@@ -1,25 +1,43 @@
 package com.voyageone.common.magento.api.bean;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class OrderDataBean {
+	private String orderNumber;
 	private String billingName;
 	private String billingState;
 	private String billingCity;
 	private String billingCountry;
 	private String billingAddress;
+	private String billingAddress2;
 	private String billingPostcode;
 	private String billingTelephone;
+	private String billingEmail;
 	private String shippingName;
+	private String shippingEmail;
 	private String shippingState;
 	private String shippingCity;
 	private String shippingCountry;
 	private String shippingAddress;
+	private String shippingAddress2;
 	private String shippingPostcode;
 	private String shippingTelephone;
 	private String shippingMethod;
 	private String paymentMethod;
 	private List<OrderDetailBean> orderDetails;
+	private double discount = 0;
+	private double surcharge = 0;
+	private double finalGrandTotal = 0;
+
+	public String getOrderNumber() {
+		return orderNumber;
+	}
+
+	public void setOrderNumber(String orderNumber) {
+		this.orderNumber = orderNumber;
+	}
+
 	/**
 	 * @return the billingName
 	 */
@@ -104,6 +122,23 @@ public class OrderDataBean {
 	public void setBillingTelephone(String billingTelephone) {
 		this.billingTelephone = billingTelephone;
 	}
+
+	public String getBillingEmail() {
+		return billingEmail;
+	}
+
+	public void setBillingEmail(String billingEmail) {
+		this.billingEmail = billingEmail;
+	}
+
+	public String getShippingEmail() {
+		return shippingEmail;
+	}
+
+	public void setShippingEmail(String shippingEmail) {
+		this.shippingEmail = shippingEmail;
+	}
+
 	/**
 	 * @return the shippingName
 	 */
@@ -224,5 +259,44 @@ public class OrderDataBean {
 	public void setOrderDetails(List<OrderDetailBean> orderDetails) {
 		this.orderDetails = orderDetails;
 	}
-	
+
+	public double getSurcharge() {
+		return surcharge;
+	}
+
+	public void setSurcharge(double surcharge) {
+		this.surcharge = surcharge;
+	}
+
+	public double getDiscount() {
+		return discount;
+	}
+
+	public void setDiscount(double discount) {
+		this.discount = discount;
+	}
+
+	public String getBillingAddress2() {
+		return billingAddress2;
+	}
+
+	public void setBillingAddress2(String billingAddress2) {
+		this.billingAddress2 = billingAddress2;
+	}
+
+	public String getShippingAddress2() {
+		return shippingAddress2;
+	}
+
+	public void setShippingAddress2(String shippingAddress2) {
+		this.shippingAddress2 = shippingAddress2;
+	}
+
+	public double getFinalGrandTotal() {
+		return finalGrandTotal;
+	}
+
+	public void setFinalGrandTotal(double finalGrandTotal) {
+		this.finalGrandTotal = finalGrandTotal;
+	}
 }

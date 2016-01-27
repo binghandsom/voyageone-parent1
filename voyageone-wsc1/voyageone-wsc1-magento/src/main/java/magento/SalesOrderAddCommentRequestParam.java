@@ -20,22 +20,22 @@ public class SalesOrderAddCommentRequestParam implements org.apache.axis2.databi
     /**
      * field for SessionId
      */
-    protected String localSessionId;
+    protected java.lang.String localSessionId;
 
     /**
      * field for OrderIncrementId
      */
-    protected String localOrderIncrementId;
+    protected java.lang.String localOrderIncrementId;
 
     /**
      * field for Status
      */
-    protected String localStatus;
+    protected java.lang.String localStatus;
 
     /**
      * field for Comment
      */
-    protected String localComment;
+    protected java.lang.String localComment;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -58,7 +58,7 @@ public class SalesOrderAddCommentRequestParam implements org.apache.axis2.databi
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getSessionId() {
+    public java.lang.String getSessionId() {
         return localSessionId;
     }
 
@@ -66,7 +66,7 @@ public class SalesOrderAddCommentRequestParam implements org.apache.axis2.databi
      * Auto generated setter method
      * @param param SessionId
      */
-    public void setSessionId(String param) {
+    public void setSessionId(java.lang.String param) {
         this.localSessionId = param;
     }
 
@@ -74,7 +74,7 @@ public class SalesOrderAddCommentRequestParam implements org.apache.axis2.databi
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getOrderIncrementId() {
+    public java.lang.String getOrderIncrementId() {
         return localOrderIncrementId;
     }
 
@@ -82,7 +82,7 @@ public class SalesOrderAddCommentRequestParam implements org.apache.axis2.databi
      * Auto generated setter method
      * @param param OrderIncrementId
      */
-    public void setOrderIncrementId(String param) {
+    public void setOrderIncrementId(java.lang.String param) {
         this.localOrderIncrementId = param;
     }
 
@@ -90,7 +90,7 @@ public class SalesOrderAddCommentRequestParam implements org.apache.axis2.databi
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getStatus() {
+    public java.lang.String getStatus() {
         return localStatus;
     }
 
@@ -98,7 +98,7 @@ public class SalesOrderAddCommentRequestParam implements org.apache.axis2.databi
      * Auto generated setter method
      * @param param Status
      */
-    public void setStatus(String param) {
+    public void setStatus(java.lang.String param) {
         this.localStatus = param;
     }
 
@@ -110,7 +110,7 @@ public class SalesOrderAddCommentRequestParam implements org.apache.axis2.databi
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getComment() {
+    public java.lang.String getComment() {
         return localComment;
     }
 
@@ -118,7 +118,7 @@ public class SalesOrderAddCommentRequestParam implements org.apache.axis2.databi
      * Auto generated setter method
      * @param param Comment
      */
-    public void setComment(String param) {
+    public void setComment(java.lang.String param) {
         localCommentTracker = param != null;
 
         this.localComment = param;
@@ -142,7 +142,7 @@ public class SalesOrderAddCommentRequestParam implements org.apache.axis2.databi
      */
     public void setNotify(int param) {
         // setting primitive attribute tracker to true
-        localNotifyTracker = param != Integer.MIN_VALUE;
+        localNotifyTracker = param != java.lang.Integer.MIN_VALUE;
 
         this.localNotify = param;
     }
@@ -174,8 +174,8 @@ public class SalesOrderAddCommentRequestParam implements org.apache.axis2.databi
         javax.xml.stream.XMLStreamWriter xmlWriter, boolean serializeType)
         throws javax.xml.stream.XMLStreamException,
             org.apache.axis2.databinding.ADBException {
-        String prefix = null;
-        String namespace = null;
+        java.lang.String prefix = null;
+        java.lang.String namespace = null;
 
         prefix = parentQName.getPrefix();
         namespace = parentQName.getNamespaceURI();
@@ -183,7 +183,7 @@ public class SalesOrderAddCommentRequestParam implements org.apache.axis2.databi
             xmlWriter);
 
         if (serializeType) {
-            String namespacePrefix = registerPrefix(xmlWriter,
+            java.lang.String namespacePrefix = registerPrefix(xmlWriter,
                     "urn:Magento");
 
             if ((namespacePrefix != null) &&
@@ -257,7 +257,7 @@ public class SalesOrderAddCommentRequestParam implements org.apache.axis2.databi
             namespace = "";
             writeStartElement(null, namespace, "notify", xmlWriter);
 
-            if (localNotify == Integer.MIN_VALUE) {
+            if (localNotify == java.lang.Integer.MIN_VALUE) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "notify cannot be null!!");
             } else {
@@ -271,7 +271,7 @@ public class SalesOrderAddCommentRequestParam implements org.apache.axis2.databi
         xmlWriter.writeEndElement();
     }
 
-    private static String generatePrefix(String namespace) {
+    private static java.lang.String generatePrefix(java.lang.String namespace) {
         if (namespace.equals("urn:Magento")) {
             return "ns1";
         }
@@ -282,11 +282,11 @@ public class SalesOrderAddCommentRequestParam implements org.apache.axis2.databi
     /**
      * Utility method to write an element start tag.
      */
-    private void writeStartElement(String prefix,
-        String namespace, String localPart,
+    private void writeStartElement(java.lang.String prefix,
+        java.lang.String namespace, java.lang.String localPart,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
-        String writerPrefix = xmlWriter.getPrefix(namespace);
+        java.lang.String writerPrefix = xmlWriter.getPrefix(namespace);
 
         if (writerPrefix != null) {
             xmlWriter.writeStartElement(namespace, localPart);
@@ -306,9 +306,9 @@ public class SalesOrderAddCommentRequestParam implements org.apache.axis2.databi
     /**
      * Util method to write an attribute with the ns prefix
      */
-    private void writeAttribute(String prefix,
-        String namespace, String attName,
-        String attValue, javax.xml.stream.XMLStreamWriter xmlWriter)
+    private void writeAttribute(java.lang.String prefix,
+        java.lang.String namespace, java.lang.String attName,
+        java.lang.String attValue, javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
         if (xmlWriter.getPrefix(namespace) == null) {
             xmlWriter.writeNamespace(prefix, namespace);
@@ -321,8 +321,8 @@ public class SalesOrderAddCommentRequestParam implements org.apache.axis2.databi
     /**
      * Util method to write an attribute without the ns prefix
      */
-    private void writeAttribute(String namespace,
-        String attName, String attValue,
+    private void writeAttribute(java.lang.String namespace,
+        java.lang.String attName, java.lang.String attValue,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
         if (namespace.equals("")) {
@@ -336,18 +336,18 @@ public class SalesOrderAddCommentRequestParam implements org.apache.axis2.databi
     /**
      * Util method to write an attribute without the ns prefix
      */
-    private void writeQNameAttribute(String namespace,
-        String attName, javax.xml.namespace.QName qname,
+    private void writeQNameAttribute(java.lang.String namespace,
+        java.lang.String attName, javax.xml.namespace.QName qname,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
-        String attributeNamespace = qname.getNamespaceURI();
-        String attributePrefix = xmlWriter.getPrefix(attributeNamespace);
+        java.lang.String attributeNamespace = qname.getNamespaceURI();
+        java.lang.String attributePrefix = xmlWriter.getPrefix(attributeNamespace);
 
         if (attributePrefix == null) {
             attributePrefix = registerPrefix(xmlWriter, attributeNamespace);
         }
 
-        String attributeValue;
+        java.lang.String attributeValue;
 
         if (attributePrefix.trim().length() > 0) {
             attributeValue = attributePrefix + ":" + qname.getLocalPart();
@@ -369,10 +369,10 @@ public class SalesOrderAddCommentRequestParam implements org.apache.axis2.databi
     private void writeQName(javax.xml.namespace.QName qname,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
-        String namespaceURI = qname.getNamespaceURI();
+        java.lang.String namespaceURI = qname.getNamespaceURI();
 
         if (namespaceURI != null) {
-            String prefix = xmlWriter.getPrefix(namespaceURI);
+            java.lang.String prefix = xmlWriter.getPrefix(namespaceURI);
 
             if (prefix == null) {
                 prefix = generatePrefix(namespaceURI);
@@ -401,9 +401,9 @@ public class SalesOrderAddCommentRequestParam implements org.apache.axis2.databi
         if (qnames != null) {
             // we have to store this data until last moment since it is not possible to write any
             // namespace data after writing the charactor data
-            StringBuffer stringToWrite = new StringBuffer();
-            String namespaceURI = null;
-            String prefix = null;
+            java.lang.StringBuffer stringToWrite = new java.lang.StringBuffer();
+            java.lang.String namespaceURI = null;
+            java.lang.String prefix = null;
 
             for (int i = 0; i < qnames.length; i++) {
                 if (i > 0) {
@@ -442,10 +442,10 @@ public class SalesOrderAddCommentRequestParam implements org.apache.axis2.databi
     /**
      * Register a namespace prefix
      */
-    private String registerPrefix(
-        javax.xml.stream.XMLStreamWriter xmlWriter, String namespace)
+    private java.lang.String registerPrefix(
+        javax.xml.stream.XMLStreamWriter xmlWriter, java.lang.String namespace)
         throws javax.xml.stream.XMLStreamException {
-        String prefix = xmlWriter.getPrefix(namespace);
+        java.lang.String prefix = xmlWriter.getPrefix(namespace);
 
         if (prefix == null) {
             prefix = generatePrefix(namespace);
@@ -453,7 +453,7 @@ public class SalesOrderAddCommentRequestParam implements org.apache.axis2.databi
             javax.xml.namespace.NamespaceContext nsContext = xmlWriter.getNamespaceContext();
 
             while (true) {
-                String uri = nsContext.getNamespaceURI(prefix);
+                java.lang.String uri = nsContext.getNamespaceURI(prefix);
 
                 if ((uri == null) || (uri.length() == 0)) {
                     break;
@@ -544,13 +544,13 @@ public class SalesOrderAddCommentRequestParam implements org.apache.axis2.databi
          *                If this object is a complex type, the reader is positioned at the end element of its outer element
          */
         public static SalesOrderAddCommentRequestParam parse(
-            javax.xml.stream.XMLStreamReader reader) throws Exception {
+            javax.xml.stream.XMLStreamReader reader) throws java.lang.Exception {
             SalesOrderAddCommentRequestParam object = new SalesOrderAddCommentRequestParam();
 
             int event;
-            String nillableValue = null;
-            String prefix = "";
-            String namespaceuri = "";
+            java.lang.String nillableValue = null;
+            java.lang.String prefix = "";
+            java.lang.String namespaceuri = "";
 
             try {
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -558,11 +558,11 @@ public class SalesOrderAddCommentRequestParam implements org.apache.axis2.databi
 
                 if (reader.getAttributeValue(
                             "http://www.w3.org/2001/XMLSchema-instance", "type") != null) {
-                    String fullTypeName = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance",
+                    java.lang.String fullTypeName = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance",
                             "type");
 
                     if (fullTypeName != null) {
-                        String nsPrefix = null;
+                        java.lang.String nsPrefix = null;
 
                         if (fullTypeName.indexOf(":") > -1) {
                             nsPrefix = fullTypeName.substring(0,
@@ -571,12 +571,12 @@ public class SalesOrderAddCommentRequestParam implements org.apache.axis2.databi
 
                         nsPrefix = (nsPrefix == null) ? "" : nsPrefix;
 
-                        String type = fullTypeName.substring(fullTypeName.indexOf(
+                        java.lang.String type = fullTypeName.substring(fullTypeName.indexOf(
                                     ":") + 1);
 
                         if (!"salesOrderAddCommentRequestParam".equals(type)) {
                             //find namespace for the prefix
-                            String nsUri = reader.getNamespaceContext()
+                            java.lang.String nsUri = reader.getNamespaceContext()
                                                            .getNamespaceURI(nsPrefix);
 
                             return (SalesOrderAddCommentRequestParam) magento.ExtensionMapper.getTypeObject(nsUri,
@@ -606,7 +606,7 @@ public class SalesOrderAddCommentRequestParam implements org.apache.axis2.databi
                             "The element: " + "sessionId" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setSessionId(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -636,7 +636,7 @@ public class SalesOrderAddCommentRequestParam implements org.apache.axis2.databi
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setOrderIncrementId(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -665,7 +665,7 @@ public class SalesOrderAddCommentRequestParam implements org.apache.axis2.databi
                             "The element: " + "status" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setStatus(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -694,7 +694,7 @@ public class SalesOrderAddCommentRequestParam implements org.apache.axis2.databi
                             "The element: " + "comment" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setComment(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -720,7 +720,7 @@ public class SalesOrderAddCommentRequestParam implements org.apache.axis2.databi
                             "The element: " + "notify" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setNotify(org.apache.axis2.databinding.utils.ConverterUtil.convertToInt(
                             content));
@@ -729,7 +729,7 @@ public class SalesOrderAddCommentRequestParam implements org.apache.axis2.databi
                 } // End of if for expected property start element
 
                 else {
-                    object.setNotify(Integer.MIN_VALUE);
+                    object.setNotify(java.lang.Integer.MIN_VALUE);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -741,7 +741,7 @@ public class SalesOrderAddCommentRequestParam implements org.apache.axis2.databi
                         "Unexpected subelement " + reader.getName());
                 }
             } catch (javax.xml.stream.XMLStreamException e) {
-                throw new Exception(e);
+                throw new java.lang.Exception(e);
             }
 
             return object;

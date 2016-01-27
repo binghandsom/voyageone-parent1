@@ -17,7 +17,7 @@ public interface MagentoService {
      * @param catalogCategoryLevelRequestParam1
      */
     public magento.CatalogCategoryLevelResponseParam catalogCategoryLevel(
-            magento.CatalogCategoryLevelRequestParam catalogCategoryLevelRequestParam1)
+        magento.CatalogCategoryLevelRequestParam catalogCategoryLevelRequestParam1)
         throws java.rmi.RemoteException;
 
     /**
@@ -26,8 +26,8 @@ public interface MagentoService {
      * @param catalogCategoryLevelRequestParam1
      */
     public void startcatalogCategoryLevel(
-            magento.CatalogCategoryLevelRequestParam catalogCategoryLevelRequestParam1,
-            final MagentoServiceCallbackHandler callback)
+        magento.CatalogCategoryLevelRequestParam catalogCategoryLevelRequestParam1,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -36,7 +36,7 @@ public interface MagentoService {
      * @param storeListRequestParam3
      */
     public magento.StoreListResponseParam storeList(
-            magento.StoreListRequestParam storeListRequestParam3)
+        magento.StoreListRequestParam storeListRequestParam3)
         throws java.rmi.RemoteException;
 
     /**
@@ -45,8 +45,8 @@ public interface MagentoService {
      * @param storeListRequestParam3
      */
     public void startstoreList(
-            magento.StoreListRequestParam storeListRequestParam3,
-            final MagentoServiceCallbackHandler callback)
+        magento.StoreListRequestParam storeListRequestParam3,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -55,7 +55,7 @@ public interface MagentoService {
      * @param salesOrderShipmentGetCarriersRequestParam5
      */
     public magento.SalesOrderShipmentGetCarriersResponseParam salesOrderShipmentGetCarriers(
-            magento.SalesOrderShipmentGetCarriersRequestParam salesOrderShipmentGetCarriersRequestParam5)
+        magento.SalesOrderShipmentGetCarriersRequestParam salesOrderShipmentGetCarriersRequestParam5)
         throws java.rmi.RemoteException;
 
     /**
@@ -64,8 +64,8 @@ public interface MagentoService {
      * @param salesOrderShipmentGetCarriersRequestParam5
      */
     public void startsalesOrderShipmentGetCarriers(
-            magento.SalesOrderShipmentGetCarriersRequestParam salesOrderShipmentGetCarriersRequestParam5,
-            final MagentoServiceCallbackHandler callback)
+        magento.SalesOrderShipmentGetCarriersRequestParam salesOrderShipmentGetCarriersRequestParam5,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -74,7 +74,7 @@ public interface MagentoService {
      * @param giftcardAccountInfoRequestParam7
      */
     public magento.GiftcardAccountInfoResponseParam giftcardAccountInfo(
-            magento.GiftcardAccountInfoRequestParam giftcardAccountInfoRequestParam7)
+        magento.GiftcardAccountInfoRequestParam giftcardAccountInfoRequestParam7)
         throws java.rmi.RemoteException;
 
     /**
@@ -83,8 +83,8 @@ public interface MagentoService {
      * @param giftcardAccountInfoRequestParam7
      */
     public void startgiftcardAccountInfo(
-            magento.GiftcardAccountInfoRequestParam giftcardAccountInfoRequestParam7,
-            final MagentoServiceCallbackHandler callback)
+        magento.GiftcardAccountInfoRequestParam giftcardAccountInfoRequestParam7,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -93,7 +93,7 @@ public interface MagentoService {
      * @param catalogProductCustomOptionTypesRequestParam9
      */
     public magento.CatalogProductCustomOptionTypesResponseParam catalogProductCustomOptionTypes(
-            magento.CatalogProductCustomOptionTypesRequestParam catalogProductCustomOptionTypesRequestParam9)
+        magento.CatalogProductCustomOptionTypesRequestParam catalogProductCustomOptionTypesRequestParam9)
         throws java.rmi.RemoteException;
 
     /**
@@ -102,8 +102,8 @@ public interface MagentoService {
      * @param catalogProductCustomOptionTypesRequestParam9
      */
     public void startcatalogProductCustomOptionTypes(
-            magento.CatalogProductCustomOptionTypesRequestParam catalogProductCustomOptionTypesRequestParam9,
-            final MagentoServiceCallbackHandler callback)
+        magento.CatalogProductCustomOptionTypesRequestParam catalogProductCustomOptionTypesRequestParam9,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -112,7 +112,7 @@ public interface MagentoService {
      * @param catalogProductDownloadableLinkRemoveRequestParam11
      */
     public magento.CatalogProductDownloadableLinkRemoveResponseParam catalogProductDownloadableLinkRemove(
-            magento.CatalogProductDownloadableLinkRemoveRequestParam catalogProductDownloadableLinkRemoveRequestParam11)
+        magento.CatalogProductDownloadableLinkRemoveRequestParam catalogProductDownloadableLinkRemoveRequestParam11)
         throws java.rmi.RemoteException;
 
     /**
@@ -121,8 +121,8 @@ public interface MagentoService {
      * @param catalogProductDownloadableLinkRemoveRequestParam11
      */
     public void startcatalogProductDownloadableLinkRemove(
-            magento.CatalogProductDownloadableLinkRemoveRequestParam catalogProductDownloadableLinkRemoveRequestParam11,
-            final MagentoServiceCallbackHandler callback)
+        magento.CatalogProductDownloadableLinkRemoveRequestParam catalogProductDownloadableLinkRemoveRequestParam11,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -131,7 +131,7 @@ public interface MagentoService {
      * @param giftcardAccountUpdateRequestParam13
      */
     public magento.GiftcardAccountUpdateResponseParam giftcardAccountUpdate(
-            magento.GiftcardAccountUpdateRequestParam giftcardAccountUpdateRequestParam13)
+        magento.GiftcardAccountUpdateRequestParam giftcardAccountUpdateRequestParam13)
         throws java.rmi.RemoteException;
 
     /**
@@ -140,8 +140,8 @@ public interface MagentoService {
      * @param giftcardAccountUpdateRequestParam13
      */
     public void startgiftcardAccountUpdate(
-            magento.GiftcardAccountUpdateRequestParam giftcardAccountUpdateRequestParam13,
-            final MagentoServiceCallbackHandler callback)
+        magento.GiftcardAccountUpdateRequestParam giftcardAccountUpdateRequestParam13,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -150,7 +150,7 @@ public interface MagentoService {
      * @param shoppingCartShippingListRequestParam15
      */
     public magento.ShoppingCartShippingListResponseParam shoppingCartShippingList(
-            magento.ShoppingCartShippingListRequestParam shoppingCartShippingListRequestParam15)
+        magento.ShoppingCartShippingListRequestParam shoppingCartShippingListRequestParam15)
         throws java.rmi.RemoteException;
 
     /**
@@ -159,8 +159,8 @@ public interface MagentoService {
      * @param shoppingCartShippingListRequestParam15
      */
     public void startshoppingCartShippingList(
-            magento.ShoppingCartShippingListRequestParam shoppingCartShippingListRequestParam15,
-            final MagentoServiceCallbackHandler callback)
+        magento.ShoppingCartShippingListRequestParam shoppingCartShippingListRequestParam15,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -169,7 +169,7 @@ public interface MagentoService {
      * @param catalogProductLinkAttributesRequestParam17
      */
     public magento.CatalogProductLinkAttributesResponseParam catalogProductLinkAttributes(
-            magento.CatalogProductLinkAttributesRequestParam catalogProductLinkAttributesRequestParam17)
+        magento.CatalogProductLinkAttributesRequestParam catalogProductLinkAttributesRequestParam17)
         throws java.rmi.RemoteException;
 
     /**
@@ -178,8 +178,8 @@ public interface MagentoService {
      * @param catalogProductLinkAttributesRequestParam17
      */
     public void startcatalogProductLinkAttributes(
-            magento.CatalogProductLinkAttributesRequestParam catalogProductLinkAttributesRequestParam17,
-            final MagentoServiceCallbackHandler callback)
+        magento.CatalogProductLinkAttributesRequestParam catalogProductLinkAttributesRequestParam17,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -188,7 +188,7 @@ public interface MagentoService {
      * @param giftcardAccountListRequestParam19
      */
     public magento.GiftcardAccountListResponseParam giftcardAccountList(
-            magento.GiftcardAccountListRequestParam giftcardAccountListRequestParam19)
+        magento.GiftcardAccountListRequestParam giftcardAccountListRequestParam19)
         throws java.rmi.RemoteException;
 
     /**
@@ -197,8 +197,8 @@ public interface MagentoService {
      * @param giftcardAccountListRequestParam19
      */
     public void startgiftcardAccountList(
-            magento.GiftcardAccountListRequestParam giftcardAccountListRequestParam19,
-            final MagentoServiceCallbackHandler callback)
+        magento.GiftcardAccountListRequestParam giftcardAccountListRequestParam19,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -207,7 +207,7 @@ public interface MagentoService {
      * @param catalogProductTypeListRequestParam21
      */
     public magento.CatalogProductTypeListResponseParam catalogProductTypeList(
-            magento.CatalogProductTypeListRequestParam catalogProductTypeListRequestParam21)
+        magento.CatalogProductTypeListRequestParam catalogProductTypeListRequestParam21)
         throws java.rmi.RemoteException;
 
     /**
@@ -216,8 +216,8 @@ public interface MagentoService {
      * @param catalogProductTypeListRequestParam21
      */
     public void startcatalogProductTypeList(
-            magento.CatalogProductTypeListRequestParam catalogProductTypeListRequestParam21,
-            final MagentoServiceCallbackHandler callback)
+        magento.CatalogProductTypeListRequestParam catalogProductTypeListRequestParam21,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -226,7 +226,7 @@ public interface MagentoService {
      * @param salesOrderShipmentRemoveTrackRequestParam23
      */
     public magento.SalesOrderShipmentRemoveTrackResponseParam salesOrderShipmentRemoveTrack(
-            magento.SalesOrderShipmentRemoveTrackRequestParam salesOrderShipmentRemoveTrackRequestParam23)
+        magento.SalesOrderShipmentRemoveTrackRequestParam salesOrderShipmentRemoveTrackRequestParam23)
         throws java.rmi.RemoteException;
 
     /**
@@ -235,8 +235,8 @@ public interface MagentoService {
      * @param salesOrderShipmentRemoveTrackRequestParam23
      */
     public void startsalesOrderShipmentRemoveTrack(
-            magento.SalesOrderShipmentRemoveTrackRequestParam salesOrderShipmentRemoveTrackRequestParam23,
-            final MagentoServiceCallbackHandler callback)
+        magento.SalesOrderShipmentRemoveTrackRequestParam salesOrderShipmentRemoveTrackRequestParam23,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -245,7 +245,7 @@ public interface MagentoService {
      * @param salesOrderInvoiceCaptureRequestParam25
      */
     public magento.SalesOrderInvoiceCaptureResponseParam salesOrderInvoiceCapture(
-            magento.SalesOrderInvoiceCaptureRequestParam salesOrderInvoiceCaptureRequestParam25)
+        magento.SalesOrderInvoiceCaptureRequestParam salesOrderInvoiceCaptureRequestParam25)
         throws java.rmi.RemoteException;
 
     /**
@@ -254,8 +254,8 @@ public interface MagentoService {
      * @param salesOrderInvoiceCaptureRequestParam25
      */
     public void startsalesOrderInvoiceCapture(
-            magento.SalesOrderInvoiceCaptureRequestParam salesOrderInvoiceCaptureRequestParam25,
-            final MagentoServiceCallbackHandler callback)
+        magento.SalesOrderInvoiceCaptureRequestParam salesOrderInvoiceCaptureRequestParam25,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -264,7 +264,7 @@ public interface MagentoService {
      * @param catalogCategoryAttributeCurrentStoreRequestParam27
      */
     public magento.CatalogCategoryAttributeCurrentStoreResponseParam catalogCategoryAttributeCurrentStore(
-            magento.CatalogCategoryAttributeCurrentStoreRequestParam catalogCategoryAttributeCurrentStoreRequestParam27)
+        magento.CatalogCategoryAttributeCurrentStoreRequestParam catalogCategoryAttributeCurrentStoreRequestParam27)
         throws java.rmi.RemoteException;
 
     /**
@@ -273,8 +273,8 @@ public interface MagentoService {
      * @param catalogCategoryAttributeCurrentStoreRequestParam27
      */
     public void startcatalogCategoryAttributeCurrentStore(
-            magento.CatalogCategoryAttributeCurrentStoreRequestParam catalogCategoryAttributeCurrentStoreRequestParam27,
-            final MagentoServiceCallbackHandler callback)
+        magento.CatalogCategoryAttributeCurrentStoreRequestParam catalogCategoryAttributeCurrentStoreRequestParam27,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -283,7 +283,7 @@ public interface MagentoService {
      * @param catalogProductCustomOptionInfoRequestParam29
      */
     public magento.CatalogProductCustomOptionInfoResponseParam catalogProductCustomOptionInfo(
-            magento.CatalogProductCustomOptionInfoRequestParam catalogProductCustomOptionInfoRequestParam29)
+        magento.CatalogProductCustomOptionInfoRequestParam catalogProductCustomOptionInfoRequestParam29)
         throws java.rmi.RemoteException;
 
     /**
@@ -292,8 +292,8 @@ public interface MagentoService {
      * @param catalogProductCustomOptionInfoRequestParam29
      */
     public void startcatalogProductCustomOptionInfo(
-            magento.CatalogProductCustomOptionInfoRequestParam catalogProductCustomOptionInfoRequestParam29,
-            final MagentoServiceCallbackHandler callback)
+        magento.CatalogProductCustomOptionInfoRequestParam catalogProductCustomOptionInfoRequestParam29,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -302,7 +302,7 @@ public interface MagentoService {
      * @param catalogProductCreateRequestParam31
      */
     public magento.CatalogProductCreateResponseParam catalogProductCreate(
-            magento.CatalogProductCreateRequestParam catalogProductCreateRequestParam31)
+        magento.CatalogProductCreateRequestParam catalogProductCreateRequestParam31)
         throws java.rmi.RemoteException;
 
     /**
@@ -311,8 +311,8 @@ public interface MagentoService {
      * @param catalogProductCreateRequestParam31
      */
     public void startcatalogProductCreate(
-            magento.CatalogProductCreateRequestParam catalogProductCreateRequestParam31,
-            final MagentoServiceCallbackHandler callback)
+        magento.CatalogProductCreateRequestParam catalogProductCreateRequestParam31,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -321,7 +321,7 @@ public interface MagentoService {
      * @param salesOrderListRequestParam33
      */
     public magento.SalesOrderListResponseParam salesOrderList(
-            magento.SalesOrderListRequestParam salesOrderListRequestParam33)
+        magento.SalesOrderListRequestParam salesOrderListRequestParam33)
         throws java.rmi.RemoteException;
 
     /**
@@ -330,8 +330,8 @@ public interface MagentoService {
      * @param salesOrderListRequestParam33
      */
     public void startsalesOrderList(
-            magento.SalesOrderListRequestParam salesOrderListRequestParam33,
-            final MagentoServiceCallbackHandler callback)
+        magento.SalesOrderListRequestParam salesOrderListRequestParam33,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -340,7 +340,7 @@ public interface MagentoService {
      * @param salesOrderCreditmemoCancelRequestParam35
      */
     public magento.SalesOrderCreditmemoCancelResponseParam salesOrderCreditmemoCancel(
-            magento.SalesOrderCreditmemoCancelRequestParam salesOrderCreditmemoCancelRequestParam35)
+        magento.SalesOrderCreditmemoCancelRequestParam salesOrderCreditmemoCancelRequestParam35)
         throws java.rmi.RemoteException;
 
     /**
@@ -349,8 +349,8 @@ public interface MagentoService {
      * @param salesOrderCreditmemoCancelRequestParam35
      */
     public void startsalesOrderCreditmemoCancel(
-            magento.SalesOrderCreditmemoCancelRequestParam salesOrderCreditmemoCancelRequestParam35,
-            final MagentoServiceCallbackHandler callback)
+        magento.SalesOrderCreditmemoCancelRequestParam salesOrderCreditmemoCancelRequestParam35,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -359,7 +359,7 @@ public interface MagentoService {
      * @param resourcesRequestParam37
      */
     public magento.ResourcesResponseParam resources(
-            magento.ResourcesRequestParam resourcesRequestParam37)
+        magento.ResourcesRequestParam resourcesRequestParam37)
         throws java.rmi.RemoteException;
 
     /**
@@ -368,8 +368,8 @@ public interface MagentoService {
      * @param resourcesRequestParam37
      */
     public void startresources(
-            magento.ResourcesRequestParam resourcesRequestParam37,
-            final MagentoServiceCallbackHandler callback)
+        magento.ResourcesRequestParam resourcesRequestParam37,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -378,7 +378,7 @@ public interface MagentoService {
      * @param catalogProductAttributeTierPriceInfoRequestParam39
      */
     public magento.CatalogProductAttributeTierPriceInfoResponseParam catalogProductAttributeTierPriceInfo(
-            magento.CatalogProductAttributeTierPriceInfoRequestParam catalogProductAttributeTierPriceInfoRequestParam39)
+        magento.CatalogProductAttributeTierPriceInfoRequestParam catalogProductAttributeTierPriceInfoRequestParam39)
         throws java.rmi.RemoteException;
 
     /**
@@ -387,8 +387,8 @@ public interface MagentoService {
      * @param catalogProductAttributeTierPriceInfoRequestParam39
      */
     public void startcatalogProductAttributeTierPriceInfo(
-            magento.CatalogProductAttributeTierPriceInfoRequestParam catalogProductAttributeTierPriceInfoRequestParam39,
-            final MagentoServiceCallbackHandler callback)
+        magento.CatalogProductAttributeTierPriceInfoRequestParam catalogProductAttributeTierPriceInfoRequestParam39,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -397,7 +397,7 @@ public interface MagentoService {
      * @param catalogProductTagInfoRequestParam41
      */
     public magento.CatalogProductTagInfoResponseParam catalogProductTagInfo(
-            magento.CatalogProductTagInfoRequestParam catalogProductTagInfoRequestParam41)
+        magento.CatalogProductTagInfoRequestParam catalogProductTagInfoRequestParam41)
         throws java.rmi.RemoteException;
 
     /**
@@ -406,8 +406,8 @@ public interface MagentoService {
      * @param catalogProductTagInfoRequestParam41
      */
     public void startcatalogProductTagInfo(
-            magento.CatalogProductTagInfoRequestParam catalogProductTagInfoRequestParam41,
-            final MagentoServiceCallbackHandler callback)
+        magento.CatalogProductTagInfoRequestParam catalogProductTagInfoRequestParam41,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -416,7 +416,7 @@ public interface MagentoService {
      * @param shoppingCartCustomerbalanceSetAmountRequestParam43
      */
     public magento.ShoppingCartCustomerbalanceSetAmountResponseParam shoppingCartCustomerbalanceSetAmount(
-            magento.ShoppingCartCustomerbalanceSetAmountRequestParam shoppingCartCustomerbalanceSetAmountRequestParam43)
+        magento.ShoppingCartCustomerbalanceSetAmountRequestParam shoppingCartCustomerbalanceSetAmountRequestParam43)
         throws java.rmi.RemoteException;
 
     /**
@@ -425,8 +425,8 @@ public interface MagentoService {
      * @param shoppingCartCustomerbalanceSetAmountRequestParam43
      */
     public void startshoppingCartCustomerbalanceSetAmount(
-            magento.ShoppingCartCustomerbalanceSetAmountRequestParam shoppingCartCustomerbalanceSetAmountRequestParam43,
-            final MagentoServiceCallbackHandler callback)
+        magento.ShoppingCartCustomerbalanceSetAmountRequestParam shoppingCartCustomerbalanceSetAmountRequestParam43,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -435,7 +435,7 @@ public interface MagentoService {
      * @param catalogProductAttributeTierPriceUpdateRequestParam45
      */
     public magento.CatalogProductAttributeTierPriceUpdateResponseParam catalogProductAttributeTierPriceUpdate(
-            magento.CatalogProductAttributeTierPriceUpdateRequestParam catalogProductAttributeTierPriceUpdateRequestParam45)
+        magento.CatalogProductAttributeTierPriceUpdateRequestParam catalogProductAttributeTierPriceUpdateRequestParam45)
         throws java.rmi.RemoteException;
 
     /**
@@ -444,8 +444,8 @@ public interface MagentoService {
      * @param catalogProductAttributeTierPriceUpdateRequestParam45
      */
     public void startcatalogProductAttributeTierPriceUpdate(
-            magento.CatalogProductAttributeTierPriceUpdateRequestParam catalogProductAttributeTierPriceUpdateRequestParam45,
-            final MagentoServiceCallbackHandler callback)
+        magento.CatalogProductAttributeTierPriceUpdateRequestParam catalogProductAttributeTierPriceUpdateRequestParam45,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -454,7 +454,7 @@ public interface MagentoService {
      * @param catalogProductAttributeAddOptionRequestParam47
      */
     public magento.CatalogProductAttributeAddOptionResponseParam catalogProductAttributeAddOption(
-            magento.CatalogProductAttributeAddOptionRequestParam catalogProductAttributeAddOptionRequestParam47)
+        magento.CatalogProductAttributeAddOptionRequestParam catalogProductAttributeAddOptionRequestParam47)
         throws java.rmi.RemoteException;
 
     /**
@@ -463,8 +463,8 @@ public interface MagentoService {
      * @param catalogProductAttributeAddOptionRequestParam47
      */
     public void startcatalogProductAttributeAddOption(
-            magento.CatalogProductAttributeAddOptionRequestParam catalogProductAttributeAddOptionRequestParam47,
-            final MagentoServiceCallbackHandler callback)
+        magento.CatalogProductAttributeAddOptionRequestParam catalogProductAttributeAddOptionRequestParam47,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -473,7 +473,7 @@ public interface MagentoService {
      * @param catalogProductAttributeMediaCreateRequestParam49
      */
     public magento.CatalogProductAttributeMediaCreateResponseParam catalogProductAttributeMediaCreate(
-            magento.CatalogProductAttributeMediaCreateRequestParam catalogProductAttributeMediaCreateRequestParam49)
+        magento.CatalogProductAttributeMediaCreateRequestParam catalogProductAttributeMediaCreateRequestParam49)
         throws java.rmi.RemoteException;
 
     /**
@@ -482,8 +482,8 @@ public interface MagentoService {
      * @param catalogProductAttributeMediaCreateRequestParam49
      */
     public void startcatalogProductAttributeMediaCreate(
-            magento.CatalogProductAttributeMediaCreateRequestParam catalogProductAttributeMediaCreateRequestParam49,
-            final MagentoServiceCallbackHandler callback)
+        magento.CatalogProductAttributeMediaCreateRequestParam catalogProductAttributeMediaCreateRequestParam49,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -492,7 +492,7 @@ public interface MagentoService {
      * @param directoryRegionListRequestParam51
      */
     public magento.DirectoryRegionListResponseParam directoryRegionList(
-            magento.DirectoryRegionListRequestParam directoryRegionListRequestParam51)
+        magento.DirectoryRegionListRequestParam directoryRegionListRequestParam51)
         throws java.rmi.RemoteException;
 
     /**
@@ -501,8 +501,8 @@ public interface MagentoService {
      * @param directoryRegionListRequestParam51
      */
     public void startdirectoryRegionList(
-            magento.DirectoryRegionListRequestParam directoryRegionListRequestParam51,
-            final MagentoServiceCallbackHandler callback)
+        magento.DirectoryRegionListRequestParam directoryRegionListRequestParam51,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -511,7 +511,7 @@ public interface MagentoService {
      * @param endSessionParam53
      */
     public magento.EndSessionResponseParam endSession(
-            magento.EndSessionParam endSessionParam53)
+        magento.EndSessionParam endSessionParam53)
         throws java.rmi.RemoteException;
 
     /**
@@ -520,7 +520,7 @@ public interface MagentoService {
      * @param endSessionParam53
      */
     public void startendSession(magento.EndSessionParam endSessionParam53,
-                                final MagentoServiceCallbackHandler callback)
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -529,7 +529,7 @@ public interface MagentoService {
      * @param salesOrderAddCommentRequestParam55
      */
     public magento.SalesOrderAddCommentResponseParam salesOrderAddComment(
-            magento.SalesOrderAddCommentRequestParam salesOrderAddCommentRequestParam55)
+        magento.SalesOrderAddCommentRequestParam salesOrderAddCommentRequestParam55)
         throws java.rmi.RemoteException;
 
     /**
@@ -538,8 +538,8 @@ public interface MagentoService {
      * @param salesOrderAddCommentRequestParam55
      */
     public void startsalesOrderAddComment(
-            magento.SalesOrderAddCommentRequestParam salesOrderAddCommentRequestParam55,
-            final MagentoServiceCallbackHandler callback)
+        magento.SalesOrderAddCommentRequestParam salesOrderAddCommentRequestParam55,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -548,7 +548,7 @@ public interface MagentoService {
      * @param shoppingCartProductAddRequestParam57
      */
     public magento.ShoppingCartProductAddResponseParam shoppingCartProductAdd(
-            magento.ShoppingCartProductAddRequestParam shoppingCartProductAddRequestParam57)
+        magento.ShoppingCartProductAddRequestParam shoppingCartProductAddRequestParam57)
         throws java.rmi.RemoteException;
 
     /**
@@ -557,8 +557,8 @@ public interface MagentoService {
      * @param shoppingCartProductAddRequestParam57
      */
     public void startshoppingCartProductAdd(
-            magento.ShoppingCartProductAddRequestParam shoppingCartProductAddRequestParam57,
-            final MagentoServiceCallbackHandler callback)
+        magento.ShoppingCartProductAddRequestParam shoppingCartProductAddRequestParam57,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -567,7 +567,7 @@ public interface MagentoService {
      * @param shoppingCartPaymentMethodRequestParam59
      */
     public magento.ShoppingCartPaymentMethodResponseParam shoppingCartPaymentMethod(
-            magento.ShoppingCartPaymentMethodRequestParam shoppingCartPaymentMethodRequestParam59)
+        magento.ShoppingCartPaymentMethodRequestParam shoppingCartPaymentMethodRequestParam59)
         throws java.rmi.RemoteException;
 
     /**
@@ -576,8 +576,8 @@ public interface MagentoService {
      * @param shoppingCartPaymentMethodRequestParam59
      */
     public void startshoppingCartPaymentMethod(
-            magento.ShoppingCartPaymentMethodRequestParam shoppingCartPaymentMethodRequestParam59,
-            final MagentoServiceCallbackHandler callback)
+        magento.ShoppingCartPaymentMethodRequestParam shoppingCartPaymentMethodRequestParam59,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -586,7 +586,7 @@ public interface MagentoService {
      * @param catalogProductTagListRequestParam61
      */
     public magento.CatalogProductTagListResponseParam catalogProductTagList(
-            magento.CatalogProductTagListRequestParam catalogProductTagListRequestParam61)
+        magento.CatalogProductTagListRequestParam catalogProductTagListRequestParam61)
         throws java.rmi.RemoteException;
 
     /**
@@ -595,8 +595,8 @@ public interface MagentoService {
      * @param catalogProductTagListRequestParam61
      */
     public void startcatalogProductTagList(
-            magento.CatalogProductTagListRequestParam catalogProductTagListRequestParam61,
-            final MagentoServiceCallbackHandler callback)
+        magento.CatalogProductTagListRequestParam catalogProductTagListRequestParam61,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -605,7 +605,7 @@ public interface MagentoService {
      * @param shoppingCartCustomerAddressesRequestParam63
      */
     public magento.ShoppingCartCustomerAddressesResponseParam shoppingCartCustomerAddresses(
-            magento.ShoppingCartCustomerAddressesRequestParam shoppingCartCustomerAddressesRequestParam63)
+        magento.ShoppingCartCustomerAddressesRequestParam shoppingCartCustomerAddressesRequestParam63)
         throws java.rmi.RemoteException;
 
     /**
@@ -614,8 +614,8 @@ public interface MagentoService {
      * @param shoppingCartCustomerAddressesRequestParam63
      */
     public void startshoppingCartCustomerAddresses(
-            magento.ShoppingCartCustomerAddressesRequestParam shoppingCartCustomerAddressesRequestParam63,
-            final MagentoServiceCallbackHandler callback)
+        magento.ShoppingCartCustomerAddressesRequestParam shoppingCartCustomerAddressesRequestParam63,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -624,7 +624,7 @@ public interface MagentoService {
      * @param storeInfoRequestParam65
      */
     public magento.StoreInfoResponseParam storeInfo(
-            magento.StoreInfoRequestParam storeInfoRequestParam65)
+        magento.StoreInfoRequestParam storeInfoRequestParam65)
         throws java.rmi.RemoteException;
 
     /**
@@ -633,8 +633,8 @@ public interface MagentoService {
      * @param storeInfoRequestParam65
      */
     public void startstoreInfo(
-            magento.StoreInfoRequestParam storeInfoRequestParam65,
-            final MagentoServiceCallbackHandler callback)
+        magento.StoreInfoRequestParam storeInfoRequestParam65,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -643,7 +643,7 @@ public interface MagentoService {
      * @param catalogProductSetSpecialPriceRequestParam67
      */
     public magento.CatalogProductSetSpecialPriceResponseParam catalogProductSetSpecialPrice(
-            magento.CatalogProductSetSpecialPriceRequestParam catalogProductSetSpecialPriceRequestParam67)
+        magento.CatalogProductSetSpecialPriceRequestParam catalogProductSetSpecialPriceRequestParam67)
         throws java.rmi.RemoteException;
 
     /**
@@ -652,8 +652,8 @@ public interface MagentoService {
      * @param catalogProductSetSpecialPriceRequestParam67
      */
     public void startcatalogProductSetSpecialPrice(
-            magento.CatalogProductSetSpecialPriceRequestParam catalogProductSetSpecialPriceRequestParam67,
-            final MagentoServiceCallbackHandler callback)
+        magento.CatalogProductSetSpecialPriceRequestParam catalogProductSetSpecialPriceRequestParam67,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -662,7 +662,7 @@ public interface MagentoService {
      * @param shoppingCartProductListRequestParam69
      */
     public magento.ShoppingCartProductListResponseParam shoppingCartProductList(
-            magento.ShoppingCartProductListRequestParam shoppingCartProductListRequestParam69)
+        magento.ShoppingCartProductListRequestParam shoppingCartProductListRequestParam69)
         throws java.rmi.RemoteException;
 
     /**
@@ -671,8 +671,8 @@ public interface MagentoService {
      * @param shoppingCartProductListRequestParam69
      */
     public void startshoppingCartProductList(
-            magento.ShoppingCartProductListRequestParam shoppingCartProductListRequestParam69,
-            final MagentoServiceCallbackHandler callback)
+        magento.ShoppingCartProductListRequestParam shoppingCartProductListRequestParam69,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -681,7 +681,7 @@ public interface MagentoService {
      * @param salesOrderInfoRequestParam71
      */
     public magento.SalesOrderInfoResponseParam salesOrderInfo(
-            magento.SalesOrderInfoRequestParam salesOrderInfoRequestParam71)
+        magento.SalesOrderInfoRequestParam salesOrderInfoRequestParam71)
         throws java.rmi.RemoteException;
 
     /**
@@ -690,8 +690,8 @@ public interface MagentoService {
      * @param salesOrderInfoRequestParam71
      */
     public void startsalesOrderInfo(
-            magento.SalesOrderInfoRequestParam salesOrderInfoRequestParam71,
-            final MagentoServiceCallbackHandler callback)
+        magento.SalesOrderInfoRequestParam salesOrderInfoRequestParam71,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -700,7 +700,7 @@ public interface MagentoService {
      * @param catalogProductLinkUpdateRequestParam73
      */
     public magento.CatalogProductLinkUpdateResponseParam catalogProductLinkUpdate(
-            magento.CatalogProductLinkUpdateRequestParam catalogProductLinkUpdateRequestParam73)
+        magento.CatalogProductLinkUpdateRequestParam catalogProductLinkUpdateRequestParam73)
         throws java.rmi.RemoteException;
 
     /**
@@ -709,8 +709,8 @@ public interface MagentoService {
      * @param catalogProductLinkUpdateRequestParam73
      */
     public void startcatalogProductLinkUpdate(
-            magento.CatalogProductLinkUpdateRequestParam catalogProductLinkUpdateRequestParam73,
-            final MagentoServiceCallbackHandler callback)
+        magento.CatalogProductLinkUpdateRequestParam catalogProductLinkUpdateRequestParam73,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -719,7 +719,7 @@ public interface MagentoService {
      * @param catalogProductGetSpecialPriceRequestParam75
      */
     public magento.CatalogProductGetSpecialPriceResponseParam catalogProductGetSpecialPrice(
-            magento.CatalogProductGetSpecialPriceRequestParam catalogProductGetSpecialPriceRequestParam75)
+        magento.CatalogProductGetSpecialPriceRequestParam catalogProductGetSpecialPriceRequestParam75)
         throws java.rmi.RemoteException;
 
     /**
@@ -728,8 +728,8 @@ public interface MagentoService {
      * @param catalogProductGetSpecialPriceRequestParam75
      */
     public void startcatalogProductGetSpecialPrice(
-            magento.CatalogProductGetSpecialPriceRequestParam catalogProductGetSpecialPriceRequestParam75,
-            final MagentoServiceCallbackHandler callback)
+        magento.CatalogProductGetSpecialPriceRequestParam catalogProductGetSpecialPriceRequestParam75,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -738,7 +738,7 @@ public interface MagentoService {
      * @param catalogProductAttributeListRequestParam77
      */
     public magento.CatalogProductAttributeListResponseParam catalogProductAttributeList(
-            magento.CatalogProductAttributeListRequestParam catalogProductAttributeListRequestParam77)
+        magento.CatalogProductAttributeListRequestParam catalogProductAttributeListRequestParam77)
         throws java.rmi.RemoteException;
 
     /**
@@ -747,8 +747,8 @@ public interface MagentoService {
      * @param catalogProductAttributeListRequestParam77
      */
     public void startcatalogProductAttributeList(
-            magento.CatalogProductAttributeListRequestParam catalogProductAttributeListRequestParam77,
-            final MagentoServiceCallbackHandler callback)
+        magento.CatalogProductAttributeListRequestParam catalogProductAttributeListRequestParam77,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -757,7 +757,7 @@ public interface MagentoService {
      * @param catalogProductAttributeSetAttributeRemoveRequestParam79
      */
     public magento.CatalogProductAttributeSetAttributeRemoveResponseParam catalogProductAttributeSetAttributeRemove(
-            magento.CatalogProductAttributeSetAttributeRemoveRequestParam catalogProductAttributeSetAttributeRemoveRequestParam79)
+        magento.CatalogProductAttributeSetAttributeRemoveRequestParam catalogProductAttributeSetAttributeRemoveRequestParam79)
         throws java.rmi.RemoteException;
 
     /**
@@ -766,8 +766,8 @@ public interface MagentoService {
      * @param catalogProductAttributeSetAttributeRemoveRequestParam79
      */
     public void startcatalogProductAttributeSetAttributeRemove(
-            magento.CatalogProductAttributeSetAttributeRemoveRequestParam catalogProductAttributeSetAttributeRemoveRequestParam79,
-            final MagentoServiceCallbackHandler callback)
+        magento.CatalogProductAttributeSetAttributeRemoveRequestParam catalogProductAttributeSetAttributeRemoveRequestParam79,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -776,7 +776,7 @@ public interface MagentoService {
      * @param salesOrderInvoiceInfoRequestParam81
      */
     public magento.SalesOrderInvoiceInfoResponseParam salesOrderInvoiceInfo(
-            magento.SalesOrderInvoiceInfoRequestParam salesOrderInvoiceInfoRequestParam81)
+        magento.SalesOrderInvoiceInfoRequestParam salesOrderInvoiceInfoRequestParam81)
         throws java.rmi.RemoteException;
 
     /**
@@ -785,8 +785,8 @@ public interface MagentoService {
      * @param salesOrderInvoiceInfoRequestParam81
      */
     public void startsalesOrderInvoiceInfo(
-            magento.SalesOrderInvoiceInfoRequestParam salesOrderInvoiceInfoRequestParam81,
-            final MagentoServiceCallbackHandler callback)
+        magento.SalesOrderInvoiceInfoRequestParam salesOrderInvoiceInfoRequestParam81,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -795,7 +795,7 @@ public interface MagentoService {
      * @param shoppingCartInfoRequestParam83
      */
     public magento.ShoppingCartInfoResponseParam shoppingCartInfo(
-            magento.ShoppingCartInfoRequestParam shoppingCartInfoRequestParam83)
+        magento.ShoppingCartInfoRequestParam shoppingCartInfoRequestParam83)
         throws java.rmi.RemoteException;
 
     /**
@@ -804,8 +804,8 @@ public interface MagentoService {
      * @param shoppingCartInfoRequestParam83
      */
     public void startshoppingCartInfo(
-            magento.ShoppingCartInfoRequestParam shoppingCartInfoRequestParam83,
-            final MagentoServiceCallbackHandler callback)
+        magento.ShoppingCartInfoRequestParam shoppingCartInfoRequestParam83,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -814,7 +814,7 @@ public interface MagentoService {
      * @param shoppingCartProductMoveToCustomerQuoteRequestParam85
      */
     public magento.ShoppingCartProductMoveToCustomerQuoteResponseParam shoppingCartProductMoveToCustomerQuote(
-            magento.ShoppingCartProductMoveToCustomerQuoteRequestParam shoppingCartProductMoveToCustomerQuoteRequestParam85)
+        magento.ShoppingCartProductMoveToCustomerQuoteRequestParam shoppingCartProductMoveToCustomerQuoteRequestParam85)
         throws java.rmi.RemoteException;
 
     /**
@@ -823,8 +823,8 @@ public interface MagentoService {
      * @param shoppingCartProductMoveToCustomerQuoteRequestParam85
      */
     public void startshoppingCartProductMoveToCustomerQuote(
-            magento.ShoppingCartProductMoveToCustomerQuoteRequestParam shoppingCartProductMoveToCustomerQuoteRequestParam85,
-            final MagentoServiceCallbackHandler callback)
+        magento.ShoppingCartProductMoveToCustomerQuoteRequestParam shoppingCartProductMoveToCustomerQuoteRequestParam85,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -833,7 +833,7 @@ public interface MagentoService {
      * @param catalogCategoryInfoRequestParam87
      */
     public magento.CatalogCategoryInfoResponseParam catalogCategoryInfo(
-            magento.CatalogCategoryInfoRequestParam catalogCategoryInfoRequestParam87)
+        magento.CatalogCategoryInfoRequestParam catalogCategoryInfoRequestParam87)
         throws java.rmi.RemoteException;
 
     /**
@@ -842,8 +842,8 @@ public interface MagentoService {
      * @param catalogCategoryInfoRequestParam87
      */
     public void startcatalogCategoryInfo(
-            magento.CatalogCategoryInfoRequestParam catalogCategoryInfoRequestParam87,
-            final MagentoServiceCallbackHandler callback)
+        magento.CatalogCategoryInfoRequestParam catalogCategoryInfoRequestParam87,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -852,7 +852,7 @@ public interface MagentoService {
      * @param shoppingCartGiftcardAddRequestParam89
      */
     public magento.ShoppingCartGiftcardAddResponseParam shoppingCartGiftcardAdd(
-            magento.ShoppingCartGiftcardAddRequestParam shoppingCartGiftcardAddRequestParam89)
+        magento.ShoppingCartGiftcardAddRequestParam shoppingCartGiftcardAddRequestParam89)
         throws java.rmi.RemoteException;
 
     /**
@@ -861,8 +861,8 @@ public interface MagentoService {
      * @param shoppingCartGiftcardAddRequestParam89
      */
     public void startshoppingCartGiftcardAdd(
-            magento.ShoppingCartGiftcardAddRequestParam shoppingCartGiftcardAddRequestParam89,
-            final MagentoServiceCallbackHandler callback)
+        magento.ShoppingCartGiftcardAddRequestParam shoppingCartGiftcardAddRequestParam89,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -871,7 +871,7 @@ public interface MagentoService {
      * @param catalogCategoryAssignProductRequestParam91
      */
     public magento.CatalogCategoryAssignProductResponseParam catalogCategoryAssignProduct(
-            magento.CatalogCategoryAssignProductRequestParam catalogCategoryAssignProductRequestParam91)
+        magento.CatalogCategoryAssignProductRequestParam catalogCategoryAssignProductRequestParam91)
         throws java.rmi.RemoteException;
 
     /**
@@ -880,8 +880,8 @@ public interface MagentoService {
      * @param catalogCategoryAssignProductRequestParam91
      */
     public void startcatalogCategoryAssignProduct(
-            magento.CatalogCategoryAssignProductRequestParam catalogCategoryAssignProductRequestParam91,
-            final MagentoServiceCallbackHandler callback)
+        magento.CatalogCategoryAssignProductRequestParam catalogCategoryAssignProductRequestParam91,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -890,7 +890,7 @@ public interface MagentoService {
      * @param catalogProductAttributeCurrentStoreRequestParam93
      */
     public magento.CatalogProductAttributeCurrentStoreResponseParam catalogProductAttributeCurrentStore(
-            magento.CatalogProductAttributeCurrentStoreRequestParam catalogProductAttributeCurrentStoreRequestParam93)
+        magento.CatalogProductAttributeCurrentStoreRequestParam catalogProductAttributeCurrentStoreRequestParam93)
         throws java.rmi.RemoteException;
 
     /**
@@ -899,8 +899,8 @@ public interface MagentoService {
      * @param catalogProductAttributeCurrentStoreRequestParam93
      */
     public void startcatalogProductAttributeCurrentStore(
-            magento.CatalogProductAttributeCurrentStoreRequestParam catalogProductAttributeCurrentStoreRequestParam93,
-            final MagentoServiceCallbackHandler callback)
+        magento.CatalogProductAttributeCurrentStoreRequestParam catalogProductAttributeCurrentStoreRequestParam93,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -909,7 +909,7 @@ public interface MagentoService {
      * @param catalogProductAttributeMediaCurrentStoreRequestParam95
      */
     public magento.CatalogProductAttributeMediaCurrentStoreResponseParam catalogProductAttributeMediaCurrentStore(
-            magento.CatalogProductAttributeMediaCurrentStoreRequestParam catalogProductAttributeMediaCurrentStoreRequestParam95)
+        magento.CatalogProductAttributeMediaCurrentStoreRequestParam catalogProductAttributeMediaCurrentStoreRequestParam95)
         throws java.rmi.RemoteException;
 
     /**
@@ -918,8 +918,8 @@ public interface MagentoService {
      * @param catalogProductAttributeMediaCurrentStoreRequestParam95
      */
     public void startcatalogProductAttributeMediaCurrentStore(
-            magento.CatalogProductAttributeMediaCurrentStoreRequestParam catalogProductAttributeMediaCurrentStoreRequestParam95,
-            final MagentoServiceCallbackHandler callback)
+        magento.CatalogProductAttributeMediaCurrentStoreRequestParam catalogProductAttributeMediaCurrentStoreRequestParam95,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -928,7 +928,7 @@ public interface MagentoService {
      * @param catalogProductUpdateRequestParam97
      */
     public magento.CatalogProductUpdateResponseParam catalogProductUpdate(
-            magento.CatalogProductUpdateRequestParam catalogProductUpdateRequestParam97)
+        magento.CatalogProductUpdateRequestParam catalogProductUpdateRequestParam97)
         throws java.rmi.RemoteException;
 
     /**
@@ -937,8 +937,8 @@ public interface MagentoService {
      * @param catalogProductUpdateRequestParam97
      */
     public void startcatalogProductUpdate(
-            magento.CatalogProductUpdateRequestParam catalogProductUpdateRequestParam97,
-            final MagentoServiceCallbackHandler callback)
+        magento.CatalogProductUpdateRequestParam catalogProductUpdateRequestParam97,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -947,7 +947,7 @@ public interface MagentoService {
      * @param catalogProductAttributeMediaListRequestParam99
      */
     public magento.CatalogProductAttributeMediaListResponseParam catalogProductAttributeMediaList(
-            magento.CatalogProductAttributeMediaListRequestParam catalogProductAttributeMediaListRequestParam99)
+        magento.CatalogProductAttributeMediaListRequestParam catalogProductAttributeMediaListRequestParam99)
         throws java.rmi.RemoteException;
 
     /**
@@ -956,8 +956,8 @@ public interface MagentoService {
      * @param catalogProductAttributeMediaListRequestParam99
      */
     public void startcatalogProductAttributeMediaList(
-            magento.CatalogProductAttributeMediaListRequestParam catalogProductAttributeMediaListRequestParam99,
-            final MagentoServiceCallbackHandler callback)
+        magento.CatalogProductAttributeMediaListRequestParam catalogProductAttributeMediaListRequestParam99,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -966,7 +966,7 @@ public interface MagentoService {
      * @param catalogProductAttributeInfoRequestParam101
      */
     public magento.CatalogProductAttributeInfoResponseParam catalogProductAttributeInfo(
-            magento.CatalogProductAttributeInfoRequestParam catalogProductAttributeInfoRequestParam101)
+        magento.CatalogProductAttributeInfoRequestParam catalogProductAttributeInfoRequestParam101)
         throws java.rmi.RemoteException;
 
     /**
@@ -975,8 +975,8 @@ public interface MagentoService {
      * @param catalogProductAttributeInfoRequestParam101
      */
     public void startcatalogProductAttributeInfo(
-            magento.CatalogProductAttributeInfoRequestParam catalogProductAttributeInfoRequestParam101,
-            final MagentoServiceCallbackHandler callback)
+        magento.CatalogProductAttributeInfoRequestParam catalogProductAttributeInfoRequestParam101,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -991,7 +991,7 @@ public interface MagentoService {
      * Start web service session
      */
     public void startstartSession(
-            final MagentoServiceCallbackHandler callback)
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -1000,7 +1000,7 @@ public interface MagentoService {
      * @param catalogProductMultiUpdateRequestParam105
      */
     public magento.CatalogProductMultiUpdateResponseParam catalogProductMultiUpdate(
-            magento.CatalogProductMultiUpdateRequestParam catalogProductMultiUpdateRequestParam105)
+        magento.CatalogProductMultiUpdateRequestParam catalogProductMultiUpdateRequestParam105)
         throws java.rmi.RemoteException;
 
     /**
@@ -1009,8 +1009,8 @@ public interface MagentoService {
      * @param catalogProductMultiUpdateRequestParam105
      */
     public void startcatalogProductMultiUpdate(
-            magento.CatalogProductMultiUpdateRequestParam catalogProductMultiUpdateRequestParam105,
-            final MagentoServiceCallbackHandler callback)
+        magento.CatalogProductMultiUpdateRequestParam catalogProductMultiUpdateRequestParam105,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -1019,7 +1019,7 @@ public interface MagentoService {
      * @param salesOrderShipmentListRequestParam107
      */
     public magento.SalesOrderShipmentListResponseParam salesOrderShipmentList(
-            magento.SalesOrderShipmentListRequestParam salesOrderShipmentListRequestParam107)
+        magento.SalesOrderShipmentListRequestParam salesOrderShipmentListRequestParam107)
         throws java.rmi.RemoteException;
 
     /**
@@ -1028,8 +1028,8 @@ public interface MagentoService {
      * @param salesOrderShipmentListRequestParam107
      */
     public void startsalesOrderShipmentList(
-            magento.SalesOrderShipmentListRequestParam salesOrderShipmentListRequestParam107,
-            final MagentoServiceCallbackHandler callback)
+        magento.SalesOrderShipmentListRequestParam salesOrderShipmentListRequestParam107,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -1038,7 +1038,7 @@ public interface MagentoService {
      * @param enterpriseCustomerbalanceBalanceRequestParam109
      */
     public magento.EnterpriseCustomerbalanceBalanceResponseParam enterpriseCustomerbalanceBalance(
-            magento.EnterpriseCustomerbalanceBalanceRequestParam enterpriseCustomerbalanceBalanceRequestParam109)
+        magento.EnterpriseCustomerbalanceBalanceRequestParam enterpriseCustomerbalanceBalanceRequestParam109)
         throws java.rmi.RemoteException;
 
     /**
@@ -1047,8 +1047,8 @@ public interface MagentoService {
      * @param enterpriseCustomerbalanceBalanceRequestParam109
      */
     public void startenterpriseCustomerbalanceBalance(
-            magento.EnterpriseCustomerbalanceBalanceRequestParam enterpriseCustomerbalanceBalanceRequestParam109,
-            final MagentoServiceCallbackHandler callback)
+        magento.EnterpriseCustomerbalanceBalanceRequestParam enterpriseCustomerbalanceBalanceRequestParam109,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -1057,7 +1057,7 @@ public interface MagentoService {
      * @param catalogProductLinkAssignRequestParam111
      */
     public magento.CatalogProductLinkAssignResponseParam catalogProductLinkAssign(
-            magento.CatalogProductLinkAssignRequestParam catalogProductLinkAssignRequestParam111)
+        magento.CatalogProductLinkAssignRequestParam catalogProductLinkAssignRequestParam111)
         throws java.rmi.RemoteException;
 
     /**
@@ -1066,8 +1066,8 @@ public interface MagentoService {
      * @param catalogProductLinkAssignRequestParam111
      */
     public void startcatalogProductLinkAssign(
-            magento.CatalogProductLinkAssignRequestParam catalogProductLinkAssignRequestParam111,
-            final MagentoServiceCallbackHandler callback)
+        magento.CatalogProductLinkAssignRequestParam catalogProductLinkAssignRequestParam111,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -1076,7 +1076,7 @@ public interface MagentoService {
      * @param salesOrderInvoiceListRequestParam113
      */
     public magento.SalesOrderInvoiceListResponseParam salesOrderInvoiceList(
-            magento.SalesOrderInvoiceListRequestParam salesOrderInvoiceListRequestParam113)
+        magento.SalesOrderInvoiceListRequestParam salesOrderInvoiceListRequestParam113)
         throws java.rmi.RemoteException;
 
     /**
@@ -1085,8 +1085,8 @@ public interface MagentoService {
      * @param salesOrderInvoiceListRequestParam113
      */
     public void startsalesOrderInvoiceList(
-            magento.SalesOrderInvoiceListRequestParam salesOrderInvoiceListRequestParam113,
-            final MagentoServiceCallbackHandler callback)
+        magento.SalesOrderInvoiceListRequestParam salesOrderInvoiceListRequestParam113,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -1095,7 +1095,7 @@ public interface MagentoService {
      * @param catalogProductLinkListRequestParam115
      */
     public magento.CatalogProductLinkListResponseParam catalogProductLinkList(
-            magento.CatalogProductLinkListRequestParam catalogProductLinkListRequestParam115)
+        magento.CatalogProductLinkListRequestParam catalogProductLinkListRequestParam115)
         throws java.rmi.RemoteException;
 
     /**
@@ -1104,8 +1104,8 @@ public interface MagentoService {
      * @param catalogProductLinkListRequestParam115
      */
     public void startcatalogProductLinkList(
-            magento.CatalogProductLinkListRequestParam catalogProductLinkListRequestParam115,
-            final MagentoServiceCallbackHandler callback)
+        magento.CatalogProductLinkListRequestParam catalogProductLinkListRequestParam115,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -1114,7 +1114,7 @@ public interface MagentoService {
      * @param catalogProductAttributeCreateRequestParam117
      */
     public magento.CatalogProductAttributeCreateResponseParam catalogProductAttributeCreate(
-            magento.CatalogProductAttributeCreateRequestParam catalogProductAttributeCreateRequestParam117)
+        magento.CatalogProductAttributeCreateRequestParam catalogProductAttributeCreateRequestParam117)
         throws java.rmi.RemoteException;
 
     /**
@@ -1123,8 +1123,8 @@ public interface MagentoService {
      * @param catalogProductAttributeCreateRequestParam117
      */
     public void startcatalogProductAttributeCreate(
-            magento.CatalogProductAttributeCreateRequestParam catalogProductAttributeCreateRequestParam117,
-            final MagentoServiceCallbackHandler callback)
+        magento.CatalogProductAttributeCreateRequestParam catalogProductAttributeCreateRequestParam117,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -1133,7 +1133,7 @@ public interface MagentoService {
      * @param salesOrderInvoiceCreateRequestParam119
      */
     public magento.SalesOrderInvoiceCreateResponseParam salesOrderInvoiceCreate(
-            magento.SalesOrderInvoiceCreateRequestParam salesOrderInvoiceCreateRequestParam119)
+        magento.SalesOrderInvoiceCreateRequestParam salesOrderInvoiceCreateRequestParam119)
         throws java.rmi.RemoteException;
 
     /**
@@ -1142,8 +1142,8 @@ public interface MagentoService {
      * @param salesOrderInvoiceCreateRequestParam119
      */
     public void startsalesOrderInvoiceCreate(
-            magento.SalesOrderInvoiceCreateRequestParam salesOrderInvoiceCreateRequestParam119,
-            final MagentoServiceCallbackHandler callback)
+        magento.SalesOrderInvoiceCreateRequestParam salesOrderInvoiceCreateRequestParam119,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -1152,7 +1152,7 @@ public interface MagentoService {
      * @param customerGroupListRequestParam121
      */
     public magento.CustomerGroupListResponseParam customerGroupList(
-            magento.CustomerGroupListRequestParam customerGroupListRequestParam121)
+        magento.CustomerGroupListRequestParam customerGroupListRequestParam121)
         throws java.rmi.RemoteException;
 
     /**
@@ -1161,8 +1161,8 @@ public interface MagentoService {
      * @param customerGroupListRequestParam121
      */
     public void startcustomerGroupList(
-            magento.CustomerGroupListRequestParam customerGroupListRequestParam121,
-            final MagentoServiceCallbackHandler callback)
+        magento.CustomerGroupListRequestParam customerGroupListRequestParam121,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -1171,7 +1171,7 @@ public interface MagentoService {
      * @param catalogProductCustomOptionUpdateRequestParam123
      */
     public magento.CatalogProductCustomOptionUpdateResponseParam catalogProductCustomOptionUpdate(
-            magento.CatalogProductCustomOptionUpdateRequestParam catalogProductCustomOptionUpdateRequestParam123)
+        magento.CatalogProductCustomOptionUpdateRequestParam catalogProductCustomOptionUpdateRequestParam123)
         throws java.rmi.RemoteException;
 
     /**
@@ -1180,8 +1180,8 @@ public interface MagentoService {
      * @param catalogProductCustomOptionUpdateRequestParam123
      */
     public void startcatalogProductCustomOptionUpdate(
-            magento.CatalogProductCustomOptionUpdateRequestParam catalogProductCustomOptionUpdateRequestParam123,
-            final MagentoServiceCallbackHandler callback)
+        magento.CatalogProductCustomOptionUpdateRequestParam catalogProductCustomOptionUpdateRequestParam123,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -1190,7 +1190,7 @@ public interface MagentoService {
      * @param catalogProductAttributeSetListRequestParam125
      */
     public magento.CatalogProductAttributeSetListResponseParam catalogProductAttributeSetList(
-            magento.CatalogProductAttributeSetListRequestParam catalogProductAttributeSetListRequestParam125)
+        magento.CatalogProductAttributeSetListRequestParam catalogProductAttributeSetListRequestParam125)
         throws java.rmi.RemoteException;
 
     /**
@@ -1199,8 +1199,8 @@ public interface MagentoService {
      * @param catalogProductAttributeSetListRequestParam125
      */
     public void startcatalogProductAttributeSetList(
-            magento.CatalogProductAttributeSetListRequestParam catalogProductAttributeSetListRequestParam125,
-            final MagentoServiceCallbackHandler callback)
+        magento.CatalogProductAttributeSetListRequestParam catalogProductAttributeSetListRequestParam125,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -1209,7 +1209,7 @@ public interface MagentoService {
      * @param catalogProductCustomOptionValueRemoveRequestParam127
      */
     public magento.CatalogProductCustomOptionValueRemoveResponseParam catalogProductCustomOptionValueRemove(
-            magento.CatalogProductCustomOptionValueRemoveRequestParam catalogProductCustomOptionValueRemoveRequestParam127)
+        magento.CatalogProductCustomOptionValueRemoveRequestParam catalogProductCustomOptionValueRemoveRequestParam127)
         throws java.rmi.RemoteException;
 
     /**
@@ -1218,8 +1218,8 @@ public interface MagentoService {
      * @param catalogProductCustomOptionValueRemoveRequestParam127
      */
     public void startcatalogProductCustomOptionValueRemove(
-            magento.CatalogProductCustomOptionValueRemoveRequestParam catalogProductCustomOptionValueRemoveRequestParam127,
-            final MagentoServiceCallbackHandler callback)
+        magento.CatalogProductCustomOptionValueRemoveRequestParam catalogProductCustomOptionValueRemoveRequestParam127,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -1228,7 +1228,7 @@ public interface MagentoService {
      * @param catalogCategoryMoveRequestParam129
      */
     public magento.CatalogCategoryMoveResponseParam catalogCategoryMove(
-            magento.CatalogCategoryMoveRequestParam catalogCategoryMoveRequestParam129)
+        magento.CatalogCategoryMoveRequestParam catalogCategoryMoveRequestParam129)
         throws java.rmi.RemoteException;
 
     /**
@@ -1237,8 +1237,8 @@ public interface MagentoService {
      * @param catalogCategoryMoveRequestParam129
      */
     public void startcatalogCategoryMove(
-            magento.CatalogCategoryMoveRequestParam catalogCategoryMoveRequestParam129,
-            final MagentoServiceCallbackHandler callback)
+        magento.CatalogCategoryMoveRequestParam catalogCategoryMoveRequestParam129,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -1247,7 +1247,7 @@ public interface MagentoService {
      * @param catalogCategoryUpdateRequestParam131
      */
     public magento.CatalogCategoryUpdateResponseParam catalogCategoryUpdate(
-            magento.CatalogCategoryUpdateRequestParam catalogCategoryUpdateRequestParam131)
+        magento.CatalogCategoryUpdateRequestParam catalogCategoryUpdateRequestParam131)
         throws java.rmi.RemoteException;
 
     /**
@@ -1256,8 +1256,8 @@ public interface MagentoService {
      * @param catalogCategoryUpdateRequestParam131
      */
     public void startcatalogCategoryUpdate(
-            magento.CatalogCategoryUpdateRequestParam catalogCategoryUpdateRequestParam131,
-            final MagentoServiceCallbackHandler callback)
+        magento.CatalogCategoryUpdateRequestParam catalogCategoryUpdateRequestParam131,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -1266,7 +1266,7 @@ public interface MagentoService {
      * @param catalogProductAttributeSetRemoveRequestParam133
      */
     public magento.CatalogProductAttributeSetRemoveResponseParam catalogProductAttributeSetRemove(
-            magento.CatalogProductAttributeSetRemoveRequestParam catalogProductAttributeSetRemoveRequestParam133)
+        magento.CatalogProductAttributeSetRemoveRequestParam catalogProductAttributeSetRemoveRequestParam133)
         throws java.rmi.RemoteException;
 
     /**
@@ -1275,8 +1275,8 @@ public interface MagentoService {
      * @param catalogProductAttributeSetRemoveRequestParam133
      */
     public void startcatalogProductAttributeSetRemove(
-            magento.CatalogProductAttributeSetRemoveRequestParam catalogProductAttributeSetRemoveRequestParam133,
-            final MagentoServiceCallbackHandler callback)
+        magento.CatalogProductAttributeSetRemoveRequestParam catalogProductAttributeSetRemoveRequestParam133,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -1285,7 +1285,7 @@ public interface MagentoService {
      * @param catalogCategoryAttributeListRequestParam135
      */
     public magento.CatalogCategoryAttributeListResponseParam catalogCategoryAttributeList(
-            magento.CatalogCategoryAttributeListRequestParam catalogCategoryAttributeListRequestParam135)
+        magento.CatalogCategoryAttributeListRequestParam catalogCategoryAttributeListRequestParam135)
         throws java.rmi.RemoteException;
 
     /**
@@ -1294,8 +1294,8 @@ public interface MagentoService {
      * @param catalogCategoryAttributeListRequestParam135
      */
     public void startcatalogCategoryAttributeList(
-            magento.CatalogCategoryAttributeListRequestParam catalogCategoryAttributeListRequestParam135,
-            final MagentoServiceCallbackHandler callback)
+        magento.CatalogCategoryAttributeListRequestParam catalogCategoryAttributeListRequestParam135,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -1304,7 +1304,7 @@ public interface MagentoService {
      * @param shoppingCartProductUpdateRequestParam137
      */
     public magento.ShoppingCartProductUpdateResponseParam shoppingCartProductUpdate(
-            magento.ShoppingCartProductUpdateRequestParam shoppingCartProductUpdateRequestParam137)
+        magento.ShoppingCartProductUpdateRequestParam shoppingCartProductUpdateRequestParam137)
         throws java.rmi.RemoteException;
 
     /**
@@ -1313,8 +1313,8 @@ public interface MagentoService {
      * @param shoppingCartProductUpdateRequestParam137
      */
     public void startshoppingCartProductUpdate(
-            magento.ShoppingCartProductUpdateRequestParam shoppingCartProductUpdateRequestParam137,
-            final MagentoServiceCallbackHandler callback)
+        magento.ShoppingCartProductUpdateRequestParam shoppingCartProductUpdateRequestParam137,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -1323,7 +1323,7 @@ public interface MagentoService {
      * @param customerAddressInfoRequestParam139
      */
     public magento.CustomerAddressInfoResponseParam customerAddressInfo(
-            magento.CustomerAddressInfoRequestParam customerAddressInfoRequestParam139)
+        magento.CustomerAddressInfoRequestParam customerAddressInfoRequestParam139)
         throws java.rmi.RemoteException;
 
     /**
@@ -1332,8 +1332,8 @@ public interface MagentoService {
      * @param customerAddressInfoRequestParam139
      */
     public void startcustomerAddressInfo(
-            magento.CustomerAddressInfoRequestParam customerAddressInfoRequestParam139,
-            final MagentoServiceCallbackHandler callback)
+        magento.CustomerAddressInfoRequestParam customerAddressInfoRequestParam139,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -1342,7 +1342,7 @@ public interface MagentoService {
      * @param catalogProductCustomOptionListRequestParam141
      */
     public magento.CatalogProductCustomOptionListResponseParam catalogProductCustomOptionList(
-            magento.CatalogProductCustomOptionListRequestParam catalogProductCustomOptionListRequestParam141)
+        magento.CatalogProductCustomOptionListRequestParam catalogProductCustomOptionListRequestParam141)
         throws java.rmi.RemoteException;
 
     /**
@@ -1351,8 +1351,8 @@ public interface MagentoService {
      * @param catalogProductCustomOptionListRequestParam141
      */
     public void startcatalogProductCustomOptionList(
-            magento.CatalogProductCustomOptionListRequestParam catalogProductCustomOptionListRequestParam141,
-            final MagentoServiceCallbackHandler callback)
+        magento.CatalogProductCustomOptionListRequestParam catalogProductCustomOptionListRequestParam141,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -1361,7 +1361,7 @@ public interface MagentoService {
      * @param salesOrderInvoiceVoidRequestParam143
      */
     public magento.SalesOrderInvoiceVoidResponseParam salesOrderInvoiceVoid(
-            magento.SalesOrderInvoiceVoidRequestParam salesOrderInvoiceVoidRequestParam143)
+        magento.SalesOrderInvoiceVoidRequestParam salesOrderInvoiceVoidRequestParam143)
         throws java.rmi.RemoteException;
 
     /**
@@ -1370,8 +1370,8 @@ public interface MagentoService {
      * @param salesOrderInvoiceVoidRequestParam143
      */
     public void startsalesOrderInvoiceVoid(
-            magento.SalesOrderInvoiceVoidRequestParam salesOrderInvoiceVoidRequestParam143,
-            final MagentoServiceCallbackHandler callback)
+        magento.SalesOrderInvoiceVoidRequestParam salesOrderInvoiceVoidRequestParam143,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -1380,7 +1380,7 @@ public interface MagentoService {
      * @param catalogProductAttributeSetCreateRequestParam145
      */
     public magento.CatalogProductAttributeSetCreateResponseParam catalogProductAttributeSetCreate(
-            magento.CatalogProductAttributeSetCreateRequestParam catalogProductAttributeSetCreateRequestParam145)
+        magento.CatalogProductAttributeSetCreateRequestParam catalogProductAttributeSetCreateRequestParam145)
         throws java.rmi.RemoteException;
 
     /**
@@ -1389,8 +1389,8 @@ public interface MagentoService {
      * @param catalogProductAttributeSetCreateRequestParam145
      */
     public void startcatalogProductAttributeSetCreate(
-            magento.CatalogProductAttributeSetCreateRequestParam catalogProductAttributeSetCreateRequestParam145,
-            final MagentoServiceCallbackHandler callback)
+        magento.CatalogProductAttributeSetCreateRequestParam catalogProductAttributeSetCreateRequestParam145,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -1399,7 +1399,7 @@ public interface MagentoService {
      * @param catalogCategoryCreateRequestParam147
      */
     public magento.CatalogCategoryCreateResponseParam catalogCategoryCreate(
-            magento.CatalogCategoryCreateRequestParam catalogCategoryCreateRequestParam147)
+        magento.CatalogCategoryCreateRequestParam catalogCategoryCreateRequestParam147)
         throws java.rmi.RemoteException;
 
     /**
@@ -1408,8 +1408,8 @@ public interface MagentoService {
      * @param catalogCategoryCreateRequestParam147
      */
     public void startcatalogCategoryCreate(
-            magento.CatalogCategoryCreateRequestParam catalogCategoryCreateRequestParam147,
-            final MagentoServiceCallbackHandler callback)
+        magento.CatalogCategoryCreateRequestParam catalogCategoryCreateRequestParam147,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -1418,7 +1418,7 @@ public interface MagentoService {
      * @param catalogProductAttributeMediaInfoRequestParam149
      */
     public magento.CatalogProductAttributeMediaInfoResponseParam catalogProductAttributeMediaInfo(
-            magento.CatalogProductAttributeMediaInfoRequestParam catalogProductAttributeMediaInfoRequestParam149)
+        magento.CatalogProductAttributeMediaInfoRequestParam catalogProductAttributeMediaInfoRequestParam149)
         throws java.rmi.RemoteException;
 
     /**
@@ -1427,8 +1427,8 @@ public interface MagentoService {
      * @param catalogProductAttributeMediaInfoRequestParam149
      */
     public void startcatalogProductAttributeMediaInfo(
-            magento.CatalogProductAttributeMediaInfoRequestParam catalogProductAttributeMediaInfoRequestParam149,
-            final MagentoServiceCallbackHandler callback)
+        magento.CatalogProductAttributeMediaInfoRequestParam catalogProductAttributeMediaInfoRequestParam149,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -1437,7 +1437,7 @@ public interface MagentoService {
      * @param customerCustomerUpdateRequestParam151
      */
     public magento.CustomerCustomerUpdateResponseParam customerCustomerUpdate(
-            magento.CustomerCustomerUpdateRequestParam customerCustomerUpdateRequestParam151)
+        magento.CustomerCustomerUpdateRequestParam customerCustomerUpdateRequestParam151)
         throws java.rmi.RemoteException;
 
     /**
@@ -1446,8 +1446,8 @@ public interface MagentoService {
      * @param customerCustomerUpdateRequestParam151
      */
     public void startcustomerCustomerUpdate(
-            magento.CustomerCustomerUpdateRequestParam customerCustomerUpdateRequestParam151,
-            final MagentoServiceCallbackHandler callback)
+        magento.CustomerCustomerUpdateRequestParam customerCustomerUpdateRequestParam151,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -1456,7 +1456,7 @@ public interface MagentoService {
      * @param magentoInfoRequestParam153
      */
     public magento.MagentoInfoResponseParam magentoInfo(
-            magento.MagentoInfoRequestParam magentoInfoRequestParam153)
+        magento.MagentoInfoRequestParam magentoInfoRequestParam153)
         throws java.rmi.RemoteException;
 
     /**
@@ -1465,8 +1465,8 @@ public interface MagentoService {
      * @param magentoInfoRequestParam153
      */
     public void startmagentoInfo(
-            magento.MagentoInfoRequestParam magentoInfoRequestParam153,
-            final MagentoServiceCallbackHandler callback)
+        magento.MagentoInfoRequestParam magentoInfoRequestParam153,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -1475,7 +1475,7 @@ public interface MagentoService {
      * @param giftcardAccountCreateRequestParam155
      */
     public magento.GiftcardAccountCreateResponseParam giftcardAccountCreate(
-            magento.GiftcardAccountCreateRequestParam giftcardAccountCreateRequestParam155)
+        magento.GiftcardAccountCreateRequestParam giftcardAccountCreateRequestParam155)
         throws java.rmi.RemoteException;
 
     /**
@@ -1484,8 +1484,8 @@ public interface MagentoService {
      * @param giftcardAccountCreateRequestParam155
      */
     public void startgiftcardAccountCreate(
-            magento.GiftcardAccountCreateRequestParam giftcardAccountCreateRequestParam155,
-            final MagentoServiceCallbackHandler callback)
+        magento.GiftcardAccountCreateRequestParam giftcardAccountCreateRequestParam155,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -1494,7 +1494,7 @@ public interface MagentoService {
      * @param shoppingCartCreateRequestParam157
      */
     public magento.ShoppingCartCreateResponseParam shoppingCartCreate(
-            magento.ShoppingCartCreateRequestParam shoppingCartCreateRequestParam157)
+        magento.ShoppingCartCreateRequestParam shoppingCartCreateRequestParam157)
         throws java.rmi.RemoteException;
 
     /**
@@ -1503,8 +1503,8 @@ public interface MagentoService {
      * @param shoppingCartCreateRequestParam157
      */
     public void startshoppingCartCreate(
-            magento.ShoppingCartCreateRequestParam shoppingCartCreateRequestParam157,
-            final MagentoServiceCallbackHandler callback)
+        magento.ShoppingCartCreateRequestParam shoppingCartCreateRequestParam157,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -1513,7 +1513,7 @@ public interface MagentoService {
      * @param giftMessageForQuoteRequestParam159
      */
     public magento.GiftMessageForQuoteResponseParam giftMessageSetForQuote(
-            magento.GiftMessageForQuoteRequestParam giftMessageForQuoteRequestParam159)
+        magento.GiftMessageForQuoteRequestParam giftMessageForQuoteRequestParam159)
         throws java.rmi.RemoteException;
 
     /**
@@ -1522,8 +1522,8 @@ public interface MagentoService {
      * @param giftMessageForQuoteRequestParam159
      */
     public void startgiftMessageSetForQuote(
-            magento.GiftMessageForQuoteRequestParam giftMessageForQuoteRequestParam159,
-            final MagentoServiceCallbackHandler callback)
+        magento.GiftMessageForQuoteRequestParam giftMessageForQuoteRequestParam159,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -1532,7 +1532,7 @@ public interface MagentoService {
      * @param salesOrderShipmentSendInfoRequestParam161
      */
     public magento.SalesOrderShipmentSendInfoResponseParam salesOrderShipmentSendInfo(
-            magento.SalesOrderShipmentSendInfoRequestParam salesOrderShipmentSendInfoRequestParam161)
+        magento.SalesOrderShipmentSendInfoRequestParam salesOrderShipmentSendInfoRequestParam161)
         throws java.rmi.RemoteException;
 
     /**
@@ -1541,8 +1541,8 @@ public interface MagentoService {
      * @param salesOrderShipmentSendInfoRequestParam161
      */
     public void startsalesOrderShipmentSendInfo(
-            magento.SalesOrderShipmentSendInfoRequestParam salesOrderShipmentSendInfoRequestParam161,
-            final MagentoServiceCallbackHandler callback)
+        magento.SalesOrderShipmentSendInfoRequestParam salesOrderShipmentSendInfoRequestParam161,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -1551,7 +1551,7 @@ public interface MagentoService {
      * @param catalogProductAttributeSetAttributeAddRequestParam163
      */
     public magento.CatalogProductAttributeSetAttributeAddResponseParam catalogProductAttributeSetAttributeAdd(
-            magento.CatalogProductAttributeSetAttributeAddRequestParam catalogProductAttributeSetAttributeAddRequestParam163)
+        magento.CatalogProductAttributeSetAttributeAddRequestParam catalogProductAttributeSetAttributeAddRequestParam163)
         throws java.rmi.RemoteException;
 
     /**
@@ -1560,8 +1560,8 @@ public interface MagentoService {
      * @param catalogProductAttributeSetAttributeAddRequestParam163
      */
     public void startcatalogProductAttributeSetAttributeAdd(
-            magento.CatalogProductAttributeSetAttributeAddRequestParam catalogProductAttributeSetAttributeAddRequestParam163,
-            final MagentoServiceCallbackHandler callback)
+        magento.CatalogProductAttributeSetAttributeAddRequestParam catalogProductAttributeSetAttributeAddRequestParam163,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -1570,7 +1570,7 @@ public interface MagentoService {
      * @param shoppingCartProductRemoveRequestParam165
      */
     public magento.ShoppingCartProductRemoveResponseParam shoppingCartProductRemove(
-            magento.ShoppingCartProductRemoveRequestParam shoppingCartProductRemoveRequestParam165)
+        magento.ShoppingCartProductRemoveRequestParam shoppingCartProductRemoveRequestParam165)
         throws java.rmi.RemoteException;
 
     /**
@@ -1579,8 +1579,8 @@ public interface MagentoService {
      * @param shoppingCartProductRemoveRequestParam165
      */
     public void startshoppingCartProductRemove(
-            magento.ShoppingCartProductRemoveRequestParam shoppingCartProductRemoveRequestParam165,
-            final MagentoServiceCallbackHandler callback)
+        magento.ShoppingCartProductRemoveRequestParam shoppingCartProductRemoveRequestParam165,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -1597,7 +1597,7 @@ public interface MagentoService {
      * @param loginParam167
      */
     public void startlogin(magento.LoginParam loginParam167,
-                           final MagentoServiceCallbackHandler callback)
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -1606,7 +1606,7 @@ public interface MagentoService {
      * @param catalogProductCustomOptionAddRequestParam169
      */
     public magento.CatalogProductCustomOptionAddResponseParam catalogProductCustomOptionAdd(
-            magento.CatalogProductCustomOptionAddRequestParam catalogProductCustomOptionAddRequestParam169)
+        magento.CatalogProductCustomOptionAddRequestParam catalogProductCustomOptionAddRequestParam169)
         throws java.rmi.RemoteException;
 
     /**
@@ -1615,8 +1615,8 @@ public interface MagentoService {
      * @param catalogProductCustomOptionAddRequestParam169
      */
     public void startcatalogProductCustomOptionAdd(
-            magento.CatalogProductCustomOptionAddRequestParam catalogProductCustomOptionAddRequestParam169,
-            final MagentoServiceCallbackHandler callback)
+        magento.CatalogProductCustomOptionAddRequestParam catalogProductCustomOptionAddRequestParam169,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -1625,7 +1625,7 @@ public interface MagentoService {
      * @param catalogCategoryAttributeOptionsRequestParam171
      */
     public magento.CatalogCategoryAttributeOptionsResponseParam catalogCategoryAttributeOptions(
-            magento.CatalogCategoryAttributeOptionsRequestParam catalogCategoryAttributeOptionsRequestParam171)
+        magento.CatalogCategoryAttributeOptionsRequestParam catalogCategoryAttributeOptionsRequestParam171)
         throws java.rmi.RemoteException;
 
     /**
@@ -1634,8 +1634,8 @@ public interface MagentoService {
      * @param catalogCategoryAttributeOptionsRequestParam171
      */
     public void startcatalogCategoryAttributeOptions(
-            magento.CatalogCategoryAttributeOptionsRequestParam catalogCategoryAttributeOptionsRequestParam171,
-            final MagentoServiceCallbackHandler callback)
+        magento.CatalogCategoryAttributeOptionsRequestParam catalogCategoryAttributeOptionsRequestParam171,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -1644,7 +1644,7 @@ public interface MagentoService {
      * @param salesOrderCreditmemoInfoRequestParam173
      */
     public magento.SalesOrderCreditmemoInfoResponseParam salesOrderCreditmemoInfo(
-            magento.SalesOrderCreditmemoInfoRequestParam salesOrderCreditmemoInfoRequestParam173)
+        magento.SalesOrderCreditmemoInfoRequestParam salesOrderCreditmemoInfoRequestParam173)
         throws java.rmi.RemoteException;
 
     /**
@@ -1653,8 +1653,8 @@ public interface MagentoService {
      * @param salesOrderCreditmemoInfoRequestParam173
      */
     public void startsalesOrderCreditmemoInfo(
-            magento.SalesOrderCreditmemoInfoRequestParam salesOrderCreditmemoInfoRequestParam173,
-            final MagentoServiceCallbackHandler callback)
+        magento.SalesOrderCreditmemoInfoRequestParam salesOrderCreditmemoInfoRequestParam173,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -1663,7 +1663,7 @@ public interface MagentoService {
      * @param customerCustomerInfoRequestParam175
      */
     public magento.CustomerCustomerInfoResponseParam customerCustomerInfo(
-            magento.CustomerCustomerInfoRequestParam customerCustomerInfoRequestParam175)
+        magento.CustomerCustomerInfoRequestParam customerCustomerInfoRequestParam175)
         throws java.rmi.RemoteException;
 
     /**
@@ -1672,8 +1672,8 @@ public interface MagentoService {
      * @param customerCustomerInfoRequestParam175
      */
     public void startcustomerCustomerInfo(
-            magento.CustomerCustomerInfoRequestParam customerCustomerInfoRequestParam175,
-            final MagentoServiceCallbackHandler callback)
+        magento.CustomerCustomerInfoRequestParam customerCustomerInfoRequestParam175,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -1682,7 +1682,7 @@ public interface MagentoService {
      * @param salesOrderCreditmemoCreateRequestParam177
      */
     public magento.SalesOrderCreditmemoCreateResponseParam salesOrderCreditmemoCreate(
-            magento.SalesOrderCreditmemoCreateRequestParam salesOrderCreditmemoCreateRequestParam177)
+        magento.SalesOrderCreditmemoCreateRequestParam salesOrderCreditmemoCreateRequestParam177)
         throws java.rmi.RemoteException;
 
     /**
@@ -1691,8 +1691,8 @@ public interface MagentoService {
      * @param salesOrderCreditmemoCreateRequestParam177
      */
     public void startsalesOrderCreditmemoCreate(
-            magento.SalesOrderCreditmemoCreateRequestParam salesOrderCreditmemoCreateRequestParam177,
-            final MagentoServiceCallbackHandler callback)
+        magento.SalesOrderCreditmemoCreateRequestParam salesOrderCreditmemoCreateRequestParam177,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -1701,7 +1701,7 @@ public interface MagentoService {
      * @param salesOrderCancelRequestParam179
      */
     public magento.SalesOrderCancelResponseParam salesOrderCancel(
-            magento.SalesOrderCancelRequestParam salesOrderCancelRequestParam179)
+        magento.SalesOrderCancelRequestParam salesOrderCancelRequestParam179)
         throws java.rmi.RemoteException;
 
     /**
@@ -1710,8 +1710,8 @@ public interface MagentoService {
      * @param salesOrderCancelRequestParam179
      */
     public void startsalesOrderCancel(
-            magento.SalesOrderCancelRequestParam salesOrderCancelRequestParam179,
-            final MagentoServiceCallbackHandler callback)
+        magento.SalesOrderCancelRequestParam salesOrderCancelRequestParam179,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -1720,7 +1720,7 @@ public interface MagentoService {
      * @param shoppingCartCouponRemoveRequestParam181
      */
     public magento.ShoppingCartCouponRemoveResponseParam shoppingCartCouponRemove(
-            magento.ShoppingCartCouponRemoveRequestParam shoppingCartCouponRemoveRequestParam181)
+        magento.ShoppingCartCouponRemoveRequestParam shoppingCartCouponRemoveRequestParam181)
         throws java.rmi.RemoteException;
 
     /**
@@ -1729,8 +1729,8 @@ public interface MagentoService {
      * @param shoppingCartCouponRemoveRequestParam181
      */
     public void startshoppingCartCouponRemove(
-            magento.ShoppingCartCouponRemoveRequestParam shoppingCartCouponRemoveRequestParam181,
-            final MagentoServiceCallbackHandler callback)
+        magento.ShoppingCartCouponRemoveRequestParam shoppingCartCouponRemoveRequestParam181,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -1739,7 +1739,7 @@ public interface MagentoService {
      * @param shoppingCartShippingMethodRequestParam183
      */
     public magento.ShoppingCartShippingMethodResponseParam shoppingCartShippingMethod(
-            magento.ShoppingCartShippingMethodRequestParam shoppingCartShippingMethodRequestParam183)
+        magento.ShoppingCartShippingMethodRequestParam shoppingCartShippingMethodRequestParam183)
         throws java.rmi.RemoteException;
 
     /**
@@ -1748,8 +1748,8 @@ public interface MagentoService {
      * @param shoppingCartShippingMethodRequestParam183
      */
     public void startshoppingCartShippingMethod(
-            magento.ShoppingCartShippingMethodRequestParam shoppingCartShippingMethodRequestParam183,
-            final MagentoServiceCallbackHandler callback)
+        magento.ShoppingCartShippingMethodRequestParam shoppingCartShippingMethodRequestParam183,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -1758,7 +1758,7 @@ public interface MagentoService {
      * @param shoppingCartCustomerbalanceRemoveAmountRequestParam185
      */
     public magento.ShoppingCartCustomerbalanceRemoveAmountResponseParam shoppingCartCustomerbalanceRemoveAmount(
-            magento.ShoppingCartCustomerbalanceRemoveAmountRequestParam shoppingCartCustomerbalanceRemoveAmountRequestParam185)
+        magento.ShoppingCartCustomerbalanceRemoveAmountRequestParam shoppingCartCustomerbalanceRemoveAmountRequestParam185)
         throws java.rmi.RemoteException;
 
     /**
@@ -1767,8 +1767,8 @@ public interface MagentoService {
      * @param shoppingCartCustomerbalanceRemoveAmountRequestParam185
      */
     public void startshoppingCartCustomerbalanceRemoveAmount(
-            magento.ShoppingCartCustomerbalanceRemoveAmountRequestParam shoppingCartCustomerbalanceRemoveAmountRequestParam185,
-            final MagentoServiceCallbackHandler callback)
+        magento.ShoppingCartCustomerbalanceRemoveAmountRequestParam shoppingCartCustomerbalanceRemoveAmountRequestParam185,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -1777,7 +1777,7 @@ public interface MagentoService {
      * @param salesOrderShipmentAddTrackRequestParam187
      */
     public magento.SalesOrderShipmentAddTrackResponseParam salesOrderShipmentAddTrack(
-            magento.SalesOrderShipmentAddTrackRequestParam salesOrderShipmentAddTrackRequestParam187)
+        magento.SalesOrderShipmentAddTrackRequestParam salesOrderShipmentAddTrackRequestParam187)
         throws java.rmi.RemoteException;
 
     /**
@@ -1786,8 +1786,8 @@ public interface MagentoService {
      * @param salesOrderShipmentAddTrackRequestParam187
      */
     public void startsalesOrderShipmentAddTrack(
-            magento.SalesOrderShipmentAddTrackRequestParam salesOrderShipmentAddTrackRequestParam187,
-            final MagentoServiceCallbackHandler callback)
+        magento.SalesOrderShipmentAddTrackRequestParam salesOrderShipmentAddTrackRequestParam187,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -1796,7 +1796,7 @@ public interface MagentoService {
      * @param catalogProductTagUpdateRequestParam189
      */
     public magento.CatalogProductTagUpdateResponseParam catalogProductTagUpdate(
-            magento.CatalogProductTagUpdateRequestParam catalogProductTagUpdateRequestParam189)
+        magento.CatalogProductTagUpdateRequestParam catalogProductTagUpdateRequestParam189)
         throws java.rmi.RemoteException;
 
     /**
@@ -1805,8 +1805,8 @@ public interface MagentoService {
      * @param catalogProductTagUpdateRequestParam189
      */
     public void startcatalogProductTagUpdate(
-            magento.CatalogProductTagUpdateRequestParam catalogProductTagUpdateRequestParam189,
-            final MagentoServiceCallbackHandler callback)
+        magento.CatalogProductTagUpdateRequestParam catalogProductTagUpdateRequestParam189,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -1815,7 +1815,7 @@ public interface MagentoService {
      * @param catalogProductDownloadableLinkAddRequestParam191
      */
     public magento.CatalogProductDownloadableLinkAddResponseParam catalogProductDownloadableLinkAdd(
-            magento.CatalogProductDownloadableLinkAddRequestParam catalogProductDownloadableLinkAddRequestParam191)
+        magento.CatalogProductDownloadableLinkAddRequestParam catalogProductDownloadableLinkAddRequestParam191)
         throws java.rmi.RemoteException;
 
     /**
@@ -1824,8 +1824,8 @@ public interface MagentoService {
      * @param catalogProductDownloadableLinkAddRequestParam191
      */
     public void startcatalogProductDownloadableLinkAdd(
-            magento.CatalogProductDownloadableLinkAddRequestParam catalogProductDownloadableLinkAddRequestParam191,
-            final MagentoServiceCallbackHandler callback)
+        magento.CatalogProductDownloadableLinkAddRequestParam catalogProductDownloadableLinkAddRequestParam191,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -1834,7 +1834,7 @@ public interface MagentoService {
      * @param resourceFaultsParam193
      */
     public magento.ResourceFaultsResponseParam resourceFaults(
-            magento.ResourceFaultsParam resourceFaultsParam193)
+        magento.ResourceFaultsParam resourceFaultsParam193)
         throws java.rmi.RemoteException;
 
     /**
@@ -1843,8 +1843,8 @@ public interface MagentoService {
      * @param resourceFaultsParam193
      */
     public void startresourceFaults(
-            magento.ResourceFaultsParam resourceFaultsParam193,
-            final MagentoServiceCallbackHandler callback)
+        magento.ResourceFaultsParam resourceFaultsParam193,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -1853,7 +1853,7 @@ public interface MagentoService {
      * @param customerAddressListRequestParam195
      */
     public magento.CustomerAddressListResponseParam customerAddressList(
-            magento.CustomerAddressListRequestParam customerAddressListRequestParam195)
+        magento.CustomerAddressListRequestParam customerAddressListRequestParam195)
         throws java.rmi.RemoteException;
 
     /**
@@ -1862,8 +1862,8 @@ public interface MagentoService {
      * @param customerAddressListRequestParam195
      */
     public void startcustomerAddressList(
-            magento.CustomerAddressListRequestParam customerAddressListRequestParam195,
-            final MagentoServiceCallbackHandler callback)
+        magento.CustomerAddressListRequestParam customerAddressListRequestParam195,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -1872,7 +1872,7 @@ public interface MagentoService {
      * @param catalogInventoryStockItemUpdateRequestParam197
      */
     public magento.CatalogInventoryStockItemUpdateResponseParam catalogInventoryStockItemUpdate(
-            magento.CatalogInventoryStockItemUpdateRequestParam catalogInventoryStockItemUpdateRequestParam197)
+        magento.CatalogInventoryStockItemUpdateRequestParam catalogInventoryStockItemUpdateRequestParam197)
         throws java.rmi.RemoteException;
 
     /**
@@ -1881,8 +1881,8 @@ public interface MagentoService {
      * @param catalogInventoryStockItemUpdateRequestParam197
      */
     public void startcatalogInventoryStockItemUpdate(
-            magento.CatalogInventoryStockItemUpdateRequestParam catalogInventoryStockItemUpdateRequestParam197,
-            final MagentoServiceCallbackHandler callback)
+        magento.CatalogInventoryStockItemUpdateRequestParam catalogInventoryStockItemUpdateRequestParam197,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -1891,7 +1891,7 @@ public interface MagentoService {
      * @param shoppingCartPaymentListRequestParam199
      */
     public magento.ShoppingCartPaymentListResponseParam shoppingCartPaymentList(
-            magento.ShoppingCartPaymentListRequestParam shoppingCartPaymentListRequestParam199)
+        magento.ShoppingCartPaymentListRequestParam shoppingCartPaymentListRequestParam199)
         throws java.rmi.RemoteException;
 
     /**
@@ -1900,8 +1900,8 @@ public interface MagentoService {
      * @param shoppingCartPaymentListRequestParam199
      */
     public void startshoppingCartPaymentList(
-            magento.ShoppingCartPaymentListRequestParam shoppingCartPaymentListRequestParam199,
-            final MagentoServiceCallbackHandler callback)
+        magento.ShoppingCartPaymentListRequestParam shoppingCartPaymentListRequestParam199,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -1910,7 +1910,7 @@ public interface MagentoService {
      * @param salesOrderCreditmemoAddCommentRequestParam201
      */
     public magento.SalesOrderCreditmemoAddCommentResponseParam salesOrderCreditmemoAddComment(
-            magento.SalesOrderCreditmemoAddCommentRequestParam salesOrderCreditmemoAddCommentRequestParam201)
+        magento.SalesOrderCreditmemoAddCommentRequestParam salesOrderCreditmemoAddCommentRequestParam201)
         throws java.rmi.RemoteException;
 
     /**
@@ -1919,8 +1919,8 @@ public interface MagentoService {
      * @param salesOrderCreditmemoAddCommentRequestParam201
      */
     public void startsalesOrderCreditmemoAddComment(
-            magento.SalesOrderCreditmemoAddCommentRequestParam salesOrderCreditmemoAddCommentRequestParam201,
-            final MagentoServiceCallbackHandler callback)
+        magento.SalesOrderCreditmemoAddCommentRequestParam salesOrderCreditmemoAddCommentRequestParam201,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -1929,7 +1929,7 @@ public interface MagentoService {
      * @param catalogProductTagRemoveRequestParam203
      */
     public magento.CatalogProductTagRemoveResponseParam catalogProductTagRemove(
-            magento.CatalogProductTagRemoveRequestParam catalogProductTagRemoveRequestParam203)
+        magento.CatalogProductTagRemoveRequestParam catalogProductTagRemoveRequestParam203)
         throws java.rmi.RemoteException;
 
     /**
@@ -1938,8 +1938,8 @@ public interface MagentoService {
      * @param catalogProductTagRemoveRequestParam203
      */
     public void startcatalogProductTagRemove(
-            magento.CatalogProductTagRemoveRequestParam catalogProductTagRemoveRequestParam203,
-            final MagentoServiceCallbackHandler callback)
+        magento.CatalogProductTagRemoveRequestParam catalogProductTagRemoveRequestParam203,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
@@ -1948,7 +1948,7 @@ public interface MagentoService {
      * @param salesOrderShipmentInfoRequestParam205
      */
     public magento.SalesOrderShipmentInfoResponseParam salesOrderShipmentInfo(
-            magento.SalesOrderShipmentInfoRequestParam salesOrderShipmentInfoRequestParam205)
+        magento.SalesOrderShipmentInfoRequestParam salesOrderShipmentInfoRequestParam205)
         throws java.rmi.RemoteException;
 
     /**
@@ -1957,1145 +1957,1164 @@ public interface MagentoService {
      * @param salesOrderShipmentInfoRequestParam205
      */
     public void startsalesOrderShipmentInfo(
-            magento.SalesOrderShipmentInfoRequestParam salesOrderShipmentInfoRequestParam205,
-            final MagentoServiceCallbackHandler callback)
+        magento.SalesOrderShipmentInfoRequestParam salesOrderShipmentInfoRequestParam205,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
+        throws java.rmi.RemoteException;
+
+    /**
+     * Auto generated method signature
+     * Set custom product price(s)
+     * @param shoppingCartProductCustomPriceRequestParam207
+     */
+    public magento.ShoppingCartProductCustomPriceResponseParam shoppingCartProductSetCustomPrice(
+        magento.ShoppingCartProductCustomPriceRequestParam shoppingCartProductCustomPriceRequestParam207)
+        throws java.rmi.RemoteException;
+
+    /**
+     * Auto generated method signature for Asynchronous Invocations
+     * Set custom product price(s)
+     * @param shoppingCartProductCustomPriceRequestParam207
+     */
+    public void startshoppingCartProductSetCustomPrice(
+        magento.ShoppingCartProductCustomPriceRequestParam shoppingCartProductCustomPriceRequestParam207,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature
      * Redeem gift card amount
-     * @param shoppingCartGiftcardRemoveRequestParam207
+     * @param shoppingCartGiftcardRemoveRequestParam209
      */
     public magento.ShoppingCartGiftcardRemoveResponseParam shoppingCartGiftcardRemove(
-            magento.ShoppingCartGiftcardRemoveRequestParam shoppingCartGiftcardRemoveRequestParam207)
+        magento.ShoppingCartGiftcardRemoveRequestParam shoppingCartGiftcardRemoveRequestParam209)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature for Asynchronous Invocations
      * Redeem gift card amount
-     * @param shoppingCartGiftcardRemoveRequestParam207
+     * @param shoppingCartGiftcardRemoveRequestParam209
      */
     public void startshoppingCartGiftcardRemove(
-            magento.ShoppingCartGiftcardRemoveRequestParam shoppingCartGiftcardRemoveRequestParam207,
-            final MagentoServiceCallbackHandler callback)
+        magento.ShoppingCartGiftcardRemoveRequestParam shoppingCartGiftcardRemoveRequestParam209,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature
      * Delete category
-     * @param catalogCategoryDeleteRequestParam209
+     * @param catalogCategoryDeleteRequestParam211
      */
     public magento.CatalogCategoryDeleteResponseParam catalogCategoryDelete(
-            magento.CatalogCategoryDeleteRequestParam catalogCategoryDeleteRequestParam209)
+        magento.CatalogCategoryDeleteRequestParam catalogCategoryDeleteRequestParam211)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature for Asynchronous Invocations
      * Delete category
-     * @param catalogCategoryDeleteRequestParam209
+     * @param catalogCategoryDeleteRequestParam211
      */
     public void startcatalogCategoryDelete(
-            magento.CatalogCategoryDeleteRequestParam catalogCategoryDeleteRequestParam209,
-            final MagentoServiceCallbackHandler callback)
+        magento.CatalogCategoryDeleteRequestParam catalogCategoryDeleteRequestParam211,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature
      * Retrieve attribute options
-     * @param catalogProductAttributeOptionsRequestParam211
+     * @param catalogProductAttributeOptionsRequestParam213
      */
     public magento.CatalogProductAttributeOptionsResponseParam catalogProductAttributeOptions(
-            magento.CatalogProductAttributeOptionsRequestParam catalogProductAttributeOptionsRequestParam211)
+        magento.CatalogProductAttributeOptionsRequestParam catalogProductAttributeOptionsRequestParam213)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature for Asynchronous Invocations
      * Retrieve attribute options
-     * @param catalogProductAttributeOptionsRequestParam211
+     * @param catalogProductAttributeOptionsRequestParam213
      */
     public void startcatalogProductAttributeOptions(
-            magento.CatalogProductAttributeOptionsRequestParam catalogProductAttributeOptionsRequestParam211,
-            final MagentoServiceCallbackHandler callback)
+        magento.CatalogProductAttributeOptionsRequestParam catalogProductAttributeOptionsRequestParam213,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature
      * Delete customer address
-     * @param customerAddressDeleteRequestParam213
+     * @param customerAddressDeleteRequestParam215
      */
     public magento.CustomerAddressDeleteResponseParam customerAddressDelete(
-            magento.CustomerAddressDeleteRequestParam customerAddressDeleteRequestParam213)
+        magento.CustomerAddressDeleteRequestParam customerAddressDeleteRequestParam215)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature for Asynchronous Invocations
      * Delete customer address
-     * @param customerAddressDeleteRequestParam213
+     * @param customerAddressDeleteRequestParam215
      */
     public void startcustomerAddressDelete(
-            magento.CustomerAddressDeleteRequestParam customerAddressDeleteRequestParam213,
-            final MagentoServiceCallbackHandler callback)
+        magento.CustomerAddressDeleteRequestParam customerAddressDeleteRequestParam215,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature
      * Retrieve customer store credit history information
-     * @param enterpriseCustomerbalanceHistoryRequestParam215
+     * @param enterpriseCustomerbalanceHistoryRequestParam217
      */
     public magento.EnterpriseCustomerbalanceHistoryResponseParam enterpriseCustomerbalanceHistory(
-            magento.EnterpriseCustomerbalanceHistoryRequestParam enterpriseCustomerbalanceHistoryRequestParam215)
+        magento.EnterpriseCustomerbalanceHistoryRequestParam enterpriseCustomerbalanceHistoryRequestParam217)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature for Asynchronous Invocations
      * Retrieve customer store credit history information
-     * @param enterpriseCustomerbalanceHistoryRequestParam215
+     * @param enterpriseCustomerbalanceHistoryRequestParam217
      */
     public void startenterpriseCustomerbalanceHistory(
-            magento.EnterpriseCustomerbalanceHistoryRequestParam enterpriseCustomerbalanceHistoryRequestParam215,
-            final MagentoServiceCallbackHandler callback)
+        magento.EnterpriseCustomerbalanceHistoryRequestParam enterpriseCustomerbalanceHistoryRequestParam217,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature
      * Add coupon code for shopping cart
-     * @param shoppingCartCouponAddRequestParam217
+     * @param shoppingCartCouponAddRequestParam219
      */
     public magento.ShoppingCartCouponAddResponseParam shoppingCartCouponAdd(
-            magento.ShoppingCartCouponAddRequestParam shoppingCartCouponAddRequestParam217)
+        magento.ShoppingCartCouponAddRequestParam shoppingCartCouponAddRequestParam219)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature for Asynchronous Invocations
      * Add coupon code for shopping cart
-     * @param shoppingCartCouponAddRequestParam217
+     * @param shoppingCartCouponAddRequestParam219
      */
     public void startshoppingCartCouponAdd(
-            magento.ShoppingCartCouponAddRequestParam shoppingCartCouponAddRequestParam217,
-            final MagentoServiceCallbackHandler callback)
+        magento.ShoppingCartCouponAddRequestParam shoppingCartCouponAddRequestParam219,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature
      * List of countries
-     * @param directoryCountryListRequestParam219
+     * @param directoryCountryListRequestParam221
      */
     public magento.DirectoryCountryListResponseParam directoryCountryList(
-            magento.DirectoryCountryListRequestParam directoryCountryListRequestParam219)
+        magento.DirectoryCountryListRequestParam directoryCountryListRequestParam221)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature for Asynchronous Invocations
      * List of countries
-     * @param directoryCountryListRequestParam219
+     * @param directoryCountryListRequestParam221
      */
     public void startdirectoryCountryList(
-            magento.DirectoryCountryListRequestParam directoryCountryListRequestParam219,
-            final MagentoServiceCallbackHandler callback)
+        magento.DirectoryCountryListRequestParam directoryCountryListRequestParam221,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature
      * Set_Get current store view
-     * @param catalogCategoryCurrentStoreRequestParam221
+     * @param catalogCategoryCurrentStoreRequestParam223
      */
     public magento.CatalogCategoryCurrentStoreResponseParam catalogCategoryCurrentStore(
-            magento.CatalogCategoryCurrentStoreRequestParam catalogCategoryCurrentStoreRequestParam221)
+        magento.CatalogCategoryCurrentStoreRequestParam catalogCategoryCurrentStoreRequestParam223)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature for Asynchronous Invocations
      * Set_Get current store view
-     * @param catalogCategoryCurrentStoreRequestParam221
+     * @param catalogCategoryCurrentStoreRequestParam223
      */
     public void startcatalogCategoryCurrentStore(
-            magento.CatalogCategoryCurrentStoreRequestParam catalogCategoryCurrentStoreRequestParam221,
-            final MagentoServiceCallbackHandler callback)
+        magento.CatalogCategoryCurrentStoreRequestParam catalogCategoryCurrentStoreRequestParam223,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature
      * Update assigned product
-     * @param catalogCategoryUpdateProductRequestParam223
+     * @param catalogCategoryUpdateProductRequestParam225
      */
     public magento.CatalogCategoryUpdateProductResponseParam catalogCategoryUpdateProduct(
-            magento.CatalogCategoryUpdateProductRequestParam catalogCategoryUpdateProductRequestParam223)
+        magento.CatalogCategoryUpdateProductRequestParam catalogCategoryUpdateProductRequestParam225)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature for Asynchronous Invocations
      * Update assigned product
-     * @param catalogCategoryUpdateProductRequestParam223
+     * @param catalogCategoryUpdateProductRequestParam225
      */
     public void startcatalogCategoryUpdateProduct(
-            magento.CatalogCategoryUpdateProductRequestParam catalogCategoryUpdateProductRequestParam223,
-            final MagentoServiceCallbackHandler callback)
+        magento.CatalogCategoryUpdateProductRequestParam catalogCategoryUpdateProductRequestParam225,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature
      * Update attribute
-     * @param catalogProductAttributeUpdateRequestParam225
+     * @param catalogProductAttributeUpdateRequestParam227
      */
     public magento.CatalogProductAttributeUpdateResponseParam catalogProductAttributeUpdate(
-            magento.CatalogProductAttributeUpdateRequestParam catalogProductAttributeUpdateRequestParam225)
+        magento.CatalogProductAttributeUpdateRequestParam catalogProductAttributeUpdateRequestParam227)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature for Asynchronous Invocations
      * Update attribute
-     * @param catalogProductAttributeUpdateRequestParam225
+     * @param catalogProductAttributeUpdateRequestParam227
      */
     public void startcatalogProductAttributeUpdate(
-            magento.CatalogProductAttributeUpdateRequestParam catalogProductAttributeUpdateRequestParam225,
-            final MagentoServiceCallbackHandler callback)
+        magento.CatalogProductAttributeUpdateRequestParam catalogProductAttributeUpdateRequestParam227,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature
      * List of global faults
-     * @param globalFaultsParam227
+     * @param globalFaultsParam229
      */
     public magento.GlobalFaultsResponseParam globalFaults(
-            magento.GlobalFaultsParam globalFaultsParam227)
+        magento.GlobalFaultsParam globalFaultsParam229)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature for Asynchronous Invocations
      * List of global faults
-     * @param globalFaultsParam227
+     * @param globalFaultsParam229
      */
     public void startglobalFaults(
-            magento.GlobalFaultsParam globalFaultsParam227,
-            final MagentoServiceCallbackHandler callback)
+        magento.GlobalFaultsParam globalFaultsParam229,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature
      * Create an order from shopping cart
-     * @param shoppingCartOrderRequestParam229
+     * @param shoppingCartOrderRequestParam231
      */
     public magento.ShoppingCartOrderResponseParam shoppingCartOrder(
-            magento.ShoppingCartOrderRequestParam shoppingCartOrderRequestParam229)
+        magento.ShoppingCartOrderRequestParam shoppingCartOrderRequestParam231)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature for Asynchronous Invocations
      * Create an order from shopping cart
-     * @param shoppingCartOrderRequestParam229
+     * @param shoppingCartOrderRequestParam231
      */
     public void startshoppingCartOrder(
-            magento.ShoppingCartOrderRequestParam shoppingCartOrderRequestParam229,
-            final MagentoServiceCallbackHandler callback)
+        magento.ShoppingCartOrderRequestParam shoppingCartOrderRequestParam231,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature
      * Delete customer
-     * @param customerCustomerDeleteRequestParam231
+     * @param customerCustomerDeleteRequestParam233
      */
     public magento.CustomerCustomerDeleteResponseParam customerCustomerDelete(
-            magento.CustomerCustomerDeleteRequestParam customerCustomerDeleteRequestParam231)
+        magento.CustomerCustomerDeleteRequestParam customerCustomerDeleteRequestParam233)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature for Asynchronous Invocations
      * Delete customer
-     * @param customerCustomerDeleteRequestParam231
+     * @param customerCustomerDeleteRequestParam233
      */
     public void startcustomerCustomerDelete(
-            magento.CustomerCustomerDeleteRequestParam customerCustomerDeleteRequestParam231,
-            final MagentoServiceCallbackHandler callback)
+        magento.CustomerCustomerDeleteRequestParam customerCustomerDeleteRequestParam233,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature
      * Retrieve hierarchical tree of categories.
-     * @param catalogCategoryTreeRequestParam233
+     * @param catalogCategoryTreeRequestParam235
      */
     public magento.CatalogCategoryTreeResponseParam catalogCategoryTree(
-            magento.CatalogCategoryTreeRequestParam catalogCategoryTreeRequestParam233)
+        magento.CatalogCategoryTreeRequestParam catalogCategoryTreeRequestParam235)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature for Asynchronous Invocations
      * Retrieve hierarchical tree of categories.
-     * @param catalogCategoryTreeRequestParam233
+     * @param catalogCategoryTreeRequestParam235
      */
     public void startcatalogCategoryTree(
-            magento.CatalogCategoryTreeRequestParam catalogCategoryTreeRequestParam233,
-            final MagentoServiceCallbackHandler callback)
+        magento.CatalogCategoryTreeRequestParam catalogCategoryTreeRequestParam235,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature
      * Create group within existing attribute set
-     * @param catalogProductAttributeSetGroupAddRequestParam235
+     * @param catalogProductAttributeSetGroupAddRequestParam237
      */
     public magento.CatalogProductAttributeSetGroupAddResponseParam catalogProductAttributeSetGroupAdd(
-            magento.CatalogProductAttributeSetGroupAddRequestParam catalogProductAttributeSetGroupAddRequestParam235)
+        magento.CatalogProductAttributeSetGroupAddRequestParam catalogProductAttributeSetGroupAddRequestParam237)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature for Asynchronous Invocations
      * Create group within existing attribute set
-     * @param catalogProductAttributeSetGroupAddRequestParam235
+     * @param catalogProductAttributeSetGroupAddRequestParam237
      */
     public void startcatalogProductAttributeSetGroupAdd(
-            magento.CatalogProductAttributeSetGroupAddRequestParam catalogProductAttributeSetGroupAddRequestParam235,
-            final MagentoServiceCallbackHandler callback)
+        magento.CatalogProductAttributeSetGroupAddRequestParam catalogProductAttributeSetGroupAddRequestParam237,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature
      * Remove product image
-     * @param catalogProductAttributeMediaRemoveRequestParam237
+     * @param catalogProductAttributeMediaRemoveRequestParam239
      */
     public magento.CatalogProductAttributeMediaRemoveResponseParam catalogProductAttributeMediaRemove(
-            magento.CatalogProductAttributeMediaRemoveRequestParam catalogProductAttributeMediaRemoveRequestParam237)
+        magento.CatalogProductAttributeMediaRemoveRequestParam catalogProductAttributeMediaRemoveRequestParam239)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature for Asynchronous Invocations
      * Remove product image
-     * @param catalogProductAttributeMediaRemoveRequestParam237
+     * @param catalogProductAttributeMediaRemoveRequestParam239
      */
     public void startcatalogProductAttributeMediaRemove(
-            magento.CatalogProductAttributeMediaRemoveRequestParam catalogProductAttributeMediaRemoveRequestParam237,
-            final MagentoServiceCallbackHandler callback)
+        magento.CatalogProductAttributeMediaRemoveRequestParam catalogProductAttributeMediaRemoveRequestParam239,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature
      * Unhold order
-     * @param salesOrderUnholdRequestParam239
+     * @param salesOrderUnholdRequestParam241
      */
     public magento.SalesOrderUnholdResponseParam salesOrderUnhold(
-            magento.SalesOrderUnholdRequestParam salesOrderUnholdRequestParam239)
+        magento.SalesOrderUnholdRequestParam salesOrderUnholdRequestParam241)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature for Asynchronous Invocations
      * Unhold order
-     * @param salesOrderUnholdRequestParam239
+     * @param salesOrderUnholdRequestParam241
      */
     public void startsalesOrderUnhold(
-            magento.SalesOrderUnholdRequestParam salesOrderUnholdRequestParam239,
-            final MagentoServiceCallbackHandler callback)
+        magento.SalesOrderUnholdRequestParam salesOrderUnholdRequestParam241,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature
      * Setting a gift messages to the quote item
-     * @param giftMessageForQuoteItemRequestParam241
+     * @param giftMessageForQuoteItemRequestParam243
      */
     public magento.GiftMessageForQuoteItemResponseParam giftMessageSetForQuoteItem(
-            magento.GiftMessageForQuoteItemRequestParam giftMessageForQuoteItemRequestParam241)
+        magento.GiftMessageForQuoteItemRequestParam giftMessageForQuoteItemRequestParam243)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature for Asynchronous Invocations
      * Setting a gift messages to the quote item
-     * @param giftMessageForQuoteItemRequestParam241
+     * @param giftMessageForQuoteItemRequestParam243
      */
     public void startgiftMessageSetForQuoteItem(
-            magento.GiftMessageForQuoteItemRequestParam giftMessageForQuoteItemRequestParam241,
-            final MagentoServiceCallbackHandler callback)
+        magento.GiftMessageForQuoteItemRequestParam giftMessageForQuoteItemRequestParam243,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature
      * Delete attribute
-     * @param catalogProductAttributeRemoveRequestParam243
+     * @param catalogProductAttributeRemoveRequestParam245
      */
     public magento.CatalogProductAttributeRemoveResponseParam catalogProductAttributeRemove(
-            magento.CatalogProductAttributeRemoveRequestParam catalogProductAttributeRemoveRequestParam243)
+        magento.CatalogProductAttributeRemoveRequestParam catalogProductAttributeRemoveRequestParam245)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature for Asynchronous Invocations
      * Delete attribute
-     * @param catalogProductAttributeRemoveRequestParam243
+     * @param catalogProductAttributeRemoveRequestParam245
      */
     public void startcatalogProductAttributeRemove(
-            magento.CatalogProductAttributeRemoveRequestParam catalogProductAttributeRemoveRequestParam243,
-            final MagentoServiceCallbackHandler callback)
+        magento.CatalogProductAttributeRemoveRequestParam catalogProductAttributeRemoveRequestParam245,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature
      * Call api functionality
-     * @param callParam245
+     * @param callParam247
      */
-    public magento.CallResponseParam call(magento.CallParam callParam245)
+    public magento.CallResponseParam call(magento.CallParam callParam247)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature for Asynchronous Invocations
      * Call api functionality
-     * @param callParam245
+     * @param callParam247
      */
-    public void startcall(magento.CallParam callParam245,
-                          final MagentoServiceCallbackHandler callback)
+    public void startcall(magento.CallParam callParam247,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature
      * Retrieve product image types
-     * @param catalogProductAttributeMediaTypesRequestParam247
+     * @param catalogProductAttributeMediaTypesRequestParam249
      */
     public magento.CatalogProductAttributeMediaTypesResponseParam catalogProductAttributeMediaTypes(
-            magento.CatalogProductAttributeMediaTypesRequestParam catalogProductAttributeMediaTypesRequestParam247)
+        magento.CatalogProductAttributeMediaTypesRequestParam catalogProductAttributeMediaTypesRequestParam249)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature for Asynchronous Invocations
      * Retrieve product image types
-     * @param catalogProductAttributeMediaTypesRequestParam247
+     * @param catalogProductAttributeMediaTypesRequestParam249
      */
     public void startcatalogProductAttributeMediaTypes(
-            magento.CatalogProductAttributeMediaTypesRequestParam catalogProductAttributeMediaTypesRequestParam247,
-            final MagentoServiceCallbackHandler callback)
+        magento.CatalogProductAttributeMediaTypesRequestParam catalogProductAttributeMediaTypesRequestParam249,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature
      * Update product image
-     * @param catalogProductAttributeMediaUpdateRequestParam249
+     * @param catalogProductAttributeMediaUpdateRequestParam251
      */
     public magento.CatalogProductAttributeMediaUpdateResponseParam catalogProductAttributeMediaUpdate(
-            magento.CatalogProductAttributeMediaUpdateRequestParam catalogProductAttributeMediaUpdateRequestParam249)
+        magento.CatalogProductAttributeMediaUpdateRequestParam catalogProductAttributeMediaUpdateRequestParam251)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature for Asynchronous Invocations
      * Update product image
-     * @param catalogProductAttributeMediaUpdateRequestParam249
+     * @param catalogProductAttributeMediaUpdateRequestParam251
      */
     public void startcatalogProductAttributeMediaUpdate(
-            magento.CatalogProductAttributeMediaUpdateRequestParam catalogProductAttributeMediaUpdateRequestParam249,
-            final MagentoServiceCallbackHandler callback)
+        magento.CatalogProductAttributeMediaUpdateRequestParam catalogProductAttributeMediaUpdateRequestParam251,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature
      * Retrieve stock data by product ids
-     * @param catalogInventoryStockItemListRequestParam251
+     * @param catalogInventoryStockItemListRequestParam253
      */
     public magento.CatalogInventoryStockItemListResponseParam catalogInventoryStockItemList(
-            magento.CatalogInventoryStockItemListRequestParam catalogInventoryStockItemListRequestParam251)
+        magento.CatalogInventoryStockItemListRequestParam catalogInventoryStockItemListRequestParam253)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature for Asynchronous Invocations
      * Retrieve stock data by product ids
-     * @param catalogInventoryStockItemListRequestParam251
+     * @param catalogInventoryStockItemListRequestParam253
      */
     public void startcatalogInventoryStockItemList(
-            magento.CatalogInventoryStockItemListRequestParam catalogInventoryStockItemListRequestParam251,
-            final MagentoServiceCallbackHandler callback)
+        magento.CatalogInventoryStockItemListRequestParam catalogInventoryStockItemListRequestParam253,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature
      * Retrieve customers
-     * @param customerCustomerListRequestParam253
+     * @param customerCustomerListRequestParam255
      */
     public magento.CustomerCustomerListResponseParam customerCustomerList(
-            magento.CustomerCustomerListRequestParam customerCustomerListRequestParam253)
+        magento.CustomerCustomerListRequestParam customerCustomerListRequestParam255)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature for Asynchronous Invocations
      * Retrieve customers
-     * @param customerCustomerListRequestParam253
+     * @param customerCustomerListRequestParam255
      */
     public void startcustomerCustomerList(
-            magento.CustomerCustomerListRequestParam customerCustomerListRequestParam253,
-            final MagentoServiceCallbackHandler callback)
+        magento.CustomerCustomerListRequestParam customerCustomerListRequestParam255,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature
      * Redeem gift card amount
-     * @param giftcardCustomerRedeemRequestParam255
+     * @param giftcardCustomerRedeemRequestParam257
      */
     public magento.GiftcardCustomerRedeemResponseParam giftcardCustomerRedeem(
-            magento.GiftcardCustomerRedeemRequestParam giftcardCustomerRedeemRequestParam255)
+        magento.GiftcardCustomerRedeemRequestParam giftcardCustomerRedeemRequestParam257)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature for Asynchronous Invocations
      * Redeem gift card amount
-     * @param giftcardCustomerRedeemRequestParam255
+     * @param giftcardCustomerRedeemRequestParam257
      */
     public void startgiftcardCustomerRedeem(
-            magento.GiftcardCustomerRedeemRequestParam giftcardCustomerRedeemRequestParam255,
-            final MagentoServiceCallbackHandler callback)
+        magento.GiftcardCustomerRedeemRequestParam giftcardCustomerRedeemRequestParam257,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature
      * Remove group from attribute set
-     * @param catalogProductAttributeSetGroupRemoveRequestParam257
+     * @param catalogProductAttributeSetGroupRemoveRequestParam259
      */
     public magento.CatalogProductAttributeSetGroupRemoveResponseParam catalogProductAttributeSetGroupRemove(
-            magento.CatalogProductAttributeSetGroupRemoveRequestParam catalogProductAttributeSetGroupRemoveRequestParam257)
+        magento.CatalogProductAttributeSetGroupRemoveRequestParam catalogProductAttributeSetGroupRemoveRequestParam259)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature for Asynchronous Invocations
      * Remove group from attribute set
-     * @param catalogProductAttributeSetGroupRemoveRequestParam257
+     * @param catalogProductAttributeSetGroupRemoveRequestParam259
      */
     public void startcatalogProductAttributeSetGroupRemove(
-            magento.CatalogProductAttributeSetGroupRemoveRequestParam catalogProductAttributeSetGroupRemoveRequestParam257,
-            final MagentoServiceCallbackHandler callback)
+        magento.CatalogProductAttributeSetGroupRemoveRequestParam catalogProductAttributeSetGroupRemoveRequestParam259,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature
      * Remove product link
-     * @param catalogProductLinkRemoveRequestParam259
+     * @param catalogProductLinkRemoveRequestParam261
      */
     public magento.CatalogProductLinkRemoveResponseParam catalogProductLinkRemove(
-            magento.CatalogProductLinkRemoveRequestParam catalogProductLinkRemoveRequestParam259)
+        magento.CatalogProductLinkRemoveRequestParam catalogProductLinkRemoveRequestParam261)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature for Asynchronous Invocations
      * Remove product link
-     * @param catalogProductLinkRemoveRequestParam259
+     * @param catalogProductLinkRemoveRequestParam261
      */
     public void startcatalogProductLinkRemove(
-            magento.CatalogProductLinkRemoveRequestParam catalogProductLinkRemoveRequestParam259,
-            final MagentoServiceCallbackHandler callback)
+        magento.CatalogProductLinkRemoveRequestParam catalogProductLinkRemoveRequestParam261,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature
      * Retrieve gift card data
-     * @param giftcardCustomerInfoRequestParam261
+     * @param giftcardCustomerInfoRequestParam263
      */
     public magento.GiftcardCustomerInfoResponseParam giftcardCustomerInfo(
-            magento.GiftcardCustomerInfoRequestParam giftcardCustomerInfoRequestParam261)
+        magento.GiftcardCustomerInfoRequestParam giftcardCustomerInfoRequestParam263)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature for Asynchronous Invocations
      * Retrieve gift card data
-     * @param giftcardCustomerInfoRequestParam261
+     * @param giftcardCustomerInfoRequestParam263
      */
     public void startgiftcardCustomerInfo(
-            magento.GiftcardCustomerInfoRequestParam giftcardCustomerInfoRequestParam261,
-            final MagentoServiceCallbackHandler callback)
+        magento.GiftcardCustomerInfoRequestParam giftcardCustomerInfoRequestParam263,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature
      * Retrieve products list by filters
-     * @param catalogProductListRequestParam263
+     * @param catalogProductListRequestParam265
      */
     public magento.CatalogProductListResponseParam catalogProductList(
-            magento.CatalogProductListRequestParam catalogProductListRequestParam263)
+        magento.CatalogProductListRequestParam catalogProductListRequestParam265)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature for Asynchronous Invocations
      * Retrieve products list by filters
-     * @param catalogProductListRequestParam263
+     * @param catalogProductListRequestParam265
      */
     public void startcatalogProductList(
-            magento.CatalogProductListRequestParam catalogProductListRequestParam263,
-            final MagentoServiceCallbackHandler callback)
+        magento.CatalogProductListRequestParam catalogProductListRequestParam265,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature
      * Add new custom option values
-     * @param catalogProductCustomOptionValueAddRequestParam265
+     * @param catalogProductCustomOptionValueAddRequestParam267
      */
     public magento.CatalogProductCustomOptionValueAddResponseParam catalogProductCustomOptionValueAdd(
-            magento.CatalogProductCustomOptionValueAddRequestParam catalogProductCustomOptionValueAddRequestParam265)
+        magento.CatalogProductCustomOptionValueAddRequestParam catalogProductCustomOptionValueAddRequestParam267)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature for Asynchronous Invocations
      * Add new custom option values
-     * @param catalogProductCustomOptionValueAddRequestParam265
+     * @param catalogProductCustomOptionValueAddRequestParam267
      */
     public void startcatalogProductCustomOptionValueAdd(
-            magento.CatalogProductCustomOptionValueAddRequestParam catalogProductCustomOptionValueAddRequestParam265,
-            final MagentoServiceCallbackHandler callback)
+        magento.CatalogProductCustomOptionValueAddRequestParam catalogProductCustomOptionValueAddRequestParam267,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature
      * Retrieve list of links and samples for downloadable product
-     * @param catalogProductDownloadableLinkListRequestParam267
+     * @param catalogProductDownloadableLinkListRequestParam269
      */
     public magento.CatalogProductDownloadableLinkListResponseParam catalogProductDownloadableLinkList(
-            magento.CatalogProductDownloadableLinkListRequestParam catalogProductDownloadableLinkListRequestParam267)
+        magento.CatalogProductDownloadableLinkListRequestParam catalogProductDownloadableLinkListRequestParam269)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature for Asynchronous Invocations
      * Retrieve list of links and samples for downloadable product
-     * @param catalogProductDownloadableLinkListRequestParam267
+     * @param catalogProductDownloadableLinkListRequestParam269
      */
     public void startcatalogProductDownloadableLinkList(
-            magento.CatalogProductDownloadableLinkListRequestParam catalogProductDownloadableLinkListRequestParam267,
-            final MagentoServiceCallbackHandler callback)
+        magento.CatalogProductDownloadableLinkListRequestParam catalogProductDownloadableLinkListRequestParam269,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature
      * Delete product
-     * @param catalogProductDeleteRequestParam269
+     * @param catalogProductDeleteRequestParam271
      */
     public magento.CatalogProductDeleteResponseParam catalogProductDelete(
-            magento.CatalogProductDeleteRequestParam catalogProductDeleteRequestParam269)
+        magento.CatalogProductDeleteRequestParam catalogProductDeleteRequestParam271)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature for Asynchronous Invocations
      * Delete product
-     * @param catalogProductDeleteRequestParam269
+     * @param catalogProductDeleteRequestParam271
      */
     public void startcatalogProductDelete(
-            magento.CatalogProductDeleteRequestParam catalogProductDeleteRequestParam269,
-            final MagentoServiceCallbackHandler callback)
+        magento.CatalogProductDeleteRequestParam catalogProductDeleteRequestParam271,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature
      * Hold order
-     * @param salesOrderHoldRequestParam271
+     * @param salesOrderHoldRequestParam273
      */
     public magento.SalesOrderHoldResponseParam salesOrderHold(
-            magento.SalesOrderHoldRequestParam salesOrderHoldRequestParam271)
+        magento.SalesOrderHoldRequestParam salesOrderHoldRequestParam273)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature for Asynchronous Invocations
      * Hold order
-     * @param salesOrderHoldRequestParam271
+     * @param salesOrderHoldRequestParam273
      */
     public void startsalesOrderHold(
-            magento.SalesOrderHoldRequestParam salesOrderHoldRequestParam271,
-            final MagentoServiceCallbackHandler callback)
+        magento.SalesOrderHoldRequestParam salesOrderHoldRequestParam273,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature
      * Redeem gift card amount
-     * @param shoppingCartGiftcardListRequestParam273
+     * @param shoppingCartGiftcardListRequestParam275
      */
     public magento.ShoppingCartGiftcardListResponseParam shoppingCartGiftcardList(
-            magento.ShoppingCartGiftcardListRequestParam shoppingCartGiftcardListRequestParam273)
+        magento.ShoppingCartGiftcardListRequestParam shoppingCartGiftcardListRequestParam275)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature for Asynchronous Invocations
      * Redeem gift card amount
-     * @param shoppingCartGiftcardListRequestParam273
+     * @param shoppingCartGiftcardListRequestParam275
      */
     public void startshoppingCartGiftcardList(
-            magento.ShoppingCartGiftcardListRequestParam shoppingCartGiftcardListRequestParam273,
-            final MagentoServiceCallbackHandler callback)
+        magento.ShoppingCartGiftcardListRequestParam shoppingCartGiftcardListRequestParam275,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature
      * Update customer address data
-     * @param customerAddressUpdateRequestParam275
+     * @param customerAddressUpdateRequestParam277
      */
     public magento.CustomerAddressUpdateResponseParam customerAddressUpdate(
-            magento.CustomerAddressUpdateRequestParam customerAddressUpdateRequestParam275)
+        magento.CustomerAddressUpdateRequestParam customerAddressUpdateRequestParam277)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature for Asynchronous Invocations
      * Update customer address data
-     * @param customerAddressUpdateRequestParam275
+     * @param customerAddressUpdateRequestParam277
      */
     public void startcustomerAddressUpdate(
-            magento.CustomerAddressUpdateRequestParam customerAddressUpdateRequestParam275,
-            final MagentoServiceCallbackHandler callback)
+        magento.CustomerAddressUpdateRequestParam customerAddressUpdateRequestParam277,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature
      * Setting a gift messages to the quote items by products
-     * @param giftMessageForQuoteProductRequestParam277
+     * @param giftMessageForQuoteProductRequestParam279
      */
     public magento.GiftMessageForQuoteProductResponseParam giftMessageSetForQuoteProduct(
-            magento.GiftMessageForQuoteProductRequestParam giftMessageForQuoteProductRequestParam277)
+        magento.GiftMessageForQuoteProductRequestParam giftMessageForQuoteProductRequestParam279)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature for Asynchronous Invocations
      * Setting a gift messages to the quote items by products
-     * @param giftMessageForQuoteProductRequestParam277
+     * @param giftMessageForQuoteProductRequestParam279
      */
     public void startgiftMessageSetForQuoteProduct(
-            magento.GiftMessageForQuoteProductRequestParam giftMessageForQuoteProductRequestParam277,
-            final MagentoServiceCallbackHandler callback)
+        magento.GiftMessageForQuoteProductRequestParam giftMessageForQuoteProductRequestParam279,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature
      * Retrieve custom option values list
-     * @param catalogProductCustomOptionValueListRequestParam279
+     * @param catalogProductCustomOptionValueListRequestParam281
      */
     public magento.CatalogProductCustomOptionValueListResponseParam catalogProductCustomOptionValueList(
-            magento.CatalogProductCustomOptionValueListRequestParam catalogProductCustomOptionValueListRequestParam279)
+        magento.CatalogProductCustomOptionValueListRequestParam catalogProductCustomOptionValueListRequestParam281)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature for Asynchronous Invocations
      * Retrieve custom option values list
-     * @param catalogProductCustomOptionValueListRequestParam279
+     * @param catalogProductCustomOptionValueListRequestParam281
      */
     public void startcatalogProductCustomOptionValueList(
-            magento.CatalogProductCustomOptionValueListRequestParam catalogProductCustomOptionValueListRequestParam279,
-            final MagentoServiceCallbackHandler callback)
+        magento.CatalogProductCustomOptionValueListRequestParam catalogProductCustomOptionValueListRequestParam281,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature
      * Add new comment to shipment
-     * @param salesOrderInvoiceAddCommentRequestParam281
+     * @param salesOrderInvoiceAddCommentRequestParam283
      */
     public magento.SalesOrderInvoiceAddCommentResponseParam salesOrderInvoiceAddComment(
-            magento.SalesOrderInvoiceAddCommentRequestParam salesOrderInvoiceAddCommentRequestParam281)
+        magento.SalesOrderInvoiceAddCommentRequestParam salesOrderInvoiceAddCommentRequestParam283)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature for Asynchronous Invocations
      * Add new comment to shipment
-     * @param salesOrderInvoiceAddCommentRequestParam281
+     * @param salesOrderInvoiceAddCommentRequestParam283
      */
     public void startsalesOrderInvoiceAddComment(
-            magento.SalesOrderInvoiceAddCommentRequestParam salesOrderInvoiceAddCommentRequestParam281,
-            final MagentoServiceCallbackHandler callback)
+        magento.SalesOrderInvoiceAddCommentRequestParam salesOrderInvoiceAddCommentRequestParam283,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature
      * Remove product assignment from category
-     * @param catalogCategoryRemoveProductRequestParam283
+     * @param catalogCategoryRemoveProductRequestParam285
      */
     public magento.CatalogCategoryRemoveProductResponseParam catalogCategoryRemoveProduct(
-            magento.CatalogCategoryRemoveProductRequestParam catalogCategoryRemoveProductRequestParam283)
+        magento.CatalogCategoryRemoveProductRequestParam catalogCategoryRemoveProductRequestParam285)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature for Asynchronous Invocations
      * Remove product assignment from category
-     * @param catalogCategoryRemoveProductRequestParam283
+     * @param catalogCategoryRemoveProductRequestParam285
      */
     public void startcatalogCategoryRemoveProduct(
-            magento.CatalogCategoryRemoveProductRequestParam catalogCategoryRemoveProductRequestParam283,
-            final MagentoServiceCallbackHandler callback)
+        magento.CatalogCategoryRemoveProductRequestParam catalogCategoryRemoveProductRequestParam285,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature
      * Update custom option value
-     * @param catalogProductCustomOptionValueUpdateRequestParam285
+     * @param catalogProductCustomOptionValueUpdateRequestParam287
      */
     public magento.CatalogProductCustomOptionValueUpdateResponseParam catalogProductCustomOptionValueUpdate(
-            magento.CatalogProductCustomOptionValueUpdateRequestParam catalogProductCustomOptionValueUpdateRequestParam285)
+        magento.CatalogProductCustomOptionValueUpdateRequestParam catalogProductCustomOptionValueUpdateRequestParam287)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature for Asynchronous Invocations
      * Update custom option value
-     * @param catalogProductCustomOptionValueUpdateRequestParam285
+     * @param catalogProductCustomOptionValueUpdateRequestParam287
      */
     public void startcatalogProductCustomOptionValueUpdate(
-            magento.CatalogProductCustomOptionValueUpdateRequestParam catalogProductCustomOptionValueUpdateRequestParam285,
-            final MagentoServiceCallbackHandler callback)
+        magento.CatalogProductCustomOptionValueUpdateRequestParam catalogProductCustomOptionValueUpdateRequestParam287,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature
      * Retrieve product link types
-     * @param catalogProductLinkTypesRequestParam287
+     * @param catalogProductLinkTypesRequestParam289
      */
     public magento.CatalogProductLinkTypesResponseParam catalogProductLinkTypes(
-            magento.CatalogProductLinkTypesRequestParam catalogProductLinkTypesRequestParam287)
+        magento.CatalogProductLinkTypesRequestParam catalogProductLinkTypesRequestParam289)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature for Asynchronous Invocations
      * Retrieve product link types
-     * @param catalogProductLinkTypesRequestParam287
+     * @param catalogProductLinkTypesRequestParam289
      */
     public void startcatalogProductLinkTypes(
-            magento.CatalogProductLinkTypesRequestParam catalogProductLinkTypesRequestParam287,
-            final MagentoServiceCallbackHandler callback)
+        magento.CatalogProductLinkTypesRequestParam catalogProductLinkTypesRequestParam289,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature
      * Retrieve custom option value info
-     * @param catalogProductCustomOptionValueInfoRequestParam289
+     * @param catalogProductCustomOptionValueInfoRequestParam291
      */
     public magento.CatalogProductCustomOptionValueInfoResponseParam catalogProductCustomOptionValueInfo(
-            magento.CatalogProductCustomOptionValueInfoRequestParam catalogProductCustomOptionValueInfoRequestParam289)
+        magento.CatalogProductCustomOptionValueInfoRequestParam catalogProductCustomOptionValueInfoRequestParam291)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature for Asynchronous Invocations
      * Retrieve custom option value info
-     * @param catalogProductCustomOptionValueInfoRequestParam289
+     * @param catalogProductCustomOptionValueInfoRequestParam291
      */
     public void startcatalogProductCustomOptionValueInfo(
-            magento.CatalogProductCustomOptionValueInfoRequestParam catalogProductCustomOptionValueInfoRequestParam289,
-            final MagentoServiceCallbackHandler callback)
+        magento.CatalogProductCustomOptionValueInfoRequestParam catalogProductCustomOptionValueInfoRequestParam291,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature
      * Cancel invoice
-     * @param salesOrderInvoiceCancelRequestParam291
+     * @param salesOrderInvoiceCancelRequestParam293
      */
     public magento.SalesOrderInvoiceCancelResponseParam salesOrderInvoiceCancel(
-            magento.SalesOrderInvoiceCancelRequestParam salesOrderInvoiceCancelRequestParam291)
+        magento.SalesOrderInvoiceCancelRequestParam salesOrderInvoiceCancelRequestParam293)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature for Asynchronous Invocations
      * Cancel invoice
-     * @param salesOrderInvoiceCancelRequestParam291
+     * @param salesOrderInvoiceCancelRequestParam293
      */
     public void startsalesOrderInvoiceCancel(
-            magento.SalesOrderInvoiceCancelRequestParam salesOrderInvoiceCancelRequestParam291,
-            final MagentoServiceCallbackHandler callback)
+        magento.SalesOrderInvoiceCancelRequestParam salesOrderInvoiceCancelRequestParam293,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature
      * Create customer
-     * @param customerCustomerCreateRequestParam293
+     * @param customerCustomerCreateRequestParam295
      */
     public magento.CustomerCustomerCreateResponseParam customerCustomerCreate(
-            magento.CustomerCustomerCreateRequestParam customerCustomerCreateRequestParam293)
+        magento.CustomerCustomerCreateRequestParam customerCustomerCreateRequestParam295)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature for Asynchronous Invocations
      * Create customer
-     * @param customerCustomerCreateRequestParam293
+     * @param customerCustomerCreateRequestParam295
      */
     public void startcustomerCustomerCreate(
-            magento.CustomerCustomerCreateRequestParam customerCustomerCreateRequestParam293,
-            final MagentoServiceCallbackHandler callback)
+        magento.CustomerCustomerCreateRequestParam customerCustomerCreateRequestParam295,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature
      * Retrieve list of assigned products
-     * @param catalogCategoryAssignedProductsRequestParam295
+     * @param catalogCategoryAssignedProductsRequestParam297
      */
     public magento.CatalogCategoryAssignedProductsResponseParam catalogCategoryAssignedProducts(
-            magento.CatalogCategoryAssignedProductsRequestParam catalogCategoryAssignedProductsRequestParam295)
+        magento.CatalogCategoryAssignedProductsRequestParam catalogCategoryAssignedProductsRequestParam297)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature for Asynchronous Invocations
      * Retrieve list of assigned products
-     * @param catalogCategoryAssignedProductsRequestParam295
+     * @param catalogCategoryAssignedProductsRequestParam297
      */
     public void startcatalogCategoryAssignedProducts(
-            magento.CatalogCategoryAssignedProductsRequestParam catalogCategoryAssignedProductsRequestParam295,
-            final MagentoServiceCallbackHandler callback)
+        magento.CatalogCategoryAssignedProductsRequestParam catalogCategoryAssignedProductsRequestParam297,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature
      * Get terms and conditions
-     * @param shoppingCartLicenseRequestParam297
+     * @param shoppingCartLicenseRequestParam299
      */
     public magento.ShoppingCartLicenseResponseParam shoppingCartLicense(
-            magento.ShoppingCartLicenseRequestParam shoppingCartLicenseRequestParam297)
+        magento.ShoppingCartLicenseRequestParam shoppingCartLicenseRequestParam299)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature for Asynchronous Invocations
      * Get terms and conditions
-     * @param shoppingCartLicenseRequestParam297
+     * @param shoppingCartLicenseRequestParam299
      */
     public void startshoppingCartLicense(
-            magento.ShoppingCartLicenseRequestParam shoppingCartLicenseRequestParam297,
-            final MagentoServiceCallbackHandler callback)
+        magento.ShoppingCartLicenseRequestParam shoppingCartLicenseRequestParam299,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature
      * Add tag(s) to product
-     * @param catalogProductTagAddRequestParam299
+     * @param catalogProductTagAddRequestParam301
      */
     public magento.CatalogProductTagAddResponseParam catalogProductTagAdd(
-            magento.CatalogProductTagAddRequestParam catalogProductTagAddRequestParam299)
+        magento.CatalogProductTagAddRequestParam catalogProductTagAddRequestParam301)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature for Asynchronous Invocations
      * Add tag(s) to product
-     * @param catalogProductTagAddRequestParam299
+     * @param catalogProductTagAddRequestParam301
      */
     public void startcatalogProductTagAdd(
-            magento.CatalogProductTagAddRequestParam catalogProductTagAddRequestParam299,
-            final MagentoServiceCallbackHandler callback)
+        magento.CatalogProductTagAddRequestParam catalogProductTagAddRequestParam301,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature
      * Get total prices for shopping cart
-     * @param shoppingCartTotalsRequestParam301
+     * @param shoppingCartTotalsRequestParam303
      */
     public magento.ShoppingCartTotalsResponseParam shoppingCartTotals(
-            magento.ShoppingCartTotalsRequestParam shoppingCartTotalsRequestParam301)
+        magento.ShoppingCartTotalsRequestParam shoppingCartTotalsRequestParam303)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature for Asynchronous Invocations
      * Get total prices for shopping cart
-     * @param shoppingCartTotalsRequestParam301
+     * @param shoppingCartTotalsRequestParam303
      */
     public void startshoppingCartTotals(
-            magento.ShoppingCartTotalsRequestParam shoppingCartTotalsRequestParam301,
-            final MagentoServiceCallbackHandler callback)
+        magento.ShoppingCartTotalsRequestParam shoppingCartTotalsRequestParam303,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature
      * Create customer address
-     * @param customerAddressCreateRequestParam303
+     * @param customerAddressCreateRequestParam305
      */
     public magento.CustomerAddressCreateResponseParam customerAddressCreate(
-            magento.CustomerAddressCreateRequestParam customerAddressCreateRequestParam303)
+        magento.CustomerAddressCreateRequestParam customerAddressCreateRequestParam305)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature for Asynchronous Invocations
      * Create customer address
-     * @param customerAddressCreateRequestParam303
+     * @param customerAddressCreateRequestParam305
      */
     public void startcustomerAddressCreate(
-            magento.CustomerAddressCreateRequestParam customerAddressCreateRequestParam303,
-            final MagentoServiceCallbackHandler callback)
+        magento.CustomerAddressCreateRequestParam customerAddressCreateRequestParam305,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature
      * Set/Get current store view
-     * @param catalogProductCurrentStoreRequestParam305
+     * @param catalogProductCurrentStoreRequestParam307
      */
     public magento.CatalogProductCurrentStoreResponseParam catalogProductCurrentStore(
-            magento.CatalogProductCurrentStoreRequestParam catalogProductCurrentStoreRequestParam305)
+        magento.CatalogProductCurrentStoreRequestParam catalogProductCurrentStoreRequestParam307)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature for Asynchronous Invocations
      * Set/Get current store view
-     * @param catalogProductCurrentStoreRequestParam305
+     * @param catalogProductCurrentStoreRequestParam307
      */
     public void startcatalogProductCurrentStore(
-            magento.CatalogProductCurrentStoreRequestParam catalogProductCurrentStoreRequestParam305,
-            final MagentoServiceCallbackHandler callback)
+        magento.CatalogProductCurrentStoreRequestParam catalogProductCurrentStoreRequestParam307,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature
      * Retrieve product
-     * @param catalogProductInfoRequestParam307
+     * @param catalogProductInfoRequestParam309
      */
     public magento.CatalogProductInfoResponseParam catalogProductInfo(
-            magento.CatalogProductInfoRequestParam catalogProductInfoRequestParam307)
+        magento.CatalogProductInfoRequestParam catalogProductInfoRequestParam309)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature for Asynchronous Invocations
      * Retrieve product
-     * @param catalogProductInfoRequestParam307
+     * @param catalogProductInfoRequestParam309
      */
     public void startcatalogProductInfo(
-            magento.CatalogProductInfoRequestParam catalogProductInfoRequestParam307,
-            final MagentoServiceCallbackHandler callback)
+        magento.CatalogProductInfoRequestParam catalogProductInfoRequestParam309,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature
      * Set customer for shopping cart
-     * @param shoppingCartCustomerSetRequestParam309
+     * @param shoppingCartCustomerSetRequestParam311
      */
     public magento.ShoppingCartCustomerSetResponseParam shoppingCartCustomerSet(
-            magento.ShoppingCartCustomerSetRequestParam shoppingCartCustomerSetRequestParam309)
+        magento.ShoppingCartCustomerSetRequestParam shoppingCartCustomerSetRequestParam311)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature for Asynchronous Invocations
      * Set customer for shopping cart
-     * @param shoppingCartCustomerSetRequestParam309
+     * @param shoppingCartCustomerSetRequestParam311
      */
     public void startshoppingCartCustomerSet(
-            magento.ShoppingCartCustomerSetRequestParam shoppingCartCustomerSetRequestParam309,
-            final MagentoServiceCallbackHandler callback)
+        magento.ShoppingCartCustomerSetRequestParam shoppingCartCustomerSetRequestParam311,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature
      * Multiple calls of resource functionality
-     * @param multiCallParam311
+     * @param multiCallParam313
      */
     public magento.MultiCallResponseParam multiCall(
-            magento.MultiCallParam multiCallParam311)
+        magento.MultiCallParam multiCallParam313)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature for Asynchronous Invocations
      * Multiple calls of resource functionality
-     * @param multiCallParam311
+     * @param multiCallParam313
      */
-    public void startmultiCall(magento.MultiCallParam multiCallParam311,
-                               final MagentoServiceCallbackHandler callback)
+    public void startmultiCall(magento.MultiCallParam multiCallParam313,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature
      * Remove custom option
-     * @param catalogProductCustomOptionRemoveRequestParam313
+     * @param catalogProductCustomOptionRemoveRequestParam315
      */
     public magento.CatalogProductCustomOptionRemoveResponseParam catalogProductCustomOptionRemove(
-            magento.CatalogProductCustomOptionRemoveRequestParam catalogProductCustomOptionRemoveRequestParam313)
+        magento.CatalogProductCustomOptionRemoveRequestParam catalogProductCustomOptionRemoveRequestParam315)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature for Asynchronous Invocations
      * Remove custom option
-     * @param catalogProductCustomOptionRemoveRequestParam313
+     * @param catalogProductCustomOptionRemoveRequestParam315
      */
     public void startcatalogProductCustomOptionRemove(
-            magento.CatalogProductCustomOptionRemoveRequestParam catalogProductCustomOptionRemoveRequestParam313,
-            final MagentoServiceCallbackHandler callback)
+        magento.CatalogProductCustomOptionRemoveRequestParam catalogProductCustomOptionRemoveRequestParam315,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature
      * Rename existing group
-     * @param catalogProductAttributeSetGroupRenameRequestParam315
+     * @param catalogProductAttributeSetGroupRenameRequestParam317
      */
     public magento.CatalogProductAttributeSetGroupRenameResponseParam catalogProductAttributeSetGroupRename(
-            magento.CatalogProductAttributeSetGroupRenameRequestParam catalogProductAttributeSetGroupRenameRequestParam315)
+        magento.CatalogProductAttributeSetGroupRenameRequestParam catalogProductAttributeSetGroupRenameRequestParam317)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature for Asynchronous Invocations
      * Rename existing group
-     * @param catalogProductAttributeSetGroupRenameRequestParam315
+     * @param catalogProductAttributeSetGroupRenameRequestParam317
      */
     public void startcatalogProductAttributeSetGroupRename(
-            magento.CatalogProductAttributeSetGroupRenameRequestParam catalogProductAttributeSetGroupRenameRequestParam315,
-            final MagentoServiceCallbackHandler callback)
+        magento.CatalogProductAttributeSetGroupRenameRequestParam catalogProductAttributeSetGroupRenameRequestParam317,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature
      * Multi update product stock data
-     * @param catalogInventoryStockItemMultiUpdateRequestParam317
+     * @param catalogInventoryStockItemMultiUpdateRequestParam319
      */
     public magento.CatalogInventoryStockItemMultiUpdateResponseParam catalogInventoryStockItemMultiUpdate(
-            magento.CatalogInventoryStockItemMultiUpdateRequestParam catalogInventoryStockItemMultiUpdateRequestParam317)
+        magento.CatalogInventoryStockItemMultiUpdateRequestParam catalogInventoryStockItemMultiUpdateRequestParam319)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature for Asynchronous Invocations
      * Multi update product stock data
-     * @param catalogInventoryStockItemMultiUpdateRequestParam317
+     * @param catalogInventoryStockItemMultiUpdateRequestParam319
      */
     public void startcatalogInventoryStockItemMultiUpdate(
-            magento.CatalogInventoryStockItemMultiUpdateRequestParam catalogInventoryStockItemMultiUpdateRequestParam317,
-            final MagentoServiceCallbackHandler callback)
+        magento.CatalogInventoryStockItemMultiUpdateRequestParam catalogInventoryStockItemMultiUpdateRequestParam319,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature
      * Remove gift card account
-     * @param giftcardAccountRemoveRequestParam319
+     * @param giftcardAccountRemoveRequestParam321
      */
     public magento.GiftcardAccountRemoveResponseParam giftcardAccountRemove(
-            magento.GiftcardAccountRemoveRequestParam giftcardAccountRemoveRequestParam319)
+        magento.GiftcardAccountRemoveRequestParam giftcardAccountRemoveRequestParam321)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature for Asynchronous Invocations
      * Remove gift card account
-     * @param giftcardAccountRemoveRequestParam319
+     * @param giftcardAccountRemoveRequestParam321
      */
     public void startgiftcardAccountRemove(
-            magento.GiftcardAccountRemoveRequestParam giftcardAccountRemoveRequestParam319,
-            final MagentoServiceCallbackHandler callback)
+        magento.GiftcardAccountRemoveRequestParam giftcardAccountRemoveRequestParam321,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature
      * Add new comment to shipment
-     * @param salesOrderShipmentAddCommentRequestParam321
+     * @param salesOrderShipmentAddCommentRequestParam323
      */
     public magento.SalesOrderShipmentAddCommentResponseParam salesOrderShipmentAddComment(
-            magento.SalesOrderShipmentAddCommentRequestParam salesOrderShipmentAddCommentRequestParam321)
+        magento.SalesOrderShipmentAddCommentRequestParam salesOrderShipmentAddCommentRequestParam323)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature for Asynchronous Invocations
      * Add new comment to shipment
-     * @param salesOrderShipmentAddCommentRequestParam321
+     * @param salesOrderShipmentAddCommentRequestParam323
      */
     public void startsalesOrderShipmentAddComment(
-            magento.SalesOrderShipmentAddCommentRequestParam salesOrderShipmentAddCommentRequestParam321,
-            final MagentoServiceCallbackHandler callback)
+        magento.SalesOrderShipmentAddCommentRequestParam salesOrderShipmentAddCommentRequestParam323,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature
      * Create new shipment for order
-     * @param salesOrderShipmentCreateRequestParam323
+     * @param salesOrderShipmentCreateRequestParam325
      */
     public magento.SalesOrderShipmentCreateResponseParam salesOrderShipmentCreate(
-            magento.SalesOrderShipmentCreateRequestParam salesOrderShipmentCreateRequestParam323)
+        magento.SalesOrderShipmentCreateRequestParam salesOrderShipmentCreateRequestParam325)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature for Asynchronous Invocations
      * Create new shipment for order
-     * @param salesOrderShipmentCreateRequestParam323
+     * @param salesOrderShipmentCreateRequestParam325
      */
     public void startsalesOrderShipmentCreate(
-            magento.SalesOrderShipmentCreateRequestParam salesOrderShipmentCreateRequestParam323,
-            final MagentoServiceCallbackHandler callback)
+        magento.SalesOrderShipmentCreateRequestParam salesOrderShipmentCreateRequestParam325,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature
      * Retrieve list of creditmemos by filters
-     * @param salesOrderCreditmemoListRequestParam325
+     * @param salesOrderCreditmemoListRequestParam327
      */
     public magento.SalesOrderCreditmemoListResponseParam salesOrderCreditmemoList(
-            magento.SalesOrderCreditmemoListRequestParam salesOrderCreditmemoListRequestParam325)
+        magento.SalesOrderCreditmemoListRequestParam salesOrderCreditmemoListRequestParam327)
         throws java.rmi.RemoteException;
 
     /**
      * Auto generated method signature for Asynchronous Invocations
      * Retrieve list of creditmemos by filters
-     * @param salesOrderCreditmemoListRequestParam325
+     * @param salesOrderCreditmemoListRequestParam327
      */
     public void startsalesOrderCreditmemoList(
-            magento.SalesOrderCreditmemoListRequestParam salesOrderCreditmemoListRequestParam325,
-            final MagentoServiceCallbackHandler callback)
+        magento.SalesOrderCreditmemoListRequestParam salesOrderCreditmemoListRequestParam327,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException;
 
     //

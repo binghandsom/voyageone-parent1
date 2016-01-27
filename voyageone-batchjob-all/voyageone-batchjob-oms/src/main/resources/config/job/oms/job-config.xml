@@ -336,6 +336,12 @@
 
 				<!-- WMF准备取消订单推送 -->
 				<ref bean="postWMFPendingCancelOrderJobTaskContri" />
+
+				<!-- WMF新订单推送 -->
+				<ref bean="postWMFNewOrderTaskContri" />
+
+				<!-- WMF对已推送订单更新菜鸟号 -->
+				<ref bean="postWMFNewOrderTrackingNoTaskContri" />
 			
 			</list>
 		</property>

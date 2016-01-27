@@ -23,7 +23,7 @@ public class ShoppingCartPaymentMethodEntity implements org.apache.axis2.databin
     /**
      * field for Po_number
      */
-    protected String localPo_number;
+    protected java.lang.String localPo_number;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -34,7 +34,7 @@ public class ShoppingCartPaymentMethodEntity implements org.apache.axis2.databin
     /**
      * field for Method
      */
-    protected String localMethod;
+    protected java.lang.String localMethod;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -45,7 +45,7 @@ public class ShoppingCartPaymentMethodEntity implements org.apache.axis2.databin
     /**
      * field for Cc_cid
      */
-    protected String localCc_cid;
+    protected java.lang.String localCc_cid;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -56,7 +56,7 @@ public class ShoppingCartPaymentMethodEntity implements org.apache.axis2.databin
     /**
      * field for Cc_owner
      */
-    protected String localCc_owner;
+    protected java.lang.String localCc_owner;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -67,7 +67,7 @@ public class ShoppingCartPaymentMethodEntity implements org.apache.axis2.databin
     /**
      * field for Cc_number
      */
-    protected String localCc_number;
+    protected java.lang.String localCc_number;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -78,7 +78,7 @@ public class ShoppingCartPaymentMethodEntity implements org.apache.axis2.databin
     /**
      * field for Cc_type
      */
-    protected String localCc_type;
+    protected java.lang.String localCc_type;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -89,7 +89,7 @@ public class ShoppingCartPaymentMethodEntity implements org.apache.axis2.databin
     /**
      * field for Cc_exp_year
      */
-    protected String localCc_exp_year;
+    protected java.lang.String localCc_exp_year;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -100,7 +100,7 @@ public class ShoppingCartPaymentMethodEntity implements org.apache.axis2.databin
     /**
      * field for Cc_exp_month
      */
-    protected String localCc_exp_month;
+    protected java.lang.String localCc_exp_month;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -116,7 +116,7 @@ public class ShoppingCartPaymentMethodEntity implements org.apache.axis2.databin
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getPo_number() {
+    public java.lang.String getPo_number() {
         return localPo_number;
     }
 
@@ -124,7 +124,7 @@ public class ShoppingCartPaymentMethodEntity implements org.apache.axis2.databin
      * Auto generated setter method
      * @param param Po_number
      */
-    public void setPo_number(String param) {
+    public void setPo_number(java.lang.String param) {
         localPo_numberTracker = param != null;
 
         this.localPo_number = param;
@@ -138,7 +138,7 @@ public class ShoppingCartPaymentMethodEntity implements org.apache.axis2.databin
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getMethod() {
+    public java.lang.String getMethod() {
         return localMethod;
     }
 
@@ -146,7 +146,7 @@ public class ShoppingCartPaymentMethodEntity implements org.apache.axis2.databin
      * Auto generated setter method
      * @param param Method
      */
-    public void setMethod(String param) {
+    public void setMethod(java.lang.String param) {
         localMethodTracker = param != null;
 
         this.localMethod = param;
@@ -160,7 +160,7 @@ public class ShoppingCartPaymentMethodEntity implements org.apache.axis2.databin
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getCc_cid() {
+    public java.lang.String getCc_cid() {
         return localCc_cid;
     }
 
@@ -168,7 +168,7 @@ public class ShoppingCartPaymentMethodEntity implements org.apache.axis2.databin
      * Auto generated setter method
      * @param param Cc_cid
      */
-    public void setCc_cid(String param) {
+    public void setCc_cid(java.lang.String param) {
         localCc_cidTracker = param != null;
 
         this.localCc_cid = param;
@@ -182,7 +182,7 @@ public class ShoppingCartPaymentMethodEntity implements org.apache.axis2.databin
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getCc_owner() {
+    public java.lang.String getCc_owner() {
         return localCc_owner;
     }
 
@@ -190,7 +190,7 @@ public class ShoppingCartPaymentMethodEntity implements org.apache.axis2.databin
      * Auto generated setter method
      * @param param Cc_owner
      */
-    public void setCc_owner(String param) {
+    public void setCc_owner(java.lang.String param) {
         localCc_ownerTracker = param != null;
 
         this.localCc_owner = param;
@@ -204,7 +204,7 @@ public class ShoppingCartPaymentMethodEntity implements org.apache.axis2.databin
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getCc_number() {
+    public java.lang.String getCc_number() {
         return localCc_number;
     }
 
@@ -212,7 +212,7 @@ public class ShoppingCartPaymentMethodEntity implements org.apache.axis2.databin
      * Auto generated setter method
      * @param param Cc_number
      */
-    public void setCc_number(String param) {
+    public void setCc_number(java.lang.String param) {
         localCc_numberTracker = param != null;
 
         this.localCc_number = param;
@@ -226,7 +226,7 @@ public class ShoppingCartPaymentMethodEntity implements org.apache.axis2.databin
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getCc_type() {
+    public java.lang.String getCc_type() {
         return localCc_type;
     }
 
@@ -234,7 +234,7 @@ public class ShoppingCartPaymentMethodEntity implements org.apache.axis2.databin
      * Auto generated setter method
      * @param param Cc_type
      */
-    public void setCc_type(String param) {
+    public void setCc_type(java.lang.String param) {
         localCc_typeTracker = param != null;
 
         this.localCc_type = param;
@@ -248,7 +248,7 @@ public class ShoppingCartPaymentMethodEntity implements org.apache.axis2.databin
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getCc_exp_year() {
+    public java.lang.String getCc_exp_year() {
         return localCc_exp_year;
     }
 
@@ -256,7 +256,7 @@ public class ShoppingCartPaymentMethodEntity implements org.apache.axis2.databin
      * Auto generated setter method
      * @param param Cc_exp_year
      */
-    public void setCc_exp_year(String param) {
+    public void setCc_exp_year(java.lang.String param) {
         localCc_exp_yearTracker = param != null;
 
         this.localCc_exp_year = param;
@@ -270,7 +270,7 @@ public class ShoppingCartPaymentMethodEntity implements org.apache.axis2.databin
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getCc_exp_month() {
+    public java.lang.String getCc_exp_month() {
         return localCc_exp_month;
     }
 
@@ -278,7 +278,7 @@ public class ShoppingCartPaymentMethodEntity implements org.apache.axis2.databin
      * Auto generated setter method
      * @param param Cc_exp_month
      */
-    public void setCc_exp_month(String param) {
+    public void setCc_exp_month(java.lang.String param) {
         localCc_exp_monthTracker = param != null;
 
         this.localCc_exp_month = param;
@@ -311,8 +311,8 @@ public class ShoppingCartPaymentMethodEntity implements org.apache.axis2.databin
         javax.xml.stream.XMLStreamWriter xmlWriter, boolean serializeType)
         throws javax.xml.stream.XMLStreamException,
             org.apache.axis2.databinding.ADBException {
-        String prefix = null;
-        String namespace = null;
+        java.lang.String prefix = null;
+        java.lang.String namespace = null;
 
         prefix = parentQName.getPrefix();
         namespace = parentQName.getNamespaceURI();
@@ -320,7 +320,7 @@ public class ShoppingCartPaymentMethodEntity implements org.apache.axis2.databin
             xmlWriter);
 
         if (serializeType) {
-            String namespacePrefix = registerPrefix(xmlWriter,
+            java.lang.String namespacePrefix = registerPrefix(xmlWriter,
                     "urn:Magento");
 
             if ((namespacePrefix != null) &&
@@ -459,7 +459,7 @@ public class ShoppingCartPaymentMethodEntity implements org.apache.axis2.databin
         xmlWriter.writeEndElement();
     }
 
-    private static String generatePrefix(String namespace) {
+    private static java.lang.String generatePrefix(java.lang.String namespace) {
         if (namespace.equals("urn:Magento")) {
             return "ns1";
         }
@@ -470,11 +470,11 @@ public class ShoppingCartPaymentMethodEntity implements org.apache.axis2.databin
     /**
      * Utility method to write an element start tag.
      */
-    private void writeStartElement(String prefix,
-        String namespace, String localPart,
+    private void writeStartElement(java.lang.String prefix,
+        java.lang.String namespace, java.lang.String localPart,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
-        String writerPrefix = xmlWriter.getPrefix(namespace);
+        java.lang.String writerPrefix = xmlWriter.getPrefix(namespace);
 
         if (writerPrefix != null) {
             xmlWriter.writeStartElement(namespace, localPart);
@@ -494,9 +494,9 @@ public class ShoppingCartPaymentMethodEntity implements org.apache.axis2.databin
     /**
      * Util method to write an attribute with the ns prefix
      */
-    private void writeAttribute(String prefix,
-        String namespace, String attName,
-        String attValue, javax.xml.stream.XMLStreamWriter xmlWriter)
+    private void writeAttribute(java.lang.String prefix,
+        java.lang.String namespace, java.lang.String attName,
+        java.lang.String attValue, javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
         if (xmlWriter.getPrefix(namespace) == null) {
             xmlWriter.writeNamespace(prefix, namespace);
@@ -509,8 +509,8 @@ public class ShoppingCartPaymentMethodEntity implements org.apache.axis2.databin
     /**
      * Util method to write an attribute without the ns prefix
      */
-    private void writeAttribute(String namespace,
-        String attName, String attValue,
+    private void writeAttribute(java.lang.String namespace,
+        java.lang.String attName, java.lang.String attValue,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
         if (namespace.equals("")) {
@@ -524,18 +524,18 @@ public class ShoppingCartPaymentMethodEntity implements org.apache.axis2.databin
     /**
      * Util method to write an attribute without the ns prefix
      */
-    private void writeQNameAttribute(String namespace,
-        String attName, javax.xml.namespace.QName qname,
+    private void writeQNameAttribute(java.lang.String namespace,
+        java.lang.String attName, javax.xml.namespace.QName qname,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
-        String attributeNamespace = qname.getNamespaceURI();
-        String attributePrefix = xmlWriter.getPrefix(attributeNamespace);
+        java.lang.String attributeNamespace = qname.getNamespaceURI();
+        java.lang.String attributePrefix = xmlWriter.getPrefix(attributeNamespace);
 
         if (attributePrefix == null) {
             attributePrefix = registerPrefix(xmlWriter, attributeNamespace);
         }
 
-        String attributeValue;
+        java.lang.String attributeValue;
 
         if (attributePrefix.trim().length() > 0) {
             attributeValue = attributePrefix + ":" + qname.getLocalPart();
@@ -557,10 +557,10 @@ public class ShoppingCartPaymentMethodEntity implements org.apache.axis2.databin
     private void writeQName(javax.xml.namespace.QName qname,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
-        String namespaceURI = qname.getNamespaceURI();
+        java.lang.String namespaceURI = qname.getNamespaceURI();
 
         if (namespaceURI != null) {
-            String prefix = xmlWriter.getPrefix(namespaceURI);
+            java.lang.String prefix = xmlWriter.getPrefix(namespaceURI);
 
             if (prefix == null) {
                 prefix = generatePrefix(namespaceURI);
@@ -589,9 +589,9 @@ public class ShoppingCartPaymentMethodEntity implements org.apache.axis2.databin
         if (qnames != null) {
             // we have to store this data until last moment since it is not possible to write any
             // namespace data after writing the charactor data
-            StringBuffer stringToWrite = new StringBuffer();
-            String namespaceURI = null;
-            String prefix = null;
+            java.lang.StringBuffer stringToWrite = new java.lang.StringBuffer();
+            java.lang.String namespaceURI = null;
+            java.lang.String prefix = null;
 
             for (int i = 0; i < qnames.length; i++) {
                 if (i > 0) {
@@ -630,10 +630,10 @@ public class ShoppingCartPaymentMethodEntity implements org.apache.axis2.databin
     /**
      * Register a namespace prefix
      */
-    private String registerPrefix(
-        javax.xml.stream.XMLStreamWriter xmlWriter, String namespace)
+    private java.lang.String registerPrefix(
+        javax.xml.stream.XMLStreamWriter xmlWriter, java.lang.String namespace)
         throws javax.xml.stream.XMLStreamException {
-        String prefix = xmlWriter.getPrefix(namespace);
+        java.lang.String prefix = xmlWriter.getPrefix(namespace);
 
         if (prefix == null) {
             prefix = generatePrefix(namespace);
@@ -641,7 +641,7 @@ public class ShoppingCartPaymentMethodEntity implements org.apache.axis2.databin
             javax.xml.namespace.NamespaceContext nsContext = xmlWriter.getNamespaceContext();
 
             while (true) {
-                String uri = nsContext.getNamespaceURI(prefix);
+                java.lang.String uri = nsContext.getNamespaceURI(prefix);
 
                 if ((uri == null) || (uri.length() == 0)) {
                     break;
@@ -779,13 +779,13 @@ public class ShoppingCartPaymentMethodEntity implements org.apache.axis2.databin
          *                If this object is a complex type, the reader is positioned at the end element of its outer element
          */
         public static ShoppingCartPaymentMethodEntity parse(
-            javax.xml.stream.XMLStreamReader reader) throws Exception {
+            javax.xml.stream.XMLStreamReader reader) throws java.lang.Exception {
             ShoppingCartPaymentMethodEntity object = new ShoppingCartPaymentMethodEntity();
 
             int event;
-            String nillableValue = null;
-            String prefix = "";
-            String namespaceuri = "";
+            java.lang.String nillableValue = null;
+            java.lang.String prefix = "";
+            java.lang.String namespaceuri = "";
 
             try {
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -793,11 +793,11 @@ public class ShoppingCartPaymentMethodEntity implements org.apache.axis2.databin
 
                 if (reader.getAttributeValue(
                             "http://www.w3.org/2001/XMLSchema-instance", "type") != null) {
-                    String fullTypeName = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance",
+                    java.lang.String fullTypeName = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance",
                             "type");
 
                     if (fullTypeName != null) {
-                        String nsPrefix = null;
+                        java.lang.String nsPrefix = null;
 
                         if (fullTypeName.indexOf(":") > -1) {
                             nsPrefix = fullTypeName.substring(0,
@@ -806,12 +806,12 @@ public class ShoppingCartPaymentMethodEntity implements org.apache.axis2.databin
 
                         nsPrefix = (nsPrefix == null) ? "" : nsPrefix;
 
-                        String type = fullTypeName.substring(fullTypeName.indexOf(
+                        java.lang.String type = fullTypeName.substring(fullTypeName.indexOf(
                                     ":") + 1);
 
                         if (!"shoppingCartPaymentMethodEntity".equals(type)) {
                             //find namespace for the prefix
-                            String nsUri = reader.getNamespaceContext()
+                            java.lang.String nsUri = reader.getNamespaceContext()
                                                            .getNamespaceURI(nsPrefix);
 
                             return (ShoppingCartPaymentMethodEntity) magento.ExtensionMapper.getTypeObject(nsUri,
@@ -841,7 +841,7 @@ public class ShoppingCartPaymentMethodEntity implements org.apache.axis2.databin
                             "The element: " + "po_number" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setPo_number(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -867,7 +867,7 @@ public class ShoppingCartPaymentMethodEntity implements org.apache.axis2.databin
                             "The element: " + "method" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setMethod(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -893,7 +893,7 @@ public class ShoppingCartPaymentMethodEntity implements org.apache.axis2.databin
                             "The element: " + "cc_cid" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setCc_cid(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -919,7 +919,7 @@ public class ShoppingCartPaymentMethodEntity implements org.apache.axis2.databin
                             "The element: " + "cc_owner" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setCc_owner(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -945,7 +945,7 @@ public class ShoppingCartPaymentMethodEntity implements org.apache.axis2.databin
                             "The element: " + "cc_number" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setCc_number(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -971,7 +971,7 @@ public class ShoppingCartPaymentMethodEntity implements org.apache.axis2.databin
                             "The element: " + "cc_type" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setCc_type(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -998,7 +998,7 @@ public class ShoppingCartPaymentMethodEntity implements org.apache.axis2.databin
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setCc_exp_year(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1025,7 +1025,7 @@ public class ShoppingCartPaymentMethodEntity implements org.apache.axis2.databin
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setCc_exp_month(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1045,7 +1045,7 @@ public class ShoppingCartPaymentMethodEntity implements org.apache.axis2.databin
                         "Unexpected subelement " + reader.getName());
                 }
             } catch (javax.xml.stream.XMLStreamException e) {
-                throw new Exception(e);
+                throw new java.lang.Exception(e);
             }
 
             return object;

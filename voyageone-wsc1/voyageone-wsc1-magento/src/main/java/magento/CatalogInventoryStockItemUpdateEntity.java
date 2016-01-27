@@ -23,7 +23,7 @@ public class CatalogInventoryStockItemUpdateEntity implements org.apache.axis2.d
     /**
      * field for Qty
      */
-    protected String localQty;
+    protected java.lang.String localQty;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -193,7 +193,7 @@ public class CatalogInventoryStockItemUpdateEntity implements org.apache.axis2.d
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getQty() {
+    public java.lang.String getQty() {
         return localQty;
     }
 
@@ -201,7 +201,7 @@ public class CatalogInventoryStockItemUpdateEntity implements org.apache.axis2.d
      * Auto generated setter method
      * @param param Qty
      */
-    public void setQty(String param) {
+    public void setQty(java.lang.String param) {
         localQtyTracker = param != null;
 
         this.localQty = param;
@@ -225,7 +225,7 @@ public class CatalogInventoryStockItemUpdateEntity implements org.apache.axis2.d
      */
     public void setIs_in_stock(int param) {
         // setting primitive attribute tracker to true
-        localIs_in_stockTracker = param != Integer.MIN_VALUE;
+        localIs_in_stockTracker = param != java.lang.Integer.MIN_VALUE;
 
         this.localIs_in_stock = param;
     }
@@ -248,7 +248,7 @@ public class CatalogInventoryStockItemUpdateEntity implements org.apache.axis2.d
      */
     public void setManage_stock(int param) {
         // setting primitive attribute tracker to true
-        localManage_stockTracker = param != Integer.MIN_VALUE;
+        localManage_stockTracker = param != java.lang.Integer.MIN_VALUE;
 
         this.localManage_stock = param;
     }
@@ -271,7 +271,7 @@ public class CatalogInventoryStockItemUpdateEntity implements org.apache.axis2.d
      */
     public void setUse_config_manage_stock(int param) {
         // setting primitive attribute tracker to true
-        localUse_config_manage_stockTracker = param != Integer.MIN_VALUE;
+        localUse_config_manage_stockTracker = param != java.lang.Integer.MIN_VALUE;
 
         this.localUse_config_manage_stock = param;
     }
@@ -294,7 +294,7 @@ public class CatalogInventoryStockItemUpdateEntity implements org.apache.axis2.d
      */
     public void setMin_qty(int param) {
         // setting primitive attribute tracker to true
-        localMin_qtyTracker = param != Integer.MIN_VALUE;
+        localMin_qtyTracker = param != java.lang.Integer.MIN_VALUE;
 
         this.localMin_qty = param;
     }
@@ -317,7 +317,7 @@ public class CatalogInventoryStockItemUpdateEntity implements org.apache.axis2.d
      */
     public void setUse_config_min_qty(int param) {
         // setting primitive attribute tracker to true
-        localUse_config_min_qtyTracker = param != Integer.MIN_VALUE;
+        localUse_config_min_qtyTracker = param != java.lang.Integer.MIN_VALUE;
 
         this.localUse_config_min_qty = param;
     }
@@ -340,7 +340,7 @@ public class CatalogInventoryStockItemUpdateEntity implements org.apache.axis2.d
      */
     public void setMin_sale_qty(int param) {
         // setting primitive attribute tracker to true
-        localMin_sale_qtyTracker = param != Integer.MIN_VALUE;
+        localMin_sale_qtyTracker = param != java.lang.Integer.MIN_VALUE;
 
         this.localMin_sale_qty = param;
     }
@@ -363,7 +363,7 @@ public class CatalogInventoryStockItemUpdateEntity implements org.apache.axis2.d
      */
     public void setUse_config_min_sale_qty(int param) {
         // setting primitive attribute tracker to true
-        localUse_config_min_sale_qtyTracker = param != Integer.MIN_VALUE;
+        localUse_config_min_sale_qtyTracker = param != java.lang.Integer.MIN_VALUE;
 
         this.localUse_config_min_sale_qty = param;
     }
@@ -386,7 +386,7 @@ public class CatalogInventoryStockItemUpdateEntity implements org.apache.axis2.d
      */
     public void setMax_sale_qty(int param) {
         // setting primitive attribute tracker to true
-        localMax_sale_qtyTracker = param != Integer.MIN_VALUE;
+        localMax_sale_qtyTracker = param != java.lang.Integer.MIN_VALUE;
 
         this.localMax_sale_qty = param;
     }
@@ -409,7 +409,7 @@ public class CatalogInventoryStockItemUpdateEntity implements org.apache.axis2.d
      */
     public void setUse_config_max_sale_qty(int param) {
         // setting primitive attribute tracker to true
-        localUse_config_max_sale_qtyTracker = param != Integer.MIN_VALUE;
+        localUse_config_max_sale_qtyTracker = param != java.lang.Integer.MIN_VALUE;
 
         this.localUse_config_max_sale_qty = param;
     }
@@ -432,7 +432,7 @@ public class CatalogInventoryStockItemUpdateEntity implements org.apache.axis2.d
      */
     public void setIs_qty_decimal(int param) {
         // setting primitive attribute tracker to true
-        localIs_qty_decimalTracker = param != Integer.MIN_VALUE;
+        localIs_qty_decimalTracker = param != java.lang.Integer.MIN_VALUE;
 
         this.localIs_qty_decimal = param;
     }
@@ -455,7 +455,7 @@ public class CatalogInventoryStockItemUpdateEntity implements org.apache.axis2.d
      */
     public void setBackorders(int param) {
         // setting primitive attribute tracker to true
-        localBackordersTracker = param != Integer.MIN_VALUE;
+        localBackordersTracker = param != java.lang.Integer.MIN_VALUE;
 
         this.localBackorders = param;
     }
@@ -478,7 +478,7 @@ public class CatalogInventoryStockItemUpdateEntity implements org.apache.axis2.d
      */
     public void setUse_config_backorders(int param) {
         // setting primitive attribute tracker to true
-        localUse_config_backordersTracker = param != Integer.MIN_VALUE;
+        localUse_config_backordersTracker = param != java.lang.Integer.MIN_VALUE;
 
         this.localUse_config_backorders = param;
     }
@@ -501,7 +501,7 @@ public class CatalogInventoryStockItemUpdateEntity implements org.apache.axis2.d
      */
     public void setNotify_stock_qty(int param) {
         // setting primitive attribute tracker to true
-        localNotify_stock_qtyTracker = param != Integer.MIN_VALUE;
+        localNotify_stock_qtyTracker = param != java.lang.Integer.MIN_VALUE;
 
         this.localNotify_stock_qty = param;
     }
@@ -524,7 +524,7 @@ public class CatalogInventoryStockItemUpdateEntity implements org.apache.axis2.d
      */
     public void setUse_config_notify_stock_qty(int param) {
         // setting primitive attribute tracker to true
-        localUse_config_notify_stock_qtyTracker = param != Integer.MIN_VALUE;
+        localUse_config_notify_stock_qtyTracker = param != java.lang.Integer.MIN_VALUE;
 
         this.localUse_config_notify_stock_qty = param;
     }
@@ -556,8 +556,8 @@ public class CatalogInventoryStockItemUpdateEntity implements org.apache.axis2.d
         javax.xml.stream.XMLStreamWriter xmlWriter, boolean serializeType)
         throws javax.xml.stream.XMLStreamException,
             org.apache.axis2.databinding.ADBException {
-        String prefix = null;
-        String namespace = null;
+        java.lang.String prefix = null;
+        java.lang.String namespace = null;
 
         prefix = parentQName.getPrefix();
         namespace = parentQName.getNamespaceURI();
@@ -565,7 +565,7 @@ public class CatalogInventoryStockItemUpdateEntity implements org.apache.axis2.d
             xmlWriter);
 
         if (serializeType) {
-            String namespacePrefix = registerPrefix(xmlWriter,
+            java.lang.String namespacePrefix = registerPrefix(xmlWriter,
                     "urn:Magento");
 
             if ((namespacePrefix != null) &&
@@ -600,7 +600,7 @@ public class CatalogInventoryStockItemUpdateEntity implements org.apache.axis2.d
             namespace = "";
             writeStartElement(null, namespace, "is_in_stock", xmlWriter);
 
-            if (localIs_in_stock == Integer.MIN_VALUE) {
+            if (localIs_in_stock == java.lang.Integer.MIN_VALUE) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "is_in_stock cannot be null!!");
             } else {
@@ -615,7 +615,7 @@ public class CatalogInventoryStockItemUpdateEntity implements org.apache.axis2.d
             namespace = "";
             writeStartElement(null, namespace, "manage_stock", xmlWriter);
 
-            if (localManage_stock == Integer.MIN_VALUE) {
+            if (localManage_stock == java.lang.Integer.MIN_VALUE) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "manage_stock cannot be null!!");
             } else {
@@ -631,7 +631,7 @@ public class CatalogInventoryStockItemUpdateEntity implements org.apache.axis2.d
             writeStartElement(null, namespace, "use_config_manage_stock",
                 xmlWriter);
 
-            if (localUse_config_manage_stock == Integer.MIN_VALUE) {
+            if (localUse_config_manage_stock == java.lang.Integer.MIN_VALUE) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "use_config_manage_stock cannot be null!!");
             } else {
@@ -646,7 +646,7 @@ public class CatalogInventoryStockItemUpdateEntity implements org.apache.axis2.d
             namespace = "";
             writeStartElement(null, namespace, "min_qty", xmlWriter);
 
-            if (localMin_qty == Integer.MIN_VALUE) {
+            if (localMin_qty == java.lang.Integer.MIN_VALUE) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "min_qty cannot be null!!");
             } else {
@@ -661,7 +661,7 @@ public class CatalogInventoryStockItemUpdateEntity implements org.apache.axis2.d
             namespace = "";
             writeStartElement(null, namespace, "use_config_min_qty", xmlWriter);
 
-            if (localUse_config_min_qty == Integer.MIN_VALUE) {
+            if (localUse_config_min_qty == java.lang.Integer.MIN_VALUE) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "use_config_min_qty cannot be null!!");
             } else {
@@ -676,7 +676,7 @@ public class CatalogInventoryStockItemUpdateEntity implements org.apache.axis2.d
             namespace = "";
             writeStartElement(null, namespace, "min_sale_qty", xmlWriter);
 
-            if (localMin_sale_qty == Integer.MIN_VALUE) {
+            if (localMin_sale_qty == java.lang.Integer.MIN_VALUE) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "min_sale_qty cannot be null!!");
             } else {
@@ -692,7 +692,7 @@ public class CatalogInventoryStockItemUpdateEntity implements org.apache.axis2.d
             writeStartElement(null, namespace, "use_config_min_sale_qty",
                 xmlWriter);
 
-            if (localUse_config_min_sale_qty == Integer.MIN_VALUE) {
+            if (localUse_config_min_sale_qty == java.lang.Integer.MIN_VALUE) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "use_config_min_sale_qty cannot be null!!");
             } else {
@@ -707,7 +707,7 @@ public class CatalogInventoryStockItemUpdateEntity implements org.apache.axis2.d
             namespace = "";
             writeStartElement(null, namespace, "max_sale_qty", xmlWriter);
 
-            if (localMax_sale_qty == Integer.MIN_VALUE) {
+            if (localMax_sale_qty == java.lang.Integer.MIN_VALUE) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "max_sale_qty cannot be null!!");
             } else {
@@ -723,7 +723,7 @@ public class CatalogInventoryStockItemUpdateEntity implements org.apache.axis2.d
             writeStartElement(null, namespace, "use_config_max_sale_qty",
                 xmlWriter);
 
-            if (localUse_config_max_sale_qty == Integer.MIN_VALUE) {
+            if (localUse_config_max_sale_qty == java.lang.Integer.MIN_VALUE) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "use_config_max_sale_qty cannot be null!!");
             } else {
@@ -738,7 +738,7 @@ public class CatalogInventoryStockItemUpdateEntity implements org.apache.axis2.d
             namespace = "";
             writeStartElement(null, namespace, "is_qty_decimal", xmlWriter);
 
-            if (localIs_qty_decimal == Integer.MIN_VALUE) {
+            if (localIs_qty_decimal == java.lang.Integer.MIN_VALUE) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "is_qty_decimal cannot be null!!");
             } else {
@@ -753,7 +753,7 @@ public class CatalogInventoryStockItemUpdateEntity implements org.apache.axis2.d
             namespace = "";
             writeStartElement(null, namespace, "backorders", xmlWriter);
 
-            if (localBackorders == Integer.MIN_VALUE) {
+            if (localBackorders == java.lang.Integer.MIN_VALUE) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "backorders cannot be null!!");
             } else {
@@ -769,7 +769,7 @@ public class CatalogInventoryStockItemUpdateEntity implements org.apache.axis2.d
             writeStartElement(null, namespace, "use_config_backorders",
                 xmlWriter);
 
-            if (localUse_config_backorders == Integer.MIN_VALUE) {
+            if (localUse_config_backorders == java.lang.Integer.MIN_VALUE) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "use_config_backorders cannot be null!!");
             } else {
@@ -784,7 +784,7 @@ public class CatalogInventoryStockItemUpdateEntity implements org.apache.axis2.d
             namespace = "";
             writeStartElement(null, namespace, "notify_stock_qty", xmlWriter);
 
-            if (localNotify_stock_qty == Integer.MIN_VALUE) {
+            if (localNotify_stock_qty == java.lang.Integer.MIN_VALUE) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "notify_stock_qty cannot be null!!");
             } else {
@@ -800,7 +800,7 @@ public class CatalogInventoryStockItemUpdateEntity implements org.apache.axis2.d
             writeStartElement(null, namespace, "use_config_notify_stock_qty",
                 xmlWriter);
 
-            if (localUse_config_notify_stock_qty == Integer.MIN_VALUE) {
+            if (localUse_config_notify_stock_qty == java.lang.Integer.MIN_VALUE) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "use_config_notify_stock_qty cannot be null!!");
             } else {
@@ -814,7 +814,7 @@ public class CatalogInventoryStockItemUpdateEntity implements org.apache.axis2.d
         xmlWriter.writeEndElement();
     }
 
-    private static String generatePrefix(String namespace) {
+    private static java.lang.String generatePrefix(java.lang.String namespace) {
         if (namespace.equals("urn:Magento")) {
             return "ns1";
         }
@@ -825,11 +825,11 @@ public class CatalogInventoryStockItemUpdateEntity implements org.apache.axis2.d
     /**
      * Utility method to write an element start tag.
      */
-    private void writeStartElement(String prefix,
-        String namespace, String localPart,
+    private void writeStartElement(java.lang.String prefix,
+        java.lang.String namespace, java.lang.String localPart,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
-        String writerPrefix = xmlWriter.getPrefix(namespace);
+        java.lang.String writerPrefix = xmlWriter.getPrefix(namespace);
 
         if (writerPrefix != null) {
             xmlWriter.writeStartElement(namespace, localPart);
@@ -849,9 +849,9 @@ public class CatalogInventoryStockItemUpdateEntity implements org.apache.axis2.d
     /**
      * Util method to write an attribute with the ns prefix
      */
-    private void writeAttribute(String prefix,
-        String namespace, String attName,
-        String attValue, javax.xml.stream.XMLStreamWriter xmlWriter)
+    private void writeAttribute(java.lang.String prefix,
+        java.lang.String namespace, java.lang.String attName,
+        java.lang.String attValue, javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
         if (xmlWriter.getPrefix(namespace) == null) {
             xmlWriter.writeNamespace(prefix, namespace);
@@ -864,8 +864,8 @@ public class CatalogInventoryStockItemUpdateEntity implements org.apache.axis2.d
     /**
      * Util method to write an attribute without the ns prefix
      */
-    private void writeAttribute(String namespace,
-        String attName, String attValue,
+    private void writeAttribute(java.lang.String namespace,
+        java.lang.String attName, java.lang.String attValue,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
         if (namespace.equals("")) {
@@ -879,18 +879,18 @@ public class CatalogInventoryStockItemUpdateEntity implements org.apache.axis2.d
     /**
      * Util method to write an attribute without the ns prefix
      */
-    private void writeQNameAttribute(String namespace,
-        String attName, javax.xml.namespace.QName qname,
+    private void writeQNameAttribute(java.lang.String namespace,
+        java.lang.String attName, javax.xml.namespace.QName qname,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
-        String attributeNamespace = qname.getNamespaceURI();
-        String attributePrefix = xmlWriter.getPrefix(attributeNamespace);
+        java.lang.String attributeNamespace = qname.getNamespaceURI();
+        java.lang.String attributePrefix = xmlWriter.getPrefix(attributeNamespace);
 
         if (attributePrefix == null) {
             attributePrefix = registerPrefix(xmlWriter, attributeNamespace);
         }
 
-        String attributeValue;
+        java.lang.String attributeValue;
 
         if (attributePrefix.trim().length() > 0) {
             attributeValue = attributePrefix + ":" + qname.getLocalPart();
@@ -912,10 +912,10 @@ public class CatalogInventoryStockItemUpdateEntity implements org.apache.axis2.d
     private void writeQName(javax.xml.namespace.QName qname,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
-        String namespaceURI = qname.getNamespaceURI();
+        java.lang.String namespaceURI = qname.getNamespaceURI();
 
         if (namespaceURI != null) {
-            String prefix = xmlWriter.getPrefix(namespaceURI);
+            java.lang.String prefix = xmlWriter.getPrefix(namespaceURI);
 
             if (prefix == null) {
                 prefix = generatePrefix(namespaceURI);
@@ -944,9 +944,9 @@ public class CatalogInventoryStockItemUpdateEntity implements org.apache.axis2.d
         if (qnames != null) {
             // we have to store this data until last moment since it is not possible to write any
             // namespace data after writing the charactor data
-            StringBuffer stringToWrite = new StringBuffer();
-            String namespaceURI = null;
-            String prefix = null;
+            java.lang.StringBuffer stringToWrite = new java.lang.StringBuffer();
+            java.lang.String namespaceURI = null;
+            java.lang.String prefix = null;
 
             for (int i = 0; i < qnames.length; i++) {
                 if (i > 0) {
@@ -985,10 +985,10 @@ public class CatalogInventoryStockItemUpdateEntity implements org.apache.axis2.d
     /**
      * Register a namespace prefix
      */
-    private String registerPrefix(
-        javax.xml.stream.XMLStreamWriter xmlWriter, String namespace)
+    private java.lang.String registerPrefix(
+        javax.xml.stream.XMLStreamWriter xmlWriter, java.lang.String namespace)
         throws javax.xml.stream.XMLStreamException {
-        String prefix = xmlWriter.getPrefix(namespace);
+        java.lang.String prefix = xmlWriter.getPrefix(namespace);
 
         if (prefix == null) {
             prefix = generatePrefix(namespace);
@@ -996,7 +996,7 @@ public class CatalogInventoryStockItemUpdateEntity implements org.apache.axis2.d
             javax.xml.namespace.NamespaceContext nsContext = xmlWriter.getNamespaceContext();
 
             while (true) {
-                String uri = nsContext.getNamespaceURI(prefix);
+                java.lang.String uri = nsContext.getNamespaceURI(prefix);
 
                 if ((uri == null) || (uri.length() == 0)) {
                     break;
@@ -1154,13 +1154,13 @@ public class CatalogInventoryStockItemUpdateEntity implements org.apache.axis2.d
          *                If this object is a complex type, the reader is positioned at the end element of its outer element
          */
         public static CatalogInventoryStockItemUpdateEntity parse(
-            javax.xml.stream.XMLStreamReader reader) throws Exception {
+            javax.xml.stream.XMLStreamReader reader) throws java.lang.Exception {
             CatalogInventoryStockItemUpdateEntity object = new CatalogInventoryStockItemUpdateEntity();
 
             int event;
-            String nillableValue = null;
-            String prefix = "";
-            String namespaceuri = "";
+            java.lang.String nillableValue = null;
+            java.lang.String prefix = "";
+            java.lang.String namespaceuri = "";
 
             try {
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -1168,11 +1168,11 @@ public class CatalogInventoryStockItemUpdateEntity implements org.apache.axis2.d
 
                 if (reader.getAttributeValue(
                             "http://www.w3.org/2001/XMLSchema-instance", "type") != null) {
-                    String fullTypeName = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance",
+                    java.lang.String fullTypeName = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance",
                             "type");
 
                     if (fullTypeName != null) {
-                        String nsPrefix = null;
+                        java.lang.String nsPrefix = null;
 
                         if (fullTypeName.indexOf(":") > -1) {
                             nsPrefix = fullTypeName.substring(0,
@@ -1181,13 +1181,13 @@ public class CatalogInventoryStockItemUpdateEntity implements org.apache.axis2.d
 
                         nsPrefix = (nsPrefix == null) ? "" : nsPrefix;
 
-                        String type = fullTypeName.substring(fullTypeName.indexOf(
+                        java.lang.String type = fullTypeName.substring(fullTypeName.indexOf(
                                     ":") + 1);
 
                         if (!"catalogInventoryStockItemUpdateEntity".equals(
                                     type)) {
                             //find namespace for the prefix
-                            String nsUri = reader.getNamespaceContext()
+                            java.lang.String nsUri = reader.getNamespaceContext()
                                                            .getNamespaceURI(nsPrefix);
 
                             return (CatalogInventoryStockItemUpdateEntity) magento.ExtensionMapper.getTypeObject(nsUri,
@@ -1217,7 +1217,7 @@ public class CatalogInventoryStockItemUpdateEntity implements org.apache.axis2.d
                             "The element: " + "qty" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setQty(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1244,7 +1244,7 @@ public class CatalogInventoryStockItemUpdateEntity implements org.apache.axis2.d
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setIs_in_stock(org.apache.axis2.databinding.utils.ConverterUtil.convertToInt(
                             content));
@@ -1253,7 +1253,7 @@ public class CatalogInventoryStockItemUpdateEntity implements org.apache.axis2.d
                 } // End of if for expected property start element
 
                 else {
-                    object.setIs_in_stock(Integer.MIN_VALUE);
+                    object.setIs_in_stock(java.lang.Integer.MIN_VALUE);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -1272,7 +1272,7 @@ public class CatalogInventoryStockItemUpdateEntity implements org.apache.axis2.d
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setManage_stock(org.apache.axis2.databinding.utils.ConverterUtil.convertToInt(
                             content));
@@ -1281,7 +1281,7 @@ public class CatalogInventoryStockItemUpdateEntity implements org.apache.axis2.d
                 } // End of if for expected property start element
 
                 else {
-                    object.setManage_stock(Integer.MIN_VALUE);
+                    object.setManage_stock(java.lang.Integer.MIN_VALUE);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -1300,7 +1300,7 @@ public class CatalogInventoryStockItemUpdateEntity implements org.apache.axis2.d
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setUse_config_manage_stock(org.apache.axis2.databinding.utils.ConverterUtil.convertToInt(
                             content));
@@ -1309,7 +1309,7 @@ public class CatalogInventoryStockItemUpdateEntity implements org.apache.axis2.d
                 } // End of if for expected property start element
 
                 else {
-                    object.setUse_config_manage_stock(Integer.MIN_VALUE);
+                    object.setUse_config_manage_stock(java.lang.Integer.MIN_VALUE);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -1327,7 +1327,7 @@ public class CatalogInventoryStockItemUpdateEntity implements org.apache.axis2.d
                             "The element: " + "min_qty" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setMin_qty(org.apache.axis2.databinding.utils.ConverterUtil.convertToInt(
                             content));
@@ -1336,7 +1336,7 @@ public class CatalogInventoryStockItemUpdateEntity implements org.apache.axis2.d
                 } // End of if for expected property start element
 
                 else {
-                    object.setMin_qty(Integer.MIN_VALUE);
+                    object.setMin_qty(java.lang.Integer.MIN_VALUE);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -1355,7 +1355,7 @@ public class CatalogInventoryStockItemUpdateEntity implements org.apache.axis2.d
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setUse_config_min_qty(org.apache.axis2.databinding.utils.ConverterUtil.convertToInt(
                             content));
@@ -1364,7 +1364,7 @@ public class CatalogInventoryStockItemUpdateEntity implements org.apache.axis2.d
                 } // End of if for expected property start element
 
                 else {
-                    object.setUse_config_min_qty(Integer.MIN_VALUE);
+                    object.setUse_config_min_qty(java.lang.Integer.MIN_VALUE);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -1383,7 +1383,7 @@ public class CatalogInventoryStockItemUpdateEntity implements org.apache.axis2.d
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setMin_sale_qty(org.apache.axis2.databinding.utils.ConverterUtil.convertToInt(
                             content));
@@ -1392,7 +1392,7 @@ public class CatalogInventoryStockItemUpdateEntity implements org.apache.axis2.d
                 } // End of if for expected property start element
 
                 else {
-                    object.setMin_sale_qty(Integer.MIN_VALUE);
+                    object.setMin_sale_qty(java.lang.Integer.MIN_VALUE);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -1411,7 +1411,7 @@ public class CatalogInventoryStockItemUpdateEntity implements org.apache.axis2.d
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setUse_config_min_sale_qty(org.apache.axis2.databinding.utils.ConverterUtil.convertToInt(
                             content));
@@ -1420,7 +1420,7 @@ public class CatalogInventoryStockItemUpdateEntity implements org.apache.axis2.d
                 } // End of if for expected property start element
 
                 else {
-                    object.setUse_config_min_sale_qty(Integer.MIN_VALUE);
+                    object.setUse_config_min_sale_qty(java.lang.Integer.MIN_VALUE);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -1439,7 +1439,7 @@ public class CatalogInventoryStockItemUpdateEntity implements org.apache.axis2.d
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setMax_sale_qty(org.apache.axis2.databinding.utils.ConverterUtil.convertToInt(
                             content));
@@ -1448,7 +1448,7 @@ public class CatalogInventoryStockItemUpdateEntity implements org.apache.axis2.d
                 } // End of if for expected property start element
 
                 else {
-                    object.setMax_sale_qty(Integer.MIN_VALUE);
+                    object.setMax_sale_qty(java.lang.Integer.MIN_VALUE);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -1467,7 +1467,7 @@ public class CatalogInventoryStockItemUpdateEntity implements org.apache.axis2.d
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setUse_config_max_sale_qty(org.apache.axis2.databinding.utils.ConverterUtil.convertToInt(
                             content));
@@ -1476,7 +1476,7 @@ public class CatalogInventoryStockItemUpdateEntity implements org.apache.axis2.d
                 } // End of if for expected property start element
 
                 else {
-                    object.setUse_config_max_sale_qty(Integer.MIN_VALUE);
+                    object.setUse_config_max_sale_qty(java.lang.Integer.MIN_VALUE);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -1495,7 +1495,7 @@ public class CatalogInventoryStockItemUpdateEntity implements org.apache.axis2.d
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setIs_qty_decimal(org.apache.axis2.databinding.utils.ConverterUtil.convertToInt(
                             content));
@@ -1504,7 +1504,7 @@ public class CatalogInventoryStockItemUpdateEntity implements org.apache.axis2.d
                 } // End of if for expected property start element
 
                 else {
-                    object.setIs_qty_decimal(Integer.MIN_VALUE);
+                    object.setIs_qty_decimal(java.lang.Integer.MIN_VALUE);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -1523,7 +1523,7 @@ public class CatalogInventoryStockItemUpdateEntity implements org.apache.axis2.d
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setBackorders(org.apache.axis2.databinding.utils.ConverterUtil.convertToInt(
                             content));
@@ -1532,7 +1532,7 @@ public class CatalogInventoryStockItemUpdateEntity implements org.apache.axis2.d
                 } // End of if for expected property start element
 
                 else {
-                    object.setBackorders(Integer.MIN_VALUE);
+                    object.setBackorders(java.lang.Integer.MIN_VALUE);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -1551,7 +1551,7 @@ public class CatalogInventoryStockItemUpdateEntity implements org.apache.axis2.d
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setUse_config_backorders(org.apache.axis2.databinding.utils.ConverterUtil.convertToInt(
                             content));
@@ -1560,7 +1560,7 @@ public class CatalogInventoryStockItemUpdateEntity implements org.apache.axis2.d
                 } // End of if for expected property start element
 
                 else {
-                    object.setUse_config_backorders(Integer.MIN_VALUE);
+                    object.setUse_config_backorders(java.lang.Integer.MIN_VALUE);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -1579,7 +1579,7 @@ public class CatalogInventoryStockItemUpdateEntity implements org.apache.axis2.d
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setNotify_stock_qty(org.apache.axis2.databinding.utils.ConverterUtil.convertToInt(
                             content));
@@ -1588,7 +1588,7 @@ public class CatalogInventoryStockItemUpdateEntity implements org.apache.axis2.d
                 } // End of if for expected property start element
 
                 else {
-                    object.setNotify_stock_qty(Integer.MIN_VALUE);
+                    object.setNotify_stock_qty(java.lang.Integer.MIN_VALUE);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -1608,7 +1608,7 @@ public class CatalogInventoryStockItemUpdateEntity implements org.apache.axis2.d
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setUse_config_notify_stock_qty(org.apache.axis2.databinding.utils.ConverterUtil.convertToInt(
                             content));
@@ -1617,7 +1617,7 @@ public class CatalogInventoryStockItemUpdateEntity implements org.apache.axis2.d
                 } // End of if for expected property start element
 
                 else {
-                    object.setUse_config_notify_stock_qty(Integer.MIN_VALUE);
+                    object.setUse_config_notify_stock_qty(java.lang.Integer.MIN_VALUE);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -1629,7 +1629,7 @@ public class CatalogInventoryStockItemUpdateEntity implements org.apache.axis2.d
                         "Unexpected subelement " + reader.getName());
                 }
             } catch (javax.xml.stream.XMLStreamException e) {
-                throw new Exception(e);
+                throw new java.lang.Exception(e);
             }
 
             return object;

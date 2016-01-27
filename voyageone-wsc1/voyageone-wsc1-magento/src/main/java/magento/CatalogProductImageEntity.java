@@ -23,27 +23,27 @@ public class CatalogProductImageEntity implements org.apache.axis2.databinding.A
     /**
      * field for File
      */
-    protected String localFile;
+    protected java.lang.String localFile;
 
     /**
      * field for Label
      */
-    protected String localLabel;
+    protected java.lang.String localLabel;
 
     /**
      * field for Position
      */
-    protected String localPosition;
+    protected java.lang.String localPosition;
 
     /**
      * field for Exclude
      */
-    protected String localExclude;
+    protected java.lang.String localExclude;
 
     /**
      * field for Url
      */
-    protected String localUrl;
+    protected java.lang.String localUrl;
 
     /**
      * field for Types
@@ -54,7 +54,7 @@ public class CatalogProductImageEntity implements org.apache.axis2.databinding.A
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getFile() {
+    public java.lang.String getFile() {
         return localFile;
     }
 
@@ -62,7 +62,7 @@ public class CatalogProductImageEntity implements org.apache.axis2.databinding.A
      * Auto generated setter method
      * @param param File
      */
-    public void setFile(String param) {
+    public void setFile(java.lang.String param) {
         this.localFile = param;
     }
 
@@ -70,7 +70,7 @@ public class CatalogProductImageEntity implements org.apache.axis2.databinding.A
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getLabel() {
+    public java.lang.String getLabel() {
         return localLabel;
     }
 
@@ -78,7 +78,7 @@ public class CatalogProductImageEntity implements org.apache.axis2.databinding.A
      * Auto generated setter method
      * @param param Label
      */
-    public void setLabel(String param) {
+    public void setLabel(java.lang.String param) {
         this.localLabel = param;
     }
 
@@ -86,7 +86,7 @@ public class CatalogProductImageEntity implements org.apache.axis2.databinding.A
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getPosition() {
+    public java.lang.String getPosition() {
         return localPosition;
     }
 
@@ -94,7 +94,7 @@ public class CatalogProductImageEntity implements org.apache.axis2.databinding.A
      * Auto generated setter method
      * @param param Position
      */
-    public void setPosition(String param) {
+    public void setPosition(java.lang.String param) {
         this.localPosition = param;
     }
 
@@ -102,7 +102,7 @@ public class CatalogProductImageEntity implements org.apache.axis2.databinding.A
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getExclude() {
+    public java.lang.String getExclude() {
         return localExclude;
     }
 
@@ -110,7 +110,7 @@ public class CatalogProductImageEntity implements org.apache.axis2.databinding.A
      * Auto generated setter method
      * @param param Exclude
      */
-    public void setExclude(String param) {
+    public void setExclude(java.lang.String param) {
         this.localExclude = param;
     }
 
@@ -118,7 +118,7 @@ public class CatalogProductImageEntity implements org.apache.axis2.databinding.A
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getUrl() {
+    public java.lang.String getUrl() {
         return localUrl;
     }
 
@@ -126,7 +126,7 @@ public class CatalogProductImageEntity implements org.apache.axis2.databinding.A
      * Auto generated setter method
      * @param param Url
      */
-    public void setUrl(String param) {
+    public void setUrl(java.lang.String param) {
         this.localUrl = param;
     }
 
@@ -173,8 +173,8 @@ public class CatalogProductImageEntity implements org.apache.axis2.databinding.A
         javax.xml.stream.XMLStreamWriter xmlWriter, boolean serializeType)
         throws javax.xml.stream.XMLStreamException,
             org.apache.axis2.databinding.ADBException {
-        String prefix = null;
-        String namespace = null;
+        java.lang.String prefix = null;
+        java.lang.String namespace = null;
 
         prefix = parentQName.getPrefix();
         namespace = parentQName.getNamespaceURI();
@@ -182,7 +182,7 @@ public class CatalogProductImageEntity implements org.apache.axis2.databinding.A
             xmlWriter);
 
         if (serializeType) {
-            String namespacePrefix = registerPrefix(xmlWriter,
+            java.lang.String namespacePrefix = registerPrefix(xmlWriter,
                     "urn:Magento");
 
             if ((namespacePrefix != null) &&
@@ -273,7 +273,7 @@ public class CatalogProductImageEntity implements org.apache.axis2.databinding.A
         xmlWriter.writeEndElement();
     }
 
-    private static String generatePrefix(String namespace) {
+    private static java.lang.String generatePrefix(java.lang.String namespace) {
         if (namespace.equals("urn:Magento")) {
             return "ns1";
         }
@@ -284,11 +284,11 @@ public class CatalogProductImageEntity implements org.apache.axis2.databinding.A
     /**
      * Utility method to write an element start tag.
      */
-    private void writeStartElement(String prefix,
-        String namespace, String localPart,
+    private void writeStartElement(java.lang.String prefix,
+        java.lang.String namespace, java.lang.String localPart,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
-        String writerPrefix = xmlWriter.getPrefix(namespace);
+        java.lang.String writerPrefix = xmlWriter.getPrefix(namespace);
 
         if (writerPrefix != null) {
             xmlWriter.writeStartElement(namespace, localPart);
@@ -308,9 +308,9 @@ public class CatalogProductImageEntity implements org.apache.axis2.databinding.A
     /**
      * Util method to write an attribute with the ns prefix
      */
-    private void writeAttribute(String prefix,
-        String namespace, String attName,
-        String attValue, javax.xml.stream.XMLStreamWriter xmlWriter)
+    private void writeAttribute(java.lang.String prefix,
+        java.lang.String namespace, java.lang.String attName,
+        java.lang.String attValue, javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
         if (xmlWriter.getPrefix(namespace) == null) {
             xmlWriter.writeNamespace(prefix, namespace);
@@ -323,8 +323,8 @@ public class CatalogProductImageEntity implements org.apache.axis2.databinding.A
     /**
      * Util method to write an attribute without the ns prefix
      */
-    private void writeAttribute(String namespace,
-        String attName, String attValue,
+    private void writeAttribute(java.lang.String namespace,
+        java.lang.String attName, java.lang.String attValue,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
         if (namespace.equals("")) {
@@ -338,18 +338,18 @@ public class CatalogProductImageEntity implements org.apache.axis2.databinding.A
     /**
      * Util method to write an attribute without the ns prefix
      */
-    private void writeQNameAttribute(String namespace,
-        String attName, javax.xml.namespace.QName qname,
+    private void writeQNameAttribute(java.lang.String namespace,
+        java.lang.String attName, javax.xml.namespace.QName qname,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
-        String attributeNamespace = qname.getNamespaceURI();
-        String attributePrefix = xmlWriter.getPrefix(attributeNamespace);
+        java.lang.String attributeNamespace = qname.getNamespaceURI();
+        java.lang.String attributePrefix = xmlWriter.getPrefix(attributeNamespace);
 
         if (attributePrefix == null) {
             attributePrefix = registerPrefix(xmlWriter, attributeNamespace);
         }
 
-        String attributeValue;
+        java.lang.String attributeValue;
 
         if (attributePrefix.trim().length() > 0) {
             attributeValue = attributePrefix + ":" + qname.getLocalPart();
@@ -371,10 +371,10 @@ public class CatalogProductImageEntity implements org.apache.axis2.databinding.A
     private void writeQName(javax.xml.namespace.QName qname,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
-        String namespaceURI = qname.getNamespaceURI();
+        java.lang.String namespaceURI = qname.getNamespaceURI();
 
         if (namespaceURI != null) {
-            String prefix = xmlWriter.getPrefix(namespaceURI);
+            java.lang.String prefix = xmlWriter.getPrefix(namespaceURI);
 
             if (prefix == null) {
                 prefix = generatePrefix(namespaceURI);
@@ -403,9 +403,9 @@ public class CatalogProductImageEntity implements org.apache.axis2.databinding.A
         if (qnames != null) {
             // we have to store this data until last moment since it is not possible to write any
             // namespace data after writing the charactor data
-            StringBuffer stringToWrite = new StringBuffer();
-            String namespaceURI = null;
-            String prefix = null;
+            java.lang.StringBuffer stringToWrite = new java.lang.StringBuffer();
+            java.lang.String namespaceURI = null;
+            java.lang.String prefix = null;
 
             for (int i = 0; i < qnames.length; i++) {
                 if (i > 0) {
@@ -444,10 +444,10 @@ public class CatalogProductImageEntity implements org.apache.axis2.databinding.A
     /**
      * Register a namespace prefix
      */
-    private String registerPrefix(
-        javax.xml.stream.XMLStreamWriter xmlWriter, String namespace)
+    private java.lang.String registerPrefix(
+        javax.xml.stream.XMLStreamWriter xmlWriter, java.lang.String namespace)
         throws javax.xml.stream.XMLStreamException {
-        String prefix = xmlWriter.getPrefix(namespace);
+        java.lang.String prefix = xmlWriter.getPrefix(namespace);
 
         if (prefix == null) {
             prefix = generatePrefix(namespace);
@@ -455,7 +455,7 @@ public class CatalogProductImageEntity implements org.apache.axis2.databinding.A
             javax.xml.namespace.NamespaceContext nsContext = xmlWriter.getNamespaceContext();
 
             while (true) {
-                String uri = nsContext.getNamespaceURI(prefix);
+                java.lang.String uri = nsContext.getNamespaceURI(prefix);
 
                 if ((uri == null) || (uri.length() == 0)) {
                     break;
@@ -556,13 +556,13 @@ public class CatalogProductImageEntity implements org.apache.axis2.databinding.A
          *                If this object is a complex type, the reader is positioned at the end element of its outer element
          */
         public static CatalogProductImageEntity parse(
-            javax.xml.stream.XMLStreamReader reader) throws Exception {
+            javax.xml.stream.XMLStreamReader reader) throws java.lang.Exception {
             CatalogProductImageEntity object = new CatalogProductImageEntity();
 
             int event;
-            String nillableValue = null;
-            String prefix = "";
-            String namespaceuri = "";
+            java.lang.String nillableValue = null;
+            java.lang.String prefix = "";
+            java.lang.String namespaceuri = "";
 
             try {
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -570,11 +570,11 @@ public class CatalogProductImageEntity implements org.apache.axis2.databinding.A
 
                 if (reader.getAttributeValue(
                             "http://www.w3.org/2001/XMLSchema-instance", "type") != null) {
-                    String fullTypeName = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance",
+                    java.lang.String fullTypeName = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance",
                             "type");
 
                     if (fullTypeName != null) {
-                        String nsPrefix = null;
+                        java.lang.String nsPrefix = null;
 
                         if (fullTypeName.indexOf(":") > -1) {
                             nsPrefix = fullTypeName.substring(0,
@@ -583,12 +583,12 @@ public class CatalogProductImageEntity implements org.apache.axis2.databinding.A
 
                         nsPrefix = (nsPrefix == null) ? "" : nsPrefix;
 
-                        String type = fullTypeName.substring(fullTypeName.indexOf(
+                        java.lang.String type = fullTypeName.substring(fullTypeName.indexOf(
                                     ":") + 1);
 
                         if (!"catalogProductImageEntity".equals(type)) {
                             //find namespace for the prefix
-                            String nsUri = reader.getNamespaceContext()
+                            java.lang.String nsUri = reader.getNamespaceContext()
                                                            .getNamespaceURI(nsPrefix);
 
                             return (CatalogProductImageEntity) magento.ExtensionMapper.getTypeObject(nsUri,
@@ -618,7 +618,7 @@ public class CatalogProductImageEntity implements org.apache.axis2.databinding.A
                             "The element: " + "file" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setFile(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -647,7 +647,7 @@ public class CatalogProductImageEntity implements org.apache.axis2.databinding.A
                             "The element: " + "label" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setLabel(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -676,7 +676,7 @@ public class CatalogProductImageEntity implements org.apache.axis2.databinding.A
                             "The element: " + "position" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setPosition(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -705,7 +705,7 @@ public class CatalogProductImageEntity implements org.apache.axis2.databinding.A
                             "The element: " + "exclude" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setExclude(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -734,7 +734,7 @@ public class CatalogProductImageEntity implements org.apache.axis2.databinding.A
                             "The element: " + "url" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setUrl(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -774,7 +774,7 @@ public class CatalogProductImageEntity implements org.apache.axis2.databinding.A
                         "Unexpected subelement " + reader.getName());
                 }
             } catch (javax.xml.stream.XMLStreamException e) {
-                throw new Exception(e);
+                throw new java.lang.Exception(e);
             }
 
             return object;

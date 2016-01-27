@@ -23,7 +23,7 @@ public class SalesOrderShipmentItemEntity implements org.apache.axis2.databindin
     /**
      * field for Increment_id
      */
-    protected String localIncrement_id;
+    protected java.lang.String localIncrement_id;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -34,7 +34,7 @@ public class SalesOrderShipmentItemEntity implements org.apache.axis2.databindin
     /**
      * field for Parent_id
      */
-    protected String localParent_id;
+    protected java.lang.String localParent_id;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -45,7 +45,7 @@ public class SalesOrderShipmentItemEntity implements org.apache.axis2.databindin
     /**
      * field for Created_at
      */
-    protected String localCreated_at;
+    protected java.lang.String localCreated_at;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -56,7 +56,7 @@ public class SalesOrderShipmentItemEntity implements org.apache.axis2.databindin
     /**
      * field for Updated_at
      */
-    protected String localUpdated_at;
+    protected java.lang.String localUpdated_at;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -67,7 +67,7 @@ public class SalesOrderShipmentItemEntity implements org.apache.axis2.databindin
     /**
      * field for Is_active
      */
-    protected String localIs_active;
+    protected java.lang.String localIs_active;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -78,7 +78,7 @@ public class SalesOrderShipmentItemEntity implements org.apache.axis2.databindin
     /**
      * field for Sku
      */
-    protected String localSku;
+    protected java.lang.String localSku;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -89,7 +89,7 @@ public class SalesOrderShipmentItemEntity implements org.apache.axis2.databindin
     /**
      * field for Name
      */
-    protected String localName;
+    protected java.lang.String localName;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -100,7 +100,7 @@ public class SalesOrderShipmentItemEntity implements org.apache.axis2.databindin
     /**
      * field for Order_item_id
      */
-    protected String localOrder_item_id;
+    protected java.lang.String localOrder_item_id;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -111,7 +111,7 @@ public class SalesOrderShipmentItemEntity implements org.apache.axis2.databindin
     /**
      * field for Product_id
      */
-    protected String localProduct_id;
+    protected java.lang.String localProduct_id;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -122,7 +122,7 @@ public class SalesOrderShipmentItemEntity implements org.apache.axis2.databindin
     /**
      * field for Weight
      */
-    protected String localWeight;
+    protected java.lang.String localWeight;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -133,7 +133,7 @@ public class SalesOrderShipmentItemEntity implements org.apache.axis2.databindin
     /**
      * field for Price
      */
-    protected String localPrice;
+    protected java.lang.String localPrice;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -144,7 +144,7 @@ public class SalesOrderShipmentItemEntity implements org.apache.axis2.databindin
     /**
      * field for Qty
      */
-    protected String localQty;
+    protected java.lang.String localQty;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -155,7 +155,7 @@ public class SalesOrderShipmentItemEntity implements org.apache.axis2.databindin
     /**
      * field for Item_id
      */
-    protected String localItem_id;
+    protected java.lang.String localItem_id;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -171,7 +171,7 @@ public class SalesOrderShipmentItemEntity implements org.apache.axis2.databindin
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getIncrement_id() {
+    public java.lang.String getIncrement_id() {
         return localIncrement_id;
     }
 
@@ -179,7 +179,7 @@ public class SalesOrderShipmentItemEntity implements org.apache.axis2.databindin
      * Auto generated setter method
      * @param param Increment_id
      */
-    public void setIncrement_id(String param) {
+    public void setIncrement_id(java.lang.String param) {
         localIncrement_idTracker = param != null;
 
         this.localIncrement_id = param;
@@ -193,7 +193,7 @@ public class SalesOrderShipmentItemEntity implements org.apache.axis2.databindin
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getParent_id() {
+    public java.lang.String getParent_id() {
         return localParent_id;
     }
 
@@ -201,7 +201,7 @@ public class SalesOrderShipmentItemEntity implements org.apache.axis2.databindin
      * Auto generated setter method
      * @param param Parent_id
      */
-    public void setParent_id(String param) {
+    public void setParent_id(java.lang.String param) {
         localParent_idTracker = param != null;
 
         this.localParent_id = param;
@@ -215,7 +215,7 @@ public class SalesOrderShipmentItemEntity implements org.apache.axis2.databindin
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getCreated_at() {
+    public java.lang.String getCreated_at() {
         return localCreated_at;
     }
 
@@ -223,7 +223,7 @@ public class SalesOrderShipmentItemEntity implements org.apache.axis2.databindin
      * Auto generated setter method
      * @param param Created_at
      */
-    public void setCreated_at(String param) {
+    public void setCreated_at(java.lang.String param) {
         localCreated_atTracker = param != null;
 
         this.localCreated_at = param;
@@ -237,7 +237,7 @@ public class SalesOrderShipmentItemEntity implements org.apache.axis2.databindin
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getUpdated_at() {
+    public java.lang.String getUpdated_at() {
         return localUpdated_at;
     }
 
@@ -245,7 +245,7 @@ public class SalesOrderShipmentItemEntity implements org.apache.axis2.databindin
      * Auto generated setter method
      * @param param Updated_at
      */
-    public void setUpdated_at(String param) {
+    public void setUpdated_at(java.lang.String param) {
         localUpdated_atTracker = param != null;
 
         this.localUpdated_at = param;
@@ -259,7 +259,7 @@ public class SalesOrderShipmentItemEntity implements org.apache.axis2.databindin
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getIs_active() {
+    public java.lang.String getIs_active() {
         return localIs_active;
     }
 
@@ -267,7 +267,7 @@ public class SalesOrderShipmentItemEntity implements org.apache.axis2.databindin
      * Auto generated setter method
      * @param param Is_active
      */
-    public void setIs_active(String param) {
+    public void setIs_active(java.lang.String param) {
         localIs_activeTracker = param != null;
 
         this.localIs_active = param;
@@ -281,7 +281,7 @@ public class SalesOrderShipmentItemEntity implements org.apache.axis2.databindin
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getSku() {
+    public java.lang.String getSku() {
         return localSku;
     }
 
@@ -289,7 +289,7 @@ public class SalesOrderShipmentItemEntity implements org.apache.axis2.databindin
      * Auto generated setter method
      * @param param Sku
      */
-    public void setSku(String param) {
+    public void setSku(java.lang.String param) {
         localSkuTracker = param != null;
 
         this.localSku = param;
@@ -303,7 +303,7 @@ public class SalesOrderShipmentItemEntity implements org.apache.axis2.databindin
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getName() {
+    public java.lang.String getName() {
         return localName;
     }
 
@@ -311,7 +311,7 @@ public class SalesOrderShipmentItemEntity implements org.apache.axis2.databindin
      * Auto generated setter method
      * @param param Name
      */
-    public void setName(String param) {
+    public void setName(java.lang.String param) {
         localNameTracker = param != null;
 
         this.localName = param;
@@ -325,7 +325,7 @@ public class SalesOrderShipmentItemEntity implements org.apache.axis2.databindin
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getOrder_item_id() {
+    public java.lang.String getOrder_item_id() {
         return localOrder_item_id;
     }
 
@@ -333,7 +333,7 @@ public class SalesOrderShipmentItemEntity implements org.apache.axis2.databindin
      * Auto generated setter method
      * @param param Order_item_id
      */
-    public void setOrder_item_id(String param) {
+    public void setOrder_item_id(java.lang.String param) {
         localOrder_item_idTracker = param != null;
 
         this.localOrder_item_id = param;
@@ -347,7 +347,7 @@ public class SalesOrderShipmentItemEntity implements org.apache.axis2.databindin
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getProduct_id() {
+    public java.lang.String getProduct_id() {
         return localProduct_id;
     }
 
@@ -355,7 +355,7 @@ public class SalesOrderShipmentItemEntity implements org.apache.axis2.databindin
      * Auto generated setter method
      * @param param Product_id
      */
-    public void setProduct_id(String param) {
+    public void setProduct_id(java.lang.String param) {
         localProduct_idTracker = param != null;
 
         this.localProduct_id = param;
@@ -369,7 +369,7 @@ public class SalesOrderShipmentItemEntity implements org.apache.axis2.databindin
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getWeight() {
+    public java.lang.String getWeight() {
         return localWeight;
     }
 
@@ -377,7 +377,7 @@ public class SalesOrderShipmentItemEntity implements org.apache.axis2.databindin
      * Auto generated setter method
      * @param param Weight
      */
-    public void setWeight(String param) {
+    public void setWeight(java.lang.String param) {
         localWeightTracker = param != null;
 
         this.localWeight = param;
@@ -391,7 +391,7 @@ public class SalesOrderShipmentItemEntity implements org.apache.axis2.databindin
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getPrice() {
+    public java.lang.String getPrice() {
         return localPrice;
     }
 
@@ -399,7 +399,7 @@ public class SalesOrderShipmentItemEntity implements org.apache.axis2.databindin
      * Auto generated setter method
      * @param param Price
      */
-    public void setPrice(String param) {
+    public void setPrice(java.lang.String param) {
         localPriceTracker = param != null;
 
         this.localPrice = param;
@@ -413,7 +413,7 @@ public class SalesOrderShipmentItemEntity implements org.apache.axis2.databindin
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getQty() {
+    public java.lang.String getQty() {
         return localQty;
     }
 
@@ -421,7 +421,7 @@ public class SalesOrderShipmentItemEntity implements org.apache.axis2.databindin
      * Auto generated setter method
      * @param param Qty
      */
-    public void setQty(String param) {
+    public void setQty(java.lang.String param) {
         localQtyTracker = param != null;
 
         this.localQty = param;
@@ -435,7 +435,7 @@ public class SalesOrderShipmentItemEntity implements org.apache.axis2.databindin
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getItem_id() {
+    public java.lang.String getItem_id() {
         return localItem_id;
     }
 
@@ -443,7 +443,7 @@ public class SalesOrderShipmentItemEntity implements org.apache.axis2.databindin
      * Auto generated setter method
      * @param param Item_id
      */
-    public void setItem_id(String param) {
+    public void setItem_id(java.lang.String param) {
         localItem_idTracker = param != null;
 
         this.localItem_id = param;
@@ -476,8 +476,8 @@ public class SalesOrderShipmentItemEntity implements org.apache.axis2.databindin
         javax.xml.stream.XMLStreamWriter xmlWriter, boolean serializeType)
         throws javax.xml.stream.XMLStreamException,
             org.apache.axis2.databinding.ADBException {
-        String prefix = null;
-        String namespace = null;
+        java.lang.String prefix = null;
+        java.lang.String namespace = null;
 
         prefix = parentQName.getPrefix();
         namespace = parentQName.getNamespaceURI();
@@ -485,7 +485,7 @@ public class SalesOrderShipmentItemEntity implements org.apache.axis2.databindin
             xmlWriter);
 
         if (serializeType) {
-            String namespacePrefix = registerPrefix(xmlWriter,
+            java.lang.String namespacePrefix = registerPrefix(xmlWriter,
                     "urn:Magento");
 
             if ((namespacePrefix != null) &&
@@ -698,7 +698,7 @@ public class SalesOrderShipmentItemEntity implements org.apache.axis2.databindin
         xmlWriter.writeEndElement();
     }
 
-    private static String generatePrefix(String namespace) {
+    private static java.lang.String generatePrefix(java.lang.String namespace) {
         if (namespace.equals("urn:Magento")) {
             return "ns1";
         }
@@ -709,11 +709,11 @@ public class SalesOrderShipmentItemEntity implements org.apache.axis2.databindin
     /**
      * Utility method to write an element start tag.
      */
-    private void writeStartElement(String prefix,
-        String namespace, String localPart,
+    private void writeStartElement(java.lang.String prefix,
+        java.lang.String namespace, java.lang.String localPart,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
-        String writerPrefix = xmlWriter.getPrefix(namespace);
+        java.lang.String writerPrefix = xmlWriter.getPrefix(namespace);
 
         if (writerPrefix != null) {
             xmlWriter.writeStartElement(namespace, localPart);
@@ -733,9 +733,9 @@ public class SalesOrderShipmentItemEntity implements org.apache.axis2.databindin
     /**
      * Util method to write an attribute with the ns prefix
      */
-    private void writeAttribute(String prefix,
-        String namespace, String attName,
-        String attValue, javax.xml.stream.XMLStreamWriter xmlWriter)
+    private void writeAttribute(java.lang.String prefix,
+        java.lang.String namespace, java.lang.String attName,
+        java.lang.String attValue, javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
         if (xmlWriter.getPrefix(namespace) == null) {
             xmlWriter.writeNamespace(prefix, namespace);
@@ -748,8 +748,8 @@ public class SalesOrderShipmentItemEntity implements org.apache.axis2.databindin
     /**
      * Util method to write an attribute without the ns prefix
      */
-    private void writeAttribute(String namespace,
-        String attName, String attValue,
+    private void writeAttribute(java.lang.String namespace,
+        java.lang.String attName, java.lang.String attValue,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
         if (namespace.equals("")) {
@@ -763,18 +763,18 @@ public class SalesOrderShipmentItemEntity implements org.apache.axis2.databindin
     /**
      * Util method to write an attribute without the ns prefix
      */
-    private void writeQNameAttribute(String namespace,
-        String attName, javax.xml.namespace.QName qname,
+    private void writeQNameAttribute(java.lang.String namespace,
+        java.lang.String attName, javax.xml.namespace.QName qname,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
-        String attributeNamespace = qname.getNamespaceURI();
-        String attributePrefix = xmlWriter.getPrefix(attributeNamespace);
+        java.lang.String attributeNamespace = qname.getNamespaceURI();
+        java.lang.String attributePrefix = xmlWriter.getPrefix(attributeNamespace);
 
         if (attributePrefix == null) {
             attributePrefix = registerPrefix(xmlWriter, attributeNamespace);
         }
 
-        String attributeValue;
+        java.lang.String attributeValue;
 
         if (attributePrefix.trim().length() > 0) {
             attributeValue = attributePrefix + ":" + qname.getLocalPart();
@@ -796,10 +796,10 @@ public class SalesOrderShipmentItemEntity implements org.apache.axis2.databindin
     private void writeQName(javax.xml.namespace.QName qname,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
-        String namespaceURI = qname.getNamespaceURI();
+        java.lang.String namespaceURI = qname.getNamespaceURI();
 
         if (namespaceURI != null) {
-            String prefix = xmlWriter.getPrefix(namespaceURI);
+            java.lang.String prefix = xmlWriter.getPrefix(namespaceURI);
 
             if (prefix == null) {
                 prefix = generatePrefix(namespaceURI);
@@ -828,9 +828,9 @@ public class SalesOrderShipmentItemEntity implements org.apache.axis2.databindin
         if (qnames != null) {
             // we have to store this data until last moment since it is not possible to write any
             // namespace data after writing the charactor data
-            StringBuffer stringToWrite = new StringBuffer();
-            String namespaceURI = null;
-            String prefix = null;
+            java.lang.StringBuffer stringToWrite = new java.lang.StringBuffer();
+            java.lang.String namespaceURI = null;
+            java.lang.String prefix = null;
 
             for (int i = 0; i < qnames.length; i++) {
                 if (i > 0) {
@@ -869,10 +869,10 @@ public class SalesOrderShipmentItemEntity implements org.apache.axis2.databindin
     /**
      * Register a namespace prefix
      */
-    private String registerPrefix(
-        javax.xml.stream.XMLStreamWriter xmlWriter, String namespace)
+    private java.lang.String registerPrefix(
+        javax.xml.stream.XMLStreamWriter xmlWriter, java.lang.String namespace)
         throws javax.xml.stream.XMLStreamException {
-        String prefix = xmlWriter.getPrefix(namespace);
+        java.lang.String prefix = xmlWriter.getPrefix(namespace);
 
         if (prefix == null) {
             prefix = generatePrefix(namespace);
@@ -880,7 +880,7 @@ public class SalesOrderShipmentItemEntity implements org.apache.axis2.databindin
             javax.xml.namespace.NamespaceContext nsContext = xmlWriter.getNamespaceContext();
 
             while (true) {
-                String uri = nsContext.getNamespaceURI(prefix);
+                java.lang.String uri = nsContext.getNamespaceURI(prefix);
 
                 if ((uri == null) || (uri.length() == 0)) {
                     break;
@@ -1078,13 +1078,13 @@ public class SalesOrderShipmentItemEntity implements org.apache.axis2.databindin
          *                If this object is a complex type, the reader is positioned at the end element of its outer element
          */
         public static SalesOrderShipmentItemEntity parse(
-            javax.xml.stream.XMLStreamReader reader) throws Exception {
+            javax.xml.stream.XMLStreamReader reader) throws java.lang.Exception {
             SalesOrderShipmentItemEntity object = new SalesOrderShipmentItemEntity();
 
             int event;
-            String nillableValue = null;
-            String prefix = "";
-            String namespaceuri = "";
+            java.lang.String nillableValue = null;
+            java.lang.String prefix = "";
+            java.lang.String namespaceuri = "";
 
             try {
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -1092,11 +1092,11 @@ public class SalesOrderShipmentItemEntity implements org.apache.axis2.databindin
 
                 if (reader.getAttributeValue(
                             "http://www.w3.org/2001/XMLSchema-instance", "type") != null) {
-                    String fullTypeName = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance",
+                    java.lang.String fullTypeName = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance",
                             "type");
 
                     if (fullTypeName != null) {
-                        String nsPrefix = null;
+                        java.lang.String nsPrefix = null;
 
                         if (fullTypeName.indexOf(":") > -1) {
                             nsPrefix = fullTypeName.substring(0,
@@ -1105,12 +1105,12 @@ public class SalesOrderShipmentItemEntity implements org.apache.axis2.databindin
 
                         nsPrefix = (nsPrefix == null) ? "" : nsPrefix;
 
-                        String type = fullTypeName.substring(fullTypeName.indexOf(
+                        java.lang.String type = fullTypeName.substring(fullTypeName.indexOf(
                                     ":") + 1);
 
                         if (!"salesOrderShipmentItemEntity".equals(type)) {
                             //find namespace for the prefix
-                            String nsUri = reader.getNamespaceContext()
+                            java.lang.String nsUri = reader.getNamespaceContext()
                                                            .getNamespaceURI(nsPrefix);
 
                             return (SalesOrderShipmentItemEntity) magento.ExtensionMapper.getTypeObject(nsUri,
@@ -1141,7 +1141,7 @@ public class SalesOrderShipmentItemEntity implements org.apache.axis2.databindin
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setIncrement_id(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1167,7 +1167,7 @@ public class SalesOrderShipmentItemEntity implements org.apache.axis2.databindin
                             "The element: " + "parent_id" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setParent_id(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1194,7 +1194,7 @@ public class SalesOrderShipmentItemEntity implements org.apache.axis2.databindin
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setCreated_at(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1221,7 +1221,7 @@ public class SalesOrderShipmentItemEntity implements org.apache.axis2.databindin
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setUpdated_at(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1247,7 +1247,7 @@ public class SalesOrderShipmentItemEntity implements org.apache.axis2.databindin
                             "The element: " + "is_active" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setIs_active(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1273,7 +1273,7 @@ public class SalesOrderShipmentItemEntity implements org.apache.axis2.databindin
                             "The element: " + "sku" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setSku(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1299,7 +1299,7 @@ public class SalesOrderShipmentItemEntity implements org.apache.axis2.databindin
                             "The element: " + "name" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setName(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1326,7 +1326,7 @@ public class SalesOrderShipmentItemEntity implements org.apache.axis2.databindin
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setOrder_item_id(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1353,7 +1353,7 @@ public class SalesOrderShipmentItemEntity implements org.apache.axis2.databindin
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setProduct_id(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1379,7 +1379,7 @@ public class SalesOrderShipmentItemEntity implements org.apache.axis2.databindin
                             "The element: " + "weight" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setWeight(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1405,7 +1405,7 @@ public class SalesOrderShipmentItemEntity implements org.apache.axis2.databindin
                             "The element: " + "price" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setPrice(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1431,7 +1431,7 @@ public class SalesOrderShipmentItemEntity implements org.apache.axis2.databindin
                             "The element: " + "qty" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setQty(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1457,7 +1457,7 @@ public class SalesOrderShipmentItemEntity implements org.apache.axis2.databindin
                             "The element: " + "item_id" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setItem_id(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1477,7 +1477,7 @@ public class SalesOrderShipmentItemEntity implements org.apache.axis2.databindin
                         "Unexpected subelement " + reader.getName());
                 }
             } catch (javax.xml.stream.XMLStreamException e) {
-                throw new Exception(e);
+                throw new java.lang.Exception(e);
             }
 
             return object;

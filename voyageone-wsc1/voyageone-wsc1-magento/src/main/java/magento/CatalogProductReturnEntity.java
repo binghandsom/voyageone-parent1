@@ -23,7 +23,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
     /**
      * field for Product_id
      */
-    protected String localProduct_id;
+    protected java.lang.String localProduct_id;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -34,7 +34,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
     /**
      * field for Sku
      */
-    protected String localSku;
+    protected java.lang.String localSku;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -45,7 +45,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
     /**
      * field for Set
      */
-    protected String localSet;
+    protected java.lang.String localSet;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -56,7 +56,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
     /**
      * field for Type
      */
-    protected String localType;
+    protected java.lang.String localType;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -89,7 +89,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
     /**
      * field for Created_at
      */
-    protected String localCreated_at;
+    protected java.lang.String localCreated_at;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -100,7 +100,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
     /**
      * field for Updated_at
      */
-    protected String localUpdated_at;
+    protected java.lang.String localUpdated_at;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -111,7 +111,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
     /**
      * field for Type_id
      */
-    protected String localType_id;
+    protected java.lang.String localType_id;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -122,7 +122,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
     /**
      * field for Name
      */
-    protected String localName;
+    protected java.lang.String localName;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -133,7 +133,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
     /**
      * field for Description
      */
-    protected String localDescription;
+    protected java.lang.String localDescription;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -144,7 +144,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
     /**
      * field for Short_description
      */
-    protected String localShort_description;
+    protected java.lang.String localShort_description;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -155,7 +155,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
     /**
      * field for Weight
      */
-    protected String localWeight;
+    protected java.lang.String localWeight;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -166,7 +166,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
     /**
      * field for Status
      */
-    protected String localStatus;
+    protected java.lang.String localStatus;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -177,7 +177,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
     /**
      * field for Url_key
      */
-    protected String localUrl_key;
+    protected java.lang.String localUrl_key;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -188,7 +188,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
     /**
      * field for Url_path
      */
-    protected String localUrl_path;
+    protected java.lang.String localUrl_path;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -199,7 +199,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
     /**
      * field for Visibility
      */
-    protected String localVisibility;
+    protected java.lang.String localVisibility;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -232,7 +232,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
     /**
      * field for Has_options
      */
-    protected String localHas_options;
+    protected java.lang.String localHas_options;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -243,7 +243,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
     /**
      * field for Gift_message_available
      */
-    protected String localGift_message_available;
+    protected java.lang.String localGift_message_available;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -254,7 +254,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
     /**
      * field for Price
      */
-    protected String localPrice;
+    protected java.lang.String localPrice;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -265,7 +265,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
     /**
      * field for Special_price
      */
-    protected String localSpecial_price;
+    protected java.lang.String localSpecial_price;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -276,7 +276,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
     /**
      * field for Special_from_date
      */
-    protected String localSpecial_from_date;
+    protected java.lang.String localSpecial_from_date;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -287,7 +287,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
     /**
      * field for Special_to_date
      */
-    protected String localSpecial_to_date;
+    protected java.lang.String localSpecial_to_date;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -298,7 +298,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
     /**
      * field for Tax_class_id
      */
-    protected String localTax_class_id;
+    protected java.lang.String localTax_class_id;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -320,7 +320,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
     /**
      * field for Meta_title
      */
-    protected String localMeta_title;
+    protected java.lang.String localMeta_title;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -331,7 +331,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
     /**
      * field for Meta_keyword
      */
-    protected String localMeta_keyword;
+    protected java.lang.String localMeta_keyword;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -342,7 +342,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
     /**
      * field for Meta_description
      */
-    protected String localMeta_description;
+    protected java.lang.String localMeta_description;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -353,7 +353,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
     /**
      * field for Custom_design
      */
-    protected String localCustom_design;
+    protected java.lang.String localCustom_design;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -364,7 +364,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
     /**
      * field for Custom_layout_update
      */
-    protected String localCustom_layout_update;
+    protected java.lang.String localCustom_layout_update;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -375,7 +375,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
     /**
      * field for Options_container
      */
-    protected String localOptions_container;
+    protected java.lang.String localOptions_container;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -402,7 +402,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getProduct_id() {
+    public java.lang.String getProduct_id() {
         return localProduct_id;
     }
 
@@ -410,7 +410,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Product_id
      */
-    public void setProduct_id(String param) {
+    public void setProduct_id(java.lang.String param) {
         localProduct_idTracker = param != null;
 
         this.localProduct_id = param;
@@ -424,7 +424,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getSku() {
+    public java.lang.String getSku() {
         return localSku;
     }
 
@@ -432,7 +432,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Sku
      */
-    public void setSku(String param) {
+    public void setSku(java.lang.String param) {
         localSkuTracker = param != null;
 
         this.localSku = param;
@@ -446,7 +446,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getSet() {
+    public java.lang.String getSet() {
         return localSet;
     }
 
@@ -454,7 +454,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Set
      */
-    public void setSet(String param) {
+    public void setSet(java.lang.String param) {
         localSetTracker = param != null;
 
         this.localSet = param;
@@ -468,7 +468,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getType() {
+    public java.lang.String getType() {
         return localType;
     }
 
@@ -476,7 +476,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Type
      */
-    public void setType(String param) {
+    public void setType(java.lang.String param) {
         localTypeTracker = param != null;
 
         this.localType = param;
@@ -534,7 +534,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getCreated_at() {
+    public java.lang.String getCreated_at() {
         return localCreated_at;
     }
 
@@ -542,7 +542,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Created_at
      */
-    public void setCreated_at(String param) {
+    public void setCreated_at(java.lang.String param) {
         localCreated_atTracker = param != null;
 
         this.localCreated_at = param;
@@ -556,7 +556,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getUpdated_at() {
+    public java.lang.String getUpdated_at() {
         return localUpdated_at;
     }
 
@@ -564,7 +564,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Updated_at
      */
-    public void setUpdated_at(String param) {
+    public void setUpdated_at(java.lang.String param) {
         localUpdated_atTracker = param != null;
 
         this.localUpdated_at = param;
@@ -578,7 +578,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getType_id() {
+    public java.lang.String getType_id() {
         return localType_id;
     }
 
@@ -586,7 +586,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Type_id
      */
-    public void setType_id(String param) {
+    public void setType_id(java.lang.String param) {
         localType_idTracker = param != null;
 
         this.localType_id = param;
@@ -600,7 +600,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getName() {
+    public java.lang.String getName() {
         return localName;
     }
 
@@ -608,7 +608,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Name
      */
-    public void setName(String param) {
+    public void setName(java.lang.String param) {
         localNameTracker = param != null;
 
         this.localName = param;
@@ -622,7 +622,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getDescription() {
+    public java.lang.String getDescription() {
         return localDescription;
     }
 
@@ -630,7 +630,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Description
      */
-    public void setDescription(String param) {
+    public void setDescription(java.lang.String param) {
         localDescriptionTracker = param != null;
 
         this.localDescription = param;
@@ -644,7 +644,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getShort_description() {
+    public java.lang.String getShort_description() {
         return localShort_description;
     }
 
@@ -652,7 +652,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Short_description
      */
-    public void setShort_description(String param) {
+    public void setShort_description(java.lang.String param) {
         localShort_descriptionTracker = param != null;
 
         this.localShort_description = param;
@@ -666,7 +666,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getWeight() {
+    public java.lang.String getWeight() {
         return localWeight;
     }
 
@@ -674,7 +674,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Weight
      */
-    public void setWeight(String param) {
+    public void setWeight(java.lang.String param) {
         localWeightTracker = param != null;
 
         this.localWeight = param;
@@ -688,7 +688,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getStatus() {
+    public java.lang.String getStatus() {
         return localStatus;
     }
 
@@ -696,7 +696,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Status
      */
-    public void setStatus(String param) {
+    public void setStatus(java.lang.String param) {
         localStatusTracker = param != null;
 
         this.localStatus = param;
@@ -710,7 +710,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getUrl_key() {
+    public java.lang.String getUrl_key() {
         return localUrl_key;
     }
 
@@ -718,7 +718,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Url_key
      */
-    public void setUrl_key(String param) {
+    public void setUrl_key(java.lang.String param) {
         localUrl_keyTracker = param != null;
 
         this.localUrl_key = param;
@@ -732,7 +732,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getUrl_path() {
+    public java.lang.String getUrl_path() {
         return localUrl_path;
     }
 
@@ -740,7 +740,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Url_path
      */
-    public void setUrl_path(String param) {
+    public void setUrl_path(java.lang.String param) {
         localUrl_pathTracker = param != null;
 
         this.localUrl_path = param;
@@ -754,7 +754,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getVisibility() {
+    public java.lang.String getVisibility() {
         return localVisibility;
     }
 
@@ -762,7 +762,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Visibility
      */
-    public void setVisibility(String param) {
+    public void setVisibility(java.lang.String param) {
         localVisibilityTracker = param != null;
 
         this.localVisibility = param;
@@ -820,7 +820,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getHas_options() {
+    public java.lang.String getHas_options() {
         return localHas_options;
     }
 
@@ -828,7 +828,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Has_options
      */
-    public void setHas_options(String param) {
+    public void setHas_options(java.lang.String param) {
         localHas_optionsTracker = param != null;
 
         this.localHas_options = param;
@@ -842,7 +842,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getGift_message_available() {
+    public java.lang.String getGift_message_available() {
         return localGift_message_available;
     }
 
@@ -850,7 +850,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Gift_message_available
      */
-    public void setGift_message_available(String param) {
+    public void setGift_message_available(java.lang.String param) {
         localGift_message_availableTracker = param != null;
 
         this.localGift_message_available = param;
@@ -864,7 +864,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getPrice() {
+    public java.lang.String getPrice() {
         return localPrice;
     }
 
@@ -872,7 +872,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Price
      */
-    public void setPrice(String param) {
+    public void setPrice(java.lang.String param) {
         localPriceTracker = param != null;
 
         this.localPrice = param;
@@ -886,7 +886,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getSpecial_price() {
+    public java.lang.String getSpecial_price() {
         return localSpecial_price;
     }
 
@@ -894,7 +894,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Special_price
      */
-    public void setSpecial_price(String param) {
+    public void setSpecial_price(java.lang.String param) {
         localSpecial_priceTracker = param != null;
 
         this.localSpecial_price = param;
@@ -908,7 +908,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getSpecial_from_date() {
+    public java.lang.String getSpecial_from_date() {
         return localSpecial_from_date;
     }
 
@@ -916,7 +916,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Special_from_date
      */
-    public void setSpecial_from_date(String param) {
+    public void setSpecial_from_date(java.lang.String param) {
         localSpecial_from_dateTracker = param != null;
 
         this.localSpecial_from_date = param;
@@ -930,7 +930,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getSpecial_to_date() {
+    public java.lang.String getSpecial_to_date() {
         return localSpecial_to_date;
     }
 
@@ -938,7 +938,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Special_to_date
      */
-    public void setSpecial_to_date(String param) {
+    public void setSpecial_to_date(java.lang.String param) {
         localSpecial_to_dateTracker = param != null;
 
         this.localSpecial_to_date = param;
@@ -952,7 +952,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getTax_class_id() {
+    public java.lang.String getTax_class_id() {
         return localTax_class_id;
     }
 
@@ -960,7 +960,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Tax_class_id
      */
-    public void setTax_class_id(String param) {
+    public void setTax_class_id(java.lang.String param) {
         localTax_class_idTracker = param != null;
 
         this.localTax_class_id = param;
@@ -996,7 +996,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getMeta_title() {
+    public java.lang.String getMeta_title() {
         return localMeta_title;
     }
 
@@ -1004,7 +1004,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Meta_title
      */
-    public void setMeta_title(String param) {
+    public void setMeta_title(java.lang.String param) {
         localMeta_titleTracker = param != null;
 
         this.localMeta_title = param;
@@ -1018,7 +1018,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getMeta_keyword() {
+    public java.lang.String getMeta_keyword() {
         return localMeta_keyword;
     }
 
@@ -1026,7 +1026,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Meta_keyword
      */
-    public void setMeta_keyword(String param) {
+    public void setMeta_keyword(java.lang.String param) {
         localMeta_keywordTracker = param != null;
 
         this.localMeta_keyword = param;
@@ -1040,7 +1040,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getMeta_description() {
+    public java.lang.String getMeta_description() {
         return localMeta_description;
     }
 
@@ -1048,7 +1048,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Meta_description
      */
-    public void setMeta_description(String param) {
+    public void setMeta_description(java.lang.String param) {
         localMeta_descriptionTracker = param != null;
 
         this.localMeta_description = param;
@@ -1062,7 +1062,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getCustom_design() {
+    public java.lang.String getCustom_design() {
         return localCustom_design;
     }
 
@@ -1070,7 +1070,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Custom_design
      */
-    public void setCustom_design(String param) {
+    public void setCustom_design(java.lang.String param) {
         localCustom_designTracker = param != null;
 
         this.localCustom_design = param;
@@ -1084,7 +1084,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getCustom_layout_update() {
+    public java.lang.String getCustom_layout_update() {
         return localCustom_layout_update;
     }
 
@@ -1092,7 +1092,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Custom_layout_update
      */
-    public void setCustom_layout_update(String param) {
+    public void setCustom_layout_update(java.lang.String param) {
         localCustom_layout_updateTracker = param != null;
 
         this.localCustom_layout_update = param;
@@ -1106,7 +1106,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getOptions_container() {
+    public java.lang.String getOptions_container() {
         return localOptions_container;
     }
 
@@ -1114,7 +1114,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Options_container
      */
-    public void setOptions_container(String param) {
+    public void setOptions_container(java.lang.String param) {
         localOptions_containerTracker = param != null;
 
         this.localOptions_container = param;
@@ -1169,8 +1169,8 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
         javax.xml.stream.XMLStreamWriter xmlWriter, boolean serializeType)
         throws javax.xml.stream.XMLStreamException,
             org.apache.axis2.databinding.ADBException {
-        String prefix = null;
-        String namespace = null;
+        java.lang.String prefix = null;
+        java.lang.String namespace = null;
 
         prefix = parentQName.getPrefix();
         namespace = parentQName.getNamespaceURI();
@@ -1178,7 +1178,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
             xmlWriter);
 
         if (serializeType) {
-            String namespacePrefix = registerPrefix(xmlWriter,
+            java.lang.String namespacePrefix = registerPrefix(xmlWriter,
                     "urn:Magento");
 
             if ((namespacePrefix != null) &&
@@ -1677,7 +1677,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
         xmlWriter.writeEndElement();
     }
 
-    private static String generatePrefix(String namespace) {
+    private static java.lang.String generatePrefix(java.lang.String namespace) {
         if (namespace.equals("urn:Magento")) {
             return "ns1";
         }
@@ -1688,11 +1688,11 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
     /**
      * Utility method to write an element start tag.
      */
-    private void writeStartElement(String prefix,
-        String namespace, String localPart,
+    private void writeStartElement(java.lang.String prefix,
+        java.lang.String namespace, java.lang.String localPart,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
-        String writerPrefix = xmlWriter.getPrefix(namespace);
+        java.lang.String writerPrefix = xmlWriter.getPrefix(namespace);
 
         if (writerPrefix != null) {
             xmlWriter.writeStartElement(namespace, localPart);
@@ -1712,9 +1712,9 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
     /**
      * Util method to write an attribute with the ns prefix
      */
-    private void writeAttribute(String prefix,
-        String namespace, String attName,
-        String attValue, javax.xml.stream.XMLStreamWriter xmlWriter)
+    private void writeAttribute(java.lang.String prefix,
+        java.lang.String namespace, java.lang.String attName,
+        java.lang.String attValue, javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
         if (xmlWriter.getPrefix(namespace) == null) {
             xmlWriter.writeNamespace(prefix, namespace);
@@ -1727,8 +1727,8 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
     /**
      * Util method to write an attribute without the ns prefix
      */
-    private void writeAttribute(String namespace,
-        String attName, String attValue,
+    private void writeAttribute(java.lang.String namespace,
+        java.lang.String attName, java.lang.String attValue,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
         if (namespace.equals("")) {
@@ -1742,18 +1742,18 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
     /**
      * Util method to write an attribute without the ns prefix
      */
-    private void writeQNameAttribute(String namespace,
-        String attName, javax.xml.namespace.QName qname,
+    private void writeQNameAttribute(java.lang.String namespace,
+        java.lang.String attName, javax.xml.namespace.QName qname,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
-        String attributeNamespace = qname.getNamespaceURI();
-        String attributePrefix = xmlWriter.getPrefix(attributeNamespace);
+        java.lang.String attributeNamespace = qname.getNamespaceURI();
+        java.lang.String attributePrefix = xmlWriter.getPrefix(attributeNamespace);
 
         if (attributePrefix == null) {
             attributePrefix = registerPrefix(xmlWriter, attributeNamespace);
         }
 
-        String attributeValue;
+        java.lang.String attributeValue;
 
         if (attributePrefix.trim().length() > 0) {
             attributeValue = attributePrefix + ":" + qname.getLocalPart();
@@ -1775,10 +1775,10 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
     private void writeQName(javax.xml.namespace.QName qname,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
-        String namespaceURI = qname.getNamespaceURI();
+        java.lang.String namespaceURI = qname.getNamespaceURI();
 
         if (namespaceURI != null) {
-            String prefix = xmlWriter.getPrefix(namespaceURI);
+            java.lang.String prefix = xmlWriter.getPrefix(namespaceURI);
 
             if (prefix == null) {
                 prefix = generatePrefix(namespaceURI);
@@ -1807,9 +1807,9 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
         if (qnames != null) {
             // we have to store this data until last moment since it is not possible to write any
             // namespace data after writing the charactor data
-            StringBuffer stringToWrite = new StringBuffer();
-            String namespaceURI = null;
-            String prefix = null;
+            java.lang.StringBuffer stringToWrite = new java.lang.StringBuffer();
+            java.lang.String namespaceURI = null;
+            java.lang.String prefix = null;
 
             for (int i = 0; i < qnames.length; i++) {
                 if (i > 0) {
@@ -1848,10 +1848,10 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
     /**
      * Register a namespace prefix
      */
-    private String registerPrefix(
-        javax.xml.stream.XMLStreamWriter xmlWriter, String namespace)
+    private java.lang.String registerPrefix(
+        javax.xml.stream.XMLStreamWriter xmlWriter, java.lang.String namespace)
         throws javax.xml.stream.XMLStreamException {
-        String prefix = xmlWriter.getPrefix(namespace);
+        java.lang.String prefix = xmlWriter.getPrefix(namespace);
 
         if (prefix == null) {
             prefix = generatePrefix(namespace);
@@ -1859,7 +1859,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
             javax.xml.namespace.NamespaceContext nsContext = xmlWriter.getNamespaceContext();
 
             while (true) {
-                String uri = nsContext.getNamespaceURI(prefix);
+                java.lang.String uri = nsContext.getNamespaceURI(prefix);
 
                 if ((uri == null) || (uri.length() == 0)) {
                     break;
@@ -2309,13 +2309,13 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
          *                If this object is a complex type, the reader is positioned at the end element of its outer element
          */
         public static CatalogProductReturnEntity parse(
-            javax.xml.stream.XMLStreamReader reader) throws Exception {
+            javax.xml.stream.XMLStreamReader reader) throws java.lang.Exception {
             CatalogProductReturnEntity object = new CatalogProductReturnEntity();
 
             int event;
-            String nillableValue = null;
-            String prefix = "";
-            String namespaceuri = "";
+            java.lang.String nillableValue = null;
+            java.lang.String prefix = "";
+            java.lang.String namespaceuri = "";
 
             try {
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -2323,11 +2323,11 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
 
                 if (reader.getAttributeValue(
                             "http://www.w3.org/2001/XMLSchema-instance", "type") != null) {
-                    String fullTypeName = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance",
+                    java.lang.String fullTypeName = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance",
                             "type");
 
                     if (fullTypeName != null) {
-                        String nsPrefix = null;
+                        java.lang.String nsPrefix = null;
 
                         if (fullTypeName.indexOf(":") > -1) {
                             nsPrefix = fullTypeName.substring(0,
@@ -2336,12 +2336,12 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
 
                         nsPrefix = (nsPrefix == null) ? "" : nsPrefix;
 
-                        String type = fullTypeName.substring(fullTypeName.indexOf(
+                        java.lang.String type = fullTypeName.substring(fullTypeName.indexOf(
                                     ":") + 1);
 
                         if (!"catalogProductReturnEntity".equals(type)) {
                             //find namespace for the prefix
-                            String nsUri = reader.getNamespaceContext()
+                            java.lang.String nsUri = reader.getNamespaceContext()
                                                            .getNamespaceURI(nsPrefix);
 
                             return (CatalogProductReturnEntity) magento.ExtensionMapper.getTypeObject(nsUri,
@@ -2372,7 +2372,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setProduct_id(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -2398,7 +2398,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
                             "The element: " + "sku" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setSku(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -2424,7 +2424,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
                             "The element: " + "set" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setSet(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -2450,7 +2450,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
                             "The element: " + "type" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setType(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -2507,7 +2507,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setCreated_at(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -2534,7 +2534,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setUpdated_at(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -2560,7 +2560,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
                             "The element: " + "type_id" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setType_id(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -2586,7 +2586,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
                             "The element: " + "name" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setName(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -2613,7 +2613,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setDescription(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -2640,7 +2640,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setShort_description(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -2666,7 +2666,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
                             "The element: " + "weight" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setWeight(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -2692,7 +2692,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
                             "The element: " + "status" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setStatus(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -2718,7 +2718,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
                             "The element: " + "url_key" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setUrl_key(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -2744,7 +2744,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
                             "The element: " + "url_path" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setUrl_path(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -2771,7 +2771,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setVisibility(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -2828,7 +2828,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setHas_options(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -2855,7 +2855,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setGift_message_available(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -2881,7 +2881,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
                             "The element: " + "price" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setPrice(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -2908,7 +2908,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setSpecial_price(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -2935,7 +2935,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setSpecial_from_date(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -2962,7 +2962,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setSpecial_to_date(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -2989,7 +2989,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setTax_class_id(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -3031,7 +3031,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setMeta_title(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -3058,7 +3058,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setMeta_keyword(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -3085,7 +3085,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setMeta_description(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -3112,7 +3112,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setCustom_design(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -3139,7 +3139,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setCustom_layout_update(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -3166,7 +3166,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setOptions_container(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -3201,7 +3201,7 @@ public class CatalogProductReturnEntity implements org.apache.axis2.databinding.
                         "Unexpected subelement " + reader.getName());
                 }
             } catch (javax.xml.stream.XMLStreamException e) {
-                throw new Exception(e);
+                throw new java.lang.Exception(e);
             }
 
             return object;

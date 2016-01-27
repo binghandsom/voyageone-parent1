@@ -34,7 +34,7 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
     /**
      * field for Created_at
      */
-    protected String localCreated_at;
+    protected java.lang.String localCreated_at;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -45,7 +45,7 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
     /**
      * field for Updated_at
      */
-    protected String localUpdated_at;
+    protected java.lang.String localUpdated_at;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -56,7 +56,7 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
     /**
      * field for Increment_id
      */
-    protected String localIncrement_id;
+    protected java.lang.String localIncrement_id;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -67,7 +67,7 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
     /**
      * field for City
      */
-    protected String localCity;
+    protected java.lang.String localCity;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -78,7 +78,7 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
     /**
      * field for Company
      */
-    protected String localCompany;
+    protected java.lang.String localCompany;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -89,7 +89,7 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
     /**
      * field for Country_id
      */
-    protected String localCountry_id;
+    protected java.lang.String localCountry_id;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -100,7 +100,7 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
     /**
      * field for Fax
      */
-    protected String localFax;
+    protected java.lang.String localFax;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -111,7 +111,7 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
     /**
      * field for Firstname
      */
-    protected String localFirstname;
+    protected java.lang.String localFirstname;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -122,7 +122,7 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
     /**
      * field for Lastname
      */
-    protected String localLastname;
+    protected java.lang.String localLastname;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -133,7 +133,7 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
     /**
      * field for Middlename
      */
-    protected String localMiddlename;
+    protected java.lang.String localMiddlename;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -144,7 +144,7 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
     /**
      * field for Postcode
      */
-    protected String localPostcode;
+    protected java.lang.String localPostcode;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -155,7 +155,7 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
     /**
      * field for Prefix
      */
-    protected String localPrefix;
+    protected java.lang.String localPrefix;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -166,7 +166,7 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
     /**
      * field for Region
      */
-    protected String localRegion;
+    protected java.lang.String localRegion;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -188,7 +188,7 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
     /**
      * field for Street
      */
-    protected String localStreet;
+    protected java.lang.String localStreet;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -199,7 +199,7 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
     /**
      * field for Suffix
      */
-    protected String localSuffix;
+    protected java.lang.String localSuffix;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -210,7 +210,7 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
     /**
      * field for Telephone
      */
-    protected String localTelephone;
+    protected java.lang.String localTelephone;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -258,7 +258,7 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
      */
     public void setCustomer_address_id(int param) {
         // setting primitive attribute tracker to true
-        localCustomer_address_idTracker = param != Integer.MIN_VALUE;
+        localCustomer_address_idTracker = param != java.lang.Integer.MIN_VALUE;
 
         this.localCustomer_address_id = param;
     }
@@ -271,7 +271,7 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getCreated_at() {
+    public java.lang.String getCreated_at() {
         return localCreated_at;
     }
 
@@ -279,7 +279,7 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
      * Auto generated setter method
      * @param param Created_at
      */
-    public void setCreated_at(String param) {
+    public void setCreated_at(java.lang.String param) {
         localCreated_atTracker = param != null;
 
         this.localCreated_at = param;
@@ -293,7 +293,7 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getUpdated_at() {
+    public java.lang.String getUpdated_at() {
         return localUpdated_at;
     }
 
@@ -301,7 +301,7 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
      * Auto generated setter method
      * @param param Updated_at
      */
-    public void setUpdated_at(String param) {
+    public void setUpdated_at(java.lang.String param) {
         localUpdated_atTracker = param != null;
 
         this.localUpdated_at = param;
@@ -315,7 +315,7 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getIncrement_id() {
+    public java.lang.String getIncrement_id() {
         return localIncrement_id;
     }
 
@@ -323,7 +323,7 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
      * Auto generated setter method
      * @param param Increment_id
      */
-    public void setIncrement_id(String param) {
+    public void setIncrement_id(java.lang.String param) {
         localIncrement_idTracker = param != null;
 
         this.localIncrement_id = param;
@@ -337,7 +337,7 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getCity() {
+    public java.lang.String getCity() {
         return localCity;
     }
 
@@ -345,7 +345,7 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
      * Auto generated setter method
      * @param param City
      */
-    public void setCity(String param) {
+    public void setCity(java.lang.String param) {
         localCityTracker = param != null;
 
         this.localCity = param;
@@ -359,7 +359,7 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getCompany() {
+    public java.lang.String getCompany() {
         return localCompany;
     }
 
@@ -367,7 +367,7 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
      * Auto generated setter method
      * @param param Company
      */
-    public void setCompany(String param) {
+    public void setCompany(java.lang.String param) {
         localCompanyTracker = param != null;
 
         this.localCompany = param;
@@ -381,7 +381,7 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getCountry_id() {
+    public java.lang.String getCountry_id() {
         return localCountry_id;
     }
 
@@ -389,7 +389,7 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
      * Auto generated setter method
      * @param param Country_id
      */
-    public void setCountry_id(String param) {
+    public void setCountry_id(java.lang.String param) {
         localCountry_idTracker = param != null;
 
         this.localCountry_id = param;
@@ -403,7 +403,7 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getFax() {
+    public java.lang.String getFax() {
         return localFax;
     }
 
@@ -411,7 +411,7 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
      * Auto generated setter method
      * @param param Fax
      */
-    public void setFax(String param) {
+    public void setFax(java.lang.String param) {
         localFaxTracker = param != null;
 
         this.localFax = param;
@@ -425,7 +425,7 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getFirstname() {
+    public java.lang.String getFirstname() {
         return localFirstname;
     }
 
@@ -433,7 +433,7 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
      * Auto generated setter method
      * @param param Firstname
      */
-    public void setFirstname(String param) {
+    public void setFirstname(java.lang.String param) {
         localFirstnameTracker = param != null;
 
         this.localFirstname = param;
@@ -447,7 +447,7 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getLastname() {
+    public java.lang.String getLastname() {
         return localLastname;
     }
 
@@ -455,7 +455,7 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
      * Auto generated setter method
      * @param param Lastname
      */
-    public void setLastname(String param) {
+    public void setLastname(java.lang.String param) {
         localLastnameTracker = param != null;
 
         this.localLastname = param;
@@ -469,7 +469,7 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getMiddlename() {
+    public java.lang.String getMiddlename() {
         return localMiddlename;
     }
 
@@ -477,7 +477,7 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
      * Auto generated setter method
      * @param param Middlename
      */
-    public void setMiddlename(String param) {
+    public void setMiddlename(java.lang.String param) {
         localMiddlenameTracker = param != null;
 
         this.localMiddlename = param;
@@ -491,7 +491,7 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getPostcode() {
+    public java.lang.String getPostcode() {
         return localPostcode;
     }
 
@@ -499,7 +499,7 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
      * Auto generated setter method
      * @param param Postcode
      */
-    public void setPostcode(String param) {
+    public void setPostcode(java.lang.String param) {
         localPostcodeTracker = param != null;
 
         this.localPostcode = param;
@@ -513,7 +513,7 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getPrefix() {
+    public java.lang.String getPrefix() {
         return localPrefix;
     }
 
@@ -521,7 +521,7 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
      * Auto generated setter method
      * @param param Prefix
      */
-    public void setPrefix(String param) {
+    public void setPrefix(java.lang.String param) {
         localPrefixTracker = param != null;
 
         this.localPrefix = param;
@@ -535,7 +535,7 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getRegion() {
+    public java.lang.String getRegion() {
         return localRegion;
     }
 
@@ -543,7 +543,7 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
      * Auto generated setter method
      * @param param Region
      */
-    public void setRegion(String param) {
+    public void setRegion(java.lang.String param) {
         localRegionTracker = param != null;
 
         this.localRegion = param;
@@ -567,7 +567,7 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
      */
     public void setRegion_id(int param) {
         // setting primitive attribute tracker to true
-        localRegion_idTracker = param != Integer.MIN_VALUE;
+        localRegion_idTracker = param != java.lang.Integer.MIN_VALUE;
 
         this.localRegion_id = param;
     }
@@ -580,7 +580,7 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getStreet() {
+    public java.lang.String getStreet() {
         return localStreet;
     }
 
@@ -588,7 +588,7 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
      * Auto generated setter method
      * @param param Street
      */
-    public void setStreet(String param) {
+    public void setStreet(java.lang.String param) {
         localStreetTracker = param != null;
 
         this.localStreet = param;
@@ -602,7 +602,7 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getSuffix() {
+    public java.lang.String getSuffix() {
         return localSuffix;
     }
 
@@ -610,7 +610,7 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
      * Auto generated setter method
      * @param param Suffix
      */
-    public void setSuffix(String param) {
+    public void setSuffix(java.lang.String param) {
         localSuffixTracker = param != null;
 
         this.localSuffix = param;
@@ -624,7 +624,7 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getTelephone() {
+    public java.lang.String getTelephone() {
         return localTelephone;
     }
 
@@ -632,7 +632,7 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
      * Auto generated setter method
      * @param param Telephone
      */
-    public void setTelephone(String param) {
+    public void setTelephone(java.lang.String param) {
         localTelephoneTracker = param != null;
 
         this.localTelephone = param;
@@ -711,8 +711,8 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
         javax.xml.stream.XMLStreamWriter xmlWriter, boolean serializeType)
         throws javax.xml.stream.XMLStreamException,
             org.apache.axis2.databinding.ADBException {
-        String prefix = null;
-        String namespace = null;
+        java.lang.String prefix = null;
+        java.lang.String namespace = null;
 
         prefix = parentQName.getPrefix();
         namespace = parentQName.getNamespaceURI();
@@ -720,7 +720,7 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
             xmlWriter);
 
         if (serializeType) {
-            String namespacePrefix = registerPrefix(xmlWriter,
+            java.lang.String namespacePrefix = registerPrefix(xmlWriter,
                     "urn:Magento");
 
             if ((namespacePrefix != null) &&
@@ -739,7 +739,7 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
             namespace = "";
             writeStartElement(null, namespace, "customer_address_id", xmlWriter);
 
-            if (localCustomer_address_id == Integer.MIN_VALUE) {
+            if (localCustomer_address_id == java.lang.Integer.MIN_VALUE) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "customer_address_id cannot be null!!");
             } else {
@@ -949,7 +949,7 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
             namespace = "";
             writeStartElement(null, namespace, "region_id", xmlWriter);
 
-            if (localRegion_id == Integer.MIN_VALUE) {
+            if (localRegion_id == java.lang.Integer.MIN_VALUE) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "region_id cannot be null!!");
             } else {
@@ -1038,7 +1038,7 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
         xmlWriter.writeEndElement();
     }
 
-    private static String generatePrefix(String namespace) {
+    private static java.lang.String generatePrefix(java.lang.String namespace) {
         if (namespace.equals("urn:Magento")) {
             return "ns1";
         }
@@ -1049,11 +1049,11 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
     /**
      * Utility method to write an element start tag.
      */
-    private void writeStartElement(String prefix,
-        String namespace, String localPart,
+    private void writeStartElement(java.lang.String prefix,
+        java.lang.String namespace, java.lang.String localPart,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
-        String writerPrefix = xmlWriter.getPrefix(namespace);
+        java.lang.String writerPrefix = xmlWriter.getPrefix(namespace);
 
         if (writerPrefix != null) {
             xmlWriter.writeStartElement(namespace, localPart);
@@ -1073,9 +1073,9 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
     /**
      * Util method to write an attribute with the ns prefix
      */
-    private void writeAttribute(String prefix,
-        String namespace, String attName,
-        String attValue, javax.xml.stream.XMLStreamWriter xmlWriter)
+    private void writeAttribute(java.lang.String prefix,
+        java.lang.String namespace, java.lang.String attName,
+        java.lang.String attValue, javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
         if (xmlWriter.getPrefix(namespace) == null) {
             xmlWriter.writeNamespace(prefix, namespace);
@@ -1088,8 +1088,8 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
     /**
      * Util method to write an attribute without the ns prefix
      */
-    private void writeAttribute(String namespace,
-        String attName, String attValue,
+    private void writeAttribute(java.lang.String namespace,
+        java.lang.String attName, java.lang.String attValue,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
         if (namespace.equals("")) {
@@ -1103,18 +1103,18 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
     /**
      * Util method to write an attribute without the ns prefix
      */
-    private void writeQNameAttribute(String namespace,
-        String attName, javax.xml.namespace.QName qname,
+    private void writeQNameAttribute(java.lang.String namespace,
+        java.lang.String attName, javax.xml.namespace.QName qname,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
-        String attributeNamespace = qname.getNamespaceURI();
-        String attributePrefix = xmlWriter.getPrefix(attributeNamespace);
+        java.lang.String attributeNamespace = qname.getNamespaceURI();
+        java.lang.String attributePrefix = xmlWriter.getPrefix(attributeNamespace);
 
         if (attributePrefix == null) {
             attributePrefix = registerPrefix(xmlWriter, attributeNamespace);
         }
 
-        String attributeValue;
+        java.lang.String attributeValue;
 
         if (attributePrefix.trim().length() > 0) {
             attributeValue = attributePrefix + ":" + qname.getLocalPart();
@@ -1136,10 +1136,10 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
     private void writeQName(javax.xml.namespace.QName qname,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
-        String namespaceURI = qname.getNamespaceURI();
+        java.lang.String namespaceURI = qname.getNamespaceURI();
 
         if (namespaceURI != null) {
-            String prefix = xmlWriter.getPrefix(namespaceURI);
+            java.lang.String prefix = xmlWriter.getPrefix(namespaceURI);
 
             if (prefix == null) {
                 prefix = generatePrefix(namespaceURI);
@@ -1168,9 +1168,9 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
         if (qnames != null) {
             // we have to store this data until last moment since it is not possible to write any
             // namespace data after writing the charactor data
-            StringBuffer stringToWrite = new StringBuffer();
-            String namespaceURI = null;
-            String prefix = null;
+            java.lang.StringBuffer stringToWrite = new java.lang.StringBuffer();
+            java.lang.String namespaceURI = null;
+            java.lang.String prefix = null;
 
             for (int i = 0; i < qnames.length; i++) {
                 if (i > 0) {
@@ -1209,10 +1209,10 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
     /**
      * Register a namespace prefix
      */
-    private String registerPrefix(
-        javax.xml.stream.XMLStreamWriter xmlWriter, String namespace)
+    private java.lang.String registerPrefix(
+        javax.xml.stream.XMLStreamWriter xmlWriter, java.lang.String namespace)
         throws javax.xml.stream.XMLStreamException {
-        String prefix = xmlWriter.getPrefix(namespace);
+        java.lang.String prefix = xmlWriter.getPrefix(namespace);
 
         if (prefix == null) {
             prefix = generatePrefix(namespace);
@@ -1220,7 +1220,7 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
             javax.xml.namespace.NamespaceContext nsContext = xmlWriter.getNamespaceContext();
 
             while (true) {
-                String uri = nsContext.getNamespaceURI(prefix);
+                java.lang.String uri = nsContext.getNamespaceURI(prefix);
 
                 if ((uri == null) || (uri.length() == 0)) {
                     break;
@@ -1485,13 +1485,13 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
          *                If this object is a complex type, the reader is positioned at the end element of its outer element
          */
         public static CustomerAddressEntityItem parse(
-            javax.xml.stream.XMLStreamReader reader) throws Exception {
+            javax.xml.stream.XMLStreamReader reader) throws java.lang.Exception {
             CustomerAddressEntityItem object = new CustomerAddressEntityItem();
 
             int event;
-            String nillableValue = null;
-            String prefix = "";
-            String namespaceuri = "";
+            java.lang.String nillableValue = null;
+            java.lang.String prefix = "";
+            java.lang.String namespaceuri = "";
 
             try {
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -1499,11 +1499,11 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
 
                 if (reader.getAttributeValue(
                             "http://www.w3.org/2001/XMLSchema-instance", "type") != null) {
-                    String fullTypeName = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance",
+                    java.lang.String fullTypeName = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance",
                             "type");
 
                     if (fullTypeName != null) {
-                        String nsPrefix = null;
+                        java.lang.String nsPrefix = null;
 
                         if (fullTypeName.indexOf(":") > -1) {
                             nsPrefix = fullTypeName.substring(0,
@@ -1512,12 +1512,12 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
 
                         nsPrefix = (nsPrefix == null) ? "" : nsPrefix;
 
-                        String type = fullTypeName.substring(fullTypeName.indexOf(
+                        java.lang.String type = fullTypeName.substring(fullTypeName.indexOf(
                                     ":") + 1);
 
                         if (!"customerAddressEntityItem".equals(type)) {
                             //find namespace for the prefix
-                            String nsUri = reader.getNamespaceContext()
+                            java.lang.String nsUri = reader.getNamespaceContext()
                                                            .getNamespaceURI(nsPrefix);
 
                             return (CustomerAddressEntityItem) magento.ExtensionMapper.getTypeObject(nsUri,
@@ -1548,7 +1548,7 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setCustomer_address_id(org.apache.axis2.databinding.utils.ConverterUtil.convertToInt(
                             content));
@@ -1557,7 +1557,7 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
                 } // End of if for expected property start element
 
                 else {
-                    object.setCustomer_address_id(Integer.MIN_VALUE);
+                    object.setCustomer_address_id(java.lang.Integer.MIN_VALUE);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -1576,7 +1576,7 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setCreated_at(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1603,7 +1603,7 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setUpdated_at(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1630,7 +1630,7 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setIncrement_id(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1656,7 +1656,7 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
                             "The element: " + "city" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setCity(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1682,7 +1682,7 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
                             "The element: " + "company" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setCompany(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1709,7 +1709,7 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setCountry_id(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1735,7 +1735,7 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
                             "The element: " + "fax" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setFax(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1761,7 +1761,7 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
                             "The element: " + "firstname" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setFirstname(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1787,7 +1787,7 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
                             "The element: " + "lastname" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setLastname(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1814,7 +1814,7 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setMiddlename(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1840,7 +1840,7 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
                             "The element: " + "postcode" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setPostcode(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1866,7 +1866,7 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
                             "The element: " + "prefix" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setPrefix(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1892,7 +1892,7 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
                             "The element: " + "region" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setRegion(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1918,7 +1918,7 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
                             "The element: " + "region_id" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setRegion_id(org.apache.axis2.databinding.utils.ConverterUtil.convertToInt(
                             content));
@@ -1927,7 +1927,7 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
                 } // End of if for expected property start element
 
                 else {
-                    object.setRegion_id(Integer.MIN_VALUE);
+                    object.setRegion_id(java.lang.Integer.MIN_VALUE);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -1945,7 +1945,7 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
                             "The element: " + "street" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setStreet(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1971,7 +1971,7 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
                             "The element: " + "suffix" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setSuffix(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1997,7 +1997,7 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
                             "The element: " + "telephone" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setTelephone(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -2024,7 +2024,7 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setIs_default_billing(org.apache.axis2.databinding.utils.ConverterUtil.convertToBoolean(
                             content));
@@ -2051,7 +2051,7 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setIs_default_shipping(org.apache.axis2.databinding.utils.ConverterUtil.convertToBoolean(
                             content));
@@ -2071,7 +2071,7 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
                         "Unexpected subelement " + reader.getName());
                 }
             } catch (javax.xml.stream.XMLStreamException e) {
-                throw new Exception(e);
+                throw new java.lang.Exception(e);
             }
 
             return object;

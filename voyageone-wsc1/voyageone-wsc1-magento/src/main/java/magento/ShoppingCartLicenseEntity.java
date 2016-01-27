@@ -23,7 +23,7 @@ public class ShoppingCartLicenseEntity implements org.apache.axis2.databinding.A
     /**
      * field for Agreement_id
      */
-    protected String localAgreement_id;
+    protected java.lang.String localAgreement_id;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -34,7 +34,7 @@ public class ShoppingCartLicenseEntity implements org.apache.axis2.databinding.A
     /**
      * field for Name
      */
-    protected String localName;
+    protected java.lang.String localName;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -45,7 +45,7 @@ public class ShoppingCartLicenseEntity implements org.apache.axis2.databinding.A
     /**
      * field for Content
      */
-    protected String localContent;
+    protected java.lang.String localContent;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -83,7 +83,7 @@ public class ShoppingCartLicenseEntity implements org.apache.axis2.databinding.A
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getAgreement_id() {
+    public java.lang.String getAgreement_id() {
         return localAgreement_id;
     }
 
@@ -91,7 +91,7 @@ public class ShoppingCartLicenseEntity implements org.apache.axis2.databinding.A
      * Auto generated setter method
      * @param param Agreement_id
      */
-    public void setAgreement_id(String param) {
+    public void setAgreement_id(java.lang.String param) {
         localAgreement_idTracker = param != null;
 
         this.localAgreement_id = param;
@@ -105,7 +105,7 @@ public class ShoppingCartLicenseEntity implements org.apache.axis2.databinding.A
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getName() {
+    public java.lang.String getName() {
         return localName;
     }
 
@@ -113,7 +113,7 @@ public class ShoppingCartLicenseEntity implements org.apache.axis2.databinding.A
      * Auto generated setter method
      * @param param Name
      */
-    public void setName(String param) {
+    public void setName(java.lang.String param) {
         localNameTracker = param != null;
 
         this.localName = param;
@@ -127,7 +127,7 @@ public class ShoppingCartLicenseEntity implements org.apache.axis2.databinding.A
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getContent() {
+    public java.lang.String getContent() {
         return localContent;
     }
 
@@ -135,7 +135,7 @@ public class ShoppingCartLicenseEntity implements org.apache.axis2.databinding.A
      * Auto generated setter method
      * @param param Content
      */
-    public void setContent(String param) {
+    public void setContent(java.lang.String param) {
         localContentTracker = param != null;
 
         this.localContent = param;
@@ -159,7 +159,7 @@ public class ShoppingCartLicenseEntity implements org.apache.axis2.databinding.A
      */
     public void setIs_active(int param) {
         // setting primitive attribute tracker to true
-        localIs_activeTracker = param != Integer.MIN_VALUE;
+        localIs_activeTracker = param != java.lang.Integer.MIN_VALUE;
 
         this.localIs_active = param;
     }
@@ -182,7 +182,7 @@ public class ShoppingCartLicenseEntity implements org.apache.axis2.databinding.A
      */
     public void setIs_html(int param) {
         // setting primitive attribute tracker to true
-        localIs_htmlTracker = param != Integer.MIN_VALUE;
+        localIs_htmlTracker = param != java.lang.Integer.MIN_VALUE;
 
         this.localIs_html = param;
     }
@@ -214,8 +214,8 @@ public class ShoppingCartLicenseEntity implements org.apache.axis2.databinding.A
         javax.xml.stream.XMLStreamWriter xmlWriter, boolean serializeType)
         throws javax.xml.stream.XMLStreamException,
             org.apache.axis2.databinding.ADBException {
-        String prefix = null;
-        String namespace = null;
+        java.lang.String prefix = null;
+        java.lang.String namespace = null;
 
         prefix = parentQName.getPrefix();
         namespace = parentQName.getNamespaceURI();
@@ -223,7 +223,7 @@ public class ShoppingCartLicenseEntity implements org.apache.axis2.databinding.A
             xmlWriter);
 
         if (serializeType) {
-            String namespacePrefix = registerPrefix(xmlWriter,
+            java.lang.String namespacePrefix = registerPrefix(xmlWriter,
                     "urn:Magento");
 
             if ((namespacePrefix != null) &&
@@ -287,7 +287,7 @@ public class ShoppingCartLicenseEntity implements org.apache.axis2.databinding.A
             namespace = "";
             writeStartElement(null, namespace, "is_active", xmlWriter);
 
-            if (localIs_active == Integer.MIN_VALUE) {
+            if (localIs_active == java.lang.Integer.MIN_VALUE) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "is_active cannot be null!!");
             } else {
@@ -302,7 +302,7 @@ public class ShoppingCartLicenseEntity implements org.apache.axis2.databinding.A
             namespace = "";
             writeStartElement(null, namespace, "is_html", xmlWriter);
 
-            if (localIs_html == Integer.MIN_VALUE) {
+            if (localIs_html == java.lang.Integer.MIN_VALUE) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "is_html cannot be null!!");
             } else {
@@ -316,7 +316,7 @@ public class ShoppingCartLicenseEntity implements org.apache.axis2.databinding.A
         xmlWriter.writeEndElement();
     }
 
-    private static String generatePrefix(String namespace) {
+    private static java.lang.String generatePrefix(java.lang.String namespace) {
         if (namespace.equals("urn:Magento")) {
             return "ns1";
         }
@@ -327,11 +327,11 @@ public class ShoppingCartLicenseEntity implements org.apache.axis2.databinding.A
     /**
      * Utility method to write an element start tag.
      */
-    private void writeStartElement(String prefix,
-        String namespace, String localPart,
+    private void writeStartElement(java.lang.String prefix,
+        java.lang.String namespace, java.lang.String localPart,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
-        String writerPrefix = xmlWriter.getPrefix(namespace);
+        java.lang.String writerPrefix = xmlWriter.getPrefix(namespace);
 
         if (writerPrefix != null) {
             xmlWriter.writeStartElement(namespace, localPart);
@@ -351,9 +351,9 @@ public class ShoppingCartLicenseEntity implements org.apache.axis2.databinding.A
     /**
      * Util method to write an attribute with the ns prefix
      */
-    private void writeAttribute(String prefix,
-        String namespace, String attName,
-        String attValue, javax.xml.stream.XMLStreamWriter xmlWriter)
+    private void writeAttribute(java.lang.String prefix,
+        java.lang.String namespace, java.lang.String attName,
+        java.lang.String attValue, javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
         if (xmlWriter.getPrefix(namespace) == null) {
             xmlWriter.writeNamespace(prefix, namespace);
@@ -366,8 +366,8 @@ public class ShoppingCartLicenseEntity implements org.apache.axis2.databinding.A
     /**
      * Util method to write an attribute without the ns prefix
      */
-    private void writeAttribute(String namespace,
-        String attName, String attValue,
+    private void writeAttribute(java.lang.String namespace,
+        java.lang.String attName, java.lang.String attValue,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
         if (namespace.equals("")) {
@@ -381,18 +381,18 @@ public class ShoppingCartLicenseEntity implements org.apache.axis2.databinding.A
     /**
      * Util method to write an attribute without the ns prefix
      */
-    private void writeQNameAttribute(String namespace,
-        String attName, javax.xml.namespace.QName qname,
+    private void writeQNameAttribute(java.lang.String namespace,
+        java.lang.String attName, javax.xml.namespace.QName qname,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
-        String attributeNamespace = qname.getNamespaceURI();
-        String attributePrefix = xmlWriter.getPrefix(attributeNamespace);
+        java.lang.String attributeNamespace = qname.getNamespaceURI();
+        java.lang.String attributePrefix = xmlWriter.getPrefix(attributeNamespace);
 
         if (attributePrefix == null) {
             attributePrefix = registerPrefix(xmlWriter, attributeNamespace);
         }
 
-        String attributeValue;
+        java.lang.String attributeValue;
 
         if (attributePrefix.trim().length() > 0) {
             attributeValue = attributePrefix + ":" + qname.getLocalPart();
@@ -414,10 +414,10 @@ public class ShoppingCartLicenseEntity implements org.apache.axis2.databinding.A
     private void writeQName(javax.xml.namespace.QName qname,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
-        String namespaceURI = qname.getNamespaceURI();
+        java.lang.String namespaceURI = qname.getNamespaceURI();
 
         if (namespaceURI != null) {
-            String prefix = xmlWriter.getPrefix(namespaceURI);
+            java.lang.String prefix = xmlWriter.getPrefix(namespaceURI);
 
             if (prefix == null) {
                 prefix = generatePrefix(namespaceURI);
@@ -446,9 +446,9 @@ public class ShoppingCartLicenseEntity implements org.apache.axis2.databinding.A
         if (qnames != null) {
             // we have to store this data until last moment since it is not possible to write any
             // namespace data after writing the charactor data
-            StringBuffer stringToWrite = new StringBuffer();
-            String namespaceURI = null;
-            String prefix = null;
+            java.lang.StringBuffer stringToWrite = new java.lang.StringBuffer();
+            java.lang.String namespaceURI = null;
+            java.lang.String prefix = null;
 
             for (int i = 0; i < qnames.length; i++) {
                 if (i > 0) {
@@ -487,10 +487,10 @@ public class ShoppingCartLicenseEntity implements org.apache.axis2.databinding.A
     /**
      * Register a namespace prefix
      */
-    private String registerPrefix(
-        javax.xml.stream.XMLStreamWriter xmlWriter, String namespace)
+    private java.lang.String registerPrefix(
+        javax.xml.stream.XMLStreamWriter xmlWriter, java.lang.String namespace)
         throws javax.xml.stream.XMLStreamException {
-        String prefix = xmlWriter.getPrefix(namespace);
+        java.lang.String prefix = xmlWriter.getPrefix(namespace);
 
         if (prefix == null) {
             prefix = generatePrefix(namespace);
@@ -498,7 +498,7 @@ public class ShoppingCartLicenseEntity implements org.apache.axis2.databinding.A
             javax.xml.namespace.NamespaceContext nsContext = xmlWriter.getNamespaceContext();
 
             while (true) {
-                String uri = nsContext.getNamespaceURI(prefix);
+                java.lang.String uri = nsContext.getNamespaceURI(prefix);
 
                 if ((uri == null) || (uri.length() == 0)) {
                     break;
@@ -590,13 +590,13 @@ public class ShoppingCartLicenseEntity implements org.apache.axis2.databinding.A
          *                If this object is a complex type, the reader is positioned at the end element of its outer element
          */
         public static ShoppingCartLicenseEntity parse(
-            javax.xml.stream.XMLStreamReader reader) throws Exception {
+            javax.xml.stream.XMLStreamReader reader) throws java.lang.Exception {
             ShoppingCartLicenseEntity object = new ShoppingCartLicenseEntity();
 
             int event;
-            String nillableValue = null;
-            String prefix = "";
-            String namespaceuri = "";
+            java.lang.String nillableValue = null;
+            java.lang.String prefix = "";
+            java.lang.String namespaceuri = "";
 
             try {
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -604,11 +604,11 @@ public class ShoppingCartLicenseEntity implements org.apache.axis2.databinding.A
 
                 if (reader.getAttributeValue(
                             "http://www.w3.org/2001/XMLSchema-instance", "type") != null) {
-                    String fullTypeName = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance",
+                    java.lang.String fullTypeName = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance",
                             "type");
 
                     if (fullTypeName != null) {
-                        String nsPrefix = null;
+                        java.lang.String nsPrefix = null;
 
                         if (fullTypeName.indexOf(":") > -1) {
                             nsPrefix = fullTypeName.substring(0,
@@ -617,12 +617,12 @@ public class ShoppingCartLicenseEntity implements org.apache.axis2.databinding.A
 
                         nsPrefix = (nsPrefix == null) ? "" : nsPrefix;
 
-                        String type = fullTypeName.substring(fullTypeName.indexOf(
+                        java.lang.String type = fullTypeName.substring(fullTypeName.indexOf(
                                     ":") + 1);
 
                         if (!"shoppingCartLicenseEntity".equals(type)) {
                             //find namespace for the prefix
-                            String nsUri = reader.getNamespaceContext()
+                            java.lang.String nsUri = reader.getNamespaceContext()
                                                            .getNamespaceURI(nsPrefix);
 
                             return (ShoppingCartLicenseEntity) magento.ExtensionMapper.getTypeObject(nsUri,
@@ -653,7 +653,7 @@ public class ShoppingCartLicenseEntity implements org.apache.axis2.databinding.A
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setAgreement_id(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -679,7 +679,7 @@ public class ShoppingCartLicenseEntity implements org.apache.axis2.databinding.A
                             "The element: " + "name" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setName(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -705,7 +705,7 @@ public class ShoppingCartLicenseEntity implements org.apache.axis2.databinding.A
                             "The element: " + "content" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setContent(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -731,7 +731,7 @@ public class ShoppingCartLicenseEntity implements org.apache.axis2.databinding.A
                             "The element: " + "is_active" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setIs_active(org.apache.axis2.databinding.utils.ConverterUtil.convertToInt(
                             content));
@@ -740,7 +740,7 @@ public class ShoppingCartLicenseEntity implements org.apache.axis2.databinding.A
                 } // End of if for expected property start element
 
                 else {
-                    object.setIs_active(Integer.MIN_VALUE);
+                    object.setIs_active(java.lang.Integer.MIN_VALUE);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -758,7 +758,7 @@ public class ShoppingCartLicenseEntity implements org.apache.axis2.databinding.A
                             "The element: " + "is_html" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setIs_html(org.apache.axis2.databinding.utils.ConverterUtil.convertToInt(
                             content));
@@ -767,7 +767,7 @@ public class ShoppingCartLicenseEntity implements org.apache.axis2.databinding.A
                 } // End of if for expected property start element
 
                 else {
-                    object.setIs_html(Integer.MIN_VALUE);
+                    object.setIs_html(java.lang.Integer.MIN_VALUE);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -779,7 +779,7 @@ public class ShoppingCartLicenseEntity implements org.apache.axis2.databinding.A
                         "Unexpected subelement " + reader.getName());
                 }
             } catch (javax.xml.stream.XMLStreamException e) {
-                throw new Exception(e);
+                throw new java.lang.Exception(e);
             }
 
             return object;

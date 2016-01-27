@@ -23,22 +23,22 @@ public class CatalogProductAttributeEntity implements org.apache.axis2.databindi
     /**
      * field for Attribute_id
      */
-    protected String localAttribute_id;
+    protected java.lang.String localAttribute_id;
 
     /**
      * field for Attribute_code
      */
-    protected String localAttribute_code;
+    protected java.lang.String localAttribute_code;
 
     /**
      * field for Frontend_input
      */
-    protected String localFrontend_input;
+    protected java.lang.String localFrontend_input;
 
     /**
      * field for Scope
      */
-    protected String localScope;
+    protected java.lang.String localScope;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -49,7 +49,7 @@ public class CatalogProductAttributeEntity implements org.apache.axis2.databindi
     /**
      * field for Default_value
      */
-    protected String localDefault_value;
+    protected java.lang.String localDefault_value;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -198,7 +198,7 @@ public class CatalogProductAttributeEntity implements org.apache.axis2.databindi
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getAttribute_id() {
+    public java.lang.String getAttribute_id() {
         return localAttribute_id;
     }
 
@@ -206,7 +206,7 @@ public class CatalogProductAttributeEntity implements org.apache.axis2.databindi
      * Auto generated setter method
      * @param param Attribute_id
      */
-    public void setAttribute_id(String param) {
+    public void setAttribute_id(java.lang.String param) {
         this.localAttribute_id = param;
     }
 
@@ -214,7 +214,7 @@ public class CatalogProductAttributeEntity implements org.apache.axis2.databindi
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getAttribute_code() {
+    public java.lang.String getAttribute_code() {
         return localAttribute_code;
     }
 
@@ -222,7 +222,7 @@ public class CatalogProductAttributeEntity implements org.apache.axis2.databindi
      * Auto generated setter method
      * @param param Attribute_code
      */
-    public void setAttribute_code(String param) {
+    public void setAttribute_code(java.lang.String param) {
         this.localAttribute_code = param;
     }
 
@@ -230,7 +230,7 @@ public class CatalogProductAttributeEntity implements org.apache.axis2.databindi
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getFrontend_input() {
+    public java.lang.String getFrontend_input() {
         return localFrontend_input;
     }
 
@@ -238,7 +238,7 @@ public class CatalogProductAttributeEntity implements org.apache.axis2.databindi
      * Auto generated setter method
      * @param param Frontend_input
      */
-    public void setFrontend_input(String param) {
+    public void setFrontend_input(java.lang.String param) {
         this.localFrontend_input = param;
     }
 
@@ -250,7 +250,7 @@ public class CatalogProductAttributeEntity implements org.apache.axis2.databindi
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getScope() {
+    public java.lang.String getScope() {
         return localScope;
     }
 
@@ -258,7 +258,7 @@ public class CatalogProductAttributeEntity implements org.apache.axis2.databindi
      * Auto generated setter method
      * @param param Scope
      */
-    public void setScope(String param) {
+    public void setScope(java.lang.String param) {
         localScopeTracker = param != null;
 
         this.localScope = param;
@@ -272,7 +272,7 @@ public class CatalogProductAttributeEntity implements org.apache.axis2.databindi
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getDefault_value() {
+    public java.lang.String getDefault_value() {
         return localDefault_value;
     }
 
@@ -280,7 +280,7 @@ public class CatalogProductAttributeEntity implements org.apache.axis2.databindi
      * Auto generated setter method
      * @param param Default_value
      */
-    public void setDefault_value(String param) {
+    public void setDefault_value(java.lang.String param) {
         localDefault_valueTracker = param != null;
 
         this.localDefault_value = param;
@@ -304,7 +304,7 @@ public class CatalogProductAttributeEntity implements org.apache.axis2.databindi
      */
     public void setIs_unique(int param) {
         // setting primitive attribute tracker to true
-        localIs_uniqueTracker = param != Integer.MIN_VALUE;
+        localIs_uniqueTracker = param != java.lang.Integer.MIN_VALUE;
 
         this.localIs_unique = param;
     }
@@ -327,7 +327,7 @@ public class CatalogProductAttributeEntity implements org.apache.axis2.databindi
      */
     public void setIs_required(int param) {
         // setting primitive attribute tracker to true
-        localIs_requiredTracker = param != Integer.MIN_VALUE;
+        localIs_requiredTracker = param != java.lang.Integer.MIN_VALUE;
 
         this.localIs_required = param;
     }
@@ -372,7 +372,7 @@ public class CatalogProductAttributeEntity implements org.apache.axis2.databindi
      */
     public void setIs_configurable(int param) {
         // setting primitive attribute tracker to true
-        localIs_configurableTracker = param != Integer.MIN_VALUE;
+        localIs_configurableTracker = param != java.lang.Integer.MIN_VALUE;
 
         this.localIs_configurable = param;
     }
@@ -395,7 +395,7 @@ public class CatalogProductAttributeEntity implements org.apache.axis2.databindi
      */
     public void setIs_searchable(int param) {
         // setting primitive attribute tracker to true
-        localIs_searchableTracker = param != Integer.MIN_VALUE;
+        localIs_searchableTracker = param != java.lang.Integer.MIN_VALUE;
 
         this.localIs_searchable = param;
     }
@@ -418,7 +418,7 @@ public class CatalogProductAttributeEntity implements org.apache.axis2.databindi
      */
     public void setIs_visible_in_advanced_search(int param) {
         // setting primitive attribute tracker to true
-        localIs_visible_in_advanced_searchTracker = param != Integer.MIN_VALUE;
+        localIs_visible_in_advanced_searchTracker = param != java.lang.Integer.MIN_VALUE;
 
         this.localIs_visible_in_advanced_search = param;
     }
@@ -441,7 +441,7 @@ public class CatalogProductAttributeEntity implements org.apache.axis2.databindi
      */
     public void setIs_comparable(int param) {
         // setting primitive attribute tracker to true
-        localIs_comparableTracker = param != Integer.MIN_VALUE;
+        localIs_comparableTracker = param != java.lang.Integer.MIN_VALUE;
 
         this.localIs_comparable = param;
     }
@@ -464,7 +464,7 @@ public class CatalogProductAttributeEntity implements org.apache.axis2.databindi
      */
     public void setIs_used_for_promo_rules(int param) {
         // setting primitive attribute tracker to true
-        localIs_used_for_promo_rulesTracker = param != Integer.MIN_VALUE;
+        localIs_used_for_promo_rulesTracker = param != java.lang.Integer.MIN_VALUE;
 
         this.localIs_used_for_promo_rules = param;
     }
@@ -487,7 +487,7 @@ public class CatalogProductAttributeEntity implements org.apache.axis2.databindi
      */
     public void setIs_visible_on_front(int param) {
         // setting primitive attribute tracker to true
-        localIs_visible_on_frontTracker = param != Integer.MIN_VALUE;
+        localIs_visible_on_frontTracker = param != java.lang.Integer.MIN_VALUE;
 
         this.localIs_visible_on_front = param;
     }
@@ -510,7 +510,7 @@ public class CatalogProductAttributeEntity implements org.apache.axis2.databindi
      */
     public void setUsed_in_product_listing(int param) {
         // setting primitive attribute tracker to true
-        localUsed_in_product_listingTracker = param != Integer.MIN_VALUE;
+        localUsed_in_product_listingTracker = param != java.lang.Integer.MIN_VALUE;
 
         this.localUsed_in_product_listing = param;
     }
@@ -603,8 +603,8 @@ public class CatalogProductAttributeEntity implements org.apache.axis2.databindi
         javax.xml.stream.XMLStreamWriter xmlWriter, boolean serializeType)
         throws javax.xml.stream.XMLStreamException,
             org.apache.axis2.databinding.ADBException {
-        String prefix = null;
-        String namespace = null;
+        java.lang.String prefix = null;
+        java.lang.String namespace = null;
 
         prefix = parentQName.getPrefix();
         namespace = parentQName.getNamespaceURI();
@@ -612,7 +612,7 @@ public class CatalogProductAttributeEntity implements org.apache.axis2.databindi
             xmlWriter);
 
         if (serializeType) {
-            String namespacePrefix = registerPrefix(xmlWriter,
+            java.lang.String namespacePrefix = registerPrefix(xmlWriter,
                     "urn:Magento");
 
             if ((namespacePrefix != null) &&
@@ -701,7 +701,7 @@ public class CatalogProductAttributeEntity implements org.apache.axis2.databindi
             namespace = "";
             writeStartElement(null, namespace, "is_unique", xmlWriter);
 
-            if (localIs_unique == Integer.MIN_VALUE) {
+            if (localIs_unique == java.lang.Integer.MIN_VALUE) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "is_unique cannot be null!!");
             } else {
@@ -716,7 +716,7 @@ public class CatalogProductAttributeEntity implements org.apache.axis2.databindi
             namespace = "";
             writeStartElement(null, namespace, "is_required", xmlWriter);
 
-            if (localIs_required == Integer.MIN_VALUE) {
+            if (localIs_required == java.lang.Integer.MIN_VALUE) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "is_required cannot be null!!");
             } else {
@@ -741,7 +741,7 @@ public class CatalogProductAttributeEntity implements org.apache.axis2.databindi
             namespace = "";
             writeStartElement(null, namespace, "is_configurable", xmlWriter);
 
-            if (localIs_configurable == Integer.MIN_VALUE) {
+            if (localIs_configurable == java.lang.Integer.MIN_VALUE) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "is_configurable cannot be null!!");
             } else {
@@ -756,7 +756,7 @@ public class CatalogProductAttributeEntity implements org.apache.axis2.databindi
             namespace = "";
             writeStartElement(null, namespace, "is_searchable", xmlWriter);
 
-            if (localIs_searchable == Integer.MIN_VALUE) {
+            if (localIs_searchable == java.lang.Integer.MIN_VALUE) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "is_searchable cannot be null!!");
             } else {
@@ -772,7 +772,7 @@ public class CatalogProductAttributeEntity implements org.apache.axis2.databindi
             writeStartElement(null, namespace, "is_visible_in_advanced_search",
                 xmlWriter);
 
-            if (localIs_visible_in_advanced_search == Integer.MIN_VALUE) {
+            if (localIs_visible_in_advanced_search == java.lang.Integer.MIN_VALUE) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "is_visible_in_advanced_search cannot be null!!");
             } else {
@@ -787,7 +787,7 @@ public class CatalogProductAttributeEntity implements org.apache.axis2.databindi
             namespace = "";
             writeStartElement(null, namespace, "is_comparable", xmlWriter);
 
-            if (localIs_comparable == Integer.MIN_VALUE) {
+            if (localIs_comparable == java.lang.Integer.MIN_VALUE) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "is_comparable cannot be null!!");
             } else {
@@ -803,7 +803,7 @@ public class CatalogProductAttributeEntity implements org.apache.axis2.databindi
             writeStartElement(null, namespace, "is_used_for_promo_rules",
                 xmlWriter);
 
-            if (localIs_used_for_promo_rules == Integer.MIN_VALUE) {
+            if (localIs_used_for_promo_rules == java.lang.Integer.MIN_VALUE) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "is_used_for_promo_rules cannot be null!!");
             } else {
@@ -818,7 +818,7 @@ public class CatalogProductAttributeEntity implements org.apache.axis2.databindi
             namespace = "";
             writeStartElement(null, namespace, "is_visible_on_front", xmlWriter);
 
-            if (localIs_visible_on_front == Integer.MIN_VALUE) {
+            if (localIs_visible_on_front == java.lang.Integer.MIN_VALUE) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "is_visible_on_front cannot be null!!");
             } else {
@@ -834,7 +834,7 @@ public class CatalogProductAttributeEntity implements org.apache.axis2.databindi
             writeStartElement(null, namespace, "used_in_product_listing",
                 xmlWriter);
 
-            if (localUsed_in_product_listing == Integer.MIN_VALUE) {
+            if (localUsed_in_product_listing == java.lang.Integer.MIN_VALUE) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "used_in_product_listing cannot be null!!");
             } else {
@@ -876,7 +876,7 @@ public class CatalogProductAttributeEntity implements org.apache.axis2.databindi
         xmlWriter.writeEndElement();
     }
 
-    private static String generatePrefix(String namespace) {
+    private static java.lang.String generatePrefix(java.lang.String namespace) {
         if (namespace.equals("urn:Magento")) {
             return "ns1";
         }
@@ -887,11 +887,11 @@ public class CatalogProductAttributeEntity implements org.apache.axis2.databindi
     /**
      * Utility method to write an element start tag.
      */
-    private void writeStartElement(String prefix,
-        String namespace, String localPart,
+    private void writeStartElement(java.lang.String prefix,
+        java.lang.String namespace, java.lang.String localPart,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
-        String writerPrefix = xmlWriter.getPrefix(namespace);
+        java.lang.String writerPrefix = xmlWriter.getPrefix(namespace);
 
         if (writerPrefix != null) {
             xmlWriter.writeStartElement(namespace, localPart);
@@ -911,9 +911,9 @@ public class CatalogProductAttributeEntity implements org.apache.axis2.databindi
     /**
      * Util method to write an attribute with the ns prefix
      */
-    private void writeAttribute(String prefix,
-        String namespace, String attName,
-        String attValue, javax.xml.stream.XMLStreamWriter xmlWriter)
+    private void writeAttribute(java.lang.String prefix,
+        java.lang.String namespace, java.lang.String attName,
+        java.lang.String attValue, javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
         if (xmlWriter.getPrefix(namespace) == null) {
             xmlWriter.writeNamespace(prefix, namespace);
@@ -926,8 +926,8 @@ public class CatalogProductAttributeEntity implements org.apache.axis2.databindi
     /**
      * Util method to write an attribute without the ns prefix
      */
-    private void writeAttribute(String namespace,
-        String attName, String attValue,
+    private void writeAttribute(java.lang.String namespace,
+        java.lang.String attName, java.lang.String attValue,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
         if (namespace.equals("")) {
@@ -941,18 +941,18 @@ public class CatalogProductAttributeEntity implements org.apache.axis2.databindi
     /**
      * Util method to write an attribute without the ns prefix
      */
-    private void writeQNameAttribute(String namespace,
-        String attName, javax.xml.namespace.QName qname,
+    private void writeQNameAttribute(java.lang.String namespace,
+        java.lang.String attName, javax.xml.namespace.QName qname,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
-        String attributeNamespace = qname.getNamespaceURI();
-        String attributePrefix = xmlWriter.getPrefix(attributeNamespace);
+        java.lang.String attributeNamespace = qname.getNamespaceURI();
+        java.lang.String attributePrefix = xmlWriter.getPrefix(attributeNamespace);
 
         if (attributePrefix == null) {
             attributePrefix = registerPrefix(xmlWriter, attributeNamespace);
         }
 
-        String attributeValue;
+        java.lang.String attributeValue;
 
         if (attributePrefix.trim().length() > 0) {
             attributeValue = attributePrefix + ":" + qname.getLocalPart();
@@ -974,10 +974,10 @@ public class CatalogProductAttributeEntity implements org.apache.axis2.databindi
     private void writeQName(javax.xml.namespace.QName qname,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
-        String namespaceURI = qname.getNamespaceURI();
+        java.lang.String namespaceURI = qname.getNamespaceURI();
 
         if (namespaceURI != null) {
-            String prefix = xmlWriter.getPrefix(namespaceURI);
+            java.lang.String prefix = xmlWriter.getPrefix(namespaceURI);
 
             if (prefix == null) {
                 prefix = generatePrefix(namespaceURI);
@@ -1006,9 +1006,9 @@ public class CatalogProductAttributeEntity implements org.apache.axis2.databindi
         if (qnames != null) {
             // we have to store this data until last moment since it is not possible to write any
             // namespace data after writing the charactor data
-            StringBuffer stringToWrite = new StringBuffer();
-            String namespaceURI = null;
-            String prefix = null;
+            java.lang.StringBuffer stringToWrite = new java.lang.StringBuffer();
+            java.lang.String namespaceURI = null;
+            java.lang.String prefix = null;
 
             for (int i = 0; i < qnames.length; i++) {
                 if (i > 0) {
@@ -1047,10 +1047,10 @@ public class CatalogProductAttributeEntity implements org.apache.axis2.databindi
     /**
      * Register a namespace prefix
      */
-    private String registerPrefix(
-        javax.xml.stream.XMLStreamWriter xmlWriter, String namespace)
+    private java.lang.String registerPrefix(
+        javax.xml.stream.XMLStreamWriter xmlWriter, java.lang.String namespace)
         throws javax.xml.stream.XMLStreamException {
-        String prefix = xmlWriter.getPrefix(namespace);
+        java.lang.String prefix = xmlWriter.getPrefix(namespace);
 
         if (prefix == null) {
             prefix = generatePrefix(namespace);
@@ -1058,7 +1058,7 @@ public class CatalogProductAttributeEntity implements org.apache.axis2.databindi
             javax.xml.namespace.NamespaceContext nsContext = xmlWriter.getNamespaceContext();
 
             while (true) {
-                String uri = nsContext.getNamespaceURI(prefix);
+                java.lang.String uri = nsContext.getNamespaceURI(prefix);
 
                 if ((uri == null) || (uri.length() == 0)) {
                     break;
@@ -1264,13 +1264,13 @@ public class CatalogProductAttributeEntity implements org.apache.axis2.databindi
          *                If this object is a complex type, the reader is positioned at the end element of its outer element
          */
         public static CatalogProductAttributeEntity parse(
-            javax.xml.stream.XMLStreamReader reader) throws Exception {
+            javax.xml.stream.XMLStreamReader reader) throws java.lang.Exception {
             CatalogProductAttributeEntity object = new CatalogProductAttributeEntity();
 
             int event;
-            String nillableValue = null;
-            String prefix = "";
-            String namespaceuri = "";
+            java.lang.String nillableValue = null;
+            java.lang.String prefix = "";
+            java.lang.String namespaceuri = "";
 
             try {
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -1278,11 +1278,11 @@ public class CatalogProductAttributeEntity implements org.apache.axis2.databindi
 
                 if (reader.getAttributeValue(
                             "http://www.w3.org/2001/XMLSchema-instance", "type") != null) {
-                    String fullTypeName = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance",
+                    java.lang.String fullTypeName = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance",
                             "type");
 
                     if (fullTypeName != null) {
-                        String nsPrefix = null;
+                        java.lang.String nsPrefix = null;
 
                         if (fullTypeName.indexOf(":") > -1) {
                             nsPrefix = fullTypeName.substring(0,
@@ -1291,12 +1291,12 @@ public class CatalogProductAttributeEntity implements org.apache.axis2.databindi
 
                         nsPrefix = (nsPrefix == null) ? "" : nsPrefix;
 
-                        String type = fullTypeName.substring(fullTypeName.indexOf(
+                        java.lang.String type = fullTypeName.substring(fullTypeName.indexOf(
                                     ":") + 1);
 
                         if (!"catalogProductAttributeEntity".equals(type)) {
                             //find namespace for the prefix
-                            String nsUri = reader.getNamespaceContext()
+                            java.lang.String nsUri = reader.getNamespaceContext()
                                                            .getNamespaceURI(nsPrefix);
 
                             return (CatalogProductAttributeEntity) magento.ExtensionMapper.getTypeObject(nsUri,
@@ -1327,7 +1327,7 @@ public class CatalogProductAttributeEntity implements org.apache.axis2.databindi
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setAttribute_id(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1357,7 +1357,7 @@ public class CatalogProductAttributeEntity implements org.apache.axis2.databindi
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setAttribute_code(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1387,7 +1387,7 @@ public class CatalogProductAttributeEntity implements org.apache.axis2.databindi
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setFrontend_input(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1416,7 +1416,7 @@ public class CatalogProductAttributeEntity implements org.apache.axis2.databindi
                             "The element: " + "scope" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setScope(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1443,7 +1443,7 @@ public class CatalogProductAttributeEntity implements org.apache.axis2.databindi
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setDefault_value(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1469,7 +1469,7 @@ public class CatalogProductAttributeEntity implements org.apache.axis2.databindi
                             "The element: " + "is_unique" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setIs_unique(org.apache.axis2.databinding.utils.ConverterUtil.convertToInt(
                             content));
@@ -1478,7 +1478,7 @@ public class CatalogProductAttributeEntity implements org.apache.axis2.databindi
                 } // End of if for expected property start element
 
                 else {
-                    object.setIs_unique(Integer.MIN_VALUE);
+                    object.setIs_unique(java.lang.Integer.MIN_VALUE);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -1497,7 +1497,7 @@ public class CatalogProductAttributeEntity implements org.apache.axis2.databindi
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setIs_required(org.apache.axis2.databinding.utils.ConverterUtil.convertToInt(
                             content));
@@ -1506,7 +1506,7 @@ public class CatalogProductAttributeEntity implements org.apache.axis2.databindi
                 } // End of if for expected property start element
 
                 else {
-                    object.setIs_required(Integer.MIN_VALUE);
+                    object.setIs_required(java.lang.Integer.MIN_VALUE);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -1540,7 +1540,7 @@ public class CatalogProductAttributeEntity implements org.apache.axis2.databindi
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setIs_configurable(org.apache.axis2.databinding.utils.ConverterUtil.convertToInt(
                             content));
@@ -1549,7 +1549,7 @@ public class CatalogProductAttributeEntity implements org.apache.axis2.databindi
                 } // End of if for expected property start element
 
                 else {
-                    object.setIs_configurable(Integer.MIN_VALUE);
+                    object.setIs_configurable(java.lang.Integer.MIN_VALUE);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -1568,7 +1568,7 @@ public class CatalogProductAttributeEntity implements org.apache.axis2.databindi
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setIs_searchable(org.apache.axis2.databinding.utils.ConverterUtil.convertToInt(
                             content));
@@ -1577,7 +1577,7 @@ public class CatalogProductAttributeEntity implements org.apache.axis2.databindi
                 } // End of if for expected property start element
 
                 else {
-                    object.setIs_searchable(Integer.MIN_VALUE);
+                    object.setIs_searchable(java.lang.Integer.MIN_VALUE);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -1597,7 +1597,7 @@ public class CatalogProductAttributeEntity implements org.apache.axis2.databindi
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setIs_visible_in_advanced_search(org.apache.axis2.databinding.utils.ConverterUtil.convertToInt(
                             content));
@@ -1606,7 +1606,7 @@ public class CatalogProductAttributeEntity implements org.apache.axis2.databindi
                 } // End of if for expected property start element
 
                 else {
-                    object.setIs_visible_in_advanced_search(Integer.MIN_VALUE);
+                    object.setIs_visible_in_advanced_search(java.lang.Integer.MIN_VALUE);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -1625,7 +1625,7 @@ public class CatalogProductAttributeEntity implements org.apache.axis2.databindi
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setIs_comparable(org.apache.axis2.databinding.utils.ConverterUtil.convertToInt(
                             content));
@@ -1634,7 +1634,7 @@ public class CatalogProductAttributeEntity implements org.apache.axis2.databindi
                 } // End of if for expected property start element
 
                 else {
-                    object.setIs_comparable(Integer.MIN_VALUE);
+                    object.setIs_comparable(java.lang.Integer.MIN_VALUE);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -1653,7 +1653,7 @@ public class CatalogProductAttributeEntity implements org.apache.axis2.databindi
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setIs_used_for_promo_rules(org.apache.axis2.databinding.utils.ConverterUtil.convertToInt(
                             content));
@@ -1662,7 +1662,7 @@ public class CatalogProductAttributeEntity implements org.apache.axis2.databindi
                 } // End of if for expected property start element
 
                 else {
-                    object.setIs_used_for_promo_rules(Integer.MIN_VALUE);
+                    object.setIs_used_for_promo_rules(java.lang.Integer.MIN_VALUE);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -1681,7 +1681,7 @@ public class CatalogProductAttributeEntity implements org.apache.axis2.databindi
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setIs_visible_on_front(org.apache.axis2.databinding.utils.ConverterUtil.convertToInt(
                             content));
@@ -1690,7 +1690,7 @@ public class CatalogProductAttributeEntity implements org.apache.axis2.databindi
                 } // End of if for expected property start element
 
                 else {
-                    object.setIs_visible_on_front(Integer.MIN_VALUE);
+                    object.setIs_visible_on_front(java.lang.Integer.MIN_VALUE);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -1709,7 +1709,7 @@ public class CatalogProductAttributeEntity implements org.apache.axis2.databindi
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setUsed_in_product_listing(org.apache.axis2.databinding.utils.ConverterUtil.convertToInt(
                             content));
@@ -1718,7 +1718,7 @@ public class CatalogProductAttributeEntity implements org.apache.axis2.databindi
                 } // End of if for expected property start element
 
                 else {
-                    object.setUsed_in_product_listing(Integer.MIN_VALUE);
+                    object.setUsed_in_product_listing(java.lang.Integer.MIN_VALUE);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -1778,7 +1778,7 @@ public class CatalogProductAttributeEntity implements org.apache.axis2.databindi
                         "Unexpected subelement " + reader.getName());
                 }
             } catch (javax.xml.stream.XMLStreamException e) {
-                throw new Exception(e);
+                throw new java.lang.Exception(e);
             }
 
             return object;
