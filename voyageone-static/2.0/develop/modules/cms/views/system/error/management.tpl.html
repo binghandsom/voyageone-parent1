@@ -16,7 +16,7 @@
 								</div>
 							</div>
 							<div class="form-group">
-								<label class="col-sm-3 control-label" translate="TXT_CATEGORY_NO_COLON"></label>
+								<label class="col-sm-3 control-label" translate="TXT_CATEGORY_NO_COLON"+></label>
 								<div class="col-sm-9">
 									<select class="form-control" ng-model="vm.searchInfo.catId"
 											ng-options="category.catId as category.catPath for category in vm.masterData.categoryList">
@@ -121,11 +121,11 @@
 						</tbody>
 					</table>
 				</div><!-- .table-responsive -->
-				<div class="col-sm-12 m-t-xs">
-					<vpagination config="vm.errorPageOption"></vpagination>
-				</div>
 			</div>
 			</div><!-- /.box-body -->
+			<div class="m-t-xs">
+				<vpagination config="vm.errorPageOption"></vpagination>
+			</div>
 		</div>
 	</div><!-- .col-lg-12 -->
 </div><!-- end .wrapper-md -->
