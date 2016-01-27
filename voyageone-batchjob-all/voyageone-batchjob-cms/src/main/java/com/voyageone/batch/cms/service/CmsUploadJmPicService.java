@@ -128,7 +128,7 @@ public class CmsUploadJmPicService extends BaseTaskService {
                     try {
                         String juUrl=mockImageFileUpload(SHOPBEAN,convertJmPicToImageFileBean(jmPicBean));
                         //String juUrl= jumeiImageFileService.imageFileUpload(SHOPBEAN,convertJmPicToImageFileBean(jmPicBean));
-                        jmPicDao.updateJmpicUploaded(juUrl,jmPicBean.getSeq());
+                        jmPicDao.updateJmpicUploaded(juUrl,jmPicBean.getSeq(),getTaskName());
                         monitor.addSuccsseOne();
                     } catch (Exception e) {
                         noError=false;
@@ -137,7 +137,7 @@ public class CmsUploadJmPicService extends BaseTaskService {
                     }
                 }
                 if(noError){
-                    jmPicDao.updateJmProductImportUploaded(imageKey);
+                    jmPicDao.updateJmProductImportUploaded(imageKey,getTaskName());
                 }
             }
         }
