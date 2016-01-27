@@ -1,11 +1,10 @@
-<div class="panel" ng-controller="DictCustomController as vm">
+<!--<div class="panel" ng-init="initialize()">
     <div class="panel-body">
         <div class="form-group">
-            <h4 for="dict-custom-name" class="control-label" translate="TXT_DICT_CUSTOM"></h4>
+            <h4 for="dict-custom-name" class="control-label">新辞典项</h4>
             <div class="row">
                 <div class="col-sm-3">
-                    <select id="dict-custom-name" class="form-control" ng-model="vm.custom"
-                            ng-options="i as i.word_name for i in vm.customs">
+                    <select class="form-control">
                     </select>
                 </div>
             </div>
@@ -44,4 +43,84 @@
             <button type="button" class="btn btn-default m-b-xs btn-sm" ng-click="vm.cancel()" translate="BTN_CANCEL"></button>
         </div>
     </div>
-</div>
+</div>-->
+
+<!--开始-->
+<div class="wrapper-md" ng-init="initialize()">
+    <div class="col-sm-12">
+        <!-- search -->
+        <div class="panel panelPromotion">
+            <div class="container-fluid m-t-sm">
+                <div class="col-sm-12">
+                    <div class="col-sm-3">
+                        <div class="form-horizontal">
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">名称</label>
+                                <div class="col-sm-8">
+                                    <input type="text" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-horizontal">
+                            <div class="form-group">
+                                <label class="col-sm-4 checkbox-inline c-checkbox">
+                                    <input type="checkbox"><span class="fa fa-check"></span> 需要上传天猫 ？
+                                </label>
+                                <button class="btn btn-vo" ng-click="search()"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}</button>
+                            </div>
+                        </div><!-- .form-group -->
+                    </div>
+                    <div class="col-sm-5" ng-controller="popupCtrl">
+                        <div class="form-inline pull-right">
+                            <button class="btn btn-success" ng-click="opendictValue()"><i class="fa fa-plus"></i> 新增字典值 </button>
+                            <button class="btn btn-success"><i class="fa fa-plus"></i> <a href="#/system/dictionary/item" target="_blank">新增自定义</a></button>
+                        </div><!-- .form-inline -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div><!-- .accordion --><!--/search-->
+
+    <div class="col-sm-12">
+        <div class="box">
+            <div class="box-body">
+                <div class="table-responsive">
+                    <table class="table table-hover vo_table" style="margin-bottom:0px">
+                        <tbody>
+                        <tr class="font-bold" style="background:#e67e22;color:#fff">
+                            <td class="mfb-xt3 text-center">Seq.</td>
+                            <td class="mfb-xxt text-center">类型</td>
+                            <td class="text-center">值</td>
+                            <td class="mfb-xt text-left">操作</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <div class="col-sm-12 dropdown_table_main">
+                        <table class="table table-hover vo_table tableWordBreak" style="margin-bottom:0px">
+                            <tbody>
+                            <tr>
+                                <td class="mfb-xt3 text-center">1</td>
+                                <td class="mfb-xxt text-center">DICT</td>
+                                <td class="text-center">产品图片-5</td>
+                                <td class="mfb-xt text-center" ng-controller="popupCtrl">
+                                    <button title="编辑" class="btn btn-success btn-xs" ng-click=""><i class="fa fa-pencil"></i></button>
+                                    <button title="删除" class="btn btn-danger btn-xs"  ng-click="del(promotion)"><i class="fa  fa-trash-o"></i></button>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div><!-- .table-responsive -->
+                </div>
+            </div><!-- /.box-body -->
+            <div>
+                <button type="button" class="btn btn-vo m-b-xs btn-sm">保存</button>
+                <button type="button" class="btn btn-default m-b-xs btn-sm">取消</button>
+            </div>
+            <div class="m-t-xs">
+                <vpagination config="vm.errorPageOption"></vpagination>
+            </div>
+        </div>
+    </div><!-- .col-lg-12 -->
+</div><!-- end .wrapper-md -->
