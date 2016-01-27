@@ -1,9 +1,9 @@
-package com.voyageone.batch.cms.model;
+package com.voyageone.cms.service.model;
 
 /**
  * Created by Leo on 15-12-7.
  */
-public class SxWorkloadModel {
+public class CmsBtSxWorkloadModel {
     private long seq;
     private String channel_id;
     private int group_id;

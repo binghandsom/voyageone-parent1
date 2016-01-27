@@ -189,7 +189,12 @@ public class TypeConfigEnums {
 		/**
 		 * 数量比较种类:cms2
 		 */
-		compareType(48);
+		compareType(48),
+
+		/**
+		 * 错误类别:cms2
+		 */
+		errorType(55);
 
     	private int id;
 

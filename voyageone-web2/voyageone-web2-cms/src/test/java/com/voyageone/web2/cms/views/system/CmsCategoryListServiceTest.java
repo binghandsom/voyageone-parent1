@@ -1,8 +1,7 @@
 package com.voyageone.web2.cms.views.system;
 
 import com.voyageone.cms.service.dao.mongodb.CmsMtCategorySchemaDao;
-import com.voyageone.cms.service.model.CmsMtCategorySchemaModel;
-import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.web2.cms.views.system.category.CmsCategoryListService;
 import net.minidev.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,8 +12,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static org.junit.Assert.*;
 
 /**
  * @author james.li on 2015/12/29.

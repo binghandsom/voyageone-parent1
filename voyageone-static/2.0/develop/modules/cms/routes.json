@@ -95,14 +95,29 @@
     "templateUrl": "views/system/category/edit2.tpl.html",
     "controllerUrl": "modules/cms/views/system/category/edit.ctl"
   },
+  "system_dictionary": {
+    "hash": "/system/dictionary",
+    "templateUrl": "views/system/dictionary/index.tpl.html",
+    "controllerUrl": "modules/cms/views/system/dictionary/index.ctl"
+  },
   "system_error_op": {
-    "hash": "/system/error_management_op",
-    "templateUrl": "views/system/error/management_op.tpl.html",
-    "controllerUrl": "modules/cms/views/system/error/management_op.ctl"
+    "hash": "/system/error/management/:type",
+    "templateUrl": "views/system/error/management.tpl.html",
+    "controllerUrl": "modules/cms/views/system/error/management.ctl"
   },
   "system_error_con": {
-    "hash": "/system/error_management_con",
-    "templateUrl": "views/system/error/management_con.tpl.html",
-    "controllerUrl": "modules/cms/views/system/error/management_con.ctl"
+    "hash": "/system/error/management/:type",
+    "templateUrl": "views/system/error/management.tpl.html",
+    "controllerUrl": "modules/cms/views/system/error/management.ctl"
+  },
+  "cms_dict": {
+    "hash": "/cms/dict",
+    "templateUrl": "views/dict/dict.list.tpl.html",
+    "controllerUrl": "modules/cms/views/dict/dict.list.ctl"
+  },
+  "cms_dict_item": {
+    "hash": "/cms/dict/item",
+    "templateUrl": "views/dict/dict.item.tpl.html",
+    "controllerUrl": "modules/cms/views/dict/dict.item.ctl"
   }
 }
