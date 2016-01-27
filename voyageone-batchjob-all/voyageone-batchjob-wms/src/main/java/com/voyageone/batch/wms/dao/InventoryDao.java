@@ -91,6 +91,25 @@ public class InventoryDao extends BaseDao {
     }
 
     /**
+     * 获取需要进行的库存同步记录(聚美)
+     *
+     * @param order_channel_id 渠道
+     * @param cart_id          店铺
+     * @return InventorySynLogBean
+     */
+    public List<InventorySynLogBean> getInventorySynLogForJM(String task_name, String order_channel_id, String cart_id, int row_count) {
+        Map<String, Object> params = new HashMap<>();
+
+        params.put("task_name", task_name);
+        params.put("order_channel_id", order_channel_id);
+        params.put("cart_id", cart_id);
+        params.put("syn_flg", "0");
+        params.put("limit", row_count);
+
+        return selectList(Constants.DAO_NAME_SPACE_WMS + "wms_selectInventorySynLogsForJM", params);
+    }
+
+    /**
      * 删除库存同步记录
      */
     public int deleteInventorySynLog(InventorySynLogBean inventorySynLogBean) {

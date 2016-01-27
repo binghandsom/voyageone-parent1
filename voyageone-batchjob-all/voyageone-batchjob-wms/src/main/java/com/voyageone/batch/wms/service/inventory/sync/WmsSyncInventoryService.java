@@ -72,7 +72,7 @@ public class WmsSyncInventoryService extends WmsSyncInventoryBaseService {
 
                 List<InventorySynLogBean> inventorySynLogBeans = new ArrayList<>();
 
-                // 根据平台，调用相应的 抽出方法 （淘宝需要NumID更新）
+                // 根据平台，调用相应的 抽出方法 （淘宝需要NumID更新；聚美需要存在上新记录）
                 switch (platForm) {
                     case TM:
                         inventorySynLogBeans =
@@ -80,9 +80,12 @@ public class WmsSyncInventoryService extends WmsSyncInventoryBaseService {
                         break;
                     case JD:
                     case CN:
-                    case JM:
                         inventorySynLogBeans =
                                 inventoryDao.getInventorySynLog(getTaskName(), shopBean.getOrder_channel_id(), shopBean.getCart_id(), intRowCount);
+                        break;
+                    case JM:
+//                        inventorySynLogBeans =
+//                                inventoryDao.getInventorySynLogForJM(getTaskName(), shopBean.getOrder_channel_id(), shopBean.getCart_id(), intRowCount);
                         break;
                 }
 
