@@ -61,6 +61,9 @@ public class CmsUploadJmPicService extends BaseTaskService {
     /* SHOPBEAN */
     private static final ShopBean SHOPBEAN = ShopConfigs.getShop(ChannelConfigEnums.Channel.SN.getId(), CartEnums.Cart.JM.getId());
 
+    /* 图片后缀 */
+    private static final String IMGTYPE=".jpg";
+
     @Autowired
     private JmPicDao jmPicDao;
 
@@ -182,23 +185,13 @@ public class CmsUploadJmPicService extends BaseTaskService {
             Assert.notNull(inputStream,"inputStream为null，图片流获取失败！"+jmPicBean.getOriginUrl());
             jmImageFileBean.setInputStream(HttpUtils.getInputStream(jmPicBean.getOriginUrl(),null));
             jmImageFileBean.setDirName(buildDirName(jmPicBean));
-            jmImageFileBean.setImgName(jmPicBean.getImageKey()+jmPicBean.getImageType()+jmPicBean.getImageIndex()+getPicType(jmPicBean.getOriginUrl()));
+            jmImageFileBean.setImgName(jmPicBean.getImageKey()+jmPicBean.getImageType()+jmPicBean.getImageIndex()+IMGTYPE);
             jmImageFileBean.setNeedReplace(NEED_REPLACE);
             return jmImageFileBean;
         } catch (IOException e) {
             LOG.error("CmsUploadJmPicService -> convertJmPicToImageFileBean() Error:"+e);
             return null;
         }
-    }
-
-    /***
-     * 获取图片类型
-     * @param originUrl url
-     * @return type
-     */
-    private static String getPicType(String originUrl) {
-        Assert.notNull(originUrl);
-        return originUrl.substring(originUrl.lastIndexOf("."));
     }
 
     /**
