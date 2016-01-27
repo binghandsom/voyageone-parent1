@@ -65,6 +65,10 @@ public interface CmsUrlConstants {
             String GET_DICT_LIST = "getDictList";
 
             String GET_PLATFORM_MAPPING = "getPlatformMapping";
+
+            String GET_MAPPING_TYPE = "getMappingType";
+
+            String SAVE_COMPLEX_MAPPING = "saveComplexMapping";
         }
     }
 

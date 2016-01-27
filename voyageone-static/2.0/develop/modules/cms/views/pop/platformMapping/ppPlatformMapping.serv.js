@@ -7,6 +7,10 @@ define([
     'use strict';
     return cms.service('ppPlatformMappingService', (function () {
 
+        function $WrapFieldId(id) {
+            return id.replace(/\./g, '->');
+        }
+
         function PopupPlatformMappingService(platformMappingService, $q, cookieService) {
             this.platformMappingService = platformMappingService;
             this.$q = $q;
@@ -71,6 +75,52 @@ define([
                     return mainCategorySchema.catFullPath;
                 });
             },
+
+            /**
+             * 保存一个 Complex Mapping
+             * @param {string} mainCategoryId 主数据类目 ID
+             * @param {string} platformCategoryId 平台类目 ID
+             * @param {number} cartId 平台 ID
+             * @param {ComplexMappingBean} complexMapping 将保存的 Mapping
+             * @param {WrapField} property 平台属性, 用于构造属性的 Path 作为 MappingPath
+             * @returns {Promise.<boolean>}
+             */
+            saveComplexMapping: function (mainCategoryId, platformCategoryId, cartId, complexMapping, property) {
+
+                var mappingPath = [property.id];
+                var parent;
+                while (parent = property.parent) {
+                    mappingPath.push(parent.id);
+                }
+
+                return this.platformMappingService.$saveComplexMapping({
+                    mainCategoryId: mainCategoryId,
+                    platformCategoryId: platformCategoryId,
+                    cartId: cartId,
+                    mappingBean: complexMapping,
+                    mappingPath: mappingPath
+                }).then(function (res) {
+                    // java return top MappingBean
+                    var mappingBean = res.data;
+                    if (!mappingBean) return false;
+
+                    return this.$getPlatformMapping(mainCategoryId, platformCategoryId, cartId).then(function (mappingModel) {
+
+                        var index = _.findIndex(mappingModel.props, function(propertyMapping) {
+                            return propertyMapping.platformPropId === mappingBean.platformPropId;
+                        });
+
+                        if (index > -1) {
+                            mappingModel.props[index] = mappingBean;
+                        } else {
+                            mappingModel.props.push(mappingBean);
+                        }
+
+                        return true;
+                    });
+                }.bind(this));
+            },
+
             /**
              * 获取字典数据
              */
@@ -170,7 +220,7 @@ define([
              */
             getPlatformPropertyMapping: function (property, mainCategoryId, platformCategoryId, cartId) {
 
-                return this.$getPlatformMapping(mainCategoryId, platformCategoryId, cartId).then(function (mappings) {
+                return this.$getPlatformMapping(mainCategoryId, platformCategoryId, cartId).then(function (mapping) {
 
                     // 搜索属性 mapping
                     // 理论上传递的 property 包含 parent 信息
@@ -179,7 +229,7 @@ define([
 
                     if (!property) return null;
 
-                    return this.$searchMappingByParent(property, mappings);
+                    return this.$searchMappingByParent(property, mapping.props);
 
                 }.bind(this));
             },
@@ -229,7 +279,7 @@ define([
                 // 非 Multi 的情况下
                 if (!multiMappings) {
                     return _.find(mappings, function (mapping) {
-                        return mapping.platformPropId === property.id;
+                        return mapping.platformPropId === $WrapFieldId(property.id);
                     });
                 }
 
@@ -237,7 +287,7 @@ define([
                 return _.chain(multiMappings)
                     .map(function (mappings) {
                         return _.find(mappings, function (mapping) {
-                            return mapping.platformPropId === property.id;
+                            return mapping.platformPropId === $WrapFieldId(property.id);
                         });
                     })
                     .filter(function (mapping) {
@@ -245,6 +295,7 @@ define([
                     })
                     .value();
             },
+
             /**
              * @private
              * @param {string} mainCategoryId
@@ -258,7 +309,7 @@ define([
                 var mapping = this.mappingMap[key];
 
                 if (mapping) {
-                    var a = deferred.resolve(mapping);
+                    deferred.resolve(mapping);
                     return deferred.promise;
                 }
 
@@ -272,6 +323,7 @@ define([
 
                 return deferred.promise;
             },
+
             /**
              * @private
              * @param {string} mainCategoryId
