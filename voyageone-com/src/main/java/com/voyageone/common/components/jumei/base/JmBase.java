@@ -1,5 +1,6 @@
 package com.voyageone.common.components.jumei.base;
 
+import com.google.gson.JsonSyntaxException;
 import com.taobao.top.schema.Util.StringUtil;
 import com.voyageone.common.components.jumei.Bean.JMErrorResult;
 import com.voyageone.common.configs.beans.ShopBean;
@@ -59,11 +60,25 @@ public class JmBase {
         }
 
         String result = HttpUtils.post(post_url.toString(), parm_url.toString());
+
+
         //转换错误信息
-        JMErrorResult res = JsonUtil.jsonToBean(result, JMErrorResult.class);
-        if (res.getCode() != null){
-            throw new Exception("调用聚美API错误：" + result);
+        if (result != null && result.indexOf("\"error\"") > 0) {
+            Map<String, Object> resultMap = JsonUtil.jsonToMap(result);
+            if (resultMap.containsKey("error")) {
+                throw new Exception("调用聚美API错误：" + result);
+            }
+        } else {
+            JMErrorResult res = null;
+            try {
+                res = JsonUtil.jsonToBean(result, JMErrorResult.class);
+                if (res.getCode() != null) {
+                    throw new Exception("调用聚美API错误：" + result);
+                }
+            } catch (JsonSyntaxException ignored) {
+            }
         }
+
 
         return result;
     }

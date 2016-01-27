@@ -12,18 +12,18 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:applicationContext.xml")
-public class JumeiBrandServiceTest {
+public class JumeiCategoryServiceTest {
 
     @Autowired
-    JumeiBrandService brandService;
+    JumeiCategoryService categoryService;
 
     @Test
-    public void testInsertCmsBtProduct() throws Exception {
+    public void testGet() throws Exception {
         ShopBean shopBean = new ShopBean();
         shopBean.setAppKey("72");
         shopBean.setAppSecret("62cc742a25d3ec18ecee9dd5bcc724ccfb2844ac");
         shopBean.setSessionKey("e5f9d143815a520726576040460bd67f");
         shopBean.setApp_url("http://182.138.102.82:8868/");
-        brandService.initBrands(shopBean);
+        categoryService.initCategoryListLevel4(shopBean);
     }
 }
