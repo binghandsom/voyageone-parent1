@@ -33,6 +33,8 @@ public class JmBtProductImportModel {
 
     private String functionIds;
 
+    private String specialNote;
+
     private String uploadErrorInfo;
 
     private String synFlg;
@@ -237,5 +239,13 @@ public class JmBtProductImportModel {
 
     public void setUploadErrorInfo(String uploadErrorInfo) {
         this.uploadErrorInfo = uploadErrorInfo;
+    }
+
+    public String getSpecialNote() {
+        return specialNote;
+    }
+
+    public void setSpecialNote(String specialNote) {
+        this.specialNote = specialNote;
     }
 }
