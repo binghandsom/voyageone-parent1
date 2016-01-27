@@ -68,7 +68,7 @@ public interface CmsUrlConstants {
 
             String GET_MAPPING_TYPE = "getMappingType";
 
-            String SAVE_COMPLEX_MAPPING = "saveComplexMapping";
+            String SAVE_MAPPING = "saveMapping";
         }
     }
 
