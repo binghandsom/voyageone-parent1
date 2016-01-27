@@ -23,7 +23,7 @@ public class JumeiService extends JmBase{
     public static final String C_URL_GET_ORDERDETAIL_BY_ORDERID = "HtOrder/GetOrderDetailByOrderId";
     public static final String C_URL_SET_SHIPPING = "HtOrder/setShipping";
     //SKU库存同步接口
-    public static final String C_URL_STOCK_SYNC = "HtOrder/StockSync";
+    public static final String C_URL_STOCK_SYNC = "HtStock/StockSync";
 
     /**
      * 根据订单ID获取订单详情

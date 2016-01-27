@@ -42,6 +42,10 @@ public class ChannelConfigEnums {
          */
         print_us_label,
         /**
+         * 是否打印sku面单，0：不打印，1：打印
+         */
+        print_sku_label,
+        /**
          * 初期显示状态
          */
         display_status,
