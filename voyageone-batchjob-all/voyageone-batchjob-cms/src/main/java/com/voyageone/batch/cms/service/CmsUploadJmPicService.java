@@ -177,7 +177,7 @@ public class CmsUploadJmPicService extends BaseTaskService {
     private static JmImageFileBean convertJmPicToImageFileBean(JmPicBean jmPicBean) {
         try {
             JmImageFileBean jmImageFileBean=new JmImageFileBean();
-            File imageFile=new File(jmPicBean.getOriginUrl());
+//            File imageFile=new File(jmPicBean.getOriginUrl());
             int retryCount=GET_IMG_INPUTSTREAM_RETRY;
             InputStream inputStream = getImgInputStream(jmPicBean.getOriginUrl(),retryCount);
             Assert.notNull(inputStream,"inputStream为null，图片流获取失败！"+jmPicBean.getOriginUrl());
