@@ -319,7 +319,7 @@
 		WHERE
 			channel_id = #{channelId}
 			and (image_key = #{productCode,jdbcType=VARCHAR} or image_key = #{brand,jdbcType=VARCHAR} or image_type = 7)
-		ORDER BY imageType DESC
+		ORDER BY imageType,image_index
 
 	</select>
 </mapper>

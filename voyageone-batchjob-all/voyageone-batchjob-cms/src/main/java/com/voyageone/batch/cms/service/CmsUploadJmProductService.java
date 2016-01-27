@@ -1,5 +1,6 @@
 package com.voyageone.batch.cms.service;
 
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.batch.base.BaseTaskService;
 import com.voyageone.batch.cms.bean.JmPicBean;
 import com.voyageone.batch.cms.dao.DealImportDao;
@@ -20,6 +21,7 @@ import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.ShopConfigs;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -49,6 +51,12 @@ public class CmsUploadJmProductService extends BaseTaskService {
 
     @Autowired
     private SimpleTransaction simpleTransaction;
+
+    private static final String IMG_HTML="<img src=\"%s\" alt=\"\" />";
+
+    private static final String DESCRIPTION_USAGE="<div align=\"center\">%s %s <br /></div>";
+
+    private static final String DESCRIPTION_IMAGES = "%s<br />";
 
     @Override
     public SubSystem getSubSystem() {
@@ -83,7 +91,7 @@ public class CmsUploadJmProductService extends BaseTaskService {
             // 取得上新的数据
             JmProductBean jmProductBean = selfBeanToJmBean(jmBtProductImport);
 
-            setImages(jmBtProductImport.getChannelId(),jmBtProductImport.getProductCode(),"puma",jmProductBean);
+            setImages(jmBtProductImport,jmProductBean);
             // 上新
 //            jumeiProductService.productNewUpload(shopBean, jmProductBean);
 
@@ -101,19 +109,67 @@ public class CmsUploadJmProductService extends BaseTaskService {
     }
 
 
-    private void setImages(String channelId, String productCode, String brand, JmProductBean jmProductBean) {
-        Map<Integer, List<JmPicBean>> imagesMap = jmUploadProductDao.selectImageByCode(channelId, productCode, brand);
+    private void setImages(JmBtProductImportModel jmBtProductImport, JmProductBean jmProductBean) {
+        Map<Integer, List<JmPicBean>> imagesMap = jmUploadProductDao.selectImageByCode(jmBtProductImport.getChannelId(), jmBtProductImport.getProductCode(), jmBtProductImport.getBrandName());
 
-        StringBuffer normalImage = new StringBuffer();
-        if (imagesMap.get(1) != null) {
-            imagesMap.get(1).forEach(jmPicBean -> {
-                if(normalImage.length() != 0) {
-                    normalImage.append(",");
+        StringBuffer stringBuffer = new StringBuffer();
+        List<JmPicBean> pics = imagesMap.get(1);
+        //白底方图
+        if (pics != null) {
+            for(JmPicBean jmPicBean:pics){
+                if(stringBuffer.length() != 0) {
+                    stringBuffer.append(",");
                 }
-                normalImage.append(jmPicBean.getJmUrl());
-            });
+                stringBuffer.append(jmPicBean.getJmUrl());
+            };
+        }else {
+            throw new BusinessException("白底方图不存在");
         }
-        jmProductBean.setNormalImage(normalImage.toString());
+        jmProductBean.setNormalImage(stringBuffer.toString());
+
+
+        // 品牌图
+        stringBuffer = new StringBuffer();
+        pics = imagesMap.get(4);
+        if (pics != null) {
+            for(JmPicBean jmPicBean:pics){
+                stringBuffer.append(String.format(IMG_HTML, jmPicBean.getJmUrl()));
+            }
+        }else {
+            throw new BusinessException("品牌图不存在");
+        }
+        jmProductBean.getDealInfo().setDescription_properties(stringBuffer.toString());
+
+        //尺码表
+        stringBuffer = new StringBuffer();
+        pics = imagesMap.get(3);
+        if (pics != null) {
+            for(JmPicBean jmPicBean:pics){
+                stringBuffer.append(String.format(IMG_HTML, jmPicBean.getJmUrl()));
+            }
+        }
+        pics = imagesMap.get(5);
+        if (pics != null) {
+            for(JmPicBean jmPicBean:pics){
+                stringBuffer.append(String.format(IMG_HTML, jmPicBean.getJmUrl()));
+            }
+        }
+        if(stringBuffer.length()>0) {
+            jmProductBean.getDealInfo().setDescription_usage(String.format(DESCRIPTION_USAGE, jmBtProductImport.getProductDes(), stringBuffer.toString()));
+        }
+
+        // 产品详细
+        stringBuffer = new StringBuffer();
+        pics = imagesMap.get(2);
+        if (pics != null) {
+            for(JmPicBean jmPicBean:pics){
+                stringBuffer.append(String.format(IMG_HTML, jmPicBean.getJmUrl()));
+            }
+        }else {
+            throw new BusinessException("产品图不存在");
+        }
+        jmProductBean.getDealInfo().setDescription_images(String.format(DESCRIPTION_IMAGES,stringBuffer.toString()));
+
     }
 
     /**
