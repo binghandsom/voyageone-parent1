@@ -73,12 +73,12 @@
 				<table class="table table-hover vo_table" style="margin-bottom:0px">
 					<tbody>
 					<tr style="background:#e67e22;color:#fff">
-						<td class="mfb-xt text-center" translate="TXT_SEQ"></>
-						<td class="mfb-xxt text-left" translate="TXT_PROMOTION_NAME"></td>
-						<td class="mfb-xxt text-left" translate="TXT_GROUP_ID"></td>
-						<td class="mfb-xxt text-left" translate="TXT_GROUP_NAME_NO_COLON"></td>
+						<td class="mfb-xt3 text-center" translate="TXT_SEQ"></td>
+						<td class="mfb-xxx text-left" translate="TXT_PROMOTION_NAME"></td>
+						<td class="mfb-xt text-center" translate="TXT_GROUP_ID"></td>
+						<td class="mfb-xxt text-center" translate="TXT_GROUP_NAME_NO_COLON"></td>
 						<td class="mfb-xxt text-left" translate="TXT_PRODUCT_CODE_NO_COLON"></td>
-						<td class="mfb-xxt text-left" translate="TXT_PRODUCT_NAME_NO_COLON"></td>
+						<td class="mfb-xxx text-left" translate="TXT_PRODUCT_NAME_NO_COLON"></td>
 						<td class="mfb-xxt text-center" translate="TXT_ERROR_CODE"></td>
 						<td class="mfb-xxs text-left" translate="TXT_ERROR_MESSAGE"></td>
 						<td class="mfb-xxt text-left" translate="TXT_ERROR_CREATE_TIME"></td>
@@ -90,21 +90,21 @@
 					<table class="table table-hover vo_table tableWordBreak" style="margin-bottom:0px">
 						<tbody>
 						<tr ng-repeat="errorInfo in vm.errorList">
-							<td class="mfb-xt text-center" ng-bind="errorInfo.seq"></td>
-							<td class="mfb-xxt text-left text-u-l">
+							<td class="mfb-xt3 text-center" ng-bind="errorInfo.seq"></td>
+							<td class="mfb-xxx text-left text-u-l">
 								<a ng-if="errorInfo.promotionId" ng-href="#/promotion/detail/{{errorInfo.promotionId}}" ng-bind="errorInfo.promotionName"></a>
 								<span ng-if="!errorInfo.promotionId" ng-bind="errorInfo.promotionName"></span>
 							</td>
-							<td class="mfb-xxt text-left text-u-l">
+							<td class="mfb-xt text-center text-u-l">
 								<a ng-if="errorInfo.groupId" ng-href="#/group/list/{{errorInfo.groupId}}" ng-bind="errorInfo.groupId"></a>
 								<span ng-if="!errorInfo.groupId" ng-bind="errorInfo.groupId"></span>
 							</td>
-							<td class="mfb-xxt text-left text-u-l" ng-bind="errorInfo.groupName"></td>
+							<td class="mfb-xxt text-center text-u-l" ng-bind="errorInfo.groupName"></td>
 							<td class="mfb-xxt text-left text-u-l">
 								<a ng-if="errorInfo.productId" ng-href="#/product/detail/{{errorInfo.productId}}" ng-bind="errorInfo.productCode"></a>
 								<span ng-if="!errorInfo.productId" ng-bind="errorInfo.productCode"></span>
 							</td>
-							<td class="mfb-xxt text-left" ng-bind="errorInfo.productName"></td>
+							<td class="mfb-xxx text-left" ng-bind="errorInfo.productName"></td>
 							<td class="mfb-xxt text-center" ng-bind="errorInfo.errorCode"></td>
 							<td class="mfb-xxs text-left" ng-bind="errorInfo.errMsg"></td>
 							<td class="mfb-xxt text-left" ng-bind="errorInfo.created | date : 'yyyy-MM-dd hh:mm:ss'"></td>
