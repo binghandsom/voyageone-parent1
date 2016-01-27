@@ -58,7 +58,7 @@
 					</tr>
 					</tbody>
 				</table>
-				<div class="col-sm-12 dropdown_table dropdown_table_main" if-no-rows="vm.errorList.length">
+				<div class="col-sm-12 dropdown_table_main">
 					<table class="table table-hover vo_table tableWordBreak" style="margin-bottom:0px">
 						<tbody>
 						<tr ng-repeat="errorInfo in vm.errorList">
@@ -72,6 +72,30 @@
 							<button title="编辑" class="btn btn-success btn-xs" ng-click=""><i class="fa fa-pencil"></i></button>
 							<button title="删除" class="btn btn-danger btn-xs"  ng-click="del(promotion)"><i class="fa  fa-trash-o"></i></button>
 						</td>
+						</tr>
+						<tr ng-repeat="errorInfo in vm.errorList">
+							<td class="mfb-xt3 text-center">2</td>
+							<td class="mfb-xxt text-center"><span class="badge badge-empty">京东</span></td>
+							<td class="mfb-xxs text-left text-u-l"><a href="#" target="_blank"> 商品详情画面1</a></td>
+							<td class="mfb-xxxxs text-left">第一部分：带参数的图片</td>
+							<td class="mfb-xxt text-center">2016.1.2</td>
+							<td class="mfb-xxt text-center">2016.1.6</td>
+							<td class="mfb-xt text-center" ng-controller="popupCtrl">
+								<button title="编辑" class="btn btn-success btn-xs" ng-click=""><i class="fa fa-pencil"></i></button>
+								<button title="删除" class="btn btn-danger btn-xs"  ng-click="del(promotion)"><i class="fa  fa-trash-o"></i></button>
+							</td>
+						</tr>
+						<tr ng-repeat="errorInfo in vm.errorList">
+							<td class="mfb-xt3 text-center">3</td>
+							<td class="mfb-xxt text-center"><span class="badge badge-empty">聚美</span></td>
+							<td class="mfb-xxs text-left text-u-l"><a href="#" target="_blank"> 商品详情画面1</a></td>
+							<td class="mfb-xxxxs text-left">第一部分：带参数的图片</td>
+							<td class="mfb-xxt text-center">2016.1.2</td>
+							<td class="mfb-xxt text-center">2016.1.6</td>
+							<td class="mfb-xt text-center" ng-controller="popupCtrl">
+								<button title="编辑" class="btn btn-success btn-xs" ng-click=""><i class="fa fa-pencil"></i></button>
+								<button title="删除" class="btn btn-danger btn-xs"  ng-click="del(promotion)"><i class="fa  fa-trash-o"></i></button>
+							</td>
 						</tr>
 						</tbody>
 					</table>
