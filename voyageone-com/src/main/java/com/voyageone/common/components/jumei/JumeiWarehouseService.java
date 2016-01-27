@@ -24,7 +24,7 @@ public class JumeiWarehouseService extends JmBase {
      * 初始化商家仓库
      */
     public void initWarehouse(ShopBean shopBean) throws Exception {
-        Map<String, String> param = new HashMap<>();
+        Map<String, Object> param = new HashMap<>();
         param.put("fields", "shipping_system_id,shipping_system_name");
         String result = reqJmApi(shopBean, WARE_HOUSE_URL, param);
         List<JmWarehouseBean> warehouseList = JsonUtil.jsonToBeanList(result, JmWarehouseBean.class);

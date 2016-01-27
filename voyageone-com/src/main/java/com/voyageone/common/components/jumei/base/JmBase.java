@@ -3,6 +3,7 @@ package com.voyageone.common.components.jumei.base;
 import com.google.gson.JsonSyntaxException;
 import com.taobao.top.schema.Util.StringUtil;
 import com.voyageone.common.components.jumei.Bean.JMErrorResult;
+import com.voyageone.common.components.jumei.Bean.NotSignString;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.HttpUtils;
 import com.voyageone.common.util.JsonUtil;
@@ -13,7 +14,6 @@ import org.apache.commons.logging.LogFactory;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 
 /**
@@ -27,7 +27,7 @@ public class JmBase {
         return reqJmApi(shopBean, api_url, new HashMap<>());
     }
 
-    protected String reqJmApi(ShopBean shopBean, String api_url, Map<String, String> params) throws Exception {
+    protected String reqJmApi(ShopBean shopBean, String api_url, Map<String, Object> params) throws Exception {
 
         StringBuilder post_url = new StringBuilder();
 
@@ -38,21 +38,28 @@ public class JmBase {
 
 
         //设置系统级参数
-        Map<String, String> tempParm = params;
-        tempParm.put("client_id",shopBean.getAppKey());
-        tempParm.put("client_key", shopBean.getSessionKey());
+        params.put("client_id", shopBean.getAppKey());
+        params.put("client_key", shopBean.getSessionKey());
         //生成签名
-        String sign = getSignRequest(shopBean,params);
-        tempParm.put("sign",sign);
+        String sign = getSignRequest(shopBean, params);
+        params.put("sign", sign);
 
         StringBuilder parm_url = new StringBuilder();
         //拼接URL
-        for (String key : tempParm.keySet()) {
-            if(!StringUtils.isEmpty(key)){
-                parm_url.append("&"  + key + "=");
+        for (Map.Entry<String, Object> entry : params.entrySet()) {
+            if(!StringUtils.isEmpty(entry.getKey())){
+                parm_url.append("&").append(entry.getKey()).append("=");
             }
-            if(!StringUtils.isEmpty(tempParm.get(key))){
-                parm_url.append(tempParm.get(key));
+            Object value = entry.getValue();
+            if (value instanceof String) {
+                if(!StringUtils.isEmpty((String)value)){
+                    parm_url.append(value);
+                }
+            } else if (value instanceof NotSignString) {
+                NotSignString notSignString = (NotSignString)value;
+                if(!StringUtils.isEmpty(notSignString.content)){
+                    parm_url.append(notSignString.content);
+                }
             }
         }
         if (parm_url.length() != 0){
@@ -69,7 +76,7 @@ public class JmBase {
                 throw new Exception("调用聚美API错误：" + result);
             }
         } else {
-            JMErrorResult res = null;
+            JMErrorResult res;
             try {
                 res = JsonUtil.jsonToBean(result, JMErrorResult.class);
                 if (res.getCode() != null) {
@@ -85,27 +92,29 @@ public class JmBase {
 
 
     /**
-     * @param shopBean
-     * @param params
+     * @param shopBean ShopBean
+     * @param params Map<String, Object>
      * @return 加密好的签名
      */
-    public String getSignRequest(ShopBean shopBean,Map<String, String> params){
-        Map<String, String> sortedParams = new TreeMap<String,String>();
-        sortedParams.putAll(params);
+    public String getSignRequest(ShopBean shopBean,Map<String, Object> params){
+        Map<String, Object> sortedParams = new TreeMap<>();
         //1.先按照参数的字母顺序排序
-        Set<Map.Entry<String, String>> paramSet =sortedParams.entrySet();
+        sortedParams.putAll(params);
+
         StringBuilder query = new StringBuilder();
         //把client_sign 夹在字符串的两端
         if (!StringUtil.isEmpty(shopBean.getAppSecret())) {
             query.append(shopBean.getAppSecret());
         }
         //2.把所有参数名和参数值串在一起
-        for (Map.Entry<String, String> param : paramSet) {
-            if (!StringUtils.isEmpty(param.getKey())) {
-                query.append(param.getKey());
-            }
-            if (!StringUtils.isEmpty(param.getKey())) {
-                query.append(param.getValue());
+        for (Map.Entry<String, Object> param : sortedParams.entrySet()) {
+            if (param.getValue() != null && param.getValue() instanceof String) {
+                if (!StringUtils.isEmpty(param.getKey())) {
+                    query.append(param.getKey());
+                }
+                if (!StringUtils.isEmpty((String)param.getValue())) {
+                    query.append(param.getValue());
+                }
             }
         }
         //把client_sign（假设是 abc） 夹在字符串的两端
@@ -113,7 +122,6 @@ public class JmBase {
             query.append(shopBean.getAppSecret());
         }
         //使用MD5 进行加密，再转化成大写
-        String encryptStr = MD5.getMD5(query.toString()).toUpperCase();
-        return encryptStr;
+        return MD5.getMD5(query.toString()).toUpperCase();
     }
 }

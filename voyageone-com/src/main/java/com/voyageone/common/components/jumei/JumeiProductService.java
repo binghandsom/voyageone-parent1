@@ -28,7 +28,7 @@ public class JumeiProductService extends JmBase {
 
         product.check();
 
-        Map<String, String> params = new HashMap<>();
+        Map<String, Object> params = new HashMap<>();
         params.put("product", product.toJsonStr());
         params.put("spus", product.getSpusString());
         params.put("dealInfo", product.getDealInfoString());
@@ -71,7 +71,7 @@ public class JumeiProductService extends JmBase {
      * 取得商品
      */
     public JmProductBean getProduct(ShopBean shopBean, String product_id) throws Exception {
-        Map<String, String> params = new HashMap<>();
+        Map<String, Object> params = new HashMap<>();
         params.put("product_id", product_id);
         params.put("fields", "product_id,name,foreign_language_name,categorys,brand_id,brand_name,functions,normalImage,verticalImage,diaoxingImage");
 

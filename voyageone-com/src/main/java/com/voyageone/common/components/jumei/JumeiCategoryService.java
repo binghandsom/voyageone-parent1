@@ -40,7 +40,7 @@ public class JumeiCategoryService extends JmBase {
         try {
             int i = 1;
             while (true) {
-                Map<String, String> param = new HashMap<>();
+                Map<String, Object> param = new HashMap<>();
                 param.put("page", String.valueOf(i));
                 param.put("level", level);
                 param.put("fields", "category_id,name,level,parent_category_id");
