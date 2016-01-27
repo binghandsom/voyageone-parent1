@@ -19,6 +19,9 @@ import com.voyageone.web2.cms.bean.setting.mapping.feed.GetFieldMappingBean;
 import com.voyageone.web2.cms.bean.setting.mapping.feed.SaveFieldMappingBean;
 import com.voyageone.web2.cms.dao.CmsMtCommonPropDefDao;
 import com.voyageone.web2.core.bean.UserSessionBean;
+import com.voyageone.web2.sdk.api.VoApiDefaultClient;
+import com.voyageone.web2.sdk.api.request.FeedMappingsGetRequest;
+import com.voyageone.web2.sdk.api.response.FeedMappingsGetResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -54,6 +57,9 @@ public class CmsFeedPropMappingService extends BaseAppService {
 
     @Autowired
     private com.voyageone.cms.service.CmsFeedMappingService com$feedMappingService;
+
+    @Autowired
+    protected VoApiDefaultClient voApiClient;
 
     /**
      * 通过 Feed 类目,获取其默认匹配的主类目
@@ -138,12 +144,25 @@ public class CmsFeedPropMappingService extends BaseAppService {
      * @return 属性匹配设定
      */
     public Prop getFieldMapping(GetFieldMappingBean getFieldMappingBean, UserSessionBean user) {
+//        CmsBtFeedMappingModel mappingModel = com$feedMappingService.getMapping(user.getSelChannel(),
+//                getFieldMappingBean.getFeedCategoryPath(), getFieldMappingBean.getMainCategoryPath());
+        //liang change
+        FeedMappingsGetRequest requestModel = new FeedMappingsGetRequest();
+        requestModel.setChannelId(user.getSelChannel().getId());
+        requestModel.setFeedCategoryPath(getFieldMappingBean.getFeedCategoryPath());
+        requestModel.setMainCategoryPath(getFieldMappingBean.getMainCategoryPath());
 
-        CmsBtFeedMappingModel mappingModel = com$feedMappingService.getMapping(user.getSelChannel(),
-                getFieldMappingBean.getFeedCategoryPath(), getFieldMappingBean.getMainCategoryPath());
+        //SDK取得Product 数据
+        FeedMappingsGetResponse response = voApiClient.execute(requestModel);
+        CmsBtFeedMappingModel mappingModel = null;
+        if (response != null && response.getFeedMappings() != null && response.getFeedMappings().size() > 0) {
+            mappingModel = response.getFeedMappings().get(0);
+        }
+
+        if (mappingModel == null)
+            return null;
 
         List<Prop> props = mappingModel.getProps();
-
         if (props == null)
             return null;
 

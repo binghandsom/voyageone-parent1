@@ -1,4 +1,4 @@
-<div ng-controller="DictItemController as vm">
+<!--<div ng-init="initialize()">
     <div class="bg-light lter b-b wrapper-md vo_page_header clearfix">
         <div class="row">
             <div class="vo_page_title col-sm-7">
@@ -72,4 +72,81 @@
         </div>
         <div collapse="!vm.showCustom" ng-include="'modules/cms/master/dict/dict.custom.tpl.html'"></div>
     </div>
-</div>
+</div>-->
+
+<!--开始-->
+<div class="wrapper-md" ng-init="initialize()">
+    <div class="col-sm-12">
+        <!-- search -->
+        <div class="panel panelPromotion">
+            <div class="container-fluid m-t-sm">
+                <div class="col-sm-12">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-sm-1 control-label text-center">自定义项</label>
+                            <div class="col-sm-2">
+                                <select class="form-control">
+                                    <option value="">GetAllImages</option>
+                                    <option value="">GetMainProductImages</option>
+                                    <option value="">GetPaddingImageKey</option>
+                                </select>
+                            </div>
+                            <label class="col-sm-7 control-label text-left">获取主商品图片的所有图片</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div><!-- .accordion --><!--/search-->
+
+    <div class="col-sm-12">
+        <div class="box">
+            <div class="box-body">
+                <div class="table-responsive">
+                    <table class="table table-hover vo_table" style="margin-bottom:0px">
+                        <tbody>
+                        <tr class="font-bold" style="background:#e67e22;color:#fff">
+                            <td class="mfb-xt3 text-center">Seq.	</td>
+                            <td class="mfb-xxx text-left">名称</td>
+                            <td class="mfb-xxxs text-left">摘要</td>
+                            <td class="text-center">值</td>
+                            <td class="mfb-xt text-left">操作</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <div class="col-sm-12 dropdown_table_main">
+                        <table class="table table-hover vo_table tableWordBreak" style="margin-bottom:0px">
+                            <tbody>
+                            <tr>
+                                <td class="mfb-xt3 text-center">1</td>
+                                <td class="mfb-xxx text-left">imageTemplate</td>
+                                <td class="mfb-xxxs text-left">图片模板</td>
+                                <td class="text-center">产品图片-5</td>
+                                <td class="mfb-xt text-center" ng-controller="popupCtrl">
+                                    <button title="修改参数" class="btn btn-success btn-xs" ng-click=""><i class="fa fa-pencil"></i> 修改参数</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="mfb-xt3 text-center">2</td>
+                                <td class="mfb-xxx text-left">paddingPropName</td>
+                                <td class="mfb-xxxs text-left">padding属性图名称，该名称决定使用哪个类型图片作为填充</td>
+                                <td class="text-center">产品图片-5</td>
+                                <td class="mfb-xt text-center" ng-controller="popupCtrl">
+                                    <button title="修改参数" class="btn btn-success btn-xs" ng-click=""><i class="fa fa-pencil"></i> 修改参数</button>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div><!-- .table-responsive -->
+                </div>
+            </div><!-- /.box-body -->
+            <div>
+                <button type="button" class="btn btn-vo m-b-xs btn-sm">保存</button>
+                <button type="button" class="btn btn-default m-b-xs btn-sm">取消</button>
+            </div>
+            <div class="m-t-xs">
+                <vpagination config="vm.errorPageOption"></vpagination>
+            </div>
+        </div>
+    </div><!-- .col-lg-12 -->
+</div><!-- end .wrapper-md -->
