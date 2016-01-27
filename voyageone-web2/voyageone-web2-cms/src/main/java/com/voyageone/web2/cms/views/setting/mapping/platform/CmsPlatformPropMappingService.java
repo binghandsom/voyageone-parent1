@@ -22,6 +22,7 @@ import com.voyageone.web2.cms.bean.setting.mapping.platform.PlatformMappingBean;
 import com.voyageone.web2.cms.dao.CmsMtDictDao;
 import com.voyageone.web2.cms.model.CmsMtDictModel;
 import com.voyageone.web2.core.bean.UserSessionBean;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -195,7 +196,9 @@ public class CmsPlatformPropMappingService extends BaseAppService {
      */
     public String getMultiComplexFieldMappingType(Integer cartId, String platformCategoryId, String propertyId) {
 
-        return platformSpecialFieldDao.selectSpecialMappingType(cartId, platformCategoryId, propertyId);
+        String type = platformSpecialFieldDao.selectSpecialMappingType(cartId, platformCategoryId, propertyId);
+
+        return StringUtils.isEmpty(type) ? "1" : type;
     }
 
     /**
@@ -316,7 +319,7 @@ public class CmsPlatformPropMappingService extends BaseAppService {
                     fieldMap = ((ComplexField) field).getFieldMap();
                     break;
                 case MULTICOMPLEX:
-                    mappingType = platformSpecialFieldDao.selectSpecialMappingType(
+                    mappingType = getMultiComplexFieldMappingType(
                             platformMappingModel.getPlatformCartId(),
                             platformMappingModel.getPlatformCategoryId(),
                             field.getId()
