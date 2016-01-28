@@ -12,6 +12,7 @@ import com.voyageone.common.util.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
@@ -63,6 +64,7 @@ public class JmBase {
             Object value = entry.getValue();
             if (value instanceof String) {
                 if(!StringUtils.isEmpty((String)value)){
+//                    parm_url.append(URLEncoder.encode((String) value, "UTF-8"));
                     parm_url.append(value);
                 }
             } else if (value instanceof NotSignString) {
@@ -146,6 +148,7 @@ public class JmBase {
             query.append(shopBean.getAppSecret());
         }
         //使用MD5 进行加密，再转化成大写
+        logger.info("md5:"+query.toString());
         return MD5.getMD5(query.toString()).toUpperCase();
     }
 }

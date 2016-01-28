@@ -147,10 +147,12 @@ public class JmProductBean extends JmBaseBean {
         return JacksonUtil.bean2JsonNotNull(resultBean);
     }
 
+    @JsonIgnore
     public String getSpusString() throws IOException {
         return JacksonUtil.bean2JsonNotNull(spus);
     }
 
+    @JsonIgnore
     public String getDealInfoString() throws IOException {
         List<JmProductBean_DealInfo> dealInfos = new ArrayList<>();
         dealInfos.add(dealInfo);

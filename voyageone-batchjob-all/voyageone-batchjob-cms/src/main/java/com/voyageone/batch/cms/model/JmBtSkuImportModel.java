@@ -25,6 +25,10 @@ public class JmBtSkuImportModel {
 
     private String hscode;
 
+    private String jumeiSpuNo;
+
+    private String jumeiSkuNo;
+
     private Date created;
 
     private String creater;
@@ -151,5 +155,21 @@ public class JmBtSkuImportModel {
 
     public void setModifier(String modifier) {
         this.modifier = modifier == null ? null : modifier.trim();
+    }
+
+    public String getJumeiSpuNo() {
+        return jumeiSpuNo;
+    }
+
+    public void setJumeiSpuNo(String jumeiSpuNo) {
+        this.jumeiSpuNo = jumeiSpuNo;
+    }
+
+    public String getJumeiSkuNo() {
+        return jumeiSkuNo;
+    }
+
+    public void setJumeiSkuNo(String jumeiSkuNo) {
+        this.jumeiSkuNo = jumeiSkuNo;
     }
 }

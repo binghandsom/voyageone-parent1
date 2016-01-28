@@ -285,7 +285,7 @@
 	</delete>
 	<insert id="insert_skus" parameterType="java.util.ArrayList" >
 		insert into jumei.jm_bt_sku (channel_id, product_code,
-		sku, upc_code, abroad_price,
+		sku,jumei_spu_no,jumei_sku_no, upc_code, abroad_price,
 		deal_price, market_price, size,
 		hscode, created, creater,
 		modified, modifier)
@@ -295,6 +295,8 @@
 		( #{item.channelId,jdbcType=VARCHAR},
 		  #{item.productCode,jdbcType=VARCHAR},
 		  #{item.sku,jdbcType=VARCHAR},
+		  #{item.jumeiSpuNo,jdbcType=VARCHAR},
+		  #{item.jumeiSkuNo,jdbcType=VARCHAR},
 		  #{item.upcCode,jdbcType=VARCHAR},
 		  #{item.abroadPrice,jdbcType=DOUBLE},
 		  #{item.dealPrice,jdbcType=DOUBLE},
@@ -336,7 +338,7 @@
 			jumei.jm_bt_images
 		WHERE
 			channel_id = #{channelId}
-			and (image_key = #{productCode,jdbcType=VARCHAR} or (image_key = #{brand,jdbcType=VARCHAR} and image_type_extend = #{sizeType,jdbcType=VARCHAR}) or image_type = 7)
+			and (image_key = #{productCode,jdbcType=VARCHAR} or (image_key = #{brand,jdbcType=VARCHAR} and image_type_extend = #{sizeType,jdbcType=VARCHAR}) or image_type = 6)
 		ORDER BY imageType,image_index
 
 	</select>

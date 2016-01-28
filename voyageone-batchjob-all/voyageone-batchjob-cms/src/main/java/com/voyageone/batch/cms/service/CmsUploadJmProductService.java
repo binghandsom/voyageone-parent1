@@ -16,6 +16,7 @@ import com.voyageone.common.components.jumei.Bean.JmProductBean;
 import com.voyageone.common.components.jumei.Bean.JmProductBean_DealInfo;
 import com.voyageone.common.components.jumei.Bean.JmProductBean_Spus;
 import com.voyageone.common.components.jumei.Bean.JmProductBean_Spus_Sku;
+import com.voyageone.common.components.jumei.Enums.JumeiImageType;
 import com.voyageone.common.components.jumei.JumeiProductService;
 import com.voyageone.common.components.transaction.SimpleTransaction;
 import com.voyageone.common.configs.Enums.CartEnums;
@@ -115,6 +116,7 @@ public class CmsUploadJmProductService extends BaseTaskService {
 
             jmBtProductImport.setJumeiProductId(jmProductBean.getJumei_product_id());
             jmBtProductImport.getJmBtDealImportModel().setJumeiHashId(jmProductBean.getDealInfo().getJumei_hash_id());
+            copyJumeiSkuInfo(jmBtProductImport,jmProductBean);
             jmBtProductImport.getJmBtDealImportModel().setSynFlg(1);
             jmBtProductImport.getJmBtDealImportModel().setModifier(getTaskName());
             succeedProduct.add(jmBtProductImport);
@@ -129,12 +131,26 @@ public class CmsUploadJmProductService extends BaseTaskService {
         }
     }
 
+    private void copyJumeiSkuInfo(JmBtProductImportModel jmBtProductImportModel,JmProductBean jmProduct){
+
+        for(JmBtSkuImportModel skuImportModel : jmBtProductImportModel.getSkuImportModelList()){
+            for(JmProductBean_Spus spu:jmProduct.getSpus()){
+                if(skuImportModel.getSku().equalsIgnoreCase(spu.getPartner_spu_no())){
+                    skuImportModel.setJumeiSpuNo(spu.getJumei_spu_no());
+                    skuImportModel.setJumeiSkuNo(spu.getSkuInfo().getJumei_sku_no());
+                    break;
+                }
+            }
+        }
+
+    }
+
 
     private void setImages(JmBtProductImportModel jmBtProductImport, JmProductBean jmProductBean) {
         Map<Integer, List<JmPicBean>> imagesMap = jmUploadProductDao.selectImageByCode(jmBtProductImport.getChannelId(), jmBtProductImport.getProductCode(), jmBtProductImport.getBrandName(), jmBtProductImport.getSizeType());
 
         StringBuffer stringBuffer = new StringBuffer();
-        List<JmPicBean> pics = imagesMap.get(1);
+        List<JmPicBean> pics = imagesMap.get(JumeiImageType.NORMAL.getId());
         //白底方图
         if (pics != null) {
             for (JmPicBean jmPicBean : pics) {
@@ -152,7 +168,7 @@ public class CmsUploadJmProductService extends BaseTaskService {
 
         // 品牌图
         stringBuffer = new StringBuffer();
-        pics = imagesMap.get(4);
+        pics = imagesMap.get(JumeiImageType.BRANDSTORY.getId());
         if (pics != null) {
             for (JmPicBean jmPicBean : pics) {
                 stringBuffer.append(String.format(IMG_HTML, jmPicBean.getJmUrl()));
@@ -164,13 +180,13 @@ public class CmsUploadJmProductService extends BaseTaskService {
 
         //尺码表
         stringBuffer = new StringBuffer();
-        pics = imagesMap.get(3);
+        pics = imagesMap.get(JumeiImageType.PARAMETER.getId());
         if (pics != null) {
             for (JmPicBean jmPicBean : pics) {
                 stringBuffer.append(String.format(IMG_HTML, jmPicBean.getJmUrl()));
             }
         }
-        pics = imagesMap.get(5);
+        pics = imagesMap.get(JumeiImageType.SIZE.getId());
         if (pics != null) {
             for (JmPicBean jmPicBean : pics) {
                 stringBuffer.append(String.format(IMG_HTML, jmPicBean.getJmUrl()));
@@ -180,13 +196,21 @@ public class CmsUploadJmProductService extends BaseTaskService {
 
         // 产品详细
         stringBuffer = new StringBuffer();
-        pics = imagesMap.get(2);
+        pics = imagesMap.get(JumeiImageType.PRODUCT.getId());
         if (pics != null) {
             for (JmPicBean jmPicBean : pics) {
                 stringBuffer.append(String.format(IMG_HTML, jmPicBean.getJmUrl()));
             }
         } else {
             throw new BusinessException("产品图不存在");
+        }
+        pics = imagesMap.get(JumeiImageType.LOGISTICS.getId());
+        if (pics != null) {
+            for (JmPicBean jmPicBean : pics) {
+                stringBuffer.append(String.format(IMG_HTML, jmPicBean.getJmUrl()));
+            }
+        } else {
+            throw new BusinessException("物流图不存在");
         }
         jmProductBean.getDealInfo().setDescription_images(String.format(DESCRIPTION_IMAGES, stringBuffer.toString()));
 
