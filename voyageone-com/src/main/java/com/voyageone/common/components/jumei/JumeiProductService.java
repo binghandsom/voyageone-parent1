@@ -66,7 +66,7 @@ public class JumeiProductService extends JmBase {
     }
 
 
-    private static String PRODUCT_GET = "/v1/htProduct/getProductById";
+    private static String PRODUCT_GET = "v1/htProduct/getProductById";
     /**
      * 取得商品
      */
