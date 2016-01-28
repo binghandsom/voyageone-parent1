@@ -9,6 +9,8 @@ public class JmProductBean_Spus_Sku extends JmBaseBean {
 
     private String sale_on_this_deal;
 
+    private String jumei_sku_no;
+
     private String customs_product_number;
 
     private String businessman_num;
@@ -73,5 +75,13 @@ public class JmProductBean_Spus_Sku extends JmBaseBean {
 
     public void setMarket_price(String market_price) {
         this.market_price = market_price;
+    }
+
+    public String getJumei_sku_no() {
+        return jumei_sku_no;
+    }
+
+    public void setJumei_sku_no(String jumei_sku_no) {
+        this.jumei_sku_no = jumei_sku_no;
     }
 }
