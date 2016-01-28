@@ -104,6 +104,13 @@ define([
                 "backdrop": 'static',
                 "size": 'md'
             },
+        "dictValue": {
+            "templateUrl": "views/pop/dictValue/index.tpl.html",
+            "controllerUrl": "modules/cms/views/pop/dictValue/index.ctl",
+            "controller": 'dictValuePopupController as ctrl',
+            "backdrop": 'static',
+            "size": 'md'
+        },
             "platformMapping": {
                 "complex": {
                     "templateUrl": "views/pop/platformMapping/ppComplex.tpl.html",
@@ -446,6 +453,10 @@ define([
 
         $scope.popupFeedValue = function (context) {
             return openModel(popActions.feedValue, context);
+        };
+
+        $scope.popupDictValue = function (context) {
+            return openModel(popActions.dictValue, context);
         };
 
         $scope.ppPlatformMapping = {
