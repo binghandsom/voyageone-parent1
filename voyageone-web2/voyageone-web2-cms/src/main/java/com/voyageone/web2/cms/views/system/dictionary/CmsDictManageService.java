@@ -1,5 +1,10 @@
 package com.voyageone.web2.cms.views.system.dictionary;
 
+import com.voyageone.base.exception.BusinessException;
+import com.voyageone.cms.bean.DictionaryMasterPropBean;
+import com.voyageone.cms.enums.DictionaryMasterProp;
+import com.voyageone.common.util.StringUtils;
+import com.voyageone.web2.cms.bean.system.dictionary.CmsDictionaryIndexBean;
 import com.voyageone.web2.cms.dao.CmsMtDictDao;
 import com.voyageone.web2.cms.model.CmsMtDictModel;
 import com.voyageone.web2.core.bean.UserSessionBean;
@@ -8,7 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -48,9 +55,9 @@ public class CmsDictManageService {
      * @param channel_id 渠道
      * @return 字典集合
      */
-    public Map<String, Object> dtGetAllDict(Map params, String channel_id) {
+    public Map<String, Object> dtGetAllDict(CmsDictionaryIndexBean params, String channel_id) {
 
-        params.put("channel_id", channel_id);
+        params.setOrder_channel_id(channel_id);
 
         Map<String, Object> resultInfo = new HashMap<>();
         resultInfo.put("dictionaryList", cmsMtDictDao.selectByChannel(params));
@@ -62,25 +69,39 @@ public class CmsDictManageService {
     /**
      * 添加一个字典项
      *
-     * @param dictWordBean 字典项
-     * @param user         当前用户
+     * @param cmsMtDictModel 字典项
+     * @param user           当前用户
      * @return 更新的字典项
      */
-//    public DictWordBean addDict(DictWordBean dictWordBean, UserSessionBean user) {
-//
-//        dictWordBean.setOrder_channel_id(user.getSelChannelId());
-//
-//        checkDict(dictWordBean);
-//
-//        dictWordBean.setCreater(user.getUserName());
-//        dictWordBean.setModifier(user.getUserName());
-//
-//        if (dictDao.insertDict(dictWordBean) < 1)
-//            throw new BusinessException(UPDATE_BY_OTHER);
-//
-//        List<DictWordBean> byName = dictDao.selectByName(dictWordBean);
-//        return byName.get(0);
-//    }
+    public void addDict(CmsMtDictModel cmsMtDictModel, UserSessionBean user) {
+
+        cmsMtDictModel.setOrder_channel_id(user.getSelChannelId());
+
+        // 检测新字典项数据
+        checkDict(cmsMtDictModel);
+
+        cmsMtDictModel.setCreater(user.getUserName());
+        cmsMtDictModel.setModifier(user.getUserName());
+        // TODO 目前默认值是0,以后再修改
+        cmsMtDictModel.setCart_id("0");
+
+        if (cmsMtDictDao.insertDict(cmsMtDictModel) < 1)
+            // TODO 以后所有的异常msg统一修改
+            throw new BusinessException("插入一条新的字典数据失败!");
+    }
+
+    /**
+     * 删除一个字典项
+     *
+     * @param cmsMtDictModel 字典项
+     * @return 更新结果
+     */
+    public int delDict(CmsMtDictModel cmsMtDictModel, UserSessionBean userInfo) {
+        //插入备份
+        cmsMtDictModel.setModifier(userInfo.getUserName());
+        cmsMtDictDao.insertDictLog(cmsMtDictModel);
+        return cmsMtDictDao.deleteDict(cmsMtDictModel);
+    }
 
     /**
      * 更新一个字典项
@@ -99,25 +120,12 @@ public class CmsDictManageService {
 //    }
 
     /**
-     * 删除一个字典项
-     *
-     * @param cmsMtDictModel 字典项
-     * @return 更新结果
-     */
-    public int delDict(CmsMtDictModel cmsMtDictModel, UserSessionBean userInfo) {
-        //插入备份
-        cmsMtDictModel.setModifier(userInfo.getUserName());
-        cmsMtDictDao.insertDictLog(cmsMtDictModel);
-        return cmsMtDictDao.deleteDict(cmsMtDictModel);
-    }
-
-    /**
      * 获取可用的 CMS 属性
      *
      * @return CmsModelEnum 集合
      */
-//    public List<CmsFieldEnum.CmsModelEnum> getCmsValues() {
-//        return Arrays.asList(CmsFieldEnum.CmsModelEnum.values());
+//    public List<CmsDictionaryEnum.CmsModelEnum> getCmsValues() {
+//        return Arrays.asList(CmsDictionaryEnum.CmsModelEnum.values());
 //    }
 
     /**
@@ -125,16 +133,24 @@ public class CmsDictManageService {
      *
      * @return 属性集合
      */
-//    public List<DictMasterPropBean> getMasterProps() {
-//
-//        List<DictMasterPropBean> beans = new ArrayList<>();
-//
-//        for (DictMasterProp prop : DictMasterProp.values()) {
-//            beans.add(prop.toBean());
-//        }
-//
-//        return beans;
-//    }
+    public Map<String, Object> getMasterProps(UserSessionBean userInfo) {
+        Map<String, Object> resultInfo = new HashMap<>();
+
+        // TODO 目前是从定义死的数据取得,以后改成从数据库中取得
+        // 获取主数据数据
+        List<DictionaryMasterPropBean> beans = new ArrayList<>();
+        for (DictionaryMasterProp prop : DictionaryMasterProp.values()) {
+            beans.add(prop.toBean());
+        }
+        resultInfo.put("masterProps", beans);
+
+        // 获取字典的数据
+        CmsDictionaryIndexBean params = new CmsDictionaryIndexBean();
+        params.setOrder_channel_id(userInfo.getSelChannelId());
+        resultInfo.put("dictionaryProps", cmsMtDictDao.selectByChannel(params));
+
+        return resultInfo;
+    }
 
     /**
      * 获取可用的自定义逻辑
@@ -155,20 +171,19 @@ public class CmsDictManageService {
 //        return dictDao.selectSimpleDict(channel_id);
 //    }
 
-//    private void checkDict(DictWordBean dictWordBean) {
-//
-//        Channel channel = Channel.valueOfId(dictWordBean.getOrder_channel_id());
-//
-//        if (channel == null)
-//            throw new BusinessException(NOT_FOUND_CHANNEL);
-//
-//        if (StringUtils.isEmpty(dictWordBean.getName()))
-//            throw new BusinessException(NO_NAME);
-//
-//        if (StringUtils.isEmpty(dictWordBean.getValue()))
-//            throw new BusinessException(NO_EXPRESSION);
-//
-//        if (dictDao.selectByName(dictWordBean).size() > 1)
-//            throw new BusinessException(DUP_NAME);
-//    }
+    /**
+     * 检测现有数据是否符合
+     * @param cmsMtDictModel
+     */
+    private void checkDict(CmsMtDictModel cmsMtDictModel) {
+
+        if (StringUtils.isEmpty(cmsMtDictModel.getName()))
+            throw new BusinessException("字典名称不存在!");
+
+        if (StringUtils.isEmpty(cmsMtDictModel.getValue()))
+            throw new BusinessException("字典定义内容不存在!");
+
+        if (cmsMtDictDao.selectByName(cmsMtDictModel).size() > 1)
+            throw new BusinessException("该字典名称已经存在,请重新设定字典名称!");
+    }
 }

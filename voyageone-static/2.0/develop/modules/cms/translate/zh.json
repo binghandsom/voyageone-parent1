@@ -15,6 +15,7 @@
   "TXT_COM_DELETE_SUCCESS": "删除操作成功",
   "TXT_COM_MSG_SEARCH": "Search...",
   "TXT_COM_EDIT": "编辑",
+  "TXT_COM_MSG_NO_DATA_WITH_SAVE": "请确保必填项,以及列表中不为空",
 
   "BTN_COM_GO": "Go",
   "BTN_COM_CANCEL": "Cancel",
@@ -155,6 +156,9 @@
   "BTN_NEW_DICTIONARY_DEFINE": "新增自定义",
   "TXT_TYPE": "类型",
   "TXT_VALUE": "值",
+  "TXT_MASTER_DATA": "主数据",
+  "TXT_DICTIONARY": "字典",
+  "TXT_TEXT": "文本",
 
   "TXT_DICT_CUSTOM": "自定义项",
   "TXT_ABSTRACT": "摘要",
@@ -163,8 +167,6 @@
   "TXT_HEAD_DICT": "字典管理",
   "TXT_MSG_DICT_VAL_TITLE": "值",
   "TXT_MSG_DICT_VAL_CMS": "CMS",
-  "TXT_MSG_DICT_VAL_MASTER": "主数据",
-  "TXT_MSG_DICT_VAL_DICT": "字典",
   "TXT_MSG_DICT_VAL_TXT": "文本",
 
   "TXT_MSG_DICT_UN_VALID_CUS": "提供的自定义内容无效",

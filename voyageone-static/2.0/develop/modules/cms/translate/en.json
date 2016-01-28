@@ -15,6 +15,7 @@
   "TXT_COM_DELETE_SUCCESS": "删除操作成功",
   "TXT_COM_MSG_SEARCH": "Search...",
   "TXT_COM_EDIT": "Edit",
+  "TXT_COM_MSG_NO_DATA_WITH_SAVE": "请确保必填项,以及列表中不为空",
 
   "BTN_COM_GO": "Go",
   "BTN_COM_CANCEL": "Cancel",
@@ -155,6 +156,9 @@
   "BTN_NEW_DICTIONARY_DEFINE": "新增自定义",
   "TXT_TYPE": "Type",
   "TXT_VALUE": "Value",
+  "TXT_MASTER_DATA": "主数据",
+  "TXT_DICTIONARY": "Dictionary",
+  "TXT_TEXT": "Text",
 
 
   "TXT_DICT_CUSTOM": "Custom",
@@ -164,9 +168,6 @@
   "TXT_HEAD_DICT": "Dict Manage",
   "TXT_MSG_DICT_VAL_TITLE": "Values",
   "TXT_MSG_DICT_VAL_CMS": "CMS",
-  "TXT_MSG_DICT_VAL_MASTER": "Master Props",
-  "TXT_MSG_DICT_VAL_DICT": "Dict",
-  "TXT_MSG_DICT_VAL_TXT": "Text",
 
   "TXT_MSG_DICT_UN_VALID_CUS": "Un valid custom",
   "TXT_MSG_DICT_NO_CUS": "Please chosen one option from that select",

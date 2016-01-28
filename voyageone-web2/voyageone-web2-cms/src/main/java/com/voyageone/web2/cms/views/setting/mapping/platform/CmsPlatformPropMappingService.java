@@ -18,6 +18,7 @@ import com.voyageone.ims.rule_expression.RuleExpression;
 import com.voyageone.ims.rule_expression.RuleWord;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.bean.setting.mapping.platform.PlatformMappingBean;
+import com.voyageone.web2.cms.bean.system.dictionary.CmsDictionaryIndexBean;
 import com.voyageone.web2.cms.dao.CmsMtDictDao;
 import com.voyageone.web2.cms.model.CmsMtDictModel;
 import com.voyageone.web2.core.bean.UserSessionBean;
@@ -110,8 +111,8 @@ public class CmsPlatformPropMappingService extends BaseAppService {
      * 获取当前渠道的所有可用字典
      */
     public List<CmsMtDictModel> getDictList(UserSessionBean user) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("channel_id", user.getSelChannelId());
+        CmsDictionaryIndexBean params = new CmsDictionaryIndexBean();
+        params.setOrder_channel_id(user.getSelChannelId());
         return dictDao.selectByChannel(params);
     }
 

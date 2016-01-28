@@ -2,11 +2,11 @@ package com.voyageone.web2.cms.dao;
 
 import com.voyageone.web2.base.dao.WebBaseDao;
 import com.voyageone.web2.base.dao.WebDaoNs;
+import com.voyageone.web2.cms.bean.system.dictionary.CmsDictionaryIndexBean;
 import com.voyageone.web2.cms.model.CmsMtDictModel;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author Jonas, 1/19/16.
@@ -20,11 +20,11 @@ public class CmsMtDictDao extends WebBaseDao {
         return WebDaoNs.CMS;
     }
 
-    public List<CmsMtDictModel> selectByChannel(Map<String, Object> params) {
+    public List<CmsMtDictModel> selectByChannel(CmsDictionaryIndexBean params) {
         return selectList("cms_mt_dict_selectByCondition", params);
     }
 
-    public int selectAllCount(Map<String, Object> params) {
+    public int selectAllCount(CmsDictionaryIndexBean params) {
         return selectOne("cms_mt_dict_selectAllCount", params);
     }
 

@@ -74,7 +74,7 @@ define([
                     "value": {
                         "templateUrl": "views/pop/system/dictionary/value.tpl.html",
                         "controllerUrl": "modules/cms/views/pop/system/dictionary/value.ctl",
-                        "controller": "popDictValueController as ctrl"
+                        "controller": "popDictValueController"
                     },
                     "custom": {
                         "templateUrl": "views/pop/system/dictionary/custom.tpl.html",
@@ -215,7 +215,7 @@ define([
         }
 
         $scope.openDictValue = openDictValue;
-        function openDictValue(viewSize) {
+        function openDictValue(viewSize, fnInitial) {
             require([popActions.system.dictionary.value.controllerUrl], function () {
                 var modalInstance = $modal.open({
                     templateUrl: popActions.system.dictionary.value.templateUrl,
@@ -233,9 +233,9 @@ define([
                 });
 
                 // 回调主页面的刷新操作
-                //modalInstance.result.then(function () {
-                //    fnInitial();
-                //})
+                modalInstance.result.then(function (data) {
+                    fnInitial(data);
+                })
             });
         }
 

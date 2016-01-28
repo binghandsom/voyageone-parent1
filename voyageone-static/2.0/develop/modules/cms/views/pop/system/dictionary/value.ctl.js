@@ -12,32 +12,79 @@ define([
   'cms'
 ], function (cms) {
 
+  cms.controller('popDictValueController', function ($scope, $dictionaryService, $modalInstance, notify) {
+    $scope.vm = {
+      //propertyInfo: {
+      //  property: {},
+      //  productIds: productIds
+      //},
+      masterData: {},
+      valueTypes: {
+        text: 'TEXT',
+        dict: 'DICT',
+        master: 'MASTER',
+        custom: 'CUSTOM'
+      },
+      selected: {
+        valueType: 'MASTER',
+        masterValue: {},
+        dictValue: {},
+        textValue: {}
+      }
+    };
 
-  cms.controller('popDictValueController', function ($scope) {
-//, $propChangeService, $translate, $modalInstance, notify
-    //$scope.vm = {
-    //  propertyInfo: {
-    //    property: {},
-    //    productIds: productIds
-    //  },
-    //  properties: []
-    //};
-    //
-    //$scope.initialize = initialize;
-    //$scope.save = save;
-    //
-    //function initialize() {
-    //  $propChangeService.getPopOptions().then(function (res) {
-    //    $scope.vm.properties = res.data;
-    //  });
-    //}
-    //
-    //function save () {
-    //  $propChangeService.setProductFields($scope.vm.propertyInfo).then(function () {
-    //    notify.success ($translate.instant('TXT_COM_UPDATE_SUCCESS'));
-    //    //$scope.$close();
-    //    $modalInstance.close('');
-    //  });
-    //}
+    $scope.initialize = initialize;
+    $scope.save = save;
+    $scope.cancel = cancel;
+
+    function initialize() {
+      $dictionaryService.getConst().then(function (res) {
+        $scope.vm.masterData = res.data;
+      });
+    }
+
+    /**
+     * 保存现有数据到主页面
+     */
+    function save () {
+      var data = {
+        type: $scope.vm.selected.valueType,
+        value: _returnValue()
+      };
+      $modalInstance.close(data);
+      $scope.$close();
+    }
+
+    /**
+     * 取消新添加数据
+     */
+    function cancel () {
+      $scope.vm.selected = {
+        valueType: 'MASTER',
+        masterValue: {},
+        dictValue: {},
+        textValue: {}
+      };
+      $scope.$close();
+    }
+
+    /**
+     * 根据不同的选择种类返回不同的值
+     * @returns {*}
+     * @private
+     */
+    function _returnValue () {
+      switch ($scope.vm.selected.valueType) {
+        case $scope.vm.valueTypes.text:
+          return $scope.vm.selected.textValue;
+          break;
+        case $scope.vm.valueTypes.master:
+          return $scope.vm.selected.masterValue;
+          break;
+        case $scope.vm.valueTypes.dict:
+          return $scope.vm.selected.dictValue;
+          break;
+      }
+    }
   });
 });

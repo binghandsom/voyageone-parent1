@@ -1,53 +1,41 @@
-<div class="vo_modal" ng-init="ctrl.init()">
+<div class="vo_modal" ng-init="initialize()">
     <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="ctrl.cancel()"><span
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancel()"><span
                 aria-hidden="true"><i class="fa fa-close"></i></span></button>
-        <h5 class="modal-title"><i class="fa fa-crosshairs"></i> 新增字典值</h5>
+        <h5 class="modal-title"><i class="fa fa-crosshairs"></i>&nbsp;{{'BTN_NEW_DICTIONARY_VALUE' | translate}}</h5>
     </div>
-        <form role="form" class="form-horizontal m-t-md m-l-lg m-b-lg">
-            <div class="form-group">
-                <div class="col-sm-3"><label class="checkbox-inline c-radio"><input type="checkbox" value="option1"><span class="fa fa-check"></span> CMS </label></div>
-                <div class="col-sm-8">
-                    <select class="form-control">
-                        <option>brand_id</option>
-                        <option>model</option>
-                        <option>category_id</option>
-                        <option>title_cn</option>
-                    </select>
-                </div>
+    <form role="form" class="form-horizontal m-t-md m-l-lg m-b-lg">
+        <div class="form-group">
+            <div class="col-sm-3"><label class="checkbox-inline c-radio">
+                <input type="radio" name="radioDictionaryType" value="{{vm.valueTypes.master}}" ng-model="vm.selected.valueType">
+                <span class="fa fa-check"></span>&nbsp;{{'TXT_MASTER_DATA' | translate}}</label>
             </div>
-            <div class="form-group">
-                <div class="col-sm-3"><label class="checkbox-inline c-radio"><input type="checkbox" value="option1"><span class="fa fa-check"></span> 主数据 </label></div>
-                <div class="col-sm-8">
-                    <select class="form-control">
-                        <option>FEED-适合风格</option>
-                        <option>FEED-详细说明-英</option>
-                        <option>FEED-适合人群</option>
-                        <option>FEED-产品宝石</option>
-                    </select>
-                </div>
+            <div class="col-sm-8" ng-show="vm.selected.valueType == vm.valueTypes.master">
+                <select class="form-control" ng-model="vm.selected.masterValue" ng-options="i.desc as i.desc for i in vm.masterData.masterProps"></select>
             </div>
-            <div class="form-group">
-                <div class="col-sm-3"><label class="checkbox-inline c-radio"><input type="checkbox" value="option1"><span class="fa fa-check"></span> 字典 </label></div>
-                <div class="col-sm-8">
-                    <select class="form-control">
-                        <option>产品图片-1</option>
-                        <option>产品图片-2</option>
-                        <option>产品图片-3</option>
-                        <option>商品图片-1</option>
-                    </select>
-                </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-3"><label class="checkbox-inline c-radio">
+                <input type="radio" name="radioDictionaryType" value="{{vm.valueTypes.dict}}" ng-model="vm.selected.valueType">
+                <span class="fa fa-check"></span>&nbsp;{{'TXT_DICTIONARY' | translate}}</label>
             </div>
+            <div class="col-sm-8" ng-show="vm.selected.valueType == vm.valueTypes.dict">
+                <select class="form-control" ng-model="vm.selected.dictValue" ng-options="i.name as i.name for i in vm.masterData.dictionaryProps"></select>
+            </div>
+        </div>
 
-            <div class="form-group">
-                <div class="col-sm-3"><label class="checkbox-inline c-radio"><input type="checkbox" value="option1"><span class="fa fa-check"></span> 文本 </label></div>
-                <div class="col-sm-8">
-                    <textarea class="form-control" rows="4"></textarea>
-                </div>
+        <div class="form-group">
+            <div class="col-sm-3"><label class="checkbox-inline c-radio">
+                <input type="radio" name="radioDictionaryType" value="{{vm.valueTypes.text}}" ng-model="vm.selected.valueType">
+                <span class="fa fa-check"></span>&nbsp;{{'TXT_TEXT' | translate}}</label>
             </div>
-        </form>
+            <div class="col-sm-8" ng-show="vm.selected.valueType == vm.valueTypes.text">
+                <textarea class="form-control" rows="4" ng-model="vm.selected.textValue"></textarea>
+            </div>
+        </div>
+    </form>
     <div class="modal-footer">
-        <button class="btn btn-default" ng-click="ctrl.cancel()">取消</button>
-        <button class="btn btn-vo" ng-click="ctrl.ok()">保存</button>
+        <button class="btn btn-default" ng-click="cancel()" translate="BTN_CANCEL"></button>
+        <button class="btn btn-vo" ng-click="save()" translate="BTN_SAVE"></button>
     </div>
 </div><!-- .vo_modal -->
