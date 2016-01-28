@@ -17,7 +17,7 @@ public class JmProductBean_Spus extends JmBaseBean {
 
     private String attribute;
 
-    private String abroad_price;
+    private Double abroad_price;
 
     private String area_code;
 
@@ -75,11 +75,11 @@ public class JmProductBean_Spus extends JmBaseBean {
         this.attribute = attribute;
     }
 
-    public String getAbroad_price() {
+    public Double getAbroad_price() {
         return abroad_price;
     }
 
-    public void setAbroad_price(String abroad_price) {
+    public void setAbroad_price(Double abroad_price) {
         this.abroad_price = abroad_price;
     }
 
