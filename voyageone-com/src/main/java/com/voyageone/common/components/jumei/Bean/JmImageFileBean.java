@@ -72,11 +72,16 @@ public class JmImageFileBean extends JmBaseBean {
         if (needReplace == null) {
             throw new Exception("needReplace not found!");
         }
-        if (file == null) {
-            throw new Exception("file not found!");
+
+        if (file == null && inputStream == null) {
+            throw new Exception("file or inputStream must exist!");
         }
-        if (!file.exists()) {
+
+        if (file != null && !file.exists()) {
             throw new Exception("file not exist!");
+        }
+        if (inputStream != null && inputStream.available() == 0) {
+            throw new Exception("inputStream content not exist!");
         }
     }
 

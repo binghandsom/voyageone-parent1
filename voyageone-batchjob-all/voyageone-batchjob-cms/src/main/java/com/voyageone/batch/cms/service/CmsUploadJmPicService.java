@@ -185,7 +185,7 @@ public class CmsUploadJmPicService extends BaseTaskService {
             Assert.notNull(inputStream,"inputStream为null，图片流获取失败！"+jmPicBean.getOriginUrl());
             jmImageFileBean.setInputStream(inputStream);
             jmImageFileBean.setDirName(buildDirName(jmPicBean));
-            jmImageFileBean.setImgName(jmPicBean.getImageKey()+jmPicBean.getImageType()+jmPicBean.getImageIndex()+IMGTYPE);
+            jmImageFileBean.setImgName(jmPicBean.getImageKey()+jmPicBean.getImageType()+jmPicBean.getImageIndex()/*+IMGTYPE*/);
             jmImageFileBean.setNeedReplace(NEED_REPLACE);
             return jmImageFileBean;
         } catch (Exception e) {
@@ -198,17 +198,19 @@ public class CmsUploadJmPicService extends BaseTaskService {
      * 获取网络图片流，遇错重试
      * @param url imgUrl
      * @param retry retrycount
-     * @return inputStream
+     * @return inputStream / throw Exception
      */
-    private static InputStream getImgInputStream(String url,int retry){
-        if(retry-->0){
+    private static InputStream getImgInputStream(String url,int retry) throws Exception {
+        Exception exception=null;
+        if(--retry>0){
             try {
                 return HttpUtils.getInputStream(url,null);
             } catch (Exception e) {
+                exception=e;
                 getImgInputStream(url,retry);
             }
         }
-        return null;
+        throw exception;
     }
 
     /***
