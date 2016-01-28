@@ -7,6 +7,42 @@
   @User: Jonas
   @Version: 0.0.1
  */
+
+
+define([
+  'cms'
+], function (cms) {
+
+
+  cms.controller('popDictCustomController', function ($scope) {
+//, $propChangeService, $translate, $modalInstance, notify
+    //$scope.vm = {
+    //  propertyInfo: {
+    //    property: {},
+    //    productIds: productIds
+    //  },
+    //  properties: []
+    //};
+    //
+    //$scope.initialize = initialize;
+    //$scope.save = save;
+    //
+    //function initialize() {
+    //  $propChangeService.getPopOptions().then(function (res) {
+    //    $scope.vm.properties = res.data;
+    //  });
+    //}
+    //
+    //function save () {
+    //  $propChangeService.setProductFields($scope.vm.propertyInfo).then(function () {
+    //    notify.success ($translate.instant('TXT_COM_UPDATE_SUCCESS'));
+    //    //$scope.$close();
+    //    $modalInstance.close('');
+    //  });
+    //}
+  });
+});
+
 /*
 var bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
