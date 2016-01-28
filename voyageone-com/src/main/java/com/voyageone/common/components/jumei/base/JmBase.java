@@ -30,6 +30,15 @@ public class JmBase {
         return reqJmApi(shopBean, api_url, new HashMap<>());
     }
 
+    private String replaceSpicialChart(String org) {
+        String result = null;
+        if (org != null) {
+            result = org.replaceAll("&", "、");
+            result = result.replaceAll("?", "？");
+        }
+        return result;
+    }
+
     protected String reqJmApi(ShopBean shopBean, String api_url, Map<String, Object> params) throws Exception {
 
         for (Object value : params.values()) {
@@ -38,6 +47,18 @@ public class JmBase {
                     throw new Exception("String or NotSignString type is only support!");
                 }
             }
+        }
+
+        Map<String, Object> paramsTmp = new HashMap<>();
+        for (Map.Entry<String, Object> entry : params.entrySet()) {
+            Object valueObj = entry.getValue();
+            Object newValueObj;
+            if (valueObj instanceof NotSignString) {
+                newValueObj = new NotSignString(replaceSpicialChart(((NotSignString)valueObj).content));
+            } else {
+                newValueObj = replaceSpicialChart((String)valueObj);
+            }
+            paramsTmp.put(entry.getKey(), newValueObj);
         }
 
         StringBuilder post_url = new StringBuilder();
@@ -49,15 +70,15 @@ public class JmBase {
 
 
         //设置系统级参数
-        params.put("client_id", shopBean.getAppKey());
-        params.put("client_key", shopBean.getSessionKey());
+        paramsTmp.put("client_id", shopBean.getAppKey());
+        paramsTmp.put("client_key", shopBean.getSessionKey());
         //生成签名
-        String sign = getSignRequest(shopBean, params);
-        params.put("sign", sign);
+        String sign = getSignRequest(shopBean, paramsTmp);
+        paramsTmp.put("sign", sign);
 
         StringBuilder parm_url = new StringBuilder();
         //拼接URL
-        for (Map.Entry<String, Object> entry : params.entrySet()) {
+        for (Map.Entry<String, Object> entry : paramsTmp.entrySet()) {
             if(!StringUtils.isEmpty(entry.getKey())){
                 parm_url.append("&").append(entry.getKey()).append("=");
             }
