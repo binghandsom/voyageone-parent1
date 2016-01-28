@@ -1,5 +1,8 @@
 package com.voyageone.common.components.jumei.Bean;
 
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.io.Serializable;
 
 /**
@@ -13,9 +16,13 @@ import java.io.Serializable;
  */
 public abstract class JmBaseBean implements Serializable {
 
+    @JsonIgnore
     protected String created;
+    @JsonIgnore
     protected String creater;
+    @JsonIgnore
     protected String modified;
+    @JsonIgnore
     protected String modifier;
 
     public String getCreated() {
