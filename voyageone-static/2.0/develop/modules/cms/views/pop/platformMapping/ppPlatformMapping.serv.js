@@ -83,13 +83,17 @@ define([
              * @param {number} cartId 平台 ID
              * @param {MappingBean} mapping 将保存的 Mapping
              * @param {WrapField} property 平台属性, 用于构造属性的 Path 作为 MappingPath
+             * @param {number} valueIndex 目标 Mapping 在 MultiComplexMapping 中所在的 Value 位置
              * @returns {Promise.<boolean>}
              */
-            saveMapping: function (mainCategoryId, platformCategoryId, cartId, mapping, property) {
+            saveMapping: function (mainCategoryId, platformCategoryId, cartId, mapping, property, valueIndex) {
 
                 var mappingPath = [property.id];
                 var parent = property;
                 while (parent = parent.parent) {
+                    if (valueIndex !== null && parent.type === FieldTypes.multiComplex) {
+                        mappingPath.unshift(valueIndex);
+                    }
                     mappingPath.unshift(parent.id);
                 }
 
@@ -292,6 +296,9 @@ define([
                 }
 
                 // Multi 情况下, 搜索多个
+                if (!multiMapping.values || !multiMapping.values.length || multiMapping.values.length <= valueIndex)
+                    return null;
+
                 return _.find(multiMapping.values[valueIndex].subMappings, function (mapping) {
                     return mapping.platformPropId === $WrapFieldId(property.id);
                 });

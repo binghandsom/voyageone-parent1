@@ -399,7 +399,9 @@ public class CmsPlatformPropMappingService extends BaseAppService {
             // 检查是不是批量复杂
             if (mappingBeen == null && values != null) {
                 // 如果是, 则默认这次 propertyId 是 values 的 index
-                mappingBeen = values.get(Integer.valueOf(propertyId)).getSubMappings();
+                int i = Integer.valueOf(propertyId);
+                if (values.size() <= i) return null;
+                mappingBeen = values.get(i).getSubMappings();
                 continue;
             }
 
