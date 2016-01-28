@@ -1,5 +1,6 @@
 package com.voyageone.common.components.jumei.Bean;
 
+import com.voyageone.common.util.StringUtils;
 import org.springframework.util.Assert;
 
 /**
@@ -7,7 +8,7 @@ import org.springframework.util.Assert;
  * @version 2.0.0
  * @since 2.0.0
  */
-public class GetDealInfoReq extends JmBaseBean {
+public class JmGetDealInfoReq extends JmBaseBean {
 
     /**
      * productId 商品Id
@@ -21,8 +22,11 @@ public class GetDealInfoReq extends JmBaseBean {
      * */
     private String fields;
 
-    public void check() throws Exception {
-        Assert.notNull(productId,"product must not null!");
+    public void check(){
+        if(StringUtils.isEmpty(productId)){
+            throw new IllegalArgumentException("product must not null!");
+        }
+        //Assert.notNull(productId,"product must not null!");
     }
 
     public String getProductId() {

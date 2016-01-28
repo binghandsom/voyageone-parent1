@@ -4,6 +4,7 @@ import com.voyageone.common.components.jumei.Bean.*;
 import com.voyageone.common.components.jumei.base.JmBase;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.common.util.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
@@ -28,9 +29,12 @@ public class JumeiDealService extends JmBase{
      * @param getDealInfoReq 应用级参数
      * @return 商品信息
      */
-    public GetDealInfoRes getDealByHashID(ShopBean shopBean, GetDealInfoReq getDealInfoReq) throws Exception {
+    public JmGetDealInfoRes getDealByHashID(ShopBean shopBean, JmGetDealInfoReq getDealInfoReq) throws Exception {
         //check
-        Assert.notNull(shopBean,"shopBean must not null!");
+        if(shopBean==null){
+            throw new IllegalArgumentException("shopBean must not null!");
+        }
+        //Assert.notNull(shopBean,"shopBean must not null!");
         getDealInfoReq.check();
 
         Map<String,Object> params=new HashMap<>();
@@ -38,11 +42,10 @@ public class JumeiDealService extends JmBase{
         params.put("fields", getDealInfoReq.getFields());
 
         String reqResult = reqJmApi(shopBean, GET_DEAL_BY_ID, params);
-        GetDealInfoRes dealInfo=JacksonUtil.json2Bean(reqResult,GetDealInfoRes.class);
-        if(dealInfo==null){
-            logger.warn("dealInfo is null");
+        if(reqResult==null){
+            logger.warn("reqResult is null");
         }
-        return dealInfo;
+        return JacksonUtil.json2Bean(reqResult,JmGetDealInfoRes.class);
     }
 
 }

@@ -31,6 +31,14 @@ public class JmBase {
 
     protected String reqJmApi(ShopBean shopBean, String api_url, Map<String, Object> params) throws Exception {
 
+        for (Object value : params.values()) {
+            if (value != null) {
+                if (!(value instanceof String) && !(value instanceof NotSignString)) {
+                    throw new Exception("String or NotSignString type is only support!");
+                }
+            }
+        }
+
         StringBuilder post_url = new StringBuilder();
 
         String call_url = shopBean.getApp_url() + api_url;

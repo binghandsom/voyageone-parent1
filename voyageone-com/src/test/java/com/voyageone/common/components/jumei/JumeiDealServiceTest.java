@@ -1,7 +1,7 @@
 package com.voyageone.common.components.jumei;
 
-import com.voyageone.common.components.jumei.Bean.GetDealInfoRes;
-import com.voyageone.common.components.jumei.Bean.GetDealInfoReq;
+import com.voyageone.common.components.jumei.Bean.JmGetDealInfoRes;
+import com.voyageone.common.components.jumei.Bean.JmGetDealInfoReq;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.JsonUtil;
 import org.junit.Test;
@@ -30,11 +30,11 @@ public class JumeiDealServiceTest {
         shopBean.setSessionKey("e5f9d143815a520726576040460bd67f");
         shopBean.setApp_url("http://182.138.102.82:8868/");
 
-        GetDealInfoReq getDealInfoReq =new GetDealInfoReq();
+        JmGetDealInfoReq getDealInfoReq =new JmGetDealInfoReq();
         getDealInfoReq.setProductId("1");
         //getDealInfoReq.setFields("product_id,categorys,brand_id,brand_name,name,foreign_language_name");
 
-        GetDealInfoRes dealInfo = jumeiDealService.getDealByHashID(shopBean, getDealInfoReq);
+        JmGetDealInfoRes dealInfo = jumeiDealService.getDealByHashID(shopBean, getDealInfoReq);
 
         System.out.println(JsonUtil.getJsonString(dealInfo));
     }
