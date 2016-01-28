@@ -149,12 +149,16 @@
   "TXT_DICTIONARY_NAME": "Dictionary Name",
   "TXT_DICTIONARY_COMMENT": "Dictionary Comment",
   "TXT_ACTION": "Action",
+  "TXT_NAME": "名称",
+  "TXT_IS_UPLOAD_TO_TMALL": "需要上传天猫 ?",
+  "BTN_NEW_DICTIONARY_VALUE": "新增字典值",
+  "BTN_NEW_DICTIONARY_DEFINE": "新增自定义",
+  "TXT_TYPE": "Type",
+  "TXT_VALUE": "Value",
 
 
   "TXT_DICT_CUSTOM": "Custom",
   "TXT_ABSTRACT": "Abstract",
-  "TXT_TH_TYPE": "Type",
-  "TXT_TH_VALUE": "Value",
   "TXT_SELECT_ONE": "Please select one",
   "TXT_DICT_IS_URL": "Need upload to Tmall ?",
   "TXT_HEAD_DICT": "Dict Manage",

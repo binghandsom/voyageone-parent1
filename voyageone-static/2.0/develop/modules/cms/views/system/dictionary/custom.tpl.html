@@ -52,31 +52,18 @@
         <div class="panel panelPromotion">
             <div class="container-fluid m-t-sm">
                 <div class="col-sm-12">
-                    <div class="col-sm-3">
-                        <div class="form-horizontal">
-                            <div class="form-group">
-                                <label class="col-sm-3 control-label">名称</label>
-                                <div class="col-sm-8">
-                                    <input type="text" class="form-control">
-                                </div>
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-sm-1 control-label text-center">自定义项</label>
+                            <div class="col-sm-2">
+                                <select class="form-control">
+                                    <option value="">GetAllImages</option>
+                                    <option value="">GetMainProductImages</option>
+                                    <option value="">GetPaddingImageKey</option>
+                                </select>
                             </div>
+                            <label class="col-sm-7 control-label text-left">获取主商品图片的所有图片</label>
                         </div>
-                    </div>
-                    <div class="col-sm-4">
-                        <div class="form-horizontal">
-                            <div class="form-group">
-                                <label class="col-sm-4 checkbox-inline c-checkbox">
-                                    <input type="checkbox"><span class="fa fa-check"></span> 需要上传天猫 ？
-                                </label>
-                                <button class="btn btn-vo" ng-click="search()"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}</button>
-                            </div>
-                        </div><!-- .form-group -->
-                    </div>
-                    <div class="col-sm-5" ng-controller="popupCtrl">
-                        <div class="form-inline pull-right">
-                            <button class="btn btn-success" ng-click="opendictValue()"><i class="fa fa-plus"></i> 新增字典值 </button>
-                            <button class="btn btn-success"><i class="fa fa-plus"></i> <a href="#/system/dictionary/item" target="_blank">新增自定义</a></button>
-                        </div><!-- .form-inline -->
                     </div>
                 </div>
             </div>
@@ -90,8 +77,9 @@
                     <table class="table table-hover vo_table" style="margin-bottom:0px">
                         <tbody>
                         <tr class="font-bold" style="background:#e67e22;color:#fff">
-                            <td class="mfb-xt3 text-center">Seq.</td>
-                            <td class="mfb-xxt text-center">类型</td>
+                            <td class="mfb-xt3 text-center">Seq.	</td>
+                            <td class="mfb-xxx text-left">名称</td>
+                            <td class="mfb-xxxs text-left">摘要</td>
                             <td class="text-center">值</td>
                             <td class="mfb-xt text-left">操作</td>
                         </tr>
@@ -102,11 +90,20 @@
                             <tbody>
                             <tr>
                                 <td class="mfb-xt3 text-center">1</td>
-                                <td class="mfb-xxt text-center">DICT</td>
+                                <td class="mfb-xxx text-left">imageTemplate</td>
+                                <td class="mfb-xxxs text-left">图片模板</td>
                                 <td class="text-center">产品图片-5</td>
                                 <td class="mfb-xt text-center" ng-controller="popupCtrl">
-                                    <button title="编辑" class="btn btn-success btn-xs" ng-click=""><i class="fa fa-pencil"></i></button>
-                                    <button title="删除" class="btn btn-danger btn-xs"  ng-click="del(promotion)"><i class="fa  fa-trash-o"></i></button>
+                                    <button title="修改参数" class="btn btn-success btn-xs" ng-click=""><i class="fa fa-pencil"></i> 修改参数</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="mfb-xt3 text-center">2</td>
+                                <td class="mfb-xxx text-left">paddingPropName</td>
+                                <td class="mfb-xxxs text-left">padding属性图名称，该名称决定使用哪个类型图片作为填充</td>
+                                <td class="text-center">产品图片-5</td>
+                                <td class="mfb-xt text-center" ng-controller="popupCtrl">
+                                    <button title="修改参数" class="btn btn-success btn-xs" ng-click=""><i class="fa fa-pencil"></i> 修改参数</button>
                                 </td>
                             </tr>
                             </tbody>

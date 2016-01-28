@@ -110,7 +110,7 @@
     "templateUrl": "views/system/dictionary/index.tpl.html",
     "controllerUrl": "modules/cms/views/system/dictionary/index.ctl"
   },
-  "system_dict_item": {
+  "system_dict_item_new": {
     "hash": "/system/dictionary/item",
     "templateUrl": "views/system/dictionary/item.tpl.html",
     "controllerUrl": "modules/cms/views/system/dictionary/item.ctl"
