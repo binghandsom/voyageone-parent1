@@ -119,6 +119,7 @@ public class CmsUploadJmPicService extends BaseTaskService {
             if(CollectionUtils.isEmpty(jmPicBeanList)){
                 LOG.warn("UploadTask -> run() -> jmPicBeanList为空");
             }else{
+                LOG.info("UploadTask -> run() -> imageKey:"+imageKey);
                 boolean noError=true;
                 for (JmPicBean jmPicBean:jmPicBeanList){
                     try {
