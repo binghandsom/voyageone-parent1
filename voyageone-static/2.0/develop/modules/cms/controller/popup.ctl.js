@@ -117,11 +117,21 @@ define([
                     }
                 },
                 "multiComplex": {
-                    "templateUrl": "views/pop/platformMapping/ppMultiComplex.tpl.html",
-                    "controllerUrl": "modules/cms/views/pop/platformMapping/ppMultiComplex.ctl",
-                    "controller": 'multiComplexMappingPopupController as ctrl',
-                    "size": 'lg',
-                    "backdrop": "static"
+                    list: {
+                        "templateUrl": "views/pop/platformMapping/ppMultiComplex.list.tpl.html",
+                        "controllerUrl": "modules/cms/views/pop/platformMapping/ppMultiComplex.list.ctl",
+                        "controller": 'multiComplexMappingPopupController as ctrl',
+                        "size": 'lg',
+                        "backdrop": "static"
+                    },
+
+                    item: {
+                        "templateUrl": "views/pop/platformMapping/ppMultiComplex.item.tpl.html",
+                        "controllerUrl": "modules/cms/views/pop/platformMapping/ppMultiComplex.item.ctl",
+                        "controller": 'multiComplexItemMappingPopupController as ctrl',
+                        "size": 'lg',
+                        "backdrop": "static"
+                    }
                 }
             }
         })
@@ -377,18 +387,11 @@ define([
         };
 
         $scope.ppPlatformMapping = {
-            /**
-             * Complex Mapping 设定弹出框的上下文参数
-             * @typedef {object} ComplexMappingPopupContext
-             * @property {string} platformCategoryPath 平台类目路径
-             * @property {string} mainCategoryId 主数据类目 ID
-             * @property {Field} property 平台属性
-             */
 
             /**
              * 弹出 Complex 属性的值匹配窗
-             * @param {ComplexMappingPopupContext} context 上下文参数
-             * @returns {Promise.<ComplexMappingBean>}
+             * @param {SimpleListMappingPopupContext} context 上下文参数
+             * @returns {Promise.<MultiComplexMappingBean>}
              */
             complex: function (context) {
                 return openModel(popActions.platformMapping.complex, context);
@@ -433,8 +436,15 @@ define([
                 }
             },
 
-            multiComplex: function (context) {
-                return openModel(popActions.platformMapping.multiComplex, context);
+            multiComplex: {
+
+                list: function (context) {
+                    return openModel(popActions.platformMapping.multiComplex.list, context);
+                },
+
+                item: function (context) {
+                    return openModel(popActions.platformMapping.multiComplex.item, context);
+                }
             }
         };
     }

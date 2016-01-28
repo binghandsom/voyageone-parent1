@@ -33,7 +33,7 @@
                     <div class="panel panel-default">
                         <form class="form-horizontal">
                             <div class="container-fluid" ng-controller="popupCtrl">
-                                <div ng-repeat="(k, property) in ctrl.properties track by property.id"
+                                <div ng-repeat="(k, property) in ctrl.platform.properties track by property.id"
                                      ng-if="!property.hide"
                                      platform-prop="property"
                                      platform-prop-popup="ctrl.popup(property, ppPlatformMapping)"></div>

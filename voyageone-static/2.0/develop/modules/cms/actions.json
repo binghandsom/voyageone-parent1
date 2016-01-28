@@ -62,7 +62,7 @@
         "getDictList": "getDictList",
         "getPlatformMapping": "getPlatformMapping",
         "getMappingType": "getMappingType",
-        "$saveComplexMapping": "saveComplexMapping"
+        "$saveMapping": "saveMapping"
       }
     },
     "pop": {
