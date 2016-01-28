@@ -362,8 +362,6 @@ public class WmsGetWmfClientInvService extends WmsGetClientInvBaseService {
                     map.put("fullUpdateFlg", "1");
                     map.put("currDate", lastFullUpdtTimeStr);
                     clientInventoryDao.setLastFullUpdateTime(map);
-                } else {
-                    clientInventoryDao.setLastFullUpdateTime(map);
                 }
             } else {
                 map.put("fullUpdateFlg", "1");

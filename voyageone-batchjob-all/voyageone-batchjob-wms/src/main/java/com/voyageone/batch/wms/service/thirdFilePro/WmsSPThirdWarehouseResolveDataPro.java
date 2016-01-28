@@ -18,10 +18,7 @@ import com.voyageone.common.mail.Mail;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.FileUtils;
 import com.voyageone.common.util.StringUtils;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.ss.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -151,9 +148,18 @@ public class WmsSPThirdWarehouseResolveDataPro extends ThirdFileProBaseService {
                 if (sheet.getSheetName().contains(sheetName)) {
                     logger.info(format("SHEET [ %s ]开始解读", sheet.getSheetName()));
                     for (Row row : sheet) {
+                        //空行不再做处理
+                        if (row.getCell(WmsConstants.SPThirdWarehouseReportItems.Column_Index)==null){
+                            break;
+                        }
+                        row.getCell(WmsConstants.SPThirdWarehouseReportItems.Column_Index).setCellType(Cell.CELL_TYPE_STRING);
+                        if (StringUtils.isNullOrBlank2(row.getCell(WmsConstants.SPThirdWarehouseReportItems.Column_Index).getStringCellValue())){
+                            break;
+                        }
                         if (row.getRowNum() == 0) {
                             continue;
                         } else {
+
                             SPThirdWarehouseReportBean spBean = new SPThirdWarehouseReportBean();
                             //下单时间
                             spBean.setOrder_date_time(row.getCell(WmsConstants.SPThirdWarehouseReportItems.Column_Order_date_time).getStringCellValue());

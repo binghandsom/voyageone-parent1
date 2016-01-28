@@ -10,6 +10,7 @@ import com.voyageone.wms.WmsCodeConstants.TransferType;
 import com.voyageone.wms.WmsConstants.ReportItems;
 import com.voyageone.wms.WmsUrlConstants.TransferUrls;
 import com.voyageone.wms.formbean.TransferFormBean;
+import com.voyageone.wms.formbean.TransferItemMapBean;
 import com.voyageone.wms.formbean.TransferMapBean;
 import com.voyageone.wms.modelbean.TransferBean;
 import com.voyageone.wms.modelbean.TransferDetailBean;
@@ -314,6 +315,27 @@ public class WmsTransferController extends BaseController {
         TransferBean transfer = map.getTransfer();
 
         Map<String, Object> result = transferService.compareTransfer(transfer);
+
+        AjaxResponseBean
+                .newResult(true)
+                .setResultInfo(result)
+                .writeTo(getRequest(), response);
+    }
+
+    /**
+     * 获取SKU信息
+     */
+    @RequestMapping(TransferUrls.Item.GETSKU)
+    public void getSku(@RequestBody Map<String, Object> params, HttpServletResponse response) {
+
+        TransferItemMapBean transferItem =new TransferItemMapBean();
+
+        transferItem.setOrder_channel_id((String) params.get("order_channel_id"));
+        transferItem.setTransfer_barcode((String) params.get("transfer_barcode"));
+        transferItem.setTransfer_sku((String) params.get("transfer_sku"));
+        transferItem.setType((String) params.get("type"));
+
+        Map<String, Object> result = transferService.getSku(transferItem);
 
         AjaxResponseBean
                 .newResult(true)

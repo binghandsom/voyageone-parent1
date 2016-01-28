@@ -4,6 +4,7 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.core.modelbean.ChannelStoreBean;
 import com.voyageone.core.modelbean.UserSessionBean;
 import com.voyageone.wms.formbean.TransferFormBean;
+import com.voyageone.wms.formbean.TransferItemMapBean;
 import com.voyageone.wms.formbean.TransferMapBean;
 import com.voyageone.wms.modelbean.TransferBean;
 import com.voyageone.wms.modelbean.TransferDetailBean;
@@ -53,6 +54,8 @@ public interface WmsTransferService {
     TransferBean submitTransfer(TransferMapBean transfer, UserSessionBean user);
 
     Map<String, Object> compareTransfer(TransferBean transfer);
+
+    Map<String, Object> getSku(TransferItemMapBean transferItem);
 
     List<TransferItemBean> allItemInTransfer(long transfer_in_id);
 

@@ -31,7 +31,8 @@ define(function () {
                     item: {
                         add: "/wms/transfer/edit/addItem",
                         select: "/wms/transfer/edit/getPackageItems",
-                        compare: "/wms/transfer/edit/compare"
+                        compare: "/wms/transfer/edit/compare",
+                        getSku: "/wms/transfer/edit/getSku"
                     }
                 },
 
@@ -195,14 +196,16 @@ define(function () {
                     ReturnLabel: 'ReturnLabel',
                     sf: 'SF',
                     PickUp: 'PickUp',
-                    Location:'Location'
+                    Location:'Location',
+                    SKU:'SKU'
                 },
 
                 hardware_key: {
                     Print_Return: 'Print_Return',
                     Print_SF: "Print_SF",
                     Print_PickUp: "Print_PickUp",
-                    Print_Location: "Print_Location"
+                    Print_Location: "Print_Location",
+                    Print_SKU: "Print_SKU"
                 }
             },
 

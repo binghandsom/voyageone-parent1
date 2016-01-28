@@ -16,6 +16,7 @@ import com.voyageone.core.modelbean.UserSessionBean;
 import com.voyageone.core.util.PageUtil;
 import com.voyageone.wms.WmsConstants;
 import com.voyageone.wms.WmsMsgConstants;
+import com.voyageone.wms.dao.ItemDao;
 import com.voyageone.wms.dao.StocktakeDao;
 import com.voyageone.wms.formbean.FormStocktake;
 import com.voyageone.wms.service.WmsStocktakeService;
@@ -59,6 +60,9 @@ public class WmsStocktakeServiceImpl implements WmsStocktakeService {
 
 	@Autowired
 	private StocktakeDao stocktakeDao;
+
+	@Autowired
+	private ItemDao itemDao;
 	
 	@Autowired
 	private DataSourceTransactionManager transactionManager;
@@ -617,6 +621,9 @@ public class WmsStocktakeServiceImpl implements WmsStocktakeService {
 
 	//根据upc获取产品
 	private FormStocktake getProductByUpcOrSku(FormStocktake formStocktake) {
+		// 根据输入的条形码找到对应的UPC
+		String Upc = itemDao.getUPC(formStocktake.getOrder_channel_id(), formStocktake.getUpc());
+		formStocktake.setUpc(Upc);
 		return stocktakeDao.getProductByUpcOrSku(formStocktake);
 	}
 

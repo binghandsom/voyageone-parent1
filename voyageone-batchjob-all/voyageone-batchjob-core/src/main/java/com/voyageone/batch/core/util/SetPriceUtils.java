@@ -168,6 +168,7 @@ public class SetPriceUtils {
 
             //订单折扣设定
             discount  = Double.valueOf(priceReportDatas.get(0).getDiscount());
+            discount = 0 - discount;
 //            if (discount < 0){
 //                discount = 0 - discount;
 //            }
