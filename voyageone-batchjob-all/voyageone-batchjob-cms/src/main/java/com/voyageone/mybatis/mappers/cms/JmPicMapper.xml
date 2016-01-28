@@ -42,16 +42,16 @@
 	<!-- 修改聚美图片上传状态 -->
 	<update id="cms_work_jm_bt_images_updateJmPic_uploaded" parameterType="HashMap">
 		UPDATE jumei.jm_bt_images
-		SET jm_url=#{jmUrl},syn_flg = 1,modified = now()
+		SET jm_url=#{jmUrl},syn_flg = 1,modified = now(),modifier=#{modifier}
 		WHERE
 		syn_flg = 0
 		AND seq = #{seq}
 	</update>
 
 	<!-- 修改产品表图片导入状态 -->
-	<update id="cms_work_jm_bt_product_import_updateJmProductImport_uploaded" parameterType="String">
+	<update id="cms_work_jm_bt_product_import_updateJmProductImport_uploaded" parameterType="HashMap">
 		UPDATE jumei.jm_bt_product_import
-		SET syn_flg = 1,modified = now()
+		SET syn_flg = 1,modified = now(),modifier=#{modifier}
 		WHERE
 		syn_flg = 0
 		AND product_code =#{imageKey}

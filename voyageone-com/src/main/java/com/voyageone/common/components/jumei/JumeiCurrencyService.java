@@ -3,7 +3,7 @@ package com.voyageone.common.components.jumei;
 import com.voyageone.common.components.jumei.Bean.JmCurrencyBean;
 import com.voyageone.common.components.jumei.base.JmBase;
 import com.voyageone.common.configs.beans.ShopBean;
-import com.voyageone.common.util.JsonUtil;
+import com.voyageone.common.util.JacksonUtil;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -17,14 +17,14 @@ public class JumeiCurrencyService extends JmBase {
 
     private static List<JmCurrencyBean> currencys = null;
 
-    private static String CURRENCY_URL = "/v1/currency/query";
+    private static String CURRENCY_URL = "v1/currency/query";
 
     /**
      * 初始化货币信息
      */
     public void initCurrencys(ShopBean shopBean) throws Exception {
         String result = reqJmApi(shopBean, CURRENCY_URL);
-        List<JmCurrencyBean> currencyList = JsonUtil.jsonToBeanList(result, JmCurrencyBean.class);
+        List<JmCurrencyBean> currencyList = JacksonUtil.jsonToBeanList(result, JmCurrencyBean.class);
         if (currencyList != null) {
             currencys = currencyList;
         } else {
@@ -63,8 +63,5 @@ public class JumeiCurrencyService extends JmBase {
 
         return null;
     }
-
-
-
 
 }

@@ -23,7 +23,7 @@
         where code = #{code,jdbcType=VARCHAR}
     </delete>
     <insert id="insert_jm_mt_master" parameterType="com.voyageone.batch.cms.bean.JmMasterBean" >
-        insert into jm_mt_master (code, key,
+        insert into jumei.jm_mt_master (code, `key`,
         name1, name2, name3,
         name4, created, creater,
         modified, modifier)

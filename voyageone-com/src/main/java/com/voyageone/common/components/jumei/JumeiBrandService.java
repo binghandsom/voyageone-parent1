@@ -3,7 +3,7 @@ package com.voyageone.common.components.jumei;
 import com.voyageone.common.components.jumei.Bean.JmBrandBean;
 import com.voyageone.common.components.jumei.base.JmBase;
 import com.voyageone.common.configs.beans.ShopBean;
-import com.voyageone.common.util.JsonUtil;
+import com.voyageone.common.util.JacksonUtil;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -17,13 +17,13 @@ public class JumeiBrandService extends JmBase {
 
     private static List<JmBrandBean> brands = null;
 
-    private static String BRAND_URL = "/v1/htBrand/query";
+    private static String BRAND_URL = "v1/htBrand/query";
     /**
      * 初始化品牌
      */
     public void initBrands(ShopBean shopBean) throws Exception {
         String result = reqJmApi(shopBean, BRAND_URL);
-        List<JmBrandBean> brandList = JsonUtil.jsonToBeanList(result, JmBrandBean.class);
+        List<JmBrandBean> brandList = JacksonUtil.jsonToBeanList(result, JmBrandBean.class);
         if (brandList != null) {
             brands = brandList;
         } else {

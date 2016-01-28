@@ -9,11 +9,14 @@
 		<result column="deal_id" property="dealId" />
 		<result column="category_lv4_id" property="categoryLv4Id" />
 		<result column="brand_id" property="brandId" />
+		<result column="brand_name" property="brandName" />
+		<result column="size_type" property="sizeType" />
 		<result column="product_name" property="productName" />
 		<result column="foreign_language_name" property="foreignLanguageName" />
 		<result column="function_ids" property="functionIds" />
 		<result column="address_of_produce" property="addressOfProduce" />
 		<result column="attribute" property="attribute" jdbcType="VARCHAR" />
+		<result column="special_note" property="specialNote" jdbcType="VARCHAR" />
 		<association property="jmBtDealImportModel"
 					 javaType="com.voyageone.batch.cms.model.JmBtDealImportModel">
 			<result column="channel_id" property="channelId"/>
@@ -47,27 +50,30 @@
 		(
 			SELECT
 				a.channel_id,
-				a.product_code
+				a.product_code,
+				a.deal_id
 			FROM
 				jumei.jm_bt_product_import a
 			WHERE
 				a.syn_flg = 1
-			LIMIT 0,
-			#{count,jdbcType=INTEGER}
-		) t1
-	LEFT JOIN (
+
+		) t1,
+	    (
 		SELECT
 			a.channel_id,
 			a.product_code,
 			a.product_des,
 			a.category_lv4_id,
 			a.brand_id,
+			a.brand_name,
 			a.product_name,
 			a.foreign_language_name,
 			a.function_ids,
 			a.address_of_produce,
 			a.deal_id,
+			a.size_type,
 			a.attribute,
+			a.special_note,
 			b.start_time,
 			b.end_time,
 			b.user_purchase_limit,
@@ -83,13 +89,255 @@
 			c.market_price,
 			c.size
 		FROM
-			jumei.jm_bt_product_import a
-		LEFT JOIN jumei.jm_bt_deal_import b ON a.channel_id = b.channel_id
+			jumei.jm_bt_product_import a,jumei.jm_bt_deal_import b,jumei.jm_bt_sku_import c
+		where
+			a.channel_id = b.channel_id and a.deal_id = b.deal_id
 		AND a.product_code = b.product_code
-		LEFT JOIN jumei.jm_bt_sku_import c ON a.channel_id = c.channel_id
+		and a.channel_id = c.channel_id
 		AND a.product_code = c.product_code
-		where b.syn_flg = 0
-	) t2 ON t1.channel_id = t2.channel_id
+
+	) t2
+	 where t1.channel_id = t2.channel_id
 	AND t2.product_code = t1.product_code
+	and t1.deal_id = t2.deal_id
+	</select>
+
+	<insert id="insert_jm_bt_product" parameterType="com.voyageone.batch.cms.model.JmBtProductImportModel" >
+		insert into jumei.jm_bt_product
+		<trim prefix="(" suffix=")" suffixOverrides="," >
+			<if test="channelId != null" >
+				channel_id,
+			</if>
+			<if test="productCode != null" >
+				product_code,
+			</if>
+			<if test="jumeiProductId != null" >
+				jumei_product_id,
+			</if>
+			<if test="dealId != null" >
+				deal_id,
+			</if>
+			<if test="productDes != null" >
+				product_des,
+			</if>
+			<if test="categoryLv4Id != null" >
+				category_lv4_id,
+			</if>
+			<if test="brandId != null" >
+				brand_id,
+			</if>
+			<if test="brandName != null">
+				brand_name,
+			</if>
+			<if test="sizeType != null">
+				size_type,
+			</if>
+			<if test="specialNote != null" >
+				special_note,
+			</if>
+			<if test="productName != null" >
+				product_name,
+			</if>
+			<if test="foreignLanguageName != null" >
+				foreign_language_name,
+			</if>
+			<if test="functionIds != null" >
+				function_ids,
+			</if>
+			<if test="attribute != null" >
+				attribute,
+			</if>
+			<if test="addressOfProduce != null" >
+				address_of_produce,
+			</if>
+				created,
+			<if test="creater != null" >
+				creater,
+			</if>
+				modified,
+			<if test="modifier != null" >
+				modifier,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides="," >
+			<if test="channelId != null" >
+				#{channelId,jdbcType=VARCHAR},
+			</if>
+			<if test="productCode != null" >
+				#{productCode,jdbcType=VARCHAR},
+			</if>
+			<if test="jumeiProductId != null" >
+				#{jumeiProductId,jdbcType=VARCHAR},
+			</if>
+			<if test="dealId != null" >
+				#{dealId,jdbcType=VARCHAR},
+			</if>
+			<if test="productDes != null" >
+				#{productDes,jdbcType=VARCHAR},
+			</if>
+			<if test="categoryLv4Id != null" >
+				#{categoryLv4Id,jdbcType=INTEGER},
+			</if>
+			<if test="brandId != null" >
+				#{brandId,jdbcType=INTEGER},
+			</if>
+			<if test="brandName != null">
+				#{brandName,jdbcType=VARCHAR},
+			</if>
+			<if test="sizeType != null">
+				#{sizeType,jdbcType=VARCHAR},
+			</if>
+			<if test="specialNote != null" >
+			    #{specialNote,jdbcType=VARCHAR},
+			</if>
+			<if test="productName != null" >
+				#{productName,jdbcType=VARCHAR},
+			</if>
+			<if test="foreignLanguageName != null" >
+				#{foreignLanguageName,jdbcType=VARCHAR},
+			</if>
+			<if test="functionIds != null" >
+				#{functionIds,jdbcType=VARCHAR},
+			</if>
+			<if test="attribute != null" >
+				#{attribute,jdbcType=VARCHAR},
+			</if>
+			<if test="addressOfProduce != null" >
+				#{addressOfProduce,jdbcType=VARCHAR},
+			</if>
+				now(),
+			<if test="creater != null" >
+				#{creater,jdbcType=VARCHAR},
+			</if>
+				now(),
+			<if test="modifier != null" >
+				#{modifier,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	<update id="update_jm_bt_product" parameterType="com.voyageone.batch.cms.model.JmBtProductImportModel" >
+		update jumei.jm_bt_product
+		<set >
+			<if test="channelId != null" >
+				channel_id = #{channelId,jdbcType=VARCHAR},
+			</if>
+			<if test="productCode != null" >
+				product_code = #{productCode,jdbcType=VARCHAR},
+			</if>
+			<if test="jumeiProductId != null" >
+				jumei_product_id = #{jumeiProductId,jdbcType=VARCHAR},
+			</if>
+			<if test="dealId != null" >
+				deal_id = #{dealId,jdbcType=VARCHAR},
+			</if>
+			<if test="productDes != null" >
+				product_des = #{productDes,jdbcType=VARCHAR},
+			</if>
+			<if test="categoryLv4Id != null" >
+				category_lv4_id = #{categoryLv4Id,jdbcType=INTEGER},
+			</if>
+			<if test="brandId != null" >
+				brand_id = #{brandId,jdbcType=INTEGER},
+			</if>
+			<if test="brandName != null">
+				brand_name = #{brandName,jdbcType=VARCHAR},
+			</if>
+			<if test="sizeType != null">
+				size_type = #{sizeType,jdbcType=VARCHAR},
+			</if>
+			<if test="specialNote != null" >
+				special_note = #{specialNote,jdbcType=VARCHAR},
+			</if>
+			<if test="productName != null" >
+				product_name = #{productName,jdbcType=VARCHAR},
+			</if>
+			<if test="foreignLanguageName != null" >
+				foreign_language_name = #{foreignLanguageName,jdbcType=VARCHAR},
+			</if>
+			<if test="functionIds != null" >
+				function_ids = #{functionIds,jdbcType=VARCHAR},
+			</if>
+			<if test="attribute != null" >
+				attribute = #{attribute,jdbcType=VARCHAR},
+			</if>
+			<if test="addressOfProduce != null" >
+				address_of_produce = #{addressOfProduce,jdbcType=VARCHAR},
+			</if>
+				modified = now(),
+			<if test="modifier != null" >
+				modifier = #{modifier,jdbcType=VARCHAR},
+			</if>
+		</set>
+		<where>
+			<if test="channelId != null" >
+				and channel_id = #{channelId,jdbcType=VARCHAR}
+			</if>
+			<if test="productCode != null" >
+				and product_code = #{productCode,jdbcType=VARCHAR}
+			</if>
+		</where>
+	</update>
+
+	<delete id="delete_jm_bt_sku_by_code" parameterType="HashMap" >
+		delete from jumei.jm_bt_sku
+		where channel_id = #{channelId,jdbcType=VARCHAR}
+		and product_code = #{productCode,jdbcType=VARCHAR}
+	</delete>
+	<insert id="insert_skus" parameterType="java.util.ArrayList" >
+		insert into jumei.jm_bt_sku (channel_id, product_code,
+		sku, upc_code, abroad_price,
+		deal_price, market_price, size,
+		hscode, created, creater,
+		modified, modifier)
+		values
+		<foreach collection="list" item="item" index="index"
+				 separator=",">
+		( #{item.channelId,jdbcType=VARCHAR},
+		  #{item.productCode,jdbcType=VARCHAR},
+		  #{item.sku,jdbcType=VARCHAR},
+		  #{item.upcCode,jdbcType=VARCHAR},
+		  #{item.abroadPrice,jdbcType=DOUBLE},
+		  #{item.dealPrice,jdbcType=DOUBLE},
+		  #{item.marketPrice,jdbcType=DOUBLE},
+		  #{item.size,jdbcType=VARCHAR},
+		  #{item.hscode,jdbcType=VARCHAR},
+		  #{item.created,jdbcType=TIMESTAMP},
+		  #{item.creater,jdbcType=VARCHAR},
+		  #{item.modified,jdbcType=TIMESTAMP},
+		  #{item.modifier,jdbcType=VARCHAR})
+		</foreach>
+	</insert>
+	<resultMap id="selectImageResultMap" type="HashMap">
+		<result column="imageType" property="imageType" javaType="java.lang.Integer"/>
+		<collection property="images" javaType="ArrayList" ofType="com.voyageone.batch.cms.bean.JmPicBean" >
+			<result column="channelId" property="channelId"/>
+			<result column="imageKey" property="imageKey" />
+			<result column="imageType" property="imageType" />
+			<result column="imageTypeExtend" property="imageTypeExtend" />
+			<result column="imageIndex" property="imageIndex" />
+			<result column="originUrl" property="originUrl"  />
+			<result column="jmUrl" property="jmUrl"  />
+			<result column="synFlg" property="synFlg" />
+		</collection>
+	</resultMap>
+
+	<select id="select_image" parameterType="HashMap" resultMap="selectImageResultMap">
+		SELECT
+			seq,
+			channel_id as channelId,
+			image_key as imageKey,
+			image_type as imageType,
+			image_type_extend as imageTypeExtend,
+			image_index as imageIndex,
+			origin_url as originUrl,
+			jm_url as jmUrl,
+			syn_flg as synFlg
+		FROM
+			jumei.jm_bt_images
+		WHERE
+			channel_id = #{channelId}
+			and (image_key = #{productCode,jdbcType=VARCHAR} or (image_key = #{brand,jdbcType=VARCHAR} and image_type_extend = #{sizeType,jdbcType=VARCHAR}) or image_type = 7)
+		ORDER BY imageType,image_index
+
 	</select>
 </mapper>

@@ -1,6 +1,8 @@
 package com.voyageone.batch.cms.bean;
 
 import com.voyageone.common.components.jumei.Bean.JmBrandBean;
+import com.voyageone.common.components.jumei.Bean.JmCurrencyBean;
+import com.voyageone.common.components.jumei.Bean.JmWarehouseBean;
 
 /**
  * @author james.li on 2016/1/25.
@@ -35,6 +37,23 @@ public class JmMasterBean {
         this.creater = modifier;
         this.modifier = modifier;
     }
+    public JmMasterBean(JmCurrencyBean jmCurrencyBean,String modifier){
+        this.code = "1";
+        this.key = jmCurrencyBean.getArea_code().toString();
+        this.name1 = jmCurrencyBean.getArea_currency_name();
+        this.name2 = jmCurrencyBean.getArea_currency_symbol();
+        this.creater = modifier;
+        this.modifier = modifier;
+    }
+    public JmMasterBean(JmWarehouseBean jmWarehouseBean,String modifier){
+        this.code = "2";
+        this.key = jmWarehouseBean.getShipping_system_id().toString();
+        this.name1 = jmWarehouseBean.getShipping_system_name();
+        this.name2 = jmWarehouseBean.getArea_name();
+        this.creater = modifier;
+        this.modifier = modifier;
+    }
+
     public JmMasterBean(){
 
     }

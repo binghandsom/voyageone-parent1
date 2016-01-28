@@ -41,6 +41,8 @@ public class JmProductBean_DealInfo extends JmBaseBean {
 
     private String partner_sku_nos;
 
+    private Integer rebate_ratio = 5;
+
     public String getPartner_deal_id() {
         return partner_deal_id;
     }
@@ -183,5 +185,13 @@ public class JmProductBean_DealInfo extends JmBaseBean {
 
     public void setPartner_sku_nos(String partner_sku_nos) {
         this.partner_sku_nos = partner_sku_nos;
+    }
+
+    public Integer getRebate_ratio() {
+        return rebate_ratio;
+    }
+
+    public void setRebate_ratio(Integer rebate_ratio) {
+        this.rebate_ratio = rebate_ratio;
     }
 }
