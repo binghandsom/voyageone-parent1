@@ -3,7 +3,7 @@ package com.voyageone.common.components.jumei;
 import com.voyageone.common.components.jumei.Bean.JmProductBean;
 import com.voyageone.common.components.jumei.base.JmBase;
 import com.voyageone.common.configs.beans.ShopBean;
-import com.voyageone.common.util.JsonUtil;
+import com.voyageone.common.util.JacksonUtil;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -34,7 +34,7 @@ public class JumeiProductService extends JmBase {
         params.put("dealInfo", product.getDealInfoString());
 
         String reqResult = reqJmApi(shopBean, PRODUCT_NEW, params);
-        Map<String, Object> resultMap = JsonUtil.jsonToMap(reqResult);
+        Map<String, Object> resultMap = JacksonUtil.jsonToMap(reqResult);
         product.setProduct_spec_number((String) getValue(resultMap, "product", "product_spec_number"));
         product.setJumei_product_id((String) getValue(resultMap, "product", "jumei_product_id"));
 
@@ -76,7 +76,7 @@ public class JumeiProductService extends JmBase {
         params.put("fields", "product_id,name,foreign_language_name,categorys,brand_id,brand_name,functions,normalImage,verticalImage,diaoxingImage");
 
         String reqResult = reqJmApi(shopBean, PRODUCT_NEW, params);
-        Map<String, Object> resultMap = JsonUtil.jsonToMap(reqResult);
+        Map<String, Object> resultMap = JacksonUtil.jsonToMap(reqResult);
 
         JmProductBean resultBean = new JmProductBean();
         resultBean.setJumei_product_id((String) getValue(resultMap, "product_id"));

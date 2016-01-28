@@ -5,7 +5,7 @@ import com.voyageone.common.components.jumei.Bean.JmImageFileBean;
 import com.voyageone.common.components.jumei.Bean.NotSignString;
 import com.voyageone.common.components.jumei.base.JmBase;
 import com.voyageone.common.configs.beans.ShopBean;
-import com.voyageone.common.util.JsonUtil;
+import com.voyageone.common.util.JacksonUtil;
 import org.springframework.stereotype.Service;
 
 import java.net.URLEncoder;
@@ -39,13 +39,12 @@ public class JumeiImageFileService extends JmBase {
         params.put("needReplace", fileBean.getNeedReplace().toString());
 
         String imageStr = fileBean.getBase64Content();
-        imageStr = imageStr.replaceAll("\r\n", " ");
         imageStr = URLEncoder.encode(imageStr, "utf-8");
         NotSignString imgData = new NotSignString(imageStr);
         params.put("imgData", imgData);
 
         String reqResult = reqJmApi(shopBean, IMAGWE_UPLOAD, params);
-        Map<String, Object> resultMap = JsonUtil.jsonToMap(reqResult);
+        Map<String, Object> resultMap = JacksonUtil.jsonToMap(reqResult);
 
         String result = null;
         if (resultMap != null && resultMap.containsKey("imgUrl")) {

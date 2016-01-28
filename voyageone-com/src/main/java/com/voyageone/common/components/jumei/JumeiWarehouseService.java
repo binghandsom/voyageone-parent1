@@ -3,7 +3,7 @@ package com.voyageone.common.components.jumei;
 import com.voyageone.common.components.jumei.Bean.JmWarehouseBean;
 import com.voyageone.common.components.jumei.base.JmBase;
 import com.voyageone.common.configs.beans.ShopBean;
-import com.voyageone.common.util.JsonUtil;
+import com.voyageone.common.util.JacksonUtil;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -27,7 +27,7 @@ public class JumeiWarehouseService extends JmBase {
         Map<String, Object> param = new HashMap<>();
         param.put("fields", "shipping_system_id,shipping_system_name");
         String result = reqJmApi(shopBean, WARE_HOUSE_URL, param);
-        List<JmWarehouseBean> warehouseList = JsonUtil.jsonToBeanList(result, JmWarehouseBean.class);
+        List<JmWarehouseBean> warehouseList = JacksonUtil.jsonToBeanList(result, JmWarehouseBean.class);
         if (warehouseList != null) {
             warehouses = warehouseList;
         } else {
@@ -67,8 +67,5 @@ public class JumeiWarehouseService extends JmBase {
 
         return null;
     }
-
-
-
 
 }
