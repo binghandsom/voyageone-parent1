@@ -21,6 +21,9 @@ public class JmImageFileBean extends JmBaseBean {
     //图片名，不需要传后缀名；
     private String imgName;
 
+    //后缀名；
+    private String extName;
+
     //目录名（参数范围: 只允许数字、下划线、字母；大于1小于10个字节）
     private String dirName;
 
@@ -36,6 +39,14 @@ public class JmImageFileBean extends JmBaseBean {
 
     public void setImgName(String imgName) {
         this.imgName = imgName;
+    }
+
+    public String getExtName() {
+        return extName;
+    }
+
+    public void setExtName(String extName) {
+        this.extName = extName;
     }
 
     public String getDirName() {
@@ -74,7 +85,7 @@ public class JmImageFileBean extends JmBaseBean {
         }
 
         if (file == null && inputStream == null) {
-            throw new Exception("file or inputStream must exist!");
+            throw new Exception("file or inputStream not exist!");
         }
 
         if (file != null && !file.exists()) {
@@ -82,6 +93,10 @@ public class JmImageFileBean extends JmBaseBean {
         }
         if (inputStream != null && inputStream.available() == 0) {
             throw new Exception("inputStream content not exist!");
+        }
+
+        if (inputStream != null && extName == null) {
+            throw new Exception("extName not found!");
         }
     }
 
@@ -91,7 +106,7 @@ public class JmImageFileBean extends JmBaseBean {
         if (this.file != null && this.file.exists()) {
             result = ImgUtils.encodeToString(file);
         }else if(this.inputStream!=null ){
-            result =ImgUtils.encodeToString(inputStream,imgName);
+            result =ImgUtils.encodeToString(inputStream,imgName + "." + extName);
         }
         return result;
     }

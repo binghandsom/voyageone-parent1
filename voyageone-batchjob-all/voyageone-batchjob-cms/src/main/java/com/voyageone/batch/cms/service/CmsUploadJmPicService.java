@@ -58,10 +58,7 @@ public class CmsUploadJmPicService extends BaseTaskService {
     private static final int GET_IMG_INPUTSTREAM_RETRY=5;
 
     /* SHOPBEAN */
-    private static ShopBean SHOPBEAN;
-
-    /* 图片后缀 */
-    private static final String IMGTYPE=".jpg";
+    private static ShopBean shopBean;
 
     @Autowired
     private JmPicDao jmPicDao;
@@ -89,7 +86,7 @@ public class CmsUploadJmPicService extends BaseTaskService {
      */
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
-        SHOPBEAN = ShopConfigs.getShop(ChannelConfigEnums.Channel.SN.getId(), CartEnums.Cart.JM.getId());
+        shopBean = ShopConfigs.getShop(ChannelConfigEnums.Channel.SN.getId(), CartEnums.Cart.JM.getId());
         monitor=new MonitorUpload();
         monitor.setTaskStart();
         List<Map<String, Object>> jmpickeys= jmPicDao.getJmPicImageKeyGroup();
@@ -126,7 +123,7 @@ public class CmsUploadJmPicService extends BaseTaskService {
                 for (JmPicBean jmPicBean:jmPicBeanList){
                     try {
                         //String juUrl=mockImageFileUpload(SHOPBEAN,convertJmPicToImageFileBean(jmPicBean));
-                        String juUrl= jumeiImageFileService.imageFileUpload(SHOPBEAN,convertJmPicToImageFileBean(jmPicBean));
+                        String juUrl= jumeiImageFileService.imageFileUpload(shopBean,convertJmPicToImageFileBean(jmPicBean));
                         jmPicDao.updateJmpicUploaded(juUrl,jmPicBean.getSeq(),getTaskName());
                         monitor.addSuccsseOne();
                     } catch (Exception e) {
@@ -187,6 +184,7 @@ public class CmsUploadJmPicService extends BaseTaskService {
             jmImageFileBean.setDirName(buildDirName(jmPicBean));
             jmImageFileBean.setImgName(jmPicBean.getImageKey()+jmPicBean.getImageType()+jmPicBean.getImageIndex()/*+IMGTYPE*/);
             jmImageFileBean.setNeedReplace(NEED_REPLACE);
+            jmImageFileBean.setExtName("jpg");
             return jmImageFileBean;
         } catch (Exception e) {
             LOG.error("CmsUploadJmPicService -> convertJmPicToImageFileBean() Error:"+e);
