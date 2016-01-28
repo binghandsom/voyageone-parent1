@@ -10,6 +10,10 @@ import com.voyageone.common.util.StringUtils;
 import magento.*;
 
 import org.apache.axis2.AxisFault;
+import org.apache.axis2.context.ConfigurationContext;
+import org.apache.axis2.engine.AxisConfiguration;
+import org.apache.axis2.transport.http.HTTPConstants;
+import org.apache.axis2.transport.http.HttpTransportProperties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -120,6 +124,11 @@ public class MagentoApiServiceImpl {
 		stub = new MagentoServiceStub(url);
 //		stub = new MagentoServiceStub("http://www.wmf.com/api/v2_soap");
 //		System.setProperty("javax.net.ssl.trustStore", "D:/tmp/trustStore");
+
+		HttpTransportProperties.Authenticator auth = new HttpTransportProperties.Authenticator();
+		auth.setUsername("VoyageOne");
+		auth.setPassword("?Vere91bB;\\e:UTmF1SG");
+		stub._getServiceClient().getOptions().setProperty(HTTPConstants.AUTHENTICATE, auth);
 		
 		// 登陆
 		LoginResponseParam response = stub.login(loginParam);
@@ -229,9 +238,6 @@ public class MagentoApiServiceImpl {
 								double finalGrandTotal = order.getFinalGrandTotal();
 
 								ShoppingCartProductCustomPriceRequestParam customerPriceRequest = new ShoppingCartProductCustomPriceRequestParam();
-								customerPriceRequest.setSessionId(sessionId);
-								customerPriceRequest.setQuoteId(shoppingCartId);
-
 								if (detailList != null && detailList.size() > 0) {
 									int detailSize = detailList.size();
 									getPriceDiffPer(orderPriceDiff, finalGrandTotal, detailList);
@@ -249,6 +255,9 @@ public class MagentoApiServiceImpl {
 									}
 									customerPriceRequest.setProductsData(customPriceEntityArray);
 								}
+								customerPriceRequest.setSessionId(sessionId);
+								customerPriceRequest.setQuoteId(shoppingCartId);
+
 								ShoppingCartProductCustomPriceResponseParam customPriceResponse = stub.shoppingCartProductSetCustomPrice(customerPriceRequest);
 								boolean isCustomerPrice = customPriceResponse.getResult();
 
@@ -464,6 +473,7 @@ public class MagentoApiServiceImpl {
 						customerEntity.setMode(customer.getMode());
 						customerEntity.setEmail(order.getBillingEmail());
 						customerEntity.setFirstname(order.getBillingName());
+						customerEntity.setLastname(order.getBillingName());
 
 						// 购物车中顾客对象设置参数准备
 						ShoppingCartCustomerSetRequestParam customer = new ShoppingCartCustomerSetRequestParam();
@@ -488,7 +498,9 @@ public class MagentoApiServiceImpl {
 							if (detailList != null && detailList.size() > 0) {
 								for (OrderDetailBean orderDetail : detailList) {
 									ShoppingCartProductEntity productEntity = new ShoppingCartProductEntity();
-									productEntity.setSku(orderDetail.getSku());
+									String clientSku = orderDetail.getClientSku();
+									String sku = orderDetail.getSku();
+									productEntity.setSku(StringUtils.isNullOrBlank2(clientSku) ? sku : clientSku);
 									productEntity.setQty(orderDetail.getQty());
 									productEntityArrays.addComplexObjectArray(productEntity);
 								}
@@ -526,7 +538,9 @@ public class MagentoApiServiceImpl {
 										OrderDetailBean orderDetail = detailList.get(i);
 
 										ShoppingCartProductCustomPriceEntity param = new ShoppingCartProductCustomPriceEntity();
-										param.setSku(orderDetail.getSku());
+										String clientSku = orderDetail.getClientSku();
+										String sku = orderDetail.getSku();
+										param.setSku(StringUtils.isNullOrBlank2(clientSku) ? sku : clientSku);
 										param.setPrice(orderDetail.getRealPrice());
 										customPriceEntityArray.addComplexObjectArray(param);
 									}
@@ -546,25 +560,53 @@ public class MagentoApiServiceImpl {
 									// 账单人信息
 									ShoppingCartCustomerAddressEntity billingAddress = new ShoppingCartCustomerAddressEntity();
 									billingAddress.setMode("billing");
-									billingAddress.setFirstname(order.getBillingName());
-									billingAddress.setCity(order.getBillingCity());
-									billingAddress.setRegion(order.getBillingState());
-									billingAddress.setStreet(order.getBillingAddress());
-									billingAddress.setTelephone(order.getBillingTelephone());
-									billingAddress.setPostcode(order.getBillingPostcode());
-									billingAddress.setCountry_id(order.getBillingCountry());
+//									billingAddress.setFirstname(order.getBillingName());
+//									billingAddress.setLastname(order.getBillingName());
+//									billingAddress.setCity(order.getBillingCity());
+//									billingAddress.setRegion(order.getBillingState());
+//									billingAddress.setStreet(order.getBillingAddress());
+//									billingAddress.setTelephone(order.getShippingTelephone());
+//									billingAddress.setFax(order.getShippingTelephone());
+//									billingAddress.setPostcode(order.getBillingPostcode());
+
+									billingAddress.setFirstname("testFirstname");
+									billingAddress.setLastname("testLastname");
+									billingAddress.setCompany("testCompany");
+									billingAddress.setStreet("testStreet");
+									billingAddress.setCity("testCity");
+									billingAddress.setRegion("testRegion");
+									billingAddress.setPostcode("testPostcode");
+									billingAddress.setCountry_id(this.customer.getCountry());
+									billingAddress.setTelephone("0123456789");
+									billingAddress.setFax("0123456789");
+									billingAddress.setHouse_no("123");
 									billingAddress.setIs_default_billing(0);
+									billingAddress.setIs_default_shipping(0);
 
 									// 收货人信息
 									ShoppingCartCustomerAddressEntity shippingAddress = new ShoppingCartCustomerAddressEntity();
 									shippingAddress.setMode("shipping");
-									shippingAddress.setFirstname(order.getShippingName());
-									shippingAddress.setCity(order.getShippingCity());
-									shippingAddress.setRegion(order.getShippingState());
-									shippingAddress.setStreet(order.getShippingAddress());
-									shippingAddress.setTelephone(order.getShippingTelephone());
-									shippingAddress.setPostcode(order.getShippingPostcode());
-									shippingAddress.setCountry_id(order.getShippingCountry());
+//									shippingAddress.setFirstname(order.getShippingName());
+//									shippingAddress.setLastname(order.getShippingName());
+//									shippingAddress.setCity(order.getShippingCity());
+//									shippingAddress.setRegion(order.getShippingState());
+//									shippingAddress.setStreet(order.getShippingAddress());
+//									shippingAddress.setTelephone(order.getShippingTelephone());
+//									shippingAddress.setFax(order.getShippingTelephone());
+//									shippingAddress.setPostcode(order.getShippingPostcode());
+
+									shippingAddress.setFirstname("testFirstname");
+									shippingAddress.setLastname("testLastname");
+									shippingAddress.setCompany("testCompany");
+									shippingAddress.setStreet("testStreet");
+									shippingAddress.setCity("testCity");
+									shippingAddress.setRegion("testRegion");
+									shippingAddress.setPostcode("testPostcode");
+									shippingAddress.setCountry_id(this.customer.getCountry());
+									shippingAddress.setTelephone("0123456789");
+									shippingAddress.setFax("0123456789");
+									shippingAddress.setHouse_no("123");
+									shippingAddress.setIs_default_billing(0);
 									shippingAddress.setIs_default_shipping(0);
 
 									addressEntity.addComplexObjectArray(billingAddress);

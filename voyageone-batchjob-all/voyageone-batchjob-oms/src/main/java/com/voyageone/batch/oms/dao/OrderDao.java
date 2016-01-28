@@ -2271,7 +2271,6 @@ public class OrderDao extends BaseDao {
 		List<OrderDataBean> ordersList = (List) selectList(Constants.DAO_NAME_SPACE_OMS + "oms_bt_orders_getWMFNewOrderInfo", orderChannelID);
 		if (ordersList != null && ordersList.size() > 0) {
 			int orderSize = ordersList.size();
-			StringBuilder orderNumberSb = new StringBuilder();
 			Map<String, String> dataMap = new HashMap<String, String>();
 			for (int i = 0; i < orderSize; i++) {
 				OrderDataBean order = ordersList.get(i);
@@ -2307,15 +2306,18 @@ public class OrderDao extends BaseDao {
 
 								// 物品折扣
 								if (subItemNumber > 0) {
+									// 寻找挂靠物品
 									for (OrderDetailBean orderDetailInner : orderDetailBeanList) {
 										int adjustmentInner = orderDetailInner.getAdjustment();
 										// 真实物品
 										if (adjustmentInner == 0) {
-											int itemNumber = orderDetail.getItemNumber();
+											int itemNumber = orderDetailInner.getItemNumber();
 											// 找到该折扣对应物品
 											if (subItemNumber == itemNumber) {
 
 												orderDetailInner.setDiscount(price);
+
+												break;
 											}
 										}
 									}

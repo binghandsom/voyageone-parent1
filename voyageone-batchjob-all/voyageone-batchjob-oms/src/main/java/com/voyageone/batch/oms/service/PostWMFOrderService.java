@@ -77,6 +77,11 @@ public class PostWMFOrderService {
 		// 取出OMS中需要向WMF推送的订单
 		List<OrderDataBean> orderDataBeanList = orderDao.getWMFNewOrderInfo(orderChannelID);
 		if (orderDataBeanList != null && orderDataBeanList.size() > 0) {
+			logger.info("本次向WMF推送的新订单数为：" + orderDataBeanList.size());
+
+			// 初期化
+			magentoApiServiceImpl.setOrderChannelId(orderChannelID);
+
 			for (OrderDataBean orderDataBean : orderDataBeanList) {
 				String clientOrderNumber = "";
 				try {
@@ -88,10 +93,17 @@ public class PostWMFOrderService {
 
 				// 订单推送magento成功
 				if (!StringUtils.isNullOrBlank2(clientOrderNumber)) {
+					logger.info("OMS orderNumber:" + orderDataBean.getOrderNumber() + " 向WMF推送成功，客户订单号：" + clientOrderNumber);
+
 					// 回写第三方订单号并置位发送标志
-					recordClientOrderNumber(clientOrderNumber, orderDataBean);
+					boolean isRecord = recordClientOrderNumber(clientOrderNumber, orderDataBean);
+					if (isRecord) {
+						logger.info("WMF客户订单号：" + clientOrderNumber + " 回写成功");
+					}
 				}
 			}
+		} else {
+			logger.info("本次没有要向WMF推送的新订单");
 		}
 
 		return isSuccess;
