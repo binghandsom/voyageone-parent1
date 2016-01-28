@@ -7,12 +7,12 @@ import org.springframework.util.Assert;
  * @version 2.0.0
  * @since 2.0.0
  */
-public class JmDealBean extends JmBaseBean {
+public class GetDealInfoReq extends JmBaseBean {
 
     /**
      * productId 商品Id
      * */
-    private Integer productId;
+    private String productId;
 
     /**
      *  需要查询的字段.；可选字段见“返回字段”列表
@@ -25,11 +25,11 @@ public class JmDealBean extends JmBaseBean {
         Assert.notNull(productId,"product must not null!");
     }
 
-    public Integer getProductId() {
+    public String getProductId() {
         return productId;
     }
 
-    public void setProductId(Integer productId) {
+    public void setProductId(String productId) {
         this.productId = productId;
     }
 

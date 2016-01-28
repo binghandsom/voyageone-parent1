@@ -5,7 +5,7 @@ package com.voyageone.common.components.jumei.Bean;
  * @version 2.0.0
  * @since 2.0.0
  */
-public class Deal_Info extends JmBaseBean {
+public class GetDealInfoRes extends JmBaseBean {
 
     private String hash_id;	//	Hash_id.
     private Integer on_sale_status;	//	可售状态，可售返回 1..
