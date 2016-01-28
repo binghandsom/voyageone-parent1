@@ -60,7 +60,7 @@ public class JumeiCategoryService extends JmBase {
     public List<JmCategoryBean> getCategoryListALL(ShopBean shopBean) throws Exception {
         List<JmCategoryBean> result = new ArrayList<>();
         for (int i=1; i<=4; i++) {
-            List<JmCategoryBean> categorysList = getCategoryListLevel(shopBean, "4");
+            List<JmCategoryBean> categorysList = getCategoryListLevel(shopBean, i+"");
             if (categorysList != null) {
                 result.addAll(categorysList);
             }

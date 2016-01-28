@@ -144,17 +144,17 @@ public class JmProductBean extends JmBaseBean {
         resultBean.setNormalImage(normalImage);
         resultBean.setVerticalImage(verticalImage);
         resultBean.setDiaoxingImage(diaoxingImage);
-        return JacksonUtil.bean2Json(resultBean);
+        return JacksonUtil.bean2JsonNotNull(resultBean);
     }
 
     public String getSpusString() throws IOException {
-        return JacksonUtil.bean2Json(spus);
+        return JacksonUtil.bean2JsonNotNull(spus);
     }
 
     public String getDealInfoString() throws IOException {
         List<JmProductBean_DealInfo> dealInfos = new ArrayList<>();
         dealInfos.add(dealInfo);
-        return JacksonUtil.bean2Json(dealInfos);
+        return JacksonUtil.bean2JsonNotNull(dealInfos);
     }
 
     public void check() {

@@ -23,6 +23,8 @@ public class JmBase {
 
     protected Log logger = LogFactory.getLog(getClass());
 
+    public static final int C_MAX_API_REPEAT_TIME = 3;
+
     protected String reqJmApi(ShopBean shopBean, String api_url) throws Exception {
         return reqJmApi(shopBean, api_url, new HashMap<>());
     }
@@ -66,6 +68,7 @@ public class JmBase {
             parm_url.delete(0,1);
         }
 
+
         String result = HttpUtils.post(post_url.toString(), parm_url.toString());
 
 
@@ -90,6 +93,19 @@ public class JmBase {
         return result;
     }
 
+    protected String reqOnTimeoutRepert(String post_url, String parm_url) throws Exception {
+        for (int intApiErrorCount = 0; intApiErrorCount < C_MAX_API_REPEAT_TIME; intApiErrorCount++) {
+            try {
+                return  HttpUtils.post(post_url.toString(), parm_url.toString());
+            } catch (Exception e) {
+                logger.info("time out :"+ intApiErrorCount+1);
+                // 最后一次出错则直接抛出
+                Thread.sleep(1000);
+                if (C_MAX_API_REPEAT_TIME - intApiErrorCount == 1) throw e;
+            }
+        }
+        return "";
+    }
 
     /**
      * @param shopBean ShopBean
