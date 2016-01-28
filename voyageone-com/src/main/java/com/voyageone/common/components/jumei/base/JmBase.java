@@ -34,7 +34,7 @@ public class JmBase {
         String result = null;
         if (org != null) {
             result = org.replaceAll("&", "、");
-            result = result.replaceAll("?", "？");
+            result = result.replaceAll("\\?", "？");
         }
         return result;
     }
