@@ -31,5 +31,39 @@
             #{creater,jdbcType=VARCHAR},
             now(),
             #{modifier,jdbcType=VARCHAR})
+        ON DUPLICATE KEY UPDATE
+              syn_flg = if(origin_url = #{originUrl}, syn_flg, 0),
+              modified = if(origin_url = #{originUrl}, modified, now()),
+              modifier = #{modifier,jdbcType=VARCHAR},
+              origin_url = if(origin_url = #{originUrl}, origin_url, #{originUrl})
     </insert>
+
+    <select id="jm_bt_images_selectBySynFlg" parameterType="com.voyageone.batch.cms.model.JmBtImagesModel" resultType="com.voyageone.batch.cms.model.JmBtImagesModel">
+        select
+            syn_flg as synFlg,
+            count(*) as recCount
+        from
+            jumei.jm_bt_images
+        where
+            channel_id = #{channelId}
+            and image_key = #{imageKey}
+            group by syn_flg
+    </select>
+
+    <update id="jm_bt_product_import_updateByImage" parameterType="HashMap" >
+        update jumei.jm_bt_product_import product,
+                (SELECT img.channel_id,
+                        img.image_key
+                from jumei.jm_bt_images img
+                where img.channel_id = #{channelId,jdbcType=VARCHAR}
+                    and img.syn_flg = 0
+                    and img.creater != img.modified
+                GROUP BY img.channel_id, img.image_key) imgm
+        set product.syn_flg = if(product.syn_flg = '2', '1', product.syn_flg),
+            product.modified = now(),
+            product.modifier = #{modifier,jdbcType=VARCHAR}
+        where product.channel_id = imgm.channel_id
+        and product.product_code = imgm.image_key
+        and product.deal_id = #{dealId,jdbcType=VARCHAR}
+    </update>
 </mapper>

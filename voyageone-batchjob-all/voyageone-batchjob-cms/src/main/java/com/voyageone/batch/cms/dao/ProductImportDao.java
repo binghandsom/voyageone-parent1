@@ -18,12 +18,12 @@ public class ProductImportDao extends BaseDao {
 	 * @return
 	 */
 	public boolean insertProductImportInfo(JmBtProductImportModel jmBtProductImportModel) {
-		boolean isSuccess = false;
+		boolean isSuccess = true;
 
 		int count = updateTemplate.update(Constants.DAO_NAME_SPACE_CMS + "jm_bt_product_import_insert", jmBtProductImportModel);
-		if (count == 1) {
-			isSuccess = true;
-		}
+//		if (count > 0) {
+//			isSuccess = true;
+//		}
 
 		return isSuccess;
 	}
