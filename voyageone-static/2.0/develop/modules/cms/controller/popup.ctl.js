@@ -121,7 +121,7 @@ define([
                         "templateUrl": "views/pop/platformMapping/ppMultiComplex.list.tpl.html",
                         "controllerUrl": "modules/cms/views/pop/platformMapping/ppMultiComplex.list.ctl",
                         "controller": 'multiComplexMappingPopupController as ctrl',
-                        "size": 'lg',
+                        "size": 'md',
                         "backdrop": "static"
                     },
 
@@ -129,7 +129,7 @@ define([
                         "templateUrl": "views/pop/platformMapping/ppMultiComplex.item.tpl.html",
                         "controllerUrl": "modules/cms/views/pop/platformMapping/ppMultiComplex.item.ctl",
                         "controller": 'multiComplexItemMappingPopupController as ctrl',
-                        "size": 'lg',
+                        "size": 'md',
                         "backdrop": "static"
                     }
                 }
@@ -408,6 +408,7 @@ define([
                  * @property {string} mainCategoryId 主数据类目 ID
                  * @property {number} cartId 平台 ID
                  * @property {Field} property 平台属性
+                 * @property {number|null} valueIndex
                  */
 
                 /**

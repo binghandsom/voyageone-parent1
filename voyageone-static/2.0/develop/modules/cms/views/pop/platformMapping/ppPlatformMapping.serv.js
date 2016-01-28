@@ -212,13 +212,20 @@ define([
 
             /**
              * 查询平台属性的匹配
+             *
+             * 注意!!!
+             * valueIndex 这里只传入一次, 递归过程中不会修改 valueIndex
+             * 所以, 当出现多层 MultiComplexMapping 的情况时
+             * 该方法将无法正确查找. 这里只暂时考虑一层的查找需求
+             *
              * @param {WrapField} property
              * @param {string} mainCategoryId
              * @param {string} platformCategoryId
              * @param {number} cartId
+             * @param {number} valueIndex 目标 Mapping 在 MultiComplexMapping 中所在的 Value 位置
              * @return {Promise.<MappingBean|MappingBean[]>}
              */
-            getPlatformPropertyMapping: function (property, mainCategoryId, platformCategoryId, cartId) {
+            getPlatformPropertyMapping: function (property, mainCategoryId, platformCategoryId, cartId, valueIndex) {
 
                 return this.$getPlatformMapping(mainCategoryId, platformCategoryId, cartId).then(function (mapping) {
 
@@ -229,7 +236,7 @@ define([
 
                     if (!property) return null;
 
-                    return this.$searchMappingByParent(property, mapping.props);
+                    return this.$searchMappingByParent(property, mapping.props, valueIndex);
 
                 }.bind(this));
             },
@@ -238,11 +245,12 @@ define([
              * @private
              * @param {WrapField} property 平台类目属性
              * @param {MappingBean[]} mappings
+             * @param {number} valueIndex 目标 Mapping 在 MultiComplexMapping 中所在的 Value 位置
              * @return {MappingBean|MappingBean[]}
              */
-            $searchMappingByParent: function (property, mappings) {
+            $searchMappingByParent: function (property, mappings, valueIndex) {
 
-                var multiMappings = null;
+                var multiMapping = null;
 
                 if (property.parent) {
                     // 有父级时, 先查找父级的 mapping, 覆盖当前 mappings
@@ -256,12 +264,12 @@ define([
                         case FieldTypes.multiComplex:
 
                             // 如果是多复杂类型, 有可能返回的是数组
-                            switch (parentMapping) {
+                            switch (parentMapping.mappingType) {
                                 case MappingTypes.COMPLEX_MAPPING:
                                     mappings = parentMapping ? parentMapping.subMappings : null;
                                     break;
                                 case MappingTypes.MULTI_COMPLEX_MAPPING:
-                                    multiMappings = parentMapping;
+                                    multiMapping = parentMapping;
                                     break;
                                 default:
                                     throw 'Unsupported mapping type.';
@@ -277,23 +285,16 @@ define([
                 if (!mappings) return null;
 
                 // 非 Multi 的情况下
-                if (!multiMappings) {
+                if (!multiMapping) {
                     return _.find(mappings, function (mapping) {
                         return mapping.platformPropId === $WrapFieldId(property.id);
                     });
                 }
 
                 // Multi 情况下, 搜索多个
-                return _.chain(multiMappings)
-                    .map(function (mappings) {
-                        return _.find(mappings, function (mapping) {
-                            return mapping.platformPropId === $WrapFieldId(property.id);
-                        });
-                    })
-                    .filter(function (mapping) {
-                        return !!mapping;
-                    })
-                    .value();
+                return _.find(multiMapping.values[valueIndex].subMappings, function (mapping) {
+                    return mapping.platformPropId === $WrapFieldId(property.id);
+                });
             },
 
             /**

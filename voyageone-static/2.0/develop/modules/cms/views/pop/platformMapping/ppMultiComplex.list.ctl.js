@@ -74,7 +74,12 @@ define([
 
             add: function (ppPlatformMapping) {
                 // 打开子窗
-                this.context.value = null;
+                this.context.valueIndex = this.multiComplexMapping.values.length;
+                ppPlatformMapping.multiComplex.item(this.context);
+            },
+
+            edit: function($index, ppPlatformMapping) {
+                this.context.valueIndex = $index;
                 ppPlatformMapping.multiComplex.item(this.context);
             },
 

@@ -19,31 +19,42 @@ define([
             this.$uibModalInstance = $uibModalInstance;
             this.ppPlatformMappingService = ppPlatformMappingService;
 
-            this.mainCategoryPath = null;
-            this.mainCategoryId = this.context.mainCategoryId;
+            this.maindata = {
+                category: {
+                    id: this.context.mainCategoryId,
+                    path: null
+                }
+            };
 
-            this.platformProperty = this.context.property;
+            this.platform = {
+                category: {
+                    id: this.context.platformCategoryId,
+                    path: this.context.platformCategoryPath
+                },
+                property: this.context.property
+            };
+
             /**
-             * com.voyageone.cms.service.bean.MultiComplexCustomMappingValue
+             * @type {number}
              */
-            this.value = this.context.value;
+            this.valueIndex = this.context.valueIndex;
         }
 
         MultiComplexItemMappingPopupController.prototype = {
 
             init: function () {
 
-                this.ppPlatformMappingService.getMainCategoryPath(this.mainCategoryId).then(function (path) {
-                    this.mainCategoryPath = path;
-                }.bind(this));
+                var mainCate = this.maindata.category;
+
+                this.ppPlatformMappingService.getMainCategoryPath(mainCate.id).then(function (path) {
+                    mainCate.path = path;
+                });
             },
 
             mapping: function(ppPlatformMapping, property) {
 
                 var context = _.clone(this.context);
-
                 context.property = property;
-
                 ppPlatformMapping.simple.list(context);
             },
 

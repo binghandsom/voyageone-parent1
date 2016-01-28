@@ -39,6 +39,12 @@ define([
             };
 
             /**
+             * 当前属性在 MultiComplexMapping 中的第几个 Value 中
+             * @type {number|null}
+             */
+            this.valueIndex = this.context.valueIndex;
+
+            /**
              * 当前属性的匹配
              * @type {SimpleMappingBean}
              */
@@ -87,7 +93,8 @@ define([
                     property,
                     mainCategory.id,
                     this.platform.category.id,
-                    this.context.cartId
+                    this.context.cartId,
+                    this.valueIndex
                 ).then(function (simpleMapping) {
 
                     // 如果没拿到, 则创建新的 SimpleMapping

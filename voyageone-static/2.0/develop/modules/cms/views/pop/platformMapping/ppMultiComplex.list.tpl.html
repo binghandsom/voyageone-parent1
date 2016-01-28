@@ -13,25 +13,25 @@
                 <thead>
                 <tr>
                     <th>类型</th>
-                    <th>匹配关系</th>
                     <th class="text-right">Action</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr ng-repeat="value in ctrl.multiComplexMapping.values">
                     <td>第 <span>{{::$index+1}}</span> 套</td>
-                    <td>
-                        <small popover="文本：MASTER.商品介绍 描述图片：MASTER.商品主图"
-                               popover-trigger="mouseenter"
-                               popover-placement="right">
-                            文本：MASTER.商品介绍……
-                        </small>
-                    </td>
                     <td class="form-inline text-right">
-                        <button title="编辑" class="btn btn-success btn-xs"><i class="fa fa-pencil"></i></button>
-                        <button title="删除" class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i></button>
-                        <button title="上移" class="btn btn-default btn-xs"><i class="fa fa-arrow-up"></i></button>
-                        <button title="下移" class="btn btn-default btn-xs"><i class="fa fa-arrow-down"></i></button>
+                        <button title="编辑" class="btn btn-success btn-xs" ng-click="ctrl.edit($index, ppPlatformMapping)">
+                            <i class="fa fa-pencil"></i>
+                        </button>
+                        <button title="删除" class="btn btn-danger btn-xs">
+                            <i class="fa fa-trash-o"></i>
+                        </button>
+                        <button title="上移" class="btn btn-default btn-xs">
+                            <i class="fa fa-arrow-up"></i>
+                        </button>
+                        <button title="下移" class="btn btn-default btn-xs">
+                            <i class="fa fa-arrow-down"></i>
+                        </button>
                     </td>
                 </tr>
                 </tbody>
