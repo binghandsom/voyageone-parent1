@@ -85,6 +85,11 @@
     "templateUrl": "views/system/category/index.tpl.html",
     "controllerUrl": "modules/cms/views/system/category/index.ctl"
   },
+  "translation": {
+    "hash": "/translation",
+    "templateUrl": "views/translation/index.tpl.html",
+    "controllerUrl": "modules/cms/views/translation/index.ctl"
+  },
   "system_category_edit": {
     "hash": "/system/category/edit/:catId",
     "templateUrl": "views/system/category/edit.tpl.html",
