@@ -29,58 +29,6 @@
                 </div>
             </div>
         </form>
-        <div class="table-responsive">
-            <table class="table">
-                <thead>
-                <tr>
-                    <th>选择条件</th>
-                    <th></th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr ng-repeat="condition in ctrl.conditions">
-                    <td class="form-inline">
-                        <select class="form-control m-r-sm" title="被用来判断的 Feed 属性"
-                                ng-options="k as k for (k,v) in ctrl.feedAttributes track by k"
-                                ng-model="condition.property"></select>
-
-                        <select class="form-control m-r-sm" title="条件操作"
-                                ng-options="o as o.desc for o in ctrl.operations track by o.desc"
-                                ng-model="condition.operation"></select>
-
-                        <span ng-if="!condition.operation.isSingle">
-                            <input class="form-control" type="text"
-                                   ng-if="!ctrl.feedAttributes[condition.property].length"
-                                   ng-model="condition.value" title="条件值"/>
-
-                            <select class="form-control" title="条件检查的值"
-                                    ng-if="ctrl.feedAttributes[condition.property].length"
-                                    ng-options="v as v for v in ctrl.feedAttributes[condition.property] track by v"
-                                    ng-model="condition.value"></select>
-                        </span>
-                    </td>
-                    <td>
-                        <button title="删除" ng-click="ctrl.removeCondition($index)" class="btn btn-danger btn-xs">
-                            <i class="fa fa-minus"></i>
-                        </button>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-        <div>
-            <button title="添加" ng-click="ctrl.addCondition()" class="btn btn-success pull-right">
-                <i class="fa fa-plus"></i>
-                <span>新增条件</span>
-            </button>
-        </div>
-    </div>
-    <div class="attribute_top">
-        <h5 class="text-vo m-l font-bold">值设定说明：</h5>
-        <ul>
-            <li>如果不对属性进行任何值设定，则会使用默认值。</li>
-            <li>如果对属性进行了多个值设定，则会使用顺序验证可用性。即如果条件，则先验证条件，无条件的，直接为可用。一旦某一条设定生效（可用）</li>
-        </ul>
     </div>
     <div class="modal-footer">
         <button class="btn btn-default" ng-click="ctrl.cancel()">取消</button>

@@ -4,9 +4,9 @@
                 aria-hidden="true"><i class="fa fa-close"></i></span></button>
         <h5 class="modal-title"><i class="fa fa-crosshairs"></i> 新增自定义项</h5>
     </div>
-    <form role="form" class="form-horizontal m-t-md m-l-lg m-b-lg">
+    <form role="form" class="form-horizontal m-t-md m-l-sm m-b-sm m-r-sm">
         <div class="form-group">
-            <label class="col-sm-3 control-label text-center">自定义项</label>
+            <label class="col-sm-1 control-label text-center">自定义项</label>
             <div class="col-sm-4">
                 <select class="form-control">
                     <option value="">GetAllImages</option>
@@ -16,44 +16,45 @@
             </div>
             <label class="col-sm-5 control-label text-left">获取主商品图片的所有图片</label>
         </div>
-    </form>
-    <div class="table-responsive">
-        <table class="table table-hover vo_table" style="margin-bottom:0px">
-            <tbody>
-            <tr class="font-bold" style="background:#e67e22;color:#fff">
-                <td class="mfb-xt3 text-center">Seq.	</td>
-                <td class="mfb-xxx text-left">名称</td>
-                <td class="mfb-xxx text-left">摘要</td>
-                <td class="text-center">值</td>
-                <td class="mfb-xt text-left">操作</td>
-            </tr>
-            </tbody>
-        </table>
-        <div class="col-sm-12 dropdown_table_main">
-            <table class="table table-hover vo_table tableWordBreak" style="margin-bottom:0px">
+        <div class="box table-responsive">
+            <table class="table table-hover vo_table" style="margin-bottom:0px">
                 <tbody>
-                <tr>
-                    <td class="mfb-xt3 text-center">1</td>
-                    <td class="mfb-xxx text-left">imageTemplate</td>
-                    <td class="mfb-xxx text-left">图片模板</td>
-                    <td class="text-center">产品图片-5</td>
-                    <td class="mfb-xt text-center" ng-controller="popupCtrl">
-                        <button title="修改参数" class="btn btn-success btn-xs" ng-click=""><i class="fa fa-pencil"></i> 修改参数</button>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="mfb-xt3 text-center">2</td>
-                    <td class="mfb-xxx text-left">paddingPropName</td>
-                    <td class="mfb-xxx text-left">padding属性图名称，该名称决定使用哪个类型图片作为填充</td>
-                    <td class="text-center">产品图片-5</td>
-                    <td class="mfb-xt text-center" ng-controller="popupCtrl">
-                        <button title="修改参数" class="btn btn-success btn-xs" ng-click=""><i class="fa fa-pencil"></i> 修改参数</button>
-                    </td>
+                <tr class="font-bold" style="background:#e67e22;color:#fff">
+                    <td class="mfb-xt3 text-center">Seq.	</td>
+                    <td class="mfb-xxx text-left">名称</td>
+                    <td class="mfb-xxxs text-left">摘要</td>
+                    <td class="mfb-xxxs text-center">值</td>
+                    <td class="mfb-xxt text-center">操作</td>
                 </tr>
                 </tbody>
             </table>
-        </div><!-- .table-responsive -->
-    </div>
+            <div class="col-sm-12 dropdown_table_main">
+                <table class="table table-hover vo_table tableWordBreak" style="margin-bottom:0px">
+                    <tbody>
+                    <tr>
+                        <td class="mfb-xt3 text-center">1</td>
+                        <td class="mfb-xxx text-left">imageTemplate</td>
+                        <td class="mfb-xxxs text-left">图片模板</td>
+                        <td class="text-center">产品图片-5</td>
+                        <td class="mfb-xxt text-center" ng-controller="popupCtrl">
+                            <button title="修改参数" class="btn btn-success btn-xs" ng-click=""><i class="fa fa-pencil"></i> 修改参数</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="mfb-xt3 text-center">2</td>
+                        <td class="mfb-xxx text-left">paddingPropName</td>
+                        <td class="mfb-xxxs text-left">padding属性图名称，该名称决定使用哪个类型图片作为填充</td>
+                        <td class="mfb-xxxs text-center">产品图片-5</td>
+                        <td class="mfb-xxt text-center" ng-controller="popupCtrl">
+                            <button title="修改参数" class="btn btn-success btn-xs" ng-click=""><i class="fa fa-pencil"></i> 修改参数</button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div><!-- .table-responsive -->
+        </div>
+    </form>
+
     <div class="modal-footer">
         <button class="btn btn-default" ng-click="ctrl.cancel()">取消</button>
         <button class="btn btn-vo" ng-click="ctrl.ok()">保存</button>
