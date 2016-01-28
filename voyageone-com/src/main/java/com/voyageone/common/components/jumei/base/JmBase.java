@@ -127,7 +127,7 @@ public class JmBase {
     protected String reqOnTimeoutRepert(String post_url, String parm_url) throws Exception {
         for (int intApiErrorCount = 0; intApiErrorCount < C_MAX_API_REPEAT_TIME; intApiErrorCount++) {
             try {
-                return  HttpUtils.post(post_url.toString(), parm_url.toString());
+                return  HttpUtils.post(post_url, parm_url);
             } catch (Exception e) {
                 logger.info("time out :"+ intApiErrorCount+1);
                 // 最后一次出错则直接抛出
