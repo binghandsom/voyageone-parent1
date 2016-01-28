@@ -106,7 +106,7 @@ public class JmImageFileBean extends JmBaseBean {
         if (this.file != null && this.file.exists()) {
             result = ImgUtils.encodeToString(file);
         }else if(this.inputStream!=null ){
-            result =ImgUtils.encodeToString(inputStream,imgName + "." + extName);
+            result =ImgUtils.encodeToString(inputStream, extName);
         }
         return result;
     }

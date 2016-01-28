@@ -1,11 +1,8 @@
 package com.voyageone.common.util;
 
-
-import org.codehaus.jackson.JsonFactory;
-import org.codehaus.jackson.JsonGenerator;
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -21,7 +18,7 @@ public final class JacksonUtil {
         return sw.toString();
     }
 
-    public static <T> T json2Bean(String jsonStr, Class<T> objClass) throws JsonParseException, JsonMappingException, IOException {
+    public static <T> T json2Bean(String jsonStr, Class<T> objClass) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         return mapper.readValue(jsonStr, objClass);
     }

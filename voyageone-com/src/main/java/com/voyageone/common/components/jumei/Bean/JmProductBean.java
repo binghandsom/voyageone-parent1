@@ -2,9 +2,6 @@ package com.voyageone.common.components.jumei.Bean;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.voyageone.common.util.JacksonUtil;
-import com.voyageone.common.util.JacksonUtilEx;
-import com.voyageone.common.util.JsonUtil;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -147,17 +144,17 @@ public class JmProductBean extends JmBaseBean {
         resultBean.setNormalImage(normalImage);
         resultBean.setVerticalImage(verticalImage);
         resultBean.setDiaoxingImage(diaoxingImage);
-        return JacksonUtilEx.bean2Json(resultBean);
+        return JacksonUtil.bean2Json(resultBean);
     }
 
     public String getSpusString() throws IOException {
-        return JacksonUtilEx.bean2Json(spus);
+        return JacksonUtil.bean2Json(spus);
     }
 
     public String getDealInfoString() throws IOException {
         List<JmProductBean_DealInfo> dealInfos = new ArrayList<>();
         dealInfos.add(dealInfo);
-        return JacksonUtilEx.bean2Json(dealInfos);
+        return JacksonUtil.bean2Json(dealInfos);
     }
 
     public void check() {
