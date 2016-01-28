@@ -9,6 +9,8 @@ public class JmBtSkuImportModel {
 
     private String productCode;
 
+    private String dealId;
+
     private String sku;
 
     private String upcCode;
@@ -53,6 +55,14 @@ public class JmBtSkuImportModel {
 
     public void setProductCode(String productCode) {
         this.productCode = productCode == null ? null : productCode.trim();
+    }
+
+    public String getDealId() {
+        return dealId;
+    }
+
+    public void setDealId(String dealId) {
+        this.dealId = dealId;
     }
 
     public String getSku() {

@@ -1,11 +1,13 @@
 package com.voyageone.common.components.jumei;
 
 import com.voyageone.common.components.jumei.Bean.JmProductBean;
+import com.voyageone.common.components.jumei.Bean.JmProductBean_Spus;
 import com.voyageone.common.components.jumei.base.JmBase;
 import com.voyageone.common.configs.beans.ShopBean;
-import com.voyageone.common.util.JsonUtil;
+import com.voyageone.common.util.JacksonUtil;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +23,7 @@ public class JumeiProductService extends JmBase {
     /**
      * 创建商品并同时创建Deal
      */
+    @SuppressWarnings("unchecked")
     public void productNewUpload(ShopBean shopBean, JmProductBean product) throws Exception {
         if (product == null) {
             throw new Exception("fileBean not found!");
@@ -34,11 +37,46 @@ public class JumeiProductService extends JmBase {
         params.put("dealInfo", product.getDealInfoString());
 
         String reqResult = reqJmApi(shopBean, PRODUCT_NEW, params);
-        Map<String, Object> resultMap = JsonUtil.jsonToMap(reqResult);
-        product.setProduct_spec_number((String) getValue(resultMap, "product", "product_spec_number"));
+        Map<String, Object> resultMap = JacksonUtil.jsonToMap(reqResult);
+
+        /**
+         * set jumei_product_id from result
+         */
+        //product.setProduct_spec_number((String) getValue(resultMap, "product", "product_spec_number"));
         product.setJumei_product_id((String) getValue(resultMap, "product", "jumei_product_id"));
 
-        product.getDealInfo().setPartner_deal_id((String) getValue(resultMap, "dealInfo", "partner_deal_id"));
+        /**
+         * set jumei_spu_no jumei_sku_no from result
+         */
+        List<Map<String, Object>> spusMapList = new ArrayList<>();
+        if (resultMap.get("spus") != null && resultMap.get("spus") instanceof List) {
+            spusMapList = (List<Map<String, Object>>)resultMap.get("spus");
+        }
+        List<JmProductBean_Spus> spusList = new ArrayList<>();
+        if (product.getSpus() != null) {
+            spusList = product.getSpus();
+        }
+        for (JmProductBean_Spus spu : spusList) {
+            for (Map<String, Object> spusMap : spusMapList) {
+                String partner_spu_no = (String) spusMap.get("partner_spu_no");
+                if (partner_spu_no != null && partner_spu_no.equals(spu.getPartner_spu_no())) {
+                    String jumei_spu_no = (String) spusMap.get("jumei_spu_no");
+                    spu.setJumei_spu_no(jumei_spu_no);
+                    if (spu.getSkuInfo() != null && spusMap.get("skuinfo") != null) {
+                        Map<String, Object> skuinfoMap = (Map<String, Object>)spusMap.get("skuinfo");
+                        String jumei_sku_no = (String)skuinfoMap.get("jumei_sku_no");
+                        spu.getSkuInfo().setJumei_sku_no(jumei_sku_no);
+                    }
+
+                    break;
+                }
+            }
+        }
+
+        /**
+         * set jumei_hash_id from result
+         */
+        //product.getDealInfo().setPartner_deal_id((String) getValue(resultMap, "dealInfo", "partner_deal_id"));
         product.getDealInfo().setPartner_deal_id((String) getValue(resultMap, "dealInfo", "jumei_hash_id"));
     }
 
@@ -76,7 +114,7 @@ public class JumeiProductService extends JmBase {
         params.put("fields", "product_id,name,foreign_language_name,categorys,brand_id,brand_name,functions,normalImage,verticalImage,diaoxingImage");
 
         String reqResult = reqJmApi(shopBean, PRODUCT_NEW, params);
-        Map<String, Object> resultMap = JsonUtil.jsonToMap(reqResult);
+        Map<String, Object> resultMap = JacksonUtil.jsonToMap(reqResult);
 
         JmProductBean resultBean = new JmProductBean();
         resultBean.setJumei_product_id((String) getValue(resultMap, "product_id"));

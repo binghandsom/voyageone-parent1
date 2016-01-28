@@ -7,7 +7,7 @@
             (
               channel_id,
               product_code,
-
+              deal_id,
               start_time,
               end_time,
               user_purchase_limit,
@@ -17,6 +17,7 @@
               product_short_name,
 
               search_meta_text_custom,
+              syn_flg,
               created,
               creater,
               modified,
@@ -25,7 +26,7 @@
             (
               #{channelId,jdbcType=VARCHAR},
               #{productCode,jdbcType=VARCHAR},
-
+              #{dealId,jdbcType=VARCHAR},
               #{startTime,jdbcType=VARCHAR},
               #{endTime,jdbcType=VARCHAR},
               #{userPurchaseLimit,jdbcType=INTEGER},
@@ -35,10 +36,23 @@
               #{productShortName,jdbcType=VARCHAR},
 
               #{searchMetaTextCustom,jdbcType=VARCHAR},
+              #{synFlg,jdbcType=INTEGER},
               now(),
               #{creater,jdbcType=VARCHAR},
               now(),
               #{modifier,jdbcType=VARCHAR})
+        ON DUPLICATE KEY UPDATE
+              start_time = #{startTime,jdbcType=VARCHAR},
+              end_time = #{endTime,jdbcType=VARCHAR},
+              user_purchase_limit = #{userPurchaseLimit,jdbcType=INTEGER},
+              shipping_system_id = #{shippingSystemId,jdbcType=INTEGER},
+              product_long_name = #{productLongName,jdbcType=VARCHAR},
+              product_medium_name = #{productMediumName,jdbcType=VARCHAR},
+              product_short_name = #{productShortName,jdbcType=VARCHAR},
+              search_meta_text_custom = #{searchMetaTextCustom,jdbcType=VARCHAR},
+              syn_flg = if(syn_flg = 1,0,syn_flg),
+              modified = now(),
+              modifier = #{modifier,jdbcType=VARCHAR}
     </insert>
 
   <update id="jm_bt_deal_import_update" parameterType="com.voyageone.batch.cms.model.JmBtDealImportModel" >
@@ -91,4 +105,22 @@
       </if>
     </where>
   </update>
+
+  <update id="jm_bt_product_import_updateByDealImport" parameterType="com.voyageone.batch.cms.model.JmBtDealImportModel" >
+        update jumei.jm_bt_product_import product,
+              (SELECT deal.channel_id,
+                        deal.product_code,
+                        deal.deal_id
+              from jumei.jm_bt_deal_import deal
+              where deal.channel_id = #{channelId,jdbcType=VARCHAR}
+              and deal.creater != deal.modified
+              and deal.deal_id = #{dealId,jdbcType=VARCHAR}) dealm
+        set product.syn_flg = if(product.syn_flg = '2', '1', product.syn_flg),
+            product.modified = now(),
+            product.modifier = #{modifier,jdbcType=VARCHAR}
+        where product.channel_id = dealm.channel_id
+            and product.product_code = dealm.product_code
+            and product.deal_id = dealm.deal_id
+  </update>
+
 </mapper>

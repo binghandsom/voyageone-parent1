@@ -27,10 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -62,6 +59,8 @@ public class CmsUploadJmProductService extends BaseTaskService {
 
     private static final String DESCRIPTION_IMAGES = "%s<br />";
 
+    private static Vector<JmBtProductImportModel> succeedProduct = new Vector<>();
+
     @Override
     public SubSystem getSubSystem() {
         return SubSystem.CMS;
@@ -77,23 +76,25 @@ public class CmsUploadJmProductService extends BaseTaskService {
 
         int threadPoolCnt = 10;
         int limit = 100;
-        for(TaskControlBean taskControlBean: taskControlList){
-            if("ThreadPoolCnt".equalsIgnoreCase(taskControlBean.getCfg_name())){
-                threadPoolCnt=Integer.parseInt(taskControlBean.getCfg_val1());
-            }else if("Limit".equalsIgnoreCase(taskControlBean.getCfg_name())){
-                limit=Integer.parseInt(taskControlBean.getCfg_val1());
+        for (TaskControlBean taskControlBean : taskControlList) {
+            if ("ThreadPoolCnt".equalsIgnoreCase(taskControlBean.getCfg_name())) {
+                threadPoolCnt = Integer.parseInt(taskControlBean.getCfg_val1());
+            } else if ("Limit".equalsIgnoreCase(taskControlBean.getCfg_name())) {
+                limit = Integer.parseInt(taskControlBean.getCfg_val1());
             }
         }
-        List < JmBtProductImportModel > jmBtProductImports = getNotUploadProduct(limit);
+        List<JmBtProductImportModel> jmBtProductImports = getNotUploadProduct(limit);
         ShopBean shopBean = ShopConfigs.getShop(ChannelConfigEnums.Channel.SN.getId(), CartEnums.Cart.JM.getId());
 
         ExecutorService executor = Executors.newFixedThreadPool(threadPoolCnt);
 
         for (JmBtProductImportModel product : jmBtProductImports) {
             executor.execute(() -> uploadProduct(product, shopBean));
+            break;
         }
         executor.shutdown();
         executor.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
+        succeedProduct.forEach(jmBtProductImportModel -> updateFlg(jmBtProductImportModel));
     }
 
     private List<JmBtProductImportModel> getNotUploadProduct(Integer count) {
@@ -116,10 +117,10 @@ public class CmsUploadJmProductService extends BaseTaskService {
             jmBtProductImport.getJmBtDealImportModel().setJumeiHashId(jmProductBean.getDealInfo().getJumei_hash_id());
             jmBtProductImport.getJmBtDealImportModel().setSynFlg(1);
             jmBtProductImport.getJmBtDealImportModel().setModifier(getTaskName());
-            updateFlg(jmBtProductImport);
+            succeedProduct.add(jmBtProductImport);
+//            updateFlg(jmBtProductImport);
             logger.info(jmBtProductImport.getChannelId() + "|" + jmBtProductImport.getProductCode() + " 聚美上新结束");
         } catch (Exception e) {
-            e.printStackTrace();
             issueLog.log(e, ErrorType.BatchJob, getSubSystem());
             jmBtProductImport.setSynFlg("3");
             jmBtProductImport.setUploadErrorInfo(e.getMessage());
@@ -175,9 +176,7 @@ public class CmsUploadJmProductService extends BaseTaskService {
                 stringBuffer.append(String.format(IMG_HTML, jmPicBean.getJmUrl()));
             }
         }
-        if (stringBuffer.length() > 0) {
-            jmProductBean.getDealInfo().setDescription_usage(String.format(DESCRIPTION_USAGE, jmBtProductImport.getProductDes(), stringBuffer.toString()));
-        }
+        jmProductBean.getDealInfo().setDescription_usage(String.format(DESCRIPTION_USAGE, jmBtProductImport.getProductDes(), stringBuffer.toString()));
 
         // 产品详细
         stringBuffer = new StringBuffer();
@@ -255,9 +254,9 @@ public class CmsUploadJmProductService extends BaseTaskService {
             spu.setPropery("OTHER");
             spu.setSize(jmBtSkuImportModel.getSize());
             spu.setAttribute(jmBtProductImport.getAttribute());
-            spu.setAbroad_price(jmBtSkuImportModel.getAbroadPrice().toString());
+            spu.setAbroad_price(jmBtSkuImportModel.getAbroadPrice());
             // todo 价格单位
-//            spu.setArea_code();
+            spu.setArea_code("169");
 
             JmProductBean_Spus_Sku sku = new JmProductBean_Spus_Sku();
             sku.setPartner_sku_no(jmBtSkuImportModel.getSku());
@@ -275,11 +274,10 @@ public class CmsUploadJmProductService extends BaseTaskService {
         //dealinfo
         JmBtDealImportModel jmBtDealImportModel = jmBtProductImport.getJmBtDealImportModel();
         JmProductBean_DealInfo jmProductBean_DealInfo = new JmProductBean_DealInfo();
-        jmProductBean_DealInfo.setPartner_deal_id(jmBtDealImportModel.getDealId());
+        jmProductBean_DealInfo.setPartner_deal_id(jmBtDealImportModel.getProductCode() + "-" + jmBtDealImportModel.getDealId());
         jmProductBean_DealInfo.setStart_time(getTime(jmBtDealImportModel.getStartTime()));
         jmProductBean_DealInfo.setEnd_time(getTime(jmBtDealImportModel.getEndTime()));
         jmProductBean_DealInfo.setUser_purchase_limit(jmBtDealImportModel.getUserPurchaseLimit());
-        // todo 仓库
         jmProductBean_DealInfo.setShipping_system_id(jmBtDealImportModel.getShippingSystemId());
         jmProductBean_DealInfo.setProduct_long_name(jmBtDealImportModel.getProductLongName());
         jmProductBean_DealInfo.setProduct_medium_name(jmBtDealImportModel.getProductMediumName());
@@ -289,12 +287,8 @@ public class CmsUploadJmProductService extends BaseTaskService {
         jmProductBean_DealInfo.setSuit_people("时尚潮流人士");
         jmProductBean_DealInfo.setSearch_meta_text_custom(jmBtDealImportModel.getSearchMetaTextCustom());
 
-        // todo 特殊说明
-//        jmProductBean_DealInfo.setSpecial_explain();
-
-//        jmProductBean_DealInfo.setDescription_properties();
-//        jmProductBean_DealInfo.setDescription_usage();
-//        jmProductBean_DealInfo.setDescription_images();
+        // 特殊说明
+        jmProductBean_DealInfo.setSpecial_explain(jmBtProductImport.getSpecialNote());
 
         jmProductBean_DealInfo.setPartner_sku_nos(partner_sku_nos.substring(0, partner_sku_nos.length() - 2));
 
@@ -309,7 +303,7 @@ public class CmsUploadJmProductService extends BaseTaskService {
 
 
         d = sdf.parse(user_time);
-        long l = d.getTime();
+        long l = d.getTime()/1000;
 
         return l;
     }

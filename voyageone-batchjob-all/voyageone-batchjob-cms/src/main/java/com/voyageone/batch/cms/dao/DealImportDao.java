@@ -19,12 +19,12 @@ public class DealImportDao extends BaseDao {
 	 * @return
 	 */
 	public boolean insertDealImportInfo(JmBtDealImportModel jmBtDealImportModel) {
-		boolean isSuccess = false;
+		boolean isSuccess = true;
 
 		int count = updateTemplate.update(Constants.DAO_NAME_SPACE_CMS + "jm_bt_deal_import_insert", jmBtDealImportModel);
-		if (count == 1) {
-			isSuccess = true;
-		}
+//		if (count == 1) {
+//			isSuccess = true;
+//		}
 
 		return isSuccess;
 	}
@@ -39,4 +39,12 @@ public class DealImportDao extends BaseDao {
 		return ret;
 	}
 
+	/**
+	 * 根据修改的Deal，更新ProductImport
+	 * @param jmBtDealImportModel
+	 * @return
+	 */
+	public int updateProductImportInfoByDealImport(JmBtDealImportModel jmBtDealImportModel){
+		return updateTemplate.update("jm_bt_product_import_updateByDealImport", jmBtDealImportModel);
+	}
 }

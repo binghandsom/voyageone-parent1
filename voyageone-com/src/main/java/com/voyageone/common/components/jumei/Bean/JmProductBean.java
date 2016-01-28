@@ -1,7 +1,8 @@
 package com.voyageone.common.components.jumei.Bean;
 
-import com.voyageone.common.util.JsonUtil;
-
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.voyageone.common.util.JacksonUtil;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,16 +23,18 @@ public class JmProductBean extends JmBaseBean {
 
     private String foreign_language_name;
 
-    private String function_ids = "";
+    private String function_ids;
 
     private String normalImage;
 
-    private String verticalImage = "";
+    private String verticalImage;
 
-    private String diaoxingImage = "";
+    private String diaoxingImage;
 
+    @JsonIgnore
     private List<JmProductBean_Spus> spus;
 
+    @JsonIgnore
     private JmProductBean_DealInfo dealInfo;
 
     public String getProduct_spec_number() {
@@ -130,7 +133,7 @@ public class JmProductBean extends JmBaseBean {
         this.dealInfo = dealInfo;
     }
 
-    public String toJsonStr() {
+    public String toJsonStr() throws Exception {
         JmProductBean resultBean = new JmProductBean();
         resultBean.setProduct_spec_number(product_spec_number);
         resultBean.setCategory_v3_4_id(category_v3_4_id);
@@ -141,17 +144,17 @@ public class JmProductBean extends JmBaseBean {
         resultBean.setNormalImage(normalImage);
         resultBean.setVerticalImage(verticalImage);
         resultBean.setDiaoxingImage(diaoxingImage);
-        return JsonUtil.getJsonString(resultBean);
+        return JacksonUtil.bean2JsonNotNull(resultBean);
     }
 
-    public String getSpusString() {
-        return JsonUtil.getJsonString(spus);
+    public String getSpusString() throws IOException {
+        return JacksonUtil.bean2JsonNotNull(spus);
     }
 
-    public String getDealInfoString() {
+    public String getDealInfoString() throws IOException {
         List<JmProductBean_DealInfo> dealInfos = new ArrayList<>();
         dealInfos.add(dealInfo);
-        return JsonUtil.getJsonString(dealInfos);
+        return JacksonUtil.bean2JsonNotNull(dealInfos);
     }
 
     public void check() {

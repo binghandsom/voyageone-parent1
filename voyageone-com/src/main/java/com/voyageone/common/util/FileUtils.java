@@ -45,12 +45,14 @@ public final class FileUtils {
      * @return 该目录下的文件组
      * @description filePath下的文件组返回
      */
-    public static List getFileGroup2(String filePath) {
+    public static List getFileGroup2(String filePath, String postfix) {
         ArrayList<String> fileNameList = new ArrayList<>();
 
         File file = new File(filePath);
         for (String fileName : file.list()) {
+            if (fileName.contains(postfix)) {
                 fileNameList.add(fileName);
+            }
         }
         return fileNameList;
     }

@@ -16,6 +16,7 @@
 		<result column="function_ids" property="functionIds" />
 		<result column="address_of_produce" property="addressOfProduce" />
 		<result column="attribute" property="attribute" jdbcType="VARCHAR" />
+		<result column="special_note" property="specialNote" jdbcType="VARCHAR" />
 		<association property="jmBtDealImportModel"
 					 javaType="com.voyageone.batch.cms.model.JmBtDealImportModel">
 			<result column="channel_id" property="channelId"/>
@@ -55,8 +56,7 @@
 				jumei.jm_bt_product_import a
 			WHERE
 				a.syn_flg = 1
-			LIMIT 0,
-			#{count,jdbcType=INTEGER}
+
 		) t1,
 	    (
 		SELECT
@@ -73,6 +73,7 @@
 			a.deal_id,
 			a.size_type,
 			a.attribute,
+			a.special_note,
 			b.start_time,
 			b.end_time,
 			b.user_purchase_limit,
@@ -88,10 +89,11 @@
 			c.market_price,
 			c.size
 		FROM
-			jumei.jm_bt_product_import a
-		LEFT JOIN jumei.jm_bt_deal_import b ON a.channel_id = b.channel_id and a.deal_id = b.deal_id
+			jumei.jm_bt_product_import a,jumei.jm_bt_deal_import b,jumei.jm_bt_sku_import c
+		where
+			a.channel_id = b.channel_id and a.deal_id = b.deal_id
 		AND a.product_code = b.product_code
-		LEFT JOIN jumei.jm_bt_sku_import c ON a.channel_id = c.channel_id
+		and a.channel_id = c.channel_id
 		AND a.product_code = c.product_code
 
 	) t2
@@ -129,6 +131,9 @@
 			</if>
 			<if test="sizeType != null">
 				size_type,
+			</if>
+			<if test="specialNote != null" >
+				special_note,
 			</if>
 			<if test="productName != null" >
 				product_name,
@@ -181,6 +186,9 @@
 			</if>
 			<if test="sizeType != null">
 				#{sizeType,jdbcType=VARCHAR},
+			</if>
+			<if test="specialNote != null" >
+			    #{specialNote,jdbcType=VARCHAR},
 			</if>
 			<if test="productName != null" >
 				#{productName,jdbcType=VARCHAR},
@@ -236,6 +244,9 @@
 			</if>
 			<if test="sizeType != null">
 				size_type = #{sizeType,jdbcType=VARCHAR},
+			</if>
+			<if test="specialNote != null" >
+				special_note = #{specialNote,jdbcType=VARCHAR},
 			</if>
 			<if test="productName != null" >
 				product_name = #{productName,jdbcType=VARCHAR},

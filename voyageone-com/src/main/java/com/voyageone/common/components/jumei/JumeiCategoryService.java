@@ -3,7 +3,7 @@ package com.voyageone.common.components.jumei;
 import com.voyageone.common.components.jumei.Bean.JmCategoryBean;
 import com.voyageone.common.components.jumei.base.JmBase;
 import com.voyageone.common.configs.beans.ShopBean;
-import com.voyageone.common.util.JsonUtil;
+import com.voyageone.common.util.JacksonUtil;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -45,7 +45,7 @@ public class JumeiCategoryService extends JmBase {
                 param.put("level", level);
                 param.put("fields", "category_id,name,level,parent_category_id");
                 String reqResult = reqJmApi(shopBean, CATEGORY_URL, param);
-                List<JmCategoryBean> categoryList = JsonUtil.jsonToBeanList(reqResult, JmCategoryBean.class);
+                List<JmCategoryBean> categoryList = JacksonUtil.jsonToBeanList(reqResult, JmCategoryBean.class);
                 result.addAll(categoryList);
                 i++;
             }
@@ -60,7 +60,7 @@ public class JumeiCategoryService extends JmBase {
     public List<JmCategoryBean> getCategoryListALL(ShopBean shopBean) throws Exception {
         List<JmCategoryBean> result = new ArrayList<>();
         for (int i=1; i<=4; i++) {
-            List<JmCategoryBean> categorysList = getCategoryListLevel(shopBean, "4");
+            List<JmCategoryBean> categorysList = getCategoryListLevel(shopBean, i+"");
             if (categorysList != null) {
                 result.addAll(categorysList);
             }
@@ -107,8 +107,5 @@ public class JumeiCategoryService extends JmBase {
 
         return null;
     }
-
-
-
 
 }
