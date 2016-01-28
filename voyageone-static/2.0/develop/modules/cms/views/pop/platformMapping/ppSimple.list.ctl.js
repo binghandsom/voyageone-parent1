@@ -240,7 +240,8 @@ define([
                         platform.category.id,
                         this.context.cartId,
                         simpleMapping,
-                        platform.property)
+                        platform.property,
+                        this.valueIndex)
                 .then(function(updated){
                     if (updated)
                         notify.success('已更新');

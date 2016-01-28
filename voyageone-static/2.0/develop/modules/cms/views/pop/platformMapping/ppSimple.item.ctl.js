@@ -294,7 +294,7 @@ define([
                         textWord.value = pfProp.value;
                         break;
                     case FieldTypes.singleCheck:
-                        textWord.value = pfProp.value;
+                        textWord.value = pfProp.value.value;
                         break;
                     case FieldTypes.multiCheck:
                         // 多选保存结果
