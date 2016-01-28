@@ -69,6 +69,18 @@ define([
                     "controller": 'popCategorySchemaCtl as ctrl',
                     "backdrop": 'static',
                     "size": 'md'
+                },
+                "dictionary": {
+                    "value": {
+                        "templateUrl": "views/pop/system/dictionary/value.tpl.html",
+                        "controllerUrl": "modules/cms/views/pop/system/dictionary/value.ctl",
+                        "controller": "popDictValueController as ctrl"
+                    },
+                    "custom": {
+                        "templateUrl": "views/pop/system/dictionary/custom.tpl.html",
+                        "controllerUrl": "modules/cms/views/pop/system/dictionary/custom.ctl",
+                        "controller": "popDictCustomController as ctrl"
+                    }
                 }
             },
             "category": {
@@ -189,6 +201,56 @@ define([
                 } else {
                     alert($translate.instant('TXT_COM_MSG_NO_ROWS_SELECT'));
                 }
+            });
+        }
+
+        $scope.openDictValue = openDictValue;
+        function openDictValue(viewSize) {
+            require([popActions.system.dictionary.value.controllerUrl], function () {
+                var modalInstance = $modal.open({
+                    templateUrl: popActions.system.dictionary.value.templateUrl,
+                    controller: popActions.system.dictionary.value.controller,
+                    size: viewSize,
+                    resolve: {
+                        promotion: function () {
+                            //var productIds = [];
+                            //_.forEach(selList, function (object) {
+                            //    productIds.push(object.id);
+                            //});
+                            //return {"promotion": promotion, "productIds": productIds};
+                        }
+                    }
+                });
+
+                // 回调主页面的刷新操作
+                //modalInstance.result.then(function () {
+                //    fnInitial();
+                //})
+            });
+        }
+
+        $scope.openDictCustom = openDictCustom;
+        function openDictCustom(viewSize) {
+            require([popActions.system.dictionary.custom.controllerUrl], function () {
+                var modalInstance = $modal.open({
+                    templateUrl: popActions.system.dictionary.custom.templateUrl,
+                    controller: popActions.system.dictionary.custom.controller,
+                    size: viewSize,
+                    resolve: {
+                        promotion: function () {
+                            //var productIds = [];
+                            //_.forEach(selList, function (object) {
+                            //    productIds.push(object.id);
+                            //});
+                            //return {"promotion": promotion, "productIds": productIds};
+                        }
+                    }
+                });
+
+                // 回调主页面的刷新操作
+                //modalInstance.result.then(function () {
+                //    fnInitial();
+                //})
             });
         }
 
