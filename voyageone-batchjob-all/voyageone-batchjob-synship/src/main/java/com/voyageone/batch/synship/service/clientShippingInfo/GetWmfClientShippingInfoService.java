@@ -114,8 +114,6 @@ public class GetWmfClientShippingInfoService extends GetClientShippingBaseServic
                         // 品牌方订单号
                         String clientOrderId = clientOrder.getClient_order_id();
 
-                        $info(fullName + "（" + shopName + "）" + "-----Order_Number：" + orderNumber + "，Client_order_id：" + clientOrderId);
-
                         if (StringUtils.isNullOrBlank2(clientOrderId)) {
                             $info(fullName + "（" + shopName + "）" + "-----的品牌方订单号未设置，无法取得相关信息，Order_Number：" + orderNumber + "，Client_order_id：" + clientOrderId);
                             logIssue(fullName + "（" + shopName + "）" + "的品牌方订单号未设置，无法取得相关信息", "Order_Number：" + orderNumber + "，Client_order_id：" + clientOrderId);
@@ -131,6 +129,8 @@ public class GetWmfClientShippingInfoService extends GetClientShippingBaseServic
                                 // 订单状态
                                 String magentoOrderStatus = salesOrderEntity.getStatus();
 
+                                $info(fullName + "（" + shopName + "）" + "-----Order_Number：" + orderNumber + "，Client_order_id：" + clientOrderId + "，Magento_order_status：" + magentoOrderStatus);
+
                                 // 品牌方发货
                                 if (MagentoConstants.WMF_Status.Shipped.equalsIgnoreCase(magentoOrderStatus)) {
                                     ShipClientOrderList.add(clientOrder);
@@ -143,6 +143,10 @@ public class GetWmfClientShippingInfoService extends GetClientShippingBaseServic
                                     }
                                 }
 
+                            }else {
+                                $info(fullName + "（" + shopName + "）" + "-----品牌方信息取得失败，Order_Number：" + orderNumber + "，Client_order_id：" + clientOrderId);
+                                logIssue(fullName + "（" + shopName + "）" + "品牌方信息取得失败", "Order_Number：" + orderNumber + "，Client_order_id：" + clientOrderId);
+                                continue;
                             }
                         }
 
