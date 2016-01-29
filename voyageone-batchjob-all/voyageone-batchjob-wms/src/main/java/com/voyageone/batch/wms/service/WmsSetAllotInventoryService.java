@@ -194,7 +194,7 @@ public class WmsSetAllotInventoryService extends BaseTaskService {
                         $info(channel.getFull_name() + "----------(订单级别)初回处理Order_Number：" + reservation.getOrder_number() + "，Item_Number：" + reservation.getItem_number()+ "，SKU：" + reservation.getSku());
 
                         // SKU信息取得
-                        String result = getItemCodeInfo(channel.getOrder_channel_id(), reservation.getItemCode(), postURI);
+                        String result = getItemCodeInfo(channel.getOrder_channel_id(), reservation.getItemCode(), reservation.getSku(), postURI);
                         $info(channel.getFull_name() + "----------(订单级别)初回处理getItemCodeInfo："+ result);
 
                         ItemCodeBean itemCodeInfo = new ItemCodeBean();
@@ -480,7 +480,7 @@ public class WmsSetAllotInventoryService extends BaseTaskService {
      * @return response
      * @throws UnsupportedEncodingException
      */
-    private String getItemCodeInfo(String orderChannelId, String itemCode, String postURI) throws UnsupportedEncodingException {
+    private String getItemCodeInfo(String orderChannelId, String itemCode, String sku, String postURI) throws UnsupportedEncodingException {
 
         String json = "";
         Map<String, Object> jsonMap = new HashMap<>();
@@ -492,14 +492,18 @@ public class WmsSetAllotInventoryService extends BaseTaskService {
 
             jsonMap.put("code", itemCode);
 
-
         } else {
 
             Map<String, Object> dataBodyMap = new HashMap<>();
 
             dataBodyMap.put("orderChannelId", orderChannelId);
 
-            dataBodyMap.put("itemCode", itemCode);
+            // 区分是聚美相关WebService还是CMS相关WebService
+            if(postURI.contains("Jm2Wms")) {
+                dataBodyMap.put("sku", sku);
+            }else {
+                dataBodyMap.put("itemCode", itemCode);
+            }
 
 //            String dataBody = new Gson().toJson(dataBodyMap);
 

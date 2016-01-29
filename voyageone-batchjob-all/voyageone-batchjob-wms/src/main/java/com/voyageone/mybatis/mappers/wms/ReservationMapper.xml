@@ -97,7 +97,19 @@
                 orders.order_channel_id,
                 orders.cart_id
             FROM
-                oms_bt_orders orders
+                oms_bt_orders orders,
+                (SELECT
+                    DISTINCT  order_number
+                FROM
+                    oms_bt_order_details
+                WHERE
+                    res_allot_flg = '0'
+                AND
+                    adjustment = 0
+                AND
+                    quantity_shipped = 1
+                AND
+                    res_id = 0) details1
             WHERE
                 orders.order_channel_id = #{order_channel_id}
             AND
@@ -105,20 +117,7 @@
             AND
                 orders.cancelled = 0
             AND
-                EXISTS (SELECT
-                                1
-                        FROM
-                                oms_bt_order_details details1
-                        WHERE
-                                orders.order_number = details1.order_number
-                        AND
-                                details1.res_allot_flg = '0'
-                        AND
-                                details1.adjustment = 0
-                        AND
-                                details1.quantity_shipped = 1
-                        AND
-                                details1.res_id = 0)
+                orders.order_number = details1.order_number
             AND
                 NOT EXISTS (SELECT
                                     1
@@ -143,8 +142,13 @@
             ORDER BY
                 orders.order_number
              LIMIT #{limit}) orders,
-            oms_bt_order_details details,
-            wms_bt_item_details itemdel
+            oms_bt_order_details details
+            LEFT JOIN
+                wms_bt_item_details itemdel
+            ON
+                itemdel.order_channel_id = #{order_channel_id}
+            AND
+                itemdel.sku = details.sku
         WHERE
             orders.order_number = details.order_number
         AND
@@ -155,10 +159,6 @@
             details.quantity_shipped = 1
         AND
             details.res_id = 0
-        AND
-            orders.order_channel_id = itemdel.order_channel_id
-        AND
-            details.sku = itemdel.sku
         ORDER BY
             orders.order_number,
             details.item_number
