@@ -916,7 +916,8 @@ public class ImportExcelFileService extends BaseTaskService {
                 ret = false;
                 retRow = false;
 
-                logger.info("readProductSheet error rownum = " + row.getRowNum());
+//                logger.info("readProductSheet error rownum = " + row.getRowNum());
+                logger.info("readProductSheet error filename = " + fileName + " rownum = " + row.getRowNum());
                 ErrorContent errorContent = getReadErrorContent(fileName, productSheetName, row.getRowNum());
                 errList.add(errorContent);
             }
@@ -975,7 +976,8 @@ public class ImportExcelFileService extends BaseTaskService {
                 ret = false;
                 retRow = false;
 
-                logger.info("readSkuSheet error rownum = " + row.getRowNum());
+//                logger.info("readSkuSheet error rownum = " + row.getRowNum());
+                logger.info("readSkuSheet error filename = " + fileName + " rownum = " + row.getRowNum());
                 ErrorContent errorContent = getReadErrorContent(fileName, skuSheetName, row.getRowNum());
                 errList.add(errorContent);
             } else {
@@ -1024,7 +1026,8 @@ public class ImportExcelFileService extends BaseTaskService {
                 ret = false;
                 retRow = false;
 
-                logger.info("readImageSheet error rownum = " + row.getRowNum());
+//                logger.info("readImageSheet error rownum = " + row.getRowNum());
+                logger.info("readImageSheet error filename = " + fileName + " rownum = " + row.getRowNum());
                 ErrorContent errorContent = getReadErrorContent(fileName, imageSheetName, row.getRowNum());
                 errList.add(errorContent);
             }
@@ -1072,7 +1075,8 @@ public class ImportExcelFileService extends BaseTaskService {
                 ret = false;
                 retRow = false;
 
-                logger.info("readDealSheet error rownum = " + row.getRowNum());
+//                logger.info("readDealSheet error rownum = " + row.getRowNum());
+                logger.info("readDealSheet error filename = " + fileName + " rownum = " + row.getRowNum());
                 ErrorContent errorContent = getReadErrorContent(fileName, dealSheetName, row.getRowNum());
                 errList.add(errorContent);
             }

@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 /**
  * Created by jerry on 2016/01/23.
  */
-@Component("importExcelFileJob")
+@Component("ImportExcelFileJob")
 public class ImportExcelFileJob extends BaseTaskJob {
     @Autowired
     private ImportExcelFileService importExcelFileService;
