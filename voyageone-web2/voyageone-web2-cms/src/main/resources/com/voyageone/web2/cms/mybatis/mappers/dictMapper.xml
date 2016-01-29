@@ -50,28 +50,30 @@
 
     <select id="cms_mt_dict_selectByName" parameterType="com.voyageone.web2.cms.model.CmsMtDictModel" resultType="com.voyageone.web2.cms.model.CmsMtDictModel">
         SELECT
-        id,
-        order_channel_id,
-        name,
-        value,
-        created,
-        creater,
-        modified,
-        modifier
+            id,
+            order_channel_id,
+            cart_id,
+            name,
+            value,
+            created,
+            creater,
+            modified,
+            modifier
         FROM voyageone_cms2.cms_mt_dict
         WHERE order_channel_id = #{order_channel_id} AND name = #{name}
     </select>
 
     <select id="cms_mt_dict_selectById" parameterType="com.voyageone.web2.cms.model.CmsMtDictModel" resultType="com.voyageone.web2.cms.model.CmsMtDictModel">
         SELECT
-        id,
-        order_channel_id,
-        name,
-        value,
-        created,
-        creater,
-        modified,
-        modifier
+            id,
+            order_channel_id,
+            cart_id,
+            name,
+            value,
+            created,
+            creater,
+            modified,
+            modifier
         FROM voyageone_cms2.cms_mt_dict
         WHERE order_channel_id = #{order_channel_id} AND id = #{id}
     </select>

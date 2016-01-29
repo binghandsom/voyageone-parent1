@@ -12,16 +12,15 @@ define([
   'cms'
 ], function (cms) {
 
-  cms.controller('popDictCustomController', function ($scope, $dictionaryService, $modalInstance, $translate, notify) {
+  cms.controller('popDictCustomController', function ($scope, $dictionaryService, $modalInstance, $translate, notify, customValue) {
 
     $scope.vm = {
-      valueType: 'CUSTOM',
       masterData: {},
-      custom: { params: [] },
-      customBody: {
-        moduleName: '',
-        userParam: {}
-      }
+      valueTypes: {
+        custom: 'CUSTOM'
+      },
+      // 选中的自定义字典对象
+      customInfo: { params: [] }
     };
 
     $scope.initialize = initialize;
@@ -33,6 +32,20 @@ define([
     function initialize() {
       $dictionaryService.getCustoms().then(function (res) {
         $scope.vm.masterData = res.data;
+
+        if (!_.isUndefined(customValue)) {
+          var customInfo = customValue.value;
+          // 判断当前custom属于哪个custom
+          _.forEach($scope.vm.masterData.customs, function (custom) {
+            if (_.isEqual(custom.word_name, customInfo.moduleName)) {
+              $scope.vm.customInfo = custom;
+              // 为当前匹配的custom设置值
+              _.forEach($scope.vm.customInfo.params, function (param) {
+                param.value = customInfo.userParam[param.param_name] != null ? customInfo.userParam[param.param_name].ruleWordList : null;
+              })
+            }
+          })
+        }
       });
     }
 
@@ -41,8 +54,11 @@ define([
      */
     function save () {
       var data = {
-        type: $scope.vm.valueType,
-        value: $scope.vm.customBody
+        type: $scope.vm.valueTypes.custom,
+        value: {
+          moduleName: $scope.vm.customInfo.word_name,
+          userParam: _getUserParam()
+        }
       };
       $modalInstance.close(data);
       notify.success ($translate.instant('TXT_COM_UPDATE_SUCCESS'));
@@ -53,11 +69,7 @@ define([
      * 取消新添加数据
      */
     function cancel () {
-      $scope.vm.custom = { params: [] };
-      $scope.vm.customBody = {
-        moduleName: '',
-        userParam: {}
-      };
+      $scope.vm.customInfo = { params: [] };
 
       $scope.$close();
     }
@@ -67,24 +79,36 @@ define([
      * @param info
      * @param index
      */
-    function editDictionary (info, name) {
-      if(!_.isUndefined(info))
-        $scope.vm.customBody.userParam[name] = angular.toJson({ruleWordList: info});
+    function editDictionary (info, index) {
+      if(!_.isUndefined(info)) {
+        $scope.vm.customInfo.params[index].value = info;
+      }
     }
 
     /**
      * 清空上次被设置的值
      */
     function resetValue () {
-      $scope.vm.customBody = {
-        moduleName: $scope.vm.custom.word_name,
-        userParam: {}
-      };
 
       // 初始化每个自定义字典的项目
-      _.forEach($scope.vm.custom.params, function (param) {
-        $scope.vm.customBody.userParam[param.param_name] = null;
+      _.forEach($scope.vm.customInfo.params, function (param) {
+        param.value = null;
       })
+    }
+
+    /**
+     * 返回userparam对象
+     * @returns {{}}
+     * @private
+     */
+    function _getUserParam () {
+      var tempUserParam = {};
+
+      _.forEach($scope.vm.customInfo.params, function (param) {
+        tempUserParam[param.param_name] = param.value != null ? {ruleWordList: param.value} : null;
+      });
+
+      return tempUserParam;
     }
   });
 });

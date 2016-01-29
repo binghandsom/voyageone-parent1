@@ -8,11 +8,11 @@
         <div class="form-group">
             <label class="col-sm-1 control-label text-center" translate="TXT_DICT_CUSTOM"></label>
             <div class="col-sm-4">
-                <select id="dict-custom-name" class="form-control" ng-model="vm.custom" ng-change="resetValue()"
+                <select id="dict-custom-name" class="form-control" ng-model="vm.customInfo" ng-change="resetValue()"
                         ng-options="i as i.word_name for i in vm.masterData.customs">
                 </select>
             </div>
-            <label class="col-sm-5 control-label text-left" ng-bind="vm.custom.word_desc"></label>
+            <label class="col-sm-5 control-label text-left" ng-bind="vm.customInfo.word_desc"></label>
         </div>
         <div class="box table-responsive">
             <table class="table table-hover vo_table" style="margin-bottom:0px">
@@ -26,16 +26,17 @@
                 </tr>
                 </tbody>
             </table>
-            <div class="col-sm-12 dropdown_table_main" if-no-rows="vm.custom.params.length">
+            <div class="col-sm-12 dropdown_table_main" if-no-rows="vm.customInfo.params.length">
                 <table class="table table-hover vo_table tableWordBreak" style="margin-bottom:0px">
                     <tbody>
-                    <tr ng-repeat="param in vm.custom.params">
+                    <tr ng-repeat="param in vm.customInfo.params">
                         <td class="mfb-xt3 text-center">{{$index+1}}</td>
                         <td class="mfb-xxx text-left" ng-bind="param.param_name"></td>
                         <td class="mfb-xxxs text-left" ng-bind="param.param_desc"></td>
-                        <td class="mfb-xxxs text-left" ng-bind="vm.customBody.userParam[param.param_name]"></td>
+                        <td class="mfb-xxxs text-left">{{param.value}}</td>
                         <td class="mfb-xxt text-center" ng-controller="popupCtrl">
-                            <button class="btn btn-success btn-xs" ng-click="openDictValue('md', editDictionary, param.param_name)"><i class="fa fa-pencil"></i></button>
+                            <button class="btn btn-success btn-xs" ng-click="openDictValue('md', editDictionary, $index, param.value)"><i class="fa fa-pencil"></i></button>
+                            <button ng-if="param.value" class="btn btn-danger btn-xs"  ng-click="param.value = null"><i class="fa fa-trash-o"></i></button>
                         </td>
                     </tr>
                     </tbody>

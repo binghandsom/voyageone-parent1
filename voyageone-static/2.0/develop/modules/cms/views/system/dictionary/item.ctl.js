@@ -29,18 +29,17 @@ define([
             ruleWordList: []
           },
           isUrl: false
-        }
+        },
+        idEdit: false,
+        modified: ""
       };
 
       if (!_.isUndefined($routeParams.id)) {
+        $scope.vm.idEdit = true;
         $dictionaryService.getDict({id: $routeParams.id})
             .then(function (res) {
               $scope.vm.dictionary = JSON.parse(res.data.value);
-              _.forEach($scope.vm.dictionary.expression.ruleWordList, function (object) {
-                if (_.isEqual(object.type, 'CUSTOM')) {
-                  object.value = angular.toJson(object.value);
-                }
-              })
+              $scope.vm.modified = res.data.modified;
             })
       }
     }
@@ -63,10 +62,20 @@ define([
           name: $scope.vm.dictionary.value,
           value: angular.toJson ($scope.vm.dictionary)
         };
-        $dictionaryService.addDict(data)
-            .then(function () {
-              $location.path(cRoutes.system_dict_list.hash);
-            })
+
+        if ($scope.vm.idEdit) {
+          data.id = $routeParams.id;
+          data.modified = $scope.vm.modified;
+          $dictionaryService.setDict(data)
+              .then(function () {
+                $location.path(cRoutes.system_dict_list.hash);
+              })
+        } else {
+          $dictionaryService.addDict(data)
+              .then(function () {
+                $location.path(cRoutes.system_dict_list.hash);
+              })
+        }
       } else {
         notify.danger($translate.instant('TXT_COM_MSG_NO_DATA_WITH_SAVE'))
       }

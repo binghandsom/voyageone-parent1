@@ -12,15 +12,14 @@ define([
   'cms'
 ], function (cms) {
 
-  cms.controller('popDictValueController', function ($scope, $dictionaryService, $modalInstance, $translate, notify) {
+  cms.controller('popDictValueController', function ($scope, $dictionaryService, $modalInstance, $translate, notify, dictValue) {
 
     $scope.vm = {
       masterData: {},
       valueTypes: {
         text: 'TEXT',
         dict: 'DICT',
-        master: 'MASTER',
-        custom: 'CUSTOM'
+        master: 'MASTER'
       },
       selected: {
         valueType: 'MASTER',
@@ -40,6 +39,10 @@ define([
     function initialize() {
       $dictionaryService.getConst().then(function (res) {
         $scope.vm.masterData = res.data;
+
+        if (!_.isUndefined(dictValue)) {
+          _returnInitInfo (dictValue);
+        }
       });
     }
 
@@ -84,6 +87,28 @@ define([
           break;
         case $scope.vm.valueTypes.dict:
           return $scope.vm.selected.dictValue;
+          break;
+      }
+    }
+
+    /**
+     * 编辑的时候,根据不同的类型,显示初始化值
+     * @param dictValue
+     * @returns {*}
+     * @private
+     */
+    function _returnInitInfo (dictValue) {
+      $scope.vm.selected.valueType = dictValue.type;
+
+      switch (dictValue.type) {
+        case $scope.vm.valueTypes.text:
+          return $scope.vm.selected.textValue = dictValue.value;
+          break;
+        case $scope.vm.valueTypes.master:
+          return $scope.vm.selected.masterValue = dictValue.value;
+          break;
+        case $scope.vm.valueTypes.dict:
+          return $scope.vm.selected.dictValue = dictValue.value;
           break;
       }
     }

@@ -1,85 +1,90 @@
 <div class="wrapper-md" ng-init="initialize()">
     <div class="vo_accordion vo_attr">
-        <div class="panel-group">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h4 class="panel-title"><i class="fa fa-cogs"></i>&nbsp;字典管理</h4>
-                </div>
-                <div class="container-fluid m-t-xs m-b-xs">
-                    <div class="col-sm-12">
-                        <div class="col-sm-3">
-                            <div class="form-horizontal">
-                                <div class="form-group">
-                                    <label class="col-sm-3 control-label vo_reqfield" translate="TXT_NAME"></label>
-                                    <div class="col-sm-8">
-                                        <input type="text" class="form-control" ng-model="vm.dictionary.value" required>
+        <form class="form-horizontal" name="dictionaryForm">
+            <div class="panel-group">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title"><i class="fa fa-cogs"></i>&nbsp;{{'TXT_DICT_EDIT' | translate}}</h4>
+                    </div>
+                    <div class="container-fluid m-t-xs m-b-xs">
+                        <div class="col-sm-12">
+                            <div class="col-sm-3">
+                                <div class="form-horizontal">
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label vo_reqfield" translate="TXT_NAME"></label>
+                                        <div class="col-sm-8">
+                                            <input type="text" class="form-control" ng-model="vm.dictionary.value" required>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-sm-4">
-                            <div class="form-horizontal">
-                                <div class="form-group">
-                                    <label class="col-sm-4 checkbox-inline c-checkbox">
-                                        <input type="checkbox" ng-model="vm.dictionary.isUrl"><span class="fa fa-check"></span>&nbsp;{{'TXT_IS_UPLOAD_TO_TMALL' | translate}}
-                                    </label>
-                                </div>
-                            </div><!-- .form-group -->
-                        </div>
-                        <div class="col-sm-5">
-                            <div class="form-inline pull-right" ng-controller="popupCtrl">
-                                <button class="btn btn-success" ng-click="openDictValue('md', addNewDictionary)"><i class="fa fa-plus"></i>&nbsp;{{'BTN_NEW_DICTIONARY_VALUE' | translate}}</button>
-                                <button class="btn btn-success" ng-click="openDictCustom('lg', addNewDictionary)"><i class="fa fa-plus"></i>&nbsp;{{'BTN_NEW_DICTIONARY_DEFINE' | translate}}</button>
-                            </div><!-- .form-inline -->
-                        </div>
+                            <div class="col-sm-4">
+                                <div class="form-horizontal">
+                                    <div class="form-group">
+                                        <label class="col-sm-4 checkbox-inline c-checkbox">
+                                            <input type="checkbox" ng-model="vm.dictionary.isUrl"><span class="fa fa-check"></span>&nbsp;{{'TXT_IS_UPLOAD_TO_TMALL' | translate}}
+                                        </label>
+                                    </div>
+                                </div><!-- .form-group -->
+                            </div>
+                            <div class="col-sm-5">
+                                <div class="form-inline pull-right" ng-controller="popupCtrl">
+                                    <button class="btn btn-success" ng-click="openDictValue('md', addNewDictionary)"><i class="fa fa-plus"></i>&nbsp;{{'BTN_NEW_DICTIONARY_VALUE' | translate}}</button>
+                                    <button class="btn btn-success" ng-click="openDictCustom('lg', addNewDictionary)"><i class="fa fa-plus"></i>&nbsp;{{'BTN_NEW_DICTIONARY_DEFINE' | translate}}</button>
+                                </div><!-- .form-inline -->
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
+            </div><!-- .accordion --><!--/search-->
 
-    <form class="form-horizontal" name="dictionaryForm">
-        <div class="box">
-            <div class="box-body">
-                <div class="table-responsive">
-                    <table class="table table-hover vo_table" style="margin-bottom:0px">
-                        <tbody>
-                        <tr class="font-bold" style="background:#e67e22;color:#fff">
-                            <td class="mfb-xt3 text-center" translate="TXT_SEQ"></td>
-                            <td class="mfb-xxt text-center" translate="TXT_TYPE"></td>
-                            <td class="text-left" translate="TXT_VALUE"></td>
-                            <td class="mfb-xxt text-center" translate="TXT_ACTION"></td>
-                        </tr>
-                        </tbody>
-                    </table>
-                    <div class="col-sm-12 dropdown_table_main" if-no-rows="vm.dictionary.expression.ruleWordList.length">
-                        <table class="table table-hover vo_table tableWordBreak" style="margin-bottom:0px">
-                            <tbody>
-                            <tr ng-repeat="valueInfo in vm.dictionary.expression.ruleWordList">
-                                <td class="mfb-xt3 text-center">{{$index+1}}</td>
-                                <td class="mfb-xxt text-center" ng-bind="valueInfo.type"></td>
-                                <td class="text-left" ng-bind="valueInfo.value"></td>
-                                <td class="mfb-xxt text-center">
-                                    <button ng-if="valueInfo.type == 'CUSTOM'" ng-controller="popupCtrl" class="btn btn-success btn-xs" ng-click="openDictCustom('lg', editDictionary, $index, valueInfo.value)"><i class="fa fa-pencil"></i></button>
-                                    <button ng-if="valueInfo.type != 'CUSTOM'" ng-controller="popupCtrl" class="btn btn-success btn-xs" ng-click="openDictValue('md', editDictionary, $index, valueInfo.value)"><i class="fa fa-pencil"></i></button>
-                                    <button class="btn btn-danger btn-xs"  ng-click="delDictItem($index)"><i class="fa fa-trash-o"></i></button>
-                                    <button class="btn btn-danger btn-xs" ng-show="$index != 0" ng-click="sortUp($index)">
-                                        <i class="glyphicon glyphicon-arrow-up"></i>
-                                    </button>
-                                    <button class="btn btn-danger btn-xs" ng-show="$index < (vm.dictionary.expression.ruleWordList.length - 1)" ng-click="sortDown($index)">
-                                        <i class="glyphicon glyphicon-arrow-down"></i>
-                                    </button>
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div><!-- .table-responsive -->
+            <div class="col-sm-12">
+                <div class="box">
+                    <div class="box-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover vo_table" style="margin-bottom:0px">
+                                <tbody>
+                                <tr class="font-bold" style="background:#e67e22;color:#fff">
+                                    <td class="mfb-xt3 text-center" translate="TXT_SEQ"></td>
+                                    <td class="mfb-xxt text-center" translate="TXT_TYPE"></td>
+                                    <td class="text-left" translate="TXT_VALUE"></td>
+                                    <td class="mfb-xxt text-center" translate="TXT_ACTION"></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                            <div class="col-sm-12 dropdown_table_main" if-no-rows="vm.dictionary.expression.ruleWordList.length">
+                                <table class="table table-hover vo_table tableWordBreak" style="margin-bottom:0px">
+                                    <tbody>
+                                    <tr ng-repeat="valueInfo in vm.dictionary.expression.ruleWordList">
+                                        <td class="mfb-xt3 text-center">{{$index+1}}</td>
+                                        <td class="mfb-xxt text-center" ng-bind="valueInfo.type"></td>
+                                        <td class="text-left">{{valueInfo.value}}</td>
+                                        <td class="mfb-xxt text-center">
+                                            <button ng-if="valueInfo.type == 'CUSTOM'" ng-controller="popupCtrl" class="btn btn-success btn-xs" ng-click="openDictCustom('lg', editDictionary, $index, valueInfo)"><i class="fa fa-pencil"></i></button>
+                                            <button ng-if="valueInfo.type != 'CUSTOM'" ng-controller="popupCtrl" class="btn btn-success btn-xs" ng-click="openDictValue('md', editDictionary, $index, valueInfo)"><i class="fa fa-pencil"></i></button>
+                                            <button class="btn btn-danger btn-xs"  ng-click="delDictItem($index)"><i class="fa fa-trash-o"></i></button>
+                                            <button class="btn btn-danger btn-xs" ng-show="$index != 0" ng-click="sortUp($index)">
+                                                <i class="glyphicon glyphicon-arrow-up"></i>
+                                            </button>
+                                            <button class="btn btn-danger btn-xs" ng-show="$index < (vm.dictionary.expression.ruleWordList.length - 1)" ng-click="sortDown($index)">
+                                                <i class="glyphicon glyphicon-arrow-down"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div><!-- .table-responsive -->
+                        </div>
+                    </div><!-- /.box-body -->
                 </div>
-            </div><!-- /.box-body -->
-            <div class="form-inline m-t-md text-center">
-                <button type="submit" class="btn btn-vo ng-scope" ng-click="save()" translate="BTN_SAVE"></button>
-                <button type="button" class="btn btn-default ng-scope" translate="BTN_CANCEL" ng-click="cancel()"></button>
-            </div><!-- .form-inline -->
-        </div>
-    </form>
+            </div><!-- .col-lg-12 -->
+
+            <div class="col-sm-12 text-center">
+                <div class="form-inline">
+                    <button type="submit" class="btn btn-vo ng-scope" ng-click="save()" translate="BTN_SAVE"></button>
+                    <button type="button" class="btn btn-default ng-scope" translate="BTN_CANCEL" ng-click="cancel()"></button>
+                </div><!-- .form-inline -->
+            </div>
+        </form>
+    </div>
 </div><!-- end .wrapper-md -->
