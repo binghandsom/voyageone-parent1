@@ -6,6 +6,7 @@ import com.voyageone.cms.enums.DictionaryMasterProp;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.web2.cms.bean.system.dictionary.CmsDictionaryIndexBean;
 import com.voyageone.web2.cms.dao.CmsMtDictDao;
+import com.voyageone.web2.cms.dao.CustomWordDao;
 import com.voyageone.web2.cms.model.CmsMtDictModel;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import com.voyageone.web2.core.dao.ChannelShopDao;
@@ -32,6 +33,9 @@ public class CmsDictManageService {
 
     @Autowired
     protected ChannelShopDao channelShopDao;
+
+    @Autowired
+    protected CustomWordDao customWordDao;
 
     /**
      * 获取检索页面初始化的master data数据
@@ -157,19 +161,23 @@ public class CmsDictManageService {
      *
      * @return 逻辑集合
      */
-//    public List<CustomWord> getCustomWords() {
-//        return customWordDao.selectWithParam();
-//    }
+    public Map<String, Object> getCustoms() {
+        Map<String, Object> resultInfo = new HashMap<>();
+        resultInfo.put("customs", customWordDao.selectWithParam());
+        return resultInfo;
+    }
 
     /**
      * 获取渠道所有字典的简单信息
      *
-     * @param channel_id 当前所选渠道
-     * @return 字典集合
+     * @param cmsMtDictModel
+     * @param userInfo
+     * @return
      */
-//    public List<DictWordBean> getDictList(String channel_id) {
-//        return dictDao.selectSimpleDict(channel_id);
-//    }
+    public CmsMtDictModel getDict(CmsMtDictModel cmsMtDictModel, UserSessionBean userInfo) {
+        cmsMtDictModel.setOrder_channel_id(userInfo.getSelChannelId());
+        return cmsMtDictDao.selectById(cmsMtDictModel);
+    }
 
     /**
      * 检测现有数据是否符合

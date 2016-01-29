@@ -39,29 +39,40 @@ public class CmsDictManageController extends CmsController {
      * @param request
      * @return
      */
-    @RequestMapping(CmsUrlConstants.SYSTEM.DICTIONARY.DT_GET_DICT)
-    public AjaxResponse dtGetDict(@RequestBody CmsDictionaryIndexBean request) {
+    @RequestMapping(CmsUrlConstants.SYSTEM.DICTIONARY.GET_DICT_LIST)
+    public AjaxResponse dtGetDictList(@RequestBody CmsDictionaryIndexBean request) {
         return success(dictManageService.dtGetAllDict(request, getUser().getSelChannelId()));
     }
 
     /**
+     * 获取单个字典数据
+     * @param request
+     * @return
+     */
+    @RequestMapping(CmsUrlConstants.SYSTEM.DICTIONARY.GET_DICT)
+    public AjaxResponse dtGetDict(@RequestBody CmsMtDictModel request) {
+        return success(dictManageService.getDict(request, getUser()));
+    }
+
+
+    /**
      * 删除字典页面list页面的单个字典数据
-     * @param cmsMtDictModel
+     * @param request
      * @return
      */
     @RequestMapping(CmsUrlConstants.SYSTEM.DICTIONARY.DEL_DICT)
-    public AjaxResponse delDict(@RequestBody CmsMtDictModel cmsMtDictModel) {
-        return success(dictManageService.delDict(cmsMtDictModel, getUser()));
+    public AjaxResponse delDict(@RequestBody CmsMtDictModel request) {
+        return success(dictManageService.delDict(request, getUser()));
     }
 
     /**
      * 添加一个新的字典数据
-     * @param cmsMtDictModel
+     * @param request
      * @return
      */
     @RequestMapping(CmsUrlConstants.SYSTEM.DICTIONARY.ADD_DICT)
-    public AjaxResponse addDict(@RequestBody CmsMtDictModel cmsMtDictModel) {
-        dictManageService.addDict(cmsMtDictModel, getUser());
+    public AjaxResponse addDict(@RequestBody CmsMtDictModel request) {
+        dictManageService.addDict(request, getUser());
         return new AjaxResponse();
     }
 
@@ -75,6 +86,15 @@ public class CmsDictManageController extends CmsController {
     }
 
     /**
+     * 获取自定义的字典列表
+     * @return
+     */
+    @RequestMapping(CmsUrlConstants.SYSTEM.DICTIONARY.GET_CUSTOMS)
+    public AjaxResponse getCustoms() {
+        return success(dictManageService.getCustoms());
+    }
+
+    /**
      * 修改字典页面list页面的某个字典数据
      * @param cmsMtDictModel
      * @return
@@ -84,13 +104,6 @@ public class CmsDictManageController extends CmsController {
 //        return success(dictManageService.setDict(cmsMtDictModel, getUser()));
 //    }
 /*
-
-    @RequestMapping(CmsUrlConstants.SYSTEM.DICTIONARY.GET_CUSTOMS)
-    public AjaxResponse getCustomWords() {
-        List<CustomWord> customWords = dictManageService.getCustomWords();
-
-        return success(customWords);
-    }
 
     @RequestMapping(CmsUrlConstants.SYSTEM.DICTIONARY.GET_DICT_LIST)
     public AjaxResponse getDictList() {

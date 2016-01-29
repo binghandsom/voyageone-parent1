@@ -48,6 +48,10 @@ public class CmsMtDictDao extends WebBaseDao {
         return selectList("cms_mt_dict_selectByName", cmsMtDictModel);
     }
 
+    public CmsMtDictModel selectById(CmsMtDictModel cmsMtDictModel) {
+        return selectOne("cms_mt_dict_selectById", cmsMtDictModel);
+    }
+
     public List<CmsMtDictModel> selectSimpleDict(String channel_id) {
         return selectList("cms_mt_dict_selectSimpleDict", parameters("channel_id", channel_id));
     }

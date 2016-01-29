@@ -1,52 +1,41 @@
-<div class="vo_modal" ng-init="ctrl.init()">
+<div class="vo_modal" ng-init="initialize()">
     <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="ctrl.cancel()"><span
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="cancel()"><span
                 aria-hidden="true"><i class="fa fa-close"></i></span></button>
-        <h5 class="modal-title"><i class="fa fa-crosshairs"></i> 新增自定义项</h5>
+        <h5 class="modal-title"><i class="fa fa-crosshairs"></i>&nbsp;{{'BTN_NEW_DICTIONARY_DEFINE' | translate}}</h5>
     </div>
     <form role="form" class="form-horizontal m-t-md m-l-sm m-b-sm m-r-sm">
         <div class="form-group">
-            <label class="col-sm-1 control-label text-center">自定义项</label>
+            <label class="col-sm-1 control-label text-center" translate="TXT_DICT_CUSTOM"></label>
             <div class="col-sm-4">
-                <select class="form-control">
-                    <option value="">GetAllImages</option>
-                    <option value="">GetMainProductImages</option>
-                    <option value="">GetPaddingImageKey</option>
+                <select id="dict-custom-name" class="form-control" ng-model="vm.custom" ng-change="resetValue()"
+                        ng-options="i as i.word_name for i in vm.masterData.customs">
                 </select>
             </div>
-            <label class="col-sm-5 control-label text-left">获取主商品图片的所有图片</label>
+            <label class="col-sm-5 control-label text-left" ng-bind="vm.custom.word_desc"></label>
         </div>
         <div class="box table-responsive">
             <table class="table table-hover vo_table" style="margin-bottom:0px">
                 <tbody>
                 <tr class="font-bold" style="background:#e67e22;color:#fff">
-                    <td class="mfb-xt3 text-center">Seq.	</td>
-                    <td class="mfb-xxx text-left">名称</td>
-                    <td class="mfb-xxxs text-left">摘要</td>
-                    <td class="mfb-xxxs text-center">值</td>
-                    <td class="mfb-xxt text-center">操作</td>
+                    <td class="mfb-xt3 text-center" translate="TXT_SEQ"></td>
+                    <td class="mfb-xxx text-left" translate="TXT_NAME"></td>
+                    <td class="mfb-xxxs text-left" translate="TXT_ABSTRACT"></td>
+                    <td class="mfb-xxxs text-left" translate="TXT_VALUE"></td>
+                    <td class="mfb-xxt text-center" translate="TXT_ACTION"></td>
                 </tr>
                 </tbody>
             </table>
-            <div class="col-sm-12 dropdown_table_main">
+            <div class="col-sm-12 dropdown_table_main" if-no-rows="vm.custom.params.length">
                 <table class="table table-hover vo_table tableWordBreak" style="margin-bottom:0px">
                     <tbody>
-                    <tr>
-                        <td class="mfb-xt3 text-center">1</td>
-                        <td class="mfb-xxx text-left">imageTemplate</td>
-                        <td class="mfb-xxxs text-left">图片模板</td>
-                        <td class="text-center">产品图片-5</td>
+                    <tr ng-repeat="param in vm.custom.params">
+                        <td class="mfb-xt3 text-center">{{$index+1}}</td>
+                        <td class="mfb-xxx text-left" ng-bind="param.param_name"></td>
+                        <td class="mfb-xxxs text-left" ng-bind="param.param_desc"></td>
+                        <td class="mfb-xxxs text-left" ng-bind="vm.customBody.userParam[param.param_name]"></td>
                         <td class="mfb-xxt text-center" ng-controller="popupCtrl">
-                            <button title="修改参数" class="btn btn-success btn-xs" ng-click=""><i class="fa fa-pencil"></i> 修改参数</button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="mfb-xt3 text-center">2</td>
-                        <td class="mfb-xxx text-left">paddingPropName</td>
-                        <td class="mfb-xxxs text-left">padding属性图名称，该名称决定使用哪个类型图片作为填充</td>
-                        <td class="mfb-xxxs text-center">产品图片-5</td>
-                        <td class="mfb-xxt text-center" ng-controller="popupCtrl">
-                            <button title="修改参数" class="btn btn-success btn-xs" ng-click=""><i class="fa fa-pencil"></i> 修改参数</button>
+                            <button class="btn btn-success btn-xs" ng-click="openDictValue('md', editDictionary, param.param_name)"><i class="fa fa-pencil"></i></button>
                         </td>
                     </tr>
                     </tbody>
@@ -56,7 +45,7 @@
     </form>
 
     <div class="modal-footer">
-        <button class="btn btn-default" ng-click="ctrl.cancel()">取消</button>
-        <button class="btn btn-vo" ng-click="ctrl.ok()">保存</button>
+        <button class="btn btn-default" ng-click="cancel()" translate="BTN_CANCEL"></button>
+        <button class="btn btn-vo" ng-click="save()" translate="BTN_SAVE"></button>
     </div>
 </div><!-- .vo_modal -->

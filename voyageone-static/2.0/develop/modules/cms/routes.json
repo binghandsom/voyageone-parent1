@@ -119,5 +119,11 @@
     "hash": "/system/dictionary/item",
     "templateUrl": "views/system/dictionary/item.tpl.html",
     "controllerUrl": "modules/cms/views/system/dictionary/item.ctl"
+  },
+  "system_dict_item_edit": {
+    "url": "/system/dictionary/item/",
+    "hash": "/system/dictionary/item/:id",
+    "templateUrl": "views/system/dictionary/item.tpl.html",
+    "controllerUrl": "modules/cms/views/system/dictionary/item.ctl"
   }
 }

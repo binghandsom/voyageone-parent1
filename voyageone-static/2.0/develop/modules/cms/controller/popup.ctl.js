@@ -79,7 +79,7 @@ define([
                     "custom": {
                         "templateUrl": "views/pop/system/dictionary/custom.tpl.html",
                         "controllerUrl": "modules/cms/views/pop/system/dictionary/custom.ctl",
-                        "controller": "popDictCustomController as ctrl"
+                        "controller": "popDictCustomController"
                     }
                 }
             },
@@ -221,53 +221,55 @@ define([
             });
         }
 
+        /**
+         * 添加字典值页面
+         * @type {openDictValue}
+         */
         $scope.openDictValue = openDictValue;
-        function openDictValue(viewSize, fnInitial) {
+        function openDictValue(viewSize, data, fnInitial, $index, data) {
             require([popActions.system.dictionary.value.controllerUrl], function () {
                 var modalInstance = $modal.open({
                     templateUrl: popActions.system.dictionary.value.templateUrl,
                     controller: popActions.system.dictionary.value.controller,
                     size: viewSize,
                     resolve: {
-                        promotion: function () {
-                            //var productIds = [];
-                            //_.forEach(selList, function (object) {
-                            //    productIds.push(object.id);
-                            //});
-                            //return {"promotion": promotion, "productIds": productIds};
+                        dictValue: function () {
+                            if ($index != undefined && data != null)
+                            return JSON.parse(data)
                         }
                     }
                 });
 
                 // 回调主页面的刷新操作
                 modalInstance.result.then(function (data) {
-                    fnInitial(data);
+                    fnInitial(data, $index);
                 })
             });
         }
 
+        /**
+         * 添加字典自定义页面
+         * @type {openDictCustom}
+         */
         $scope.openDictCustom = openDictCustom;
-        function openDictCustom(viewSize) {
+        function openDictCustom(viewSize, fnInitial, $index, data) {
             require([popActions.system.dictionary.custom.controllerUrl], function () {
                 var modalInstance = $modal.open({
                     templateUrl: popActions.system.dictionary.custom.templateUrl,
                     controller: popActions.system.dictionary.custom.controller,
                     size: viewSize,
                     resolve: {
-                        promotion: function () {
-                            //var productIds = [];
-                            //_.forEach(selList, function (object) {
-                            //    productIds.push(object.id);
-                            //});
-                            //return {"promotion": promotion, "productIds": productIds};
+                        customValue: function () {
+                            if ($index != undefined && data != null)
+                                return JSON.parse(data)
                         }
                     }
                 });
 
                 // 回调主页面的刷新操作
-                //modalInstance.result.then(function () {
-                //    fnInitial();
-                //})
+                modalInstance.result.then(function (data) {
+                    fnInitial(data, $index);
+                })
             });
         }
 

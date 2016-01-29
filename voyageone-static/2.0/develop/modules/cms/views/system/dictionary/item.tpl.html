@@ -127,7 +127,7 @@
                             </tr>
                             </tbody>
                         </table>
-                        <div class="col-sm-12 dropdown_table_main" if-no-rows="vm.dictionary.valueList.length">
+                        <div class="col-sm-12 dropdown_table_main" if-no-rows="vm.dictionary.expression.ruleWordList.length">
                             <table class="table table-hover vo_table tableWordBreak" style="margin-bottom:0px">
                                 <tbody>
                                 <tr ng-repeat="valueInfo in vm.dictionary.expression.ruleWordList">
@@ -135,7 +135,8 @@
                                     <td class="mfb-xxt text-center" ng-bind="valueInfo.type"></td>
                                     <td class="text-left" ng-bind="valueInfo.value"></td>
                                     <td class="mfb-xxt text-center">
-                                        <button ng-controller="popupCtrl" class="btn btn-success btn-xs" ng-click=""><i class="fa fa-pencil"></i></button>
+                                        <button ng-if="valueInfo.type == 'CUSTOM'" ng-controller="popupCtrl" class="btn btn-success btn-xs" ng-click="openDictCustom('lg', editDictionary, $index, valueInfo.value)"><i class="fa fa-pencil"></i></button>
+                                        <button ng-if="valueInfo.type != 'CUSTOM'" ng-controller="popupCtrl" class="btn btn-success btn-xs" ng-click="openDictValue('md', editDictionary, $index, valueInfo.value)"><i class="fa fa-pencil"></i></button>
                                         <button class="btn btn-danger btn-xs"  ng-click="delDictItem($index)"><i class="fa fa-trash-o"></i></button>
                                         <button class="btn btn-danger btn-xs" ng-show="$index != 0" ng-click="sortUp($index)">
                                             <i class="glyphicon glyphicon-arrow-up"></i>

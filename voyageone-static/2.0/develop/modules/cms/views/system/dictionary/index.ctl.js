@@ -6,7 +6,7 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function () {
 
-    function dictionaryIndex($scope, notify, $routeParams, $translate, $dictionaryService) {
+    function dictionaryIndex($scope, notify, $location, $translate, $dictionaryService, cRoutes) {
 
         $scope.vm = {
             searchInfo: { cartId: null },
@@ -17,6 +17,7 @@ define([
         $scope.initialize = initialize;
         $scope.clear = clear;
         $scope.search = search;
+        $scope.openDictionaryItem = openDictionaryItem;
         $scope.delDictItem = delDictItem;
 
         /**
@@ -44,11 +45,19 @@ define([
             var data = angular.copy($scope.vm.searchInfo);
             data.offset = ($scope.vm.dictionaryPageOption.curr - 1) * $scope.vm.dictionaryPageOption.size;
             data.rows = $scope.vm.dictionaryPageOption.size;
-            $dictionaryService.dtGetDict(data)
+            $dictionaryService.getDictList(data)
                 .then(function (res) {
                     $scope.vm.dictionaryList = res.data.dictionaryList;
                     $scope.vm.dictionaryPageOption.total = res.data.dictionaryListCnt;
                 })
+        }
+
+        /**
+         * 跳转到单个字典页面
+         * @param id
+         */
+        function openDictionaryItem (id) {
+            $location.path(cRoutes.system_dict_item_edit.url + id);
         }
 
         /**
@@ -64,6 +73,6 @@ define([
         }
     }
 
-    dictionaryIndex.$inject = ['$scope', 'notify', '$routeParams', '$translate', '$dictionaryService'];
+    dictionaryIndex.$inject = ['$scope', 'notify', '$location', '$translate', '$dictionaryService', 'cRoutes'];
     return dictionaryIndex;
 });

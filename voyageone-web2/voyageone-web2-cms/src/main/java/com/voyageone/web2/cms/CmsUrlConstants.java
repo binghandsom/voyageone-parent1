@@ -153,7 +153,7 @@ public interface CmsUrlConstants {
 
             String INIT = "init";
 
-            String DT_GET_DICT = "dtGetDict";
+            String GET_DICT = "getDict";
 
             String GET_CONST = "getConst";
 

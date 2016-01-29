@@ -133,13 +133,13 @@
     "$dictionaryService": {
       "root": "/cms/system/dictionary",
       "init": "init",
-      "dtGetDict" : "dtGetDict",
+      "getDict" : "getDict",
+      "getDictList" : "getDictList",
       "getConst" : "getConst",
       "getCustoms" : "getCustoms",
       "setDict" : "setDict",
       "delDict" : "delDict",
       "addDict" : "addDict",
-      "getDictList" : "getDictList",
       "customs":"getCustoms"
     }
   }

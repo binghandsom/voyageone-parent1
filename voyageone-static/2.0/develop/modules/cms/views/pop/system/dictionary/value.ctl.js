@@ -12,12 +12,9 @@ define([
   'cms'
 ], function (cms) {
 
-  cms.controller('popDictValueController', function ($scope, $dictionaryService, $modalInstance, notify) {
+  cms.controller('popDictValueController', function ($scope, $dictionaryService, $modalInstance, $translate, notify) {
+
     $scope.vm = {
-      //propertyInfo: {
-      //  property: {},
-      //  productIds: productIds
-      //},
       masterData: {},
       valueTypes: {
         text: 'TEXT',
@@ -29,7 +26,7 @@ define([
         valueType: 'MASTER',
         masterValue: {},
         dictValue: {},
-        textValue: {}
+        textValue: ""
       }
     };
 
@@ -37,6 +34,9 @@ define([
     $scope.save = save;
     $scope.cancel = cancel;
 
+    /**
+     * 初始化页面获得主数据
+     */
     function initialize() {
       $dictionaryService.getConst().then(function (res) {
         $scope.vm.masterData = res.data;
@@ -52,6 +52,7 @@ define([
         value: _returnValue()
       };
       $modalInstance.close(data);
+      notify.success ($translate.instant('TXT_COM_UPDATE_SUCCESS'));
       $scope.$close();
     }
 
@@ -63,7 +64,7 @@ define([
         valueType: 'MASTER',
         masterValue: {},
         dictValue: {},
-        textValue: {}
+        textValue: ""
       };
       $scope.$close();
     }

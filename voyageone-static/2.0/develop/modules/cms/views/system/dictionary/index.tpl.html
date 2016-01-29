@@ -66,12 +66,12 @@
 						<tr ng-repeat="dictionaryInfo in vm.dictionaryList">
 							<td class="mfb-xt3 text-center" ng-bind="dictionaryInfo.id"></td>
 							<td class="mfb-xxt text-center"><span class="badge badge-empty"></span></td>
-							<td class="mfb-xxs text-left text-u-l" ng-bind="dictionaryInfo.name"></td>
+							<td class="mfb-xxs text-left" ng-bind="dictionaryInfo.name"></td>
 							<td class="mfb-xxxxs text-left"><div class="line-height">{{dictionaryInfo.value}}</div></td>
 							<td class="mfb-xxt text-center" ng-bind="dictionaryInfo.created"></td>
 							<td class="mfb-xxt text-center" ng-bind="dictionaryInfo.modified"></td>
 							<td class="mfb-xt text-center">
-								<button ng-controller="popupCtrl" class="btn btn-success btn-xs" ng-click="openDictionaryitem(dictionaryInfo)"><i class="fa fa-pencil"></i></button>
+								<button class="btn btn-success btn-xs" ng-click="openDictionaryItem(dictionaryInfo.id)"><i class="fa fa-pencil"></i></button>
 								<button class="btn btn-danger btn-xs"  ng-click="delDictItem(dictionaryInfo)"><i class="fa  fa-trash-o"></i></button>
 							</td>
 						</tr>

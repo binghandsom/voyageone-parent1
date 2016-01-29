@@ -8,367 +8,83 @@
   @Version: 0.0.1
  */
 
-
 define([
   'cms'
 ], function (cms) {
 
+  cms.controller('popDictCustomController', function ($scope, $dictionaryService, $modalInstance, $translate, notify) {
 
-  cms.controller('popDictCustomController', function ($scope) {
-//, $propChangeService, $translate, $modalInstance, notify
-    //$scope.vm = {
-    //  propertyInfo: {
-    //    property: {},
-    //    productIds: productIds
-    //  },
-    //  properties: []
-    //};
-    //
-    //$scope.initialize = initialize;
-    //$scope.save = save;
-    //
-    //function initialize() {
-    //  $propChangeService.getPopOptions().then(function (res) {
-    //    $scope.vm.properties = res.data;
-    //  });
-    //}
-    //
-    //function save () {
-    //  $propChangeService.setProductFields($scope.vm.propertyInfo).then(function () {
-    //    notify.success ($translate.instant('TXT_COM_UPDATE_SUCCESS'));
-    //    //$scope.$close();
-    //    $modalInstance.close('');
-    //  });
-    //}
+    $scope.vm = {
+      valueType: 'CUSTOM',
+      masterData: {},
+      custom: { params: [] },
+      customBody: {
+        moduleName: '',
+        userParam: {}
+      }
+    };
+
+    $scope.initialize = initialize;
+    $scope.save = save;
+    $scope.cancel = cancel;
+    $scope.editDictionary = editDictionary;
+    $scope.resetValue = resetValue;
+
+    function initialize() {
+      $dictionaryService.getCustoms().then(function (res) {
+        $scope.vm.masterData = res.data;
+      });
+    }
+
+    /**
+     * 保存现有数据到主页面
+     */
+    function save () {
+      var data = {
+        type: $scope.vm.valueType,
+        value: $scope.vm.customBody
+      };
+      $modalInstance.close(data);
+      notify.success ($translate.instant('TXT_COM_UPDATE_SUCCESS'));
+      $scope.$close();
+    }
+
+    /**
+     * 取消新添加数据
+     */
+    function cancel () {
+      $scope.vm.custom = { params: [] };
+      $scope.vm.customBody = {
+        moduleName: '',
+        userParam: {}
+      };
+
+      $scope.$close();
+    }
+
+    /**
+     * 修改一个原有的字典项
+     * @param info
+     * @param index
+     */
+    function editDictionary (info, name) {
+      if(!_.isUndefined(info))
+        $scope.vm.customBody.userParam[name] = angular.toJson({ruleWordList: info});
+    }
+
+    /**
+     * 清空上次被设置的值
+     */
+    function resetValue () {
+      $scope.vm.customBody = {
+        moduleName: $scope.vm.custom.word_name,
+        userParam: {}
+      };
+
+      // 初始化每个自定义字典的项目
+      _.forEach($scope.vm.custom.params, function (param) {
+        $scope.vm.customBody.userParam[param.param_name] = null;
+      })
+    }
   });
 });
-
-/*
-var bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
-
-define(['modules/cms/views/dict/dict.custom.ctl',
-        'modules/cms/views/dict/dict.value.ctl'],
-
-    function(cmsModule) {
-        return cmsModule.controller('DictItemController', (function() {
-          _Class.$inject = ['$scope', '$translate', 'DictService', '$location', '$modal', 'alert', 'notify'];
-
-          function _Class($scope, $translate, DictService, $location, $modal, alert, notify) {
-            var dict;
-            this.$translate = $translate;
-            this.DictService = DictService;
-            this.$location = $location;
-            this.$modal = $modal;
-            this.alert = alert;
-            this.notify = notify;
-            this.saveCustom = bind(this.saveCustom, this);
-            this.broadcast = function(name, msg) {
-              return $scope.$broadcast(name, msg);
-            };
-            $scope.$on('custom.save', this.saveCustom);
-            $scope.$on('custom.cancel', (function(_this) {
-              return function() {
-                return _this.showCustom = false;
-              };
-            })(this));
-            dict = sessionStorage.dict;
-            if (dict) {
-              dict = angular.fromJson(dict);
-            }
-            if (!dict || !dict.item || !dict.item.id) {
-              sessionStorage.dict = angular.toJson(dict = {
-                item: {
-                  isUrl: false,
-                  type: 'DICT'
-                }
-              });
-              this.isEdit = false;
-            } else {
-              this.isEdit = true;
-              dict = angular.fromJson(dict);
-            }
-            this.item = dict.item || (dict.item = {});
-            if (this.item.value) {
-              this.value = angular.fromJson(this.item.value);
-            }
-            if (!this.value.expression) {
-              this.value.expression = {};
-            }
-            if (!this.value.expression.ruleWordList) {
-              this.value.expression.ruleWordList = [];
-            }
-            this.wordList = this.value.expression.ruleWordList;
-            this.DictService.getConst().then((function(_this) {
-              return function(res) {
-                return _this.constData = res.data;
-              };
-            })(this));
-            this.DictService.getDictList().then((function(_this) {
-              return function(res) {
-                var selfIndex;
-                selfIndex = _.findIndex(res.data, function(i) {
-                  return i.id === _this.item.id;
-                });
-                res.data.splice(selfIndex, 1);
-                return _this.dictList = res.data;
-              };
-            })(this));
-          }
-
-          _Class.prototype.isEdit = false;
-
-          _Class.prototype.item = null;
-
-          _Class.prototype.value = {};
-
-          _Class.prototype.wordList = [];
-
-          _Class.prototype.showCustom = false;
-
-          _Class.prototype.constData = null;
-
-          _Class.prototype.dictList = null;
-
-          _Class.prototype.cancel = function() {
-            sessionStorage.dict = null;
-            return this.$location.path('/cms/dict');
-          };
-
-          _Class.prototype.addCustom = function() {
-            this.broadcast('custom.add');
-            return this.showCustom = true;
-          };
-
-          _Class.prototype.addValue = function() {
-            return this.openValue(null, (function(_this) {
-              return function(res) {
-                return _this.wordList.push(res);
-              };
-            })(this));
-          };
-          _Class.prototype.up = function(index) {
-            var temp =  angular.copy (this.wordList[index]);
-            this.wordList.splice(index, 1);
-            this.wordList.splice(index - 1, 0,temp);
-          };
-
-          _Class.prototype.down = function(index) {
-            var temp =  angular.copy (this.wordList[index]);
-            this.wordList.splice(index, 1);
-            this.wordList.splice(index+1 , 0,temp);
-          };
-
-          _Class.prototype.delValue = function(index) {
-            return this.wordList.splice(index, 1);
-          };
-
-          _Class.prototype.editValue = function(word,mode) {
-            if (word.type === 'CUSTOM'&& mode !=null) {
-              this.broadcast('custom.edit', word);
-              this.showCustom = true;
-              return;
-            }
-            return this.openValue(word, function(res) {
-              word.type = res.type;
-              return word.value = res.value;
-            });
-          };
-
-          _Class.prototype.openValue = function(word, callback) {
-            return this.$modal.open({
-              templateUrl: 'modules/cms/views/dict/dict.value.tpl.html',
-              controller: 'DictValueController',
-              controllerAs: 'vm',
-              resolve: {
-                masterProps: (function(_this) {
-                  return function() {
-                    return _this.constData.masterProps;
-                  };
-                })(this),
-                cmsValues: (function(_this) {
-                  return function() {
-                    return _this.constData.cmsValues;
-                  };
-                })(this),
-                dictList: (function(_this) {
-                  return function() {
-                    return _this.dictList;
-                  };
-                })(this),
-                word: function() {
-                  return word;
-                }
-              }
-            }).result.then(callback);
-          };
-
-          _Class.prototype.save = function() {
-            if (!this.value.value) {
-              this.notify.warning('TXT_MSG_DICT_NO_NAME');
-              return;
-            }
-            if (!this.wordList.length) {
-              this.notify.warning('TXT_MSG_DICT_NO_VALUE');
-              return;
-            }
-            this.item.value = angular.toJson(this.value);
-            this.item.name = this.value.value;
-            return this.DictService[!this.isEdit ? 'addDict' : 'setDict'](this.item).then((function(_this) {
-              return function(res) {
-                if (res) {
-                  return _this.alert('TXT_MSG_SAVE_SUCCESS').result.then(function() {
-                    return _this.cancel();
-                  });
-                }
-              };
-            })(this));
-          };
-
-          _Class.prototype.saveCustom = function(event, msg) {
-            if (!msg.editing) {
-              this.wordList.push(msg.custom);
-            }
-            return this.showCustom = false;
-          };
-
-          return _Class;
-
-        })());
-});
-*/
-// Generated by CoffeeScript 1.9.3
-
-/*
- @Name: DictCustomController
- @Date: 2015-09-15 16:06:34
-
- @User: Jonas
- @Version: 0.0.1
- */
-var bind = function(fn, me){
-  return function(){
-    return fn.apply(me, arguments);
-  };
-};
-
-define([],
-
-    function(cmsModule) {
-
-      return cmsModule.controller('DictCustomController', (function() {
-
-        _Class.$inject = ['$scope', 'alert', '$translate', 'DictService'];
-
-        function _Class($scope, alert,$translate, DictService) {
-          this.alert = alert;
-          this.$translate = $translate;
-          this.DictService = DictService;
-          this.onEditCustom = bind(this.onEditCustom, this);
-          this.onAddCustom = bind(this.onAddCustom, this);
-          this.openValue = function(word, callback) {
-            return $scope.$parent.vm.openValue(word, callback);
-          };
-          this.DictService.customs().then((function(_this) {
-            return function(res) {
-              return _this.customs = res.data;
-            };
-          })(this));
-          $scope.$on('custom.add', this.onAddCustom);
-          $scope.$on('custom.edit', this.onEditCustom);
-          this.emit = function(name, msg) {
-            return $scope.$emit(name, msg);
-          };
-        }
-
-        _Class.prototype.onAddCustom = function() {
-          this.editing = false;
-          this.customValue = {
-            type: 'CUSTOM',
-            value: {
-              moduleName: '',
-              userParam: {}
-            }
-          };
-          return this.customBody = this.customValue.value;
-        };
-
-        _Class.prototype.onEditCustom = function(event, editingCustom) {
-          this.editing = true;
-          this.customValue = editingCustom;
-          if (!this.customValue || !this.customValue.value) {
-            this.alert('TXT_MSG_DICT_UN_VALID_CUS');
-            this.cancel();
-            return;
-          }
-          this.customBody = this.customValue.value;
-          return this.custom = _.find(this.customs, (function(_this) {
-            return function(obj) {
-              return obj.word_name === _this.customBody.moduleName;
-            };
-          })(this));
-        };
-
-        _Class.prototype.editing = false;
-
-        _Class.prototype.custom = null;
-
-        _Class.prototype.customValue = null;
-
-        _Class.prototype.customBody = null;
-
-        _Class.prototype.cancel = function() {
-          return this.emit('custom.cancel');
-        };
-
-        _Class.prototype.setParam = function(param) {
-          return this.openValue(null, (function(_this) {
-            return function(val) {
-              return _this.customBody.userParam[param.param_name] = {
-                ruleWordList: [val]
-              };
-            };
-          })(this));
-        };
-
-        _Class.prototype.saveCustom = function() {
-          var unValidParamName;
-          if (!this.custom) {
-            this.alert('TXT_MSG_DICT_NO_CUS');
-            return;
-          }
-          unValidParamName = this.checkParam();
-          if (unValidParamName) {
-            this.alert({
-              id: 'TXT_MSG_DICT_CUS_NO_VALUE',
-              values: {
-                unValidParamName: unValidParamName
-              }
-            });
-            return;
-          }
-          this.customBody.moduleName = this.custom.word_name;
-          return this.emit('custom.save', {
-            editing: this.editing,
-            custom: this.customValue
-          });
-        };
-
-        _Class.prototype.checkParam = function() {
-          var i, len, p, params, ref, val;
-          params = this.customBody.userParam;
-          ref = this.custom.params;
-          for (i = 0, len = ref.length; i < len; i++) {
-            p = ref[i];
-            val = params[p.param_name];
-            if (!val || !val.ruleWordList || !val.ruleWordList.length) {
-              return p.param_name;
-            }
-          }
-          return null;
-        };
-
-        return _Class;
-
-      })());
-    });
-

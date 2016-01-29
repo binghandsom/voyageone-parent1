@@ -1,5 +1,7 @@
 package com.voyageone.web2.cms.model;
 
+import com.voyageone.base.dao.mysql.BaseModel;
+
 import java.util.List;
 
 /**
@@ -7,7 +9,7 @@ import java.util.List;
  *
  * Created by Jonas on 9/11/15.
  */
-public class CustomWord {
+public class CustomWord extends BaseModel {
     private int word_id;
 
     private String word_name;
