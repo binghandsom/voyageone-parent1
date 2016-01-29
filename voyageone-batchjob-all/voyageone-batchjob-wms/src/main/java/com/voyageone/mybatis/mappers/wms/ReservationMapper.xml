@@ -32,6 +32,12 @@
              from wms_bt_item_details itemdel
              where orders.order_channel_id = itemdel.order_channel_id
              and details.sku = itemdel.sku)
+        AND
+            not exists
+            (select 1
+             from jumei.jm_bt_sku jm
+             where orders.order_channel_id = jm.channel_id
+             and details.sku = jm.sku)
         ORDER BY
             details.sku
     </select>
@@ -47,7 +53,7 @@
             orders.cart_id,
             details.sku,
             details.price_per_unit,
-            itemdel.itemcode
+            ifnull(itemdel.itemcode,jm.product_code) as itemcode
         FROM
             oms_bt_orders orders,
             oms_bt_order_details details
@@ -57,6 +63,12 @@
             itemdel.order_channel_id = #{order_channel_id}
         AND
             itemdel.sku = details.sku
+        LEFT JOIN
+            jumei.jm_bt_sku jm
+        ON
+            itemdel.order_channel_id = jm.channel_id
+        AND
+            itemdel.sku = jm.sku
         WHERE
             orders.order_channel_id = #{order_channel_id}
         AND
@@ -89,7 +101,7 @@
             details.product,
             orders.cart_id,
             details.sku,
-            itemdel.itemcode
+            ifnull(itemdel.itemcode,jm.product_code) as itemcode
         FROM
             (SELECT
                 orders.order_number,
@@ -97,7 +109,19 @@
                 orders.order_channel_id,
                 orders.cart_id
             FROM
-                oms_bt_orders orders
+                oms_bt_orders orders,
+                (SELECT
+                    DISTINCT  order_number
+                FROM
+                    oms_bt_order_details
+                WHERE
+                    res_allot_flg = '0'
+                AND
+                    adjustment = 0
+                AND
+                    quantity_shipped = 1
+                AND
+                    res_id = 0) details1
             WHERE
                 orders.order_channel_id = #{order_channel_id}
             AND
@@ -105,20 +129,7 @@
             AND
                 orders.cancelled = 0
             AND
-                EXISTS (SELECT
-                                1
-                        FROM
-                                oms_bt_order_details details1
-                        WHERE
-                                orders.order_number = details1.order_number
-                        AND
-                                details1.res_allot_flg = '0'
-                        AND
-                                details1.adjustment = 0
-                        AND
-                                details1.quantity_shipped = 1
-                        AND
-                                details1.res_id = 0)
+                orders.order_number = details1.order_number
             AND
                 NOT EXISTS (SELECT
                                     1
@@ -139,12 +150,29 @@
                                     (select 1
                                      from wms_bt_item_details itemdel1
                                      where orders.order_channel_id = itemdel1.order_channel_id
-                                           and details1.sku = itemdel1.sku))
+                                           and details1.sku = itemdel1.sku)
+                                AND
+                                    not exists
+                                    (select 1
+                                     from jumei.jm_bt_sku jm
+                                     where orders.order_channel_id = jm.channel_id
+                                     and details1.sku = jm.sku))
             ORDER BY
                 orders.order_number
              LIMIT #{limit}) orders,
-            oms_bt_order_details details,
-            wms_bt_item_details itemdel
+            oms_bt_order_details details
+            LEFT JOIN
+                wms_bt_item_details itemdel
+            ON
+                itemdel.order_channel_id = #{order_channel_id}
+            AND
+                itemdel.sku = details.sku
+            LEFT JOIN
+                jumei.jm_bt_sku jm
+            ON
+                jm.channel_id = itemdel.order_channel_id
+            AND
+                jm.sku = itemdel.sku
         WHERE
             orders.order_number = details.order_number
         AND
@@ -155,10 +183,6 @@
             details.quantity_shipped = 1
         AND
             details.res_id = 0
-        AND
-            orders.order_channel_id = itemdel.order_channel_id
-        AND
-            details.sku = itemdel.sku
         ORDER BY
             orders.order_number,
             details.item_number
