@@ -648,9 +648,10 @@
 		SELECT
 		r.product_id,
 		r.channel_id,
-		u.url_key
+		tp.url_key
 		FROM
 		cms_bt_cn_product_share r
+		left join cms_bt_product tp on r.product_id = tp.product_id and r.channel_id = tp.channel_id
 		<if test="publishStatus != null and publishStatus != ''">
 			left join voyageone_ims.ims_bt_product s on r.product_id = s.product_id and r.channel_id = s.channel_id and r.cart_id = s.cart_id
 		</if>
