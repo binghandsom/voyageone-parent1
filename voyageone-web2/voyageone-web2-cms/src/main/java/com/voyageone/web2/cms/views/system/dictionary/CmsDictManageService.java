@@ -128,15 +128,6 @@ public class CmsDictManageService {
     }
 
     /**
-     * 获取可用的 CMS 属性
-     *
-     * @return CmsModelEnum 集合
-     */
-//    public List<CmsDictionaryEnum.CmsModelEnum> getCmsValues() {
-//        return Arrays.asList(CmsDictionaryEnum.CmsModelEnum.values());
-//    }
-
-    /**
      * 获取可用的主数据属性
      *
      * @return 属性集合

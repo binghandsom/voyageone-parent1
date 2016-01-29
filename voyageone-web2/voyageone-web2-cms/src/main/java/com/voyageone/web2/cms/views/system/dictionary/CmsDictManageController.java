@@ -103,13 +103,4 @@ public class CmsDictManageController extends CmsController {
     public AjaxResponse setDict(@RequestBody CmsMtDictModel cmsMtDictModel) {
         return success(dictManageService.setDict(cmsMtDictModel, getUser()));
     }
-/*
-
-    @RequestMapping(CmsUrlConstants.SYSTEM.DICTIONARY.GET_DICT_LIST)
-    public AjaxResponse getDictList() {
-        List<DictWordBean> wordBeans = dictManageService.getDictList(getUser().getSelChannelId());
-
-        return success(wordBeans);
-    }
-*/
 }
