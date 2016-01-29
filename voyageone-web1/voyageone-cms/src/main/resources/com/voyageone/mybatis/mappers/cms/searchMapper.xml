@@ -323,6 +323,12 @@
 		<result column="cnLongDescription" property="cnLongDescription" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
 		<result column="cnShortDescription" property="cnShortDescription" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
 		<result column="urlKey" property="urlKey" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="stone" property="stone" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="metalColor" property="metalColor" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="stoneColor" property="stoneColor" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="gemCreationMethod" property="gemCreationMethod" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="descriptionMeasure" property="descriptionMeasure" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="collection" property="collection" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
 		<result column="created" property="created"/>
 		<result column="creater" property="creater"/>
 		<result column="modified" property="modified"/>
@@ -468,6 +474,22 @@
 			b.cnLongDescription AS cnLongDescription,
 			SUM(IFNULL(c.qty_china, 0)) AS quantity,
 			b.urlKey AS urlKey,
+		<if test="channelId == '010'">
+			coalesce(a1.attribute_value_cn, a1.attribute_value) as stone,
+			coalesce(a2.attribute_value_cn, a2.attribute_value) as metalColor,
+			coalesce(a3.attribute_value_cn, a3.attribute_value) as stoneColor,
+			coalesce(a4.attribute_value_cn, a4.attribute_value) as gemCreationMethod,
+			coalesce(a5.attribute_value_cn, a5.attribute_value) as descriptionMeasure,
+			coalesce(a6.attribute_value_cn, a6.attribute_value) as collection,
+		</if>
+		<if test="channelId != '010'">
+			'' as stone,
+			'' as metalColor,
+			'' as stoneColor,
+			'' as gemCreationMethod,
+			'' as descriptionMeasure,
+			'' as collection,
+		</if>
 			b.created,
 			b.modified,
 			b.referenceMsrp AS referenceMsrp,
