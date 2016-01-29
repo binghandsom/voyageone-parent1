@@ -647,7 +647,8 @@
 		(
 		SELECT
 		r.product_id,
-		r.channel_id
+		r.channel_id,
+		u.url_key
 		FROM
 		cms_bt_cn_product_share r
 		<if test="publishStatus != null and publishStatus != ''">
@@ -658,14 +659,6 @@
 		</if>
 		<if test="codes != null">
 			left join cms_bt_cn_product u on r.product_id = u.product_id and r.channel_id = u.channel_id
-		</if>
-		<if test="channelId == '010'">
-			left join cms_mt_product_attribute a1 on a1.channel_id = u.channel_id and a1.product_url_key = u.url_key and a1.attribute_name = 'attribute19'
-			left join cms_mt_product_attribute a2 on a2.channel_id = u.channel_id and a2.product_url_key = u.url_key and a2.attribute_name = 'attribute11'
-			left join cms_mt_product_attribute a3 on a3.channel_id = u.channel_id and a3.product_url_key = u.url_key and a3.attribute_name = 'attribute23'
-			left join cms_mt_product_attribute a4 on a4.channel_id = u.channel_id and a4.product_url_key = u.url_key and a4.attribute_name = 'attribute28'
-			left join cms_mt_product_attribute a5 on a5.channel_id = u.channel_id and a5.product_url_key = u.url_key and a5.attribute_name = 'attribute25'
-			left join cms_mt_product_attribute a6 on a6.channel_id = u.channel_id and a6.product_url_key = u.url_key and a6.attribute_name = 'attribute38'
 		</if>
 		WHERE
 		r.channel_id = #{channelId}
@@ -702,6 +695,14 @@
 		) t1
 		LEFT JOIN view_cn_product_info_list b ON t1.channel_id = b.channel_id AND t1.product_id = b.product_id
 		LEFT JOIN Synship.wms_bt_inventory_center_logic c ON c.code = b.CODE and c.order_channel_id = b.channel_id
+		<if test="channelId == '010'">
+			left join cms_mt_product_attribute a1 on a1.channel_id = b.channel_id and a1.product_url_key = t1.url_key and a1.attribute_name = 'attribute19'
+			left join cms_mt_product_attribute a2 on a2.channel_id = b.channel_id and a2.product_url_key = t1.url_key and a2.attribute_name = 'attribute11'
+			left join cms_mt_product_attribute a3 on a3.channel_id = b.channel_id and a3.product_url_key = t1.url_key and a3.attribute_name = 'attribute23'
+			left join cms_mt_product_attribute a4 on a4.channel_id = b.channel_id and a4.product_url_key = t1.url_key and a4.attribute_name = 'attribute28'
+			left join cms_mt_product_attribute a5 on a5.channel_id = b.channel_id and a5.product_url_key = t1.url_key and a5.attribute_name = 'attribute25'
+			left join cms_mt_product_attribute a6 on a6.channel_id = b.channel_id and a6.product_url_key = t1.url_key and a6.attribute_name = 'attribute38'
+		</if>
 		GROUP BY b.CODE,b.channel_id
 
 	</select>
