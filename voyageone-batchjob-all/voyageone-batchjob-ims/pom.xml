@@ -20,6 +20,11 @@
             <artifactId>voyageone-batchjob-core</artifactId>
             <version>${voyageone.batchjob.core.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.voyageone</groupId>
+            <artifactId>voyageone-wsc1-getOrderService</artifactId>
+            <version>${voyageone.wsc1.getOrderService.version}</version>
+        </dependency>
     </dependencies>
     <build>
         <finalName>voyageone-batchjob-ims</finalName>

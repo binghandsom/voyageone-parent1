@@ -7,6 +7,7 @@ import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.JacksonUtil;
 import org.springframework.stereotype.Service;
 
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,10 +33,13 @@ public class JumeiProductService extends JmBase {
         product.check();
 
         Map<String, Object> params = new HashMap<>();
+//        params.put("product", URLEncoder.encode(product.toJsonStr(),"UTF-8"));
+//        params.put("spus", URLEncoder.encode(product.getSpusString(),"UTF-8"));
+//        params.put("dealInfo", URLEncoder.encode(product.getDealInfoString(),"UTF-8"));
         params.put("product", product.toJsonStr());
         params.put("spus", product.getSpusString());
         params.put("dealInfo", product.getDealInfoString());
-
+//        params.put("__deBug__","true");
         String reqResult = reqJmApi(shopBean, PRODUCT_NEW, params);
         Map<String, Object> resultMap = JacksonUtil.jsonToMap(reqResult);
 
@@ -104,7 +108,7 @@ public class JumeiProductService extends JmBase {
     }
 
 
-    private static String PRODUCT_GET = "/v1/htProduct/getProductById";
+    private static String PRODUCT_GET = "v1/htProduct/getProductById";
     /**
      * 取得商品
      */

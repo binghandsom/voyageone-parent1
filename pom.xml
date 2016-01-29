@@ -80,6 +80,7 @@
         <voyageone.wsdl.cms.version>0.0.1-SNAPSHOT</voyageone.wsdl.cms.version>
         <voyageone.wsdl.oms.version>0.0.1-SNAPSHOT</voyageone.wsdl.oms.version>
         <voyageone.wsc1.magento.version>0.0.1-SNAPSHOT</voyageone.wsc1.magento.version>
+        <voyageone.wsc1.getOrderService.version>0.0.1-SNAPSHOT</voyageone.wsc1.getOrderService.version>
 
         <!-- voyageone 2 module version -->
         <voyageone.web2.core.version>2.0.0-SNAPSHOT</voyageone.web2.core.version>

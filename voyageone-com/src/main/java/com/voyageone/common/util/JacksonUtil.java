@@ -59,7 +59,7 @@ public final class JacksonUtil {
      */
     public static Map<String, Object> jsonToMap(String jsonString) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
-        return mapper.readValue(jsonString, new TypeReference<Map<String, String>>() {
+        return mapper.readValue(jsonString, new TypeReference<Map<String, Object>>() {
         });
     }
 
