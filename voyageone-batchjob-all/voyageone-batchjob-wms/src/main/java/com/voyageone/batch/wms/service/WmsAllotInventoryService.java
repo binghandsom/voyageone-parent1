@@ -142,7 +142,7 @@ public class WmsAllotInventoryService extends BaseTaskService {
                             if (!StringUtils.isNullOrBlank2(postURI) && !StringUtils.isNullOrBlank2(reservation.getItemCode())) {
 
                                 // SKU信息取得
-                                String result = getItemCodeInfo(channel.getOrder_channel_id(), reservation.getItemCode(), postURI);
+                                String result = getItemCodeInfo(channel.getOrder_channel_id(), reservation.getItemCode(), reservation.getSku(), postURI);
                                 logger.info(channel.getFull_name() + "----------getItemCodeInfo：" + result);
 
                                 // 调用WebService时返回为空时，抛出错误
@@ -283,7 +283,7 @@ public class WmsAllotInventoryService extends BaseTaskService {
      * @return response
      * @throws UnsupportedEncodingException
      */
-    private String getItemCodeInfo(String orderChannelId, String itemCode, String postURI) throws UnsupportedEncodingException {
+    private String getItemCodeInfo(String orderChannelId, String itemCode, String sku, String postURI) throws UnsupportedEncodingException {
 
         String json = "";
         Map<String, Object> jsonMap = new HashMap<>();
@@ -295,14 +295,18 @@ public class WmsAllotInventoryService extends BaseTaskService {
 
             jsonMap.put("code", itemCode);
 
-
         } else {
 
             Map<String, Object> dataBodyMap = new HashMap<>();
 
             dataBodyMap.put("orderChannelId", orderChannelId);
 
-            dataBodyMap.put("itemCode", itemCode);
+            // 区分是聚美相关WebService还是CMS相关WebService
+            if(postURI.contains("Jm2Wms")) {
+                dataBodyMap.put("sku", sku);
+            }else {
+                dataBodyMap.put("itemCode", itemCode);
+            }
 
 //            String dataBody = new Gson().toJson(dataBodyMap);
 
