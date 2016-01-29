@@ -40,8 +40,6 @@ public class GroupMainProductUpdateRequest extends VoApiRequest<VoApiUpdateRespo
 
 	private Long productId;
 
-	private String modifier;
-
 	@Override
 	public void requestCheck() throws ApiRuleException {
 		RequestUtils.checkNotEmpty("channelId groupId productId", channelId,groupId,productId);
