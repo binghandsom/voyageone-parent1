@@ -89,17 +89,19 @@ public class GetWmfClientShippingInfoService extends GetClientShippingBaseServic
             List<ReservationClientBean> BackClientOrderList = new ArrayList<>();
             //发货订单初期化
             List<ReservationClientBean> ShipClientOrderList = new ArrayList<>();
+            //订单初期化
+            List<ReservationClientBean> cancelClientOrderList = new ArrayList<>();
 
             try {
                 List<ReservationClientBean> clientOrderList = new ArrayList<>();
 
                 // 从tt_reservation表中取得该店铺的status=11(open)的记录,同时需要再抽出oms_bt_orders中的client_order_id
-                List<ReservationClientBean> openclientOrderList = reservationDao.getReservationDatasByShop(orderChannelId, shop.getCart_id(), CodeConstants.Reservation_Status.Open);
-                clientOrderList.addAll(openclientOrderList);
+                List<ReservationClientBean> openOrderList = reservationDao.getReservationDatasByShop(orderChannelId, shop.getCart_id(), CodeConstants.Reservation_Status.Open);
+                clientOrderList.addAll(openOrderList);
 
                 // 从tt_reservation表中取得该店铺的status=99(cancel)的记录,同时品牌方还没有取消
-                List<ReservationClientBean> cancelclientOrderList = reservationDao.getCancelReservationDatasByShop(orderChannelId, shop.getCart_id(), CodeConstants.Reservation_Status.Cancelled);
-                clientOrderList.addAll(cancelclientOrderList);
+                List<ReservationClientBean> cancelOrderList = reservationDao.getCancelReservationDatasByShop(orderChannelId, shop.getCart_id(), CodeConstants.Reservation_Status.Cancelled);
+                clientOrderList.addAll(cancelOrderList);
 
                 int clientOrderListSize = clientOrderList.size();
                 $info(fullName + "（" + shopName + "）" + "-----Open订单件数：" + clientOrderListSize);
@@ -140,6 +142,8 @@ public class GetWmfClientShippingInfoService extends GetClientShippingBaseServic
                                 else if (MagentoConstants.WMF_Status.Canceled.equalsIgnoreCase(magentoOrderStatus)) {
                                     if (CodeConstants.Reservation_Status.Open.equals(clientOrder.getStatus())) {
                                         BackClientOrderList.add(clientOrder);
+                                    }else {
+                                        cancelClientOrderList.add(clientOrder);
                                     }
                                 }
 
@@ -164,6 +168,13 @@ public class GetWmfClientShippingInfoService extends GetClientShippingBaseServic
                     $info(channel.getFull_name() + "（" + shop.getShop_name() + "）" + "-----超卖订单件数：" + backOrderSize);
                     if (backOrderSize > 0) {
                         SetBackOrderList(channel, BackClientOrderList);
+                    }
+
+                    // 更新取消订单状态（品牌方确认取消）
+                    int cancelOrderSize = cancelClientOrderList.size();
+                    $info(channel.getFull_name() + "（" + shop.getShop_name() + "）" + "-----取消订单件数：" + cancelOrderSize);
+                    if (cancelOrderSize > 0) {
+                        SetCancelOrderList(channel, cancelClientOrderList);
                     }
                 }
 

@@ -195,6 +195,26 @@ public abstract class GetClientShippingBaseService extends BaseTaskService {
     }
 
     /**
+     * 取消订单的更新（品牌方确认取消）
+     */
+    protected void SetCancelOrderList(OrderChannelBean channel, List<ReservationClientBean>  cancelClientlList) throws Exception {
+
+        for (ReservationClientBean reservationClientBean : cancelClientlList) {
+
+            $info(channel.getFull_name()+ "-------Order_Number：" + reservationClientBean.getOrder_number());
+
+            String notes = channel.getFull_name() + " confirm cancel order";
+
+            // 更新订单的品牌方取消标志位
+            orderDao.UpdateOrderCancelFlg(reservationClientBean.getOrder_number(), getTaskName());
+            // 插入订单日志
+            orderDao.insertOrderNotes(reservationClientBean.getOrder_number(), reservationClientBean.getSource_order_id(), notes, getTaskName());
+
+        }
+
+    }
+
+    /**
      * 错误邮件出力
      * @param errorList 错误SKU一览
      * @return 错误邮件内容
