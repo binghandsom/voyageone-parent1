@@ -139,8 +139,7 @@
       "getCustoms" : "getCustoms",
       "setDict" : "setDict",
       "delDict" : "delDict",
-      "addDict" : "addDict",
-      "customs":"getCustoms"
+      "addDict" : "addDict"
     }
   }
 }
