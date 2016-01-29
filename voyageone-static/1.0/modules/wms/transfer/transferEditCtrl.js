@@ -287,10 +287,10 @@ define([
             }
 
             if (pkg) {
-                editingPackage(pkg);
+                editingPackage(vm.transfer.order_channel_id, pkg);
             } else {
                 reqPackage(vm.transfer.transfer_id, name)
-                    .then(editingPackage)
+                    .then(function (res) {editingPackage(vm.transfer.order_channel_id, res);})
             }
         }
 
@@ -304,7 +304,7 @@ define([
             var index = vm.packages.selected;
             if (index < 0 || isEditingPackage()) return;
 
-            editingPackage(vm.packages[index]);
+            editingPackage(vm.transfer.order_channel_id, vm.packages[index]);
         }
 
         function closePackage() {
@@ -357,7 +357,7 @@ define([
                     // 采购订单时打印SKU面单（配置化）
                     if (isPurchaseOrder()) {
                         reqSku(vm.transfer.order_channel_id, code, sku, "scan").then(function (res) {
-                            if　(res.printSkuLabel == "1") {
+                            if　(vm.auto_print == true) {
                                 reqPrintSKU(res.labelType, res.clientSku, res.Sku, res.Upc);
                             }
                         });
@@ -602,11 +602,12 @@ define([
                 });
         }
 
-        function reqPackageItems(transfer_package_id) {
-            return transferService.selectPackageItems(transfer_package_id)
+        function reqPackageItems(order_channel_id, transfer_package_id) {
+            return transferService.selectPackageItems(order_channel_id, transfer_package_id)
 
-                .then(function (itemsArr) {
-                    vm.packageItems = itemsArr;
+                .then(function (res) {
+                    vm.packageItems = res.packageItems;
+                    vm.auto_print = res.auto_print;
                 })
         }
 
@@ -632,12 +633,12 @@ define([
 
         // ------------ 辅助方法 ------------ //
 
-        function editingPackage(pkg) {
+        function editingPackage(order_channel_id, pkg) {
             // 此处不判断 package 的关闭状态，因为需要提供 close 状态下的查看功能
 
             vm.package = pkg;
             isEditingPackage(true);
-            reqPackageItems(pkg.transfer_package_id);
+            reqPackageItems(order_channel_id, pkg.transfer_package_id);
         }
 
         function findPackage(name) {
