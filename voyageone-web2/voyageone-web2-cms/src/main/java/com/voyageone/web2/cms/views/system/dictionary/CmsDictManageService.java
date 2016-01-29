@@ -110,18 +110,22 @@ public class CmsDictManageService {
     /**
      * 更新一个字典项
      *
-     * @param dictWordBean 字典项
+     * @param cmsMtDictModel 字典项
      * @param user         当前用户
      * @return 更新结果
      */
-//    public int setDict(DictWordBean dictWordBean, UserSessionBean user) {
-//        checkDict(dictWordBean);
-//
-//        dictWordBean.setModifier(user.getUserName());
-//        //插入备份
-//        dictDao.insertDictLog(dictWordBean);
-//        return dictDao.updateDict(dictWordBean);
-//    }
+    public int setDict(CmsMtDictModel cmsMtDictModel, UserSessionBean user) {
+        checkDict(cmsMtDictModel);
+
+        cmsMtDictModel.setModifier(user.getUserName());
+        //插入备份
+        CmsMtDictModel oldCmsMtDictModel = getDict(cmsMtDictModel, user);
+        if (!oldCmsMtDictModel.getModified().equals(cmsMtDictModel.getModified()))
+            throw new BusinessException("该条数据已经被其他人更新过了,请确认!");
+
+        cmsMtDictDao.insertDictLog(oldCmsMtDictModel);
+        return cmsMtDictDao.updateDict(cmsMtDictModel);
+    }
 
     /**
      * 获取可用的 CMS 属性

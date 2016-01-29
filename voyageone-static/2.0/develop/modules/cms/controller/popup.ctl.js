@@ -226,7 +226,7 @@ define([
          * @type {openDictValue}
          */
         $scope.openDictValue = openDictValue;
-        function openDictValue(viewSize, data, fnInitial, $index, data) {
+        function openDictValue(viewSize, fnInitial, $index, data) {
             require([popActions.system.dictionary.value.controllerUrl], function () {
                 var modalInstance = $modal.open({
                     templateUrl: popActions.system.dictionary.value.templateUrl,
@@ -234,8 +234,7 @@ define([
                     size: viewSize,
                     resolve: {
                         dictValue: function () {
-                            if ($index != undefined && data != null)
-                            return JSON.parse(data)
+                            return data;
                         }
                     }
                 });
@@ -260,8 +259,7 @@ define([
                     size: viewSize,
                     resolve: {
                         customValue: function () {
-                            if ($index != undefined && data != null)
-                                return JSON.parse(data)
+                            return data;
                         }
                     }
                 });

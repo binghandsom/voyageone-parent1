@@ -40,7 +40,7 @@ public class CmsDictManageController extends CmsController {
      * @return
      */
     @RequestMapping(CmsUrlConstants.SYSTEM.DICTIONARY.GET_DICT_LIST)
-    public AjaxResponse dtGetDictList(@RequestBody CmsDictionaryIndexBean request) {
+    public AjaxResponse getDictList(@RequestBody CmsDictionaryIndexBean request) {
         return success(dictManageService.dtGetAllDict(request, getUser().getSelChannelId()));
     }
 
@@ -50,7 +50,7 @@ public class CmsDictManageController extends CmsController {
      * @return
      */
     @RequestMapping(CmsUrlConstants.SYSTEM.DICTIONARY.GET_DICT)
-    public AjaxResponse dtGetDict(@RequestBody CmsMtDictModel request) {
+    public AjaxResponse getDict(@RequestBody CmsMtDictModel request) {
         return success(dictManageService.getDict(request, getUser()));
     }
 
@@ -99,10 +99,10 @@ public class CmsDictManageController extends CmsController {
      * @param cmsMtDictModel
      * @return
      */
-//    @RequestMapping(CmsUrlConstants.SYSTEM.DICTIONARY.SET_DICT)
-//    public AjaxResponse setDict(@RequestBody CmsMtDictModel cmsMtDictModel) {
-//        return success(dictManageService.setDict(cmsMtDictModel, getUser()));
-//    }
+    @RequestMapping(CmsUrlConstants.SYSTEM.DICTIONARY.SET_DICT)
+    public AjaxResponse setDict(@RequestBody CmsMtDictModel cmsMtDictModel) {
+        return success(dictManageService.setDict(cmsMtDictModel, getUser()));
+    }
 /*
 
     @RequestMapping(CmsUrlConstants.SYSTEM.DICTIONARY.GET_DICT_LIST)
