@@ -1,74 +1,76 @@
 <div class="wrapper-md" ng-init="initialize()">
-	<div class="col-sm-12">
-		<!-- search -->
-		<div class="panel panelPromotion">
-			<div class="container-fluid m-t-sm">
-				<div class="col-sm-12">
-					<div class="col-sm-4">
-						<div class="form-horizontal">
-							<div class="form-group">
-								<label class="col-sm-3 control-label" translate="TXT_PLATFORM"></label>
-								<div class="col-sm-9">
-									<select class="form-control" ng-model="vm.searchInfo.cartId"
-											ng-options="categoryType.cartId as categoryType.name for categoryType in vm.masterData.categoryTypeList">
-										<option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
-									</select>
+	<div class="vo_accordion vo_attr">
+		<div class="panel-group">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h4 class="panel-title"><i class="fa fa-cogs"></i>&nbsp;异常管理 运营/维护</h4>
+				</div>
+				<div class="container-fluid m-t-xs m-b-xs">
+					<div class="col-sm-12">
+						<div class="col-sm-4">
+							<div class="form-horizontal">
+								<div class="form-group">
+									<label class="col-sm-3 control-label" translate="TXT_PLATFORM"></label>
+									<div class="col-sm-9">
+										<select class="form-control" ng-model="vm.searchInfo.cartId"
+												ng-options="categoryType.cartId as categoryType.name for categoryType in vm.masterData.categoryTypeList">
+											<option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+										</select>
+									</div>
 								</div>
-							</div>
-							<div class="form-group">
-								<label class="col-sm-3 control-label" translate="TXT_CATEGORY_NO_COLON"></label>
-								<div class="col-sm-9">
-									<select class="form-control" ng-model="vm.searchInfo.catId"
-											ng-options="category.catId as category.catPath for category in vm.masterData.categoryList">
-										<option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
-									</select>
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="col-sm-4">
-						<div class="form-horizontal">
-							<div class="form-group">
-								<label class="col-sm-3 control-label" translate="TXT_PRODUCT_NAME_NO_COLON"></label>
-								<div class="col-sm-9">
-									<input type="text" ng-model="vm.searchInfo.productName" class="form-control">
-								</div>
-							</div>
-							<div class="form-group">
-								<label class="col-sm-3 control-label" translate="TXT_ERROR_TYPE"></label>
-								<div class="col-sm-9">
-									<select class="form-control" ng-model="vm.searchInfo.errType"
-											ng-options="errorType.value as errorType.name for errorType in vm.masterData.errorTypeList">
-										<option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
-									</select>
-								</div>
-							</div>
-						</div><!-- .form-group -->
-					</div>
-					<div class="col-sm-4">
-						<div class="form-horizontal">
-							<div class="form-group">
-								<label class="col-sm-3 control-label" translate="TXT_CODE_LIST"></label>
-								<div class="col-sm-8">
-									<textarea class="form-control inherited" rows="4" ng-model="vm.searchInfo.codes"></textarea>
+								<div class="form-group">
+									<label class="col-sm-3 control-label" translate="TXT_CATEGORY_NO_COLON"></label>
+									<div class="col-sm-9">
+										<select class="form-control" ng-model="vm.searchInfo.catId"
+												ng-options="category.catId as category.catPath for category in vm.masterData.categoryList">
+											<option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+										</select>
+									</div>
 								</div>
 							</div>
 						</div>
+						<div class="col-sm-4">
+							<div class="form-horizontal">
+								<div class="form-group">
+									<label class="col-sm-3 control-label" translate="TXT_PRODUCT_NAME_NO_COLON"></label>
+									<div class="col-sm-9">
+										<input type="text" ng-model="vm.searchInfo.productName" class="form-control">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-3 control-label" translate="TXT_ERROR_TYPE"></label>
+									<div class="col-sm-9">
+										<select class="form-control" ng-model="vm.searchInfo.errType"
+												ng-options="errorType.value as errorType.name for errorType in vm.masterData.errorTypeList">
+											<option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+										</select>
+									</div>
+								</div>
+							</div><!-- .form-group -->
+						</div>
+						<div class="col-sm-4">
+							<div class="form-horizontal">
+								<div class="form-group">
+									<label class="col-sm-3 control-label" translate="TXT_CODE_LIST"></label>
+									<div class="col-sm-8">
+										<textarea class="form-control inherited" rows="4" ng-model="vm.searchInfo.codes"></textarea>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-sm-12 text-center m-b-sm">
+							<div class="form-inline">
+								<button class="btn btn-default" ng-click="clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR' | translate}}</button>
+								<button class="btn btn-vo" ng-click="search()"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}</button>
+							</div><!-- .form-inline -->
+						</div>
 					</div>
-					<div class="col-sm-12 text-center m-b-sm">
-						<div class="form-inline">
-							<button class="btn btn-default" ng-click="clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR' | translate}}</button>
-							<button class="btn btn-vo" ng-click="search()"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}</button>
-						</div><!-- .form-inline -->
 					</div>
 				</div>
 			</div>
 		</div>
-	</div><!-- .accordion --><!--/search-->
-
-	<div class="col-sm-12">
-		<div class="box">
-			<div class="box-body">
+	<div class="box">
+		<div class="box-body">
 			<div class="table-responsive">
 				<table class="table table-hover vo_table" style="margin-bottom:0px">
 					<tbody>
@@ -80,7 +82,7 @@
 						<td class="mfb-xxt text-left" translate="TXT_PRODUCT_CODE_NO_COLON"></td>
 						<td class="mfb-xxx text-left" translate="TXT_PRODUCT_NAME_NO_COLON"></td>
 						<td class="mfb-xxt text-center" translate="TXT_ERROR_CODE"></td>
-						<td class="mfb-xxs text-left" translate="TXT_ERROR_MESSAGE"></td>
+						<td class="mfb-xxx text-left" translate="TXT_ERROR_MESSAGE"></td>
 						<td class="mfb-xxt text-left" translate="TXT_ERROR_CREATE_TIME"></td>
 						<td class="mfb-xt text-center" translate="TXT_COMPLETED"></td>
 					</tr>
@@ -106,7 +108,7 @@
 							</td>
 							<td class="mfb-xxx text-left" ng-bind="errorInfo.productName"></td>
 							<td class="mfb-xxt text-center" ng-bind="errorInfo.errorCode"></td>
-							<td class="mfb-xxs text-left" ng-bind="errorInfo.errMsg"></td>
+							<td class="mfb-xxx text-left" ng-bind="errorInfo.errMsg"></td>
 							<td class="mfb-xxt text-left" ng-bind="errorInfo.created | date : 'yyyy-MM-dd hh:mm:ss'"></td>
 							<td class="mfb-xt">
 								<div class="onoffswitch">
@@ -121,11 +123,10 @@
 						</tbody>
 					</table>
 				</div><!-- .table-responsive -->
-				<div class="col-sm-12 m-t-xs">
-					<vpagination config="vm.errorPageOption"></vpagination>
-				</div>
 			</div>
-			</div><!-- /.box-body -->
+		</div><!-- /.box-body -->
+		<div class="m-t-xs">
+			<vpagination config="vm.errorPageOption"></vpagination>
 		</div>
-	</div><!-- .col-lg-12 -->
+	</div>
 </div><!-- end .wrapper-md -->

@@ -1,8 +1,7 @@
 package com.voyageone.web2.cms.dao;
 
-import com.voyageone.base.dao.BaseDao;
-import com.voyageone.common.Constants;
-import com.voyageone.common.components.issueLog.enums.SubSystem;
+import com.voyageone.web2.base.dao.WebBaseDao;
+import com.voyageone.web2.base.dao.WebDaoNs;
 import com.voyageone.web2.cms.model.CustomWord;
 import org.springframework.stereotype.Repository;
 
@@ -14,11 +13,10 @@ import java.util.List;
  * Created by Jonas on 9/11/15.
  */
 @Repository
-public class CustomWordDao extends BaseDao {
-
+public class CustomWordDao extends WebBaseDao {
     @Override
-    protected String namespace() {
-        return Constants.getDaoNameSpace(SubSystem.CMS);
+    protected WebDaoNs webNs() {
+        return WebDaoNs.CMS;
     }
 
     public List<CustomWord> selectWithParam() {

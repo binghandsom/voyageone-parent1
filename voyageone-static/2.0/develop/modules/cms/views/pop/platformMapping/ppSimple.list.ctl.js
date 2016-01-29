@@ -1,38 +1,54 @@
 define([
     'cms',
+    'underscore',
     'modules/cms/enums/FieldTypes',
     'modules/cms/models/SimpleMappingBean',
     'modules/cms/models/RuleExpression',
     'modules/cms/enums/WordTypes',
-    'modules/cms/models/ruleWords',
+    'modules/cms/models/RuleWord',
     'modules/cms/views/pop/platformMapping/ppPlatformMapping.serv',
     'modules/cms/controller/popup.ctl'
-], function (cms, FieldTypes, SimpleMappingBean, RuleExpression, WordTypes, ruleWords) {
+], function (cms, _, FieldTypes, SimpleMappingBean, RuleExpression, WordTypes, RuleWord) {
     'use strict';
     return cms.controller('simpleListMappingPopupController', (function () {
 
-        function SimpleListMappingPopupController(context, $uibModalInstance, ppPlatformMappingService, alert) {
+        function SimpleListMappingPopupController(context, $uibModalInstance, ppPlatformMappingService, alert, notify) {
 
             this.$uibModalInstance = $uibModalInstance;
             this.context = context;
             this.ppPlatformMappingService = ppPlatformMappingService;
             this.alert = alert;
+            this.notify = notify;
+
+            this.maindata = {
+                category: {
+                    id: this.context.mainCategoryId,
+                    path: null
+                }
+            };
+
+            this.platform = {
+                category: {
+                    id: this.context.platformCategoryId,
+                    path: this.context.platformCategoryPath
+                },
+                /**
+                 * @type {WrapField}
+                 */
+                property: this.context.property
+            };
 
             /**
-             * 平台类目 ID
-             * @type {string}
+             * 当前属性在 MultiComplexMapping 中的第几个 Value 中
+             * @type {number|null}
              */
-            this.platformCategoryId = this.context.platformCategoryId;
+            this.valueIndex = this.context.valueIndex;
+
             /**
-             * 主数据类目 ID
-             * @type {string}
+             * 当前属性的匹配
+             * @type {SimpleMappingBean}
              */
-            this.mainCategoryId = this.context.mainCategoryId;
-            /**
-             * 平台属性
-             * @type {WrapField}
-             */
-            this.property = this.context.property;
+            this.simpleMapping = null;
             /**
              * 一组 RuleWord
              * @type {RuleWord[]}
@@ -40,19 +56,9 @@ define([
             this.ruleWords = null;
             /**
              * 与 this.ruleWord 平行的行尾配置
-             * @type {TextWord[]}
+             * @type {RuleWord[]}
              */
             this.lineEnds = null;
-            /**
-             * 主数据类目路径
-             * @type {string}
-             */
-            this.mainCategoryPath = null;
-            /**
-             * 当前属性的匹配
-             * @type {SimpleMappingBean}
-             */
-            this.mapping = null;
         }
 
         SimpleListMappingPopupController.prototype = {
@@ -64,8 +70,11 @@ define([
 
             init: function () {
 
+                var mainCategory = this.maindata.category;
+                var property = this.platform.property;
+
                 // 检查 popup 的支持类型
-                switch (this.property.type) {
+                switch (property.type) {
                     case FieldTypes.complex:
                     case FieldTypes.multiComplex:
                         this.alert('当前属性不是 Simple 属性').result.then(function () {
@@ -75,28 +84,33 @@ define([
                 }
 
                 // 加载主类目路径
-                this.ppPlatformMappingService.getMainCategoryPath(this.mainCategoryId).then(function (path) {
-                    this.mainCategoryPath = path;
-                }.bind(this));
+                this.ppPlatformMappingService.getMainCategoryPath(mainCategory.id).then(function (path) {
+                    mainCategory.path = path;
+                });
 
                 // 加载原有的匹配
                 this.ppPlatformMappingService.getPlatformPropertyMapping(
-                    this.property, this.mainCategoryId, this.platformCategoryId, this.context.cartId
-                ).then(function (mapping) {
+                    property,
+                    mainCategory.id,
+                    this.platform.category.id,
+                    this.context.cartId,
+                    this.valueIndex
+                ).then(function (simpleMapping) {
 
                     // 如果没拿到, 则创建新的 SimpleMapping
-                    if (!mapping) {
-                        mapping = new SimpleMappingBean();
-                        mapping.platformPropId = this.property.id;
+                    if (!simpleMapping) {
+                        simpleMapping = new SimpleMappingBean();
+                        simpleMapping.platformPropId = property.id;
                     }
 
-                    this.mapping = mapping;
+                    if (!simpleMapping.expression)
+                        simpleMapping.expression = new RuleExpression();
 
-                    if (!mapping.expression) mapping.expression = new RuleExpression();
+                    if (!simpleMapping.expression.ruleWordList)
+                        simpleMapping.expression.ruleWordList = [];
 
-                    this.ruleWords = (
-                        mapping.expression.ruleWordList || (mapping.expression.ruleWordList = [])
-                    );
+                    this.simpleMapping = simpleMapping;
+                    this.ruleWords = simpleMapping.expression.ruleWordList;
 
                     // 加载完数据之后, 进行对 end line 的数据包装
                     this.wrapRuleList();
@@ -108,35 +122,33 @@ define([
              */
             wrapRuleList: function () {
                 // 重置数据
-                this.lineEnds = [];
+                var lineEnds = this.lineEnds = [];
                 // 初始化
                 var words = this.ruleWords;
                 var i = 0;
-                var curr = null;
                 var next = null;
                 while (i < words.length) {
-                    curr = words[i];
-                    next = words[i + 1];
-                    if (next.wordType !== WordTypes.TEXT) {
+                    next = words[++i];
+                    if (!next || next.type !== WordTypes.TEXT) {
                         // 如果这一行不是 Text, 就跳过, 平行的配置指定为 null ,表示"无"
-                        this.lineEnds[i] = {type: 3, value: null};
+                        lineEnds[i - 1] = {type: 3, value: null};
                         continue;
                     }
 
                     // 命中时, 把这个空格行移动到平行配置中
 
                     if (this.regulars.endWithBr.test(next.value)) {
-                        this.lineEnds[i] = {type: 1, value: words.splice(1, 1)[0]};
+                        lineEnds[i - 1] = {type: 1, value: words.splice(1, 1)[0]};
                         continue;
                     }
 
                     if (this.regulars.endWithSpace.test(next.value)) {
-                        this.lineEnds[i] = {type: 2, value: words.splice(1, 1)[0]};
+                        lineEnds[i - 1] = {type: 2, value: words.splice(1, 1)[0]};
                         continue;
                     }
 
                     // 是 Text 但未命中的话, 也为空
-                    this.lineEnds[i] = {type: 3, value: null};
+                    lineEnds[i] = {type: 3, value: null};
                 }
             },
             /**
@@ -144,13 +156,14 @@ define([
              */
             unWrapRuleList: function () {
                 // 根据 end line 合并数据
-                var newRuleWord = [];
+                var newRuleWordList = [];
+                var lineEnds = this.lineEnds;
                 _.each(this.ruleWords, function (ruleWord, index) {
-                    newRuleWord.push(ruleWord);
-                    var lineEndWord = this.lineEnds[index];
-                    if (lineEndWord.value) newRuleWord.push(lineEndWord.value);
-                }.bind(this));
-                return newRuleWord;
+                    newRuleWordList.push(ruleWord);
+                    var lineEndWord = lineEnds[index];
+                    if (lineEndWord.value) newRuleWordList.push(lineEndWord.value);
+                });
+                return newRuleWordList;
             },
             /**
              * 当 lineEnd 配置变更时, 更新配置的值
@@ -161,12 +174,12 @@ define([
 
                 switch (lineEndWord.type) {
                     case 1:
-                        var brWord = new ruleWords.TextWord();
+                        var brWord = new RuleWord(WordTypes.TEXT);
                         brWord.value = '<br/>';
                         lineEndWord.value = brWord;
                         break;
                     case 2:
-                        var spaceWord = new ruleWords.TextWord();
+                        var spaceWord = new RuleWord(WordTypes.TEXT);
                         spaceWord.value = '&nbsp;';
                         lineEndWord.value = spaceWord;
                         break;
@@ -175,6 +188,7 @@ define([
                         break;
                 }
             },
+
             add: function (ppPlatformMapping) {
                 this.context.ruleWord = null;
                 // 增加 RuleWord
@@ -184,6 +198,7 @@ define([
                     this.lineEnds.push({type: 3, value: null});
                 }.bind(this));
             },
+
             edit: function ($index, ppPlatformMapping) {
                 this.context.ruleWord = this.ruleWords[$index];
                 ppPlatformMapping.simple.item(this.context).then(function (word) {
@@ -191,27 +206,53 @@ define([
                     this.ruleWords[$index] = word;
                 }.bind(this));
             },
+
             remove: function ($index) {
                 this.ruleWords.splice($index, 1);
             },
+
             moveUp: function ($index) {
                 if ($index < 1) return;
                 var temp = this.ruleWords[$index];
                 this.ruleWords[$index] = this.ruleWords[$index - 1];
                 this.ruleWords[$index - 1] = temp;
             },
+
             moveDown: function ($index) {
                 if ($index + 1 >= this.ruleWords.length) return;
                 var temp = this.ruleWords[$index];
                 this.ruleWords[$index] = this.ruleWords[$index + 1];
                 this.ruleWords[$index + 1] = temp;
             },
+
             ok: function () {
-                // 最终结束
-                // 解除包装的 ruleWords, 更新到各个位置上
-                this.mapping.expression.ruleWordList = this.unWrapRuleList();
+
+                var simpleMapping = this.simpleMapping;
+                var platform = this.platform;
+                var modal = this.$uibModalInstance;
+                var notify = this.notify;
+
+                simpleMapping.expression.ruleWordList = this.unWrapRuleList();
+
+                this.ppPlatformMappingService
+                    .saveMapping(
+                        this.maindata.category.id,
+                        platform.category.id,
+                        this.context.cartId,
+                        simpleMapping,
+                        platform.property,
+                        this.valueIndex)
+                .then(function(updated){
+                    if (updated)
+                        notify.success('已更新');
+                    else
+                        notify.warning('没有更新任何数据');
+                    modal.close(updated);
+                });
+
                 this.$uibModalInstance.close(this.mapping);
             },
+
             cancel: function () {
                 this.$uibModalInstance.dismiss('cancel');
             }

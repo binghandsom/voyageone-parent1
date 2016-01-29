@@ -1,73 +1,78 @@
 <div class="wrapper-md" ng-init="initialize()">
-    <div class="panel panelPromotion">
-        <div class="wrapper">
-            <div class="container-fluid">
-                <div class="col-sm-4">
-                    <form class="form-horizontal">
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label">Promotion Name</label>
-
-                            <div class="col-sm-7">
-                                <input type="text" class="form-control" ng-model="vm.promotion.promotionName" disabled>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-sm-4 control-label">Promotion Date</label>
-
-                            <div class="col-sm-7 form-inline">
-                                <div class="input-group col-sm-5"><input type="text" class="form-control inherited"
-                                                                         ng-model="vm.promotion.activityStart" disabled>
-                                </div>
-                                &nbsp;~&nbsp;
-                                <div class="input-group col-sm-6"><input type="text" class="form-control inherited"
-                                                                         ng-model="vm.promotion.activityEnd" disabled>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- .form-group -->
-                    </form>
-                    <!-- .form -->
+    <div class="vo_accordion vo_attr">
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title"><i class="glyphicon glyphicon-star"></i>&nbsp;活动详情</h4>
                 </div>
-                <!--.col -->
-                <div class="col-sm-4">
-                    <form class="form-horizontal">
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label">活动状态</label>
-
-                            <div class="col-sm-8">
-                                <input ng-show="vm.promotion.promotionStatus==false" value="Open" type="text"
-                                       class="form-control" placeholder="promotion_approved" disabled>
-                                <input ng-show="vm.promotion.promotionStatus==true" value="Close" type="text"
-                                       class="form-control" placeholder="promotion_approved" disabled>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label">Search</label>
-
-                            <div class="col-sm-8">
-                                <input type="text" class="form-control" ng-model="vm.searchKey" placeholder="">
-                            </div>
-                        </div>
-                    </form>
-                    <!-- .form -->
-                </div>
-                <div class="row text-center">
+                <div class="container-fluid m-t-sm m-b-md">
                     <div class="col-sm-12">
-                        <div class="form-inline" ng-controller="popupCtrl">
-                            <button class="btn btn-vo" ng-click="search()"><i class="fa fa-search"></i> Search</button>
-                            <button class="btn btn-success" ng-click="openpromotion('md',vm.cartList,vm.promotion,null)"><i
-                                    class="fa fa-pencil"></i> 修改Promotion
-                            </button>
+                        <div class="col-sm-4">
+                            <form class="form-horizontal">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">Promotion Name</label>
+
+                                    <div class="col-sm-7">
+                                        <input type="text" class="form-control" ng-model="vm.promotion.promotionName" disabled>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label">Promotion Date</label>
+
+                                    <div class="col-sm-7 form-inline">
+                                        <div class="input-group col-sm-5"><input type="text" class="form-control inherited"
+                                                                                 ng-model="vm.promotion.activityStart" disabled>
+                                        </div>
+                                        &nbsp;~&nbsp;
+                                        <div class="input-group col-sm-6"><input type="text" class="form-control inherited"
+                                                                                 ng-model="vm.promotion.activityEnd" disabled>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- .form-group -->
+                            </form>
+                            <!-- .form -->
                         </div>
-                        <!-- .form-inline -->
+                        <!--.col -->
+                        <div class="col-sm-4">
+                            <form class="form-horizontal">
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">活动状态</label>
+
+                                    <div class="col-sm-8">
+                                        <input ng-show="vm.promotion.promotionStatus==false" value="Open" type="text"
+                                               class="form-control" placeholder="promotion_approved" disabled>
+                                        <input ng-show="vm.promotion.promotionStatus==true" value="Close" type="text"
+                                               class="form-control" placeholder="promotion_approved" disabled>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label">Search</label>
+
+                                    <div class="col-sm-8">
+                                        <input type="text" class="form-control" ng-model="vm.searchKey" placeholder="">
+                                    </div>
+                                </div>
+                            </form>
+                            <!-- .form -->
+                        </div>
+                        <div class="text-center">
+                            <div class="col-sm-12">
+                                <div class="form-inline" ng-controller="popupCtrl">
+                                    <button class="btn btn-vo" ng-click="search()"><i class="fa fa-search"></i> Search</button>
+                                    <button class="btn btn-success" ng-click="openpromotion('md',vm.cartList,vm.promotion,null)"><i
+                                            class="fa fa-pencil"></i> 修改Promotion
+                                    </button>
+                                </div>
+                                <!-- .form-inline -->
+                            </div>
+                        </div>
+                    </div>
                     </div>
                 </div>
             </div>
-            <!-- .container-fluid -->
         </div>
-        <!-- .row wrapper -->
-    </div>
-    <div>
+    <div class="box">
         <tabset class="tab-container vo_nav-tabs">
             <!--right-btn-->
             <div class="form-inline m-b-xs pull-right" ng-controller="popupCtrl">
@@ -88,23 +93,23 @@
                     {{'TXT_GROUP_LIST' | translate}}
                 </tab-heading>
                 <div class="table-responsive">
-                    <table class="table table-hover vo_table vo_models dropdown_table_bk font-bold text-vo">
+                    <table class="table table-hover vo_models dropdown_table_bk font-bold" style="background:#e67e22;color:#fff">
                         <thead>
                         <tr>
-                            <th class="mfb-xxxs" ng-controller="selectRowsCtrl">
+                            <td class="mfb-xxxs" ng-controller="selectRowsCtrl">
                                 <label class="checkbox-inline c-checkbox">
                                     <input type="checkbox" ng-checked="vm.groupSelList.selAllFlag"
                                            ng-click="selectAll(vm.groupSelList,'modelId')"><span
                                         class="fa fa-check"></span> {{'TXT_SELECT_ALL' | translate}} </label>
                                 <span class="m-l-xxl">Primary Product</span>
-                            </th>
-                            <th class="mfb-xxt text-left">Inventory</th>
-                            <th class="mfb-xxt text-center">Promotion Price</th>
-                            <th class="mfb-xxt text-center">MSRP</th>
-                            <th class="mfb-xxt text-left">折扣</th>
-                            <th class="mfb-xxt text-left">Base Property</th>
-                            <th class="mfb-xxt text-left">Time</th>
-                            <th class="mfb-xxt text-center"></th>
+                            </td>
+                            <td class="mfb-xxt text-left">Inventory</td>
+                            <td class="mfb-xxt text-center">Promotion Price</td>
+                            <td class="mfb-xxt text-center">MSRP</td>
+                            <td class="mfb-xxt text-left">折扣</td>
+                            <td class="mfb-xxt text-left">Base Property</td>
+                            <td class="mfb-xxt text-left">Time</td>
+                            <td class="mfb-xxt text-center"></td>
                         </tr>
                         </thead>
                     </table>
@@ -197,13 +202,12 @@
                 </tab-heading>
                 <!-- Products table and controls -->
                 <div class="table-responsive">
-                    <table class="table table-hover vo_table vo_models dropdown_table_bk font-bold text-vo">
+                    <table class="table table-hover vo_table vo_models dropdown_table_bk font-bold text-vo" style="background:#e67e22;color:#fff">
                         <thead>
                         <tr ng-controller="selectRowsCtrl">
-                            <td class="mfb-xxt"><label class="checkbox-inline c-checkbox"><input type="checkbox"
-                                                                                                 ng-checked="vm.codeSelList.selAllFlag"
-                                                                                                 ng-click="selectAll(vm.codeSelList,'productCode')"><span
-                                    class="fa fa-check"></span> {{'TXT_SELECT_ALL' | translate}} </label></td>
+                            <td class="mfb-xxt"><label class="checkbox-inline c-checkbox">
+                                <input type="checkbox" ng-checked="vm.codeSelList.selAllFlag" ng-click="selectAll(vm.codeSelList,'productCode')">
+                                <span class="fa fa-check"></span> {{'TXT_SELECT_ALL' | translate}} </label></td>
                             <td class="mfb-xxt text-center">折扣</td>
                             <td class="mfb-xxt text-center">Inventory</td>
                             <td class="mfb-xxt text-center">Promotion Price</td>
@@ -292,19 +296,19 @@
                 <!-- .table-responsive -->
             </tab>
             <tab>
-                <tab-heading ng-click="vm.tabIndex = 2"><i class="fa fa-list"></i>{{'TXT_SKU_LIST' | translate}}
+                <tab-heading ng-click="vm.tabIndex = 2"><i class="fa fa-list"></i> {{'TXT_SKU_LIST' | translate}}
                 </tab-heading>
                 <div class="panel vo_panel tab_panel">
                     <div class="table-responsive">
-                        <table class="table table-hover vo_table vo_models dropdown_table_bk font-bold text-vo">
+                        <table class="table table-hover vo_table vo_models dropdown_table_bk font-bold" style="background:#e67e22;color:#fff">
                             <thead>
                             <tr>
-                                <th class="mfb-xxs">SKU</th>
-                                <th class="mfb-xx">折扣</th>
-                                <th class="mfb-x">Size</th>
-                                <th class="mfb-x">Inventory</th>
-                                <th class="mfb-x">Promotion Price</th>
-                                <th class="mfb-x">price sale</th>
+                                <td class="mfb-xxs">SKU</td>
+                                <td class="mfb-xx">折扣</td>
+                                <td class="mfb-x">Size</td>
+                                <td class="mfb-x">Inventory</td>
+                                <td class="mfb-x">Promotion Price</td>
+                                <td class="mfb-x">price sale</td>
                                 <!--<th class="mfb-xt">Edit</th>-->
                             </tr>
                             </thead>

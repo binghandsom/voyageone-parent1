@@ -45,7 +45,7 @@ define([
                 iconClass = 'badge badge-success';
                 break;
             case FieldTypes.multiComplex:
-                iconClass = 'badge badge-failure';
+                iconClass = 'badge badge-Purple';
                 break;
         }
 

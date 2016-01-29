@@ -1,5 +1,7 @@
 package com.voyageone.web2.cms.model;
 
+import com.voyageone.base.dao.mysql.BaseModel;
+
 /**
  * 对表 voyageone_cms2.cms_mt_dict 的映射, 没有完整映射所有字段, 后续请自行追加
  *
@@ -7,15 +9,19 @@ package com.voyageone.web2.cms.model;
  * @version 2.0.0
  * @since 2.0.0
  */
-public class CmsMtDictModel {
+public class CmsMtDictModel extends BaseModel {
 
     private int id;
 
     private String order_channel_id;
 
+    private String cart_id;
+
     private String name;
 
     private String value;
+
+    private String comment;
 
     public int getId() {
         return id;
@@ -33,6 +39,14 @@ public class CmsMtDictModel {
         this.order_channel_id = order_channel_id;
     }
 
+    public String getCart_id() {
+        return cart_id;
+    }
+
+    public void setCart_id(String cart_id) {
+        this.cart_id = cart_id;
+    }
+
     public String getName() {
         return name;
     }
@@ -47,5 +61,13 @@ public class CmsMtDictModel {
 
     public void setValue(String value) {
         this.value = value;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
     }
 }

@@ -65,6 +65,10 @@ public interface CmsUrlConstants {
             String GET_DICT_LIST = "getDictList";
 
             String GET_PLATFORM_MAPPING = "getPlatformMapping";
+
+            String GET_MAPPING_TYPE = "getMappingType";
+
+            String SAVE_MAPPING = "saveMapping";
         }
     }
 
@@ -140,6 +144,28 @@ public interface CmsUrlConstants {
             String SEARCH = "search";
 
             String UPDATE_FINISH_STATUS = "updateFinishStatus";
+        }
+
+
+        interface DICTIONARY {
+
+            String ROOT = "/cms/system/dictionary";
+
+            String INIT = "init";
+
+            String GET_DICT = "getDict";
+
+            String GET_CONST = "getConst";
+
+            String GET_CUSTOMS = "getCustoms";
+
+            String SET_DICT = "setDict";
+
+            String DEL_DICT = "delDict";
+
+            String ADD_DICT = "addDict";
+
+            String GET_DICT_LIST = "getDictList";
         }
     }
     interface SEARCH {
@@ -225,26 +251,6 @@ public interface CmsUrlConstants {
 
             String SET_MAIN_PRODUCT = "setMainProduct";
         }
-    }
-
-
-    interface DictManage {
-
-        String ROOT = "/cms/dict/manage/";
-
-        String DT_GET_DICT = "dtGetDict";
-
-        String GET_CONST = "getConst";
-
-        String GET_CUSTOMS = "getCustoms";
-
-        String SET_DICT = "setDict";
-
-        String DEL_DICT = "delDict";
-
-        String ADD_DICT = "addDict";
-
-        String GET_DICT_LIST = "getDictList";
     }
 
 }

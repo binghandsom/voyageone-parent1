@@ -3,11 +3,11 @@ define([
 ], function (MappingTypes) {
 
     /**
-     * 构造一个和 Java 端 com.voyageone.cms.service.bean.ComplexMappingBean 一样的实例
+     * 构造一个和 Java 端 com.voyageone.cms.service.bean.MultiComplexMappingBean 一样的实例
      * @constructor
      * @extends {MappingBean}
      */
-    function ComplexMappingBean() {
+    function MultiComplexMappingBean() {
         /**
          * 平台属性 ID
          * @type {string}
@@ -20,12 +20,15 @@ define([
         this.mappingType = MappingTypes.MULTI_COMPLEX_MAPPING;
         /**
          * 实际匹配
-         * @type {MultiComplexCustomMappingValue[]}
+         * @type {MultiComplexMappingBean.MultiComplexCustomMappingValue[]}
          */
         this.values = null;
     }
 
-    ComplexMappingBean.MultiComplexCustomMappingValue = function() {
+    /**
+     * @constructor
+     */
+    MultiComplexMappingBean.MultiComplexCustomMappingValue = function() {
         /**
          * 子匹配
          * @type {MappingBean[]}
@@ -33,6 +36,6 @@ define([
         this.subMappings = null;
     };
 
-    return ComplexMappingBean;
+    return MultiComplexMappingBean;
 
 });

@@ -5,35 +5,40 @@ define([
     'cms',
     'underscore',
     'modules/cms/enums/FieldTypes',
+    'modules/cms/enums/MappingTypes',
     'modules/cms/controller/popup.ctl',
     'modules/cms/views/setting/platform_mapping/prop.item.d'
-], function (cms, _, FieldTypes) {
+], function (cms, _, FieldTypes, MappingTypes) {
     'use strict';
     return cms.controller('platformPropMappingController', (function () {
 
-        function PlatformMappingController(platformMappingService, $routeParams) {
+        function PlatformMappingController(platformMappingService, $routeParams, alert, $q) {
 
             this.platformMappingService = platformMappingService;
+            this.alert = alert;
+            this.$q = $q;
 
             this.mainCategoryId = $routeParams['mainCategoryId'];
-
             this.cartId = parseInt($routeParams['cartId']);
 
-            /**
-             * 平台类目
-             * @type {object}
-             */
-            this.category = null;
-            /**
-             * 平台类目属性的 Map, Key 为属性名, 值为 Field
-             * @type {object}
-             */
-            this.properties = null;
-            /**
-             * 包含 Mapping Matched 信息的 Map
-             * @type {object}
-             */
-            this.mappings = null;
+            this.platform = {
+                /**
+                 * 平台类目
+                 * @type {object}
+                 */
+                category: null,
+                /**
+                 * 平台类目属性的 Map, Key 为属性名, 值为 Field
+                 * @type {object}
+                 */
+                properties: null,
+                /**
+                 * 包含 Mapping Matched 信息的 Map
+                 * @type {object}
+                 */
+                mappingModel: null
+            };
+
             /**
              * 平台属性的 Map 备份
              * @type {object}
@@ -61,20 +66,21 @@ define([
             },
             init: function () {
 
+                var platform = this.platform;
+
                 this.platformMappingService.getPlatformCategory({
                     categoryId: this.mainCategoryId,
                     cartId: this.cartId
                 }).then(function (res) {
 
-                    this.category = res.data.categorySchema;
-                    this.properties = res.data.properties;
-                    this.mappings = res.data.mapping;
+                    platform.category = res.data.categorySchema;
+                    platform.properties = res.data.properties;
+                    platform.mappingModel = res.data.mapping;
 
-                }.bind(this));
+                });
             },
             filteringData: function () {
-
-                _.each(this.properties, function (property) {
+                _.each(this.platform.properties, function (property) {
                     this.setHide(property);
                 }.bind(this));
             },
@@ -105,29 +111,39 @@ define([
              */
             popup: function (property, ppPlatformMapping) {
 
+                var category = this.platform.category;
                 var context = {
                     mainCategoryId: this.mainCategoryId,
-                    platformCategoryPath: this.category.catFullPath,
-                    platformCategoryId: this.category.catId,
+                    platformCategoryPath: category.catFullPath,
+                    platformCategoryId: category.catId,
                     property: property,
                     cartId: this.cartId
                 };
 
                 switch (property.type) {
                     case FieldTypes.complex:
-                        ppPlatformMapping.complex(context).then(function(complexMappingBean) {
-                            console.log(complexMappingBean);
-                        });
+                        ppPlatformMapping.complex(context);
                         break;
                     case FieldTypes.multiComplex:
-                        ppPlatformMapping.multiComplex(context).then(function(mappingBean) {
-                            console.log(mappingBean);
+                        this.platformMappingService.getMappingType({
+                            cartId: this.cartId,
+                            platformCategoryId: category.catId,
+                            propertyId: property.id
+                        }).then(function (res) {
+                            switch (res.data) {
+                                case MappingTypes.COMPLEX_MAPPING:
+                                    ppPlatformMapping.complex(context);
+                                    break;
+                                case MappingTypes.MULTI_COMPLEX_MAPPING:
+                                    ppPlatformMapping.multiComplex.list(context);
+                                    break;
+                                default:
+
+                            }
                         });
                         break;
                     default: // simple ~
-                        ppPlatformMapping.simple.list(context).then(function(simpleMappingBean) {
-                            console.log(simpleMappingBean);
-                        });
+                        ppPlatformMapping.simple.list(context);
                         break;
                 }
             }

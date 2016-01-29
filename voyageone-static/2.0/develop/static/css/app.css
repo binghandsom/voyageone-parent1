@@ -6174,6 +6174,7 @@ a.text-black:hover {
 .fontcolor {color:#e67e22;}
 .fontcolor-h{color:#999}
 .btnleft {margin-left:3px}
+.line-height{height:30px;overflow-y:hidden;}
 .attribute_bg{background:#efefef;border-radius: 2px; border-color:#d4cfcf;padding:10px 0px 10px 0px;margin:8px;}
 .attribute_top{color:#999}
 .attribute_top li{padding:0px 0px 4px 0px;color:#999}

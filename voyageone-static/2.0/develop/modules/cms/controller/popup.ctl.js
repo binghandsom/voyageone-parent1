@@ -69,6 +69,18 @@ define([
                     "controller": 'popCategorySchemaCtl as ctrl',
                     "backdrop": 'static',
                     "size": 'md'
+                },
+                "dictionary": {
+                    "value": {
+                        "templateUrl": "views/pop/system/dictionary/value.tpl.html",
+                        "controllerUrl": "modules/cms/views/pop/system/dictionary/value.ctl",
+                        "controller": "popDictValueController"
+                    },
+                    "custom": {
+                        "templateUrl": "views/pop/system/dictionary/custom.tpl.html",
+                        "controllerUrl": "modules/cms/views/pop/system/dictionary/custom.ctl",
+                        "controller": "popDictCustomController"
+                    }
                 }
             },
             "category": {
@@ -92,6 +104,13 @@ define([
                 "backdrop": 'static',
                 "size": 'md'
             },
+        "dictValue": {
+            "templateUrl": "views/pop/dictValue/index.tpl.html",
+            "controllerUrl": "modules/cms/views/pop/dictValue/index.ctl",
+            "controller": 'dictValuePopupController as ctrl',
+            "backdrop": 'static',
+            "size": 'md'
+        },
             "platformMapping": {
                 "complex": {
                     "templateUrl": "views/pop/platformMapping/ppComplex.tpl.html",
@@ -117,11 +136,21 @@ define([
                     }
                 },
                 "multiComplex": {
-                    "templateUrl": "views/pop/platformMapping/ppMultiComplex.tpl.html",
-                    "controllerUrl": "modules/cms/views/pop/platformMapping/ppMultiComplex.ctl",
-                    "controller": 'multiComplexMappingPopupController as ctrl',
-                    "size": 'lg',
-                    "backdrop": "static"
+                    list: {
+                        "templateUrl": "views/pop/platformMapping/ppMultiComplex.list.tpl.html",
+                        "controllerUrl": "modules/cms/views/pop/platformMapping/ppMultiComplex.list.ctl",
+                        "controller": 'multiComplexMappingPopupController as ctrl',
+                        "size": 'md',
+                        "backdrop": "static"
+                    },
+
+                    item: {
+                        "templateUrl": "views/pop/platformMapping/ppMultiComplex.item.tpl.html",
+                        "controllerUrl": "modules/cms/views/pop/platformMapping/ppMultiComplex.item.ctl",
+                        "controller": 'multiComplexItemMappingPopupController as ctrl',
+                        "size": 'md',
+                        "backdrop": "static"
+                    }
                 }
             }
         })
@@ -189,6 +218,56 @@ define([
                 } else {
                     alert($translate.instant('TXT_COM_MSG_NO_ROWS_SELECT'));
                 }
+            });
+        }
+
+        /**
+         * 添加字典值页面
+         * @type {openDictValue}
+         */
+        $scope.openDictValue = openDictValue;
+        function openDictValue(viewSize, fnInitial, $index, data) {
+            require([popActions.system.dictionary.value.controllerUrl], function () {
+                var modalInstance = $modal.open({
+                    templateUrl: popActions.system.dictionary.value.templateUrl,
+                    controller: popActions.system.dictionary.value.controller,
+                    size: viewSize,
+                    resolve: {
+                        dictValue: function () {
+                            return data;
+                        }
+                    }
+                });
+
+                // 回调主页面的刷新操作
+                modalInstance.result.then(function (data) {
+                    fnInitial(data, $index);
+                })
+            });
+        }
+
+        /**
+         * 添加字典自定义页面
+         * @type {openDictCustom}
+         */
+        $scope.openDictCustom = openDictCustom;
+        function openDictCustom(viewSize, fnInitial, $index, data) {
+            require([popActions.system.dictionary.custom.controllerUrl], function () {
+                var modalInstance = $modal.open({
+                    templateUrl: popActions.system.dictionary.custom.templateUrl,
+                    controller: popActions.system.dictionary.custom.controller,
+                    size: viewSize,
+                    resolve: {
+                        customValue: function () {
+                            return data;
+                        }
+                    }
+                });
+
+                // 回调主页面的刷新操作
+                modalInstance.result.then(function (data) {
+                    fnInitial(data, $index);
+                })
             });
         }
 
@@ -376,19 +455,16 @@ define([
             return openModel(popActions.feedValue, context);
         };
 
+        $scope.popupDictValue = function (context) {
+            return openModel(popActions.dictValue, context);
+        };
+
         $scope.ppPlatformMapping = {
-            /**
-             * Complex Mapping 设定弹出框的上下文参数
-             * @typedef {object} ComplexMappingPopupContext
-             * @property {string} platformCategoryPath 平台类目路径
-             * @property {string} mainCategoryId 主数据类目 ID
-             * @property {Field} property 平台属性
-             */
 
             /**
              * 弹出 Complex 属性的值匹配窗
-             * @param {ComplexMappingPopupContext} context 上下文参数
-             * @returns {Promise.<ComplexMappingBean>}
+             * @param {SimpleListMappingPopupContext} context 上下文参数
+             * @returns {Promise.<MultiComplexMappingBean>}
              */
             complex: function (context) {
                 return openModel(popActions.platformMapping.complex, context);
@@ -405,6 +481,7 @@ define([
                  * @property {string} mainCategoryId 主数据类目 ID
                  * @property {number} cartId 平台 ID
                  * @property {Field} property 平台属性
+                 * @property {number|null} valueIndex
                  */
 
                 /**
@@ -433,8 +510,15 @@ define([
                 }
             },
 
-            multiComplex: function (context) {
-                return openModel(popActions.platformMapping.multiComplex, context);
+            multiComplex: {
+
+                list: function (context) {
+                    return openModel(popActions.platformMapping.multiComplex.list, context);
+                },
+
+                item: function (context) {
+                    return openModel(popActions.platformMapping.multiComplex.item, context);
+                }
             }
         };
     }

@@ -5,8 +5,8 @@
         </button>
         <h5 class="modal-title"><i class="fa fa-crosshairs"></i> 简单类型属性匹配</h5>
     </div>
-    <h5 class="m-l">主数据类目：{{ctrl.mainCategoryPath}}</h5>
-    <h5 class="text-vo m-l">-> 平台类目：{{::ctrl.context.platformCategoryPath}}</h5>
+    <h5 class="m-l">主数据类目：{{ctrl.maindata.category.path}}</h5>
+    <h5 class="text-vo m-l">-> 平台类目：{{::ctrl.platform.category.path}}</h5>
 
     <div class="p-l-r">
         <div class="table-responsive" ng-controller="popupCtrl">
@@ -21,7 +21,7 @@
                 </thead>
                 <tbody>
                 <tr ng-repeat="ruleWord in ctrl.ruleWords" ng-init="endLine = ctrl.lineEnds[$index]">
-                    <td>{{ruleWord.wordType}}</td>
+                    <td>{{ruleWord.type}}</td>
                     <td>{{ruleWord.value}}</td>
                     <td class="form-inline">
                         <label><input type="radio"
@@ -83,7 +83,7 @@
     </div>
 
     <div class="modal-footer">
-        <button class="btn btn-default" ng-click="ctrl.cancel()">取消</button>
-        <button class="btn btn-vo" ng-click="ctrl.ok()">保存</button>
+        <button class="btn btn-default" ng-click="ctrl.cancel()"><i class="fa fa-remove"></i> 取消</button>
+        <button class="btn btn-vo" ng-click="ctrl.ok()"><i class="glyphicon glyphicon-floppy-disk"></i> 保存</button>
     </div>
 </div>

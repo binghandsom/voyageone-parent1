@@ -1,122 +1,131 @@
 <div class="wrapper-md" ng-init="initialize()">
-	<div class="col-sm-12">
-		<div class="panel vo_panel tab_panel m-t-xs">
-			<div class="container-fluid m-t-sm">
-				<div class="col-sm-4">
-					<form class="form-horizontal">
-						<div class="form-group">
-							<label class="col-sm-3 control-label" translate="TXT_NUM_IID"></label>
-							<label class="col-sm-7 control-label text-left text-vo">
-								<a ng-href="https://detail.tmall.com/item.htm?id={{vm.productList[0].groups.platforms[0].numIId}}"
-								   target="_blank" class="text-u-l" ng-bind="vm.productList[0].groups.platforms[0].numIId"></a>
-							</label>
-							<label class="col-sm-2 text-vo control-label text-left" ng-bind="vm.productList[0].groups.platforms[0].platformStatus"></label>
-						</div><!-- .form-group -->
-						<div class="form-group">
-							<label class="col-sm-3 control-label" translate="TXT_MODEL"></label>
-							<div class="col-sm-8">
-								<input type="text" class="form-control" ng-model="vm.productList[0].fields.model" readonly>
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-3 control-label" translate="TXT_INVENTORY"></label>
-							<div class="col-sm-8">
-								<input type="text" class="form-control" ng-model="vm.productList[0].groups.platforms[0].qty" readonly>
-							</div>
-						</div><!-- .form-group -->
-					</form><!-- .form -->
-				</div><!--.col -->
-				<div class="col-sm-4">
-					<form class="form-horizontal">
-						<div class="form-group">
-							<label class="col-sm-3 control-label" translate="TXT_PLATFORM_CATEGORY"></label>
-							<!-- TODO 暂时不知道如何取得 -->
-							<!--<label class="col-sm-9 control-label text-left text-vo" ng-bind=""></label>-->
-						</div><!-- .form-group -->
-						<div class="form-group">
-							<label class="col-sm-3 control-label" translate="TXT_MASTER_CATEGORY"></label>
-							<div class="col-sm-8">
-								<input type="text" class="form-control" ng-model="vm.productList[0].catPath" readonly>
-							</div>
-						</div><!-- .form-group -->
-						<div class="form-group">
-							<label class="col-sm-3 control-label" translate="TXT_STORE_CATEGORY"></label>
-							<!-- TODO 暂时不知道如何取得 -->
-							<!--<div class="col-sm-8">-->
-								<!--<textarea class="form-control no-resize" rows="2" ng-model="" readonly></textarea>-->
-							<!--</div>-->
-						</div><!-- .form-group -->
-					</form><!-- .form -->
-				</div><!-- .col -->
-				<div class="col-sm-4">
-					<form class="form-horizontal">
-						<div class="form-group">
-							<label class="col-sm-3 control-label" translate="TXT_PUBLISH_TIME"></label>
-							<div class="col-sm-8">
-								<input type="text" class="form-control" ng-model="vm.productList[0].groups.platforms[0].publishTime" readonly>
-							</div>
-						</div><!-- .form-group -->
-						<div class="form-group">
-							<label class="col-sm-3 control-label" translate="TXT_ON_SALE_TIME"></label>
-							<div class="col-sm-8">
-								<input type="text" class="form-control" ng-model="vm.productList[0].groups.platforms[0].onSaleTime" readonly>
-							</div>
-						</div><!-- .form-group -->
-					</form><!-- .form -->
-				</div><!--.col -->
-			</div><!-- .container-fluid -->
-		</div>
-		<div>
-			<tabset class="tab-container vo_nav-tabs">
-				<!--right-btn-->
-				<div class="form-inline m-b-xs pull-right" ng-controller="popupCtrl">
-					<!-- TODO 暂时未实现-->
-					<!--<button class="btn btn-default" ng-click="openCustomBaseProperty('lg')"><i class="fa fa-cog"></i>&nbsp;{{'TXT_CUSTOM_BASE_PROPERTY' | translate}}</button>-->
-					<div class="btn-group" dropdown>
-						<button type="button" class="btn btn-default" ng-disabled="vm.masterData.promotionList.length < 0">
-							<i class="fa fa-arrow-circle-right"></i>&nbsp;{{'TXT_SELECT_PROMOTION' | translate}}
-						</button>
-						<button type="button" class="btn btn-default dropdown-toggle" dropdown-toggle ng-disabled="vm.masterData.promotionList.length < 0">
-							<span class="caret"></span>
-							<span class="sr-only" translate="TXT_SELECT_PROMOTION"></span>
-						</button>
-						<ul class="dropdown-menu" role="menu" ng-if="vm.masterData.promotionList.length">
-							<li ng-repeat="promotion in vm.masterData.promotionList">
-								<a href ng-click="openTagPromotion('md', promotion, vm.productIds, vm.productPageOption.fetch)">{{promotion.promotionName}}|{{promotion.cartName}}</a>
-							</li>
-						</ul>
+	<div class="vo_accordion vo_attr">
+		<div class="panel-group">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h4 class="panel-title"><i class="glyphicon glyphicon-th-list"></i>&nbsp;Group 详情</h4>
 					</div>
-					<button class="btn btn-default" ng-click="openUpdateProperties('md', vm.productIds, vm.productPageOption.fetch)"><i class="fa fa-pencil-square"></i>&nbsp;{{'TXT_BATCH_UPDATE_ATTRIBUTE' | translate}}</button>
-					<!-- TODO 暂时未实现 -->
-					<!--<button class="btn btn-default" ng-click="openNewCategory('lg')"><i class="fa fa-th-list"></i>&nbsp;{{'TXT_CHANGE_CATEGORY' | translate}}</button>-->
-				</div><!-- /right-btn -->
-				<tab>
-					<tab-heading><i class="glyphicons glyphicons-sort text-default"></i>&nbsp;{{'TXT_PRODUCT_LIST' | translate}}</tab-heading>
-					<div class="table-responsive">
-						<table class="table table-hover vo_table vo_models dropdown_table_bk font-bold text-vo">
-							<thead>
-							<tr>
-								<td class="mfb-xxt" translate="TXT_MAIN_PRODUCT"></td>
-								<td class="mfb-xxt text-left" translate="TXT_BRAND"></td>
-								<td class="mfb-xxt text-center" translate="TXT_INVENTORY"></td>
-								<td class="mfb-xxt text-center" translate="TXT_SALE_PRICE"></td>
-								<td class="mfb-xxt" translate="TXT_SIZE_CHART"></td>
-								<td class="mfb-xxt text-left" translate="TXT_BASE_PROPERTY"></td>
-								<td class="mfb-xxt text-center" translate="TXT_SKU_COUNT"></td>
-								<!--<td class="mfb-xxs">Product</td>-->
-								<td class="mfb-xxt text-left" translate="TXT_TIME"></td>
-							</tr>
-							</thead>
-						</table>
-						<div class="col-sm-12 dropdown_table dropdown_table_main" if-no-rows="vm.productList.length">
-							<table class="table table-hover vo_table vo_models" ng-if="vm.productList.length">
-								<tbody ng-repeat="productInfo in vm.productList">
-								<tr class="table_bg_gray">
-									<td colspan="6" class="control-label text-left form-inline">
-										<label class="checkbox-inline c-radio">
-											<input type="radio" name="radioMainProduct" ng-checked="productInfo.groups.platforms[0].isMain" ng-click="setMainProduct(productInfo.prodId)">
-											<span class="fa fa-check"></span>
-										</label>
+				<div class="container-fluid m-t-sm m-b-md">
+					<div class="col-sm-12">
+						<div class="col-sm-4">
+							<form class="form-horizontal">
+								<div class="form-group">
+									<label class="col-sm-3 control-label" translate="TXT_NUM_IID"></label>
+									<label class="col-sm-7 control-label text-left text-vo">
+										<a ng-href="https://detail.tmall.com/item.htm?id={{vm.productList[0].groups.platforms[0].numIId}}"
+										   target="_blank" class="text-u-l" ng-bind="vm.productList[0].groups.platforms[0].numIId"></a>
+									</label>
+									<label class="col-sm-2 text-vo control-label text-left" ng-bind="vm.productList[0].groups.platforms[0].platformStatus"></label>
+								</div><!-- .form-group -->
+								<div class="form-group">
+									<label class="col-sm-3 control-label" translate="TXT_MODEL"></label>
+									<div class="col-sm-8">
+										<input type="text" class="form-control" ng-model="vm.productList[0].fields.model" readonly>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-3 control-label" translate="TXT_INVENTORY"></label>
+									<div class="col-sm-8">
+										<input type="text" class="form-control" ng-model="vm.productList[0].groups.platforms[0].qty" readonly>
+									</div>
+								</div><!-- .form-group -->
+							</form><!-- .form -->
+						</div><!--.col -->
+						<div class="col-sm-4">
+							<form class="form-horizontal">
+								<div class="form-group">
+									<label class="col-sm-3 control-label" translate="TXT_PLATFORM_CATEGORY"></label>
+									<!-- TODO 暂时不知道如何取得 -->
+									<!--<label class="col-sm-9 control-label text-left text-vo" ng-bind=""></label>-->
+								</div><!-- .form-group -->
+								<div class="form-group">
+									<label class="col-sm-3 control-label" translate="TXT_MASTER_CATEGORY"></label>
+									<div class="col-sm-8">
+										<input type="text" class="form-control" ng-model="vm.productList[0].catPath" readonly>
+									</div>
+								</div><!-- .form-group -->
+								<div class="form-group">
+									<label class="col-sm-3 control-label" translate="TXT_STORE_CATEGORY"></label>
+									<!-- TODO 暂时不知道如何取得 -->
+									<!--<div class="col-sm-8">-->
+									<!--<textarea class="form-control no-resize" rows="2" ng-model="" readonly></textarea>-->
+									<!--</div>-->
+								</div><!-- .form-group -->
+							</form><!-- .form -->
+						</div><!-- .col -->
+						<div class="col-sm-4">
+							<form class="form-horizontal">
+								<div class="form-group">
+									<label class="col-sm-3 control-label" translate="TXT_PUBLISH_TIME"></label>
+									<div class="col-sm-8">
+										<input type="text" class="form-control" ng-model="vm.productList[0].groups.platforms[0].publishTime" readonly>
+									</div>
+								</div><!-- .form-group -->
+								<div class="form-group">
+									<label class="col-sm-3 control-label" translate="TXT_ON_SALE_TIME"></label>
+									<div class="col-sm-8">
+										<input type="text" class="form-control" ng-model="vm.productList[0].groups.platforms[0].onSaleTime" readonly>
+									</div>
+								</div><!-- .form-group -->
+							</form><!-- .form -->
+						</div><!--.col -->
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	<div class="box">
+		<tabset class="tab-container vo_nav-tabs">
+			<!--right-btn-->
+			<div class="form-inline m-b-xs pull-right" ng-controller="popupCtrl">
+				<!-- TODO 暂时未实现-->
+				<!--<button class="btn btn-default" ng-click="openCustomBaseProperty('lg')"><i class="fa fa-cog"></i>&nbsp;{{'TXT_CUSTOM_BASE_PROPERTY' | translate}}</button>-->
+				<div class="btn-group" dropdown>
+					<button type="button" class="btn btn-default" ng-disabled="vm.masterData.promotionList.length < 0">
+						<i class="fa fa-arrow-circle-right"></i>&nbsp;{{'TXT_SELECT_PROMOTION' | translate}}
+					</button>
+					<button type="button" class="btn btn-default dropdown-toggle" dropdown-toggle ng-disabled="vm.masterData.promotionList.length < 0">
+						<span class="caret"></span>
+						<span class="sr-only" translate="TXT_SELECT_PROMOTION"></span>
+					</button>
+					<ul class="dropdown-menu" role="menu" ng-if="vm.masterData.promotionList.length">
+						<li ng-repeat="promotion in vm.masterData.promotionList">
+							<a href ng-click="openTagPromotion('md', promotion, vm.productIds, vm.productPageOption.fetch)">{{promotion.promotionName}}|{{promotion.cartName}}</a>
+						</li>
+					</ul>
+				</div>
+				<button class="btn btn-default" ng-click="openUpdateProperties('md', vm.productIds, vm.productPageOption.fetch)"><i class="fa fa-pencil-square"></i>&nbsp;{{'TXT_BATCH_UPDATE_ATTRIBUTE' | translate}}</button>
+				<!-- TODO 暂时未实现 -->
+				<!--<button class="btn btn-default" ng-click="openNewCategory('lg')"><i class="fa fa-th-list"></i>&nbsp;{{'TXT_CHANGE_CATEGORY' | translate}}</button>-->
+			</div><!-- /right-btn -->
+			<tab>
+				<tab-heading><i class="glyphicons glyphicons-sort text-default"></i>&nbsp;{{'TXT_PRODUCT_LIST' | translate}}</tab-heading>
+				<div class="table-responsive">
+					<table class="table table-hover vo_table vo_models dropdown_table_bk font-bold" style="background:#e67e22;color:#fff">
+						<thead>
+						<tr>
+							<td class="mfb-xxt" translate="TXT_MAIN_PRODUCT"></td>
+							<td class="mfb-xxt text-left" translate="TXT_BRAND"></td>
+							<td class="mfb-xxt text-center" translate="TXT_INVENTORY"></td>
+							<td class="mfb-xxt text-center" translate="TXT_SALE_PRICE"></td>
+							<td class="mfb-xxt" translate="TXT_SIZE_CHART"></td>
+							<td class="mfb-xxt text-left" translate="TXT_BASE_PROPERTY"></td>
+							<td class="mfb-xxt text-center" translate="TXT_SKU_COUNT"></td>
+							<!--<td class="mfb-xxs">Product</td>-->
+							<td class="mfb-xxt text-left" translate="TXT_TIME"></td>
+						</tr>
+						</thead>
+					</table>
+					<div class="col-sm-12 dropdown_table dropdown_table_main" if-no-rows="vm.productList.length">
+						<table class="table table-hover vo_table vo_models" ng-if="vm.productList.length">
+							<tbody ng-repeat="productInfo in vm.productList">
+							<tr class="table_bg_gray">
+								<td colspan="6" class="control-label text-left form-inline">
+									<label class="checkbox-inline c-radio">
+										<input type="radio" name="radioMainProduct" ng-checked="productInfo.groups.platforms[0].isMain" ng-click="setMainProduct(productInfo.prodId)">
+										<span class="fa fa-check"></span>
+									</label>
 										<span class="label m-r-lg m-l" ng-class="{'label-yellow-new': productInfo.fields.status == 'Pending','label-info': productInfo.fields.status == 'Ready', 'label-primary': productInfo.fields.status == 'Approved', 'label-danger-new': productInfo.fields.status == 'Deleted', 'label-success-new': productInfo.fields.status == 'New'}">
 											&nbsp;{{productInfo.fields.status}}&nbsp;
 										</span>
@@ -126,54 +135,51 @@
 										<span>{{'TXT_PRODUCT_NAME' | translate}}&nbsp;
 											<a href="#/product/detail/{{productInfo.prodId}}" target="_blank" class="text-u-l" ng-bind="productInfo.fields.productName || productInfo.fields.productNameEn"></a>
 										</span>
-									</td>
-									<td colspan="2" class="text-right">{{'TXT_CATEGORY' | translate}}&nbsp;{{productInfo.catPath}}</td>
-								</tr>
-								<tr>
-									<td class="mfb-xxt">
-										<img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{productInfo.fields.images1[0].image1}}" alt="{{productInfo.fields.code}}" class="img-circle pull-left m-r"/>
-									</td>
-									<td class="mfb-xxt text-left">{{productInfo.fields.brand}}</td>
-									<td class="mfb-xxt text-center">
-										<button ng-controller="showPopoverCtrl" popover-html="showInfo({{productInfo.inventoryDetail}})" popover-title="{{'TXT_INVENTORY' | translate}}" type="button" popover-placement="left" class="btn btn-default btn-xs">{{productInfo.fields.qty || 0}}</button>
-									</td>
-									<td class="mfb-xxt text-center">
-										<button ng-controller="showPopoverCtrl" popover-html="showInfo({{productInfo.groups.priceDetail}})" popover-title="{{'TXT_SALE_PRICE' | translate}}" type="button" popover-placement="left" class="btn btn-default btn-xs">{{productInfo.fields.priceSaleSt || 0.00}}&nbsp;~&nbsp;{{productInfo.fields.priceSaleEd || 0.00}}</button>
-									</td>
-									<td class="mfb-xxt">{{productInfo.fields.sizeType}}</td>
-									<td class="mfb-xxt text-left">
+								</td>
+								<td colspan="2" class="text-right">{{'TXT_CATEGORY' | translate}}&nbsp;{{productInfo.catPath}}</td>
+							</tr>
+							<tr>
+								<td class="mfb-xxt">
+									<img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{productInfo.fields.images1[0].image1}}" alt="{{productInfo.fields.code}}" class="img-circle pull-left m-r"/>
+								</td>
+								<td class="mfb-xxt text-left">{{productInfo.fields.brand}}</td>
+								<td class="mfb-xxt text-center">
+									<button ng-controller="showPopoverCtrl" popover-html="showInfo({{productInfo.inventoryDetail}})" popover-title="{{'TXT_INVENTORY' | translate}}" type="button" popover-placement="left" class="btn btn-default btn-xs">{{productInfo.fields.qty || 0}}</button>
+								</td>
+								<td class="mfb-xxt text-center">
+									<button ng-controller="showPopoverCtrl" popover-html="showInfo({{productInfo.groups.priceDetail}})" popover-title="{{'TXT_SALE_PRICE' | translate}}" type="button" popover-placement="left" class="btn btn-default btn-xs">{{productInfo.fields.priceSaleSt || 0.00}}&nbsp;~&nbsp;{{productInfo.fields.priceSaleEd || 0.00}}</button>
+								</td>
+								<td class="mfb-xxt">{{productInfo.fields.sizeType}}</td>
+								<td class="mfb-xxt text-left">
+									<div class="table_main">
+										<ul>
+											<!--<li ng-repeat="baseProperty in productInfo.basePropertyList">{{baseProperty.name}}&nbsp;{{baseProperty.value}}</li>-->
+										</ul>
+									</div>
+								</td>
+								<td class="mfb-xxt text-center">{{productInfo.skus.length}}</td>
+								<td class="mfb-xxt text-left">
+									<small ng-controller="showPopoverCtrl" popover-html="showInfo({{productInfo.groups.platforms[0].timeDetail}})" popover-trigger="mouseenter" popover-placement="left">
 										<div class="table_main">
 											<ul>
-												<!--<li ng-repeat="baseProperty in productInfo.basePropertyList">{{baseProperty.name}}&nbsp;{{baseProperty.value}}</li>-->
+												<li>{{'TXT_CREATE_TIME' | translate}}</li>
+												<!--<li><span>{{productInfo.publishDate}}</span></li>-->
+												<li><span>{{productInfo.created}}</span></li>
 											</ul>
 										</div>
-									</td>
-									<td class="mfb-xxt text-center">{{productInfo.skus.length}}</td>
-									<td class="mfb-xxt text-left">
-										<small ng-controller="showPopoverCtrl" popover-html="showInfo({{productInfo.groups.platforms[0].timeDetail}})" popover-trigger="mouseenter" popover-placement="left">
-											<div class="table_main">
-												<ul>
-													<li>{{'TXT_CREATE_TIME' | translate}}</li>
-													<!--<li><span>{{productInfo.publishDate}}</span></li>-->
-													<li><span>{{productInfo.created}}</span></li>
-												</ul>
-											</div>
-										</small>
-									</td>
-								</tr>
-								</tbody>
-							</table>
-						</div>
-						<div class="col-sm-12 m-t-sm">
-							<vpagination config="vm.productPageOption"></vpagination>
-						</div>
-					</div><!-- .table-responsive -->
-					</table><!-- .table-responsive -->
-				</tab>
-			</tabset><!-- tabset -->
-		</div><!-- tabs ng-controller -->
-
-
+									</small>
+								</td>
+							</tr>
+							</tbody>
+						</table>
+					</div>
+					<div class="col-sm-12 m-t-sm">
+						<vpagination config="vm.productPageOption"></vpagination>
+					</div>
+				</div><!-- .table-responsive -->
+				</table><!-- .table-responsive -->
+			</tab>
+		</tabset><!-- tabset -->
 	</div><!-- .col-lg-12 -->
 </div><!-- end .wrapper-md -->
 

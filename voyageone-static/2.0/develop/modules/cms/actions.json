@@ -60,7 +60,9 @@
         "getPlatformCategory": "getPlatformCategory",
         "getMainCategorySchema": "getMainCategorySchema",
         "getDictList": "getDictList",
-        "getPlatformMapping": "getPlatformMapping"
+        "getPlatformMapping": "getPlatformMapping",
+        "getMappingType": "getMappingType",
+        "$saveMapping": "saveMapping"
       }
     },
     "pop": {
@@ -127,17 +129,17 @@
       "init": "init",
       "search": "search",
       "updateFinishStatus": "updateFinishStatus"
-    }
-  },
-  "DictService": {
-      "root": "/cms/dict/manage/",
-      "dtGetDict" : "dtGetDict",
+    },
+    "$dictionaryService": {
+      "root": "/cms/system/dictionary",
+      "init": "init",
+      "getDict" : "getDict",
+      "getDictList" : "getDictList",
       "getConst" : "getConst",
       "getCustoms" : "getCustoms",
       "setDict" : "setDict",
       "delDict" : "delDict",
-      "addDict" : "addDict",
-      "getDictList" : "getDictList",
-      "customs":"getCustoms"
+      "addDict" : "addDict"
+    }
   }
 }
