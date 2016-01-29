@@ -11,7 +11,7 @@ import java.util.Map;
 /**
  * Created by lewis on 16-1-5.
  */
-public class ProductInfoBean {
+public class CmsProductInfoBean {
 
     private String channelId;
 

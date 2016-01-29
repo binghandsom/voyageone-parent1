@@ -3,6 +3,8 @@ package com.voyageone.web2.cms.views.group;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
+import com.voyageone.web2.core.bean.UserSessionBean;
+import com.voyageone.web2.sdk.api.VoApiDefaultClient;
 import com.voyageone.web2.sdk.api.response.ProductsGetResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,14 +20,14 @@ import java.util.Map;
  * @version 2.0.0, 16/1/14
  */
 @RestController
-@RequestMapping(
-        value = CmsUrlConstants.GROUP.LIST.ROOT,
-        method = RequestMethod.POST
-)
+@RequestMapping(value = CmsUrlConstants.GROUP.LIST.ROOT, method = RequestMethod.POST)
 public class CmsGroupListController extends CmsController {
 
     @Autowired
     private CmsGroupListService cmsGroupListService;
+
+    @Autowired
+    protected VoApiDefaultClient voApiDefaultClient;
 
     /**
      * 初始化,获取master数据
@@ -79,7 +81,8 @@ public class CmsGroupListController extends CmsController {
     @RequestMapping(CmsUrlConstants.GROUP.LIST.SET_MAIN_PRODUCT)
     public AjaxResponse setMainProduct(@RequestBody Map<String, Object> params) {
 
-        Map<String, Object> resultBean = new HashMap<>();
+        UserSessionBean userSession = super.getUser();
+        Map<String, Object> resultBean = cmsGroupListService.updateMainProduct(params,userSession);
 
         // 返回用户信息
         return success(resultBean);

@@ -13,6 +13,7 @@ import com.voyageone.cms.service.model.CmsBtProductModel_Group_Platform;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.web2.cms.wsdl.BaseService;
 import com.voyageone.web2.sdk.api.VoApiConstants;
+import com.voyageone.web2.sdk.api.VoApiUpdateResponse;
 import com.voyageone.web2.sdk.api.exception.ApiException;
 import com.voyageone.web2.sdk.api.request.ProductGroupGetRequest;
 import com.voyageone.web2.sdk.api.request.ProductGroupsDeleteRequest;
@@ -374,6 +375,82 @@ public class ProductGroupService extends BaseService {
                 }
             }
         }
+    }
+
+    /**
+     * change main product.
+     * @param groupId
+     * @param channelId
+     * @param productId
+     * @return
+     */
+    public VoApiUpdateResponse updateMainProduct(Long groupId, String channelId, Long productId,String modifier){
+
+        int updateCount = 0;
+
+        updateCount = updateCount +resetMainProduct(groupId, channelId, modifier);
+
+        updateCount = updateCount +setMainProduct(groupId, channelId, productId, modifier);
+
+        VoApiUpdateResponse response = new VoApiUpdateResponse();
+
+        response.setModifiedCount(updateCount);
+
+        return response;
+    }
+
+    /**
+     * 设置主产品.
+     * @param groupId
+     * @param channelId
+     * @param productId
+     * @param modifier
+     */
+    private int setMainProduct(Long groupId, String channelId, Long productId, String modifier) {
+        List<BulkUpdateModel> bulkList = new ArrayList<>();
+
+        HashMap<String, Object> updateMap = new HashMap<>();
+        updateMap.put("groups.platforms.$.isMain", 1);
+
+        HashMap<String, Object> queryMap = new HashMap<>();
+
+        queryMap.put("prodId", productId);
+
+        queryMap.put("groups.platforms.groupId", groupId);
+
+        BulkUpdateModel model = new BulkUpdateModel();
+        model.setUpdateMap(updateMap);
+        model.setQueryMap(queryMap);
+        bulkList.add(model);
+
+        BulkWriteResult result = cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, modifier, "$set");
+
+        return result.getModifiedCount();
+    }
+
+    /**
+     * 将主商品设置为非主商品.
+     * @param groupId
+     * @param channelId
+     * @param modifier
+     */
+    private int resetMainProduct(Long groupId, String channelId, String modifier) {
+        List<BulkUpdateModel> bulkList = new ArrayList<>();
+
+        HashMap<String, Object> updateMap = new HashMap<>();
+        updateMap.put("groups.platforms.$.isMain", 0);
+
+        HashMap<String, Object> queryMap = new HashMap<>();
+        queryMap.put("groups.platforms.isMain", 1);
+        queryMap.put("groups.platforms.groupId", groupId);
+
+        BulkUpdateModel model = new BulkUpdateModel();
+        model.setUpdateMap(updateMap);
+        model.setQueryMap(queryMap);
+        bulkList.add(model);
+        BulkWriteResult result = cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, modifier, "$set");
+
+        return result.getModifiedCount();
     }
 
 }

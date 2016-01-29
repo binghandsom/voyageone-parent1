@@ -2,6 +2,7 @@ package com.voyageone.web2.cms.wsdl.control;
 
 import com.voyageone.web2.cms.wsdl.BaseController;
 import com.voyageone.web2.cms.wsdl.service.ProductGroupService;
+import com.voyageone.web2.sdk.api.VoApiUpdateResponse;
 import com.voyageone.web2.sdk.api.request.*;
 import com.voyageone.web2.sdk.api.response.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,5 +63,11 @@ public class ProductGroupController extends BaseController {
     @RequestMapping("delete")
     public ProductGroupsDeleteResponse deleteList(@RequestBody ProductGroupsDeleteRequest request) {
         return productGroupService.deleteList(request);
+    }
+
+    @RequestMapping("updMainProduct")
+    public VoApiUpdateResponse updMainProduct(@RequestBody GroupMainProductUpdateRequest request){
+        return productGroupService.updateMainProduct(request.getGroupId(),request.getChannelId(),request.getProductId(),request.getModifier());
+
     }
 }

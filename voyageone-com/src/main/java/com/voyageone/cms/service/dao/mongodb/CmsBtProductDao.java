@@ -478,4 +478,20 @@ public class CmsBtProductDao extends BaseMongoPartDao {
 //        }
 //        return null;
 //    }
+
+    /**
+     * change main product.
+     * @param groupId
+     * @param channelId
+     * @param productId
+     * @return
+     */
+    public WriteResult updateMainProduct(Long groupId, String channelId, Long productId){
+
+        //1.将老的主产品更新成一般产品.
+
+        //2.将传入的product设置成主商品.
+
+        return null;
+    }
 }

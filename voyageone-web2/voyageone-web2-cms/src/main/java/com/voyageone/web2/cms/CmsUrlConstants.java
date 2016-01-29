@@ -236,7 +236,6 @@ public interface CmsUrlConstants {
 
             String CONFIRM_CHANGE = "confirmChange";
 
-            String REVERT_CATEGORY = "revertCategory";
         }
     }
 

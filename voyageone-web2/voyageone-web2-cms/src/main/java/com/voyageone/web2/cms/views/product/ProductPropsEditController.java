@@ -3,7 +3,8 @@ package com.voyageone.web2.cms.views.product;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
-import com.voyageone.web2.cms.bean.ProductInfoBean;
+import com.voyageone.web2.cms.bean.CmsCategoryInfoBean;
+import com.voyageone.web2.cms.bean.CmsProductInfoBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,7 +33,7 @@ public class ProductPropsEditController extends CmsController{
 
         Map<String,Object> categoryInfo = new HashMap<>();
 
-        ProductInfoBean productInfo = productPropsEditService.getProductInfo(channelId,productId);
+        CmsProductInfoBean productInfo = productPropsEditService.getProductInfo(channelId,productId);
 
         categoryInfo.put("productInfo",productInfo);
 
@@ -94,13 +95,16 @@ public class ProductPropsEditController extends CmsController{
 
     }
 
-
     @RequestMapping(CmsUrlConstants.PRODUCT.EDIT.CHANGE_CATEGORY)
     public AjaxResponse doChangeCategory(@RequestBody Map requestMap){
 
+        String categoryId = requestMap.get("catId").toString();
+
+        CmsCategoryInfoBean categoryInfoBean = productPropsEditService.getCategoryInfo(categoryId);
 
         Map<String,Object> categoryInfo = new HashMap<>();
 
+        categoryInfo.put("categoryInfo",categoryInfoBean);
 
         return success(categoryInfo);
 
@@ -116,17 +120,5 @@ public class ProductPropsEditController extends CmsController{
         return success(categoryInfo);
 
     }
-
-    @RequestMapping(CmsUrlConstants.PRODUCT.EDIT.REVERT_CATEGORY)
-    public AjaxResponse doRevertCategory(@RequestBody Map requestMap){
-
-
-        Map<String,Object> categoryInfo = new HashMap<>();
-
-
-        return success(categoryInfo);
-
-    }
-
 
 }

@@ -1,10 +1,13 @@
 package com.voyageone.web2.cms.views.group;
 
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.cms.views.promotion.CmsPromotionService;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import com.voyageone.web2.sdk.api.VoApiDefaultClient;
+import com.voyageone.web2.sdk.api.VoApiUpdateResponse;
+import com.voyageone.web2.sdk.api.request.GroupMainProductUpdateRequest;
 import com.voyageone.web2.sdk.api.request.ProductsGetRequest;
 import com.voyageone.web2.sdk.api.response.ProductsGetResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -113,6 +116,52 @@ public class CmsGroupListService {
         result.append(",");
 
         return "{" + result.toString() + "}";
+    }
+
+    /**
+     * update main product.
+     * @param params
+     * @return
+     */
+    public Map<String, Object> updateMainProduct(Map<String, Object> params, UserSessionBean userSession){
+
+        GroupMainProductUpdateRequest requestData = new GroupMainProductUpdateRequest();
+
+        //参数验证.
+        String errMsg =null;
+
+        Object groupIdObj = params.get("groupId");
+
+        Object prodIdObj = params.get("prodId");
+
+        if (groupIdObj == null){
+            errMsg = "group id is null !";
+        }else if (prodIdObj == null){
+            errMsg = "product id is null !";
+        }
+
+        if (errMsg != null){
+            throw new BusinessException(errMsg);
+        }
+
+        Long groupId = Long.parseLong(String.valueOf(groupIdObj));
+
+        String channelId = userSession.getSelChannelId();
+
+        Long productId = Long.parseLong(String.valueOf(prodIdObj));
+
+        requestData.setGroupId(groupId);
+        requestData.setChannelId(channelId);
+        requestData.setProductId(productId);
+        requestData.setModifier(userSession.getUserName());
+
+        VoApiUpdateResponse responseData = voApiClient.execute(requestData);
+
+        Map<String,Object> updateResult = new HashMap<>();
+
+        updateResult.put("result",new Integer(responseData.getModifiedCount()));
+
+        return updateResult;
     }
 
 }

@@ -16,10 +16,13 @@ import com.voyageone.common.masterdate.schema.utils.FieldUtil;
 import com.voyageone.common.masterdate.schema.value.ComplexValue;
 import com.voyageone.common.masterdate.schema.value.Value;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.web2.cms.bean.CmsCategoryInfoBean;
 import com.voyageone.web2.cms.bean.CustomAttributesBean;
-import com.voyageone.web2.cms.bean.ProductInfoBean;
+import com.voyageone.web2.cms.bean.CmsProductInfoBean;
 import com.voyageone.web2.sdk.api.VoApiDefaultClient;
+import com.voyageone.web2.sdk.api.request.CategorySchemaGetRequest;
 import com.voyageone.web2.sdk.api.request.ProductUpdateRequest;
+import com.voyageone.web2.sdk.api.response.CategorySchemaGetResponse;
 import com.voyageone.web2.sdk.api.service.ProductSdkClient;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -52,7 +55,7 @@ public class ProductPropsEditService {
     private CmsBtFeedInfoDao cmsBtFeedInfoDao;
 
     @Autowired
-    protected VoApiDefaultClient voApiClient;
+    VoApiDefaultClient voApiDefaultClient;
 
     @Autowired
     protected ProductSdkClient productClient;
@@ -61,9 +64,9 @@ public class ProductPropsEditService {
 
     private static final String completeStatus = "1";
 
-    public ProductInfoBean getProductInfo(String channelId, int prodId) throws BusinessException{
+    public CmsProductInfoBean getProductInfo(String channelId, int prodId) throws BusinessException{
 
-        ProductInfoBean productInfo = new ProductInfoBean();
+        CmsProductInfoBean productInfo = new CmsProductInfoBean();
 
         //自定义属性.
         CustomAttributesBean customAttributes = new CustomAttributesBean();
@@ -72,7 +75,7 @@ public class ProductPropsEditService {
         CmsBtProductModel productValueModel = getProductModel(channelId, prodId);
 
         //商品各种状态.
-        ProductInfoBean.ProductStatus productStatus = productInfo.getProductStatusInstance();
+        CmsProductInfoBean.ProductStatus productStatus = productInfo.getProductStatusInstance();
         productStatus.setApproveStatus(productValueModel.getFields().getStatus());
 
         if (completeStatus.equals(productValueModel.getFields().getTranslateStatus())){
@@ -93,7 +96,7 @@ public class ProductPropsEditService {
         Map<String,String> feedInfoModel = getCmsBtFeedInfoModel(channelId, prodId, productValueModel);
 
         // 获取product 对应的 schema
-        CmsMtCategorySchemaModel categorySchemaModel = getCmsMtCategorySchemaModel(productValueModel);
+        CmsMtCategorySchemaModel categorySchemaModel = getCmsMtCategorySchemaModel(productValueModel.getCatId());
 
         // 获取共通schema.
         CmsMtComSchemaModel comSchemaModel = getComSchemaModel();
@@ -265,6 +268,28 @@ public class ProductPropsEditService {
     }
 
     /**
+     * 获取被切换类目的schema.
+     * @param categoryId
+     * @return
+     * @throws BusinessException
+     */
+    public CmsCategoryInfoBean getCategoryInfo(String categoryId) throws BusinessException{
+
+        CmsCategoryInfoBean categoryInfo = new CmsCategoryInfoBean();
+
+        CategorySchemaGetRequest schemaGetRequest = new CategorySchemaGetRequest(categoryId);
+
+        CategorySchemaGetResponse schemaGetResponse = voApiDefaultClient.execute(schemaGetRequest);
+
+        categoryInfo.setMasterFields(schemaGetResponse.getMasterFields());
+        categoryInfo.setCategoryId(schemaGetResponse.getCategoryId());
+        categoryInfo.setCategoryFullPath(schemaGetResponse.getCategoryFullPath());
+        categoryInfo.setSkuFields(schemaGetResponse.getSkuFields());
+
+        return categoryInfo;
+    }
+
+    /**
      * 获取 feed info model.
      * @param channelId
      * @param prodId
@@ -398,21 +423,19 @@ public class ProductPropsEditService {
 
     /**
      * 获取 master schema.
-     * @param productValueModel
+     * @param categoryId
      * @return
      */
-    private CmsMtCategorySchemaModel getCmsMtCategorySchemaModel(CmsBtProductModel productValueModel) {
+    private CmsMtCategorySchemaModel getCmsMtCategorySchemaModel(String categoryId) {
 
-        CmsMtCategorySchemaModel schemaModel = cmsMtCategorySchemaDao.getMasterSchemaModelByCatId(productValueModel.getCatId());
+        CmsMtCategorySchemaModel schemaModel = cmsMtCategorySchemaDao.getMasterSchemaModelByCatId(categoryId);
 
         if (schemaModel == null){
             // product 对应的schema信息不存在时的异常处理.
-            String errMsg = "category id: " + productValueModel.getCatId() +"对应的类目信息不存在！";
+            String errMsg = "category id: " + categoryId +"对应的类目信息不存在！";
             logger.error(errMsg);
             throw new BusinessException(errMsg);
         }
-
-
 
         return schemaModel;
     }
