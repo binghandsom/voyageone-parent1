@@ -60,15 +60,15 @@
                                         <td class="mfb-xxt text-center" ng-bind="valueInfo.type"></td>
                                         <td class="text-left">{{valueInfo.value}}</td>
                                         <td class="mfb-xxt text-center">
-                                            <button class="btn btn-default btn-xs" ng-show="$index != 0" ng-click="sortUp($index)">
-                                                <i class="fa fa-arrow-up"></i>
-                                            </button>
-                                            <button class="btn btn-default btn-xs" ng-show="$index < (vm.dictionary.expression.ruleWordList.length - 1)" ng-click="sortDown($index)">
-                                                <i class="fa fa-arrow-down"></i>
-                                            </button>
                                             <button ng-if="valueInfo.type == 'CUSTOM'" ng-controller="popupCtrl" class="btn btn-success btn-xs" ng-click="openDictCustom('lg', editDictionary, $index, valueInfo)"><i class="fa fa-pencil"></i></button>
                                             <button ng-if="valueInfo.type != 'CUSTOM'" ng-controller="popupCtrl" class="btn btn-success btn-xs" ng-click="openDictValue('md', editDictionary, $index, valueInfo)"><i class="fa fa-pencil"></i></button>
                                             <button class="btn btn-danger btn-xs"  ng-click="delDictItem($index)"><i class="fa fa-trash-o"></i></button>
+                                            <button class="btn btn-dangerdel btn-xs" ng-show="$index != 0" ng-click="sortUp($index)">
+                                                <i class="glyphicon glyphicon-chevron-up"></i>
+                                            </button>
+                                            <button class="btn btn-dangerdel btn-xs" ng-show="$index < (vm.dictionary.expression.ruleWordList.length - 1)" ng-click="sortDown($index)">
+                                                <i class="glyphicon glyphicon-chevron-down"></i>
+                                            </button>
                                         </td>
                                     </tr>
                                     </tbody>
