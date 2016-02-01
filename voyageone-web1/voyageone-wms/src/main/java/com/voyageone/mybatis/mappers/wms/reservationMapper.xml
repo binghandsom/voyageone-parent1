@@ -394,7 +394,17 @@
         </if>
           printed = '1',
           ship_channel = #{shipChannel},
-          price = #{price},
+        <choose>
+            <when test="scanType == 1">
+                price = #{price},
+            </when>
+            <when test="scanType == 2">
+                date = NOW(),
+            </when>
+            <when test="scanType == 3">
+                date = NOW(),
+            </when>
+        </choose>
         <if test="closeDayFlg != null and closeDayFlg != ''">
           close_day_flg = #{closeDayFlg},
         </if>

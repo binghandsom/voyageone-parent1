@@ -64,8 +64,8 @@ public class AjaxResponseBean {
      * 将内容写到Response的输出流中
      */
 	public void WriteTo(HttpServletResponse response, String encoding) throws BiException {
-		if (!StringUtils.isEmpty(encoding))
-			response.setCharacterEncoding(encoding);
+//		if (!StringUtils.isEmpty(encoding))
+//			response.setCharacterEncoding(encoding);
 		
 		PrintWriter out;
 		try {

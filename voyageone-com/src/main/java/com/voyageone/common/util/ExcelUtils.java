@@ -72,6 +72,8 @@ public final class ExcelUtils {
                 return formatter.format(val);
             case Cell.CELL_TYPE_STRING:
                 return cell.getStringCellValue();
+            case Cell.CELL_TYPE_FORMULA:
+                return cell.getStringCellValue();
         }
 
         return null;
