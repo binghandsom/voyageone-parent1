@@ -1142,7 +1142,7 @@ public class MagentoApiServiceImpl {
 	public int addNewOrderTrack(Map<String, String> cainiaoMap) throws Exception {
 		boolean isException = false;
 
-		int trackingNumberId = 0;
+		int result = 0;
 
 		String clientOrderId = cainiaoMap.get("client_order_id");
 		String sourceOrderId = cainiaoMap.get("origin_source_order_id");
@@ -1154,38 +1154,47 @@ public class MagentoApiServiceImpl {
 			// login
 			sessionId = login();
 
-			SalesOrderShipmentCreateRequestParam request = new SalesOrderShipmentCreateRequestParam();
-			request.setOrderIncrementId(clientOrderId);
-			request.setSessionId(sessionId);
+			SalesOrderAddCommentRequestParam requestParam = new SalesOrderAddCommentRequestParam();
+			requestParam.setSessionId(this.sessionId);
+			requestParam.setOrderIncrementId(clientOrderId);
+			String comment = "cainiaoId=" + cainiaoId + ";sourceOrderId=" + sourceOrderId + ";payNo=" + payNo;
+			requestParam.setComment(comment);
+			requestParam.setStatus("pending");
+			SalesOrderAddCommentResponseParam responseParam = stub.salesOrderAddComment(requestParam);
+			result = responseParam.getResult();
 
-			SalesOrderShipmentCreateResponseParam response = stub.salesOrderShipmentCreate(request);
-			String shipmentIncrementId = response.getResult();
-
-			if (!StringUtils.isNullOrBlank2(shipmentIncrementId)) {
-				SalesOrderShipmentAddCommentRequestParam request2 = new SalesOrderShipmentAddCommentRequestParam();
-				request2.setSessionId(sessionId);
-				request2.setShipmentIncrementId(shipmentIncrementId);
-				request2.setComment("sourceOrderId=" + sourceOrderId + ";payNo=" + payNo);
-
-				SalesOrderShipmentAddCommentResponseParam response2 = stub.salesOrderShipmentAddComment(request2);
-				int commentResult = response2.getResult();
-
-				if (commentResult > 0) {
-					SalesOrderShipmentAddTrackRequestParam request3 = new SalesOrderShipmentAddTrackRequestParam();
-					request3.setSessionId(sessionId);
-					request3.setShipmentIncrementId(shipmentIncrementId);
-					request3.setTrackNumber(cainiaoId);
-					request3.setCarrier(CAINIAO_CARRIER);
-					request3.setTitle(CAINIAO_TITLE);
-
-					SalesOrderShipmentAddTrackResponseParam response3 = stub.salesOrderShipmentAddTrack(request3);
-					trackingNumberId = response3.getResult();
-				}
-			} else {
-				logger.error("clientOrderId:" + clientOrderId + " salesOrderShipmentCreate failure!");
-			}
-
-			return trackingNumberId;
+//			SalesOrderShipmentCreateRequestParam request = new SalesOrderShipmentCreateRequestParam();
+//			request.setOrderIncrementId(clientOrderId);
+//			request.setSessionId(sessionId);
+//
+//			SalesOrderShipmentCreateResponseParam response = stub.salesOrderShipmentCreate(request);
+//			String shipmentIncrementId = response.getResult();
+//
+//			if (!StringUtils.isNullOrBlank2(shipmentIncrementId)) {
+//				SalesOrderShipmentAddCommentRequestParam request2 = new SalesOrderShipmentAddCommentRequestParam();
+//				request2.setSessionId(sessionId);
+//				request2.setShipmentIncrementId(shipmentIncrementId);
+//				request2.setComment("sourceOrderId=" + sourceOrderId + ";payNo=" + payNo);
+//
+//				SalesOrderShipmentAddCommentResponseParam response2 = stub.salesOrderShipmentAddComment(request2);
+//				int commentResult = response2.getResult();
+//
+//				if (commentResult > 0) {
+//					SalesOrderShipmentAddTrackRequestParam request3 = new SalesOrderShipmentAddTrackRequestParam();
+//					request3.setSessionId(sessionId);
+//					request3.setShipmentIncrementId(shipmentIncrementId);
+//					request3.setTrackNumber(cainiaoId);
+//					request3.setCarrier(CAINIAO_CARRIER);
+//					request3.setTitle(CAINIAO_TITLE);
+//
+//					SalesOrderShipmentAddTrackResponseParam response3 = stub.salesOrderShipmentAddTrack(request3);
+//					trackingNumberId = response3.getResult();
+//				}
+//			} else {
+//				logger.error("clientOrderId:" + clientOrderId + " salesOrderShipmentCreate failure!");
+//			}
+//
+			return result;
 
 		} catch (Exception ex) {
 			logger.error(ex.getMessage(), ex);
@@ -1215,9 +1224,8 @@ public class MagentoApiServiceImpl {
 	 * @param cainiaoMap
 	 */
 	public int addNewOrderTrackWithOneSession(Map<String, String> cainiaoMap) throws Exception {
-		boolean isException = false;
 
-		int trackingNumberId = 0;
+		int result = 0;
 
 		String clientOrderId = cainiaoMap.get("client_order_id");
 		String sourceOrderId = cainiaoMap.get("origin_source_order_id");
@@ -1232,67 +1240,150 @@ public class MagentoApiServiceImpl {
 				this.sessionId = sessionId;
 			}
 
-			SalesOrderShipmentCreateRequestParam request = new SalesOrderShipmentCreateRequestParam();
-			request.setOrderIncrementId(clientOrderId);
-			request.setSessionId(sessionId);
+			logger.info("WMF订单号：" + clientOrderId + " 处理开始");
 
-			SalesOrderShipmentCreateResponseParam response;
+			SalesOrderAddCommentRequestParam requestParam = new SalesOrderAddCommentRequestParam();
+			requestParam.setSessionId(this.sessionId);
+			requestParam.setOrderIncrementId(clientOrderId);
+			String comment = "cainiaoId=" + cainiaoId + ";sourceOrderId=" + sourceOrderId + ";payNo=" + payNo;
+			requestParam.setComment(comment);
+			requestParam.setStatus("pending");
+			SalesOrderAddCommentResponseParam responseParam;
+
 			try {
-				response = stub.salesOrderShipmentCreate(request);
+				responseParam = stub.salesOrderAddComment(requestParam);
+				result = responseParam.getResult();
 			} catch (AxisFault ex) {
-				boolean isNotOtherAxisFault = false;
+				int faultType = -1;
 				try {
-					isNotOtherAxisFault = RELOGIN_CODE.equals(ex.getFaultCode().getLocalPart());
+					if (RELOGIN_CODE.equals(ex.getFaultCode().getLocalPart())) {
+						faultType = 0;
+					}
+
 				} catch (Exception e) {
 					// 抛出原始异常
 					throw ex;
 				}
 				// session失效
-				if (isNotOtherAxisFault) {
+				if (faultType == 0) {
 					sessionId = login();
 					this.sessionId = sessionId;
-					request.setSessionId(sessionId);
+					requestParam.setSessionId(sessionId);
 
-					response = stub.salesOrderShipmentCreate(request);
+					responseParam = stub.salesOrderAddComment(requestParam);
+					result = responseParam.getResult();
 				} else {
 					throw ex;
 				}
-			} catch (Exception ex) {
-				throw ex;
 			}
 
-			String shipmentIncrementId = response.getResult();
+//			SalesOrderShipmentCreateRequestParam request = new SalesOrderShipmentCreateRequestParam();
+//			request.setOrderIncrementId(clientOrderId);
+//
+//			OrderItemIdQtyArray itemQty = new OrderItemIdQtyArray();
+//			request.setItemsQty(itemQty);
+//			request.setSessionId(sessionId);
+//
+//			SalesOrderShipmentCreateResponseParam response;
+//			String shipmentIncrementId = "";
+//			try {
+//				response = stub.salesOrderShipmentCreate(request);
+//				shipmentIncrementId = response.getResult();
+//			} catch (AxisFault ex) {
+//				int faultType = -1;
+//				try {
+//					if (RELOGIN_CODE.equals(ex.getFaultCode().getLocalPart())) {
+//						faultType = 0;
+//					} else if ("102".equals(ex.getFaultCode().getLocalPart())) {
+//						faultType = 1;
+//					}
+//
+//				} catch (Exception e) {
+//					// 抛出原始异常
+//					throw ex;
+//				}
+//				// session失效
+//				if (faultType == 0) {
+//					sessionId = login();
+//					this.sessionId = sessionId;
+//					request.setSessionId(sessionId);
+//
+//					response = stub.salesOrderShipmentCreate(request);
+//				} else if (faultType == 1) {
 
-			if (!StringUtils.isNullOrBlank2(shipmentIncrementId)) {
-				SalesOrderShipmentAddCommentRequestParam request2 = new SalesOrderShipmentAddCommentRequestParam();
-				request2.setSessionId(sessionId);
-				request2.setShipmentIncrementId(shipmentIncrementId);
-				request2.setComment("sourceOrderId=" + sourceOrderId + ";payNo=" + payNo);
 
-				SalesOrderShipmentAddCommentResponseParam response2 = stub.salesOrderShipmentAddComment(request2);
-				int commentResult = response2.getResult();
 
-				if (commentResult > 0) {
-					SalesOrderShipmentAddTrackRequestParam request3 = new SalesOrderShipmentAddTrackRequestParam();
-					request3.setSessionId(sessionId);
-					request3.setShipmentIncrementId(shipmentIncrementId);
-					request3.setTrackNumber(cainiaoId);
-					request3.setCarrier(CAINIAO_CARRIER);
-					request3.setTitle(CAINIAO_TITLE);
+//					SalesOrderInfoRequestParam requestParam = new SalesOrderInfoRequestParam();
+//					requestParam.setSessionId(this.sessionId);
+//					requestParam.setOrderIncrementId(clientOrderId);
+//					SalesOrderInfoResponseParam responseParam = stub.salesOrderInfo(requestParam);
+//					SalesOrderEntity salesOrderEntity = responseParam.getResult();
+//
+//					String shipmentId = salesOrderEntity.getIncrement_id();
+//					System.out.println("");
+//
+//					SalesOrderShipmentListRequestParam requestParam = new SalesOrderShipmentListRequestParam();
+//					requestParam.setSessionId(this.sessionId);
+//
+//					Filters filters = new Filters();
+//					ComplexFilterArray filterArray = new ComplexFilterArray();
+//					ComplexFilter complexFilter = new ComplexFilter();
+//					complexFilter.setKey("increment_id");
+//					AssociativeEntity associativeEntity = new AssociativeEntity();
+//					associativeEntity.setKey("eq");
+//					associativeEntity.setValue(clientOrderId);
+//					complexFilter.setValue(associativeEntity);
+//					filterArray.addComplexObjectArray(complexFilter);
+//					filters.setComplex_filter(filterArray);
+//					requestParam.setFilters(filters);
+//
+//					SalesOrderShipmentListResponseParam responseParam = stub.salesOrderShipmentList(requestParam);
+//					SalesOrderShipmentEntityArray result = responseParam.getResult();
+//					if (result != null) {
+//						SalesOrderShipmentEntity[] complexObjectArray = result.getComplexObjectArray();
+//						if (complexObjectArray != null && complexObjectArray.length >= 1) {
+//							shipmentIncrementId = complexObjectArray[0].getShipment_id();
+//						}
+//					}
+//				} else {
+//					throw ex;
+//				}
+//			} catch (Exception ex) {
+//				throw ex;
+//			}
 
-					SalesOrderShipmentAddTrackResponseParam response3 = stub.salesOrderShipmentAddTrack(request3);
-					trackingNumberId = response3.getResult();
-				}
-			} else {
-				logger.error("clientOrderId:" + clientOrderId + " salesOrderShipmentCreate failure!");
-			}
+//			if (!StringUtils.isNullOrBlank2(shipmentIncrementId)) {
+//				logger.info("shipmentIncrementId 创建成功：" + shipmentIncrementId);
 
-			return trackingNumberId;
+//				SalesOrderShipmentAddCommentRequestParam request2 = new SalesOrderShipmentAddCommentRequestParam();
+//				request2.setSessionId(sessionId);
+//				request2.setShipmentIncrementId(shipmentIncrementId);
+//				request2.setIncludeInEmail("order.test@voyageone.com");
+//				request2.setEmail("order.test@voyageone.com");
+//				request2.setComment("sourceOrderId=" + sourceOrderId + ";payNo=" + payNo);
+//
+//				SalesOrderShipmentAddCommentResponseParam response2 = stub.salesOrderShipmentAddComment(request2);
+//				int commentResult = response2.getResult();
+//
+//				if (commentResult > 0) {
+//					SalesOrderShipmentAddTrackRequestParam request3 = new SalesOrderShipmentAddTrackRequestParam();
+//					request3.setSessionId(sessionId);
+//					request3.setShipmentIncrementId(shipmentIncrementId);
+//					request3.setTrackNumber(cainiaoId);
+//					request3.setCarrier("ups");
+//					request3.setTitle(CAINIAO_TITLE);
+//
+//					SalesOrderShipmentAddTrackResponseParam response3 = stub.salesOrderShipmentAddTrack(request3);
+//					trackingNumberId = response3.getResult();
+//				}
+//			} else {
+//				logger.error("clientOrderId:" + clientOrderId + " salesOrderShipmentCreate failure!");
+//			}
+
+			return result;
 
 		} catch (Exception ex) {
 			logger.error(ex.getMessage(), ex);
-
-			isException = true;
 
 			throw ex;
 		}

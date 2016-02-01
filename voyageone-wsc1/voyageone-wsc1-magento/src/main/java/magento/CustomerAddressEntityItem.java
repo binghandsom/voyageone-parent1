@@ -240,6 +240,17 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
      */
     protected boolean localIs_default_shippingTracker = false;
 
+    /**
+     * field for House_no
+     */
+    protected java.lang.String localHouse_no;
+
+    /*  This tracker boolean wil be used to detect whether the user called the set method
+     *   for this attribute. It will be used to determine whether to include this field
+     *   in the serialized XML
+     */
+    protected boolean localHouse_noTracker = false;
+
     public boolean isCustomer_address_idSpecified() {
         return localCustomer_address_idTracker;
     }
@@ -684,6 +695,28 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
         this.localIs_default_shipping = param;
     }
 
+    public boolean isHouse_noSpecified() {
+        return localHouse_noTracker;
+    }
+
+    /**
+     * Auto generated getter method
+     * @return java.lang.String
+     */
+    public java.lang.String getHouse_no() {
+        return localHouse_no;
+    }
+
+    /**
+     * Auto generated setter method
+     * @param param House_no
+     */
+    public void setHouse_no(java.lang.String param) {
+        localHouse_noTracker = param != null;
+
+        this.localHouse_no = param;
+    }
+
     /**
      *
      * @param parentQName
@@ -1030,6 +1063,21 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
             } else {
                 xmlWriter.writeCharacters(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                         localIs_default_shipping));
+            }
+
+            xmlWriter.writeEndElement();
+        }
+
+        if (localHouse_noTracker) {
+            namespace = "";
+            writeStartElement(null, namespace, "house_no", xmlWriter);
+
+            if (localHouse_no == null) {
+                // write the nil attribute
+                throw new org.apache.axis2.databinding.ADBException(
+                    "house_no cannot be null!!");
+            } else {
+                xmlWriter.writeCharacters(localHouse_no);
             }
 
             xmlWriter.writeEndElement();
@@ -1467,6 +1515,18 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
 
             elementList.add(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                     localIs_default_shipping));
+        }
+
+        if (localHouse_noTracker) {
+            elementList.add(new javax.xml.namespace.QName("", "house_no"));
+
+            if (localHouse_no != null) {
+                elementList.add(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
+                        localHouse_no));
+            } else {
+                throw new org.apache.axis2.databinding.ADBException(
+                    "house_no cannot be null!!");
+            }
         }
 
         return new org.apache.axis2.databinding.utils.reader.ADBXMLStreamReaderImpl(qName,
@@ -2054,6 +2114,32 @@ public class CustomerAddressEntityItem implements org.apache.axis2.databinding.A
                     java.lang.String content = reader.getElementText();
 
                     object.setIs_default_shipping(org.apache.axis2.databinding.utils.ConverterUtil.convertToBoolean(
+                            content));
+
+                    reader.next();
+                } // End of if for expected property start element
+
+                else {
+                }
+
+                while (!reader.isStartElement() && !reader.isEndElement())
+                    reader.next();
+
+                if (reader.isStartElement() &&
+                        new javax.xml.namespace.QName("", "house_no").equals(
+                            reader.getName())) {
+                    nillableValue = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance",
+                            "nil");
+
+                    if ("true".equals(nillableValue) ||
+                            "1".equals(nillableValue)) {
+                        throw new org.apache.axis2.databinding.ADBException(
+                            "The element: " + "house_no" + "  cannot be null");
+                    }
+
+                    java.lang.String content = reader.getElementText();
+
+                    object.setHouse_no(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
 
                     reader.next();
