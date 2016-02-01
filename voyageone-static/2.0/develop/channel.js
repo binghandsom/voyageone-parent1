@@ -52,7 +52,7 @@ require([
             $ajax.post('/core/access/user/logout')
                 .then(function () {
                     cookieService.removeAll();
-                    $window.location = '/login.html#/';
+                    $window.location = '/login.html';
                 });
         }
     });

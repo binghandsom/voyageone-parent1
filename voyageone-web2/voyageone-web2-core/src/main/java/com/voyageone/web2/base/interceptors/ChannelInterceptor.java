@@ -24,6 +24,7 @@ class ChannelInterceptor {
     private final static Set<String> excludes = new HashSet<String>() {{
         add("/core/access/user/getChannel");
         add("/core/access/user/selectChannel");
+        add("/core/access/user/logout");
     }};
 
     public boolean preHandle(HttpServletRequest request) throws Exception {
