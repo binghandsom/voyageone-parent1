@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * Created by sn3 on 2015-07-20.
  */
-public class GetOrderIdsRes {
+public class GetOrderIdsRes extends JmBaseBean {
 
     private String error;
     private List<String> result;

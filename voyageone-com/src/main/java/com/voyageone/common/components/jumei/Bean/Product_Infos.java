@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * Created by sn3 on 2015-07-18.
  */
-public class Product_Infos {
+public class Product_Infos extends JmBaseBean {
 
     private String deal_hash_id;
     private String deal_price;

@@ -489,6 +489,11 @@ public class ChannelConfigEnums {
         WMF("014"),
 
         /**
+         * GILT
+         */
+        GILT("015"),
+
+        /**
          * JUMEI
          */
         JUMEI("998");
@@ -530,6 +535,7 @@ public class ChannelConfigEnums {
                 case "012": return BCBG;
                 case "013": return SEARS;
                 case "014": return WMF;
+                case "015": return GILT;
                 case "998": return JUMEI;
                 default: return null;
             }

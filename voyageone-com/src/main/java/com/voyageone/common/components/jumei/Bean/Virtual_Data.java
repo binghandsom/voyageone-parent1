@@ -3,7 +3,7 @@ package com.voyageone.common.components.jumei.Bean;
 /**
  * Created by sn3 on 2015-07-18.
  */
-public class Virtual_Data {
+public class Virtual_Data extends JmBaseBean {
 
     private String sku_no;
     private String supplier_code;
