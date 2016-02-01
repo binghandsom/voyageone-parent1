@@ -75,10 +75,10 @@ public class CmsUploadJmProductService extends BaseTaskService {
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
 
-        int threadPoolCnt = 10;
+        int threadPoolCnt = 1;
         int limit = 100;
         for (TaskControlBean taskControlBean : taskControlList) {
-            if ("ThreadPoolCnt".equalsIgnoreCase(taskControlBean.getCfg_name())) {
+            if ("thread_count".equalsIgnoreCase(taskControlBean.getCfg_name())) {
                 threadPoolCnt = Integer.parseInt(taskControlBean.getCfg_val1());
             } else if ("Limit".equalsIgnoreCase(taskControlBean.getCfg_name())) {
                 limit = Integer.parseInt(taskControlBean.getCfg_val1());
@@ -91,7 +91,6 @@ public class CmsUploadJmProductService extends BaseTaskService {
 
         for (JmBtProductImportModel product : jmBtProductImports) {
             executor.execute(() -> uploadProduct(product, shopBean));
-            break;
         }
         executor.shutdown();
         executor.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
@@ -210,7 +209,7 @@ public class CmsUploadJmProductService extends BaseTaskService {
                 stringBuffer.append(String.format(IMG_HTML, jmPicBean.getJmUrl()));
             }
         } else {
-            throw new BusinessException("物流图不存在");
+//            throw new BusinessException("物流图不存在");
         }
         jmProductBean.getDealInfo().setDescription_images(String.format(DESCRIPTION_IMAGES, stringBuffer.toString()));
 
@@ -280,7 +279,7 @@ public class CmsUploadJmProductService extends BaseTaskService {
             spu.setAttribute(jmBtProductImport.getAttribute());
             spu.setAbroad_price(jmBtSkuImportModel.getAbroadPrice());
             // todo 价格单位
-            spu.setArea_code("169");
+            spu.setArea_code("19");
 
             JmProductBean_Spus_Sku sku = new JmProductBean_Spus_Sku();
             sku.setPartner_sku_no(jmBtSkuImportModel.getSku());

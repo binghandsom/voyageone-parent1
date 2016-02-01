@@ -53,10 +53,12 @@
 				a.product_code,
 				a.deal_id
 			FROM
-				jumei.jm_bt_product_import a
+				jumei.jm_bt_product_import a LEFT JOIN jumei.jm_bt_product b on a.channel_id = b.channel_id and a.product_code = b.product_code
 			WHERE
 				a.syn_flg = 1
-
+				and b.product_code is null
+			LIMIT 0,
+			#{count,jdbcType=INTEGER}
 		) t1,
 	    (
 		SELECT
@@ -337,8 +339,11 @@
 		FROM
 			jumei.jm_bt_images
 		WHERE
-			channel_id = #{channelId}
-			and (image_key = #{productCode,jdbcType=VARCHAR} or (image_key = #{brand,jdbcType=VARCHAR} and image_type_extend = #{sizeType,jdbcType=VARCHAR}) or image_type = 6)
+
+			(channel_id = #{channelId}
+			and (image_key = #{productCode,jdbcType=VARCHAR} or image_type = 6 ))
+			or  (image_key =#{brand,jdbcType=VARCHAR} and image_type = 4)
+			or  (image_key = #{brand,jdbcType=VARCHAR} and image_type_extend = #{sizeType,jdbcType=VARCHAR})
 		ORDER BY imageType,image_index
 
 	</select>

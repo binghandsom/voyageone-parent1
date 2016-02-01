@@ -169,7 +169,7 @@ public class JmBase {
             query.append(shopBean.getAppSecret());
         }
         //使用MD5 进行加密，再转化成大写
-        logger.info("md5:"+query.toString());
+        //logger.info("md5:"+query.toString());
         return MD5.getMD5(query.toString()).toUpperCase();
     }
 }
