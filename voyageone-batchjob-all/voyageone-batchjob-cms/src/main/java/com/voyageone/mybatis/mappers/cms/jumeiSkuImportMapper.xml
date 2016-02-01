@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.cms.sql">
+
+    <insert id="jm_bt_sku_import_insert" parameterType="com.voyageone.batch.cms.model.JmBtSkuImportModel" >
+        insert into jumei.jm_bt_sku_import
+            (
+            channel_id,
+            product_code,
+            deal_id,
+            sku,
+            upc_code,
+            abroad_price,
+            deal_price,
+            market_price,
+            size,
+            created,
+            creater,
+            modified,
+            modifier)
+        values
+          (
+            #{channelId,jdbcType=VARCHAR},
+            #{productCode,jdbcType=VARCHAR},
+            #{dealId,jdbcType=VARCHAR},
+            #{sku,jdbcType=VARCHAR},
+            #{upcCode,jdbcType=VARCHAR},
+            #{abroadPrice,jdbcType=DOUBLE},
+            #{dealPrice,jdbcType=DOUBLE},
+            #{marketPrice,jdbcType=DOUBLE},
+            #{size,jdbcType=VARCHAR},
+            now(),
+            #{creater,jdbcType=VARCHAR},
+            now(),
+            #{modifier,jdbcType=VARCHAR})
+        ON DUPLICATE KEY UPDATE
+              upc_code = #{upcCode,jdbcType=VARCHAR},
+              abroad_price = #{abroadPrice,jdbcType=DOUBLE},
+              deal_price = #{dealPrice,jdbcType=DOUBLE},
+              market_price = #{marketPrice,jdbcType=DOUBLE},
+              size = #{size,jdbcType=VARCHAR},
+              modified = now(),
+              modifier = #{modifier,jdbcType=VARCHAR}
+    </insert>
+
+    <update id="jm_bt_product_import_updateBySkuImport" parameterType="com.voyageone.batch.cms.model.JmBtSkuImportModel" >
+        update jumei.jm_bt_product_import product,
+                (SELECT sku.channel_id,
+                          sku.product_code,
+                          sku.deal_id
+                from jumei.jm_bt_sku_import sku
+                where sku.channel_id = #{channelId,jdbcType=VARCHAR}
+                    and sku.creater != sku.modified
+                    and sku.deal_id = #{dealId,jdbcType=VARCHAR}
+                GROUP BY sku.channel_id, sku.product_code, sku.deal_id) skum
+        set product.syn_flg = if(product.syn_flg = '2', '1', product.syn_flg),
+		    product.modified = now(),
+		    product.modifier = #{modifier,jdbcType=VARCHAR}
+        where product.channel_id = skum.channel_id
+            and product.product_code = skum.product_code
+            and product.deal_id = skum.deal_id
+    </update>
+
+</mapper>
