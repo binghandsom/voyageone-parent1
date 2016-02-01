@@ -67,6 +67,7 @@ public class ProductGroupController extends BaseController {
 
     @RequestMapping("updMainProduct")
     public VoApiUpdateResponse updMainProduct(@RequestBody GroupMainProductUpdateRequest request){
+        request.check();
         return productGroupService.updateMainProduct(request.getGroupId(),request.getChannelId(),request.getProductId(),request.getModifier());
 
     }

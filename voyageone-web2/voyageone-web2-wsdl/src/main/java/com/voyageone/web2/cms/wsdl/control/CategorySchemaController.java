@@ -35,6 +35,9 @@ public class CategorySchemaController extends BaseController {
      */
     @RequestMapping("selectOne")
     public CategorySchemaGetResponse selectOne(@RequestBody CategorySchemaGetRequest request) {
+
+        request.check();
+
         return categorySchemaService.getCategorySchemaByCatId(request.getCategoryId());
     }
 
