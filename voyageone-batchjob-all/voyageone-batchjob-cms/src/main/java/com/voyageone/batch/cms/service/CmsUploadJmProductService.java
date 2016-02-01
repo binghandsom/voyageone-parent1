@@ -78,7 +78,7 @@ public class CmsUploadJmProductService extends BaseTaskService {
         int threadPoolCnt = 1;
         int limit = 100;
         for (TaskControlBean taskControlBean : taskControlList) {
-            if ("ThreadPoolCnt".equalsIgnoreCase(taskControlBean.getCfg_name())) {
+            if ("thread_count".equalsIgnoreCase(taskControlBean.getCfg_name())) {
                 threadPoolCnt = Integer.parseInt(taskControlBean.getCfg_val1());
             } else if ("Limit".equalsIgnoreCase(taskControlBean.getCfg_name())) {
                 limit = Integer.parseInt(taskControlBean.getCfg_val1());
