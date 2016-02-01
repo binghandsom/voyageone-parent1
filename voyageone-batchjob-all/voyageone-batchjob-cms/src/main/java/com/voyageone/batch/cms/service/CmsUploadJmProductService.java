@@ -75,7 +75,7 @@ public class CmsUploadJmProductService extends BaseTaskService {
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
 
-        int threadPoolCnt = 10;
+        int threadPoolCnt = 1;
         int limit = 100;
         for (TaskControlBean taskControlBean : taskControlList) {
             if ("ThreadPoolCnt".equalsIgnoreCase(taskControlBean.getCfg_name())) {
@@ -91,7 +91,6 @@ public class CmsUploadJmProductService extends BaseTaskService {
 
         for (JmBtProductImportModel product : jmBtProductImports) {
             executor.execute(() -> uploadProduct(product, shopBean));
-            break;
         }
         executor.shutdown();
         executor.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
