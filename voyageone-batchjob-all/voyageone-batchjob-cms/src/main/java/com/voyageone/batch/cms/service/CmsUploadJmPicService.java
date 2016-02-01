@@ -126,8 +126,11 @@ public class CmsUploadJmPicService extends BaseTaskService {
             } else {
                 LOG.info("UploadTask -> run() -> imageKey:" + imageKey);
                 boolean noError = true;
+                String channelId=null;
                 for (JmPicBean jmPicBean : jmPicBeanList) {
                     try {
+                        if(StringUtils.isNullOrBlank2(channelId))
+                            channelId=jmPicBean.getChannelId();
                         //String juUrl=mockImageFileUpload(SHOPBEAN,convertJmPicToImageFileBean(jmPicBean));
                         String juUrl = jumeiImageFileService.imageFileUpload(shopBean, convertJmPicToImageFileBean(jmPicBean));
                         logger.info(juUrl);
@@ -140,8 +143,10 @@ public class CmsUploadJmPicService extends BaseTaskService {
                     }
                 }
                 if (noError) {
-                    jmPicDao.updateJmProductImportUploaded(imageKey, getTaskName());
-                    monitor.addProductSucessOne();
+                    if(!StringUtils.isNullOrBlank2(channelId)&&!StringUtils.isNullOrBlank2(imageKey)) {
+                        jmPicDao.updateJmProductImportUploaded(channelId, imageKey, getTaskName());
+                        monitor.addProductSucessOne();
+                    }
                 }
             }
         }

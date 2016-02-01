@@ -57,10 +57,29 @@ public class JmPicDao extends BaseDao{
      * @param imageKey 参数
      * @return effect count
      */
-    public int updateJmProductImportUploaded(String imageKey,String modifier){
+    public int updateJmProductImportUploaded(String channelId,String imageKey,String modifier){
         Map<String,Object> params=new HashMap<String,Object>();
+        params.put("channelId",channelId);
         params.put("imageKey",imageKey);
         params.put("modifier",modifier);
+        insertOrUpdateJmpicTempUploaded(channelId,imageKey,modifier);
         return update(Constants.DAO_NAME_SPACE_CMS + "cms_work_jm_bt_product_import_updateJmProductImport_uploaded", params);
     }
+
+    /**
+     * 增加或修改临时表数据
+     * @param channelId channelId
+     * @param imageKey imageKey
+     * @param modifier modifier
+     * @return insertOrUpdateJmpicTempUploaded
+     */
+    public int insertOrUpdateJmpicTempUploaded(String channelId,String imageKey,String modifier){
+        Map<String,Object> params=new HashMap<String,Object>();
+        params.put("id",channelId+"_"+imageKey);
+        params.put("channelId",channelId);
+        params.put("imageKey",imageKey);
+        params.put("modifier",modifier);
+        return update(Constants.DAO_NAME_SPACE_CMS + "cms_work_jm_bt_images_updateJmPic_temp_uploaded", params);
+    }
+
 }
