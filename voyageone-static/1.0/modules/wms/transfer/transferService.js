@@ -133,8 +133,9 @@ define([
              * 获取 Package 的所有 Items
              * @param package_id
              */
-            this.selectPackageItems = function (package_id) {
+            this.selectPackageItems = function (order_channel_id, package_id) {
                 return http.ajaxPost({
+                    order_channel_id: order_channel_id.toString(),
                     package_id: package_id.toString()
                 }, actions.transfer.package.item.select).then(function (res) {
                     return res.data; // res.data = PackageItems[]

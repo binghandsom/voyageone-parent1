@@ -323,6 +323,12 @@
 		<result column="cnLongDescription" property="cnLongDescription" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
 		<result column="cnShortDescription" property="cnShortDescription" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
 		<result column="urlKey" property="urlKey" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="stone" property="stone" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="metalColor" property="metalColor" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="stoneColor" property="stoneColor" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="gemCreationMethod" property="gemCreationMethod" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="descriptionMeasure" property="descriptionMeasure" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
+		<result column="collection" property="collection" typeHandler="com.voyageone.cms.utils.EmptyStringIfNull"/>
 		<result column="created" property="created"/>
 		<result column="creater" property="creater"/>
 		<result column="modified" property="modified"/>
@@ -468,6 +474,22 @@
 			b.cnLongDescription AS cnLongDescription,
 			SUM(IFNULL(c.qty_china, 0)) AS quantity,
 			b.urlKey AS urlKey,
+		<if test="channelId == '010'">
+			coalesce(a1.attribute_value_cn, a1.attribute_value) as stone,
+			coalesce(a2.attribute_value_cn, a2.attribute_value) as metalColor,
+			coalesce(a3.attribute_value_cn, a3.attribute_value) as stoneColor,
+			coalesce(a4.attribute_value_cn, a4.attribute_value) as gemCreationMethod,
+			coalesce(a5.attribute_value_cn, a5.attribute_value) as descriptionMeasure,
+			coalesce(a6.attribute_value_cn, a6.attribute_value) as collection,
+		</if>
+		<if test="channelId != '010'">
+			'' as stone,
+			'' as metalColor,
+			'' as stoneColor,
+			'' as gemCreationMethod,
+			'' as descriptionMeasure,
+			'' as collection,
+		</if>
 			b.created,
 			b.modified,
 			b.referenceMsrp AS referenceMsrp,
@@ -625,9 +647,11 @@
 		(
 		SELECT
 		r.product_id,
-		r.channel_id
+		r.channel_id,
+		tp.url_key
 		FROM
 		cms_bt_cn_product_share r
+		left join cms_bt_product tp on r.product_id = tp.product_id and r.channel_id = tp.channel_id
 		<if test="publishStatus != null and publishStatus != ''">
 			left join voyageone_ims.ims_bt_product s on r.product_id = s.product_id and r.channel_id = s.channel_id and r.cart_id = s.cart_id
 		</if>
@@ -672,6 +696,14 @@
 		) t1
 		LEFT JOIN view_cn_product_info_list b ON t1.channel_id = b.channel_id AND t1.product_id = b.product_id
 		LEFT JOIN Synship.wms_bt_inventory_center_logic c ON c.code = b.CODE and c.order_channel_id = b.channel_id
+		<if test="channelId == '010'">
+			left join cms_mt_product_attribute a1 on a1.channel_id = b.channel_id and a1.product_url_key = t1.url_key and a1.attribute_name = 'attribute19'
+			left join cms_mt_product_attribute a2 on a2.channel_id = b.channel_id and a2.product_url_key = t1.url_key and a2.attribute_name = 'attribute11'
+			left join cms_mt_product_attribute a3 on a3.channel_id = b.channel_id and a3.product_url_key = t1.url_key and a3.attribute_name = 'attribute23'
+			left join cms_mt_product_attribute a4 on a4.channel_id = b.channel_id and a4.product_url_key = t1.url_key and a4.attribute_name = 'attribute28'
+			left join cms_mt_product_attribute a5 on a5.channel_id = b.channel_id and a5.product_url_key = t1.url_key and a5.attribute_name = 'attribute25'
+			left join cms_mt_product_attribute a6 on a6.channel_id = b.channel_id and a6.product_url_key = t1.url_key and a6.attribute_name = 'attribute38'
+		</if>
 		GROUP BY b.CODE,b.channel_id
 
 	</select>

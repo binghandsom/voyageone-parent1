@@ -1,5 +1,7 @@
 package com.voyageone.wms.controller;
 
+import com.voyageone.common.configs.ChannelConfigs;
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.core.MessageConstants;
@@ -28,6 +30,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -364,11 +367,16 @@ public class WmsTransferController extends BaseController {
     @RequestMapping(TransferUrls.Item.SELECT)
     public void getPackageItems(@RequestBody Map<String, Object> params, HttpServletResponse response) {
         long package_id = Long.valueOf((String) params.get("package_id"));
+        String order_channel_id = (String) params.get("order_channel_id");
 
         List<TransferItemBean> items = transferService.getItemsInPackage(package_id);
 
+        Map<String, Object> resultMap = new HashMap<>();
+        resultMap.put("packageItems", items);
+        resultMap.put("auto_print", StringUtils.null2Space2(ChannelConfigs.getVal1(order_channel_id, ChannelConfigEnums.Name.print_sku_label)).equals(ChannelConfigEnums.Print.YES.getIs()));
+
         AjaxResponseBean.newResult(true)
-                .setResultInfo(items)
+                .setResultInfo(resultMap)
                 .writeTo(getRequest(), response);
     }
 
