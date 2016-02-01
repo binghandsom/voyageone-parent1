@@ -275,6 +275,13 @@ public class ProductPropsEditService {
      */
     public CmsCategoryInfoBean getCategoryInfo(String categoryId) throws BusinessException{
 
+        // TODO 将来应该是调用/product/group/numiid/delete直接删除，不需要报异常处理.
+        // 现在的方案，先报错，让运营手动删除，然后删除cms对应数据.
+        // 先是否已在售？
+        // 提醒运营人员去天猫后台删除对应产品信息
+        // 删除cms系统中对应的产品id.
+
+
         CmsCategoryInfoBean categoryInfo = new CmsCategoryInfoBean();
 
         CategorySchemaGetRequest schemaGetRequest = new CategorySchemaGetRequest(categoryId);
@@ -287,6 +294,17 @@ public class ProductPropsEditService {
         categoryInfo.setSkuFields(schemaGetResponse.getSkuFields());
 
         return categoryInfo;
+    }
+
+    /**
+     * 确认切换类目.
+     * @param categoryId
+     * @param productId
+     * @return
+     */
+    public int confirmChangeCatgory(String categoryId, Long productId){
+
+        return 0;
     }
 
     /**
