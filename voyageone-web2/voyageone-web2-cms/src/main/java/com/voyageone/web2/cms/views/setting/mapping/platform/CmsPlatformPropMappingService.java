@@ -14,6 +14,7 @@ import com.voyageone.cms.service.dao.mongodb.CmsMtPlatformMappingDao;
 import com.voyageone.cms.service.model.CmsMtCategorySchemaModel;
 import com.voyageone.cms.service.model.CmsMtPlatformCategorySchemaModel;
 import com.voyageone.cms.service.model.CmsMtPlatformMappingModel;
+import com.voyageone.cms.service.model.CmsMtPlatformSpecialFieldModel;
 import com.voyageone.ims.rule_expression.RuleExpression;
 import com.voyageone.ims.rule_expression.RuleWord;
 import com.voyageone.web2.base.BaseAppService;
@@ -188,18 +189,17 @@ public class CmsPlatformPropMappingService extends BaseAppService {
     }
 
     /**
-     * 查询 cartId 平台的 platformCategoryId 类目的 propertyId 属性的指定 MappingType
+     * 查询 cartId 平台的 platformCategoryId 类目的属性 MappingType
      *
      * @param cartId             平台 ID
      * @param platformCategoryId 平台类目 ID
-     * @param propertyId         属性 ID
-     * @return MappingType 的 1 或 2
+     * @return Mapping Map 属性 ID -> Type
      */
-    public String getMultiComplexFieldMappingType(Integer cartId, String platformCategoryId, String propertyId) {
+    public Map<String, String> getMultiComplexFieldMappingType(Integer cartId, String platformCategoryId) {
 
-        String type = platformSpecialFieldDao.selectSpecialMappingType(cartId, platformCategoryId, propertyId);
-
-        return StringUtils.isEmpty(type) ? "1" : type;
+        return platformSpecialFieldDao.select(cartId, platformCategoryId, null, null)
+                .stream()
+                .collect(toMap(CmsMtPlatformSpecialFieldModel::getFieldId, CmsMtPlatformSpecialFieldModel::getType));
     }
 
     /**
@@ -437,5 +437,12 @@ public class CmsPlatformPropMappingService extends BaseAppService {
         }
 
         return mappingBean;
+    }
+
+    private String getMultiComplexFieldMappingType(Integer cartId, String platformCategoryId, String propertyId) {
+
+        String type = platformSpecialFieldDao.selectSpecialMappingType(cartId, platformCategoryId, propertyId);
+
+        return StringUtils.isEmpty(type) ? "1" : type;
     }
 }

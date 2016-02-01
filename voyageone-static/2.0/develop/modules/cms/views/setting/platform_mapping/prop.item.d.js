@@ -1,11 +1,66 @@
+/**
+ * @ngdoc
+ * @directive
+ * @name platformProp
+ */
+
+/**
+ * @class
+ * @name WrapField
+ * @extends {Field}
+ * @property {WrapField} parent
+ * @property
+ */
+
 define([
     'cms',
     'underscore',
     'modules/cms/enums/FieldTypes',
     'modules/cms/enums/RuleTypes',
+    'modules/cms/enums/MappingTypes',
     'modules/cms/controller/popup.ctl'
-], function (cms, _, FieldTypes, RuleTypes) {
+], function (cms, _, FieldTypes, RuleTypes, MappingTypes) {
     'use strict';
+    return cms.directive('platformProp', function (platformPropMappingService) {
+
+        return {
+            restrict: 'A',
+            // 地址基于地址栏定位, 启动的画面变动, 这里也要跟随变动
+            templateUrl: 'views/setting/platform_mapping/prop.item.d.html',
+            scope: {
+                property: '=platformProp',
+                parent: '=platformPropParent',
+                popup: '&platformPropPopup'
+            },
+            link: function ($scope) {
+
+                var property = $scope.property;
+                var parent = property.parent = $scope.parent;
+
+                // 计算每个属性的属性
+                property.iconClass = getIconClass(property);
+                property.isSimple = isSimpleType(property);
+                property.required = isRequiredField(property);
+                property.parentRequired = !parent ? false : (parent.required || parent.parentRequired);
+                property.headClass = property.isSimple ? 'fa-minus' : 'fa-plus';
+
+                property.mapping = {
+                    isMulti: false,
+                    isChildOfMulti: $scope.isChildOfMulti = function() {
+                        if (!parent)
+                            return false;
+                        if (parent.mapping.isMulti)
+                            return true;
+                        return parent.mapping.isChildOfMulti();
+                    }
+                };
+
+                platformPropMappingService.getMappingType(property).then(function(type) {
+                    property.mapping.isMulti = type === MappingTypes.MULTI_COMPLEX_MAPPING;
+                });
+            }
+        }
+    });
 
     function isRequiredField(field) {
 
@@ -47,29 +102,4 @@ define([
 
         return iconClass;
     }
-
-    return cms.directive('platformProp', function () {
-        return {
-            restrict: 'A',
-            // 地址基于地址栏定位, 启动的画面变动, 这里也要跟随变动
-            templateUrl: 'views/setting/platform_mapping/prop.item.d.html',
-            scope: {
-                property: '=platformProp',
-                parent: '=platformPropParent',
-                popup: '&platformPropPopup'
-            },
-            link: function ($scope) {
-
-                var property = $scope.property;
-                var parent = property.parent = $scope.parent;
-
-                // 计算每个属性的属性
-                property.iconClass = getIconClass(property);
-                property.isSimple = isSimpleType(property);
-                property.required = isRequiredField(property);
-                property.parentRequired = !parent ? false : (parent.required || parent.parentRequired);
-                property.headClass = property.isSimple ? 'fa-minus' : 'fa-plus';
-            }
-        }
-    });
 });
