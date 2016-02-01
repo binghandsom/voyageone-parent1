@@ -6,25 +6,25 @@ import com.voyageone.common.util.StringUtils;
 import org.springframework.util.Assert;
 
 /**
- * 实时库存
+ *
  * @author aooer 2016/2/1.
  * @version 2.0.0
  * @since 2.0.0
  */
-public class RealTimeInventory {
+public class GiltOrderItem {
 
     /* The unique identifier of a SKU.*/
-    private long skuId;
+    private long sku_id;
 
     /* The quantity available for this SKU.*/
     private long quantity;
 
-    public long getSkuId() {
-        return skuId;
+    public long getSku_id() {
+        return sku_id;
     }
 
-    public void setSkuId(long skuId) {
-        this.skuId = skuId;
+    public void setSku_id(long sku_id) {
+        this.sku_id = sku_id;
     }
 
     public long getQuantity() {
@@ -36,7 +36,7 @@ public class RealTimeInventory {
     }
 
     private void check(){
-        Assert.notNull(skuId,"skuId不能为空");
+        Assert.notNull(sku_id,"sku_id不能为空");
         Assert.notNull(quantity,"quantity不能为空");
     }
 }

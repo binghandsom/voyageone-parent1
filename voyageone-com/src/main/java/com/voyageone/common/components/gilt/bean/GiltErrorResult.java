@@ -7,16 +7,11 @@ package com.voyageone.common.components.gilt.bean;
  */
 public class GiltErrorResult {
 
-    private String code;
-    private String message;
+    private String message;//	Text describing what the error is
 
-    public String getCode() {
-        return code;
-    }
+    private Long sku_id;//	Optional Sku identifier that is related to the error
 
-    public void setCode(String code) {
-        this.code = code;
-    }
+    private GiltErrorType type;//	The type of the error. This allows partners to automate error handling. See below for the available error types
 
     public String getMessage() {
         return message;
@@ -26,4 +21,19 @@ public class GiltErrorResult {
         this.message = message;
     }
 
+    public Long getSku_id() {
+        return sku_id;
+    }
+
+    public void setSku_id(Long sku_id) {
+        this.sku_id = sku_id;
+    }
+
+    public GiltErrorType getType() {
+        return type;
+    }
+
+    public void setType(GiltErrorType type) {
+        this.type = type;
+    }
 }

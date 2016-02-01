@@ -1,7 +1,6 @@
 package com.voyageone.common.components.gilt.base;
 
 import com.taobao.top.schema.Util.StringUtil;
-import com.voyageone.common.components.gilt.bean.GiltErrorResult;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.HttpUtils;
 import com.voyageone.common.util.JsonUtil;
