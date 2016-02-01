@@ -38,53 +38,50 @@
                 </div>
             </div><!-- .accordion --><!--/search-->
 
-            <div class="col-sm-12">
-                <div class="box">
-                    <div class="box-body">
-                        <div class="table-responsive">
-                            <table class="table table-hover vo_table" style="margin-bottom:0px">
+            <div class="box">
+                <div class="box-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover vo_table" style="margin-bottom:0px">
+                            <tbody>
+                            <tr class="font-bold" style="background:#e67e22;color:#fff">
+                                <td class="mfb-xt3 text-center" translate="TXT_SEQ"></td>
+                                <td class="mfb-xxt text-center" translate="TXT_TYPE"></td>
+                                <td class="text-left" translate="TXT_VALUE"></td>
+                                <td class="mfb-xxt text-center" translate="TXT_ACTION"></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <div class="col-sm-12 dropdown_table_main" if-no-rows="vm.dictionary.expression.ruleWordList.length">
+                            <table class="table table-hover vo_table tableWordBreak" style="margin-bottom:0px">
                                 <tbody>
-                                <tr class="font-bold" style="background:#e67e22;color:#fff">
-                                    <td class="mfb-xt3 text-center" translate="TXT_SEQ"></td>
-                                    <td class="mfb-xxt text-center" translate="TXT_TYPE"></td>
-                                    <td class="text-left" translate="TXT_VALUE"></td>
-                                    <td class="mfb-xxt text-center" translate="TXT_ACTION"></td>
+                                <tr ng-repeat="valueInfo in vm.dictionary.expression.ruleWordList">
+                                    <td class="mfb-xt3 text-center">{{$index+1}}</td>
+                                    <td class="mfb-xxt text-center" ng-bind="valueInfo.type"></td>
+                                    <td class="text-left">{{valueInfo.value}}</td>
+                                    <td class="mfb-xxt text-center">
+                                        <button ng-if="valueInfo.type == 'CUSTOM'" ng-controller="popupCtrl" class="btn btn-success btn-xs" ng-click="openDictCustom('lg', editDictionary, $index, valueInfo)"><i class="fa fa-pencil"></i></button>
+                                        <button ng-if="valueInfo.type != 'CUSTOM'" ng-controller="popupCtrl" class="btn btn-success btn-xs" ng-click="openDictValue('md', editDictionary, $index, valueInfo)"><i class="fa fa-pencil"></i></button>
+                                        <button class="btn btn-danger btn-xs"  ng-click="delDictItem($index)"><i class="fa fa-trash-o"></i></button>
+                                        <button class="btn btn-dangerdel btn-xs" ng-show="$index != 0" ng-click="sortUp($index)">
+                                            <i class="glyphicon glyphicon-chevron-up"></i>
+                                        </button>
+                                        <button class="btn btn-dangerdel btn-xs" ng-show="$index < (vm.dictionary.expression.ruleWordList.length - 1)" ng-click="sortDown($index)">
+                                            <i class="glyphicon glyphicon-chevron-down"></i>
+                                        </button>
+                                    </td>
                                 </tr>
                                 </tbody>
                             </table>
-                            <div class="col-sm-12 dropdown_table_main" if-no-rows="vm.dictionary.expression.ruleWordList.length">
-                                <table class="table table-hover vo_table tableWordBreak" style="margin-bottom:0px">
-                                    <tbody>
-                                    <tr ng-repeat="valueInfo in vm.dictionary.expression.ruleWordList">
-                                        <td class="mfb-xt3 text-center">{{$index+1}}</td>
-                                        <td class="mfb-xxt text-center" ng-bind="valueInfo.type"></td>
-                                        <td class="text-left">{{valueInfo.value}}</td>
-                                        <td class="mfb-xxt text-center">
-                                            <button ng-if="valueInfo.type == 'CUSTOM'" ng-controller="popupCtrl" class="btn btn-success btn-xs" ng-click="openDictCustom('lg', editDictionary, $index, valueInfo)"><i class="fa fa-pencil"></i></button>
-                                            <button ng-if="valueInfo.type != 'CUSTOM'" ng-controller="popupCtrl" class="btn btn-success btn-xs" ng-click="openDictValue('md', editDictionary, $index, valueInfo)"><i class="fa fa-pencil"></i></button>
-                                            <button class="btn btn-danger btn-xs"  ng-click="delDictItem($index)"><i class="fa fa-trash-o"></i></button>
-                                            <button class="btn btn-dangerdel btn-xs" ng-show="$index != 0" ng-click="sortUp($index)">
-                                                <i class="glyphicon glyphicon-chevron-up"></i>
-                                            </button>
-                                            <button class="btn btn-dangerdel btn-xs" ng-show="$index < (vm.dictionary.expression.ruleWordList.length - 1)" ng-click="sortDown($index)">
-                                                <i class="glyphicon glyphicon-chevron-down"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
-                                    </tbody>
-                                </table>
-                            </div><!-- .table-responsive -->
-                        </div>
-                    </div><!-- /.box-body -->
-                </div>
-                <div class="col-sm-12 text-center m-b-lg">
-                    <div class="form-inline">
-                        <button type="button" class="btn btn-default ng-scope" ng-click="cancel()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CANCEL' | translate}}</button>
-                        <button type="submit" class="btn btn-vo ng-scope" ng-click="save()"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;{{'BTN_SAVE' | translate}}</button>
-                    </div><!-- .form-inline -->
-                </div>
-            </div><!-- .col-lg-12 -->
-
+                        </div><!-- .table-responsive -->
+                    </div>
+                </div><!-- /.box-body -->
+            </div>
+            <div class="col-sm-12 text-center m-b-lg">
+                <div class="form-inline">
+                    <button type="button" class="btn btn-default ng-scope" ng-click="cancel()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CANCEL' | translate}}</button>
+                    <button type="submit" class="btn btn-vo ng-scope" ng-click="save()"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;{{'BTN_SAVE' | translate}}</button>
+                </div><!-- .form-inline -->
+            </div>
 
         </form>
     </div>
