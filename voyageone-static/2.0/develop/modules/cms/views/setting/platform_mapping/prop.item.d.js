@@ -45,6 +45,7 @@ define([
                 property.headClass = property.isSimple ? 'fa-minus' : 'fa-plus';
 
                 property.mapping = {
+                    type: null,
                     isMulti: false,
                     isChildOfMulti: $scope.isChildOfMulti = function() {
                         if (!parent)
@@ -56,11 +57,23 @@ define([
                 };
 
                 platformPropMappingService.getMappingType(property).then(function(type) {
+                    property.mapping.type = switchMappingType(property, type);
                     property.mapping.isMulti = type === MappingTypes.MULTI_COMPLEX_MAPPING;
                 });
             }
         }
     });
+
+    function switchMappingType(property, type) {
+        switch (property.type) {
+            case FieldTypes.complex:
+                return MappingTypes.COMPLEX_MAPPING;
+            case FieldTypes.multiComplex:
+                return type || MappingTypes.COMPLEX_MAPPING;
+            default:
+                return MappingTypes.SIMPLE_MAPPING;
+        }
+    }
 
     function isRequiredField(field) {
 

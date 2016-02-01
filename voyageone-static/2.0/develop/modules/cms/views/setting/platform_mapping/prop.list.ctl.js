@@ -15,11 +15,10 @@
 define([
     'cms',
     'underscore',
-    'modules/cms/enums/FieldTypes',
     'modules/cms/enums/MappingTypes',
     'modules/cms/controller/popup.ctl',
     'modules/cms/views/setting/platform_mapping/prop.item.d'
-], function (cms, _, FieldTypes, MappingTypes) {
+], function (cms, _, MappingTypes) {
     'use strict';
     return cms.controller('platformPropMappingController', (function () {
 
@@ -94,7 +93,6 @@ define([
             popup: function (property, ppPlatformMapping) {
 
                 var category = this.platform.category;
-                var mappingTypes = this.platform.mappingTypes;
                 var context = {
                     mainCategoryId: this.mainCategoryId,
                     platformCategoryPath: category.catFullPath,
@@ -103,28 +101,18 @@ define([
                     cartId: this.cartId
                 };
 
-                switch (property.type) {
-                    case FieldTypes.complex:
-                        ppPlatformMapping.complex(context);
-                        break;
-                    case FieldTypes.multiComplex:
-
-                        var propertyMappingType = mappingTypes[property.id] || MappingTypes.COMPLEX_MAPPING;
-
-                        switch (propertyMappingType) {
-                            case MappingTypes.COMPLEX_MAPPING:
-                                ppPlatformMapping.complex(context);
-                                break;
-                            case MappingTypes.MULTI_COMPLEX_MAPPING:
-                                ppPlatformMapping.multiComplex.list(context);
-                                break;
-                            default:
-                                throw 'Unsupported mapping type';
-                        }
-                        break;
-                    default: // simple ~
+                switch (property.mapping.type) {
+                    case MappingTypes.SIMPLE_MAPPING:
                         ppPlatformMapping.simple.list(context);
                         break;
+                    case MappingTypes.COMPLEX_MAPPING:
+                        ppPlatformMapping.complex(context);
+                        break;
+                    case MappingTypes.MULTI_COMPLEX_MAPPING:
+                        ppPlatformMapping.multiComplex.list(context);
+                        break;
+                    default:
+                        throw 'Unknown mapping type: ' + property.mapping.type;
                 }
             }
         };
