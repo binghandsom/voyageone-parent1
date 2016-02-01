@@ -337,8 +337,11 @@
 		FROM
 			jumei.jm_bt_images
 		WHERE
-			channel_id = #{channelId}
-			and (image_key = #{productCode,jdbcType=VARCHAR} or (image_key = #{brand,jdbcType=VARCHAR} and image_type_extend = #{sizeType,jdbcType=VARCHAR}) or image_type = 6)
+
+			(channel_id = #{channelId}
+			and (image_key = #{productCode,jdbcType=VARCHAR} or image_type = 6 ))
+			or  (image_key =#{brand,jdbcType=VARCHAR} and image_type = 4)
+			or  (image_key = #{brand,jdbcType=VARCHAR} and image_type_extend = #{sizeType,jdbcType=VARCHAR})
 		ORDER BY imageType,image_index
 
 	</select>

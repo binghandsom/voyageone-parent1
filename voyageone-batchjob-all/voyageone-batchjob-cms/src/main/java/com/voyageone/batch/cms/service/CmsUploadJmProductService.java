@@ -210,7 +210,7 @@ public class CmsUploadJmProductService extends BaseTaskService {
                 stringBuffer.append(String.format(IMG_HTML, jmPicBean.getJmUrl()));
             }
         } else {
-            throw new BusinessException("物流图不存在");
+//            throw new BusinessException("物流图不存在");
         }
         jmProductBean.getDealInfo().setDescription_images(String.format(DESCRIPTION_IMAGES, stringBuffer.toString()));
 
@@ -280,7 +280,7 @@ public class CmsUploadJmProductService extends BaseTaskService {
             spu.setAttribute(jmBtProductImport.getAttribute());
             spu.setAbroad_price(jmBtSkuImportModel.getAbroadPrice());
             // todo 价格单位
-            spu.setArea_code("169");
+            spu.setArea_code("19");
 
             JmProductBean_Spus_Sku sku = new JmProductBean_Spus_Sku();
             sku.setPartner_sku_no(jmBtSkuImportModel.getSku());
