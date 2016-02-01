@@ -138,6 +138,7 @@ public class CmsUploadJmPicService extends BaseTaskService {
                         monitor.addSuccsseOne();
                     } catch (Exception e) {
                         noError = false;
+                        jmPicDao.updateJmpicFailedUploadModified(jmPicBean.getSeq(),getTaskName());
                         monitor.addErrorOne();
                         LOG.error("UploadTask -> run() -> exception:" + e);
                     }

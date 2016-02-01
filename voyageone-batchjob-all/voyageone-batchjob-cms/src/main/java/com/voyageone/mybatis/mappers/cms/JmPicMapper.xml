@@ -6,13 +6,16 @@
 	<select id="cms_work_jm_bt_images_getJmPic_ImageKeyGroup" resultType="HashMap">
 			SELECT
 				image_key imageKey,
-				count(1) count
+				count(1) count,
+				max(modified) modified
 			FROM
 				jumei.jm_bt_images
 			WHERE
 				syn_flg = 0
 			GROUP BY
-				image_key limit 100
+				image_key
+			ORDER BY modified asc
+				limit 100
 	</select>
 
 	<!-- 获取imageKey的所有未上传图片 -->
@@ -46,6 +49,14 @@
 		WHERE
 		syn_flg = 0
 		AND seq = #{seq}
+	</update>
+
+	<!-- 修改聚美图片上传状态 -->
+	<update id="cms_work_jm_bt_images_updateJmPic_failed_uploaded" parameterType="HashMap">
+		UPDATE jumei.jm_bt_images
+		SET modified = now(),modifier=#{modifier}
+		WHERE
+		seq = #{seq}
 	</update>
 
 	<!-- 修改产品表图片导入状态 -->

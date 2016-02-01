@@ -53,6 +53,18 @@ public class JmPicDao extends BaseDao{
     }
 
     /**
+     * 失败上传，修改聚美图片最后更新时间
+     * @param seq seq
+     * @return effect count
+     */
+    public int updateJmpicFailedUploadModified(Integer seq,String modifier){
+        Map<String,Object> params=new HashMap<String,Object>();
+        params.put("seq",seq);
+        params.put("modifier",modifier);
+        return update(Constants.DAO_NAME_SPACE_CMS + "cms_work_jm_bt_images_updateJmPic_failed_uploaded", params);
+    }
+
+    /**
      * 修改产品导入状态
      * @param imageKey 参数
      * @return effect count
