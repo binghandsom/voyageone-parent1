@@ -32,10 +32,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -702,9 +699,13 @@ public class ImportExcelFileService extends BaseTaskService {
             ret = false;
         }
 
-        // special_note
+        // special_note 空检查
         if (StringUtils.isEmpty(productImportModel.getSpecialNote())) {
             errContent.append(" special_note is empty ");
+            ret = false;
+        }//             长度检查
+        if (!chkLength(productImportModel.getSpecialNote(), PruductSheetFormat.special_note_length)) {
+            errContent.append(" special_note_length chk error ");
             ret = false;
         }
 
@@ -712,6 +713,32 @@ public class ImportExcelFileService extends BaseTaskService {
             ErrorContent errorContent = getReadErrorContent(fileName, productSheetName, rowNum, errContent.toString());
             errList.add(errorContent);
         }
+
+        return ret;
+    }
+
+    /**
+     * Product 主图检查
+     *
+     */
+    private boolean chkProductImagesBean(List<JmBtImagesModel> imagesModelList, String fileName, int rowNum, List<ErrorContent> errList) {
+        boolean ret = false;
+        StringBuffer errContent = new StringBuffer();
+
+        for (int i = 0; i < imagesModelList.size(); i++) {
+            JmBtImagesModel imagesModel = imagesModelList.get(i);
+            if (imageTypeMain == imagesModel.getImageType()) {
+                ret = true;
+                break;
+            }
+        }
+        if (!ret) {
+            errContent.append(" main_image is not exist ");
+
+            ErrorContent errorContent = getReadErrorContent(fileName, productSheetName, rowNum, errContent.toString());
+            errList.add(errorContent);
+        }
+
 
         return ret;
     }
@@ -742,8 +769,35 @@ public class ImportExcelFileService extends BaseTaskService {
             ret = false;
         }
 
+        // 日期检查
+        if (!chkDate(dealImportModel.getStartTime(), dealImportModel.getEndTime())) {
+            errContent.append(" start_time > end_time ");
+            ret = false;
+        }
+
         if(!ret) {
             ErrorContent errorContent = getReadErrorContent(fileName, dealSheetName, rowNum, errContent.toString());
+            errList.add(errorContent);
+        }
+        return ret;
+    }
+
+    /**
+     * Sku Bean检查
+     *
+     */
+    private boolean chkSkuBean(JmBtSkuImportModel skuModel, String fileName, int rowNum, List<ErrorContent> errList) {
+        boolean ret = true;
+        StringBuffer errContent = new StringBuffer();
+
+        // deal_price
+        if (skuModel.getDealPrice() <= SkuSheetFormat.deal_price_min_value) {
+            errContent.append(" deal_price <= " + SkuSheetFormat.deal_price_min_value);
+            ret = false;
+        }
+
+        if(!ret) {
+            ErrorContent errorContent = getReadErrorContent(fileName, skuSheetName, rowNum, errContent.toString());
             errList.add(errorContent);
         }
         return ret;
@@ -862,7 +916,8 @@ public class ImportExcelFileService extends BaseTaskService {
                 ret = false;
                 retRow = false;
 
-                logger.info("readProductSheet error rownum = " + row.getRowNum());
+//                logger.info("readProductSheet error rownum = " + row.getRowNum());
+                logger.info("readProductSheet error filename = " + fileName + " rownum = " + row.getRowNum());
                 ErrorContent errorContent = getReadErrorContent(fileName, productSheetName, row.getRowNum());
                 errList.add(errorContent);
             }
@@ -870,6 +925,14 @@ public class ImportExcelFileService extends BaseTaskService {
             if (retRow) {
                 // 内容检查
                 retRow = chkProductImportBean(productImportModel, fileName, row.getRowNum(), errList);
+                if (!retRow) {
+                    ret = false;
+                }
+            }
+
+            if (retRow) {
+                // 关联图片检查
+                retRow = chkProductImagesBean(imagesModelList, fileName, row.getRowNum(), errList);
                 if (!retRow) {
                     ret = false;
                 }
@@ -913,11 +976,20 @@ public class ImportExcelFileService extends BaseTaskService {
                 ret = false;
                 retRow = false;
 
-                logger.info("readSkuSheet error rownum = " + row.getRowNum());
+//                logger.info("readSkuSheet error rownum = " + row.getRowNum());
+                logger.info("readSkuSheet error filename = " + fileName + " rownum = " + row.getRowNum());
                 ErrorContent errorContent = getReadErrorContent(fileName, skuSheetName, row.getRowNum());
                 errList.add(errorContent);
             } else {
                 dealId = skuImportModel.getDealId();
+            }
+
+            if (retRow) {
+                // 内容检查
+                retRow = chkSkuBean(skuImportModel, fileName, row.getRowNum(), errList);
+                if (!retRow) {
+                    ret = false;
+                }
             }
 
             // 数据库追加
@@ -954,7 +1026,8 @@ public class ImportExcelFileService extends BaseTaskService {
                 ret = false;
                 retRow = false;
 
-                logger.info("readImageSheet error rownum = " + row.getRowNum());
+//                logger.info("readImageSheet error rownum = " + row.getRowNum());
+                logger.info("readImageSheet error filename = " + fileName + " rownum = " + row.getRowNum());
                 ErrorContent errorContent = getReadErrorContent(fileName, imageSheetName, row.getRowNum());
                 errList.add(errorContent);
             }
@@ -1002,7 +1075,8 @@ public class ImportExcelFileService extends BaseTaskService {
                 ret = false;
                 retRow = false;
 
-                logger.info("readDealSheet error rownum = " + row.getRowNum());
+//                logger.info("readDealSheet error rownum = " + row.getRowNum());
+                logger.info("readDealSheet error filename = " + fileName + " rownum = " + row.getRowNum());
                 ErrorContent errorContent = getReadErrorContent(fileName, dealSheetName, row.getRowNum());
                 errList.add(errorContent);
             }
@@ -1085,6 +1159,21 @@ public class ImportExcelFileService extends BaseTaskService {
     }
 
     /**
+     * 日期大小检查
+     *
+     */
+    private boolean chkDate(String dateStr, String dateEnd) {
+        boolean ret = false;
+        Date strDate = DateTimeUtil.parse(dateStr, DateTimeUtil.DEFAULT_DATETIME_FORMAT);
+        Date endDate = DateTimeUtil.parse(dateEnd, DateTimeUtil.DEFAULT_DATETIME_FORMAT);
+        if (strDate.before(endDate)) {
+            ret = true;
+        }
+
+        return ret;
+    }
+
+    /**
      * Product 格式
      *
      */
@@ -1109,6 +1198,7 @@ public class ImportExcelFileService extends BaseTaskService {
         private static final int address_of_produce_length = 150;
 
         private static final int special_note_index = 22;
+        private static final int special_note_length = 150;
 
         private static final int product_des_index = 23;
 
@@ -1151,7 +1241,10 @@ public class ImportExcelFileService extends BaseTaskService {
         private static final int upc_code_index = 4;
         private static final int size_index = 6;
         private static final int abroad_price_index = 7;
+
         private static final int deal_price_index = 8;
+        private static final int deal_price_min_value = 15;
+
         private static final int market_price_index = 9;
 
 //        private static final int hscode_index = 5;
@@ -1198,6 +1291,10 @@ public class ImportExcelFileService extends BaseTaskService {
         private static final int search_meta_text_custom_index = 14;
     }
 
+    /**
+     * 检查异常信息缓存
+     *
+     */
     private class ErrorContent{
         private String fileName;
         private String sheetName;
