@@ -1,49 +1,39 @@
 /**
- * platformPropMappingController
+ * @ngdoc
+ * @controller
+ * @name platformPropMappingController
  */
+
+/**
+ * @typedef {object} PlatformInfo
+ * @property {object} category CategorySchema
+ * @property {object} properties FieldMap
+ * @property {object} mappingModel
+ * @property {object} mappingTypes MappingTypeMap
+ */
+
 define([
     'cms',
     'underscore',
-    'modules/cms/enums/FieldTypes',
     'modules/cms/enums/MappingTypes',
     'modules/cms/controller/popup.ctl',
     'modules/cms/views/setting/platform_mapping/prop.item.d'
-], function (cms, _, FieldTypes, MappingTypes) {
+], function (cms, _, MappingTypes) {
     'use strict';
     return cms.controller('platformPropMappingController', (function () {
 
-        function PlatformMappingController(platformMappingService, $routeParams, alert, $q) {
+        function PlatformPropMappingController(platformPropMappingService, $routeParams, alert) {
 
-            this.platformMappingService = platformMappingService;
+            this.dataService = platformPropMappingService;
             this.alert = alert;
-            this.$q = $q;
 
             this.mainCategoryId = $routeParams['mainCategoryId'];
             this.cartId = parseInt($routeParams['cartId']);
 
-            this.platform = {
-                /**
-                 * 平台类目
-                 * @type {object}
-                 */
-                category: null,
-                /**
-                 * 平台类目属性的 Map, Key 为属性名, 值为 Field
-                 * @type {object}
-                 */
-                properties: null,
-                /**
-                 * 包含 Mapping Matched 信息的 Map
-                 * @type {object}
-                 */
-                mappingModel: null
-            };
-
             /**
-             * 平台属性的 Map 备份
-             * @type {object}
+             * @type {PlatformInfo}
              */
-            this.backupProperties = null;
+            this.platform = null;
 
             this.selected = {
                 required: null,
@@ -51,7 +41,7 @@ define([
             };
         }
 
-        PlatformMappingController.prototype = {
+        PlatformPropMappingController.prototype = {
             options: {
                 required: {
                     '必填情况(ALL)': null,
@@ -65,18 +55,9 @@ define([
                 }
             },
             init: function () {
-
-                var platform = this.platform;
-
-                this.platformMappingService.getPlatformCategory({
-                    categoryId: this.mainCategoryId,
-                    cartId: this.cartId
-                }).then(function (res) {
-
-                    platform.category = res.data.categorySchema;
-                    platform.properties = res.data.properties;
-                    platform.mappingModel = res.data.mapping;
-
+                var $ = this;
+                $.dataService.getPlatformData($.mainCategoryId, $.cartId).then(function (data) {
+                    $.platform = data;
                 });
             },
             filteringData: function () {
@@ -120,36 +101,93 @@ define([
                     cartId: this.cartId
                 };
 
-                switch (property.type) {
-                    case FieldTypes.complex:
-                        ppPlatformMapping.complex(context);
-                        break;
-                    case FieldTypes.multiComplex:
-                        this.platformMappingService.getMappingType({
-                            cartId: this.cartId,
-                            platformCategoryId: category.catId,
-                            propertyId: property.id
-                        }).then(function (res) {
-                            switch (res.data) {
-                                case MappingTypes.COMPLEX_MAPPING:
-                                    ppPlatformMapping.complex(context);
-                                    break;
-                                case MappingTypes.MULTI_COMPLEX_MAPPING:
-                                    ppPlatformMapping.multiComplex.list(context);
-                                    break;
-                                default:
-
-                            }
-                        });
-                        break;
-                    default: // simple ~
+                switch (property.mapping.type) {
+                    case MappingTypes.SIMPLE_MAPPING:
                         ppPlatformMapping.simple.list(context);
                         break;
+                    case MappingTypes.COMPLEX_MAPPING:
+                        ppPlatformMapping.complex(context);
+                        break;
+                    case MappingTypes.MULTI_COMPLEX_MAPPING:
+                        ppPlatformMapping.multiComplex.list(context);
+                        break;
+                    default:
+                        throw 'Unknown mapping type: ' + property.mapping.type;
                 }
             }
         };
 
-        return PlatformMappingController;
+        return PlatformPropMappingController;
+
+    })()).service('platformPropMappingService', (function () {
+
+        /**
+         * 用于封装属性 Mapping 相关的数据操作, 用于在画面和 item directive 间共享
+         * @constructor
+         */
+        function PlatformPropMappingService(platformMappingService, $q) {
+            this.$service = platformMappingService;
+            this.$q = $q;
+
+            /**
+             * @type {PlatformInfo}
+             */
+            this.platform = null;
+        }
+
+        PlatformPropMappingService.prototype = {
+
+            /**
+             * 根据主数据目录,通过Mapping,获取完整的平台数据信息
+             * @param categoryId MainCategory ID
+             * @param cartId
+             * @returns {Promise.<PlatformInfo|null>}
+             */
+            getPlatformData: function (categoryId, cartId) {
+
+                // 因为后续的操作理论上都是在画面加载后进行的.所以后续可能不传递参数
+                // 因此需要在此处特殊检查
+                if (this.platform || !categoryId || !cartId) {
+                    var deferred = this.$q.defer();
+                    deferred.resolve(this.platform);
+                    return deferred.promise;
+                }
+
+                // 木有数据,再去后台拿
+                return this.$service.getPlatformCategory({
+                    categoryId: categoryId,
+                    cartId: cartId
+                }).then(function (res) {
+                    this.platform = {
+                        category: res.data.categorySchema,
+                        properties: res.data.properties,
+                        mappingModel: res.data.mapping
+                    };
+                }.bind(this)).then(function () {
+                    var platform = this.platform;
+                    this.$service.getMappingTypes({
+                        cartId: cartId,
+                        platformCategoryId: platform.catId
+                    }).then(function (res) {
+                        platform.mappingTypes = res.data;
+                    });
+                    return platform;
+                }.bind(this));
+            },
+
+            /**
+             * @param property
+             * @returns {Promise.<string|null>}
+             */
+            getMappingType: function(property) {
+                return this.getPlatformData().then(function (platform) {
+                    if (!platform) return null;
+                    return platform.mappingTypes[property.id];
+                });
+            }
+        };
+
+        return PlatformPropMappingService;
 
     })());
 });

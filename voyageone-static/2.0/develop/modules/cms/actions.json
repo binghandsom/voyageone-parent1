@@ -61,7 +61,7 @@
         "getMainCategorySchema": "getMainCategorySchema",
         "getDictList": "getDictList",
         "getPlatformMapping": "getPlatformMapping",
-        "getMappingType": "getMappingType",
+        "getMappingTypes": "getMappingType",
         "$saveMapping": "saveMapping"
       }
     },

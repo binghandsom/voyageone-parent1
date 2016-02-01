@@ -208,13 +208,6 @@ define([
             },
 
             /**
-             * @class
-             * @name WrapField
-             * @extends {Field}
-             * @property {WrapField} parent
-             */
-
-            /**
              * 查询平台属性的匹配
              *
              * 注意!!!

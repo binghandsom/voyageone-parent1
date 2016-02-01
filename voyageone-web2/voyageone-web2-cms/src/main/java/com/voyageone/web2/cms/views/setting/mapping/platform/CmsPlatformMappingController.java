@@ -104,9 +104,8 @@ public class CmsPlatformMappingController extends CmsController {
 
         Integer cartId = (Integer) params.get("cartId");
         String platformCategoryId = (String) params.get("platformCategoryId");
-        String propertyId = (String) params.get("propertyId");
 
-        return success(platformPropMappingService.getMultiComplexFieldMappingType(cartId, platformCategoryId, propertyId));
+        return success(platformPropMappingService.getMultiComplexFieldMappingType(cartId, platformCategoryId));
     }
 
     @RequestMapping(CmsUrlConstants.MAPPING.PLATFORM.SAVE_MAPPING)
