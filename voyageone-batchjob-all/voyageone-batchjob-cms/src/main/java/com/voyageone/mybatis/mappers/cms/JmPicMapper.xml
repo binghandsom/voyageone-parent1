@@ -60,7 +60,7 @@
 
 	<!-- 修改聚美图片上传状态临时表 -->
 	<update id="cms_work_jm_bt_images_updateJmPic_temp_uploaded" parameterType="HashMap">
-		INSERT INTO jm_bt_images_upload_temp (
+		INSERT INTO jumei.jm_bt_images_upload_temp (
 			id,
 			channel_id,
 			image_key,
