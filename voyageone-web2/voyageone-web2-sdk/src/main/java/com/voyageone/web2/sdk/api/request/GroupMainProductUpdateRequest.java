@@ -20,7 +20,7 @@ import com.voyageone.web2.sdk.api.util.RequestUtils;
 public class GroupMainProductUpdateRequest extends VoApiRequest<VoApiUpdateResponse> {
 
 	public String getApiURLPath() {
-		return "/group/product/updMainProduct";
+		return "/product/group/updMainProduct";
 	}
 
 
