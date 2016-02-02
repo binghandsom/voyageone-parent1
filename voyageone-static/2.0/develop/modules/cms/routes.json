@@ -125,5 +125,25 @@
     "hash": "/system/dictionary/item/:id",
     "templateUrl": "views/system/dictionary/item.tpl.html",
     "controllerUrl": "modules/cms/views/system/dictionary/item.ctl"
+  },
+  "store_common_attribute": {
+    "hash": "/store/common_attribute/",
+    "templateUrl": "views/store/common_attribute.tpl.html",
+    "controllerUrl": "modules/cms/views/store/common_attribute.ctl"
+  },
+  "store_custom_attribute": {
+    "hash": "/store/custom_attribute/",
+    "templateUrl": "views/store/custom_attribute.tpl.html",
+    "controllerUrl": "modules/cms/views/store/custom_attribute.ctl"
+  },
+  "store_authority_management": {
+    "hash": "/store/authority_management/",
+    "templateUrl": "views/store/authority_management.tpl.html",
+    "controllerUrl": "modules/cms/views/store/authority_management.ctl"
+  },
+  "store_custom_translate": {
+    "hash": "/store/custom_translate/",
+    "templateUrl": "views/store/custom_translate.tpl.html",
+    "controllerUrl": "modules/cms/views/store/custom_translate.ctl"
   }
 }
