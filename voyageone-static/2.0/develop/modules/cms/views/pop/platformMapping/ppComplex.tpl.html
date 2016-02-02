@@ -16,9 +16,19 @@
                 </div>
                 <div class="col-sm-9 form-inline">
                     <select class="form-control" title="值选择"
-                            ng-options="f.id as f.name for f in ctrl.options.values"
-                            ng-model="ctrl.complexMapping.masterPropId">
+                            ng-repeat="propGroup in ctrl.options.propGroups"
+                            ng-change="ctrl.loadNext(propGroup, $index)"
+                            ng-options="f as f.name for f in propGroup.props"
+                            ng-model="propGroup.selected">
                     </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-3">
+                    <label>当前选中属性</label>
+                </div>
+                <div class="col-sm-9 form-inline">
+                    <span>{{ctrl.selectedValue}}</span>
                 </div>
             </div>
         </form>

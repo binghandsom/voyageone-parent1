@@ -4,12 +4,12 @@
 
 define([
     'cms',
-    'modules/cms/models/ComplexMappingBean',
+    'underscore',
     'modules/cms/enums/FieldTypes',
+    'modules/cms/models/ComplexMappingBean',
     'modules/cms/views/pop/platformMapping/ppPlatformMapping.serv'
-], function (cms, ComplexMappingBean, FieldTypes) {
+], function (cms, _, FieldTypes, ComplexMappingBean) {
     'use strict';
-
     return cms.controller('complexMappingPopupController', (function () {
 
         /**
@@ -22,100 +22,152 @@ define([
          */
         function ComplexMappingPopupController(context, $uibModalInstance, ppPlatformMappingService, notify) {
 
-            this.$uibModalInstance = $uibModalInstance;
+            // 保存依赖
+            this.$modal = $uibModalInstance;
             this.context = context;
-            this.ppPlatformMappingService = ppPlatformMappingService;
+            this.ppService = ppPlatformMappingService;
             this.notify = notify;
 
-            this.maindata = {
-                category: {
-                    id: this.context.mainCategoryId,
-                    path: null
-                }
-            };
+            // 复制属性到 Controller
+            _.extend(this, context);
 
-            this.platform = {
-                property: this.context.property,
-                category: {
-                    id: this.context.platformCategoryId,
-                    path: this.context.platformCategoryPath
-                }
-            };
+            // 保存当前属性
+            this.platform.property = context.path[0];
 
             // 当前可选的所有属性
             this.options = {
                 /**
-                 * @type {Field[]}
+                 * @type {PropGroup[]}
                  */
-                values: null
+                propGroups: null
             };
 
             /**
              * @type {ComplexMappingBean}
              */
             this.complexMapping = null;
+
+            this.selectedValue = null;
         }
 
         ComplexMappingPopupController.prototype = {
             init: function () {
-
-                var mainCategory = this.maindata.category;
+                var $ = this;
+                var $mainCate = this.maindata.category;
+                var $service = this.ppService;
+                var $platform = this.platform;
 
                 // 加载类目路径
-                this.ppPlatformMappingService.getMainCategoryPath(mainCategory.id).then(function (path) {
-                    mainCategory.path = path;
+                $service.getMainCategoryPath($mainCate.id).then(function (path) {
+                    $mainCate.path = path;
                 });
 
                 // 尝试加载原有数据
-                this.ppPlatformMappingService.getPlatformPropertyMapping(
-                    this.platform.property, mainCategory.id, this.platform.category.id, this.context.cartId
+                $service.getPlatformPropertyMapping(
+                    $platform.property, $mainCate.id, $platform.category.id, $.context.cartId
                 ).then(function (complexMapping) {
 
                     if (!complexMapping)
                     // 新建默认
                         complexMapping = new ComplexMappingBean(
-                            this.platform.property.id,
+                            $platform.property.id,
                             null,
                             []
                         );
 
-                    this.complexMapping = complexMapping;
-
-                }.bind(this));
-
-                this.loadValue();
+                    $.complexMapping = complexMapping;
+                    $.selectedValue = complexMapping.masterPropId;
+                    $.loadValue();
+                });
             },
             loadValue: function () {
-                this.ppPlatformMappingService
-                    .getMainCategoryPropsWithSku(this.maindata.category.id)
+                var $ = this;
+                var $service = this.ppService;
+                var $mainCate = this.maindata.category;
+                var $mapping = this.complexMapping;
+                var $options = this.options;
+
+                $service.getMainCategoryProps(this.maindata.category.id)
                     .then(function (props) {
-                        // 绑定所有属性
-                        this.options.values = props;
-                    }.bind(this));
+
+                        $options.propGroups = [];
+                        props = $.filterComplex(props);
+
+                        // 加载第一级下拉菜单
+                        // 同时根据 Mapping 设定默认选中值
+                        if (!$mapping.masterPropId) {
+                            // 加载的 Mapping 无默认选中内容
+                            $options.propGroups.push({
+                                selected: null,
+                                props: props
+                            });
+                            return;
+                        }
+
+                        // 获取默认选中值,所在的属性路径
+                        $service.getPropertyPath($mainCate.id, $mapping.masterPropId).then(function (properties) {
+                            _.each(properties.reverse(), function (property) {
+                                $options.propGroups.push({selected: property, props: props});
+                                props = $.filterComplex(property.fields);
+                            }.bind(this));
+                        });
+                    });
             },
+
+            loadNext: function (propGroup, $index) {
+                var propGroups = this.options.propGroups;
+                var prop = propGroup.selected;
+                var children = this.filterComplex(prop.fields);
+                // 清空指定级别以下的所有数据
+                propGroups.splice($index + 1);
+                if (children.length)
+                    propGroups.push({selected: null, props: children});
+                this.setSelectedValue();
+            },
+
+            setSelectedValue: function() {
+
+                var $propGroups = this.options.propGroups;
+                var index = $propGroups.length - 1;
+                var group = $propGroups[index];
+
+                while (!group.selected && index >= 0) {
+                    group = $propGroups[index--];
+                }
+
+                this.selectedValue = group.selected ? group.selected.id : '';
+            },
+
+            filterComplex: function (fieldArr) {
+                return _.filter(fieldArr, function (f) {
+                    return f.type === FieldTypes.complex;
+                });
+            },
+
             ok: function () {
 
-                var modal = this.$uibModalInstance;
-                var platform = this.platform;
-                var notify = this.notify;
+                var $modal = this.$modal;
+                var $platform = this.platform;
+                var $notify = this.notify;
 
-                this.ppPlatformMappingService
-                    .saveMapping(
+                this.complexMapping.masterPropId = this.selectedValue;
+
+                this.ppService.saveMapping(
                         this.maindata.category.id,
-                        platform.category.id,
+                        $platform.category.id,
                         this.context.cartId,
                         this.complexMapping,
-                        platform.property)
+                        $platform.property)
                     .then(function (updated) {
                         if (updated)
-                            notify.success('已更新');
+                            $notify.success('已更新');
                         else
-                            notify.warning('没有更新任何数据');
-                        modal.close(updated);
+                            $notify.warning('没有更新任何数据');
+                        $modal.close(updated);
                     });
             },
             cancel: function () {
-                this.$uibModalInstance.dismiss('cancel');
+                this.$modal.dismiss('cancel');
             }
         };
 

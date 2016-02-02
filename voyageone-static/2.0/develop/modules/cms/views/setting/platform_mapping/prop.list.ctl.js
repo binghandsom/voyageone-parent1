@@ -93,27 +93,25 @@ define([
             popup: function (property, ppPlatformMapping) {
 
                 var category = this.platform.category;
+
                 var context = {
-                    mainCategoryId: this.mainCategoryId,
-                    platformCategoryPath: category.catFullPath,
-                    platformCategoryId: category.catId,
-                    property: property,
-                    cartId: this.cartId
+                    maindata: {
+                        category: {
+                            id: this.mainCategoryId
+                        }
+                    },
+                    platform: {
+                        category: {
+                            id: category.catId,
+                            path: category.catFullPath,
+                            model: category
+                        }
+                    },
+                    cartId: this.cartId,
+                    path: [property]
                 };
 
-                switch (property.mapping.type) {
-                    case MappingTypes.SIMPLE_MAPPING:
-                        ppPlatformMapping.simple.list(context);
-                        break;
-                    case MappingTypes.COMPLEX_MAPPING:
-                        ppPlatformMapping.complex(context);
-                        break;
-                    case MappingTypes.MULTI_COMPLEX_MAPPING:
-                        ppPlatformMapping.multiComplex.list(context);
-                        break;
-                    default:
-                        throw 'Unknown mapping type: ' + property.mapping.type;
-                }
+                ppPlatformMapping(context);
             }
         };
 
@@ -179,7 +177,7 @@ define([
              * @param property
              * @returns {Promise.<string|null>}
              */
-            getMappingType: function(property) {
+            getMappingType: function (property) {
                 return this.getPlatformData().then(function (platform) {
                     if (!platform) return null;
                     return platform.mappingTypes[property.id];

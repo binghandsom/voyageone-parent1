@@ -35,16 +35,7 @@ define([
         }
 
         PopupPlatformMappingService.prototype = {
-            /**
-             * 获取主数据类目的属性及 SKU 级属性
-             * @param {string} mainCategoryId
-             * @returns {Promise.<Field[]>}
-             */
-            getMainCategoryPropsWithSku: function (mainCategoryId) {
-                return this.$getMainCategorySchema(mainCategoryId).then(function (mainCategorySchema) {
-                    return mainCategorySchema.fields.concat([mainCategorySchema.sku]);
-                });
-            },
+
             /**
              * 获取主数据类目属性的简化格式, 只包含 id 和 name
              * @param {string} mainCategoryId
@@ -55,6 +46,7 @@ define([
                     return mainCategorySchema.fields;
                 });
             },
+
             /**
              * 获取主数据类目的 SKU 级属性
              * @param {string} mainCategoryId
@@ -219,7 +211,7 @@ define([
              * @param {string} mainCategoryId
              * @param {string} platformCategoryId
              * @param {number} cartId
-             * @param {number} valueIndex 目标 Mapping 在 MultiComplexMapping 中所在的 Value 位置
+             * @param {number} [valueIndex] 目标 Mapping 在 MultiComplexMapping 中所在的 Value 位置
              * @return {Promise.<MappingBean|MappingBean[]>}
              */
             getPlatformPropertyMapping: function (property, mainCategoryId, platformCategoryId, cartId, valueIndex) {
