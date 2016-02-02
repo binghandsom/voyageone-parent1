@@ -4,6 +4,7 @@ import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.cms.service.CmsProductService;
 import com.voyageone.cms.service.dao.mongodb.CmsBtFeedInfoDao;
+import com.voyageone.cms.service.dao.mongodb.CmsBtProductDao;
 import com.voyageone.cms.service.dao.mongodb.CmsMtCategorySchemaDao;
 import com.voyageone.cms.service.dao.mongodb.CmsMtCommonSchemaDao;
 import com.voyageone.cms.service.model.*;
@@ -21,7 +22,6 @@ import com.voyageone.web2.cms.bean.CustomAttributesBean;
 import com.voyageone.web2.cms.bean.CmsProductInfoBean;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import com.voyageone.web2.sdk.api.VoApiDefaultClient;
-import com.voyageone.web2.sdk.api.VoApiUpdateResponse;
 import com.voyageone.web2.sdk.api.request.CategorySchemaGetRequest;
 import com.voyageone.web2.sdk.api.request.ProductCategoryUpdateRequest;
 import com.voyageone.web2.sdk.api.request.ProductUpdateRequest;
@@ -48,7 +48,7 @@ public class ProductPropsEditService {
     @Autowired
     private CmsMtCategorySchemaDao cmsMtCategorySchemaDao;
 
-    Log logger = LogFactory.getLog(this.getClass());
+    Log logger = LogFactory.getLog(ProductPropsEditService.class);
 
     @Autowired
     private CmsProductService cmsProductService;
@@ -60,7 +60,10 @@ public class ProductPropsEditService {
     private CmsBtFeedInfoDao cmsBtFeedInfoDao;
 
     @Autowired
-    VoApiDefaultClient voApiDefaultClient;
+    private CmsBtProductDao cmsBtProductDao;
+
+    @Autowired
+    protected VoApiDefaultClient voApiDefaultClient;
 
     @Autowired
     protected ProductSdkClient productClient;
@@ -69,9 +72,25 @@ public class ProductPropsEditService {
 
     private static final String completeStatus = "1";
 
-    public CmsProductInfoBean getProductInfo(String channelId, int prodId) throws BusinessException{
+    /**
+     * 获取类目以及类目属性信息.
+     * 1.检查数据已经准备完成，batchField.switchCategory = 1时返回并告知运营正在准备数据，否则正常显示.
+     * @param channelId
+     * @param prodId
+     * @return
+     * @throws BusinessException
+     */
+    public CmsProductInfoBean getProductInfo(String channelId, Long prodId) throws BusinessException {
 
         CmsProductInfoBean productInfo = new CmsProductInfoBean();
+
+        //check the product data is ready.
+        if (!cmsBtProductDao.checkProductDataIsReady(channelId,prodId)){
+            productInfo.setProductDataIsReady(false);
+            return productInfo;
+        }
+
+        productInfo.setProductDataIsReady(true);
 
         //自定义属性.
         CustomAttributesBean customAttributes = new CustomAttributesBean();
@@ -88,6 +107,7 @@ public class ProductPropsEditService {
         }else {
             productStatus.setTranslateStatus(false);
         }
+
         if (completeStatus.equals(productValueModel.getFields().getEditStatus())){
             productStatus.setEditStatus(true);
         }else {
@@ -278,7 +298,7 @@ public class ProductPropsEditService {
      * @return
      * @throws BusinessException
      */
-    public CmsCategoryInfoBean getCategoryInfo(String categoryId) throws BusinessException{
+    public CmsCategoryInfoBean getCategoryInfo(String categoryId) throws BusinessException {
 
         // TODO 将来应该是调用/product/group/numiid/delete直接删除，不需要报异常处理.
         // 现在的方案，先报错，让运营手动删除，然后删除cms对应数据.
@@ -303,14 +323,15 @@ public class ProductPropsEditService {
 
     /**
      * 确认切换类目.
+     * 1.检查相关产品是否已经上架，如果在架就返回并提醒运营删除对应平台上的产品，否则继续
      * @param requestMap
      * @return
      */
-    public Map<String,Object> confirmChangeCategory(Map requestMap, UserSessionBean userSession){
+    public Map<String,Object> changeProductCategory(Map requestMap, UserSessionBean userSession){
 
-        Object catIdObj = requestMap.get("categoryId");
-        Object catPathObj = requestMap.get("categoryPath");
-        Object prodIdObj = requestMap.get("productId");
+        Object catIdObj = requestMap.get("catId");
+        Object catPathObj = requestMap.get("catPath");
+        Object prodIdObj = requestMap.get("prodId");
 
         // check the parameters
         Assert.notEmpty(requestMap);
@@ -318,10 +339,6 @@ public class ProductPropsEditService {
         Assert.notNull(catIdObj);
         Assert.notNull(catPathObj);
         Assert.notNull(prodIdObj);
-
-        Assert.isInstanceOf(String.class,catIdObj);
-        Assert.isInstanceOf(String.class,catPathObj);
-        Assert.isInstanceOf(Long.class,prodIdObj);
 
         String categoryId = String.valueOf(catIdObj);
 
@@ -350,7 +367,7 @@ public class ProductPropsEditService {
      * @param productValueModel
      * @return
      */
-    private Map<String,String> getCmsBtFeedInfoModel(String channelId, int prodId, CmsBtProductModel productValueModel) {
+    private Map<String,String> getCmsBtFeedInfoModel(String channelId, Long prodId, CmsBtProductModel productValueModel) {
 
         CmsBtFeedInfoModel feedInfoModel = cmsBtFeedInfoDao.selectProductByCode(channelId,productValueModel.getFields().getCode());
 
@@ -500,7 +517,7 @@ public class ProductPropsEditService {
      * @param prodId
      * @return
      */
-    private CmsBtProductModel getProductModel(String channelId, int prodId) {
+    private CmsBtProductModel getProductModel(String channelId, Long prodId) {
 
         CmsBtProductModel productValueModel = cmsProductService.getProductById(channelId, prodId);
 

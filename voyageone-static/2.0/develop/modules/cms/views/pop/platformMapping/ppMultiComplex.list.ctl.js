@@ -1,9 +1,10 @@
 define([
     'cms',
+    'underscore',
     'modules/cms/models/MultiComplexMappingBean',
     'modules/cms/views/pop/platformMapping/ppPlatformMapping.serv',
     'modules/cms/controller/popup.ctl'
-], function (cms, MultiComplexMappingBean) {
+], function (cms, _, MultiComplexMappingBean) {
     'use strict';
     return cms.controller('multiComplexMappingPopupController', (function () {
 
@@ -17,23 +18,10 @@ define([
         function MultiComplexMappingPopupController(context, $uibModalInstance, ppPlatformMappingService) {
 
             this.context = context;
-            this.$uibModalInstance = $uibModalInstance;
-            this.ppPlatformMappingService = ppPlatformMappingService;
+            this.$modal = $uibModalInstance;
+            this.ppService = ppPlatformMappingService;
 
-            this.maindata = {
-                category: {
-                    id: this.context.mainCategoryId,
-                    path: null
-                }
-            };
-
-            this.platform = {
-                category: {
-                    id: this.context.platformCategoryId,
-                    path: this.context.platformCategoryPath
-                },
-                property: this.context.property
-            };
+            this.property = context.path[0];
 
             /**
              * 当前平台属性所对应的 Mapping
@@ -46,19 +34,17 @@ define([
 
             init: function () {
 
-                var mainCate = this.maindata.category;
-                var platform = this.platform;
-                var cartId = this.context.cartId;
+                var $ = this;
+                var $mainCate = $.context.maindata.category;
+                var $platform = $.context.platform;
+                var $cartId = $.context.cartId;
+                var $service = $.ppService;
 
-                this.ppPlatformMappingService.getMainCategoryPath(mainCate.id).then(function (path) {
-                    mainCate.path = path;
-                });
-
-                this.ppPlatformMappingService.getPlatformPropertyMapping(
-                    platform.property, mainCate.id, platform.category.id, cartId
+                $service.getPlatformPropertyMapping(
+                    $.context.path, $mainCate.id, $platform.category.id, $cartId
                 ).then(function (multiComplexMapping) {
-                    this.multiComplexMapping = multiComplexMapping || this.$create();
-                }.bind(this));
+                    $.multiComplexMapping = multiComplexMapping || $.$create();
+                });
             },
 
             /**
@@ -68,26 +54,27 @@ define([
             $create: function() {
                 var mapping = new MultiComplexMappingBean();
                 mapping.values = [];
-                mapping.platformPropId = this.platform.property.id;
+                mapping.platformPropId = this.context.platform.property.id;
                 return mapping;
             },
 
             add: function (ppPlatformMapping) {
                 // 打开子窗
-                this.context.valueIndex = this.multiComplexMapping.values.length;
-                ppPlatformMapping.multiComplex.item(this.context);
+                var newIndex = this.multiComplexMapping.values.length;
+                this.context.path.unshift(newIndex);
+                ppPlatformMapping(this.context);
             },
 
             edit: function($index, ppPlatformMapping) {
-                this.context.valueIndex = $index;
-                ppPlatformMapping.multiComplex.item(this.context);
+                this.context.path.unshift($index);
+                ppPlatformMapping(this.context);
             },
 
             ok: function () {
                 this.cancel();
             },
             cancel: function () {
-                this.$uibModalInstance.dismiss('cancel');
+                this.$modal.dismiss('cancel');
             }
         };
 

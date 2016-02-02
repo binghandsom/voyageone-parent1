@@ -504,7 +504,7 @@ public class CmsBtProductDao extends BaseMongoPartDao {
      * @param productId
      * @return
      */
-    public String getModelCode(String channelId,Long productId){
+    public String getModelCode(String channelId,Long productId) {
 
         String query = "{\"prodId\":" + productId + "}";
         String collectionName = mongoTemplate.getCollectionName(this.collectionName, channelId);
@@ -518,4 +518,26 @@ public class CmsBtProductDao extends BaseMongoPartDao {
         return modelCode;
 
     }
+
+    /**
+     * 检查该产品的数据是否已经准备完成.
+     * @param channelId
+     * @param productId
+     * @return
+     */
+    public boolean checkProductDataIsReady(String channelId,Long productId){
+
+        String query = String.format("{prodId:%s,batchField.switchCategory:%s}",productId,1);
+
+        String collectionName = mongoTemplate.getCollectionName(this.collectionName, channelId);
+
+        long count = mongoTemplate.count(query,collectionName);
+
+        if (count < 1)
+            return true;
+
+        return false;
+    }
+
+
 }

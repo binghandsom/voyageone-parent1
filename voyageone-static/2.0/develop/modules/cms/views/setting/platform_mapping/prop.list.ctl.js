@@ -27,8 +27,13 @@ define([
             this.dataService = platformPropMappingService;
             this.alert = alert;
 
-            this.mainCategoryId = $routeParams['mainCategoryId'];
             this.cartId = parseInt($routeParams['cartId']);
+
+            this.maindata = {
+                category: {
+                    id: $routeParams['mainCategoryId']
+                }
+            };
 
             /**
              * @type {PlatformInfo}
@@ -56,8 +61,15 @@ define([
             },
             init: function () {
                 var $ = this;
-                $.dataService.getPlatformData($.mainCategoryId, $.cartId).then(function (data) {
+                var $service = this.dataService;
+                var $mainCate = this.maindata.category;
+
+                $service.getPlatformData($mainCate.id, $.cartId).then(function (data) {
                     $.platform = data;
+                });
+
+                $service.getMainCategorySchema($mainCate.id).then(function(mainCategory) {
+                    $.maindata.category.schema = mainCategory;
                 });
             },
             filteringData: function () {
@@ -93,27 +105,34 @@ define([
             popup: function (property, ppPlatformMapping) {
 
                 var category = this.platform.category;
+                var mainCate = this.maindata.category;
+                var path = [property];
+                var parent = property.parent;
+
+                while (parent) {
+                    path.push(parent);
+                    parent = parent.parent;
+                }
+
                 var context = {
-                    mainCategoryId: this.mainCategoryId,
-                    platformCategoryPath: category.catFullPath,
-                    platformCategoryId: category.catId,
-                    property: property,
-                    cartId: this.cartId
+                    maindata: {
+                        category: {
+                            id: mainCate.id,
+                            path: mainCate.schema.catFullPath
+                        }
+                    },
+                    platform: {
+                        category: {
+                            id: category.catId,
+                            path: category.catFullPath,
+                            model: category
+                        }
+                    },
+                    cartId: this.cartId,
+                    path: path
                 };
 
-                switch (property.mapping.type) {
-                    case MappingTypes.SIMPLE_MAPPING:
-                        ppPlatformMapping.simple.list(context);
-                        break;
-                    case MappingTypes.COMPLEX_MAPPING:
-                        ppPlatformMapping.complex(context);
-                        break;
-                    case MappingTypes.MULTI_COMPLEX_MAPPING:
-                        ppPlatformMapping.multiComplex.list(context);
-                        break;
-                    default:
-                        throw 'Unknown mapping type: ' + property.mapping.type;
-                }
+                ppPlatformMapping(context);
             }
         };
 
@@ -133,6 +152,13 @@ define([
              * @type {PlatformInfo}
              */
             this.platform = null;
+
+            /**
+             * 主数据类目缓存 Map.
+             * 已查询的会存入.
+             * @type {object}
+             */
+            this.mainCategories = {};
         }
 
         PlatformPropMappingService.prototype = {
@@ -179,11 +205,34 @@ define([
              * @param property
              * @returns {Promise.<string|null>}
              */
-            getMappingType: function(property) {
+            getMappingType: function (property) {
                 return this.getPlatformData().then(function (platform) {
                     if (!platform) return null;
                     return platform.mappingTypes[property.id];
                 });
+            },
+
+            /**
+             * @param {string} mainCategoryId
+             * @return {Promise}
+             */
+            getMainCategorySchema: function (mainCategoryId) {
+
+                var deferred = this.$q.defer();
+                var mainCategorySchema = this.mainCategories[mainCategoryId];
+
+                if (mainCategorySchema) {
+                    deferred.resolve(mainCategorySchema);
+                    return deferred.promise;
+                }
+
+                this.$service.getMainCategorySchema({
+                    mainCategoryId: mainCategoryId
+                }).then(function (res) {
+                    deferred.resolve(this.mainCategories[mainCategoryId] = res.data);
+                }.bind(this));
+
+                return deferred.promise;
             }
         };
 

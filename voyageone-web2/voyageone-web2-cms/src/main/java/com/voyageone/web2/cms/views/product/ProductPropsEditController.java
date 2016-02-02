@@ -3,7 +3,6 @@ package com.voyageone.web2.cms.views.product;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
-import com.voyageone.web2.cms.bean.CmsCategoryInfoBean;
 import com.voyageone.web2.cms.bean.CmsProductInfoBean;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +27,7 @@ public class ProductPropsEditController extends CmsController{
     @RequestMapping(CmsUrlConstants.PRODUCT.EDIT.GET_PRODUCT_INFO)
     public AjaxResponse doGetProductInfo(@RequestBody Map params){
 
-        int productId = Integer.valueOf(params.get("productId").toString());
+        Long productId = Long.parseLong(String.valueOf(params.get("productId")));
 
         String channelId = super.getUser().getSelChannelId();
 
@@ -99,15 +98,21 @@ public class ProductPropsEditController extends CmsController{
     @RequestMapping(CmsUrlConstants.PRODUCT.EDIT.CHANGE_CATEGORY)
     public AjaxResponse doChangeCategory(@RequestBody Map requestMap){
 
-        String categoryId = requestMap.get("catId").toString();
+//        String categoryId = requestMap.get("catId").toString();
+//
+//        CmsCategoryInfoBean categoryInfoBean = productPropsEditService.getCategoryInfo(categoryId);
+//
+//        Map<String,Object> categoryInfo = new HashMap<>();
+//
+//        categoryInfo.put("categoryInfo",categoryInfoBean);
+//
+//        return success(categoryInfo);
 
-        CmsCategoryInfoBean categoryInfoBean = productPropsEditService.getCategoryInfo(categoryId);
+        UserSessionBean userSession = super.getUser();
 
-        Map<String,Object> categoryInfo = new HashMap<>();
+        Map<String,Object> resultMap = productPropsEditService.changeProductCategory(requestMap,userSession);
 
-        categoryInfo.put("categoryInfo",categoryInfoBean);
-
-        return success(categoryInfo);
+        return success(resultMap);
 
     }
 
@@ -121,7 +126,7 @@ public class ProductPropsEditController extends CmsController{
 
         UserSessionBean userSession = super.getUser();
 
-        Map<String,Object> resultMap = productPropsEditService.confirmChangeCategory(requestMap,userSession);
+        Map<String,Object> resultMap = productPropsEditService.changeProductCategory(requestMap,userSession);
 
         return success(resultMap);
 

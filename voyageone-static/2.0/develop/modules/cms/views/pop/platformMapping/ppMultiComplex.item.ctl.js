@@ -16,53 +16,26 @@ define([
         function MultiComplexItemMappingPopupController(context, $uibModalInstance, ppPlatformMappingService) {
 
             this.context = context;
-            this.$uibModalInstance = $uibModalInstance;
-            this.ppPlatformMappingService = ppPlatformMappingService;
+            this.$modal = $uibModalInstance;
+            this.ppService = ppPlatformMappingService;
 
-            this.maindata = {
-                category: {
-                    id: this.context.mainCategoryId,
-                    path: null
-                }
-            };
-
-            this.platform = {
-                category: {
-                    id: this.context.platformCategoryId,
-                    path: this.context.platformCategoryPath
-                },
-                property: this.context.property
-            };
-
-            /**
-             * @type {number}
-             */
-            this.valueIndex = this.context.valueIndex;
+            this.property = context.path[1];
         }
 
         MultiComplexItemMappingPopupController.prototype = {
 
-            init: function () {
-
-                var mainCate = this.maindata.category;
-
-                this.ppPlatformMappingService.getMainCategoryPath(mainCate.id).then(function (path) {
-                    mainCate.path = path;
-                });
-            },
-
             mapping: function(ppPlatformMapping, property) {
-
-                var context = _.clone(this.context);
-                context.property = property;
-                ppPlatformMapping.simple.list(context);
+                this.context.path.unshift(property);
+                ppPlatformMapping(this.context);
             },
 
             ok: function () {
                 this.cancel();
             },
+
             cancel: function () {
-                this.$uibModalInstance.dismiss('cancel');
+                this.context.path.shift();
+                this.$modal.dismiss('cancel');
             }
         };
 

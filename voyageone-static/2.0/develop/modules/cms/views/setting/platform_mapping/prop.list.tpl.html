@@ -27,7 +27,13 @@
             </div>
         </div>
         <tab>
-            <tab-heading> 平台类目属性匹配</tab-heading>
+            <tab-heading>
+                <span>{{ctrl.platform.category.catFullPath}}</span>
+                <sup><strong>平台</strong></sup>
+                <span class="fa fa-exchange"></span>
+                <span>{{ctrl.maindata.category.schema.catFullPath}}</span>
+                <sup><strong>主数据</strong></sup>
+            </tab-heading>
             <div class="container-fluid">
                 <div class="col-sm-12">
                     <div class="panel panel-default">

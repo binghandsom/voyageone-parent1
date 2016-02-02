@@ -758,7 +758,7 @@ public class ProductService extends BaseService {
      * @param request
      * @return
      */
-    public VoApiUpdateResponse confirmChangeCategory(ProductCategoryUpdateRequest request){
+    public VoApiUpdateResponse changeProductCategory(ProductCategoryUpdateRequest request){
 
         request.check();
 

@@ -21,7 +21,7 @@ import com.voyageone.web2.sdk.api.util.RequestUtils;
 public class ProductCategoryUpdateRequest extends VoApiRequest<ProductCategoryUpdateResponse> {
 
 	public String getApiURLPath() {
-		return "product/switchCategory/confirm";
+		return "/product/category/switch";
 	}
 
 	private String channelId;
