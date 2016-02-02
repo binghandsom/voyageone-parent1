@@ -26,13 +26,6 @@ define([
 
         MultiComplexItemMappingPopupController.prototype = {
 
-            init: function () {
-                var mainCate = this.maindata.category;
-                this.ppService.getMainCategoryPath(mainCate.id).then(function (path) {
-                    mainCate.path = path;
-                });
-            },
-
             mapping: function(ppPlatformMapping, property) {
                 this.context.path.unshift(property);
                 ppPlatformMapping(this.context);

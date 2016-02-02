@@ -41,10 +41,6 @@ define([
                 var $cartId = this.context.cartId;
                 var $service = this.ppService;
 
-                $service.getMainCategoryPath($mainCate.id).then(function (path) {
-                    $mainCate.path = path;
-                });
-
                 $service.getPlatformPropertyMapping(
                     $platform.property, $mainCate.id, $platform.category.id, $cartId
                 ).then(function (multiComplexMapping) {
