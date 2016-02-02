@@ -73,43 +73,47 @@ define([
                 });
             },
             loadValue: function () {
-                var $ = this;
+                var me = this;
                 var $service = this.ppService;
                 var $mainCate = this.context.maindata.category;
                 var $mapping = this.complexMapping;
                 var $options = this.options;
 
-                $service.getMainCategoryProps($mainCate.id)
-                    .then(function (props) {
+                $service.getMainCategoryProps($mainCate.id, true).then(function (props) {
 
-                        $options.propGroups = [];
-                        props = $.filterComplex(props);
+                    $options.propGroups = [];
+                    props = me.filterCurrent(props);
 
-                        // 加载第一级下拉菜单
-                        // 同时根据 Mapping 设定默认选中值
-                        if (!$mapping.masterPropId) {
-                            // 加载的 Mapping 无默认选中内容
-                            $options.propGroups.push({
-                                selected: null,
-                                props: props
-                            });
+                    // 加载第一级下拉菜单
+                    // 同时根据 Mapping 设定默认选中值
+                    if (!$mapping.masterPropId) {
+                        // 加载的 Mapping 无默认选中内容
+                        $options.propGroups.push({
+                            selected: null,
+                            props: props
+                        });
+                        return;
+                    }
+
+                    // 获取默认选中值,所在的属性路径
+                    $service.getPropertyPath($mainCate.id, $mapping.masterPropId, true).then(function (properties) {
+                        if (!properties) {
+                            $options.propGroups.push({selected: null, props: props});
                             return;
                         }
 
-                        // 获取默认选中值,所在的属性路径
-                        $service.getPropertyPath($mainCate.id, $mapping.masterPropId).then(function (properties) {
-                            _.each(properties.reverse(), function (property) {
-                                $options.propGroups.push({selected: property, props: props});
-                                props = $.filterComplex(property.fields);
-                            });
+                        _.each(_.clone(properties).reverse(), function (property) {
+                            $options.propGroups.push({selected: property, props: props});
+                            props = me.filterCurrent(property.fields);
                         });
                     });
+                });
             },
 
             loadNext: function (propGroup, $index) {
                 var propGroups = this.options.propGroups;
                 var prop = propGroup.selected;
-                var children = this.filterComplex(prop.fields);
+                var children = this.filterCurrent(prop.fields);
                 // 清空指定级别以下的所有数据
                 propGroups.splice($index + 1);
                 if (children.length)
@@ -117,7 +121,7 @@ define([
                 this.setSelectedValue();
             },
 
-            setSelectedValue: function() {
+            setSelectedValue: function () {
 
                 var $propGroups = this.options.propGroups;
                 var index = $propGroups.length - 1;
@@ -130,10 +134,22 @@ define([
                 this.selectedValue = group.selected ? group.selected.id : '';
             },
 
-            filterComplex: function (fieldArr) {
-                return _.filter(fieldArr, function (f) {
-                    return f.type === FieldTypes.complex;
-                });
+            filterCurrent: function (fieldArr) {
+                var me = this;
+                var filter;
+                switch (me.property.type) {
+                    case FieldTypes.complex:
+                        filter = function (f) {
+                            return f.type === FieldTypes.complex;
+                        };
+                        break;
+                    case FieldTypes.multiComplex:
+                        filter = function (f) {
+                            return f.type === FieldTypes.complex || f.type === FieldTypes.multiComplex;
+                        };
+                        break;
+                }
+                return _.filter(fieldArr, filter);
             },
 
             ok: function () {
@@ -146,11 +162,11 @@ define([
                 this.complexMapping.masterPropId = this.selectedValue;
 
                 this.ppService.saveMapping(
-                        me.context.maindata.category.id,
-                        $platform.category.id,
-                        me.context.cartId,
-                        me.complexMapping,
-                        me.context.path)
+                    me.context.maindata.category.id,
+                    $platform.category.id,
+                    me.context.cartId,
+                    me.complexMapping,
+                    me.context.path)
                     .then(function (updated) {
                         if (updated)
                             $notify.success('已更新');

@@ -37,9 +37,11 @@ define([
              * @param {string} mainCategoryId
              * @returns {Promise.<Field[]>}
              */
-            getMainCategoryProps: function (mainCategoryId) {
+            getMainCategoryProps: function (mainCategoryId, withSku) {
                 return this.$getMainCategorySchema(mainCategoryId).then(function (mainCategorySchema) {
-                    return mainCategorySchema.fields;
+                    var fields = _.clone(mainCategorySchema.fields);
+                    if (withSku) fields.push(mainCategorySchema.sku);
+                    return fields;
                 });
             },
 
@@ -65,7 +67,7 @@ define([
              */
             saveMapping: function (mainCategoryId, platformCategoryId, cartId, mapping, path) {
 
-                path = _.map(_.clone(path).reverse(), function(item) {
+                path = _.map(_.clone(path).reverse(), function (item) {
                     if (_.isNumber(item)) return item;
                     return item.id;
                 });
@@ -84,7 +86,7 @@ define([
 
                     return this.$getPlatformMapping(mainCategoryId, platformCategoryId, cartId).then(function (mappingModel) {
 
-                        var index = _.findIndex(mappingModel.props, function(propertyMapping) {
+                        var index = _.findIndex(mappingModel.props, function (propertyMapping) {
                             return propertyMapping.platformPropId === mappingBean.platformPropId;
                         });
 
@@ -133,13 +135,16 @@ define([
              * 根据 masterWord 查找完整字段路径
              * @param {string} mainCategoryId
              * @param {string} propertyId
+             * @param withSku
              * @return {Promise.<Field[]>}
              */
-            getPropertyPath: function (mainCategoryId, propertyId) {
+            getPropertyPath: function (mainCategoryId, propertyId, withSku) {
 
                 return this.$getMainCategorySchema(mainCategoryId)
                     .then(function (mainCategorySchema) {
-                        return this.$searchProperty(mainCategorySchema.fields, propertyId);
+                        var fields = _.clone(mainCategorySchema.fields);
+                        if (withSku) fields.push(mainCategorySchema.sku);
+                        return this.$searchProperty(fields, propertyId);
                     }.bind(this));
             },
 
@@ -200,7 +205,7 @@ define([
                     var mapping = null;
                     var values;
 
-                    _.each(_.clone(path).reverse(), function(item) {
+                    _.each(_.clone(path).reverse(), function (item) {
 
                         if (_.isNumber(item)) {
                             mappings = values[item].subMappings;

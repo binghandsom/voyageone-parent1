@@ -83,6 +83,12 @@ public class CmsPlatformPropMappingService extends BaseAppService {
         // 转换类目属性
         Map<String, Field> fieldMap = SchemaReader.readXmlForMap(platformCatSchemaModel.getPropsItem());
 
+        // 对特殊字段进行过滤
+        fieldMap.remove("product_images");
+        fieldMap.remove("item_images");
+        fieldMap.remove("description");
+        fieldMap.remove("wap_desc");
+
         // 转换简化的 mapping 信息
         Map<String, Object> mappingMap = platformMappingModel.getProps().stream()
                 .collect(toMap(MappingBean::getPlatformPropId, this::getMatched));
@@ -242,9 +248,7 @@ public class CmsPlatformPropMappingService extends BaseAppService {
 
             // 查找并补全
             mappingBean = fixMappingStruct(platformMappingModel, fieldMap, mappingPath);
-        }
-
-        if (!mappingBean.getMappingType().equals(orgMappingBean.getMappingType())) {
+        } else if (!mappingBean.getMappingType().equals(orgMappingBean.getMappingType())) {
             throw new BusinessException("将要更新的和既存的类型不同");
         }
 
