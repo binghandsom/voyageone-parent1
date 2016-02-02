@@ -42,6 +42,7 @@
                         <th class="text-left">Feed Category</th>
                         <th class="text-left">Main Data Category</th>
                         <th class="text-center">类目匹配</th>
+                        <th class="text-center">属性匹配完成</th>
                         <th class="text-center">属性匹配</th>
                     </tr>
                     </thead>
@@ -66,6 +67,11 @@
                                     <i class="fa fa-arrow-circle-up"></i> 继承
                                 </button>
                             </div>
+                        </td>
+                        <td>
+                            <span class="h4" ng-if="feedCategory.mapping && feedCategory.mapping.matchOver">
+                                <i class="fa fa-check-circle"></i>
+                            </span>
                         </td>
                         <td>
                             <div class="btn-group" ng-if="feedCategory.model.attribute && ctrl.findDefaultMapping(feedCategory)">
