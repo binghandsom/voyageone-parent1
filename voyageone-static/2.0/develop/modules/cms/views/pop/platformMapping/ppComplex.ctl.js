@@ -57,11 +57,6 @@ define([
                 var $service = this.ppService;
                 var $platform = this.platform;
 
-                // 加载类目路径
-                $service.getMainCategoryPath($mainCate.id).then(function (path) {
-                    $mainCate.path = path;
-                });
-
                 // 尝试加载原有数据
                 $service.getPlatformPropertyMapping(
                     $platform.property, $mainCate.id, $platform.category.id, $.context.cartId

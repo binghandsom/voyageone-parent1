@@ -5,8 +5,14 @@
         </button>
         <h5 class="modal-title"><i class="fa fa-crosshairs"></i> Complex 父级属性匹配</h5>
     </div>
-    <h5 class="m-l">主数据类目：{{ctrl.maindata.category.path}}</h5>
-    <h5 class="text-vo m-l">-> 平台类目：{{::ctrl.platform.category.path}}</h5>
+    <h5 class="m-l">
+        <span>{{::ctrl.maindata.category.path}}</span>
+        <sup>主数据</sup>
+    </h5>
+    <h5 class="text-vo m-l">
+        <span>{{::ctrl.platform.category.path}}</span>
+        <sup>平台类目</sup>
+    </h5>
 
     <div class="p-l-r">
         <form role="form" class="form-horizontal m-r-sm m-l-sm">
