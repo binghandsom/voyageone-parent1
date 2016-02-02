@@ -2,6 +2,7 @@ package com.voyageone.web2.cms.wsdl.control;
 
 import com.voyageone.web2.cms.wsdl.BaseController;
 import com.voyageone.web2.cms.wsdl.service.ProductService;
+import com.voyageone.web2.sdk.api.VoApiUpdateResponse;
 import com.voyageone.web2.sdk.api.request.*;
 import com.voyageone.web2.sdk.api.response.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -108,5 +109,16 @@ public class ProductController extends BaseController {
     @RequestMapping("/status/update")
     public ProductGroupsPutResponse updateStatusProduct(@RequestBody ProductStatusPutRequest request) {
         return productService.updateStatusProduct(request);
+    }
+
+    /**
+     * change product category
+     * @param request
+     * @return
+     */
+    @RequestMapping("/switchCategory/confirm")
+    public VoApiUpdateResponse changeProductCategory(@RequestBody ProductCategoryUpdateRequest request){
+
+        return productService.confirmChangeCategory(request);
     }
 }
