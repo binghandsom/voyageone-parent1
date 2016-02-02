@@ -201,7 +201,7 @@ define([
                     if (!path || !path.length) return null;
 
                     var mappings = model.props;
-                    var mapping;
+                    var mapping = null;
                     var values;
 
                     _.each(_.clone(path).reverse(), function(item) {
@@ -214,6 +214,8 @@ define([
                         mapping = _.find(mappings, function (mapping) {
                             return mapping.platformPropId === $WrapFieldId(item.id);
                         });
+
+                        if (!mapping) return false;
 
                         switch (mapping.mappingType) {
                             case MappingTypes.COMPLEX_MAPPING:

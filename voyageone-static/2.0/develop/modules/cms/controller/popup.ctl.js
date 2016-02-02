@@ -504,10 +504,14 @@ define([
                     config = popActions.platformMapping.multiComplex.list;
                     break;
                 default:
-                    throw 'Unknown mapping type: ' + property.mapping.type;
+                    throw 'Unknown mapping type: ' + mapping.type;
             }
 
             return openModel(config, context);
+        };
+
+        $scope.ppPlatformMapping.simpleItem = function(context) {
+            return openModel(popActions.platformMapping.simple.item, context);
         };
     }
 });

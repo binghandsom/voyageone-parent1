@@ -1,3 +1,15 @@
+/**
+ * @ngdoc
+ * @controller
+ * @name simpleItemMappingPopupController
+ */
+
+/**
+ * @typedef {object} PropGroup
+ * @property {object|Field} selected 选中值
+ * @property {object[]|Field[]} props 可选值, 必须包含 id 和 name
+ */
+
 define([
     'cms',
     'underscore',
@@ -19,27 +31,12 @@ define([
          */
         function SimpleItemMappingPopupController(context, $uibModalInstance, ppPlatformMappingService, alert) {
 
-            this.$uibModalInstance = $uibModalInstance;
+            this.$modal = $uibModalInstance;
             this.context = context;
-            this.ppPlatformMappingService = ppPlatformMappingService;
+            this.ppService = ppPlatformMappingService;
             this.alert = alert;
 
-            this.maindata = {
-                category: {
-                    id: this.context.mainCategoryId,
-                    path: null
-                }
-            };
-
-            this.platform = {
-                category: {
-                    id: this.context.platformCategoryId,
-                    path: this.context.platformCategoryPath
-                },
-                property: this.context.property
-            };
-
-
+            this.property = context.path[0];
             /**
              * 是否需要(显示)选择项的匹配
              * @type {boolean}
@@ -70,15 +67,8 @@ define([
             };
 
             /**
-             * @typedef {object} SimpleProps
-             * @property {object|Field} selected 选中值
-             * @property {object[]|Field[]} props 可选值, 必须包含 id 和 name
-             *
-             */
-
-            /**
-             * 一组 SimpleProps 数组. 因为需要处理多级属性
-             * @type {SimpleProps[]}
+             * 一组 PropGroup 数组. 因为需要处理多级属性
+             * @type {PropGroup[]}
              */
             this.values = null;
         }
@@ -95,68 +85,64 @@ define([
 
             init: function () {
 
-                var mainCategory = this.maindata.category;
+                var me = this;
                 var valueFrom = null;
-                var property = this.platform.property;
+                var property = me.property;
 
-                switch (this.platform.property.type) {
+                switch (property.type) {
                     case FieldTypes.complex:
                     case FieldTypes.multiComplex:
-                        this.alert('当前属性不是 Simple 属性').result.then(function () {
-                            this.cancel();
-                        }.bind(this));
+                        me.alert('当前属性不是 Simple 属性').result.then(function () {
+                            me.cancel();
+                        });
                         return;
                 }
 
-                this.ppPlatformMappingService.getMainCategoryPath(mainCategory.id).then(function (path) {
-                    mainCategory.path = path;
-                });
-
-                if (!this.ruleWord) {
-                    this.loadValue();
+                if (!me.ruleWord) {
+                    me.loadValue();
                     return;
                 }
 
-                switch (this.ruleWord.type) {
+                switch (me.ruleWord.type) {
                     case WordTypes.MASTER:
                         break;
                     case WordTypes.FEED_CN:
-                        valueFrom = this.valueFromOptions.FEED_CN;
+                        valueFrom = me.valueFromOptions.FEED_CN;
                         break;
                     case WordTypes.FEED_ORG:
-                        valueFrom = this.valueFromOptions.FEED_ORG;
+                        valueFrom = me.valueFromOptions.FEED_ORG;
                         break;
                     case WordTypes.SKU:
-                        valueFrom = this.valueFromOptions.SKU;
+                        valueFrom = me.valueFromOptions.SKU;
                         break;
                     case WordTypes.DICT:
-                        valueFrom = this.valueFromOptions.DICT;
+                        valueFrom = me.valueFromOptions.DICT;
                         break;
                     case WordTypes.TEXT:
                         // 反向加载值...
                         switch (property.type) {
                             case FieldTypes.input:
-                                property.value = this.ruleWord.value;
+                                property.value = me.ruleWord.value;
                                 break;
                             case FieldTypes.singleCheck:
-                                property.value = {value: this.ruleWord.value};
+                                property.value = {value: me.ruleWord.value};
                                 break;
                             case FieldTypes.multiCheck:
-                                var values = this.ruleWord.value.split(',');
+                                var values = me.ruleWord.value.split(',');
                                 values = _.map(values, function (value) {
                                     return {value: value};
                                 });
                                 property.values = values;
                         }
-                        this.selected.fixedValue = true;
+                        me.selected.fixedValue = true;
                         break;
                     default:
                         throw 'Unsupported word type.';
                 }
 
-                if (valueFrom) this.selected.valueFrom = valueFrom;
+                if (valueFrom) me.selected.valueFrom = valueFrom;
 
-                this.loadValue();
+                me.loadValue();
             },
 
             /**
@@ -164,71 +150,73 @@ define([
              */
             loadValue: function () {
 
+                var me = this;
+                var options = me.valueFromOptions;
+                var mainCate = me.context.maindata.category;
+
                 // 先重置画面显示
-                this.needMappingOptions = false;
-                var options = this.valueFromOptions;
-                var mainCate = this.maindata.category;
+                me.needMappingOptions = false;
 
                 // 再根据类型加载
-                switch (this.selected.valueFrom) {
+                switch (me.selected.valueFrom) {
                     case options.MASTER:
 
-                        return this.ppPlatformMappingService.getMainCategoryProps(mainCate.id).then(function (props) {
+                        return me.ppService.getMainCategoryProps(mainCate.id).then(function (props) {
 
                             // 如果是编辑, 则搜索选中字段的完整字段路径
                             // 编辑情况下, 有可能默认选中固定值, 但同时也会 load Master 属性, 所以这里需要特殊处理
 
-                            var values = this.values = [];
+                            var values = me.values = [];
 
-                            if (!this.ruleWord || this.selected.fixedValue) {
-                                this.values = [
+                            if (!me.ruleWord || me.selected.fixedValue) {
+                                me.values = [
                                     {selected: null, props: props}
                                 ];
                                 return;
                             }
 
-                            this.ppPlatformMappingService.getPropertyPath(mainCate.id, this.ruleWord.value)
+                            me.ppService.getPropertyPath(mainCate.id, me.ruleWord.value)
                                 .then(function (properties) {
 
                                     _.each(properties.reverse(), function (property) {
                                         values.push({selected: property, props: props});
                                         props = property.fields;
-                                        this.selected.value = property;
-                                    }.bind(this));
+                                        me.selected.value = property;
+                                    });
 
-                                }.bind(this));
+                                });
 
-                        }.bind(this));
+                        });
 
                     case options.SKU:
 
-                        return this.ppPlatformMappingService.getMainCategorySkuProp(mainCate.id).then(function (sku) {
-                            var selectedId = this.ruleWord ? this.ruleWord.value : null;
+                        return me.ppService.getMainCategorySkuProp(mainCate.id).then(function (sku) {
+                            var selectedId = me.ruleWord ? me.ruleWord.value : null;
                             var selectedField = _.find(sku.fields, function (field) {
                                 return field.id === selectedId;
                             });
-                            this.values = [
+                            me.values = [
                                 {selected: selectedField, props: sku.fields}
                             ];
-                        }.bind(this));
+                        });
 
                     case options.DICT:
 
-                        return this.ppPlatformMappingService.getDictList().then(function (dictList) {
-                            var selectedName = this.ruleWord ? this.ruleWord.value : null;
+                        return me.ppService.getDictList().then(function (dictList) {
+                            var selectedName = me.ruleWord ? me.ruleWord.value : null;
                             var selectedDict = _.find(dictList, function (dict) {
                                 return dict.name === selectedName;
                             });
-                            this.values = [
+                            me.values = [
                                 {selected: selectedDict, props: dictList}
                             ];
-                        }.bind(this));
+                        });
 
                     case options.FEED_CN:
                     case options.FEED_ORG:
                     case options.TEXT:
-                        this.alert('当前暂时不支持该类型');
-                        this.values = [];
+                        me.alert('当前暂时不支持该类型');
+                        me.values = [];
                         return null;
                 }
 
@@ -265,7 +253,7 @@ define([
              */
             updateSelectedValue: function () {
                 var values = this.values;
-                var property = this.platform.property;
+                var property = this.property;
 
                 this.selected.value = values[values.length - 1].selected;
 
@@ -287,7 +275,7 @@ define([
                 // 这里是下半边
                 // 固定值,即 TextWord
                 var textWord = new RuleWord(WordTypes.TEXT);
-                var pfProp = this.platform.property;
+                var pfProp = this.property;
 
                 switch (pfProp.type) {
                     case FieldTypes.input:
@@ -357,7 +345,7 @@ define([
             },
 
             ok: function () {
-                this.$uibModalInstance.close(
+                this.$modal.close(
                     this.selected.fixedValue
                         ? this.getTextWord()
                         : this.getWordByFrom()
@@ -365,7 +353,7 @@ define([
             },
 
             cancel: function () {
-                this.$uibModalInstance.dismiss('cancel');
+                this.$modal.dismiss('cancel');
             }
         };
 
