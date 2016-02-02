@@ -91,6 +91,7 @@ public class CmsUploadJmProductService extends BaseTaskService {
 
         for (JmBtProductImportModel product : jmBtProductImports) {
             executor.execute(() -> uploadProduct(product, shopBean));
+            break;
         }
         executor.shutdown();
         executor.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
@@ -285,7 +286,7 @@ public class CmsUploadJmProductService extends BaseTaskService {
             sku.setPartner_sku_no(jmBtSkuImportModel.getSku());
             sku.setSale_on_this_deal("1");
             sku.setBusinessman_num(jmBtSkuImportModel.getSku());
-            sku.setStocks("0");
+            sku.setStocks("1");
             sku.setDeal_price(jmBtSkuImportModel.getDealPrice().toString());
             sku.setMarket_price(jmBtSkuImportModel.getMarketPrice().toString());
             spu.setSkuInfo(sku);

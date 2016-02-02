@@ -54,9 +54,12 @@
 				a.deal_id
 			FROM
 				jumei.jm_bt_product_import a LEFT JOIN jumei.jm_bt_product b on a.channel_id = b.channel_id and a.product_code = b.product_code
+				LEFT JOIN
+					jumei.jm_bt_deal_import c on a.channel_id = c.channel_id and a.product_code = c.product_code
 			WHERE
 				a.syn_flg = 1
 				and b.product_code is null
+				and c.product_code is not null
 			LIMIT 0,
 			#{count,jdbcType=INTEGER}
 		) t1,
@@ -152,6 +155,9 @@
 			<if test="addressOfProduce != null" >
 				address_of_produce,
 			</if>
+			<if test="hsCode != null">
+				hs_code,
+			</if>
 				created,
 			<if test="creater != null" >
 				creater,
@@ -206,6 +212,9 @@
 			</if>
 			<if test="addressOfProduce != null" >
 				#{addressOfProduce,jdbcType=VARCHAR},
+			</if>
+			<if test="hsCode != null">
+				#{hsCode,jdbcType=VARCHAR},
 			</if>
 				now(),
 			<if test="creater != null" >
@@ -264,6 +273,9 @@
 			</if>
 			<if test="addressOfProduce != null" >
 				address_of_produce = #{addressOfProduce,jdbcType=VARCHAR},
+			</if>
+			<if test="hsCode != null">
+				#{hsCode,jdbcType=VARCHAR},
 			</if>
 				modified = now(),
 			<if test="modifier != null" >
