@@ -33,10 +33,6 @@ public class MagentoApiServiceImpl {
 	 */
 	private static String RELOGIN_CODE = "5";
 
-	private static String CAINIAO_CARRIER = "syb";
-
-	private static String CAINIAO_TITLE = "cainiao";
-
 //	@Autowired
 //	IssueLog issueLog;
 	/**
@@ -125,10 +121,15 @@ public class MagentoApiServiceImpl {
 //		stub = new MagentoServiceStub("http://www.wmf.com/api/v2_soap");
 //		System.setProperty("javax.net.ssl.trustStore", "D:/tmp/trustStore");
 
-		HttpTransportProperties.Authenticator auth = new HttpTransportProperties.Authenticator();
-		auth.setUsername("VoyageOne");
-		auth.setPassword("?Vere91bB;\\e:UTmF1SG");
-		stub._getServiceClient().getOptions().setProperty(HTTPConstants.AUTHENTICATE, auth);
+		String useBasicAuth = ThirdPartyConfigs.getVal1(this.orderChannelId, "useBasicAuth");
+		if ("1".equals(useBasicAuth)) {
+			HttpTransportProperties.Authenticator auth = new HttpTransportProperties.Authenticator();
+			String basicAuthUserName = ThirdPartyConfigs.getVal1(this.orderChannelId, "basicAuthUserName");
+			String basicAuthPassword = ThirdPartyConfigs.getVal1(this.orderChannelId, "basicAuthPassword");
+			auth.setUsername(basicAuthUserName);
+			auth.setPassword(basicAuthPassword);
+			stub._getServiceClient().getOptions().setProperty(HTTPConstants.AUTHENTICATE, auth);
+		}
 		
 		// 登陆
 		LoginResponseParam response = stub.login(loginParam);
