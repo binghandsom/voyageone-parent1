@@ -1,11 +1,10 @@
 package com.voyageone.common.util;
 
+import com.voyageone.common.configs.Properties;
 import org.apache.log4j.Logger;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
+import java.net.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +21,7 @@ public final class FileUtils {
      * @param preFileName 源文件名
      * @param filePath 文件所在目录
      * @return 以【XXXX_】开头的文件组
-     * @description 文件名必须以【XXXX_】开头，在指定目录下获取文件名以【XXXX_】开头的文件组，
+     * description 文件名必须以【XXXX_】开头，在指定目录下获取文件名以【XXXX_】开头的文件组，
      */
     public static List getFileGroup(String preFileName, String filePath) {
         ArrayList<String> fileNameList = new ArrayList<>();
@@ -37,6 +36,23 @@ public final class FileUtils {
             }
         } else {
             fileNameList.add(preFileName);
+        }
+        return fileNameList;
+    }
+
+    /**
+     * @param filePath 文件所在目录
+     * @return 该目录下的文件组
+     * @description filePath下的文件组返回
+     */
+    public static List getFileGroup2(String filePath, String postfix) {
+        ArrayList<String> fileNameList = new ArrayList<>();
+
+        File file = new File(filePath);
+        for (String fileName : file.list()) {
+            if (fileName.contains(postfix)) {
+                fileNameList.add(fileName);
+            }
         }
         return fileNameList;
     }
@@ -70,7 +86,6 @@ public final class FileUtils {
     /**
      * 删除文件
      * @param filePathAndName 要删除的文件的路径
-     * @return boolean
      */
     public static void delFile(String filePathAndName) {
         File file = new File(filePathAndName);
@@ -88,7 +103,6 @@ public final class FileUtils {
      *
      * @param srcFile 源文件
      * @param targetFile 目标文件
-     * @return boolean
      */
     public static void moveFile(String srcFile, String targetFile) {
         copyFile(srcFile, targetFile);
@@ -113,10 +127,10 @@ public final class FileUtils {
 
     /**
      * @param filePath 文件所在目录
-     * @description 在指定目录下获取全部文件组
+     * description 在指定目录下获取全部文件组
      */
     public static ArrayList <String[]> getFileGroup(String filePath) {
-        ArrayList<String[]> fileNameList = new ArrayList<String[]>();
+        ArrayList<String[]> fileNameList = new ArrayList<>();
         File file = new File(filePath);
         for (String fileName : file.list()) {
             File file2 = new File(filePath + "/" + fileName);
@@ -162,15 +176,15 @@ public final class FileUtils {
     public static void copyFileByBcbg(String srcFile, String targetFile) throws IOException {
 
         try (FileInputStream inStream = new FileInputStream(srcFile);
-             FileOutputStream fs = new FileOutputStream(targetFile);){
-            int byteread;
-            File oldfile = new File(srcFile);
-            if (oldfile.exists()) {
+             FileOutputStream fs = new FileOutputStream(targetFile)){
+            int byteRead;
+            File oldFile = new File(srcFile);
+            if (oldFile.exists()) {
 //                FileInputStream inStream = new FileInputStream(srcFile);
 //                FileOutputStream fs = new FileOutputStream(targetFile);
                 byte[] buffer = new byte[1444];
-                while ((byteread = inStream.read(buffer)) != -1) {
-                    fs.write(buffer, 0, byteread);
+                while ((byteRead = inStream.read(buffer)) != -1) {
+                    fs.write(buffer, 0, byteRead);
                 }
                 //inStream.close();
                 //fs.close();
@@ -189,11 +203,112 @@ public final class FileUtils {
      *
      * @param srcFile 源文件
      * @param targetFile 目标文件
-     * @return boolean
      */
     public static void moveFileByBcbg(String srcFile, String targetFile)throws IOException {
         copyFileByBcbg(srcFile, targetFile);
         delFile(srcFile);
+    }
+
+    /**
+     * url download file
+     */
+    public static boolean downloadImage(String urlString, String filename, String savePath) {
+        return downloadImage(urlString, filename, savePath, null, 0, null, null);
+    }
+
+    /**
+     * url download file with proxy
+     */
+    public static boolean downloadImageWithProxy(String urlString, String filename, String savePath) {
+        String proxyHost = Properties.readValue("download.proxyHost");
+        int proxyPort = Integer.parseInt(Properties.readValue("download.proxyPort"));
+        String proxyUser = Properties.readValue("download.proxyUser");
+        String proxyPassword = Properties.readValue("download.proxyPassword");
+
+        return downloadImage(urlString, filename, savePath, proxyHost, proxyPort, proxyUser, proxyPassword);
+    }
+
+    /**
+     * url download file with proxy
+     */
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    public static boolean downloadImage(String urlString, String filename, String savePath, String proxyIP, int proxyPort, String proxyUserName, String proxyPwd) {
+        boolean result = false;
+        OutputStream os = null;
+        InputStream is = null;
+        try {
+            // 构造URL
+            URL url = new URL(urlString);
+            URLConnection con;
+            //proxyIP = null;
+            if (proxyIP != null) {
+                // 设置代理 地址和端口
+                Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(proxyIP, proxyPort));
+                // 设置代理的密码验证
+                if (proxyUserName != null) {
+                    Authenticator auth = new Authenticator() {
+                        private PasswordAuthentication pa = new PasswordAuthentication(proxyUserName, proxyPwd.toCharArray());
+
+                        @Override
+                        protected PasswordAuthentication getPasswordAuthentication() {
+                            return pa;
+                        }
+                    };
+                    Authenticator.setDefault(auth);
+                }
+                // 打开连接
+                con = url.openConnection(proxy);
+            } else {
+                // 打开连接
+                con = url.openConnection();
+            }
+            con.setRequestProperty("Accept-Charset", "UTF-8");
+            //设置请求超时为5s
+            con.setConnectTimeout(10 * 1000);
+            //设置请求超时为5s
+            con.setReadTimeout(20 * 1000);
+            // 输入流
+            is = con.getInputStream();
+
+            // 1K的数据缓冲
+            byte[] bs = new byte[1024];
+            // 读取到的数据长度
+            int len;
+            // 输出的文件流
+            File sf = new File(savePath);
+            if (!sf.exists()) {
+                sf.mkdirs();
+            }
+            File file = new File(sf.getPath() + "\\" + filename);
+            if (file.exists()) {
+                file.delete();
+            }
+            os = new FileOutputStream(file);
+            // 开始读取
+            while ((len = is.read(bs)) != -1) {
+                os.write(bs, 0, len);
+            }
+            // 完毕，关闭所有链接
+            result = true;
+
+        } catch (Exception e) {
+            logger.error("downloadImage", e);
+            logger.error("downloadImage url:=" + urlString);
+        } finally {
+            if (os != null) {
+                try {
+                    os.close();
+                } catch (IOException ignored) {
+                }
+            }
+            if (is != null) {
+                try {
+                    is.close();
+                } catch (IOException ignored) {
+                }
+            }
+        }
+        return result;
     }
 
 }

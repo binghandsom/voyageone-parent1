@@ -33,7 +33,7 @@ public class BaseJomgoPartTemplate {
         this.mongoTemplate = mongoTemplate;
         try {
             this.jongo = new Jongo(mongoTemplate.getDb());
-        } catch (Exception e) {
+        } catch (Exception ignored) {
 
         }
     }
