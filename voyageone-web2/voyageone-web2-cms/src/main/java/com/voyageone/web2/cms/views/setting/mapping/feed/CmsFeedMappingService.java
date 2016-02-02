@@ -370,4 +370,21 @@ public class CmsFeedMappingService extends BaseAppService {
 
         return result.getN() > 0;
     }
+
+    public int getMatchOver(String feedCategoryPath, UserSessionBean user) {
+
+        CmsMtFeedCategoryTreeModelx treeModelx = cmsMtFeedCategoryTreeDao.selectFeedCategoryx(user.getSelChannelId());
+
+        CmsFeedCategoryModel feedCategoryModel = findByPath(feedCategoryPath, treeModelx);
+
+        if (feedCategoryModel == null)
+            throw new BusinessException("没找到 Feed 类目");
+
+        CmsFeedMappingModel feedMappingModel = findMapping(feedCategoryModel, m -> m.getDefaultMapping() == 1);
+
+        if (feedMappingModel == null)
+            throw new BusinessException("没找到 Mapping");
+
+        return feedMappingModel.getMatchOver();
+    }
 }

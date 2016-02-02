@@ -14,13 +14,13 @@
         <div class="form-inline pull-right m-r-sm">
             <label class="m-t-xs col-sm-6">匹配完成?</label>
             <div class="col-sm-6 text-left">
-            <div class="onoffswitch">
-               <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch5" checked>
-                <label class="onoffswitch-label" for="myonoffswitch5">
-                    <span class="onoffswitch-inner"></span>
-                    <span class="onoffswitch-switch"></span>
-                </label>
-            </div><!-- onoff switch -->
+                <div class="onoffswitch">
+                    <input type="checkbox" class="onoffswitch-checkbox" id="feed-m-ckb-1" ng-change="ctrl.switchMatchOver()" ng-model="ctrl.matchOver">
+                    <label class="onoffswitch-label" for="feed-m-ckb-1">
+                        <span class="onoffswitch-inner"></span>
+                        <span class="onoffswitch-switch"></span>
+                    </label>
+                </div>
             </div>
         </div>
         <tab>

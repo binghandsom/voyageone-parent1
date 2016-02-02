@@ -44,6 +44,8 @@ public interface CmsUrlConstants {
             String SAVE_FIELD_MAPPING = "saveFieldMapping";
 
             String DIRECT_MATCH_OVER = "directMatchOver";
+
+            String GET_MATCH_OVER = "getMatchOver";
         }
 
         interface PLATFORM {
