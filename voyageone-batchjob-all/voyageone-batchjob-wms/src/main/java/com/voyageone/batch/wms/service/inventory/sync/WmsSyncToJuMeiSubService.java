@@ -1,16 +1,11 @@
 package com.voyageone.batch.wms.service.inventory.sync;
 
 import com.google.gson.Gson;
-import com.jd.open.api.sdk.JdException;
-import com.jd.open.api.sdk.response.ware.WareSkuStockUpdateResponse;
 import com.voyageone.batch.core.modelbean.TaskControlBean;
+import com.voyageone.batch.wms.WmsConstants;
 import com.voyageone.batch.wms.modelbean.InventorySynLogBean;
-import com.voyageone.common.components.jd.JdInventoryService;
-import com.voyageone.common.components.jumei.Bean.SetShippingReq;
 import com.voyageone.common.components.jumei.Bean.StockSyncReq;
 import com.voyageone.common.components.jumei.JumeiService;
-import com.voyageone.common.configs.Enums.ShopConfigEnums;
-import com.voyageone.common.configs.ShopConfigs;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.JsonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,19 +31,20 @@ public class WmsSyncToJuMeiSubService extends WmsSyncInventoryBaseService {
         // 可以更改任务启动内容为：只处理 Cart 为 JD 的内容。但暂时搁置
     }
 
-    public void syncJumei(List<InventorySynLogBean> inventorySynLogBeans, ShopBean shopBean) {
+    public void syncJumei(List<InventorySynLogBean> inventorySynLogBeans, ShopBean shopBean, String updateFlg) {
 
         logger.info(shopBean.getShop_name() + "（" + shopBean.getComment() + ")库存同步开始");
+        logger.info(shopBean.getShop_name() + "（" + shopBean.getComment() + ")库存同步类型："+ updateFlg);
         logger.info(shopBean.getShop_name() + "（" + shopBean.getComment() + ")库存需要同步件数："+inventorySynLogBeans.size());
 
         for (InventorySynLogBean inventorySynLogBean : inventorySynLogBeans)
 
-            syncJumei(inventorySynLogBean, shopBean);
+            syncJumei(inventorySynLogBean, shopBean, updateFlg);
 
         logger.info(shopBean.getShop_name() + "（" + shopBean.getComment() + ")库存同步结束");
     }
 
-    private void syncJumei(InventorySynLogBean inventorySynLogBean, ShopBean shopBean) {
+    private void syncJumei(InventorySynLogBean inventorySynLogBean, ShopBean shopBean, String updateFlg) {
 
         String res = null;
         StockSyncReq req = new StockSyncReq();
@@ -56,6 +52,7 @@ public class WmsSyncToJuMeiSubService extends WmsSyncInventoryBaseService {
 
             req.setBusinessman_code(inventorySynLogBean.getSku());
             req.setEnable_num(String.valueOf(inventorySynLogBean.getQty()));
+
 
             res = jumeiService.stockSync(shopBean, req);
 
@@ -73,15 +70,26 @@ public class WmsSyncToJuMeiSubService extends WmsSyncInventoryBaseService {
 
             Map<String, Object> resultMap = JsonUtil.jsonToMap(res);
 
-            //  0 处理正确
-            if ("0".equals(resultMap.get("error"))) {
-                // 成功后，迁移数据到历史表
-                movePass(inventorySynLogBean);
+            //  处理正确
+            if ((resultMap.containsKey("error") && "0".equals(resultMap.get("error"))) ||
+                    (resultMap.containsKey("message") && "success!".equals(resultMap.get("message"))))  {
+
+                if (updateFlg.equals(WmsConstants.UPDATE_FLG.ReFlush)) {
+                    // 刷新成功时，更新标志位
+                    updateJMFlg(inventorySynLogBean);
+                }
+                else if (updateFlg.equals(WmsConstants.UPDATE_FLG.Update)) {
+                    // 更新成功后，迁移数据到历史表
+                    movePass(inventorySynLogBean);
+                }
+
                 return;
             }
             else {
                 // 失败的话，记录失败的信息
-                moveIgnore(inventorySynLogBean, res);
+                if (updateFlg.equals(WmsConstants.UPDATE_FLG.Update)) {
+                    moveIgnore(inventorySynLogBean, res);
+                }
 
                 logFailRecord( res, inventorySynLogBean);
                 return;
