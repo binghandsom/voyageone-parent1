@@ -1,7 +1,5 @@
 package com.voyageone.web2.cms.bean;
 
-import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
-import com.voyageone.cms.service.model.CmsBtFeedInfoModel;
 import com.voyageone.cms.service.model.CmsBtProductModel_Field_Image;
 import com.voyageone.common.masterdate.schema.field.Field;
 
@@ -13,9 +11,11 @@ import java.util.Map;
  */
 public class CmsProductInfoBean {
 
+    private boolean productDataIsReady;
+
     private String channelId;
 
-    private int productId;
+    private Long productId;
 
     private String categoryId;
 
@@ -55,11 +55,11 @@ public class CmsProductInfoBean {
         this.channelId = channelId;
     }
 
-    public int getProductId() {
+    public Long getProductId() {
         return productId;
     }
 
-    public void setProductId(int productId) {
+    public void setProductId(Long productId) {
         this.productId = productId;
     }
 
@@ -137,6 +137,14 @@ public class CmsProductInfoBean {
 
     public void setProductCode(String productCode) {
         this.productCode = productCode;
+    }
+
+    public boolean isProductDataIsReady() {
+        return productDataIsReady;
+    }
+
+    public void setProductDataIsReady(boolean productDataIsReady) {
+        this.productDataIsReady = productDataIsReady;
     }
 
     /**

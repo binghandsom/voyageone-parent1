@@ -10,8 +10,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.*;
-
 /**
  * Created by lewis on 2016/2/2.
  */
@@ -34,7 +32,7 @@ public class ProductPropsEditServiceTest {
         userSession.setSelChannelId("013");
         userSession.setUserName("lewis");
 
-        Map<String,Object> resMap = productPropsEditService.confirmChangeCategory(requestMap,userSession);
+        Map<String,Object> resMap = productPropsEditService.changeProductCategory(requestMap,userSession);
 
         System.out.println();
 

@@ -25,4 +25,11 @@ public class CmsBtProductDaoTest {
        String modelCode = cmsBtProductDao.getModelCode("013",161l);
         Assert.assertNotNull(modelCode);
     }
+
+    @Test
+    public void testCheckProductDataIsReady() throws Exception {
+
+        boolean isReady = cmsBtProductDao.checkProductDataIsReady("013",162l);
+        Assert.assertFalse(isReady);
+    }
 }

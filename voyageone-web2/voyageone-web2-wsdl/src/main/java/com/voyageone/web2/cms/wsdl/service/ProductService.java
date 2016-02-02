@@ -758,7 +758,7 @@ public class ProductService extends BaseService {
      * @param request
      * @return
      */
-    public VoApiUpdateResponse confirmChangeCategory(ProductCategoryUpdateRequest request){
+    public VoApiUpdateResponse changeProductCategory(ProductCategoryUpdateRequest request){
 
         request.check();
 
@@ -785,11 +785,11 @@ public class ProductService extends BaseService {
         int updateFeedInfoCount = cmsBtFeedInfoDao.updateFeedInfoUpdFlg(request.getChannelId(),modelCode);
 
 
-        VoApiUpdateResponse response = new VoApiUpdateResponse();
+        ProductCategoryUpdateResponse response = new ProductCategoryUpdateResponse();
 
-//        response.setUpdFeedInfoCount(updateFeedInfoCount);
-//
-//        response.setUpdProductCount(result.getModifiedCount());
+        response.setUpdFeedInfoCount(updateFeedInfoCount);
+
+        response.setUpdProductCount(result.getModifiedCount());
 
         response.setModifiedCount(result.getModifiedCount()+updateFeedInfoCount);
 
