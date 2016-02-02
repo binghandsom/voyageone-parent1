@@ -145,14 +145,29 @@ public class PostWMFOrderService {
 		// 取出OMS中需要向WMF推送菜鸟订单号的订单
 		List<Map<String, String>> cainiaoIdList = orderDao.getWMFNewOrderTrackingInfo(orderChannelID);
 		if (cainiaoIdList != null && cainiaoIdList.size() > 0) {
+
+			// 初期化
+			magentoApiServiceImpl.setOrderChannelId(orderChannelID);
+
 			for (Map<String, String> cainiaoMap : cainiaoIdList) {
 				try {
-					int trackingNumberId = magentoApiServiceImpl.addNewOrderTrack(cainiaoMap);
+					int trackingNumberId = magentoApiServiceImpl.addNewOrderTrackWithOneSession(cainiaoMap);
 
 					// 置位发送标志
 					if (trackingNumberId > 0) {
-						String order_number = cainiaoMap.get("order_number");
-						orderDao.resetTrackingSendFlag(order_number, POST_WMF_NEW_ORDER_TRACKING_NO);
+						String order_number = String.valueOf(cainiaoMap.get("order_number"));
+						String clientOrderId = String.valueOf(cainiaoMap.get("client_order_id"));
+						String sourceOrderId = String.valueOf(cainiaoMap.get("origin_source_order_id"));
+						String payNo = String.valueOf(cainiaoMap.get("pay_no"));
+						String cainiaoId = String.valueOf(cainiaoMap.get("taobao_logistics_id"));
+
+						logger.info("OMS订单号：" + order_number + " 更新WMF菜鸟单号：" + cainiaoId + " 成功");
+
+						// 置位发送标志
+						boolean isRecord = orderDao.resetTrackingSendFlag(order_number, POST_WMF_NEW_ORDER_TRACKING_NO);
+						if (isRecord) {
+							logger.info("OMS订单号：" + order_number + " 更新WMF菜鸟单号发送标志置位成功");
+						}
 					}
 
 				} catch (Exception ex) {
@@ -163,6 +178,8 @@ public class PostWMFOrderService {
 					isSuccess = false;
 				}
 			}
+		} else {
+			logger.info("本次没有要向WMF更新菜鸟单号的新订单");
 		}
 
 		return isSuccess;
