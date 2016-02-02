@@ -35,6 +35,8 @@ public class JmBtProductImportModel {
 
     private String specialNote;
 
+    private String hsCode;
+
     private String uploadErrorInfo;
 
     private String synFlg;
@@ -247,5 +249,13 @@ public class JmBtProductImportModel {
 
     public void setSpecialNote(String specialNote) {
         this.specialNote = specialNote;
+    }
+
+    public String getHsCode() {
+        return hsCode;
+    }
+
+    public void setHsCode(String hsCode) {
+        this.hsCode = hsCode;
     }
 }

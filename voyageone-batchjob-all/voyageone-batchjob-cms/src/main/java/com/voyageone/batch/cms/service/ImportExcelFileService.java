@@ -561,6 +561,7 @@ public class ImportExcelFileService extends BaseTaskService {
 
             productModel.setAttribute(ExcelUtils.getString(row, PruductSheetFormat.attribute_index));
             productModel.setAddressOfProduce(ExcelUtils.getString(row, PruductSheetFormat.address_of_produce_index));
+            productModel.setHsCode(ExcelUtils.getString(row, PruductSheetFormat.hs_code_index,"#"));
             productModel.setSpecialNote(ExcelUtils.getString(row, PruductSheetFormat.special_note_index));
 
             productModel.setSynFlg("0");
@@ -1196,6 +1197,8 @@ public class ImportExcelFileService extends BaseTaskService {
 
         private static final int address_of_produce_index = 20;
         private static final int address_of_produce_length = 150;
+
+        private static final int hs_code_index = 21;
 
         private static final int special_note_index = 22;
         private static final int special_note_length = 150;
