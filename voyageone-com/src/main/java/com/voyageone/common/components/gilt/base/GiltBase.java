@@ -66,7 +66,41 @@ public abstract class GiltBase {
         }
         return result;
     }
+    protected String putGiltApi(ShopBean shopBean, String api_url, Map<String, String> params) throws Exception {
+        StringBuilder post_url = new StringBuilder();
+        String call_url = shopBean.getApp_url() + api_url;
+        post_url.append(call_url);
 
+        if (StringUtils.isNullOrBlank2(shopBean.getAppKey()))
+            throw new IllegalArgumentException("authorization Key不能为空");
+
+        //临时map
+        Map<String, String> tempParm=params;
+
+        StringBuilder parm_url = new StringBuilder();
+        //拼接URL
+        for (String key : tempParm.keySet()) {
+            if(!StringUtils.isEmpty(tempParm.get(key))){
+                parm_url.append("&"  + key + "=");
+                parm_url.append(tempParm.get(key));
+            }
+        }
+        if (parm_url.length() != 0){
+            parm_url.delete(0,1);
+        }
+
+        String result = HttpUtils.get(post_url.toString(), parm_url.toString(),shopBean.getAppKey());
+
+        /* 如果包含message  表示错误*/
+        if(result.contains("message")){
+            //转换错误信息
+            GiltErrorResult res = JacksonUtil.json2Bean(result, GiltErrorResult.class);
+            if (res.getType() != null){
+                throw new Exception("调用Gilt API错误：" + result);
+            }
+        }
+        return result;
+    }
 
 
 }
