@@ -7,6 +7,7 @@ import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +21,40 @@ import java.util.Map;
 public class GiltOrderService extends GiltBase{
 
     private static final String URL = "orders";
+
+
+    /**
+     *  Put订单数据
+     * @param shopBean shopBean
+     * @param request request
+     * @return GiltOrder
+     * @throws Exception
+     */
+    public GiltOrder putOrder(ShopBean shopBean,GiltPutOrderRequest request) throws Exception {
+        request.check();
+        Map map= JacksonUtil.jsonToMap(JacksonUtil.bean2Json(request));
+        Map<String,String> params=new HashMap<String,String>();
+        params.putAll(map);
+        System.out.println(map);
+        String result=reqGiltApi(shopBean,URL+"/"+request.getId(),params);
+        return JacksonUtil.json2Bean(result,GiltOrder.class);
+    }
+
+    /**
+     *  Patch订单数据
+     * @param shopBean shopBean
+     * @param request request
+     * @return GiltOrder
+     * @throws Exception
+     */
+    public GiltOrder patchOrder(ShopBean shopBean,GiltPatchOrderRequest request) throws Exception {
+        request.check();
+        Map map= JacksonUtil.jsonToMap(JacksonUtil.bean2Json(request));
+        Map<String,String> params=new HashMap<String,String>();
+        params.putAll(map);
+        String result=reqGiltApi(shopBean,URL+"/"+request.getId(),params);
+        return JacksonUtil.json2Bean(result,GiltOrder.class);
+    }
 
     /**
      *  分页获取Orders
