@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.cms.sql">
+
+    <insert id="jm_bt_images_insert" parameterType="com.voyageone.batch.cms.model.JmBtImagesModel" >
+        insert into jumei.jm_bt_images
+            (
+            channel_id,
+            image_key,
+            image_type,
+            image_type_extend,
+            image_index,
+            origin_url,
+            jm_url,
+            syn_flg,
+            created,
+            creater,
+            modified,
+            modifier)
+        values
+          (
+            #{channelId,jdbcType=VARCHAR},
+            #{imageKey,jdbcType=VARCHAR},
+            #{imageType,jdbcType=INTEGER},
+            #{imageTypeExtend,jdbcType=VARCHAR},
+            #{imageIndex,jdbcType=INTEGER},
+            #{originUrl,jdbcType=VARCHAR},
+            #{jmUrl,jdbcType=VARCHAR},
+            #{synFlg,jdbcType=INTEGER},
+            now(),
+            #{creater,jdbcType=VARCHAR},
+            now(),
+            #{modifier,jdbcType=VARCHAR})
+        ON DUPLICATE KEY UPDATE
+              syn_flg = if(origin_url = #{originUrl}, syn_flg, 0),
+              modified = if(origin_url = #{originUrl}, modified, now()),
+              modifier = #{modifier,jdbcType=VARCHAR},
+              origin_url = if(origin_url = #{originUrl}, origin_url, #{originUrl})
+    </insert>
+
+    <select id="jm_bt_images_selectBySynFlg" parameterType="com.voyageone.batch.cms.model.JmBtImagesModel" resultType="com.voyageone.batch.cms.model.JmBtImagesModel">
+        select
+            syn_flg as synFlg,
+            count(*) as recCount
+        from
+            jumei.jm_bt_images
+        where
+            channel_id = #{channelId}
+            and image_key = #{imageKey}
+            group by syn_flg
+    </select>
+
+    <update id="jm_bt_product_import_updateByImage" parameterType="HashMap" >
+        update jumei.jm_bt_product_import product,
+                (SELECT img.channel_id,
+                        img.image_key
+                from jumei.jm_bt_images img
+                where img.channel_id = #{channelId,jdbcType=VARCHAR}
+                    and img.syn_flg = 0
+                    and img.creater != img.modified
+                GROUP BY img.channel_id, img.image_key) imgm
+        set product.syn_flg = if(product.syn_flg = '2', '1', product.syn_flg),
+            product.modified = now(),
+            product.modifier = #{modifier,jdbcType=VARCHAR}
+        where product.channel_id = imgm.channel_id
+        and product.product_code = imgm.image_key
+        and product.deal_id = #{dealId,jdbcType=VARCHAR}
+    </update>
+</mapper>
