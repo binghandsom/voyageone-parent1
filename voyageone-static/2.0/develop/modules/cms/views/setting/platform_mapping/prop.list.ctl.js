@@ -93,6 +93,13 @@ define([
             popup: function (property, ppPlatformMapping) {
 
                 var category = this.platform.category;
+                var path = [property];
+                var parent = property.parent;
+
+                while (parent) {
+                    path.push(parent);
+                    parent = parent.parent;
+                }
 
                 var context = {
                     maindata: {
@@ -108,7 +115,7 @@ define([
                         }
                     },
                     cartId: this.cartId,
-                    path: [property]
+                    path: path
                 };
 
                 ppPlatformMapping(context);

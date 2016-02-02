@@ -482,8 +482,16 @@ define([
 
         $scope.ppPlatformMapping = function (context) {
 
-            var mapping = context.path[0].mapping;
+            var last = context.path[0];
+            var mapping;
             var config;
+
+            if (_.isNumber(last)) {
+                config = popActions.platformMapping.multiComplex.item;
+                return openModel(config, context);
+            }
+
+            mapping = last.mapping;
 
             switch (mapping.type) {
                 case MappingTypes.SIMPLE_MAPPING:
