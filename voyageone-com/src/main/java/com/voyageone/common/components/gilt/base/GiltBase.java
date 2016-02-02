@@ -57,7 +57,7 @@ public abstract class GiltBase {
         String result = HttpUtils.get(post_url.toString(), parm_url.toString(),shopBean.getAppKey());
 
         /* 如果包含message  表示错误*/
-        if(result.contains("message")){
+        if(StringUtils.isNullOrBlank2(result)||result.contains("message")){
             //转换错误信息
             GiltErrorResult res = JacksonUtil.json2Bean(result, GiltErrorResult.class);
             if (res.getType() != null){

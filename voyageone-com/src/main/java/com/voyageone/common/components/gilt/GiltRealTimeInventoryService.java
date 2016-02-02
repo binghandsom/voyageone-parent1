@@ -23,7 +23,7 @@ public class GiltRealTimeInventoryService extends GiltBase {
 
 
     /**
-     *
+     * 根据Id获取实时库存
      * @param shopBean shopBean
      * @param skuId skuId
      * @return GiltRealTimeInventory
