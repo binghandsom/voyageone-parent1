@@ -138,24 +138,27 @@ define([
 
             ok: function () {
 
-                var $ = this;
-                var $modal = $.$modal;
-                var $platform = $.context.platform;
-                var $notify = $.notify;
+                var me = this;
+                var $modal = me.$modal;
+                var $platform = me.context.platform;
+                var $notify = me.notify;
 
                 this.complexMapping.masterPropId = this.selectedValue;
 
                 this.ppService.saveMapping(
-                        this.context.maindata.category.id,
+                        me.context.maindata.category.id,
                         $platform.category.id,
-                        this.context.cartId,
-                        this.complexMapping,
-                        $.property)
+                        me.context.cartId,
+                        me.complexMapping,
+                        me.context.path)
                     .then(function (updated) {
                         if (updated)
                             $notify.success('已更新');
                         else
                             $notify.warning('没有更新任何数据');
+
+                        // 维护 Context 中的 Path, 让对应的属性和窗口同时结束生命周期
+                        me.context.path.shift();
                         $modal.close(updated);
                     });
             },

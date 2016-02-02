@@ -60,30 +60,26 @@ define([
              * @param {string} platformCategoryId 平台类目 ID
              * @param {number} cartId 平台 ID
              * @param {MappingBean} mapping 将保存的 Mapping
-             * @param {WrapField} property 平台属性, 用于构造属性的 Path 作为 MappingPath
-             * @param {number} valueIndex 目标 Mapping 在 MultiComplexMapping 中所在的 Value 位置
+             * @param {Array.<WrapField|number>} path Mapping 存储路径
              * @returns {Promise.<boolean>}
              */
-            saveMapping: function (mainCategoryId, platformCategoryId, cartId, mapping, property, valueIndex) {
+            saveMapping: function (mainCategoryId, platformCategoryId, cartId, mapping, path) {
 
-                var mappingPath = [property.id];
-                var parent = property;
-                while (parent = parent.parent) {
-                    if (valueIndex !== null && parent.type === FieldTypes.multiComplex) {
-                        mappingPath.unshift(valueIndex);
-                    }
-                    mappingPath.unshift(parent.id);
-                }
+                path = _.map(_.clone(path).reverse(), function(item) {
+                    if (_.isNumber(item)) return item;
+                    return item.id;
+                });
 
                 return this.pmService.$saveMapping({
                     mainCategoryId: mainCategoryId,
                     platformCategoryId: platformCategoryId,
                     cartId: cartId,
                     mappingBean: mapping,
-                    mappingPath: mappingPath
+                    mappingPath: path
                 }).then(function (res) {
                     // java return top MappingBean
                     var mappingBean = res.data;
+
                     if (!mappingBean) return false;
 
                     return this.$getPlatformMapping(mainCategoryId, platformCategoryId, cartId).then(function (mappingModel) {

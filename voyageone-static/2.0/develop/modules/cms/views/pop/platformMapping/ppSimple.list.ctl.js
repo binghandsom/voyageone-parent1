@@ -201,32 +201,30 @@ define([
 
             ok: function () {
 
-                //var simpleMapping = this.simpleMapping;
-                //var platform = this.platform;
-                //var modal = this.$modal;
-                //var notify = this.notify;
-                //
-                //simpleMapping.expression.ruleWordList = this.unWrapRuleList();
-                //
-                //this.ppService
-                //    .saveMapping(
-                //        this.maindata.category.id,
-                //        platform.category.id,
-                //        this.context.cartId,
-                //        simpleMapping,
-                //        platform.property,
-                //        this.valueIndex)
-                //.then(function(updated){
-                //    if (updated)
-                //        notify.success('已更新');
-                //    else
-                //        notify.warning('没有更新任何数据');
-                //    modal.close(updated);
-                //});
-                //
-                //this.$modal.close(this.mapping);
+                var me = this;
+                var simpleMapping = me.simpleMapping;
+                var platform = me.context.platform;
+                var notify = me.notify;
 
-                this.$modal.close();
+                simpleMapping.expression.ruleWordList = me.unWrapRuleList();
+
+                this.ppService
+                    .saveMapping(
+                        me.context.maindata.category.id,
+                        platform.category.id,
+                        me.context.cartId,
+                        simpleMapping,
+                        me.context.path)
+                .then(function(updated){
+                    if (updated)
+                        notify.success('已更新');
+                    else
+                        notify.warning('没有更新任何数据');
+
+                    // 维护 Context 中的 Path, 让对应的属性和窗口同时结束生命周期
+                    me.context.path.shift();
+                    me.$modal.close(updated);
+                });
             },
 
             cancel: function () {
