@@ -1,6 +1,7 @@
 package com.voyageone.common.components.gilt.base;
 
 import com.taobao.top.schema.Util.StringUtil;
+import com.voyageone.common.components.gilt.bean.GiltErrorResult;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.HttpUtils;
 import com.voyageone.common.util.JsonUtil;
@@ -62,7 +63,7 @@ public abstract class GiltBase {
         String result = HttpUtils.post(post_url.toString(), parm_url.toString());
         //转换错误信息
         GiltErrorResult res = JsonUtil.jsonToBean(result, GiltErrorResult.class);
-        if (res.getCode() != null){
+        if (res.getType() != null){
             throw new Exception("调用Gilt API错误：" + result);
         }
 
