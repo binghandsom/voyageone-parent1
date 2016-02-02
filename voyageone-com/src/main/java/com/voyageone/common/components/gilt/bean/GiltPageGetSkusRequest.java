@@ -1,5 +1,8 @@
 package com.voyageone.common.components.gilt.bean;
 
+import com.voyageone.common.util.StringUtils;
+import org.springframework.util.Assert;
+
 import java.util.Date;
 
 /**
@@ -29,5 +32,13 @@ public class GiltPageGetSkusRequest extends GiltPage{
 
     public void setSku_ids(String sku_ids) {
         this.sku_ids = sku_ids;
+    }
+
+    public void check(){
+        if(!StringUtils.isNullOrBlank2(sku_ids)){
+            if(sku_ids.split(",").length>100){
+                throw new IllegalArgumentException(" A comma delineated array of Sku ids to fetch. (Max 100)");
+            }
+        }
     }
 }

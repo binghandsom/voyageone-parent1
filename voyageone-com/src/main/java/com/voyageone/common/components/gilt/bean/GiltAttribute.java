@@ -1,6 +1,7 @@
 package com.voyageone.common.components.gilt.bean;
 
 /**
+ * @deprecated
  * @author aooer 2016/2/1.
  * @version 2.0.0
  * @since 2.0.0

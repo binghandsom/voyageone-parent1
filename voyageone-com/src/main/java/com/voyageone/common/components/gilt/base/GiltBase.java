@@ -45,10 +45,8 @@ public abstract class GiltBase {
         StringBuilder parm_url = new StringBuilder();
         //拼接URL
         for (String key : tempParm.keySet()) {
-            if(!StringUtils.isEmpty(key)){
-                parm_url.append("&"  + key + "=");
-            }
             if(!StringUtils.isEmpty(tempParm.get(key))){
+                parm_url.append("&"  + key + "=");
                 parm_url.append(tempParm.get(key));
             }
         }
@@ -58,9 +56,8 @@ public abstract class GiltBase {
 
         String result = HttpUtils.get(post_url.toString(), parm_url.toString(),shopBean.getAppKey());
 
-        /* 如果Map包含message key 表示错误*/
-        Map resultMap=JsonUtil.jsonToMap(result);
-        if(resultMap.containsKey("message")){
+        /* 如果包含message  表示错误*/
+        if(result.contains("message")){
             //转换错误信息
             GiltErrorResult res = JacksonUtil.json2Bean(result, GiltErrorResult.class);
             if (res.getType() != null){

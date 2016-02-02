@@ -31,7 +31,7 @@ public class GiltRealTimeInventory {
         this.quantity = quantity;
     }
 
-    private void check(){
+    public void check(){
         Assert.notNull(sku_id,"sku_id不能为空");
         Assert.notNull(quantity,"quantity不能为空");
     }
