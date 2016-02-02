@@ -54,11 +54,11 @@ define([
 
 		/**
 		 * 设置该group的主数据
-		 * @param id
+		 * @param data
 		 * @returns {*}
          */
-		function setMainProduct(id) {
-			return $groupListService.setMainProduct({productId: id})
+		function setMainProduct(data) {
+			return $groupListService.setMainProduct(data);
 		}
 
 		/**

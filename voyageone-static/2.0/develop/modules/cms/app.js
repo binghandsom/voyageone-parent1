@@ -51,10 +51,10 @@ define([
         })
         .constant('cCommonRoutes', {
             "login": {
-                "url": "/login.html#/"
+                "url": "/login.html"
             },
             "channel": {
-                "url": "/channel.html#/"
+                "url": "/channel.html"
             },
             "application": {
                 "modules": "/modules/",

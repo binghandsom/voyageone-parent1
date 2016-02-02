@@ -20,6 +20,7 @@ define([
 		this.updateProductInfo = updateProductInfo;
 		this.updateSkuInfo = updateSkuInfo;
 		this.updateProductDetail = updateProductDetail;
+		this.changeCategory = changeCategory;
 
 		/**
 		 * 获取页面产品信息
@@ -144,6 +145,15 @@ define([
 			});
 
 			return $productDetailService.updateProductAllInfo(data);
+		}
+
+		/**
+		 * 切换商品的主类目
+		 * @param data
+         * @returns {*}
+         */
+		function changeCategory (data) {
+			return $productDetailService.changeCategory(data);
 		}
 
 		/**

@@ -1,6 +1,7 @@
 package com.voyageone.cms.service.dao.mongodb;
 
 import com.mongodb.*;
+import com.voyageone.base.dao.mongodb.BaseJomgoPartTemplate;
 import com.voyageone.base.dao.mongodb.BaseMongoPartDao;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
@@ -12,6 +13,8 @@ import com.voyageone.cms.service.model.CmsBtProductModel_Group_Platform;
 import com.voyageone.cms.service.model.CmsBtProductModel_Sku;
 import com.voyageone.common.util.*;
 import net.minidev.json.JSONObject;
+import org.apache.poi.ss.formula.functions.T;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.Iterator;
@@ -493,5 +496,26 @@ public class CmsBtProductDao extends BaseMongoPartDao {
         //2.将传入的product设置成主商品.
 
         return null;
+    }
+
+    /**
+     * 获取feed方的
+     * @param channelId
+     * @param productId
+     * @return
+     */
+    public String getModelCode(String channelId,Long productId){
+
+        String query = "{\"prodId\":" + productId + "}";
+        String collectionName = mongoTemplate.getCollectionName(this.collectionName, channelId);
+        String projection = "{feed.orgAtts.modelCode:1,_id:0}";
+        List<JSONObject>  result = mongoTemplate.find(query, projection, collectionName);
+        JSONObject resObj = result.get(0);
+        Map feedMap = (Map)resObj.get("feed");
+        Map orgAttsMap = (Map)feedMap.get("orgAtts");
+        String modelCode = (String) orgAttsMap.get("modelCode");
+
+        return modelCode;
+
     }
 }
