@@ -37,14 +37,9 @@ public abstract class GiltBase {
         StringBuilder post_url = new StringBuilder();
         String call_url = shopBean.getApp_url() + api_url;
         post_url.append(call_url);
-        post_url.append("?");
         //设置系统级参数
         Map<String, String> tempParm = params;
-        tempParm.put("client_id",shopBean.getAppKey());
-        tempParm.put("client_key", shopBean.getSessionKey());
-        //生成签名
-        String sign = getSignRequest(shopBean,params);
-        tempParm.put("sign",sign);
+        tempParm.put("API_TOKEN",shopBean.getAppKey());
 
         StringBuilder parm_url = new StringBuilder();
         //拼接URL
@@ -60,7 +55,7 @@ public abstract class GiltBase {
             parm_url.delete(0,1);
         }
 
-        String result = HttpUtils.post(post_url.toString(), parm_url.toString());
+        String result = HttpUtils.get(post_url.toString(), parm_url.toString());
         //转换错误信息
         GiltErrorResult res = JsonUtil.jsonToBean(result, GiltErrorResult.class);
         if (res.getType() != null){
@@ -71,37 +66,5 @@ public abstract class GiltBase {
     }
 
 
-    /**
-     * @param shopBean 系统级参数
-     * @param params 应用级参数
-     * @return 加密好的签名
-     */
-    private String getSignRequest(ShopBean shopBean,Map<String, String> params){
-        Map<String, String> sortedParams = new TreeMap<String,String>();
-        sortedParams.putAll(params);
-        //1.先按照参数的字母顺序排序
-        Set<Map.Entry<String, String>> paramSet =sortedParams.entrySet();
-        StringBuilder query = new StringBuilder();
-        //把client_sign 夹在字符串的两端
-        if (!StringUtil.isEmpty(shopBean.getAppSecret())) {
-            query.append(shopBean.getAppSecret());
-        }
-        //2.把所有参数名和参数值串在一起
-        for (Map.Entry<String, String> param : paramSet) {
-            if (!StringUtils.isEmpty(param.getKey())) {
-                query.append(param.getKey());
-            }
-            if (!StringUtils.isEmpty(param.getKey())) {
-                query.append(param.getValue());
-            }
-        }
-        //把client_sign（假设是 abc） 夹在字符串的两端
-        if (!StringUtil.isEmpty(shopBean.getAppSecret())) {
-            query.append(shopBean.getAppSecret());
-        }
-        //使用MD5 进行加密，再转化成大写
-        String encryptStr = MD5.getMD5(query.toString()).toUpperCase();
-        return encryptStr;
-    }
 
 }
