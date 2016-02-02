@@ -168,7 +168,8 @@ define([
                     .then(function () {
                         var data = {
                             prodId: $.productDetails.productId,
-                            catId: context.selected.catId
+                            catId: context.selected.catId,
+                            catPath: context.selected.catPath
                         };
                         $.productDetailService.changeCategory(data).then(function () {
                             $.notify($.translate.instant('TXT_COM_UPDATE_SUCCESS'));
