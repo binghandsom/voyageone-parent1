@@ -82,6 +82,8 @@ public class ImportExcelFileService extends BaseTaskService {
     private final int imageTypeDeal = 2;
     private final int imageTypeMobile = 7;
 
+    private final String GBKCharset = "GBK";
+
     @Override
     public SubSystem getSubSystem() {
         return SubSystem.CMS;
@@ -1151,8 +1153,9 @@ public class ImportExcelFileService extends BaseTaskService {
      */
     private boolean chkLength(String content, int length){
         boolean ret = false;
+        int byteLength = length * 2;
 
-        if (content.length() <= length) {
+        if (StringUtils.getByteLength(content, GBKCharset) <= byteLength) {
             ret = true;
         }
 

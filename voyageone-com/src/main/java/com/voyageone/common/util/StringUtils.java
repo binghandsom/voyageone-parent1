@@ -435,4 +435,28 @@ public final class StringUtils {
         }
         return (source + strAdd(chr, lenleft));
     }
+
+    /**
+     * <p>
+     * Discription: 取得字符的Byte长度
+     * </p>
+     *
+     * @param content
+     * @param charsetName
+     * @return
+     * @author :
+     * @update :
+     */
+    public static int getByteLength(String content, String charsetName) {
+        int byteLength = 0;
+
+        try {
+            byte[] byteContent = content.getBytes(charsetName);
+            byteLength = byteContent.length;
+        } catch (Exception e) {
+
+        }
+
+        return byteLength;
+    }
 }
