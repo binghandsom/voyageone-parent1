@@ -39,7 +39,7 @@ public abstract class GiltBase {
         post_url.append(call_url);
         //设置系统级参数
         Map<String, String> tempParm = params;
-        tempParm.put("API_TOKEN",shopBean.getAppKey());
+       // tempParm.put("API_TOKEN",shopBean.getAppKey());
 
         StringBuilder parm_url = new StringBuilder();
         //拼接URL
@@ -55,7 +55,7 @@ public abstract class GiltBase {
             parm_url.delete(0,1);
         }
 
-        String result = HttpUtils.get(post_url.toString(), parm_url.toString());
+        String result = HttpUtils.get(post_url.toString(), parm_url.toString(),"YTE5N2YzM2M1ZmFhZmRjZDY3YmZiNjgxMzJiYTgzNGY6");
         //转换错误信息
         GiltErrorResult res = JsonUtil.jsonToBean(result, GiltErrorResult.class);
         if (res.getType() != null){

@@ -25,10 +25,11 @@ public class GiltRealTimeInventoryServiceTest {
     @Test
     public void testGetRealTimeInventoryBySkuId() throws Exception {
         ShopBean shopBean=new ShopBean();
-        shopBean.setAppKey("a197f33c5faafdcd67bfb68132ba834f");
+       // shopBean.setAppKey("a197f33c5faafdcd67bfb68132ba834f");
         shopBean.setApp_url("https://api-sandbox.gilt.com/global/");
         //shopBean.setSessionKey();
-
+        //httpPost.setHeader("Authorization", "basic "
+        //        + "dGNsb3VkYWRtaW46dGNsb3VkMTIz");
 
         giltRealTimeInventoryService.getRealTimeInventoryBySkuId(shopBean,"4099260");
     }

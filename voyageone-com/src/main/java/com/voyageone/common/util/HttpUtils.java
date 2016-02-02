@@ -103,6 +103,26 @@ public class HttpUtils {
         return null;
     }
 
+    public static String get(String url, String param,String authorization) {
+        if (!StringUtils.isEmpty(param)) url += "?" + param;
+        HttpURLConnection connection = null;
+        try {
+            connection = getConnection(url, "GET");
+            connection.setRequestProperty("Authorization", "Basic " + authorization);
+            connection.connect();
+            try (InputStream inputStream = connection.getInputStream()) {
+                return readConnection(inputStream);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (connection != null)
+                connection.disconnect();
+        }
+
+        return null;
+    }
+
     public static String get(String url, String param) {
 
         if (!StringUtils.isEmpty(param)) url += "?" + param;
@@ -250,6 +270,7 @@ public class HttpUtils {
         connection.setRequestProperty("connection", "Keep-Alive");
         connection.setRequestProperty("user-agent",
                 "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
+
 
         return connection;
     }
