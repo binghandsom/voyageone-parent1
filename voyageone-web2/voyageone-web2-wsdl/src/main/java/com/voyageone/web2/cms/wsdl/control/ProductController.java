@@ -116,7 +116,7 @@ public class ProductController extends BaseController {
      * @param request
      * @return
      */
-    @RequestMapping("/switchCategory/confirm")
+    @RequestMapping("/category/switch")
     public VoApiUpdateResponse changeProductCategory(@RequestBody ProductCategoryUpdateRequest request){
 
         return productService.confirmChangeCategory(request);
