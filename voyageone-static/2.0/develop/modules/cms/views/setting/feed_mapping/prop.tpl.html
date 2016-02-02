@@ -79,12 +79,14 @@
                 值匹配
             </button>
         </div>
-        <div class="pull-right">
-            <span class="{{::bean.iconClass}}">{{::bean.field.type}}</span>
+        <div class="col-sm-1 pull-right">
             <span ng-if="bean.isSimple"
                   ng-class="{'badge':bean.matched, 'badge badge-failure': !bean.matched}">
                 <span>{{ bean.matched ? '已匹配' : '未匹配' }}</span>
             </span>
+        </div>
+        <div class="pull-right">
+            <span class="{{::bean.iconClass}}">{{::bean.field.type}}</span>
         </div>
     </script>
 </div>
