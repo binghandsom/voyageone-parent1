@@ -42,7 +42,7 @@ define([
                 var $service = this.ppService;
 
                 $service.getPlatformPropertyMapping(
-                    $platform.property, $mainCate.id, $platform.category.id, $cartId
+                    this.path, $mainCate.id, $platform.category.id, $cartId
                 ).then(function (multiComplexMapping) {
                     this.multiComplexMapping = multiComplexMapping || this.$create();
                 }.bind(this));

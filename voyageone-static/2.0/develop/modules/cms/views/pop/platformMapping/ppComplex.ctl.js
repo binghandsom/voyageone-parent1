@@ -59,7 +59,7 @@ define([
 
                 // 尝试加载原有数据
                 $service.getPlatformPropertyMapping(
-                    $platform.property, $mainCate.id, $platform.category.id, $.context.cartId
+                    $.path, $mainCate.id, $platform.category.id, $.context.cartId
                 ).then(function (complexMapping) {
 
                     if (!complexMapping)

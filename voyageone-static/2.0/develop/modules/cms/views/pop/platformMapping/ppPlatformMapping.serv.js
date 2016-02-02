@@ -188,91 +188,51 @@ define([
             /**
              * 查询平台属性的匹配
              *
-             * 注意!!!
-             * valueIndex 这里只传入一次, 递归过程中不会修改 valueIndex
-             * 所以, 当出现多层 MultiComplexMapping 的情况时
-             * 该方法将无法正确查找. 这里只暂时考虑一层的查找需求
-             *
-             * @param {WrapField} property
+             * @param {object[]} path Mapping 路径, 顺序为倒序
              * @param {string} mainCategoryId
              * @param {string} platformCategoryId
              * @param {number} cartId
-             * @param {number} [valueIndex] 目标 Mapping 在 MultiComplexMapping 中所在的 Value 位置
              * @return {Promise.<MappingBean|MappingBean[]>}
              */
-            getPlatformPropertyMapping: function (property, mainCategoryId, platformCategoryId, cartId, valueIndex) {
+            getPlatformPropertyMapping: function (path, mainCategoryId, platformCategoryId, cartId) {
 
-                return this.$getPlatformMapping(mainCategoryId, platformCategoryId, cartId).then(function (mapping) {
+                return this.$getPlatformMapping(mainCategoryId, platformCategoryId, cartId).then(function (model) {
 
-                    // 搜索属性 mapping
-                    // 理论上传递的 property 包含 parent 信息
-                    // 所以依据 parent 查找
-                    // 如果 prop.item.d 中不再为 property 包装 parent 信息, 则此处需要修改
+                    if (!path || !path.length) return null;
 
-                    if (!property) return null;
+                    var mappings = model.props;
+                    var mapping;
+                    var values;
 
-                    return this.$searchMappingByParent(property, mapping.props, valueIndex);
+                    _.each(_.clone(path).reverse(), function(item) {
 
-                }.bind(this));
-            },
-            /**
-             * 通过 directive prop.item.d 包装的 parent 信息, 在 mapping 中查找具体属性的 mapping 信息
-             * @private
-             * @param {WrapField} property 平台类目属性
-             * @param {MappingBean[]} mappings
-             * @param {number} valueIndex 目标 Mapping 在 MultiComplexMapping 中所在的 Value 位置
-             * @return {MappingBean|MappingBean[]}
-             */
-            $searchMappingByParent: function (property, mappings, valueIndex) {
+                        if (_.isNumber(item)) {
+                            mappings = values[item].subMappings;
+                            return;
+                        }
 
-                var multiMapping = null;
+                        mapping = _.find(mappings, function (mapping) {
+                            return mapping.platformPropId === $WrapFieldId(item.id);
+                        });
 
-                if (property.parent) {
-                    // 有父级时, 先查找父级的 mapping, 覆盖当前 mappings
-                    var parent = property.parent;
-                    var parentMapping = this.$searchMappingByParent(parent, mappings);
-                    // 不同类型的父级, 需要不同的处理
-                    switch (parent.type) {
-                        case FieldTypes.complex:
-                            mappings = parentMapping ? parentMapping.subMappings : null;
-                            break;
-                        case FieldTypes.multiComplex:
-
-                            // 如果是多复杂类型, 有可能返回的是数组
-                            switch (parentMapping.mappingType) {
-                                case MappingTypes.COMPLEX_MAPPING:
-                                    mappings = parentMapping ? parentMapping.subMappings : null;
-                                    break;
-                                case MappingTypes.MULTI_COMPLEX_MAPPING:
-                                    multiMapping = parentMapping;
-                                    break;
-                                default:
-                                    throw 'Unsupported mapping type.';
-                            }
-
-                            break;
-                        default:
-                            throw 'Unsupported parent type.';
-                    }
-                }
-
-                // 说明找不到
-                if (!mappings) return null;
-
-                // 非 Multi 的情况下
-                if (!multiMapping) {
-                    return _.find(mappings, function (mapping) {
-                        return mapping.platformPropId === $WrapFieldId(property.id);
+                        switch (mapping.mappingType) {
+                            case MappingTypes.COMPLEX_MAPPING:
+                                mappings = mapping.subMappings;
+                                values = null;
+                                break;
+                            case MappingTypes.MULTI_COMPLEX_MAPPING:
+                                values = mapping.values;
+                                mappings = null;
+                                break;
+                            default:
+                                mappings = null;
+                                values = null;
+                                break;
+                        }
                     });
-                }
 
-                // Multi 情况下, 搜索多个
-                if (!multiMapping.values || !multiMapping.values.length || multiMapping.values.length <= valueIndex)
-                    return null;
-
-                return _.find(multiMapping.values[valueIndex].subMappings, function (mapping) {
-                    return mapping.platformPropId === $WrapFieldId(property.id);
-                });
+                    return mapping;
+                }.bind(this));
             },
 
             /**
