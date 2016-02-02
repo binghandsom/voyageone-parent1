@@ -2,6 +2,7 @@ package com.voyageone.wms.service.impl;
 
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.base.exception.SystemException;
+import com.voyageone.common.configs.ChannelConfigs;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.StoreConfigEnums;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
@@ -371,10 +372,10 @@ public class WmsTransferServiceImpl implements WmsTransferService {
             throw new BusinessException(TransferMsg.PACKAGE_ALREADY_CLOSED);
         }
 
+        TransferBean transfer = get(detailBean.getTransfer_id());
+
         // 尝试获取“容器内，相同 Barcode 的 Item”，如果已存在，则直接操作，更改数量。如果不存在，则新建
         TransferItemBean item = transferDao.getItem(package_id, barcode);
-
-        TransferBean transfer = get(detailBean.getTransfer_id());
 
         if (item == null) {
             // 如果数据库没有，并且 num 为添加操作，则创建一个
@@ -532,6 +533,45 @@ public class WmsTransferServiceImpl implements WmsTransferService {
         }
 
         resultMap.put("compareResult", clientShipmentCompareList.size() > 0 ? "1" :"0");
+
+        return resultMap;
+    }
+
+    /**
+     * 获取PackageItem的Sku信息
+     *
+     * @return List
+     */
+    @Override
+    public Map<String, Object> getSku(TransferItemMapBean transferItem) {
+        Map<String, Object> resultMap = new HashMap<>();
+
+        String labelType = "0";
+        String clientSku = "";
+        String Sku = transferItem.getTransfer_sku();
+        String Upc = transferItem.getTransfer_barcode();
+        String printSkuLabel = ChannelConfigEnums.Print.YES.getIs();
+
+        ClientSkuBean clientSkuBean = clientSkuDao.getSkuInfo(transferItem.getOrder_channel_id(), transferItem.getTransfer_barcode());
+
+        if (clientSkuBean != null) {
+            clientSku = clientSkuBean.getItem_code() + " " + clientSkuBean.getColor() + " " + clientSkuBean.getSize();
+            Upc = clientSkuBean.getUpc();
+        }
+
+        // 前台来源是Scan时，判断是否需要自动打印
+        if (transferItem.getType().equals("scan")) {
+            printSkuLabel = ChannelConfigs.getVal1(transferItem.getOrder_channel_id(),ChannelConfigEnums.Name.print_sku_label);
+            if (StringUtils.isNullOrBlank2(printSkuLabel)) {
+                printSkuLabel = ChannelConfigEnums.Print.NO.getIs();
+            }
+        }
+
+        resultMap.put("labelType", labelType);
+        resultMap.put("clientSku", clientSku);
+        resultMap.put("Sku", Sku);
+        resultMap.put("Upc", Upc);
+        resultMap.put("printSkuLabel", printSkuLabel);
 
         return resultMap;
     }
@@ -1140,7 +1180,10 @@ public class WmsTransferServiceImpl implements WmsTransferService {
             to_store_channel_id = transfer.getOrder_channel_id();
         }
 
-        String sku = itemDao.getSku(to_store_channel_id, barcode);
+        // 根据输入的条形码找到对应的UPC
+        String Upc = itemDao.getUPC(transfer.getOrder_channel_id(), barcode);
+
+        String sku = itemDao.getSku(to_store_channel_id, Upc);
 
         //该渠道找不到匹配SKU时
 //        if (StringUtils.isEmpty(sku)) {

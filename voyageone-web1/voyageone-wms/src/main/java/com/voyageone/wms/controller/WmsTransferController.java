@@ -1,5 +1,7 @@
 package com.voyageone.wms.controller;
 
+import com.voyageone.common.configs.ChannelConfigs;
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.core.MessageConstants;
@@ -10,6 +12,7 @@ import com.voyageone.wms.WmsCodeConstants.TransferType;
 import com.voyageone.wms.WmsConstants.ReportItems;
 import com.voyageone.wms.WmsUrlConstants.TransferUrls;
 import com.voyageone.wms.formbean.TransferFormBean;
+import com.voyageone.wms.formbean.TransferItemMapBean;
 import com.voyageone.wms.formbean.TransferMapBean;
 import com.voyageone.wms.modelbean.TransferBean;
 import com.voyageone.wms.modelbean.TransferDetailBean;
@@ -27,6 +30,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -322,6 +326,27 @@ public class WmsTransferController extends BaseController {
     }
 
     /**
+     * 获取SKU信息
+     */
+    @RequestMapping(TransferUrls.Item.GETSKU)
+    public void getSku(@RequestBody Map<String, Object> params, HttpServletResponse response) {
+
+        TransferItemMapBean transferItem =new TransferItemMapBean();
+
+        transferItem.setOrder_channel_id((String) params.get("order_channel_id"));
+        transferItem.setTransfer_barcode((String) params.get("transfer_barcode"));
+        transferItem.setTransfer_sku((String) params.get("transfer_sku"));
+        transferItem.setType((String) params.get("type"));
+
+        Map<String, Object> result = transferService.getSku(transferItem);
+
+        AjaxResponseBean
+                .newResult(true)
+                .setResultInfo(result)
+                .writeTo(getRequest(), response);
+    }
+
+    /**
      * 获取两个Transfer， Out 和 In 的所有 Item。
      */
     @RequestMapping(TransferUrls.Item.COMPARE)
@@ -342,11 +367,16 @@ public class WmsTransferController extends BaseController {
     @RequestMapping(TransferUrls.Item.SELECT)
     public void getPackageItems(@RequestBody Map<String, Object> params, HttpServletResponse response) {
         long package_id = Long.valueOf((String) params.get("package_id"));
+        String order_channel_id = (String) params.get("order_channel_id");
 
         List<TransferItemBean> items = transferService.getItemsInPackage(package_id);
 
+        Map<String, Object> resultMap = new HashMap<>();
+        resultMap.put("packageItems", items);
+        resultMap.put("auto_print", StringUtils.null2Space2(ChannelConfigs.getVal1(order_channel_id, ChannelConfigEnums.Name.print_sku_label)).equals(ChannelConfigEnums.Print.YES.getIs()));
+
         AjaxResponseBean.newResult(true)
-                .setResultInfo(items)
+                .setResultInfo(resultMap)
                 .writeTo(getRequest(), response);
     }
 

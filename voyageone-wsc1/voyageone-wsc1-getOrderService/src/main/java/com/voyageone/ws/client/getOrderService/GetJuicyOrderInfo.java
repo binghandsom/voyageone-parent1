@@ -9,10 +9,10 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>anonymous complex typeµÄ Java Àà¡£
- * 
- * <p>ÒÔÏÂÄ£Ê½Æ¬¶ÎÖ¸¶¨°üº¬ÔÚ´ËÀàÖĞµÄÔ¤ÆÚÄÚÈİ¡£
- * 
+ * <p>anonymous complex typeçš„ Java ç±»ã€‚
+ *
+ * <p>ä»¥ä¸‹æ¨¡å¼ç‰‡æ®µæŒ‡å®šåŒ…å«åœ¨æ­¤ç±»ä¸­çš„é¢„æœŸå†…å®¹ã€‚
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -27,15 +27,15 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-    "in0",
-    "in1",
-    "in2",
-    "in3"
+        "in0",
+        "in1",
+        "in2",
+        "in3"
 })
 @XmlRootElement(name = "getJuicyOrderInfo")
 public class GetJuicyOrderInfo {
@@ -50,96 +50,96 @@ public class GetJuicyOrderInfo {
     protected String in3;
 
     /**
-     * »ñÈ¡in0ÊôĞÔµÄÖµ¡£
-     * 
+     * è·å–in0å±æ€§çš„å€¼ã€‚
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getIn0() {
         return in0;
     }
 
     /**
-     * ÉèÖÃin0ÊôĞÔµÄÖµ¡£
-     * 
+     * è®¾ç½®in0å±æ€§çš„å€¼ã€‚
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setIn0(String value) {
         this.in0 = value;
     }
 
     /**
-     * »ñÈ¡in1ÊôĞÔµÄÖµ¡£
-     * 
+     * è·å–in1å±æ€§çš„å€¼ã€‚
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getIn1() {
         return in1;
     }
 
     /**
-     * ÉèÖÃin1ÊôĞÔµÄÖµ¡£
-     * 
+     * è®¾ç½®in1å±æ€§çš„å€¼ã€‚
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setIn1(String value) {
         this.in1 = value;
     }
 
     /**
-     * »ñÈ¡in2ÊôĞÔµÄÖµ¡£
-     * 
+     * è·å–in2å±æ€§çš„å€¼ã€‚
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getIn2() {
         return in2;
     }
 
     /**
-     * ÉèÖÃin2ÊôĞÔµÄÖµ¡£
-     * 
+     * è®¾ç½®in2å±æ€§çš„å€¼ã€‚
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setIn2(String value) {
         this.in2 = value;
     }
 
     /**
-     * »ñÈ¡in3ÊôĞÔµÄÖµ¡£
-     * 
+     * è·å–in3å±æ€§çš„å€¼ã€‚
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getIn3() {
         return in3;
     }
 
     /**
-     * ÉèÖÃin3ÊôĞÔµÄÖµ¡£
-     * 
+     * è®¾ç½®in3å±æ€§çš„å€¼ã€‚
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setIn3(String value) {
         this.in3 = value;

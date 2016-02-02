@@ -72,7 +72,7 @@ define([
                 } else {
                     searchCondition = scanCondition.barCode;
                     object = _.find(arr, function (obj) {
-                        return obj.barCode == searchCondition && !obj.selectClass;
+                        return obj.barCode == searchCondition && !obj.selectClass || obj.Upc == searchCondition && !obj.selectClass;
                     });
                 }
                 //清空扫描条件

@@ -9,10 +9,10 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * <p>anonymous complex typeµÄ Java Àà¡£
- * 
- * <p>ÒÔÏÂÄ£Ê½Æ¬¶ÎÖ¸¶¨°üº¬ÔÚ´ËÀàÖĞµÄÔ¤ÆÚÄÚÈİ¡£
- * 
+ * <p>anonymous complex typeçš„ Java ç±»ã€‚
+ *
+ * <p>ä»¥ä¸‹æ¨¡å¼ç‰‡æ®µæŒ‡å®šåŒ…å«åœ¨æ­¤ç±»ä¸­çš„é¢„æœŸå†…å®¹ã€‚
+ *
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -24,12 +24,12 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-    "out"
+        "out"
 })
 @XmlRootElement(name = "getOrderInfoResponse")
 public class GetOrderInfoResponse {
@@ -38,24 +38,24 @@ public class GetOrderInfoResponse {
     protected String out;
 
     /**
-     * »ñÈ¡outÊôĞÔµÄÖµ¡£
-     * 
+     * è·å–outå±æ€§çš„å€¼ã€‚
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getOut() {
         return out;
     }
 
     /**
-     * ÉèÖÃoutÊôĞÔµÄÖµ¡£
-     * 
+     * è®¾ç½®outå±æ€§çš„å€¼ã€‚
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setOut(String value) {
         this.out = value;

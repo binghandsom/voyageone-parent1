@@ -51,19 +51,19 @@ public class WmsSyncToJuMeiSubService extends WmsSyncInventoryBaseService {
     private void syncJumei(InventorySynLogBean inventorySynLogBean, ShopBean shopBean) {
 
         String res = null;
-
+        StockSyncReq req = new StockSyncReq();
         try {
-            StockSyncReq req = new StockSyncReq();
+
             req.setBusinessman_code(inventorySynLogBean.getSku());
             req.setEnable_num(String.valueOf(inventorySynLogBean.getQty()));
 
-            //$info(shopBean.getShop_name() + "（" + shopBean.getComment() + ")库存同步记录：" + new Gson().toJson(req));
-
             res = jumeiService.stockSync(shopBean, req);
 
-            //$info(shopBean.getShop_name() + "（" + shopBean.getComment() + ")库存同步结果：" + res);
+            $info(shopBean.getShop_name() + "（" + shopBean.getComment() + ")库存同步记录：" + new Gson().toJson(req) + "，库存同步结果：" + res);
+
 
         } catch (Exception e) {
+            $info(shopBean.getShop_name() + "（" + shopBean.getComment() + ")库存同步记录：" + new Gson().toJson(req) + "，库存同步结果：" + e);
             logFailRecord(e, inventorySynLogBean);
             return;
         }
@@ -73,7 +73,7 @@ public class WmsSyncToJuMeiSubService extends WmsSyncInventoryBaseService {
 
             Map<String, Object> resultMap = JsonUtil.jsonToMap(res);
 
-            //  0 处理正确(已发货的订单再次调用此接口, 更改快递信息,更改成功后也会返回 0)
+            //  0 处理正确
             if ("0".equals(resultMap.get("error"))) {
                 // 成功后，迁移数据到历史表
                 movePass(inventorySynLogBean);
@@ -81,9 +81,9 @@ public class WmsSyncToJuMeiSubService extends WmsSyncInventoryBaseService {
             }
             else {
                 // 失败的话，记录失败的信息
-                moveIgnore(inventorySynLogBean, (String) resultMap.get("result"));
+                moveIgnore(inventorySynLogBean, res);
 
-                logFailRecord( (String) resultMap.get("result"), inventorySynLogBean);
+                logFailRecord( res, inventorySynLogBean);
                 return;
             }
         }

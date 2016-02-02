@@ -199,6 +199,9 @@ public class WmsLocationServiceImpl implements WmsLocationService {
         if (StringUtils.isEmpty(order_channel_id))
             throw new BusinessException(ItemLocationMsg.NOT_FOUND_CHANNEL);
 
+        // 根据输入的条形码找到对应的UPC
+        code = itemDao.getUPC(order_channel_id, code);
+
         // 通过 itemcode 和 barcode 进行匹配。检索所有匹配商品的 itemcode （去重复）
         List<String> codes = itemDao.searchItemCode(code, order_channel_id);
 

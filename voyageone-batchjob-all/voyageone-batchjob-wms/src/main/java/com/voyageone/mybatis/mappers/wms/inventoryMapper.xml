@@ -146,6 +146,50 @@
         LIMIT #{limit};
     </select>
 
+    <select id="wms_selectInventorySynLogsForJM" resultType="com.voyageone.batch.wms.modelbean.InventorySynLogBean">
+        SELECT
+            i.seq,
+            i.order_channel_id,
+            i.cart_id,
+            i.sku,
+            i.qty,
+            i.syn_flg,
+            i.syn_type,
+            i.modified,
+            i.modifier,
+            i.created,
+            i.creater,
+            d.barcode,
+            d.itemcode
+        FROM
+            (SELECT
+              MAX(i.seq) seq
+            FROM
+              voyageone_ims.ims_bt_log_syn_inventory i
+            WHERE
+              i.order_channel_id = #{order_channel_id}
+            AND i.cart_id = #{cart_id}
+            AND i.syn_flg = #{syn_flg}
+            AND EXISTS( SELECT
+                          1
+                        FROM
+                          tm_task_control
+                        WHERE
+                          task_id = #{task_name}
+                        AND cfg_name = 'order_channel_id'
+                        AND cfg_val1 = #{order_channel_id})
+                        GROUP BY i.sku) ii
+        JOIN
+          voyageone_ims.ims_bt_log_syn_inventory i ON i.seq = ii.seq
+        JOIN
+          wms_bt_item_details d ON i.order_channel_id = d.order_channel_id
+        AND i.sku = d.sku
+        JOIN
+          jumei.jm_bt_product p ON i.order_channel_id = p.channel_id
+        AND d.itemcode = p.product_code
+        LIMIT #{limit};
+    </select>
+
     <delete id="wms_deleteInventorySynLog">
         DELETE FROM
           voyageone_ims.ims_bt_log_syn_inventory

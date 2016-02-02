@@ -50,6 +50,8 @@ define(['modules/wms/wms.module'], function (wmsApp) {
 									activeX.doPrintPickUpLabel(jsonData, printerName, printerFixVal1, printerFixVal2);
 								}else if(business == wmsConstant.print.business.Location){
 									activeX.doPrintLocationLabel(jsonData, printerName, printerFixVal1, printerFixVal2);
+								}else if(business == wmsConstant.print.business.SKU){
+									activeX.doPrintSkuLabel(jsonData, printerName, printerFixVal1, printerFixVal2);
     		        	    	}else{
     		        	    		alert("未找到对应的打印配置信息！");
     		        	    	}
