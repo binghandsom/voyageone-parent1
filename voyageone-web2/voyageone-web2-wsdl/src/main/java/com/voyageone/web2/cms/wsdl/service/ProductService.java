@@ -8,6 +8,7 @@ import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.cms.CmsConstants;
 import com.voyageone.cms.service.CmsProductLogService;
 import com.voyageone.cms.service.dao.CmsBtSxWorkloadDao;
+import com.voyageone.cms.service.dao.mongodb.CmsBtFeedInfoDao;
 import com.voyageone.cms.service.dao.mongodb.CmsBtProductDao;
 import com.voyageone.cms.service.model.*;
 import com.voyageone.common.util.DateTimeUtil;
@@ -15,6 +16,7 @@ import com.voyageone.common.util.StringUtils;
 import com.voyageone.web2.cms.wsdl.BaseService;
 import com.voyageone.web2.cms.wsdl.dao.CmsBtPriceLogDao;
 import com.voyageone.web2.sdk.api.VoApiConstants;
+import com.voyageone.web2.sdk.api.VoApiUpdateResponse;
 import com.voyageone.web2.sdk.api.domain.CmsBtPriceLogModel;
 import com.voyageone.web2.sdk.api.domain.ProductPriceModel;
 import com.voyageone.web2.sdk.api.domain.ProductSkuPriceModel;
@@ -52,6 +54,9 @@ public class ProductService extends BaseService {
 
     @Autowired
     private CmsBtSxWorkloadDao cmsBtSxWorkloadDao;
+
+    @Autowired
+    private CmsBtFeedInfoDao cmsBtFeedInfoDao;
 
     /**
      * selectOne
@@ -746,6 +751,49 @@ public class ProductService extends BaseService {
                 cmsBtSxWorkloadDao.insertSxWorkloadModel(model);
             }
         }
+    }
+
+    /**
+     * confirm change category
+     * @param request
+     * @return
+     */
+    public VoApiUpdateResponse confirmChangeCategory(ProductCategoryUpdateRequest request){
+
+        request.check();
+
+        String modelCode = cmsBtProductDao.getModelCode(request.getChannelId(),request.getProductId());
+
+        //update product's category id and category path
+        List<BulkUpdateModel> bulkList = new ArrayList<>();
+
+        HashMap<String, Object> updateMap = new HashMap<>();
+        updateMap.put("catId", request.getCategoryId());
+        updateMap.put("catPath", request.getCategoryPath());
+        updateMap.put("batchField.switchCategory",1);
+
+        HashMap<String, Object> queryMap = new HashMap<>();
+        queryMap.put("feed.orgAtts.modelCode", modelCode);
+
+        BulkUpdateModel model = new BulkUpdateModel();
+        model.setUpdateMap(updateMap);
+        model.setQueryMap(queryMap);
+        bulkList.add(model);
+
+        BulkWriteResult result = cmsBtProductDao.bulkUpdateWithMap(request.getChannelId(), bulkList, request.getModifier(), "$set");
+
+        int updateFeedInfoCount = cmsBtFeedInfoDao.updateFeedInfoUpdFlg(request.getChannelId(),modelCode);
+
+
+        VoApiUpdateResponse response = new VoApiUpdateResponse();
+
+//        response.setUpdFeedInfoCount(updateFeedInfoCount);
+//
+//        response.setUpdProductCount(result.getModifiedCount());
+
+        response.setModifiedCount(result.getModifiedCount()+updateFeedInfoCount);
+
+        return response;
     }
 
 }

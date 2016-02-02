@@ -14,7 +14,8 @@ define([
             masterData: null,
             productList: [],
             productIds: [],
-            productPageOption: {curr: 1, total: 0, size: 20, fetch: getProductList}
+            productPageOption: {curr: 1, total: 0, size: 20, fetch: getProductList},
+            mainProduct: null
         };
 
         $scope.initialize = initialize;
@@ -50,11 +51,11 @@ define([
         /**
          * 设置group的主商品
          */
-        function setMainProduct (productId) {
-            // TODO该功能还未实现
-            //groupListService.setMainProduct(productId).then(function () {
-            //    notify.success (this.translate.instant('TXT_COM_UPDATE_SUCCESS'));
-            //})
+        function setMainProduct (product) {
+
+            groupListService.setMainProduct({groupId: product.groups.platforms[0].groupId, prodId: product.prodId}).then(function () {
+                notify.success (this.translate.instant('TXT_COM_UPDATE_SUCCESS'));
+            })
         }
     }
 

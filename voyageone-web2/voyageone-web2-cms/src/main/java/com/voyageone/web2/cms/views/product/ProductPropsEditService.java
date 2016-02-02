@@ -19,15 +19,20 @@ import com.voyageone.common.util.StringUtils;
 import com.voyageone.web2.cms.bean.CmsCategoryInfoBean;
 import com.voyageone.web2.cms.bean.CustomAttributesBean;
 import com.voyageone.web2.cms.bean.CmsProductInfoBean;
+import com.voyageone.web2.core.bean.UserSessionBean;
 import com.voyageone.web2.sdk.api.VoApiDefaultClient;
+import com.voyageone.web2.sdk.api.VoApiUpdateResponse;
 import com.voyageone.web2.sdk.api.request.CategorySchemaGetRequest;
+import com.voyageone.web2.sdk.api.request.ProductCategoryUpdateRequest;
 import com.voyageone.web2.sdk.api.request.ProductUpdateRequest;
 import com.voyageone.web2.sdk.api.response.CategorySchemaGetResponse;
+import com.voyageone.web2.sdk.api.response.ProductCategoryUpdateResponse;
 import com.voyageone.web2.sdk.api.service.ProductSdkClient;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -55,7 +60,7 @@ public class ProductPropsEditService {
     private CmsBtFeedInfoDao cmsBtFeedInfoDao;
 
     @Autowired
-    VoApiDefaultClient voApiDefaultClient;
+    protected VoApiDefaultClient voApiDefaultClient;
 
     @Autowired
     protected ProductSdkClient productClient;
@@ -298,13 +303,44 @@ public class ProductPropsEditService {
 
     /**
      * 确认切换类目.
-     * @param categoryId
-     * @param productId
+     * @param requestMap
      * @return
      */
-    public int confirmChangeCatgory(String categoryId, Long productId){
+    public Map<String,Object> confirmChangeCategory(Map requestMap, UserSessionBean userSession){
 
-        return 0;
+        Object catIdObj = requestMap.get("catId");
+        Object catPathObj = requestMap.get("catPath");
+        Object prodIdObj = requestMap.get("prodId");
+
+        // check the parameters
+        Assert.notEmpty(requestMap);
+
+        Assert.notNull(catIdObj);
+        Assert.notNull(catPathObj);
+        Assert.notNull(prodIdObj);
+
+        Assert.isInstanceOf(String.class,catIdObj);
+        Assert.isInstanceOf(String.class,catPathObj);
+//        Assert.isInstanceOf(Long.class,prodIdObj);
+
+        String categoryId = String.valueOf(catIdObj);
+
+        String categoryPath = String.valueOf(catPathObj);
+
+        Long productId = Long.parseLong(String.valueOf(prodIdObj));
+
+        ProductCategoryUpdateRequest request = new ProductCategoryUpdateRequest(userSession.getSelChannelId(),categoryId,categoryPath,productId);
+        request.setModifier(userSession.getUserName());
+
+        VoApiUpdateResponse response = voApiDefaultClient.execute(request);
+
+        Map<String,Object> resultMap = new HashMap<>();
+
+//        requestMap.put("updFeedInfoCount",response.getUpdFeedInfoCount());
+//        requestMap.put("updProductCount",response.getUpdProductCount());
+        requestMap.put("updateCount",response.getModifiedCount());
+
+        return resultMap;
     }
 
     /**

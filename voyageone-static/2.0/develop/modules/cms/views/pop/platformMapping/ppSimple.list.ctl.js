@@ -14,35 +14,13 @@ define([
 
         function SimpleListMappingPopupController(context, $uibModalInstance, ppPlatformMappingService, alert, notify) {
 
-            this.$uibModalInstance = $uibModalInstance;
+            this.$modal = $uibModalInstance;
             this.context = context;
-            this.ppPlatformMappingService = ppPlatformMappingService;
+            this.ppService = ppPlatformMappingService;
             this.alert = alert;
             this.notify = notify;
 
-            this.maindata = {
-                category: {
-                    id: this.context.mainCategoryId,
-                    path: null
-                }
-            };
-
-            this.platform = {
-                category: {
-                    id: this.context.platformCategoryId,
-                    path: this.context.platformCategoryPath
-                },
-                /**
-                 * @type {WrapField}
-                 */
-                property: this.context.property
-            };
-
-            /**
-             * 当前属性在 MultiComplexMapping 中的第几个 Value 中
-             * @type {number|null}
-             */
-            this.valueIndex = this.context.valueIndex;
+            this.property = context.path[0];
 
             /**
              * 当前属性的匹配
@@ -70,31 +48,27 @@ define([
 
             init: function () {
 
-                var mainCategory = this.maindata.category;
-                var property = this.platform.property;
+                var $ = this;
+                var $mainCate = $.context.maindata.category;
+                var property = $.property;
+                var $pfCate = $.context.platform.category;
 
                 // 检查 popup 的支持类型
                 switch (property.type) {
                     case FieldTypes.complex:
                     case FieldTypes.multiComplex:
-                        this.alert('当前属性不是 Simple 属性').result.then(function () {
-                            this.cancel();
-                        }.bind(this));
+                        $.alert('当前属性不是 Simple 属性').result.then(function () {
+                            $.cancel();
+                        });
                         return;
                 }
 
-                // 加载主类目路径
-                this.ppPlatformMappingService.getMainCategoryPath(mainCategory.id).then(function (path) {
-                    mainCategory.path = path;
-                });
-
                 // 加载原有的匹配
-                this.ppPlatformMappingService.getPlatformPropertyMapping(
-                    property,
-                    mainCategory.id,
-                    this.platform.category.id,
-                    this.context.cartId,
-                    this.valueIndex
+                $.ppService.getPlatformPropertyMapping(
+                    $.context.path,
+                    $mainCate.id,
+                    $pfCate.id,
+                    $.context.cartId
                 ).then(function (simpleMapping) {
 
                     // 如果没拿到, 则创建新的 SimpleMapping
@@ -109,13 +83,13 @@ define([
                     if (!simpleMapping.expression.ruleWordList)
                         simpleMapping.expression.ruleWordList = [];
 
-                    this.simpleMapping = simpleMapping;
-                    this.ruleWords = simpleMapping.expression.ruleWordList;
+                    $.simpleMapping = simpleMapping;
+                    $.ruleWords = simpleMapping.expression.ruleWordList;
 
                     // 加载完数据之后, 进行对 end line 的数据包装
-                    this.wrapRuleList();
+                    $.wrapRuleList();
 
-                }.bind(this));
+                });
             },
             /**
              * 为 Line End 包装 List
@@ -192,7 +166,7 @@ define([
             add: function (ppPlatformMapping) {
                 this.context.ruleWord = null;
                 // 增加 RuleWord
-                ppPlatformMapping.simple.item(this.context).then(function (word) {
+                ppPlatformMapping.simpleItem(this.context).then(function (word) {
                     // 更新 ruleWords 时, 要同步更新平行的 lineEnds
                     this.ruleWords.push(word);
                     this.lineEnds.push({type: 3, value: null});
@@ -201,7 +175,7 @@ define([
 
             edit: function ($index, ppPlatformMapping) {
                 this.context.ruleWord = this.ruleWords[$index];
-                ppPlatformMapping.simple.item(this.context).then(function (word) {
+                ppPlatformMapping.simpleItem(this.context).then(function (word) {
                     // 用新的结果替换原结果
                     this.ruleWords[$index] = word;
                 }.bind(this));
@@ -227,34 +201,34 @@ define([
 
             ok: function () {
 
-                var simpleMapping = this.simpleMapping;
-                var platform = this.platform;
-                var modal = this.$uibModalInstance;
-                var notify = this.notify;
+                var me = this;
+                var simpleMapping = me.simpleMapping;
+                var platform = me.context.platform;
+                var notify = me.notify;
 
-                simpleMapping.expression.ruleWordList = this.unWrapRuleList();
+                simpleMapping.expression.ruleWordList = me.unWrapRuleList();
 
-                this.ppPlatformMappingService
+                this.ppService
                     .saveMapping(
-                        this.maindata.category.id,
+                        me.context.maindata.category.id,
                         platform.category.id,
-                        this.context.cartId,
+                        me.context.cartId,
                         simpleMapping,
-                        platform.property,
-                        this.valueIndex)
+                        me.context.path)
                 .then(function(updated){
                     if (updated)
                         notify.success('已更新');
                     else
                         notify.warning('没有更新任何数据');
-                    modal.close(updated);
-                });
 
-                this.$uibModalInstance.close(this.mapping);
+                    // 维护 Context 中的 Path, 让对应的属性和窗口同时结束生命周期
+                    me.context.path.shift();
+                    me.$modal.close(updated);
+                });
             },
 
             cancel: function () {
-                this.$uibModalInstance.dismiss('cancel');
+                this.$modal.dismiss('cancel');
             }
         };
 

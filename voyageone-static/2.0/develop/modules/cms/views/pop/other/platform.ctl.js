@@ -16,7 +16,7 @@ define([
         function OtherPlatformPopupController(platformMappingService, context, $uibModalInstance) {
 
             this.platformMappingService = platformMappingService;
-            this.$uibModalInstance = $uibModalInstance;
+            this.$modal = $uibModalInstance;
             this.context = context;
             this.carts = Carts;
 
@@ -42,7 +42,7 @@ define([
             },
             cancel: function () {
 
-                this.$uibModalInstance.dismiss('cancel');
+                this.$modal.dismiss('cancel');
             }
         };
 

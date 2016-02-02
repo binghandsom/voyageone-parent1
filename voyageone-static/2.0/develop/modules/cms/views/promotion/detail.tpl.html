@@ -126,7 +126,7 @@
                                     <span class="label label-success-new m-r-lg m-l"> {{group.platformStatus}} </span> <span class="m-r-lg">Number IID: <a
                                         ng-href="https://detail.tmall.com/item.htm?id={{group.numIid}}" target="_blank"
                                         class="text-u-l">{{group.numIid}}</a></span> <span>Group Name:<a
-                                        ng-href="#/group/list/{{group.modelId}}" target="_blank" class="Mtext-u-l">{{group.productModel}}</a></span>
+                                        ng-href="#/group/list/{{group.modelId}}" target="_blank" class="text-u-l">{{group.productModel}}</a></span>
                                 </td>
                                 <td colspan="4" class="text-right">{{group.catPath}}</td>
                             </tr>
@@ -305,10 +305,10 @@
                             <tr>
                                 <td class="mfb-xxs">SKU</td>
                                 <td class="mfb-xx">折扣</td>
-                                <td class="mfb-x">Size</td>
+                                <td class="mfb-x text-left">Size</td>
                                 <td class="mfb-x">Inventory</td>
-                                <td class="mfb-x">Promotion Price</td>
-                                <td class="mfb-x">price sale</td>
+                                <td class="mfb-x text-center">Promotion Price</td>
+                                <td class="mfb-x text-center">price sale</td>
                                 <!--<th class="mfb-xt">Edit</th>-->
                             </tr>
                             </thead>
@@ -319,14 +319,14 @@
                                 <tr ng-repeat="sku in vm.skuList">
                                     <td class="mfb-xxs">{{sku.productSku}}</td>
                                     <td  class="mfb-xx">{{(sku.promotionPrice/sku.salePrice*100).toFixed(1)}}折</td>
-                                    <td class="mfb-x">{{sku.size}}</td>
+                                    <td class="mfb-x text-left">{{sku.size}}</td>
                                     <td class="mfb-x"><input type="text" class="col-sm-1 form-control" placeholder="{{sku.qty}}"
                                                popover-placement="left" popover="原始库存：{{sku.qty}}"></td>
-                                    <td class="mfb-x">
+                                    <td class="mfb-x text-center">
                                         <!--<button type="button" popover-placement="left" class="btn btn-default btn-xs">{{sku.promotionPrice}}</button>-->
                                         {{sku.promotionPrice}}
                                     </td>
-                                    <td class="mfb-x">
+                                    <td class="mfb-x text-center">
                                         <!--<input type="text" class="form-control col-sm-2" popover-placement="left" popover="price retail：1200">-->
                                         <!--<button type="button" popover-placement="left" class="btn btn-default btn-xs">{{sku.salePrice}}</button>-->
                                         {{sku.salePrice}}

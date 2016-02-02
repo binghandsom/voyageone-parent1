@@ -162,6 +162,8 @@
   "TXT_DICT_CUSTOM": "Custom",
   "TXT_ABSTRACT": "Abstract",
   "TXT_DICT_EDIT": "字典编辑",
+  "TXT_MSG_CONFIRM_IS_CHANGE_CATEGORY": "您是否确认需要切换商品的主类目?",
+  "TXT_CHANGE_CATEGORY": "选择主类目",
 
   "BTN_CANCEL": "Cancel",
   "BTN_CLEAR": "Clear",

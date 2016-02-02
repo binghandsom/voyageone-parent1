@@ -12,12 +12,14 @@ define([
 ], function (cms, Status) {
     return cms.controller('productDetailController', (function () {
 
-        function productDetailController($routeParams, $translate, productDetailService, notify) {
+        function productDetailController($routeParams, $translate, productDetailService, feedMappingService, notify, confirm) {
 
             this.routeParams = $routeParams;
             this.translate = $translate;
             this.productDetailService = productDetailService;
+            this.feedMappingService = feedMappingService;
             this.notify = notify;
+            this.confirm = confirm;
 
             this.productDetails = null;
             this.productDetailsCopy = null;
@@ -140,6 +142,52 @@ define([
             // 取消所有的变更
             cancelProductDetail: function () {
                 this.productDetails = angular.copy(this.productDetailsCopy);
+            },
+
+            openCategoryMapping: function (productInfo, popupNewCategory) {
+
+                this.feedMappingService.getMainCategories()
+                    .then(function (res) {
+
+                        popupNewCategory({
+
+                            categories: res.data,
+                            from: productInfo.categoryFullPath
+                        }).then(this.bindCategory.bind(this));
+
+                    }.bind(this));
+            },
+            /**
+             * 在类目 Popup 确定关闭后, 为相关类目进行绑定
+             * @param {{from:string, selected:object}} context Popup 返回的结果信息
+             */
+            bindCategory: function (context) {
+
+                var $ = this;
+                this.confirm(this.translate.instant('TXT_MSG_CONFIRM_IS_CHANGE_CATEGORY')).result
+                    .then(function () {
+                        var data = {
+                            prodId: $.productDetails.productId,
+                            catId: context.selected.catId,
+                            catPath: context.selected.catPath
+                        };
+                        $.productDetailService.changeCategory(data).then(function () {
+                            $.notify($.translate.instant('TXT_COM_UPDATE_SUCCESS'));
+                        })
+                    });
+
+                // TODO 弹出新的popup画面,展示主类目预览
+                //this.feedMappingService.setMapping({
+                //    from: context.from,
+                //    to: context.selected.catPath
+                //}).then(function (res) {
+                //    // 从后台获取更新后的 mapping
+                //    // 刷新数据
+                //    var feedCategoryBean = this.findCategory(context.from);
+                //    feedCategoryBean.mapping = _.find(res.data, function (m) {
+                //        return m.defaultMapping === 1;
+                //    });
+                //}.bind(this));
             }
         };
 

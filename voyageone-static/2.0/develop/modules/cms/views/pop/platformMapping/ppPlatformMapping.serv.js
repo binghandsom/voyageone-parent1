@@ -11,17 +11,13 @@ define([
             return id.replace(/\./g, '->');
         }
 
-        function PopupPlatformMappingService(platformMappingService, $q, cookieService) {
-            this.platformMappingService = platformMappingService;
+        function PopupPlatformMappingService(platformMappingService, platformPropMappingService, $q, cookieService) {
+
+            this.pmService = platformMappingService;
+            this.ppService = platformPropMappingService;
             this.$q = $q;
             this.cookieService = cookieService;
 
-            /**
-             * 主数据类目缓存 Map.
-             * 已查询的会存入.
-             * @type {object}
-             */
-            this.mainCategories = {};
             /**
              * 根据渠道存储的字典数据
              * @type {object}
@@ -35,16 +31,7 @@ define([
         }
 
         PopupPlatformMappingService.prototype = {
-            /**
-             * 获取主数据类目的属性及 SKU 级属性
-             * @param {string} mainCategoryId
-             * @returns {Promise.<Field[]>}
-             */
-            getMainCategoryPropsWithSku: function (mainCategoryId) {
-                return this.$getMainCategorySchema(mainCategoryId).then(function (mainCategorySchema) {
-                    return mainCategorySchema.fields.concat([mainCategorySchema.sku]);
-                });
-            },
+
             /**
              * 获取主数据类目属性的简化格式, 只包含 id 和 name
              * @param {string} mainCategoryId
@@ -55,6 +42,7 @@ define([
                     return mainCategorySchema.fields;
                 });
             },
+
             /**
              * 获取主数据类目的 SKU 级属性
              * @param {string} mainCategoryId
@@ -65,16 +53,6 @@ define([
                     return mainCategorySchema.sku;
                 });
             },
-            /**
-             * 获取主数据类目的类目路径
-             * @param {string} mainCategoryId
-             * @returns {Promise.<string>}
-             */
-            getMainCategoryPath: function (mainCategoryId) {
-                return this.$getMainCategorySchema(mainCategoryId).then(function (mainCategorySchema) {
-                    return mainCategorySchema.catFullPath;
-                });
-            },
 
             /**
              * 保存一个 Mapping
@@ -82,30 +60,26 @@ define([
              * @param {string} platformCategoryId 平台类目 ID
              * @param {number} cartId 平台 ID
              * @param {MappingBean} mapping 将保存的 Mapping
-             * @param {WrapField} property 平台属性, 用于构造属性的 Path 作为 MappingPath
-             * @param {number} valueIndex 目标 Mapping 在 MultiComplexMapping 中所在的 Value 位置
+             * @param {Array.<WrapField|number>} path Mapping 存储路径
              * @returns {Promise.<boolean>}
              */
-            saveMapping: function (mainCategoryId, platformCategoryId, cartId, mapping, property, valueIndex) {
+            saveMapping: function (mainCategoryId, platformCategoryId, cartId, mapping, path) {
 
-                var mappingPath = [property.id];
-                var parent = property;
-                while (parent = parent.parent) {
-                    if (valueIndex !== null && parent.type === FieldTypes.multiComplex) {
-                        mappingPath.unshift(valueIndex);
-                    }
-                    mappingPath.unshift(parent.id);
-                }
+                path = _.map(_.clone(path).reverse(), function(item) {
+                    if (_.isNumber(item)) return item;
+                    return item.id;
+                });
 
-                return this.platformMappingService.$saveMapping({
+                return this.pmService.$saveMapping({
                     mainCategoryId: mainCategoryId,
                     platformCategoryId: platformCategoryId,
                     cartId: cartId,
                     mappingBean: mapping,
-                    mappingPath: mappingPath
+                    mappingPath: path
                 }).then(function (res) {
                     // java return top MappingBean
                     var mappingBean = res.data;
+
                     if (!mappingBean) return false;
 
                     return this.$getPlatformMapping(mainCategoryId, platformCategoryId, cartId).then(function (mappingModel) {
@@ -139,7 +113,7 @@ define([
                 if (dictList && dictList.length) {
                     defer.resolve(dictList);
                 } else {
-                    this.platformMappingService.getDictList().then(function (res) {
+                    this.pmService.getDictList().then(function (res) {
 
                         var dictList = res.data;
                         var first = dictList[0];
@@ -208,100 +182,55 @@ define([
             },
 
             /**
-             * @class
-             * @name WrapField
-             * @extends {Field}
-             * @property {WrapField} parent
-             */
-
-            /**
              * 查询平台属性的匹配
              *
-             * 注意!!!
-             * valueIndex 这里只传入一次, 递归过程中不会修改 valueIndex
-             * 所以, 当出现多层 MultiComplexMapping 的情况时
-             * 该方法将无法正确查找. 这里只暂时考虑一层的查找需求
-             *
-             * @param {WrapField} property
+             * @param {object[]} path Mapping 路径, 顺序为倒序
              * @param {string} mainCategoryId
              * @param {string} platformCategoryId
              * @param {number} cartId
-             * @param {number} valueIndex 目标 Mapping 在 MultiComplexMapping 中所在的 Value 位置
              * @return {Promise.<MappingBean|MappingBean[]>}
              */
-            getPlatformPropertyMapping: function (property, mainCategoryId, platformCategoryId, cartId, valueIndex) {
+            getPlatformPropertyMapping: function (path, mainCategoryId, platformCategoryId, cartId) {
 
-                return this.$getPlatformMapping(mainCategoryId, platformCategoryId, cartId).then(function (mapping) {
+                return this.$getPlatformMapping(mainCategoryId, platformCategoryId, cartId).then(function (model) {
 
-                    // 搜索属性 mapping
-                    // 理论上传递的 property 包含 parent 信息
-                    // 所以依据 parent 查找
-                    // 如果 prop.item.d 中不再为 property 包装 parent 信息, 则此处需要修改
+                    if (!path || !path.length) return null;
 
-                    if (!property) return null;
+                    var mappings = model.props;
+                    var mapping = null;
+                    var values;
 
-                    return this.$searchMappingByParent(property, mapping.props, valueIndex);
+                    _.each(_.clone(path).reverse(), function(item) {
 
-                }.bind(this));
-            },
-            /**
-             * 通过 directive prop.item.d 包装的 parent 信息, 在 mapping 中查找具体属性的 mapping 信息
-             * @private
-             * @param {WrapField} property 平台类目属性
-             * @param {MappingBean[]} mappings
-             * @param {number} valueIndex 目标 Mapping 在 MultiComplexMapping 中所在的 Value 位置
-             * @return {MappingBean|MappingBean[]}
-             */
-            $searchMappingByParent: function (property, mappings, valueIndex) {
+                        if (_.isNumber(item)) {
+                            mappings = values[item].subMappings;
+                            return;
+                        }
 
-                var multiMapping = null;
+                        mapping = _.find(mappings, function (mapping) {
+                            return mapping.platformPropId === $WrapFieldId(item.id);
+                        });
 
-                if (property.parent) {
-                    // 有父级时, 先查找父级的 mapping, 覆盖当前 mappings
-                    var parent = property.parent;
-                    var parentMapping = this.$searchMappingByParent(parent, mappings);
-                    // 不同类型的父级, 需要不同的处理
-                    switch (parent.type) {
-                        case FieldTypes.complex:
-                            mappings = parentMapping ? parentMapping.subMappings : null;
-                            break;
-                        case FieldTypes.multiComplex:
+                        if (!mapping) return false;
 
-                            // 如果是多复杂类型, 有可能返回的是数组
-                            switch (parentMapping.mappingType) {
-                                case MappingTypes.COMPLEX_MAPPING:
-                                    mappings = parentMapping ? parentMapping.subMappings : null;
-                                    break;
-                                case MappingTypes.MULTI_COMPLEX_MAPPING:
-                                    multiMapping = parentMapping;
-                                    break;
-                                default:
-                                    throw 'Unsupported mapping type.';
-                            }
-
-                            break;
-                        default:
-                            throw 'Unsupported parent type.';
-                    }
-                }
-
-                // 说明找不到
-                if (!mappings) return null;
-
-                // 非 Multi 的情况下
-                if (!multiMapping) {
-                    return _.find(mappings, function (mapping) {
-                        return mapping.platformPropId === $WrapFieldId(property.id);
+                        switch (mapping.mappingType) {
+                            case MappingTypes.COMPLEX_MAPPING:
+                                mappings = mapping.subMappings;
+                                values = null;
+                                break;
+                            case MappingTypes.MULTI_COMPLEX_MAPPING:
+                                values = mapping.values;
+                                mappings = null;
+                                break;
+                            default:
+                                mappings = null;
+                                values = null;
+                                break;
+                        }
                     });
-                }
 
-                // Multi 情况下, 搜索多个
-                if (!multiMapping.values || !multiMapping.values.length || multiMapping.values.length <= valueIndex)
-                    return null;
-
-                return _.find(multiMapping.values[valueIndex].subMappings, function (mapping) {
-                    return mapping.platformPropId === $WrapFieldId(property.id);
-                });
+                    return mapping;
+                }.bind(this));
             },
 
             /**
@@ -321,7 +250,7 @@ define([
                     return deferred.promise;
                 }
 
-                this.platformMappingService.getPlatformMapping({
+                this.pmService.getPlatformMapping({
                     mainCategoryId: mainCategoryId,
                     platformCategoryId: platformCategoryId,
                     cartId: cartId
@@ -334,27 +263,9 @@ define([
 
             /**
              * @private
-             * @param {string} mainCategoryId
-             * @return {Promise}
              */
             $getMainCategorySchema: function (mainCategoryId) {
-
-                var defer = this.$q.defer();
-
-                var mainCategorySchema = this.mainCategories[mainCategoryId];
-
-                if (mainCategorySchema) {
-                    defer.resolve(mainCategorySchema);
-                    return defer.promise;
-                }
-
-                this.platformMappingService.getMainCategorySchema({
-                    mainCategoryId: mainCategoryId
-                }).then(function (res) {
-                    defer.resolve(this.mainCategories[mainCategoryId] = res.data);
-                }.bind(this));
-
-                return defer.promise;
+                return this.ppService.getMainCategorySchema(mainCategoryId);
             }
         };
 

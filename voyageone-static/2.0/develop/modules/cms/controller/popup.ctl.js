@@ -2,10 +2,53 @@
  * Created by linanbin on 15/12/7.
  */
 
+/**
+ * @class
+ * @name Field
+ * @property {string} type
+ * @property {object[]} options
+ * @property {object[]} rules
+ * @property {string} name
+ * @property {string} id
+ */
+
+/**
+ * @typedef {object} FieldBean
+ */
+
+/**
+ * @typedef {object} FeedPropMappingPopupContext
+ * @property {string} feedCategoryPath
+ * @property {string} mainCategoryPath
+ * @property {Field} field
+ * @property {FieldBean} bean
+ */
+
+/**
+ * Simple Mapping List 设定弹出框的上下文参数
+ * @name SimpleListMappingPopupContext
+ * @class
+ * @property {string} platformCategoryPath 平台类目路径
+ * @property {string} platformCategoryId 平台类目 ID
+ * @property {string} mainCategoryId 主数据类目 ID
+ * @property {Array} path
+ * @property {number} cartId 平台 ID
+ * @property {Field} property 平台属性
+ * @property {number|null} valueIndex
+ */
+
+/**
+ * @name SimpleItemMappingPopupContext
+ * @class
+ * @extends SimpleListMappingPopupContext
+ * @property {RuleWord|null} ruleWord
+ */
+
 define([
     'cms',
-    'underscore'
-], function (cms, _) {
+    'underscore',
+    'modules/cms/enums/MappingTypes'
+], function (cms, _, MappingTypes) {
 
     cms.constant('popActions', {
             "column_define": {
@@ -422,28 +465,6 @@ define([
         };
 
         /**
-         * @class
-         * @name Field
-         * @property {string} type
-         * @property {object[]} options
-         * @property {object[]} rules
-         * @property {string} name
-         * @property {string} id
-         */
-
-        /**
-         * @typedef {object} FieldBean
-         */
-
-        /**
-         * @typedef {object} FeedPropMappingPopupContext
-         * @property {string} feedCategoryPath
-         * @property {string} mainCategoryPath
-         * @property {Field} field
-         * @property {FieldBean} bean
-         */
-
-        /**
          * @param {FeedPropMappingPopupContext} context
          * @returns {Promise}
          */
@@ -459,67 +480,38 @@ define([
             return openModel(popActions.dictValue, context);
         };
 
-        $scope.ppPlatformMapping = {
+        $scope.ppPlatformMapping = function (context) {
 
-            /**
-             * 弹出 Complex 属性的值匹配窗
-             * @param {SimpleListMappingPopupContext} context 上下文参数
-             * @returns {Promise.<MultiComplexMappingBean>}
-             */
-            complex: function (context) {
-                return openModel(popActions.platformMapping.complex, context);
-            },
+            var last = context.path[0];
+            var mapping;
+            var config;
 
-            simple: {
-
-                /**
-                 * Simple Mapping List 设定弹出框的上下文参数
-                 * @name SimpleListMappingPopupContext
-                 * @class
-                 * @property {string} platformCategoryPath 平台类目路径
-                 * @property {string} platformCategoryId 平台类目 ID
-                 * @property {string} mainCategoryId 主数据类目 ID
-                 * @property {number} cartId 平台 ID
-                 * @property {Field} property 平台属性
-                 * @property {number|null} valueIndex
-                 */
-
-                /**
-                 * 弹出 Simple 属性的值匹配窗
-                 * @param {SimpleListMappingPopupContext} context
-                 * @returns {Promise}
-                 */
-                list: function (context) {
-                    return openModel(popActions.platformMapping.simple.list, context);
-                },
-
-                /**
-                 * @name SimpleItemMappingPopupContext
-                 * @class
-                 * @extends SimpleListMappingPopupContext
-                 * @property {RuleWord|null} ruleWord
-                 */
-
-                /**
-                 * 弹出 Simple 属性的值匹配窗
-                 * @param {SimpleItemMappingPopupContext} context
-                 * @returns {Promise.<RuleWord>}
-                 */
-                item: function (context) {
-                    return openModel(popActions.platformMapping.simple.item, context);
-                }
-            },
-
-            multiComplex: {
-
-                list: function (context) {
-                    return openModel(popActions.platformMapping.multiComplex.list, context);
-                },
-
-                item: function (context) {
-                    return openModel(popActions.platformMapping.multiComplex.item, context);
-                }
+            if (_.isNumber(last)) {
+                config = popActions.platformMapping.multiComplex.item;
+                return openModel(config, context);
             }
+
+            mapping = last.mapping;
+
+            switch (mapping.type) {
+                case MappingTypes.SIMPLE_MAPPING:
+                    config = popActions.platformMapping.simple.list;
+                    break;
+                case MappingTypes.COMPLEX_MAPPING:
+                    config = popActions.platformMapping.complex;
+                    break;
+                case MappingTypes.MULTI_COMPLEX_MAPPING:
+                    config = popActions.platformMapping.multiComplex.list;
+                    break;
+                default:
+                    throw 'Unknown mapping type: ' + mapping.type;
+            }
+
+            return openModel(config, context);
+        };
+
+        $scope.ppPlatformMapping.simpleItem = function(context) {
+            return openModel(popActions.platformMapping.simple.item, context);
         };
     }
 });

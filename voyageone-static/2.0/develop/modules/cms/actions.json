@@ -61,7 +61,7 @@
         "getMainCategorySchema": "getMainCategorySchema",
         "getDictList": "getDictList",
         "getPlatformMapping": "getPlatformMapping",
-        "getMappingType": "getMappingType",
+        "getMappingTypes": "getMappingType",
         "$saveMapping": "saveMapping"
       }
     },
@@ -121,7 +121,6 @@
       "updateProductSkuInfo":"updateProductSkuInfo",
       "updateProductAllInfo":"updateProductAllInfo",
       "changeCategory":"changeCategory",
-      "confirmChange":"confirmChange",
       "revertCategory":"revertCategory"
     },
     "$errorManagementConService": {
