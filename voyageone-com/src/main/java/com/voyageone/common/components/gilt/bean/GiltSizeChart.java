@@ -1,5 +1,7 @@
 package com.voyageone.common.components.gilt.bean;
 
+import java.util.List;
+
 /**
  * @author aooer 2016/2/1.
  * @version 2.0.0
@@ -11,7 +13,7 @@ public class GiltSizeChart {
 
     private String name;//	The display name of the size chart
 
-    private GiltSizeChartEntry entries;//	See Size Chart Entry
+    private List<GiltSizeChartEntry> entries;//	See Size Chart Entry
 
     public Long getId() {
         return id;
@@ -29,11 +31,11 @@ public class GiltSizeChart {
         this.name = name;
     }
 
-    public GiltSizeChartEntry getEntries() {
+    public List<GiltSizeChartEntry> getEntries() {
         return entries;
     }
 
-    public void setEntries(GiltSizeChartEntry entries) {
+    public void setEntries(List<GiltSizeChartEntry> entries) {
         this.entries = entries;
     }
 }

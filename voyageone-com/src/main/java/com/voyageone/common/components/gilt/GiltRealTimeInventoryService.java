@@ -19,7 +19,7 @@ import java.util.Map;
 public class GiltRealTimeInventoryService extends GiltBase {
 
 
-    private static final String URL = "realtime-inventory/";
+    private static final String URL = "realtime-inventory";
 
 
     /**
@@ -31,7 +31,7 @@ public class GiltRealTimeInventoryService extends GiltBase {
     public GiltRealTimeInventory getRealTimeInventoryBySkuId(ShopBean shopBean, String skuId) throws Exception {
         if(StringUtils.isNullOrBlank2(skuId))
         throw new IllegalArgumentException("skuId不能为空");
-        String result=reqGiltApi(shopBean,URL+""+skuId,new HashMap<String,String>());
+        String result=reqGiltApi(shopBean,URL+"/"+skuId,new HashMap<String,String>());
         return JacksonUtil.json2Bean(result,GiltRealTimeInventory.class);
     }
 
