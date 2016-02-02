@@ -3,6 +3,7 @@ package com.voyageone.common.components.gilt;
 import com.voyageone.common.components.gilt.base.GiltBase;
 import com.voyageone.common.components.gilt.bean.GiltRealTimeInventory;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
 import org.springframework.stereotype.Service;
 
@@ -31,10 +32,7 @@ public class GiltRealTimeInventoryService extends GiltBase {
         if(StringUtils.isNullOrBlank2(skuId))
         throw new IllegalArgumentException("skuId不能为空");
         String result=reqGiltApi(shopBean,URL+""+skuId,new HashMap<String,String>());
-
-        System.out.println(result);
-
-        return null;
+        return JacksonUtil.json2Bean(result,GiltRealTimeInventory.class);
     }
 
 }

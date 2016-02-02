@@ -1,6 +1,9 @@
 package com.voyageone.common.components.gilt;
 
+import com.voyageone.common.components.gilt.bean.GiltRealTimeInventory;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.common.util.JsonUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,12 +28,10 @@ public class GiltRealTimeInventoryServiceTest {
     @Test
     public void testGetRealTimeInventoryBySkuId() throws Exception {
         ShopBean shopBean=new ShopBean();
-       // shopBean.setAppKey("a197f33c5faafdcd67bfb68132ba834f");
         shopBean.setApp_url("https://api-sandbox.gilt.com/global/");
-        //shopBean.setSessionKey();
-        //httpPost.setHeader("Authorization", "basic "
-        //        + "dGNsb3VkYWRtaW46dGNsb3VkMTIz");
-
-        giltRealTimeInventoryService.getRealTimeInventoryBySkuId(shopBean,"4099260");
+        shopBean.setAppKey("YTE5N2YzM2M1ZmFhZmRjZDY3YmZiNjgxMzJiYTgzNGY6");
+        GiltRealTimeInventory giltRealTimeInventory= giltRealTimeInventoryService.getRealTimeInventoryBySkuId(shopBean,"4099260");
+        System.out.println(JsonUtil.getJsonString(giltRealTimeInventory));
     }
+
 }

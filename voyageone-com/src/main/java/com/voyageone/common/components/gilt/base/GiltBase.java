@@ -2,11 +2,9 @@ package com.voyageone.common.components.gilt.base;
 
 import com.taobao.top.schema.Util.StringUtil;
 import com.voyageone.common.components.gilt.bean.GiltErrorResult;
+import com.voyageone.common.components.gilt.bean.GiltErrorType;
 import com.voyageone.common.configs.beans.ShopBean;
-import com.voyageone.common.util.HttpUtils;
-import com.voyageone.common.util.JsonUtil;
-import com.voyageone.common.util.MD5;
-import com.voyageone.common.util.StringUtils;
+import com.voyageone.common.util.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -37,9 +35,12 @@ public abstract class GiltBase {
         StringBuilder post_url = new StringBuilder();
         String call_url = shopBean.getApp_url() + api_url;
         post_url.append(call_url);
-        //设置系统级参数
-        Map<String, String> tempParm = params;
-       // tempParm.put("API_TOKEN",shopBean.getAppKey());
+
+        if (StringUtils.isNullOrBlank2(shopBean.getAppKey()))
+        throw new IllegalArgumentException("authorization Key不能为空");
+
+        //临时map
+        Map<String, String> tempParm=params;
 
         StringBuilder parm_url = new StringBuilder();
         //拼接URL
@@ -55,13 +56,17 @@ public abstract class GiltBase {
             parm_url.delete(0,1);
         }
 
-        String result = HttpUtils.get(post_url.toString(), parm_url.toString(),"YTE5N2YzM2M1ZmFhZmRjZDY3YmZiNjgxMzJiYTgzNGY6");
-        //转换错误信息
-        GiltErrorResult res = JsonUtil.jsonToBean(result, GiltErrorResult.class);
-        if (res.getType() != null){
-            throw new Exception("调用Gilt API错误：" + result);
-        }
+        String result = HttpUtils.get(post_url.toString(), parm_url.toString(),shopBean.getAppKey());
 
+        /* 如果Map包含message key 表示错误*/
+        Map resultMap=JsonUtil.jsonToMap(result);
+        if(resultMap.containsKey("message")){
+            //转换错误信息
+            GiltErrorResult res = JacksonUtil.json2Bean(result, GiltErrorResult.class);
+            if (res.getType() != null){
+                throw new Exception("调用Gilt API错误：" + result);
+            }
+        }
         return result;
     }
 
