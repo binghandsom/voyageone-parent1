@@ -89,6 +89,14 @@ define([
                 "templateUrl": "views/pop/import/index.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/import/index.ctl"
             },
+            "Authority": {
+                "templateUrl": "views/pop/authority/index.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/authority/index.ctl"
+            },
+           "Translate": {
+               "templateUrl": "views/pop/translate/index.tpl.html",
+               "controllerUrl": "modules/cms/views/pop/translate/index.ctl"
+            },
             "otherDownload": {
                 "templateUrl": "views/pop/other/download.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/other/download.ctl",
@@ -442,6 +450,37 @@ define([
                 $modal.open({
                     templateUrl: popActions.import.templateUrl,
                     controller: 'importCtl',
+                    size: viewSize,
+                    resolve: {
+                        data: function () {
+                            return data;
+                        }
+                    }
+                });
+            });
+        }
+
+        $scope.openAuthority = openAuthority;
+        function openAuthority(viewSize, data) {
+            require([popActions.Authority.controllerUrl], function () {
+                $modal.open({
+                    templateUrl: popActions.Authority.templateUrl,
+                    controller: 'AuthorityCtl',
+                    size: viewSize,
+                    resolve: {
+                        data: function () {
+                            return data;
+                        }
+                    }
+                });
+            });
+        }
+        $scope.openTranslate = openTranslate;
+        function openTranslate(viewSize, data) {
+            require([popActions.Translate.controllerUrl], function () {
+                $modal.open({
+                    templateUrl: popActions.Translate.templateUrl,
+                    controller: 'TranslateCtl',
                     size: viewSize,
                     resolve: {
                         data: function () {
