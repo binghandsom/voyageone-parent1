@@ -1,5 +1,6 @@
 package com.voyageone.common.components.gilt.base;
 
+import com.taobao.api.ApiException;
 import com.taobao.top.schema.Util.StringUtil;
 import com.voyageone.common.components.gilt.bean.GiltErrorResult;
 import com.voyageone.common.components.gilt.bean.GiltErrorType;
@@ -7,6 +8,7 @@ import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.util.Assert;
 
 import java.util.Map;
 import java.util.Set;
@@ -22,6 +24,10 @@ import java.util.TreeMap;
 public abstract class GiltBase {
 
     protected final Log logger = LogFactory.getLog(getClass());
+
+    public static final int C_MAX_API_ERROR = 3;
+
+    public static final int TRY_WAIT_TIME = 5000;
 
     /**
      * 发送请求Api
@@ -67,6 +73,32 @@ public abstract class GiltBase {
         return result;
     }
 
+    /**
+     * 重试发送请求Api
+     * @param shopBean 系统级参数
+     * @param maxRetry 重试次数
+     * @param api_url api路径
+     * @param params 应用参数
+     * @return Json String
+     * @throws Exception
+     */
+    protected String reqGiltApi(ShopBean shopBean, String api_url,int maxRetry,Map<String, String> params) throws Exception {
+        for (int intApiErrorCount = 0; intApiErrorCount < maxRetry; intApiErrorCount++) {
+            try {
+                return reqGiltApi(shopBean,api_url,params);
+            } catch (Exception e) {
+                if (maxRetry - intApiErrorCount == 1)
+                    throw e;
+                else{
+                    try {
+                        Thread.sleep(TRY_WAIT_TIME);
+                    } catch (InterruptedException ignore) {
 
+                    }
+                }
+            }
+        }
+        throw new Exception("调用Gilt API错误：");
+    }
 
 }
