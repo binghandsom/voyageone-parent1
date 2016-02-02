@@ -5,18 +5,18 @@
         <h5 class="modal-title"><i class="fa fa-crosshairs"></i> 平台值匹配</h5>
     </div>
     <h5 class="m-l">
-        <span>{{::ctrl.maindata.category.path}}</span>
+        <span>{{::ctrl.context.maindata.category.path}}</span>
         <sup>主数据</sup>
         <span class="fa fa-exchange"></span>
     </h5>
     <h5 class="text-vo m-l">
-        <span>{{::ctrl.platform.category.path}}</span>
+        <span>{{::ctrl.context.platform.category.path}}</span>
         <sup>平台类目</sup>
     </h5>
 
     <div class="p-l-r" ng-controller="popupCtrl">
 
-        <button class="form-control m-b-md" ng-repeat="property in ctrl.platform.property.fieldList"
+        <button class="form-control m-b-md" ng-repeat="property in ctrl.property.fieldList"
                 ng-click="ctrl.mapping(ppPlatformMapping, property)">
             {{::property.name}}
         </button>

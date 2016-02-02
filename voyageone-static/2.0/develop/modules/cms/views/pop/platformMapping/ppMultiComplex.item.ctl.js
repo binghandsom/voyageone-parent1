@@ -19,9 +19,7 @@ define([
             this.$modal = $uibModalInstance;
             this.ppService = ppPlatformMappingService;
 
-            _.extend(this, context);
-
-            this.platform.property = context.path[1];
+            this.property = context.path[1];
         }
 
         MultiComplexItemMappingPopupController.prototype = {

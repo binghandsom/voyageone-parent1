@@ -28,11 +28,8 @@ define([
             this.ppService = ppPlatformMappingService;
             this.notify = notify;
 
-            // 复制属性到 Controller
-            _.extend(this, context);
-
             // 保存当前属性
-            this.platform.property = context.path[0];
+            this.property = context.path[0];
 
             // 当前可选的所有属性
             this.options = {
@@ -53,19 +50,19 @@ define([
         ComplexMappingPopupController.prototype = {
             init: function () {
                 var $ = this;
-                var $mainCate = this.maindata.category;
+                var $mainCate = this.context.maindata.category;
                 var $service = this.ppService;
-                var $platform = this.platform;
+                var $platform = this.context.platform;
 
                 // 尝试加载原有数据
                 $service.getPlatformPropertyMapping(
-                    $.path, $mainCate.id, $platform.category.id, $.context.cartId
+                    $.context.path, $mainCate.id, $platform.category.id, $.context.cartId
                 ).then(function (complexMapping) {
 
                     if (!complexMapping)
                     // 新建默认
                         complexMapping = new ComplexMappingBean(
-                            $platform.property.id,
+                            $.property.id,
                             null,
                             []
                         );
@@ -78,11 +75,11 @@ define([
             loadValue: function () {
                 var $ = this;
                 var $service = this.ppService;
-                var $mainCate = this.maindata.category;
+                var $mainCate = this.context.maindata.category;
                 var $mapping = this.complexMapping;
                 var $options = this.options;
 
-                $service.getMainCategoryProps(this.maindata.category.id)
+                $service.getMainCategoryProps($mainCate.id)
                     .then(function (props) {
 
                         $options.propGroups = [];
@@ -104,7 +101,7 @@ define([
                             _.each(properties.reverse(), function (property) {
                                 $options.propGroups.push({selected: property, props: props});
                                 props = $.filterComplex(property.fields);
-                            }.bind(this));
+                            });
                         });
                     });
             },
@@ -141,18 +138,19 @@ define([
 
             ok: function () {
 
-                var $modal = this.$modal;
-                var $platform = this.platform;
-                var $notify = this.notify;
+                var $ = this;
+                var $modal = $.$modal;
+                var $platform = $.context.platform;
+                var $notify = $.notify;
 
                 this.complexMapping.masterPropId = this.selectedValue;
 
                 this.ppService.saveMapping(
-                        this.maindata.category.id,
+                        this.context.maindata.category.id,
                         $platform.category.id,
                         this.context.cartId,
                         this.complexMapping,
-                        $platform.property)
+                        $.property)
                     .then(function (updated) {
                         if (updated)
                             $notify.success('已更新');

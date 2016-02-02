@@ -21,9 +21,7 @@ define([
             this.$modal = $uibModalInstance;
             this.ppService = ppPlatformMappingService;
 
-            _.extend(this, context);
-
-            this.platform.property = context.path[0];
+            this.property = context.path[0];
 
             /**
              * 当前平台属性所对应的 Mapping
@@ -36,16 +34,17 @@ define([
 
             init: function () {
 
-                var $mainCate = this.maindata.category;
-                var $platform = this.platform;
-                var $cartId = this.context.cartId;
-                var $service = this.ppService;
+                var $ = this;
+                var $mainCate = $.context.maindata.category;
+                var $platform = $.context.platform;
+                var $cartId = $.context.cartId;
+                var $service = $.ppService;
 
                 $service.getPlatformPropertyMapping(
-                    this.path, $mainCate.id, $platform.category.id, $cartId
+                    $.context.path, $mainCate.id, $platform.category.id, $cartId
                 ).then(function (multiComplexMapping) {
-                    this.multiComplexMapping = multiComplexMapping || this.$create();
-                }.bind(this));
+                    $.multiComplexMapping = multiComplexMapping || $.$create();
+                });
             },
 
             /**
@@ -55,7 +54,7 @@ define([
             $create: function() {
                 var mapping = new MultiComplexMappingBean();
                 mapping.values = [];
-                mapping.platformPropId = this.platform.property.id;
+                mapping.platformPropId = this.context.platform.property.id;
                 return mapping;
             },
 
