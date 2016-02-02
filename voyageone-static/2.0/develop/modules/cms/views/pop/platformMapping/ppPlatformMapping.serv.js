@@ -11,17 +11,13 @@ define([
             return id.replace(/\./g, '->');
         }
 
-        function PopupPlatformMappingService(platformMappingService, $q, cookieService) {
-            this.platformMappingService = platformMappingService;
+        function PopupPlatformMappingService(platformMappingService, platformPropMappingService, $q, cookieService) {
+
+            this.pmService = platformMappingService;
+            this.ppService = platformPropMappingService;
             this.$q = $q;
             this.cookieService = cookieService;
 
-            /**
-             * 主数据类目缓存 Map.
-             * 已查询的会存入.
-             * @type {object}
-             */
-            this.mainCategories = {};
             /**
              * 根据渠道存储的字典数据
              * @type {object}
@@ -57,16 +53,6 @@ define([
                     return mainCategorySchema.sku;
                 });
             },
-            /**
-             * 获取主数据类目的类目路径
-             * @param {string} mainCategoryId
-             * @returns {Promise.<string>}
-             */
-            getMainCategoryPath: function (mainCategoryId) {
-                return this.$getMainCategorySchema(mainCategoryId).then(function (mainCategorySchema) {
-                    return mainCategorySchema.catFullPath;
-                });
-            },
 
             /**
              * 保存一个 Mapping
@@ -89,7 +75,7 @@ define([
                     mappingPath.unshift(parent.id);
                 }
 
-                return this.platformMappingService.$saveMapping({
+                return this.pmService.$saveMapping({
                     mainCategoryId: mainCategoryId,
                     platformCategoryId: platformCategoryId,
                     cartId: cartId,
@@ -131,7 +117,7 @@ define([
                 if (dictList && dictList.length) {
                     defer.resolve(dictList);
                 } else {
-                    this.platformMappingService.getDictList().then(function (res) {
+                    this.pmService.getDictList().then(function (res) {
 
                         var dictList = res.data;
                         var first = dictList[0];
@@ -306,7 +292,7 @@ define([
                     return deferred.promise;
                 }
 
-                this.platformMappingService.getPlatformMapping({
+                this.pmService.getPlatformMapping({
                     mainCategoryId: mainCategoryId,
                     platformCategoryId: platformCategoryId,
                     cartId: cartId
@@ -319,27 +305,9 @@ define([
 
             /**
              * @private
-             * @param {string} mainCategoryId
-             * @return {Promise}
              */
             $getMainCategorySchema: function (mainCategoryId) {
-
-                var defer = this.$q.defer();
-
-                var mainCategorySchema = this.mainCategories[mainCategoryId];
-
-                if (mainCategorySchema) {
-                    defer.resolve(mainCategorySchema);
-                    return defer.promise;
-                }
-
-                this.platformMappingService.getMainCategorySchema({
-                    mainCategoryId: mainCategoryId
-                }).then(function (res) {
-                    defer.resolve(this.mainCategories[mainCategoryId] = res.data);
-                }.bind(this));
-
-                return defer.promise;
+                return this.ppService.getMainCategorySchema(mainCategoryId);
             }
         };
 
