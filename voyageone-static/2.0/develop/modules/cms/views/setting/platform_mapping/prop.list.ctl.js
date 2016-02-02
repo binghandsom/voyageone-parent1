@@ -8,7 +8,7 @@
  * @typedef {object} PlatformInfo
  * @property {object} category CategorySchema
  * @property {object} properties FieldMap
- * @property {object} mappingModel
+ * @property {object} mappingInfo
  * @property {object} mappingTypes MappingTypeMap
  */
 
@@ -68,7 +68,7 @@ define([
                     $.platform = data;
                 });
 
-                $service.getMainCategorySchema($mainCate.id).then(function(mainCategory) {
+                $service.getMainCategorySchema($mainCate.id).then(function (mainCategory) {
                     $.maindata.category.schema = mainCategory;
                 });
             },
@@ -133,6 +133,14 @@ define([
                 };
 
                 ppPlatformMapping(context);
+            },
+
+            saveMatchOver: function () {
+                var that = this;
+                that.dataService.saveMatchOver(that.maindata.category.id, that.platform.matchOver,
+                    that.cartId).then(function (matchOver) {
+                    that.platform.matchOver = matchOver;
+                });
             }
         };
 
@@ -187,7 +195,8 @@ define([
                     this.platform = {
                         category: res.data.categorySchema,
                         properties: res.data.properties,
-                        mappingModel: res.data.mapping
+                        mappingInfo: res.data.mapping,
+                        matchOver: res.data.matchOver
                     };
                 }.bind(this)).then(function () {
                     var platform = this.platform;
@@ -233,6 +242,14 @@ define([
                 }.bind(this));
 
                 return deferred.promise;
+            },
+
+            saveMatchOver: function (mainCategoryId, matchOver, cartId) {
+                return this.$service.$saveMatchOverByMainCategory({
+                    mainCategoryId: mainCategoryId, matchOver: matchOver, cartId: cartId
+                }).then(function(res) {
+                    return res.data;
+                });
             }
         };
 

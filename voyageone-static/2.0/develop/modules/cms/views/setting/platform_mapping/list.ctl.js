@@ -90,7 +90,7 @@ define([
 
                         category.mapping = category.matched ? map.path : '未匹配';
 
-                        category.propertyMatched = !!category.matched;
+                        category.propertyMatched = category.matched && !!map.matched;
                     });
 
                 }.bind(this));

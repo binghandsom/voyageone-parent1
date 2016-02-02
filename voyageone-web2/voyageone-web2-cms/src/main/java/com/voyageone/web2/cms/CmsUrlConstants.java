@@ -71,6 +71,8 @@ public interface CmsUrlConstants {
             String GET_MAPPING_TYPE = "getMappingType";
 
             String SAVE_MAPPING = "saveMapping";
+
+            String SAVE_MATCH_OVER_BY_MAIN_CATE = "saveMatchOverByMainCategory";
         }
     }
 

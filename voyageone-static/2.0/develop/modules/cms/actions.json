@@ -63,7 +63,8 @@
         "getDictList": "getDictList",
         "getPlatformMapping": "getPlatformMapping",
         "getMappingTypes": "getMappingType",
-        "$saveMapping": "saveMapping"
+        "$saveMapping": "saveMapping",
+        "$saveMatchOverByMainCategory": "saveMatchOverByMainCategory"
       }
     },
     "pop": {

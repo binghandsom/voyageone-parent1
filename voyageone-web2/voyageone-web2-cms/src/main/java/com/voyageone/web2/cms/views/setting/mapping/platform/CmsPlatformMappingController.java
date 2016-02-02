@@ -113,4 +113,10 @@ public class CmsPlatformMappingController extends CmsController {
 
         return success(platformPropMappingService.saveMapping(mappingBean, getUser()));
     }
+
+    @RequestMapping(CmsUrlConstants.MAPPING.PLATFORM.SAVE_MATCH_OVER_BY_MAIN_CATE)
+    public AjaxResponse saveMatchOverByMainCategory(@RequestBody PlatformMappingBean mappingBean) {
+        return success(platformPropMappingService.setMatchOver(mappingBean.getMainCategoryId(),
+                mappingBean.getMatchOver(), mappingBean.getCartId(), getUser()));
+    }
 }

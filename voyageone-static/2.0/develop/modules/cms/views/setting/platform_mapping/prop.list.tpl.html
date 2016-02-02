@@ -18,8 +18,10 @@
             <label class="m-t-xs col-sm-6">匹配完成?</label>
             <div class="col-sm-6 text-left">
                 <div class="onoffswitch">
-                    <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch5" checked>
-                    <label class="onoffswitch-label" for="myonoffswitch5">
+                    <input type="checkbox" class="onoffswitch-checkbox" id="check1"
+                           ng-true-value="1" ng-false-value="0"
+                           ng-change="ctrl.saveMatchOver()" ng-model="ctrl.platform.matchOver">
+                    <label class="onoffswitch-label" for="check1">
                         <span class="onoffswitch-inner"></span>
                         <span class="onoffswitch-switch"></span>
                     </label>
