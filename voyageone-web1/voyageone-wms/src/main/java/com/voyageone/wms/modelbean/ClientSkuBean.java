@@ -11,6 +11,7 @@ public class ClientSkuBean {
     private String item_code;
     private String color;
     private String size;
+    private String upc;
     private int active;
     private String created;
     private String creater;
@@ -55,6 +56,14 @@ public class ClientSkuBean {
 
     public void setSize(String size) {
         this.size = size;
+    }
+
+    public String getUpc() {
+        return upc;
+    }
+
+    public void setUpc(String upc) {
+        this.upc = upc;
     }
 
     public int getActive() {

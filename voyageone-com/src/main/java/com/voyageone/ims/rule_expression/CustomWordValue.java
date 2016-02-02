@@ -21,6 +21,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
         @JsonSubTypes.Type(value = CustomWordValueConditionAnd.class, name = CustomWordValueConditionAnd.moduleName),
         @JsonSubTypes.Type(value = CustomWordValueConditionEq.class, name = CustomWordValueConditionEq.moduleName),
         @JsonSubTypes.Type(value = CustomWordValueConditionNeq.class, name = CustomWordValueConditionNeq.moduleName),
+        @JsonSubTypes.Type(value = CustomWordValueConditionLike.class, name = CustomWordValueConditionLike.moduleName),
 })
 public abstract class CustomWordValue {
         public CustomWordValue() {}

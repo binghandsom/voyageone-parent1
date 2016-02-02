@@ -133,8 +133,9 @@ define([
              * 获取 Package 的所有 Items
              * @param package_id
              */
-            this.selectPackageItems = function (package_id) {
+            this.selectPackageItems = function (order_channel_id, package_id) {
                 return http.ajaxPost({
+                    order_channel_id: order_channel_id.toString(),
                     package_id: package_id.toString()
                 }, actions.transfer.package.item.select).then(function (res) {
                     return res.data; // res.data = PackageItems[]
@@ -266,6 +267,25 @@ define([
                         transfer: transfer
                     },
                     actions.transfer.compare)
+
+                    .then(function (res) {
+                        return res.data;
+                    });
+            };
+
+            /**
+             * 获取一个 Item的SKU信息
+             * @param packageIitem {number}
+             */
+            this.getSku = function (order_channel_id, transfer_barcode, transfer_sku, type) {
+
+                return http.ajaxPost({
+                        order_channel_id: order_channel_id.toString(),
+                        transfer_barcode: transfer_barcode.toString(),
+                        transfer_sku: transfer_sku.toString(),
+                        type:type
+                    },
+                    actions.transfer.package.item.getSku)
 
                     .then(function (res) {
                         return res.data;
