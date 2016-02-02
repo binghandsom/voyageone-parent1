@@ -5,8 +5,13 @@
         </button>
         <h5 class="modal-title"><i class="fa fa-crosshairs"></i> 属性设定: {{:: ctrl.context.field.name }}</h5>
     </div>
-    <h5 class="text-vo m-l">Feed类目：Fitness & Sports</h5>
-    <h5 class="m-l">主数据类目：Fitness & Sports</h5>
+    <h5 class="m-l">
+        <span class="text-vo">{{::ctrl.context.feedCategoryPath}}</span>
+        <sup  class="text-vo"><strong>品牌数据</strong></sup>
+        <span class="fa fa-exchange"></span>
+        <span>{{::ctrl.context.mainCategoryPath}}</span>
+        <sup><strong>主数据</strong></sup>
+    </h5>
     <div class="m-l m-r">
         <table class="table box table-hover">
             <thead>
