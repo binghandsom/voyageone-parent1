@@ -60,7 +60,7 @@ public class ProductPropsEditService {
     private CmsBtFeedInfoDao cmsBtFeedInfoDao;
 
     @Autowired
-    VoApiDefaultClient voApiDefaultClient;
+    protected VoApiDefaultClient voApiDefaultClient;
 
     @Autowired
     protected ProductSdkClient productClient;
@@ -308,9 +308,9 @@ public class ProductPropsEditService {
      */
     public Map<String,Object> confirmChangeCategory(Map requestMap, UserSessionBean userSession){
 
-        Object catIdObj = requestMap.get("categoryId");
-        Object catPathObj = requestMap.get("categoryPath");
-        Object prodIdObj = requestMap.get("productId");
+        Object catIdObj = requestMap.get("catId");
+        Object catPathObj = requestMap.get("catPath");
+        Object prodIdObj = requestMap.get("prodId");
 
         // check the parameters
         Assert.notEmpty(requestMap);
@@ -321,7 +321,7 @@ public class ProductPropsEditService {
 
         Assert.isInstanceOf(String.class,catIdObj);
         Assert.isInstanceOf(String.class,catPathObj);
-        Assert.isInstanceOf(Long.class,prodIdObj);
+//        Assert.isInstanceOf(Long.class,prodIdObj);
 
         String categoryId = String.valueOf(catIdObj);
 
@@ -332,12 +332,12 @@ public class ProductPropsEditService {
         ProductCategoryUpdateRequest request = new ProductCategoryUpdateRequest(userSession.getSelChannelId(),categoryId,categoryPath,productId);
         request.setModifier(userSession.getUserName());
 
-        ProductCategoryUpdateResponse response = voApiDefaultClient.execute(request);
+        VoApiUpdateResponse response = voApiDefaultClient.execute(request);
 
         Map<String,Object> resultMap = new HashMap<>();
 
-        requestMap.put("updFeedInfoCount",response.getUpdFeedInfoCount());
-        requestMap.put("updProductCount",response.getUpdProductCount());
+//        requestMap.put("updFeedInfoCount",response.getUpdFeedInfoCount());
+//        requestMap.put("updProductCount",response.getUpdProductCount());
         requestMap.put("updateCount",response.getModifiedCount());
 
         return resultMap;

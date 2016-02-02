@@ -99,15 +99,21 @@ public class ProductPropsEditController extends CmsController{
     @RequestMapping(CmsUrlConstants.PRODUCT.EDIT.CHANGE_CATEGORY)
     public AjaxResponse doChangeCategory(@RequestBody Map requestMap){
 
-        String categoryId = requestMap.get("catId").toString();
+//        String categoryId = requestMap.get("catId").toString();
+//
+//        CmsCategoryInfoBean categoryInfoBean = productPropsEditService.getCategoryInfo(categoryId);
+//
+//        Map<String,Object> categoryInfo = new HashMap<>();
+//
+//        categoryInfo.put("categoryInfo",categoryInfoBean);
+//
+//        return success(categoryInfo);
 
-        CmsCategoryInfoBean categoryInfoBean = productPropsEditService.getCategoryInfo(categoryId);
+        UserSessionBean userSession = super.getUser();
 
-        Map<String,Object> categoryInfo = new HashMap<>();
+        Map<String,Object> resultMap = productPropsEditService.confirmChangeCategory(requestMap,userSession);
 
-        categoryInfo.put("categoryInfo",categoryInfoBean);
-
-        return success(categoryInfo);
+        return success(resultMap);
 
     }
 

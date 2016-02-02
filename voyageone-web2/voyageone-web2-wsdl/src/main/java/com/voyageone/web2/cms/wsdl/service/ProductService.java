@@ -785,11 +785,11 @@ public class ProductService extends BaseService {
         int updateFeedInfoCount = cmsBtFeedInfoDao.updateFeedInfoUpdFlg(request.getChannelId(),modelCode);
 
 
-        ProductCategoryUpdateResponse response = new ProductCategoryUpdateResponse();
+        VoApiUpdateResponse response = new VoApiUpdateResponse();
 
-        response.setUpdFeedInfoCount(updateFeedInfoCount);
-
-        response.setUpdProductCount(result.getModifiedCount());
+//        response.setUpdFeedInfoCount(updateFeedInfoCount);
+//
+//        response.setUpdProductCount(result.getModifiedCount());
 
         response.setModifiedCount(result.getModifiedCount()+updateFeedInfoCount);
 

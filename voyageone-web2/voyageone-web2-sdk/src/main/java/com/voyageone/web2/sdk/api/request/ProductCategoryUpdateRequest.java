@@ -2,8 +2,8 @@ package com.voyageone.web2.sdk.api.request;
 
 
 import com.voyageone.web2.sdk.api.VoApiRequest;
+import com.voyageone.web2.sdk.api.VoApiUpdateResponse;
 import com.voyageone.web2.sdk.api.exception.ApiRuleException;
-import com.voyageone.web2.sdk.api.response.ProductCategoryUpdateResponse;
 import com.voyageone.web2.sdk.api.util.RequestUtils;
 
 /**
@@ -18,10 +18,10 @@ import com.voyageone.web2.sdk.api.util.RequestUtils;
  * @version 2.0.0
  * @since. 2.0.0
  */
-public class ProductCategoryUpdateRequest extends VoApiRequest<ProductCategoryUpdateResponse> {
+public class ProductCategoryUpdateRequest extends VoApiRequest<VoApiUpdateResponse> {
 
 	public String getApiURLPath() {
-		return "product/switchCategory/confirm";
+		return "/product/category/switch";
 	}
 
 	private String channelId;
