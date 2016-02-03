@@ -12,6 +12,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.Assert.*;
 
@@ -51,5 +52,50 @@ public class GiltSkuServiceTest {
 
         GiltSku skus= giltSkuService.getSkuById(shopBean,"4099260");
         System.out.println("Retrun:"+JsonUtil.getJsonString(skus));
+    }
+
+    @Test
+    public void testGetAllSalesSkus() throws Exception {
+        ShopBean shopBean=new ShopBean();
+        shopBean.setApp_url("https://api-sandbox.gilt.com/global/");
+        shopBean.setAppKey("YTE5N2YzM2M1ZmFhZmRjZDY3YmZiNjgxMzJiYTgzNGY6");
+
+
+        List<GiltSku> skus= giltSkuService.getAllSalesSkus(shopBean);
+        System.out.println("Retrun:"+JsonUtil.getJsonString(skus));
+    }
+
+
+    @Test
+    public void testGetSalesSkuIds() throws Exception {
+        ShopBean shopBean=new ShopBean();
+        shopBean.setApp_url("https://api-sandbox.gilt.com/global/");
+        shopBean.setAppKey("YTE5N2YzM2M1ZmFhZmRjZDY3YmZiNjgxMzJiYTgzNGY6");
+
+
+        Set<Long> skus= giltSkuService.getSalesSkuIds(shopBean);
+        System.out.println("Retrun:"+JsonUtil.getJsonString(skus));
+    }
+
+    @Test
+    public void testGetSkus() throws Exception {
+        ShopBean shopBean=new ShopBean();
+        shopBean.setApp_url("https://api-sandbox.gilt.com/global/");
+        shopBean.setAppKey("YTE5N2YzM2M1ZmFhZmRjZDY3YmZiNjgxMzJiYTgzNGY6");
+
+        Set<Long> skuIds= giltSkuService.getSalesSkuIds(shopBean);
+        StringBuilder sb=new StringBuilder();
+        int i=0;
+        for(Long skuId : skuIds){
+            sb.append(skuId);
+            if(++i%100==0) {
+                List<GiltSku> skus = giltSkuService.getSkus(shopBean, sb.toString());
+                //Todo 业务处理
+                System.out.println("Retrun:" + JsonUtil.getJsonString(skus));
+                sb = new StringBuilder();
+            }else
+                sb.append(",");
+        }
+
     }
 }
