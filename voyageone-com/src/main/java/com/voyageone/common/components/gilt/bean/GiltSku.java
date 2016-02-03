@@ -1,5 +1,6 @@
 package com.voyageone.common.components.gilt.bean;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -11,14 +12,14 @@ public class GiltSku {
 
     private Long id;//	A unique number to identify this sku.
 
-    //Local language default chinese
-    private GiltLocalLanguages locale = GiltLocalLanguages.ZH_CN;//	See Locale
+    //Local language
+    private GiltLocalLanguages locale;//	See Locale
 
     private String name;//	The name or title for this sku.
 
-    private GiltImage images;//	See Image
+    private List<GiltImage> images;//	See Image
 
-    private GiltAttribute attributes;//	See Attribute
+    private List<Object> attributes;//	See Attribute
 
     private GiltBrand brand;//	See Brand
 
@@ -34,7 +35,9 @@ public class GiltSku {
 
     private GiltPrices prices;//	See Prices
 
-    private GiltCategory categories;//	See Category
+    private List<GiltCategory> categories;//	See Category
+
+    private Date timestamp; //time
 
     public Long getId() {
         return id;
@@ -60,19 +63,19 @@ public class GiltSku {
         this.name = name;
     }
 
-    public GiltImage getImages() {
+    public List<GiltImage> getImages() {
         return images;
     }
 
-    public void setImages(GiltImage images) {
+    public void setImages(List<GiltImage> images) {
         this.images = images;
     }
 
-    public GiltAttribute getAttributes() {
+    public List<Object> getAttributes() {
         return attributes;
     }
 
-    public void setAttributes(GiltAttribute attributes) {
+    public void setAttributes(List<Object> attributes) {
         this.attributes = attributes;
     }
 
@@ -132,11 +135,19 @@ public class GiltSku {
         this.prices = prices;
     }
 
-    public GiltCategory getCategories() {
+    public List<GiltCategory> getCategories() {
         return categories;
     }
 
-    public void setCategories(GiltCategory categories) {
+    public void setCategories(List<GiltCategory> categories) {
         this.categories = categories;
+    }
+
+    public Date getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
     }
 }

@@ -7,9 +7,9 @@ package com.voyageone.common.components.gilt.bean;
  */
 public enum GiltLocalLanguages {
 
-    ZH_CN(" China "),
+    zh_CN(" China "),
 
-    EN_US(" United States")
+    en_US(" United States")
     ;
 
     private String description;
