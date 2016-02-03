@@ -1185,7 +1185,7 @@ public class ImportExcelFileService extends BaseTaskService {
     }
 
     /**
-     * 输入项目长度检查
+     * 输入项目长度检查（Byte 长度）
      *
      */
     private boolean chkLength(String content, int length){
@@ -1227,7 +1227,8 @@ public class ImportExcelFileService extends BaseTaskService {
         private static final int product_name_length = 100;
 
         private static final int foreign_language_name_index = 6;
-        private static final int foreign_language_name_length = 100;
+        // 长度50，汉字，byte 100
+        private static final int foreign_language_name_length = 50;
 
         private static final int category_lv4_id_index = 12;
         private static final int brand_name_index = 14;
