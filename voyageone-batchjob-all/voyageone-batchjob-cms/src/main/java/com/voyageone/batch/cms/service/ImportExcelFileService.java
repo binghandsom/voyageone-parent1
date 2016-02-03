@@ -199,7 +199,7 @@ public class ImportExcelFileService extends BaseTaskService {
                 $info("上传的文档 [ %s ] Image Sheet读入", fileName);
                 ret = readImageSheet(book, fileName, errList, imageList);
                 if (!ret) {
-                    $info("上传的文档 [ %s ]Image Sheet读入异常", fileName);
+                    $info("上传的文档 [ %s ] Image Sheet读入异常", fileName);
                 }
 
                 // Deal Sheet读入
@@ -223,7 +223,11 @@ public class ImportExcelFileService extends BaseTaskService {
             } else {
                 // 缓存内容DB追加
                 $info("上传的文档 [ %s ] DB导入", fileName);
-                insertDB(productList, dealList, imageList, skuList);
+                insertDB(productList, dealList, imageList, skuList, fileName, errList);
+                if (errList.size() > 0) {
+                    // 异常信息
+                    exportErrorContent(filePathBean, errList);
+                }
 
                 // 标志位关联更新
                 $info("上传的文档 [ %s ] Product 同步", fileName);
@@ -271,30 +275,59 @@ public class ImportExcelFileService extends BaseTaskService {
      * 缓存内容DB追加
      *
      */
-    private void insertDB(List<JmBtProductImportModel> productList,
+    private boolean insertDB(List<JmBtProductImportModel> productList,
                           List<JmBtDealImportModel> dealList,
                           List<JmBtImagesModel> imageList,
-                          List<JmBtSkuImportModel> skuList) {
+                          List<JmBtSkuImportModel> skuList,
+                          String fileName,
+                          List<ErrorContent> errList) {
+        boolean ret = true;
 
         for (int i = 0; i < productList.size(); i++) {
             JmBtProductImportModel productImportModel = productList.get(i);
-            insertProductTable(productImportModel);
+            ret = insertProductTable(productImportModel);
+            if (!ret) {
+                String errorInfo = "product code = [%s] DB insert error";
+                errorInfo = String.format(errorInfo, productImportModel.getProductCode());
+                ErrorContent errorContent = getReadErrorContent(fileName, productSheetName, 0, errorInfo);
+                errList.add(errorContent);
+            }
         }
 
         for (int i = 0; i < dealList.size(); i++) {
             JmBtDealImportModel dealImportModel = dealList.get(i);
-            insertDealTable(dealImportModel);
+            ret = insertDealTable(dealImportModel);
+            if (!ret) {
+                String errorInfo = "deal id = [%s], product code = [%s] DB insert error";
+                errorInfo = String.format(errorInfo, dealImportModel.getDealId(), dealImportModel.getProductCode());
+                ErrorContent errorContent = getReadErrorContent(fileName, dealSheetName, 0, errorInfo);
+                errList.add(errorContent);
+            }
         }
 
         for (int i = 0; i < imageList.size(); i++) {
             JmBtImagesModel imagesModel = imageList.get(i);
-            insertImagesTable(imagesModel);
+            ret = insertImagesTable(imagesModel);
+            if (!ret) {
+                String errorInfo = "image_key = [%s], origin_url = [%s] DB insert error";
+                errorInfo = String.format(errorInfo, imagesModel.getImageKey(), imagesModel.getOriginUrl());
+                ErrorContent errorContent = getReadErrorContent(fileName, imageSheetName, 0, errorInfo);
+                errList.add(errorContent);
+            }
         }
 
         for (int i = 0; i < skuList.size(); i++) {
             JmBtSkuImportModel skuImportModel = skuList.get(i);
-            insertSkuTable(skuImportModel);
+            ret = insertSkuTable(skuImportModel);
+            if (!ret) {
+                String errorInfo = "sku = [%s] DB insert error";
+                errorInfo = String.format(errorInfo, skuImportModel.getSku());
+                ErrorContent errorContent = getReadErrorContent(fileName, skuSheetName, 0, errorInfo);
+                errList.add(errorContent);
+            }
         }
+
+        return ret;
     }
 
     /**
@@ -600,7 +633,7 @@ public class ImportExcelFileService extends BaseTaskService {
 
             productModel.setAttribute(ExcelUtils.getString(row, PruductSheetFormat.attribute_index));
             productModel.setAddressOfProduce(ExcelUtils.getString(row, PruductSheetFormat.address_of_produce_index));
-            productModel.setHsCode(ExcelUtils.getString(row, PruductSheetFormat.hs_code_index,"#"));
+            productModel.setHsCode(ExcelUtils.getString(row, PruductSheetFormat.hs_code_index, "#"));
             productModel.setSpecialNote(ExcelUtils.getString(row, PruductSheetFormat.special_note_index));
 
             productModel.setSynFlg("0");
@@ -871,7 +904,16 @@ public class ImportExcelFileService extends BaseTaskService {
     private boolean insertProductTable(JmBtProductImportModel productImportModel) {
         boolean ret = true;
 
-        ret = productImportDao.insertProductImportInfo(productImportModel);
+        try {
+            ret = productImportDao.insertProductImportInfo(productImportModel);
+        } catch (Exception e) {
+            ret = false;
+            logger.error("insertProductTable error productCode = " + productImportModel.getProductCode(), e);
+            issueLog.log(e,
+                    ErrorType.BatchJob,
+                    SubSystem.CMS,
+                    "Channel Id, Product code = " + productImportModel.getChannelId() + "," + productImportModel.getProductCode());
+        }
 
         return ret;
     }
@@ -883,7 +925,16 @@ public class ImportExcelFileService extends BaseTaskService {
     private boolean insertSkuTable(JmBtSkuImportModel skuImportModel) {
         boolean ret = true;
 
-        ret = skuImportDao.insertSkuImportInfo(skuImportModel);
+        try {
+            ret = skuImportDao.insertSkuImportInfo(skuImportModel);
+        } catch (Exception e) {
+            ret = false;
+            logger.error("insertSkuTable error sku = " + skuImportModel.getSku(), e);
+            issueLog.log(e,
+                    ErrorType.BatchJob,
+                    SubSystem.CMS,
+                    "Channel Id, sku = " + skuImportModel.getChannelId() + "," + skuImportModel.getSku());
+        }
 
         return ret;
     }
@@ -895,7 +946,16 @@ public class ImportExcelFileService extends BaseTaskService {
     private boolean insertDealTable(JmBtDealImportModel dealImportModel) {
         boolean ret = true;
 
-        ret = dealImportDao.insertDealImportInfo(dealImportModel);
+        try {
+            ret = dealImportDao.insertDealImportInfo(dealImportModel);
+        } catch (Exception e) {
+            ret = false;
+            logger.error("insertDealTable error dealId, productCode = " + dealImportModel.getDealId() + " , " + dealImportModel.getProductCode(), e);
+            issueLog.log(e,
+                    ErrorType.BatchJob,
+                    SubSystem.CMS,
+                    "Channel Id, Deal Id, Product Code = " + dealImportModel.getChannelId() + "," + dealImportModel.getDealId() + "," + dealImportModel.getProductCode());
+        }
 
         return ret;
     }
@@ -907,7 +967,16 @@ public class ImportExcelFileService extends BaseTaskService {
     private boolean insertImagesTable(JmBtImagesModel imagesModel) {
         boolean ret = true;
 
-        ret = imagesDao.insertImagesInfo(imagesModel);
+        try {
+            ret = imagesDao.insertImagesInfo(imagesModel);
+        } catch (Exception e) {
+            ret = false;
+            logger.error("insertImagesTable error OriginUrl = " + imagesModel.getOriginUrl(), e);
+            issueLog.log(e,
+                    ErrorType.BatchJob,
+                    SubSystem.CMS,
+                    "Channel Id, Origin Url = " + imagesModel.getChannelId() + "," + imagesModel.getOriginUrl());
+        }
 
         return ret;
     }
