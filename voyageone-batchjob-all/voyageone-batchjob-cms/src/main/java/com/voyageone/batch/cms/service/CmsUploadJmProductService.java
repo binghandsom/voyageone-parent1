@@ -91,7 +91,6 @@ public class CmsUploadJmProductService extends BaseTaskService {
 
         for (JmBtProductImportModel product : jmBtProductImports) {
             executor.execute(() -> uploadProduct(product, shopBean));
-            break;
         }
         executor.shutdown();
         executor.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
