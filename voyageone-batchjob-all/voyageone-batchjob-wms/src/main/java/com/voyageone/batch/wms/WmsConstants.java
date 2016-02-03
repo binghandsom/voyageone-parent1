@@ -29,6 +29,16 @@ public interface WmsConstants {
     }
 
     /**
+     * 更新标志位
+     */
+    final class UPDATE_FLG {
+        //可用
+        public final static String  ReFlush = "1";
+        //不可用
+        public final static String  Update = "2";
+    }
+
+    /**
      * 库存分配时SKU错误邮件（WmsSetAllotInventoryJob）
      */
     final class EmailSetAllotInventoryErrorSku {
