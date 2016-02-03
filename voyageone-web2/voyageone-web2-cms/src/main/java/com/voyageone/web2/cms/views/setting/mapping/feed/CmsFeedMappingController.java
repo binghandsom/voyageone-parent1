@@ -89,8 +89,14 @@ public class CmsFeedMappingController extends CmsController {
     }
 
     @RequestMapping(FEED.DIRECT_MATCH_OVER)
-    public AjaxResponse directMatchOver(@RequestBody Map<String, String> params) {
+    public AjaxResponse switchMatchOver(@RequestBody Map<String, String> params) {
         String feedCategoryPath = params.get("feedCategoryPath");
-        return success(cmsFeedMappingService.setMatchOver(feedCategoryPath, getUser()));
+        return success(cmsFeedMappingService.switchMatchOver(feedCategoryPath, getUser()));
+    }
+
+    @RequestMapping(FEED.GET_MATCH_OVER)
+    public AjaxResponse getMatchOver(@RequestBody Map<String, String> params) {
+        String feedCategoryPath = params.get("feedCategoryPath");
+        return success(cmsFeedMappingService.getMatchOver(feedCategoryPath, getUser()));
     }
 }

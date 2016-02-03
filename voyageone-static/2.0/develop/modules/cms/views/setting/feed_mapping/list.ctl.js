@@ -220,25 +220,6 @@ define([
                 });
             },
 
-            directMatchOver: function (feedCategoryBean) {
-
-                this.confirm('确定要直接完成该类目的属性匹配吗?').result.then(function () {
-
-                    this.feedMappingService.directMatchOver({
-                        feedCategoryPath: feedCategoryBean.model.path
-                    }).then(function (res) {
-
-                        var bool = res.data;
-                        if (bool) {
-                            this.notify.success('保存成功')
-                        } else {
-                            this.notify.danger('保存失败');
-                        }
-
-                    }.bind(this));
-                }.bind(this));
-            },
-
             openCategoryMapping: function (categoryModel, popupNewCategory) {
 
                 this.feedMappingService.getMainCategories()

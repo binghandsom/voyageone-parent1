@@ -245,25 +245,7 @@ define([
              * @param {number} cartId
              */
             $getPlatformMapping: function (mainCategoryId, platformCategoryId, cartId) {
-
-                var deferred = this.$q.defer();
-                var key = mainCategoryId + '->' + platformCategoryId + '@' + cartId;
-                var mapping = this.mappingMap[key];
-
-                if (mapping) {
-                    deferred.resolve(mapping);
-                    return deferred.promise;
-                }
-
-                this.pmService.getPlatformMapping({
-                    mainCategoryId: mainCategoryId,
-                    platformCategoryId: platformCategoryId,
-                    cartId: cartId
-                }).then(function (res) {
-                    deferred.resolve(this.mappingMap[key] = res.data);
-                }.bind(this));
-
-                return deferred.promise;
+                return this.ppService.getPlatformMapping(mainCategoryId, platformCategoryId, cartId);
             },
 
             /**

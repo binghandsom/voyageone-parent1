@@ -344,13 +344,13 @@ public class CmsFeedMappingService extends BaseAppService {
     }
 
     /**
-     * 设定 MatchOver 为 True (1)
+     * 切换 MatchOver
      *
      * @param feedCategoryPath Feed 类目路径
      * @param user             UserSessionBean
      * @return Update 结果
      */
-    public boolean setMatchOver(String feedCategoryPath, UserSessionBean user) {
+    public boolean switchMatchOver(String feedCategoryPath, UserSessionBean user) {
 
         CmsMtFeedCategoryTreeModelx treeModelx = cmsMtFeedCategoryTreeDao.selectFeedCategoryx(user.getSelChannelId());
 
@@ -364,10 +364,27 @@ public class CmsFeedMappingService extends BaseAppService {
         if (feedMappingModel == null)
             throw new BusinessException("没找到 Mapping");
 
-        feedMappingModel.setMatchOver(1);
+        feedMappingModel.setMatchOver(feedMappingModel.getMatchOver() == 1 ? 0 : 1);
 
         WriteResult result = cmsMtFeedCategoryTreeDao.update(treeModelx);
 
         return result.getN() > 0;
+    }
+
+    public int getMatchOver(String feedCategoryPath, UserSessionBean user) {
+
+        CmsMtFeedCategoryTreeModelx treeModelx = cmsMtFeedCategoryTreeDao.selectFeedCategoryx(user.getSelChannelId());
+
+        CmsFeedCategoryModel feedCategoryModel = findByPath(feedCategoryPath, treeModelx);
+
+        if (feedCategoryModel == null)
+            throw new BusinessException("没找到 Feed 类目");
+
+        CmsFeedMappingModel feedMappingModel = findMapping(feedCategoryModel, m -> m.getDefaultMapping() == 1);
+
+        if (feedMappingModel == null)
+            throw new BusinessException("没找到 Mapping");
+
+        return feedMappingModel.getMatchOver();
     }
 }
