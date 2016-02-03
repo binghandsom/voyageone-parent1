@@ -50,6 +50,7 @@ public class JumeiProductService extends JmBase {
         product.setJumei_product_id((String) getValue(resultMap, "product", "jumei_product_id"));
 
         if(StringUtils.isEmpty(product.getJumei_product_id())){
+            logger.info("返回错误"+reqResult);
             throw new Exception(reqResult);
         }
         /**
