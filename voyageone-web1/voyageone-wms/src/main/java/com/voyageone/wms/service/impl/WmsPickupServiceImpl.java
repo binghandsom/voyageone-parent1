@@ -95,7 +95,7 @@ public class WmsPickupServiceImpl implements WmsPickupService {
         for (ChannelStoreBean storeBean : user.getCompanyRealStoreList() ) {
             StoreBean store = StoreConfigs.getStore(new Long(storeBean.getStore_id()));
             if (reserveType.equals(WmsConstants.ReserveType.PickUp)) {
-                if (store.getInventory_manager().equals(StoreConfigEnums.Manager.YES.getId()) && store.getIs_sale().equals(StoreConfigEnums.Sale.YES.getId())) {
+                if (store.getIs_sale().equals(StoreConfigEnums.Sale.YES.getId())) {
                     storeList.add(storeBean);
                 }
             }
