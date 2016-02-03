@@ -30,7 +30,7 @@ public class GiltSkuService extends GiltBase {
 
     /**
      * @deprecated
-     *  内存，网络原因不推荐使用此方法(耗时)
+     *  内存，网络原因不推荐使用此方法(耗时)，请使用getSalesSkuIds()方法
      *  获取Sales的所有Skus
      * @param shopBean shopBean
      * @return List<GiltSku>

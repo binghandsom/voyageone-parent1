@@ -42,13 +42,13 @@ public class GiltSalesService extends GiltBase{
     }
 
     /**
-     * 根据id获取sales的inventory
+     * 根据id获取sales的inventory (restful API:  /sales/:id/inventory)
      * @param shopBean shopBean
      * @param request request
      * @return List<GiltInventory>
      * @throws Exception
      */
-    public List<GiltInventory> getSaleInventorysById(ShopBean shopBean, GiltPageGetSaleAttrRequest request) throws Exception {
+    public List<GiltInventory> getInventorysBySaleId(ShopBean shopBean, GiltPageGetSaleAttrRequest request) throws Exception {
         request.check();
         return getApiListResult(shopBean,GiltInventory.class,URL+"/"+request.getId()+"/inventory",request.getBeanMap());
     }
@@ -60,7 +60,7 @@ public class GiltSalesService extends GiltBase{
      * @return List<GiltRealTimeInventory>
      * @throws Exception
      */
-    public List<GiltRealTimeInventory> getSaleRealTimeInventorysById(ShopBean shopBean, GiltPageGetSaleAttrRequest request) throws Exception {
+    public List<GiltRealTimeInventory> getRealTimeInventoriesBySaleId(ShopBean shopBean, GiltPageGetSaleAttrRequest request) throws Exception {
         request.check();
         return getApiListResult(shopBean,GiltRealTimeInventory.class,URL+"/"+request.getId()+"/realtime-inventory",request.getBeanMap());
     }
@@ -72,7 +72,7 @@ public class GiltSalesService extends GiltBase{
      * @return List<GiltSku>
      * @throws Exception
      */
-    public List<GiltSku> getSaleSkusById(ShopBean shopBean, GiltPageGetSaleAttrRequest request) throws Exception {
+    public List<GiltSku> getSkusBySaleId(ShopBean shopBean, GiltPageGetSaleAttrRequest request) throws Exception {
         request.check();
         return getApiListResult(shopBean,GiltSku.class,URL+"/"+request.getId()+"/skus",request.getBeanMap());
     }
