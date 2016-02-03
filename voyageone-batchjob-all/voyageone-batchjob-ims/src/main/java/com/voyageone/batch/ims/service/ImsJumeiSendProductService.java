@@ -89,33 +89,30 @@ public class ImsJumeiSendProductService extends BaseTaskService {
         public void dorun() {
             logger.info(channel.getFull_name() + "开始推送数据");
             List<SendProductBean> sendproductList = sendProductList(channel.getOrder_channel_id(), rowCount);
-            if (sendproductList.size() != 0) {
-                for (SendProductBean productBean : sendproductList) {
-                    try {
-                        String result = getSendCode(productBean.getChannel_id(), productBean.getProduct_code());
-                        Date now = new Date();
-                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                        if (result.contains("Success")) {
-                            String time = dateFormat.format(now);
-                            sendProductDao.updateSendProductSend_flg(time, getTaskName().toString(), productBean);
-                            logger.info(channel.getOrder_channel_id() + "-----" + productBean.getProduct_code() + "-----" + time + "-----推送成功");
-                        } else {
-                            logger.info(channel.getFull_name() + productBean.getProduct_code() + result);
-                            String time = dateFormat.format(now);
-                            logIssue(getTaskName() + "---" + getSubSystem().toString() + "---推送数据：---" + productBean.getProduct_code() + "--失败--" + time);
-                        }
-                    } catch (Exception e) {
-                        logger.info(channel.getFull_name() + productBean.getProduct_code() + e);
-                        Date now = new Date();
-                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            logger.info(channel.getFull_name() + "推送数据件数：" + sendproductList.size());
+            for (SendProductBean productBean : sendproductList) {
+                try {
+                    String result = getSendCode(productBean.getChannel_id(), productBean.getProduct_code());
+                    Date now = new Date();
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    if (result.contains("Success")) {
                         String time = dateFormat.format(now);
-                        logIssue(getTaskName() + "---" + getSubSystem().toString() + "---推送数据：---" + productBean.getProduct_code() + "---异常---" + time);
+                        sendProductDao.updateSendProductSend_flg(time, getTaskName().toString(), productBean);
+                        logger.info(channel.getOrder_channel_id() + "-----" + productBean.getProduct_code() + "-----" + time + "-----推送成功");
+                    } else {
+                        logger.info(channel.getFull_name() + productBean.getProduct_code() + result);
+                        String time = dateFormat.format(now);
+                        logIssue(getTaskName() + "---" + getSubSystem().toString() + "---推送数据：---" + productBean.getProduct_code() + "--失败--" + time);
                     }
+                } catch (Exception e) {
+                    logger.info(channel.getFull_name() + productBean.getProduct_code() + e);
+                    Date now = new Date();
+                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    String time = dateFormat.format(now);
+                    logIssue(getTaskName() + "---" + getSubSystem().toString() + "---推送数据：---" + productBean.getProduct_code() + "---异常---" + time);
                 }
-                logger.info(channel.getFull_name() + "推送数据结束");
-            } else {
-                logger.info("没有需要推送的数据");
             }
+            logger.info(channel.getFull_name() + "推送数据结束");
         }
 
         private String getSendCode(String orderChannel_id, String product_code) throws Exception {
