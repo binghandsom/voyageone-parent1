@@ -1,7 +1,9 @@
 package com.voyageone.batch.cms.service;
 
 import com.google.common.base.Joiner;
+import com.mongodb.BulkWriteResult;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
+import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.batch.base.BaseTaskService;
 import com.voyageone.batch.cms.bean.ItemDetailsBean;
 import com.voyageone.batch.cms.dao.ItemDetailsDao;
@@ -228,11 +230,12 @@ public class CmsSetMainPropService extends BaseTaskService {
                 // 修改商品数据
                 // 一般只改改价格神马的
                 cmsProduct = doUpdateCmsBtProductModel(feed, cmsProduct, mapping, mapBrandMapping);
+                // TODO: 没有设置的fields里的内容, 不会被清除? 这个应该是在共通里做掉的吧, 要是共通里不做的话就要自己写了
 
-                // 清除一些batch的标记
-                CmsBtProductModel_BatchField batchField = cmsProduct.getBatchField();
-                batchField.setAttribute("switchCategory", "0"); // 切换主类目->完成
-                cmsProduct.setBatchField(batchField);
+                // 清除一些batch的标记 // TODO: 梁兄坑爹啊, batchField的更新没有放到product更新里, 暂时自己写一个用, 这里暂时注释掉
+//                CmsBtProductModel_BatchField batchField = cmsProduct.getBatchField();
+//                batchField.setAttribute("switchCategory", "0"); // 切换主类目->完成
+//                cmsProduct.setBatchField(batchField);
 
                 ProductUpdateRequest requestModel = new ProductUpdateRequest(channelId);
                 requestModel.setProductModel(cmsProduct);
@@ -240,6 +243,26 @@ public class CmsSetMainPropService extends BaseTaskService {
                 requestModel.setIsCheckModifed(false); // 不做最新修改时间ｃｈｅｃｋ
 
                 ProductUpdateResponse response = voApiClient.execute(requestModel);
+
+                // TODO: 梁兄坑爹啊, batchField的更新没有放到product更新里, 暂时自己写一个用
+                // TODO: 等改好后下面这段内容就可以删掉了
+                {
+                    List<BulkUpdateModel> bulkList = new ArrayList<>();
+
+                    HashMap<String, Object> updateMap = new HashMap<>();
+                    updateMap.put("batchField.switchCategory",0);
+
+                    HashMap<String, Object> queryMap = new HashMap<>();
+                    queryMap.put("prodId", cmsProduct.getProdId());
+
+                    BulkUpdateModel model = new BulkUpdateModel();
+                    model.setUpdateMap(updateMap);
+                    model.setQueryMap(queryMap);
+                    bulkList.add(model);
+
+                    BulkWriteResult result = cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, getTaskName(), "$set");
+
+                }
 
                 logger.info(getTaskName() + ":更新:" + cmsProduct.getChannelId() + ":" + cmsProduct.getFields().getCode() + ":" + response.getCode() + ":" + response.getMessage());
 
@@ -526,7 +549,12 @@ public class CmsSetMainPropService extends BaseTaskService {
             // 注意: 价格是在外面共通方法更新的, 这里不需要更新
 
             // 更新Fields字段
-            doCreateCmsBtProductModelField(feed, mapping, mapBrandMapping, product.getCatId());
+            CmsBtProductModel_Field field = doCreateCmsBtProductModelField(feed, mapping, mapBrandMapping, product.getCatId());
+            if (field == null) {
+                return null;
+            }
+
+            product.setFields(field);
 
             // 遍历feed的skus
             for (CmsBtFeedInfoModel_Sku feedSku : feed.getSkus()) {

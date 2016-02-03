@@ -1526,9 +1526,6 @@ public class TmallProductService {
                     }
 
                     Field processField = processFields.get(0);
-                    // 测试代码不要提交 tom START
-                    mainSxProduct.getCmsBtProductModelGroupPlatform().setPlatformActive(CmsConstants.PlatformActive.Instock);
-                    // 测试代码不要提交 tom END
                     CmsConstants.PlatformActive platformActive = mainSxProduct.getCmsBtProductModelGroupPlatform().getPlatformActive();
                     if (platformActive == CmsConstants.PlatformActive.Onsale) {
                         ((SingleCheckField) processField).setValue("0");
