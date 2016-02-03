@@ -539,5 +539,23 @@ public class CmsBtProductDao extends BaseMongoPartDao {
         return false;
     }
 
+    /**
+     * 查询某个group下已经在平台上新的产品列表.
+     * @param channelId
+     * @param modelCode
+     * @return
+     */
+    public List<CmsBtProductModel> getOnSaleProducts(String channelId,String modelCode){
+
+        String conditionQuery = String.format("{ 'feed.orgAtts.modelCode' : '%s', 'groups.platforms': {$elemMatch: {numIId: {'$nin':[null,''], '$exists':true} }} }",modelCode);
+
+        String projection = "{'prodId':1,'fields.code':1,'groups.platforms.$':1}";
+
+        List<CmsBtProductModel> cmsBtProductModels = selectWithProjection(conditionQuery,projection,channelId);
+
+        return cmsBtProductModels;
+
+    }
+
 
 }

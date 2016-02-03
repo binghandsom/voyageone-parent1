@@ -49,7 +49,8 @@
         "getFieldMapping": "getFieldMapping",
         "getFeedAttrs": "getFeedAttributes",
         "saveFieldMapping": "saveFieldMapping",
-        "directMatchOver": "directMatchOver"
+        "directMatchOver": "directMatchOver",
+        "getMatchOver": "getMatchOver"
       },
       "platformMappingService": {
         "root": "/cms/setting/platformMapping",
@@ -62,7 +63,8 @@
         "getDictList": "getDictList",
         "getPlatformMapping": "getPlatformMapping",
         "getMappingTypes": "getMappingType",
-        "$saveMapping": "saveMapping"
+        "$saveMapping": "saveMapping",
+        "$saveMatchOverByMainCategory": "saveMatchOverByMainCategory"
       }
     },
     "pop": {

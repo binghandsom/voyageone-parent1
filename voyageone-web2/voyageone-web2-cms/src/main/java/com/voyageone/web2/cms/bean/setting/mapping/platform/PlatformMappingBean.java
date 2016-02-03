@@ -21,6 +21,8 @@ public class PlatformMappingBean {
 
     private List<String> mappingPath;
 
+    private Integer matchOver;
+
     public String getMainCategoryId() {
         return mainCategoryId;
     }
@@ -59,5 +61,13 @@ public class PlatformMappingBean {
 
     public void setMappingPath(List<String> mappingPath) {
         this.mappingPath = mappingPath;
+    }
+
+    public Integer getMatchOver() {
+        return matchOver;
+    }
+
+    public void setMatchOver(Integer matchOver) {
+        this.matchOver = matchOver;
     }
 }

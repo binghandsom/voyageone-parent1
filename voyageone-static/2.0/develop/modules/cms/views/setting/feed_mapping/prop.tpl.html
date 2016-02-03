@@ -14,17 +14,23 @@
         <div class="form-inline pull-right m-r-sm">
             <label class="m-t-xs col-sm-6">匹配完成?</label>
             <div class="col-sm-6 text-left">
-            <div class="onoffswitch">
-               <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch5" checked>
-                <label class="onoffswitch-label" for="myonoffswitch5">
-                    <span class="onoffswitch-inner"></span>
-                    <span class="onoffswitch-switch"></span>
-                </label>
-            </div><!-- onoff switch -->
+                <div class="onoffswitch">
+                    <input type="checkbox" class="onoffswitch-checkbox" id="feed-m-ckb-1" ng-change="ctrl.switchMatchOver()" ng-model="ctrl.matchOver">
+                    <label class="onoffswitch-label" for="feed-m-ckb-1">
+                        <span class="onoffswitch-inner"></span>
+                        <span class="onoffswitch-switch"></span>
+                    </label>
+                </div>
             </div>
         </div>
         <tab>
-            <tab-heading>类目属性匹配</tab-heading>
+            <tab-heading>
+                <span>{{::ctrl.feedCategoryPath}}</span>
+                <sup><strong>品牌数据</strong></sup>
+                <span class="fa fa-exchange"></span>
+                <span>{{ctrl.mainCategory.catFullPath}}</span>
+                <sup><strong>主数据</strong></sup>
+            </tab-heading>
             <div class="container-fluid" ng-controller="popupCtrl">
                 <div class="col-sm-6">
                     <div class="panel panel-default">
@@ -79,12 +85,14 @@
                 值匹配
             </button>
         </div>
-        <div class="pull-right">
-            <span class="{{::bean.iconClass}}">{{::bean.field.type}}</span>
+        <div class="col-sm-1 pull-right">
             <span ng-if="bean.isSimple"
                   ng-class="{'badge':bean.matched, 'badge badge-failure': !bean.matched}">
                 <span>{{ bean.matched ? '已匹配' : '未匹配' }}</span>
             </span>
+        </div>
+        <div class="pull-right">
+            <span class="{{::bean.iconClass}}">{{::bean.field.type}}</span>
         </div>
     </script>
 </div>

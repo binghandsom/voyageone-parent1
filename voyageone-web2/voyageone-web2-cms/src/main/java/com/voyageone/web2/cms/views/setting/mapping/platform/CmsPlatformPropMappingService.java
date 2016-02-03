@@ -1,5 +1,6 @@
 package com.voyageone.web2.cms.views.setting.mapping.platform;
 
+import com.mongodb.WriteResult;
 import com.taobao.top.schema.exception.TopSchemaException;
 import com.taobao.top.schema.factory.SchemaReader;
 import com.taobao.top.schema.field.ComplexField;
@@ -100,6 +101,7 @@ public class CmsPlatformPropMappingService extends BaseAppService {
             put("categorySchema", platformCatSchemaModel);
             put("properties", fieldMap);
             put("mapping", mappingMap);
+            put("matchOver", platformMappingModel.getMatchOver());
         }};
     }
 
@@ -448,5 +450,20 @@ public class CmsPlatformPropMappingService extends BaseAppService {
         String type = platformSpecialFieldDao.selectSpecialMappingType(cartId, platformCategoryId, propertyId);
 
         return StringUtils.isEmpty(type) ? "1" : type;
+    }
+
+    public int setMatchOver(String mainCategoryId, Integer matchOver, Integer cartId, UserSessionBean user) {
+
+        CmsMtPlatformMappingModel platformMappingModel =
+                platformMappingDao.getMappingByMainCatId(user.getSelChannelId(), cartId, mainCategoryId);
+
+        if (platformMappingModel == null)
+            throw new BusinessException("没找到 Mapping");
+
+        platformMappingModel.setMatchOver(matchOver);
+
+        WriteResult res = platformMappingDao.update(platformMappingModel);
+
+        return res.getN() > 0 ? matchOver : (matchOver == 1 ? 0 : 1);
     }
 }

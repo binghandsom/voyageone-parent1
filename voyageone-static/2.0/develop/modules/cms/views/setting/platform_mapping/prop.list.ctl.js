@@ -8,7 +8,7 @@
  * @typedef {object} PlatformInfo
  * @property {object} category CategorySchema
  * @property {object} properties FieldMap
- * @property {object} mappingModel
+ * @property {object} mappingInfo
  * @property {object} mappingTypes MappingTypeMap
  */
 
@@ -68,7 +68,7 @@ define([
                     $.platform = data;
                 });
 
-                $service.getMainCategorySchema($mainCate.id).then(function(mainCategory) {
+                $service.getMainCategorySchema($mainCate.id).then(function (mainCategory) {
                     $.maindata.category.schema = mainCategory;
                 });
             },
@@ -133,6 +133,14 @@ define([
                 };
 
                 ppPlatformMapping(context);
+            },
+
+            saveMatchOver: function () {
+                var that = this;
+                that.dataService.saveMatchOver(that.maindata.category.id, that.platform.matchOver,
+                    that.cartId).then(function (matchOver) {
+                    that.platform.matchOver = matchOver;
+                });
             }
         };
 
@@ -159,6 +167,8 @@ define([
              * @type {object}
              */
             this.mainCategories = {};
+
+            this.mappingMap = {};
         }
 
         PlatformPropMappingService.prototype = {
@@ -170,35 +180,38 @@ define([
              * @returns {Promise.<PlatformInfo|null>}
              */
             getPlatformData: function (categoryId, cartId) {
+                var that = this;
 
                 // 因为后续的操作理论上都是在画面加载后进行的.所以后续可能不传递参数
                 // 因此需要在此处特殊检查
-                if (this.platform || !categoryId || !cartId) {
-                    var deferred = this.$q.defer();
-                    deferred.resolve(this.platform);
+                if (that.platform || !categoryId || !cartId) {
+                    var deferred = that.$q.defer();
+                    deferred.resolve(that.platform);
                     return deferred.promise;
                 }
 
                 // 木有数据,再去后台拿
-                return this.$service.getPlatformCategory({
+                return that.$service.getPlatformCategory({
                     categoryId: categoryId,
                     cartId: cartId
                 }).then(function (res) {
-                    this.platform = {
+                    that.platform = {
                         category: res.data.categorySchema,
                         properties: res.data.properties,
-                        mappingModel: res.data.mapping
+                        mappingInfo: res.data.mapping,
+                        matchOver: res.data.matchOver
                     };
-                }.bind(this)).then(function () {
-                    var platform = this.platform;
-                    this.$service.getMappingTypes({
+                    that.getPlatformMapping(categoryId, that.platform.category.catId, cartId);
+                }).then(function () {
+                    var platform = that.platform;
+                    that.$service.getMappingTypes({
                         cartId: cartId,
                         platformCategoryId: platform.catId
                     }).then(function (res) {
                         platform.mappingTypes = res.data;
                     });
                     return platform;
-                }.bind(this));
+                });
             },
 
             /**
@@ -233,7 +246,73 @@ define([
                 }.bind(this));
 
                 return deferred.promise;
+            },
+
+            saveMatchOver: function (mainCategoryId, matchOver, cartId) {
+                return this.$service.$saveMatchOverByMainCategory({
+                    mainCategoryId: mainCategoryId, matchOver: matchOver, cartId: cartId
+                }).then(function(res) {
+                    return res.data;
+                });
+            },
+
+            /**
+             * @param {string} mainCategoryId
+             * @param {string} platformCategoryId
+             * @param {number} cartId
+             */
+            getPlatformMapping: function (mainCategoryId, platformCategoryId, cartId) {
+
+                var deferred = this.$q.defer();
+                var key = mainCategoryId + '->' + platformCategoryId + '@' + cartId;
+                var mapping = this.mappingMap[key];
+
+                if (mapping) {
+                    deferred.resolve(mapping);
+                    return deferred.promise;
+                }
+
+                this.$service.getPlatformMapping({
+                    mainCategoryId: mainCategoryId,
+                    platformCategoryId: platformCategoryId,
+                    cartId: cartId
+                }).then(function (res) {
+                    deferred.resolve(this.mappingMap[key] = res.data);
+                }.bind(this));
+
+                return deferred.promise;
+            },
+
+            isMatched: function(property) {
+
+                var that = this;
+                var path = [property];
+                var parent = property.parent;
+                while (parent) {
+                    path.unshift(parent);
+                    parent = parent.parent;
+                }
+
+                return that.getPlatformData().then(function(platform) {
+                    var mappingInfo = platform.mappingInfo;
+                    var result = false;
+                    _.find(path, function(p) {
+                        result = mappingInfo[p.id];
+                        if (_.isBoolean(result)) return true;
+                        if (_.isArray(result)) {
+                            result = !!result.length;
+                            return true;
+                        }
+                        if (_.isObject(result)) {
+                            mappingInfo = result;
+                            result = !!_.keys(result).length;
+                        }
+                        return false;
+                    });
+                    return result;
+                });
             }
+
         };
 
         return PlatformPropMappingService;

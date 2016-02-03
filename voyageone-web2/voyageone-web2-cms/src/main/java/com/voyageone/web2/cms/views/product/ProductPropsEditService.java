@@ -8,7 +8,9 @@ import com.voyageone.cms.service.dao.mongodb.CmsBtProductDao;
 import com.voyageone.cms.service.dao.mongodb.CmsMtCategorySchemaDao;
 import com.voyageone.cms.service.dao.mongodb.CmsMtCommonSchemaDao;
 import com.voyageone.cms.service.model.*;
+import com.voyageone.common.configs.ShopConfigs;
 import com.voyageone.common.configs.TypeChannel;
+import com.voyageone.common.configs.beans.CartBean;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.factory.SchemaJsonReader;
 import com.voyageone.common.masterdate.schema.field.*;
@@ -345,6 +347,31 @@ public class ProductPropsEditService {
         String categoryPath = String.valueOf(catPathObj);
 
         Long productId = Long.parseLong(String.valueOf(prodIdObj));
+
+        String modelCode = cmsBtProductDao.getModelCode(userSession.getSelChannelId(),productId);
+
+        List<CmsBtProductModel> checkProductModels = cmsBtProductDao.getOnSaleProducts(userSession.getSelChannelId(),modelCode);
+
+        if (!checkProductModels.isEmpty()){
+
+            StringBuilder errMsg = new StringBuilder();
+
+            for (CmsBtProductModel productModel:checkProductModels){
+                errMsg.append("Product id: "+productModel.getProdId()+" ");
+                List<CmsBtProductModel_Group_Platform> group_platforms = productModel.getGroups().getPlatforms();
+                for (CmsBtProductModel_Group_Platform platform:group_platforms){
+                    CartBean cartBean = ShopConfigs.getCart(platform.getCartId());
+                    errMsg.append("platform："+cartBean.getName()+ " ");
+                    errMsg.append("Number id: "+platform.getNumIId());
+                }
+
+                errMsg.append("</br>");
+
+            }
+
+            throw new BusinessException(errMsg.toString());
+
+        }
 
         ProductCategoryUpdateRequest request = new ProductCategoryUpdateRequest(userSession.getSelChannelId(),categoryId,categoryPath,productId);
         request.setModifier(userSession.getUserName());

@@ -136,11 +136,12 @@ define([
              * @param {FeedMappingService} feedMappingService
              * @constructor
              */
-            function FeedPropMappingController($scope, $routeParams, feedMappingService) {
+            function FeedPropMappingController($scope, $routeParams, feedMappingService, notify) {
 
                 this.$scope = $scope;
                 this.feedCategoryPath = $routeParams['feedCategoryPath'];
                 this.feedMappingService = feedMappingService;
+                this.notify = notify;
 
                 /**
                  * 主类目模型,不包含字段信息
@@ -181,6 +182,8 @@ define([
                 };
 
                 this.saveMapping = this.saveMapping.bind(this);
+
+                this.matchOver = false;
             }
 
             FeedPropMappingController.prototype = {
@@ -228,6 +231,13 @@ define([
 
                         }.bind(this));
                     }.bind(this));
+
+                    var ttthis = this;
+                    this.feedMappingService.getMatchOver({
+                        feedCategoryPath: this.feedCategoryPath
+                    }).then(function(res) {
+                        ttthis.matchOver = res.data == 1;
+                    });
                 },
                 popupContext: function (bean) {
                     return {
@@ -291,6 +301,22 @@ define([
                         result = (this.show.matched ? bean.hasMatched : bean.hasUnMatched);
                     }
                     return result;
+                },
+
+                switchMatchOver: function () {
+
+                    var me = this;
+
+                    me.feedMappingService.directMatchOver({
+                        feedCategoryPath: me.feedCategoryPath
+                    }).then(function (res) {
+                        if (res.data)
+                            me.notify.success('保存成功');
+                        else {
+                            me.notify.danger('保存失败');
+                            me.matchOver = !me.matchOver;
+                        }
+                    });
                 }
             };
 

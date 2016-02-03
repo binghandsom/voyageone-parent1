@@ -37,6 +37,7 @@
                         <th class="text-left">Main Data Category</th>
                         <th class="text-left">Platform Category</th>
                         <th class="text-center">类目匹配 / 其它平台</th>
+                        <th class="text-center">属性匹配完成</th>
                         <th class="text-center">类目属性匹配</th>
                     </tr>
                     </thead>
@@ -56,6 +57,11 @@
                                     <i class="glyphicon glyphicon-link"></i> 其它平台
                                 </button>
                             </div>
+                        </td>
+                        <td>
+                            <span class="h4" ng-if="category.propertyMatched">
+                                <i class="fa fa-check-circle"></i>
+                            </span>
                         </td>
                         <td>
                             <a class="btn btn-default btn-xs" target="_blank"

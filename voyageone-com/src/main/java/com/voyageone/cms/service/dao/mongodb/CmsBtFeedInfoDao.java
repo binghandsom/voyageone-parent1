@@ -44,7 +44,7 @@ public class CmsBtFeedInfoDao extends BaseMongoPartDao {
     public int updateFeedInfoUpdFlg(String channelId,String modelCode){
 
         String query = String.format("{ channelId: '%s', model: '%s'}", channelId, modelCode);
-        String update = String.format("{ $set: {updFlg: %s}}", 1);
+        String update = String.format("{ $set: {updFlg: %s}}", 0);
 
         String collectionName = mongoTemplate.getCollectionName(this.getEntityClass(), channelId);
 

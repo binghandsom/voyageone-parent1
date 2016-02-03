@@ -169,14 +169,17 @@ define([
                             var values = me.values = [];
 
                             if (!me.ruleWord || me.selected.fixedValue) {
-                                me.values = [
-                                    {selected: null, props: props}
-                                ];
+                                values.push({selected: null, props: props});
                                 return;
                             }
 
                             me.ppService.getPropertyPath(mainCate.id, me.ruleWord.value)
                                 .then(function (properties) {
+
+                                    if (!properties) {
+                                        values.push({selected: null, props: props});
+                                        return;
+                                    }
 
                                     _.each(properties.reverse(), function (property) {
                                         values.push({selected: property, props: props});
