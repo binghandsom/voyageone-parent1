@@ -146,6 +146,50 @@
         LIMIT #{limit};
     </select>
 
+    <select id="wms_selectInventorySynLogsForJMReFlush" resultType="com.voyageone.batch.wms.modelbean.InventorySynLogBean">
+        SELECT
+            0 as seq,
+            channel_id order_channel_id,
+            #{cart_id} as cart_id,
+            sku,
+            0 as qty,
+            send_flg as syn_flg,
+            '1' as syn_type,
+            modified,
+            modifier,
+            created,
+            creater,
+            upc_code as barcode,
+            product_code as itemcode
+        FROM
+            jumei.jm_bt_sku
+        WHERE
+            channel_id = #{order_channel_id}
+        AND send_flg = #{syn_flg}
+        AND EXISTS( SELECT
+                        1
+                      FROM
+                        tm_task_control
+                      WHERE
+                        task_id = #{task_name}
+                      AND cfg_name = 'order_channel_id'
+                      AND cfg_val1 = #{order_channel_id})
+        LIMIT #{limit};
+    </select>
+
+    <delete id="wms_updateJMFlg">
+        UPDATE
+            jumei.jm_bt_sku
+        SET
+            send_flg = #{syn_flg},
+            modified = NOW(),
+            modifier = #{modifier}
+        WHERE
+            channel_id = #{order_channel_id}
+        AND
+            sku = #{sku}
+    </delete>
+
     <select id="wms_selectInventorySynLogsForJM" resultType="com.voyageone.batch.wms.modelbean.InventorySynLogBean">
         SELECT
             i.seq,
@@ -184,6 +228,10 @@
         JOIN
           wms_bt_item_details d ON i.order_channel_id = d.order_channel_id
         AND i.sku = d.sku
+        JOIN
+          jumei.jm_bt_sku e ON i.order_channel_id = e.channel_id
+        AND i.sku = e.sku
+        AND e.send_flg = '1'
         JOIN
           jumei.jm_bt_product p ON i.order_channel_id = p.channel_id
         AND d.itemcode = p.product_code

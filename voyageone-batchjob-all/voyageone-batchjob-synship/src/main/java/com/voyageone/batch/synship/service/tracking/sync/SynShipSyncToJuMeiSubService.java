@@ -92,8 +92,9 @@ public class SynShipSyncToJuMeiSubService extends SynShipSyncTrackingBaseService
 
             Map<String, Object> resultMap = JsonUtil.jsonToMap(res);
 
-            //  0 处理正确(已发货的订单再次调用此接口, 更改快递信息,更改成功后也会返回 0)
-            if ("0".equals(resultMap.get("error"))) {
+            //  处理正确(已发货的订单再次调用此接口, 更改快递信息,更改成功后也会返回 0)
+            if ((resultMap.containsKey("error") && "0".equals(resultMap.get("error"))) ||
+                    (resultMap.containsKey("message") && "success!".equals(resultMap.get("message"))))  {
                 // 成功后，更新标志位
                 UpdateSyncTracking(trackingSyncBean, SynshipConstants.SEND_TRACKING_FLG.SENDED);
                 return;
