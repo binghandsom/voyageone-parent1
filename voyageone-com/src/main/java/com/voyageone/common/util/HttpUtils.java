@@ -252,7 +252,7 @@ public class HttpUtils {
      */
     private static HttpURLConnection getConnection(String location, String method) throws IOException {
 
-        return getConnection(location, method, 10000, 10000);
+        return getConnection(location, method, 1000000, 1000000);
     }
 
     private static HttpURLConnection getConnection(String location, String method, int connectTimeout, int readTimeout) throws IOException {
