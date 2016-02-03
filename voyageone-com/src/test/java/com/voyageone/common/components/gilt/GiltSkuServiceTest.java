@@ -34,7 +34,9 @@ public class GiltSkuServiceTest {
         shopBean.setAppKey("YTE5N2YzM2M1ZmFhZmRjZDY3YmZiNjgxMzJiYTgzNGY6");
 
         GiltPageGetSkusRequest request=new GiltPageGetSkusRequest();
-        request.setSku_ids("4099260,4099262,2997763");
+        request.setLimit(2);
+        request.setOffset(1);
+        //request.setSku_ids("4099260,4099262,2997763");
 
         List<GiltSku> skus= giltSkuService.pageGetSkus(shopBean,request);
         System.out.println("Retrun:"+JsonUtil.getJsonString(skus));

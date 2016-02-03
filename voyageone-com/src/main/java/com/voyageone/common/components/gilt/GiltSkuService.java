@@ -34,10 +34,7 @@ public class GiltSkuService extends GiltBase {
      */
     public List<GiltSku> pageGetSkus(ShopBean shopBean, GiltPageGetSkusRequest request) throws Exception {
         request.check();
-        Map map=JacksonUtil.jsonToMap(JacksonUtil.bean2Json(request));
-        Map<String,String> params=new HashMap<String,String>();
-        params.putAll(map);
-        String result=reqGiltApi(shopBean,URL,params);
+        String result=reqGiltApi(shopBean,URL,request.getBeanMap());
         return JacksonUtil.jsonToBeanList(result,GiltSku.class);
     }
 
