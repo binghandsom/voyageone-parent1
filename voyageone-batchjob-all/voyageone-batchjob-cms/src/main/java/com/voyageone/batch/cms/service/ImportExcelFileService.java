@@ -232,26 +232,45 @@ public class ImportExcelFileService extends BaseTaskService {
                 // 标志位关联更新
                 $info("上传的文档 [ %s ] Product 同步", fileName);
                 synProductImportSynFlg(orderChannelID, dealId);
-
-                // 文件移动
-                $info("上传的文档 [ %s ] 备份目录夹移动", fileName);
-                fileInputStream.close();
-                // 源文件
-                String srcFile = filePathBean.getUpload_localpath() + "/" + fileName;
-                // 目标文件
-                String destFile = filePathBean.getUpload_local_bak_path() + "/" + fileName;
-                logger.info("moveFile = " + srcFile + " " + destFile);
-                FileUtils.moveFile(srcFile, destFile);
             }
+
+            fileInputStream.close();
 
             $info("上传的文档 [ %s ] 处理结束", fileName);
         } catch (Exception e) {
+
             logger.error("importExcelFile file error = " + fileName, e);
             issueLog.log(e,
                     ErrorType.BatchJob,
                     SubSystem.CMS,
                     "importExcelFile file = " + fileName
             );
+        } finally {
+
+            moveFile(fileName, filePathBean);
+        }
+    }
+
+    /**
+     * 处理文件移动
+     *
+     */
+    private void moveFile(String fileName, FtpBean filePathBean) {
+        try {
+            // 文件移动
+            $info("上传的文档 [ %s ] 备份目录夹移动", fileName);
+            // 源文件
+            String srcFile = filePathBean.getUpload_localpath() + "/" + fileName;
+            // 目标文件
+            String destFile = filePathBean.getUpload_local_bak_path() + "/" + fileName;
+            logger.info("moveFile = " + srcFile + " " + destFile);
+            FileUtils.moveFile(srcFile, destFile);
+        } catch (Exception e) {
+            logger.error("moveFile file error = " + fileName, e);
+            issueLog.log(e,
+                    ErrorType.BatchJob,
+                    SubSystem.CMS,
+                    "moveFile file error fileName = " + fileName);
         }
     }
 

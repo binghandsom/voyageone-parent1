@@ -113,7 +113,7 @@
                         deal.deal_id
               from jumei.jm_bt_deal_import deal
               where deal.channel_id = #{channelId,jdbcType=VARCHAR}
-              and deal.creater != deal.modified
+              and deal.created != deal.modified
               and deal.deal_id = #{dealId,jdbcType=VARCHAR}) dealm
         set product.syn_flg = if(product.syn_flg = '2', '1', product.syn_flg),
             product.modified = now(),
