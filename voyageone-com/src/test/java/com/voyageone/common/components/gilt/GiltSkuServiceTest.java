@@ -52,4 +52,15 @@ public class GiltSkuServiceTest {
         GiltSku skus= giltSkuService.getSkuById(shopBean,"4099260");
         System.out.println("Retrun:"+JsonUtil.getJsonString(skus));
     }
+
+    @Test
+    public void testGetAllSalesSkus() throws Exception {
+        ShopBean shopBean=new ShopBean();
+        shopBean.setApp_url("https://api-sandbox.gilt.com/global/");
+        shopBean.setAppKey("YTE5N2YzM2M1ZmFhZmRjZDY3YmZiNjgxMzJiYTgzNGY6");
+
+
+        List<GiltSku> skus= giltSkuService.getAllSalesSkus(shopBean);
+        System.out.println("Retrun:"+JsonUtil.getJsonString(skus));
+    }
 }
