@@ -397,6 +397,9 @@
         <choose>
             <when test="scanType == 1">
                 price = #{price},
+                <if test="closeDayFlg != null and closeDayFlg != '' and closeDayFlg == '2'">
+                    date = NOW(),
+                </if>
             </when>
             <when test="scanType == 2">
                 date = NOW(),
