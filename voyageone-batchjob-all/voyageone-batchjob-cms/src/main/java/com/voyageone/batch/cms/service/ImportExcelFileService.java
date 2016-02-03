@@ -61,7 +61,7 @@ public class ImportExcelFileService extends BaseTaskService {
     private final String import_excel_file_path = "import_excel_file_path";
 
     // 上传Excel最大Sheet数
-    private final int maxSheetCount = 12;
+    private final int maxSheetCount = 4;
     private final String productSheetName = "Product";
     private final String skuSheetName = "SKU";
     private final String dealSheetName = "Product_Deal";
@@ -81,6 +81,8 @@ public class ImportExcelFileService extends BaseTaskService {
     private final int imageTypeMain = 1;
     private final int imageTypeDeal = 2;
     private final int imageTypeMobile = 7;
+
+    private final String GBKCharset = "GBK";
 
     @Override
     public SubSystem getSubSystem() {
@@ -178,40 +180,41 @@ public class ImportExcelFileService extends BaseTaskService {
             Workbook book = WorkbookFactory.create(fileInputStream);
 
             // Excel Sheet数检查
-            $info("上传的文档 [ %s ] Sheet数检查", fileName);
-            ret = chkSheetCount(book);
+            $info("上传的文档 [ %s ] Sheet名检查", fileName);
+            ret = chkSheet(book, fileName, errList);
             if (!ret ){
-                $info("上传的文档 [ %s ] Sheet数异常", fileName);
-            }
+                $info("上传的文档 [ %s ] Sheet名检查异常", fileName);
 
-            // Sku Sheet读入
-            $info("上传的文档 [ %s ] Sku Sheet读入", fileName);
-            ArrayList<Object> retArr = readSkuSheet(book, fileName, errList, skuList);
-            ret = (boolean)retArr.get(0);
-            dealId = (String)retArr.get(1);
-            if (!ret) {
-                $info("上传的文档 [ %s ]Sku Sheet读入异常", fileName);
-            }
+            } else {
+                // Sku Sheet读入
+                $info("上传的文档 [ %s ] Sku Sheet读入", fileName);
+                ArrayList<Object> retArr = readSkuSheet(book, fileName, errList, skuList);
+                ret = (boolean)retArr.get(0);
+                dealId = (String)retArr.get(1);
+                if (!ret) {
+                    $info("上传的文档 [ %s ]Sku Sheet读入异常", fileName);
+                }
 
-            // Image Sheet读入
-            $info("上传的文档 [ %s ] Image Sheet读入", fileName);
-            ret = readImageSheet(book, fileName, errList, imageList);
-            if (!ret) {
-                $info("上传的文档 [ %s ]Image Sheet读入异常", fileName);
-            }
+                // Image Sheet读入
+                $info("上传的文档 [ %s ] Image Sheet读入", fileName);
+                ret = readImageSheet(book, fileName, errList, imageList);
+                if (!ret) {
+                    $info("上传的文档 [ %s ]Image Sheet读入异常", fileName);
+                }
 
-            // Deal Sheet读入
-            $info("上传的文档 [ %s ] Deal Sheet读入", fileName);
-            ret = readDealSheet(book, fileName, errList, dealList);
-            if (!ret) {
-                $info("上传的文档 [ %s ] Deal Sheet读入异常", fileName);
-            }
+                // Deal Sheet读入
+                $info("上传的文档 [ %s ] Deal Sheet读入", fileName);
+                ret = readDealSheet(book, fileName, errList, dealList);
+                if (!ret) {
+                    $info("上传的文档 [ %s ] Deal Sheet读入异常", fileName);
+                }
 
-            // Product Sheet读入
-            $info("上传的文档 [ %s ] Product Sheet读入", fileName);
-            ret = readProductSheet(book, fileName, errList, productList, imageList);
-            if (!ret) {
-                $info("上传的文档 [ %s ] Product Sheet读入异常", fileName);
+                // Product Sheet读入
+                $info("上传的文档 [ %s ] Product Sheet读入", fileName);
+                ret = readProductSheet(book, fileName, errList, productList, imageList);
+                if (!ret) {
+                    $info("上传的文档 [ %s ] Product Sheet读入异常", fileName);
+                }
             }
 
             if (errList.size() > 0) {
@@ -333,13 +336,45 @@ public class ImportExcelFileService extends BaseTaskService {
      * Excel文件Sheet数检查
      *
      */
-    private boolean chkSheetCount(Workbook book) {
-        boolean ret = false;
+    private boolean chkSheet(Workbook book, String fileName, List<ErrorContent> errList) {
+        boolean ret = true;
 
-        Sheet temp = book.getSheetAt(maxSheetCount - 1);
-        if (temp != null ){
-            ret = true;
+//        Sheet temp = book.getSheetAt(maxSheetCount - 1);
+//        if (temp != null ){
+//            ret = true;
+//        }
+
+        Sheet sheetTemp = book.getSheet(productSheetName);
+        if (sheetTemp == null){
+            ret = false;
         }
+
+        if (ret) {
+            sheetTemp = book.getSheet(skuSheetName);
+            if (sheetTemp == null) {
+                ret = false;
+            }
+        }
+
+        if (ret) {
+            sheetTemp = book.getSheet(dealSheetName);
+            if (sheetTemp == null) {
+                ret = false;
+            }
+        }
+
+        if (ret) {
+            sheetTemp = book.getSheet(imageSheetName);
+            if (sheetTemp == null) {
+                ret = false;
+            }
+        }
+
+        if (!ret) {
+            ErrorContent errorContent = getReadErrorContent(fileName, "", 0, "Sheet Name Chk Error [Product][SKU][Product_Deal][IMAGE]");
+            errList.add(errorContent);
+        }
+
         return ret;
     }
 
@@ -549,7 +584,11 @@ public class ImportExcelFileService extends BaseTaskService {
             productModel.setChannelId(ExcelUtils.getString(row, PruductSheetFormat.channel_id_index));
             productModel.setProductCode(ExcelUtils.getString(row, PruductSheetFormat.product_code_index));
             productModel.setDealId(ExcelUtils.getString(row, PruductSheetFormat.deal_id_index));
-            productModel.setProductDes(ExcelUtils.getString(row, PruductSheetFormat.product_des_index));
+
+            String productDes = ExcelUtils.getString(row, PruductSheetFormat.product_des_index);
+            // <img> 元素删除
+            productModel.setProductDes(StringUtils.trimImgElement(productDes));
+
             productModel.setCategoryLv4Id(Integer.valueOf(ExcelUtils.getString(row, PruductSheetFormat.category_lv4_id_index, "#")));
             productModel.setBrandId(Integer.valueOf(ExcelUtils.getString(row, PruductSheetFormat.brand_id_index, "#")));
             productModel.setBrandName(ExcelUtils.getString(row, PruductSheetFormat.brand_name_index));
@@ -1146,13 +1185,14 @@ public class ImportExcelFileService extends BaseTaskService {
     }
 
     /**
-     * 输入项目长度检查
+     * 输入项目长度检查（Byte 长度）
      *
      */
     private boolean chkLength(String content, int length){
         boolean ret = false;
+        int byteLength = length * 2;
 
-        if (content.length() <= length) {
+        if (StringUtils.getByteLength(content, GBKCharset) <= byteLength) {
             ret = true;
         }
 
@@ -1187,7 +1227,8 @@ public class ImportExcelFileService extends BaseTaskService {
         private static final int product_name_length = 100;
 
         private static final int foreign_language_name_index = 6;
-        private static final int foreign_language_name_length = 100;
+        // 长度50，汉字，byte 100
+        private static final int foreign_language_name_length = 50;
 
         private static final int category_lv4_id_index = 12;
         private static final int brand_name_index = 14;
