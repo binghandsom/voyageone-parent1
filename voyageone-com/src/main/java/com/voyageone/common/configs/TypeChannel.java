@@ -129,4 +129,26 @@ public class TypeChannel {
 
         return ret;
     }
+
+    /**
+     *
+     * @param type
+     * @param channel_id
+     * @param value
+     * @param lang_id
+     * @return
+     */
+    public static TypeChannelBean getTypeChannelByCode(String type, String channel_id, String value, String... lang_id) {
+        String key = type + "-" + channel_id;
+        List<TypeChannelBean> typeList = typeMap.get(key);
+
+        for (TypeChannelBean typeChannelBean: typeList) {
+
+            if (typeChannelBean.getValue().equals(value))
+                return typeChannelBean;
+        }
+        return null;
+    }
+
+
 }
