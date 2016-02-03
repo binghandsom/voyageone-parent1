@@ -494,6 +494,11 @@ public class ChannelConfigEnums {
         GILT("015"),
 
         /**
+         * SHOE_CITY
+         */
+        SHOE_CITY("016"),
+
+        /**
          * JUMEI
          */
         JUMEI("998");
@@ -536,6 +541,7 @@ public class ChannelConfigEnums {
                 case "013": return SEARS;
                 case "014": return WMF;
                 case "015": return GILT;
+                case "016": return SHOE_CITY;
                 case "998": return JUMEI;
                 default: return null;
             }

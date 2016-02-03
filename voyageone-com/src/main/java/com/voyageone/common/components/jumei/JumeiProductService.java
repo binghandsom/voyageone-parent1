@@ -6,6 +6,7 @@ import com.voyageone.common.components.jumei.Bean.JmProductBean_Spus;
 import com.voyageone.common.components.jumei.base.JmBase;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.common.util.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.net.URLEncoder;
@@ -48,6 +49,10 @@ public class JumeiProductService extends JmBase {
         //product.setProduct_spec_number((String) getValue(resultMap, "product", "product_spec_number"));
         product.setJumei_product_id((String) getValue(resultMap, "product", "jumei_product_id"));
 
+        if(StringUtils.isEmpty(product.getJumei_product_id())){
+            logger.info("返回错误"+reqResult);
+            throw new Exception(reqResult);
+        }
         /**
          * set jumei_spu_no jumei_sku_no from result
          */

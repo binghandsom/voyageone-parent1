@@ -101,12 +101,12 @@ public class JmBase {
 
 
         String result = HttpUtils.post(post_url.toString(), parm_url.toString());
-
+        logger.info("result：" + result);
 
         //转换错误信息
         if (result != null && result.indexOf("\"error\"") > 0) {
             Map<String, Object> resultMap = JsonUtil.jsonToMap(result);
-            if (resultMap.containsKey("error")) {
+            if (resultMap.containsKey("error") && !"0".equals(resultMap.get("error"))) {
                 throw new Exception("调用聚美API错误：" + result);
             }
         } else {
