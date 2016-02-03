@@ -1,8 +1,6 @@
 package com.voyageone.common.components.gilt;
 
-import com.voyageone.common.components.gilt.bean.GiltPageGetSaleAttrRequest;
-import com.voyageone.common.components.gilt.bean.GiltSale;
-import com.voyageone.common.components.gilt.bean.GiltSku;
+import com.voyageone.common.components.gilt.bean.*;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.JsonUtil;
 import org.junit.Before;
@@ -57,23 +55,29 @@ public class GiltSalesServiceTest {
 
     @Test
     public void testGetSaleById() throws Exception {
-        GiltPageGetSaleAttrRequest request=new GiltPageGetSaleAttrRequest();
-        request.setLimit(2);
-        request.setOffset(0);
-        request.setId("1141689861");
-        //request.setSku_ids("4099260,4099262,2997763");
-
-        List<GiltSale> skus= giltSalesService.getAllSales(shopBean);
-        System.out.println("Retrun:"+ JsonUtil.getJsonString(skus));
+        GiltSale sale= giltSalesService.getSaleById(shopBean,"1141506556");
+        System.out.println("Retrun:"+ JsonUtil.getJsonString(sale));
     }
 
     @Test
     public void testGetSaleInventorysById() throws Exception {
-
+        GiltPageGetSaleAttrRequest request=new GiltPageGetSaleAttrRequest();
+        request.setLimit(2);
+        request.setOffset(0);
+        request.setId("1141689861");
+        List<GiltInventory> list=giltSalesService.getSaleInventorysById(shopBean,request);
+        System.out.println("Retrun:"+ JsonUtil.getJsonString(list));
+        assertTrue(list.size()>0);
     }
 
     @Test
     public void testGetSaleRealTimeInventorysById() throws Exception {
-
+        GiltPageGetSaleAttrRequest request=new GiltPageGetSaleAttrRequest();
+        request.setLimit(2);
+        request.setOffset(0);
+        request.setId("1141689861");
+        List<GiltRealTimeInventory> list= giltSalesService.getSaleRealTimeInventorysById(shopBean,request);
+        System.out.println("Retrun:"+ JsonUtil.getJsonString(list));
+        assertTrue(list.size()>0);
     }
 }
