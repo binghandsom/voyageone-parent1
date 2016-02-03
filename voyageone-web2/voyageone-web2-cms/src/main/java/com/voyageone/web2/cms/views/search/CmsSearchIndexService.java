@@ -40,7 +40,7 @@ public class CmsSearchIndexService extends BaseAppService{
     private CmsBtChannelCategoryService cmsBtChannelCategoryService;
 
     private final String searchItems = "channelId;prodId;catId;catPath;created;creater;modified;" +
-            "modifier;fields;groups.msrpStart;groups.msrpEnd;groups.retailPriceStart;groups:retailPriceEnd;" +
+            "modifier;fields;groups.msrpStart;groups.msrpEnd;groups.retailPriceStart;groups.retailPriceEnd;" +
             "groups.salePriceStart;groups.salePriceEnd;groups.platforms.$;skus";
 
     /**

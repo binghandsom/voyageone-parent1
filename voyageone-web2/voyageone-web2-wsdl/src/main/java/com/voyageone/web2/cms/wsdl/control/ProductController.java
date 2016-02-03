@@ -29,6 +29,9 @@ public class ProductController extends BaseController {
     @Autowired
     private ProductService productService;
 
+    // TODO 好像不能只取到group的platforms数据
+    private final String searchItems = "fields;skus.$;groups";
+
     /**
      * selectOne
      *
@@ -151,11 +154,13 @@ public class ProductController extends BaseController {
 //                response = productService.getWmsProductsInfo(request);
 //            }
 //        }
+        request.setFields(searchItems);
         return productService.getWmsProductsInfo(request);
     }
 
     @RequestMapping("getOmsProductsInfo")
     public ProductForOmsGetResponse getOmsProductsInfo(@RequestBody ProductForOmsGetRequest request) {
+        request.setFields(searchItems);
         return productService.getOmsProductsInfo(request);
     }
 }

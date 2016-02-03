@@ -818,6 +818,8 @@ public class ProductService extends BaseService {
         request.check();
 
         JomgoQuery queryObject = new JomgoQuery();
+        // set fields
+        buildProjection(request, queryObject);
 
         //getProductByCode
         String productCode = request.getCode();
@@ -903,17 +905,24 @@ public class ProductService extends BaseService {
         request.check();
 
         JomgoQuery queryObject = new JomgoQuery();
+        // set fields
+        buildProjection(request, queryObject);
 
         StringBuffer sbQuery = new StringBuffer();
         // 设定sku的模糊查询
         String skuIncludes = request.getSkuIncludes();
         // 根据具体的sku取值
         List<String> skuList = request.getSkuList();
+
         if (!StringUtils.isEmpty(skuIncludes)) {
             sbQuery.append(MongoUtils.splicingValue("skus.skuCode", skuIncludes, "$regex"));
             sbQuery.append(",");
-        } else if (skuList.size() > 0) {
-            sbQuery.append(MongoUtils.splicingValue("skus.skuCode", skuList.toArray()));
+        } else if (skuList!= null && skuList.size() > 0) {
+            String[] newSkuList = new String[skuList.size()];
+            for (int i = 0; i < skuList.size(); i++) {
+                newSkuList[i] = skuList.get(i);
+            }
+            sbQuery.append(MongoUtils.splicingValue("skus.skuCode", newSkuList));
             sbQuery.append(",");
         }
 
