@@ -44,6 +44,8 @@ define([
                 property.parentRequired = !parent ? false : (parent.required || parent.parentRequired);
                 property.headClass = property.isSimple ? 'fa-minus' : 'fa-plus';
 
+                property.matched = false;
+
                 property.mapping = {
                     type: null,
                     isMulti: false,
@@ -55,6 +57,11 @@ define([
                         return parent.mapping.isChildOfMulti();
                     }
                 };
+
+                platformPropMappingService.isMatched(property).then(function(matched) {
+                    property.matched = matched;
+                    console.log(matched);
+                });
 
                 platformPropMappingService.getMappingType(property).then(function(type) {
                     property.mapping.type = switchMappingType(property, type);
