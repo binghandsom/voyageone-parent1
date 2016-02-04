@@ -169,6 +169,21 @@ public class CmsUploadJmProductService extends BaseTaskService {
         }
         jmProductBean.setNormalImage(stringBuffer.toString());
 
+        // 竖图
+        stringBuffer = new StringBuffer();
+        pics = imagesMap.get(JumeiImageType.VERTICAL.getId());
+        if (pics != null) {
+            for (JmPicBean jmPicBean : pics) {
+                if (stringBuffer.length() != 0) {
+                    stringBuffer.append(",");
+                }
+                stringBuffer.append(jmPicBean.getJmUrl());
+            }
+        }
+        if(stringBuffer.length() > 0){
+            jmProductBean.setVerticalImage(stringBuffer.toString());
+        }
+
 
         // 品牌图
         stringBuffer = new StringBuffer();
