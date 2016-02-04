@@ -58,7 +58,7 @@ public class CmsUploadJmProductService extends BaseTaskService {
 
     private static final String IMG_HTML = "<img src=\"%s\" alt=\"\" />";
 
-    private static final String DESCRIPTION_USAGE = "<div align=\"center\">%s %s <br /></div>";
+    private static final String DESCRIPTION_USAGE = "<div>%s %s <br /></div>";
 
     private static final String DESCRIPTION_IMAGES = "%s<br />";
 
