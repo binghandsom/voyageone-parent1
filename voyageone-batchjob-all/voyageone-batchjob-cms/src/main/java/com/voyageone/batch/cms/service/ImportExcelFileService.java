@@ -142,6 +142,10 @@ public class ImportExcelFileService extends BaseTaskService {
         }
     }
 
+    /**
+     * 专场文件判定
+     *
+     */
     private boolean isSpecialActivity(String fileName) {
         boolean ret = false;
 
@@ -1177,6 +1181,12 @@ public class ImportExcelFileService extends BaseTaskService {
                 continue;
             }
 
+            // 结束行判定
+            if (StringUtils.isEmpty(ExcelUtils.getString(row, PruductSheetFormat.channel_id_index))) {
+                logger.info("readProductSheet end rownum = " + row.getRowNum());
+                break;
+            }
+
             // Product Bean 生成
             JmBtProductImportModel productImportModel = getProductModel(row);
             // Image Bean 生成
@@ -1236,8 +1246,15 @@ public class ImportExcelFileService extends BaseTaskService {
         for (Row row : skuSheet) {
             boolean retRow = true;
 
+            // 标题行判定
             if (isSkuHeadRow(row)) {
                 continue;
+            }
+
+            // 结束行判定
+            if (StringUtils.isEmpty(ExcelUtils.getString(row, SkuSheetFormat.channel_id_index))) {
+                logger.info("readSkuSheet end rownum = " + row.getRowNum());
+                break;
             }
 
             // Sku Bean 生成
@@ -1291,6 +1308,12 @@ public class ImportExcelFileService extends BaseTaskService {
                 continue;
             }
 
+            // 结束行判定
+            if (StringUtils.isEmpty(ExcelUtils.getString(row, ImageSheetFormat.seq_index))) {
+                logger.info("readImageSheet end rownum = " + row.getRowNum());
+                break;
+            }
+
             // Images Bean 生成
             JmBtImagesModel imagesModel = getImageModel(row);
             if (imagesModel == null) {
@@ -1338,6 +1361,12 @@ public class ImportExcelFileService extends BaseTaskService {
                     isDataRow = true;
                     continue;
                 }
+            }
+
+            // 结束行判定
+            if (StringUtils.isEmpty(ExcelUtils.getString(row, DealSheetFormat.channel_id_index))) {
+                logger.info("readDealSheet end rownum = " + row.getRowNum());
+                break;
             }
 
             // Deal Bean 生成
