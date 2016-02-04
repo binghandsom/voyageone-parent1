@@ -84,6 +84,9 @@ public class ImportExcelFileService extends BaseTaskService {
 
     private final String GBKCharset = "GBK";
 
+    // 专场文件前缀
+    private final String preFixSpecialActivity = "S_";
+
     @Override
     public SubSystem getSubSystem() {
         return SubSystem.CMS;
@@ -131,8 +134,23 @@ public class ImportExcelFileService extends BaseTaskService {
         for (int i = 0; i < uploadFileList.size(); i++) {
             String filePath = filePathBean.getUpload_localpath() + File.separator + uploadFileList.get(i);
 
-            importExcelFile(orderChannelID, filePath, uploadFileList.get(i), filePathBean);
+            if (isSpecialActivity(uploadFileList.get(i))) {
+                importExcelFileForSpecialActivity(orderChannelID, filePath, uploadFileList.get(i), filePathBean);
+            } else {
+                importExcelFile(orderChannelID, filePath, uploadFileList.get(i), filePathBean);
+            }
         }
+    }
+
+    private boolean isSpecialActivity(String fileName) {
+        boolean ret = false;
+
+        String preFix = fileName.substring(0, preFixSpecialActivity.length());
+        if (preFixSpecialActivity.equals(preFix)) {
+            ret = true;
+        }
+
+        return ret;
     }
 
     /**
@@ -151,6 +169,94 @@ public class ImportExcelFileService extends BaseTaskService {
         ftpBean.setUpload_local_bak_path(ftpFilePaths.get(0).getProp_val2());
 
         return ftpBean;
+    }
+
+    /**
+     * Excel 专场文件系统导入
+     *
+     */
+    private void importExcelFileForSpecialActivity(String orderChannelID, String filePath, String fileName, FtpBean filePathBean) {
+        boolean ret = true;
+        // 异常返回
+        List<ErrorContent> errList = new ArrayList<ErrorContent>();
+
+        // Excel 内容缓存
+        // Deal Sheet
+        List<JmBtDealImportModel> dealList = new ArrayList<JmBtDealImportModel>();
+
+        $info("上传的文档 [ %s ] 处理开始", fileName);
+        try {
+            File excelFile = new File(filePath);
+            InputStream fileInputStream = new FileInputStream(excelFile);
+            Workbook book = WorkbookFactory.create(fileInputStream);
+
+            // Excel Sheet数检查
+            $info("上传的文档 [ %s ] Sheet名检查", fileName);
+            ret = chkSheet(book, fileName, errList);
+            if (!ret ){
+                $info("上传的文档 [ %s ] Sheet名检查异常", fileName);
+
+            } else {
+
+                // Deal Sheet读入
+                $info("上传的文档 [ %s ] Deal Sheet读入", fileName);
+                ret = readDealSheet(book, fileName, errList, dealList);
+                if (!ret) {
+                    $info("上传的文档 [ %s ] Deal Sheet读入异常", fileName);
+                }
+            }
+
+            if (errList.size() > 0) {
+                // 异常信息
+                exportErrorContent(filePathBean, errList);
+            } else {
+                // 缓存内容DB追加
+                $info("上传的文档 [ %s ] DB导入 专场货架更新", fileName);
+                updateSpecialActivity(dealList, fileName, errList);
+                if (errList.size() > 0) {
+                    // 异常信息
+                    exportErrorContent(filePathBean, errList);
+                }
+            }
+
+            fileInputStream.close();
+
+            $info("上传的文档 [ %s ] 处理结束", fileName);
+        } catch (Exception e) {
+
+            logger.error("importExcelFileForSpecialActivity file error = " + fileName, e);
+            issueLog.log(e,
+                    ErrorType.BatchJob,
+                    SubSystem.CMS,
+                    "importExcelFileForSpecialActivity file = " + fileName
+            );
+        } finally {
+            moveFile(fileName, filePathBean);
+        }
+    }
+
+    /**
+     * 缓存内容DB追加
+     *
+     */
+    private boolean updateSpecialActivity(
+                             List<JmBtDealImportModel> dealList,
+                             String fileName,
+                             List<ErrorContent> errList) {
+        boolean ret = true;
+
+        for (int i = 0; i < dealList.size(); i++) {
+            JmBtDealImportModel dealImportModel = dealList.get(i);
+            ret = updateDealTableForSpecialActivity(dealImportModel);
+            if (!ret) {
+                String errorInfo = "deal id = [%s], product code = [%s] DB special activity update error";
+                errorInfo = String.format(errorInfo, dealImportModel.getDealId(), dealImportModel.getProductCode());
+                ErrorContent errorContent = getReadErrorContent(fileName, dealSheetName, 0, errorInfo);
+                errList.add(errorContent);
+            }
+        }
+
+        return ret;
     }
 
     /**
@@ -295,12 +401,12 @@ public class ImportExcelFileService extends BaseTaskService {
      *
      */
     private boolean insertDB(List<JmBtProductImportModel> productList,
-                          List<JmBtDealImportModel> dealList,
-                          List<JmBtImagesModel> imageList,
-                          List<JmBtSkuImportModel> skuList,
-                          String fileName,
-                          List<ErrorContent> errList) {
-        boolean ret = true;
+                List<JmBtDealImportModel> dealList,
+                List<JmBtImagesModel> imageList,
+                List<JmBtSkuImportModel> skuList,
+                String fileName,
+                List<ErrorContent> errList) {
+            boolean ret = true;
 
         for (int i = 0; i < productList.size(); i++) {
             JmBtProductImportModel productImportModel = productList.get(i);
@@ -685,9 +791,9 @@ public class ImportExcelFileService extends BaseTaskService {
             skuModel.setDealId(ExcelUtils.getString(row, SkuSheetFormat.deal_id_index));
             skuModel.setSku(ExcelUtils.getString(row, SkuSheetFormat.sku_index));
             skuModel.setUpcCode(ExcelUtils.getString(row, SkuSheetFormat.upc_code_index));
-            skuModel.setAbroadPrice(Double.valueOf(ExcelUtils.getString(row, SkuSheetFormat.abroad_price_index)));
-            skuModel.setDealPrice(ExcelUtils.getNum(row, SkuSheetFormat.deal_price_index));
-            skuModel.setMarketPrice(ExcelUtils.getNum(row, SkuSheetFormat.market_price_index));
+            skuModel.setAbroadPrice(CommonUtil.getRoundUp2Digits(Double.valueOf(ExcelUtils.getString(row, SkuSheetFormat.abroad_price_index))));
+            skuModel.setDealPrice(CommonUtil.getRoundUp2Digits(ExcelUtils.getNum(row, SkuSheetFormat.deal_price_index)));
+            skuModel.setMarketPrice(CommonUtil.getRoundUp2Digits(ExcelUtils.getNum(row, SkuSheetFormat.market_price_index)));
             skuModel.setSize(ExcelUtils.getString(row, SkuSheetFormat.size_index));
 //        skuModel.setHscode(ExcelUtils.getString(row, SkuSheetFormat.hscode_index));
             skuModel.setHscode("");
@@ -757,6 +863,14 @@ public class ImportExcelFileService extends BaseTaskService {
             dealModel.setSynFlg(0);
             dealModel.setCreater(getTaskName());
             dealModel.setModifier(getTaskName());
+
+            // 专场对应
+            dealModel.setSpecialActivityId1(ExcelUtils.getString(row, DealSheetFormat.special_activity_id1_index));
+            dealModel.setShelfId1(ExcelUtils.getString(row, DealSheetFormat.shelf_id1_index));
+            dealModel.setSpecialActivityId2(ExcelUtils.getString(row, DealSheetFormat.special_activity_id2_index));
+            dealModel.setShelfId2(ExcelUtils.getString(row, DealSheetFormat.shelf_id2_index));
+            dealModel.setSpecialActivityId3(ExcelUtils.getString(row, DealSheetFormat.special_activity_id3_index));
+            dealModel.setShelfId3(ExcelUtils.getString(row, DealSheetFormat.shelf_id3_index));
         }catch (Exception e) {
             logger.error("importExcelFile getDealModel error", e);
             dealModel = null;
@@ -970,6 +1084,35 @@ public class ImportExcelFileService extends BaseTaskService {
         } catch (Exception e) {
             ret = false;
             logger.error("insertDealTable error dealId, productCode = " + dealImportModel.getDealId() + " , " + dealImportModel.getProductCode(), e);
+            issueLog.log(e,
+                    ErrorType.BatchJob,
+                    SubSystem.CMS,
+                    "Channel Id, Deal Id, Product Code = " + dealImportModel.getChannelId() + "," + dealImportModel.getDealId() + "," + dealImportModel.getProductCode());
+        }
+
+        return ret;
+    }
+
+    /**
+     * Deal Bean数据库追加
+     *
+     */
+    private boolean updateDealTableForSpecialActivity(JmBtDealImportModel dealImportModel) {
+        boolean ret = true;
+
+        try {
+            int recCount = dealImportDao.updateDealImportInfoForSpecialActivity(dealImportModel);
+            if (recCount == 0) {
+                ret = false;
+                logger.error("updateDealTableForSpecialActivity error record not found. dealId, productCode = " + dealImportModel.getDealId() + " , " + dealImportModel.getProductCode());
+                issueLog.log("updateDealTableForSpecialActivity",
+                        "Channel Id, Deal Id, Product Code = " + dealImportModel.getChannelId() + "," + dealImportModel.getDealId() + "," + dealImportModel.getProductCode(),
+                        ErrorType.BatchJob,
+                        SubSystem.CMS);
+            }
+        } catch (Exception e) {
+            ret = false;
+            logger.error("updateDealTableForSpecialActivity error dealId, productCode = " + dealImportModel.getDealId() + " , " + dealImportModel.getProductCode(), e);
             issueLog.log(e,
                     ErrorType.BatchJob,
                     SubSystem.CMS,
@@ -1421,6 +1564,14 @@ public class ImportExcelFileService extends BaseTaskService {
         private static final int product_short_name_length = 15;
 
         private static final int search_meta_text_custom_index = 14;
+
+        // 专场货架对应
+        private static final int special_activity_id1_index = 15;
+        private static final int shelf_id1_index = 16;
+        private static final int special_activity_id2_index = 17;
+        private static final int shelf_id2_index = 18;
+        private static final int special_activity_id3_index = 19;
+        private static final int shelf_id3_index = 20;
     }
 
     /**

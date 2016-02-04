@@ -123,4 +123,42 @@
             and product.deal_id = dealm.deal_id
   </update>
 
+    <update id="jm_bt_deal_import_updateForSpecialActivity" parameterType="com.voyageone.batch.cms.model.JmBtDealImportModel" >
+        update jumei.jm_bt_deal_import
+        <set >
+            <if test="specialActivityId1 != null" >
+                special_activity_id1 = #{specialActivityId1,jdbcType=VARCHAR},
+            </if>
+            <if test="shelfId1 != null" >
+                shelf_id1 = #{shelfId1,jdbcType=VARCHAR},
+            </if>
+            <if test="specialActivityId2 != null" >
+                special_activity_id2 = #{specialActivityId2,jdbcType=VARCHAR},
+            </if>
+            <if test="shelfId2 != null" >
+                shelf_id2 = #{shelfId2,jdbcType=VARCHAR},
+            </if>
+            <if test="specialActivityId3 != null" >
+                special_activity_id3 = #{specialActivityId3,jdbcType=VARCHAR},
+            </if>
+            <if test="shelfId3 != null" >
+                shelf_id3 = #{shelfId3,jdbcType=VARCHAR},
+            </if>
+            modified = now(),
+            <if test="modifier != null" >
+                modifier = #{modifier,jdbcType=VARCHAR},
+            </if>
+        </set>
+        <where>
+            <if test="channelId != null" >
+                channel_id = #{channelId,jdbcType=VARCHAR}
+            </if>
+            <if test="productCode != null" >
+                and product_code = #{productCode,jdbcType=VARCHAR}
+            </if>
+            <if test="dealId != null and dealId != ''" >
+                and deal_id = #{dealId,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </update>
 </mapper>
