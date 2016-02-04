@@ -46,21 +46,9 @@ public class TrackingService {
      * 根据传入参数取得该订单的物流信息
      * @param cwb 检索参数
      */
-    public OrderTrackInfoBean getSynshipNoByWebid(String cwb) {
+    public OrderTrackInfoBean getSynshipNoByWebid(String cwb, String channelid) {
 
-        OrderTrackInfoBean orderTrackInfoBean = trackingDao.getSynshipNoByWebid(cwb);
-
-        return orderTrackInfoBean;
-
-    }
-
-    /**
-     * 根据传入参数取得该订单的物流信息
-     * @param cwb 检索参数
-     */
-    public OrderTrackInfoBean getSynshipNoByPhone(String cwb) {
-
-        OrderTrackInfoBean orderTrackInfoBean = trackingDao.getSynshipNoByPhone(cwb);
+        OrderTrackInfoBean orderTrackInfoBean = trackingDao.getSynshipNoByWebid(cwb, channelid);
 
         return orderTrackInfoBean;
 
@@ -70,9 +58,9 @@ public class TrackingService {
      * 根据传入参数取得该订单的物流信息
      * @param cwb 检索参数
      */
-    public OrderTrackInfoBean getSynshipNoByTrackingNo(String cwb) {
+    public OrderTrackInfoBean getSynshipNoByPhone(String cwb,String channelid) {
 
-        OrderTrackInfoBean orderTrackInfoBean = trackingDao.getSynshipNoByTrackingNo(cwb);
+        OrderTrackInfoBean orderTrackInfoBean = trackingDao.getSynshipNoByPhone(cwb, channelid);
 
         return orderTrackInfoBean;
 
@@ -82,9 +70,21 @@ public class TrackingService {
      * 根据传入参数取得该订单的物流信息
      * @param cwb 检索参数
      */
-    public OrderTrackInfoBean getSynshipNoByOrderNum(String cwb) {
+    public OrderTrackInfoBean getSynshipNoByTrackingNo(String cwb,String channelid) {
 
-        OrderTrackInfoBean orderTrackInfoBean = trackingDao.getSynshipNoByOrderNum(cwb);
+        OrderTrackInfoBean orderTrackInfoBean = trackingDao.getSynshipNoByTrackingNo(cwb, channelid);
+
+        return orderTrackInfoBean;
+
+    }
+
+    /**
+     * 根据传入参数取得该订单的物流信息
+     * @param cwb 检索参数
+     */
+    public OrderTrackInfoBean getSynshipNoByOrderNum(String cwb,String channelid) {
+
+        OrderTrackInfoBean orderTrackInfoBean = trackingDao.getSynshipNoByOrderNum(cwb, channelid);
 
         return orderTrackInfoBean;
 
