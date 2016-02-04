@@ -42,6 +42,14 @@ public class JmBtDealImportModel {
 
     private String modifier;
 
+    private String specialActivityId1;
+    private String shelfId1;
+    private String specialActivityId2;
+    private String shelfId2;
+    private String specialActivityId3;
+    private String shelfId3;
+
+
     public Integer getSeq() {
         return seq;
     }
@@ -194,4 +202,51 @@ public class JmBtDealImportModel {
         this.jumeiHashId = jumeiHashId;
     }
 
+    public String getSpecialActivityId1() {
+        return specialActivityId1;
+    }
+
+    public void setSpecialActivityId1(String specialActivityId1) {
+        this.specialActivityId1 = specialActivityId1;
+    }
+
+    public String getShelfId1() {
+        return shelfId1;
+    }
+
+    public void setShelfId1(String shelfId1) {
+        this.shelfId1 = shelfId1;
+    }
+
+    public String getSpecialActivityId2() {
+        return specialActivityId2;
+    }
+
+    public void setSpecialActivityId2(String specialActivityId2) {
+        this.specialActivityId2 = specialActivityId2;
+    }
+
+    public String getShelfId2() {
+        return shelfId2;
+    }
+
+    public void setShelfId2(String shelfId2) {
+        this.shelfId2 = shelfId2;
+    }
+
+    public String getSpecialActivityId3() {
+        return specialActivityId3;
+    }
+
+    public void setSpecialActivityId3(String specialActivityId3) {
+        this.specialActivityId3 = specialActivityId3;
+    }
+
+    public String getShelfId3() {
+        return shelfId3;
+    }
+
+    public void setShelfId3(String shelfId3) {
+        this.shelfId3 = shelfId3;
+    }
 }
