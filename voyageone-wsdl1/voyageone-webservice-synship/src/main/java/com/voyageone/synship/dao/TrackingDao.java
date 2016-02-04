@@ -44,8 +44,14 @@ public class TrackingDao extends BaseDao {
      * @param cwb 查询参数
      * @return OrderTrackInfoBean
      */
-    public OrderTrackInfoBean getSynshipNoByWebid(String cwb) {
-        return selectOne("orders_getSynshipNoByWebid", cwb);
+    public OrderTrackInfoBean getSynshipNoByWebid(String cwb,String channelid) {
+
+        Map<String, Object> params = new HashMap<>();
+
+        params.put("cwb", cwb);
+        params.put("channelid", channelid);
+
+        return selectOne("orders_getSynshipNoByWebid", params);
     }
 
     /**
@@ -53,8 +59,14 @@ public class TrackingDao extends BaseDao {
      * @param cwb 查询参数
      * @return OrderTrackInfoBean
      */
-    public OrderTrackInfoBean getSynshipNoByPhone(String cwb) {
-        return selectOne("orders_getSynshipNoByPhone", cwb);
+    public OrderTrackInfoBean getSynshipNoByPhone(String cwb,String channelid) {
+
+        Map<String, Object> params = new HashMap<>();
+
+        params.put("cwb", cwb);
+        params.put("channelid", channelid);
+
+        return selectOne("orders_getSynshipNoByPhone", params);
     }
 
     /**
@@ -62,8 +74,14 @@ public class TrackingDao extends BaseDao {
      * @param cwb 查询参数
      * @return OrderTrackInfoBean
      */
-    public OrderTrackInfoBean getSynshipNoByTrackingNo(String cwb) {
-        return selectOne("orders_getSynshipNoByTrackingNo", cwb);
+    public OrderTrackInfoBean getSynshipNoByTrackingNo(String cwb,String channelid) {
+
+        Map<String, Object> params = new HashMap<>();
+
+        params.put("cwb", cwb);
+        params.put("channelid", channelid);
+
+        return selectOne("orders_getSynshipNoByTrackingNo", params);
     }
 
     /**
@@ -71,8 +89,14 @@ public class TrackingDao extends BaseDao {
      * @param cwb 查询参数
      * @return OrderTrackInfoBean
      */
-    public OrderTrackInfoBean getSynshipNoByOrderNum(String cwb) {
-        return selectOne("orders_getSynshipNoByOrderNum", cwb);
+    public OrderTrackInfoBean getSynshipNoByOrderNum(String cwb,String channelid) {
+
+        Map<String, Object> params = new HashMap<>();
+
+        params.put("cwb", cwb);
+        params.put("channelid", channelid);
+
+        return selectOne("orders_getSynshipNoByOrderNum", params);
     }
 
     /**

@@ -15,6 +15,8 @@ import com.voyageone.common.components.jumei.Enums.JumeiImageType;
 import com.voyageone.common.components.jumei.JumeiImageFileService;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
+import com.voyageone.common.configs.Enums.FeedEnums;
+import com.voyageone.common.configs.Feed;
 import com.voyageone.common.configs.ShopConfigs;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.configs.beans.ShopConfigBean;
@@ -36,6 +38,7 @@ import java.io.*;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.regex.Pattern;
 
 /**
  * @author james.li on 2016/1/25.
@@ -46,6 +49,8 @@ public class CmsUploadJmPicService extends BaseTaskService {
 
     /* slf4j Log */
     private static final Logger LOG = LoggerFactory.getLogger(CmsUploadJmPicService.class);
+
+    private static final Pattern special_symbol= Pattern.compile("[~@'\\s.:#$%&*_''/‘’^\\()]");
 
     /* 线程总数 */
     /*private static final int THREAD_COUNT=10;*/
@@ -189,8 +194,7 @@ public class CmsUploadJmPicService extends BaseTaskService {
      * @param jmPicBean jmPicBean
      * @return JmImageFileBean
      */
-    private static JmImageFileBean convertJmPicToImageFileBean(JmPicBean jmPicBean) {
-        try {
+    private static JmImageFileBean convertJmPicToImageFileBean(JmPicBean jmPicBean) throws Exception {
             JmImageFileBean jmImageFileBean = new JmImageFileBean();
 //            File imageFile=new File(jmPicBean.getOriginUrl());
             int retryCount = GET_IMG_INPUTSTREAM_RETRY;
@@ -201,15 +205,11 @@ public class CmsUploadJmPicService extends BaseTaskService {
             if (jmPicBean.getImageType() == JumeiImageType.BRANDSTORY.getId() || jmPicBean.getImageType() == JumeiImageType.SIZE.getId()) {
                 jmImageFileBean.setImgName(MD5.getMD5(jmPicBean.getImageKey()) + "_" + jmPicBean.getImageType() + "_" + jmPicBean.getImageIndex()/*+IMGTYPE*/);
             } else {
-                jmImageFileBean.setImgName(jmPicBean.getImageKey().replace(SLASH, "_") + "_" + jmPicBean.getImageType() + "_" + jmPicBean.getImageIndex()/*+IMGTYPE*/);
+                jmImageFileBean.setImgName(special_symbol.matcher(jmPicBean.getImageKey()).replaceAll("") + jmPicBean.getImageType() + "_" + jmPicBean.getImageIndex()/*+IMGTYPE*/);
             }
             jmImageFileBean.setNeedReplace(NEED_REPLACE);
             jmImageFileBean.setExtName("jpg");
             return jmImageFileBean;
-        } catch (Exception e) {
-            LOG.error("CmsUploadJmPicService -> convertJmPicToImageFileBean() Error:" + e);
-            return null;
-        }
     }
 
     /**
@@ -229,7 +229,7 @@ public class CmsUploadJmPicService extends BaseTaskService {
                 getImgInputStream(url, retry);
             }
         }
-        throw exception;
+        throw new Exception(url+"取得失败");
     }
 
     /***
@@ -242,7 +242,7 @@ public class CmsUploadJmPicService extends BaseTaskService {
         Assert.notNull(jmPicBean);
         checkFiled(jmPicBean.getChannelId(), jmPicBean.getImageKey());
         if (jmPicBean.getImageType() <= 3) {
-            return SLASH + jmPicBean.getChannelId() + SLASH + "product" + SLASH + jmPicBean.getImageType() + SLASH + jmPicBean.getImageKey().replace(SLASH, "_");
+            return SLASH + jmPicBean.getChannelId() + SLASH + "product" + SLASH + jmPicBean.getImageType() + SLASH + special_symbol.matcher(jmPicBean.getImageKey()).replaceAll("");
         } else if (jmPicBean.getImageType() <= 5) {
 //            return SLASH+jmPicBean.getChannelId()+SLASH+jmPicBean.getPicType()+SLASH+jmPicBean.getImageKey().replace(SLASH,"_")+SLASH+jmPicBean.getImageType();
             return SLASH + jmPicBean.getChannelId() + SLASH + "brand" + SLASH + jmPicBean.getImageType();

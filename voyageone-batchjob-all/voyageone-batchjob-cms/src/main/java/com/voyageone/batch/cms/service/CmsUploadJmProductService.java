@@ -23,6 +23,7 @@ import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.ShopConfigs;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,6 +33,7 @@ import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 
 /**
  * @author james.li on 2016/1/25.
@@ -56,9 +58,11 @@ public class CmsUploadJmProductService extends BaseTaskService {
 
     private static final String IMG_HTML = "<img src=\"%s\" alt=\"\" />";
 
-    private static final String DESCRIPTION_USAGE = "<div align=\"center\">%s %s <br /></div>";
+    private static final String DESCRIPTION_USAGE = "<div>%s %s <br /></div>";
 
     private static final String DESCRIPTION_IMAGES = "%s<br />";
+
+    private static final Pattern special_symbol= Pattern.compile("[~@'\\s.:#$%&_''‘’^]");
 
     private static Vector<JmBtProductImportModel> succeedProduct = new Vector<>();
 
@@ -75,7 +79,7 @@ public class CmsUploadJmProductService extends BaseTaskService {
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
 
-        int threadPoolCnt = 1;
+        int threadPoolCnt = 5;
         int limit = 100;
         for (TaskControlBean taskControlBean : taskControlList) {
             if ("thread_count".equalsIgnoreCase(taskControlBean.getCfg_name())) {
@@ -122,9 +126,10 @@ public class CmsUploadJmProductService extends BaseTaskService {
 //            updateFlg(jmBtProductImport);
             logger.info(jmBtProductImport.getChannelId() + "|" + jmBtProductImport.getProductCode() + " 聚美上新结束");
         } catch (Exception e) {
+            e.printStackTrace();
             issueLog.log(e, ErrorType.BatchJob, getSubSystem());
             jmBtProductImport.setSynFlg("3");
-            jmBtProductImport.setUploadErrorInfo(e.getMessage());
+            jmBtProductImport.setUploadErrorInfo(CommonUtil.getMessages(e));
             jmBtProductImport.setModifier(getTaskName());
             productImportDao.updateProductImportInfo(jmBtProductImport);
         }
@@ -177,7 +182,8 @@ public class CmsUploadJmProductService extends BaseTaskService {
         }
         jmProductBean.getDealInfo().setDescription_properties(stringBuffer.toString());
 
-        //尺码表
+
+        //参数图
         stringBuffer = new StringBuffer();
         pics = imagesMap.get(JumeiImageType.PARAMETER.getId());
         if (pics != null) {
@@ -185,6 +191,7 @@ public class CmsUploadJmProductService extends BaseTaskService {
                 stringBuffer.append(String.format(IMG_HTML, jmPicBean.getJmUrl()));
             }
         }
+        //尺码表
         pics = imagesMap.get(JumeiImageType.SIZE.getId());
         if (pics != null) {
             for (JmPicBean jmPicBean : pics) {
@@ -209,7 +216,7 @@ public class CmsUploadJmProductService extends BaseTaskService {
                 stringBuffer.append(String.format(IMG_HTML, jmPicBean.getJmUrl()));
             }
         } else {
-//            throw new BusinessException("物流图不存在");
+            throw new BusinessException("物流图不存在");
         }
         jmProductBean.getDealInfo().setDescription_images(String.format(DESCRIPTION_IMAGES, stringBuffer.toString()));
 
@@ -260,11 +267,11 @@ public class CmsUploadJmProductService extends BaseTaskService {
         String partner_sku_nos = "";
         JmProductBean jmProductBean = new JmProductBean();
 
-        jmProductBean.setName(jmBtProductImport.getProductName());
+        jmProductBean.setName(special_symbol.matcher(jmBtProductImport.getProductName()).replaceAll(" "));
         jmProductBean.setProduct_spec_number(jmBtProductImport.getProductCode());
         jmProductBean.setCategory_v3_4_id(jmBtProductImport.getCategoryLv4Id());
         jmProductBean.setBrand_id(jmBtProductImport.getBrandId());
-        jmProductBean.setForeign_language_name(jmBtProductImport.getForeignLanguageName());
+        jmProductBean.setForeign_language_name(special_symbol.matcher(jmBtProductImport.getForeignLanguageName()).replaceAll(" "));
         // Todo
 
         // sku
@@ -285,7 +292,7 @@ public class CmsUploadJmProductService extends BaseTaskService {
             sku.setPartner_sku_no(jmBtSkuImportModel.getSku());
             sku.setSale_on_this_deal("1");
             sku.setBusinessman_num(jmBtSkuImportModel.getSku());
-            sku.setStocks("1");
+            sku.setStocks("0");
             sku.setDeal_price(jmBtSkuImportModel.getDealPrice().toString());
             sku.setMarket_price(jmBtSkuImportModel.getMarketPrice().toString());
             spu.setSkuInfo(sku);
@@ -313,7 +320,7 @@ public class CmsUploadJmProductService extends BaseTaskService {
         // 特殊说明
         jmProductBean_DealInfo.setSpecial_explain(jmBtProductImport.getSpecialNote());
 
-        jmProductBean_DealInfo.setPartner_sku_nos(partner_sku_nos.substring(0, partner_sku_nos.length() - 2));
+        jmProductBean_DealInfo.setPartner_sku_nos(partner_sku_nos.substring(0, partner_sku_nos.length() - 1));
 
         jmProductBean.setDealInfo(jmProductBean_DealInfo);
         return jmProductBean;
@@ -326,7 +333,7 @@ public class CmsUploadJmProductService extends BaseTaskService {
 
 
         d = sdf.parse(user_time);
-        long l = d.getTime()/1000;
+        long l = d.getTime()/1000-8*3600;
 
         return l;
     }
