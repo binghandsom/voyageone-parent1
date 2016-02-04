@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
  * @version 2.0.0
  * @since 2.0.0
  */
-@Component
+@Component("GiltAnalysisJob")
 public class GiltAnalysisJob extends BaseTaskJob {
 
     @Autowired
