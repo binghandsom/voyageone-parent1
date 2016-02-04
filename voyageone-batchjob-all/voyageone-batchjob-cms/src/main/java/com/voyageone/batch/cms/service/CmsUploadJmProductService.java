@@ -333,7 +333,7 @@ public class CmsUploadJmProductService extends BaseTaskService {
 
 
         d = sdf.parse(user_time);
-        long l = d.getTime()/1000;
+        long l = d.getTime()/1000-8*3600;
 
         return l;
     }
