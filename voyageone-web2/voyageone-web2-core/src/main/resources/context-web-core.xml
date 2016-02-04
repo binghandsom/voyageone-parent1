@@ -5,7 +5,6 @@
      http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
     <!-- DAO相关配置 -->
     <import resource="classpath*:context-test-datasource.xml" />
-    <!--<import resource="classpath*:context-test-collecion-mapping.xml" />-->
     <import resource="classpath*:context-test-datasource-mongo.xml" />
     <!--<import resource="file:/usr/web/spring-config/datasource-config.xml" />-->
     <!--<import resource="file:/usr/web/spring-config/datasource-config-mongo.xml" />-->

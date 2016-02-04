@@ -66,6 +66,7 @@ public class ProductService extends BaseService {
 
     /**
      * selectOne
+     *
      * @param request ProductGetRequest
      * @return ProductGetResponse
      */
@@ -114,6 +115,7 @@ public class ProductService extends BaseService {
 
     /**
      * selectList
+     *
      * @param request ProductsGetRequest
      * @return ProductsGetResponse
      */
@@ -180,6 +182,7 @@ public class ProductService extends BaseService {
 
     /**
      * selectCount
+     *
      * @param request Request
      * @return ProductsCountResponse
      */
@@ -245,6 +248,7 @@ public class ProductService extends BaseService {
 
     /**
      * build product query
+     *
      * @param props prop string
      * @return query string
      */
@@ -286,7 +290,7 @@ public class ProductService extends BaseService {
 
                 index = 0;
                 for (String propTmp : propList) {
-                    if (index>0) {
+                    if (index > 0) {
                         resultSb.append(" , ");
                     }
                     resultSb.append(propTmp.replace(key, ""));
@@ -295,8 +299,8 @@ public class ProductService extends BaseService {
                 resultSb.append(" } } ");
 
                 //"fields":{$elemMatch: {"code": "100001", "isMain":1}
-            } else if (propList.size()>0) {
-                if (resultSb.length()>0) {
+            } else if (propList.size() > 0) {
+                if (resultSb.length() > 0) {
                     resultSb.append(" , ");
                 }
                 resultSb.append(propList.get(0));
@@ -308,6 +312,7 @@ public class ProductService extends BaseService {
 
     /**
      * get Product ArrayType Path String
+     *
      * @param propStr porp string
      * @return Product ArrayType Path
      */
@@ -322,6 +327,7 @@ public class ProductService extends BaseService {
 
     /**
      * get prices log list
+     *
      * @param request ProductPriceLogGetRequest
      * @return ProductPriceLogGetResponse
      */
@@ -360,7 +366,7 @@ public class ProductService extends BaseService {
             priceList = cmsBtPriceLogDao.selectPriceLogByCode(params);
             count = cmsBtPriceLogDao.selectPriceLogByCodeCnt(params);
             result.setPriceList(priceList);
-            result.setTotalCount((long)count);
+            result.setTotalCount((long) count);
         }
 
         return result;
@@ -465,7 +471,7 @@ public class ProductService extends BaseService {
                 throw new ApiException(codeEnum.getErrorCode(), "product not found!");
             }
 
-            if(request.getIsCheckModifed()) {
+            if (request.getIsCheckModifed()) {
                 if (findModel.getModified() != null && !findModel.getModified().equals(productModel.getModified())) {
                     throw new ApiException(codeEnum.getErrorCode(), "product has been update, not update!");
                 }
@@ -571,7 +577,7 @@ public class ProductService extends BaseService {
             if (bulkList.size() > 0) {
 
                 if (findModel.getFields() != null && findModel.getFields().getStatus() != null
-                    && productModel.getFields() != null && productModel.getFields().getStatus() != null) {
+                        && productModel.getFields() != null && productModel.getFields().getStatus() != null) {
                     //insert　ProductHistory
                     CmsConstants.ProductStatus befStatus = CmsConstants.ProductStatus.valueOf(findModel.getFields().getStatus());
                     CmsConstants.ProductStatus aftStatus = CmsConstants.ProductStatus.valueOf(productModel.getFields().getStatus());
@@ -647,10 +653,11 @@ public class ProductService extends BaseService {
 
     /**
      * updateStatusProduct
+     *
      * @param request ProductStatusPutRequest
      * @return ProductGroupsPutResponse
      */
-    public ProductGroupsPutResponse updateStatusProduct(@RequestBody ProductStatusPutRequest  request) {
+    public ProductGroupsPutResponse updateStatusProduct(@RequestBody ProductStatusPutRequest request) {
         ProductGroupsPutResponse response = new ProductGroupsPutResponse();
 
         checkCommRequest(request);
@@ -700,7 +707,7 @@ public class ProductService extends BaseService {
             List<BulkUpdateModel> bulkList = new ArrayList<>();
             bulkList.add(model);
 
-            if (findModel !=null && findModel.getFields() != null) {
+            if (findModel != null && findModel.getFields() != null) {
                 //insert　Product　History
                 CmsConstants.ProductStatus befStatus = CmsConstants.ProductStatus.valueOf(findModel.getFields().getStatus());
                 insertProductHistory(befStatus, aftStatus, channelId, findModel.getProdId());
@@ -741,8 +748,8 @@ public class ProductService extends BaseService {
             // 从其他状态转为Pending
             if (befStatus != CmsConstants.ProductStatus.Pending && aftStatus == CmsConstants.ProductStatus.Pending) {
                 isNeed = true;
-            // 从Pending转为其他状态
-            // 在Pending下变更了
+                // 从Pending转为其他状态
+                // 在Pending下变更了
             } else if (befStatus == CmsConstants.ProductStatus.Pending) {
                 isNeed = true;
             }
@@ -761,49 +768,52 @@ public class ProductService extends BaseService {
 
     /**
      * confirm change category
+     *
      * @param request
      * @return
      */
-    public VoApiUpdateResponse changeProductCategory(ProductCategoryUpdateRequest request){
+    public VoApiUpdateResponse changeProductCategory(ProductGroupMainCategoryUpdateRequest request) {
 
         request.check();
-
-        String modelCode = cmsBtProductDao.getModelCode(request.getChannelId(),request.getProductId());
-
-        //update product's category id and category path
-        List<BulkUpdateModel> bulkList = new ArrayList<>();
-
         HashMap<String, Object> updateMap = new HashMap<>();
         updateMap.put("catId", request.getCategoryId());
         updateMap.put("catPath", request.getCategoryPath());
-        updateMap.put("batchField.switchCategory",1);
+        updateMap.put("batchField.switchCategory", 1);
 
-        HashMap<String, Object> queryMap = new HashMap<>();
-        queryMap.put("feed.orgAtts.modelCode", modelCode);
+        List<BulkUpdateModel> bulkList = new ArrayList<>();
 
-        BulkUpdateModel model = new BulkUpdateModel();
-        model.setUpdateMap(updateMap);
-        model.setQueryMap(queryMap);
-        bulkList.add(model);
+        for (String modelCode : request.getModels()) {
+            HashMap<String, Object> queryMap = new HashMap<>();
+            queryMap.put("feed.orgAtts.modelCode", modelCode);
+            BulkUpdateModel model = new BulkUpdateModel();
+            model.setUpdateMap(updateMap);
+            model.setQueryMap(queryMap);
+            bulkList.add(model);
+        }
 
-        BulkWriteResult result = cmsBtProductDao.bulkUpdateWithMap(request.getChannelId(), bulkList, request.getModifier(), "$set");
+        // 批量更新product表
+        BulkWriteResult result = null;
+        if (bulkList.size() > 0) {
+            result = cmsBtProductDao.bulkUpdateWithMap(request.getChannelId(), bulkList, request.getModifier(), "$set");
+        }
 
-        int updateFeedInfoCount = cmsBtFeedInfoDao.updateFeedInfoUpdFlg(request.getChannelId(),modelCode);
+        // 批量更新feed表
+        int updateFeedInfoCount = cmsBtFeedInfoDao.updateFeedInfoUpdFlg(request.getChannelId(), (String[]) request.getModels().toArray(new String[request.getModels().size()]));
 
-
-        ProductCategoryUpdateResponse response = new ProductCategoryUpdateResponse();
+        ProductGroupMainCategoryUpdateResponse response = new ProductGroupMainCategoryUpdateResponse();
 
         response.setUpdFeedInfoCount(updateFeedInfoCount);
 
         response.setUpdProductCount(result.getModifiedCount());
 
-        response.setModifiedCount(result.getModifiedCount()+updateFeedInfoCount);
+        response.setModifiedCount(result.getModifiedCount() + updateFeedInfoCount);
 
         return response;
     }
 
     /**
      * get the product info from wms's request
+     *
      * @param request
      * @return
      */
@@ -864,7 +874,7 @@ public class ProductService extends BaseService {
             // 获取HsCodeCrop
             String hsCodeCrop = product.getFields().getHsCodeCrop();
             if (!StringUtils.isEmpty(hsCodeCrop)) {
-                TypeChannelBean bean =  TypeChannel.getTypeChannelByCode(Constants.productForOtherSystemInfo.HS_CODE_CROP, channelId, hsCodeCrop);
+                TypeChannelBean bean = TypeChannel.getTypeChannelByCode(Constants.productForOtherSystemInfo.HS_CODE_CROP, channelId, hsCodeCrop);
                 if (bean != null) {
                     resultInfo.setHsCodeId(String.valueOf(bean.getId()));
                     resultInfo.setHsCode(hsCodeCrop);
@@ -875,7 +885,7 @@ public class ProductService extends BaseService {
             // 获取HsCodePrivate
             String hsCodePrivate = product.getFields().getHsCodePrivate();
             if (!StringUtils.isEmpty(hsCodePrivate)) {
-                TypeChannelBean bean =  TypeChannel.getTypeChannelByCode(Constants.productForOtherSystemInfo.HS_CODE_PRIVATE, channelId, hsCodePrivate);
+                TypeChannelBean bean = TypeChannel.getTypeChannelByCode(Constants.productForOtherSystemInfo.HS_CODE_PRIVATE, channelId, hsCodePrivate);
                 if (bean != null) {
                     resultInfo.setHsCodePuId(String.valueOf(bean.getId()));
                     resultInfo.setHsCodePu(hsCodeCrop);
@@ -891,6 +901,7 @@ public class ProductService extends BaseService {
 
     /**
      * get the product list from oms's request
+     *
      * @param request
      * @return
      */
@@ -917,12 +928,8 @@ public class ProductService extends BaseService {
         if (!StringUtils.isEmpty(skuIncludes)) {
             sbQuery.append(MongoUtils.splicingValue("skus.skuCode", skuIncludes, "$regex"));
             sbQuery.append(",");
-        } else if (skuList!= null && skuList.size() > 0) {
-            String[] newSkuList = new String[skuList.size()];
-            for (int i = 0; i < skuList.size(); i++) {
-                newSkuList[i] = skuList.get(i);
-            }
-            sbQuery.append(MongoUtils.splicingValue("skus.skuCode", newSkuList));
+        } else if (skuList != null && skuList.size() > 0) {
+            sbQuery.append(MongoUtils.splicingValue("skus.skuCode", (String[]) skuList.toArray(new String[skuList.size()])));
             sbQuery.append(",");
         }
 
@@ -977,7 +984,7 @@ public class ProductService extends BaseService {
                 switch (cartId) {
                     case "23":
                         numIid = product.getGroups().getPlatforms().size() > 0 && !StringUtils.isEmpty(product.getGroups().getPlatforms().get(0).getNumIId())
-                                ? Constants.productForOtherSystemInfo.TMALL_NUM_IID + product.getGroups().getPlatforms().get(0).getNumIId(): "";
+                                ? Constants.productForOtherSystemInfo.TMALL_NUM_IID + product.getGroups().getPlatforms().get(0).getNumIId() : "";
                         break;
                 }
                 bean.setSkuTmallUrl(numIid);

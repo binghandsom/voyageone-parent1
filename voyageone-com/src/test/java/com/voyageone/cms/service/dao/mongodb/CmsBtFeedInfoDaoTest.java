@@ -6,8 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import static org.junit.Assert.*;
-
 /**
  * Created by lewis on 2016/2/1.
  */
@@ -21,7 +19,9 @@ public class CmsBtFeedInfoDaoTest {
     @Test
     public void testUpdateFeedInfoUpdFlg() throws Exception {
 
-       int count = cmsBtFeedInfoDao.updateFeedInfoUpdFlg("013","GAU-80306");
+        String[] models = new String[]{};
+        models[0] = "GAU-80306";
+       int count = cmsBtFeedInfoDao.updateFeedInfoUpdFlg("013",models);
 
         System.out.println(count);
 

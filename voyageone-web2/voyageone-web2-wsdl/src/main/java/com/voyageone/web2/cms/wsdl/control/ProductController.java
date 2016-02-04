@@ -120,7 +120,7 @@ public class ProductController extends BaseController {
      * @return
      */
     @RequestMapping("/category/switch")
-    public VoApiUpdateResponse changeProductCategory(@RequestBody ProductCategoryUpdateRequest request){
+    public VoApiUpdateResponse changeProductCategory(@RequestBody ProductGroupMainCategoryUpdateRequest request){
 
         return productService.changeProductCategory(request);
     }

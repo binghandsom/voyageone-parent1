@@ -96,8 +96,7 @@
 					</ul>
 				</div>
 				<button class="btn btn-default" ng-click="openUpdateProperties('md', vm.productIds, vm.productPageOption.fetch)"><i class="fa fa-pencil-square"></i>&nbsp;{{'TXT_BATCH_UPDATE_ATTRIBUTE' | translate}}</button>
-				<!-- TODO 暂时未实现 -->
-				<!--<button class="btn btn-default" ng-click="openNewCategory('lg')"><i class="fa fa-th-list"></i>&nbsp;{{'TXT_CHANGE_CATEGORY' | translate}}</button>-->
+				<button class="btn btn-default" ng-click="$parent.openCategoryMapping(popupNewCategory)"><i class="fa fa-arrow-circle-right"></i>&nbsp;{{'TXT_CHANGE_CATEGORY' | translate}}</button>
 			</div><!-- /right-btn -->
 			<tab>
 				<tab-heading><i class="glyphicons glyphicons-sort text-default"></i>&nbsp;{{'TXT_PRODUCT_LIST' | translate}}</tab-heading>

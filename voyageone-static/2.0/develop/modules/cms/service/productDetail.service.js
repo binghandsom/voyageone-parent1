@@ -34,12 +34,14 @@ define([
 				var result = angular.copy(res);
 
 				// 设定custom列表中的feed被选中
-				result.data.productInfo.customAttributes.orgAtts = _returnNew(res.data.productInfo.customAttributes.orgAtts, result.data.productInfo.customAttributes.customIds);
-				result.data.productInfo.customAttributes.cnAtts = _returnNew(res.data.productInfo.customAttributes.cnAtts);
+				if (res.data.productInfo.customAttributes) {
+					result.data.productInfo.customAttributes.orgAtts = _returnNew(res.data.productInfo.customAttributes.orgAtts, result.data.productInfo.customAttributes.customIds);
+					result.data.productInfo.customAttributes.cnAtts = _returnNew(res.data.productInfo.customAttributes.cnAtts);
 
-				// 设定哪些原始feed被添加到custom列表
-				var feedKeys = _returnKeys(res.data.productInfo.customAttributes.orgAtts);
-				result.data.productInfo.feedKeys = feedKeys;
+					// 设定哪些原始feed被添加到custom列表
+					var feedKeys = _returnKeys(res.data.productInfo.customAttributes.orgAtts);
+					result.data.productInfo.feedKeys = feedKeys;
+				}
 				if(res.data.productInfo.feedInfoModel)
 					result.data.productInfo.feedInfoModel = _returnNew(res.data.productInfo.feedInfoModel, feedKeys);
 
@@ -53,20 +55,22 @@ define([
 				});
 
 				// 设置产品状态
-				var status = result.data.productInfo.productStatus.approveStatus;
+				if (result.data.productInfo.productStatus) {
+					var status = result.data.productInfo.productStatus.approveStatus;
 
-				if (_.isEqual(status, Status.NEW)
-						|| _.isEqual(status, Status.PENDING)
-						|| _.isEqual(status, Status.READY))
-					result.data.productInfo.productStatus.statusInfo = {
-						isApproved: false,
-						isDisable: false
-					};
-				else
-					result.data.productInfo.productStatus.statusInfo = {
-						isApproved: true,
-						isDisable: true
-					};
+					if (_.isEqual(status, Status.NEW)
+							|| _.isEqual(status, Status.PENDING)
+							|| _.isEqual(status, Status.READY))
+						result.data.productInfo.productStatus.statusInfo = {
+							isApproved: false,
+							isDisable: false
+						};
+					else
+						result.data.productInfo.productStatus.statusInfo = {
+							isApproved: true,
+							isDisable: true
+						};
+				}
 
 				defer.resolve(result);
 			});

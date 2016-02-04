@@ -1,7 +1,6 @@
 package com.voyageone.cms.service.dao.mongodb;
 
 import com.voyageone.cms.service.model.CmsBtProductModel;
-import net.minidev.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -10,8 +9,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.List;
-
-import static org.junit.Assert.*;
 
 /**
  * Created by lewis on 2016/2/1.
@@ -26,7 +23,10 @@ public class CmsBtProductDaoTest {
     @Test
     public void testGetModelCode() throws Exception {
 
-       String modelCode = cmsBtProductDao.getModelCode("013",161l);
+        Long[] productIds = new Long[]{};
+        productIds[0] = 163L;
+
+        List<CmsBtProductModel> modelCode = cmsBtProductDao.getModelCode("013", productIds);
         Assert.assertNotNull(modelCode);
     }
 

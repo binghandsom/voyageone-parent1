@@ -7,7 +7,7 @@ import com.voyageone.web2.sdk.api.VoApiUpdateResponse;
  * @version 2.0.0
  * @since 2.0.0
  */
-public class ProductCategoryUpdateResponse extends VoApiUpdateResponse {
+public class ProductGroupMainCategoryUpdateResponse extends VoApiUpdateResponse {
 
     private int updFeedInfoCount;
 
