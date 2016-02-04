@@ -123,6 +123,41 @@ public class HttpUtils {
         return null;
     }
 
+    public static String put(String url, String jsonParam,String authorization) {
+        HttpURLConnection connection = null;
+        try {
+            connection = getConnection(url, "PUT");
+            connection.setRequestProperty("Authorization", "Basic " + authorization);
+            connection.setRequestProperty("Content-Type","application/json");
+
+            // 发送Put请求必须设置如下两行
+            connection.setDoOutput(true);
+            connection.setDoInput(true);
+
+            // 获取URLConnection对象对应的输出流
+            try (OutputStream outputStream = connection.getOutputStream();
+                 PrintWriter printWriter = new PrintWriter(outputStream)) {
+
+                // 发送请求参数
+                printWriter.print(jsonParam);
+                printWriter.flush();
+            }
+
+            connection.connect();
+            try (InputStream inputStream = connection.getInputStream()) {
+                return readConnection(inputStream);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (connection != null)
+                connection.disconnect();
+        }
+
+        return null;
+    }
+
+
     public static String get(String url, String param) {
 
         if (!StringUtils.isEmpty(param)) url += "?" + param;

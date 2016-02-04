@@ -78,6 +78,38 @@ public abstract class GiltBase {
     }
 
     /**
+     * 发送请求Api
+     * @param api_url api路径
+     * @return Json String
+     * @throws Exception
+     */
+    protected String reqPutGiltApi(String api_url,String jsonString) throws Exception {
+        String api_url_root = ThirdPartyConfigs.getVal1(ChannelConfigEnums.Channel.GILT.getId(), "api_url");
+        String app_key = ThirdPartyConfigs.getVal1(ChannelConfigEnums.Channel.GILT.getId(), "app_key");
+
+        StringBuilder post_url = new StringBuilder();
+        String call_url = api_url_root + api_url;
+        post_url.append(call_url);
+
+        if (StringUtils.isNullOrBlank2(app_key))
+            throw new IllegalArgumentException("authorization Key不能为空");
+
+
+
+        String result = HttpUtils.put(post_url.toString(), jsonString,app_key);
+
+        /* 如果包含message  表示错误*/
+        if(StringUtils.isNullOrBlank2(result)||result.contains("message")){
+            //转换错误信息
+            GiltErrorResult res = JacksonUtil.json2Bean(result, GiltErrorResult.class);
+            if (res.getType() != null){
+                throw new Exception("调用Gilt API错误：" + result);
+            }
+        }
+        return result;
+    }
+
+    /**
      * 重试发送请求Api
      * @param maxRetry 重试次数
      * @param api_url api路径

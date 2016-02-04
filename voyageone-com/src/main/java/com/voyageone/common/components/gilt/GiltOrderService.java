@@ -31,11 +31,9 @@ public class GiltOrderService extends GiltBase{
      */
     public GiltOrder putOrder(GiltPutOrderRequest request) throws Exception {
         request.check();
-        Map map= JacksonUtil.jsonToMap(JacksonUtil.bean2Json(request));
-        Map<String,String> params=new HashMap<String,String>();
-        params.putAll(map);
-        System.out.println(map);
-        String result=reqGiltApi(URI +"/"+request.getId(),params);
+        Map param=JacksonUtil.jsonToMap(JacksonUtil.bean2Json(request));
+        param.remove("id");
+        String result=reqPutGiltApi(URI +"/"+request.getId(), JacksonUtil.bean2Json(param));
         return JacksonUtil.json2Bean(result,GiltOrder.class);
     }
 

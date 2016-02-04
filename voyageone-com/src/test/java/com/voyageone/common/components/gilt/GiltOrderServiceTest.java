@@ -52,8 +52,8 @@ public class GiltOrderServiceTest {
         List<GiltOrderItem> orderItems=new ArrayList<>();
 
         GiltOrderItem orderItem=new GiltOrderItem();
-        orderItem.setSku_id(1124545654);
-        orderItem.setQuantity(0);
+        orderItem.setSku_id(2506623);
+        orderItem.setQuantity(2);
         request.setOrder_items(orderItems);
         orderItems.add(orderItem);
 
