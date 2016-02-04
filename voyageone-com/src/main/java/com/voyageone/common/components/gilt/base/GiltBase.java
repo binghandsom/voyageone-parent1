@@ -4,6 +4,8 @@ import com.taobao.api.ApiException;
 import com.taobao.top.schema.Util.StringUtil;
 import com.voyageone.common.components.gilt.bean.GiltErrorResult;
 import com.voyageone.common.components.gilt.bean.GiltErrorType;
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
+import com.voyageone.common.configs.ThirdPartyConfigs;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.*;
 import org.apache.commons.logging.Log;
@@ -31,18 +33,20 @@ public abstract class GiltBase {
 
     /**
      * 发送请求Api
-     * @param shopBean 系统级参数
      * @param api_url api路径
      * @param params 应用参数
      * @return Json String
      * @throws Exception
      */
-    protected String reqGiltApi(ShopBean shopBean, String api_url, Map<String, String> params) throws Exception {
+    protected String reqGiltApi(String api_url,Map<String, String> params) throws Exception {
+        String api_url_root = ThirdPartyConfigs.getVal1(ChannelConfigEnums.Channel.GILT.getId(), "api_url");
+        String app_key = ThirdPartyConfigs.getVal1(ChannelConfigEnums.Channel.GILT.getId(), "app_key");
+
         StringBuilder post_url = new StringBuilder();
-        String call_url = shopBean.getApp_url() + api_url;
+        String call_url = api_url_root + api_url;
         post_url.append(call_url);
 
-        if (StringUtils.isNullOrBlank2(shopBean.getAppKey()))
+        if (StringUtils.isNullOrBlank2(app_key))
         throw new IllegalArgumentException("authorization Key不能为空");
 
         //临时map
@@ -60,7 +64,7 @@ public abstract class GiltBase {
             parm_url.delete(0,1);
         }
 
-        String result = HttpUtils.get(post_url.toString(), parm_url.toString(),shopBean.getAppKey());
+        String result = HttpUtils.get(post_url.toString(), parm_url.toString(),app_key);
 
         /* 如果包含message  表示错误*/
         if(StringUtils.isNullOrBlank2(result)||result.contains("message")){
@@ -75,17 +79,16 @@ public abstract class GiltBase {
 
     /**
      * 重试发送请求Api
-     * @param shopBean 系统级参数
      * @param maxRetry 重试次数
      * @param api_url api路径
      * @param params 应用参数
      * @return Json String
      * @throws Exception
      */
-    protected String reqGiltApi(ShopBean shopBean, String api_url,int maxRetry,Map<String, String> params) throws Exception {
+    protected String reqGiltApi(String api_url,int maxRetry,Map<String, String> params) throws Exception {
         for (int intApiErrorCount = 0; intApiErrorCount < maxRetry; intApiErrorCount++) {
             try {
-                return reqGiltApi(shopBean,api_url,params);
+                return reqGiltApi(api_url,params);
             } catch (Exception e) {
                 if (maxRetry - intApiErrorCount == 1)
                     throw e;
