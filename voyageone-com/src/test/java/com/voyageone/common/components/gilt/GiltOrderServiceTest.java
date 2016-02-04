@@ -31,7 +31,7 @@ public class GiltOrderServiceTest {
     public void testPageGetOrders() throws Exception {
 
         GiltPageGetOrdersRequest request=new GiltPageGetOrdersRequest();
-        request.setOrder_ids("e3eb4b7d-d1bc-4d33-bfe5-4a095485b6b9");
+        //request.setOrder_ids("e3eb4b7d-d1bc-4d33-bfe5-4a095485b6b9");
 
         List<GiltOrder> orders= giltOrderService
                 .pageGetOrders(request);
@@ -41,7 +41,7 @@ public class GiltOrderServiceTest {
     @Test
     public void testGetOrderById() throws Exception {
 
-        GiltOrder giltOrder= giltOrderService.getOrderById("e3eb4b7d-d1bc-4d33-bfe5-4a095485b6b9");
+        GiltOrder giltOrder= giltOrderService.getOrderById("d0ca18a3-03f7-44ee-a6f8-9e3a34ac3213");
         System.out.println(JsonUtil.getJsonString(giltOrder));
     }
 
@@ -52,8 +52,8 @@ public class GiltOrderServiceTest {
         List<GiltOrderItem> orderItems=new ArrayList<>();
 
         GiltOrderItem orderItem=new GiltOrderItem();
-        orderItem.setSku_id(1124545654);
-        orderItem.setQuantity(0);
+        orderItem.setSku_id(253);
+        orderItem.setQuantity(1);
         request.setOrder_items(orderItems);
         orderItems.add(orderItem);
 
@@ -63,11 +63,10 @@ public class GiltOrderServiceTest {
 
     @Test
     public void testPatchOrder() throws Exception {
-                GiltPageGetOrdersRequest request=new GiltPageGetOrdersRequest();
-        request.setOrder_ids("e3eb4b7d-d1bc-4d33-bfe5-4a095485b6b9");
-
-        List<GiltOrder> orders= giltOrderService
-                .pageGetOrders(request);
+        GiltPatchOrderRequest request=new GiltPatchOrderRequest();
+        request.setId(UUID.fromString("d0ca18a3-03f7-44ee-a6f8-9e3a34ac3213"));
+        request.setStatus(GiltOrderStatus.cancelled);
+        GiltOrder orders= giltOrderService.patchOrder(request);
         System.out.println(JsonUtil.getJsonString(orders));
     }
 }
