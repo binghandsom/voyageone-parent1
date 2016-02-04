@@ -237,7 +237,7 @@ public final class CommonUtil {
 
         BigDecimal bd1 = new BigDecimal(doubleValue);
 
-        ret = bd1.setScale(2, BigDecimal.ROUND_HALF_UP).floatValue();
+        ret = bd1.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
 
         return ret;
     }
