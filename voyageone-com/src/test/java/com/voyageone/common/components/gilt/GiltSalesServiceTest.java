@@ -34,14 +34,14 @@ public class GiltSalesServiceTest {
     private GiltSalesService giltSalesService;
 
     @Test
-    public void testGetSaleSkusById() throws Exception {
+    public void testGetSkusBySaleId() throws Exception {
         GiltPageGetSaleAttrRequest request=new GiltPageGetSaleAttrRequest();
         request.setLimit(2);
         request.setOffset(0);
         request.setId("1141689861");
         //request.setSku_ids("4099260,4099262,2997763");
 
-        List<GiltSku> skus= giltSalesService.getSaleSkusById(shopBean,request);
+        List<GiltSku> skus= giltSalesService.getSkusBySaleId(shopBean,request);
         System.out.println("Retrun:"+ JsonUtil.getJsonString(skus));
         assertTrue(skus.size()>0);
     }
@@ -60,23 +60,23 @@ public class GiltSalesServiceTest {
     }
 
     @Test
-    public void testGetSaleInventorysById() throws Exception {
+    public void testGetInventorysBySaleId() throws Exception {
         GiltPageGetSaleAttrRequest request=new GiltPageGetSaleAttrRequest();
         request.setLimit(2);
         request.setOffset(0);
         request.setId("1141689861");
-        List<GiltInventory> list=giltSalesService.getSaleInventorysById(shopBean,request);
+        List<GiltInventory> list=giltSalesService.getInventorysBySaleId(shopBean,request);
         System.out.println("Retrun:"+ JsonUtil.getJsonString(list));
         assertTrue(list.size()>0);
     }
 
     @Test
-    public void testGetSaleRealTimeInventorysById() throws Exception {
+    public void testGetRealTimeInventoriesBySaleId() throws Exception {
         GiltPageGetSaleAttrRequest request=new GiltPageGetSaleAttrRequest();
         request.setLimit(2);
         request.setOffset(0);
         request.setId("1141689861");
-        List<GiltRealTimeInventory> list= giltSalesService.getSaleRealTimeInventorysById(shopBean,request);
+        List<GiltRealTimeInventory> list= giltSalesService.getRealTimeInventoriesBySaleId(shopBean,request);
         System.out.println("Retrun:"+ JsonUtil.getJsonString(list));
         assertTrue(list.size()>0);
     }
