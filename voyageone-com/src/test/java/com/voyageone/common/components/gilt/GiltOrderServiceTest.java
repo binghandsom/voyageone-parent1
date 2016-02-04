@@ -29,58 +29,44 @@ public class GiltOrderServiceTest {
 
     @Test
     public void testPageGetOrders() throws Exception {
-        ShopBean shopBean=new ShopBean();
-        shopBean.setApp_url("https://api-sandbox.gilt.com/global/");
-        shopBean.setAppKey("YTE5N2YzM2M1ZmFhZmRjZDY3YmZiNjgxMzJiYTgzNGY6");
 
         GiltPageGetOrdersRequest request=new GiltPageGetOrdersRequest();
-        request.setOrder_ids("e3eb4b7d-d1bc-4d33-bfe5-4a095485b6b9");
+        //request.setOrder_ids("e3eb4b7d-d1bc-4d33-bfe5-4a095485b6b9");
 
         List<GiltOrder> orders= giltOrderService
-                .pageGetOrders(shopBean,request);
+                .pageGetOrders(request);
         System.out.println(JsonUtil.getJsonString(orders));
     }
 
     @Test
     public void testGetOrderById() throws Exception {
-        ShopBean shopBean=new ShopBean();
-        shopBean.setApp_url("https://api-sandbox.gilt.com/global/");
-        shopBean.setAppKey("YTE5N2YzM2M1ZmFhZmRjZDY3YmZiNjgxMzJiYTgzNGY6");
-        GiltOrder giltOrder= giltOrderService.getOrderById(shopBean,"e3eb4b7d-d1bc-4d33-bfe5-4a095485b6b9");
+
+        GiltOrder giltOrder= giltOrderService.getOrderById("d0ca18a3-03f7-44ee-a6f8-9e3a34ac3213");
         System.out.println(JsonUtil.getJsonString(giltOrder));
     }
 
     @Test
     public void testPutOrder() throws Exception {
-        ShopBean shopBean=new ShopBean();
-        shopBean.setApp_url("https://api-sandbox.gilt.com/global/");
-        shopBean.setAppKey("YTE5N2YzM2M1ZmFhZmRjZDY3YmZiNjgxMzJiYTgzNGY6");
-
-        GiltPutOrderRequest request=new GiltPutOrderRequest();
+             GiltPutOrderRequest request=new GiltPutOrderRequest();
         request.setId(UUID.randomUUID());
         List<GiltOrderItem> orderItems=new ArrayList<>();
 
         GiltOrderItem orderItem=new GiltOrderItem();
-        orderItem.setSku_id(1124545654);
-        orderItem.setQuantity(0);
+        orderItem.setSku_id(253);
+        orderItem.setQuantity(1);
         request.setOrder_items(orderItems);
         orderItems.add(orderItem);
 
-        GiltOrder orders= giltOrderService.putOrder(shopBean,request);
+        GiltOrder orders= giltOrderService.putOrder(request);
         System.out.println(JsonUtil.getJsonString(orders));
     }
 
     @Test
     public void testPatchOrder() throws Exception {
-        ShopBean shopBean=new ShopBean();
-        shopBean.setApp_url("https://api-sandbox.gilt.com/global/");
-        shopBean.setAppKey("YTE5N2YzM2M1ZmFhZmRjZDY3YmZiNjgxMzJiYTgzNGY6");
-
-        GiltPageGetOrdersRequest request=new GiltPageGetOrdersRequest();
-        request.setOrder_ids("e3eb4b7d-d1bc-4d33-bfe5-4a095485b6b9");
-
-        List<GiltOrder> orders= giltOrderService
-                .pageGetOrders(shopBean,request);
+        GiltPatchOrderRequest request=new GiltPatchOrderRequest();
+        request.setId(UUID.fromString("d0ca18a3-03f7-44ee-a6f8-9e3a34ac3213"));
+        request.setStatus(GiltOrderStatus.cancelled);
+        GiltOrder orders= giltOrderService.patchOrder(request);
         System.out.println(JsonUtil.getJsonString(orders));
     }
 }

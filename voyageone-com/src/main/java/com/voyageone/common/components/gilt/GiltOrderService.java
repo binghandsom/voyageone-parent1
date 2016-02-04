@@ -7,7 +7,6 @@ import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,71 +19,68 @@ import java.util.Map;
 @Service
 public class GiltOrderService extends GiltBase{
 
-    private static final String URL = "orders";
+    private static final String URI = "orders";
 
 
     /**
      *  Put订单数据
-     * @param shopBean shopBean
+    
      * @param request request
      * @return GiltOrder
      * @throws Exception
      */
-    public GiltOrder putOrder(ShopBean shopBean,GiltPutOrderRequest request) throws Exception {
+    public GiltOrder putOrder(GiltPutOrderRequest request) throws Exception {
         request.check();
-        Map map= JacksonUtil.jsonToMap(JacksonUtil.bean2Json(request));
-        Map<String,String> params=new HashMap<String,String>();
-        params.putAll(map);
-        System.out.println(map);
-        String result=reqGiltApi(shopBean,URL+"/"+request.getId(),params);
+        Map param=JacksonUtil.jsonToMap(JacksonUtil.bean2Json(request));
+        param.remove("id");
+        String result=reqPutGiltApi(URI +"/"+request.getId(), JacksonUtil.bean2Json(param));
         return JacksonUtil.json2Bean(result,GiltOrder.class);
     }
 
     /**
      *  Patch订单数据
-     * @param shopBean shopBean
+
      * @param request request
      * @return GiltOrder
      * @throws Exception
      */
-    public GiltOrder patchOrder(ShopBean shopBean,GiltPatchOrderRequest request) throws Exception {
+    public GiltOrder patchOrder(GiltPatchOrderRequest request) throws Exception {
         request.check();
-        Map map= JacksonUtil.jsonToMap(JacksonUtil.bean2Json(request));
-        Map<String,String> params=new HashMap<String,String>();
-        params.putAll(map);
-        String result=reqGiltApi(shopBean,URL+"/"+request.getId(),params);
+        Map param=JacksonUtil.jsonToMap(JacksonUtil.bean2Json(request));
+        param.remove("id");
+        String result=reqPatchGiltApi(URI +"/"+request.getId(),JacksonUtil.bean2Json(param));
         return JacksonUtil.json2Bean(result,GiltOrder.class);
     }
 
     /**
      *  分页获取Orders
-     * @param shopBean shopBean
+
      * @param request request
      * @return List
      * @throws Exception
      */
-    public List<GiltOrder> pageGetOrders(ShopBean shopBean, GiltPageGetOrdersRequest request) throws Exception {
+    public List<GiltOrder> pageGetOrders(GiltPageGetOrdersRequest request) throws Exception {
         request.check();
         Map map= JacksonUtil.jsonToMap(JacksonUtil.bean2Json(request));
         Map<String,String> params=new HashMap<String,String>();
         params.putAll(map);
-        String result=reqGiltApi(shopBean,URL,params);
+        String result=reqGiltApi(URI,params);
         return JacksonUtil.jsonToBeanList(result,GiltOrder.class);
     }
 
     /**
      *  根据Id获取Order
-     * @param shopBean shopBean
+
      * @param id id
      * @return List
      * @throws Exception
      *
      *  @see this returns data about a particular placed universally unique identifier (UUID). This should be a unique ID that maps to your customer's order.
      */
-    public GiltOrder getOrderById(ShopBean shopBean,String id) throws Exception {
+    public GiltOrder getOrderById(String id) throws Exception {
         if(StringUtils.isNullOrBlank2(id))
             throw new IllegalArgumentException("id不能为空");
-        String result=reqGiltApi(shopBean,URL+"/"+id,new HashMap<String,String>());
+        String result=reqGiltApi(URI +"/"+id,new HashMap<String,String>());
         return JacksonUtil.json2Bean(result,GiltOrder.class);
     }
 

@@ -8,7 +8,6 @@ import com.voyageone.common.util.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author aooer 2016/2/2.
@@ -19,19 +18,18 @@ import java.util.Map;
 public class GiltRealTimeInventoryService extends GiltBase {
 
 
-    private static final String URL = "realtime-inventory";
+    private static final String URI = "realtime-inventory";
 
 
     /**
      * 根据Id获取实时库存
-     * @param shopBean shopBean
-     * @param skuId skuId
+      * @param skuId skuId
      * @return GiltRealTimeInventory
      */
-    public GiltRealTimeInventory getRealTimeInventoryBySkuId(ShopBean shopBean, String skuId) throws Exception {
+    public GiltRealTimeInventory getRealTimeInventoryBySkuId(String skuId) throws Exception {
         if(StringUtils.isNullOrBlank2(skuId))
         throw new IllegalArgumentException("skuId不能为空");
-        String result=reqGiltApi(shopBean,URL+"/"+skuId,new HashMap<String,String>());
+        String result=reqGiltApi(URI +"/"+skuId,new HashMap<String,String>());
         return JacksonUtil.json2Bean(result,GiltRealTimeInventory.class);
     }
 

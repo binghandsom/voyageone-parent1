@@ -123,6 +123,75 @@ public class HttpUtils {
         return null;
     }
 
+    public static String put(String url, String jsonParam,String authorization) {
+        HttpURLConnection connection = null;
+        try {
+            connection = getConnection(url, "PUT");
+            connection.setRequestProperty("Authorization", "Basic " + authorization);
+            connection.setRequestProperty("Content-Type","application/json");
+
+            // 发送Put请求必须设置如下两行
+            connection.setDoOutput(true);
+            connection.setDoInput(true);
+
+            // 获取URLConnection对象对应的输出流
+            try (OutputStream outputStream = connection.getOutputStream();
+                 PrintWriter printWriter = new PrintWriter(outputStream)) {
+
+                // 发送请求参数
+                printWriter.print(jsonParam);
+                printWriter.flush();
+            }
+
+            connection.connect();
+            try (InputStream inputStream = connection.getInputStream()) {
+                return readConnection(inputStream);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (connection != null)
+                connection.disconnect();
+        }
+
+        return null;
+    }
+
+    public static String patch(String url, String jsonParam,String authorization) {
+        HttpURLConnection connection = null;
+        try {
+            connection = getConnection(url, "POST");
+            connection.setRequestProperty("Authorization", "Basic " + authorization);
+            connection.setRequestProperty("Content-Type","application/json");
+            connection.setRequestProperty("X-HTTP-Method-Override", "PATCH");
+            // 发送Put请求必须设置如下两行
+            connection.setDoOutput(true);
+            connection.setDoInput(true);
+
+            // 获取URLConnection对象对应的输出流
+            try (OutputStream outputStream = connection.getOutputStream();
+                 PrintWriter printWriter = new PrintWriter(outputStream)) {
+
+                // 发送请求参数
+                printWriter.print(jsonParam);
+                printWriter.flush();
+            }
+
+            connection.connect();
+            try (InputStream inputStream = connection.getInputStream()) {
+                return readConnection(inputStream);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (connection != null)
+                connection.disconnect();
+        }
+
+        return null;
+    }
+
+
     public static String get(String url, String param) {
 
         if (!StringUtils.isEmpty(param)) url += "?" + param;
@@ -252,7 +321,7 @@ public class HttpUtils {
      */
     private static HttpURLConnection getConnection(String location, String method) throws IOException {
 
-        return getConnection(location, method, 10000, 10000);
+        return getConnection(location, method, 1000000, 1000000);
     }
 
     private static HttpURLConnection getConnection(String location, String method, int connectTimeout, int readTimeout) throws IOException {
@@ -270,7 +339,6 @@ public class HttpUtils {
         connection.setRequestProperty("connection", "Keep-Alive");
         connection.setRequestProperty("user-agent",
                 "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
-
 
         return connection;
     }

@@ -7,19 +7,14 @@ package com.voyageone.common.components.gilt.bean;
  */
 public enum GiltOrderStatus {
 
-    PLACED("placed"),
+    placed,
 
-    CONFIRMED("confirmed"),
+    confirmed,
 
-    CANCELLED("cancelled"),
+    cancelled,
 
-    PROCESSING("processing"),
+    processing,
 
-    SHIPPED("shipped");
+    shipped;
 
-    private String description;
-
-    GiltOrderStatus(String description) {
-        this.description = description;
-    }
 }

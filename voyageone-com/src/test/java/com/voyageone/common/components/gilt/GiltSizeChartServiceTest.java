@@ -26,12 +26,7 @@ public class GiltSizeChartServiceTest {
 
     @Test
     public void testGetSizeChartById() throws Exception {
-        ShopBean shopBean=new ShopBean();
-        shopBean.setApp_url("https://api-sandbox.gilt.com/global/");
-        shopBean.setAppKey("YTE5N2YzM2M1ZmFhZmRjZDY3YmZiNjgxMzJiYTgzNGY6");
-
-        GiltSizeChart giltSizeChart=giltSizeChartService.getSizeChartById(shopBean,"1");
-
+        GiltSizeChart giltSizeChart=giltSizeChartService.getSizeChartById("1");
         System.out.println(JsonUtil.getJsonString(giltSizeChart));
     }
 }
