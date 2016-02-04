@@ -37,11 +37,11 @@ public class CmsBtProductDaoTest {
         Assert.assertFalse(isReady);
     }
 
-    @Test
-    public void testGetOnSaleProducts() throws Exception {
-
-        List<CmsBtProductModel> products = cmsBtProductDao.getOnSaleProducts("013","05-58255");
-
-        System.out.println(products.size());
-    }
+//    @Test
+//    public void testGetOnSaleProducts() throws Exception {
+//
+//        List<CmsBtProductModel> products = cmsBtProductDao.getOnSaleProducts("013","05-58255");
+//
+//        System.out.println(products.size());
+//    }
 }

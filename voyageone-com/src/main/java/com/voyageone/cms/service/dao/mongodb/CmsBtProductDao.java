@@ -519,35 +519,33 @@ public class CmsBtProductDao extends BaseMongoPartDao {
      */
     public boolean checkProductDataIsReady(String channelId,Long productId){
 
-        String query = String.format("{prodId:%s,batchField.switchCategory:%s}",productId,1);
+        JomgoQuery jomgoQuery = new JomgoQuery();
+        jomgoQuery.setQuery(String.format("{prodId: %s, batchField.switchCategory: 1}",productId));
+        jomgoQuery.setProjection("prodId");
 
-        String collectionName = mongoTemplate.getCollectionName(this.collectionName, channelId);
+        List<CmsBtProductModel> result = select(jomgoQuery, channelId);
 
-        long count = mongoTemplate.count(query,collectionName);
-
-        if (count < 1)
-            return true;
-
-        return false;
+        return result.size() > 0 ? false : true;
     }
 
-    /**
-     * 查询某个group下已经在平台上新的产品列表.
-     * @param channelId
-     * @param modelCode
-     * @return
-     */
-    public List<CmsBtProductModel> getOnSaleProducts(String channelId,String modelCode){
-
-        String conditionQuery = String.format("{ 'feed.orgAtts.modelCode' : '%s', 'groups.platforms': {$elemMatch: {numIId: {'$nin':[null,''], '$exists':true} }} }",modelCode);
-
-        String projection = "{'prodId':1,'fields.code':1,'groups.platforms.$':1}";
-
-        List<CmsBtProductModel> cmsBtProductModels = selectWithProjection(conditionQuery,projection,channelId);
-
-        return cmsBtProductModels;
-
-    }
+    // TODO 删除edward:好像没有被用到
+//    /**
+//     * 查询某个group下已经在平台上新的产品列表.
+//     * @param channelId
+//     * @param modelCode
+//     * @return
+//     */
+//    public List<CmsBtProductModel> getOnSaleProducts(String channelId,String modelCode){
+//
+//        String conditionQuery = String.format("{ 'feed.orgAtts.modelCode' : '%s', 'groups.platforms': {$elemMatch: {numIId: {'$nin':[null,''], '$exists':true} }} }",modelCode);
+//
+//        String projection = "{'prodId':1,'fields.code':1,'groups.platforms.$':1}";
+//
+//        List<CmsBtProductModel> cmsBtProductModels = selectWithProjection(conditionQuery,projection,channelId);
+//
+//        return cmsBtProductModels;
+//
+//    }
 
 
 }
