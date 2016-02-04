@@ -99,6 +99,7 @@ public class CmsUploadJmProductService extends BaseTaskService {
         executor.shutdown();
         executor.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
         succeedProduct.forEach(jmBtProductImportModel -> updateFlg(jmBtProductImportModel));
+        succeedProduct.clear();
     }
 
     private List<JmBtProductImportModel> getNotUploadProduct(Integer count) {
