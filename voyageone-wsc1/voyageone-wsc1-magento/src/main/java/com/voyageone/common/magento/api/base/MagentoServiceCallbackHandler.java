@@ -1500,6 +1500,21 @@ public abstract class MagentoServiceCallbackHandler {
     }
 
     /**
+     * auto generated Axis2 call back method for shoppingCartExternalId method
+     * override this method for handling normal response from shoppingCartExternalId operation
+     */
+    public void receiveResultshoppingCartExternalId(
+        magento.ShoppingCartExternalIdResponseParam result) {
+    }
+
+    /**
+     * auto generated Axis2 Error handler
+     * override this method for handling error response from shoppingCartExternalId operation
+     */
+    public void receiveErrorshoppingCartExternalId(java.lang.Exception e) {
+    }
+
+    /**
      * auto generated Axis2 call back method for resourceFaults method
      * override this method for handling normal response from resourceFaults operation
      */

@@ -2969,7 +2969,10 @@
 			o.ship_phone as shippingTelephone,
 			o.ship_address as shippingAddress,
 			o.ship_address2 as shippingAddress2,
-			o.final_grand_total as finalGrandTotal
+			o.final_grand_total as finalGrandTotal,
+			o.origin_source_order_id,
+			o.pay_no,
+			cainiao_o.taobao_logistics_id
 		from
 			oms_bt_orders o
 			left join oms_bt_ext_orders ext_o

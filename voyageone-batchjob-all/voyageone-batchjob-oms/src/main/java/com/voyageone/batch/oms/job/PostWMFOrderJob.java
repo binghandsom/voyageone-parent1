@@ -123,7 +123,9 @@ public class PostWMFOrderJob {
 		boolean isSuccess = true;
 
 		try {
-			isSuccess = postWMFOrderService.postWMFNewOrderTrackingNo();
+			// 该任务已废止
+//			isSuccess = postWMFOrderService.postWMFNewOrderTrackingNo();
+			isSuccess = true;
 		} catch (Exception ex) {
 			isSuccess = false;
 

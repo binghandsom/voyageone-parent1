@@ -88,6 +88,7 @@ public class MagentoApiServiceImpl {
 			String country = ThirdPartyConfigs.getVal1(this.orderChannelId, "country");
 			String paymentMethod = ThirdPartyConfigs.getVal1(this.orderChannelId, "paymentMethod");
 			String shippingMethod = ThirdPartyConfigs.getVal1(this.orderChannelId, "shippingMethod");
+			String houseNo = ThirdPartyConfigs.getVal1(this.orderChannelId, "houseNo");
 
 	//		String customerId = "20";
 	//		String customerMode = "customer";
@@ -105,6 +106,7 @@ public class MagentoApiServiceImpl {
 			customer.setCountry(country);
 			customer.setPaymentMethod(paymentMethod);
 			customer.setShippingMethod(shippingMethod);
+			customer.setHouseNo(houseNo);
 		}
 	}
 	
@@ -420,6 +422,7 @@ public class MagentoApiServiceImpl {
 		String orderCreateResult = "";
 
 		String sessionId = this.sessionId;
+
 		try {
 			if (StringUtils.isNullOrBlank2(sessionId)) {
 				// login
@@ -469,214 +472,230 @@ public class MagentoApiServiceImpl {
 					// 购物车创建成功
 					if (shoppingCartId > 0) {
 
-						// 顾客对象
-						ShoppingCartCustomerEntity customerEntity = new ShoppingCartCustomerEntity();
-						customerEntity.setMode(customer.getMode());
-						customerEntity.setEmail(order.getBillingEmail());
-						customerEntity.setFirstname(order.getBillingName());
-						customerEntity.setLastname(order.getBillingName());
+						// 创建外部ID（ExternalId）
+						ShoppingCartExternalIdRequestParam externalIdRequest =  new ShoppingCartExternalIdRequestParam();
+						externalIdRequest.setSessionId(sessionId);
+						externalIdRequest.setQuoteId(shoppingCartId);
+						String externalId = "cainiaoId=" + order.getTaobao_logistics_id() + ";sourceOrderId=" + order.getOrigin_source_order_id() + ";payNo=" + order.getPay_no();
+						externalIdRequest.setExternalId(externalId);
+						externalIdRequest.setStore(customer.getStoreId());
+						ShoppingCartExternalIdResponseParam externalIdResponse = stub.shoppingCartExternalId(externalIdRequest);
+						boolean isExternalIdSuccess = externalIdResponse.getResult();
 
-						// 购物车中顾客对象设置参数准备
-						ShoppingCartCustomerSetRequestParam customer = new ShoppingCartCustomerSetRequestParam();
-						customer.setSessionId(sessionId);
-						customer.setCustomerData(customerEntity);
-						customer.setQuoteId(shoppingCartId);
-						// 购物车中顾客对象设置
-						ShoppingCartCustomerSetResponseParam responseCustomer = stub.shoppingCartCustomerSet(customer);
-						boolean isCustomerSuccess = responseCustomer.getResult();
+						// 外部ID（ExternalId）创建成功
+						if (isExternalIdSuccess) {
 
-						// 购物车中顾客对象设置成功
-						if (isCustomerSuccess) {
+							// 顾客对象
+							ShoppingCartCustomerEntity customerEntity = new ShoppingCartCustomerEntity();
+							customerEntity.setMode(customer.getMode());
+							customerEntity.setEmail(StringUtils.isNullOrBlank2(order.getBillingEmail())? "DummyEmail@dummy.com":order.getBillingEmail());
+							customerEntity.setFirstname(StringUtils.isNullOrBlank2(order.getBillingName())? "DummyName":order.getBillingName());
+							customerEntity.setLastname(StringUtils.isNullOrBlank2(order.getBillingName())? "DummyName":order.getBillingName());
 
-							// 购物车中商品追加参数设置
-							ShoppingCartProductAddRequestParam productAddRequest = new ShoppingCartProductAddRequestParam();
-							productAddRequest.setQuoteId(shoppingCartId);
-							productAddRequest.setSessionId(sessionId);
+							// 购物车中顾客对象设置参数准备
+							ShoppingCartCustomerSetRequestParam customer = new ShoppingCartCustomerSetRequestParam();
+							customer.setSessionId(sessionId);
+							customer.setCustomerData(customerEntity);
+							customer.setQuoteId(shoppingCartId);
+							// 购物车中顾客对象设置
+							ShoppingCartCustomerSetResponseParam responseCustomer = stub.shoppingCartCustomerSet(customer);
+							boolean isCustomerSuccess = responseCustomer.getResult();
 
-							ShoppingCartProductEntityArray productEntityArrays = new ShoppingCartProductEntityArray();
+							// 购物车中顾客对象设置成功
+							if (isCustomerSuccess) {
 
-							List<OrderDetailBean> detailList = order.getOrderDetails();
-							if (detailList != null && detailList.size() > 0) {
-								for (OrderDetailBean orderDetail : detailList) {
-									ShoppingCartProductEntity productEntity = new ShoppingCartProductEntity();
-									String clientSku = orderDetail.getClientSku();
-									String sku = orderDetail.getSku();
-									productEntity.setSku(StringUtils.isNullOrBlank2(clientSku) ? sku : clientSku);
-									productEntity.setQty(orderDetail.getQty());
-									productEntityArrays.addComplexObjectArray(productEntity);
-								}
-							}
+								// 购物车中商品追加参数设置
+								ShoppingCartProductAddRequestParam productAddRequest = new ShoppingCartProductAddRequestParam();
+								productAddRequest.setQuoteId(shoppingCartId);
+								productAddRequest.setSessionId(sessionId);
 
-							productAddRequest.setProductsData(productEntityArrays);
+								ShoppingCartProductEntityArray productEntityArrays = new ShoppingCartProductEntityArray();
 
-							ShoppingCartProductAddResponseParam productAddResponse = stub.shoppingCartProductAdd(productAddRequest);
-							boolean isProductAddSuccess = productAddResponse.getResult();
-
-							// 购物车中商品追加成功
-							if (isProductAddSuccess) {
-
-								// 订单级折扣
-								double orderDiscount = order.getDiscount();
-								// 订单级补价
-								double orderSurcharge = order.getSurcharge();
-								// 订单级实际差价
-								double orderPriceDiff = Math.abs(orderDiscount) - Math.abs(orderSurcharge);
-								orderPriceDiff = -orderPriceDiff;
-								// 订单物品实际总价
-								double finalGrandTotal = order.getFinalGrandTotal();
-
-								ShoppingCartProductCustomPriceRequestParam customerPriceRequest = new ShoppingCartProductCustomPriceRequestParam();
-								customerPriceRequest.setSessionId(sessionId);
-								customerPriceRequest.setQuoteId(shoppingCartId);
-
+								List<OrderDetailBean> detailList = order.getOrderDetails();
 								if (detailList != null && detailList.size() > 0) {
-									int detailSize = detailList.size();
-									getPriceDiffPer(orderPriceDiff, finalGrandTotal, detailList);
-
-									ShoppingCartProductCustomPriceEntityArray customPriceEntityArray = new ShoppingCartProductCustomPriceEntityArray();
-
-									for (int i = 0; i < detailSize; i++) {
-										OrderDetailBean orderDetail = detailList.get(i);
-
-										ShoppingCartProductCustomPriceEntity param = new ShoppingCartProductCustomPriceEntity();
+									for (OrderDetailBean orderDetail : detailList) {
+										ShoppingCartProductEntity productEntity = new ShoppingCartProductEntity();
 										String clientSku = orderDetail.getClientSku();
 										String sku = orderDetail.getSku();
-										param.setSku(StringUtils.isNullOrBlank2(clientSku) ? sku : clientSku);
-										param.setPrice(orderDetail.getRealPrice());
-										customPriceEntityArray.addComplexObjectArray(param);
+										productEntity.setSku(StringUtils.isNullOrBlank2(clientSku) ? sku : clientSku);
+										productEntity.setQty(orderDetail.getQty());
+										productEntityArrays.addComplexObjectArray(productEntity);
 									}
-									customerPriceRequest.setProductsData(customPriceEntityArray);
 								}
 
-								ShoppingCartProductCustomPriceResponseParam customPriceResponse = stub.shoppingCartProductSetCustomPrice(customerPriceRequest);
-								boolean isCustomerPrice = customPriceResponse.getResult();
+								productAddRequest.setProductsData(productEntityArrays);
 
-								if (isCustomerPrice) {
-									// 购物车中顾客账单地址和收货地址设置参数准备
-									ShoppingCartCustomerAddressesRequestParam addressRequest = new ShoppingCartCustomerAddressesRequestParam();
-									addressRequest.setQuoteId(shoppingCartId);
-									addressRequest.setSessionId(sessionId);
-									ShoppingCartCustomerAddressEntityArray addressEntity = new ShoppingCartCustomerAddressEntityArray();
+								ShoppingCartProductAddResponseParam productAddResponse = stub.shoppingCartProductAdd(productAddRequest);
+								boolean isProductAddSuccess = productAddResponse.getResult();
 
-									// 账单人信息
-									ShoppingCartCustomerAddressEntity billingAddress = new ShoppingCartCustomerAddressEntity();
-									billingAddress.setMode("billing");
-//									billingAddress.setFirstname(order.getBillingName());
-//									billingAddress.setLastname(order.getBillingName());
-//									billingAddress.setCity(order.getBillingCity());
-//									billingAddress.setRegion(order.getBillingState());
-//									billingAddress.setStreet(order.getBillingAddress());
-//									billingAddress.setTelephone(order.getShippingTelephone());
-//									billingAddress.setFax(order.getShippingTelephone());
-//									billingAddress.setPostcode(order.getBillingPostcode());
+								// 购物车中商品追加成功
+								if (isProductAddSuccess) {
 
-									billingAddress.setFirstname("testFirstname");
-									billingAddress.setLastname("testLastname");
-									billingAddress.setCompany("testCompany");
-									billingAddress.setStreet("testStreet");
-									billingAddress.setCity("testCity");
-									billingAddress.setRegion("testRegion");
-									billingAddress.setPostcode("testPostcode");
-									billingAddress.setCountry_id(this.customer.getCountry());
-									billingAddress.setTelephone("0123456789");
-									billingAddress.setFax("0123456789");
-									billingAddress.setHouse_no("123");
-									billingAddress.setIs_default_billing(0);
-									billingAddress.setIs_default_shipping(0);
+									// 订单级折扣
+									double orderDiscount = order.getDiscount();
+									// 订单级补价
+									double orderSurcharge = order.getSurcharge();
+									// 订单级实际差价
+									double orderPriceDiff = Math.abs(orderDiscount) - Math.abs(orderSurcharge);
+									orderPriceDiff = -orderPriceDiff;
+									// 订单物品实际总价
+									double finalGrandTotal = order.getFinalGrandTotal();
 
-									// 收货人信息
-									ShoppingCartCustomerAddressEntity shippingAddress = new ShoppingCartCustomerAddressEntity();
-									shippingAddress.setMode("shipping");
-//									shippingAddress.setFirstname(order.getShippingName());
-//									shippingAddress.setLastname(order.getShippingName());
-//									shippingAddress.setCity(order.getShippingCity());
-//									shippingAddress.setRegion(order.getShippingState());
-//									shippingAddress.setStreet(order.getShippingAddress());
-//									shippingAddress.setTelephone(order.getShippingTelephone());
-//									shippingAddress.setFax(order.getShippingTelephone());
-//									shippingAddress.setPostcode(order.getShippingPostcode());
+									ShoppingCartProductCustomPriceRequestParam customerPriceRequest = new ShoppingCartProductCustomPriceRequestParam();
+									customerPriceRequest.setSessionId(sessionId);
+									customerPriceRequest.setQuoteId(shoppingCartId);
 
-									shippingAddress.setFirstname("testFirstname");
-									shippingAddress.setLastname("testLastname");
-									shippingAddress.setCompany("testCompany");
-									shippingAddress.setStreet("testStreet");
-									shippingAddress.setCity("testCity");
-									shippingAddress.setRegion("testRegion");
-									shippingAddress.setPostcode("testPostcode");
-									shippingAddress.setCountry_id(this.customer.getCountry());
-									shippingAddress.setTelephone("0123456789");
-									shippingAddress.setFax("0123456789");
-									shippingAddress.setHouse_no("123");
-									shippingAddress.setIs_default_billing(0);
-									shippingAddress.setIs_default_shipping(0);
+									if (detailList != null && detailList.size() > 0) {
+										int detailSize = detailList.size();
+										getPriceDiffPer(orderPriceDiff, finalGrandTotal, detailList);
 
-									addressEntity.addComplexObjectArray(billingAddress);
-									addressEntity.addComplexObjectArray(shippingAddress);
-									addressRequest.setCustomerAddressData(addressEntity);
+										ShoppingCartProductCustomPriceEntityArray customPriceEntityArray = new ShoppingCartProductCustomPriceEntityArray();
 
-									// 购物车中顾客账单地址和收货地址设置
-									ShoppingCartCustomerAddressesResponseParam addressResponse = stub.shoppingCartCustomerAddresses(addressRequest);
-									boolean isAddressSuccess = addressResponse.getResult();
+										for (int i = 0; i < detailSize; i++) {
+											OrderDetailBean orderDetail = detailList.get(i);
 
-									// 购物车中顾客账单地址和收货地址设置成功
-									if (isAddressSuccess) {
+											ShoppingCartProductCustomPriceEntity param = new ShoppingCartProductCustomPriceEntity();
+											String clientSku = orderDetail.getClientSku();
+											String sku = orderDetail.getSku();
+											param.setSku(StringUtils.isNullOrBlank2(clientSku) ? sku : clientSku);
+											param.setPrice(orderDetail.getRealPrice());
+											customPriceEntityArray.addComplexObjectArray(param);
+										}
+										customerPriceRequest.setProductsData(customPriceEntityArray);
+									}
 
-										// 发货方式设定参数准备
-										ShoppingCartShippingMethodRequestParam shippingMethodRequest = new ShoppingCartShippingMethodRequestParam();
-										shippingMethodRequest.setQuoteId(shoppingCartId);
-										shippingMethodRequest.setSessionId(sessionId);
-										shippingMethodRequest.setShippingMethod(this.customer.getShippingMethod());
-										shippingMethodRequest.setStore(customer.getStore());
+									ShoppingCartProductCustomPriceResponseParam customPriceResponse = stub.shoppingCartProductSetCustomPrice(customerPriceRequest);
+									boolean isCustomerPrice = customPriceResponse.getResult();
 
-										// 发货方式设定
-										ShoppingCartShippingMethodResponseParam shippingMethodResponse = stub.shoppingCartShippingMethod(shippingMethodRequest);
-										boolean isShippingMethodSuccess = shippingMethodResponse.getResult();
+									if (isCustomerPrice) {
+										// 购物车中顾客账单地址和收货地址设置参数准备
+										ShoppingCartCustomerAddressesRequestParam addressRequest = new ShoppingCartCustomerAddressesRequestParam();
+										addressRequest.setQuoteId(shoppingCartId);
+										addressRequest.setSessionId(sessionId);
+										ShoppingCartCustomerAddressEntityArray addressEntity = new ShoppingCartCustomerAddressEntityArray();
 
-										// 发货方式设定成功
-										if (isShippingMethodSuccess) {
+										// 账单人信息
+										ShoppingCartCustomerAddressEntity billingAddress = new ShoppingCartCustomerAddressEntity();
+										billingAddress.setMode("billing");
+										billingAddress.setFirstname(StringUtils.isNullOrBlank2(order.getBillingName())? "DummyName" : order.getBillingName());
+										billingAddress.setLastname(StringUtils.isNullOrBlank2(order.getBillingName())? "DummyName" : order.getBillingName());
+										billingAddress.setCity(StringUtils.isNullOrBlank2(order.getBillingCity())? "DummyCity" : order.getBillingCity());
+										billingAddress.setRegion(StringUtils.isNullOrBlank2(order.getBillingState())? "DummyState" : order.getBillingState());
+										billingAddress.setStreet(StringUtils.isNullOrBlank2(order.getBillingAddress())? "DummyAddress" : order.getBillingAddress());
+										billingAddress.setTelephone(StringUtils.isNullOrBlank2(order.getShippingTelephone())? "00000000" : order.getShippingTelephone());
+										billingAddress.setFax(StringUtils.isNullOrBlank2(order.getShippingTelephone())? "00000000" : order.getShippingTelephone());
+										billingAddress.setPostcode(StringUtils.isNullOrBlank2(order.getBillingPostcode())? "000000" : order.getBillingPostcode());
 
-											// 支付方式设定参数准备
-											ShoppingCartPaymentMethodRequestParam paymentMethodRequest = new ShoppingCartPaymentMethodRequestParam();
-											paymentMethodRequest.setQuoteId(shoppingCartId);
-											paymentMethodRequest.setSessionId(sessionId);
-											ShoppingCartPaymentMethodEntity paymentMethodEntity = new ShoppingCartPaymentMethodEntity();
-											paymentMethodEntity.setMethod(this.customer.getPaymentMethod());
-											paymentMethodRequest.setPaymentData(paymentMethodEntity);
+//										billingAddress.setFirstname("testFirstname");
+//										billingAddress.setLastname("testLastname");
+//										billingAddress.setCompany("testCompany");
+//										billingAddress.setStreet("testStreet");
+//										billingAddress.setCity("testCity");
+//										billingAddress.setRegion("testRegion");
+//										billingAddress.setPostcode("testPostcode");
+										billingAddress.setCountry_id(this.customer.getCountry());
+//										billingAddress.setTelephone("0123456789");
+//										billingAddress.setFax("0123456789");
+										billingAddress.setHouse_no(this.customer.getHouseNo());
+										billingAddress.setIs_default_billing(0);
+										billingAddress.setIs_default_shipping(0);
 
-											// 支付方式设定
-											ShoppingCartPaymentMethodResponseParam paymentMethodResponse = stub.shoppingCartPaymentMethod(paymentMethodRequest);
-											boolean isPaymentMethodSuccess = paymentMethodResponse.getResult();
+										// 收货人信息
+										ShoppingCartCustomerAddressEntity shippingAddress = new ShoppingCartCustomerAddressEntity();
+										shippingAddress.setMode("shipping");
+										shippingAddress.setFirstname(StringUtils.isNullOrBlank2(order.getShippingName())? "DummyName" : order.getShippingName());
+										shippingAddress.setLastname(StringUtils.isNullOrBlank2(order.getShippingName())? "DummyName" : order.getShippingName());
+										shippingAddress.setCity(StringUtils.isNullOrBlank2(order.getShippingCity())? "DummyCity" : order.getShippingCity());
+										shippingAddress.setRegion(StringUtils.isNullOrBlank2(order.getShippingState())? "DummyState" : order.getShippingState());
+										shippingAddress.setStreet(StringUtils.isNullOrBlank2(order.getShippingAddress())? "DummyAddress" : order.getShippingAddress());
+										shippingAddress.setTelephone(StringUtils.isNullOrBlank2(order.getShippingTelephone())? "00000000" : order.getShippingTelephone());
+										shippingAddress.setFax(StringUtils.isNullOrBlank2(order.getShippingTelephone())? "00000000" : order.getShippingTelephone());
+										shippingAddress.setPostcode(StringUtils.isNullOrBlank2(order.getShippingPostcode())? "000000" : order.getShippingPostcode());
 
-											// 支付方式设定成功
-											if (isPaymentMethodSuccess) {
+//										shippingAddress.setFirstname("testFirstname");
+//										shippingAddress.setLastname("testLastname");
+//										shippingAddress.setCompany("testCompany");
+//										shippingAddress.setStreet("testStreet");
+//										shippingAddress.setCity("testCity");
+//										shippingAddress.setRegion("testRegion");
+//										shippingAddress.setPostcode("testPostcode");
+										shippingAddress.setCountry_id(this.customer.getCountry());
+//										shippingAddress.setTelephone("0123456789");
+//										shippingAddress.setFax("0123456789");
+										shippingAddress.setHouse_no(this.customer.getHouseNo());
+										shippingAddress.setIs_default_billing(0);
+										shippingAddress.setIs_default_shipping(0);
 
-												// 下订单参数准备
-												ShoppingCartOrderRequestParam shoppingCartOrderRequestParam = new ShoppingCartOrderRequestParam();
-												shoppingCartOrderRequestParam.setSessionId(sessionId);
-												shoppingCartOrderRequestParam.setQuoteId(shoppingCartId);
+										addressEntity.addComplexObjectArray(billingAddress);
+										addressEntity.addComplexObjectArray(shippingAddress);
+										addressRequest.setCustomerAddressData(addressEntity);
 
-												// 下订单
-												ShoppingCartOrderResponseParam orderResponse = stub.shoppingCartOrder(shoppingCartOrderRequestParam);
-												// 订单号
-												orderCreateResult = orderResponse.getResult();
+										// 购物车中顾客账单地址和收货地址设置
+										ShoppingCartCustomerAddressesResponseParam addressResponse = stub.shoppingCartCustomerAddresses(addressRequest);
+										boolean isAddressSuccess = addressResponse.getResult();
 
+										// 购物车中顾客账单地址和收货地址设置成功
+										if (isAddressSuccess) {
+
+											// 发货方式设定参数准备
+											ShoppingCartShippingMethodRequestParam shippingMethodRequest = new ShoppingCartShippingMethodRequestParam();
+											shippingMethodRequest.setQuoteId(shoppingCartId);
+											shippingMethodRequest.setSessionId(sessionId);
+											shippingMethodRequest.setShippingMethod(this.customer.getShippingMethod());
+											shippingMethodRequest.setStore(customer.getStore());
+
+											// 发货方式设定
+											ShoppingCartShippingMethodResponseParam shippingMethodResponse = stub.shoppingCartShippingMethod(shippingMethodRequest);
+											boolean isShippingMethodSuccess = shippingMethodResponse.getResult();
+
+											// 发货方式设定成功
+											if (isShippingMethodSuccess) {
+
+												// 支付方式设定参数准备
+												ShoppingCartPaymentMethodRequestParam paymentMethodRequest = new ShoppingCartPaymentMethodRequestParam();
+												paymentMethodRequest.setQuoteId(shoppingCartId);
+												paymentMethodRequest.setSessionId(sessionId);
+												ShoppingCartPaymentMethodEntity paymentMethodEntity = new ShoppingCartPaymentMethodEntity();
+												paymentMethodEntity.setMethod(this.customer.getPaymentMethod());
+												paymentMethodRequest.setPaymentData(paymentMethodEntity);
+
+												// 支付方式设定
+												ShoppingCartPaymentMethodResponseParam paymentMethodResponse = stub.shoppingCartPaymentMethod(paymentMethodRequest);
+												boolean isPaymentMethodSuccess = paymentMethodResponse.getResult();
+
+												// 支付方式设定成功
+												if (isPaymentMethodSuccess) {
+
+													// 下订单参数准备
+													ShoppingCartOrderRequestParam shoppingCartOrderRequestParam = new ShoppingCartOrderRequestParam();
+													shoppingCartOrderRequestParam.setSessionId(sessionId);
+													shoppingCartOrderRequestParam.setQuoteId(shoppingCartId);
+
+													// 下订单
+													ShoppingCartOrderResponseParam orderResponse = stub.shoppingCartOrder(shoppingCartOrderRequestParam);
+													// 订单号
+													orderCreateResult = orderResponse.getResult();
+
+												} else {
+													logger.info("支付方式设定失败");
+												}
 											} else {
-												logger.info("支付方式设定失败");
+												logger.info("发货方式设定失败");
 											}
 										} else {
-											logger.info("发货方式设定失败");
+											logger.info("购物车中顾客账单地址和收货地址设置失败");
 										}
 									} else {
-										logger.info("购物车中顾客账单地址和收货地址设置失败");
+										logger.info("购物车中商品价格修改失败");
 									}
 								} else {
-									logger.info("购物车中商品价格修改失败");
+									logger.info("购物车中商品追加失败");
 								}
 							} else {
-								logger.info("购物车中商品追加失败");
+								logger.info("购物车中顾客对象设置失败");
 							}
 						} else {
-							logger.info("购物车中顾客对象设置失败");
+							logger.info("购物车中ExternalID创建失败");
 						}
 					} else {
 						logger.info("购物车创建失败");

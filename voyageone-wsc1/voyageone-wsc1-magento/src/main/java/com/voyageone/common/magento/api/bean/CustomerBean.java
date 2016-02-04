@@ -23,6 +23,8 @@ public class CustomerBean {
 
 	private String shippingMethod;
 
+	private String houseNo;
+
 	/**
 	 * @return the firstName
 	 */
@@ -157,5 +159,13 @@ public class CustomerBean {
 
 	public void setShippingMethod(String shippingMethod) {
 		this.shippingMethod = shippingMethod;
+	}
+
+	public String getHouseNo() {
+		return houseNo;
+	}
+
+	public void setHouseNo(String houseNo) {
+		this.houseNo = houseNo;
 	}
 }

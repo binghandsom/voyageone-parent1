@@ -6,6 +6,7 @@ import com.voyageone.batch.oms.modelbean.OrderExtend;
 import com.voyageone.common.components.issueLog.IssueLog;
 import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.magento.api.MagentoConstants;
 import com.voyageone.common.magento.api.bean.OrderDataBean;
 import com.voyageone.common.magento.api.service.MagentoApiServiceImpl;
@@ -55,7 +56,7 @@ public class PostWMFOrderService {
 	private final static String POST_WMF_CANCEL_ORDER = "PostWMFPendingCancelOrder";
 
 	// WMF渠道ID
-	private String orderChannelID = "014";
+	private String orderChannelID = ChannelConfigEnums.Channel.WMF.getId();
 
 	/**
 	 * 向WMF正常订单推送
@@ -118,16 +119,31 @@ public class PostWMFOrderService {
 	private boolean recordClientOrderNumber(String clientOrderNumber, OrderDataBean orderDataBean) {
 		boolean isSuccess = false;
 
+		TransactionStatus status=transactionManager.getTransaction(def);
+
 		try {
 			// 回写第三方订单号
 			isSuccess = orderDao.updateOrdersClientOrderIdInfo(orderDataBean.getOrderNumber(), clientOrderNumber, POST_WMF_NEW_ORDER);
 
+			if (isSuccess) {
+				isSuccess = orderDao.resetTrackingSendFlag(orderDataBean.getOrderNumber(), POST_WMF_NEW_ORDER_TRACKING_NO);
+			}
+
+			if (isSuccess) {
+				transactionManager.commit(status);
+
+			} else {
+				transactionManager.rollback(status);
+
+			}
 		} catch (Exception ex) {
 			logger.error(ex.getMessage(), ex);
 
 			issueLog.log(ex, ErrorType.BatchJob, SubSystem.OMS);
 
 			isSuccess = false;
+
+			transactionManager.rollback(status);
 
 		}
 

@@ -22,6 +22,9 @@ public class OrderDataBean {
 	private String shippingAddress;
 	private String shippingAddress2;
 	private String shippingPostcode;
+	private String origin_source_order_id;
+	private String pay_no;
+	private String taobao_logistics_id;
 	private String shippingTelephone;
 	private String shippingMethod;
 	private String paymentMethod;
@@ -298,5 +301,29 @@ public class OrderDataBean {
 
 	public void setFinalGrandTotal(double finalGrandTotal) {
 		this.finalGrandTotal = finalGrandTotal;
+	}
+
+	public String getOrigin_source_order_id() {
+		return origin_source_order_id;
+	}
+
+	public void setOrigin_source_order_id(String origin_source_order_id) {
+		this.origin_source_order_id = origin_source_order_id;
+	}
+
+	public String getPay_no() {
+		return pay_no;
+	}
+
+	public void setPay_no(String pay_no) {
+		this.pay_no = pay_no;
+	}
+
+	public String getTaobao_logistics_id() {
+		return taobao_logistics_id;
+	}
+
+	public void setTaobao_logistics_id(String taobao_logistics_id) {
+		this.taobao_logistics_id = taobao_logistics_id;
 	}
 }

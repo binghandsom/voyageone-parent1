@@ -2275,7 +2275,7 @@ public class OrderDao extends BaseDao {
 			for (int i = 0; i < orderSize; i++) {
 				OrderDataBean order = ordersList.get(i);
 
-				// 地址设定
+				// Bill地址设定
 				String address = order.getBillingAddress();
 				if (StringUtils.isNullOrBlank2(address)) {
 					address = com.voyageone.batch.core.Constants.EMPTY_STR;
@@ -2285,7 +2285,19 @@ public class OrderDao extends BaseDao {
 					address2 = com.voyageone.batch.core.Constants.EMPTY_STR;
 				}
 				address += address2;
-				order.setBillingAddress2(address);
+				order.setBillingAddress(address);
+
+				// Ship地址设定
+				address = order.getShippingAddress();
+				if (StringUtils.isNullOrBlank2(address)) {
+					address = com.voyageone.batch.core.Constants.EMPTY_STR;
+				}
+				 address2 = order.getShippingAddress2();
+				if (StringUtils.isNullOrBlank2(address2)) {
+					address2 = com.voyageone.batch.core.Constants.EMPTY_STR;
+				}
+				address += address2;
+				order.setShippingAddress(address);
 
 				dataMap.put("orderNumber", order.getOrderNumber());
 				dataMap.put("orderChannelId", orderChannelID);
