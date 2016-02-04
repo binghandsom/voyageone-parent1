@@ -2,7 +2,6 @@ package com.voyageone.common.components.gilt;
 
 import com.voyageone.common.components.gilt.base.GiltBase;
 import com.voyageone.common.components.gilt.bean.GiltPageGetSkusRequest;
-import com.voyageone.common.components.gilt.bean.GiltRealTimeInventory;
 import com.voyageone.common.components.gilt.bean.GiltSale;
 import com.voyageone.common.components.gilt.bean.GiltSku;
 import com.voyageone.common.configs.beans.ShopBean;
@@ -10,9 +9,7 @@ import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
-import java.io.IOException;
 import java.util.*;
 
 /**
@@ -23,7 +20,7 @@ import java.util.*;
 @Service
 public class GiltSkuService extends GiltBase {
 
-    private static final String URL = "skus";
+    private static final String URI = "skus";
 
     @Autowired
     private GiltSalesService giltSalesService;
@@ -32,13 +29,13 @@ public class GiltSkuService extends GiltBase {
      * @deprecated
      *  内存，网络原因不推荐使用此方法(耗时)，请使用getSalesSkuIds()方法
      *  获取Sales的所有Skus
-     * @param shopBean shopBean
+
      * @return List<GiltSku>
      * @throws Exception
      */
-    public List<GiltSku> getAllSalesSkus(ShopBean shopBean) throws Exception {
+    public List<GiltSku> getAllSalesSkus() throws Exception {
         //所有的skuId
-        Set<Long> skuIds=getSalesSkuIds(shopBean);
+        Set<Long> skuIds=getSalesSkuIds();
         //返回Sku集合
         List<GiltSku> result=new ArrayList<GiltSku>();
         //每100个skuIds调用方法查询skus信息
@@ -47,7 +44,7 @@ public class GiltSkuService extends GiltBase {
         for (Long skuId : skuIds){
             tempSkuIds.append(skuId);
             if(++i%100==0){
-                result.addAll(getSkus(shopBean,tempSkuIds.toString()));
+                result.addAll(getSkus(tempSkuIds.toString()));
                 //重置变量
                 tempSkuIds=new StringBuilder();
             }else
@@ -61,19 +58,19 @@ public class GiltSkuService extends GiltBase {
                 request.setSku_ids(tempSkuIds.substring(0,tempSkuIds.length()-2));
             else
                 request.setSku_ids(tempSkuIds.toString());
-            result.addAll(pageGetSkus(shopBean,request));
+            result.addAll(pageGetSkus(request));
         }
         return result;
     }
 
     /**
      *  获取Sales下所有SkuIds
-     * @param shopBean shopBean
+
      * @return Set<SkuId>
      */
-    public Set<Long> getSalesSkuIds(ShopBean shopBean) throws Exception {
+    public Set<Long> getSalesSkuIds() throws Exception {
         //sales
-        List<GiltSale> sales=giltSalesService.getAllSales(shopBean);
+        List<GiltSale> sales=giltSalesService.getAllSales();
         //所有的skuId
         Set<Long> skuIds=new HashSet<Long>();
         for (GiltSale sale:sales){
@@ -84,45 +81,45 @@ public class GiltSkuService extends GiltBase {
 
     /**
      * 根据SkuIds获取Skus
-     * @param shopBean shopBean
+
      * @param skuIds skuIds
      * @return List<GiltSku>
      * @throws Exception
      */
-    public List<GiltSku> getSkus(ShopBean shopBean,String skuIds) throws Exception {
+    public List<GiltSku> getSkus(String skuIds) throws Exception {
         if(StringUtils.isNullOrBlank2(skuIds))
             throw new IllegalArgumentException("skuIds不能为空");
         if(skuIds.split(",").length>100)
             throw new IllegalArgumentException("skuIds最多只能设置100个");
         GiltPageGetSkusRequest request=new GiltPageGetSkusRequest();
         request.setSku_ids(skuIds);
-        return pageGetSkus(shopBean,request);
+        return pageGetSkus(request);
     }
 
     /**
      *  分页获取Skus
-     * @param shopBean shopBean
+
      * @param request request
      * @return List
      * @throws Exception
      */
-    public List<GiltSku> pageGetSkus(ShopBean shopBean, GiltPageGetSkusRequest request) throws Exception {
+    public List<GiltSku> pageGetSkus(GiltPageGetSkusRequest request) throws Exception {
         request.check();
-        String result=reqGiltApi(shopBean,URL,request.getBeanMap());
+        String result=reqGiltApi(URI,request.getBeanMap());
         return JacksonUtil.jsonToBeanList(result,GiltSku.class);
     }
 
     /**
      *  根据Id 获取Sku
-     * @param shopBean shopBean
+
      * @param skuId skuId
      * @return GiltSku
      * @throws Exception
      */
-    public GiltSku getSkuById(ShopBean shopBean, String skuId) throws Exception {
+    public GiltSku getSkuById(String skuId) throws Exception {
         if(StringUtils.isNullOrBlank2(skuId))
             throw new IllegalArgumentException("skuId不能为空");
-        String result=reqGiltApi(shopBean,URL+"/"+skuId,new HashMap<String,String>());
+        String result=reqGiltApi( URI +"/"+skuId,new HashMap<String,String>());
         return JacksonUtil.json2Bean(result,GiltSku.class);
     }
 

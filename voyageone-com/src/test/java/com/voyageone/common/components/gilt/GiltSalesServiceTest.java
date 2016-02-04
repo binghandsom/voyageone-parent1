@@ -20,16 +20,8 @@ import static org.junit.Assert.*;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:applicationContext.xml")
 public class GiltSalesServiceTest {
-    private static final String url="https://api-sandbox.gilt.com/global/";
-    private static final String tokenKey="YTE5N2YzM2M1ZmFhZmRjZDY3YmZiNjgxMzJiYTgzNGY6";
-    private ShopBean shopBean;
 
-    @Before
-    public void before() {
-        shopBean=new ShopBean();
-        shopBean.setApp_url(url);
-        shopBean.setAppKey(tokenKey);
-    }
+
     @Autowired
     private GiltSalesService giltSalesService;
 
@@ -41,21 +33,21 @@ public class GiltSalesServiceTest {
         request.setId("1141689861");
         //request.setSku_ids("4099260,4099262,2997763");
 
-        List<GiltSku> skus= giltSalesService.getSkusBySaleId(shopBean,request);
+        List<GiltSku> skus= giltSalesService.getSkusBySaleId(request);
         System.out.println("Retrun:"+ JsonUtil.getJsonString(skus));
         assertTrue(skus.size()>0);
     }
 
     @Test
     public void testGetAllSales() throws Exception {
-        List<GiltSale> skus= giltSalesService.getAllSales(shopBean);
+        List<GiltSale> skus= giltSalesService.getAllSales();
         System.out.println("Retrun:"+ JsonUtil.getJsonString(skus));
 
     }
 
     @Test
     public void testGetSaleById() throws Exception {
-        GiltSale sale= giltSalesService.getSaleById(shopBean,"1141506556");
+        GiltSale sale= giltSalesService.getSaleById("1141506556");
         System.out.println("Retrun:"+ JsonUtil.getJsonString(sale));
     }
 
@@ -65,7 +57,7 @@ public class GiltSalesServiceTest {
         request.setLimit(2);
         request.setOffset(0);
         request.setId("1141689861");
-        List<GiltInventory> list=giltSalesService.getInventorysBySaleId(shopBean,request);
+        List<GiltInventory> list=giltSalesService.getInventorysBySaleId(request);
         System.out.println("Retrun:"+ JsonUtil.getJsonString(list));
         assertTrue(list.size()>0);
     }
@@ -76,7 +68,7 @@ public class GiltSalesServiceTest {
         request.setLimit(2);
         request.setOffset(0);
         request.setId("1141689861");
-        List<GiltRealTimeInventory> list= giltSalesService.getRealTimeInventoriesBySaleId(shopBean,request);
+        List<GiltRealTimeInventory> list= giltSalesService.getRealTimeInventoriesBySaleId(request);
         System.out.println("Retrun:"+ JsonUtil.getJsonString(list));
         assertTrue(list.size()>0);
     }

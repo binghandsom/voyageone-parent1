@@ -30,66 +30,46 @@ public class GiltSkuServiceTest {
 
     @Test
     public void testPageGetSkus() throws Exception {
-        ShopBean shopBean=new ShopBean();
-        shopBean.setApp_url("https://api-sandbox.gilt.com/global/");
-        shopBean.setAppKey("YTE5N2YzM2M1ZmFhZmRjZDY3YmZiNjgxMzJiYTgzNGY6");
 
         GiltPageGetSkusRequest request=new GiltPageGetSkusRequest();
         request.setLimit(2);
         request.setOffset(1);
         //request.setSku_ids("4099260,4099262,2997763");
 
-        List<GiltSku> skus= giltSkuService.pageGetSkus(shopBean,request);
+        List<GiltSku> skus= giltSkuService.pageGetSkus(request);
         System.out.println("Retrun:"+JsonUtil.getJsonString(skus));
     }
 
     @Test
     public void testGetSkuById() throws Exception {
-        ShopBean shopBean=new ShopBean();
-        shopBean.setApp_url("https://api-sandbox.gilt.com/global/");
-        shopBean.setAppKey("YTE5N2YzM2M1ZmFhZmRjZDY3YmZiNjgxMzJiYTgzNGY6");
-
-
-        GiltSku skus= giltSkuService.getSkuById(shopBean,"4099260");
+       GiltSku skus= giltSkuService.getSkuById("4099260");
         System.out.println("Retrun:"+JsonUtil.getJsonString(skus));
     }
 
     @Test
     public void testGetAllSalesSkus() throws Exception {
-        ShopBean shopBean=new ShopBean();
-        shopBean.setApp_url("https://api-sandbox.gilt.com/global/");
-        shopBean.setAppKey("YTE5N2YzM2M1ZmFhZmRjZDY3YmZiNjgxMzJiYTgzNGY6");
-
-
-        List<GiltSku> skus= giltSkuService.getAllSalesSkus(shopBean);
+        List<GiltSku> skus= giltSkuService.getAllSalesSkus();
         System.out.println("Retrun:"+JsonUtil.getJsonString(skus));
     }
 
 
     @Test
     public void testGetSalesSkuIds() throws Exception {
-        ShopBean shopBean=new ShopBean();
-        shopBean.setApp_url("https://api-sandbox.gilt.com/global/");
-        shopBean.setAppKey("YTE5N2YzM2M1ZmFhZmRjZDY3YmZiNjgxMzJiYTgzNGY6");
 
-
-        Set<Long> skus= giltSkuService.getSalesSkuIds(shopBean);
+        Set<Long> skus= giltSkuService.getSalesSkuIds();
         System.out.println("Retrun:"+JsonUtil.getJsonString(skus));
     }
 
     @Test
     public void testGetSkus() throws Exception {
-        ShopBean shopBean=new ShopBean();
-        shopBean.setApp_url("https://api-sandbox.gilt.com/global/");
-        shopBean.setAppKey("YTE5N2YzM2M1ZmFhZmRjZDY3YmZiNjgxMzJiYTgzNGY6");
 
-        Set<Long> skuIds= giltSkuService.getSalesSkuIds(shopBean);
+        Set<Long> skuIds= giltSkuService.getSalesSkuIds();
         StringBuilder sb=new StringBuilder();
         int i=0;
         for(Long skuId : skuIds){
             sb.append(skuId);
             if(++i%100==0) {
-                List<GiltSku> skus = giltSkuService.getSkus(shopBean, sb.toString());
+                List<GiltSku> skus = giltSkuService.getSkus(sb.toString());
                 //Todo 业务处理
                 System.out.println("Retrun:" + JsonUtil.getJsonString(skus));
                 sb = new StringBuilder();

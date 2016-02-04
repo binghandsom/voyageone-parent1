@@ -1,6 +1,8 @@
 package com.voyageone.common.components.gilt;
 
 import com.voyageone.common.components.gilt.bean.GiltHealthcheck;
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
+import com.voyageone.common.configs.ThirdPartyConfigs;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.JsonUtil;
 import org.junit.Test;
@@ -25,19 +27,13 @@ public class GiltHealthcheckServiceTest {
 
     @Test
     public void testPing() throws Exception {
-        ShopBean shopBean=new ShopBean();
-        shopBean.setApp_url("https://api-sandbox.gilt.com/global/");
-        shopBean.setAppKey("YTE5N2YzM2M1ZmFhZmRjZDY3YmZiNjgxMzJiYTgzNGY6");
-        GiltHealthcheck  giltHealthcheck=giltHealthcheckService.ping(shopBean);
+        GiltHealthcheck  giltHealthcheck=giltHealthcheckService.ping();
         System.out.println(JsonUtil.getJsonString(giltHealthcheck));
     }
 
     @Test
     public void testStatus() throws Exception {
-        ShopBean shopBean=new ShopBean();
-        shopBean.setApp_url("https://api-sandbox.gilt.com/global/");
-        shopBean.setAppKey("YTE5N2YzM2M1ZmFhZmRjZDY3YmZiNjgxMzJiYTgzNGY6");
-        GiltHealthcheck  giltHealthcheck=giltHealthcheckService.status(shopBean);
+       GiltHealthcheck  giltHealthcheck=giltHealthcheckService.status();
         System.out.println(JsonUtil.getJsonString(giltHealthcheck));
     }
 }

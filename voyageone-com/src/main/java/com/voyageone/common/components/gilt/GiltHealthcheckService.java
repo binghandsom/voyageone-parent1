@@ -16,7 +16,7 @@ import java.util.HashMap;
 @Service
 public class GiltHealthcheckService extends GiltBase {
 
-    private static final String URL = "healthchecks";
+    private static final String URI = "healthchecks";
 
     /**
      *  Api健康检查 ping
@@ -25,8 +25,8 @@ public class GiltHealthcheckService extends GiltBase {
      * @return GiltHealthcheck
      * @throws Exception
      */
-    public GiltHealthcheck ping(ShopBean shopBean) throws Exception {
-        return JacksonUtil.json2Bean(reqGiltApi(shopBean,URL+"/ping",new HashMap<String,String>()),GiltHealthcheck.class);
+    public GiltHealthcheck ping() throws Exception {
+        return JacksonUtil.json2Bean(reqGiltApi(URI +"/ping",new HashMap<String,String>()),GiltHealthcheck.class);
     }
 
     /**
@@ -36,7 +36,7 @@ public class GiltHealthcheckService extends GiltBase {
      * @return GiltHealthcheck
      * @throws Exception
      */
-    public GiltHealthcheck status(ShopBean shopBean) throws Exception {
-        return JacksonUtil.json2Bean(reqGiltApi(shopBean,URL+"/status",new HashMap<String,String>()),GiltHealthcheck.class);
+    public GiltHealthcheck status() throws Exception {
+        return JacksonUtil.json2Bean(reqGiltApi(URI +"/status",new HashMap<String,String>()),GiltHealthcheck.class);
     }
 }

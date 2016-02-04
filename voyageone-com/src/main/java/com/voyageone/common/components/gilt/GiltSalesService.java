@@ -2,7 +2,6 @@ package com.voyageone.common.components.gilt;
 
 import com.voyageone.common.components.gilt.base.GiltBase;
 import com.voyageone.common.components.gilt.bean.*;
-import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
 import org.springframework.stereotype.Service;
@@ -19,15 +18,15 @@ import java.util.Map;
 @Service
 public class GiltSalesService extends GiltBase{
 
-    private static final String URL = "sales";
+    private static final String URI = "sales";
 
     /**
      * 返回所有活动和即将到来的未来七天的销售数据
      * Returns data for all active and upcoming sales for the next seven days.
      * @return List<GiltSale>
      */
-    public List<GiltSale> getAllSales(ShopBean shopBean) throws Exception {
-        return getApiListResult(shopBean,GiltSale.class,URL,new HashMap<String,String>());
+    public List<GiltSale> getAllSales() throws Exception {
+        return getApiListResult(GiltSale.class, URI,new HashMap<String,String>());
     }
 
     /**
@@ -35,51 +34,48 @@ public class GiltSalesService extends GiltBase{
      * Returns data for a particular Sale ID if it is active or upcoming in the next seven days.
      * @return List<GiltSale>
      */
-    public GiltSale getSaleById(ShopBean shopBean,String saleId) throws Exception {
+    public GiltSale getSaleById(String saleId) throws Exception {
         if(StringUtils.isNullOrBlank2(saleId))
             throw new IllegalArgumentException("saleId不能为空");
-        return JacksonUtil.json2Bean(reqGiltApi(shopBean,URL+"/"+saleId,new HashMap<String,String>()),GiltSale.class);
+        return JacksonUtil.json2Bean(reqGiltApi(URI +"/"+saleId,new HashMap<String,String>()),GiltSale.class);
     }
 
     /**
      * 根据id获取sales的inventory (restful API:  /sales/:id/inventory)
-     * @param shopBean shopBean
-     * @param request request
+       * @param request request
      * @return List<GiltInventory>
      * @throws Exception
      */
-    public List<GiltInventory> getInventorysBySaleId(ShopBean shopBean, GiltPageGetSaleAttrRequest request) throws Exception {
+    public List<GiltInventory> getInventorysBySaleId(GiltPageGetSaleAttrRequest request) throws Exception {
         request.check();
-        return getApiListResult(shopBean,GiltInventory.class,URL+"/"+request.getId()+"/inventory",request.getBeanMap());
+        return getApiListResult(GiltInventory.class, URI +"/"+request.getId()+"/inventory",request.getBeanMap());
     }
 
     /**
      * 根据id获取sales的realtime-inventory
-     * @param shopBean shopBean
-     * @param request request
+        * @param request request
      * @return List<GiltRealTimeInventory>
      * @throws Exception
      */
-    public List<GiltRealTimeInventory> getRealTimeInventoriesBySaleId(ShopBean shopBean, GiltPageGetSaleAttrRequest request) throws Exception {
+    public List<GiltRealTimeInventory> getRealTimeInventoriesBySaleId(GiltPageGetSaleAttrRequest request) throws Exception {
         request.check();
-        return getApiListResult(shopBean,GiltRealTimeInventory.class,URL+"/"+request.getId()+"/realtime-inventory",request.getBeanMap());
+        return getApiListResult(GiltRealTimeInventory.class, URI +"/"+request.getId()+"/realtime-inventory",request.getBeanMap());
     }
 
     /**
      * 根据id获取sales的skus
-     * @param shopBean shopBean
-     * @param request request
+      * @param request request
      * @return List<GiltSku>
      * @throws Exception
      */
-    public List<GiltSku> getSkusBySaleId(ShopBean shopBean, GiltPageGetSaleAttrRequest request) throws Exception {
+    public List<GiltSku> getSkusBySaleId(GiltPageGetSaleAttrRequest request) throws Exception {
         request.check();
-        return getApiListResult(shopBean,GiltSku.class,URL+"/"+request.getId()+"/skus",request.getBeanMap());
+        return getApiListResult(GiltSku.class, URI +"/"+request.getId()+"/skus",request.getBeanMap());
     }
 
     /**
      * 获取Api结果
-     * @param shopBean shopBean
+
      * @param e e
      * @param url url
      * @param param param
@@ -87,8 +83,8 @@ public class GiltSalesService extends GiltBase{
      * @return List<E>
      * @throws Exception
      */
-    private <E> List<E> getApiListResult(ShopBean shopBean,Class<E> e,String url,Map<String,String> param) throws Exception {
-        return JacksonUtil.jsonToBeanList(reqGiltApi(shopBean,url,param),e);
+    private <E> List<E> getApiListResult(Class<E> e,String url,Map<String,String> param) throws Exception {
+        return JacksonUtil.jsonToBeanList(reqGiltApi(url,param),e);
     }
 
 }
