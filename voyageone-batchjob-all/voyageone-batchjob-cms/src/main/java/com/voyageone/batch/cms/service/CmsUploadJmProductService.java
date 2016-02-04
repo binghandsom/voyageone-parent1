@@ -320,7 +320,7 @@ public class CmsUploadJmProductService extends BaseTaskService {
         // 特殊说明
         jmProductBean_DealInfo.setSpecial_explain(jmBtProductImport.getSpecialNote());
 
-        jmProductBean_DealInfo.setPartner_sku_nos(partner_sku_nos.substring(0, partner_sku_nos.length() - 2));
+        jmProductBean_DealInfo.setPartner_sku_nos(partner_sku_nos.substring(0, partner_sku_nos.length() - 1));
 
         jmProductBean.setDealInfo(jmProductBean_DealInfo);
         return jmProductBean;
