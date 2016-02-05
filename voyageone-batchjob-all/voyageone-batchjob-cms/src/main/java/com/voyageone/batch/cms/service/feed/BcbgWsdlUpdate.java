@@ -73,6 +73,7 @@ public class BcbgWsdlUpdate extends BcbgWsdlBase {
 
         if (isServiceDisabled()) {
             $info("已断开 CMS");
+            setUpdated(null);
             return false;
         }
 
