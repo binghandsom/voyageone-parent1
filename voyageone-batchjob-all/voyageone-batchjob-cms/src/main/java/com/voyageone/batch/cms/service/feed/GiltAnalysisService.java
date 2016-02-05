@@ -110,6 +110,7 @@ public class GiltAnalysisService extends BaseTaskService {
         }
 
         if (context.isNoNeedUpdate()) {
+            $info("\t无需要更新的数据");
             setUpdateFlag(null);
             return false;
         }
