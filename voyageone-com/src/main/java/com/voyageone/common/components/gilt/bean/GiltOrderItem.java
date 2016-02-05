@@ -1,8 +1,5 @@
 package com.voyageone.common.components.gilt.bean;
 
-import com.sun.istack.internal.NotNull;
-import com.taobao.api.internal.util.RequestCheckUtils;
-import com.voyageone.common.util.StringUtils;
 import org.springframework.util.Assert;
 
 /**
