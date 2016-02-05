@@ -24,10 +24,12 @@ import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.ShopConfigs;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.CommonUtil;
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
@@ -93,6 +95,7 @@ public class CmsUploadJmProductService extends BaseTaskService {
             }
         }
         List<JmBtProductImportModel> jmBtProductImports = getNotUploadProduct(limit,channels);
+        logger.info("---------------cnt:" + jmBtProductImports.size());
         ShopBean shopBean = ShopConfigs.getShop(ChannelConfigEnums.Channel.SN.getId(), CartEnums.Cart.JM.getId());
 
         ExecutorService executor = Executors.newFixedThreadPool(threadPoolCnt);
@@ -106,12 +109,11 @@ public class CmsUploadJmProductService extends BaseTaskService {
         succeedProduct.clear();
     }
 
-    private List<JmBtProductImportModel> getNotUploadProduct(Integer count,List<String> channelIds) {
+    private List<JmBtProductImportModel> getNotUploadProduct(Integer count,List<String> channelIds) throws IOException {
         Map<String, Object> param = new HashMap<>();
         param.put("count",count);
-        if(channelIds.size()>0){
-            param.put("channels",channelIds);
-        }
+        param.put("channels",channelIds);
+        logger.info("param:"+ JacksonUtil.bean2Json(param));
         return jmUploadProductDao.getNotUploadProduct(param);
     }
 
