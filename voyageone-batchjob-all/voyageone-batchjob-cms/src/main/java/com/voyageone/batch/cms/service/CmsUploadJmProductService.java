@@ -58,7 +58,7 @@ public class CmsUploadJmProductService extends BaseTaskService {
 
     private static final String IMG_HTML = "<img src=\"%s\" alt=\"\" />";
 
-    private static final String DESCRIPTION_USAGE = "<div align=\"center\">%s %s <br /></div>";
+    private static final String DESCRIPTION_USAGE = "<div>%s %s <br /></div>";
 
     private static final String DESCRIPTION_IMAGES = "%s<br />";
 
@@ -81,14 +81,17 @@ public class CmsUploadJmProductService extends BaseTaskService {
 
         int threadPoolCnt = 5;
         int limit = 100;
+        List<String> channels = new ArrayList<>();
         for (TaskControlBean taskControlBean : taskControlList) {
             if ("thread_count".equalsIgnoreCase(taskControlBean.getCfg_name())) {
                 threadPoolCnt = Integer.parseInt(taskControlBean.getCfg_val1());
             } else if ("Limit".equalsIgnoreCase(taskControlBean.getCfg_name())) {
                 limit = Integer.parseInt(taskControlBean.getCfg_val1());
+            } else if("order_channel_id".equalsIgnoreCase(taskControlBean.getCfg_name())){
+                channels.add(taskControlBean.getCfg_val1());
             }
         }
-        List<JmBtProductImportModel> jmBtProductImports = getNotUploadProduct(limit);
+        List<JmBtProductImportModel> jmBtProductImports = getNotUploadProduct(limit,channels);
         ShopBean shopBean = ShopConfigs.getShop(ChannelConfigEnums.Channel.SN.getId(), CartEnums.Cart.JM.getId());
 
         ExecutorService executor = Executors.newFixedThreadPool(threadPoolCnt);
@@ -99,10 +102,16 @@ public class CmsUploadJmProductService extends BaseTaskService {
         executor.shutdown();
         executor.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
         succeedProduct.forEach(jmBtProductImportModel -> updateFlg(jmBtProductImportModel));
+        succeedProduct.clear();
     }
 
-    private List<JmBtProductImportModel> getNotUploadProduct(Integer count) {
-        return jmUploadProductDao.getNotUploadProduct(count);
+    private List<JmBtProductImportModel> getNotUploadProduct(Integer count,List<String> channelIds) {
+        Map<String, Object> param = new HashMap<>();
+        param.put("count",count);
+        if(channelIds.size()>0){
+            param.put("channels",channelIds);
+        }
+        return jmUploadProductDao.getNotUploadProduct(param);
     }
 
 
@@ -168,6 +177,21 @@ public class CmsUploadJmProductService extends BaseTaskService {
             throw new BusinessException("白底方图不存在");
         }
         jmProductBean.setNormalImage(stringBuffer.toString());
+
+        // 竖图
+        stringBuffer = new StringBuffer();
+        pics = imagesMap.get(JumeiImageType.VERTICAL.getId());
+        if (pics != null) {
+            for (JmPicBean jmPicBean : pics) {
+                if (stringBuffer.length() != 0) {
+                    stringBuffer.append(",");
+                }
+                stringBuffer.append(jmPicBean.getJmUrl());
+            }
+        }
+        if(stringBuffer.length() > 0){
+            jmProductBean.setVerticalImage(stringBuffer.toString());
+        }
 
 
         // 品牌图
@@ -320,7 +344,7 @@ public class CmsUploadJmProductService extends BaseTaskService {
         // 特殊说明
         jmProductBean_DealInfo.setSpecial_explain(jmBtProductImport.getSpecialNote());
 
-        jmProductBean_DealInfo.setPartner_sku_nos(partner_sku_nos.substring(0, partner_sku_nos.length() - 2));
+        jmProductBean_DealInfo.setPartner_sku_nos(partner_sku_nos.substring(0, partner_sku_nos.length() - 1));
 
         jmProductBean.setDealInfo(jmProductBean_DealInfo);
         return jmProductBean;
