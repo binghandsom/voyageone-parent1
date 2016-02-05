@@ -7,6 +7,8 @@ import com.voyageone.batch.wms.dao.ClientInventoryDao;
 import com.voyageone.batch.wms.dao.ItemDetailsDao;
 import com.voyageone.batch.wms.modelbean.ClientInventoryBean;
 import com.voyageone.common.components.channelAdvisor.service.InventoryService;
+import com.voyageone.common.components.gilt.GiltRealTimeInventoryService;
+import com.voyageone.common.components.gilt.GiltSalesService;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.components.sears.SearsService;
 import com.voyageone.common.configs.ChannelConfigs;
@@ -46,6 +48,12 @@ public abstract class WmsGetClientInvBaseService extends BaseTaskService {
 
     @Autowired
     MagentoApiServiceImpl magentoApiServiceImpl;
+
+    @Autowired
+    GiltSalesService giltSalesService;
+
+    @Autowired
+    GiltRealTimeInventoryService giltRealTimeInventoryService;
 
     @Override
     public SubSystem getSubSystem() {

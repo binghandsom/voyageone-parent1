@@ -200,6 +200,7 @@ public interface WmsConstants {
         public final static String INVENTORYFULLUPDATECONFIG= "inventory_full_update_config";
         public final static String INVENTORYPAGESIZE= "inventory_update_pagesize";
         public final static String CENTERCODE = "ca_inventory_center_code";
+        public final static String INVENTORYSALECONFIG= "inventory_sale_config";
     }
 
     /**
@@ -483,6 +484,20 @@ public interface WmsConstants {
 
     //是否有库存
     final class IN_STOCK {
+        public final static String YES = "1";
+        public final static String NO = "0";
+    }
+
+    //是否按照Sale来取得库存
+    final class SALE {
+        public final static String ALLOW_YES = "1";
+        public final static String ALLOW_NO = "0";
+        public final static String UPDATE_INVENTORY = "1";
+        public final static String UPDATE_REALTIME_INVENTORY = "2";
+    }
+
+    //是否允许全量取得库存
+    final class FULL {
         public final static String YES = "1";
         public final static String NO = "0";
     }
