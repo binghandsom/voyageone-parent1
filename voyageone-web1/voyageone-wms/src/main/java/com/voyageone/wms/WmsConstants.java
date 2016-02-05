@@ -419,5 +419,47 @@ public final class WmsConstants {
 
     }
 
+    /**
+     * 已捡货列表
+     */
+    public final static class ReportPickedItems {
 
+        // 文件名
+        public final static String FILE_NAME = "pickedReport";
+
+        // 出力内容
+        public final static class Reservation {
+
+            // 模板Sheet
+            public final static int TEMPLATE_SHEET = 0;
+
+            // 最大列数
+            public final static int MAX_COLUMNS = 7;
+
+            // 开始行数
+            public final static int START_ROWS = 1;
+
+            // 列：RowNo
+            public final static int Column_RowNo = 0;
+
+            // 列：PickUP Time
+            public final static int Column_PickedTime = 1;
+
+            // 列：OrderNumber
+            public final static int Column_OrderNumber = 2;
+
+            // 列：ResID
+            public final static int Column_ResID = 3;
+
+            // 列：SKU
+            public final static int Column_SKU = 4;
+
+            // 列：Des
+            public final static int Column_Des= 5;
+
+            // 列：Qty
+            public final static int Column_Qty= 6;
+        }
+
+    }
 }

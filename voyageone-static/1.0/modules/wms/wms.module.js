@@ -167,6 +167,9 @@ define(function () {
                     search: "/wms/pickup/list/search",
                     scan: "/wms/pickup/list/scan",
                     download: "/wms/pickup/list/download"
+                },
+                report:{
+                    download: "/wms/pickup/report/download"
                 }
             },
 

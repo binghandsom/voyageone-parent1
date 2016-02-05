@@ -181,6 +181,7 @@ define(['components/app', 'components/services/language.service', "underscore"],
                     WMS_PICKUP_TYPE_UN_VALID: "请输入{{scanTypeName}}！",
                     WMS_PICKUP_PERMIT: "没有权限捡货 !",
                     WMS_RECEIVE_PERMIT: "没有权限收货 !",
+                    WMS_DEL_REPORT_CHECK_DATE: "只能取得时间间隔为一天的数据，请修改起始时间或者终止时间!",
 
                     WMS_LOCATION_NOT_FOUND:"没找到货架！",
                     WMS_LOCATION_DEL: "是否确定删除货架？",
@@ -207,7 +208,11 @@ define(['components/app', 'components/services/language.service', "underscore"],
                     //报表
                     WMS_INVENTORY_DETAIL_REPORT: '库存变更详情报表',
                     WMS_STOCKTAKE_COMPARERES_REPORT: '盘点比较结果报表',
-                    WMS_INCLUDING_RETURN_STORE: '包含退货仓库'
+                    WMS_INCLUDING_RETURN_STORE: '包含退货仓库',
+
+                    WMS_DLPICKEDGOOS: '下载已捡货报告',
+
+
                 });
         }]);
 });
