@@ -81,14 +81,17 @@ public class CmsUploadJmProductService extends BaseTaskService {
 
         int threadPoolCnt = 5;
         int limit = 100;
+        List<String> channels = new ArrayList<>();
         for (TaskControlBean taskControlBean : taskControlList) {
             if ("thread_count".equalsIgnoreCase(taskControlBean.getCfg_name())) {
                 threadPoolCnt = Integer.parseInt(taskControlBean.getCfg_val1());
             } else if ("Limit".equalsIgnoreCase(taskControlBean.getCfg_name())) {
                 limit = Integer.parseInt(taskControlBean.getCfg_val1());
+            } else if("order_channel_id".equalsIgnoreCase(taskControlBean.getCfg_name())){
+                channels.add(taskControlBean.getCfg_val1());
             }
         }
-        List<JmBtProductImportModel> jmBtProductImports = getNotUploadProduct(limit);
+        List<JmBtProductImportModel> jmBtProductImports = getNotUploadProduct(limit,channels);
         ShopBean shopBean = ShopConfigs.getShop(ChannelConfigEnums.Channel.SN.getId(), CartEnums.Cart.JM.getId());
 
         ExecutorService executor = Executors.newFixedThreadPool(threadPoolCnt);
@@ -102,8 +105,13 @@ public class CmsUploadJmProductService extends BaseTaskService {
         succeedProduct.clear();
     }
 
-    private List<JmBtProductImportModel> getNotUploadProduct(Integer count) {
-        return jmUploadProductDao.getNotUploadProduct(count);
+    private List<JmBtProductImportModel> getNotUploadProduct(Integer count,List<String> channelIds) {
+        Map<String, Object> param = new HashMap<>();
+        param.put("count",count);
+        if(channelIds.size()>0){
+            param.put("channels",channelIds);
+        }
+        return jmUploadProductDao.getNotUploadProduct(param);
     }
 
 
