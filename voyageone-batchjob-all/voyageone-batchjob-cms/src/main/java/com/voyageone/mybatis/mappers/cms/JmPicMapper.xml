@@ -14,7 +14,7 @@
 				syn_flg = 0
 			GROUP BY
 				image_key
-			ORDER BY modified asc
+			ORDER BY image_type desc, modified asc
 				limit 100
 	</select>
 

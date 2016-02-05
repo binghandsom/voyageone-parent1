@@ -60,9 +60,9 @@ public class TrackingController {
     }
 
     @RequestMapping(method = RequestMethod.GET, value = TrackingUrls.GET_TRACKING_INFO, produces = {"text/html;charset=UTF-8"})
-    public String getCNTrackingInfo(String cwb,String type) throws UnsupportedEncodingException {
+    public String getCNTrackingInfo(String cwb,String type,String channelid) throws UnsupportedEncodingException {
 
-        logger.info("物流查询，cwb：" + cwb + "，type："+ type);
+        logger.info("物流查询，cwb：" + cwb + "，type："+ type + "，channelid："+ channelid);
 
         OrderTrackInfoBean orderTrackInfoBean = new OrderTrackInfoBean();
 
@@ -74,12 +74,12 @@ public class TrackingController {
         switch (type) {
             // 根据Source_order_id查询
             case TrackingType.WEBID:
-                orderTrackInfoBean = trackingService.getSynshipNoByWebid(cwb);
+                orderTrackInfoBean = trackingService.getSynshipNoByWebid(cwb, channelid);
                 break;
 
             // 根据电话号码查询
             case TrackingType.PHONE:
-                orderTrackInfoBean = trackingService.getSynshipNoByPhone(cwb);
+                orderTrackInfoBean = trackingService.getSynshipNoByPhone(cwb,channelid);
                 break;
 
             // 根据syn_ship_no查询
@@ -89,12 +89,12 @@ public class TrackingController {
 
             // 根据快递单号查询
             case TrackingType.TRACKINGNO:
-                orderTrackInfoBean = trackingService.getSynshipNoByTrackingNo(cwb);
+                orderTrackInfoBean = trackingService.getSynshipNoByTrackingNo(cwb, channelid);
                 break;
 
             // 根据订单号查询
             case TrackingType.ORDERNUM:
-                orderTrackInfoBean = trackingService.getSynshipNoByOrderNum(cwb);
+                orderTrackInfoBean = trackingService.getSynshipNoByOrderNum(cwb, channelid);
                 break;
         }
 

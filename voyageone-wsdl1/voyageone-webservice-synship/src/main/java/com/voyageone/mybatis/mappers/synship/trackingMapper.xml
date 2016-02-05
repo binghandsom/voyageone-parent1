@@ -44,6 +44,9 @@
             omsOrders.order_kind = '0'
         AND
             omsOrders.order_number = orders.order_number
+        <if test="channelid != null and channelid != '' ">
+            and omsOrders.order_channel_id = #{channelid}
+        </if>
     </select>
 
     <select id="orders_getSynshipNoByPhone" resultType="com.voyageone.synship.formbean.OrderTrackInfoBean">
@@ -58,6 +61,9 @@
             omsOrders.order_kind = '0'
         AND
             omsOrders.order_number = orders.order_number
+        <if test="channelid != null and channelid != '' ">
+            and omsOrders.order_channel_id = #{channelid}
+        </if>
         ORDER BY
             omsOrders.order_date_time DESC
         limit 1
@@ -75,6 +81,9 @@
             tracking.use_flg = '1'
 		AND
 			tracking.tracking_area = '0'
+        <if test="channelid != null and channelid != '' ">
+            and tracking.order_channel_id = #{channelid}
+        </if>
         ORDER BY
             tracking.create_time DESC
 		limit 1
@@ -87,6 +96,9 @@
             tt_orders orders
         WHERE
             orders.order_number = #{cwb}
+        <if test="channelid != null and channelid != '' ">
+            and orders.order_channel_id = #{channelid}
+        </if>
     </select>
 
     <select id="tt_tracking_info_select" resultType="com.voyageone.synship.formbean.TrackInfoBean">

@@ -435,4 +435,69 @@ public final class StringUtils {
         }
         return (source + strAdd(chr, lenleft));
     }
+
+    /**
+     * <p>
+     * Discription: 取得字符的Byte长度
+     * </p>
+     *
+     * @param content
+     * @param charsetName
+     * @return
+     * @author :
+     * @update :
+     */
+    public static int getByteLength(String content, String charsetName) {
+        int byteLength = 0;
+
+        try {
+            byte[] byteContent = content.getBytes(charsetName);
+            byteLength = byteContent.length;
+        } catch (Exception e) {
+
+        }
+
+        return byteLength;
+    }
+
+    /**
+     * <p>
+     * Discription: <img></> 元素删除
+     * </p>
+     *
+     * @param content
+     * @param
+     * @return
+     * @author :
+     * @update :
+     */
+    public static String trimImgElement(String content) {
+        String ret = content;
+
+        int imgBeginIndex = content.indexOf("<img");
+        while (imgBeginIndex != -1) {
+            int imgEndIndex = ret.indexOf(">", imgBeginIndex);
+
+            // 正常匹配的场合
+            if (imgEndIndex != -1) {
+                imgEndIndex = imgEndIndex + 1;
+                ret = ret.substring(0,imgBeginIndex) + ret.substring(imgEndIndex, ret.length());
+            } else {
+            // 异常数据的场合
+                break;
+            }
+
+            imgBeginIndex = ret.indexOf("<img");
+        }
+
+        return ret;
+    }
+
+//    public static void main(String[] args) {
+//        String content = "<img src=https://img.alicdn.com/imgextra/i3/2694857307/TB2GprUjVXXXXbjXpXXXXXXXXXX_!!2694857307.jpg> <p>The envelope <img src=https://img.alicdn.com/imgextra/i3/2694857307/TB2GprUjVXXXXbjXpXXXXXXXXXX_!!2694857307.jpg>clutch is reimagined in smooth cork with splashes of vivid colors for an artistic finish.</p><ul><li>Magnetic snap closure.</li><li>Material: Cork.</li><li>Lining: Rayon.</li><li>Imported.</li></ul><br /><p>这款信封式手拿包的灵感来源于鲜艳的色彩飞溅在光滑的软木上，体现了现代艺术与自然的结合.</p><ul><li>磁扣闭合.</li><li>材质: 软木.</li><li>内衬: 人造丝.</li><li>进口原厂制作.</li></ul>  <img src=https://img.alicdn.com/imgextra/i3/2694857307/TB2GprUjVXXXXbjXpXXXXXXXXXX_!!2694857307.jpg> <br>";
+//
+//        String ret = trimImgElement(content);
+//        System.out.println(content);
+//        System.out.println(ret);
+//    }
 }
