@@ -92,24 +92,19 @@ public class BcbgWsdlUpdate extends BcbgWsdlBase {
 
                 // web services 返回系统失败
                 if (response.getResult().equals("NG")) {
-
                     $info("更新产品处理失败，MessageCode = %s ,Message = %s", response.getMessageCode(), response.getMessage());
-
                     logIssue("cms 数据导入处理", "更新产品处理异常 code=" + feedUpdate.getBarcode());
                 }
                 // web services 返回数据失败
                 else {
-                    StringBuilder failureMessage = new StringBuilder();
 
                     // 出错统计
                     List<ProductUpdateDetailBean> productUpdateDetailBeans = productUpdateResponseBean.getFailure();
 
-                    for (int b = 0; b < productUpdateDetailBeans.size(); b++) {
-                        failureMessage.append("Message(").append(b).append(")=").append(productUpdateDetailBeans.get(b).getResultMessage()).append(";");
-                    }
+                    String failureMessage = productUpdateDetailBeans.stream().map(ProductUpdateDetailBean::getResultMessage)
+                            .collect(joining(";"));
 
                     $info("更新产品处理失败，" + failureMessage);
-
                     logIssue("cms 数据导入处理", "更新产品处理失败，" + failureMessage);
                 }
             } else {
@@ -118,15 +113,14 @@ public class BcbgWsdlUpdate extends BcbgWsdlBase {
             }
         }
 
-        if (updatedCodes.size() < 1) {
-            return false;
-        }
+        // 不管更新是否成功, 最新的数据是要保存到库中
+        // 如果更新不成功, 只是不更新标识位, 等待下次程序认为是强制更新
+        int count0 = bcbgSuperFeedDao.deleteUpdating();
+        int count1 = bcbgSuperFeedDao.selectInsertUpdated();
+        int count2 = bcbgSuperFeedDao.updateFlgToUpdated(updatedCodes);
+        $info("更新结束, 原数据删除 [ %s ] 补充数据 [ %s ] 标记成功数据 [ %s ]", count0, count1, count2);
 
-        // 返回删除数量和插入数量,理论上应该相同
-        int[] counts = bcbgSuperFeedDao.updateFull(updatedCodes);
-        $info("已完成商品更新, DEL/INS/UPD: %s / %s / %s", counts[0], counts[1], counts[2]);
-
-        return (counts[1] + counts[2]) > 0;
+        return count2 > 0;
     }
 
     private List<ProductBean> getNewProducts() {
