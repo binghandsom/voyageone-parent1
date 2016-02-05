@@ -42,8 +42,6 @@ public class BcbgWsdlUpdate extends BcbgWsdlBase {
 
         $info("准备处理更新商品");
 
-        WsdlProductService service = new WsdlProductService(channel);
-
         // 先获取要更新的商品信息(由 getWhereUpdateFlg 决定)
         List<ProductBean> updatingProduct = getProducts();
 
@@ -65,10 +63,16 @@ public class BcbgWsdlUpdate extends BcbgWsdlBase {
 
         List<ProductsFeedUpdate> feedUpdates = feedMap.get(true);
 
-        if (feedUpdates == null || feedUpdates.size() < 1) {
+        if (feedUpdates == null || feedUpdates.isEmpty()) {
             // 没有需要更新的, 则
             // 将所有新数据补充到 full 表, 之后更新所有记录到 40
+            $info("无商品需要更新");
             setUpdated(null);
+            return false;
+        }
+
+        if (isServiceDisabled()) {
+            $info("已断开 CMS");
             return false;
         }
 
@@ -76,7 +80,7 @@ public class BcbgWsdlUpdate extends BcbgWsdlBase {
 
         List<ProductsFeedUpdate> noNeedUpdating = feedMap.get(false);
 
-        List<String> updatedCodes = null;
+        List<String> updatedCodes;
 
         if (noNeedUpdating != null && noNeedUpdating.size() > 0) {
             // 不需要更新的 Code, 直接认为是更新成功的
@@ -85,6 +89,17 @@ public class BcbgWsdlUpdate extends BcbgWsdlBase {
         } else {
             updatedCodes = new ArrayList<>();
         }
+
+        foreachUpdate(feedUpdates, updatedCodes);
+
+        // 不管更新是否成功, 最新的数据是要保存到库中
+        // 如果更新不成功, 只是不更新标识位, 等待下次程序认为是强制更新
+        return setUpdated(updatedCodes);
+    }
+
+    private void foreachUpdate(List<ProductsFeedUpdate> feedUpdates, List<String> updatedCodes) throws Exception {
+
+        WsdlProductService service = new WsdlProductService(channel);
 
         for (ProductsFeedUpdate feedUpdate : feedUpdates) {
 
@@ -116,10 +131,6 @@ public class BcbgWsdlUpdate extends BcbgWsdlBase {
                 updatedCodes.add(feedUpdate.getCode());
             }
         }
-
-        // 不管更新是否成功, 最新的数据是要保存到库中
-        // 如果更新不成功, 只是不更新标识位, 等待下次程序认为是强制更新
-        return setUpdated(updatedCodes);
     }
 
     private boolean setUpdated(List<String> codes) {
