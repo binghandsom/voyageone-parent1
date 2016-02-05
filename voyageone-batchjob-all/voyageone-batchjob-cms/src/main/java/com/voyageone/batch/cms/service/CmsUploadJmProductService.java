@@ -62,7 +62,7 @@ public class CmsUploadJmProductService extends BaseTaskService {
 
     private static final String DESCRIPTION_IMAGES = "%s<br />";
 
-    private static final Pattern special_symbol= Pattern.compile("[~@'\\s.:#$%&_''‘’^]");
+    private static final Pattern special_symbol= Pattern.compile("[~@'\\[\\]\\s.:#$%&_''‘’^]");
 
     private static Vector<JmBtProductImportModel> succeedProduct = new Vector<>();
 
@@ -88,6 +88,7 @@ public class CmsUploadJmProductService extends BaseTaskService {
             } else if ("Limit".equalsIgnoreCase(taskControlBean.getCfg_name())) {
                 limit = Integer.parseInt(taskControlBean.getCfg_val1());
             } else if("order_channel_id".equalsIgnoreCase(taskControlBean.getCfg_name())){
+                logger.info(taskControlBean.getCfg_val1());
                 channels.add(taskControlBean.getCfg_val1());
             }
         }
@@ -118,6 +119,9 @@ public class CmsUploadJmProductService extends BaseTaskService {
     public void uploadProduct(JmBtProductImportModel jmBtProductImport, ShopBean shopBean) {
 
         try {
+            if(jmBtProductImport.getSkuImportModelList() == null || jmBtProductImport.getSkuImportModelList().size() == 0){
+                throw new BusinessException("没有找到SKU数据 code：" + jmBtProductImport.getProductCode());
+            }
             logger.info(jmBtProductImport.getChannelId() + "|" + jmBtProductImport.getProductCode() + " 聚美上新开始");
             // 取得上新的数据
             JmProductBean jmProductBean = selfBeanToJmBean(jmBtProductImport);
@@ -136,7 +140,7 @@ public class CmsUploadJmProductService extends BaseTaskService {
             logger.info(jmBtProductImport.getChannelId() + "|" + jmBtProductImport.getProductCode() + " 聚美上新结束");
         } catch (Exception e) {
             e.printStackTrace();
-            issueLog.log(e, ErrorType.BatchJob, getSubSystem());
+            issueLog.log(e, ErrorType.BatchJob, getSubSystem(),jmBtProductImport.getChannelId() + "  " +  jmBtProductImport.getProductCode());
             jmBtProductImport.setSynFlg("3");
             jmBtProductImport.setUploadErrorInfo(CommonUtil.getMessages(e));
             jmBtProductImport.setModifier(getTaskName());
@@ -319,6 +323,9 @@ public class CmsUploadJmProductService extends BaseTaskService {
             sku.setStocks("0");
             sku.setDeal_price(jmBtSkuImportModel.getDealPrice().toString());
             sku.setMarket_price(jmBtSkuImportModel.getMarketPrice().toString());
+            if(jmBtSkuImportModel.getDealPrice() < 1 || jmBtSkuImportModel.getMarketPrice() < 1){
+                throw new BusinessException("价格为0");
+            }
             spu.setSkuInfo(sku);
             spus.add(spu);
 
