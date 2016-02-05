@@ -51,6 +51,8 @@ public class WmsGetGiltClientInvService extends WmsGetClientInvBaseService {
             List<ClientInventoryBean> inventoryBeans = new ArrayList<>();
             List<ClientInventoryBean> saleInventoryBeans = new ArrayList<>();
 
+            String updateType = getUpdateType(channelId);
+
             // 判断是否需要取得Sales相关的库存
             if (getInventoryParamBean.getSalesAllow().equals(WmsConstants.SALE.ALLOW_YES)) {
                 if (StringUtils.isNullOrBlank2(getInventoryParamBean.getSalesInterval())) {
@@ -66,7 +68,9 @@ public class WmsGetGiltClientInvService extends WmsGetClientInvBaseService {
                     }else {
                         log(channel.getFull_name()+" Sales取得间隔时间未到，还无需取得库存，退出处理");
                         //更新全量更新配置
-                        setLastFullUpdateTime(channelId, getInventoryParamBean);
+                        if (!updateClientInventoryConstants.FULL.equals(updateType)) {
+                            setLastFullUpdateTime(channelId, getInventoryParamBean);
+                        }
                         return;
                     }
                 }
@@ -74,7 +78,6 @@ public class WmsGetGiltClientInvService extends WmsGetClientInvBaseService {
 
             // Sales取得后，判断全量是否有必要取得
             if (getInventoryParamBean.getFullAllow().equals(WmsConstants.FULL.YES)) {
-                String updateType = getUpdateType(channelId);
 
                 if (updateClientInventoryConstants.FULL.equals(updateType)) {
                     log(channel.getFull_name()+"全量库存取得");
