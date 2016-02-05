@@ -20,6 +20,7 @@ import java.util.Map;
 
 import static com.voyageone.common.configs.Enums.ChannelConfigEnums.Channel.GILT;
 import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toMap;
 
 /**
  * @author Jonas, 2/3/16.
@@ -49,6 +50,7 @@ public class GiltAnalysisService extends BaseTaskService {
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
 
         int pageIndex = 0;
+
         while(true) {
 
             List<GiltSku> skuList = getSkus(pageIndex);
@@ -72,18 +74,106 @@ public class GiltAnalysisService extends BaseTaskService {
 
         prepareData(skuList);
 
-        List<SuperFeedGiltBean> inserting = giltFeedDao.selectByUpdateFlg(SuperFeedGiltBean.INSERTING);
+        boolean inserted = insert();
+
+        boolean updated = update();
+
+        if (inserted || updated)
+            attribute();
+    }
+
+    private void attribute() {
+        $info("attribute 暂未实现");
+    }
+
+    private boolean update() throws Exception {
+
+        $info("进入更新");
+
+        List<SuperFeedGiltBean> newData = giltFeedDao.selectByUpdateFlg(SuperFeedGiltBean.UPDATING);
+
+        $info("\t新数据取得 -> %s", newData.size());
+
+        List<SuperFeedGiltBean> oldData = giltFeedDao.selectFullByUpdateFlg(SuperFeedGiltBean.UPDATING);
+
+        $info("\t旧(FULL)数据取得 -> %s", oldData.size());
+
+        Map<String, SuperFeedGiltBean> oldMap = getUpdatingMap(oldData);
+
+        $info("\t旧(FULL)数据转换完成");
 
         GiltAnalysisContext context = new GiltAnalysisContext();
 
-        for (SuperFeedGiltBean feedGiltBean : inserting)
-            context.put(feedGiltBean, null);
+        for (SuperFeedGiltBean newItem: newData) {
+            SuperFeedGiltBean oldItem = oldMap.get(newItem.getId());
+            context.put(newItem, oldItem);
+        }
 
-        List<List<CategoryBean>> categoryTreeList = context.getCategoriesList();
+        if (context.isNoNeedUpdate()) {
+            setUpdateFlag(null);
+            return false;
+        }
 
-        $info("\t构建的 Category 树: %s", categoryTreeList.size());
+        return callUpdate(context);
+    }
 
-        callInsert(context);
+    private boolean callUpdate(GiltAnalysisContext context) throws Exception {
+
+        WsdlProductService service = new WsdlProductService(GILT);
+
+        List<String> failCodes = new ArrayList<>();
+
+        List<String> successCodes = new ArrayList<>();
+
+        for (ProductsFeedUpdate feedUpdate: context.getFeedUpdateList()) {
+
+            WsdlProductUpdateResponse response = service.update(feedUpdate);
+
+            ProductUpdateResponseBean productUpdateResponseBean = response.getResultInfo();
+
+            if (response.getResult().equals("NG")) {
+
+                $info("\t更新产品处理失败 -> MessageCode = %s ,Message = %s", response.getMessageCode(), response.getMessage());
+
+                failCodes.add(feedUpdate.getCode());
+            } else {
+
+                List<ProductUpdateDetailBean> failure = productUpdateResponseBean.getFailure();
+
+                if (!failure.isEmpty()) {
+
+                    String failureMessage = failure.stream().map(ProductUpdateDetailBean::getResultMessage).collect(joining(";"));
+
+                    $info("\t更新产品处理失败 -> " + failureMessage);
+
+                    logIssue("cms 数据导入处理", "更新产品处理失败 -> " + failureMessage);
+
+                    failCodes.add(feedUpdate.getCode());
+                } else {
+
+                    successCodes.add(feedUpdate.getCode());
+                }
+            }
+        }
+
+        $info("\t更新产品结束 -> 成功 %s, 失败 %s", successCodes.size(), failCodes.size());
+
+        return setUpdateFlag(successCodes);
+    }
+
+    private boolean setUpdateFlag(List<String> successCodes) {
+
+        int count0 = giltFeedDao.deleteUpdating();
+        int count1 = giltFeedDao.selectInsertUpdating();
+        int count2 = giltFeedDao.updateUpdated(successCodes);
+
+        $info("\t更新产品标识结束 -> DELETE %s, INSERT %s, UPDATE %s", count0, count1, count2);
+
+        return count2 > 0;
+    }
+
+    private Map<String, SuperFeedGiltBean> getUpdatingMap(List<SuperFeedGiltBean> feedGiltBeanList) {
+        return feedGiltBeanList.stream().collect(toMap(SuperFeedGiltBean::getId, i -> i));
     }
 
     private void prepareData(List<GiltSku> skuList) {
@@ -118,7 +208,25 @@ public class GiltAnalysisService extends BaseTaskService {
         return giltSkuService.pageGetSkus(request);
     }
 
-    private void callInsert(GiltAnalysisContext context) throws Exception {
+    private boolean insert() throws Exception {
+
+        List<SuperFeedGiltBean> inserting = giltFeedDao.selectFullByUpdateFlg(SuperFeedGiltBean.INSERTING);
+
+        GiltAnalysisContext context = new GiltAnalysisContext();
+
+        for (SuperFeedGiltBean feedGiltBean : inserting)
+            context.put(feedGiltBean);
+
+        List<List<CategoryBean>> categoryTreeList = context.getCategoriesList();
+
+        $info("\t构建的 Category 树: %s", categoryTreeList.size());
+
+        return callInsert(context);
+    }
+
+    private boolean callInsert(GiltAnalysisContext context) throws Exception {
+
+        WsdlProductService service = new WsdlProductService(GILT);
 
         List<String> modelFailList = new ArrayList<>();
 
@@ -127,8 +235,6 @@ public class GiltAnalysisService extends BaseTaskService {
         for (List<CategoryBean> categoryTree: context.getCategoriesList()) {
 
             $info("\t调用 Insert -> %s", categoryTree.get(categoryTree.size() - 1).getUrl_key());
-
-            WsdlProductService service = new WsdlProductService(GILT);
 
             ProductsFeedInsert feedInsert = new ProductsFeedInsert();
 
@@ -161,11 +267,15 @@ public class GiltAnalysisService extends BaseTaskService {
         int[] count = giltFeedDao.updateInsertSuccess(modelFailList, productFailList);
 
         $info("\t新商品 INSERT 处理全部完成 { Feed: %s, Fail(M): %s, Fail(C): %s }", count[0], count[1], count[2]);
+
+        return count[0] - count[1] - count[2] > 0;
     }
 
     private SuperFeedGiltBean toMySqlBean(GiltSku giltSku) {
 
         SuperFeedGiltBean superFeedGiltBean = new SuperFeedGiltBean();
+
+        // TODO UPC 貌似没处理
 
         superFeedGiltBean.setId(String.valueOf(giltSku.getId()));
         superFeedGiltBean.setProduct_id(String.valueOf(giltSku.getProduct_id()));

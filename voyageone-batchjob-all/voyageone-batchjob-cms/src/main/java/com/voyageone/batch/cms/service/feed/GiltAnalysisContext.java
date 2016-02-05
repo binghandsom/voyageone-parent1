@@ -1,6 +1,11 @@
 package com.voyageone.batch.cms.service.feed;
 
+import com.voyageone.batch.cms.CmsConstants;
 import com.voyageone.batch.cms.bean.*;
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
+import com.voyageone.common.configs.Enums.FeedEnums;
+import com.voyageone.common.configs.Feed;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,17 +21,32 @@ public class GiltAnalysisContext {
 
     private Map<String, CategoryBean> categoryBeanMap = new HashMap<>();
 
+    private List<ProductsFeedUpdate> feedUpdateList = new ArrayList<>();
+
+    private Map<String, ProductsFeedUpdate> feedUpdateMap = new HashMap<>();
+
     private List<List<CategoryBean>> categoriesList = new ArrayList<>();
 
     private Map<String, ModelBean> modelBeanMap = new HashMap<>();
 
     private Map<String, ProductBean> productBeanMap = new HashMap<>();
 
+    private boolean isSyncFinalRmb() {
+        String syncFinalRmbValue = Feed.getVal1(ChannelConfigEnums.Channel.GILT, FeedEnums.Name.sync_final_rmb);
+        if (StringUtils.isEmpty(syncFinalRmbValue))
+            return true;
+        return Boolean.valueOf(syncFinalRmbValue);
+    }
+
     public List<List<CategoryBean>> getCategoriesList() {
         return categoriesList;
     }
 
-    public void put(SuperFeedGiltBean feedGiltBean, SuperFeedGiltBean oldSku) {
+    public List<ProductsFeedUpdate> getFeedUpdateList() {
+        return feedUpdateList;
+    }
+
+    public void put(SuperFeedGiltBean feedGiltBean) {
 
         ProductBean productBean = getProduct(feedGiltBean);
 
@@ -40,6 +60,56 @@ public class GiltAnalysisContext {
         itemBean.setI_client_sku(feedGiltBean.getId());
 
         productBean.getItembeans().add(itemBean);
+    }
+
+    public void put(SuperFeedGiltBean newItem, SuperFeedGiltBean oldItem) {
+
+        if (feedUpdateMap.containsKey(newItem.getProduct_look_id()))
+            return;
+
+        Map<String, String> updateFields = getNewestFields(newItem, oldItem);
+
+        if (updateFields == null || updateFields.size() < 1)
+            return;
+
+        ProductsFeedUpdate feedUpdate = new ProductsFeedUpdate();
+
+        feedUpdate.setChannel_id(ChannelConfigEnums.Channel.GILT.getId());
+        feedUpdate.setCode(newItem.getProduct_look_id());
+        feedUpdate.setProduct_url_key(newItem.getCategories_key() + "-" + newItem.getProduct_look_id());
+        feedUpdate.setUpdatefields(updateFields);
+
+        feedUpdateList.add(feedUpdate);
+        feedUpdateMap.put(newItem.getProduct_look_id(), feedUpdate);
+    }
+
+    private Map<String, String> getNewestFields(SuperFeedGiltBean newItem, SuperFeedGiltBean oldItem) {
+
+        Map<String, String> updateFields = new HashMap<>();
+
+        if (!newItem.getPrices_retail_value().equals(oldItem.getPrices_retail_value())) {
+            updateFields.put(CmsConstants.FEED_IO_UPDATEFIELDS_MSRP, newItem.getPrices_retail_value());
+        }
+
+        if (!newItem.getPrices_sale_value().equals(oldItem.getPrices_sale_value())) {
+            updateFields.put(CmsConstants.FEED_IO_UPDATEFIELDS_PRICE, newItem.getPrices_sale_value());
+            updateFields.put(CmsConstants.FEED_IO_UPDATEFIELDS_CN_PRICE, newItem.getPrices_sale_value());
+            updateFields.put(CmsConstants.FEED_IO_UPDATEFIELDS_CN_PRICE_RMB, newItem.getPrices_sale_value());
+            if (isSyncFinalRmb())
+                updateFields.put(CmsConstants.FEED_IO_UPDATEFIELDS_CN_PRICE_FINAL_RMB, newItem.getPrices_sale_value());
+        }
+
+        if (!newItem.getDescription().equals(oldItem.getDescription())) {
+            updateFields.put(CmsConstants.FEED_IO_UPDATEFIELDS_LONG_DESCRIPTION, newItem.getDescription());
+        }
+
+        String separator = CmsConstants.FEED_IO_UPDATEFIELDS_IMAGE_SPLIT;
+
+        if (!newItem.getImages_url().equals(oldItem.getImages_url())) {
+            updateFields.put(CmsConstants.FEED_IO_UPDATEFIELDS_IMAGE_URL, newItem.getImages_url().replaceAll(",", separator));
+        }
+
+        return updateFields;
     }
 
     private ProductBean getProduct(SuperFeedGiltBean feedGiltBean) {
@@ -185,5 +255,9 @@ public class GiltAnalysisContext {
             curr.setModelbeans(new ArrayList<>());
 
         return curr;
+    }
+
+    public boolean isNoNeedUpdate() {
+        return feedUpdateList.isEmpty();
     }
 }
