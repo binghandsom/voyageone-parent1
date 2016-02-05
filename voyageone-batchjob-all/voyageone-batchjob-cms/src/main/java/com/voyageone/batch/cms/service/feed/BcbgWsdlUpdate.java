@@ -66,21 +66,25 @@ public class BcbgWsdlUpdate extends BcbgWsdlBase {
         List<ProductsFeedUpdate> feedUpdates = feedMap.get(true);
 
         if (feedUpdates == null || feedUpdates.size() < 1) {
-            int[] counts = bcbgSuperFeedDao.updateUpdatingSuccess();
-            $info("没有商品需要更新. 商品更新信息 Feed [ %s ] [ %s ]", counts[0], counts[1]);
+            // 没有需要更新的, 则
+            // 将所有新数据补充到 full 表, 之后更新所有记录到 40
+            setUpdated(null);
             return false;
-        }
-
-        List<ProductsFeedUpdate> noNeedUpdating = feedMap.get(false);
-
-        if (noNeedUpdating != null && noNeedUpdating.size() > 0) {
-            int[] counts = bcbgSuperFeedDao.updateFull(noNeedUpdating.stream().map(ProductsFeedUpdate::getCode).collect(toList()));
-            $info("部分商品不需要更新, 执行信息 Feed [ %s ] [ %s ]", counts[0], counts[1]);
         }
 
         $info("已取得商品更新参数 [ %s ]", feedUpdates.size());
 
-        List<String> updatedCodes = new ArrayList<>();
+        List<ProductsFeedUpdate> noNeedUpdating = feedMap.get(false);
+
+        List<String> updatedCodes = null;
+
+        if (noNeedUpdating != null && noNeedUpdating.size() > 0) {
+            // 不需要更新的 Code, 直接认为是更新成功的
+            updatedCodes = noNeedUpdating.stream().map(ProductsFeedUpdate::getCode).collect(toList());
+            $info("不需要更新的(默认成功)商品数 -> %s", updatedCodes.size());
+        } else {
+            updatedCodes = new ArrayList<>();
+        }
 
         for (ProductsFeedUpdate feedUpdate : feedUpdates) {
 
@@ -115,11 +119,14 @@ public class BcbgWsdlUpdate extends BcbgWsdlBase {
 
         // 不管更新是否成功, 最新的数据是要保存到库中
         // 如果更新不成功, 只是不更新标识位, 等待下次程序认为是强制更新
+        return setUpdated(updatedCodes);
+    }
+
+    private boolean setUpdated(List<String> codes) {
         int count0 = bcbgSuperFeedDao.deleteUpdating();
         int count1 = bcbgSuperFeedDao.selectInsertUpdated();
-        int count2 = bcbgSuperFeedDao.updateFlgToUpdated(updatedCodes);
+        int count2 = bcbgSuperFeedDao.updateFlgToUpdated(codes);
         $info("更新结束, 原数据删除 [ %s ] 补充数据 [ %s ] 标记成功数据 [ %s ]", count0, count1, count2);
-
         return count2 > 0;
     }
 
