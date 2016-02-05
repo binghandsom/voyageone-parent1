@@ -93,10 +93,10 @@ public class GiltAnalysisContext {
 
         if (!newItem.getPrices_sale_value().equals(oldItem.getPrices_sale_value())) {
             updateFields.put(CmsConstants.FEED_IO_UPDATEFIELDS_PRICE, newItem.getPrices_sale_value());
-            updateFields.put(CmsConstants.FEED_IO_UPDATEFIELDS_CN_PRICE, newItem.getPrices_sale_value());
-            updateFields.put(CmsConstants.FEED_IO_UPDATEFIELDS_CN_PRICE_RMB, newItem.getPrices_sale_value());
-            if (isSyncFinalRmb())
-                updateFields.put(CmsConstants.FEED_IO_UPDATEFIELDS_CN_PRICE_FINAL_RMB, newItem.getPrices_sale_value());
+//            updateFields.put(CmsConstants.FEED_IO_UPDATEFIELDS_CN_PRICE, newItem.getPrices_sale_value());
+//            updateFields.put(CmsConstants.FEED_IO_UPDATEFIELDS_CN_PRICE_RMB, newItem.getPrices_sale_value());
+//            if (isSyncFinalRmb())
+//                updateFields.put(CmsConstants.FEED_IO_UPDATEFIELDS_CN_PRICE_FINAL_RMB, newItem.getPrices_sale_value());
         }
 
         if (!newItem.getDescription().equals(oldItem.getDescription())) {
