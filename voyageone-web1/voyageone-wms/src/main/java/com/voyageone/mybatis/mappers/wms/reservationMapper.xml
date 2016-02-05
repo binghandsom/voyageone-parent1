@@ -397,14 +397,14 @@
         <choose>
             <when test="scanType == 1">
                 price = #{price},
-                <if test="closeDayFlg != null and closeDayFlg != '' and closeDayFlg == 2">
+                <if test="closeDayFlg != null and closeDayFlg != '' and closeDayFlg == 2 and scanMode == 'Scan'">
                     date = NOW(),
                 </if>
             </when>
-            <when test="scanType == 2">
+            <when test="scanType == 2 and scanMode == 'Scan'">
                 date = NOW(),
             </when>
-            <when test="scanType == 3">
+            <when test="scanType == 3 and scanMode == 'Scan'">
                 date = NOW(),
             </when>
         </choose>
