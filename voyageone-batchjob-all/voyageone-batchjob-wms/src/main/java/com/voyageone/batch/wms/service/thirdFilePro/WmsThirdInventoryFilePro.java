@@ -260,12 +260,12 @@ import java.util.List;
             throw new RuntimeException(logMsg);
         }
 
-        //按照配置规则拼装clientSku
+        //按照配置规则拼装clientSku(去除拼接字段的左右空格)
         for (String ruleElm: concatRuleArr) {
             for (int j = 0; j < firstLineDataArr.length; j++) {
                 flag = false;
                 if (ruleElm.equals(firstLineDataArr[j])) {
-                    concatRes = concatRes + lineDataArr[j];
+                    concatRes = concatRes + lineDataArr[j].trim();
                     flag = true;
                     break;
                 }
