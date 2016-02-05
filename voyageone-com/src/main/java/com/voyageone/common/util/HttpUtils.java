@@ -1,6 +1,12 @@
 package com.voyageone.common.util;
 
 import com.voyageone.common.configs.beans.PostResponse;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpPatch;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSocketFactory;
@@ -123,72 +129,120 @@ public class HttpUtils {
         return null;
     }
 
-    public static String put(String url, String jsonParam,String authorization) {
-        HttpURLConnection connection = null;
+    public static String put(String url, String jsonParam,String authorization)
+    {
+
+        InputStream input = null;//输入流
+        InputStreamReader isr = null;
+        BufferedReader buffer = null;
+        StringBuffer sb = null;
+        String line = null;
+
         try {
-            connection = getConnection(url, "PUT");
-            connection.setRequestProperty("Authorization", "Basic " + authorization);
-            connection.setRequestProperty("Content-Type","application/json");
+	            /*post向服务器请求数据*/
+            HttpPut request = new HttpPut(url);
+            StringEntity se = new StringEntity(jsonParam);
+            request.setEntity(se);
+            se.setContentEncoding("UTF-8");
+            se.setContentType("application/json");
+            request.setHeader("Authorization", "Basic " + authorization);;
+            CloseableHttpClient httpclient= HttpClients.createDefault();
+            HttpResponse response = httpclient.execute(request);
+            int code = response.getStatusLine().getStatusCode();
+            // System.out.println("postCode= " + code);
 
-            // 发送Put请求必须设置如下两行
-            connection.setDoOutput(true);
-            connection.setDoInput(true);
+            //从服务器获得输入流
+            input = response.getEntity().getContent();
+            isr = new InputStreamReader(input);
+            buffer = new BufferedReader(isr,10*1024);
 
-            // 获取URLConnection对象对应的输出流
-            try (OutputStream outputStream = connection.getOutputStream();
-                 PrintWriter printWriter = new PrintWriter(outputStream)) {
-
-                // 发送请求参数
-                printWriter.print(jsonParam);
-                printWriter.flush();
+            sb = new StringBuffer();
+            while ((line = buffer.readLine()) != null) {
+                sb.append(line);
             }
 
-            connection.connect();
-            try (InputStream inputStream = connection.getInputStream()) {
-                return readConnection(inputStream);
-            }
-        } catch (IOException e) {
+
+        } catch (Exception e) {
+            //其他异常同样读取assets目录中的"local_stream.xml"文件
+            System.out.println("请求异常数据异常");
             e.printStackTrace();
+            return null;
         } finally {
-            if (connection != null)
-                connection.disconnect();
+            try {
+                if(buffer != null) {
+                    buffer.close();
+                    buffer = null;
+                }
+                if(isr != null) {
+                    isr.close();
+                    isr = null;
+                }
+                if(input != null) {
+                    input.close();
+                    input = null;
+                }
+            } catch (Exception e) {
+            }
         }
-
-        return null;
+        return sb.toString();
     }
 
-    public static String patch(String url, String jsonParam,String authorization) {
-        HttpURLConnection connection = null;
+    public static String patch(String url, String jsonParam,String authorization)
+    {
+
+        InputStream input = null;//输入流
+        InputStreamReader isr = null;
+        BufferedReader buffer = null;
+        StringBuffer sb = null;
+        String line = null;
+
         try {
-            connection = getConnection(url, "POST");
-            connection.setRequestProperty("Authorization", "Basic " + authorization);
-            connection.setRequestProperty("Content-Type","application/json");
-            connection.setRequestProperty("X-HTTP-Method-Override", "PATCH");
-            // 发送Put请求必须设置如下两行
-            connection.setDoOutput(true);
-            connection.setDoInput(true);
+	            /*post向服务器请求数据*/
+            HttpPatch request = new HttpPatch(url);
+            StringEntity se = new StringEntity(jsonParam);
+            request.setEntity(se);
+            se.setContentEncoding("UTF-8");
+            se.setContentType("application/json");
+            request.setHeader("Authorization", "Basic " + authorization);;
+            CloseableHttpClient httpclient= HttpClients.createDefault();
+            HttpResponse response = httpclient.execute(request);
+            int code = response.getStatusLine().getStatusCode();
+            // System.out.println("postCode= " + code);
 
-            // 获取URLConnection对象对应的输出流
-            try (OutputStream outputStream = connection.getOutputStream();
-                 PrintWriter printWriter = new PrintWriter(outputStream)) {
+            //从服务器获得输入流
+            input = response.getEntity().getContent();
+            isr = new InputStreamReader(input);
+            buffer = new BufferedReader(isr,10*1024);
 
-                // 发送请求参数
-                printWriter.print(jsonParam);
-                printWriter.flush();
+            sb = new StringBuffer();
+            while ((line = buffer.readLine()) != null) {
+                sb.append(line);
             }
 
-            connection.connect();
-            try (InputStream inputStream = connection.getInputStream()) {
-                return readConnection(inputStream);
-            }
-        } catch (IOException e) {
+
+        } catch (Exception e) {
+            //其他异常同样读取assets目录中的"local_stream.xml"文件
+            System.out.println("请求异常数据异常");
             e.printStackTrace();
+            return null;
         } finally {
-            if (connection != null)
-                connection.disconnect();
+            try {
+                if(buffer != null) {
+                    buffer.close();
+                    buffer = null;
+                }
+                if(isr != null) {
+                    isr.close();
+                    isr = null;
+                }
+                if(input != null) {
+                    input.close();
+                    input = null;
+                }
+            } catch (Exception e) {
+            }
         }
-
-        return null;
+        return sb.toString();
     }
 
 
