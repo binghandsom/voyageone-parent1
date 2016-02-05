@@ -119,14 +119,10 @@ public class WmsPickupServiceImpl implements WmsPickupService {
         String date_to = DateTimeUtil.parseStr(DateTimeUtil.getLocalTime(DateTimeUtil.getNow(), user.getTimeZone()), DateTimeUtil.DEFAULT_DATE_FORMAT);
         resultMap.put("toDate", date_to);
 
-        // 获取已发货报告开始日期（当前日期的一天前）
-        String reportFromDate = DateTimeUtil.parseStr(DateTimeUtil.getLocalTime(DateTimeUtil.addDays(DateTimeUtil.getDate(), -1), user.getTimeZone()), DateTimeUtil.DEFAULT_DATE_FORMAT);
-        resultMap.put("reportFromDate", reportFromDate);
-
-        // 获取结束日期（当前日期）
-        String reportToDate = DateTimeUtil.parseStr(DateTimeUtil.getLocalTime(DateTimeUtil.getNow(), user.getTimeZone()), DateTimeUtil.DEFAULT_DATE_FORMAT);
-        resultMap.put("reportToDate", reportToDate);
-
+        // 获取已发货报告开始日期\结束日期（当前日期）
+        String reportDate = DateTimeUtil.parseStr(DateTimeUtil.getLocalTime(DateTimeUtil.addDays(DateTimeUtil.getDate(), -1), user.getTimeZone()), DateTimeUtil.DEFAULT_DATE_FORMAT);
+        resultMap.put("reportFromDate", reportDate);
+        resultMap.put("reportToDate", reportDate);
 
         // 获取相关渠道对应的扫描方式
         List<String> orderChannelList = user.getChannelList();
@@ -1056,9 +1052,9 @@ public class WmsPickupServiceImpl implements WmsPickupService {
 
         resultMap.put("store_id", storeid);
         resultMap.put("storeList", channelStoreList);
-        resultMap.put("orderChannelList",orderChannelList);
-        resultMap.put("from", StringUtils.isNullOrBlank2(from)? "0000-00-00 00:00:00" : DateTimeUtil.getGMTTimeFrom(from, user.getTimeZone()));
-        resultMap.put("to", StringUtils.isNullOrBlank2(to)? "9999-99-99 99:99:99" : DateTimeUtil.getGMTTimeTo(to, user.getTimeZone()));
+        resultMap.put("orderChannelList", orderChannelList);
+        resultMap.put("from", StringUtils.isNullOrBlank2(from) ? "0000-00-00 00:00:00" : DateTimeUtil.getGMTTimeFrom(from, user.getTimeZone()));
+        resultMap.put("to", StringUtils.isNullOrBlank2(to) ? "9999-99-99 99:99:99" : DateTimeUtil.getGMTTimeTo(to, user.getTimeZone()));
 
         return resultMap;
 
