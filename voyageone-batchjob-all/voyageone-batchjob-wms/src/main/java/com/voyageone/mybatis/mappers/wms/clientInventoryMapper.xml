@@ -217,7 +217,7 @@
     <update id="wms_getClientInv_setLastSalesUpdateTime">
         update com_mt_third_party_config t
         set
-            t.prop_val3 =now(),
+            t.prop_val3 = #{currDate},
             t.modifier = #{modifier},
             t.modified = now()
         where t.channel_id = #{order_channel_id}

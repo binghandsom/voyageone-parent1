@@ -58,10 +58,10 @@ public class WmsGetGiltClientInvService extends WmsGetClientInvBaseService {
                     logIssue(channel.getFull_name()+" Sales取得间隔时间未设定，无法取得库存，退出处理");
                 }else {
                     int timeInterval = Integer.parseInt(getInventoryParamBean.getSalesInterval());
-                    String UpdateTime = DateTimeUtil.getLocalTime(timeInterval * -1);
+                    String UpdateTime = DateTimeUtil.format(DateTimeUtil.addMinutes(DateTimeUtil.parse(getInventoryParamBean.getSalesUpdateSince()), timeInterval), DateTimeUtil.DEFAULT_DATETIME_FORMAT);
 
                     // 初回更新或现在时间大于上传更新时间时，需要去取得相关Sales的库存
-                    if (StringUtils.isNullOrBlank2(getInventoryParamBean.getSalesUpdateSince()) || UpdateTime.compareTo(getInventoryParamBean.getSalesUpdateSince()) > 0) {
+                    if (StringUtils.isNullOrBlank2(getInventoryParamBean.getSalesUpdateSince()) || DateTimeUtil.getNow().compareTo(UpdateTime) > 0) {
                         saleInventoryBeans = getClientInvSales(getInventoryParamBean, channelId);
                     }else {
                         log(channel.getFull_name()+" Sales取得间隔时间未到，还无需取得库存，退出处理");
@@ -202,6 +202,7 @@ public class WmsGetGiltClientInvService extends WmsGetClientInvBaseService {
             map.put("order_channel_id", channel.getOrder_channel_id());
             map.put("propName", updateClientInventoryConstants.INVENTORYSALECONFIG);
             map.put("modifier", getTaskName());
+            map.put("currDate",DateTimeUtil.getNow());
             clientInventoryDao.setLastSalesUpdateTime(map);
 
             log(channel.getFull_name() + " Sales库存取得结束");
