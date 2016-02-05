@@ -60,13 +60,8 @@
 				a.syn_flg = 1
 				and b.product_code is null
 				and c.product_code is not null
-			<if test="channels != null and channels.size >0">
-				and a.channel_id in
-				<foreach item="item" index="index" collection="channels"
-						 open="(" separator="," close=")">
-					#{item}
-				</foreach>
-			</if>
+				and a.channel_id in ('010','012')
+
 			LIMIT 0,
 			#{count,jdbcType=INTEGER}
 		) t1,
