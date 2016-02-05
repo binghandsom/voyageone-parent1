@@ -120,7 +120,7 @@ public class WmsPickupServiceImpl implements WmsPickupService {
         resultMap.put("toDate", date_to);
 
         // 获取已发货报告开始日期\结束日期（当前日期）
-        String reportDate = DateTimeUtil.parseStr(DateTimeUtil.getLocalTime(DateTimeUtil.addDays(DateTimeUtil.getDate(), -1), user.getTimeZone()), DateTimeUtil.DEFAULT_DATE_FORMAT);
+        String reportDate = DateTimeUtil.parseStr(DateTimeUtil.getLocalTime(DateTimeUtil.getNow(), user.getTimeZone()), DateTimeUtil.DEFAULT_DATE_FORMAT);
         resultMap.put("reportFromDate", reportDate);
         resultMap.put("reportToDate", reportDate);
 
