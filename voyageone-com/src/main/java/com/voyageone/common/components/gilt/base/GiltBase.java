@@ -120,7 +120,7 @@ public abstract class GiltBase {
         String result=null;
         if(reqType.equals("put")){
              result = HttpUtils.put(post_url.toString(), jsonString,app_key);
-            System.out.println(result);
+          //  System.out.println(result);
         }else if(reqType.equals("patch")){
              result = HttpUtils.patch(post_url.toString(), jsonString,app_key);
         }

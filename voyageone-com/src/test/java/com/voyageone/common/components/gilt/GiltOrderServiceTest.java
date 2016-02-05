@@ -52,7 +52,7 @@ public class GiltOrderServiceTest {
         List<GiltOrderItem> orderItems=new ArrayList<>();
 
         GiltOrderItem orderItem=new GiltOrderItem();
-        orderItem.setSku_id(253);
+        orderItem.setSku_id(5072313);
         orderItem.setQuantity(1);
         request.setOrder_items(orderItems);
         orderItems.add(orderItem);
@@ -64,9 +64,14 @@ public class GiltOrderServiceTest {
     @Test
     public void testPatchOrder() throws Exception {
         GiltPatchOrderRequest request=new GiltPatchOrderRequest();
-        request.setId(UUID.fromString("d0ca18a3-03f7-44ee-a6f8-9e3a34ac3213"));
-        request.setStatus(GiltOrderStatus.cancelled);
+        request.setId(UUID.fromString("9ad6d3ea-ea66-4fcc-bbeb-57805f0549b2"));
+        request.setStatus(GiltOrderStatus.confirmed);
         GiltOrder orders= giltOrderService.patchOrder(request);
         System.out.println(JsonUtil.getJsonString(orders));
+    }
+
+    @Test
+    public void testRandomUUID() throws Exception {
+        System.out.println(UUID.randomUUID());
     }
 }

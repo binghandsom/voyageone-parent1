@@ -7,6 +7,7 @@ import com.voyageone.batch.core.modelbean.TaskControlBean;
 import com.voyageone.common.components.gilt.GiltSkuService;
 import com.voyageone.common.components.gilt.bean.GiltCategory;
 import com.voyageone.common.components.gilt.bean.GiltImage;
+import com.voyageone.common.components.gilt.bean.GiltPageGetSkusRequest;
 import com.voyageone.common.components.gilt.bean.GiltSku;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.util.StringUtils;
@@ -16,7 +17,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import static com.voyageone.common.configs.Enums.ChannelConfigEnums.Channel.GILT;
 import static java.util.stream.Collectors.joining;
@@ -48,75 +48,74 @@ public class GiltAnalysisService extends BaseTaskService {
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
 
-        Set<Long> skuIdSet = giltSkuService.getSalesSkuIds();
+        int pageIndex = 0;
+        while(true) {
 
-        $info("取得的所有 Sale Sku 数为: %s", skuIdSet.size());
+            List<GiltSku> skuList = getSkus(pageIndex);
 
-        int index = 0;
+            $info("取得 SKU: %s", skuList.size());
 
-        List<StringBuilder> stringBuilders = new ArrayList<>();
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilders.add(stringBuilder);
+            if (skuList.isEmpty())
+                break;
 
-        for (Long id : skuIdSet) {
+            doFeedData(skuList);
 
-            stringBuilder.append(id);
-            stringBuilder.append(",");
-            index++;
+            if (skuList.size() < 100)
+                break;
 
-            if (index < 100) continue;
-
-            stringBuilder = new StringBuilder();
-            stringBuilders.add(stringBuilder);
-            index = 0;
+            $info("阶段结束等待 10 秒");
+            Thread.sleep(10000);
         }
+    }
 
-        $info("已创建 id StringBuilder 数 (每 100 个): %s", stringBuilders.size());
+    private void doFeedData(List<GiltSku> skuList) throws Exception {
 
-        $info("准备进入处理");
-        for (StringBuilder idStringBuilder : stringBuilders) {
+        prepareData(skuList);
 
-            giltFeedDao.clearTemp();
+        List<SuperFeedGiltBean> inserting = giltFeedDao.selectByUpdateFlg(SuperFeedGiltBean.INSERTING);
 
-            List<GiltSku> skuList = giltSkuService.getSkus(idStringBuilder.toString());
+        GiltAnalysisContext context = new GiltAnalysisContext();
 
-            $info("\t取得 SKU: %s", skuList.size());
+        for (SuperFeedGiltBean feedGiltBean : inserting)
+            context.put(feedGiltBean, null);
 
-            List<SuperFeedGiltBean> feedGiltBeanList = new ArrayList<>();
+        List<List<CategoryBean>> categoryTreeList = context.getCategoriesList();
 
-            for (GiltSku giltSku : skuList) feedGiltBeanList.add(toMySqlBean(giltSku));
+        $info("\t构建的 Category 树: %s", categoryTreeList.size());
 
-            $info("\t转换 SKU: %s", feedGiltBeanList.size());
+        callInsert(context);
+    }
 
-            int count = giltFeedDao.insertListTemp(feedGiltBeanList);
+    private void prepareData(List<GiltSku> skuList) {
 
-            $info("\t插入 TEMP SKU: %s", count);
+        List<SuperFeedGiltBean> feedGiltBeanList = new ArrayList<>();
 
-            int[] counts = giltFeedDao.updateFlg();
+        for (GiltSku giltSku : skuList) feedGiltBeanList.add(toMySqlBean(giltSku));
 
-            $info("\t更新 SKU 标识位: INSERT -> %s, UPDATE -> %s", counts[0], counts[1]);
+        $info("\t转换 SKU: %s", feedGiltBeanList.size());
 
-            counts = giltFeedDao.appendInserting();
+        int count = giltFeedDao.insertListTemp(feedGiltBeanList);
 
-            $info("\t追加插入的 SKU 数据: DELETE -> %s, INSERT -> %s", counts[0], counts[1]);
+        $info("\t插入 TEMP SKU: %s", count);
 
-            List<SuperFeedGiltBean> inserting = giltFeedDao.selectByUpdateFlg(SuperFeedGiltBean.INSERTING);
+        int[] counts = giltFeedDao.updateFlg();
 
-            GiltAnalysisContext context = new GiltAnalysisContext();
+        $info("\t更新 SKU 标识位: INSERT -> %s, UPDATE -> %s", counts[0], counts[1]);
 
-            for (SuperFeedGiltBean feedGiltBean : inserting)
-                context.put(feedGiltBean, null);
+        counts = giltFeedDao.appendInserting();
 
-            List<List<CategoryBean>> categoryTreeList = context.getCategoriesList();
+        $info("\t追加插入的 SKU 数据: DELETE -> %s, INSERT -> %s", counts[0], counts[1]);
+    }
 
-            $info("\t构建的 Category 树: %s", categoryTreeList.size());
+    private List<GiltSku> getSkus(int index) throws Exception {
 
-            callInsert(context);
+        GiltPageGetSkusRequest request = new GiltPageGetSkusRequest();
 
-            $info("阶段结束等待 5 秒");
+        request.setOffset(index * 100);
 
-            break;
-        }
+        request.setLimit(100);
+
+        return giltSkuService.pageGetSkus(request);
     }
 
     private void callInsert(GiltAnalysisContext context) throws Exception {
