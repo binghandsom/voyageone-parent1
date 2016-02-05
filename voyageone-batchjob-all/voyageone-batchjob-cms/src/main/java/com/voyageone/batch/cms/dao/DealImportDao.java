@@ -40,6 +40,16 @@ public class DealImportDao extends BaseDao {
 	}
 
 	/**
+	 * 更新JmBtDealImportModel（专场货架更新）
+	 * @param jmBtDealImportModel
+	 * @return
+	 */
+	public int updateDealImportInfoForSpecialActivity(JmBtDealImportModel jmBtDealImportModel){
+		int ret = updateTemplate.update("jm_bt_deal_import_updateForSpecialActivity", jmBtDealImportModel);
+		return ret;
+	}
+
+	/**
 	 * 根据修改的Deal，更新ProductImport
 	 * @param jmBtDealImportModel
 	 * @return

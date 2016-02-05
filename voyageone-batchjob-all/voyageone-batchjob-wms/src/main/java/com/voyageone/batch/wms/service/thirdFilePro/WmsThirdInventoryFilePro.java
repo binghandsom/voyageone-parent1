@@ -173,7 +173,7 @@ import java.util.List;
         try {
             filePath = filePath + "/" + filename;
             File file = new File(filePath);
-            if(!file.exists()){
+            if(!file.exists() || StringUtils.isNullOrBlank2(filename)){
                 log("文件不存在：" + filePath);
                 return false;
             }
@@ -198,7 +198,8 @@ import java.util.List;
                 while ((lineTxt = bufferedReader.readLine()) != null) {
                     //数据合法性验证
                     checkData(i, lineTxt, firstLineData, splitStr);
-                    if (i > 0) {
+                    // 第一行不是标题行的话，也要处理记录
+                    if (i >= 0 && (!firstLineData.equals(lineTxt.trim()))) {
                         //根据不同的渠道将文件数据处理成固定格式数组
                         String[] stringArr = proLineData(concatRule, lineTxt, firstLineData);
                         //生成SQL文
@@ -259,17 +260,17 @@ import java.util.List;
             throw new RuntimeException(logMsg);
         }
 
-        //按照配置规则拼装clientSku
+        //按照配置规则拼装clientSku(去除拼接字段的左右空格)
         for (String ruleElm: concatRuleArr) {
             for (int j = 0; j < firstLineDataArr.length; j++) {
                 flag = false;
                 if (ruleElm.equals(firstLineDataArr[j])) {
-                    concatRes = concatRes + lineDataArr[j];
+                    concatRes = concatRes + lineDataArr[j].trim();
                     flag = true;
                     break;
                 }
             }
-            if (!flag && "-".equals(ruleElm)) {
+            if (!flag && ("-".equals(ruleElm) || " ".equals(ruleElm))) {
                 concatRes = concatRes + ruleElm;
             } else if (!flag) {
                 String logMsg = "数据文件中找不到拼接规则所需要的字段！请检查【com_mt_third_party_config】表设置";

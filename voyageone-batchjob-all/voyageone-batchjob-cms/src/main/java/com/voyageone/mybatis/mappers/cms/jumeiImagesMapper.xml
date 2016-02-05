@@ -57,7 +57,7 @@
                 from jumei.jm_bt_images img
                 where img.channel_id = #{channelId,jdbcType=VARCHAR}
                     and img.syn_flg = 0
-                    and img.creater != img.modified
+                    and img.created != img.modified
                 GROUP BY img.channel_id, img.image_key) imgm
         set product.syn_flg = if(product.syn_flg = '2', '1', product.syn_flg),
             product.modified = now(),

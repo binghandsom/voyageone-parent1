@@ -58,7 +58,7 @@ public class CmsUploadJmProductService extends BaseTaskService {
 
     private static final String IMG_HTML = "<img src=\"%s\" alt=\"\" />";
 
-    private static final String DESCRIPTION_USAGE = "<div align=\"center\">%s %s <br /></div>";
+    private static final String DESCRIPTION_USAGE = "<div>%s %s <br /></div>";
 
     private static final String DESCRIPTION_IMAGES = "%s<br />";
 
@@ -320,7 +320,7 @@ public class CmsUploadJmProductService extends BaseTaskService {
         // 特殊说明
         jmProductBean_DealInfo.setSpecial_explain(jmBtProductImport.getSpecialNote());
 
-        jmProductBean_DealInfo.setPartner_sku_nos(partner_sku_nos.substring(0, partner_sku_nos.length() - 2));
+        jmProductBean_DealInfo.setPartner_sku_nos(partner_sku_nos.substring(0, partner_sku_nos.length() - 1));
 
         jmProductBean.setDealInfo(jmProductBean_DealInfo);
         return jmProductBean;
@@ -333,7 +333,7 @@ public class CmsUploadJmProductService extends BaseTaskService {
 
 
         d = sdf.parse(user_time);
-        long l = d.getTime()/1000;
+        long l = d.getTime()/1000-8*3600;
 
         return l;
     }

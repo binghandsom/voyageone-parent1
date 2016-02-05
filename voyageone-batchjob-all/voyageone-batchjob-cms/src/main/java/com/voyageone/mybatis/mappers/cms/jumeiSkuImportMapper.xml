@@ -50,7 +50,7 @@
                           sku.deal_id
                 from jumei.jm_bt_sku_import sku
                 where sku.channel_id = #{channelId,jdbcType=VARCHAR}
-                    and sku.creater != sku.modified
+                    and sku.created != sku.modified
                     and sku.deal_id = #{dealId,jdbcType=VARCHAR}
                 GROUP BY sku.channel_id, sku.product_code, sku.deal_id) skum
         set product.syn_flg = if(product.syn_flg = '2', '1', product.syn_flg),

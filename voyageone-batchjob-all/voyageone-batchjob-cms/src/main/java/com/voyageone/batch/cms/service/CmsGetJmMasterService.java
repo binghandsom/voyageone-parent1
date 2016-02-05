@@ -66,10 +66,10 @@ public class CmsGetJmMasterService extends BaseTaskService {
 //        shopBean.setSessionKey("7e059a48c30c67d2693be14275c2d3be");
 //        shopBean.setAppSecret("0f9e3437ca010f63f2c4f3a216b7f4bc9698f071");
 //        shopBean.setApp_url("http://openapi.ext.jumei.com/");
-//        insertCategory(shopBean);
+        insertCategory(shopBean);
         insertBrand(shopBean);
-//        inserCurrency(shopBean);
-//        inserWarehouse(shopBean);
+        inserCurrency(shopBean);
+        inserWarehouse(shopBean);
 
     }
 

@@ -166,6 +166,7 @@
         WHERE
             channel_id = #{order_channel_id}
         AND send_flg = #{syn_flg}
+        AND jumei_sku_no != '0'
         AND EXISTS( SELECT
                         1
                       FROM
