@@ -47,11 +47,18 @@ public class WmsGetGiltClientInvService extends WmsGetClientInvBaseService {
     public void sysGiltInventoryByClient(String channelId,  List<Runnable> threads){
         threads.add(() -> {
             OrderChannelBean channel = ChannelConfigs.getChannel(channelId);
-            GetInventoryParamBean getInventoryParamBean = setParamBean(channelId);
             List<ClientInventoryBean> inventoryBeans = new ArrayList<>();
             List<ClientInventoryBean> saleInventoryBeans = new ArrayList<>();
+            List<String> saleSkuList = new ArrayList<>();
 
             String updateType = getUpdateType(channelId);
+
+            GetInventoryParamBean getInventoryParamBean = setParamBean(channelId);
+
+            //更新全量更新配置
+            if (!updateClientInventoryConstants.FULL.equals(updateType)) {
+                setLastFullUpdateTime(channelId, getInventoryParamBean);
+            }
 
             // 判断是否需要取得Sales相关的库存
             if (getInventoryParamBean.getSalesAllow().equals(WmsConstants.SALE.ALLOW_YES)) {
@@ -62,15 +69,12 @@ public class WmsGetGiltClientInvService extends WmsGetClientInvBaseService {
                     int timeInterval = Integer.parseInt(getInventoryParamBean.getSalesInterval());
                     String UpdateTime = DateTimeUtil.format(DateTimeUtil.addMinutes(DateTimeUtil.parse(getInventoryParamBean.getSalesUpdateSince()), timeInterval), DateTimeUtil.DEFAULT_DATETIME_FORMAT);
 
+                    log(channel.getFull_name()+" Sales取得前次处理时间："+getInventoryParamBean.getSalesUpdateSince());
                     // 初回更新或现在时间大于上传更新时间时，需要去取得相关Sales的库存
                     if (StringUtils.isNullOrBlank2(getInventoryParamBean.getSalesUpdateSince()) || DateTimeUtil.getNow().compareTo(UpdateTime) > 0) {
-                        saleInventoryBeans = getClientInvSales(getInventoryParamBean, channelId);
+                        saleInventoryBeans = getClientInvSales(getInventoryParamBean, channelId, saleSkuList);
                     }else {
                         log(channel.getFull_name()+" Sales取得间隔时间未到，还无需取得库存，退出处理");
-                        //更新全量更新配置
-                        if (!updateClientInventoryConstants.FULL.equals(updateType)) {
-                            setLastFullUpdateTime(channelId, getInventoryParamBean);
-                        }
                         return;
                     }
                 }
@@ -81,7 +85,7 @@ public class WmsGetGiltClientInvService extends WmsGetClientInvBaseService {
 
                 if (updateClientInventoryConstants.FULL.equals(updateType)) {
                     log(channel.getFull_name()+"全量库存取得");
-                    inventoryBeans = getClientInvFull(getInventoryParamBean, channelId, saleInventoryBeans);
+                    inventoryBeans = getClientInvFull(getInventoryParamBean, channelId, saleSkuList);
                     inventoryBeans.addAll(saleInventoryBeans);
                 }
             }
@@ -137,7 +141,7 @@ public class WmsGetGiltClientInvService extends WmsGetClientInvBaseService {
         });
     }
 
-    private List<ClientInventoryBean> getClientInvSales(GetInventoryParamBean getInventoryParamBean, String channelId){
+    private List<ClientInventoryBean> getClientInvSales(GetInventoryParamBean getInventoryParamBean, String channelId, List<String> saleSkuList){
         OrderChannelBean channel = ChannelConfigs.getChannel(channelId);
         List<ClientInventoryBean> clientInventoryList = new ArrayList<>();
 
@@ -153,13 +157,14 @@ public class WmsGetGiltClientInvService extends WmsGetClientInvBaseService {
 
             for (GiltSale giltSale : giltSales) {
                 int offset = 0;
+                int page = 1;
                 GiltPageGetSaleAttrRequest giltPageGetSaleAttrRequest = new GiltPageGetSaleAttrRequest();
                 giltPageGetSaleAttrRequest.setId(giltSale.getId().toString());
                 giltPageGetSaleAttrRequest.setLimit(StringUtils.isNullOrBlank2(getInventoryParamBean.getSalesLimit())? 1 : Integer.parseInt(getInventoryParamBean.getSalesLimit()));
                 giltPageGetSaleAttrRequest.setOffset(offset);
 
                 while (true) {
-                    logger.info("----------" + channel.getFull_name() + "当前处理到Sales【" + giltSale.getId() + "】的第【" + (offset + 1 ) + "】页----------");
+                    logger.info("----------" + channel.getFull_name() + "当前处理到Sales【" + giltSale.getId() + "】的第【" + page + "】页----------");
 
                     // 根据类型决定取得线下库存还是线上库存
                     if (getInventoryParamBean.getSalesUpdateType().equals(WmsConstants.SALE.UPDATE_INVENTORY)) {
@@ -175,7 +180,10 @@ public class WmsGetGiltClientInvService extends WmsGetClientInvBaseService {
                             clientInventoryBean.setClient_sku(String.valueOf(giltInventory.getSku_id()));
                             clientInventoryBean.setQty(String.valueOf(giltInventory.getQuantity()));
 
-                            clientInventoryList.add(clientInventoryBean);
+                            if (!saleSkuList.contains(clientInventoryBean.getClient_sku())) {
+                                saleSkuList.add(clientInventoryBean.getClient_sku());
+                                clientInventoryList.add(clientInventoryBean);
+                            }
                         }
                     }
                     else if (getInventoryParamBean.getSalesUpdateType().equals(WmsConstants.SALE.UPDATE_REALTIME_INVENTORY)) {
@@ -191,11 +199,16 @@ public class WmsGetGiltClientInvService extends WmsGetClientInvBaseService {
                             clientInventoryBean.setClient_sku(String.valueOf(giltRealTimeInventory.getSku_id()));
                             clientInventoryBean.setQty(String.valueOf(giltRealTimeInventory.getQuantity()));
 
-                            clientInventoryList.add(clientInventoryBean);
+                            if (!saleSkuList.contains(clientInventoryBean.getClient_sku())) {
+                                saleSkuList.add(clientInventoryBean.getClient_sku());
+                                clientInventoryList.add(clientInventoryBean);
+                            }
                         }
                     }
 
+                    page = page + 1;
                     offset = offset + 1;
+                    giltPageGetSaleAttrRequest.setOffset(offset * 100);
                 }
 
             }
@@ -219,7 +232,7 @@ public class WmsGetGiltClientInvService extends WmsGetClientInvBaseService {
 
     }
 
-    private List<ClientInventoryBean> getClientInvFull(GetInventoryParamBean getInventoryParamBean, String channelId, List<ClientInventoryBean> saleInventoryBeans){
+    private List<ClientInventoryBean> getClientInvFull(GetInventoryParamBean getInventoryParamBean, String channelId,List<String> saleSkuList){
         OrderChannelBean channel = ChannelConfigs.getChannel(channelId);
         List<ClientInventoryBean> clientInventoryList = new ArrayList<>();
 
@@ -234,13 +247,7 @@ public class WmsGetGiltClientInvService extends WmsGetClientInvBaseService {
 
             logger.info("----------"+channel.getFull_name() + " ItemDetail total size:" + itemDetailBeans.size());
 
-            List<String> skuList = new ArrayList<>();
-
-            for (ClientInventoryBean clientInventoryBean: saleInventoryBeans) {
-                skuList.add(clientInventoryBean.getClient_sku());
-            }
-
-            logger.info("----------"+channel.getFull_name() + " Sales ItemDetail total size:" + skuList.size());
+            logger.info("----------"+channel.getFull_name() + " Sales ItemDetail total size:" + saleSkuList.size());
 
             int totalCount = 0;
             int intCount = 0;
@@ -248,7 +255,7 @@ public class WmsGetGiltClientInvService extends WmsGetClientInvBaseService {
 
                 if (!StringUtils.isNullOrBlank2(itemDetailBean.getClient_sku())) {
                     // 如果SKU已经在Sales中取得，则不再取得线上库存
-                    if (skuList.contains(itemDetailBean.getClient_sku())) {
+                    if (saleSkuList.contains(itemDetailBean.getClient_sku())) {
                         continue;
                     }
                 }
@@ -256,7 +263,7 @@ public class WmsGetGiltClientInvService extends WmsGetClientInvBaseService {
                 totalCount = totalCount + 1 ;
                 intCount = intCount + 1;
 
-                if (intCount == getInventoryParamBean.getnPageSize() || totalCount == itemDetailBeans.size() -  skuList.size()) {
+                if (intCount == getInventoryParamBean.getnPageSize() || totalCount == itemDetailBeans.size() -  saleSkuList.size()) {
                     logger.info("----------" + channel.getFull_name() + "当前处理到第【" + totalCount + "】件----------");
                 }
 
@@ -308,12 +315,14 @@ public class WmsGetGiltClientInvService extends WmsGetClientInvBaseService {
             getInventoryParamBean.setUpdateCount(Integer.parseInt(ThirdPartyConfigs.getThirdPartyConfigList(channelId, updateClientInventoryConstants.INVENTORYPAGESIZE).get(0).getProp_val2()));
 
             // Sale级别的参数设定
-            getInventoryParamBean.setSalesAllow(ThirdPartyConfigs.getThirdPartyConfigList(channelId, updateClientInventoryConstants.INVENTORYSALECONFIG).get(0).getProp_val1());
-            getInventoryParamBean.setSalesInterval(ThirdPartyConfigs.getThirdPartyConfigList(channelId, updateClientInventoryConstants.INVENTORYSALECONFIG).get(0).getProp_val2());
-            getInventoryParamBean.setSalesUpdateSince(ThirdPartyConfigs.getThirdPartyConfigList(channelId, updateClientInventoryConstants.INVENTORYSALECONFIG).get(0).getProp_val3());
-            getInventoryParamBean.setSalesUpdateType(ThirdPartyConfigs.getThirdPartyConfigList(channelId, updateClientInventoryConstants.INVENTORYSALECONFIG).get(0).getProp_val4());
-            getInventoryParamBean.setFullAllow(ThirdPartyConfigs.getThirdPartyConfigList(channelId, updateClientInventoryConstants.INVENTORYSALECONFIG).get(0).getProp_val5());
-            getInventoryParamBean.setSalesLimit(ThirdPartyConfigs.getThirdPartyConfigList(channelId, updateClientInventoryConstants.INVENTORYSALECONFIG).get(0).getProp_val6());
+            thirdPartyConfigBean = getFullUpdtConfig(channelId, updateClientInventoryConstants.INVENTORYSALECONFIG);
+
+            getInventoryParamBean.setSalesAllow(thirdPartyConfigBean.getProp_val1());
+            getInventoryParamBean.setSalesInterval(thirdPartyConfigBean.getProp_val2());
+            getInventoryParamBean.setSalesUpdateSince(thirdPartyConfigBean.getProp_val3());
+            getInventoryParamBean.setSalesUpdateType(thirdPartyConfigBean.getProp_val4());
+            getInventoryParamBean.setFullAllow(thirdPartyConfigBean.getProp_val5());
+            getInventoryParamBean.setSalesLimit(thirdPartyConfigBean.getProp_val6());
 
         }catch (Exception e){
             String msg = channel.getFull_name()+"设置库存取得请求参数错误：" + e;
