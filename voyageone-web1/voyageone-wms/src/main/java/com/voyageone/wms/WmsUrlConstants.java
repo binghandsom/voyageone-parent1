@@ -96,6 +96,11 @@ public final class WmsUrlConstants {
          */
         public static final String DOWNLOAD = "/wms/pickup/list/download";
 
+        /**
+         * 已拣货报告。下载
+         */
+        public static final String REPORTDOWNLOAD = "/wms/pickup/report/download";
+
     }
 
     /**

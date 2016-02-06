@@ -63,17 +63,26 @@ public abstract class ThirdFileProBaseService extends BaseTaskService{
      * @param lineTxt 数据行
      */
     protected void checkData(int lineNo, String lineTxt, String firstRowContent, String splitStr) {
-        if (lineNo == 0) {
-            if (StringUtils.isEmpty(firstRowContent)) {
-                throw new RuntimeException("请在【com_mt_third_party_config】表设置【prop_val2】设置文件第一行内容");
-            } else if (!firstRowContent.equals(lineTxt.trim())) {
-                throw new RuntimeException("读入文件格式不对，请检查！");
-            }
-        } else {
-            int lent = lineTxt.split(splitStr).length;
-            if (lineTxt.split(splitStr).length != firstRowContent.split(splitStr).length) {
-                throw new RuntimeException("文件第【" + lineNo + "】行数据格式不对：content【" + lineTxt + "】！");
-            }
+//        if (lineNo == 0) {
+//            if (StringUtils.isEmpty(firstRowContent)) {
+//                throw new RuntimeException("请在【com_mt_third_party_config】表设置【prop_val2】设置文件第一行内容");
+//            } else if (!firstRowContent.equals(lineTxt.trim())) {
+//                throw new RuntimeException("读入文件格式不对，请检查！");
+//            }
+//        } else {
+//            int lent = lineTxt.split(splitStr).length;
+//            if (lineTxt.split(splitStr).length != firstRowContent.split(splitStr).length) {
+//                throw new RuntimeException("文件第【" + lineNo + "】行数据格式不对：content【" + lineTxt + "】！");
+//            }
+//        }
+
+        int lent = lineTxt.split(splitStr).length;
+
+        // 只判断项目个数，不对对应项进行检查
+        if (StringUtils.isEmpty(firstRowContent)) {
+            throw new RuntimeException("请在【com_mt_third_party_config】表设置【prop_val2】设置文件第一行内容");
+        } else  if (lineTxt.split(splitStr).length != firstRowContent.split(splitStr).length) {
+            throw new RuntimeException("文件第【" + lineNo + "】行数据格式不对：content【" + lineTxt + "】！");
         }
     }
 
