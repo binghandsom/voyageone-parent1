@@ -10,6 +10,8 @@ import com.voyageone.common.components.gilt.bean.GiltImage;
 import com.voyageone.common.components.gilt.bean.GiltPageGetSkusRequest;
 import com.voyageone.common.components.gilt.bean.GiltSku;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
+import com.voyageone.common.configs.ThirdPartyConfigs;
+import com.voyageone.common.configs.beans.ThirdPartyConfigBean;
 import com.voyageone.common.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,10 +32,6 @@ import static java.util.stream.Collectors.toMap;
 @Service
 public class GiltAnalysisService extends BaseTaskService {
 
-    private final static int _DELAY_SECOND = 0;
-
-    private final static int _PAGE_SIZE = 30;
-
     @Override
     public SubSystem getSubSystem() {
         return SubSystem.CMS;
@@ -50,12 +48,16 @@ public class GiltAnalysisService extends BaseTaskService {
     @Autowired
     private GiltSkuService giltSkuService;
 
+    private static ThirdPartyConfigBean getFeedGetConfig() {
+        return ThirdPartyConfigs.getThirdPartyConfig(GILT.getId(), "feed_get_config");
+    }
+
     public static int getPageSize() {
-        return _PAGE_SIZE;
+        return Integer.valueOf(getFeedGetConfig().getProp_val2());
     }
 
     public static int getDelaySecond() {
-        return _DELAY_SECOND;
+        return Integer.valueOf(getFeedGetConfig().getProp_val1());
     }
 
     @Override
