@@ -103,7 +103,6 @@ public class ImagePostScene7Service {
 
                             if (StringUtils.isNullOrBlank2(imageUrl)) {
                                 successImageUrlList.add(imageUrl);
-
                                 continue;
                             }
 
@@ -111,7 +110,8 @@ public class ImagePostScene7Service {
                                 inputStream = HttpUtils.getInputStream(imageUrl, null);
                             } catch (FileNotFoundException ex) {
                                 // 图片url错误
-                                logger.debug(ex.getMessage(), ex);
+                                // logger.debug(ex.getMessage(), ex);
+                                logger.info(ex.getMessage());
                                 // 记录url错误图片以便删除这张图片相关记录
                                 urlErrorList.add(anImageUrlList);
                                 continue;
