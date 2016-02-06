@@ -40,9 +40,11 @@ public class GiltFeedDao extends BaseDao {
 
         int insertingCount = update("cms_zz_worktable_gilt_superfeed_full_updateFlgToInsert1", null);
 
-        int updatingCount = update("cms_zz_worktable_gilt_superfeed_full_updateFlgToUpdate", null);
+        update("cms_zz_worktable_gilt_superfeed_full_updateFlgToUpdate1", null);
 
         insertingCount += update("cms_zz_worktable_gilt_superfeed_full_updateFlgToInsert2", null);
+
+        int updatingCount = update("cms_zz_worktable_gilt_superfeed_full_updateFlgToUpdate2", null);
 
         return new int[]{insertingCount, updatingCount};
     }
@@ -56,8 +58,12 @@ public class GiltFeedDao extends BaseDao {
         return new int[]{deleteCount, insertCount};
     }
 
-    public List<SuperFeedGiltBean> selectByUpdateFlg(String updateFlag) {
+    public List<SuperFeedGiltBean> selectFullByUpdateFlg(String updateFlag) {
         return selectList("cms_zz_worktable_gilt_superfeed_full_selectByUpdateFlg", parameters("updateFlag", updateFlag));
+    }
+
+    public List<SuperFeedGiltBean> selectByUpdateFlg(String updateFlag) {
+        return selectList("cms_zz_worktable_gilt_superfeed_selectByUpdateFlg", parameters("updateFlag", updateFlag));
     }
 
     public int[] updateInsertSuccess(List<String> modelFailList, List<String> productFailList) {
@@ -77,10 +83,22 @@ public class GiltFeedDao extends BaseDao {
         if (!productFailList.isEmpty())
             count3 = update("cms_zz_worktable_gilt_superfeed_full_updateInsertSuccess3", params);
 
-        return new int[] { count1, count2, count3 };
+        return new int[]{count1, count2, count3};
     }
 
     public int clearTemp() {
         return delete("cms_zz_worktable_gilt_superfeed_clear", null);
+    }
+
+    public int deleteUpdating() {
+        return delete("cms_zz_worktable_gilt_superfeed_full_deleteUpdating", parameters("updatingFlag", SuperFeedGiltBean.UPDATING));
+    }
+
+    public int selectInsertUpdating() {
+        return insert("cms_zz_worktable_gilt_superfeed_full_selectInsertUpdating", parameters("updatingFlag", SuperFeedGiltBean.UPDATING));
+    }
+
+    public int updateUpdated(List<String> updatedCodes) {
+        return update("cms_zz_worktable_gilt_superfeed_full_updateUpdated", parameters("updatingFlag", SuperFeedGiltBean.UPDATING, "updatedFlag", SuperFeedGiltBean.UPDATED, "updatedCodes", updatedCodes));
     }
 }
