@@ -64,7 +64,7 @@ public class CmsUploadJmProductService extends BaseTaskService {
 
     private static final String DESCRIPTION_IMAGES = "%s<br />";
 
-    private static final Pattern special_symbol= Pattern.compile("[~@'\\[\\]\\s.:#$%&_''‘’^]");
+    private static final Pattern special_symbol= Pattern.compile("[~@'\\[\\]\\s\".:#$%&_''‘’^]");
 
     private static Vector<JmBtProductImportModel> succeedProduct = new Vector<>();
 
