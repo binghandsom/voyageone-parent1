@@ -397,14 +397,14 @@
         <choose>
             <when test="scanType == 1">
                 price = #{price},
-                <if test="closeDayFlg != null and closeDayFlg != '' and closeDayFlg == 2">
+                <if test="closeDayFlg != null and closeDayFlg != '' and closeDayFlg == 2 and scanMode == 'Scan'">
                     date = NOW(),
                 </if>
             </when>
-            <when test="scanType == 2">
+            <when test="scanType == 2 and scanMode == 'Scan'">
                 date = NOW(),
             </when>
-            <when test="scanType == 3">
+            <when test="scanType == 3 and scanMode == 'Scan'">
                 date = NOW(),
             </when>
         </choose>
@@ -964,4 +964,41 @@
         where order_channel_id = #{order_channel_id}
         and sku = #{sku}
     </delete>
+
+    <select id="reservation_getPickedInfo" resultType="com.voyageone.wms.formbean.PickedInfoBean">
+        SELECT
+            store,
+            date,
+            order_number,
+            id,
+            sku,
+            description_short,
+            1 qty,
+            order_channel_id
+        FROM
+          tt_reservation
+        <include refid="pickedInfo_Search_condition"/>
+        ORDER BY
+          store,order_number,id
+    </select>
+
+    <sql id="pickedInfo_Search_condition">
+        WHERE
+        date between #{from} and #{to}
+        <if test="store_id != null and store_id != 0">
+            AND store_id = #{store_id}
+        </if>
+        <if test="storeList != null and storeList.size() != 0">
+            AND store_id in
+            <foreach collection="storeList" item="store"  open="(" separator="," close=")">
+                #{store.store_id}
+            </foreach>
+        </if>
+        <if test="orderChannelList != null and orderChannelList.size() != 0">
+            AND order_channel_id in
+            <foreach collection="orderChannelList" item="orderChannelId"  open="(" separator="," close=")">
+                #{orderChannelId}
+            </foreach>
+        </if>
+    </sql>
 </mapper>

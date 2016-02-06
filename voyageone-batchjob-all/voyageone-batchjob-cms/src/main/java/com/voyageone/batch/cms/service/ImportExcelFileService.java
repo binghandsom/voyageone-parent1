@@ -412,6 +412,7 @@ public class ImportExcelFileService extends BaseTaskService {
                 List<ErrorContent> errList) {
             boolean ret = true;
 
+        $info("上传的文档 [ %s ] DB导入 Product", fileName);
         for (int i = 0; i < productList.size(); i++) {
             JmBtProductImportModel productImportModel = productList.get(i);
             ret = insertProductTable(productImportModel);
@@ -423,6 +424,7 @@ public class ImportExcelFileService extends BaseTaskService {
             }
         }
 
+        $info("上传的文档 [ %s ] DB导入 Deal", fileName);
         for (int i = 0; i < dealList.size(); i++) {
             JmBtDealImportModel dealImportModel = dealList.get(i);
             ret = insertDealTable(dealImportModel);
@@ -434,7 +436,9 @@ public class ImportExcelFileService extends BaseTaskService {
             }
         }
 
+        $info("上传的文档 [ %s ] DB导入 Image", fileName);
         for (int i = 0; i < imageList.size(); i++) {
+//            $info("上传的文档 [ %s ] DB导入 Image index = [%s]", fileName, i);
             JmBtImagesModel imagesModel = imageList.get(i);
             ret = insertImagesTable(imagesModel);
             if (!ret) {
@@ -445,7 +449,9 @@ public class ImportExcelFileService extends BaseTaskService {
             }
         }
 
+        $info("上传的文档 [ %s ] DB导入 Sku", fileName);
         for (int i = 0; i < skuList.size(); i++) {
+//            $info("上传的文档 [ %s ] DB导入 Sku index = [%s]", fileName, i);
             JmBtSkuImportModel skuImportModel = skuList.get(i);
             ret = insertSkuTable(skuImportModel);
             if (!ret) {

@@ -25,6 +25,7 @@ import com.voyageone.wms.dao.TrackingInfoDao;
 import com.voyageone.wms.formbean.FormPickUpLabelBean;
 import com.voyageone.wms.formbean.FormPickupBean;
 import com.voyageone.wms.formbean.FormReservation;
+import com.voyageone.wms.formbean.PickedInfoBean;
 import com.voyageone.wms.service.WmsPickupService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -117,6 +118,11 @@ public class WmsPickupServiceImpl implements WmsPickupService {
         // 获取结束日期（当前日期）
         String date_to = DateTimeUtil.parseStr(DateTimeUtil.getLocalTime(DateTimeUtil.getNow(), user.getTimeZone()), DateTimeUtil.DEFAULT_DATE_FORMAT);
         resultMap.put("toDate", date_to);
+
+        // 获取已发货报告开始日期\结束日期（当前日期）
+        String reportDate = DateTimeUtil.parseStr(DateTimeUtil.getLocalTime(DateTimeUtil.getNow(), user.getTimeZone()), DateTimeUtil.DEFAULT_DATE_FORMAT);
+        resultMap.put("reportFromDate", reportDate);
+        resultMap.put("reportToDate", reportDate);
 
         // 获取相关渠道对应的扫描方式
         List<String> orderChannelList = user.getChannelList();
@@ -959,5 +965,185 @@ public class WmsPickupServiceImpl implements WmsPickupService {
             }
         else sb.append(list.get(0)).append(" * ").append(1);
         return sb.toString();
+    }
+
+    /**
+     * 【捡货画面】下载已捡货报告
+     * @param store_id 画面的检索参数
+     * @param from 画面的检索参数
+     * @param to
+     * @param user 用户登录信息
+     * @return ResponseEntity<byte[]> 可捡货列表
+     */
+    @Override
+    public byte[] downloadReportPicked(String store_id,String from,String to, UserSessionBean user) {
+
+        byte[] bytes = null;
+
+        // 检索参数的取得和设置
+        Map<String, Object> selectParams = getSelectParamsForDownload(store_id, from, to, user);
+
+        // 取得符合条件的记录
+        List<PickedInfoBean> pickedList = new ArrayList<>();
+        // 根据检索参数取得记录
+        pickedList = reservationDao.downloadPickedItemsByReservation(selectParams);
+
+        logger.info("可捡货清单件数：" + pickedList.size());
+        try{
+
+            // 报表模板名取得
+            String templateFile = Properties.readValue(ReportSetting.WMS_REPORT_TEMPLATE_PATH) + WmsConstants.ReportPickedItems.FILE_NAME + ".xls";
+
+            // 报表模板名读入
+            InputStream templateInput = new FileInputStream(templateFile);
+            HSSFWorkbook workbook = new HSSFWorkbook(templateInput);
+
+            // 设置内容
+            setPickedItemsOfReport(workbook, pickedList, user);
+
+            // 出力内容
+            ByteArrayOutputStream outDate = new ByteArrayOutputStream();
+            workbook.write(outDate);
+            bytes = outDate.toByteArray();
+
+            // 关闭
+            templateInput.close();
+            workbook.close();
+            outDate.close();
+
+        } catch (Exception e) {
+            logger.info("可捡货清单下载失败：" + e);
+            throw new BusinessException(WmsMsgConstants.PickUpMsg.DOWNLOAD_FAILED, e);
+        }
+
+        return bytes;
+
+    }
+
+    /**
+     * 取得下载报告画面的检索参数进行编辑以符合DB检索的要求
+     * @param store_id 画面的检索参数
+     * @param from 画面的检索参数
+     * @param to
+     * @param user 用户登录信息
+     * @return Map DB检索条件
+     */
+    private  Map<String, Object> getSelectParamsForDownload(String store_id,String from,String to, UserSessionBean user) {
+
+        // 取得画面的各个检索参数
+        int storeid = Integer.valueOf(store_id).intValue();
+
+        // 用户所属仓库的设置
+        List<ChannelStoreBean> channelStoreList = new ArrayList<ChannelStoreBean>();
+
+        // 根据reserveType来决定显示仓库
+        for (ChannelStoreBean storeBean : user.getCompanyRealStoreList() ) {
+            StoreBean store = StoreConfigs.getStore(new Long(storeBean.getStore_id()));
+            if (store.getIs_sale().equals(StoreConfigEnums.Sale.YES.getId())) {
+                channelStoreList.add(storeBean);
+            }
+        }
+
+        // 获取相关渠道
+        List<String> orderChannelList = user.getChannelList();
+
+        // DB检索用参数的设置
+        Map<String, Object> resultMap = new HashMap<>();
+
+        resultMap.put("store_id", storeid);
+        resultMap.put("storeList", channelStoreList);
+        resultMap.put("orderChannelList", orderChannelList);
+        resultMap.put("from", StringUtils.isNullOrBlank2(from) ? "0000-00-00 00:00:00" : DateTimeUtil.getGMTTimeFrom(from, user.getTimeZone()));
+        resultMap.put("to", StringUtils.isNullOrBlank2(to) ? "9999-99-99 99:99:99" : DateTimeUtil.getGMTTimeTo(to, user.getTimeZone()));
+
+        return resultMap;
+
+    }
+
+    /**
+     * 设置已捡货列表内容
+     * @param workbook 报表模板
+     * @param pickedList 已捡货列表内容
+     * @param user 用户登录信息
+     */
+    private  void setPickedItemsOfReport(HSSFWorkbook workbook, List<PickedInfoBean> pickedList,UserSessionBean user) {
+
+        // 仓库初期值
+        String store = "";
+
+        HSSFSheet sheet = null;
+
+        // 模板Sheet
+        int sheetNo = WmsConstants.ReportPickedItems.Reservation.TEMPLATE_SHEET;
+
+        // 开始行
+        int intRow = WmsConstants.ReportPickedItems.Reservation.START_ROWS;
+
+        for (PickedInfoBean picked : pickedList) {
+
+            // 仓库改变时，写入新Sheet
+            if (!store.equals(picked.getStore())) {
+
+                String channelName = ChannelConfigs.getChannel(picked.getOrder_channel_id()).getFull_name();
+                logger.info(channelName + "_" + picked.getStore() + "仓库已捡货清单做成");
+
+                sheet = workbook.cloneSheet(WmsConstants.ReportPickedItems.Reservation.TEMPLATE_SHEET);
+                sheetNo = sheetNo +1;
+
+                // 设置Sheet名
+                workbook.setSheetName(sheetNo,channelName + "_" +picked.getStore());
+                store =picked.getStore();
+
+                // 重置开始行
+                intRow = WmsConstants.ReportPickedItems.Reservation.START_ROWS;
+            }
+            else {
+                // 仓库没改变时，增加新行
+                HSSFRow newRow = sheet.createRow(intRow);
+                HSSFRow oldRow = sheet.getRow(WmsConstants.ReportPickedItems.Reservation.START_ROWS);
+
+                for (int col = 0; col < WmsConstants.ReportPickedItems.Reservation.MAX_COLUMNS; col++) {
+                    HSSFCell newCell = newRow.createCell(col);
+                    HSSFCell oldCell = oldRow.getCell(col);
+
+                    newCell.setCellStyle(oldCell.getCellStyle());
+                }
+
+            }
+
+            // 得到当前行
+            HSSFRow currentRow = sheet.getRow(intRow);
+            //RowNo,PickUP Time,OrderNumber,ResID,SKU,Des,Qty
+            // RowNo
+            currentRow.getCell(WmsConstants.ReportPickedItems.Reservation.Column_RowNo).setCellValue(String.valueOf(intRow));
+
+            // PickedTime
+            String pickedTime = StringUtils.isNullOrBlank2(picked.getDate()) ? "" : DateTimeUtil.getLocalTime(picked.getDate(), user.getTimeZone());
+            currentRow.getCell(WmsConstants.ReportPickedItems.Reservation.Column_PickedTime).setCellValue(pickedTime);
+
+            // OrderNumber
+            currentRow.getCell(WmsConstants.ReportPickedItems.Reservation.Column_OrderNumber).setCellValue(StringUtils.null2Space2(picked.getOrder_number()));
+
+            // ResID
+            currentRow.getCell(WmsConstants.ReportPickedItems.Reservation.Column_ResID).setCellValue(picked.getId());
+
+            // SKU
+            currentRow.getCell(WmsConstants.ReportPickedItems.Reservation.Column_SKU).setCellValue(picked.getSku());
+
+            // Des
+            currentRow.getCell(WmsConstants.ReportPickedItems.Reservation.Column_Des).setCellValue(StringUtils.null2Space2(picked.getDescription_short()));
+
+            // Qty
+            currentRow.getCell(WmsConstants.ReportPickedItems.Reservation.Column_Qty).setCellValue(picked.getQty());
+
+            intRow = intRow + 1;
+
+        }
+
+        // 如果有记录的话，删除模板sheet
+        if (pickedList.size() > 0) {
+            workbook.removeSheetAt(WmsConstants.ReportPickedItems.Reservation.TEMPLATE_SHEET);
+        }
+
     }
 }

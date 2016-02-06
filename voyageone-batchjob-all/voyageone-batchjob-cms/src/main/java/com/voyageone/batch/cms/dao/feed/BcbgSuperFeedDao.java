@@ -53,11 +53,11 @@ public class BcbgSuperFeedDao extends BaseDao {
 
         // 必须 product 有数据才执行下一句, 否则会更新全部
         if (productFailList == null || productFailList.size() < 1)
-            return new int[] { count1, 0 };
+            return new int[]{count1, 0};
 
         int count2 = update("cms_zz_worktable_bcbg_superfeed_full_updateStatusWithoutFailCode", params);
 
-        return new int[] { count1, count2 };
+        return new int[]{count1, count2};
     }
 
     public int[] updateFull(List<String> updatedCodes) {
@@ -82,5 +82,20 @@ public class BcbgSuperFeedDao extends BaseDao {
      */
     public int[] updateUpdatingSuccess() {
         return updateFull(null);
+    }
+
+    public int deleteUpdating() {
+        return delete("cms_zz_worktable_bcbg_superfeed_full_deleteUpdating", parameters("updatingFlg", 30));
+    }
+
+    public int selectInsertUpdated() {
+        return insert("cms_zz_worktable_bcbg_superfeed_full_selectInsertUpdating", parameters("updatingFlg", 30));
+    }
+
+    /**
+     * 如果传递的 codes 是空的, 那么会更新所有的内容
+     */
+    public int updateFlgToUpdated(List<String> codes) {
+        return update("cms_zz_worktable_bcbg_superfeed_full_updateFlgToUpdated", parameters("updatingFlg", 30, "updatedFlg", 40, "updatedCodes", codes));
     }
 }

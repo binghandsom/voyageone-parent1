@@ -17,8 +17,8 @@ import java.util.Map;
 @Repository
 public class JMUploadProductDao extends BaseDao {
 
-    public List<JmBtProductImportModel> getNotUploadProduct(Integer count) {
-        return selectList("get_jm_upload_product", count);
+    public List<JmBtProductImportModel> getNotUploadProduct(Map param) {
+        return selectList("get_jm_upload_product", param);
     }
 
     public int updateJMProduct(JmBtProductImportModel jmBtProductImportModel) {

@@ -57,6 +57,7 @@ public class ImagePostScene7Service {
 	 * 根据图片url上传scene7图片文件
 	 * 
 	 * @return
+	 *
 	 */
 	public boolean getAndSendImage(String orderChannelId, List<Map<String, String>> imageUrlList, List<String> successImageUrlList,
 								   List<Map<String, String>> urlErrorList, int threadNo) throws Exception {
@@ -106,6 +107,7 @@ public class ImagePostScene7Service {
 						for (int i = 0; i < imageUrlList.size(); i++) {
 							imageUrl = String.valueOf(imageUrlList.get(i).get("image_url"));
 
+
 							if (StringUtils.isNullOrBlank2(imageUrl)) {
 								successImageUrlList.add(imageUrl);
 
@@ -124,7 +126,12 @@ public class ImagePostScene7Service {
 							}
 							
 							int lastSlash = imageUrl.lastIndexOf("/");
-							String fileName = imageUrl.substring(lastSlash + 1);
+							String fileName;
+							if(ChannelConfigEnums.Channel.GILT.getId().equalsIgnoreCase(imageUrlList.get(i).get("channel_id"))){
+								fileName = String.valueOf(imageUrlList.get(i).get("image_name"))+".jpg";
+							}else{
+								fileName = imageUrl.substring(lastSlash + 1);
+							}
 							if (fileName.contains("?")) {
 								int qIndex = fileName.indexOf("?");
 								fileName = fileName.substring(0, qIndex);
