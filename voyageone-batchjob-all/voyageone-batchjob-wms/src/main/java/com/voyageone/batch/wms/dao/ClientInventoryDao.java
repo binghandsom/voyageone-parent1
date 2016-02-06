@@ -171,6 +171,10 @@ public class ClientInventoryDao extends BaseDao {
        return updateTemplate.update(Constants.DAO_NAME_SPACE_WMS + "wms_getClientInv_setLastFullUpdateTime", params);
     }
 
+    public int setLastSalesUpdateTime(Map<String, String> params) {
+        return updateTemplate.update(Constants.DAO_NAME_SPACE_WMS + "wms_getClientInv_setLastSalesUpdateTime", params);
+    }
+
     public int setFaildConfig(Map<String, String> params) {
         return updateTemplate.update(Constants.DAO_NAME_SPACE_WMS + "wms_getClientInv_setFaildConfig", params);
     }
