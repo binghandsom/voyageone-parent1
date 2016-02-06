@@ -48,15 +48,17 @@ public class GiltAnalysisService extends BaseTaskService {
     @Autowired
     private GiltSkuService giltSkuService;
 
+    private static int pageIndex = 0;
+
     private static ThirdPartyConfigBean getFeedGetConfig() {
         return ThirdPartyConfigs.getThirdPartyConfig(GILT.getId(), "feed_get_config");
     }
 
-    public static int getPageSize() {
+    private static int getPageSize() {
         return Integer.valueOf(getFeedGetConfig().getProp_val2());
     }
 
-    public static int getDelaySecond() {
+    private static int getDelaySecond() {
         return Integer.valueOf(getFeedGetConfig().getProp_val1());
     }
 
@@ -78,7 +80,6 @@ public class GiltAnalysisService extends BaseTaskService {
 
     private void onStartupInThread() throws Exception {
 
-        int pageIndex = 0;
         int delay = getDelaySecond();
 
         while(true) {
@@ -89,13 +90,17 @@ public class GiltAnalysisService extends BaseTaskService {
 
             $info("取得 SKU: %s", skuList.size());
 
-            if (skuList.isEmpty())
+            if (skuList.isEmpty()){
+                pageIndex = 0;
                 break;
+            }
 
             doFeedData(skuList);
 
-            if (skuList.size() < getPageSize())
+            if (skuList.size() < getPageSize()) {
+                pageIndex = 0;
                 break;
+            }
 
             if (delay > 0) {
                 $info("阶段结束等待 %s 秒", delay);
