@@ -183,19 +183,19 @@ public class GiltAnalysisService extends BaseTaskService {
 
         for (GiltSku giltSku : skuList) feedGiltBeanList.add(toMySqlBean(giltSku));
 
-        $info("\t转换 SKU: %s", feedGiltBeanList.size());
+        $info("转换 SKU: %s", feedGiltBeanList.size());
 
         int count = giltFeedDao.insertListTemp(feedGiltBeanList);
 
-        $info("\t插入 TEMP SKU: %s", count);
+        $info("插入 TEMP SKU: %s", count);
 
         int[] counts = giltFeedDao.updateFlg();
 
-        $info("\t更新 SKU 标识位: INSERT -> %s, UPDATE -> %s", counts[0], counts[1]);
+        $info("更新 SKU 标识位: INSERT -> %s, UPDATE -> %s", counts[0], counts[1]);
 
         counts = giltFeedDao.appendInserting();
 
-        $info("\t追加插入的 SKU 数据: DELETE -> %s, INSERT -> %s", counts[0], counts[1]);
+        $info("追加插入的 SKU 数据: DELETE -> %s, INSERT -> %s", counts[0], counts[1]);
     }
 
     private List<GiltSku> getSkus(int index) throws Exception {
