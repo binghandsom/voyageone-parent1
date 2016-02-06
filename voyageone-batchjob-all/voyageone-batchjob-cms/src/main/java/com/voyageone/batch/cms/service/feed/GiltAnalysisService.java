@@ -65,6 +65,7 @@ public class GiltAnalysisService extends BaseTaskService {
     private void onStartupInThread() throws Exception {
 
         int pageIndex = 0;
+        int delaySecond = 30;
 
         while(true) {
 
@@ -82,8 +83,11 @@ public class GiltAnalysisService extends BaseTaskService {
             if (skuList.size() < 100)
                 break;
 
-            $info("阶段结束等待 10 秒");
-            Thread.sleep(30000);
+
+            $info("阶段结束等待 %s 秒", delaySecond);
+            Thread.sleep(delaySecond * 1000);
+
+            pageIndex++;
         }
     }
 
