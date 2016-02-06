@@ -66,7 +66,7 @@ public class GiltAnalysisService extends BaseTaskService {
                 break;
 
             $info("阶段结束等待 10 秒");
-            Thread.sleep(10000);
+            Thread.sleep(30000);
         }
     }
 
@@ -90,22 +90,14 @@ public class GiltAnalysisService extends BaseTaskService {
 
         $info("进入更新");
 
-        List<SuperFeedGiltBean> newData = giltFeedDao.selectByUpdateFlg(SuperFeedGiltBean.UPDATING);
+        List<SuperFeedGiltBean> newData = giltFeedDao.selectUpdatingProducts();
 
         $info("\t新数据取得 -> %s", newData.size());
-
-        List<SuperFeedGiltBean> oldData = giltFeedDao.selectFullByUpdateFlg(SuperFeedGiltBean.UPDATING);
-
-        $info("\t旧(FULL)数据取得 -> %s", oldData.size());
-
-        Map<String, SuperFeedGiltBean> oldMap = getUpdatingMap(oldData);
-
-        $info("\t旧(FULL)数据转换完成");
 
         GiltAnalysisContext context = new GiltAnalysisContext();
 
         for (SuperFeedGiltBean newItem: newData) {
-            SuperFeedGiltBean oldItem = oldMap.get(newItem.getId());
+            SuperFeedGiltBean oldItem = giltFeedDao.selectFullUpdatingProduct(newItem.getProduct_look_id());
             context.put(newItem, oldItem);
         }
 
@@ -184,6 +176,8 @@ public class GiltAnalysisService extends BaseTaskService {
         for (GiltSku giltSku : skuList) feedGiltBeanList.add(toMySqlBean(giltSku));
 
         $info("转换 SKU: %s", feedGiltBeanList.size());
+
+        giltFeedDao.clearTemp();
 
         int count = giltFeedDao.insertListTemp(feedGiltBeanList);
 
