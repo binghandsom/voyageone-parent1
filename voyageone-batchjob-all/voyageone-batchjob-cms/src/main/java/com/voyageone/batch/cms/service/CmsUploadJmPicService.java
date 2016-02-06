@@ -203,7 +203,7 @@ public class CmsUploadJmPicService extends BaseTaskService {
             jmImageFileBean.setInputStream(inputStream);
             jmImageFileBean.setDirName(buildDirName(jmPicBean));
             if (jmPicBean.getImageType() == JumeiImageType.BRANDSTORY.getId() || jmPicBean.getImageType() == JumeiImageType.SIZE.getId()) {
-                jmImageFileBean.setImgName(MD5.getMD5(jmPicBean.getImageKey()) + "_" + jmPicBean.getImageType() + "_" + jmPicBean.getImageIndex()/*+IMGTYPE*/);
+                jmImageFileBean.setImgName(MD5.getMD5(jmPicBean.getImageKey()+jmPicBean.getImageTypeExtend()) + "_" + jmPicBean.getImageType() + "_" + jmPicBean.getImageIndex() /*+IMGTYPE*/);
             } else {
                 jmImageFileBean.setImgName(special_symbol.matcher(jmPicBean.getImageKey()).replaceAll("") + jmPicBean.getImageType() + "_" + jmPicBean.getImageIndex()/*+IMGTYPE*/);
             }
