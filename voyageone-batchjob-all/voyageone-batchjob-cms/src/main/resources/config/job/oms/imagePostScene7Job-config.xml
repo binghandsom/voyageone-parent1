@@ -88,6 +88,33 @@
 			<value>${quartz.image.scene7.sears.post}</value>
 		</property>
 	</bean>
+
+
+	<bean id="giltImagePostScene7Task"
+		  class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref local="imagePostScene7Job" />
+		</property>
+		<property name="targetMethod">
+			<value>run</value>
+		</property>
+		<property name="arguments">
+			<value>015</value>
+		</property>
+		<property name="concurrent">
+			<value>false</value>
+		</property>
+	</bean>
+	<bean id="giltImagePostScene7TaskContri"
+		  name="giltImagePostScene7TaskContri"
+		  class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail">
+			<ref bean="giltImagePostScene7Task" />
+		</property>
+		<property name="cronExpression">
+			<value>${quartz.image.scene7.guit.post}</value>
+		</property>
+	</bean>
 	<!-- ===================== 向scene7上传产品图片定时任务 end ===================== -->
 	
 </beans>

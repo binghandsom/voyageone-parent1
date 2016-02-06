@@ -5,8 +5,10 @@
 	<!-- 取出要处理的图片url列表 -->
 	<select id="cms_work_product_image_url_getImageUrls" parameterType="String" resultType="HashMap">
 		select
+				channel_id,
 				product_id,
 				image_type_id,
+				image_name,
 				image_id,
 				image_url
 		from
