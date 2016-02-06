@@ -85,6 +85,9 @@ public class GiltAnalysisContext {
 
     private Map<String, String> getNewestFields(SuperFeedGiltBean newItem, SuperFeedGiltBean oldItem) {
 
+        if (oldItem == null)
+            return getFocusUpdateFields(newItem);
+
         Map<String, String> updateFields = new HashMap<>();
 
         if (!newItem.getPrices_retail_value().equals(oldItem.getPrices_retail_value())) {
@@ -108,6 +111,19 @@ public class GiltAnalysisContext {
         if (!newItem.getImages_url().equals(oldItem.getImages_url())) {
             updateFields.put(CmsConstants.FEED_IO_UPDATEFIELDS_IMAGE_URL, newItem.getImages_url().replaceAll(",", separator));
         }
+
+        return updateFields;
+    }
+
+    private Map<String, String> getFocusUpdateFields(SuperFeedGiltBean newItem) {
+
+        Map<String, String> updateFields = new HashMap<>();
+        String separator = CmsConstants.FEED_IO_UPDATEFIELDS_IMAGE_SPLIT;
+
+        updateFields.put(CmsConstants.FEED_IO_UPDATEFIELDS_MSRP, newItem.getPrices_retail_value());
+        updateFields.put(CmsConstants.FEED_IO_UPDATEFIELDS_PRICE, newItem.getPrices_sale_value());
+        updateFields.put(CmsConstants.FEED_IO_UPDATEFIELDS_LONG_DESCRIPTION, newItem.getDescription());
+        updateFields.put(CmsConstants.FEED_IO_UPDATEFIELDS_IMAGE_URL, newItem.getImages_url().replaceAll(",", separator));
 
         return updateFields;
     }

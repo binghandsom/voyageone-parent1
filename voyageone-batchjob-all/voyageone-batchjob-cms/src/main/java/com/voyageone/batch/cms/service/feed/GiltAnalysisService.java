@@ -10,6 +10,8 @@ import com.voyageone.common.components.gilt.bean.GiltImage;
 import com.voyageone.common.components.gilt.bean.GiltPageGetSkusRequest;
 import com.voyageone.common.components.gilt.bean.GiltSku;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
+import com.voyageone.common.configs.ThirdPartyConfigs;
+import com.voyageone.common.configs.beans.ThirdPartyConfigBean;
 import com.voyageone.common.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -46,27 +48,66 @@ public class GiltAnalysisService extends BaseTaskService {
     @Autowired
     private GiltSkuService giltSkuService;
 
-    @Override
-    protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
+    private static int pageIndex = 0;
 
-        int pageIndex = 0;
+    private static ThirdPartyConfigBean getFeedGetConfig() {
+        return ThirdPartyConfigs.getThirdPartyConfig(GILT.getId(), "feed_get_config");
+    }
+
+    private static int getPageSize() {
+        return Integer.valueOf(getFeedGetConfig().getProp_val2());
+    }
+
+    private static int getDelaySecond() {
+        return Integer.valueOf(getFeedGetConfig().getProp_val1());
+    }
+
+    @Override
+    protected void onStartup(List<TaskControlBean> taskControlList) throws InterruptedException {
+
+        List<Runnable> runnables = new ArrayList<>();
+
+        runnables.add(() -> {
+            try {
+                onStartupInThread();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+
+        runWithThreadPool(runnables, taskControlList);
+    }
+
+    private void onStartupInThread() throws Exception {
+
+        int delay = getDelaySecond();
 
         while(true) {
+
+            $info("准备获取第 %s 页", pageIndex);
 
             List<GiltSku> skuList = getSkus(pageIndex);
 
             $info("取得 SKU: %s", skuList.size());
 
-            if (skuList.isEmpty())
+            if (skuList.isEmpty()){
+                pageIndex = 0;
                 break;
+            }
 
             doFeedData(skuList);
 
-            if (skuList.size() < 100)
+            if (skuList.size() < getPageSize()) {
+                pageIndex = 0;
                 break;
+            }
 
-            $info("阶段结束等待 10 秒");
-            Thread.sleep(10000);
+            if (delay > 0) {
+                $info("阶段结束等待 %s 秒", delay);
+                Thread.sleep(delay * 1000);
+            }
+
+            pageIndex++;
         }
     }
 
@@ -90,22 +131,14 @@ public class GiltAnalysisService extends BaseTaskService {
 
         $info("进入更新");
 
-        List<SuperFeedGiltBean> newData = giltFeedDao.selectByUpdateFlg(SuperFeedGiltBean.UPDATING);
+        List<SuperFeedGiltBean> newData = giltFeedDao.selectUpdatingProducts();
 
         $info("\t新数据取得 -> %s", newData.size());
-
-        List<SuperFeedGiltBean> oldData = giltFeedDao.selectFullByUpdateFlg(SuperFeedGiltBean.UPDATING);
-
-        $info("\t旧(FULL)数据取得 -> %s", oldData.size());
-
-        Map<String, SuperFeedGiltBean> oldMap = getUpdatingMap(oldData);
-
-        $info("\t旧(FULL)数据转换完成");
 
         GiltAnalysisContext context = new GiltAnalysisContext();
 
         for (SuperFeedGiltBean newItem: newData) {
-            SuperFeedGiltBean oldItem = oldMap.get(newItem.getId());
+            SuperFeedGiltBean oldItem = giltFeedDao.selectFullUpdatingProduct(newItem.getProduct_look_id());
             context.put(newItem, oldItem);
         }
 
@@ -183,28 +216,30 @@ public class GiltAnalysisService extends BaseTaskService {
 
         for (GiltSku giltSku : skuList) feedGiltBeanList.add(toMySqlBean(giltSku));
 
-        $info("\t转换 SKU: %s", feedGiltBeanList.size());
+        $info("转换 SKU: %s", feedGiltBeanList.size());
+
+        giltFeedDao.clearTemp();
 
         int count = giltFeedDao.insertListTemp(feedGiltBeanList);
 
-        $info("\t插入 TEMP SKU: %s", count);
+        $info("插入 TEMP SKU: %s", count);
 
         int[] counts = giltFeedDao.updateFlg();
 
-        $info("\t更新 SKU 标识位: INSERT -> %s, UPDATE -> %s", counts[0], counts[1]);
+        $info("更新 SKU 标识位: INSERT -> %s, UPDATE -> %s", counts[0], counts[1]);
 
         counts = giltFeedDao.appendInserting();
 
-        $info("\t追加插入的 SKU 数据: DELETE -> %s, INSERT -> %s", counts[0], counts[1]);
+        $info("追加插入的 SKU 数据: DELETE -> %s, INSERT -> %s", counts[0], counts[1]);
     }
 
     private List<GiltSku> getSkus(int index) throws Exception {
 
         GiltPageGetSkusRequest request = new GiltPageGetSkusRequest();
 
-        request.setOffset(index * 100);
+        request.setOffset(index * getPageSize());
 
-        request.setLimit(100);
+        request.setLimit(getPageSize());
 
         return giltSkuService.pageGetSkus(request);
     }

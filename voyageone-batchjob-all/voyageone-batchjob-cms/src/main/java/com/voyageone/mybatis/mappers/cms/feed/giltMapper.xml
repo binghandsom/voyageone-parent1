@@ -300,4 +300,35 @@
             AND bf.product_look_id IN (<foreach collection="updatedCodes" item="code" separator=",">#{code}</foreach>)
         </if>
     </update>
+
+    <select id="cms_zz_worktable_gilt_superfeed_full_selectUpdatingProduct" resultType="com.voyageone.batch.cms.bean.SuperFeedGiltBean">
+        SELECT DISTINCT
+            product_id,
+            product_look_id,
+            description,
+            country_code,
+            images_url,
+            prices_retail_value,
+            prices_sale_value,
+            categories_key,
+            updateFlag
+        FROM voyageone_cms.cms_zz_worktable_gilt_superfeed_full
+        WHERE updateFlag = #{updatingFlag}
+        AND product_look_id = #{product_look_id}
+    </select>
+
+    <select id="cms_zz_worktable_gilt_superfeed_selectUpdatingProducts" resultType="com.voyageone.batch.cms.bean.SuperFeedGiltBean">
+        SELECT DISTINCT
+            product_id,
+            product_look_id,
+            description,
+            country_code,
+            images_url,
+            prices_retail_value,
+            prices_sale_value,
+            categories_key,
+            updateFlag
+        FROM voyageone_cms.cms_zz_worktable_gilt_superfeed
+        WHERE updateFlag = #{updatingFlag}
+    </select>
 </mapper>

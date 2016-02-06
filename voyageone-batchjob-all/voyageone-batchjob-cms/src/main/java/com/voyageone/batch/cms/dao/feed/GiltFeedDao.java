@@ -101,4 +101,14 @@ public class GiltFeedDao extends BaseDao {
     public int updateUpdated(List<String> updatedCodes) {
         return update("cms_zz_worktable_gilt_superfeed_full_updateUpdated", parameters("updatingFlag", SuperFeedGiltBean.UPDATING, "updatedFlag", SuperFeedGiltBean.UPDATED, "updatedCodes", updatedCodes));
     }
+
+    public List<SuperFeedGiltBean> selectUpdatingProducts() {
+        return selectList("cms_zz_worktable_gilt_superfeed_selectUpdatingProducts",
+                parameters("updatingFlag", SuperFeedGiltBean.UPDATING));
+    }
+
+    public SuperFeedGiltBean selectFullUpdatingProduct(String product_look_id) {
+        return selectOne("cms_zz_worktable_gilt_superfeed_full_selectUpdatingProduct",
+                parameters("updatingFlag", SuperFeedGiltBean.UPDATING, "product_look_id", product_look_id));
+    }
 }
