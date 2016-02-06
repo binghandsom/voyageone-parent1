@@ -30,6 +30,10 @@ import static java.util.stream.Collectors.toMap;
 @Service
 public class GiltAnalysisService extends BaseTaskService {
 
+    private final static int DELAY_SECOND = 30;
+
+    private final static int PAGE_SIZE = 50;
+
     @Override
     public SubSystem getSubSystem() {
         return SubSystem.CMS;
@@ -65,7 +69,6 @@ public class GiltAnalysisService extends BaseTaskService {
     private void onStartupInThread() throws Exception {
 
         int pageIndex = 0;
-        int delaySecond = 30;
 
         while(true) {
 
@@ -80,12 +83,12 @@ public class GiltAnalysisService extends BaseTaskService {
 
             doFeedData(skuList);
 
-            if (skuList.size() < 100)
+            if (skuList.size() < PAGE_SIZE)
                 break;
 
 
-            $info("阶段结束等待 %s 秒", delaySecond);
-            Thread.sleep(delaySecond * 1000);
+            $info("阶段结束等待 %s 秒", DELAY_SECOND);
+            Thread.sleep(DELAY_SECOND * 1000);
 
             pageIndex++;
         }
@@ -217,9 +220,9 @@ public class GiltAnalysisService extends BaseTaskService {
 
         GiltPageGetSkusRequest request = new GiltPageGetSkusRequest();
 
-        request.setOffset(index * 100);
+        request.setOffset(index * PAGE_SIZE);
 
-        request.setLimit(100);
+        request.setLimit(PAGE_SIZE);
 
         return giltSkuService.pageGetSkus(request);
     }
