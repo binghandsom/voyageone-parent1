@@ -47,11 +47,28 @@ public class GiltAnalysisService extends BaseTaskService {
     private GiltSkuService giltSkuService;
 
     @Override
-    protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
+    protected void onStartup(List<TaskControlBean> taskControlList) throws InterruptedException {
+
+        List<Runnable> runnables = new ArrayList<>();
+
+        runnables.add(() -> {
+            try {
+                onStartupInThread();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+
+        runWithThreadPool(runnables, taskControlList);
+    }
+
+    private void onStartupInThread() throws Exception {
 
         int pageIndex = 0;
 
         while(true) {
+
+            $info("准备获取第 %s 页", pageIndex);
 
             List<GiltSku> skuList = getSkus(pageIndex);
 
