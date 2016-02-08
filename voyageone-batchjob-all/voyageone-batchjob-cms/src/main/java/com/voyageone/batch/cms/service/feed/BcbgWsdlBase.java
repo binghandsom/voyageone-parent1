@@ -13,6 +13,7 @@ import com.voyageone.common.Constants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.FeedEnums;
 import com.voyageone.common.configs.Feed;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
@@ -49,6 +50,17 @@ abstract class BcbgWsdlBase extends BaseTaskService {
     @Override
     public SubSystem getSubSystem() {
         return SubSystem.CMS;
+    }
+
+    /**
+     * 获取是否禁用向 CMS 处理数据的 Web Service.
+     * 从配置获取, 但未进行值类型检查
+     */
+    protected boolean isServiceDisabled() {
+        String disabledValue = Feed.getVal1(channel, FeedEnums.Name.disable_service);
+        if (StringUtils.isEmpty(disabledValue))
+            return false;
+        return Boolean.valueOf(disabledValue);
     }
 
     /**

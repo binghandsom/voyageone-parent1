@@ -24,10 +24,12 @@ import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.ShopConfigs;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.CommonUtil;
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
@@ -62,7 +64,7 @@ public class CmsUploadJmProductService extends BaseTaskService {
 
     private static final String DESCRIPTION_IMAGES = "%s<br />";
 
-    private static final Pattern special_symbol= Pattern.compile("[~@'\\s.:#$%&_''‘’^]");
+    private static final Pattern special_symbol= Pattern.compile("[~@'\\[\\]\\s\".:#$%&_''‘’^]");
 
     private static Vector<JmBtProductImportModel> succeedProduct = new Vector<>();
 
@@ -81,14 +83,19 @@ public class CmsUploadJmProductService extends BaseTaskService {
 
         int threadPoolCnt = 5;
         int limit = 100;
+        List<String> channels = new ArrayList<>();
         for (TaskControlBean taskControlBean : taskControlList) {
             if ("thread_count".equalsIgnoreCase(taskControlBean.getCfg_name())) {
                 threadPoolCnt = Integer.parseInt(taskControlBean.getCfg_val1());
             } else if ("Limit".equalsIgnoreCase(taskControlBean.getCfg_name())) {
                 limit = Integer.parseInt(taskControlBean.getCfg_val1());
+            } else if("order_channel_id".equalsIgnoreCase(taskControlBean.getCfg_name())){
+                logger.info(taskControlBean.getCfg_val1());
+                channels.add(taskControlBean.getCfg_val1());
             }
         }
-        List<JmBtProductImportModel> jmBtProductImports = getNotUploadProduct(limit);
+        List<JmBtProductImportModel> jmBtProductImports = getNotUploadProduct(limit,channels);
+        logger.info("---------------cnt:" + jmBtProductImports.size());
         ShopBean shopBean = ShopConfigs.getShop(ChannelConfigEnums.Channel.SN.getId(), CartEnums.Cart.JM.getId());
 
         ExecutorService executor = Executors.newFixedThreadPool(threadPoolCnt);
@@ -99,16 +106,24 @@ public class CmsUploadJmProductService extends BaseTaskService {
         executor.shutdown();
         executor.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
         succeedProduct.forEach(jmBtProductImportModel -> updateFlg(jmBtProductImportModel));
+        succeedProduct.clear();
     }
 
-    private List<JmBtProductImportModel> getNotUploadProduct(Integer count) {
-        return jmUploadProductDao.getNotUploadProduct(count);
+    private List<JmBtProductImportModel> getNotUploadProduct(Integer count,List<String> channelIds) throws IOException {
+        Map<String, Object> param = new HashMap<>();
+        param.put("count",count);
+        param.put("channels",channelIds);
+        logger.info("param:"+ JacksonUtil.bean2Json(param));
+        return jmUploadProductDao.getNotUploadProduct(param);
     }
 
 
     public void uploadProduct(JmBtProductImportModel jmBtProductImport, ShopBean shopBean) {
 
         try {
+            if(jmBtProductImport.getSkuImportModelList() == null || jmBtProductImport.getSkuImportModelList().size() == 0){
+                throw new BusinessException("没有找到SKU数据 code：" + jmBtProductImport.getProductCode());
+            }
             logger.info(jmBtProductImport.getChannelId() + "|" + jmBtProductImport.getProductCode() + " 聚美上新开始");
             // 取得上新的数据
             JmProductBean jmProductBean = selfBeanToJmBean(jmBtProductImport);
@@ -127,7 +142,7 @@ public class CmsUploadJmProductService extends BaseTaskService {
             logger.info(jmBtProductImport.getChannelId() + "|" + jmBtProductImport.getProductCode() + " 聚美上新结束");
         } catch (Exception e) {
             e.printStackTrace();
-            issueLog.log(e, ErrorType.BatchJob, getSubSystem());
+            issueLog.log(e, ErrorType.BatchJob, getSubSystem(),jmBtProductImport.getChannelId() + "  " +  jmBtProductImport.getProductCode());
             jmBtProductImport.setSynFlg("3");
             jmBtProductImport.setUploadErrorInfo(CommonUtil.getMessages(e));
             jmBtProductImport.setModifier(getTaskName());
@@ -168,6 +183,21 @@ public class CmsUploadJmProductService extends BaseTaskService {
             throw new BusinessException("白底方图不存在");
         }
         jmProductBean.setNormalImage(stringBuffer.toString());
+
+        // 竖图
+        stringBuffer = new StringBuffer();
+        pics = imagesMap.get(JumeiImageType.VERTICAL.getId());
+        if (pics != null) {
+            for (JmPicBean jmPicBean : pics) {
+                if (stringBuffer.length() != 0) {
+                    stringBuffer.append(",");
+                }
+                stringBuffer.append(jmPicBean.getJmUrl());
+            }
+        }
+        if(stringBuffer.length() > 0){
+            jmProductBean.setVerticalImage(stringBuffer.toString());
+        }
 
 
         // 品牌图
@@ -295,6 +325,9 @@ public class CmsUploadJmProductService extends BaseTaskService {
             sku.setStocks("0");
             sku.setDeal_price(jmBtSkuImportModel.getDealPrice().toString());
             sku.setMarket_price(jmBtSkuImportModel.getMarketPrice().toString());
+            if(jmBtSkuImportModel.getDealPrice() < 1 || jmBtSkuImportModel.getMarketPrice() < 1){
+                throw new BusinessException("价格为0");
+            }
             spu.setSkuInfo(sku);
             spus.add(spu);
 

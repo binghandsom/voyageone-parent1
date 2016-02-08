@@ -33,9 +33,11 @@
         <!--<task:scheduled ref="ImportExcelFileJob" method="run" cron="0 0/1 0-23 * * ?"/>-->
         <task:scheduled ref="ImportExcelFileJob" method="run" cron="0 0/1 0-23 * * ?"/>
 
-        <task:scheduled ref="CmsUploadJmProductJob" method="run" cron="0 0/1 * * * ?"/>
+        <task:scheduled ref="CmsUploadJmProductJob" method="run" cron="0/30 0/1 * * * ?"/>
 
         <task:scheduled ref="CmsUploadJmPicJob" method="run" cron="0 0/1 * * * ?"/>
+
+        <task:scheduled ref="GiltAnalysisJob" method="run" cron="0 0 0/23 * * ?"/>
 
     </task:scheduled-tasks>
 

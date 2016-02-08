@@ -43,7 +43,7 @@
 		</collection>
 	</resultMap>
 
-	<select id="get_jm_upload_product" resultMap="jmUploadProductResultMap" parameterType="Integer">
+	<select id="get_jm_upload_product" resultMap="jmUploadProductResultMap" parameterType="HashMap">
 	SELECT
 		t2.*
 	FROM
@@ -60,6 +60,13 @@
 				a.syn_flg = 1
 				and b.product_code is null
 				and c.product_code is not null
+			<if test="channels != null and channels.size >0">
+				and a.channel_id in
+				<foreach item="item" index="index" collection="channels"
+						 open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
 			LIMIT 0,
 			#{count,jdbcType=INTEGER}
 		) t1,
