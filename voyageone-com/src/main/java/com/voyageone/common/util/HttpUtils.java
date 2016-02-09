@@ -297,7 +297,7 @@ public class HttpUtils {
     public static InputStream getHttpsInputStream(String url, String param) throws IOException {
         if (!StringUtils.isEmpty(param)) url += "?" + param;
 
-        HttpURLConnection connection = getHttpsConnection(url, "GET");
+        HttpsURLConnection connection = getHttpsConnection(url, "GET");
 
         connection.connect();
 
