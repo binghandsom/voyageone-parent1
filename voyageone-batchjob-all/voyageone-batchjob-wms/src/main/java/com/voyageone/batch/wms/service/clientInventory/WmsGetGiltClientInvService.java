@@ -58,6 +58,7 @@ public class WmsGetGiltClientInvService extends WmsGetClientInvBaseService {
             //更新全量更新配置
             if (!updateClientInventoryConstants.FULL.equals(updateType)) {
                 setLastFullUpdateTime(channelId, getInventoryParamBean);
+                updateType = getUpdateType(channelId);
             }
 
             // 判断是否需要取得Sales相关的库存
@@ -84,7 +85,7 @@ public class WmsGetGiltClientInvService extends WmsGetClientInvBaseService {
             if (getInventoryParamBean.getFullAllow().equals(WmsConstants.FULL.YES)) {
 
                 if (updateClientInventoryConstants.FULL.equals(updateType)) {
-                    log(channel.getFull_name()+"全量库存取得");
+                    log(channel.getFull_name() + "全量库存取得");
                     inventoryBeans = getClientInvFull(getInventoryParamBean, channelId, saleSkuList);
                     inventoryBeans.addAll(saleInventoryBeans);
                 }
