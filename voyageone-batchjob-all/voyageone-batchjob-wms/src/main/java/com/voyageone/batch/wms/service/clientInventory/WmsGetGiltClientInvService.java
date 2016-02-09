@@ -151,8 +151,6 @@ public class WmsGetGiltClientInvService extends WmsGetClientInvBaseService {
         OrderChannelBean channel = ChannelConfigs.getChannel(channelId);
         List<ClientInventoryBean> clientInventoryList = new ArrayList<>();
 
-        int pageIndex = getInventoryParamBean.getnPageIndex();
-        int losePageCount = 1;
         try {
             log(channel.getFull_name() + " Sales库存取得开始");
 
@@ -163,70 +161,83 @@ public class WmsGetGiltClientInvService extends WmsGetClientInvBaseService {
 
             for (GiltSale giltSale : giltSales) {
                 int offset = 0;
-                int page = 1;
+                int pageIndex = 1;
+                int losePageCount = 1;
                 GiltPageGetSaleAttrRequest giltPageGetSaleAttrRequest = new GiltPageGetSaleAttrRequest();
                 giltPageGetSaleAttrRequest.setId(giltSale.getId().toString());
                 giltPageGetSaleAttrRequest.setLimit(StringUtils.isNullOrBlank2(getInventoryParamBean.getSalesLimit())? 1 : Integer.parseInt(getInventoryParamBean.getSalesLimit()));
                 giltPageGetSaleAttrRequest.setOffset(offset);
 
                 while (true) {
-                    logger.info("----------" + channel.getFull_name() + "当前处理到Sales【" + giltSale.getId() + "】的第【" + page + "】页----------");
 
-                    // 根据类型决定取得线下库存还是线上库存
-                    if (getInventoryParamBean.getSalesUpdateType().equals(WmsConstants.SALE.UPDATE_INVENTORY)) {
-                        List<GiltInventory> giltInventories =  giltSalesService.getInventorysBySaleId(giltPageGetSaleAttrRequest);
+                    try {
+                        logger.info("----------" + channel.getFull_name() + "当前处理到Sales【" + giltSale.getId() + "】的第【" + pageIndex + "】页----------");
 
-                        log(channel.getFull_name() + " Sales线下库存取得结束："+  new Gson().toJson(giltInventories));
+                        // 根据类型决定取得线下库存还是线上库存
+                        if (getInventoryParamBean.getSalesUpdateType().equals(WmsConstants.SALE.UPDATE_INVENTORY)) {
+                            List<GiltInventory> giltInventories =  giltSalesService.getInventorysBySaleId(giltPageGetSaleAttrRequest);
 
-                        if (giltInventories == null || giltInventories.size() == 0) {
-                            break;
+                            log(channel.getFull_name() + " Sales线下库存取得结束："+  new Gson().toJson(giltInventories));
+
+                            if (giltInventories == null || giltInventories.size() == 0) {
+                                break;
+                            }
+
+                            for (GiltInventory giltInventory : giltInventories) {
+                                ClientInventoryBean clientInventoryBean = new ClientInventoryBean();
+
+                                clientInventoryBean.setClient_sku(String.valueOf(giltInventory.getSku_id()));
+                                clientInventoryBean.setQty(String.valueOf(giltInventory.getQuantity()));
+
+                                if (!saleSkuList.contains(clientInventoryBean.getClient_sku())) {
+                                    saleSkuList.add(clientInventoryBean.getClient_sku());
+                                    clientInventoryList.add(clientInventoryBean);
+                                }
+                            }
+
+                            if (giltInventories.size() < giltPageGetSaleAttrRequest.getLimit()) {
+                                break;
+                            }
                         }
+                        else if (getInventoryParamBean.getSalesUpdateType().equals(WmsConstants.SALE.UPDATE_REALTIME_INVENTORY)) {
+                            List<GiltRealTimeInventory> giltRealTimeInventories =  giltSalesService.getRealTimeInventoriesBySaleId(giltPageGetSaleAttrRequest);
 
-                        for (GiltInventory giltInventory : giltInventories) {
-                            ClientInventoryBean clientInventoryBean = new ClientInventoryBean();
+                            log(channel.getFull_name() + " Sales实时库存取得结束："+  new Gson().toJson(giltRealTimeInventories));
 
-                            clientInventoryBean.setClient_sku(String.valueOf(giltInventory.getSku_id()));
-                            clientInventoryBean.setQty(String.valueOf(giltInventory.getQuantity()));
+                            if (giltRealTimeInventories == null || giltRealTimeInventories.size() == 0) {
+                                break;
+                            }
 
-                            if (!saleSkuList.contains(clientInventoryBean.getClient_sku())) {
-                                saleSkuList.add(clientInventoryBean.getClient_sku());
-                                clientInventoryList.add(clientInventoryBean);
+                            for (GiltRealTimeInventory giltRealTimeInventory : giltRealTimeInventories) {
+                                ClientInventoryBean clientInventoryBean = new ClientInventoryBean();
+
+                                clientInventoryBean.setClient_sku(String.valueOf(giltRealTimeInventory.getSku_id()));
+                                clientInventoryBean.setQty(String.valueOf(giltRealTimeInventory.getQuantity()));
+
+                                if (!saleSkuList.contains(clientInventoryBean.getClient_sku())) {
+                                    saleSkuList.add(clientInventoryBean.getClient_sku());
+                                    clientInventoryList.add(clientInventoryBean);
+                                }
+                            }
+
+                            if (giltRealTimeInventories.size() < giltPageGetSaleAttrRequest.getLimit()) {
+                                break;
                             }
                         }
 
-                        if (giltInventories.size() < giltPageGetSaleAttrRequest.getLimit()) {
-                            break;
+                        pageIndex ++;
+                        offset  ++;
+                        giltPageGetSaleAttrRequest.setOffset(offset * giltPageGetSaleAttrRequest.getLimit());
+                    } catch (Exception e) {
+                        logger.info("----------" + channel.getFull_name() + "当前处理到Sales【" + giltSale.getId() + "】的第【" + pageIndex + "】页数据请求失败----------");
+                        if(losePageCount == ALLOWLOSEPAGECOUNT){
+                            String msg = channel.getFull_name()+"已经连续【" + ALLOWLOSEPAGECOUNT + "】次请求webService库存数据失败！" + e;
+                            logger.info("----------" + msg + "----------");
+                            throw new RuntimeException(msg);
                         }
+                        losePageCount ++;
+                        continue;
                     }
-                    else if (getInventoryParamBean.getSalesUpdateType().equals(WmsConstants.SALE.UPDATE_REALTIME_INVENTORY)) {
-                        List<GiltRealTimeInventory> giltRealTimeInventories =  giltSalesService.getRealTimeInventoriesBySaleId(giltPageGetSaleAttrRequest);
-
-                        log(channel.getFull_name() + " Sales实时库存取得结束："+  new Gson().toJson(giltRealTimeInventories));
-
-                        if (giltRealTimeInventories == null || giltRealTimeInventories.size() == 0) {
-                            break;
-                        }
-
-                        for (GiltRealTimeInventory giltRealTimeInventory : giltRealTimeInventories) {
-                            ClientInventoryBean clientInventoryBean = new ClientInventoryBean();
-
-                            clientInventoryBean.setClient_sku(String.valueOf(giltRealTimeInventory.getSku_id()));
-                            clientInventoryBean.setQty(String.valueOf(giltRealTimeInventory.getQuantity()));
-
-                            if (!saleSkuList.contains(clientInventoryBean.getClient_sku())) {
-                                saleSkuList.add(clientInventoryBean.getClient_sku());
-                                clientInventoryList.add(clientInventoryBean);
-                            }
-                        }
-
-                        if (giltRealTimeInventories.size() < giltPageGetSaleAttrRequest.getLimit()) {
-                            break;
-                        }
-                    }
-
-                    page = page + 1;
-                    offset = offset + 1;
-                    giltPageGetSaleAttrRequest.setOffset(offset * giltPageGetSaleAttrRequest.getLimit());
                 }
 
             }
