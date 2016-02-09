@@ -175,7 +175,7 @@ public class WmsGetGiltClientInvService extends WmsGetClientInvBaseService {
                     if (getInventoryParamBean.getSalesUpdateType().equals(WmsConstants.SALE.UPDATE_INVENTORY)) {
                         List<GiltInventory> giltInventories =  giltSalesService.getInventorysBySaleId(giltPageGetSaleAttrRequest);
 
-                        log(channel.getFull_name() + " Sales实时库存取得结束："+  new Gson().toJson(giltInventories));
+                        log(channel.getFull_name() + " Sales线下库存取得结束："+  new Gson().toJson(giltInventories));
 
                         if (giltInventories == null || giltInventories.size() == 0) {
                             break;
@@ -191,6 +191,10 @@ public class WmsGetGiltClientInvService extends WmsGetClientInvBaseService {
                                 saleSkuList.add(clientInventoryBean.getClient_sku());
                                 clientInventoryList.add(clientInventoryBean);
                             }
+                        }
+
+                        if (giltInventories.size() < giltPageGetSaleAttrRequest.getLimit()) {
+                            break;
                         }
                     }
                     else if (getInventoryParamBean.getSalesUpdateType().equals(WmsConstants.SALE.UPDATE_REALTIME_INVENTORY)) {
@@ -212,6 +216,10 @@ public class WmsGetGiltClientInvService extends WmsGetClientInvBaseService {
                                 saleSkuList.add(clientInventoryBean.getClient_sku());
                                 clientInventoryList.add(clientInventoryBean);
                             }
+                        }
+
+                        if (giltRealTimeInventories.size() < giltPageGetSaleAttrRequest.getLimit()) {
+                            break;
                         }
                     }
 
