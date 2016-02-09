@@ -92,6 +92,24 @@ public class WmsGetGiltClientInvService extends WmsGetClientInvBaseService {
                     log(channel.getFull_name() + "全量库存取得");
                     inventoryBeans = getClientInvFull(getInventoryParamBean, channelId, saleSkuList);
                 }
+            }else {
+                // 将不在Sales中的SKU库存清零
+                List<ItemDetailsBean> itemDetailBeans = itemDetailsDao.getItemDetaiInfo(channelId);
+
+                for (ItemDetailsBean itemDetailBean : itemDetailBeans) {
+
+                    if (!StringUtils.isNullOrBlank2(itemDetailBean.getClient_sku())) {
+                        // 如果SKU已经在Sales中取得，则不再取得线上库存
+                        if (!saleSkuList.contains(itemDetailBean.getClient_sku())) {
+                            ClientInventoryBean clientInventoryBean = new ClientInventoryBean();
+
+                            clientInventoryBean.setClient_sku(itemDetailBean.getClient_sku());
+                            clientInventoryBean.setQty("0");
+                            inventoryBeans.add(clientInventoryBean);
+                        }
+                    }
+                }
+
             }
 
             inventoryBeans.addAll(saleInventoryBeans);
