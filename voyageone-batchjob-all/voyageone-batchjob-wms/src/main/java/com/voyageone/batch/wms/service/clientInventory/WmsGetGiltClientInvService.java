@@ -1,5 +1,6 @@
 package com.voyageone.batch.wms.service.clientInventory;
 
+import com.google.gson.Gson;
 import com.voyageone.batch.core.modelbean.TaskControlBean;
 import com.voyageone.batch.wms.WmsConstants;
 import com.voyageone.batch.wms.WmsConstants.updateClientInventoryConstants;
@@ -68,7 +69,10 @@ public class WmsGetGiltClientInvService extends WmsGetClientInvBaseService {
                     logIssue(channel.getFull_name()+" Sales取得间隔时间未设定，无法取得库存，退出处理");
                 }else {
                     int timeInterval = Integer.parseInt(getInventoryParamBean.getSalesInterval());
-                    String UpdateTime = DateTimeUtil.format(DateTimeUtil.addMinutes(DateTimeUtil.parse(getInventoryParamBean.getSalesUpdateSince()), timeInterval), DateTimeUtil.DEFAULT_DATETIME_FORMAT);
+                    String UpdateTime = "";
+                    if (!StringUtils.isNullOrBlank2(getInventoryParamBean.getSalesUpdateSince())) {
+                        UpdateTime = DateTimeUtil.format(DateTimeUtil.addMinutes(DateTimeUtil.parse(getInventoryParamBean.getSalesUpdateSince()), timeInterval), DateTimeUtil.DEFAULT_DATETIME_FORMAT);
+                    }
 
                     log(channel.getFull_name()+" Sales取得前次处理时间："+getInventoryParamBean.getSalesUpdateSince());
                     // 初回更新或现在时间大于上传更新时间时，需要去取得相关Sales的库存
@@ -171,6 +175,8 @@ public class WmsGetGiltClientInvService extends WmsGetClientInvBaseService {
                     if (getInventoryParamBean.getSalesUpdateType().equals(WmsConstants.SALE.UPDATE_INVENTORY)) {
                         List<GiltInventory> giltInventories =  giltSalesService.getInventorysBySaleId(giltPageGetSaleAttrRequest);
 
+                        log(channel.getFull_name() + " Sales实时库存取得结束："+  new Gson().toJson(giltInventories));
+
                         if (giltInventories == null || giltInventories.size() == 0) {
                             break;
                         }
@@ -189,6 +195,8 @@ public class WmsGetGiltClientInvService extends WmsGetClientInvBaseService {
                     }
                     else if (getInventoryParamBean.getSalesUpdateType().equals(WmsConstants.SALE.UPDATE_REALTIME_INVENTORY)) {
                         List<GiltRealTimeInventory> giltRealTimeInventories =  giltSalesService.getRealTimeInventoriesBySaleId(giltPageGetSaleAttrRequest);
+
+                        log(channel.getFull_name() + " Sales实时库存取得结束："+  new Gson().toJson(giltRealTimeInventories));
 
                         if (giltRealTimeInventories == null || giltRealTimeInventories.size() == 0) {
                             break;
@@ -209,7 +217,7 @@ public class WmsGetGiltClientInvService extends WmsGetClientInvBaseService {
 
                     page = page + 1;
                     offset = offset + 1;
-                    giltPageGetSaleAttrRequest.setOffset(offset * 100);
+                    giltPageGetSaleAttrRequest.setOffset(offset * giltPageGetSaleAttrRequest.getLimit());
                 }
 
             }
@@ -222,7 +230,7 @@ public class WmsGetGiltClientInvService extends WmsGetClientInvBaseService {
             map.put("currDate",DateTimeUtil.getNow());
             clientInventoryDao.setLastSalesUpdateTime(map);
 
-            log(channel.getFull_name() + " Sales库存取得结束");
+            log(channel.getFull_name() + " Sales库存取得结束："+ clientInventoryList.size());
             return clientInventoryList;
         } catch (Exception e) {
             String msg = channel.getFull_name() + " Sales取得库存失败" + e;
