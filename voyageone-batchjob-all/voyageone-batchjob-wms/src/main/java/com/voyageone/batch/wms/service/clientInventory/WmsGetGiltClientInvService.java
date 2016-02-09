@@ -91,9 +91,10 @@ public class WmsGetGiltClientInvService extends WmsGetClientInvBaseService {
                 if (updateClientInventoryConstants.FULL.equals(updateType)) {
                     log(channel.getFull_name() + "全量库存取得");
                     inventoryBeans = getClientInvFull(getInventoryParamBean, channelId, saleSkuList);
-                    inventoryBeans.addAll(saleInventoryBeans);
                 }
             }
+
+            inventoryBeans.addAll(saleInventoryBeans);
 
             if(inventoryBeans.size() > 0) {
 
