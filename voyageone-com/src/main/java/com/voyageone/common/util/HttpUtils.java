@@ -286,6 +286,23 @@ public class HttpUtils {
 
         return connection.getInputStream();
     }
+    /**
+     * 使用 get 方式，获取输入流(Https)
+     *
+     * @param url   地址
+     * @param param 参数
+     * @return 输入流
+     * @throws IOException
+     */
+    public static InputStream getHttpsInputStream(String url, String param) throws IOException {
+        if (!StringUtils.isEmpty(param)) url += "?" + param;
+
+        HttpsURLConnection connection = getHttpsConnection(url, "GET");
+
+        connection.connect();
+
+        return connection.getInputStream();
+    }
 
     /**
      * 使用 post method 发送 http 请求

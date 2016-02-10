@@ -115,7 +115,12 @@ public class ImagePostScene7Service {
 							}
 
 							try {
-								inputStream = HttpUtils.getInputStream(imageUrl, null);
+								if (imageUrl.startsWith("https")) {
+									inputStream = HttpUtils.getHttpsInputStream(imageUrl, null);
+								} else {
+									inputStream = HttpUtils.getInputStream(imageUrl, null);
+								}
+
 							} catch (FileNotFoundException ex) {
 								// 图片url错误
 								logger.error(ex.getMessage(), ex);
