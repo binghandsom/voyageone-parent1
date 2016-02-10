@@ -245,6 +245,7 @@ import java.util.List;
      * @param concatRule 连接规则字符串
      */
     private String[] proLineData(String concatRule, String lineData, String firstLineData) {
+        lineData = lineData.replaceAll("\"", "");
         String[] resArr = new String[3]; //返回结果数组
         String[] colArr = concatRule.split(";"); //插入client_sku,qty,barCode对应的字段
         String[] concatRuleArr = colArr[0].split(","); //第一个字段(client_sku)的拼接规则
