@@ -400,4 +400,21 @@ public class ReservationDao extends BaseDao {
         return updateTemplate.selectList(Constants.DAO_NAME_SPACE_WMS + "reservation_getPickedInfo", params);
 
     }
+
+    /**
+     * 获得内部订单号
+     * @param orderChannelList 用户所属的ChannelID
+     * @param scanNo 输入的scanNo
+     * @return String
+     */
+    public String getOrderNumber(List<String> orderChannelList, String scanNo) {
+
+        Map<String, Object> params = new HashMap<>();
+
+        params.put("scanNo", scanNo);
+        params.put("orderChannelList", orderChannelList);
+
+        return updateTemplate.selectOne(Constants.DAO_NAME_SPACE_WMS + "order_getOrderNumber", params);
+
+    }
 }
