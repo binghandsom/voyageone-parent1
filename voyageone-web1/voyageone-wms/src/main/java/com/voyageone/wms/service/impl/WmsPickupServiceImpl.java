@@ -247,15 +247,19 @@ public class WmsPickupServiceImpl implements WmsPickupService {
         // 获取相关渠道
         List<String> orderChannelList = user.getChannelList();
 
-        String Upc = "";
+        String searchNo = "";
         if (WmsConstants.ScanType.SCAN.equals(scanMode) && ChannelConfigEnums.Scan.RES.getType().equals(scanType)) {
             StoreBean store = StoreConfigs.getStore(Long.valueOf(scanStore));
             // 根据输入的条形码找到对应的UPC
-            Upc = itemDao.getUPC(store.getOrder_channel_id(), scanNo);
+            searchNo = itemDao.getUPC(store.getOrder_channel_id(), scanNo);
+        }else if (ChannelConfigEnums.Scan.ORDER.getType().equals(scanType)){
+            // 根据输入的订单号找到对应的内部订单号
+            searchNo = reservationDao.getOrderNumber(orderChannelList, scanNo);
         }
+        logger.info("searchNo："+searchNo);
 
         // 取得符合条件的记录
-        List<FormPickupBean> scanInfoListALL = reservationDao.getScanInfo(scanMode, scanType, StringUtils.isNullOrBlank2(Upc)?scanNo:Upc, scanStatus, scanStore, channelStoreList, orderChannelList, reserveType);
+        List<FormPickupBean> scanInfoListALL = reservationDao.getScanInfo(scanMode, scanType, StringUtils.isNullOrBlank2(searchNo)?scanNo:searchNo, scanStatus, scanStore, channelStoreList, orderChannelList, reserveType);
 
         String StatusName = Type.getTypeName(MastType.reservationStatus.getId(),scanStatus);
 
