@@ -37,6 +37,8 @@
 
         <task:scheduled ref="CmsUploadJmPicJob" method="run" cron="0 0/1 * * * ?"/>
 
+        <task:scheduled ref="GiltAnalysisJob" method="run" cron="0 0 0/6 * * ?"/>
+
     </task:scheduled-tasks>
 
     <!-- 必须需要 -->

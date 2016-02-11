@@ -180,6 +180,8 @@ define(['components/app', 'components/services/language.service', "underscore"],
                     WMS_PICKUP_RELABEL: 'Are you sure ?<br/> ReLabel the {{scanTypeName}} [ {{scanNo}} ] s Pick note.',
                     WMS_PICKUP_TYPE_UN_VALID: "{{scanTypeName}} is required !",
                     WMS_PICKUP_PERMIT: "No permit to PickUp Items !",
+                    WMS_DEL_REPORT_CHECK_DATE: "Only get one day of interval data, edit the from time or to time!",
+
                     WMS_RECEIVE_PERMIT: "No permit to Receive Orders !",
 
                     WMS_LOCATION_NOT_FOUND:"Not found location",
@@ -207,7 +209,9 @@ define(['components/app', 'components/services/language.service', "underscore"],
                     //report
                     WMS_INVENTORY_DETAIL_REPORT: 'Inventory Details Report',
                     WMS_STOCKTAKE_COMPARERES_REPORT: 'Stocktake Compare Result Report',
-                    WMS_INCLUDING_RETURN_STORE: 'Including return Store'
+                    WMS_INCLUDING_RETURN_STORE: 'Including return Store',
+
+                    WMS_DLPICKEDGOOS: 'Download Report Of Picked Goods',
                 });
         }]);
 });
