@@ -50,6 +50,9 @@ public class GiltAnalysisService extends BaseTaskService {
 
     private static int pageIndex = 0;
 
+    //允许webSericce请求超时的连续最大次数
+    private static int ALLOWLOSEPAGECOUNT = 10;
+
     private static ThirdPartyConfigBean getFeedGetConfig() {
         return ThirdPartyConfigs.getThirdPartyConfig(GILT.getId(), "feed_get_config");
     }
@@ -241,7 +244,26 @@ public class GiltAnalysisService extends BaseTaskService {
 
         request.setLimit(getPageSize());
 
-        return giltSkuService.pageGetSkus(request);
+        List<GiltSku> giltSkus = new ArrayList<>();
+
+        int losePageCount = 1;
+
+        while (true) {
+            try {
+                giltSkus =  giltSkuService.pageGetSkus(request);
+                break;
+            } catch (Exception e) {
+                if(losePageCount == ALLOWLOSEPAGECOUNT){
+                    String msg = "已经连续【" + ALLOWLOSEPAGECOUNT + "】次请求webService库存数据失败！" + e;
+                    logger.info("----------" + msg + "----------");
+                    throw new RuntimeException(e);
+                }
+                losePageCount ++;
+                continue;
+            }
+        }
+
+        return giltSkus;
     }
 
     private boolean insert() throws Exception {

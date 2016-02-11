@@ -315,6 +315,7 @@
         FROM voyageone_cms.cms_zz_worktable_gilt_superfeed_full
         WHERE updateFlag = #{updatingFlag}
         AND product_look_id = #{product_look_id}
+        limit 1
     </select>
 
     <select id="cms_zz_worktable_gilt_superfeed_selectUpdatingProducts" resultType="com.voyageone.batch.cms.bean.SuperFeedGiltBean">
