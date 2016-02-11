@@ -312,7 +312,7 @@ public class WmsGetGiltClientInvService extends WmsGetClientInvBaseService {
                 int losePageCount = 1;
 
                 if (intCount == getInventoryParamBean.getnPageSize() || totalCount == itemDetailBeans.size() -  saleSkuList.size()) {
-                    intCount = 1;
+                    intCount = 0;
                     logger.info("----------" + channel.getFull_name() + "当前处理到第【" + totalCount + "】件----------");
                 }
 
