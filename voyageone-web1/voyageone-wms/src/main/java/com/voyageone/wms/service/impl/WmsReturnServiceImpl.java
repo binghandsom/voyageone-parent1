@@ -104,10 +104,11 @@ public class WmsReturnServiceImpl implements WmsReturnService {
 		formReturn.setOrder_num(orderNumber);
 
 		// 根据传入的值来取得真正的orderNumber
-		String order_nember = returnDao.getOrderNumber(formReturn);
+//		String order_number = returnDao.getOrderNumber(formReturn);
+		String order_number= reservationDao.getOrderNumber(formReturn.getOrderChannelId(), formReturn.getOrder_num());
 
-		if (!StringUtils.isNullOrBlank2(order_nember)) {
-			formReturn.setOrder_num(order_nember);
+		if (!StringUtils.isNullOrBlank2(order_number)) {
+			formReturn.setOrder_num(order_number);
 		}
 
 		List<FormReturn> orderInfo;
