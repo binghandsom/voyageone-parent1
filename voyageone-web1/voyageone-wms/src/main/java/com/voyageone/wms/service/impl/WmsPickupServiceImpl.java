@@ -884,6 +884,20 @@ public class WmsPickupServiceImpl implements WmsPickupService {
             pickupLabelBean.setSku(StringUtils.isNullOrBlank2(client_sku) ? scanInfoList.get(0).getSku() : client_sku);
 
         }
+        else  if (ChannelConfigEnums.Scan.UPC.getType().equals(scanType)) {
+
+            // 配货号
+            pickupLabelBean.setReservation_id(String.valueOf(scanInfoList.get(0).getId()));
+
+            // 货品名称
+            pickupLabelBean.setProduct(scanInfoList.get(0).getProduct());
+
+            // SKU（品牌方SKU存在时，显示品牌方SKU）
+            String client_sku = StringUtils.null2Space(reservationDao.getClientSku(scanInfoList.get(0).getOrder_channel_id(), scanInfoList.get(0).getSku()));
+
+            pickupLabelBean.setSku(StringUtils.isNullOrBlank2(client_sku) ? scanInfoList.get(0).getSku() : client_sku);
+
+        }
 
         // 发货渠道
         pickupLabelBean.setShip_channel(scanInfoList.get(0).getShip_channel());
