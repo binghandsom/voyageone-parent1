@@ -347,7 +347,7 @@ define([
             //    notify({"message": "WMS_DEL_REPORT_CHECK_DATE","status":"warning"});
             //    return;
             //}
-            var downloadUrl = "./wms/received/report/download?store_id={0}&from={1}&to={2}";
+            var downloadUrl = "./wms/receive/report/download?store_id={0}&from={1}&to={2}";
             var realPage = downloadUrl.replace ("{0}",vm.report.store).replace ("{1}",from).replace ("{2}",to);
             $window.open(realPage);
 
