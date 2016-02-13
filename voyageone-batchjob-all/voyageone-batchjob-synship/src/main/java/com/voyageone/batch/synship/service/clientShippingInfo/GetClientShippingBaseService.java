@@ -83,19 +83,28 @@ public abstract class GetClientShippingBaseService extends BaseTaskService {
                 tracking_no = reservationClientBean.getTaobao_logistics_id();
                 tracking_type = CarrierEnums.Name.SYB.toString();
                 tracking_time = DateTimeUtil.getGMTTime();
-                tracking_status = CodeConstants.TRACKING.INFO_040;
-                status = CodeConstants.Reservation_Status.Packaged;
+                tracking_status = CodeConstants.TRACKING.INFO_030;
+                status = CodeConstants.Reservation_Status.ShippedTP;
                 res_note = channel.getFull_name() + " Items sent to the SYB" ;
             }
+            else if (PortConfigEnums.Port.LA.getId().equals(port)) {
+                tracking_time = DateTimeUtil.getGMTTime();
+                tracking_status = CodeConstants.TRACKING.INFO_052;
+                status = CodeConstants.Reservation_Status.ShippedTP;
+                res_note = channel.getFull_name() + " Items sent to LA" ;
+            }
 
-            // 模拟Tracking
-            TrackingBean trackingBean = SimTracking(reservationClientBean.getSyn_ship_no(), reservationClientBean.getOrder_channel_id(), tracking_no, tracking_type, port);
+            if (PortConfigEnums.Port.SYB.getId().equals(port)) {
 
-            // 插入Tracking
-            trackingDao.insertTracking(trackingBean);
+                // 模拟Tracking
+                TrackingBean trackingBean = SimTracking(reservationClientBean.getSyn_ship_no(), reservationClientBean.getOrder_channel_id(), tracking_no, tracking_type, port);
 
-            // 插入ResTracking
-            trackingDao.insertResTracking(reservationClientBean.getSyn_ship_no(), tracking_no, tracking_type, getTaskName());
+                // 插入Tracking
+                trackingDao.insertTracking(trackingBean);
+
+                // 插入ResTracking
+                trackingDao.insertResTracking(reservationClientBean.getSyn_ship_no(), tracking_no, tracking_type, getTaskName());
+            }
 
             // 插入TrackingInfo
             trackingDao.insertTrackingInfoBySim(reservationClientBean.getSyn_ship_no(), tracking_no, tracking_status, tracking_time, getTaskName());
@@ -106,8 +115,10 @@ public abstract class GetClientShippingBaseService extends BaseTaskService {
             // 插入物品日志
             reservationDao.insertReservationLog(reservationClientBean.getSyn_ship_no(), res_note, getTaskName());
 
-            // 更新订单状态
-            orderDao.updateOrderStatus(reservationClientBean.getSyn_ship_no(), status, getTaskName());
+            if (PortConfigEnums.Port.SYB.getId().equals(port)) {
+                // 更新订单状态
+                orderDao.updateOrderStatus(reservationClientBean.getSyn_ship_no(), status, getTaskName());
+            }
 
             // 插入订单日志
             orderDao.insertOrderNotes(reservationClientBean.getOrder_number(), reservationClientBean.getSource_order_id(), res_note, getTaskName());

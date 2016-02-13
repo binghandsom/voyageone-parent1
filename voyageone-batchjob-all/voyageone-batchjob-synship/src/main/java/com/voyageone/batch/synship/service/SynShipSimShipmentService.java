@@ -267,7 +267,7 @@ public class SynShipSimShipmentService  extends BaseTaskService {
 
                             if (port.equals(PortConfigEnums.Port.LA.getId())) {
                                 // 更新物品状态
-                                reservationDao.UpdateReservationStatus(clientTracking.getSyn_ship_no(), CodeConstants.Reservation_Status.ShippedUS, "2",getTaskName());
+                                reservationDao.UpdateReservationStatus(clientTracking.getSyn_ship_no(), CodeConstants.Reservation_Status.ShippedTP, "2",getTaskName());
 
                                 // 插入物品日志
                                 reservationDao.insertReservationLog(clientTracking.getSyn_ship_no(), "Sim LA Port Shipment", getTaskName());

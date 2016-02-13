@@ -53,6 +53,37 @@
             </div>
         </div>
     </div>
+
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h3 class="panel-title">
+                Report Of Received
+            </h3>
+        </div>
+        <div class="panel-body">
+            <div class="mb10 form-inline">
+                <span class="input-group">
+                    <label for="report-store" class="input-group-addon" translate="WMS_STORE"></label>
+                    <select chosen style="width: 100px"
+                            id="report-store"
+                            class="form-control"
+                            ng-model="vm.report.store"
+                            ng-options="i.store_id as i.store_name for i in vm.stores">
+                    </select>
+                </span>
+                <span class="input-group">
+                    <label class="input-group-addon" translate="WMS_FROM"></label>
+                    <input class="form-control" type="text" ng-model="vm.report.fromDate" is-open="reportFromOpened" max-date="vm.report.toDate" ng-click="reportFromOpened = true"
+                           placeholder="Select a date" datepicker-popup="yyyy-MM-dd" datepicker-append-to-body="1"/>
+                    <label class="input-group-addon" translate="WMS_TO"></label>
+                    <input class="form-control" type="text" ng-model="vm.report.toDate" is-open="reportToOpened"  min-date="vm.report.fromDate" ng-click="reportToOpened = true"
+                           placeholder="Select a date" datepicker-popup="yyyy-MM-dd" datepicker-append-to-body="1"/>
+                </span>
+                <button class="btn btn-xs btn-primary" type="button" ng-click="downloadReportReceived()" translate="WMS_DOWNLOAD_RECEIVED"></button>
+            </div>
+        </div>
+    </div>
+
     <div class="panel panel-primary">
         <div class="panel-heading">
             <h3 class="panel-title">

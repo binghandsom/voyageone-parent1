@@ -218,8 +218,8 @@ public class SynShipGetEtkStatusService extends BaseTaskService {
                                 case EtkConstants.StatusCode.Inscanned:
                                 case EtkConstants.StatusCode.Clearance:
                                 case EtkConstants.StatusCode.Submitted:
-                                    // ShippedUS状态时，变为Arrived
-                                    if (CodeConstants.Reservation_Status.ShippedUS.equals(etkTrackingBean.getStatus())) {
+                                    // Shipped状态时，变为Arrived
+                                    if (CodeConstants.Reservation_Status.Shipped.equals(etkTrackingBean.getStatus())) {
                                         etkTrackingBean.setBefore_status(etkTrackingBean.getStatus());
                                         etkTrackingBean.setStatus(CodeConstants.Reservation_Status.Arrived);
 
@@ -232,8 +232,8 @@ public class SynShipGetEtkStatusService extends BaseTaskService {
                                     }
                                     break;
                                 case EtkConstants.StatusCode.Despatch:
-                                    // ShippedUS状态时，变为Arrived
-                                    if (CodeConstants.Reservation_Status.ShippedUS.equals(etkTrackingBean.getStatus())) {
+                                    // Shipped状态时，变为Arrived
+                                    if (CodeConstants.Reservation_Status.Shipped.equals(etkTrackingBean.getStatus())) {
                                         etkTrackingBean.setBefore_status(etkTrackingBean.getStatus());
                                         etkTrackingBean.setStatus(CodeConstants.Reservation_Status.Arrived);
                                         // 判断发货地是否是香港

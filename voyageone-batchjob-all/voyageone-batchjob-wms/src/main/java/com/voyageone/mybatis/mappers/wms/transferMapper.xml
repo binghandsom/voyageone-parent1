@@ -42,7 +42,7 @@
                 order_channel_id = #{order_channel_id}
             AND
                 <!-- Reserved状态：防止捡货后没有及时处理，将发货状态、退货等也判断其中-->
-                status in ('12','13','14','15','16','17','97')
+                status in ('12','13','14','15','16','17','97','24')
             AND
                 <!-- 未模拟 -->
                 close_day_flg = '0'

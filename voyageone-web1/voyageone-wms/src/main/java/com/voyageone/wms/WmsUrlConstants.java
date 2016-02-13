@@ -123,6 +123,11 @@ public final class WmsUrlConstants {
          */
         public static final String SCAN = "/wms/receive/list/scan";
 
+        /**
+         * 已拣货报告。下载
+         */
+        public static final String REPORTDOWNLOAD = "/wms/receive/report/download";
+
     }
 
     /**

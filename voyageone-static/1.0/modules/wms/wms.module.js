@@ -178,6 +178,9 @@ define(function () {
                     init: "/wms/receive/list/init",
                     search: "/wms/receive/list/search",
                     scan: "/wms/receive/list/scan"
+                },
+                report:{
+                    download: "/wms/receive/report/download"
                 }
             },
 

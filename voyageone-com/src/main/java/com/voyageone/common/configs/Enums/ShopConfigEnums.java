@@ -55,7 +55,12 @@ public class ShopConfigEnums {
         /**
          * barcode转sku设置名
          */
-        barcode_2_sku
+        barcode_2_sku,
+
+        /**
+         * 主渠道
+         */
+        main_channel_id
     }
 
     /**
