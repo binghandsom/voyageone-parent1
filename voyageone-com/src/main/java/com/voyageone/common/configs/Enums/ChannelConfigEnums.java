@@ -666,9 +666,13 @@ public class ChannelConfigEnums {
          */
         ORDER("2"),
         /**
-         * 订单物品
+         * 订单物品(物品运单号)
          */
-        ITEM("3");
+        ITEM("3"),
+        /**
+         * 订单物品(物品Barcode)
+         */
+        UPC("4");
 
         private String type;
 

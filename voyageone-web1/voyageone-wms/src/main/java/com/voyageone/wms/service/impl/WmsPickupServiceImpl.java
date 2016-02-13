@@ -980,12 +980,12 @@ public class WmsPickupServiceImpl implements WmsPickupService {
      * @return ResponseEntity<byte[]> 可捡货列表
      */
     @Override
-    public byte[] downloadReportPicked(String store_id,String from,String to, UserSessionBean user) {
+    public byte[] downloadReportPicked(String store_id,String from,String to, UserSessionBean user, String reserveType) {
 
         byte[] bytes = null;
 
         // 检索参数的取得和设置
-        Map<String, Object> selectParams = getSelectParamsForDownload(store_id, from, to, user);
+        Map<String, Object> selectParams = getSelectParamsForDownload(store_id, from, to, user, reserveType);
 
         // 取得符合条件的记录
         List<PickedInfoBean> pickedList = new ArrayList<>();
@@ -1032,7 +1032,7 @@ public class WmsPickupServiceImpl implements WmsPickupService {
      * @param user 用户登录信息
      * @return Map DB检索条件
      */
-    private  Map<String, Object> getSelectParamsForDownload(String store_id,String from,String to, UserSessionBean user) {
+    private  Map<String, Object> getSelectParamsForDownload(String store_id,String from,String to, UserSessionBean user, String reserveType) {
 
         // 取得画面的各个检索参数
         int storeid = Integer.valueOf(store_id).intValue();
@@ -1043,8 +1043,15 @@ public class WmsPickupServiceImpl implements WmsPickupService {
         // 根据reserveType来决定显示仓库
         for (ChannelStoreBean storeBean : user.getCompanyRealStoreList() ) {
             StoreBean store = StoreConfigs.getStore(new Long(storeBean.getStore_id()));
-            if (store.getIs_sale().equals(StoreConfigEnums.Sale.YES.getId())) {
-                channelStoreList.add(storeBean);
+            if (reserveType.equals(WmsConstants.ReserveType.PickUp)) {
+                if (store.getIs_sale().equals(StoreConfigEnums.Sale.YES.getId())) {
+                    channelStoreList.add(storeBean);
+                }
+            }
+            else  if (reserveType.equals(WmsConstants.ReserveType.Receive)) {
+                if (store.getInventory_manager().equals(StoreConfigEnums.Manager.NO.getId())) {
+                    channelStoreList.add(storeBean);
+                }
             }
         }
 
