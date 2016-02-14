@@ -30,4 +30,15 @@ public class CmsConstants {
         Onsale, 		// 在售
         Instock  		// 在库
     }
+
+	/**
+	 * workload type
+     */
+    public enum WorkloadType {
+        Sx,             // 上新 / 全属性更新
+        UpdProdImage,   // 更新商品图片
+        UpdDesc,        // 更新商品描述
+        SetOnsale,      // 上架
+        SetInstock      // 下架
+    }
 }
