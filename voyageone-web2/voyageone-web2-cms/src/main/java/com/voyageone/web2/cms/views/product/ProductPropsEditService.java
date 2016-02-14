@@ -2,6 +2,7 @@ package com.voyageone.web2.cms.views.product;
 
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.cms.enums.CartType;
 import com.voyageone.cms.service.CmsProductService;
 import com.voyageone.cms.service.dao.mongodb.CmsBtFeedInfoDao;
 import com.voyageone.cms.service.dao.mongodb.CmsBtProductDao;
@@ -16,17 +17,20 @@ import com.voyageone.common.masterdate.schema.option.Option;
 import com.voyageone.common.masterdate.schema.utils.FieldUtil;
 import com.voyageone.common.masterdate.schema.value.ComplexValue;
 import com.voyageone.common.masterdate.schema.value.Value;
+import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.web2.cms.bean.CmsCategoryInfoBean;
-import com.voyageone.web2.cms.bean.CustomAttributesBean;
 import com.voyageone.web2.cms.bean.CmsProductInfoBean;
+import com.voyageone.web2.cms.bean.CustomAttributesBean;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import com.voyageone.web2.sdk.api.VoApiDefaultClient;
 import com.voyageone.web2.sdk.api.request.CategorySchemaGetRequest;
-import com.voyageone.web2.sdk.api.request.ProductCategoryUpdateRequest;
+import com.voyageone.web2.sdk.api.request.ProductGroupMainCategoryUpdateRequest;
 import com.voyageone.web2.sdk.api.request.ProductUpdateRequest;
+import com.voyageone.web2.sdk.api.request.ProductsGetRequest;
 import com.voyageone.web2.sdk.api.response.CategorySchemaGetResponse;
-import com.voyageone.web2.sdk.api.response.ProductCategoryUpdateResponse;
+import com.voyageone.web2.sdk.api.response.ProductGroupMainCategoryUpdateResponse;
+import com.voyageone.web2.sdk.api.response.ProductsGetResponse;
 import com.voyageone.web2.sdk.api.service.ProductSdkClient;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -34,10 +38,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by lewis on 15-12-16.
@@ -63,10 +64,10 @@ public class ProductPropsEditService {
     private CmsBtProductDao cmsBtProductDao;
 
     @Autowired
-    protected VoApiDefaultClient voApiDefaultClient;
+    protected ProductSdkClient productClient;
 
     @Autowired
-    protected ProductSdkClient productClient;
+    protected VoApiDefaultClient voApiClient;
 
     private static final String optionDataSource = "optConfig";
 
@@ -75,6 +76,7 @@ public class ProductPropsEditService {
     /**
      * 获取类目以及类目属性信息.
      * 1.检查数据已经准备完成，batchField.switchCategory = 1时返回并告知运营正在准备数据，否则正常显示.
+     *
      * @param channelId
      * @param prodId
      * @return
@@ -85,12 +87,7 @@ public class ProductPropsEditService {
         CmsProductInfoBean productInfo = new CmsProductInfoBean();
 
         //check the product data is ready.
-        if (!cmsBtProductDao.checkProductDataIsReady(channelId,prodId)){
-            productInfo.setProductDataIsReady(false);
-            return productInfo;
-        }
-
-        productInfo.setProductDataIsReady(true);
+        productInfo.setProductDataIsReady(cmsBtProductDao.checkProductDataIsReady(channelId, prodId));
 
         //自定义属性.
         CustomAttributesBean customAttributes = new CustomAttributesBean();
@@ -102,15 +99,15 @@ public class ProductPropsEditService {
         CmsProductInfoBean.ProductStatus productStatus = productInfo.getProductStatusInstance();
         productStatus.setApproveStatus(productValueModel.getFields().getStatus());
 
-        if (completeStatus.equals(productValueModel.getFields().getTranslateStatus())){
+        if (completeStatus.equals(productValueModel.getFields().getTranslateStatus())) {
             productStatus.setTranslateStatus(true);
-        }else {
+        } else {
             productStatus.setTranslateStatus(false);
         }
 
-        if (completeStatus.equals(productValueModel.getFields().getEditStatus())){
+        if (completeStatus.equals(productValueModel.getFields().getEditStatus())) {
             productStatus.setEditStatus(true);
-        }else {
+        } else {
             productStatus.setEditStatus(false);
         }
 
@@ -118,7 +115,7 @@ public class ProductPropsEditService {
         List<CmsBtProductModel_Field_Image> productImages = productValueModel.getFields().getImages(CmsBtProductConstants.FieldImageType.PRODUCT_IMAGE);
 
         // 获取feed方数据.
-        Map<String,String> feedInfoModel = getCmsBtFeedInfoModel(channelId, prodId, productValueModel);
+        Map<String, String> feedInfoModel = getCmsBtFeedInfoModel(channelId, prodId, productValueModel);
 
         // 获取product 对应的 schema
         CmsMtCategorySchemaModel categorySchemaModel = getCmsMtCategorySchemaModel(productValueModel.getCatId());
@@ -128,7 +125,7 @@ public class ProductPropsEditService {
 
         List<Field> comSchemaFields = comSchemaModel.getFields();
 
-        this.fillFieldOptions(comSchemaFields,channelId);
+        this.fillFieldOptions(comSchemaFields, channelId);
 
         // 获取master schema.
         List<Field> masterSchemaFields = categorySchemaModel.getFields();
@@ -137,10 +134,10 @@ public class ProductPropsEditService {
         masterSchemaFields.addAll(comSchemaFields);
 
         //获取主数据的值.
-        Map masterSchemaValue =  productValueModel.getFields();
+        Map masterSchemaValue = productValueModel.getFields();
 
         //填充master schema
-        FieldUtil.setFieldsValueFromMap(masterSchemaFields,masterSchemaValue);
+        FieldUtil.setFieldsValueFromMap(masterSchemaFields, masterSchemaValue);
 
         //没有值的情况下设定complexField、MultiComplexField的默认值.
         setDefaultComplexValues(masterSchemaFields);
@@ -148,17 +145,17 @@ public class ProductPropsEditService {
         //获取sku schema.
         List<Field> skuSchemaFields = this.buildSkuSchema(categorySchemaModel);
 
-        MultiComplexField skuField = (MultiComplexField)skuSchemaFields.get(0);
+        MultiComplexField skuField = (MultiComplexField) skuSchemaFields.get(0);
 
         List<Field> subSkuFields = skuField.getFields();
 
-        this.fillFieldOptions(subSkuFields,channelId);
+        this.fillFieldOptions(subSkuFields, channelId);
 
         //获取sku schemaValue
         Map<String, Object> skuSchemaValue = buildSkuSchemaValue(productValueModel, categorySchemaModel);
 
         //填充sku schema.
-        FieldUtil.setFieldsValueFromMap(skuSchemaFields,skuSchemaValue);
+        FieldUtil.setFieldsValueFromMap(skuSchemaFields, skuSchemaValue);
 
         //设置feed属性值
         customAttributes.setOrgAtts(productValueModel.getFeed().getOrgAtts());
@@ -183,15 +180,16 @@ public class ProductPropsEditService {
 
     /**
      * 更新product values.
+     *
      * @param channelId
      * @param user
      * @param requestMap
      */
-    public String updateProductMasterInfo(String channelId, String user, Map requestMap){
+    public String updateProductMasterInfo(String channelId, String user, Map requestMap) {
 
-        List<Map<String,Object>> masterFieldsList = (List<Map<String,Object>>) requestMap.get("masterFields");
+        List<Map<String, Object>> masterFieldsList = (List<Map<String, Object>>) requestMap.get("masterFields");
 
-        Map<String,Object> customAttributesValue =(Map<String,Object>) requestMap.get("customAttributes");
+        Map<String, Object> customAttributesValue = (Map<String, Object>) requestMap.get("customAttributes");
 
         ProductUpdateRequest updateRequest = new ProductUpdateRequest(channelId);
         CmsBtProductModel productModel = new CmsBtProductModel(channelId);
@@ -219,6 +217,7 @@ public class ProductPropsEditService {
 
     /**
      * 更新product values.
+     *
      * @param channelId
      * @param user
      * @param categoryId
@@ -226,7 +225,7 @@ public class ProductPropsEditService {
      * @param categoryFullPath
      * @param skuFieldMap
      */
-    public String updateProductSkuInfo(String channelId,String user,String categoryId,Long productId,String modified,String categoryFullPath, Map skuFieldMap){
+    public String updateProductSkuInfo(String channelId, String user, String categoryId, Long productId, String modified, String categoryFullPath, Map skuFieldMap) {
 
         ProductUpdateRequest updateRequest = new ProductUpdateRequest(channelId);
 
@@ -250,12 +249,13 @@ public class ProductPropsEditService {
 
     /**
      * 保存全部产品信息.
+     *
      * @param channelId
      * @param userName
      * @param requestMap
      * @return
      */
-    public String updateProductAllInfo(String channelId,String userName, Map requestMap){
+    public String updateProductAllInfo(String channelId, String userName, Map requestMap) {
 
         String categoryId = requestMap.get("categoryId").toString();
         Long productId = Long.valueOf(requestMap.get("productId").toString());
@@ -263,8 +263,8 @@ public class ProductPropsEditService {
         Map skuMap = (Map) requestMap.get("skuFields");
         String modified = requestMap.get("modified").toString();
 
-        List<Map<String,Object>> masterFieldsList = (List<Map<String,Object>>) requestMap.get("masterFields");
-        Map<String,Object> customAttributesValue =(Map<String,Object>) requestMap.get("customAttributes");
+        List<Map<String, Object>> masterFieldsList = (List<Map<String, Object>>) requestMap.get("masterFields");
+        Map<String, Object> customAttributesValue = (Map<String, Object>) requestMap.get("customAttributes");
         List<CmsBtProductModel_Sku> skuValues = buildCmsBtProductModel_skus(skuMap);
 
         ProductUpdateRequest updateRequest = new ProductUpdateRequest(channelId);
@@ -294,6 +294,7 @@ public class ProductPropsEditService {
 
     /**
      * 获取被切换类目的schema.
+     *
      * @param categoryId
      * @return
      * @throws BusinessException
@@ -311,7 +312,7 @@ public class ProductPropsEditService {
 
         CategorySchemaGetRequest schemaGetRequest = new CategorySchemaGetRequest(categoryId);
 
-        CategorySchemaGetResponse schemaGetResponse = voApiDefaultClient.execute(schemaGetRequest);
+        CategorySchemaGetResponse schemaGetResponse = voApiClient.execute(schemaGetRequest);
 
         categoryInfo.setMasterFields(schemaGetResponse.getMasterFields());
         categoryInfo.setCategoryId(schemaGetResponse.getCategoryId());
@@ -324,14 +325,15 @@ public class ProductPropsEditService {
     /**
      * 确认切换类目.
      * 1.检查相关产品是否已经上架，如果在架就返回并提醒运营删除对应平台上的产品，否则继续
+     *
      * @param requestMap
      * @return
      */
-    public Map<String,Object> changeProductCategory(Map requestMap, UserSessionBean userSession){
+    public Map<String, Object> changeProductCategory(Map requestMap, UserSessionBean userSession,String language) {
 
         Object catIdObj = requestMap.get("catId");
         Object catPathObj = requestMap.get("catPath");
-        Object prodIdObj = requestMap.get("prodId");
+        Object prodIdObj = requestMap.get("prodIds");
 
         // check the parameters
         Assert.notEmpty(requestMap);
@@ -344,109 +346,154 @@ public class ProductPropsEditService {
 
         String categoryPath = String.valueOf(catPathObj);
 
-        Long productId = Long.parseLong(String.valueOf(prodIdObj));
+        Set<Long> productIds = new HashSet<Long>(CommonUtil.changeListType((List<Integer>) prodIdObj));
 
-        ProductCategoryUpdateRequest request = new ProductCategoryUpdateRequest(userSession.getSelChannelId(),categoryId,categoryPath,productId);
-        request.setModifier(userSession.getUserName());
+        // 取得products对应的所有的groupIds
+        ProductsGetRequest productsGetRequest = new ProductsGetRequest(userSession.getSelChannelId());
+        productsGetRequest.setProductIds(productIds);
+        productsGetRequest.addField("feed.orgAtts.modelCode");
+        productsGetRequest.addField("groups");
+        ProductsGetResponse groups = voApiClient.execute(productsGetRequest);
 
-        ProductCategoryUpdateResponse response = voApiDefaultClient.execute(request);
+        // 获取groupId的数据
+        List<String> models = new ArrayList<String>();
+        Map<String,List<String>> numIids = new HashMap<>();
+        for (CmsBtProductModel product: groups.getProducts()) {
 
-        Map<String,Object> resultMap = new HashMap<>();
+            // 获取所有model
+            String model = product.getFeed().getOrgAtts().get("modelCode").toString();
+            if(!models.contains(model))
+                models.add(model);
 
-        requestMap.put("updFeedInfoCount",response.getUpdFeedInfoCount());
-        requestMap.put("updProductCount",response.getUpdProductCount());
-        requestMap.put("updateCount",response.getModifiedCount());
+            for(CmsBtProductModel_Group_Platform platform: product.getGroups().getPlatforms()) {
+                // 获取已经上新的产品数据
+                Integer cartId = Integer.valueOf(platform.getCartId().toString());
+                String numIid = platform.getNumIId().toString();
+                if (!StringUtils.isEmpty(numIid)) {
+                    String cartName = CartType.getCartNameById(cartId, language);
+                    if (numIids.get(cartName) != null) {
+                        numIids.get(cartName).add(numIid);
+                    } else {
+                        List<String> tempList = new ArrayList<>();
+                        tempList.add(numIid);
+                        numIids.put(cartName, tempList);
+                    }
+                }
+            }
+        }
+
+        Map<String, Object> resultMap = new HashMap<>();
+        // 如果存在已经上新过的产品
+        if (numIids.size() > 0) {
+            resultMap.put("isChangeCategory", false);
+            resultMap.put("publishInfo", numIids);
+        }
+        // 如果不存在已经上新过的产品
+        else {
+
+            ProductGroupMainCategoryUpdateRequest request = new ProductGroupMainCategoryUpdateRequest(userSession.getSelChannelId(), categoryId, categoryPath, models);
+            request.setModifier(userSession.getUserName());
+            request.setModels(models);
+            ProductGroupMainCategoryUpdateResponse response = voApiClient.execute(request);
+
+            // 获取更新结果
+            resultMap.put("isChangeCategory", true);
+            resultMap.put("updFeedInfoCount", response.getUpdFeedInfoCount());
+            resultMap.put("updProductCount", response.getUpdProductCount());
+            resultMap.put("updateCount", response.getModifiedCount());
+        }
 
         return resultMap;
     }
 
     /**
      * 获取 feed info model.
+     *
      * @param channelId
      * @param prodId
      * @param productValueModel
      * @return
      */
-    private Map<String,String> getCmsBtFeedInfoModel(String channelId, Long prodId, CmsBtProductModel productValueModel) {
+    private Map<String, String> getCmsBtFeedInfoModel(String channelId, Long prodId, CmsBtProductModel productValueModel) {
 
-        CmsBtFeedInfoModel feedInfoModel = cmsBtFeedInfoDao.selectProductByCode(channelId,productValueModel.getFields().getCode());
+        CmsBtFeedInfoModel feedInfoModel = cmsBtFeedInfoDao.selectProductByCode(channelId, productValueModel.getFields().getCode());
 
-        if (feedInfoModel == null){
+        if (feedInfoModel == null) {
             //feed 信息不存在时异常处理.
-            String errMsg = "channel id: " + channelId +" product id: " +prodId+" 对应的品牌方信息不存在！";
+            String errMsg = "channel id: " + channelId + " product id: " + prodId + " 对应的品牌方信息不存在！";
 
             logger.warn(errMsg);
 
         }
 
-        Map<String,String> feedAttributes = new HashMap<>();
+        Map<String, String> feedAttributes = new HashMap<>();
 
 
-        if (!StringUtils.isEmpty(feedInfoModel.getCode())){
-            feedAttributes.put("code",feedInfoModel.getCode());
+        if (!StringUtils.isEmpty(feedInfoModel.getCode())) {
+            feedAttributes.put("code", feedInfoModel.getCode());
         }
 
-        if (!StringUtils.isEmpty(feedInfoModel.getName())){
-            feedAttributes.put("name",feedInfoModel.getName());
+        if (!StringUtils.isEmpty(feedInfoModel.getName())) {
+            feedAttributes.put("name", feedInfoModel.getName());
         }
 
-        if (!StringUtils.isEmpty(feedInfoModel.getModel())){
-            feedAttributes.put("model",feedInfoModel.getModel());
+        if (!StringUtils.isEmpty(feedInfoModel.getModel())) {
+            feedAttributes.put("model", feedInfoModel.getModel());
         }
 
-        if (!StringUtils.isEmpty(feedInfoModel.getColor())){
-            feedAttributes.put("color",feedInfoModel.getColor());
+        if (!StringUtils.isEmpty(feedInfoModel.getColor())) {
+            feedAttributes.put("color", feedInfoModel.getColor());
         }
 
-        if (!StringUtils.isEmpty(feedInfoModel.getOrigin())){
-            feedAttributes.put("origin",feedInfoModel.getOrigin());
+        if (!StringUtils.isEmpty(feedInfoModel.getOrigin())) {
+            feedAttributes.put("origin", feedInfoModel.getOrigin());
         }
 
-        if (!StringUtils.isEmpty(feedInfoModel.getSizeType())){
-            feedAttributes.put("sizeType",feedInfoModel.getSizeType());
+        if (!StringUtils.isEmpty(feedInfoModel.getSizeType())) {
+            feedAttributes.put("sizeType", feedInfoModel.getSizeType());
         }
 
-        if (!StringUtils.isEmpty(feedInfoModel.getBrand())){
-            feedAttributes.put("brand",feedInfoModel.getBrand());
+        if (!StringUtils.isEmpty(feedInfoModel.getBrand())) {
+            feedAttributes.put("brand", feedInfoModel.getBrand());
         }
 
-        if (!StringUtils.isEmpty(feedInfoModel.getWeight())){
-            feedAttributes.put("weight",feedInfoModel.getWeight());
+        if (!StringUtils.isEmpty(feedInfoModel.getWeight())) {
+            feedAttributes.put("weight", feedInfoModel.getWeight());
         }
 
-        if (!StringUtils.isEmpty(feedInfoModel.getShort_description())){
-            feedAttributes.put("short_description",feedInfoModel.getShort_description());
+        if (!StringUtils.isEmpty(feedInfoModel.getShort_description())) {
+            feedAttributes.put("short_description", feedInfoModel.getShort_description());
         }
 
-        if (!StringUtils.isEmpty(feedInfoModel.getLong_description())){
-            feedAttributes.put("long_description",feedInfoModel.getLong_description());
+        if (!StringUtils.isEmpty(feedInfoModel.getLong_description())) {
+            feedAttributes.put("long_description", feedInfoModel.getLong_description());
         }
 
-        if (!StringUtils.isEmpty(String.valueOf(feedInfoModel.getUpdFlg()))){
-            feedAttributes.put("updFlg",String.valueOf(feedInfoModel.getUpdFlg()));
+        if (!StringUtils.isEmpty(String.valueOf(feedInfoModel.getUpdFlg()))) {
+            feedAttributes.put("updFlg", String.valueOf(feedInfoModel.getUpdFlg()));
         }
 
-        Map<String,List<String>> attributes = feedInfoModel.getAttribute();
+        Map<String, List<String>> attributes = feedInfoModel.getAttribute();
 
-        Map<String,String> attributesMap = new HashMap<>();
+        Map<String, String> attributesMap = new HashMap<>();
 
-        for (Map.Entry<String,List<String>> entry : attributes.entrySet()){
+        for (Map.Entry<String, List<String>> entry : attributes.entrySet()) {
 
             StringBuilder valueStr = new StringBuilder();
 
             List<String> values = entry.getValue();
 
-            if (values != null){
-                for (int i=0;i<values.size();i++){
-                    if (i<values.size()-1){
+            if (values != null) {
+                for (int i = 0; i < values.size(); i++) {
+                    if (i < values.size() - 1) {
                         valueStr.append(values.get(i)).append("/");
-                    }else {
+                    } else {
                         valueStr.append(values.get(i));
                     }
                 }
             }
 
-            attributesMap.put(entry.getKey(),valueStr.toString());
+            attributesMap.put(entry.getKey(), valueStr.toString());
 
         }
 
@@ -457,20 +504,21 @@ public class ProductPropsEditService {
 
     /**
      * 构建sku schemaValue.
+     *
      * @param productValueModel
      * @param categorySchemaModel
      * @return
      */
     private Map<String, Object> buildSkuSchemaValue(CmsBtProductModel productValueModel, CmsMtCategorySchemaModel categorySchemaModel) {
-        List<Map<String,Object>> skuValueModel = new ArrayList<>();
+        List<Map<String, Object>> skuValueModel = new ArrayList<>();
 
         List<CmsBtProductModel_Sku> valueSkus = productValueModel.getSkus();
 
-        for (CmsBtProductModel_Sku model_sku:valueSkus){
+        for (CmsBtProductModel_Sku model_sku : valueSkus) {
             skuValueModel.add(model_sku);
         }
 
-        Map<String,Object> skuSchemaValue = new HashMap<>();
+        Map<String, Object> skuSchemaValue = new HashMap<>();
 
         skuSchemaValue.put(categorySchemaModel.getSku().getId(), skuValueModel);
 
@@ -480,10 +528,11 @@ public class ProductPropsEditService {
 
     /**
      * 构建sku schema.
+     *
      * @param categorySchemaModel
      * @return
      */
-    private List<Field> buildSkuSchema(CmsMtCategorySchemaModel categorySchemaModel){
+    private List<Field> buildSkuSchema(CmsMtCategorySchemaModel categorySchemaModel) {
 
         List<Field> skuSchema = new ArrayList<>();
         Field skuField = categorySchemaModel.getSku();
@@ -494,6 +543,7 @@ public class ProductPropsEditService {
 
     /**
      * 获取 master schema.
+     *
      * @param categoryId
      * @return
      */
@@ -501,9 +551,9 @@ public class ProductPropsEditService {
 
         CmsMtCategorySchemaModel schemaModel = cmsMtCategorySchemaDao.getMasterSchemaModelByCatId(categoryId);
 
-        if (schemaModel == null){
+        if (schemaModel == null) {
             // product 对应的schema信息不存在时的异常处理.
-            String errMsg = "category id: " + categoryId +"对应的类目信息不存在！";
+            String errMsg = "category id: " + categoryId + "对应的类目信息不存在！";
             logger.error(errMsg);
             throw new BusinessException(errMsg);
         }
@@ -513,6 +563,7 @@ public class ProductPropsEditService {
 
     /**
      * 获取product model.
+     *
      * @param channelId
      * @param prodId
      * @return
@@ -521,10 +572,10 @@ public class ProductPropsEditService {
 
         CmsBtProductModel productValueModel = cmsProductService.getProductById(channelId, prodId);
 
-        if (productValueModel == null){
+        if (productValueModel == null) {
 
             //product 信息不存在时异常处理.
-            String errMsg = "channel id: " + channelId +" product id: " +prodId+" 对应的产品信息不存在！";
+            String errMsg = "channel id: " + channelId + " product id: " + prodId + " 对应的产品信息不存在！";
 
             logger.error(errMsg);
 
@@ -536,12 +587,13 @@ public class ProductPropsEditService {
 
     /**
      * 获取common schema.
+     *
      * @return
      */
     private CmsMtComSchemaModel getComSchemaModel() {
         CmsMtComSchemaModel comSchemaModel = cmsMtCommonSchemaDao.getComSchema();
 
-        if (comSchemaModel == null){
+        if (comSchemaModel == null) {
 
             //common schema 不存在时异常处理.
             String errMsg = "共通schema（cms_mt_common_schema）的信息不存在！";
@@ -556,13 +608,14 @@ public class ProductPropsEditService {
 
     /**
      * 构建CmsBtProductModel_Sku list.
+     *
      * @param skuFieldMap
      * @return
      */
     private List<CmsBtProductModel_Sku> buildCmsBtProductModel_skus(Map skuFieldMap) {
         Field skuField = SchemaJsonReader.mapToField(skuFieldMap);
 
-        Map<String,Object> skuFieldValueMap = new HashMap<>();
+        Map<String, Object> skuFieldValueMap = new HashMap<>();
 
         skuField.getFieldValueToMap(skuFieldValueMap);
 
@@ -570,7 +623,7 @@ public class ProductPropsEditService {
 
         List<CmsBtProductModel_Sku> skuValues = new ArrayList<>();
 
-        for (Map skuMap:skuValuesMap){
+        for (Map skuMap : skuValuesMap) {
             CmsBtProductModel_Sku skuModel = new CmsBtProductModel_Sku(skuMap);
             skuValues.add(skuModel);
         }
@@ -579,6 +632,7 @@ public class ProductPropsEditService {
 
     /**
      * 构建masterFields.
+     *
      * @param masterFieldsList
      * @return
      */
@@ -587,13 +641,13 @@ public class ProductPropsEditService {
         List<Field> masterFields = SchemaJsonReader.readJsonForList(masterFieldsList);
 
         // setComplexValue
-        for (Field field:masterFields){
+        for (Field field : masterFields) {
 
-            if (field instanceof ComplexField){
-                ComplexField complexField = (ComplexField)field;
+            if (field instanceof ComplexField) {
+                ComplexField complexField = (ComplexField) field;
                 List<Field> complexFields = complexField.getFields();
                 ComplexValue complexValue = complexField.getComplexValue();
-                setComplexValue(complexFields,complexValue);
+                setComplexValue(complexFields, complexValue);
             }
 
         }
@@ -603,6 +657,7 @@ public class ProductPropsEditService {
 
     /**
      * 构建 CmsBtProductModel_Field
+     *
      * @param requestMap
      * @param masterFields
      * @return
@@ -610,7 +665,7 @@ public class ProductPropsEditService {
     private CmsBtProductModel_Field buildCmsBtProductModel_field(Map requestMap, List<Field> masterFields) {
         CmsBtProductModel_Field masterFieldsValue = new CmsBtProductModel_Field();
 
-        if (requestMap.get("productStatus") != null){
+        if (requestMap.get("productStatus") != null) {
             Map status = (Map) requestMap.get("productStatus");
             masterFieldsValue.setStatus(status.get("approveStatus").toString());
             masterFieldsValue.setTranslateStatus(status.get("translateStatus").toString());
@@ -624,6 +679,7 @@ public class ProductPropsEditService {
 
     /**
      * 构建 CmsBtProductModel_feed.
+     *
      * @param customAttributesValue
      * @return
      */
@@ -634,21 +690,21 @@ public class ProductPropsEditService {
 
         List<String> customIds = new ArrayList<>();
 
-        List<Map<String, String>> orgAttsList =(List<Map<String, String>>) customAttributesValue.get("orgAtts");
+        List<Map<String, String>> orgAttsList = (List<Map<String, String>>) customAttributesValue.get("orgAtts");
         for (Map<String, String> orgAttMap : orgAttsList) {
 
             orgAtts.put(orgAttMap.get("key"), orgAttMap.get("value"));
 
             Object selected = orgAttMap.get("selected");
 
-            Boolean isSelected = (Boolean)selected;
+            Boolean isSelected = (Boolean) selected;
 
-            if (isSelected){
+            if (isSelected) {
                 customIds.add(orgAttMap.get("key"));
             }
         }
 
-        List<Map<String, String>> cnAttsList =(List<Map<String, String>>) customAttributesValue.get("cnAtts");
+        List<Map<String, String>> cnAttsList = (List<Map<String, String>>) customAttributesValue.get("cnAtts");
         for (Map<String, String> cnAttsMap : cnAttsList) {
             cnAtts.put(cnAttsMap.get("key"), cnAttsMap.get("value"));
         }
@@ -661,48 +717,49 @@ public class ProductPropsEditService {
 
     /**
      * set complex value.
+     *
      * @param fields
      * @param complexValue
      */
-    private void setComplexValue(List<Field> fields, ComplexValue complexValue){
+    private void setComplexValue(List<Field> fields, ComplexValue complexValue) {
 
-        for (Field fieldItem:fields){
+        for (Field fieldItem : fields) {
 
             complexValue.put(fieldItem);
 
             FieldTypeEnum fieldType = fieldItem.getType();
 
-            switch (fieldType){
+            switch (fieldType) {
                 case INPUT:
-                    InputField inputField = (InputField)fieldItem;
+                    InputField inputField = (InputField) fieldItem;
                     String inputValue = inputField.getValue();
-                    complexValue.setInputFieldValue(inputField.getId(),inputValue);
+                    complexValue.setInputFieldValue(inputField.getId(), inputValue);
                     break;
                 case SINGLECHECK:
-                    SingleCheckField singleCheckField = (SingleCheckField)fieldItem;
+                    SingleCheckField singleCheckField = (SingleCheckField) fieldItem;
                     Value checkValue = singleCheckField.getValue();
-                    complexValue.setSingleCheckFieldValue(singleCheckField.getId(),checkValue);
+                    complexValue.setSingleCheckFieldValue(singleCheckField.getId(), checkValue);
                     break;
                 case MULTICHECK:
-                    MultiCheckField multiCheckField = (MultiCheckField)fieldItem;
+                    MultiCheckField multiCheckField = (MultiCheckField) fieldItem;
                     List<Value> checkValues = multiCheckField.getValues();
-                    complexValue.setMultiCheckFieldValues(multiCheckField.getId(),checkValues);
+                    complexValue.setMultiCheckFieldValues(multiCheckField.getId(), checkValues);
                     break;
                 case MULTIINPUT:
-                    MultiInputField multiInputField = (MultiInputField)fieldItem;
+                    MultiInputField multiInputField = (MultiInputField) fieldItem;
                     List<String> inputValues = multiInputField.getStringValues();
-                    complexValue.setMultiInputFieldValues(multiInputField.getId(),inputValues);
+                    complexValue.setMultiInputFieldValues(multiInputField.getId(), inputValues);
                     break;
                 case COMPLEX:
-                    ComplexField complexField = (ComplexField)fieldItem;
+                    ComplexField complexField = (ComplexField) fieldItem;
                     List<Field> subFields = complexField.getFields();
                     ComplexValue subComplexValue = complexField.getComplexValue();
-                    setComplexValue(subFields,subComplexValue);
+                    setComplexValue(subFields, subComplexValue);
                     break;
                 case MULTICOMPLEX:
-                    MultiComplexField multiComplexField = (MultiComplexField)fieldItem;
+                    MultiComplexField multiComplexField = (MultiComplexField) fieldItem;
                     List<ComplexValue> complexValueList = multiComplexField.getComplexValues();
-                    complexValue.setMultiComplexFieldValues(multiComplexField.getId(),complexValueList);
+                    complexValue.setMultiComplexFieldValues(multiComplexField.getId(), complexValueList);
                     break;
 
                 default:
@@ -715,30 +772,31 @@ public class ProductPropsEditService {
 
     /**
      * complex field值为空时设定默认值.
+     *
      * @param fields
      */
-    private void setDefaultComplexValues(List<Field> fields){
+    private void setDefaultComplexValues(List<Field> fields) {
 
-        for (Field fieldItem:fields){
+        for (Field fieldItem : fields) {
 
             FieldTypeEnum fieldType = fieldItem.getType();
 
-            switch (fieldType){
+            switch (fieldType) {
                 case COMPLEX:
-                    ComplexField complexField = (ComplexField)fieldItem;
-                    if (complexField.getComplexValue().getFieldMap().isEmpty() && complexField.getDefaultComplexValue().getFieldMap().isEmpty()){
+                    ComplexField complexField = (ComplexField) fieldItem;
+                    if (complexField.getComplexValue().getFieldMap().isEmpty() && complexField.getDefaultComplexValue().getFieldMap().isEmpty()) {
 
                         ComplexValue defComplexValue = new ComplexValue();
-                        Map<String,Field> complexValueMap = new HashMap<>();
+                        Map<String, Field> complexValueMap = new HashMap<>();
                         List<Field> complexFields = complexField.getFields();
-                        setDefaultValueFieldMap(complexFields,complexValueMap);
+                        setDefaultValueFieldMap(complexFields, complexValueMap);
                         defComplexValue.setFieldMap(complexValueMap);
                         complexField.setDefaultValue(defComplexValue);
 
                     }
                     break;
                 case MULTICOMPLEX:
-                    MultiComplexField multiComplexField = (MultiComplexField)fieldItem;
+                    MultiComplexField multiComplexField = (MultiComplexField) fieldItem;
                     if (multiComplexField.getComplexValues().isEmpty() && multiComplexField.getDefaultComplexValues().isEmpty()) {
                         List<Field> complexFields = multiComplexField.getFields();
                         ComplexValue defComplexValue = new ComplexValue();
@@ -759,52 +817,53 @@ public class ProductPropsEditService {
 
     /**
      * 设定Field 的valueFieldMap.
+     *
      * @param fields
      * @param complexValueMap
      */
-    private void setDefaultValueFieldMap(List<Field> fields,Map<String,Field> complexValueMap){
+    private void setDefaultValueFieldMap(List<Field> fields, Map<String, Field> complexValueMap) {
 
-        for (Field field:fields){
+        for (Field field : fields) {
             FieldTypeEnum type = field.getType();
-            switch (type){
+            switch (type) {
                 case INPUT:
                 case SINGLECHECK:
                 case MULTICHECK:
                 case MULTIINPUT:
-                    complexValueMap.put(field.getId(),field);
+                    complexValueMap.put(field.getId(), field);
                     break;
                 case COMPLEX:
 
-                    ComplexField complexField = (ComplexField)field;
+                    ComplexField complexField = (ComplexField) field;
 
-                    if (complexField.getComplexValue().getFieldMap().isEmpty() && complexField.getDefaultComplexValue().getFieldMap().isEmpty()){
+                    if (complexField.getComplexValue().getFieldMap().isEmpty() && complexField.getDefaultComplexValue().getFieldMap().isEmpty()) {
 
                         ComplexValue complexValue = new ComplexValue();
 
-                        Map<String,Field> subComplexValueMap = new HashMap<>();
+                        Map<String, Field> subComplexValueMap = new HashMap<>();
 
                         List<Field> subFields = complexField.getFields();
 
-                        setDefaultValueFieldMap(subFields,subComplexValueMap);
+                        setDefaultValueFieldMap(subFields, subComplexValueMap);
 
                         complexValue.setFieldMap(subComplexValueMap);
 
                         complexField.setDefaultValue(complexValue);
 
-                        complexValueMap.put(complexField.getId(),complexField);
+                        complexValueMap.put(complexField.getId(), complexField);
                     }
                     break;
                 case MULTICOMPLEX:
-                    MultiComplexField multiComplexField = (MultiComplexField)field;
-                    if (multiComplexField.getComplexValues().isEmpty() && multiComplexField.getDefaultComplexValues().isEmpty()){
+                    MultiComplexField multiComplexField = (MultiComplexField) field;
+                    if (multiComplexField.getComplexValues().isEmpty() && multiComplexField.getDefaultComplexValues().isEmpty()) {
                         ComplexValue complexValue = new ComplexValue();
-                        Map<String,Field> subComplexValueMap = new HashMap<>();
+                        Map<String, Field> subComplexValueMap = new HashMap<>();
                         List<Field> subFields = multiComplexField.getFields();
 
-                        setDefaultValueFieldMap(subFields,subComplexValueMap);
+                        setDefaultValueFieldMap(subFields, subComplexValueMap);
 
                         multiComplexField.addDefaultComplexValue(complexValue);
-                        complexValueMap.put(multiComplexField.getId(),multiComplexField);
+                        complexValueMap.put(multiComplexField.getId(), multiComplexField);
 
                     }
                     break;
@@ -817,10 +876,11 @@ public class ProductPropsEditService {
 
     /**
      * 填充field选项值.
+     *
      * @param fields
      * @param channelId
      */
-    private void fillFieldOptions(List<Field> fields,String channelId){
+    private void fillFieldOptions(List<Field> fields, String channelId) {
 
         for (Field field : fields) {
 
@@ -828,7 +888,7 @@ public class ProductPropsEditService {
 
                 FieldTypeEnum type = field.getType();
 
-                switch (type){
+                switch (type) {
                     case LABEL:
                         break;
                     case INPUT:

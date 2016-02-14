@@ -3,6 +3,7 @@ package com.voyageone.cms.service.dao.mongodb;
 import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.BaseMongoPartDao;
 import com.voyageone.cms.service.model.CmsBtFeedInfoModel;
+import com.voyageone.common.util.MongoUtils;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -41,14 +42,18 @@ public class CmsBtFeedInfoDao extends BaseMongoPartDao {
      * @param channelId
      * @param modelCode
      */
-    public int updateFeedInfoUpdFlg(String channelId,String modelCode){
+    public int updateFeedInfoUpdFlg(String channelId,String[] modelCode){
 
-        String query = String.format("{ channelId: '%s', model: '%s'}", channelId, modelCode);
-        String update = String.format("{ $set: {updFlg: %s}}", 0);
+        StringBuffer sbQuery = new StringBuffer();
+        sbQuery.append("{");
+        sbQuery.append(MongoUtils.splicingValue("channelId", channelId));
+        sbQuery.append(",");
+        sbQuery.append(MongoUtils.splicingValue("model", modelCode));
+        sbQuery.append("}");
 
         String collectionName = mongoTemplate.getCollectionName(this.getEntityClass(), channelId);
 
-        WriteResult updateRes = mongoTemplate.updateMulti(query,update,collectionName);
+        WriteResult updateRes = mongoTemplate.updateMulti(sbQuery.toString(),"{ $set: {updFlg: 0}}", collectionName);
 
         return updateRes.getN();
     }

@@ -4,7 +4,6 @@ import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
 import com.voyageone.web2.cms.bean.CmsProductInfoBean;
-import com.voyageone.web2.core.bean.UserSessionBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,7 +28,7 @@ public class ProductPropsEditController extends CmsController{
 
         Long productId = Long.parseLong(String.valueOf(params.get("productId")));
 
-        String channelId = super.getUser().getSelChannelId();
+        String channelId = getUser().getSelChannelId();
 
         Map<String,Object> categoryInfo = new HashMap<>();
 
@@ -44,9 +43,9 @@ public class ProductPropsEditController extends CmsController{
     @RequestMapping(CmsUrlConstants.PRODUCT.EDIT.UPDATE_PRODUCT_MASTER_INFO)
     public AjaxResponse doUpdateProductMasterInfo(@RequestBody Map requestMap){
 
-        String channelId = super.getUser().getSelChannelId();
+        String channelId = getUser().getSelChannelId();
 
-        String user = super.getUser().getUserName();
+        String user = getUser().getUserName();
 
         String updateTime = productPropsEditService.updateProductMasterInfo(channelId, user, requestMap);
 
@@ -61,8 +60,8 @@ public class ProductPropsEditController extends CmsController{
     @RequestMapping(CmsUrlConstants.PRODUCT.EDIT.UPDATE_PRODUCT_SKU_INFO)
     public AjaxResponse doUpdateProductSkuInfo(@RequestBody Map requestMap){
 
-        String channelId = super.getUser().getSelChannelId();
-        String user = super.getUser().getUserName();
+        String channelId = getUser().getSelChannelId();
+        String user = getUser().getUserName();
         String categoryId = requestMap.get("categoryId").toString();
         Long productId = Long.valueOf(requestMap.get("productId").toString());
         String categoryFullPath = requestMap.get("categoryFullPath").toString();
@@ -82,8 +81,8 @@ public class ProductPropsEditController extends CmsController{
     @RequestMapping(CmsUrlConstants.PRODUCT.EDIT.UPDATE_PRODUCT_ALL_INFO)
     public AjaxResponse doUpdateProductAllInfo(@RequestBody Map requestMap){
 
-        String channelId = super.getUser().getSelChannelId();
-        String userName = super.getUser().getUserName();
+        String channelId = getUser().getSelChannelId();
+        String userName = getUser().getUserName();
 
         String updateTime = productPropsEditService.updateProductAllInfo(channelId, userName,requestMap);
 
@@ -98,38 +97,9 @@ public class ProductPropsEditController extends CmsController{
     @RequestMapping(CmsUrlConstants.PRODUCT.EDIT.CHANGE_CATEGORY)
     public AjaxResponse doChangeCategory(@RequestBody Map requestMap){
 
-//        String categoryId = requestMap.get("catId").toString();
-//
-//        CmsCategoryInfoBean categoryInfoBean = productPropsEditService.getCategoryInfo(categoryId);
-//
-//        Map<String,Object> categoryInfo = new HashMap<>();
-//
-//        categoryInfo.put("categoryInfo",categoryInfoBean);
-//
-//        return success(categoryInfo);
-
-        UserSessionBean userSession = super.getUser();
-
-        Map<String,Object> resultMap = productPropsEditService.changeProductCategory(requestMap,userSession);
+        Map<String,Object> resultMap = productPropsEditService.changeProductCategory(requestMap, getUser(), getLang());
 
         return success(resultMap);
-
-    }
-
-    /**
-     * confirm change category
-     * @param requestMap
-     * @return
-     */
-    @RequestMapping(CmsUrlConstants.PRODUCT.EDIT.CONFIRM_CHANGE)
-    public AjaxResponse doConfirmChange(@RequestBody Map requestMap){
-
-        UserSessionBean userSession = super.getUser();
-
-        Map<String,Object> resultMap = productPropsEditService.changeProductCategory(requestMap,userSession);
-
-        return success(resultMap);
-
     }
 
 }

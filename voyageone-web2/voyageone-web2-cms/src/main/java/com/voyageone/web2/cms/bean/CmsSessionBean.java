@@ -1,6 +1,6 @@
 package com.voyageone.web2.cms.bean;
 
-import com.voyageone.web2.cms.CmsConstants;
+import com.voyageone.cms.enums.CartType;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -20,8 +20,8 @@ public class CmsSessionBean implements Serializable {
             return categoryType;
         } else {
             Map<String, Object> newCategoryType = new HashMap<String, Object>();
-            newCategoryType.put("cTypeId", CmsConstants.DEFAULT_CATEGORY_TYPE);
-            newCategoryType.put("cartId", CmsConstants.DEFAULT_CART_ID);
+            newCategoryType.put("cTypeId", CartType.TMALLG.getShortName());
+            newCategoryType.put("cartId", CartType.TMALLG.getCartId());
             return newCategoryType;
         }
     }

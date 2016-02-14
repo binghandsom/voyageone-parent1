@@ -4,6 +4,7 @@ package com.voyageone.common.configs.beans;
  */
 public class TypeChannelBean {
 
+    private int id;
     private int type_id;
     private String channel_id;
     private String type_code;
@@ -13,6 +14,14 @@ public class TypeChannelBean {
     private String add_name2;
     private String lang_id;
     private String comment;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String getChannel_id() {
         return channel_id;

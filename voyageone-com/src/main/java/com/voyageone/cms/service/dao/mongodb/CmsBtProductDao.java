@@ -1,7 +1,6 @@
 package com.voyageone.cms.service.dao.mongodb;
 
 import com.mongodb.*;
-import com.voyageone.base.dao.mongodb.BaseJomgoPartTemplate;
 import com.voyageone.base.dao.mongodb.BaseMongoPartDao;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
@@ -11,10 +10,9 @@ import com.voyageone.cms.service.model.CmsBtProductModel;
 import com.voyageone.cms.service.model.CmsBtProductModel_Field;
 import com.voyageone.cms.service.model.CmsBtProductModel_Group_Platform;
 import com.voyageone.cms.service.model.CmsBtProductModel_Sku;
-import com.voyageone.common.util.*;
+import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.MongoUtils;
 import net.minidev.json.JSONObject;
-import org.apache.poi.ss.formula.functions.T;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.Iterator;
@@ -499,24 +497,18 @@ public class CmsBtProductDao extends BaseMongoPartDao {
     }
 
     /**
-     * 获取feed方的
+     * 取得该产品所有的group信息
      * @param channelId
-     * @param productId
+     * @param productIds
      * @return
      */
-    public String getModelCode(String channelId,Long productId) {
+    public List<CmsBtProductModel> getModelCode(String channelId,Object[] productIds) {
 
-        String query = "{\"prodId\":" + productId + "}";
-        String collectionName = mongoTemplate.getCollectionName(this.collectionName, channelId);
-        String projection = "{feed.orgAtts.modelCode:1,_id:0}";
-        List<JSONObject>  result = mongoTemplate.find(query, projection, collectionName);
-        JSONObject resObj = result.get(0);
-        Map feedMap = (Map)resObj.get("feed");
-        Map orgAttsMap = (Map)feedMap.get("orgAtts");
-        String modelCode = (String) orgAttsMap.get("modelCode");
+        JomgoQuery jomgoQuery = new JomgoQuery();
+        jomgoQuery.setQuery(MongoUtils.splicingValue("prodId", productIds));
+        jomgoQuery.setProjection("groups");
 
-        return modelCode;
-
+        return select(jomgoQuery, channelId);
     }
 
     /**
@@ -527,17 +519,33 @@ public class CmsBtProductDao extends BaseMongoPartDao {
      */
     public boolean checkProductDataIsReady(String channelId,Long productId){
 
-        String query = String.format("{prodId:%s,batchField.switchCategory:%s}",productId,1);
+        JomgoQuery jomgoQuery = new JomgoQuery();
+        jomgoQuery.setQuery(String.format("{prodId: %s, batchField.switchCategory: 1}",productId));
+        jomgoQuery.setProjection("prodId");
 
-        String collectionName = mongoTemplate.getCollectionName(this.collectionName, channelId);
+        List<CmsBtProductModel> result = select(jomgoQuery, channelId);
 
-        long count = mongoTemplate.count(query,collectionName);
-
-        if (count < 1)
-            return true;
-
-        return false;
+        return result.size() > 0 ? false : true;
     }
+
+    // TODO 删除edward:好像没有被用到
+//    /**
+//     * 查询某个group下已经在平台上新的产品列表.
+//     * @param channelId
+//     * @param modelCode
+//     * @return
+//     */
+//    public List<CmsBtProductModel> getOnSaleProducts(String channelId,String modelCode){
+//
+//        String conditionQuery = String.format("{ 'feed.orgAtts.modelCode' : '%s', 'groups.platforms': {$elemMatch: {numIId: {'$nin':[null,''], '$exists':true} }} }",modelCode);
+//
+//        String projection = "{'prodId':1,'fields.code':1,'groups.platforms.$':1}";
+//
+//        List<CmsBtProductModel> cmsBtProductModels = selectWithProjection(conditionQuery,projection,channelId);
+//
+//        return cmsBtProductModels;
+//
+//    }
 
 
 }

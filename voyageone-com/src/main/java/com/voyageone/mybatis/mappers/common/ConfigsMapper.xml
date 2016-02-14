@@ -55,6 +55,7 @@
 
     <select id="com_mt_value_channel_getAll" resultType="com.voyageone.common.configs.beans.TypeChannelBean">
         SELECT
+        mt_value.id,
         mt_value.channel_id,
         mt_value.type_id,
         mt_type.name as type_code,

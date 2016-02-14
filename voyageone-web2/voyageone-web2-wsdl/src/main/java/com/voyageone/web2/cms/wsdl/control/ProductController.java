@@ -29,6 +29,9 @@ public class ProductController extends BaseController {
     @Autowired
     private ProductService productService;
 
+    // TODO 好像不能只取到group的platforms数据
+    private final String searchItems = "fields;skus.$;groups";
+
     /**
      * selectOne
      *
@@ -117,8 +120,47 @@ public class ProductController extends BaseController {
      * @return
      */
     @RequestMapping("/category/switch")
-    public VoApiUpdateResponse changeProductCategory(@RequestBody ProductCategoryUpdateRequest request){
+    public VoApiUpdateResponse changeProductCategory(@RequestBody ProductGroupMainCategoryUpdateRequest request){
 
         return productService.changeProductCategory(request);
+    }
+
+    @RequestMapping("getWmsProductsInfo")
+    public ProductForWmsGetResponse getWmsProductsInfo(@RequestBody ProductForWmsGetRequest request) {
+//        ProductForWmsGetResponse response = new ProductForWmsGetResponse();
+//
+//        // check the request is not null
+//        if (request == null) {
+//            response.setResult("NG");
+//            response.setMessage("param data is empty");
+//        } else {
+//            StringBuilder sbNeed = new StringBuilder();
+//            // check the channelId is not empty
+//            if (StringUtils.isEmpty(request.getChannelId())) {
+//                sbNeed.append("channelId");
+//            }
+//
+//            // check the code is not empty
+//            if (StringUtils.isEmpty(request.getCode())) {
+//                if (sbNeed.length() > 0) sbNeed.append(", code");
+//            }
+//
+//            if (sbNeed.length() > 0) {
+//                response.setResult("NG");
+//                response.setMessage(sbNeed.append(" is empty.").toString());
+//            }
+//            // if check ok then get the product info
+//            else {
+//                response = productService.getWmsProductsInfo(request);
+//            }
+//        }
+        request.setFields(searchItems);
+        return productService.getWmsProductsInfo(request);
+    }
+
+    @RequestMapping("getOmsProductsInfo")
+    public ProductForOmsGetResponse getOmsProductsInfo(@RequestBody ProductForOmsGetRequest request) {
+        request.setFields(searchItems);
+        return productService.getOmsProductsInfo(request);
     }
 }

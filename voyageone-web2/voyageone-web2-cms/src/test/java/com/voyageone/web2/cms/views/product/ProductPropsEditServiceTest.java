@@ -32,7 +32,7 @@ public class ProductPropsEditServiceTest {
         userSession.setSelChannelId("013");
         userSession.setUserName("lewis");
 
-        Map<String,Object> resMap = productPropsEditService.changeProductCategory(requestMap,userSession);
+        Map<String,Object> resMap = productPropsEditService.changeProductCategory(requestMap,userSession, "en");
 
         System.out.println();
 

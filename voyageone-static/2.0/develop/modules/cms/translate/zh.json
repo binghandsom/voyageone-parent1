@@ -164,6 +164,8 @@
   "TXT_DICT_EDIT": "字典编辑",
   "TXT_MSG_CONFIRM_IS_CHANGE_CATEGORY": "您是否确认需要切换商品的主类目?",
   "TXT_CHANGE_CATEGORY": "选择主类目",
+  "TXT_MASTER_CATEGORY_WITH_COLON": "主数据类目:",
+  "TXT_MSG_PRODUCT_CAN_NOT_EDIT": "该商品正在主类目切换中,请稍等...",
 
   "BTN_CANCEL": "取消 ",
   "BTN_CLEAR": "清空",

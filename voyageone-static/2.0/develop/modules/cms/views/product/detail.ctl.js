@@ -40,7 +40,7 @@ define([
                         this.productDetailsCopy = angular.copy(this.productDetails);
 
                     }.bind(this), function (res) {
-                        this.notify.danger(res.message);
+                        this.notify(res.message);
                     }.bind(this))
             },
 
@@ -145,7 +145,6 @@ define([
             },
 
             openCategoryMapping: function (productInfo, popupNewCategory) {
-
                 this.feedMappingService.getMainCategories()
                     .then(function (res) {
 
@@ -167,12 +166,18 @@ define([
                 this.confirm(this.translate.instant('TXT_MSG_CONFIRM_IS_CHANGE_CATEGORY')).result
                     .then(function () {
                         var data = {
-                            prodId: $.productDetails.productId,
+                            prodIds: [$.productDetails.productId],
                             catId: context.selected.catId,
                             catPath: context.selected.catPath
                         };
-                        $.productDetailService.changeCategory(data).then(function () {
-                            $.notify($.translate.instant('TXT_COM_UPDATE_SUCCESS'));
+                        $.productDetailService.changeCategory(data).then(function (res) {
+                            if(res.data.isChangeCategory){
+                                $.notify.success($.translate.instant('TXT_COM_UPDATE_SUCCESS'));
+                                $.initialize()
+                            }
+                            else
+                            // TODO 需要enka设计一个错误页面 res.data.publishInfo
+                                $.notify("有商品处于上新状态,不能切换类目");
                         })
                     });
 

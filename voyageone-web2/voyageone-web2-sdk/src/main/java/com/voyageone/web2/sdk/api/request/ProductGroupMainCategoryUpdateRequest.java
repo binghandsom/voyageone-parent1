@@ -3,8 +3,10 @@ package com.voyageone.web2.sdk.api.request;
 
 import com.voyageone.web2.sdk.api.VoApiRequest;
 import com.voyageone.web2.sdk.api.exception.ApiRuleException;
-import com.voyageone.web2.sdk.api.response.ProductCategoryUpdateResponse;
+import com.voyageone.web2.sdk.api.response.ProductGroupMainCategoryUpdateResponse;
 import com.voyageone.web2.sdk.api.util.RequestUtils;
+
+import java.util.List;
 
 /**
  * /categorySchema/change Request Model
@@ -18,7 +20,7 @@ import com.voyageone.web2.sdk.api.util.RequestUtils;
  * @version 2.0.0
  * @since. 2.0.0
  */
-public class ProductCategoryUpdateRequest extends VoApiRequest<ProductCategoryUpdateResponse> {
+public class ProductGroupMainCategoryUpdateRequest extends VoApiRequest<ProductGroupMainCategoryUpdateResponse> {
 
 	public String getApiURLPath() {
 		return "/product/category/switch";
@@ -30,23 +32,24 @@ public class ProductCategoryUpdateRequest extends VoApiRequest<ProductCategoryUp
 
 	private String categoryPath;
 
-	private Long productId;
+	private List<String> models;
 
 
-	public ProductCategoryUpdateRequest() {
+	public ProductGroupMainCategoryUpdateRequest() {
 
 	}
 
-	public ProductCategoryUpdateRequest(String channelId,String categoryId,String categoryPath, Long productId) {
+	public ProductGroupMainCategoryUpdateRequest(String channelId, String categoryId, String categoryPath, List<String> models) {
 		this.channelId = channelId;
 		this.categoryId = categoryId;
 		this.categoryPath = categoryPath;
-		this.productId = productId;
+		this.models = models;
 	}
 
 	@Override
 	public void requestCheck() throws ApiRuleException {
-		RequestUtils.checkNotEmpty("categoryId categoryPath productId", categoryId,categoryPath,productId);
+		RequestUtils.checkNotEmpty("channelId", channelId);
+		RequestUtils.checkNotEmpty("categoryId categoryPath models", categoryId,categoryPath,models);
 	}
 
 	public String getChannelId() {
@@ -73,12 +76,12 @@ public class ProductCategoryUpdateRequest extends VoApiRequest<ProductCategoryUp
 		this.categoryPath = categoryPath;
 	}
 
-	public Long getProductId() {
-		return productId;
+	public List<String> getModels() {
+		return models;
 	}
 
-	public void setProductId(Long productId) {
-		this.productId = productId;
+	public void setModels(List<String> models) {
+		this.models = models;
 	}
 
 

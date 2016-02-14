@@ -129,4 +129,15 @@ public final class Constants {
         public static final String BRAND = "brand";
     }
 
+    public static final class productForOtherSystemInfo {
+        public static final String IMG_URL = "http://image.sneakerhead.com/is/image/sneakerhead/";
+
+        public static final String TMALL_NUM_IID = "http://detail.tmall.com/item.htm?id=";
+
+        public static final String HS_CODE_CROP = "hsCodeCrop";
+
+        public static final String HS_CODE_PRIVATE = "hsCodePrivate";
+
+    }
+
 }

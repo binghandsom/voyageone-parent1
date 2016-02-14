@@ -1,9 +1,9 @@
 package com.voyageone.web2.cms.views.menu;
 
+import com.voyageone.cms.enums.CartType;
 import com.voyageone.cms.service.model.CmsMtCategoryTreeModel;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.web2.base.ajax.AjaxResponse;
-import com.voyageone.web2.cms.CmsConstants;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants.MENU;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,11 +83,11 @@ public class CmsMenuController extends CmsController {
 
         // 如果cTypeId为空,设置成其默认值.
         if (StringUtils.isEmpty(cTypeId)) {
-            params.put("cTypeId", CmsConstants.DEFAULT_CATEGORY_TYPE);
+            params.put("cTypeId", CartType.TMALLG.getShortName());
         }
 
         if (cartId == null) {
-            params.put("cartId", CmsConstants.DEFAULT_CART_ID);
+            params.put("cartId", CartType.TMALLG.getCartId());
         }
 
         getCmsSession().setCategoryType(params);
