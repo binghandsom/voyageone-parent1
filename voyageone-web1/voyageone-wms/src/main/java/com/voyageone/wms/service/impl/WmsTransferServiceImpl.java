@@ -364,6 +364,8 @@ public class WmsTransferServiceImpl implements WmsTransferService {
     @Override
     public String addItem(long package_id, String barcode, int num, String itemCode, String color, String size, UserSessionBean user) {
 
+        logger.info("package_id:"+package_id+"，barcode:"+barcode+",num:"+num);
+
         // 获取容器
         TransferDetailBean detailBean = transferDao.getPackage(package_id);
 
@@ -552,6 +554,8 @@ public class WmsTransferServiceImpl implements WmsTransferService {
         String Upc = transferItem.getTransfer_barcode();
         String printSkuLabel = ChannelConfigEnums.Print.YES.getIs();
 
+        logger.info("Order_channel_id："+transferItem.getOrder_channel_id()+"，Transfer_barcode："+transferItem.getTransfer_barcode()+"，Transfer_sku："+transferItem.getTransfer_sku());
+
         ClientSkuBean clientSkuBean = clientSkuDao.getSkuInfo(transferItem.getOrder_channel_id(), transferItem.getTransfer_barcode());
 
         if (clientSkuBean != null) {
@@ -566,6 +570,8 @@ public class WmsTransferServiceImpl implements WmsTransferService {
                 printSkuLabel = ChannelConfigEnums.Print.NO.getIs();
             }
         }
+
+        logger.info("Order_channel_id："+transferItem.getOrder_channel_id()+"，clientSku："+clientSku+"，Sku："+Sku+"，Upc："+Upc+"，printSkuLabel："+printSkuLabel);
 
         resultMap.put("labelType", labelType);
         resultMap.put("clientSku", clientSku);
@@ -1182,6 +1188,7 @@ public class WmsTransferServiceImpl implements WmsTransferService {
 
         // 根据输入的条形码找到对应的UPC
         String Upc = itemDao.getUPC(transfer.getOrder_channel_id(), barcode);
+        logger.info("对应的UPC："+Upc);
 
         String sku = itemDao.getSku(to_store_channel_id, Upc);
 
