@@ -1,16 +1,18 @@
 package com.voyageone.batch.cms.service;
 
-import com.voyageone.batch.cms.dao.ImageDao;
-import com.voyageone.common.components.issueLog.IssueLog;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.components.transaction.TransactionRunner;
 import com.voyageone.common.configs.ChannelConfigs;
 import com.voyageone.common.configs.Codes;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
-import com.voyageone.common.configs.beans.FtpBean;
-import com.voyageone.common.util.FtpUtil;
-import com.voyageone.common.util.HttpUtils;
 import com.voyageone.common.util.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -19,11 +21,11 @@ import org.apache.commons.net.ftp.FTPClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.List;
-import java.util.Map;
+import com.voyageone.batch.cms.dao.ImageDao;
+import com.voyageone.common.components.issueLog.IssueLog;
+import com.voyageone.common.configs.beans.FtpBean;
+import com.voyageone.common.util.FtpUtil;
+import com.voyageone.common.util.HttpUtils;
 
 @Service
 public class ImagePostScene7Service {
@@ -42,8 +44,14 @@ public class ImagePostScene7Service {
     // Scene7FTP设置
     private static final String S7FTP_CONFIG = "S7FTP_CONFIG";
 
+    private static Map<String, Integer> fileNotFoundUrlMap = new HashMap<String, Integer>();
+
+    private static int retryTimes = 5;
+
     /**
      * 取出要处理的图片url列表
+     *
+     * @return
      */
     public List<Map<String, String>> getImageUrls(String orderChannelId) {
         return imageDao.getImageUrls(orderChannelId);
@@ -51,6 +59,9 @@ public class ImagePostScene7Service {
 
     /**
      * 根据图片url上传scene7图片文件
+     *
+     * @return
+     *
      */
     public boolean getAndSendImage(String orderChannelId, List<Map<String, String>> imageUrlList, List<String> successImageUrlList,
                                    List<Map<String, String>> urlErrorList, int threadNo) throws Exception {
@@ -84,7 +95,7 @@ public class ImagePostScene7Service {
             FtpUtil ftpUtil = new FtpUtil();
             FTPClient ftpClient = new FTPClient();
 
-            String imageUrl;
+            String imageUrl = "";
 
             try {
                 //建立连接
@@ -97,31 +108,73 @@ public class ImagePostScene7Service {
                         ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
                         ftpClient.setConnectTimeout(120000);
 
-                        for (Map<String, String> anImageUrlList : imageUrlList) {
-                            imageUrl = String.valueOf(anImageUrlList.get("image_url"));
+                        for (int i = 0; i < imageUrlList.size(); i++) {
+                            imageUrl = String.valueOf(imageUrlList.get(i).get("image_url"));
 
 
                             if (StringUtils.isNullOrBlank2(imageUrl)) {
                                 successImageUrlList.add(imageUrl);
+
                                 continue;
                             }
 
                             try {
-                                inputStream = HttpUtils.getInputStream(imageUrl, null);
+//								if (imageUrl.startsWith("https")) {
+//									inputStream = HttpUtils.getHttpsInputStream(imageUrl, null);
+//								} else {
+                                inputStream = HttpUtils.getInputStream(imageUrl);
+//								}
+
                             } catch (FileNotFoundException ex) {
                                 // 图片url错误
-                                // logger.debug(ex.getMessage(), ex);
-                                logger.info(ex.getMessage());
-                                // 记录url错误图片以便删除这张图片相关记录
-                                urlErrorList.add(anImageUrlList);
+                                logger.error(ex.getMessage(), ex);
+
+                                // url错误图片已经出现过，错误次数增加
+                                if (fileNotFoundUrlMap.containsKey(imageUrl)) {
+                                    int errTimes = fileNotFoundUrlMap.get(imageUrl);
+                                    // 错误次数到达重试次数
+                                    if ((errTimes + 1) >= retryTimes) {
+                                        // 记录url错误图片以便删除这张图片相关记录
+                                        urlErrorList.add(imageUrlList.get(i));
+
+                                        // 记录次数结构体清空该图片
+                                        fileNotFoundUrlMap.remove(imageUrl);
+
+                                        // 次数++
+                                    } else {
+                                        fileNotFoundUrlMap.put(imageUrl, ++errTimes);
+                                    }
+
+                                    // 图片url错误第一次出现错误
+                                } else {
+                                    fileNotFoundUrlMap.put(imageUrl, 1);
+                                }
+
+                                if (inputStream != null) {
+                                    inputStream.close();
+                                }
+
                                 continue;
+                            } catch (Exception ex) {
+                                logger.error(ex.getMessage(), ex);
+
+                                if (inputStream != null) {
+                                    inputStream.close();
+                                }
+
+                                continue;
+                            }
+
+                            // 没有出现url错误的图片清空之前可能没有成功的同一图片记录
+                            if (fileNotFoundUrlMap.containsKey(imageUrl)) {
+                                fileNotFoundUrlMap.remove(imageUrl);
                             }
 
                             int lastSlash = imageUrl.lastIndexOf("/");
                             String fileName;
-                            if (ChannelConfigEnums.Channel.GILT.getId().equalsIgnoreCase(anImageUrlList.get("channel_id"))) {
-                                fileName = String.valueOf(anImageUrlList.get("image_name")) + ".jpg";
-                            } else {
+                            if(ChannelConfigEnums.Channel.GILT.getId().equalsIgnoreCase(imageUrlList.get(i).get("channel_id"))){
+                                fileName = String.valueOf(imageUrlList.get(i).get("image_name"))+".jpg";
+                            }else{
                                 fileName = imageUrl.substring(lastSlash + 1);
                             }
                             if (fileName.contains("?")) {
@@ -139,7 +192,7 @@ public class ImagePostScene7Service {
                             } else {
                                 isSuccess = false;
 
-                                break;
+                                continue;
                             }
 
                             if (inputStream != null) {
@@ -172,6 +225,11 @@ public class ImagePostScene7Service {
 
     /**
      * 更新已上传图片发送标志
+     *
+     * @param orderChannelId
+     * @param successImageUrlList
+     * @param taskName
+     * @return
      */
     public int updateImageSendFlag(String orderChannelId, List<String> successImageUrlList, String taskName) {
         return imageDao.updateImageSendFlag(orderChannelId, successImageUrlList, taskName);
@@ -179,6 +237,10 @@ public class ImagePostScene7Service {
 
     /**
      * 删除错误url图片
+     *
+     * @param orderChannelId
+     * @param urlErrorList
+     * @return
      */
     public void deleteUrlErrorImage(String orderChannelId, List<Map<String, String>> urlErrorList) {
         for (Map<String, String> urlError : urlErrorList) {
@@ -194,6 +256,7 @@ public class ImagePostScene7Service {
             });
         }
     }
+
 
 
     public static void main(String[] args) throws IOException {
