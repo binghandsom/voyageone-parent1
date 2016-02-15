@@ -757,7 +757,7 @@ public class ProductService extends BaseService {
             if (isNeed) {
                 CmsBtSxWorkloadModel model = new CmsBtSxWorkloadModel();
                 model.setChannelId(channelId);
-                model.setGroupId(groupId.intValue());
+                model.setGroupId(groupId);
                 model.setPublishStatus(0);
                 model.setCreater(modifier);
                 model.setModifier(modifier);

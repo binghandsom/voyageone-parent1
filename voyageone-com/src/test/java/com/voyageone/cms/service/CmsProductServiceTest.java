@@ -193,7 +193,7 @@ public class CmsProductServiceTest {
         List<CmsBtProductModel> listRet = cmsProductService.getProductByGroupId("001", 470);
         for (CmsBtProductModel ret : listRet) {
             System.out.println(ret.toString());
-            System.out.println(ret.getGroups().getPlatformByGroupId(470));
+            System.out.println(ret.getGroups().getPlatformByGroupId(470L));
         }
     }
 

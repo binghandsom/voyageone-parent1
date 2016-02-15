@@ -77,7 +77,7 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
 
             workload.setSxWorkloadModel(sxWorkloadModel);
 
-            int groupId = sxWorkloadModel.getGroupId();
+            Long groupId = sxWorkloadModel.getGroupId();
             String channelId = sxWorkloadModel.getChannelId();
 
             workload.setOrder_channel_id(channelId);
