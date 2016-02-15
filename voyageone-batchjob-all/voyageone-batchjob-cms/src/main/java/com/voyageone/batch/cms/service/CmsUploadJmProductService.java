@@ -251,6 +251,8 @@ public class CmsUploadJmProductService extends BaseTaskService {
             for (JmPicBean jmPicBean : pics) {
                 stringBuffer.append(String.format(IMG_HTML, jmPicBean.getJmUrl()));
             }
+        } else {
+            throw new BusinessException("尺码图不存在");
         }
         jmProductBean.getDealInfo().setDescription_usage(String.format(DESCRIPTION_USAGE, jmBtProductImport.getProductDes(), stringBuffer.toString()));
 
