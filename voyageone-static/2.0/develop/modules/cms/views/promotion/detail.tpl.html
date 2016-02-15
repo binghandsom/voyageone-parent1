@@ -321,7 +321,7 @@
                         </table>
                         <div class="col-sm-12 dropdown_table_main">
                             <table if-no-rows="vm.skuList.length" class="table table-hover vo_table vo_models">
-                                <tbody ng-repeat="sku in vm.skuList">
+                                <tbody>
                                 <tr ng-repeat="sku in vm.skuList">
                                     <td class="mfb-xxs">{{sku.productSku}}</td>
                                     <td  class="mfb-xx">{{(sku.promotionPrice/sku.salePrice*100).toFixed(1)}}折</td>

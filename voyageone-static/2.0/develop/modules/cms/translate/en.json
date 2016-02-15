@@ -166,6 +166,11 @@
   "TXT_MSG_CONFIRM_IS_CHANGE_CATEGORY": "您是否确认需要切换商品的主类目?",
   "TXT_MSG_PRODUCT_CAN_NOT_EDIT": "该商品正在主类目切换中,请稍等...",
   "TXT_CHANGE_CATEGORY": "选择主类目",
+  "TXT_PUBLISH_TIME_WITH_COLON": "Publish Time:",
+  "TXT_ON_SALE_TIME_WITH_COLON": "On Sale Time:",
+  "TXT_SKU_PLATFORM_INFO": "Sku's Platform",
+  "TXT_FUZZY_SEARCH": "Fuzzy Search",
+  "TXT_MSG_SEARCH_INDEX_FUZZY_SEARCH": "该内容可以根据产品Code,产品Model,产品Name,产品LongTile,其中产品Code和产品Model支持多个查询,如需多个查询,每个查询内容请输入回车分割",
 
   "BTN_CANCEL": "Cancel",
   "BTN_CLEAR": "Clear",
