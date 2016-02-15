@@ -1,6 +1,7 @@
 package com.voyageone.common.components.jumei.Bean;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.voyageone.common.util.StringUtils;
 
 import java.util.List;
 
@@ -28,6 +29,10 @@ public class JmGetProductInfoRes extends JmBaseBean {
     private List<JmGetProductInfo_Spus> spus;
 
     public String getHash_ids() {
+        if(!StringUtils.isEmpty(hash_ids)){
+            String[] temp = hash_ids.split(",");
+            return temp[temp.length-1];
+        }
         return hash_ids;
     }
 

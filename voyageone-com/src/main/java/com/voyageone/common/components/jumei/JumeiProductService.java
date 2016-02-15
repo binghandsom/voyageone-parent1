@@ -1,5 +1,6 @@
 package com.voyageone.common.components.jumei;
 
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.jumei.Bean.JmGetProductInfoRes;
 import com.voyageone.common.components.jumei.Bean.JmProductBean;
 import com.voyageone.common.components.jumei.Bean.JmProductBean_DealInfo;
@@ -53,8 +54,8 @@ public class JumeiProductService extends JmBase {
         product.setJumei_product_id((String) getValue(resultMap, "product", "jumei_product_id"));
 
         if(StringUtils.isEmpty(product.getJumei_product_id())){
-            logger.info("返回错误"+reqResult);
-            throw new Exception(reqResult);
+            logger.info("返回错误" + reqResult);
+            throw new BusinessException(reqResult);
         }
         /**
          * set jumei_spu_no jumei_sku_no from result
