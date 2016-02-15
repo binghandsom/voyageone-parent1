@@ -40,6 +40,7 @@
             <mvc:exclude-mapping path="/core/account/login/doLogin"/>
             <mvc:exclude-mapping path="/wms/pickup/list/download"/>
             <mvc:exclude-mapping path="/wms/pickup/report/download"/>
+            <mvc:exclude-mapping path="/wms/receive/report/download"/>
             <mvc:exclude-mapping path="/wms/report/list/download"/>
             <mvc:exclude-mapping path="/wms/stockTake/compare/compResdownload"/>
             <mvc:exclude-mapping path="/wms/transfer/list/download"/>

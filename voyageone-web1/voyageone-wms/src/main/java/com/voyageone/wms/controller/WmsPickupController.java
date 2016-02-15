@@ -117,9 +117,7 @@ public class WmsPickupController extends BaseController {
     public ResponseEntity<byte[]>  downloadReportPicked(String store_id,String from,String to) throws IOException {
 
         // 根据检索条件取得抽出记录
-        //List<FormReservation> pickupList = pickupService.getPickupInfo(paramMap, getUser(),WmsConstants.ReserveType.PickUp);
-
-        byte[] bytes = pickupService.downloadReportPicked(store_id,from,to, getUser());
+        byte[] bytes = pickupService.downloadReportPicked(store_id,from,to, getUser(),WmsConstants.ReserveType.PickUp);
 
         String outFile =  WmsConstants.ReportPickedItems.FILE_NAME + "_" + DateTimeUtil.getNow() + ".xls";
 

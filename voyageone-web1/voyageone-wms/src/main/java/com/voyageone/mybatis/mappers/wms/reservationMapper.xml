@@ -309,19 +309,25 @@
                 barcode = #{scanNo}
             </when>
             <when test="scanMode == 'Scan' and scanType == 2">
-                client_order_id = #{scanNo}
+                order_number = #{scanNo}
             </when>
             <when test="scanMode == 'Scan' and scanType == 3">
                 tracking_number = #{scanNo}
+            </when>
+            <when test="scanMode == 'Scan' and scanType == 4">
+                barcode = #{scanNo}
             </when>
             <when test="scanMode == 'ReLabel' and scanType == 1">
                 id = #{scanNo}
             </when>
             <when test="scanMode == 'ReLabel' and scanType == 2">
-                (order_number = #{scanNo} or client_order_id = #{scanNo})
+                order_number = #{scanNo}
             </when>
             <when test="scanMode == 'ReLabel' and scanType == 3">
                 (id = #{scanNo} or tracking_number = #{scanNo})
+            </when>
+            <when test="scanMode == 'ReLabel' and scanType == 4">
+                id = #{scanNo}
             </when>
             <otherwise>
                 1 != 1
@@ -348,10 +354,16 @@
         <if test="reserveType != null and reserveType != '' and reserveType == 'PickUp' and scanMode == 'Scan'">
             AND isLock = '0'
         </if>
-        ORDER BY
-            ship_channel_priority asc,
-            id asc
-        <if test="scanType == 1">
+        <if test="scanType == 4">
+            ORDER BY
+                id asc
+        </if>
+        <if test="scanType != 4">
+            ORDER BY
+                ship_channel_priority asc,
+                id asc
+        </if>
+        <if test="scanType == 1 or scanType == 4">
           LIMIT 1
         </if>
     </select>
@@ -375,6 +387,9 @@
                 and status NOT IN ('96', '97')
             </when>
             <when test="scanType == 3">
+                and status NOT IN ('96', '97')
+            </when>
+            <when test="scanType == 4">
                 and status NOT IN ('96', '97')
             </when>
         </choose>
@@ -407,6 +422,9 @@
             <when test="scanType == 3 and scanMode == 'Scan'">
                 date = NOW(),
             </when>
+            <when test="scanType == 4 and scanMode == 'Scan'">
+                date = NOW(),
+            </when>
         </choose>
         <if test="closeDayFlg != null and closeDayFlg != ''">
           close_day_flg = #{closeDayFlg},
@@ -423,6 +441,9 @@
             </when>
             <when test="scanType == 3 and scanMode == 'Scan'">
                 (status = #{scanStatus} or status = '98' or status = '99' or status = '11')
+            </when>
+            <when test="scanType == 4">
+                (status = #{scanStatus})
             </when>
             <otherwise>
                 status = #{scanStatus}
@@ -1001,4 +1022,68 @@
             </foreach>
         </if>
     </sql>
+
+    <select id="order_getOrderNumber" resultType="string">
+        select * from
+            (select
+                order_number
+            from
+                oms_bt_orders
+            where
+                client_order_id = #{scanNo}
+            <if test="orderChannelList != null and orderChannelList.size() != 0">
+                AND order_channel_id in
+                <foreach collection="orderChannelList" item="orderChannelId"  open="(" separator="," close=")">
+                    #{orderChannelId}
+                </foreach>
+            </if>
+
+            UNION
+
+            select
+                order_number
+            from
+                oms_bt_orders
+            where
+                order_number = #{scanNo}
+            <if test="orderChannelList != null and orderChannelList.size() != 0">
+                AND order_channel_id in
+                <foreach collection="orderChannelList" item="orderChannelId"  open="(" separator="," close=")">
+                    #{orderChannelId}
+                </foreach>
+            </if>
+
+            UNION
+
+            select
+                order_number
+            from
+                oms_bt_orders
+            where
+                source_order_id = #{scanNo}
+            and
+                order_kind = '0'
+            <if test="orderChannelList != null and orderChannelList.size() != 0">
+                AND order_channel_id in
+                <foreach collection="orderChannelList" item="orderChannelId"  open="(" separator="," close=")">
+                    #{orderChannelId}
+                </foreach>
+            </if>
+
+            UNION
+
+            select
+                order_number
+            from
+                oms_bt_ext_orders
+            where
+                seller_order_id = #{scanNo}
+            <if test="orderChannelList != null and orderChannelList.size() != 0">
+                AND order_channel_id in
+                <foreach collection="orderChannelList" item="orderChannelId"  open="(" separator="," close=")">
+                    #{orderChannelId}
+                </foreach>
+            </if>) orders
+        limit 1
+    </select>
 </mapper>

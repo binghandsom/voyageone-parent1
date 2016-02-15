@@ -211,7 +211,8 @@ define(['components/app', 'components/services/language.service', "underscore"],
                     WMS_STOCKTAKE_COMPARERES_REPORT: 'Stocktake Compare Result Report',
                     WMS_INCLUDING_RETURN_STORE: 'Including return Store',
 
-                    WMS_DLPICKEDGOOS: 'Download Report Of Picked Goods',
+                    WMS_DOWNLOAD_PICKED: 'Download Report Of Picked',
+                    WMS_DOWNLOAD_RECEIVED: 'Download Report Of Received',
                 });
         }]);
 });

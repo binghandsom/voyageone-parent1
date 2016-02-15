@@ -247,15 +247,19 @@ public class WmsPickupServiceImpl implements WmsPickupService {
         // 获取相关渠道
         List<String> orderChannelList = user.getChannelList();
 
-        String Upc = "";
+        String searchNo = "";
         if (WmsConstants.ScanType.SCAN.equals(scanMode) && ChannelConfigEnums.Scan.RES.getType().equals(scanType)) {
             StoreBean store = StoreConfigs.getStore(Long.valueOf(scanStore));
             // 根据输入的条形码找到对应的UPC
-            Upc = itemDao.getUPC(store.getOrder_channel_id(), scanNo);
+            searchNo = itemDao.getUPC(store.getOrder_channel_id(), scanNo);
+        }else if (ChannelConfigEnums.Scan.ORDER.getType().equals(scanType)){
+            // 根据输入的订单号找到对应的内部订单号
+            searchNo = reservationDao.getOrderNumber(orderChannelList, scanNo);
         }
+        logger.info("searchNo："+searchNo);
 
         // 取得符合条件的记录
-        List<FormPickupBean> scanInfoListALL = reservationDao.getScanInfo(scanMode, scanType, StringUtils.isNullOrBlank2(Upc)?scanNo:Upc, scanStatus, scanStore, channelStoreList, orderChannelList, reserveType);
+        List<FormPickupBean> scanInfoListALL = reservationDao.getScanInfo(scanMode, scanType, StringUtils.isNullOrBlank2(searchNo)?scanNo:searchNo, scanStatus, scanStore, channelStoreList, orderChannelList, reserveType);
 
         String StatusName = Type.getTypeName(MastType.reservationStatus.getId(),scanStatus);
 
@@ -880,6 +884,20 @@ public class WmsPickupServiceImpl implements WmsPickupService {
             pickupLabelBean.setSku(StringUtils.isNullOrBlank2(client_sku) ? scanInfoList.get(0).getSku() : client_sku);
 
         }
+        else  if (ChannelConfigEnums.Scan.UPC.getType().equals(scanType)) {
+
+            // 配货号
+            pickupLabelBean.setReservation_id(String.valueOf(scanInfoList.get(0).getId()));
+
+            // 货品名称
+            pickupLabelBean.setProduct(scanInfoList.get(0).getProduct());
+
+            // SKU（品牌方SKU存在时，显示品牌方SKU）
+            String client_sku = StringUtils.null2Space(reservationDao.getClientSku(scanInfoList.get(0).getOrder_channel_id(), scanInfoList.get(0).getSku()));
+
+            pickupLabelBean.setSku(StringUtils.isNullOrBlank2(client_sku) ? scanInfoList.get(0).getSku() : client_sku);
+
+        }
 
         // 发货渠道
         pickupLabelBean.setShip_channel(scanInfoList.get(0).getShip_channel());
@@ -976,12 +994,12 @@ public class WmsPickupServiceImpl implements WmsPickupService {
      * @return ResponseEntity<byte[]> 可捡货列表
      */
     @Override
-    public byte[] downloadReportPicked(String store_id,String from,String to, UserSessionBean user) {
+    public byte[] downloadReportPicked(String store_id,String from,String to, UserSessionBean user, String reserveType) {
 
         byte[] bytes = null;
 
         // 检索参数的取得和设置
-        Map<String, Object> selectParams = getSelectParamsForDownload(store_id, from, to, user);
+        Map<String, Object> selectParams = getSelectParamsForDownload(store_id, from, to, user, reserveType);
 
         // 取得符合条件的记录
         List<PickedInfoBean> pickedList = new ArrayList<>();
@@ -1028,7 +1046,7 @@ public class WmsPickupServiceImpl implements WmsPickupService {
      * @param user 用户登录信息
      * @return Map DB检索条件
      */
-    private  Map<String, Object> getSelectParamsForDownload(String store_id,String from,String to, UserSessionBean user) {
+    private  Map<String, Object> getSelectParamsForDownload(String store_id,String from,String to, UserSessionBean user, String reserveType) {
 
         // 取得画面的各个检索参数
         int storeid = Integer.valueOf(store_id).intValue();
@@ -1039,8 +1057,15 @@ public class WmsPickupServiceImpl implements WmsPickupService {
         // 根据reserveType来决定显示仓库
         for (ChannelStoreBean storeBean : user.getCompanyRealStoreList() ) {
             StoreBean store = StoreConfigs.getStore(new Long(storeBean.getStore_id()));
-            if (store.getIs_sale().equals(StoreConfigEnums.Sale.YES.getId())) {
-                channelStoreList.add(storeBean);
+            if (reserveType.equals(WmsConstants.ReserveType.PickUp)) {
+                if (store.getIs_sale().equals(StoreConfigEnums.Sale.YES.getId())) {
+                    channelStoreList.add(storeBean);
+                }
+            }
+            else  if (reserveType.equals(WmsConstants.ReserveType.Receive)) {
+                if (store.getInventory_manager().equals(StoreConfigEnums.Manager.NO.getId())) {
+                    channelStoreList.add(storeBean);
+                }
             }
         }
 

@@ -249,7 +249,7 @@ public class WmsGetGiltClientInvService extends WmsGetClientInvBaseService {
                     } catch (Exception e) {
                         logger.info("----------" + channel.getFull_name() + "当前处理到Sales【" + giltSale.getId() + "】的第【" + pageIndex + "】页数据请求失败----------");
                         if(losePageCount == ALLOWLOSEPAGECOUNT){
-                            String msg = channel.getFull_name()+"已经连续【" + ALLOWLOSEPAGECOUNT + "】次请求webService库存数据失败！" + e;
+                            String msg = channel.getFull_name()+"已经连续【" + ALLOWLOSEPAGECOUNT + "】次请求Sales库存数据失败！" + e;
                             logger.info("----------" + msg + "----------");
                             throw new RuntimeException(msg);
                         }
@@ -309,12 +309,28 @@ public class WmsGetGiltClientInvService extends WmsGetClientInvBaseService {
 
                 totalCount = totalCount + 1 ;
                 intCount = intCount + 1;
+                int losePageCount = 1;
 
                 if (intCount == getInventoryParamBean.getnPageSize() || totalCount == itemDetailBeans.size() -  saleSkuList.size()) {
+                    intCount = 0;
                     logger.info("----------" + channel.getFull_name() + "当前处理到第【" + totalCount + "】件----------");
                 }
 
-                GiltRealTimeInventory giltRealTimeInventory =  giltRealTimeInventoryService.getRealTimeInventoryBySkuId(itemDetailBean.getClient_sku());
+                GiltRealTimeInventory giltRealTimeInventory = new GiltRealTimeInventory();
+                while (true) {
+                    try {
+                        giltRealTimeInventory =  giltRealTimeInventoryService.getRealTimeInventoryBySkuId(itemDetailBean.getClient_sku());
+                        break;
+                    } catch (Exception e) {
+                        if(losePageCount == ALLOWLOSEPAGECOUNT){
+                            String msg = channel.getFull_name() +  "已经连续【" + ALLOWLOSEPAGECOUNT + "】次请求全量库存数据失败！" + e;
+                            logger.info("----------" + msg + "----------");
+                            throw new RuntimeException(e);
+                        }
+                        losePageCount ++;
+                        continue;
+                    }
+                }
 
                 ClientInventoryBean clientInventoryBean = new ClientInventoryBean();
 

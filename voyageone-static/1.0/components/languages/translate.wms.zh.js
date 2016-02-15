@@ -210,8 +210,8 @@ define(['components/app', 'components/services/language.service', "underscore"],
                     WMS_STOCKTAKE_COMPARERES_REPORT: '盘点比较结果报表',
                     WMS_INCLUDING_RETURN_STORE: '包含退货仓库',
 
-                    WMS_DLPICKEDGOOS: '下载已捡货报告',
-
+                    WMS_DOWNLOAD_PICKED: '下载已捡货报告',
+                    WMS_DOWNLOAD_RECEIVED: '下载已收货报告',
 
                 });
         }]);
