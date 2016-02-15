@@ -1,11 +1,14 @@
 package com.voyageone.common.components.jumei;
 
+import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.components.jumei.Bean.JmGetProductInfoRes;
 import com.voyageone.common.components.jumei.Bean.JmProductBean;
 import com.voyageone.common.components.jumei.Bean.JmProductBean_DealInfo;
 import com.voyageone.common.components.jumei.Bean.JmProductBean_Spus;
 import com.voyageone.common.components.jumei.base.JmBase;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.common.util.JsonUtil;
 import com.voyageone.common.util.StringUtils;
 import org.springframework.stereotype.Service;
 
@@ -51,8 +54,8 @@ public class JumeiProductService extends JmBase {
         product.setJumei_product_id((String) getValue(resultMap, "product", "jumei_product_id"));
 
         if(StringUtils.isEmpty(product.getJumei_product_id())){
-            logger.info("返回错误"+reqResult);
-            throw new Exception(reqResult);
+            logger.info("返回错误" + reqResult);
+            throw new BusinessException(reqResult);
         }
         /**
          * set jumei_spu_no jumei_sku_no from result
@@ -123,35 +126,61 @@ public class JumeiProductService extends JmBase {
     }
 
 
-    private static String PRODUCT_GET = "v1/htProduct/getProductById";
+    private static String PRODUCT_GET = "v1/htProduct/getProductByIdOrName";
     /**
      * 取得商品
      */
-    public JmProductBean getProduct(ShopBean shopBean, String product_id) throws Exception {
+    public JmGetProductInfoRes getProductById(ShopBean shopBean, String product_id) throws Exception {
         Map<String, Object> params = new HashMap<>();
         params.put("product_id", product_id);
         params.put("fields", "product_id,name,foreign_language_name,categorys,brand_id,brand_name,functions,normalImage,verticalImage,diaoxingImage");
 
-        String reqResult = reqJmApi(shopBean, PRODUCT_NEW, params);
-        Map<String, Object> resultMap = JacksonUtil.jsonToMap(reqResult);
+        String reqResult = reqJmApi(shopBean, PRODUCT_GET, params);
+        JmGetProductInfoRes resultBean = JsonUtil.jsonToBean(reqResult, JmGetProductInfoRes.class);
 
-        JmProductBean resultBean = new JmProductBean();
-        resultBean.setJumei_product_id((String) getValue(resultMap, "product_id"));
-        resultBean.setName((String) getValue(resultMap, "name"));
-        resultBean.setForeign_language_name((String) getValue(resultMap, "foreign_language_name"));
-        resultBean.setBrand_id((int) getValue(resultMap, "brand_id"));
+//        resultBean.setJumei_product_id((String) getValue(resultMap, "product_id"));
+//        resultBean.setName((String) getValue(resultMap, "name"));
+//        resultBean.setForeign_language_name((String) getValue(resultMap, "foreign_language_name"));
+//        resultBean.setBrand_id((int) getValue(resultMap, "brand_id"));
+//
+//        @SuppressWarnings("unchecked")
+//        List<Map<String, Object>> categorys = (List<Map<String, Object>>)getValue(resultMap, "categorys");
+//        if (categorys != null && categorys.size()>0) {
+//            Map<String, Object> categoryMap = categorys.get(categorys.size()-1);
+//            resultBean.setCategory_v3_4_id((int)categoryMap.get("category_id"));
+//        }
+//
+//        //resultBean.setFunction_ids(function_ids);
+//        resultBean.setNormalImage((String) getValue(resultMap, "normalImage"));
+//        resultBean.setVerticalImage((String) getValue(resultMap, "verticalImage"));
+//        resultBean.setDiaoxingImage((String) getValue(resultMap, "diaoxingImage"));
+        return resultBean;
+    }
+    public JmGetProductInfoRes getProductByName(ShopBean shopBean, String productName) throws Exception {
+        Map<String, Object> params = new HashMap<>();
+        params.put("product_name", productName);
+        params.put("fields", "product_id,name,foreign_language_name,categorys,brand_id,brand_name,functions,normalImage,verticalImage,diaoxingImage,hash_ids,category_v3_4,spus");
 
-        @SuppressWarnings("unchecked")
-        List<Map<String, Object>> categorys = (List<Map<String, Object>>)getValue(resultMap, "categorys");
-        if (categorys != null && categorys.size()>0) {
-            Map<String, Object> categoryMap = categorys.get(categorys.size()-1);
-            resultBean.setCategory_v3_4_id((int)categoryMap.get("category_id"));
-        }
+        String reqResult = reqJmApi(shopBean, PRODUCT_GET, params);
+        JmGetProductInfoRes resultBean = JsonUtil.jsonToBean(reqResult, JmGetProductInfoRes.class);
 
-        //resultBean.setFunction_ids(function_ids);
-        resultBean.setNormalImage((String) getValue(resultMap, "normalImage"));
-        resultBean.setVerticalImage((String) getValue(resultMap, "verticalImage"));
-        resultBean.setDiaoxingImage((String) getValue(resultMap, "diaoxingImage"));
+//        resultBean.setJumei_product_id((String) getValue(resultMap, "product_id"));
+//        resultBean.setName((String) getValue(resultMap, "name"));
+//        resultBean.setForeign_language_name((String) getValue(resultMap, "foreign_language_name"));
+//        resultBean.setBrand_id( Integer.parseInt(getValue(resultMap, "brand_id").toString()));
+//        resultBean.setHash_ids((String) getValue(resultMap, "hash_ids"));
+//
+//        @SuppressWarnings("unchecked")
+//        List<Map<String, Object>> categorys = (List<Map<String, Object>>)getValue(resultMap, "categorys");
+//        if (categorys != null && categorys.size()>0) {
+//            Map<String, Object> categoryMap = categorys.get(categorys.size()-1);
+//            resultBean.setCategory_v3_4_id((int)categoryMap.get("category_id"));
+//        }
+//
+//        //resultBean.setFunction_ids(function_ids);
+//        resultBean.setNormalImage((String) getValue(resultMap, "normalImage"));
+//        resultBean.setVerticalImage((String) getValue(resultMap, "verticalImage"));
+//        resultBean.setDiaoxingImage((String) getValue(resultMap, "diaoxingImage"));
         return resultBean;
     }
 }
