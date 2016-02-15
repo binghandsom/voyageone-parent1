@@ -1097,7 +1097,7 @@ body {
     overflow-x: visible !important;
   }
   .app-content {
-    min-width: 1200px;
+    min-width: 991px;
   }
   .navbar-right {
     margin-right: -15px;
@@ -2085,7 +2085,7 @@ a.text-vo:focus {
 .vo_prodGallery .thumbnailWrapper {
   display: inline-block;
   width: 100%;
-  text-align: center;
+  text-align: left;
   margin-top: 0px;
   padding-top: 8px;
   padding-bottom: 10px;
@@ -6704,7 +6704,7 @@ input:checked + ol > li {
   /*float:left;*/
   margin:0px;
   padding:4px 4px 0px 4px;
-  height:250px;
+  height:180px;
   overflow-y: auto;
   overflow-scrolling: touch;
   -webkit-overflow-scrolling: touch;
