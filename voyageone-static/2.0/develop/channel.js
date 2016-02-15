@@ -43,7 +43,7 @@ require([
             $ajax.post('/core/access/user/selectChannel', {channelId: channel.channelId}).then(function (res) {
                 cookieService.application(app);
                 cookieService.channel(channel.channelId);
-                location.href = 'modules/' + app + '/app.html';
+                location.href = 'modules/' + app + '/app.html#/home';
             }, function (res) {
                 alert(res.message || res.code);
             })

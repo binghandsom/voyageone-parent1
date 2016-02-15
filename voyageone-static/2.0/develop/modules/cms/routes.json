@@ -1,6 +1,6 @@
 {
-  "/": {
-    "hash": "/",
+  "home": {
+    "hash": "/home",
     "templateUrl": "views/welcome/index.tpl.html",
     "controllerUrl": "modules/cms/views/welcome/index.ctl"
   },
