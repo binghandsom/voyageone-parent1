@@ -145,5 +145,10 @@
     "hash": "/store/custom_translate/",
     "templateUrl": "views/store/custom_translate.tpl.html",
     "controllerUrl": "modules/cms/views/store/custom_translate.ctl"
+  },
+  "store_configuration_management": {
+    "hash": "/store/configuration_management/",
+    "templateUrl": "views/store/configuration_management.tpl.html",
+    "controllerUrl": "modules/cms/views/store/configuration_management.ctl"
   }
 }
