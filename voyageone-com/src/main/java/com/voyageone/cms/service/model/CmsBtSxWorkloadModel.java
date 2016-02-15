@@ -6,7 +6,7 @@ package com.voyageone.cms.service.model;
 public class CmsBtSxWorkloadModel {
     private long seq;
     private String channel_id;
-    private int group_id;
+    private Long group_id;
     private int publish_status;
     private String created;
     private String creater;
@@ -38,11 +38,11 @@ public class CmsBtSxWorkloadModel {
         this.creater = creater;
     }
 
-    public int getGroupId() {
+    public Long getGroupId() {
         return group_id;
     }
 
-    public void setGroupId(int groupId) {
+    public void setGroupId(Long groupId) {
         this.group_id = groupId;
     }
 
@@ -70,11 +70,11 @@ public class CmsBtSxWorkloadModel {
         this.channel_id = channel_id;
     }
 
-    public int getGroup_id() {
+    public Long getGroup_id() {
         return group_id;
     }
 
-    public void setGroup_id(int group_id) {
+    public void setGroup_id(Long group_id) {
         this.group_id = group_id;
     }
 

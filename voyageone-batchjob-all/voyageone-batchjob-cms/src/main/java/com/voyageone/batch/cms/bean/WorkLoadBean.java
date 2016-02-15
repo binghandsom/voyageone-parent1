@@ -17,7 +17,7 @@ public class WorkLoadBean implements Cloneable{
     private String order_channel_id;
     private int cart_id;
     private String catId;
-    private int groupId;
+    private Long groupId;
     private UpJobParamBean upJobParam;
     private List<SxProductBean> processProducts;
     private SxProductBean mainProduct;
@@ -106,11 +106,11 @@ public class WorkLoadBean implements Cloneable{
         this.catId = catId;
     }
 
-    public int getGroupId() {
+    public Long getGroupId() {
         return groupId;
     }
 
-    public void setGroupId(int groupId) {
+    public void setGroupId(Long groupId) {
         this.groupId = groupId;
     }
 
