@@ -29,6 +29,7 @@ public class SxGetProductInfo {
 	 */
 	public SxData getProductInfoByGroupId(String channelId, Long groupId) {
 		SxData sxData = new SxData();
+		List<CmsBtProductModel_Sku> skuList = new ArrayList<>();
 
 		// 获取group的所有商品的主数据信息 (取出一堆的product)
 		List<CmsBtProductModel> cmsBtProductModelList = getProductInfo(channelId, groupId);
@@ -38,6 +39,8 @@ public class SxGetProductInfo {
 		List<CmsBtProductModel_Group_Platform> platformList = new ArrayList<>();
 		for (CmsBtProductModel productModel : cmsBtProductModelList) {
 			platformList.add(productModel.getGroups().getPlatformByGroupId(groupId));
+
+			skuList.addAll(productModel.getSkus());
 		}
 		sxData.setPlatformList(platformList);
 
@@ -65,7 +68,7 @@ public class SxGetProductInfo {
 		sxData.setPlatformNumIId(platformNumIId);
 
 		// 获取group的所有商品的sku信息 (剔除不需要在当前cart中上新的sku, 内容是所有product在当前cart中需要上新的sku)
-		List<CmsBtProductModel_Sku> cmsBtProductModelSkuList = getSkuInfo(sxData.getCartId(), sxData.getSkuList());
+		List<CmsBtProductModel_Sku> cmsBtProductModelSkuList = getSkuInfo(sxData.getCartId(), skuList);
 		sxData.setSkuList(cmsBtProductModelSkuList);
 
 		// 获取库存信息
