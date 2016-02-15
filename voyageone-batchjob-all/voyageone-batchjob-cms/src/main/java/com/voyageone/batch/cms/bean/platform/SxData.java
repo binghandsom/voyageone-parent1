@@ -22,8 +22,19 @@ public class SxData {
 	private List<CmsBtProductModel_Sku> skuList;					// 只包含当前group中, 允许使用的sku信息
 	private Map<String, Integer> qtyList;							// 只包含当前group中, 允许使用的库存信息
 
+	// ***************************
+	// 聚美专用数据
+	// ...
+	// ***************************
+
 	private String platformProductId;
 	private String platformNumIId;
+
+	// 存放平台上新需要的数据 （最后调用上新API用的那些数据结构）
+	// 例： "TM_Product", xxxBean
+	// 例： "TM_Item", xxxBean
+	// 例： "JM_Product", JmProductBean
+	private Map<String, Object> platformSxData;
 
 	public String getChannelId() {
 		return channelId;
@@ -112,4 +123,5 @@ public class SxData {
 	public void setPlatformNumIId(String platformNumIId) {
 		this.platformNumIId = platformNumIId;
 	}
+
 }
