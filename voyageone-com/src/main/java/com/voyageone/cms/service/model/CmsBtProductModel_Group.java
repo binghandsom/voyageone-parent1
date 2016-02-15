@@ -6,6 +6,7 @@ import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * 的商品Model Group
@@ -94,7 +95,7 @@ public class CmsBtProductModel_Group extends BaseMongoMap<String, Object> {
         CmsBtProductModel_Group_Platform result = null;
         List<CmsBtProductModel_Group_Platform> platforms = getPlatforms();
         for (CmsBtProductModel_Group_Platform platform : platforms) {
-            if (platform.getGroupId() == groupId) {
+            if (Objects.equals(platform.getGroupId(), groupId)) {
                 result = platform;
                 break;
             }
