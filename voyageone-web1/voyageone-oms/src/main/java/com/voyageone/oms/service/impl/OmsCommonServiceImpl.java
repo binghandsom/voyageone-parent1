@@ -2,11 +2,10 @@ package com.voyageone.oms.service.impl;
 
 import com.google.gson.GsonBuilder;
 import com.voyageone.common.Constants;
+import com.voyageone.common.configs.ChannelConfigs;
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Properties;
-import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.common.util.HttpUtils;
-import com.voyageone.common.util.JsonUtil;
-import com.voyageone.common.util.MD5;
+import com.voyageone.common.util.*;
 import com.voyageone.oms.OmsCodeConstants;
 import com.voyageone.oms.OmsConstants;
 import com.voyageone.oms.OmsConstants.PropKey;
@@ -43,59 +42,74 @@ public class OmsCommonServiceImpl implements OmsCommonService {
 	public List<OutFormServiceSearchSKU> getSKUList(InFormServiceSearchSKU inFormServiceSearchSKU,String type) {
 		List<OutFormServiceSearchSKU> ret = new ArrayList<OutFormServiceSearchSKU>();
 
-		String param = JsonUtil.getJsonString(inFormServiceSearchSKU);
-		String result=null;
+//		String param = JsonUtil.getJsonString(inFormServiceSearchSKU);
+//		String result=null;
 
 		//WebService 调用
-		// 斯伯丁，CHAMPION，皇马 的场合（CMS 在国内）
-		if(OmsCodeConstants.OrderChannelId.SP.equals(inFormServiceSearchSKU.getChannelId()) ||
-				OmsCodeConstants.OrderChannelId.CHAMPION.equals(inFormServiceSearchSKU.getChannelId()) ||
-				OmsCodeConstants.OrderChannelId.RM.equals(inFormServiceSearchSKU.getChannelId())) {
-			if (type.equals(OmsConstants.SKU_TYPE_ADDNEWORDER)) {
-				String searchskuPath = Properties.readValue(PropKey.SEARCHSKUCN_PATH);
-				result = HttpUtils.post(searchskuPath, param);
-			}
-			//OrderDetail调用
-			if (type.equals(OmsConstants.SKU_TYPE_ORDERDETAIL)) {
-				String searchskuPath = Properties.readValue(PropKey.SEARCHSKUListCN_PATH);
-				result = HttpUtils.post(searchskuPath, param);
-			}
-		// SN，PA，JC，BHFO 的场合(CMS 在美国)
-		} else if(OmsCodeConstants.OrderChannelId.SN.equals(inFormServiceSearchSKU.getChannelId()) ||
-						OmsCodeConstants.OrderChannelId.PA.equals(inFormServiceSearchSKU.getChannelId()) ||
-						OmsCodeConstants.OrderChannelId.JC.equals(inFormServiceSearchSKU.getChannelId()) ||
-						OmsCodeConstants.OrderChannelId.BHFO.equals(inFormServiceSearchSKU.getChannelId())) {
-
-			if(type.equals(OmsConstants.SKU_TYPE_ADDNEWORDER)){
-				String searchskuPath = Properties.readValue(PropKey.SEARCHSKU_PATH);
-				result = HttpUtils.post(searchskuPath, param);
-			}
-			//OrderDetail调用
-			if(type.equals(OmsConstants.SKU_TYPE_ORDERDETAIL)){
-				String searchskuPath = Properties.readValue(PropKey.SEARCHSKUList_PATH);
-				result = HttpUtils.post(searchskuPath, param);
-			}
-		// 其他的场合 珠宝,BCBG的场合（新CMS）
-		} else {
-			String searchskuPath = Properties.readValue(PropKey.SEARCHSKUINFO_PATH);
-			result = getSKUInfoByWebService(searchskuPath, inFormServiceSearchSKU);
-		}
+//		// 斯伯丁，CHAMPION，皇马 的场合（CMS 在国内）
+//		if(OmsCodeConstants.OrderChannelId.SP.equals(inFormServiceSearchSKU.getChannelId()) ||
+//				OmsCodeConstants.OrderChannelId.CHAMPION.equals(inFormServiceSearchSKU.getChannelId()) ||
+//				OmsCodeConstants.OrderChannelId.RM.equals(inFormServiceSearchSKU.getChannelId())) {
+//			if (type.equals(OmsConstants.SKU_TYPE_ADDNEWORDER)) {
+//				String searchskuPath = Properties.readValue(PropKey.SEARCHSKUCN_PATH);
+//				result = HttpUtils.post(searchskuPath, param);
+//			}
+//			//OrderDetail调用
+//			if (type.equals(OmsConstants.SKU_TYPE_ORDERDETAIL)) {
+//				String searchskuPath = Properties.readValue(PropKey.SEARCHSKUListCN_PATH);
+//				result = HttpUtils.post(searchskuPath, param);
+//			}
+//		// SN，PA，JC，BHFO 的场合(CMS 在美国)
+//		} else if(OmsCodeConstants.OrderChannelId.SN.equals(inFormServiceSearchSKU.getChannelId()) ||
+//						OmsCodeConstants.OrderChannelId.PA.equals(inFormServiceSearchSKU.getChannelId()) ||
+//						OmsCodeConstants.OrderChannelId.JC.equals(inFormServiceSearchSKU.getChannelId()) ||
+//						OmsCodeConstants.OrderChannelId.BHFO.equals(inFormServiceSearchSKU.getChannelId())) {
+//
+//			if(type.equals(OmsConstants.SKU_TYPE_ADDNEWORDER)){
+//				String searchskuPath = Properties.readValue(PropKey.SEARCHSKU_PATH);
+//				result = HttpUtils.post(searchskuPath, param);
+//			}
+//			//OrderDetail调用
+//			if(type.equals(OmsConstants.SKU_TYPE_ORDERDETAIL)){
+//				String searchskuPath = Properties.readValue(PropKey.SEARCHSKUList_PATH);
+//				result = HttpUtils.post(searchskuPath, param);
+//			}
+//		// 其他的场合 珠宝,BCBG的场合（新CMS）
+//		} else {
+//			String searchskuPath = Properties.readValue(PropKey.SEARCHSKUINFO_PATH);
+//			result = getSKUInfoByWebService(searchskuPath, inFormServiceSearchSKU);
+//		}
+		String result = null;
+		result = getSKUInfoByWebService(inFormServiceSearchSKU, type);
 
 		ret = JsonUtil.jsonToBeanList(result, OutFormServiceSearchSKU.class);
 
+//		// 库存再设定
+//		if (OmsCodeConstants.OrderChannelId.SP.equals(inFormServiceSearchSKU.getChannelId()) ||
+//				OmsCodeConstants.OrderChannelId.CHAMPION.equals(inFormServiceSearchSKU.getChannelId()) ||
+//				OmsCodeConstants.OrderChannelId.RM.equals(inFormServiceSearchSKU.getChannelId()) ||
+//				OmsCodeConstants.OrderChannelId.JC.equals(inFormServiceSearchSKU.getChannelId()) ||
+//				OmsCodeConstants.OrderChannelId.BHFO.equals(inFormServiceSearchSKU.getChannelId())) {
+//			for (OutFormServiceSearchSKU outFormServiceSearchSKU : ret) {
+//				int quantity = 0;
+//
+//				quantity = inventoryDao.getLogicQuantity(inFormServiceSearchSKU.getChannelId(), outFormServiceSearchSKU.getSku());
+//				outFormServiceSearchSKU.setInventory(String.valueOf(quantity));
+//			}
+//		}
 		// 库存再设定
-		if (OmsCodeConstants.OrderChannelId.SP.equals(inFormServiceSearchSKU.getChannelId()) ||
-				OmsCodeConstants.OrderChannelId.CHAMPION.equals(inFormServiceSearchSKU.getChannelId()) ||
-				OmsCodeConstants.OrderChannelId.RM.equals(inFormServiceSearchSKU.getChannelId()) ||
-				OmsCodeConstants.OrderChannelId.JC.equals(inFormServiceSearchSKU.getChannelId()) ||
-				OmsCodeConstants.OrderChannelId.BHFO.equals(inFormServiceSearchSKU.getChannelId())) {
-			for (OutFormServiceSearchSKU outFormServiceSearchSKU : ret) {
-				int quantity = 0;
+		String isNeedResetInventory = ChannelConfigs.getVal1(inFormServiceSearchSKU.getChannelId(), ChannelConfigEnums.Name.searchsku_reset_inventory);
+		if (!StringUtils.isEmpty(isNeedResetInventory)) {
+			if (OmsConstants.PERMIT_OK.equals(isNeedResetInventory)) {
+				for (OutFormServiceSearchSKU outFormServiceSearchSKU : ret) {
+					int quantity = 0;
 
-				quantity = inventoryDao.getLogicQuantity(inFormServiceSearchSKU.getChannelId(), outFormServiceSearchSKU.getSku());
-				outFormServiceSearchSKU.setInventory(String.valueOf(quantity));
+					quantity = inventoryDao.getLogicQuantity(inFormServiceSearchSKU.getChannelId(), outFormServiceSearchSKU.getSku());
+					outFormServiceSearchSKU.setInventory(String.valueOf(quantity));
+				}
 			}
 		}
+
 
 //		for (OutFormServiceSearchSKU outFormServiceSearchSKU : ret) {
 //			// TODO 转换什么字符？
@@ -109,6 +123,32 @@ public class OmsCommonServiceImpl implements OmsCommonService {
 		
 		
 		return ret;
+	}
+
+	/**
+	 * 获得SKU信息（配置对应）
+	 *
+	 * @return
+	 */
+	private String getSKUInfoByWebService(InFormServiceSearchSKU inFormServiceSearchSKU, String type) {
+		String result = "";
+		String param = JsonUtil.getJsonString(inFormServiceSearchSKU);
+
+		String searchskuPath = ChannelConfigs.getVal1(inFormServiceSearchSKU.getChannelId(), ChannelConfigEnums.Name.searchsku_path);
+		String searchskuListPath = ChannelConfigs.getVal2(inFormServiceSearchSKU.getChannelId(), ChannelConfigEnums.Name.searchsku_path, searchskuPath);
+
+		// 其他的场合 珠宝,BCBG的场合（新CMS）
+		if (StringUtils.isEmpty(searchskuListPath)) {
+			result = getSKUInfoByWebService(searchskuPath, inFormServiceSearchSKU);
+		} else {
+			if (type.equals(OmsConstants.SKU_TYPE_ADDNEWORDER)) {
+				result = HttpUtils.post(searchskuPath, param);
+			} else {
+				result = HttpUtils.post(searchskuListPath, param);
+			}
+		}
+
+		return result;
 	}
 
 	/**
