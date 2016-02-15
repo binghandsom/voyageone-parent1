@@ -153,7 +153,7 @@ define([
                 "controllerUrl": "modules/cms/views/pop/feedValue/index.ctl",
                 "controller": 'feedPropValuePopupController as ctrl',
                 "backdrop": 'static',
-                "size": 'md'
+                "size": 'lg'
             },
         "dictValue": {
             "templateUrl": "views/pop/dictValue/index.tpl.html",

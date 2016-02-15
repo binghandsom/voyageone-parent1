@@ -218,7 +218,7 @@
 		</accordion-group>
 	</accordion><!-- .accordion --><!--/search-->
 	<!--category-->
-	<div >
+	<div>
 		<tabset class="tab-container vo_nav-tabs">
 			<!--right-btn-->
 			<div class="form-inline m-b-xs pull-right" ng-controller="popupCtrl">
@@ -261,7 +261,7 @@
 						</tr>
 						</thead>
 					</table>
-					<div class="col-sm-12 dropdown_table dropdown_table_main" if-no-rows="vm.groupList.length">
+					<div class="col-sm-12 dropdown_table_main" if-no-rows="vm.groupList.length">
 						<table class="table table-hover vo_table vo_models" ng-if="vm.groupList.length">
 							<tbody ng-repeat="groupInfo in vm.groupList">
 							<tr class="table_bg_gray">
@@ -285,9 +285,9 @@
 							<tr>
 								<td colspan="3" class="mfb-xxxs">
 									<img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{groupInfo.fields.images1[0].image1}}" alt="{{groupInfo.fields.code}}" class="img-circle pull-left m-r"/>
-									<div class="table_main pull-left">
+									<div class="table_main pull-left" style="width:60%">
 										<ul>
-											<li class="m-t">{{groupInfo.fields.code}}</li>
+											<li class="">{{groupInfo.fields.code}}</li>
 											<li>{{groupInfo.fields.productName || groupInfo.fields.productNameEn}}</li>
 										</ul>
 									</div>
