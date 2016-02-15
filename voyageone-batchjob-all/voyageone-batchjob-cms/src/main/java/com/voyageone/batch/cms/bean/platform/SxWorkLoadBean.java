@@ -5,7 +5,9 @@ package com.voyageone.batch.cms.bean.platform;
  */
 public class SxWorkLoadBean {
 	private String channelId;
-	private Long groupId;
+	private Long groupId;									        // 天猫用groupId进行上新
+	private Long prodId;									        // 聚美用prodId进行上新
+	private int promotionId;										// 活动id (目前只有聚美用到, 由cms进行管理)
 	private int publishStatus;
 
 	public String getChannelId() {
@@ -22,6 +24,22 @@ public class SxWorkLoadBean {
 
 	public void setGroupId(Long groupId) {
 		this.groupId = groupId;
+	}
+
+	public Long getProdId() {
+		return prodId;
+	}
+
+	public void setProdId(Long prodId) {
+		this.prodId = prodId;
+	}
+
+	public int getPromotionId() {
+		return promotionId;
+	}
+
+	public void setPromotionId(int promotionId) {
+		this.promotionId = promotionId;
 	}
 
 	public int getPublishStatus() {
