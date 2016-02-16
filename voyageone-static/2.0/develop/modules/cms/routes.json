@@ -4,11 +4,6 @@
     "templateUrl": "views/welcome/index.tpl.html",
     "controllerUrl": "modules/cms/views/welcome/index.ctl"
   },
-  "welcome_index": {
-    "hash": "/welcome/index",
-    "templateUrl": "views/welcome/index.tpl.html",
-    "controllerUrl": "modules/cms/views/welcome/index.ctl"
-  },
   "promotion_list": {
     "hash": "/promotion/list",
     "templateUrl": "views/promotion/list.tpl.html",

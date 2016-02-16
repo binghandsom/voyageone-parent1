@@ -1,4 +1,15 @@
 {
+  "TXT_REMINDER_WITH_COLON": "温馨提示：",
+
+
+  "TXT_MSG_SEARCH": "检索...",
+  "TXT_MSG_PAGE_IS_BUILDING": "该页面正在建设中...",
+
+
+
+
+
+
   "TXT_COM_SHOWING_NO": "第",
   "TXT_COM_PAGE": "页",
   "TXT_COM_SHOWING": "showing",
@@ -13,7 +24,6 @@
   "TXT_COM_MSG_NO_ROWS_SELECT": "请至少选择一条数据...",
   "TXT_COM_UPDATE_SUCCESS": "更新操作成功",
   "TXT_COM_DELETE_SUCCESS": "删除操作成功",
-  "TXT_COM_MSG_SEARCH": "Search...",
   "TXT_COM_EDIT": "编辑",
   "TXT_COM_MSG_NO_DATA_WITH_SAVE": "请确保必填项,以及列表中不为空",
 

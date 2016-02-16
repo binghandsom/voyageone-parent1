@@ -58,7 +58,7 @@ define([
             },
             "application": {
                 "modules": "/modules/",
-                "url": "/app.html#/"
+                "url": "/app.html#/home"
             }
         })
 
