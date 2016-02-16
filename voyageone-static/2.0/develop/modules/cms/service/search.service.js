@@ -4,12 +4,13 @@
 
 define([
     'angularAMD',
-    'underscore'
-], function (angularAMD, _) {
+    'underscore',
+    'modules/cms/enums/Carts'
+], function (angularAMD, _, Carts) {
     angularAMD
         .service('searchIndexService', searchIndexService);
 
-    function searchIndexService($q, selectRowsFactory, $searchIndexService) {
+    function searchIndexService($q, $translate, selectRowsFactory, $searchIndexService) {
 
         this.init = init;
         this.search = search;
@@ -165,7 +166,7 @@ define([
                 groupInfo.groups.priceDetail = _setPriceDetail(groupInfo.groups);
 
                 // 设置time detail
-                groupInfo.groups.platforms[0].timeDetail = _setTimeDetail(groupInfo.groups.platforms[0]);
+                groupInfo.groups.platforms[0].timeDetail = _setTimeDetail(groupInfo);
 
             });
             data.groupSelList = tempGroupSelect.selectRowsInfo;
@@ -188,11 +189,14 @@ define([
                 // 设置Inventory Detail
                 productInfo.inventoryDetail = _setInventoryDetail(productInfo.skus);
 
+                // 设置sku销售渠道信息
+                productInfo.skuDetail = _setSkuDetail(productInfo.skus);
+
                 // 设置price detail
                 productInfo.groups.priceDetail = _setPriceDetail(productInfo.fields);
 
                 // 设置time detail
-                productInfo.groups.platforms[0].timeDetail = _setTimeDetail(productInfo.groups.platforms[0]);
+                productInfo.groups.platforms[0].timeDetail = _setTimeDetail(productInfo);
 
             });
             data.productSelList = tempProductSelect.selectRowsInfo;
@@ -214,6 +218,24 @@ define([
         }
 
         /**
+         * 设置sku的销售渠道信息
+         * @param skus
+         * @returns {Array}
+         * @private
+         */
+        function _setSkuDetail(skus) {
+            var result = [];
+            _.forEach(skus, function (sku) {
+                var cartInfo = "";
+                _.forEach(sku.skuCarts, function (skuCart) {
+                    cartInfo += Carts.valueOf(skuCart).name + ",";
+                });
+                result.push(sku.skuCode + ": " + cartInfo.substr(0, cartInfo.length -1));
+            });
+            return result;
+        }
+
+        /**
          * 设置Price Detail
          * @param groups
          * @returns {Array}
@@ -221,12 +243,12 @@ define([
          */
         function _setPriceDetail(object) {
             var result = [];
-            var tempMsrpDetail = _setOnePriceDetail("MSRP", object.priceMsrpSt, object.priceMsrpEd);
+            var tempMsrpDetail = _setOnePriceDetail($translate.instant('TXT_MSRP'), object.priceMsrpSt, object.priceMsrpEd);
             if (!_.isNull(tempMsrpDetail))
                 result.push(tempMsrpDetail);
 
             // 设置retail price
-            var tempRetailPriceDetail = _setOnePriceDetail("Retail Price", object.priceRetailSt, object.priceRetailEd);
+            var tempRetailPriceDetail = _setOnePriceDetail($translate.instant('TXT_RETAIL_PRICE'), object.priceRetailSt, object.priceRetailEd);
             if (!_.isNull(tempRetailPriceDetail))
                 result.push(tempRetailPriceDetail);
 
@@ -263,13 +285,18 @@ define([
          * @param platforms
          * @private
          */
-        function _setTimeDetail(platforms) {
+        function _setTimeDetail(product) {
             var result = [];
+
+            if(!_.isEmpty(product.created))
+                result.push($translate.instant('TXT_CREATE_TIME_WITH_COLON') + product.created);
+
+            var platforms = product.groups.platforms[0];
             if(!_.isEmpty(platforms.publishTime))
-                result.push("Publish Time: " + platforms.publishTime);
+                result.push($translate.instant('TXT_PUBLISH_TIME_WITH_COLON') + platforms.publishTime);
 
             if(!_.isEmpty(platforms.instockTime))
-                result.push("On Sale Time: " + platforms.instockTime);
+                result.push($translate.instant('TXT_ON_SALE_TIME_WITH_COLON') + platforms.instockTime);
 
             return result;
         }

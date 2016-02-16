@@ -54,7 +54,7 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 
 @Service
-public class CmsSetMainPropService extends BaseTaskService {
+public class CmsSetMainPropMongoService extends BaseTaskService {
 
     @Autowired
     SuperFeedDao superfeeddao;

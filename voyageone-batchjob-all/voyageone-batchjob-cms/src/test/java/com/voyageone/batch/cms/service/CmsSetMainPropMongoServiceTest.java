@@ -11,13 +11,13 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:context-cms-test.xml")
-public class CmsSetMainPropServiceTest {
+public class CmsSetMainPropMongoServiceTest {
 
     @Autowired
-    CmsSetMainPropService cmsSetMainPropService;
+    CmsSetMainPropMongoService cmsSetMainPropMongoService;
 
     @Test
     public void testOnStartup() throws Exception {
-        cmsSetMainPropService.startup();
+        cmsSetMainPropMongoService.startup();
     }
 }
