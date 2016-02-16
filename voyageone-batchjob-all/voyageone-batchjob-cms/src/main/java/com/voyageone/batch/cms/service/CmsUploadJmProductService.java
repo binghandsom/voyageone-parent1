@@ -252,7 +252,9 @@ public class CmsUploadJmProductService extends BaseTaskService {
                 stringBuffer.append(String.format(IMG_HTML, jmPicBean.getJmUrl()));
             }
         } else {
-            throw new BusinessException("尺码图不存在");
+            if(!jmBtProductImport.getSizeType().equalsIgnoreCase("One Size") && !jmBtProductImport.getSizeType().equalsIgnoreCase("OneSize")){
+                throw new BusinessException("尺码图不存在");
+            }
         }
         jmProductBean.getDealInfo().setDescription_usage(String.format(DESCRIPTION_USAGE, jmBtProductImport.getProductDes(), stringBuffer.toString()));
 
