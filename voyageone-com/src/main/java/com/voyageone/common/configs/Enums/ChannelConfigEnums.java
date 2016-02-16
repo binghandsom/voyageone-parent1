@@ -412,7 +412,15 @@ public class ChannelConfigEnums {
         /**
          * 第三方订单(1：代表订单由商家自行管理)
          */
-        third_order
+        third_order,
+        /**
+         * 产品库存再设定
+         */
+        searchsku_reset_inventory,
+        /**
+         * 产品信息检索路径
+         */
+        searchsku_path
 
     }
 

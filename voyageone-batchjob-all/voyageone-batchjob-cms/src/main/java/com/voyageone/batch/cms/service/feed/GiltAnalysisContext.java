@@ -92,14 +92,19 @@ public class GiltAnalysisContext {
 
         if (!newItem.getPrices_retail_value().equals(oldItem.getPrices_retail_value())) {
             updateFields.put(CmsConstants.FEED_IO_UPDATEFIELDS_MSRP, newItem.getPrices_retail_value());
+            updateFields.put(CmsConstants.FEED_IO_UPDATEFIELDS_CN_PRICE, newItem.getPrices_retail_value());
         }
 
         if (!newItem.getPrices_sale_value().equals(oldItem.getPrices_sale_value())) {
-            updateFields.put(CmsConstants.FEED_IO_UPDATEFIELDS_PRICE, newItem.getPrices_sale_value());
+            updateFields.put(CmsConstants.FEED_IO_UPDATEFIELDS_CN_PRICE_RMB, newItem.getPrices_sale_value());
+        }
+
+        if (!newItem.getPrices_cost_value().equals(oldItem.getPrices_cost_value())) {
+            updateFields.put(CmsConstants.FEED_IO_UPDATEFIELDS_PRICE, newItem.getPrices_cost_value());
 //            updateFields.put(CmsConstants.FEED_IO_UPDATEFIELDS_CN_PRICE, newItem.getPrices_sale_value());
 //            updateFields.put(CmsConstants.FEED_IO_UPDATEFIELDS_CN_PRICE_RMB, newItem.getPrices_sale_value());
 //            if (isSyncFinalRmb())
-//                updateFields.put(CmsConstants.FEED_IO_UPDATEFIELDS_CN_PRICE_FINAL_RMB, newItem.getPrices_sale_value());
+                updateFields.put(CmsConstants.FEED_IO_UPDATEFIELDS_CN_PRICE_FINAL_RMB, newItem.getPrices_cost_value());
         }
 
         if (!newItem.getDescription().equals(oldItem.getDescription())) {
@@ -121,7 +126,10 @@ public class GiltAnalysisContext {
         String separator = CmsConstants.FEED_IO_UPDATEFIELDS_IMAGE_SPLIT;
 
         updateFields.put(CmsConstants.FEED_IO_UPDATEFIELDS_MSRP, newItem.getPrices_retail_value());
-        updateFields.put(CmsConstants.FEED_IO_UPDATEFIELDS_PRICE, newItem.getPrices_sale_value());
+        updateFields.put(CmsConstants.FEED_IO_UPDATEFIELDS_PRICE, newItem.getPrices_cost_value());
+        updateFields.put(CmsConstants.FEED_IO_UPDATEFIELDS_CN_PRICE, newItem.getPrices_retail_value());
+        updateFields.put(CmsConstants.FEED_IO_UPDATEFIELDS_CN_PRICE_RMB, newItem.getPrices_sale_value());
+        updateFields.put(CmsConstants.FEED_IO_UPDATEFIELDS_CN_PRICE_FINAL_RMB, newItem.getPrices_cost_value());
         updateFields.put(CmsConstants.FEED_IO_UPDATEFIELDS_LONG_DESCRIPTION, newItem.getDescription());
         updateFields.put(CmsConstants.FEED_IO_UPDATEFIELDS_IMAGE_URL, newItem.getImages_url().replaceAll(",", separator));
 
@@ -150,10 +158,13 @@ public class GiltAnalysisContext {
         productBean.setP_msrp(feedGiltBean.getPrices_retail_value());
         productBean.setP_made_in_country(feedGiltBean.getCountry_code());
         productBean.setP_material_fabric_1(feedGiltBean.getAttributes_material_value());
-        productBean.setPs_price(feedGiltBean.getPrices_sale_value());
+        productBean.setPs_price(feedGiltBean.getPrices_cost_value());
         productBean.setItembeans(new ArrayList<>());
         productBean.setImages(getImages(feedGiltBean));
         productBean.setP_image_item_count(String.valueOf(productBean.getImages().size()));
+        productBean.setCps_cn_price(feedGiltBean.getPrices_retail_value());
+        productBean.setCps_cn_price_rmb(feedGiltBean.getPrices_sale_value());
+        productBean.setCps_cn_price_final_rmb(feedGiltBean.getPrices_cost_value());
 
         productBeanMap.put(url_key, productBean);
         modelBean.getProductbeans().add(productBean);
