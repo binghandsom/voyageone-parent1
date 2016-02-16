@@ -401,11 +401,11 @@ public class LoginServiceImpl implements LoginService {
 		List<ChannelStoreBean> storeList = new ArrayList<>();
 
 		// 用户角色中有仓库时，取得用户表中设定的仓库
-		if (propertyRoles.contains(CoreConstants.Role.WHS)) {
+		if (propertyRoles.toString().contains(CoreConstants.Role.WHS)) {
 			storeList = getUserStoreList(user.getUserId());
 		}
 		// 管理者或客服或运营时，取得相关渠道下的仓库
-		else if (propertyRoles.contains(CoreConstants.Role.ADMIN) || propertyRoles.contains(CoreConstants.Role.CS) || propertyRoles.contains(CoreConstants.Role.OP)){
+		else if (propertyRoles.toString().contains(CoreConstants.Role.ADMIN) || propertyRoles.toString().contains(CoreConstants.Role.CS) || propertyRoles.toString().contains(CoreConstants.Role.OP)){
 			storeList = getChannelStoreList(channelList);
 		}
 
