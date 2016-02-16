@@ -29,6 +29,7 @@
 						</div>
 						<div class="col-sm-4 text-center" ng-controller="popupCtrl">
 							<div class="form-horizontal form-inline">
+								<button class="btn btn-default" ng-click="clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR' | translate}}</button>
 								<button class="btn btn-vo" ng-click="search()"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}</button>
 								<button class="btn btn-success" ng-click="openAuthority('md')"><i class="fa fa-plus"></i>&nbsp;增加配置</button>
 							</div><!-- .form-inline -->
@@ -47,7 +48,7 @@
 						<td class="mfb-xt text-center">序号</td>
 						<td class="mfb-xxt text-left">配置项</td>
 						<td class="mfb-xxt text-left">配置Key</td>
-						<td class="mfb-xxt text-left">配置值</td>
+						<td class="mfb-xxt text-center">配置值</td>
 						<td class="mfb-xxt text-center">Action</td>
 					</tr>
 					</tbody>
@@ -58,8 +59,8 @@
 						<tr>
 							<td class="mfb-xt text-center">1</td>
 							<td class="mfb-xxt text-left">abcd</td>
-							<td class="mfb-xxt text-left">edward</td>
-							<td class="mfb-xxt text-left">1</td>
+							<td class="mfb-xxt text-left">123456</td>
+							<td class="mfb-xxt text-center">1</td>
 							<td class="mfb-xxt text-center">
 								<button title="修改初始密码" class="btn btn-success btn-xs" ng-click="openAuthority('md')"><i class="fa fa-pencil"></i></button>
 								<button title="删除" class="btn btn-danger btn-xs"><i class="fa  fa-trash-o"></i></button>
@@ -68,8 +69,8 @@
 						<tr>
 							<td class="mfb-xt text-center">2</td>
 							<td class="mfb-xxt text-left">abcd</td>
-							<td class="mfb-xxt text-left">edward</td>
-							<td class="mfb-xxt text-left">2</td>
+							<td class="mfb-xxt text-left">123456</td>
+							<td class="mfb-xxt text-center">2</td>
 							<td class="mfb-xxt text-center">
 								<button title="修改初始密码" class="btn btn-success btn-xs" ng-click="openAuthority('md')"><i class="fa fa-pencil"></i></button>
 								<button title="删除" class="btn btn-danger btn-xs"><i class="fa  fa-trash-o"></i></button>
@@ -78,10 +79,20 @@
 						<tr>
 							<td class="mfb-xt text-center">3</td>
 							<td class="mfb-xxt text-left">abcd</td>
-							<td class="mfb-xxt text-left">edward</td>
-							<td class="mfb-xxt text-left">3</td>
+							<td class="mfb-xxt text-left">123456</td>
+							<td class="mfb-xxt text-center">3</td>
 							<td class="mfb-xxt text-center">
 								<button title="修改初始密码" class="btn btn-success btn-xs" ng-click="openAuthority('md')"><i class="fa fa-pencil"></i></button>
+								<button title="删除" class="btn btn-danger btn-xs"><i class="fa  fa-trash-o"></i></button>
+							</td>
+						</tr>
+						<tr>
+							<td class="mfb-xt text-center">4</td>
+							<td class="mfb-xxt text-left"><input type="text" class="form-control col-sm-2"/></td>
+							<td class="mfb-xxt text-left"><input type="text" class="form-control"/></td>
+							<td class="mfb-xxt text-center"><input type="text" class="form-control"/></td>
+							<td class="mfb-xxt text-center">
+								<button title="修改初始密码" class="btn btn-success btn-xs"><i class="fa fa-plus"></i></button>
 								<button title="删除" class="btn btn-danger btn-xs"><i class="fa  fa-trash-o"></i></button>
 							</td>
 						</tr>
