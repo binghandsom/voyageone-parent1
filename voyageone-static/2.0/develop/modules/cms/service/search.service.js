@@ -166,7 +166,7 @@ define([
                 groupInfo.groups.priceDetail = _setPriceDetail(groupInfo.groups);
 
                 // 设置time detail
-                groupInfo.groups.platforms[0].timeDetail = _setTimeDetail(groupInfo.groups.platforms[0]);
+                groupInfo.groups.platforms[0].timeDetail = _setTimeDetail(groupInfo);
 
             });
             data.groupSelList = tempGroupSelect.selectRowsInfo;
@@ -196,7 +196,7 @@ define([
                 productInfo.groups.priceDetail = _setPriceDetail(productInfo.fields);
 
                 // 设置time detail
-                productInfo.groups.platforms[0].timeDetail = _setTimeDetail(productInfo.groups.platforms[0]);
+                productInfo.groups.platforms[0].timeDetail = _setTimeDetail(productInfo);
 
             });
             data.productSelList = tempProductSelect.selectRowsInfo;
@@ -285,8 +285,13 @@ define([
          * @param platforms
          * @private
          */
-        function _setTimeDetail(platforms) {
+        function _setTimeDetail(product) {
             var result = [];
+
+            if(!_.isEmpty(product.created))
+                result.push($translate.instant('TXT_CREATE_TIME_WITH_COLON') + product.created);
+
+            var platforms = product.groups.platforms[0];
             if(!_.isEmpty(platforms.publishTime))
                 result.push($translate.instant('TXT_PUBLISH_TIME_WITH_COLON') + platforms.publishTime);
 

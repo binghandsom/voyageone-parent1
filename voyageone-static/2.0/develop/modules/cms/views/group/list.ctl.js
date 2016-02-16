@@ -31,6 +31,7 @@ define([
                 .then(function (res) {
                     $scope.vm.masterData = res.data.masterData;
                     $scope.vm.productList = res.data.productList;
+                    $scope.vm.productListCopy = angular.copy($scope.vm.productList);
                     $scope.vm.productPageOption.total = res.data.productListTotal;
                     $scope.vm.productIds = res.data.productIds;
                 });
@@ -44,6 +45,7 @@ define([
             groupListService.getProductList($routeParams.id, $scope.vm.productPageOption)
                 .then(function (res) {
                     $scope.vm.productList = res.data.productList;
+                    $scope.vm.productListCopy = angular.copy($scope.vm.productList);
                     $scope.vm.productPageOption.total = res.data.productListTotal;
                     $scope.vm.productIds = res.data.productIds;
                 });
@@ -54,9 +56,14 @@ define([
          */
         function setMainProduct (product) {
 
-            groupListService.setMainProduct({groupId: product.groups.platforms[0].groupId, prodId: product.prodId}).then(function () {
-                notify.success ($translate.instant('TXT_COM_UPDATE_SUCCESS'));
-            })
+            confirm($translate.instant('TXT_MSG_CONFIRM_CHANGE_MASTER_PRODUCT')).result
+                .then(function () {
+                    groupListService.setMainProduct({groupId: product.groups.platforms[0].groupId, prodId: product.prodId}).then(function () {
+                        notify.success ($translate.instant('TXT_COM_UPDATE_SUCCESS'));
+                    });
+                }, function () {
+                    $scope.vm.productList = angular.copy($scope.vm.productListCopy);
+                })
         }
 
         function openCategoryMapping (popupNewCategory) {
