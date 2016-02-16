@@ -93,6 +93,10 @@ define([
                 "templateUrl": "views/pop/authority/index.tpl.html",
                 "controllerUrl": "modules/cms/views/pop/authority/index.ctl"
             },
+            "Configuration": {
+            "templateUrl": "views/pop/configuration/index.tpl.html",
+            "controllerUrl": "modules/cms/views/pop/configuration/index.ctl"
+            },
            "Translate": {
                "templateUrl": "views/pop/translate/index.tpl.html",
                "controllerUrl": "modules/cms/views/pop/translate/index.ctl"
@@ -466,6 +470,21 @@ define([
                 $modal.open({
                     templateUrl: popActions.Authority.templateUrl,
                     controller: 'AuthorityCtl',
+                    size: viewSize,
+                    resolve: {
+                        data: function () {
+                            return data;
+                        }
+                    }
+                });
+            });
+        }
+        $scope.openConfiguration = openConfiguration;
+        function openConfiguration(viewSize, data) {
+            require([popActions.Configuration.controllerUrl], function () {
+                $modal.open({
+                    templateUrl: popActions.Configuration.templateUrl,
+                    controller: 'ConfigurationCtl',
                     size: viewSize,
                     resolve: {
                         data: function () {
