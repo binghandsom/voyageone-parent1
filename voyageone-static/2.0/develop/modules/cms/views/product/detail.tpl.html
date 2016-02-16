@@ -1,5 +1,15 @@
 <div class="wrapper-md" ng-controller="productDetailController as ctrl" ng-init="ctrl.initialize()">
 	<div class="form-inline pull-right m-t-xs m-r-xs" style="padding-top:12px">
+		<label class="col-sm-4 control-label m-t-xs" translate="TXT_IS_FIX_TRANSLATED"></label>
+		<div class="col-sm-8 text-left">
+			<div class="onoffswitch">
+				<input type="checkbox" name="switchIsTranslated" class="onoffswitch-checkbox" id="switchIsTranslated" ng-model="ctrl.productDetails.productStatus.translateStatus">
+				<label class="onoffswitch-label" for="switchIsTranslated">
+					<span class="onoffswitch-inner"></span>
+					<span class="onoffswitch-switch"></span>
+				</label>
+			</div><!-- onoff switch -->
+		</div>
 		<button type="submit" class="btn btn-default" ng-click="ctrl.cancelProductInfo()"><i class="fa fa-remove"></i> {{'BTN_CANCEL' | translate}}</button>
 		<button type="submit" class="btn btn-vo" ng-click="ctrl.updateProductInfo()"><i class="glyphicon glyphicon-floppy-disk"></i> {{'BTN_SAVE' | translate}}</button>
 	</div>
@@ -42,6 +52,7 @@
 					<div class="row text-center">
 						<div class="col-sm-12">
 							<div class="form-inline">
+
 								<button type="submit" class="btn btn-vo" ng-click="ctrl.updateProductInfo()"><i class="glyphicon glyphicon-floppy-disk"></i> {{'BTN_SAVE' | translate}}</button>
 								<button type="submit" class="btn btn-default" ng-click="ctrl.cancelProductInfo()"><i class="fa fa-remove"></i> {{'BTN_CANCEL' | translate}}</button>
 							</div><!-- .form-inline -->
