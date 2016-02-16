@@ -206,7 +206,8 @@ public class GetSpaldingClientShippingInfoService extends GetClientShippingBaseS
                 bean.setTracking_type(getEXPName(order.getCompanyName()));
 
                 //发货时间
-                bean.setTracking_time(DateTimeUtil.format(order.getCreated(), DateTimeUtil.DEFAULT_DATETIME_FORMAT));
+//                bean.setTracking_time(DateTimeUtil.format(order.getCreated(), DateTimeUtil.DEFAULT_DATETIME_FORMAT));
+                bean.setTracking_time(DateTimeUtil.getGMTTime());
 
                 bean.setCreater(getTaskName());
                 bean.setModifier(getTaskName());
@@ -223,8 +224,8 @@ public class GetSpaldingClientShippingInfoService extends GetClientShippingBaseS
                     errorNotExistOrder.add(bean.getSource_order_id());
                 } else {
                     // GMT时间转换
-                    String channel_time_zone = ChannelConfigs.getVal1(channel.getOrder_channel_id(), ChannelConfigEnums.Name.channel_time_zone);
-                    bean.setTracking_time(DateTimeUtil.getGMTTime(bean.getTracking_time(), StringUtils.isNullOrBlank2(channel_time_zone)?0:Integer.valueOf(channel_time_zone)));
+//                    String channel_time_zone = ChannelConfigs.getVal1(channel.getOrder_channel_id(), ChannelConfigEnums.Name.channel_time_zone);
+//                    bean.setTracking_time(DateTimeUtil.getGMTTime(bean.getTracking_time(), StringUtils.isNullOrBlank2(channel_time_zone)?0:Integer.valueOf(channel_time_zone)));
                     trackingList.add(bean);
                 }
             }

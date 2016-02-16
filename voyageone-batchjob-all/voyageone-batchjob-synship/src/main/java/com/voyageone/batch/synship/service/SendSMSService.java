@@ -184,9 +184,9 @@ public class SendSMSService  extends BaseTaskService {
                     }
                 }
                 // 物流短信余额判断
-                checkBalance(sendSMSLstLst.size(),channel.getOrder_channel_id(),Constants.smsInfo.SMS_TYPE_LOGISTICS);
+                checkBalance(sendSMSLstLst.size(),channel.getOrder_channel_id(),Constants.smsInfo.SMS_TYPE_LOGISTICS, SynshipConstants.SMS_CHECK.ACCOUNT_BALANCE_LOGISTICS);
                 // 营销短信余额判断
-                checkBalance(sendSMSLstLst.size(),channel.getOrder_channel_id(),Constants.smsInfo.SMS_TYPE_MARKETING);
+                checkBalance(sendSMSLstLst.size(),channel.getOrder_channel_id(),Constants.smsInfo.SMS_TYPE_MARKETING, SynshipConstants.SMS_CHECK.ACCOUNT_BALANCE_MARKETING);
 
             } catch (Exception e) {
                 $info(channel.getFull_name() + "定时发送短信发生错误：", e);
@@ -328,7 +328,7 @@ public class SendSMSService  extends BaseTaskService {
          * @param
          *
          */
-        private void checkBalance(int sendSMSLstLstSize,String orderChannelId,String sms_type) {
+        private void checkBalance(int sendSMSLstLstSize,String orderChannelId,String sms_type, Double accountBalance) {
             // 余额不足的场合
             if (sendSMSLstLstSize > 0) {
                 double balance = 0d;
@@ -346,7 +346,7 @@ public class SendSMSService  extends BaseTaskService {
 
                     $info(strValue + "短信账户的剩余金额(实际金额)： " + (balance / 2));
                     // 余额不足200的场合，发送要求充值邮件(之所以用大于零而不是大于等于零的原因是防止误报)
-                    if (balance > 0d && (balance / 2) < SynshipConstants.SMS_CHECK.ACCOUNT_BALANCE) {
+                    if (balance > 0d && (balance / 2) < accountBalance) {
                         logIssue(strValue + "短信账户的剩余金额不足，请尽快充值", "短信账户的剩余金额:" + (balance / 2));
                     }
                 } catch (Exception e) {
