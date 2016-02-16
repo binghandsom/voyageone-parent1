@@ -5,6 +5,7 @@ import com.voyageone.batch.cms.bean.platform.SxWorkLoadBean;
 import com.voyageone.batch.cms.service.platform.PlatformMethod;
 import com.voyageone.batch.cms.service.platform.PlatformMethodInterface;
 import com.voyageone.batch.cms.service.platform.common.SxGetProductInfo;
+import com.voyageone.common.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -13,8 +14,10 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public class AliSx extends PlatformMethod implements PlatformMethodInterface {
-	@Autowired SxGetProductInfo sxGetProductInfo;
-	@Autowired AliSxProduct aliSxProduct;
+	@Autowired
+	private SxGetProductInfo sxGetProductInfo;
+	@Autowired
+	private AliSxProduct aliSxProduct;
 
 	@Override
 	public void doJob(SxWorkLoadBean workLoadBean) {
@@ -22,7 +25,11 @@ public class AliSx extends PlatformMethod implements PlatformMethodInterface {
 		SxData sxData = sxGetProductInfo.getProductInfoByGroupId(workLoadBean.getChannelId(), workLoadBean.getGroupId());
 
 		// 确认product是否已上传
-//		aliSxProduct.xxx
+		if (StringUtils.isEmpty(sxData.getPlatformProductId())) {
+			// 去天猫(天猫国际)上去寻找是否有存在这个product
+			Long productId = aliSxProduct.getProductIdFromTmall(sxData);
+		}
+
 		// 上传product - 数据准备
 		// 上传product
 
