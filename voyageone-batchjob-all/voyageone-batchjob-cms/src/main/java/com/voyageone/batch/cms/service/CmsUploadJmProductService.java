@@ -12,10 +12,7 @@ import com.voyageone.batch.cms.model.JmBtSkuImportModel;
 import com.voyageone.batch.core.modelbean.TaskControlBean;
 import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
-import com.voyageone.common.components.jumei.Bean.JmProductBean;
-import com.voyageone.common.components.jumei.Bean.JmProductBean_DealInfo;
-import com.voyageone.common.components.jumei.Bean.JmProductBean_Spus;
-import com.voyageone.common.components.jumei.Bean.JmProductBean_Spus_Sku;
+import com.voyageone.common.components.jumei.Bean.*;
 import com.voyageone.common.components.jumei.Enums.JumeiImageType;
 import com.voyageone.common.components.jumei.JumeiProductService;
 import com.voyageone.common.components.transaction.SimpleTransaction;
@@ -97,7 +94,10 @@ public class CmsUploadJmProductService extends BaseTaskService {
         List<JmBtProductImportModel> jmBtProductImports = getNotUploadProduct(limit,channels);
         logger.info("---------------cnt:" + jmBtProductImports.size());
         ShopBean shopBean = ShopConfigs.getShop(ChannelConfigEnums.Channel.SN.getId(), CartEnums.Cart.JM.getId());
-
+//        shopBean.setAppKey("131");
+//        shopBean.setSessionKey("7e059a48c30c67d2693be14275c2d3be");
+//        shopBean.setAppSecret("0f9e3437ca010f63f2c4f3a216b7f4bc9698f071");
+//        shopBean.setApp_url("http://openapi.ext.jumei.com/");
         ExecutorService executor = Executors.newFixedThreadPool(threadPoolCnt);
 
         for (JmBtProductImportModel product : jmBtProductImports) {
@@ -111,9 +111,9 @@ public class CmsUploadJmProductService extends BaseTaskService {
 
     private List<JmBtProductImportModel> getNotUploadProduct(Integer count,List<String> channelIds) throws IOException {
         Map<String, Object> param = new HashMap<>();
-        param.put("count",count);
-        param.put("channels",channelIds);
-        logger.info("param:"+ JacksonUtil.bean2Json(param));
+        param.put("count", count);
+        param.put("channels", channelIds);
+        logger.info("param:" + JacksonUtil.bean2Json(param));
         return jmUploadProductDao.getNotUploadProduct(param);
     }
 
@@ -130,11 +130,23 @@ public class CmsUploadJmProductService extends BaseTaskService {
 
             setImages(jmBtProductImport, jmProductBean);
             // 上新
-            jumeiProductService.productNewUpload(shopBean, jmProductBean);
+            try{
+                jumeiProductService.productNewUpload(shopBean, jmProductBean);
+                jmBtProductImport.setJumeiProductId(jmProductBean.getJumei_product_id());
+                jmBtProductImport.getJmBtDealImportModel().setJumeiHashId(jmProductBean.getDealInfo().getJumei_hash_id());
+                copyJumeiSkuInfo(jmBtProductImport,jmProductBean);
+            }catch (BusinessException e){
+                if(e.getMessage().indexOf("103087")>=0) {
+                    logger.info("聚美上新失败 调用取得聚美产品信息接口");
+                    JmGetProductInfoRes jmGetProductInfoRes = jumeiProductService.getProductByName(shopBean, jmProductBean.getName());
+                    jmBtProductImport.setJumeiProductId(jmGetProductInfoRes.getProduct_id());
+                    jmBtProductImport.getJmBtDealImportModel().setJumeiHashId(jmGetProductInfoRes.getHash_ids());
+                    copyJumeiSkuInfo(jmBtProductImport, jmGetProductInfoRes);
+                }else{
+                    throw e;
+                }
+            }
 
-            jmBtProductImport.setJumeiProductId(jmProductBean.getJumei_product_id());
-            jmBtProductImport.getJmBtDealImportModel().setJumeiHashId(jmProductBean.getDealInfo().getJumei_hash_id());
-            copyJumeiSkuInfo(jmBtProductImport,jmProductBean);
             jmBtProductImport.getJmBtDealImportModel().setSynFlg(1);
             jmBtProductImport.getJmBtDealImportModel().setModifier(getTaskName());
             succeedProduct.add(jmBtProductImport);
@@ -163,7 +175,19 @@ public class CmsUploadJmProductService extends BaseTaskService {
         }
 
     }
+    private void copyJumeiSkuInfo(JmBtProductImportModel jmBtProductImportModel,JmGetProductInfoRes jmGetProductInfoRes){
 
+        for(JmBtSkuImportModel skuImportModel : jmBtProductImportModel.getSkuImportModelList()){
+            for(JmGetProductInfo_Spus spu:jmGetProductInfoRes.getSpus()){
+                if(skuImportModel.getSku().equalsIgnoreCase(spu.getSku_list().get(0).getBusinessman_code())){
+                    skuImportModel.setJumeiSpuNo(spu.getSpu_no());
+                    skuImportModel.setJumeiSkuNo(spu.getSku_list().get(0).getSku_no());
+                    break;
+                }
+            }
+        }
+
+    }
 
     private void setImages(JmBtProductImportModel jmBtProductImport, JmProductBean jmProductBean) {
         Map<Integer, List<JmPicBean>> imagesMap = jmUploadProductDao.selectImageByCode(jmBtProductImport.getChannelId(), jmBtProductImport.getProductCode(), jmBtProductImport.getBrandName(), jmBtProductImport.getSizeType());
@@ -226,6 +250,10 @@ public class CmsUploadJmProductService extends BaseTaskService {
         if (pics != null) {
             for (JmPicBean jmPicBean : pics) {
                 stringBuffer.append(String.format(IMG_HTML, jmPicBean.getJmUrl()));
+            }
+        } else {
+            if(!jmBtProductImport.getSizeType().equalsIgnoreCase("One Size") && !jmBtProductImport.getSizeType().equalsIgnoreCase("OneSize")){
+                throw new BusinessException("尺码图不存在");
             }
         }
         jmProductBean.getDealInfo().setDescription_usage(String.format(DESCRIPTION_USAGE, jmBtProductImport.getProductDes(), stringBuffer.toString()));

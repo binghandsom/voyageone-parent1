@@ -29,12 +29,12 @@ import com.voyageone.common.util.HttpUtils;
 
 @Service
 public class ImagePostScene7Service {
-	
+
 	private static Log logger = LogFactory.getLog(ImagePostScene7Service.class);
 
 	@Autowired
 	private ImageDao imageDao;
-	
+
 	@Autowired
 	IssueLog issueLog;
 
@@ -44,29 +44,33 @@ public class ImagePostScene7Service {
 	// Scene7FTP设置
 	private static final String S7FTP_CONFIG = "S7FTP_CONFIG";
 
+	private static Map<String, Integer> fileNotFoundUrlMap = new HashMap<String, Integer>();
+
+	private static int retryTimes = 5;
+
 	/**
 	 * 取出要处理的图片url列表
-	 * 
+	 *
 	 * @return
 	 */
 	public List<Map<String, String>> getImageUrls(String orderChannelId) {
 		return imageDao.getImageUrls(orderChannelId);
 	}
-	
+
 	/**
 	 * 根据图片url上传scene7图片文件
-	 * 
+	 *
 	 * @return
 	 *
 	 */
 	public boolean getAndSendImage(String orderChannelId, List<Map<String, String>> imageUrlList, List<String> successImageUrlList,
 								   List<Map<String, String>> urlErrorList, int threadNo) throws Exception {
 		boolean isSuccess = true;
-		
+
 		if (imageUrlList != null && imageUrlList.size() > 0) {
-			
+
 			InputStream inputStream = null;
-			
+
 			FtpBean ftpBean = new FtpBean();
 			// ftp连接port
 			String port = Codes.getCodeName(S7FTP_CONFIG, "Port");
@@ -83,11 +87,11 @@ public class ImagePostScene7Service {
 			// ftp连接上传文件编码
 			String fileEncode = Codes.getCodeName(S7FTP_CONFIG, "FileCoding");
 			ftpBean.setFile_coding(fileEncode);
-			
+
 			//FTP服务器保存目录设定
 			String uploadPath = ChannelConfigs.getVal1(orderChannelId, ChannelConfigEnums.Name.scene7_image_folder);
 			ftpBean.setUpload_path(uploadPath);
-			
+
 			FtpUtil ftpUtil = new FtpUtil();
 			FTPClient ftpClient = new FTPClient();
 
@@ -97,13 +101,13 @@ public class ImagePostScene7Service {
 				//建立连接
 				ftpClient = ftpUtil.linkFtp(ftpBean);
 				if (ftpClient != null) {
-					
+
 					boolean change = ftpClient.changeWorkingDirectory(ftpBean.getUpload_path());
 					if (change) {
 						ftpClient.enterLocalPassiveMode();
 						ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
 						ftpClient.setConnectTimeout(120000);
-						
+
 						for (int i = 0; i < imageUrlList.size(); i++) {
 							imageUrl = String.valueOf(imageUrlList.get(i).get("image_url"));
 
@@ -115,21 +119,57 @@ public class ImagePostScene7Service {
 							}
 
 							try {
-								if (imageUrl.startsWith("https")) {
-									inputStream = HttpUtils.getHttpsInputStream(imageUrl, null);
-								} else {
-									inputStream = HttpUtils.getInputStream(imageUrl, null);
-								}
+//								if (imageUrl.startsWith("https")) {
+//									inputStream = HttpUtils.getHttpsInputStream(imageUrl, null);
+//								} else {
+								inputStream = HttpUtils.getInputStream(imageUrl);
+//								}
 
 							} catch (FileNotFoundException ex) {
 								// 图片url错误
 								logger.error(ex.getMessage(), ex);
-								// 记录url错误图片以便删除这张图片相关记录
-								urlErrorList.add(imageUrlList.get(i));
+
+								// url错误图片已经出现过，错误次数增加
+								if (fileNotFoundUrlMap.containsKey(imageUrl)) {
+									int errTimes = fileNotFoundUrlMap.get(imageUrl);
+									// 错误次数到达重试次数
+									if ((errTimes + 1) >= retryTimes) {
+										// 记录url错误图片以便删除这张图片相关记录
+										urlErrorList.add(imageUrlList.get(i));
+
+										// 记录次数结构体清空该图片
+										fileNotFoundUrlMap.remove(imageUrl);
+
+										// 次数++
+									} else {
+										fileNotFoundUrlMap.put(imageUrl, ++errTimes);
+									}
+
+									// 图片url错误第一次出现错误
+								} else {
+									fileNotFoundUrlMap.put(imageUrl, 1);
+								}
+
+								if (inputStream != null) {
+									inputStream.close();
+								}
+
+								continue;
+							} catch (Exception ex) {
+								logger.error(ex.getMessage(), ex);
+
+								if (inputStream != null) {
+									inputStream.close();
+								}
 
 								continue;
 							}
-							
+
+							// 没有出现url错误的图片清空之前可能没有成功的同一图片记录
+							if (fileNotFoundUrlMap.containsKey(imageUrl)) {
+								fileNotFoundUrlMap.remove(imageUrl);
+							}
+
 							int lastSlash = imageUrl.lastIndexOf("/");
 							String fileName;
 							if(ChannelConfigEnums.Channel.GILT.getId().equalsIgnoreCase(imageUrlList.get(i).get("channel_id"))){
@@ -141,27 +181,27 @@ public class ImagePostScene7Service {
 								int qIndex = fileName.indexOf("?");
 								fileName = fileName.substring(0, qIndex);
 							}
-							
+
 							boolean result = ftpClient.storeFile(fileName, inputStream);
 
 							if (result) {
 								successImageUrlList.add(imageUrl);
-								
+
 								logger.info("thread-" + threadNo + ":" + imageUrl + "上传成功!");
-								
+
 							} else {
 								isSuccess = false;
-								
-								break;
+
+								continue;
 							}
-							
+
 							if (inputStream != null) {
 								inputStream.close();
 							}
 						}
 					}
 				}
-					
+
 			} catch (Exception ex) {
 				logger.error(ex.getMessage(), ex);
 				issueLog.log(ex, ErrorType.BatchJob, SubSystem.CMS);
@@ -173,19 +213,19 @@ public class ImagePostScene7Service {
 				if (ftpClient != null) {
 					ftpUtil.disconnectFtp(ftpClient);
 				}
-				
+
 				if (inputStream != null) {
 					inputStream.close();
 				}
 			}
 		}
-		
+
 		return isSuccess;
 	}
-	
+
 	/**
 	 * 更新已上传图片发送标志
-	 * 
+	 *
 	 * @param orderChannelId
 	 * @param successImageUrlList
 	 * @param taskName

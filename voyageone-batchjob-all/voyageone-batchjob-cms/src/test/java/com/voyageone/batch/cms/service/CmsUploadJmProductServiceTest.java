@@ -27,4 +27,11 @@ public class CmsUploadJmProductServiceTest {
         List<TaskControlBean> taskControlList = new ArrayList<>();
         cmsUploadJmProductService.onStartup(taskControlList);
     }
+
+    @Test
+    public void testGetTime() throws Exception {
+
+        Long a=CmsUploadJmProductService.getTime("2016-03-10 10:00:00");
+        System.out.println(a);
+    }
 }
