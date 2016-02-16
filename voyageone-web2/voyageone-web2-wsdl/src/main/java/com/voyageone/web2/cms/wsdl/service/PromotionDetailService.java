@@ -117,7 +117,7 @@ public class PromotionDetailService extends BaseService {
         CmsBtPromotionCodeModel promotionCodeModel = promotionDetailUpdateRequest.getPromotionCodeModel();
         String operator = promotionDetailUpdateRequest.getModifier();
         if (cmsPromotionCodeDao.updatePromotionCode(promotionCodeModel) != 0) {
-            CmsBtPromotionTaskModel cmsBtPromotionTask = new CmsBtPromotionTaskModel(promotionCodeModel.getPromotionId(), PromotionTypeEnums.Type.TEJIABAO.getTypeId(), promotionCodeModel.getProductCode(), operator);
+            CmsBtPromotionTaskModel cmsBtPromotionTask = new CmsBtPromotionTaskModel(promotionCodeModel.getPromotionId(), PromotionTypeEnums.Type.TEJIABAO.getTypeId(), promotionCodeModel.getProductCode(),promotionCodeModel.getNumIid(), operator);
             cmsPromotionTaskDao.updatePromotionTask(cmsBtPromotionTask);
         }
         response.setModifiedCount(1);
