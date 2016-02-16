@@ -19,6 +19,7 @@
                                 ng-model="ctrl.matched.property"
                                 ng-options="v as k for (k, v) in ctrl.options.property"></select>
                         <input type="text" placeholder="快速检索" class="form-control">
+                        <button class="btn btn-default" ng-click="clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR' | translate}}</button>
                         <button type="submit" class="btn btn-vo btn-xxs"><i class="fa fa-search"></i> 检索</button>
                     </div><!-- /right-btn -->
                 </div>

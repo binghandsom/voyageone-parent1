@@ -31,7 +31,7 @@
 							<div class="form-group">
 								<label class="col-sm-3 control-label">Create Time</label>
 								<div class="col-sm-8 form-inline">
-									<div class="col-sm-6 input-group" ng-controller="datePickerCtrl">
+									<div class="col-sm-5 input-group" ng-controller="datePickerCtrl">
 										<input type="text" class="form-control" datepicker-popup="{{formatDate}}" ng-model="$parent.searchInfo.createdStart" date-model-format="{{formatDate}}" is-open="opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" />
 								              <span class="input-group-btn">
 								                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
@@ -47,7 +47,7 @@
 							</div>
 							<div class="form-group">
 								<label class="col-sm-3  control-label">Platform</label>
-								<div class="col-sm-8">
+								<div class="col-sm-7">
 									<select class="form-control" ng-model="searchInfo.cartId">
 										<option value=''>All</option>
 										<option ng-repeat="cart in vm.cartList" value={{cart.cartId}}>{{cart.name}}</option>
@@ -68,6 +68,7 @@
 					</div>
 					<div class="col-sm-12 text-center m-t-sm" ng-controller="popupCtrl">
 						<div class="form-inline">
+							<button class="btn btn-default" ng-click="clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR' | translate}}</button>
 							<button class="btn btn-vo" ng-click="search()"><i class="fa fa-search"></i>  检索</button>
 							<button class="btn btn-success" ng-click="openpromotion('md',vm.cartList,null,search)"><i class="fa fa-plus"></i> 新增活动</button>
 						</div><!-- .form-inline -->

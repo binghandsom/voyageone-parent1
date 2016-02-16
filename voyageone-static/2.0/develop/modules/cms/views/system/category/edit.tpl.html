@@ -30,8 +30,8 @@
 					<div class="col-sm-2" ng-controller="popupCtrl">
 						<div class="form-horizontal">
 							<div class="form-group">
-								<button class="btn btn-vo btn-sm" ng-click="getCategoryDetail()"><i class="glyphicon glyphicon-refresh"></i>  刷新</button>
-								<button ng-click="openSystemCategory({'field':vm.category,'vm':vm,'addOrEditFlg':0})" class="btn btn-sm btn-success"><i class="fa fa-plus"></i> 新增属性</button>
+								<button class="btn btn-vo" ng-click="getCategoryDetail()"><i class="glyphicon glyphicon-refresh"></i>  刷新</button>
+								<button ng-click="openSystemCategory({'field':vm.category,'vm':vm,'addOrEditFlg':0})" class="btn btn-success"><i class="fa fa-plus"></i> 新增属性</button>
 							</div><!-- .form-group -->
 						</div>
 					</div>
@@ -69,13 +69,13 @@
 			<span class="badge" ng-class="{'badge-initialize':field.type == 'INPUT','badge-darkPurple': field.type == 'LABEL', 'badge-success':field.type == 'SINGLECHECK','badge-darkBlue': field.type == 'MULTICHECK' , 'badge-refresh':field.type == 'COMPLEX', 'badge-Purple':field.type == 'MULTICOMPLEX'}">{{field.type}}</span>
 		</div>
 		<div class="col-sm-1 text-left btn-group">
-			<button title="编辑" class="btn btn-default btn-xs" ng-click="openSystemCategory({'field':field,'vm':vm,'addOrEditFlg':1})" ><i class="fa fa-pencil text-vo"></i></button>
-			<button title="删除" ng-click="delNode(parent,field)" class="btn btn-default btn-xs"><i class="fa fa-trash-o text-vo"></i></button>
-			<button title="增加" class="btn btn-default btn-xs" ng-if="field.type=='MULTICOMPLEX' || field.type=='COMPLEX'" ng-click="openSystemCategory({'field':field,'vm':vm,'addOrEditFlg':0})" ><i class="fa fa-plus-circle text-vo"></i></button>
+			<button title="编辑" class="btn btn-success btn-xs" ng-click="openSystemCategory({'field':field,'vm':vm,'addOrEditFlg':1})" ><i class="fa fa-pencil"></i></button>
+			<button title="删除" ng-click="delNode(parent,field)" class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i></button>
+			<button title="新增属性" class="btn btn-success btn-xs" ng-if="field.type=='MULTICOMPLEX' || field.type=='COMPLEX'" ng-click="openSystemCategory({'field':field,'vm':vm,'addOrEditFlg':0})" ><i class="fa fa-plus"></i></button>
 		</div>
-		<div class="col-sm-4 pull-center">
+		<!--<div class="col-sm-4 pull-center">
 			<span class="badge badge-empty">comment</span>
-		</div>
+		</div>-->
 	</div>
 	<div ng-if="field.type=='MULTICOMPLEX'|| field.type=='COMPLEX'">
 		<div ng-repeat ="item in field.fields">
