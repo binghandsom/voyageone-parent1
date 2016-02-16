@@ -14,7 +14,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class AliUpdDesc extends PlatformMethod implements PlatformMethodInterface {
 	@Autowired
-	SxGetProductInfo sxGetProductInfo;
+	private SxGetProductInfo sxGetProductInfo;
 
 	@Override
 	public void doJob(SxWorkLoadBean workLoadBean) {
