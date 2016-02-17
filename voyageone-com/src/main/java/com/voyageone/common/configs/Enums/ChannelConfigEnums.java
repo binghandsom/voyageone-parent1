@@ -507,9 +507,14 @@ public class ChannelConfigEnums {
         SHOE_CITY("016"),
 
         /**
-         * JUMEI
+         * VOYAGEONE
          */
-        JUMEI("998");
+        VOYAGEONE("997"),
+
+        /**
+         * ThirdParty
+         */
+        THIRD_PARTY("998");
 
         private String id;
 
@@ -550,7 +555,8 @@ public class ChannelConfigEnums {
                 case "014": return WMF;
                 case "015": return GILT;
                 case "016": return SHOE_CITY;
-                case "998": return JUMEI;
+                case "997": return VOYAGEONE;
+                case "998": return THIRD_PARTY;
                 default: return null;
             }
         }
