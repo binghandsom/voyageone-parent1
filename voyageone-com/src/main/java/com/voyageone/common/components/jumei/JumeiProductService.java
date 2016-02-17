@@ -133,7 +133,7 @@ public class JumeiProductService extends JmBase {
     public JmGetProductInfoRes getProductById(ShopBean shopBean, String product_id) throws Exception {
         Map<String, Object> params = new HashMap<>();
         params.put("product_id", product_id);
-        params.put("fields", "product_id,name,foreign_language_name,categorys,brand_id,brand_name,functions,normalImage,verticalImage,diaoxingImage");
+        params.put("fields", "product_id,name,foreign_language_name,categorys,brand_id,brand_name,functions,normalImage,verticalImage,diaoxingImage,hash_ids,category_v3_4,spus");
 
         String reqResult = reqJmApi(shopBean, PRODUCT_GET, params);
         JmGetProductInfoRes resultBean = JsonUtil.jsonToBean(reqResult, JmGetProductInfoRes.class);

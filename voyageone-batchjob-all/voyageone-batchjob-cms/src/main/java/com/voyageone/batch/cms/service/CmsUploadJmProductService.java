@@ -105,8 +105,8 @@ public class CmsUploadJmProductService extends BaseTaskService {
         }
         executor.shutdown();
         executor.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
-        succeedProduct.forEach(jmBtProductImportModel -> updateFlg(jmBtProductImportModel));
-        succeedProduct.clear();
+//        succeedProduct.forEach(jmBtProductImportModel -> updateFlg(jmBtProductImportModel));
+//        succeedProduct.clear();
     }
 
     private List<JmBtProductImportModel> getNotUploadProduct(Integer count,List<String> channelIds) throws IOException {
@@ -149,8 +149,8 @@ public class CmsUploadJmProductService extends BaseTaskService {
 
             jmBtProductImport.getJmBtDealImportModel().setSynFlg(1);
             jmBtProductImport.getJmBtDealImportModel().setModifier(getTaskName());
-            succeedProduct.add(jmBtProductImport);
-//            updateFlg(jmBtProductImport);
+//            succeedProduct.add(jmBtProductImport);
+            updateFlg(jmBtProductImport);
             logger.info(jmBtProductImport.getChannelId() + "|" + jmBtProductImport.getProductCode() + " 聚美上新结束");
         } catch (Exception e) {
             e.printStackTrace();
