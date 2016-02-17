@@ -21,6 +21,8 @@ public class JasonCommentBean {
     protected String buyer_nick;
     // 身份证号
     protected String id_card;
+	// cartId
+	protected String cartId;
     
 	public String getPayment() {
 		return payment;
@@ -88,5 +90,12 @@ public class JasonCommentBean {
 	public void setId_card(String id_card) {
 		this.id_card = id_card;
 	}
-    
+
+	public String getCartId() {
+		return cartId;
+	}
+
+	public void setCartId(String cartId) {
+		this.cartId = cartId;
+	}
 }
