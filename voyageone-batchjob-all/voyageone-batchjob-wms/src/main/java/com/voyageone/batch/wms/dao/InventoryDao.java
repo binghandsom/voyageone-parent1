@@ -90,6 +90,45 @@ public class InventoryDao extends BaseDao {
         return selectList(Constants.DAO_NAME_SPACE_WMS + "wms_selectInventorySynLogsForTM", params);
     }
 
+
+    /**
+     * 获取需要进行的库存刷新记录(聚美)
+     *
+     * @param order_channel_id 渠道
+     * @param cart_id          店铺
+     * @return InventorySynLogBean
+     */
+    public List<InventorySynLogBean> getInventorySynLogForJMReFlush(String task_name, String order_channel_id, String cart_id, int row_count) {
+        Map<String, Object> params = new HashMap<>();
+
+        params.put("task_name", task_name);
+        params.put("order_channel_id", order_channel_id);
+        params.put("cart_id", cart_id);
+        params.put("syn_flg", "0");
+        params.put("limit", row_count);
+
+        return selectList(Constants.DAO_NAME_SPACE_WMS + "wms_selectInventorySynLogsForJMReFlush", params);
+    }
+
+    /**
+     * 获取需要进行的库存同步记录(聚美)
+     *
+     * @param order_channel_id 渠道
+     * @param cart_id          店铺
+     * @return InventorySynLogBean
+     */
+    public List<InventorySynLogBean> getInventorySynLogForJM(String task_name, String order_channel_id, String cart_id, int row_count) {
+        Map<String, Object> params = new HashMap<>();
+
+        params.put("task_name", task_name);
+        params.put("order_channel_id", order_channel_id);
+        params.put("cart_id", cart_id);
+        params.put("syn_flg", "0");
+        params.put("limit", row_count);
+
+        return selectList(Constants.DAO_NAME_SPACE_WMS + "wms_selectInventorySynLogsForJM", params);
+    }
+
     /**
      * 删除库存同步记录
      */
@@ -102,6 +141,13 @@ public class InventoryDao extends BaseDao {
      */
     public int insertInventorySynLogHistory(InventorySynLogBean inventorySynLogBean) {
         return updateTemplate.insert(Constants.DAO_NAME_SPACE_WMS + "wms_insertInventorySynLogHistory", inventorySynLogBean);
+    }
+
+    /**
+     * 更新刷新完毕的JmSKU
+     */
+    public int updateJMFlg(InventorySynLogBean inventorySynLogBean) {
+        return updateTemplate.insert(Constants.DAO_NAME_SPACE_WMS + "wms_updateJMFlg", inventorySynLogBean);
     }
 
     /**
@@ -225,6 +271,14 @@ public class InventoryDao extends BaseDao {
      */
     public int truncateInventorySynTable() {
         return updateTemplate.update(Constants.DAO_NAME_SPACE_WMS + "wms_truncateInventorySynTable");
+    }
+
+    /**
+     * 将wms_bt_inventory_center_logic初始化
+     * @return
+     */
+    public int deleteLogicInventory() {
+        return updateTemplate.update(Constants.DAO_NAME_SPACE_WMS + "wms_deleteLogicInventory");
     }
 
     /**

@@ -676,7 +676,7 @@
                     <div class="row">
                         <div class="col-xs-8">
                             <div class="row mt-sm form-horizontal">
-                                <label class="col-xs-3 control-label" translate="TXT_ORDER_CLIENT_ORDER_NUMBER"></label>
+                                <label class="col-xs-4 control-label" translate="TXT_ORDER_CLIENT_ORDER_NUMBER"></label>
                                 
                                 <div class="col-xs-4">
                                 	<input type="text" ng-model="selectedOrder.orderInfo.clientOrderId" readonly class="form-control input-sm c_gray"/>
@@ -688,7 +688,7 @@
                             </div>
 
                             <div class="row mt-sm form-horizontal">
-                                <label class="col-xs-3 control-label" translate="TXT_ORDER_FREIGHT_COLLECT"></label>
+                                <label class="col-xs-4 control-label" translate="TXT_ORDER_FREIGHT_COLLECT"></label>
 
                                 <div class="form-group">
                                 	<div class="col-xs-1">
@@ -704,7 +704,7 @@
                             </div>
 
                             <div class="row mt-sm form-horizontal">
-                                <label class="col-xs-3 control-label" translate="TXT_ORDER_CUSTOMER_REFUSED"></label>
+                                <label class="col-xs-4 control-label" translate="TXT_ORDER_CUSTOMER_REFUSED"></label>
 
                                 <div class="form-group">
                                     <div class="col-xs-1">
@@ -720,7 +720,7 @@
                             </div>
 
                             <div class="row mt-sm form-horizontal">
-                                <label class="col-xs-3 control-label" translate="TXT_ACCOUNTING_RATE"></label>
+                                <label class="col-xs-4 control-label" translate="TXT_ACCOUNTING_RATE"></label>
 
                                 <div class="form-group">
                                     <div class="col-xs-2">
@@ -733,8 +733,8 @@
                                 </div>
                             </div>
 
-                            <div class="row mt-sm form-horizontal" ng-if="selectedOrder.orderInfo.orderChannelId == '008'">
-                                <label class="col-xs-3 control-label" translate="TXT_ORDER_CANCEL_RM_ORDER"></label>
+                            <div class="row mt-sm form-horizontal" ng-if="selectedOrder.orderInfo.orderChannelId == '008' || selectedOrder.orderInfo.orderChannelId == '014'">
+                                <label class="col-xs-4 control-label" translate="TXT_ORDER_CANCEL_CLIENT_ORDER"></label>
 
                                 <div class="form-group">
                                     <div class="col-xs-1">
@@ -749,16 +749,16 @@
                                 </div>
                             </div>
 
-                            <div class="row mt-sm form-horizontal" ng-if="selectedOrder.orderInfo.orderChannelId == '008'">
+                            <div class="row mt-sm form-horizontal" ng-if="selectedOrder.orderInfo.orderChannelId == '008' || selectedOrder.orderInfo.orderChannelId == '014'">
                                 <div class="form-group">
                                     <div class="col-xs-8">
-                                        <span class="col-xs-7 small pl-sm pr-sm" translate="TXT_ORDER_CANCEL_RM_ORDER_EXPLAIN"></span>
+                                        <span class="col-xs-7 small pl-sm pr-sm" translate="TXT_ORDER_CANCEL_CLIENT_ORDER_EXPLAIN"></span>
                                     </div>
                                 </div>
                             </div>
 
-                            <div class="row mt-sm form-horizontal" ng-if="selectedOrder.orderInfo.orderChannelId == '008'">
-                                <label class="col-xs-3 control-label" translate="TXT_ORDER_SEND_RM_ORDER"></label>
+                            <div class="row mt-sm form-horizontal" ng-if="selectedOrder.orderInfo.orderChannelId == '008' || selectedOrder.orderInfo.orderChannelId == '014'">
+                                <label class="col-xs-4 control-label" translate="TXT_ORDER_SEND_CLIENT_ORDER"></label>
 
                                 <div class="form-group">
                                     <div class="col-xs-1">
@@ -769,8 +769,8 @@
                                 </div>
                             </div>
 
-                            <div class="row mt-sm form-horizontal" ng-if="selectedOrder.orderInfo.orderChannelId == '008'">
-                                <label class="col-xs-3 control-label" translate="TXT_ORDER_PARTNER_CANCEL_RM_ORDER"></label>
+                            <div class="row mt-sm form-horizontal" ng-if="selectedOrder.orderInfo.orderChannelId == '008' || selectedOrder.orderInfo.orderChannelId == '014'">
+                                <label class="col-xs-4 control-label" translate="TXT_ORDER_PARTNER_CANCEL_CLIENT_ORDER"></label>
 
                                 <div class="form-group">
                                     <div class="col-xs-1">
@@ -781,10 +781,10 @@
                                 </div>
                             </div>
 
-                            <div class="row mt-sm form-horizontal" ng-if="selectedOrder.orderInfo.orderChannelId == '008'">
+                            <div class="row mt-sm form-horizontal" ng-if="selectedOrder.orderInfo.orderChannelId == '008' || selectedOrder.orderInfo.orderChannelId == '014'">
                                 <div class="form-group">
                                     <div class="col-xs-8">
-                                        <span class="col-xs-7 small pl-sm pr-sm" translate="TXT_ORDER_PARTNER_CANCEL_RM_ORDER_EXPLAIN"></span>
+                                        <span class="col-xs-7 small pl-sm pr-sm" translate="TXT_ORDER_PARTNER_CANCEL_CLIENT_ORDER_EXPLAIN"></span>
                                     </div>
                                 </div>
                             </div>

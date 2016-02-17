@@ -7,6 +7,8 @@ import com.voyageone.batch.wms.dao.ClientInventoryDao;
 import com.voyageone.batch.wms.dao.ItemDetailsDao;
 import com.voyageone.batch.wms.modelbean.ClientInventoryBean;
 import com.voyageone.common.components.channelAdvisor.service.InventoryService;
+import com.voyageone.common.components.gilt.GiltRealTimeInventoryService;
+import com.voyageone.common.components.gilt.GiltSalesService;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.components.sears.SearsService;
 import com.voyageone.common.configs.ChannelConfigs;
@@ -16,6 +18,7 @@ import com.voyageone.common.configs.beans.OrderChannelBean;
 import com.voyageone.common.configs.beans.StoreBean;
 import com.voyageone.common.configs.beans.ThirdPartyConfigBean;
 import com.voyageone.common.configs.dao.ThirdPartConfigDao;
+import com.voyageone.common.magento.api.service.MagentoApiServiceImpl;
 import com.voyageone.common.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,6 +45,15 @@ public abstract class WmsGetClientInvBaseService extends BaseTaskService {
 
     @Autowired
     SearsService searsService;
+
+    @Autowired
+    MagentoApiServiceImpl magentoApiServiceImpl;
+
+    @Autowired
+    GiltSalesService giltSalesService;
+
+    @Autowired
+    GiltRealTimeInventoryService giltRealTimeInventoryService;
 
     @Override
     public SubSystem getSubSystem() {
@@ -213,6 +225,23 @@ public abstract class WmsGetClientInvBaseService extends BaseTaskService {
         } else {
             return data.replaceAll("'", "''");
         }
+    }
+
+    /**
+     * @description 获取渠道对应的没有设置ClientSku的SKU，插入到IssueLog
+     * @param order_channel_id 渠道
+     */
+    protected void getItemDetaiInfoNoClient(String order_channel_id) {
+        OrderChannelBean channel = ChannelConfigs.getChannel(order_channel_id);
+
+        // ItemDetail表中没有的记录取得
+        List<String> notExistsClientSku = itemDetailsDao.getItemDetaiInfoNoClient(channel.getOrder_channel_id());
+
+        log(channel.getFull_name() + " ClientSku在ItemDetail中不存在件数：" + notExistsClientSku.size());
+        if (notExistsClientSku.size() > 0 ) {
+            logIssue(channel.getFull_name() + "：在ItemDetail中没有设定ClientSku，无法取得库存", notExistsClientSku);
+        }
+
     }
 
     protected void log (String logMsg){

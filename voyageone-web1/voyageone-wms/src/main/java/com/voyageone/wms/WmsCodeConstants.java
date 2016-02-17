@@ -11,10 +11,11 @@ public interface WmsCodeConstants {
         public final static String Open = "11";
         public final static String Reserved = "12";
         public final static String Packaged = "13";
-        public final static String ShippedUS = "14";
+        public final static String Shipped = "14";
         public final static String Arrived = "15";
         public final static String Clearance = "16";
         public final static String ShippedCN = "17";
+        public final static String ShippedTP = "24";
         public final static String Missed = "80";
         public final static String Lost = "96";
         public final static String BackOrderConfirmed = "96";
@@ -35,9 +36,9 @@ public interface WmsCodeConstants {
      * 物流信息
      */
     final class Tracking_Info {
-        // 您的订单已经揽收
+        // 订单已经揽收
         public final static String Take = "010";
-        // 您的订单已经拣货完成
+        // 订单开始发往集散中心
         public final static String Reserved = "030";
     }
 

@@ -43,6 +43,7 @@ define(['components/app', 'components/services/language.service', "underscore"],
                     WMS_SCAN: '扫码',
                     WMS_RELABEL: '重打',
                     WMS_PRINT: '打印',
+                    WMS_AUTO_PRINT_SKU_LABEL: '自动打印SKU面单',
                     WMS_CHANNEL: '渠道',
                     WMS_SHIP: '发货',
                     WMS_DESCRIPTION: '描述',
@@ -95,6 +96,7 @@ define(['components/app', 'components/services/language.service', "underscore"],
                     WMS_TRANSFER: 'Transfer',
                     WMS_TRANSFERNAME: '入出库名',
                     WMS_TARGETOUT: '关联的 Transfer Out',
+                    WMS_CLIENT_SHIPMENT: '品牌方 Shipment',
                     WMS_LOCATION: '货架',
                     WMS_ADDLOCATION: '添加货架',
                     WMS_PLEASESAVETRANSFERFIREST: '请先保存。',
@@ -125,6 +127,8 @@ define(['components/app', 'components/services/language.service', "underscore"],
                     WMS_ORDERNUMBERANDTRANSFERNAME: '订单号/入出库名',
                     WMS_RECORDNUMBER: '全部记录数 : ',
                     WMS_RETURNTYPE: '退货类型',
+                    WMS_SIZE: '尺寸',
+                    WMS_ITEM_CODE: '型号',
 
                     // 弹出提示框的内容翻译部分
                     WMS_ALERT_UPC_MSRP: "官方建议售价，必须是数字！",
@@ -133,6 +137,7 @@ define(['components/app', 'components/services/language.service', "underscore"],
 
                     WMS_ALERT_TRANSFER_DELETE: "是否确定删除 Transfer： [ {{transfer_name}} ]？",
                     WMS_ALERT_TRANSFER_DELETE_FAIL: "删除失败了。请检查以下 Transfer 的当前状态。",
+                    WMS_ALERT_TRANSFER_COMPARE:"入库数量和品牌方提供的数量不一致，是否继续提交？ <br />可以下载比对报表进行确认。",
 
                     WMS_ALERT_TRANSFER_EDIT_NO_TYPE: "没有找到对应的 Transfer 类型，所以不能进行创建",
                     WMS_ALERT_TRANSFER_EDIT_CLOSED: "Transfer 已经关闭了！",
@@ -176,6 +181,7 @@ define(['components/app', 'components/services/language.service', "underscore"],
                     WMS_PICKUP_TYPE_UN_VALID: "请输入{{scanTypeName}}！",
                     WMS_PICKUP_PERMIT: "没有权限捡货 !",
                     WMS_RECEIVE_PERMIT: "没有权限收货 !",
+                    WMS_DEL_REPORT_CHECK_DATE: "只能取得时间间隔为一天的数据，请修改起始时间或者终止时间!",
 
                     WMS_LOCATION_NOT_FOUND:"没找到货架！",
                     WMS_LOCATION_DEL: "是否确定删除货架？",
@@ -202,7 +208,11 @@ define(['components/app', 'components/services/language.service', "underscore"],
                     //报表
                     WMS_INVENTORY_DETAIL_REPORT: '库存变更详情报表',
                     WMS_STOCKTAKE_COMPARERES_REPORT: '盘点比较结果报表',
-                    WMS_INCLUDING_RETURN_STORE: '包含退货仓库'
+                    WMS_INCLUDING_RETURN_STORE: '包含退货仓库',
+
+                    WMS_DOWNLOAD_PICKED: '下载已捡货报告',
+                    WMS_DOWNLOAD_RECEIVED: '下载已收货报告',
+
                 });
         }]);
 });

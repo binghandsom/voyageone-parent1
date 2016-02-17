@@ -7,7 +7,9 @@
 define([
     "modules/wms/wms.module",
     "modules/wms/transfer/transferService",
+    "modules/wms/directives/popInputClientSku/popInputClientSku",
     "components/directives/dialogs/dialogs",
+    "components/services/printService",
     "components/directives/enterClick"
 ], function (wms) {
     wms.controller("transferEditCtrl", [
@@ -15,12 +17,15 @@ define([
         "$routeParams",
         "$location",
         "transferService",
+        "printService",
         "vConfirm",
         "$timeout",
         "vAlert",
         "ngDialog",
         "notify",
         "$window",
+        "wmsInputClientSku",
+        "wmsConstant",
         transferEditCtrl
     ])
         .filter("statusName", function () {
@@ -33,12 +38,15 @@ define([
                               $routeParams,
                               $location,
                               transferService,
+                              printService,
                               confirm,
                               $timeout,
                               alert,
                               ngDialog,
                               notify,
-                              $window) {
+                              $window,
+                              wmsInputClientSku,
+                              wmsConstant) {
         var channelStores = [];
         var companyStores = [];
         var storesTo = [];
@@ -56,6 +64,8 @@ define([
         vm.isAddMode = ( $location.path().indexOf("/wms/transfer/add") === 0 );
 
         vm.transfer_map_target = "";
+
+        vm.transfer_client_shipments = "";
 
         // 当前的 Transfer
         vm.transfer = {};
@@ -105,6 +115,7 @@ define([
         $scope.closePackage = closePackage;
         $scope.acceptItem = acceptItem;
         $scope.deleteItem = deleteItem;
+        $scope.printItem = printItem;
         $scope.cancel = cancel;
         $scope.isPackageClosed = isPackageClosed;
         $scope.isTransferIn = isTransferIn;
@@ -124,10 +135,11 @@ define([
         }
 
         function init() {
-            transferService.getStores().then(function (res) {
+            transferService.getConfigs($routeParams.id).then(function (res) {
                 channelStores = res.data.storeList;
                 companyStores = res.data.companyStoreList;
                 storesTo = res.data.companyStoreToList;
+                vm.transfer_client_shipments = res.data.notMatchClientShipmentList;
 
                 if (vm.isAddMode) {
                     vm.transfer = newTransfer();
@@ -245,7 +257,21 @@ define([
                 return;
             }
 
-            reqSubmitTransfer();
+            if (vm.transfer.client_shipment_id == "0") {
+                reqSubmitTransfer();
+            } else {
+                // 有ClientShipment时，数量比对有差异，则出确认框
+                transferService.compareTransfer(vm.transfer).then(function (res) {
+
+                    if (res.compareResult == "1") {
+                        confirm("WMS_ALERT_TRANSFER_COMPARE").then(reqSubmitTransfer);
+                    } else {
+                        reqSubmitTransfer();
+                    }
+                });
+
+            }
+
         }
 
         function acceptPackage() {
@@ -261,10 +287,10 @@ define([
             }
 
             if (pkg) {
-                editingPackage(pkg);
+                editingPackage(vm.transfer.order_channel_id, pkg);
             } else {
                 reqPackage(vm.transfer.transfer_id, name)
-                    .then(editingPackage)
+                    .then(function (res) {editingPackage(vm.transfer.order_channel_id, res);})
             }
         }
 
@@ -278,7 +304,7 @@ define([
             var index = vm.packages.selected;
             if (index < 0 || isEditingPackage()) return;
 
-            editingPackage(vm.packages[index]);
+            editingPackage(vm.transfer.order_channel_id, vm.packages[index]);
         }
 
         function closePackage() {
@@ -316,12 +342,26 @@ define([
                     // 没有内容，则放弃继续
                     if (!sku) return;
 
+                    if(sku == 'popupInput') {
+                        wmsInputClientSku($scope,vm.package.transfer_package_id, code, num);
+                        return;
+                    }
+
                     // 如果返回内容，有值。那么就反映到画面中
                     vm.packageItems.unshift({
                         transfer_sku: sku,
                         transfer_barcode: code,
                         transfer_qty: num
                     });
+
+                    // 采购订单时打印SKU面单（配置化）
+                    if (isPurchaseOrder()) {
+                        reqSku(vm.transfer.order_channel_id, code, sku, "scan").then(function (res) {
+                            if　(vm.auto_print == true) {
+                                reqPrintSKU(res.labelType, res.clientSku, res.Sku, res.Upc);
+                            }
+                        });
+                    }
 
                 });
         }
@@ -337,6 +377,36 @@ define([
             reqDeleteItem(item).then(function () {
                 vm.packageItems.splice(index, 1);
             });
+        }
+
+        function printItem(index) {
+            var item = vm.packageItems[index];
+
+            if (!item) {
+                alert("WMS_TRANSFER_EDIT_NO_ITEM");
+                return;
+            }
+
+            reqSku(vm.transfer.order_channel_id,item.transfer_barcode,item.transfer_sku,"print").then(function (res) {
+
+                reqPrintSKU(res.labelType, res.clientSku,res.Sku,res.Upc);
+            });
+
+        }
+
+        function reqSku(order_channel_id, transfer_barcode, transfer_sku, type) {
+            return transferService.getSku(order_channel_id, transfer_barcode, transfer_sku, type);
+        }
+
+        function reqPrintSKU(labelType, clientSku, Sku, Upc) {
+
+            var data = [{"label_type" : labelType,
+                "client_sku" : clientSku,
+                "sku" : Sku,
+                "upc" : Upc}];
+            var jsonData = JSON.stringify(data);
+
+            printService.doPrint(wmsConstant.print.business.SKU, wmsConstant.print.hardware_key.Print_SKU, jsonData);
         }
 
         function cancel() {
@@ -532,11 +602,12 @@ define([
                 });
         }
 
-        function reqPackageItems(transfer_package_id) {
-            return transferService.selectPackageItems(transfer_package_id)
+        function reqPackageItems(order_channel_id, transfer_package_id) {
+            return transferService.selectPackageItems(order_channel_id, transfer_package_id)
 
-                .then(function (itemsArr) {
-                    vm.packageItems = itemsArr;
+                .then(function (res) {
+                    vm.packageItems = res.packageItems;
+                    vm.auto_print = res.auto_print;
                 })
         }
 
@@ -562,12 +633,12 @@ define([
 
         // ------------ 辅助方法 ------------ //
 
-        function editingPackage(pkg) {
+        function editingPackage(order_channel_id, pkg) {
             // 此处不判断 package 的关闭状态，因为需要提供 close 状态下的查看功能
 
             vm.package = pkg;
             isEditingPackage(true);
-            reqPackageItems(pkg.transfer_package_id);
+            reqPackageItems(order_channel_id, pkg.transfer_package_id);
         }
 
         function findPackage(name) {
@@ -620,7 +691,8 @@ define([
                 transfer_name: "",
                 transfer_from_store: "",
                 transfer_to_store: "",
-                comment: ""
+                comment: "",
+                client_shipment_id : 0
             };
         }
 

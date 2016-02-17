@@ -66,6 +66,7 @@ public class ReservationBean {
     private String client_status;
     private String client_status_comment;
     private boolean client_status_update;
+    private String price_per_unit;
 
     public long getId() {
         return id;
@@ -545,5 +546,13 @@ public class ReservationBean {
 
     public void setClient_status_update(boolean client_status_update) {
         this.client_status_update = client_status_update;
+    }
+
+    public String getPrice_per_unit() {
+        return price_per_unit;
+    }
+
+    public void setPrice_per_unit(String price_per_unit) {
+        this.price_per_unit = price_per_unit;
     }
 }

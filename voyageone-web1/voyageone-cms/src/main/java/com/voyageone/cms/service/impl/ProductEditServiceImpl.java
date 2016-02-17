@@ -739,12 +739,22 @@ public class ProductEditServiceImpl implements ProductEditService {
 
 	@Transactional("transactionManagerCms")
 	@Override
-	public void doUpdateCustomInfo(List<Map<String, Object>> requestMap, String userName) throws Exception {
+	public void doUpdateCustomInfo(List<Map<String, Object>> requestMap, UserSessionBean userName) throws Exception {
 
 		try {
+			List<String> productIdList = new ArrayList<>();
 			for (Map<String, Object>item:requestMap){
 				productDao.doUpdateCustomInfo(item);
+				if (!productIdList.contains(item.get("product_id").toString()))
+					productIdList.add(item.get("product_id").toString());
 			}
+
+			// 更新该product的列表
+			Map<String, Object> paramMap = new HashMap<String, Object>();
+			paramMap.put("modifier", userName.getUserName());
+			paramMap.put("channelId", userName.getSelChannel());
+			paramMap.put("productIdList", productIdList);
+			productDao.doUpdateImsBtProduct(paramMap);
 		}catch (Exception e){
 			throw e;
 		}

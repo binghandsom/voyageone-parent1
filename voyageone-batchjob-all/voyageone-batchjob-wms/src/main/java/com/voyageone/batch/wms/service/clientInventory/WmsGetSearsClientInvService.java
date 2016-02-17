@@ -192,7 +192,10 @@ public class WmsGetSearsClientInvService extends WmsGetClientInvBaseService {
         try {
             log(channel.getFull_name() + "库存取得开始");
 
-            // 取得该渠道下的所有SKU
+            // 取得该渠道下的所有SKU（没有设定ClientSku）
+            getItemDetaiInfoNoClient(channelId);
+
+            // 取得该渠道下的所有SKU（有设定ClientSku）
             List<ItemDetailsBean> itemDetailBeans = itemDetailsDao.getItemDetaiInfo(channelId);
 
             logger.info("----------"+channel.getFull_name() + " ItemDetail total size:" + itemDetailBeans.size());

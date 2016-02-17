@@ -4,12 +4,12 @@ package com.voyageone.common.util;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.io.*;
-import java.math.BigDecimal;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.nio.charset.Charset;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author Jerry
@@ -108,7 +108,7 @@ public class FileWriteUtils {
                     }
                 } else {
                     if (isNegative) {
-                        outputString = "-" +StringUtils.lPad(inputString, "0", Integer.valueOf(numericLength) - 1);
+                        outputString = "-" + StringUtils.lPad(inputString, "0", Integer.valueOf(numericLength) - 1);
                     } else {
                         outputString = StringUtils.lPad(inputString, "0", Integer.valueOf(numericLength));
                     }

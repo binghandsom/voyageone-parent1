@@ -12,7 +12,7 @@ import java.util.Map;
  * Created by james.li on 2015/10/29.
  */
 @Repository
-public class PromotionDao extends BaseDao{
+public class PromotionDao extends BaseDao {
     /**
      * 取得需要添加折扣的产品列表
      * @param channelId

@@ -41,7 +41,7 @@ public class PromotionService extends BaseService {
 
 	/**
 	 * 添加或者修改
-	 * 
+	 *
 	 * @param promotionPutRequest Request
 	 * @return PromotionsPutResponse
 	 */
@@ -64,7 +64,7 @@ public class PromotionService extends BaseService {
 	 *
 	 * @param cmsBtPromotionModel PromotionModel
 	 * @return CmsBtPromotionModel
-     */
+	 */
 	private CmsBtPromotionModel insertTagsAndGetNewModel(CmsBtPromotionModel cmsBtPromotionModel){
 		TagAddRequest requestModel = new TagAddRequest();
 		requestModel.setChannelId(cmsBtPromotionModel.getChannelId());
@@ -81,7 +81,7 @@ public class PromotionService extends BaseService {
 
 	/**
 	 * 根据条件查询
-	 * 
+	 *
 	 * @param promotionGetRequest Request
 	 * @return PromotionsGetResponse
 	 */
@@ -109,7 +109,7 @@ public class PromotionService extends BaseService {
 
 	/**
 	 * 删除
-	 * 
+	 *
 	 * @param promotionDeleteRequest Request
 	 * @return PromotionsPutResponse
 	 */
@@ -125,7 +125,7 @@ public class PromotionService extends BaseService {
 
 	/**
 	 * 构造条件map
-	 * 
+	 *
 	 * @param obj input
 	 * @return Map
 	 */

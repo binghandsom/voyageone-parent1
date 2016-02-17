@@ -121,13 +121,13 @@
                ) tt1,
                tt_tracking_info tt2
          where tt1.id = tt2.reservation_id
-           and tt2.tracking_status = '040'
+           and tt2.tracking_status = '030'
     </select>
 
     <insert id="wms_insertTTTrackingInfo">
         insert into tt_tracking_info
                (syn_ship_no, tracking_status, reservation_id, tracking_no, process_time, create_time, create_person, update_time, update_person)
-         select syn_ship_no, '040', res.id, trankingNo, created, created, creater, now(), #{task_name}
+         select syn_ship_no, '030', res.id, trankingNo, created, created, creater, now(), #{task_name}
            from (
                   tt_reservation res,
                   (${tempTable}) temp

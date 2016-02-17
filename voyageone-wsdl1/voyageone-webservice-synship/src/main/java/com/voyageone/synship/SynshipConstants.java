@@ -13,6 +13,8 @@ public class SynshipConstants {
         public static final String GET_TRACKING_JM_INFO = "/tracking/getJMInfo";
         // 官网订单物流信息查询
         public static final String GET_TRACKING_CN_INFO = "/tracking/getCNInfo";
+        // 订单物流信息查询
+        public static final String GET_TRACKING_INFO = "/tracking/getInfo";
     }
 
     /**
@@ -42,6 +44,17 @@ public class SynshipConstants {
     public static final class TrackingInfo {
         public static final String DISPLAY ="1";
         public static final String SPREAD ="1";
+    }
+
+    /**
+     * 物流类型
+     */
+    public static final class TrackingType {
+        public static final String WEBID ="1";
+        public static final String PHONE ="2";
+        public static final String SYNSHIPNO ="3";
+        public static final String TRACKINGNO ="4";
+        public static final String ORDERNUM ="5";
     }
 
 

@@ -3,6 +3,7 @@ package com.voyageone.batch.wms.service.inventory.sync;
 import com.voyageone.batch.core.Enums.TaskControlEnums;
 import com.voyageone.batch.core.modelbean.TaskControlBean;
 import com.voyageone.batch.core.util.TaskControlUtils;
+import com.voyageone.batch.wms.WmsConstants;
 import com.voyageone.batch.wms.modelbean.InventorySynLogBean;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.ShopConfigs;
@@ -29,6 +30,9 @@ public class WmsSyncInventoryService extends WmsSyncInventoryBaseService {
 
     @Autowired
     private WmsSyncToCnSubService wmsSyncToCnSubService;
+
+    @Autowired
+    private WmsSyncToJuMeiSubService wmsSyncToJuMeiSubService;
 
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
@@ -69,7 +73,10 @@ public class WmsSyncInventoryService extends WmsSyncInventoryBaseService {
 
                 List<InventorySynLogBean> inventorySynLogBeans = new ArrayList<>();
 
-                // 根据平台，调用相应的 抽出方法 （淘宝需要NumID更新）
+                // 更新标志位
+                String updateFlg = WmsConstants.UPDATE_FLG.Update;
+
+                // 根据平台，调用相应的 抽出方法 （淘宝需要NumID更新；聚美需要存在上新记录）
                 switch (platForm) {
                     case TM:
                         inventorySynLogBeans =
@@ -77,13 +84,24 @@ public class WmsSyncInventoryService extends WmsSyncInventoryBaseService {
                         break;
                     case JD:
                     case CN:
-                    case JM:
                         inventorySynLogBeans =
                                 inventoryDao.getInventorySynLog(getTaskName(), shopBean.getOrder_channel_id(), shopBean.getCart_id(), intRowCount);
                         break;
+                    case JM:
+                        // 取得刚上新但没库存同步过的记录（由于为了能够自动审核，聚美上新时库存都是设置为1）
+                        inventorySynLogBeans =
+                                inventoryDao.getInventorySynLogForJMReFlush(getTaskName(), shopBean.getOrder_channel_id(), shopBean.getCart_id(), intRowCount);
+                        // 如果不存在需刷新的记录时，则取得有库存变化的记录
+                        if (inventorySynLogBeans.size() == 0) {
+                            inventorySynLogBeans =
+                                    inventoryDao.getInventorySynLogForJM(getTaskName(), shopBean.getOrder_channel_id(), shopBean.getCart_id(), intRowCount);
+                        }else {
+                            updateFlg = WmsConstants.UPDATE_FLG.ReFlush;
+                        }
+                        break;
                 }
 
-                if (!needSync(shopBean)) {
+                if (!needSync(shopBean) && updateFlg.equals(WmsConstants.UPDATE_FLG.Update)) {
 
                     // 不需要同步的，则直接转为忽略
                     for (InventorySynLogBean inventorySynLogBean : inventorySynLogBeans)
@@ -106,6 +124,7 @@ public class WmsSyncInventoryService extends WmsSyncInventoryBaseService {
                             wmsSyncToCnSubService.syncSite(inventorySynLogBeans, shopBean);
                             break;
                         case JM:
+                            wmsSyncToJuMeiSubService.syncJumei(inventorySynLogBeans, shopBean, updateFlg);
                             break;
                     }
                 } catch (Exception e) {

@@ -3,11 +3,12 @@
 <mapper namespace="com.voyageone.ims.sql">
 
     <select id="ims_selectNoPublishBeansByTime" resultType="com.voyageone.batch.ims.modelbean.ProductPublishBean" parameterType="Map">
-        SELECT * FROM voyageone_ims.ims_bt_product
-        WHERE cart_id = 23
-        AND publish_status = 0
-        AND publish_skip = 0
-        ORDER BY created desc limit 0,#{count}
+        SELECT * FROM voyageone_ims.ims_bt_product product, voyageone_cms.cms_bt_cn_model_extend model
+        WHERE product.cart_id = 23
+        AND product.publish_status = 0
+        AND product.model_id = model.model_id
+        AND model.publish_skip = 0
+        ORDER BY product.created desc limit 0,#{count}
     </select>
 
     <select id="ims_selectProductPublishByCondition" resultType="com.voyageone.batch.ims.modelbean.ProductPublishBean" parameterType="Map">

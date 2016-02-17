@@ -17,7 +17,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
@@ -46,7 +49,7 @@ public class CmsPromotionFileService extends BaseAppService {
 
     @Autowired
     // MysqlDB
-    CmsPromotionSkuDao cmsPromotionSkuDao;
+            CmsPromotionSkuDao cmsPromotionSkuDao;
 
     // Sku 文件单线程用
     ReentrantLock lock = new ReentrantLock();

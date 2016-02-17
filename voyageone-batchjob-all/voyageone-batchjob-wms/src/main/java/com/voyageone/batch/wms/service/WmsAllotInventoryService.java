@@ -101,20 +101,28 @@ public class WmsAllotInventoryService extends BaseTaskService {
         }
 
         public void doRun() {
-            logger.info(channel.getFull_name()+"库存分配开始" );
+            logger.info(channel.getFull_name()+"第三方库存分配开始" );
 
-            // ItemDetail表中没有的记录取得
-            List<String> notExistsItemCode = reservationDao.getNotExistsItemCode(channel.getOrder_channel_id());
+            //分配仓库取得（如果能够取得相应的值，则说明只是模拟分配而已，不再对一些信息进行检查）
+            String allot_store = ChannelConfigs.getVal1(channel.getOrder_channel_id(),ChannelConfigEnums.Name.allot_store);
 
-            logger.info(channel.getFull_name() + "----------SKU在ItemDetail中不存在件数：" + notExistsItemCode.size());
-            if (notExistsItemCode.size() > 0 ) {
-                logIssue(channel.getFull_name() + "：SKU在ItemDetail中不存在，无法库存分配", notExistsItemCode);
+            if (StringUtils.isNullOrBlank2(allot_store)) {
+//                // ItemDetail表中没有的记录取得
+//                List<String> notExistsItemCode = reservationDao.getNotExistsItemCode(channel.getOrder_channel_id());
+//
+//                logger.info(channel.getFull_name() + "----------SKU在ItemDetail中不存在件数：" + notExistsItemCode.size());
+//                if (notExistsItemCode.size() > 0) {
+//                    logIssue(channel.getFull_name() + "：SKU在ItemDetail中不存在，无法库存分配", notExistsItemCode);
+//                }
+                logger.info(channel.getFull_name() + "----------分配仓库未指定，无法模拟分配");
+                logIssue(channel.getFull_name() + "：分配仓库未指定，无法模拟分配");
+                return;
             }
 
             // 需要库存分配的记录取得
             final List<ReservationBean> reservationList = reservationDao.getAllotInventoryInto(channel.getOrder_channel_id(), rowCount);
 
-            logger.info(channel.getFull_name() + "----------库存分配件数：" + reservationList.size());
+            logger.info(channel.getFull_name() + "----------第三方库存分配件数：" + reservationList.size());
 
             for (final ReservationBean reservation : reservationList) {
 
@@ -123,95 +131,111 @@ public class WmsAllotInventoryService extends BaseTaskService {
                     public void run() {
 
                         try {
-
-                            if (StringUtils.isNullOrBlank2(postURI)) {
-                                throw new RuntimeException(channel.getFull_name() + " PostURL地址没有设置，无法库存分配");
-                            }
-
                             logger.info(channel.getFull_name() + "----------Order_Number：" + reservation.getOrder_number() + "，Item_Number：" + reservation.getItem_number() + "，SKU：" + reservation.getSku());
 
-                            // SKU信息取得
-                            String result = getItemCodeInfo(channel.getOrder_channel_id(), reservation.getItemCode(), postURI);
-                            logger.info(channel.getFull_name() + "----------getItemCodeInfo：" + result);
-
                             ItemCodeBean itemCodeInfo = new ItemCodeBean();
-                            // 调用WebService时返回为空时，抛出错误
-                            if (StringUtils.isNullOrBlank2(result)) {
-                                logIssue(channel.getFull_name() + "库存分配时SKU信息取得失败" + "，Order_Number：" + reservation.getOrder_number() + "，Item_Number：" + reservation.getItem_number()+ "，SKU：" + reservation.getSku());
-                            } else{
 
-                                List<ItemCodeBean> itemCodeInfoList = new ArrayList<>();
-                                String errorMessage = "";
+                            // 防止Code情报取不到，将金额设置为产品售价
+                            itemCodeInfo.setPrice(StringUtils.isNullOrBlank2(reservation.getPrice_per_unit()) || reservation.getPrice_per_unit().equals("0.00") ? "1" : reservation.getPrice_per_unit());
+                            itemCodeInfo.setSalePrice(StringUtils.isNullOrBlank2(reservation.getPrice_per_unit()) || reservation.getPrice_per_unit().equals("0.00") ? "1" : reservation.getPrice_per_unit());
 
-                                // 老的webService（调用老的webService, Spling）
-                                if (postURI.contains("aspx")) {
-                                    itemCodeInfoList = JsonUtil.jsonToBeanList(result, ItemCodeBean.class);
-                                    // 新的webService（Jewelry）
+                            if (!StringUtils.isNullOrBlank2(postURI) && !StringUtils.isNullOrBlank2(reservation.getItemCode())) {
+
+                                // SKU信息取得
+                                String result = getItemCodeInfo(channel.getOrder_channel_id(), reservation.getItemCode(), reservation.getSku(), postURI);
+                                logger.info(channel.getFull_name() + "----------getItemCodeInfo：" + result);
+
+                                // 调用WebService时返回为空时，抛出错误
+                                if (StringUtils.isNullOrBlank2(result)) {
+                                    logIssue(channel.getFull_name() + "第三方库存分配时SKU信息取得失败" + "，Order_Number：" + reservation.getOrder_number() + "，Item_Number：" + reservation.getItem_number()+ "，SKU：" + reservation.getSku());
                                 } else {
-                                    CmsWsdlResponseBean cmsWsdlResponseBean = JsonUtil.jsonToBean(result, CmsWsdlResponseBean.class);
 
-                                    // 返回结果为NG时，记录下错误信息
-                                    if (cmsWsdlResponseBean.getResult().equals("NG")) {
-                                        errorMessage = cmsWsdlResponseBean.getMessage();
-                                    } else if (cmsWsdlResponseBean.getResult().equals("OK")) {
+                                    List<ItemCodeBean> itemCodeInfoList = new ArrayList<>();
+                                    String errorMessage = "";
 
-                                        if (cmsWsdlResponseBean.getResultInfo().size() > 0) {
-                                            itemCodeInfoList = proResult(cmsWsdlResponseBean.getResultInfo().get(0));
-                                        }
-                                    }
-                                }
+                                    // 老的webService（调用老的webService, Spling）
+                                    if (postURI.contains("aspx")) {
+                                        itemCodeInfoList = JsonUtil.jsonToBeanList(result, ItemCodeBean.class);
+                                        // 新的webService（Jewelry）
+                                    } else {
+                                        CmsWsdlResponseBean cmsWsdlResponseBean = JsonUtil.jsonToBean(result, CmsWsdlResponseBean.class);
 
-                                if (itemCodeInfoList.size() == 0) {
-                                    logIssue(channel.getFull_name() + "库存分配时SKU信息未取得", "Order_Number：" + reservation.getOrder_number() + "，Item_Number：" + reservation.getItem_number() + "，SKU：" + reservation.getSku() + "，ErrorMessage：" + errorMessage);
-                                } else {
-                                    itemCodeInfo = itemCodeInfoList.get(0);
+                                        // 返回结果为NG时，记录下错误信息
+                                        if (cmsWsdlResponseBean.getResult().equals("NG")) {
+                                            errorMessage = cmsWsdlResponseBean.getMessage();
+                                        } else if (cmsWsdlResponseBean.getResult().equals("OK")) {
 
-                                    // 产品属性的检查
-                                    boolean productAttributes = checkProductAttributes(channel.getOrder_channel_id(), itemCodeInfo);
-
-                                    // 产品属性设置完全时，允许分配
-                                    if (productAttributes) {
-                                        // 分配仓库
-                                        long storeId = reservationDao.getAllotStore(channel.getOrder_channel_id(), reservation.getCart_id(), reservation.getSku());
-                                        logger.info(channel.getFull_name() + "----------getAllotStore：" + storeId);
-
-                                        // 仓库分配没有取得
-                                        if (storeId == 0) {
-                                            logIssue(channel.getFull_name() + "库存分配时仓库取得失败", "Order_Number：" + reservation.getOrder_number() + "，Item_Number：" + reservation.getItem_number() + "，SKU：" + reservation.getSku() + "，Store：" + storeId);
-                                        } else {
-
-                                            // Reservation表编辑
-                                            setReservation(reservation, itemCodeInfo, storeId);
-
-                                            // 插入tt_reservation表
-                                            long res_id = reservationDao.insertReservation(reservation);
-
-                                            if (res_id == 0) {
-                                                logger.info(channel.getFull_name() + "----------库存分配失败：" + res_id);
-                                                logIssue(channel.getFull_name() + "库存分配时插入Reservation表失败", "Order_Number：" + reservation.getOrder_number() + "，Item_Number：" + reservation.getItem_number() + "，SKU：" + reservation.getSku());
-                                            } else {
-
-                                                // 更新OrderDetails
-                                                reservationDao.updateOrderDetails(reservation.getOrder_number(), reservation.getItem_number(), res_id, getTaskName());
-
-                                                // 插入ReservationLog
-                                                List<Long> reservationList = new ArrayList<>();
-                                                reservationList.add(res_id);
-                                                reservationLogDao.insertReservationLog(reservationList, "AllotInventory", getTaskName());
-
-                                                logger.info(channel.getFull_name() + "----------库存分配成功：" + res_id);
+                                            if (cmsWsdlResponseBean.getResultInfo().size() > 0) {
+                                                itemCodeInfoList = proResult(cmsWsdlResponseBean.getResultInfo().get(0));
                                             }
                                         }
+                                    }
+
+                                    if (itemCodeInfoList.size() == 0) {
+                                        logIssue(channel.getFull_name() + "第三方库存分配时SKU信息未取得", "Order_Number：" + reservation.getOrder_number() + "，Item_Number：" + reservation.getItem_number() + "，SKU：" + reservation.getSku() + "，ErrorMessage：" + errorMessage);
                                     } else {
-                                        String json = itemCodeInfo == null ? "" : new Gson().toJson(itemCodeInfo);
-                                        logger.info(channel.getFull_name() + "----------产品属性设置不全");
-                                        logIssue(channel.getFull_name() + "税号等产品属性设置不全，无法库存分配", "Order_Number：" + reservation.getOrder_number() + "，Item_Number：" + reservation.getItem_number() + "，SKU：" + reservation.getSku() + "，Attributes：" + json);
+                                        itemCodeInfo = itemCodeInfoList.get(0);
                                     }
                                 }
+                            }
+
+                            // TODO 聚美税号等信息取得预定
+
+
+                            // 产品属性的检查
+                            boolean productAttributes = true;
+                            if (!StringUtils.isNullOrBlank2(reservation.getItemCode())) {
+                                checkProductAttributes(channel.getOrder_channel_id(), itemCodeInfo);
+                            }
+
+                            // 产品属性设置完全时，允许分配
+                            if (productAttributes) {
+                                // 分配仓库
+                                long storeId = 0;
+
+                                if (StringUtils.isNullOrBlank2(allot_store)) {
+                                    storeId = reservationDao.getAllotStore(channel.getOrder_channel_id(), reservation.getCart_id(), reservation.getSku());
+                                }else {
+                                    storeId = Long.valueOf(allot_store);
+                                }
+
+                                logger.info(channel.getFull_name() + "----------getAllotStore：" + storeId);
+
+                                // 仓库分配没有取得
+                                if (storeId == 0) {
+                                    logIssue(channel.getFull_name() + "第三方库存分配时仓库取得失败", "Order_Number：" + reservation.getOrder_number() + "，Item_Number：" + reservation.getItem_number() + "，SKU：" + reservation.getSku() + "，Store：" + storeId);
+                                } else {
+
+                                    // Reservation表编辑
+                                    setReservation(reservation, itemCodeInfo, storeId);
+
+                                    // 插入tt_reservation表
+                                    long res_id = reservationDao.insertReservation(reservation);
+
+                                    if (res_id == 0) {
+                                        logger.info(channel.getFull_name() + "----------第三方库存分配失败：" + res_id);
+                                        logIssue(channel.getFull_name() + "第三方库存分配时插入Reservation表失败", "Order_Number：" + reservation.getOrder_number() + "，Item_Number：" + reservation.getItem_number() + "，SKU：" + reservation.getSku());
+                                    } else {
+
+                                        // 更新OrderDetails
+                                        reservationDao.updateOrderDetails(reservation.getOrder_number(), reservation.getItem_number(), res_id, getTaskName());
+
+                                        // 插入ReservationLog
+                                        List<Long> reservationList = new ArrayList<>();
+                                        reservationList.add(res_id);
+                                        reservationLogDao.insertReservationLog(reservationList, "AllotInventory", getTaskName());
+
+                                        logger.info(channel.getFull_name() + "----------第三方库存分配成功：" + res_id);
+                                    }
+                                }
+                            } else {
+                                String json = itemCodeInfo == null ? "" : new Gson().toJson(itemCodeInfo);
+                                logger.info(channel.getFull_name() + "----------产品属性设置不全");
+                                logIssue(channel.getFull_name() + "税号等产品属性设置不全，无法第三方库存分配", "Order_Number：" + reservation.getOrder_number() + "，Item_Number：" + reservation.getItem_number() + "，SKU：" + reservation.getSku() + "，Attributes：" + json);
                             }
 
                         } catch (Exception e) {
-                            logIssue(channel.getFull_name() + "----------库存分配错误，Order_Number：" + reservation.getOrder_number() + "，Item_Number：" + reservation.getItem_number()+ "，SKU：" + reservation.getSku(),e);
+                            logIssue(channel.getFull_name() + "----------第三方库存分配错误，Order_Number：" + reservation.getOrder_number() + "，Item_Number：" + reservation.getItem_number()+ "，SKU：" + reservation.getSku(),e);
 
                             throw new RuntimeException(e);
                         }
@@ -220,7 +244,7 @@ public class WmsAllotInventoryService extends BaseTaskService {
 
             }
 
-            logger.info(channel.getFull_name() + "库存分配结束");
+            logger.info(channel.getFull_name() + "第三方库存分配结束");
 
         }
 
@@ -259,7 +283,7 @@ public class WmsAllotInventoryService extends BaseTaskService {
      * @return response
      * @throws UnsupportedEncodingException
      */
-    private String getItemCodeInfo(String orderChannelId, String itemCode, String postURI) throws UnsupportedEncodingException {
+    private String getItemCodeInfo(String orderChannelId, String itemCode, String sku, String postURI) throws UnsupportedEncodingException {
 
         String json = "";
         Map<String, Object> jsonMap = new HashMap<>();
@@ -271,14 +295,18 @@ public class WmsAllotInventoryService extends BaseTaskService {
 
             jsonMap.put("code", itemCode);
 
-
         } else {
 
             Map<String, Object> dataBodyMap = new HashMap<>();
 
             dataBodyMap.put("orderChannelId", orderChannelId);
 
-            dataBodyMap.put("itemCode", itemCode);
+            // 区分是聚美相关WebService还是CMS相关WebService
+            if(postURI.contains("Jm2Wms")) {
+                dataBodyMap.put("sku", sku);
+            }else {
+                dataBodyMap.put("itemCode", itemCode);
+            }
 
 //            String dataBody = new Gson().toJson(dataBodyMap);
 
@@ -320,11 +348,11 @@ public class WmsAllotInventoryService extends BaseTaskService {
         if (store.getStore_kind().equals(StoreConfigEnums.Kind.VIRTUAL.getId())) {
             storeName = WmsConstants.StoreName.CH;
         }
-        //如果该渠道是境外电商、并且仓库所属在国内的话，设置成TM；
-        else if (ChannelConfigs.getVal1(reservation.getOrder_channel_id(), ChannelConfigEnums.Name.sale_type).equals(ChannelConfigEnums.Sale.CB.getType()) &&
-                store.getStore_location().equals(StoreConfigEnums.Location.CN.getId())) {
-            storeName = WmsConstants.StoreName.CN;
-        }
+//        //如果该渠道是境外电商、并且仓库所属在国内的话，设置成TM；
+//        else if (ChannelConfigs.getVal1(reservation.getOrder_channel_id(), ChannelConfigEnums.Name.sale_type).equals(ChannelConfigEnums.Sale.CB.getType()) &&
+//                store.getStore_location().equals(StoreConfigEnums.Location.CN.getId())) {
+//            storeName = WmsConstants.StoreName.CN;
+//        }
         //以外的场合，设置成仓库ID所属的仓库名称
         else {
             storeName = store.getStore_name();

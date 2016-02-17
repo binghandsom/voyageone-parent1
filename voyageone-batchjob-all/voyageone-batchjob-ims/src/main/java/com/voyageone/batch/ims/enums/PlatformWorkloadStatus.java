@@ -3,7 +3,7 @@ package com.voyageone.batch.ims.enums;
 /**
  * Created by Leo on 15-8-3.
  */
-public class PlatformWorkloadStatus implements Cloneable{
+public class PlatformWorkloadStatus implements Cloneable {
     public static final int JOB_INIT = 0;
     public static final int JOB_DONE = 1;
     public static final int JOB_ABORT = 2;
@@ -36,5 +36,23 @@ public class PlatformWorkloadStatus implements Cloneable{
             e.printStackTrace();
         }
         return cloneObj;
+    }
+
+    @Override
+    public String toString() {
+        switch (value) {
+            case JOB_INIT:
+                return "JOB_INIT";
+            case JOB_DONE:
+                return "JOB_DONE";
+            case JOB_ABORT:
+                return "JOB_ABORT";
+            case ADD_START:
+                return "ADD_START";
+            case UPDATE_START:
+                return "UPDATE_START";
+            default:
+                return "JOB_UNDEFINED" + value;
+        }
     }
 }

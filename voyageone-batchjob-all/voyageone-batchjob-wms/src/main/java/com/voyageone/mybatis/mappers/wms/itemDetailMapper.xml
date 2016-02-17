@@ -10,7 +10,21 @@
           wms_bt_item_details
         WHERE
           order_channel_id = #{order_channel_id}
+        AND
+          client_sku != ""
   </select>
+
+    <!-- SKU记录取出 -->
+    <select id="wms_getItemDetaiInfoNoClient" resultType="String">
+        SELECT
+          sku
+        FROM
+          wms_bt_item_details
+        WHERE
+          order_channel_id = #{order_channel_id}
+        AND
+          client_sku = ""
+    </select>
 
 
 </mapper>

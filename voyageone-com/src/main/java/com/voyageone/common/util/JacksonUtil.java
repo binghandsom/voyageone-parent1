@@ -1,5 +1,6 @@
 package com.voyageone.common.util;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -28,6 +29,15 @@ public final class JacksonUtil {
         gen.close();
         return sw.toString();
     }
+    public static String bean2JsonNotNull(Object obj) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        StringWriter sw = new StringWriter();
+        JsonGenerator gen = new JsonFactory().createGenerator(sw);
+        mapper.writeValue(gen, obj);
+        gen.close();
+        return sw.toString();
+    }
 
     /**
      * 根据json字符串返回对应java类型
@@ -49,7 +59,8 @@ public final class JacksonUtil {
      */
     public static Map<String, Object> jsonToMap(String jsonString) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
-        return mapper.readValue(jsonString, new TypeReference<Map<String, String>>(){});
+        return mapper.readValue(jsonString, new TypeReference<Map<String, Object>>() {
+        });
     }
 
     /**

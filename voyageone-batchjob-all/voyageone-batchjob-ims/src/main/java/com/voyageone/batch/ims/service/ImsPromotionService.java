@@ -103,6 +103,9 @@ public class ImsPromotionService extends BaseTaskService {
         items.forEach(item -> {
             TaobaoResponse response;
             try {
+                // 先删除之前的提价商品
+                tbPromotionService.removePromotion(shopBean,Long.parseLong(item.get("num_iid").toString()),promotionId);
+
                 TipItemPromDTO tipItemPromDTO = new TipItemPromDTO();
                 tipItemPromDTO.setCampaignId(promotionId);
                 tipItemPromDTO.setItemId(Long.parseLong(item.get("num_iid").toString()));
@@ -121,18 +124,21 @@ public class ImsPromotionService extends BaseTaskService {
                         List<Map> skuList = (List<Map>) product.get("skuList");
                         // 遍历code下面的所有SKU
                         skuList.forEach(map -> {
-                            TipSkuPromUnitDTO tipSkuPromUnitDTO = new TipSkuPromUnitDTO();
-                            tipSkuPromUnitDTO.setDiscount(Long.parseLong(map.get(priceField).toString()));
-                            // 获取SKU对已TM的SKUID
-                            skuids.getSkus().forEach(sku -> {
-                                if (sku.getOuterId() != null) {
-                                    if (sku.getOuterId().equalsIgnoreCase(map.get("sku").toString())) {
-                                        tipSkuPromUnitDTO.setSkuId(sku.getSkuId());
+                            // 价格与MSRP价格不一致的sku才加特价宝
+                            if(!map.get(priceField).toString().equalsIgnoreCase(map.get("cnPrice").toString())) {
+                                TipSkuPromUnitDTO tipSkuPromUnitDTO = new TipSkuPromUnitDTO();
+                                tipSkuPromUnitDTO.setDiscount(Long.parseLong(map.get(priceField).toString()));
+                                // 获取SKU对已TM的SKUID
+                                skuids.getSkus().forEach(sku -> {
+                                    if (sku.getOuterId() != null) {
+                                        if (sku.getOuterId().equalsIgnoreCase(map.get("sku").toString())) {
+                                            tipSkuPromUnitDTO.setSkuId(sku.getSkuId());
+                                        }
                                     }
+                                });
+                                if (tipSkuPromUnitDTO.getSkuId() != null && tipSkuPromUnitDTO.getSkuId() > 0) {
+                                    tipSkuPromUnitDTOs.add(tipSkuPromUnitDTO);
                                 }
-                            });
-                            if(tipSkuPromUnitDTO.getSkuId() != null && tipSkuPromUnitDTO.getSkuId() > 0){
-                                tipSkuPromUnitDTOs.add(tipSkuPromUnitDTO);
                             }
                         });
                     }
@@ -140,9 +146,11 @@ public class ImsPromotionService extends BaseTaskService {
                 }else{
                     // ITEM单位更新
                     List<Map> skuList = (List<Map>) productList.get(0).get("skuList");
-                    TipPromUnitDTO tipPromUnitDTO = new TipPromUnitDTO();
-                    tipPromUnitDTO.setDiscount(Long.parseLong(skuList.get(0).get(priceField).toString()));
-                    tipItemPromDTO.setItemLevelProm(tipPromUnitDTO);
+                    if(!skuList.get(0).get(priceField).toString().equalsIgnoreCase(skuList.get(0).get("cnPrice").toString())) {
+                        TipPromUnitDTO tipPromUnitDTO = new TipPromUnitDTO();
+                        tipPromUnitDTO.setDiscount(Long.parseLong(skuList.get(0).get(priceField).toString()));
+                        tipItemPromDTO.setItemLevelProm(tipPromUnitDTO);
+                    }
                 }
                 // 调用天猫特价宝
                 response = tbPromotionService.updatePromotion(shopBean, tipItemPromDTO);

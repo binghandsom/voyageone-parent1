@@ -40,6 +40,66 @@ public class TrackingDao extends BaseDao {
     }
 
     /**
+     * 根据传入参数取得该订单的物流信息
+     * @param cwb 查询参数
+     * @return OrderTrackInfoBean
+     */
+    public OrderTrackInfoBean getSynshipNoByWebid(String cwb,String channelid) {
+
+        Map<String, Object> params = new HashMap<>();
+
+        params.put("cwb", cwb);
+        params.put("channelid", channelid);
+
+        return selectOne("orders_getSynshipNoByWebid", params);
+    }
+
+    /**
+     * 根据传入参数取得该订单的物流信息
+     * @param cwb 查询参数
+     * @return OrderTrackInfoBean
+     */
+    public OrderTrackInfoBean getSynshipNoByPhone(String cwb,String channelid) {
+
+        Map<String, Object> params = new HashMap<>();
+
+        params.put("cwb", cwb);
+        params.put("channelid", channelid);
+
+        return selectOne("orders_getSynshipNoByPhone", params);
+    }
+
+    /**
+     * 根据传入参数取得该订单的物流信息
+     * @param cwb 查询参数
+     * @return OrderTrackInfoBean
+     */
+    public OrderTrackInfoBean getSynshipNoByTrackingNo(String cwb,String channelid) {
+
+        Map<String, Object> params = new HashMap<>();
+
+        params.put("cwb", cwb);
+        params.put("channelid", channelid);
+
+        return selectOne("orders_getSynshipNoByTrackingNo", params);
+    }
+
+    /**
+     * 根据传入参数取得该订单的物流信息
+     * @param cwb 查询参数
+     * @return OrderTrackInfoBean
+     */
+    public OrderTrackInfoBean getSynshipNoByOrderNum(String cwb,String channelid) {
+
+        Map<String, Object> params = new HashMap<>();
+
+        params.put("cwb", cwb);
+        params.put("channelid", channelid);
+
+        return selectOne("orders_getSynshipNoByOrderNum", params);
+    }
+
+    /**
      * 获得物流信息
      * @param syn_ship_no synShip物流单号
      * @return List<FromReservation>

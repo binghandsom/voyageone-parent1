@@ -32,6 +32,75 @@
             omsOrders.order_number = orders.order_number
     </select>
 
+    <select id="orders_getSynshipNoByWebid" resultType="com.voyageone.synship.formbean.OrderTrackInfoBean">
+        SELECT
+            orders.syn_ship_no
+        FROM
+            oms_bt_orders  omsOrders,
+            tt_orders orders
+        WHERE
+            omsOrders.source_order_id = #{cwb}
+        AND
+            omsOrders.order_kind = '0'
+        AND
+            omsOrders.order_number = orders.order_number
+        <if test="channelid != null and channelid != '' ">
+            and omsOrders.order_channel_id = #{channelid}
+        </if>
+    </select>
+
+    <select id="orders_getSynshipNoByPhone" resultType="com.voyageone.synship.formbean.OrderTrackInfoBean">
+        SELECT
+            orders.syn_ship_no
+        FROM
+            oms_bt_orders  omsOrders,
+            tt_orders orders
+        WHERE
+            omsOrders.ship_phone = #{cwb}
+        AND
+            omsOrders.order_kind = '0'
+        AND
+            omsOrders.order_number = orders.order_number
+        <if test="channelid != null and channelid != '' ">
+            and omsOrders.order_channel_id = #{channelid}
+        </if>
+        ORDER BY
+            omsOrders.order_date_time DESC
+        limit 1
+    </select>
+
+
+    <select id="orders_getSynshipNoByTrackingNo" resultType="com.voyageone.synship.formbean.OrderTrackInfoBean">
+        SELECT
+            tracking.syn_ship_no
+        FROM
+            tt_tracking tracking
+        WHERE
+            tracking.tracking_no = #{cwb}
+        AND
+            tracking.use_flg = '1'
+		AND
+			tracking.tracking_area = '0'
+        <if test="channelid != null and channelid != '' ">
+            and tracking.order_channel_id = #{channelid}
+        </if>
+        ORDER BY
+            tracking.create_time DESC
+		limit 1
+    </select>
+
+    <select id="orders_getSynshipNoByOrderNum" resultType="com.voyageone.synship.formbean.OrderTrackInfoBean">
+        SELECT
+            orders.syn_ship_no
+        FROM
+            tt_orders orders
+        WHERE
+            orders.order_number = #{cwb}
+        <if test="channelid != null and channelid != '' ">
+            and orders.order_channel_id = #{channelid}
+        </if>
+    </select>
+
     <select id="tt_tracking_info_select" resultType="com.voyageone.synship.formbean.TrackInfoBean">
         select
             info.syn_ship_no,

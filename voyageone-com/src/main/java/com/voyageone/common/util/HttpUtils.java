@@ -1,20 +1,18 @@
 package com.voyageone.common.util;
 
 import com.voyageone.common.configs.beans.PostResponse;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpPatch;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.*;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.security.*;
-import java.security.cert.CertificateException;
-
-import javax.net.ssl.KeyManager;
-import javax.net.ssl.KeyManagerFactory;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.TrustManager;
-import javax.net.ssl.TrustManagerFactory;
+import java.security.KeyStore;
 
 /**
  * HttpUtils
@@ -103,6 +101,143 @@ public class HttpUtils {
         return null;
     }
 
+    public static String get(String url, String param,String authorization) {
+        if (!StringUtils.isEmpty(param)) url += "?" + param;
+        HttpURLConnection connection = null;
+        try {
+            connection = getConnection(url, "GET");
+            connection.setRequestProperty("Authorization", "Basic " + authorization);
+            connection.connect();
+            try (InputStream inputStream = connection.getInputStream()) {
+                return readConnection(inputStream);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (connection != null)
+                connection.disconnect();
+        }
+
+        return null;
+    }
+
+    public static String put(String url, String jsonParam,String authorization)
+    {
+
+        InputStream input = null;//输入流
+        InputStreamReader isr = null;
+        BufferedReader buffer = null;
+        StringBuffer sb = null;
+        String line = null;
+
+        try {
+	            /*post向服务器请求数据*/
+            HttpPut request = new HttpPut(url);
+            StringEntity se = new StringEntity(jsonParam);
+            request.setEntity(se);
+            se.setContentEncoding("UTF-8");
+            se.setContentType("application/json");
+            request.setHeader("Authorization", "Basic " + authorization);;
+            CloseableHttpClient httpclient= HttpClients.createDefault();
+            HttpResponse response = httpclient.execute(request);
+            int code = response.getStatusLine().getStatusCode();
+            // System.out.println("postCode= " + code);
+
+            //从服务器获得输入流
+            input = response.getEntity().getContent();
+            isr = new InputStreamReader(input);
+            buffer = new BufferedReader(isr,10*1024);
+
+            sb = new StringBuffer();
+            while ((line = buffer.readLine()) != null) {
+                sb.append(line);
+            }
+
+
+        } catch (Exception e) {
+            //其他异常同样读取assets目录中的"local_stream.xml"文件
+            System.out.println("请求异常数据异常");
+            e.printStackTrace();
+            return null;
+        } finally {
+            try {
+                if(buffer != null) {
+                    buffer.close();
+                    buffer = null;
+                }
+                if(isr != null) {
+                    isr.close();
+                    isr = null;
+                }
+                if(input != null) {
+                    input.close();
+                    input = null;
+                }
+            } catch (Exception e) {
+            }
+        }
+        return sb.toString();
+    }
+
+    public static String patch(String url, String jsonParam,String authorization)
+    {
+
+        InputStream input = null;//输入流
+        InputStreamReader isr = null;
+        BufferedReader buffer = null;
+        StringBuffer sb = null;
+        String line = null;
+
+        try {
+	            /*post向服务器请求数据*/
+            HttpPatch request = new HttpPatch(url);
+            StringEntity se = new StringEntity(jsonParam);
+            request.setEntity(se);
+            se.setContentEncoding("UTF-8");
+            se.setContentType("application/json");
+            request.setHeader("Authorization", "Basic " + authorization);;
+            CloseableHttpClient httpclient= HttpClients.createDefault();
+            HttpResponse response = httpclient.execute(request);
+            int code = response.getStatusLine().getStatusCode();
+            // System.out.println("postCode= " + code);
+
+            //从服务器获得输入流
+            input = response.getEntity().getContent();
+            isr = new InputStreamReader(input);
+            buffer = new BufferedReader(isr,10*1024);
+
+            sb = new StringBuffer();
+            while ((line = buffer.readLine()) != null) {
+                sb.append(line);
+            }
+
+
+        } catch (Exception e) {
+            //其他异常同样读取assets目录中的"local_stream.xml"文件
+            System.out.println("请求异常数据异常");
+            e.printStackTrace();
+            return null;
+        } finally {
+            try {
+                if(buffer != null) {
+                    buffer.close();
+                    buffer = null;
+                }
+                if(isr != null) {
+                    isr.close();
+                    isr = null;
+                }
+                if(input != null) {
+                    input.close();
+                    input = null;
+                }
+            } catch (Exception e) {
+            }
+        }
+        return sb.toString();
+    }
+
+
     public static String get(String url, String param) {
 
         if (!StringUtils.isEmpty(param)) url += "?" + param;
@@ -138,6 +273,23 @@ public class HttpUtils {
         if (!StringUtils.isEmpty(param)) url += "?" + param;
 
         HttpURLConnection connection = getConnection(url, "GET");
+
+        connection.connect();
+
+        return connection.getInputStream();
+    }
+    /**
+     * 使用 get 方式，获取输入流(Https)
+     *
+     * @param url   地址
+     * @param param 参数
+     * @return 输入流
+     * @throws IOException
+     */
+    public static InputStream getHttpsInputStream(String url, String param) throws IOException {
+        if (!StringUtils.isEmpty(param)) url += "?" + param;
+
+        HttpsURLConnection connection = getHttpsConnection(url, "GET");
 
         connection.connect();
 
@@ -232,7 +384,7 @@ public class HttpUtils {
      */
     private static HttpURLConnection getConnection(String location, String method) throws IOException {
 
-        return getConnection(location, method, 10000, 10000);
+        return getConnection(location, method, 1000000, 1000000);
     }
 
     private static HttpURLConnection getConnection(String location, String method, int connectTimeout, int readTimeout) throws IOException {
@@ -538,6 +690,21 @@ public class HttpUtils {
         connection.connect();
 
         return connection;
+    }
+
+    /**
+     * 根据url获取输入流
+     *
+     * @param urlString   地址
+     * @return 输入流
+     * @throws IOException
+     */
+    public static InputStream getInputStream(String urlString) throws IOException {
+        URL url = new URL(urlString);
+
+        InputStream inputStream = url.openStream();
+
+        return inputStream;
     }
 
 }

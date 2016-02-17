@@ -56,7 +56,15 @@ public class TaskControlEnums {
         /**
          * 历史数据转移表
          */
-        history_table
+        history_table,
+        /**
+         * 验证身份证间隔
+         */
+        valid_interval,
+        /**
+         * 删除历史记录间隔
+         */
+        delete_time_interval
     }
 
     /**

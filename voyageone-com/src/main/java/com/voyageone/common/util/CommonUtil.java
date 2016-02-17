@@ -5,6 +5,7 @@ import com.voyageone.common.Constants;
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
@@ -227,6 +228,22 @@ public final class CommonUtil {
     }
 
     /**
+     * 保留两位小数
+     *
+     * @param doubleValue
+     * @return ret
+     */
+    public static double getRoundUp2Digits(double doubleValue) {
+        double ret = 0d;
+
+        BigDecimal bd1 = new BigDecimal(doubleValue);
+
+        ret = bd1.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
+
+        return ret;
+    }
+	
+	/**
      * 将integer的list转成long的list
      * @param list
      * @return

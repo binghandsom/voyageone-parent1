@@ -111,8 +111,8 @@ public class UploadProductHandler extends UploadWorkloadHandler{
                 {
                     MainToUploadImageTaskSignalInfo signalInfo = (MainToUploadImageTaskSignalInfo)
                             signal.getSignalInfo();
-                    uploadJob.addUploadImageTask(signalInfo.getUploadImageTcb());
                     suspendCurrentTask();
+                    uploadJob.addUploadImageTask(signalInfo.getUploadImageTcb());
                     logger.info(String.format("tcb:%s is paused, add new image tcb!", signalInfo.getUploadProductTcb().getWorkLoadBean().toString()));
                     return;
                 }

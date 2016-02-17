@@ -194,13 +194,14 @@ public class WmsSetAllotInventoryService extends BaseTaskService {
                         $info(channel.getFull_name() + "----------(订单级别)初回处理Order_Number：" + reservation.getOrder_number() + "，Item_Number：" + reservation.getItem_number()+ "，SKU：" + reservation.getSku());
 
                         // SKU信息取得
-                        String result = getItemCodeInfo(channel.getOrder_channel_id(), reservation.getItemCode(), postURI);
+                        String result = getItemCodeInfo(channel.getOrder_channel_id(), reservation.getItemCode(), reservation.getSku(), postURI);
                         $info(channel.getFull_name() + "----------(订单级别)初回处理getItemCodeInfo："+ result);
 
                         ItemCodeBean itemCodeInfo = new ItemCodeBean();
                         // 调用WebService时返回为空时，抛出错误
                         if (StringUtils.isNullOrBlank2(result)) {
-                            logIssue(channel.getFull_name() + "库存分配时SKU信息取得失败" + "，Order_Number：" + reservation.getOrder_number() + "，Item_Number：" + reservation.getItem_number()+ "，SKU：" + reservation.getSku());
+                            $info(channel.getFull_name() + "----------库存分配时SKU信息取得失败"+ "，Order_Number：" + reservation.getOrder_number() + "，Item_Number：" + reservation.getItem_number()+ "，SKU：" + reservation.getSku());
+                            logIssue(channel.getFull_name() + "库存分配时SKU信息取得失败" + "，Order_Number：" + reservation.getOrder_number() + "，Item_Number：" + reservation.getItem_number() + "，SKU：" + reservation.getSku());
                             allotInventory.setAllot_error(true);
                         } else {
 
@@ -226,6 +227,7 @@ public class WmsSetAllotInventoryService extends BaseTaskService {
                             }
 
                             if (itemCodeInfoList.size() == 0) {
+                                $info(channel.getFull_name() + "----------库存分配时SKU信息取得失败"+ "，Order_Number：" + reservation.getOrder_number() + "，Item_Number：" + reservation.getItem_number()+ "，SKU：" + reservation.getSku() + "，ErrorMessage：" + errorMessage);
                                 logIssue(channel.getFull_name() + "库存分配时SKU信息未取得", "Order_Number：" + reservation.getOrder_number() + "，Item_Number：" + reservation.getItem_number() + "，SKU：" + reservation.getSku() + "，ErrorMessage：" + errorMessage);
                                 allotInventory.setAllot_error(true);
                             } else {
@@ -249,21 +251,24 @@ public class WmsSetAllotInventoryService extends BaseTaskService {
 
                                 // 仓库分配没有取得
                                 if (storeId == 0) {
+                                    $info(channel.getFull_name() + "----------(订单级别)库存分配时仓库取得失败"+ "，Order_Number：" + reservation.getOrder_number() + "，Item_Number：" + reservation.getItem_number() + "，SKU：" + reservation.getSku() + "，Store：" + storeId);
                                     logIssue(channel.getFull_name() + "(订单级别)库存分配时仓库取得失败", "Order_Number：" + reservation.getOrder_number() + "，Item_Number：" + reservation.getItem_number() + "，SKU：" + reservation.getSku() + "，Store：" + storeId);
                                     allotInventory.setAllot_error(true);
                                 } else {
                                     reservation.setStore_id(storeId);
 
                                     // 库存再分配仓库判断
-                                    for (OrderChannelConfigBean orderChannelConfigBean : allot_inventory_again) {
-                                        if (orderChannelConfigBean.getCfg_val1().equals(WmsConstants.ALLOT_INVENTORY_AGAIN.INVENTORY_MANAGER)) {
-                                            if (StoreConfigs.getStore(storeId).getInventory_manager().equals(orderChannelConfigBean.getCfg_val2())) {
-                                                allotInventory.setAllot_again(true);
+                                    if (allot_inventory_again != null) {
+                                        for (OrderChannelConfigBean orderChannelConfigBean : allot_inventory_again) {
+                                            if (orderChannelConfigBean.getCfg_val1().equals(WmsConstants.ALLOT_INVENTORY_AGAIN.INVENTORY_MANAGER)) {
+                                                if (StoreConfigs.getStore(storeId).getInventory_manager().equals(orderChannelConfigBean.getCfg_val2())) {
+                                                    allotInventory.setAllot_again(true);
+                                                }
                                             }
-                                        }
-                                        if (orderChannelConfigBean.getCfg_val1().equals(WmsConstants.ALLOT_INVENTORY_AGAIN.STORE_AREA)) {
-                                            if (StoreConfigs.getStore(storeId).getStore_area().contains(orderChannelConfigBean.getCfg_val2())) {
-                                                allotInventory.setAllot_again(true);
+                                            if (orderChannelConfigBean.getCfg_val1().equals(WmsConstants.ALLOT_INVENTORY_AGAIN.STORE_AREA)) {
+                                                if (StoreConfigs.getStore(storeId).getStore_area().contains(orderChannelConfigBean.getCfg_val2())) {
+                                                    allotInventory.setAllot_again(true);
+                                                }
                                             }
                                         }
                                     }
@@ -285,15 +290,17 @@ public class WmsSetAllotInventoryService extends BaseTaskService {
                         for (StoreBean storeBean : storeLst) {
 
                             // 库存再分配仓库判断
-                            for (OrderChannelConfigBean orderChannelConfigBean : allot_inventory_again) {
-                                if (orderChannelConfigBean.getCfg_val1().equals(WmsConstants.ALLOT_INVENTORY_AGAIN.INVENTORY_MANAGER)) {
-                                    if (!StoreConfigs.getStore(storeBean.getStore_id()).getInventory_manager().equals(orderChannelConfigBean.getCfg_val2())) {
-                                        exceptStoreList.add(storeBean.getStore_id());
+                            if (allot_inventory_again != null) {
+                                for (OrderChannelConfigBean orderChannelConfigBean : allot_inventory_again) {
+                                    if (orderChannelConfigBean.getCfg_val1().equals(WmsConstants.ALLOT_INVENTORY_AGAIN.INVENTORY_MANAGER)) {
+                                        if (!StoreConfigs.getStore(storeBean.getStore_id()).getInventory_manager().equals(orderChannelConfigBean.getCfg_val2())) {
+                                            exceptStoreList.add(storeBean.getStore_id());
+                                        }
                                     }
-                                }
-                                if (orderChannelConfigBean.getCfg_val1().equals(WmsConstants.ALLOT_INVENTORY_AGAIN.STORE_AREA)) {
-                                    if (!StoreConfigs.getStore(storeBean.getStore_id()).getStore_area().contains(orderChannelConfigBean.getCfg_val2())) {
-                                        exceptStoreList.add(storeBean.getStore_id());
+                                    if (orderChannelConfigBean.getCfg_val1().equals(WmsConstants.ALLOT_INVENTORY_AGAIN.STORE_AREA)) {
+                                        if (!StoreConfigs.getStore(storeBean.getStore_id()).getStore_area().contains(orderChannelConfigBean.getCfg_val2())) {
+                                            exceptStoreList.add(storeBean.getStore_id());
+                                        }
                                     }
                                 }
                             }
@@ -306,18 +313,20 @@ public class WmsSetAllotInventoryService extends BaseTaskService {
                                 boolean blnFound = false;
 
                                 // 库存再分配仓库判断
-                                for (OrderChannelConfigBean orderChannelConfigBean : allot_inventory_again) {
-                                    if (orderChannelConfigBean.getCfg_val1().equals(WmsConstants.ALLOT_INVENTORY_AGAIN.INVENTORY_MANAGER)) {
-                                        if (!StoreConfigs.getStore(reservation.getStore_id()).getInventory_manager().equals(orderChannelConfigBean.getCfg_val2())) {
-                                            blnFound = true;
-                                        }
-                                    }
-                                    if (orderChannelConfigBean.getCfg_val1().equals(WmsConstants.ALLOT_INVENTORY_AGAIN.STORE_AREA)) {
-                                        if (!StoreConfigs.getStore(reservation.getStore_id()).getStore_area().contains(orderChannelConfigBean.getCfg_val2())) {
-                                            blnFound = true;
-                                        }
-                                    }
-                                }
+                                 if (allot_inventory_again != null) {
+                                     for (OrderChannelConfigBean orderChannelConfigBean : allot_inventory_again) {
+                                         if (orderChannelConfigBean.getCfg_val1().equals(WmsConstants.ALLOT_INVENTORY_AGAIN.INVENTORY_MANAGER)) {
+                                             if (!StoreConfigs.getStore(reservation.getStore_id()).getInventory_manager().equals(orderChannelConfigBean.getCfg_val2())) {
+                                                 blnFound = true;
+                                             }
+                                         }
+                                         if (orderChannelConfigBean.getCfg_val1().equals(WmsConstants.ALLOT_INVENTORY_AGAIN.STORE_AREA)) {
+                                             if (!StoreConfigs.getStore(reservation.getStore_id()).getStore_area().contains(orderChannelConfigBean.getCfg_val2())) {
+                                                 blnFound = true;
+                                             }
+                                         }
+                                     }
+                                 }
 
                                 if (blnFound) {
 
@@ -331,6 +340,7 @@ public class WmsSetAllotInventoryService extends BaseTaskService {
 
                                     // 仓库分配没有取得
                                     if (storeId == 0) {
+                                        $info(channel.getFull_name() + "----------(订单级别)库存分配时仓库取得失败"+ "，Order_Number：" + reservation.getOrder_number() + "，Item_Number：" + reservation.getItem_number() + "，SKU：" + reservation.getSku() + "，Store：" + storeId);
                                         logIssue(channel.getFull_name() + "(订单级别)库存分配时仓库取得失败", "Order_Number：" + reservation.getOrder_number() + "，Item_Number：" + reservation.getItem_number() + "，SKU：" + reservation.getSku() + "，Store：" + storeId);
                                         allotInventory.setAllot_error(true);
                                     } else {
@@ -347,6 +357,7 @@ public class WmsSetAllotInventoryService extends BaseTaskService {
                     }
 
                 } catch (Exception e) {
+                    $info(channel.getFull_name() + "----------(订单级别)库存分配错误，Order_Number："+ allotInventory.getOrder_number() + "，ErrorMessage：" + e);
                     logIssue(channel.getFull_name() + "----------(订单级别)库存分配错误，Order_Number：" + allotInventory.getOrder_number(),e);
                     allotInventory.setAllot_error(true);
                 }
@@ -411,6 +422,7 @@ public class WmsSetAllotInventoryService extends BaseTaskService {
 
 
                             } catch (Exception e) {
+                                $info(channel.getFull_name() + "----------(订单级别)库存分配错误，Order_Number："+ allotInventory.getOrder_number() + "，ErrorMessage：" + e);
                                 logIssue(channel.getFull_name() + "----------(订单级别)库存分配错误，Order_Number：" + allotInventory.getOrder_number(),e);
 
                                 throw new RuntimeException(e);
@@ -468,7 +480,7 @@ public class WmsSetAllotInventoryService extends BaseTaskService {
      * @return response
      * @throws UnsupportedEncodingException
      */
-    private String getItemCodeInfo(String orderChannelId, String itemCode, String postURI) throws UnsupportedEncodingException {
+    private String getItemCodeInfo(String orderChannelId, String itemCode, String sku, String postURI) throws UnsupportedEncodingException {
 
         String json = "";
         Map<String, Object> jsonMap = new HashMap<>();
@@ -480,14 +492,18 @@ public class WmsSetAllotInventoryService extends BaseTaskService {
 
             jsonMap.put("code", itemCode);
 
-
         } else {
 
             Map<String, Object> dataBodyMap = new HashMap<>();
 
             dataBodyMap.put("orderChannelId", orderChannelId);
 
-            dataBodyMap.put("itemCode", itemCode);
+            // 区分是聚美相关WebService还是CMS相关WebService
+            if(postURI.contains("Jm2Wms")) {
+                dataBodyMap.put("sku", sku);
+            }else {
+                dataBodyMap.put("itemCode", itemCode);
+            }
 
 //            String dataBody = new Gson().toJson(dataBodyMap);
 
@@ -529,11 +545,11 @@ public class WmsSetAllotInventoryService extends BaseTaskService {
         if (store.getStore_kind().equals(StoreConfigEnums.Kind.VIRTUAL.getId())) {
             storeName = WmsConstants.StoreName.CH;
         }
-        //如果该渠道是境外电商、并且仓库所属在国内的话，设置成TM；
-        else if (ChannelConfigs.getVal1(reservation.getOrder_channel_id(), ChannelConfigEnums.Name.sale_type).equals(ChannelConfigEnums.Sale.CB.getType()) &&
-                store.getStore_location().equals(StoreConfigEnums.Location.CN.getId())) {
-            storeName = WmsConstants.StoreName.CN;
-        }
+//        //如果该渠道是境外电商、并且仓库所属在国内的话，设置成TM；
+//        else if (ChannelConfigs.getVal1(reservation.getOrder_channel_id(), ChannelConfigEnums.Name.sale_type).equals(ChannelConfigEnums.Sale.CB.getType()) &&
+//                store.getStore_location().equals(StoreConfigEnums.Location.CN.getId())) {
+//            storeName = WmsConstants.StoreName.CN;
+//        }
         //以外的场合，设置成仓库ID所属的仓库名称
         else {
             storeName = store.getStore_name();
@@ -744,28 +760,29 @@ public class WmsSetAllotInventoryService extends BaseTaskService {
 
         boolean blnSpilt = false ;
 
-        for (OrderChannelConfigBean orderChannelConfigBean: order_split) {
+        if (order_split != null) {
+            for (OrderChannelConfigBean orderChannelConfigBean : order_split) {
 
-            // 不同区域判断
-            if (orderChannelConfigBean.getCfg_val1().equals("1")) {
+                // 不同区域判断
+                if (orderChannelConfigBean.getCfg_val1().equals(WmsConstants.ORDER_SPLIT.AREA)) {
 
-                String store_area = "";
-                for (long store : storeList) {
+                    String store_area = "";
+                    for (long store : storeList) {
 
-                    if (!StringUtils.isNullOrBlank2(store_area) && !store_area.equals(StoreConfigs.getStore(store).getStore_area())) {
-                        blnSpilt = true;
+                        if (!StringUtils.isNullOrBlank2(store_area) && !store_area.equals(StoreConfigs.getStore(store).getStore_area())) {
+                            blnSpilt = true;
+                            break;
+                        }
+                        store_area = StoreConfigs.getStore(store).getStore_area();
+                    }
+
+                    if (blnSpilt == true) {
                         break;
                     }
-                    store_area = StoreConfigs.getStore(store).getStore_area();
-                }
 
-                if (blnSpilt == true) {
-                    break;
                 }
-
-            }
-            // 不同库存管理判断
-            else   if (orderChannelConfigBean.getCfg_val1().equals("2")) {
+                // 不同库存管理判断
+                else if (orderChannelConfigBean.getCfg_val1().equals(WmsConstants.ORDER_SPLIT.INVENTORY)) {
 
                     String inventory_manager = "";
                     for (long store : storeList) {
@@ -783,6 +800,7 @@ public class WmsSetAllotInventoryService extends BaseTaskService {
 
                 }
 
+            }
         }
 
 

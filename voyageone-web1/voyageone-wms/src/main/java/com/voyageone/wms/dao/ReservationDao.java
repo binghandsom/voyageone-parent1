@@ -6,6 +6,7 @@ import com.voyageone.common.util.StringUtils;
 import com.voyageone.core.modelbean.ChannelStoreBean;
 import com.voyageone.wms.formbean.FormPickupBean;
 import com.voyageone.wms.formbean.FormReservation;
+import com.voyageone.wms.formbean.PickedInfoBean;
 import com.voyageone.wms.modelbean.ReservationBean;
 import org.springframework.stereotype.Repository;
 
@@ -385,6 +386,35 @@ public class ReservationDao extends BaseDao {
         params.put("sku", sku);
 
         return updateTemplate.delete(Constants.DAO_NAME_SPACE_WMS + "inventory_center_logic_deleteSKU", params);
+
+    }
+
+    /**
+     * 获得已捡货信息一览
+
+     * @param params
+     * @return List<PickedInfoBean>
+     */
+    public List<PickedInfoBean> downloadPickedItemsByReservation(Map<String, Object> params) {
+
+        return updateTemplate.selectList(Constants.DAO_NAME_SPACE_WMS + "reservation_getPickedInfo", params);
+
+    }
+
+    /**
+     * 获得内部订单号
+     * @param orderChannelList 用户所属的ChannelID
+     * @param scanNo 输入的scanNo
+     * @return String
+     */
+    public String getOrderNumber(List<String> orderChannelList, String scanNo) {
+
+        Map<String, Object> params = new HashMap<>();
+
+        params.put("scanNo", scanNo);
+        params.put("orderChannelList", orderChannelList);
+
+        return updateTemplate.selectOne(Constants.DAO_NAME_SPACE_WMS + "order_getOrderNumber", params);
 
     }
 }

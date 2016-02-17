@@ -57,4 +57,15 @@ public interface WmsPickupService {
     byte[] downloadPickup(String type, UserSessionBean user);
 
 
+    /**
+     * 【捡货画面】下载已捡货报告
+     * @param store_id 画面的检索参数
+     * @param from 画面的检索参数
+     * @param to
+     * @param user 用户登录信息
+     * @return ResponseEntity<byte[]> 可捡货列表
+     */
+    byte[] downloadReportPicked(String store_id,String from,String to, UserSessionBean user,String reserveType);
+
+
 }

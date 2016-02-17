@@ -43,6 +43,7 @@ define(['components/app', 'components/services/language.service', "underscore"],
                     WMS_SCAN: 'Scan',
                     WMS_RELABEL: 'Relabel',
                     WMS_PRINT: 'Print',
+                    WMS_AUTO_PRINT_SKU_LABEL: 'Auto print SKU label',
                     WMS_CHANNEL: 'Channel',
                     WMS_SHIP: 'Ship',
                     WMS_DESCRIPTION: 'Description',
@@ -95,6 +96,7 @@ define(['components/app', 'components/services/language.service', "underscore"],
                     WMS_TRANSFER: 'Transfer',
                     WMS_TRANSFERNAME: 'Transfer Name',
                     WMS_TARGETOUT: 'Target Out',
+                    WMS_CLIENT_SHIPMENT: 'Client Shipment',
                     WMS_LOCATION: 'Location',
                     WMS_ADDLOCATION: 'Add location',
                     WMS_PLEASESAVETRANSFERFIREST: 'Please save transfer first.',
@@ -125,6 +127,8 @@ define(['components/app', 'components/services/language.service', "underscore"],
                     WMS_ORDERNUMBERANDTRANSFERNAME: 'Order#/Transfer Name',
                     WMS_RECORDNUMBER: 'Total Record Number : ',
                     WMS_RETURNTYPE: 'Return Type',
+                    WMS_SIZE: 'Size',
+                    WMS_ITEM_CODE: 'ItemCode',
 
                     // 弹出提示框的内容翻译部分
                     WMS_ALERT_UPC_MSRP: "Msrp must be number!",
@@ -133,6 +137,7 @@ define(['components/app', 'components/services/language.service', "underscore"],
 
                     WMS_ALERT_TRANSFER_DELETE: "Will delete this transfer [ {{transfer_name}} ], sure ?",
                     WMS_ALERT_TRANSFER_DELETE_FAIL: "delete transfer failed. please check its status.",
+                    WMS_ALERT_TRANSFER_COMPARE: "Transfer quantity is different with the quantity Client provided,whether to continue to submit? <br />You can download compare report to confirm.",
 
                     WMS_ALERT_TRANSFER_EDIT_NO_TYPE: "No transfer type, cant add transfer.",
                     WMS_ALERT_TRANSFER_EDIT_CLOSED: "Current Transfer, already closed.",
@@ -175,6 +180,8 @@ define(['components/app', 'components/services/language.service', "underscore"],
                     WMS_PICKUP_RELABEL: 'Are you sure ?<br/> ReLabel the {{scanTypeName}} [ {{scanNo}} ] s Pick note.',
                     WMS_PICKUP_TYPE_UN_VALID: "{{scanTypeName}} is required !",
                     WMS_PICKUP_PERMIT: "No permit to PickUp Items !",
+                    WMS_DEL_REPORT_CHECK_DATE: "Only get one day of interval data, edit the from time or to time!",
+
                     WMS_RECEIVE_PERMIT: "No permit to Receive Orders !",
 
                     WMS_LOCATION_NOT_FOUND:"Not found location",
@@ -202,7 +209,10 @@ define(['components/app', 'components/services/language.service', "underscore"],
                     //report
                     WMS_INVENTORY_DETAIL_REPORT: 'Inventory Details Report',
                     WMS_STOCKTAKE_COMPARERES_REPORT: 'Stocktake Compare Result Report',
-                    WMS_INCLUDING_RETURN_STORE: 'Including return Store'
+                    WMS_INCLUDING_RETURN_STORE: 'Including return Store',
+
+                    WMS_DOWNLOAD_PICKED: 'Download Report Of Picked',
+                    WMS_DOWNLOAD_RECEIVED: 'Download Report Of Received',
                 });
         }]);
 });

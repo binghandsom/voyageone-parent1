@@ -11,7 +11,9 @@ public interface CodeConstants {
         public static final String ITOMS = "ITOMS";
         public static final String ITWMS = "ITWMS";
         public static final String ITIMS = "ITIMS";
+        public static final String ITSYNSHIP = "ITSYNSHIP";
         public static final String NEED_SOLVE ="NEED_SOLVE";
+        public static final String SP_THIRD_REPORT = "SP_THIRD_REPORT";
 	}
 
     /**
@@ -68,10 +70,11 @@ public interface CodeConstants {
         public final static String Open = "11";
         public final static String Reserved = "12";
         public final static String Packaged = "13";
-        public final static String ShippedUS = "14";
+        public final static String Shipped = "14";
         public final static String Arrived = "15";
         public final static String Clearance = "16";
         public final static String ShippedCN = "17";
+        public final static String ShippedTP = "24";
         public final static String Missed = "80";
         public final static String Lost = "96";
         public final static String BackOrderConfirmed = "96";
@@ -99,20 +102,26 @@ public interface CodeConstants {
     }
 
     final class TRACKING {
-        public static final String INFO_010 = "010";//您提交的订单，客服已经审批通过
-        public static final String INFO_020 = "020";//您的订单已经进入【洛杉矶仓库】准备出库，预定与美国洛杉矶时间早晨10点左右（中国时间凌晨1点）开始处理
-        public static final String INFO_030 = "030";//您的订单已经拣货完成
-        public static final String INFO_040 = "040";//您的订单已经打印并且打包装箱完毕                  Print/Package
-        public static final String INFO_050 = "050";//您的订单已交由航空货运开始国际段运送        直邮 GZ_PACKAGE
-        public static final String INFO_051 = "051";//您的订单已交由【%s】开始国际段运送 运单号：【%s】        上海转运 TM_PACKAGE
-        public static final String INFO_052 = "052";//您的订单已离开美国中部爱荷华州前往洛杉矶        美国内部转运LA_PACKAGE
-        public static final String INFO_060 = "060";//您的订单已到达海关，等待机构清关                  Received
-        public static final String INFO_070 = "070";//您的订单已交由【s1%】进行国内段运送 运单号：【s2%】        GZ_PACKAGE
-        public static final String INFO_071 = "071";//您的订单已清关，等待国内转运    TM_PACKAGE
-        public static final String INFO_080 = "080";//您的订单已交由【s1%】进行国内段运送 运单号：【s2%】        TM_PACKAGE
-        public static final String INFO_061 = "061";//您的订单已到达香港，将由香港邮政收寄                  HK_PACKAGE
-        public static final String INFO_062 = "062";//您的订单将由香港邮政收寄                  HK_PACKAGE
-        public static final String INFO_072 = "072";//您的订单已交由【%s】开始配送，运单号：【%s】                  HK_PACKAGE
+        public static final String INFO_010 = "010";//订单已揽收
+        public static final String INFO_020 = "020";//订单已经进入【%s仓库】准备出库，预定于%s时间早晨10点左右开始处理
+        public static final String INFO_030 = "030";//订单开始发往集散中心
+        public static final String INFO_040 = "040";//订单已抵达集散中心
+        public static final String INFO_050 = "050";//订单开始国际运输
+        public static final String INFO_051 = "051";//订单已交由【%s】开始国际段运送 运单号：【%s】
+        public static final String INFO_052 = "052";//订单已离开美国%s前往洛杉矶
+        public static final String INFO_053 = "053";//订单开始配送
+        public static final String INFO_060 = "060";//订单已到达海关，等待机构清关
+        public static final String INFO_061 = "061";//订单已抵达香港口岸，将由香港邮政收寄
+        public static final String INFO_062 = "062";//您的订单将由香港邮政收寄
+        public static final String INFO_070 = "070";//订单已交由【%s】进行国内段运送 运单号：【%s】
+        public static final String INFO_071 = "071";//订单已通关完成
+        public static final String INFO_072 = "072";//订单已交由【%s】开始配送，运单号：【%s】
+        public static final String INFO_077 = "077";//订单国际段物流已结束，等待上海转发。
+        public static final String INFO_080 = "080";//订单已交由【%s】进行国内段运送 运单号：【%s】
+        public static final String INFO_990 = "990";//订单正在被海关查验，查验时间预计1至2天，请耐心等待。
+        public static final String INFO_991 = "991";//因为快递承运商无法递送，取消之前的运单，等待变更新的快递承运商
+        public static final String INFO_992 = "992";//货物确认丢件，仓库重新安排发货
+
     }
 
     // tt_shipment_info.proccess_type
