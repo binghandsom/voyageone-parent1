@@ -60,7 +60,11 @@ public class TaskControlEnums {
         /**
          * 验证身份证间隔
          */
-        valid_interval
+        valid_interval,
+        /**
+         * 删除历史记录间隔
+         */
+        delete_time_interval
     }
 
     /**
