@@ -1,5 +1,9 @@
 package com.voyageone.common.util;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.commons.net.util.Base64;
+
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -9,6 +13,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public final class StringUtils {
+
+    private static final Pattern special_symbol = Pattern.compile("[.]");
+
+    private static Log logger = LogFactory.getLog(StringUtils.class);
 
     public static String null2Space(String input) {
         if (input == null) {
@@ -492,6 +500,50 @@ public final class StringUtils {
 
         return ret;
     }
+	
+	
+	/**
+     * 把str中的【.】替换成【->】
+     * @param str
+     * @return
+     */
+    public static String replaceDot(String str){
+        return special_symbol.matcher(str).replaceAll("->");
+    }
+
+    /**
+     * 把str中的【->】替换成【.】
+     */
+    public static String replaceToDot(String str){
+        return str.replaceAll("->", ".");
+    }
+
+    /**
+     * BASE64字符串二进制数据编码为
+     */
+    public static String decodeBase64(String input) {
+        String result = null;
+        if (input != null) {
+            result = new String(Base64.decodeBase64(input.getBytes()));
+        }
+        return result;
+    }
+
+    /**
+     * 二进制数据编码为BASE64字符串
+     */
+    public static String encodeBase64(String input) {
+        String result = null;
+        if (input != null) {
+            result = new String(Base64.encodeBase64(input.getBytes()));
+        }
+        return result;
+    }
+
+    public static String generCatId(String catPath) {
+        return MD5.getMD5(catPath);
+    }
+	
 
 //    public static void main(String[] args) {
 //        String content = "<img src=https://img.alicdn.com/imgextra/i3/2694857307/TB2GprUjVXXXXbjXpXXXXXXXXXX_!!2694857307.jpg> <p>The envelope <img src=https://img.alicdn.com/imgextra/i3/2694857307/TB2GprUjVXXXXbjXpXXXXXXXXXX_!!2694857307.jpg>clutch is reimagined in smooth cork with splashes of vivid colors for an artistic finish.</p><ul><li>Magnetic snap closure.</li><li>Material: Cork.</li><li>Lining: Rayon.</li><li>Imported.</li></ul><br /><p>这款信封式手拿包的灵感来源于鲜艳的色彩飞溅在光滑的软木上，体现了现代艺术与自然的结合.</p><ul><li>磁扣闭合.</li><li>材质: 软木.</li><li>内衬: 人造丝.</li><li>进口原厂制作.</li></ul>  <img src=https://img.alicdn.com/imgextra/i3/2694857307/TB2GprUjVXXXXbjXpXXXXXXXXXX_!!2694857307.jpg> <br>";

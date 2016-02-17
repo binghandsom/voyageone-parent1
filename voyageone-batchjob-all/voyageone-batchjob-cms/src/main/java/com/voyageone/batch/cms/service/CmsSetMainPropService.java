@@ -4,7 +4,8 @@ import com.voyageone.batch.base.BaseTaskService;
 import com.voyageone.batch.cms.bean.*;
 import com.voyageone.batch.cms.dao.MainPropDao;
 import com.voyageone.batch.cms.dao.SuperFeedDao;
-import com.voyageone.batch.cms.emum.FeedPropMappingType;
+
+import com.voyageone.batch.cms.enums.FeedPropMappingType;
 import com.voyageone.batch.core.Enums.TaskControlEnums;
 import com.voyageone.batch.core.modelbean.TaskControlBean;
 import com.voyageone.batch.core.util.TaskControlUtils;

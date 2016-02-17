@@ -178,12 +178,12 @@ public class TmallProductService implements PlatformServiceInterface {
 
         Long categoryCode = Long.valueOf(tcb.getPlatformCId());
         String brandCode = brandMapDao.cmsBrandToPlatformBrand(workLoadBean.getOrder_channel_id(),
-                workLoadBean.getCart_id(), Integer.parseInt(cmsModelProp.getProp(CmsFieldEnum.CmsModelEnum.brand_id)));
+                workLoadBean.getCart_id(), Integer.parseInt(cmsModelProp.getProp(CmsFieldEnum.CmsModelEnum.brand)));
 
         if (brandCode == null || "".equals(brandCode))
         {
             String abortCause = "Job abort: can not find brand_code by brandId "
-                    + cmsModelProp.getProp(CmsFieldEnum.CmsModelEnum.brand_id)
+                    + cmsModelProp.getProp(CmsFieldEnum.CmsModelEnum.brand)
                     + ", workload:" + workLoadBean;
             logger.error(abortCause);
             throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo(abortCause));
@@ -922,12 +922,12 @@ public class TmallProductService implements PlatformServiceInterface {
         }
 
         String brandCode = brandMapDao.cmsBrandToPlatformBrand(workLoadBean.getOrder_channel_id(),
-                workLoadBean.getCart_id(), Integer.parseInt(cmsModelProp.getProp(CmsFieldEnum.CmsModelEnum.brand_id)));
+                workLoadBean.getCart_id(), Integer.parseInt(cmsModelProp.getProp(CmsFieldEnum.CmsModelEnum.brand)));
 
         if (brandCode == null || "".equals(brandCode))
         {
             logger.info("Job abort: can not find brand_code by brandId " +
-                    cmsModelProp.getProp(CmsFieldEnum.CmsModelEnum.brand_id) + ", workload:" + workLoadBean);
+                    cmsModelProp.getProp(CmsFieldEnum.CmsModelEnum.brand) + ", workload:" + workLoadBean);
             throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo("No brand found"));
         }
         else {
@@ -1459,7 +1459,7 @@ public class TmallProductService implements PlatformServiceInterface {
                     {
                         throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo("No sku builder find"));
                     }
-                     //
+                    //
                     DictWordBean dictWordBean = dictWordDao.selectDictWordByName(workLoadBean.getOrder_channel_id(), "属性图片模板");
                     RuleJsonMapper ruleJsonMapper = new RuleJsonMapper();
                     DictWord dictWord = (DictWord) ruleJsonMapper.deserializeRuleWord(dictWordBean.getValue());
@@ -1467,13 +1467,12 @@ public class TmallProductService implements PlatformServiceInterface {
                     skuFieldBuilder.setCodeImageTemplete(codePropImageTemplate);
 
                     List<Field> skuInfoFields = skuFieldBuilder.buildSkuInfoField(cartId, categoryCode, platformProps,
-                     workLoadBean.getCmsModelProp(), contextBuildCustomFields, imageSet);
+                            workLoadBean.getCmsModelProp(), contextBuildCustomFields, imageSet);
 
                     if (skuInfoFields == null)
                     {
                         throw new TaskSignal(TaskSignalType.ABORT, new AbortTaskSignalInfo("Can't build SkuInfoField"));
                     }
-
                     contextBeforeUploadImage.getCustomFields().addAll(skuInfoFields);
                     contextBuildCustomFields.setSkuFieldBuilder(skuFieldBuilder);
                     break;

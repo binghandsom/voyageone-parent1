@@ -8,6 +8,4 @@
 
 	<import resource="applicationContext-ims.xml"/>
 
-	<import resource="dao-mongo-collecion-mapping.xml"/>
-
 </beans>

@@ -12,6 +12,8 @@ public class TaxDetailReportDisBean {
     private int month_calc;
     private String order_channel_name;
     private String tracking_no;
+    private String syn_ship_no;
+    private String main_waybill_num;
     private String source_order_id;
     private String client_order_number;
     private String pay_in_warrant_num;
@@ -55,6 +57,22 @@ public class TaxDetailReportDisBean {
 
     public void setTracking_no(String tracking_no) {
         this.tracking_no = tracking_no;
+    }
+
+    public String getSyn_ship_no() {
+        return syn_ship_no;
+    }
+
+    public void setSyn_ship_no(String syn_ship_no) {
+        this.syn_ship_no = syn_ship_no;
+    }
+
+    public String getMain_waybill_num() {
+        return main_waybill_num;
+    }
+
+    public void setMain_waybill_num(String main_waybill_num) {
+        this.main_waybill_num = main_waybill_num;
     }
 
     public String getSource_order_id() {

@@ -10,4 +10,7 @@ public enum WordType{
     MASTER,
     CONDITION,
     CUSTOM,
+    FEED_ORG,
+    FEED_CN,
+    SKU,
 }

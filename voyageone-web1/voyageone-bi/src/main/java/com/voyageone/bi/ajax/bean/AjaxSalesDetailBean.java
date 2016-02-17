@@ -68,6 +68,15 @@ public class AjaxSalesDetailBean extends AjaxRequestBean {
 			this.categoryDisBean = categoryDisBean;
 		}
 		
+		// [款式]销量请求
+		private List<ChartGridDisBean> modelDisBean;
+		public List<ChartGridDisBean> getModelDisBean() {
+			return modelDisBean;
+		}
+		public void setModelDisBean(List<ChartGridDisBean> modelDisBean) {
+			this.modelDisBean = modelDisBean;
+		}
+		
 		// [产品]销量请求
 		private List<ChartGridDisBean> productDisBean;
 		public List<ChartGridDisBean> getProductDisBean() {

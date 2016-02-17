@@ -7,7 +7,10 @@ import com.voyageone.web2.core.CoreConstants;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import com.voyageone.web2.core.dao.UserConfigDao;
 import com.voyageone.web2.core.dao.UserDao;
-import com.voyageone.web2.core.model.*;
+import com.voyageone.web2.core.model.ChannelPermissionModel;
+import com.voyageone.web2.core.model.PermissionModel;
+import com.voyageone.web2.core.model.UserConfigModel;
+import com.voyageone.web2.core.model.UserModel;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.crypto.hash.Md5Hash;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,6 +96,12 @@ public class UserService extends BaseAppService {
                 .collect(toList());
 
         user.setPagePermission(pagePermissions);
+    }
+
+    public String getUserLanguage (UserSessionBean user) {
+        List<UserConfigModel> languageInfo = user.getUserConfig().get(CoreConstants.USER_CONFIG_LANGUAGE_ID);
+
+        return languageInfo != null && languageInfo.size() > 0 ? languageInfo.get(0).getCfg_val1() : "en";
     }
 
     private Map<String , List<UserConfigModel>> getUserConfig(int userId) {

@@ -5,7 +5,6 @@ import org.apache.commons.lang3.StringUtils;
 
 /**
  * 第三方品牌数据比对的条件
- * <p>
  * Created by Jonas on 9/2/15.
  */
 public class Condition {

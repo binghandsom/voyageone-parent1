@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.cms.sql">
+
+    <!-- 插入item details的数据 -->
+    <insert id="wms_bt_item_details_insert" parameterType="HashMap">
+        insert into Synship.wms_bt_item_details
+        (
+            `order_channel_id`,
+            `sku`,
+            `product_id`,
+            `itemcode`,
+            `size`,
+            `barcode`,
+            `is_sale`,
+            `client_sku`,
+            `active`,
+            `creater`,
+            `created`,
+            `modifier`,
+            `modified`
+
+        )
+        values
+            (#{itemDetailsBean.order_channel_id},
+            #{itemDetailsBean.sku},
+            #{itemDetailsBean.product_id},
+            #{itemDetailsBean.itemcode},
+            #{itemDetailsBean.size},
+            #{itemDetailsBean.barcode},
+            #{itemDetailsBean.is_sale},
+            #{itemDetailsBean.client_sku},
+            #{itemDetailsBean.active},
+            #{taskName},
+            NOW(),
+            '',
+            null
+        )
+        ;
+ </insert>
+
+  <!-- 根据product id, 获取item details表的数据 -->
+  <select id="wms_bt_item_details_select_by_code"
+          parameterType="HashMap"
+          resultType="com.voyageone.batch.cms.bean.ItemDetailsBean">
+  select
+	order_channel_id,
+	sku,
+	product_id,
+	itemcode,
+	size,
+	barcode,
+	is_sale,
+	client_sku,
+	active
+  from  Synship.wms_bt_item_details
+  where order_channel_id = #{channelId}
+    and itemcode = #{code}
+    ;
+  </select>
+
+</mapper>

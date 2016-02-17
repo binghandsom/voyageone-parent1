@@ -12,39 +12,42 @@ var versions = {
 };
 var build = {
   version: versions.statics,
+  actions: {
+    src: 'develop/modules/*/actions.json'
+  },
   common: {
     angular: {
       src: 'develop/components/angular/*/*.js',
       dist: 'develop/components/dist',
-      footerFile: 'develop/components/angular/voyageone.angular.com.suffix',
+      footerFile: 'voyageone.angular.suffix',
       concat: 'voyageone.angular.com.js',
       version: versions.angularCom
     },
     native: {
       src: 'develop/components/js/*.js',
       dist: 'develop/components/dist',
-      concat: 'voyageone.com.min.js',
-      map: 'voyageone.com.min.js.map',
+      concat: 'voyageone.com.js',
+      map: 'voyageone.com.js.map',
       version: versions.com
     },
     appCss: {
       src: [
         'develop/static/css/twitter-bootstrap/local/bootstrap.css',
-        'develop/static/css/animate.css',
-        'develop/static/css/font-awesome.css',
-        'develop/static/css/simple-line-icons.css',
+        'develop/static/css/assets/animate.css',
+        'develop/static/css/assets/font-awesome.css',
+        'develop/static/css/assets/simple-line-icons.css',
         'develop/static/css/font.css',
         'develop/static/css/app.css'
       ],
-      dist: 'develop/static/',
+      dist: 'develop/static/css/',
       concat: 'app.min.css'
     },
     loginCss: {
       src: [
         'develop/static/css/login.css',
-        'develop/static/css/font-awesome.css'
+        'develop/static/css/assets/font-awesome.css'
       ],
-      dist: 'develop/static/',
+      dist: 'develop/static/css/',
       concat: 'login.min.css'
     }
   }
@@ -52,6 +55,7 @@ var build = {
 var publish = {
   version: versions.publish,
   static: {
+    path: 'publish/static/' + versions.statics,
     fonts: {
       src: 'develop/static/fonts/**',
       dist: 'publish/static/' + versions.statics + '/fonts'
@@ -61,8 +65,8 @@ var publish = {
       dist: 'publish/static/' + versions.statics + '/img'
     },
     css: {
-      src: 'develop/static/*.css',
-      dist: 'publish/static/' + versions.statics
+      src: 'develop/static/css/*.min.css',
+      dist: 'publish/static/' + versions.statics + '/css'
     }
   },
   components: {
@@ -74,39 +78,65 @@ var publish = {
     }
   },
   libs: {
-    src: 'develop/libs/**/*min.js'
+    src: ['develop/libs/**/*min.js','develop/libs/**/*min.css']
   },
   loginAndChannel: {
     js: 'develop/*.js',
     html: 'develop/*.html'
   },
-  views: {
-    js: 'develop/views/**/*.js',
-    html: 'develop/views/**/*.html',
-    json: 'develop/views/**/*.json'
+  modules: {
+    js: 'develop/modules/**/*.js',
+    html: 'develop/modules/**/*.html',
+    json: 'develop/modules/**/*.json'
   },
   release: {
     static: {
+      path: 'publish/release/' + versions.publish + '/static',
       fonts: 'publish/release/' + versions.publish + '/static/fonts',
       img: 'publish/release/' + versions.publish + '/static/img',
-      css: 'publish/release/' + versions.publish + '/static'
+      css: 'publish/release/' + versions.publish + '/static/css'
     },
     components: 'publish/release/' + versions.publish + '/components/dist',
     libs: 'publish/release/' + versions.publish + '/libs',
-    views: 'publish/release/' + versions.publish + '/views',
+    modules: 'publish/release/' + versions.publish + '/modules',
     loginAndChannel: 'publish/release/' + versions.publish
+  },
+  replace_value: {
+    voyageone_angular_com: 'components/dist/voyageone.angular.com',
+    'voyageone_com': 'components/dist/voyageone.com',
+    'angular_animate': 'libs/angular.js/1.5.0-RC.0/angular-animate',
+    'angular_route': 'libs/angular.js/1.5.0-RC.0/angular-route',
+    'angular_sanitize': 'libs/angular.js/1.5.0-RC.0/angular-sanitize',
+    'angular_cookies': 'libs/angular.js/1.5.0-RC.0/angular-cookies',
+    'angular': 'libs/angular.js/1.5.0-RC.0/angular',
+    'angular_translate': 'libs/angular-translate/2.8.1/angular-translate',
+    'angular_block_ui': 'libs/angular-block-ui/0.2.1/angular-block-ui',
+    'angular_ui_bootstrap': 'libs/angular-ui-bootstrap/0.14.3/ui-bootstrap-tpls-0.14.3',
+    'angular_ngStorage': 'libs/angular-ngStorage/ngStorage',
+    'angular_file_upload': 'libs/angular-file-upload/2.2.0/angular-file-upload',
+    'angularAMD': 'libs/angularAMD/0.2.1/angularAMD',
+    'ngload': 'libs/angularAMD/0.2.1/ngload',
+    'jquery': 'libs/jquery/2.1.4/jquery.js',
+    'underscore': 'libs/underscore.js/1.8.3/underscore',
+    'css': 'libs/require-css/0.1.8/css',
+    'json': 'libs/requirejs-plugins/1.0.3/json',
+    'text': 'libs/require-text/2.0.12/text',
+    'filestyle': 'libs/bootstrap-filestyle/1.2.1/bootstrap-filestyle',
+    'notify': 'libs/notify/0.4.0/notify',
+    'angular_block_ui_css': 'css!libs/angular-block-ui/0.2.1/angular-block-ui.css'
   }
 };
 var tasks = {
   build: {
+    actions: 'build-actions-doc',
     angular: 'build-angular-com',
+    angular_suff: 'build-angular-suff',
     com: 'build-com',
     css: {
       all: 'build-css',
       app : 'build-css-app',
       login : 'build-css-login'
-    },
-    watch: 'watch-build'
+    }
   },
   publish: {
     all: 'publish',
@@ -114,7 +144,8 @@ var tasks = {
     angular: 'publish-angular-com',
     com: 'publish-com',
     libs: 'publish-libs',
-    views: 'publish-views'
+    modules: 'publish-modules',
+    del: 'publish-del'
   }
 };
 

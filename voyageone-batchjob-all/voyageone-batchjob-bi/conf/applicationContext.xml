@@ -16,6 +16,12 @@
     <!-- DAO相关配置 -->
     <import resource="dao-config.xml"/>
 
+    <!-- mongo DAO相关配置 -->
+    <import resource="datasource-config-mongo-sample.xml"/>
+
+    <!-- sdk-client相关配置 -->
+    <import resource="sdk-client-config-sample.xml"/>
+
     <!-- 异常处理 -->
     <!-- <bean id="exceptionHandler" class="com.voyageone.core.exception.ExceptionHandler"/> -->
 

@@ -1,0 +1,110 @@
+<div class="vo_modal" ng-init="initialize()">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$close()"><span
+                aria-hidden="true"><i class="fa fa-close"></i></span></button>
+        <h5 class="modal-title"><i class="glyphicons glyphicons-edit"></i> 类目属性编辑</h5>
+    </div>
+    <div class="modal-body wrapper">
+        <form role="form" class="form-horizontal" name="promotionFrom">
+            <div class="form-group">
+                <label class="col-sm-3 control-label">类目</label>
+                <div class="col-sm-8">
+                    <input class="form-control" ng-required="true" ng-model="vm.catFullName" disabled>
+                </div>
+            </div><!-- .form-group -->
+            <div class="form-group">
+                <label class="col-sm-3 control-label">属性ID</label>
+                <div class="col-sm-8">
+                    <input class="form-control" ng-required="true" ng-model="vm.schema.id" ng-disabled="addOrEditFlg == 1" required>
+                </div>
+            </div><!-- .form-group -->
+            <div class="form-group">
+                <label class="col-sm-3 control-label">属性名称</label>
+                <div class="col-sm-8">
+                    <input class="form-control" ng-required="true" ng-model="vm.schema.name" ng-disabled="addOrEditFlg == 1" required>
+                </div>
+            </div><!-- .form-group -->
+            <div class="form-group">
+                <label class="col-sm-3 control-label">属性Type</label>
+                <div class="col-sm-8">
+                    <select class="form-control" ng-model="vm.schema.type" ng-required="true">
+                        <option value="INPUT">input</option>
+                        <option value="LABEL">label</option>
+                        <option value="SINGLECHECK">singleCheck</option>
+                        <option value="MULTICHECK">multiCheck</option>
+                        <option value="MULTICOMPLEX">multiComplex</option>
+                        <option value="COMPLEX">complex</option>
+                    </select>
+                </div>
+            </div>
+        </form>
+        <tabset class="tab-container vo_nav-tabs m-t-lg">
+            <tab ng-if="vm.schema.type == 'SINGLECHECK'|| vm.schema.type == 'MULTICHECK'">
+                <tab-heading> Options</tab-heading>
+                <div class="table-responsive">
+                    <div class="col-sm-8">
+                        <div class="input-group">
+                            <input type="text" class="input-sm form-control" placeholder="Name&Value">
+											          <span class="input-group-btn">
+                                                          <button class="btn btn-sm btn-default" type="button"><i class="fa fa-search"></i> search</button>
+											          </span>
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <button class="btn m-b-xs btn-sm btn-success btn-addon pull-right"><i class="fa fa-plus"></i>新增</button>
+                    </div>
+                </div>
+                <div class="table-responsive m-l-xs m-r-xs">
+                    <table class="table table-hover-new table-hover">
+                        <thead>
+                        <tr class="control-label">
+                            <th>Name</th>
+                            <th>Value</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="option in vm.schema.options">
+                            <td><input class="form-control" ng-model="option.displayName"></td>
+                            <td><input class="form-control" ng-model="option.value"></td>
+                            <td><button title="删除" ng-click="delOption(option)" class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i></button></td>
+                        </tr>
+                        <tr>
+                            <td><input class="form-control" ng-model="newOption.displayName"></td>
+                            <td><input class="form-control" ng-model="newOption.value"></td>
+                            <td><button title="追加" ng-click="addOption()" class="btn btn-success btn-xs"><i class="fa fa-plus"></i></button></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </tab>
+            <!-- .tab -->
+            <tab ><!--ng-if="false"-->
+                <tab-heading> Rules </tab-heading>
+                <form class="form-validate form-horizontal m-l-sm">
+                    <div class="form-group" ng-repeat="rule in vm.schema.rules">
+                        <div ng-if="rule.name == 'requiredRule'">
+                            <div class="col-sm-3">
+                                <label class="checkbox-inline c-checkbox"><input type="checkbox"  ng-checked="rule.value == 'true'" ng-click="onChecked(rule)"  value="20"><span class="fa fa-check"></span> {{rule.name}} </label>
+                            </div>
+                        </div>
+                        <div ng-if="rule.name != 'requiredRule'">
+                            <div class="col-sm-3">
+                                {{rule.name}}
+                                <!--<label class="checkbox-inline c-checkbox"><input type="checkbox" value="20"><span class="fa fa-check"></span> {{rule.name}} </label>-->
+                            </div>
+                            <div class="col-sm-4">
+                                <input class="form-control" ng-model="rule.value">
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </tab>
+            <!-- / tab -->
+        </tabset>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-default" ng-click="$close()"><i class="fa fa-remove"></i> 取消</button>
+        <button class="btn btn-vo" ng-click="ok()"><i class="glyphicon glyphicon-floppy-disk"></i> 保存</button>
+    </div>
+</div><!-- .vo_modal -->

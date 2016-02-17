@@ -9,20 +9,17 @@ import com.voyageone.batch.bi.spider.service.base.JumeiUploadDataService;
 import com.voyageone.batch.bi.spider.service.jumei.JumeiUploadService;
 import com.voyageone.batch.bi.util.FileUtils;
 import com.voyageone.batch.configs.FileProperties;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.Select;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.text.DecimalFormat;
 import java.util.List;
 
@@ -69,8 +66,8 @@ public class JumeiUploadServiceImpl implements JumeiUploadService {
                     selectLevel4.selectByVisibleText(jumeiProductBean.getJumei_category4());
                 } catch (Exception e) {
                     JumeiRecordBean jumeiRecord = doErrorRecordProduct(jumeiProductBean);
-                    jumeiRecord.setError_type_id(3);
-                    jumeiRecord.setError_message("上新失败:分类设置失败");
+                    jumeiRecord.setError_type_id(10);
+                    jumeiRecord.setError_message("ProductUpload失败:分类设置失败");
                     jumeiUploadDataService.insertJumeiRecord(jumeiRecord);
                 }
 
@@ -87,7 +84,7 @@ public class JumeiUploadServiceImpl implements JumeiUploadService {
                     List<WebElement> myOptions = brand.getOptions();
                     for (WebElement option : myOptions) {
                         String strDescription = option.getAttribute("text");
-                        if (strDescription.indexOf(jumeiProductBean.getJumei_brand()) >= 0) {
+                        if (strDescription.toLowerCase().indexOf(jumeiProductBean.getJumei_brand().toLowerCase()) >= 0) {
                             brand.selectByVisibleText(strDescription);
                             boolBrand = false;
                             break;
@@ -95,16 +92,16 @@ public class JumeiUploadServiceImpl implements JumeiUploadService {
                     }
                 } catch (Exception e) {
                     JumeiRecordBean jumeiRecord = doErrorRecordProduct(jumeiProductBean);
-                    jumeiRecord.setError_type_id(9);
-                    jumeiRecord.setError_message("上新失败:品牌设置失败");
+                    jumeiRecord.setError_type_id(11);
+                    jumeiRecord.setError_message("ProductUpload失败:品牌设置失败");
                     jumeiUploadDataService.insertJumeiRecord(jumeiRecord);
                     boolBrand = false;
                 }
 
                 if (boolBrand) {
                     JumeiRecordBean jumeiRecord = doErrorRecordProduct(jumeiProductBean);
-                    jumeiRecord.setError_type_id(9);
-                    jumeiRecord.setError_message("上新失败:品牌设置失败");
+                    jumeiRecord.setError_type_id(12);
+                    jumeiRecord.setError_message("ProductUpload失败:品牌设置失败");
                     jumeiUploadDataService.insertJumeiRecord(jumeiRecord);
                     boolBrand = true;
                 }
@@ -122,16 +119,35 @@ public class JumeiUploadServiceImpl implements JumeiUploadService {
                 //产品主图1
                 try {
                     uploadImageFile(jumeiProductBean.getProduct_image1(), jumeiProductBean.getImage_url_from1(), imageControlList.get(0));
+                    Thread.sleep(1000);
+                    String stringProductImage2 = jumeiProductBean.getProduct_image2();
                     uploadImageFile(jumeiProductBean.getProduct_image2(), jumeiProductBean.getImage_url_from2(), imageControlList.get(1));
-                    uploadImageFile(jumeiProductBean.getProduct_image3(), jumeiProductBean.getImage_url_from3(), imageControlList.get(2));
-                    uploadImageFile(jumeiProductBean.getProduct_image4(), jumeiProductBean.getImage_url_from4(), imageControlList.get(3));
-                    uploadImageFile(jumeiProductBean.getProduct_image5(), jumeiProductBean.getImage_url_from5(), imageControlList.get(4));
-                    uploadImageFile(jumeiProductBean.getProduct_image6(), jumeiProductBean.getImage_url_from6(), imageControlList.get(5));
+                    Thread.sleep(1000);
+                    String stringProductImage3 = jumeiProductBean.getProduct_image3();
+                    if (!stringProductImage3.equals(stringProductImage2)) {
+                        uploadImageFile(jumeiProductBean.getProduct_image3(), jumeiProductBean.getImage_url_from3(), imageControlList.get(2));
+                        Thread.sleep(1000);
+                    }
+                    String stringProductImage4 = jumeiProductBean.getProduct_image4();
+                    if (!stringProductImage4.equals(stringProductImage3)) {
+                        uploadImageFile(jumeiProductBean.getProduct_image4(), jumeiProductBean.getImage_url_from4(), imageControlList.get(3));
+                        Thread.sleep(1000);
+                    }
+                    String stringProductImage5 = jumeiProductBean.getProduct_image5();
+                    if (!stringProductImage5.equals(stringProductImage4)) {
+                        uploadImageFile(jumeiProductBean.getProduct_image5(), jumeiProductBean.getImage_url_from5(), imageControlList.get(4));
+                        Thread.sleep(1000);
+                    }
+                    String stringProductImage6 = jumeiProductBean.getProduct_image6();
+                    if (!stringProductImage6.equals(stringProductImage5)) {
+                        uploadImageFile(jumeiProductBean.getProduct_image6(), jumeiProductBean.getImage_url_from6(), imageControlList.get(5));
+                        Thread.sleep(1000);
+                    }
 
                 } catch (Exception e) {
                     JumeiRecordBean jumeiRecord = doErrorRecordProduct(jumeiProductBean);
-                    jumeiRecord.setError_type_id(3);
-                    jumeiRecord.setError_message("上新失败:图片获取失败");
+                    jumeiRecord.setError_type_id(13);
+                    jumeiRecord.setError_message("ProductUpload失败:图片获取失败");
                     jumeiUploadDataService.insertJumeiRecord(jumeiRecord);
                 }
 
@@ -174,23 +190,23 @@ public class JumeiUploadServiceImpl implements JumeiUploadService {
                 JumeiRecordBean jumeiRecord = doErrorRecordProduct(jumeiProductBean);
                 String currentUrl = driver.getCurrentUrl();
                 if (currentUrl.equals("http://a.jumeiglobal.com/GlobalProduct/List")) {
-                    jumeiRecord.setError_type_id(33);
-                    jumeiRecord.setError_message("新品上传成功");
+                    jumeiRecord.setError_type_id(22);
+                    jumeiRecord.setError_message("ProductUpload成功");
                 } else {
                     WebElement centerTip = driver.findElement(By.className("centerTip"));
                     String resultHtml = centerTip.findElement(By.tagName("div")).getAttribute("innerHTML");
                     Document resultHtmlDoc = Jsoup.parse(resultHtml);
                     String msg = resultHtmlDoc.text();
-                    jumeiRecord.setError_type_id(11);
-                    jumeiRecord.setError_message("message:=[" + msg + "]");
+                    jumeiRecord.setError_type_id(14);
+                    jumeiRecord.setError_message("ProductUpload失败：message:=[" + msg + "]");
                 }
 
                 jumeiUploadDataService.insertJumeiRecord(jumeiRecord);
 
             } catch (Exception e) {
                 JumeiRecordBean jumeiRecord = doErrorRecordProduct(jumeiProductBean);
-                jumeiRecord.setError_type_id(1);
-                jumeiRecord.setError_message("上新失败:" + e.getMessage());
+                jumeiRecord.setError_type_id(15);
+                jumeiRecord.setError_message("ProductUpload失败:" + e.getMessage());
                 jumeiUploadDataService.insertJumeiRecord(jumeiRecord);
                 logger.info(jumeiProductBean.getProduct_code());
                 logger.error(e.getMessage(), e);
@@ -214,24 +230,25 @@ public class JumeiUploadServiceImpl implements JumeiUploadService {
 
     private boolean uploadImageFile(String product_image, String image_url_from, WebElement imageControl) throws InterruptedException {
         if (image_url_from != null && !"".equals(image_url_from.trim()) && !"0".equals(image_url_from.trim())) {
+            Thread.sleep(500);
             String url = image_url_from;
             String fileName = product_image + ".jpg";
             String strSavePath = FileProperties.readValue("bi.jumei.save.path");
             FileUtils.deleteFile(strSavePath, fileName);
             logger.info("uploadImageFile start:" + fileName + ";" + url);
-        	int index=0;
-        	while (index < 5) {
-        		try {
-	            	if (FileUtils.downloadImageWithProxy(url, fileName, strSavePath)) {
-	                    imageControl.sendKeys(strSavePath + "\\" + fileName);
-	                    logger.info("uploadImageFile end:" + fileName + ";" + url);
-	                    return true;
-	                }
-	            } catch (Exception e) {
-	            }
-            	index++;
-            	Thread.sleep(1000);
-        	}
+            int index = 0;
+            while (index < 5) {
+                try {
+                    if (FileUtils.downloadImageWithProxy(url, fileName, strSavePath)) {
+                        imageControl.sendKeys(strSavePath + "\\" + fileName);
+                        logger.info("uploadImageFile end:" + fileName + ";" + url);
+                        Thread.sleep(1500);
+                        return true;
+                    }
+                } catch (Exception e) {
+                }
+                index++;
+            }
             logger.info("uploadImageFile error:" + fileName + ";" + url);
         }
 
@@ -277,7 +294,7 @@ public class JumeiUploadServiceImpl implements JumeiUploadService {
                         WebElement spu_table_tr = spu_table_trs.get(i);
                         List<WebElement> spu_table_tds = spu_table_tr.findElements(By.tagName("td"));
                         if (spu_table_tds.size() > 7) {
-                            String spu_size = spu_table_tds.get(7).getText();
+                            String spu_size = spu_table_tds.get(8).getText();
                             String strJumeiSize = sku.getJumei_size();
                             if (strJumeiSize.equals(spu_size)) {
                                 isExist = true;
@@ -313,7 +330,7 @@ public class JumeiUploadServiceImpl implements JumeiUploadService {
 //                    if (size.contains("加宽")) {
 //                        size = size.replace("加宽", "CDW");
 //                    }
-                    
+
                     for (JumeiSkuBean skuGet : skuListGet) {
                         String strJumeiSize = skuGet.getJumei_size();
                         if (strJumeiSize.equals(size)) {
@@ -388,40 +405,66 @@ public class JumeiUploadServiceImpl implements JumeiUploadService {
 
                 // 获取编辑框
                 List<WebElement> editors = driver.findElements(By.xpath("//div[@class='ke-container ke-container-default']"));
-                
+
 
                 // 本单详情
                 WebElement editorIframe = editors.get(0);
                 clearEditorContent(editorIframe);
                 uploadEditorImage(jumeiDealBean, jumeiDealBean.getDetail(), "ThisDeal", driver, editorIframe);
+                uploadEditorImage(jumeiDealBean, jumeiDealBean.getDetail2(), "ThisDeal", driver, editorIframe);
+                uploadEditorImage(jumeiDealBean, jumeiDealBean.getDetail3(), "ThisDeal", driver, editorIframe);
+                uploadEditorImage(jumeiDealBean, jumeiDealBean.getDetail4(), "ThisDeal", driver, editorIframe);
+                uploadEditorImage(jumeiDealBean, jumeiDealBean.getDetail5(), "ThisDeal", driver, editorIframe);
 
                 // 使用方法
                 editorIframe = editors.get(1);
                 clearEditorContent(editorIframe);
-                
+
                 // 获取编辑框
                 WebElement usage = editorIframe.findElement(By.xpath("div/iframe[@class='ke-edit-iframe']"));
+                editorIframe.findElement(By.xpath("div/span[@title='居中']")).click();
+//                editorIframe.findElement(By.xpath("div/span[@title='文字大小']")).click();
+//                editorIframe.findElement(By.xpath("div/div[@style='height: 26px;']")).click();
                 usage.sendKeys(jumeiDealBean.getCms_long_description());
                 //使用方法图片
                 uploadEditorImage(jumeiDealBean, jumeiDealBean.getUsage(), "ThisUsage", driver, editorIframe);
+                //使用方法图片2
+                uploadEditorImage(jumeiDealBean, jumeiDealBean.getUsage2(), "ThisUsage", driver, editorIframe);
+                //使用方法图片3
+                uploadEditorImage(jumeiDealBean, jumeiDealBean.getUsage3(), "ThisUsage", driver, editorIframe);
+
 
                 // 商品实拍
                 editorIframe = editors.get(2);
                 clearEditorContent(editorIframe);
-                
+
+
                 //商品实拍1
                 uploadEditorImage(jumeiDealBean, jumeiDealBean.getProduct_image_url_from1(), "ThisProduct1", driver, editorIframe);
+                String stringProductImage2 = jumeiDealBean.getProduct_image_url_from2();
                 //商品实拍2
                 uploadEditorImage(jumeiDealBean, jumeiDealBean.getProduct_image_url_from2(), "ThisProduct2", driver, editorIframe);
-                //商品实拍3
-                uploadEditorImage(jumeiDealBean, jumeiDealBean.getProduct_image_url_from3(), "ThisProduct3", driver, editorIframe);
-                //商品实拍4
-                uploadEditorImage(jumeiDealBean, jumeiDealBean.getProduct_image_url_from4(), "ThisProduct4", driver, editorIframe);
-                //商品实拍5
-                uploadEditorImage(jumeiDealBean, jumeiDealBean.getProduct_image_url_from5(), "ThisProduct5", driver, editorIframe);
-                //商品实拍6
-                uploadEditorImage(jumeiDealBean, jumeiDealBean.getProduct_image_url_from6(), "ThisProduct6", driver, editorIframe);
+                String stringProductImage3 = jumeiDealBean.getProduct_image_url_from3();
+                if (!stringProductImage3.equals(stringProductImage2)) {
+                    //商品实拍3
+                    uploadEditorImage(jumeiDealBean, jumeiDealBean.getProduct_image_url_from3(), "ThisProduct3", driver, editorIframe);
+                }
+                String stringProductImage4 = jumeiDealBean.getProduct_image_url_from4();
+                if (!stringProductImage4.equals(stringProductImage3)) {
+                    //商品实拍4
+                    uploadEditorImage(jumeiDealBean, jumeiDealBean.getProduct_image_url_from4(), "ThisProduct4", driver, editorIframe);
+                }
+                String stringProductImage5 = jumeiDealBean.getProduct_image_url_from5();
+                if (!stringProductImage5.equals(stringProductImage4)) {
+                    //商品实拍5
+                    uploadEditorImage(jumeiDealBean, jumeiDealBean.getProduct_image_url_from5(), "ThisProduct5", driver, editorIframe);
+                }
 
+                String stringProductImage6 = jumeiDealBean.getProduct_image_url_from6();
+                if (!stringProductImage6.equals(stringProductImage5)) {
+                    //商品实拍6
+                    uploadEditorImage(jumeiDealBean, jumeiDealBean.getProduct_image_url_from6(), "ThisProduct6", driver, editorIframe);
+                }
                 //购买流程1
                 uploadEditorImage(jumeiDealBean, jumeiDealBean.getBuy_process1(), "ThisBuyProcess1", driver, editorIframe);
                 //购买流程2
@@ -448,18 +491,18 @@ public class JumeiUploadServiceImpl implements JumeiUploadService {
                 String msg = resultHtmlDoc.text();
                 JumeiRecordBean jumeiRecord = doErrorRecordDeal(jumeiDealBean);
                 if (msg.indexOf("新增成功") >= 0) {
-                    jumeiRecord.setError_type_id(22);
-                    jumeiRecord.setError_message("Deal保存并送审成功");
+                    jumeiRecord.setError_type_id(44);
+                    jumeiRecord.setError_message("DealUpload成功：保存并送审成功");
                 } else {
-                    jumeiRecord.setError_type_id(4);
-                    jumeiRecord.setError_message("message:=[" + msg + "]");
+                    jumeiRecord.setError_type_id(16);
+                    jumeiRecord.setError_message("DealUpload失败：message:=[" + msg + "]");
                 }
                 jumeiUploadDataService.insertJumeiRecord(jumeiRecord);
 
             } catch (Exception e) {
                 JumeiRecordBean jumeiRecord = doErrorRecordDeal(jumeiDealBean);
-                jumeiRecord.setError_type_id(4);
-                jumeiRecord.setError_message("Deal失败:" + e.getMessage());
+                jumeiRecord.setError_type_id(17);
+                jumeiRecord.setError_message("DealUpload失败：" + e.getMessage());
                 jumeiUploadDataService.insertJumeiRecord(jumeiRecord);
                 logger.info(jumeiDealBean.getProduct_code());
                 logger.error(e.getMessage(), e);
@@ -479,6 +522,9 @@ public class JumeiUploadServiceImpl implements JumeiUploadService {
                 deleteImageFile("ThisBuyProcess2", jumeiDealBean.getBuy_process2());
                 deleteImageFile("ThisBuyProcess3", jumeiDealBean.getBuy_process3());
                 deleteImageFile("ThisBuyProcess4", jumeiDealBean.getBuy_process4());
+                jumeiUploadDataService.synchronizeJumeiProductRecord();
+                jumeiUploadDataService.synchronizeJumeiDealRecord();
+                jumeiUploadDataService.updateJumeiRecord();
             }
 
             index++;
@@ -488,38 +534,41 @@ public class JumeiUploadServiceImpl implements JumeiUploadService {
             Thread.sleep(DataSearchConstants.THREAD_SLEEP);
         }
     }
+
     private boolean clearEditorContent(WebElement editorIframe) {
-    	try {
-    		WebElement iframe = editorIframe.findElement(By.xpath("div/iframe[@class='ke-edit-iframe']"));
-    		iframe.sendKeys(Keys.chord(Keys.CONTROL, "a"));
-		    Thread.sleep(100);
-		    iframe.sendKeys(Keys.DELETE);
-		    Thread.sleep(100);
-		    return true;
-    	 } catch (Exception e) {
-    	 }
-    	return false;
+        try {
+            WebElement iframe = editorIframe.findElement(By.xpath("div/iframe[@class='ke-edit-iframe']"));
+            iframe.sendKeys(Keys.chord(Keys.CONTROL, "a"));
+            Thread.sleep(100);
+            iframe.sendKeys(Keys.DELETE);
+            Thread.sleep(100);
+            return true;
+        } catch (Exception e) {
+        }
+        return false;
     }
 
     private boolean uploadEditorImage(JumeiDealBean jumeiDealBean, String image, String fileName, WebDriver driver, WebElement editorIframe) {
-        if (image != null && !"".equals(image.trim()) &&  !"0".equals(image.trim())) {
+        if (image != null && !"".equals(image.trim()) && !"0".equals(image.trim())) {
             try {
+                Thread.sleep(500);
                 editorIframe.findElement(By.xpath("div/span[@title='图片']")).click();
+
+                image = getUtf8Url(image);
                 Thread.sleep(500);
                 if (image.toLowerCase().indexOf("jmstatic.com") > 0) {
-                	driver.findElement(By.id("remoteUrl")).sendKeys(image);
-                	driver.findElement(By.xpath("//span/input[@value='确定']")).click();
+                    driver.findElement(By.id("remoteUrl")).sendKeys(image);
+                    driver.findElement(By.xpath("//span/input[@value='确定']")).click();
                 } else {
                     //driver.findElement(By.xpath("//ul/li[@class='ke-tabs-li']")).click();
-                	WebElement tabs_ul = driver.findElement(By.xpath("//ul[@class='ke-tabs-ul ke-clearfix']"));
+                    WebElement tabs_ul = driver.findElement(By.xpath("//ul[@class='ke-tabs-ul ke-clearfix']"));
                     List<WebElement> tabs = tabs_ul.findElements(By.tagName("li"));
-                    if (tabs.size()>1) {
+                    if (tabs.size() > 1) {
                         tabs.get(1).click();
                     }
-                    Thread.sleep(500);
                     if (uploadImageFile("ThisBuyProcess1", image, driver.findElement(By.xpath("//div/input[@type='file']")))) {
                         driver.findElement(By.xpath("//span/input[@value='确定']")).click();
-                        Thread.sleep(500);
+                        Thread.sleep(1500);
                     } else {
                         driver.findElement(By.xpath("//span/input[@value='取消']")).click();
                         Thread.sleep(500);
@@ -528,14 +577,34 @@ public class JumeiUploadServiceImpl implements JumeiUploadService {
                 return true;
             } catch (Exception e) {
                 JumeiRecordBean jumeiRecord = doErrorRecordDeal(jumeiDealBean);
-                jumeiRecord.setError_type_id(7);
-                jumeiRecord.setError_message("Deal失败：Deal图片" + image + "不符合要求");
+                jumeiRecord.setError_type_id(18);
+                jumeiRecord.setError_message("DealUpload失败：Deal图片" + image + "不符合要求");
                 jumeiUploadDataService.insertJumeiRecord(jumeiRecord);
             }
         }
         return false;
     }
-    
+
+    private String getUtf8Url(String url) {
+        char[] chars = url.toCharArray();
+        StringBuilder utf8Url = new StringBuilder();
+        final int charCount = chars.length;
+        for (int i = 0; i < charCount; i++) {
+            byte[] bytes = ("" + chars[i]).getBytes();
+            if (bytes.length == 1) {
+                utf8Url.append(chars[i]);
+            }else{
+                try {
+                    utf8Url.append(URLEncoder.encode(String.valueOf(chars[i]), "UTF-8"));
+                } catch (UnsupportedEncodingException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+        }
+        return utf8Url.toString();
+    }
+
     private JumeiRecordBean doErrorRecordProduct(JumeiProductBean jumeiProductBean) {
 
         JumeiRecordBean jumeiRecord = new JumeiRecordBean();
@@ -560,4 +629,6 @@ public class JumeiUploadServiceImpl implements JumeiUploadService {
 
         return jumeiRecord;
     }
+
+
 }

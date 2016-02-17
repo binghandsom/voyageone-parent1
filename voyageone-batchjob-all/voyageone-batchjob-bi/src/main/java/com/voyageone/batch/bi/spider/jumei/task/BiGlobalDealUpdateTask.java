@@ -7,6 +7,7 @@ import java.util.regex.Pattern;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -46,11 +47,11 @@ public class BiGlobalDealUpdateTask extends BaseSpiderService {
         try {
             FormUser user = new FormUser();
             user.setUser_name("Voyageone");
-            user.setUser_ps("voyage1@la&SH");
+            user.setUser_ps("voyage1@sh&LA");
             //需要修改：data_base
             user.setDb_name("test");
             //需要修改：channel_id
-            user.setChannel_code("BHFO");
+            user.setChannel_code("JW");
             if (UtilCheckData.checkUser(user)) {
                 UtilCheckData.setLocalUser(user);
 
@@ -66,7 +67,7 @@ public class BiGlobalDealUpdateTask extends BaseSpiderService {
                 fireFoxDriverService.initialLocalLoginFireFoxDriver(driverConfigBean);
                 WebDriver driver = driverConfigBean.getInitial_driver();
                 //需要修改：task_id
-                List<JumeiDealBean> productDealBeanLst = jumeiUploadDataService.getUploadJumeiDealList("", "BHFO003");
+                List<JumeiDealBean> productDealBeanLst = jumeiUploadDataService.getUploadJumeiDealList("", "JW003");
                 for (JumeiDealBean deal : productDealBeanLst) {
                     //运行查询URL
                 	String searchUrl = "http://a.jumeiglobal.com/GlobalDeal/List?product_name=" + deal.getProduct_code();
@@ -75,24 +76,25 @@ public class BiGlobalDealUpdateTask extends BaseSpiderService {
                     boolean isFindProduct = true;
                     if (strOrderLog.contains("共0个商品")) {
                     	driver.findElement(By.name("Search[product_name]")).clear();
-                    	driver.findElement(By.name("Search[product_name]")).sendKeys(deal.getProduct_code());
-//                        driver.findElement(By.name("Search[sku_no]")).sendKeys(deal.getTitle_short());
+//                    	driver.findElement(By.name("Search[product_name]")).sendKeys(deal.getProduct_code());
+                        driver.findElement(By.name("Search[sku_no]")).sendKeys(deal.getTitle_short());
                         List<WebElement> elementsButton = driver.findElements(By.xpath("//div/button"));
                         elementsButton.get(0).click();
                         strOrderLog = driver.findElement(By.className("tb-top")).getText();
                         if (strOrderLog.contains("共0个商品")) {
                         	logger.info("商品编号" + deal.getProduct_code() + "未上传");
                             String strTitle =deal.getTitle_long() + " " + deal.getProduct_code();
-                            insertRecordLog(deal, 5, strTitle, "Deal失败：未找到对应新品");
+                            insertRecordLog(deal, 8, strTitle, "Deal失败：未找到对应新品");
                             isFindProduct = false;
                     	}
                     }
                         
                     if (isFindProduct) {
-                        //SKU选择
+
                         List<WebElement> tds = driver.findElements(By.xpath("//tbody/tr/td"));
                         //获得PID
-                        WebElement elementPID = tds.get(15);
+                        WebElement elementPID = tds.get(20);
+
                         List<WebElement> a_list = elementPID.findElements(By.xpath("div/div/a"));
                         String dID = null;
                         for (WebElement aTag : a_list) {
@@ -113,12 +115,12 @@ public class BiGlobalDealUpdateTask extends BaseSpiderService {
                         if (dID != null) {
                             String strProductCode = deal.getProduct_code();
                             //需要修改：task_id
-                            List<JumeiSkuBean> skuLst = jumeiUploadDataService.getUploadJumeiSkuList(strProductCode, "BHFO003");
+                            List<JumeiSkuBean> skuLst = jumeiUploadDataService.getUploadJumeiSkuList(strProductCode, "JW003");
                         	//更新DEAL
                         	jumeiUpdateService.updateDeal(driver, dID, deal, skuLst);
                         }else {
                             String strTitle =deal.getTitle_long() + " " + deal.getProduct_code();
-                            insertRecordLog(deal, 6, strTitle, "Deal失败：对应新品未完成审核(pid not found)");
+                            insertRecordLog(deal, 9, strTitle, "Deal失败：对应新品未完成审核(pid not found)");
                         }
                     }
 
@@ -127,6 +129,10 @@ public class BiGlobalDealUpdateTask extends BaseSpiderService {
             }
         } catch (Exception e) {
             logger.error("Driver Initial execute error", e);
+        }finally {
+            jumeiUploadDataService.synchronizeJumeiProductRecord();
+            jumeiUploadDataService.synchronizeJumeiDealRecord();
+            jumeiUploadDataService.updateJumeiRecord();
         }
     }
 

@@ -18,28 +18,19 @@ public final class JsonUtil {
 
     /**
      * 根据json字符串返回对应java类型
-     *
-     * @param jsonString
-     * @param cls
-     * @return
      */
     public static <T> T jsonToBean(String jsonString, Class<T> cls) {
-        T t = null;
 
         Gson gson = new Gson();
-        t = gson.fromJson(jsonString, cls);
 
-        return t;
+        return gson.fromJson(jsonString, cls);
     }
 
     /**
      * 根据json字符串返回对应java类型List
-     *
-     * @param jsonString
-     * @param cls
-     * @return
      */
     public static <T> List<T> jsonToBeanList(String jsonString, Class<T> cls) {
+
         Type type = new TypeToken<ArrayList<JsonObject>>() {
         }.getType();
         ArrayList<JsonObject> jsonList = new Gson().fromJson(jsonString, type);
@@ -56,13 +47,10 @@ public final class JsonUtil {
 
     /**
      * 根据json字符串返回对应Map类型
-     *
-     * @param jsonString
-     * @return
      */
     @SuppressWarnings("unchecked")
     public static Map<String, Object> jsonToMap(String jsonString) {
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map;
         Gson gson = new Gson();
         map = gson.fromJson(jsonString, Map.class);
 
@@ -71,12 +59,9 @@ public final class JsonUtil {
 
     /**
      * 根据json字符串返回对应Map类型List
-     *
-     * @param jsonString
-     * @return
      */
     public static List<Map<String, Object>> jsonToMapList(String jsonString) {
-        List<Map<String, Object>> list = new ArrayList<Map<String, Object>>();
+        List<Map<String, Object>> list;
 
         Gson gson = new Gson();
         list = gson.fromJson(jsonString, new TypeToken<List<Map<String, Object>>>() {
@@ -87,9 +72,6 @@ public final class JsonUtil {
 
     /**
      * 根据json字符串返回对应java类型
-     *
-     * @param data
-     * @return
      */
     public static String getJsonString(Object data) {
         return new GsonBuilder().serializeNulls().create().toJson(data);

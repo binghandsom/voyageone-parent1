@@ -24,6 +24,10 @@ public class ProductPublishBean {
     private String modifier;
     private String modified;
 
+    public ProductPublishBean() {
+        main_product_flg = -1;
+    }
+
     public int getProduct_id() {
         return product_id;
     }

@@ -505,6 +505,13 @@
 
     <update id="wms_deleteLogicInventory">
         DELETE FROM wms_bt_inventory_center_logic
+        WHERE
+            EXISTS (select 1
+                      from tm_task_control task
+                      where task.task_id = 'WmsSetClientInventoryJob'
+                      and task.cfg_name = 'order_channel_id'
+                      and task.cfg_val1 = wms_bt_inventory_center_logic.order_channel_id
+                      and task.cfg_val2 = '1')
     </update>
 
     <update id="wms_updateBackOrder">

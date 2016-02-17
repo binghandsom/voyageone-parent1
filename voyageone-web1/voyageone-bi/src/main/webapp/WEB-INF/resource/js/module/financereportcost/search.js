@@ -102,6 +102,8 @@ function initGetCond() {
     finance_search_cond.time_end = $("#search_date_to").val();
     // 运单号
     finance_search_cond.tracking_no = $("#search_tracking_no").val();
+    // 提单号
+    finance_search_cond.main_waybill_num = $("#search_main_waybill_num").val();
     // 店铺订单编号
     finance_search_cond.source_order_id = $("#search_source_order_id").val();
     // 系统订单编号

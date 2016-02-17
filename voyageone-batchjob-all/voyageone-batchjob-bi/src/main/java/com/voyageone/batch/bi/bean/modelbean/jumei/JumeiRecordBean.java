@@ -1,5 +1,7 @@
 package com.voyageone.batch.bi.bean.modelbean.jumei;
 
+import java.sql.Timestamp;
+
 /**
  * Created by Kylin on 2015/9/2.
  */
@@ -11,6 +13,9 @@ public class JumeiRecordBean {
     private String jumei_product_name_cn_real;
     private int error_type_id;
     private String error_message;
+    private Timestamp update_time;
+    private Timestamp create_time;
+    private int del_flg;
 
     public String getChannel_id() {
         return channel_id;
@@ -58,5 +63,29 @@ public class JumeiRecordBean {
 
     public void setError_message(String error_message) {
         this.error_message = error_message;
+    }
+
+    public Timestamp getUpdate_time() {
+        return update_time;
+    }
+
+    public void setUpdate_time(Timestamp update_time) {
+        this.update_time = update_time;
+    }
+
+    public Timestamp getCreate_time() {
+        return create_time;
+    }
+
+    public void setCreate_time(Timestamp create_time) {
+        this.create_time = create_time;
+    }
+
+    public int getDel_flg() {
+        return del_flg;
+    }
+
+    public void setDel_flg(int del_flg) {
+        this.del_flg = del_flg;
     }
 }

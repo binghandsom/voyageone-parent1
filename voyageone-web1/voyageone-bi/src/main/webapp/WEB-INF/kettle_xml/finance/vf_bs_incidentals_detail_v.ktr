@@ -259,7 +259,7 @@
     </attributes>
   </connection>
   <order>
-  <hop> <from>get incidentals detail</from><to>set incidentals detail</to><enabled>Y</enabled> </hop>
+  <hop> <from>get incidentals detail</from><to>set master incidentals detail</to><enabled>Y</enabled> </hop>
   </order>
   <step>
     <name>get incidentals detail</name>
@@ -273,11 +273,11 @@
            <schema_name/>
            </partitioning>
     <connection>bi_source</connection>
-    <sql>SELECT&#xd;&#xa;fms_cost_transpotation_incidentals.seq AS seq,&#xd;&#xa;fms_cost_transpotation_incidentals.invoice_num,&#xd;&#xa;TRIM&#x28;&#x27; &#x27; FROM fms_cost_transpotation_incidentals.main_waybill_num&#x29; AS main_waybill_num,&#xd;&#xa;fms_cost_transpotation_incidentals.weight_actual_kg,&#xd;&#xa;fms_cost_transpotation_incidentals.weight_calc_kg,&#xd;&#xa;fms_cost_transpotation_incidentals.weight_actual_kg &#x2a; fms_unit_list.unit_price AS weight_actual_lb,&#xd;&#xa;fms_cost_transpotation_incidentals.weight_calc_kg &#x2a; fms_unit_list.unit_price AS weight_calc_lb,&#xd;&#xa;fms_cost_transpotation_incidentals.ground_handling_fee,&#xd;&#xa;fms_cost_transpotation_incidentals.storage_charges,&#xd;&#xa;COUNT&#x28;track_detail.tracking_no&#x29; AS tracking_qty&#xd;&#xa;FROM&#xd;&#xa;fms_cost_transpotation_incidentals&#xd;&#xa;LEFT JOIN bi_master.vf_bc_track_detail AS track_detail&#xd;&#xa;ON TRIM&#x28;&#x27; &#x27; FROM fms_cost_transpotation_incidentals.main_waybill_num&#x29; &#x3d; track_detail.main_waybill_num&#xd;&#xa;LEFT JOIN fms_unit_list&#xd;&#xa;ON fms_unit_list.cost_type_id &#x3d; &#x27;9&#x27;&#xd;&#xa;WHERE STR_TO_DATE&#x28;fms_cost_transpotation_incidentals.create_time,&#x27;&#x25;Y-&#x25;m-&#x25;d &#x25;H&#x3a;&#x25;i&#x3a;&#x25;s&#x27;&#x29;&#x3e;&#x3d;&#x27;&#x24;&#x7b;start_date&#x7d;&#x27;&#xd;&#xa;GROUP BY&#xd;&#xa;fms_cost_transpotation_incidentals.main_waybill_num</sql>
+    <sql>SELECT&#xd;&#xa;fms_cost_transpotation_incidentals.seq AS seq,&#xd;&#xa;fms_cost_transpotation_incidentals.invoice_num,&#xd;&#xa;TRIM&#x28;&#x27; &#x27; FROM fms_cost_transpotation_incidentals.main_waybill_num&#x29; AS main_waybill_num,&#xd;&#xa;fms_cost_transpotation_incidentals.weight_actual_kg,&#xd;&#xa;fms_cost_transpotation_incidentals.weight_calc_kg,&#xd;&#xa;fms_cost_transpotation_incidentals.weight_actual_kg &#x2a; fms_unit_list.unit_price AS weight_actual_lb,&#xd;&#xa;fms_cost_transpotation_incidentals.weight_calc_kg &#x2a; fms_unit_list.unit_price AS weight_calc_lb,&#xd;&#xa;fms_cost_transpotation_incidentals.ground_handling_fee,&#xd;&#xa;fms_cost_transpotation_incidentals.storage_charges,&#xd;&#xa;COUNT&#x28;track_detail.tracking_no&#x29; AS tracking_qty&#xd;&#xa;FROM&#xd;&#xa;fms_cost_transpotation_incidentals&#xd;&#xa;LEFT JOIN bi_master.vf_bc_track_detail AS track_detail&#xd;&#xa;ON TRIM&#x28;&#x27; &#x27; FROM fms_cost_transpotation_incidentals.main_waybill_num&#x29; &#x3d; track_detail.main_waybill_num&#xd;&#xa;LEFT JOIN fms_unit_list&#xd;&#xa;ON fms_unit_list.cost_type_id &#x3d; &#x27;9&#x27;&#xd;&#xa;WHERE&#xd;&#xa;	STR_TO_DATE&#x28;&#xd;&#xa;		DATE_ADD&#x28;&#xd;&#xa;			fms_cost_transpotation_incidentals.create_time,&#xd;&#xa;			INTERVAL 2 MONTH&#xd;&#xa;		&#x29;,&#xd;&#xa;		&#x27;&#x25;Y-&#x25;m-&#x25;d &#x25;H&#x3a;&#x25;i&#x3a;&#x25;s&#x27;&#xd;&#xa;	&#x29; &#x3e;&#x3d; &#x27;&#x24;&#x7b;start_date&#x7d;&#x27;&#xd;&#xa;GROUP BY&#xd;&#xa;fms_cost_transpotation_incidentals.main_waybill_num</sql>
     <limit>0</limit>
     <lookup/>
     <execute_each_row>N</execute_each_row>
-    <variables_active>N</variables_active>
+    <variables_active>Y</variables_active>
     <lazy_conversion_active>N</lazy_conversion_active>
      <cluster_schema/>
  <remotesteps>   <input>   </input>   <output>   </output> </remotesteps>    <GUI>
@@ -288,7 +288,7 @@
     </step>
 
   <step>
-    <name>set incidentals detail</name>
+    <name>set master incidentals detail</name>
     <type>InsertUpdate</type>
     <description/>
     <distribute>Y</distribute>

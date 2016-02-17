@@ -37,9 +37,9 @@
 
     <update id="cms_zz_worktable_bcbg_superfeed_full_updateStatusWithoutFailModel">
         UPDATE voyageone_cms.cms_zz_worktable_bcbg_superfeed_full
-        JOIN voyageone_cms.cms_zz_worktable_bcbg_styles_full ON styleID = feedStyleID
-        SET `status` = #{success_status}
-        WHERE `status` = #{target_status}
+          JOIN voyageone_cms.cms_zz_worktable_bcbg_styles_full ON styleID = feedStyleID
+           SET `status` = #{success_status}
+         WHERE `status` = #{target_status}
         <if test="modelFailList != null and modelFailList.size() > 0">
             AND SATNR NOT IN (<foreach collection="modelFailList" item="model" separator=",">#{model}</foreach>)
         </if>
@@ -47,9 +47,9 @@
 
     <update id="cms_zz_worktable_bcbg_superfeed_full_updateStatusWithoutFailCode">
         UPDATE voyageone_cms.cms_zz_worktable_bcbg_superfeed_full
-        JOIN voyageone_cms.cms_zz_worktable_bcbg_styles_full ON styleID = feedStyleID
-        SET `status` = #{success_status}
-        WHERE `status` = #{target_status}
+          JOIN voyageone_cms.cms_zz_worktable_bcbg_styles_full ON styleID = feedStyleID
+           SET `status` = #{success_status}
+         WHERE `status` = #{target_status}
         <if test="productFailList != null and productFailList.size() > 0">
             AND feedStyleID NOT IN (<foreach collection="productFailList" item="code" separator=",">#{code}</foreach>)
         </if>
@@ -69,8 +69,7 @@
 
     <insert id="cms_zz_worktable_bcbg_superfeed_full_insertFullByCode">
         INSERT INTO voyageone_cms.cms_zz_worktable_bcbg_superfeed_full
-        (MATNR, EAN11, BRAND_ID, MATKL, MATKL_ATT1, ZZCODE1, ZZCODE2, ZZCODE3, MEINS, BSTME, COLOR, COLOR_ATWTB, SIZE1,
-        SIZE1_ATWTB,
+        (MATNR, EAN11, BRAND_ID, MATKL, MATKL_ATT1, ZZCODE1, ZZCODE2, ZZCODE3, MEINS, BSTME, COLOR, COLOR_ATWTB, SIZE1, SIZE1_ATWTB,
         SIZE1_ATINN, ATBEZ, SAISO, SAISJ, SAITY, SATNR, MAKTX, WLADG, WHERL, MEAN_EAN11, A304_DATAB, A304_DATBI,
         A304_KBETR, A304_KONWA, A073_DATAB, A073_DATBI, A073_KBETR, A073_KONWA, status, feedStyleID)
         SELECT
@@ -95,7 +94,7 @@
         <where>
             `status` = #{target_status}
             <if test="updatedCodes != null and updatedCodes.size() > 0">
-                AND styleID IN (<foreach collection="updatedCodes" item="code" separator=",">#{code}</foreach>)
+              AND styleID IN (<foreach collection="updatedCodes" item="code" separator=",">#{code}</foreach>)
             </if>
         </where>
     </update>

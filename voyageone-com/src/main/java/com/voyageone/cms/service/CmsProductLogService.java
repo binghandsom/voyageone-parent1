@@ -14,7 +14,6 @@ public class CmsProductLogService {
 
     /**
      * CmsBtProductModel变更接口留下日志
-     * @param product
      */
     public void insertProductHistory(CmsBtProductModel product) {
         CmsBtProductLogModel logModel = new CmsBtProductLogModel();

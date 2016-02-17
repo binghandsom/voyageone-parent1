@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.bi.mapper.OfficialTaxMapper">
+
+    <!-- 获得vf_bc_price_detail信息结构 -->
+    <resultMap id="officialTaxMap" type="bi.OfficialTaxBean">
+        <result column="year_calc" property="year_calc"/>
+        <result column="month_calc" property="month_calc"/>
+        <result column="date_calc" property="date_calc"/>
+        <result column="ship_date" property="ship_date"/>
+        <result column="port_id" property="port_id"/>
+        <result column="tax_object_id" property="tax_object_id"/>
+        <result column="channel_code" property="channel_code"/>
+        <result column="order_channel_name" property="order_channel_name"/>
+        <result column="shipment_id" property="shipment_id"/>
+        <result column="order_number" property="order_number"/>
+        <result column="source_order_id" property="source_order_id"/>
+        <result column="client_order_number" property="client_order_number"/>
+        <result column="reservation_id" property="reservation_id"/>
+        <result column="syn_ship_no" property="syn_ship_no"/>
+        <result column="tracking_no" property="tracking_no"/>
+        <result column="sku" property="sku"/>
+        <result column="hs_code_use" property="hs_code_use"/>
+        <result column="rate" property="rate"/>
+        <result column="declare_price" property="declare_price"/>
+        <result column="declare_quantity" property="declare_quantity"/>
+        <result column="custom_duties" property="custom_duties"/>
+    </resultMap>
+
+    <!-- 设定official_tax_detail_report检索条件 -->
+    <sql id="official_tax_detail_report_condition">
+        <where>
+            <if test="tracking_no_fuzzy != null and tracking_no_fuzzy != '' ">
+                vf_bc_price_detail.tracking_no LIKE CONCAT(#{tracking_no_fuzzy},'%' )
+            </if>
+            <if test="year_from != null and year_from != '' ">
+                and vf_bc_price_detail.year_calc <![CDATA[>=]]> #{year_from}
+            </if>
+            <if test="year_to != null and year_to != '' ">
+                and vf_bc_price_detail.year_calc <![CDATA[<=]]> #{year_to}
+            </if>
+            <if test="month_from != null and month_from != '' ">
+                and vf_bc_price_detail.month_calc <![CDATA[>=]]> #{month_from}
+            </if>
+            <if test="month_to != null and month_to != '' ">
+                and vf_bc_price_detail.month_calc <![CDATA[<=]]> #{month_to}
+            </if>
+            <if test="channel_code != null and channel_code != '' ">
+                and vf_bc_price_detail.channel_code IN ( ${channel_code} )
+            </if>
+            <if test="tracking_no != null and tracking_no != '' ">
+                and vf_bc_price_detail.tracking_no = #{tracking_no}
+            </if>
+            <if test="main_waybill_num != null and main_waybill_num != '' ">
+                and vf_bc_price_detail.main_waybill_num = #{main_waybill_num}
+            </if>
+            <if test="source_order_id != null and source_order_id != '' ">
+                and vf_bc_price_detail.source_order_id = #{source_order_id}
+            </if>
+            <if test="order_number != null and order_number != '' ">
+                and vf_bc_price_detail.order_number = #{order_number}
+            </if>
+            <if test="ship_date_from != null and ship_date_from != '' ">
+                AND vf_bc_price_detail.ship_date <![CDATA[>=]]> convert(#{ship_date_from}, datetime)
+            </if>
+            <if test="ship_date_to != null and ship_date_to != '' ">
+                AND vf_bc_price_detail.ship_date <![CDATA[<=]]> convert(#{ship_date_to}, datetime)
+            </if>
+            <if test="data_null_check != null and data_null_check != '' ">
+                AND (vf_bc_price_detail.declare_price IS NOT NULL OR vf_bc_price_detail.declare_price > 0)
+            </if>
+            <if test="port_id != null and port_id != '' ">
+                AND vf_bc_price_detail.port_id IN ( ${port_id} )
+            </if>
+        </where>
+    </sql>
+
+    <sql id="official_tax_detail_report_condition_fuzzy">
+        <where>
+            <if test="tracking_no_fuzzy != null and tracking_no_fuzzy != '' ">
+                vf_bc_price_detail.tracking_no LIKE CONCAT(#{tracking_no_fuzzy},'%' )
+            </if>
+            <if test="year_from != null and year_from != '' ">
+                and vf_bc_price_detail.year_calc <![CDATA[>=]]> #{year_from}
+            </if>
+            <if test="year_to != null and year_to != '' ">
+                and vf_bc_price_detail.year_calc <![CDATA[<=]]> #{year_to}
+            </if>
+            <if test="month_from != null and month_from != '' ">
+                and vf_bc_price_detail.month_calc <![CDATA[>=]]> #{month_from}
+            </if>
+            <if test="month_to != null and month_to != '' ">
+                and vf_bc_price_detail.month_calc <![CDATA[<=]]> #{month_to}
+            </if>
+            <if test="channel_code != null and channel_code != '' ">
+                and vf_bc_price_detail.channel_code IN ( ${channel_code} )
+            </if>
+            <if test="tracking_no != null and tracking_no != '' ">
+                and vf_bc_price_detail.tracking_no LIKE CONCAT('%',#{tracking_no},'%' )
+            </if>
+            <if test="main_waybill_num != null and main_waybill_num != '' ">
+                and vf_bc_price_detail.main_waybill_num LIKE CONCAT('%',#{main_waybill_num},'%' )
+            </if>
+            <if test="source_order_id != null and source_order_id != '' ">
+                and vf_bc_price_detail.source_order_id LIKE CONCAT('%',#{source_order_id},'%' )
+            </if>
+            <if test="order_number != null and order_number != '' ">
+                and vf_bc_price_detail.order_number LIKE CONCAT('%',#{order_number},'%' )
+            </if>
+            <if test="ship_date_from != null and ship_date_from != '' ">
+                AND vf_bc_price_detail.ship_date <![CDATA[>=]]> convert(#{ship_date_from}, datetime)
+            </if>
+            <if test="ship_date_to != null and ship_date_to != '' ">
+                AND vf_bc_price_detail.ship_date <![CDATA[<=]]> convert(#{ship_date_to}, datetime)
+            </if>
+            <if test="data_null_check != null and data_null_check != '' ">
+                AND (vf_bc_price_detail.declare_price IS NOT NULL OR vf_bc_price_detail.declare_price > 0)
+            </if>
+            <if test="port_id != null and port_id != '' ">
+                AND vf_bc_price_detail.port_id IN ( ${port_id} )
+            </if>
+        </where>
+    </sql>
+
+    <!-- 获得official_tax_detail_report数量 -->
+    <select id="select_count_official_tax_detail_report" parameterType="Map" resultType="int">
+        select
+        count(1)
+        FROM
+        bi_master.vf_bc_price_detail AS vf_bc_price_detail
+        <include refid="official_tax_detail_report_condition_fuzzy"/>
+        ORDER BY
+        vf_bc_price_detail.year_calc,
+        vf_bc_price_detail.month_calc,
+        vf_bc_price_detail.order_channel_name,
+        vf_bc_price_detail.order_number
+    </select>
+
+    <!-- 检索official_tax_detail_report信息 -->
+    <select id="select_list_official_tax_detail_report" parameterType="Map" resultMap="officialTaxMap">
+        SELECT
+        vf_bc_price_detail.year_calc AS 'year_calc',
+        vf_bc_price_detail.month_calc AS 'month_calc',
+        vf_bc_price_detail.date_calc AS 'date_calc',
+        vf_bc_price_detail.ship_date AS 'ship_date',
+        CASE vf_bc_price_detail.port_id
+        WHEN '10' THEN
+        'SH'
+        WHEN '12' THEN
+        'HK'
+        WHEN '13' THEN
+        'GZ'
+        WHEN '16' THEN
+        'SYB'
+        ELSE
+        'AAA'
+        END AS 'port_id',
+        vf_bc_price_detail.tax_object_id AS 'tax_object_id',
+        vf_bc_price_detail.channel_code AS 'channel_code',
+        vf_bc_price_detail.order_channel_name AS 'order_channel_name',
+        vf_bc_price_detail.shipment_id AS 'shipment_id',
+        vf_bc_price_detail.order_number AS 'order_number',
+        vf_bc_price_detail.source_order_id AS 'source_order_id',
+        vf_bc_price_detail.client_order_number AS 'client_order_number',
+        vf_bc_price_detail.reservation_id AS 'reservation_id',
+        vf_bc_price_detail.syn_ship_no AS 'syn_ship_no',
+        vf_bc_price_detail.item_number AS 'item_number',
+        vf_bc_price_detail.tracking_no AS 'tracking_no',
+        vf_bc_price_detail.main_waybill_num AS 'main_waybill_num',
+        vf_bc_price_detail.sku AS 'sku',
+        vf_bc_price_detail.hs_code_use AS 'hs_code_use',
+        vf_bc_price_detail.rate * 100 AS 'rate',
+        vf_bc_price_detail.rmb_price AS 'rmb_price',
+        vf_bc_price_detail.exchange_rate AS 'exchange_rate',
+        vf_bc_price_detail.declare_price AS 'declare_price',
+        vf_bc_price_detail.declare_quantity AS 'declare_quantity',
+        vf_bc_price_detail.declare_price * vf_bc_price_detail.rate AS 'custom_duties'
+        FROM
+        bi_master.vf_bc_price_detail AS vf_bc_price_detail
+        <include refid="official_tax_detail_report_condition_fuzzy"/>
+        ORDER BY
+        vf_bc_price_detail.year_calc,
+        vf_bc_price_detail.month_calc,
+        vf_bc_price_detail.order_channel_name,
+        vf_bc_price_detail.order_number
+        <if test="init_index != null and init_index != '' ">
+            LIMIT #{init_index}, #{get_size}
+        </if>
+    </select>
+
+</mapper>

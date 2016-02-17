@@ -5,51 +5,50 @@
  */
 
 angular.module('voyageone.angular.services.cookie', [])
-  .service('cookieService', CookieService);
+    .service('cookieService', CookieService);
 
 var keys = {
-  language: 'voyageone.user.language',
-  company: 'voyageone.user.company',
-  channel: 'voyageone.user.channel',
-  menu: "voyageone.user.menu",
-  name: "voyageone.user.name"
+    language: 'voyageone.user.language',
+    company: 'voyageone.user.company',
+    channel: 'voyageone.user.channel',
+    application: "voyageone.user.application"
 };
 
 function gentProps(key) {
-  return function(val) {
-    if (arguments.length === 1) {
-      return this.set(key, val);
-    } else if (arguments.length > 1) {
-      return this.set(key, arguments);
-    }
-    return this.get(key);
-  };
+    return function (val) {
+        if (arguments.length === 1) {
+            return this.set(key, val);
+        } else if (arguments.length > 1) {
+            return this.set(key, arguments);
+        }
+        return this.get(key);
+    };
 }
 
 function CookieService($cookieStore) {
-  this.$cookieStore = $cookieStore;
-  // init
-  this.set(keys.language, '');
-  this.set(keys.company, '');
-  this.set(keys.channel, '');
-  this.set(keys.menu, '');
+    this.$cookieStore = $cookieStore;
 }
 
-CookieService.prototype.get = function(key) {
-  return this.$cookieStore.get(key);
+CookieService.prototype.get = function (key) {
+    var result = this.$cookieStore.get(key);
+    return result == undefined || result == null ? "" : this.$cookieStore.get(key);
 };
 
-CookieService.prototype.set = function(key, value) {
-  return this.$cookieStore.put(key, value);
+CookieService.prototype.set = function (key, value) {
+    return this.$cookieStore.put(key, value);
 };
 
 CookieService.prototype.language = gentProps(keys.language);
 
 CookieService.prototype.company = gentProps(keys.company);
 
-// todo: channel 是否需要的是一个对象(id,name),在menu画面中需要显示channel的名称(edward.lin)
 CookieService.prototype.channel = gentProps(keys.channel);
 
-CookieService.prototype.menu = gentProps(keys.menu);
+CookieService.prototype.application = gentProps(keys.application);
 
-CookieService.prototype.name = gentProps(keys.name);
+CookieService.prototype.removeAll = function () {
+    this.$cookieStore.remove(keys.language);
+    this.$cookieStore.remove(keys.company);
+    this.$cookieStore.remove(keys.channel);
+    this.$cookieStore.remove(keys.application);
+};

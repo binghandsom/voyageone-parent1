@@ -71,6 +71,9 @@
         <result column="title_middle" property="title_middle"/>
         <result column="title_short" property="title_short"/>
         <result column="cms_production_place" property="cms_production_place"/>
+        <result column="usage" property="usage"/>
+        <result column="usage2" property="usage2"/>
+        <result column="usage3" property="usage3"/>
         <result column="jumei_production_place" property="jumei_production_place"/>
         <result column="quality_period" property="quality_period"/>
         <result column="applicable_crowd" property="applicable_crowd"/>
@@ -78,6 +81,10 @@
         <result column="custom_sear_label" property="custom_sear_label"/>
         <result column="cms_long_description" property="cms_long_description"/>
         <result column="detail" property="detail"/>
+        <result column="detail2" property="detail2"/>
+        <result column="detail3" property="detail3"/>
+        <result column="detail4" property="detail4"/>
+        <result column="detail5" property="detail5"/>
         <result column="product_image_url_from1" property="product_image_url_from1"/>
         <result column="product_image_url_from2" property="product_image_url_from2"/>
         <result column="product_image_url_from3" property="product_image_url_from3"/>
@@ -233,6 +240,19 @@
         </where>
     </sql>
 
+
+    <!-- 设定ims_jumei_vl_record检索条件 -->
+    <sql id="ims_jumei_vl_record_condition">
+        <where>
+            <if test="channel_id != null and channel_id != '' ">
+                and deal.channel_id = #{channel_id}
+            </if>
+            <if test="task_id != null and task_id != '' ">
+                and deal.task_id = #{task_id}
+            </if>
+        </where>
+    </sql>
+
     <!-- 获得ims_jumei_vl_product数量 -->
     <select id="ims_jumei_vl_product_count" parameterType="batch.bi.JumeiProductBean" resultType="int">
         select
@@ -275,7 +295,7 @@
         product_image_url_from3,
         product_image_url_from4,
         product_image_url_from5,
-        product_image_url_from6,
+        product_image_url_from6
         status
         from test.ims_jumei_vl_product
         <include refid="ims_jumei_vl_product_condition_fuzzy"/>
@@ -354,7 +374,13 @@
         deal.custom_sear_label,
         deal.cms_long_description,
         deal.usage,
+        deal.usage2,
+        deal.usage3,
         deal.detail,
+        deal.detail2,
+        deal.detail3,
+        deal.detail4,
+        deal.detail5,
         product.product_image_url_from1,
         product.product_image_url_from2,
         product.product_image_url_from3,
@@ -448,5 +474,95 @@
 		product_code=VALUES(product_code),
 		error_message=VALUES(error_message)
 	</insert>
+    
+    <update id="update_ims_jumei_vl_record" parameterType="batch.bi.JumeiRecordBean">
+        UPDATE test.ims_jumei_vl_record
+        SET del_flg = '1',
+        update_time = NOW()
+        WHERE del_flg = '0'
+    </update>
+
+    <update id="update_ims_jumei_vl_product_status">
+		UPDATE test.ims_jumei_vl_product product
+        INNER JOIN
+        test.ims_jumei_vl_record record
+        ON
+        product.task_id = record.task_id
+        AND
+        product.channel_id = record.channel_id
+        AND
+        product.product_code = record.product_code
+        AND
+        (record.error_type_id = '22' OR record.error_type_id = '33' OR record.error_message LIKE '%Product%产品名%不允许重复]' )
+        AND
+        record.del_flg = '0'
+        SET
+        product.status = '1'
+    </update>
+
+    <update id="update_ims_jumei_vl_product_status_0">
+        UPDATE test.ims_jumei_vl_product product
+        INNER JOIN test.ims_jumei_vl_record record ON product.task_id = record.task_id
+        AND
+        product.channel_id = record.channel_id
+        AND
+        product.product_code = record.product_code
+        AND
+        record.error_type_id <![CDATA[<>]]> '22'
+        AND
+        record.error_type_id <![CDATA[<>]]> '33'
+        AND
+        record.error_type_id <![CDATA[<>]]> '44'
+        AND
+        record.error_type_id <![CDATA[<>]]> '55'
+        AND
+        record.error_message NOT LIKE '%Product%产品名%不允许重复]'
+        AND
+        record.error_message LIKE '%Product%'
+        AND
+        record.del_flg = '0'
+        SET
+        product.status = '0'
+    </update>
+
+    <update id="update_ims_jumei_vl_deal_status">
+        UPDATE
+        test.ims_jumei_vl_deal deal
+        INNER JOIN
+        test.ims_jumei_vl_record record
+        ON
+        deal.task_id = record.task_id
+        AND
+        deal.channel_id = record.channel_id
+        AND
+        deal.product_code = record.product_code
+        AND
+        (record.error_type_id = '44' OR record.error_type_id = '55' OR record.error_message LIKE '%Deal已发布%')
+        AND
+        record.del_flg = '0'
+        SET
+        deal.status = '1'
+    </update>
+
+    <update id="update_ims_jumei_vl_deal_status_0">
+        UPDATE
+        test.ims_jumei_vl_deal deal
+        INNER JOIN
+        test.ims_jumei_vl_record record
+        ON
+        deal.task_id = record.task_id
+        AND
+        deal.channel_id = record.channel_id
+        AND
+        deal.product_code = record.product_code
+        AND
+        (record.error_type_id <![CDATA[<>]]> '44' AND record.error_type_id <![CDATA[<>]]> '55' AND record.error_message NOT LIKE '%Deal已发布%')
+        AND
+        record.error_message LIKE '%Deal%'
+        AND
+        record.del_flg = '0'
+        SET
+        deal.status = '0'
+    </update>
 
 </mapper>
