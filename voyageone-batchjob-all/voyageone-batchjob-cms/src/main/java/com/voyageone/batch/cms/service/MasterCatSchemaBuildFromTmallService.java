@@ -1,17 +1,17 @@
 package com.voyageone.batch.cms.service;
 
 import com.mongodb.WriteResult;
-import com.voyageone.cms.service.dao.mongodb.CmsMtCommonSchemaDao;
-import com.voyageone.cms.service.model.CmsMtCategorySchemaModel;
 import com.voyageone.batch.base.BaseTaskService;
 import com.voyageone.batch.cms.dao.mongo.CmsMtPlatformFieldsRemoveHistoryDao;
 import com.voyageone.batch.cms.model.mongo.CmsMtPlatformRemoveFieldsModel;
 import com.voyageone.batch.core.modelbean.TaskControlBean;
 import com.voyageone.cms.service.dao.CmsMtCommonPropDao;
 import com.voyageone.cms.service.dao.mongodb.CmsMtCategorySchemaDao;
+import com.voyageone.cms.service.dao.mongodb.CmsMtCommonSchemaDao;
+import com.voyageone.cms.service.dao.mongodb.CmsMtPlatformCategorySchemaDao;
+import com.voyageone.cms.service.model.CmsMtCategorySchemaModel;
 import com.voyageone.cms.service.model.CmsMtComSchemaModel;
 import com.voyageone.cms.service.model.CmsMtPlatformCategorySchemaModel;
-import com.voyageone.cms.service.dao.mongodb.CmsMtPlatformCategorySchemaDao;
 import com.voyageone.cms.service.model.MtCommPropActionDefModel;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.ActionType;
@@ -22,6 +22,7 @@ import com.voyageone.common.masterdate.schema.exception.TopSchemaException;
 import com.voyageone.common.masterdate.schema.factory.SchemaReader;
 import com.voyageone.common.masterdate.schema.field.*;
 import com.voyageone.common.masterdate.schema.label.Label;
+import com.voyageone.common.masterdate.schema.rule.Rule;
 import com.voyageone.common.masterdate.schema.utils.FieldUtil;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.StringUtils;
@@ -31,10 +32,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by lewis on 15-12-3.
@@ -280,7 +278,7 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
                         comCategorySchema.add(comField);
                         FieldUtil.removeFieldById(masterFields,comModel.getPropId());
                     }
-
+                    fieldsSort(masterFields);
                     masterModel.setFields(masterFields);
                     masterModel.setCreater(this.JOB_NAME);
                     masterModel.setModifier(this.JOB_NAME);
@@ -315,6 +313,24 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
             }
 
         }
+    }
+
+    //Field字段排序方法
+    private void fieldsSort(List<Field> masterFields){
+        Collections.sort(masterFields, new Comparator<Field>() {
+            @Override
+            public int compare(Field a, Field b) {
+                if(a.getInputLevel()<b.getInputLevel())
+                    return -2;
+                else if(a.getInputLevel()>b.getInputLevel())
+                    return 2;
+                for(Rule rule:b.getRules()){
+                    if(rule.getName()!=null&&rule.getName().equals("requiredRule")&&rule.getValue()!=null&&rule.getValue().equals("true"))
+                        return 1;
+                }
+                return 0;
+            };
+        });
     }
 
     private void setValueType(MtCommPropActionDefModel actionDefModel, Field updField) {
