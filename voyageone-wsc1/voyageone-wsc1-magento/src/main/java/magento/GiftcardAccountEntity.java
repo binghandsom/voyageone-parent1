@@ -34,7 +34,7 @@ public class GiftcardAccountEntity implements org.apache.axis2.databinding.ADBBe
     /**
      * field for Code
      */
-    protected String localCode;
+    protected java.lang.String localCode;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -56,7 +56,7 @@ public class GiftcardAccountEntity implements org.apache.axis2.databinding.ADBBe
     /**
      * field for Date_created
      */
-    protected String localDate_created;
+    protected java.lang.String localDate_created;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -67,7 +67,7 @@ public class GiftcardAccountEntity implements org.apache.axis2.databinding.ADBBe
     /**
      * field for Expire_date
      */
-    protected String localExpire_date;
+    protected java.lang.String localExpire_date;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -100,7 +100,7 @@ public class GiftcardAccountEntity implements org.apache.axis2.databinding.ADBBe
     /**
      * field for Status
      */
-    protected String localStatus;
+    protected java.lang.String localStatus;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -148,7 +148,7 @@ public class GiftcardAccountEntity implements org.apache.axis2.databinding.ADBBe
      */
     public void setGiftcard_id(int param) {
         // setting primitive attribute tracker to true
-        localGiftcard_idTracker = param != Integer.MIN_VALUE;
+        localGiftcard_idTracker = param != java.lang.Integer.MIN_VALUE;
 
         this.localGiftcard_id = param;
     }
@@ -161,7 +161,7 @@ public class GiftcardAccountEntity implements org.apache.axis2.databinding.ADBBe
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getCode() {
+    public java.lang.String getCode() {
         return localCode;
     }
 
@@ -169,7 +169,7 @@ public class GiftcardAccountEntity implements org.apache.axis2.databinding.ADBBe
      * Auto generated setter method
      * @param param Code
      */
-    public void setCode(String param) {
+    public void setCode(java.lang.String param) {
         localCodeTracker = param != null;
 
         this.localCode = param;
@@ -193,7 +193,7 @@ public class GiftcardAccountEntity implements org.apache.axis2.databinding.ADBBe
      */
     public void setStore_id(int param) {
         // setting primitive attribute tracker to true
-        localStore_idTracker = param != Integer.MIN_VALUE;
+        localStore_idTracker = param != java.lang.Integer.MIN_VALUE;
 
         this.localStore_id = param;
     }
@@ -206,7 +206,7 @@ public class GiftcardAccountEntity implements org.apache.axis2.databinding.ADBBe
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getDate_created() {
+    public java.lang.String getDate_created() {
         return localDate_created;
     }
 
@@ -214,7 +214,7 @@ public class GiftcardAccountEntity implements org.apache.axis2.databinding.ADBBe
      * Auto generated setter method
      * @param param Date_created
      */
-    public void setDate_created(String param) {
+    public void setDate_created(java.lang.String param) {
         localDate_createdTracker = param != null;
 
         this.localDate_created = param;
@@ -228,7 +228,7 @@ public class GiftcardAccountEntity implements org.apache.axis2.databinding.ADBBe
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getExpire_date() {
+    public java.lang.String getExpire_date() {
         return localExpire_date;
     }
 
@@ -236,7 +236,7 @@ public class GiftcardAccountEntity implements org.apache.axis2.databinding.ADBBe
      * Auto generated setter method
      * @param param Expire_date
      */
-    public void setExpire_date(String param) {
+    public void setExpire_date(java.lang.String param) {
         localExpire_dateTracker = param != null;
 
         this.localExpire_date = param;
@@ -260,7 +260,7 @@ public class GiftcardAccountEntity implements org.apache.axis2.databinding.ADBBe
      */
     public void setIs_active(int param) {
         // setting primitive attribute tracker to true
-        localIs_activeTracker = param != Integer.MIN_VALUE;
+        localIs_activeTracker = param != java.lang.Integer.MIN_VALUE;
 
         this.localIs_active = param;
     }
@@ -283,7 +283,7 @@ public class GiftcardAccountEntity implements org.apache.axis2.databinding.ADBBe
      */
     public void setIs_redeemable(int param) {
         // setting primitive attribute tracker to true
-        localIs_redeemableTracker = param != Integer.MIN_VALUE;
+        localIs_redeemableTracker = param != java.lang.Integer.MIN_VALUE;
 
         this.localIs_redeemable = param;
     }
@@ -296,7 +296,7 @@ public class GiftcardAccountEntity implements org.apache.axis2.databinding.ADBBe
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getStatus() {
+    public java.lang.String getStatus() {
         return localStatus;
     }
 
@@ -304,7 +304,7 @@ public class GiftcardAccountEntity implements org.apache.axis2.databinding.ADBBe
      * Auto generated setter method
      * @param param Status
      */
-    public void setStatus(String param) {
+    public void setStatus(java.lang.String param) {
         localStatusTracker = param != null;
 
         this.localStatus = param;
@@ -328,7 +328,7 @@ public class GiftcardAccountEntity implements org.apache.axis2.databinding.ADBBe
      */
     public void setBalance(double param) {
         // setting primitive attribute tracker to true
-        localBalanceTracker = !Double.isNaN(param);
+        localBalanceTracker = !java.lang.Double.isNaN(param);
 
         this.localBalance = param;
     }
@@ -382,8 +382,8 @@ public class GiftcardAccountEntity implements org.apache.axis2.databinding.ADBBe
         javax.xml.stream.XMLStreamWriter xmlWriter, boolean serializeType)
         throws javax.xml.stream.XMLStreamException,
             org.apache.axis2.databinding.ADBException {
-        String prefix = null;
-        String namespace = null;
+        java.lang.String prefix = null;
+        java.lang.String namespace = null;
 
         prefix = parentQName.getPrefix();
         namespace = parentQName.getNamespaceURI();
@@ -391,7 +391,7 @@ public class GiftcardAccountEntity implements org.apache.axis2.databinding.ADBBe
             xmlWriter);
 
         if (serializeType) {
-            String namespacePrefix = registerPrefix(xmlWriter,
+            java.lang.String namespacePrefix = registerPrefix(xmlWriter,
                     "urn:Magento");
 
             if ((namespacePrefix != null) &&
@@ -410,7 +410,7 @@ public class GiftcardAccountEntity implements org.apache.axis2.databinding.ADBBe
             namespace = "";
             writeStartElement(null, namespace, "giftcard_id", xmlWriter);
 
-            if (localGiftcard_id == Integer.MIN_VALUE) {
+            if (localGiftcard_id == java.lang.Integer.MIN_VALUE) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "giftcard_id cannot be null!!");
             } else {
@@ -440,7 +440,7 @@ public class GiftcardAccountEntity implements org.apache.axis2.databinding.ADBBe
             namespace = "";
             writeStartElement(null, namespace, "store_id", xmlWriter);
 
-            if (localStore_id == Integer.MIN_VALUE) {
+            if (localStore_id == java.lang.Integer.MIN_VALUE) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "store_id cannot be null!!");
             } else {
@@ -485,7 +485,7 @@ public class GiftcardAccountEntity implements org.apache.axis2.databinding.ADBBe
             namespace = "";
             writeStartElement(null, namespace, "is_active", xmlWriter);
 
-            if (localIs_active == Integer.MIN_VALUE) {
+            if (localIs_active == java.lang.Integer.MIN_VALUE) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "is_active cannot be null!!");
             } else {
@@ -500,7 +500,7 @@ public class GiftcardAccountEntity implements org.apache.axis2.databinding.ADBBe
             namespace = "";
             writeStartElement(null, namespace, "is_redeemable", xmlWriter);
 
-            if (localIs_redeemable == Integer.MIN_VALUE) {
+            if (localIs_redeemable == java.lang.Integer.MIN_VALUE) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "is_redeemable cannot be null!!");
             } else {
@@ -530,7 +530,7 @@ public class GiftcardAccountEntity implements org.apache.axis2.databinding.ADBBe
             namespace = "";
             writeStartElement(null, namespace, "balance", xmlWriter);
 
-            if (Double.isNaN(localBalance)) {
+            if (java.lang.Double.isNaN(localBalance)) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "balance cannot be null!!");
             } else {
@@ -554,7 +554,7 @@ public class GiftcardAccountEntity implements org.apache.axis2.databinding.ADBBe
         xmlWriter.writeEndElement();
     }
 
-    private static String generatePrefix(String namespace) {
+    private static java.lang.String generatePrefix(java.lang.String namespace) {
         if (namespace.equals("urn:Magento")) {
             return "ns1";
         }
@@ -565,11 +565,11 @@ public class GiftcardAccountEntity implements org.apache.axis2.databinding.ADBBe
     /**
      * Utility method to write an element start tag.
      */
-    private void writeStartElement(String prefix,
-        String namespace, String localPart,
+    private void writeStartElement(java.lang.String prefix,
+        java.lang.String namespace, java.lang.String localPart,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
-        String writerPrefix = xmlWriter.getPrefix(namespace);
+        java.lang.String writerPrefix = xmlWriter.getPrefix(namespace);
 
         if (writerPrefix != null) {
             xmlWriter.writeStartElement(namespace, localPart);
@@ -589,9 +589,9 @@ public class GiftcardAccountEntity implements org.apache.axis2.databinding.ADBBe
     /**
      * Util method to write an attribute with the ns prefix
      */
-    private void writeAttribute(String prefix,
-        String namespace, String attName,
-        String attValue, javax.xml.stream.XMLStreamWriter xmlWriter)
+    private void writeAttribute(java.lang.String prefix,
+        java.lang.String namespace, java.lang.String attName,
+        java.lang.String attValue, javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
         if (xmlWriter.getPrefix(namespace) == null) {
             xmlWriter.writeNamespace(prefix, namespace);
@@ -604,8 +604,8 @@ public class GiftcardAccountEntity implements org.apache.axis2.databinding.ADBBe
     /**
      * Util method to write an attribute without the ns prefix
      */
-    private void writeAttribute(String namespace,
-        String attName, String attValue,
+    private void writeAttribute(java.lang.String namespace,
+        java.lang.String attName, java.lang.String attValue,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
         if (namespace.equals("")) {
@@ -619,18 +619,18 @@ public class GiftcardAccountEntity implements org.apache.axis2.databinding.ADBBe
     /**
      * Util method to write an attribute without the ns prefix
      */
-    private void writeQNameAttribute(String namespace,
-        String attName, javax.xml.namespace.QName qname,
+    private void writeQNameAttribute(java.lang.String namespace,
+        java.lang.String attName, javax.xml.namespace.QName qname,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
-        String attributeNamespace = qname.getNamespaceURI();
-        String attributePrefix = xmlWriter.getPrefix(attributeNamespace);
+        java.lang.String attributeNamespace = qname.getNamespaceURI();
+        java.lang.String attributePrefix = xmlWriter.getPrefix(attributeNamespace);
 
         if (attributePrefix == null) {
             attributePrefix = registerPrefix(xmlWriter, attributeNamespace);
         }
 
-        String attributeValue;
+        java.lang.String attributeValue;
 
         if (attributePrefix.trim().length() > 0) {
             attributeValue = attributePrefix + ":" + qname.getLocalPart();
@@ -652,10 +652,10 @@ public class GiftcardAccountEntity implements org.apache.axis2.databinding.ADBBe
     private void writeQName(javax.xml.namespace.QName qname,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
-        String namespaceURI = qname.getNamespaceURI();
+        java.lang.String namespaceURI = qname.getNamespaceURI();
 
         if (namespaceURI != null) {
-            String prefix = xmlWriter.getPrefix(namespaceURI);
+            java.lang.String prefix = xmlWriter.getPrefix(namespaceURI);
 
             if (prefix == null) {
                 prefix = generatePrefix(namespaceURI);
@@ -684,9 +684,9 @@ public class GiftcardAccountEntity implements org.apache.axis2.databinding.ADBBe
         if (qnames != null) {
             // we have to store this data until last moment since it is not possible to write any
             // namespace data after writing the charactor data
-            StringBuffer stringToWrite = new StringBuffer();
-            String namespaceURI = null;
-            String prefix = null;
+            java.lang.StringBuffer stringToWrite = new java.lang.StringBuffer();
+            java.lang.String namespaceURI = null;
+            java.lang.String prefix = null;
 
             for (int i = 0; i < qnames.length; i++) {
                 if (i > 0) {
@@ -725,10 +725,10 @@ public class GiftcardAccountEntity implements org.apache.axis2.databinding.ADBBe
     /**
      * Register a namespace prefix
      */
-    private String registerPrefix(
-        javax.xml.stream.XMLStreamWriter xmlWriter, String namespace)
+    private java.lang.String registerPrefix(
+        javax.xml.stream.XMLStreamWriter xmlWriter, java.lang.String namespace)
         throws javax.xml.stream.XMLStreamException {
-        String prefix = xmlWriter.getPrefix(namespace);
+        java.lang.String prefix = xmlWriter.getPrefix(namespace);
 
         if (prefix == null) {
             prefix = generatePrefix(namespace);
@@ -736,7 +736,7 @@ public class GiftcardAccountEntity implements org.apache.axis2.databinding.ADBBe
             javax.xml.namespace.NamespaceContext nsContext = xmlWriter.getNamespaceContext();
 
             while (true) {
-                String uri = nsContext.getNamespaceURI(prefix);
+                java.lang.String uri = nsContext.getNamespaceURI(prefix);
 
                 if ((uri == null) || (uri.length() == 0)) {
                     break;
@@ -872,13 +872,13 @@ public class GiftcardAccountEntity implements org.apache.axis2.databinding.ADBBe
          *                If this object is a complex type, the reader is positioned at the end element of its outer element
          */
         public static GiftcardAccountEntity parse(
-            javax.xml.stream.XMLStreamReader reader) throws Exception {
+            javax.xml.stream.XMLStreamReader reader) throws java.lang.Exception {
             GiftcardAccountEntity object = new GiftcardAccountEntity();
 
             int event;
-            String nillableValue = null;
-            String prefix = "";
-            String namespaceuri = "";
+            java.lang.String nillableValue = null;
+            java.lang.String prefix = "";
+            java.lang.String namespaceuri = "";
 
             try {
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -886,11 +886,11 @@ public class GiftcardAccountEntity implements org.apache.axis2.databinding.ADBBe
 
                 if (reader.getAttributeValue(
                             "http://www.w3.org/2001/XMLSchema-instance", "type") != null) {
-                    String fullTypeName = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance",
+                    java.lang.String fullTypeName = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance",
                             "type");
 
                     if (fullTypeName != null) {
-                        String nsPrefix = null;
+                        java.lang.String nsPrefix = null;
 
                         if (fullTypeName.indexOf(":") > -1) {
                             nsPrefix = fullTypeName.substring(0,
@@ -899,12 +899,12 @@ public class GiftcardAccountEntity implements org.apache.axis2.databinding.ADBBe
 
                         nsPrefix = (nsPrefix == null) ? "" : nsPrefix;
 
-                        String type = fullTypeName.substring(fullTypeName.indexOf(
+                        java.lang.String type = fullTypeName.substring(fullTypeName.indexOf(
                                     ":") + 1);
 
                         if (!"giftcardAccountEntity".equals(type)) {
                             //find namespace for the prefix
-                            String nsUri = reader.getNamespaceContext()
+                            java.lang.String nsUri = reader.getNamespaceContext()
                                                            .getNamespaceURI(nsPrefix);
 
                             return (GiftcardAccountEntity) magento.ExtensionMapper.getTypeObject(nsUri,
@@ -935,7 +935,7 @@ public class GiftcardAccountEntity implements org.apache.axis2.databinding.ADBBe
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setGiftcard_id(org.apache.axis2.databinding.utils.ConverterUtil.convertToInt(
                             content));
@@ -944,7 +944,7 @@ public class GiftcardAccountEntity implements org.apache.axis2.databinding.ADBBe
                 } // End of if for expected property start element
 
                 else {
-                    object.setGiftcard_id(Integer.MIN_VALUE);
+                    object.setGiftcard_id(java.lang.Integer.MIN_VALUE);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -962,7 +962,7 @@ public class GiftcardAccountEntity implements org.apache.axis2.databinding.ADBBe
                             "The element: " + "code" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setCode(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -988,7 +988,7 @@ public class GiftcardAccountEntity implements org.apache.axis2.databinding.ADBBe
                             "The element: " + "store_id" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setStore_id(org.apache.axis2.databinding.utils.ConverterUtil.convertToInt(
                             content));
@@ -997,7 +997,7 @@ public class GiftcardAccountEntity implements org.apache.axis2.databinding.ADBBe
                 } // End of if for expected property start element
 
                 else {
-                    object.setStore_id(Integer.MIN_VALUE);
+                    object.setStore_id(java.lang.Integer.MIN_VALUE);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -1016,7 +1016,7 @@ public class GiftcardAccountEntity implements org.apache.axis2.databinding.ADBBe
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setDate_created(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1043,7 +1043,7 @@ public class GiftcardAccountEntity implements org.apache.axis2.databinding.ADBBe
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setExpire_date(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1069,7 +1069,7 @@ public class GiftcardAccountEntity implements org.apache.axis2.databinding.ADBBe
                             "The element: " + "is_active" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setIs_active(org.apache.axis2.databinding.utils.ConverterUtil.convertToInt(
                             content));
@@ -1078,7 +1078,7 @@ public class GiftcardAccountEntity implements org.apache.axis2.databinding.ADBBe
                 } // End of if for expected property start element
 
                 else {
-                    object.setIs_active(Integer.MIN_VALUE);
+                    object.setIs_active(java.lang.Integer.MIN_VALUE);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -1097,7 +1097,7 @@ public class GiftcardAccountEntity implements org.apache.axis2.databinding.ADBBe
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setIs_redeemable(org.apache.axis2.databinding.utils.ConverterUtil.convertToInt(
                             content));
@@ -1106,7 +1106,7 @@ public class GiftcardAccountEntity implements org.apache.axis2.databinding.ADBBe
                 } // End of if for expected property start element
 
                 else {
-                    object.setIs_redeemable(Integer.MIN_VALUE);
+                    object.setIs_redeemable(java.lang.Integer.MIN_VALUE);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -1124,7 +1124,7 @@ public class GiftcardAccountEntity implements org.apache.axis2.databinding.ADBBe
                             "The element: " + "status" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setStatus(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1150,7 +1150,7 @@ public class GiftcardAccountEntity implements org.apache.axis2.databinding.ADBBe
                             "The element: " + "balance" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setBalance(org.apache.axis2.databinding.utils.ConverterUtil.convertToDouble(
                             content));
@@ -1159,7 +1159,7 @@ public class GiftcardAccountEntity implements org.apache.axis2.databinding.ADBBe
                 } // End of if for expected property start element
 
                 else {
-                    object.setBalance(Double.NaN);
+                    object.setBalance(java.lang.Double.NaN);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -1186,7 +1186,7 @@ public class GiftcardAccountEntity implements org.apache.axis2.databinding.ADBBe
                         "Unexpected subelement " + reader.getName());
                 }
             } catch (javax.xml.stream.XMLStreamException e) {
-                throw new Exception(e);
+                throw new java.lang.Exception(e);
             }
 
             return object;

@@ -5,8 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.voyageone.batch.oms.OmsConstants;
 import com.voyageone.batch.oms.formbean.*;
 
+import com.voyageone.common.magento.api.bean.OrderDataBean;
+import com.voyageone.common.magento.api.bean.OrderDetailBean;
 import com.voyageone.common.util.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -2255,5 +2258,144 @@ public class OrderDao extends BaseDao {
 		}
 
 		return sku;
+	}
+
+	/**
+	 * 获得需要推送WMF新订单信息
+	 *
+	 * @param orderChannelID
+	 * @return
+	 */
+	public List<OrderDataBean> getWMFNewOrderInfo(String orderChannelID) {
+		// 获取订单级信息
+		List<OrderDataBean> ordersList = (List) selectList(Constants.DAO_NAME_SPACE_OMS + "oms_bt_orders_getWMFNewOrderInfo", orderChannelID);
+		if (ordersList != null && ordersList.size() > 0) {
+			int orderSize = ordersList.size();
+			Map<String, String> dataMap = new HashMap<String, String>();
+			for (int i = 0; i < orderSize; i++) {
+				OrderDataBean order = ordersList.get(i);
+
+				// Bill地址设定
+				String address = order.getBillingAddress();
+				if (StringUtils.isNullOrBlank2(address)) {
+					address = com.voyageone.batch.core.Constants.EMPTY_STR;
+				}
+				String address2 = order.getBillingAddress2();
+				if (StringUtils.isNullOrBlank2(address2)) {
+					address2 = com.voyageone.batch.core.Constants.EMPTY_STR;
+				}
+				address += address2;
+				order.setBillingAddress(address);
+
+				// Ship地址设定
+				address = order.getShippingAddress();
+				if (StringUtils.isNullOrBlank2(address)) {
+					address = com.voyageone.batch.core.Constants.EMPTY_STR;
+				}
+				 address2 = order.getShippingAddress2();
+				if (StringUtils.isNullOrBlank2(address2)) {
+					address2 = com.voyageone.batch.core.Constants.EMPTY_STR;
+				}
+				address += address2;
+				order.setShippingAddress(address);
+
+				dataMap.put("orderNumber", order.getOrderNumber());
+				dataMap.put("orderChannelId", orderChannelID);
+				List<OrderDetailBean> orderDetailBeanList = (List) selectList(Constants.DAO_NAME_SPACE_OMS + "oms_bt_order_details_getWMFNewOrderInfo", dataMap);
+				if (orderDetailBeanList != null && orderDetailBeanList.size() > 0) {
+					for (OrderDetailBean orderDetail : orderDetailBeanList) {
+						int adjustment = orderDetail.getAdjustment();
+						// 非真实物品
+						if (adjustment == 1) {
+							String sku = orderDetail.getSku();
+
+							// 折扣
+							if (com.voyageone.batch.core.Constants.DISCOUNT_STR.equals(sku)) {
+								// 折扣
+								double price = orderDetail.getPrice();
+								// 挂靠itemNumber
+								int subItemNumber = orderDetail.getSubItemNumber();
+
+								// 物品折扣
+								if (subItemNumber > 0) {
+									// 寻找挂靠物品
+									for (OrderDetailBean orderDetailInner : orderDetailBeanList) {
+										int adjustmentInner = orderDetailInner.getAdjustment();
+										// 真实物品
+										if (adjustmentInner == 0) {
+											int itemNumber = orderDetailInner.getItemNumber();
+											// 找到该折扣对应物品
+											if (subItemNumber == itemNumber) {
+
+												orderDetailInner.setDiscount(price);
+
+												break;
+											}
+										}
+									}
+
+								// 订单折扣
+								} else {
+									order.setDiscount(price);
+								}
+
+							// Surcharge
+							} else if (com.voyageone.batch.core.Constants.SURCHARGE_STR.equals(sku)) {
+								order.setSurcharge(orderDetail.getPrice());
+							}
+						}
+					}
+
+					List<OrderDetailBean> orderDetailAddList = new ArrayList<OrderDetailBean>();
+					// 去除非真实物品，保留真实物品
+					for (OrderDetailBean orderDetail : orderDetailBeanList) {
+						int adjustment = orderDetail.getAdjustment();
+						// 真实物品
+						if (adjustment == 0) {
+							orderDetailAddList.add(orderDetail);
+						}
+					}
+
+					order.setOrderDetails(orderDetailAddList);
+				}
+
+			}
+		}
+
+		return ordersList;
+	}
+
+	/**
+	 * 获得需要推送WMF新订单菜鸟单号信息
+	 *
+	 * @param orderChannelID
+	 * @return
+	 */
+	public List<Map<String, String>> getWMFNewOrderTrackingInfo(String orderChannelID) {
+		// 获取订单级信息
+		List<Map<String, String>> cainiaoList = (List) selectList(Constants.DAO_NAME_SPACE_OMS + "oms_bt_orders_getWMFCainiaoId", orderChannelID);
+
+		return cainiaoList;
+	}
+
+	/**
+	 * 订单信息更新（cainiao Id 发送标志）
+	 *
+	 * @return
+	 */
+	public boolean resetTrackingSendFlag(String order_number, String taskName) {
+		boolean ret = false;
+
+		HashMap<String, Object> paraIn = new HashMap<String, Object>();
+		paraIn.put("order_number", order_number);
+		paraIn.put("modifier", taskName);
+
+		int retCount = updateTemplate.update(Constants.DAO_NAME_SPACE_OMS + "oms_bt_ext_orders_resetTrackingSendFlag", paraIn);
+
+		if (retCount > 0) {
+			ret = true;
+		}
+
+		return ret;
 	}
 }

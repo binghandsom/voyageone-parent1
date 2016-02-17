@@ -50,7 +50,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from catalogCategoryLevel operation
      */
-    public void receiveErrorcatalogCategoryLevel(Exception e) {
+    public void receiveErrorcatalogCategoryLevel(java.lang.Exception e) {
     }
 
     /**
@@ -64,7 +64,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from storeList operation
      */
-    public void receiveErrorstoreList(Exception e) {
+    public void receiveErrorstoreList(java.lang.Exception e) {
     }
 
     /**
@@ -79,7 +79,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from salesOrderShipmentGetCarriers operation
      */
-    public void receiveErrorsalesOrderShipmentGetCarriers(Exception e) {
+    public void receiveErrorsalesOrderShipmentGetCarriers(java.lang.Exception e) {
     }
 
     /**
@@ -94,7 +94,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from giftcardAccountInfo operation
      */
-    public void receiveErrorgiftcardAccountInfo(Exception e) {
+    public void receiveErrorgiftcardAccountInfo(java.lang.Exception e) {
     }
 
     /**
@@ -110,7 +110,7 @@ public abstract class MagentoServiceCallbackHandler {
      * override this method for handling error response from catalogProductCustomOptionTypes operation
      */
     public void receiveErrorcatalogProductCustomOptionTypes(
-        Exception e) {
+        java.lang.Exception e) {
     }
 
     /**
@@ -126,7 +126,7 @@ public abstract class MagentoServiceCallbackHandler {
      * override this method for handling error response from catalogProductDownloadableLinkRemove operation
      */
     public void receiveErrorcatalogProductDownloadableLinkRemove(
-        Exception e) {
+        java.lang.Exception e) {
     }
 
     /**
@@ -141,7 +141,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from giftcardAccountUpdate operation
      */
-    public void receiveErrorgiftcardAccountUpdate(Exception e) {
+    public void receiveErrorgiftcardAccountUpdate(java.lang.Exception e) {
     }
 
     /**
@@ -156,7 +156,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from shoppingCartShippingList operation
      */
-    public void receiveErrorshoppingCartShippingList(Exception e) {
+    public void receiveErrorshoppingCartShippingList(java.lang.Exception e) {
     }
 
     /**
@@ -171,7 +171,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from catalogProductLinkAttributes operation
      */
-    public void receiveErrorcatalogProductLinkAttributes(Exception e) {
+    public void receiveErrorcatalogProductLinkAttributes(java.lang.Exception e) {
     }
 
     /**
@@ -186,7 +186,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from giftcardAccountList operation
      */
-    public void receiveErrorgiftcardAccountList(Exception e) {
+    public void receiveErrorgiftcardAccountList(java.lang.Exception e) {
     }
 
     /**
@@ -201,7 +201,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from catalogProductTypeList operation
      */
-    public void receiveErrorcatalogProductTypeList(Exception e) {
+    public void receiveErrorcatalogProductTypeList(java.lang.Exception e) {
     }
 
     /**
@@ -216,7 +216,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from salesOrderShipmentRemoveTrack operation
      */
-    public void receiveErrorsalesOrderShipmentRemoveTrack(Exception e) {
+    public void receiveErrorsalesOrderShipmentRemoveTrack(java.lang.Exception e) {
     }
 
     /**
@@ -231,7 +231,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from salesOrderInvoiceCapture operation
      */
-    public void receiveErrorsalesOrderInvoiceCapture(Exception e) {
+    public void receiveErrorsalesOrderInvoiceCapture(java.lang.Exception e) {
     }
 
     /**
@@ -247,7 +247,7 @@ public abstract class MagentoServiceCallbackHandler {
      * override this method for handling error response from catalogCategoryAttributeCurrentStore operation
      */
     public void receiveErrorcatalogCategoryAttributeCurrentStore(
-        Exception e) {
+        java.lang.Exception e) {
     }
 
     /**
@@ -263,7 +263,7 @@ public abstract class MagentoServiceCallbackHandler {
      * override this method for handling error response from catalogProductCustomOptionInfo operation
      */
     public void receiveErrorcatalogProductCustomOptionInfo(
-        Exception e) {
+        java.lang.Exception e) {
     }
 
     /**
@@ -278,7 +278,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from catalogProductCreate operation
      */
-    public void receiveErrorcatalogProductCreate(Exception e) {
+    public void receiveErrorcatalogProductCreate(java.lang.Exception e) {
     }
 
     /**
@@ -293,7 +293,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from salesOrderList operation
      */
-    public void receiveErrorsalesOrderList(Exception e) {
+    public void receiveErrorsalesOrderList(java.lang.Exception e) {
     }
 
     /**
@@ -308,7 +308,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from salesOrderCreditmemoCancel operation
      */
-    public void receiveErrorsalesOrderCreditmemoCancel(Exception e) {
+    public void receiveErrorsalesOrderCreditmemoCancel(java.lang.Exception e) {
     }
 
     /**
@@ -322,7 +322,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from resources operation
      */
-    public void receiveErrorresources(Exception e) {
+    public void receiveErrorresources(java.lang.Exception e) {
     }
 
     /**
@@ -338,7 +338,7 @@ public abstract class MagentoServiceCallbackHandler {
      * override this method for handling error response from catalogProductAttributeTierPriceInfo operation
      */
     public void receiveErrorcatalogProductAttributeTierPriceInfo(
-        Exception e) {
+        java.lang.Exception e) {
     }
 
     /**
@@ -353,7 +353,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from catalogProductTagInfo operation
      */
-    public void receiveErrorcatalogProductTagInfo(Exception e) {
+    public void receiveErrorcatalogProductTagInfo(java.lang.Exception e) {
     }
 
     /**
@@ -369,7 +369,7 @@ public abstract class MagentoServiceCallbackHandler {
      * override this method for handling error response from shoppingCartCustomerbalanceSetAmount operation
      */
     public void receiveErrorshoppingCartCustomerbalanceSetAmount(
-        Exception e) {
+        java.lang.Exception e) {
     }
 
     /**
@@ -385,7 +385,7 @@ public abstract class MagentoServiceCallbackHandler {
      * override this method for handling error response from catalogProductAttributeTierPriceUpdate operation
      */
     public void receiveErrorcatalogProductAttributeTierPriceUpdate(
-        Exception e) {
+        java.lang.Exception e) {
     }
 
     /**
@@ -401,7 +401,7 @@ public abstract class MagentoServiceCallbackHandler {
      * override this method for handling error response from catalogProductAttributeAddOption operation
      */
     public void receiveErrorcatalogProductAttributeAddOption(
-        Exception e) {
+        java.lang.Exception e) {
     }
 
     /**
@@ -417,7 +417,7 @@ public abstract class MagentoServiceCallbackHandler {
      * override this method for handling error response from catalogProductAttributeMediaCreate operation
      */
     public void receiveErrorcatalogProductAttributeMediaCreate(
-        Exception e) {
+        java.lang.Exception e) {
     }
 
     /**
@@ -432,7 +432,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from directoryRegionList operation
      */
-    public void receiveErrordirectoryRegionList(Exception e) {
+    public void receiveErrordirectoryRegionList(java.lang.Exception e) {
     }
 
     /**
@@ -446,7 +446,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from endSession operation
      */
-    public void receiveErrorendSession(Exception e) {
+    public void receiveErrorendSession(java.lang.Exception e) {
     }
 
     /**
@@ -461,7 +461,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from salesOrderAddComment operation
      */
-    public void receiveErrorsalesOrderAddComment(Exception e) {
+    public void receiveErrorsalesOrderAddComment(java.lang.Exception e) {
     }
 
     /**
@@ -476,7 +476,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from shoppingCartProductAdd operation
      */
-    public void receiveErrorshoppingCartProductAdd(Exception e) {
+    public void receiveErrorshoppingCartProductAdd(java.lang.Exception e) {
     }
 
     /**
@@ -491,7 +491,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from shoppingCartPaymentMethod operation
      */
-    public void receiveErrorshoppingCartPaymentMethod(Exception e) {
+    public void receiveErrorshoppingCartPaymentMethod(java.lang.Exception e) {
     }
 
     /**
@@ -506,7 +506,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from catalogProductTagList operation
      */
-    public void receiveErrorcatalogProductTagList(Exception e) {
+    public void receiveErrorcatalogProductTagList(java.lang.Exception e) {
     }
 
     /**
@@ -521,7 +521,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from shoppingCartCustomerAddresses operation
      */
-    public void receiveErrorshoppingCartCustomerAddresses(Exception e) {
+    public void receiveErrorshoppingCartCustomerAddresses(java.lang.Exception e) {
     }
 
     /**
@@ -535,7 +535,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from storeInfo operation
      */
-    public void receiveErrorstoreInfo(Exception e) {
+    public void receiveErrorstoreInfo(java.lang.Exception e) {
     }
 
     /**
@@ -550,7 +550,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from catalogProductSetSpecialPrice operation
      */
-    public void receiveErrorcatalogProductSetSpecialPrice(Exception e) {
+    public void receiveErrorcatalogProductSetSpecialPrice(java.lang.Exception e) {
     }
 
     /**
@@ -565,7 +565,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from shoppingCartProductList operation
      */
-    public void receiveErrorshoppingCartProductList(Exception e) {
+    public void receiveErrorshoppingCartProductList(java.lang.Exception e) {
     }
 
     /**
@@ -580,7 +580,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from salesOrderInfo operation
      */
-    public void receiveErrorsalesOrderInfo(Exception e) {
+    public void receiveErrorsalesOrderInfo(java.lang.Exception e) {
     }
 
     /**
@@ -595,7 +595,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from catalogProductLinkUpdate operation
      */
-    public void receiveErrorcatalogProductLinkUpdate(Exception e) {
+    public void receiveErrorcatalogProductLinkUpdate(java.lang.Exception e) {
     }
 
     /**
@@ -610,7 +610,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from catalogProductGetSpecialPrice operation
      */
-    public void receiveErrorcatalogProductGetSpecialPrice(Exception e) {
+    public void receiveErrorcatalogProductGetSpecialPrice(java.lang.Exception e) {
     }
 
     /**
@@ -625,7 +625,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from catalogProductAttributeList operation
      */
-    public void receiveErrorcatalogProductAttributeList(Exception e) {
+    public void receiveErrorcatalogProductAttributeList(java.lang.Exception e) {
     }
 
     /**
@@ -641,7 +641,7 @@ public abstract class MagentoServiceCallbackHandler {
      * override this method for handling error response from catalogProductAttributeSetAttributeRemove operation
      */
     public void receiveErrorcatalogProductAttributeSetAttributeRemove(
-        Exception e) {
+        java.lang.Exception e) {
     }
 
     /**
@@ -656,7 +656,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from salesOrderInvoiceInfo operation
      */
-    public void receiveErrorsalesOrderInvoiceInfo(Exception e) {
+    public void receiveErrorsalesOrderInvoiceInfo(java.lang.Exception e) {
     }
 
     /**
@@ -671,7 +671,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from shoppingCartInfo operation
      */
-    public void receiveErrorshoppingCartInfo(Exception e) {
+    public void receiveErrorshoppingCartInfo(java.lang.Exception e) {
     }
 
     /**
@@ -687,7 +687,7 @@ public abstract class MagentoServiceCallbackHandler {
      * override this method for handling error response from shoppingCartProductMoveToCustomerQuote operation
      */
     public void receiveErrorshoppingCartProductMoveToCustomerQuote(
-        Exception e) {
+        java.lang.Exception e) {
     }
 
     /**
@@ -702,7 +702,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from catalogCategoryInfo operation
      */
-    public void receiveErrorcatalogCategoryInfo(Exception e) {
+    public void receiveErrorcatalogCategoryInfo(java.lang.Exception e) {
     }
 
     /**
@@ -717,7 +717,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from shoppingCartGiftcardAdd operation
      */
-    public void receiveErrorshoppingCartGiftcardAdd(Exception e) {
+    public void receiveErrorshoppingCartGiftcardAdd(java.lang.Exception e) {
     }
 
     /**
@@ -732,7 +732,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from catalogCategoryAssignProduct operation
      */
-    public void receiveErrorcatalogCategoryAssignProduct(Exception e) {
+    public void receiveErrorcatalogCategoryAssignProduct(java.lang.Exception e) {
     }
 
     /**
@@ -748,7 +748,7 @@ public abstract class MagentoServiceCallbackHandler {
      * override this method for handling error response from catalogProductAttributeCurrentStore operation
      */
     public void receiveErrorcatalogProductAttributeCurrentStore(
-        Exception e) {
+        java.lang.Exception e) {
     }
 
     /**
@@ -764,7 +764,7 @@ public abstract class MagentoServiceCallbackHandler {
      * override this method for handling error response from catalogProductAttributeMediaCurrentStore operation
      */
     public void receiveErrorcatalogProductAttributeMediaCurrentStore(
-        Exception e) {
+        java.lang.Exception e) {
     }
 
     /**
@@ -779,7 +779,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from catalogProductUpdate operation
      */
-    public void receiveErrorcatalogProductUpdate(Exception e) {
+    public void receiveErrorcatalogProductUpdate(java.lang.Exception e) {
     }
 
     /**
@@ -795,7 +795,7 @@ public abstract class MagentoServiceCallbackHandler {
      * override this method for handling error response from catalogProductAttributeMediaList operation
      */
     public void receiveErrorcatalogProductAttributeMediaList(
-        Exception e) {
+        java.lang.Exception e) {
     }
 
     /**
@@ -810,7 +810,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from catalogProductAttributeInfo operation
      */
-    public void receiveErrorcatalogProductAttributeInfo(Exception e) {
+    public void receiveErrorcatalogProductAttributeInfo(java.lang.Exception e) {
     }
 
     /**
@@ -825,7 +825,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from startSession operation
      */
-    public void receiveErrorstartSession(Exception e) {
+    public void receiveErrorstartSession(java.lang.Exception e) {
     }
 
     /**
@@ -840,7 +840,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from catalogProductMultiUpdate operation
      */
-    public void receiveErrorcatalogProductMultiUpdate(Exception e) {
+    public void receiveErrorcatalogProductMultiUpdate(java.lang.Exception e) {
     }
 
     /**
@@ -855,7 +855,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from salesOrderShipmentList operation
      */
-    public void receiveErrorsalesOrderShipmentList(Exception e) {
+    public void receiveErrorsalesOrderShipmentList(java.lang.Exception e) {
     }
 
     /**
@@ -871,7 +871,7 @@ public abstract class MagentoServiceCallbackHandler {
      * override this method for handling error response from enterpriseCustomerbalanceBalance operation
      */
     public void receiveErrorenterpriseCustomerbalanceBalance(
-        Exception e) {
+        java.lang.Exception e) {
     }
 
     /**
@@ -886,7 +886,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from catalogProductLinkAssign operation
      */
-    public void receiveErrorcatalogProductLinkAssign(Exception e) {
+    public void receiveErrorcatalogProductLinkAssign(java.lang.Exception e) {
     }
 
     /**
@@ -901,7 +901,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from salesOrderInvoiceList operation
      */
-    public void receiveErrorsalesOrderInvoiceList(Exception e) {
+    public void receiveErrorsalesOrderInvoiceList(java.lang.Exception e) {
     }
 
     /**
@@ -916,7 +916,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from catalogProductLinkList operation
      */
-    public void receiveErrorcatalogProductLinkList(Exception e) {
+    public void receiveErrorcatalogProductLinkList(java.lang.Exception e) {
     }
 
     /**
@@ -931,7 +931,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from catalogProductAttributeCreate operation
      */
-    public void receiveErrorcatalogProductAttributeCreate(Exception e) {
+    public void receiveErrorcatalogProductAttributeCreate(java.lang.Exception e) {
     }
 
     /**
@@ -946,7 +946,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from salesOrderInvoiceCreate operation
      */
-    public void receiveErrorsalesOrderInvoiceCreate(Exception e) {
+    public void receiveErrorsalesOrderInvoiceCreate(java.lang.Exception e) {
     }
 
     /**
@@ -961,7 +961,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from customerGroupList operation
      */
-    public void receiveErrorcustomerGroupList(Exception e) {
+    public void receiveErrorcustomerGroupList(java.lang.Exception e) {
     }
 
     /**
@@ -977,7 +977,7 @@ public abstract class MagentoServiceCallbackHandler {
      * override this method for handling error response from catalogProductCustomOptionUpdate operation
      */
     public void receiveErrorcatalogProductCustomOptionUpdate(
-        Exception e) {
+        java.lang.Exception e) {
     }
 
     /**
@@ -993,7 +993,7 @@ public abstract class MagentoServiceCallbackHandler {
      * override this method for handling error response from catalogProductAttributeSetList operation
      */
     public void receiveErrorcatalogProductAttributeSetList(
-        Exception e) {
+        java.lang.Exception e) {
     }
 
     /**
@@ -1009,7 +1009,7 @@ public abstract class MagentoServiceCallbackHandler {
      * override this method for handling error response from catalogProductCustomOptionValueRemove operation
      */
     public void receiveErrorcatalogProductCustomOptionValueRemove(
-        Exception e) {
+        java.lang.Exception e) {
     }
 
     /**
@@ -1024,7 +1024,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from catalogCategoryMove operation
      */
-    public void receiveErrorcatalogCategoryMove(Exception e) {
+    public void receiveErrorcatalogCategoryMove(java.lang.Exception e) {
     }
 
     /**
@@ -1039,7 +1039,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from catalogCategoryUpdate operation
      */
-    public void receiveErrorcatalogCategoryUpdate(Exception e) {
+    public void receiveErrorcatalogCategoryUpdate(java.lang.Exception e) {
     }
 
     /**
@@ -1055,7 +1055,7 @@ public abstract class MagentoServiceCallbackHandler {
      * override this method for handling error response from catalogProductAttributeSetRemove operation
      */
     public void receiveErrorcatalogProductAttributeSetRemove(
-        Exception e) {
+        java.lang.Exception e) {
     }
 
     /**
@@ -1070,7 +1070,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from catalogCategoryAttributeList operation
      */
-    public void receiveErrorcatalogCategoryAttributeList(Exception e) {
+    public void receiveErrorcatalogCategoryAttributeList(java.lang.Exception e) {
     }
 
     /**
@@ -1085,7 +1085,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from shoppingCartProductUpdate operation
      */
-    public void receiveErrorshoppingCartProductUpdate(Exception e) {
+    public void receiveErrorshoppingCartProductUpdate(java.lang.Exception e) {
     }
 
     /**
@@ -1100,7 +1100,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from customerAddressInfo operation
      */
-    public void receiveErrorcustomerAddressInfo(Exception e) {
+    public void receiveErrorcustomerAddressInfo(java.lang.Exception e) {
     }
 
     /**
@@ -1116,7 +1116,7 @@ public abstract class MagentoServiceCallbackHandler {
      * override this method for handling error response from catalogProductCustomOptionList operation
      */
     public void receiveErrorcatalogProductCustomOptionList(
-        Exception e) {
+        java.lang.Exception e) {
     }
 
     /**
@@ -1131,7 +1131,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from salesOrderInvoiceVoid operation
      */
-    public void receiveErrorsalesOrderInvoiceVoid(Exception e) {
+    public void receiveErrorsalesOrderInvoiceVoid(java.lang.Exception e) {
     }
 
     /**
@@ -1147,7 +1147,7 @@ public abstract class MagentoServiceCallbackHandler {
      * override this method for handling error response from catalogProductAttributeSetCreate operation
      */
     public void receiveErrorcatalogProductAttributeSetCreate(
-        Exception e) {
+        java.lang.Exception e) {
     }
 
     /**
@@ -1162,7 +1162,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from catalogCategoryCreate operation
      */
-    public void receiveErrorcatalogCategoryCreate(Exception e) {
+    public void receiveErrorcatalogCategoryCreate(java.lang.Exception e) {
     }
 
     /**
@@ -1178,7 +1178,7 @@ public abstract class MagentoServiceCallbackHandler {
      * override this method for handling error response from catalogProductAttributeMediaInfo operation
      */
     public void receiveErrorcatalogProductAttributeMediaInfo(
-        Exception e) {
+        java.lang.Exception e) {
     }
 
     /**
@@ -1193,7 +1193,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from customerCustomerUpdate operation
      */
-    public void receiveErrorcustomerCustomerUpdate(Exception e) {
+    public void receiveErrorcustomerCustomerUpdate(java.lang.Exception e) {
     }
 
     /**
@@ -1208,7 +1208,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from magentoInfo operation
      */
-    public void receiveErrormagentoInfo(Exception e) {
+    public void receiveErrormagentoInfo(java.lang.Exception e) {
     }
 
     /**
@@ -1223,7 +1223,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from giftcardAccountCreate operation
      */
-    public void receiveErrorgiftcardAccountCreate(Exception e) {
+    public void receiveErrorgiftcardAccountCreate(java.lang.Exception e) {
     }
 
     /**
@@ -1238,7 +1238,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from shoppingCartCreate operation
      */
-    public void receiveErrorshoppingCartCreate(Exception e) {
+    public void receiveErrorshoppingCartCreate(java.lang.Exception e) {
     }
 
     /**
@@ -1253,7 +1253,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from giftMessageSetForQuote operation
      */
-    public void receiveErrorgiftMessageSetForQuote(Exception e) {
+    public void receiveErrorgiftMessageSetForQuote(java.lang.Exception e) {
     }
 
     /**
@@ -1268,7 +1268,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from salesOrderShipmentSendInfo operation
      */
-    public void receiveErrorsalesOrderShipmentSendInfo(Exception e) {
+    public void receiveErrorsalesOrderShipmentSendInfo(java.lang.Exception e) {
     }
 
     /**
@@ -1284,7 +1284,7 @@ public abstract class MagentoServiceCallbackHandler {
      * override this method for handling error response from catalogProductAttributeSetAttributeAdd operation
      */
     public void receiveErrorcatalogProductAttributeSetAttributeAdd(
-        Exception e) {
+        java.lang.Exception e) {
     }
 
     /**
@@ -1299,7 +1299,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from shoppingCartProductRemove operation
      */
-    public void receiveErrorshoppingCartProductRemove(Exception e) {
+    public void receiveErrorshoppingCartProductRemove(java.lang.Exception e) {
     }
 
     /**
@@ -1313,7 +1313,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from login operation
      */
-    public void receiveErrorlogin(Exception e) {
+    public void receiveErrorlogin(java.lang.Exception e) {
     }
 
     /**
@@ -1328,7 +1328,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from catalogProductCustomOptionAdd operation
      */
-    public void receiveErrorcatalogProductCustomOptionAdd(Exception e) {
+    public void receiveErrorcatalogProductCustomOptionAdd(java.lang.Exception e) {
     }
 
     /**
@@ -1344,7 +1344,7 @@ public abstract class MagentoServiceCallbackHandler {
      * override this method for handling error response from catalogCategoryAttributeOptions operation
      */
     public void receiveErrorcatalogCategoryAttributeOptions(
-        Exception e) {
+        java.lang.Exception e) {
     }
 
     /**
@@ -1359,7 +1359,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from salesOrderCreditmemoInfo operation
      */
-    public void receiveErrorsalesOrderCreditmemoInfo(Exception e) {
+    public void receiveErrorsalesOrderCreditmemoInfo(java.lang.Exception e) {
     }
 
     /**
@@ -1374,7 +1374,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from customerCustomerInfo operation
      */
-    public void receiveErrorcustomerCustomerInfo(Exception e) {
+    public void receiveErrorcustomerCustomerInfo(java.lang.Exception e) {
     }
 
     /**
@@ -1389,7 +1389,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from salesOrderCreditmemoCreate operation
      */
-    public void receiveErrorsalesOrderCreditmemoCreate(Exception e) {
+    public void receiveErrorsalesOrderCreditmemoCreate(java.lang.Exception e) {
     }
 
     /**
@@ -1404,7 +1404,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from salesOrderCancel operation
      */
-    public void receiveErrorsalesOrderCancel(Exception e) {
+    public void receiveErrorsalesOrderCancel(java.lang.Exception e) {
     }
 
     /**
@@ -1419,7 +1419,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from shoppingCartCouponRemove operation
      */
-    public void receiveErrorshoppingCartCouponRemove(Exception e) {
+    public void receiveErrorshoppingCartCouponRemove(java.lang.Exception e) {
     }
 
     /**
@@ -1434,7 +1434,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from shoppingCartShippingMethod operation
      */
-    public void receiveErrorshoppingCartShippingMethod(Exception e) {
+    public void receiveErrorshoppingCartShippingMethod(java.lang.Exception e) {
     }
 
     /**
@@ -1450,7 +1450,7 @@ public abstract class MagentoServiceCallbackHandler {
      * override this method for handling error response from shoppingCartCustomerbalanceRemoveAmount operation
      */
     public void receiveErrorshoppingCartCustomerbalanceRemoveAmount(
-        Exception e) {
+        java.lang.Exception e) {
     }
 
     /**
@@ -1465,7 +1465,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from salesOrderShipmentAddTrack operation
      */
-    public void receiveErrorsalesOrderShipmentAddTrack(Exception e) {
+    public void receiveErrorsalesOrderShipmentAddTrack(java.lang.Exception e) {
     }
 
     /**
@@ -1480,7 +1480,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from catalogProductTagUpdate operation
      */
-    public void receiveErrorcatalogProductTagUpdate(Exception e) {
+    public void receiveErrorcatalogProductTagUpdate(java.lang.Exception e) {
     }
 
     /**
@@ -1496,7 +1496,22 @@ public abstract class MagentoServiceCallbackHandler {
      * override this method for handling error response from catalogProductDownloadableLinkAdd operation
      */
     public void receiveErrorcatalogProductDownloadableLinkAdd(
-        Exception e) {
+        java.lang.Exception e) {
+    }
+
+    /**
+     * auto generated Axis2 call back method for shoppingCartExternalId method
+     * override this method for handling normal response from shoppingCartExternalId operation
+     */
+    public void receiveResultshoppingCartExternalId(
+        magento.ShoppingCartExternalIdResponseParam result) {
+    }
+
+    /**
+     * auto generated Axis2 Error handler
+     * override this method for handling error response from shoppingCartExternalId operation
+     */
+    public void receiveErrorshoppingCartExternalId(java.lang.Exception e) {
     }
 
     /**
@@ -1511,7 +1526,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from resourceFaults operation
      */
-    public void receiveErrorresourceFaults(Exception e) {
+    public void receiveErrorresourceFaults(java.lang.Exception e) {
     }
 
     /**
@@ -1526,7 +1541,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from customerAddressList operation
      */
-    public void receiveErrorcustomerAddressList(Exception e) {
+    public void receiveErrorcustomerAddressList(java.lang.Exception e) {
     }
 
     /**
@@ -1542,7 +1557,7 @@ public abstract class MagentoServiceCallbackHandler {
      * override this method for handling error response from catalogInventoryStockItemUpdate operation
      */
     public void receiveErrorcatalogInventoryStockItemUpdate(
-        Exception e) {
+        java.lang.Exception e) {
     }
 
     /**
@@ -1557,7 +1572,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from shoppingCartPaymentList operation
      */
-    public void receiveErrorshoppingCartPaymentList(Exception e) {
+    public void receiveErrorshoppingCartPaymentList(java.lang.Exception e) {
     }
 
     /**
@@ -1573,7 +1588,7 @@ public abstract class MagentoServiceCallbackHandler {
      * override this method for handling error response from salesOrderCreditmemoAddComment operation
      */
     public void receiveErrorsalesOrderCreditmemoAddComment(
-        Exception e) {
+        java.lang.Exception e) {
     }
 
     /**
@@ -1588,7 +1603,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from catalogProductTagRemove operation
      */
-    public void receiveErrorcatalogProductTagRemove(Exception e) {
+    public void receiveErrorcatalogProductTagRemove(java.lang.Exception e) {
     }
 
     /**
@@ -1603,7 +1618,23 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from salesOrderShipmentInfo operation
      */
-    public void receiveErrorsalesOrderShipmentInfo(Exception e) {
+    public void receiveErrorsalesOrderShipmentInfo(java.lang.Exception e) {
+    }
+
+    /**
+     * auto generated Axis2 call back method for shoppingCartProductSetCustomPrice method
+     * override this method for handling normal response from shoppingCartProductSetCustomPrice operation
+     */
+    public void receiveResultshoppingCartProductSetCustomPrice(
+        magento.ShoppingCartProductCustomPriceResponseParam result) {
+    }
+
+    /**
+     * auto generated Axis2 Error handler
+     * override this method for handling error response from shoppingCartProductSetCustomPrice operation
+     */
+    public void receiveErrorshoppingCartProductSetCustomPrice(
+        java.lang.Exception e) {
     }
 
     /**
@@ -1618,7 +1649,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from shoppingCartGiftcardRemove operation
      */
-    public void receiveErrorshoppingCartGiftcardRemove(Exception e) {
+    public void receiveErrorshoppingCartGiftcardRemove(java.lang.Exception e) {
     }
 
     /**
@@ -1633,7 +1664,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from catalogCategoryDelete operation
      */
-    public void receiveErrorcatalogCategoryDelete(Exception e) {
+    public void receiveErrorcatalogCategoryDelete(java.lang.Exception e) {
     }
 
     /**
@@ -1649,7 +1680,7 @@ public abstract class MagentoServiceCallbackHandler {
      * override this method for handling error response from catalogProductAttributeOptions operation
      */
     public void receiveErrorcatalogProductAttributeOptions(
-        Exception e) {
+        java.lang.Exception e) {
     }
 
     /**
@@ -1664,7 +1695,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from customerAddressDelete operation
      */
-    public void receiveErrorcustomerAddressDelete(Exception e) {
+    public void receiveErrorcustomerAddressDelete(java.lang.Exception e) {
     }
 
     /**
@@ -1680,7 +1711,7 @@ public abstract class MagentoServiceCallbackHandler {
      * override this method for handling error response from enterpriseCustomerbalanceHistory operation
      */
     public void receiveErrorenterpriseCustomerbalanceHistory(
-        Exception e) {
+        java.lang.Exception e) {
     }
 
     /**
@@ -1695,7 +1726,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from shoppingCartCouponAdd operation
      */
-    public void receiveErrorshoppingCartCouponAdd(Exception e) {
+    public void receiveErrorshoppingCartCouponAdd(java.lang.Exception e) {
     }
 
     /**
@@ -1710,7 +1741,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from directoryCountryList operation
      */
-    public void receiveErrordirectoryCountryList(Exception e) {
+    public void receiveErrordirectoryCountryList(java.lang.Exception e) {
     }
 
     /**
@@ -1725,7 +1756,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from catalogCategoryCurrentStore operation
      */
-    public void receiveErrorcatalogCategoryCurrentStore(Exception e) {
+    public void receiveErrorcatalogCategoryCurrentStore(java.lang.Exception e) {
     }
 
     /**
@@ -1740,7 +1771,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from catalogCategoryUpdateProduct operation
      */
-    public void receiveErrorcatalogCategoryUpdateProduct(Exception e) {
+    public void receiveErrorcatalogCategoryUpdateProduct(java.lang.Exception e) {
     }
 
     /**
@@ -1755,7 +1786,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from catalogProductAttributeUpdate operation
      */
-    public void receiveErrorcatalogProductAttributeUpdate(Exception e) {
+    public void receiveErrorcatalogProductAttributeUpdate(java.lang.Exception e) {
     }
 
     /**
@@ -1770,7 +1801,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from globalFaults operation
      */
-    public void receiveErrorglobalFaults(Exception e) {
+    public void receiveErrorglobalFaults(java.lang.Exception e) {
     }
 
     /**
@@ -1785,7 +1816,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from shoppingCartOrder operation
      */
-    public void receiveErrorshoppingCartOrder(Exception e) {
+    public void receiveErrorshoppingCartOrder(java.lang.Exception e) {
     }
 
     /**
@@ -1800,7 +1831,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from customerCustomerDelete operation
      */
-    public void receiveErrorcustomerCustomerDelete(Exception e) {
+    public void receiveErrorcustomerCustomerDelete(java.lang.Exception e) {
     }
 
     /**
@@ -1815,7 +1846,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from catalogCategoryTree operation
      */
-    public void receiveErrorcatalogCategoryTree(Exception e) {
+    public void receiveErrorcatalogCategoryTree(java.lang.Exception e) {
     }
 
     /**
@@ -1831,7 +1862,7 @@ public abstract class MagentoServiceCallbackHandler {
      * override this method for handling error response from catalogProductAttributeSetGroupAdd operation
      */
     public void receiveErrorcatalogProductAttributeSetGroupAdd(
-        Exception e) {
+        java.lang.Exception e) {
     }
 
     /**
@@ -1847,7 +1878,7 @@ public abstract class MagentoServiceCallbackHandler {
      * override this method for handling error response from catalogProductAttributeMediaRemove operation
      */
     public void receiveErrorcatalogProductAttributeMediaRemove(
-        Exception e) {
+        java.lang.Exception e) {
     }
 
     /**
@@ -1862,7 +1893,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from salesOrderUnhold operation
      */
-    public void receiveErrorsalesOrderUnhold(Exception e) {
+    public void receiveErrorsalesOrderUnhold(java.lang.Exception e) {
     }
 
     /**
@@ -1877,7 +1908,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from giftMessageSetForQuoteItem operation
      */
-    public void receiveErrorgiftMessageSetForQuoteItem(Exception e) {
+    public void receiveErrorgiftMessageSetForQuoteItem(java.lang.Exception e) {
     }
 
     /**
@@ -1892,7 +1923,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from catalogProductAttributeRemove operation
      */
-    public void receiveErrorcatalogProductAttributeRemove(Exception e) {
+    public void receiveErrorcatalogProductAttributeRemove(java.lang.Exception e) {
     }
 
     /**
@@ -1906,7 +1937,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from call operation
      */
-    public void receiveErrorcall(Exception e) {
+    public void receiveErrorcall(java.lang.Exception e) {
     }
 
     /**
@@ -1922,7 +1953,7 @@ public abstract class MagentoServiceCallbackHandler {
      * override this method for handling error response from catalogProductAttributeMediaTypes operation
      */
     public void receiveErrorcatalogProductAttributeMediaTypes(
-        Exception e) {
+        java.lang.Exception e) {
     }
 
     /**
@@ -1938,7 +1969,7 @@ public abstract class MagentoServiceCallbackHandler {
      * override this method for handling error response from catalogProductAttributeMediaUpdate operation
      */
     public void receiveErrorcatalogProductAttributeMediaUpdate(
-        Exception e) {
+        java.lang.Exception e) {
     }
 
     /**
@@ -1953,7 +1984,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from catalogInventoryStockItemList operation
      */
-    public void receiveErrorcatalogInventoryStockItemList(Exception e) {
+    public void receiveErrorcatalogInventoryStockItemList(java.lang.Exception e) {
     }
 
     /**
@@ -1968,7 +1999,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from customerCustomerList operation
      */
-    public void receiveErrorcustomerCustomerList(Exception e) {
+    public void receiveErrorcustomerCustomerList(java.lang.Exception e) {
     }
 
     /**
@@ -1983,7 +2014,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from giftcardCustomerRedeem operation
      */
-    public void receiveErrorgiftcardCustomerRedeem(Exception e) {
+    public void receiveErrorgiftcardCustomerRedeem(java.lang.Exception e) {
     }
 
     /**
@@ -1999,7 +2030,7 @@ public abstract class MagentoServiceCallbackHandler {
      * override this method for handling error response from catalogProductAttributeSetGroupRemove operation
      */
     public void receiveErrorcatalogProductAttributeSetGroupRemove(
-        Exception e) {
+        java.lang.Exception e) {
     }
 
     /**
@@ -2014,7 +2045,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from catalogProductLinkRemove operation
      */
-    public void receiveErrorcatalogProductLinkRemove(Exception e) {
+    public void receiveErrorcatalogProductLinkRemove(java.lang.Exception e) {
     }
 
     /**
@@ -2029,7 +2060,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from giftcardCustomerInfo operation
      */
-    public void receiveErrorgiftcardCustomerInfo(Exception e) {
+    public void receiveErrorgiftcardCustomerInfo(java.lang.Exception e) {
     }
 
     /**
@@ -2044,7 +2075,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from catalogProductList operation
      */
-    public void receiveErrorcatalogProductList(Exception e) {
+    public void receiveErrorcatalogProductList(java.lang.Exception e) {
     }
 
     /**
@@ -2060,7 +2091,7 @@ public abstract class MagentoServiceCallbackHandler {
      * override this method for handling error response from catalogProductCustomOptionValueAdd operation
      */
     public void receiveErrorcatalogProductCustomOptionValueAdd(
-        Exception e) {
+        java.lang.Exception e) {
     }
 
     /**
@@ -2076,7 +2107,7 @@ public abstract class MagentoServiceCallbackHandler {
      * override this method for handling error response from catalogProductDownloadableLinkList operation
      */
     public void receiveErrorcatalogProductDownloadableLinkList(
-        Exception e) {
+        java.lang.Exception e) {
     }
 
     /**
@@ -2091,7 +2122,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from catalogProductDelete operation
      */
-    public void receiveErrorcatalogProductDelete(Exception e) {
+    public void receiveErrorcatalogProductDelete(java.lang.Exception e) {
     }
 
     /**
@@ -2106,7 +2137,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from salesOrderHold operation
      */
-    public void receiveErrorsalesOrderHold(Exception e) {
+    public void receiveErrorsalesOrderHold(java.lang.Exception e) {
     }
 
     /**
@@ -2121,7 +2152,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from shoppingCartGiftcardList operation
      */
-    public void receiveErrorshoppingCartGiftcardList(Exception e) {
+    public void receiveErrorshoppingCartGiftcardList(java.lang.Exception e) {
     }
 
     /**
@@ -2136,7 +2167,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from customerAddressUpdate operation
      */
-    public void receiveErrorcustomerAddressUpdate(Exception e) {
+    public void receiveErrorcustomerAddressUpdate(java.lang.Exception e) {
     }
 
     /**
@@ -2151,7 +2182,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from giftMessageSetForQuoteProduct operation
      */
-    public void receiveErrorgiftMessageSetForQuoteProduct(Exception e) {
+    public void receiveErrorgiftMessageSetForQuoteProduct(java.lang.Exception e) {
     }
 
     /**
@@ -2167,7 +2198,7 @@ public abstract class MagentoServiceCallbackHandler {
      * override this method for handling error response from catalogProductCustomOptionValueList operation
      */
     public void receiveErrorcatalogProductCustomOptionValueList(
-        Exception e) {
+        java.lang.Exception e) {
     }
 
     /**
@@ -2182,7 +2213,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from salesOrderInvoiceAddComment operation
      */
-    public void receiveErrorsalesOrderInvoiceAddComment(Exception e) {
+    public void receiveErrorsalesOrderInvoiceAddComment(java.lang.Exception e) {
     }
 
     /**
@@ -2197,7 +2228,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from catalogCategoryRemoveProduct operation
      */
-    public void receiveErrorcatalogCategoryRemoveProduct(Exception e) {
+    public void receiveErrorcatalogCategoryRemoveProduct(java.lang.Exception e) {
     }
 
     /**
@@ -2213,7 +2244,7 @@ public abstract class MagentoServiceCallbackHandler {
      * override this method for handling error response from catalogProductCustomOptionValueUpdate operation
      */
     public void receiveErrorcatalogProductCustomOptionValueUpdate(
-        Exception e) {
+        java.lang.Exception e) {
     }
 
     /**
@@ -2228,7 +2259,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from catalogProductLinkTypes operation
      */
-    public void receiveErrorcatalogProductLinkTypes(Exception e) {
+    public void receiveErrorcatalogProductLinkTypes(java.lang.Exception e) {
     }
 
     /**
@@ -2244,7 +2275,7 @@ public abstract class MagentoServiceCallbackHandler {
      * override this method for handling error response from catalogProductCustomOptionValueInfo operation
      */
     public void receiveErrorcatalogProductCustomOptionValueInfo(
-        Exception e) {
+        java.lang.Exception e) {
     }
 
     /**
@@ -2259,7 +2290,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from salesOrderInvoiceCancel operation
      */
-    public void receiveErrorsalesOrderInvoiceCancel(Exception e) {
+    public void receiveErrorsalesOrderInvoiceCancel(java.lang.Exception e) {
     }
 
     /**
@@ -2274,7 +2305,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from customerCustomerCreate operation
      */
-    public void receiveErrorcustomerCustomerCreate(Exception e) {
+    public void receiveErrorcustomerCustomerCreate(java.lang.Exception e) {
     }
 
     /**
@@ -2290,7 +2321,7 @@ public abstract class MagentoServiceCallbackHandler {
      * override this method for handling error response from catalogCategoryAssignedProducts operation
      */
     public void receiveErrorcatalogCategoryAssignedProducts(
-        Exception e) {
+        java.lang.Exception e) {
     }
 
     /**
@@ -2305,7 +2336,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from shoppingCartLicense operation
      */
-    public void receiveErrorshoppingCartLicense(Exception e) {
+    public void receiveErrorshoppingCartLicense(java.lang.Exception e) {
     }
 
     /**
@@ -2320,7 +2351,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from catalogProductTagAdd operation
      */
-    public void receiveErrorcatalogProductTagAdd(Exception e) {
+    public void receiveErrorcatalogProductTagAdd(java.lang.Exception e) {
     }
 
     /**
@@ -2335,7 +2366,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from shoppingCartTotals operation
      */
-    public void receiveErrorshoppingCartTotals(Exception e) {
+    public void receiveErrorshoppingCartTotals(java.lang.Exception e) {
     }
 
     /**
@@ -2350,7 +2381,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from customerAddressCreate operation
      */
-    public void receiveErrorcustomerAddressCreate(Exception e) {
+    public void receiveErrorcustomerAddressCreate(java.lang.Exception e) {
     }
 
     /**
@@ -2365,7 +2396,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from catalogProductCurrentStore operation
      */
-    public void receiveErrorcatalogProductCurrentStore(Exception e) {
+    public void receiveErrorcatalogProductCurrentStore(java.lang.Exception e) {
     }
 
     /**
@@ -2380,7 +2411,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from catalogProductInfo operation
      */
-    public void receiveErrorcatalogProductInfo(Exception e) {
+    public void receiveErrorcatalogProductInfo(java.lang.Exception e) {
     }
 
     /**
@@ -2395,7 +2426,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from shoppingCartCustomerSet operation
      */
-    public void receiveErrorshoppingCartCustomerSet(Exception e) {
+    public void receiveErrorshoppingCartCustomerSet(java.lang.Exception e) {
     }
 
     /**
@@ -2409,7 +2440,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from multiCall operation
      */
-    public void receiveErrormultiCall(Exception e) {
+    public void receiveErrormultiCall(java.lang.Exception e) {
     }
 
     /**
@@ -2425,7 +2456,7 @@ public abstract class MagentoServiceCallbackHandler {
      * override this method for handling error response from catalogProductCustomOptionRemove operation
      */
     public void receiveErrorcatalogProductCustomOptionRemove(
-        Exception e) {
+        java.lang.Exception e) {
     }
 
     /**
@@ -2441,7 +2472,7 @@ public abstract class MagentoServiceCallbackHandler {
      * override this method for handling error response from catalogProductAttributeSetGroupRename operation
      */
     public void receiveErrorcatalogProductAttributeSetGroupRename(
-        Exception e) {
+        java.lang.Exception e) {
     }
 
     /**
@@ -2457,7 +2488,7 @@ public abstract class MagentoServiceCallbackHandler {
      * override this method for handling error response from catalogInventoryStockItemMultiUpdate operation
      */
     public void receiveErrorcatalogInventoryStockItemMultiUpdate(
-        Exception e) {
+        java.lang.Exception e) {
     }
 
     /**
@@ -2472,7 +2503,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from giftcardAccountRemove operation
      */
-    public void receiveErrorgiftcardAccountRemove(Exception e) {
+    public void receiveErrorgiftcardAccountRemove(java.lang.Exception e) {
     }
 
     /**
@@ -2487,7 +2518,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from salesOrderShipmentAddComment operation
      */
-    public void receiveErrorsalesOrderShipmentAddComment(Exception e) {
+    public void receiveErrorsalesOrderShipmentAddComment(java.lang.Exception e) {
     }
 
     /**
@@ -2502,7 +2533,7 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from salesOrderShipmentCreate operation
      */
-    public void receiveErrorsalesOrderShipmentCreate(Exception e) {
+    public void receiveErrorsalesOrderShipmentCreate(java.lang.Exception e) {
     }
 
     /**
@@ -2517,6 +2548,6 @@ public abstract class MagentoServiceCallbackHandler {
      * auto generated Axis2 Error handler
      * override this method for handling error response from salesOrderCreditmemoList operation
      */
-    public void receiveErrorsalesOrderCreditmemoList(Exception e) {
+    public void receiveErrorsalesOrderCreditmemoList(java.lang.Exception e) {
     }
 }

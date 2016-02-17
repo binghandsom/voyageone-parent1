@@ -23,7 +23,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
     /**
      * field for Increment_id
      */
-    protected String localIncrement_id;
+    protected java.lang.String localIncrement_id;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -34,7 +34,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
     /**
      * field for Parent_id
      */
-    protected String localParent_id;
+    protected java.lang.String localParent_id;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -45,7 +45,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
     /**
      * field for Store_id
      */
-    protected String localStore_id;
+    protected java.lang.String localStore_id;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -56,7 +56,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
     /**
      * field for Created_at
      */
-    protected String localCreated_at;
+    protected java.lang.String localCreated_at;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -67,7 +67,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
     /**
      * field for Updated_at
      */
-    protected String localUpdated_at;
+    protected java.lang.String localUpdated_at;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -78,7 +78,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
     /**
      * field for Is_active
      */
-    protected String localIs_active;
+    protected java.lang.String localIs_active;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -89,7 +89,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
     /**
      * field for Customer_id
      */
-    protected String localCustomer_id;
+    protected java.lang.String localCustomer_id;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -100,7 +100,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
     /**
      * field for Tax_amount
      */
-    protected String localTax_amount;
+    protected java.lang.String localTax_amount;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -111,7 +111,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
     /**
      * field for Shipping_amount
      */
-    protected String localShipping_amount;
+    protected java.lang.String localShipping_amount;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -122,7 +122,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
     /**
      * field for Discount_amount
      */
-    protected String localDiscount_amount;
+    protected java.lang.String localDiscount_amount;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -133,7 +133,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
     /**
      * field for Subtotal
      */
-    protected String localSubtotal;
+    protected java.lang.String localSubtotal;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -144,7 +144,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
     /**
      * field for Grand_total
      */
-    protected String localGrand_total;
+    protected java.lang.String localGrand_total;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -155,7 +155,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
     /**
      * field for Total_paid
      */
-    protected String localTotal_paid;
+    protected java.lang.String localTotal_paid;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -166,7 +166,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
     /**
      * field for Total_refunded
      */
-    protected String localTotal_refunded;
+    protected java.lang.String localTotal_refunded;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -177,7 +177,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
     /**
      * field for Total_qty_ordered
      */
-    protected String localTotal_qty_ordered;
+    protected java.lang.String localTotal_qty_ordered;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -188,7 +188,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
     /**
      * field for Total_canceled
      */
-    protected String localTotal_canceled;
+    protected java.lang.String localTotal_canceled;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -199,7 +199,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
     /**
      * field for Total_invoiced
      */
-    protected String localTotal_invoiced;
+    protected java.lang.String localTotal_invoiced;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -210,7 +210,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
     /**
      * field for Total_online_refunded
      */
-    protected String localTotal_online_refunded;
+    protected java.lang.String localTotal_online_refunded;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -221,7 +221,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
     /**
      * field for Total_offline_refunded
      */
-    protected String localTotal_offline_refunded;
+    protected java.lang.String localTotal_offline_refunded;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -232,7 +232,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
     /**
      * field for Base_tax_amount
      */
-    protected String localBase_tax_amount;
+    protected java.lang.String localBase_tax_amount;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -243,7 +243,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
     /**
      * field for Base_shipping_amount
      */
-    protected String localBase_shipping_amount;
+    protected java.lang.String localBase_shipping_amount;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -254,7 +254,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
     /**
      * field for Base_discount_amount
      */
-    protected String localBase_discount_amount;
+    protected java.lang.String localBase_discount_amount;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -265,7 +265,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
     /**
      * field for Base_subtotal
      */
-    protected String localBase_subtotal;
+    protected java.lang.String localBase_subtotal;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -276,7 +276,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
     /**
      * field for Base_grand_total
      */
-    protected String localBase_grand_total;
+    protected java.lang.String localBase_grand_total;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -287,7 +287,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
     /**
      * field for Base_total_paid
      */
-    protected String localBase_total_paid;
+    protected java.lang.String localBase_total_paid;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -298,7 +298,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
     /**
      * field for Base_total_refunded
      */
-    protected String localBase_total_refunded;
+    protected java.lang.String localBase_total_refunded;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -309,7 +309,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
     /**
      * field for Base_total_qty_ordered
      */
-    protected String localBase_total_qty_ordered;
+    protected java.lang.String localBase_total_qty_ordered;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -320,7 +320,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
     /**
      * field for Base_total_canceled
      */
-    protected String localBase_total_canceled;
+    protected java.lang.String localBase_total_canceled;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -331,7 +331,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
     /**
      * field for Base_total_invoiced
      */
-    protected String localBase_total_invoiced;
+    protected java.lang.String localBase_total_invoiced;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -342,7 +342,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
     /**
      * field for Base_total_online_refunded
      */
-    protected String localBase_total_online_refunded;
+    protected java.lang.String localBase_total_online_refunded;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -353,7 +353,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
     /**
      * field for Base_total_offline_refunded
      */
-    protected String localBase_total_offline_refunded;
+    protected java.lang.String localBase_total_offline_refunded;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -364,7 +364,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
     /**
      * field for Billing_address_id
      */
-    protected String localBilling_address_id;
+    protected java.lang.String localBilling_address_id;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -375,7 +375,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
     /**
      * field for Billing_firstname
      */
-    protected String localBilling_firstname;
+    protected java.lang.String localBilling_firstname;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -386,7 +386,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
     /**
      * field for Billing_lastname
      */
-    protected String localBilling_lastname;
+    protected java.lang.String localBilling_lastname;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -397,7 +397,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
     /**
      * field for Shipping_address_id
      */
-    protected String localShipping_address_id;
+    protected java.lang.String localShipping_address_id;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -408,7 +408,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
     /**
      * field for Shipping_firstname
      */
-    protected String localShipping_firstname;
+    protected java.lang.String localShipping_firstname;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -419,7 +419,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
     /**
      * field for Shipping_lastname
      */
-    protected String localShipping_lastname;
+    protected java.lang.String localShipping_lastname;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -430,7 +430,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
     /**
      * field for Billing_name
      */
-    protected String localBilling_name;
+    protected java.lang.String localBilling_name;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -441,7 +441,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
     /**
      * field for Shipping_name
      */
-    protected String localShipping_name;
+    protected java.lang.String localShipping_name;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -452,7 +452,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
     /**
      * field for Store_to_base_rate
      */
-    protected String localStore_to_base_rate;
+    protected java.lang.String localStore_to_base_rate;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -463,7 +463,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
     /**
      * field for Store_to_order_rate
      */
-    protected String localStore_to_order_rate;
+    protected java.lang.String localStore_to_order_rate;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -474,7 +474,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
     /**
      * field for Base_to_global_rate
      */
-    protected String localBase_to_global_rate;
+    protected java.lang.String localBase_to_global_rate;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -485,7 +485,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
     /**
      * field for Base_to_order_rate
      */
-    protected String localBase_to_order_rate;
+    protected java.lang.String localBase_to_order_rate;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -496,7 +496,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
     /**
      * field for Weight
      */
-    protected String localWeight;
+    protected java.lang.String localWeight;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -507,7 +507,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
     /**
      * field for Store_name
      */
-    protected String localStore_name;
+    protected java.lang.String localStore_name;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -518,7 +518,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
     /**
      * field for Remote_ip
      */
-    protected String localRemote_ip;
+    protected java.lang.String localRemote_ip;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -529,7 +529,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
     /**
      * field for Status
      */
-    protected String localStatus;
+    protected java.lang.String localStatus;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -540,7 +540,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
     /**
      * field for State
      */
-    protected String localState;
+    protected java.lang.String localState;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -551,7 +551,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
     /**
      * field for Applied_rule_ids
      */
-    protected String localApplied_rule_ids;
+    protected java.lang.String localApplied_rule_ids;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -562,7 +562,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
     /**
      * field for Global_currency_code
      */
-    protected String localGlobal_currency_code;
+    protected java.lang.String localGlobal_currency_code;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -573,7 +573,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
     /**
      * field for Base_currency_code
      */
-    protected String localBase_currency_code;
+    protected java.lang.String localBase_currency_code;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -584,7 +584,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
     /**
      * field for Store_currency_code
      */
-    protected String localStore_currency_code;
+    protected java.lang.String localStore_currency_code;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -595,7 +595,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
     /**
      * field for Order_currency_code
      */
-    protected String localOrder_currency_code;
+    protected java.lang.String localOrder_currency_code;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -606,7 +606,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
     /**
      * field for Shipping_method
      */
-    protected String localShipping_method;
+    protected java.lang.String localShipping_method;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -617,7 +617,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
     /**
      * field for Shipping_description
      */
-    protected String localShipping_description;
+    protected java.lang.String localShipping_description;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -628,7 +628,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
     /**
      * field for Customer_email
      */
-    protected String localCustomer_email;
+    protected java.lang.String localCustomer_email;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -639,7 +639,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
     /**
      * field for Customer_firstname
      */
-    protected String localCustomer_firstname;
+    protected java.lang.String localCustomer_firstname;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -650,7 +650,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
     /**
      * field for Customer_lastname
      */
-    protected String localCustomer_lastname;
+    protected java.lang.String localCustomer_lastname;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -661,7 +661,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
     /**
      * field for Quote_id
      */
-    protected String localQuote_id;
+    protected java.lang.String localQuote_id;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -672,7 +672,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
     /**
      * field for Is_virtual
      */
-    protected String localIs_virtual;
+    protected java.lang.String localIs_virtual;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -683,7 +683,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
     /**
      * field for Customer_group_id
      */
-    protected String localCustomer_group_id;
+    protected java.lang.String localCustomer_group_id;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -694,7 +694,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
     /**
      * field for Customer_note_notify
      */
-    protected String localCustomer_note_notify;
+    protected java.lang.String localCustomer_note_notify;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -705,7 +705,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
     /**
      * field for Customer_is_guest
      */
-    protected String localCustomer_is_guest;
+    protected java.lang.String localCustomer_is_guest;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -716,7 +716,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
     /**
      * field for Email_sent
      */
-    protected String localEmail_sent;
+    protected java.lang.String localEmail_sent;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -727,7 +727,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
     /**
      * field for Order_id
      */
-    protected String localOrder_id;
+    protected java.lang.String localOrder_id;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -738,7 +738,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
     /**
      * field for Gift_message_id
      */
-    protected String localGift_message_id;
+    protected java.lang.String localGift_message_id;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -749,7 +749,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
     /**
      * field for Gift_message
      */
-    protected String localGift_message;
+    protected java.lang.String localGift_message;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -820,7 +820,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getIncrement_id() {
+    public java.lang.String getIncrement_id() {
         return localIncrement_id;
     }
 
@@ -828,7 +828,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated setter method
      * @param param Increment_id
      */
-    public void setIncrement_id(String param) {
+    public void setIncrement_id(java.lang.String param) {
         localIncrement_idTracker = param != null;
 
         this.localIncrement_id = param;
@@ -842,7 +842,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getParent_id() {
+    public java.lang.String getParent_id() {
         return localParent_id;
     }
 
@@ -850,7 +850,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated setter method
      * @param param Parent_id
      */
-    public void setParent_id(String param) {
+    public void setParent_id(java.lang.String param) {
         localParent_idTracker = param != null;
 
         this.localParent_id = param;
@@ -864,7 +864,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getStore_id() {
+    public java.lang.String getStore_id() {
         return localStore_id;
     }
 
@@ -872,7 +872,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated setter method
      * @param param Store_id
      */
-    public void setStore_id(String param) {
+    public void setStore_id(java.lang.String param) {
         localStore_idTracker = param != null;
 
         this.localStore_id = param;
@@ -886,7 +886,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getCreated_at() {
+    public java.lang.String getCreated_at() {
         return localCreated_at;
     }
 
@@ -894,7 +894,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated setter method
      * @param param Created_at
      */
-    public void setCreated_at(String param) {
+    public void setCreated_at(java.lang.String param) {
         localCreated_atTracker = param != null;
 
         this.localCreated_at = param;
@@ -908,7 +908,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getUpdated_at() {
+    public java.lang.String getUpdated_at() {
         return localUpdated_at;
     }
 
@@ -916,7 +916,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated setter method
      * @param param Updated_at
      */
-    public void setUpdated_at(String param) {
+    public void setUpdated_at(java.lang.String param) {
         localUpdated_atTracker = param != null;
 
         this.localUpdated_at = param;
@@ -930,7 +930,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getIs_active() {
+    public java.lang.String getIs_active() {
         return localIs_active;
     }
 
@@ -938,7 +938,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated setter method
      * @param param Is_active
      */
-    public void setIs_active(String param) {
+    public void setIs_active(java.lang.String param) {
         localIs_activeTracker = param != null;
 
         this.localIs_active = param;
@@ -952,7 +952,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getCustomer_id() {
+    public java.lang.String getCustomer_id() {
         return localCustomer_id;
     }
 
@@ -960,7 +960,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated setter method
      * @param param Customer_id
      */
-    public void setCustomer_id(String param) {
+    public void setCustomer_id(java.lang.String param) {
         localCustomer_idTracker = param != null;
 
         this.localCustomer_id = param;
@@ -974,7 +974,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getTax_amount() {
+    public java.lang.String getTax_amount() {
         return localTax_amount;
     }
 
@@ -982,7 +982,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated setter method
      * @param param Tax_amount
      */
-    public void setTax_amount(String param) {
+    public void setTax_amount(java.lang.String param) {
         localTax_amountTracker = param != null;
 
         this.localTax_amount = param;
@@ -996,7 +996,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getShipping_amount() {
+    public java.lang.String getShipping_amount() {
         return localShipping_amount;
     }
 
@@ -1004,7 +1004,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated setter method
      * @param param Shipping_amount
      */
-    public void setShipping_amount(String param) {
+    public void setShipping_amount(java.lang.String param) {
         localShipping_amountTracker = param != null;
 
         this.localShipping_amount = param;
@@ -1018,7 +1018,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getDiscount_amount() {
+    public java.lang.String getDiscount_amount() {
         return localDiscount_amount;
     }
 
@@ -1026,7 +1026,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated setter method
      * @param param Discount_amount
      */
-    public void setDiscount_amount(String param) {
+    public void setDiscount_amount(java.lang.String param) {
         localDiscount_amountTracker = param != null;
 
         this.localDiscount_amount = param;
@@ -1040,7 +1040,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getSubtotal() {
+    public java.lang.String getSubtotal() {
         return localSubtotal;
     }
 
@@ -1048,7 +1048,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated setter method
      * @param param Subtotal
      */
-    public void setSubtotal(String param) {
+    public void setSubtotal(java.lang.String param) {
         localSubtotalTracker = param != null;
 
         this.localSubtotal = param;
@@ -1062,7 +1062,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getGrand_total() {
+    public java.lang.String getGrand_total() {
         return localGrand_total;
     }
 
@@ -1070,7 +1070,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated setter method
      * @param param Grand_total
      */
-    public void setGrand_total(String param) {
+    public void setGrand_total(java.lang.String param) {
         localGrand_totalTracker = param != null;
 
         this.localGrand_total = param;
@@ -1084,7 +1084,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getTotal_paid() {
+    public java.lang.String getTotal_paid() {
         return localTotal_paid;
     }
 
@@ -1092,7 +1092,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated setter method
      * @param param Total_paid
      */
-    public void setTotal_paid(String param) {
+    public void setTotal_paid(java.lang.String param) {
         localTotal_paidTracker = param != null;
 
         this.localTotal_paid = param;
@@ -1106,7 +1106,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getTotal_refunded() {
+    public java.lang.String getTotal_refunded() {
         return localTotal_refunded;
     }
 
@@ -1114,7 +1114,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated setter method
      * @param param Total_refunded
      */
-    public void setTotal_refunded(String param) {
+    public void setTotal_refunded(java.lang.String param) {
         localTotal_refundedTracker = param != null;
 
         this.localTotal_refunded = param;
@@ -1128,7 +1128,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getTotal_qty_ordered() {
+    public java.lang.String getTotal_qty_ordered() {
         return localTotal_qty_ordered;
     }
 
@@ -1136,7 +1136,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated setter method
      * @param param Total_qty_ordered
      */
-    public void setTotal_qty_ordered(String param) {
+    public void setTotal_qty_ordered(java.lang.String param) {
         localTotal_qty_orderedTracker = param != null;
 
         this.localTotal_qty_ordered = param;
@@ -1150,7 +1150,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getTotal_canceled() {
+    public java.lang.String getTotal_canceled() {
         return localTotal_canceled;
     }
 
@@ -1158,7 +1158,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated setter method
      * @param param Total_canceled
      */
-    public void setTotal_canceled(String param) {
+    public void setTotal_canceled(java.lang.String param) {
         localTotal_canceledTracker = param != null;
 
         this.localTotal_canceled = param;
@@ -1172,7 +1172,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getTotal_invoiced() {
+    public java.lang.String getTotal_invoiced() {
         return localTotal_invoiced;
     }
 
@@ -1180,7 +1180,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated setter method
      * @param param Total_invoiced
      */
-    public void setTotal_invoiced(String param) {
+    public void setTotal_invoiced(java.lang.String param) {
         localTotal_invoicedTracker = param != null;
 
         this.localTotal_invoiced = param;
@@ -1194,7 +1194,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getTotal_online_refunded() {
+    public java.lang.String getTotal_online_refunded() {
         return localTotal_online_refunded;
     }
 
@@ -1202,7 +1202,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated setter method
      * @param param Total_online_refunded
      */
-    public void setTotal_online_refunded(String param) {
+    public void setTotal_online_refunded(java.lang.String param) {
         localTotal_online_refundedTracker = param != null;
 
         this.localTotal_online_refunded = param;
@@ -1216,7 +1216,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getTotal_offline_refunded() {
+    public java.lang.String getTotal_offline_refunded() {
         return localTotal_offline_refunded;
     }
 
@@ -1224,7 +1224,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated setter method
      * @param param Total_offline_refunded
      */
-    public void setTotal_offline_refunded(String param) {
+    public void setTotal_offline_refunded(java.lang.String param) {
         localTotal_offline_refundedTracker = param != null;
 
         this.localTotal_offline_refunded = param;
@@ -1238,7 +1238,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getBase_tax_amount() {
+    public java.lang.String getBase_tax_amount() {
         return localBase_tax_amount;
     }
 
@@ -1246,7 +1246,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated setter method
      * @param param Base_tax_amount
      */
-    public void setBase_tax_amount(String param) {
+    public void setBase_tax_amount(java.lang.String param) {
         localBase_tax_amountTracker = param != null;
 
         this.localBase_tax_amount = param;
@@ -1260,7 +1260,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getBase_shipping_amount() {
+    public java.lang.String getBase_shipping_amount() {
         return localBase_shipping_amount;
     }
 
@@ -1268,7 +1268,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated setter method
      * @param param Base_shipping_amount
      */
-    public void setBase_shipping_amount(String param) {
+    public void setBase_shipping_amount(java.lang.String param) {
         localBase_shipping_amountTracker = param != null;
 
         this.localBase_shipping_amount = param;
@@ -1282,7 +1282,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getBase_discount_amount() {
+    public java.lang.String getBase_discount_amount() {
         return localBase_discount_amount;
     }
 
@@ -1290,7 +1290,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated setter method
      * @param param Base_discount_amount
      */
-    public void setBase_discount_amount(String param) {
+    public void setBase_discount_amount(java.lang.String param) {
         localBase_discount_amountTracker = param != null;
 
         this.localBase_discount_amount = param;
@@ -1304,7 +1304,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getBase_subtotal() {
+    public java.lang.String getBase_subtotal() {
         return localBase_subtotal;
     }
 
@@ -1312,7 +1312,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated setter method
      * @param param Base_subtotal
      */
-    public void setBase_subtotal(String param) {
+    public void setBase_subtotal(java.lang.String param) {
         localBase_subtotalTracker = param != null;
 
         this.localBase_subtotal = param;
@@ -1326,7 +1326,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getBase_grand_total() {
+    public java.lang.String getBase_grand_total() {
         return localBase_grand_total;
     }
 
@@ -1334,7 +1334,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated setter method
      * @param param Base_grand_total
      */
-    public void setBase_grand_total(String param) {
+    public void setBase_grand_total(java.lang.String param) {
         localBase_grand_totalTracker = param != null;
 
         this.localBase_grand_total = param;
@@ -1348,7 +1348,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getBase_total_paid() {
+    public java.lang.String getBase_total_paid() {
         return localBase_total_paid;
     }
 
@@ -1356,7 +1356,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated setter method
      * @param param Base_total_paid
      */
-    public void setBase_total_paid(String param) {
+    public void setBase_total_paid(java.lang.String param) {
         localBase_total_paidTracker = param != null;
 
         this.localBase_total_paid = param;
@@ -1370,7 +1370,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getBase_total_refunded() {
+    public java.lang.String getBase_total_refunded() {
         return localBase_total_refunded;
     }
 
@@ -1378,7 +1378,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated setter method
      * @param param Base_total_refunded
      */
-    public void setBase_total_refunded(String param) {
+    public void setBase_total_refunded(java.lang.String param) {
         localBase_total_refundedTracker = param != null;
 
         this.localBase_total_refunded = param;
@@ -1392,7 +1392,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getBase_total_qty_ordered() {
+    public java.lang.String getBase_total_qty_ordered() {
         return localBase_total_qty_ordered;
     }
 
@@ -1400,7 +1400,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated setter method
      * @param param Base_total_qty_ordered
      */
-    public void setBase_total_qty_ordered(String param) {
+    public void setBase_total_qty_ordered(java.lang.String param) {
         localBase_total_qty_orderedTracker = param != null;
 
         this.localBase_total_qty_ordered = param;
@@ -1414,7 +1414,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getBase_total_canceled() {
+    public java.lang.String getBase_total_canceled() {
         return localBase_total_canceled;
     }
 
@@ -1422,7 +1422,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated setter method
      * @param param Base_total_canceled
      */
-    public void setBase_total_canceled(String param) {
+    public void setBase_total_canceled(java.lang.String param) {
         localBase_total_canceledTracker = param != null;
 
         this.localBase_total_canceled = param;
@@ -1436,7 +1436,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getBase_total_invoiced() {
+    public java.lang.String getBase_total_invoiced() {
         return localBase_total_invoiced;
     }
 
@@ -1444,7 +1444,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated setter method
      * @param param Base_total_invoiced
      */
-    public void setBase_total_invoiced(String param) {
+    public void setBase_total_invoiced(java.lang.String param) {
         localBase_total_invoicedTracker = param != null;
 
         this.localBase_total_invoiced = param;
@@ -1458,7 +1458,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getBase_total_online_refunded() {
+    public java.lang.String getBase_total_online_refunded() {
         return localBase_total_online_refunded;
     }
 
@@ -1466,7 +1466,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated setter method
      * @param param Base_total_online_refunded
      */
-    public void setBase_total_online_refunded(String param) {
+    public void setBase_total_online_refunded(java.lang.String param) {
         localBase_total_online_refundedTracker = param != null;
 
         this.localBase_total_online_refunded = param;
@@ -1480,7 +1480,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getBase_total_offline_refunded() {
+    public java.lang.String getBase_total_offline_refunded() {
         return localBase_total_offline_refunded;
     }
 
@@ -1488,7 +1488,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated setter method
      * @param param Base_total_offline_refunded
      */
-    public void setBase_total_offline_refunded(String param) {
+    public void setBase_total_offline_refunded(java.lang.String param) {
         localBase_total_offline_refundedTracker = param != null;
 
         this.localBase_total_offline_refunded = param;
@@ -1502,7 +1502,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getBilling_address_id() {
+    public java.lang.String getBilling_address_id() {
         return localBilling_address_id;
     }
 
@@ -1510,7 +1510,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated setter method
      * @param param Billing_address_id
      */
-    public void setBilling_address_id(String param) {
+    public void setBilling_address_id(java.lang.String param) {
         localBilling_address_idTracker = param != null;
 
         this.localBilling_address_id = param;
@@ -1524,7 +1524,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getBilling_firstname() {
+    public java.lang.String getBilling_firstname() {
         return localBilling_firstname;
     }
 
@@ -1532,7 +1532,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated setter method
      * @param param Billing_firstname
      */
-    public void setBilling_firstname(String param) {
+    public void setBilling_firstname(java.lang.String param) {
         localBilling_firstnameTracker = param != null;
 
         this.localBilling_firstname = param;
@@ -1546,7 +1546,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getBilling_lastname() {
+    public java.lang.String getBilling_lastname() {
         return localBilling_lastname;
     }
 
@@ -1554,7 +1554,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated setter method
      * @param param Billing_lastname
      */
-    public void setBilling_lastname(String param) {
+    public void setBilling_lastname(java.lang.String param) {
         localBilling_lastnameTracker = param != null;
 
         this.localBilling_lastname = param;
@@ -1568,7 +1568,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getShipping_address_id() {
+    public java.lang.String getShipping_address_id() {
         return localShipping_address_id;
     }
 
@@ -1576,7 +1576,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated setter method
      * @param param Shipping_address_id
      */
-    public void setShipping_address_id(String param) {
+    public void setShipping_address_id(java.lang.String param) {
         localShipping_address_idTracker = param != null;
 
         this.localShipping_address_id = param;
@@ -1590,7 +1590,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getShipping_firstname() {
+    public java.lang.String getShipping_firstname() {
         return localShipping_firstname;
     }
 
@@ -1598,7 +1598,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated setter method
      * @param param Shipping_firstname
      */
-    public void setShipping_firstname(String param) {
+    public void setShipping_firstname(java.lang.String param) {
         localShipping_firstnameTracker = param != null;
 
         this.localShipping_firstname = param;
@@ -1612,7 +1612,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getShipping_lastname() {
+    public java.lang.String getShipping_lastname() {
         return localShipping_lastname;
     }
 
@@ -1620,7 +1620,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated setter method
      * @param param Shipping_lastname
      */
-    public void setShipping_lastname(String param) {
+    public void setShipping_lastname(java.lang.String param) {
         localShipping_lastnameTracker = param != null;
 
         this.localShipping_lastname = param;
@@ -1634,7 +1634,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getBilling_name() {
+    public java.lang.String getBilling_name() {
         return localBilling_name;
     }
 
@@ -1642,7 +1642,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated setter method
      * @param param Billing_name
      */
-    public void setBilling_name(String param) {
+    public void setBilling_name(java.lang.String param) {
         localBilling_nameTracker = param != null;
 
         this.localBilling_name = param;
@@ -1656,7 +1656,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getShipping_name() {
+    public java.lang.String getShipping_name() {
         return localShipping_name;
     }
 
@@ -1664,7 +1664,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated setter method
      * @param param Shipping_name
      */
-    public void setShipping_name(String param) {
+    public void setShipping_name(java.lang.String param) {
         localShipping_nameTracker = param != null;
 
         this.localShipping_name = param;
@@ -1678,7 +1678,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getStore_to_base_rate() {
+    public java.lang.String getStore_to_base_rate() {
         return localStore_to_base_rate;
     }
 
@@ -1686,7 +1686,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated setter method
      * @param param Store_to_base_rate
      */
-    public void setStore_to_base_rate(String param) {
+    public void setStore_to_base_rate(java.lang.String param) {
         localStore_to_base_rateTracker = param != null;
 
         this.localStore_to_base_rate = param;
@@ -1700,7 +1700,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getStore_to_order_rate() {
+    public java.lang.String getStore_to_order_rate() {
         return localStore_to_order_rate;
     }
 
@@ -1708,7 +1708,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated setter method
      * @param param Store_to_order_rate
      */
-    public void setStore_to_order_rate(String param) {
+    public void setStore_to_order_rate(java.lang.String param) {
         localStore_to_order_rateTracker = param != null;
 
         this.localStore_to_order_rate = param;
@@ -1722,7 +1722,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getBase_to_global_rate() {
+    public java.lang.String getBase_to_global_rate() {
         return localBase_to_global_rate;
     }
 
@@ -1730,7 +1730,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated setter method
      * @param param Base_to_global_rate
      */
-    public void setBase_to_global_rate(String param) {
+    public void setBase_to_global_rate(java.lang.String param) {
         localBase_to_global_rateTracker = param != null;
 
         this.localBase_to_global_rate = param;
@@ -1744,7 +1744,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getBase_to_order_rate() {
+    public java.lang.String getBase_to_order_rate() {
         return localBase_to_order_rate;
     }
 
@@ -1752,7 +1752,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated setter method
      * @param param Base_to_order_rate
      */
-    public void setBase_to_order_rate(String param) {
+    public void setBase_to_order_rate(java.lang.String param) {
         localBase_to_order_rateTracker = param != null;
 
         this.localBase_to_order_rate = param;
@@ -1766,7 +1766,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getWeight() {
+    public java.lang.String getWeight() {
         return localWeight;
     }
 
@@ -1774,7 +1774,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated setter method
      * @param param Weight
      */
-    public void setWeight(String param) {
+    public void setWeight(java.lang.String param) {
         localWeightTracker = param != null;
 
         this.localWeight = param;
@@ -1788,7 +1788,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getStore_name() {
+    public java.lang.String getStore_name() {
         return localStore_name;
     }
 
@@ -1796,7 +1796,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated setter method
      * @param param Store_name
      */
-    public void setStore_name(String param) {
+    public void setStore_name(java.lang.String param) {
         localStore_nameTracker = param != null;
 
         this.localStore_name = param;
@@ -1810,7 +1810,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getRemote_ip() {
+    public java.lang.String getRemote_ip() {
         return localRemote_ip;
     }
 
@@ -1818,7 +1818,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated setter method
      * @param param Remote_ip
      */
-    public void setRemote_ip(String param) {
+    public void setRemote_ip(java.lang.String param) {
         localRemote_ipTracker = param != null;
 
         this.localRemote_ip = param;
@@ -1832,7 +1832,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getStatus() {
+    public java.lang.String getStatus() {
         return localStatus;
     }
 
@@ -1840,7 +1840,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated setter method
      * @param param Status
      */
-    public void setStatus(String param) {
+    public void setStatus(java.lang.String param) {
         localStatusTracker = param != null;
 
         this.localStatus = param;
@@ -1854,7 +1854,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getState() {
+    public java.lang.String getState() {
         return localState;
     }
 
@@ -1862,7 +1862,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated setter method
      * @param param State
      */
-    public void setState(String param) {
+    public void setState(java.lang.String param) {
         localStateTracker = param != null;
 
         this.localState = param;
@@ -1876,7 +1876,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getApplied_rule_ids() {
+    public java.lang.String getApplied_rule_ids() {
         return localApplied_rule_ids;
     }
 
@@ -1884,7 +1884,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated setter method
      * @param param Applied_rule_ids
      */
-    public void setApplied_rule_ids(String param) {
+    public void setApplied_rule_ids(java.lang.String param) {
         localApplied_rule_idsTracker = param != null;
 
         this.localApplied_rule_ids = param;
@@ -1898,7 +1898,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getGlobal_currency_code() {
+    public java.lang.String getGlobal_currency_code() {
         return localGlobal_currency_code;
     }
 
@@ -1906,7 +1906,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated setter method
      * @param param Global_currency_code
      */
-    public void setGlobal_currency_code(String param) {
+    public void setGlobal_currency_code(java.lang.String param) {
         localGlobal_currency_codeTracker = param != null;
 
         this.localGlobal_currency_code = param;
@@ -1920,7 +1920,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getBase_currency_code() {
+    public java.lang.String getBase_currency_code() {
         return localBase_currency_code;
     }
 
@@ -1928,7 +1928,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated setter method
      * @param param Base_currency_code
      */
-    public void setBase_currency_code(String param) {
+    public void setBase_currency_code(java.lang.String param) {
         localBase_currency_codeTracker = param != null;
 
         this.localBase_currency_code = param;
@@ -1942,7 +1942,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getStore_currency_code() {
+    public java.lang.String getStore_currency_code() {
         return localStore_currency_code;
     }
 
@@ -1950,7 +1950,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated setter method
      * @param param Store_currency_code
      */
-    public void setStore_currency_code(String param) {
+    public void setStore_currency_code(java.lang.String param) {
         localStore_currency_codeTracker = param != null;
 
         this.localStore_currency_code = param;
@@ -1964,7 +1964,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getOrder_currency_code() {
+    public java.lang.String getOrder_currency_code() {
         return localOrder_currency_code;
     }
 
@@ -1972,7 +1972,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated setter method
      * @param param Order_currency_code
      */
-    public void setOrder_currency_code(String param) {
+    public void setOrder_currency_code(java.lang.String param) {
         localOrder_currency_codeTracker = param != null;
 
         this.localOrder_currency_code = param;
@@ -1986,7 +1986,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getShipping_method() {
+    public java.lang.String getShipping_method() {
         return localShipping_method;
     }
 
@@ -1994,7 +1994,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated setter method
      * @param param Shipping_method
      */
-    public void setShipping_method(String param) {
+    public void setShipping_method(java.lang.String param) {
         localShipping_methodTracker = param != null;
 
         this.localShipping_method = param;
@@ -2008,7 +2008,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getShipping_description() {
+    public java.lang.String getShipping_description() {
         return localShipping_description;
     }
 
@@ -2016,7 +2016,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated setter method
      * @param param Shipping_description
      */
-    public void setShipping_description(String param) {
+    public void setShipping_description(java.lang.String param) {
         localShipping_descriptionTracker = param != null;
 
         this.localShipping_description = param;
@@ -2030,7 +2030,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getCustomer_email() {
+    public java.lang.String getCustomer_email() {
         return localCustomer_email;
     }
 
@@ -2038,7 +2038,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated setter method
      * @param param Customer_email
      */
-    public void setCustomer_email(String param) {
+    public void setCustomer_email(java.lang.String param) {
         localCustomer_emailTracker = param != null;
 
         this.localCustomer_email = param;
@@ -2052,7 +2052,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getCustomer_firstname() {
+    public java.lang.String getCustomer_firstname() {
         return localCustomer_firstname;
     }
 
@@ -2060,7 +2060,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated setter method
      * @param param Customer_firstname
      */
-    public void setCustomer_firstname(String param) {
+    public void setCustomer_firstname(java.lang.String param) {
         localCustomer_firstnameTracker = param != null;
 
         this.localCustomer_firstname = param;
@@ -2074,7 +2074,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getCustomer_lastname() {
+    public java.lang.String getCustomer_lastname() {
         return localCustomer_lastname;
     }
 
@@ -2082,7 +2082,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated setter method
      * @param param Customer_lastname
      */
-    public void setCustomer_lastname(String param) {
+    public void setCustomer_lastname(java.lang.String param) {
         localCustomer_lastnameTracker = param != null;
 
         this.localCustomer_lastname = param;
@@ -2096,7 +2096,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getQuote_id() {
+    public java.lang.String getQuote_id() {
         return localQuote_id;
     }
 
@@ -2104,7 +2104,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated setter method
      * @param param Quote_id
      */
-    public void setQuote_id(String param) {
+    public void setQuote_id(java.lang.String param) {
         localQuote_idTracker = param != null;
 
         this.localQuote_id = param;
@@ -2118,7 +2118,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getIs_virtual() {
+    public java.lang.String getIs_virtual() {
         return localIs_virtual;
     }
 
@@ -2126,7 +2126,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated setter method
      * @param param Is_virtual
      */
-    public void setIs_virtual(String param) {
+    public void setIs_virtual(java.lang.String param) {
         localIs_virtualTracker = param != null;
 
         this.localIs_virtual = param;
@@ -2140,7 +2140,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getCustomer_group_id() {
+    public java.lang.String getCustomer_group_id() {
         return localCustomer_group_id;
     }
 
@@ -2148,7 +2148,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated setter method
      * @param param Customer_group_id
      */
-    public void setCustomer_group_id(String param) {
+    public void setCustomer_group_id(java.lang.String param) {
         localCustomer_group_idTracker = param != null;
 
         this.localCustomer_group_id = param;
@@ -2162,7 +2162,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getCustomer_note_notify() {
+    public java.lang.String getCustomer_note_notify() {
         return localCustomer_note_notify;
     }
 
@@ -2170,7 +2170,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated setter method
      * @param param Customer_note_notify
      */
-    public void setCustomer_note_notify(String param) {
+    public void setCustomer_note_notify(java.lang.String param) {
         localCustomer_note_notifyTracker = param != null;
 
         this.localCustomer_note_notify = param;
@@ -2184,7 +2184,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getCustomer_is_guest() {
+    public java.lang.String getCustomer_is_guest() {
         return localCustomer_is_guest;
     }
 
@@ -2192,7 +2192,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated setter method
      * @param param Customer_is_guest
      */
-    public void setCustomer_is_guest(String param) {
+    public void setCustomer_is_guest(java.lang.String param) {
         localCustomer_is_guestTracker = param != null;
 
         this.localCustomer_is_guest = param;
@@ -2206,7 +2206,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getEmail_sent() {
+    public java.lang.String getEmail_sent() {
         return localEmail_sent;
     }
 
@@ -2214,7 +2214,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated setter method
      * @param param Email_sent
      */
-    public void setEmail_sent(String param) {
+    public void setEmail_sent(java.lang.String param) {
         localEmail_sentTracker = param != null;
 
         this.localEmail_sent = param;
@@ -2228,7 +2228,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getOrder_id() {
+    public java.lang.String getOrder_id() {
         return localOrder_id;
     }
 
@@ -2236,7 +2236,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated setter method
      * @param param Order_id
      */
-    public void setOrder_id(String param) {
+    public void setOrder_id(java.lang.String param) {
         localOrder_idTracker = param != null;
 
         this.localOrder_id = param;
@@ -2250,7 +2250,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getGift_message_id() {
+    public java.lang.String getGift_message_id() {
         return localGift_message_id;
     }
 
@@ -2258,7 +2258,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated setter method
      * @param param Gift_message_id
      */
-    public void setGift_message_id(String param) {
+    public void setGift_message_id(java.lang.String param) {
         localGift_message_idTracker = param != null;
 
         this.localGift_message_id = param;
@@ -2272,7 +2272,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getGift_message() {
+    public java.lang.String getGift_message() {
         return localGift_message;
     }
 
@@ -2280,7 +2280,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
      * Auto generated setter method
      * @param param Gift_message
      */
-    public void setGift_message(String param) {
+    public void setGift_message(java.lang.String param) {
         localGift_messageTracker = param != null;
 
         this.localGift_message = param;
@@ -2424,8 +2424,8 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
         javax.xml.stream.XMLStreamWriter xmlWriter, boolean serializeType)
         throws javax.xml.stream.XMLStreamException,
             org.apache.axis2.databinding.ADBException {
-        String prefix = null;
-        String namespace = null;
+        java.lang.String prefix = null;
+        java.lang.String namespace = null;
 
         prefix = parentQName.getPrefix();
         namespace = parentQName.getNamespaceURI();
@@ -2433,7 +2433,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
             xmlWriter);
 
         if (serializeType) {
-            String namespacePrefix = registerPrefix(xmlWriter,
+            java.lang.String namespacePrefix = registerPrefix(xmlWriter,
                     "urn:Magento");
 
             if ((namespacePrefix != null) &&
@@ -3511,7 +3511,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
         xmlWriter.writeEndElement();
     }
 
-    private static String generatePrefix(String namespace) {
+    private static java.lang.String generatePrefix(java.lang.String namespace) {
         if (namespace.equals("urn:Magento")) {
             return "ns1";
         }
@@ -3522,11 +3522,11 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
     /**
      * Utility method to write an element start tag.
      */
-    private void writeStartElement(String prefix,
-        String namespace, String localPart,
+    private void writeStartElement(java.lang.String prefix,
+        java.lang.String namespace, java.lang.String localPart,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
-        String writerPrefix = xmlWriter.getPrefix(namespace);
+        java.lang.String writerPrefix = xmlWriter.getPrefix(namespace);
 
         if (writerPrefix != null) {
             xmlWriter.writeStartElement(namespace, localPart);
@@ -3546,9 +3546,9 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
     /**
      * Util method to write an attribute with the ns prefix
      */
-    private void writeAttribute(String prefix,
-        String namespace, String attName,
-        String attValue, javax.xml.stream.XMLStreamWriter xmlWriter)
+    private void writeAttribute(java.lang.String prefix,
+        java.lang.String namespace, java.lang.String attName,
+        java.lang.String attValue, javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
         if (xmlWriter.getPrefix(namespace) == null) {
             xmlWriter.writeNamespace(prefix, namespace);
@@ -3561,8 +3561,8 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
     /**
      * Util method to write an attribute without the ns prefix
      */
-    private void writeAttribute(String namespace,
-        String attName, String attValue,
+    private void writeAttribute(java.lang.String namespace,
+        java.lang.String attName, java.lang.String attValue,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
         if (namespace.equals("")) {
@@ -3576,18 +3576,18 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
     /**
      * Util method to write an attribute without the ns prefix
      */
-    private void writeQNameAttribute(String namespace,
-        String attName, javax.xml.namespace.QName qname,
+    private void writeQNameAttribute(java.lang.String namespace,
+        java.lang.String attName, javax.xml.namespace.QName qname,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
-        String attributeNamespace = qname.getNamespaceURI();
-        String attributePrefix = xmlWriter.getPrefix(attributeNamespace);
+        java.lang.String attributeNamespace = qname.getNamespaceURI();
+        java.lang.String attributePrefix = xmlWriter.getPrefix(attributeNamespace);
 
         if (attributePrefix == null) {
             attributePrefix = registerPrefix(xmlWriter, attributeNamespace);
         }
 
-        String attributeValue;
+        java.lang.String attributeValue;
 
         if (attributePrefix.trim().length() > 0) {
             attributeValue = attributePrefix + ":" + qname.getLocalPart();
@@ -3609,10 +3609,10 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
     private void writeQName(javax.xml.namespace.QName qname,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
-        String namespaceURI = qname.getNamespaceURI();
+        java.lang.String namespaceURI = qname.getNamespaceURI();
 
         if (namespaceURI != null) {
-            String prefix = xmlWriter.getPrefix(namespaceURI);
+            java.lang.String prefix = xmlWriter.getPrefix(namespaceURI);
 
             if (prefix == null) {
                 prefix = generatePrefix(namespaceURI);
@@ -3641,9 +3641,9 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
         if (qnames != null) {
             // we have to store this data until last moment since it is not possible to write any
             // namespace data after writing the charactor data
-            StringBuffer stringToWrite = new StringBuffer();
-            String namespaceURI = null;
-            String prefix = null;
+            java.lang.StringBuffer stringToWrite = new java.lang.StringBuffer();
+            java.lang.String namespaceURI = null;
+            java.lang.String prefix = null;
 
             for (int i = 0; i < qnames.length; i++) {
                 if (i > 0) {
@@ -3682,10 +3682,10 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
     /**
      * Register a namespace prefix
      */
-    private String registerPrefix(
-        javax.xml.stream.XMLStreamWriter xmlWriter, String namespace)
+    private java.lang.String registerPrefix(
+        javax.xml.stream.XMLStreamWriter xmlWriter, java.lang.String namespace)
         throws javax.xml.stream.XMLStreamException {
-        String prefix = xmlWriter.getPrefix(namespace);
+        java.lang.String prefix = xmlWriter.getPrefix(namespace);
 
         if (prefix == null) {
             prefix = generatePrefix(namespace);
@@ -3693,7 +3693,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
             javax.xml.namespace.NamespaceContext nsContext = xmlWriter.getNamespaceContext();
 
             while (true) {
-                String uri = nsContext.getNamespaceURI(prefix);
+                java.lang.String uri = nsContext.getNamespaceURI(prefix);
 
                 if ((uri == null) || (uri.length() == 0)) {
                     break;
@@ -4624,13 +4624,13 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
          *                If this object is a complex type, the reader is positioned at the end element of its outer element
          */
         public static SalesOrderEntity parse(
-            javax.xml.stream.XMLStreamReader reader) throws Exception {
+            javax.xml.stream.XMLStreamReader reader) throws java.lang.Exception {
             SalesOrderEntity object = new SalesOrderEntity();
 
             int event;
-            String nillableValue = null;
-            String prefix = "";
-            String namespaceuri = "";
+            java.lang.String nillableValue = null;
+            java.lang.String prefix = "";
+            java.lang.String namespaceuri = "";
 
             try {
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -4638,11 +4638,11 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
 
                 if (reader.getAttributeValue(
                             "http://www.w3.org/2001/XMLSchema-instance", "type") != null) {
-                    String fullTypeName = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance",
+                    java.lang.String fullTypeName = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance",
                             "type");
 
                     if (fullTypeName != null) {
-                        String nsPrefix = null;
+                        java.lang.String nsPrefix = null;
 
                         if (fullTypeName.indexOf(":") > -1) {
                             nsPrefix = fullTypeName.substring(0,
@@ -4651,12 +4651,12 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
 
                         nsPrefix = (nsPrefix == null) ? "" : nsPrefix;
 
-                        String type = fullTypeName.substring(fullTypeName.indexOf(
+                        java.lang.String type = fullTypeName.substring(fullTypeName.indexOf(
                                     ":") + 1);
 
                         if (!"salesOrderEntity".equals(type)) {
                             //find namespace for the prefix
-                            String nsUri = reader.getNamespaceContext()
+                            java.lang.String nsUri = reader.getNamespaceContext()
                                                            .getNamespaceURI(nsPrefix);
 
                             return (SalesOrderEntity) magento.ExtensionMapper.getTypeObject(nsUri,
@@ -4687,7 +4687,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setIncrement_id(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -4713,7 +4713,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
                             "The element: " + "parent_id" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setParent_id(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -4739,7 +4739,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
                             "The element: " + "store_id" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setStore_id(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -4766,7 +4766,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setCreated_at(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -4793,7 +4793,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setUpdated_at(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -4819,7 +4819,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
                             "The element: " + "is_active" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setIs_active(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -4846,7 +4846,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setCustomer_id(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -4873,7 +4873,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setTax_amount(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -4900,7 +4900,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setShipping_amount(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -4927,7 +4927,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setDiscount_amount(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -4953,7 +4953,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
                             "The element: " + "subtotal" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setSubtotal(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -4980,7 +4980,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setGrand_total(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5007,7 +5007,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setTotal_paid(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5034,7 +5034,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setTotal_refunded(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5061,7 +5061,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setTotal_qty_ordered(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5088,7 +5088,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setTotal_canceled(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5115,7 +5115,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setTotal_invoiced(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5142,7 +5142,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setTotal_online_refunded(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5169,7 +5169,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setTotal_offline_refunded(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5196,7 +5196,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setBase_tax_amount(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5223,7 +5223,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setBase_shipping_amount(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5250,7 +5250,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setBase_discount_amount(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5277,7 +5277,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setBase_subtotal(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5304,7 +5304,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setBase_grand_total(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5331,7 +5331,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setBase_total_paid(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5358,7 +5358,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setBase_total_refunded(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5385,7 +5385,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setBase_total_qty_ordered(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5412,7 +5412,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setBase_total_canceled(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5439,7 +5439,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setBase_total_invoiced(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5467,7 +5467,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setBase_total_online_refunded(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5495,7 +5495,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setBase_total_offline_refunded(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5522,7 +5522,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setBilling_address_id(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5549,7 +5549,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setBilling_firstname(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5576,7 +5576,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setBilling_lastname(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5603,7 +5603,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setShipping_address_id(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5630,7 +5630,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setShipping_firstname(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5657,7 +5657,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setShipping_lastname(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5684,7 +5684,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setBilling_name(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5711,7 +5711,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setShipping_name(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5738,7 +5738,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setStore_to_base_rate(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5765,7 +5765,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setStore_to_order_rate(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5792,7 +5792,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setBase_to_global_rate(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5819,7 +5819,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setBase_to_order_rate(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5845,7 +5845,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
                             "The element: " + "weight" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setWeight(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5872,7 +5872,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setStore_name(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5898,7 +5898,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
                             "The element: " + "remote_ip" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setRemote_ip(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5924,7 +5924,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
                             "The element: " + "status" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setStatus(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5950,7 +5950,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
                             "The element: " + "state" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setState(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5977,7 +5977,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setApplied_rule_ids(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -6004,7 +6004,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setGlobal_currency_code(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -6031,7 +6031,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setBase_currency_code(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -6058,7 +6058,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setStore_currency_code(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -6085,7 +6085,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setOrder_currency_code(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -6112,7 +6112,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setShipping_method(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -6139,7 +6139,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setShipping_description(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -6166,7 +6166,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setCustomer_email(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -6193,7 +6193,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setCustomer_firstname(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -6220,7 +6220,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setCustomer_lastname(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -6246,7 +6246,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
                             "The element: " + "quote_id" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setQuote_id(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -6273,7 +6273,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setIs_virtual(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -6300,7 +6300,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setCustomer_group_id(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -6327,7 +6327,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setCustomer_note_notify(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -6354,7 +6354,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setCustomer_is_guest(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -6381,7 +6381,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setEmail_sent(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -6407,7 +6407,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
                             "The element: " + "order_id" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setOrder_id(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -6434,7 +6434,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setGift_message_id(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -6461,7 +6461,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setGift_message(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -6556,7 +6556,7 @@ public class SalesOrderEntity implements org.apache.axis2.databinding.ADBBean {
                         "Unexpected subelement " + reader.getName());
                 }
             } catch (javax.xml.stream.XMLStreamException e) {
-                throw new Exception(e);
+                throw new java.lang.Exception(e);
             }
 
             return object;

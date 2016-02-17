@@ -7,7 +7,7 @@ public class MagentoConstants {
 
     //WmFStatus
     public static final class WMF_Status {
-        public final static String Shipped = "Shipped";
+        public final static String Shipped = "Complete";
         public final static String Canceled =  "Canceled";
     }
 

@@ -1217,7 +1217,8 @@ public class WmsTransferServiceImpl implements WmsTransferService {
                 // ItemCode，Size 输入的场合
                 } else {
                     if (isClientSKUExistByItemCodeAndSize(to_store_channel_id, itemCode, color, size)) {
-                        sku = repeatInput;
+//                        sku = repeatInput;
+                        sku = barcode;
                     } else {
                         sku = barcode;
                     }

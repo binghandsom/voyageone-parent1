@@ -23,7 +23,7 @@ public class SalesOrderCreditmemoCommentEntity implements org.apache.axis2.datab
     /**
      * field for Parent_id
      */
-    protected String localParent_id;
+    protected java.lang.String localParent_id;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -34,7 +34,7 @@ public class SalesOrderCreditmemoCommentEntity implements org.apache.axis2.datab
     /**
      * field for Created_at
      */
-    protected String localCreated_at;
+    protected java.lang.String localCreated_at;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -45,7 +45,7 @@ public class SalesOrderCreditmemoCommentEntity implements org.apache.axis2.datab
     /**
      * field for Comment
      */
-    protected String localComment;
+    protected java.lang.String localComment;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -56,7 +56,7 @@ public class SalesOrderCreditmemoCommentEntity implements org.apache.axis2.datab
     /**
      * field for Is_customer_notified
      */
-    protected String localIs_customer_notified;
+    protected java.lang.String localIs_customer_notified;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -67,7 +67,7 @@ public class SalesOrderCreditmemoCommentEntity implements org.apache.axis2.datab
     /**
      * field for Comment_id
      */
-    protected String localComment_id;
+    protected java.lang.String localComment_id;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -78,7 +78,7 @@ public class SalesOrderCreditmemoCommentEntity implements org.apache.axis2.datab
     /**
      * field for Is_visible_on_front
      */
-    protected String localIs_visible_on_front;
+    protected java.lang.String localIs_visible_on_front;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -94,7 +94,7 @@ public class SalesOrderCreditmemoCommentEntity implements org.apache.axis2.datab
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getParent_id() {
+    public java.lang.String getParent_id() {
         return localParent_id;
     }
 
@@ -102,7 +102,7 @@ public class SalesOrderCreditmemoCommentEntity implements org.apache.axis2.datab
      * Auto generated setter method
      * @param param Parent_id
      */
-    public void setParent_id(String param) {
+    public void setParent_id(java.lang.String param) {
         localParent_idTracker = param != null;
 
         this.localParent_id = param;
@@ -116,7 +116,7 @@ public class SalesOrderCreditmemoCommentEntity implements org.apache.axis2.datab
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getCreated_at() {
+    public java.lang.String getCreated_at() {
         return localCreated_at;
     }
 
@@ -124,7 +124,7 @@ public class SalesOrderCreditmemoCommentEntity implements org.apache.axis2.datab
      * Auto generated setter method
      * @param param Created_at
      */
-    public void setCreated_at(String param) {
+    public void setCreated_at(java.lang.String param) {
         localCreated_atTracker = param != null;
 
         this.localCreated_at = param;
@@ -138,7 +138,7 @@ public class SalesOrderCreditmemoCommentEntity implements org.apache.axis2.datab
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getComment() {
+    public java.lang.String getComment() {
         return localComment;
     }
 
@@ -146,7 +146,7 @@ public class SalesOrderCreditmemoCommentEntity implements org.apache.axis2.datab
      * Auto generated setter method
      * @param param Comment
      */
-    public void setComment(String param) {
+    public void setComment(java.lang.String param) {
         localCommentTracker = param != null;
 
         this.localComment = param;
@@ -160,7 +160,7 @@ public class SalesOrderCreditmemoCommentEntity implements org.apache.axis2.datab
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getIs_customer_notified() {
+    public java.lang.String getIs_customer_notified() {
         return localIs_customer_notified;
     }
 
@@ -168,7 +168,7 @@ public class SalesOrderCreditmemoCommentEntity implements org.apache.axis2.datab
      * Auto generated setter method
      * @param param Is_customer_notified
      */
-    public void setIs_customer_notified(String param) {
+    public void setIs_customer_notified(java.lang.String param) {
         localIs_customer_notifiedTracker = param != null;
 
         this.localIs_customer_notified = param;
@@ -182,7 +182,7 @@ public class SalesOrderCreditmemoCommentEntity implements org.apache.axis2.datab
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getComment_id() {
+    public java.lang.String getComment_id() {
         return localComment_id;
     }
 
@@ -190,7 +190,7 @@ public class SalesOrderCreditmemoCommentEntity implements org.apache.axis2.datab
      * Auto generated setter method
      * @param param Comment_id
      */
-    public void setComment_id(String param) {
+    public void setComment_id(java.lang.String param) {
         localComment_idTracker = param != null;
 
         this.localComment_id = param;
@@ -204,7 +204,7 @@ public class SalesOrderCreditmemoCommentEntity implements org.apache.axis2.datab
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getIs_visible_on_front() {
+    public java.lang.String getIs_visible_on_front() {
         return localIs_visible_on_front;
     }
 
@@ -212,7 +212,7 @@ public class SalesOrderCreditmemoCommentEntity implements org.apache.axis2.datab
      * Auto generated setter method
      * @param param Is_visible_on_front
      */
-    public void setIs_visible_on_front(String param) {
+    public void setIs_visible_on_front(java.lang.String param) {
         localIs_visible_on_frontTracker = param != null;
 
         this.localIs_visible_on_front = param;
@@ -245,8 +245,8 @@ public class SalesOrderCreditmemoCommentEntity implements org.apache.axis2.datab
         javax.xml.stream.XMLStreamWriter xmlWriter, boolean serializeType)
         throws javax.xml.stream.XMLStreamException,
             org.apache.axis2.databinding.ADBException {
-        String prefix = null;
-        String namespace = null;
+        java.lang.String prefix = null;
+        java.lang.String namespace = null;
 
         prefix = parentQName.getPrefix();
         namespace = parentQName.getNamespaceURI();
@@ -254,7 +254,7 @@ public class SalesOrderCreditmemoCommentEntity implements org.apache.axis2.datab
             xmlWriter);
 
         if (serializeType) {
-            String namespacePrefix = registerPrefix(xmlWriter,
+            java.lang.String namespacePrefix = registerPrefix(xmlWriter,
                     "urn:Magento");
 
             if ((namespacePrefix != null) &&
@@ -363,7 +363,7 @@ public class SalesOrderCreditmemoCommentEntity implements org.apache.axis2.datab
         xmlWriter.writeEndElement();
     }
 
-    private static String generatePrefix(String namespace) {
+    private static java.lang.String generatePrefix(java.lang.String namespace) {
         if (namespace.equals("urn:Magento")) {
             return "ns1";
         }
@@ -374,11 +374,11 @@ public class SalesOrderCreditmemoCommentEntity implements org.apache.axis2.datab
     /**
      * Utility method to write an element start tag.
      */
-    private void writeStartElement(String prefix,
-        String namespace, String localPart,
+    private void writeStartElement(java.lang.String prefix,
+        java.lang.String namespace, java.lang.String localPart,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
-        String writerPrefix = xmlWriter.getPrefix(namespace);
+        java.lang.String writerPrefix = xmlWriter.getPrefix(namespace);
 
         if (writerPrefix != null) {
             xmlWriter.writeStartElement(namespace, localPart);
@@ -398,9 +398,9 @@ public class SalesOrderCreditmemoCommentEntity implements org.apache.axis2.datab
     /**
      * Util method to write an attribute with the ns prefix
      */
-    private void writeAttribute(String prefix,
-        String namespace, String attName,
-        String attValue, javax.xml.stream.XMLStreamWriter xmlWriter)
+    private void writeAttribute(java.lang.String prefix,
+        java.lang.String namespace, java.lang.String attName,
+        java.lang.String attValue, javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
         if (xmlWriter.getPrefix(namespace) == null) {
             xmlWriter.writeNamespace(prefix, namespace);
@@ -413,8 +413,8 @@ public class SalesOrderCreditmemoCommentEntity implements org.apache.axis2.datab
     /**
      * Util method to write an attribute without the ns prefix
      */
-    private void writeAttribute(String namespace,
-        String attName, String attValue,
+    private void writeAttribute(java.lang.String namespace,
+        java.lang.String attName, java.lang.String attValue,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
         if (namespace.equals("")) {
@@ -428,18 +428,18 @@ public class SalesOrderCreditmemoCommentEntity implements org.apache.axis2.datab
     /**
      * Util method to write an attribute without the ns prefix
      */
-    private void writeQNameAttribute(String namespace,
-        String attName, javax.xml.namespace.QName qname,
+    private void writeQNameAttribute(java.lang.String namespace,
+        java.lang.String attName, javax.xml.namespace.QName qname,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
-        String attributeNamespace = qname.getNamespaceURI();
-        String attributePrefix = xmlWriter.getPrefix(attributeNamespace);
+        java.lang.String attributeNamespace = qname.getNamespaceURI();
+        java.lang.String attributePrefix = xmlWriter.getPrefix(attributeNamespace);
 
         if (attributePrefix == null) {
             attributePrefix = registerPrefix(xmlWriter, attributeNamespace);
         }
 
-        String attributeValue;
+        java.lang.String attributeValue;
 
         if (attributePrefix.trim().length() > 0) {
             attributeValue = attributePrefix + ":" + qname.getLocalPart();
@@ -461,10 +461,10 @@ public class SalesOrderCreditmemoCommentEntity implements org.apache.axis2.datab
     private void writeQName(javax.xml.namespace.QName qname,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
-        String namespaceURI = qname.getNamespaceURI();
+        java.lang.String namespaceURI = qname.getNamespaceURI();
 
         if (namespaceURI != null) {
-            String prefix = xmlWriter.getPrefix(namespaceURI);
+            java.lang.String prefix = xmlWriter.getPrefix(namespaceURI);
 
             if (prefix == null) {
                 prefix = generatePrefix(namespaceURI);
@@ -493,9 +493,9 @@ public class SalesOrderCreditmemoCommentEntity implements org.apache.axis2.datab
         if (qnames != null) {
             // we have to store this data until last moment since it is not possible to write any
             // namespace data after writing the charactor data
-            StringBuffer stringToWrite = new StringBuffer();
-            String namespaceURI = null;
-            String prefix = null;
+            java.lang.StringBuffer stringToWrite = new java.lang.StringBuffer();
+            java.lang.String namespaceURI = null;
+            java.lang.String prefix = null;
 
             for (int i = 0; i < qnames.length; i++) {
                 if (i > 0) {
@@ -534,10 +534,10 @@ public class SalesOrderCreditmemoCommentEntity implements org.apache.axis2.datab
     /**
      * Register a namespace prefix
      */
-    private String registerPrefix(
-        javax.xml.stream.XMLStreamWriter xmlWriter, String namespace)
+    private java.lang.String registerPrefix(
+        javax.xml.stream.XMLStreamWriter xmlWriter, java.lang.String namespace)
         throws javax.xml.stream.XMLStreamException {
-        String prefix = xmlWriter.getPrefix(namespace);
+        java.lang.String prefix = xmlWriter.getPrefix(namespace);
 
         if (prefix == null) {
             prefix = generatePrefix(namespace);
@@ -545,7 +545,7 @@ public class SalesOrderCreditmemoCommentEntity implements org.apache.axis2.datab
             javax.xml.namespace.NamespaceContext nsContext = xmlWriter.getNamespaceContext();
 
             while (true) {
-                String uri = nsContext.getNamespaceURI(prefix);
+                java.lang.String uri = nsContext.getNamespaceURI(prefix);
 
                 if ((uri == null) || (uri.length() == 0)) {
                     break;
@@ -661,13 +661,13 @@ public class SalesOrderCreditmemoCommentEntity implements org.apache.axis2.datab
          *                If this object is a complex type, the reader is positioned at the end element of its outer element
          */
         public static SalesOrderCreditmemoCommentEntity parse(
-            javax.xml.stream.XMLStreamReader reader) throws Exception {
+            javax.xml.stream.XMLStreamReader reader) throws java.lang.Exception {
             SalesOrderCreditmemoCommentEntity object = new SalesOrderCreditmemoCommentEntity();
 
             int event;
-            String nillableValue = null;
-            String prefix = "";
-            String namespaceuri = "";
+            java.lang.String nillableValue = null;
+            java.lang.String prefix = "";
+            java.lang.String namespaceuri = "";
 
             try {
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -675,11 +675,11 @@ public class SalesOrderCreditmemoCommentEntity implements org.apache.axis2.datab
 
                 if (reader.getAttributeValue(
                             "http://www.w3.org/2001/XMLSchema-instance", "type") != null) {
-                    String fullTypeName = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance",
+                    java.lang.String fullTypeName = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance",
                             "type");
 
                     if (fullTypeName != null) {
-                        String nsPrefix = null;
+                        java.lang.String nsPrefix = null;
 
                         if (fullTypeName.indexOf(":") > -1) {
                             nsPrefix = fullTypeName.substring(0,
@@ -688,12 +688,12 @@ public class SalesOrderCreditmemoCommentEntity implements org.apache.axis2.datab
 
                         nsPrefix = (nsPrefix == null) ? "" : nsPrefix;
 
-                        String type = fullTypeName.substring(fullTypeName.indexOf(
+                        java.lang.String type = fullTypeName.substring(fullTypeName.indexOf(
                                     ":") + 1);
 
                         if (!"salesOrderCreditmemoCommentEntity".equals(type)) {
                             //find namespace for the prefix
-                            String nsUri = reader.getNamespaceContext()
+                            java.lang.String nsUri = reader.getNamespaceContext()
                                                            .getNamespaceURI(nsPrefix);
 
                             return (SalesOrderCreditmemoCommentEntity) magento.ExtensionMapper.getTypeObject(nsUri,
@@ -723,7 +723,7 @@ public class SalesOrderCreditmemoCommentEntity implements org.apache.axis2.datab
                             "The element: " + "parent_id" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setParent_id(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -750,7 +750,7 @@ public class SalesOrderCreditmemoCommentEntity implements org.apache.axis2.datab
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setCreated_at(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -776,7 +776,7 @@ public class SalesOrderCreditmemoCommentEntity implements org.apache.axis2.datab
                             "The element: " + "comment" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setComment(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -803,7 +803,7 @@ public class SalesOrderCreditmemoCommentEntity implements org.apache.axis2.datab
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setIs_customer_notified(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -830,7 +830,7 @@ public class SalesOrderCreditmemoCommentEntity implements org.apache.axis2.datab
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setComment_id(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -857,7 +857,7 @@ public class SalesOrderCreditmemoCommentEntity implements org.apache.axis2.datab
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setIs_visible_on_front(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -877,7 +877,7 @@ public class SalesOrderCreditmemoCommentEntity implements org.apache.axis2.datab
                         "Unexpected subelement " + reader.getName());
                 }
             } catch (javax.xml.stream.XMLStreamException e) {
-                throw new Exception(e);
+                throw new java.lang.Exception(e);
             }
 
             return object;

@@ -23,7 +23,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
     /**
      * field for Store_id
      */
-    protected String localStore_id;
+    protected java.lang.String localStore_id;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -34,7 +34,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
     /**
      * field for Created_at
      */
-    protected String localCreated_at;
+    protected java.lang.String localCreated_at;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -45,7 +45,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
     /**
      * field for Updated_at
      */
-    protected String localUpdated_at;
+    protected java.lang.String localUpdated_at;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -56,7 +56,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
     /**
      * field for Converted_at
      */
-    protected String localConverted_at;
+    protected java.lang.String localConverted_at;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -133,7 +133,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
     /**
      * field for Orig_order_id
      */
-    protected String localOrig_order_id;
+    protected java.lang.String localOrig_order_id;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -144,7 +144,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
     /**
      * field for Store_to_base_rate
      */
-    protected String localStore_to_base_rate;
+    protected java.lang.String localStore_to_base_rate;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -155,7 +155,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
     /**
      * field for Store_to_quote_rate
      */
-    protected String localStore_to_quote_rate;
+    protected java.lang.String localStore_to_quote_rate;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -166,7 +166,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
     /**
      * field for Base_currency_code
      */
-    protected String localBase_currency_code;
+    protected java.lang.String localBase_currency_code;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -177,7 +177,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
     /**
      * field for Store_currency_code
      */
-    protected String localStore_currency_code;
+    protected java.lang.String localStore_currency_code;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -188,7 +188,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
     /**
      * field for Quote_currency_code
      */
-    protected String localQuote_currency_code;
+    protected java.lang.String localQuote_currency_code;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -199,7 +199,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
     /**
      * field for Grand_total
      */
-    protected String localGrand_total;
+    protected java.lang.String localGrand_total;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -210,7 +210,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
     /**
      * field for Base_grand_total
      */
-    protected String localBase_grand_total;
+    protected java.lang.String localBase_grand_total;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -221,7 +221,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
     /**
      * field for Checkout_method
      */
-    protected String localCheckout_method;
+    protected java.lang.String localCheckout_method;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -232,7 +232,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
     /**
      * field for Customer_id
      */
-    protected String localCustomer_id;
+    protected java.lang.String localCustomer_id;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -243,7 +243,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
     /**
      * field for Customer_tax_class_id
      */
-    protected String localCustomer_tax_class_id;
+    protected java.lang.String localCustomer_tax_class_id;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -265,7 +265,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
     /**
      * field for Customer_email
      */
-    protected String localCustomer_email;
+    protected java.lang.String localCustomer_email;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -276,7 +276,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
     /**
      * field for Customer_prefix
      */
-    protected String localCustomer_prefix;
+    protected java.lang.String localCustomer_prefix;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -287,7 +287,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
     /**
      * field for Customer_firstname
      */
-    protected String localCustomer_firstname;
+    protected java.lang.String localCustomer_firstname;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -298,7 +298,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
     /**
      * field for Customer_middlename
      */
-    protected String localCustomer_middlename;
+    protected java.lang.String localCustomer_middlename;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -309,7 +309,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
     /**
      * field for Customer_lastname
      */
-    protected String localCustomer_lastname;
+    protected java.lang.String localCustomer_lastname;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -320,7 +320,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
     /**
      * field for Customer_suffix
      */
-    protected String localCustomer_suffix;
+    protected java.lang.String localCustomer_suffix;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -331,7 +331,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
     /**
      * field for Customer_note
      */
-    protected String localCustomer_note;
+    protected java.lang.String localCustomer_note;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -342,7 +342,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
     /**
      * field for Customer_note_notify
      */
-    protected String localCustomer_note_notify;
+    protected java.lang.String localCustomer_note_notify;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -353,7 +353,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
     /**
      * field for Customer_is_guest
      */
-    protected String localCustomer_is_guest;
+    protected java.lang.String localCustomer_is_guest;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -364,7 +364,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
     /**
      * field for Applied_rule_ids
      */
-    protected String localApplied_rule_ids;
+    protected java.lang.String localApplied_rule_ids;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -375,7 +375,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
     /**
      * field for Reserved_order_id
      */
-    protected String localReserved_order_id;
+    protected java.lang.String localReserved_order_id;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -386,7 +386,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
     /**
      * field for Password_hash
      */
-    protected String localPassword_hash;
+    protected java.lang.String localPassword_hash;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -397,7 +397,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
     /**
      * field for Coupon_code
      */
-    protected String localCoupon_code;
+    protected java.lang.String localCoupon_code;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -408,7 +408,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
     /**
      * field for Global_currency_code
      */
-    protected String localGlobal_currency_code;
+    protected java.lang.String localGlobal_currency_code;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -441,7 +441,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
     /**
      * field for Customer_taxvat
      */
-    protected String localCustomer_taxvat;
+    protected java.lang.String localCustomer_taxvat;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -452,7 +452,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
     /**
      * field for Customer_gender
      */
-    protected String localCustomer_gender;
+    protected java.lang.String localCustomer_gender;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -507,7 +507,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
     /**
      * field for Ext_shipping_info
      */
-    protected String localExt_shipping_info;
+    protected java.lang.String localExt_shipping_info;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -518,7 +518,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
     /**
      * field for Gift_message_id
      */
-    protected String localGift_message_id;
+    protected java.lang.String localGift_message_id;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -529,7 +529,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
     /**
      * field for Gift_message
      */
-    protected String localGift_message;
+    protected java.lang.String localGift_message;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -562,7 +562,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
     /**
      * field for Use_customer_balance
      */
-    protected String localUse_customer_balance;
+    protected java.lang.String localUse_customer_balance;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -573,7 +573,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
     /**
      * field for Gift_cards_amount
      */
-    protected String localGift_cards_amount;
+    protected java.lang.String localGift_cards_amount;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -584,7 +584,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
     /**
      * field for Base_gift_cards_amount
      */
-    protected String localBase_gift_cards_amount;
+    protected java.lang.String localBase_gift_cards_amount;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -595,7 +595,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
     /**
      * field for Gift_cards_amount_used
      */
-    protected String localGift_cards_amount_used;
+    protected java.lang.String localGift_cards_amount_used;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -606,7 +606,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
     /**
      * field for Use_reward_points
      */
-    protected String localUse_reward_points;
+    protected java.lang.String localUse_reward_points;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -617,7 +617,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
     /**
      * field for Reward_points_balance
      */
-    protected String localReward_points_balance;
+    protected java.lang.String localReward_points_balance;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -628,7 +628,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
     /**
      * field for Base_reward_currency_amount
      */
-    protected String localBase_reward_currency_amount;
+    protected java.lang.String localBase_reward_currency_amount;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -639,7 +639,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
     /**
      * field for Reward_currency_amount
      */
-    protected String localReward_currency_amount;
+    protected java.lang.String localReward_currency_amount;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -699,7 +699,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getStore_id() {
+    public java.lang.String getStore_id() {
         return localStore_id;
     }
 
@@ -707,7 +707,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated setter method
      * @param param Store_id
      */
-    public void setStore_id(String param) {
+    public void setStore_id(java.lang.String param) {
         localStore_idTracker = param != null;
 
         this.localStore_id = param;
@@ -721,7 +721,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getCreated_at() {
+    public java.lang.String getCreated_at() {
         return localCreated_at;
     }
 
@@ -729,7 +729,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated setter method
      * @param param Created_at
      */
-    public void setCreated_at(String param) {
+    public void setCreated_at(java.lang.String param) {
         localCreated_atTracker = param != null;
 
         this.localCreated_at = param;
@@ -743,7 +743,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getUpdated_at() {
+    public java.lang.String getUpdated_at() {
         return localUpdated_at;
     }
 
@@ -751,7 +751,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated setter method
      * @param param Updated_at
      */
-    public void setUpdated_at(String param) {
+    public void setUpdated_at(java.lang.String param) {
         localUpdated_atTracker = param != null;
 
         this.localUpdated_at = param;
@@ -765,7 +765,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getConverted_at() {
+    public java.lang.String getConverted_at() {
         return localConverted_at;
     }
 
@@ -773,7 +773,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated setter method
      * @param param Converted_at
      */
-    public void setConverted_at(String param) {
+    public void setConverted_at(java.lang.String param) {
         localConverted_atTracker = param != null;
 
         this.localConverted_at = param;
@@ -797,7 +797,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      */
     public void setQuote_id(int param) {
         // setting primitive attribute tracker to true
-        localQuote_idTracker = param != Integer.MIN_VALUE;
+        localQuote_idTracker = param != java.lang.Integer.MIN_VALUE;
 
         this.localQuote_id = param;
     }
@@ -820,7 +820,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      */
     public void setIs_active(int param) {
         // setting primitive attribute tracker to true
-        localIs_activeTracker = param != Integer.MIN_VALUE;
+        localIs_activeTracker = param != java.lang.Integer.MIN_VALUE;
 
         this.localIs_active = param;
     }
@@ -843,7 +843,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      */
     public void setIs_virtual(int param) {
         // setting primitive attribute tracker to true
-        localIs_virtualTracker = param != Integer.MIN_VALUE;
+        localIs_virtualTracker = param != java.lang.Integer.MIN_VALUE;
 
         this.localIs_virtual = param;
     }
@@ -866,7 +866,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      */
     public void setIs_multi_shipping(int param) {
         // setting primitive attribute tracker to true
-        localIs_multi_shippingTracker = param != Integer.MIN_VALUE;
+        localIs_multi_shippingTracker = param != java.lang.Integer.MIN_VALUE;
 
         this.localIs_multi_shipping = param;
     }
@@ -889,7 +889,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      */
     public void setItems_count(double param) {
         // setting primitive attribute tracker to true
-        localItems_countTracker = !Double.isNaN(param);
+        localItems_countTracker = !java.lang.Double.isNaN(param);
 
         this.localItems_count = param;
     }
@@ -912,7 +912,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      */
     public void setItems_qty(double param) {
         // setting primitive attribute tracker to true
-        localItems_qtyTracker = !Double.isNaN(param);
+        localItems_qtyTracker = !java.lang.Double.isNaN(param);
 
         this.localItems_qty = param;
     }
@@ -925,7 +925,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getOrig_order_id() {
+    public java.lang.String getOrig_order_id() {
         return localOrig_order_id;
     }
 
@@ -933,7 +933,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated setter method
      * @param param Orig_order_id
      */
-    public void setOrig_order_id(String param) {
+    public void setOrig_order_id(java.lang.String param) {
         localOrig_order_idTracker = param != null;
 
         this.localOrig_order_id = param;
@@ -947,7 +947,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getStore_to_base_rate() {
+    public java.lang.String getStore_to_base_rate() {
         return localStore_to_base_rate;
     }
 
@@ -955,7 +955,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated setter method
      * @param param Store_to_base_rate
      */
-    public void setStore_to_base_rate(String param) {
+    public void setStore_to_base_rate(java.lang.String param) {
         localStore_to_base_rateTracker = param != null;
 
         this.localStore_to_base_rate = param;
@@ -969,7 +969,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getStore_to_quote_rate() {
+    public java.lang.String getStore_to_quote_rate() {
         return localStore_to_quote_rate;
     }
 
@@ -977,7 +977,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated setter method
      * @param param Store_to_quote_rate
      */
-    public void setStore_to_quote_rate(String param) {
+    public void setStore_to_quote_rate(java.lang.String param) {
         localStore_to_quote_rateTracker = param != null;
 
         this.localStore_to_quote_rate = param;
@@ -991,7 +991,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getBase_currency_code() {
+    public java.lang.String getBase_currency_code() {
         return localBase_currency_code;
     }
 
@@ -999,7 +999,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated setter method
      * @param param Base_currency_code
      */
-    public void setBase_currency_code(String param) {
+    public void setBase_currency_code(java.lang.String param) {
         localBase_currency_codeTracker = param != null;
 
         this.localBase_currency_code = param;
@@ -1013,7 +1013,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getStore_currency_code() {
+    public java.lang.String getStore_currency_code() {
         return localStore_currency_code;
     }
 
@@ -1021,7 +1021,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated setter method
      * @param param Store_currency_code
      */
-    public void setStore_currency_code(String param) {
+    public void setStore_currency_code(java.lang.String param) {
         localStore_currency_codeTracker = param != null;
 
         this.localStore_currency_code = param;
@@ -1035,7 +1035,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getQuote_currency_code() {
+    public java.lang.String getQuote_currency_code() {
         return localQuote_currency_code;
     }
 
@@ -1043,7 +1043,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated setter method
      * @param param Quote_currency_code
      */
-    public void setQuote_currency_code(String param) {
+    public void setQuote_currency_code(java.lang.String param) {
         localQuote_currency_codeTracker = param != null;
 
         this.localQuote_currency_code = param;
@@ -1057,7 +1057,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getGrand_total() {
+    public java.lang.String getGrand_total() {
         return localGrand_total;
     }
 
@@ -1065,7 +1065,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated setter method
      * @param param Grand_total
      */
-    public void setGrand_total(String param) {
+    public void setGrand_total(java.lang.String param) {
         localGrand_totalTracker = param != null;
 
         this.localGrand_total = param;
@@ -1079,7 +1079,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getBase_grand_total() {
+    public java.lang.String getBase_grand_total() {
         return localBase_grand_total;
     }
 
@@ -1087,7 +1087,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated setter method
      * @param param Base_grand_total
      */
-    public void setBase_grand_total(String param) {
+    public void setBase_grand_total(java.lang.String param) {
         localBase_grand_totalTracker = param != null;
 
         this.localBase_grand_total = param;
@@ -1101,7 +1101,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getCheckout_method() {
+    public java.lang.String getCheckout_method() {
         return localCheckout_method;
     }
 
@@ -1109,7 +1109,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated setter method
      * @param param Checkout_method
      */
-    public void setCheckout_method(String param) {
+    public void setCheckout_method(java.lang.String param) {
         localCheckout_methodTracker = param != null;
 
         this.localCheckout_method = param;
@@ -1123,7 +1123,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getCustomer_id() {
+    public java.lang.String getCustomer_id() {
         return localCustomer_id;
     }
 
@@ -1131,7 +1131,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated setter method
      * @param param Customer_id
      */
-    public void setCustomer_id(String param) {
+    public void setCustomer_id(java.lang.String param) {
         localCustomer_idTracker = param != null;
 
         this.localCustomer_id = param;
@@ -1145,7 +1145,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getCustomer_tax_class_id() {
+    public java.lang.String getCustomer_tax_class_id() {
         return localCustomer_tax_class_id;
     }
 
@@ -1153,7 +1153,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated setter method
      * @param param Customer_tax_class_id
      */
-    public void setCustomer_tax_class_id(String param) {
+    public void setCustomer_tax_class_id(java.lang.String param) {
         localCustomer_tax_class_idTracker = param != null;
 
         this.localCustomer_tax_class_id = param;
@@ -1177,7 +1177,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      */
     public void setCustomer_group_id(int param) {
         // setting primitive attribute tracker to true
-        localCustomer_group_idTracker = param != Integer.MIN_VALUE;
+        localCustomer_group_idTracker = param != java.lang.Integer.MIN_VALUE;
 
         this.localCustomer_group_id = param;
     }
@@ -1190,7 +1190,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getCustomer_email() {
+    public java.lang.String getCustomer_email() {
         return localCustomer_email;
     }
 
@@ -1198,7 +1198,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated setter method
      * @param param Customer_email
      */
-    public void setCustomer_email(String param) {
+    public void setCustomer_email(java.lang.String param) {
         localCustomer_emailTracker = param != null;
 
         this.localCustomer_email = param;
@@ -1212,7 +1212,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getCustomer_prefix() {
+    public java.lang.String getCustomer_prefix() {
         return localCustomer_prefix;
     }
 
@@ -1220,7 +1220,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated setter method
      * @param param Customer_prefix
      */
-    public void setCustomer_prefix(String param) {
+    public void setCustomer_prefix(java.lang.String param) {
         localCustomer_prefixTracker = param != null;
 
         this.localCustomer_prefix = param;
@@ -1234,7 +1234,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getCustomer_firstname() {
+    public java.lang.String getCustomer_firstname() {
         return localCustomer_firstname;
     }
 
@@ -1242,7 +1242,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated setter method
      * @param param Customer_firstname
      */
-    public void setCustomer_firstname(String param) {
+    public void setCustomer_firstname(java.lang.String param) {
         localCustomer_firstnameTracker = param != null;
 
         this.localCustomer_firstname = param;
@@ -1256,7 +1256,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getCustomer_middlename() {
+    public java.lang.String getCustomer_middlename() {
         return localCustomer_middlename;
     }
 
@@ -1264,7 +1264,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated setter method
      * @param param Customer_middlename
      */
-    public void setCustomer_middlename(String param) {
+    public void setCustomer_middlename(java.lang.String param) {
         localCustomer_middlenameTracker = param != null;
 
         this.localCustomer_middlename = param;
@@ -1278,7 +1278,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getCustomer_lastname() {
+    public java.lang.String getCustomer_lastname() {
         return localCustomer_lastname;
     }
 
@@ -1286,7 +1286,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated setter method
      * @param param Customer_lastname
      */
-    public void setCustomer_lastname(String param) {
+    public void setCustomer_lastname(java.lang.String param) {
         localCustomer_lastnameTracker = param != null;
 
         this.localCustomer_lastname = param;
@@ -1300,7 +1300,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getCustomer_suffix() {
+    public java.lang.String getCustomer_suffix() {
         return localCustomer_suffix;
     }
 
@@ -1308,7 +1308,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated setter method
      * @param param Customer_suffix
      */
-    public void setCustomer_suffix(String param) {
+    public void setCustomer_suffix(java.lang.String param) {
         localCustomer_suffixTracker = param != null;
 
         this.localCustomer_suffix = param;
@@ -1322,7 +1322,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getCustomer_note() {
+    public java.lang.String getCustomer_note() {
         return localCustomer_note;
     }
 
@@ -1330,7 +1330,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated setter method
      * @param param Customer_note
      */
-    public void setCustomer_note(String param) {
+    public void setCustomer_note(java.lang.String param) {
         localCustomer_noteTracker = param != null;
 
         this.localCustomer_note = param;
@@ -1344,7 +1344,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getCustomer_note_notify() {
+    public java.lang.String getCustomer_note_notify() {
         return localCustomer_note_notify;
     }
 
@@ -1352,7 +1352,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated setter method
      * @param param Customer_note_notify
      */
-    public void setCustomer_note_notify(String param) {
+    public void setCustomer_note_notify(java.lang.String param) {
         localCustomer_note_notifyTracker = param != null;
 
         this.localCustomer_note_notify = param;
@@ -1366,7 +1366,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getCustomer_is_guest() {
+    public java.lang.String getCustomer_is_guest() {
         return localCustomer_is_guest;
     }
 
@@ -1374,7 +1374,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated setter method
      * @param param Customer_is_guest
      */
-    public void setCustomer_is_guest(String param) {
+    public void setCustomer_is_guest(java.lang.String param) {
         localCustomer_is_guestTracker = param != null;
 
         this.localCustomer_is_guest = param;
@@ -1388,7 +1388,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getApplied_rule_ids() {
+    public java.lang.String getApplied_rule_ids() {
         return localApplied_rule_ids;
     }
 
@@ -1396,7 +1396,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated setter method
      * @param param Applied_rule_ids
      */
-    public void setApplied_rule_ids(String param) {
+    public void setApplied_rule_ids(java.lang.String param) {
         localApplied_rule_idsTracker = param != null;
 
         this.localApplied_rule_ids = param;
@@ -1410,7 +1410,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getReserved_order_id() {
+    public java.lang.String getReserved_order_id() {
         return localReserved_order_id;
     }
 
@@ -1418,7 +1418,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated setter method
      * @param param Reserved_order_id
      */
-    public void setReserved_order_id(String param) {
+    public void setReserved_order_id(java.lang.String param) {
         localReserved_order_idTracker = param != null;
 
         this.localReserved_order_id = param;
@@ -1432,7 +1432,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getPassword_hash() {
+    public java.lang.String getPassword_hash() {
         return localPassword_hash;
     }
 
@@ -1440,7 +1440,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated setter method
      * @param param Password_hash
      */
-    public void setPassword_hash(String param) {
+    public void setPassword_hash(java.lang.String param) {
         localPassword_hashTracker = param != null;
 
         this.localPassword_hash = param;
@@ -1454,7 +1454,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getCoupon_code() {
+    public java.lang.String getCoupon_code() {
         return localCoupon_code;
     }
 
@@ -1462,7 +1462,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated setter method
      * @param param Coupon_code
      */
-    public void setCoupon_code(String param) {
+    public void setCoupon_code(java.lang.String param) {
         localCoupon_codeTracker = param != null;
 
         this.localCoupon_code = param;
@@ -1476,7 +1476,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getGlobal_currency_code() {
+    public java.lang.String getGlobal_currency_code() {
         return localGlobal_currency_code;
     }
 
@@ -1484,7 +1484,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated setter method
      * @param param Global_currency_code
      */
-    public void setGlobal_currency_code(String param) {
+    public void setGlobal_currency_code(java.lang.String param) {
         localGlobal_currency_codeTracker = param != null;
 
         this.localGlobal_currency_code = param;
@@ -1508,7 +1508,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      */
     public void setBase_to_global_rate(double param) {
         // setting primitive attribute tracker to true
-        localBase_to_global_rateTracker = !Double.isNaN(param);
+        localBase_to_global_rateTracker = !java.lang.Double.isNaN(param);
 
         this.localBase_to_global_rate = param;
     }
@@ -1531,7 +1531,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      */
     public void setBase_to_quote_rate(double param) {
         // setting primitive attribute tracker to true
-        localBase_to_quote_rateTracker = !Double.isNaN(param);
+        localBase_to_quote_rateTracker = !java.lang.Double.isNaN(param);
 
         this.localBase_to_quote_rate = param;
     }
@@ -1544,7 +1544,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getCustomer_taxvat() {
+    public java.lang.String getCustomer_taxvat() {
         return localCustomer_taxvat;
     }
 
@@ -1552,7 +1552,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated setter method
      * @param param Customer_taxvat
      */
-    public void setCustomer_taxvat(String param) {
+    public void setCustomer_taxvat(java.lang.String param) {
         localCustomer_taxvatTracker = param != null;
 
         this.localCustomer_taxvat = param;
@@ -1566,7 +1566,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getCustomer_gender() {
+    public java.lang.String getCustomer_gender() {
         return localCustomer_gender;
     }
 
@@ -1574,7 +1574,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated setter method
      * @param param Customer_gender
      */
-    public void setCustomer_gender(String param) {
+    public void setCustomer_gender(java.lang.String param) {
         localCustomer_genderTracker = param != null;
 
         this.localCustomer_gender = param;
@@ -1598,7 +1598,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      */
     public void setSubtotal(double param) {
         // setting primitive attribute tracker to true
-        localSubtotalTracker = !Double.isNaN(param);
+        localSubtotalTracker = !java.lang.Double.isNaN(param);
 
         this.localSubtotal = param;
     }
@@ -1621,7 +1621,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      */
     public void setBase_subtotal(double param) {
         // setting primitive attribute tracker to true
-        localBase_subtotalTracker = !Double.isNaN(param);
+        localBase_subtotalTracker = !java.lang.Double.isNaN(param);
 
         this.localBase_subtotal = param;
     }
@@ -1644,7 +1644,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      */
     public void setSubtotal_with_discount(double param) {
         // setting primitive attribute tracker to true
-        localSubtotal_with_discountTracker = !Double.isNaN(param);
+        localSubtotal_with_discountTracker = !java.lang.Double.isNaN(param);
 
         this.localSubtotal_with_discount = param;
     }
@@ -1667,7 +1667,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      */
     public void setBase_subtotal_with_discount(double param) {
         // setting primitive attribute tracker to true
-        localBase_subtotal_with_discountTracker = !Double.isNaN(param);
+        localBase_subtotal_with_discountTracker = !java.lang.Double.isNaN(param);
 
         this.localBase_subtotal_with_discount = param;
     }
@@ -1680,7 +1680,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getExt_shipping_info() {
+    public java.lang.String getExt_shipping_info() {
         return localExt_shipping_info;
     }
 
@@ -1688,7 +1688,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated setter method
      * @param param Ext_shipping_info
      */
-    public void setExt_shipping_info(String param) {
+    public void setExt_shipping_info(java.lang.String param) {
         localExt_shipping_infoTracker = param != null;
 
         this.localExt_shipping_info = param;
@@ -1702,7 +1702,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getGift_message_id() {
+    public java.lang.String getGift_message_id() {
         return localGift_message_id;
     }
 
@@ -1710,7 +1710,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated setter method
      * @param param Gift_message_id
      */
-    public void setGift_message_id(String param) {
+    public void setGift_message_id(java.lang.String param) {
         localGift_message_idTracker = param != null;
 
         this.localGift_message_id = param;
@@ -1724,7 +1724,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getGift_message() {
+    public java.lang.String getGift_message() {
         return localGift_message;
     }
 
@@ -1732,7 +1732,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated setter method
      * @param param Gift_message
      */
-    public void setGift_message(String param) {
+    public void setGift_message(java.lang.String param) {
         localGift_messageTracker = param != null;
 
         this.localGift_message = param;
@@ -1756,7 +1756,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      */
     public void setCustomer_balance_amount_used(double param) {
         // setting primitive attribute tracker to true
-        localCustomer_balance_amount_usedTracker = !Double.isNaN(param);
+        localCustomer_balance_amount_usedTracker = !java.lang.Double.isNaN(param);
 
         this.localCustomer_balance_amount_used = param;
     }
@@ -1779,7 +1779,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      */
     public void setBase_customer_balance_amount_used(double param) {
         // setting primitive attribute tracker to true
-        localBase_customer_balance_amount_usedTracker = !Double.isNaN(param);
+        localBase_customer_balance_amount_usedTracker = !java.lang.Double.isNaN(param);
 
         this.localBase_customer_balance_amount_used = param;
     }
@@ -1792,7 +1792,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getUse_customer_balance() {
+    public java.lang.String getUse_customer_balance() {
         return localUse_customer_balance;
     }
 
@@ -1800,7 +1800,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated setter method
      * @param param Use_customer_balance
      */
-    public void setUse_customer_balance(String param) {
+    public void setUse_customer_balance(java.lang.String param) {
         localUse_customer_balanceTracker = param != null;
 
         this.localUse_customer_balance = param;
@@ -1814,7 +1814,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getGift_cards_amount() {
+    public java.lang.String getGift_cards_amount() {
         return localGift_cards_amount;
     }
 
@@ -1822,7 +1822,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated setter method
      * @param param Gift_cards_amount
      */
-    public void setGift_cards_amount(String param) {
+    public void setGift_cards_amount(java.lang.String param) {
         localGift_cards_amountTracker = param != null;
 
         this.localGift_cards_amount = param;
@@ -1836,7 +1836,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getBase_gift_cards_amount() {
+    public java.lang.String getBase_gift_cards_amount() {
         return localBase_gift_cards_amount;
     }
 
@@ -1844,7 +1844,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated setter method
      * @param param Base_gift_cards_amount
      */
-    public void setBase_gift_cards_amount(String param) {
+    public void setBase_gift_cards_amount(java.lang.String param) {
         localBase_gift_cards_amountTracker = param != null;
 
         this.localBase_gift_cards_amount = param;
@@ -1858,7 +1858,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getGift_cards_amount_used() {
+    public java.lang.String getGift_cards_amount_used() {
         return localGift_cards_amount_used;
     }
 
@@ -1866,7 +1866,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated setter method
      * @param param Gift_cards_amount_used
      */
-    public void setGift_cards_amount_used(String param) {
+    public void setGift_cards_amount_used(java.lang.String param) {
         localGift_cards_amount_usedTracker = param != null;
 
         this.localGift_cards_amount_used = param;
@@ -1880,7 +1880,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getUse_reward_points() {
+    public java.lang.String getUse_reward_points() {
         return localUse_reward_points;
     }
 
@@ -1888,7 +1888,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated setter method
      * @param param Use_reward_points
      */
-    public void setUse_reward_points(String param) {
+    public void setUse_reward_points(java.lang.String param) {
         localUse_reward_pointsTracker = param != null;
 
         this.localUse_reward_points = param;
@@ -1902,7 +1902,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getReward_points_balance() {
+    public java.lang.String getReward_points_balance() {
         return localReward_points_balance;
     }
 
@@ -1910,7 +1910,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated setter method
      * @param param Reward_points_balance
      */
-    public void setReward_points_balance(String param) {
+    public void setReward_points_balance(java.lang.String param) {
         localReward_points_balanceTracker = param != null;
 
         this.localReward_points_balance = param;
@@ -1924,7 +1924,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getBase_reward_currency_amount() {
+    public java.lang.String getBase_reward_currency_amount() {
         return localBase_reward_currency_amount;
     }
 
@@ -1932,7 +1932,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated setter method
      * @param param Base_reward_currency_amount
      */
-    public void setBase_reward_currency_amount(String param) {
+    public void setBase_reward_currency_amount(java.lang.String param) {
         localBase_reward_currency_amountTracker = param != null;
 
         this.localBase_reward_currency_amount = param;
@@ -1946,7 +1946,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getReward_currency_amount() {
+    public java.lang.String getReward_currency_amount() {
         return localReward_currency_amount;
     }
 
@@ -1954,7 +1954,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated setter method
      * @param param Reward_currency_amount
      */
-    public void setReward_currency_amount(String param) {
+    public void setReward_currency_amount(java.lang.String param) {
         localReward_currency_amountTracker = param != null;
 
         this.localReward_currency_amount = param;
@@ -2075,8 +2075,8 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
         javax.xml.stream.XMLStreamWriter xmlWriter, boolean serializeType)
         throws javax.xml.stream.XMLStreamException,
             org.apache.axis2.databinding.ADBException {
-        String prefix = null;
-        String namespace = null;
+        java.lang.String prefix = null;
+        java.lang.String namespace = null;
 
         prefix = parentQName.getPrefix();
         namespace = parentQName.getNamespaceURI();
@@ -2084,7 +2084,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
             xmlWriter);
 
         if (serializeType) {
-            String namespacePrefix = registerPrefix(xmlWriter,
+            java.lang.String namespacePrefix = registerPrefix(xmlWriter,
                     "urn:Magento");
 
             if ((namespacePrefix != null) &&
@@ -2163,7 +2163,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
             namespace = "";
             writeStartElement(null, namespace, "quote_id", xmlWriter);
 
-            if (localQuote_id == Integer.MIN_VALUE) {
+            if (localQuote_id == java.lang.Integer.MIN_VALUE) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "quote_id cannot be null!!");
             } else {
@@ -2178,7 +2178,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
             namespace = "";
             writeStartElement(null, namespace, "is_active", xmlWriter);
 
-            if (localIs_active == Integer.MIN_VALUE) {
+            if (localIs_active == java.lang.Integer.MIN_VALUE) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "is_active cannot be null!!");
             } else {
@@ -2193,7 +2193,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
             namespace = "";
             writeStartElement(null, namespace, "is_virtual", xmlWriter);
 
-            if (localIs_virtual == Integer.MIN_VALUE) {
+            if (localIs_virtual == java.lang.Integer.MIN_VALUE) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "is_virtual cannot be null!!");
             } else {
@@ -2208,7 +2208,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
             namespace = "";
             writeStartElement(null, namespace, "is_multi_shipping", xmlWriter);
 
-            if (localIs_multi_shipping == Integer.MIN_VALUE) {
+            if (localIs_multi_shipping == java.lang.Integer.MIN_VALUE) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "is_multi_shipping cannot be null!!");
             } else {
@@ -2223,7 +2223,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
             namespace = "";
             writeStartElement(null, namespace, "items_count", xmlWriter);
 
-            if (Double.isNaN(localItems_count)) {
+            if (java.lang.Double.isNaN(localItems_count)) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "items_count cannot be null!!");
             } else {
@@ -2238,7 +2238,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
             namespace = "";
             writeStartElement(null, namespace, "items_qty", xmlWriter);
 
-            if (Double.isNaN(localItems_qty)) {
+            if (java.lang.Double.isNaN(localItems_qty)) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "items_qty cannot be null!!");
             } else {
@@ -2419,7 +2419,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
             namespace = "";
             writeStartElement(null, namespace, "customer_group_id", xmlWriter);
 
-            if (localCustomer_group_id == Integer.MIN_VALUE) {
+            if (localCustomer_group_id == java.lang.Integer.MIN_VALUE) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "customer_group_id cannot be null!!");
             } else {
@@ -2644,7 +2644,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
             namespace = "";
             writeStartElement(null, namespace, "base_to_global_rate", xmlWriter);
 
-            if (Double.isNaN(localBase_to_global_rate)) {
+            if (java.lang.Double.isNaN(localBase_to_global_rate)) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "base_to_global_rate cannot be null!!");
             } else {
@@ -2659,7 +2659,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
             namespace = "";
             writeStartElement(null, namespace, "base_to_quote_rate", xmlWriter);
 
-            if (Double.isNaN(localBase_to_quote_rate)) {
+            if (java.lang.Double.isNaN(localBase_to_quote_rate)) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "base_to_quote_rate cannot be null!!");
             } else {
@@ -2704,7 +2704,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
             namespace = "";
             writeStartElement(null, namespace, "subtotal", xmlWriter);
 
-            if (Double.isNaN(localSubtotal)) {
+            if (java.lang.Double.isNaN(localSubtotal)) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "subtotal cannot be null!!");
             } else {
@@ -2719,7 +2719,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
             namespace = "";
             writeStartElement(null, namespace, "base_subtotal", xmlWriter);
 
-            if (Double.isNaN(localBase_subtotal)) {
+            if (java.lang.Double.isNaN(localBase_subtotal)) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "base_subtotal cannot be null!!");
             } else {
@@ -2735,7 +2735,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
             writeStartElement(null, namespace, "subtotal_with_discount",
                 xmlWriter);
 
-            if (Double.isNaN(localSubtotal_with_discount)) {
+            if (java.lang.Double.isNaN(localSubtotal_with_discount)) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "subtotal_with_discount cannot be null!!");
             } else {
@@ -2751,7 +2751,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
             writeStartElement(null, namespace, "base_subtotal_with_discount",
                 xmlWriter);
 
-            if (Double.isNaN(localBase_subtotal_with_discount)) {
+            if (java.lang.Double.isNaN(localBase_subtotal_with_discount)) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "base_subtotal_with_discount cannot be null!!");
             } else {
@@ -2812,7 +2812,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
             writeStartElement(null, namespace, "customer_balance_amount_used",
                 xmlWriter);
 
-            if (Double.isNaN(localCustomer_balance_amount_used)) {
+            if (java.lang.Double.isNaN(localCustomer_balance_amount_used)) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "customer_balance_amount_used cannot be null!!");
             } else {
@@ -2828,7 +2828,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
             writeStartElement(null, namespace,
                 "base_customer_balance_amount_used", xmlWriter);
 
-            if (Double.isNaN(localBase_customer_balance_amount_used)) {
+            if (java.lang.Double.isNaN(localBase_customer_balance_amount_used)) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "base_customer_balance_amount_used cannot be null!!");
             } else {
@@ -3007,7 +3007,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
         xmlWriter.writeEndElement();
     }
 
-    private static String generatePrefix(String namespace) {
+    private static java.lang.String generatePrefix(java.lang.String namespace) {
         if (namespace.equals("urn:Magento")) {
             return "ns1";
         }
@@ -3018,11 +3018,11 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
     /**
      * Utility method to write an element start tag.
      */
-    private void writeStartElement(String prefix,
-        String namespace, String localPart,
+    private void writeStartElement(java.lang.String prefix,
+        java.lang.String namespace, java.lang.String localPart,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
-        String writerPrefix = xmlWriter.getPrefix(namespace);
+        java.lang.String writerPrefix = xmlWriter.getPrefix(namespace);
 
         if (writerPrefix != null) {
             xmlWriter.writeStartElement(namespace, localPart);
@@ -3042,9 +3042,9 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
     /**
      * Util method to write an attribute with the ns prefix
      */
-    private void writeAttribute(String prefix,
-        String namespace, String attName,
-        String attValue, javax.xml.stream.XMLStreamWriter xmlWriter)
+    private void writeAttribute(java.lang.String prefix,
+        java.lang.String namespace, java.lang.String attName,
+        java.lang.String attValue, javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
         if (xmlWriter.getPrefix(namespace) == null) {
             xmlWriter.writeNamespace(prefix, namespace);
@@ -3057,8 +3057,8 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
     /**
      * Util method to write an attribute without the ns prefix
      */
-    private void writeAttribute(String namespace,
-        String attName, String attValue,
+    private void writeAttribute(java.lang.String namespace,
+        java.lang.String attName, java.lang.String attValue,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
         if (namespace.equals("")) {
@@ -3072,18 +3072,18 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
     /**
      * Util method to write an attribute without the ns prefix
      */
-    private void writeQNameAttribute(String namespace,
-        String attName, javax.xml.namespace.QName qname,
+    private void writeQNameAttribute(java.lang.String namespace,
+        java.lang.String attName, javax.xml.namespace.QName qname,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
-        String attributeNamespace = qname.getNamespaceURI();
-        String attributePrefix = xmlWriter.getPrefix(attributeNamespace);
+        java.lang.String attributeNamespace = qname.getNamespaceURI();
+        java.lang.String attributePrefix = xmlWriter.getPrefix(attributeNamespace);
 
         if (attributePrefix == null) {
             attributePrefix = registerPrefix(xmlWriter, attributeNamespace);
         }
 
-        String attributeValue;
+        java.lang.String attributeValue;
 
         if (attributePrefix.trim().length() > 0) {
             attributeValue = attributePrefix + ":" + qname.getLocalPart();
@@ -3105,10 +3105,10 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
     private void writeQName(javax.xml.namespace.QName qname,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
-        String namespaceURI = qname.getNamespaceURI();
+        java.lang.String namespaceURI = qname.getNamespaceURI();
 
         if (namespaceURI != null) {
-            String prefix = xmlWriter.getPrefix(namespaceURI);
+            java.lang.String prefix = xmlWriter.getPrefix(namespaceURI);
 
             if (prefix == null) {
                 prefix = generatePrefix(namespaceURI);
@@ -3137,9 +3137,9 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
         if (qnames != null) {
             // we have to store this data until last moment since it is not possible to write any
             // namespace data after writing the charactor data
-            StringBuffer stringToWrite = new StringBuffer();
-            String namespaceURI = null;
-            String prefix = null;
+            java.lang.StringBuffer stringToWrite = new java.lang.StringBuffer();
+            java.lang.String namespaceURI = null;
+            java.lang.String prefix = null;
 
             for (int i = 0; i < qnames.length; i++) {
                 if (i > 0) {
@@ -3178,10 +3178,10 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
     /**
      * Register a namespace prefix
      */
-    private String registerPrefix(
-        javax.xml.stream.XMLStreamWriter xmlWriter, String namespace)
+    private java.lang.String registerPrefix(
+        javax.xml.stream.XMLStreamWriter xmlWriter, java.lang.String namespace)
         throws javax.xml.stream.XMLStreamException {
-        String prefix = xmlWriter.getPrefix(namespace);
+        java.lang.String prefix = xmlWriter.getPrefix(namespace);
 
         if (prefix == null) {
             prefix = generatePrefix(namespace);
@@ -3189,7 +3189,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
             javax.xml.namespace.NamespaceContext nsContext = xmlWriter.getNamespaceContext();
 
             while (true) {
-                String uri = nsContext.getNamespaceURI(prefix);
+                java.lang.String uri = nsContext.getNamespaceURI(prefix);
 
                 if ((uri == null) || (uri.length() == 0)) {
                     break;
@@ -3914,13 +3914,13 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
          *                If this object is a complex type, the reader is positioned at the end element of its outer element
          */
         public static ShoppingCartInfoEntity parse(
-            javax.xml.stream.XMLStreamReader reader) throws Exception {
+            javax.xml.stream.XMLStreamReader reader) throws java.lang.Exception {
             ShoppingCartInfoEntity object = new ShoppingCartInfoEntity();
 
             int event;
-            String nillableValue = null;
-            String prefix = "";
-            String namespaceuri = "";
+            java.lang.String nillableValue = null;
+            java.lang.String prefix = "";
+            java.lang.String namespaceuri = "";
 
             try {
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -3928,11 +3928,11 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
 
                 if (reader.getAttributeValue(
                             "http://www.w3.org/2001/XMLSchema-instance", "type") != null) {
-                    String fullTypeName = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance",
+                    java.lang.String fullTypeName = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance",
                             "type");
 
                     if (fullTypeName != null) {
-                        String nsPrefix = null;
+                        java.lang.String nsPrefix = null;
 
                         if (fullTypeName.indexOf(":") > -1) {
                             nsPrefix = fullTypeName.substring(0,
@@ -3941,12 +3941,12 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
 
                         nsPrefix = (nsPrefix == null) ? "" : nsPrefix;
 
-                        String type = fullTypeName.substring(fullTypeName.indexOf(
+                        java.lang.String type = fullTypeName.substring(fullTypeName.indexOf(
                                     ":") + 1);
 
                         if (!"shoppingCartInfoEntity".equals(type)) {
                             //find namespace for the prefix
-                            String nsUri = reader.getNamespaceContext()
+                            java.lang.String nsUri = reader.getNamespaceContext()
                                                            .getNamespaceURI(nsPrefix);
 
                             return (ShoppingCartInfoEntity) magento.ExtensionMapper.getTypeObject(nsUri,
@@ -3976,7 +3976,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
                             "The element: " + "store_id" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setStore_id(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -4003,7 +4003,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setCreated_at(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -4030,7 +4030,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setUpdated_at(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -4057,7 +4057,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setConverted_at(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -4083,7 +4083,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
                             "The element: " + "quote_id" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setQuote_id(org.apache.axis2.databinding.utils.ConverterUtil.convertToInt(
                             content));
@@ -4092,7 +4092,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
                 } // End of if for expected property start element
 
                 else {
-                    object.setQuote_id(Integer.MIN_VALUE);
+                    object.setQuote_id(java.lang.Integer.MIN_VALUE);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -4110,7 +4110,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
                             "The element: " + "is_active" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setIs_active(org.apache.axis2.databinding.utils.ConverterUtil.convertToInt(
                             content));
@@ -4119,7 +4119,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
                 } // End of if for expected property start element
 
                 else {
-                    object.setIs_active(Integer.MIN_VALUE);
+                    object.setIs_active(java.lang.Integer.MIN_VALUE);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -4138,7 +4138,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setIs_virtual(org.apache.axis2.databinding.utils.ConverterUtil.convertToInt(
                             content));
@@ -4147,7 +4147,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
                 } // End of if for expected property start element
 
                 else {
-                    object.setIs_virtual(Integer.MIN_VALUE);
+                    object.setIs_virtual(java.lang.Integer.MIN_VALUE);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -4166,7 +4166,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setIs_multi_shipping(org.apache.axis2.databinding.utils.ConverterUtil.convertToInt(
                             content));
@@ -4175,7 +4175,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
                 } // End of if for expected property start element
 
                 else {
-                    object.setIs_multi_shipping(Integer.MIN_VALUE);
+                    object.setIs_multi_shipping(java.lang.Integer.MIN_VALUE);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -4194,7 +4194,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setItems_count(org.apache.axis2.databinding.utils.ConverterUtil.convertToDouble(
                             content));
@@ -4203,7 +4203,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
                 } // End of if for expected property start element
 
                 else {
-                    object.setItems_count(Double.NaN);
+                    object.setItems_count(java.lang.Double.NaN);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -4221,7 +4221,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
                             "The element: " + "items_qty" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setItems_qty(org.apache.axis2.databinding.utils.ConverterUtil.convertToDouble(
                             content));
@@ -4230,7 +4230,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
                 } // End of if for expected property start element
 
                 else {
-                    object.setItems_qty(Double.NaN);
+                    object.setItems_qty(java.lang.Double.NaN);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -4249,7 +4249,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setOrig_order_id(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -4276,7 +4276,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setStore_to_base_rate(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -4303,7 +4303,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setStore_to_quote_rate(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -4330,7 +4330,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setBase_currency_code(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -4357,7 +4357,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setStore_currency_code(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -4384,7 +4384,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setQuote_currency_code(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -4411,7 +4411,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setGrand_total(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -4438,7 +4438,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setBase_grand_total(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -4465,7 +4465,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setCheckout_method(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -4492,7 +4492,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setCustomer_id(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -4519,7 +4519,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setCustomer_tax_class_id(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -4546,7 +4546,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setCustomer_group_id(org.apache.axis2.databinding.utils.ConverterUtil.convertToInt(
                             content));
@@ -4555,7 +4555,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
                 } // End of if for expected property start element
 
                 else {
-                    object.setCustomer_group_id(Integer.MIN_VALUE);
+                    object.setCustomer_group_id(java.lang.Integer.MIN_VALUE);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -4574,7 +4574,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setCustomer_email(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -4601,7 +4601,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setCustomer_prefix(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -4628,7 +4628,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setCustomer_firstname(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -4655,7 +4655,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setCustomer_middlename(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -4682,7 +4682,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setCustomer_lastname(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -4709,7 +4709,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setCustomer_suffix(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -4736,7 +4736,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setCustomer_note(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -4763,7 +4763,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setCustomer_note_notify(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -4790,7 +4790,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setCustomer_is_guest(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -4817,7 +4817,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setApplied_rule_ids(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -4844,7 +4844,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setReserved_order_id(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -4871,7 +4871,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setPassword_hash(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -4898,7 +4898,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setCoupon_code(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -4925,7 +4925,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setGlobal_currency_code(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -4952,7 +4952,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setBase_to_global_rate(org.apache.axis2.databinding.utils.ConverterUtil.convertToDouble(
                             content));
@@ -4961,7 +4961,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
                 } // End of if for expected property start element
 
                 else {
-                    object.setBase_to_global_rate(Double.NaN);
+                    object.setBase_to_global_rate(java.lang.Double.NaN);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -4980,7 +4980,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setBase_to_quote_rate(org.apache.axis2.databinding.utils.ConverterUtil.convertToDouble(
                             content));
@@ -4989,7 +4989,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
                 } // End of if for expected property start element
 
                 else {
-                    object.setBase_to_quote_rate(Double.NaN);
+                    object.setBase_to_quote_rate(java.lang.Double.NaN);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -5008,7 +5008,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setCustomer_taxvat(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5035,7 +5035,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setCustomer_gender(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5061,7 +5061,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
                             "The element: " + "subtotal" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setSubtotal(org.apache.axis2.databinding.utils.ConverterUtil.convertToDouble(
                             content));
@@ -5070,7 +5070,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
                 } // End of if for expected property start element
 
                 else {
-                    object.setSubtotal(Double.NaN);
+                    object.setSubtotal(java.lang.Double.NaN);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -5089,7 +5089,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setBase_subtotal(org.apache.axis2.databinding.utils.ConverterUtil.convertToDouble(
                             content));
@@ -5098,7 +5098,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
                 } // End of if for expected property start element
 
                 else {
-                    object.setBase_subtotal(Double.NaN);
+                    object.setBase_subtotal(java.lang.Double.NaN);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -5117,7 +5117,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setSubtotal_with_discount(org.apache.axis2.databinding.utils.ConverterUtil.convertToDouble(
                             content));
@@ -5126,7 +5126,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
                 } // End of if for expected property start element
 
                 else {
-                    object.setSubtotal_with_discount(Double.NaN);
+                    object.setSubtotal_with_discount(java.lang.Double.NaN);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -5146,7 +5146,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setBase_subtotal_with_discount(org.apache.axis2.databinding.utils.ConverterUtil.convertToDouble(
                             content));
@@ -5155,7 +5155,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
                 } // End of if for expected property start element
 
                 else {
-                    object.setBase_subtotal_with_discount(Double.NaN);
+                    object.setBase_subtotal_with_discount(java.lang.Double.NaN);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -5174,7 +5174,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setExt_shipping_info(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5201,7 +5201,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setGift_message_id(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5228,7 +5228,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setGift_message(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5256,7 +5256,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setCustomer_balance_amount_used(org.apache.axis2.databinding.utils.ConverterUtil.convertToDouble(
                             content));
@@ -5265,7 +5265,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
                 } // End of if for expected property start element
 
                 else {
-                    object.setCustomer_balance_amount_used(Double.NaN);
+                    object.setCustomer_balance_amount_used(java.lang.Double.NaN);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -5286,7 +5286,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setBase_customer_balance_amount_used(org.apache.axis2.databinding.utils.ConverterUtil.convertToDouble(
                             content));
@@ -5295,7 +5295,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
                 } // End of if for expected property start element
 
                 else {
-                    object.setBase_customer_balance_amount_used(Double.NaN);
+                    object.setBase_customer_balance_amount_used(java.lang.Double.NaN);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -5314,7 +5314,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setUse_customer_balance(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5341,7 +5341,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setGift_cards_amount(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5368,7 +5368,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setBase_gift_cards_amount(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5395,7 +5395,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setGift_cards_amount_used(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5422,7 +5422,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setUse_reward_points(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5449,7 +5449,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setReward_points_balance(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5477,7 +5477,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setBase_reward_currency_amount(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5504,7 +5504,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setReward_currency_amount(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5584,7 +5584,7 @@ public class ShoppingCartInfoEntity implements org.apache.axis2.databinding.ADBB
                         "Unexpected subelement " + reader.getName());
                 }
             } catch (javax.xml.stream.XMLStreamException e) {
-                throw new Exception(e);
+                throw new java.lang.Exception(e);
             }
 
             return object;
