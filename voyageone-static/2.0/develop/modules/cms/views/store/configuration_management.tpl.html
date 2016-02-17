@@ -1,0 +1,140 @@
+<div class="wrapper-md" ng-init="initialize()">
+	<div class="vo_accordion vo_attr">
+		<div class="panel-group">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h4 class="panel-title"><i class="fa fa-reorder"></i>&nbsp;配置管理</h4>
+				</div>
+				<div class="container-fluid m-t-xs m-b-xs">
+					<div class="col-sm-12">
+						<div class="col-sm-4">
+							<div class="form-horizontal">
+								<div class="form-group">
+									<label class="col-sm-3 control-label">配置项</label>
+									<div class="col-sm-9">
+										<input type="text" class="form-control">
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-sm-4">
+							<div class="form-horizontal">
+								<div class="form-group">
+									<label class="col-sm-3 control-label">配置Key</label>
+									<div class="col-sm-9">
+										<input type="text" class="form-control">
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-sm-4 text-center" ng-controller="popupCtrl">
+							<div class="form-horizontal form-inline">
+								<button class="btn btn-default" ng-click="clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR' | translate}}</button>
+								<button class="btn btn-vo" ng-click="search()"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}</button>
+								<button class="btn btn-success" ng-click="openConfiguration('md')"><i class="fa fa-plus"></i>&nbsp;新增配置</button>
+							</div><!-- .form-inline -->
+						</div>
+					</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	<div class="box">
+		<div class="box-body">
+			<div class="table-responsive">
+				<div class="col-sm-12 dropdown_table_main">
+					<table class="table table-hover-new vo_table tableWordBreak" style="margin-bottom:0px" ng-controller="popupCtrl">
+						<thead>
+						<tr>
+							<th class="mfb-xt text-center">序号</th>
+							<th class="mfb-xxt text-center">配置项</th>
+							<th class="mfb-xxt text-center">配置Key</th>
+							<th class="mfb-xxt text-center">配置值1</th>
+							<th class="mfb-xxt text-center">配置值2</th>
+							<th class="mfb-xxt text-center">配置值3</th>
+							<th class="mfb-xt text-center">Action</th>
+						</tr>
+						</thead>
+						<tbody>
+						<tr>
+							<td class="mfb-xt text-center">1</td>
+							<td class="mfb-xxt text-center">abcd</td>
+							<td class="mfb-xxt text-center">123456</td>
+							<td class="mfb-xxt text-center">5978652</td>
+							<td class="mfb-xxt text-center">3568942</td>
+							<td class="mfb-xxt text-center">7862145</td>
+							<td class="mfb-xt text-center">
+								<button title="修改初始密码" class="btn btn-success btn-xs" ng-click="openConfiguration('md')"><i class="fa fa-pencil"></i></button>
+								<button title="删除" class="btn btn-danger btn-xs"><i class="fa  fa-trash-o"></i></button>
+							</td>
+						</tr>
+						<tr>
+							<td class="mfb-xt text-center">2</td>
+							<td class="mfb-xxt text-center">abcd</td>
+							<td class="mfb-xxt text-center">123456</td>
+							<td class="mfb-xxt text-center">596421</td>
+							<td class="mfb-xxt text-center">1568493</td>
+							<td class="mfb-xxt text-center">3659842</td>
+							<td class="mfb-xt text-center">
+								<button title="修改初始密码" class="btn btn-success btn-xs" ng-click="openConfiguration('md')"><i class="fa fa-pencil"></i></button>
+								<button title="删除" class="btn btn-danger btn-xs"><i class="fa  fa-trash-o"></i></button>
+							</td>
+						</tr>
+						<tr>
+							<td class="mfb-xt text-center">3</td>
+							<td class="mfb-xxt text-center">abcd</td>
+							<td class="mfb-xxt text-center">123456</td>
+							<td class="mfb-xxt text-center">698423</td>
+							<td class="mfb-xxt text-center">963482</td>
+							<td class="mfb-xxt text-center">687123</td>
+							<td class="mfb-xt text-center">
+								<button title="修改初始密码" class="btn btn-success btn-xs" ng-click="openConfiguration('md')"><i class="fa fa-pencil"></i></button>
+								<button title="删除" class="btn btn-danger btn-xs"><i class="fa  fa-trash-o"></i></button>
+							</td>
+						</tr>
+						<tr>
+							<td class="mfb-xt text-center">4</td>
+							<td class="mfb-xxt text-center">abcd</td>
+							<td class="mfb-xxt text-center">123456</td>
+							<td class="mfb-xxt text-center">5978652</td>
+							<td class="mfb-xxt text-center">3568942</td>
+							<td class="mfb-xxt text-center">7862145</td>
+							<td class="mfb-xt text-center">
+								<button title="修改初始密码" class="btn btn-success btn-xs" ng-click="openConfiguration('md')"><i class="fa fa-pencil"></i></button>
+								<button title="删除" class="btn btn-danger btn-xs"><i class="fa  fa-trash-o"></i></button>
+							</td>
+						</tr>
+						<tr>
+							<td class="mfb-xt text-center">5</td>
+							<td class="mfb-xxt text-center">abcd</td>
+							<td class="mfb-xxt text-center">123456</td>
+							<td class="mfb-xxt text-center">596421</td>
+							<td class="mfb-xxt text-center">1568493</td>
+							<td class="mfb-xxt text-center">3659842</td>
+							<td class="mfb-xt text-center">
+								<button title="修改初始密码" class="btn btn-success btn-xs" ng-click="openConfiguration('md')"><i class="fa fa-pencil"></i></button>
+								<button title="删除" class="btn btn-danger btn-xs"><i class="fa  fa-trash-o"></i></button>
+							</td>
+						</tr>
+						<tr>
+							<td class="mfb-xt text-center">6</td>
+							<td class="mfb-xxt text-center">abcd</td>
+							<td class="mfb-xxt text-center">123456</td>
+							<td class="mfb-xxt text-center">698423</td>
+							<td class="mfb-xxt text-center">963482</td>
+							<td class="mfb-xxt text-center">687123</td>
+							<td class="mfb-xt text-center">
+								<button title="修改初始密码" class="btn btn-success btn-xs" ng-click="openConfiguration('md')"><i class="fa fa-pencil"></i></button>
+								<button title="删除" class="btn btn-danger btn-xs"><i class="fa  fa-trash-o"></i></button>
+							</td>
+						</tr>
+						</tbody>
+					</table>
+				</div><!-- .table-responsive -->
+			</div>
+		</div><!-- /.box-body -->
+		<div class="m-t-xs">
+			<vpagination config="vm.errorPageOption"></vpagination>
+		</div>
+	</div>
+</div><!-- end .wrapper-md -->

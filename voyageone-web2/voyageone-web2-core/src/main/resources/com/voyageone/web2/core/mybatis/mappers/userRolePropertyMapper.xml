@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.web2.core.sql">
+    <select id="ct_user_role_property_selectUserMenu" resultType="HashMap">
+        SELECT DISTINCT
+            f.menu_title as menuTitle,
+            f.default_url as defaultUrl
+        FROM
+            Synship.ct_user_role_property a
+            LEFT JOIN Synship.ct_role_permission b ON a.role_id = b.role_id
+            LEFT JOIN Synship.ct_action c ON b.action_id = c.id
+            LEFT JOIN Synship.ct_controller d ON c.controller_id = d.id
+            LEFT JOIN Synship.ct_module e ON d.module_id = e.id
+            LEFT JOIN Synship.ct_application f ON e.application_id = f.id
+        WHERE a.user_id = #{userId}#
+              AND a.property_id = #{channelId}#
+    </select>
+</mapper>

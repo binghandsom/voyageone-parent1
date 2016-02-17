@@ -1,0 +1,80 @@
+<div class="wrapper-md" ng-controller="platformMappingController as ctrl" ng-init="ctrl.init()">
+    <div class="vo_accordion vo_attr">
+        <div class="panel-group">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title"><i class="glyphicon glyphicon-cog"></i>&nbsp;平台匹配关系设置</h4>
+                </div>
+                <div class="container-fluid m-l-md m-t-sm m-b-xs">
+                <div class="col-sm-12">
+                    <div class="form-inline m-b-sm pull-left">
+                        <select class="form-control m-r-xxs" title="平台(必选)"
+                                ng-model="ctrl.selected.cart"
+                                ng-change="ctrl.loadCategories()"
+                                ng-options="v.id as v.desc for (k,v) in ctrl.carts"></select>
+                        <select class="form-control m-r-xxs" title="类目匹配情况"
+                                ng-model="ctrl.matched.category"
+                                ng-options="v as k for (k, v) in ctrl.options.category"></select>
+                        <select class="form-control m-r-xxs" title="类目属性匹配情况"
+                                ng-model="ctrl.matched.property"
+                                ng-options="v as k for (k, v) in ctrl.options.property"></select>
+                        <input type="text" placeholder="快速检索" class="form-control">
+                        <button class="btn btn-default" ng-click="clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR' | translate}}</button>
+                        <button type="submit" class="btn btn-vo btn-xxs"><i class="fa fa-search"></i> 检索</button>
+                    </div><!-- /right-btn -->
+                </div>
+                </div>
+                </div>
+            </div>
+        </div>
+
+    <div class="m-b-lg">
+        <div class="box">
+            <div class="box-body">
+                <table class="table table-hover table-hover-new text-center" ng-controller="popupCtrl">
+                    <thead>
+                    <tr>
+                        <th class="text-center">Seq.</th>
+                        <th class="text-left">Main Data Category</th>
+                        <th class="text-left">Platform Category</th>
+                        <th class="text-center">类目匹配 / 其它平台</th>
+                        <th class="text-center">属性匹配完成</th>
+                        <th class="text-center">类目属性匹配</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="category in ctrl.mainCategories track by category.catId"
+                        ng-if="ctrl.shown(category)">
+                        <td>{{::$index + 1}}</td>
+                        <td class="text-left">{{::category.catPath}}</td>
+                        <td class="text-left">{{category.mapping}}</td>
+                        <td>
+                            <div class="btn-group">
+                                <button ng-click="ctrl.popupMapping(category, popupNewCategory)" class="btn btn-default btn-xs">
+                                    <i class="glyphicon glyphicon-link"></i> 类目匹配
+                                </button>
+                                <button class="btn btn-default btn-xs"
+                                        ng-click="openOtherPlatform({mainCategoryId: category.catId})">
+                                    <i class="glyphicon glyphicon-link"></i> 其它平台
+                                </button>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="h4" ng-if="category.propertyMatched">
+                                <i class="fa fa-check-circle"></i>
+                            </span>
+                        </td>
+                        <td>
+                            <a class="btn btn-default btn-xs" target="_blank"
+                               ng-href="#/setting/platform_mapping/{{ctrl.selected.cart}}/{{::category.catId}}"
+                               ng-if="category.matched">
+                                <i class="glyphicon glyphicon-link"></i> 属性匹配
+                            </a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

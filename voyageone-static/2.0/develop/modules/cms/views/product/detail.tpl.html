@@ -1,0 +1,269 @@
+<div class="wrapper-md" ng-controller="productDetailController as ctrl" ng-init="ctrl.initialize()">
+	<div class="vo_accordion vo_attr">
+		<div class="panel-group">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h4 class="panel-title">&nbsp;产品详情</h4>
+				</div>
+				<div class="container-fluid m-t-sm m-l-xs m-r-xs">
+					<div class="col-sm-12">
+						<div class="col-sm-12  m-b-sm font-bold text-vo">
+							<span>{{'TXT_MASTER_CATEGORY_WITH_COLON' | translate}}</b>{{ctrl.productDetails.categoryFullPath}}</span>
+							<div class="form-inline pull-right" ng-controller="popupCtrl">
+								<!-- TODO 暂时未实现 -->
+								<!--<button class="btn btn-default" ng-click="ctrl.openCategoryMapping(ctrl.productDetails, popupNewCategory)"><i class="fa fa-arrow-circle-right"></i>&nbsp;{{'TXT_SELECT_STORE_CATEGORY' | translate}}</button>-->
+								<button type="button" class="btn btn-default" ng-click="openHistoryPromotion('lg', ctrl.productDetails.productCode)"><i class="fa fa-rotate-left"></i>&nbsp;{{'TXT_HISTORY_PROMOTION' | translate}}</button>
+								<button type="button" class="btn btn-default" ng-click="openHistoryPrice('lg', ctrl.productDetails.productCode, 'code')"><i class="fa fa-jpy"></i>&nbsp;{{'TXT_HISTORY_PRICE' | translate}}</button>
+								<button class="btn btn-default" ng-click="ctrl.openCategoryMapping(ctrl.productDetails, popupNewCategory)"><i class="fa fa-arrow-circle-right"></i>&nbsp;{{'TXT_CHANGE_CATEGORY' | translate}}</button>
+
+							</div>
+						</div>
+						<div class="form-inline pull-left m-b-xs m-r-sm">
+							<label class="m-t-xs col-sm-3" translate="TXT_IS_FIX_TRANSLATED"></label>
+							<div class="col-sm-3 text-left">
+								<div class="onoffswitch">
+									<input type="checkbox" name="switchIsTranslated" class="onoffswitch-checkbox" id="switchIsTranslated" ng-model="ctrl.productDetails.productStatus.translateStatus">
+									<label class="onoffswitch-label" for="switchIsTranslated">
+										<span class="onoffswitch-inner"></span>
+										<span class="onoffswitch-switch"></span>
+									</label>
+								</div><!-- onoff switch -->
+							</div>
+							<label class="m-t-xs col-sm-3" translate="TXT_IS_FIX_EDIT"></label>
+							<div class="col-sm-3 text-left">
+								<div class="onoffswitch">
+									<input type="checkbox" name="switchIsEdit" class="onoffswitch-checkbox" id="switchIsEdit" ng-model="ctrl.productDetails.productStatus.editStatus">
+									<label class="onoffswitch-label" for="switchIsEdit">
+										<span class="onoffswitch-inner"></span>
+										<span class="onoffswitch-switch"></span>
+									</label>
+								</div><!-- onoff switch -->
+							</div>
+						</div>
+						<!--<div class="form-inline pull-right">
+							<button type="submit" class="btn btn-default" ng-click="ctrl.cancelProductInfo()"><i class="fa fa-remove"></i> {{'BTN_CANCEL' | translate}}</button>
+							<button type="submit" class="btn btn-vo" ng-click="ctrl.updateProductInfo()"><i class="glyphicon glyphicon-floppy-disk"></i> {{'BTN_SAVE' | translate}}</button>
+						</div>-->
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div style="width:80%" ng-if="ctrl.productDetails.productDataIsReady">
+		<tabset class="tab-container vo_nav-tabs">
+
+			<tab>
+				<tab-heading>&nbsp;{{'TXT_PRODUCT_DETAIL' | translate}}</tab-heading>
+				<!-- Products table and controls -->
+				<form class="form-horizontal" name="productFieldForm" novalidate>
+					<div class="panel vo_panel tab_panel">
+						<div class="row wrapper">
+							<div class="container-fluid">
+								<div class="col-sm-12">
+
+									<!--<ng-form ng-repeat="field in ctrl.productDetails.masterFields" name="subForm" novalidate>-->
+										<!--<schema-header data="field" ng-if="field.isDisplay != 0">-->
+											<!--<schema-item data="field"></schema-item>-->
+										<!--</schema-header>-->
+									<!--</ng-form>-->
+									<schema-header ng-repeat="field in ctrl.productDetails.masterFields" data="field" ng-if="field.isDisplay != 0">
+										<schema-item data="field"></schema-item>
+									</schema-header>
+								</div>
+								<!--<div>-->
+									<!--<input type="text" name="test" ng-model="ctrl.testvalue" ng-pattern="/^[0-9]*$/">-->
+								<!--</div>-->
+							</div>
+						</div>
+					</div>
+					<div class="row text-center">
+						<div class="col-sm-12">
+							<div class="form-inline">
+
+								<button type="submit" class="btn btn-vo" ng-click="ctrl.updateProductInfo()"><i class="glyphicon glyphicon-floppy-disk"></i> {{'BTN_SAVE' | translate}}</button>
+								<button type="submit" class="btn btn-default" ng-click="ctrl.cancelProductInfo()"><i class="fa fa-remove"></i> {{'BTN_CANCEL' | translate}}</button>
+							</div><!-- .form-inline -->
+						</div>
+					</div>
+				</form><!-- .form -->
+			</tab>
+
+			<tab>
+				<tab-heading>&nbsp;{{'TXT_PRODUCT_CUSTOM' | translate}}</tab-heading>
+				<!-- Products table and controls -->
+				<form class="form-horizontal" name="productCustomForm">
+					<div class="panel vo_panel tab_panel">
+						<div class="row wrapper">
+							<div class="container-fluid">
+								<div class="col-sm-6">
+									<div class="form-group" ng-repeat="feedOrgAttr in ctrl.productDetails.customAttributes.orgAtts">
+										<label class="col-sm-3 control-label" ng-bind="feedOrgAttr.key"></label>
+										<div class="col-sm-8">
+											<input type="text" class="form-control" ng-model="feedOrgAttr.value" readonly>
+										</div>
+										<div class="col-sm-1">
+											<label class="i-checks-sm m-b-none"><input type="checkbox" ng-model="feedOrgAttr.selected"></label>
+										</div>
+									</div>
+								</div><!--.col -->
+								<div class="col-sm-6">
+									<div class="form-group" ng-repeat="feedCnAttr in ctrl.productDetails.customAttributes.cnAtts">
+										<label class="col-sm-3 control-label" ng-bind="feedCnAttr.key"></label>
+										<div class="col-sm-8">
+											<input type="text" class="form-control" ng-model="feedCnAttr.value">
+										</div>
+									</div><!-- .form-group -->
+								</div><!-- .col -->
+							</div>
+						</div>
+					</div>
+					<div class="row text-center">
+						<div class="col-sm-12">
+							<div class="form-inline">
+								<button type="submit" class="btn btn-vo" ng-click="ctrl.updateProductInfo()"><i class="glyphicon glyphicon-floppy-disk"></i> {{'BTN_SAVE' | translate}}</button>
+								<button type="submit" class="btn btn-default" ng-click="ctrl.cancelProductCustomInfo()"><i class="fa fa-remove"></i> {{'BTN_CANCEL' | translate}}</button>
+							</div><!-- .form-inline -->
+						</div>
+					</div>
+				</form><!-- .form -->
+			</tab>
+
+			<tab>
+				<tab-heading>&nbsp;{{'TXT_PRODUCT_SKU_LIST' | translate}}</tab-heading>
+				<div class="panel vo_panel tab_panel">
+					<div class="row wrapper">
+						<div class="container-fluid">
+							<schema-item class="hierarchy_main modal-open col-sm-11" data="ctrl.productDetails.skuFields" ng-if="ctrl.productDetails.skuFields != null" not-show-edit="true"></schema-item>
+							<!-- SKU 不可以添加和删除 -->
+							<!--<div class="col-sm-1">-->
+								<!--<button class="btn btn-success" ng-click="ctrl.addField(ctrl.productDetails.skuFields)"><i class="fa fa-plus"></i>{{'BTN_COM_ADD' | translate}}</button>-->
+							<!--</div>-->
+						</div>
+					</div>
+				</div> <!-- .panel -->
+				<div class="row text-center">
+					<div class="col-sm-12">
+						<div class="form-inline">
+							<button type="submit" class="btn btn-vo" ng-click="ctrl.updateSkuInfo()"><i class="glyphicon glyphicon-floppy-disk"></i> {{'BTN_SAVE' | translate}}</button>
+							<button type="submit" class="btn btn-default" ng-click="ctrl.cancelSkuInfo()"><i class="fa fa-remove"></i> {{'BTN_CANCEL' | translate}}</button>
+						</div><!-- .form-inline -->
+					</div>
+				</div>
+			</tab>
+
+			<tab>
+				<tab-heading>&nbsp;{{'TXT_PRODUCT_THIRD_PROPERTY' | translate}}</tab-heading>
+				<form class="form-horizontal" name="thirdFeedForm">
+					<!-- Products table and controls -->
+					<div class="panel vo_panel tab_panel">
+						<div class="row wrapper">
+							<div class="container-fluid">
+								<div class="col-sm-12">
+									<div class="form-group" ng-repeat="feedAttr in ctrl.productDetails.feedInfoModel">
+										<label class="col-sm-2 control-label" ng-bind="feedAttr.key"></label>
+										<div class="col-sm-8">
+											<input type="text" class="form-control" ng-model="feedAttr.value" readonly>
+										</div>
+										<div class="col-sm-1">
+											<label class="i-checks-sm m-b-none"><input type="checkbox" ng-model="feedAttr.selected"></label>
+										</div>
+									</div><!-- .form-group -->
+								</div><!--.col -->
+							</div>
+						</div>
+					</div>
+					<div class="row text-center">
+						<div class="col-sm-12">
+							<div class="form-inline">
+								<button type="submit" class="btn btn-vo" ng-click="ctrl.addFeedAttrToCustom()"><i class="glyphicon glyphicon-floppy-disk"></i> {{'BTN_SAVE' | translate}}</button>
+								<button type="submit" class="btn btn-default" ng-click="ctrl.cancelAddFeedAttrToCustom()"><i class="fa fa-remove"></i> {{'BTN_CANCEL' | translate}}</button>
+							</div><!-- .form-inline -->
+						</div>
+					</div>
+				</form><!-- .form -->
+			</tab>
+
+		</tabset><!-- tabset -->
+		<div style="width:16%;position: fixed;right:1%;top:242px;">
+			<!-- product detail panel starts here -->
+			<div class="col no-padder w-lg bg-light vo_prodDetailPanel">
+				<div id="vo_fixProdPanel" >
+					<!-- product photos -->
+					<div class="vo_prodGallery">
+						<div class="imageContainer">
+							<div class="imageWrapper" style="background-image: url('http://image.sneakerhead.com/is/image/sneakerhead/{{!ctrl.currentImage ? ctrl.productDetails.productImages[0].image1 : ctrl.currentImage}}')"></div>
+						</div>
+						<nav>
+							<div class="thumbnailWrapper">
+								<div ng-repeat="image in ctrl.productDetails.productImages | limitTo: 10" class="thumbnail" ng-class="{'active':ctrl.currentImage == image.image1}"
+									 ng-click="ctrl.currentImage = image.image1" ng-style="{'background-image' : 'url(http://image.sneakerhead.com/is/image/sneakerhead/' + image.image1 + ')'}"></div>
+							</div>
+						</nav>
+					</div><!-- .vo_prodGallery -->
+
+					<div class="wrapper-sm">
+						<!--<div class="form-group">
+							<label class="col-sm-4 control-label m-t-xs" translate="TXT_IS_FIX_TRANSLATED"></label>
+							<div class="col-sm-8 text-left">
+								<div class="onoffswitch">
+									<input type="checkbox" name="switchIsTranslated" class="onoffswitch-checkbox" id="switchIsTranslated" ng-model="ctrl.productDetails.productStatus.translateStatus">
+									<label class="onoffswitch-label" for="switchIsTranslated">
+										<span class="onoffswitch-inner"></span>
+										<span class="onoffswitch-switch"></span>
+									</label>
+								</div>&lt;!&ndash; onoff switch &ndash;&gt;
+							</div>
+						</div>-->
+						<!--<div class="form-group">
+							<label class="col-sm-4 control-label m-t-xs" translate="TXT_IS_FIX_EDIT"></label>
+							<div class="col-sm-8 text-left">
+								<div class="onoffswitch">
+									<input type="checkbox" name="switchIsEdit" class="onoffswitch-checkbox" id="switchIsEdit" ng-model="ctrl.productDetails.productStatus.editStatus">
+									<label class="onoffswitch-label" for="switchIsEdit">
+										<span class="onoffswitch-inner"></span>
+										<span class="onoffswitch-switch"></span>
+									</label>
+								</div>&lt;!&ndash; onoff switch &ndash;&gt;
+							</div>
+						</div>-->
+						<!--<div class="form-group">
+							<label class="col-sm-4 control-label m-t-xs" translate="TXT_IS_FIX_APPROVED"></label>
+							<div class="col-sm-8 text-left">
+								<div class="onoffswitch">
+									<input type="checkbox" name="switchIsApprove" ng-disabled="ctrl.productDetails.productStatus.statusInfo.isDisable" class="onoffswitch-checkbox" id="switchIsApprove" ng-model="ctrl.productDetails.productStatus.statusInfo.isApproved">
+									<label class="onoffswitch-label" for="switchIsApprove">
+										<span class="onoffswitch-inner"></span>
+										<span class="onoffswitch-switch"></span>
+									</label>
+								</div>&lt;!&ndash; onoff switch &ndash;&gt;
+							</div>
+						</div>-->
+						<!--<div class="form-group">
+							<label class="col-sm-12 m-t-xs m-b-xs"><b></label>
+						</div>-->
+						<div class="form-inline text-center">
+							<button type="submit" class="btn btn-vo" ng-click="ctrl.updateProductDetail()"><i class="glyphicon glyphicon-floppy-disk"></i> {{'BTN_SAVE' | translate}}</button>
+							<button type="submit" class="btn btn-default" ng-click="ctrl.cancelProductDetail()"><i class="fa fa-remove"></i> {{'BTN_CANCEL' | translate}}</button>
+						</div><!-- .form-inline -->
+					</div><!-- .wrapper -->
+				</div><!-- #prodFixed -->
+			</div><!-- no-padder -->
+
+		</div>
+	</div><!-- tabs ng-controller -->
+	<div style="width:80%" ng-if="!ctrl.productDetails.productDataIsReady">
+		<!-- TODO 需要enka设计一个画面,只显示切换类目中的商品的基础信息(code, iamges, ) -->
+		<div class="text-center text-hs ng-binding ng-scope" id="noData">
+			<h4 class="text-vo ng-binding"><i class="icon fa fa-warning"></i>&nbsp;{{'TXT_COM_WARNING' | translate}}</h4>
+			{{'TXT_MSG_PRODUCT_CAN_NOT_EDIT' | translate}}</div>
+	</div>
+</div><!-- end .wrapper-md -->
+
+
+
+
+
+
+
+

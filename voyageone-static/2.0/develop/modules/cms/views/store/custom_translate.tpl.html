@@ -1,0 +1,147 @@
+<div class="wrapper-md" ng-init="initialize()">
+	<div class="vo_accordion vo_attr">
+		<div class="panel-group">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h4 class="panel-title"><i class="fa fa-reorder"></i>&nbsp;翻译自定义属性</h4>
+				</div>
+				<div class="container-fluid m-t-xs m-b-xs">
+					<div class="col-sm-12">
+						<div class="col-sm-6">
+							<div class="form-horizontal">
+								<div class="form-group">
+									<label class="col-sm-4 control-label">Customize Property</label>
+									<div class="col-sm-6">
+										<input type="text" class="form-control"/>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-4 control-label">Customize Property Value</label>
+									<div class="col-sm-6">
+										<input type="text" class="form-control"/>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-sm-6">
+							<div class="form-horizontal">
+								<div class="form-group">
+									<label class="col-sm-4 control-label">自定义属性名称</label>
+									<div class="col-sm-6">
+										<input type="text" class="form-control"/>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-4 control-label">自定义属性值</label>
+									<div class="col-sm-6">
+										<input type="text" class="form-control"/>
+									</div>
+								</div>
+							</div><!-- .form-group -->
+						</div>
+						<div class="col-sm-12 text-center m-b-sm">
+							<div class="form-inline">
+								<button class="btn btn-default" ng-click="clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR' | translate}}</button>
+								<button class="btn btn-vo" ng-click="search()"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}</button>
+							</div><!-- .form-inline -->
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="box">
+		<tabset class="tab-container vo_nav-tabs">
+			<!--tab-->
+			<tab>
+				<tab-heading>&nbsp;Category - Customize Property</tab-heading>
+				<div class="table-responsive">
+					<table class="table table-hover-new table-hover" ng-controller="popupCtrl">
+						<thead>
+						<tr>
+							<th class="text-center">Seq.</th>
+							<th class="text-center">Feed Property Name</th>
+							<th class="text-center">自定义属性名称</th>
+							<th class="text-center">Sample(Product Code)</th>
+							<th class="text-center">Action</th>
+						</tr>
+						</thead>
+						<tbody>
+						<tr>
+							<td class="text-center">1</td>
+							<td class="text-center">Stone</td>
+							<td class="text-center"><input class="form-control" placeholder="宝石"/></td>
+							<td class="text-center text-u-l"><a  target="_blank" ng-click="openTranslate('lg')"> 123456 </a></td>
+							<td class="text-center">
+								<button title="取消" class="btn btn-default btn-xs">取消</button>
+								<button title="保存" class="btn btn-vo btn-xs"> 保存</button>
+							</td>
+						</tr>
+						<tr>
+							<td class="text-center">2</td>
+							<td class="text-center">Family Color</td>
+							<td class="text-center"><input class="form-control" placeholder="颜色"/></td>
+							<td class="text-center text-u-l"><a href="#/product/detail/1" target="_blank"> 123456 </a></td>
+							<td class="text-center">
+								<button title="取消" class="btn btn-default btn-xs">取消</button>
+								<button title="保存" class="btn btn-vo btn-xs"> 保存</button>
+							</td>
+						</tr>
+						</tbody>
+					</table>
+					<div class="col-sm-12 m-t-sm">
+						<vpagination config="vm.productPageOption"></vpagination>
+					</div>
+				</div><!-- .table-responsive -->
+			</tab>
+
+			<tab>
+				<tab-heading>&nbsp;Customize Property</tab-heading>
+				<div class="table-responsive">
+					<table class="table table-hover-new table-hover">
+						<thead>
+						<tr>
+							<th class="text-center">Seq.</th>
+							<th class="text-center">Feed Property Name</th>
+							<th class="text-center">自定义属性值名称</th>
+							<th class="text-center">Customize Property Value</th>
+							<th class="text-center">自定义属性值</th>
+							<th class="text-center">Sample(Product Code)</th>
+							<th class="text-center">Action</th>
+						</tr>
+						</thead>
+						<tbody>
+						<tr>
+							<td class="text-center">1</td>
+							<td class="text-center">Stone</td>
+							<td class="text-center">1.5CT</td>
+							<td class="text-center">1.5CT</td>
+							<td class="text-center"><input class="form-control" placeholder="1.5CT"/></td>
+							<td class="text-center text-u-l"><a href="#/product/detail/1" target="_blank"> 123456 </a></td>
+							<td class="text-center">
+								<button title="取消" class="btn btn-default btn-xs">取消</button>
+								<button title="保存" class="btn btn-vo btn-xs"> 保存</button>
+							</td>
+						</tr>
+						<tr>
+							<td class="text-center">2</td>
+							<td class="text-center">Family Color</td>
+							<td class="text-center">RED</td>
+							<td class="text-center">RED</td>
+							<td class="text-center"><input class="form-control" placeholder="红色"/></td>
+							<td class="text-center text-u-l"><a href="#/product/detail/1" target="_blank"> 123456 </a></td>
+							<td class="text-center">
+								<button title="取消" class="btn btn-default btn-xs">取消</button>
+								<button title="保存" class="btn btn-vo btn-xs"> 保存</button>
+							</td>
+						</tr>
+						</tbody>
+					</table>
+					<div class="col-sm-12 m-t-sm">
+						<vpagination config="vm.productPageOption"></vpagination>
+					</div>
+				</div><!-- .table-responsive -->
+			</tab>
+		</tabset><!-- tabset -->
+	</div><!-- tabs ng-controller -->
+</div><!-- .col-lg-12 -->
