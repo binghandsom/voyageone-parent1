@@ -98,10 +98,10 @@ public class MagentoApiServiceImpl {
 	//		String storeName = "juicy_cn";
 
 			customer = new CustomerBean();
-			customer.setCustomerId(Integer.valueOf(customerId));
+			customer.setCustomerId(Integer.valueOf(StringUtils.isNullOrBlank2(customerId)?"0":customerId));
 			customer.setMode(customerMode);
 			customer.setStoreId(storeId);
-			customer.setWebsiteId(Integer.valueOf(webSiteId));
+			customer.setWebsiteId(Integer.valueOf(StringUtils.isNullOrBlank2(webSiteId)?"1":webSiteId));
 			customer.setStore(storeName);
 			customer.setCountry(country);
 			customer.setPaymentMethod(paymentMethod);
