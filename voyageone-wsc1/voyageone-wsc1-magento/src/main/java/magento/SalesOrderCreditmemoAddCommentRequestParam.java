@@ -20,17 +20,17 @@ public class SalesOrderCreditmemoAddCommentRequestParam implements org.apache.ax
     /**
      * field for SessionId
      */
-    protected String localSessionId;
+    protected java.lang.String localSessionId;
 
     /**
      * field for CreditmemoIncrementId
      */
-    protected String localCreditmemoIncrementId;
+    protected java.lang.String localCreditmemoIncrementId;
 
     /**
      * field for Comment
      */
-    protected String localComment;
+    protected java.lang.String localComment;
 
     /**
      * field for NotifyCustomer
@@ -58,7 +58,7 @@ public class SalesOrderCreditmemoAddCommentRequestParam implements org.apache.ax
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getSessionId() {
+    public java.lang.String getSessionId() {
         return localSessionId;
     }
 
@@ -66,7 +66,7 @@ public class SalesOrderCreditmemoAddCommentRequestParam implements org.apache.ax
      * Auto generated setter method
      * @param param SessionId
      */
-    public void setSessionId(String param) {
+    public void setSessionId(java.lang.String param) {
         this.localSessionId = param;
     }
 
@@ -74,7 +74,7 @@ public class SalesOrderCreditmemoAddCommentRequestParam implements org.apache.ax
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getCreditmemoIncrementId() {
+    public java.lang.String getCreditmemoIncrementId() {
         return localCreditmemoIncrementId;
     }
 
@@ -82,7 +82,7 @@ public class SalesOrderCreditmemoAddCommentRequestParam implements org.apache.ax
      * Auto generated setter method
      * @param param CreditmemoIncrementId
      */
-    public void setCreditmemoIncrementId(String param) {
+    public void setCreditmemoIncrementId(java.lang.String param) {
         this.localCreditmemoIncrementId = param;
     }
 
@@ -90,7 +90,7 @@ public class SalesOrderCreditmemoAddCommentRequestParam implements org.apache.ax
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getComment() {
+    public java.lang.String getComment() {
         return localComment;
     }
 
@@ -98,7 +98,7 @@ public class SalesOrderCreditmemoAddCommentRequestParam implements org.apache.ax
      * Auto generated setter method
      * @param param Comment
      */
-    public void setComment(String param) {
+    public void setComment(java.lang.String param) {
         this.localComment = param;
     }
 
@@ -120,7 +120,7 @@ public class SalesOrderCreditmemoAddCommentRequestParam implements org.apache.ax
      */
     public void setNotifyCustomer(int param) {
         // setting primitive attribute tracker to true
-        localNotifyCustomerTracker = param != Integer.MIN_VALUE;
+        localNotifyCustomerTracker = param != java.lang.Integer.MIN_VALUE;
 
         this.localNotifyCustomer = param;
     }
@@ -143,7 +143,7 @@ public class SalesOrderCreditmemoAddCommentRequestParam implements org.apache.ax
      */
     public void setIncludeComment(int param) {
         // setting primitive attribute tracker to true
-        localIncludeCommentTracker = param != Integer.MIN_VALUE;
+        localIncludeCommentTracker = param != java.lang.Integer.MIN_VALUE;
 
         this.localIncludeComment = param;
     }
@@ -175,8 +175,8 @@ public class SalesOrderCreditmemoAddCommentRequestParam implements org.apache.ax
         javax.xml.stream.XMLStreamWriter xmlWriter, boolean serializeType)
         throws javax.xml.stream.XMLStreamException,
             org.apache.axis2.databinding.ADBException {
-        String prefix = null;
-        String namespace = null;
+        java.lang.String prefix = null;
+        java.lang.String namespace = null;
 
         prefix = parentQName.getPrefix();
         namespace = parentQName.getNamespaceURI();
@@ -184,7 +184,7 @@ public class SalesOrderCreditmemoAddCommentRequestParam implements org.apache.ax
             xmlWriter);
 
         if (serializeType) {
-            String namespacePrefix = registerPrefix(xmlWriter,
+            java.lang.String namespacePrefix = registerPrefix(xmlWriter,
                     "urn:Magento");
 
             if ((namespacePrefix != null) &&
@@ -243,7 +243,7 @@ public class SalesOrderCreditmemoAddCommentRequestParam implements org.apache.ax
             namespace = "";
             writeStartElement(null, namespace, "notifyCustomer", xmlWriter);
 
-            if (localNotifyCustomer == Integer.MIN_VALUE) {
+            if (localNotifyCustomer == java.lang.Integer.MIN_VALUE) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "notifyCustomer cannot be null!!");
             } else {
@@ -258,7 +258,7 @@ public class SalesOrderCreditmemoAddCommentRequestParam implements org.apache.ax
             namespace = "";
             writeStartElement(null, namespace, "includeComment", xmlWriter);
 
-            if (localIncludeComment == Integer.MIN_VALUE) {
+            if (localIncludeComment == java.lang.Integer.MIN_VALUE) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "includeComment cannot be null!!");
             } else {
@@ -272,7 +272,7 @@ public class SalesOrderCreditmemoAddCommentRequestParam implements org.apache.ax
         xmlWriter.writeEndElement();
     }
 
-    private static String generatePrefix(String namespace) {
+    private static java.lang.String generatePrefix(java.lang.String namespace) {
         if (namespace.equals("urn:Magento")) {
             return "ns1";
         }
@@ -283,11 +283,11 @@ public class SalesOrderCreditmemoAddCommentRequestParam implements org.apache.ax
     /**
      * Utility method to write an element start tag.
      */
-    private void writeStartElement(String prefix,
-        String namespace, String localPart,
+    private void writeStartElement(java.lang.String prefix,
+        java.lang.String namespace, java.lang.String localPart,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
-        String writerPrefix = xmlWriter.getPrefix(namespace);
+        java.lang.String writerPrefix = xmlWriter.getPrefix(namespace);
 
         if (writerPrefix != null) {
             xmlWriter.writeStartElement(namespace, localPart);
@@ -307,9 +307,9 @@ public class SalesOrderCreditmemoAddCommentRequestParam implements org.apache.ax
     /**
      * Util method to write an attribute with the ns prefix
      */
-    private void writeAttribute(String prefix,
-        String namespace, String attName,
-        String attValue, javax.xml.stream.XMLStreamWriter xmlWriter)
+    private void writeAttribute(java.lang.String prefix,
+        java.lang.String namespace, java.lang.String attName,
+        java.lang.String attValue, javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
         if (xmlWriter.getPrefix(namespace) == null) {
             xmlWriter.writeNamespace(prefix, namespace);
@@ -322,8 +322,8 @@ public class SalesOrderCreditmemoAddCommentRequestParam implements org.apache.ax
     /**
      * Util method to write an attribute without the ns prefix
      */
-    private void writeAttribute(String namespace,
-        String attName, String attValue,
+    private void writeAttribute(java.lang.String namespace,
+        java.lang.String attName, java.lang.String attValue,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
         if (namespace.equals("")) {
@@ -337,18 +337,18 @@ public class SalesOrderCreditmemoAddCommentRequestParam implements org.apache.ax
     /**
      * Util method to write an attribute without the ns prefix
      */
-    private void writeQNameAttribute(String namespace,
-        String attName, javax.xml.namespace.QName qname,
+    private void writeQNameAttribute(java.lang.String namespace,
+        java.lang.String attName, javax.xml.namespace.QName qname,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
-        String attributeNamespace = qname.getNamespaceURI();
-        String attributePrefix = xmlWriter.getPrefix(attributeNamespace);
+        java.lang.String attributeNamespace = qname.getNamespaceURI();
+        java.lang.String attributePrefix = xmlWriter.getPrefix(attributeNamespace);
 
         if (attributePrefix == null) {
             attributePrefix = registerPrefix(xmlWriter, attributeNamespace);
         }
 
-        String attributeValue;
+        java.lang.String attributeValue;
 
         if (attributePrefix.trim().length() > 0) {
             attributeValue = attributePrefix + ":" + qname.getLocalPart();
@@ -370,10 +370,10 @@ public class SalesOrderCreditmemoAddCommentRequestParam implements org.apache.ax
     private void writeQName(javax.xml.namespace.QName qname,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
-        String namespaceURI = qname.getNamespaceURI();
+        java.lang.String namespaceURI = qname.getNamespaceURI();
 
         if (namespaceURI != null) {
-            String prefix = xmlWriter.getPrefix(namespaceURI);
+            java.lang.String prefix = xmlWriter.getPrefix(namespaceURI);
 
             if (prefix == null) {
                 prefix = generatePrefix(namespaceURI);
@@ -402,9 +402,9 @@ public class SalesOrderCreditmemoAddCommentRequestParam implements org.apache.ax
         if (qnames != null) {
             // we have to store this data until last moment since it is not possible to write any
             // namespace data after writing the charactor data
-            StringBuffer stringToWrite = new StringBuffer();
-            String namespaceURI = null;
-            String prefix = null;
+            java.lang.StringBuffer stringToWrite = new java.lang.StringBuffer();
+            java.lang.String namespaceURI = null;
+            java.lang.String prefix = null;
 
             for (int i = 0; i < qnames.length; i++) {
                 if (i > 0) {
@@ -443,10 +443,10 @@ public class SalesOrderCreditmemoAddCommentRequestParam implements org.apache.ax
     /**
      * Register a namespace prefix
      */
-    private String registerPrefix(
-        javax.xml.stream.XMLStreamWriter xmlWriter, String namespace)
+    private java.lang.String registerPrefix(
+        javax.xml.stream.XMLStreamWriter xmlWriter, java.lang.String namespace)
         throws javax.xml.stream.XMLStreamException {
-        String prefix = xmlWriter.getPrefix(namespace);
+        java.lang.String prefix = xmlWriter.getPrefix(namespace);
 
         if (prefix == null) {
             prefix = generatePrefix(namespace);
@@ -454,7 +454,7 @@ public class SalesOrderCreditmemoAddCommentRequestParam implements org.apache.ax
             javax.xml.namespace.NamespaceContext nsContext = xmlWriter.getNamespaceContext();
 
             while (true) {
-                String uri = nsContext.getNamespaceURI(prefix);
+                java.lang.String uri = nsContext.getNamespaceURI(prefix);
 
                 if ((uri == null) || (uri.length() == 0)) {
                     break;
@@ -541,13 +541,13 @@ public class SalesOrderCreditmemoAddCommentRequestParam implements org.apache.ax
          *                If this object is a complex type, the reader is positioned at the end element of its outer element
          */
         public static SalesOrderCreditmemoAddCommentRequestParam parse(
-            javax.xml.stream.XMLStreamReader reader) throws Exception {
+            javax.xml.stream.XMLStreamReader reader) throws java.lang.Exception {
             SalesOrderCreditmemoAddCommentRequestParam object = new SalesOrderCreditmemoAddCommentRequestParam();
 
             int event;
-            String nillableValue = null;
-            String prefix = "";
-            String namespaceuri = "";
+            java.lang.String nillableValue = null;
+            java.lang.String prefix = "";
+            java.lang.String namespaceuri = "";
 
             try {
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -555,11 +555,11 @@ public class SalesOrderCreditmemoAddCommentRequestParam implements org.apache.ax
 
                 if (reader.getAttributeValue(
                             "http://www.w3.org/2001/XMLSchema-instance", "type") != null) {
-                    String fullTypeName = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance",
+                    java.lang.String fullTypeName = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance",
                             "type");
 
                     if (fullTypeName != null) {
-                        String nsPrefix = null;
+                        java.lang.String nsPrefix = null;
 
                         if (fullTypeName.indexOf(":") > -1) {
                             nsPrefix = fullTypeName.substring(0,
@@ -568,13 +568,13 @@ public class SalesOrderCreditmemoAddCommentRequestParam implements org.apache.ax
 
                         nsPrefix = (nsPrefix == null) ? "" : nsPrefix;
 
-                        String type = fullTypeName.substring(fullTypeName.indexOf(
+                        java.lang.String type = fullTypeName.substring(fullTypeName.indexOf(
                                     ":") + 1);
 
                         if (!"salesOrderCreditmemoAddCommentRequestParam".equals(
                                     type)) {
                             //find namespace for the prefix
-                            String nsUri = reader.getNamespaceContext()
+                            java.lang.String nsUri = reader.getNamespaceContext()
                                                            .getNamespaceURI(nsPrefix);
 
                             return (SalesOrderCreditmemoAddCommentRequestParam) magento.ExtensionMapper.getTypeObject(nsUri,
@@ -604,7 +604,7 @@ public class SalesOrderCreditmemoAddCommentRequestParam implements org.apache.ax
                             "The element: " + "sessionId" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setSessionId(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -634,7 +634,7 @@ public class SalesOrderCreditmemoAddCommentRequestParam implements org.apache.ax
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setCreditmemoIncrementId(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -663,7 +663,7 @@ public class SalesOrderCreditmemoAddCommentRequestParam implements org.apache.ax
                             "The element: " + "comment" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setComment(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -693,7 +693,7 @@ public class SalesOrderCreditmemoAddCommentRequestParam implements org.apache.ax
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setNotifyCustomer(org.apache.axis2.databinding.utils.ConverterUtil.convertToInt(
                             content));
@@ -702,7 +702,7 @@ public class SalesOrderCreditmemoAddCommentRequestParam implements org.apache.ax
                 } // End of if for expected property start element
 
                 else {
-                    object.setNotifyCustomer(Integer.MIN_VALUE);
+                    object.setNotifyCustomer(java.lang.Integer.MIN_VALUE);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -721,7 +721,7 @@ public class SalesOrderCreditmemoAddCommentRequestParam implements org.apache.ax
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setIncludeComment(org.apache.axis2.databinding.utils.ConverterUtil.convertToInt(
                             content));
@@ -730,7 +730,7 @@ public class SalesOrderCreditmemoAddCommentRequestParam implements org.apache.ax
                 } // End of if for expected property start element
 
                 else {
-                    object.setIncludeComment(Integer.MIN_VALUE);
+                    object.setIncludeComment(java.lang.Integer.MIN_VALUE);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -742,7 +742,7 @@ public class SalesOrderCreditmemoAddCommentRequestParam implements org.apache.ax
                         "Unexpected subelement " + reader.getName());
                 }
             } catch (javax.xml.stream.XMLStreamException e) {
-                throw new Exception(e);
+                throw new java.lang.Exception(e);
             }
 
             return object;

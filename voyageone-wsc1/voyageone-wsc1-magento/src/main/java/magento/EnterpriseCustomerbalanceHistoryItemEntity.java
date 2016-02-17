@@ -23,63 +23,63 @@ public class EnterpriseCustomerbalanceHistoryItemEntity implements org.apache.ax
     /**
      * field for History_id
      */
-    protected String localHistory_id;
+    protected java.lang.String localHistory_id;
 
     /**
      * field for Balance_id
      */
-    protected String localBalance_id;
+    protected java.lang.String localBalance_id;
 
     /**
      * field for Updated_at
      */
-    protected String localUpdated_at;
+    protected java.lang.String localUpdated_at;
 
     /**
      * field for Action
      */
-    protected String localAction;
+    protected java.lang.String localAction;
 
     /**
      * field for Balance_amount
      */
-    protected String localBalance_amount;
+    protected java.lang.String localBalance_amount;
 
     /**
      * field for Balance_delta
      */
-    protected String localBalance_delta;
+    protected java.lang.String localBalance_delta;
 
     /**
      * field for Additional_info
      */
-    protected String localAdditional_info;
+    protected java.lang.String localAdditional_info;
 
     /**
      * field for Is_customer_notified
      */
-    protected String localIs_customer_notified;
+    protected java.lang.String localIs_customer_notified;
 
     /**
      * field for Customer_id
      */
-    protected String localCustomer_id;
+    protected java.lang.String localCustomer_id;
 
     /**
      * field for Website_id
      */
-    protected String localWebsite_id;
+    protected java.lang.String localWebsite_id;
 
     /**
      * field for Base_currency_code
      */
-    protected String localBase_currency_code;
+    protected java.lang.String localBase_currency_code;
 
     /**
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getHistory_id() {
+    public java.lang.String getHistory_id() {
         return localHistory_id;
     }
 
@@ -87,7 +87,7 @@ public class EnterpriseCustomerbalanceHistoryItemEntity implements org.apache.ax
      * Auto generated setter method
      * @param param History_id
      */
-    public void setHistory_id(String param) {
+    public void setHistory_id(java.lang.String param) {
         this.localHistory_id = param;
     }
 
@@ -95,7 +95,7 @@ public class EnterpriseCustomerbalanceHistoryItemEntity implements org.apache.ax
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getBalance_id() {
+    public java.lang.String getBalance_id() {
         return localBalance_id;
     }
 
@@ -103,7 +103,7 @@ public class EnterpriseCustomerbalanceHistoryItemEntity implements org.apache.ax
      * Auto generated setter method
      * @param param Balance_id
      */
-    public void setBalance_id(String param) {
+    public void setBalance_id(java.lang.String param) {
         this.localBalance_id = param;
     }
 
@@ -111,7 +111,7 @@ public class EnterpriseCustomerbalanceHistoryItemEntity implements org.apache.ax
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getUpdated_at() {
+    public java.lang.String getUpdated_at() {
         return localUpdated_at;
     }
 
@@ -119,7 +119,7 @@ public class EnterpriseCustomerbalanceHistoryItemEntity implements org.apache.ax
      * Auto generated setter method
      * @param param Updated_at
      */
-    public void setUpdated_at(String param) {
+    public void setUpdated_at(java.lang.String param) {
         this.localUpdated_at = param;
     }
 
@@ -127,7 +127,7 @@ public class EnterpriseCustomerbalanceHistoryItemEntity implements org.apache.ax
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getAction() {
+    public java.lang.String getAction() {
         return localAction;
     }
 
@@ -135,7 +135,7 @@ public class EnterpriseCustomerbalanceHistoryItemEntity implements org.apache.ax
      * Auto generated setter method
      * @param param Action
      */
-    public void setAction(String param) {
+    public void setAction(java.lang.String param) {
         this.localAction = param;
     }
 
@@ -143,7 +143,7 @@ public class EnterpriseCustomerbalanceHistoryItemEntity implements org.apache.ax
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getBalance_amount() {
+    public java.lang.String getBalance_amount() {
         return localBalance_amount;
     }
 
@@ -151,7 +151,7 @@ public class EnterpriseCustomerbalanceHistoryItemEntity implements org.apache.ax
      * Auto generated setter method
      * @param param Balance_amount
      */
-    public void setBalance_amount(String param) {
+    public void setBalance_amount(java.lang.String param) {
         this.localBalance_amount = param;
     }
 
@@ -159,7 +159,7 @@ public class EnterpriseCustomerbalanceHistoryItemEntity implements org.apache.ax
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getBalance_delta() {
+    public java.lang.String getBalance_delta() {
         return localBalance_delta;
     }
 
@@ -167,7 +167,7 @@ public class EnterpriseCustomerbalanceHistoryItemEntity implements org.apache.ax
      * Auto generated setter method
      * @param param Balance_delta
      */
-    public void setBalance_delta(String param) {
+    public void setBalance_delta(java.lang.String param) {
         this.localBalance_delta = param;
     }
 
@@ -175,7 +175,7 @@ public class EnterpriseCustomerbalanceHistoryItemEntity implements org.apache.ax
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getAdditional_info() {
+    public java.lang.String getAdditional_info() {
         return localAdditional_info;
     }
 
@@ -183,7 +183,7 @@ public class EnterpriseCustomerbalanceHistoryItemEntity implements org.apache.ax
      * Auto generated setter method
      * @param param Additional_info
      */
-    public void setAdditional_info(String param) {
+    public void setAdditional_info(java.lang.String param) {
         this.localAdditional_info = param;
     }
 
@@ -191,7 +191,7 @@ public class EnterpriseCustomerbalanceHistoryItemEntity implements org.apache.ax
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getIs_customer_notified() {
+    public java.lang.String getIs_customer_notified() {
         return localIs_customer_notified;
     }
 
@@ -199,7 +199,7 @@ public class EnterpriseCustomerbalanceHistoryItemEntity implements org.apache.ax
      * Auto generated setter method
      * @param param Is_customer_notified
      */
-    public void setIs_customer_notified(String param) {
+    public void setIs_customer_notified(java.lang.String param) {
         this.localIs_customer_notified = param;
     }
 
@@ -207,7 +207,7 @@ public class EnterpriseCustomerbalanceHistoryItemEntity implements org.apache.ax
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getCustomer_id() {
+    public java.lang.String getCustomer_id() {
         return localCustomer_id;
     }
 
@@ -215,7 +215,7 @@ public class EnterpriseCustomerbalanceHistoryItemEntity implements org.apache.ax
      * Auto generated setter method
      * @param param Customer_id
      */
-    public void setCustomer_id(String param) {
+    public void setCustomer_id(java.lang.String param) {
         this.localCustomer_id = param;
     }
 
@@ -223,7 +223,7 @@ public class EnterpriseCustomerbalanceHistoryItemEntity implements org.apache.ax
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getWebsite_id() {
+    public java.lang.String getWebsite_id() {
         return localWebsite_id;
     }
 
@@ -231,7 +231,7 @@ public class EnterpriseCustomerbalanceHistoryItemEntity implements org.apache.ax
      * Auto generated setter method
      * @param param Website_id
      */
-    public void setWebsite_id(String param) {
+    public void setWebsite_id(java.lang.String param) {
         this.localWebsite_id = param;
     }
 
@@ -239,7 +239,7 @@ public class EnterpriseCustomerbalanceHistoryItemEntity implements org.apache.ax
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getBase_currency_code() {
+    public java.lang.String getBase_currency_code() {
         return localBase_currency_code;
     }
 
@@ -247,7 +247,7 @@ public class EnterpriseCustomerbalanceHistoryItemEntity implements org.apache.ax
      * Auto generated setter method
      * @param param Base_currency_code
      */
-    public void setBase_currency_code(String param) {
+    public void setBase_currency_code(java.lang.String param) {
         this.localBase_currency_code = param;
     }
 
@@ -278,8 +278,8 @@ public class EnterpriseCustomerbalanceHistoryItemEntity implements org.apache.ax
         javax.xml.stream.XMLStreamWriter xmlWriter, boolean serializeType)
         throws javax.xml.stream.XMLStreamException,
             org.apache.axis2.databinding.ADBException {
-        String prefix = null;
-        String namespace = null;
+        java.lang.String prefix = null;
+        java.lang.String namespace = null;
 
         prefix = parentQName.getPrefix();
         namespace = parentQName.getNamespaceURI();
@@ -287,7 +287,7 @@ public class EnterpriseCustomerbalanceHistoryItemEntity implements org.apache.ax
             xmlWriter);
 
         if (serializeType) {
-            String namespacePrefix = registerPrefix(xmlWriter,
+            java.lang.String namespacePrefix = registerPrefix(xmlWriter,
                     "urn:Magento");
 
             if ((namespacePrefix != null) &&
@@ -449,7 +449,7 @@ public class EnterpriseCustomerbalanceHistoryItemEntity implements org.apache.ax
         xmlWriter.writeEndElement();
     }
 
-    private static String generatePrefix(String namespace) {
+    private static java.lang.String generatePrefix(java.lang.String namespace) {
         if (namespace.equals("urn:Magento")) {
             return "ns1";
         }
@@ -460,11 +460,11 @@ public class EnterpriseCustomerbalanceHistoryItemEntity implements org.apache.ax
     /**
      * Utility method to write an element start tag.
      */
-    private void writeStartElement(String prefix,
-        String namespace, String localPart,
+    private void writeStartElement(java.lang.String prefix,
+        java.lang.String namespace, java.lang.String localPart,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
-        String writerPrefix = xmlWriter.getPrefix(namespace);
+        java.lang.String writerPrefix = xmlWriter.getPrefix(namespace);
 
         if (writerPrefix != null) {
             xmlWriter.writeStartElement(namespace, localPart);
@@ -484,9 +484,9 @@ public class EnterpriseCustomerbalanceHistoryItemEntity implements org.apache.ax
     /**
      * Util method to write an attribute with the ns prefix
      */
-    private void writeAttribute(String prefix,
-        String namespace, String attName,
-        String attValue, javax.xml.stream.XMLStreamWriter xmlWriter)
+    private void writeAttribute(java.lang.String prefix,
+        java.lang.String namespace, java.lang.String attName,
+        java.lang.String attValue, javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
         if (xmlWriter.getPrefix(namespace) == null) {
             xmlWriter.writeNamespace(prefix, namespace);
@@ -499,8 +499,8 @@ public class EnterpriseCustomerbalanceHistoryItemEntity implements org.apache.ax
     /**
      * Util method to write an attribute without the ns prefix
      */
-    private void writeAttribute(String namespace,
-        String attName, String attValue,
+    private void writeAttribute(java.lang.String namespace,
+        java.lang.String attName, java.lang.String attValue,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
         if (namespace.equals("")) {
@@ -514,18 +514,18 @@ public class EnterpriseCustomerbalanceHistoryItemEntity implements org.apache.ax
     /**
      * Util method to write an attribute without the ns prefix
      */
-    private void writeQNameAttribute(String namespace,
-        String attName, javax.xml.namespace.QName qname,
+    private void writeQNameAttribute(java.lang.String namespace,
+        java.lang.String attName, javax.xml.namespace.QName qname,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
-        String attributeNamespace = qname.getNamespaceURI();
-        String attributePrefix = xmlWriter.getPrefix(attributeNamespace);
+        java.lang.String attributeNamespace = qname.getNamespaceURI();
+        java.lang.String attributePrefix = xmlWriter.getPrefix(attributeNamespace);
 
         if (attributePrefix == null) {
             attributePrefix = registerPrefix(xmlWriter, attributeNamespace);
         }
 
-        String attributeValue;
+        java.lang.String attributeValue;
 
         if (attributePrefix.trim().length() > 0) {
             attributeValue = attributePrefix + ":" + qname.getLocalPart();
@@ -547,10 +547,10 @@ public class EnterpriseCustomerbalanceHistoryItemEntity implements org.apache.ax
     private void writeQName(javax.xml.namespace.QName qname,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
-        String namespaceURI = qname.getNamespaceURI();
+        java.lang.String namespaceURI = qname.getNamespaceURI();
 
         if (namespaceURI != null) {
-            String prefix = xmlWriter.getPrefix(namespaceURI);
+            java.lang.String prefix = xmlWriter.getPrefix(namespaceURI);
 
             if (prefix == null) {
                 prefix = generatePrefix(namespaceURI);
@@ -579,9 +579,9 @@ public class EnterpriseCustomerbalanceHistoryItemEntity implements org.apache.ax
         if (qnames != null) {
             // we have to store this data until last moment since it is not possible to write any
             // namespace data after writing the charactor data
-            StringBuffer stringToWrite = new StringBuffer();
-            String namespaceURI = null;
-            String prefix = null;
+            java.lang.StringBuffer stringToWrite = new java.lang.StringBuffer();
+            java.lang.String namespaceURI = null;
+            java.lang.String prefix = null;
 
             for (int i = 0; i < qnames.length; i++) {
                 if (i > 0) {
@@ -620,10 +620,10 @@ public class EnterpriseCustomerbalanceHistoryItemEntity implements org.apache.ax
     /**
      * Register a namespace prefix
      */
-    private String registerPrefix(
-        javax.xml.stream.XMLStreamWriter xmlWriter, String namespace)
+    private java.lang.String registerPrefix(
+        javax.xml.stream.XMLStreamWriter xmlWriter, java.lang.String namespace)
         throws javax.xml.stream.XMLStreamException {
-        String prefix = xmlWriter.getPrefix(namespace);
+        java.lang.String prefix = xmlWriter.getPrefix(namespace);
 
         if (prefix == null) {
             prefix = generatePrefix(namespace);
@@ -631,7 +631,7 @@ public class EnterpriseCustomerbalanceHistoryItemEntity implements org.apache.ax
             javax.xml.namespace.NamespaceContext nsContext = xmlWriter.getNamespaceContext();
 
             while (true) {
-                String uri = nsContext.getNamespaceURI(prefix);
+                java.lang.String uri = nsContext.getNamespaceURI(prefix);
 
                 if ((uri == null) || (uri.length() == 0)) {
                     break;
@@ -783,13 +783,13 @@ public class EnterpriseCustomerbalanceHistoryItemEntity implements org.apache.ax
          *                If this object is a complex type, the reader is positioned at the end element of its outer element
          */
         public static EnterpriseCustomerbalanceHistoryItemEntity parse(
-            javax.xml.stream.XMLStreamReader reader) throws Exception {
+            javax.xml.stream.XMLStreamReader reader) throws java.lang.Exception {
             EnterpriseCustomerbalanceHistoryItemEntity object = new EnterpriseCustomerbalanceHistoryItemEntity();
 
             int event;
-            String nillableValue = null;
-            String prefix = "";
-            String namespaceuri = "";
+            java.lang.String nillableValue = null;
+            java.lang.String prefix = "";
+            java.lang.String namespaceuri = "";
 
             try {
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -797,11 +797,11 @@ public class EnterpriseCustomerbalanceHistoryItemEntity implements org.apache.ax
 
                 if (reader.getAttributeValue(
                             "http://www.w3.org/2001/XMLSchema-instance", "type") != null) {
-                    String fullTypeName = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance",
+                    java.lang.String fullTypeName = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance",
                             "type");
 
                     if (fullTypeName != null) {
-                        String nsPrefix = null;
+                        java.lang.String nsPrefix = null;
 
                         if (fullTypeName.indexOf(":") > -1) {
                             nsPrefix = fullTypeName.substring(0,
@@ -810,13 +810,13 @@ public class EnterpriseCustomerbalanceHistoryItemEntity implements org.apache.ax
 
                         nsPrefix = (nsPrefix == null) ? "" : nsPrefix;
 
-                        String type = fullTypeName.substring(fullTypeName.indexOf(
+                        java.lang.String type = fullTypeName.substring(fullTypeName.indexOf(
                                     ":") + 1);
 
                         if (!"enterpriseCustomerbalanceHistoryItemEntity".equals(
                                     type)) {
                             //find namespace for the prefix
-                            String nsUri = reader.getNamespaceContext()
+                            java.lang.String nsUri = reader.getNamespaceContext()
                                                            .getNamespaceURI(nsPrefix);
 
                             return (EnterpriseCustomerbalanceHistoryItemEntity) magento.ExtensionMapper.getTypeObject(nsUri,
@@ -847,7 +847,7 @@ public class EnterpriseCustomerbalanceHistoryItemEntity implements org.apache.ax
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setHistory_id(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -877,7 +877,7 @@ public class EnterpriseCustomerbalanceHistoryItemEntity implements org.apache.ax
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setBalance_id(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -907,7 +907,7 @@ public class EnterpriseCustomerbalanceHistoryItemEntity implements org.apache.ax
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setUpdated_at(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -936,7 +936,7 @@ public class EnterpriseCustomerbalanceHistoryItemEntity implements org.apache.ax
                             "The element: " + "action" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setAction(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -966,7 +966,7 @@ public class EnterpriseCustomerbalanceHistoryItemEntity implements org.apache.ax
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setBalance_amount(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -996,7 +996,7 @@ public class EnterpriseCustomerbalanceHistoryItemEntity implements org.apache.ax
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setBalance_delta(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1026,7 +1026,7 @@ public class EnterpriseCustomerbalanceHistoryItemEntity implements org.apache.ax
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setAdditional_info(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1056,7 +1056,7 @@ public class EnterpriseCustomerbalanceHistoryItemEntity implements org.apache.ax
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setIs_customer_notified(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1086,7 +1086,7 @@ public class EnterpriseCustomerbalanceHistoryItemEntity implements org.apache.ax
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setCustomer_id(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1116,7 +1116,7 @@ public class EnterpriseCustomerbalanceHistoryItemEntity implements org.apache.ax
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setWebsite_id(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1146,7 +1146,7 @@ public class EnterpriseCustomerbalanceHistoryItemEntity implements org.apache.ax
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setBase_currency_code(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1169,7 +1169,7 @@ public class EnterpriseCustomerbalanceHistoryItemEntity implements org.apache.ax
                         "Unexpected subelement " + reader.getName());
                 }
             } catch (javax.xml.stream.XMLStreamException e) {
-                throw new Exception(e);
+                throw new java.lang.Exception(e);
             }
 
             return object;

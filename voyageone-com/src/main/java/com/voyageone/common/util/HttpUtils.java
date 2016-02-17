@@ -700,4 +700,19 @@ public class HttpUtils {
         return connection;
     }
 
+    /**
+     * 根据url获取输入流
+     *
+     * @param urlString   地址
+     * @return 输入流
+     * @throws IOException
+     */
+    public static InputStream getInputStream(String urlString) throws IOException {
+        URL url = new URL(urlString);
+
+        InputStream inputStream = url.openStream();
+
+        return inputStream;
+    }
+
 }

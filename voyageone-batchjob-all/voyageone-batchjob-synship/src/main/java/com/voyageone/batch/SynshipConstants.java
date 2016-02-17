@@ -40,8 +40,10 @@ public interface SynshipConstants {
     final class SMS_CHECK {
         // 基础内容
         public static final String SIGN_NAME = "【%s】";
-        // 短信账户余额情报
-        public static final Double ACCOUNT_BALANCE = 800d;
+        // 短信账户余额情报(物流)
+        public static final Double ACCOUNT_BALANCE_LOGISTICS = 800d;
+        // 短信账户余额情报(营销)
+        public static final Double ACCOUNT_BALANCE_MARKETING = 200d;
         // 短信限制次数
         public static final Integer SMS_SENT_lIMIT = 1;
     }

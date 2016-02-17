@@ -23,7 +23,7 @@ public class SalesOrderShipmentEntity implements org.apache.axis2.databinding.AD
     /**
      * field for Increment_id
      */
-    protected String localIncrement_id;
+    protected java.lang.String localIncrement_id;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -34,7 +34,7 @@ public class SalesOrderShipmentEntity implements org.apache.axis2.databinding.AD
     /**
      * field for Parent_id
      */
-    protected String localParent_id;
+    protected java.lang.String localParent_id;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -45,7 +45,7 @@ public class SalesOrderShipmentEntity implements org.apache.axis2.databinding.AD
     /**
      * field for Store_id
      */
-    protected String localStore_id;
+    protected java.lang.String localStore_id;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -56,7 +56,7 @@ public class SalesOrderShipmentEntity implements org.apache.axis2.databinding.AD
     /**
      * field for Created_at
      */
-    protected String localCreated_at;
+    protected java.lang.String localCreated_at;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -67,7 +67,7 @@ public class SalesOrderShipmentEntity implements org.apache.axis2.databinding.AD
     /**
      * field for Updated_at
      */
-    protected String localUpdated_at;
+    protected java.lang.String localUpdated_at;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -78,7 +78,7 @@ public class SalesOrderShipmentEntity implements org.apache.axis2.databinding.AD
     /**
      * field for Is_active
      */
-    protected String localIs_active;
+    protected java.lang.String localIs_active;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -89,7 +89,7 @@ public class SalesOrderShipmentEntity implements org.apache.axis2.databinding.AD
     /**
      * field for Shipping_address_id
      */
-    protected String localShipping_address_id;
+    protected java.lang.String localShipping_address_id;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -100,7 +100,7 @@ public class SalesOrderShipmentEntity implements org.apache.axis2.databinding.AD
     /**
      * field for Shipping_firstname
      */
-    protected String localShipping_firstname;
+    protected java.lang.String localShipping_firstname;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -111,7 +111,7 @@ public class SalesOrderShipmentEntity implements org.apache.axis2.databinding.AD
     /**
      * field for Shipping_lastname
      */
-    protected String localShipping_lastname;
+    protected java.lang.String localShipping_lastname;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -122,7 +122,7 @@ public class SalesOrderShipmentEntity implements org.apache.axis2.databinding.AD
     /**
      * field for Order_id
      */
-    protected String localOrder_id;
+    protected java.lang.String localOrder_id;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -133,7 +133,7 @@ public class SalesOrderShipmentEntity implements org.apache.axis2.databinding.AD
     /**
      * field for Order_increment_id
      */
-    protected String localOrder_increment_id;
+    protected java.lang.String localOrder_increment_id;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -144,7 +144,7 @@ public class SalesOrderShipmentEntity implements org.apache.axis2.databinding.AD
     /**
      * field for Order_created_at
      */
-    protected String localOrder_created_at;
+    protected java.lang.String localOrder_created_at;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -155,7 +155,7 @@ public class SalesOrderShipmentEntity implements org.apache.axis2.databinding.AD
     /**
      * field for Total_qty
      */
-    protected String localTotal_qty;
+    protected java.lang.String localTotal_qty;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -166,7 +166,7 @@ public class SalesOrderShipmentEntity implements org.apache.axis2.databinding.AD
     /**
      * field for Shipment_id
      */
-    protected String localShipment_id;
+    protected java.lang.String localShipment_id;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -215,7 +215,7 @@ public class SalesOrderShipmentEntity implements org.apache.axis2.databinding.AD
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getIncrement_id() {
+    public java.lang.String getIncrement_id() {
         return localIncrement_id;
     }
 
@@ -223,7 +223,7 @@ public class SalesOrderShipmentEntity implements org.apache.axis2.databinding.AD
      * Auto generated setter method
      * @param param Increment_id
      */
-    public void setIncrement_id(String param) {
+    public void setIncrement_id(java.lang.String param) {
         localIncrement_idTracker = param != null;
 
         this.localIncrement_id = param;
@@ -237,7 +237,7 @@ public class SalesOrderShipmentEntity implements org.apache.axis2.databinding.AD
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getParent_id() {
+    public java.lang.String getParent_id() {
         return localParent_id;
     }
 
@@ -245,7 +245,7 @@ public class SalesOrderShipmentEntity implements org.apache.axis2.databinding.AD
      * Auto generated setter method
      * @param param Parent_id
      */
-    public void setParent_id(String param) {
+    public void setParent_id(java.lang.String param) {
         localParent_idTracker = param != null;
 
         this.localParent_id = param;
@@ -259,7 +259,7 @@ public class SalesOrderShipmentEntity implements org.apache.axis2.databinding.AD
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getStore_id() {
+    public java.lang.String getStore_id() {
         return localStore_id;
     }
 
@@ -267,7 +267,7 @@ public class SalesOrderShipmentEntity implements org.apache.axis2.databinding.AD
      * Auto generated setter method
      * @param param Store_id
      */
-    public void setStore_id(String param) {
+    public void setStore_id(java.lang.String param) {
         localStore_idTracker = param != null;
 
         this.localStore_id = param;
@@ -281,7 +281,7 @@ public class SalesOrderShipmentEntity implements org.apache.axis2.databinding.AD
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getCreated_at() {
+    public java.lang.String getCreated_at() {
         return localCreated_at;
     }
 
@@ -289,7 +289,7 @@ public class SalesOrderShipmentEntity implements org.apache.axis2.databinding.AD
      * Auto generated setter method
      * @param param Created_at
      */
-    public void setCreated_at(String param) {
+    public void setCreated_at(java.lang.String param) {
         localCreated_atTracker = param != null;
 
         this.localCreated_at = param;
@@ -303,7 +303,7 @@ public class SalesOrderShipmentEntity implements org.apache.axis2.databinding.AD
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getUpdated_at() {
+    public java.lang.String getUpdated_at() {
         return localUpdated_at;
     }
 
@@ -311,7 +311,7 @@ public class SalesOrderShipmentEntity implements org.apache.axis2.databinding.AD
      * Auto generated setter method
      * @param param Updated_at
      */
-    public void setUpdated_at(String param) {
+    public void setUpdated_at(java.lang.String param) {
         localUpdated_atTracker = param != null;
 
         this.localUpdated_at = param;
@@ -325,7 +325,7 @@ public class SalesOrderShipmentEntity implements org.apache.axis2.databinding.AD
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getIs_active() {
+    public java.lang.String getIs_active() {
         return localIs_active;
     }
 
@@ -333,7 +333,7 @@ public class SalesOrderShipmentEntity implements org.apache.axis2.databinding.AD
      * Auto generated setter method
      * @param param Is_active
      */
-    public void setIs_active(String param) {
+    public void setIs_active(java.lang.String param) {
         localIs_activeTracker = param != null;
 
         this.localIs_active = param;
@@ -347,7 +347,7 @@ public class SalesOrderShipmentEntity implements org.apache.axis2.databinding.AD
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getShipping_address_id() {
+    public java.lang.String getShipping_address_id() {
         return localShipping_address_id;
     }
 
@@ -355,7 +355,7 @@ public class SalesOrderShipmentEntity implements org.apache.axis2.databinding.AD
      * Auto generated setter method
      * @param param Shipping_address_id
      */
-    public void setShipping_address_id(String param) {
+    public void setShipping_address_id(java.lang.String param) {
         localShipping_address_idTracker = param != null;
 
         this.localShipping_address_id = param;
@@ -369,7 +369,7 @@ public class SalesOrderShipmentEntity implements org.apache.axis2.databinding.AD
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getShipping_firstname() {
+    public java.lang.String getShipping_firstname() {
         return localShipping_firstname;
     }
 
@@ -377,7 +377,7 @@ public class SalesOrderShipmentEntity implements org.apache.axis2.databinding.AD
      * Auto generated setter method
      * @param param Shipping_firstname
      */
-    public void setShipping_firstname(String param) {
+    public void setShipping_firstname(java.lang.String param) {
         localShipping_firstnameTracker = param != null;
 
         this.localShipping_firstname = param;
@@ -391,7 +391,7 @@ public class SalesOrderShipmentEntity implements org.apache.axis2.databinding.AD
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getShipping_lastname() {
+    public java.lang.String getShipping_lastname() {
         return localShipping_lastname;
     }
 
@@ -399,7 +399,7 @@ public class SalesOrderShipmentEntity implements org.apache.axis2.databinding.AD
      * Auto generated setter method
      * @param param Shipping_lastname
      */
-    public void setShipping_lastname(String param) {
+    public void setShipping_lastname(java.lang.String param) {
         localShipping_lastnameTracker = param != null;
 
         this.localShipping_lastname = param;
@@ -413,7 +413,7 @@ public class SalesOrderShipmentEntity implements org.apache.axis2.databinding.AD
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getOrder_id() {
+    public java.lang.String getOrder_id() {
         return localOrder_id;
     }
 
@@ -421,7 +421,7 @@ public class SalesOrderShipmentEntity implements org.apache.axis2.databinding.AD
      * Auto generated setter method
      * @param param Order_id
      */
-    public void setOrder_id(String param) {
+    public void setOrder_id(java.lang.String param) {
         localOrder_idTracker = param != null;
 
         this.localOrder_id = param;
@@ -435,7 +435,7 @@ public class SalesOrderShipmentEntity implements org.apache.axis2.databinding.AD
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getOrder_increment_id() {
+    public java.lang.String getOrder_increment_id() {
         return localOrder_increment_id;
     }
 
@@ -443,7 +443,7 @@ public class SalesOrderShipmentEntity implements org.apache.axis2.databinding.AD
      * Auto generated setter method
      * @param param Order_increment_id
      */
-    public void setOrder_increment_id(String param) {
+    public void setOrder_increment_id(java.lang.String param) {
         localOrder_increment_idTracker = param != null;
 
         this.localOrder_increment_id = param;
@@ -457,7 +457,7 @@ public class SalesOrderShipmentEntity implements org.apache.axis2.databinding.AD
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getOrder_created_at() {
+    public java.lang.String getOrder_created_at() {
         return localOrder_created_at;
     }
 
@@ -465,7 +465,7 @@ public class SalesOrderShipmentEntity implements org.apache.axis2.databinding.AD
      * Auto generated setter method
      * @param param Order_created_at
      */
-    public void setOrder_created_at(String param) {
+    public void setOrder_created_at(java.lang.String param) {
         localOrder_created_atTracker = param != null;
 
         this.localOrder_created_at = param;
@@ -479,7 +479,7 @@ public class SalesOrderShipmentEntity implements org.apache.axis2.databinding.AD
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getTotal_qty() {
+    public java.lang.String getTotal_qty() {
         return localTotal_qty;
     }
 
@@ -487,7 +487,7 @@ public class SalesOrderShipmentEntity implements org.apache.axis2.databinding.AD
      * Auto generated setter method
      * @param param Total_qty
      */
-    public void setTotal_qty(String param) {
+    public void setTotal_qty(java.lang.String param) {
         localTotal_qtyTracker = param != null;
 
         this.localTotal_qty = param;
@@ -501,7 +501,7 @@ public class SalesOrderShipmentEntity implements org.apache.axis2.databinding.AD
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getShipment_id() {
+    public java.lang.String getShipment_id() {
         return localShipment_id;
     }
 
@@ -509,7 +509,7 @@ public class SalesOrderShipmentEntity implements org.apache.axis2.databinding.AD
      * Auto generated setter method
      * @param param Shipment_id
      */
-    public void setShipment_id(String param) {
+    public void setShipment_id(java.lang.String param) {
         localShipment_idTracker = param != null;
 
         this.localShipment_id = param;
@@ -608,8 +608,8 @@ public class SalesOrderShipmentEntity implements org.apache.axis2.databinding.AD
         javax.xml.stream.XMLStreamWriter xmlWriter, boolean serializeType)
         throws javax.xml.stream.XMLStreamException,
             org.apache.axis2.databinding.ADBException {
-        String prefix = null;
-        String namespace = null;
+        java.lang.String prefix = null;
+        java.lang.String namespace = null;
 
         prefix = parentQName.getPrefix();
         namespace = parentQName.getNamespaceURI();
@@ -617,7 +617,7 @@ public class SalesOrderShipmentEntity implements org.apache.axis2.databinding.AD
             xmlWriter);
 
         if (serializeType) {
-            String namespacePrefix = registerPrefix(xmlWriter,
+            java.lang.String namespacePrefix = registerPrefix(xmlWriter,
                     "urn:Magento");
 
             if ((namespacePrefix != null) &&
@@ -875,7 +875,7 @@ public class SalesOrderShipmentEntity implements org.apache.axis2.databinding.AD
         xmlWriter.writeEndElement();
     }
 
-    private static String generatePrefix(String namespace) {
+    private static java.lang.String generatePrefix(java.lang.String namespace) {
         if (namespace.equals("urn:Magento")) {
             return "ns1";
         }
@@ -886,11 +886,11 @@ public class SalesOrderShipmentEntity implements org.apache.axis2.databinding.AD
     /**
      * Utility method to write an element start tag.
      */
-    private void writeStartElement(String prefix,
-        String namespace, String localPart,
+    private void writeStartElement(java.lang.String prefix,
+        java.lang.String namespace, java.lang.String localPart,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
-        String writerPrefix = xmlWriter.getPrefix(namespace);
+        java.lang.String writerPrefix = xmlWriter.getPrefix(namespace);
 
         if (writerPrefix != null) {
             xmlWriter.writeStartElement(namespace, localPart);
@@ -910,9 +910,9 @@ public class SalesOrderShipmentEntity implements org.apache.axis2.databinding.AD
     /**
      * Util method to write an attribute with the ns prefix
      */
-    private void writeAttribute(String prefix,
-        String namespace, String attName,
-        String attValue, javax.xml.stream.XMLStreamWriter xmlWriter)
+    private void writeAttribute(java.lang.String prefix,
+        java.lang.String namespace, java.lang.String attName,
+        java.lang.String attValue, javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
         if (xmlWriter.getPrefix(namespace) == null) {
             xmlWriter.writeNamespace(prefix, namespace);
@@ -925,8 +925,8 @@ public class SalesOrderShipmentEntity implements org.apache.axis2.databinding.AD
     /**
      * Util method to write an attribute without the ns prefix
      */
-    private void writeAttribute(String namespace,
-        String attName, String attValue,
+    private void writeAttribute(java.lang.String namespace,
+        java.lang.String attName, java.lang.String attValue,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
         if (namespace.equals("")) {
@@ -940,18 +940,18 @@ public class SalesOrderShipmentEntity implements org.apache.axis2.databinding.AD
     /**
      * Util method to write an attribute without the ns prefix
      */
-    private void writeQNameAttribute(String namespace,
-        String attName, javax.xml.namespace.QName qname,
+    private void writeQNameAttribute(java.lang.String namespace,
+        java.lang.String attName, javax.xml.namespace.QName qname,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
-        String attributeNamespace = qname.getNamespaceURI();
-        String attributePrefix = xmlWriter.getPrefix(attributeNamespace);
+        java.lang.String attributeNamespace = qname.getNamespaceURI();
+        java.lang.String attributePrefix = xmlWriter.getPrefix(attributeNamespace);
 
         if (attributePrefix == null) {
             attributePrefix = registerPrefix(xmlWriter, attributeNamespace);
         }
 
-        String attributeValue;
+        java.lang.String attributeValue;
 
         if (attributePrefix.trim().length() > 0) {
             attributeValue = attributePrefix + ":" + qname.getLocalPart();
@@ -973,10 +973,10 @@ public class SalesOrderShipmentEntity implements org.apache.axis2.databinding.AD
     private void writeQName(javax.xml.namespace.QName qname,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
-        String namespaceURI = qname.getNamespaceURI();
+        java.lang.String namespaceURI = qname.getNamespaceURI();
 
         if (namespaceURI != null) {
-            String prefix = xmlWriter.getPrefix(namespaceURI);
+            java.lang.String prefix = xmlWriter.getPrefix(namespaceURI);
 
             if (prefix == null) {
                 prefix = generatePrefix(namespaceURI);
@@ -1005,9 +1005,9 @@ public class SalesOrderShipmentEntity implements org.apache.axis2.databinding.AD
         if (qnames != null) {
             // we have to store this data until last moment since it is not possible to write any
             // namespace data after writing the charactor data
-            StringBuffer stringToWrite = new StringBuffer();
-            String namespaceURI = null;
-            String prefix = null;
+            java.lang.StringBuffer stringToWrite = new java.lang.StringBuffer();
+            java.lang.String namespaceURI = null;
+            java.lang.String prefix = null;
 
             for (int i = 0; i < qnames.length; i++) {
                 if (i > 0) {
@@ -1046,10 +1046,10 @@ public class SalesOrderShipmentEntity implements org.apache.axis2.databinding.AD
     /**
      * Register a namespace prefix
      */
-    private String registerPrefix(
-        javax.xml.stream.XMLStreamWriter xmlWriter, String namespace)
+    private java.lang.String registerPrefix(
+        javax.xml.stream.XMLStreamWriter xmlWriter, java.lang.String namespace)
         throws javax.xml.stream.XMLStreamException {
-        String prefix = xmlWriter.getPrefix(namespace);
+        java.lang.String prefix = xmlWriter.getPrefix(namespace);
 
         if (prefix == null) {
             prefix = generatePrefix(namespace);
@@ -1057,7 +1057,7 @@ public class SalesOrderShipmentEntity implements org.apache.axis2.databinding.AD
             javax.xml.namespace.NamespaceContext nsContext = xmlWriter.getNamespaceContext();
 
             while (true) {
-                String uri = nsContext.getNamespaceURI(prefix);
+                java.lang.String uri = nsContext.getNamespaceURI(prefix);
 
                 if ((uri == null) || (uri.length() == 0)) {
                     break;
@@ -1304,13 +1304,13 @@ public class SalesOrderShipmentEntity implements org.apache.axis2.databinding.AD
          *                If this object is a complex type, the reader is positioned at the end element of its outer element
          */
         public static SalesOrderShipmentEntity parse(
-            javax.xml.stream.XMLStreamReader reader) throws Exception {
+            javax.xml.stream.XMLStreamReader reader) throws java.lang.Exception {
             SalesOrderShipmentEntity object = new SalesOrderShipmentEntity();
 
             int event;
-            String nillableValue = null;
-            String prefix = "";
-            String namespaceuri = "";
+            java.lang.String nillableValue = null;
+            java.lang.String prefix = "";
+            java.lang.String namespaceuri = "";
 
             try {
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -1318,11 +1318,11 @@ public class SalesOrderShipmentEntity implements org.apache.axis2.databinding.AD
 
                 if (reader.getAttributeValue(
                             "http://www.w3.org/2001/XMLSchema-instance", "type") != null) {
-                    String fullTypeName = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance",
+                    java.lang.String fullTypeName = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance",
                             "type");
 
                     if (fullTypeName != null) {
-                        String nsPrefix = null;
+                        java.lang.String nsPrefix = null;
 
                         if (fullTypeName.indexOf(":") > -1) {
                             nsPrefix = fullTypeName.substring(0,
@@ -1331,12 +1331,12 @@ public class SalesOrderShipmentEntity implements org.apache.axis2.databinding.AD
 
                         nsPrefix = (nsPrefix == null) ? "" : nsPrefix;
 
-                        String type = fullTypeName.substring(fullTypeName.indexOf(
+                        java.lang.String type = fullTypeName.substring(fullTypeName.indexOf(
                                     ":") + 1);
 
                         if (!"salesOrderShipmentEntity".equals(type)) {
                             //find namespace for the prefix
-                            String nsUri = reader.getNamespaceContext()
+                            java.lang.String nsUri = reader.getNamespaceContext()
                                                            .getNamespaceURI(nsPrefix);
 
                             return (SalesOrderShipmentEntity) magento.ExtensionMapper.getTypeObject(nsUri,
@@ -1367,7 +1367,7 @@ public class SalesOrderShipmentEntity implements org.apache.axis2.databinding.AD
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setIncrement_id(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1393,7 +1393,7 @@ public class SalesOrderShipmentEntity implements org.apache.axis2.databinding.AD
                             "The element: " + "parent_id" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setParent_id(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1419,7 +1419,7 @@ public class SalesOrderShipmentEntity implements org.apache.axis2.databinding.AD
                             "The element: " + "store_id" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setStore_id(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1446,7 +1446,7 @@ public class SalesOrderShipmentEntity implements org.apache.axis2.databinding.AD
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setCreated_at(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1473,7 +1473,7 @@ public class SalesOrderShipmentEntity implements org.apache.axis2.databinding.AD
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setUpdated_at(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1499,7 +1499,7 @@ public class SalesOrderShipmentEntity implements org.apache.axis2.databinding.AD
                             "The element: " + "is_active" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setIs_active(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1526,7 +1526,7 @@ public class SalesOrderShipmentEntity implements org.apache.axis2.databinding.AD
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setShipping_address_id(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1553,7 +1553,7 @@ public class SalesOrderShipmentEntity implements org.apache.axis2.databinding.AD
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setShipping_firstname(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1580,7 +1580,7 @@ public class SalesOrderShipmentEntity implements org.apache.axis2.databinding.AD
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setShipping_lastname(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1606,7 +1606,7 @@ public class SalesOrderShipmentEntity implements org.apache.axis2.databinding.AD
                             "The element: " + "order_id" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setOrder_id(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1633,7 +1633,7 @@ public class SalesOrderShipmentEntity implements org.apache.axis2.databinding.AD
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setOrder_increment_id(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1660,7 +1660,7 @@ public class SalesOrderShipmentEntity implements org.apache.axis2.databinding.AD
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setOrder_created_at(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1686,7 +1686,7 @@ public class SalesOrderShipmentEntity implements org.apache.axis2.databinding.AD
                             "The element: " + "total_qty" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setTotal_qty(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1713,7 +1713,7 @@ public class SalesOrderShipmentEntity implements org.apache.axis2.databinding.AD
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setShipment_id(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1778,7 +1778,7 @@ public class SalesOrderShipmentEntity implements org.apache.axis2.databinding.AD
                         "Unexpected subelement " + reader.getName());
                 }
             } catch (javax.xml.stream.XMLStreamException e) {
-                throw new Exception(e);
+                throw new java.lang.Exception(e);
             }
 
             return object;

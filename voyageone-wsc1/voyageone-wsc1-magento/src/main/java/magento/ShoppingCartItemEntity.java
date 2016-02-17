@@ -23,7 +23,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
     /**
      * field for Item_id
      */
-    protected String localItem_id;
+    protected java.lang.String localItem_id;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -34,7 +34,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
     /**
      * field for Created_at
      */
-    protected String localCreated_at;
+    protected java.lang.String localCreated_at;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -45,7 +45,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
     /**
      * field for Updated_at
      */
-    protected String localUpdated_at;
+    protected java.lang.String localUpdated_at;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -56,7 +56,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
     /**
      * field for Product_id
      */
-    protected String localProduct_id;
+    protected java.lang.String localProduct_id;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -67,7 +67,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
     /**
      * field for Store_id
      */
-    protected String localStore_id;
+    protected java.lang.String localStore_id;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -78,7 +78,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
     /**
      * field for Parent_item_id
      */
-    protected String localParent_item_id;
+    protected java.lang.String localParent_item_id;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -100,7 +100,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
     /**
      * field for Sku
      */
-    protected String localSku;
+    protected java.lang.String localSku;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -111,7 +111,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
     /**
      * field for Name
      */
-    protected String localName;
+    protected java.lang.String localName;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -122,7 +122,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
     /**
      * field for Description
      */
-    protected String localDescription;
+    protected java.lang.String localDescription;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -133,7 +133,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
     /**
      * field for Applied_rule_ids
      */
-    protected String localApplied_rule_ids;
+    protected java.lang.String localApplied_rule_ids;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -144,7 +144,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
     /**
      * field for Additional_data
      */
-    protected String localAdditional_data;
+    protected java.lang.String localAdditional_data;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -155,7 +155,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
     /**
      * field for Free_shipping
      */
-    protected String localFree_shipping;
+    protected java.lang.String localFree_shipping;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -166,7 +166,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
     /**
      * field for Is_qty_decimal
      */
-    protected String localIs_qty_decimal;
+    protected java.lang.String localIs_qty_decimal;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -177,7 +177,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
     /**
      * field for No_discount
      */
-    protected String localNo_discount;
+    protected java.lang.String localNo_discount;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -353,7 +353,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
     /**
      * field for Product_type
      */
-    protected String localProduct_type;
+    protected java.lang.String localProduct_type;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -452,7 +452,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
     /**
      * field for Gift_message_id
      */
-    protected String localGift_message_id;
+    protected java.lang.String localGift_message_id;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -463,7 +463,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
     /**
      * field for Gift_message
      */
-    protected String localGift_message;
+    protected java.lang.String localGift_message;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -474,7 +474,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
     /**
      * field for Gift_message_available
      */
-    protected String localGift_message_available;
+    protected java.lang.String localGift_message_available;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -584,7 +584,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
     /**
      * field for Tax_class_id
      */
-    protected String localTax_class_id;
+    protected java.lang.String localTax_class_id;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -600,7 +600,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getItem_id() {
+    public java.lang.String getItem_id() {
         return localItem_id;
     }
 
@@ -608,7 +608,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated setter method
      * @param param Item_id
      */
-    public void setItem_id(String param) {
+    public void setItem_id(java.lang.String param) {
         localItem_idTracker = param != null;
 
         this.localItem_id = param;
@@ -622,7 +622,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getCreated_at() {
+    public java.lang.String getCreated_at() {
         return localCreated_at;
     }
 
@@ -630,7 +630,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated setter method
      * @param param Created_at
      */
-    public void setCreated_at(String param) {
+    public void setCreated_at(java.lang.String param) {
         localCreated_atTracker = param != null;
 
         this.localCreated_at = param;
@@ -644,7 +644,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getUpdated_at() {
+    public java.lang.String getUpdated_at() {
         return localUpdated_at;
     }
 
@@ -652,7 +652,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated setter method
      * @param param Updated_at
      */
-    public void setUpdated_at(String param) {
+    public void setUpdated_at(java.lang.String param) {
         localUpdated_atTracker = param != null;
 
         this.localUpdated_at = param;
@@ -666,7 +666,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getProduct_id() {
+    public java.lang.String getProduct_id() {
         return localProduct_id;
     }
 
@@ -674,7 +674,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated setter method
      * @param param Product_id
      */
-    public void setProduct_id(String param) {
+    public void setProduct_id(java.lang.String param) {
         localProduct_idTracker = param != null;
 
         this.localProduct_id = param;
@@ -688,7 +688,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getStore_id() {
+    public java.lang.String getStore_id() {
         return localStore_id;
     }
 
@@ -696,7 +696,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated setter method
      * @param param Store_id
      */
-    public void setStore_id(String param) {
+    public void setStore_id(java.lang.String param) {
         localStore_idTracker = param != null;
 
         this.localStore_id = param;
@@ -710,7 +710,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getParent_item_id() {
+    public java.lang.String getParent_item_id() {
         return localParent_item_id;
     }
 
@@ -718,7 +718,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated setter method
      * @param param Parent_item_id
      */
-    public void setParent_item_id(String param) {
+    public void setParent_item_id(java.lang.String param) {
         localParent_item_idTracker = param != null;
 
         this.localParent_item_id = param;
@@ -742,7 +742,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
      */
     public void setIs_virtual(int param) {
         // setting primitive attribute tracker to true
-        localIs_virtualTracker = param != Integer.MIN_VALUE;
+        localIs_virtualTracker = param != java.lang.Integer.MIN_VALUE;
 
         this.localIs_virtual = param;
     }
@@ -755,7 +755,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getSku() {
+    public java.lang.String getSku() {
         return localSku;
     }
 
@@ -763,7 +763,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated setter method
      * @param param Sku
      */
-    public void setSku(String param) {
+    public void setSku(java.lang.String param) {
         localSkuTracker = param != null;
 
         this.localSku = param;
@@ -777,7 +777,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getName() {
+    public java.lang.String getName() {
         return localName;
     }
 
@@ -785,7 +785,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated setter method
      * @param param Name
      */
-    public void setName(String param) {
+    public void setName(java.lang.String param) {
         localNameTracker = param != null;
 
         this.localName = param;
@@ -799,7 +799,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getDescription() {
+    public java.lang.String getDescription() {
         return localDescription;
     }
 
@@ -807,7 +807,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated setter method
      * @param param Description
      */
-    public void setDescription(String param) {
+    public void setDescription(java.lang.String param) {
         localDescriptionTracker = param != null;
 
         this.localDescription = param;
@@ -821,7 +821,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getApplied_rule_ids() {
+    public java.lang.String getApplied_rule_ids() {
         return localApplied_rule_ids;
     }
 
@@ -829,7 +829,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated setter method
      * @param param Applied_rule_ids
      */
-    public void setApplied_rule_ids(String param) {
+    public void setApplied_rule_ids(java.lang.String param) {
         localApplied_rule_idsTracker = param != null;
 
         this.localApplied_rule_ids = param;
@@ -843,7 +843,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getAdditional_data() {
+    public java.lang.String getAdditional_data() {
         return localAdditional_data;
     }
 
@@ -851,7 +851,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated setter method
      * @param param Additional_data
      */
-    public void setAdditional_data(String param) {
+    public void setAdditional_data(java.lang.String param) {
         localAdditional_dataTracker = param != null;
 
         this.localAdditional_data = param;
@@ -865,7 +865,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getFree_shipping() {
+    public java.lang.String getFree_shipping() {
         return localFree_shipping;
     }
 
@@ -873,7 +873,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated setter method
      * @param param Free_shipping
      */
-    public void setFree_shipping(String param) {
+    public void setFree_shipping(java.lang.String param) {
         localFree_shippingTracker = param != null;
 
         this.localFree_shipping = param;
@@ -887,7 +887,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getIs_qty_decimal() {
+    public java.lang.String getIs_qty_decimal() {
         return localIs_qty_decimal;
     }
 
@@ -895,7 +895,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated setter method
      * @param param Is_qty_decimal
      */
-    public void setIs_qty_decimal(String param) {
+    public void setIs_qty_decimal(java.lang.String param) {
         localIs_qty_decimalTracker = param != null;
 
         this.localIs_qty_decimal = param;
@@ -909,7 +909,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getNo_discount() {
+    public java.lang.String getNo_discount() {
         return localNo_discount;
     }
 
@@ -917,7 +917,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated setter method
      * @param param No_discount
      */
-    public void setNo_discount(String param) {
+    public void setNo_discount(java.lang.String param) {
         localNo_discountTracker = param != null;
 
         this.localNo_discount = param;
@@ -941,7 +941,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
      */
     public void setWeight(double param) {
         // setting primitive attribute tracker to true
-        localWeightTracker = !Double.isNaN(param);
+        localWeightTracker = !java.lang.Double.isNaN(param);
 
         this.localWeight = param;
     }
@@ -964,7 +964,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
      */
     public void setQty(double param) {
         // setting primitive attribute tracker to true
-        localQtyTracker = !Double.isNaN(param);
+        localQtyTracker = !java.lang.Double.isNaN(param);
 
         this.localQty = param;
     }
@@ -987,7 +987,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
      */
     public void setPrice(double param) {
         // setting primitive attribute tracker to true
-        localPriceTracker = !Double.isNaN(param);
+        localPriceTracker = !java.lang.Double.isNaN(param);
 
         this.localPrice = param;
     }
@@ -1010,7 +1010,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
      */
     public void setBase_price(double param) {
         // setting primitive attribute tracker to true
-        localBase_priceTracker = !Double.isNaN(param);
+        localBase_priceTracker = !java.lang.Double.isNaN(param);
 
         this.localBase_price = param;
     }
@@ -1033,7 +1033,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
      */
     public void setCustom_price(double param) {
         // setting primitive attribute tracker to true
-        localCustom_priceTracker = !Double.isNaN(param);
+        localCustom_priceTracker = !java.lang.Double.isNaN(param);
 
         this.localCustom_price = param;
     }
@@ -1056,7 +1056,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
      */
     public void setDiscount_percent(double param) {
         // setting primitive attribute tracker to true
-        localDiscount_percentTracker = !Double.isNaN(param);
+        localDiscount_percentTracker = !java.lang.Double.isNaN(param);
 
         this.localDiscount_percent = param;
     }
@@ -1079,7 +1079,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
      */
     public void setDiscount_amount(double param) {
         // setting primitive attribute tracker to true
-        localDiscount_amountTracker = !Double.isNaN(param);
+        localDiscount_amountTracker = !java.lang.Double.isNaN(param);
 
         this.localDiscount_amount = param;
     }
@@ -1102,7 +1102,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
      */
     public void setBase_discount_amount(double param) {
         // setting primitive attribute tracker to true
-        localBase_discount_amountTracker = !Double.isNaN(param);
+        localBase_discount_amountTracker = !java.lang.Double.isNaN(param);
 
         this.localBase_discount_amount = param;
     }
@@ -1125,7 +1125,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
      */
     public void setTax_percent(double param) {
         // setting primitive attribute tracker to true
-        localTax_percentTracker = !Double.isNaN(param);
+        localTax_percentTracker = !java.lang.Double.isNaN(param);
 
         this.localTax_percent = param;
     }
@@ -1148,7 +1148,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
      */
     public void setTax_amount(double param) {
         // setting primitive attribute tracker to true
-        localTax_amountTracker = !Double.isNaN(param);
+        localTax_amountTracker = !java.lang.Double.isNaN(param);
 
         this.localTax_amount = param;
     }
@@ -1171,7 +1171,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
      */
     public void setBase_tax_amount(double param) {
         // setting primitive attribute tracker to true
-        localBase_tax_amountTracker = !Double.isNaN(param);
+        localBase_tax_amountTracker = !java.lang.Double.isNaN(param);
 
         this.localBase_tax_amount = param;
     }
@@ -1194,7 +1194,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
      */
     public void setRow_total(double param) {
         // setting primitive attribute tracker to true
-        localRow_totalTracker = !Double.isNaN(param);
+        localRow_totalTracker = !java.lang.Double.isNaN(param);
 
         this.localRow_total = param;
     }
@@ -1217,7 +1217,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
      */
     public void setBase_row_total(double param) {
         // setting primitive attribute tracker to true
-        localBase_row_totalTracker = !Double.isNaN(param);
+        localBase_row_totalTracker = !java.lang.Double.isNaN(param);
 
         this.localBase_row_total = param;
     }
@@ -1240,7 +1240,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
      */
     public void setRow_total_with_discount(double param) {
         // setting primitive attribute tracker to true
-        localRow_total_with_discountTracker = !Double.isNaN(param);
+        localRow_total_with_discountTracker = !java.lang.Double.isNaN(param);
 
         this.localRow_total_with_discount = param;
     }
@@ -1263,7 +1263,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
      */
     public void setRow_weight(double param) {
         // setting primitive attribute tracker to true
-        localRow_weightTracker = !Double.isNaN(param);
+        localRow_weightTracker = !java.lang.Double.isNaN(param);
 
         this.localRow_weight = param;
     }
@@ -1276,7 +1276,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getProduct_type() {
+    public java.lang.String getProduct_type() {
         return localProduct_type;
     }
 
@@ -1284,7 +1284,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated setter method
      * @param param Product_type
      */
-    public void setProduct_type(String param) {
+    public void setProduct_type(java.lang.String param) {
         localProduct_typeTracker = param != null;
 
         this.localProduct_type = param;
@@ -1308,7 +1308,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
      */
     public void setBase_tax_before_discount(double param) {
         // setting primitive attribute tracker to true
-        localBase_tax_before_discountTracker = !Double.isNaN(param);
+        localBase_tax_before_discountTracker = !java.lang.Double.isNaN(param);
 
         this.localBase_tax_before_discount = param;
     }
@@ -1331,7 +1331,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
      */
     public void setTax_before_discount(double param) {
         // setting primitive attribute tracker to true
-        localTax_before_discountTracker = !Double.isNaN(param);
+        localTax_before_discountTracker = !java.lang.Double.isNaN(param);
 
         this.localTax_before_discount = param;
     }
@@ -1354,7 +1354,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
      */
     public void setOriginal_custom_price(double param) {
         // setting primitive attribute tracker to true
-        localOriginal_custom_priceTracker = !Double.isNaN(param);
+        localOriginal_custom_priceTracker = !java.lang.Double.isNaN(param);
 
         this.localOriginal_custom_price = param;
     }
@@ -1377,7 +1377,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
      */
     public void setBase_cost(double param) {
         // setting primitive attribute tracker to true
-        localBase_costTracker = !Double.isNaN(param);
+        localBase_costTracker = !java.lang.Double.isNaN(param);
 
         this.localBase_cost = param;
     }
@@ -1400,7 +1400,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
      */
     public void setPrice_incl_tax(double param) {
         // setting primitive attribute tracker to true
-        localPrice_incl_taxTracker = !Double.isNaN(param);
+        localPrice_incl_taxTracker = !java.lang.Double.isNaN(param);
 
         this.localPrice_incl_tax = param;
     }
@@ -1423,7 +1423,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
      */
     public void setBase_price_incl_tax(double param) {
         // setting primitive attribute tracker to true
-        localBase_price_incl_taxTracker = !Double.isNaN(param);
+        localBase_price_incl_taxTracker = !java.lang.Double.isNaN(param);
 
         this.localBase_price_incl_tax = param;
     }
@@ -1446,7 +1446,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
      */
     public void setRow_total_incl_tax(double param) {
         // setting primitive attribute tracker to true
-        localRow_total_incl_taxTracker = !Double.isNaN(param);
+        localRow_total_incl_taxTracker = !java.lang.Double.isNaN(param);
 
         this.localRow_total_incl_tax = param;
     }
@@ -1469,7 +1469,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
      */
     public void setBase_row_total_incl_tax(double param) {
         // setting primitive attribute tracker to true
-        localBase_row_total_incl_taxTracker = !Double.isNaN(param);
+        localBase_row_total_incl_taxTracker = !java.lang.Double.isNaN(param);
 
         this.localBase_row_total_incl_tax = param;
     }
@@ -1482,7 +1482,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getGift_message_id() {
+    public java.lang.String getGift_message_id() {
         return localGift_message_id;
     }
 
@@ -1490,7 +1490,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated setter method
      * @param param Gift_message_id
      */
-    public void setGift_message_id(String param) {
+    public void setGift_message_id(java.lang.String param) {
         localGift_message_idTracker = param != null;
 
         this.localGift_message_id = param;
@@ -1504,7 +1504,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getGift_message() {
+    public java.lang.String getGift_message() {
         return localGift_message;
     }
 
@@ -1512,7 +1512,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated setter method
      * @param param Gift_message
      */
-    public void setGift_message(String param) {
+    public void setGift_message(java.lang.String param) {
         localGift_messageTracker = param != null;
 
         this.localGift_message = param;
@@ -1526,7 +1526,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getGift_message_available() {
+    public java.lang.String getGift_message_available() {
         return localGift_message_available;
     }
 
@@ -1534,7 +1534,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated setter method
      * @param param Gift_message_available
      */
-    public void setGift_message_available(String param) {
+    public void setGift_message_available(java.lang.String param) {
         localGift_message_availableTracker = param != null;
 
         this.localGift_message_available = param;
@@ -1558,7 +1558,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
      */
     public void setWeee_tax_applied(double param) {
         // setting primitive attribute tracker to true
-        localWeee_tax_appliedTracker = !Double.isNaN(param);
+        localWeee_tax_appliedTracker = !java.lang.Double.isNaN(param);
 
         this.localWeee_tax_applied = param;
     }
@@ -1581,7 +1581,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
      */
     public void setWeee_tax_applied_amount(double param) {
         // setting primitive attribute tracker to true
-        localWeee_tax_applied_amountTracker = !Double.isNaN(param);
+        localWeee_tax_applied_amountTracker = !java.lang.Double.isNaN(param);
 
         this.localWeee_tax_applied_amount = param;
     }
@@ -1604,7 +1604,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
      */
     public void setWeee_tax_applied_row_amount(double param) {
         // setting primitive attribute tracker to true
-        localWeee_tax_applied_row_amountTracker = !Double.isNaN(param);
+        localWeee_tax_applied_row_amountTracker = !java.lang.Double.isNaN(param);
 
         this.localWeee_tax_applied_row_amount = param;
     }
@@ -1627,7 +1627,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
      */
     public void setBase_weee_tax_applied_amount(double param) {
         // setting primitive attribute tracker to true
-        localBase_weee_tax_applied_amountTracker = !Double.isNaN(param);
+        localBase_weee_tax_applied_amountTracker = !java.lang.Double.isNaN(param);
 
         this.localBase_weee_tax_applied_amount = param;
     }
@@ -1650,7 +1650,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
      */
     public void setBase_weee_tax_applied_row_amount(double param) {
         // setting primitive attribute tracker to true
-        localBase_weee_tax_applied_row_amountTracker = !Double.isNaN(param);
+        localBase_weee_tax_applied_row_amountTracker = !java.lang.Double.isNaN(param);
 
         this.localBase_weee_tax_applied_row_amount = param;
     }
@@ -1673,7 +1673,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
      */
     public void setWeee_tax_disposition(double param) {
         // setting primitive attribute tracker to true
-        localWeee_tax_dispositionTracker = !Double.isNaN(param);
+        localWeee_tax_dispositionTracker = !java.lang.Double.isNaN(param);
 
         this.localWeee_tax_disposition = param;
     }
@@ -1696,7 +1696,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
      */
     public void setWeee_tax_row_disposition(double param) {
         // setting primitive attribute tracker to true
-        localWeee_tax_row_dispositionTracker = !Double.isNaN(param);
+        localWeee_tax_row_dispositionTracker = !java.lang.Double.isNaN(param);
 
         this.localWeee_tax_row_disposition = param;
     }
@@ -1719,7 +1719,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
      */
     public void setBase_weee_tax_disposition(double param) {
         // setting primitive attribute tracker to true
-        localBase_weee_tax_dispositionTracker = !Double.isNaN(param);
+        localBase_weee_tax_dispositionTracker = !java.lang.Double.isNaN(param);
 
         this.localBase_weee_tax_disposition = param;
     }
@@ -1742,7 +1742,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
      */
     public void setBase_weee_tax_row_disposition(double param) {
         // setting primitive attribute tracker to true
-        localBase_weee_tax_row_dispositionTracker = !Double.isNaN(param);
+        localBase_weee_tax_row_dispositionTracker = !java.lang.Double.isNaN(param);
 
         this.localBase_weee_tax_row_disposition = param;
     }
@@ -1755,7 +1755,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getTax_class_id() {
+    public java.lang.String getTax_class_id() {
         return localTax_class_id;
     }
 
@@ -1763,7 +1763,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
      * Auto generated setter method
      * @param param Tax_class_id
      */
-    public void setTax_class_id(String param) {
+    public void setTax_class_id(java.lang.String param) {
         localTax_class_idTracker = param != null;
 
         this.localTax_class_id = param;
@@ -1796,8 +1796,8 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
         javax.xml.stream.XMLStreamWriter xmlWriter, boolean serializeType)
         throws javax.xml.stream.XMLStreamException,
             org.apache.axis2.databinding.ADBException {
-        String prefix = null;
-        String namespace = null;
+        java.lang.String prefix = null;
+        java.lang.String namespace = null;
 
         prefix = parentQName.getPrefix();
         namespace = parentQName.getNamespaceURI();
@@ -1805,7 +1805,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
             xmlWriter);
 
         if (serializeType) {
-            String namespacePrefix = registerPrefix(xmlWriter,
+            java.lang.String namespacePrefix = registerPrefix(xmlWriter,
                     "urn:Magento");
 
             if ((namespacePrefix != null) &&
@@ -1914,7 +1914,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
             namespace = "";
             writeStartElement(null, namespace, "is_virtual", xmlWriter);
 
-            if (localIs_virtual == Integer.MIN_VALUE) {
+            if (localIs_virtual == java.lang.Integer.MIN_VALUE) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "is_virtual cannot be null!!");
             } else {
@@ -2049,7 +2049,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
             namespace = "";
             writeStartElement(null, namespace, "weight", xmlWriter);
 
-            if (Double.isNaN(localWeight)) {
+            if (java.lang.Double.isNaN(localWeight)) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "weight cannot be null!!");
             } else {
@@ -2064,7 +2064,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
             namespace = "";
             writeStartElement(null, namespace, "qty", xmlWriter);
 
-            if (Double.isNaN(localQty)) {
+            if (java.lang.Double.isNaN(localQty)) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "qty cannot be null!!");
             } else {
@@ -2079,7 +2079,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
             namespace = "";
             writeStartElement(null, namespace, "price", xmlWriter);
 
-            if (Double.isNaN(localPrice)) {
+            if (java.lang.Double.isNaN(localPrice)) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "price cannot be null!!");
             } else {
@@ -2094,7 +2094,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
             namespace = "";
             writeStartElement(null, namespace, "base_price", xmlWriter);
 
-            if (Double.isNaN(localBase_price)) {
+            if (java.lang.Double.isNaN(localBase_price)) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "base_price cannot be null!!");
             } else {
@@ -2109,7 +2109,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
             namespace = "";
             writeStartElement(null, namespace, "custom_price", xmlWriter);
 
-            if (Double.isNaN(localCustom_price)) {
+            if (java.lang.Double.isNaN(localCustom_price)) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "custom_price cannot be null!!");
             } else {
@@ -2124,7 +2124,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
             namespace = "";
             writeStartElement(null, namespace, "discount_percent", xmlWriter);
 
-            if (Double.isNaN(localDiscount_percent)) {
+            if (java.lang.Double.isNaN(localDiscount_percent)) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "discount_percent cannot be null!!");
             } else {
@@ -2139,7 +2139,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
             namespace = "";
             writeStartElement(null, namespace, "discount_amount", xmlWriter);
 
-            if (Double.isNaN(localDiscount_amount)) {
+            if (java.lang.Double.isNaN(localDiscount_amount)) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "discount_amount cannot be null!!");
             } else {
@@ -2154,7 +2154,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
             namespace = "";
             writeStartElement(null, namespace, "base_discount_amount", xmlWriter);
 
-            if (Double.isNaN(localBase_discount_amount)) {
+            if (java.lang.Double.isNaN(localBase_discount_amount)) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "base_discount_amount cannot be null!!");
             } else {
@@ -2169,7 +2169,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
             namespace = "";
             writeStartElement(null, namespace, "tax_percent", xmlWriter);
 
-            if (Double.isNaN(localTax_percent)) {
+            if (java.lang.Double.isNaN(localTax_percent)) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "tax_percent cannot be null!!");
             } else {
@@ -2184,7 +2184,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
             namespace = "";
             writeStartElement(null, namespace, "tax_amount", xmlWriter);
 
-            if (Double.isNaN(localTax_amount)) {
+            if (java.lang.Double.isNaN(localTax_amount)) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "tax_amount cannot be null!!");
             } else {
@@ -2199,7 +2199,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
             namespace = "";
             writeStartElement(null, namespace, "base_tax_amount", xmlWriter);
 
-            if (Double.isNaN(localBase_tax_amount)) {
+            if (java.lang.Double.isNaN(localBase_tax_amount)) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "base_tax_amount cannot be null!!");
             } else {
@@ -2214,7 +2214,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
             namespace = "";
             writeStartElement(null, namespace, "row_total", xmlWriter);
 
-            if (Double.isNaN(localRow_total)) {
+            if (java.lang.Double.isNaN(localRow_total)) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "row_total cannot be null!!");
             } else {
@@ -2229,7 +2229,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
             namespace = "";
             writeStartElement(null, namespace, "base_row_total", xmlWriter);
 
-            if (Double.isNaN(localBase_row_total)) {
+            if (java.lang.Double.isNaN(localBase_row_total)) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "base_row_total cannot be null!!");
             } else {
@@ -2245,7 +2245,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
             writeStartElement(null, namespace, "row_total_with_discount",
                 xmlWriter);
 
-            if (Double.isNaN(localRow_total_with_discount)) {
+            if (java.lang.Double.isNaN(localRow_total_with_discount)) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "row_total_with_discount cannot be null!!");
             } else {
@@ -2260,7 +2260,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
             namespace = "";
             writeStartElement(null, namespace, "row_weight", xmlWriter);
 
-            if (Double.isNaN(localRow_weight)) {
+            if (java.lang.Double.isNaN(localRow_weight)) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "row_weight cannot be null!!");
             } else {
@@ -2291,7 +2291,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
             writeStartElement(null, namespace, "base_tax_before_discount",
                 xmlWriter);
 
-            if (Double.isNaN(localBase_tax_before_discount)) {
+            if (java.lang.Double.isNaN(localBase_tax_before_discount)) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "base_tax_before_discount cannot be null!!");
             } else {
@@ -2306,7 +2306,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
             namespace = "";
             writeStartElement(null, namespace, "tax_before_discount", xmlWriter);
 
-            if (Double.isNaN(localTax_before_discount)) {
+            if (java.lang.Double.isNaN(localTax_before_discount)) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "tax_before_discount cannot be null!!");
             } else {
@@ -2322,7 +2322,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
             writeStartElement(null, namespace, "original_custom_price",
                 xmlWriter);
 
-            if (Double.isNaN(localOriginal_custom_price)) {
+            if (java.lang.Double.isNaN(localOriginal_custom_price)) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "original_custom_price cannot be null!!");
             } else {
@@ -2337,7 +2337,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
             namespace = "";
             writeStartElement(null, namespace, "base_cost", xmlWriter);
 
-            if (Double.isNaN(localBase_cost)) {
+            if (java.lang.Double.isNaN(localBase_cost)) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "base_cost cannot be null!!");
             } else {
@@ -2352,7 +2352,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
             namespace = "";
             writeStartElement(null, namespace, "price_incl_tax", xmlWriter);
 
-            if (Double.isNaN(localPrice_incl_tax)) {
+            if (java.lang.Double.isNaN(localPrice_incl_tax)) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "price_incl_tax cannot be null!!");
             } else {
@@ -2367,7 +2367,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
             namespace = "";
             writeStartElement(null, namespace, "base_price_incl_tax", xmlWriter);
 
-            if (Double.isNaN(localBase_price_incl_tax)) {
+            if (java.lang.Double.isNaN(localBase_price_incl_tax)) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "base_price_incl_tax cannot be null!!");
             } else {
@@ -2382,7 +2382,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
             namespace = "";
             writeStartElement(null, namespace, "row_total_incl_tax", xmlWriter);
 
-            if (Double.isNaN(localRow_total_incl_tax)) {
+            if (java.lang.Double.isNaN(localRow_total_incl_tax)) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "row_total_incl_tax cannot be null!!");
             } else {
@@ -2398,7 +2398,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
             writeStartElement(null, namespace, "base_row_total_incl_tax",
                 xmlWriter);
 
-            if (Double.isNaN(localBase_row_total_incl_tax)) {
+            if (java.lang.Double.isNaN(localBase_row_total_incl_tax)) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "base_row_total_incl_tax cannot be null!!");
             } else {
@@ -2459,7 +2459,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
             namespace = "";
             writeStartElement(null, namespace, "weee_tax_applied", xmlWriter);
 
-            if (Double.isNaN(localWeee_tax_applied)) {
+            if (java.lang.Double.isNaN(localWeee_tax_applied)) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "weee_tax_applied cannot be null!!");
             } else {
@@ -2475,7 +2475,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
             writeStartElement(null, namespace, "weee_tax_applied_amount",
                 xmlWriter);
 
-            if (Double.isNaN(localWeee_tax_applied_amount)) {
+            if (java.lang.Double.isNaN(localWeee_tax_applied_amount)) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "weee_tax_applied_amount cannot be null!!");
             } else {
@@ -2491,7 +2491,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
             writeStartElement(null, namespace, "weee_tax_applied_row_amount",
                 xmlWriter);
 
-            if (Double.isNaN(localWeee_tax_applied_row_amount)) {
+            if (java.lang.Double.isNaN(localWeee_tax_applied_row_amount)) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "weee_tax_applied_row_amount cannot be null!!");
             } else {
@@ -2507,7 +2507,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
             writeStartElement(null, namespace, "base_weee_tax_applied_amount",
                 xmlWriter);
 
-            if (Double.isNaN(localBase_weee_tax_applied_amount)) {
+            if (java.lang.Double.isNaN(localBase_weee_tax_applied_amount)) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "base_weee_tax_applied_amount cannot be null!!");
             } else {
@@ -2523,7 +2523,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
             writeStartElement(null, namespace,
                 "base_weee_tax_applied_row_amount", xmlWriter);
 
-            if (Double.isNaN(localBase_weee_tax_applied_row_amount)) {
+            if (java.lang.Double.isNaN(localBase_weee_tax_applied_row_amount)) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "base_weee_tax_applied_row_amount cannot be null!!");
             } else {
@@ -2538,7 +2538,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
             namespace = "";
             writeStartElement(null, namespace, "weee_tax_disposition", xmlWriter);
 
-            if (Double.isNaN(localWeee_tax_disposition)) {
+            if (java.lang.Double.isNaN(localWeee_tax_disposition)) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "weee_tax_disposition cannot be null!!");
             } else {
@@ -2554,7 +2554,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
             writeStartElement(null, namespace, "weee_tax_row_disposition",
                 xmlWriter);
 
-            if (Double.isNaN(localWeee_tax_row_disposition)) {
+            if (java.lang.Double.isNaN(localWeee_tax_row_disposition)) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "weee_tax_row_disposition cannot be null!!");
             } else {
@@ -2570,7 +2570,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
             writeStartElement(null, namespace, "base_weee_tax_disposition",
                 xmlWriter);
 
-            if (Double.isNaN(localBase_weee_tax_disposition)) {
+            if (java.lang.Double.isNaN(localBase_weee_tax_disposition)) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "base_weee_tax_disposition cannot be null!!");
             } else {
@@ -2586,7 +2586,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
             writeStartElement(null, namespace, "base_weee_tax_row_disposition",
                 xmlWriter);
 
-            if (Double.isNaN(localBase_weee_tax_row_disposition)) {
+            if (java.lang.Double.isNaN(localBase_weee_tax_row_disposition)) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "base_weee_tax_row_disposition cannot be null!!");
             } else {
@@ -2615,7 +2615,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
         xmlWriter.writeEndElement();
     }
 
-    private static String generatePrefix(String namespace) {
+    private static java.lang.String generatePrefix(java.lang.String namespace) {
         if (namespace.equals("urn:Magento")) {
             return "ns1";
         }
@@ -2626,11 +2626,11 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
     /**
      * Utility method to write an element start tag.
      */
-    private void writeStartElement(String prefix,
-        String namespace, String localPart,
+    private void writeStartElement(java.lang.String prefix,
+        java.lang.String namespace, java.lang.String localPart,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
-        String writerPrefix = xmlWriter.getPrefix(namespace);
+        java.lang.String writerPrefix = xmlWriter.getPrefix(namespace);
 
         if (writerPrefix != null) {
             xmlWriter.writeStartElement(namespace, localPart);
@@ -2650,9 +2650,9 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
     /**
      * Util method to write an attribute with the ns prefix
      */
-    private void writeAttribute(String prefix,
-        String namespace, String attName,
-        String attValue, javax.xml.stream.XMLStreamWriter xmlWriter)
+    private void writeAttribute(java.lang.String prefix,
+        java.lang.String namespace, java.lang.String attName,
+        java.lang.String attValue, javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
         if (xmlWriter.getPrefix(namespace) == null) {
             xmlWriter.writeNamespace(prefix, namespace);
@@ -2665,8 +2665,8 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
     /**
      * Util method to write an attribute without the ns prefix
      */
-    private void writeAttribute(String namespace,
-        String attName, String attValue,
+    private void writeAttribute(java.lang.String namespace,
+        java.lang.String attName, java.lang.String attValue,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
         if (namespace.equals("")) {
@@ -2680,18 +2680,18 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
     /**
      * Util method to write an attribute without the ns prefix
      */
-    private void writeQNameAttribute(String namespace,
-        String attName, javax.xml.namespace.QName qname,
+    private void writeQNameAttribute(java.lang.String namespace,
+        java.lang.String attName, javax.xml.namespace.QName qname,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
-        String attributeNamespace = qname.getNamespaceURI();
-        String attributePrefix = xmlWriter.getPrefix(attributeNamespace);
+        java.lang.String attributeNamespace = qname.getNamespaceURI();
+        java.lang.String attributePrefix = xmlWriter.getPrefix(attributeNamespace);
 
         if (attributePrefix == null) {
             attributePrefix = registerPrefix(xmlWriter, attributeNamespace);
         }
 
-        String attributeValue;
+        java.lang.String attributeValue;
 
         if (attributePrefix.trim().length() > 0) {
             attributeValue = attributePrefix + ":" + qname.getLocalPart();
@@ -2713,10 +2713,10 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
     private void writeQName(javax.xml.namespace.QName qname,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
-        String namespaceURI = qname.getNamespaceURI();
+        java.lang.String namespaceURI = qname.getNamespaceURI();
 
         if (namespaceURI != null) {
-            String prefix = xmlWriter.getPrefix(namespaceURI);
+            java.lang.String prefix = xmlWriter.getPrefix(namespaceURI);
 
             if (prefix == null) {
                 prefix = generatePrefix(namespaceURI);
@@ -2745,9 +2745,9 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
         if (qnames != null) {
             // we have to store this data until last moment since it is not possible to write any
             // namespace data after writing the charactor data
-            StringBuffer stringToWrite = new StringBuffer();
-            String namespaceURI = null;
-            String prefix = null;
+            java.lang.StringBuffer stringToWrite = new java.lang.StringBuffer();
+            java.lang.String namespaceURI = null;
+            java.lang.String prefix = null;
 
             for (int i = 0; i < qnames.length; i++) {
                 if (i > 0) {
@@ -2786,10 +2786,10 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
     /**
      * Register a namespace prefix
      */
-    private String registerPrefix(
-        javax.xml.stream.XMLStreamWriter xmlWriter, String namespace)
+    private java.lang.String registerPrefix(
+        javax.xml.stream.XMLStreamWriter xmlWriter, java.lang.String namespace)
         throws javax.xml.stream.XMLStreamException {
-        String prefix = xmlWriter.getPrefix(namespace);
+        java.lang.String prefix = xmlWriter.getPrefix(namespace);
 
         if (prefix == null) {
             prefix = generatePrefix(namespace);
@@ -2797,7 +2797,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
             javax.xml.namespace.NamespaceContext nsContext = xmlWriter.getNamespaceContext();
 
             while (true) {
-                String uri = nsContext.getNamespaceURI(prefix);
+                java.lang.String uri = nsContext.getNamespaceURI(prefix);
 
                 if ((uri == null) || (uri.length() == 0)) {
                     break;
@@ -3315,13 +3315,13 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
          *                If this object is a complex type, the reader is positioned at the end element of its outer element
          */
         public static ShoppingCartItemEntity parse(
-            javax.xml.stream.XMLStreamReader reader) throws Exception {
+            javax.xml.stream.XMLStreamReader reader) throws java.lang.Exception {
             ShoppingCartItemEntity object = new ShoppingCartItemEntity();
 
             int event;
-            String nillableValue = null;
-            String prefix = "";
-            String namespaceuri = "";
+            java.lang.String nillableValue = null;
+            java.lang.String prefix = "";
+            java.lang.String namespaceuri = "";
 
             try {
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -3329,11 +3329,11 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
 
                 if (reader.getAttributeValue(
                             "http://www.w3.org/2001/XMLSchema-instance", "type") != null) {
-                    String fullTypeName = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance",
+                    java.lang.String fullTypeName = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance",
                             "type");
 
                     if (fullTypeName != null) {
-                        String nsPrefix = null;
+                        java.lang.String nsPrefix = null;
 
                         if (fullTypeName.indexOf(":") > -1) {
                             nsPrefix = fullTypeName.substring(0,
@@ -3342,12 +3342,12 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
 
                         nsPrefix = (nsPrefix == null) ? "" : nsPrefix;
 
-                        String type = fullTypeName.substring(fullTypeName.indexOf(
+                        java.lang.String type = fullTypeName.substring(fullTypeName.indexOf(
                                     ":") + 1);
 
                         if (!"shoppingCartItemEntity".equals(type)) {
                             //find namespace for the prefix
-                            String nsUri = reader.getNamespaceContext()
+                            java.lang.String nsUri = reader.getNamespaceContext()
                                                            .getNamespaceURI(nsPrefix);
 
                             return (ShoppingCartItemEntity) magento.ExtensionMapper.getTypeObject(nsUri,
@@ -3377,7 +3377,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                             "The element: " + "item_id" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setItem_id(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -3404,7 +3404,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setCreated_at(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -3431,7 +3431,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setUpdated_at(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -3458,7 +3458,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setProduct_id(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -3484,7 +3484,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                             "The element: " + "store_id" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setStore_id(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -3511,7 +3511,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setParent_item_id(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -3538,7 +3538,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setIs_virtual(org.apache.axis2.databinding.utils.ConverterUtil.convertToInt(
                             content));
@@ -3547,7 +3547,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                 } // End of if for expected property start element
 
                 else {
-                    object.setIs_virtual(Integer.MIN_VALUE);
+                    object.setIs_virtual(java.lang.Integer.MIN_VALUE);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -3565,7 +3565,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                             "The element: " + "sku" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setSku(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -3591,7 +3591,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                             "The element: " + "name" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setName(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -3618,7 +3618,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setDescription(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -3645,7 +3645,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setApplied_rule_ids(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -3672,7 +3672,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setAdditional_data(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -3699,7 +3699,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setFree_shipping(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -3726,7 +3726,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setIs_qty_decimal(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -3753,7 +3753,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setNo_discount(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -3779,7 +3779,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                             "The element: " + "weight" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setWeight(org.apache.axis2.databinding.utils.ConverterUtil.convertToDouble(
                             content));
@@ -3788,7 +3788,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                 } // End of if for expected property start element
 
                 else {
-                    object.setWeight(Double.NaN);
+                    object.setWeight(java.lang.Double.NaN);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -3806,7 +3806,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                             "The element: " + "qty" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setQty(org.apache.axis2.databinding.utils.ConverterUtil.convertToDouble(
                             content));
@@ -3815,7 +3815,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                 } // End of if for expected property start element
 
                 else {
-                    object.setQty(Double.NaN);
+                    object.setQty(java.lang.Double.NaN);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -3833,7 +3833,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                             "The element: " + "price" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setPrice(org.apache.axis2.databinding.utils.ConverterUtil.convertToDouble(
                             content));
@@ -3842,7 +3842,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                 } // End of if for expected property start element
 
                 else {
-                    object.setPrice(Double.NaN);
+                    object.setPrice(java.lang.Double.NaN);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -3861,7 +3861,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setBase_price(org.apache.axis2.databinding.utils.ConverterUtil.convertToDouble(
                             content));
@@ -3870,7 +3870,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                 } // End of if for expected property start element
 
                 else {
-                    object.setBase_price(Double.NaN);
+                    object.setBase_price(java.lang.Double.NaN);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -3889,7 +3889,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setCustom_price(org.apache.axis2.databinding.utils.ConverterUtil.convertToDouble(
                             content));
@@ -3898,7 +3898,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                 } // End of if for expected property start element
 
                 else {
-                    object.setCustom_price(Double.NaN);
+                    object.setCustom_price(java.lang.Double.NaN);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -3917,7 +3917,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setDiscount_percent(org.apache.axis2.databinding.utils.ConverterUtil.convertToDouble(
                             content));
@@ -3926,7 +3926,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                 } // End of if for expected property start element
 
                 else {
-                    object.setDiscount_percent(Double.NaN);
+                    object.setDiscount_percent(java.lang.Double.NaN);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -3945,7 +3945,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setDiscount_amount(org.apache.axis2.databinding.utils.ConverterUtil.convertToDouble(
                             content));
@@ -3954,7 +3954,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                 } // End of if for expected property start element
 
                 else {
-                    object.setDiscount_amount(Double.NaN);
+                    object.setDiscount_amount(java.lang.Double.NaN);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -3973,7 +3973,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setBase_discount_amount(org.apache.axis2.databinding.utils.ConverterUtil.convertToDouble(
                             content));
@@ -3982,7 +3982,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                 } // End of if for expected property start element
 
                 else {
-                    object.setBase_discount_amount(Double.NaN);
+                    object.setBase_discount_amount(java.lang.Double.NaN);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -4001,7 +4001,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setTax_percent(org.apache.axis2.databinding.utils.ConverterUtil.convertToDouble(
                             content));
@@ -4010,7 +4010,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                 } // End of if for expected property start element
 
                 else {
-                    object.setTax_percent(Double.NaN);
+                    object.setTax_percent(java.lang.Double.NaN);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -4029,7 +4029,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setTax_amount(org.apache.axis2.databinding.utils.ConverterUtil.convertToDouble(
                             content));
@@ -4038,7 +4038,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                 } // End of if for expected property start element
 
                 else {
-                    object.setTax_amount(Double.NaN);
+                    object.setTax_amount(java.lang.Double.NaN);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -4057,7 +4057,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setBase_tax_amount(org.apache.axis2.databinding.utils.ConverterUtil.convertToDouble(
                             content));
@@ -4066,7 +4066,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                 } // End of if for expected property start element
 
                 else {
-                    object.setBase_tax_amount(Double.NaN);
+                    object.setBase_tax_amount(java.lang.Double.NaN);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -4084,7 +4084,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                             "The element: " + "row_total" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setRow_total(org.apache.axis2.databinding.utils.ConverterUtil.convertToDouble(
                             content));
@@ -4093,7 +4093,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                 } // End of if for expected property start element
 
                 else {
-                    object.setRow_total(Double.NaN);
+                    object.setRow_total(java.lang.Double.NaN);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -4112,7 +4112,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setBase_row_total(org.apache.axis2.databinding.utils.ConverterUtil.convertToDouble(
                             content));
@@ -4121,7 +4121,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                 } // End of if for expected property start element
 
                 else {
-                    object.setBase_row_total(Double.NaN);
+                    object.setBase_row_total(java.lang.Double.NaN);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -4140,7 +4140,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setRow_total_with_discount(org.apache.axis2.databinding.utils.ConverterUtil.convertToDouble(
                             content));
@@ -4149,7 +4149,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                 } // End of if for expected property start element
 
                 else {
-                    object.setRow_total_with_discount(Double.NaN);
+                    object.setRow_total_with_discount(java.lang.Double.NaN);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -4168,7 +4168,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setRow_weight(org.apache.axis2.databinding.utils.ConverterUtil.convertToDouble(
                             content));
@@ -4177,7 +4177,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                 } // End of if for expected property start element
 
                 else {
-                    object.setRow_weight(Double.NaN);
+                    object.setRow_weight(java.lang.Double.NaN);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -4196,7 +4196,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setProduct_type(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -4223,7 +4223,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setBase_tax_before_discount(org.apache.axis2.databinding.utils.ConverterUtil.convertToDouble(
                             content));
@@ -4232,7 +4232,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                 } // End of if for expected property start element
 
                 else {
-                    object.setBase_tax_before_discount(Double.NaN);
+                    object.setBase_tax_before_discount(java.lang.Double.NaN);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -4251,7 +4251,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setTax_before_discount(org.apache.axis2.databinding.utils.ConverterUtil.convertToDouble(
                             content));
@@ -4260,7 +4260,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                 } // End of if for expected property start element
 
                 else {
-                    object.setTax_before_discount(Double.NaN);
+                    object.setTax_before_discount(java.lang.Double.NaN);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -4279,7 +4279,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setOriginal_custom_price(org.apache.axis2.databinding.utils.ConverterUtil.convertToDouble(
                             content));
@@ -4288,7 +4288,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                 } // End of if for expected property start element
 
                 else {
-                    object.setOriginal_custom_price(Double.NaN);
+                    object.setOriginal_custom_price(java.lang.Double.NaN);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -4306,7 +4306,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                             "The element: " + "base_cost" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setBase_cost(org.apache.axis2.databinding.utils.ConverterUtil.convertToDouble(
                             content));
@@ -4315,7 +4315,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                 } // End of if for expected property start element
 
                 else {
-                    object.setBase_cost(Double.NaN);
+                    object.setBase_cost(java.lang.Double.NaN);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -4334,7 +4334,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setPrice_incl_tax(org.apache.axis2.databinding.utils.ConverterUtil.convertToDouble(
                             content));
@@ -4343,7 +4343,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                 } // End of if for expected property start element
 
                 else {
-                    object.setPrice_incl_tax(Double.NaN);
+                    object.setPrice_incl_tax(java.lang.Double.NaN);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -4362,7 +4362,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setBase_price_incl_tax(org.apache.axis2.databinding.utils.ConverterUtil.convertToDouble(
                             content));
@@ -4371,7 +4371,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                 } // End of if for expected property start element
 
                 else {
-                    object.setBase_price_incl_tax(Double.NaN);
+                    object.setBase_price_incl_tax(java.lang.Double.NaN);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -4390,7 +4390,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setRow_total_incl_tax(org.apache.axis2.databinding.utils.ConverterUtil.convertToDouble(
                             content));
@@ -4399,7 +4399,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                 } // End of if for expected property start element
 
                 else {
-                    object.setRow_total_incl_tax(Double.NaN);
+                    object.setRow_total_incl_tax(java.lang.Double.NaN);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -4418,7 +4418,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setBase_row_total_incl_tax(org.apache.axis2.databinding.utils.ConverterUtil.convertToDouble(
                             content));
@@ -4427,7 +4427,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                 } // End of if for expected property start element
 
                 else {
-                    object.setBase_row_total_incl_tax(Double.NaN);
+                    object.setBase_row_total_incl_tax(java.lang.Double.NaN);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -4446,7 +4446,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setGift_message_id(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -4473,7 +4473,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setGift_message(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -4500,7 +4500,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setGift_message_available(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -4527,7 +4527,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setWeee_tax_applied(org.apache.axis2.databinding.utils.ConverterUtil.convertToDouble(
                             content));
@@ -4536,7 +4536,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                 } // End of if for expected property start element
 
                 else {
-                    object.setWeee_tax_applied(Double.NaN);
+                    object.setWeee_tax_applied(java.lang.Double.NaN);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -4555,7 +4555,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setWeee_tax_applied_amount(org.apache.axis2.databinding.utils.ConverterUtil.convertToDouble(
                             content));
@@ -4564,7 +4564,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                 } // End of if for expected property start element
 
                 else {
-                    object.setWeee_tax_applied_amount(Double.NaN);
+                    object.setWeee_tax_applied_amount(java.lang.Double.NaN);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -4584,7 +4584,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setWeee_tax_applied_row_amount(org.apache.axis2.databinding.utils.ConverterUtil.convertToDouble(
                             content));
@@ -4593,7 +4593,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                 } // End of if for expected property start element
 
                 else {
-                    object.setWeee_tax_applied_row_amount(Double.NaN);
+                    object.setWeee_tax_applied_row_amount(java.lang.Double.NaN);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -4613,7 +4613,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setBase_weee_tax_applied_amount(org.apache.axis2.databinding.utils.ConverterUtil.convertToDouble(
                             content));
@@ -4622,7 +4622,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                 } // End of if for expected property start element
 
                 else {
-                    object.setBase_weee_tax_applied_amount(Double.NaN);
+                    object.setBase_weee_tax_applied_amount(java.lang.Double.NaN);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -4643,7 +4643,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setBase_weee_tax_applied_row_amount(org.apache.axis2.databinding.utils.ConverterUtil.convertToDouble(
                             content));
@@ -4652,7 +4652,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                 } // End of if for expected property start element
 
                 else {
-                    object.setBase_weee_tax_applied_row_amount(Double.NaN);
+                    object.setBase_weee_tax_applied_row_amount(java.lang.Double.NaN);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -4671,7 +4671,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setWeee_tax_disposition(org.apache.axis2.databinding.utils.ConverterUtil.convertToDouble(
                             content));
@@ -4680,7 +4680,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                 } // End of if for expected property start element
 
                 else {
-                    object.setWeee_tax_disposition(Double.NaN);
+                    object.setWeee_tax_disposition(java.lang.Double.NaN);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -4699,7 +4699,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setWeee_tax_row_disposition(org.apache.axis2.databinding.utils.ConverterUtil.convertToDouble(
                             content));
@@ -4708,7 +4708,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                 } // End of if for expected property start element
 
                 else {
-                    object.setWeee_tax_row_disposition(Double.NaN);
+                    object.setWeee_tax_row_disposition(java.lang.Double.NaN);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -4728,7 +4728,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setBase_weee_tax_disposition(org.apache.axis2.databinding.utils.ConverterUtil.convertToDouble(
                             content));
@@ -4737,7 +4737,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                 } // End of if for expected property start element
 
                 else {
-                    object.setBase_weee_tax_disposition(Double.NaN);
+                    object.setBase_weee_tax_disposition(java.lang.Double.NaN);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -4757,7 +4757,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setBase_weee_tax_row_disposition(org.apache.axis2.databinding.utils.ConverterUtil.convertToDouble(
                             content));
@@ -4766,7 +4766,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                 } // End of if for expected property start element
 
                 else {
-                    object.setBase_weee_tax_row_disposition(Double.NaN);
+                    object.setBase_weee_tax_row_disposition(java.lang.Double.NaN);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -4785,7 +4785,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setTax_class_id(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -4805,7 +4805,7 @@ public class ShoppingCartItemEntity implements org.apache.axis2.databinding.ADBB
                         "Unexpected subelement " + reader.getName());
                 }
             } catch (javax.xml.stream.XMLStreamException e) {
-                throw new Exception(e);
+                throw new java.lang.Exception(e);
             }
 
             return object;

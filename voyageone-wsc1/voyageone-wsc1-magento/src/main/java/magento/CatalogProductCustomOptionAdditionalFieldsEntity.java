@@ -23,7 +23,7 @@ public class CatalogProductCustomOptionAdditionalFieldsEntity implements org.apa
     /**
      * field for Title
      */
-    protected String localTitle;
+    protected java.lang.String localTitle;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -34,7 +34,7 @@ public class CatalogProductCustomOptionAdditionalFieldsEntity implements org.apa
     /**
      * field for Price
      */
-    protected String localPrice;
+    protected java.lang.String localPrice;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -45,7 +45,7 @@ public class CatalogProductCustomOptionAdditionalFieldsEntity implements org.apa
     /**
      * field for Price_type
      */
-    protected String localPrice_type;
+    protected java.lang.String localPrice_type;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -56,7 +56,7 @@ public class CatalogProductCustomOptionAdditionalFieldsEntity implements org.apa
     /**
      * field for Sku
      */
-    protected String localSku;
+    protected java.lang.String localSku;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -67,7 +67,7 @@ public class CatalogProductCustomOptionAdditionalFieldsEntity implements org.apa
     /**
      * field for Max_characters
      */
-    protected String localMax_characters;
+    protected java.lang.String localMax_characters;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -78,7 +78,7 @@ public class CatalogProductCustomOptionAdditionalFieldsEntity implements org.apa
     /**
      * field for Sort_order
      */
-    protected String localSort_order;
+    protected java.lang.String localSort_order;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -89,7 +89,7 @@ public class CatalogProductCustomOptionAdditionalFieldsEntity implements org.apa
     /**
      * field for File_extension
      */
-    protected String localFile_extension;
+    protected java.lang.String localFile_extension;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -100,7 +100,7 @@ public class CatalogProductCustomOptionAdditionalFieldsEntity implements org.apa
     /**
      * field for Image_size_x
      */
-    protected String localImage_size_x;
+    protected java.lang.String localImage_size_x;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -111,7 +111,7 @@ public class CatalogProductCustomOptionAdditionalFieldsEntity implements org.apa
     /**
      * field for Image_size_y
      */
-    protected String localImage_size_y;
+    protected java.lang.String localImage_size_y;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -122,7 +122,7 @@ public class CatalogProductCustomOptionAdditionalFieldsEntity implements org.apa
     /**
      * field for Value_id
      */
-    protected String localValue_id;
+    protected java.lang.String localValue_id;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -138,7 +138,7 @@ public class CatalogProductCustomOptionAdditionalFieldsEntity implements org.apa
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getTitle() {
+    public java.lang.String getTitle() {
         return localTitle;
     }
 
@@ -146,7 +146,7 @@ public class CatalogProductCustomOptionAdditionalFieldsEntity implements org.apa
      * Auto generated setter method
      * @param param Title
      */
-    public void setTitle(String param) {
+    public void setTitle(java.lang.String param) {
         localTitleTracker = param != null;
 
         this.localTitle = param;
@@ -160,7 +160,7 @@ public class CatalogProductCustomOptionAdditionalFieldsEntity implements org.apa
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getPrice() {
+    public java.lang.String getPrice() {
         return localPrice;
     }
 
@@ -168,7 +168,7 @@ public class CatalogProductCustomOptionAdditionalFieldsEntity implements org.apa
      * Auto generated setter method
      * @param param Price
      */
-    public void setPrice(String param) {
+    public void setPrice(java.lang.String param) {
         localPriceTracker = param != null;
 
         this.localPrice = param;
@@ -182,7 +182,7 @@ public class CatalogProductCustomOptionAdditionalFieldsEntity implements org.apa
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getPrice_type() {
+    public java.lang.String getPrice_type() {
         return localPrice_type;
     }
 
@@ -190,7 +190,7 @@ public class CatalogProductCustomOptionAdditionalFieldsEntity implements org.apa
      * Auto generated setter method
      * @param param Price_type
      */
-    public void setPrice_type(String param) {
+    public void setPrice_type(java.lang.String param) {
         localPrice_typeTracker = param != null;
 
         this.localPrice_type = param;
@@ -204,7 +204,7 @@ public class CatalogProductCustomOptionAdditionalFieldsEntity implements org.apa
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getSku() {
+    public java.lang.String getSku() {
         return localSku;
     }
 
@@ -212,7 +212,7 @@ public class CatalogProductCustomOptionAdditionalFieldsEntity implements org.apa
      * Auto generated setter method
      * @param param Sku
      */
-    public void setSku(String param) {
+    public void setSku(java.lang.String param) {
         localSkuTracker = param != null;
 
         this.localSku = param;
@@ -226,7 +226,7 @@ public class CatalogProductCustomOptionAdditionalFieldsEntity implements org.apa
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getMax_characters() {
+    public java.lang.String getMax_characters() {
         return localMax_characters;
     }
 
@@ -234,7 +234,7 @@ public class CatalogProductCustomOptionAdditionalFieldsEntity implements org.apa
      * Auto generated setter method
      * @param param Max_characters
      */
-    public void setMax_characters(String param) {
+    public void setMax_characters(java.lang.String param) {
         localMax_charactersTracker = param != null;
 
         this.localMax_characters = param;
@@ -248,7 +248,7 @@ public class CatalogProductCustomOptionAdditionalFieldsEntity implements org.apa
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getSort_order() {
+    public java.lang.String getSort_order() {
         return localSort_order;
     }
 
@@ -256,7 +256,7 @@ public class CatalogProductCustomOptionAdditionalFieldsEntity implements org.apa
      * Auto generated setter method
      * @param param Sort_order
      */
-    public void setSort_order(String param) {
+    public void setSort_order(java.lang.String param) {
         localSort_orderTracker = param != null;
 
         this.localSort_order = param;
@@ -270,7 +270,7 @@ public class CatalogProductCustomOptionAdditionalFieldsEntity implements org.apa
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getFile_extension() {
+    public java.lang.String getFile_extension() {
         return localFile_extension;
     }
 
@@ -278,7 +278,7 @@ public class CatalogProductCustomOptionAdditionalFieldsEntity implements org.apa
      * Auto generated setter method
      * @param param File_extension
      */
-    public void setFile_extension(String param) {
+    public void setFile_extension(java.lang.String param) {
         localFile_extensionTracker = param != null;
 
         this.localFile_extension = param;
@@ -292,7 +292,7 @@ public class CatalogProductCustomOptionAdditionalFieldsEntity implements org.apa
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getImage_size_x() {
+    public java.lang.String getImage_size_x() {
         return localImage_size_x;
     }
 
@@ -300,7 +300,7 @@ public class CatalogProductCustomOptionAdditionalFieldsEntity implements org.apa
      * Auto generated setter method
      * @param param Image_size_x
      */
-    public void setImage_size_x(String param) {
+    public void setImage_size_x(java.lang.String param) {
         localImage_size_xTracker = param != null;
 
         this.localImage_size_x = param;
@@ -314,7 +314,7 @@ public class CatalogProductCustomOptionAdditionalFieldsEntity implements org.apa
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getImage_size_y() {
+    public java.lang.String getImage_size_y() {
         return localImage_size_y;
     }
 
@@ -322,7 +322,7 @@ public class CatalogProductCustomOptionAdditionalFieldsEntity implements org.apa
      * Auto generated setter method
      * @param param Image_size_y
      */
-    public void setImage_size_y(String param) {
+    public void setImage_size_y(java.lang.String param) {
         localImage_size_yTracker = param != null;
 
         this.localImage_size_y = param;
@@ -336,7 +336,7 @@ public class CatalogProductCustomOptionAdditionalFieldsEntity implements org.apa
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getValue_id() {
+    public java.lang.String getValue_id() {
         return localValue_id;
     }
 
@@ -344,7 +344,7 @@ public class CatalogProductCustomOptionAdditionalFieldsEntity implements org.apa
      * Auto generated setter method
      * @param param Value_id
      */
-    public void setValue_id(String param) {
+    public void setValue_id(java.lang.String param) {
         localValue_idTracker = param != null;
 
         this.localValue_id = param;
@@ -377,8 +377,8 @@ public class CatalogProductCustomOptionAdditionalFieldsEntity implements org.apa
         javax.xml.stream.XMLStreamWriter xmlWriter, boolean serializeType)
         throws javax.xml.stream.XMLStreamException,
             org.apache.axis2.databinding.ADBException {
-        String prefix = null;
-        String namespace = null;
+        java.lang.String prefix = null;
+        java.lang.String namespace = null;
 
         prefix = parentQName.getPrefix();
         namespace = parentQName.getNamespaceURI();
@@ -386,7 +386,7 @@ public class CatalogProductCustomOptionAdditionalFieldsEntity implements org.apa
             xmlWriter);
 
         if (serializeType) {
-            String namespacePrefix = registerPrefix(xmlWriter,
+            java.lang.String namespacePrefix = registerPrefix(xmlWriter,
                     "urn:Magento");
 
             if ((namespacePrefix != null) &&
@@ -557,7 +557,7 @@ public class CatalogProductCustomOptionAdditionalFieldsEntity implements org.apa
         xmlWriter.writeEndElement();
     }
 
-    private static String generatePrefix(String namespace) {
+    private static java.lang.String generatePrefix(java.lang.String namespace) {
         if (namespace.equals("urn:Magento")) {
             return "ns1";
         }
@@ -568,11 +568,11 @@ public class CatalogProductCustomOptionAdditionalFieldsEntity implements org.apa
     /**
      * Utility method to write an element start tag.
      */
-    private void writeStartElement(String prefix,
-        String namespace, String localPart,
+    private void writeStartElement(java.lang.String prefix,
+        java.lang.String namespace, java.lang.String localPart,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
-        String writerPrefix = xmlWriter.getPrefix(namespace);
+        java.lang.String writerPrefix = xmlWriter.getPrefix(namespace);
 
         if (writerPrefix != null) {
             xmlWriter.writeStartElement(namespace, localPart);
@@ -592,9 +592,9 @@ public class CatalogProductCustomOptionAdditionalFieldsEntity implements org.apa
     /**
      * Util method to write an attribute with the ns prefix
      */
-    private void writeAttribute(String prefix,
-        String namespace, String attName,
-        String attValue, javax.xml.stream.XMLStreamWriter xmlWriter)
+    private void writeAttribute(java.lang.String prefix,
+        java.lang.String namespace, java.lang.String attName,
+        java.lang.String attValue, javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
         if (xmlWriter.getPrefix(namespace) == null) {
             xmlWriter.writeNamespace(prefix, namespace);
@@ -607,8 +607,8 @@ public class CatalogProductCustomOptionAdditionalFieldsEntity implements org.apa
     /**
      * Util method to write an attribute without the ns prefix
      */
-    private void writeAttribute(String namespace,
-        String attName, String attValue,
+    private void writeAttribute(java.lang.String namespace,
+        java.lang.String attName, java.lang.String attValue,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
         if (namespace.equals("")) {
@@ -622,18 +622,18 @@ public class CatalogProductCustomOptionAdditionalFieldsEntity implements org.apa
     /**
      * Util method to write an attribute without the ns prefix
      */
-    private void writeQNameAttribute(String namespace,
-        String attName, javax.xml.namespace.QName qname,
+    private void writeQNameAttribute(java.lang.String namespace,
+        java.lang.String attName, javax.xml.namespace.QName qname,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
-        String attributeNamespace = qname.getNamespaceURI();
-        String attributePrefix = xmlWriter.getPrefix(attributeNamespace);
+        java.lang.String attributeNamespace = qname.getNamespaceURI();
+        java.lang.String attributePrefix = xmlWriter.getPrefix(attributeNamespace);
 
         if (attributePrefix == null) {
             attributePrefix = registerPrefix(xmlWriter, attributeNamespace);
         }
 
-        String attributeValue;
+        java.lang.String attributeValue;
 
         if (attributePrefix.trim().length() > 0) {
             attributeValue = attributePrefix + ":" + qname.getLocalPart();
@@ -655,10 +655,10 @@ public class CatalogProductCustomOptionAdditionalFieldsEntity implements org.apa
     private void writeQName(javax.xml.namespace.QName qname,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
-        String namespaceURI = qname.getNamespaceURI();
+        java.lang.String namespaceURI = qname.getNamespaceURI();
 
         if (namespaceURI != null) {
-            String prefix = xmlWriter.getPrefix(namespaceURI);
+            java.lang.String prefix = xmlWriter.getPrefix(namespaceURI);
 
             if (prefix == null) {
                 prefix = generatePrefix(namespaceURI);
@@ -687,9 +687,9 @@ public class CatalogProductCustomOptionAdditionalFieldsEntity implements org.apa
         if (qnames != null) {
             // we have to store this data until last moment since it is not possible to write any
             // namespace data after writing the charactor data
-            StringBuffer stringToWrite = new StringBuffer();
-            String namespaceURI = null;
-            String prefix = null;
+            java.lang.StringBuffer stringToWrite = new java.lang.StringBuffer();
+            java.lang.String namespaceURI = null;
+            java.lang.String prefix = null;
 
             for (int i = 0; i < qnames.length; i++) {
                 if (i > 0) {
@@ -728,10 +728,10 @@ public class CatalogProductCustomOptionAdditionalFieldsEntity implements org.apa
     /**
      * Register a namespace prefix
      */
-    private String registerPrefix(
-        javax.xml.stream.XMLStreamWriter xmlWriter, String namespace)
+    private java.lang.String registerPrefix(
+        javax.xml.stream.XMLStreamWriter xmlWriter, java.lang.String namespace)
         throws javax.xml.stream.XMLStreamException {
-        String prefix = xmlWriter.getPrefix(namespace);
+        java.lang.String prefix = xmlWriter.getPrefix(namespace);
 
         if (prefix == null) {
             prefix = generatePrefix(namespace);
@@ -739,7 +739,7 @@ public class CatalogProductCustomOptionAdditionalFieldsEntity implements org.apa
             javax.xml.namespace.NamespaceContext nsContext = xmlWriter.getNamespaceContext();
 
             while (true) {
-                String uri = nsContext.getNamespaceURI(prefix);
+                java.lang.String uri = nsContext.getNamespaceURI(prefix);
 
                 if ((uri == null) || (uri.length() == 0)) {
                     break;
@@ -901,13 +901,13 @@ public class CatalogProductCustomOptionAdditionalFieldsEntity implements org.apa
          *                If this object is a complex type, the reader is positioned at the end element of its outer element
          */
         public static CatalogProductCustomOptionAdditionalFieldsEntity parse(
-            javax.xml.stream.XMLStreamReader reader) throws Exception {
+            javax.xml.stream.XMLStreamReader reader) throws java.lang.Exception {
             CatalogProductCustomOptionAdditionalFieldsEntity object = new CatalogProductCustomOptionAdditionalFieldsEntity();
 
             int event;
-            String nillableValue = null;
-            String prefix = "";
-            String namespaceuri = "";
+            java.lang.String nillableValue = null;
+            java.lang.String prefix = "";
+            java.lang.String namespaceuri = "";
 
             try {
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -915,11 +915,11 @@ public class CatalogProductCustomOptionAdditionalFieldsEntity implements org.apa
 
                 if (reader.getAttributeValue(
                             "http://www.w3.org/2001/XMLSchema-instance", "type") != null) {
-                    String fullTypeName = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance",
+                    java.lang.String fullTypeName = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance",
                             "type");
 
                     if (fullTypeName != null) {
-                        String nsPrefix = null;
+                        java.lang.String nsPrefix = null;
 
                         if (fullTypeName.indexOf(":") > -1) {
                             nsPrefix = fullTypeName.substring(0,
@@ -928,13 +928,13 @@ public class CatalogProductCustomOptionAdditionalFieldsEntity implements org.apa
 
                         nsPrefix = (nsPrefix == null) ? "" : nsPrefix;
 
-                        String type = fullTypeName.substring(fullTypeName.indexOf(
+                        java.lang.String type = fullTypeName.substring(fullTypeName.indexOf(
                                     ":") + 1);
 
                         if (!"catalogProductCustomOptionAdditionalFieldsEntity".equals(
                                     type)) {
                             //find namespace for the prefix
-                            String nsUri = reader.getNamespaceContext()
+                            java.lang.String nsUri = reader.getNamespaceContext()
                                                            .getNamespaceURI(nsPrefix);
 
                             return (CatalogProductCustomOptionAdditionalFieldsEntity) magento.ExtensionMapper.getTypeObject(nsUri,
@@ -964,7 +964,7 @@ public class CatalogProductCustomOptionAdditionalFieldsEntity implements org.apa
                             "The element: " + "title" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setTitle(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -990,7 +990,7 @@ public class CatalogProductCustomOptionAdditionalFieldsEntity implements org.apa
                             "The element: " + "price" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setPrice(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1017,7 +1017,7 @@ public class CatalogProductCustomOptionAdditionalFieldsEntity implements org.apa
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setPrice_type(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1043,7 +1043,7 @@ public class CatalogProductCustomOptionAdditionalFieldsEntity implements org.apa
                             "The element: " + "sku" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setSku(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1070,7 +1070,7 @@ public class CatalogProductCustomOptionAdditionalFieldsEntity implements org.apa
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setMax_characters(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1097,7 +1097,7 @@ public class CatalogProductCustomOptionAdditionalFieldsEntity implements org.apa
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setSort_order(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1124,7 +1124,7 @@ public class CatalogProductCustomOptionAdditionalFieldsEntity implements org.apa
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setFile_extension(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1151,7 +1151,7 @@ public class CatalogProductCustomOptionAdditionalFieldsEntity implements org.apa
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setImage_size_x(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1178,7 +1178,7 @@ public class CatalogProductCustomOptionAdditionalFieldsEntity implements org.apa
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setImage_size_y(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1204,7 +1204,7 @@ public class CatalogProductCustomOptionAdditionalFieldsEntity implements org.apa
                             "The element: " + "value_id" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setValue_id(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1224,7 +1224,7 @@ public class CatalogProductCustomOptionAdditionalFieldsEntity implements org.apa
                         "Unexpected subelement " + reader.getName());
                 }
             } catch (javax.xml.stream.XMLStreamException e) {
-                throw new Exception(e);
+                throw new java.lang.Exception(e);
             }
 
             return object;

@@ -20,22 +20,22 @@ public class CatalogProductLinkAssignRequestParam implements org.apache.axis2.da
     /**
      * field for SessionId
      */
-    protected String localSessionId;
+    protected java.lang.String localSessionId;
 
     /**
      * field for Type
      */
-    protected String localType;
+    protected java.lang.String localType;
 
     /**
      * field for ProductId
      */
-    protected String localProductId;
+    protected java.lang.String localProductId;
 
     /**
      * field for LinkedProductId
      */
-    protected String localLinkedProductId;
+    protected java.lang.String localLinkedProductId;
 
     /**
      * field for Data
@@ -51,7 +51,7 @@ public class CatalogProductLinkAssignRequestParam implements org.apache.axis2.da
     /**
      * field for IdentifierType
      */
-    protected String localIdentifierType;
+    protected java.lang.String localIdentifierType;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -63,7 +63,7 @@ public class CatalogProductLinkAssignRequestParam implements org.apache.axis2.da
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getSessionId() {
+    public java.lang.String getSessionId() {
         return localSessionId;
     }
 
@@ -71,7 +71,7 @@ public class CatalogProductLinkAssignRequestParam implements org.apache.axis2.da
      * Auto generated setter method
      * @param param SessionId
      */
-    public void setSessionId(String param) {
+    public void setSessionId(java.lang.String param) {
         this.localSessionId = param;
     }
 
@@ -79,7 +79,7 @@ public class CatalogProductLinkAssignRequestParam implements org.apache.axis2.da
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getType() {
+    public java.lang.String getType() {
         return localType;
     }
 
@@ -87,7 +87,7 @@ public class CatalogProductLinkAssignRequestParam implements org.apache.axis2.da
      * Auto generated setter method
      * @param param Type
      */
-    public void setType(String param) {
+    public void setType(java.lang.String param) {
         this.localType = param;
     }
 
@@ -95,7 +95,7 @@ public class CatalogProductLinkAssignRequestParam implements org.apache.axis2.da
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getProductId() {
+    public java.lang.String getProductId() {
         return localProductId;
     }
 
@@ -103,7 +103,7 @@ public class CatalogProductLinkAssignRequestParam implements org.apache.axis2.da
      * Auto generated setter method
      * @param param ProductId
      */
-    public void setProductId(String param) {
+    public void setProductId(java.lang.String param) {
         this.localProductId = param;
     }
 
@@ -111,7 +111,7 @@ public class CatalogProductLinkAssignRequestParam implements org.apache.axis2.da
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getLinkedProductId() {
+    public java.lang.String getLinkedProductId() {
         return localLinkedProductId;
     }
 
@@ -119,7 +119,7 @@ public class CatalogProductLinkAssignRequestParam implements org.apache.axis2.da
      * Auto generated setter method
      * @param param LinkedProductId
      */
-    public void setLinkedProductId(String param) {
+    public void setLinkedProductId(java.lang.String param) {
         this.localLinkedProductId = param;
     }
 
@@ -153,7 +153,7 @@ public class CatalogProductLinkAssignRequestParam implements org.apache.axis2.da
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getIdentifierType() {
+    public java.lang.String getIdentifierType() {
         return localIdentifierType;
     }
 
@@ -161,7 +161,7 @@ public class CatalogProductLinkAssignRequestParam implements org.apache.axis2.da
      * Auto generated setter method
      * @param param IdentifierType
      */
-    public void setIdentifierType(String param) {
+    public void setIdentifierType(java.lang.String param) {
         localIdentifierTypeTracker = param != null;
 
         this.localIdentifierType = param;
@@ -194,8 +194,8 @@ public class CatalogProductLinkAssignRequestParam implements org.apache.axis2.da
         javax.xml.stream.XMLStreamWriter xmlWriter, boolean serializeType)
         throws javax.xml.stream.XMLStreamException,
             org.apache.axis2.databinding.ADBException {
-        String prefix = null;
-        String namespace = null;
+        java.lang.String prefix = null;
+        java.lang.String namespace = null;
 
         prefix = parentQName.getPrefix();
         namespace = parentQName.getNamespaceURI();
@@ -203,7 +203,7 @@ public class CatalogProductLinkAssignRequestParam implements org.apache.axis2.da
             xmlWriter);
 
         if (serializeType) {
-            String namespacePrefix = registerPrefix(xmlWriter,
+            java.lang.String namespacePrefix = registerPrefix(xmlWriter,
                     "urn:Magento");
 
             if ((namespacePrefix != null) &&
@@ -299,7 +299,7 @@ public class CatalogProductLinkAssignRequestParam implements org.apache.axis2.da
         xmlWriter.writeEndElement();
     }
 
-    private static String generatePrefix(String namespace) {
+    private static java.lang.String generatePrefix(java.lang.String namespace) {
         if (namespace.equals("urn:Magento")) {
             return "ns1";
         }
@@ -310,11 +310,11 @@ public class CatalogProductLinkAssignRequestParam implements org.apache.axis2.da
     /**
      * Utility method to write an element start tag.
      */
-    private void writeStartElement(String prefix,
-        String namespace, String localPart,
+    private void writeStartElement(java.lang.String prefix,
+        java.lang.String namespace, java.lang.String localPart,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
-        String writerPrefix = xmlWriter.getPrefix(namespace);
+        java.lang.String writerPrefix = xmlWriter.getPrefix(namespace);
 
         if (writerPrefix != null) {
             xmlWriter.writeStartElement(namespace, localPart);
@@ -334,9 +334,9 @@ public class CatalogProductLinkAssignRequestParam implements org.apache.axis2.da
     /**
      * Util method to write an attribute with the ns prefix
      */
-    private void writeAttribute(String prefix,
-        String namespace, String attName,
-        String attValue, javax.xml.stream.XMLStreamWriter xmlWriter)
+    private void writeAttribute(java.lang.String prefix,
+        java.lang.String namespace, java.lang.String attName,
+        java.lang.String attValue, javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
         if (xmlWriter.getPrefix(namespace) == null) {
             xmlWriter.writeNamespace(prefix, namespace);
@@ -349,8 +349,8 @@ public class CatalogProductLinkAssignRequestParam implements org.apache.axis2.da
     /**
      * Util method to write an attribute without the ns prefix
      */
-    private void writeAttribute(String namespace,
-        String attName, String attValue,
+    private void writeAttribute(java.lang.String namespace,
+        java.lang.String attName, java.lang.String attValue,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
         if (namespace.equals("")) {
@@ -364,18 +364,18 @@ public class CatalogProductLinkAssignRequestParam implements org.apache.axis2.da
     /**
      * Util method to write an attribute without the ns prefix
      */
-    private void writeQNameAttribute(String namespace,
-        String attName, javax.xml.namespace.QName qname,
+    private void writeQNameAttribute(java.lang.String namespace,
+        java.lang.String attName, javax.xml.namespace.QName qname,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
-        String attributeNamespace = qname.getNamespaceURI();
-        String attributePrefix = xmlWriter.getPrefix(attributeNamespace);
+        java.lang.String attributeNamespace = qname.getNamespaceURI();
+        java.lang.String attributePrefix = xmlWriter.getPrefix(attributeNamespace);
 
         if (attributePrefix == null) {
             attributePrefix = registerPrefix(xmlWriter, attributeNamespace);
         }
 
-        String attributeValue;
+        java.lang.String attributeValue;
 
         if (attributePrefix.trim().length() > 0) {
             attributeValue = attributePrefix + ":" + qname.getLocalPart();
@@ -397,10 +397,10 @@ public class CatalogProductLinkAssignRequestParam implements org.apache.axis2.da
     private void writeQName(javax.xml.namespace.QName qname,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
-        String namespaceURI = qname.getNamespaceURI();
+        java.lang.String namespaceURI = qname.getNamespaceURI();
 
         if (namespaceURI != null) {
-            String prefix = xmlWriter.getPrefix(namespaceURI);
+            java.lang.String prefix = xmlWriter.getPrefix(namespaceURI);
 
             if (prefix == null) {
                 prefix = generatePrefix(namespaceURI);
@@ -429,9 +429,9 @@ public class CatalogProductLinkAssignRequestParam implements org.apache.axis2.da
         if (qnames != null) {
             // we have to store this data until last moment since it is not possible to write any
             // namespace data after writing the charactor data
-            StringBuffer stringToWrite = new StringBuffer();
-            String namespaceURI = null;
-            String prefix = null;
+            java.lang.StringBuffer stringToWrite = new java.lang.StringBuffer();
+            java.lang.String namespaceURI = null;
+            java.lang.String prefix = null;
 
             for (int i = 0; i < qnames.length; i++) {
                 if (i > 0) {
@@ -470,10 +470,10 @@ public class CatalogProductLinkAssignRequestParam implements org.apache.axis2.da
     /**
      * Register a namespace prefix
      */
-    private String registerPrefix(
-        javax.xml.stream.XMLStreamWriter xmlWriter, String namespace)
+    private java.lang.String registerPrefix(
+        javax.xml.stream.XMLStreamWriter xmlWriter, java.lang.String namespace)
         throws javax.xml.stream.XMLStreamException {
-        String prefix = xmlWriter.getPrefix(namespace);
+        java.lang.String prefix = xmlWriter.getPrefix(namespace);
 
         if (prefix == null) {
             prefix = generatePrefix(namespace);
@@ -481,7 +481,7 @@ public class CatalogProductLinkAssignRequestParam implements org.apache.axis2.da
             javax.xml.namespace.NamespaceContext nsContext = xmlWriter.getNamespaceContext();
 
             while (true) {
-                String uri = nsContext.getNamespaceURI(prefix);
+                java.lang.String uri = nsContext.getNamespaceURI(prefix);
 
                 if ((uri == null) || (uri.length() == 0)) {
                     break;
@@ -586,13 +586,13 @@ public class CatalogProductLinkAssignRequestParam implements org.apache.axis2.da
          *                If this object is a complex type, the reader is positioned at the end element of its outer element
          */
         public static CatalogProductLinkAssignRequestParam parse(
-            javax.xml.stream.XMLStreamReader reader) throws Exception {
+            javax.xml.stream.XMLStreamReader reader) throws java.lang.Exception {
             CatalogProductLinkAssignRequestParam object = new CatalogProductLinkAssignRequestParam();
 
             int event;
-            String nillableValue = null;
-            String prefix = "";
-            String namespaceuri = "";
+            java.lang.String nillableValue = null;
+            java.lang.String prefix = "";
+            java.lang.String namespaceuri = "";
 
             try {
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -600,11 +600,11 @@ public class CatalogProductLinkAssignRequestParam implements org.apache.axis2.da
 
                 if (reader.getAttributeValue(
                             "http://www.w3.org/2001/XMLSchema-instance", "type") != null) {
-                    String fullTypeName = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance",
+                    java.lang.String fullTypeName = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance",
                             "type");
 
                     if (fullTypeName != null) {
-                        String nsPrefix = null;
+                        java.lang.String nsPrefix = null;
 
                         if (fullTypeName.indexOf(":") > -1) {
                             nsPrefix = fullTypeName.substring(0,
@@ -613,12 +613,12 @@ public class CatalogProductLinkAssignRequestParam implements org.apache.axis2.da
 
                         nsPrefix = (nsPrefix == null) ? "" : nsPrefix;
 
-                        String type = fullTypeName.substring(fullTypeName.indexOf(
+                        java.lang.String type = fullTypeName.substring(fullTypeName.indexOf(
                                     ":") + 1);
 
                         if (!"catalogProductLinkAssignRequestParam".equals(type)) {
                             //find namespace for the prefix
-                            String nsUri = reader.getNamespaceContext()
+                            java.lang.String nsUri = reader.getNamespaceContext()
                                                            .getNamespaceURI(nsPrefix);
 
                             return (CatalogProductLinkAssignRequestParam) magento.ExtensionMapper.getTypeObject(nsUri,
@@ -648,7 +648,7 @@ public class CatalogProductLinkAssignRequestParam implements org.apache.axis2.da
                             "The element: " + "sessionId" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setSessionId(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -677,7 +677,7 @@ public class CatalogProductLinkAssignRequestParam implements org.apache.axis2.da
                             "The element: " + "type" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setType(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -706,7 +706,7 @@ public class CatalogProductLinkAssignRequestParam implements org.apache.axis2.da
                             "The element: " + "productId" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setProductId(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -736,7 +736,7 @@ public class CatalogProductLinkAssignRequestParam implements org.apache.axis2.da
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setLinkedProductId(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -781,7 +781,7 @@ public class CatalogProductLinkAssignRequestParam implements org.apache.axis2.da
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setIdentifierType(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -801,7 +801,7 @@ public class CatalogProductLinkAssignRequestParam implements org.apache.axis2.da
                         "Unexpected subelement " + reader.getName());
                 }
             } catch (javax.xml.stream.XMLStreamException e) {
-                throw new Exception(e);
+                throw new java.lang.Exception(e);
             }
 
             return object;

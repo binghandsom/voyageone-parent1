@@ -36,7 +36,7 @@ define([
             if (!_.isNumber(num)) num = parseInt(num);
 
             return  http.ajaxPost({
-                package_id: package_id,
+                package_id: package_id.toString(),
                 barcode: code,
                 num: num,
                 itemCode: itemCode,

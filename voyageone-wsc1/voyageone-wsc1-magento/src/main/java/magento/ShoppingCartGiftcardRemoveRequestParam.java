@@ -20,28 +20,28 @@ public class ShoppingCartGiftcardRemoveRequestParam implements org.apache.axis2.
     /**
      * field for SessionId
      */
-    protected String localSessionId;
+    protected java.lang.String localSessionId;
 
     /**
      * field for GiftcardAccountCode
      */
-    protected String localGiftcardAccountCode;
+    protected java.lang.String localGiftcardAccountCode;
 
     /**
      * field for QuoteId
      */
-    protected String localQuoteId;
+    protected java.lang.String localQuoteId;
 
     /**
      * field for StoreId
      */
-    protected String localStoreId;
+    protected java.lang.String localStoreId;
 
     /**
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getSessionId() {
+    public java.lang.String getSessionId() {
         return localSessionId;
     }
 
@@ -49,7 +49,7 @@ public class ShoppingCartGiftcardRemoveRequestParam implements org.apache.axis2.
      * Auto generated setter method
      * @param param SessionId
      */
-    public void setSessionId(String param) {
+    public void setSessionId(java.lang.String param) {
         this.localSessionId = param;
     }
 
@@ -57,7 +57,7 @@ public class ShoppingCartGiftcardRemoveRequestParam implements org.apache.axis2.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getGiftcardAccountCode() {
+    public java.lang.String getGiftcardAccountCode() {
         return localGiftcardAccountCode;
     }
 
@@ -65,7 +65,7 @@ public class ShoppingCartGiftcardRemoveRequestParam implements org.apache.axis2.
      * Auto generated setter method
      * @param param GiftcardAccountCode
      */
-    public void setGiftcardAccountCode(String param) {
+    public void setGiftcardAccountCode(java.lang.String param) {
         this.localGiftcardAccountCode = param;
     }
 
@@ -73,7 +73,7 @@ public class ShoppingCartGiftcardRemoveRequestParam implements org.apache.axis2.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getQuoteId() {
+    public java.lang.String getQuoteId() {
         return localQuoteId;
     }
 
@@ -81,7 +81,7 @@ public class ShoppingCartGiftcardRemoveRequestParam implements org.apache.axis2.
      * Auto generated setter method
      * @param param QuoteId
      */
-    public void setQuoteId(String param) {
+    public void setQuoteId(java.lang.String param) {
         this.localQuoteId = param;
     }
 
@@ -89,7 +89,7 @@ public class ShoppingCartGiftcardRemoveRequestParam implements org.apache.axis2.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getStoreId() {
+    public java.lang.String getStoreId() {
         return localStoreId;
     }
 
@@ -97,7 +97,7 @@ public class ShoppingCartGiftcardRemoveRequestParam implements org.apache.axis2.
      * Auto generated setter method
      * @param param StoreId
      */
-    public void setStoreId(String param) {
+    public void setStoreId(java.lang.String param) {
         this.localStoreId = param;
     }
 
@@ -128,8 +128,8 @@ public class ShoppingCartGiftcardRemoveRequestParam implements org.apache.axis2.
         javax.xml.stream.XMLStreamWriter xmlWriter, boolean serializeType)
         throws javax.xml.stream.XMLStreamException,
             org.apache.axis2.databinding.ADBException {
-        String prefix = null;
-        String namespace = null;
+        java.lang.String prefix = null;
+        java.lang.String namespace = null;
 
         prefix = parentQName.getPrefix();
         namespace = parentQName.getNamespaceURI();
@@ -137,7 +137,7 @@ public class ShoppingCartGiftcardRemoveRequestParam implements org.apache.axis2.
             xmlWriter);
 
         if (serializeType) {
-            String namespacePrefix = registerPrefix(xmlWriter,
+            java.lang.String namespacePrefix = registerPrefix(xmlWriter,
                     "urn:Magento");
 
             if ((namespacePrefix != null) &&
@@ -208,7 +208,7 @@ public class ShoppingCartGiftcardRemoveRequestParam implements org.apache.axis2.
         xmlWriter.writeEndElement();
     }
 
-    private static String generatePrefix(String namespace) {
+    private static java.lang.String generatePrefix(java.lang.String namespace) {
         if (namespace.equals("urn:Magento")) {
             return "ns1";
         }
@@ -219,11 +219,11 @@ public class ShoppingCartGiftcardRemoveRequestParam implements org.apache.axis2.
     /**
      * Utility method to write an element start tag.
      */
-    private void writeStartElement(String prefix,
-        String namespace, String localPart,
+    private void writeStartElement(java.lang.String prefix,
+        java.lang.String namespace, java.lang.String localPart,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
-        String writerPrefix = xmlWriter.getPrefix(namespace);
+        java.lang.String writerPrefix = xmlWriter.getPrefix(namespace);
 
         if (writerPrefix != null) {
             xmlWriter.writeStartElement(namespace, localPart);
@@ -243,9 +243,9 @@ public class ShoppingCartGiftcardRemoveRequestParam implements org.apache.axis2.
     /**
      * Util method to write an attribute with the ns prefix
      */
-    private void writeAttribute(String prefix,
-        String namespace, String attName,
-        String attValue, javax.xml.stream.XMLStreamWriter xmlWriter)
+    private void writeAttribute(java.lang.String prefix,
+        java.lang.String namespace, java.lang.String attName,
+        java.lang.String attValue, javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
         if (xmlWriter.getPrefix(namespace) == null) {
             xmlWriter.writeNamespace(prefix, namespace);
@@ -258,8 +258,8 @@ public class ShoppingCartGiftcardRemoveRequestParam implements org.apache.axis2.
     /**
      * Util method to write an attribute without the ns prefix
      */
-    private void writeAttribute(String namespace,
-        String attName, String attValue,
+    private void writeAttribute(java.lang.String namespace,
+        java.lang.String attName, java.lang.String attValue,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
         if (namespace.equals("")) {
@@ -273,18 +273,18 @@ public class ShoppingCartGiftcardRemoveRequestParam implements org.apache.axis2.
     /**
      * Util method to write an attribute without the ns prefix
      */
-    private void writeQNameAttribute(String namespace,
-        String attName, javax.xml.namespace.QName qname,
+    private void writeQNameAttribute(java.lang.String namespace,
+        java.lang.String attName, javax.xml.namespace.QName qname,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
-        String attributeNamespace = qname.getNamespaceURI();
-        String attributePrefix = xmlWriter.getPrefix(attributeNamespace);
+        java.lang.String attributeNamespace = qname.getNamespaceURI();
+        java.lang.String attributePrefix = xmlWriter.getPrefix(attributeNamespace);
 
         if (attributePrefix == null) {
             attributePrefix = registerPrefix(xmlWriter, attributeNamespace);
         }
 
-        String attributeValue;
+        java.lang.String attributeValue;
 
         if (attributePrefix.trim().length() > 0) {
             attributeValue = attributePrefix + ":" + qname.getLocalPart();
@@ -306,10 +306,10 @@ public class ShoppingCartGiftcardRemoveRequestParam implements org.apache.axis2.
     private void writeQName(javax.xml.namespace.QName qname,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
-        String namespaceURI = qname.getNamespaceURI();
+        java.lang.String namespaceURI = qname.getNamespaceURI();
 
         if (namespaceURI != null) {
-            String prefix = xmlWriter.getPrefix(namespaceURI);
+            java.lang.String prefix = xmlWriter.getPrefix(namespaceURI);
 
             if (prefix == null) {
                 prefix = generatePrefix(namespaceURI);
@@ -338,9 +338,9 @@ public class ShoppingCartGiftcardRemoveRequestParam implements org.apache.axis2.
         if (qnames != null) {
             // we have to store this data until last moment since it is not possible to write any
             // namespace data after writing the charactor data
-            StringBuffer stringToWrite = new StringBuffer();
-            String namespaceURI = null;
-            String prefix = null;
+            java.lang.StringBuffer stringToWrite = new java.lang.StringBuffer();
+            java.lang.String namespaceURI = null;
+            java.lang.String prefix = null;
 
             for (int i = 0; i < qnames.length; i++) {
                 if (i > 0) {
@@ -379,10 +379,10 @@ public class ShoppingCartGiftcardRemoveRequestParam implements org.apache.axis2.
     /**
      * Register a namespace prefix
      */
-    private String registerPrefix(
-        javax.xml.stream.XMLStreamWriter xmlWriter, String namespace)
+    private java.lang.String registerPrefix(
+        javax.xml.stream.XMLStreamWriter xmlWriter, java.lang.String namespace)
         throws javax.xml.stream.XMLStreamException {
-        String prefix = xmlWriter.getPrefix(namespace);
+        java.lang.String prefix = xmlWriter.getPrefix(namespace);
 
         if (prefix == null) {
             prefix = generatePrefix(namespace);
@@ -390,7 +390,7 @@ public class ShoppingCartGiftcardRemoveRequestParam implements org.apache.axis2.
             javax.xml.namespace.NamespaceContext nsContext = xmlWriter.getNamespaceContext();
 
             while (true) {
-                String uri = nsContext.getNamespaceURI(prefix);
+                java.lang.String uri = nsContext.getNamespaceURI(prefix);
 
                 if ((uri == null) || (uri.length() == 0)) {
                     break;
@@ -472,13 +472,13 @@ public class ShoppingCartGiftcardRemoveRequestParam implements org.apache.axis2.
          *                If this object is a complex type, the reader is positioned at the end element of its outer element
          */
         public static ShoppingCartGiftcardRemoveRequestParam parse(
-            javax.xml.stream.XMLStreamReader reader) throws Exception {
+            javax.xml.stream.XMLStreamReader reader) throws java.lang.Exception {
             ShoppingCartGiftcardRemoveRequestParam object = new ShoppingCartGiftcardRemoveRequestParam();
 
             int event;
-            String nillableValue = null;
-            String prefix = "";
-            String namespaceuri = "";
+            java.lang.String nillableValue = null;
+            java.lang.String prefix = "";
+            java.lang.String namespaceuri = "";
 
             try {
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -486,11 +486,11 @@ public class ShoppingCartGiftcardRemoveRequestParam implements org.apache.axis2.
 
                 if (reader.getAttributeValue(
                             "http://www.w3.org/2001/XMLSchema-instance", "type") != null) {
-                    String fullTypeName = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance",
+                    java.lang.String fullTypeName = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance",
                             "type");
 
                     if (fullTypeName != null) {
-                        String nsPrefix = null;
+                        java.lang.String nsPrefix = null;
 
                         if (fullTypeName.indexOf(":") > -1) {
                             nsPrefix = fullTypeName.substring(0,
@@ -499,13 +499,13 @@ public class ShoppingCartGiftcardRemoveRequestParam implements org.apache.axis2.
 
                         nsPrefix = (nsPrefix == null) ? "" : nsPrefix;
 
-                        String type = fullTypeName.substring(fullTypeName.indexOf(
+                        java.lang.String type = fullTypeName.substring(fullTypeName.indexOf(
                                     ":") + 1);
 
                         if (!"shoppingCartGiftcardRemoveRequestParam".equals(
                                     type)) {
                             //find namespace for the prefix
-                            String nsUri = reader.getNamespaceContext()
+                            java.lang.String nsUri = reader.getNamespaceContext()
                                                            .getNamespaceURI(nsPrefix);
 
                             return (ShoppingCartGiftcardRemoveRequestParam) magento.ExtensionMapper.getTypeObject(nsUri,
@@ -535,7 +535,7 @@ public class ShoppingCartGiftcardRemoveRequestParam implements org.apache.axis2.
                             "The element: " + "sessionId" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setSessionId(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -565,7 +565,7 @@ public class ShoppingCartGiftcardRemoveRequestParam implements org.apache.axis2.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setGiftcardAccountCode(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -594,7 +594,7 @@ public class ShoppingCartGiftcardRemoveRequestParam implements org.apache.axis2.
                             "The element: " + "quoteId" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setQuoteId(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -623,7 +623,7 @@ public class ShoppingCartGiftcardRemoveRequestParam implements org.apache.axis2.
                             "The element: " + "storeId" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setStoreId(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -646,7 +646,7 @@ public class ShoppingCartGiftcardRemoveRequestParam implements org.apache.axis2.
                         "Unexpected subelement " + reader.getName());
                 }
             } catch (javax.xml.stream.XMLStreamException e) {
-                throw new Exception(e);
+                throw new java.lang.Exception(e);
             }
 
             return object;

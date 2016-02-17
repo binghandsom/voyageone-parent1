@@ -23,17 +23,17 @@ public class CatalogProductDownloadableLinkEntity implements org.apache.axis2.da
     /**
      * field for Link_id
      */
-    protected String localLink_id;
+    protected java.lang.String localLink_id;
 
     /**
      * field for Title
      */
-    protected String localTitle;
+    protected java.lang.String localTitle;
 
     /**
      * field for Price
      */
-    protected String localPrice;
+    protected java.lang.String localPrice;
 
     /**
      * field for Number_of_downloads
@@ -65,17 +65,17 @@ public class CatalogProductDownloadableLinkEntity implements org.apache.axis2.da
     /**
      * field for Link_url
      */
-    protected String localLink_url;
+    protected java.lang.String localLink_url;
 
     /**
      * field for Link_type
      */
-    protected String localLink_type;
+    protected java.lang.String localLink_type;
 
     /**
      * field for Sample_file
      */
-    protected String localSample_file;
+    protected java.lang.String localSample_file;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -86,7 +86,7 @@ public class CatalogProductDownloadableLinkEntity implements org.apache.axis2.da
     /**
      * field for Sample_url
      */
-    protected String localSample_url;
+    protected java.lang.String localSample_url;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -97,7 +97,7 @@ public class CatalogProductDownloadableLinkEntity implements org.apache.axis2.da
     /**
      * field for Sample_type
      */
-    protected String localSample_type;
+    protected java.lang.String localSample_type;
 
     /**
      * field for Sort_order
@@ -130,7 +130,7 @@ public class CatalogProductDownloadableLinkEntity implements org.apache.axis2.da
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getLink_id() {
+    public java.lang.String getLink_id() {
         return localLink_id;
     }
 
@@ -138,7 +138,7 @@ public class CatalogProductDownloadableLinkEntity implements org.apache.axis2.da
      * Auto generated setter method
      * @param param Link_id
      */
-    public void setLink_id(String param) {
+    public void setLink_id(java.lang.String param) {
         this.localLink_id = param;
     }
 
@@ -146,7 +146,7 @@ public class CatalogProductDownloadableLinkEntity implements org.apache.axis2.da
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getTitle() {
+    public java.lang.String getTitle() {
         return localTitle;
     }
 
@@ -154,7 +154,7 @@ public class CatalogProductDownloadableLinkEntity implements org.apache.axis2.da
      * Auto generated setter method
      * @param param Title
      */
-    public void setTitle(String param) {
+    public void setTitle(java.lang.String param) {
         this.localTitle = param;
     }
 
@@ -162,7 +162,7 @@ public class CatalogProductDownloadableLinkEntity implements org.apache.axis2.da
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getPrice() {
+    public java.lang.String getPrice() {
         return localPrice;
     }
 
@@ -170,7 +170,7 @@ public class CatalogProductDownloadableLinkEntity implements org.apache.axis2.da
      * Auto generated setter method
      * @param param Price
      */
-    public void setPrice(String param) {
+    public void setPrice(java.lang.String param) {
         this.localPrice = param;
     }
 
@@ -192,7 +192,7 @@ public class CatalogProductDownloadableLinkEntity implements org.apache.axis2.da
      */
     public void setNumber_of_downloads(int param) {
         // setting primitive attribute tracker to true
-        localNumber_of_downloadsTracker = param != Integer.MIN_VALUE;
+        localNumber_of_downloadsTracker = param != java.lang.Integer.MIN_VALUE;
 
         this.localNumber_of_downloads = param;
     }
@@ -215,7 +215,7 @@ public class CatalogProductDownloadableLinkEntity implements org.apache.axis2.da
      */
     public void setIs_unlimited(int param) {
         // setting primitive attribute tracker to true
-        localIs_unlimitedTracker = param != Integer.MIN_VALUE;
+        localIs_unlimitedTracker = param != java.lang.Integer.MIN_VALUE;
 
         this.localIs_unlimited = param;
     }
@@ -240,7 +240,7 @@ public class CatalogProductDownloadableLinkEntity implements org.apache.axis2.da
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getLink_url() {
+    public java.lang.String getLink_url() {
         return localLink_url;
     }
 
@@ -248,7 +248,7 @@ public class CatalogProductDownloadableLinkEntity implements org.apache.axis2.da
      * Auto generated setter method
      * @param param Link_url
      */
-    public void setLink_url(String param) {
+    public void setLink_url(java.lang.String param) {
         this.localLink_url = param;
     }
 
@@ -256,7 +256,7 @@ public class CatalogProductDownloadableLinkEntity implements org.apache.axis2.da
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getLink_type() {
+    public java.lang.String getLink_type() {
         return localLink_type;
     }
 
@@ -264,7 +264,7 @@ public class CatalogProductDownloadableLinkEntity implements org.apache.axis2.da
      * Auto generated setter method
      * @param param Link_type
      */
-    public void setLink_type(String param) {
+    public void setLink_type(java.lang.String param) {
         this.localLink_type = param;
     }
 
@@ -276,7 +276,7 @@ public class CatalogProductDownloadableLinkEntity implements org.apache.axis2.da
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getSample_file() {
+    public java.lang.String getSample_file() {
         return localSample_file;
     }
 
@@ -284,7 +284,7 @@ public class CatalogProductDownloadableLinkEntity implements org.apache.axis2.da
      * Auto generated setter method
      * @param param Sample_file
      */
-    public void setSample_file(String param) {
+    public void setSample_file(java.lang.String param) {
         localSample_fileTracker = param != null;
 
         this.localSample_file = param;
@@ -298,7 +298,7 @@ public class CatalogProductDownloadableLinkEntity implements org.apache.axis2.da
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getSample_url() {
+    public java.lang.String getSample_url() {
         return localSample_url;
     }
 
@@ -306,7 +306,7 @@ public class CatalogProductDownloadableLinkEntity implements org.apache.axis2.da
      * Auto generated setter method
      * @param param Sample_url
      */
-    public void setSample_url(String param) {
+    public void setSample_url(java.lang.String param) {
         localSample_urlTracker = param != null;
 
         this.localSample_url = param;
@@ -316,7 +316,7 @@ public class CatalogProductDownloadableLinkEntity implements org.apache.axis2.da
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getSample_type() {
+    public java.lang.String getSample_type() {
         return localSample_type;
     }
 
@@ -324,7 +324,7 @@ public class CatalogProductDownloadableLinkEntity implements org.apache.axis2.da
      * Auto generated setter method
      * @param param Sample_type
      */
-    public void setSample_type(String param) {
+    public void setSample_type(java.lang.String param) {
         this.localSample_type = param;
     }
 
@@ -417,8 +417,8 @@ public class CatalogProductDownloadableLinkEntity implements org.apache.axis2.da
         javax.xml.stream.XMLStreamWriter xmlWriter, boolean serializeType)
         throws javax.xml.stream.XMLStreamException,
             org.apache.axis2.databinding.ADBException {
-        String prefix = null;
-        String namespace = null;
+        java.lang.String prefix = null;
+        java.lang.String namespace = null;
 
         prefix = parentQName.getPrefix();
         namespace = parentQName.getNamespaceURI();
@@ -426,7 +426,7 @@ public class CatalogProductDownloadableLinkEntity implements org.apache.axis2.da
             xmlWriter);
 
         if (serializeType) {
-            String namespacePrefix = registerPrefix(xmlWriter,
+            java.lang.String namespacePrefix = registerPrefix(xmlWriter,
                     "urn:Magento");
 
             if ((namespacePrefix != null) &&
@@ -485,7 +485,7 @@ public class CatalogProductDownloadableLinkEntity implements org.apache.axis2.da
             namespace = "";
             writeStartElement(null, namespace, "number_of_downloads", xmlWriter);
 
-            if (localNumber_of_downloads == Integer.MIN_VALUE) {
+            if (localNumber_of_downloads == java.lang.Integer.MIN_VALUE) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "number_of_downloads cannot be null!!");
             } else {
@@ -500,7 +500,7 @@ public class CatalogProductDownloadableLinkEntity implements org.apache.axis2.da
             namespace = "";
             writeStartElement(null, namespace, "is_unlimited", xmlWriter);
 
-            if (localIs_unlimited == Integer.MIN_VALUE) {
+            if (localIs_unlimited == java.lang.Integer.MIN_VALUE) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "is_unlimited cannot be null!!");
             } else {
@@ -514,7 +514,7 @@ public class CatalogProductDownloadableLinkEntity implements org.apache.axis2.da
         namespace = "";
         writeStartElement(null, namespace, "is_shareable", xmlWriter);
 
-        if (localIs_shareable == Integer.MIN_VALUE) {
+        if (localIs_shareable == java.lang.Integer.MIN_VALUE) {
             throw new org.apache.axis2.databinding.ADBException(
                 "is_shareable cannot be null!!");
         } else {
@@ -596,7 +596,7 @@ public class CatalogProductDownloadableLinkEntity implements org.apache.axis2.da
         namespace = "";
         writeStartElement(null, namespace, "sort_order", xmlWriter);
 
-        if (localSort_order == Integer.MIN_VALUE) {
+        if (localSort_order == java.lang.Integer.MIN_VALUE) {
             throw new org.apache.axis2.databinding.ADBException(
                 "sort_order cannot be null!!");
         } else {
@@ -629,7 +629,7 @@ public class CatalogProductDownloadableLinkEntity implements org.apache.axis2.da
         xmlWriter.writeEndElement();
     }
 
-    private static String generatePrefix(String namespace) {
+    private static java.lang.String generatePrefix(java.lang.String namespace) {
         if (namespace.equals("urn:Magento")) {
             return "ns1";
         }
@@ -640,11 +640,11 @@ public class CatalogProductDownloadableLinkEntity implements org.apache.axis2.da
     /**
      * Utility method to write an element start tag.
      */
-    private void writeStartElement(String prefix,
-        String namespace, String localPart,
+    private void writeStartElement(java.lang.String prefix,
+        java.lang.String namespace, java.lang.String localPart,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
-        String writerPrefix = xmlWriter.getPrefix(namespace);
+        java.lang.String writerPrefix = xmlWriter.getPrefix(namespace);
 
         if (writerPrefix != null) {
             xmlWriter.writeStartElement(namespace, localPart);
@@ -664,9 +664,9 @@ public class CatalogProductDownloadableLinkEntity implements org.apache.axis2.da
     /**
      * Util method to write an attribute with the ns prefix
      */
-    private void writeAttribute(String prefix,
-        String namespace, String attName,
-        String attValue, javax.xml.stream.XMLStreamWriter xmlWriter)
+    private void writeAttribute(java.lang.String prefix,
+        java.lang.String namespace, java.lang.String attName,
+        java.lang.String attValue, javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
         if (xmlWriter.getPrefix(namespace) == null) {
             xmlWriter.writeNamespace(prefix, namespace);
@@ -679,8 +679,8 @@ public class CatalogProductDownloadableLinkEntity implements org.apache.axis2.da
     /**
      * Util method to write an attribute without the ns prefix
      */
-    private void writeAttribute(String namespace,
-        String attName, String attValue,
+    private void writeAttribute(java.lang.String namespace,
+        java.lang.String attName, java.lang.String attValue,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
         if (namespace.equals("")) {
@@ -694,18 +694,18 @@ public class CatalogProductDownloadableLinkEntity implements org.apache.axis2.da
     /**
      * Util method to write an attribute without the ns prefix
      */
-    private void writeQNameAttribute(String namespace,
-        String attName, javax.xml.namespace.QName qname,
+    private void writeQNameAttribute(java.lang.String namespace,
+        java.lang.String attName, javax.xml.namespace.QName qname,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
-        String attributeNamespace = qname.getNamespaceURI();
-        String attributePrefix = xmlWriter.getPrefix(attributeNamespace);
+        java.lang.String attributeNamespace = qname.getNamespaceURI();
+        java.lang.String attributePrefix = xmlWriter.getPrefix(attributeNamespace);
 
         if (attributePrefix == null) {
             attributePrefix = registerPrefix(xmlWriter, attributeNamespace);
         }
 
-        String attributeValue;
+        java.lang.String attributeValue;
 
         if (attributePrefix.trim().length() > 0) {
             attributeValue = attributePrefix + ":" + qname.getLocalPart();
@@ -727,10 +727,10 @@ public class CatalogProductDownloadableLinkEntity implements org.apache.axis2.da
     private void writeQName(javax.xml.namespace.QName qname,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
-        String namespaceURI = qname.getNamespaceURI();
+        java.lang.String namespaceURI = qname.getNamespaceURI();
 
         if (namespaceURI != null) {
-            String prefix = xmlWriter.getPrefix(namespaceURI);
+            java.lang.String prefix = xmlWriter.getPrefix(namespaceURI);
 
             if (prefix == null) {
                 prefix = generatePrefix(namespaceURI);
@@ -759,9 +759,9 @@ public class CatalogProductDownloadableLinkEntity implements org.apache.axis2.da
         if (qnames != null) {
             // we have to store this data until last moment since it is not possible to write any
             // namespace data after writing the charactor data
-            StringBuffer stringToWrite = new StringBuffer();
-            String namespaceURI = null;
-            String prefix = null;
+            java.lang.StringBuffer stringToWrite = new java.lang.StringBuffer();
+            java.lang.String namespaceURI = null;
+            java.lang.String prefix = null;
 
             for (int i = 0; i < qnames.length; i++) {
                 if (i > 0) {
@@ -800,10 +800,10 @@ public class CatalogProductDownloadableLinkEntity implements org.apache.axis2.da
     /**
      * Register a namespace prefix
      */
-    private String registerPrefix(
-        javax.xml.stream.XMLStreamWriter xmlWriter, String namespace)
+    private java.lang.String registerPrefix(
+        javax.xml.stream.XMLStreamWriter xmlWriter, java.lang.String namespace)
         throws javax.xml.stream.XMLStreamException {
-        String prefix = xmlWriter.getPrefix(namespace);
+        java.lang.String prefix = xmlWriter.getPrefix(namespace);
 
         if (prefix == null) {
             prefix = generatePrefix(namespace);
@@ -811,7 +811,7 @@ public class CatalogProductDownloadableLinkEntity implements org.apache.axis2.da
             javax.xml.namespace.NamespaceContext nsContext = xmlWriter.getNamespaceContext();
 
             while (true) {
-                String uri = nsContext.getNamespaceURI(prefix);
+                java.lang.String uri = nsContext.getNamespaceURI(prefix);
 
                 if ((uri == null) || (uri.length() == 0)) {
                     break;
@@ -984,13 +984,13 @@ public class CatalogProductDownloadableLinkEntity implements org.apache.axis2.da
          *                If this object is a complex type, the reader is positioned at the end element of its outer element
          */
         public static CatalogProductDownloadableLinkEntity parse(
-            javax.xml.stream.XMLStreamReader reader) throws Exception {
+            javax.xml.stream.XMLStreamReader reader) throws java.lang.Exception {
             CatalogProductDownloadableLinkEntity object = new CatalogProductDownloadableLinkEntity();
 
             int event;
-            String nillableValue = null;
-            String prefix = "";
-            String namespaceuri = "";
+            java.lang.String nillableValue = null;
+            java.lang.String prefix = "";
+            java.lang.String namespaceuri = "";
 
             try {
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -998,11 +998,11 @@ public class CatalogProductDownloadableLinkEntity implements org.apache.axis2.da
 
                 if (reader.getAttributeValue(
                             "http://www.w3.org/2001/XMLSchema-instance", "type") != null) {
-                    String fullTypeName = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance",
+                    java.lang.String fullTypeName = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance",
                             "type");
 
                     if (fullTypeName != null) {
-                        String nsPrefix = null;
+                        java.lang.String nsPrefix = null;
 
                         if (fullTypeName.indexOf(":") > -1) {
                             nsPrefix = fullTypeName.substring(0,
@@ -1011,12 +1011,12 @@ public class CatalogProductDownloadableLinkEntity implements org.apache.axis2.da
 
                         nsPrefix = (nsPrefix == null) ? "" : nsPrefix;
 
-                        String type = fullTypeName.substring(fullTypeName.indexOf(
+                        java.lang.String type = fullTypeName.substring(fullTypeName.indexOf(
                                     ":") + 1);
 
                         if (!"catalogProductDownloadableLinkEntity".equals(type)) {
                             //find namespace for the prefix
-                            String nsUri = reader.getNamespaceContext()
+                            java.lang.String nsUri = reader.getNamespaceContext()
                                                            .getNamespaceURI(nsPrefix);
 
                             return (CatalogProductDownloadableLinkEntity) magento.ExtensionMapper.getTypeObject(nsUri,
@@ -1046,7 +1046,7 @@ public class CatalogProductDownloadableLinkEntity implements org.apache.axis2.da
                             "The element: " + "link_id" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setLink_id(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1075,7 +1075,7 @@ public class CatalogProductDownloadableLinkEntity implements org.apache.axis2.da
                             "The element: " + "title" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setTitle(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1104,7 +1104,7 @@ public class CatalogProductDownloadableLinkEntity implements org.apache.axis2.da
                             "The element: " + "price" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setPrice(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1134,7 +1134,7 @@ public class CatalogProductDownloadableLinkEntity implements org.apache.axis2.da
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setNumber_of_downloads(org.apache.axis2.databinding.utils.ConverterUtil.convertToInt(
                             content));
@@ -1143,7 +1143,7 @@ public class CatalogProductDownloadableLinkEntity implements org.apache.axis2.da
                 } // End of if for expected property start element
 
                 else {
-                    object.setNumber_of_downloads(Integer.MIN_VALUE);
+                    object.setNumber_of_downloads(java.lang.Integer.MIN_VALUE);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -1162,7 +1162,7 @@ public class CatalogProductDownloadableLinkEntity implements org.apache.axis2.da
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setIs_unlimited(org.apache.axis2.databinding.utils.ConverterUtil.convertToInt(
                             content));
@@ -1171,7 +1171,7 @@ public class CatalogProductDownloadableLinkEntity implements org.apache.axis2.da
                 } // End of if for expected property start element
 
                 else {
-                    object.setIs_unlimited(Integer.MIN_VALUE);
+                    object.setIs_unlimited(java.lang.Integer.MIN_VALUE);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -1190,7 +1190,7 @@ public class CatalogProductDownloadableLinkEntity implements org.apache.axis2.da
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setIs_shareable(org.apache.axis2.databinding.utils.ConverterUtil.convertToInt(
                             content));
@@ -1219,7 +1219,7 @@ public class CatalogProductDownloadableLinkEntity implements org.apache.axis2.da
                             "The element: " + "link_url" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setLink_url(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1248,7 +1248,7 @@ public class CatalogProductDownloadableLinkEntity implements org.apache.axis2.da
                             "The element: " + "link_type" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setLink_type(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1278,7 +1278,7 @@ public class CatalogProductDownloadableLinkEntity implements org.apache.axis2.da
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setSample_file(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1305,7 +1305,7 @@ public class CatalogProductDownloadableLinkEntity implements org.apache.axis2.da
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setSample_url(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1332,7 +1332,7 @@ public class CatalogProductDownloadableLinkEntity implements org.apache.axis2.da
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setSample_type(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1362,7 +1362,7 @@ public class CatalogProductDownloadableLinkEntity implements org.apache.axis2.da
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setSort_order(org.apache.axis2.databinding.utils.ConverterUtil.convertToInt(
                             content));
@@ -1415,7 +1415,7 @@ public class CatalogProductDownloadableLinkEntity implements org.apache.axis2.da
                         "Unexpected subelement " + reader.getName());
                 }
             } catch (javax.xml.stream.XMLStreamException e) {
-                throw new Exception(e);
+                throw new java.lang.Exception(e);
             }
 
             return object;

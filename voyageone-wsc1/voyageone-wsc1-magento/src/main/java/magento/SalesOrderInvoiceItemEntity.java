@@ -23,7 +23,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
     /**
      * field for Increment_id
      */
-    protected String localIncrement_id;
+    protected java.lang.String localIncrement_id;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -34,7 +34,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
     /**
      * field for Parent_id
      */
-    protected String localParent_id;
+    protected java.lang.String localParent_id;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -45,7 +45,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
     /**
      * field for Created_at
      */
-    protected String localCreated_at;
+    protected java.lang.String localCreated_at;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -56,7 +56,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
     /**
      * field for Updated_at
      */
-    protected String localUpdated_at;
+    protected java.lang.String localUpdated_at;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -67,7 +67,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
     /**
      * field for Is_active
      */
-    protected String localIs_active;
+    protected java.lang.String localIs_active;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -78,7 +78,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
     /**
      * field for Weee_tax_applied
      */
-    protected String localWeee_tax_applied;
+    protected java.lang.String localWeee_tax_applied;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -89,7 +89,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
     /**
      * field for Qty
      */
-    protected String localQty;
+    protected java.lang.String localQty;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -100,7 +100,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
     /**
      * field for Cost
      */
-    protected String localCost;
+    protected java.lang.String localCost;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -111,7 +111,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
     /**
      * field for Price
      */
-    protected String localPrice;
+    protected java.lang.String localPrice;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -122,7 +122,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
     /**
      * field for Tax_amount
      */
-    protected String localTax_amount;
+    protected java.lang.String localTax_amount;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -133,7 +133,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
     /**
      * field for Row_total
      */
-    protected String localRow_total;
+    protected java.lang.String localRow_total;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -144,7 +144,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
     /**
      * field for Base_price
      */
-    protected String localBase_price;
+    protected java.lang.String localBase_price;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -155,7 +155,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
     /**
      * field for Base_tax_amount
      */
-    protected String localBase_tax_amount;
+    protected java.lang.String localBase_tax_amount;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -166,7 +166,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
     /**
      * field for Base_row_total
      */
-    protected String localBase_row_total;
+    protected java.lang.String localBase_row_total;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -177,7 +177,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
     /**
      * field for Base_weee_tax_applied_amount
      */
-    protected String localBase_weee_tax_applied_amount;
+    protected java.lang.String localBase_weee_tax_applied_amount;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -188,7 +188,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
     /**
      * field for Base_weee_tax_applied_row_amount
      */
-    protected String localBase_weee_tax_applied_row_amount;
+    protected java.lang.String localBase_weee_tax_applied_row_amount;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -199,7 +199,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
     /**
      * field for Weee_tax_applied_amount
      */
-    protected String localWeee_tax_applied_amount;
+    protected java.lang.String localWeee_tax_applied_amount;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -210,7 +210,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
     /**
      * field for Weee_tax_applied_row_amount
      */
-    protected String localWeee_tax_applied_row_amount;
+    protected java.lang.String localWeee_tax_applied_row_amount;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -221,7 +221,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
     /**
      * field for Weee_tax_disposition
      */
-    protected String localWeee_tax_disposition;
+    protected java.lang.String localWeee_tax_disposition;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -232,7 +232,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
     /**
      * field for Weee_tax_row_disposition
      */
-    protected String localWeee_tax_row_disposition;
+    protected java.lang.String localWeee_tax_row_disposition;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -243,7 +243,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
     /**
      * field for Base_weee_tax_disposition
      */
-    protected String localBase_weee_tax_disposition;
+    protected java.lang.String localBase_weee_tax_disposition;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -254,7 +254,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
     /**
      * field for Base_weee_tax_row_disposition
      */
-    protected String localBase_weee_tax_row_disposition;
+    protected java.lang.String localBase_weee_tax_row_disposition;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -265,7 +265,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
     /**
      * field for Sku
      */
-    protected String localSku;
+    protected java.lang.String localSku;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -276,7 +276,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
     /**
      * field for Name
      */
-    protected String localName;
+    protected java.lang.String localName;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -287,7 +287,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
     /**
      * field for Order_item_id
      */
-    protected String localOrder_item_id;
+    protected java.lang.String localOrder_item_id;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -298,7 +298,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
     /**
      * field for Product_id
      */
-    protected String localProduct_id;
+    protected java.lang.String localProduct_id;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -309,7 +309,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
     /**
      * field for Item_id
      */
-    protected String localItem_id;
+    protected java.lang.String localItem_id;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -325,7 +325,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getIncrement_id() {
+    public java.lang.String getIncrement_id() {
         return localIncrement_id;
     }
 
@@ -333,7 +333,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
      * Auto generated setter method
      * @param param Increment_id
      */
-    public void setIncrement_id(String param) {
+    public void setIncrement_id(java.lang.String param) {
         localIncrement_idTracker = param != null;
 
         this.localIncrement_id = param;
@@ -347,7 +347,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getParent_id() {
+    public java.lang.String getParent_id() {
         return localParent_id;
     }
 
@@ -355,7 +355,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
      * Auto generated setter method
      * @param param Parent_id
      */
-    public void setParent_id(String param) {
+    public void setParent_id(java.lang.String param) {
         localParent_idTracker = param != null;
 
         this.localParent_id = param;
@@ -369,7 +369,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getCreated_at() {
+    public java.lang.String getCreated_at() {
         return localCreated_at;
     }
 
@@ -377,7 +377,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
      * Auto generated setter method
      * @param param Created_at
      */
-    public void setCreated_at(String param) {
+    public void setCreated_at(java.lang.String param) {
         localCreated_atTracker = param != null;
 
         this.localCreated_at = param;
@@ -391,7 +391,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getUpdated_at() {
+    public java.lang.String getUpdated_at() {
         return localUpdated_at;
     }
 
@@ -399,7 +399,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
      * Auto generated setter method
      * @param param Updated_at
      */
-    public void setUpdated_at(String param) {
+    public void setUpdated_at(java.lang.String param) {
         localUpdated_atTracker = param != null;
 
         this.localUpdated_at = param;
@@ -413,7 +413,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getIs_active() {
+    public java.lang.String getIs_active() {
         return localIs_active;
     }
 
@@ -421,7 +421,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
      * Auto generated setter method
      * @param param Is_active
      */
-    public void setIs_active(String param) {
+    public void setIs_active(java.lang.String param) {
         localIs_activeTracker = param != null;
 
         this.localIs_active = param;
@@ -435,7 +435,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getWeee_tax_applied() {
+    public java.lang.String getWeee_tax_applied() {
         return localWeee_tax_applied;
     }
 
@@ -443,7 +443,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
      * Auto generated setter method
      * @param param Weee_tax_applied
      */
-    public void setWeee_tax_applied(String param) {
+    public void setWeee_tax_applied(java.lang.String param) {
         localWeee_tax_appliedTracker = param != null;
 
         this.localWeee_tax_applied = param;
@@ -457,7 +457,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getQty() {
+    public java.lang.String getQty() {
         return localQty;
     }
 
@@ -465,7 +465,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
      * Auto generated setter method
      * @param param Qty
      */
-    public void setQty(String param) {
+    public void setQty(java.lang.String param) {
         localQtyTracker = param != null;
 
         this.localQty = param;
@@ -479,7 +479,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getCost() {
+    public java.lang.String getCost() {
         return localCost;
     }
 
@@ -487,7 +487,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
      * Auto generated setter method
      * @param param Cost
      */
-    public void setCost(String param) {
+    public void setCost(java.lang.String param) {
         localCostTracker = param != null;
 
         this.localCost = param;
@@ -501,7 +501,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getPrice() {
+    public java.lang.String getPrice() {
         return localPrice;
     }
 
@@ -509,7 +509,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
      * Auto generated setter method
      * @param param Price
      */
-    public void setPrice(String param) {
+    public void setPrice(java.lang.String param) {
         localPriceTracker = param != null;
 
         this.localPrice = param;
@@ -523,7 +523,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getTax_amount() {
+    public java.lang.String getTax_amount() {
         return localTax_amount;
     }
 
@@ -531,7 +531,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
      * Auto generated setter method
      * @param param Tax_amount
      */
-    public void setTax_amount(String param) {
+    public void setTax_amount(java.lang.String param) {
         localTax_amountTracker = param != null;
 
         this.localTax_amount = param;
@@ -545,7 +545,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getRow_total() {
+    public java.lang.String getRow_total() {
         return localRow_total;
     }
 
@@ -553,7 +553,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
      * Auto generated setter method
      * @param param Row_total
      */
-    public void setRow_total(String param) {
+    public void setRow_total(java.lang.String param) {
         localRow_totalTracker = param != null;
 
         this.localRow_total = param;
@@ -567,7 +567,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getBase_price() {
+    public java.lang.String getBase_price() {
         return localBase_price;
     }
 
@@ -575,7 +575,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
      * Auto generated setter method
      * @param param Base_price
      */
-    public void setBase_price(String param) {
+    public void setBase_price(java.lang.String param) {
         localBase_priceTracker = param != null;
 
         this.localBase_price = param;
@@ -589,7 +589,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getBase_tax_amount() {
+    public java.lang.String getBase_tax_amount() {
         return localBase_tax_amount;
     }
 
@@ -597,7 +597,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
      * Auto generated setter method
      * @param param Base_tax_amount
      */
-    public void setBase_tax_amount(String param) {
+    public void setBase_tax_amount(java.lang.String param) {
         localBase_tax_amountTracker = param != null;
 
         this.localBase_tax_amount = param;
@@ -611,7 +611,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getBase_row_total() {
+    public java.lang.String getBase_row_total() {
         return localBase_row_total;
     }
 
@@ -619,7 +619,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
      * Auto generated setter method
      * @param param Base_row_total
      */
-    public void setBase_row_total(String param) {
+    public void setBase_row_total(java.lang.String param) {
         localBase_row_totalTracker = param != null;
 
         this.localBase_row_total = param;
@@ -633,7 +633,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getBase_weee_tax_applied_amount() {
+    public java.lang.String getBase_weee_tax_applied_amount() {
         return localBase_weee_tax_applied_amount;
     }
 
@@ -641,7 +641,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
      * Auto generated setter method
      * @param param Base_weee_tax_applied_amount
      */
-    public void setBase_weee_tax_applied_amount(String param) {
+    public void setBase_weee_tax_applied_amount(java.lang.String param) {
         localBase_weee_tax_applied_amountTracker = param != null;
 
         this.localBase_weee_tax_applied_amount = param;
@@ -655,7 +655,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getBase_weee_tax_applied_row_amount() {
+    public java.lang.String getBase_weee_tax_applied_row_amount() {
         return localBase_weee_tax_applied_row_amount;
     }
 
@@ -663,7 +663,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
      * Auto generated setter method
      * @param param Base_weee_tax_applied_row_amount
      */
-    public void setBase_weee_tax_applied_row_amount(String param) {
+    public void setBase_weee_tax_applied_row_amount(java.lang.String param) {
         localBase_weee_tax_applied_row_amountTracker = param != null;
 
         this.localBase_weee_tax_applied_row_amount = param;
@@ -677,7 +677,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getWeee_tax_applied_amount() {
+    public java.lang.String getWeee_tax_applied_amount() {
         return localWeee_tax_applied_amount;
     }
 
@@ -685,7 +685,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
      * Auto generated setter method
      * @param param Weee_tax_applied_amount
      */
-    public void setWeee_tax_applied_amount(String param) {
+    public void setWeee_tax_applied_amount(java.lang.String param) {
         localWeee_tax_applied_amountTracker = param != null;
 
         this.localWeee_tax_applied_amount = param;
@@ -699,7 +699,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getWeee_tax_applied_row_amount() {
+    public java.lang.String getWeee_tax_applied_row_amount() {
         return localWeee_tax_applied_row_amount;
     }
 
@@ -707,7 +707,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
      * Auto generated setter method
      * @param param Weee_tax_applied_row_amount
      */
-    public void setWeee_tax_applied_row_amount(String param) {
+    public void setWeee_tax_applied_row_amount(java.lang.String param) {
         localWeee_tax_applied_row_amountTracker = param != null;
 
         this.localWeee_tax_applied_row_amount = param;
@@ -721,7 +721,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getWeee_tax_disposition() {
+    public java.lang.String getWeee_tax_disposition() {
         return localWeee_tax_disposition;
     }
 
@@ -729,7 +729,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
      * Auto generated setter method
      * @param param Weee_tax_disposition
      */
-    public void setWeee_tax_disposition(String param) {
+    public void setWeee_tax_disposition(java.lang.String param) {
         localWeee_tax_dispositionTracker = param != null;
 
         this.localWeee_tax_disposition = param;
@@ -743,7 +743,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getWeee_tax_row_disposition() {
+    public java.lang.String getWeee_tax_row_disposition() {
         return localWeee_tax_row_disposition;
     }
 
@@ -751,7 +751,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
      * Auto generated setter method
      * @param param Weee_tax_row_disposition
      */
-    public void setWeee_tax_row_disposition(String param) {
+    public void setWeee_tax_row_disposition(java.lang.String param) {
         localWeee_tax_row_dispositionTracker = param != null;
 
         this.localWeee_tax_row_disposition = param;
@@ -765,7 +765,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getBase_weee_tax_disposition() {
+    public java.lang.String getBase_weee_tax_disposition() {
         return localBase_weee_tax_disposition;
     }
 
@@ -773,7 +773,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
      * Auto generated setter method
      * @param param Base_weee_tax_disposition
      */
-    public void setBase_weee_tax_disposition(String param) {
+    public void setBase_weee_tax_disposition(java.lang.String param) {
         localBase_weee_tax_dispositionTracker = param != null;
 
         this.localBase_weee_tax_disposition = param;
@@ -787,7 +787,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getBase_weee_tax_row_disposition() {
+    public java.lang.String getBase_weee_tax_row_disposition() {
         return localBase_weee_tax_row_disposition;
     }
 
@@ -795,7 +795,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
      * Auto generated setter method
      * @param param Base_weee_tax_row_disposition
      */
-    public void setBase_weee_tax_row_disposition(String param) {
+    public void setBase_weee_tax_row_disposition(java.lang.String param) {
         localBase_weee_tax_row_dispositionTracker = param != null;
 
         this.localBase_weee_tax_row_disposition = param;
@@ -809,7 +809,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getSku() {
+    public java.lang.String getSku() {
         return localSku;
     }
 
@@ -817,7 +817,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
      * Auto generated setter method
      * @param param Sku
      */
-    public void setSku(String param) {
+    public void setSku(java.lang.String param) {
         localSkuTracker = param != null;
 
         this.localSku = param;
@@ -831,7 +831,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getName() {
+    public java.lang.String getName() {
         return localName;
     }
 
@@ -839,7 +839,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
      * Auto generated setter method
      * @param param Name
      */
-    public void setName(String param) {
+    public void setName(java.lang.String param) {
         localNameTracker = param != null;
 
         this.localName = param;
@@ -853,7 +853,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getOrder_item_id() {
+    public java.lang.String getOrder_item_id() {
         return localOrder_item_id;
     }
 
@@ -861,7 +861,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
      * Auto generated setter method
      * @param param Order_item_id
      */
-    public void setOrder_item_id(String param) {
+    public void setOrder_item_id(java.lang.String param) {
         localOrder_item_idTracker = param != null;
 
         this.localOrder_item_id = param;
@@ -875,7 +875,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getProduct_id() {
+    public java.lang.String getProduct_id() {
         return localProduct_id;
     }
 
@@ -883,7 +883,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
      * Auto generated setter method
      * @param param Product_id
      */
-    public void setProduct_id(String param) {
+    public void setProduct_id(java.lang.String param) {
         localProduct_idTracker = param != null;
 
         this.localProduct_id = param;
@@ -897,7 +897,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getItem_id() {
+    public java.lang.String getItem_id() {
         return localItem_id;
     }
 
@@ -905,7 +905,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
      * Auto generated setter method
      * @param param Item_id
      */
-    public void setItem_id(String param) {
+    public void setItem_id(java.lang.String param) {
         localItem_idTracker = param != null;
 
         this.localItem_id = param;
@@ -938,8 +938,8 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
         javax.xml.stream.XMLStreamWriter xmlWriter, boolean serializeType)
         throws javax.xml.stream.XMLStreamException,
             org.apache.axis2.databinding.ADBException {
-        String prefix = null;
-        String namespace = null;
+        java.lang.String prefix = null;
+        java.lang.String namespace = null;
 
         prefix = parentQName.getPrefix();
         namespace = parentQName.getNamespaceURI();
@@ -947,7 +947,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
             xmlWriter);
 
         if (serializeType) {
-            String namespacePrefix = registerPrefix(xmlWriter,
+            java.lang.String namespacePrefix = registerPrefix(xmlWriter,
                     "urn:Magento");
 
             if ((namespacePrefix != null) &&
@@ -1377,7 +1377,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
         xmlWriter.writeEndElement();
     }
 
-    private static String generatePrefix(String namespace) {
+    private static java.lang.String generatePrefix(java.lang.String namespace) {
         if (namespace.equals("urn:Magento")) {
             return "ns1";
         }
@@ -1388,11 +1388,11 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
     /**
      * Utility method to write an element start tag.
      */
-    private void writeStartElement(String prefix,
-        String namespace, String localPart,
+    private void writeStartElement(java.lang.String prefix,
+        java.lang.String namespace, java.lang.String localPart,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
-        String writerPrefix = xmlWriter.getPrefix(namespace);
+        java.lang.String writerPrefix = xmlWriter.getPrefix(namespace);
 
         if (writerPrefix != null) {
             xmlWriter.writeStartElement(namespace, localPart);
@@ -1412,9 +1412,9 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
     /**
      * Util method to write an attribute with the ns prefix
      */
-    private void writeAttribute(String prefix,
-        String namespace, String attName,
-        String attValue, javax.xml.stream.XMLStreamWriter xmlWriter)
+    private void writeAttribute(java.lang.String prefix,
+        java.lang.String namespace, java.lang.String attName,
+        java.lang.String attValue, javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
         if (xmlWriter.getPrefix(namespace) == null) {
             xmlWriter.writeNamespace(prefix, namespace);
@@ -1427,8 +1427,8 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
     /**
      * Util method to write an attribute without the ns prefix
      */
-    private void writeAttribute(String namespace,
-        String attName, String attValue,
+    private void writeAttribute(java.lang.String namespace,
+        java.lang.String attName, java.lang.String attValue,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
         if (namespace.equals("")) {
@@ -1442,18 +1442,18 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
     /**
      * Util method to write an attribute without the ns prefix
      */
-    private void writeQNameAttribute(String namespace,
-        String attName, javax.xml.namespace.QName qname,
+    private void writeQNameAttribute(java.lang.String namespace,
+        java.lang.String attName, javax.xml.namespace.QName qname,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
-        String attributeNamespace = qname.getNamespaceURI();
-        String attributePrefix = xmlWriter.getPrefix(attributeNamespace);
+        java.lang.String attributeNamespace = qname.getNamespaceURI();
+        java.lang.String attributePrefix = xmlWriter.getPrefix(attributeNamespace);
 
         if (attributePrefix == null) {
             attributePrefix = registerPrefix(xmlWriter, attributeNamespace);
         }
 
-        String attributeValue;
+        java.lang.String attributeValue;
 
         if (attributePrefix.trim().length() > 0) {
             attributeValue = attributePrefix + ":" + qname.getLocalPart();
@@ -1475,10 +1475,10 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
     private void writeQName(javax.xml.namespace.QName qname,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
-        String namespaceURI = qname.getNamespaceURI();
+        java.lang.String namespaceURI = qname.getNamespaceURI();
 
         if (namespaceURI != null) {
-            String prefix = xmlWriter.getPrefix(namespaceURI);
+            java.lang.String prefix = xmlWriter.getPrefix(namespaceURI);
 
             if (prefix == null) {
                 prefix = generatePrefix(namespaceURI);
@@ -1507,9 +1507,9 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
         if (qnames != null) {
             // we have to store this data until last moment since it is not possible to write any
             // namespace data after writing the charactor data
-            StringBuffer stringToWrite = new StringBuffer();
-            String namespaceURI = null;
-            String prefix = null;
+            java.lang.StringBuffer stringToWrite = new java.lang.StringBuffer();
+            java.lang.String namespaceURI = null;
+            java.lang.String prefix = null;
 
             for (int i = 0; i < qnames.length; i++) {
                 if (i > 0) {
@@ -1548,10 +1548,10 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
     /**
      * Register a namespace prefix
      */
-    private String registerPrefix(
-        javax.xml.stream.XMLStreamWriter xmlWriter, String namespace)
+    private java.lang.String registerPrefix(
+        javax.xml.stream.XMLStreamWriter xmlWriter, java.lang.String namespace)
         throws javax.xml.stream.XMLStreamException {
-        String prefix = xmlWriter.getPrefix(namespace);
+        java.lang.String prefix = xmlWriter.getPrefix(namespace);
 
         if (prefix == null) {
             prefix = generatePrefix(namespace);
@@ -1559,7 +1559,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
             javax.xml.namespace.NamespaceContext nsContext = xmlWriter.getNamespaceContext();
 
             while (true) {
-                String uri = nsContext.getNamespaceURI(prefix);
+                java.lang.String uri = nsContext.getNamespaceURI(prefix);
 
                 if ((uri == null) || (uri.length() == 0)) {
                     break;
@@ -1933,13 +1933,13 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
          *                If this object is a complex type, the reader is positioned at the end element of its outer element
          */
         public static SalesOrderInvoiceItemEntity parse(
-            javax.xml.stream.XMLStreamReader reader) throws Exception {
+            javax.xml.stream.XMLStreamReader reader) throws java.lang.Exception {
             SalesOrderInvoiceItemEntity object = new SalesOrderInvoiceItemEntity();
 
             int event;
-            String nillableValue = null;
-            String prefix = "";
-            String namespaceuri = "";
+            java.lang.String nillableValue = null;
+            java.lang.String prefix = "";
+            java.lang.String namespaceuri = "";
 
             try {
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -1947,11 +1947,11 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
 
                 if (reader.getAttributeValue(
                             "http://www.w3.org/2001/XMLSchema-instance", "type") != null) {
-                    String fullTypeName = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance",
+                    java.lang.String fullTypeName = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance",
                             "type");
 
                     if (fullTypeName != null) {
-                        String nsPrefix = null;
+                        java.lang.String nsPrefix = null;
 
                         if (fullTypeName.indexOf(":") > -1) {
                             nsPrefix = fullTypeName.substring(0,
@@ -1960,12 +1960,12 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
 
                         nsPrefix = (nsPrefix == null) ? "" : nsPrefix;
 
-                        String type = fullTypeName.substring(fullTypeName.indexOf(
+                        java.lang.String type = fullTypeName.substring(fullTypeName.indexOf(
                                     ":") + 1);
 
                         if (!"salesOrderInvoiceItemEntity".equals(type)) {
                             //find namespace for the prefix
-                            String nsUri = reader.getNamespaceContext()
+                            java.lang.String nsUri = reader.getNamespaceContext()
                                                            .getNamespaceURI(nsPrefix);
 
                             return (SalesOrderInvoiceItemEntity) magento.ExtensionMapper.getTypeObject(nsUri,
@@ -1996,7 +1996,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setIncrement_id(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -2022,7 +2022,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
                             "The element: " + "parent_id" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setParent_id(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -2049,7 +2049,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setCreated_at(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -2076,7 +2076,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setUpdated_at(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -2102,7 +2102,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
                             "The element: " + "is_active" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setIs_active(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -2129,7 +2129,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setWeee_tax_applied(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -2155,7 +2155,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
                             "The element: " + "qty" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setQty(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -2181,7 +2181,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
                             "The element: " + "cost" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setCost(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -2207,7 +2207,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
                             "The element: " + "price" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setPrice(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -2234,7 +2234,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setTax_amount(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -2260,7 +2260,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
                             "The element: " + "row_total" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setRow_total(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -2287,7 +2287,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setBase_price(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -2314,7 +2314,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setBase_tax_amount(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -2341,7 +2341,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setBase_row_total(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -2369,7 +2369,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setBase_weee_tax_applied_amount(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -2398,7 +2398,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setBase_weee_tax_applied_row_amount(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -2425,7 +2425,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setWeee_tax_applied_amount(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -2453,7 +2453,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setWeee_tax_applied_row_amount(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -2480,7 +2480,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setWeee_tax_disposition(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -2507,7 +2507,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setWeee_tax_row_disposition(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -2535,7 +2535,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setBase_weee_tax_disposition(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -2563,7 +2563,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setBase_weee_tax_row_disposition(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -2589,7 +2589,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
                             "The element: " + "sku" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setSku(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -2615,7 +2615,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
                             "The element: " + "name" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setName(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -2642,7 +2642,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setOrder_item_id(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -2669,7 +2669,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setProduct_id(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -2695,7 +2695,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
                             "The element: " + "item_id" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setItem_id(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -2715,7 +2715,7 @@ public class SalesOrderInvoiceItemEntity implements org.apache.axis2.databinding
                         "Unexpected subelement " + reader.getName());
                 }
             } catch (javax.xml.stream.XMLStreamException e) {
-                throw new Exception(e);
+                throw new java.lang.Exception(e);
             }
 
             return object;
