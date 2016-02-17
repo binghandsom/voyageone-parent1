@@ -54,7 +54,13 @@ public class WmsSimTransferInfoService  extends BaseTaskService {
         // 线程
         List<Runnable> threads = new ArrayList<>();
 
-        String process_time = DateTimeUtil.getLocalTime(DateTimeUtil.getDate(), -4);
+        String delete_time_interval =  TaskControlUtils.getVal1(taskControlList, TaskControlEnums.Name.delete_time_interval);
+
+        if (StringUtils.isNullOrBlank2(delete_time_interval)) {
+            delete_time_interval = "4";
+        }
+
+        String process_time = DateTimeUtil.getLocalTime(DateTimeUtil.getDate(), Integer.valueOf(delete_time_interval) * -1);
 
         int transferCount = transferDao.deleteTransferHistory( process_time);
 
