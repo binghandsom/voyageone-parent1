@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * @author jacky, Jonas
@@ -240,5 +241,17 @@ public final class CommonUtil {
         ret = bd1.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
 
         return ret;
+    }
+	
+	/**
+     * 将integer的list转成long的list
+     * @param list
+     * @return
+     */
+    public static List<Long> changeListType(List<Integer> list) {
+        if (list != null && list.size() > 0)
+            return list.stream().map(m->m.longValue()).collect(Collectors.toList());
+        else
+            return new ArrayList<Long>();
     }
 }

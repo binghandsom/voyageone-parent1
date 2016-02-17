@@ -9,8 +9,6 @@ import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * 对权限进行检测
@@ -21,14 +19,10 @@ import java.util.Set;
 @Component
 class AuthorizationInterceptor {
 
-    private final static Set<String> excludes = new HashSet<String>() {{
-        add("/core/access/user/getChannel");
-        add("/core/access/user/selectChannel");
-    }};
-
     public boolean preHandle(HttpServletRequest request) throws Exception {
 
-        if (skip(request)) return true;
+        // TODO 开发阶段跳过全部检查
+        if (true) return true;
 
         HttpSession session = request.getSession();
         UserSessionBean user = (UserSessionBean) session.getAttribute(BaseConstants.SESSION_USER);
@@ -47,10 +41,5 @@ class AuthorizationInterceptor {
             throw new BusinessException(BaseConstants.MSG_DENIED);
 
         return true;
-    }
-
-    private boolean skip(HttpServletRequest request) {
-
-        return excludes.contains(request.getRequestURI());
     }
 }

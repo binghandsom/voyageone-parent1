@@ -91,6 +91,7 @@ public final class Constants {
         public static final String EN = "en";
         public static final String CN = "cn";
         public static final String JP = "jp";
+        public static final String[] ALL = {"en", "cn", "jp"};
     }
 
     /**
@@ -122,5 +123,21 @@ public final class Constants {
 
     // 手机号码不符合规定
     public static final int PHONE_NUM_ERR = -3;
+
+
+    public static final class comMtType {
+        public static final String BRAND = "brand";
+    }
+
+    public static final class productForOtherSystemInfo {
+        public static final String IMG_URL = "http://image.sneakerhead.com/is/image/sneakerhead/";
+
+        public static final String TMALL_NUM_IID = "http://detail.tmall.com/item.htm?id=";
+
+        public static final String HS_CODE_CROP = "hsCodeCrop";
+
+        public static final String HS_CODE_PRIVATE = "hsCodePrivate";
+
+    }
 
 }

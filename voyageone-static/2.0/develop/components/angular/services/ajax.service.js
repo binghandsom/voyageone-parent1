@@ -5,24 +5,22 @@
  */
 
 angular.module('voyageone.angular.services.ajax', [])
+  .service('$ajax', $Ajax)
   .service('ajaxService', AjaxService);
 
-function AjaxService($http, blockUI, $q) {
+function $Ajax($http, blockUI, $q) {
   this.$http = $http;
   this.blockUI = blockUI;
   this.$q = $q;
 }
-AjaxService.prototype.post = function (url, data) {
+$Ajax.prototype.post = function (url, data) {
+
   var defer = this.$q.defer();
   this.$http.post(url, data).then(function (response) {
     var res = response.data;
     if (!res) {
       alert('相应结果不存在?????');
       defer.reject(null);
-      return;
-    }
-    // 对后端通知的跳转进行自动处理
-    if (autoRedirect(res) || sessionTimeout(res)) {
       return;
     }
     if (res.message || res.code) {
@@ -36,27 +34,27 @@ AjaxService.prototype.post = function (url, data) {
   return defer.promise;
 };
 
-// 和 JAVA 同步,系统通知前端自动跳转的特殊代码
-var CODE_SYS_REDIRECT = "SYS_REDIRECT";
-// 和 JAVA 同步,回话过期的信息
-var MSG_TIMEOUT = "300001";
-
-function autoRedirect(res) {
-  if (res.code != CODE_SYS_REDIRECT) {
-    return false;
-  }
-  // 如果跳转数据异常,则默认跳转登陆页
-  location.href = (!res.data || !res.data.redirectTo)
-    ? '/login.html'
-    : res.data.redirectTo;
-  return true;
+function AjaxService($q, $ajax, messageService) {
+  this.$q = $q;
+  this.$ajax = $ajax;
+  this.messageService = messageService;
 }
+AjaxService.prototype.post = function (url, data) {
 
-function sessionTimeout(res) {
-  if (res.code != MSG_TIMEOUT) {
-    return false;
-  }
-  // 会话超时,默认跳转到登陆页
-  location.href = '/login.html';
-  return true;
-}
+  var defer = this.$q.defer();
+
+  this.$ajax.post(url, data).then(function(res) {
+    // 成功
+    defer.resolve(res);
+    return res;
+  }, (function (_this) {
+    // 失败
+    return function(res) {
+      _this.messageService.show(res);
+      defer.reject(res);
+      return res;
+    };
+  })(this));
+
+  return defer.promise;
+};

@@ -3,32 +3,34 @@ package com.voyageone.web2.core.views;
 import com.voyageone.web2.base.BaseConstants;
 import com.voyageone.web2.base.BaseController;
 import com.voyageone.web2.base.ajax.AjaxResponse;
-import com.voyageone.web2.core.model.ChannelPermissionModel;
+import com.voyageone.web2.core.CoreUrlConstants;
 import com.voyageone.web2.core.bean.UserSessionBean;
+import com.voyageone.web2.core.model.ChannelPermissionModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpSession;
 import java.util.List;
 import java.util.Map;
 
 /**
  * Index 路径
- * Created on 11/26/15.
  *
- * @author Jonas
+ * @author Jonas, 11/26/15.
  * @version 2.0.0
  */
 @RestController
-@RequestMapping(value = "/core/access/user/", method = RequestMethod.POST)
+@RequestMapping(value = CoreUrlConstants.USER_ROOT, method = RequestMethod.POST)
 public class UserController extends BaseController {
     @Autowired
     private UserService userService;
 
-    @RequestMapping("login")
+    @RequestMapping(CoreUrlConstants.USER_LOGIN)
     public AjaxResponse login(@RequestBody Map<String, Object> params) {
+
         String username = (String) params.get("username");
         String password = (String) params.get("password");
         int timezone = (int) params.get("timezone");
@@ -38,20 +40,38 @@ public class UserController extends BaseController {
         UserSessionBean userSessionBean = userService.login(username, password, timezone);
         // 保存用户
         getSession().setAttribute(BaseConstants.SESSION_USER, userSessionBean);
+        // 保存用户的默认语言
+        getSession().setAttribute(BaseConstants.SESSION_LANG, userService.getUserLanguage(userSessionBean));
 
         // 返回用户信息
         return success(true);
     }
 
-    @RequestMapping("getChannel")
+    @RequestMapping(CoreUrlConstants.USER_CHANNEL)
     public AjaxResponse getChannel() {
         List<ChannelPermissionModel> companyBeans = userService.getPermissionCompany(getUser());
         return success(companyBeans);
     }
 
-    @RequestMapping("selectChannel")
+    @RequestMapping(CoreUrlConstants.USER_SEL_CHANNEL)
     public AjaxResponse selectChannel(@RequestBody Map<String, Object> params) {
         userService.setSelectChannel(getUser(), String.valueOf(params.get("channelId")));
+        // 只要不报异常就是ok
+        return success(true);
+    }
+
+    /**
+     * logout处理
+     */
+    @RequestMapping(CoreUrlConstants.USER_LOGOUT)
+    public AjaxResponse logout() {
+
+        // 清空缓存
+        HttpSession session = getSession();
+        if (session != null) {
+            session.invalidate();
+        }
+
         // 只要不报异常就是ok
         return success(true);
     }

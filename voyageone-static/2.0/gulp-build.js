@@ -8,6 +8,8 @@ var minifyCss = require('gulp-minify-css');
 var uglify = require('gulp-uglify');
 var sourceMaps = require('gulp-sourcemaps');
 var fs = require('fs');
+var suffBuilder = require('./gulp-build-suff');
+var actionsDesc = require('./gulp-build-actions');
 
 var build = require('./gulp-vars').build;
 var tasks = require('./gulp-vars').tasks;
@@ -18,18 +20,31 @@ var headerSingle = '(function(){\n';
 var footerSingle = '})();';
 var encode = 'utf-8';
 
-// build voyageone.angular.com.js
-gulp.task(tasks.build.angular, function () {
+gulp.task(tasks.build.actions, function() {
+  return gulp.src(build.actions.src)
+    .pipe(debug())
+    .pipe(actionsDesc())
+    .pipe(gulp.dest('./'));
+});
+
+gulp.task(tasks.build.angular_suff, function () {
   return gulp.src(build.common.angular.src)
+    .pipe(debug())
+    .pipe(suffBuilder(build.common.angular.footerFile))
+    .pipe(gulp.dest(build.common.angular.dist));
+});
+
+// build voyageone.angular.com.js
+gulp.task(tasks.build.angular, [tasks.build.angular_suff], function () {
+  return gulp.src(build.common.angular.src)
+    .pipe(debug())
+    .pipe(sourceMaps.init())
     // 追加依赖注入语法
     .pipe(ngAnnotate())
-    // 包裹每个单个组件
-    .pipe(header(headerSingle))
-    .pipe(footer(footerSingle))
     // 合并到一个文件
     .pipe(concat(build.common.angular.concat))
     // 追加尾部声明
-    .pipe(footer(fs.readFileSync(build.common.angular.footerFile, encode)))
+    .pipe(footer(fs.readFileSync(( build.common.angular.dist + '/' + build.common.angular.footerFile), encode)))
     // 包裹整个内容
     .pipe(header(definePrefix))
     .pipe(footer(defineSuffix))
@@ -38,6 +53,9 @@ gulp.task(tasks.build.angular, function () {
       mangle: false,
       compress: false,
       output: {beautify: true, indent_level: 2}
+    }))
+    .pipe(sourceMaps.write('./', {
+      sourceRoot: 'components/angular'
     }))
     .pipe(gulp.dest(build.common.angular.dist));
 });
@@ -59,6 +77,7 @@ gulp.task(tasks.build.com, function () {
 // build app.css
 gulp.task(tasks.build.css.app, function () {
   return gulp.src(build.common.appCss.src)
+    .pipe(debug())
     .pipe(concat(build.common.appCss.concat))
     .pipe(minifyCss())
     .pipe(gulp.dest(build.common.appCss.dist));
@@ -67,6 +86,7 @@ gulp.task(tasks.build.css.app, function () {
 // build login.css
 gulp.task(tasks.build.css.login, function () {
   return gulp.src(build.common.loginCss.src)
+    .pipe(debug())
     .pipe(concat(build.common.loginCss.concat))
     .pipe(minifyCss())
     .pipe(gulp.dest(build.common.loginCss.dist));
@@ -74,9 +94,3 @@ gulp.task(tasks.build.css.login, function () {
 
 // build all css files
 gulp.task(tasks.build.css.all, [tasks.build.css.app, tasks.build.css.login]);
-
-// watch the login.css and app.css has been changed.
-gulp.task(tasks.build.watch, function () {
-  gulp.watch(build.common.appCss.src, [tasks.build.css.app]);
-  gulp.watch(build.common.loginCss.src, [tasks.build.css.login]);
-});

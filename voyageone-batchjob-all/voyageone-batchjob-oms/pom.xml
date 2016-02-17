@@ -21,11 +21,11 @@
 		</dependency>
 
 		<dependency>
-			<groupId>com.voyageone</groupId>
+			<groupId>com.sun.jersey</groupId>
 			<artifactId>jersey-bundle</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.voyageone</groupId>
+			<groupId>com.sun.jersey.contribs</groupId>
 			<artifactId>jersey-spring</artifactId>
 		</dependency>
 
@@ -38,7 +38,7 @@
 			<artifactId>axis</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.voyageone</groupId>
+			<groupId>org.codehaus.jettison</groupId>
 			<artifactId>jettison</artifactId>
 		</dependency>
 		<dependency>
@@ -46,7 +46,7 @@
 			<artifactId>mailapi</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.voyageone</groupId>
+			<groupId>wsdl4j</groupId>
 			<artifactId>wsdl4j</artifactId>
 		</dependency>
 		<dependency>
@@ -54,7 +54,7 @@
 			<artifactId>quartz</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.voyageone</groupId>
+			<groupId>com.sun.mail</groupId>
 			<artifactId>smtp</artifactId>
 		</dependency>
 

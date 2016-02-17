@@ -70,10 +70,10 @@ public class SqlOlapConstantShopExtend {
 			+ ",sum(pv) pv_n \n"
 			+ ",sum(uv) uv_n \n"
 			+ ",avg(cvr_order) tr_n \n"
-			+ "FROM #schema##table_name#_extend sale \n"
-			+ "INNER JOIN #schema#vm_date date ON date.id=sale.date \n"
-			+ "INNER JOIN #schema#vm_shop shop ON shop.id=sale.shop_id \n"
-			+ "INNER JOIN #schema#vm_buy_channel buy_channel ON buy_channel.id=sale.buy_channel \n"
+			+ "FROM #table_name#_extend sale \n"
+			+ "INNER JOIN vm_date date ON date.id=sale.date \n"
+			+ "INNER JOIN vm_shop shop ON shop.id=sale.shop_id \n"
+			+ "INNER JOIN vm_buy_channel buy_channel ON buy_channel.id=sale.buy_channel \n"
 			+ "WHERE #date_condition# #condition# \n";
 	
 }

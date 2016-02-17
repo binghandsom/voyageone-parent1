@@ -6,9 +6,10 @@ import com.voyageone.common.Constants.LANGUAGE;
 import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.web2.base.ajax.AjaxResponse;
-import com.voyageone.web2.base.ajax.AjaxResponseData;
 import com.voyageone.web2.base.log.ExceptionLogBean;
 import com.voyageone.web2.base.log.LogService;
+import com.voyageone.web2.base.message.DisplayType;
+import com.voyageone.web2.base.message.MessageModel;
 import com.voyageone.web2.base.message.MessageService;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.apache.commons.lang3.StringUtils;
@@ -38,11 +39,24 @@ public class ExceptionHandler implements HandlerExceptionResolver {
     @Autowired
     private MessageService messageService;
 
+    private boolean debug;
+
+    public boolean isDebug() {
+        return debug;
+    }
+
+    public void setDebug(boolean debug) {
+        this.debug = debug;
+    }
+
     public ModelAndView resolveException(HttpServletRequest request,
                                          HttpServletResponse response, Object handler, Exception exception) {
         try {
-            // log4j打印出详细信息，包括堆栈信息
-            logger.error(exception.getMessage(), exception);
+
+            String url = request.getRequestURI();
+            String simpleMessage = exception.getMessage();
+            if (StringUtils.isEmpty(simpleMessage)) simpleMessage = exception.toString();
+            logger.debug(String.format("%s => %s", url, simpleMessage));
 
             Object val = request.getSession().getAttribute(BaseConstants.SESSION_LANG);
 
@@ -68,8 +82,8 @@ public class ExceptionHandler implements HandlerExceptionResolver {
                 return catchDefault(exception, response);
             }
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
 
+            logger.error(e.getMessage(), e);
             return catchDefault(e, response);
         }
     }
@@ -79,7 +93,19 @@ public class ExceptionHandler implements HandlerExceptionResolver {
      */
     private ModelAndView catchBusinessException(String lang, BusinessException exception,
                                                 HttpServletResponse response) {
-        return businessExceptionDeal(lang, exception, response);
+        // 如果携带的 code 为空, 则尝试使用异常的本来信息
+        if (!StringUtils.isEmpty(exception.getCode()))
+            return messageDeal(lang, exception.getCode(), exception.getInfo(), response);
+
+        AjaxResponse ajaxResponse = new AjaxResponse();
+
+        ajaxResponse.setCode(exception.getCode());
+        ajaxResponse.setDisplayType(DisplayType.ALERT);
+        ajaxResponse.setMessage(exception.getMessage());
+
+        ajaxResponse.writeTo(response);
+
+        return null;
     }
 
     /**
@@ -93,12 +119,14 @@ public class ExceptionHandler implements HandlerExceptionResolver {
         }
 
         String code = exception.getCode();
-        String msg = messageService.getMessage(lang, code);
+        MessageModel msgModel = messageService.getMessage(lang, code);
 
-        if (StringUtils.isEmpty(msg)) msg = exception.getMessage();
+        if (msgModel != null) {
+            return messageDeal(lang, code, null, response);
+        }
 
-        msg = StringUtils.isEmpty(msg) ? exception.getClass().getName() : msg;
-
+        String msg = exception.getMessage();
+        if (StringUtils.isEmpty(msg)) msg = exception.getClass().getName();
         return exceptionDeal(msg, code, response);
     }
 
@@ -109,29 +137,41 @@ public class ExceptionHandler implements HandlerExceptionResolver {
                                       HttpServletResponse response) {
         // 尝试根据信息获取指定的错误提示
         String msg = exception.getMessage();
-        msg = StringUtils.isEmpty(msg) ? exception.getClass().getName() : msg;
+
+        if (isDebug()) {
+            msg = exception.getClass().getName() + ":" + exception.getStackTrace()[0].toString();
+        }
+
+        if (StringUtils.isEmpty(msg))
+            msg = "maybe in ct exception info (db)";
+
         return exceptionDeal(msg, "5", response);
     }
 
     /**
-     * 业务异常时ajax返回处理
+     * 信息类异常处理
+     *
+     * @param lang     选定语言
+     * @param code     信息代码
+     * @param args     格式化参数
+     * @param response 响应
+     * @return null
      */
-    private ModelAndView businessExceptionDeal(String lang, BusinessException exception, HttpServletResponse response) {
-
-        String code = exception.getCode();
-
-        String msg = messageService.getMessage(lang, code);
-
-        if (StringUtils.isEmpty(msg)) {
-            msg = String.format("this msg_code [%s(%s)] is not exists !!", code, lang);
-        } else {
-            msg = String.format(msg, exception.getInfo());
-        }
+    private ModelAndView messageDeal(String lang, String code, Object[] args, HttpServletResponse response) {
 
         AjaxResponse ajaxResponse = new AjaxResponse();
 
-        ajaxResponse.setCode(code);
-        ajaxResponse.setMessage(msg);
+        MessageModel msgModel = messageService.getMessage(lang, code);
+
+        if (msgModel == null) {
+            ajaxResponse.setCode(code);
+            ajaxResponse.setDisplayType(DisplayType.ALERT);
+            // TODO 暂时未处理根据Code来获取message
+//            ajaxResponse.setMessage(String.format("this msg_code [%s(%s)] is not exists !!", code, lang));
+            ajaxResponse.setMessage(code);
+        } else {
+            ajaxResponse.setMessage(msgModel, args);
+        }
 
         ajaxResponse.writeTo(response);
 
@@ -152,7 +192,7 @@ public class ExceptionHandler implements HandlerExceptionResolver {
             case BaseConstants.CODE_SEL_CHANNEL:
                 AjaxResponse ajaxResponse = new AjaxResponse();
                 ajaxResponse.setCode(BaseConstants.CODE_SYS_REDIRECT);
-                ajaxResponse.setResult(new AjaxResponseData(){{ setRedirectTo("/channel.html"); }});
+                ajaxResponse.setRedirectTo("/channel.html");
                 ajaxResponse.writeTo(response);
                 return true;
         }
@@ -164,6 +204,7 @@ public class ExceptionHandler implements HandlerExceptionResolver {
      * 业务以外异常时ajax返回处理
      */
     private ModelAndView exceptionDeal(String msg, String code, HttpServletResponse response) {
+
         AjaxResponse ajaxResponse = new AjaxResponse();
         ajaxResponse.setCode(code);
         ajaxResponse.setMessage(msg);
@@ -173,6 +214,10 @@ public class ExceptionHandler implements HandlerExceptionResolver {
     }
 
     private void insertLogToDB(HttpServletRequest request, Exception exception) {
+
+        // 如果是开发阶段则不需要记录
+        if (isDebug()) return;
+
         // 异常发生时间
         String dateTime = DateTimeUtil.getNow(DateTimeUtil.DATE_TIME_FORMAT_1);
         // 取得用户信息
@@ -187,6 +232,9 @@ public class ExceptionHandler implements HandlerExceptionResolver {
         // String stackInfo = getExceptionStack(exception);
         // 异常描述
         String message = CommonUtil.getExceptionSimpleContent(exception);
+
+        // 保证不会因为数据库字段长度的问题导致报错
+        if (message.length() > 200) message = message.substring(0, 200);
 
         ExceptionLogBean exceptionBean = new ExceptionLogBean();
         exceptionBean.setDateTime(dateTime);

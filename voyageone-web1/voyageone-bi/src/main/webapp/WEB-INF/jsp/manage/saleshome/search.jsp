@@ -3,6 +3,12 @@
 <!-- End define -->
                         <div class="panel panel-grey margin-bottom-5 rounded">
                             <div class="panel-heading">
+                                <div><h3 class="panel-title">Channel:</h3></div>
+                                <div class="input-group" style="padding-left: 30px"><select id="search_channel_id" class="selectpicker" data-live-search="false" data-size="7"></select></div>
+                            </div>
+                        </div>
+                        <div class="panel panel-grey margin-bottom-5 rounded">
+                            <div class="panel-heading">
                                 <h3 class="panel-title"><input type="checkbox" id="shop_selectall"  onclick="selectAll('shop_selectall');" checked/> Shops</h3>
                             </div>
                             <div class="mmCustomScrollbar" style="padding: 0px;max-height:250px;">

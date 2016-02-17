@@ -7,6 +7,7 @@ public class PlatformWorkloadStatus implements Cloneable {
     public static final int JOB_INIT = 0;
     public static final int JOB_DONE = 1;
     public static final int JOB_ABORT = 2;
+    public static final int JOB_UNDEFINE= 3;
 
     public static final int ADD_START = 100;
     public static final int UPDATE_START = 200;

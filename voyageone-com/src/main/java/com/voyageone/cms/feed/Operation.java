@@ -2,7 +2,6 @@ package com.voyageone.cms.feed;
 
 /**
  * 第三方品牌数据条件可用的比较操作
- * <p>
  * Created by Jonas on 9/2/15.
  */
 public enum Operation {
@@ -27,9 +26,11 @@ public enum Operation {
      */
     NOT_EQUALS("不等于");
 
-    private String desc;
+    private final OperationBean bean;
 
-    private boolean single;
+    private final String desc;
+
+    private final boolean single;
 
     public String desc() {
         return this.desc;
@@ -39,23 +40,17 @@ public enum Operation {
         return single;
     }
 
+    public OperationBean bean() {
+        return bean;
+    }
+
     Operation(String desc) {
-        this.desc = desc;
+        this(desc, false);
     }
 
     Operation(String desc, boolean single) {
         this.desc = desc;
         this.single = single;
-    }
-
-    public OperationBean toBean() {
-
-        OperationBean bean = new OperationBean();
-
-        bean.setDesc(this.desc());
-        bean.setName(this.name());
-        bean.setSingle(this.isSingle());
-
-        return bean;
+        this.bean = new OperationBean(this);
     }
 }

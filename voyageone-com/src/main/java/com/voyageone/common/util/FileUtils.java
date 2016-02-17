@@ -1,7 +1,9 @@
 package com.voyageone.common.util;
 
+
 import com.voyageone.common.configs.Properties;
-import org.apache.log4j.Logger;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.io.*;
 import java.net.*;
@@ -15,13 +17,13 @@ import java.util.List;
 
 public final class FileUtils {
 
-    private static Logger logger = Logger.getLogger(FileUtils.class);
+    private static Log logger = LogFactory.getLog(FileUtils.class);
 
     /**
      * @param preFileName 源文件名
      * @param filePath 文件所在目录
      * @return 以【XXXX_】开头的文件组
-     * description 文件名必须以【XXXX_】开头，在指定目录下获取文件名以【XXXX_】开头的文件组，
+     * @description 文件名必须以【XXXX_】开头，在指定目录下获取文件名以【XXXX_】开头的文件组，
      */
     public static List getFileGroup(String preFileName, String filePath) {
         ArrayList<String> fileNameList = new ArrayList<>();

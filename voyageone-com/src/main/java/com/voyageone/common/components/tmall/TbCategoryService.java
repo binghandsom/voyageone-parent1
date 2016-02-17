@@ -54,7 +54,7 @@ public class TbCategoryService extends TbBase {
      * @param parentCid 指定的父类目id
      * @return ItemCat
      */
-    public List<ItemCat> getCategory(ShopBean shop,Long parentCid) throws ApiException{
+    public List<ItemCat> getCategory(ShopBean shop,Long parentCid) throws ApiException {
 
         List<ItemCat> itemCatListResult = new ArrayList<>();
 
@@ -132,6 +132,9 @@ public class TbCategoryService extends TbBase {
             // 设置返回值
             return response.getAddProductRule();
         } else if (response != null){
+
+
+
             String subMsg = response.getSubMsg();
             switch(subMsg)
             {
@@ -154,7 +157,7 @@ public class TbCategoryService extends TbBase {
      * @param cid
      * @return
      */
-    public ItemSchema getTbItemAddSchema(ShopBean shop,Long cid) throws ApiException{
+    public ItemSchema getTbItemAddSchema(ShopBean shop,Long cid, Long productId) throws ApiException{
 
         ItemSchema result = new ItemSchema();
         result.setCid(cid);
@@ -162,9 +165,14 @@ public class TbCategoryService extends TbBase {
         //tmall.item.add.schema.get 天猫发布商品规则获取
         TmallItemAddSchemaGetRequest request = new TmallItemAddSchemaGetRequest();
         request.setCategoryId(cid);
-        request.setProductId(0L);
+        if (productId == null) {
+            request.setProductId(0L);
+            request.setIsvInit(true);
+        } else {
+            request.setProductId(productId);
+            request.setIsvInit(false);
+        }
         request.setType("b");
-        request.setIsvInit(true);
         TmallItemAddSchemaGetResponse response = reqTaobaoApi(shop, request);
 
         if (response != null && response.getErrorCode() == null) {

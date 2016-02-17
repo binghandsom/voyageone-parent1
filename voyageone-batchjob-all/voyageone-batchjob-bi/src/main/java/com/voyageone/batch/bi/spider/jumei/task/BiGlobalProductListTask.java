@@ -64,10 +64,12 @@ public class BiGlobalProductListTask extends BaseSpiderService {
             	shopBean.setUser_ps(user.getUser_ps());
             	shopBean.setReflash_url("http://a.jumeiglobal.com/");
             	
-                fireFoxDriverService.initialRemoteLoginFireFoxDriver(driverConfigBean);
+                fireFoxDriverService.initialLocalLoginFireFoxDriver(driverConfigBean);
                 WebDriver driver = driverConfigBean.getInitial_driver();
                 
                 String pageSource = getListPageSource(driver, 1);
+				pageSource = pageSource.replace("xmlns:a0=\"http://www.w3.org/1999/xhtml\" ", "");
+				pageSource = pageSource.replace("a0:", "");
                 Document doc = getDocument(pageSource);
                 int pageSize = getPageSizeCount(doc);
                 List<JumeiProductAddedBean> allRows = new ArrayList<JumeiProductAddedBean>();
@@ -193,6 +195,8 @@ public class BiGlobalProductListTask extends BaseSpiderService {
 	
 	private List<JumeiProductAddedBean> getProductList(WebDriver driver, int pageIndex) throws InterruptedException {
 		String pageSource = getListPageSource(driver, pageIndex);
+		pageSource = pageSource.replace("xmlns:a0=\"http://www.w3.org/1999/xhtml\" ", "");
+		pageSource = pageSource.replace("a0:", "");
 	    Document doc = getDocument(pageSource);
 	    return parseProductList(doc);
 	}

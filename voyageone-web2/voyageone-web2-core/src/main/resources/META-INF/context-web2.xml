@@ -11,4 +11,5 @@
     </context:component-scan>
 
     <import resource="classpath*:context-web-core.xml"/>
+    <import resource="classpath*:context-web-cms.xml"/>
 </beans>

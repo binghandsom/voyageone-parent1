@@ -33,6 +33,7 @@ import com.voyageone.bi.task.sup.SalesBrandTask;
 import com.voyageone.bi.task.sup.SalesBuyChannelTask;
 import com.voyageone.bi.task.sup.SalesCategoryTask;
 import com.voyageone.bi.task.sup.SalesColorTask;
+import com.voyageone.bi.task.sup.SalesModelTask;
 import com.voyageone.bi.task.sup.SalesProductTask;
 import com.voyageone.bi.task.sup.SalesShopTask;
 import com.voyageone.bi.task.sup.SalesSizeTask;
@@ -68,6 +69,9 @@ public class SalesDetailTask {
 	// 按品类
 	@Autowired
 	private SalesSizeTask salesSizeTask;
+	// 按款式
+	@Autowired
+	private SalesModelTask salesModelTask;
 	// 按产品
 	@Autowired
 	private SalesProductTask salesProductTask;
@@ -231,6 +235,34 @@ public class SalesDetailTask {
 		return strExcelFileName;
 	}
 	
+	//ajaxGetSalesModelData KPI
+	public void ajaxGetSalesModelData(AjaxSalesDetailBean bean, UserInfoBean userInfoBean) throws BiException {
+		AjaxSalesDetailBean.Result result = bean.getResponseBean();
+		
+		try{
+			ConditionBean condition = ConditionUtil.getSalesDetailCondition(bean, Dimension.Product, userInfoBean);
+			result.setModelDisBean(salesModelTask.getTopSalesModelInfo(condition, userInfoBean, 100));
+			result.setReqResult(Contants.AJAX_RESULT_OK);
+		} catch(Exception e) {
+			result.setReqResult(Contants.AJAX_RESULT_FALSE);
+			throw new BiException(e, "ajaxGetSalesModelData");
+		}
+	}
+	
+	//ajaxGetSalesModelDataExcel KPI
+	public String ajaxGetSalesModelDataExcel(HttpServletRequest request, AjaxSalesDetailBean bean, UserInfoBean userInfoBean) throws BiException {
+		ConditionBean condition = ConditionUtil.getSalesDetailCondition(bean, Dimension.Product, userInfoBean);
+		List<ChartGridDisBean> modelList = salesModelTask.getTopSalesModelInfo(condition, userInfoBean, 0);
+		
+		String strExcelFileName = "";
+		try{
+			strExcelFileName = createExcelFile(request, modelList, "bi_sales_detail_template_p", true);
+		} catch(Exception e) {
+			logger.error("ajaxGetSalesModelDataExcel error", e);
+		}
+		return strExcelFileName;
+	}
+	
 	//ajaxGetSalesProductData KPI
 	public void ajaxGetSalesProductData(AjaxSalesDetailBean bean, UserInfoBean userInfoBean) throws BiException {
 		AjaxSalesDetailBean.Result result = bean.getResponseBean();
@@ -309,8 +341,7 @@ public class SalesDetailTask {
 
 	private WritableWorkbook getTemplateWorkBook(String strTemplateFile, String strExcelFileName) throws Exception {
         Workbook workbook = Workbook.getWorkbook(new File(strTemplateFile));
-        WritableWorkbook writableWorkbook = Workbook.createWorkbook(new File(strExcelFileName), workbook);
-	    return writableWorkbook;
+		return Workbook.createWorkbook(new File(strExcelFileName), workbook);
 	}
 	
 	private void exportProductListExcel(WritableWorkbook workbook, List<ChartGridDisBean> beanList, boolean isExistId) throws Exception {

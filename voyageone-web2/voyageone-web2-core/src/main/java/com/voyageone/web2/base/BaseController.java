@@ -1,7 +1,7 @@
 package com.voyageone.web2.base;
 
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.web2.base.ajax.AjaxResponse;
-import com.voyageone.web2.base.ajax.AjaxResponseData;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -117,8 +117,12 @@ public abstract class BaseController extends BaseAppComponent {
     public AjaxResponse success(Object data) {
 
         AjaxResponse response = new AjaxResponse();
-        response.setResult(new AjaxResponseData());
-        response.getResult().setData(data);
+        response.setData(data);
+        try {
+            logger.debug(JacksonUtil.bean2Json(response));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return response;
     }
 
@@ -128,8 +132,7 @@ public abstract class BaseController extends BaseAppComponent {
     public AjaxResponse redirectTo(String path) {
 
         AjaxResponse response = new AjaxResponse();
-        response.setResult(new AjaxResponseData());
-        response.getResult().setRedirectTo(path);
+        response.setRedirectTo(path);
         return response;
     }
 }

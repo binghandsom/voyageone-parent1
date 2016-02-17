@@ -2,16 +2,17 @@ package com.voyageone.cms.service.model;
 
 import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
 import com.voyageone.base.dao.mongodb.model.ChannelPartitionModel;
+import com.voyageone.base.dao.mysql.BaseModel;
 
 /**
  * Created by james.li on 2015/11/30.
  */
-public class CmsBtFeedProductImageModel extends BaseMongoModel {
+public class CmsBtFeedProductImageModel extends BaseModel {
     private String channelId;
     private String imageUrl;
     private String imageName;
     private int imageTypeId = 1;
-    private int sentFlag = 0;
+    private Integer sentFlag = 0;
 
     public CmsBtFeedProductImageModel(String channelId, String imageUrl,String modifier){
         this.channelId = channelId;
@@ -47,7 +48,7 @@ public class CmsBtFeedProductImageModel extends BaseMongoModel {
         this.imageTypeId = imageTypeId;
     }
 
-    public int getSentFlag() {
+    public Integer getSentFlag() {
         return sentFlag;
     }
 

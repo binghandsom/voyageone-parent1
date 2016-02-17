@@ -1,21 +1,28 @@
 package com.voyageone.cms.service.model;
 
 import com.voyageone.base.dao.mongodb.model.ChannelPartitionModel;
-import org.codehaus.jackson.annotate.JsonIgnore;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
+/**
+ * {@link CmsBtProductModel} 的商品Model
+ * @author chuanyu.liang, 12/11/15
+ * @version 2.0.0
+ * @since 2.0.0
+ */
 public class CmsBtProductModel extends ChannelPartitionModel {
 
-    private int prodId;
-    private int catId;
-    private String catIdPath;
+    private Long prodId;
+    private String catId;
+    private String catPath;
 
     private CmsBtProductModel_Field fields = new CmsBtProductModel_Field();
     private CmsBtProductModel_Group groups = new CmsBtProductModel_Group();
     private List<CmsBtProductModel_Sku> skus = new ArrayList<>();
-    private List<CmsBtProductModel_Tag> tags = new ArrayList<>();
-    private CmsBtProductModel_Feed feedAtts = new CmsBtProductModel_Feed();
+    private List<String> tags = new ArrayList<>();
+    private CmsBtProductModel_BatchField batchField = new CmsBtProductModel_BatchField();
+    private CmsBtProductModel_Feed feed = new CmsBtProductModel_Feed();
 
     public CmsBtProductModel() {
     }
@@ -24,27 +31,27 @@ public class CmsBtProductModel extends ChannelPartitionModel {
         super(channelId);
     }
 
-    public int getCatId() {
+    public String getCatId() {
         return catId;
     }
 
-    public void setCatId(int catId) {
+    public void setCatId(String catId) {
         this.catId = catId;
     }
 
-    public String getCatIdPath() {
-        return catIdPath;
+    public String getCatPath() {
+        return catPath;
     }
 
-    public void setCatIdPath(String catIdPath) {
-        this.catIdPath = catIdPath;
+    public void setCatPath(String catIdPath) {
+        this.catPath = catIdPath;
     }
 
-    public int getProdId() {
+    public Long getProdId() {
         return prodId;
     }
 
-    public void setProdId(int prodId) {
+    public void setProdId(Long prodId) {
         this.prodId = prodId;
     }
 
@@ -72,20 +79,38 @@ public class CmsBtProductModel extends ChannelPartitionModel {
         this.skus = skus;
     }
 
-    public List<CmsBtProductModel_Tag> getTags() {
+    public CmsBtProductModel_Sku getSku(String skuCode) {
+        if (skuCode != null && this.skus != null) {
+            for(CmsBtProductModel_Sku sku : skus) {
+                if (skuCode.equals(sku.getSkuCode())) {
+                    return sku;
+                }
+            }
+        }
+        return null;
+    }
+
+    public List<String> getTags() {
         return tags;
     }
 
-    public void setTags(List<CmsBtProductModel_Tag> tags) {
+    public void setTags(List<String> tags) {
         this.tags = tags;
     }
 
-    public CmsBtProductModel_Feed getFeedAtts() {
-        return feedAtts;
+    public CmsBtProductModel_BatchField getBatchField() {
+        return batchField;
     }
 
-    public void setFeedAtts(CmsBtProductModel_Feed feedAtt) {
-        this.feedAtts = feedAtt;
+    public void setBatchField(CmsBtProductModel_BatchField batchField) {
+        this.batchField = batchField;
     }
 
+    public CmsBtProductModel_Feed getFeed() {
+        return feed;
+    }
+
+    public void setFeed(CmsBtProductModel_Feed feed) {
+        this.feed = feed;
+    }
 }

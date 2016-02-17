@@ -9,8 +9,6 @@
 
 		<import resource="applicationContext-core.xml"/>
 
-		<import resource="dao-mongo-collecion-mapping.xml"/>
-
 		<task:scheduled-tasks scheduler="core-job-scheduler">
 			<!--每隔10分钟任务错误信息上报-->
 			<task:scheduled ref="CoreIssueTaskErrorTask" method="run" cron="0 0/10 0-23 * * ?"/>

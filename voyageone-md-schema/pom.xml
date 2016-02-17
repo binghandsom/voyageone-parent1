@@ -12,9 +12,31 @@
     <version>${voyageone.md.schema.version}</version>
     <dependencies>
         <dependency>
+            <groupId>dom4j</groupId>
+            <artifactId>dom4j</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+
+        <!-- junit -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>com.voyageone</groupId>
-            <artifactId>voyageone-com</artifactId>
-            <version>${voyageone.common.version}</version>
+            <artifactId>top-schema</artifactId>
         </dependency>
     </dependencies>
     <build>

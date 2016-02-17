@@ -19,10 +19,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.voyageone.cms.CmsMsgConstants.FeedPropMappingMsg.*;
@@ -162,11 +162,7 @@ public class FeedPropMappingServiceImpl extends BaseAppService implements FeedPr
     @Override
     public List<OperationBean> getConditionOperations() {
 
-        List<OperationBean> operationBeans = new ArrayList<>();
-
-        for (Operation operation : Operation.values()) operationBeans.add(operation.toBean());
-
-        return operationBeans;
+        return Arrays.stream(Operation.values()).map(Operation::bean).collect(Collectors.toList());
     }
 
     /**

@@ -35,7 +35,7 @@ public class ViewProductDataService extends BaseSpiderService {
 		List<FormUser> listUser = userMapper.select_list_vm_shop_user(Constants.ENABLE);
 
         for (FormUser user : listUser) {
-//        	if (user.getShop_id() != 10) {
+//        	if (user.getShop_id() != 17) {
 //        		continue;
 //        	}
             //dealDataService.runProductDataProcess(user);

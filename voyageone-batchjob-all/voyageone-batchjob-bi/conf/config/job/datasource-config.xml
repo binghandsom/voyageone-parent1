@@ -4,49 +4,16 @@
        xmlns:p="http://www.springframework.org/schema/p"
        xmlns:tx="http://www.springframework.org/schema/tx"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-     http://www.springframework.org/schema/beans/spring-beans-3.2.xsd  
-
-
+     http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
      http://www.springframework.org/schema/tx  
      http://www.springframework.org/schema/tx/spring-tx-3.2.xsd">
 
-    <bean id="dataSourceMaster"
-          class="com.voyageone.base.dao.ProxoolDataSource">
-        <property name="driver">
-            <value>com.mysql.jdbc.Driver</value>
-        </property>
-
-        <!-- 本地测试环境 -->
-        <property name="driverUrl">
-            <value>jdbc:mysql://10.0.0.59:3306/bi_master?user=biuser&amp;password=packpen&amp;useOldAliasMetadataBehavior=true&amp;useUnicode=true&amp;characterEncoding=UTF-8</value>
-        </property>
+    <bean id="dataSourceMaster" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+        <property name="driverClass" value="com.mysql.jdbc.Driver" />
+        <property name="jdbcUrl"
+                  value="jdbc:mysql://10.0.0.59:3306/bi_master?useOldAliasMetadataBehavior=true&amp;useUnicode=true&amp;characterEncoding=UTF-8" />
         <property name="user" value="biuser"/>
         <property name="password" value="packpen"/>
-
-        <!-- 阿里云测试环境 -->
-        <!--<property name="driverUrl">
-            <value>jdbc:mysql://localhost:3306/Synship?user=app&amp;password=ZAQ!2wsx;useOldAliasMetadataBehavior=true&amp;useUnicode=true&amp;characterEncoding=UTF-8</value>
-        </property>
-        <property name="user" value="app" />
-        <property name="password" value="ZAQ!2wsx" />-->
-
-        <!-- 正式环境 -->
-        <!--<property name="driverUrl">
-            <value>jdbc:mysql://1ee2deee2bd6ee2d0859c4d9871ce0d7f4f23345.rackspaceclouddb.com:3306/Synship?user=synship_app&amp;password=NHY^7ujm;useOldAliasMetadataBehavior=true&amp;useUnicode=true&amp;characterEncoding=UTF-8</value>
-        </property>
-        <property name="user" value="synship_app" />
-        <property name="password" value="NHY^7ujm" />-->
-
-        <property name="alias" value="Pool_data_master"/>
-        <property name="prototypeCount" value="1"/>
-        <property name="maximumConnectionCount" value="30"/>
-        <property name="minimumConnectionCount" value="5"/>
-        <property name="testBeforeUse" value="true"/>
-        <property name="houseKeepingTestSql" value="select CURRENT_DATE"/>
-        <property name="houseKeepingSleepTime" value="60000"/>
-        <property name="maximumActiveTime" value="300000"/>
-        <property name="simultaneousBuildThrottle" value="50"/>
-        <property name="maximumConnectionLifetime" value="14400000"/>
     </bean>
 
     <bean id="masterJdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
@@ -71,43 +38,12 @@
           p:dataSource-ref="dataSourceMaster"/>
     <tx:annotation-driven transaction-manager="transactionManager"/>
 
-    <bean id="dataSourceSlave"
-          class="com.voyageone.base.dao.ProxoolDataSource">
-        <property name="driver">
-            <value>com.mysql.jdbc.Driver</value>
-        </property>
-
-        <!-- 本地测试环境 -->
-        <property name="driverUrl">
-            <value>jdbc:mysql://119.9.108.179:3306/Synship?useOldAliasMetadataBehavior=true&amp;useUnicode=true&amp;characterEncoding=UTF-8</value>
-        </property>
+    <bean id="dataSourceSlave" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+        <property name="driverClass" value="com.mysql.jdbc.Driver" />
+        <property name="jdbcUrl"
+                  value="jdbc:mysql://119.9.108.179:3306/Synship?useOldAliasMetadataBehavior=true&amp;useUnicode=true&amp;characterEncoding=UTF-8" />
         <property name="user" value="app_voyageone"/>
         <property name="password" value="Slave_~!!d23S41"/>
-
-        <!-- 阿里云测试环境 -->
-        <!--<property name="driverUrl">
-            <value>jdbc:mysql://localhost:3306/Synship?user=app&amp;password=ZAQ!2wsx;useOldAliasMetadataBehavior=true&amp;useUnicode=true&amp;characterEncoding=UTF-8</value>
-        </property>
-        <property name="user" value="app" />
-        <property name="password" value="ZAQ!2wsx" />-->
-
-        <!-- 正式环境 -->
-        <!--<property name="driverUrl">
-            <value>jdbc:mysql://1ee2deee2bd6ee2d0859c4d9871ce0d7f4f23345.rackspaceclouddb.com:3306/Synship?user=synship_app&amp;password=NHY^7ujm;useOldAliasMetadataBehavior=true&amp;useUnicode=true&amp;characterEncoding=UTF-8</value>
-        </property>
-        <property name="user" value="synship_app" />
-        <property name="password" value="NHY^7ujm" />-->
-
-        <property name="alias" value="Pool_data_slave"/>
-        <property name="prototypeCount" value="1"/>
-        <property name="maximumConnectionCount" value="30"/>
-        <property name="minimumConnectionCount" value="5"/>
-        <property name="testBeforeUse" value="true"/>
-        <property name="houseKeepingTestSql" value="select CURRENT_DATE"/>
-        <property name="houseKeepingSleepTime" value="60000"/>
-        <property name="maximumActiveTime" value="300000"/>
-        <property name="simultaneousBuildThrottle" value="50"/>
-        <property name="maximumConnectionLifetime" value="14400000"/>
     </bean>
 
     <bean id="sqlSessionFactorySlave"
@@ -118,5 +54,4 @@
     <bean id="selectTemplate" class="org.mybatis.spring.SqlSessionTemplate">
         <constructor-arg ref="sqlSessionFactorySlave"/>
     </bean>
-
 </beans>

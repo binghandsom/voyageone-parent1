@@ -1,6 +1,6 @@
 body {
-	background-color: #eeeded;
-	font-family: sans-serif;
+	background: #000000;
+	font-family: "Helvetica neue",Helvetica,Tahoma,"lantinghei sc","Microsoft Yahei", sans-serif;
 }
 
 .login-logo {
@@ -10,7 +10,7 @@ body {
 
 .login {
 	margin: 2% auto 2%;
-	width: 30%;
+	width: 450px;
 	background: #fff;
 	border-radius: 0.5em;
 	-webkit-border-radius: 0.5em;
@@ -40,7 +40,6 @@ body {
 	list-style: none;
 	width: 100%;
 	font-weight: 500;
-	border: 1px solid #c8c2c2;
 	border-radius: 4px;
 	background: #fff;
 	margin: 1em 0;
@@ -67,14 +66,14 @@ body {
 }
 
 .login-user {
-	background: url(img/user.png) no-repeat 8px 2px;
+	background: url(../img/user.png) no-repeat 8px 2px;
 }
 
 .login-lock {
-	background: url(img/lock.png) no-repeat 8px 2px;
+	background: url(../img/lock.png) no-repeat 8px 2px;
 }
 
-.login-submit input[type="button"] {
+.login-submit button {
 	font-size: 20px;
 	font-weight: 400;
 	color: #fff;
@@ -84,11 +83,11 @@ body {
 	margin: 0;
 	width: 100%;
 	border: none;
+	background: #ffa300;
 	transition: 0.1s all;
 	-webkit-transition: 0.1s all;
 	-moz-transition: 0.1s all;
 	-o-transition: 0.1s all;
-	background: #ffa300;
 	border-bottom-right-radius: 0.44em;
 	-webkit-border-bottom-right-radius: 0.4em;
 	-o-border-bottom-right-radius: 0.4em;
@@ -97,9 +96,11 @@ body {
 	-webkit-border-bottom-left-radius: 0.4em;
 	-o-border-bottom-left-radius: 0.4em;
 	-moz-border-bottom-left-radius: 0.4em;
+	font-family: "Microsoft Yahei", sans-serif;
 }
 
-.login-submit input[type="button"]:hover {
+.login-submit button:hover {
+	color: #FFFFFF;
 	background: #ed9005;
 }
 
@@ -112,7 +113,7 @@ body {
 	color: #fff;
 	padding: 8px 0;
 	border-radius: 4px;
-	font-size: 16px;
+	font-size: 12px;
 }
 
 .loginSign:before {
@@ -197,42 +198,36 @@ body {
 @media (max-width: 1280px) {
 	.login {
 		margin: 2% auto 6%;
-		width: 35%;
 	}
 }
 
 @media (max-width: 1024px) {
 	.login {
 		margin: 2% auto 6%;
-		width: 40%;
 	}
 }
 
 @media (max-width: 768px) {
 	.login {
 		margin: 3% auto 8%;
-		width: 55%;
 	}
 }
 
 @media (max-width: 640px) {
 	.login {
 		margin: 3% auto 8%;
-		width: 66%;
 	}
 }
 
 @media (max-width: 480px) {
 	.login {
 		margin: 4% auto 18%;
-		width: 87%;
 	}
 }
 
 @media (max-width: 320px) {
 	.login {
 		margin: 4% auto 8%;
-		width: 89%;
 	}
 
 	.login-submit input[type="submit"] {

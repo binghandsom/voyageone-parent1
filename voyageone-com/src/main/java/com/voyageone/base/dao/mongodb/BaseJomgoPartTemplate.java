@@ -1,10 +1,12 @@
 package com.voyageone.base.dao.mongodb;
 
+import com.mongodb.BasicDBObject;
 import com.mongodb.CommandResult;
 import com.mongodb.DBCollection;
 import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
 import com.voyageone.base.dao.mongodb.model.ChannelPartitionModel;
+import com.voyageone.common.util.StringUtils;
 import net.minidev.json.JSONObject;
 import org.apache.commons.collections.IteratorUtils;
 import org.bson.types.ObjectId;
@@ -14,11 +16,15 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 
 import javax.annotation.Resource;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
+/**
+ * BaseJomgoPartTemplate
+ * @author chuanyu.liang, 12/11/15
+ * @version 2.0.0
+ * @since 2.0.0
+ */
 public class BaseJomgoPartTemplate {
 
     protected MongoTemplate mongoTemplate;
@@ -33,8 +39,8 @@ public class BaseJomgoPartTemplate {
         this.mongoTemplate = mongoTemplate;
         try {
             this.jongo = new Jongo(mongoTemplate.getDb());
-        } catch (Exception ignored) {
-
+        } catch (Exception e) {
+            throw new RuntimeException("MongoDB connection error:", e);
         }
     }
 
@@ -97,7 +103,7 @@ public class BaseJomgoPartTemplate {
     }
 
     public <T> T findOne(Class<T> entityClass, String collectionName) {
-        return getCollection(collectionName).findOne().as(entityClass);
+        return findOne("", entityClass, collectionName);
     }
 
     public JSONObject findOne(String strQuery, String collectionName) {
@@ -105,8 +111,39 @@ public class BaseJomgoPartTemplate {
     }
 
     public <T> T findOne(String strQuery, Class<T> entityClass, String collectionName) {
-        JSONObject aa = getCollection(collectionName).findOne(strQuery).as(JSONObject.class);
-        return getCollection(collectionName).findOne(strQuery).as(entityClass);
+        return findOne(strQuery, null, entityClass, collectionName);
+    }
+
+    public <T> T findOne(String strQuery, String projection, Class<T> entityClass, String collectionName) {
+        JomgoQuery query = new JomgoQuery();
+        query.setQuery(strQuery);
+        query.setProjection(projection);
+        return findOne(query, entityClass, collectionName);
+    }
+
+    public <T> T findOne(JomgoQuery queryObject, Class<T> entityClass, String collectionName) {
+        MongoCursor<T> result;
+        FindOne find;
+
+        //condition
+        if (StringUtils.isEmpty(queryObject.getQuery())) {
+            find = getCollection(collectionName).findOne();
+        } else {
+            find = getCollection(collectionName).findOne(queryObject.getQuery());
+        }
+
+        //column
+        if (!StringUtils.isEmpty(queryObject.getProjection())) {
+            find = find.projection(queryObject.getProjection());
+        }
+
+        //sort
+        if (!StringUtils.isEmpty(queryObject.getSort())) {
+            find = find.orderBy(queryObject.getSort());
+        }
+
+        //execute
+        return find.as(entityClass);
     }
 
     public boolean exists(String strQuery, String collectionName) {
@@ -118,20 +155,91 @@ public class BaseJomgoPartTemplate {
     }
 
     public <T> List<T> findAll(Class<T> entityClass, String collectionName) {
-        return find("", entityClass, collectionName);
+        return find(null, null, entityClass, collectionName);
     }
 
     public List<JSONObject> find(final String strQuery, String collectionName) {
-        return find(strQuery, JSONObject.class, collectionName);
+        return find(strQuery, null, JSONObject.class, collectionName);
+    }
+
+    public List<JSONObject> find(final String strQuery, String projection, String collectionName) {
+        return find(strQuery, projection, JSONObject.class, collectionName);
     }
 
     public <T> List<T> find(final String strQuery, Class<T> entityClass, String collectionName) {
-        List<T> result;
-        if (strQuery == null) {
-            result = IteratorUtils.toList(getCollection(collectionName).find().as(entityClass));
+        return find(strQuery, null, entityClass, collectionName);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> List<T> find(final String strQuery, String projection, Class<T> entityClass, String collectionName) {
+        return IteratorUtils.toList(findCursor(strQuery, projection, entityClass, collectionName));
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> List<T> find(JomgoQuery queryObject, Class<T> entityClass, String collectionName) {
+        return IteratorUtils.toList(findCursor(queryObject, entityClass, collectionName));
+    }
+
+    public <T> MongoCursor<T> findCursorAll(Class<T> entityClass, String collectionName) {
+        return findCursor(null, null, entityClass, collectionName);
+    }
+
+    public MongoCursor<JSONObject> findCursorAll(final String strQuery, String collectionName) {
+        return findCursor(strQuery, null, JSONObject.class, collectionName);
+    }
+
+    public MongoCursor<JSONObject> findCursor(final String strQuery, String collectionName) {
+        return findCursor(strQuery, null, JSONObject.class, collectionName);
+    }
+
+    public MongoCursor<JSONObject> findCursor(final String strQuery, String projection, String collectionName) {
+        return findCursor(strQuery, projection, JSONObject.class, collectionName);
+    }
+
+    public <T> MongoCursor<T> findCursor(final String strQuery, Class<T> entityClass, String collectionName) {
+        return findCursor(strQuery, null, entityClass, collectionName);
+    }
+
+    public <T> MongoCursor<T> findCursor(final String strQuery, String projection, Class<T> entityClass, String collectionName) {
+        JomgoQuery query = new JomgoQuery();
+        query.setQuery(strQuery);
+        query.setProjection(projection);
+        return findCursor(query, entityClass, collectionName);
+    }
+
+    public <T> MongoCursor<T> findCursor(JomgoQuery queryObject, Class<T> entityClass, String collectionName) {
+        MongoCursor<T> result;
+        Find find;
+
+        //condition
+        if (StringUtils.isEmpty(queryObject.getQuery())) {
+            find = getCollection(collectionName).find();
         } else {
-            result = IteratorUtils.toList(getCollection(collectionName).find(strQuery).as(entityClass));
+            find = getCollection(collectionName).find(queryObject.getQuery());
         }
+
+        //column
+        if (!StringUtils.isEmpty(queryObject.getProjection())) {
+            find = find.projection(queryObject.getProjection());
+        }
+
+        //sort
+        if (!StringUtils.isEmpty(queryObject.getSort())) {
+            find = find.sort(queryObject.getSort());
+        }
+
+        //limit
+        if (queryObject.getLimit() != null) {
+            find = find.limit(queryObject.getLimit());
+        }
+
+        //skip
+        if (queryObject.getSkip() != null) {
+            find = find.skip(queryObject.getSkip());
+        }
+
+        //execute
+        result = find.as(entityClass);
         return result;
     }
 
@@ -140,7 +248,9 @@ public class BaseJomgoPartTemplate {
     }
 
     public <T> T findById(String id, Class<T> entityClass, String collectionName) {
-        String query = "{\"_id\":ObjectId(\"" + id + "\")}";
+        BasicDBObject queryObj = new BasicDBObject();
+        queryObj.put("_id", new ObjectId(id));
+        String query = queryObj.toString();
         return findOne(query, entityClass, collectionName);
     }
 

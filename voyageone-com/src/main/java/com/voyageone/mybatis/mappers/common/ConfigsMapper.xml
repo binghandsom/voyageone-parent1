@@ -53,6 +53,28 @@
           mt_value.value
     </select>
 
+    <select id="com_mt_value_channel_getAll" resultType="com.voyageone.common.configs.beans.TypeChannelBean">
+        SELECT
+        mt_value.id,
+        mt_value.channel_id,
+        mt_value.type_id,
+        mt_type.name as type_code,
+        mt_value.value,
+        mt_value.name,
+        mt_value.add_name1,
+        mt_value.add_name2,
+        mt_value.lang_id,
+        mt_type.comment
+        FROM
+        com_mt_value_channel mt_value,
+        com_mt_type mt_type
+        WHERE
+        mt_value.type_id = mt_type.id
+        ORDER BY
+        mt_value.type_id,
+        mt_value.value
+    </select>
+
     <select id="tm_discount_rate_getDiscountRate" resultType="com.voyageone.common.configs.beans.DiscountRateBean">
         select * from tm_discount_rate order by order_channel_id,ship_channel
     </select>

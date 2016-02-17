@@ -1,43 +1,35 @@
 package com.voyageone.cms.feed;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
- * 对 Operation 的映射。便于把完成信息转换成 json
- *
- * Created by Jonas on 9/2/15.
+ * 枚举 Operation 的 Bean 定义
+ * @author Jonas 9/2/15.
+ * @version 2.0.0
+ * @since 1.0.0
  */
 public class OperationBean {
 
-    private String desc;
+    private final Operation operation;
 
-    private boolean single;
-
-    private String name;
-
-    public String getDesc() {
-        return desc;
+    protected OperationBean(Operation operation) {
+        this.operation = operation;
     }
 
-    public void setDesc(String desc) {
-        this.desc = desc;
+    public String getDesc() {
+        return getOperation().desc();
     }
 
     public boolean isSingle() {
-        return single;
-    }
-
-    public void setSingle(boolean single) {
-        this.single = single;
+        return getOperation().isSingle();
     }
 
     public String getName() {
-        return name;
+        return getOperation().name();
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Operation toEnum() {
-        return Operation.valueOf(this.getName());
+    @JsonIgnore
+    public Operation getOperation() {
+        return operation;
     }
 }

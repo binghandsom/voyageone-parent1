@@ -1,5 +1,6 @@
 package com.voyageone.cms.service.model;
 
+import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.dao.mongodb.model.ChannelPartitionModel;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Enums.FeedEnums;
@@ -36,7 +37,9 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
     private String long_description;
     private List<CmsBtFeedInfoModel_Sku> skus;
     private List<Map> attributeList;
-    private Map attribute = new HashMap<>();
+    private Map<String,List<String>> attribute = new HashMap<>();
+    private Map<String, Object> fullAttribute = new HashMap<>();
+    private int updFlg;
 
     public String getCategory() {
         return category;
@@ -142,12 +145,45 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
         this.attributeList = attributeList;
     }
 
-    public Map getAttribute() {
+    public Map<String,List<String>> getAttribute() {
         return attribute;
     }
 
-    public void setAttribute(Map attribute) {
+    public void setAttribute(Map<String,List<String>> attribute) {
         this.attribute = attribute;
+    }
+
+    public Map<String, Object> getFullAttribute() {
+        return this.fullAttribute;
+    }
+
+    public void setFullAttribute() {
+        Map<String, Object> attribute = new HashMap<>();
+
+        // 增加了code级别的共通属性的支持
+        attribute.put("category", this.category);
+        attribute.put("code", this.code);
+        attribute.put("name", this.name);
+        attribute.put("model", this.model);
+        attribute.put("color", this.color);
+        attribute.put("origin", this.origin);
+        attribute.put("sizeType", this.sizeType);
+        attribute.put("image", this.image);
+        attribute.put("brand", this.brand);
+        attribute.put("weight", this.weight);
+        attribute.put("short_description", this.short_description);
+        attribute.put("long_description", this.long_description);
+
+        // 增加了sku级别的价格属性的支持
+        if (this.getSkus() != null && this.getSkus().size() > 0) {
+            attribute.put("price_current", this.getSkus().get(0).getPrice_current());
+            attribute.put("price_msrp", this.getSkus().get(0).getPrice_msrp());
+        } else {
+            attribute.put("price_current", "0");
+            attribute.put("price_msrp", "0");
+        }
+
+        this.fullAttribute = attribute;
     }
 
     public String getWeight() {
@@ -179,4 +215,13 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
         );
         this.attributeList = null;
     }
+
+    public int getUpdFlg() {
+        return updFlg;
+    }
+
+    public void setUpdFlg(int updFlg) {
+        this.updFlg = updFlg;
+    }
+
 }

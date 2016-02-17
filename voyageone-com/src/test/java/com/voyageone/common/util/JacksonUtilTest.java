@@ -24,7 +24,6 @@ public class JacksonUtilTest {
         System.out.println(str);
     }
 
-
     @Test
     public void testJson2Bean() throws IOException {
         String str = "{\"cart_id\":null,\"cart_type\":null,\"platform_id\":null,\"order_channel_id\":null,\"appKey\":\"72\",\"appSecret\":\"62cc742a25d3ec18ecee9dd5bcc724ccfb2844ac\",\"sessionKey\":\"e5f9d143815a520726576040460bd67f\",\"app_url\":\"http://182.138.102.82:8868/\",\"shop_name\":null,\"platform\":null,\"comment\":null,\"cart_name\":null}";

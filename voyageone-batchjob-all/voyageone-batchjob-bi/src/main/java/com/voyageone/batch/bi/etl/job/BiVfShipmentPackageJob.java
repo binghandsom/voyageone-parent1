@@ -20,8 +20,8 @@ public class BiVfShipmentPackageJob extends BaseBiTaskJob {
     protected BaseBiKettleService[] getTaskServices() {
         BaseBiKettleService.setJobXmlPath("/kettle_xml/finance/");
         Map<String, String> params = new HashMap<String, String>();
-        Date date = DateTimeUtil.addDays(-20);
-        String strDate = DateTimeUtil.format(date, "yyyy-MM-dd");
+        Date date = DateTimeUtil.addDays(-30);
+        String strDate = DateTimeUtil.format(date, "yyyy-MM-dd HH:mm:ss");
         params.put("start_date", strDate);
         vfShipmentPackageService.setParams(params);
         return new BaseBiKettleService[]{vfShipmentPackageService};
