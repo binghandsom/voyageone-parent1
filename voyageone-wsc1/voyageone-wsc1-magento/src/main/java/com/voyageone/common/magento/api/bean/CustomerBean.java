@@ -9,13 +9,21 @@ public class CustomerBean {
 	
 	private int customerId;
 	
-	private int storeId;
+	private String storeId;
 	
 	private int websiteId;
 	
 	private String email;
 	
 	private String store;
+
+	private String country;
+
+	private String paymentMethod;
+
+	private String shippingMethod;
+
+	private String houseNo;
 
 	/**
 	 * @return the firstName
@@ -76,14 +84,14 @@ public class CustomerBean {
 	/**
 	 * @return the storeId
 	 */
-	public int getStoreId() {
+	public String getStoreId() {
 		return storeId;
 	}
 
 	/**
 	 * @param storeId the storeId to set
 	 */
-	public void setStoreId(int storeId) {
+	public void setStoreId(String storeId) {
 		this.storeId = storeId;
 	}
 
@@ -127,5 +135,37 @@ public class CustomerBean {
 	 */
 	public void setStore(String store) {
 		this.store = store;
+	}
+
+	public String getCountry() {
+		return country;
+	}
+
+	public void setCountry(String country) {
+		this.country = country;
+	}
+
+	public String getPaymentMethod() {
+		return paymentMethod;
+	}
+
+	public void setPaymentMethod(String paymentMethod) {
+		this.paymentMethod = paymentMethod;
+	}
+
+	public String getShippingMethod() {
+		return shippingMethod;
+	}
+
+	public void setShippingMethod(String shippingMethod) {
+		this.shippingMethod = shippingMethod;
+	}
+
+	public String getHouseNo() {
+		return houseNo;
+	}
+
+	public void setHouseNo(String houseNo) {
+		this.houseNo = houseNo;
 	}
 }

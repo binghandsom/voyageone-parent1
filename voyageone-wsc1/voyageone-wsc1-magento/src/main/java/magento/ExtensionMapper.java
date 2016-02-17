@@ -14,9 +14,9 @@ package magento;
     "unused"
 })
 public class ExtensionMapper {
-    public static Object getTypeObject(
-        String namespaceURI, String typeName,
-        javax.xml.stream.XMLStreamReader reader) throws Exception {
+    public static java.lang.Object getTypeObject(
+        java.lang.String namespaceURI, java.lang.String typeName,
+        javax.xml.stream.XMLStreamReader reader) throws java.lang.Exception {
         if ("urn:Magento".equals(namespaceURI) &&
                 "catalogProductAttributeMediaTypeEntity".equals(typeName)) {
             return magento.CatalogProductAttributeMediaTypeEntity.Factory.parse(reader);
@@ -344,6 +344,11 @@ public class ExtensionMapper {
         }
 
         if ("urn:Magento".equals(namespaceURI) &&
+                "shoppingCartProductCustomPriceEntityArray".equals(typeName)) {
+            return magento.ShoppingCartProductCustomPriceEntityArray.Factory.parse(reader);
+        }
+
+        if ("urn:Magento".equals(namespaceURI) &&
                 "giftcardCustomerEntity".equals(typeName)) {
             return magento.GiftcardCustomerEntity.Factory.parse(reader);
         }
@@ -446,6 +451,11 @@ public class ExtensionMapper {
         if ("urn:Magento".equals(namespaceURI) &&
                 "shoppingCartInfoEntity".equals(typeName)) {
             return magento.ShoppingCartInfoEntity.Factory.parse(reader);
+        }
+
+        if ("urn:Magento".equals(namespaceURI) &&
+                "shoppingCartProductCustomPriceEntity".equals(typeName)) {
+            return magento.ShoppingCartProductCustomPriceEntity.Factory.parse(reader);
         }
 
         if ("urn:Magento".equals(namespaceURI) &&

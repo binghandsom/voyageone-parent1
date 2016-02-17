@@ -23,73 +23,73 @@ public class CatalogProductCustomOptionValueInfoEntity implements org.apache.axi
     /**
      * field for Value_id
      */
-    protected String localValue_id;
+    protected java.lang.String localValue_id;
 
     /**
      * field for Option_id
      */
-    protected String localOption_id;
+    protected java.lang.String localOption_id;
 
     /**
      * field for Sku
      */
-    protected String localSku;
+    protected java.lang.String localSku;
 
     /**
      * field for Sort_order
      */
-    protected String localSort_order;
+    protected java.lang.String localSort_order;
 
     /**
      * field for Default_price
      */
-    protected String localDefault_price;
+    protected java.lang.String localDefault_price;
 
     /**
      * field for Default_price_type
      */
-    protected String localDefault_price_type;
+    protected java.lang.String localDefault_price_type;
 
     /**
      * field for Store_price
      */
-    protected String localStore_price;
+    protected java.lang.String localStore_price;
 
     /**
      * field for Store_price_type
      */
-    protected String localStore_price_type;
+    protected java.lang.String localStore_price_type;
 
     /**
      * field for Price
      */
-    protected String localPrice;
+    protected java.lang.String localPrice;
 
     /**
      * field for Price_type
      */
-    protected String localPrice_type;
+    protected java.lang.String localPrice_type;
 
     /**
      * field for Default_title
      */
-    protected String localDefault_title;
+    protected java.lang.String localDefault_title;
 
     /**
      * field for Store_title
      */
-    protected String localStore_title;
+    protected java.lang.String localStore_title;
 
     /**
      * field for Title
      */
-    protected String localTitle;
+    protected java.lang.String localTitle;
 
     /**
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getValue_id() {
+    public java.lang.String getValue_id() {
         return localValue_id;
     }
 
@@ -97,7 +97,7 @@ public class CatalogProductCustomOptionValueInfoEntity implements org.apache.axi
      * Auto generated setter method
      * @param param Value_id
      */
-    public void setValue_id(String param) {
+    public void setValue_id(java.lang.String param) {
         this.localValue_id = param;
     }
 
@@ -105,7 +105,7 @@ public class CatalogProductCustomOptionValueInfoEntity implements org.apache.axi
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getOption_id() {
+    public java.lang.String getOption_id() {
         return localOption_id;
     }
 
@@ -113,7 +113,7 @@ public class CatalogProductCustomOptionValueInfoEntity implements org.apache.axi
      * Auto generated setter method
      * @param param Option_id
      */
-    public void setOption_id(String param) {
+    public void setOption_id(java.lang.String param) {
         this.localOption_id = param;
     }
 
@@ -121,7 +121,7 @@ public class CatalogProductCustomOptionValueInfoEntity implements org.apache.axi
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getSku() {
+    public java.lang.String getSku() {
         return localSku;
     }
 
@@ -129,7 +129,7 @@ public class CatalogProductCustomOptionValueInfoEntity implements org.apache.axi
      * Auto generated setter method
      * @param param Sku
      */
-    public void setSku(String param) {
+    public void setSku(java.lang.String param) {
         this.localSku = param;
     }
 
@@ -137,7 +137,7 @@ public class CatalogProductCustomOptionValueInfoEntity implements org.apache.axi
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getSort_order() {
+    public java.lang.String getSort_order() {
         return localSort_order;
     }
 
@@ -145,7 +145,7 @@ public class CatalogProductCustomOptionValueInfoEntity implements org.apache.axi
      * Auto generated setter method
      * @param param Sort_order
      */
-    public void setSort_order(String param) {
+    public void setSort_order(java.lang.String param) {
         this.localSort_order = param;
     }
 
@@ -153,7 +153,7 @@ public class CatalogProductCustomOptionValueInfoEntity implements org.apache.axi
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getDefault_price() {
+    public java.lang.String getDefault_price() {
         return localDefault_price;
     }
 
@@ -161,7 +161,7 @@ public class CatalogProductCustomOptionValueInfoEntity implements org.apache.axi
      * Auto generated setter method
      * @param param Default_price
      */
-    public void setDefault_price(String param) {
+    public void setDefault_price(java.lang.String param) {
         this.localDefault_price = param;
     }
 
@@ -169,7 +169,7 @@ public class CatalogProductCustomOptionValueInfoEntity implements org.apache.axi
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getDefault_price_type() {
+    public java.lang.String getDefault_price_type() {
         return localDefault_price_type;
     }
 
@@ -177,7 +177,7 @@ public class CatalogProductCustomOptionValueInfoEntity implements org.apache.axi
      * Auto generated setter method
      * @param param Default_price_type
      */
-    public void setDefault_price_type(String param) {
+    public void setDefault_price_type(java.lang.String param) {
         this.localDefault_price_type = param;
     }
 
@@ -185,7 +185,7 @@ public class CatalogProductCustomOptionValueInfoEntity implements org.apache.axi
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getStore_price() {
+    public java.lang.String getStore_price() {
         return localStore_price;
     }
 
@@ -193,7 +193,7 @@ public class CatalogProductCustomOptionValueInfoEntity implements org.apache.axi
      * Auto generated setter method
      * @param param Store_price
      */
-    public void setStore_price(String param) {
+    public void setStore_price(java.lang.String param) {
         this.localStore_price = param;
     }
 
@@ -201,7 +201,7 @@ public class CatalogProductCustomOptionValueInfoEntity implements org.apache.axi
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getStore_price_type() {
+    public java.lang.String getStore_price_type() {
         return localStore_price_type;
     }
 
@@ -209,7 +209,7 @@ public class CatalogProductCustomOptionValueInfoEntity implements org.apache.axi
      * Auto generated setter method
      * @param param Store_price_type
      */
-    public void setStore_price_type(String param) {
+    public void setStore_price_type(java.lang.String param) {
         this.localStore_price_type = param;
     }
 
@@ -217,7 +217,7 @@ public class CatalogProductCustomOptionValueInfoEntity implements org.apache.axi
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getPrice() {
+    public java.lang.String getPrice() {
         return localPrice;
     }
 
@@ -225,7 +225,7 @@ public class CatalogProductCustomOptionValueInfoEntity implements org.apache.axi
      * Auto generated setter method
      * @param param Price
      */
-    public void setPrice(String param) {
+    public void setPrice(java.lang.String param) {
         this.localPrice = param;
     }
 
@@ -233,7 +233,7 @@ public class CatalogProductCustomOptionValueInfoEntity implements org.apache.axi
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getPrice_type() {
+    public java.lang.String getPrice_type() {
         return localPrice_type;
     }
 
@@ -241,7 +241,7 @@ public class CatalogProductCustomOptionValueInfoEntity implements org.apache.axi
      * Auto generated setter method
      * @param param Price_type
      */
-    public void setPrice_type(String param) {
+    public void setPrice_type(java.lang.String param) {
         this.localPrice_type = param;
     }
 
@@ -249,7 +249,7 @@ public class CatalogProductCustomOptionValueInfoEntity implements org.apache.axi
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getDefault_title() {
+    public java.lang.String getDefault_title() {
         return localDefault_title;
     }
 
@@ -257,7 +257,7 @@ public class CatalogProductCustomOptionValueInfoEntity implements org.apache.axi
      * Auto generated setter method
      * @param param Default_title
      */
-    public void setDefault_title(String param) {
+    public void setDefault_title(java.lang.String param) {
         this.localDefault_title = param;
     }
 
@@ -265,7 +265,7 @@ public class CatalogProductCustomOptionValueInfoEntity implements org.apache.axi
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getStore_title() {
+    public java.lang.String getStore_title() {
         return localStore_title;
     }
 
@@ -273,7 +273,7 @@ public class CatalogProductCustomOptionValueInfoEntity implements org.apache.axi
      * Auto generated setter method
      * @param param Store_title
      */
-    public void setStore_title(String param) {
+    public void setStore_title(java.lang.String param) {
         this.localStore_title = param;
     }
 
@@ -281,7 +281,7 @@ public class CatalogProductCustomOptionValueInfoEntity implements org.apache.axi
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getTitle() {
+    public java.lang.String getTitle() {
         return localTitle;
     }
 
@@ -289,7 +289,7 @@ public class CatalogProductCustomOptionValueInfoEntity implements org.apache.axi
      * Auto generated setter method
      * @param param Title
      */
-    public void setTitle(String param) {
+    public void setTitle(java.lang.String param) {
         this.localTitle = param;
     }
 
@@ -320,8 +320,8 @@ public class CatalogProductCustomOptionValueInfoEntity implements org.apache.axi
         javax.xml.stream.XMLStreamWriter xmlWriter, boolean serializeType)
         throws javax.xml.stream.XMLStreamException,
             org.apache.axis2.databinding.ADBException {
-        String prefix = null;
-        String namespace = null;
+        java.lang.String prefix = null;
+        java.lang.String namespace = null;
 
         prefix = parentQName.getPrefix();
         namespace = parentQName.getNamespaceURI();
@@ -329,7 +329,7 @@ public class CatalogProductCustomOptionValueInfoEntity implements org.apache.axi
             xmlWriter);
 
         if (serializeType) {
-            String namespacePrefix = registerPrefix(xmlWriter,
+            java.lang.String namespacePrefix = registerPrefix(xmlWriter,
                     "urn:Magento");
 
             if ((namespacePrefix != null) &&
@@ -517,7 +517,7 @@ public class CatalogProductCustomOptionValueInfoEntity implements org.apache.axi
         xmlWriter.writeEndElement();
     }
 
-    private static String generatePrefix(String namespace) {
+    private static java.lang.String generatePrefix(java.lang.String namespace) {
         if (namespace.equals("urn:Magento")) {
             return "ns1";
         }
@@ -528,11 +528,11 @@ public class CatalogProductCustomOptionValueInfoEntity implements org.apache.axi
     /**
      * Utility method to write an element start tag.
      */
-    private void writeStartElement(String prefix,
-        String namespace, String localPart,
+    private void writeStartElement(java.lang.String prefix,
+        java.lang.String namespace, java.lang.String localPart,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
-        String writerPrefix = xmlWriter.getPrefix(namespace);
+        java.lang.String writerPrefix = xmlWriter.getPrefix(namespace);
 
         if (writerPrefix != null) {
             xmlWriter.writeStartElement(namespace, localPart);
@@ -552,9 +552,9 @@ public class CatalogProductCustomOptionValueInfoEntity implements org.apache.axi
     /**
      * Util method to write an attribute with the ns prefix
      */
-    private void writeAttribute(String prefix,
-        String namespace, String attName,
-        String attValue, javax.xml.stream.XMLStreamWriter xmlWriter)
+    private void writeAttribute(java.lang.String prefix,
+        java.lang.String namespace, java.lang.String attName,
+        java.lang.String attValue, javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
         if (xmlWriter.getPrefix(namespace) == null) {
             xmlWriter.writeNamespace(prefix, namespace);
@@ -567,8 +567,8 @@ public class CatalogProductCustomOptionValueInfoEntity implements org.apache.axi
     /**
      * Util method to write an attribute without the ns prefix
      */
-    private void writeAttribute(String namespace,
-        String attName, String attValue,
+    private void writeAttribute(java.lang.String namespace,
+        java.lang.String attName, java.lang.String attValue,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
         if (namespace.equals("")) {
@@ -582,18 +582,18 @@ public class CatalogProductCustomOptionValueInfoEntity implements org.apache.axi
     /**
      * Util method to write an attribute without the ns prefix
      */
-    private void writeQNameAttribute(String namespace,
-        String attName, javax.xml.namespace.QName qname,
+    private void writeQNameAttribute(java.lang.String namespace,
+        java.lang.String attName, javax.xml.namespace.QName qname,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
-        String attributeNamespace = qname.getNamespaceURI();
-        String attributePrefix = xmlWriter.getPrefix(attributeNamespace);
+        java.lang.String attributeNamespace = qname.getNamespaceURI();
+        java.lang.String attributePrefix = xmlWriter.getPrefix(attributeNamespace);
 
         if (attributePrefix == null) {
             attributePrefix = registerPrefix(xmlWriter, attributeNamespace);
         }
 
-        String attributeValue;
+        java.lang.String attributeValue;
 
         if (attributePrefix.trim().length() > 0) {
             attributeValue = attributePrefix + ":" + qname.getLocalPart();
@@ -615,10 +615,10 @@ public class CatalogProductCustomOptionValueInfoEntity implements org.apache.axi
     private void writeQName(javax.xml.namespace.QName qname,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
-        String namespaceURI = qname.getNamespaceURI();
+        java.lang.String namespaceURI = qname.getNamespaceURI();
 
         if (namespaceURI != null) {
-            String prefix = xmlWriter.getPrefix(namespaceURI);
+            java.lang.String prefix = xmlWriter.getPrefix(namespaceURI);
 
             if (prefix == null) {
                 prefix = generatePrefix(namespaceURI);
@@ -647,9 +647,9 @@ public class CatalogProductCustomOptionValueInfoEntity implements org.apache.axi
         if (qnames != null) {
             // we have to store this data until last moment since it is not possible to write any
             // namespace data after writing the charactor data
-            StringBuffer stringToWrite = new StringBuffer();
-            String namespaceURI = null;
-            String prefix = null;
+            java.lang.StringBuffer stringToWrite = new java.lang.StringBuffer();
+            java.lang.String namespaceURI = null;
+            java.lang.String prefix = null;
 
             for (int i = 0; i < qnames.length; i++) {
                 if (i > 0) {
@@ -688,10 +688,10 @@ public class CatalogProductCustomOptionValueInfoEntity implements org.apache.axi
     /**
      * Register a namespace prefix
      */
-    private String registerPrefix(
-        javax.xml.stream.XMLStreamWriter xmlWriter, String namespace)
+    private java.lang.String registerPrefix(
+        javax.xml.stream.XMLStreamWriter xmlWriter, java.lang.String namespace)
         throws javax.xml.stream.XMLStreamException {
-        String prefix = xmlWriter.getPrefix(namespace);
+        java.lang.String prefix = xmlWriter.getPrefix(namespace);
 
         if (prefix == null) {
             prefix = generatePrefix(namespace);
@@ -699,7 +699,7 @@ public class CatalogProductCustomOptionValueInfoEntity implements org.apache.axi
             javax.xml.namespace.NamespaceContext nsContext = xmlWriter.getNamespaceContext();
 
             while (true) {
-                String uri = nsContext.getNamespaceURI(prefix);
+                java.lang.String uri = nsContext.getNamespaceURI(prefix);
 
                 if ((uri == null) || (uri.length() == 0)) {
                     break;
@@ -871,13 +871,13 @@ public class CatalogProductCustomOptionValueInfoEntity implements org.apache.axi
          *                If this object is a complex type, the reader is positioned at the end element of its outer element
          */
         public static CatalogProductCustomOptionValueInfoEntity parse(
-            javax.xml.stream.XMLStreamReader reader) throws Exception {
+            javax.xml.stream.XMLStreamReader reader) throws java.lang.Exception {
             CatalogProductCustomOptionValueInfoEntity object = new CatalogProductCustomOptionValueInfoEntity();
 
             int event;
-            String nillableValue = null;
-            String prefix = "";
-            String namespaceuri = "";
+            java.lang.String nillableValue = null;
+            java.lang.String prefix = "";
+            java.lang.String namespaceuri = "";
 
             try {
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -885,11 +885,11 @@ public class CatalogProductCustomOptionValueInfoEntity implements org.apache.axi
 
                 if (reader.getAttributeValue(
                             "http://www.w3.org/2001/XMLSchema-instance", "type") != null) {
-                    String fullTypeName = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance",
+                    java.lang.String fullTypeName = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance",
                             "type");
 
                     if (fullTypeName != null) {
-                        String nsPrefix = null;
+                        java.lang.String nsPrefix = null;
 
                         if (fullTypeName.indexOf(":") > -1) {
                             nsPrefix = fullTypeName.substring(0,
@@ -898,13 +898,13 @@ public class CatalogProductCustomOptionValueInfoEntity implements org.apache.axi
 
                         nsPrefix = (nsPrefix == null) ? "" : nsPrefix;
 
-                        String type = fullTypeName.substring(fullTypeName.indexOf(
+                        java.lang.String type = fullTypeName.substring(fullTypeName.indexOf(
                                     ":") + 1);
 
                         if (!"catalogProductCustomOptionValueInfoEntity".equals(
                                     type)) {
                             //find namespace for the prefix
-                            String nsUri = reader.getNamespaceContext()
+                            java.lang.String nsUri = reader.getNamespaceContext()
                                                            .getNamespaceURI(nsPrefix);
 
                             return (CatalogProductCustomOptionValueInfoEntity) magento.ExtensionMapper.getTypeObject(nsUri,
@@ -934,7 +934,7 @@ public class CatalogProductCustomOptionValueInfoEntity implements org.apache.axi
                             "The element: " + "value_id" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setValue_id(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -963,7 +963,7 @@ public class CatalogProductCustomOptionValueInfoEntity implements org.apache.axi
                             "The element: " + "option_id" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setOption_id(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -992,7 +992,7 @@ public class CatalogProductCustomOptionValueInfoEntity implements org.apache.axi
                             "The element: " + "sku" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setSku(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1022,7 +1022,7 @@ public class CatalogProductCustomOptionValueInfoEntity implements org.apache.axi
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setSort_order(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1052,7 +1052,7 @@ public class CatalogProductCustomOptionValueInfoEntity implements org.apache.axi
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setDefault_price(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1082,7 +1082,7 @@ public class CatalogProductCustomOptionValueInfoEntity implements org.apache.axi
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setDefault_price_type(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1112,7 +1112,7 @@ public class CatalogProductCustomOptionValueInfoEntity implements org.apache.axi
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setStore_price(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1142,7 +1142,7 @@ public class CatalogProductCustomOptionValueInfoEntity implements org.apache.axi
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setStore_price_type(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1171,7 +1171,7 @@ public class CatalogProductCustomOptionValueInfoEntity implements org.apache.axi
                             "The element: " + "price" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setPrice(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1201,7 +1201,7 @@ public class CatalogProductCustomOptionValueInfoEntity implements org.apache.axi
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setPrice_type(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1231,7 +1231,7 @@ public class CatalogProductCustomOptionValueInfoEntity implements org.apache.axi
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setDefault_title(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1261,7 +1261,7 @@ public class CatalogProductCustomOptionValueInfoEntity implements org.apache.axi
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setStore_title(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1290,7 +1290,7 @@ public class CatalogProductCustomOptionValueInfoEntity implements org.apache.axi
                             "The element: " + "title" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setTitle(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -1313,7 +1313,7 @@ public class CatalogProductCustomOptionValueInfoEntity implements org.apache.axi
                         "Unexpected subelement " + reader.getName());
                 }
             } catch (javax.xml.stream.XMLStreamException e) {
-                throw new Exception(e);
+                throw new java.lang.Exception(e);
             }
 
             return object;

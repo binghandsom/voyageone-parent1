@@ -23,7 +23,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
     /**
      * field for Updated_at
      */
-    protected String localUpdated_at;
+    protected java.lang.String localUpdated_at;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -34,7 +34,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
     /**
      * field for Created_at
      */
-    protected String localCreated_at;
+    protected java.lang.String localCreated_at;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -45,7 +45,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
     /**
      * field for Increment_id
      */
-    protected String localIncrement_id;
+    protected java.lang.String localIncrement_id;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -56,7 +56,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
     /**
      * field for Transaction_id
      */
-    protected String localTransaction_id;
+    protected java.lang.String localTransaction_id;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -67,7 +67,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
     /**
      * field for Global_currency_code
      */
-    protected String localGlobal_currency_code;
+    protected java.lang.String localGlobal_currency_code;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -78,7 +78,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
     /**
      * field for Base_currency_code
      */
-    protected String localBase_currency_code;
+    protected java.lang.String localBase_currency_code;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -89,7 +89,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
     /**
      * field for Order_currency_code
      */
-    protected String localOrder_currency_code;
+    protected java.lang.String localOrder_currency_code;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -100,7 +100,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
     /**
      * field for Store_currency_code
      */
-    protected String localStore_currency_code;
+    protected java.lang.String localStore_currency_code;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -111,7 +111,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
     /**
      * field for Cybersource_token
      */
-    protected String localCybersource_token;
+    protected java.lang.String localCybersource_token;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -122,7 +122,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
     /**
      * field for Invoice_id
      */
-    protected String localInvoice_id;
+    protected java.lang.String localInvoice_id;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -133,7 +133,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
     /**
      * field for Billing_address_id
      */
-    protected String localBilling_address_id;
+    protected java.lang.String localBilling_address_id;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -144,7 +144,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
     /**
      * field for Shipping_address_id
      */
-    protected String localShipping_address_id;
+    protected java.lang.String localShipping_address_id;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -155,7 +155,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
     /**
      * field for State
      */
-    protected String localState;
+    protected java.lang.String localState;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -166,7 +166,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
     /**
      * field for Creditmemo_status
      */
-    protected String localCreditmemo_status;
+    protected java.lang.String localCreditmemo_status;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -177,7 +177,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
     /**
      * field for Email_sent
      */
-    protected String localEmail_sent;
+    protected java.lang.String localEmail_sent;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -188,7 +188,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
     /**
      * field for Order_id
      */
-    protected String localOrder_id;
+    protected java.lang.String localOrder_id;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -199,7 +199,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
     /**
      * field for Tax_amount
      */
-    protected String localTax_amount;
+    protected java.lang.String localTax_amount;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -210,7 +210,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
     /**
      * field for Shipping_tax_amount
      */
-    protected String localShipping_tax_amount;
+    protected java.lang.String localShipping_tax_amount;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -221,7 +221,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
     /**
      * field for Base_tax_amount
      */
-    protected String localBase_tax_amount;
+    protected java.lang.String localBase_tax_amount;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -232,7 +232,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
     /**
      * field for Base_adjustment_positive
      */
-    protected String localBase_adjustment_positive;
+    protected java.lang.String localBase_adjustment_positive;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -243,7 +243,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
     /**
      * field for Base_grand_total
      */
-    protected String localBase_grand_total;
+    protected java.lang.String localBase_grand_total;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -254,7 +254,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
     /**
      * field for Adjustment
      */
-    protected String localAdjustment;
+    protected java.lang.String localAdjustment;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -265,7 +265,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
     /**
      * field for Subtotal
      */
-    protected String localSubtotal;
+    protected java.lang.String localSubtotal;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -276,7 +276,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
     /**
      * field for Discount_amount
      */
-    protected String localDiscount_amount;
+    protected java.lang.String localDiscount_amount;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -287,7 +287,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
     /**
      * field for Base_subtotal
      */
-    protected String localBase_subtotal;
+    protected java.lang.String localBase_subtotal;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -298,7 +298,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
     /**
      * field for Base_adjustment
      */
-    protected String localBase_adjustment;
+    protected java.lang.String localBase_adjustment;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -309,7 +309,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
     /**
      * field for Base_to_global_rate
      */
-    protected String localBase_to_global_rate;
+    protected java.lang.String localBase_to_global_rate;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -320,7 +320,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
     /**
      * field for Store_to_base_rate
      */
-    protected String localStore_to_base_rate;
+    protected java.lang.String localStore_to_base_rate;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -331,7 +331,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
     /**
      * field for Base_shipping_amount
      */
-    protected String localBase_shipping_amount;
+    protected java.lang.String localBase_shipping_amount;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -342,7 +342,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
     /**
      * field for Adjustment_negative
      */
-    protected String localAdjustment_negative;
+    protected java.lang.String localAdjustment_negative;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -353,7 +353,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
     /**
      * field for Subtotal_incl_tax
      */
-    protected String localSubtotal_incl_tax;
+    protected java.lang.String localSubtotal_incl_tax;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -364,7 +364,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
     /**
      * field for Shipping_amount
      */
-    protected String localShipping_amount;
+    protected java.lang.String localShipping_amount;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -375,7 +375,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
     /**
      * field for Base_subtotal_incl_tax
      */
-    protected String localBase_subtotal_incl_tax;
+    protected java.lang.String localBase_subtotal_incl_tax;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -386,7 +386,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
     /**
      * field for Base_adjustment_negative
      */
-    protected String localBase_adjustment_negative;
+    protected java.lang.String localBase_adjustment_negative;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -397,7 +397,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
     /**
      * field for Grand_total
      */
-    protected String localGrand_total;
+    protected java.lang.String localGrand_total;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -408,7 +408,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
     /**
      * field for Base_discount_amount
      */
-    protected String localBase_discount_amount;
+    protected java.lang.String localBase_discount_amount;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -419,7 +419,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
     /**
      * field for Base_to_order_rate
      */
-    protected String localBase_to_order_rate;
+    protected java.lang.String localBase_to_order_rate;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -430,7 +430,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
     /**
      * field for Store_to_order_rate
      */
-    protected String localStore_to_order_rate;
+    protected java.lang.String localStore_to_order_rate;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -441,7 +441,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
     /**
      * field for Base_shipping_tax_amount
      */
-    protected String localBase_shipping_tax_amount;
+    protected java.lang.String localBase_shipping_tax_amount;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -452,7 +452,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
     /**
      * field for Adjustment_positive
      */
-    protected String localAdjustment_positive;
+    protected java.lang.String localAdjustment_positive;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -463,7 +463,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
     /**
      * field for Store_id
      */
-    protected String localStore_id;
+    protected java.lang.String localStore_id;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -474,7 +474,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
     /**
      * field for Hidden_tax_amount
      */
-    protected String localHidden_tax_amount;
+    protected java.lang.String localHidden_tax_amount;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -485,7 +485,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
     /**
      * field for Base_hidden_tax_amount
      */
-    protected String localBase_hidden_tax_amount;
+    protected java.lang.String localBase_hidden_tax_amount;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -496,7 +496,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
     /**
      * field for Shipping_hidden_tax_amount
      */
-    protected String localShipping_hidden_tax_amount;
+    protected java.lang.String localShipping_hidden_tax_amount;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -507,7 +507,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
     /**
      * field for Base_shipping_hidden_tax_amnt
      */
-    protected String localBase_shipping_hidden_tax_amnt;
+    protected java.lang.String localBase_shipping_hidden_tax_amnt;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -518,7 +518,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
     /**
      * field for Shipping_incl_tax
      */
-    protected String localShipping_incl_tax;
+    protected java.lang.String localShipping_incl_tax;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -529,7 +529,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
     /**
      * field for Base_shipping_incl_tax
      */
-    protected String localBase_shipping_incl_tax;
+    protected java.lang.String localBase_shipping_incl_tax;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -540,7 +540,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
     /**
      * field for Base_customer_balance_amount
      */
-    protected String localBase_customer_balance_amount;
+    protected java.lang.String localBase_customer_balance_amount;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -551,7 +551,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
     /**
      * field for Customer_balance_amount
      */
-    protected String localCustomer_balance_amount;
+    protected java.lang.String localCustomer_balance_amount;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -562,7 +562,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
     /**
      * field for Bs_customer_bal_total_refunded
      */
-    protected String localBs_customer_bal_total_refunded;
+    protected java.lang.String localBs_customer_bal_total_refunded;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -573,7 +573,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
     /**
      * field for Customer_bal_total_refunded
      */
-    protected String localCustomer_bal_total_refunded;
+    protected java.lang.String localCustomer_bal_total_refunded;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -584,7 +584,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
     /**
      * field for Base_gift_cards_amount
      */
-    protected String localBase_gift_cards_amount;
+    protected java.lang.String localBase_gift_cards_amount;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -595,7 +595,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
     /**
      * field for Gift_cards_amount
      */
-    protected String localGift_cards_amount;
+    protected java.lang.String localGift_cards_amount;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -606,7 +606,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
     /**
      * field for Gw_base_price
      */
-    protected String localGw_base_price;
+    protected java.lang.String localGw_base_price;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -617,7 +617,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
     /**
      * field for Gw_price
      */
-    protected String localGw_price;
+    protected java.lang.String localGw_price;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -628,7 +628,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
     /**
      * field for Gw_items_base_price
      */
-    protected String localGw_items_base_price;
+    protected java.lang.String localGw_items_base_price;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -639,7 +639,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
     /**
      * field for Gw_items_price
      */
-    protected String localGw_items_price;
+    protected java.lang.String localGw_items_price;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -650,7 +650,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
     /**
      * field for Gw_card_base_price
      */
-    protected String localGw_card_base_price;
+    protected java.lang.String localGw_card_base_price;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -661,7 +661,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
     /**
      * field for Gw_card_price
      */
-    protected String localGw_card_price;
+    protected java.lang.String localGw_card_price;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -672,7 +672,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
     /**
      * field for Gw_base_tax_amount
      */
-    protected String localGw_base_tax_amount;
+    protected java.lang.String localGw_base_tax_amount;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -683,7 +683,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
     /**
      * field for Gw_tax_amount
      */
-    protected String localGw_tax_amount;
+    protected java.lang.String localGw_tax_amount;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -694,7 +694,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
     /**
      * field for Gw_items_base_tax_amount
      */
-    protected String localGw_items_base_tax_amount;
+    protected java.lang.String localGw_items_base_tax_amount;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -705,7 +705,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
     /**
      * field for Gw_items_tax_amount
      */
-    protected String localGw_items_tax_amount;
+    protected java.lang.String localGw_items_tax_amount;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -716,7 +716,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
     /**
      * field for Gw_card_base_tax_amount
      */
-    protected String localGw_card_base_tax_amount;
+    protected java.lang.String localGw_card_base_tax_amount;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -727,7 +727,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
     /**
      * field for Gw_card_tax_amount
      */
-    protected String localGw_card_tax_amount;
+    protected java.lang.String localGw_card_tax_amount;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -738,7 +738,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
     /**
      * field for Base_reward_currency_amount
      */
-    protected String localBase_reward_currency_amount;
+    protected java.lang.String localBase_reward_currency_amount;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -749,7 +749,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
     /**
      * field for Reward_currency_amount
      */
-    protected String localReward_currency_amount;
+    protected java.lang.String localReward_currency_amount;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -760,7 +760,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
     /**
      * field for Reward_points_balance
      */
-    protected String localReward_points_balance;
+    protected java.lang.String localReward_points_balance;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -771,7 +771,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
     /**
      * field for Reward_points_balance_refund
      */
-    protected String localReward_points_balance_refund;
+    protected java.lang.String localReward_points_balance_refund;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -782,7 +782,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
     /**
      * field for Creditmemo_id
      */
-    protected String localCreditmemo_id;
+    protected java.lang.String localCreditmemo_id;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -820,7 +820,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getUpdated_at() {
+    public java.lang.String getUpdated_at() {
         return localUpdated_at;
     }
 
@@ -828,7 +828,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Updated_at
      */
-    public void setUpdated_at(String param) {
+    public void setUpdated_at(java.lang.String param) {
         localUpdated_atTracker = param != null;
 
         this.localUpdated_at = param;
@@ -842,7 +842,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getCreated_at() {
+    public java.lang.String getCreated_at() {
         return localCreated_at;
     }
 
@@ -850,7 +850,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Created_at
      */
-    public void setCreated_at(String param) {
+    public void setCreated_at(java.lang.String param) {
         localCreated_atTracker = param != null;
 
         this.localCreated_at = param;
@@ -864,7 +864,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getIncrement_id() {
+    public java.lang.String getIncrement_id() {
         return localIncrement_id;
     }
 
@@ -872,7 +872,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Increment_id
      */
-    public void setIncrement_id(String param) {
+    public void setIncrement_id(java.lang.String param) {
         localIncrement_idTracker = param != null;
 
         this.localIncrement_id = param;
@@ -886,7 +886,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getTransaction_id() {
+    public java.lang.String getTransaction_id() {
         return localTransaction_id;
     }
 
@@ -894,7 +894,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Transaction_id
      */
-    public void setTransaction_id(String param) {
+    public void setTransaction_id(java.lang.String param) {
         localTransaction_idTracker = param != null;
 
         this.localTransaction_id = param;
@@ -908,7 +908,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getGlobal_currency_code() {
+    public java.lang.String getGlobal_currency_code() {
         return localGlobal_currency_code;
     }
 
@@ -916,7 +916,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Global_currency_code
      */
-    public void setGlobal_currency_code(String param) {
+    public void setGlobal_currency_code(java.lang.String param) {
         localGlobal_currency_codeTracker = param != null;
 
         this.localGlobal_currency_code = param;
@@ -930,7 +930,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getBase_currency_code() {
+    public java.lang.String getBase_currency_code() {
         return localBase_currency_code;
     }
 
@@ -938,7 +938,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Base_currency_code
      */
-    public void setBase_currency_code(String param) {
+    public void setBase_currency_code(java.lang.String param) {
         localBase_currency_codeTracker = param != null;
 
         this.localBase_currency_code = param;
@@ -952,7 +952,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getOrder_currency_code() {
+    public java.lang.String getOrder_currency_code() {
         return localOrder_currency_code;
     }
 
@@ -960,7 +960,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Order_currency_code
      */
-    public void setOrder_currency_code(String param) {
+    public void setOrder_currency_code(java.lang.String param) {
         localOrder_currency_codeTracker = param != null;
 
         this.localOrder_currency_code = param;
@@ -974,7 +974,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getStore_currency_code() {
+    public java.lang.String getStore_currency_code() {
         return localStore_currency_code;
     }
 
@@ -982,7 +982,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Store_currency_code
      */
-    public void setStore_currency_code(String param) {
+    public void setStore_currency_code(java.lang.String param) {
         localStore_currency_codeTracker = param != null;
 
         this.localStore_currency_code = param;
@@ -996,7 +996,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getCybersource_token() {
+    public java.lang.String getCybersource_token() {
         return localCybersource_token;
     }
 
@@ -1004,7 +1004,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Cybersource_token
      */
-    public void setCybersource_token(String param) {
+    public void setCybersource_token(java.lang.String param) {
         localCybersource_tokenTracker = param != null;
 
         this.localCybersource_token = param;
@@ -1018,7 +1018,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getInvoice_id() {
+    public java.lang.String getInvoice_id() {
         return localInvoice_id;
     }
 
@@ -1026,7 +1026,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Invoice_id
      */
-    public void setInvoice_id(String param) {
+    public void setInvoice_id(java.lang.String param) {
         localInvoice_idTracker = param != null;
 
         this.localInvoice_id = param;
@@ -1040,7 +1040,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getBilling_address_id() {
+    public java.lang.String getBilling_address_id() {
         return localBilling_address_id;
     }
 
@@ -1048,7 +1048,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Billing_address_id
      */
-    public void setBilling_address_id(String param) {
+    public void setBilling_address_id(java.lang.String param) {
         localBilling_address_idTracker = param != null;
 
         this.localBilling_address_id = param;
@@ -1062,7 +1062,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getShipping_address_id() {
+    public java.lang.String getShipping_address_id() {
         return localShipping_address_id;
     }
 
@@ -1070,7 +1070,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Shipping_address_id
      */
-    public void setShipping_address_id(String param) {
+    public void setShipping_address_id(java.lang.String param) {
         localShipping_address_idTracker = param != null;
 
         this.localShipping_address_id = param;
@@ -1084,7 +1084,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getState() {
+    public java.lang.String getState() {
         return localState;
     }
 
@@ -1092,7 +1092,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param State
      */
-    public void setState(String param) {
+    public void setState(java.lang.String param) {
         localStateTracker = param != null;
 
         this.localState = param;
@@ -1106,7 +1106,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getCreditmemo_status() {
+    public java.lang.String getCreditmemo_status() {
         return localCreditmemo_status;
     }
 
@@ -1114,7 +1114,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Creditmemo_status
      */
-    public void setCreditmemo_status(String param) {
+    public void setCreditmemo_status(java.lang.String param) {
         localCreditmemo_statusTracker = param != null;
 
         this.localCreditmemo_status = param;
@@ -1128,7 +1128,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getEmail_sent() {
+    public java.lang.String getEmail_sent() {
         return localEmail_sent;
     }
 
@@ -1136,7 +1136,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Email_sent
      */
-    public void setEmail_sent(String param) {
+    public void setEmail_sent(java.lang.String param) {
         localEmail_sentTracker = param != null;
 
         this.localEmail_sent = param;
@@ -1150,7 +1150,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getOrder_id() {
+    public java.lang.String getOrder_id() {
         return localOrder_id;
     }
 
@@ -1158,7 +1158,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Order_id
      */
-    public void setOrder_id(String param) {
+    public void setOrder_id(java.lang.String param) {
         localOrder_idTracker = param != null;
 
         this.localOrder_id = param;
@@ -1172,7 +1172,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getTax_amount() {
+    public java.lang.String getTax_amount() {
         return localTax_amount;
     }
 
@@ -1180,7 +1180,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Tax_amount
      */
-    public void setTax_amount(String param) {
+    public void setTax_amount(java.lang.String param) {
         localTax_amountTracker = param != null;
 
         this.localTax_amount = param;
@@ -1194,7 +1194,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getShipping_tax_amount() {
+    public java.lang.String getShipping_tax_amount() {
         return localShipping_tax_amount;
     }
 
@@ -1202,7 +1202,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Shipping_tax_amount
      */
-    public void setShipping_tax_amount(String param) {
+    public void setShipping_tax_amount(java.lang.String param) {
         localShipping_tax_amountTracker = param != null;
 
         this.localShipping_tax_amount = param;
@@ -1216,7 +1216,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getBase_tax_amount() {
+    public java.lang.String getBase_tax_amount() {
         return localBase_tax_amount;
     }
 
@@ -1224,7 +1224,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Base_tax_amount
      */
-    public void setBase_tax_amount(String param) {
+    public void setBase_tax_amount(java.lang.String param) {
         localBase_tax_amountTracker = param != null;
 
         this.localBase_tax_amount = param;
@@ -1238,7 +1238,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getBase_adjustment_positive() {
+    public java.lang.String getBase_adjustment_positive() {
         return localBase_adjustment_positive;
     }
 
@@ -1246,7 +1246,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Base_adjustment_positive
      */
-    public void setBase_adjustment_positive(String param) {
+    public void setBase_adjustment_positive(java.lang.String param) {
         localBase_adjustment_positiveTracker = param != null;
 
         this.localBase_adjustment_positive = param;
@@ -1260,7 +1260,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getBase_grand_total() {
+    public java.lang.String getBase_grand_total() {
         return localBase_grand_total;
     }
 
@@ -1268,7 +1268,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Base_grand_total
      */
-    public void setBase_grand_total(String param) {
+    public void setBase_grand_total(java.lang.String param) {
         localBase_grand_totalTracker = param != null;
 
         this.localBase_grand_total = param;
@@ -1282,7 +1282,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getAdjustment() {
+    public java.lang.String getAdjustment() {
         return localAdjustment;
     }
 
@@ -1290,7 +1290,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Adjustment
      */
-    public void setAdjustment(String param) {
+    public void setAdjustment(java.lang.String param) {
         localAdjustmentTracker = param != null;
 
         this.localAdjustment = param;
@@ -1304,7 +1304,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getSubtotal() {
+    public java.lang.String getSubtotal() {
         return localSubtotal;
     }
 
@@ -1312,7 +1312,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Subtotal
      */
-    public void setSubtotal(String param) {
+    public void setSubtotal(java.lang.String param) {
         localSubtotalTracker = param != null;
 
         this.localSubtotal = param;
@@ -1326,7 +1326,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getDiscount_amount() {
+    public java.lang.String getDiscount_amount() {
         return localDiscount_amount;
     }
 
@@ -1334,7 +1334,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Discount_amount
      */
-    public void setDiscount_amount(String param) {
+    public void setDiscount_amount(java.lang.String param) {
         localDiscount_amountTracker = param != null;
 
         this.localDiscount_amount = param;
@@ -1348,7 +1348,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getBase_subtotal() {
+    public java.lang.String getBase_subtotal() {
         return localBase_subtotal;
     }
 
@@ -1356,7 +1356,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Base_subtotal
      */
-    public void setBase_subtotal(String param) {
+    public void setBase_subtotal(java.lang.String param) {
         localBase_subtotalTracker = param != null;
 
         this.localBase_subtotal = param;
@@ -1370,7 +1370,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getBase_adjustment() {
+    public java.lang.String getBase_adjustment() {
         return localBase_adjustment;
     }
 
@@ -1378,7 +1378,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Base_adjustment
      */
-    public void setBase_adjustment(String param) {
+    public void setBase_adjustment(java.lang.String param) {
         localBase_adjustmentTracker = param != null;
 
         this.localBase_adjustment = param;
@@ -1392,7 +1392,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getBase_to_global_rate() {
+    public java.lang.String getBase_to_global_rate() {
         return localBase_to_global_rate;
     }
 
@@ -1400,7 +1400,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Base_to_global_rate
      */
-    public void setBase_to_global_rate(String param) {
+    public void setBase_to_global_rate(java.lang.String param) {
         localBase_to_global_rateTracker = param != null;
 
         this.localBase_to_global_rate = param;
@@ -1414,7 +1414,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getStore_to_base_rate() {
+    public java.lang.String getStore_to_base_rate() {
         return localStore_to_base_rate;
     }
 
@@ -1422,7 +1422,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Store_to_base_rate
      */
-    public void setStore_to_base_rate(String param) {
+    public void setStore_to_base_rate(java.lang.String param) {
         localStore_to_base_rateTracker = param != null;
 
         this.localStore_to_base_rate = param;
@@ -1436,7 +1436,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getBase_shipping_amount() {
+    public java.lang.String getBase_shipping_amount() {
         return localBase_shipping_amount;
     }
 
@@ -1444,7 +1444,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Base_shipping_amount
      */
-    public void setBase_shipping_amount(String param) {
+    public void setBase_shipping_amount(java.lang.String param) {
         localBase_shipping_amountTracker = param != null;
 
         this.localBase_shipping_amount = param;
@@ -1458,7 +1458,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getAdjustment_negative() {
+    public java.lang.String getAdjustment_negative() {
         return localAdjustment_negative;
     }
 
@@ -1466,7 +1466,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Adjustment_negative
      */
-    public void setAdjustment_negative(String param) {
+    public void setAdjustment_negative(java.lang.String param) {
         localAdjustment_negativeTracker = param != null;
 
         this.localAdjustment_negative = param;
@@ -1480,7 +1480,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getSubtotal_incl_tax() {
+    public java.lang.String getSubtotal_incl_tax() {
         return localSubtotal_incl_tax;
     }
 
@@ -1488,7 +1488,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Subtotal_incl_tax
      */
-    public void setSubtotal_incl_tax(String param) {
+    public void setSubtotal_incl_tax(java.lang.String param) {
         localSubtotal_incl_taxTracker = param != null;
 
         this.localSubtotal_incl_tax = param;
@@ -1502,7 +1502,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getShipping_amount() {
+    public java.lang.String getShipping_amount() {
         return localShipping_amount;
     }
 
@@ -1510,7 +1510,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Shipping_amount
      */
-    public void setShipping_amount(String param) {
+    public void setShipping_amount(java.lang.String param) {
         localShipping_amountTracker = param != null;
 
         this.localShipping_amount = param;
@@ -1524,7 +1524,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getBase_subtotal_incl_tax() {
+    public java.lang.String getBase_subtotal_incl_tax() {
         return localBase_subtotal_incl_tax;
     }
 
@@ -1532,7 +1532,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Base_subtotal_incl_tax
      */
-    public void setBase_subtotal_incl_tax(String param) {
+    public void setBase_subtotal_incl_tax(java.lang.String param) {
         localBase_subtotal_incl_taxTracker = param != null;
 
         this.localBase_subtotal_incl_tax = param;
@@ -1546,7 +1546,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getBase_adjustment_negative() {
+    public java.lang.String getBase_adjustment_negative() {
         return localBase_adjustment_negative;
     }
 
@@ -1554,7 +1554,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Base_adjustment_negative
      */
-    public void setBase_adjustment_negative(String param) {
+    public void setBase_adjustment_negative(java.lang.String param) {
         localBase_adjustment_negativeTracker = param != null;
 
         this.localBase_adjustment_negative = param;
@@ -1568,7 +1568,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getGrand_total() {
+    public java.lang.String getGrand_total() {
         return localGrand_total;
     }
 
@@ -1576,7 +1576,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Grand_total
      */
-    public void setGrand_total(String param) {
+    public void setGrand_total(java.lang.String param) {
         localGrand_totalTracker = param != null;
 
         this.localGrand_total = param;
@@ -1590,7 +1590,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getBase_discount_amount() {
+    public java.lang.String getBase_discount_amount() {
         return localBase_discount_amount;
     }
 
@@ -1598,7 +1598,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Base_discount_amount
      */
-    public void setBase_discount_amount(String param) {
+    public void setBase_discount_amount(java.lang.String param) {
         localBase_discount_amountTracker = param != null;
 
         this.localBase_discount_amount = param;
@@ -1612,7 +1612,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getBase_to_order_rate() {
+    public java.lang.String getBase_to_order_rate() {
         return localBase_to_order_rate;
     }
 
@@ -1620,7 +1620,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Base_to_order_rate
      */
-    public void setBase_to_order_rate(String param) {
+    public void setBase_to_order_rate(java.lang.String param) {
         localBase_to_order_rateTracker = param != null;
 
         this.localBase_to_order_rate = param;
@@ -1634,7 +1634,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getStore_to_order_rate() {
+    public java.lang.String getStore_to_order_rate() {
         return localStore_to_order_rate;
     }
 
@@ -1642,7 +1642,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Store_to_order_rate
      */
-    public void setStore_to_order_rate(String param) {
+    public void setStore_to_order_rate(java.lang.String param) {
         localStore_to_order_rateTracker = param != null;
 
         this.localStore_to_order_rate = param;
@@ -1656,7 +1656,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getBase_shipping_tax_amount() {
+    public java.lang.String getBase_shipping_tax_amount() {
         return localBase_shipping_tax_amount;
     }
 
@@ -1664,7 +1664,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Base_shipping_tax_amount
      */
-    public void setBase_shipping_tax_amount(String param) {
+    public void setBase_shipping_tax_amount(java.lang.String param) {
         localBase_shipping_tax_amountTracker = param != null;
 
         this.localBase_shipping_tax_amount = param;
@@ -1678,7 +1678,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getAdjustment_positive() {
+    public java.lang.String getAdjustment_positive() {
         return localAdjustment_positive;
     }
 
@@ -1686,7 +1686,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Adjustment_positive
      */
-    public void setAdjustment_positive(String param) {
+    public void setAdjustment_positive(java.lang.String param) {
         localAdjustment_positiveTracker = param != null;
 
         this.localAdjustment_positive = param;
@@ -1700,7 +1700,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getStore_id() {
+    public java.lang.String getStore_id() {
         return localStore_id;
     }
 
@@ -1708,7 +1708,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Store_id
      */
-    public void setStore_id(String param) {
+    public void setStore_id(java.lang.String param) {
         localStore_idTracker = param != null;
 
         this.localStore_id = param;
@@ -1722,7 +1722,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getHidden_tax_amount() {
+    public java.lang.String getHidden_tax_amount() {
         return localHidden_tax_amount;
     }
 
@@ -1730,7 +1730,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Hidden_tax_amount
      */
-    public void setHidden_tax_amount(String param) {
+    public void setHidden_tax_amount(java.lang.String param) {
         localHidden_tax_amountTracker = param != null;
 
         this.localHidden_tax_amount = param;
@@ -1744,7 +1744,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getBase_hidden_tax_amount() {
+    public java.lang.String getBase_hidden_tax_amount() {
         return localBase_hidden_tax_amount;
     }
 
@@ -1752,7 +1752,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Base_hidden_tax_amount
      */
-    public void setBase_hidden_tax_amount(String param) {
+    public void setBase_hidden_tax_amount(java.lang.String param) {
         localBase_hidden_tax_amountTracker = param != null;
 
         this.localBase_hidden_tax_amount = param;
@@ -1766,7 +1766,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getShipping_hidden_tax_amount() {
+    public java.lang.String getShipping_hidden_tax_amount() {
         return localShipping_hidden_tax_amount;
     }
 
@@ -1774,7 +1774,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Shipping_hidden_tax_amount
      */
-    public void setShipping_hidden_tax_amount(String param) {
+    public void setShipping_hidden_tax_amount(java.lang.String param) {
         localShipping_hidden_tax_amountTracker = param != null;
 
         this.localShipping_hidden_tax_amount = param;
@@ -1788,7 +1788,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getBase_shipping_hidden_tax_amnt() {
+    public java.lang.String getBase_shipping_hidden_tax_amnt() {
         return localBase_shipping_hidden_tax_amnt;
     }
 
@@ -1796,7 +1796,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Base_shipping_hidden_tax_amnt
      */
-    public void setBase_shipping_hidden_tax_amnt(String param) {
+    public void setBase_shipping_hidden_tax_amnt(java.lang.String param) {
         localBase_shipping_hidden_tax_amntTracker = param != null;
 
         this.localBase_shipping_hidden_tax_amnt = param;
@@ -1810,7 +1810,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getShipping_incl_tax() {
+    public java.lang.String getShipping_incl_tax() {
         return localShipping_incl_tax;
     }
 
@@ -1818,7 +1818,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Shipping_incl_tax
      */
-    public void setShipping_incl_tax(String param) {
+    public void setShipping_incl_tax(java.lang.String param) {
         localShipping_incl_taxTracker = param != null;
 
         this.localShipping_incl_tax = param;
@@ -1832,7 +1832,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getBase_shipping_incl_tax() {
+    public java.lang.String getBase_shipping_incl_tax() {
         return localBase_shipping_incl_tax;
     }
 
@@ -1840,7 +1840,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Base_shipping_incl_tax
      */
-    public void setBase_shipping_incl_tax(String param) {
+    public void setBase_shipping_incl_tax(java.lang.String param) {
         localBase_shipping_incl_taxTracker = param != null;
 
         this.localBase_shipping_incl_tax = param;
@@ -1854,7 +1854,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getBase_customer_balance_amount() {
+    public java.lang.String getBase_customer_balance_amount() {
         return localBase_customer_balance_amount;
     }
 
@@ -1862,7 +1862,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Base_customer_balance_amount
      */
-    public void setBase_customer_balance_amount(String param) {
+    public void setBase_customer_balance_amount(java.lang.String param) {
         localBase_customer_balance_amountTracker = param != null;
 
         this.localBase_customer_balance_amount = param;
@@ -1876,7 +1876,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getCustomer_balance_amount() {
+    public java.lang.String getCustomer_balance_amount() {
         return localCustomer_balance_amount;
     }
 
@@ -1884,7 +1884,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Customer_balance_amount
      */
-    public void setCustomer_balance_amount(String param) {
+    public void setCustomer_balance_amount(java.lang.String param) {
         localCustomer_balance_amountTracker = param != null;
 
         this.localCustomer_balance_amount = param;
@@ -1898,7 +1898,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getBs_customer_bal_total_refunded() {
+    public java.lang.String getBs_customer_bal_total_refunded() {
         return localBs_customer_bal_total_refunded;
     }
 
@@ -1906,7 +1906,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Bs_customer_bal_total_refunded
      */
-    public void setBs_customer_bal_total_refunded(String param) {
+    public void setBs_customer_bal_total_refunded(java.lang.String param) {
         localBs_customer_bal_total_refundedTracker = param != null;
 
         this.localBs_customer_bal_total_refunded = param;
@@ -1920,7 +1920,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getCustomer_bal_total_refunded() {
+    public java.lang.String getCustomer_bal_total_refunded() {
         return localCustomer_bal_total_refunded;
     }
 
@@ -1928,7 +1928,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Customer_bal_total_refunded
      */
-    public void setCustomer_bal_total_refunded(String param) {
+    public void setCustomer_bal_total_refunded(java.lang.String param) {
         localCustomer_bal_total_refundedTracker = param != null;
 
         this.localCustomer_bal_total_refunded = param;
@@ -1942,7 +1942,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getBase_gift_cards_amount() {
+    public java.lang.String getBase_gift_cards_amount() {
         return localBase_gift_cards_amount;
     }
 
@@ -1950,7 +1950,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Base_gift_cards_amount
      */
-    public void setBase_gift_cards_amount(String param) {
+    public void setBase_gift_cards_amount(java.lang.String param) {
         localBase_gift_cards_amountTracker = param != null;
 
         this.localBase_gift_cards_amount = param;
@@ -1964,7 +1964,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getGift_cards_amount() {
+    public java.lang.String getGift_cards_amount() {
         return localGift_cards_amount;
     }
 
@@ -1972,7 +1972,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Gift_cards_amount
      */
-    public void setGift_cards_amount(String param) {
+    public void setGift_cards_amount(java.lang.String param) {
         localGift_cards_amountTracker = param != null;
 
         this.localGift_cards_amount = param;
@@ -1986,7 +1986,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getGw_base_price() {
+    public java.lang.String getGw_base_price() {
         return localGw_base_price;
     }
 
@@ -1994,7 +1994,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Gw_base_price
      */
-    public void setGw_base_price(String param) {
+    public void setGw_base_price(java.lang.String param) {
         localGw_base_priceTracker = param != null;
 
         this.localGw_base_price = param;
@@ -2008,7 +2008,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getGw_price() {
+    public java.lang.String getGw_price() {
         return localGw_price;
     }
 
@@ -2016,7 +2016,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Gw_price
      */
-    public void setGw_price(String param) {
+    public void setGw_price(java.lang.String param) {
         localGw_priceTracker = param != null;
 
         this.localGw_price = param;
@@ -2030,7 +2030,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getGw_items_base_price() {
+    public java.lang.String getGw_items_base_price() {
         return localGw_items_base_price;
     }
 
@@ -2038,7 +2038,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Gw_items_base_price
      */
-    public void setGw_items_base_price(String param) {
+    public void setGw_items_base_price(java.lang.String param) {
         localGw_items_base_priceTracker = param != null;
 
         this.localGw_items_base_price = param;
@@ -2052,7 +2052,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getGw_items_price() {
+    public java.lang.String getGw_items_price() {
         return localGw_items_price;
     }
 
@@ -2060,7 +2060,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Gw_items_price
      */
-    public void setGw_items_price(String param) {
+    public void setGw_items_price(java.lang.String param) {
         localGw_items_priceTracker = param != null;
 
         this.localGw_items_price = param;
@@ -2074,7 +2074,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getGw_card_base_price() {
+    public java.lang.String getGw_card_base_price() {
         return localGw_card_base_price;
     }
 
@@ -2082,7 +2082,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Gw_card_base_price
      */
-    public void setGw_card_base_price(String param) {
+    public void setGw_card_base_price(java.lang.String param) {
         localGw_card_base_priceTracker = param != null;
 
         this.localGw_card_base_price = param;
@@ -2096,7 +2096,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getGw_card_price() {
+    public java.lang.String getGw_card_price() {
         return localGw_card_price;
     }
 
@@ -2104,7 +2104,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Gw_card_price
      */
-    public void setGw_card_price(String param) {
+    public void setGw_card_price(java.lang.String param) {
         localGw_card_priceTracker = param != null;
 
         this.localGw_card_price = param;
@@ -2118,7 +2118,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getGw_base_tax_amount() {
+    public java.lang.String getGw_base_tax_amount() {
         return localGw_base_tax_amount;
     }
 
@@ -2126,7 +2126,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Gw_base_tax_amount
      */
-    public void setGw_base_tax_amount(String param) {
+    public void setGw_base_tax_amount(java.lang.String param) {
         localGw_base_tax_amountTracker = param != null;
 
         this.localGw_base_tax_amount = param;
@@ -2140,7 +2140,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getGw_tax_amount() {
+    public java.lang.String getGw_tax_amount() {
         return localGw_tax_amount;
     }
 
@@ -2148,7 +2148,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Gw_tax_amount
      */
-    public void setGw_tax_amount(String param) {
+    public void setGw_tax_amount(java.lang.String param) {
         localGw_tax_amountTracker = param != null;
 
         this.localGw_tax_amount = param;
@@ -2162,7 +2162,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getGw_items_base_tax_amount() {
+    public java.lang.String getGw_items_base_tax_amount() {
         return localGw_items_base_tax_amount;
     }
 
@@ -2170,7 +2170,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Gw_items_base_tax_amount
      */
-    public void setGw_items_base_tax_amount(String param) {
+    public void setGw_items_base_tax_amount(java.lang.String param) {
         localGw_items_base_tax_amountTracker = param != null;
 
         this.localGw_items_base_tax_amount = param;
@@ -2184,7 +2184,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getGw_items_tax_amount() {
+    public java.lang.String getGw_items_tax_amount() {
         return localGw_items_tax_amount;
     }
 
@@ -2192,7 +2192,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Gw_items_tax_amount
      */
-    public void setGw_items_tax_amount(String param) {
+    public void setGw_items_tax_amount(java.lang.String param) {
         localGw_items_tax_amountTracker = param != null;
 
         this.localGw_items_tax_amount = param;
@@ -2206,7 +2206,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getGw_card_base_tax_amount() {
+    public java.lang.String getGw_card_base_tax_amount() {
         return localGw_card_base_tax_amount;
     }
 
@@ -2214,7 +2214,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Gw_card_base_tax_amount
      */
-    public void setGw_card_base_tax_amount(String param) {
+    public void setGw_card_base_tax_amount(java.lang.String param) {
         localGw_card_base_tax_amountTracker = param != null;
 
         this.localGw_card_base_tax_amount = param;
@@ -2228,7 +2228,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getGw_card_tax_amount() {
+    public java.lang.String getGw_card_tax_amount() {
         return localGw_card_tax_amount;
     }
 
@@ -2236,7 +2236,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Gw_card_tax_amount
      */
-    public void setGw_card_tax_amount(String param) {
+    public void setGw_card_tax_amount(java.lang.String param) {
         localGw_card_tax_amountTracker = param != null;
 
         this.localGw_card_tax_amount = param;
@@ -2250,7 +2250,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getBase_reward_currency_amount() {
+    public java.lang.String getBase_reward_currency_amount() {
         return localBase_reward_currency_amount;
     }
 
@@ -2258,7 +2258,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Base_reward_currency_amount
      */
-    public void setBase_reward_currency_amount(String param) {
+    public void setBase_reward_currency_amount(java.lang.String param) {
         localBase_reward_currency_amountTracker = param != null;
 
         this.localBase_reward_currency_amount = param;
@@ -2272,7 +2272,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getReward_currency_amount() {
+    public java.lang.String getReward_currency_amount() {
         return localReward_currency_amount;
     }
 
@@ -2280,7 +2280,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Reward_currency_amount
      */
-    public void setReward_currency_amount(String param) {
+    public void setReward_currency_amount(java.lang.String param) {
         localReward_currency_amountTracker = param != null;
 
         this.localReward_currency_amount = param;
@@ -2294,7 +2294,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getReward_points_balance() {
+    public java.lang.String getReward_points_balance() {
         return localReward_points_balance;
     }
 
@@ -2302,7 +2302,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Reward_points_balance
      */
-    public void setReward_points_balance(String param) {
+    public void setReward_points_balance(java.lang.String param) {
         localReward_points_balanceTracker = param != null;
 
         this.localReward_points_balance = param;
@@ -2316,7 +2316,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getReward_points_balance_refund() {
+    public java.lang.String getReward_points_balance_refund() {
         return localReward_points_balance_refund;
     }
 
@@ -2324,7 +2324,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Reward_points_balance_refund
      */
-    public void setReward_points_balance_refund(String param) {
+    public void setReward_points_balance_refund(java.lang.String param) {
         localReward_points_balance_refundTracker = param != null;
 
         this.localReward_points_balance_refund = param;
@@ -2338,7 +2338,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getCreditmemo_id() {
+    public java.lang.String getCreditmemo_id() {
         return localCreditmemo_id;
     }
 
@@ -2346,7 +2346,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
      * Auto generated setter method
      * @param param Creditmemo_id
      */
-    public void setCreditmemo_id(String param) {
+    public void setCreditmemo_id(java.lang.String param) {
         localCreditmemo_idTracker = param != null;
 
         this.localCreditmemo_id = param;
@@ -2424,8 +2424,8 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
         javax.xml.stream.XMLStreamWriter xmlWriter, boolean serializeType)
         throws javax.xml.stream.XMLStreamException,
             org.apache.axis2.databinding.ADBException {
-        String prefix = null;
-        String namespace = null;
+        java.lang.String prefix = null;
+        java.lang.String namespace = null;
 
         prefix = parentQName.getPrefix();
         namespace = parentQName.getNamespaceURI();
@@ -2433,7 +2433,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
             xmlWriter);
 
         if (serializeType) {
-            String namespacePrefix = registerPrefix(xmlWriter,
+            java.lang.String namespacePrefix = registerPrefix(xmlWriter,
                     "urn:Magento");
 
             if ((namespacePrefix != null) &&
@@ -3540,7 +3540,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
         xmlWriter.writeEndElement();
     }
 
-    private static String generatePrefix(String namespace) {
+    private static java.lang.String generatePrefix(java.lang.String namespace) {
         if (namespace.equals("urn:Magento")) {
             return "ns1";
         }
@@ -3551,11 +3551,11 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
     /**
      * Utility method to write an element start tag.
      */
-    private void writeStartElement(String prefix,
-        String namespace, String localPart,
+    private void writeStartElement(java.lang.String prefix,
+        java.lang.String namespace, java.lang.String localPart,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
-        String writerPrefix = xmlWriter.getPrefix(namespace);
+        java.lang.String writerPrefix = xmlWriter.getPrefix(namespace);
 
         if (writerPrefix != null) {
             xmlWriter.writeStartElement(namespace, localPart);
@@ -3575,9 +3575,9 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
     /**
      * Util method to write an attribute with the ns prefix
      */
-    private void writeAttribute(String prefix,
-        String namespace, String attName,
-        String attValue, javax.xml.stream.XMLStreamWriter xmlWriter)
+    private void writeAttribute(java.lang.String prefix,
+        java.lang.String namespace, java.lang.String attName,
+        java.lang.String attValue, javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
         if (xmlWriter.getPrefix(namespace) == null) {
             xmlWriter.writeNamespace(prefix, namespace);
@@ -3590,8 +3590,8 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
     /**
      * Util method to write an attribute without the ns prefix
      */
-    private void writeAttribute(String namespace,
-        String attName, String attValue,
+    private void writeAttribute(java.lang.String namespace,
+        java.lang.String attName, java.lang.String attValue,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
         if (namespace.equals("")) {
@@ -3605,18 +3605,18 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
     /**
      * Util method to write an attribute without the ns prefix
      */
-    private void writeQNameAttribute(String namespace,
-        String attName, javax.xml.namespace.QName qname,
+    private void writeQNameAttribute(java.lang.String namespace,
+        java.lang.String attName, javax.xml.namespace.QName qname,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
-        String attributeNamespace = qname.getNamespaceURI();
-        String attributePrefix = xmlWriter.getPrefix(attributeNamespace);
+        java.lang.String attributeNamespace = qname.getNamespaceURI();
+        java.lang.String attributePrefix = xmlWriter.getPrefix(attributeNamespace);
 
         if (attributePrefix == null) {
             attributePrefix = registerPrefix(xmlWriter, attributeNamespace);
         }
 
-        String attributeValue;
+        java.lang.String attributeValue;
 
         if (attributePrefix.trim().length() > 0) {
             attributeValue = attributePrefix + ":" + qname.getLocalPart();
@@ -3638,10 +3638,10 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
     private void writeQName(javax.xml.namespace.QName qname,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
-        String namespaceURI = qname.getNamespaceURI();
+        java.lang.String namespaceURI = qname.getNamespaceURI();
 
         if (namespaceURI != null) {
-            String prefix = xmlWriter.getPrefix(namespaceURI);
+            java.lang.String prefix = xmlWriter.getPrefix(namespaceURI);
 
             if (prefix == null) {
                 prefix = generatePrefix(namespaceURI);
@@ -3670,9 +3670,9 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
         if (qnames != null) {
             // we have to store this data until last moment since it is not possible to write any
             // namespace data after writing the charactor data
-            StringBuffer stringToWrite = new StringBuffer();
-            String namespaceURI = null;
-            String prefix = null;
+            java.lang.StringBuffer stringToWrite = new java.lang.StringBuffer();
+            java.lang.String namespaceURI = null;
+            java.lang.String prefix = null;
 
             for (int i = 0; i < qnames.length; i++) {
                 if (i > 0) {
@@ -3711,10 +3711,10 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
     /**
      * Register a namespace prefix
      */
-    private String registerPrefix(
-        javax.xml.stream.XMLStreamWriter xmlWriter, String namespace)
+    private java.lang.String registerPrefix(
+        javax.xml.stream.XMLStreamWriter xmlWriter, java.lang.String namespace)
         throws javax.xml.stream.XMLStreamException {
-        String prefix = xmlWriter.getPrefix(namespace);
+        java.lang.String prefix = xmlWriter.getPrefix(namespace);
 
         if (prefix == null) {
             prefix = generatePrefix(namespace);
@@ -3722,7 +3722,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
             javax.xml.namespace.NamespaceContext nsContext = xmlWriter.getNamespaceContext();
 
             while (true) {
-                String uri = nsContext.getNamespaceURI(prefix);
+                java.lang.String uri = nsContext.getNamespaceURI(prefix);
 
                 if ((uri == null) || (uri.length() == 0)) {
                     break;
@@ -4671,13 +4671,13 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
          *                If this object is a complex type, the reader is positioned at the end element of its outer element
          */
         public static SalesOrderCreditmemoEntity parse(
-            javax.xml.stream.XMLStreamReader reader) throws Exception {
+            javax.xml.stream.XMLStreamReader reader) throws java.lang.Exception {
             SalesOrderCreditmemoEntity object = new SalesOrderCreditmemoEntity();
 
             int event;
-            String nillableValue = null;
-            String prefix = "";
-            String namespaceuri = "";
+            java.lang.String nillableValue = null;
+            java.lang.String prefix = "";
+            java.lang.String namespaceuri = "";
 
             try {
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -4685,11 +4685,11 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
 
                 if (reader.getAttributeValue(
                             "http://www.w3.org/2001/XMLSchema-instance", "type") != null) {
-                    String fullTypeName = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance",
+                    java.lang.String fullTypeName = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance",
                             "type");
 
                     if (fullTypeName != null) {
-                        String nsPrefix = null;
+                        java.lang.String nsPrefix = null;
 
                         if (fullTypeName.indexOf(":") > -1) {
                             nsPrefix = fullTypeName.substring(0,
@@ -4698,12 +4698,12 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
 
                         nsPrefix = (nsPrefix == null) ? "" : nsPrefix;
 
-                        String type = fullTypeName.substring(fullTypeName.indexOf(
+                        java.lang.String type = fullTypeName.substring(fullTypeName.indexOf(
                                     ":") + 1);
 
                         if (!"salesOrderCreditmemoEntity".equals(type)) {
                             //find namespace for the prefix
-                            String nsUri = reader.getNamespaceContext()
+                            java.lang.String nsUri = reader.getNamespaceContext()
                                                            .getNamespaceURI(nsPrefix);
 
                             return (SalesOrderCreditmemoEntity) magento.ExtensionMapper.getTypeObject(nsUri,
@@ -4734,7 +4734,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setUpdated_at(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -4761,7 +4761,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setCreated_at(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -4788,7 +4788,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setIncrement_id(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -4815,7 +4815,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setTransaction_id(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -4842,7 +4842,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setGlobal_currency_code(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -4869,7 +4869,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setBase_currency_code(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -4896,7 +4896,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setOrder_currency_code(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -4923,7 +4923,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setStore_currency_code(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -4950,7 +4950,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setCybersource_token(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -4977,7 +4977,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setInvoice_id(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5004,7 +5004,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setBilling_address_id(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5031,7 +5031,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setShipping_address_id(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5057,7 +5057,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
                             "The element: " + "state" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setState(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5084,7 +5084,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setCreditmemo_status(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5111,7 +5111,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setEmail_sent(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5137,7 +5137,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
                             "The element: " + "order_id" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setOrder_id(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5164,7 +5164,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setTax_amount(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5191,7 +5191,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setShipping_tax_amount(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5218,7 +5218,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setBase_tax_amount(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5245,7 +5245,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setBase_adjustment_positive(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5272,7 +5272,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setBase_grand_total(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5299,7 +5299,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setAdjustment(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5325,7 +5325,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
                             "The element: " + "subtotal" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setSubtotal(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5352,7 +5352,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setDiscount_amount(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5379,7 +5379,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setBase_subtotal(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5406,7 +5406,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setBase_adjustment(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5433,7 +5433,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setBase_to_global_rate(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5460,7 +5460,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setStore_to_base_rate(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5487,7 +5487,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setBase_shipping_amount(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5514,7 +5514,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setAdjustment_negative(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5541,7 +5541,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setSubtotal_incl_tax(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5568,7 +5568,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setShipping_amount(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5595,7 +5595,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setBase_subtotal_incl_tax(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5622,7 +5622,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setBase_adjustment_negative(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5649,7 +5649,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setGrand_total(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5676,7 +5676,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setBase_discount_amount(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5703,7 +5703,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setBase_to_order_rate(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5730,7 +5730,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setStore_to_order_rate(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5757,7 +5757,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setBase_shipping_tax_amount(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5784,7 +5784,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setAdjustment_positive(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5810,7 +5810,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
                             "The element: " + "store_id" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setStore_id(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5837,7 +5837,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setHidden_tax_amount(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5864,7 +5864,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setBase_hidden_tax_amount(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5892,7 +5892,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setShipping_hidden_tax_amount(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5920,7 +5920,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setBase_shipping_hidden_tax_amnt(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5947,7 +5947,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setShipping_incl_tax(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -5974,7 +5974,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setBase_shipping_incl_tax(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -6002,7 +6002,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setBase_customer_balance_amount(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -6029,7 +6029,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setCustomer_balance_amount(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -6057,7 +6057,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setBs_customer_bal_total_refunded(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -6085,7 +6085,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setCustomer_bal_total_refunded(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -6112,7 +6112,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setBase_gift_cards_amount(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -6139,7 +6139,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setGift_cards_amount(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -6166,7 +6166,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setGw_base_price(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -6192,7 +6192,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
                             "The element: " + "gw_price" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setGw_price(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -6219,7 +6219,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setGw_items_base_price(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -6246,7 +6246,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setGw_items_price(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -6273,7 +6273,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setGw_card_base_price(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -6300,7 +6300,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setGw_card_price(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -6327,7 +6327,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setGw_base_tax_amount(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -6354,7 +6354,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setGw_tax_amount(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -6381,7 +6381,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setGw_items_base_tax_amount(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -6408,7 +6408,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setGw_items_tax_amount(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -6435,7 +6435,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setGw_card_base_tax_amount(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -6462,7 +6462,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setGw_card_tax_amount(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -6490,7 +6490,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setBase_reward_currency_amount(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -6517,7 +6517,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setReward_currency_amount(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -6544,7 +6544,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setReward_points_balance(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -6572,7 +6572,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setReward_points_balance_refund(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -6599,7 +6599,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setCreditmemo_id(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -6649,7 +6649,7 @@ public class SalesOrderCreditmemoEntity implements org.apache.axis2.databinding.
                         "Unexpected subelement " + reader.getName());
                 }
             } catch (javax.xml.stream.XMLStreamException e) {
-                throw new Exception(e);
+                throw new java.lang.Exception(e);
             }
 
             return object;

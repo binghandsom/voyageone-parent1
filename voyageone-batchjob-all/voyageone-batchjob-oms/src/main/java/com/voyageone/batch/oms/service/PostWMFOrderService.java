@@ -6,6 +6,7 @@ import com.voyageone.batch.oms.modelbean.OrderExtend;
 import com.voyageone.common.components.issueLog.IssueLog;
 import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.magento.api.MagentoConstants;
 import com.voyageone.common.magento.api.bean.OrderDataBean;
 import com.voyageone.common.magento.api.service.MagentoApiServiceImpl;
@@ -24,6 +25,7 @@ import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class PostWMFOrderService {
@@ -44,16 +46,17 @@ public class PostWMFOrderService {
 	
 	private DefaultTransactionDefinition def = new DefaultTransactionDefinition();
 
-	// taskName
-	// 正常订单推送
-	private final static String POST_WMF_NOWMFAL_ORDER = "PostWMFNormalOrder";
+	// 新订单推送
+	private final static String POST_WMF_NEW_ORDER = "PostWMFNewOrder";
+
+	// 对已推送订单菜鸟单号更新
+	private final static String POST_WMF_NEW_ORDER_TRACKING_NO = "PostWMFNewOrderTrackingNo";
 
 	// 准备取消订单推送
 	private final static String POST_WMF_CANCEL_ORDER = "PostWMFPendingCancelOrder";
 
-	// 皇马渠道ID
-	private String orderChannelID = "014";
-
+	// WMF渠道ID
+	private String orderChannelID = ChannelConfigEnums.Channel.WMF.getId();
 
 	/**
 	 * 向WMF正常订单推送
@@ -73,11 +76,128 @@ public class PostWMFOrderService {
 		boolean isSuccess = true;
 
 		// 取出OMS中需要向WMF推送的订单
-		List<OrderDataBean> orderDataBeanList = new ArrayList<OrderDataBean>();
+		List<OrderDataBean> orderDataBeanList = orderDao.getWMFNewOrderInfo(orderChannelID);
+		if (orderDataBeanList != null && orderDataBeanList.size() > 0) {
+			logger.info("本次向WMF推送的新订单数为：" + orderDataBeanList.size());
 
-		for (OrderDataBean orderDataBean : orderDataBeanList) {
-			magentoApiServiceImpl.pushOrder(orderDataBean);
+			// 初期化
+			magentoApiServiceImpl.setOrderChannelId(orderChannelID);
+
+			for (OrderDataBean orderDataBean : orderDataBeanList) {
+				String clientOrderNumber = "";
+				try {
+					clientOrderNumber = magentoApiServiceImpl.pushOrderWithOneSession(orderDataBean);
+
+				} catch (Exception ex) {
+					issueLog.log(ex, ErrorType.BatchJob, SubSystem.OMS, "WMF 推送magento新订单失败。OMS orderNumber:" + orderDataBean.getOrderNumber());
+				}
+
+				// 订单推送magento成功
+				if (!StringUtils.isNullOrBlank2(clientOrderNumber)) {
+					logger.info("OMS orderNumber:" + orderDataBean.getOrderNumber() + " 向WMF推送成功，客户订单号：" + clientOrderNumber);
+
+					// 回写第三方订单号并置位发送标志
+					boolean isRecord = recordClientOrderNumber(clientOrderNumber, orderDataBean);
+					if (isRecord) {
+						logger.info("WMF客户订单号：" + clientOrderNumber + " 回写成功");
+					}
+				}
+			}
+		} else {
+			logger.info("本次没有要向WMF推送的新订单");
 		}
+
+		return isSuccess;
+	}
+
+	/**
+	 * 回写第三方订单号置位发送标志
+	 *
+	 * @param clientOrderNumber
+	 * @param orderDataBean
+	 */
+	private boolean recordClientOrderNumber(String clientOrderNumber, OrderDataBean orderDataBean) {
+		boolean isSuccess = false;
+
+		TransactionStatus status=transactionManager.getTransaction(def);
+
+		try {
+			// 回写第三方订单号
+			isSuccess = orderDao.updateOrdersClientOrderIdInfo(orderDataBean.getOrderNumber(), clientOrderNumber, POST_WMF_NEW_ORDER);
+
+			if (isSuccess) {
+				isSuccess = orderDao.resetTrackingSendFlag(orderDataBean.getOrderNumber(), POST_WMF_NEW_ORDER_TRACKING_NO);
+			}
+
+			if (isSuccess) {
+				transactionManager.commit(status);
+
+			} else {
+				transactionManager.rollback(status);
+
+			}
+		} catch (Exception ex) {
+			logger.error(ex.getMessage(), ex);
+
+			issueLog.log(ex, ErrorType.BatchJob, SubSystem.OMS);
+
+			isSuccess = false;
+
+			transactionManager.rollback(status);
+
+		}
+
+		return isSuccess;
+
+	}
+
+	/**
+	 * 向WMF新订单推送菜鸟订单号
+	 *
+	 */
+	public boolean postWMFNewOrderTrackingNo() throws Exception {
+		boolean isSuccess = true;
+
+		// 取出OMS中需要向WMF推送菜鸟订单号的订单
+		List<Map<String, String>> cainiaoIdList = orderDao.getWMFNewOrderTrackingInfo(orderChannelID);
+		if (cainiaoIdList != null && cainiaoIdList.size() > 0) {
+
+			// 初期化
+			magentoApiServiceImpl.setOrderChannelId(orderChannelID);
+
+			for (Map<String, String> cainiaoMap : cainiaoIdList) {
+				try {
+					int trackingNumberId = magentoApiServiceImpl.addNewOrderTrackWithOneSession(cainiaoMap);
+
+					// 置位发送标志
+					if (trackingNumberId > 0) {
+						String order_number = String.valueOf(cainiaoMap.get("order_number"));
+						String clientOrderId = String.valueOf(cainiaoMap.get("client_order_id"));
+						String sourceOrderId = String.valueOf(cainiaoMap.get("origin_source_order_id"));
+						String payNo = String.valueOf(cainiaoMap.get("pay_no"));
+						String cainiaoId = String.valueOf(cainiaoMap.get("taobao_logistics_id"));
+
+						logger.info("OMS订单号：" + order_number + " 更新WMF菜鸟单号：" + cainiaoId + " 成功");
+
+						// 置位发送标志
+						boolean isRecord = orderDao.resetTrackingSendFlag(order_number, POST_WMF_NEW_ORDER_TRACKING_NO);
+						if (isRecord) {
+							logger.info("OMS订单号：" + order_number + " 更新WMF菜鸟单号发送标志置位成功");
+						}
+					}
+
+				} catch (Exception ex) {
+					logger.error(ex.getMessage(), ex);
+
+					issueLog.log(ex, ErrorType.BatchJob, SubSystem.OMS);
+
+					isSuccess = false;
+				}
+			}
+		} else {
+			logger.info("本次没有要向WMF更新菜鸟单号的新订单");
+		}
+
 		return isSuccess;
 	}
 
@@ -161,8 +281,8 @@ public class PostWMFOrderService {
 		try {
 
 			// 正常订单推送
-			if (POST_WMF_NOWMFAL_ORDER.equals(taskName)) {
-				isSuccess = orderDao.updateOrdersSendInfo(POST_WMF_NOWMFAL_ORDER, getSelectOrderNumberList(pushOrderList));
+			if (POST_WMF_NEW_ORDER.equals(taskName)) {
+				isSuccess = orderDao.updateOrdersSendInfo(POST_WMF_NEW_ORDER, getSelectOrderNumberList(pushOrderList));
 			// 取消订单推送
 			} else if (POST_WMF_CANCEL_ORDER.equals(taskName)) {
 				isSuccess = orderDao.updatePendingCancelOrdersSendInfo(POST_WMF_CANCEL_ORDER, getSelectOrderNumberList(pushOrderList));
@@ -300,7 +420,7 @@ public class PostWMFOrderService {
 		// notes
 		String note = "";
 		// 正常订单推送
-		if (POST_WMF_NOWMFAL_ORDER.equals(taskName)) {
+		if (POST_WMF_NEW_ORDER.equals(taskName)) {
 			note = "Push order to WMF";
 		// 取消订单推送
 		} else if (POST_WMF_CANCEL_ORDER.equals(taskName)) {

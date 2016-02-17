@@ -23,7 +23,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
     /**
      * field for Category_id
      */
-    protected String localCategory_id;
+    protected java.lang.String localCategory_id;
 
     /**
      * field for Is_active
@@ -33,32 +33,32 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
     /**
      * field for Position
      */
-    protected String localPosition;
+    protected java.lang.String localPosition;
 
     /**
      * field for Level
      */
-    protected String localLevel;
+    protected java.lang.String localLevel;
 
     /**
      * field for Parent_id
      */
-    protected String localParent_id;
+    protected java.lang.String localParent_id;
 
     /**
      * field for All_children
      */
-    protected String localAll_children;
+    protected java.lang.String localAll_children;
 
     /**
      * field for Children
      */
-    protected String localChildren;
+    protected java.lang.String localChildren;
 
     /**
      * field for Created_at
      */
-    protected String localCreated_at;
+    protected java.lang.String localCreated_at;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -69,7 +69,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
     /**
      * field for Updated_at
      */
-    protected String localUpdated_at;
+    protected java.lang.String localUpdated_at;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -80,7 +80,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
     /**
      * field for Name
      */
-    protected String localName;
+    protected java.lang.String localName;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -91,7 +91,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
     /**
      * field for Url_key
      */
-    protected String localUrl_key;
+    protected java.lang.String localUrl_key;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -102,7 +102,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
     /**
      * field for Description
      */
-    protected String localDescription;
+    protected java.lang.String localDescription;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -113,7 +113,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
     /**
      * field for Meta_title
      */
-    protected String localMeta_title;
+    protected java.lang.String localMeta_title;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -124,7 +124,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
     /**
      * field for Meta_keywords
      */
-    protected String localMeta_keywords;
+    protected java.lang.String localMeta_keywords;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -135,7 +135,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
     /**
      * field for Meta_description
      */
-    protected String localMeta_description;
+    protected java.lang.String localMeta_description;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -146,7 +146,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
     /**
      * field for Path
      */
-    protected String localPath;
+    protected java.lang.String localPath;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -157,7 +157,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
     /**
      * field for Url_path
      */
-    protected String localUrl_path;
+    protected java.lang.String localUrl_path;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -179,7 +179,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
     /**
      * field for Display_mode
      */
-    protected String localDisplay_mode;
+    protected java.lang.String localDisplay_mode;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -212,7 +212,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
     /**
      * field for Custom_design
      */
-    protected String localCustom_design;
+    protected java.lang.String localCustom_design;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -223,7 +223,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
     /**
      * field for Custom_design_apply
      */
-    protected String localCustom_design_apply;
+    protected java.lang.String localCustom_design_apply;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -234,7 +234,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
     /**
      * field for Custom_design_from
      */
-    protected String localCustom_design_from;
+    protected java.lang.String localCustom_design_from;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -245,7 +245,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
     /**
      * field for Custom_design_to
      */
-    protected String localCustom_design_to;
+    protected java.lang.String localCustom_design_to;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -256,7 +256,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
     /**
      * field for Page_layout
      */
-    protected String localPage_layout;
+    protected java.lang.String localPage_layout;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -267,7 +267,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
     /**
      * field for Custom_layout_update
      */
-    protected String localCustom_layout_update;
+    protected java.lang.String localCustom_layout_update;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -278,7 +278,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
     /**
      * field for Default_sort_by
      */
-    protected String localDefault_sort_by;
+    protected java.lang.String localDefault_sort_by;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -333,7 +333,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
     /**
      * field for Filter_price_range
      */
-    protected String localFilter_price_range;
+    protected java.lang.String localFilter_price_range;
 
     /*  This tracker boolean wil be used to detect whether the user called the set method
      *   for this attribute. It will be used to determine whether to include this field
@@ -345,7 +345,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getCategory_id() {
+    public java.lang.String getCategory_id() {
         return localCategory_id;
     }
 
@@ -353,7 +353,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
      * Auto generated setter method
      * @param param Category_id
      */
-    public void setCategory_id(String param) {
+    public void setCategory_id(java.lang.String param) {
         this.localCategory_id = param;
     }
 
@@ -377,7 +377,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getPosition() {
+    public java.lang.String getPosition() {
         return localPosition;
     }
 
@@ -385,7 +385,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
      * Auto generated setter method
      * @param param Position
      */
-    public void setPosition(String param) {
+    public void setPosition(java.lang.String param) {
         this.localPosition = param;
     }
 
@@ -393,7 +393,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getLevel() {
+    public java.lang.String getLevel() {
         return localLevel;
     }
 
@@ -401,7 +401,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
      * Auto generated setter method
      * @param param Level
      */
-    public void setLevel(String param) {
+    public void setLevel(java.lang.String param) {
         this.localLevel = param;
     }
 
@@ -409,7 +409,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getParent_id() {
+    public java.lang.String getParent_id() {
         return localParent_id;
     }
 
@@ -417,7 +417,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
      * Auto generated setter method
      * @param param Parent_id
      */
-    public void setParent_id(String param) {
+    public void setParent_id(java.lang.String param) {
         this.localParent_id = param;
     }
 
@@ -425,7 +425,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getAll_children() {
+    public java.lang.String getAll_children() {
         return localAll_children;
     }
 
@@ -433,7 +433,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
      * Auto generated setter method
      * @param param All_children
      */
-    public void setAll_children(String param) {
+    public void setAll_children(java.lang.String param) {
         this.localAll_children = param;
     }
 
@@ -441,7 +441,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getChildren() {
+    public java.lang.String getChildren() {
         return localChildren;
     }
 
@@ -449,7 +449,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
      * Auto generated setter method
      * @param param Children
      */
-    public void setChildren(String param) {
+    public void setChildren(java.lang.String param) {
         this.localChildren = param;
     }
 
@@ -461,7 +461,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getCreated_at() {
+    public java.lang.String getCreated_at() {
         return localCreated_at;
     }
 
@@ -469,7 +469,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
      * Auto generated setter method
      * @param param Created_at
      */
-    public void setCreated_at(String param) {
+    public void setCreated_at(java.lang.String param) {
         localCreated_atTracker = param != null;
 
         this.localCreated_at = param;
@@ -483,7 +483,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getUpdated_at() {
+    public java.lang.String getUpdated_at() {
         return localUpdated_at;
     }
 
@@ -491,7 +491,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
      * Auto generated setter method
      * @param param Updated_at
      */
-    public void setUpdated_at(String param) {
+    public void setUpdated_at(java.lang.String param) {
         localUpdated_atTracker = param != null;
 
         this.localUpdated_at = param;
@@ -505,7 +505,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getName() {
+    public java.lang.String getName() {
         return localName;
     }
 
@@ -513,7 +513,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
      * Auto generated setter method
      * @param param Name
      */
-    public void setName(String param) {
+    public void setName(java.lang.String param) {
         localNameTracker = param != null;
 
         this.localName = param;
@@ -527,7 +527,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getUrl_key() {
+    public java.lang.String getUrl_key() {
         return localUrl_key;
     }
 
@@ -535,7 +535,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
      * Auto generated setter method
      * @param param Url_key
      */
-    public void setUrl_key(String param) {
+    public void setUrl_key(java.lang.String param) {
         localUrl_keyTracker = param != null;
 
         this.localUrl_key = param;
@@ -549,7 +549,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getDescription() {
+    public java.lang.String getDescription() {
         return localDescription;
     }
 
@@ -557,7 +557,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
      * Auto generated setter method
      * @param param Description
      */
-    public void setDescription(String param) {
+    public void setDescription(java.lang.String param) {
         localDescriptionTracker = param != null;
 
         this.localDescription = param;
@@ -571,7 +571,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getMeta_title() {
+    public java.lang.String getMeta_title() {
         return localMeta_title;
     }
 
@@ -579,7 +579,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
      * Auto generated setter method
      * @param param Meta_title
      */
-    public void setMeta_title(String param) {
+    public void setMeta_title(java.lang.String param) {
         localMeta_titleTracker = param != null;
 
         this.localMeta_title = param;
@@ -593,7 +593,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getMeta_keywords() {
+    public java.lang.String getMeta_keywords() {
         return localMeta_keywords;
     }
 
@@ -601,7 +601,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
      * Auto generated setter method
      * @param param Meta_keywords
      */
-    public void setMeta_keywords(String param) {
+    public void setMeta_keywords(java.lang.String param) {
         localMeta_keywordsTracker = param != null;
 
         this.localMeta_keywords = param;
@@ -615,7 +615,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getMeta_description() {
+    public java.lang.String getMeta_description() {
         return localMeta_description;
     }
 
@@ -623,7 +623,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
      * Auto generated setter method
      * @param param Meta_description
      */
-    public void setMeta_description(String param) {
+    public void setMeta_description(java.lang.String param) {
         localMeta_descriptionTracker = param != null;
 
         this.localMeta_description = param;
@@ -637,7 +637,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getPath() {
+    public java.lang.String getPath() {
         return localPath;
     }
 
@@ -645,7 +645,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
      * Auto generated setter method
      * @param param Path
      */
-    public void setPath(String param) {
+    public void setPath(java.lang.String param) {
         localPathTracker = param != null;
 
         this.localPath = param;
@@ -659,7 +659,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getUrl_path() {
+    public java.lang.String getUrl_path() {
         return localUrl_path;
     }
 
@@ -667,7 +667,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
      * Auto generated setter method
      * @param param Url_path
      */
-    public void setUrl_path(String param) {
+    public void setUrl_path(java.lang.String param) {
         localUrl_pathTracker = param != null;
 
         this.localUrl_path = param;
@@ -691,7 +691,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
      */
     public void setChildren_count(int param) {
         // setting primitive attribute tracker to true
-        localChildren_countTracker = param != Integer.MIN_VALUE;
+        localChildren_countTracker = param != java.lang.Integer.MIN_VALUE;
 
         this.localChildren_count = param;
     }
@@ -704,7 +704,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getDisplay_mode() {
+    public java.lang.String getDisplay_mode() {
         return localDisplay_mode;
     }
 
@@ -712,7 +712,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
      * Auto generated setter method
      * @param param Display_mode
      */
-    public void setDisplay_mode(String param) {
+    public void setDisplay_mode(java.lang.String param) {
         localDisplay_modeTracker = param != null;
 
         this.localDisplay_mode = param;
@@ -736,7 +736,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
      */
     public void setIs_anchor(int param) {
         // setting primitive attribute tracker to true
-        localIs_anchorTracker = param != Integer.MIN_VALUE;
+        localIs_anchorTracker = param != java.lang.Integer.MIN_VALUE;
 
         this.localIs_anchor = param;
     }
@@ -771,7 +771,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getCustom_design() {
+    public java.lang.String getCustom_design() {
         return localCustom_design;
     }
 
@@ -779,7 +779,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
      * Auto generated setter method
      * @param param Custom_design
      */
-    public void setCustom_design(String param) {
+    public void setCustom_design(java.lang.String param) {
         localCustom_designTracker = param != null;
 
         this.localCustom_design = param;
@@ -793,7 +793,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getCustom_design_apply() {
+    public java.lang.String getCustom_design_apply() {
         return localCustom_design_apply;
     }
 
@@ -801,7 +801,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
      * Auto generated setter method
      * @param param Custom_design_apply
      */
-    public void setCustom_design_apply(String param) {
+    public void setCustom_design_apply(java.lang.String param) {
         localCustom_design_applyTracker = param != null;
 
         this.localCustom_design_apply = param;
@@ -815,7 +815,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getCustom_design_from() {
+    public java.lang.String getCustom_design_from() {
         return localCustom_design_from;
     }
 
@@ -823,7 +823,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
      * Auto generated setter method
      * @param param Custom_design_from
      */
-    public void setCustom_design_from(String param) {
+    public void setCustom_design_from(java.lang.String param) {
         localCustom_design_fromTracker = param != null;
 
         this.localCustom_design_from = param;
@@ -837,7 +837,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getCustom_design_to() {
+    public java.lang.String getCustom_design_to() {
         return localCustom_design_to;
     }
 
@@ -845,7 +845,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
      * Auto generated setter method
      * @param param Custom_design_to
      */
-    public void setCustom_design_to(String param) {
+    public void setCustom_design_to(java.lang.String param) {
         localCustom_design_toTracker = param != null;
 
         this.localCustom_design_to = param;
@@ -859,7 +859,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getPage_layout() {
+    public java.lang.String getPage_layout() {
         return localPage_layout;
     }
 
@@ -867,7 +867,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
      * Auto generated setter method
      * @param param Page_layout
      */
-    public void setPage_layout(String param) {
+    public void setPage_layout(java.lang.String param) {
         localPage_layoutTracker = param != null;
 
         this.localPage_layout = param;
@@ -881,7 +881,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getCustom_layout_update() {
+    public java.lang.String getCustom_layout_update() {
         return localCustom_layout_update;
     }
 
@@ -889,7 +889,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
      * Auto generated setter method
      * @param param Custom_layout_update
      */
-    public void setCustom_layout_update(String param) {
+    public void setCustom_layout_update(java.lang.String param) {
         localCustom_layout_updateTracker = param != null;
 
         this.localCustom_layout_update = param;
@@ -903,7 +903,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getDefault_sort_by() {
+    public java.lang.String getDefault_sort_by() {
         return localDefault_sort_by;
     }
 
@@ -911,7 +911,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
      * Auto generated setter method
      * @param param Default_sort_by
      */
-    public void setDefault_sort_by(String param) {
+    public void setDefault_sort_by(java.lang.String param) {
         localDefault_sort_byTracker = param != null;
 
         this.localDefault_sort_by = param;
@@ -935,7 +935,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
      */
     public void setLanding_page(int param) {
         // setting primitive attribute tracker to true
-        localLanding_pageTracker = param != Integer.MIN_VALUE;
+        localLanding_pageTracker = param != java.lang.Integer.MIN_VALUE;
 
         this.localLanding_page = param;
     }
@@ -958,7 +958,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
      */
     public void setInclude_in_menu(int param) {
         // setting primitive attribute tracker to true
-        localInclude_in_menuTracker = param != Integer.MIN_VALUE;
+        localInclude_in_menuTracker = param != java.lang.Integer.MIN_VALUE;
 
         this.localInclude_in_menu = param;
     }
@@ -981,7 +981,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
      */
     public void setCustom_use_parent_settings(int param) {
         // setting primitive attribute tracker to true
-        localCustom_use_parent_settingsTracker = param != Integer.MIN_VALUE;
+        localCustom_use_parent_settingsTracker = param != java.lang.Integer.MIN_VALUE;
 
         this.localCustom_use_parent_settings = param;
     }
@@ -1004,7 +1004,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
      */
     public void setCustom_apply_to_products(int param) {
         // setting primitive attribute tracker to true
-        localCustom_apply_to_productsTracker = param != Integer.MIN_VALUE;
+        localCustom_apply_to_productsTracker = param != java.lang.Integer.MIN_VALUE;
 
         this.localCustom_apply_to_products = param;
     }
@@ -1017,7 +1017,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
      * Auto generated getter method
      * @return java.lang.String
      */
-    public String getFilter_price_range() {
+    public java.lang.String getFilter_price_range() {
         return localFilter_price_range;
     }
 
@@ -1025,7 +1025,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
      * Auto generated setter method
      * @param param Filter_price_range
      */
-    public void setFilter_price_range(String param) {
+    public void setFilter_price_range(java.lang.String param) {
         localFilter_price_rangeTracker = param != null;
 
         this.localFilter_price_range = param;
@@ -1058,8 +1058,8 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
         javax.xml.stream.XMLStreamWriter xmlWriter, boolean serializeType)
         throws javax.xml.stream.XMLStreamException,
             org.apache.axis2.databinding.ADBException {
-        String prefix = null;
-        String namespace = null;
+        java.lang.String prefix = null;
+        java.lang.String namespace = null;
 
         prefix = parentQName.getPrefix();
         namespace = parentQName.getNamespaceURI();
@@ -1067,7 +1067,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
             xmlWriter);
 
         if (serializeType) {
-            String namespacePrefix = registerPrefix(xmlWriter,
+            java.lang.String namespacePrefix = registerPrefix(xmlWriter,
                     "urn:Magento");
 
             if ((namespacePrefix != null) &&
@@ -1098,7 +1098,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
         namespace = "";
         writeStartElement(null, namespace, "is_active", xmlWriter);
 
-        if (localIs_active == Integer.MIN_VALUE) {
+        if (localIs_active == java.lang.Integer.MIN_VALUE) {
             throw new org.apache.axis2.databinding.ADBException(
                 "is_active cannot be null!!");
         } else {
@@ -1327,7 +1327,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
             namespace = "";
             writeStartElement(null, namespace, "children_count", xmlWriter);
 
-            if (localChildren_count == Integer.MIN_VALUE) {
+            if (localChildren_count == java.lang.Integer.MIN_VALUE) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "children_count cannot be null!!");
             } else {
@@ -1357,7 +1357,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
             namespace = "";
             writeStartElement(null, namespace, "is_anchor", xmlWriter);
 
-            if (localIs_anchor == Integer.MIN_VALUE) {
+            if (localIs_anchor == java.lang.Integer.MIN_VALUE) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "is_anchor cannot be null!!");
             } else {
@@ -1487,7 +1487,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
             namespace = "";
             writeStartElement(null, namespace, "landing_page", xmlWriter);
 
-            if (localLanding_page == Integer.MIN_VALUE) {
+            if (localLanding_page == java.lang.Integer.MIN_VALUE) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "landing_page cannot be null!!");
             } else {
@@ -1502,7 +1502,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
             namespace = "";
             writeStartElement(null, namespace, "include_in_menu", xmlWriter);
 
-            if (localInclude_in_menu == Integer.MIN_VALUE) {
+            if (localInclude_in_menu == java.lang.Integer.MIN_VALUE) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "include_in_menu cannot be null!!");
             } else {
@@ -1518,7 +1518,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
             writeStartElement(null, namespace, "custom_use_parent_settings",
                 xmlWriter);
 
-            if (localCustom_use_parent_settings == Integer.MIN_VALUE) {
+            if (localCustom_use_parent_settings == java.lang.Integer.MIN_VALUE) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "custom_use_parent_settings cannot be null!!");
             } else {
@@ -1534,7 +1534,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
             writeStartElement(null, namespace, "custom_apply_to_products",
                 xmlWriter);
 
-            if (localCustom_apply_to_products == Integer.MIN_VALUE) {
+            if (localCustom_apply_to_products == java.lang.Integer.MIN_VALUE) {
                 throw new org.apache.axis2.databinding.ADBException(
                     "custom_apply_to_products cannot be null!!");
             } else {
@@ -1563,7 +1563,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
         xmlWriter.writeEndElement();
     }
 
-    private static String generatePrefix(String namespace) {
+    private static java.lang.String generatePrefix(java.lang.String namespace) {
         if (namespace.equals("urn:Magento")) {
             return "ns1";
         }
@@ -1574,11 +1574,11 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
     /**
      * Utility method to write an element start tag.
      */
-    private void writeStartElement(String prefix,
-        String namespace, String localPart,
+    private void writeStartElement(java.lang.String prefix,
+        java.lang.String namespace, java.lang.String localPart,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
-        String writerPrefix = xmlWriter.getPrefix(namespace);
+        java.lang.String writerPrefix = xmlWriter.getPrefix(namespace);
 
         if (writerPrefix != null) {
             xmlWriter.writeStartElement(namespace, localPart);
@@ -1598,9 +1598,9 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
     /**
      * Util method to write an attribute with the ns prefix
      */
-    private void writeAttribute(String prefix,
-        String namespace, String attName,
-        String attValue, javax.xml.stream.XMLStreamWriter xmlWriter)
+    private void writeAttribute(java.lang.String prefix,
+        java.lang.String namespace, java.lang.String attName,
+        java.lang.String attValue, javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
         if (xmlWriter.getPrefix(namespace) == null) {
             xmlWriter.writeNamespace(prefix, namespace);
@@ -1613,8 +1613,8 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
     /**
      * Util method to write an attribute without the ns prefix
      */
-    private void writeAttribute(String namespace,
-        String attName, String attValue,
+    private void writeAttribute(java.lang.String namespace,
+        java.lang.String attName, java.lang.String attValue,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
         if (namespace.equals("")) {
@@ -1628,18 +1628,18 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
     /**
      * Util method to write an attribute without the ns prefix
      */
-    private void writeQNameAttribute(String namespace,
-        String attName, javax.xml.namespace.QName qname,
+    private void writeQNameAttribute(java.lang.String namespace,
+        java.lang.String attName, javax.xml.namespace.QName qname,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
-        String attributeNamespace = qname.getNamespaceURI();
-        String attributePrefix = xmlWriter.getPrefix(attributeNamespace);
+        java.lang.String attributeNamespace = qname.getNamespaceURI();
+        java.lang.String attributePrefix = xmlWriter.getPrefix(attributeNamespace);
 
         if (attributePrefix == null) {
             attributePrefix = registerPrefix(xmlWriter, attributeNamespace);
         }
 
-        String attributeValue;
+        java.lang.String attributeValue;
 
         if (attributePrefix.trim().length() > 0) {
             attributeValue = attributePrefix + ":" + qname.getLocalPart();
@@ -1661,10 +1661,10 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
     private void writeQName(javax.xml.namespace.QName qname,
         javax.xml.stream.XMLStreamWriter xmlWriter)
         throws javax.xml.stream.XMLStreamException {
-        String namespaceURI = qname.getNamespaceURI();
+        java.lang.String namespaceURI = qname.getNamespaceURI();
 
         if (namespaceURI != null) {
-            String prefix = xmlWriter.getPrefix(namespaceURI);
+            java.lang.String prefix = xmlWriter.getPrefix(namespaceURI);
 
             if (prefix == null) {
                 prefix = generatePrefix(namespaceURI);
@@ -1693,9 +1693,9 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
         if (qnames != null) {
             // we have to store this data until last moment since it is not possible to write any
             // namespace data after writing the charactor data
-            StringBuffer stringToWrite = new StringBuffer();
-            String namespaceURI = null;
-            String prefix = null;
+            java.lang.StringBuffer stringToWrite = new java.lang.StringBuffer();
+            java.lang.String namespaceURI = null;
+            java.lang.String prefix = null;
 
             for (int i = 0; i < qnames.length; i++) {
                 if (i > 0) {
@@ -1734,10 +1734,10 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
     /**
      * Register a namespace prefix
      */
-    private String registerPrefix(
-        javax.xml.stream.XMLStreamWriter xmlWriter, String namespace)
+    private java.lang.String registerPrefix(
+        javax.xml.stream.XMLStreamWriter xmlWriter, java.lang.String namespace)
         throws javax.xml.stream.XMLStreamException {
-        String prefix = xmlWriter.getPrefix(namespace);
+        java.lang.String prefix = xmlWriter.getPrefix(namespace);
 
         if (prefix == null) {
             prefix = generatePrefix(namespace);
@@ -1745,7 +1745,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
             javax.xml.namespace.NamespaceContext nsContext = xmlWriter.getNamespaceContext();
 
             while (true) {
-                String uri = nsContext.getNamespaceURI(prefix);
+                java.lang.String uri = nsContext.getNamespaceURI(prefix);
 
                 if ((uri == null) || (uri.length() == 0)) {
                     break;
@@ -2140,13 +2140,13 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
          *                If this object is a complex type, the reader is positioned at the end element of its outer element
          */
         public static CatalogCategoryInfo parse(
-            javax.xml.stream.XMLStreamReader reader) throws Exception {
+            javax.xml.stream.XMLStreamReader reader) throws java.lang.Exception {
             CatalogCategoryInfo object = new CatalogCategoryInfo();
 
             int event;
-            String nillableValue = null;
-            String prefix = "";
-            String namespaceuri = "";
+            java.lang.String nillableValue = null;
+            java.lang.String prefix = "";
+            java.lang.String namespaceuri = "";
 
             try {
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -2154,11 +2154,11 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
 
                 if (reader.getAttributeValue(
                             "http://www.w3.org/2001/XMLSchema-instance", "type") != null) {
-                    String fullTypeName = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance",
+                    java.lang.String fullTypeName = reader.getAttributeValue("http://www.w3.org/2001/XMLSchema-instance",
                             "type");
 
                     if (fullTypeName != null) {
-                        String nsPrefix = null;
+                        java.lang.String nsPrefix = null;
 
                         if (fullTypeName.indexOf(":") > -1) {
                             nsPrefix = fullTypeName.substring(0,
@@ -2167,12 +2167,12 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
 
                         nsPrefix = (nsPrefix == null) ? "" : nsPrefix;
 
-                        String type = fullTypeName.substring(fullTypeName.indexOf(
+                        java.lang.String type = fullTypeName.substring(fullTypeName.indexOf(
                                     ":") + 1);
 
                         if (!"catalogCategoryInfo".equals(type)) {
                             //find namespace for the prefix
-                            String nsUri = reader.getNamespaceContext()
+                            java.lang.String nsUri = reader.getNamespaceContext()
                                                            .getNamespaceURI(nsPrefix);
 
                             return (CatalogCategoryInfo) magento.ExtensionMapper.getTypeObject(nsUri,
@@ -2203,7 +2203,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setCategory_id(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -2232,7 +2232,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
                             "The element: " + "is_active" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setIs_active(org.apache.axis2.databinding.utils.ConverterUtil.convertToInt(
                             content));
@@ -2261,7 +2261,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
                             "The element: " + "position" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setPosition(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -2290,7 +2290,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
                             "The element: " + "level" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setLevel(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -2319,7 +2319,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
                             "The element: " + "parent_id" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setParent_id(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -2349,7 +2349,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setAll_children(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -2378,7 +2378,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
                             "The element: " + "children" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setChildren(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -2408,7 +2408,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setCreated_at(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -2435,7 +2435,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setUpdated_at(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -2461,7 +2461,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
                             "The element: " + "name" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setName(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -2487,7 +2487,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
                             "The element: " + "url_key" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setUrl_key(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -2514,7 +2514,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setDescription(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -2541,7 +2541,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setMeta_title(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -2568,7 +2568,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setMeta_keywords(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -2595,7 +2595,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setMeta_description(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -2621,7 +2621,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
                             "The element: " + "path" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setPath(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -2647,7 +2647,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
                             "The element: " + "url_path" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setUrl_path(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -2674,7 +2674,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setChildren_count(org.apache.axis2.databinding.utils.ConverterUtil.convertToInt(
                             content));
@@ -2683,7 +2683,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
                 } // End of if for expected property start element
 
                 else {
-                    object.setChildren_count(Integer.MIN_VALUE);
+                    object.setChildren_count(java.lang.Integer.MIN_VALUE);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -2702,7 +2702,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setDisplay_mode(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -2728,7 +2728,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
                             "The element: " + "is_anchor" + "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setIs_anchor(org.apache.axis2.databinding.utils.ConverterUtil.convertToInt(
                             content));
@@ -2737,7 +2737,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
                 } // End of if for expected property start element
 
                 else {
-                    object.setIs_anchor(Integer.MIN_VALUE);
+                    object.setIs_anchor(java.lang.Integer.MIN_VALUE);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -2771,7 +2771,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setCustom_design(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -2798,7 +2798,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setCustom_design_apply(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -2825,7 +2825,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setCustom_design_from(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -2852,7 +2852,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setCustom_design_to(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -2879,7 +2879,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setPage_layout(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -2906,7 +2906,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setCustom_layout_update(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -2933,7 +2933,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setDefault_sort_by(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -2960,7 +2960,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setLanding_page(org.apache.axis2.databinding.utils.ConverterUtil.convertToInt(
                             content));
@@ -2969,7 +2969,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
                 } // End of if for expected property start element
 
                 else {
-                    object.setLanding_page(Integer.MIN_VALUE);
+                    object.setLanding_page(java.lang.Integer.MIN_VALUE);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -2988,7 +2988,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setInclude_in_menu(org.apache.axis2.databinding.utils.ConverterUtil.convertToInt(
                             content));
@@ -2997,7 +2997,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
                 } // End of if for expected property start element
 
                 else {
-                    object.setInclude_in_menu(Integer.MIN_VALUE);
+                    object.setInclude_in_menu(java.lang.Integer.MIN_VALUE);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -3017,7 +3017,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setCustom_use_parent_settings(org.apache.axis2.databinding.utils.ConverterUtil.convertToInt(
                             content));
@@ -3026,7 +3026,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
                 } // End of if for expected property start element
 
                 else {
-                    object.setCustom_use_parent_settings(Integer.MIN_VALUE);
+                    object.setCustom_use_parent_settings(java.lang.Integer.MIN_VALUE);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -3045,7 +3045,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setCustom_apply_to_products(org.apache.axis2.databinding.utils.ConverterUtil.convertToInt(
                             content));
@@ -3054,7 +3054,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
                 } // End of if for expected property start element
 
                 else {
-                    object.setCustom_apply_to_products(Integer.MIN_VALUE);
+                    object.setCustom_apply_to_products(java.lang.Integer.MIN_VALUE);
                 }
 
                 while (!reader.isStartElement() && !reader.isEndElement())
@@ -3073,7 +3073,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
                             "  cannot be null");
                     }
 
-                    String content = reader.getElementText();
+                    java.lang.String content = reader.getElementText();
 
                     object.setFilter_price_range(org.apache.axis2.databinding.utils.ConverterUtil.convertToString(
                             content));
@@ -3093,7 +3093,7 @@ public class CatalogCategoryInfo implements org.apache.axis2.databinding.ADBBean
                         "Unexpected subelement " + reader.getName());
                 }
             } catch (javax.xml.stream.XMLStreamException e) {
-                throw new Exception(e);
+                throw new java.lang.Exception(e);
             }
 
             return object;

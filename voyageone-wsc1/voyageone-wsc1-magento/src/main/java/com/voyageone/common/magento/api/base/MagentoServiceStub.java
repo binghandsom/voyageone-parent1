@@ -57,14 +57,14 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         org.apache.axis2.context.ConfigurationContext configurationContext)
         throws org.apache.axis2.AxisFault {
         this(configurationContext,
-            "https://dev.juicycouture.asia/index.php/api/v2_soap/index/");
+            "http://staging.wmf.com/index.php/api/v2_soap/index/");
     }
 
     /**
      * Default Constructor
      */
     public MagentoServiceStub() throws org.apache.axis2.AxisFault {
-        this("https://dev.juicycouture.asia/index.php/api/v2_soap/index/");
+        this("http://staging.wmf.com/index.php/api/v2_soap/index/");
     }
 
     /**
@@ -96,7 +96,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //creating the operations
         org.apache.axis2.description.AxisOperation __operation;
 
-        _operations = new org.apache.axis2.description.AxisOperation[163];
+        _operations = new org.apache.axis2.description.AxisOperation[165];
 
         __operation = new org.apache.axis2.description.OutInAxisOperation();
 
@@ -868,7 +868,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         __operation = new org.apache.axis2.description.OutInAxisOperation();
 
         __operation.setName(new javax.xml.namespace.QName("urn:Magento",
-                "resourceFaults"));
+                "shoppingCartExternalId"));
         _service.addOperation(__operation);
 
         _operations[96] = __operation;
@@ -876,7 +876,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         __operation = new org.apache.axis2.description.OutInAxisOperation();
 
         __operation.setName(new javax.xml.namespace.QName("urn:Magento",
-                "customerAddressList"));
+                "resourceFaults"));
         _service.addOperation(__operation);
 
         _operations[97] = __operation;
@@ -884,7 +884,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         __operation = new org.apache.axis2.description.OutInAxisOperation();
 
         __operation.setName(new javax.xml.namespace.QName("urn:Magento",
-                "catalogInventoryStockItemUpdate"));
+                "customerAddressList"));
         _service.addOperation(__operation);
 
         _operations[98] = __operation;
@@ -892,7 +892,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         __operation = new org.apache.axis2.description.OutInAxisOperation();
 
         __operation.setName(new javax.xml.namespace.QName("urn:Magento",
-                "shoppingCartPaymentList"));
+                "catalogInventoryStockItemUpdate"));
         _service.addOperation(__operation);
 
         _operations[99] = __operation;
@@ -900,7 +900,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         __operation = new org.apache.axis2.description.OutInAxisOperation();
 
         __operation.setName(new javax.xml.namespace.QName("urn:Magento",
-                "salesOrderCreditmemoAddComment"));
+                "shoppingCartPaymentList"));
         _service.addOperation(__operation);
 
         _operations[100] = __operation;
@@ -908,7 +908,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         __operation = new org.apache.axis2.description.OutInAxisOperation();
 
         __operation.setName(new javax.xml.namespace.QName("urn:Magento",
-                "catalogProductTagRemove"));
+                "salesOrderCreditmemoAddComment"));
         _service.addOperation(__operation);
 
         _operations[101] = __operation;
@@ -916,7 +916,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         __operation = new org.apache.axis2.description.OutInAxisOperation();
 
         __operation.setName(new javax.xml.namespace.QName("urn:Magento",
-                "salesOrderShipmentInfo"));
+                "catalogProductTagRemove"));
         _service.addOperation(__operation);
 
         _operations[102] = __operation;
@@ -924,7 +924,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         __operation = new org.apache.axis2.description.OutInAxisOperation();
 
         __operation.setName(new javax.xml.namespace.QName("urn:Magento",
-                "shoppingCartGiftcardRemove"));
+                "salesOrderShipmentInfo"));
         _service.addOperation(__operation);
 
         _operations[103] = __operation;
@@ -932,7 +932,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         __operation = new org.apache.axis2.description.OutInAxisOperation();
 
         __operation.setName(new javax.xml.namespace.QName("urn:Magento",
-                "catalogCategoryDelete"));
+                "shoppingCartProductSetCustomPrice"));
         _service.addOperation(__operation);
 
         _operations[104] = __operation;
@@ -940,7 +940,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         __operation = new org.apache.axis2.description.OutInAxisOperation();
 
         __operation.setName(new javax.xml.namespace.QName("urn:Magento",
-                "catalogProductAttributeOptions"));
+                "shoppingCartGiftcardRemove"));
         _service.addOperation(__operation);
 
         _operations[105] = __operation;
@@ -948,7 +948,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         __operation = new org.apache.axis2.description.OutInAxisOperation();
 
         __operation.setName(new javax.xml.namespace.QName("urn:Magento",
-                "customerAddressDelete"));
+                "catalogCategoryDelete"));
         _service.addOperation(__operation);
 
         _operations[106] = __operation;
@@ -956,7 +956,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         __operation = new org.apache.axis2.description.OutInAxisOperation();
 
         __operation.setName(new javax.xml.namespace.QName("urn:Magento",
-                "enterpriseCustomerbalanceHistory"));
+                "catalogProductAttributeOptions"));
         _service.addOperation(__operation);
 
         _operations[107] = __operation;
@@ -964,7 +964,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         __operation = new org.apache.axis2.description.OutInAxisOperation();
 
         __operation.setName(new javax.xml.namespace.QName("urn:Magento",
-                "shoppingCartCouponAdd"));
+                "customerAddressDelete"));
         _service.addOperation(__operation);
 
         _operations[108] = __operation;
@@ -972,7 +972,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         __operation = new org.apache.axis2.description.OutInAxisOperation();
 
         __operation.setName(new javax.xml.namespace.QName("urn:Magento",
-                "directoryCountryList"));
+                "enterpriseCustomerbalanceHistory"));
         _service.addOperation(__operation);
 
         _operations[109] = __operation;
@@ -980,7 +980,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         __operation = new org.apache.axis2.description.OutInAxisOperation();
 
         __operation.setName(new javax.xml.namespace.QName("urn:Magento",
-                "catalogCategoryCurrentStore"));
+                "shoppingCartCouponAdd"));
         _service.addOperation(__operation);
 
         _operations[110] = __operation;
@@ -988,7 +988,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         __operation = new org.apache.axis2.description.OutInAxisOperation();
 
         __operation.setName(new javax.xml.namespace.QName("urn:Magento",
-                "catalogCategoryUpdateProduct"));
+                "directoryCountryList"));
         _service.addOperation(__operation);
 
         _operations[111] = __operation;
@@ -996,7 +996,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         __operation = new org.apache.axis2.description.OutInAxisOperation();
 
         __operation.setName(new javax.xml.namespace.QName("urn:Magento",
-                "catalogProductAttributeUpdate"));
+                "catalogCategoryCurrentStore"));
         _service.addOperation(__operation);
 
         _operations[112] = __operation;
@@ -1004,7 +1004,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         __operation = new org.apache.axis2.description.OutInAxisOperation();
 
         __operation.setName(new javax.xml.namespace.QName("urn:Magento",
-                "globalFaults"));
+                "catalogCategoryUpdateProduct"));
         _service.addOperation(__operation);
 
         _operations[113] = __operation;
@@ -1012,7 +1012,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         __operation = new org.apache.axis2.description.OutInAxisOperation();
 
         __operation.setName(new javax.xml.namespace.QName("urn:Magento",
-                "shoppingCartOrder"));
+                "catalogProductAttributeUpdate"));
         _service.addOperation(__operation);
 
         _operations[114] = __operation;
@@ -1020,7 +1020,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         __operation = new org.apache.axis2.description.OutInAxisOperation();
 
         __operation.setName(new javax.xml.namespace.QName("urn:Magento",
-                "customerCustomerDelete"));
+                "globalFaults"));
         _service.addOperation(__operation);
 
         _operations[115] = __operation;
@@ -1028,7 +1028,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         __operation = new org.apache.axis2.description.OutInAxisOperation();
 
         __operation.setName(new javax.xml.namespace.QName("urn:Magento",
-                "catalogCategoryTree"));
+                "shoppingCartOrder"));
         _service.addOperation(__operation);
 
         _operations[116] = __operation;
@@ -1036,7 +1036,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         __operation = new org.apache.axis2.description.OutInAxisOperation();
 
         __operation.setName(new javax.xml.namespace.QName("urn:Magento",
-                "catalogProductAttributeSetGroupAdd"));
+                "customerCustomerDelete"));
         _service.addOperation(__operation);
 
         _operations[117] = __operation;
@@ -1044,7 +1044,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         __operation = new org.apache.axis2.description.OutInAxisOperation();
 
         __operation.setName(new javax.xml.namespace.QName("urn:Magento",
-                "catalogProductAttributeMediaRemove"));
+                "catalogCategoryTree"));
         _service.addOperation(__operation);
 
         _operations[118] = __operation;
@@ -1052,7 +1052,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         __operation = new org.apache.axis2.description.OutInAxisOperation();
 
         __operation.setName(new javax.xml.namespace.QName("urn:Magento",
-                "salesOrderUnhold"));
+                "catalogProductAttributeSetGroupAdd"));
         _service.addOperation(__operation);
 
         _operations[119] = __operation;
@@ -1060,7 +1060,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         __operation = new org.apache.axis2.description.OutInAxisOperation();
 
         __operation.setName(new javax.xml.namespace.QName("urn:Magento",
-                "giftMessageSetForQuoteItem"));
+                "catalogProductAttributeMediaRemove"));
         _service.addOperation(__operation);
 
         _operations[120] = __operation;
@@ -1068,14 +1068,15 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         __operation = new org.apache.axis2.description.OutInAxisOperation();
 
         __operation.setName(new javax.xml.namespace.QName("urn:Magento",
-                "catalogProductAttributeRemove"));
+                "salesOrderUnhold"));
         _service.addOperation(__operation);
 
         _operations[121] = __operation;
 
         __operation = new org.apache.axis2.description.OutInAxisOperation();
 
-        __operation.setName(new javax.xml.namespace.QName("urn:Magento", "call"));
+        __operation.setName(new javax.xml.namespace.QName("urn:Magento",
+                "giftMessageSetForQuoteItem"));
         _service.addOperation(__operation);
 
         _operations[122] = __operation;
@@ -1083,15 +1084,14 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         __operation = new org.apache.axis2.description.OutInAxisOperation();
 
         __operation.setName(new javax.xml.namespace.QName("urn:Magento",
-                "catalogProductAttributeMediaTypes"));
+                "catalogProductAttributeRemove"));
         _service.addOperation(__operation);
 
         _operations[123] = __operation;
 
         __operation = new org.apache.axis2.description.OutInAxisOperation();
 
-        __operation.setName(new javax.xml.namespace.QName("urn:Magento",
-                "catalogProductAttributeMediaUpdate"));
+        __operation.setName(new javax.xml.namespace.QName("urn:Magento", "call"));
         _service.addOperation(__operation);
 
         _operations[124] = __operation;
@@ -1099,7 +1099,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         __operation = new org.apache.axis2.description.OutInAxisOperation();
 
         __operation.setName(new javax.xml.namespace.QName("urn:Magento",
-                "catalogInventoryStockItemList"));
+                "catalogProductAttributeMediaTypes"));
         _service.addOperation(__operation);
 
         _operations[125] = __operation;
@@ -1107,7 +1107,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         __operation = new org.apache.axis2.description.OutInAxisOperation();
 
         __operation.setName(new javax.xml.namespace.QName("urn:Magento",
-                "customerCustomerList"));
+                "catalogProductAttributeMediaUpdate"));
         _service.addOperation(__operation);
 
         _operations[126] = __operation;
@@ -1115,7 +1115,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         __operation = new org.apache.axis2.description.OutInAxisOperation();
 
         __operation.setName(new javax.xml.namespace.QName("urn:Magento",
-                "giftcardCustomerRedeem"));
+                "catalogInventoryStockItemList"));
         _service.addOperation(__operation);
 
         _operations[127] = __operation;
@@ -1123,7 +1123,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         __operation = new org.apache.axis2.description.OutInAxisOperation();
 
         __operation.setName(new javax.xml.namespace.QName("urn:Magento",
-                "catalogProductAttributeSetGroupRemove"));
+                "customerCustomerList"));
         _service.addOperation(__operation);
 
         _operations[128] = __operation;
@@ -1131,7 +1131,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         __operation = new org.apache.axis2.description.OutInAxisOperation();
 
         __operation.setName(new javax.xml.namespace.QName("urn:Magento",
-                "catalogProductLinkRemove"));
+                "giftcardCustomerRedeem"));
         _service.addOperation(__operation);
 
         _operations[129] = __operation;
@@ -1139,7 +1139,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         __operation = new org.apache.axis2.description.OutInAxisOperation();
 
         __operation.setName(new javax.xml.namespace.QName("urn:Magento",
-                "giftcardCustomerInfo"));
+                "catalogProductAttributeSetGroupRemove"));
         _service.addOperation(__operation);
 
         _operations[130] = __operation;
@@ -1147,7 +1147,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         __operation = new org.apache.axis2.description.OutInAxisOperation();
 
         __operation.setName(new javax.xml.namespace.QName("urn:Magento",
-                "catalogProductList"));
+                "catalogProductLinkRemove"));
         _service.addOperation(__operation);
 
         _operations[131] = __operation;
@@ -1155,7 +1155,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         __operation = new org.apache.axis2.description.OutInAxisOperation();
 
         __operation.setName(new javax.xml.namespace.QName("urn:Magento",
-                "catalogProductCustomOptionValueAdd"));
+                "giftcardCustomerInfo"));
         _service.addOperation(__operation);
 
         _operations[132] = __operation;
@@ -1163,7 +1163,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         __operation = new org.apache.axis2.description.OutInAxisOperation();
 
         __operation.setName(new javax.xml.namespace.QName("urn:Magento",
-                "catalogProductDownloadableLinkList"));
+                "catalogProductList"));
         _service.addOperation(__operation);
 
         _operations[133] = __operation;
@@ -1171,7 +1171,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         __operation = new org.apache.axis2.description.OutInAxisOperation();
 
         __operation.setName(new javax.xml.namespace.QName("urn:Magento",
-                "catalogProductDelete"));
+                "catalogProductCustomOptionValueAdd"));
         _service.addOperation(__operation);
 
         _operations[134] = __operation;
@@ -1179,7 +1179,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         __operation = new org.apache.axis2.description.OutInAxisOperation();
 
         __operation.setName(new javax.xml.namespace.QName("urn:Magento",
-                "salesOrderHold"));
+                "catalogProductDownloadableLinkList"));
         _service.addOperation(__operation);
 
         _operations[135] = __operation;
@@ -1187,7 +1187,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         __operation = new org.apache.axis2.description.OutInAxisOperation();
 
         __operation.setName(new javax.xml.namespace.QName("urn:Magento",
-                "shoppingCartGiftcardList"));
+                "catalogProductDelete"));
         _service.addOperation(__operation);
 
         _operations[136] = __operation;
@@ -1195,7 +1195,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         __operation = new org.apache.axis2.description.OutInAxisOperation();
 
         __operation.setName(new javax.xml.namespace.QName("urn:Magento",
-                "customerAddressUpdate"));
+                "salesOrderHold"));
         _service.addOperation(__operation);
 
         _operations[137] = __operation;
@@ -1203,7 +1203,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         __operation = new org.apache.axis2.description.OutInAxisOperation();
 
         __operation.setName(new javax.xml.namespace.QName("urn:Magento",
-                "giftMessageSetForQuoteProduct"));
+                "shoppingCartGiftcardList"));
         _service.addOperation(__operation);
 
         _operations[138] = __operation;
@@ -1211,7 +1211,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         __operation = new org.apache.axis2.description.OutInAxisOperation();
 
         __operation.setName(new javax.xml.namespace.QName("urn:Magento",
-                "catalogProductCustomOptionValueList"));
+                "customerAddressUpdate"));
         _service.addOperation(__operation);
 
         _operations[139] = __operation;
@@ -1219,7 +1219,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         __operation = new org.apache.axis2.description.OutInAxisOperation();
 
         __operation.setName(new javax.xml.namespace.QName("urn:Magento",
-                "salesOrderInvoiceAddComment"));
+                "giftMessageSetForQuoteProduct"));
         _service.addOperation(__operation);
 
         _operations[140] = __operation;
@@ -1227,7 +1227,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         __operation = new org.apache.axis2.description.OutInAxisOperation();
 
         __operation.setName(new javax.xml.namespace.QName("urn:Magento",
-                "catalogCategoryRemoveProduct"));
+                "catalogProductCustomOptionValueList"));
         _service.addOperation(__operation);
 
         _operations[141] = __operation;
@@ -1235,7 +1235,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         __operation = new org.apache.axis2.description.OutInAxisOperation();
 
         __operation.setName(new javax.xml.namespace.QName("urn:Magento",
-                "catalogProductCustomOptionValueUpdate"));
+                "salesOrderInvoiceAddComment"));
         _service.addOperation(__operation);
 
         _operations[142] = __operation;
@@ -1243,7 +1243,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         __operation = new org.apache.axis2.description.OutInAxisOperation();
 
         __operation.setName(new javax.xml.namespace.QName("urn:Magento",
-                "catalogProductLinkTypes"));
+                "catalogCategoryRemoveProduct"));
         _service.addOperation(__operation);
 
         _operations[143] = __operation;
@@ -1251,7 +1251,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         __operation = new org.apache.axis2.description.OutInAxisOperation();
 
         __operation.setName(new javax.xml.namespace.QName("urn:Magento",
-                "catalogProductCustomOptionValueInfo"));
+                "catalogProductCustomOptionValueUpdate"));
         _service.addOperation(__operation);
 
         _operations[144] = __operation;
@@ -1259,7 +1259,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         __operation = new org.apache.axis2.description.OutInAxisOperation();
 
         __operation.setName(new javax.xml.namespace.QName("urn:Magento",
-                "salesOrderInvoiceCancel"));
+                "catalogProductLinkTypes"));
         _service.addOperation(__operation);
 
         _operations[145] = __operation;
@@ -1267,7 +1267,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         __operation = new org.apache.axis2.description.OutInAxisOperation();
 
         __operation.setName(new javax.xml.namespace.QName("urn:Magento",
-                "customerCustomerCreate"));
+                "catalogProductCustomOptionValueInfo"));
         _service.addOperation(__operation);
 
         _operations[146] = __operation;
@@ -1275,7 +1275,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         __operation = new org.apache.axis2.description.OutInAxisOperation();
 
         __operation.setName(new javax.xml.namespace.QName("urn:Magento",
-                "catalogCategoryAssignedProducts"));
+                "salesOrderInvoiceCancel"));
         _service.addOperation(__operation);
 
         _operations[147] = __operation;
@@ -1283,7 +1283,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         __operation = new org.apache.axis2.description.OutInAxisOperation();
 
         __operation.setName(new javax.xml.namespace.QName("urn:Magento",
-                "shoppingCartLicense"));
+                "customerCustomerCreate"));
         _service.addOperation(__operation);
 
         _operations[148] = __operation;
@@ -1291,7 +1291,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         __operation = new org.apache.axis2.description.OutInAxisOperation();
 
         __operation.setName(new javax.xml.namespace.QName("urn:Magento",
-                "catalogProductTagAdd"));
+                "catalogCategoryAssignedProducts"));
         _service.addOperation(__operation);
 
         _operations[149] = __operation;
@@ -1299,7 +1299,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         __operation = new org.apache.axis2.description.OutInAxisOperation();
 
         __operation.setName(new javax.xml.namespace.QName("urn:Magento",
-                "shoppingCartTotals"));
+                "shoppingCartLicense"));
         _service.addOperation(__operation);
 
         _operations[150] = __operation;
@@ -1307,7 +1307,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         __operation = new org.apache.axis2.description.OutInAxisOperation();
 
         __operation.setName(new javax.xml.namespace.QName("urn:Magento",
-                "customerAddressCreate"));
+                "catalogProductTagAdd"));
         _service.addOperation(__operation);
 
         _operations[151] = __operation;
@@ -1315,7 +1315,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         __operation = new org.apache.axis2.description.OutInAxisOperation();
 
         __operation.setName(new javax.xml.namespace.QName("urn:Magento",
-                "catalogProductCurrentStore"));
+                "shoppingCartTotals"));
         _service.addOperation(__operation);
 
         _operations[152] = __operation;
@@ -1323,7 +1323,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         __operation = new org.apache.axis2.description.OutInAxisOperation();
 
         __operation.setName(new javax.xml.namespace.QName("urn:Magento",
-                "catalogProductInfo"));
+                "customerAddressCreate"));
         _service.addOperation(__operation);
 
         _operations[153] = __operation;
@@ -1331,7 +1331,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         __operation = new org.apache.axis2.description.OutInAxisOperation();
 
         __operation.setName(new javax.xml.namespace.QName("urn:Magento",
-                "shoppingCartCustomerSet"));
+                "catalogProductCurrentStore"));
         _service.addOperation(__operation);
 
         _operations[154] = __operation;
@@ -1339,7 +1339,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         __operation = new org.apache.axis2.description.OutInAxisOperation();
 
         __operation.setName(new javax.xml.namespace.QName("urn:Magento",
-                "multiCall"));
+                "catalogProductInfo"));
         _service.addOperation(__operation);
 
         _operations[155] = __operation;
@@ -1347,7 +1347,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         __operation = new org.apache.axis2.description.OutInAxisOperation();
 
         __operation.setName(new javax.xml.namespace.QName("urn:Magento",
-                "catalogProductCustomOptionRemove"));
+                "shoppingCartCustomerSet"));
         _service.addOperation(__operation);
 
         _operations[156] = __operation;
@@ -1355,7 +1355,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         __operation = new org.apache.axis2.description.OutInAxisOperation();
 
         __operation.setName(new javax.xml.namespace.QName("urn:Magento",
-                "catalogProductAttributeSetGroupRename"));
+                "multiCall"));
         _service.addOperation(__operation);
 
         _operations[157] = __operation;
@@ -1363,7 +1363,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         __operation = new org.apache.axis2.description.OutInAxisOperation();
 
         __operation.setName(new javax.xml.namespace.QName("urn:Magento",
-                "catalogInventoryStockItemMultiUpdate"));
+                "catalogProductCustomOptionRemove"));
         _service.addOperation(__operation);
 
         _operations[158] = __operation;
@@ -1371,7 +1371,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         __operation = new org.apache.axis2.description.OutInAxisOperation();
 
         __operation.setName(new javax.xml.namespace.QName("urn:Magento",
-                "giftcardAccountRemove"));
+                "catalogProductAttributeSetGroupRename"));
         _service.addOperation(__operation);
 
         _operations[159] = __operation;
@@ -1379,7 +1379,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         __operation = new org.apache.axis2.description.OutInAxisOperation();
 
         __operation.setName(new javax.xml.namespace.QName("urn:Magento",
-                "salesOrderShipmentAddComment"));
+                "catalogInventoryStockItemMultiUpdate"));
         _service.addOperation(__operation);
 
         _operations[160] = __operation;
@@ -1387,7 +1387,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         __operation = new org.apache.axis2.description.OutInAxisOperation();
 
         __operation.setName(new javax.xml.namespace.QName("urn:Magento",
-                "salesOrderShipmentCreate"));
+                "giftcardAccountRemove"));
         _service.addOperation(__operation);
 
         _operations[161] = __operation;
@@ -1395,10 +1395,26 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         __operation = new org.apache.axis2.description.OutInAxisOperation();
 
         __operation.setName(new javax.xml.namespace.QName("urn:Magento",
-                "salesOrderCreditmemoList"));
+                "salesOrderShipmentAddComment"));
         _service.addOperation(__operation);
 
         _operations[162] = __operation;
+
+        __operation = new org.apache.axis2.description.OutInAxisOperation();
+
+        __operation.setName(new javax.xml.namespace.QName("urn:Magento",
+                "salesOrderShipmentCreate"));
+        _service.addOperation(__operation);
+
+        _operations[163] = __operation;
+
+        __operation = new org.apache.axis2.description.OutInAxisOperation();
+
+        __operation.setName(new javax.xml.namespace.QName("urn:Magento",
+                "salesOrderCreditmemoList"));
+        _service.addOperation(__operation);
+
+        _operations[164] = __operation;
     }
 
     //populates the faults
@@ -1409,10 +1425,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Retrieve hierarchical tree of categories.
      * @see com.voyageone.common.magento.api.base.MagentoService#catalogCategoryLevel
-     * @param catalogCategoryLevelRequestParam327
+     * @param catalogCategoryLevelRequestParam331
      */
     public magento.CatalogCategoryLevelResponseParam catalogCategoryLevel(
-        magento.CatalogCategoryLevelRequestParam catalogCategoryLevelRequestParam327)
+        magento.CatalogCategoryLevelRequestParam catalogCategoryLevelRequestParam331)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -1434,7 +1450,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    catalogCategoryLevelRequestParam327,
+                    catalogCategoryLevelRequestParam331,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "catalogCategoryLevel")),
@@ -1524,10 +1540,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Retrieve hierarchical tree of categories.
      * @see com.voyageone.common.magento.api.base.MagentoService#startcatalogCategoryLevel
-     * @param catalogCategoryLevelRequestParam327
+     * @param catalogCategoryLevelRequestParam331
      */
     public void startcatalogCategoryLevel(
-        magento.CatalogCategoryLevelRequestParam catalogCategoryLevelRequestParam327,
+        magento.CatalogCategoryLevelRequestParam catalogCategoryLevelRequestParam331,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[0].getName());
@@ -1546,7 +1562,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                catalogCategoryLevelRequestParam327,
+                catalogCategoryLevelRequestParam331,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "catalogCategoryLevel")),
@@ -1675,10 +1691,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * List of stores
      * @see com.voyageone.common.magento.api.base.MagentoService#storeList
-     * @param storeListRequestParam329
+     * @param storeListRequestParam333
      */
     public magento.StoreListResponseParam storeList(
-        magento.StoreListRequestParam storeListRequestParam329)
+        magento.StoreListRequestParam storeListRequestParam333)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -1700,7 +1716,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    storeListRequestParam329,
+                    storeListRequestParam333,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento", "storeList")),
                     new javax.xml.namespace.QName("urn:Magento", "storeList"));
@@ -1788,10 +1804,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * List of stores
      * @see com.voyageone.common.magento.api.base.MagentoService#startstoreList
-     * @param storeListRequestParam329
+     * @param storeListRequestParam333
      */
     public void startstoreList(
-        magento.StoreListRequestParam storeListRequestParam329,
+        magento.StoreListRequestParam storeListRequestParam333,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[1].getName());
@@ -1810,7 +1826,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                storeListRequestParam329,
+                storeListRequestParam333,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento", "storeList")),
                 new javax.xml.namespace.QName("urn:Magento", "storeList"));
@@ -1934,10 +1950,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Retrieve list of allowed carriers for order
      * @see com.voyageone.common.magento.api.base.MagentoService#salesOrderShipmentGetCarriers
-     * @param salesOrderShipmentGetCarriersRequestParam331
+     * @param salesOrderShipmentGetCarriersRequestParam335
      */
     public magento.SalesOrderShipmentGetCarriersResponseParam salesOrderShipmentGetCarriers(
-        magento.SalesOrderShipmentGetCarriersRequestParam salesOrderShipmentGetCarriersRequestParam331)
+        magento.SalesOrderShipmentGetCarriersRequestParam salesOrderShipmentGetCarriersRequestParam335)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -1959,7 +1975,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    salesOrderShipmentGetCarriersRequestParam331,
+                    salesOrderShipmentGetCarriersRequestParam335,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "salesOrderShipmentGetCarriers")),
@@ -2052,10 +2068,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Retrieve list of allowed carriers for order
      * @see com.voyageone.common.magento.api.base.MagentoService#startsalesOrderShipmentGetCarriers
-     * @param salesOrderShipmentGetCarriersRequestParam331
+     * @param salesOrderShipmentGetCarriersRequestParam335
      */
     public void startsalesOrderShipmentGetCarriers(
-        magento.SalesOrderShipmentGetCarriersRequestParam salesOrderShipmentGetCarriersRequestParam331,
+        magento.SalesOrderShipmentGetCarriersRequestParam salesOrderShipmentGetCarriersRequestParam335,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[2].getName());
@@ -2074,7 +2090,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                salesOrderShipmentGetCarriersRequestParam331,
+                salesOrderShipmentGetCarriersRequestParam335,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "salesOrderShipmentGetCarriers")),
@@ -2203,10 +2219,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Remove gift card account
      * @see com.voyageone.common.magento.api.base.MagentoService#giftcardAccountInfo
-     * @param giftcardAccountInfoRequestParam333
+     * @param giftcardAccountInfoRequestParam337
      */
     public magento.GiftcardAccountInfoResponseParam giftcardAccountInfo(
-        magento.GiftcardAccountInfoRequestParam giftcardAccountInfoRequestParam333)
+        magento.GiftcardAccountInfoRequestParam giftcardAccountInfoRequestParam337)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -2228,7 +2244,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    giftcardAccountInfoRequestParam333,
+                    giftcardAccountInfoRequestParam337,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "giftcardAccountInfo")),
@@ -2318,10 +2334,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Remove gift card account
      * @see com.voyageone.common.magento.api.base.MagentoService#startgiftcardAccountInfo
-     * @param giftcardAccountInfoRequestParam333
+     * @param giftcardAccountInfoRequestParam337
      */
     public void startgiftcardAccountInfo(
-        magento.GiftcardAccountInfoRequestParam giftcardAccountInfoRequestParam333,
+        magento.GiftcardAccountInfoRequestParam giftcardAccountInfoRequestParam337,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[3].getName());
@@ -2340,7 +2356,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                giftcardAccountInfoRequestParam333,
+                giftcardAccountInfoRequestParam337,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "giftcardAccountInfo")),
@@ -2469,10 +2485,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Get list of available custom option types
      * @see com.voyageone.common.magento.api.base.MagentoService#catalogProductCustomOptionTypes
-     * @param catalogProductCustomOptionTypesRequestParam335
+     * @param catalogProductCustomOptionTypesRequestParam339
      */
     public magento.CatalogProductCustomOptionTypesResponseParam catalogProductCustomOptionTypes(
-        magento.CatalogProductCustomOptionTypesRequestParam catalogProductCustomOptionTypesRequestParam335)
+        magento.CatalogProductCustomOptionTypesRequestParam catalogProductCustomOptionTypesRequestParam339)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -2494,7 +2510,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    catalogProductCustomOptionTypesRequestParam335,
+                    catalogProductCustomOptionTypesRequestParam339,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "catalogProductCustomOptionTypes")),
@@ -2587,10 +2603,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Get list of available custom option types
      * @see com.voyageone.common.magento.api.base.MagentoService#startcatalogProductCustomOptionTypes
-     * @param catalogProductCustomOptionTypesRequestParam335
+     * @param catalogProductCustomOptionTypesRequestParam339
      */
     public void startcatalogProductCustomOptionTypes(
-        magento.CatalogProductCustomOptionTypesRequestParam catalogProductCustomOptionTypesRequestParam335,
+        magento.CatalogProductCustomOptionTypesRequestParam catalogProductCustomOptionTypesRequestParam339,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[4].getName());
@@ -2609,7 +2625,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                catalogProductCustomOptionTypesRequestParam335,
+                catalogProductCustomOptionTypesRequestParam339,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "catalogProductCustomOptionTypes")),
@@ -2738,10 +2754,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Remove links and samples from downloadable product
      * @see com.voyageone.common.magento.api.base.MagentoService#catalogProductDownloadableLinkRemove
-     * @param catalogProductDownloadableLinkRemoveRequestParam337
+     * @param catalogProductDownloadableLinkRemoveRequestParam341
      */
     public magento.CatalogProductDownloadableLinkRemoveResponseParam catalogProductDownloadableLinkRemove(
-        magento.CatalogProductDownloadableLinkRemoveRequestParam catalogProductDownloadableLinkRemoveRequestParam337)
+        magento.CatalogProductDownloadableLinkRemoveRequestParam catalogProductDownloadableLinkRemoveRequestParam341)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -2763,7 +2779,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    catalogProductDownloadableLinkRemoveRequestParam337,
+                    catalogProductDownloadableLinkRemoveRequestParam341,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "catalogProductDownloadableLinkRemove")),
@@ -2856,10 +2872,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Remove links and samples from downloadable product
      * @see com.voyageone.common.magento.api.base.MagentoService#startcatalogProductDownloadableLinkRemove
-     * @param catalogProductDownloadableLinkRemoveRequestParam337
+     * @param catalogProductDownloadableLinkRemoveRequestParam341
      */
     public void startcatalogProductDownloadableLinkRemove(
-        magento.CatalogProductDownloadableLinkRemoveRequestParam catalogProductDownloadableLinkRemoveRequestParam337,
+        magento.CatalogProductDownloadableLinkRemoveRequestParam catalogProductDownloadableLinkRemoveRequestParam341,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[5].getName());
@@ -2878,7 +2894,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                catalogProductDownloadableLinkRemoveRequestParam337,
+                catalogProductDownloadableLinkRemoveRequestParam341,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "catalogProductDownloadableLinkRemove")),
@@ -3007,10 +3023,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Remove gift card account
      * @see com.voyageone.common.magento.api.base.MagentoService#giftcardAccountUpdate
-     * @param giftcardAccountUpdateRequestParam339
+     * @param giftcardAccountUpdateRequestParam343
      */
     public magento.GiftcardAccountUpdateResponseParam giftcardAccountUpdate(
-        magento.GiftcardAccountUpdateRequestParam giftcardAccountUpdateRequestParam339)
+        magento.GiftcardAccountUpdateRequestParam giftcardAccountUpdateRequestParam343)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -3032,7 +3048,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    giftcardAccountUpdateRequestParam339,
+                    giftcardAccountUpdateRequestParam343,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "giftcardAccountUpdate")),
@@ -3122,10 +3138,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Remove gift card account
      * @see com.voyageone.common.magento.api.base.MagentoService#startgiftcardAccountUpdate
-     * @param giftcardAccountUpdateRequestParam339
+     * @param giftcardAccountUpdateRequestParam343
      */
     public void startgiftcardAccountUpdate(
-        magento.GiftcardAccountUpdateRequestParam giftcardAccountUpdateRequestParam339,
+        magento.GiftcardAccountUpdateRequestParam giftcardAccountUpdateRequestParam343,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[6].getName());
@@ -3144,7 +3160,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                giftcardAccountUpdateRequestParam339,
+                giftcardAccountUpdateRequestParam343,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "giftcardAccountUpdate")),
@@ -3273,10 +3289,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Get list of available shipping methods
      * @see com.voyageone.common.magento.api.base.MagentoService#shoppingCartShippingList
-     * @param shoppingCartShippingListRequestParam341
+     * @param shoppingCartShippingListRequestParam345
      */
     public magento.ShoppingCartShippingListResponseParam shoppingCartShippingList(
-        magento.ShoppingCartShippingListRequestParam shoppingCartShippingListRequestParam341)
+        magento.ShoppingCartShippingListRequestParam shoppingCartShippingListRequestParam345)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -3298,7 +3314,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    shoppingCartShippingListRequestParam341,
+                    shoppingCartShippingListRequestParam345,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "shoppingCartShippingList")),
@@ -3390,10 +3406,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Get list of available shipping methods
      * @see com.voyageone.common.magento.api.base.MagentoService#startshoppingCartShippingList
-     * @param shoppingCartShippingListRequestParam341
+     * @param shoppingCartShippingListRequestParam345
      */
     public void startshoppingCartShippingList(
-        magento.ShoppingCartShippingListRequestParam shoppingCartShippingListRequestParam341,
+        magento.ShoppingCartShippingListRequestParam shoppingCartShippingListRequestParam345,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[7].getName());
@@ -3412,7 +3428,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                shoppingCartShippingListRequestParam341,
+                shoppingCartShippingListRequestParam345,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "shoppingCartShippingList")),
@@ -3541,10 +3557,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Retrieve product link type attributes
      * @see com.voyageone.common.magento.api.base.MagentoService#catalogProductLinkAttributes
-     * @param catalogProductLinkAttributesRequestParam343
+     * @param catalogProductLinkAttributesRequestParam347
      */
     public magento.CatalogProductLinkAttributesResponseParam catalogProductLinkAttributes(
-        magento.CatalogProductLinkAttributesRequestParam catalogProductLinkAttributesRequestParam343)
+        magento.CatalogProductLinkAttributesRequestParam catalogProductLinkAttributesRequestParam347)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -3566,7 +3582,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    catalogProductLinkAttributesRequestParam343,
+                    catalogProductLinkAttributesRequestParam347,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "catalogProductLinkAttributes")),
@@ -3659,10 +3675,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Retrieve product link type attributes
      * @see com.voyageone.common.magento.api.base.MagentoService#startcatalogProductLinkAttributes
-     * @param catalogProductLinkAttributesRequestParam343
+     * @param catalogProductLinkAttributesRequestParam347
      */
     public void startcatalogProductLinkAttributes(
-        magento.CatalogProductLinkAttributesRequestParam catalogProductLinkAttributesRequestParam343,
+        magento.CatalogProductLinkAttributesRequestParam catalogProductLinkAttributesRequestParam347,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[8].getName());
@@ -3681,7 +3697,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                catalogProductLinkAttributesRequestParam343,
+                catalogProductLinkAttributesRequestParam347,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "catalogProductLinkAttributes")),
@@ -3810,10 +3826,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Remove gift card account
      * @see com.voyageone.common.magento.api.base.MagentoService#giftcardAccountList
-     * @param giftcardAccountListRequestParam345
+     * @param giftcardAccountListRequestParam349
      */
     public magento.GiftcardAccountListResponseParam giftcardAccountList(
-        magento.GiftcardAccountListRequestParam giftcardAccountListRequestParam345)
+        magento.GiftcardAccountListRequestParam giftcardAccountListRequestParam349)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -3835,7 +3851,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    giftcardAccountListRequestParam345,
+                    giftcardAccountListRequestParam349,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "giftcardAccountList")),
@@ -3925,10 +3941,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Remove gift card account
      * @see com.voyageone.common.magento.api.base.MagentoService#startgiftcardAccountList
-     * @param giftcardAccountListRequestParam345
+     * @param giftcardAccountListRequestParam349
      */
     public void startgiftcardAccountList(
-        magento.GiftcardAccountListRequestParam giftcardAccountListRequestParam345,
+        magento.GiftcardAccountListRequestParam giftcardAccountListRequestParam349,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[9].getName());
@@ -3947,7 +3963,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                giftcardAccountListRequestParam345,
+                giftcardAccountListRequestParam349,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "giftcardAccountList")),
@@ -4076,10 +4092,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Retrieve product types
      * @see com.voyageone.common.magento.api.base.MagentoService#catalogProductTypeList
-     * @param catalogProductTypeListRequestParam347
+     * @param catalogProductTypeListRequestParam351
      */
     public magento.CatalogProductTypeListResponseParam catalogProductTypeList(
-        magento.CatalogProductTypeListRequestParam catalogProductTypeListRequestParam347)
+        magento.CatalogProductTypeListRequestParam catalogProductTypeListRequestParam351)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -4101,7 +4117,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    catalogProductTypeListRequestParam347,
+                    catalogProductTypeListRequestParam351,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "catalogProductTypeList")),
@@ -4193,10 +4209,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Retrieve product types
      * @see com.voyageone.common.magento.api.base.MagentoService#startcatalogProductTypeList
-     * @param catalogProductTypeListRequestParam347
+     * @param catalogProductTypeListRequestParam351
      */
     public void startcatalogProductTypeList(
-        magento.CatalogProductTypeListRequestParam catalogProductTypeListRequestParam347,
+        magento.CatalogProductTypeListRequestParam catalogProductTypeListRequestParam351,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[10].getName());
@@ -4215,7 +4231,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                catalogProductTypeListRequestParam347,
+                catalogProductTypeListRequestParam351,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "catalogProductTypeList")),
@@ -4344,10 +4360,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Remove tracking number
      * @see com.voyageone.common.magento.api.base.MagentoService#salesOrderShipmentRemoveTrack
-     * @param salesOrderShipmentRemoveTrackRequestParam349
+     * @param salesOrderShipmentRemoveTrackRequestParam353
      */
     public magento.SalesOrderShipmentRemoveTrackResponseParam salesOrderShipmentRemoveTrack(
-        magento.SalesOrderShipmentRemoveTrackRequestParam salesOrderShipmentRemoveTrackRequestParam349)
+        magento.SalesOrderShipmentRemoveTrackRequestParam salesOrderShipmentRemoveTrackRequestParam353)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -4369,7 +4385,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    salesOrderShipmentRemoveTrackRequestParam349,
+                    salesOrderShipmentRemoveTrackRequestParam353,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "salesOrderShipmentRemoveTrack")),
@@ -4462,10 +4478,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Remove tracking number
      * @see com.voyageone.common.magento.api.base.MagentoService#startsalesOrderShipmentRemoveTrack
-     * @param salesOrderShipmentRemoveTrackRequestParam349
+     * @param salesOrderShipmentRemoveTrackRequestParam353
      */
     public void startsalesOrderShipmentRemoveTrack(
-        magento.SalesOrderShipmentRemoveTrackRequestParam salesOrderShipmentRemoveTrackRequestParam349,
+        magento.SalesOrderShipmentRemoveTrackRequestParam salesOrderShipmentRemoveTrackRequestParam353,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[11].getName());
@@ -4484,7 +4500,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                salesOrderShipmentRemoveTrackRequestParam349,
+                salesOrderShipmentRemoveTrackRequestParam353,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "salesOrderShipmentRemoveTrack")),
@@ -4613,10 +4629,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Capture invoice
      * @see com.voyageone.common.magento.api.base.MagentoService#salesOrderInvoiceCapture
-     * @param salesOrderInvoiceCaptureRequestParam351
+     * @param salesOrderInvoiceCaptureRequestParam355
      */
     public magento.SalesOrderInvoiceCaptureResponseParam salesOrderInvoiceCapture(
-        magento.SalesOrderInvoiceCaptureRequestParam salesOrderInvoiceCaptureRequestParam351)
+        magento.SalesOrderInvoiceCaptureRequestParam salesOrderInvoiceCaptureRequestParam355)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -4638,7 +4654,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    salesOrderInvoiceCaptureRequestParam351,
+                    salesOrderInvoiceCaptureRequestParam355,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "salesOrderInvoiceCapture")),
@@ -4730,10 +4746,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Capture invoice
      * @see com.voyageone.common.magento.api.base.MagentoService#startsalesOrderInvoiceCapture
-     * @param salesOrderInvoiceCaptureRequestParam351
+     * @param salesOrderInvoiceCaptureRequestParam355
      */
     public void startsalesOrderInvoiceCapture(
-        magento.SalesOrderInvoiceCaptureRequestParam salesOrderInvoiceCaptureRequestParam351,
+        magento.SalesOrderInvoiceCaptureRequestParam salesOrderInvoiceCaptureRequestParam355,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[12].getName());
@@ -4752,7 +4768,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                salesOrderInvoiceCaptureRequestParam351,
+                salesOrderInvoiceCaptureRequestParam355,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "salesOrderInvoiceCapture")),
@@ -4881,10 +4897,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Set/Get current store view
      * @see com.voyageone.common.magento.api.base.MagentoService#catalogCategoryAttributeCurrentStore
-     * @param catalogCategoryAttributeCurrentStoreRequestParam353
+     * @param catalogCategoryAttributeCurrentStoreRequestParam357
      */
     public magento.CatalogCategoryAttributeCurrentStoreResponseParam catalogCategoryAttributeCurrentStore(
-        magento.CatalogCategoryAttributeCurrentStoreRequestParam catalogCategoryAttributeCurrentStoreRequestParam353)
+        magento.CatalogCategoryAttributeCurrentStoreRequestParam catalogCategoryAttributeCurrentStoreRequestParam357)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -4906,7 +4922,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    catalogCategoryAttributeCurrentStoreRequestParam353,
+                    catalogCategoryAttributeCurrentStoreRequestParam357,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "catalogCategoryAttributeCurrentStore")),
@@ -4999,10 +5015,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Set/Get current store view
      * @see com.voyageone.common.magento.api.base.MagentoService#startcatalogCategoryAttributeCurrentStore
-     * @param catalogCategoryAttributeCurrentStoreRequestParam353
+     * @param catalogCategoryAttributeCurrentStoreRequestParam357
      */
     public void startcatalogCategoryAttributeCurrentStore(
-        magento.CatalogCategoryAttributeCurrentStoreRequestParam catalogCategoryAttributeCurrentStoreRequestParam353,
+        magento.CatalogCategoryAttributeCurrentStoreRequestParam catalogCategoryAttributeCurrentStoreRequestParam357,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[13].getName());
@@ -5021,7 +5037,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                catalogCategoryAttributeCurrentStoreRequestParam353,
+                catalogCategoryAttributeCurrentStoreRequestParam357,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "catalogCategoryAttributeCurrentStore")),
@@ -5150,10 +5166,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Get full information about custom option in product
      * @see com.voyageone.common.magento.api.base.MagentoService#catalogProductCustomOptionInfo
-     * @param catalogProductCustomOptionInfoRequestParam355
+     * @param catalogProductCustomOptionInfoRequestParam359
      */
     public magento.CatalogProductCustomOptionInfoResponseParam catalogProductCustomOptionInfo(
-        magento.CatalogProductCustomOptionInfoRequestParam catalogProductCustomOptionInfoRequestParam355)
+        magento.CatalogProductCustomOptionInfoRequestParam catalogProductCustomOptionInfoRequestParam359)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -5175,7 +5191,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    catalogProductCustomOptionInfoRequestParam355,
+                    catalogProductCustomOptionInfoRequestParam359,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "catalogProductCustomOptionInfo")),
@@ -5268,10 +5284,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Get full information about custom option in product
      * @see com.voyageone.common.magento.api.base.MagentoService#startcatalogProductCustomOptionInfo
-     * @param catalogProductCustomOptionInfoRequestParam355
+     * @param catalogProductCustomOptionInfoRequestParam359
      */
     public void startcatalogProductCustomOptionInfo(
-        magento.CatalogProductCustomOptionInfoRequestParam catalogProductCustomOptionInfoRequestParam355,
+        magento.CatalogProductCustomOptionInfoRequestParam catalogProductCustomOptionInfoRequestParam359,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[14].getName());
@@ -5290,7 +5306,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                catalogProductCustomOptionInfoRequestParam355,
+                catalogProductCustomOptionInfoRequestParam359,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "catalogProductCustomOptionInfo")),
@@ -5419,10 +5435,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Create new product and return product id
      * @see com.voyageone.common.magento.api.base.MagentoService#catalogProductCreate
-     * @param catalogProductCreateRequestParam357
+     * @param catalogProductCreateRequestParam361
      */
     public magento.CatalogProductCreateResponseParam catalogProductCreate(
-        magento.CatalogProductCreateRequestParam catalogProductCreateRequestParam357)
+        magento.CatalogProductCreateRequestParam catalogProductCreateRequestParam361)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -5444,7 +5460,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    catalogProductCreateRequestParam357,
+                    catalogProductCreateRequestParam361,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "catalogProductCreate")),
@@ -5534,10 +5550,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Create new product and return product id
      * @see com.voyageone.common.magento.api.base.MagentoService#startcatalogProductCreate
-     * @param catalogProductCreateRequestParam357
+     * @param catalogProductCreateRequestParam361
      */
     public void startcatalogProductCreate(
-        magento.CatalogProductCreateRequestParam catalogProductCreateRequestParam357,
+        magento.CatalogProductCreateRequestParam catalogProductCreateRequestParam361,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[15].getName());
@@ -5556,7 +5572,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                catalogProductCreateRequestParam357,
+                catalogProductCreateRequestParam361,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "catalogProductCreate")),
@@ -5685,10 +5701,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Retrieve list of orders by filters
      * @see com.voyageone.common.magento.api.base.MagentoService#salesOrderList
-     * @param salesOrderListRequestParam359
+     * @param salesOrderListRequestParam363
      */
     public magento.SalesOrderListResponseParam salesOrderList(
-        magento.SalesOrderListRequestParam salesOrderListRequestParam359)
+        magento.SalesOrderListRequestParam salesOrderListRequestParam363)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -5710,7 +5726,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    salesOrderListRequestParam359,
+                    salesOrderListRequestParam363,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "salesOrderList")),
@@ -5800,10 +5816,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Retrieve list of orders by filters
      * @see com.voyageone.common.magento.api.base.MagentoService#startsalesOrderList
-     * @param salesOrderListRequestParam359
+     * @param salesOrderListRequestParam363
      */
     public void startsalesOrderList(
-        magento.SalesOrderListRequestParam salesOrderListRequestParam359,
+        magento.SalesOrderListRequestParam salesOrderListRequestParam363,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[16].getName());
@@ -5822,7 +5838,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                salesOrderListRequestParam359,
+                salesOrderListRequestParam363,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "salesOrderList")),
@@ -5950,10 +5966,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Cancel creditmemo
      * @see com.voyageone.common.magento.api.base.MagentoService#salesOrderCreditmemoCancel
-     * @param salesOrderCreditmemoCancelRequestParam361
+     * @param salesOrderCreditmemoCancelRequestParam365
      */
     public magento.SalesOrderCreditmemoCancelResponseParam salesOrderCreditmemoCancel(
-        magento.SalesOrderCreditmemoCancelRequestParam salesOrderCreditmemoCancelRequestParam361)
+        magento.SalesOrderCreditmemoCancelRequestParam salesOrderCreditmemoCancelRequestParam365)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -5975,7 +5991,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    salesOrderCreditmemoCancelRequestParam361,
+                    salesOrderCreditmemoCancelRequestParam365,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "salesOrderCreditmemoCancel")),
@@ -6068,10 +6084,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Cancel creditmemo
      * @see com.voyageone.common.magento.api.base.MagentoService#startsalesOrderCreditmemoCancel
-     * @param salesOrderCreditmemoCancelRequestParam361
+     * @param salesOrderCreditmemoCancelRequestParam365
      */
     public void startsalesOrderCreditmemoCancel(
-        magento.SalesOrderCreditmemoCancelRequestParam salesOrderCreditmemoCancelRequestParam361,
+        magento.SalesOrderCreditmemoCancelRequestParam salesOrderCreditmemoCancelRequestParam365,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[17].getName());
@@ -6090,7 +6106,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                salesOrderCreditmemoCancelRequestParam361,
+                salesOrderCreditmemoCancelRequestParam365,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "salesOrderCreditmemoCancel")),
@@ -6219,10 +6235,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * List of available resources
      * @see com.voyageone.common.magento.api.base.MagentoService#resources
-     * @param resourcesRequestParam363
+     * @param resourcesRequestParam367
      */
     public magento.ResourcesResponseParam resources(
-        magento.ResourcesRequestParam resourcesRequestParam363)
+        magento.ResourcesRequestParam resourcesRequestParam367)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -6244,7 +6260,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    resourcesRequestParam363,
+                    resourcesRequestParam367,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento", "resources")),
                     new javax.xml.namespace.QName("urn:Magento", "resources"));
@@ -6332,10 +6348,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * List of available resources
      * @see com.voyageone.common.magento.api.base.MagentoService#startresources
-     * @param resourcesRequestParam363
+     * @param resourcesRequestParam367
      */
     public void startresources(
-        magento.ResourcesRequestParam resourcesRequestParam363,
+        magento.ResourcesRequestParam resourcesRequestParam367,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[18].getName());
@@ -6354,7 +6370,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                resourcesRequestParam363,
+                resourcesRequestParam367,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento", "resources")),
                 new javax.xml.namespace.QName("urn:Magento", "resources"));
@@ -6478,10 +6494,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Retrieve product tier prices
      * @see com.voyageone.common.magento.api.base.MagentoService#catalogProductAttributeTierPriceInfo
-     * @param catalogProductAttributeTierPriceInfoRequestParam365
+     * @param catalogProductAttributeTierPriceInfoRequestParam369
      */
     public magento.CatalogProductAttributeTierPriceInfoResponseParam catalogProductAttributeTierPriceInfo(
-        magento.CatalogProductAttributeTierPriceInfoRequestParam catalogProductAttributeTierPriceInfoRequestParam365)
+        magento.CatalogProductAttributeTierPriceInfoRequestParam catalogProductAttributeTierPriceInfoRequestParam369)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -6503,7 +6519,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    catalogProductAttributeTierPriceInfoRequestParam365,
+                    catalogProductAttributeTierPriceInfoRequestParam369,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "catalogProductAttributeTierPriceInfo")),
@@ -6596,10 +6612,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Retrieve product tier prices
      * @see com.voyageone.common.magento.api.base.MagentoService#startcatalogProductAttributeTierPriceInfo
-     * @param catalogProductAttributeTierPriceInfoRequestParam365
+     * @param catalogProductAttributeTierPriceInfoRequestParam369
      */
     public void startcatalogProductAttributeTierPriceInfo(
-        magento.CatalogProductAttributeTierPriceInfoRequestParam catalogProductAttributeTierPriceInfoRequestParam365,
+        magento.CatalogProductAttributeTierPriceInfoRequestParam catalogProductAttributeTierPriceInfoRequestParam369,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[19].getName());
@@ -6618,7 +6634,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                catalogProductAttributeTierPriceInfoRequestParam365,
+                catalogProductAttributeTierPriceInfoRequestParam369,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "catalogProductAttributeTierPriceInfo")),
@@ -6747,10 +6763,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Retrieve product tag info
      * @see com.voyageone.common.magento.api.base.MagentoService#catalogProductTagInfo
-     * @param catalogProductTagInfoRequestParam367
+     * @param catalogProductTagInfoRequestParam371
      */
     public magento.CatalogProductTagInfoResponseParam catalogProductTagInfo(
-        magento.CatalogProductTagInfoRequestParam catalogProductTagInfoRequestParam367)
+        magento.CatalogProductTagInfoRequestParam catalogProductTagInfoRequestParam371)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -6772,7 +6788,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    catalogProductTagInfoRequestParam367,
+                    catalogProductTagInfoRequestParam371,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "catalogProductTagInfo")),
@@ -6862,10 +6878,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Retrieve product tag info
      * @see com.voyageone.common.magento.api.base.MagentoService#startcatalogProductTagInfo
-     * @param catalogProductTagInfoRequestParam367
+     * @param catalogProductTagInfoRequestParam371
      */
     public void startcatalogProductTagInfo(
-        magento.CatalogProductTagInfoRequestParam catalogProductTagInfoRequestParam367,
+        magento.CatalogProductTagInfoRequestParam catalogProductTagInfoRequestParam371,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[20].getName());
@@ -6884,7 +6900,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                catalogProductTagInfoRequestParam367,
+                catalogProductTagInfoRequestParam371,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "catalogProductTagInfo")),
@@ -7013,10 +7029,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Set amount from customer store credit into shopping cart (quote)
      * @see com.voyageone.common.magento.api.base.MagentoService#shoppingCartCustomerbalanceSetAmount
-     * @param shoppingCartCustomerbalanceSetAmountRequestParam369
+     * @param shoppingCartCustomerbalanceSetAmountRequestParam373
      */
     public magento.ShoppingCartCustomerbalanceSetAmountResponseParam shoppingCartCustomerbalanceSetAmount(
-        magento.ShoppingCartCustomerbalanceSetAmountRequestParam shoppingCartCustomerbalanceSetAmountRequestParam369)
+        magento.ShoppingCartCustomerbalanceSetAmountRequestParam shoppingCartCustomerbalanceSetAmountRequestParam373)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -7038,7 +7054,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    shoppingCartCustomerbalanceSetAmountRequestParam369,
+                    shoppingCartCustomerbalanceSetAmountRequestParam373,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "shoppingCartCustomerbalanceSetAmount")),
@@ -7131,10 +7147,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Set amount from customer store credit into shopping cart (quote)
      * @see com.voyageone.common.magento.api.base.MagentoService#startshoppingCartCustomerbalanceSetAmount
-     * @param shoppingCartCustomerbalanceSetAmountRequestParam369
+     * @param shoppingCartCustomerbalanceSetAmountRequestParam373
      */
     public void startshoppingCartCustomerbalanceSetAmount(
-        magento.ShoppingCartCustomerbalanceSetAmountRequestParam shoppingCartCustomerbalanceSetAmountRequestParam369,
+        magento.ShoppingCartCustomerbalanceSetAmountRequestParam shoppingCartCustomerbalanceSetAmountRequestParam373,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[21].getName());
@@ -7153,7 +7169,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                shoppingCartCustomerbalanceSetAmountRequestParam369,
+                shoppingCartCustomerbalanceSetAmountRequestParam373,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "shoppingCartCustomerbalanceSetAmount")),
@@ -7282,10 +7298,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Update product tier prices
      * @see com.voyageone.common.magento.api.base.MagentoService#catalogProductAttributeTierPriceUpdate
-     * @param catalogProductAttributeTierPriceUpdateRequestParam371
+     * @param catalogProductAttributeTierPriceUpdateRequestParam375
      */
     public magento.CatalogProductAttributeTierPriceUpdateResponseParam catalogProductAttributeTierPriceUpdate(
-        magento.CatalogProductAttributeTierPriceUpdateRequestParam catalogProductAttributeTierPriceUpdateRequestParam371)
+        magento.CatalogProductAttributeTierPriceUpdateRequestParam catalogProductAttributeTierPriceUpdateRequestParam375)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -7307,7 +7323,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    catalogProductAttributeTierPriceUpdateRequestParam371,
+                    catalogProductAttributeTierPriceUpdateRequestParam375,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "catalogProductAttributeTierPriceUpdate")),
@@ -7400,10 +7416,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Update product tier prices
      * @see com.voyageone.common.magento.api.base.MagentoService#startcatalogProductAttributeTierPriceUpdate
-     * @param catalogProductAttributeTierPriceUpdateRequestParam371
+     * @param catalogProductAttributeTierPriceUpdateRequestParam375
      */
     public void startcatalogProductAttributeTierPriceUpdate(
-        magento.CatalogProductAttributeTierPriceUpdateRequestParam catalogProductAttributeTierPriceUpdateRequestParam371,
+        magento.CatalogProductAttributeTierPriceUpdateRequestParam catalogProductAttributeTierPriceUpdateRequestParam375,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[22].getName());
@@ -7422,7 +7438,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                catalogProductAttributeTierPriceUpdateRequestParam371,
+                catalogProductAttributeTierPriceUpdateRequestParam375,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "catalogProductAttributeTierPriceUpdate")),
@@ -7551,10 +7567,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Add option to attribute
      * @see com.voyageone.common.magento.api.base.MagentoService#catalogProductAttributeAddOption
-     * @param catalogProductAttributeAddOptionRequestParam373
+     * @param catalogProductAttributeAddOptionRequestParam377
      */
     public magento.CatalogProductAttributeAddOptionResponseParam catalogProductAttributeAddOption(
-        magento.CatalogProductAttributeAddOptionRequestParam catalogProductAttributeAddOptionRequestParam373)
+        magento.CatalogProductAttributeAddOptionRequestParam catalogProductAttributeAddOptionRequestParam377)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -7576,7 +7592,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    catalogProductAttributeAddOptionRequestParam373,
+                    catalogProductAttributeAddOptionRequestParam377,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "catalogProductAttributeAddOption")),
@@ -7669,10 +7685,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Add option to attribute
      * @see com.voyageone.common.magento.api.base.MagentoService#startcatalogProductAttributeAddOption
-     * @param catalogProductAttributeAddOptionRequestParam373
+     * @param catalogProductAttributeAddOptionRequestParam377
      */
     public void startcatalogProductAttributeAddOption(
-        magento.CatalogProductAttributeAddOptionRequestParam catalogProductAttributeAddOptionRequestParam373,
+        magento.CatalogProductAttributeAddOptionRequestParam catalogProductAttributeAddOptionRequestParam377,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[23].getName());
@@ -7691,7 +7707,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                catalogProductAttributeAddOptionRequestParam373,
+                catalogProductAttributeAddOptionRequestParam377,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "catalogProductAttributeAddOption")),
@@ -7820,10 +7836,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Upload new product image
      * @see com.voyageone.common.magento.api.base.MagentoService#catalogProductAttributeMediaCreate
-     * @param catalogProductAttributeMediaCreateRequestParam375
+     * @param catalogProductAttributeMediaCreateRequestParam379
      */
     public magento.CatalogProductAttributeMediaCreateResponseParam catalogProductAttributeMediaCreate(
-        magento.CatalogProductAttributeMediaCreateRequestParam catalogProductAttributeMediaCreateRequestParam375)
+        magento.CatalogProductAttributeMediaCreateRequestParam catalogProductAttributeMediaCreateRequestParam379)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -7845,7 +7861,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    catalogProductAttributeMediaCreateRequestParam375,
+                    catalogProductAttributeMediaCreateRequestParam379,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "catalogProductAttributeMediaCreate")),
@@ -7938,10 +7954,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Upload new product image
      * @see com.voyageone.common.magento.api.base.MagentoService#startcatalogProductAttributeMediaCreate
-     * @param catalogProductAttributeMediaCreateRequestParam375
+     * @param catalogProductAttributeMediaCreateRequestParam379
      */
     public void startcatalogProductAttributeMediaCreate(
-        magento.CatalogProductAttributeMediaCreateRequestParam catalogProductAttributeMediaCreateRequestParam375,
+        magento.CatalogProductAttributeMediaCreateRequestParam catalogProductAttributeMediaCreateRequestParam379,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[24].getName());
@@ -7960,7 +7976,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                catalogProductAttributeMediaCreateRequestParam375,
+                catalogProductAttributeMediaCreateRequestParam379,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "catalogProductAttributeMediaCreate")),
@@ -8089,10 +8105,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * List of regions in specified country
      * @see com.voyageone.common.magento.api.base.MagentoService#directoryRegionList
-     * @param directoryRegionListRequestParam377
+     * @param directoryRegionListRequestParam381
      */
     public magento.DirectoryRegionListResponseParam directoryRegionList(
-        magento.DirectoryRegionListRequestParam directoryRegionListRequestParam377)
+        magento.DirectoryRegionListRequestParam directoryRegionListRequestParam381)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -8114,7 +8130,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    directoryRegionListRequestParam377,
+                    directoryRegionListRequestParam381,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "directoryRegionList")),
@@ -8204,10 +8220,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * List of regions in specified country
      * @see com.voyageone.common.magento.api.base.MagentoService#startdirectoryRegionList
-     * @param directoryRegionListRequestParam377
+     * @param directoryRegionListRequestParam381
      */
     public void startdirectoryRegionList(
-        magento.DirectoryRegionListRequestParam directoryRegionListRequestParam377,
+        magento.DirectoryRegionListRequestParam directoryRegionListRequestParam381,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[25].getName());
@@ -8226,7 +8242,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                directoryRegionListRequestParam377,
+                directoryRegionListRequestParam381,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "directoryRegionList")),
@@ -8355,10 +8371,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * End web service session
      * @see com.voyageone.common.magento.api.base.MagentoService#endSession
-     * @param endSessionParam379
+     * @param endSessionParam383
      */
     public magento.EndSessionResponseParam endSession(
-        magento.EndSessionParam endSessionParam379)
+        magento.EndSessionParam endSessionParam383)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -8380,7 +8396,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    endSessionParam379,
+                    endSessionParam383,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "endSession")),
@@ -8469,9 +8485,9 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * End web service session
      * @see com.voyageone.common.magento.api.base.MagentoService#startendSession
-     * @param endSessionParam379
+     * @param endSessionParam383
      */
-    public void startendSession(magento.EndSessionParam endSessionParam379,
+    public void startendSession(magento.EndSessionParam endSessionParam383,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[26].getName());
@@ -8490,7 +8506,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                endSessionParam379,
+                endSessionParam383,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento", "endSession")),
                 new javax.xml.namespace.QName("urn:Magento", "endSession"));
@@ -8616,10 +8632,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Add comment to order
      * @see com.voyageone.common.magento.api.base.MagentoService#salesOrderAddComment
-     * @param salesOrderAddCommentRequestParam381
+     * @param salesOrderAddCommentRequestParam385
      */
     public magento.SalesOrderAddCommentResponseParam salesOrderAddComment(
-        magento.SalesOrderAddCommentRequestParam salesOrderAddCommentRequestParam381)
+        magento.SalesOrderAddCommentRequestParam salesOrderAddCommentRequestParam385)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -8641,7 +8657,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    salesOrderAddCommentRequestParam381,
+                    salesOrderAddCommentRequestParam385,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "salesOrderAddComment")),
@@ -8731,10 +8747,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Add comment to order
      * @see com.voyageone.common.magento.api.base.MagentoService#startsalesOrderAddComment
-     * @param salesOrderAddCommentRequestParam381
+     * @param salesOrderAddCommentRequestParam385
      */
     public void startsalesOrderAddComment(
-        magento.SalesOrderAddCommentRequestParam salesOrderAddCommentRequestParam381,
+        magento.SalesOrderAddCommentRequestParam salesOrderAddCommentRequestParam385,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[27].getName());
@@ -8753,7 +8769,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                salesOrderAddCommentRequestParam381,
+                salesOrderAddCommentRequestParam385,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "salesOrderAddComment")),
@@ -8882,10 +8898,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Add product(s) to shopping cart
      * @see com.voyageone.common.magento.api.base.MagentoService#shoppingCartProductAdd
-     * @param shoppingCartProductAddRequestParam383
+     * @param shoppingCartProductAddRequestParam387
      */
     public magento.ShoppingCartProductAddResponseParam shoppingCartProductAdd(
-        magento.ShoppingCartProductAddRequestParam shoppingCartProductAddRequestParam383)
+        magento.ShoppingCartProductAddRequestParam shoppingCartProductAddRequestParam387)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -8907,7 +8923,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    shoppingCartProductAddRequestParam383,
+                    shoppingCartProductAddRequestParam387,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "shoppingCartProductAdd")),
@@ -8999,10 +9015,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Add product(s) to shopping cart
      * @see com.voyageone.common.magento.api.base.MagentoService#startshoppingCartProductAdd
-     * @param shoppingCartProductAddRequestParam383
+     * @param shoppingCartProductAddRequestParam387
      */
     public void startshoppingCartProductAdd(
-        magento.ShoppingCartProductAddRequestParam shoppingCartProductAddRequestParam383,
+        magento.ShoppingCartProductAddRequestParam shoppingCartProductAddRequestParam387,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[28].getName());
@@ -9021,7 +9037,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                shoppingCartProductAddRequestParam383,
+                shoppingCartProductAddRequestParam387,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "shoppingCartProductAdd")),
@@ -9150,10 +9166,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Set payment method
      * @see com.voyageone.common.magento.api.base.MagentoService#shoppingCartPaymentMethod
-     * @param shoppingCartPaymentMethodRequestParam385
+     * @param shoppingCartPaymentMethodRequestParam389
      */
     public magento.ShoppingCartPaymentMethodResponseParam shoppingCartPaymentMethod(
-        magento.ShoppingCartPaymentMethodRequestParam shoppingCartPaymentMethodRequestParam385)
+        magento.ShoppingCartPaymentMethodRequestParam shoppingCartPaymentMethodRequestParam389)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -9175,7 +9191,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    shoppingCartPaymentMethodRequestParam385,
+                    shoppingCartPaymentMethodRequestParam389,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "shoppingCartPaymentMethod")),
@@ -9267,10 +9283,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Set payment method
      * @see com.voyageone.common.magento.api.base.MagentoService#startshoppingCartPaymentMethod
-     * @param shoppingCartPaymentMethodRequestParam385
+     * @param shoppingCartPaymentMethodRequestParam389
      */
     public void startshoppingCartPaymentMethod(
-        magento.ShoppingCartPaymentMethodRequestParam shoppingCartPaymentMethodRequestParam385,
+        magento.ShoppingCartPaymentMethodRequestParam shoppingCartPaymentMethodRequestParam389,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[29].getName());
@@ -9289,7 +9305,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                shoppingCartPaymentMethodRequestParam385,
+                shoppingCartPaymentMethodRequestParam389,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "shoppingCartPaymentMethod")),
@@ -9418,10 +9434,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Retrieve list of tags by product
      * @see com.voyageone.common.magento.api.base.MagentoService#catalogProductTagList
-     * @param catalogProductTagListRequestParam387
+     * @param catalogProductTagListRequestParam391
      */
     public magento.CatalogProductTagListResponseParam catalogProductTagList(
-        magento.CatalogProductTagListRequestParam catalogProductTagListRequestParam387)
+        magento.CatalogProductTagListRequestParam catalogProductTagListRequestParam391)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -9443,7 +9459,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    catalogProductTagListRequestParam387,
+                    catalogProductTagListRequestParam391,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "catalogProductTagList")),
@@ -9533,10 +9549,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Retrieve list of tags by product
      * @see com.voyageone.common.magento.api.base.MagentoService#startcatalogProductTagList
-     * @param catalogProductTagListRequestParam387
+     * @param catalogProductTagListRequestParam391
      */
     public void startcatalogProductTagList(
-        magento.CatalogProductTagListRequestParam catalogProductTagListRequestParam387,
+        magento.CatalogProductTagListRequestParam catalogProductTagListRequestParam391,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[30].getName());
@@ -9555,7 +9571,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                catalogProductTagListRequestParam387,
+                catalogProductTagListRequestParam391,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "catalogProductTagList")),
@@ -9684,10 +9700,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Set customer's addresses in shopping cart
      * @see com.voyageone.common.magento.api.base.MagentoService#shoppingCartCustomerAddresses
-     * @param shoppingCartCustomerAddressesRequestParam389
+     * @param shoppingCartCustomerAddressesRequestParam393
      */
     public magento.ShoppingCartCustomerAddressesResponseParam shoppingCartCustomerAddresses(
-        magento.ShoppingCartCustomerAddressesRequestParam shoppingCartCustomerAddressesRequestParam389)
+        magento.ShoppingCartCustomerAddressesRequestParam shoppingCartCustomerAddressesRequestParam393)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -9709,7 +9725,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    shoppingCartCustomerAddressesRequestParam389,
+                    shoppingCartCustomerAddressesRequestParam393,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "shoppingCartCustomerAddresses")),
@@ -9802,10 +9818,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Set customer's addresses in shopping cart
      * @see com.voyageone.common.magento.api.base.MagentoService#startshoppingCartCustomerAddresses
-     * @param shoppingCartCustomerAddressesRequestParam389
+     * @param shoppingCartCustomerAddressesRequestParam393
      */
     public void startshoppingCartCustomerAddresses(
-        magento.ShoppingCartCustomerAddressesRequestParam shoppingCartCustomerAddressesRequestParam389,
+        magento.ShoppingCartCustomerAddressesRequestParam shoppingCartCustomerAddressesRequestParam393,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[31].getName());
@@ -9824,7 +9840,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                shoppingCartCustomerAddressesRequestParam389,
+                shoppingCartCustomerAddressesRequestParam393,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "shoppingCartCustomerAddresses")),
@@ -9953,10 +9969,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Store view info
      * @see com.voyageone.common.magento.api.base.MagentoService#storeInfo
-     * @param storeInfoRequestParam391
+     * @param storeInfoRequestParam395
      */
     public magento.StoreInfoResponseParam storeInfo(
-        magento.StoreInfoRequestParam storeInfoRequestParam391)
+        magento.StoreInfoRequestParam storeInfoRequestParam395)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -9978,7 +9994,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    storeInfoRequestParam391,
+                    storeInfoRequestParam395,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento", "storeInfo")),
                     new javax.xml.namespace.QName("urn:Magento", "storeInfo"));
@@ -10066,10 +10082,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Store view info
      * @see com.voyageone.common.magento.api.base.MagentoService#startstoreInfo
-     * @param storeInfoRequestParam391
+     * @param storeInfoRequestParam395
      */
     public void startstoreInfo(
-        magento.StoreInfoRequestParam storeInfoRequestParam391,
+        magento.StoreInfoRequestParam storeInfoRequestParam395,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[32].getName());
@@ -10088,7 +10104,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                storeInfoRequestParam391,
+                storeInfoRequestParam395,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento", "storeInfo")),
                 new javax.xml.namespace.QName("urn:Magento", "storeInfo"));
@@ -10212,10 +10228,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Update product special price
      * @see com.voyageone.common.magento.api.base.MagentoService#catalogProductSetSpecialPrice
-     * @param catalogProductSetSpecialPriceRequestParam393
+     * @param catalogProductSetSpecialPriceRequestParam397
      */
     public magento.CatalogProductSetSpecialPriceResponseParam catalogProductSetSpecialPrice(
-        magento.CatalogProductSetSpecialPriceRequestParam catalogProductSetSpecialPriceRequestParam393)
+        magento.CatalogProductSetSpecialPriceRequestParam catalogProductSetSpecialPriceRequestParam397)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -10237,7 +10253,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    catalogProductSetSpecialPriceRequestParam393,
+                    catalogProductSetSpecialPriceRequestParam397,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "catalogProductSetSpecialPrice")),
@@ -10330,10 +10346,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Update product special price
      * @see com.voyageone.common.magento.api.base.MagentoService#startcatalogProductSetSpecialPrice
-     * @param catalogProductSetSpecialPriceRequestParam393
+     * @param catalogProductSetSpecialPriceRequestParam397
      */
     public void startcatalogProductSetSpecialPrice(
-        magento.CatalogProductSetSpecialPriceRequestParam catalogProductSetSpecialPriceRequestParam393,
+        magento.CatalogProductSetSpecialPriceRequestParam catalogProductSetSpecialPriceRequestParam397,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[33].getName());
@@ -10352,7 +10368,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                catalogProductSetSpecialPriceRequestParam393,
+                catalogProductSetSpecialPriceRequestParam397,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "catalogProductSetSpecialPrice")),
@@ -10481,10 +10497,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Get list of products in shopping cart
      * @see com.voyageone.common.magento.api.base.MagentoService#shoppingCartProductList
-     * @param shoppingCartProductListRequestParam395
+     * @param shoppingCartProductListRequestParam399
      */
     public magento.ShoppingCartProductListResponseParam shoppingCartProductList(
-        magento.ShoppingCartProductListRequestParam shoppingCartProductListRequestParam395)
+        magento.ShoppingCartProductListRequestParam shoppingCartProductListRequestParam399)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -10506,7 +10522,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    shoppingCartProductListRequestParam395,
+                    shoppingCartProductListRequestParam399,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "shoppingCartProductList")),
@@ -10598,10 +10614,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Get list of products in shopping cart
      * @see com.voyageone.common.magento.api.base.MagentoService#startshoppingCartProductList
-     * @param shoppingCartProductListRequestParam395
+     * @param shoppingCartProductListRequestParam399
      */
     public void startshoppingCartProductList(
-        magento.ShoppingCartProductListRequestParam shoppingCartProductListRequestParam395,
+        magento.ShoppingCartProductListRequestParam shoppingCartProductListRequestParam399,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[34].getName());
@@ -10620,7 +10636,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                shoppingCartProductListRequestParam395,
+                shoppingCartProductListRequestParam399,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "shoppingCartProductList")),
@@ -10749,10 +10765,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Retrieve order information
      * @see com.voyageone.common.magento.api.base.MagentoService#salesOrderInfo
-     * @param salesOrderInfoRequestParam397
+     * @param salesOrderInfoRequestParam401
      */
     public magento.SalesOrderInfoResponseParam salesOrderInfo(
-        magento.SalesOrderInfoRequestParam salesOrderInfoRequestParam397)
+        magento.SalesOrderInfoRequestParam salesOrderInfoRequestParam401)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -10774,7 +10790,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    salesOrderInfoRequestParam397,
+                    salesOrderInfoRequestParam401,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "salesOrderInfo")),
@@ -10864,10 +10880,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Retrieve order information
      * @see com.voyageone.common.magento.api.base.MagentoService#startsalesOrderInfo
-     * @param salesOrderInfoRequestParam397
+     * @param salesOrderInfoRequestParam401
      */
     public void startsalesOrderInfo(
-        magento.SalesOrderInfoRequestParam salesOrderInfoRequestParam397,
+        magento.SalesOrderInfoRequestParam salesOrderInfoRequestParam401,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[35].getName());
@@ -10886,7 +10902,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                salesOrderInfoRequestParam397,
+                salesOrderInfoRequestParam401,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "salesOrderInfo")),
@@ -11014,10 +11030,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Update product link
      * @see com.voyageone.common.magento.api.base.MagentoService#catalogProductLinkUpdate
-     * @param catalogProductLinkUpdateRequestParam399
+     * @param catalogProductLinkUpdateRequestParam403
      */
     public magento.CatalogProductLinkUpdateResponseParam catalogProductLinkUpdate(
-        magento.CatalogProductLinkUpdateRequestParam catalogProductLinkUpdateRequestParam399)
+        magento.CatalogProductLinkUpdateRequestParam catalogProductLinkUpdateRequestParam403)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -11039,7 +11055,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    catalogProductLinkUpdateRequestParam399,
+                    catalogProductLinkUpdateRequestParam403,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "catalogProductLinkUpdate")),
@@ -11131,10 +11147,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Update product link
      * @see com.voyageone.common.magento.api.base.MagentoService#startcatalogProductLinkUpdate
-     * @param catalogProductLinkUpdateRequestParam399
+     * @param catalogProductLinkUpdateRequestParam403
      */
     public void startcatalogProductLinkUpdate(
-        magento.CatalogProductLinkUpdateRequestParam catalogProductLinkUpdateRequestParam399,
+        magento.CatalogProductLinkUpdateRequestParam catalogProductLinkUpdateRequestParam403,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[36].getName());
@@ -11153,7 +11169,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                catalogProductLinkUpdateRequestParam399,
+                catalogProductLinkUpdateRequestParam403,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "catalogProductLinkUpdate")),
@@ -11282,10 +11298,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Get product special price data
      * @see com.voyageone.common.magento.api.base.MagentoService#catalogProductGetSpecialPrice
-     * @param catalogProductGetSpecialPriceRequestParam401
+     * @param catalogProductGetSpecialPriceRequestParam405
      */
     public magento.CatalogProductGetSpecialPriceResponseParam catalogProductGetSpecialPrice(
-        magento.CatalogProductGetSpecialPriceRequestParam catalogProductGetSpecialPriceRequestParam401)
+        magento.CatalogProductGetSpecialPriceRequestParam catalogProductGetSpecialPriceRequestParam405)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -11307,7 +11323,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    catalogProductGetSpecialPriceRequestParam401,
+                    catalogProductGetSpecialPriceRequestParam405,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "catalogProductGetSpecialPrice")),
@@ -11400,10 +11416,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Get product special price data
      * @see com.voyageone.common.magento.api.base.MagentoService#startcatalogProductGetSpecialPrice
-     * @param catalogProductGetSpecialPriceRequestParam401
+     * @param catalogProductGetSpecialPriceRequestParam405
      */
     public void startcatalogProductGetSpecialPrice(
-        magento.CatalogProductGetSpecialPriceRequestParam catalogProductGetSpecialPriceRequestParam401,
+        magento.CatalogProductGetSpecialPriceRequestParam catalogProductGetSpecialPriceRequestParam405,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[37].getName());
@@ -11422,7 +11438,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                catalogProductGetSpecialPriceRequestParam401,
+                catalogProductGetSpecialPriceRequestParam405,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "catalogProductGetSpecialPrice")),
@@ -11551,10 +11567,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Retrieve attribute list
      * @see com.voyageone.common.magento.api.base.MagentoService#catalogProductAttributeList
-     * @param catalogProductAttributeListRequestParam403
+     * @param catalogProductAttributeListRequestParam407
      */
     public magento.CatalogProductAttributeListResponseParam catalogProductAttributeList(
-        magento.CatalogProductAttributeListRequestParam catalogProductAttributeListRequestParam403)
+        magento.CatalogProductAttributeListRequestParam catalogProductAttributeListRequestParam407)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -11576,7 +11592,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    catalogProductAttributeListRequestParam403,
+                    catalogProductAttributeListRequestParam407,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "catalogProductAttributeList")),
@@ -11669,10 +11685,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Retrieve attribute list
      * @see com.voyageone.common.magento.api.base.MagentoService#startcatalogProductAttributeList
-     * @param catalogProductAttributeListRequestParam403
+     * @param catalogProductAttributeListRequestParam407
      */
     public void startcatalogProductAttributeList(
-        magento.CatalogProductAttributeListRequestParam catalogProductAttributeListRequestParam403,
+        magento.CatalogProductAttributeListRequestParam catalogProductAttributeListRequestParam407,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[38].getName());
@@ -11691,7 +11707,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                catalogProductAttributeListRequestParam403,
+                catalogProductAttributeListRequestParam407,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "catalogProductAttributeList")),
@@ -11820,10 +11836,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Remove attribute from attribute set
      * @see com.voyageone.common.magento.api.base.MagentoService#catalogProductAttributeSetAttributeRemove
-     * @param catalogProductAttributeSetAttributeRemoveRequestParam405
+     * @param catalogProductAttributeSetAttributeRemoveRequestParam409
      */
     public magento.CatalogProductAttributeSetAttributeRemoveResponseParam catalogProductAttributeSetAttributeRemove(
-        magento.CatalogProductAttributeSetAttributeRemoveRequestParam catalogProductAttributeSetAttributeRemoveRequestParam405)
+        magento.CatalogProductAttributeSetAttributeRemoveRequestParam catalogProductAttributeSetAttributeRemoveRequestParam409)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -11845,7 +11861,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    catalogProductAttributeSetAttributeRemoveRequestParam405,
+                    catalogProductAttributeSetAttributeRemoveRequestParam409,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "catalogProductAttributeSetAttributeRemove")),
@@ -11938,10 +11954,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Remove attribute from attribute set
      * @see com.voyageone.common.magento.api.base.MagentoService#startcatalogProductAttributeSetAttributeRemove
-     * @param catalogProductAttributeSetAttributeRemoveRequestParam405
+     * @param catalogProductAttributeSetAttributeRemoveRequestParam409
      */
     public void startcatalogProductAttributeSetAttributeRemove(
-        magento.CatalogProductAttributeSetAttributeRemoveRequestParam catalogProductAttributeSetAttributeRemoveRequestParam405,
+        magento.CatalogProductAttributeSetAttributeRemoveRequestParam catalogProductAttributeSetAttributeRemoveRequestParam409,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[39].getName());
@@ -11960,7 +11976,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                catalogProductAttributeSetAttributeRemoveRequestParam405,
+                catalogProductAttributeSetAttributeRemoveRequestParam409,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "catalogProductAttributeSetAttributeRemove")),
@@ -12089,10 +12105,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Retrieve invoice information
      * @see com.voyageone.common.magento.api.base.MagentoService#salesOrderInvoiceInfo
-     * @param salesOrderInvoiceInfoRequestParam407
+     * @param salesOrderInvoiceInfoRequestParam411
      */
     public magento.SalesOrderInvoiceInfoResponseParam salesOrderInvoiceInfo(
-        magento.SalesOrderInvoiceInfoRequestParam salesOrderInvoiceInfoRequestParam407)
+        magento.SalesOrderInvoiceInfoRequestParam salesOrderInvoiceInfoRequestParam411)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -12114,7 +12130,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    salesOrderInvoiceInfoRequestParam407,
+                    salesOrderInvoiceInfoRequestParam411,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "salesOrderInvoiceInfo")),
@@ -12204,10 +12220,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Retrieve invoice information
      * @see com.voyageone.common.magento.api.base.MagentoService#startsalesOrderInvoiceInfo
-     * @param salesOrderInvoiceInfoRequestParam407
+     * @param salesOrderInvoiceInfoRequestParam411
      */
     public void startsalesOrderInvoiceInfo(
-        magento.SalesOrderInvoiceInfoRequestParam salesOrderInvoiceInfoRequestParam407,
+        magento.SalesOrderInvoiceInfoRequestParam salesOrderInvoiceInfoRequestParam411,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[40].getName());
@@ -12226,7 +12242,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                salesOrderInvoiceInfoRequestParam407,
+                salesOrderInvoiceInfoRequestParam411,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "salesOrderInvoiceInfo")),
@@ -12355,10 +12371,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Retrieve information about shopping cart
      * @see com.voyageone.common.magento.api.base.MagentoService#shoppingCartInfo
-     * @param shoppingCartInfoRequestParam409
+     * @param shoppingCartInfoRequestParam413
      */
     public magento.ShoppingCartInfoResponseParam shoppingCartInfo(
-        magento.ShoppingCartInfoRequestParam shoppingCartInfoRequestParam409)
+        magento.ShoppingCartInfoRequestParam shoppingCartInfoRequestParam413)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -12380,7 +12396,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    shoppingCartInfoRequestParam409,
+                    shoppingCartInfoRequestParam413,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "shoppingCartInfo")),
@@ -12470,10 +12486,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Retrieve information about shopping cart
      * @see com.voyageone.common.magento.api.base.MagentoService#startshoppingCartInfo
-     * @param shoppingCartInfoRequestParam409
+     * @param shoppingCartInfoRequestParam413
      */
     public void startshoppingCartInfo(
-        magento.ShoppingCartInfoRequestParam shoppingCartInfoRequestParam409,
+        magento.ShoppingCartInfoRequestParam shoppingCartInfoRequestParam413,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[41].getName());
@@ -12492,7 +12508,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                shoppingCartInfoRequestParam409,
+                shoppingCartInfoRequestParam413,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "shoppingCartInfo")),
@@ -12620,10 +12636,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Move product(s) to customer quote
      * @see com.voyageone.common.magento.api.base.MagentoService#shoppingCartProductMoveToCustomerQuote
-     * @param shoppingCartProductMoveToCustomerQuoteRequestParam411
+     * @param shoppingCartProductMoveToCustomerQuoteRequestParam415
      */
     public magento.ShoppingCartProductMoveToCustomerQuoteResponseParam shoppingCartProductMoveToCustomerQuote(
-        magento.ShoppingCartProductMoveToCustomerQuoteRequestParam shoppingCartProductMoveToCustomerQuoteRequestParam411)
+        magento.ShoppingCartProductMoveToCustomerQuoteRequestParam shoppingCartProductMoveToCustomerQuoteRequestParam415)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -12645,7 +12661,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    shoppingCartProductMoveToCustomerQuoteRequestParam411,
+                    shoppingCartProductMoveToCustomerQuoteRequestParam415,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "shoppingCartProductMoveToCustomerQuote")),
@@ -12738,10 +12754,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Move product(s) to customer quote
      * @see com.voyageone.common.magento.api.base.MagentoService#startshoppingCartProductMoveToCustomerQuote
-     * @param shoppingCartProductMoveToCustomerQuoteRequestParam411
+     * @param shoppingCartProductMoveToCustomerQuoteRequestParam415
      */
     public void startshoppingCartProductMoveToCustomerQuote(
-        magento.ShoppingCartProductMoveToCustomerQuoteRequestParam shoppingCartProductMoveToCustomerQuoteRequestParam411,
+        magento.ShoppingCartProductMoveToCustomerQuoteRequestParam shoppingCartProductMoveToCustomerQuoteRequestParam415,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[42].getName());
@@ -12760,7 +12776,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                shoppingCartProductMoveToCustomerQuoteRequestParam411,
+                shoppingCartProductMoveToCustomerQuoteRequestParam415,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "shoppingCartProductMoveToCustomerQuote")),
@@ -12889,10 +12905,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Retrieve hierarchical tree of categories.
      * @see com.voyageone.common.magento.api.base.MagentoService#catalogCategoryInfo
-     * @param catalogCategoryInfoRequestParam413
+     * @param catalogCategoryInfoRequestParam417
      */
     public magento.CatalogCategoryInfoResponseParam catalogCategoryInfo(
-        magento.CatalogCategoryInfoRequestParam catalogCategoryInfoRequestParam413)
+        magento.CatalogCategoryInfoRequestParam catalogCategoryInfoRequestParam417)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -12914,7 +12930,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    catalogCategoryInfoRequestParam413,
+                    catalogCategoryInfoRequestParam417,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "catalogCategoryInfo")),
@@ -13004,10 +13020,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Retrieve hierarchical tree of categories.
      * @see com.voyageone.common.magento.api.base.MagentoService#startcatalogCategoryInfo
-     * @param catalogCategoryInfoRequestParam413
+     * @param catalogCategoryInfoRequestParam417
      */
     public void startcatalogCategoryInfo(
-        magento.CatalogCategoryInfoRequestParam catalogCategoryInfoRequestParam413,
+        magento.CatalogCategoryInfoRequestParam catalogCategoryInfoRequestParam417,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[43].getName());
@@ -13026,7 +13042,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                catalogCategoryInfoRequestParam413,
+                catalogCategoryInfoRequestParam417,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "catalogCategoryInfo")),
@@ -13155,10 +13171,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Redeem gift card amount
      * @see com.voyageone.common.magento.api.base.MagentoService#shoppingCartGiftcardAdd
-     * @param shoppingCartGiftcardAddRequestParam415
+     * @param shoppingCartGiftcardAddRequestParam419
      */
     public magento.ShoppingCartGiftcardAddResponseParam shoppingCartGiftcardAdd(
-        magento.ShoppingCartGiftcardAddRequestParam shoppingCartGiftcardAddRequestParam415)
+        magento.ShoppingCartGiftcardAddRequestParam shoppingCartGiftcardAddRequestParam419)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -13180,7 +13196,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    shoppingCartGiftcardAddRequestParam415,
+                    shoppingCartGiftcardAddRequestParam419,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "shoppingCartGiftcardAdd")),
@@ -13272,10 +13288,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Redeem gift card amount
      * @see com.voyageone.common.magento.api.base.MagentoService#startshoppingCartGiftcardAdd
-     * @param shoppingCartGiftcardAddRequestParam415
+     * @param shoppingCartGiftcardAddRequestParam419
      */
     public void startshoppingCartGiftcardAdd(
-        magento.ShoppingCartGiftcardAddRequestParam shoppingCartGiftcardAddRequestParam415,
+        magento.ShoppingCartGiftcardAddRequestParam shoppingCartGiftcardAddRequestParam419,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[44].getName());
@@ -13294,7 +13310,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                shoppingCartGiftcardAddRequestParam415,
+                shoppingCartGiftcardAddRequestParam419,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "shoppingCartGiftcardAdd")),
@@ -13423,10 +13439,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Assign product to category
      * @see com.voyageone.common.magento.api.base.MagentoService#catalogCategoryAssignProduct
-     * @param catalogCategoryAssignProductRequestParam417
+     * @param catalogCategoryAssignProductRequestParam421
      */
     public magento.CatalogCategoryAssignProductResponseParam catalogCategoryAssignProduct(
-        magento.CatalogCategoryAssignProductRequestParam catalogCategoryAssignProductRequestParam417)
+        magento.CatalogCategoryAssignProductRequestParam catalogCategoryAssignProductRequestParam421)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -13448,7 +13464,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    catalogCategoryAssignProductRequestParam417,
+                    catalogCategoryAssignProductRequestParam421,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "catalogCategoryAssignProduct")),
@@ -13541,10 +13557,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Assign product to category
      * @see com.voyageone.common.magento.api.base.MagentoService#startcatalogCategoryAssignProduct
-     * @param catalogCategoryAssignProductRequestParam417
+     * @param catalogCategoryAssignProductRequestParam421
      */
     public void startcatalogCategoryAssignProduct(
-        magento.CatalogCategoryAssignProductRequestParam catalogCategoryAssignProductRequestParam417,
+        magento.CatalogCategoryAssignProductRequestParam catalogCategoryAssignProductRequestParam421,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[45].getName());
@@ -13563,7 +13579,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                catalogCategoryAssignProductRequestParam417,
+                catalogCategoryAssignProductRequestParam421,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "catalogCategoryAssignProduct")),
@@ -13692,10 +13708,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Set/Get current store view
      * @see com.voyageone.common.magento.api.base.MagentoService#catalogProductAttributeCurrentStore
-     * @param catalogProductAttributeCurrentStoreRequestParam419
+     * @param catalogProductAttributeCurrentStoreRequestParam423
      */
     public magento.CatalogProductAttributeCurrentStoreResponseParam catalogProductAttributeCurrentStore(
-        magento.CatalogProductAttributeCurrentStoreRequestParam catalogProductAttributeCurrentStoreRequestParam419)
+        magento.CatalogProductAttributeCurrentStoreRequestParam catalogProductAttributeCurrentStoreRequestParam423)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -13717,7 +13733,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    catalogProductAttributeCurrentStoreRequestParam419,
+                    catalogProductAttributeCurrentStoreRequestParam423,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "catalogProductAttributeCurrentStore")),
@@ -13810,10 +13826,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Set/Get current store view
      * @see com.voyageone.common.magento.api.base.MagentoService#startcatalogProductAttributeCurrentStore
-     * @param catalogProductAttributeCurrentStoreRequestParam419
+     * @param catalogProductAttributeCurrentStoreRequestParam423
      */
     public void startcatalogProductAttributeCurrentStore(
-        magento.CatalogProductAttributeCurrentStoreRequestParam catalogProductAttributeCurrentStoreRequestParam419,
+        magento.CatalogProductAttributeCurrentStoreRequestParam catalogProductAttributeCurrentStoreRequestParam423,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[46].getName());
@@ -13832,7 +13848,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                catalogProductAttributeCurrentStoreRequestParam419,
+                catalogProductAttributeCurrentStoreRequestParam423,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "catalogProductAttributeCurrentStore")),
@@ -13961,10 +13977,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Set/Get current store view
      * @see com.voyageone.common.magento.api.base.MagentoService#catalogProductAttributeMediaCurrentStore
-     * @param catalogProductAttributeMediaCurrentStoreRequestParam421
+     * @param catalogProductAttributeMediaCurrentStoreRequestParam425
      */
     public magento.CatalogProductAttributeMediaCurrentStoreResponseParam catalogProductAttributeMediaCurrentStore(
-        magento.CatalogProductAttributeMediaCurrentStoreRequestParam catalogProductAttributeMediaCurrentStoreRequestParam421)
+        magento.CatalogProductAttributeMediaCurrentStoreRequestParam catalogProductAttributeMediaCurrentStoreRequestParam425)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -13986,7 +14002,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    catalogProductAttributeMediaCurrentStoreRequestParam421,
+                    catalogProductAttributeMediaCurrentStoreRequestParam425,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "catalogProductAttributeMediaCurrentStore")),
@@ -14079,10 +14095,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Set/Get current store view
      * @see com.voyageone.common.magento.api.base.MagentoService#startcatalogProductAttributeMediaCurrentStore
-     * @param catalogProductAttributeMediaCurrentStoreRequestParam421
+     * @param catalogProductAttributeMediaCurrentStoreRequestParam425
      */
     public void startcatalogProductAttributeMediaCurrentStore(
-        magento.CatalogProductAttributeMediaCurrentStoreRequestParam catalogProductAttributeMediaCurrentStoreRequestParam421,
+        magento.CatalogProductAttributeMediaCurrentStoreRequestParam catalogProductAttributeMediaCurrentStoreRequestParam425,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[47].getName());
@@ -14101,7 +14117,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                catalogProductAttributeMediaCurrentStoreRequestParam421,
+                catalogProductAttributeMediaCurrentStoreRequestParam425,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "catalogProductAttributeMediaCurrentStore")),
@@ -14230,10 +14246,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Update product
      * @see com.voyageone.common.magento.api.base.MagentoService#catalogProductUpdate
-     * @param catalogProductUpdateRequestParam423
+     * @param catalogProductUpdateRequestParam427
      */
     public magento.CatalogProductUpdateResponseParam catalogProductUpdate(
-        magento.CatalogProductUpdateRequestParam catalogProductUpdateRequestParam423)
+        magento.CatalogProductUpdateRequestParam catalogProductUpdateRequestParam427)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -14255,7 +14271,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    catalogProductUpdateRequestParam423,
+                    catalogProductUpdateRequestParam427,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "catalogProductUpdate")),
@@ -14345,10 +14361,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Update product
      * @see com.voyageone.common.magento.api.base.MagentoService#startcatalogProductUpdate
-     * @param catalogProductUpdateRequestParam423
+     * @param catalogProductUpdateRequestParam427
      */
     public void startcatalogProductUpdate(
-        magento.CatalogProductUpdateRequestParam catalogProductUpdateRequestParam423,
+        magento.CatalogProductUpdateRequestParam catalogProductUpdateRequestParam427,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[48].getName());
@@ -14367,7 +14383,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                catalogProductUpdateRequestParam423,
+                catalogProductUpdateRequestParam427,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "catalogProductUpdate")),
@@ -14496,10 +14512,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Retrieve product image list
      * @see com.voyageone.common.magento.api.base.MagentoService#catalogProductAttributeMediaList
-     * @param catalogProductAttributeMediaListRequestParam425
+     * @param catalogProductAttributeMediaListRequestParam429
      */
     public magento.CatalogProductAttributeMediaListResponseParam catalogProductAttributeMediaList(
-        magento.CatalogProductAttributeMediaListRequestParam catalogProductAttributeMediaListRequestParam425)
+        magento.CatalogProductAttributeMediaListRequestParam catalogProductAttributeMediaListRequestParam429)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -14521,7 +14537,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    catalogProductAttributeMediaListRequestParam425,
+                    catalogProductAttributeMediaListRequestParam429,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "catalogProductAttributeMediaList")),
@@ -14614,10 +14630,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Retrieve product image list
      * @see com.voyageone.common.magento.api.base.MagentoService#startcatalogProductAttributeMediaList
-     * @param catalogProductAttributeMediaListRequestParam425
+     * @param catalogProductAttributeMediaListRequestParam429
      */
     public void startcatalogProductAttributeMediaList(
-        magento.CatalogProductAttributeMediaListRequestParam catalogProductAttributeMediaListRequestParam425,
+        magento.CatalogProductAttributeMediaListRequestParam catalogProductAttributeMediaListRequestParam429,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[49].getName());
@@ -14636,7 +14652,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                catalogProductAttributeMediaListRequestParam425,
+                catalogProductAttributeMediaListRequestParam429,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "catalogProductAttributeMediaList")),
@@ -14765,10 +14781,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Get full information about attribute with list of options
      * @see com.voyageone.common.magento.api.base.MagentoService#catalogProductAttributeInfo
-     * @param catalogProductAttributeInfoRequestParam427
+     * @param catalogProductAttributeInfoRequestParam431
      */
     public magento.CatalogProductAttributeInfoResponseParam catalogProductAttributeInfo(
-        magento.CatalogProductAttributeInfoRequestParam catalogProductAttributeInfoRequestParam427)
+        magento.CatalogProductAttributeInfoRequestParam catalogProductAttributeInfoRequestParam431)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -14790,7 +14806,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    catalogProductAttributeInfoRequestParam427,
+                    catalogProductAttributeInfoRequestParam431,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "catalogProductAttributeInfo")),
@@ -14883,10 +14899,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Get full information about attribute with list of options
      * @see com.voyageone.common.magento.api.base.MagentoService#startcatalogProductAttributeInfo
-     * @param catalogProductAttributeInfoRequestParam427
+     * @param catalogProductAttributeInfoRequestParam431
      */
     public void startcatalogProductAttributeInfo(
-        magento.CatalogProductAttributeInfoRequestParam catalogProductAttributeInfoRequestParam427,
+        magento.CatalogProductAttributeInfoRequestParam catalogProductAttributeInfoRequestParam431,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[50].getName());
@@ -14905,7 +14921,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                catalogProductAttributeInfoRequestParam427,
+                catalogProductAttributeInfoRequestParam431,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "catalogProductAttributeInfo")),
@@ -15288,10 +15304,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Product multi update
      * @see com.voyageone.common.magento.api.base.MagentoService#catalogProductMultiUpdate
-     * @param catalogProductMultiUpdateRequestParam431
+     * @param catalogProductMultiUpdateRequestParam435
      */
     public magento.CatalogProductMultiUpdateResponseParam catalogProductMultiUpdate(
-        magento.CatalogProductMultiUpdateRequestParam catalogProductMultiUpdateRequestParam431)
+        magento.CatalogProductMultiUpdateRequestParam catalogProductMultiUpdateRequestParam435)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -15313,7 +15329,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    catalogProductMultiUpdateRequestParam431,
+                    catalogProductMultiUpdateRequestParam435,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "catalogProductMultiUpdate")),
@@ -15405,10 +15421,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Product multi update
      * @see com.voyageone.common.magento.api.base.MagentoService#startcatalogProductMultiUpdate
-     * @param catalogProductMultiUpdateRequestParam431
+     * @param catalogProductMultiUpdateRequestParam435
      */
     public void startcatalogProductMultiUpdate(
-        magento.CatalogProductMultiUpdateRequestParam catalogProductMultiUpdateRequestParam431,
+        magento.CatalogProductMultiUpdateRequestParam catalogProductMultiUpdateRequestParam435,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[52].getName());
@@ -15427,7 +15443,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                catalogProductMultiUpdateRequestParam431,
+                catalogProductMultiUpdateRequestParam435,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "catalogProductMultiUpdate")),
@@ -15556,10 +15572,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Retrieve list of shipments by filters
      * @see com.voyageone.common.magento.api.base.MagentoService#salesOrderShipmentList
-     * @param salesOrderShipmentListRequestParam433
+     * @param salesOrderShipmentListRequestParam437
      */
     public magento.SalesOrderShipmentListResponseParam salesOrderShipmentList(
-        magento.SalesOrderShipmentListRequestParam salesOrderShipmentListRequestParam433)
+        magento.SalesOrderShipmentListRequestParam salesOrderShipmentListRequestParam437)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -15581,7 +15597,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    salesOrderShipmentListRequestParam433,
+                    salesOrderShipmentListRequestParam437,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "salesOrderShipmentList")),
@@ -15673,10 +15689,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Retrieve list of shipments by filters
      * @see com.voyageone.common.magento.api.base.MagentoService#startsalesOrderShipmentList
-     * @param salesOrderShipmentListRequestParam433
+     * @param salesOrderShipmentListRequestParam437
      */
     public void startsalesOrderShipmentList(
-        magento.SalesOrderShipmentListRequestParam salesOrderShipmentListRequestParam433,
+        magento.SalesOrderShipmentListRequestParam salesOrderShipmentListRequestParam437,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[53].getName());
@@ -15695,7 +15711,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                salesOrderShipmentListRequestParam433,
+                salesOrderShipmentListRequestParam437,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "salesOrderShipmentList")),
@@ -15824,10 +15840,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Retrieve customer store credit balance information
      * @see com.voyageone.common.magento.api.base.MagentoService#enterpriseCustomerbalanceBalance
-     * @param enterpriseCustomerbalanceBalanceRequestParam435
+     * @param enterpriseCustomerbalanceBalanceRequestParam439
      */
     public magento.EnterpriseCustomerbalanceBalanceResponseParam enterpriseCustomerbalanceBalance(
-        magento.EnterpriseCustomerbalanceBalanceRequestParam enterpriseCustomerbalanceBalanceRequestParam435)
+        magento.EnterpriseCustomerbalanceBalanceRequestParam enterpriseCustomerbalanceBalanceRequestParam439)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -15849,7 +15865,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    enterpriseCustomerbalanceBalanceRequestParam435,
+                    enterpriseCustomerbalanceBalanceRequestParam439,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "enterpriseCustomerbalanceBalance")),
@@ -15942,10 +15958,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Retrieve customer store credit balance information
      * @see com.voyageone.common.magento.api.base.MagentoService#startenterpriseCustomerbalanceBalance
-     * @param enterpriseCustomerbalanceBalanceRequestParam435
+     * @param enterpriseCustomerbalanceBalanceRequestParam439
      */
     public void startenterpriseCustomerbalanceBalance(
-        magento.EnterpriseCustomerbalanceBalanceRequestParam enterpriseCustomerbalanceBalanceRequestParam435,
+        magento.EnterpriseCustomerbalanceBalanceRequestParam enterpriseCustomerbalanceBalanceRequestParam439,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[54].getName());
@@ -15964,7 +15980,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                enterpriseCustomerbalanceBalanceRequestParam435,
+                enterpriseCustomerbalanceBalanceRequestParam439,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "enterpriseCustomerbalanceBalance")),
@@ -16093,10 +16109,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Assign product link
      * @see com.voyageone.common.magento.api.base.MagentoService#catalogProductLinkAssign
-     * @param catalogProductLinkAssignRequestParam437
+     * @param catalogProductLinkAssignRequestParam441
      */
     public magento.CatalogProductLinkAssignResponseParam catalogProductLinkAssign(
-        magento.CatalogProductLinkAssignRequestParam catalogProductLinkAssignRequestParam437)
+        magento.CatalogProductLinkAssignRequestParam catalogProductLinkAssignRequestParam441)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -16118,7 +16134,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    catalogProductLinkAssignRequestParam437,
+                    catalogProductLinkAssignRequestParam441,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "catalogProductLinkAssign")),
@@ -16210,10 +16226,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Assign product link
      * @see com.voyageone.common.magento.api.base.MagentoService#startcatalogProductLinkAssign
-     * @param catalogProductLinkAssignRequestParam437
+     * @param catalogProductLinkAssignRequestParam441
      */
     public void startcatalogProductLinkAssign(
-        magento.CatalogProductLinkAssignRequestParam catalogProductLinkAssignRequestParam437,
+        magento.CatalogProductLinkAssignRequestParam catalogProductLinkAssignRequestParam441,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[55].getName());
@@ -16232,7 +16248,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                catalogProductLinkAssignRequestParam437,
+                catalogProductLinkAssignRequestParam441,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "catalogProductLinkAssign")),
@@ -16361,10 +16377,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Retrieve list of invoices by filters
      * @see com.voyageone.common.magento.api.base.MagentoService#salesOrderInvoiceList
-     * @param salesOrderInvoiceListRequestParam439
+     * @param salesOrderInvoiceListRequestParam443
      */
     public magento.SalesOrderInvoiceListResponseParam salesOrderInvoiceList(
-        magento.SalesOrderInvoiceListRequestParam salesOrderInvoiceListRequestParam439)
+        magento.SalesOrderInvoiceListRequestParam salesOrderInvoiceListRequestParam443)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -16386,7 +16402,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    salesOrderInvoiceListRequestParam439,
+                    salesOrderInvoiceListRequestParam443,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "salesOrderInvoiceList")),
@@ -16476,10 +16492,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Retrieve list of invoices by filters
      * @see com.voyageone.common.magento.api.base.MagentoService#startsalesOrderInvoiceList
-     * @param salesOrderInvoiceListRequestParam439
+     * @param salesOrderInvoiceListRequestParam443
      */
     public void startsalesOrderInvoiceList(
-        magento.SalesOrderInvoiceListRequestParam salesOrderInvoiceListRequestParam439,
+        magento.SalesOrderInvoiceListRequestParam salesOrderInvoiceListRequestParam443,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[56].getName());
@@ -16498,7 +16514,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                salesOrderInvoiceListRequestParam439,
+                salesOrderInvoiceListRequestParam443,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "salesOrderInvoiceList")),
@@ -16627,10 +16643,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Retrieve linked products
      * @see com.voyageone.common.magento.api.base.MagentoService#catalogProductLinkList
-     * @param catalogProductLinkListRequestParam441
+     * @param catalogProductLinkListRequestParam445
      */
     public magento.CatalogProductLinkListResponseParam catalogProductLinkList(
-        magento.CatalogProductLinkListRequestParam catalogProductLinkListRequestParam441)
+        magento.CatalogProductLinkListRequestParam catalogProductLinkListRequestParam445)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -16652,7 +16668,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    catalogProductLinkListRequestParam441,
+                    catalogProductLinkListRequestParam445,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "catalogProductLinkList")),
@@ -16744,10 +16760,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Retrieve linked products
      * @see com.voyageone.common.magento.api.base.MagentoService#startcatalogProductLinkList
-     * @param catalogProductLinkListRequestParam441
+     * @param catalogProductLinkListRequestParam445
      */
     public void startcatalogProductLinkList(
-        magento.CatalogProductLinkListRequestParam catalogProductLinkListRequestParam441,
+        magento.CatalogProductLinkListRequestParam catalogProductLinkListRequestParam445,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[57].getName());
@@ -16766,7 +16782,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                catalogProductLinkListRequestParam441,
+                catalogProductLinkListRequestParam445,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "catalogProductLinkList")),
@@ -16895,10 +16911,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Create new attribute
      * @see com.voyageone.common.magento.api.base.MagentoService#catalogProductAttributeCreate
-     * @param catalogProductAttributeCreateRequestParam443
+     * @param catalogProductAttributeCreateRequestParam447
      */
     public magento.CatalogProductAttributeCreateResponseParam catalogProductAttributeCreate(
-        magento.CatalogProductAttributeCreateRequestParam catalogProductAttributeCreateRequestParam443)
+        magento.CatalogProductAttributeCreateRequestParam catalogProductAttributeCreateRequestParam447)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -16920,7 +16936,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    catalogProductAttributeCreateRequestParam443,
+                    catalogProductAttributeCreateRequestParam447,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "catalogProductAttributeCreate")),
@@ -17013,10 +17029,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Create new attribute
      * @see com.voyageone.common.magento.api.base.MagentoService#startcatalogProductAttributeCreate
-     * @param catalogProductAttributeCreateRequestParam443
+     * @param catalogProductAttributeCreateRequestParam447
      */
     public void startcatalogProductAttributeCreate(
-        magento.CatalogProductAttributeCreateRequestParam catalogProductAttributeCreateRequestParam443,
+        magento.CatalogProductAttributeCreateRequestParam catalogProductAttributeCreateRequestParam447,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[58].getName());
@@ -17035,7 +17051,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                catalogProductAttributeCreateRequestParam443,
+                catalogProductAttributeCreateRequestParam447,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "catalogProductAttributeCreate")),
@@ -17164,10 +17180,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Create new invoice for order
      * @see com.voyageone.common.magento.api.base.MagentoService#salesOrderInvoiceCreate
-     * @param salesOrderInvoiceCreateRequestParam445
+     * @param salesOrderInvoiceCreateRequestParam449
      */
     public magento.SalesOrderInvoiceCreateResponseParam salesOrderInvoiceCreate(
-        magento.SalesOrderInvoiceCreateRequestParam salesOrderInvoiceCreateRequestParam445)
+        magento.SalesOrderInvoiceCreateRequestParam salesOrderInvoiceCreateRequestParam449)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -17189,7 +17205,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    salesOrderInvoiceCreateRequestParam445,
+                    salesOrderInvoiceCreateRequestParam449,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "salesOrderInvoiceCreate")),
@@ -17281,10 +17297,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Create new invoice for order
      * @see com.voyageone.common.magento.api.base.MagentoService#startsalesOrderInvoiceCreate
-     * @param salesOrderInvoiceCreateRequestParam445
+     * @param salesOrderInvoiceCreateRequestParam449
      */
     public void startsalesOrderInvoiceCreate(
-        magento.SalesOrderInvoiceCreateRequestParam salesOrderInvoiceCreateRequestParam445,
+        magento.SalesOrderInvoiceCreateRequestParam salesOrderInvoiceCreateRequestParam449,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[59].getName());
@@ -17303,7 +17319,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                salesOrderInvoiceCreateRequestParam445,
+                salesOrderInvoiceCreateRequestParam449,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "salesOrderInvoiceCreate")),
@@ -17432,10 +17448,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Retrieve customer groups
      * @see com.voyageone.common.magento.api.base.MagentoService#customerGroupList
-     * @param customerGroupListRequestParam447
+     * @param customerGroupListRequestParam451
      */
     public magento.CustomerGroupListResponseParam customerGroupList(
-        magento.CustomerGroupListRequestParam customerGroupListRequestParam447)
+        magento.CustomerGroupListRequestParam customerGroupListRequestParam451)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -17457,7 +17473,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    customerGroupListRequestParam447,
+                    customerGroupListRequestParam451,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "customerGroupList")),
@@ -17547,10 +17563,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Retrieve customer groups
      * @see com.voyageone.common.magento.api.base.MagentoService#startcustomerGroupList
-     * @param customerGroupListRequestParam447
+     * @param customerGroupListRequestParam451
      */
     public void startcustomerGroupList(
-        magento.CustomerGroupListRequestParam customerGroupListRequestParam447,
+        magento.CustomerGroupListRequestParam customerGroupListRequestParam451,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[60].getName());
@@ -17569,7 +17585,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                customerGroupListRequestParam447,
+                customerGroupListRequestParam451,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "customerGroupList")),
@@ -17697,10 +17713,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Update product custom option
      * @see com.voyageone.common.magento.api.base.MagentoService#catalogProductCustomOptionUpdate
-     * @param catalogProductCustomOptionUpdateRequestParam449
+     * @param catalogProductCustomOptionUpdateRequestParam453
      */
     public magento.CatalogProductCustomOptionUpdateResponseParam catalogProductCustomOptionUpdate(
-        magento.CatalogProductCustomOptionUpdateRequestParam catalogProductCustomOptionUpdateRequestParam449)
+        magento.CatalogProductCustomOptionUpdateRequestParam catalogProductCustomOptionUpdateRequestParam453)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -17722,7 +17738,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    catalogProductCustomOptionUpdateRequestParam449,
+                    catalogProductCustomOptionUpdateRequestParam453,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "catalogProductCustomOptionUpdate")),
@@ -17815,10 +17831,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Update product custom option
      * @see com.voyageone.common.magento.api.base.MagentoService#startcatalogProductCustomOptionUpdate
-     * @param catalogProductCustomOptionUpdateRequestParam449
+     * @param catalogProductCustomOptionUpdateRequestParam453
      */
     public void startcatalogProductCustomOptionUpdate(
-        magento.CatalogProductCustomOptionUpdateRequestParam catalogProductCustomOptionUpdateRequestParam449,
+        magento.CatalogProductCustomOptionUpdateRequestParam catalogProductCustomOptionUpdateRequestParam453,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[61].getName());
@@ -17837,7 +17853,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                catalogProductCustomOptionUpdateRequestParam449,
+                catalogProductCustomOptionUpdateRequestParam453,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "catalogProductCustomOptionUpdate")),
@@ -17966,10 +17982,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Retrieve product attribute sets
      * @see com.voyageone.common.magento.api.base.MagentoService#catalogProductAttributeSetList
-     * @param catalogProductAttributeSetListRequestParam451
+     * @param catalogProductAttributeSetListRequestParam455
      */
     public magento.CatalogProductAttributeSetListResponseParam catalogProductAttributeSetList(
-        magento.CatalogProductAttributeSetListRequestParam catalogProductAttributeSetListRequestParam451)
+        magento.CatalogProductAttributeSetListRequestParam catalogProductAttributeSetListRequestParam455)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -17991,7 +18007,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    catalogProductAttributeSetListRequestParam451,
+                    catalogProductAttributeSetListRequestParam455,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "catalogProductAttributeSetList")),
@@ -18084,10 +18100,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Retrieve product attribute sets
      * @see com.voyageone.common.magento.api.base.MagentoService#startcatalogProductAttributeSetList
-     * @param catalogProductAttributeSetListRequestParam451
+     * @param catalogProductAttributeSetListRequestParam455
      */
     public void startcatalogProductAttributeSetList(
-        magento.CatalogProductAttributeSetListRequestParam catalogProductAttributeSetListRequestParam451,
+        magento.CatalogProductAttributeSetListRequestParam catalogProductAttributeSetListRequestParam455,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[62].getName());
@@ -18106,7 +18122,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                catalogProductAttributeSetListRequestParam451,
+                catalogProductAttributeSetListRequestParam455,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "catalogProductAttributeSetList")),
@@ -18235,10 +18251,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Remove value from custom option
      * @see com.voyageone.common.magento.api.base.MagentoService#catalogProductCustomOptionValueRemove
-     * @param catalogProductCustomOptionValueRemoveRequestParam453
+     * @param catalogProductCustomOptionValueRemoveRequestParam457
      */
     public magento.CatalogProductCustomOptionValueRemoveResponseParam catalogProductCustomOptionValueRemove(
-        magento.CatalogProductCustomOptionValueRemoveRequestParam catalogProductCustomOptionValueRemoveRequestParam453)
+        magento.CatalogProductCustomOptionValueRemoveRequestParam catalogProductCustomOptionValueRemoveRequestParam457)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -18260,7 +18276,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    catalogProductCustomOptionValueRemoveRequestParam453,
+                    catalogProductCustomOptionValueRemoveRequestParam457,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "catalogProductCustomOptionValueRemove")),
@@ -18353,10 +18369,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Remove value from custom option
      * @see com.voyageone.common.magento.api.base.MagentoService#startcatalogProductCustomOptionValueRemove
-     * @param catalogProductCustomOptionValueRemoveRequestParam453
+     * @param catalogProductCustomOptionValueRemoveRequestParam457
      */
     public void startcatalogProductCustomOptionValueRemove(
-        magento.CatalogProductCustomOptionValueRemoveRequestParam catalogProductCustomOptionValueRemoveRequestParam453,
+        magento.CatalogProductCustomOptionValueRemoveRequestParam catalogProductCustomOptionValueRemoveRequestParam457,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[63].getName());
@@ -18375,7 +18391,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                catalogProductCustomOptionValueRemoveRequestParam453,
+                catalogProductCustomOptionValueRemoveRequestParam457,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "catalogProductCustomOptionValueRemove")),
@@ -18504,10 +18520,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Move category in tree
      * @see com.voyageone.common.magento.api.base.MagentoService#catalogCategoryMove
-     * @param catalogCategoryMoveRequestParam455
+     * @param catalogCategoryMoveRequestParam459
      */
     public magento.CatalogCategoryMoveResponseParam catalogCategoryMove(
-        magento.CatalogCategoryMoveRequestParam catalogCategoryMoveRequestParam455)
+        magento.CatalogCategoryMoveRequestParam catalogCategoryMoveRequestParam459)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -18529,7 +18545,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    catalogCategoryMoveRequestParam455,
+                    catalogCategoryMoveRequestParam459,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "catalogCategoryMove")),
@@ -18619,10 +18635,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Move category in tree
      * @see com.voyageone.common.magento.api.base.MagentoService#startcatalogCategoryMove
-     * @param catalogCategoryMoveRequestParam455
+     * @param catalogCategoryMoveRequestParam459
      */
     public void startcatalogCategoryMove(
-        magento.CatalogCategoryMoveRequestParam catalogCategoryMoveRequestParam455,
+        magento.CatalogCategoryMoveRequestParam catalogCategoryMoveRequestParam459,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[64].getName());
@@ -18641,7 +18657,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                catalogCategoryMoveRequestParam455,
+                catalogCategoryMoveRequestParam459,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "catalogCategoryMove")),
@@ -18770,10 +18786,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Update category
      * @see com.voyageone.common.magento.api.base.MagentoService#catalogCategoryUpdate
-     * @param catalogCategoryUpdateRequestParam457
+     * @param catalogCategoryUpdateRequestParam461
      */
     public magento.CatalogCategoryUpdateResponseParam catalogCategoryUpdate(
-        magento.CatalogCategoryUpdateRequestParam catalogCategoryUpdateRequestParam457)
+        magento.CatalogCategoryUpdateRequestParam catalogCategoryUpdateRequestParam461)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -18795,7 +18811,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    catalogCategoryUpdateRequestParam457,
+                    catalogCategoryUpdateRequestParam461,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "catalogCategoryUpdate")),
@@ -18885,10 +18901,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Update category
      * @see com.voyageone.common.magento.api.base.MagentoService#startcatalogCategoryUpdate
-     * @param catalogCategoryUpdateRequestParam457
+     * @param catalogCategoryUpdateRequestParam461
      */
     public void startcatalogCategoryUpdate(
-        magento.CatalogCategoryUpdateRequestParam catalogCategoryUpdateRequestParam457,
+        magento.CatalogCategoryUpdateRequestParam catalogCategoryUpdateRequestParam461,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[65].getName());
@@ -18907,7 +18923,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                catalogCategoryUpdateRequestParam457,
+                catalogCategoryUpdateRequestParam461,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "catalogCategoryUpdate")),
@@ -19036,10 +19052,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Remove product attribute set
      * @see com.voyageone.common.magento.api.base.MagentoService#catalogProductAttributeSetRemove
-     * @param catalogProductAttributeSetRemoveRequestParam459
+     * @param catalogProductAttributeSetRemoveRequestParam463
      */
     public magento.CatalogProductAttributeSetRemoveResponseParam catalogProductAttributeSetRemove(
-        magento.CatalogProductAttributeSetRemoveRequestParam catalogProductAttributeSetRemoveRequestParam459)
+        magento.CatalogProductAttributeSetRemoveRequestParam catalogProductAttributeSetRemoveRequestParam463)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -19061,7 +19077,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    catalogProductAttributeSetRemoveRequestParam459,
+                    catalogProductAttributeSetRemoveRequestParam463,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "catalogProductAttributeSetRemove")),
@@ -19154,10 +19170,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Remove product attribute set
      * @see com.voyageone.common.magento.api.base.MagentoService#startcatalogProductAttributeSetRemove
-     * @param catalogProductAttributeSetRemoveRequestParam459
+     * @param catalogProductAttributeSetRemoveRequestParam463
      */
     public void startcatalogProductAttributeSetRemove(
-        magento.CatalogProductAttributeSetRemoveRequestParam catalogProductAttributeSetRemoveRequestParam459,
+        magento.CatalogProductAttributeSetRemoveRequestParam catalogProductAttributeSetRemoveRequestParam463,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[66].getName());
@@ -19176,7 +19192,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                catalogProductAttributeSetRemoveRequestParam459,
+                catalogProductAttributeSetRemoveRequestParam463,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "catalogProductAttributeSetRemove")),
@@ -19305,10 +19321,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Retrieve category attributes
      * @see com.voyageone.common.magento.api.base.MagentoService#catalogCategoryAttributeList
-     * @param catalogCategoryAttributeListRequestParam461
+     * @param catalogCategoryAttributeListRequestParam465
      */
     public magento.CatalogCategoryAttributeListResponseParam catalogCategoryAttributeList(
-        magento.CatalogCategoryAttributeListRequestParam catalogCategoryAttributeListRequestParam461)
+        magento.CatalogCategoryAttributeListRequestParam catalogCategoryAttributeListRequestParam465)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -19330,7 +19346,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    catalogCategoryAttributeListRequestParam461,
+                    catalogCategoryAttributeListRequestParam465,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "catalogCategoryAttributeList")),
@@ -19423,10 +19439,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Retrieve category attributes
      * @see com.voyageone.common.magento.api.base.MagentoService#startcatalogCategoryAttributeList
-     * @param catalogCategoryAttributeListRequestParam461
+     * @param catalogCategoryAttributeListRequestParam465
      */
     public void startcatalogCategoryAttributeList(
-        magento.CatalogCategoryAttributeListRequestParam catalogCategoryAttributeListRequestParam461,
+        magento.CatalogCategoryAttributeListRequestParam catalogCategoryAttributeListRequestParam465,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[67].getName());
@@ -19445,7 +19461,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                catalogCategoryAttributeListRequestParam461,
+                catalogCategoryAttributeListRequestParam465,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "catalogCategoryAttributeList")),
@@ -19574,10 +19590,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Update product(s) quantities in shopping cart
      * @see com.voyageone.common.magento.api.base.MagentoService#shoppingCartProductUpdate
-     * @param shoppingCartProductUpdateRequestParam463
+     * @param shoppingCartProductUpdateRequestParam467
      */
     public magento.ShoppingCartProductUpdateResponseParam shoppingCartProductUpdate(
-        magento.ShoppingCartProductUpdateRequestParam shoppingCartProductUpdateRequestParam463)
+        magento.ShoppingCartProductUpdateRequestParam shoppingCartProductUpdateRequestParam467)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -19599,7 +19615,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    shoppingCartProductUpdateRequestParam463,
+                    shoppingCartProductUpdateRequestParam467,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "shoppingCartProductUpdate")),
@@ -19691,10 +19707,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Update product(s) quantities in shopping cart
      * @see com.voyageone.common.magento.api.base.MagentoService#startshoppingCartProductUpdate
-     * @param shoppingCartProductUpdateRequestParam463
+     * @param shoppingCartProductUpdateRequestParam467
      */
     public void startshoppingCartProductUpdate(
-        magento.ShoppingCartProductUpdateRequestParam shoppingCartProductUpdateRequestParam463,
+        magento.ShoppingCartProductUpdateRequestParam shoppingCartProductUpdateRequestParam467,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[68].getName());
@@ -19713,7 +19729,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                shoppingCartProductUpdateRequestParam463,
+                shoppingCartProductUpdateRequestParam467,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "shoppingCartProductUpdate")),
@@ -19842,10 +19858,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Retrieve customer address data
      * @see com.voyageone.common.magento.api.base.MagentoService#customerAddressInfo
-     * @param customerAddressInfoRequestParam465
+     * @param customerAddressInfoRequestParam469
      */
     public magento.CustomerAddressInfoResponseParam customerAddressInfo(
-        magento.CustomerAddressInfoRequestParam customerAddressInfoRequestParam465)
+        magento.CustomerAddressInfoRequestParam customerAddressInfoRequestParam469)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -19867,7 +19883,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    customerAddressInfoRequestParam465,
+                    customerAddressInfoRequestParam469,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "customerAddressInfo")),
@@ -19957,10 +19973,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Retrieve customer address data
      * @see com.voyageone.common.magento.api.base.MagentoService#startcustomerAddressInfo
-     * @param customerAddressInfoRequestParam465
+     * @param customerAddressInfoRequestParam469
      */
     public void startcustomerAddressInfo(
-        magento.CustomerAddressInfoRequestParam customerAddressInfoRequestParam465,
+        magento.CustomerAddressInfoRequestParam customerAddressInfoRequestParam469,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[69].getName());
@@ -19979,7 +19995,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                customerAddressInfoRequestParam465,
+                customerAddressInfoRequestParam469,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "customerAddressInfo")),
@@ -20108,10 +20124,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Retrieve list of product custom options
      * @see com.voyageone.common.magento.api.base.MagentoService#catalogProductCustomOptionList
-     * @param catalogProductCustomOptionListRequestParam467
+     * @param catalogProductCustomOptionListRequestParam471
      */
     public magento.CatalogProductCustomOptionListResponseParam catalogProductCustomOptionList(
-        magento.CatalogProductCustomOptionListRequestParam catalogProductCustomOptionListRequestParam467)
+        magento.CatalogProductCustomOptionListRequestParam catalogProductCustomOptionListRequestParam471)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -20133,7 +20149,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    catalogProductCustomOptionListRequestParam467,
+                    catalogProductCustomOptionListRequestParam471,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "catalogProductCustomOptionList")),
@@ -20226,10 +20242,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Retrieve list of product custom options
      * @see com.voyageone.common.magento.api.base.MagentoService#startcatalogProductCustomOptionList
-     * @param catalogProductCustomOptionListRequestParam467
+     * @param catalogProductCustomOptionListRequestParam471
      */
     public void startcatalogProductCustomOptionList(
-        magento.CatalogProductCustomOptionListRequestParam catalogProductCustomOptionListRequestParam467,
+        magento.CatalogProductCustomOptionListRequestParam catalogProductCustomOptionListRequestParam471,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[70].getName());
@@ -20248,7 +20264,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                catalogProductCustomOptionListRequestParam467,
+                catalogProductCustomOptionListRequestParam471,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "catalogProductCustomOptionList")),
@@ -20377,10 +20393,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Void invoice
      * @see com.voyageone.common.magento.api.base.MagentoService#salesOrderInvoiceVoid
-     * @param salesOrderInvoiceVoidRequestParam469
+     * @param salesOrderInvoiceVoidRequestParam473
      */
     public magento.SalesOrderInvoiceVoidResponseParam salesOrderInvoiceVoid(
-        magento.SalesOrderInvoiceVoidRequestParam salesOrderInvoiceVoidRequestParam469)
+        magento.SalesOrderInvoiceVoidRequestParam salesOrderInvoiceVoidRequestParam473)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -20402,7 +20418,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    salesOrderInvoiceVoidRequestParam469,
+                    salesOrderInvoiceVoidRequestParam473,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "salesOrderInvoiceVoid")),
@@ -20492,10 +20508,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Void invoice
      * @see com.voyageone.common.magento.api.base.MagentoService#startsalesOrderInvoiceVoid
-     * @param salesOrderInvoiceVoidRequestParam469
+     * @param salesOrderInvoiceVoidRequestParam473
      */
     public void startsalesOrderInvoiceVoid(
-        magento.SalesOrderInvoiceVoidRequestParam salesOrderInvoiceVoidRequestParam469,
+        magento.SalesOrderInvoiceVoidRequestParam salesOrderInvoiceVoidRequestParam473,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[71].getName());
@@ -20514,7 +20530,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                salesOrderInvoiceVoidRequestParam469,
+                salesOrderInvoiceVoidRequestParam473,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "salesOrderInvoiceVoid")),
@@ -20643,10 +20659,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Create product attribute set based on another set
      * @see com.voyageone.common.magento.api.base.MagentoService#catalogProductAttributeSetCreate
-     * @param catalogProductAttributeSetCreateRequestParam471
+     * @param catalogProductAttributeSetCreateRequestParam475
      */
     public magento.CatalogProductAttributeSetCreateResponseParam catalogProductAttributeSetCreate(
-        magento.CatalogProductAttributeSetCreateRequestParam catalogProductAttributeSetCreateRequestParam471)
+        magento.CatalogProductAttributeSetCreateRequestParam catalogProductAttributeSetCreateRequestParam475)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -20668,7 +20684,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    catalogProductAttributeSetCreateRequestParam471,
+                    catalogProductAttributeSetCreateRequestParam475,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "catalogProductAttributeSetCreate")),
@@ -20761,10 +20777,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Create product attribute set based on another set
      * @see com.voyageone.common.magento.api.base.MagentoService#startcatalogProductAttributeSetCreate
-     * @param catalogProductAttributeSetCreateRequestParam471
+     * @param catalogProductAttributeSetCreateRequestParam475
      */
     public void startcatalogProductAttributeSetCreate(
-        magento.CatalogProductAttributeSetCreateRequestParam catalogProductAttributeSetCreateRequestParam471,
+        magento.CatalogProductAttributeSetCreateRequestParam catalogProductAttributeSetCreateRequestParam475,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[72].getName());
@@ -20783,7 +20799,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                catalogProductAttributeSetCreateRequestParam471,
+                catalogProductAttributeSetCreateRequestParam475,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "catalogProductAttributeSetCreate")),
@@ -20912,10 +20928,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Create new category and return its id.
      * @see com.voyageone.common.magento.api.base.MagentoService#catalogCategoryCreate
-     * @param catalogCategoryCreateRequestParam473
+     * @param catalogCategoryCreateRequestParam477
      */
     public magento.CatalogCategoryCreateResponseParam catalogCategoryCreate(
-        magento.CatalogCategoryCreateRequestParam catalogCategoryCreateRequestParam473)
+        magento.CatalogCategoryCreateRequestParam catalogCategoryCreateRequestParam477)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -20937,7 +20953,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    catalogCategoryCreateRequestParam473,
+                    catalogCategoryCreateRequestParam477,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "catalogCategoryCreate")),
@@ -21027,10 +21043,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Create new category and return its id.
      * @see com.voyageone.common.magento.api.base.MagentoService#startcatalogCategoryCreate
-     * @param catalogCategoryCreateRequestParam473
+     * @param catalogCategoryCreateRequestParam477
      */
     public void startcatalogCategoryCreate(
-        magento.CatalogCategoryCreateRequestParam catalogCategoryCreateRequestParam473,
+        magento.CatalogCategoryCreateRequestParam catalogCategoryCreateRequestParam477,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[73].getName());
@@ -21049,7 +21065,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                catalogCategoryCreateRequestParam473,
+                catalogCategoryCreateRequestParam477,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "catalogCategoryCreate")),
@@ -21178,10 +21194,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Retrieve product image data
      * @see com.voyageone.common.magento.api.base.MagentoService#catalogProductAttributeMediaInfo
-     * @param catalogProductAttributeMediaInfoRequestParam475
+     * @param catalogProductAttributeMediaInfoRequestParam479
      */
     public magento.CatalogProductAttributeMediaInfoResponseParam catalogProductAttributeMediaInfo(
-        magento.CatalogProductAttributeMediaInfoRequestParam catalogProductAttributeMediaInfoRequestParam475)
+        magento.CatalogProductAttributeMediaInfoRequestParam catalogProductAttributeMediaInfoRequestParam479)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -21203,7 +21219,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    catalogProductAttributeMediaInfoRequestParam475,
+                    catalogProductAttributeMediaInfoRequestParam479,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "catalogProductAttributeMediaInfo")),
@@ -21296,10 +21312,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Retrieve product image data
      * @see com.voyageone.common.magento.api.base.MagentoService#startcatalogProductAttributeMediaInfo
-     * @param catalogProductAttributeMediaInfoRequestParam475
+     * @param catalogProductAttributeMediaInfoRequestParam479
      */
     public void startcatalogProductAttributeMediaInfo(
-        magento.CatalogProductAttributeMediaInfoRequestParam catalogProductAttributeMediaInfoRequestParam475,
+        magento.CatalogProductAttributeMediaInfoRequestParam catalogProductAttributeMediaInfoRequestParam479,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[74].getName());
@@ -21318,7 +21334,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                catalogProductAttributeMediaInfoRequestParam475,
+                catalogProductAttributeMediaInfoRequestParam479,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "catalogProductAttributeMediaInfo")),
@@ -21447,10 +21463,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Update customer data
      * @see com.voyageone.common.magento.api.base.MagentoService#customerCustomerUpdate
-     * @param customerCustomerUpdateRequestParam477
+     * @param customerCustomerUpdateRequestParam481
      */
     public magento.CustomerCustomerUpdateResponseParam customerCustomerUpdate(
-        magento.CustomerCustomerUpdateRequestParam customerCustomerUpdateRequestParam477)
+        magento.CustomerCustomerUpdateRequestParam customerCustomerUpdateRequestParam481)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -21472,7 +21488,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    customerCustomerUpdateRequestParam477,
+                    customerCustomerUpdateRequestParam481,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "customerCustomerUpdate")),
@@ -21564,10 +21580,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Update customer data
      * @see com.voyageone.common.magento.api.base.MagentoService#startcustomerCustomerUpdate
-     * @param customerCustomerUpdateRequestParam477
+     * @param customerCustomerUpdateRequestParam481
      */
     public void startcustomerCustomerUpdate(
-        magento.CustomerCustomerUpdateRequestParam customerCustomerUpdateRequestParam477,
+        magento.CustomerCustomerUpdateRequestParam customerCustomerUpdateRequestParam481,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[75].getName());
@@ -21586,7 +21602,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                customerCustomerUpdateRequestParam477,
+                customerCustomerUpdateRequestParam481,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "customerCustomerUpdate")),
@@ -21715,10 +21731,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Info about current Magento installation
      * @see com.voyageone.common.magento.api.base.MagentoService#magentoInfo
-     * @param magentoInfoRequestParam479
+     * @param magentoInfoRequestParam483
      */
     public magento.MagentoInfoResponseParam magentoInfo(
-        magento.MagentoInfoRequestParam magentoInfoRequestParam479)
+        magento.MagentoInfoRequestParam magentoInfoRequestParam483)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -21740,7 +21756,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    magentoInfoRequestParam479,
+                    magentoInfoRequestParam483,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "magentoInfo")),
@@ -21829,10 +21845,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Info about current Magento installation
      * @see com.voyageone.common.magento.api.base.MagentoService#startmagentoInfo
-     * @param magentoInfoRequestParam479
+     * @param magentoInfoRequestParam483
      */
     public void startmagentoInfo(
-        magento.MagentoInfoRequestParam magentoInfoRequestParam479,
+        magento.MagentoInfoRequestParam magentoInfoRequestParam483,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[76].getName());
@@ -21851,7 +21867,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                magentoInfoRequestParam479,
+                magentoInfoRequestParam483,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento", "magentoInfo")),
                 new javax.xml.namespace.QName("urn:Magento", "magentoInfo"));
@@ -21977,10 +21993,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Create gift card account
      * @see com.voyageone.common.magento.api.base.MagentoService#giftcardAccountCreate
-     * @param giftcardAccountCreateRequestParam481
+     * @param giftcardAccountCreateRequestParam485
      */
     public magento.GiftcardAccountCreateResponseParam giftcardAccountCreate(
-        magento.GiftcardAccountCreateRequestParam giftcardAccountCreateRequestParam481)
+        magento.GiftcardAccountCreateRequestParam giftcardAccountCreateRequestParam485)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -22002,7 +22018,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    giftcardAccountCreateRequestParam481,
+                    giftcardAccountCreateRequestParam485,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "giftcardAccountCreate")),
@@ -22092,10 +22108,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Create gift card account
      * @see com.voyageone.common.magento.api.base.MagentoService#startgiftcardAccountCreate
-     * @param giftcardAccountCreateRequestParam481
+     * @param giftcardAccountCreateRequestParam485
      */
     public void startgiftcardAccountCreate(
-        magento.GiftcardAccountCreateRequestParam giftcardAccountCreateRequestParam481,
+        magento.GiftcardAccountCreateRequestParam giftcardAccountCreateRequestParam485,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[77].getName());
@@ -22114,7 +22130,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                giftcardAccountCreateRequestParam481,
+                giftcardAccountCreateRequestParam485,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "giftcardAccountCreate")),
@@ -22243,10 +22259,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Create shopping cart
      * @see com.voyageone.common.magento.api.base.MagentoService#shoppingCartCreate
-     * @param shoppingCartCreateRequestParam483
+     * @param shoppingCartCreateRequestParam487
      */
     public magento.ShoppingCartCreateResponseParam shoppingCartCreate(
-        magento.ShoppingCartCreateRequestParam shoppingCartCreateRequestParam483)
+        magento.ShoppingCartCreateRequestParam shoppingCartCreateRequestParam487)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -22268,7 +22284,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    shoppingCartCreateRequestParam483,
+                    shoppingCartCreateRequestParam487,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "shoppingCartCreate")),
@@ -22358,10 +22374,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Create shopping cart
      * @see com.voyageone.common.magento.api.base.MagentoService#startshoppingCartCreate
-     * @param shoppingCartCreateRequestParam483
+     * @param shoppingCartCreateRequestParam487
      */
     public void startshoppingCartCreate(
-        magento.ShoppingCartCreateRequestParam shoppingCartCreateRequestParam483,
+        magento.ShoppingCartCreateRequestParam shoppingCartCreateRequestParam487,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[78].getName());
@@ -22380,7 +22396,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                shoppingCartCreateRequestParam483,
+                shoppingCartCreateRequestParam487,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "shoppingCartCreate")),
@@ -22509,10 +22525,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Set a gift message to the cart
      * @see com.voyageone.common.magento.api.base.MagentoService#giftMessageSetForQuote
-     * @param giftMessageForQuoteRequestParam485
+     * @param giftMessageForQuoteRequestParam489
      */
     public magento.GiftMessageForQuoteResponseParam giftMessageSetForQuote(
-        magento.GiftMessageForQuoteRequestParam giftMessageForQuoteRequestParam485)
+        magento.GiftMessageForQuoteRequestParam giftMessageForQuoteRequestParam489)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -22534,7 +22550,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    giftMessageForQuoteRequestParam485,
+                    giftMessageForQuoteRequestParam489,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "giftMessageSetForQuote")),
@@ -22626,10 +22642,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Set a gift message to the cart
      * @see com.voyageone.common.magento.api.base.MagentoService#startgiftMessageSetForQuote
-     * @param giftMessageForQuoteRequestParam485
+     * @param giftMessageForQuoteRequestParam489
      */
     public void startgiftMessageSetForQuote(
-        magento.GiftMessageForQuoteRequestParam giftMessageForQuoteRequestParam485,
+        magento.GiftMessageForQuoteRequestParam giftMessageForQuoteRequestParam489,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[79].getName());
@@ -22648,7 +22664,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                giftMessageForQuoteRequestParam485,
+                giftMessageForQuoteRequestParam489,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "giftMessageSetForQuote")),
@@ -22777,10 +22793,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Send shipment info
      * @see com.voyageone.common.magento.api.base.MagentoService#salesOrderShipmentSendInfo
-     * @param salesOrderShipmentSendInfoRequestParam487
+     * @param salesOrderShipmentSendInfoRequestParam491
      */
     public magento.SalesOrderShipmentSendInfoResponseParam salesOrderShipmentSendInfo(
-        magento.SalesOrderShipmentSendInfoRequestParam salesOrderShipmentSendInfoRequestParam487)
+        magento.SalesOrderShipmentSendInfoRequestParam salesOrderShipmentSendInfoRequestParam491)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -22802,7 +22818,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    salesOrderShipmentSendInfoRequestParam487,
+                    salesOrderShipmentSendInfoRequestParam491,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "salesOrderShipmentSendInfo")),
@@ -22895,10 +22911,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Send shipment info
      * @see com.voyageone.common.magento.api.base.MagentoService#startsalesOrderShipmentSendInfo
-     * @param salesOrderShipmentSendInfoRequestParam487
+     * @param salesOrderShipmentSendInfoRequestParam491
      */
     public void startsalesOrderShipmentSendInfo(
-        magento.SalesOrderShipmentSendInfoRequestParam salesOrderShipmentSendInfoRequestParam487,
+        magento.SalesOrderShipmentSendInfoRequestParam salesOrderShipmentSendInfoRequestParam491,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[80].getName());
@@ -22917,7 +22933,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                salesOrderShipmentSendInfoRequestParam487,
+                salesOrderShipmentSendInfoRequestParam491,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "salesOrderShipmentSendInfo")),
@@ -23046,10 +23062,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Add attribute into attribute set
      * @see com.voyageone.common.magento.api.base.MagentoService#catalogProductAttributeSetAttributeAdd
-     * @param catalogProductAttributeSetAttributeAddRequestParam489
+     * @param catalogProductAttributeSetAttributeAddRequestParam493
      */
     public magento.CatalogProductAttributeSetAttributeAddResponseParam catalogProductAttributeSetAttributeAdd(
-        magento.CatalogProductAttributeSetAttributeAddRequestParam catalogProductAttributeSetAttributeAddRequestParam489)
+        magento.CatalogProductAttributeSetAttributeAddRequestParam catalogProductAttributeSetAttributeAddRequestParam493)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -23071,7 +23087,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    catalogProductAttributeSetAttributeAddRequestParam489,
+                    catalogProductAttributeSetAttributeAddRequestParam493,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "catalogProductAttributeSetAttributeAdd")),
@@ -23164,10 +23180,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Add attribute into attribute set
      * @see com.voyageone.common.magento.api.base.MagentoService#startcatalogProductAttributeSetAttributeAdd
-     * @param catalogProductAttributeSetAttributeAddRequestParam489
+     * @param catalogProductAttributeSetAttributeAddRequestParam493
      */
     public void startcatalogProductAttributeSetAttributeAdd(
-        magento.CatalogProductAttributeSetAttributeAddRequestParam catalogProductAttributeSetAttributeAddRequestParam489,
+        magento.CatalogProductAttributeSetAttributeAddRequestParam catalogProductAttributeSetAttributeAddRequestParam493,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[81].getName());
@@ -23186,7 +23202,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                catalogProductAttributeSetAttributeAddRequestParam489,
+                catalogProductAttributeSetAttributeAddRequestParam493,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "catalogProductAttributeSetAttributeAdd")),
@@ -23315,10 +23331,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Remove product(s) from shopping cart
      * @see com.voyageone.common.magento.api.base.MagentoService#shoppingCartProductRemove
-     * @param shoppingCartProductRemoveRequestParam491
+     * @param shoppingCartProductRemoveRequestParam495
      */
     public magento.ShoppingCartProductRemoveResponseParam shoppingCartProductRemove(
-        magento.ShoppingCartProductRemoveRequestParam shoppingCartProductRemoveRequestParam491)
+        magento.ShoppingCartProductRemoveRequestParam shoppingCartProductRemoveRequestParam495)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -23340,7 +23356,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    shoppingCartProductRemoveRequestParam491,
+                    shoppingCartProductRemoveRequestParam495,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "shoppingCartProductRemove")),
@@ -23432,10 +23448,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Remove product(s) from shopping cart
      * @see com.voyageone.common.magento.api.base.MagentoService#startshoppingCartProductRemove
-     * @param shoppingCartProductRemoveRequestParam491
+     * @param shoppingCartProductRemoveRequestParam495
      */
     public void startshoppingCartProductRemove(
-        magento.ShoppingCartProductRemoveRequestParam shoppingCartProductRemoveRequestParam491,
+        magento.ShoppingCartProductRemoveRequestParam shoppingCartProductRemoveRequestParam495,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[82].getName());
@@ -23454,7 +23470,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                shoppingCartProductRemoveRequestParam491,
+                shoppingCartProductRemoveRequestParam495,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "shoppingCartProductRemove")),
@@ -23583,9 +23599,9 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Login user and retrive session id
      * @see com.voyageone.common.magento.api.base.MagentoService#login
-     * @param loginParam493
+     * @param loginParam497
      */
-    public magento.LoginResponseParam login(magento.LoginParam loginParam493)
+    public magento.LoginResponseParam login(magento.LoginParam loginParam497)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -23607,7 +23623,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    loginParam493,
+                    loginParam497,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento", "login")),
                     new javax.xml.namespace.QName("urn:Magento", "login"));
@@ -23695,9 +23711,9 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Login user and retrive session id
      * @see com.voyageone.common.magento.api.base.MagentoService#startlogin
-     * @param loginParam493
+     * @param loginParam497
      */
-    public void startlogin(magento.LoginParam loginParam493,
+    public void startlogin(magento.LoginParam loginParam497,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[83].getName());
@@ -23716,7 +23732,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                loginParam493,
+                loginParam497,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento", "login")),
                 new javax.xml.namespace.QName("urn:Magento", "login"));
@@ -23840,10 +23856,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Add new custom option into product
      * @see com.voyageone.common.magento.api.base.MagentoService#catalogProductCustomOptionAdd
-     * @param catalogProductCustomOptionAddRequestParam495
+     * @param catalogProductCustomOptionAddRequestParam499
      */
     public magento.CatalogProductCustomOptionAddResponseParam catalogProductCustomOptionAdd(
-        magento.CatalogProductCustomOptionAddRequestParam catalogProductCustomOptionAddRequestParam495)
+        magento.CatalogProductCustomOptionAddRequestParam catalogProductCustomOptionAddRequestParam499)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -23865,7 +23881,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    catalogProductCustomOptionAddRequestParam495,
+                    catalogProductCustomOptionAddRequestParam499,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "catalogProductCustomOptionAdd")),
@@ -23958,10 +23974,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Add new custom option into product
      * @see com.voyageone.common.magento.api.base.MagentoService#startcatalogProductCustomOptionAdd
-     * @param catalogProductCustomOptionAddRequestParam495
+     * @param catalogProductCustomOptionAddRequestParam499
      */
     public void startcatalogProductCustomOptionAdd(
-        magento.CatalogProductCustomOptionAddRequestParam catalogProductCustomOptionAddRequestParam495,
+        magento.CatalogProductCustomOptionAddRequestParam catalogProductCustomOptionAddRequestParam499,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[84].getName());
@@ -23980,7 +23996,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                catalogProductCustomOptionAddRequestParam495,
+                catalogProductCustomOptionAddRequestParam499,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "catalogProductCustomOptionAdd")),
@@ -24109,10 +24125,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Retrieve attribute options
      * @see com.voyageone.common.magento.api.base.MagentoService#catalogCategoryAttributeOptions
-     * @param catalogCategoryAttributeOptionsRequestParam497
+     * @param catalogCategoryAttributeOptionsRequestParam501
      */
     public magento.CatalogCategoryAttributeOptionsResponseParam catalogCategoryAttributeOptions(
-        magento.CatalogCategoryAttributeOptionsRequestParam catalogCategoryAttributeOptionsRequestParam497)
+        magento.CatalogCategoryAttributeOptionsRequestParam catalogCategoryAttributeOptionsRequestParam501)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -24134,7 +24150,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    catalogCategoryAttributeOptionsRequestParam497,
+                    catalogCategoryAttributeOptionsRequestParam501,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "catalogCategoryAttributeOptions")),
@@ -24227,10 +24243,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Retrieve attribute options
      * @see com.voyageone.common.magento.api.base.MagentoService#startcatalogCategoryAttributeOptions
-     * @param catalogCategoryAttributeOptionsRequestParam497
+     * @param catalogCategoryAttributeOptionsRequestParam501
      */
     public void startcatalogCategoryAttributeOptions(
-        magento.CatalogCategoryAttributeOptionsRequestParam catalogCategoryAttributeOptionsRequestParam497,
+        magento.CatalogCategoryAttributeOptionsRequestParam catalogCategoryAttributeOptionsRequestParam501,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[85].getName());
@@ -24249,7 +24265,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                catalogCategoryAttributeOptionsRequestParam497,
+                catalogCategoryAttributeOptionsRequestParam501,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "catalogCategoryAttributeOptions")),
@@ -24378,10 +24394,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Retrieve creditmemo information
      * @see com.voyageone.common.magento.api.base.MagentoService#salesOrderCreditmemoInfo
-     * @param salesOrderCreditmemoInfoRequestParam499
+     * @param salesOrderCreditmemoInfoRequestParam503
      */
     public magento.SalesOrderCreditmemoInfoResponseParam salesOrderCreditmemoInfo(
-        magento.SalesOrderCreditmemoInfoRequestParam salesOrderCreditmemoInfoRequestParam499)
+        magento.SalesOrderCreditmemoInfoRequestParam salesOrderCreditmemoInfoRequestParam503)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -24403,7 +24419,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    salesOrderCreditmemoInfoRequestParam499,
+                    salesOrderCreditmemoInfoRequestParam503,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "salesOrderCreditmemoInfo")),
@@ -24495,10 +24511,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Retrieve creditmemo information
      * @see com.voyageone.common.magento.api.base.MagentoService#startsalesOrderCreditmemoInfo
-     * @param salesOrderCreditmemoInfoRequestParam499
+     * @param salesOrderCreditmemoInfoRequestParam503
      */
     public void startsalesOrderCreditmemoInfo(
-        magento.SalesOrderCreditmemoInfoRequestParam salesOrderCreditmemoInfoRequestParam499,
+        magento.SalesOrderCreditmemoInfoRequestParam salesOrderCreditmemoInfoRequestParam503,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[86].getName());
@@ -24517,7 +24533,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                salesOrderCreditmemoInfoRequestParam499,
+                salesOrderCreditmemoInfoRequestParam503,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "salesOrderCreditmemoInfo")),
@@ -24646,10 +24662,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Retrieve customer data
      * @see com.voyageone.common.magento.api.base.MagentoService#customerCustomerInfo
-     * @param customerCustomerInfoRequestParam501
+     * @param customerCustomerInfoRequestParam505
      */
     public magento.CustomerCustomerInfoResponseParam customerCustomerInfo(
-        magento.CustomerCustomerInfoRequestParam customerCustomerInfoRequestParam501)
+        magento.CustomerCustomerInfoRequestParam customerCustomerInfoRequestParam505)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -24671,7 +24687,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    customerCustomerInfoRequestParam501,
+                    customerCustomerInfoRequestParam505,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "customerCustomerInfo")),
@@ -24761,10 +24777,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Retrieve customer data
      * @see com.voyageone.common.magento.api.base.MagentoService#startcustomerCustomerInfo
-     * @param customerCustomerInfoRequestParam501
+     * @param customerCustomerInfoRequestParam505
      */
     public void startcustomerCustomerInfo(
-        magento.CustomerCustomerInfoRequestParam customerCustomerInfoRequestParam501,
+        magento.CustomerCustomerInfoRequestParam customerCustomerInfoRequestParam505,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[87].getName());
@@ -24783,7 +24799,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                customerCustomerInfoRequestParam501,
+                customerCustomerInfoRequestParam505,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "customerCustomerInfo")),
@@ -24912,10 +24928,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Create new creditmemo for order
      * @see com.voyageone.common.magento.api.base.MagentoService#salesOrderCreditmemoCreate
-     * @param salesOrderCreditmemoCreateRequestParam503
+     * @param salesOrderCreditmemoCreateRequestParam507
      */
     public magento.SalesOrderCreditmemoCreateResponseParam salesOrderCreditmemoCreate(
-        magento.SalesOrderCreditmemoCreateRequestParam salesOrderCreditmemoCreateRequestParam503)
+        magento.SalesOrderCreditmemoCreateRequestParam salesOrderCreditmemoCreateRequestParam507)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -24937,7 +24953,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    salesOrderCreditmemoCreateRequestParam503,
+                    salesOrderCreditmemoCreateRequestParam507,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "salesOrderCreditmemoCreate")),
@@ -25030,10 +25046,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Create new creditmemo for order
      * @see com.voyageone.common.magento.api.base.MagentoService#startsalesOrderCreditmemoCreate
-     * @param salesOrderCreditmemoCreateRequestParam503
+     * @param salesOrderCreditmemoCreateRequestParam507
      */
     public void startsalesOrderCreditmemoCreate(
-        magento.SalesOrderCreditmemoCreateRequestParam salesOrderCreditmemoCreateRequestParam503,
+        magento.SalesOrderCreditmemoCreateRequestParam salesOrderCreditmemoCreateRequestParam507,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[88].getName());
@@ -25052,7 +25068,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                salesOrderCreditmemoCreateRequestParam503,
+                salesOrderCreditmemoCreateRequestParam507,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "salesOrderCreditmemoCreate")),
@@ -25181,10 +25197,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Cancel order
      * @see com.voyageone.common.magento.api.base.MagentoService#salesOrderCancel
-     * @param salesOrderCancelRequestParam505
+     * @param salesOrderCancelRequestParam509
      */
     public magento.SalesOrderCancelResponseParam salesOrderCancel(
-        magento.SalesOrderCancelRequestParam salesOrderCancelRequestParam505)
+        magento.SalesOrderCancelRequestParam salesOrderCancelRequestParam509)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -25206,7 +25222,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    salesOrderCancelRequestParam505,
+                    salesOrderCancelRequestParam509,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "salesOrderCancel")),
@@ -25296,10 +25312,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Cancel order
      * @see com.voyageone.common.magento.api.base.MagentoService#startsalesOrderCancel
-     * @param salesOrderCancelRequestParam505
+     * @param salesOrderCancelRequestParam509
      */
     public void startsalesOrderCancel(
-        magento.SalesOrderCancelRequestParam salesOrderCancelRequestParam505,
+        magento.SalesOrderCancelRequestParam salesOrderCancelRequestParam509,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[89].getName());
@@ -25318,7 +25334,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                salesOrderCancelRequestParam505,
+                salesOrderCancelRequestParam509,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "salesOrderCancel")),
@@ -25446,10 +25462,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Remove coupon code from shopping cart
      * @see com.voyageone.common.magento.api.base.MagentoService#shoppingCartCouponRemove
-     * @param shoppingCartCouponRemoveRequestParam507
+     * @param shoppingCartCouponRemoveRequestParam511
      */
     public magento.ShoppingCartCouponRemoveResponseParam shoppingCartCouponRemove(
-        magento.ShoppingCartCouponRemoveRequestParam shoppingCartCouponRemoveRequestParam507)
+        magento.ShoppingCartCouponRemoveRequestParam shoppingCartCouponRemoveRequestParam511)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -25471,7 +25487,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    shoppingCartCouponRemoveRequestParam507,
+                    shoppingCartCouponRemoveRequestParam511,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "shoppingCartCouponRemove")),
@@ -25563,10 +25579,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Remove coupon code from shopping cart
      * @see com.voyageone.common.magento.api.base.MagentoService#startshoppingCartCouponRemove
-     * @param shoppingCartCouponRemoveRequestParam507
+     * @param shoppingCartCouponRemoveRequestParam511
      */
     public void startshoppingCartCouponRemove(
-        magento.ShoppingCartCouponRemoveRequestParam shoppingCartCouponRemoveRequestParam507,
+        magento.ShoppingCartCouponRemoveRequestParam shoppingCartCouponRemoveRequestParam511,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[90].getName());
@@ -25585,7 +25601,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                shoppingCartCouponRemoveRequestParam507,
+                shoppingCartCouponRemoveRequestParam511,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "shoppingCartCouponRemove")),
@@ -25714,10 +25730,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Set shipping method
      * @see com.voyageone.common.magento.api.base.MagentoService#shoppingCartShippingMethod
-     * @param shoppingCartShippingMethodRequestParam509
+     * @param shoppingCartShippingMethodRequestParam513
      */
     public magento.ShoppingCartShippingMethodResponseParam shoppingCartShippingMethod(
-        magento.ShoppingCartShippingMethodRequestParam shoppingCartShippingMethodRequestParam509)
+        magento.ShoppingCartShippingMethodRequestParam shoppingCartShippingMethodRequestParam513)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -25739,7 +25755,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    shoppingCartShippingMethodRequestParam509,
+                    shoppingCartShippingMethodRequestParam513,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "shoppingCartShippingMethod")),
@@ -25832,10 +25848,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Set shipping method
      * @see com.voyageone.common.magento.api.base.MagentoService#startshoppingCartShippingMethod
-     * @param shoppingCartShippingMethodRequestParam509
+     * @param shoppingCartShippingMethodRequestParam513
      */
     public void startshoppingCartShippingMethod(
-        magento.ShoppingCartShippingMethodRequestParam shoppingCartShippingMethodRequestParam509,
+        magento.ShoppingCartShippingMethodRequestParam shoppingCartShippingMethodRequestParam513,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[91].getName());
@@ -25854,7 +25870,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                shoppingCartShippingMethodRequestParam509,
+                shoppingCartShippingMethodRequestParam513,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "shoppingCartShippingMethod")),
@@ -25983,10 +25999,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Remove amount from shopping cart (quote) and increase customer store credit
      * @see com.voyageone.common.magento.api.base.MagentoService#shoppingCartCustomerbalanceRemoveAmount
-     * @param shoppingCartCustomerbalanceRemoveAmountRequestParam511
+     * @param shoppingCartCustomerbalanceRemoveAmountRequestParam515
      */
     public magento.ShoppingCartCustomerbalanceRemoveAmountResponseParam shoppingCartCustomerbalanceRemoveAmount(
-        magento.ShoppingCartCustomerbalanceRemoveAmountRequestParam shoppingCartCustomerbalanceRemoveAmountRequestParam511)
+        magento.ShoppingCartCustomerbalanceRemoveAmountRequestParam shoppingCartCustomerbalanceRemoveAmountRequestParam515)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -26008,7 +26024,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    shoppingCartCustomerbalanceRemoveAmountRequestParam511,
+                    shoppingCartCustomerbalanceRemoveAmountRequestParam515,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "shoppingCartCustomerbalanceRemoveAmount")),
@@ -26101,10 +26117,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Remove amount from shopping cart (quote) and increase customer store credit
      * @see com.voyageone.common.magento.api.base.MagentoService#startshoppingCartCustomerbalanceRemoveAmount
-     * @param shoppingCartCustomerbalanceRemoveAmountRequestParam511
+     * @param shoppingCartCustomerbalanceRemoveAmountRequestParam515
      */
     public void startshoppingCartCustomerbalanceRemoveAmount(
-        magento.ShoppingCartCustomerbalanceRemoveAmountRequestParam shoppingCartCustomerbalanceRemoveAmountRequestParam511,
+        magento.ShoppingCartCustomerbalanceRemoveAmountRequestParam shoppingCartCustomerbalanceRemoveAmountRequestParam515,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[92].getName());
@@ -26123,7 +26139,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                shoppingCartCustomerbalanceRemoveAmountRequestParam511,
+                shoppingCartCustomerbalanceRemoveAmountRequestParam515,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "shoppingCartCustomerbalanceRemoveAmount")),
@@ -26252,10 +26268,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Add new tracking number
      * @see com.voyageone.common.magento.api.base.MagentoService#salesOrderShipmentAddTrack
-     * @param salesOrderShipmentAddTrackRequestParam513
+     * @param salesOrderShipmentAddTrackRequestParam517
      */
     public magento.SalesOrderShipmentAddTrackResponseParam salesOrderShipmentAddTrack(
-        magento.SalesOrderShipmentAddTrackRequestParam salesOrderShipmentAddTrackRequestParam513)
+        magento.SalesOrderShipmentAddTrackRequestParam salesOrderShipmentAddTrackRequestParam517)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -26277,7 +26293,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    salesOrderShipmentAddTrackRequestParam513,
+                    salesOrderShipmentAddTrackRequestParam517,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "salesOrderShipmentAddTrack")),
@@ -26370,10 +26386,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Add new tracking number
      * @see com.voyageone.common.magento.api.base.MagentoService#startsalesOrderShipmentAddTrack
-     * @param salesOrderShipmentAddTrackRequestParam513
+     * @param salesOrderShipmentAddTrackRequestParam517
      */
     public void startsalesOrderShipmentAddTrack(
-        magento.SalesOrderShipmentAddTrackRequestParam salesOrderShipmentAddTrackRequestParam513,
+        magento.SalesOrderShipmentAddTrackRequestParam salesOrderShipmentAddTrackRequestParam517,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[93].getName());
@@ -26392,7 +26408,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                salesOrderShipmentAddTrackRequestParam513,
+                salesOrderShipmentAddTrackRequestParam517,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "salesOrderShipmentAddTrack")),
@@ -26521,10 +26537,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Update product tag
      * @see com.voyageone.common.magento.api.base.MagentoService#catalogProductTagUpdate
-     * @param catalogProductTagUpdateRequestParam515
+     * @param catalogProductTagUpdateRequestParam519
      */
     public magento.CatalogProductTagUpdateResponseParam catalogProductTagUpdate(
-        magento.CatalogProductTagUpdateRequestParam catalogProductTagUpdateRequestParam515)
+        magento.CatalogProductTagUpdateRequestParam catalogProductTagUpdateRequestParam519)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -26546,7 +26562,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    catalogProductTagUpdateRequestParam515,
+                    catalogProductTagUpdateRequestParam519,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "catalogProductTagUpdate")),
@@ -26638,10 +26654,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Update product tag
      * @see com.voyageone.common.magento.api.base.MagentoService#startcatalogProductTagUpdate
-     * @param catalogProductTagUpdateRequestParam515
+     * @param catalogProductTagUpdateRequestParam519
      */
     public void startcatalogProductTagUpdate(
-        magento.CatalogProductTagUpdateRequestParam catalogProductTagUpdateRequestParam515,
+        magento.CatalogProductTagUpdateRequestParam catalogProductTagUpdateRequestParam519,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[94].getName());
@@ -26660,7 +26676,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                catalogProductTagUpdateRequestParam515,
+                catalogProductTagUpdateRequestParam519,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "catalogProductTagUpdate")),
@@ -26789,10 +26805,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Add links to downloadable product
      * @see com.voyageone.common.magento.api.base.MagentoService#catalogProductDownloadableLinkAdd
-     * @param catalogProductDownloadableLinkAddRequestParam517
+     * @param catalogProductDownloadableLinkAddRequestParam521
      */
     public magento.CatalogProductDownloadableLinkAddResponseParam catalogProductDownloadableLinkAdd(
-        magento.CatalogProductDownloadableLinkAddRequestParam catalogProductDownloadableLinkAddRequestParam517)
+        magento.CatalogProductDownloadableLinkAddRequestParam catalogProductDownloadableLinkAddRequestParam521)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
@@ -26814,7 +26830,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    catalogProductDownloadableLinkAddRequestParam517,
+                    catalogProductDownloadableLinkAddRequestParam521,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "catalogProductDownloadableLinkAdd")),
@@ -26907,10 +26923,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Add links to downloadable product
      * @see com.voyageone.common.magento.api.base.MagentoService#startcatalogProductDownloadableLinkAdd
-     * @param catalogProductDownloadableLinkAddRequestParam517
+     * @param catalogProductDownloadableLinkAddRequestParam521
      */
     public void startcatalogProductDownloadableLinkAdd(
-        magento.CatalogProductDownloadableLinkAddRequestParam catalogProductDownloadableLinkAddRequestParam517,
+        magento.CatalogProductDownloadableLinkAddRequestParam catalogProductDownloadableLinkAddRequestParam521,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
         org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[95].getName());
@@ -26929,7 +26945,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                catalogProductDownloadableLinkAddRequestParam517,
+                catalogProductDownloadableLinkAddRequestParam521,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "catalogProductDownloadableLinkAdd")),
@@ -27056,17 +27072,285 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
     /**
      * Auto generated method signature
-     * List of resource faults
-     * @see com.voyageone.common.magento.api.base.MagentoService#resourceFaults
-     * @param resourceFaultsParam519
+     * Set external id
+     * @see com.voyageone.common.magento.api.base.MagentoService#shoppingCartExternalId
+     * @param shoppingCartExternalIdRequestParam523
      */
-    public magento.ResourceFaultsResponseParam resourceFaults(
-        magento.ResourceFaultsParam resourceFaultsParam519)
+    public magento.ShoppingCartExternalIdResponseParam shoppingCartExternalId(
+        magento.ShoppingCartExternalIdRequestParam shoppingCartExternalIdRequestParam523)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
         try {
             org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[96].getName());
+            _operationClient.getOptions()
+                            .setAction("urn:Magento:PortType:shoppingCartExternalIdRequest");
+            _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
+
+            addPropertyToOperationClient(_operationClient,
+                org.apache.axis2.description.WSDL2Constants.ATTR_WHTTP_QUERY_PARAMETER_SEPARATOR,
+                "&");
+
+            // create a message context
+            _messageContext = new org.apache.axis2.context.MessageContext();
+
+            // create SOAP envelope with that payload
+            org.apache.axiom.soap.SOAPEnvelope env = null;
+
+            env = toEnvelope(getFactory(_operationClient.getOptions()
+                                                        .getSoapVersionURI()),
+                    shoppingCartExternalIdRequestParam523,
+                    optimizeContent(
+                        new javax.xml.namespace.QName("urn:Magento",
+                            "shoppingCartExternalId")),
+                    new javax.xml.namespace.QName("urn:Magento",
+                        "shoppingCartExternalId"));
+
+            //adding SOAP soap_headers
+            _serviceClient.addHeadersToEnvelope(env);
+            // set the message context with that soap envelope
+            _messageContext.setEnvelope(env);
+
+            // add the message contxt to the operation client
+            _operationClient.addMessageContext(_messageContext);
+
+            //execute the operation client
+            _operationClient.execute(true);
+
+            org.apache.axis2.context.MessageContext _returnMessageContext = _operationClient.getMessageContext(org.apache.axis2.wsdl.WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+            org.apache.axiom.soap.SOAPEnvelope _returnEnv = _returnMessageContext.getEnvelope();
+
+            java.lang.Object object = fromOM(_returnEnv.getBody()
+                                                       .getFirstElement(),
+                    magento.ShoppingCartExternalIdResponseParam.class,
+                    getEnvelopeNamespaces(_returnEnv));
+
+            return (magento.ShoppingCartExternalIdResponseParam) object;
+        } catch (org.apache.axis2.AxisFault f) {
+            org.apache.axiom.om.OMElement faultElt = f.getDetail();
+
+            if (faultElt != null) {
+                if (faultExceptionNameMap.containsKey(
+                            new org.apache.axis2.client.FaultMapKey(
+                                faultElt.getQName(), "shoppingCartExternalId"))) {
+                    //make the fault by reflection
+                    try {
+                        java.lang.String exceptionClassName = (java.lang.String) faultExceptionClassNameMap.get(new org.apache.axis2.client.FaultMapKey(
+                                    faultElt.getQName(),
+                                    "shoppingCartExternalId"));
+                        java.lang.Class exceptionClass = java.lang.Class.forName(exceptionClassName);
+                        java.lang.reflect.Constructor constructor = exceptionClass.getConstructor(java.lang.String.class);
+                        java.lang.Exception ex = (java.lang.Exception) constructor.newInstance(f.getMessage());
+
+                        //message class
+                        java.lang.String messageClassName = (java.lang.String) faultMessageMap.get(new org.apache.axis2.client.FaultMapKey(
+                                    faultElt.getQName(),
+                                    "shoppingCartExternalId"));
+                        java.lang.Class messageClass = java.lang.Class.forName(messageClassName);
+                        java.lang.Object messageObject = fromOM(faultElt,
+                                messageClass, null);
+                        java.lang.reflect.Method m = exceptionClass.getMethod("setFaultMessage",
+                                new java.lang.Class[] { messageClass });
+                        m.invoke(ex, new java.lang.Object[] { messageObject });
+
+                        throw new java.rmi.RemoteException(ex.getMessage(), ex);
+                    } catch (java.lang.ClassCastException e) {
+                        // we cannot intantiate the class - throw the original Axis fault
+                        throw f;
+                    } catch (java.lang.ClassNotFoundException e) {
+                        // we cannot intantiate the class - throw the original Axis fault
+                        throw f;
+                    } catch (java.lang.NoSuchMethodException e) {
+                        // we cannot intantiate the class - throw the original Axis fault
+                        throw f;
+                    } catch (java.lang.reflect.InvocationTargetException e) {
+                        // we cannot intantiate the class - throw the original Axis fault
+                        throw f;
+                    } catch (java.lang.IllegalAccessException e) {
+                        // we cannot intantiate the class - throw the original Axis fault
+                        throw f;
+                    } catch (java.lang.InstantiationException e) {
+                        // we cannot intantiate the class - throw the original Axis fault
+                        throw f;
+                    }
+                } else {
+                    throw f;
+                }
+            } else {
+                throw f;
+            }
+        } finally {
+            if (_messageContext.getTransportOut() != null) {
+                _messageContext.getTransportOut().getSender()
+                               .cleanup(_messageContext);
+            }
+        }
+    }
+
+    /**
+     * Auto generated method signature for Asynchronous Invocations
+     * Set external id
+     * @see com.voyageone.common.magento.api.base.MagentoService#startshoppingCartExternalId
+     * @param shoppingCartExternalIdRequestParam523
+     */
+    public void startshoppingCartExternalId(
+        magento.ShoppingCartExternalIdRequestParam shoppingCartExternalIdRequestParam523,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
+        throws java.rmi.RemoteException {
+        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[96].getName());
+        _operationClient.getOptions()
+                        .setAction("urn:Magento:PortType:shoppingCartExternalIdRequest");
+        _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
+
+        addPropertyToOperationClient(_operationClient,
+            org.apache.axis2.description.WSDL2Constants.ATTR_WHTTP_QUERY_PARAMETER_SEPARATOR,
+            "&");
+
+        // create SOAP envelope with that payload
+        org.apache.axiom.soap.SOAPEnvelope env = null;
+        final org.apache.axis2.context.MessageContext _messageContext = new org.apache.axis2.context.MessageContext();
+
+        //Style is Doc.
+        env = toEnvelope(getFactory(_operationClient.getOptions()
+                                                    .getSoapVersionURI()),
+                shoppingCartExternalIdRequestParam523,
+                optimizeContent(
+                    new javax.xml.namespace.QName("urn:Magento",
+                        "shoppingCartExternalId")),
+                new javax.xml.namespace.QName("urn:Magento",
+                    "shoppingCartExternalId"));
+
+        // adding SOAP soap_headers
+        _serviceClient.addHeadersToEnvelope(env);
+        // create message context with that soap envelope
+        _messageContext.setEnvelope(env);
+
+        // add the message context to the operation client
+        _operationClient.addMessageContext(_messageContext);
+
+        _operationClient.setCallback(new org.apache.axis2.client.async.AxisCallback() {
+                public void onMessage(
+                    org.apache.axis2.context.MessageContext resultContext) {
+                    try {
+                        org.apache.axiom.soap.SOAPEnvelope resultEnv = resultContext.getEnvelope();
+
+                        java.lang.Object object = fromOM(resultEnv.getBody()
+                                                                  .getFirstElement(),
+                                magento.ShoppingCartExternalIdResponseParam.class,
+                                getEnvelopeNamespaces(resultEnv));
+                        callback.receiveResultshoppingCartExternalId((magento.ShoppingCartExternalIdResponseParam) object);
+                    } catch (org.apache.axis2.AxisFault e) {
+                        callback.receiveErrorshoppingCartExternalId(e);
+                    }
+                }
+
+                public void onError(java.lang.Exception error) {
+                    if (error instanceof org.apache.axis2.AxisFault) {
+                        org.apache.axis2.AxisFault f = (org.apache.axis2.AxisFault) error;
+                        org.apache.axiom.om.OMElement faultElt = f.getDetail();
+
+                        if (faultElt != null) {
+                            if (faultExceptionNameMap.containsKey(
+                                        new org.apache.axis2.client.FaultMapKey(
+                                            faultElt.getQName(),
+                                            "shoppingCartExternalId"))) {
+                                //make the fault by reflection
+                                try {
+                                    java.lang.String exceptionClassName = (java.lang.String) faultExceptionClassNameMap.get(new org.apache.axis2.client.FaultMapKey(
+                                                faultElt.getQName(),
+                                                "shoppingCartExternalId"));
+                                    java.lang.Class exceptionClass = java.lang.Class.forName(exceptionClassName);
+                                    java.lang.reflect.Constructor constructor = exceptionClass.getConstructor(java.lang.String.class);
+                                    java.lang.Exception ex = (java.lang.Exception) constructor.newInstance(f.getMessage());
+
+                                    //message class
+                                    java.lang.String messageClassName = (java.lang.String) faultMessageMap.get(new org.apache.axis2.client.FaultMapKey(
+                                                faultElt.getQName(),
+                                                "shoppingCartExternalId"));
+                                    java.lang.Class messageClass = java.lang.Class.forName(messageClassName);
+                                    java.lang.Object messageObject = fromOM(faultElt,
+                                            messageClass, null);
+                                    java.lang.reflect.Method m = exceptionClass.getMethod("setFaultMessage",
+                                            new java.lang.Class[] { messageClass });
+                                    m.invoke(ex,
+                                        new java.lang.Object[] { messageObject });
+
+                                    callback.receiveErrorshoppingCartExternalId(new java.rmi.RemoteException(
+                                            ex.getMessage(), ex));
+                                } catch (java.lang.ClassCastException e) {
+                                    // we cannot intantiate the class - throw the original Axis fault
+                                    callback.receiveErrorshoppingCartExternalId(f);
+                                } catch (java.lang.ClassNotFoundException e) {
+                                    // we cannot intantiate the class - throw the original Axis fault
+                                    callback.receiveErrorshoppingCartExternalId(f);
+                                } catch (java.lang.NoSuchMethodException e) {
+                                    // we cannot intantiate the class - throw the original Axis fault
+                                    callback.receiveErrorshoppingCartExternalId(f);
+                                } catch (java.lang.reflect.InvocationTargetException e) {
+                                    // we cannot intantiate the class - throw the original Axis fault
+                                    callback.receiveErrorshoppingCartExternalId(f);
+                                } catch (java.lang.IllegalAccessException e) {
+                                    // we cannot intantiate the class - throw the original Axis fault
+                                    callback.receiveErrorshoppingCartExternalId(f);
+                                } catch (java.lang.InstantiationException e) {
+                                    // we cannot intantiate the class - throw the original Axis fault
+                                    callback.receiveErrorshoppingCartExternalId(f);
+                                } catch (org.apache.axis2.AxisFault e) {
+                                    // we cannot intantiate the class - throw the original Axis fault
+                                    callback.receiveErrorshoppingCartExternalId(f);
+                                }
+                            } else {
+                                callback.receiveErrorshoppingCartExternalId(f);
+                            }
+                        } else {
+                            callback.receiveErrorshoppingCartExternalId(f);
+                        }
+                    } else {
+                        callback.receiveErrorshoppingCartExternalId(error);
+                    }
+                }
+
+                public void onFault(
+                    org.apache.axis2.context.MessageContext faultContext) {
+                    org.apache.axis2.AxisFault fault = org.apache.axis2.util.Utils.getInboundFaultFromMessageContext(faultContext);
+                    onError(fault);
+                }
+
+                public void onComplete() {
+                    try {
+                        _messageContext.getTransportOut().getSender()
+                                       .cleanup(_messageContext);
+                    } catch (org.apache.axis2.AxisFault axisFault) {
+                        callback.receiveErrorshoppingCartExternalId(axisFault);
+                    }
+                }
+            });
+
+        org.apache.axis2.util.CallbackReceiver _callbackReceiver = null;
+
+        if ((_operations[96].getMessageReceiver() == null) &&
+                _operationClient.getOptions().isUseSeparateListener()) {
+            _callbackReceiver = new org.apache.axis2.util.CallbackReceiver();
+            _operations[96].setMessageReceiver(_callbackReceiver);
+        }
+
+        //execute the operation client
+        _operationClient.execute(false);
+    }
+
+    /**
+     * Auto generated method signature
+     * List of resource faults
+     * @see com.voyageone.common.magento.api.base.MagentoService#resourceFaults
+     * @param resourceFaultsParam525
+     */
+    public magento.ResourceFaultsResponseParam resourceFaults(
+        magento.ResourceFaultsParam resourceFaultsParam525)
+        throws java.rmi.RemoteException {
+        org.apache.axis2.context.MessageContext _messageContext = null;
+
+        try {
+            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[97].getName());
             _operationClient.getOptions()
                             .setAction("urn:Magento:PortType:resourceFaultsRequest");
             _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -27083,7 +27367,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    resourceFaultsParam519,
+                    resourceFaultsParam525,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "resourceFaults")),
@@ -27173,13 +27457,13 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * List of resource faults
      * @see com.voyageone.common.magento.api.base.MagentoService#startresourceFaults
-     * @param resourceFaultsParam519
+     * @param resourceFaultsParam525
      */
     public void startresourceFaults(
-        magento.ResourceFaultsParam resourceFaultsParam519,
+        magento.ResourceFaultsParam resourceFaultsParam525,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
-        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[96].getName());
+        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[97].getName());
         _operationClient.getOptions()
                         .setAction("urn:Magento:PortType:resourceFaultsRequest");
         _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -27195,7 +27479,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                resourceFaultsParam519,
+                resourceFaultsParam525,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "resourceFaults")),
@@ -27309,10 +27593,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
         org.apache.axis2.util.CallbackReceiver _callbackReceiver = null;
 
-        if ((_operations[96].getMessageReceiver() == null) &&
+        if ((_operations[97].getMessageReceiver() == null) &&
                 _operationClient.getOptions().isUseSeparateListener()) {
             _callbackReceiver = new org.apache.axis2.util.CallbackReceiver();
-            _operations[96].setMessageReceiver(_callbackReceiver);
+            _operations[97].setMessageReceiver(_callbackReceiver);
         }
 
         //execute the operation client
@@ -27323,15 +27607,15 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Retrieve customer addresses
      * @see com.voyageone.common.magento.api.base.MagentoService#customerAddressList
-     * @param customerAddressListRequestParam521
+     * @param customerAddressListRequestParam527
      */
     public magento.CustomerAddressListResponseParam customerAddressList(
-        magento.CustomerAddressListRequestParam customerAddressListRequestParam521)
+        magento.CustomerAddressListRequestParam customerAddressListRequestParam527)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
         try {
-            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[97].getName());
+            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[98].getName());
             _operationClient.getOptions()
                             .setAction("urn:Magento:PortType:customerAddressListRequest");
             _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -27348,7 +27632,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    customerAddressListRequestParam521,
+                    customerAddressListRequestParam527,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "customerAddressList")),
@@ -27438,13 +27722,13 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Retrieve customer addresses
      * @see com.voyageone.common.magento.api.base.MagentoService#startcustomerAddressList
-     * @param customerAddressListRequestParam521
+     * @param customerAddressListRequestParam527
      */
     public void startcustomerAddressList(
-        magento.CustomerAddressListRequestParam customerAddressListRequestParam521,
+        magento.CustomerAddressListRequestParam customerAddressListRequestParam527,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
-        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[97].getName());
+        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[98].getName());
         _operationClient.getOptions()
                         .setAction("urn:Magento:PortType:customerAddressListRequest");
         _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -27460,7 +27744,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                customerAddressListRequestParam521,
+                customerAddressListRequestParam527,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "customerAddressList")),
@@ -27575,10 +27859,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
         org.apache.axis2.util.CallbackReceiver _callbackReceiver = null;
 
-        if ((_operations[97].getMessageReceiver() == null) &&
+        if ((_operations[98].getMessageReceiver() == null) &&
                 _operationClient.getOptions().isUseSeparateListener()) {
             _callbackReceiver = new org.apache.axis2.util.CallbackReceiver();
-            _operations[97].setMessageReceiver(_callbackReceiver);
+            _operations[98].setMessageReceiver(_callbackReceiver);
         }
 
         //execute the operation client
@@ -27589,15 +27873,15 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Update product stock data
      * @see com.voyageone.common.magento.api.base.MagentoService#catalogInventoryStockItemUpdate
-     * @param catalogInventoryStockItemUpdateRequestParam523
+     * @param catalogInventoryStockItemUpdateRequestParam529
      */
     public magento.CatalogInventoryStockItemUpdateResponseParam catalogInventoryStockItemUpdate(
-        magento.CatalogInventoryStockItemUpdateRequestParam catalogInventoryStockItemUpdateRequestParam523)
+        magento.CatalogInventoryStockItemUpdateRequestParam catalogInventoryStockItemUpdateRequestParam529)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
         try {
-            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[98].getName());
+            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[99].getName());
             _operationClient.getOptions()
                             .setAction("urn:Magento:PortType:catalogInventoryStockItemUpdateRequest");
             _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -27614,7 +27898,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    catalogInventoryStockItemUpdateRequestParam523,
+                    catalogInventoryStockItemUpdateRequestParam529,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "catalogInventoryStockItemUpdate")),
@@ -27707,13 +27991,13 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Update product stock data
      * @see com.voyageone.common.magento.api.base.MagentoService#startcatalogInventoryStockItemUpdate
-     * @param catalogInventoryStockItemUpdateRequestParam523
+     * @param catalogInventoryStockItemUpdateRequestParam529
      */
     public void startcatalogInventoryStockItemUpdate(
-        magento.CatalogInventoryStockItemUpdateRequestParam catalogInventoryStockItemUpdateRequestParam523,
+        magento.CatalogInventoryStockItemUpdateRequestParam catalogInventoryStockItemUpdateRequestParam529,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
-        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[98].getName());
+        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[99].getName());
         _operationClient.getOptions()
                         .setAction("urn:Magento:PortType:catalogInventoryStockItemUpdateRequest");
         _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -27729,7 +28013,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                catalogInventoryStockItemUpdateRequestParam523,
+                catalogInventoryStockItemUpdateRequestParam529,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "catalogInventoryStockItemUpdate")),
@@ -27844,10 +28128,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
         org.apache.axis2.util.CallbackReceiver _callbackReceiver = null;
 
-        if ((_operations[98].getMessageReceiver() == null) &&
+        if ((_operations[99].getMessageReceiver() == null) &&
                 _operationClient.getOptions().isUseSeparateListener()) {
             _callbackReceiver = new org.apache.axis2.util.CallbackReceiver();
-            _operations[98].setMessageReceiver(_callbackReceiver);
+            _operations[99].setMessageReceiver(_callbackReceiver);
         }
 
         //execute the operation client
@@ -27858,15 +28142,15 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Get list of available payment methods
      * @see com.voyageone.common.magento.api.base.MagentoService#shoppingCartPaymentList
-     * @param shoppingCartPaymentListRequestParam525
+     * @param shoppingCartPaymentListRequestParam531
      */
     public magento.ShoppingCartPaymentListResponseParam shoppingCartPaymentList(
-        magento.ShoppingCartPaymentListRequestParam shoppingCartPaymentListRequestParam525)
+        magento.ShoppingCartPaymentListRequestParam shoppingCartPaymentListRequestParam531)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
         try {
-            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[99].getName());
+            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[100].getName());
             _operationClient.getOptions()
                             .setAction("urn:Magento:PortType:shoppingCartPaymentListRequest");
             _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -27883,7 +28167,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    shoppingCartPaymentListRequestParam525,
+                    shoppingCartPaymentListRequestParam531,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "shoppingCartPaymentList")),
@@ -27975,13 +28259,13 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Get list of available payment methods
      * @see com.voyageone.common.magento.api.base.MagentoService#startshoppingCartPaymentList
-     * @param shoppingCartPaymentListRequestParam525
+     * @param shoppingCartPaymentListRequestParam531
      */
     public void startshoppingCartPaymentList(
-        magento.ShoppingCartPaymentListRequestParam shoppingCartPaymentListRequestParam525,
+        magento.ShoppingCartPaymentListRequestParam shoppingCartPaymentListRequestParam531,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
-        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[99].getName());
+        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[100].getName());
         _operationClient.getOptions()
                         .setAction("urn:Magento:PortType:shoppingCartPaymentListRequest");
         _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -27997,7 +28281,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                shoppingCartPaymentListRequestParam525,
+                shoppingCartPaymentListRequestParam531,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "shoppingCartPaymentList")),
@@ -28112,10 +28396,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
         org.apache.axis2.util.CallbackReceiver _callbackReceiver = null;
 
-        if ((_operations[99].getMessageReceiver() == null) &&
+        if ((_operations[100].getMessageReceiver() == null) &&
                 _operationClient.getOptions().isUseSeparateListener()) {
             _callbackReceiver = new org.apache.axis2.util.CallbackReceiver();
-            _operations[99].setMessageReceiver(_callbackReceiver);
+            _operations[100].setMessageReceiver(_callbackReceiver);
         }
 
         //execute the operation client
@@ -28126,15 +28410,15 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Add new comment to creditmemo
      * @see com.voyageone.common.magento.api.base.MagentoService#salesOrderCreditmemoAddComment
-     * @param salesOrderCreditmemoAddCommentRequestParam527
+     * @param salesOrderCreditmemoAddCommentRequestParam533
      */
     public magento.SalesOrderCreditmemoAddCommentResponseParam salesOrderCreditmemoAddComment(
-        magento.SalesOrderCreditmemoAddCommentRequestParam salesOrderCreditmemoAddCommentRequestParam527)
+        magento.SalesOrderCreditmemoAddCommentRequestParam salesOrderCreditmemoAddCommentRequestParam533)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
         try {
-            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[100].getName());
+            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[101].getName());
             _operationClient.getOptions()
                             .setAction("urn:Magento:PortType:salesOrderCreditmemoAddCommentRequest");
             _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -28151,7 +28435,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    salesOrderCreditmemoAddCommentRequestParam527,
+                    salesOrderCreditmemoAddCommentRequestParam533,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "salesOrderCreditmemoAddComment")),
@@ -28244,13 +28528,13 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Add new comment to creditmemo
      * @see com.voyageone.common.magento.api.base.MagentoService#startsalesOrderCreditmemoAddComment
-     * @param salesOrderCreditmemoAddCommentRequestParam527
+     * @param salesOrderCreditmemoAddCommentRequestParam533
      */
     public void startsalesOrderCreditmemoAddComment(
-        magento.SalesOrderCreditmemoAddCommentRequestParam salesOrderCreditmemoAddCommentRequestParam527,
+        magento.SalesOrderCreditmemoAddCommentRequestParam salesOrderCreditmemoAddCommentRequestParam533,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
-        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[100].getName());
+        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[101].getName());
         _operationClient.getOptions()
                         .setAction("urn:Magento:PortType:salesOrderCreditmemoAddCommentRequest");
         _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -28266,7 +28550,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                salesOrderCreditmemoAddCommentRequestParam527,
+                salesOrderCreditmemoAddCommentRequestParam533,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "salesOrderCreditmemoAddComment")),
@@ -28381,10 +28665,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
         org.apache.axis2.util.CallbackReceiver _callbackReceiver = null;
 
-        if ((_operations[100].getMessageReceiver() == null) &&
+        if ((_operations[101].getMessageReceiver() == null) &&
                 _operationClient.getOptions().isUseSeparateListener()) {
             _callbackReceiver = new org.apache.axis2.util.CallbackReceiver();
-            _operations[100].setMessageReceiver(_callbackReceiver);
+            _operations[101].setMessageReceiver(_callbackReceiver);
         }
 
         //execute the operation client
@@ -28395,15 +28679,15 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Remove product tag
      * @see com.voyageone.common.magento.api.base.MagentoService#catalogProductTagRemove
-     * @param catalogProductTagRemoveRequestParam529
+     * @param catalogProductTagRemoveRequestParam535
      */
     public magento.CatalogProductTagRemoveResponseParam catalogProductTagRemove(
-        magento.CatalogProductTagRemoveRequestParam catalogProductTagRemoveRequestParam529)
+        magento.CatalogProductTagRemoveRequestParam catalogProductTagRemoveRequestParam535)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
         try {
-            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[101].getName());
+            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[102].getName());
             _operationClient.getOptions()
                             .setAction("urn:Magento:PortType:catalogProductTagRemoveRequest");
             _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -28420,7 +28704,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    catalogProductTagRemoveRequestParam529,
+                    catalogProductTagRemoveRequestParam535,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "catalogProductTagRemove")),
@@ -28512,13 +28796,13 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Remove product tag
      * @see com.voyageone.common.magento.api.base.MagentoService#startcatalogProductTagRemove
-     * @param catalogProductTagRemoveRequestParam529
+     * @param catalogProductTagRemoveRequestParam535
      */
     public void startcatalogProductTagRemove(
-        magento.CatalogProductTagRemoveRequestParam catalogProductTagRemoveRequestParam529,
+        magento.CatalogProductTagRemoveRequestParam catalogProductTagRemoveRequestParam535,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
-        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[101].getName());
+        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[102].getName());
         _operationClient.getOptions()
                         .setAction("urn:Magento:PortType:catalogProductTagRemoveRequest");
         _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -28534,7 +28818,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                catalogProductTagRemoveRequestParam529,
+                catalogProductTagRemoveRequestParam535,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "catalogProductTagRemove")),
@@ -28649,10 +28933,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
         org.apache.axis2.util.CallbackReceiver _callbackReceiver = null;
 
-        if ((_operations[101].getMessageReceiver() == null) &&
+        if ((_operations[102].getMessageReceiver() == null) &&
                 _operationClient.getOptions().isUseSeparateListener()) {
             _callbackReceiver = new org.apache.axis2.util.CallbackReceiver();
-            _operations[101].setMessageReceiver(_callbackReceiver);
+            _operations[102].setMessageReceiver(_callbackReceiver);
         }
 
         //execute the operation client
@@ -28663,15 +28947,15 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Retrieve shipment information
      * @see com.voyageone.common.magento.api.base.MagentoService#salesOrderShipmentInfo
-     * @param salesOrderShipmentInfoRequestParam531
+     * @param salesOrderShipmentInfoRequestParam537
      */
     public magento.SalesOrderShipmentInfoResponseParam salesOrderShipmentInfo(
-        magento.SalesOrderShipmentInfoRequestParam salesOrderShipmentInfoRequestParam531)
+        magento.SalesOrderShipmentInfoRequestParam salesOrderShipmentInfoRequestParam537)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
         try {
-            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[102].getName());
+            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[103].getName());
             _operationClient.getOptions()
                             .setAction("urn:Magento:PortType:salesOrderShipmentInfoRequest");
             _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -28688,7 +28972,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    salesOrderShipmentInfoRequestParam531,
+                    salesOrderShipmentInfoRequestParam537,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "salesOrderShipmentInfo")),
@@ -28780,13 +29064,13 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Retrieve shipment information
      * @see com.voyageone.common.magento.api.base.MagentoService#startsalesOrderShipmentInfo
-     * @param salesOrderShipmentInfoRequestParam531
+     * @param salesOrderShipmentInfoRequestParam537
      */
     public void startsalesOrderShipmentInfo(
-        magento.SalesOrderShipmentInfoRequestParam salesOrderShipmentInfoRequestParam531,
+        magento.SalesOrderShipmentInfoRequestParam salesOrderShipmentInfoRequestParam537,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
-        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[102].getName());
+        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[103].getName());
         _operationClient.getOptions()
                         .setAction("urn:Magento:PortType:salesOrderShipmentInfoRequest");
         _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -28802,7 +29086,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                salesOrderShipmentInfoRequestParam531,
+                salesOrderShipmentInfoRequestParam537,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "salesOrderShipmentInfo")),
@@ -28917,10 +29201,279 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
         org.apache.axis2.util.CallbackReceiver _callbackReceiver = null;
 
-        if ((_operations[102].getMessageReceiver() == null) &&
+        if ((_operations[103].getMessageReceiver() == null) &&
                 _operationClient.getOptions().isUseSeparateListener()) {
             _callbackReceiver = new org.apache.axis2.util.CallbackReceiver();
-            _operations[102].setMessageReceiver(_callbackReceiver);
+            _operations[103].setMessageReceiver(_callbackReceiver);
+        }
+
+        //execute the operation client
+        _operationClient.execute(false);
+    }
+
+    /**
+     * Auto generated method signature
+     * Set custom product price(s)
+     * @see com.voyageone.common.magento.api.base.MagentoService#shoppingCartProductSetCustomPrice
+     * @param shoppingCartProductCustomPriceRequestParam539
+     */
+    public magento.ShoppingCartProductCustomPriceResponseParam shoppingCartProductSetCustomPrice(
+        magento.ShoppingCartProductCustomPriceRequestParam shoppingCartProductCustomPriceRequestParam539)
+        throws java.rmi.RemoteException {
+        org.apache.axis2.context.MessageContext _messageContext = null;
+
+        try {
+            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[104].getName());
+            _operationClient.getOptions()
+                            .setAction("urn:Magento:PortType:shoppingCartProductSetCustomPriceRequest");
+            _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
+
+            addPropertyToOperationClient(_operationClient,
+                org.apache.axis2.description.WSDL2Constants.ATTR_WHTTP_QUERY_PARAMETER_SEPARATOR,
+                "&");
+
+            // create a message context
+            _messageContext = new org.apache.axis2.context.MessageContext();
+
+            // create SOAP envelope with that payload
+            org.apache.axiom.soap.SOAPEnvelope env = null;
+
+            env = toEnvelope(getFactory(_operationClient.getOptions()
+                                                        .getSoapVersionURI()),
+                    shoppingCartProductCustomPriceRequestParam539,
+                    optimizeContent(
+                        new javax.xml.namespace.QName("urn:Magento",
+                            "shoppingCartProductSetCustomPrice")),
+                    new javax.xml.namespace.QName("urn:Magento",
+                        "shoppingCartProductSetCustomPrice"));
+
+            //adding SOAP soap_headers
+            _serviceClient.addHeadersToEnvelope(env);
+            // set the message context with that soap envelope
+            _messageContext.setEnvelope(env);
+
+            // add the message contxt to the operation client
+            _operationClient.addMessageContext(_messageContext);
+
+            //execute the operation client
+            _operationClient.execute(true);
+
+            org.apache.axis2.context.MessageContext _returnMessageContext = _operationClient.getMessageContext(org.apache.axis2.wsdl.WSDLConstants.MESSAGE_LABEL_IN_VALUE);
+            org.apache.axiom.soap.SOAPEnvelope _returnEnv = _returnMessageContext.getEnvelope();
+
+            java.lang.Object object = fromOM(_returnEnv.getBody()
+                                                       .getFirstElement(),
+                    magento.ShoppingCartProductCustomPriceResponseParam.class,
+                    getEnvelopeNamespaces(_returnEnv));
+
+            return (magento.ShoppingCartProductCustomPriceResponseParam) object;
+        } catch (org.apache.axis2.AxisFault f) {
+            org.apache.axiom.om.OMElement faultElt = f.getDetail();
+
+            if (faultElt != null) {
+                if (faultExceptionNameMap.containsKey(
+                            new org.apache.axis2.client.FaultMapKey(
+                                faultElt.getQName(),
+                                "shoppingCartProductSetCustomPrice"))) {
+                    //make the fault by reflection
+                    try {
+                        java.lang.String exceptionClassName = (java.lang.String) faultExceptionClassNameMap.get(new org.apache.axis2.client.FaultMapKey(
+                                    faultElt.getQName(),
+                                    "shoppingCartProductSetCustomPrice"));
+                        java.lang.Class exceptionClass = java.lang.Class.forName(exceptionClassName);
+                        java.lang.reflect.Constructor constructor = exceptionClass.getConstructor(java.lang.String.class);
+                        java.lang.Exception ex = (java.lang.Exception) constructor.newInstance(f.getMessage());
+
+                        //message class
+                        java.lang.String messageClassName = (java.lang.String) faultMessageMap.get(new org.apache.axis2.client.FaultMapKey(
+                                    faultElt.getQName(),
+                                    "shoppingCartProductSetCustomPrice"));
+                        java.lang.Class messageClass = java.lang.Class.forName(messageClassName);
+                        java.lang.Object messageObject = fromOM(faultElt,
+                                messageClass, null);
+                        java.lang.reflect.Method m = exceptionClass.getMethod("setFaultMessage",
+                                new java.lang.Class[] { messageClass });
+                        m.invoke(ex, new java.lang.Object[] { messageObject });
+
+                        throw new java.rmi.RemoteException(ex.getMessage(), ex);
+                    } catch (java.lang.ClassCastException e) {
+                        // we cannot intantiate the class - throw the original Axis fault
+                        throw f;
+                    } catch (java.lang.ClassNotFoundException e) {
+                        // we cannot intantiate the class - throw the original Axis fault
+                        throw f;
+                    } catch (java.lang.NoSuchMethodException e) {
+                        // we cannot intantiate the class - throw the original Axis fault
+                        throw f;
+                    } catch (java.lang.reflect.InvocationTargetException e) {
+                        // we cannot intantiate the class - throw the original Axis fault
+                        throw f;
+                    } catch (java.lang.IllegalAccessException e) {
+                        // we cannot intantiate the class - throw the original Axis fault
+                        throw f;
+                    } catch (java.lang.InstantiationException e) {
+                        // we cannot intantiate the class - throw the original Axis fault
+                        throw f;
+                    }
+                } else {
+                    throw f;
+                }
+            } else {
+                throw f;
+            }
+        } finally {
+            if (_messageContext.getTransportOut() != null) {
+                _messageContext.getTransportOut().getSender()
+                               .cleanup(_messageContext);
+            }
+        }
+    }
+
+    /**
+     * Auto generated method signature for Asynchronous Invocations
+     * Set custom product price(s)
+     * @see com.voyageone.common.magento.api.base.MagentoService#startshoppingCartProductSetCustomPrice
+     * @param shoppingCartProductCustomPriceRequestParam539
+     */
+    public void startshoppingCartProductSetCustomPrice(
+        magento.ShoppingCartProductCustomPriceRequestParam shoppingCartProductCustomPriceRequestParam539,
+        final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
+        throws java.rmi.RemoteException {
+        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[104].getName());
+        _operationClient.getOptions()
+                        .setAction("urn:Magento:PortType:shoppingCartProductSetCustomPriceRequest");
+        _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
+
+        addPropertyToOperationClient(_operationClient,
+            org.apache.axis2.description.WSDL2Constants.ATTR_WHTTP_QUERY_PARAMETER_SEPARATOR,
+            "&");
+
+        // create SOAP envelope with that payload
+        org.apache.axiom.soap.SOAPEnvelope env = null;
+        final org.apache.axis2.context.MessageContext _messageContext = new org.apache.axis2.context.MessageContext();
+
+        //Style is Doc.
+        env = toEnvelope(getFactory(_operationClient.getOptions()
+                                                    .getSoapVersionURI()),
+                shoppingCartProductCustomPriceRequestParam539,
+                optimizeContent(
+                    new javax.xml.namespace.QName("urn:Magento",
+                        "shoppingCartProductSetCustomPrice")),
+                new javax.xml.namespace.QName("urn:Magento",
+                    "shoppingCartProductSetCustomPrice"));
+
+        // adding SOAP soap_headers
+        _serviceClient.addHeadersToEnvelope(env);
+        // create message context with that soap envelope
+        _messageContext.setEnvelope(env);
+
+        // add the message context to the operation client
+        _operationClient.addMessageContext(_messageContext);
+
+        _operationClient.setCallback(new org.apache.axis2.client.async.AxisCallback() {
+                public void onMessage(
+                    org.apache.axis2.context.MessageContext resultContext) {
+                    try {
+                        org.apache.axiom.soap.SOAPEnvelope resultEnv = resultContext.getEnvelope();
+
+                        java.lang.Object object = fromOM(resultEnv.getBody()
+                                                                  .getFirstElement(),
+                                magento.ShoppingCartProductCustomPriceResponseParam.class,
+                                getEnvelopeNamespaces(resultEnv));
+                        callback.receiveResultshoppingCartProductSetCustomPrice((magento.ShoppingCartProductCustomPriceResponseParam) object);
+                    } catch (org.apache.axis2.AxisFault e) {
+                        callback.receiveErrorshoppingCartProductSetCustomPrice(e);
+                    }
+                }
+
+                public void onError(java.lang.Exception error) {
+                    if (error instanceof org.apache.axis2.AxisFault) {
+                        org.apache.axis2.AxisFault f = (org.apache.axis2.AxisFault) error;
+                        org.apache.axiom.om.OMElement faultElt = f.getDetail();
+
+                        if (faultElt != null) {
+                            if (faultExceptionNameMap.containsKey(
+                                        new org.apache.axis2.client.FaultMapKey(
+                                            faultElt.getQName(),
+                                            "shoppingCartProductSetCustomPrice"))) {
+                                //make the fault by reflection
+                                try {
+                                    java.lang.String exceptionClassName = (java.lang.String) faultExceptionClassNameMap.get(new org.apache.axis2.client.FaultMapKey(
+                                                faultElt.getQName(),
+                                                "shoppingCartProductSetCustomPrice"));
+                                    java.lang.Class exceptionClass = java.lang.Class.forName(exceptionClassName);
+                                    java.lang.reflect.Constructor constructor = exceptionClass.getConstructor(java.lang.String.class);
+                                    java.lang.Exception ex = (java.lang.Exception) constructor.newInstance(f.getMessage());
+
+                                    //message class
+                                    java.lang.String messageClassName = (java.lang.String) faultMessageMap.get(new org.apache.axis2.client.FaultMapKey(
+                                                faultElt.getQName(),
+                                                "shoppingCartProductSetCustomPrice"));
+                                    java.lang.Class messageClass = java.lang.Class.forName(messageClassName);
+                                    java.lang.Object messageObject = fromOM(faultElt,
+                                            messageClass, null);
+                                    java.lang.reflect.Method m = exceptionClass.getMethod("setFaultMessage",
+                                            new java.lang.Class[] { messageClass });
+                                    m.invoke(ex,
+                                        new java.lang.Object[] { messageObject });
+
+                                    callback.receiveErrorshoppingCartProductSetCustomPrice(new java.rmi.RemoteException(
+                                            ex.getMessage(), ex));
+                                } catch (java.lang.ClassCastException e) {
+                                    // we cannot intantiate the class - throw the original Axis fault
+                                    callback.receiveErrorshoppingCartProductSetCustomPrice(f);
+                                } catch (java.lang.ClassNotFoundException e) {
+                                    // we cannot intantiate the class - throw the original Axis fault
+                                    callback.receiveErrorshoppingCartProductSetCustomPrice(f);
+                                } catch (java.lang.NoSuchMethodException e) {
+                                    // we cannot intantiate the class - throw the original Axis fault
+                                    callback.receiveErrorshoppingCartProductSetCustomPrice(f);
+                                } catch (java.lang.reflect.InvocationTargetException e) {
+                                    // we cannot intantiate the class - throw the original Axis fault
+                                    callback.receiveErrorshoppingCartProductSetCustomPrice(f);
+                                } catch (java.lang.IllegalAccessException e) {
+                                    // we cannot intantiate the class - throw the original Axis fault
+                                    callback.receiveErrorshoppingCartProductSetCustomPrice(f);
+                                } catch (java.lang.InstantiationException e) {
+                                    // we cannot intantiate the class - throw the original Axis fault
+                                    callback.receiveErrorshoppingCartProductSetCustomPrice(f);
+                                } catch (org.apache.axis2.AxisFault e) {
+                                    // we cannot intantiate the class - throw the original Axis fault
+                                    callback.receiveErrorshoppingCartProductSetCustomPrice(f);
+                                }
+                            } else {
+                                callback.receiveErrorshoppingCartProductSetCustomPrice(f);
+                            }
+                        } else {
+                            callback.receiveErrorshoppingCartProductSetCustomPrice(f);
+                        }
+                    } else {
+                        callback.receiveErrorshoppingCartProductSetCustomPrice(error);
+                    }
+                }
+
+                public void onFault(
+                    org.apache.axis2.context.MessageContext faultContext) {
+                    org.apache.axis2.AxisFault fault = org.apache.axis2.util.Utils.getInboundFaultFromMessageContext(faultContext);
+                    onError(fault);
+                }
+
+                public void onComplete() {
+                    try {
+                        _messageContext.getTransportOut().getSender()
+                                       .cleanup(_messageContext);
+                    } catch (org.apache.axis2.AxisFault axisFault) {
+                        callback.receiveErrorshoppingCartProductSetCustomPrice(axisFault);
+                    }
+                }
+            });
+
+        org.apache.axis2.util.CallbackReceiver _callbackReceiver = null;
+
+        if ((_operations[104].getMessageReceiver() == null) &&
+                _operationClient.getOptions().isUseSeparateListener()) {
+            _callbackReceiver = new org.apache.axis2.util.CallbackReceiver();
+            _operations[104].setMessageReceiver(_callbackReceiver);
         }
 
         //execute the operation client
@@ -28931,15 +29484,15 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Redeem gift card amount
      * @see com.voyageone.common.magento.api.base.MagentoService#shoppingCartGiftcardRemove
-     * @param shoppingCartGiftcardRemoveRequestParam533
+     * @param shoppingCartGiftcardRemoveRequestParam541
      */
     public magento.ShoppingCartGiftcardRemoveResponseParam shoppingCartGiftcardRemove(
-        magento.ShoppingCartGiftcardRemoveRequestParam shoppingCartGiftcardRemoveRequestParam533)
+        magento.ShoppingCartGiftcardRemoveRequestParam shoppingCartGiftcardRemoveRequestParam541)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
         try {
-            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[103].getName());
+            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[105].getName());
             _operationClient.getOptions()
                             .setAction("urn:Magento:PortType:shoppingCartGiftcardRemoveRequest");
             _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -28956,7 +29509,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    shoppingCartGiftcardRemoveRequestParam533,
+                    shoppingCartGiftcardRemoveRequestParam541,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "shoppingCartGiftcardRemove")),
@@ -29049,13 +29602,13 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Redeem gift card amount
      * @see com.voyageone.common.magento.api.base.MagentoService#startshoppingCartGiftcardRemove
-     * @param shoppingCartGiftcardRemoveRequestParam533
+     * @param shoppingCartGiftcardRemoveRequestParam541
      */
     public void startshoppingCartGiftcardRemove(
-        magento.ShoppingCartGiftcardRemoveRequestParam shoppingCartGiftcardRemoveRequestParam533,
+        magento.ShoppingCartGiftcardRemoveRequestParam shoppingCartGiftcardRemoveRequestParam541,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
-        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[103].getName());
+        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[105].getName());
         _operationClient.getOptions()
                         .setAction("urn:Magento:PortType:shoppingCartGiftcardRemoveRequest");
         _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -29071,7 +29624,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                shoppingCartGiftcardRemoveRequestParam533,
+                shoppingCartGiftcardRemoveRequestParam541,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "shoppingCartGiftcardRemove")),
@@ -29186,10 +29739,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
         org.apache.axis2.util.CallbackReceiver _callbackReceiver = null;
 
-        if ((_operations[103].getMessageReceiver() == null) &&
+        if ((_operations[105].getMessageReceiver() == null) &&
                 _operationClient.getOptions().isUseSeparateListener()) {
             _callbackReceiver = new org.apache.axis2.util.CallbackReceiver();
-            _operations[103].setMessageReceiver(_callbackReceiver);
+            _operations[105].setMessageReceiver(_callbackReceiver);
         }
 
         //execute the operation client
@@ -29200,15 +29753,15 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Delete category
      * @see com.voyageone.common.magento.api.base.MagentoService#catalogCategoryDelete
-     * @param catalogCategoryDeleteRequestParam535
+     * @param catalogCategoryDeleteRequestParam543
      */
     public magento.CatalogCategoryDeleteResponseParam catalogCategoryDelete(
-        magento.CatalogCategoryDeleteRequestParam catalogCategoryDeleteRequestParam535)
+        magento.CatalogCategoryDeleteRequestParam catalogCategoryDeleteRequestParam543)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
         try {
-            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[104].getName());
+            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[106].getName());
             _operationClient.getOptions()
                             .setAction("urn:Magento:PortType:catalogCategoryDeleteRequest");
             _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -29225,7 +29778,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    catalogCategoryDeleteRequestParam535,
+                    catalogCategoryDeleteRequestParam543,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "catalogCategoryDelete")),
@@ -29315,13 +29868,13 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Delete category
      * @see com.voyageone.common.magento.api.base.MagentoService#startcatalogCategoryDelete
-     * @param catalogCategoryDeleteRequestParam535
+     * @param catalogCategoryDeleteRequestParam543
      */
     public void startcatalogCategoryDelete(
-        magento.CatalogCategoryDeleteRequestParam catalogCategoryDeleteRequestParam535,
+        magento.CatalogCategoryDeleteRequestParam catalogCategoryDeleteRequestParam543,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
-        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[104].getName());
+        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[106].getName());
         _operationClient.getOptions()
                         .setAction("urn:Magento:PortType:catalogCategoryDeleteRequest");
         _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -29337,7 +29890,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                catalogCategoryDeleteRequestParam535,
+                catalogCategoryDeleteRequestParam543,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "catalogCategoryDelete")),
@@ -29452,10 +30005,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
         org.apache.axis2.util.CallbackReceiver _callbackReceiver = null;
 
-        if ((_operations[104].getMessageReceiver() == null) &&
+        if ((_operations[106].getMessageReceiver() == null) &&
                 _operationClient.getOptions().isUseSeparateListener()) {
             _callbackReceiver = new org.apache.axis2.util.CallbackReceiver();
-            _operations[104].setMessageReceiver(_callbackReceiver);
+            _operations[106].setMessageReceiver(_callbackReceiver);
         }
 
         //execute the operation client
@@ -29466,15 +30019,15 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Retrieve attribute options
      * @see com.voyageone.common.magento.api.base.MagentoService#catalogProductAttributeOptions
-     * @param catalogProductAttributeOptionsRequestParam537
+     * @param catalogProductAttributeOptionsRequestParam545
      */
     public magento.CatalogProductAttributeOptionsResponseParam catalogProductAttributeOptions(
-        magento.CatalogProductAttributeOptionsRequestParam catalogProductAttributeOptionsRequestParam537)
+        magento.CatalogProductAttributeOptionsRequestParam catalogProductAttributeOptionsRequestParam545)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
         try {
-            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[105].getName());
+            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[107].getName());
             _operationClient.getOptions()
                             .setAction("urn:Magento:PortType:catalogProductAttributeOptionsRequest");
             _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -29491,7 +30044,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    catalogProductAttributeOptionsRequestParam537,
+                    catalogProductAttributeOptionsRequestParam545,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "catalogProductAttributeOptions")),
@@ -29584,13 +30137,13 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Retrieve attribute options
      * @see com.voyageone.common.magento.api.base.MagentoService#startcatalogProductAttributeOptions
-     * @param catalogProductAttributeOptionsRequestParam537
+     * @param catalogProductAttributeOptionsRequestParam545
      */
     public void startcatalogProductAttributeOptions(
-        magento.CatalogProductAttributeOptionsRequestParam catalogProductAttributeOptionsRequestParam537,
+        magento.CatalogProductAttributeOptionsRequestParam catalogProductAttributeOptionsRequestParam545,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
-        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[105].getName());
+        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[107].getName());
         _operationClient.getOptions()
                         .setAction("urn:Magento:PortType:catalogProductAttributeOptionsRequest");
         _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -29606,7 +30159,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                catalogProductAttributeOptionsRequestParam537,
+                catalogProductAttributeOptionsRequestParam545,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "catalogProductAttributeOptions")),
@@ -29721,10 +30274,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
         org.apache.axis2.util.CallbackReceiver _callbackReceiver = null;
 
-        if ((_operations[105].getMessageReceiver() == null) &&
+        if ((_operations[107].getMessageReceiver() == null) &&
                 _operationClient.getOptions().isUseSeparateListener()) {
             _callbackReceiver = new org.apache.axis2.util.CallbackReceiver();
-            _operations[105].setMessageReceiver(_callbackReceiver);
+            _operations[107].setMessageReceiver(_callbackReceiver);
         }
 
         //execute the operation client
@@ -29735,15 +30288,15 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Delete customer address
      * @see com.voyageone.common.magento.api.base.MagentoService#customerAddressDelete
-     * @param customerAddressDeleteRequestParam539
+     * @param customerAddressDeleteRequestParam547
      */
     public magento.CustomerAddressDeleteResponseParam customerAddressDelete(
-        magento.CustomerAddressDeleteRequestParam customerAddressDeleteRequestParam539)
+        magento.CustomerAddressDeleteRequestParam customerAddressDeleteRequestParam547)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
         try {
-            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[106].getName());
+            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[108].getName());
             _operationClient.getOptions()
                             .setAction("urn:Magento:PortType:customerAddressDeleteRequest");
             _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -29760,7 +30313,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    customerAddressDeleteRequestParam539,
+                    customerAddressDeleteRequestParam547,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "customerAddressDelete")),
@@ -29850,13 +30403,13 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Delete customer address
      * @see com.voyageone.common.magento.api.base.MagentoService#startcustomerAddressDelete
-     * @param customerAddressDeleteRequestParam539
+     * @param customerAddressDeleteRequestParam547
      */
     public void startcustomerAddressDelete(
-        magento.CustomerAddressDeleteRequestParam customerAddressDeleteRequestParam539,
+        magento.CustomerAddressDeleteRequestParam customerAddressDeleteRequestParam547,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
-        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[106].getName());
+        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[108].getName());
         _operationClient.getOptions()
                         .setAction("urn:Magento:PortType:customerAddressDeleteRequest");
         _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -29872,7 +30425,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                customerAddressDeleteRequestParam539,
+                customerAddressDeleteRequestParam547,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "customerAddressDelete")),
@@ -29987,10 +30540,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
         org.apache.axis2.util.CallbackReceiver _callbackReceiver = null;
 
-        if ((_operations[106].getMessageReceiver() == null) &&
+        if ((_operations[108].getMessageReceiver() == null) &&
                 _operationClient.getOptions().isUseSeparateListener()) {
             _callbackReceiver = new org.apache.axis2.util.CallbackReceiver();
-            _operations[106].setMessageReceiver(_callbackReceiver);
+            _operations[108].setMessageReceiver(_callbackReceiver);
         }
 
         //execute the operation client
@@ -30001,15 +30554,15 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Retrieve customer store credit history information
      * @see com.voyageone.common.magento.api.base.MagentoService#enterpriseCustomerbalanceHistory
-     * @param enterpriseCustomerbalanceHistoryRequestParam541
+     * @param enterpriseCustomerbalanceHistoryRequestParam549
      */
     public magento.EnterpriseCustomerbalanceHistoryResponseParam enterpriseCustomerbalanceHistory(
-        magento.EnterpriseCustomerbalanceHistoryRequestParam enterpriseCustomerbalanceHistoryRequestParam541)
+        magento.EnterpriseCustomerbalanceHistoryRequestParam enterpriseCustomerbalanceHistoryRequestParam549)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
         try {
-            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[107].getName());
+            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[109].getName());
             _operationClient.getOptions()
                             .setAction("urn:Magento:PortType:enterpriseCustomerbalanceHistoryRequest");
             _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -30026,7 +30579,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    enterpriseCustomerbalanceHistoryRequestParam541,
+                    enterpriseCustomerbalanceHistoryRequestParam549,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "enterpriseCustomerbalanceHistory")),
@@ -30119,13 +30672,13 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Retrieve customer store credit history information
      * @see com.voyageone.common.magento.api.base.MagentoService#startenterpriseCustomerbalanceHistory
-     * @param enterpriseCustomerbalanceHistoryRequestParam541
+     * @param enterpriseCustomerbalanceHistoryRequestParam549
      */
     public void startenterpriseCustomerbalanceHistory(
-        magento.EnterpriseCustomerbalanceHistoryRequestParam enterpriseCustomerbalanceHistoryRequestParam541,
+        magento.EnterpriseCustomerbalanceHistoryRequestParam enterpriseCustomerbalanceHistoryRequestParam549,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
-        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[107].getName());
+        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[109].getName());
         _operationClient.getOptions()
                         .setAction("urn:Magento:PortType:enterpriseCustomerbalanceHistoryRequest");
         _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -30141,7 +30694,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                enterpriseCustomerbalanceHistoryRequestParam541,
+                enterpriseCustomerbalanceHistoryRequestParam549,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "enterpriseCustomerbalanceHistory")),
@@ -30256,10 +30809,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
         org.apache.axis2.util.CallbackReceiver _callbackReceiver = null;
 
-        if ((_operations[107].getMessageReceiver() == null) &&
+        if ((_operations[109].getMessageReceiver() == null) &&
                 _operationClient.getOptions().isUseSeparateListener()) {
             _callbackReceiver = new org.apache.axis2.util.CallbackReceiver();
-            _operations[107].setMessageReceiver(_callbackReceiver);
+            _operations[109].setMessageReceiver(_callbackReceiver);
         }
 
         //execute the operation client
@@ -30270,15 +30823,15 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Add coupon code for shopping cart
      * @see com.voyageone.common.magento.api.base.MagentoService#shoppingCartCouponAdd
-     * @param shoppingCartCouponAddRequestParam543
+     * @param shoppingCartCouponAddRequestParam551
      */
     public magento.ShoppingCartCouponAddResponseParam shoppingCartCouponAdd(
-        magento.ShoppingCartCouponAddRequestParam shoppingCartCouponAddRequestParam543)
+        magento.ShoppingCartCouponAddRequestParam shoppingCartCouponAddRequestParam551)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
         try {
-            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[108].getName());
+            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[110].getName());
             _operationClient.getOptions()
                             .setAction("urn:Magento:PortType:shoppingCartCouponAddRequest");
             _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -30295,7 +30848,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    shoppingCartCouponAddRequestParam543,
+                    shoppingCartCouponAddRequestParam551,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "shoppingCartCouponAdd")),
@@ -30385,13 +30938,13 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Add coupon code for shopping cart
      * @see com.voyageone.common.magento.api.base.MagentoService#startshoppingCartCouponAdd
-     * @param shoppingCartCouponAddRequestParam543
+     * @param shoppingCartCouponAddRequestParam551
      */
     public void startshoppingCartCouponAdd(
-        magento.ShoppingCartCouponAddRequestParam shoppingCartCouponAddRequestParam543,
+        magento.ShoppingCartCouponAddRequestParam shoppingCartCouponAddRequestParam551,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
-        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[108].getName());
+        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[110].getName());
         _operationClient.getOptions()
                         .setAction("urn:Magento:PortType:shoppingCartCouponAddRequest");
         _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -30407,7 +30960,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                shoppingCartCouponAddRequestParam543,
+                shoppingCartCouponAddRequestParam551,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "shoppingCartCouponAdd")),
@@ -30522,10 +31075,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
         org.apache.axis2.util.CallbackReceiver _callbackReceiver = null;
 
-        if ((_operations[108].getMessageReceiver() == null) &&
+        if ((_operations[110].getMessageReceiver() == null) &&
                 _operationClient.getOptions().isUseSeparateListener()) {
             _callbackReceiver = new org.apache.axis2.util.CallbackReceiver();
-            _operations[108].setMessageReceiver(_callbackReceiver);
+            _operations[110].setMessageReceiver(_callbackReceiver);
         }
 
         //execute the operation client
@@ -30536,15 +31089,15 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * List of countries
      * @see com.voyageone.common.magento.api.base.MagentoService#directoryCountryList
-     * @param directoryCountryListRequestParam545
+     * @param directoryCountryListRequestParam553
      */
     public magento.DirectoryCountryListResponseParam directoryCountryList(
-        magento.DirectoryCountryListRequestParam directoryCountryListRequestParam545)
+        magento.DirectoryCountryListRequestParam directoryCountryListRequestParam553)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
         try {
-            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[109].getName());
+            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[111].getName());
             _operationClient.getOptions()
                             .setAction("urn:Magento:PortType:directoryCountryListRequest");
             _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -30561,7 +31114,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    directoryCountryListRequestParam545,
+                    directoryCountryListRequestParam553,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "directoryCountryList")),
@@ -30651,13 +31204,13 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * List of countries
      * @see com.voyageone.common.magento.api.base.MagentoService#startdirectoryCountryList
-     * @param directoryCountryListRequestParam545
+     * @param directoryCountryListRequestParam553
      */
     public void startdirectoryCountryList(
-        magento.DirectoryCountryListRequestParam directoryCountryListRequestParam545,
+        magento.DirectoryCountryListRequestParam directoryCountryListRequestParam553,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
-        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[109].getName());
+        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[111].getName());
         _operationClient.getOptions()
                         .setAction("urn:Magento:PortType:directoryCountryListRequest");
         _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -30673,7 +31226,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                directoryCountryListRequestParam545,
+                directoryCountryListRequestParam553,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "directoryCountryList")),
@@ -30788,10 +31341,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
         org.apache.axis2.util.CallbackReceiver _callbackReceiver = null;
 
-        if ((_operations[109].getMessageReceiver() == null) &&
+        if ((_operations[111].getMessageReceiver() == null) &&
                 _operationClient.getOptions().isUseSeparateListener()) {
             _callbackReceiver = new org.apache.axis2.util.CallbackReceiver();
-            _operations[109].setMessageReceiver(_callbackReceiver);
+            _operations[111].setMessageReceiver(_callbackReceiver);
         }
 
         //execute the operation client
@@ -30802,15 +31355,15 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Set_Get current store view
      * @see com.voyageone.common.magento.api.base.MagentoService#catalogCategoryCurrentStore
-     * @param catalogCategoryCurrentStoreRequestParam547
+     * @param catalogCategoryCurrentStoreRequestParam555
      */
     public magento.CatalogCategoryCurrentStoreResponseParam catalogCategoryCurrentStore(
-        magento.CatalogCategoryCurrentStoreRequestParam catalogCategoryCurrentStoreRequestParam547)
+        magento.CatalogCategoryCurrentStoreRequestParam catalogCategoryCurrentStoreRequestParam555)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
         try {
-            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[110].getName());
+            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[112].getName());
             _operationClient.getOptions()
                             .setAction("urn:Magento:PortType:catalogCategoryCurrentStoreRequest");
             _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -30827,7 +31380,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    catalogCategoryCurrentStoreRequestParam547,
+                    catalogCategoryCurrentStoreRequestParam555,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "catalogCategoryCurrentStore")),
@@ -30920,13 +31473,13 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Set_Get current store view
      * @see com.voyageone.common.magento.api.base.MagentoService#startcatalogCategoryCurrentStore
-     * @param catalogCategoryCurrentStoreRequestParam547
+     * @param catalogCategoryCurrentStoreRequestParam555
      */
     public void startcatalogCategoryCurrentStore(
-        magento.CatalogCategoryCurrentStoreRequestParam catalogCategoryCurrentStoreRequestParam547,
+        magento.CatalogCategoryCurrentStoreRequestParam catalogCategoryCurrentStoreRequestParam555,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
-        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[110].getName());
+        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[112].getName());
         _operationClient.getOptions()
                         .setAction("urn:Magento:PortType:catalogCategoryCurrentStoreRequest");
         _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -30942,7 +31495,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                catalogCategoryCurrentStoreRequestParam547,
+                catalogCategoryCurrentStoreRequestParam555,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "catalogCategoryCurrentStore")),
@@ -31057,10 +31610,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
         org.apache.axis2.util.CallbackReceiver _callbackReceiver = null;
 
-        if ((_operations[110].getMessageReceiver() == null) &&
+        if ((_operations[112].getMessageReceiver() == null) &&
                 _operationClient.getOptions().isUseSeparateListener()) {
             _callbackReceiver = new org.apache.axis2.util.CallbackReceiver();
-            _operations[110].setMessageReceiver(_callbackReceiver);
+            _operations[112].setMessageReceiver(_callbackReceiver);
         }
 
         //execute the operation client
@@ -31071,15 +31624,15 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Update assigned product
      * @see com.voyageone.common.magento.api.base.MagentoService#catalogCategoryUpdateProduct
-     * @param catalogCategoryUpdateProductRequestParam549
+     * @param catalogCategoryUpdateProductRequestParam557
      */
     public magento.CatalogCategoryUpdateProductResponseParam catalogCategoryUpdateProduct(
-        magento.CatalogCategoryUpdateProductRequestParam catalogCategoryUpdateProductRequestParam549)
+        magento.CatalogCategoryUpdateProductRequestParam catalogCategoryUpdateProductRequestParam557)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
         try {
-            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[111].getName());
+            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[113].getName());
             _operationClient.getOptions()
                             .setAction("urn:Magento:PortType:catalogCategoryUpdateProductRequest");
             _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -31096,7 +31649,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    catalogCategoryUpdateProductRequestParam549,
+                    catalogCategoryUpdateProductRequestParam557,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "catalogCategoryUpdateProduct")),
@@ -31189,13 +31742,13 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Update assigned product
      * @see com.voyageone.common.magento.api.base.MagentoService#startcatalogCategoryUpdateProduct
-     * @param catalogCategoryUpdateProductRequestParam549
+     * @param catalogCategoryUpdateProductRequestParam557
      */
     public void startcatalogCategoryUpdateProduct(
-        magento.CatalogCategoryUpdateProductRequestParam catalogCategoryUpdateProductRequestParam549,
+        magento.CatalogCategoryUpdateProductRequestParam catalogCategoryUpdateProductRequestParam557,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
-        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[111].getName());
+        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[113].getName());
         _operationClient.getOptions()
                         .setAction("urn:Magento:PortType:catalogCategoryUpdateProductRequest");
         _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -31211,7 +31764,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                catalogCategoryUpdateProductRequestParam549,
+                catalogCategoryUpdateProductRequestParam557,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "catalogCategoryUpdateProduct")),
@@ -31326,10 +31879,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
         org.apache.axis2.util.CallbackReceiver _callbackReceiver = null;
 
-        if ((_operations[111].getMessageReceiver() == null) &&
+        if ((_operations[113].getMessageReceiver() == null) &&
                 _operationClient.getOptions().isUseSeparateListener()) {
             _callbackReceiver = new org.apache.axis2.util.CallbackReceiver();
-            _operations[111].setMessageReceiver(_callbackReceiver);
+            _operations[113].setMessageReceiver(_callbackReceiver);
         }
 
         //execute the operation client
@@ -31340,15 +31893,15 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Update attribute
      * @see com.voyageone.common.magento.api.base.MagentoService#catalogProductAttributeUpdate
-     * @param catalogProductAttributeUpdateRequestParam551
+     * @param catalogProductAttributeUpdateRequestParam559
      */
     public magento.CatalogProductAttributeUpdateResponseParam catalogProductAttributeUpdate(
-        magento.CatalogProductAttributeUpdateRequestParam catalogProductAttributeUpdateRequestParam551)
+        magento.CatalogProductAttributeUpdateRequestParam catalogProductAttributeUpdateRequestParam559)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
         try {
-            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[112].getName());
+            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[114].getName());
             _operationClient.getOptions()
                             .setAction("urn:Magento:PortType:catalogProductAttributeUpdateRequest");
             _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -31365,7 +31918,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    catalogProductAttributeUpdateRequestParam551,
+                    catalogProductAttributeUpdateRequestParam559,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "catalogProductAttributeUpdate")),
@@ -31458,13 +32011,13 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Update attribute
      * @see com.voyageone.common.magento.api.base.MagentoService#startcatalogProductAttributeUpdate
-     * @param catalogProductAttributeUpdateRequestParam551
+     * @param catalogProductAttributeUpdateRequestParam559
      */
     public void startcatalogProductAttributeUpdate(
-        magento.CatalogProductAttributeUpdateRequestParam catalogProductAttributeUpdateRequestParam551,
+        magento.CatalogProductAttributeUpdateRequestParam catalogProductAttributeUpdateRequestParam559,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
-        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[112].getName());
+        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[114].getName());
         _operationClient.getOptions()
                         .setAction("urn:Magento:PortType:catalogProductAttributeUpdateRequest");
         _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -31480,7 +32033,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                catalogProductAttributeUpdateRequestParam551,
+                catalogProductAttributeUpdateRequestParam559,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "catalogProductAttributeUpdate")),
@@ -31595,10 +32148,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
         org.apache.axis2.util.CallbackReceiver _callbackReceiver = null;
 
-        if ((_operations[112].getMessageReceiver() == null) &&
+        if ((_operations[114].getMessageReceiver() == null) &&
                 _operationClient.getOptions().isUseSeparateListener()) {
             _callbackReceiver = new org.apache.axis2.util.CallbackReceiver();
-            _operations[112].setMessageReceiver(_callbackReceiver);
+            _operations[114].setMessageReceiver(_callbackReceiver);
         }
 
         //execute the operation client
@@ -31609,15 +32162,15 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * List of global faults
      * @see com.voyageone.common.magento.api.base.MagentoService#globalFaults
-     * @param globalFaultsParam553
+     * @param globalFaultsParam561
      */
     public magento.GlobalFaultsResponseParam globalFaults(
-        magento.GlobalFaultsParam globalFaultsParam553)
+        magento.GlobalFaultsParam globalFaultsParam561)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
         try {
-            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[113].getName());
+            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[115].getName());
             _operationClient.getOptions()
                             .setAction("urn:Magento:PortType:globalFaultsRequest");
             _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -31634,7 +32187,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    globalFaultsParam553,
+                    globalFaultsParam561,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "globalFaults")),
@@ -31723,13 +32276,13 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * List of global faults
      * @see com.voyageone.common.magento.api.base.MagentoService#startglobalFaults
-     * @param globalFaultsParam553
+     * @param globalFaultsParam561
      */
     public void startglobalFaults(
-        magento.GlobalFaultsParam globalFaultsParam553,
+        magento.GlobalFaultsParam globalFaultsParam561,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
-        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[113].getName());
+        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[115].getName());
         _operationClient.getOptions()
                         .setAction("urn:Magento:PortType:globalFaultsRequest");
         _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -31745,7 +32298,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                globalFaultsParam553,
+                globalFaultsParam561,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento", "globalFaults")),
                 new javax.xml.namespace.QName("urn:Magento", "globalFaults"));
@@ -31857,10 +32410,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
         org.apache.axis2.util.CallbackReceiver _callbackReceiver = null;
 
-        if ((_operations[113].getMessageReceiver() == null) &&
+        if ((_operations[115].getMessageReceiver() == null) &&
                 _operationClient.getOptions().isUseSeparateListener()) {
             _callbackReceiver = new org.apache.axis2.util.CallbackReceiver();
-            _operations[113].setMessageReceiver(_callbackReceiver);
+            _operations[115].setMessageReceiver(_callbackReceiver);
         }
 
         //execute the operation client
@@ -31871,15 +32424,15 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Create an order from shopping cart
      * @see com.voyageone.common.magento.api.base.MagentoService#shoppingCartOrder
-     * @param shoppingCartOrderRequestParam555
+     * @param shoppingCartOrderRequestParam563
      */
     public magento.ShoppingCartOrderResponseParam shoppingCartOrder(
-        magento.ShoppingCartOrderRequestParam shoppingCartOrderRequestParam555)
+        magento.ShoppingCartOrderRequestParam shoppingCartOrderRequestParam563)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
         try {
-            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[114].getName());
+            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[116].getName());
             _operationClient.getOptions()
                             .setAction("urn:Magento:PortType:shoppingCartOrderRequest");
             _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -31896,7 +32449,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    shoppingCartOrderRequestParam555,
+                    shoppingCartOrderRequestParam563,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "shoppingCartOrder")),
@@ -31986,13 +32539,13 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Create an order from shopping cart
      * @see com.voyageone.common.magento.api.base.MagentoService#startshoppingCartOrder
-     * @param shoppingCartOrderRequestParam555
+     * @param shoppingCartOrderRequestParam563
      */
     public void startshoppingCartOrder(
-        magento.ShoppingCartOrderRequestParam shoppingCartOrderRequestParam555,
+        magento.ShoppingCartOrderRequestParam shoppingCartOrderRequestParam563,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
-        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[114].getName());
+        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[116].getName());
         _operationClient.getOptions()
                         .setAction("urn:Magento:PortType:shoppingCartOrderRequest");
         _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -32008,7 +32561,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                shoppingCartOrderRequestParam555,
+                shoppingCartOrderRequestParam563,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "shoppingCartOrder")),
@@ -32122,10 +32675,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
         org.apache.axis2.util.CallbackReceiver _callbackReceiver = null;
 
-        if ((_operations[114].getMessageReceiver() == null) &&
+        if ((_operations[116].getMessageReceiver() == null) &&
                 _operationClient.getOptions().isUseSeparateListener()) {
             _callbackReceiver = new org.apache.axis2.util.CallbackReceiver();
-            _operations[114].setMessageReceiver(_callbackReceiver);
+            _operations[116].setMessageReceiver(_callbackReceiver);
         }
 
         //execute the operation client
@@ -32136,15 +32689,15 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Delete customer
      * @see com.voyageone.common.magento.api.base.MagentoService#customerCustomerDelete
-     * @param customerCustomerDeleteRequestParam557
+     * @param customerCustomerDeleteRequestParam565
      */
     public magento.CustomerCustomerDeleteResponseParam customerCustomerDelete(
-        magento.CustomerCustomerDeleteRequestParam customerCustomerDeleteRequestParam557)
+        magento.CustomerCustomerDeleteRequestParam customerCustomerDeleteRequestParam565)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
         try {
-            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[115].getName());
+            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[117].getName());
             _operationClient.getOptions()
                             .setAction("urn:Magento:PortType:customerCustomerDeleteRequest");
             _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -32161,7 +32714,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    customerCustomerDeleteRequestParam557,
+                    customerCustomerDeleteRequestParam565,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "customerCustomerDelete")),
@@ -32253,13 +32806,13 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Delete customer
      * @see com.voyageone.common.magento.api.base.MagentoService#startcustomerCustomerDelete
-     * @param customerCustomerDeleteRequestParam557
+     * @param customerCustomerDeleteRequestParam565
      */
     public void startcustomerCustomerDelete(
-        magento.CustomerCustomerDeleteRequestParam customerCustomerDeleteRequestParam557,
+        magento.CustomerCustomerDeleteRequestParam customerCustomerDeleteRequestParam565,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
-        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[115].getName());
+        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[117].getName());
         _operationClient.getOptions()
                         .setAction("urn:Magento:PortType:customerCustomerDeleteRequest");
         _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -32275,7 +32828,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                customerCustomerDeleteRequestParam557,
+                customerCustomerDeleteRequestParam565,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "customerCustomerDelete")),
@@ -32390,10 +32943,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
         org.apache.axis2.util.CallbackReceiver _callbackReceiver = null;
 
-        if ((_operations[115].getMessageReceiver() == null) &&
+        if ((_operations[117].getMessageReceiver() == null) &&
                 _operationClient.getOptions().isUseSeparateListener()) {
             _callbackReceiver = new org.apache.axis2.util.CallbackReceiver();
-            _operations[115].setMessageReceiver(_callbackReceiver);
+            _operations[117].setMessageReceiver(_callbackReceiver);
         }
 
         //execute the operation client
@@ -32404,15 +32957,15 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Retrieve hierarchical tree of categories.
      * @see com.voyageone.common.magento.api.base.MagentoService#catalogCategoryTree
-     * @param catalogCategoryTreeRequestParam559
+     * @param catalogCategoryTreeRequestParam567
      */
     public magento.CatalogCategoryTreeResponseParam catalogCategoryTree(
-        magento.CatalogCategoryTreeRequestParam catalogCategoryTreeRequestParam559)
+        magento.CatalogCategoryTreeRequestParam catalogCategoryTreeRequestParam567)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
         try {
-            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[116].getName());
+            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[118].getName());
             _operationClient.getOptions()
                             .setAction("urn:Magento:PortType:catalogCategoryTreeRequest");
             _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -32429,7 +32982,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    catalogCategoryTreeRequestParam559,
+                    catalogCategoryTreeRequestParam567,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "catalogCategoryTree")),
@@ -32519,13 +33072,13 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Retrieve hierarchical tree of categories.
      * @see com.voyageone.common.magento.api.base.MagentoService#startcatalogCategoryTree
-     * @param catalogCategoryTreeRequestParam559
+     * @param catalogCategoryTreeRequestParam567
      */
     public void startcatalogCategoryTree(
-        magento.CatalogCategoryTreeRequestParam catalogCategoryTreeRequestParam559,
+        magento.CatalogCategoryTreeRequestParam catalogCategoryTreeRequestParam567,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
-        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[116].getName());
+        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[118].getName());
         _operationClient.getOptions()
                         .setAction("urn:Magento:PortType:catalogCategoryTreeRequest");
         _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -32541,7 +33094,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                catalogCategoryTreeRequestParam559,
+                catalogCategoryTreeRequestParam567,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "catalogCategoryTree")),
@@ -32656,10 +33209,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
         org.apache.axis2.util.CallbackReceiver _callbackReceiver = null;
 
-        if ((_operations[116].getMessageReceiver() == null) &&
+        if ((_operations[118].getMessageReceiver() == null) &&
                 _operationClient.getOptions().isUseSeparateListener()) {
             _callbackReceiver = new org.apache.axis2.util.CallbackReceiver();
-            _operations[116].setMessageReceiver(_callbackReceiver);
+            _operations[118].setMessageReceiver(_callbackReceiver);
         }
 
         //execute the operation client
@@ -32670,15 +33223,15 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Create group within existing attribute set
      * @see com.voyageone.common.magento.api.base.MagentoService#catalogProductAttributeSetGroupAdd
-     * @param catalogProductAttributeSetGroupAddRequestParam561
+     * @param catalogProductAttributeSetGroupAddRequestParam569
      */
     public magento.CatalogProductAttributeSetGroupAddResponseParam catalogProductAttributeSetGroupAdd(
-        magento.CatalogProductAttributeSetGroupAddRequestParam catalogProductAttributeSetGroupAddRequestParam561)
+        magento.CatalogProductAttributeSetGroupAddRequestParam catalogProductAttributeSetGroupAddRequestParam569)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
         try {
-            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[117].getName());
+            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[119].getName());
             _operationClient.getOptions()
                             .setAction("urn:Magento:PortType:catalogProductAttributeSetGroupAddRequest");
             _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -32695,7 +33248,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    catalogProductAttributeSetGroupAddRequestParam561,
+                    catalogProductAttributeSetGroupAddRequestParam569,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "catalogProductAttributeSetGroupAdd")),
@@ -32788,13 +33341,13 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Create group within existing attribute set
      * @see com.voyageone.common.magento.api.base.MagentoService#startcatalogProductAttributeSetGroupAdd
-     * @param catalogProductAttributeSetGroupAddRequestParam561
+     * @param catalogProductAttributeSetGroupAddRequestParam569
      */
     public void startcatalogProductAttributeSetGroupAdd(
-        magento.CatalogProductAttributeSetGroupAddRequestParam catalogProductAttributeSetGroupAddRequestParam561,
+        magento.CatalogProductAttributeSetGroupAddRequestParam catalogProductAttributeSetGroupAddRequestParam569,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
-        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[117].getName());
+        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[119].getName());
         _operationClient.getOptions()
                         .setAction("urn:Magento:PortType:catalogProductAttributeSetGroupAddRequest");
         _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -32810,7 +33363,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                catalogProductAttributeSetGroupAddRequestParam561,
+                catalogProductAttributeSetGroupAddRequestParam569,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "catalogProductAttributeSetGroupAdd")),
@@ -32925,10 +33478,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
         org.apache.axis2.util.CallbackReceiver _callbackReceiver = null;
 
-        if ((_operations[117].getMessageReceiver() == null) &&
+        if ((_operations[119].getMessageReceiver() == null) &&
                 _operationClient.getOptions().isUseSeparateListener()) {
             _callbackReceiver = new org.apache.axis2.util.CallbackReceiver();
-            _operations[117].setMessageReceiver(_callbackReceiver);
+            _operations[119].setMessageReceiver(_callbackReceiver);
         }
 
         //execute the operation client
@@ -32939,15 +33492,15 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Remove product image
      * @see com.voyageone.common.magento.api.base.MagentoService#catalogProductAttributeMediaRemove
-     * @param catalogProductAttributeMediaRemoveRequestParam563
+     * @param catalogProductAttributeMediaRemoveRequestParam571
      */
     public magento.CatalogProductAttributeMediaRemoveResponseParam catalogProductAttributeMediaRemove(
-        magento.CatalogProductAttributeMediaRemoveRequestParam catalogProductAttributeMediaRemoveRequestParam563)
+        magento.CatalogProductAttributeMediaRemoveRequestParam catalogProductAttributeMediaRemoveRequestParam571)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
         try {
-            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[118].getName());
+            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[120].getName());
             _operationClient.getOptions()
                             .setAction("urn:Magento:PortType:catalogProductAttributeMediaRemoveRequest");
             _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -32964,7 +33517,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    catalogProductAttributeMediaRemoveRequestParam563,
+                    catalogProductAttributeMediaRemoveRequestParam571,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "catalogProductAttributeMediaRemove")),
@@ -33057,13 +33610,13 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Remove product image
      * @see com.voyageone.common.magento.api.base.MagentoService#startcatalogProductAttributeMediaRemove
-     * @param catalogProductAttributeMediaRemoveRequestParam563
+     * @param catalogProductAttributeMediaRemoveRequestParam571
      */
     public void startcatalogProductAttributeMediaRemove(
-        magento.CatalogProductAttributeMediaRemoveRequestParam catalogProductAttributeMediaRemoveRequestParam563,
+        magento.CatalogProductAttributeMediaRemoveRequestParam catalogProductAttributeMediaRemoveRequestParam571,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
-        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[118].getName());
+        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[120].getName());
         _operationClient.getOptions()
                         .setAction("urn:Magento:PortType:catalogProductAttributeMediaRemoveRequest");
         _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -33079,7 +33632,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                catalogProductAttributeMediaRemoveRequestParam563,
+                catalogProductAttributeMediaRemoveRequestParam571,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "catalogProductAttributeMediaRemove")),
@@ -33194,10 +33747,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
         org.apache.axis2.util.CallbackReceiver _callbackReceiver = null;
 
-        if ((_operations[118].getMessageReceiver() == null) &&
+        if ((_operations[120].getMessageReceiver() == null) &&
                 _operationClient.getOptions().isUseSeparateListener()) {
             _callbackReceiver = new org.apache.axis2.util.CallbackReceiver();
-            _operations[118].setMessageReceiver(_callbackReceiver);
+            _operations[120].setMessageReceiver(_callbackReceiver);
         }
 
         //execute the operation client
@@ -33208,15 +33761,15 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Unhold order
      * @see com.voyageone.common.magento.api.base.MagentoService#salesOrderUnhold
-     * @param salesOrderUnholdRequestParam565
+     * @param salesOrderUnholdRequestParam573
      */
     public magento.SalesOrderUnholdResponseParam salesOrderUnhold(
-        magento.SalesOrderUnholdRequestParam salesOrderUnholdRequestParam565)
+        magento.SalesOrderUnholdRequestParam salesOrderUnholdRequestParam573)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
         try {
-            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[119].getName());
+            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[121].getName());
             _operationClient.getOptions()
                             .setAction("urn:Magento:PortType:salesOrderUnholdRequest");
             _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -33233,7 +33786,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    salesOrderUnholdRequestParam565,
+                    salesOrderUnholdRequestParam573,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "salesOrderUnhold")),
@@ -33323,13 +33876,13 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Unhold order
      * @see com.voyageone.common.magento.api.base.MagentoService#startsalesOrderUnhold
-     * @param salesOrderUnholdRequestParam565
+     * @param salesOrderUnholdRequestParam573
      */
     public void startsalesOrderUnhold(
-        magento.SalesOrderUnholdRequestParam salesOrderUnholdRequestParam565,
+        magento.SalesOrderUnholdRequestParam salesOrderUnholdRequestParam573,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
-        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[119].getName());
+        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[121].getName());
         _operationClient.getOptions()
                         .setAction("urn:Magento:PortType:salesOrderUnholdRequest");
         _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -33345,7 +33898,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                salesOrderUnholdRequestParam565,
+                salesOrderUnholdRequestParam573,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "salesOrderUnhold")),
@@ -33459,10 +34012,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
         org.apache.axis2.util.CallbackReceiver _callbackReceiver = null;
 
-        if ((_operations[119].getMessageReceiver() == null) &&
+        if ((_operations[121].getMessageReceiver() == null) &&
                 _operationClient.getOptions().isUseSeparateListener()) {
             _callbackReceiver = new org.apache.axis2.util.CallbackReceiver();
-            _operations[119].setMessageReceiver(_callbackReceiver);
+            _operations[121].setMessageReceiver(_callbackReceiver);
         }
 
         //execute the operation client
@@ -33473,15 +34026,15 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Setting a gift messages to the quote item
      * @see com.voyageone.common.magento.api.base.MagentoService#giftMessageSetForQuoteItem
-     * @param giftMessageForQuoteItemRequestParam567
+     * @param giftMessageForQuoteItemRequestParam575
      */
     public magento.GiftMessageForQuoteItemResponseParam giftMessageSetForQuoteItem(
-        magento.GiftMessageForQuoteItemRequestParam giftMessageForQuoteItemRequestParam567)
+        magento.GiftMessageForQuoteItemRequestParam giftMessageForQuoteItemRequestParam575)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
         try {
-            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[120].getName());
+            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[122].getName());
             _operationClient.getOptions()
                             .setAction("urn:Magento:PortType:giftMessageSetForQuoteItemRequest");
             _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -33498,7 +34051,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    giftMessageForQuoteItemRequestParam567,
+                    giftMessageForQuoteItemRequestParam575,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "giftMessageSetForQuoteItem")),
@@ -33591,13 +34144,13 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Setting a gift messages to the quote item
      * @see com.voyageone.common.magento.api.base.MagentoService#startgiftMessageSetForQuoteItem
-     * @param giftMessageForQuoteItemRequestParam567
+     * @param giftMessageForQuoteItemRequestParam575
      */
     public void startgiftMessageSetForQuoteItem(
-        magento.GiftMessageForQuoteItemRequestParam giftMessageForQuoteItemRequestParam567,
+        magento.GiftMessageForQuoteItemRequestParam giftMessageForQuoteItemRequestParam575,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
-        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[120].getName());
+        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[122].getName());
         _operationClient.getOptions()
                         .setAction("urn:Magento:PortType:giftMessageSetForQuoteItemRequest");
         _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -33613,7 +34166,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                giftMessageForQuoteItemRequestParam567,
+                giftMessageForQuoteItemRequestParam575,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "giftMessageSetForQuoteItem")),
@@ -33728,10 +34281,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
         org.apache.axis2.util.CallbackReceiver _callbackReceiver = null;
 
-        if ((_operations[120].getMessageReceiver() == null) &&
+        if ((_operations[122].getMessageReceiver() == null) &&
                 _operationClient.getOptions().isUseSeparateListener()) {
             _callbackReceiver = new org.apache.axis2.util.CallbackReceiver();
-            _operations[120].setMessageReceiver(_callbackReceiver);
+            _operations[122].setMessageReceiver(_callbackReceiver);
         }
 
         //execute the operation client
@@ -33742,15 +34295,15 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Delete attribute
      * @see com.voyageone.common.magento.api.base.MagentoService#catalogProductAttributeRemove
-     * @param catalogProductAttributeRemoveRequestParam569
+     * @param catalogProductAttributeRemoveRequestParam577
      */
     public magento.CatalogProductAttributeRemoveResponseParam catalogProductAttributeRemove(
-        magento.CatalogProductAttributeRemoveRequestParam catalogProductAttributeRemoveRequestParam569)
+        magento.CatalogProductAttributeRemoveRequestParam catalogProductAttributeRemoveRequestParam577)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
         try {
-            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[121].getName());
+            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[123].getName());
             _operationClient.getOptions()
                             .setAction("urn:Magento:PortType:catalogProductAttributeRemoveRequest");
             _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -33767,7 +34320,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    catalogProductAttributeRemoveRequestParam569,
+                    catalogProductAttributeRemoveRequestParam577,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "catalogProductAttributeRemove")),
@@ -33860,13 +34413,13 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Delete attribute
      * @see com.voyageone.common.magento.api.base.MagentoService#startcatalogProductAttributeRemove
-     * @param catalogProductAttributeRemoveRequestParam569
+     * @param catalogProductAttributeRemoveRequestParam577
      */
     public void startcatalogProductAttributeRemove(
-        magento.CatalogProductAttributeRemoveRequestParam catalogProductAttributeRemoveRequestParam569,
+        magento.CatalogProductAttributeRemoveRequestParam catalogProductAttributeRemoveRequestParam577,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
-        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[121].getName());
+        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[123].getName());
         _operationClient.getOptions()
                         .setAction("urn:Magento:PortType:catalogProductAttributeRemoveRequest");
         _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -33882,7 +34435,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                catalogProductAttributeRemoveRequestParam569,
+                catalogProductAttributeRemoveRequestParam577,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "catalogProductAttributeRemove")),
@@ -33997,10 +34550,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
         org.apache.axis2.util.CallbackReceiver _callbackReceiver = null;
 
-        if ((_operations[121].getMessageReceiver() == null) &&
+        if ((_operations[123].getMessageReceiver() == null) &&
                 _operationClient.getOptions().isUseSeparateListener()) {
             _callbackReceiver = new org.apache.axis2.util.CallbackReceiver();
-            _operations[121].setMessageReceiver(_callbackReceiver);
+            _operations[123].setMessageReceiver(_callbackReceiver);
         }
 
         //execute the operation client
@@ -34011,14 +34564,14 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Call api functionality
      * @see com.voyageone.common.magento.api.base.MagentoService#call
-     * @param callParam571
+     * @param callParam579
      */
-    public magento.CallResponseParam call(magento.CallParam callParam571)
+    public magento.CallResponseParam call(magento.CallParam callParam579)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
         try {
-            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[122].getName());
+            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[124].getName());
             _operationClient.getOptions()
                             .setAction("urn:Magento:PortType:callRequest");
             _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -34035,7 +34588,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    callParam571,
+                    callParam579,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento", "call")),
                     new javax.xml.namespace.QName("urn:Magento", "call"));
@@ -34123,12 +34676,12 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Call api functionality
      * @see com.voyageone.common.magento.api.base.MagentoService#startcall
-     * @param callParam571
+     * @param callParam579
      */
-    public void startcall(magento.CallParam callParam571,
+    public void startcall(magento.CallParam callParam579,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
-        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[122].getName());
+        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[124].getName());
         _operationClient.getOptions()
                         .setAction("urn:Magento:PortType:callRequest");
         _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -34144,7 +34697,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                callParam571,
+                callParam579,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento", "call")),
                 new javax.xml.namespace.QName("urn:Magento", "call"));
@@ -34254,10 +34807,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
         org.apache.axis2.util.CallbackReceiver _callbackReceiver = null;
 
-        if ((_operations[122].getMessageReceiver() == null) &&
+        if ((_operations[124].getMessageReceiver() == null) &&
                 _operationClient.getOptions().isUseSeparateListener()) {
             _callbackReceiver = new org.apache.axis2.util.CallbackReceiver();
-            _operations[122].setMessageReceiver(_callbackReceiver);
+            _operations[124].setMessageReceiver(_callbackReceiver);
         }
 
         //execute the operation client
@@ -34268,15 +34821,15 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Retrieve product image types
      * @see com.voyageone.common.magento.api.base.MagentoService#catalogProductAttributeMediaTypes
-     * @param catalogProductAttributeMediaTypesRequestParam573
+     * @param catalogProductAttributeMediaTypesRequestParam581
      */
     public magento.CatalogProductAttributeMediaTypesResponseParam catalogProductAttributeMediaTypes(
-        magento.CatalogProductAttributeMediaTypesRequestParam catalogProductAttributeMediaTypesRequestParam573)
+        magento.CatalogProductAttributeMediaTypesRequestParam catalogProductAttributeMediaTypesRequestParam581)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
         try {
-            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[123].getName());
+            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[125].getName());
             _operationClient.getOptions()
                             .setAction("urn:Magento:PortType:catalogProductAttributeMediaTypesRequest");
             _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -34293,7 +34846,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    catalogProductAttributeMediaTypesRequestParam573,
+                    catalogProductAttributeMediaTypesRequestParam581,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "catalogProductAttributeMediaTypes")),
@@ -34386,13 +34939,13 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Retrieve product image types
      * @see com.voyageone.common.magento.api.base.MagentoService#startcatalogProductAttributeMediaTypes
-     * @param catalogProductAttributeMediaTypesRequestParam573
+     * @param catalogProductAttributeMediaTypesRequestParam581
      */
     public void startcatalogProductAttributeMediaTypes(
-        magento.CatalogProductAttributeMediaTypesRequestParam catalogProductAttributeMediaTypesRequestParam573,
+        magento.CatalogProductAttributeMediaTypesRequestParam catalogProductAttributeMediaTypesRequestParam581,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
-        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[123].getName());
+        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[125].getName());
         _operationClient.getOptions()
                         .setAction("urn:Magento:PortType:catalogProductAttributeMediaTypesRequest");
         _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -34408,7 +34961,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                catalogProductAttributeMediaTypesRequestParam573,
+                catalogProductAttributeMediaTypesRequestParam581,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "catalogProductAttributeMediaTypes")),
@@ -34523,10 +35076,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
         org.apache.axis2.util.CallbackReceiver _callbackReceiver = null;
 
-        if ((_operations[123].getMessageReceiver() == null) &&
+        if ((_operations[125].getMessageReceiver() == null) &&
                 _operationClient.getOptions().isUseSeparateListener()) {
             _callbackReceiver = new org.apache.axis2.util.CallbackReceiver();
-            _operations[123].setMessageReceiver(_callbackReceiver);
+            _operations[125].setMessageReceiver(_callbackReceiver);
         }
 
         //execute the operation client
@@ -34537,15 +35090,15 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Update product image
      * @see com.voyageone.common.magento.api.base.MagentoService#catalogProductAttributeMediaUpdate
-     * @param catalogProductAttributeMediaUpdateRequestParam575
+     * @param catalogProductAttributeMediaUpdateRequestParam583
      */
     public magento.CatalogProductAttributeMediaUpdateResponseParam catalogProductAttributeMediaUpdate(
-        magento.CatalogProductAttributeMediaUpdateRequestParam catalogProductAttributeMediaUpdateRequestParam575)
+        magento.CatalogProductAttributeMediaUpdateRequestParam catalogProductAttributeMediaUpdateRequestParam583)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
         try {
-            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[124].getName());
+            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[126].getName());
             _operationClient.getOptions()
                             .setAction("urn:Magento:PortType:catalogProductAttributeMediaUpdateRequest");
             _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -34562,7 +35115,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    catalogProductAttributeMediaUpdateRequestParam575,
+                    catalogProductAttributeMediaUpdateRequestParam583,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "catalogProductAttributeMediaUpdate")),
@@ -34655,13 +35208,13 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Update product image
      * @see com.voyageone.common.magento.api.base.MagentoService#startcatalogProductAttributeMediaUpdate
-     * @param catalogProductAttributeMediaUpdateRequestParam575
+     * @param catalogProductAttributeMediaUpdateRequestParam583
      */
     public void startcatalogProductAttributeMediaUpdate(
-        magento.CatalogProductAttributeMediaUpdateRequestParam catalogProductAttributeMediaUpdateRequestParam575,
+        magento.CatalogProductAttributeMediaUpdateRequestParam catalogProductAttributeMediaUpdateRequestParam583,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
-        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[124].getName());
+        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[126].getName());
         _operationClient.getOptions()
                         .setAction("urn:Magento:PortType:catalogProductAttributeMediaUpdateRequest");
         _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -34677,7 +35230,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                catalogProductAttributeMediaUpdateRequestParam575,
+                catalogProductAttributeMediaUpdateRequestParam583,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "catalogProductAttributeMediaUpdate")),
@@ -34792,10 +35345,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
         org.apache.axis2.util.CallbackReceiver _callbackReceiver = null;
 
-        if ((_operations[124].getMessageReceiver() == null) &&
+        if ((_operations[126].getMessageReceiver() == null) &&
                 _operationClient.getOptions().isUseSeparateListener()) {
             _callbackReceiver = new org.apache.axis2.util.CallbackReceiver();
-            _operations[124].setMessageReceiver(_callbackReceiver);
+            _operations[126].setMessageReceiver(_callbackReceiver);
         }
 
         //execute the operation client
@@ -34806,15 +35359,15 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Retrieve stock data by product ids
      * @see com.voyageone.common.magento.api.base.MagentoService#catalogInventoryStockItemList
-     * @param catalogInventoryStockItemListRequestParam577
+     * @param catalogInventoryStockItemListRequestParam585
      */
     public magento.CatalogInventoryStockItemListResponseParam catalogInventoryStockItemList(
-        magento.CatalogInventoryStockItemListRequestParam catalogInventoryStockItemListRequestParam577)
+        magento.CatalogInventoryStockItemListRequestParam catalogInventoryStockItemListRequestParam585)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
         try {
-            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[125].getName());
+            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[127].getName());
             _operationClient.getOptions()
                             .setAction("urn:Magento:PortType:catalogInventoryStockItemListRequest");
             _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -34831,7 +35384,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    catalogInventoryStockItemListRequestParam577,
+                    catalogInventoryStockItemListRequestParam585,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "catalogInventoryStockItemList")),
@@ -34924,13 +35477,13 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Retrieve stock data by product ids
      * @see com.voyageone.common.magento.api.base.MagentoService#startcatalogInventoryStockItemList
-     * @param catalogInventoryStockItemListRequestParam577
+     * @param catalogInventoryStockItemListRequestParam585
      */
     public void startcatalogInventoryStockItemList(
-        magento.CatalogInventoryStockItemListRequestParam catalogInventoryStockItemListRequestParam577,
+        magento.CatalogInventoryStockItemListRequestParam catalogInventoryStockItemListRequestParam585,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
-        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[125].getName());
+        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[127].getName());
         _operationClient.getOptions()
                         .setAction("urn:Magento:PortType:catalogInventoryStockItemListRequest");
         _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -34946,7 +35499,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                catalogInventoryStockItemListRequestParam577,
+                catalogInventoryStockItemListRequestParam585,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "catalogInventoryStockItemList")),
@@ -35061,10 +35614,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
         org.apache.axis2.util.CallbackReceiver _callbackReceiver = null;
 
-        if ((_operations[125].getMessageReceiver() == null) &&
+        if ((_operations[127].getMessageReceiver() == null) &&
                 _operationClient.getOptions().isUseSeparateListener()) {
             _callbackReceiver = new org.apache.axis2.util.CallbackReceiver();
-            _operations[125].setMessageReceiver(_callbackReceiver);
+            _operations[127].setMessageReceiver(_callbackReceiver);
         }
 
         //execute the operation client
@@ -35075,15 +35628,15 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Retrieve customers
      * @see com.voyageone.common.magento.api.base.MagentoService#customerCustomerList
-     * @param customerCustomerListRequestParam579
+     * @param customerCustomerListRequestParam587
      */
     public magento.CustomerCustomerListResponseParam customerCustomerList(
-        magento.CustomerCustomerListRequestParam customerCustomerListRequestParam579)
+        magento.CustomerCustomerListRequestParam customerCustomerListRequestParam587)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
         try {
-            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[126].getName());
+            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[128].getName());
             _operationClient.getOptions()
                             .setAction("urn:Magento:PortType:customerCustomerListRequest");
             _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -35100,7 +35653,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    customerCustomerListRequestParam579,
+                    customerCustomerListRequestParam587,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "customerCustomerList")),
@@ -35190,13 +35743,13 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Retrieve customers
      * @see com.voyageone.common.magento.api.base.MagentoService#startcustomerCustomerList
-     * @param customerCustomerListRequestParam579
+     * @param customerCustomerListRequestParam587
      */
     public void startcustomerCustomerList(
-        magento.CustomerCustomerListRequestParam customerCustomerListRequestParam579,
+        magento.CustomerCustomerListRequestParam customerCustomerListRequestParam587,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
-        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[126].getName());
+        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[128].getName());
         _operationClient.getOptions()
                         .setAction("urn:Magento:PortType:customerCustomerListRequest");
         _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -35212,7 +35765,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                customerCustomerListRequestParam579,
+                customerCustomerListRequestParam587,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "customerCustomerList")),
@@ -35327,10 +35880,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
         org.apache.axis2.util.CallbackReceiver _callbackReceiver = null;
 
-        if ((_operations[126].getMessageReceiver() == null) &&
+        if ((_operations[128].getMessageReceiver() == null) &&
                 _operationClient.getOptions().isUseSeparateListener()) {
             _callbackReceiver = new org.apache.axis2.util.CallbackReceiver();
-            _operations[126].setMessageReceiver(_callbackReceiver);
+            _operations[128].setMessageReceiver(_callbackReceiver);
         }
 
         //execute the operation client
@@ -35341,15 +35894,15 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Redeem gift card amount
      * @see com.voyageone.common.magento.api.base.MagentoService#giftcardCustomerRedeem
-     * @param giftcardCustomerRedeemRequestParam581
+     * @param giftcardCustomerRedeemRequestParam589
      */
     public magento.GiftcardCustomerRedeemResponseParam giftcardCustomerRedeem(
-        magento.GiftcardCustomerRedeemRequestParam giftcardCustomerRedeemRequestParam581)
+        magento.GiftcardCustomerRedeemRequestParam giftcardCustomerRedeemRequestParam589)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
         try {
-            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[127].getName());
+            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[129].getName());
             _operationClient.getOptions()
                             .setAction("urn:Magento:PortType:giftcardCustomerRedeemRequest");
             _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -35366,7 +35919,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    giftcardCustomerRedeemRequestParam581,
+                    giftcardCustomerRedeemRequestParam589,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "giftcardCustomerRedeem")),
@@ -35458,13 +36011,13 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Redeem gift card amount
      * @see com.voyageone.common.magento.api.base.MagentoService#startgiftcardCustomerRedeem
-     * @param giftcardCustomerRedeemRequestParam581
+     * @param giftcardCustomerRedeemRequestParam589
      */
     public void startgiftcardCustomerRedeem(
-        magento.GiftcardCustomerRedeemRequestParam giftcardCustomerRedeemRequestParam581,
+        magento.GiftcardCustomerRedeemRequestParam giftcardCustomerRedeemRequestParam589,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
-        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[127].getName());
+        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[129].getName());
         _operationClient.getOptions()
                         .setAction("urn:Magento:PortType:giftcardCustomerRedeemRequest");
         _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -35480,7 +36033,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                giftcardCustomerRedeemRequestParam581,
+                giftcardCustomerRedeemRequestParam589,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "giftcardCustomerRedeem")),
@@ -35595,10 +36148,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
         org.apache.axis2.util.CallbackReceiver _callbackReceiver = null;
 
-        if ((_operations[127].getMessageReceiver() == null) &&
+        if ((_operations[129].getMessageReceiver() == null) &&
                 _operationClient.getOptions().isUseSeparateListener()) {
             _callbackReceiver = new org.apache.axis2.util.CallbackReceiver();
-            _operations[127].setMessageReceiver(_callbackReceiver);
+            _operations[129].setMessageReceiver(_callbackReceiver);
         }
 
         //execute the operation client
@@ -35609,15 +36162,15 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Remove group from attribute set
      * @see com.voyageone.common.magento.api.base.MagentoService#catalogProductAttributeSetGroupRemove
-     * @param catalogProductAttributeSetGroupRemoveRequestParam583
+     * @param catalogProductAttributeSetGroupRemoveRequestParam591
      */
     public magento.CatalogProductAttributeSetGroupRemoveResponseParam catalogProductAttributeSetGroupRemove(
-        magento.CatalogProductAttributeSetGroupRemoveRequestParam catalogProductAttributeSetGroupRemoveRequestParam583)
+        magento.CatalogProductAttributeSetGroupRemoveRequestParam catalogProductAttributeSetGroupRemoveRequestParam591)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
         try {
-            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[128].getName());
+            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[130].getName());
             _operationClient.getOptions()
                             .setAction("urn:Magento:PortType:catalogProductAttributeSetGroupRemoveRequest");
             _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -35634,7 +36187,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    catalogProductAttributeSetGroupRemoveRequestParam583,
+                    catalogProductAttributeSetGroupRemoveRequestParam591,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "catalogProductAttributeSetGroupRemove")),
@@ -35727,13 +36280,13 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Remove group from attribute set
      * @see com.voyageone.common.magento.api.base.MagentoService#startcatalogProductAttributeSetGroupRemove
-     * @param catalogProductAttributeSetGroupRemoveRequestParam583
+     * @param catalogProductAttributeSetGroupRemoveRequestParam591
      */
     public void startcatalogProductAttributeSetGroupRemove(
-        magento.CatalogProductAttributeSetGroupRemoveRequestParam catalogProductAttributeSetGroupRemoveRequestParam583,
+        magento.CatalogProductAttributeSetGroupRemoveRequestParam catalogProductAttributeSetGroupRemoveRequestParam591,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
-        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[128].getName());
+        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[130].getName());
         _operationClient.getOptions()
                         .setAction("urn:Magento:PortType:catalogProductAttributeSetGroupRemoveRequest");
         _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -35749,7 +36302,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                catalogProductAttributeSetGroupRemoveRequestParam583,
+                catalogProductAttributeSetGroupRemoveRequestParam591,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "catalogProductAttributeSetGroupRemove")),
@@ -35864,10 +36417,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
         org.apache.axis2.util.CallbackReceiver _callbackReceiver = null;
 
-        if ((_operations[128].getMessageReceiver() == null) &&
+        if ((_operations[130].getMessageReceiver() == null) &&
                 _operationClient.getOptions().isUseSeparateListener()) {
             _callbackReceiver = new org.apache.axis2.util.CallbackReceiver();
-            _operations[128].setMessageReceiver(_callbackReceiver);
+            _operations[130].setMessageReceiver(_callbackReceiver);
         }
 
         //execute the operation client
@@ -35878,15 +36431,15 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Remove product link
      * @see com.voyageone.common.magento.api.base.MagentoService#catalogProductLinkRemove
-     * @param catalogProductLinkRemoveRequestParam585
+     * @param catalogProductLinkRemoveRequestParam593
      */
     public magento.CatalogProductLinkRemoveResponseParam catalogProductLinkRemove(
-        magento.CatalogProductLinkRemoveRequestParam catalogProductLinkRemoveRequestParam585)
+        magento.CatalogProductLinkRemoveRequestParam catalogProductLinkRemoveRequestParam593)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
         try {
-            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[129].getName());
+            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[131].getName());
             _operationClient.getOptions()
                             .setAction("urn:Magento:PortType:catalogProductLinkRemoveRequest");
             _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -35903,7 +36456,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    catalogProductLinkRemoveRequestParam585,
+                    catalogProductLinkRemoveRequestParam593,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "catalogProductLinkRemove")),
@@ -35995,13 +36548,13 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Remove product link
      * @see com.voyageone.common.magento.api.base.MagentoService#startcatalogProductLinkRemove
-     * @param catalogProductLinkRemoveRequestParam585
+     * @param catalogProductLinkRemoveRequestParam593
      */
     public void startcatalogProductLinkRemove(
-        magento.CatalogProductLinkRemoveRequestParam catalogProductLinkRemoveRequestParam585,
+        magento.CatalogProductLinkRemoveRequestParam catalogProductLinkRemoveRequestParam593,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
-        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[129].getName());
+        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[131].getName());
         _operationClient.getOptions()
                         .setAction("urn:Magento:PortType:catalogProductLinkRemoveRequest");
         _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -36017,7 +36570,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                catalogProductLinkRemoveRequestParam585,
+                catalogProductLinkRemoveRequestParam593,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "catalogProductLinkRemove")),
@@ -36132,10 +36685,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
         org.apache.axis2.util.CallbackReceiver _callbackReceiver = null;
 
-        if ((_operations[129].getMessageReceiver() == null) &&
+        if ((_operations[131].getMessageReceiver() == null) &&
                 _operationClient.getOptions().isUseSeparateListener()) {
             _callbackReceiver = new org.apache.axis2.util.CallbackReceiver();
-            _operations[129].setMessageReceiver(_callbackReceiver);
+            _operations[131].setMessageReceiver(_callbackReceiver);
         }
 
         //execute the operation client
@@ -36146,15 +36699,15 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Retrieve gift card data
      * @see com.voyageone.common.magento.api.base.MagentoService#giftcardCustomerInfo
-     * @param giftcardCustomerInfoRequestParam587
+     * @param giftcardCustomerInfoRequestParam595
      */
     public magento.GiftcardCustomerInfoResponseParam giftcardCustomerInfo(
-        magento.GiftcardCustomerInfoRequestParam giftcardCustomerInfoRequestParam587)
+        magento.GiftcardCustomerInfoRequestParam giftcardCustomerInfoRequestParam595)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
         try {
-            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[130].getName());
+            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[132].getName());
             _operationClient.getOptions()
                             .setAction("urn:Magento:PortType:giftcardCustomerInfoRequest");
             _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -36171,7 +36724,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    giftcardCustomerInfoRequestParam587,
+                    giftcardCustomerInfoRequestParam595,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "giftcardCustomerInfo")),
@@ -36261,13 +36814,13 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Retrieve gift card data
      * @see com.voyageone.common.magento.api.base.MagentoService#startgiftcardCustomerInfo
-     * @param giftcardCustomerInfoRequestParam587
+     * @param giftcardCustomerInfoRequestParam595
      */
     public void startgiftcardCustomerInfo(
-        magento.GiftcardCustomerInfoRequestParam giftcardCustomerInfoRequestParam587,
+        magento.GiftcardCustomerInfoRequestParam giftcardCustomerInfoRequestParam595,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
-        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[130].getName());
+        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[132].getName());
         _operationClient.getOptions()
                         .setAction("urn:Magento:PortType:giftcardCustomerInfoRequest");
         _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -36283,7 +36836,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                giftcardCustomerInfoRequestParam587,
+                giftcardCustomerInfoRequestParam595,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "giftcardCustomerInfo")),
@@ -36398,10 +36951,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
         org.apache.axis2.util.CallbackReceiver _callbackReceiver = null;
 
-        if ((_operations[130].getMessageReceiver() == null) &&
+        if ((_operations[132].getMessageReceiver() == null) &&
                 _operationClient.getOptions().isUseSeparateListener()) {
             _callbackReceiver = new org.apache.axis2.util.CallbackReceiver();
-            _operations[130].setMessageReceiver(_callbackReceiver);
+            _operations[132].setMessageReceiver(_callbackReceiver);
         }
 
         //execute the operation client
@@ -36412,15 +36965,15 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Retrieve products list by filters
      * @see com.voyageone.common.magento.api.base.MagentoService#catalogProductList
-     * @param catalogProductListRequestParam589
+     * @param catalogProductListRequestParam597
      */
     public magento.CatalogProductListResponseParam catalogProductList(
-        magento.CatalogProductListRequestParam catalogProductListRequestParam589)
+        magento.CatalogProductListRequestParam catalogProductListRequestParam597)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
         try {
-            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[131].getName());
+            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[133].getName());
             _operationClient.getOptions()
                             .setAction("urn:Magento:PortType:catalogProductListRequest");
             _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -36437,7 +36990,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    catalogProductListRequestParam589,
+                    catalogProductListRequestParam597,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "catalogProductList")),
@@ -36527,13 +37080,13 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Retrieve products list by filters
      * @see com.voyageone.common.magento.api.base.MagentoService#startcatalogProductList
-     * @param catalogProductListRequestParam589
+     * @param catalogProductListRequestParam597
      */
     public void startcatalogProductList(
-        magento.CatalogProductListRequestParam catalogProductListRequestParam589,
+        magento.CatalogProductListRequestParam catalogProductListRequestParam597,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
-        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[131].getName());
+        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[133].getName());
         _operationClient.getOptions()
                         .setAction("urn:Magento:PortType:catalogProductListRequest");
         _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -36549,7 +37102,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                catalogProductListRequestParam589,
+                catalogProductListRequestParam597,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "catalogProductList")),
@@ -36664,10 +37217,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
         org.apache.axis2.util.CallbackReceiver _callbackReceiver = null;
 
-        if ((_operations[131].getMessageReceiver() == null) &&
+        if ((_operations[133].getMessageReceiver() == null) &&
                 _operationClient.getOptions().isUseSeparateListener()) {
             _callbackReceiver = new org.apache.axis2.util.CallbackReceiver();
-            _operations[131].setMessageReceiver(_callbackReceiver);
+            _operations[133].setMessageReceiver(_callbackReceiver);
         }
 
         //execute the operation client
@@ -36678,15 +37231,15 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Add new custom option values
      * @see com.voyageone.common.magento.api.base.MagentoService#catalogProductCustomOptionValueAdd
-     * @param catalogProductCustomOptionValueAddRequestParam591
+     * @param catalogProductCustomOptionValueAddRequestParam599
      */
     public magento.CatalogProductCustomOptionValueAddResponseParam catalogProductCustomOptionValueAdd(
-        magento.CatalogProductCustomOptionValueAddRequestParam catalogProductCustomOptionValueAddRequestParam591)
+        magento.CatalogProductCustomOptionValueAddRequestParam catalogProductCustomOptionValueAddRequestParam599)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
         try {
-            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[132].getName());
+            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[134].getName());
             _operationClient.getOptions()
                             .setAction("urn:Magento:PortType:catalogProductCustomOptionValueAddRequest");
             _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -36703,7 +37256,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    catalogProductCustomOptionValueAddRequestParam591,
+                    catalogProductCustomOptionValueAddRequestParam599,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "catalogProductCustomOptionValueAdd")),
@@ -36796,13 +37349,13 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Add new custom option values
      * @see com.voyageone.common.magento.api.base.MagentoService#startcatalogProductCustomOptionValueAdd
-     * @param catalogProductCustomOptionValueAddRequestParam591
+     * @param catalogProductCustomOptionValueAddRequestParam599
      */
     public void startcatalogProductCustomOptionValueAdd(
-        magento.CatalogProductCustomOptionValueAddRequestParam catalogProductCustomOptionValueAddRequestParam591,
+        magento.CatalogProductCustomOptionValueAddRequestParam catalogProductCustomOptionValueAddRequestParam599,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
-        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[132].getName());
+        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[134].getName());
         _operationClient.getOptions()
                         .setAction("urn:Magento:PortType:catalogProductCustomOptionValueAddRequest");
         _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -36818,7 +37371,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                catalogProductCustomOptionValueAddRequestParam591,
+                catalogProductCustomOptionValueAddRequestParam599,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "catalogProductCustomOptionValueAdd")),
@@ -36933,10 +37486,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
         org.apache.axis2.util.CallbackReceiver _callbackReceiver = null;
 
-        if ((_operations[132].getMessageReceiver() == null) &&
+        if ((_operations[134].getMessageReceiver() == null) &&
                 _operationClient.getOptions().isUseSeparateListener()) {
             _callbackReceiver = new org.apache.axis2.util.CallbackReceiver();
-            _operations[132].setMessageReceiver(_callbackReceiver);
+            _operations[134].setMessageReceiver(_callbackReceiver);
         }
 
         //execute the operation client
@@ -36947,15 +37500,15 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Retrieve list of links and samples for downloadable product
      * @see com.voyageone.common.magento.api.base.MagentoService#catalogProductDownloadableLinkList
-     * @param catalogProductDownloadableLinkListRequestParam593
+     * @param catalogProductDownloadableLinkListRequestParam601
      */
     public magento.CatalogProductDownloadableLinkListResponseParam catalogProductDownloadableLinkList(
-        magento.CatalogProductDownloadableLinkListRequestParam catalogProductDownloadableLinkListRequestParam593)
+        magento.CatalogProductDownloadableLinkListRequestParam catalogProductDownloadableLinkListRequestParam601)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
         try {
-            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[133].getName());
+            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[135].getName());
             _operationClient.getOptions()
                             .setAction("urn:Magento:PortType:catalogProductDownloadableLinkListRequest");
             _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -36972,7 +37525,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    catalogProductDownloadableLinkListRequestParam593,
+                    catalogProductDownloadableLinkListRequestParam601,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "catalogProductDownloadableLinkList")),
@@ -37065,13 +37618,13 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Retrieve list of links and samples for downloadable product
      * @see com.voyageone.common.magento.api.base.MagentoService#startcatalogProductDownloadableLinkList
-     * @param catalogProductDownloadableLinkListRequestParam593
+     * @param catalogProductDownloadableLinkListRequestParam601
      */
     public void startcatalogProductDownloadableLinkList(
-        magento.CatalogProductDownloadableLinkListRequestParam catalogProductDownloadableLinkListRequestParam593,
+        magento.CatalogProductDownloadableLinkListRequestParam catalogProductDownloadableLinkListRequestParam601,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
-        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[133].getName());
+        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[135].getName());
         _operationClient.getOptions()
                         .setAction("urn:Magento:PortType:catalogProductDownloadableLinkListRequest");
         _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -37087,7 +37640,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                catalogProductDownloadableLinkListRequestParam593,
+                catalogProductDownloadableLinkListRequestParam601,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "catalogProductDownloadableLinkList")),
@@ -37202,10 +37755,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
         org.apache.axis2.util.CallbackReceiver _callbackReceiver = null;
 
-        if ((_operations[133].getMessageReceiver() == null) &&
+        if ((_operations[135].getMessageReceiver() == null) &&
                 _operationClient.getOptions().isUseSeparateListener()) {
             _callbackReceiver = new org.apache.axis2.util.CallbackReceiver();
-            _operations[133].setMessageReceiver(_callbackReceiver);
+            _operations[135].setMessageReceiver(_callbackReceiver);
         }
 
         //execute the operation client
@@ -37216,15 +37769,15 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Delete product
      * @see com.voyageone.common.magento.api.base.MagentoService#catalogProductDelete
-     * @param catalogProductDeleteRequestParam595
+     * @param catalogProductDeleteRequestParam603
      */
     public magento.CatalogProductDeleteResponseParam catalogProductDelete(
-        magento.CatalogProductDeleteRequestParam catalogProductDeleteRequestParam595)
+        magento.CatalogProductDeleteRequestParam catalogProductDeleteRequestParam603)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
         try {
-            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[134].getName());
+            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[136].getName());
             _operationClient.getOptions()
                             .setAction("urn:Magento:PortType:catalogProductDeleteRequest");
             _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -37241,7 +37794,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    catalogProductDeleteRequestParam595,
+                    catalogProductDeleteRequestParam603,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "catalogProductDelete")),
@@ -37331,13 +37884,13 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Delete product
      * @see com.voyageone.common.magento.api.base.MagentoService#startcatalogProductDelete
-     * @param catalogProductDeleteRequestParam595
+     * @param catalogProductDeleteRequestParam603
      */
     public void startcatalogProductDelete(
-        magento.CatalogProductDeleteRequestParam catalogProductDeleteRequestParam595,
+        magento.CatalogProductDeleteRequestParam catalogProductDeleteRequestParam603,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
-        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[134].getName());
+        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[136].getName());
         _operationClient.getOptions()
                         .setAction("urn:Magento:PortType:catalogProductDeleteRequest");
         _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -37353,7 +37906,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                catalogProductDeleteRequestParam595,
+                catalogProductDeleteRequestParam603,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "catalogProductDelete")),
@@ -37468,10 +38021,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
         org.apache.axis2.util.CallbackReceiver _callbackReceiver = null;
 
-        if ((_operations[134].getMessageReceiver() == null) &&
+        if ((_operations[136].getMessageReceiver() == null) &&
                 _operationClient.getOptions().isUseSeparateListener()) {
             _callbackReceiver = new org.apache.axis2.util.CallbackReceiver();
-            _operations[134].setMessageReceiver(_callbackReceiver);
+            _operations[136].setMessageReceiver(_callbackReceiver);
         }
 
         //execute the operation client
@@ -37482,15 +38035,15 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Hold order
      * @see com.voyageone.common.magento.api.base.MagentoService#salesOrderHold
-     * @param salesOrderHoldRequestParam597
+     * @param salesOrderHoldRequestParam605
      */
     public magento.SalesOrderHoldResponseParam salesOrderHold(
-        magento.SalesOrderHoldRequestParam salesOrderHoldRequestParam597)
+        magento.SalesOrderHoldRequestParam salesOrderHoldRequestParam605)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
         try {
-            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[135].getName());
+            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[137].getName());
             _operationClient.getOptions()
                             .setAction("urn:Magento:PortType:salesOrderHoldRequest");
             _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -37507,7 +38060,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    salesOrderHoldRequestParam597,
+                    salesOrderHoldRequestParam605,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "salesOrderHold")),
@@ -37597,13 +38150,13 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Hold order
      * @see com.voyageone.common.magento.api.base.MagentoService#startsalesOrderHold
-     * @param salesOrderHoldRequestParam597
+     * @param salesOrderHoldRequestParam605
      */
     public void startsalesOrderHold(
-        magento.SalesOrderHoldRequestParam salesOrderHoldRequestParam597,
+        magento.SalesOrderHoldRequestParam salesOrderHoldRequestParam605,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
-        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[135].getName());
+        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[137].getName());
         _operationClient.getOptions()
                         .setAction("urn:Magento:PortType:salesOrderHoldRequest");
         _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -37619,7 +38172,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                salesOrderHoldRequestParam597,
+                salesOrderHoldRequestParam605,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "salesOrderHold")),
@@ -37733,10 +38286,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
         org.apache.axis2.util.CallbackReceiver _callbackReceiver = null;
 
-        if ((_operations[135].getMessageReceiver() == null) &&
+        if ((_operations[137].getMessageReceiver() == null) &&
                 _operationClient.getOptions().isUseSeparateListener()) {
             _callbackReceiver = new org.apache.axis2.util.CallbackReceiver();
-            _operations[135].setMessageReceiver(_callbackReceiver);
+            _operations[137].setMessageReceiver(_callbackReceiver);
         }
 
         //execute the operation client
@@ -37747,15 +38300,15 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Redeem gift card amount
      * @see com.voyageone.common.magento.api.base.MagentoService#shoppingCartGiftcardList
-     * @param shoppingCartGiftcardListRequestParam599
+     * @param shoppingCartGiftcardListRequestParam607
      */
     public magento.ShoppingCartGiftcardListResponseParam shoppingCartGiftcardList(
-        magento.ShoppingCartGiftcardListRequestParam shoppingCartGiftcardListRequestParam599)
+        magento.ShoppingCartGiftcardListRequestParam shoppingCartGiftcardListRequestParam607)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
         try {
-            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[136].getName());
+            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[138].getName());
             _operationClient.getOptions()
                             .setAction("urn:Magento:PortType:shoppingCartGiftcardListRequest");
             _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -37772,7 +38325,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    shoppingCartGiftcardListRequestParam599,
+                    shoppingCartGiftcardListRequestParam607,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "shoppingCartGiftcardList")),
@@ -37864,13 +38417,13 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Redeem gift card amount
      * @see com.voyageone.common.magento.api.base.MagentoService#startshoppingCartGiftcardList
-     * @param shoppingCartGiftcardListRequestParam599
+     * @param shoppingCartGiftcardListRequestParam607
      */
     public void startshoppingCartGiftcardList(
-        magento.ShoppingCartGiftcardListRequestParam shoppingCartGiftcardListRequestParam599,
+        magento.ShoppingCartGiftcardListRequestParam shoppingCartGiftcardListRequestParam607,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
-        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[136].getName());
+        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[138].getName());
         _operationClient.getOptions()
                         .setAction("urn:Magento:PortType:shoppingCartGiftcardListRequest");
         _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -37886,7 +38439,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                shoppingCartGiftcardListRequestParam599,
+                shoppingCartGiftcardListRequestParam607,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "shoppingCartGiftcardList")),
@@ -38001,10 +38554,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
         org.apache.axis2.util.CallbackReceiver _callbackReceiver = null;
 
-        if ((_operations[136].getMessageReceiver() == null) &&
+        if ((_operations[138].getMessageReceiver() == null) &&
                 _operationClient.getOptions().isUseSeparateListener()) {
             _callbackReceiver = new org.apache.axis2.util.CallbackReceiver();
-            _operations[136].setMessageReceiver(_callbackReceiver);
+            _operations[138].setMessageReceiver(_callbackReceiver);
         }
 
         //execute the operation client
@@ -38015,15 +38568,15 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Update customer address data
      * @see com.voyageone.common.magento.api.base.MagentoService#customerAddressUpdate
-     * @param customerAddressUpdateRequestParam601
+     * @param customerAddressUpdateRequestParam609
      */
     public magento.CustomerAddressUpdateResponseParam customerAddressUpdate(
-        magento.CustomerAddressUpdateRequestParam customerAddressUpdateRequestParam601)
+        magento.CustomerAddressUpdateRequestParam customerAddressUpdateRequestParam609)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
         try {
-            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[137].getName());
+            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[139].getName());
             _operationClient.getOptions()
                             .setAction("urn:Magento:PortType:customerAddressUpdateRequest");
             _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -38040,7 +38593,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    customerAddressUpdateRequestParam601,
+                    customerAddressUpdateRequestParam609,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "customerAddressUpdate")),
@@ -38130,13 +38683,13 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Update customer address data
      * @see com.voyageone.common.magento.api.base.MagentoService#startcustomerAddressUpdate
-     * @param customerAddressUpdateRequestParam601
+     * @param customerAddressUpdateRequestParam609
      */
     public void startcustomerAddressUpdate(
-        magento.CustomerAddressUpdateRequestParam customerAddressUpdateRequestParam601,
+        magento.CustomerAddressUpdateRequestParam customerAddressUpdateRequestParam609,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
-        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[137].getName());
+        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[139].getName());
         _operationClient.getOptions()
                         .setAction("urn:Magento:PortType:customerAddressUpdateRequest");
         _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -38152,7 +38705,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                customerAddressUpdateRequestParam601,
+                customerAddressUpdateRequestParam609,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "customerAddressUpdate")),
@@ -38267,10 +38820,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
         org.apache.axis2.util.CallbackReceiver _callbackReceiver = null;
 
-        if ((_operations[137].getMessageReceiver() == null) &&
+        if ((_operations[139].getMessageReceiver() == null) &&
                 _operationClient.getOptions().isUseSeparateListener()) {
             _callbackReceiver = new org.apache.axis2.util.CallbackReceiver();
-            _operations[137].setMessageReceiver(_callbackReceiver);
+            _operations[139].setMessageReceiver(_callbackReceiver);
         }
 
         //execute the operation client
@@ -38281,15 +38834,15 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Setting a gift messages to the quote items by products
      * @see com.voyageone.common.magento.api.base.MagentoService#giftMessageSetForQuoteProduct
-     * @param giftMessageForQuoteProductRequestParam603
+     * @param giftMessageForQuoteProductRequestParam611
      */
     public magento.GiftMessageForQuoteProductResponseParam giftMessageSetForQuoteProduct(
-        magento.GiftMessageForQuoteProductRequestParam giftMessageForQuoteProductRequestParam603)
+        magento.GiftMessageForQuoteProductRequestParam giftMessageForQuoteProductRequestParam611)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
         try {
-            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[138].getName());
+            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[140].getName());
             _operationClient.getOptions()
                             .setAction("urn:Magento:PortType:giftMessageSetForQuoteProductRequest");
             _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -38306,7 +38859,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    giftMessageForQuoteProductRequestParam603,
+                    giftMessageForQuoteProductRequestParam611,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "giftMessageSetForQuoteProduct")),
@@ -38399,13 +38952,13 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Setting a gift messages to the quote items by products
      * @see com.voyageone.common.magento.api.base.MagentoService#startgiftMessageSetForQuoteProduct
-     * @param giftMessageForQuoteProductRequestParam603
+     * @param giftMessageForQuoteProductRequestParam611
      */
     public void startgiftMessageSetForQuoteProduct(
-        magento.GiftMessageForQuoteProductRequestParam giftMessageForQuoteProductRequestParam603,
+        magento.GiftMessageForQuoteProductRequestParam giftMessageForQuoteProductRequestParam611,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
-        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[138].getName());
+        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[140].getName());
         _operationClient.getOptions()
                         .setAction("urn:Magento:PortType:giftMessageSetForQuoteProductRequest");
         _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -38421,7 +38974,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                giftMessageForQuoteProductRequestParam603,
+                giftMessageForQuoteProductRequestParam611,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "giftMessageSetForQuoteProduct")),
@@ -38536,10 +39089,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
         org.apache.axis2.util.CallbackReceiver _callbackReceiver = null;
 
-        if ((_operations[138].getMessageReceiver() == null) &&
+        if ((_operations[140].getMessageReceiver() == null) &&
                 _operationClient.getOptions().isUseSeparateListener()) {
             _callbackReceiver = new org.apache.axis2.util.CallbackReceiver();
-            _operations[138].setMessageReceiver(_callbackReceiver);
+            _operations[140].setMessageReceiver(_callbackReceiver);
         }
 
         //execute the operation client
@@ -38550,15 +39103,15 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Retrieve custom option values list
      * @see com.voyageone.common.magento.api.base.MagentoService#catalogProductCustomOptionValueList
-     * @param catalogProductCustomOptionValueListRequestParam605
+     * @param catalogProductCustomOptionValueListRequestParam613
      */
     public magento.CatalogProductCustomOptionValueListResponseParam catalogProductCustomOptionValueList(
-        magento.CatalogProductCustomOptionValueListRequestParam catalogProductCustomOptionValueListRequestParam605)
+        magento.CatalogProductCustomOptionValueListRequestParam catalogProductCustomOptionValueListRequestParam613)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
         try {
-            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[139].getName());
+            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[141].getName());
             _operationClient.getOptions()
                             .setAction("urn:Magento:PortType:catalogProductCustomOptionValueListRequest");
             _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -38575,7 +39128,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    catalogProductCustomOptionValueListRequestParam605,
+                    catalogProductCustomOptionValueListRequestParam613,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "catalogProductCustomOptionValueList")),
@@ -38668,13 +39221,13 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Retrieve custom option values list
      * @see com.voyageone.common.magento.api.base.MagentoService#startcatalogProductCustomOptionValueList
-     * @param catalogProductCustomOptionValueListRequestParam605
+     * @param catalogProductCustomOptionValueListRequestParam613
      */
     public void startcatalogProductCustomOptionValueList(
-        magento.CatalogProductCustomOptionValueListRequestParam catalogProductCustomOptionValueListRequestParam605,
+        magento.CatalogProductCustomOptionValueListRequestParam catalogProductCustomOptionValueListRequestParam613,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
-        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[139].getName());
+        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[141].getName());
         _operationClient.getOptions()
                         .setAction("urn:Magento:PortType:catalogProductCustomOptionValueListRequest");
         _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -38690,7 +39243,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                catalogProductCustomOptionValueListRequestParam605,
+                catalogProductCustomOptionValueListRequestParam613,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "catalogProductCustomOptionValueList")),
@@ -38805,10 +39358,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
         org.apache.axis2.util.CallbackReceiver _callbackReceiver = null;
 
-        if ((_operations[139].getMessageReceiver() == null) &&
+        if ((_operations[141].getMessageReceiver() == null) &&
                 _operationClient.getOptions().isUseSeparateListener()) {
             _callbackReceiver = new org.apache.axis2.util.CallbackReceiver();
-            _operations[139].setMessageReceiver(_callbackReceiver);
+            _operations[141].setMessageReceiver(_callbackReceiver);
         }
 
         //execute the operation client
@@ -38819,15 +39372,15 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Add new comment to shipment
      * @see com.voyageone.common.magento.api.base.MagentoService#salesOrderInvoiceAddComment
-     * @param salesOrderInvoiceAddCommentRequestParam607
+     * @param salesOrderInvoiceAddCommentRequestParam615
      */
     public magento.SalesOrderInvoiceAddCommentResponseParam salesOrderInvoiceAddComment(
-        magento.SalesOrderInvoiceAddCommentRequestParam salesOrderInvoiceAddCommentRequestParam607)
+        magento.SalesOrderInvoiceAddCommentRequestParam salesOrderInvoiceAddCommentRequestParam615)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
         try {
-            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[140].getName());
+            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[142].getName());
             _operationClient.getOptions()
                             .setAction("urn:Magento:PortType:salesOrderInvoiceAddCommentRequest");
             _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -38844,7 +39397,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    salesOrderInvoiceAddCommentRequestParam607,
+                    salesOrderInvoiceAddCommentRequestParam615,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "salesOrderInvoiceAddComment")),
@@ -38937,13 +39490,13 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Add new comment to shipment
      * @see com.voyageone.common.magento.api.base.MagentoService#startsalesOrderInvoiceAddComment
-     * @param salesOrderInvoiceAddCommentRequestParam607
+     * @param salesOrderInvoiceAddCommentRequestParam615
      */
     public void startsalesOrderInvoiceAddComment(
-        magento.SalesOrderInvoiceAddCommentRequestParam salesOrderInvoiceAddCommentRequestParam607,
+        magento.SalesOrderInvoiceAddCommentRequestParam salesOrderInvoiceAddCommentRequestParam615,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
-        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[140].getName());
+        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[142].getName());
         _operationClient.getOptions()
                         .setAction("urn:Magento:PortType:salesOrderInvoiceAddCommentRequest");
         _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -38959,7 +39512,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                salesOrderInvoiceAddCommentRequestParam607,
+                salesOrderInvoiceAddCommentRequestParam615,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "salesOrderInvoiceAddComment")),
@@ -39074,10 +39627,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
         org.apache.axis2.util.CallbackReceiver _callbackReceiver = null;
 
-        if ((_operations[140].getMessageReceiver() == null) &&
+        if ((_operations[142].getMessageReceiver() == null) &&
                 _operationClient.getOptions().isUseSeparateListener()) {
             _callbackReceiver = new org.apache.axis2.util.CallbackReceiver();
-            _operations[140].setMessageReceiver(_callbackReceiver);
+            _operations[142].setMessageReceiver(_callbackReceiver);
         }
 
         //execute the operation client
@@ -39088,15 +39641,15 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Remove product assignment from category
      * @see com.voyageone.common.magento.api.base.MagentoService#catalogCategoryRemoveProduct
-     * @param catalogCategoryRemoveProductRequestParam609
+     * @param catalogCategoryRemoveProductRequestParam617
      */
     public magento.CatalogCategoryRemoveProductResponseParam catalogCategoryRemoveProduct(
-        magento.CatalogCategoryRemoveProductRequestParam catalogCategoryRemoveProductRequestParam609)
+        magento.CatalogCategoryRemoveProductRequestParam catalogCategoryRemoveProductRequestParam617)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
         try {
-            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[141].getName());
+            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[143].getName());
             _operationClient.getOptions()
                             .setAction("urn:Magento:PortType:catalogCategoryRemoveProductRequest");
             _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -39113,7 +39666,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    catalogCategoryRemoveProductRequestParam609,
+                    catalogCategoryRemoveProductRequestParam617,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "catalogCategoryRemoveProduct")),
@@ -39206,13 +39759,13 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Remove product assignment from category
      * @see com.voyageone.common.magento.api.base.MagentoService#startcatalogCategoryRemoveProduct
-     * @param catalogCategoryRemoveProductRequestParam609
+     * @param catalogCategoryRemoveProductRequestParam617
      */
     public void startcatalogCategoryRemoveProduct(
-        magento.CatalogCategoryRemoveProductRequestParam catalogCategoryRemoveProductRequestParam609,
+        magento.CatalogCategoryRemoveProductRequestParam catalogCategoryRemoveProductRequestParam617,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
-        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[141].getName());
+        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[143].getName());
         _operationClient.getOptions()
                         .setAction("urn:Magento:PortType:catalogCategoryRemoveProductRequest");
         _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -39228,7 +39781,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                catalogCategoryRemoveProductRequestParam609,
+                catalogCategoryRemoveProductRequestParam617,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "catalogCategoryRemoveProduct")),
@@ -39343,10 +39896,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
         org.apache.axis2.util.CallbackReceiver _callbackReceiver = null;
 
-        if ((_operations[141].getMessageReceiver() == null) &&
+        if ((_operations[143].getMessageReceiver() == null) &&
                 _operationClient.getOptions().isUseSeparateListener()) {
             _callbackReceiver = new org.apache.axis2.util.CallbackReceiver();
-            _operations[141].setMessageReceiver(_callbackReceiver);
+            _operations[143].setMessageReceiver(_callbackReceiver);
         }
 
         //execute the operation client
@@ -39357,15 +39910,15 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Update custom option value
      * @see com.voyageone.common.magento.api.base.MagentoService#catalogProductCustomOptionValueUpdate
-     * @param catalogProductCustomOptionValueUpdateRequestParam611
+     * @param catalogProductCustomOptionValueUpdateRequestParam619
      */
     public magento.CatalogProductCustomOptionValueUpdateResponseParam catalogProductCustomOptionValueUpdate(
-        magento.CatalogProductCustomOptionValueUpdateRequestParam catalogProductCustomOptionValueUpdateRequestParam611)
+        magento.CatalogProductCustomOptionValueUpdateRequestParam catalogProductCustomOptionValueUpdateRequestParam619)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
         try {
-            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[142].getName());
+            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[144].getName());
             _operationClient.getOptions()
                             .setAction("urn:Magento:PortType:catalogProductCustomOptionValueUpdateRequest");
             _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -39382,7 +39935,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    catalogProductCustomOptionValueUpdateRequestParam611,
+                    catalogProductCustomOptionValueUpdateRequestParam619,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "catalogProductCustomOptionValueUpdate")),
@@ -39475,13 +40028,13 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Update custom option value
      * @see com.voyageone.common.magento.api.base.MagentoService#startcatalogProductCustomOptionValueUpdate
-     * @param catalogProductCustomOptionValueUpdateRequestParam611
+     * @param catalogProductCustomOptionValueUpdateRequestParam619
      */
     public void startcatalogProductCustomOptionValueUpdate(
-        magento.CatalogProductCustomOptionValueUpdateRequestParam catalogProductCustomOptionValueUpdateRequestParam611,
+        magento.CatalogProductCustomOptionValueUpdateRequestParam catalogProductCustomOptionValueUpdateRequestParam619,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
-        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[142].getName());
+        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[144].getName());
         _operationClient.getOptions()
                         .setAction("urn:Magento:PortType:catalogProductCustomOptionValueUpdateRequest");
         _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -39497,7 +40050,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                catalogProductCustomOptionValueUpdateRequestParam611,
+                catalogProductCustomOptionValueUpdateRequestParam619,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "catalogProductCustomOptionValueUpdate")),
@@ -39612,10 +40165,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
         org.apache.axis2.util.CallbackReceiver _callbackReceiver = null;
 
-        if ((_operations[142].getMessageReceiver() == null) &&
+        if ((_operations[144].getMessageReceiver() == null) &&
                 _operationClient.getOptions().isUseSeparateListener()) {
             _callbackReceiver = new org.apache.axis2.util.CallbackReceiver();
-            _operations[142].setMessageReceiver(_callbackReceiver);
+            _operations[144].setMessageReceiver(_callbackReceiver);
         }
 
         //execute the operation client
@@ -39626,15 +40179,15 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Retrieve product link types
      * @see com.voyageone.common.magento.api.base.MagentoService#catalogProductLinkTypes
-     * @param catalogProductLinkTypesRequestParam613
+     * @param catalogProductLinkTypesRequestParam621
      */
     public magento.CatalogProductLinkTypesResponseParam catalogProductLinkTypes(
-        magento.CatalogProductLinkTypesRequestParam catalogProductLinkTypesRequestParam613)
+        magento.CatalogProductLinkTypesRequestParam catalogProductLinkTypesRequestParam621)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
         try {
-            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[143].getName());
+            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[145].getName());
             _operationClient.getOptions()
                             .setAction("urn:Magento:PortType:catalogProductLinkTypesRequest");
             _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -39651,7 +40204,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    catalogProductLinkTypesRequestParam613,
+                    catalogProductLinkTypesRequestParam621,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "catalogProductLinkTypes")),
@@ -39743,13 +40296,13 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Retrieve product link types
      * @see com.voyageone.common.magento.api.base.MagentoService#startcatalogProductLinkTypes
-     * @param catalogProductLinkTypesRequestParam613
+     * @param catalogProductLinkTypesRequestParam621
      */
     public void startcatalogProductLinkTypes(
-        magento.CatalogProductLinkTypesRequestParam catalogProductLinkTypesRequestParam613,
+        magento.CatalogProductLinkTypesRequestParam catalogProductLinkTypesRequestParam621,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
-        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[143].getName());
+        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[145].getName());
         _operationClient.getOptions()
                         .setAction("urn:Magento:PortType:catalogProductLinkTypesRequest");
         _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -39765,7 +40318,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                catalogProductLinkTypesRequestParam613,
+                catalogProductLinkTypesRequestParam621,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "catalogProductLinkTypes")),
@@ -39880,10 +40433,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
         org.apache.axis2.util.CallbackReceiver _callbackReceiver = null;
 
-        if ((_operations[143].getMessageReceiver() == null) &&
+        if ((_operations[145].getMessageReceiver() == null) &&
                 _operationClient.getOptions().isUseSeparateListener()) {
             _callbackReceiver = new org.apache.axis2.util.CallbackReceiver();
-            _operations[143].setMessageReceiver(_callbackReceiver);
+            _operations[145].setMessageReceiver(_callbackReceiver);
         }
 
         //execute the operation client
@@ -39894,15 +40447,15 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Retrieve custom option value info
      * @see com.voyageone.common.magento.api.base.MagentoService#catalogProductCustomOptionValueInfo
-     * @param catalogProductCustomOptionValueInfoRequestParam615
+     * @param catalogProductCustomOptionValueInfoRequestParam623
      */
     public magento.CatalogProductCustomOptionValueInfoResponseParam catalogProductCustomOptionValueInfo(
-        magento.CatalogProductCustomOptionValueInfoRequestParam catalogProductCustomOptionValueInfoRequestParam615)
+        magento.CatalogProductCustomOptionValueInfoRequestParam catalogProductCustomOptionValueInfoRequestParam623)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
         try {
-            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[144].getName());
+            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[146].getName());
             _operationClient.getOptions()
                             .setAction("urn:Magento:PortType:catalogProductCustomOptionValueInfoRequest");
             _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -39919,7 +40472,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    catalogProductCustomOptionValueInfoRequestParam615,
+                    catalogProductCustomOptionValueInfoRequestParam623,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "catalogProductCustomOptionValueInfo")),
@@ -40012,13 +40565,13 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Retrieve custom option value info
      * @see com.voyageone.common.magento.api.base.MagentoService#startcatalogProductCustomOptionValueInfo
-     * @param catalogProductCustomOptionValueInfoRequestParam615
+     * @param catalogProductCustomOptionValueInfoRequestParam623
      */
     public void startcatalogProductCustomOptionValueInfo(
-        magento.CatalogProductCustomOptionValueInfoRequestParam catalogProductCustomOptionValueInfoRequestParam615,
+        magento.CatalogProductCustomOptionValueInfoRequestParam catalogProductCustomOptionValueInfoRequestParam623,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
-        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[144].getName());
+        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[146].getName());
         _operationClient.getOptions()
                         .setAction("urn:Magento:PortType:catalogProductCustomOptionValueInfoRequest");
         _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -40034,7 +40587,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                catalogProductCustomOptionValueInfoRequestParam615,
+                catalogProductCustomOptionValueInfoRequestParam623,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "catalogProductCustomOptionValueInfo")),
@@ -40149,10 +40702,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
         org.apache.axis2.util.CallbackReceiver _callbackReceiver = null;
 
-        if ((_operations[144].getMessageReceiver() == null) &&
+        if ((_operations[146].getMessageReceiver() == null) &&
                 _operationClient.getOptions().isUseSeparateListener()) {
             _callbackReceiver = new org.apache.axis2.util.CallbackReceiver();
-            _operations[144].setMessageReceiver(_callbackReceiver);
+            _operations[146].setMessageReceiver(_callbackReceiver);
         }
 
         //execute the operation client
@@ -40163,15 +40716,15 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Cancel invoice
      * @see com.voyageone.common.magento.api.base.MagentoService#salesOrderInvoiceCancel
-     * @param salesOrderInvoiceCancelRequestParam617
+     * @param salesOrderInvoiceCancelRequestParam625
      */
     public magento.SalesOrderInvoiceCancelResponseParam salesOrderInvoiceCancel(
-        magento.SalesOrderInvoiceCancelRequestParam salesOrderInvoiceCancelRequestParam617)
+        magento.SalesOrderInvoiceCancelRequestParam salesOrderInvoiceCancelRequestParam625)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
         try {
-            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[145].getName());
+            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[147].getName());
             _operationClient.getOptions()
                             .setAction("urn:Magento:PortType:salesOrderInvoiceCancelRequest");
             _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -40188,7 +40741,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    salesOrderInvoiceCancelRequestParam617,
+                    salesOrderInvoiceCancelRequestParam625,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "salesOrderInvoiceCancel")),
@@ -40280,13 +40833,13 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Cancel invoice
      * @see com.voyageone.common.magento.api.base.MagentoService#startsalesOrderInvoiceCancel
-     * @param salesOrderInvoiceCancelRequestParam617
+     * @param salesOrderInvoiceCancelRequestParam625
      */
     public void startsalesOrderInvoiceCancel(
-        magento.SalesOrderInvoiceCancelRequestParam salesOrderInvoiceCancelRequestParam617,
+        magento.SalesOrderInvoiceCancelRequestParam salesOrderInvoiceCancelRequestParam625,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
-        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[145].getName());
+        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[147].getName());
         _operationClient.getOptions()
                         .setAction("urn:Magento:PortType:salesOrderInvoiceCancelRequest");
         _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -40302,7 +40855,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                salesOrderInvoiceCancelRequestParam617,
+                salesOrderInvoiceCancelRequestParam625,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "salesOrderInvoiceCancel")),
@@ -40417,10 +40970,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
         org.apache.axis2.util.CallbackReceiver _callbackReceiver = null;
 
-        if ((_operations[145].getMessageReceiver() == null) &&
+        if ((_operations[147].getMessageReceiver() == null) &&
                 _operationClient.getOptions().isUseSeparateListener()) {
             _callbackReceiver = new org.apache.axis2.util.CallbackReceiver();
-            _operations[145].setMessageReceiver(_callbackReceiver);
+            _operations[147].setMessageReceiver(_callbackReceiver);
         }
 
         //execute the operation client
@@ -40431,15 +40984,15 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Create customer
      * @see com.voyageone.common.magento.api.base.MagentoService#customerCustomerCreate
-     * @param customerCustomerCreateRequestParam619
+     * @param customerCustomerCreateRequestParam627
      */
     public magento.CustomerCustomerCreateResponseParam customerCustomerCreate(
-        magento.CustomerCustomerCreateRequestParam customerCustomerCreateRequestParam619)
+        magento.CustomerCustomerCreateRequestParam customerCustomerCreateRequestParam627)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
         try {
-            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[146].getName());
+            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[148].getName());
             _operationClient.getOptions()
                             .setAction("urn:Magento:PortType:customerCustomerCreateRequest");
             _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -40456,7 +41009,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    customerCustomerCreateRequestParam619,
+                    customerCustomerCreateRequestParam627,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "customerCustomerCreate")),
@@ -40548,13 +41101,13 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Create customer
      * @see com.voyageone.common.magento.api.base.MagentoService#startcustomerCustomerCreate
-     * @param customerCustomerCreateRequestParam619
+     * @param customerCustomerCreateRequestParam627
      */
     public void startcustomerCustomerCreate(
-        magento.CustomerCustomerCreateRequestParam customerCustomerCreateRequestParam619,
+        magento.CustomerCustomerCreateRequestParam customerCustomerCreateRequestParam627,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
-        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[146].getName());
+        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[148].getName());
         _operationClient.getOptions()
                         .setAction("urn:Magento:PortType:customerCustomerCreateRequest");
         _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -40570,7 +41123,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                customerCustomerCreateRequestParam619,
+                customerCustomerCreateRequestParam627,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "customerCustomerCreate")),
@@ -40685,10 +41238,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
         org.apache.axis2.util.CallbackReceiver _callbackReceiver = null;
 
-        if ((_operations[146].getMessageReceiver() == null) &&
+        if ((_operations[148].getMessageReceiver() == null) &&
                 _operationClient.getOptions().isUseSeparateListener()) {
             _callbackReceiver = new org.apache.axis2.util.CallbackReceiver();
-            _operations[146].setMessageReceiver(_callbackReceiver);
+            _operations[148].setMessageReceiver(_callbackReceiver);
         }
 
         //execute the operation client
@@ -40699,15 +41252,15 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Retrieve list of assigned products
      * @see com.voyageone.common.magento.api.base.MagentoService#catalogCategoryAssignedProducts
-     * @param catalogCategoryAssignedProductsRequestParam621
+     * @param catalogCategoryAssignedProductsRequestParam629
      */
     public magento.CatalogCategoryAssignedProductsResponseParam catalogCategoryAssignedProducts(
-        magento.CatalogCategoryAssignedProductsRequestParam catalogCategoryAssignedProductsRequestParam621)
+        magento.CatalogCategoryAssignedProductsRequestParam catalogCategoryAssignedProductsRequestParam629)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
         try {
-            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[147].getName());
+            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[149].getName());
             _operationClient.getOptions()
                             .setAction("urn:Magento:PortType:catalogCategoryAssignedProductsRequest");
             _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -40724,7 +41277,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    catalogCategoryAssignedProductsRequestParam621,
+                    catalogCategoryAssignedProductsRequestParam629,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "catalogCategoryAssignedProducts")),
@@ -40817,13 +41370,13 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Retrieve list of assigned products
      * @see com.voyageone.common.magento.api.base.MagentoService#startcatalogCategoryAssignedProducts
-     * @param catalogCategoryAssignedProductsRequestParam621
+     * @param catalogCategoryAssignedProductsRequestParam629
      */
     public void startcatalogCategoryAssignedProducts(
-        magento.CatalogCategoryAssignedProductsRequestParam catalogCategoryAssignedProductsRequestParam621,
+        magento.CatalogCategoryAssignedProductsRequestParam catalogCategoryAssignedProductsRequestParam629,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
-        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[147].getName());
+        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[149].getName());
         _operationClient.getOptions()
                         .setAction("urn:Magento:PortType:catalogCategoryAssignedProductsRequest");
         _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -40839,7 +41392,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                catalogCategoryAssignedProductsRequestParam621,
+                catalogCategoryAssignedProductsRequestParam629,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "catalogCategoryAssignedProducts")),
@@ -40954,10 +41507,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
         org.apache.axis2.util.CallbackReceiver _callbackReceiver = null;
 
-        if ((_operations[147].getMessageReceiver() == null) &&
+        if ((_operations[149].getMessageReceiver() == null) &&
                 _operationClient.getOptions().isUseSeparateListener()) {
             _callbackReceiver = new org.apache.axis2.util.CallbackReceiver();
-            _operations[147].setMessageReceiver(_callbackReceiver);
+            _operations[149].setMessageReceiver(_callbackReceiver);
         }
 
         //execute the operation client
@@ -40968,15 +41521,15 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Get terms and conditions
      * @see com.voyageone.common.magento.api.base.MagentoService#shoppingCartLicense
-     * @param shoppingCartLicenseRequestParam623
+     * @param shoppingCartLicenseRequestParam631
      */
     public magento.ShoppingCartLicenseResponseParam shoppingCartLicense(
-        magento.ShoppingCartLicenseRequestParam shoppingCartLicenseRequestParam623)
+        magento.ShoppingCartLicenseRequestParam shoppingCartLicenseRequestParam631)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
         try {
-            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[148].getName());
+            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[150].getName());
             _operationClient.getOptions()
                             .setAction("urn:Magento:PortType:shoppingCartLicenseRequest");
             _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -40993,7 +41546,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    shoppingCartLicenseRequestParam623,
+                    shoppingCartLicenseRequestParam631,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "shoppingCartLicense")),
@@ -41083,13 +41636,13 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Get terms and conditions
      * @see com.voyageone.common.magento.api.base.MagentoService#startshoppingCartLicense
-     * @param shoppingCartLicenseRequestParam623
+     * @param shoppingCartLicenseRequestParam631
      */
     public void startshoppingCartLicense(
-        magento.ShoppingCartLicenseRequestParam shoppingCartLicenseRequestParam623,
+        magento.ShoppingCartLicenseRequestParam shoppingCartLicenseRequestParam631,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
-        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[148].getName());
+        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[150].getName());
         _operationClient.getOptions()
                         .setAction("urn:Magento:PortType:shoppingCartLicenseRequest");
         _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -41105,7 +41658,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                shoppingCartLicenseRequestParam623,
+                shoppingCartLicenseRequestParam631,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "shoppingCartLicense")),
@@ -41220,10 +41773,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
         org.apache.axis2.util.CallbackReceiver _callbackReceiver = null;
 
-        if ((_operations[148].getMessageReceiver() == null) &&
+        if ((_operations[150].getMessageReceiver() == null) &&
                 _operationClient.getOptions().isUseSeparateListener()) {
             _callbackReceiver = new org.apache.axis2.util.CallbackReceiver();
-            _operations[148].setMessageReceiver(_callbackReceiver);
+            _operations[150].setMessageReceiver(_callbackReceiver);
         }
 
         //execute the operation client
@@ -41234,15 +41787,15 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Add tag(s) to product
      * @see com.voyageone.common.magento.api.base.MagentoService#catalogProductTagAdd
-     * @param catalogProductTagAddRequestParam625
+     * @param catalogProductTagAddRequestParam633
      */
     public magento.CatalogProductTagAddResponseParam catalogProductTagAdd(
-        magento.CatalogProductTagAddRequestParam catalogProductTagAddRequestParam625)
+        magento.CatalogProductTagAddRequestParam catalogProductTagAddRequestParam633)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
         try {
-            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[149].getName());
+            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[151].getName());
             _operationClient.getOptions()
                             .setAction("urn:Magento:PortType:catalogProductTagAddRequest");
             _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -41259,7 +41812,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    catalogProductTagAddRequestParam625,
+                    catalogProductTagAddRequestParam633,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "catalogProductTagAdd")),
@@ -41349,13 +41902,13 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Add tag(s) to product
      * @see com.voyageone.common.magento.api.base.MagentoService#startcatalogProductTagAdd
-     * @param catalogProductTagAddRequestParam625
+     * @param catalogProductTagAddRequestParam633
      */
     public void startcatalogProductTagAdd(
-        magento.CatalogProductTagAddRequestParam catalogProductTagAddRequestParam625,
+        magento.CatalogProductTagAddRequestParam catalogProductTagAddRequestParam633,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
-        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[149].getName());
+        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[151].getName());
         _operationClient.getOptions()
                         .setAction("urn:Magento:PortType:catalogProductTagAddRequest");
         _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -41371,7 +41924,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                catalogProductTagAddRequestParam625,
+                catalogProductTagAddRequestParam633,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "catalogProductTagAdd")),
@@ -41486,10 +42039,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
         org.apache.axis2.util.CallbackReceiver _callbackReceiver = null;
 
-        if ((_operations[149].getMessageReceiver() == null) &&
+        if ((_operations[151].getMessageReceiver() == null) &&
                 _operationClient.getOptions().isUseSeparateListener()) {
             _callbackReceiver = new org.apache.axis2.util.CallbackReceiver();
-            _operations[149].setMessageReceiver(_callbackReceiver);
+            _operations[151].setMessageReceiver(_callbackReceiver);
         }
 
         //execute the operation client
@@ -41500,15 +42053,15 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Get total prices for shopping cart
      * @see com.voyageone.common.magento.api.base.MagentoService#shoppingCartTotals
-     * @param shoppingCartTotalsRequestParam627
+     * @param shoppingCartTotalsRequestParam635
      */
     public magento.ShoppingCartTotalsResponseParam shoppingCartTotals(
-        magento.ShoppingCartTotalsRequestParam shoppingCartTotalsRequestParam627)
+        magento.ShoppingCartTotalsRequestParam shoppingCartTotalsRequestParam635)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
         try {
-            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[150].getName());
+            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[152].getName());
             _operationClient.getOptions()
                             .setAction("urn:Magento:PortType:shoppingCartTotalsRequest");
             _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -41525,7 +42078,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    shoppingCartTotalsRequestParam627,
+                    shoppingCartTotalsRequestParam635,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "shoppingCartTotals")),
@@ -41615,13 +42168,13 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Get total prices for shopping cart
      * @see com.voyageone.common.magento.api.base.MagentoService#startshoppingCartTotals
-     * @param shoppingCartTotalsRequestParam627
+     * @param shoppingCartTotalsRequestParam635
      */
     public void startshoppingCartTotals(
-        magento.ShoppingCartTotalsRequestParam shoppingCartTotalsRequestParam627,
+        magento.ShoppingCartTotalsRequestParam shoppingCartTotalsRequestParam635,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
-        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[150].getName());
+        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[152].getName());
         _operationClient.getOptions()
                         .setAction("urn:Magento:PortType:shoppingCartTotalsRequest");
         _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -41637,7 +42190,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                shoppingCartTotalsRequestParam627,
+                shoppingCartTotalsRequestParam635,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "shoppingCartTotals")),
@@ -41752,10 +42305,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
         org.apache.axis2.util.CallbackReceiver _callbackReceiver = null;
 
-        if ((_operations[150].getMessageReceiver() == null) &&
+        if ((_operations[152].getMessageReceiver() == null) &&
                 _operationClient.getOptions().isUseSeparateListener()) {
             _callbackReceiver = new org.apache.axis2.util.CallbackReceiver();
-            _operations[150].setMessageReceiver(_callbackReceiver);
+            _operations[152].setMessageReceiver(_callbackReceiver);
         }
 
         //execute the operation client
@@ -41766,15 +42319,15 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Create customer address
      * @see com.voyageone.common.magento.api.base.MagentoService#customerAddressCreate
-     * @param customerAddressCreateRequestParam629
+     * @param customerAddressCreateRequestParam637
      */
     public magento.CustomerAddressCreateResponseParam customerAddressCreate(
-        magento.CustomerAddressCreateRequestParam customerAddressCreateRequestParam629)
+        magento.CustomerAddressCreateRequestParam customerAddressCreateRequestParam637)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
         try {
-            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[151].getName());
+            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[153].getName());
             _operationClient.getOptions()
                             .setAction("urn:Magento:PortType:customerAddressCreateRequest");
             _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -41791,7 +42344,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    customerAddressCreateRequestParam629,
+                    customerAddressCreateRequestParam637,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "customerAddressCreate")),
@@ -41881,13 +42434,13 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Create customer address
      * @see com.voyageone.common.magento.api.base.MagentoService#startcustomerAddressCreate
-     * @param customerAddressCreateRequestParam629
+     * @param customerAddressCreateRequestParam637
      */
     public void startcustomerAddressCreate(
-        magento.CustomerAddressCreateRequestParam customerAddressCreateRequestParam629,
+        magento.CustomerAddressCreateRequestParam customerAddressCreateRequestParam637,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
-        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[151].getName());
+        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[153].getName());
         _operationClient.getOptions()
                         .setAction("urn:Magento:PortType:customerAddressCreateRequest");
         _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -41903,7 +42456,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                customerAddressCreateRequestParam629,
+                customerAddressCreateRequestParam637,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "customerAddressCreate")),
@@ -42018,10 +42571,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
         org.apache.axis2.util.CallbackReceiver _callbackReceiver = null;
 
-        if ((_operations[151].getMessageReceiver() == null) &&
+        if ((_operations[153].getMessageReceiver() == null) &&
                 _operationClient.getOptions().isUseSeparateListener()) {
             _callbackReceiver = new org.apache.axis2.util.CallbackReceiver();
-            _operations[151].setMessageReceiver(_callbackReceiver);
+            _operations[153].setMessageReceiver(_callbackReceiver);
         }
 
         //execute the operation client
@@ -42032,15 +42585,15 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Set/Get current store view
      * @see com.voyageone.common.magento.api.base.MagentoService#catalogProductCurrentStore
-     * @param catalogProductCurrentStoreRequestParam631
+     * @param catalogProductCurrentStoreRequestParam639
      */
     public magento.CatalogProductCurrentStoreResponseParam catalogProductCurrentStore(
-        magento.CatalogProductCurrentStoreRequestParam catalogProductCurrentStoreRequestParam631)
+        magento.CatalogProductCurrentStoreRequestParam catalogProductCurrentStoreRequestParam639)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
         try {
-            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[152].getName());
+            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[154].getName());
             _operationClient.getOptions()
                             .setAction("urn:Magento:PortType:catalogProductCurrentStoreRequest");
             _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -42057,7 +42610,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    catalogProductCurrentStoreRequestParam631,
+                    catalogProductCurrentStoreRequestParam639,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "catalogProductCurrentStore")),
@@ -42150,13 +42703,13 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Set/Get current store view
      * @see com.voyageone.common.magento.api.base.MagentoService#startcatalogProductCurrentStore
-     * @param catalogProductCurrentStoreRequestParam631
+     * @param catalogProductCurrentStoreRequestParam639
      */
     public void startcatalogProductCurrentStore(
-        magento.CatalogProductCurrentStoreRequestParam catalogProductCurrentStoreRequestParam631,
+        magento.CatalogProductCurrentStoreRequestParam catalogProductCurrentStoreRequestParam639,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
-        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[152].getName());
+        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[154].getName());
         _operationClient.getOptions()
                         .setAction("urn:Magento:PortType:catalogProductCurrentStoreRequest");
         _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -42172,7 +42725,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                catalogProductCurrentStoreRequestParam631,
+                catalogProductCurrentStoreRequestParam639,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "catalogProductCurrentStore")),
@@ -42287,10 +42840,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
         org.apache.axis2.util.CallbackReceiver _callbackReceiver = null;
 
-        if ((_operations[152].getMessageReceiver() == null) &&
+        if ((_operations[154].getMessageReceiver() == null) &&
                 _operationClient.getOptions().isUseSeparateListener()) {
             _callbackReceiver = new org.apache.axis2.util.CallbackReceiver();
-            _operations[152].setMessageReceiver(_callbackReceiver);
+            _operations[154].setMessageReceiver(_callbackReceiver);
         }
 
         //execute the operation client
@@ -42301,15 +42854,15 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Retrieve product
      * @see com.voyageone.common.magento.api.base.MagentoService#catalogProductInfo
-     * @param catalogProductInfoRequestParam633
+     * @param catalogProductInfoRequestParam641
      */
     public magento.CatalogProductInfoResponseParam catalogProductInfo(
-        magento.CatalogProductInfoRequestParam catalogProductInfoRequestParam633)
+        magento.CatalogProductInfoRequestParam catalogProductInfoRequestParam641)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
         try {
-            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[153].getName());
+            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[155].getName());
             _operationClient.getOptions()
                             .setAction("urn:Magento:PortType:catalogProductInfoRequest");
             _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -42326,7 +42879,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    catalogProductInfoRequestParam633,
+                    catalogProductInfoRequestParam641,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "catalogProductInfo")),
@@ -42416,13 +42969,13 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Retrieve product
      * @see com.voyageone.common.magento.api.base.MagentoService#startcatalogProductInfo
-     * @param catalogProductInfoRequestParam633
+     * @param catalogProductInfoRequestParam641
      */
     public void startcatalogProductInfo(
-        magento.CatalogProductInfoRequestParam catalogProductInfoRequestParam633,
+        magento.CatalogProductInfoRequestParam catalogProductInfoRequestParam641,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
-        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[153].getName());
+        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[155].getName());
         _operationClient.getOptions()
                         .setAction("urn:Magento:PortType:catalogProductInfoRequest");
         _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -42438,7 +42991,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                catalogProductInfoRequestParam633,
+                catalogProductInfoRequestParam641,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "catalogProductInfo")),
@@ -42553,10 +43106,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
         org.apache.axis2.util.CallbackReceiver _callbackReceiver = null;
 
-        if ((_operations[153].getMessageReceiver() == null) &&
+        if ((_operations[155].getMessageReceiver() == null) &&
                 _operationClient.getOptions().isUseSeparateListener()) {
             _callbackReceiver = new org.apache.axis2.util.CallbackReceiver();
-            _operations[153].setMessageReceiver(_callbackReceiver);
+            _operations[155].setMessageReceiver(_callbackReceiver);
         }
 
         //execute the operation client
@@ -42567,15 +43120,15 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Set customer for shopping cart
      * @see com.voyageone.common.magento.api.base.MagentoService#shoppingCartCustomerSet
-     * @param shoppingCartCustomerSetRequestParam635
+     * @param shoppingCartCustomerSetRequestParam643
      */
     public magento.ShoppingCartCustomerSetResponseParam shoppingCartCustomerSet(
-        magento.ShoppingCartCustomerSetRequestParam shoppingCartCustomerSetRequestParam635)
+        magento.ShoppingCartCustomerSetRequestParam shoppingCartCustomerSetRequestParam643)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
         try {
-            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[154].getName());
+            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[156].getName());
             _operationClient.getOptions()
                             .setAction("urn:Magento:PortType:shoppingCartCustomerSetRequest");
             _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -42592,7 +43145,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    shoppingCartCustomerSetRequestParam635,
+                    shoppingCartCustomerSetRequestParam643,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "shoppingCartCustomerSet")),
@@ -42684,13 +43237,13 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Set customer for shopping cart
      * @see com.voyageone.common.magento.api.base.MagentoService#startshoppingCartCustomerSet
-     * @param shoppingCartCustomerSetRequestParam635
+     * @param shoppingCartCustomerSetRequestParam643
      */
     public void startshoppingCartCustomerSet(
-        magento.ShoppingCartCustomerSetRequestParam shoppingCartCustomerSetRequestParam635,
+        magento.ShoppingCartCustomerSetRequestParam shoppingCartCustomerSetRequestParam643,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
-        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[154].getName());
+        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[156].getName());
         _operationClient.getOptions()
                         .setAction("urn:Magento:PortType:shoppingCartCustomerSetRequest");
         _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -42706,7 +43259,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                shoppingCartCustomerSetRequestParam635,
+                shoppingCartCustomerSetRequestParam643,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "shoppingCartCustomerSet")),
@@ -42821,10 +43374,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
         org.apache.axis2.util.CallbackReceiver _callbackReceiver = null;
 
-        if ((_operations[154].getMessageReceiver() == null) &&
+        if ((_operations[156].getMessageReceiver() == null) &&
                 _operationClient.getOptions().isUseSeparateListener()) {
             _callbackReceiver = new org.apache.axis2.util.CallbackReceiver();
-            _operations[154].setMessageReceiver(_callbackReceiver);
+            _operations[156].setMessageReceiver(_callbackReceiver);
         }
 
         //execute the operation client
@@ -42835,15 +43388,15 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Multiple calls of resource functionality
      * @see com.voyageone.common.magento.api.base.MagentoService#multiCall
-     * @param multiCallParam637
+     * @param multiCallParam645
      */
     public magento.MultiCallResponseParam multiCall(
-        magento.MultiCallParam multiCallParam637)
+        magento.MultiCallParam multiCallParam645)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
         try {
-            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[155].getName());
+            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[157].getName());
             _operationClient.getOptions()
                             .setAction("urn:Magento:PortType:multiCallRequest");
             _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -42860,7 +43413,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    multiCallParam637,
+                    multiCallParam645,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento", "multiCall")),
                     new javax.xml.namespace.QName("urn:Magento", "multiCall"));
@@ -42948,12 +43501,12 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Multiple calls of resource functionality
      * @see com.voyageone.common.magento.api.base.MagentoService#startmultiCall
-     * @param multiCallParam637
+     * @param multiCallParam645
      */
-    public void startmultiCall(magento.MultiCallParam multiCallParam637,
+    public void startmultiCall(magento.MultiCallParam multiCallParam645,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
-        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[155].getName());
+        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[157].getName());
         _operationClient.getOptions()
                         .setAction("urn:Magento:PortType:multiCallRequest");
         _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -42969,7 +43522,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                multiCallParam637,
+                multiCallParam645,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento", "multiCall")),
                 new javax.xml.namespace.QName("urn:Magento", "multiCall"));
@@ -43079,10 +43632,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
         org.apache.axis2.util.CallbackReceiver _callbackReceiver = null;
 
-        if ((_operations[155].getMessageReceiver() == null) &&
+        if ((_operations[157].getMessageReceiver() == null) &&
                 _operationClient.getOptions().isUseSeparateListener()) {
             _callbackReceiver = new org.apache.axis2.util.CallbackReceiver();
-            _operations[155].setMessageReceiver(_callbackReceiver);
+            _operations[157].setMessageReceiver(_callbackReceiver);
         }
 
         //execute the operation client
@@ -43093,15 +43646,15 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Remove custom option
      * @see com.voyageone.common.magento.api.base.MagentoService#catalogProductCustomOptionRemove
-     * @param catalogProductCustomOptionRemoveRequestParam639
+     * @param catalogProductCustomOptionRemoveRequestParam647
      */
     public magento.CatalogProductCustomOptionRemoveResponseParam catalogProductCustomOptionRemove(
-        magento.CatalogProductCustomOptionRemoveRequestParam catalogProductCustomOptionRemoveRequestParam639)
+        magento.CatalogProductCustomOptionRemoveRequestParam catalogProductCustomOptionRemoveRequestParam647)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
         try {
-            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[156].getName());
+            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[158].getName());
             _operationClient.getOptions()
                             .setAction("urn:Magento:PortType:catalogProductCustomOptionRemoveRequest");
             _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -43118,7 +43671,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    catalogProductCustomOptionRemoveRequestParam639,
+                    catalogProductCustomOptionRemoveRequestParam647,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "catalogProductCustomOptionRemove")),
@@ -43211,13 +43764,13 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Remove custom option
      * @see com.voyageone.common.magento.api.base.MagentoService#startcatalogProductCustomOptionRemove
-     * @param catalogProductCustomOptionRemoveRequestParam639
+     * @param catalogProductCustomOptionRemoveRequestParam647
      */
     public void startcatalogProductCustomOptionRemove(
-        magento.CatalogProductCustomOptionRemoveRequestParam catalogProductCustomOptionRemoveRequestParam639,
+        magento.CatalogProductCustomOptionRemoveRequestParam catalogProductCustomOptionRemoveRequestParam647,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
-        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[156].getName());
+        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[158].getName());
         _operationClient.getOptions()
                         .setAction("urn:Magento:PortType:catalogProductCustomOptionRemoveRequest");
         _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -43233,7 +43786,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                catalogProductCustomOptionRemoveRequestParam639,
+                catalogProductCustomOptionRemoveRequestParam647,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "catalogProductCustomOptionRemove")),
@@ -43348,10 +43901,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
         org.apache.axis2.util.CallbackReceiver _callbackReceiver = null;
 
-        if ((_operations[156].getMessageReceiver() == null) &&
+        if ((_operations[158].getMessageReceiver() == null) &&
                 _operationClient.getOptions().isUseSeparateListener()) {
             _callbackReceiver = new org.apache.axis2.util.CallbackReceiver();
-            _operations[156].setMessageReceiver(_callbackReceiver);
+            _operations[158].setMessageReceiver(_callbackReceiver);
         }
 
         //execute the operation client
@@ -43362,15 +43915,15 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Rename existing group
      * @see com.voyageone.common.magento.api.base.MagentoService#catalogProductAttributeSetGroupRename
-     * @param catalogProductAttributeSetGroupRenameRequestParam641
+     * @param catalogProductAttributeSetGroupRenameRequestParam649
      */
     public magento.CatalogProductAttributeSetGroupRenameResponseParam catalogProductAttributeSetGroupRename(
-        magento.CatalogProductAttributeSetGroupRenameRequestParam catalogProductAttributeSetGroupRenameRequestParam641)
+        magento.CatalogProductAttributeSetGroupRenameRequestParam catalogProductAttributeSetGroupRenameRequestParam649)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
         try {
-            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[157].getName());
+            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[159].getName());
             _operationClient.getOptions()
                             .setAction("urn:Magento:PortType:catalogProductAttributeSetGroupRenameRequest");
             _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -43387,7 +43940,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    catalogProductAttributeSetGroupRenameRequestParam641,
+                    catalogProductAttributeSetGroupRenameRequestParam649,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "catalogProductAttributeSetGroupRename")),
@@ -43480,13 +44033,13 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Rename existing group
      * @see com.voyageone.common.magento.api.base.MagentoService#startcatalogProductAttributeSetGroupRename
-     * @param catalogProductAttributeSetGroupRenameRequestParam641
+     * @param catalogProductAttributeSetGroupRenameRequestParam649
      */
     public void startcatalogProductAttributeSetGroupRename(
-        magento.CatalogProductAttributeSetGroupRenameRequestParam catalogProductAttributeSetGroupRenameRequestParam641,
+        magento.CatalogProductAttributeSetGroupRenameRequestParam catalogProductAttributeSetGroupRenameRequestParam649,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
-        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[157].getName());
+        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[159].getName());
         _operationClient.getOptions()
                         .setAction("urn:Magento:PortType:catalogProductAttributeSetGroupRenameRequest");
         _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -43502,7 +44055,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                catalogProductAttributeSetGroupRenameRequestParam641,
+                catalogProductAttributeSetGroupRenameRequestParam649,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "catalogProductAttributeSetGroupRename")),
@@ -43617,10 +44170,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
         org.apache.axis2.util.CallbackReceiver _callbackReceiver = null;
 
-        if ((_operations[157].getMessageReceiver() == null) &&
+        if ((_operations[159].getMessageReceiver() == null) &&
                 _operationClient.getOptions().isUseSeparateListener()) {
             _callbackReceiver = new org.apache.axis2.util.CallbackReceiver();
-            _operations[157].setMessageReceiver(_callbackReceiver);
+            _operations[159].setMessageReceiver(_callbackReceiver);
         }
 
         //execute the operation client
@@ -43631,15 +44184,15 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Multi update product stock data
      * @see com.voyageone.common.magento.api.base.MagentoService#catalogInventoryStockItemMultiUpdate
-     * @param catalogInventoryStockItemMultiUpdateRequestParam643
+     * @param catalogInventoryStockItemMultiUpdateRequestParam651
      */
     public magento.CatalogInventoryStockItemMultiUpdateResponseParam catalogInventoryStockItemMultiUpdate(
-        magento.CatalogInventoryStockItemMultiUpdateRequestParam catalogInventoryStockItemMultiUpdateRequestParam643)
+        magento.CatalogInventoryStockItemMultiUpdateRequestParam catalogInventoryStockItemMultiUpdateRequestParam651)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
         try {
-            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[158].getName());
+            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[160].getName());
             _operationClient.getOptions()
                             .setAction("urn:Magento:PortType:catalogInventoryStockItemMultiUpdateRequest");
             _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -43656,7 +44209,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    catalogInventoryStockItemMultiUpdateRequestParam643,
+                    catalogInventoryStockItemMultiUpdateRequestParam651,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "catalogInventoryStockItemMultiUpdate")),
@@ -43749,13 +44302,13 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Multi update product stock data
      * @see com.voyageone.common.magento.api.base.MagentoService#startcatalogInventoryStockItemMultiUpdate
-     * @param catalogInventoryStockItemMultiUpdateRequestParam643
+     * @param catalogInventoryStockItemMultiUpdateRequestParam651
      */
     public void startcatalogInventoryStockItemMultiUpdate(
-        magento.CatalogInventoryStockItemMultiUpdateRequestParam catalogInventoryStockItemMultiUpdateRequestParam643,
+        magento.CatalogInventoryStockItemMultiUpdateRequestParam catalogInventoryStockItemMultiUpdateRequestParam651,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
-        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[158].getName());
+        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[160].getName());
         _operationClient.getOptions()
                         .setAction("urn:Magento:PortType:catalogInventoryStockItemMultiUpdateRequest");
         _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -43771,7 +44324,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                catalogInventoryStockItemMultiUpdateRequestParam643,
+                catalogInventoryStockItemMultiUpdateRequestParam651,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "catalogInventoryStockItemMultiUpdate")),
@@ -43886,10 +44439,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
         org.apache.axis2.util.CallbackReceiver _callbackReceiver = null;
 
-        if ((_operations[158].getMessageReceiver() == null) &&
+        if ((_operations[160].getMessageReceiver() == null) &&
                 _operationClient.getOptions().isUseSeparateListener()) {
             _callbackReceiver = new org.apache.axis2.util.CallbackReceiver();
-            _operations[158].setMessageReceiver(_callbackReceiver);
+            _operations[160].setMessageReceiver(_callbackReceiver);
         }
 
         //execute the operation client
@@ -43900,15 +44453,15 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Remove gift card account
      * @see com.voyageone.common.magento.api.base.MagentoService#giftcardAccountRemove
-     * @param giftcardAccountRemoveRequestParam645
+     * @param giftcardAccountRemoveRequestParam653
      */
     public magento.GiftcardAccountRemoveResponseParam giftcardAccountRemove(
-        magento.GiftcardAccountRemoveRequestParam giftcardAccountRemoveRequestParam645)
+        magento.GiftcardAccountRemoveRequestParam giftcardAccountRemoveRequestParam653)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
         try {
-            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[159].getName());
+            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[161].getName());
             _operationClient.getOptions()
                             .setAction("urn:Magento:PortType:giftcardAccountRemoveRequest");
             _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -43925,7 +44478,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    giftcardAccountRemoveRequestParam645,
+                    giftcardAccountRemoveRequestParam653,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "giftcardAccountRemove")),
@@ -44015,13 +44568,13 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Remove gift card account
      * @see com.voyageone.common.magento.api.base.MagentoService#startgiftcardAccountRemove
-     * @param giftcardAccountRemoveRequestParam645
+     * @param giftcardAccountRemoveRequestParam653
      */
     public void startgiftcardAccountRemove(
-        magento.GiftcardAccountRemoveRequestParam giftcardAccountRemoveRequestParam645,
+        magento.GiftcardAccountRemoveRequestParam giftcardAccountRemoveRequestParam653,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
-        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[159].getName());
+        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[161].getName());
         _operationClient.getOptions()
                         .setAction("urn:Magento:PortType:giftcardAccountRemoveRequest");
         _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -44037,7 +44590,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                giftcardAccountRemoveRequestParam645,
+                giftcardAccountRemoveRequestParam653,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "giftcardAccountRemove")),
@@ -44152,10 +44705,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
         org.apache.axis2.util.CallbackReceiver _callbackReceiver = null;
 
-        if ((_operations[159].getMessageReceiver() == null) &&
+        if ((_operations[161].getMessageReceiver() == null) &&
                 _operationClient.getOptions().isUseSeparateListener()) {
             _callbackReceiver = new org.apache.axis2.util.CallbackReceiver();
-            _operations[159].setMessageReceiver(_callbackReceiver);
+            _operations[161].setMessageReceiver(_callbackReceiver);
         }
 
         //execute the operation client
@@ -44166,15 +44719,15 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Add new comment to shipment
      * @see com.voyageone.common.magento.api.base.MagentoService#salesOrderShipmentAddComment
-     * @param salesOrderShipmentAddCommentRequestParam647
+     * @param salesOrderShipmentAddCommentRequestParam655
      */
     public magento.SalesOrderShipmentAddCommentResponseParam salesOrderShipmentAddComment(
-        magento.SalesOrderShipmentAddCommentRequestParam salesOrderShipmentAddCommentRequestParam647)
+        magento.SalesOrderShipmentAddCommentRequestParam salesOrderShipmentAddCommentRequestParam655)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
         try {
-            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[160].getName());
+            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[162].getName());
             _operationClient.getOptions()
                             .setAction("urn:Magento:PortType:salesOrderShipmentAddCommentRequest");
             _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -44191,7 +44744,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    salesOrderShipmentAddCommentRequestParam647,
+                    salesOrderShipmentAddCommentRequestParam655,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "salesOrderShipmentAddComment")),
@@ -44284,13 +44837,13 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Add new comment to shipment
      * @see com.voyageone.common.magento.api.base.MagentoService#startsalesOrderShipmentAddComment
-     * @param salesOrderShipmentAddCommentRequestParam647
+     * @param salesOrderShipmentAddCommentRequestParam655
      */
     public void startsalesOrderShipmentAddComment(
-        magento.SalesOrderShipmentAddCommentRequestParam salesOrderShipmentAddCommentRequestParam647,
+        magento.SalesOrderShipmentAddCommentRequestParam salesOrderShipmentAddCommentRequestParam655,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
-        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[160].getName());
+        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[162].getName());
         _operationClient.getOptions()
                         .setAction("urn:Magento:PortType:salesOrderShipmentAddCommentRequest");
         _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -44306,7 +44859,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                salesOrderShipmentAddCommentRequestParam647,
+                salesOrderShipmentAddCommentRequestParam655,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "salesOrderShipmentAddComment")),
@@ -44421,10 +44974,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
         org.apache.axis2.util.CallbackReceiver _callbackReceiver = null;
 
-        if ((_operations[160].getMessageReceiver() == null) &&
+        if ((_operations[162].getMessageReceiver() == null) &&
                 _operationClient.getOptions().isUseSeparateListener()) {
             _callbackReceiver = new org.apache.axis2.util.CallbackReceiver();
-            _operations[160].setMessageReceiver(_callbackReceiver);
+            _operations[162].setMessageReceiver(_callbackReceiver);
         }
 
         //execute the operation client
@@ -44435,15 +44988,15 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Create new shipment for order
      * @see com.voyageone.common.magento.api.base.MagentoService#salesOrderShipmentCreate
-     * @param salesOrderShipmentCreateRequestParam649
+     * @param salesOrderShipmentCreateRequestParam657
      */
     public magento.SalesOrderShipmentCreateResponseParam salesOrderShipmentCreate(
-        magento.SalesOrderShipmentCreateRequestParam salesOrderShipmentCreateRequestParam649)
+        magento.SalesOrderShipmentCreateRequestParam salesOrderShipmentCreateRequestParam657)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
         try {
-            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[161].getName());
+            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[163].getName());
             _operationClient.getOptions()
                             .setAction("urn:Magento:PortType:salesOrderShipmentCreateRequest");
             _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -44460,7 +45013,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    salesOrderShipmentCreateRequestParam649,
+                    salesOrderShipmentCreateRequestParam657,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "salesOrderShipmentCreate")),
@@ -44552,13 +45105,13 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Create new shipment for order
      * @see com.voyageone.common.magento.api.base.MagentoService#startsalesOrderShipmentCreate
-     * @param salesOrderShipmentCreateRequestParam649
+     * @param salesOrderShipmentCreateRequestParam657
      */
     public void startsalesOrderShipmentCreate(
-        magento.SalesOrderShipmentCreateRequestParam salesOrderShipmentCreateRequestParam649,
+        magento.SalesOrderShipmentCreateRequestParam salesOrderShipmentCreateRequestParam657,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
-        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[161].getName());
+        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[163].getName());
         _operationClient.getOptions()
                         .setAction("urn:Magento:PortType:salesOrderShipmentCreateRequest");
         _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -44574,7 +45127,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                salesOrderShipmentCreateRequestParam649,
+                salesOrderShipmentCreateRequestParam657,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "salesOrderShipmentCreate")),
@@ -44689,10 +45242,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
         org.apache.axis2.util.CallbackReceiver _callbackReceiver = null;
 
-        if ((_operations[161].getMessageReceiver() == null) &&
+        if ((_operations[163].getMessageReceiver() == null) &&
                 _operationClient.getOptions().isUseSeparateListener()) {
             _callbackReceiver = new org.apache.axis2.util.CallbackReceiver();
-            _operations[161].setMessageReceiver(_callbackReceiver);
+            _operations[163].setMessageReceiver(_callbackReceiver);
         }
 
         //execute the operation client
@@ -44703,15 +45256,15 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature
      * Retrieve list of creditmemos by filters
      * @see com.voyageone.common.magento.api.base.MagentoService#salesOrderCreditmemoList
-     * @param salesOrderCreditmemoListRequestParam651
+     * @param salesOrderCreditmemoListRequestParam659
      */
     public magento.SalesOrderCreditmemoListResponseParam salesOrderCreditmemoList(
-        magento.SalesOrderCreditmemoListRequestParam salesOrderCreditmemoListRequestParam651)
+        magento.SalesOrderCreditmemoListRequestParam salesOrderCreditmemoListRequestParam659)
         throws java.rmi.RemoteException {
         org.apache.axis2.context.MessageContext _messageContext = null;
 
         try {
-            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[162].getName());
+            org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[164].getName());
             _operationClient.getOptions()
                             .setAction("urn:Magento:PortType:salesOrderCreditmemoListRequest");
             _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -44728,7 +45281,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             env = toEnvelope(getFactory(_operationClient.getOptions()
                                                         .getSoapVersionURI()),
-                    salesOrderCreditmemoListRequestParam651,
+                    salesOrderCreditmemoListRequestParam659,
                     optimizeContent(
                         new javax.xml.namespace.QName("urn:Magento",
                             "salesOrderCreditmemoList")),
@@ -44820,13 +45373,13 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
      * Auto generated method signature for Asynchronous Invocations
      * Retrieve list of creditmemos by filters
      * @see com.voyageone.common.magento.api.base.MagentoService#startsalesOrderCreditmemoList
-     * @param salesOrderCreditmemoListRequestParam651
+     * @param salesOrderCreditmemoListRequestParam659
      */
     public void startsalesOrderCreditmemoList(
-        magento.SalesOrderCreditmemoListRequestParam salesOrderCreditmemoListRequestParam651,
+        magento.SalesOrderCreditmemoListRequestParam salesOrderCreditmemoListRequestParam659,
         final com.voyageone.common.magento.api.base.MagentoServiceCallbackHandler callback)
         throws java.rmi.RemoteException {
-        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[162].getName());
+        org.apache.axis2.client.OperationClient _operationClient = _serviceClient.createClient(_operations[164].getName());
         _operationClient.getOptions()
                         .setAction("urn:Magento:PortType:salesOrderCreditmemoListRequest");
         _operationClient.getOptions().setExceptionToBeThrownOnSOAPFault(true);
@@ -44842,7 +45395,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         //Style is Doc.
         env = toEnvelope(getFactory(_operationClient.getOptions()
                                                     .getSoapVersionURI()),
-                salesOrderCreditmemoListRequestParam651,
+                salesOrderCreditmemoListRequestParam659,
                 optimizeContent(
                     new javax.xml.namespace.QName("urn:Magento",
                         "salesOrderCreditmemoList")),
@@ -44957,10 +45510,10 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
         org.apache.axis2.util.CallbackReceiver _callbackReceiver = null;
 
-        if ((_operations[162].getMessageReceiver() == null) &&
+        if ((_operations[164].getMessageReceiver() == null) &&
                 _operationClient.getOptions().isUseSeparateListener()) {
             _callbackReceiver = new org.apache.axis2.util.CallbackReceiver();
-            _operations[162].setMessageReceiver(_callbackReceiver);
+            _operations[164].setMessageReceiver(_callbackReceiver);
         }
 
         //execute the operation client
@@ -44997,7 +45550,7 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         return false;
     }
 
-    //https://dev.juicycouture.asia/index.php/api/v2_soap/index/
+    //http://staging.wmf.com/index.php/api/v2_soap/index/
     private org.apache.axiom.om.OMElement toOM(
         magento.CatalogCategoryLevelRequestParam param, boolean optimizeContent)
         throws org.apache.axis2.AxisFault {
@@ -47098,6 +47651,28 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
     }
 
     private org.apache.axiom.om.OMElement toOM(
+        magento.ShoppingCartExternalIdRequestParam param,
+        boolean optimizeContent) throws org.apache.axis2.AxisFault {
+        try {
+            return param.getOMElement(magento.ShoppingCartExternalIdRequestParam.MY_QNAME,
+                org.apache.axiom.om.OMAbstractFactory.getOMFactory());
+        } catch (org.apache.axis2.databinding.ADBException e) {
+            throw org.apache.axis2.AxisFault.makeFault(e);
+        }
+    }
+
+    private org.apache.axiom.om.OMElement toOM(
+        magento.ShoppingCartExternalIdResponseParam param,
+        boolean optimizeContent) throws org.apache.axis2.AxisFault {
+        try {
+            return param.getOMElement(magento.ShoppingCartExternalIdResponseParam.MY_QNAME,
+                org.apache.axiom.om.OMAbstractFactory.getOMFactory());
+        } catch (org.apache.axis2.databinding.ADBException e) {
+            throw org.apache.axis2.AxisFault.makeFault(e);
+        }
+    }
+
+    private org.apache.axiom.om.OMElement toOM(
         magento.ResourceFaultsParam param, boolean optimizeContent)
         throws org.apache.axis2.AxisFault {
         try {
@@ -47245,6 +47820,28 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
         boolean optimizeContent) throws org.apache.axis2.AxisFault {
         try {
             return param.getOMElement(magento.SalesOrderShipmentInfoResponseParam.MY_QNAME,
+                org.apache.axiom.om.OMAbstractFactory.getOMFactory());
+        } catch (org.apache.axis2.databinding.ADBException e) {
+            throw org.apache.axis2.AxisFault.makeFault(e);
+        }
+    }
+
+    private org.apache.axiom.om.OMElement toOM(
+        magento.ShoppingCartProductCustomPriceRequestParam param,
+        boolean optimizeContent) throws org.apache.axis2.AxisFault {
+        try {
+            return param.getOMElement(magento.ShoppingCartProductCustomPriceRequestParam.MY_QNAME,
+                org.apache.axiom.om.OMAbstractFactory.getOMFactory());
+        } catch (org.apache.axis2.databinding.ADBException e) {
+            throw org.apache.axis2.AxisFault.makeFault(e);
+        }
+    }
+
+    private org.apache.axiom.om.OMElement toOM(
+        magento.ShoppingCartProductCustomPriceResponseParam param,
+        boolean optimizeContent) throws org.apache.axis2.AxisFault {
+        try {
+            return param.getOMElement(magento.ShoppingCartProductCustomPriceResponseParam.MY_QNAME,
                 org.apache.axiom.om.OMAbstractFactory.getOMFactory());
         } catch (org.apache.axis2.databinding.ADBException e) {
             throw org.apache.axis2.AxisFault.makeFault(e);
@@ -50337,6 +50934,24 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
     /* methods to provide back word compatibility */
     private org.apache.axiom.soap.SOAPEnvelope toEnvelope(
         org.apache.axiom.soap.SOAPFactory factory,
+        magento.ShoppingCartExternalIdRequestParam param,
+        boolean optimizeContent, javax.xml.namespace.QName methodQName)
+        throws org.apache.axis2.AxisFault {
+        try {
+            org.apache.axiom.soap.SOAPEnvelope emptyEnvelope = factory.getDefaultEnvelope();
+            emptyEnvelope.getBody()
+                         .addChild(param.getOMElement(
+                    magento.ShoppingCartExternalIdRequestParam.MY_QNAME, factory));
+
+            return emptyEnvelope;
+        } catch (org.apache.axis2.databinding.ADBException e) {
+            throw org.apache.axis2.AxisFault.makeFault(e);
+        }
+    }
+
+    /* methods to provide back word compatibility */
+    private org.apache.axiom.soap.SOAPEnvelope toEnvelope(
+        org.apache.axiom.soap.SOAPFactory factory,
         magento.ResourceFaultsParam param, boolean optimizeContent,
         javax.xml.namespace.QName methodQName)
         throws org.apache.axis2.AxisFault {
@@ -50457,6 +51072,25 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
             emptyEnvelope.getBody()
                          .addChild(param.getOMElement(
                     magento.SalesOrderShipmentInfoRequestParam.MY_QNAME, factory));
+
+            return emptyEnvelope;
+        } catch (org.apache.axis2.databinding.ADBException e) {
+            throw org.apache.axis2.AxisFault.makeFault(e);
+        }
+    }
+
+    /* methods to provide back word compatibility */
+    private org.apache.axiom.soap.SOAPEnvelope toEnvelope(
+        org.apache.axiom.soap.SOAPFactory factory,
+        magento.ShoppingCartProductCustomPriceRequestParam param,
+        boolean optimizeContent, javax.xml.namespace.QName methodQName)
+        throws org.apache.axis2.AxisFault {
+        try {
+            org.apache.axiom.soap.SOAPEnvelope emptyEnvelope = factory.getDefaultEnvelope();
+            emptyEnvelope.getBody()
+                         .addChild(param.getOMElement(
+                    magento.ShoppingCartProductCustomPriceRequestParam.MY_QNAME,
+                    factory));
 
             return emptyEnvelope;
         } catch (org.apache.axis2.databinding.ADBException e) {
@@ -52883,6 +53517,14 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
                 return magento.ShoppingCartCustomerSetResponseParam.Factory.parse(param.getXMLStreamReaderWithoutCaching());
             }
 
+            if (magento.ShoppingCartExternalIdRequestParam.class.equals(type)) {
+                return magento.ShoppingCartExternalIdRequestParam.Factory.parse(param.getXMLStreamReaderWithoutCaching());
+            }
+
+            if (magento.ShoppingCartExternalIdResponseParam.class.equals(type)) {
+                return magento.ShoppingCartExternalIdResponseParam.Factory.parse(param.getXMLStreamReaderWithoutCaching());
+            }
+
             if (magento.ShoppingCartGiftcardAddRequestParam.class.equals(type)) {
                 return magento.ShoppingCartGiftcardAddRequestParam.Factory.parse(param.getXMLStreamReaderWithoutCaching());
             }
@@ -52956,6 +53598,16 @@ public class MagentoServiceStub extends org.apache.axis2.client.Stub
 
             if (magento.ShoppingCartProductAddResponseParam.class.equals(type)) {
                 return magento.ShoppingCartProductAddResponseParam.Factory.parse(param.getXMLStreamReaderWithoutCaching());
+            }
+
+            if (magento.ShoppingCartProductCustomPriceRequestParam.class.equals(
+                        type)) {
+                return magento.ShoppingCartProductCustomPriceRequestParam.Factory.parse(param.getXMLStreamReaderWithoutCaching());
+            }
+
+            if (magento.ShoppingCartProductCustomPriceResponseParam.class.equals(
+                        type)) {
+                return magento.ShoppingCartProductCustomPriceResponseParam.Factory.parse(param.getXMLStreamReaderWithoutCaching());
             }
 
             if (magento.ShoppingCartProductListRequestParam.class.equals(type)) {
