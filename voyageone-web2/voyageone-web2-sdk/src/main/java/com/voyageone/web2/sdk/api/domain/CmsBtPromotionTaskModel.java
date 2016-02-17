@@ -14,6 +14,8 @@ public class CmsBtPromotionTaskModel extends BaseMongoModel {
 
     private String key;
 
+    private String numIid;
+
     private Integer synFlg;
 
     private String errMsg;
@@ -23,11 +25,12 @@ public class CmsBtPromotionTaskModel extends BaseMongoModel {
         this.errMsg = "";
     }
 
-    public CmsBtPromotionTaskModel(Integer promotionId, Integer taskType, String key, String operator) {
+    public CmsBtPromotionTaskModel(Integer promotionId, Integer taskType, String key, String  numIid, String operator) {
         this();
         this.promotionId = promotionId;
         this.taskType = taskType;
         this.key = key;
+        this.numIid = numIid;
         this.setCreater(operator);
         this.setModifier(operator);
     }
@@ -70,5 +73,13 @@ public class CmsBtPromotionTaskModel extends BaseMongoModel {
 
     public void setErrMsg(String errMsg) {
         this.errMsg = errMsg;
+    }
+
+    public String getNumIid() {
+        return numIid;
+    }
+
+    public void setNumIid(String numIid) {
+        this.numIid = numIid;
     }
 }

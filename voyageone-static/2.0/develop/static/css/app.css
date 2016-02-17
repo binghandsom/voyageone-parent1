@@ -6211,7 +6211,7 @@ a.text-black:hover {
   color:#fff;
 }
 .table_bg_green_mint{
-  background: #eff4ea;
+  background: #fafff5;
 }
 
 a.btn-main:link {color:#333;text-decoration:underline;}
@@ -6718,14 +6718,23 @@ input:checked + ol > li {
   padding:0px;
   list-style-type: none;
 }
-.category_drag_list li a{
+.category_drag_list li a:link{
    float: left;
-   width:185px;
+   width:100%;
    display: block;
    position: relative;
    list-style-type: none;
    padding:4px;
  }
+.category_drag_list li a:visited {
+  float: left;
+  display:block;
+  position: relative;
+  list-style-type: none;
+  padding: 2px;
+  background:#dcf3f9;
+  color:#333
+}
 .category_drag_list li a:hover {
   float: left;
   display:block;
@@ -6735,12 +6744,12 @@ input:checked + ol > li {
   background:#dcf3f9;
   color:#333
 }
-.category_drag_list li a:visited {
+.category_drag_list li a:active {
   float: left;
   display:block;
   position: relative;
   list-style-type: none;
-  padding: 2px;
+  padding: 4px;
   background:#dcf3f9;
   color:#333
 }
@@ -6780,6 +6789,56 @@ input:checked + ol > li {
 .category_ts span{
   color:#e67e22;
 }
+
+.custom_ts{
+  background:#fffaf4;
+  border:1px solid #e7dfd4;
+  margin:10px 0px 10px 0px;
+}
+.custom_ts span{
+  color:#e67e22;
+}
+.category_drag_list_qh{
+  /*float:left;*/
+  margin:0px;
+  padding:4px 4px 0px 4px;
+  height:400px;
+  overflow-y: auto;
+  overflow-scrolling: touch;
+  -webkit-overflow-scrolling: touch;
+  color:#3366cc;
+}
+.category_drag_list_qh ul{
+  margin:0px;
+  padding:0px;
+  list-style-type: none;
+}
+.category_drag_list_qh li a{
+  float: left;
+  width:100%;
+  display: block;
+  position: relative;
+  list-style-type: none;
+  padding:4px;
+}
+.category_drag_list_qh li a:hover {
+  float: left;
+  display:block;
+  position: relative;
+  list-style-type: none;
+  padding: 4px;
+  background:#dcf3f9;
+  color:#333
+}/*
+.category_drag_list_qh li a:visited {
+  float: left;
+  display:block;
+  position: relative;
+  list-style-type: none;
+  padding: 2px;
+  background:#dcf3f9;
+  color:#333
+}*/
 .tableLayer{
   display: block;
   margin: 0px;
