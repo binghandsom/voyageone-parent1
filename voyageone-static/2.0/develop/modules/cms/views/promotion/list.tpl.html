@@ -14,12 +14,12 @@
 								<div class="col-sm-9">
 									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option1"><span class="fa fa-check"></span> promotion_new </label>
 									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option2"><span class="fa fa-check"></span> promotion_ready </label>
-									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option3"><span class="fa fa-check"></span>  promotion_approved</label>
 								</div>
 							</div><!-- .form-group -->
 							<div class="form-group">
 								<label class="col-sm-2 control-label"></label>
 								<div class="col-sm-9">
+									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option3"><span class="fa fa-check"></span> promotion_approved</label>
 									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option4"><span class="fa fa-check"></span> promotion_saled </label>
 									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option5"><span class="fa fa-check"></span> promotion_over </label>
 								</div>
@@ -96,7 +96,7 @@
 				<tr ng-repeat="promotion in vm.promotionList">
 					<td>{{promotion.promotionId}}</td>
 					<td class="text-center"><span ng-show="promotion.promotionStatus==false" class="label label-success-new m-r-lg m-l"> Open </span><span ng-show="promotion.promotionStatus==true" class="label label-yellow-new m-r-lg m-l"> Close </span></td>
-					<td><a href="#/promotion/detail/{{promotion.promotionId}}" target="_blank">{{promotion.promotionName}}</a></td>
+					<td class="text-u-l"><a href="#/promotion/detail/{{promotion.promotionId}}" target="_blank">{{promotion.promotionName}}</a></td>
 					<td>{{promotion.activityStart}}</td>
 					<td>{{promotion.activityEnd}}</td>
 					<td>{{promotion.cartName}}</td>
