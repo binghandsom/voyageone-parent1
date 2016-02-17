@@ -5,9 +5,6 @@
 define([], function () {
 
     function indexController($scope) {
-        var vm = $scope;
-
-        vm.title = "this is a test";
     };
 
     indexController.$inject = ['$scope'];

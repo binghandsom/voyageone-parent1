@@ -1,9 +1,14 @@
 package com.voyageone.web2.cms.views.pop.tag.promotion;
 
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.CommonUtil;
 import com.voyageone.web2.base.BaseAppService;
+import com.voyageone.web2.cms.views.promotion.CmsPromotionService;
+import com.voyageone.web2.core.bean.UserSessionBean;
 import com.voyageone.web2.sdk.api.VoApiDefaultClient;
+import com.voyageone.web2.sdk.api.domain.CmsBtPromotionModel;
 import com.voyageone.web2.sdk.api.domain.CmsBtTagModel;
+import com.voyageone.web2.sdk.api.request.PromotionDetailAddRequest;
 import com.voyageone.web2.sdk.api.request.TagsGetRequest;
 import com.voyageone.web2.sdk.api.service.ProductTagClient;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +27,9 @@ public class CmsPromotionSelectService extends BaseAppService {
 
     @Autowired
     private VoApiDefaultClient voApiClient;
+
+    @Autowired
+    private CmsPromotionService cmsPromotionService;
 
     @Autowired
     private ProductTagClient productTagClient;
@@ -44,10 +52,64 @@ public class CmsPromotionSelectService extends BaseAppService {
     /**
      * addToPromotion
      */
-    public Map<String, Object> addToPromotion(Map<String, Object> params, String channelId, String modifier) {
-        String tag_path = params.get("tagPath").toString();
+    public void addToPromotion(Map<String, Object> params, UserSessionBean userInfo) {
+        String channelId = userInfo.getSelChannelId();
+        String modifier = userInfo.getUserName();
+
+        Integer promotionId = Integer.valueOf(params.get("promotionId").toString());
+        Integer tagId = Integer.valueOf(params.get("tagId").toString());
+        Integer cartId = Integer.valueOf(params.get("cartId").toString());
         List<Long> productIds = CommonUtil.changeListType((ArrayList<Integer>) params.get("productIds"));
-        // TODO 2016-01-08 目前处理逻辑只往product表中添加tag,不会将对应的产品添加到promotion中
-        return productTagClient.addTagProducts(channelId, tag_path, productIds, modifier);
+
+
+        // 获取promotion信息
+        CmsBtPromotionModel promotion = cmsPromotionService.queryById(promotionId);
+        if (promotion == null) {
+            throw new BusinessException("promotionId不存在：" + promotionId);
+        }
+
+        // 获取Tag列表
+        List<CmsBtTagModel> tags = selectListByParentTagId(promotion.getRefTagId());
+        CmsBtTagModel tagInfo = searchTag(tags, tagId);
+        if (tagInfo == null) {
+            throw new BusinessException("Tag不存在：" + tagInfo.getTagPathName());
+        }
+
+        // 给产品数据添加活动标签
+        Map<String, Object> result = productTagClient.addTagProducts(channelId, tagInfo.getTagPath(), productIds, modifier);
+        if ("success".equals(result.get("result"))) {
+
+            productIds.forEach(item -> {
+
+                PromotionDetailAddRequest request=new PromotionDetailAddRequest();
+                request.setModifier(modifier);
+                request.setChannelId(channelId);
+                request.setCartId(cartId);
+                request.setProductId(Long.valueOf(item.toString()));
+                request.setPromotionId(promotionId);
+                request.setPromotionPrice(0.00);
+                request.setTagId(tagInfo.getTagId());
+                request.setTagPath(tagInfo.getTagPath());
+
+                voApiClient.execute(request);
+
+            });
+        }
+    }
+
+    /**
+     * 检测选中的tag是否存在
+     * @param tags
+     * @param tagName
+     * @return
+     */
+    private CmsBtTagModel searchTag(List<CmsBtTagModel> tags, Integer tagName) {
+
+        for (CmsBtTagModel tag : tags) {
+            if (tag.getTagId().equals(tagName)) {
+                return tag;
+            }
+        }
+        return null;
     }
 }

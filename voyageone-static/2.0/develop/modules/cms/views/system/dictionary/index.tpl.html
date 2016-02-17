@@ -50,13 +50,13 @@
 				<table class="table table-hover vo_table" style="margin-bottom:0px">
 					<tbody>
 					<tr class="font-bold" style="background:#e67e22;color:#fff">
-						<td class="mfb-xt3 text-center" translate="TXT_SEQ"></td>
+						<td class="mfb-xt text-center" translate="TXT_SEQ"></td>
 						<td class="mfb-xxt text-center" translate="TXT_PLATFORM"></td>
 						<td class="mfb-xxs text-left" translate="TXT_DICTIONARY_NAME"></td>
-						<td class="mfb-xxxxs text-left" translate="TXT_DICTIONARY_COMMENT"></td>
+						<td class="mfb-xxxs text-left" translate="TXT_DICTIONARY_COMMENT"></td>
 						<td class="mfb-xxt text-center" translate="TXT_UPDATE_ON"></td>
 						<td class="mfb-xxt text-center" translate="TXT_CREATE_ON"></td>
-						<td class="mfb-xt text-left" translate="TXT_ACTION"></td>
+						<td class="mfb-xxt text-center" translate="TXT_ACTION"></td>
 					</tr>
 					</tbody>
 				</table>
@@ -64,13 +64,13 @@
 					<table class="table table-hover vo_table tableWordBreak" style="margin-bottom:0px">
 						<tbody>
 						<tr ng-repeat="dictionaryInfo in vm.dictionaryList">
-							<td class="mfb-xt3 text-center" ng-bind="dictionaryInfo.id"></td>
+							<td class="mfb-xt text-center" ng-bind="dictionaryInfo.id"></td>
 							<td class="mfb-xxt text-center"><span class="badge badge-empty"></span></td>
 							<td class="mfb-xxs text-left" ng-bind="dictionaryInfo.name"></td>
-							<td class="mfb-xxxxs text-left"><div class="line-height">{{dictionaryInfo.value}}</div></td>
+							<td class="mfb-xxxs text-left"><div class="line-height">{{dictionaryInfo.value}}</div></td>
 							<td class="mfb-xxt text-center" ng-bind="dictionaryInfo.created"></td>
 							<td class="mfb-xxt text-center" ng-bind="dictionaryInfo.modified"></td>
-							<td class="mfb-xt text-center">
+							<td class="mfb-xxt text-center">
 								<button class="btn btn-success btn-xs" ng-click="openDictionaryItem(dictionaryInfo.id)"><i class="fa fa-pencil"></i></button>
 								<button class="btn btn-danger btn-xs"  ng-click="delDictItem(dictionaryInfo)"><i class="fa  fa-trash-o"></i></button>
 							</td>

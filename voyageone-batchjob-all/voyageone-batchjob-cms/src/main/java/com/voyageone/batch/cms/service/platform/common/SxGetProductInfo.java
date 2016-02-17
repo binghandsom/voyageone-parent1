@@ -3,9 +3,13 @@ package com.voyageone.batch.cms.service.platform.common;
 import com.voyageone.batch.cms.bean.platform.SxData;
 import com.voyageone.batch.cms.dao.SkuInventoryDao;
 import com.voyageone.cms.service.CmsProductService;
+import com.voyageone.cms.service.dao.mongodb.CmsMtPlatformMappingDao;
 import com.voyageone.cms.service.model.CmsBtProductModel;
 import com.voyageone.cms.service.model.CmsBtProductModel_Group_Platform;
 import com.voyageone.cms.service.model.CmsBtProductModel_Sku;
+import com.voyageone.cms.service.model.CmsMtPlatformMappingModel;
+import com.voyageone.common.configs.ShopConfigs;
+import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -20,9 +24,11 @@ import java.util.Map;
 @Repository
 public class SxGetProductInfo {
 	@Autowired
-	CmsProductService cmsProductService;
+	private CmsProductService cmsProductService;
 	@Autowired
-	SkuInventoryDao skuInventoryDao;
+	private SkuInventoryDao skuInventoryDao;
+	@Autowired
+	private CmsMtPlatformMappingDao cmsMtPlatformMappingDao;
 
 	/**
 	 * 获取group的所有商品的信息
@@ -48,6 +54,22 @@ public class SxGetProductInfo {
 		sxData.setChannelId(channelId);
 		sxData.setCartId(platformList.get(0).getCartId());
 		sxData.setGroupId(groupId);
+		// ShopBean
+		ShopBean shopBean = ShopConfigs.getShop(channelId, sxData.getCartId());
+		sxData.setShopBean(shopBean);
+		// 平台类目
+		CmsMtPlatformMappingModel cmsMtPlatformMappingModel = cmsMtPlatformMappingDao.getMappingByMainCatId(
+				channelId, sxData.getCartId(), sxData.getProductList().get(0).getCatId()
+		);
+		if (cmsMtPlatformMappingModel == null)  {
+			// TODO: 主数据与平台之间没有做过类目mapping, 无法上新
+			return null;
+		}
+//		if (cmsMtPlatformMappingModel.getMatchOver() == 0) {
+//			// TODO: 主数据与平台之间的属性mapping没有完成, 无法上新
+//			return null;
+//		}
+		sxData.setPlatformCategoryId(cmsMtPlatformMappingModel.getPlatformCategoryId());
 		// 平台上的productId
 		String platformProductId = "";
 		for (CmsBtProductModel_Group_Platform platform : platformList) {

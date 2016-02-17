@@ -58,7 +58,7 @@ define([
             },
             "application": {
                 "modules": "/modules/",
-                "url": "/app.html#/"
+                "url": "/app.html#/home"
             }
         })
 
@@ -206,8 +206,8 @@ define([
         // config
         $scope.app = {
             name: 'VoyageOne',
-            version: 'Beta 0.0.2',
-            copyRight: '&copy; 2015 Copyright',
+            version: 'Version 2.0.0',
+            copyRight: 'Copyright © 2016 VoyageOne. All Rights Reserved.',
             // for chart colors
             color: {
                 primary: '#7266ba',
@@ -226,15 +226,14 @@ define([
                 navbarCollapseColor: 'bg-black',
                 asideColor: 'bg-dark',
                 headerFixed: true,
-                asideFixed: false,
+                asideFixed: true,
                 asideFolded: false,
-                asideDock: false,
                 container: false
             }
         };
 
         $scope.$watch('app.settings', function () {
-            if ($scope.app.settings.asideDock && $scope.app.settings.asideFixed) {
+            if ($scope.app.settings.asideFixed) {
                 // aside dock and fixed must set the header fixed.
                 $scope.app.settings.headerFixed = true;
             }
@@ -526,19 +525,18 @@ define([
     }
 
     function asideCtrl($scope, $rootScope, $location, menuService, cRoutes) {
-        var vm = this;
-        vm.menuInfo = {};
 
+        $scope.menuInfo = {};
         $scope.initialize = initialize;
         $scope.selectCategoryType = selectCategoryType;
         $scope.goSearchPage = goSearchPage;
 
         function initialize() {
             menuService.getCategoryType().then(function (data) {
-                vm.menuInfo.categoryTypeList = data;
+                $scope.menuInfo.categoryTypeList = data;
             });
             menuService.getCategoryInfo().then(function (data) {
-                vm.menuInfo.categoryTreeList = data.categoryTreeList;
+                $scope.menuInfo.categoryTreeList = data.categoryTreeList;
             });
         }
 
@@ -549,7 +547,7 @@ define([
         function selectCategoryType(cType) {
             menuService.setCategoryType(cType).then(function (data) {
                 $rootScope.categoryType = {cTypeId: cType.cTypeId, cartId: cType.cartId};
-                vm.menuInfo.categoryTreeList = data.categoryTreeList;
+                $scope.menuInfo.categoryTreeList = data.categoryTreeList;
             });
         }
 

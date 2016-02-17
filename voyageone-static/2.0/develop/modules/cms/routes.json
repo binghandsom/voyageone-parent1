@@ -1,11 +1,6 @@
 {
-  "/": {
-    "hash": "/",
-    "templateUrl": "views/welcome/index.tpl.html",
-    "controllerUrl": "modules/cms/views/welcome/index.ctl"
-  },
-  "welcome_index": {
-    "hash": "/welcome/index",
+  "home": {
+    "hash": "/home",
     "templateUrl": "views/welcome/index.tpl.html",
     "controllerUrl": "modules/cms/views/welcome/index.ctl"
   },
