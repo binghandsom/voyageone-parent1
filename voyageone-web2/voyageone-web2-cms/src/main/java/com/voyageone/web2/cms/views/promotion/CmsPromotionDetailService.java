@@ -294,7 +294,7 @@ public class CmsPromotionDetailService extends BaseAppService {
         simpleTransaction.openTransaction();
         try {
             codeList.forEach(code -> {
-                CmsBtPromotionTaskModel cmsBtPromotionTask = new CmsBtPromotionTaskModel(promotionId, PromotionTypeEnums.Type.TEJIABAO.getTypeId(), code.getProductCode(), operator);
+                CmsBtPromotionTaskModel cmsBtPromotionTask = new CmsBtPromotionTaskModel(promotionId, PromotionTypeEnums.Type.TEJIABAO.getTypeId(), code.getProductCode(),code.getNumIid(), operator);
                 cmsPromotionTaskDao.insertPromotionTask(cmsBtPromotionTask);
             });
         } catch (Exception e) {
