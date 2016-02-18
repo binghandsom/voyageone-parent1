@@ -316,19 +316,17 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
     }
 
     //Field字段排序方法
-    private void fieldsSort(List<Field> masterFields){
+    private static void fieldsSort(List<Field> masterFields){
         Collections.sort(masterFields, new Comparator<Field>() {
             @Override
             public int compare(Field a, Field b) {
                 if(a.getInputLevel()<b.getInputLevel())
-                    return -2;
-                else if(a.getInputLevel()>b.getInputLevel())
-                    return 2;
-                for(Rule rule:b.getRules()){
-                    if(rule.getName()!=null&&rule.getName().equals("requiredRule")&&rule.getValue()!=null&&rule.getValue().equals("true"))
-                        return 1;
-                }
-                return 0;
+                    return -1;
+                if(a.getInputLevel()>b.getInputLevel())
+                    return 1;
+                if(b.getRuleByName("requiredRule")!=null&&!StringUtils.isNullOrBlank2(b.getRuleByName("requiredRule").getValue())&&b.getRuleByName("requiredRule").getValue().equals("true"))
+                    return 1;
+                return -1;
             };
         });
     }

@@ -66,7 +66,8 @@ public class CmsBtProductModel_Sku extends BaseMongoMap<String, Object> {
     }
 
     public Double getPriceSale() {
-        return getAttribute("priceSale");
+        // 注: 有时候这个值在数据库里被读出来会变成int型, 为了避免错误, 增加了转换
+        return Double.parseDouble(getAttribute("priceSale").toString());
     }
 
     public void setPriceSale(Double priceSale) {
