@@ -177,8 +177,8 @@ define([
             }
 
         };
-        $scope.tejiabaoInit = function(){
-            promotionDetailService.tejiabaoInit( $routeParams.promotionId).then(function (res) {
+        $scope.teJiaBaoInit = function(){
+            promotionDetailService.teJiaBaoInit( $routeParams.promotionId).then(function (res) {
                 notify.success("success");
                 $location.path("/task/price/"+$routeParams.promotionId);
                 //href="#/promotion/task/price" target="_blank"-->
