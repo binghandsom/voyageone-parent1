@@ -537,6 +537,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             mainFeedCnAtts.setAttribute("categoryCode", feed.getCategory());
             product.getFeed().setCnAtts(mainFeedCnAtts);
 
+            product.getFeed().setCustomIds(mainFeedOrgAttsKeyList);
+
             return product;
         }
 
