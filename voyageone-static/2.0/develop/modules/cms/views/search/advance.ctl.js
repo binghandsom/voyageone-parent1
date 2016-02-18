@@ -155,7 +155,7 @@ define([
                     };
                     productDetailService.changeCategory(data).then(function (res) {
                         if(res.data.isChangeCategory) {
-                            notify.success($translate.instant('TXT_COM_UPDATE_SUCCESS'));
+                            notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
                             $scope.search();
                         }
                         else

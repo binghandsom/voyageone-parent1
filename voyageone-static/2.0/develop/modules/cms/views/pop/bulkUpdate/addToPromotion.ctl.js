@@ -26,12 +26,14 @@ define([
         };
 
         $scope.ok = function () {
-            $addToPromotionService.addToPromotion($scope.vm.promotionInfo).then(
-                function () {
-                    notify.success ($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
-                    //$scope.$close();
-                    $modalInstance.close('');
-                })
+            if($scope.vm.promotionInfo.tagId) {
+                $addToPromotionService.addToPromotion($scope.vm.promotionInfo).then(
+                    function () {
+                        notify.success ($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
+                        //$scope.$close();
+                        $modalInstance.close('');
+                    })
+            }
         }
 
     });

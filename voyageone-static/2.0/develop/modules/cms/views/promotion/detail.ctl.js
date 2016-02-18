@@ -161,7 +161,7 @@ define([
                         notify.warning("fail");
                     })
                 } else {
-                    alert($translate.instant('TXT_COM_MSG_NO_ROWS_SELECT'));
+                    alert($translate.instant('TXT_MSG_NO_ROWS_SELECT'));
                 }
             }else if($scope.vm.tabIndex == 1){
                 if($scope.vm.codeSelList.selList.length>0) {
@@ -172,7 +172,7 @@ define([
                         notify.warning("fail");
                     })
                 } else {
-                    alert($translate.instant('TXT_COM_MSG_NO_ROWS_SELECT'));
+                    alert($translate.instant('TXT_MSG_NO_ROWS_SELECT'));
                 }
             }
 

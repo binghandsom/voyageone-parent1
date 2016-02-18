@@ -146,7 +146,7 @@ define([
 						: null));
 			}
 
-			return _.isNull(result) ? null : title + ": " + result;
+			return _.isNull(result) ? null : title + result;
 		}
 
 		/**
