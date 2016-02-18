@@ -24,6 +24,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -46,9 +47,6 @@ public class CmsPromotionDetailService extends BaseAppService {
 
     @Autowired
     private CmsPromotionCodeDao cmsPromotionCodeDao;
-
-    @Autowired
-    private CmsPromotionSkuDao cmsPromotionSkuDao;
 
     @Autowired
     private CmsPromotionIndexService cmsPromotionService;
@@ -137,10 +135,8 @@ public class CmsPromotionDetailService extends BaseAppService {
     public List<Map<String, Object>> getPromotionGroup(Map<String, Object> param) {
         PromotionModelsGetRequest request=new PromotionModelsGetRequest();
         request.setParam(param);
-        PromotionModelsGetResponse response=voApiClient.execute(request);
-        List<Map<String, Object>> promotionGroups =new ArrayList<Map<String,Object>>();
-        if(response!=null){
-            promotionGroups = response.getPromotionGroups();
+        List<Map<String, Object>> promotionGroups =voApiClient.execute(request).getPromotionGroups();
+        if(!CollectionUtils.isEmpty(promotionGroups)){
             promotionGroups.forEach(map -> {
                 CmsBtProductModel cmsBtProductModel = ProductGetClient.getProductById(param.get("channelId").toString(), (Long) map.get("productId"));
 
@@ -181,27 +177,32 @@ public class CmsPromotionDetailService extends BaseAppService {
      * @return 以sku为单位的数据
      */
     public List<Map<String, Object>> getPromotionSku(Map<String, Object> param) {
-        List<Map<String, Object>> promotionSkus = cmsPromotionSkuDao.getPromotionSkuList(param);
-        HashMap<String, CmsBtProductModel> temp = new HashMap<>(); // 优化把之前已经取到过的Product的信息保存起来
-        promotionSkus.forEach(map -> {
-            CmsBtProductModel cmsBtProductModel;
-            if (!temp.containsKey(map.get("productId").toString())) {
-                cmsBtProductModel = ProductGetClient.getProductById(param.get("channelId").toString(), (Long) map.get("productId"));
-                temp.put(map.get("productId").toString(), cmsBtProductModel);
-            } else {
-                cmsBtProductModel = temp.get(map.get("productId").toString());
-            }
-            CmsBtProductModel_Sku sku = cmsBtProductModel.getSku(map.get("productSku").toString());
-            if (sku != null) {
-                map.put("size", sku.getSize());
-            }
-        });
-
+        PromotionSkuGetRequest request=new PromotionSkuGetRequest();
+        request.setParam(param);
+        List<Map<String, Object>> promotionSkus = voApiClient.execute(request).getSkus();
+        if(!CollectionUtils.isEmpty(promotionSkus)){
+            HashMap<String, CmsBtProductModel> temp = new HashMap<>(); // 优化把之前已经取到过的Product的信息保存起来
+            promotionSkus.forEach(map -> {
+                CmsBtProductModel cmsBtProductModel;
+                if (!temp.containsKey(map.get("productId").toString())) {
+                    cmsBtProductModel = ProductGetClient.getProductById(param.get("channelId").toString(), (Long) map.get("productId"));
+                    temp.put(map.get("productId").toString(), cmsBtProductModel);
+                } else {
+                    cmsBtProductModel = temp.get(map.get("productId").toString());
+                }
+                CmsBtProductModel_Sku sku = cmsBtProductModel.getSku(map.get("productSku").toString());
+                if (sku != null) {
+                    map.put("size", sku.getSize());
+                }
+            });
+        }
         return promotionSkus;
     }
 
     public int getPromotionSkuListCnt(Map<String, Object> params) {
-        return cmsPromotionSkuDao.getPromotionSkuListCnt(params);
+        PromotionSkuCountRequest request=new PromotionSkuCountRequest();
+        request.setParam(params);
+        return voApiClient.execute(request).getTotalCount();
     }
 
     public int getPromotionCodeListCnt(Map<String, Object> params) {
@@ -354,7 +355,10 @@ public class CmsPromotionDetailService extends BaseAppService {
                     voApiClient.execute(request);
                 }
 
-                cmsPromotionSkuDao.deletePromotionSkuByProductId(item.getPromotionId(), item.getProductId());
+                PromotionSkuDeleteRequest request=new PromotionSkuDeleteRequest();
+                request.setProductId(item.getProductId());
+                request.setPromotionId(item.getPromotionId());
+                voApiClient.execute(request);
 
                 List<Long> poIds = new ArrayList<>();
                 poIds.add(item.getProductId());
