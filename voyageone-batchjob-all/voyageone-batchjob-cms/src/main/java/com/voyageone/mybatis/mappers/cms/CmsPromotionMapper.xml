@@ -1,29 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.voyageone.cms.sql">
-       <!--<select id="ims_promotion_select" resultType="HashMap">-->
-              <!--SELECT-->
-                  <!--t1.*, floor(t2.cn_price_final_rmb*100) as cnPriceFinalRmb-->
-              <!--FROM-->
-                  <!--(-->
-                      <!--SELECT-->
-                          <!--a.product_id,-->
-                          <!--a.num_iid,-->
-                          <!--a.channel_id,-->
-                          <!--a.cart_id,-->
-                          <!--a.promotion_add_status,-->
-                          <!--a.publish_promotion_price_status-->
-                      <!--FROM-->
-                          <!--voyageone_ims.ims_bt_product a-->
-                      <!--WHERE-->
-                          <!--a.channel_id = #{channelId}-->
-                      <!--AND a.cart_id = #{cartId}-->
-                      <!--AND a.num_iid != '0'-->
-                      <!--AND a.publish_promotion_price_status = 0-->
-                  <!--) t1-->
-              <!--LEFT JOIN voyageone_cms.cms_bt_cn_product_share t2 ON t1.product_id = t2.product_id-->
-              <!--AND t1.cart_id = t2.cart_id-->
-       <!--</select>-->
     <resultMap type="HashMap" id="PromotionMap">
         <result column="promotion_id" property="promotionId"/>
         <result column="num_iid" property="num_iid"/>
@@ -86,19 +63,30 @@
         ) t2 ON t1.promotion_id = t2.promotion_id
         AND t1.num_iid = t2.num_iid
     </select>
-       <update id="ims_promotion_update" parameterType="HashMap">
-              UPDATE voyageone_ims.ims_bt_product
-              SET publish_promotion_price_status = #{priceStatus},
-              promotion_faild_comment = #{promotionFaildComment},
-              modified = now(),
-              modifier = 'ImsPromotionJob'
-              WHERE
-                  cart_id = #{cartId}
-              <if test="numIid != null and numIid.size > 0">
-                  AND num_iid IN
-              <foreach item="item" index="index" collection="numIid" open="(" separator="," close=")">
-                     #{item}
-              </foreach>
-              </if>
-       </update>
+    <update id="update_cms_bt_promotion_task" parameterType="HashMap" >
+        update voyageone_cms2.cms_bt_promotion_task
+        <set >
+            <if test="synFlg != null" >
+                syn_flg = #{synFlg,jdbcType=INTEGER},
+            </if>
+            <if test="errMsg != null" >
+                err_msg = #{errMsg,jdbcType=VARCHAR},
+            </if>
+            modified = now(),
+            <if test="modifier != null" >
+                modifier = #{modifier,jdbcType=VARCHAR},
+            </if>
+        </set>
+        <where>
+            <if test="promotionId != null and promotionId != ''">
+                promotion_id = #{promotionId,jdbcType=INTEGER}
+            </if>
+            <if test="taskType != null ">
+                and task_type = #{taskType,jdbcType=INTEGER}
+            </if>
+            <if test="key != null and key != ''">
+                and `key` = #{key,jdbcType=VARCHAR}
+            </if>
+        </where>
+    </update>
 </mapper>
