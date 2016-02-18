@@ -1,0 +1,442 @@
+<div class="wrapper-md" ng-init="initialize()">
+	<accordion class="vo_accordion vo_attr" close-others="oneAtATime">
+		<accordion-group is-open="vm.status.open">
+			<accordion-heading>
+				<i class="fa fa-search"></i>&nbsp;{{'TXT_ADVANCE_SEARCH' | translate}}
+				<i class="pull-right glyphicon glyphicon-menu-down" ng-class="{'glyphicon-menu-up': vm.status.open, 'glyphicon-menu-down': !vm.status.open}"></i>
+			</accordion-heading>
+			<!-- search -->
+			<div class="col-sm-12" >
+				<div class="col-sm-4">
+					<div class="form-horizontal">
+						<div class="form-group">
+							<label class="col-sm-3 control-label" translate="TXT_CATEGORY"></label>
+							<div class="col-sm-9">
+								<select class="form-control" ng-model="vm.searchInfo.catId"
+										ng-options="category.catId as category.catPath for category in vm.masterData.categoryList">
+									<option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+								</select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label" translate="TXT_PRODUCT_STATUS"></label>
+							<div class="col-sm-9">
+								<label class="checkbox-inline c-checkbox" ng-repeat="productStatus in vm.masterData.productStatusList">
+									<input type="checkbox" ng-value="productStatus.value" ng-model="vm.searchInfo.productStatus[productStatus.value]"><span class="fa fa-check"></span> {{productStatus.name}}
+								</label>
+							</div>
+						</div><!-- .form-group -->
+						<!-- TODO 暂时未实现 -->
+						<div class="form-group">
+							<label class="col-sm-3 control-label" translate="TXT_PLATFORM_STATUS"></label>
+							<div class="col-sm-9">
+								<label class="checkbox-inline c-checkbox" ng-repeat="platformStatus in vm.masterData.platformStatusList">
+									<input type="checkbox" ng-value="platformStatus.value" ng-model="vm.searchInfo.platformStatus[platformStatus.value]"><span class="fa fa-check"></span> {{platformStatus.name}}
+								</label>
+							</div>
+						</div>
+						<!-- TODO 暂时未实现 -->
+						<div class="form-group">
+							<!--<label class="col-sm-3 control-label" translate="TXT_LABEL"></label>-->
+							<!--<div class="col-sm-9">-->
+								<!--<label class="checkbox-inline c-checkbox" ng-repeat="labelType in vm.masterData.labelTypeList">-->
+									<!--<input type="checkbox" ng-value="labelType.value" ng-model="vm.searchInfo.labelType[labelType.value]"><span class="fa fa-check"></span> {{labelType.name}}-->
+								<!--</label>-->
+							<!--</div>-->
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label" translate="TXT_PRICE"></label>
+							<div class="col-sm-9">
+								<label class="checkbox-inline c-radio" ng-repeat="priceType in vm.masterData.priceTypeList">
+									<input name="priceType" type="radio" ng-value="priceType.value" ng-model="vm.searchInfo.priceType"><span class="fa fa-check"></span> {{priceType.name}}
+								</label>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label"></label>
+							<div class="col-sm-9 form-inline">
+								<div class="input-group col-sm-4"><input type="text" class="form-control" ng-model="vm.searchInfo.priceStart" ng-pattern="/^(\d+)(\.[0-9]{0,2})?$/"></div>&nbsp;~
+								<div class="input-group col-sm-4"><input type="text" class="form-control" ng-model="vm.searchInfo.priceEnd" ng-pattern="/^(\d+)(\.[0-9]{0,2})?$/"></div>
+							</div>
+						</div><!-- .form-group -->
+					</div>
+				</div>
+				<div class="col-sm-4">
+					<div class="form-horizontal">
+						<div class="form-group">
+							<label class="col-sm-3 control-label" translate="TXT_CREATE_TIME"></label>
+							<div class="col-sm-9 form-inline">
+								<div class="col-sm-5 input-group" ng-controller="datePickerCtrl">
+									<input type="text" class="form-control" datepicker-popup="{{formatDateTime}}" ng-model="$parent.vm.searchInfo.createTimeStart" date-model-format
+										   max-date="$parent.vm.searchInfo.createTimeTo" is-open="opened" datepicker-options="dateOptions" close-text="Close" />
+								              <span class="input-group-btn">
+								                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+								              </span>
+								</div>&nbsp;~&nbsp;
+								<div class="col-sm-5 input-group" ng-controller="datePickerCtrl">
+									<input type="text" class="form-control" datepicker-popup="{{formatDateTime}}" ng-model="$parent.vm.searchInfo.createTimeTo" date-model-format
+										   min-date="$parent.vm.searchInfo.createTimeStart" is-open="opened" datepicker-options="dateOptions" close-text="Close" />
+								              <span class="input-group-btn">
+								                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+								              </span>
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label" translate="TXT_PUBLISH_TIME"></label>
+							<div class="col-sm-9 form-inline">
+								<div class="col-sm-5 input-group" ng-controller="datePickerCtrl">
+									<input type="text" class="form-control" datepicker-popup="{{formatDateTime}}" ng-model="$parent.vm.searchInfo.publishTimeStart" date-model-format
+										   max-date="$parent.vm.searchInfo.publishTimeTo" is-open="opened" datepicker-options="dateOptions" close-text="Close" />
+								              <span class="input-group-btn">
+								                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+								              </span>
+								</div>&nbsp;~&nbsp;
+								<div class="col-sm-5 input-group" ng-controller="datePickerCtrl">
+									<input type="text" class="form-control" datepicker-popup="{{formatDateTime}}" ng-model="$parent.vm.searchInfo.publishTimeTo" date-model-format
+										   min-date="$parent.vm.searchInfo.publishTimeStart" is-open="opened" datepicker-options="dateOptions" close-text="Close" />
+								              <span class="input-group-btn">
+								                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+								              </span>
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label" translate="TXT_INVENTORY"></label>
+							<div class="col-sm-9 form-inline">
+								<div class="col-sm-5">
+									<select class="form-control m-r-xs" ng-model="vm.searchInfo.compareType"
+											ng-options="compareType.value as compareType.name for compareType in vm.masterData.compareTypeList">
+										<option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+									</select>
+								</div>
+								<div class="col-sm-4"><input class="form-control" ng-model="vm.searchInfo.inventory" ng-pattern="/^(\d+)$/"></div>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label" translate="TXT_BRAND"></label>
+							<div class="col-sm-9">
+								<select class="form-control" ng-model="vm.searchInfo.brand"
+										ng-options="brand.value as brand.displayName for brand in vm.masterData.brandList">
+									<option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+								</select>
+							</div>
+						</div>
+						<div class="form-group">
+							<!--<label class="col-sm-3 control-label" translate="TXT_PROMOTION_INFO"></label>-->
+							<!--<div class="col-sm-9">-->
+								<!--<select class="form-control" ng-model="vm.searchInfo.promotion"-->
+										<!--ng-options="promotion.promotionId as promotion.promotionName for promotion in vm.masterData.promotionList">-->
+									<!--<option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>-->
+								<!--</select>-->
+							<!--</div>-->
+						</div>
+					</div><!-- .form-group -->
+				</div>
+				<div class="col-sm-4">
+					<div class="form-horizontal">
+						<div class="form-group">
+							<label class="col-sm-3 control-label" translate="TXT_FUZZY_SEARCH"></label>
+							<div class="col-sm-9">
+								<textarea class="form-control inherited" rows="4" ng-model="vm.searchInfo.codeList"></textarea>
+								<div class="text-warnings">
+									<i class="icon fa fa-bell-o"></i>&nbsp;{{'TXT_MSG_SEARCH_INDEX_FUZZY_SEARCH' | translate}}
+								</div>
+							</div>
+
+						</div>
+						<!-- TODO 暂时未实现 -->
+						<div class="form-group">
+							<!--<label class="col-sm-3 control-label" translate="TXT_SORT_1"></label>-->
+							<!--<div class="col-sm-8">-->
+								<!--<div class="col-sm-5">-->
+									<!--<select class="form-control" ng-model="vm.searchInfo.sortOneName"-->
+											<!--ng-options="sortOne.id as sortOne.name for sortOne in vm.masterData.sortList">-->
+									<!--</select>-->
+								<!--</div>-->
+								<!--<div class="col-sm-3 text-right">-->
+									<!--<label class="checkbox-inline c-radio">-->
+										<!--<input name="sortOne" type="radio" value="asc" ng-model="vm.searchInfo.sortOneType"><span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_ASC' | translate }}-->
+									<!--</label>-->
+								<!--</div>-->
+								<!--<div class="col-sm-3">-->
+									<!--<label class="checkbox-inline c-radio">-->
+										<!--<input name="sortOne" type="radio" value="desc" ng-model="vm.searchInfo.sortOneType"><span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_DESC' | translate }}-->
+									<!--</label>-->
+								<!--</div>-->
+							<!--</div>-->
+						</div>
+						<!-- TODO 暂时未实现 -->
+						<div class="form-group">
+							<!--<label class="col-sm-3 control-label" translate="TXT_SORT_2"></label>-->
+							<!--<div class="col-sm-8">-->
+								<!--<div class="col-sm-5">-->
+									<!--<select class="form-control" ng-model="vm.searchInfo.sortTwoName"-->
+											<!--ng-options="sortTwo.id as sortTwo.name for sortTwo in vm.masterData.sortList">-->
+									<!--</select>-->
+								<!--</div>-->
+								<!--<div class="col-sm-3 text-right">-->
+									<!--<label class="checkbox-inline c-radio">-->
+										<!--<input name="sortTwo" type="radio" value="asc" ng-model="vm.searchInfo.sortTwoType"><span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_ASC' | translate }}-->
+									<!--</label>-->
+								<!--</div>-->
+								<!--<div class="col-sm-3">-->
+									<!--<label class="checkbox-inline c-radio">-->
+										<!--<input name="sortTwo" type="radio" value="desc" ng-model="vm.searchInfo.sortTwoType"><span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_DESC' | translate }}-->
+									<!--</label>-->
+								<!--</div>-->
+							<!--</div>-->
+						</div>
+						<!-- TODO 暂时未实现 -->
+						<div class="form-group">
+							<!--<label class="col-sm-3 control-label" translate="TXT_SORT_3"></label>-->
+							<!--<div class="col-sm-8">-->
+								<!--<div class="col-sm-5">-->
+									<!--<select class="form-control" ng-model="vm.searchInfo.sortThreeName"-->
+											<!--ng-options="sortThree.id as sortThree.name for sortThree in vm.masterData.sortList">-->
+									<!--</select>-->
+								<!--</div>-->
+								<!--<div class="col-sm-3 text-right">-->
+									<!--<label class="checkbox-inline c-radio">-->
+										<!--<input name="sortThree" type="radio" value="asc" ng-model="vm.searchInfo.sortThreeType"><span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_ASC' | translate }}-->
+									<!--</label>-->
+								<!--</div>-->
+								<!--<div class="col-sm-3">-->
+									<!--<label class="checkbox-inline c-radio">-->
+										<!--<input name="sortThree" type="radio" value="desc" ng-model="vm.searchInfo.sortThreeType"><span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_DESC' | translate }}-->
+									<!--</label>-->
+								<!--</div>-->
+							<!--</div>-->
+						</div>
+					</div>
+				</div>
+				<div class="col-sm-12 text-center m-b-sm">
+					<div class="form-inline">
+						<button class="btn btn-default" ng-click="clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR' | translate}}</button>
+						<button class="btn btn-vo" ng-click="search()"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}</button>
+						<!-- TODO 暂时未实现-->
+						<!--<button class="btn btn-success" ng-click="exportFile()"><i class="fa fa-reply-all"></i>&nbsp;{{'BTN_EXPORT' | translate}}</button>-->
+					</div><!-- .form-inline -->
+				</div>
+			</div>
+		</accordion-group>
+	</accordion><!-- .accordion --><!--/search-->
+	<!--category-->
+	<div>
+		<tabset class="tab-container vo_nav-tabs">
+			<!--right-btn-->
+			<div class="form-inline m-b-xs pull-right" ng-controller="popupCtrl">
+				<!-- TODO 暂时未实现-->
+				<!--<button class="btn btn-default" ng-click="openCustomBaseProperty('lg')"><i class="fa fa-cog"></i>&nbsp;{{'TXT_CUSTOM_BASE_PROPERTY' | translate}}</button>-->
+				<div class="btn-group" dropdown>
+					<button type="button" class="btn btn-default" ng-disabled="vm.masterData.promotionList.length < 0">
+						<i class="fa fa-arrow-circle-right"></i>&nbsp;{{'BTN_ADD_TO_PROMOTION' | translate}}
+					</button>
+					<button type="button" class="btn btn-default dropdown-toggle" dropdown-toggle ng-disabled="vm.masterData.promotionList.length < 0">
+						<span class="caret"></span>
+					</button>
+					<ul class="dropdown-menu" role="menu" ng-if="vm.masterData.promotionList.length">
+						<li ng-repeat="promotion in vm.masterData.promotionList">
+							<a href ng-click="openAddToPromotion('md', promotion, vm.currTab === 'group' ? vm.groupSelList.selList : vm.productSelList.selList, search)">{{promotion.promotionName}}|{{promotion.cartName}}</a>
+						</li>
+					</ul>
+				</div>
+				<button class="btn btn-default" ng-click="openBulkUpdate('md', vm.currTab === 'group' ? vm.groupSelList.selList : vm.productSelList.selList, search)"><i class="fa fa-pencil-square"></i>&nbsp;{{'BTN_BATCH_UPDATE_ATTRIBUTE' | translate}}</button>
+				<button class="btn btn-default" ng-click="$parent.openCategoryMapping(popupNewCategory)"><i class="fa fa-arrow-circle-right"></i>&nbsp;{{'BTN_CHANGE_MASTER_CATEGORY' | translate}}</button>
+			</div><!-- /right-btn -->
+			<!--tab-->
+			<tab ng-click="vm.currTab = 'group'">
+				<tab-heading><i class="glyphicons glyphicons-more-items text-default"></i>&nbsp;{{'TXT_GROUP_LIST' | translate}}</tab-heading>
+				<div class="table-responsive">
+					<table class="table table-hover vo_table vo_models dropdown_table_bk font-bold" style="background:#e67e22;color:#fff">
+						<thead>
+						<tr>
+							<td colspan="3" class="mfb-xxxs text-left"><label class="checkbox-inline c-checkbox" ng-controller="selectRowsCtrl">
+								<input type="checkbox" ng-click="selectAll(vm.groupSelList)" ng-checked="isAllSelected(vm.groupSelList)" ng-disabled="!vm.groupList.length">
+								<span class="fa fa-check"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}&nbsp;</label>
+								<span class="m-l-xxl" translate="TXT_PRIMARY_PRODUCT"></span>
+							</td>
+							<td class="mfb-xxt text-center" translate="TXT_INVENTORY"></td>
+							<td class="mfb-xxt text-right" translate="TXT_SALE_PRICE"></td>
+							<td class="mfb-xxt text-left" translate="TXT_BRAND"></td>
+							<td class="mfb-xxxs text-left" translate="TXT_BASE_PROPERTY"></td>
+							<td class="mfb-xxt text-left" translate="TXT_TIME"></td>
+						</tr>
+						</thead>
+					</table>
+					<div class="col-sm-12 dropdown_table_main" if-no-rows="vm.groupList.length">
+						<table class="table table-hover vo_table vo_models" ng-if="vm.groupList.length">
+							<tbody ng-repeat="groupInfo in vm.groupList">
+							<tr ng-class="{'table_bg_green_mint': groupInfo.groups.platforms[0].publishTime}" class="table_bg_gray">
+								<td colspan="8" class="control-label text-left form-inline">
+									<label class="checkbox-inline c-checkbox">
+										<input ng-model="vm.groupSelList.selFlag[groupInfo.prodId]" type="checkbox"  ng-controller="selectRowsCtrl" ng-click="selectOne(groupInfo.prodId, vm.groupSelList)">
+										<span class="fa fa-check"></span>
+									</label>
+									<span class="label m-r-lg m-l" ng-class="{'label-success-new': groupInfo.groups.platforms[0].platformStatus == 'Onsale','label-yellow-new': groupInfo.groups.platforms[0].platformStatus == 'Instock', 'label-danger-new': groupInfo.groups.platforms[0].platformStatus == 'Waitingpublish'}">
+										&nbsp;{{groupInfo.groups.platforms[0].platformStatus}}&nbsp;
+									</span>
+									<span class="m-r-lg" ng-if="groupInfo.groups.platforms[0].numIId">{{'TXT_NUMBER_IID_WITH_COLON' | translate}}&nbsp;
+										<a ng-href="https://detail.tmall.com/item.htm?id={{groupInfo.groups.platforms[0].numIId}}" target="_blank" class="text-u-l" ng-bind="groupInfo.groups.platforms[0].numIId"></a>
+									</span>&nbsp;
+									<span>{{'TXT_GROUP_NAME_WITH_COLON' | translate}}&nbsp;
+										<a ng-if="groupInfo.fields.productNameCn" ng-href="#/group/detail/{{groupInfo.groups.platforms[0].groupId}}" title="{{groupInfo.fields.productNameCn}}"
+										   target="_blank" class="text-u-l">{{groupInfo.fields.productNameCn | limitTo: 50}}{{groupInfo.fields.productNameCn.length > 50 ? '...' : ''}}
+										</a>
+										<a ng-if="!groupInfo.fields.productNameCn" ng-href="#/group/detail/{{groupInfo.groups.platforms[0].groupId}}" title="{{groupInfo.fields.productNameEn}}"
+										   target="_blank" class="text-u-l">{{groupInfo.fields.productNameEn | limitTo: 50}}{{groupInfo.fields.productNameEn.length > 50 ? '...' : ''}}
+										</a>
+									</span>
+									<span class="pull-right">{{'TXT_CATEGORY' | translate}}&nbsp;{{groupInfo.catPath}}</span>
+								</td>
+							</tr>
+							<tr ng-class="{'table_bg_green_mint': groupInfo.groups.platforms[0].publishTime}">
+								<td colspan="3" class="mfb-xxxs text-left">
+									<img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{groupInfo.fields.images1[0].image1}}" alt="{{groupInfo.fields.code}}" class="img-circle pull-left m-r"/>
+									<div class="table_main pull-left" style="width:60%">
+										<ul>
+											<li class="text-u-l"><a ng-href="#/product/detail/{{groupInfo.prodId}}" ng-bind="groupInfo.fields.code" target="_blank"></a></li>
+											<li class="text-u-l"><a ng-href="#/product/detail/{{groupInfo.prodId}}" ng-bind="groupInfo.fields.productNameCn || groupInfo.fields.productNameEn" target="_blank"></a></li>
+										</ul>
+									</div>
+								</td>
+								<td class="mfb-xxt text-center"><!--TODO 目前只能返回group的主product,所有拿不到group下面所有的product的库存--><!--popover-html="showInfo({{groupInfo.inventoryDetail}})"-->
+									<button ng-controller="showPopoverCtrl" popover-title="{{'TXT_SKU_INVENTORY' | translate}}" type="button" popover-placement="left" class="btn btn-default btn-xs">{{groupInfo.fields.inventory || 0}}</button>
+								</td>
+								<td class="mfb-xxt text-right">
+									<button ng-controller="showPopoverCtrl" popover-html="showInfo({{groupInfo.groups.priceDetail}})" popover-title="{{'TXT_PRICE' | translate}}" type="button" popover-placement="left" class="btn btn-default btn-xs">{{groupInfo.groups.priceSaleSt || 0 | number: 2}}&nbsp;~&nbsp;{{groupInfo.groups.priceSaleEd || 0 | number: 2}}</button>
+								</td>
+								<td class="mfb-xxt text-left">{{groupInfo.fields.brand}}</td>
+								<td class="mfb-xxxs text-left">
+									<div class="table_main">
+										<ul>
+											<!--TODO 暂时实现不了 -->
+											<!--<li ng-repeat="baseProperty in groupInfo.primaryProduct.basePropertyList">{{baseProperty.name}}&nbsp;{{baseProperty.value}}</li>-->
+										</ul>
+									</div>
+								</td>
+								<td class="mfb-xxt text-left">
+									<small ng-controller="showPopoverCtrl" popover-html="showInfo({{groupInfo.groups.platforms[0].timeDetail}})" popover-trigger="mouseenter" popover-placement="left">
+										<div class="table_main">
+											<ul ng-if="groupInfo.groups.platforms[0].publishTime">
+												<li>{{'TXT_PUBLISH_TIME' | translate}}</li>
+												<!--<li><span>{{groupInfo.publishDate}}</span></li>-->
+												<li><span>{{groupInfo.groups.platforms[0].publishTime}}</span></li>
+											</ul>
+											<ul ng-if="!groupInfo.groups.platforms[0].publishTime">
+												<li>{{'TXT_CREATE_TIME' | translate}}</li>
+												<!--<li><span>{{groupInfo.publishDate}}</span></li>-->
+												<li><span>{{groupInfo.created}}</span></li>
+											</ul>
+										</div>
+									</small>
+								</td>
+							</tr>
+							</tbody>
+						</table>
+					</div><!-- .table-responsive -->
+					<div class="col-sm-12 m-t-xs">
+						<vpagination config="vm.groupPageOption"></vpagination>
+					</div>
+				</div>
+			</tab>
+
+			<tab ng-click="vm.currTab = 'product'">
+				<tab-heading><i class="glyphicons glyphicons-sort text-default"></i>&nbsp;{{'TXT_PRODUCT_LIST' | translate}}</tab-heading>
+				<!-- Products table and controls -->
+				<div class="table-responsive">
+					<table class="table table-hover vo_table vo_models dropdown_table_bk font-bold" style="background:#e67e22;color:#fff">
+						<thead>
+						<tr>
+							<td class="mfb-xxt text-left"><label class="checkbox-inline c-checkbox" ng-controller="selectRowsCtrl">
+								<input type="checkbox" ng-click="selectAll(vm.productSelList)" ng-checked="isAllSelected(vm.productSelList)" ng-disabled="!vm.productList.length">
+								<span class="fa fa-check"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}&nbsp;</label>
+							</td>
+							<td class="mfb-xxt text-left" translate="TXT_BRAND"></td>
+							<td class="mfb-xxs text-center" translate="TXT_INVENTORY"></td>
+							<td class="mfb-xxt text-right" translate="TXT_SALE_PRICE"></td>
+							<td class="mfb-xxt text-left" translate="TXT_SIZE_TYPE"></td>
+							<td class="mfb-xxs text-left" translate="TXT_BASE_PROPERTY"></td>
+							<td class="mfb-xxt text-center" translate="TXT_SKU_COUNT"></td>
+							<td class="mfb-xxt text-left" translate="TXT_TIME"></td>
+						</tr>
+						</thead>
+					</table>
+					<div class="col-sm-12 dropdown_table_main" if-no-rows="vm.productList.length">
+						<table class="table table-hover vo_table vo_models" ng-if="vm.productList.length">
+							<tbody ng-repeat="productInfo in vm.productList">
+								<tr ng-class="{'table_bg_green_mint': productInfo.groups.platforms[0].publishTime}" class="table_bg_gray">
+									<td colspan="8" class="control-label text-left form-inline">
+										<label class="checkbox-inline c-checkbox">
+											<input ng-model="vm.productSelList.selFlag[productInfo.prodId]" type="checkbox" ng-controller="selectRowsCtrl" ng-click="selectOne(productInfo.prodId, vm.productSelList)">
+											<span class="fa fa-check"></span>
+										</label>
+										<span class="label m-r-sm m-l" ng-class="{'label-yellow-new': productInfo.fields.status == 'Pending','label-info': productInfo.fields.status == 'Ready', 'label-primary': productInfo.fields.status == 'Approved', 'label-danger-new': productInfo.fields.status == 'Deleted', 'label-success-new': productInfo.fields.status == 'New'}">
+											&nbsp;{{productInfo.fields.status}}&nbsp;
+										</span>
+									    <span class="m-r-sm" ng-if="productInfo.groups.platforms[0].numIId">{{'TXT_NUMBER_IID_WITH_COLON' | translate}}&nbsp;
+									    	<a ng-href="https://detail.tmall.com/item.htm?id={{productInfo.groups.platforms[0].numIId}}" target="_blank" class="text-u-l" ng-bind="productInfo.groups.platforms[0].numIId"></a>
+									    </span>&nbsp;
+										<span class="m-r-sm">{{'TXT_PRODUCT_CODE_WITH_COLON' | translate}}&nbsp;
+											<a ng-href="#/product/detail/{{productInfo.prodId}}" target="_blank" class="text-u-l" ng-bind="productInfo.fields.code"></a>
+										</span>&nbsp;
+										<span>{{'TXT_PRODUCT_NAME_WITH_COLON' | translate}}&nbsp;
+											<a ng-if="productInfo.fields.productNameCn" href="#/product/detail/{{productInfo.prodId}}" title="{{productInfo.fields.productNameCn}}"
+											   target="_blank" class="text-u-l">{{productInfo.fields.productNameCn | limitTo: 50}}{{productInfo.fields.productNameCn.length > 50 ? '...' : ''}}</a>
+											<a ng-if="!productInfo.fields.productNameCn" href="#/product/detail/{{productInfo.prodId}}" title="{{productInfo.fields.productNameEn}}"
+											   target="_blank" class="text-u-l">{{productInfo.fields.productNameEn | limitTo: 50}}{{productInfo.fields.productNameEn.length > 50 ? '...' : ''}}</a>
+										</span>
+										<span class="pull-right">{{'TXT_CATEGORY' | translate}}&nbsp;{{productInfo.catPath}}</span>
+									</td>
+								</tr>
+								<tr ng-class="{'table_bg_green_mint': productInfo.groups.platforms[0].publishTime}">
+									<td class="mfb-xxt">
+										<img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{productInfo.fields.images1[0].image1}}" alt="{{productInfo.fields.code}}" class="img-circle pull-left m-r"/>
+									</td>
+									<td class="mfb-xxt text-left">{{productInfo.fields.brand}}</td>
+									<td class="mfb-xxs text-center">
+										<button ng-controller="showPopoverCtrl" popover-html="showInfo({{productInfo.inventoryDetail}})" popover-title="{{'TXT_SKU_INVENTORY' | translate}}" type="button" popover-placement="left" class="btn btn-default btn-xs">{{productInfo.fields.qty || 0}}</button>
+									</td>
+									<td class="mfb-xxt text-right">
+										<button ng-controller="showPopoverCtrl" popover-html="showInfo({{productInfo.groups.priceDetail}})" popover-title="{{'TXT_PRICE' | translate}}" type="button" popover-placement="left" class="btn btn-default btn-xs">{{productInfo.fields.priceSaleSt || 0 | number: 2}}&nbsp;~&nbsp;{{productInfo.fields.priceSaleEd || 0 | number: 2}}</button>
+									</td>
+									<td class="mfb-xxt text-center">{{productInfo.fields.sizeType}}</td>
+									<td class="mfb-xxs text-left">
+										<div class="table_main">
+											<ul>
+												<!--<li ng-repeat="baseProperty in productInfo.basePropertyList">{{baseProperty.name}}&nbsp;{{baseProperty.value}}</li>-->
+											</ul>
+										</div>
+									</td>
+									<td class="mfb-xxt text-center">
+										<button ng-controller="showPopoverCtrl" popover-html="showInfo({{productInfo.skuDetail}})" popover-title="{{'TXT_SKU_PLATFORM_INFO' | translate}}"
+												type="button" popover-placement="left" class="btn btn-default btn-xs">{{productInfo.skus.length}}</button>
+									</td>
+									<td class="mfb-xxt text-left">
+										<small ng-controller="showPopoverCtrl" popover-html="showInfo({{productInfo.groups.platforms[0].timeDetail}})" popover-trigger="mouseenter" popover-placement="left">
+											<div class="table_main">
+												<ul ng-if="productInfo.groups.platforms[0].publishTime">
+													<li>{{'TXT_PUBLISH_TIME' | translate}}</li>
+													<!--<li><span>{{groupInfo.publishDate}}</span></li>-->
+													<li><span>{{productInfo.groups.platforms[0].publishTime}}</span></li>
+												</ul>
+												<ul ng-if="!productInfo.groups.platforms[0].publishTime">
+													<li>{{'TXT_CREATE_TIME' | translate}}</li>
+													<!--<li><span>{{productInfo.publishDate}}</span></li>-->
+													<li><span>{{productInfo.created}}</span></li>
+												</ul>
+											</div>
+										</small>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<div class="col-sm-12 m-t-sm">
+						<vpagination config="vm.productPageOption"></vpagination>
+					</div>
+				</div><!-- .table-responsive -->
+			</tab>
+		</tabset><!-- tabset -->
+	</div><!-- tabs ng-controller -->
+</div><!-- .col-lg-12 -->

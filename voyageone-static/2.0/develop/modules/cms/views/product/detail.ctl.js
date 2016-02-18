@@ -8,7 +8,7 @@
 define([
     'cms',
     'modules/cms/controller/popup.ctl',
-    'modules/cms/service/productDetail.service'
+    'modules/cms/service/product.detail.service'
 ], function (cms, Status) {
     return cms.controller('productDetailController', (function () {
 

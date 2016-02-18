@@ -55,13 +55,13 @@
                 </a>
             </li>
             <li ui-sref-active="active">
-                <a href="#/promotion/list">
+                <a href="#/promotion/index">
                     <i class="glyphicon glyphicon-minus icon text-vo"></i>
                     <span TRANSLATE="TXT_PROMOTION_LIST"></span>
                 </a>
             </li>
             <li ui-sref-active="active">
-                <a href="#/promotion/task/list">
+                <a href="#/promotion/task">
                     <i class="glyphicon glyphicon-minus icon text-vo"></i>
                     <span translate="TXT_TASK_LIST"></span>
                 </a>
@@ -86,81 +86,45 @@
                 </a>
             </li>
             <li ui-sref-active="active">
-                <a href="#/search/index">
+                <a href="#/search/advance">
                     <i class="glyphicon glyphicon-minus icon text-vo"></i>
-                    <span translate="TXT_SEARCH_ADVANCE"></span>
+                    <span translate="TXT_ADVANCE_SEARCH"></span>
                 </a>
             </li>
         </ul>
     </li>
     <!-- 设定 -->
     <li>
-        <a class="auto" href="#/setting/feed_mapping/list">
-      <span class="pull-right text-muted">
-        <i class="fa fa-fw fa-angle-right text"></i>
-        <i class="fa fa-fw fa-angle-down text-active"></i>
-      </span>
+        <a class="auto">
+            <span class="pull-right text-muted">
+                <i class="fa fa-fw fa-angle-right text"></i>
+                <i class="fa fa-fw fa-angle-down text-active"></i>
+            </span>
             <i class="glyphicon glyphicon-cog icon text-vo"></i>
-            <span class="" translate="TXT_SETTING"></span>
+            <span class="" translate="TXT_MAPPING_SETTING"></span>
         </a>
         <ul class="nav nav-sub dk">
             <li class="nav-sub-header">
                 <a href>
-                    <span translate="TXT_SETTING"></span>
+                    <span translate="TXT_MAPPING_SETTING"></span>
                 </a>
             </li>
             <li ui-sref-active="active">
-                <a href="#/setting/feed_mapping/list">
+                <a href="#/mapping/feed">
                     <i class="fa fa-minus icon text-vo"></i>
                     <span translate="TXT_FEED_CONNECTION_SETTING"></span>
                 </a>
             </li>
             <li ui-sref-active="active">
-                <a href="#/setting/platform_mapping/list">
+                <a href="#/mapping/platform">
                     <i class="fa fa-minus icon text-vo"></i>
                     <span translate="TXT_PLATFORM_CONNECTION_SETTING"></span>
                 </a>
             </li>
-        </ul>
-    </li>
-    <!-- 店铺管理 -->
-    <li>
-        <a class="auto">
-      <span class="pull-right text-muted">
-        <i class="fa fa-fw fa-angle-right text"></i>
-        <i class="fa fa-fw fa-angle-down text-active"></i>
-      </span>
-            <i class="fa fa-bank icon text-vo"></i>
-            <span class="" >店铺管理</span>
-        </a>
-        <ul class="nav nav-sub dk">
-            <li class="nav-sub-header">
-                <a href>
-                    <span> 店铺管理 </span>
-                </a>
-            </li>
             <li ui-sref-active="active">
-                <a href="#/store/custom_attribute">
+                <a href="#/mapping/dictionary">
                     <i class="fa fa-minus icon text-vo"></i>
-                    <span> 自定义属性管理 </span>
-                </a>
-            </li>
-            <li ui-sref-active="active">
-                <a href="#/store/common_attribute">
-                    <i class="fa fa-minus icon text-vo"></i>
-                    <span> 共通属性管理 </span>
-                </a>
-            </li>
-            <li ui-sref-active="active">
-                <a href="#/store/authority_management">
-                    <i class="fa fa-minus icon text-vo"></i>
-                    <span> 权限管理 </span>
-                </a>
-            </li>
-            <li ui-sref-active="active">
-                <a href="#/store/configuration_management">
-                    <i class="fa fa-minus icon text-vo"></i>
-                    <span> 配置管理 </span>
+                    <span translate="TXT_DICTIONARY_INDEX"></span>
                 </a>
             </li>
         </ul>
@@ -168,23 +132,65 @@
     <!-- 翻译 -->
     <li>
         <a class="auto">
-      <span class="pull-right text-muted">
-        <i class="fa fa-fw fa-angle-right text"></i>
-        <i class="fa fa-fw fa-angle-down text-active"></i>
-      </span>
-            <i class="fa fa-mortar-board (alias) icon text-vo"></i>
-            <span class="" >翻译</span>
+            <span class="pull-right text-muted">
+                <i class="fa fa-fw fa-angle-right text"></i>
+                <i class="fa fa-fw fa-angle-down text-active"></i>
+            </span>
+            <i class="fa fa-bank icon text-vo"></i>
+            <span translate="TXT_TRANSLATION_MANAGER"></span>
         </a>
         <ul class="nav nav-sub dk">
             <li class="nav-sub-header">
                 <a href>
-                    <span> 翻译 </span>
+                    <span translate="TXT_TRANSLATION_MANAGER"></span>
                 </a>
             </li>
             <li ui-sref-active="active">
-                <a href="#/translation">
+                <a href="#/translation/index">
                     <i class="fa fa-minus icon text-vo"></i>
-                    <span> 翻译管理 </span>
+                    <span translate="TXT_TRANSLATION_INDEX"></span>
+                </a>
+            </li>
+        </ul>
+    </li>
+    <!-- 店铺管理 -->
+    <li>
+        <a class="auto">
+            <span class="pull-right text-muted">
+                <i class="fa fa-fw fa-angle-right text"></i>
+                <i class="fa fa-fw fa-angle-down text-active"></i>
+            </span>
+            <i class="fa fa-bank icon text-vo"></i>
+            <span translate="TXT_CHANNEL_MANAGER"></span>
+        </a>
+        <ul class="nav nav-sub dk">
+            <li class="nav-sub-header">
+                <a href>
+                    <span translate="TXT_CHANNEL_MANAGER"></span>
+                </a>
+            </li>
+            <li ui-sref-active="active">
+                <a href="#/channel/custom">
+                    <i class="fa fa-minus icon text-vo"></i>
+                    <span translate="TXT_CUSTOM_ATTRIBUTE_MANAGER"></span>
+                </a>
+            </li>
+            <li ui-sref-active="active">
+                <a href="#/channel/common">
+                    <i class="fa fa-minus icon text-vo"></i>
+                    <span translate="TXT_COMMON_ATTRIBUTE_MANAGER"></span>
+                </a>
+            </li>
+            <li ui-sref-active="active">
+                <a href="#/channel/authority">
+                    <i class="fa fa-minus icon text-vo"></i>
+                    <span translate="TXT_AUTHORITY_SETTING"></span>
+                </a>
+            </li>
+            <li ui-sref-active="active">
+                <a href="#/channel/configuration">
+                    <i class="fa fa-minus icon text-vo"></i>
+                    <span translate="TXT_CONFIGURATION_SETTING"></span>
                 </a>
             </li>
         </ul>
@@ -192,10 +198,10 @@
     <!-- 系统管理 -->
     <li>
         <a class="auto">
-      <span class="pull-right text-muted">
-        <i class="fa fa-fw fa-angle-right text"></i>
-        <i class="fa fa-fw fa-angle-down text-active"></i>
-      </span>
+            <span class="pull-right text-muted">
+                <i class="fa fa-fw fa-angle-right text"></i>
+                <i class="fa fa-fw fa-angle-down text-active"></i>
+            </span>
             <i class="fa fa-cogs icon text-vo"></i>
             <span class="" translate="TXT_SYSTEM_SETTING"></span>
         </a>
@@ -208,30 +214,17 @@
             <li ui-sref-active="active">
                 <a href="#/system/category">
                     <i class="fa fa-minus icon text-vo"></i>
-                    <span translate="TXT_CATEGORY_SETTING"></span>
+                    <span translate="TXT_CATEGORY_INDEX"></span>
                 </a>
             </li>
-
             <li ui-sref-active="active">
-                <a href="#/system/dictionary/list">
-                    <i class="fa fa-minus icon text-vo"></i>
-                    <span translate="TXT_DICTIONARY_MANAGEMENT"></span>
-                </a>
-            </li>
-            <!--<li ui-sref-active="active">-->
-                <!--<a href="#/">-->
-                    <!--<i class="fa fa-minus icon text-vo"></i>-->
-                    <!--<span translate="TXT_DICTIONARY_SETTING"></span>-->
-                <!--</a>-->
-            <!--</li>-->
-            <li ui-sref-active="active">
-                <a href="#/system/error/management/1">
+                <a href="#/system/error/1">
                     <i class="fa fa-minus icon text-vo"></i>
                     <span translate="TXT_ERROR_MANAGER_MARKETING"></span>
                 </a>
             </li>
             <li ui-sref-active="active">
-                <a href="#/system/error/management/2">
+                <a href="#/system/error/2">
                     <i class="fa fa-minus icon text-vo"></i>
                     <span translate="TXT_ERROR_MANAGER_MAINTENANCE"></span>
                 </a>

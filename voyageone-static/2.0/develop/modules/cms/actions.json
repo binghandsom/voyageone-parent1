@@ -8,7 +8,7 @@
     "home": {
       "menu": {
         "getMenuHeaderInfo": "/core/home/menu/getMenuHeaderInfo",
-        "selectLanguage": "/core/home/menu/selectLanguage"
+        "setLanguage": "/core/home/menu/setLanguage"
       }
     }
   },
@@ -21,8 +21,8 @@
       }
     },
     "search": {
-      "$searchIndexService": {
-        "root": "/cms/search/index/",
+      "$searchAdvanceService": {
+        "root": "/cms/search/advance/",
         "init": "init",
         "search": "search",
         "getGroupList": "getGroupList",
@@ -30,16 +30,27 @@
       }
     },
     "group": {
-      "$groupListService": {
-        "root": "/cms/group/list/",
+      "$groupDetailService": {
+        "root": "/cms/group/detail/",
         "init": "init",
         "getProductList": "getProductList",
         "setMainProduct": "setMainProduct"
       }
     },
+    "product": {
+      "$productDetailService":{
+        "root":"/cms/product/detail/",
+        "getProductInfo":"getProductInfo",
+        "updateProductMasterInfo":"updateProductMasterInfo",
+        "updateProductSkuInfo":"updateProductSkuInfo",
+        "updateProductAllInfo":"updateProductAllInfo",
+        "changeCategory":"changeCategory",
+        "revertCategory":"revertCategory"
+      }
+    },
     "mapping": {
       "feedMappingService": {
-        "root": "/cms/setting/feedMapping",
+        "root": "/cms/mapping/feed",
         "getFeedCategoryTree": "getFeedCategoryTree",
         "getMainCategories": "getMainCategories",
         "setMapping": "setFeedMapping",
@@ -53,7 +64,7 @@
         "getMatchOver": "getMatchOver"
       },
       "platformMappingService": {
-        "root": "/cms/setting/platformMapping",
+        "root": "/cms/mapping/platform",
         "getMainCategory": "getMainDataFinalCategoryMap",
         "getOtherMappingPath": "getOtherMappingCategoryPath",
         "getPlatformCategories": "getPlatformCategories",
@@ -65,18 +76,74 @@
         "getMappingTypes": "getMappingType",
         "$saveMapping": "saveMapping",
         "$saveMatchOverByMainCategory": "saveMatchOverByMainCategory"
+      },
+      "$dictionaryService": {
+        "root": "/cms/mapping/dictionary",
+        "init": "init",
+        "getDict" : "getDict",
+        "getDictList" : "getDictList",
+        "getConst" : "getConst",
+        "getCustoms" : "getCustoms",
+        "setDict" : "setDict",
+        "delDict" : "delDict",
+        "addDict" : "addDict"
+      }
+    },
+    "promotion": {
+      "promotionService" : {
+        "root": "/cms/promotion/index",
+        "getPromotionList": "getPromotionList",
+        "insertPromotion": "insertPromotion",
+        "updatePromotion": "updatePromotion",
+        "delPromotion": "delPromotion"
+      },
+      "promotionDetailService": {
+        "root": "/cms/promotion/detail",
+        "getPromotionGroup": "getPromotionGroup",
+        "getPromotionCode": "getPromotionCode",
+        "getPromotionSku": "getPromotionSku",
+        "uploadPromotion": "uploadPromotion",
+        "tejiabaoInit" : "tejiabaoInit",
+        "updatePromotionProduct" : "updatePromotionProduct",
+        "delPromotionModel" : "delPromotionModel",
+        "delPromotionCode":"delPromotionCode"
+      }
+    },
+    "task": {
+      "taskPriceService" : {
+        "root": "/cms/task/price",
+        "getPriceList": "getPriceList",
+        "updateTaskStatus": "updateTaskStatus",
+      }
+    },
+    "system": {
+      "category": {
+        "systemCategoryService": {
+          "root": "/cms/system/category",
+          "getCategoryList": "getCategoryList",
+          "getCategoryDetail":"getCategoryDetail",
+          "updateCategorySchema":"updateCategorySchema"
+        }
+      },
+      "error": {
+        "$errorListService": {
+          "root":"/cms/system/error",
+          "init": "init",
+          "search": "search",
+          "updateFinishStatus": "updateFinishStatus"
+        }
       }
     },
     "pop": {
-      "$propChangeService": {
-        "root": "/cms/pop/prop_change/",
-        "getPopOptions": "getPopOptions",
-        "setProductFields": "setProductFields"
-      },
-      "$tagPromotionService": {
-        "root": "/cms/pop/prom_select/",
+      "$addToPromotionService": {
+        "root": "/cms/pop/add_to_promotion",
         "getPromotionTags": "getPromotionTags",
         "addToPromotion": "addToPromotion"
+      },
+      "$fieldEditService": {
+        "root": "/cms/pop/field_edit/",
+        "getPopOptions": "getPopOptions",
+        "setProductFields": "setProductFields"
       },
       "$promotionHistoryService": {
         "root": "/cms/pop/promotion/",
@@ -87,60 +154,15 @@
         "getPriceHistory": "getPriceHistory"
       }
     },
-    "promotionService": {
-      "root": "/cms/promotion/list",
-      "getPromotionList": "getPromotionList",
-      "insertPromotion": "insertPromotion",
-      "updatePromotion": "updatePromotion",
-      "delPromotion": "delPromotion"
-    },
-    "promotionDetailService": {
-      "root": "/cms/promotion/detail",
-      "getPromotionGroup": "getPromotionGroup",
-      "getPromotionCode": "getPromotionCode",
-      "getPromotionSku": "getPromotionSku",
-      "uploadPromotion": "uploadPromotion",
-      "tejiabaoInit" : "tejiabaoInit",
-      "updatePromotionProduct" : "updatePromotionProduct",
-      "delPromotionModel" : "delPromotionModel",
-      "delPromotionCode":"delPromotionCode"
-    },
+
+
+
+
+
     "taskPriceService": {
-      "root": "/cms/task/price",
+      "root": "/cms/promotion/price",
       "getPriceList": "getPriceList",
       "updateTaskStatus":"updateTaskStatus"
-    },
-    "systemCategoryService": {
-      "root": "/cms/system/category",
-      "getCategoryList": "getCategoryList",
-      "getCategoryDetail":"getCategoryDetail",
-      "updateCategorySchema":"updateCategorySchema"
-    },
-    "$productDetailService":{
-      "root":"/cms/product/detail/",
-      "getProductInfo":"getProductInfo",
-      "updateProductMasterInfo":"updateProductMasterInfo",
-      "updateProductSkuInfo":"updateProductSkuInfo",
-      "updateProductAllInfo":"updateProductAllInfo",
-      "changeCategory":"changeCategory",
-      "revertCategory":"revertCategory"
-    },
-    "$errorManagementConService": {
-      "root":"/cms/system/error",
-      "init": "init",
-      "search": "search",
-      "updateFinishStatus": "updateFinishStatus"
-    },
-    "$dictionaryService": {
-      "root": "/cms/system/dictionary",
-      "init": "init",
-      "getDict" : "getDict",
-      "getDictList" : "getDictList",
-      "getConst" : "getConst",
-      "getCustoms" : "getCustoms",
-      "setDict" : "setDict",
-      "delDict" : "delDict",
-      "addDict" : "addDict"
     }
   }
 }

@@ -6,7 +6,7 @@ import com.voyageone.common.components.transaction.SimpleTransaction;
 import com.voyageone.common.configs.Enums.PromotionTypeEnums;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.bean.CmsPromotionProductPriceBean;
-import com.voyageone.web2.cms.views.pop.tag.promotion.CmsPromotionSelectService;
+import com.voyageone.web2.cms.views.pop.bulkUpdate.CmsAddToPromotionService;
 import com.voyageone.web2.cms.wsdl.dao.CmsPromotionCodeDao;
 import com.voyageone.web2.cms.wsdl.dao.CmsPromotionModelDao;
 import com.voyageone.web2.cms.wsdl.dao.CmsPromotionSkuDao;
@@ -55,7 +55,7 @@ public class CmsPromotionDetailService extends BaseAppService {
     private CmsPromotionSkuDao cmsPromotionSkuDao;
 
     @Autowired
-    private CmsPromotionService cmsPromotionService;
+    private CmsPromotionIndexService cmsPromotionService;
 
     @Autowired
     private CmsPromotionTaskDao cmsPromotionTaskDao;
@@ -64,7 +64,7 @@ public class CmsPromotionDetailService extends BaseAppService {
     private SimpleTransaction simpleTransaction;
 
     @Autowired
-    private CmsPromotionSelectService cmsPromotionSelectService;
+    private CmsAddToPromotionService cmsPromotionSelectService;
 
     @Autowired
     protected VoApiDefaultClient voApiClient;

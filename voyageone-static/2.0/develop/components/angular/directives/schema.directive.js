@@ -64,7 +64,7 @@ angular.module('voyageone.angular.directives.schema', [])
             , '<div class="form-group">' +
               '  <label class="col-sm-2 control-label" ng-class="{\'vo_reqfield\': showHtmlData.isRequired}" ng-bind="$$data.name"></label>' +
               '  <div class="col-sm-8" ng-class="{\'modal-open\' : showHtmlData.isMultiComplex, \'hierarchy_main\': showHtmlData.isComplex}" ng-transclude></div>' +
-              '  <div class="col-sm-2" ng-if="showHtmlData.isMultiComplex"><button class="btn btn-success" ng-click="addField($$data)"><i class="fa fa-plus"></i>{{\'BTN_COM_ADD\' | translate}}</button></div>' +
+              '  <div class="col-sm-2" ng-if="showHtmlData.isMultiComplex"><button class="btn btn-success" ng-click="addField($$data)"><i class="fa fa-plus"></i>{{\'BTN_ADD\' | translate}}</button></div>' +
               '  <div class="row" ng-repeat="tipMsg in showHtmlData.tipMsg"><div class="col-sm-8 col-sm-offset-2 text-warnings"><i class="icon fa fa-bell-o"></i>&nbsp;{{tipMsg}}</div></div>' +
               '</div>');}
 
@@ -206,11 +206,11 @@ angular.module('voyageone.angular.directives.schema', [])
             '<thead><tr>' +
                 //'<schema-header ng-repeat="field in vm.$$data.fields" data="field" is-complex="true"></schema-header>' +
             '<th ng-repeat="field in vm.$$data.fields" ng-class="{\'vo_reqfield\': showHtmlData.isRequired}" class="text-center" style="min-width: 180px;">{{field.name}}</th>' +
-            '<th ng-if="!showHtmlData.notShowEdit" style="min-width: 60px;" class="text-center" translate="TXT_COM_EDIT"></th>' +
+            '<th ng-if="!showHtmlData.notShowEdit" style="min-width: 60px;" class="text-center" translate="TXT_EDIT"></th>' +
             '</tr></thead>' +
             '<tbody><tr ng-repeat="value in vm.$$data.complexValues">' +
             '<td class="text-left" ng-repeat="field in value.fieldMap"><div class="tableLayer"><p ng-if="field.type != \'COMPLEX\'">&nbsp;</p><p><schema-item data="field" hastip="true" complex="true"></schema-item></p></div></td>' +
-            '<td ng-if="!showHtmlData.notShowEdit" style="min-width: 60px;"><button title="{\'BTN_COM_DELETE\' | translate}" class="btn btn-danger btn-xs" ng-click="delField($index)"><i class="fa  fa-trash-o"></i></button></td>' +
+            '<td ng-if="!showHtmlData.notShowEdit" style="min-width: 60px;"><button title="{\'BTN_DELETE\' | translate}" class="btn btn-danger btn-xs" ng-click="delField($index)"><i class="fa  fa-trash-o"></i></button></td>' +
             '</tr></tbody>' +
             '</table>');}
 

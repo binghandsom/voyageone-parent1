@@ -14,8 +14,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.*;
-
 /**
  * @author james.li on 2015/12/16.
  * @version 2.0.0

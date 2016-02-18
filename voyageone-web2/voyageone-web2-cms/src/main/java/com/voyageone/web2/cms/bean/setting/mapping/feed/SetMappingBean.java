@@ -1,6 +1,6 @@
 package com.voyageone.web2.cms.bean.setting.mapping.feed;
 
-import com.voyageone.web2.cms.views.setting.mapping.feed.CmsFeedMappingController;
+import com.voyageone.web2.cms.views.mapping.feed.CmsFeedMappingController;
 
 /**
  * {@link CmsFeedMappingController } setMapping 的请求参数

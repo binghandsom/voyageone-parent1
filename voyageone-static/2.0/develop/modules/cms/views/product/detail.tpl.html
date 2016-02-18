@@ -3,7 +3,7 @@
 		<div class="panel-group">
 			<div class="panel panel-default">
 				<div class="panel-heading">
-					<h4 class="panel-title">&nbsp;产品详情</h4>
+					<h4 class="panel-title">&nbsp;{{'TXT_PRODUCT_DETAIL' | translate}}</h4>
 				</div>
 				<div class="container-fluid m-t-sm m-l-xs m-r-xs">
 					<div class="col-sm-12">
@@ -12,9 +12,9 @@
 							<div class="form-inline pull-right" ng-controller="popupCtrl">
 								<!-- TODO 暂时未实现 -->
 								<!--<button class="btn btn-default" ng-click="ctrl.openCategoryMapping(ctrl.productDetails, popupNewCategory)"><i class="fa fa-arrow-circle-right"></i>&nbsp;{{'TXT_SELECT_STORE_CATEGORY' | translate}}</button>-->
-								<button type="button" class="btn btn-default" ng-click="openHistoryPromotion('lg', ctrl.productDetails.productCode)"><i class="fa fa-rotate-left"></i>&nbsp;{{'TXT_HISTORY_PROMOTION' | translate}}</button>
-								<button type="button" class="btn btn-default" ng-click="openHistoryPrice('lg', ctrl.productDetails.productCode, 'code')"><i class="fa fa-jpy"></i>&nbsp;{{'TXT_HISTORY_PRICE' | translate}}</button>
-								<button class="btn btn-default" ng-click="ctrl.openCategoryMapping(ctrl.productDetails, popupNewCategory)"><i class="fa fa-arrow-circle-right"></i>&nbsp;{{'TXT_CHANGE_CATEGORY' | translate}}</button>
+								<button type="button" class="btn btn-default" ng-click="openHistoryPromotion('lg', ctrl.productDetails.productCode)"><i class="fa fa-rotate-left"></i>&nbsp;{{'BTN_PROMOTION_HISTORY' | translate}}</button>
+								<button type="button" class="btn btn-default" ng-click="openHistoryPrice('lg', ctrl.productDetails.productCode, 'code')"><i class="fa fa-jpy"></i>&nbsp;{{'BTN_PRICE_HISTORY' | translate}}</button>
+								<button class="btn btn-default" ng-click="ctrl.openCategoryMapping(ctrl.productDetails, popupNewCategory)"><i class="fa fa-arrow-circle-right"></i>&nbsp;{{'BTN_CHANGE_MASTER_CATEGORY' | translate}}</button>
 
 							</div>
 						</div>

@@ -51,121 +51,83 @@ define([
 ], function (cms, _, MappingTypes) {
 
     cms.constant('popActions', {
-            "column_define": {
-                "templateUrl": "views/pop/column_define/index.tpl.html",
-                "controllerUrl": "modules/cms/views/pop/column_define/index.ctl"
-            },
-            "new": {
-                "templateUrl": "views/pop/new/promotion.tpl.html",
-                "controllerUrl": "modules/cms/views/pop/new/promotion.ctl"
-            },
-            "other": {
-                "platform": {
-                    "templateUrl": "views/pop/other/platform.tpl.html",
-                    "controllerUrl": "modules/cms/views/pop/other/platform.ctl",
-                    "controller": 'otherPlatformPopupController as ctrl',
-                    "size": 'md'
-                },
-                "progress": {
-                    "templateUrl": "views/pop/other/progress.tpl.html",
-                    "controllerUrl": "modules/cms/views/pop/other/progress.ctl"
+            "authority": {
+                "new": {
+                    "templateUrl": "views/pop/authority/new.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/authority/new.ctl",
+                    "controller": 'popAuthorityNewCtl'
                 }
             },
-            "tag": {
-                "promotion": {
-                    "templateUrl": "views/pop/tag/promotion/index.tpl.html",
-                    "controllerUrl": "modules/cms/views/pop/tag/promotion/index.ctl"
+            "bulkUpdate": {
+                "addToPromotion": {
+                    "templateUrl": "views/pop/bulkUpdate/addToPromotion.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/bulkUpdate/addToPromotion.ctl",
+                    "controller": 'popAddToPromotionCtl'
                 },
-                "shop_category": {
-                    "templateUrl": "views/pop/tag/shop_category/index.tpl.html",
-                    "controllerUrl": "modules/cms/views/pop/tag/shop_category/index.ctl"
-                }
-            },
-            "prop_change": {
-                "templateUrl": "views/pop/prop_change/index.tpl.html",
-                "controllerUrl": "modules/cms/views/pop/prop_change/index.ctl"
-            },
-            "import": {
-                "templateUrl": "views/pop/import/index.tpl.html",
-                "controllerUrl": "modules/cms/views/pop/import/index.ctl"
-            },
-            "Authority": {
-                "templateUrl": "views/pop/authority/index.tpl.html",
-                "controllerUrl": "modules/cms/views/pop/authority/index.ctl"
-            },
-            "Configuration": {
-            "templateUrl": "views/pop/configuration/index.tpl.html",
-            "controllerUrl": "modules/cms/views/pop/configuration/index.ctl"
-            },
-           "Translate": {
-               "templateUrl": "views/pop/translate/index.tpl.html",
-               "controllerUrl": "modules/cms/views/pop/translate/index.ctl"
-            },
-            "otherDownload": {
-                "templateUrl": "views/pop/other/download.tpl.html",
-                "controllerUrl": "modules/cms/views/pop/other/download.ctl",
-                "controller": 'OtherDownloadCtl',
-                "size": 'md'
-            },
-            "product": {
-                "price": {
-                    "templateUrl": "views/pop/product/price/history.tpl.html",
-                    "controllerUrl": "modules/cms/views/pop/product/price/history.ctl"
+                "fieldEdit": {
+                    "templateUrl": "views/pop/bulkUpdate/fieldEdit.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/bulkUpdate/fieldEdit.ctl",
+                    "controller": 'popFieldEditCtl'
                 },
-                "promotion": {
-                    "templateUrl": "views/pop/product/promotion/history.tpl.html",
-                    "controllerUrl": "modules/cms/views/pop/product/promotion/history.ctl"
-                }
-            },
-            "system": {
                 "category": {
-                    "templateUrl": "views/pop/system/category/edit.tpl.html",
-                    "controllerUrl": "modules/cms/views/pop/system/category/edit.ctl",
-                    "controller": 'popCategorySchemaCtl as ctrl',
+                    "templateUrl": "views/pop/category/masterCategory.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/category/masterCategory.ctl",
+                    "controller": 'popCategoryCtl as ctrl',
                     "backdrop": 'static',
-                    "size": 'md'
-                },
-                "dictionary": {
-                    "value": {
-                        "templateUrl": "views/pop/system/dictionary/value.tpl.html",
-                        "controllerUrl": "modules/cms/views/pop/system/dictionary/value.ctl",
-                        "controller": "popDictValueController"
-                    },
-                    "custom": {
-                        "templateUrl": "views/pop/system/dictionary/custom.tpl.html",
-                        "controllerUrl": "modules/cms/views/pop/system/dictionary/custom.ctl",
-                        "controller": "popDictCustomController"
-                    }
+                    "size": 'lg'
                 }
             },
             "category": {
-                "templateUrl": "views/pop/category/index.tpl.html",
-                "controllerUrl": "modules/cms/views/pop/category/index.ctl",
-                "controller": 'categoryPopupController as ctrl',
-                "backdrop": 'static',
-                "size": 'lg'
+                "schema": {
+                    "templateUrl": "views/pop/category/schema.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/category/schema.ctl",
+                    "controller": 'popCategorySchemaCtl as ctrl',
+                    "backdrop": 'static',
+                    "size": 'md'
+                }
             },
-            "feed": {
-                "templateUrl": "views/pop/feed/index.tpl.html",
-                "controllerUrl": "modules/cms/views/pop/feed/index.ctl",
-                "controller": 'feedPropMappingPopupController as ctrl',
-                "backdrop": 'static',
-                "size": 'lg'
+            "configuration": {
+                "new": {
+                    "templateUrl": "views/pop/configuration/new.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/configuration/new.ctl",
+                    "controller": 'popConfigurationNewCtl'
+                }
             },
-            "feedValue": {
-                "templateUrl": "views/pop/feedValue/index.tpl.html",
-                "controllerUrl": "modules/cms/views/pop/feedValue/index.ctl",
-                "controller": 'feedPropValuePopupController as ctrl',
-                "backdrop": 'static',
-                "size": 'lg'
+            "dictionary": {
+                "value": {
+                    "templateUrl": "views/pop/dictionary/value.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/dictionary/value.ctl",
+                    "controller": "popDictValueCtl"
+                },
+                "custom": {
+                    "templateUrl": "views/pop/dictionary/custom.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/dictionary/custom.ctl",
+                    "controller": "popDictCustomCtl"
+                }
             },
-        "dictValue": {
-            "templateUrl": "views/pop/dictValue/index.tpl.html",
-            "controllerUrl": "modules/cms/views/pop/dictValue/index.ctl",
-            "controller": 'dictValuePopupController as ctrl',
-            "backdrop": 'static',
-            "size": 'md'
-        },
+            "feedMapping": {
+                "attribute": {
+                    "templateUrl": "views/pop/feedMapping/attribute.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/feedMapping/attribute.ctl",
+                    "controller": 'propFeedMappingAttributeController as ctrl',
+                    "backdrop": 'static',
+                    "size": 'lg'
+                },
+                "dictValue": {
+                    "templateUrl": "views/pop/feedMapping/dictValue.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/feedMapping/dictValue.ctl",
+                    "controller": 'propFeedMappingDictValueController as ctrl',
+                    "backdrop": 'static',
+                    "size": 'md'
+                },
+                "value": {
+                    "templateUrl": "views/pop/feedMapping/value.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/feedMapping/value.ctl",
+                    "controller": 'propFeedMappingValueController as ctrl',
+                    "backdrop": 'static',
+                    "size": 'lg'
+                }
+            },
             "platformMapping": {
                 "complex": {
                     "templateUrl": "views/pop/platformMapping/ppComplex.tpl.html",
@@ -206,6 +168,50 @@ define([
                         "size": 'md',
                         "backdrop": "static"
                     }
+                },
+                "otherPlatform": {
+                    "templateUrl": "views/pop/other/platform.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/other/platform.ctl",
+                    "controller": 'otherPlatformPopupController as ctrl',
+                    "size": 'md'
+                }
+            },
+            "field": {
+                "customColumn": {
+                    "templateUrl": "views/pop/custom/column.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/custom/column.ctl",
+                    "controller": 'popFieldColumnCtl'
+                },
+                "feedDetail": {
+                    "templateUrl": "views/pop/custom/feedDetail.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/custom/feedDetail.ctl",
+                    "controller": 'popFieldFeedDetailCtl'
+                }
+            },
+            "file": {
+                "import": {
+                    "templateUrl": "views/pop/import/index.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/import/index.ctl",
+                    "controller": 'popFileImportCtl'
+                }
+            },
+            "history": {
+                "price": {
+                    "templateUrl": "views/pop/history/price.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/history/price.ctl",
+                    "controller": "popPriceHistoryCtl"
+                },
+                "promotion": {
+                    "templateUrl": "views/pop/history/promotion.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/history/promotion.ctl",
+                    "controller": "popPromotionHistoryCtl"
+                }
+            },
+            "promotion": {
+                "detail": {
+                    "templateUrl": "views/pop/promotion/detail.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/promotion/detail.ctl",
+                    "controller": 'popPromotionDetailCtl'
                 }
             }
         })
@@ -228,16 +234,55 @@ define([
             return defer.promise;
         }
 
-        $scope.openCustomBaseProperty = openCustomBaseProperty;
-        function openCustomBaseProperty(viewSize) {
-            $modal.open({
-                templateUrl: popActions.column_define.templateUrl,
-                controllerUrl: popActions.column_define.controllerUrl,
-                size: viewSize,
-                resolve: {
-                    items: function () {
-                        //return data;
+        /**
+         * 打开新建权限页面
+         * @type {openAuthority}
+         */
+        $scope.openAuthority = openAuthority;
+        function openAuthority(viewSize, data) {
+            require([popActions.authority.new.controllerUrl], function () {
+                $modal.open({
+                    templateUrl: popActions.authority.new.templateUrl,
+                    controller: popActions.authority.new.controller,
+                    size: viewSize,
+                    resolve: {
+                        data: function () {
+                            return data;
+                        }
                     }
+                });
+            });
+        }
+
+        /**
+         * pop出promotion选择页面,用于设置
+         * @type {openAddToPromotion}
+         */
+        $scope.openAddToPromotion = openAddToPromotion;
+        function openAddToPromotion(viewSize, promotion, selList, fnInitial) {
+            require([popActions.bulkUpdate.addToPromotion.controllerUrl], function () {
+                if (selList && selList.length) {
+                    var modalInstance = $modal.open({
+                        templateUrl: popActions.bulkUpdate.addToPromotion.templateUrl,
+                        controller: popActions.bulkUpdate.addToPromotion.controller,
+                        size: viewSize,
+                        resolve: {
+                            promotion: function () {
+                                var productIds = [];
+                                _.forEach(selList, function (object) {
+                                    productIds.push(object.id);
+                                });
+                                return {"promotion": promotion, "productIds": productIds};
+                            }
+                        }
+                    });
+
+                    // 回调主页面的刷新操作
+                    modalInstance.result.then(function () {
+                        fnInitial();
+                    })
+                } else {
+                    alert($translate.instant('TXT_MSG_NO_ROWS_SELECT'));
                 }
             });
         }
@@ -246,13 +291,13 @@ define([
          * pop出properties变更页面,用于批量更新产品属性
          * @type {openupdateProperties}
          */
-        $scope.openUpdateProperties = openUpdateProperties;
-        function openUpdateProperties(viewSize, selList, fnInitial) {
-            require([popActions.prop_change.controllerUrl], function () {
+        $scope.openBulkUpdate = openBulkUpdate;
+        function openBulkUpdate(viewSize, selList, fnInitial) {
+            require([popActions.bulkUpdate.fieldEdit.controllerUrl], function () {
                 if (selList && selList.length) {
                     var modalInstance = $modal.open({
-                        templateUrl: popActions.prop_change.templateUrl,
-                        controller: 'popPropChangeCtl',
+                        templateUrl: popActions.bulkUpdate.fieldEdit.templateUrl,
+                        controller: popActions.bulkUpdate.fieldEdit.controller,
                         size: viewSize,
                         resolve: {
                             productIds: function () {
@@ -271,8 +316,46 @@ define([
                     })
 
                 } else {
-                    alert($translate.instant('TXT_COM_MSG_NO_ROWS_SELECT'));
+                    alert($translate.instant('TXT_MSG_NO_ROWS_SELECT'));
                 }
+            });
+        }
+
+        /**
+         * 打开类目选择页面
+         * @param context
+         * @returns {*}
+         */
+        $scope.popupNewCategory = function (context) {
+            return openModel(popActions.bulkUpdate.category, context);
+        };
+
+        /**
+         * 打开类目属性编辑页面
+         * @param context
+         * @returns {*}
+         */
+        $scope.openSystemCategory = function (context) {
+            return openModel(popActions.category.schema, context);
+        };
+
+        /**
+         * 打开新增配置页面
+         * @type {openConfiguration}
+         */
+        $scope.openConfiguration = openConfiguration;
+        function openConfiguration(viewSize, data) {
+            require([popActions.configuration.new.controllerUrl], function () {
+                $modal.open({
+                    templateUrl: popActions.configuration.new.templateUrl,
+                    controller: popActions.configuration.new.controller,
+                    size: viewSize,
+                    resolve: {
+                        data: function () {
+                            return data;
+                        }
+                    }
+                });
             });
         }
 
@@ -282,10 +365,10 @@ define([
          */
         $scope.openDictValue = openDictValue;
         function openDictValue(viewSize, fnInitial, $index, data) {
-            require([popActions.system.dictionary.value.controllerUrl], function () {
+            require([popActions.dictionary.value.controllerUrl], function () {
                 var modalInstance = $modal.open({
-                    templateUrl: popActions.system.dictionary.value.templateUrl,
-                    controller: popActions.system.dictionary.value.controller,
+                    templateUrl: popActions.dictionary.value.templateUrl,
+                    controller: popActions.dictionary.value.controller,
                     size: viewSize,
                     resolve: {
                         dictValue: function () {
@@ -307,10 +390,10 @@ define([
          */
         $scope.openDictCustom = openDictCustom;
         function openDictCustom(viewSize, fnInitial, $index, data) {
-            require([popActions.system.dictionary.custom.controllerUrl], function () {
+            require([popActions.dictionary.custom.controllerUrl], function () {
                 var modalInstance = $modal.open({
-                    templateUrl: popActions.system.dictionary.custom.templateUrl,
-                    controller: popActions.system.dictionary.custom.controller,
+                    templateUrl: popActions.dictionary.custom.templateUrl,
+                    controller: popActions.dictionary.custom.controller,
                     size: viewSize,
                     resolve: {
                         customValue: function () {
@@ -327,215 +410,23 @@ define([
         }
 
         /**
-         * pop出promotion选择页面,用于设置
-         * @type {openTagPromotion}
-         */
-        $scope.openTagPromotion = openTagPromotion;
-        function openTagPromotion(viewSize, promotion, selList, fnInitial) {
-            require([popActions.tag.promotion.controllerUrl], function () {
-                if (selList && selList.length) {
-                    var modalInstance = $modal.open({
-                        templateUrl: popActions.tag.promotion.templateUrl,
-                        controller: 'popTagPromotionCtl',
-                        size: viewSize,
-                        resolve: {
-                            promotion: function () {
-                                var productIds = [];
-                                _.forEach(selList, function (object) {
-                                    productIds.push(object.id);
-                                });
-                                return {"promotion": promotion, "productIds": productIds};
-                            }
-                        }
-                    });
-
-                    // 回调主页面的刷新操作
-                    modalInstance.result.then(function () {
-                        fnInitial();
-                    })
-                } else {
-                    alert($translate.instant('TXT_COM_MSG_NO_ROWS_SELECT'));
-                }
-            });
-        }
-
-        $scope.openshop_category = openshop_category;
-        function openshop_category(viewSize) {
-            $modal.open({
-                templateUrl: popActions.tag.shop_category.templateUrl,
-                controllerUrl: popActions.tag.shop_category.controllerUrl,
-                size: viewSize,
-                resolve: {
-                    items: function () {
-                        //return data;
-                    }
-                }
-            });
-        }
-
-        $scope.openHistoryPromotion = openHistoryPromotion;
-        function openHistoryPromotion(viewSize, data) {
-            require([popActions.product.promotion.controllerUrl], function () {
-                $modal.open({
-                    templateUrl: popActions.product.promotion.templateUrl,
-                    controller: 'popPromotionHistoryCtl',
-                    size: viewSize,
-                    resolve: {
-                        data: function () {
-                            return data;
-                        }
-                    }
-                });
-            });
-        }
-
-        $scope.openHistoryPrice = openHistoryPrice;
-        function openHistoryPrice(viewSize, data, type) {
-            require([popActions.product.price.controllerUrl], function () {
-                $modal.open({
-                    templateUrl: popActions.product.price.templateUrl,
-                    controller: 'popPriceHistoryCtl',
-                    size: viewSize,
-                    resolve: {
-                        data: function () {
-                            return {
-                                code: data,
-                                type: type
-                            };
-                        }
-                    }
-                });
-            });
-        }
-
-        $scope.openpromotion = openpromotion;
-        function openpromotion(viewSize, cartList, data, fnInitial) {
-            require([popActions.new.controllerUrl], function () {
-                var modalInstance = $modal.open({
-                    templateUrl: popActions.new.templateUrl,
-                    controller: 'popNewPromotionCtl',
-                    size: viewSize,
-                    resolve: {
-                        items: function () {
-                            return data;
-                        },
-                        cartList: function () {
-                            return cartList;
-                        }
-                    }
-                });
-
-                modalInstance.result.then(function () {
-                    if (fnInitial) {
-                        fnInitial();
-                    }
-
-                })
-            });
-        }
-
-        $scope.openOtherProgress = openOtherProgress;
-        function openOtherProgress(viewSize) {
-            $modal.open({
-                templateUrl: popActions.other.progress.templateUrl,
-                controllerUrl: popActions.other.progress.controllerUrl,
-                size: viewSize,
-                resolve: {
-                    items: function () {
-                        //return data;
-                    }
-                }
-            });
-        }
-
-        $scope.openImport = openImport;
-        function openImport(viewSize, data) {
-            require([popActions.import.controllerUrl], function () {
-                $modal.open({
-                    templateUrl: popActions.import.templateUrl,
-                    controller: 'importCtl',
-                    size: viewSize,
-                    resolve: {
-                        data: function () {
-                            return data;
-                        }
-                    }
-                });
-            });
-        }
-
-        $scope.openAuthority = openAuthority;
-        function openAuthority(viewSize, data) {
-            require([popActions.Authority.controllerUrl], function () {
-                $modal.open({
-                    templateUrl: popActions.Authority.templateUrl,
-                    controller: 'AuthorityCtl',
-                    size: viewSize,
-                    resolve: {
-                        data: function () {
-                            return data;
-                        }
-                    }
-                });
-            });
-        }
-        $scope.openConfiguration = openConfiguration;
-        function openConfiguration(viewSize, data) {
-            require([popActions.Configuration.controllerUrl], function () {
-                $modal.open({
-                    templateUrl: popActions.Configuration.templateUrl,
-                    controller: 'ConfigurationCtl',
-                    size: viewSize,
-                    resolve: {
-                        data: function () {
-                            return data;
-                        }
-                    }
-                });
-            });
-        }
-        $scope.openTranslate = openTranslate;
-        function openTranslate(viewSize, data) {
-            require([popActions.Translate.controllerUrl], function () {
-                $modal.open({
-                    templateUrl: popActions.Translate.templateUrl,
-                    controller: 'TranslateCtl',
-                    size: viewSize,
-                    resolve: {
-                        data: function () {
-                            return data;
-                        }
-                    }
-                });
-            });
-        }
-
-        $scope.openOtherPlatform = function (context) {
-            return openModel(popActions.other.platform, context);
-        };
-
-        $scope.openSystemCategory = function (context) {
-            return openModel(popActions.system.category, context);
-        };
-
-        $scope.popupNewCategory = function (context) {
-            return openModel(popActions.category, context);
-        };
-
-        /**
          * @param {FeedPropMappingPopupContext} context
          * @returns {Promise}
          */
         $scope.popupFeed = function (context) {
-            return openModel(popActions.feed, context);
+            return openModel(popActions.feedMapping.attribute, context);
         };
 
         $scope.popupFeedValue = function (context) {
-            return openModel(popActions.feedValue, context);
+            return openModel(popActions.feedMapping.value, context);
         };
 
         $scope.popupDictValue = function (context) {
-            return openModel(popActions.dictValue, context);
+            return openModel(popActions.feedMapping.dictValue, context);
+        };
+
+        $scope.openOtherPlatform = function (context) {
+            return openModel(popActions.platformMapping.otherPlatform, context);
         };
 
         $scope.ppPlatformMapping = function (context) {
@@ -571,5 +462,163 @@ define([
         $scope.ppPlatformMapping.simpleItem = function(context) {
             return openModel(popActions.platformMapping.simple.item, context);
         };
+
+        /**
+         * 打开选择base property页面
+         * @type {openCustomBaseProperty}
+         */
+        $scope.openCustomBaseProperty = openCustomBaseProperty;
+        function openCustomBaseProperty(viewSize) {
+            $modal.open({
+                templateUrl: popActions.field.customColumn.templateUrl,
+                controllerUrl: popActions.field.customColumn.controllerUrl,
+                size: viewSize,
+                resolve: {
+                    items: function () {
+                        //return data;
+                    }
+                }
+            });
+        }
+
+        /**
+         * 打开翻译使用的第三方属性页面
+         * @type {openTranslate}
+         */
+        $scope.openTranslate = openTranslate;
+        function openTranslate(viewSize, data) {
+            require([popActions.field.feedDetail.controllerUrl], function () {
+                $modal.open({
+                    templateUrl: popActions.field.feedDetail.templateUrl,
+                    controller: popActions.field.feedDetail.controller,
+                    size: viewSize,
+                    resolve: {
+                        data: function () {
+                            return data;
+                        }
+                    }
+                });
+            });
+        }
+
+        /**
+         * 打开导入文件页面
+         * @type {openImport}
+         */
+        $scope.openImport = openImport;
+        function openImport(viewSize, data) {
+            require([popActions.file.import.controllerUrl], function () {
+                $modal.open({
+                    templateUrl: popActions.file.import.templateUrl,
+                    controller: popActions.file.import.controller,
+                    size: viewSize,
+                    resolve: {
+                        data: function () {
+                            return data;
+                        }
+                    }
+                });
+            });
+        }
+
+        /**
+         * 打开promotion历史页面
+         * @type {openHistoryPromotion}
+         */
+        $scope.openHistoryPromotion = openHistoryPromotion;
+        function openHistoryPromotion(viewSize, data) {
+            require([popActions.product.promotion.controllerUrl], function () {
+                $modal.open({
+                    templateUrl: popActions.history.promotion.templateUrl,
+                    controller: popActions.history.promotion.controller,
+                    size: viewSize,
+                    resolve: {
+                        data: function () {
+                            return data;
+                        }
+                    }
+                });
+            });
+        }
+
+        /**
+         * 打开price历史页面
+         * @type {openHistoryPrice}
+         */
+        $scope.openHistoryPrice = openHistoryPrice;
+        function openHistoryPrice(viewSize, data, type) {
+            require([popActions.product.price.controllerUrl], function () {
+                $modal.open({
+                    templateUrl: popActions.history.price.templateUrl,
+                    controller: popActions.history.price.controller,
+                    size: viewSize,
+                    resolve: {
+                        data: function () {
+                            return {
+                                code: data,
+                                type: type
+                            };
+                        }
+                    }
+                });
+            });
+        }
+        /**
+         * 打开promotion页面
+         * @type {openPromotion}
+         */
+        $scope.openPromotion = openPromotion;
+        function openPromotion(viewSize, cartList, data, fnInitial) {
+            require([popActions.promotion.detail.controllerUrl], function () {
+                var modalInstance = $modal.open({
+                    templateUrl: popActions.promotion.detail.templateUrl,
+                    controller: popActions.promotion.detail.controller,
+                    size: viewSize,
+                    resolve: {
+                        items: function () {
+                            return data;
+                        },
+                        cartList: function () {
+                            return cartList;
+                        }
+                    }
+                });
+
+                modalInstance.result.then(function () {
+                    if (fnInitial) {
+                        fnInitial();
+                    }
+
+                })
+            });
+        }
+
+        //$scope.openshop_category = openshop_category;
+        //function openshop_category(viewSize) {
+        //    $modal.open({
+        //        templateUrl: popActions.tag.shop_category.templateUrl,
+        //        controllerUrl: popActions.tag.shop_category.controllerUrl,
+        //        size: viewSize,
+        //        resolve: {
+        //            items: function () {
+        //                //return data;
+        //            }
+        //        }
+        //    });
+        //}
+        //
+        //$scope.openOtherProgress = openOtherProgress;
+        //function openOtherProgress(viewSize) {
+        //    $modal.open({
+        //        templateUrl: popActions.other.progress.templateUrl,
+        //        controllerUrl: popActions.other.progress.controllerUrl,
+        //        size: viewSize,
+        //        resolve: {
+        //            items: function () {
+        //                //return data;
+        //            }
+        //        }
+        //    });
+        //}
     }
 });

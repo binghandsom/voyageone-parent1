@@ -2,16 +2,14 @@ package com.voyageone.web2.cms.views.task;
 
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
-import com.voyageone.web2.cms.CmsUrlConstants.TASK;
-import com.voyageone.web2.cms.views.promotion.CmsPromotionDetailService;
+import com.voyageone.web2.cms.CmsUrlConstants;
 import com.voyageone.web2.sdk.api.domain.CmsBtPromotionTaskModel;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.HttpServletRequest;
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +19,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping(
-        value = TASK.PRICE.ROOT,
+        value = CmsUrlConstants.TASK.PRICE.ROOT,
         method = RequestMethod.POST
 )
 public class CmsTaskPriceController extends CmsController {
@@ -29,7 +27,7 @@ public class CmsTaskPriceController extends CmsController {
     @Autowired
     private CmsTaskPriceService cmsTaskPriceService;
 
-    @RequestMapping(TASK.PRICE.GET_PRICE_LIST)
+    @RequestMapping(CmsUrlConstants.TASK.PRICE.GET_PRICE_LIST)
     public AjaxResponse getPriceList(@RequestBody Map param) {
 
         int cnt = cmsTaskPriceService.getPriceListCnt(param);
@@ -41,7 +39,7 @@ public class CmsTaskPriceController extends CmsController {
         return success(result);
     }
 
-    @RequestMapping(TASK.PRICE.UPDATE_TASK_STATUS)
+    @RequestMapping(CmsUrlConstants.TASK.PRICE.UPDATE_TASK_STATUS)
     public AjaxResponse updateTaskStatus(@RequestBody CmsBtPromotionTaskModel param) {
 
         param.setModifier(getUser().getUserName());
