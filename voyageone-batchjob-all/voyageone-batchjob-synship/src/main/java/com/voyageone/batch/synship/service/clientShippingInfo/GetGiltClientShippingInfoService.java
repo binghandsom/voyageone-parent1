@@ -54,13 +54,7 @@ public class GetGiltClientShippingInfoService extends GetClientShippingBaseServi
             $info(channel.getFull_name() + "获取物流信息Start");
 
             for (ShopBean shop : shops){
-
-               if (shop.getCart_id().equals(CartEnums.Cart.TG.getId())) {
-                   getTgGiltShippingInfo(channel, shop);
-               }else {
-                   $info(channel.getFull_name() + "的店铺不对，无法取得相关信息，店铺：" + shop.getCart_id());
-                   logIssue(channel.getFull_name() + "的店铺不对，无法取得相关信息，店铺：" + shop.getCart_id());
-               }
+                getGiltShippingInfo(channel, shop);
            }
 
             $info(channel.getFull_name() + "获取物流信息End");
@@ -70,7 +64,7 @@ public class GetGiltClientShippingInfoService extends GetClientShippingBaseServi
     /**
      * 获取Gilt的天猫国际店的物流以及超卖信息
      */
-    private void getTgGiltShippingInfo(OrderChannelBean channel, ShopBean shop) {
+    private void getGiltShippingInfo(OrderChannelBean channel, ShopBean shop) {
         // 渠道ID
         String orderChannelId = channel.getOrder_channel_id();
         // 店铺全名
@@ -134,7 +128,7 @@ public class GetGiltClientShippingInfoService extends GetClientShippingBaseServi
                                 else if (GiltOrderStatus.cancelled.equals(giltOrderStatus)) {
                                     if (CodeConstants.Reservation_Status.Open.equals(clientOrder.getStatus())) {
                                         BackClientOrderList.add(clientOrder);
-                                    }else {
+                                    } else {
                                         cancelClientOrderList.add(clientOrder);
                                     }
 
