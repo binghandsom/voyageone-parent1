@@ -733,7 +733,31 @@
                                 </div>
                             </div>
 
-                            <div class="row mt-sm form-horizontal" ng-if="selectedOrder.orderInfo.orderChannelId == '008' || selectedOrder.orderInfo.orderChannelId == '014'">
+                            <div class="row mt-sm form-horizontal" ng-if="selectedOrder.orderInfo.orderChannelId == '015'">
+                                <label class="col-xs-4 control-label" translate="TXT_ORDER_SEND_CLIENT_ORDER_PRE"></label>
+
+                                <div class="form-group">
+                                    <div class="col-xs-1">
+                                		<span class="input-group-addon">
+                                    		<input type="checkbox" name="preClientOrderSendFlag" ng-model="selectedOrder.orderInfo.preClientOrderSendFlag" ng-disabled="true"/>
+                                    	</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mt-sm form-horizontal" ng-if="selectedOrder.orderInfo.orderChannelId == '008' || selectedOrder.orderInfo.orderChannelId == '014' || selectedOrder.orderInfo.orderChannelId == '015'">
+                                <label class="col-xs-4 control-label" translate="TXT_ORDER_SEND_CLIENT_ORDER"></label>
+
+                                <div class="form-group">
+                                    <div class="col-xs-1">
+                                		<span class="input-group-addon">
+                                    		<input type="checkbox" name="clientOrderSendFlag" ng-model="selectedOrder.orderInfo.clientOrderSendFlag" ng-disabled="true"/>
+                                    	</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mt-sm form-horizontal" ng-if="selectedOrder.orderInfo.orderChannelId == '008' || selectedOrder.orderInfo.orderChannelId == '014' || selectedOrder.orderInfo.orderChannelId == '015'">
                                 <label class="col-xs-4 control-label" translate="TXT_ORDER_CANCEL_CLIENT_ORDER"></label>
 
                                 <div class="form-group">
@@ -749,7 +773,7 @@
                                 </div>
                             </div>
 
-                            <div class="row mt-sm form-horizontal" ng-if="selectedOrder.orderInfo.orderChannelId == '008' || selectedOrder.orderInfo.orderChannelId == '014'">
+                            <div class="row mt-sm form-horizontal" ng-if="selectedOrder.orderInfo.orderChannelId == '008' || selectedOrder.orderInfo.orderChannelId == '014' || selectedOrder.orderInfo.orderChannelId == '015'">
                                 <div class="form-group">
                                     <div class="col-xs-8">
                                         <span class="col-xs-7 small pl-sm pr-sm" translate="TXT_ORDER_CANCEL_CLIENT_ORDER_EXPLAIN"></span>
@@ -757,19 +781,7 @@
                                 </div>
                             </div>
 
-                            <div class="row mt-sm form-horizontal" ng-if="selectedOrder.orderInfo.orderChannelId == '008' || selectedOrder.orderInfo.orderChannelId == '014'">
-                                <label class="col-xs-4 control-label" translate="TXT_ORDER_SEND_CLIENT_ORDER"></label>
-
-                                <div class="form-group">
-                                    <div class="col-xs-1">
-                                		<span class="input-group-addon">
-                                    		<input type="checkbox" name="cancelClientOrderFlag" ng-model="selectedOrder.orderInfo.clientOrderSendFlag" ng-disabled="true"/>
-                                    	</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row mt-sm form-horizontal" ng-if="selectedOrder.orderInfo.orderChannelId == '008' || selectedOrder.orderInfo.orderChannelId == '014'">
+                            <div class="row mt-sm form-horizontal" ng-if="selectedOrder.orderInfo.orderChannelId == '008' || selectedOrder.orderInfo.orderChannelId == '014' || selectedOrder.orderInfo.orderChannelId == '015'">
                                 <label class="col-xs-4 control-label" translate="TXT_ORDER_PARTNER_CANCEL_CLIENT_ORDER"></label>
 
                                 <div class="form-group">
@@ -781,7 +793,7 @@
                                 </div>
                             </div>
 
-                            <div class="row mt-sm form-horizontal" ng-if="selectedOrder.orderInfo.orderChannelId == '008' || selectedOrder.orderInfo.orderChannelId == '014'">
+                            <div class="row mt-sm form-horizontal" ng-if="selectedOrder.orderInfo.orderChannelId == '008' || selectedOrder.orderInfo.orderChannelId == '014' || selectedOrder.orderInfo.orderChannelId == '015'">
                                 <div class="form-group">
                                     <div class="col-xs-8">
                                         <span class="col-xs-7 small pl-sm pr-sm" translate="TXT_ORDER_PARTNER_CANCEL_CLIENT_ORDER_EXPLAIN"></span>

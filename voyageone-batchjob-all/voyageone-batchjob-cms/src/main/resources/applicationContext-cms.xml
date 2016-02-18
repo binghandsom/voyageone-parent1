@@ -39,6 +39,13 @@
 
         <task:scheduled ref="GiltAnalysisJob" method="run" cron="0 0 0/6 * * ?"/>
 
+        <!-- Gilt订单推送(待Placed) -->
+        <task:scheduled ref="OmsPostGiltNormalOrderJob" method="run" cron="0 0/5 0-23 * * ?"/>
+        <!-- Gilt订单推送(待Confirmed) -->
+        <task:scheduled ref="OmsPostGiltConfOrderJob" method="run" cron="0 0/5 0-23 * * ?"/>
+        <!-- Gilt订单推送(待Cancelled) -->
+        <task:scheduled ref="OmsPostGiltCancelOrderJob" method="run" cron="0 0/5 0-23 * * ?"/>
+
     </task:scheduled-tasks>
 
     <!-- 必须需要 -->

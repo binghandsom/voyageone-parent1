@@ -4,6 +4,7 @@ import com.taobao.api.ApiException;
 import com.taobao.top.schema.Util.StringUtil;
 import com.voyageone.common.components.gilt.bean.GiltErrorResult;
 import com.voyageone.common.components.gilt.bean.GiltErrorType;
+import com.voyageone.common.components.gilt.exceptions.GiltException;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.ThirdPartyConfigs;
 import com.voyageone.common.configs.beans.ShopBean;
@@ -13,6 +14,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.util.Assert;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -128,9 +130,9 @@ public abstract class GiltBase {
         /* 如果包含message  表示错误*/
         if(StringUtils.isNullOrBlank2(result)||result.contains("message")){
             //转换错误信息
-            GiltErrorResult res = JacksonUtil.json2Bean(result, GiltErrorResult.class);
-            if (res.getType() != null){
-                throw new Exception("调用Gilt API错误：" + result);
+            List<GiltErrorResult> res = JacksonUtil.jsonToBeanList(result, GiltErrorResult.class);
+            if (res.size()>0){
+                throw new GiltException(result);
             }
         }
         return result;
