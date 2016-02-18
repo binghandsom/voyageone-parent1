@@ -141,23 +141,23 @@ public class SendSMSService  extends BaseTaskService {
                         continue;
                     }
 
-                    //聚美订单判定
-                    String jumeiChannelFullName = "";
-                    OrderChannelBean jumeiChannel = new OrderChannelBean();
+                    //主渠道订单判定
+                    String mainChannelFullName = "";
+                    OrderChannelBean mainChannel = new OrderChannelBean();
                     List<ShopConfigBean> shopConfig = ShopConfigs.getConfigs(channel.getOrder_channel_id(), sendSMSBean.getCart_id(), ShopConfigEnums.Name.main_channel_id);
                     if (shopConfig != null && shopConfig.size() > 0 && shopConfig.get(0).getCfg_val2().equals(Constants.smsChange.CHANGE_ON)){
-                        jumeiChannel = ChannelConfigs.getChannel(shopConfig.get(0).getCfg_val1());
-                        jumeiChannelFullName = String.format(SynshipConstants.SMS_CHECK.SIGN_NAME, jumeiChannel.getFull_name());
-                        $info("聚美变化后短信签名：" + jumeiChannelFullName);
+                        mainChannel = ChannelConfigs.getChannel(shopConfig.get(0).getCfg_val1());
+                        mainChannelFullName = String.format(SynshipConstants.SMS_CHECK.SIGN_NAME, mainChannel.getFull_name());
+                        $info("聚美变化后短信签名：" + mainChannelFullName);
                     }
 
                     //ymsmsSendBean = formatYMSMSSendBean("001","13661895431","【Sneakerhead】林冰洁，您购买的宝贝美国洛杉矶发货，请在23点前点击 synship.net.cn/a/UBVrQ3 上传身份证信息用于清关。");
                     // 判断签名是否设定
-                    if (sendSMSBean.getSent_conent().startsWith(signName) || (!StringUtils.isNullOrBlank2(jumeiChannelFullName) && sendSMSBean.getSent_conent().startsWith(jumeiChannelFullName))) {
+                    if (sendSMSBean.getSent_conent().startsWith(signName) || (!StringUtils.isNullOrBlank2(mainChannelFullName) && sendSMSBean.getSent_conent().startsWith(mainChannelFullName))) {
                         //聚美变化后短信签名有
-                        if (!StringUtils.isNullOrBlank2(jumeiChannelFullName)){
+                        if (!StringUtils.isNullOrBlank2(mainChannelFullName)){
                             // 签名已设定
-                            content = sendSMSBean.getSent_conent().replaceFirst(signName,jumeiChannelFullName);
+                            content = sendSMSBean.getSent_conent().replaceFirst(signName,mainChannelFullName);
                         }else {
                             // 签名已设定
                             content = sendSMSBean.getSent_conent();
@@ -170,10 +170,10 @@ public class SendSMSService  extends BaseTaskService {
                                     ",  phone = " + sendSMSBean.getShip_phone()+ ",  conent = " + sendSMSBean.getSent_conent());
                             continue;
                         } else {
-                            //聚美变化后短信签名有
-                            if (!StringUtils.isNullOrBlank2(jumeiChannelFullName)){
+                            //变化后短信签名有
+                            if (!StringUtils.isNullOrBlank2(mainChannelFullName)){
                                 // 签名未设定
-                                content = jumeiChannelFullName + sendSMSBean.getSent_conent();
+                                content = mainChannelFullName + sendSMSBean.getSent_conent();
                             }else {
                                 // 签名未设定
                                 content = signName + sendSMSBean.getSent_conent();
@@ -181,9 +181,9 @@ public class SendSMSService  extends BaseTaskService {
                         }
                     }
                     $info("order_channel_id = " + sendSMSBean.getOrder_channel_id() + ",  phone = " + sendSMSBean.getShip_phone() + ",  conent = " + content);
-                    //聚美变化后短信签名有
-                    if (!StringUtils.isNullOrBlank2(jumeiChannelFullName)){
-                        ymsmsSendBean = formatYMSMSSendBean(jumeiChannel.getOrder_channel_id(), sendSMSBean.getShip_phone(), content, sendSMSBean.getSms_type());
+                    //主渠道变化后短信签名有
+                    if (!StringUtils.isNullOrBlank2(mainChannelFullName)){
+                        ymsmsSendBean = formatYMSMSSendBean(mainChannel.getOrder_channel_id(), sendSMSBean.getShip_phone(), content, sendSMSBean.getSms_type());
                     }else {
                         ymsmsSendBean = formatYMSMSSendBean(sendSMSBean.getOrder_channel_id(), sendSMSBean.getShip_phone(), content, sendSMSBean.getSms_type());
                     }
