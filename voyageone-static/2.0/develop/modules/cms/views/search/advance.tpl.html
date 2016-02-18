@@ -264,7 +264,7 @@
 						</tr>
 						</thead>
 					</table>
-					<div class="col-sm-12 dropdown_table_main" if-no-rows="vm.groupList.length">
+					<div class="col-sm-12 dropdown_table_main box-body" if-no-rows="vm.groupList.length">
 						<table class="table table-hover vo_table vo_models" ng-if="vm.groupList.length">
 							<tbody ng-repeat="groupInfo in vm.groupList">
 							<tr ng-class="{'table_bg_green_mint': groupInfo.groups.platforms[0].publishTime}" class="table_bg_gray">
@@ -277,14 +277,14 @@
 										&nbsp;{{groupInfo.groups.platforms[0].platformStatus}}&nbsp;
 									</span>
 									<span class="m-r-sm" ng-if="groupInfo.groups.platforms[0].numIId">{{'TXT_NUMBER_IID_WITH_COLON' | translate}}&nbsp;
-										<a ng-href="https://detail.tmall.com/item.htm?id={{groupInfo.groups.platforms[0].numIId}}" target="_blank" class="text-u-l" ng-bind="groupInfo.groups.platforms[0].numIId"></a>
+										<a ng-href="https://detail.tmall.com/item.htm?id={{groupInfo.groups.platforms[0].numIId}}" target="_blank"  ng-bind="groupInfo.groups.platforms[0].numIId"></a>
 									</span>&nbsp;
 									<span>{{'TXT_GROUP_NAME_WITH_COLON' | translate}}&nbsp;
 										<a ng-if="groupInfo.fields.productNameCn" ng-href="#/group/detail/{{groupInfo.groups.platforms[0].groupId}}" title="{{groupInfo.fields.productNameCn}}"
-										   target="_blank" class="text-u-l">{{groupInfo.fields.productNameCn | limitTo: 50}}{{groupInfo.fields.productNameCn.length > 50 ? '...' : ''}}
+										   target="_blank">{{groupInfo.fields.productNameCn | limitTo: 50}}{{groupInfo.fields.productNameCn.length > 50 ? '...' : ''}}
 										</a>
 										<a ng-if="!groupInfo.fields.productNameCn" ng-href="#/group/detail/{{groupInfo.groups.platforms[0].groupId}}" title="{{groupInfo.fields.productNameEn}}"
-										   target="_blank" class="text-u-l">{{groupInfo.fields.productNameEn | limitTo: 50}}{{groupInfo.fields.productNameEn.length > 50 ? '...' : ''}}
+										   target="_blank">{{groupInfo.fields.productNameEn | limitTo: 50}}{{groupInfo.fields.productNameEn.length > 50 ? '...' : ''}}
 										</a>
 									</span>
 									<span class="pull-right">{{'TXT_CATEGORY' | translate}}&nbsp;{{groupInfo.catPath}}</span>
@@ -295,8 +295,8 @@
 									<img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{groupInfo.fields.images1[0].image1}}" alt="{{groupInfo.fields.code}}" class="img-circle pull-left m-r"/>
 									<div class="table_main pull-left" style="width:60%">
 										<ul>
-											<li class="text-u-l"><a ng-href="#/product/detail/{{groupInfo.prodId}}" ng-bind="groupInfo.fields.code" target="_blank"></a></li>
-											<li class="text-u-l"><a ng-href="#/product/detail/{{groupInfo.prodId}}" ng-bind="groupInfo.fields.productNameCn || groupInfo.fields.productNameEn" target="_blank"></a></li>
+											<li><a ng-href="#/product/detail/{{groupInfo.prodId}}" ng-bind="groupInfo.fields.code" target="_blank"></a></li>
+											<li><a ng-href="#/product/detail/{{groupInfo.prodId}}" ng-bind="groupInfo.fields.productNameCn || groupInfo.fields.productNameEn" target="_blank"></a></li>
 										</ul>
 									</div>
 								</td>
@@ -344,7 +344,7 @@
 			<tab ng-click="vm.currTab = 'product'">
 				<tab-heading><i class="glyphicons glyphicons-sort text-default"></i>&nbsp;{{'TXT_PRODUCT_LIST' | translate}}</tab-heading>
 				<!-- Products table and controls -->
-				<div class="table-responsive">
+				<div class="table-responsive box-body">
 					<table class="table table-hover vo_table vo_models dropdown_table_bk font-bold" style="background:#e67e22;color:#fff">
 						<thead>
 						<tr>
@@ -375,16 +375,16 @@
 											&nbsp;{{productInfo.fields.status}}&nbsp;
 										</span>
 									    <span class="m-r-sm" ng-if="productInfo.groups.platforms[0].numIId">{{'TXT_NUMBER_IID_WITH_COLON' | translate}}&nbsp;
-									    	<a ng-href="https://detail.tmall.com/item.htm?id={{productInfo.groups.platforms[0].numIId}}" target="_blank" class="text-u-l" ng-bind="productInfo.groups.platforms[0].numIId"></a>
+									    	<a ng-href="https://detail.tmall.com/item.htm?id={{productInfo.groups.platforms[0].numIId}}" target="_blank"  ng-bind="productInfo.groups.platforms[0].numIId"></a>
 									    </span>&nbsp;
 										<span class="m-r-sm">{{'TXT_PRODUCT_CODE_WITH_COLON' | translate}}&nbsp;
-											<a ng-href="#/product/detail/{{productInfo.prodId}}" target="_blank" class="text-u-l" ng-bind="productInfo.fields.code"></a>
+											<a ng-href="#/product/detail/{{productInfo.prodId}}" target="_blank" ng-bind="productInfo.fields.code"></a>
 										</span>&nbsp;
 										<span>{{'TXT_PRODUCT_NAME_WITH_COLON' | translate}}&nbsp;
 											<a ng-if="productInfo.fields.productNameCn" href="#/product/detail/{{productInfo.prodId}}" title="{{productInfo.fields.productNameCn}}"
-											   target="_blank" class="text-u-l">{{productInfo.fields.productNameCn | limitTo: 50}}{{productInfo.fields.productNameCn.length > 50 ? '...' : ''}}</a>
+											   target="_blank">{{productInfo.fields.productNameCn | limitTo: 50}}{{productInfo.fields.productNameCn.length > 50 ? '...' : ''}}</a>
 											<a ng-if="!productInfo.fields.productNameCn" href="#/product/detail/{{productInfo.prodId}}" title="{{productInfo.fields.productNameEn}}"
-											   target="_blank" class="text-u-l">{{productInfo.fields.productNameEn | limitTo: 50}}{{productInfo.fields.productNameEn.length > 50 ? '...' : ''}}</a>
+											   target="_blank">{{productInfo.fields.productNameEn | limitTo: 50}}{{productInfo.fields.productNameEn.length > 50 ? '...' : ''}}</a>
 										</span>
 										<span class="pull-right">{{'TXT_CATEGORY' | translate}}&nbsp;{{productInfo.catPath}}</span>
 									</td>

@@ -46,7 +46,7 @@ public interface CmsUrlConstants {
 
             String GET_PROMOTION_UPLOAD = "uploadPromotion";
 
-            String TE_JIA_BAO_INIT = "teiabaoInit";
+            String TE_JIA_BAO_INIT = "teJiaBaoInit";
 
             String UPDATE_PROMOTION_PRODUCT = "updatePromotionProduct";
 

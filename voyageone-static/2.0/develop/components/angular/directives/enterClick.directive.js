@@ -20,7 +20,11 @@ angular.module('voyageone.angular.directives.enterClick', [])
                         targetElem.triggerHandler('click');
                     };
 
-                    targetElem = document.querySelector(selectExp);
+                    try {
+                        targetElem = document.querySelector(selectExp);
+                    } catch (e) {
+                        targetElem = null;
+                    }
 
                     if (!targetElem) {
                         // 如果取不到元素，则尝试作为表达式执行
