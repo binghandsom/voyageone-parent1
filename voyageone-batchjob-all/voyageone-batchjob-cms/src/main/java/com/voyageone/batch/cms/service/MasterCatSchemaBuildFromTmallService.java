@@ -269,10 +269,8 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
                     masterModel.setCatFullPath(schemaModel.getCatFullPath());
                     FieldUtil.replaceFieldIdDot(masterFields);
                     Field sku = FieldUtil.getFieldById(masterFields, "sku");
-                    if(sku instanceof MultiComplexField){
-                        List<Field> fs=((MultiComplexField) sku).getFields();
-                        skusSort(fs);
-                    }
+                    if(sku instanceof MultiComplexField)
+                        skusSort(((MultiComplexField) sku).getFields());
                     FieldUtil.removeFieldById(masterFields, "sku");
                     masterModel.setSku(sku);
 
@@ -320,17 +318,11 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
 
     //Field字段排序方法
     private static void fieldsSort(List<Field> masterFields){
-        Collections.sort(masterFields, new Comparator<Field>() {
-            @Override
-            public int compare(Field a, Field b) {
-                if(a.getInputLevel()<b.getInputLevel())
-                    return -1;
-                if(a.getInputLevel()>b.getInputLevel())
-                    return 1;
+        Collections.sort(masterFields,(a, b) ->{
+                //1.b为true, B前置
                 if(b.getRuleByName("requiredRule")!=null&&!StringUtils.isNullOrBlank2(b.getRuleByName("requiredRule").getValue())&&b.getRuleByName("requiredRule").getValue().equals("true"))
                     return 1;
                 return -1;
-            };
         });
     }
 
@@ -341,16 +333,13 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
         Arrays.asList(new String[]{"skuCode:1","size:2","qty:3","priceMsrp:4","priceRetail:5","priceSale:6","skuCarts:7","barcode:8"}).forEach(a->{
            sortIndex.put(a.split(":")[0],Integer.parseInt(a.split(":")[1]));
         });
-        Collections.sort(masterFields, new Comparator<Field>() {
-            @Override
-            public int compare(Field a, Field b) {
+        Collections.sort(masterFields, (a,b) -> {
                 //1.a为空b非空 b前置 2.a>b b前置
                 Integer aIndex=sortIndex.get(a.getId());
                 Integer bIndex=sortIndex.get(b.getId());
                 if((aIndex==null&&bIndex!=null)||(aIndex!=null&&bIndex!=null&&aIndex>bIndex))
                     return 1;
                 return -1;
-            }
         });
     }
 
