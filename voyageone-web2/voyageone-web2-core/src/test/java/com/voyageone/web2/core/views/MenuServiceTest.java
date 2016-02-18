@@ -1,5 +1,6 @@
 package com.voyageone.web2.core.views;
 
+import com.voyageone.web2.core.views.menu.MenuService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 

@@ -8,6 +8,7 @@ package com.voyageone.web2.cms;
  */
 public interface CmsUrlConstants {
 
+    // menu
     interface MENU {
 
         String ROOT = "/cms/home/menu/";
@@ -19,11 +20,93 @@ public interface CmsUrlConstants {
         String SET_CATE_TYPE = "setCategoryType";
     }
 
+    // 活动管理
+    interface PROMOTION {
+
+        interface INDEX {
+
+            String ROOT = "/cms/promotion/index";
+
+            String GET_PROMOTION_LIST = "getPromotionList";
+
+            String INSERT_PROMOTION = "insertPromotion";
+
+            String UPDATE_PROMOTION = "updatePromotion";
+        }
+
+        interface DETAIL {
+
+            String ROOT = "/cms/promotion/detail";
+
+            String GET_PROMOTION_GROUP = "getPromotionGroup";
+
+            String GET_PROMOTION_CODE = "getPromotionCode";
+
+            String GET_PROMOTION_SKU = "getPromotionSku";
+
+            String GET_PROMOTION_UPLOAD = "uploadPromotion";
+
+            String TE_JIA_BAO_INIT = "teJiaBaoInit";
+
+            String UPDATE_PROMOTION_PRODUCT = "updatePromotionProduct";
+
+            String DEL_PROMOTION_MODEL = "delPromotionModel";
+
+            String DEL_PROMOTION_CODE = "delPromotionCode";
+        }
+    }
+
+    interface TASK {
+
+//            interface INDEX {
+//
+//                String ROOT = "/cms/promotion/task";
+//
+//                String GET_PRICE_LIST = "getPriceList";
+//
+//                String UPDATE_TASK_STATUS = "updateTaskStatus";
+//            }
+
+        interface PRICE {
+
+            String ROOT = "/cms/task/price";
+
+            String GET_PRICE_LIST = "getPriceList";
+
+            String UPDATE_TASK_STATUS = "updateTaskStatus";
+        }
+
+        interface FILE {
+
+            String ROOT = "/cms/promotion/file";
+
+//                String GET_CODE_FILE = "getCodeFile";
+        }
+    }
+
+    // 检索
+    interface SEARCH {
+
+        interface ADVANCE {
+
+            String ROOT = "/cms/search/advance/";
+
+            String INIT = "init";
+
+            String SEARCH = "search";
+
+            String GET_GROUP_LIST = "getGroupList";
+
+            String GET_PRODUCT_LIST = "getProductList";
+        }
+    }
+
+    // 匹配关系设置
     interface MAPPING {
 
         interface FEED {
 
-            String ROOT = "/cms/setting/feedMapping";
+            String ROOT = "/cms/mapping/feed";
 
             String GET_FEED_CATEGORY_TREE = "getFeedCategoryTree";
 
@@ -50,7 +133,7 @@ public interface CmsUrlConstants {
 
         interface PLATFORM {
 
-            String ROOT = "/cms/setting/platformMapping";
+            String ROOT = "/cms/mapping/platform";
 
             String GET_MAIN_CATEGORY = "getMainDataFinalCategoryMap";
 
@@ -74,58 +157,30 @@ public interface CmsUrlConstants {
 
             String SAVE_MATCH_OVER_BY_MAIN_CATE = "saveMatchOverByMainCategory";
         }
-    }
 
-    interface PROMOTION {
+        interface DICTIONARY {
 
-        interface LIST {
+            String ROOT = "/cms/mapping/dictionary";
 
-            String ROOT = "/cms/promotion/list";
+            String INIT = "init";
 
-            String GET_PROMOTION_LIST = "getPromotionList";
+            String GET_DICT = "getDict";
 
-            String INSERT_PROMOTION = "insertPromotion";
+            String GET_CONST = "getConst";
 
-            String UPDATE_PROMOTION = "updatePromotion";
-        }
-        interface DETAIL {
+            String GET_CUSTOMS = "getCustoms";
 
-            String ROOT = "/cms/promotion/detail";
+            String SET_DICT = "setDict";
 
-            String GET_PROMOTION_GROUP = "getPromotionGroup";
+            String DEL_DICT = "delDict";
 
-            String GETP_ROMOTION_CODE = "getPromotionCode";
+            String ADD_DICT = "addDict";
 
-            String GET_PROMOTION_SKU = "getPromotionSku";
-
-            String GET_PROMOTION_UPLOAD = "uploadPromotion";
-
-            String TEJIABAO_INIT = "tejiabaoInit";
-
-            String UPDATE_PROMOTION_PRODUCT = "updatePromotionProduct";
-
-            String DEL_PROMOTION_MODEL = "delPromotionModel";
-
-            String DEL_PROMOTION_CODE = "delPromotionCode";
+            String GET_DICT_LIST = "getDictList";
         }
     }
-    interface TASK {
 
-        interface PRICE {
-
-            String ROOT = "/cms/task/price";
-
-            String GET_PRICE_LIST = "getPriceList";
-
-            String UPDATE_TASK_STATUS = "updateTaskStatus";
-        }
-        interface FILE {
-
-            String ROOT = "/cms/promotion/file";
-
-            String GET_CODE_FILE = "getCodeFile";
-        }
-    }
+    // 系统设置
     interface SYSTEM {
 
         interface CATEGORY {
@@ -149,58 +204,23 @@ public interface CmsUrlConstants {
 
             String UPDATE_FINISH_STATUS = "updateFinishStatus";
         }
-
-
-        interface DICTIONARY {
-
-            String ROOT = "/cms/system/dictionary";
-
-            String INIT = "init";
-
-            String GET_DICT = "getDict";
-
-            String GET_CONST = "getConst";
-
-            String GET_CUSTOMS = "getCustoms";
-
-            String SET_DICT = "setDict";
-
-            String DEL_DICT = "delDict";
-
-            String ADD_DICT = "addDict";
-
-            String GET_DICT_LIST = "getDictList";
-        }
     }
-    interface SEARCH {
 
-        interface INDEX {
-
-            String ROOT = "/cms/search/index/";
-
-            String INIT = "init";
-
-            String SEARCH = "search";
-
-            String GET_GROUP_LIST = "getGroupList";
-
-            String GET_PRODUCT_LIST = "getProductList";
-        }
-    }
+    // popup页面
     interface POP {
 
-        interface PROP_CHANGE {
+        interface FIELD_EDIT {
 
-            String ROOT = "/cms/pop/prop_change/";
+            String ROOT = "/cms/pop/field_edit/";
 
             String GET_POP_OPTIONS = "getPopOptions";
 
             String SET_PRODUCT_FIELDS = "setProductFields";
         }
 
-        interface PROM_SELECT {
+        interface ADD_TO_PROMOTION {
 
-            String ROOT = "/cms/pop/prom_select/";
+            String ROOT = "/cms/pop/add_to_promotion/";
 
             String GET_PROM_TAGS = "getPromotionTags";
 
@@ -209,24 +229,25 @@ public interface CmsUrlConstants {
 
         interface PRICE {
 
-            String ROOT = "/cms/pop/price/";
+            String ROOT = "/cms/pop/history_price/";
 
             String GET_PRICE_HISTORY = "getPriceHistory";
         }
 
         interface PROMOTION {
 
-            String ROOT = "/cms/pop/promotion/";
+            String ROOT = "/cms/pop/history_promotion/";
 
             String GET_PROMOTION_HISTORY = "getPromotionHistory";
         }
     }
 
+    // 产品编辑
     interface PRODUCT{
 
-        interface EDIT{
+        interface DETAIL {
 
-            String ROOT = "/cms/product/detail/";
+            String ROOT = "/cms/product/detail";
 
             String GET_PRODUCT_INFO = "getProductInfo";
 
@@ -238,21 +259,41 @@ public interface CmsUrlConstants {
 
             String CHANGE_CATEGORY = "changeCategory";
 
-            String CONFIRM_CHANGE = "confirmChange";
-
         }
+
     }
 
+    // 商品编辑
     interface GROUP{
 
-        interface LIST {
-            String ROOT = "/cms/group/list";
+        interface DETAIL {
+            String ROOT = "/cms/group/detail";
 
             String INIT = "init";
 
             String GET_PRODUCT_LIST = "getProductList";
 
             String SET_MAIN_PRODUCT = "setMainProduct";
+        }
+    }
+
+    interface TRANSLATION {
+
+        interface DETAIL {
+
+            String ROOT = "/cms/translation/detail";
+
+            String INIT = "init";
+
+            String SEARCH = "search";
+
+            String GET_TASKS = "getTasks";
+
+            String COPY_FORM_MAIN_PRODUCT = "copyFormMainProduct";
+
+            String SAVE = "save";
+
+            String SUBMIT = "submit";
         }
     }
 

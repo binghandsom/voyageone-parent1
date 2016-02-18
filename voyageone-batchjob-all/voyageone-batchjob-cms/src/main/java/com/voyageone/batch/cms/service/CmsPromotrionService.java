@@ -28,7 +28,7 @@ import java.util.Map;
  * @version 2.0.0
  */
 @Service
-public class CmsPromotrionService extends BaseTaskService{
+public class CmsPromotrionService extends BaseTaskService {
     @Override
     public SubSystem getSubSystem() {
         return SubSystem.CMS;
@@ -53,6 +53,7 @@ public class CmsPromotrionService extends BaseTaskService{
 
 
     }
+
     private void updatePromotion(String channelId, String cartId) {
         List<Map> items = promotionDao.getPromotionItem(channelId, cartId);
         // 取得shop信息
@@ -67,12 +68,12 @@ public class CmsPromotrionService extends BaseTaskService{
             try {
                 Long promotionId = Long.parseLong(item.get("promotionId").toString());
                 // 先删除之前的提价商品
-//                tbPromotionService.removePromotion(shopBean,Long.parseLong(item.get("num_iid").toString()),promotionId);
+                tbPromotionService.removePromotion(shopBean, Long.parseLong(item.get("num_iid").toString()), promotionId);
 
                 TipItemPromDTO tipItemPromDTO = new TipItemPromDTO();
                 tipItemPromDTO.setCampaignId(promotionId);
                 tipItemPromDTO.setItemId(Long.parseLong(item.get("num_iid").toString()));
-                System.out.println(item.get("num_iid")+"开始");
+                System.out.println(item.get("num_iid") + "开始");
                 List<Map> productList = (List<Map>) item.get("productList");
 
                 // 根据商品ID列表获取SKU信息 因为需要知道天猫的SKU的ID
@@ -80,7 +81,7 @@ public class CmsPromotrionService extends BaseTaskService{
                 ItemSkusGetResponse skuids = (ItemSkusGetResponse) response;
                 // 商品里有SKU的场合 更新特价的时候以SKU为单位更新 （因为TM部分类目下没有SKU 那就用ITEM单位更新）
                 if (skuids.getSkus() != null) {
-                    System.out.println("skuids"+skuids.getSkus().size()+"");
+                    System.out.println("skuids" + skuids.getSkus().size() + "");
                     List<TipSkuPromUnitDTO> tipSkuPromUnitDTOs = new ArrayList<TipSkuPromUnitDTO>();
                     // 遍历该num_iid下所有的SKU
                     for (Map product : productList) {
@@ -88,7 +89,7 @@ public class CmsPromotrionService extends BaseTaskService{
                         // 遍历code下面的所有SKU
                         skuList.forEach(map -> {
                             // 价格与MSRP价格不一致的sku才加特价宝
-                            if(!StringUtils.isEmpty((String) map.get("promotionPrice"))) {
+                            if (!StringUtils.isEmpty((String) map.get("promotionPrice"))) {
                                 TipSkuPromUnitDTO tipSkuPromUnitDTO = new TipSkuPromUnitDTO();
                                 tipSkuPromUnitDTO.setDiscount(Long.parseLong(map.get("promotionPrice").toString()));
                                 // 获取SKU对已TM的SKUID
@@ -106,10 +107,10 @@ public class CmsPromotrionService extends BaseTaskService{
                         });
                     }
                     tipItemPromDTO.setSkuLevelProms(tipSkuPromUnitDTOs);
-                }else{
+                } else {
                     // ITEM单位更新
                     List<Map> skuList = (List<Map>) productList.get(0).get("skuList");
-                    if(!StringUtils.isEmpty((String) skuList.get(0).get("promotionPrice"))) {
+                    if (!StringUtils.isEmpty((String) skuList.get(0).get("promotionPrice"))) {
                         TipPromUnitDTO tipPromUnitDTO = new TipPromUnitDTO();
                         tipPromUnitDTO.setDiscount(Long.parseLong(skuList.get(0).get("promotionPrice").toString()));
                         tipItemPromDTO.setItemLevelProm(tipPromUnitDTO);
@@ -133,46 +134,49 @@ public class CmsPromotrionService extends BaseTaskService{
                     }
                     if (failProduct.get(fail) == null) {
                         List<String> temp = new ArrayList<>();
-                        temp.add(item.get("promotionId").toString() + "," +item.get("num_iid").toString());
+                        temp.add(item.get("promotionId").toString() + "," + item.get("num_iid").toString());
                         failProduct.put(fail, temp);
                     } else {
-                        failProduct.get(fail).add((item.get("promotionId").toString() + "," +item.get("num_iid").toString()));
+                        failProduct.get(fail).add((item.get("promotionId").toString() + "," + item.get("num_iid").toString()));
                     }
                 }
             } catch (Exception e) {
                 e.printStackTrace();
                 if (failProduct.get(e.getMessage()) == null) {
                     List<String> temp = new ArrayList<>();
-                    temp.add(item.get("promotionId").toString() + "," +item.get("num_iid").toString());
+                    temp.add(item.get("promotionId").toString() + "," + item.get("num_iid").toString());
                     failProduct.put(e.getMessage(), temp);
                 } else {
-                    failProduct.get(e.getMessage()).add(item.get("promotionId").toString() + "," +item.get("num_iid").toString());
+                    failProduct.get(e.getMessage()).add(item.get("promotionId").toString() + "," + item.get("num_iid").toString());
                 }
                 logger.info(e.getMessage());
             }
         });
         // 把成功的产品更新数据库
-        if (succeedProduct.size() > 0) {
+        succeedProduct.forEach(s -> {
             Map<String, Object> parameter = new HashMap<>();
-            parameter.put("channelId", channelId);
-            parameter.put("cartId", cartId);
-            parameter.put("numIid", succeedProduct);
-            parameter.put("priceStatus", "1");
-            parameter.put("promotionFaildComment", "");
+            parameter.put("promotionId", s.split(",")[0]);
+            parameter.put("taskType", 0);
+            parameter.put("key", s.split(",")[1]);
+            parameter.put("syn_flg", "2");
+            parameter.put("err_msg", "");
+            parameter.put("modifier", getTaskName());
             promotionDao.updatePromotionStatus(parameter);
-        }
+        });
+
 
         // 把错误信息更新到数据库中
-        failProduct.forEach((s, integers) -> {
-            if (integers.size() > 0) {
+        failProduct.forEach((s, numIids) -> {
+            numIids.forEach(numIid -> {
                 Map<String, Object> parameter = new HashMap<>();
-                parameter.put("channelId", channelId);
-                parameter.put("cartId", cartId);
-                parameter.put("numIid", integers);
-                parameter.put("priceStatus", "2");
-                parameter.put("promotionFaildComment", s);
+                parameter.put("promotionId", numIid.split(",")[0]);
+                parameter.put("taskType", 0);
+                parameter.put("key", numIid.split(",")[1]);
+                parameter.put("syn_flg", "9");
+                parameter.put("err_msg", s);
+                parameter.put("modifier", getTaskName());
                 promotionDao.updatePromotionStatus(parameter);
-            }
+            });
         });
     }
 }

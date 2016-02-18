@@ -1,0 +1,113 @@
+<div class="wrapper-md" ng-init="initialize()">
+	<div class="vo_accordion vo_attr">
+		<div class="panel-group">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h4 class="panel-title"><i class="glyphicon glyphicon-star"></i>&nbsp;{{'TXT_PROMOTION_LIST' | translate}}</h4>
+				</div>
+				<div class="container-fluid m-t-sm m-b-md">
+					<div class="col-sm-12">
+					<!--<div class="col-sm-5">
+						<div class="form-horizontal">
+							<div class="form-group">
+								<label class="col-sm-3 control-label" translate="TXT_PROMOTION_STATUS"></label>
+								<div class="col-sm-9">
+									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option1"><span class="fa fa-check"></span></label>
+								</div>
+							</div>&lt;!&ndash; .form-group &ndash;&gt;
+						</div>
+					</div>-->
+					<div class="col-sm-4">
+						<div class="form-horizontal">
+							<div class="form-group">
+								<label class="col-sm-3 control-label" translate="TXT_CREATE_TIME"></label>
+								<div class="col-sm-8 form-inline">
+									<div class="col-sm-5 input-group" ng-controller="datePickerCtrl">
+										<input type="text" class="form-control" datepicker-popup="{{formatDate}}" ng-model="$parent.searchInfo.createdStart" date-model-format="{{formatDate}}" is-open="opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" />
+								              <span class="input-group-btn">
+								                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+								              </span>
+									</div> ~
+									<div class="col-sm-5 input-group" ng-controller="datePickerCtrl">
+										<input type="text" class="form-control" datepicker-popup="{{formatDate}}" ng-model="$parent.searchInfo.createdEnd" date-model-format="{{formatDate}}" is-open="opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" />
+								              <span class="input-group-btn">
+								                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+								              </span>
+									</div>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3  control-label" translate="TXT_PLATFORM_TYPE"></label>
+								<div class="col-sm-7">
+									<select class="form-control" ng-model="searchInfo.cartId">
+										<option value='' translate="TXT_SELECT_NO_VALUE"></option>
+										<option ng-repeat="cart in vm.cartList" value={{cart.cartId}}>{{cart.name}}</option>
+									</select>
+								</div>
+							</div>
+						</div><!-- .form-group -->
+					</div>
+					<!--<div class="col-sm-3">
+						<div class="form-horizontal">
+							<div class="form-group">
+								<label class="col-sm-3 control-label" translate="TXT_FUZZY_SEARCH"></label>
+								<div class="col-sm-8">
+									<input class="form-control" ng-model="searchInfo.promotionName">
+								</div>
+							</div>&lt;!&ndash; .form-group &ndash;&gt;
+						</div>
+					</div>-->
+					<div class="col-sm-12 text-center m-t-sm" ng-controller="popupCtrl">
+						<div class="form-inline">
+							<button class="btn btn-default" ng-click="clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR' | translate}}</button>
+							<button class="btn btn-vo" ng-click="search()"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}</button>
+							<button class="btn btn-success" ng-click="openPromotion('md',vm.cartList,null,search)"><i class="fa fa-plus"></i>&nbsp;{{'BTN_NEW_PROMOTION' | translate}}</button>
+						</div><!-- .form-inline -->
+					</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div><!-- .accordion -->
+	<div class="box">
+		<div class="box-body">
+			<table class="table table-hover-new text-center">
+				<thead>
+				<tr>
+					<th class="text-center">Seq.</th>
+					<th class="text-center">Promotion Name</th>
+					<th class="text-center">Status</th>
+					<th class="text-center">Cart Type</th>
+					<th class="text-left">Promotion Time</th>
+					<th class="text-left">Preheating Time</th>
+					<th class="text-left">Pre-sale Time</th>
+					<th class="text-center">Action</th>
+				</tr>
+				</thead>
+				<tbody if-no-rows="vm.promotionList.length">
+				<tr ng-repeat="promotion in vm.promotionList">
+					<td class="text-center">{{promotion.promotionId}}</td>
+					<td class="text-center"><a href="#/promotion/detail/{{promotion.promotionId}}" target="_blank">{{promotion.promotionName}}</a></td>
+					<td class="text-center"><span ng-show="promotion.promotionStatus==false" class="label label-success-new m-r-lg m-l"> Open </span><span ng-show="promotion.promotionStatus==true" class="label label-yellow-new m-r-lg m-l"> Close </span></td>
+					<td class="text-center">{{promotion.cartName}}</td>
+					<td class="text-left">{{promotion.activityStart}}&nbsp;~&nbsp;{{promotion.activityEnd}}</td>
+					<td class="text-left"></td>
+					<td class="text-left"></td>
+					<td ng-controller="popupCtrl"><button title="编辑" class="btn btn-success btn-xs" ng-click="openPromotion('md',vm.cartList,promotion)"><i class="fa fa-pencil"></i></button>
+						<button title="删除" class="btn btn-danger btn-xs"  ng-click="del(promotion)"><i class="fa  fa-trash-o"></i></button>
+						<button title="下载" class="btn btn-dangerdel btn-xs" ng-click="openOtherDownload()"><i class="fa fa-cloud-download"></i></button>
+					</td>
+				</tr>
+				</tbody>
+			</table>
+		</div><!-- /.box-body -->
+	</div>
+</div><!-- end .wrapper-md -->
+
+
+
+
+
+
+
+

@@ -7,19 +7,25 @@ package com.voyageone.web2.core;
  */
 public interface CoreUrlConstants {
 
-    String MENU_ROOT = "/core/home/menu/";
+    interface MENU {
 
-    String MENU_HEADER_INFO = "getMenuHeaderInfo";
+        String ROOT = "/core/home/menu/";
 
-    String MENU_SEL_LANGUAGE = "selectLanguage";
+        String GET_MENU_HEADER_INFO = "getMenuHeaderInfo";
 
-    String USER_ROOT = "/core/access/user/";
+        String SET_LANGUAGE = "setLanguage";
+    }
 
-    String USER_LOGIN = "login";
+    interface USER {
 
-    String USER_CHANNEL = "getChannel";
+        String ROOT = "/core/access/user/";
 
-    String USER_SEL_CHANNEL = "selectChannel";
+        String LOGIN = "login";
 
-    String USER_LOGOUT = "logout";
+        String GET_CHANNEL = "getChannel";
+
+        String SELECT_CHANNEL = "selectChannel";
+
+        String LOGOUT = "logout";
+    }
 }

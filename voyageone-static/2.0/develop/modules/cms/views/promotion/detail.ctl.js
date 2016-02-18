@@ -161,7 +161,7 @@ define([
                         notify.warning("fail");
                     })
                 } else {
-                    alert($translate.instant('TXT_COM_MSG_NO_ROWS_SELECT'));
+                    alert($translate.instant('TXT_MSG_NO_ROWS_SELECT'));
                 }
             }else if($scope.vm.tabIndex == 1){
                 if($scope.vm.codeSelList.selList.length>0) {
@@ -172,13 +172,13 @@ define([
                         notify.warning("fail");
                     })
                 } else {
-                    alert($translate.instant('TXT_COM_MSG_NO_ROWS_SELECT'));
+                    alert($translate.instant('TXT_MSG_NO_ROWS_SELECT'));
                 }
             }
 
         };
-        $scope.tejiabaoInit = function(){
-            promotionDetailService.tejiabaoInit( $routeParams.promotionId).then(function (res) {
+        $scope.teJiaBaoInit = function(){
+            promotionDetailService.teJiaBaoInit( $routeParams.promotionId).then(function (res) {
                 notify.success("success");
                 $location.path("/task/price/"+$routeParams.promotionId);
                 //href="#/promotion/task/price" target="_blank"-->

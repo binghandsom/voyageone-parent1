@@ -278,7 +278,7 @@ define([
         this.logout = logout;
         this.getCategoryInfo = getCategoryInfo;
         this.getCategoryType = getCategoryType;
-        this.getCategoryTree = getCategoryTree;
+        //this.getCategoryTree = getCategoryTree;
 
         /**
          * get the system info.
@@ -343,7 +343,7 @@ define([
          */
         function setLanguage(language) {
             var defer = $q.defer();
-            ajaxService.post(cActions.core.home.menu.selectLanguage, {"language": language.name})
+            ajaxService.post(cActions.core.home.menu.setLanguage, {"language": language.name})
                 .then(function () {
                     cookieService.language(language.add_name2);
                     translateService.setLanguage(language.add_name2);
@@ -392,18 +392,18 @@ define([
             return defer.promise;
         }
 
-        /**
-         * get categoryTree.
-         * @returns {*}
-         */
-        function getCategoryTree() {
-            var defer = $q.defer();
-            ajaxService.post(cActions.cms.home.menu.getCategoryTree)
-                .then(function (response) {
-                    defer.resolve(response.data);
-                });
-            return defer.promise;
-        }
+        ///**
+        // * get categoryTree.
+        // * @returns {*}
+        // */
+        //function getCategoryTree() {
+        //    var defer = $q.defer();
+        //    ajaxService.post(cActions.cms.home.menu.getCategoryTree)
+        //        .then(function (response) {
+        //            defer.resolve(response.data);
+        //        });
+        //    return defer.promise;
+        //}
 
         /**
          *
@@ -482,7 +482,7 @@ define([
                 //searchInfoFactory.codeList(value);
                 //searchInfoFactory.platformCart(23);
                 vm.searchValue = "";
-                $location.path(cRoutes.search_index_param.url + "2/" + value);
+                $location.path(cRoutes.search_advance_param.url + "2/" + value);
             }
         }
 
@@ -557,7 +557,7 @@ define([
          */
         function goSearchPage(catId) {
             if(catId){
-                $location.path(cRoutes.search_index_param.url + "1/" + catId);
+                $location.path(cRoutes.search_advance_param.url + "1/" + catId);
             }
         }
     }

@@ -101,23 +101,24 @@ define(function() {
     return {
       restrict: "A",
       link: function(scope, elem, attr) {
-        $(elem).keyup(function(e) {
+        angular.element(elem).on("keyup", function(e) {
           if (e.keyCode !== 13) return;
           var selectExp = attr.enterClick;
           var targetElem, handler = function() {
-            targetElem.click();
+            targetElem.triggerHandler("click");
           };
           try {
-            targetElem = angular.element(selectExp);
+            targetElem = document.querySelector(selectExp);
           } catch (e) {
             targetElem = null;
           }
-          if (!targetElem || !targetElem.length) {
+          if (!targetElem) {
             handler = function() {
               scope.$eval(selectExp);
             };
-          } else if (targetElem.attr("disabled")) {
-            return;
+          } else {
+            targetElem = angular.element(targetElem);
+            if (targetElem.attr("disabled")) return;
           }
           handler();
         });
@@ -139,7 +140,7 @@ define(function() {
   angular.module("voyageone.angular.directives.ifNoRows", []).directive("ifNoRows", [ "$templateCache", "$compile", function($templateCache, $compile) {
     var tempNoDataKey = "voyageone.angular.directives.ifNoRows.tpl.html";
     if (!$templateCache.get(tempNoDataKey)) {
-      $templateCache.put(tempNoDataKey, '<div class="text-center text-hs" id="noData">\n' + '    <h4 class="text-vo"><i class="icon fa fa-warning"></i>&nbsp;{{\'TXT_COM_WARNING\' | translate}}</h4>\n' + "{{'TXT_COM_MSG_NO_DATE' | translate}}" + "</dv>");
+      $templateCache.put(tempNoDataKey, '<div class="text-center text-hs" id="noData">\n' + '    <h4 class="text-vo"><i class="icon fa fa-warning"></i>&nbsp;{{\'TXT_WARNING\' | translate}}</h4>\n' + "{{'TXT_MSG_NO_DATE' | translate}}" + "</dv>");
     }
     return {
       restrict: "A",
@@ -255,7 +256,7 @@ define(function() {
   }).directive("schemaHeader", [ "$templateCache", "schemaHeaderFactory", "fieldTypes", "ruleTypes", "valueTypes", function($templateCache, schemaHeaderFactory, fieldTypes, ruleTypes, valueTypes) {
     var templateKey_header = "voyageone.angular.directives.schemaHeader.tpl.html";
     if (!$templateCache.get(templateKey_header)) {
-      $templateCache.put(templateKey_header, '<div class="form-group">' + '  <label class="col-sm-2 control-label" ng-class="{\'vo_reqfield\': showHtmlData.isRequired}" ng-bind="$$data.name"></label>' + "  <div class=\"col-sm-8\" ng-class=\"{'modal-open' : showHtmlData.isMultiComplex, 'hierarchy_main': showHtmlData.isComplex}\" ng-transclude></div>" + '  <div class="col-sm-2" ng-if="showHtmlData.isMultiComplex"><button class="btn btn-success" ng-click="addField($$data)"><i class="fa fa-plus"></i>{{\'BTN_COM_ADD\' | translate}}</button></div>' + '  <div class="row" ng-repeat="tipMsg in showHtmlData.tipMsg"><div class="col-sm-8 col-sm-offset-2 text-warnings"><i class="icon fa fa-bell-o"></i>&nbsp;{{tipMsg}}</div></div>' + "</div>");
+      $templateCache.put(templateKey_header, '<div class="form-group">' + '  <label class="col-sm-2 control-label" ng-class="{\'vo_reqfield\': showHtmlData.isRequired}" ng-bind="$$data.name"></label>' + "  <div class=\"col-sm-8\" ng-class=\"{'modal-open' : showHtmlData.isMultiComplex, 'hierarchy_main': showHtmlData.isComplex}\" ng-transclude></div>" + '  <div class="col-sm-2" ng-if="showHtmlData.isMultiComplex"><button class="btn btn-success" ng-click="addField($$data)"><i class="fa fa-plus"></i>{{\'BTN_ADD\' | translate}}</button></div>' + '  <div class="row" ng-repeat="tipMsg in showHtmlData.tipMsg"><div class="col-sm-8 col-sm-offset-2 text-warnings"><i class="icon fa fa-bell-o"></i>&nbsp;{{tipMsg}}</div></div>' + "</div>");
     }
     return {
       restrict: "E",
@@ -348,7 +349,7 @@ define(function() {
     }
     var templateKey_multiComplex = "voyageone.angular.directives.schemaMultiComplex.tpl.html";
     if (!$templateCache.get(templateKey_multiComplex)) {
-      $templateCache.put(templateKey_multiComplex, '<table class="table text-center">' + "<thead><tr>" + '<th ng-repeat="field in vm.$$data.fields" ng-class="{\'vo_reqfield\': showHtmlData.isRequired}" class="text-center" style="min-width: 180px;">{{field.name}}</th>' + '<th ng-if="!showHtmlData.notShowEdit" style="min-width: 60px;" class="text-center" translate="TXT_COM_EDIT"></th>' + "</tr></thead>" + '<tbody><tr ng-repeat="value in vm.$$data.complexValues">' + '<td class="text-left" ng-repeat="field in value.fieldMap"><div class="tableLayer"><p ng-if="field.type != \'COMPLEX\'">&nbsp;</p><p><schema-item data="field" hastip="true" complex="true"></schema-item></p></div></td>' + '<td ng-if="!showHtmlData.notShowEdit" style="min-width: 60px;"><button title="{\'BTN_COM_DELETE\' | translate}" class="btn btn-danger btn-xs" ng-click="delField($index)"><i class="fa  fa-trash-o"></i></button></td>' + "</tr></tbody>" + "</table>");
+      $templateCache.put(templateKey_multiComplex, '<table class="table text-center">' + "<thead><tr>" + '<th ng-repeat="field in vm.$$data.fields" ng-class="{\'vo_reqfield\': showHtmlData.isRequired}" class="text-center" style="min-width: 180px;">{{field.name}}</th>' + '<th ng-if="!showHtmlData.notShowEdit" style="min-width: 60px;" class="text-center" translate="TXT_EDIT"></th>' + "</tr></thead>" + '<tbody><tr ng-repeat="value in vm.$$data.complexValues">' + '<td class="text-left" ng-repeat="field in value.fieldMap"><div class="tableLayer"><p ng-if="field.type != \'COMPLEX\'">&nbsp;</p><p><schema-item data="field" hastip="true" complex="true"></schema-item></p></div></td>' + '<td ng-if="!showHtmlData.notShowEdit" style="min-width: 60px;"><button title="{\'BTN_DELETE\' | translate}" class="btn btn-danger btn-xs" ng-click="delField($index)"><i class="fa  fa-trash-o"></i></button></td>' + "</tr></tbody>" + "</table>");
     }
     var templateKey_complex = "voyageone.angular.directives.schemaComplex.tpl.html";
     if (!$templateCache.get(templateKey_complex)) {
@@ -734,10 +735,10 @@ define(function() {
     var templateKey = "voyageone.angular.directives.pagination.tpl.html";
     var templateKeyNoData = "voyageone.angular.directives.paginationNoData.tpl.html";
     if (!$templateCache.get(templateKey)) {
-      $templateCache.put(templateKey, '<div class="col-sm-2">\n' + '    <div class="page-main form-inline">{{\'TXT_COM_SHOWING_NO\' | translate}}&nbsp;<input class="text-center" type="text" ng-model="curr.pageNo"/>&nbsp;/&nbsp;{{totalPages}}&nbsp;{{\'TXT_COM_PAGE\' | translate}}&nbsp;' + '        <button class="btn btn-xs btn-default" type="button" ng-click="goPage(curr.pageNo)" translate="BTN_GO"></button>\n' + "    </div>\n" + "</div>\n" + '<div class="col-sm-7 text-center">\n' + "    <small class=\"text-muted inline m-t-sm m-b-sm\">{{'TXT_COM_SHOWING' | translate}}&nbsp;{{curr.start}}-{{curr.end}}&nbsp;{{'TXT_COM_OF' | translate}}&nbsp;{{totalItems}}&nbsp{{'TXT_COM_ITEMS' | translate}}</small>\n" + "</div>\n" + '<div class="col-sm-3 text-right text-center-xs"><div>' + '    <ul class="pagination-sm m-t-none m-b pagination ng-isolate-scope ng-valid ng-dirty ng-valid-parse">\n' + '        <li ng-class="{disabled: curr.isFirst ||ngDisabled}" class="pagination-first"><a href ng-click="goPage(1)" ng-disabled="curr.isFirst">&laquo;</a></li>\n' + '        <li ng-class="{disabled: curr.isFirst ||ngDisabled}" class="pagination-prev"><a href ng-click="goPage(curr.pageNo - 1)" ng-disabled="curr.isFirst">&lsaquo;</a></li>\n' + '        <li ng-if="curr.isShowStart" class="disabled" disabled><a href>...</a></li>\n' + '        <li ng-repeat="page in curr.pages track by $index" ng-class="{active: isCurr(page)}" class="pagination-page"><a href ng-click="goPage(page)">{{page}}</a></li>\n' + '        <li ng-if="curr.isShowEnd" class="disabled" disabled><a href>...</a></li>\n' + '        <li ng-class="{disabled: curr.isLast ||ngDisabled}" class="pagination-next"><a href ng-click="goPage(curr.pageNo + 1)" ng-disabled="curr.isLast">&rsaquo;</a></li>\n' + '        <li ng-class="{disabled: curr.isLast ||ngDisabled}" class="pagination-last"><a href ng-click="goPage(totalPages)" ng-disabled="curr.isLast">&raquo;</a></li>\n' + "    </ul>\n" + "</div>");
+      $templateCache.put(templateKey, '<div class="col-sm-2">\n' + '    <div class="page-main form-inline">{{\'TXT_SHOWING_NO\' | translate}}&nbsp;<input class="text-center" type="text" ng-model="curr.pageNo"/>&nbsp;/&nbsp;{{totalPages}}&nbsp;{{\'TXT_PAGE\' | translate}}&nbsp;' + '        <button class="btn btn-xs btn-default" type="button" ng-click="goPage(curr.pageNo)" translate="BTN_GO"></button>\n' + "    </div>\n" + "</div>\n" + '<div class="col-sm-7 text-center">\n' + "    <small class=\"text-muted inline m-t-sm m-b-sm\">{{'TXT_SHOWING' | translate}}&nbsp;{{curr.start}}-{{curr.end}}&nbsp;{{'TXT_OF' | translate}}&nbsp;{{totalItems}}&nbsp{{'TXT_ITEMS' | translate}}</small>\n" + "</div>\n" + '<div class="col-sm-3 text-right text-center-xs"><div>' + '    <ul class="pagination-sm m-t-none m-b pagination ng-isolate-scope ng-valid ng-dirty ng-valid-parse">\n' + '        <li ng-class="{disabled: curr.isFirst ||ngDisabled}" class="pagination-first"><a href ng-click="goPage(1)" ng-disabled="curr.isFirst">&laquo;</a></li>\n' + '        <li ng-class="{disabled: curr.isFirst ||ngDisabled}" class="pagination-prev"><a href ng-click="goPage(curr.pageNo - 1)" ng-disabled="curr.isFirst">&lsaquo;</a></li>\n' + '        <li ng-if="curr.isShowStart" class="disabled" disabled><a href>...</a></li>\n' + '        <li ng-repeat="page in curr.pages track by $index" ng-class="{active: isCurr(page)}" class="pagination-page"><a href ng-click="goPage(page)">{{page}}</a></li>\n' + '        <li ng-if="curr.isShowEnd" class="disabled" disabled><a href>...</a></li>\n' + '        <li ng-class="{disabled: curr.isLast ||ngDisabled}" class="pagination-next"><a href ng-click="goPage(curr.pageNo + 1)" ng-disabled="curr.isLast">&rsaquo;</a></li>\n' + '        <li ng-class="{disabled: curr.isLast ||ngDisabled}" class="pagination-last"><a href ng-click="goPage(totalPages)" ng-disabled="curr.isLast">&raquo;</a></li>\n' + "    </ul>\n" + "</div>");
     }
     if (!$templateCache.get(templateKeyNoData)) {
-      $templateCache.put(templateKeyNoData, '<div class="col-sm-7 col-sm-offset-2 text-center">\n' + "    <small class=\"text-muted inline m-t-sm m-b-sm\">{{'TXT_COM_SHOWING' | translate}}&nbsp;0-0&nbsp;{{'TXT_COM_OF' | translate}}&nbsp;0&nbsp{{'TXT_COM_ITEMS' | translate}}</small>\n" + "</div>");
+      $templateCache.put(templateKeyNoData, '<div class="col-sm-7 col-sm-offset-2 text-center">\n' + "    <small class=\"text-muted inline m-t-sm m-b-sm\">{{'TXT_SHOWING' | translate}}&nbsp;0-0&nbsp;{{'TXT_OF' | translate}}&nbsp;0&nbsp{{'TXT_ITEMS' | translate}}</small>\n" + "</div>");
     }
     var defConfig = {
       curr: 1,
@@ -911,9 +912,60 @@ define(function() {
       }
     };
   });
+  angular.module("voyageone.angular.vresources", []).provider("$vresources", [ "$provide", function($provide) {
+    function getActionUrl(root, action) {
+      return root + (root.lastIndexOf("/") === root.length - 1 ? "" : "/") + action;
+    }
+    function closureDataService(name, actions, ajaxService) {
+      function DataResource() {
+        if (!actions) {
+          return;
+        }
+        if (typeof actions !== "object") {
+          console.log("Failed to new DataResource: [" + actions + "] is not a object");
+          return;
+        }
+        if (!actions.root) {
+          console.log("Failed to new DataResource: no root prop" + (JSON && JSON.stringify ? ": " + JSON.stringify(actions) : ""));
+          return;
+        }
+        for (var name in actions) {
+          if (name === "root") continue;
+          if (actions.hasOwnProperty(name)) {
+            this[name] = function(actionUrl) {
+              return function(data) {
+                return ajaxService.post(actionUrl, data);
+              };
+            }(getActionUrl(actions.root, actions[name]));
+          }
+        }
+      }
+      $provide.service(name, DataResource);
+    }
+    this.$get = [ "ajaxService", function(ajaxService) {
+      return {
+        register: function(name, actions) {
+          if (!actions) return;
+          if (typeof actions !== "object") return;
+          if (actions.root) {
+            closureDataService(name, actions, ajaxService);
+            return;
+          }
+          for (var childName in actions) {
+            if (actions.hasOwnProperty(childName)) {
+              this.register(childName, actions[childName]);
+            }
+          }
+        }
+      };
+    } ];
+  } ]).run([ "$vresources", "$actions", function($vresources, $actions) {
+    $vresources.register(null, $actions);
+  } ]);
   angular.module("voyageone.angular.factories.dialogs", []).factory("$dialogs", [ "$modal", "$filter", "$templateCache", function($modal, $filter, $templateCache) {
     var templateName = "voyageone.angular.factories.dialogs.tpl.html";
-    $templateCache.put(templateName, '<div class="vo_modal"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="close()"><span aria-hidden="true"><i ng-click="close()" class="fa fa-close"></i></span></button><h4 class="modal-title" ng-bind-html="title"></h4></div><div class="modal-body wrapper-lg"><div class="row"><h5 class="text-center text-vo"><i class="fa fa-warning"></i><span ng-bind-html="content"></span></h5></div></div><div class="modal-footer"><button class="btn btn-default btn-sm" ng-if="!isAlert" ng-click="close()" translate="BTN_COM_CANCEL"></button><button class="btn btn-vo btn-sm" ng-click="ok()" translate="BTN_COM_OK"></button></div></div>');
+    var template = '<div class="vo_modal">' + '<div class="modal-header">' + '<button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="close()">' + '<span aria-hidden="true"><i ng-click="close()" class="fa fa-close"></i></span>' + "</button>" + '<h4 class="modal-title" ng-bind-html="title"></h4>' + "</div>" + '<div class="modal-body wrapper-lg">' + '<div class="row">' + '<h5 class="text-center text-hs"><p class="text-center" ng-bind-html="content"></p></h5>' + "</div>" + "</div>" + '<div class="modal-footer">' + '<button class="btn btn-default btn-sm" ng-if="!isAlert" ng-click="close()" translate="BTN_CANCEL"></button>' + '<button class="btn btn-vo btn-sm" ng-click="ok()" translate="BTN_OK"></button>' + "</div>" + "</div>";
+    $templateCache.put(templateName, template);
     function tran(translationId, values) {
       return $filter("translate")(translationId, values);
     }
@@ -944,7 +996,7 @@ define(function() {
   } ]).factory("alert", [ "$dialogs", function($dialogs) {
     return function(content, title) {
       return $dialogs({
-        title: title || "TXT_COM_ALERT",
+        title: title || "TXT_ALERT",
         content: content,
         isAlert: true
       });
@@ -952,7 +1004,7 @@ define(function() {
   } ]).factory("confirm", [ "$dialogs", function vConfirm($dialogs) {
     return function(content, title) {
       return $dialogs({
-        title: title || "TXT_COM_CONFIRM",
+        title: title || "TXT_CONFIRM",
         content: content,
         isAlert: false
       });
@@ -1037,6 +1089,52 @@ define(function() {
       });
     };
     return notify;
+  } ]);
+  angular.module("voyageone.angular.factories.pppAutoImpl", []).factory("pppAutoImpl", [ "$q", "$modal", function($q, $modal) {
+    return function(declares, viewBaseUrl, jsBaseUrl) {
+      if (!declares.$$$ || !declares.$$$.impl) declares.$$$ = {
+        impl: declarePopupMethods(declares, viewBaseUrl, jsBaseUrl, "")
+      };
+      return declares.$$$.impl;
+    };
+    function declarePopupMethods(declares, viewBaseUrl, jsBaseUrl, popupBaseKey) {
+      var impl = {};
+      if (popupBaseKey) popupBaseKey += "/";
+      _.each(declares, function(declare, parentDir) {
+        if (!declare.popupKey) {
+          if (_.isObject(declare) || _.isArray(declare)) _.extend(impl, declarePopupMethods(declare, viewBaseUrl, jsBaseUrl, popupBaseKey + parentDir, $q, $modal));
+          return;
+        }
+        var options = _.clone(declare.options) || {};
+        var pathBase = "/" + popupBaseKey;
+        if (_.isString(parentDir)) pathBase += parentDir + "/";
+        pathBase += declare.popupKey;
+        options.templateUrl = viewBaseUrl + pathBase + ".tpl.html";
+        options.controllerUrl = jsBaseUrl + pathBase + ".ctl";
+        if (declare.controllerAs || declare.controller) options.controller = getControllerName(declare.popupKey);
+        if (declare.controllerAs) options.controller += " as " + (_.isString(declare.controllerAs) ? declare.controllerAs : "ctrl");
+        impl[declare.popupKey] = function(context) {
+          if (context) options.resolve = {
+            context: function() {
+              return context;
+            }
+          };
+          var defer = $q.defer();
+          require([ options.controllerUrl ], function() {
+            defer.resolve($modal.open(options).result);
+          });
+          return defer.promise;
+        };
+      });
+      return impl;
+    }
+    function getControllerName(key) {
+      return key.replace(/\.(\w)/g, function(m, m1) {
+        return m1.toUpperCase();
+      }).replace(/^(\w)/, function(m, m1) {
+        return m1.toLowerCase();
+      }) + "PopupController";
+    }
   } ]);
   angular.module("voyageone.angular.factories.schema", []).factory("schemaHeaderFactory", function() {
     return function(config) {
@@ -1214,56 +1312,6 @@ define(function() {
       }
     };
   });
-  angular.module("voyageone.angular.vresources", []).provider("$vresources", [ "$provide", function($provide) {
-    function getActionUrl(root, action) {
-      return root + (root.lastIndexOf("/") === root.length - 1 ? "" : "/") + action;
-    }
-    function closureDataService(name, actions, ajaxService) {
-      function DataResource() {
-        if (!actions) {
-          return;
-        }
-        if (typeof actions !== "object") {
-          console.log("Failed to new DataResource: [" + actions + "] is not a object");
-          return;
-        }
-        if (!actions.root) {
-          console.log("Failed to new DataResource: no root prop" + (JSON && JSON.stringify ? ": " + JSON.stringify(actions) : ""));
-          return;
-        }
-        for (var name in actions) {
-          if (name === "root") continue;
-          if (actions.hasOwnProperty(name)) {
-            this[name] = function(actionUrl) {
-              return function(data) {
-                return ajaxService.post(actionUrl, data);
-              };
-            }(getActionUrl(actions.root, actions[name]));
-          }
-        }
-      }
-      $provide.service(name, DataResource);
-    }
-    this.$get = [ "ajaxService", function(ajaxService) {
-      return {
-        register: function(name, actions) {
-          if (!actions) return;
-          if (typeof actions !== "object") return;
-          if (actions.root) {
-            closureDataService(name, actions, ajaxService);
-            return;
-          }
-          for (var childName in actions) {
-            if (actions.hasOwnProperty(childName)) {
-              this.register(childName, actions[childName]);
-            }
-          }
-        }
-      };
-    } ];
-  } ]).run([ "$vresources", "$actions", function($vresources, $actions) {
-    $vresources.register(null, $actions);
-  } ]);
   angular.module("voyageone.angular.services.ajax", []).service("$ajax", $Ajax).service("ajaxService", AjaxService);
   function $Ajax($http, blockUI, $q) {
     this.$http = $http;
@@ -1421,10 +1469,10 @@ define(function() {
       return currentLang.substr(0, 2);
     }
   };
-  angular.module("voyageone.angular.directives", [ "voyageone.angular.directives.dateModelFormat", "voyageone.angular.directives.enterClick", "voyageone.angular.directives.fileStyle", "voyageone.angular.directives.ifNoRows", "voyageone.angular.directives.uiNav", "voyageone.angular.directives.schema", "voyageone.angular.directives.voption", "voyageone.angular.directives.vpagination", "voyageone.angular.directives.validator" ]);
   angular.module("voyageone.angular.controllers", [ "voyageone.angular.controllers.datePicker", "voyageone.angular.controllers.selectRows", "voyageone.angular.controllers.showPopover" ]);
-  angular.module("voyageone.angular.factories", [ "voyageone.angular.factories.dialogs", "voyageone.angular.factories.interceptor", "voyageone.angular.factories.notify", "voyageone.angular.factories.schema", "voyageone.angular.factories.selectRows", "voyageone.angular.factories.vpagination" ]);
+  angular.module("voyageone.angular.directives", [ "voyageone.angular.directives.dateModelFormat", "voyageone.angular.directives.enterClick", "voyageone.angular.directives.fileStyle", "voyageone.angular.directives.ifNoRows", "voyageone.angular.directives.uiNav", "voyageone.angular.directives.schema", "voyageone.angular.directives.voption", "voyageone.angular.directives.vpagination", "voyageone.angular.directives.validator" ]);
+  angular.module("voyageone.angular.factories", [ "voyageone.angular.factories.dialogs", "voyageone.angular.factories.interceptor", "voyageone.angular.factories.notify", "voyageone.angular.factories.pppAutoImpl", "voyageone.angular.factories.schema", "voyageone.angular.factories.selectRows", "voyageone.angular.factories.vpagination" ]);
   angular.module("voyageone.angular.services", [ "voyageone.angular.services.ajax", "voyageone.angular.services.cookie", "voyageone.angular.services.message", "voyageone.angular.services.permission", "voyageone.angular.services.translate" ]);
-  return angular.module("voyageone.angular", [ "voyageone.angular.directives", "voyageone.angular.controllers", "voyageone.angular.factories", "voyageone.angular.services" ]);
+  return angular.module("voyageone.angular", [ "voyageone.angular.controllers", "voyageone.angular.directives", "voyageone.angular.factories", "voyageone.angular.services" ]);
 });
 //# sourceMappingURL=voyageone.angular.com.js.map
