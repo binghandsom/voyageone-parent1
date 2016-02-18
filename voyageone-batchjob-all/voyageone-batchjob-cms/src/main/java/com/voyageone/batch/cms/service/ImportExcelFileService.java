@@ -734,7 +734,7 @@ public class ImportExcelFileService extends BaseTaskService {
     private JmBtImagesModel getImageModelByProductRow(Row row) {
         JmBtImagesModel imagesModel = new JmBtImagesModel();
         imagesModel.setChannelId(ExcelUtils.getString(row, PruductSheetFormat.channel_id_index));
-        imagesModel.setImageKey(ExcelUtils.getString(row, PruductSheetFormat.product_code_index));
+        imagesModel.setImageKey(ExcelUtils.getString(row, PruductSheetFormat.product_code_index, "#"));
 
         imagesModel.setSynFlg(0);
         imagesModel.setCreater(getTaskName());
@@ -750,7 +750,7 @@ public class ImportExcelFileService extends BaseTaskService {
         JmBtProductImportModel productModel = new JmBtProductImportModel();
         try {
             productModel.setChannelId(ExcelUtils.getString(row, PruductSheetFormat.channel_id_index));
-            productModel.setProductCode(ExcelUtils.getString(row, PruductSheetFormat.product_code_index));
+            productModel.setProductCode(ExcelUtils.getString(row, PruductSheetFormat.product_code_index, "#"));
             productModel.setDealId(ExcelUtils.getString(row, PruductSheetFormat.deal_id_index));
 
             String productDes = ExcelUtils.getString(row, PruductSheetFormat.product_des_index);
@@ -797,10 +797,10 @@ public class ImportExcelFileService extends BaseTaskService {
         try {
 
             skuModel.setChannelId(ExcelUtils.getString(row, SkuSheetFormat.channel_id_index));
-            skuModel.setProductCode(ExcelUtils.getString(row, SkuSheetFormat.product_code_index));
+            skuModel.setProductCode(ExcelUtils.getString(row, SkuSheetFormat.product_code_index, "#"));
             skuModel.setDealId(ExcelUtils.getString(row, SkuSheetFormat.deal_id_index));
-            skuModel.setSku(ExcelUtils.getString(row, SkuSheetFormat.sku_index));
-            skuModel.setUpcCode(ExcelUtils.getString(row, SkuSheetFormat.upc_code_index));
+            skuModel.setSku(ExcelUtils.getString(row, SkuSheetFormat.sku_index, "#"));
+            skuModel.setUpcCode(ExcelUtils.getString(row, SkuSheetFormat.upc_code_index, "#"));
             skuModel.setAbroadPrice(CommonUtil.getRoundUp2Digits(Double.valueOf(ExcelUtils.getString(row, SkuSheetFormat.abroad_price_index))));
             skuModel.setDealPrice(CommonUtil.getRoundUp2Digits(ExcelUtils.getNum(row, SkuSheetFormat.deal_price_index)));
             skuModel.setMarketPrice(CommonUtil.getRoundUp2Digits(ExcelUtils.getNum(row, SkuSheetFormat.market_price_index)));
@@ -854,7 +854,7 @@ public class ImportExcelFileService extends BaseTaskService {
         JmBtDealImportModel dealModel = new JmBtDealImportModel();
         try {
             dealModel.setChannelId(ExcelUtils.getString(row, DealSheetFormat.channel_id_index));
-            dealModel.setProductCode(ExcelUtils.getString(row, DealSheetFormat.product_code_index));
+            dealModel.setProductCode(ExcelUtils.getString(row, DealSheetFormat.product_code_index, "#"));
             dealModel.setDealId(ExcelUtils.getString(row, DealSheetFormat.deal_id_index));
             dealModel.setStartTime(ExcelUtils.getString(row, DealSheetFormat.start_time_index));
             dealModel.setEndTime(ExcelUtils.getString(row, DealSheetFormat.end_time_index));
