@@ -435,20 +435,24 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 ////            group.setSalePriceStart(minSale);
 ////            group.setSalePriceEnd(maxSale);
 
-            // 获取当前channel, 有多少个platform, 最后增加一个id为0的platform
-            List<ShopBean> shopList = ShopConfigs.getChannelShopList(feed.getChannelId());
+            // 获取当前channel, 有多少个platform
+            List<TypeChannelBean> typeChannelBeanList = TypeChannel.getTypeList_skuCarts(feed.getChannelId(), "D"); // 取得展示用数据
+            if (typeChannelBeanList == null) {
+                return null;
+            }
+
             List<CmsBtProductModel_Group_Platform> platformList = new ArrayList<>();
             // 循环一下
-            for (ShopBean shop : shopList) {
+            for (TypeChannelBean shop : typeChannelBeanList) {
                 // 创建一个platform
                 CmsBtProductModel_Group_Platform platform = new CmsBtProductModel_Group_Platform();
 
                 // cart id
-                platform.setCartId(Integer.parseInt(shop.getCart_id()));
+                platform.setCartId(Integer.parseInt(shop.getValue()));
 
                 // 获取group id
                 long groupId;
-                groupId = getGroupIdByFeedModel(feed.getChannelId(), feed.getModel(), shop.getCart_id());
+                groupId = getGroupIdByFeedModel(feed.getChannelId(), feed.getModel(), shop.getValue());
 
                 // group id
                 // 看看同一个model里是否已经有数据在cms里存在的
@@ -532,6 +536,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             mainFeedCnAtts.setAttribute("modelCode", feed.getModel());
             mainFeedCnAtts.setAttribute("categoryCode", feed.getCategory());
             product.getFeed().setCnAtts(mainFeedCnAtts);
+
+            product.getFeed().setCustomIds(mainFeedOrgAttsKeyList);
 
             return product;
         }

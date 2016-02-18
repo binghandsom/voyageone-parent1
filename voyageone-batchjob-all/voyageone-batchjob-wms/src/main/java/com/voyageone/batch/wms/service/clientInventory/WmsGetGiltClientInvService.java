@@ -251,7 +251,8 @@ public class WmsGetGiltClientInvService extends WmsGetClientInvBaseService {
                         if(losePageCount == ALLOWLOSEPAGECOUNT){
                             String msg = channel.getFull_name()+"已经连续【" + ALLOWLOSEPAGECOUNT + "】次请求Sales库存数据失败！" + e;
                             logger.info("----------" + msg + "----------");
-                            throw new RuntimeException(msg);
+//                            throw new RuntimeException(msg);
+                            break;
                         }
                         losePageCount ++;
                         continue;
