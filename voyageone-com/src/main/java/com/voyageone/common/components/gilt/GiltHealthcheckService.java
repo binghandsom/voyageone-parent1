@@ -18,23 +18,26 @@ public class GiltHealthcheckService extends GiltBase {
 
     private static final String URI = "healthchecks";
 
+
     /**
-     *  Api健康检查 ping
-     *  If the status returned is "pong" then the service is up and running.
-     * @param shopBean shopBean
-     * @return GiltHealthcheck
-     * @throws Exception
+     * @api {get} /healthchecks/ping Api健康检测Ping
+     * @apiVersion 0.0.1
+     * @apiGroup public1
+     * @apiPermission 认证商家
+     * @apiDescription Api健康检查 如果ping通知返回pong的状态，则服务启动并正常运行
+     * @apiSuccess  {String} status 服务运行正常返回 "pong".
      */
     public GiltHealthcheck ping() throws Exception {
         return JacksonUtil.json2Bean(reqGiltApi(URI +"/ping",new HashMap<String,String>()),GiltHealthcheck.class);
     }
 
     /**
-     *  Api健康检查 status
-     *  If the status returned is "ok" then the service is healthy.
-     * @param shopBean shopBean
-     * @return GiltHealthcheck
-     * @throws Exception
+     * @api {get} /healthchecks/status Api健康检测Status
+     * @apiVersion 0.0.1
+     * @apiGroup public
+     * @apiPermission 认证商家
+     * @apiDescription Api健康检查 如果返回ok的状态，则服务正常运行
+     * @apiSuccess  {String} status 服务运行正常返回 "ok".
      */
     public GiltHealthcheck status() throws Exception {
         return JacksonUtil.json2Bean(reqGiltApi(URI +"/status",new HashMap<String,String>()),GiltHealthcheck.class);

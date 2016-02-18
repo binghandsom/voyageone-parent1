@@ -1,4 +1,4 @@
-package com.voyageone.oms.formbean;
+package com.voyageone.batch.cms.formbean;
 
 import java.util.List;
 
@@ -117,9 +117,14 @@ public class OutFormOrderdetailOrders {
 	private String discount;
 	
 	/**
-	 * revised discount
+	 * revised discount（全体）
 	 */
 	private String revisedDiscount;
+
+	/**
+	 * revised discount（订单折扣）
+	 */
+	private String revisedOrderDiscount;
 	
 	/**
 	 * coupon
@@ -321,16 +326,6 @@ public class OutFormOrderdetailOrders {
 	 * 订单类型
 	 */
 	private String orderKind;
-
-	/**
-	 * 汇率
-	 */
-	private String rate;
-
-	/**
-	 * 币种
-	 */
-	private String currency;
 	
 	/**
 	 * 源订单号（连番）
@@ -503,54 +498,45 @@ public class OutFormOrderdetailOrders {
 	private String platformId;
 
 	/**
-	 *		第三方订单推送标志(send_flg)
-	 */
-	private boolean clientOrderSendFlag;
-
-	/**
-	 *		第三方订单推送标志 预处理(ext_flg4)
-	 */
-	private boolean preClientOrderSendFlag;
-
-	/**
-	 *		第三方订单取消标志(ext_flg1)
+	 *		第三方订单取消标志
 	 */
 	private boolean cancelClientOrderFlag;
 
 	/**
-	 *		原始第三方订单取消标志(ext_flg1)
+	 *		第三方订单取消标志发送标志
+	 */
+	private boolean cancelClientOrderSendFlag;
+
+	/**
+	 *		原始第三方订单取消标志
 	 */
 	private boolean origCancelClientOrderFlag;
 
 	/**
-	 *		第三方取消订单标志(ext_flg3)
+	 *		第三方订单推送标志
+	 */
+	private boolean clientOrderSendFlag;
+
+	/**
+	 *		第三方取消订单标志
 	 */
 	private boolean thirdPartyCancelOrderFlag;
 
 	/**
-	 *		客户取消标志(customer_refused)
+	 *		淘宝物流单号（菜鸟物流单号）
 	 */
-	private boolean customerRefused;
+	private String taobaoLogisticsId;
 
 	/**
-	 *		原始客户取消标志(customer_refused)
+	 *		扩展文本
 	 */
-	private boolean origCustomerRefused;
-
-	/**
-	 *		品牌方订单号
-	 */
-	private String sellerOrderId;
+	private String extTxt1;
 	
 	/**
 	 * 订单明细
 	 */
 	private List<OutFormOrderDetailOrderDetail> orderDetailsList;
-	
-	/**
-	 * 订单TrackingList
-	 */
-	private List<OutFormOrderdetailShipping> orderShippingList;
+
 	
 	/**
 	 * @return the orderNumber
@@ -1210,22 +1196,6 @@ public class OutFormOrderdetailOrders {
 		this.orderKind = orderKind;
 	}
 
-	public String getRate() {
-		return rate;
-	}
-
-	public void setRate(String rate) {
-		this.rate = rate;
-	}
-
-	public String getCurrency() {
-		return currency;
-	}
-
-	public void setCurrency(String currency) {
-		this.currency = currency;
-	}
-
 	public String getSubSourceOrderId() {
 		return subSourceOrderId;
 	}
@@ -1626,20 +1596,20 @@ public class OutFormOrderdetailOrders {
 		this.origCancelClientOrderFlag = origCancelClientOrderFlag;
 	}
 
+	public boolean isCancelClientOrderSendFlag() {
+		return cancelClientOrderSendFlag;
+	}
+
+	public void setCancelClientOrderSendFlag(boolean cancelClientOrderSendFlag) {
+		this.cancelClientOrderSendFlag = cancelClientOrderSendFlag;
+	}
+
 	public boolean isClientOrderSendFlag() {
 		return clientOrderSendFlag;
 	}
 
 	public void setClientOrderSendFlag(boolean clientOrderSendFlag) {
 		this.clientOrderSendFlag = clientOrderSendFlag;
-	}
-
-	public boolean isPreClientOrderSendFlag() {
-		return preClientOrderSendFlag;
-	}
-
-	public void setPreClientOrderSendFlag(boolean preClientOrderSendFlag) {
-		this.preClientOrderSendFlag = preClientOrderSendFlag;
 	}
 
 	public boolean isThirdPartyCancelOrderFlag() {
@@ -1650,28 +1620,28 @@ public class OutFormOrderdetailOrders {
 		this.thirdPartyCancelOrderFlag = thirdPartyCancelOrderFlag;
 	}
 
-	public boolean isCustomerRefused() {
-		return customerRefused;
+	public String getRevisedOrderDiscount() {
+		return revisedOrderDiscount;
 	}
 
-	public void setCustomerRefused(boolean customerRefused) {
-		this.customerRefused = customerRefused;
+	public void setRevisedOrderDiscount(String revisedOrderDiscount) {
+		this.revisedOrderDiscount = revisedOrderDiscount;
 	}
 
-	public boolean isOrigCustomerRefused() {
-		return origCustomerRefused;
+	public String getTaobaoLogisticsId() {
+		return taobaoLogisticsId;
 	}
 
-	public void setOrigCustomerRefused(boolean origCustomerRefused) {
-		this.origCustomerRefused = origCustomerRefused;
+	public void setTaobaoLogisticsId(String taobaoLogisticsId) {
+		this.taobaoLogisticsId = taobaoLogisticsId;
 	}
 
-	public String getSellerOrderId() {
-		return sellerOrderId;
+	public String getExtTxt1() {
+		return extTxt1;
 	}
 
-	public void setSellerOrderId(String sellerOrderId) {
-		this.sellerOrderId = sellerOrderId;
+	public void setExtTxt1(String extTxt1) {
+		this.extTxt1 = extTxt1;
 	}
 
 	public List<OutFormOrderDetailOrderDetail> getOrderDetailsList() {
@@ -1681,14 +1651,5 @@ public class OutFormOrderdetailOrders {
 	public void setOrderDetailsList(
 			List<OutFormOrderDetailOrderDetail> orderDetailsList) {
 		this.orderDetailsList = orderDetailsList;
-	}
-
-	public List<OutFormOrderdetailShipping> getOrderShippingList() {
-		return orderShippingList;
-	}
-
-	public void setOrderShippingList(
-			List<OutFormOrderdetailShipping> orderShippingList) {
-		this.orderShippingList = orderShippingList;
 	}
 }
