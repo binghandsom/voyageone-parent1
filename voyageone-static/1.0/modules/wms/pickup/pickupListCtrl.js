@@ -307,13 +307,13 @@ define([
             liViewCtl.backOrderConfirmed = false;
             //状态为11(open)的时候才展示【取消】、【超卖】按钮。并且可变更仓库
             if(reservationInfo.res_status_id == '11'){
-                liViewCtl.cancel = true;
+                //liViewCtl.cancel = true;
                 liViewCtl.backOrder = true;
             }
             //状态为98(backOrder)的时候才展示【打开】、【确认】按钮
             if(reservationInfo.res_status_id == '98'){
                 liViewCtl.open  = true;
-                liViewCtl.backOrderConfirmed  = true;
+                //liViewCtl.backOrderConfirmed  = true;
             }
 
         }
