@@ -1,6 +1,7 @@
 package com.voyageone.web2.cms.views.pop.prop_change;
 
 import com.voyageone.cms.service.model.CmsMtCommonPropDefModel;
+import com.voyageone.web2.cms.views.pop.bulkUpdate.CmsFieldEditService;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
@@ -21,7 +22,7 @@ import java.util.List;
 public class CmsPropChangeServiceTest {
 
     @Autowired
-    private CmsPropChangeService cmsPropChangeService;
+    private CmsFieldEditService cmsPropChangeService;
 
     @Test
     public void testGetPropOptions() throws Exception {

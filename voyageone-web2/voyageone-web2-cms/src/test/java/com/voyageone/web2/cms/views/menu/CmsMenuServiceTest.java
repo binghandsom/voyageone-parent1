@@ -1,6 +1,7 @@
 package com.voyageone.web2.cms.views.menu;
 
 import com.voyageone.cms.service.model.CmsMtCategoryTreeModel;
+import com.voyageone.web2.cms.views.home.CmsMenuService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -44,7 +44,7 @@ public class CmsPromotionDetailController extends CmsController {
         return success(result);
     }
 
-    @RequestMapping(PROMOTION.DETAIL.GETP_ROMOTION_CODE)
+    @RequestMapping(PROMOTION.DETAIL.GET_PROMOTION_CODE)
     public AjaxResponse getPromotionCode(@RequestBody Map params) {
 
         String channelId = getUser().getSelChannelId();
@@ -86,7 +86,7 @@ public class CmsPromotionDetailController extends CmsController {
         return success(reponse);
     }
 
-    @RequestMapping(PROMOTION.DETAIL.TEJIABAO_INIT)
+    @RequestMapping(PROMOTION.DETAIL.TE_JIA_BAO_INIT)
     public AjaxResponse tejiabaoInit(@RequestBody int promotionId) throws Exception {
 
         cmsPromotionDetailService.teJiaBaoInit(promotionId,getUser().getUserName());

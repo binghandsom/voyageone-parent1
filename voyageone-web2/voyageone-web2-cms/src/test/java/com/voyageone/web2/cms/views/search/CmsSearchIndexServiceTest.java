@@ -19,7 +19,7 @@ import java.util.Map;
 public class CmsSearchIndexServiceTest {
 
     @Autowired
-    private CmsSearchIndexService cmsSearchIndexService;
+    private CmsSearchAdvanceService cmsSearchIndexService;
 
     @Test
     public void testGetMasterData() throws Exception {

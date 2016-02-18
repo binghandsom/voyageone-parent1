@@ -3,14 +3,14 @@
 		<div class="panel-group">
 			<div class="panel panel-default">
 				<div class="panel-heading">
-					<h4 class="panel-title"><i class="fa fa-cogs"></i>&nbsp;编辑类目管理</h4>
+					<h4 class="panel-title"><i class="fa fa-cogs"></i>&nbsp;{{'TXT_MASTER_CATEGORY_ATTRIBUTE_EDIT' | translate}}</h4>
 				</div>
 				<div class="container-fluid m-l-md m-t-xs m-b-xs">
 					<div class="col-sm-12">
 					<div class="col-sm-5">
 						<div class="form-horizontal">
 							<div class="form-group">
-								<label class="col-sm-2 control-label">类目名称</label>
+								<label class="col-sm-2 control-label" translate="TXT_CATEGORY_NAME"></label>
 								<div class="col-sm-7">
 									<input class="form-control" ng-model ="vm.category.catFullPath"  disabled>
 								</div>
@@ -20,7 +20,7 @@
 					<div class="col-sm-5">
 						<div class="form-horizontal">
 							<div class="form-group">
-								<label class="col-sm-2 control-label">类目ID</label>
+								<label class="col-sm-2 control-label" TRANSLATE="TXT_CATEGORY_ID"></label>
 								<div class="col-sm-9">
 									<input class="form-control" ng-model ="vm.category.catId"  disabled>
 								</div>
@@ -30,8 +30,8 @@
 					<div class="col-sm-2" ng-controller="popupCtrl">
 						<div class="form-horizontal">
 							<div class="form-group">
-								<button class="btn btn-vo" ng-click="getCategoryDetail()"><i class="glyphicon glyphicon-refresh"></i>  刷新</button>
-								<button ng-click="openSystemCategory({'field':vm.category,'vm':vm,'addOrEditFlg':0})" class="btn btn-success"><i class="fa fa-plus"></i> 新增属性</button>
+								<button class="btn btn-vo" ng-click="getCategoryDetail()"><i class="glyphicon glyphicon-refresh"></i>&nbsp;{{'BTN_REFRESH' | translate}}</button>
+								<button ng-click="openSystemCategory({'field':vm.category,'vm':vm,'addOrEditFlg':0})" class="btn btn-success"><i class="fa fa-plus"></i>&nbsp;{{'BTN_NEW_ATTRIBUTE' | translate}}</button>
 							</div><!-- .form-group -->
 						</div>
 					</div>
@@ -57,7 +57,7 @@
 		</div>
 	</div><!-- .col-lg-12 -->
 	<div class="text-right" style="position: fixed;z-index:3000; bottom:0;right:10%">
-		<button class="btn btn-danger"ng-if="vm.isEditFlg == true" ng-click="update(vm.category)"><i class="fa fa-save"></i> 全部保存</button>
+		<button class="btn btn-danger"ng-if="vm.isEditFlg == true" ng-click="update(vm.category)"><i class="fa fa-save"></i>&nbsp;{{'BTN_SAVE_ALL' | translate}}</button>
 	</div>
 </div><!-- end .wrapper-md -->
 
@@ -69,9 +69,9 @@
 			<span class="badge" ng-class="{'badge-initialize':field.type == 'INPUT','badge-darkPurple': field.type == 'LABEL', 'badge-success':field.type == 'SINGLECHECK','badge-darkBlue': field.type == 'MULTICHECK' , 'badge-refresh':field.type == 'COMPLEX', 'badge-Purple':field.type == 'MULTICOMPLEX'}">{{field.type}}</span>
 		</div>
 		<div class="col-sm-1 text-left btn-group">
-			<button title="编辑" class="btn btn-success btn-xs" ng-click="openSystemCategory({'field':field,'vm':vm,'addOrEditFlg':1})" ><i class="fa fa-pencil"></i></button>
-			<button title="删除" ng-click="delNode(parent,field)" class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i></button>
-			<button title="新增属性" class="btn btn-success btn-xs" ng-if="field.type=='MULTICOMPLEX' || field.type=='COMPLEX'" ng-click="openSystemCategory({'field':field,'vm':vm,'addOrEditFlg':0})" ><i class="fa fa-plus"></i></button>
+			<button title="{{'BTN_EDIT' | translate}}" class="btn btn-success btn-xs" ng-click="openSystemCategory({'field':field,'vm':vm,'addOrEditFlg':1})" ><i class="fa fa-pencil"></i></button>
+			<button title="{{'BTN_DELETE' | translate}}" ng-click="delNode(parent,field)" class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i></button>
+			<button title="{{'BTN_CREATE' | translate}}" class="btn btn-success btn-xs" ng-if="field.type=='MULTICOMPLEX' || field.type=='COMPLEX'" ng-click="openSystemCategory({'field':field,'vm':vm,'addOrEditFlg':0})" ><i class="fa fa-plus"></i></button>
 		</div>
 		<!--<div class="col-sm-4 pull-center">
 			<span class="badge badge-empty">comment</span>
