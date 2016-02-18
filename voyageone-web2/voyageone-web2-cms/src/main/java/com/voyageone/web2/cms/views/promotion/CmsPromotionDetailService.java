@@ -46,9 +46,6 @@ public class CmsPromotionDetailService extends BaseAppService {
     private ProductTagClient productTagClient;
 
     @Autowired
-    private CmsPromotionCodeDao cmsPromotionCodeDao;
-
-    @Autowired
     private CmsPromotionIndexService cmsPromotionService;
 
     @Autowired
@@ -157,16 +154,20 @@ public class CmsPromotionDetailService extends BaseAppService {
      */
     public List<CmsBtPromotionCodeModel> getPromotionCode(Map<String, Object> param) {
 
-        List<CmsBtPromotionCodeModel> promotionCodes = cmsPromotionCodeDao.getPromotionCodeList(param);
-        promotionCodes.forEach(map -> {
-            //SDK取得Product 数据
-            CmsBtProductModel cmsBtProductModel = ProductGetClient.getProductById(param.get("channelId").toString(), map.getProductId());
-            if (cmsBtProductModel != null) {
-                map.setImage((String) cmsBtProductModel.getFields().getImages1().get(0).getAttribute("image1"));
-                map.setSkuCount(cmsBtProductModel.getSkus().size());
-                map.setPlatformStatus(cmsBtProductModel.getGroups().getPlatforms().get(0).getPlatformStatus());
-            }
-        });
+        PromotionCodeGetRequest request=new PromotionCodeGetRequest();
+        request.setParam(param);
+        List<CmsBtPromotionCodeModel> promotionCodes = voApiClient.execute(request).getCodeList();
+        if(!CollectionUtils.isEmpty(promotionCodes)){
+            promotionCodes.forEach(map -> {
+                //SDK取得Product 数据
+                CmsBtProductModel cmsBtProductModel = ProductGetClient.getProductById(param.get("channelId").toString(), map.getProductId());
+                if (cmsBtProductModel != null) {
+                    map.setImage((String) cmsBtProductModel.getFields().getImages1().get(0).getAttribute("image1"));
+                    map.setSkuCount(cmsBtProductModel.getSkus().size());
+                    map.setPlatformStatus(cmsBtProductModel.getGroups().getPlatforms().get(0).getPlatformStatus());
+                }
+            });
+        }
         return promotionCodes;
     }
 
@@ -206,7 +207,9 @@ public class CmsPromotionDetailService extends BaseAppService {
     }
 
     public int getPromotionCodeListCnt(Map<String, Object> params) {
-        return cmsPromotionCodeDao.getPromotionCodeListCnt(params);
+        PromotionCodeGetCountRequest request=new PromotionCodeGetCountRequest();
+        request.setParam(params);
+        return voApiClient.execute(request).getTotalCount();
     }
 
     public int getPromotionModelListCnt(Map<String, Object> params) {
@@ -291,7 +294,9 @@ public class CmsPromotionDetailService extends BaseAppService {
     public void teJiaBaoInit(Integer promotionId, String operator) {
         Map<String, Object> param = new HashMap<>();
         param.put("promotionId", promotionId);
-        List<CmsBtPromotionCodeModel> codeList = cmsPromotionCodeDao.getPromotionCodeList(param);
+        PromotionCodeGetRequest requestc=new PromotionCodeGetRequest();
+        requestc.setParam(param);
+        List<CmsBtPromotionCodeModel> codeList = voApiClient.execute(requestc).getCodeList();
         simpleTransaction.openTransaction();
         try {
             codeList.forEach(code -> {
@@ -339,13 +344,17 @@ public class CmsPromotionDetailService extends BaseAppService {
         simpleTransaction.openTransaction();
         try {
             for (CmsBtPromotionCodeModel item : promotionModes) {
-                cmsPromotionCodeDao.deletePromotionCode(item);
+                PromotionCodeDeleteRequest requestc=new PromotionCodeDeleteRequest();
+                requestc.setModel(item);
+                voApiClient.execute(requestc);
 
                 HashMap<String, Object> param = new HashMap<>();
                 param.put("promotionId", item.getPromotionId());
                 param.put("modelId", item.getModelId());
                 // 获取与删除的code在同一个group的code数  如果为0 就要删除group表的数据
-                if (cmsPromotionCodeDao.getPromotionCodeListCnt(param) == 0) {
+                PromotionCodeGetCountRequest rc=new PromotionCodeGetCountRequest();
+                rc.setParam(param);
+                if (voApiClient.execute(rc).getTotalCount() == 0) {
                     CmsBtPromotionGroupModel model = new CmsBtPromotionGroupModel();
                     model.setModelId(item.getModelId());
                     model.setPromotionId(item.getPromotionId());
