@@ -177,11 +177,11 @@ define([
                 };
                 /**
                  * 显示的过滤条件
-                 * @type {{hasRequired: boolean|null, matched: boolean|null}}
                  */
                 this.show = {
                     hasRequired: null,
-                    matched: null
+                    matched: null,
+                    keyWord: null
                 };
 
                 this.saveMapping = this.saveMapping.bind(this);
@@ -293,25 +293,31 @@ define([
                         }
                     }.bind(this));
                 },
+
                 /**
                  * 确定某字段是否要显示
-                 * @param {object} bean
-                 * @return {boolean}
                  */
                 shown: function (bean) {
+
                     var result = true;
+                    var keyWord = this.show.keyWord;
+
+                    if (keyWord && bean.field.name.indexOf(keyWord) < 0)
+                        return false;
+
                     if (this.show.hasRequired !== null) {
                         result = (this.show.hasRequired ? bean.hasRequired : bean.hasOptional);
-                    } else if (this.show.matched !== null) {
+                    }
+
+                    if (result && this.show.matched !== null) {
                         result = (this.show.matched ? bean.hasMatched : bean.hasUnMatched);
                     }
+
                     return result;
                 },
 
                 switchMatchOver: function () {
-
                     var ttt = this;
-
                     ttt.feedMappingService.directMatchOver({
                         feedCategoryPath: ttt.feedCategoryPath
                     }).then(function (res) {
