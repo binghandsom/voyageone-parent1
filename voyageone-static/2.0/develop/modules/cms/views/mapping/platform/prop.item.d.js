@@ -26,7 +26,7 @@ define([
         return {
             restrict: 'A',
             // 地址基于地址栏定位, 启动的画面变动, 这里也要跟随变动
-            templateUrl: 'views/setting/platform_mapping/prop.item.d.html',
+            templateUrl: 'views/mapping/platform/prop.item.d.html',
             scope: {
                 property: '=platformProp',
                 parent: '=platformPropParent',
@@ -60,7 +60,6 @@ define([
 
                 platformPropMappingService.isMatched(property).then(function(matched) {
                     property.matched = matched;
-                    console.log(matched);
                 });
 
                 platformPropMappingService.getMappingType(property).then(function(type) {

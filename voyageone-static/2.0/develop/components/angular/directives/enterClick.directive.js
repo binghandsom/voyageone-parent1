@@ -5,37 +5,36 @@
  */
 
 angular.module('voyageone.angular.directives.enterClick', [])
-  .directive('enterClick', function() {
-    return {
-      restrict: "A",
-      link: function(scope, elem, attr) {
-        $(elem).keyup(function(e) {
-          if (e.keyCode !== 13) return;
+    .directive('enterClick', function () {
+        return {
+            restrict: "A",
+            link: function (scope, elem, attr) {
 
-          var selectExp = attr.enterClick;
+                angular.element(elem).on('keyup', function (e) {
 
-          var targetElem, handler = function() {
-            targetElem.click();
-          };
+                    if (e.keyCode !== 13) return;
 
-          try {
-            targetElem = angular.element(selectExp);
-          } catch (e) {
-            targetElem = null
-          }
+                    var selectExp = attr.enterClick;
 
-          if (!targetElem || !targetElem.length) {
-            // 如果取不到元素，则尝试作为表达式执行
-            handler = function() {
-              scope.$eval(selectExp);
-            };
-          } else if (targetElem.attr("disabled")) {
-            // 如果元素存在，但是是禁用状态的，放弃执行
-            return;
-          }
+                    var targetElem, handler = function () {
+                        targetElem.triggerHandler('click');
+                    };
 
-          handler();
-        });
-      }
-    };
-  });
+                    targetElem = document.querySelector(selectExp);
+
+                    if (!targetElem) {
+                        // 如果取不到元素，则尝试作为表达式执行
+                        handler = function () {
+                            scope.$eval(selectExp);
+                        };
+                    } else {
+                        targetElem = angular.element(targetElem);
+                        // 如果元素存在，但是是禁用状态的，放弃执行
+                        if (targetElem.attr("disabled")) return;
+                    }
+
+                    handler();
+                });
+            }
+        };
+    });

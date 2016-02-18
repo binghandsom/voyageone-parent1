@@ -86,6 +86,7 @@
   "TXT_LEVEL": "层级",
   "TXT_MAPPING_CATEGORY_OR_FORWARD": "类目匹配 / 继承",
   "TXT_MAPPING_ATTRIBUTE_IS_FINISHED": "属性匹配完成?",
+  "TXT_MAPPING_ATTRIBUTE": "属性匹配",
   "TXT_MASTER_DATA_ATTRIBUTE_MAPPING": "主数据属性匹配",
   "TXT_SUB_LEVEL": "级",
   "TXT_NORMAL_ATTRIBUTE": "普通属性",
@@ -145,6 +146,7 @@
   "TXT_PRODUCT_DETAIL": "产品详情",
   "TXT_PRICE_HISTORY": "价格履历",
   "TXT_IS_FIX_TRANSLATED": "翻译完成?",
+  "TXT_PRODUCT_CODE": "产品Code",
 
 
 
@@ -232,7 +234,6 @@
   "TXT_PROMOTION_INFO": "活动情况",
   "TXT_SKU_LIST": "Sku 一览",
   "TXT_NUMBER_IID": "Number IId:",
-  "TXT_PRODUCT_CODE": "Product Code:",
   "TXT_PROPERTY_NAME": "属性名:",
   "TXT_PROPERTY_VALUE": "属性值:",
   "TXT_SELECT_STORE_CATEGORY": "选择店铺内类目",

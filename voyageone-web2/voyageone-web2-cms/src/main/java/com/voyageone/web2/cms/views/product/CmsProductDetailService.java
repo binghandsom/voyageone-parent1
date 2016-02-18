@@ -131,7 +131,7 @@ public class CmsProductDetailService {
         List<Field> masterSchemaFields = categorySchemaModel.getFields();
 
         // 向主数据schema 添加共通schema.
-        masterSchemaFields.addAll(comSchemaFields);
+        masterSchemaFields.addAll(0,comSchemaFields);
 
         //获取主数据的值.
         Map masterSchemaValue = productValueModel.getFields();

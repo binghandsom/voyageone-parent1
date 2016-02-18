@@ -20,6 +20,7 @@ define([
          * 创建平台到主数据类目匹配的画面 Controller 类
          * @param {PlatformMappingService} platformMappingService
          * @param {function} alert
+         * @param $translate
          * @constructor
          */
         function PlatformMappingController(platformMappingService, alert, $translate) {
@@ -69,32 +70,34 @@ define([
             },
 
             loadCategories: function () {
+                
+                var ttt = this;
 
-                if (!this.selected.cart)
+                if (!ttt.selected.cart)
                     return;
 
-                this.platformMappingService.getMainCategory({
+                ttt.platformMappingService.getMainCategory({
 
-                    cartId: this.selected.cart.toString()
+                    cartId: ttt.selected.cart.toString()
 
                 }).then(function (res) {
 
-                    this.mainCategories = res.data.categories;
+                    ttt.mainCategories = res.data.categories;
                     var mappings = res.data.mappings;
 
                     // 追加附加属性
-                    _.each(this.mainCategories, function (category) {
+                    _.each(ttt.mainCategories, function (category) {
 
                         var map = mappings[category.catId];
 
                         category.matched = !!(map && map.path);
 
-                        category.mapping = category.matched ? map.path : this.$translate.instant('TXT_INCOMPLETE');
+                        category.mapping = category.matched ? map.path : ttt.$translate.instant('TXT_INCOMPLETE');
 
                         category.propertyMatched = category.matched && !!map.matched;
                     });
 
-                }.bind(this));
+                });
             },
 
             popupMapping: function (category, popupNewCategory) {

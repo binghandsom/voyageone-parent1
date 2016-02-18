@@ -248,19 +248,19 @@
 			<tab ng-click="vm.currTab = 'group'">
 				<tab-heading><i class="glyphicons glyphicons-more-items text-default"></i>&nbsp;{{'TXT_GROUP_LIST' | translate}}</tab-heading>
 				<div class="table-responsive">
-					<table class="table table-hover vo_table vo_models dropdown_table_bk font-bold" style="background:#e67e22;color:#fff">
+					<table class="table table-hover-new vo_table vo_models dropdown_table_bk font-bold" style="background:#e67e22;color:#fff">
 						<thead>
 						<tr>
-							<td colspan="3" class="mfb-xxxs text-left"><label class="checkbox-inline c-checkbox" ng-controller="selectRowsCtrl">
+							<th colspan="3" class="mfb-xxxs text-left"><label class="checkbox-inline c-checkbox" ng-controller="selectRowsCtrl">
 								<input type="checkbox" ng-click="selectAll(vm.groupSelList)" ng-checked="isAllSelected(vm.groupSelList)" ng-disabled="!vm.groupList.length">
 								<span class="fa fa-check"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}&nbsp;</label>
 								<span class="m-l-xxl" translate="TXT_PRIMARY_PRODUCT"></span>
-							</td>
-							<td class="mfb-xxt text-center" translate="TXT_INVENTORY"></td>
-							<td class="mfb-xxt text-right" translate="TXT_SALE_PRICE"></td>
-							<td class="mfb-xxt text-left" translate="TXT_BRAND"></td>
-							<td class="mfb-xxxs text-left" translate="TXT_BASE_PROPERTY"></td>
-							<td class="mfb-xxt text-left" translate="TXT_TIME"></td>
+							</th>
+							<th class="mfb-xxt text-center" translate="TXT_INVENTORY"></th>
+							<th class="mfb-xxt text-center" translate="TXT_SALE_PRICE"></th>
+							<th class="mfb-xxt text-left" translate="TXT_BRAND"></th>
+							<th class="mfb-xxxs text-left" translate="TXT_BASE_PROPERTY"></th>
+							<th class="mfb-xxt text-left" translate="TXT_TIME"></th>
 						</tr>
 						</thead>
 					</table>
@@ -273,10 +273,10 @@
 										<input ng-model="vm.groupSelList.selFlag[groupInfo.prodId]" type="checkbox"  ng-controller="selectRowsCtrl" ng-click="selectOne(groupInfo.prodId, vm.groupSelList)">
 										<span class="fa fa-check"></span>
 									</label>
-									<span class="label m-r-lg m-l" ng-class="{'label-success-new': groupInfo.groups.platforms[0].platformStatus == 'Onsale','label-yellow-new': groupInfo.groups.platforms[0].platformStatus == 'Instock', 'label-danger-new': groupInfo.groups.platforms[0].platformStatus == 'Waitingpublish'}">
+									<span class="label m-r-sm m-l" ng-class="{'label-success-new': groupInfo.groups.platforms[0].platformStatus == 'Onsale','label-yellow-new': groupInfo.groups.platforms[0].platformStatus == 'Instock', 'label-danger-new': groupInfo.groups.platforms[0].platformStatus == 'Waitingpublish'}">
 										&nbsp;{{groupInfo.groups.platforms[0].platformStatus}}&nbsp;
 									</span>
-									<span class="m-r-lg" ng-if="groupInfo.groups.platforms[0].numIId">{{'TXT_NUMBER_IID_WITH_COLON' | translate}}&nbsp;
+									<span class="m-r-sm" ng-if="groupInfo.groups.platforms[0].numIId">{{'TXT_NUMBER_IID_WITH_COLON' | translate}}&nbsp;
 										<a ng-href="https://detail.tmall.com/item.htm?id={{groupInfo.groups.platforms[0].numIId}}" target="_blank" class="text-u-l" ng-bind="groupInfo.groups.platforms[0].numIId"></a>
 									</span>&nbsp;
 									<span>{{'TXT_GROUP_NAME_WITH_COLON' | translate}}&nbsp;
@@ -303,7 +303,7 @@
 								<td class="mfb-xxt text-center"><!--TODO 目前只能返回group的主product,所有拿不到group下面所有的product的库存--><!--popover-html="showInfo({{groupInfo.inventoryDetail}})"-->
 									<button ng-controller="showPopoverCtrl" popover-title="{{'TXT_SKU_INVENTORY' | translate}}" type="button" popover-placement="left" class="btn btn-default btn-xs">{{groupInfo.fields.inventory || 0}}</button>
 								</td>
-								<td class="mfb-xxt text-right">
+								<td class="mfb-xxt text-center">
 									<button ng-controller="showPopoverCtrl" popover-html="showInfo({{groupInfo.groups.priceDetail}})" popover-title="{{'TXT_PRICE' | translate}}" type="button" popover-placement="left" class="btn btn-default btn-xs">{{groupInfo.groups.priceSaleSt || 0 | number: 2}}&nbsp;~&nbsp;{{groupInfo.groups.priceSaleEd || 0 | number: 2}}</button>
 								</td>
 								<td class="mfb-xxt text-left">{{groupInfo.fields.brand}}</td>
@@ -335,7 +335,7 @@
 							</tbody>
 						</table>
 					</div><!-- .table-responsive -->
-					<div class="col-sm-12 m-t-xs">
+					<div class="col-sm-12">
 						<vpagination config="vm.groupPageOption"></vpagination>
 					</div>
 				</div>
@@ -354,8 +354,8 @@
 							</td>
 							<td class="mfb-xxt text-left" translate="TXT_BRAND"></td>
 							<td class="mfb-xxs text-center" translate="TXT_INVENTORY"></td>
-							<td class="mfb-xxt text-right" translate="TXT_SALE_PRICE"></td>
-							<td class="mfb-xxt text-left" translate="TXT_SIZE_TYPE"></td>
+							<td class="mfb-xxt text-center" translate="TXT_SALE_PRICE"></td>
+							<td class="mfb-xxt text-center" translate="TXT_SIZE_TYPE"></td>
 							<td class="mfb-xxs text-left" translate="TXT_BASE_PROPERTY"></td>
 							<td class="mfb-xxt text-center" translate="TXT_SKU_COUNT"></td>
 							<td class="mfb-xxt text-left" translate="TXT_TIME"></td>
@@ -390,14 +390,14 @@
 									</td>
 								</tr>
 								<tr ng-class="{'table_bg_green_mint': productInfo.groups.platforms[0].publishTime}">
-									<td class="mfb-xxt">
+									<td class="mfb-xxt text-left">
 										<img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{productInfo.fields.images1[0].image1}}" alt="{{productInfo.fields.code}}" class="img-circle pull-left m-r"/>
 									</td>
 									<td class="mfb-xxt text-left">{{productInfo.fields.brand}}</td>
 									<td class="mfb-xxs text-center">
 										<button ng-controller="showPopoverCtrl" popover-html="showInfo({{productInfo.inventoryDetail}})" popover-title="{{'TXT_SKU_INVENTORY' | translate}}" type="button" popover-placement="left" class="btn btn-default btn-xs">{{productInfo.fields.qty || 0}}</button>
 									</td>
-									<td class="mfb-xxt text-right">
+									<td class="mfb-xxt text-center">
 										<button ng-controller="showPopoverCtrl" popover-html="showInfo({{productInfo.groups.priceDetail}})" popover-title="{{'TXT_PRICE' | translate}}" type="button" popover-placement="left" class="btn btn-default btn-xs">{{productInfo.fields.priceSaleSt || 0 | number: 2}}&nbsp;~&nbsp;{{productInfo.fields.priceSaleEd || 0 | number: 2}}</button>
 									</td>
 									<td class="mfb-xxt text-center">{{productInfo.fields.sizeType}}</td>
@@ -432,7 +432,7 @@
 							</tbody>
 						</table>
 					</div>
-					<div class="col-sm-12 m-t-sm">
+					<div class="col-sm-12">
 						<vpagination config="vm.productPageOption"></vpagination>
 					</div>
 				</div><!-- .table-responsive -->
