@@ -1,5 +1,6 @@
 package com.voyageone.common.util;
 
+import org.apache.commons.io.IOUtils;
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
 
@@ -83,7 +84,7 @@ public final class ImgUtils {
 	/**
 	 * 图片路径判定 
 	 * 
-	 * @param request
+	 * @param path path
 	 * @return
 	 */
     public static boolean isLocalPath(String path) {
@@ -114,16 +115,40 @@ public final class ImgUtils {
 	}
 
 	/**
+	 * Decode string to image
+	 */
+	public static void decodeToImageFile(String imageString, File newFile) throws IOException {
+		if (newFile.exists()) {
+			newFile.delete();
+		}
+
+		BASE64Decoder decoder = new BASE64Decoder();
+		byte[] imageByte = decoder.decodeBuffer(imageString);
+
+		ByteArrayInputStream bis1 = new ByteArrayInputStream(imageByte);
+		FileOutputStream fos = new FileOutputStream(newFile);
+		int data;
+		while((data=bis1.read())!=-1) {
+			char ch = (char) data;
+			fos.write(ch);
+		}
+		fos.flush();
+		fos.close();
+	}
+
+	/**
 	 * Encode image to string
 	 * @param file file
 	 * @return encoded string
 	 */
 	public static String encodeToString(File file) throws IOException {
-		String fileName = file.getName();
-		String type = fileName.substring(fileName.lastIndexOf(".") + 1);
-		BufferedImage image = ImageIO.read(file);
+		InputStream inputStream = new FileInputStream(file);
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		IOUtils.copy(inputStream, bos);
+		String result = encodeToString(bos.toByteArray());
+		bos.close();
 
-		return encodeToString(image, type);
+		return result;
 	}
 
 	/**
@@ -134,10 +159,11 @@ public final class ImgUtils {
 	 * @throws IOException
      */
 	public static String encodeToString(InputStream inputStream, String fileName) throws IOException {
-		String type = fileName.substring(fileName.lastIndexOf(".") + 1);
-		BufferedImage image = ImageIO.read(inputStream);
-
-		return encodeToString(image, type);
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		IOUtils.copy(inputStream, bos);
+		String result = encodeToString(bos.toByteArray());
+		bos.close();
+		return result;
 	}
 
 	/**
@@ -153,10 +179,21 @@ public final class ImgUtils {
 		ImageIO.write(bufferedImage, type, bos);
 		byte[] imageBytes = bos.toByteArray();
 
-		BASE64Encoder encoder = new BASE64Encoder();
-		String imageString = encoder.encode(imageBytes);
+		String imageString = encodeToString(imageBytes);
 
 		bos.close();
+		return imageString;
+	}
+
+	/**
+	 * Encode image to string
+	 * @param imageBytes imageBytes
+	 * @return encoded string
+	 * @throws IOException
+	 */
+	public static String encodeToString(byte[] imageBytes) throws IOException {
+		BASE64Encoder encoder = new BASE64Encoder();
+		String imageString = encoder.encode(imageBytes);
 		return imageString;
 	}
 
