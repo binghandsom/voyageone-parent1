@@ -1,4 +1,4 @@
-package com.voyageone.batch.bussiness.service;
+package com.voyageone.batch.core.service;
 
 import com.voyageone.batch.base.BaseTaskService;
 import com.voyageone.batch.core.Enums.TaskControlEnums;

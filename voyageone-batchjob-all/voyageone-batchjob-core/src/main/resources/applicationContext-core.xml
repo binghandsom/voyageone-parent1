@@ -35,14 +35,4 @@
 
 	<bean class="com.voyageone.batch.core.util.SetPriceUtils"/>
 
-
-	<task:scheduled-tasks scheduler="core-job-scheduler">
-
-		<!--每隔1小时进行API心跳检查-->
-		<task:scheduled ref="healthCheckTask" method="run" cron="0 0 0-23 * * ?"/>
-
-	</task:scheduled-tasks>
-
-	<!-- 必须需要 -->
-	<task:scheduler id="core-job-scheduler" pool-size="1"/>
 </beans>
