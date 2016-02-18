@@ -40,7 +40,8 @@ define([
 
             this.matched = {
                 category: null,
-                property: null
+                property: null,
+                keyWord: null
             };
             /**
              * 主数据类目
@@ -72,14 +73,13 @@ define([
             loadCategories: function () {
                 
                 var ttt = this;
+                var selectedCart = ttt.selected.cart;
 
-                if (!ttt.selected.cart)
+                if (!selectedCart)
                     return;
 
                 ttt.platformMappingService.getMainCategory({
-
-                    cartId: ttt.selected.cart.toString()
-
+                    cartId: selectedCart.toString()
                 }).then(function (res) {
 
                     ttt.mainCategories = res.data.categories;
@@ -138,8 +138,23 @@ define([
 
             shown: function (category) {
 
-                return (this.matched.category === null || this.matched.category === category.matched)
-                    && (this.matched.property === null || this.matched.property === category.propertyMatched);
+                var cateMatched = this.matched.category;
+                var propMatched = this.matched.property;
+                var keyWord = this.matched.keyWord;
+
+                if (keyWord && category.catPath.indexOf(keyWord) < 0)
+                    return false;
+
+                return (cateMatched === null || cateMatched === category.matched)
+                    && (propMatched === null || propMatched === category.propertyMatched);
+            },
+
+            clear: function() {
+                this.matched = {
+                    category: null,
+                    property: null,
+                    keyWord: null
+                };
             }
         };
 

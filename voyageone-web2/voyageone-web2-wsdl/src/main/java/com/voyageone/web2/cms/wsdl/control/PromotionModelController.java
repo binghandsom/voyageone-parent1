@@ -37,14 +37,14 @@ public class PromotionModelController extends BaseController {
     }
 
     @RequestMapping("countByParam")
-    public PromotionModelCountGetResponse getPromotionModelDetailList(
+    public PromotionModelCountGetResponse getPromotionModelDetailListCnt(
             @RequestBody PromotionModelCountGetRequest promotionModelCountGetRequest) {
         promotionModelCountGetRequest.check();
         return promotionModelService.getPromotionModelDetailListCnt(promotionModelCountGetRequest);
     }
 
     @RequestMapping("deleteByModel")
-    public PromotionModelDeleteResponse getPromotionModelDetailList(
+    public PromotionModelDeleteResponse remove(
             @RequestBody PromotionModelDeleteRequest promotionModelDeleteRequest) {
         promotionModelDeleteRequest.check();
         return promotionModelService.deleteCmsPromotionModel(promotionModelDeleteRequest);

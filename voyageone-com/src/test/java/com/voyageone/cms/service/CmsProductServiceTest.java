@@ -175,8 +175,8 @@ public class CmsProductServiceTest {
     public void testSelectCmsBtProductById() throws Exception {
         CmsBtProductModel ret = cmsProductService.getProductById("001", 1);
         System.out.println(ret.getFeed().getCnAtts());
-        System.out.println(ret.getSkus().get(0).isIncludeCart(CartEnums.Cart.valueOf("21")));
-        System.out.println(ret.getSkus().get(0).isIncludeCart(CartEnums.Cart.valueOf("20")));
+        System.out.println(ret.getSkus().get(0).isIncludeCart(CartEnums.Cart.getValueByID("21")));
+        System.out.println(ret.getSkus().get(0).isIncludeCart(CartEnums.Cart.getValueByID("20")));
         System.out.println(ret.getGroups().getCurrentPriceEnd());
 
     }
