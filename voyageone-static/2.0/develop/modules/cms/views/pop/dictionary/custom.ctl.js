@@ -61,7 +61,7 @@ define([
         }
       };
       $modalInstance.close(data);
-      notify.success ($translate.instant('TXT_COM_UPDATE_SUCCESS'));
+      //notify.success ($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
       $scope.$close();
     }
 
