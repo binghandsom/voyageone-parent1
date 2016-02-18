@@ -23,9 +23,13 @@
                                 ng-change="ctrl.refreshTable()"
                                 ng-options="v as k for (k,v) in ctrl.options.property"
                                 ng-model="ctrl.matched.property"></select>
-                        <input type="text" placeholder="{{'TXT_MSG_SEARCH' | translate}}" class="form-control">
-                        <button class="btn btn-default" ng-click="clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR' | translate}}</button>
-                        <button type="submit" class="btn btn-vo btn-xxs"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}</button>
+                        <input type="text" placeholder="{{'TXT_MSG_SEARCH' | translate}}"
+                               ng-model="ctrl.matched.keyWord" enter-click="ctrl.refreshTable()"
+                               class="form-control"/>
+                        <button class="btn btn-default" ng-click="ctrl.clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR' | translate}}</button>
+                        <button class="btn btn-vo btn-xxs" ng-click="ctrl.refreshTable()">
+                            <i class="fa fa-search"></i>&nbsp;<span>{{'BTN_SEARCH' | translate}}</span>
+                        </button>
                     </div>
                     </div>
                 </div>
