@@ -260,6 +260,23 @@ public interface CmsUrlConstants {
             String CHANGE_CATEGORY = "changeCategory";
 
         }
+
+        interface TRANSLATE {
+
+            String ROOT = "/cms/product/translate";
+
+            String GET_TASKS="getTasks";
+
+            String INIT = "init";
+
+            String SEARCH = "search";
+
+            String SAVE = "save";
+
+            String COPY_FORM_MAIN_PRODUCT = "copyFormMainProduct";
+
+            String SUBMIT = "submit";
+        }
     }
 
     // 商品编辑
