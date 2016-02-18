@@ -46,7 +46,7 @@ public interface CmsUrlConstants {
 
             String GET_PROMOTION_UPLOAD = "uploadPromotion";
 
-            String TE_JIA_BAO_INIT = "teiabaoInit";
+            String TE_JIA_BAO_INIT = "teJiaBaoInit";
 
             String UPDATE_PROMOTION_PRODUCT = "updatePromotionProduct";
 
@@ -261,22 +261,6 @@ public interface CmsUrlConstants {
 
         }
 
-        interface TRANSLATE {
-
-            String ROOT = "/cms/product/translate";
-
-            String GET_TASKS="getTasks";
-
-            String INIT = "init";
-
-            String SEARCH = "search";
-
-            String SAVE = "save";
-
-            String COPY_FORM_MAIN_PRODUCT = "copyFormMainProduct";
-
-            String SUBMIT = "submit";
-        }
     }
 
     // 商品编辑
@@ -290,6 +274,26 @@ public interface CmsUrlConstants {
             String GET_PRODUCT_LIST = "getProductList";
 
             String SET_MAIN_PRODUCT = "setMainProduct";
+        }
+    }
+
+    interface TRANSLATION {
+
+        interface DETAIL {
+
+            String ROOT = "/cms/translation/detail";
+
+            String INIT = "init";
+
+            String SEARCH = "search";
+
+            String GET_TASKS = "getTasks";
+
+            String COPY_FORM_MAIN_PRODUCT = "copyFormMainProduct";
+
+            String SAVE = "save";
+
+            String SUBMIT = "submit";
         }
     }
 

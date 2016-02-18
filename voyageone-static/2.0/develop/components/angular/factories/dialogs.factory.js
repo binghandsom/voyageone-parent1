@@ -14,7 +14,7 @@ angular.module('voyageone.angular.factories.dialogs', [])
                     '<button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="close()">' +
                         '<span aria-hidden="true"><i ng-click="close()" class="fa fa-close"></i></span>' +
                     '</button>' +
-                    '<h4 class="modal-title" ng-bind-html="title"></h4>' +
+                    '<h5 class="modal-title" ng-bind-html="title"></h5>' +
                 '</div>' +
                 '<div class="modal-body wrapper-lg">' +
                     '<div class="row">' +

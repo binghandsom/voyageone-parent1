@@ -27,11 +27,13 @@ define([
         }
 
         function save () {
-            $fieldEditService.setProductFields($scope.vm.propertyInfo).then(function () {
-                notify.success ($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
-                //$scope.$close();
-                $modalInstance.close('');
-            });
+            if ($scope.vm.propertyInfo.property) {
+                $fieldEditService.setProductFields($scope.vm.propertyInfo).then(function () {
+                    notify.success ($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
+                    //$scope.$close();
+                    $modalInstance.close('');
+                });
+            }
         }
     });
 });

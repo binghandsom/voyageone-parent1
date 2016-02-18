@@ -14,7 +14,7 @@
                             <span>{{ctrl.mainCategory.catFullPath}}</span>
                             <sup><strong>{{'TXT_MASTER_CATEGORY' | translate}}</strong></sup>
                         </div>
-                        <div class="form-inline pull-left m-r-lg">
+                        <div class="form-inline pull-left m-r-md">
                             <label class="m-t-xs col-sm-8" translate="TXT_MAPPING_ATTRIBUTE_IS_FINISHED"></label>
                             <div class="col-sm-3 text-left">
                                 <div class="onoffswitch">
@@ -33,7 +33,7 @@
                             <select class="form-control m-r-xxs"
                                     ng-model="ctrl.show.matched"
                                     ng-options="v as k for (k,v) in ctrl.options.matched"></select>
-                            <input ng-model="ctrl.show.keyWord" type="text" placeholder="{{'TXT_MSG_SEARCH' | translate}}" class="form-control"/>
+                            <input type="text" placeholder="{{'TXT_MSG_SEARCH' | translate}}" class="form-control">
                             <button class="btn btn-default" ng-click="clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR' | translate}}</button>
                             <button type="submit" class="btn btn-vo btn-xxs"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}</button>
                         </div>

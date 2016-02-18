@@ -40,7 +40,7 @@ define([
       $dictionaryService.getConst().then(function (res) {
         $scope.vm.masterData = res.data;
 
-        if (!_.isUndefined(dictValue)) {
+        if (!_.isUndefined(dictValue) && dictValue != null) {
           _returnInitInfo (dictValue);
         }
       });
@@ -55,7 +55,7 @@ define([
         value: _returnValue()
       };
       $modalInstance.close(data);
-      notify.success ($translate.instant('TXT_COM_UPDATE_SUCCESS'));
+      //notify.success ($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
       $scope.$close();
     }
 
