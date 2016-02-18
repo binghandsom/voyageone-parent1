@@ -67,12 +67,12 @@ define([
              */
             options: {
                 category: {
-                    '类目匹配情况(ALL)': null,
+                    '类目匹配情况(所有)': null,
                     '类目已匹配': true,
                     '类目未匹配': false
                 },
                 property: {
-                    '匹配属性情况(ALL)': null,
+                    '匹配属性情况(所有)': null,
                     '属性已匹配完成': true,
                     '属性未匹配完成': false
                 }
