@@ -4,11 +4,12 @@ import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.sdk.api.VoApiDefaultClient;
 import com.voyageone.web2.sdk.api.domain.CmsBtPromotionModel;
 import com.voyageone.web2.sdk.api.request.PromotionDeleteRequest;
-import com.voyageone.web2.sdk.api.request.PromotionsGetRequest;
 import com.voyageone.web2.sdk.api.request.PromotionPutRequest;
+import com.voyageone.web2.sdk.api.request.PromotionsGetRequest;
 import com.voyageone.web2.sdk.api.util.SdkBeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.Map;
 

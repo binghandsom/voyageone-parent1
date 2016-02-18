@@ -21,7 +21,7 @@ public class CmsBtPromotionDao extends BaseDao {
 
 	/**
 	 * 条件查询
-	 * 
+	 *
 	 * @param condtionParams
 	 * @return
 	 */
@@ -31,7 +31,7 @@ public class CmsBtPromotionDao extends BaseDao {
 
 	/**
 	 * 根据id查询
-	 * 
+	 *
 	 * @param condtionParams
 	 * @return
 	 */
@@ -41,7 +41,7 @@ public class CmsBtPromotionDao extends BaseDao {
 
 	/**
 	 * 修改
-	 * 
+	 *
 	 * @param cmsBtPromotionModel
 	 * @return
 	 */
@@ -51,7 +51,7 @@ public class CmsBtPromotionDao extends BaseDao {
 
 	/**
 	 * 插入
-	 * 
+	 *
 	 * @param cmsBtPromotionModel
 	 * @return
 	 */
@@ -61,7 +61,7 @@ public class CmsBtPromotionDao extends BaseDao {
 
 	/**
 	 * 删除(逻辑删除，修改is_active=0)
-	 * 
+	 *
 	 * @param condtionParams
 	 * @return
 	 */

@@ -6,6 +6,7 @@ import com.voyageone.batch.core.Enums.TaskControlEnums;
 import com.voyageone.batch.core.modelbean.TaskControlBean;
 import com.voyageone.batch.core.util.TaskControlUtils;
 import com.voyageone.batch.wms.dao.ClientInventoryDao;
+import com.voyageone.batch.wms.dao.InventoryDao;
 import com.voyageone.batch.wms.dao.TransferDao;
 import com.voyageone.batch.wms.modelbean.SimTransferBean;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
@@ -30,6 +31,9 @@ public class WmsSimTransferInfoService  extends BaseTaskService {
     ClientInventoryDao clientInventoryDao;
 
     @Autowired
+    InventoryDao inventoryDao;
+
+    @Autowired
     private TransactionRunner transactionRunner;
 
     @Override
@@ -50,9 +54,23 @@ public class WmsSimTransferInfoService  extends BaseTaskService {
         // 线程
         List<Runnable> threads = new ArrayList<>();
 
-        String process_time = DateTimeUtil.getLocalTime(DateTimeUtil.getDate(), -4);
+        String delete_time_interval =  TaskControlUtils.getVal1(taskControlList, TaskControlEnums.Name.delete_time_interval);
+
+        if (StringUtils.isNullOrBlank2(delete_time_interval)) {
+            delete_time_interval = "4";
+        }
+
+        String process_time = DateTimeUtil.getLocalTime(DateTimeUtil.getDate(), Integer.valueOf(delete_time_interval) * -1);
 
         int transferCount = transferDao.deleteTransferHistory( process_time);
+
+        logger.info("处理过期TransferItem数据日期："+process_time + "，处理件数："+transferCount);
+
+        transferCount = transferDao.deleteTransferDetail(process_time);
+
+        logger.info("处理过期TransferDetail数据日期："+process_time + "，处理件数："+transferCount);
+
+        transferCount = transferDao.deleteTransfer( process_time);
 
         logger.info("处理过期Transfer数据日期："+process_time + "，处理件数："+transferCount);
 

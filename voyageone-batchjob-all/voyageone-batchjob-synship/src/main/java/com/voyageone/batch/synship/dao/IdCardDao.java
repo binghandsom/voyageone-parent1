@@ -7,7 +7,9 @@ import com.voyageone.common.Constants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import org.springframework.stereotype.Repository;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 从 Synship CloudClient 迁移
@@ -44,5 +46,17 @@ public class IdCardDao extends BaseDao {
      */
     public int updateApprovedWithMsg(IdCardBean idCardBean) {
         return update("tt_idcard_updateApprovedWithMsg", idCardBean);
+    }
+
+    /**
+     * 更新 tm_task_control 的 cfg_val2字段
+     */
+    public int setValidInterval(String task_id, String cfg_name) {
+
+        Map<String, Object> params = new HashMap<>();
+
+        params.put("task_id", task_id);
+        params.put("cfg_name", cfg_name);
+        return update("tt_idcard_setValidInterval", params);
     }
 }

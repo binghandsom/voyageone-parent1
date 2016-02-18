@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.cms.sql">
+    <insert id="cms_zz_worktable_gilt_superfeed_insertList">
+        INSERT INTO voyageone_cms.cms_zz_worktable_gilt_superfeed (id, product_id, product_look_id, locale, name,
+        description, country_code, brand_id, brand_name, images_url, attributes_color_nfr_code, attributes_color_name,
+        attributes_style_name, attributes_material_value, attributes_size_size_chart_id, attributes_size_type,
+        attributes_size_value, prices_retail_currency, prices_retail_value, prices_sale_currencty, prices_sale_value,
+        prices_cost_currency, prices_cost_value, product_codes, product_codes_first, categories_id, categories_name,
+        categories_key, updateFlag) VALUES
+        <foreach collection="items" item="i" separator=",">
+            (#{i.id}, #{i.product_id}, #{i.product_look_id}, #{i.locale}, #{i.name}, #{i.description},
+            #{i.country_code}, #{i.brand_id},
+            #{i.brand_name}, #{i.images_url}, #{i.attributes_color_nfr_code}, #{i.attributes_color_name},
+            #{i.attributes_style_name},
+            #{i.attributes_material_value}, #{i.attributes_size_size_chart_id}, #{i.attributes_size_type},
+            #{i.attributes_size_value}, #{i.prices_retail_currency}, #{i.prices_retail_value},
+            #{i.prices_sale_currencty},
+            #{i.prices_sale_value}, #{i.prices_cost_currency}, #{i.prices_cost_value}, #{i.product_codes},
+            #{i.product_codes_first},
+            #{i.categories_id}, #{i.categories_name}, #{i.categories_key}, #{i.updateFlag})
+        </foreach>
+    </insert>
+
+    <insert id="cms_zz_worktable_gilt_superfeed_insert">
+        INSERT INTO voyageone_cms.cms_zz_worktable_gilt_superfeed
+        (id, product_id, product_look_id, locale, name,
+         description, country_code, brand_id, brand_name, images_url, attributes_color_nfr_code, attributes_color_name,
+         attributes_style_name, attributes_material_value, attributes_size_size_chart_id, attributes_size_type,
+         attributes_size_value, prices_retail_currency, prices_retail_value, prices_sale_currencty, prices_sale_value,
+         prices_cost_currency, prices_cost_value, product_codes, product_codes_first, categories_id, categories_name,
+         categories_key, updateFlag) VALUES
+            (#{id}, #{product_id}, #{product_look_id}, #{locale}, #{name}, #{description}, #{country_code}, #{brand_id},
+        #{brand_name}, #{images_url}, #{attributes_color_nfr_code}, #{attributes_color_name}, #{attributes_style_name},
+        #{attributes_material_value}, #{attributes_size_size_chart_id}, #{attributes_size_type},
+        #{attributes_size_value}, #{prices_retail_currency}, #{prices_retail_value}, #{prices_sale_currencty},
+        #{prices_sale_value}, #{prices_cost_currency}, #{prices_cost_value}, #{product_codes}, #{product_codes_first},
+        #{categories_id}, #{categories_name}, #{categories_key}, #{updateFlag})
+    </insert>
+
+    <select id="cms_zz_worktable_gilt_superfeed_full_select"
+            parameterType="com.voyageone.batch.cms.bean.SuperFeedGiltBean"
+            resultType="com.voyageone.batch.cms.bean.SuperFeedGiltBean">
+        SELECT
+            id,
+            product_id,
+            product_look_id,
+            locale,
+            name,
+            description,
+            country_code,
+            brand_id,
+            brand_name,
+            images_url,
+            attributes_color_nfr_code,
+            attributes_color_name,
+            attributes_style_name,
+            attributes_material_value,
+            attributes_size_size_chart_id,
+            attributes_size_type,
+            attributes_size_value,
+            prices_retail_currency,
+            prices_retail_value,
+            prices_sale_currencty,
+            prices_sale_value,
+            prices_cost_currency,
+            prices_cost_value,
+            product_codes,
+            product_codes_first,
+            categories_id,
+            categories_name,
+            categories_key,
+            updateFlag
+        FROM voyageone_cms.cms_zz_worktable_gilt_superfeed_full
+        WHERE product_id = #{product_id};
+    </select>
+
+    <select id="cms_zz_worktable_gilt_superfeed_full_selectByUpdateFlg"
+            resultType="com.voyageone.batch.cms.bean.SuperFeedGiltBean">
+        SELECT
+            seq,
+            id,
+            product_id,
+            product_look_id,
+            locale,
+            name,
+            description,
+            country_code,
+            brand_id,
+            brand_name,
+            images_url,
+            attributes_color_nfr_code,
+            attributes_color_name,
+            attributes_style_name,
+            attributes_material_value,
+            attributes_size_size_chart_id,
+            attributes_size_type,
+            attributes_size_value,
+            prices_retail_currency,
+            prices_retail_value,
+            prices_sale_currencty,
+            prices_sale_value,
+            prices_cost_currency,
+            prices_cost_value,
+            product_codes,
+            product_codes_first,
+            categories_id,
+            categories_name,
+            categories_key,
+            updateFlag
+        FROM voyageone_cms.cms_zz_worktable_gilt_superfeed_full
+        WHERE updateFlag = #{updateFlag};
+    </select>
+
+    <select id="cms_zz_worktable_gilt_superfeed_selectByUpdateFlg"
+            resultType="com.voyageone.batch.cms.bean.SuperFeedGiltBean">
+        SELECT
+            seq,
+            id,
+            product_id,
+            product_look_id,
+            locale,
+            name,
+            description,
+            country_code,
+            brand_id,
+            brand_name,
+            images_url,
+            attributes_color_nfr_code,
+            attributes_color_name,
+            attributes_style_name,
+            attributes_material_value,
+            attributes_size_size_chart_id,
+            attributes_size_type,
+            attributes_size_value,
+            prices_retail_currency,
+            prices_retail_value,
+            prices_sale_currencty,
+            prices_sale_value,
+            prices_cost_currency,
+            prices_cost_value,
+            product_codes,
+            product_codes_first,
+            categories_id,
+            categories_name,
+            categories_key,
+            updateFlag
+        FROM voyageone_cms.cms_zz_worktable_gilt_superfeed
+        WHERE updateFlag = #{updateFlag};
+    </select>
+
+    <update id="cms_zz_worktable_gilt_superfeed_full_updateFlgToInsert1">
+        UPDATE voyageone_cms.cms_zz_worktable_gilt_superfeed b
+            LEFT JOIN voyageone_cms.cms_zz_worktable_gilt_superfeed_full bf
+                ON b.id = bf.id
+        SET b.updateFlag = 1
+        WHERE IFNULL(bf.id, '') = ''
+    </update>
+
+    <update id="cms_zz_worktable_gilt_superfeed_full_updateFlgToInsert2">
+        UPDATE voyageone_cms.cms_zz_worktable_gilt_superfeed b
+            LEFT JOIN voyageone_cms.cms_zz_worktable_gilt_superfeed_full bf
+                ON b.id = bf.id
+        SET b.updateFlag = 1
+        WHERE IFNULL(bf.id, -1) > 0 AND bf.updateFlag = 1
+    </update>
+
+    <update id="cms_zz_worktable_gilt_superfeed_full_updateFlgToUpdate1">
+        UPDATE voyageone_cms.cms_zz_worktable_gilt_superfeed b
+            LEFT JOIN voyageone_cms.cms_zz_worktable_gilt_superfeed_full bf
+                ON b.id = bf.id
+        SET b.updateFlag = 5
+        WHERE IFNULL(bf.id, -1) > 0
+    </update>
+
+    <update id="cms_zz_worktable_gilt_superfeed_full_updateFlgToUpdate2">
+        UPDATE voyageone_cms.cms_zz_worktable_gilt_superfeed_full bf
+            JOIN voyageone_cms.cms_zz_worktable_gilt_superfeed b
+        ON b.id = bf.id
+        SET bf.updateFlag = 5
+        WHERE bf.updateFlag > 1
+    </update>
+
+    <delete id="cms_zz_worktable_gilt_superfeed_full_appendInserting1">
+        DELETE bf FROM
+            voyageone_cms.cms_zz_worktable_gilt_superfeed_full bf JOIN voyageone_cms.cms_zz_worktable_gilt_superfeed b
+                ON b.id = bf.id AND b.updateFlag = 1
+    </delete>
+
+    <insert id="cms_zz_worktable_gilt_superfeed_full_appendInserting2">
+        INSERT INTO voyageone_cms.cms_zz_worktable_gilt_superfeed_full (id, product_id, product_look_id, locale, name, description, country_code, brand_id, brand_name, images_url, attributes_color_nfr_code, attributes_color_name, attributes_style_name, attributes_material_value, attributes_size_size_chart_id, attributes_size_type, attributes_size_value, prices_retail_currency, prices_retail_value, prices_sale_currencty, prices_sale_value, prices_cost_currency, prices_cost_value, product_codes, product_codes_first, categories_id, categories_name, categories_key, updateFlag)
+            SELECT
+                id,
+                product_id,
+                product_look_id,
+                locale,
+                name,
+                description,
+                country_code,
+                brand_id,
+                brand_name,
+                images_url,
+                attributes_color_nfr_code,
+                attributes_color_name,
+                attributes_style_name,
+                attributes_material_value,
+                attributes_size_size_chart_id,
+                attributes_size_type,
+                attributes_size_value,
+                prices_retail_currency,
+                prices_retail_value,
+                prices_sale_currencty,
+                prices_sale_value,
+                prices_cost_currency,
+                prices_cost_value,
+                product_codes,
+                product_codes_first,
+                categories_id,
+                categories_name,
+                categories_key,
+                updateFlag
+            FROM voyageone_cms.cms_zz_worktable_gilt_superfeed
+            WHERE updateFlag = 1;
+    </insert>
+
+    <update id="cms_zz_worktable_gilt_superfeed_full_updateInsertSuccess1">
+        UPDATE voyageone_cms.cms_zz_worktable_gilt_superfeed_full
+        SET `updateFlag` = #{success_status}
+        WHERE `updateFlag` = #{target_status}
+    </update>
+
+    <update id="cms_zz_worktable_gilt_superfeed_full_updateInsertSuccess2">
+        UPDATE voyageone_cms.cms_zz_worktable_gilt_superfeed_full
+        SET `updateFlag` = #{target_status}
+        WHERE `updateFlag` = #{success_status}
+        AND product_id IN (<foreach collection="modelFailList" item="model" separator=",">#{model}</foreach>)
+    </update>
+
+    <update id="cms_zz_worktable_gilt_superfeed_full_updateInsertSuccess3">
+        UPDATE voyageone_cms.cms_zz_worktable_gilt_superfeed_full
+        SET `updateFlag` = #{target_status}
+        WHERE `updateFlag` = #{success_status}
+        AND product_look_id IN (<foreach collection="productFailList" item="code" separator=",">#{code}</foreach>)
+    </update>
+
+    <delete id="cms_zz_worktable_gilt_superfeed_clear">
+        DELETE FROM voyageone_cms.cms_zz_worktable_gilt_superfeed;
+    </delete>
+
+    <delete id="cms_zz_worktable_gilt_superfeed_full_deleteUpdating">
+        DELETE bf FROM voyageone_cms.cms_zz_worktable_gilt_superfeed_full bf
+        JOIN voyageone_cms.cms_zz_worktable_gilt_superfeed b
+        ON b.id = bf.id
+        WHERE b.updateFlag = #{updatingFlag};
+    </delete>
+
+    <insert id="cms_zz_worktable_gilt_superfeed_full_selectInsertUpdating">
+        INSERT INTO voyageone_cms.cms_zz_worktable_gilt_superfeed_full
+        (id, product_id, product_look_id, locale, name, description, country_code, brand_id, brand_name, images_url, attributes_color_nfr_code, attributes_color_name, attributes_style_name, attributes_material_value, attributes_size_size_chart_id, attributes_size_type, attributes_size_value, prices_retail_currency, prices_retail_value, prices_sale_currencty, prices_sale_value, prices_cost_currency, prices_cost_value, product_codes, product_codes_first, categories_id, categories_name, categories_key, updateFlag)
+            SELECT
+                id,
+                product_id,
+                product_look_id,
+                locale,
+                name,
+                description,
+                country_code,
+                brand_id,
+                brand_name,
+                images_url,
+                attributes_color_nfr_code,
+                attributes_color_name,
+                attributes_style_name,
+                attributes_material_value,
+                attributes_size_size_chart_id,
+                attributes_size_type,
+                attributes_size_value,
+                prices_retail_currency,
+                prices_retail_value,
+                prices_sale_currencty,
+                prices_sale_value,
+                prices_cost_currency,
+                prices_cost_value,
+                product_codes,
+                product_codes_first,
+                categories_id,
+                categories_name,
+                categories_key,
+                updateFlag
+            FROM voyageone_cms.cms_zz_worktable_gilt_superfeed
+            WHERE updateFlag = #{updatingFlag};
+    </insert>
+
+    <update id="cms_zz_worktable_gilt_superfeed_full_updateUpdated">
+        UPDATE voyageone_cms.cms_zz_worktable_gilt_superfeed_full bf JOIN voyageone_cms.cms_zz_worktable_gilt_superfeed b
+            ON bf.id = b.id
+                SET bf.updateFlag = #{updatedFlag}
+        WHERE b.updateFlag = #{updatingFlag}
+        <if test="updatedCodes != null and updatedCodes.size() > 0">
+            AND bf.product_look_id IN (<foreach collection="updatedCodes" item="code" separator=",">#{code}</foreach>)
+        </if>
+    </update>
+
+    <select id="cms_zz_worktable_gilt_superfeed_full_selectUpdatingProduct" resultType="com.voyageone.batch.cms.bean.SuperFeedGiltBean">
+        SELECT DISTINCT
+            product_id,
+            product_look_id,
+            description,
+            country_code,
+            images_url,
+            prices_retail_value,
+            prices_sale_value,
+            categories_key,
+            updateFlag
+        FROM voyageone_cms.cms_zz_worktable_gilt_superfeed_full
+        WHERE updateFlag = #{updatingFlag}
+        AND product_look_id = #{product_look_id}
+        limit 1
+    </select>
+
+    <select id="cms_zz_worktable_gilt_superfeed_selectUpdatingProducts" resultType="com.voyageone.batch.cms.bean.SuperFeedGiltBean">
+        SELECT DISTINCT
+            product_id,
+            product_look_id,
+            description,
+            country_code,
+            images_url,
+            prices_retail_value,
+            prices_sale_value,
+            categories_key,
+            updateFlag
+        FROM voyageone_cms.cms_zz_worktable_gilt_superfeed
+        WHERE updateFlag = #{updatingFlag}
+    </select>
+</mapper>

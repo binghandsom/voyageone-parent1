@@ -50,7 +50,7 @@ class BcbgWsdlInsert extends BcbgWsdlBase {
 
         $info("取得 [ %s ] 的 Model 数 %s", category.getUrl_key(), modelBeans.size());
 
-        for (ModelBean bean: modelBeans) {
+        for (ModelBean bean : modelBeans) {
             bean.setProductbeans(getProducts(bean));
             // 转换 Url Key 格式,这里顺序同 getCategories 一样的原理
             bean.setUrl_key(clearSpecialSymbol(bean.getUrl_key()));
@@ -158,9 +158,7 @@ class BcbgWsdlInsert extends BcbgWsdlBase {
      *
      * @throws Exception
      */
-    protected void postNewProduct() throws Exception {
-        // 接口的主服务
-        WsdlProductService service = new WsdlProductService(channel);
+    protected boolean postNewProduct() throws Exception {
 
         $info("准备 <构造> 类目树");
         List<List<CategoryBean>> categoriesList = getCategories();
@@ -169,8 +167,27 @@ class BcbgWsdlInsert extends BcbgWsdlBase {
         List<String> modelFailList = new ArrayList<>();
         List<String> productFailList = new ArrayList<>();
 
+        if (!isServiceDisabled()) {
+            foreachInsert(categoriesList, modelFailList, productFailList);
+            $info("总共~ 失败的 Model: %s ; 失败的 Product: %s", modelFailList.size(), productFailList.size());
+        } else {
+            $info("已断开 CMS");
+        }
+
+        int[] count = bcbgSuperFeedDao.updateSuccessStatus(modelFailList, productFailList);
+
+        $info("新商品 INSERT 处理全部完成 { Feed(M): %s, Feed(C): %s }", count[0], count[1]);
+
+        return (count[0] + count[1]) > 0;
+    }
+
+    private void foreachInsert(List<List<CategoryBean>> categoriesList, List<String> modelFailList, List<String> productFailList) throws Exception {
+
+        // 接口的主服务
+        WsdlProductService service = new WsdlProductService(channel);
+
         // 分每棵树进行提交
-        for (List<CategoryBean> categories: categoriesList) {
+        for (List<CategoryBean> categories : categoriesList) {
 
             // 主参数
             ProductsFeedInsert feedInsert = new ProductsFeedInsert();
@@ -202,11 +219,5 @@ class BcbgWsdlInsert extends BcbgWsdlBase {
             if (response.getResult().equals("NG"))
                 logIssue("cms 数据导入处理", "新产品推送失败：Message=" + response.getMessage());
         }
-
-        $info("总共~ 失败的 Model: %s ; 失败的 Product: %s", modelFailList.size(), productFailList.size());
-
-        int[] count = bcbgSuperFeedDao.updateSuccessStatus(modelFailList, productFailList);
-
-        $info("新商品 INSERT 处理全部完成 { Feed(M): %s, Feed(C): %s }", count[0], count[1]);
     }
 }

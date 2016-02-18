@@ -1,5 +1,7 @@
 package com.voyageone.wms.controller;
 
+import com.voyageone.common.configs.ChannelConfigs;
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.core.MessageConstants;
@@ -7,8 +9,10 @@ import com.voyageone.core.ajax.AjaxResponseBean;
 import com.voyageone.base.BaseController;
 import com.voyageone.wms.WmsConstants;
 import com.voyageone.wms.WmsCodeConstants.TransferType;
+import com.voyageone.wms.WmsConstants.ReportItems;
 import com.voyageone.wms.WmsUrlConstants.TransferUrls;
 import com.voyageone.wms.formbean.TransferFormBean;
+import com.voyageone.wms.formbean.TransferItemMapBean;
 import com.voyageone.wms.formbean.TransferMapBean;
 import com.voyageone.wms.modelbean.TransferBean;
 import com.voyageone.wms.modelbean.TransferDetailBean;
@@ -26,6 +30,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -90,7 +95,7 @@ public class WmsTransferController extends BaseController {
      */
     @RequestMapping(TransferUrls.DELETE)
     public void delete(@RequestBody Map<String, Object> params, HttpServletResponse response) {
-        int transferId = (int) params.get("transferId");
+        long transferId = Long.valueOf((String) params.get("transferId"));
         String modified = (String) params.get("modified");
 
         boolean isSuccess = transferService.delete(transferId, modified);
@@ -104,9 +109,12 @@ public class WmsTransferController extends BaseController {
     /**
      * 获取所有启用的仓库
      */
-    @RequestMapping(TransferUrls.Store.ALL)
-    public void getAllStores(HttpServletResponse response) {
-        Map<String, Object> result = transferService.allStores(getUser());
+    @RequestMapping(TransferUrls.Configs.ALL)
+    public void getAllConfigs(@RequestBody Map<String, Object> params, HttpServletResponse response) {
+
+        String transferId = (String) params.get("transferId");
+
+        Map<String, Object> result = transferService.allConfigs(transferId, getUser());
 
         AjaxResponseBean
                 .newResult(true)
@@ -119,7 +127,7 @@ public class WmsTransferController extends BaseController {
      */
     @RequestMapping(TransferUrls.GET)
     public void getTransfer(@RequestBody Map<String, Object> params, HttpServletResponse response) {
-        int transferId = (int) params.get("transferId");
+        long transferId = Long.valueOf((String) params.get("transferId"));
 
         TransferBean transfer = transferService.get(transferId);
 
@@ -178,7 +186,7 @@ public class WmsTransferController extends BaseController {
      */
     @RequestMapping(TransferUrls.Package.GET)
     public void getPackage(@RequestBody Map<String, Object> params, HttpServletResponse response) {
-        int transferId = (int) params.get("transferId");
+        long transferId = Long.valueOf((String) params.get("transferId"));
         String packageName = (String) params.get("packageName");
 
         TransferDetailBean detail = transferService.getPackage(transferId, packageName);
@@ -193,7 +201,7 @@ public class WmsTransferController extends BaseController {
      */
     @RequestMapping(TransferUrls.Package.CREATE)
     public void createPackage(@RequestBody Map<String, Object> params, HttpServletResponse response) {
-        int transferId = (int) params.get("transferId");
+        long transferId = Long.valueOf((String) params.get("transferId"));
         String packageName = (String) params.get("packageName");
 
         TransferDetailBean detail = transferService.createPackage(transferId, packageName, getUser());
@@ -208,7 +216,7 @@ public class WmsTransferController extends BaseController {
      */
     @RequestMapping(TransferUrls.Package.CLOSE)
     public void closePackage(@RequestBody Map<String, Object> params, HttpServletResponse response) {
-        int package_id = (int) params.get("package_id");
+        long package_id = Long.valueOf((String) params.get("package_id"));
         String modified = (String) params.get("modified");
 
         boolean isSuccess = transferService.closePackage(package_id, modified, getUser());
@@ -221,7 +229,7 @@ public class WmsTransferController extends BaseController {
      */
     @RequestMapping(TransferUrls.Package.DELETE)
     public void deletePackage(@RequestBody Map<String, Object> params, HttpServletResponse response) {
-        int package_id = (int) params.get("package_id");
+        long package_id = Long.valueOf((String) params.get("package_id"));
         String modified = (String) params.get("modified");
 
         boolean is = transferService.deletePackage(package_id, modified);
@@ -236,7 +244,7 @@ public class WmsTransferController extends BaseController {
      */
     @RequestMapping(TransferUrls.Package.REOPEN)
     public void reOpenPackage(@RequestBody Map<String, Object> params, HttpServletResponse response) {
-        int package_id = (int) params.get("package_id");
+        long package_id = Long.valueOf((String) params.get("package_id"));
         String modified = (String) params.get("modified");
 
         boolean is = transferService.reOpenPackage(package_id, modified);
@@ -251,11 +259,15 @@ public class WmsTransferController extends BaseController {
      */
     @RequestMapping(TransferUrls.Item.ADD)
     public void addItem(@RequestBody Map<String, Object> params, HttpServletResponse response) {
-        int package_id = (int) params.get("package_id");
+        long package_id = Long.valueOf((String) params.get("package_id"));
         String barcode = (String) params.get("barcode");
         int num = (int) params.get("num");
 
-        String sku = transferService.addItem(package_id, barcode, num, getUser());
+        String itemCode = (String) params.get("itemCode");
+        String color = (String) params.get("color");
+        String size = (String) params.get("size");
+
+        String sku = transferService.addItem(package_id, barcode, num, itemCode, color, size, getUser());
 
         AjaxResponseBean.newResult(true)
                 .setResultInfo(sku)
@@ -298,11 +310,48 @@ public class WmsTransferController extends BaseController {
     }
 
     /**
+     * 获取所有启用的仓库
+     */
+    @RequestMapping(TransferUrls.COMPARE)
+    public void compareTransfer(@RequestBody TransferMapBean map, HttpServletResponse response) {
+
+        TransferBean transfer = map.getTransfer();
+
+        Map<String, Object> result = transferService.compareTransfer(transfer);
+
+        AjaxResponseBean
+                .newResult(true)
+                .setResultInfo(result)
+                .writeTo(getRequest(), response);
+    }
+
+    /**
+     * 获取SKU信息
+     */
+    @RequestMapping(TransferUrls.Item.GETSKU)
+    public void getSku(@RequestBody Map<String, Object> params, HttpServletResponse response) {
+
+        TransferItemMapBean transferItem =new TransferItemMapBean();
+
+        transferItem.setOrder_channel_id((String) params.get("order_channel_id"));
+        transferItem.setTransfer_barcode((String) params.get("transfer_barcode"));
+        transferItem.setTransfer_sku((String) params.get("transfer_sku"));
+        transferItem.setType((String) params.get("type"));
+
+        Map<String, Object> result = transferService.getSku(transferItem);
+
+        AjaxResponseBean
+                .newResult(true)
+                .setResultInfo(result)
+                .writeTo(getRequest(), response);
+    }
+
+    /**
      * 获取两个Transfer， Out 和 In 的所有 Item。
      */
     @RequestMapping(TransferUrls.Item.COMPARE)
     public void compare(@RequestBody Map<String, Object> params, HttpServletResponse response) {
-        int transfer_in_id = (int) params.get("transfer_id");
+        long transfer_in_id = Long.valueOf((String) params.get("transfer_id"));
 
         Map<String, List<TransferItemBean>> items = transferService.allItemInMap(transfer_in_id);
 
@@ -317,12 +366,17 @@ public class WmsTransferController extends BaseController {
      */
     @RequestMapping(TransferUrls.Item.SELECT)
     public void getPackageItems(@RequestBody Map<String, Object> params, HttpServletResponse response) {
-        int package_id = (int) params.get("package_id");
+        long package_id = Long.valueOf((String) params.get("package_id"));
+        String order_channel_id = (String) params.get("order_channel_id");
 
         List<TransferItemBean> items = transferService.getItemsInPackage(package_id);
 
+        Map<String, Object> resultMap = new HashMap<>();
+        resultMap.put("packageItems", items);
+        resultMap.put("auto_print", StringUtils.null2Space2(ChannelConfigs.getVal1(order_channel_id, ChannelConfigEnums.Name.print_sku_label)).equals(ChannelConfigEnums.Print.YES.getIs()));
+
         AjaxResponseBean.newResult(true)
-                .setResultInfo(items)
+                .setResultInfo(resultMap)
                 .writeTo(getRequest(), response);
     }
 
@@ -339,6 +393,26 @@ public class WmsTransferController extends BaseController {
 
         return  genResponseEntityFromBytes(outFile, bytes);
 
+    }
+
+    /**
+     * ClientShipment详情报表下载
+     */
+    @RequestMapping(value = TransferUrls.DOWNLOAD_CLIENT_SHIPMENT, method = RequestMethod.GET)
+    public ResponseEntity<byte[]> downloadClientShipment(String param) throws IOException {
+        byte[] bytes = transferService.downloadClientShipment(param, getUser());
+        String outFile = ReportItems.ClientShipment.RPT_NAME + "_" + DateTimeUtil.getNow() + ReportItems.ClientShipment.RPT_SUFFIX;
+        return  genResponseEntityFromBytes(outFile, bytes);
+    }
+
+    /**
+     * CompareTransfer详情报表下载
+     */
+    @RequestMapping(value = TransferUrls.DOWNLOAD_TRANSFER_COMPARE, method = RequestMethod.GET)
+    public ResponseEntity<byte[]> downloadTransferCompare(String param) throws IOException {
+        byte[] bytes = transferService.downloadTransferCompare(param, getUser());
+        String outFile = ReportItems.TransferCompare.RPT_NAME + "_" + DateTimeUtil.getNow() + ReportItems.TransferCompare.RPT_SUFFIX;
+        return  genResponseEntityFromBytes(outFile, bytes);
     }
 
     /**
@@ -379,4 +453,5 @@ public class WmsTransferController extends BaseController {
         }
         return msgList;
     }
+
 }

@@ -15,6 +15,10 @@ public class ReservationClientBean {
     private String syn_ship_no;
     private String client_order_id;
     private String seller_order_id;
+    private String taobao_logistics_id;
+    private String order_channel_id;
+    private String cart_id;
+    private String status;
 
     public String getShop_name() {
         return shop_name;
@@ -102,5 +106,37 @@ public class ReservationClientBean {
 
     public void setSeller_order_id(String seller_order_id) {
         this.seller_order_id = seller_order_id;
+    }
+
+    public String getTaobao_logistics_id() {
+        return taobao_logistics_id;
+    }
+
+    public void setTaobao_logistics_id(String taobao_logistics_id) {
+        this.taobao_logistics_id = taobao_logistics_id;
+    }
+
+    public String getOrder_channel_id() {
+        return order_channel_id;
+    }
+
+    public void setOrder_channel_id(String order_channel_id) {
+        this.order_channel_id = order_channel_id;
+    }
+
+    public String getCart_id() {
+        return cart_id;
+    }
+
+    public void setCart_id(String cart_id) {
+        this.cart_id = cart_id;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

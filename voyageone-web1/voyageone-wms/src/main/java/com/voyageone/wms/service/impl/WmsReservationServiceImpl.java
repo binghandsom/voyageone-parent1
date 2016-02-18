@@ -435,11 +435,11 @@ public class WmsReservationServiceImpl implements WmsReservationService {
 			if (storeBean != null) {
 				storeName = storeBean.getStore_name();
 
-				// 跨境电商并且是国内仓库时，为了和Synship系统统一，仓库名定为TM
-				if (storeBean.getStore_location().equals(StoreConfigEnums.Location.CN.getId()) &&
-						ChannelConfigs.getVal1(storeBean.getOrder_channel_id(), ChannelConfigEnums.Name.sale_type).equals(ChannelConfigEnums.Sale.CN.getType())) {
-					storeName = WmsConstants.StoreName.CN;
-				}
+//				// 跨境电商并且是国内仓库时，为了和Synship系统统一，仓库名定为TM
+//				if (storeBean.getStore_location().equals(StoreConfigEnums.Location.CN.getId()) &&
+//						ChannelConfigs.getVal1(storeBean.getOrder_channel_id(), ChannelConfigEnums.Name.sale_type).equals(ChannelConfigEnums.Sale.CB.getType())) {
+//					storeName = WmsConstants.StoreName.CN;
+//				}
 
 			}
 

@@ -29,7 +29,7 @@ import java.util.*;
  * Created by Leo on 2015/5/28.
  */
 public class UploadImageHandler extends UploadWorkloadHandler {
-    private static Log logger = LogFactory.getLog(UploadProductHandler.class);
+    private static Log logger = LogFactory.getLog(UploadImageHandler.class);
     private UploadJob uploadJob;
     private TbPictureService tbPictureService;
 

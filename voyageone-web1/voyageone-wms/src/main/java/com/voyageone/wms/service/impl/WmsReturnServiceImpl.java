@@ -21,6 +21,7 @@ import com.voyageone.core.modelbean.UserSessionBean;
 import com.voyageone.core.util.PageUtil;
 import com.voyageone.wms.WmsCodeConstants;
 import com.voyageone.wms.WmsConstants;
+import com.voyageone.wms.dao.ItemDao;
 import com.voyageone.wms.dao.ReservationDao;
 import com.voyageone.wms.dao.ReservationLogDao;
 import com.voyageone.wms.dao.ReturnDao;
@@ -66,6 +67,9 @@ public class WmsReturnServiceImpl implements WmsReturnService {
 	@Autowired
 	private ReservationDao reservationDao;
 
+	@Autowired
+	private ItemDao itemDao;
+
 //	@Override
 //	public void changeStatus(HttpServletRequest request, HttpServletResponse response, String returnId) {
 //		Map<String, Object> resultMap = new HashMap<>();
@@ -100,14 +104,22 @@ public class WmsReturnServiceImpl implements WmsReturnService {
 		formReturn.setOrder_num(orderNumber);
 
 		// 根据传入的值来取得真正的orderNumber
-		String order_nember = returnDao.getOrderNumber(formReturn);
+//		String order_number = returnDao.getOrderNumber(formReturn);
+		String order_number= reservationDao.getOrderNumber(formReturn.getOrderChannelId(), formReturn.getOrder_num());
 
-		if (!StringUtils.isNullOrBlank2(order_nember)) {
-			formReturn.setOrder_num(order_nember);
+		if (!StringUtils.isNullOrBlank2(order_number)) {
+			formReturn.setOrder_num(order_number);
 		}
 
 		List<FormReturn> orderInfo;
 		orderInfo = returnDao.getOrderInfoByOrdNo(formReturn);
+
+		for (FormReturn returnInfo : orderInfo) {
+			// 根据输入的条形码找到对应的品牌方条形码
+			String Upc = itemDao.getClientBarcode(returnInfo.getOrder_channel_id(), returnInfo.getBarCode());
+			returnInfo.setUpc(Upc);
+		}
+
 		setDisplayInfo(orderInfo, user);
 
 		resultMap.put("orderInfo", orderInfo);

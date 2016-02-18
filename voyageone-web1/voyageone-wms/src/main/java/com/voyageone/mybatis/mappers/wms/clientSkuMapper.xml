@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.wms.sql">
+
+    <select id="wms_bt_client_sku_get_rec_count" resultType="int">
+        select count(1)
+        from wms_bt_client_sku
+        where order_channel_id = #{order_channel_id}
+            and barcode = #{barcode}
+    </select>
+
+    <select id="wms_bt_client_sku_get_rec_countByItemCodeAndSize" resultType="int">
+        select count(1)
+        from wms_bt_client_sku
+        where order_channel_id = #{order_channel_id}
+            and item_code = #{item_code}
+            and color = #{color}
+            and size = #{size}
+    </select>
+
+    <insert id="wms_bt_client_sku_insert">
+        INSERT INTO wms_bt_client_sku (
+            order_channel_id,
+            barcode,
+            item_code,
+            color,
+            size,
+            active,
+            created,
+            creater,
+            modified,
+            modifier
+        )
+        VALUES
+        (
+            #{order_channel_id},
+            #{barcode},
+            #{item_code},
+            #{color},
+            #{size},
+            #{active},
+            now(),
+            #{creater},
+            now(),
+            #{modifier}
+        )
+    </insert>
+
+    <select id="wms_bt_client_sku_getSkuInfo" resultType="com.voyageone.wms.modelbean.ClientSkuBean">
+        select *
+        from wms_bt_client_sku
+        where order_channel_id = #{order_channel_id}
+        and (barcode = #{barcode} or upc = #{barcode})
+        limit 1
+    </select>
+
+</mapper>

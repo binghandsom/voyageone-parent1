@@ -61,11 +61,15 @@ public class WmsGetJewelryClientInvService extends WmsGetClientInvBaseService {
 
             if (updateClientInventoryConstants.FULL.equals(updateType)) {
                 log(channel.getFull_name()+"全量库存取得");
-                // 取得该渠道下的所有SKU
+
+                // 取得该渠道下的所有SKU（没有设定ClientSku）
+                getItemDetaiInfoNoClient(channelId);
+
+                // 取得该渠道下的所有SKU（有设定ClientSku）
                 List<ItemDetailsBean> itemDetailBeans = itemDetailsDao.getItemDetaiInfo(channelId);
 
                 for (ItemDetailsBean itemDetailsBean : itemDetailBeans) {
-                    processSkuList.add(itemDetailsBean.getSku());
+                    processSkuList.add(itemDetailsBean.getClient_sku());
                 }
 
             } else {
@@ -82,7 +86,7 @@ public class WmsGetJewelryClientInvService extends WmsGetClientInvBaseService {
                 }
             }
 
-            log(channel.getFull_name()+"需要取得库存的SKU件数"+processSkuList.size());
+            log(channel.getFull_name()+"需要取得库存的SKU件数："+processSkuList.size());
 
 
             List<InventoryItemResSoapenv> responseBeans = getClientInv(getInventoryParamBean,processSkuList, channelId);
@@ -103,6 +107,11 @@ public class WmsGetJewelryClientInvService extends WmsGetClientInvBaseService {
                             log(channel.getFull_name() + "库存插入wms_bt_client_inventory开始");
                             int totalRow = 0, insertRow = 0;
                             for (InventoryItemResSoapenv responseBean : responseBeans) {
+                                if (responseBean.getBody().getInventoryItemListResponse().getGetInventoryItemListResult().getStatus().value().equals("Failure")) {
+                                    log(channel.getFull_name() + "取得库存失败：" + responseBean.getBody().getInventoryItemListResponse().getGetInventoryItemListResult().getMessage());
+                                    logIssue(channel.getFull_name() + "取得库存失败：" + responseBean.getBody().getInventoryItemListResponse().getGetInventoryItemListResult().getMessage());
+                                    continue;
+                                }
                                 List<InventoryItemResponse> inventoryItemResponseList = responseBean.getBody().getInventoryItemListResponse().getGetInventoryItemListResult().getResultData().getInventoryItemResponse();
                                 totalRow = totalRow + inventoryItemResponseList.size();
                                 insertRow = insertRow + insertClientInventory(channelId, inventoryItemResponseList, store_id, getInventoryParamBean.getCenterCode());

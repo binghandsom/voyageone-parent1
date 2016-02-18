@@ -42,7 +42,7 @@
                 order_channel_id = #{order_channel_id}
             AND
                 <!-- Reserved状态：防止捡货后没有及时处理，将发货状态、退货等也判断其中-->
-                status in ('12','13','14','15','16','17','97')
+                status in ('12','13','14','15','16','17','97','24')
             AND
                 <!-- 未模拟 -->
                 close_day_flg = '0'
@@ -298,6 +298,26 @@
             wms_bt_transfer_item_history
         WHERE
             created &lt;= #{process_time}
+    </delete>
+
+    <delete id="wms_deleteTransferDetail">
+        DELETE FROM
+           wms_bt_transfer_detail
+        WHERE
+          transfer_id IN (select transfer_id from wms_bt_transfer where transfer_status = '1' and transfer_type = '5' and transfer_origin = '6' and created &lt;= #{process_time})
+    </delete>
+
+    <delete id="wms_deleteTransfer">
+        DELETE FROM
+          wms_bt_transfer
+        WHERE
+          transfer_status = '1'
+        AND
+          transfer_type = '5'
+        AND
+          transfer_origin = '6'
+        AND
+          created &lt;= #{process_time}
     </delete>
 
     <!-- 取得Receipt Confirmation的记录 -->

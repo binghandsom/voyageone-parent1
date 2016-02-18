@@ -42,6 +42,10 @@ public class ChannelConfigEnums {
          */
         print_us_label,
         /**
+         * 是否打印sku面单，0：不打印，1：打印
+         */
+        print_sku_label,
+        /**
          * 初期显示状态
          */
         display_status,
@@ -400,7 +404,23 @@ public class ChannelConfigEnums {
         /**
          * 短信客服号(营销)
          */
-        sms_add_serial_marketing
+        sms_add_serial_marketing,
+        /**
+         * 分配仓库
+         */
+        allot_store,
+        /**
+         * 第三方订单(1：代表订单由商家自行管理)
+         */
+        third_order,
+        /**
+         * 产品库存再设定
+         */
+        searchsku_reset_inventory,
+        /**
+         * 产品信息检索路径
+         */
+        searchsku_path
 
     }
 
@@ -469,7 +489,32 @@ public class ChannelConfigEnums {
         /**
          * SEARS, 013
          */
-        SEARS("013");
+        SEARS("013"),
+
+        /**
+         * WMF
+         */
+        WMF("014"),
+
+        /**
+         * GILT
+         */
+        GILT("015"),
+
+        /**
+         * SHOE_CITY
+         */
+        SHOE_CITY("016"),
+
+        /**
+         * VOYAGEONE
+         */
+        VOYAGEONE("997"),
+
+        /**
+         * ThirdParty
+         */
+        THIRD_PARTY("998");
 
         private String id;
 
@@ -507,6 +552,11 @@ public class ChannelConfigEnums {
                 case "011": return LOCONDO;
                 case "012": return BCBG;
                 case "013": return SEARS;
+                case "014": return WMF;
+                case "015": return GILT;
+                case "016": return SHOE_CITY;
+                case "997": return VOYAGEONE;
+                case "998": return THIRD_PARTY;
                 default: return null;
             }
         }
@@ -630,9 +680,13 @@ public class ChannelConfigEnums {
          */
         ORDER("2"),
         /**
-         * 订单物品
+         * 订单物品(物品运单号)
          */
-        ITEM("3");
+        ITEM("3"),
+        /**
+         * 订单物品(物品Barcode)
+         */
+        UPC("4");
 
         private String type;
 

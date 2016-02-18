@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mongo="http://www.springframework.org/schema/data/mongo"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+          http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
+          
+	<!-- ===================== WMF定时任务 start ===================== -->
+	<bean id="postWMFOrderJob"
+		class="com.voyageone.batch.oms.job.PostWMFOrderJob">
+	</bean>
+	
+	<bean id="postWMFPendingCancelOrderJobTask"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref local="postWMFOrderJob" />
+		</property>
+		<property name="targetMethod">
+			<value>postWMFPendingCancelOrder</value>
+		</property>
+		<property name="concurrent">
+			<value>false</value>
+		</property>
+	</bean>
+	<bean id="postWMFPendingCancelOrderJobTaskContri"
+		name="postWMFPendingCancelOrderJobTaskContri"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail">
+			<ref bean="postWMFPendingCancelOrderJobTask" />
+		</property>
+		<property name="cronExpression">
+			<value>${quartz.post.pendingcancel.wmf.order}</value>
+		</property>
+	</bean>
+
+	<bean id="postWMFNewOrderTask"
+		  class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref local="postWMFOrderJob" />
+		</property>
+		<property name="targetMethod">
+			<value>postWMFNewOrder</value>
+		</property>
+		<property name="concurrent">
+			<value>false</value>
+		</property>
+	</bean>
+	<bean id="postWMFNewOrderTaskContri"
+		  name="postWMFNewOrderTaskContri"
+		  class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail">
+			<ref bean="postWMFNewOrderTask" />
+		</property>
+		<property name="cronExpression">
+			<value>${quartz.post.new.wmf.order}</value>
+		</property>
+	</bean>
+
+	<bean id="postWMFNewOrderTrackingNoTask"
+		  class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref local="postWMFOrderJob" />
+		</property>
+		<property name="targetMethod">
+			<value>postWMFNewOrderTrackingNo</value>
+		</property>
+		<property name="concurrent">
+			<value>false</value>
+		</property>
+	</bean>
+	<bean id="postWMFNewOrderTrackingNoTaskContri"
+		  name="postWMFNewOrderTrackingNoTaskContri"
+		  class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail">
+			<ref bean="postWMFNewOrderTrackingNoTask" />
+		</property>
+		<property name="cronExpression">
+			<value>${quartz.post.new.wmf.order.track}</value>
+		</property>
+	</bean>
+	<!-- ===================== WMF国际定时任务 end ===================== -->
+	
+</beans>

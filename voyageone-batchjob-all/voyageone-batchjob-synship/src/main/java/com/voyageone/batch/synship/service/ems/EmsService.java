@@ -61,7 +61,7 @@ public class EmsService {
         validCarNo14.setCarno(bean);
 
         B2COrderServiceStub stub = getClient();
-        B2COrderServiceStub.ValidCarNoResponse response = stub.ValidCarNo(validCarNo14);
+        B2COrderServiceStub.ValidCarNoResponse response = stub.validCarNo(validCarNo14);
 
         return response.getValidCarNoResult();
     }
@@ -73,7 +73,7 @@ public class EmsService {
         validCardNoFormat2.setCardno(code);
 
         B2COrderServiceStub stub = getClient();
-        B2COrderServiceStub.ValidCardNoFormatResponse response = stub.ValidCardNoFormat(validCardNoFormat2);
+        B2COrderServiceStub.ValidCardNoFormatResponse response = stub.validCardNoFormat(validCardNoFormat2);
         return response.getValidCardNoFormatResult();
     }
 
@@ -87,7 +87,7 @@ public class EmsService {
         isCardExist.setName(name);
 
         B2COrderServiceStub stub = getClient();
-        B2COrderServiceStub.IsCardExistResponse response = stub.IsCardExist(isCardExist);
+        B2COrderServiceStub.IsCardExistResponse response = stub.isCardExist(isCardExist);
         return response.getIsCardExistResult();
     }
 }

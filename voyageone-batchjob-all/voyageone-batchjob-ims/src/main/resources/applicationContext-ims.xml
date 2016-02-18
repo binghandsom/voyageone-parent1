@@ -23,6 +23,9 @@
 		<!--主数据类目属性信息初始化 -->
 		<task:scheduled ref="ImsCategoryInitTask" method="run" cron="0 0/1 0-23 * * ?"/>
 
+		<!--推送聚美上新成功数据-->
+		<task:scheduled ref="ImsJumeiSendProductJob" method="run" cron="0 0/1 0-23 * * ?"/>
+
 	</task:scheduled-tasks>
 
 	<!-- 必须需要 -->

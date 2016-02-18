@@ -3,7 +3,7 @@ package com.voyageone.common.components.jumei.Bean;
 /**
  * Created by sn3 on 2015-07-20.
  */
-public class GetOrderIdsReq {
+public class GetOrderIdsReq extends JmBaseBean {
 
     private String start_date;
     private String end_date;

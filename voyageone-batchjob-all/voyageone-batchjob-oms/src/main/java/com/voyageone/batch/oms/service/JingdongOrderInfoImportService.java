@@ -537,6 +537,8 @@ public class JingdongOrderInfoImportService {
 		}
 		rec.setProduct_num(String.valueOf(product_num));
 		rec.setBuyer_nick(StringUtils.null2Space2(trade.getBuyer_nick()));
+		// cartId
+		rec.setCartId(trade.getCartId());
 		String orderComment = JsonUtil.getJsonString(rec);
 		
 		// 调用wsdl验证数据拼装

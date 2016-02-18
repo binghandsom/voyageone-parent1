@@ -231,6 +231,12 @@ public class SearchServiceImpl implements SearchService {
 		column.add("cnLongDescription");
 		column.add("cnShortDescription");
 		column.add("urlKey");
+		column.add("stone");
+		column.add("metalColor");
+		column.add("stoneColor");
+		column.add("gemCreationMethod");
+		column.add("descriptionMeasure");
+		column.add("collection");
 		column.add("created");
 		column.add("modified");
 		column.add("referenceMsrp");

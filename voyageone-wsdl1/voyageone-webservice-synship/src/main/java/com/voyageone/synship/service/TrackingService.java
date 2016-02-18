@@ -43,6 +43,54 @@ public class TrackingService {
     }
 
     /**
+     * 根据传入参数取得该订单的物流信息
+     * @param cwb 检索参数
+     */
+    public OrderTrackInfoBean getSynshipNoByWebid(String cwb, String channelid) {
+
+        OrderTrackInfoBean orderTrackInfoBean = trackingDao.getSynshipNoByWebid(cwb, channelid);
+
+        return orderTrackInfoBean;
+
+    }
+
+    /**
+     * 根据传入参数取得该订单的物流信息
+     * @param cwb 检索参数
+     */
+    public OrderTrackInfoBean getSynshipNoByPhone(String cwb,String channelid) {
+
+        OrderTrackInfoBean orderTrackInfoBean = trackingDao.getSynshipNoByPhone(cwb, channelid);
+
+        return orderTrackInfoBean;
+
+    }
+
+    /**
+     * 根据传入参数取得该订单的物流信息
+     * @param cwb 检索参数
+     */
+    public OrderTrackInfoBean getSynshipNoByTrackingNo(String cwb,String channelid) {
+
+        OrderTrackInfoBean orderTrackInfoBean = trackingDao.getSynshipNoByTrackingNo(cwb, channelid);
+
+        return orderTrackInfoBean;
+
+    }
+
+    /**
+     * 根据传入参数取得该订单的物流信息
+     * @param cwb 检索参数
+     */
+    public OrderTrackInfoBean getSynshipNoByOrderNum(String cwb,String channelid) {
+
+        OrderTrackInfoBean orderTrackInfoBean = trackingDao.getSynshipNoByOrderNum(cwb, channelid);
+
+        return orderTrackInfoBean;
+
+    }
+
+    /**
      * 根据Synship物流单号取得该订单的物流信息
      * @param cwb 检索参数
      * @return String 物流信息
@@ -54,6 +102,9 @@ public class TrackingService {
         // 根据平台，获取物流单号
         String syn_ship_no = "";
         switch (platForm) {
+            case COM:
+                syn_ship_no = cwb;
+                break;
             case OF:
             case JD:
             case TM:
@@ -64,9 +115,8 @@ public class TrackingService {
             case JM:
                 syn_ship_no = cwb;
                 break;
-
         }
-        logger.info("查询参数：" + cwb + "，物流单号：" + syn_ship_no + "，商家：" + platForm.toString());
+        logger.info("查询参数：" + cwb + "，物流单号：" + syn_ship_no + "，查询方式：" + platForm.toString());
 
         // 根据检索参数取得记录
         List<TrackInfoBean> resultMap = trackingDao.getTrackingInfo(syn_ship_no);
@@ -121,6 +171,9 @@ public class TrackingService {
 
         // 根据平台，调用相应的 输入方法
         switch (platForm) {
+            case COM:
+                resultTrackingInfo = createTrackingInfo(lstTrackInfo);
+                break;
             case OF:
             case JD:
             case TM:
@@ -136,6 +189,40 @@ public class TrackingService {
 
         // 返回抽出结果
         return resultTrackingInfo;
+    }
+
+    private String createTrackingInfo(List<TrackInfoBean> lstTrackInfo) {
+
+        List<TrackInfoCNBean> lstTrackInfoCN = new ArrayList<>();
+        int idx = 0;
+
+        for (TrackInfoBean trackInfo : lstTrackInfo) {
+            TrackInfoCNBean trackInfoCNBean = new TrackInfoCNBean();
+
+            // 仅仅设置需要显示的节点
+            if (SynshipConstants.TrackingInfo.DISPLAY.equals(StringUtils.null2Space2(trackInfo.getDisplay_flg()))) {
+                idx = idx + 1;
+                trackInfoCNBean.setResultcount(String.valueOf(idx));
+                trackInfoCNBean.setCwb(trackInfo.getSyn_ship_no());
+                trackInfoCNBean.setTrackdatetime(trackInfo.getProcess_time());
+                trackInfoCNBean.setBranchname(trackInfo.getLocation());
+                trackInfoCNBean.setTrackevent(trackInfo.getTracking_event());
+                trackInfoCNBean.setPodresultname(trackInfo.getDisplay_status());
+
+                lstTrackInfoCN.add(trackInfoCNBean);
+
+            }
+        }
+
+        logger.info("返回的物流信息件数："+lstTrackInfoCN.size());
+
+        String trackingInfoCNXml = "";
+        if (lstTrackInfoCN.size() > 0) {
+            TrackInfoCNListBean trackInfoCNListBean = new TrackInfoCNListBean();
+            trackInfoCNListBean.setRow(lstTrackInfoCN);
+            trackingInfoCNXml = JaxbUtil.convertToXml(trackInfoCNListBean, "UTF-8");
+        }
+        return trackingInfoCNXml;
     }
 
     private String createTrackingInfoCN(List<TrackInfoBean> lstTrackInfo) {

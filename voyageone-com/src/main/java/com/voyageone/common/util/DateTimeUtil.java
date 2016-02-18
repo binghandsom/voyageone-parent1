@@ -7,7 +7,8 @@
 package com.voyageone.common.util;
 
 
-import org.apache.commons.logging.*;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -240,6 +241,10 @@ public final class DateTimeUtil {
      * 缺省的日期时间显示格式：MMddyy
      */
     public static final String DATE_TIME_FORMAT_9 = "MMddyy";
+    /**
+     * 缺省的日期时间显示格式：MMddyy
+     */
+    public static final String DATE_TIME_FORMAT_10 = "yyMMdd";
     /**
      * 私有构造方法，禁止对该类进行实例化
      */
@@ -660,10 +665,10 @@ public final class DateTimeUtil {
             if (result.length() == 10) {
                 result = result + " 00:00:00";
             }
-            obj = java.sql.Timestamp.valueOf(result);
+            obj = Timestamp.valueOf(result);
         }
         SimpleDateFormat dateFormat = new SimpleDateFormat(DateTimeUtil.DEFAULT_DATETIME_FORMAT);
-        return dateFormat.format((java.sql.Timestamp) obj);
+        return dateFormat.format((Timestamp) obj);
     }
 
     /**
@@ -678,7 +683,7 @@ public final class DateTimeUtil {
      * 格式化java.sql.Date对象成字符串
      */
     public static String parseSqlDate(Object obj) {
-        if (obj instanceof java.sql.Timestamp) {
+        if (obj instanceof Timestamp) {
             String result = obj.toString().trim();
             if (result.length() > 10) {
                 result = result.substring(0, 10);
@@ -1114,7 +1119,7 @@ public final class DateTimeUtil {
      */
     public static String getGMTTimeFrom(int timezone) {
         try {
-            String date = getLocalTime(timezone,DateTimeUtil.DEFAULT_DATE_FORMAT) + " 00:00:00";
+            String date = getLocalTime(timezone, DateTimeUtil.DEFAULT_DATE_FORMAT) + " 00:00:00";
 
             SimpleDateFormat df = new SimpleDateFormat(DateTimeUtil.DEFAULT_DATETIME_FORMAT);
             Date fromDate = df.parse(date);
@@ -1135,7 +1140,7 @@ public final class DateTimeUtil {
      */
     public static String getGMTTimeTo(int timezone) {
         try {
-            String date = getLocalTime(timezone,DateTimeUtil.DEFAULT_DATE_FORMAT) + " 23:59:59";
+            String date = getLocalTime(timezone, DateTimeUtil.DEFAULT_DATE_FORMAT) + " 23:59:59";
 
             SimpleDateFormat df = new SimpleDateFormat(DateTimeUtil.DEFAULT_DATETIME_FORMAT);
             Date fromDate = df.parse(date);
@@ -1157,7 +1162,7 @@ public final class DateTimeUtil {
      */
     public static String getGMTTimeFrom(int timezone,int days) {
         try {
-            String date = getLocalTime(timezone,DateTimeUtil.DEFAULT_DATE_FORMAT) + " 00:00:00";
+            String date = getLocalTime(timezone, DateTimeUtil.DEFAULT_DATE_FORMAT) + " 00:00:00";
 
             SimpleDateFormat df = new SimpleDateFormat(DateTimeUtil.DEFAULT_DATETIME_FORMAT);
             Date fromDate = df.parse(date);
@@ -1180,7 +1185,7 @@ public final class DateTimeUtil {
      */
     public static String getGMTTimeTo(int timezone,int days) {
         try {
-            String date = getLocalTime(timezone,DateTimeUtil.DEFAULT_DATE_FORMAT) + " 23:59:59";
+            String date = getLocalTime(timezone, DateTimeUtil.DEFAULT_DATE_FORMAT) + " 23:59:59";
 
             SimpleDateFormat df = new SimpleDateFormat(DateTimeUtil.DEFAULT_DATETIME_FORMAT);
             Date fromDate = df.parse(date);
@@ -1365,7 +1370,52 @@ public final class DateTimeUtil {
         return new Timestamp(System.currentTimeMillis()).toString();
     }
 
+
     /**
+     * 取得本地时间对应的GMT时间(一天的开始)SP第三方仓库发货日报用
+     *
+     * @param day      格式 yyyy-MM-dd
+     * @param timezone like +8 / -7
+     * @return String
+     */
+    public static String getGMTTimeSPFrom(String day, int timezone, String hours) {
+        try {
+            String date = day + " " + hours + ":00:00";
+
+            SimpleDateFormat df = new SimpleDateFormat(DateTimeUtil.DEFAULT_DATETIME_FORMAT);
+            Date fromDate = df.parse(date);
+
+            Date toDate = DateTimeUtil.addHours(fromDate, timezone * -1);
+
+            return format(toDate, DateTimeUtil.DEFAULT_DATETIME_FORMAT);
+        } catch (ParseException e) {
+            return ("getGMTTimeTo :date format error");
+        }
+    }
+
+    /**
+     * 取得本地时间对应的GMT时间(一天的结束)SP第三方仓库发货日报用
+     *
+     * @param day      格式 yyyy-MM-dd
+     * @param timezone like +8 / -7
+     * @return String
+     */
+    public static String getGMTTimeSPTo(String day, int timezone, String hours) {
+        try {
+            String date = day + " " + hours + ":59:59";
+
+            SimpleDateFormat df = new SimpleDateFormat(DateTimeUtil.DEFAULT_DATETIME_FORMAT);
+            Date fromDate = df.parse(date);
+
+            Date toDate = DateTimeUtil.addHours(fromDate, timezone * -1);
+
+            return format(toDate, DateTimeUtil.DEFAULT_DATETIME_FORMAT);
+        } catch (ParseException e) {
+            return ("getGMTTimeTo :date format error");
+        }
+    }
+	
+	/**
      * 得到当前时间TimeStamp
      *
      * @return 当前日期及时间

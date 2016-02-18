@@ -26,7 +26,7 @@ public class TransferDao extends BaseDao {
      * @param transfer_id {int}
      * @return TransferBean
      */
-    public TransferBean getTransfer(int transfer_id) {
+    public TransferBean getTransfer(long transfer_id) {
         Map<String, Object> params = new HashMap<>();
 
         params.put("transfer_id", transfer_id);
@@ -102,7 +102,7 @@ public class TransferDao extends BaseDao {
      * @param modified   {Date}
      * @return {int}
      */
-    public int deleteTransfer(int transferId, String modified) {
+    public int deleteTransfer(long transferId, String modified) {
         Map<String, Object> params = new HashMap<>();
 
         params.put("transfer_id", transferId);
@@ -117,7 +117,7 @@ public class TransferDao extends BaseDao {
      * @param transferId {int}
      * @return {int}
      */
-    public int deleteDetails(int transferId) {
+    public int deleteDetails(long transferId) {
         Map<String, Object> params = new HashMap<>();
 
         params.put("transfer_id", transferId);
@@ -131,7 +131,7 @@ public class TransferDao extends BaseDao {
      * @param transferId {int}
      * @return {int}
      */
-    public int deleteTransferItems(int transferId) {
+    public int deleteTransferItems(long transferId) {
         Map<String, Object> params = new HashMap<>();
 
         params.put("transfer_id", transferId);
@@ -156,7 +156,7 @@ public class TransferDao extends BaseDao {
         return selectOne(PREFIX + "wms_bt_transfer_get_by_name_modified", params);
     }
 
-    public List<TransferDetailBean> getPackages(int transfer_id) {
+    public List<TransferDetailBean> getPackages(long transfer_id) {
         Map<String, Object> params = new HashMap<>();
 
         params.put("transfer_id", transfer_id);
@@ -164,7 +164,7 @@ public class TransferDao extends BaseDao {
         return selectList(PREFIX + "wms_bt_transfer_detail_get_packages", params);
     }
 
-    public TransferDetailBean getPackage(int transferId, String packageName) {
+    public TransferDetailBean getPackage(long transferId, String packageName) {
         Map<String, Object> params = new HashMap<>();
 
         params.put("transfer_id", transferId);
@@ -173,7 +173,7 @@ public class TransferDao extends BaseDao {
         return selectOne(PREFIX + "wms_bt_transfer_detail_get_package", params);
     }
 
-    public int getDetailMaxNum(int transferId) {
+    public int getDetailMaxNum(long transferId) {
         Map<String, Object> params = new HashMap<>();
 
         params.put("transfer_id", transferId);
@@ -185,7 +185,7 @@ public class TransferDao extends BaseDao {
         return updateTemplate.insert(PREFIX + "wms_bt_transfer_detail_insert", detailBean);
     }
 
-    public int deleteDetail(int package_id, String modified) {
+    public int deleteDetail(long package_id, String modified) {
         Map<String, Object> params = new HashMap<>();
 
         params.put("package_id", package_id);
@@ -194,7 +194,7 @@ public class TransferDao extends BaseDao {
         return updateTemplate.delete(PREFIX + "wms_bt_transfer_deletePackage", params);
     }
 
-    public int reOpenPackage(int package_id, String modified) {
+    public int reOpenPackage(long package_id, String modified) {
         Map<String, Object> params = new HashMap<>();
 
         params.put("package_id", package_id);
@@ -203,7 +203,7 @@ public class TransferDao extends BaseDao {
         return updateTemplate.delete(PREFIX + "wms_bt_transfer_reOpenPackage", params);
     }
 
-    public int deletePackageItems(int package_id) {
+    public int deletePackageItems(long package_id) {
         Map<String, Object> params = new HashMap<>();
 
         params.put("package_id", package_id);
@@ -216,7 +216,7 @@ public class TransferDao extends BaseDao {
      * @param package_id int
      * @return TransferDetailBean
      */
-    public TransferDetailBean getPackage(int package_id) {
+    public TransferDetailBean getPackage(long package_id) {
         Map<String, Object> params = new HashMap<>();
 
         params.put("package_id", package_id);
@@ -224,7 +224,7 @@ public class TransferDao extends BaseDao {
         return selectOne(PREFIX + "wms_bt_transfer_detail_get_package_by_id", params);
     }
 
-    public TransferItemBean getItem(int package_id, String barcode) {
+    public TransferItemBean getItem(long package_id, String barcode) {
         Map<String, Object> params = new HashMap<>();
 
         params.put("package_id", package_id);
@@ -237,7 +237,7 @@ public class TransferDao extends BaseDao {
         return updateTemplate.insert(PREFIX + "wms_bt_transfer_item_insert", item);
     }
 
-    public int deleteItem(int transfer_item_id) {
+    public int deleteItem(long transfer_item_id) {
         Map<String, Object> params = new HashMap<>();
 
         params.put("item_id", transfer_item_id);
@@ -264,7 +264,7 @@ public class TransferDao extends BaseDao {
         return count > 0;
     }
 
-    public boolean detailHasName(int transfer_id, String name) {
+    public boolean detailHasName(long transfer_id, String name) {
         Map<String, Object> params = new HashMap<>();
 
         params.put("transfer_id", transfer_id);
@@ -287,7 +287,7 @@ public class TransferDao extends BaseDao {
         return updateTemplate.insert(PREFIX + "wms_bt_transfer_mapping_insert", transferMappingBean);
     }
 
-    public int deleteMapByIn(int transfer_in_id, String modified) {
+    public int deleteMapByIn(long transfer_in_id, String modified) {
         Map<String, Object> params = new HashMap<>();
 
         params.put("transfer_in_id", transfer_in_id);
@@ -296,7 +296,7 @@ public class TransferDao extends BaseDao {
         return updateTemplate.delete(PREFIX + "wms_bt_transfer_mapping_delete_in", params);
     }
 
-    public int deleteMapByOut(int transfer_out_id,  String modified) {
+    public int deleteMapByOut(long transfer_out_id,  String modified) {
         Map<String, Object> params = new HashMap<>();
 
         params.put("transfer_out_id", transfer_out_id);
@@ -319,7 +319,7 @@ public class TransferDao extends BaseDao {
      * @param transfer_id int
      * @return boolean
      */
-    public boolean alreadyMap(int transfer_id) {
+    public boolean alreadyMap(long transfer_id) {
         Map<String, Object> params = new HashMap<>();
 
         params.put("transfer_in_id", transfer_id);
@@ -330,7 +330,7 @@ public class TransferDao extends BaseDao {
         return count > 0;
     }
 
-    public List<TransferItemBean> allItemInTransfer(int transfer_id) {
+    public List<TransferItemBean> allItemInTransfer(long transfer_id) {
         Map<String, Object> params = new HashMap<>();
 
         params.put("transfer_id", transfer_id);
@@ -338,7 +338,7 @@ public class TransferDao extends BaseDao {
         return selectList(PREFIX + "wms_bt_transfer_item_all_in_transfer", params);
     }
 
-    public int getItemCountInTransfer(int transfer_id) {
+    public int getItemCountInTransfer(long transfer_id) {
         Map<String, Object> params = new HashMap<>();
 
         params.put("transfer_id", transfer_id);
@@ -346,7 +346,7 @@ public class TransferDao extends BaseDao {
         return selectOne(PREFIX + "wms_bt_transfer_item_count_in_transfer", params);
     }
 
-    public List<TransferItemBean> getItemsInPackage(int package_id) {
+    public List<TransferItemBean> getItemsInPackage(long package_id) {
         Map<String, Object> params = new HashMap<>();
 
         params.put("package_id", package_id);
@@ -354,7 +354,7 @@ public class TransferDao extends BaseDao {
         return selectList(PREFIX + "wms_bt_transfer_item_all_in_package", params);
     }
 
-    public int getItemCountInPackage(int package_id) {
+    public int getItemCountInPackage(long package_id) {
         Map<String, Object> params = new HashMap<>();
 
         params.put("package_id", package_id);
@@ -362,7 +362,7 @@ public class TransferDao extends BaseDao {
         return selectOne(PREFIX + "wms_bt_transfer_item_count_in_package", params);
     }
 
-    public Integer getMapTarget(int transfer_id) {
+    public Integer getMapTarget(long transfer_id) {
         Map<String, Object> params = new HashMap<>();
 
         params.put("transfer_id", transfer_id);
@@ -418,7 +418,7 @@ public class TransferDao extends BaseDao {
         return selectOne(PREFIX + "wms_bt_transfer_mapping_count_compare_right", params);
     }
 
-    public boolean isAllPackageClosed(int transfer_id) {
+    public boolean isAllPackageClosed(long transfer_id) {
         Map<String, Object> params = new HashMap<>();
 
         params.put("transfer_id", transfer_id);
@@ -428,7 +428,7 @@ public class TransferDao extends BaseDao {
         return count < 1;
     }
 
-    public int closeMapping(int transfer_id) {
+    public int closeMapping(long transfer_id) {
         Map<String, Object> params = new HashMap<>();
 
         params.put("transfer_id", transfer_id);

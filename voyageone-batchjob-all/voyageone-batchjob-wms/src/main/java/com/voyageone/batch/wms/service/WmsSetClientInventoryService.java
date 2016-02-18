@@ -12,10 +12,12 @@ import com.voyageone.batch.wms.modelbean.TransferBean;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.components.transaction.TransactionRunner;
 import com.voyageone.common.configs.ChannelConfigs;
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.StoreConfigEnums;
 import com.voyageone.common.configs.StoreConfigs;
 import com.voyageone.common.configs.beans.OrderChannelBean;
 import com.voyageone.common.configs.beans.StoreBean;
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -55,6 +57,12 @@ public class WmsSetClientInventoryService extends BaseTaskService {
 
         // 线程
         List<Runnable> threads = new ArrayList<>();
+
+        // 在北京时间零点三十分，清除现有逻辑库存，重新计算最新的库存（全量推送）
+        if (DateTimeUtil.getCurrentHour() == 16 && DateTimeUtil.getCurrentMinute() == 30) {
+            int logicyCount = inventoryDao.deleteLogicInventory();
+            logger.info("清除逻辑库存的件数："+logicyCount);
+        }
 
         // 初始化临时表
         inventoryDao.truncateInventorySynTable();
@@ -108,6 +116,12 @@ public class WmsSetClientInventoryService extends BaseTaskService {
                         }
                     }
 
+                    //分配仓库取得（如果能够取得相应的值，则说明只是模拟分配而已，不再进行逻辑库存计算）
+                    String allot_store = ChannelConfigs.getVal1(channel.getOrder_channel_id(), ChannelConfigEnums.Name.allot_store);
+                    if (!StringUtils.isNullOrBlank2(allot_store)) {
+                        inventory_manager = false;
+                    }
+
                     try {
                         for (TransferBean transfer : transferList) {
                             logger.info(channel.getFull_name() + "，transfer_id：" + transfer.getTransfer_id() + "，Store：" + transfer.getStore_id() + "，Origin：" + transfer.getTransfer_origin()+ "，Item_id：" + transfer.getTransfer_item_id());
@@ -116,7 +130,7 @@ public class WmsSetClientInventoryService extends BaseTaskService {
                             StoreBean storebean = StoreConfigs.getStore(transfer.getStore_id());
 
                             // 如果是品牌方仓库引起的变化，则允许进行逻辑库存计算（这是为了防止品牌方库存推送延迟导致库存不一致的问题）
-                            if (storebean.getInventory_manager().equals(StoreConfigEnums.Manager.NO.getId())) {
+                            if (storebean.getInventory_manager().equals(StoreConfigEnums.Manager.NO.getId()) && StringUtils.isNullOrBlank2(allot_store)) {
                                 inventory_manager = true;
                             }
 
@@ -183,6 +197,7 @@ public class WmsSetClientInventoryService extends BaseTaskService {
                         // 如果库存需要管理 或者物理库存发生过变动，进行逻辑库存计算
                         if ( inventory_manager == true ) {
                             logger.info(channel.getFull_name() + "-----逻辑库存计算" );
+
                             inventoryDao.setLogicInventory(channel.getOrder_channel_id());
                         }
                     } catch (Exception e) {

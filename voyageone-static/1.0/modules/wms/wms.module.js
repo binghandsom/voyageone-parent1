@@ -19,6 +19,7 @@ define(function () {
                 submit: "/wms/transfer/edit/submitTransfer",
                 save: "/wms/transfer/edit/saveTransfer",
                 download: "/wms/transfer/list/download",
+                compare: "/wms/transfer/edit/compareTransfer",
 
                 package: {
                     delete: "/wms/transfer/edit/deletePackage",
@@ -30,12 +31,13 @@ define(function () {
                     item: {
                         add: "/wms/transfer/edit/addItem",
                         select: "/wms/transfer/edit/getPackageItems",
-                        compare: "/wms/transfer/edit/compare"
+                        compare: "/wms/transfer/edit/compare",
+                        getSku: "/wms/transfer/edit/getSku"
                     }
                 },
 
-                store: {
-                    all: "/wms/transfer/edit/getAllStores"
+                config: {
+                    all: "/wms/transfer/edit/getAllConfigs"
                 }
             },
 
@@ -165,6 +167,9 @@ define(function () {
                     search: "/wms/pickup/list/search",
                     scan: "/wms/pickup/list/scan",
                     download: "/wms/pickup/list/download"
+                },
+                report:{
+                    download: "/wms/pickup/report/download"
                 }
             },
 
@@ -173,6 +178,9 @@ define(function () {
                     init: "/wms/receive/list/init",
                     search: "/wms/receive/list/search",
                     scan: "/wms/receive/list/scan"
+                },
+                report:{
+                    download: "/wms/receive/report/download"
                 }
             },
 
@@ -194,14 +202,16 @@ define(function () {
                     ReturnLabel: 'ReturnLabel',
                     sf: 'SF',
                     PickUp: 'PickUp',
-                    Location:'Location'
+                    Location:'Location',
+                    SKU:'SKU'
                 },
 
                 hardware_key: {
                     Print_Return: 'Print_Return',
                     Print_SF: "Print_SF",
                     Print_PickUp: "Print_PickUp",
-                    Print_Location: "Print_Location"
+                    Print_Location: "Print_Location",
+                    Print_SKU: "Print_SKU"
                 }
             },
 

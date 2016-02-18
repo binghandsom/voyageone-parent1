@@ -1182,21 +1182,28 @@
         	   tt2.item_number                                    
           from                                     
              (                                    
-               select t.order_number,                                    
+               select DISTINCT
+               		  t.order_number,
         			  t.source_order_id,                                    
         			  t.cart_id                                    
-                 from oms_bt_orders t
-                 left join tt_idcard i
+                 from
+                  	oms_bt_orders t
+                 inner join
+                  (SELECT
+						DISTINCT t1.order_number
+					FROM
+						oms_bt_order_details t1
+					WHERE
+						t1.quantity_shipped = 1
+					AND t1.res_allot_flg = '0'
+					AND t1.adjustment = 0
+					AND t1.res_id = 0) a1
+				  on t.approved = 1
+				 and t.cancelled = 0
+				 and t.order_channel_id = #{order_channel_id}
+				 and t.order_number = a1.order_number
+				left join tt_idcard i
 				 on t.ship_name = i.receive_name and t.ship_phone = i.phone and i.approved = '1'
-                where t.approved = 1                                    
-                  and t.cancelled = 0                                    
-                  and t.order_channel_id = #{order_channel_id}  
-				  and exists(select 1 from oms_bt_order_details t1 
-							  where t1.quantity_shipped = 1
-							  	and t1.res_allot_flg = '0'
-							  	and t1.adjustment = 0
-                  				and t1.res_id = 0
-								and t.order_number = t1.order_number)
 				order by i.approved desc ,t.order_number
                 limit #{intRowCount}
              ) tt1,                                    
@@ -2930,5 +2937,105 @@
 		modified = now()
 		where order_number = #{order_number}
 	</update>
+
+	<!-- 根据barcode获得sku -->
+	<select id="wms_bt_item_details_getSkuByBarcode" parameterType="HashMap" resultType="String">
+		select sku
+		from
+			wms_bt_item_details
+		where
+			order_channel_id = #{orderChannelId}
+			and barcode = #{barcode}
+			and active = 1
+	</select>
+
+	<!-- 获得需要推送WMF新订单信息 -->
+	<select id="oms_bt_orders_getWMFNewOrderInfo" parameterType="String" resultType="com.voyageone.common.magento.api.bean.OrderDataBean">
+		select
+			o.order_number as orderNumber,
+			o.name as billingName,
+			o.email as billingEmail,
+			o.state as billingState,
+			o.city as billingCity,
+			o.zip as billingPostcode,
+			o.phone as billingTelephone,
+			o.address as billingAddress,
+			o.address2 as billingAddress2,
+			o.ship_name as shippingName,
+			o.ship_email as shippingEmail,
+			o.ship_state as shippingState,
+			o.ship_city as shippingCity,
+			o.ship_zip as shippingPostcode,
+			o.ship_phone as shippingTelephone,
+			o.ship_address as shippingAddress,
+			o.ship_address2 as shippingAddress2,
+			o.final_grand_total as finalGrandTotal,
+			o.origin_source_order_id,
+			o.pay_no,
+			cainiao_o.taobao_logistics_id
+		from
+			oms_bt_orders o
+			left join oms_bt_ext_orders ext_o
+				on o.order_channel_id = ext_o.order_channel_id and o.order_number = ext_o.order_number and o.origin_source_order_id = ext_o.origin_source_order_id
+			left join tt_cainiao_order cainiao_o
+				on o.order_number = cainiao_o.order_number and o.origin_source_order_id = cainiao_o.source_order_id
+		where
+			o.order_channel_id = #{orderChannelId}
+			and ifnull(o.client_order_id, '') = ''
+			and ext_o.send_flg = false
+			and ifnull(cainiao_o.taobao_logistics_id, '') != ''
+		limit 50
+	</select>
+
+	<!-- 获得需要推送WMF新订单详细信息 -->
+	<select id="oms_bt_order_details_getWMFNewOrderInfo" parameterType="HashMap" resultType="com.voyageone.common.magento.api.bean.OrderDetailBean">
+		select
+			d.order_number as orderNumber,
+			d.item_number as itemNumber,
+			d.adjustment as adjustment,
+			d.sub_item_number as subItemNumber,
+			d.sku as sku,
+			item.client_sku as clientSku,
+			d.price_per_unit as price,
+			d.quantity_ordered as qty
+		from
+			oms_bt_order_details d
+			left join wms_bt_item_details item on d.sku = item.sku and item.order_channel_id = #{orderChannelId}
+		where
+			d.order_number = #{orderNumber}
+	</select>
+
+	<!-- 获得需要推送WMF新订单菜鸟单号信息 -->
+	<select id="oms_bt_orders_getWMFCainiaoId" parameterType="String" resultType="HashMap">
+		select
+			o.order_number,
+			o.client_order_id,
+			o.origin_source_order_id,
+			o.pay_no,
+			cainiao_o.taobao_logistics_id
+		from
+			oms_bt_orders o
+			left join oms_bt_ext_orders ext_o
+			on o.order_channel_id = ext_o.order_channel_id and o.order_number = ext_o.order_number and o.origin_source_order_id = ext_o.origin_source_order_id
+			left join tt_cainiao_order cainiao_o
+			on o.order_number = cainiao_o.order_number and o.origin_source_order_id = cainiao_o.source_order_id
+		where
+			o.order_channel_id = #{orderChannelId}
+			and ifnull(o.client_order_id, '') != ''
+			and ext_o.send_flg = false
+			and ifnull(cainiao_o.taobao_logistics_id, '') != ''
+		limit 50
+	</select>
+
+	<!-- cainiao Id 发送标志更新到数据库中 -->
+	<update id="oms_bt_ext_orders_resetTrackingSendFlag" parameterType="HashMap" >
+		Update oms_bt_ext_orders
+		set
+			send_flg = true,
+			modifier = #{modifier},
+			modified = now()
+		where order_number = #{order_number}
+	</update>
+
 </mapper>
 

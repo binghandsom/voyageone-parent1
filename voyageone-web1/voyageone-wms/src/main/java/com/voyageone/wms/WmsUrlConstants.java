@@ -26,8 +26,14 @@ public final class WmsUrlConstants {
 
         public static final String SUBMIT = "/wms/transfer/edit/submitTransfer";
 
-        public static final class Store {
-            public static final String ALL = "/wms/transfer/edit/getAllStores";
+        public static final String COMPARE = "/wms/transfer/edit/compareTransfer";
+
+        public static final String DOWNLOAD_CLIENT_SHIPMENT = "/wms/transfer/edit/downloadClientShipment";
+
+        public static final String DOWNLOAD_TRANSFER_COMPARE = "/wms/transfer/edit/downloadTransferCompare";
+
+        public static final class Configs {
+            public static final String ALL = "/wms/transfer/edit/getAllConfigs";
         }
 
         public static final class Package {
@@ -42,6 +48,7 @@ public final class WmsUrlConstants {
             public static final String ADD = "/wms/transfer/edit/addItem";
             public static final String COMPARE = "/wms/transfer/edit/compare";
             public static final String SELECT = "/wms/transfer/edit/getPackageItems";
+            public static final String GETSKU = "/wms/transfer/edit/getSku";
         }
     }
 
@@ -89,6 +96,11 @@ public final class WmsUrlConstants {
          */
         public static final String DOWNLOAD = "/wms/pickup/list/download";
 
+        /**
+         * 已拣货报告。下载
+         */
+        public static final String REPORTDOWNLOAD = "/wms/pickup/report/download";
+
     }
 
     /**
@@ -110,6 +122,11 @@ public final class WmsUrlConstants {
          * List 页面。扫描指定条件的 Order
          */
         public static final String SCAN = "/wms/receive/list/scan";
+
+        /**
+         * 已拣货报告。下载
+         */
+        public static final String REPORTDOWNLOAD = "/wms/receive/report/download";
 
     }
 

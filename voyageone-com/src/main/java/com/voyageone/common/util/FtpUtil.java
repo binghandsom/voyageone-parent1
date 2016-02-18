@@ -77,7 +77,7 @@ public class FtpUtil {
         //ftpBean.getUpload_input().close();
         //ftpClient.logout();
 
-        logger.info(ftpBean.getDown_filename()  + " Ftp 上传文件结束");
+        logger.info(ftpBean.getUpload_filename()  + " Ftp 上传文件结束");
         return result;
     }
 
