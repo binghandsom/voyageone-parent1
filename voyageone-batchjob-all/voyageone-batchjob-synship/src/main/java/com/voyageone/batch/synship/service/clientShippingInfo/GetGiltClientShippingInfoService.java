@@ -156,7 +156,7 @@ public class GetGiltClientShippingInfoService extends GetClientShippingBaseServi
                     int shipOrderSize = ShipClientOrderList.size();
                     $info(channel.getFull_name() + "（" + shop.getShop_name() + "）" + "-----发货订单件数：" + shipOrderSize);
                     if (shipOrderSize > 0) {
-                        SetShipOrderList(channel, ShipClientOrderList, PortConfigEnums.Port.SYB.getId());
+                        SetShipOrderList(channel, ShipClientOrderList, PortConfigEnums.Port.LA.getId());
                     }
 
                     // 更新超卖订单状态
