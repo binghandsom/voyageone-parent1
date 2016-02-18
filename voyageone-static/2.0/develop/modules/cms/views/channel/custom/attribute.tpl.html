@@ -15,6 +15,46 @@
 							</div>
 						</div>
 					</div>
+					<div class="col-sm-12">
+						<div class="col-sm-6">
+							<div class="form-horizontal">
+								<div class="form-group">
+									<label class="col-sm-4 control-label">Customize Property</label>
+									<div class="col-sm-6">
+										<input type="text" class="form-control"/>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-4 control-label">Customize Property Value</label>
+									<div class="col-sm-6">
+										<input type="text" class="form-control"/>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-sm-6">
+							<div class="form-horizontal">
+								<div class="form-group">
+									<label class="col-sm-4 control-label">自定义属性名称</label>
+									<div class="col-sm-6">
+										<input type="text" class="form-control"/>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-4 control-label">自定义属性值</label>
+									<div class="col-sm-6">
+										<input type="text" class="form-control"/>
+									</div>
+								</div>
+							</div><!-- .form-group -->
+						</div>
+						<div class="col-sm-12 text-center m-b-sm">
+							<div class="form-inline">
+								<button class="btn btn-default" ng-click="clear()"><i class="fa fa-remove"></i>&nbsp;清空</button>
+								<button class="btn btn-vo" ng-click="search()"><i class="fa fa-search"></i>&nbsp;搜索</button>
+							</div><!-- .form-inline -->
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -28,17 +68,14 @@
 		<div class="custom_ts" style="background:#fff">
 			<div class="pull-right m-t-xs m-r-xs" ng-controller="popupCtrl">
 			<button ng-click="ctrl.openCategoryMapping(feedCategory.model, popupNewCategory)" class="btn btn-default btn-xs"><i class="glyphicon glyphicon-link"></i> 类目匹配</button>
+				<button type="submit" class="btn btn-default btn-xs"><i class="glyphicon glyphicon-plus"></i>&nbsp;请自动添加类目</button>
 		</div><!-- .form-inline -->
 			<p class="m-l-sm m-t-xs">您当前选择的是：<span>珠宝 / 钻石 / 翡翠 / 黄金 > 彩色宝石 / 贵重宝石</span></p>
 		</div>
 
 		<div class="category_drag col-sm-6">
 		<div class="category_drag_main">
-			<!--<p class="text-center text-vo font-bold">一级类目</p>
-            <div class="form-inline text-center">
-                <input type="text" placeholder="快速检索" class="form-control" style="width:80%">
-                <button type="submit" class="btn btn-vo btn-xxs"><i class="fa fa-search"></i></button>
-            </div>-->
+			<!--<p class="text-center text-vo font-bold">一级类目</p>-->
 			<div class="category_drag_list_qh">
 				<ul>
 					<li><a href="">属性值1 <span class="pull-right text-muted"><i class="fa fa-fw fa-angle-right text"></i></span></a></li>
@@ -60,7 +97,6 @@
 					<li><a href="">属性值1 <span class="pull-right text-muted"><i class="fa fa-fw fa-angle-right text"></i></span></a></li>
 					<li><a href="">属性值2 <span class="pull-right text-muted"><i class="fa fa-fw fa-angle-right text"></i></span></a></li>
 					<li><a href="">属性值3 <span class="pull-right text-muted"><i class="fa fa-fw fa-angle-right text"></i></span></a></li>
-					<li><a href="">属性值4 <span class="pull-right text-muted"><i class="fa fa-fw fa-angle-right text"></i></span></a></li>
 				</ul>
 			</div>
 		</div>
@@ -77,21 +113,24 @@
                 <button type="submit" class="btn btn-vo btn-xxs"><i class="fa fa-search"></i></button>
             </div>-->
 			<div class="category_drag_list_qh">
-				<!--<ul>
-					<li><a href="">属性值1 <span class="pull-right text-muted"><i class="fa fa-fw fa-angle-right text"></i></span></a></li>
-					<li><a href="">属性值2 <span class="pull-right text-muted"><i class="fa fa-fw fa-angle-right text"></i></span></a></li>
-					<li><a href="">属性值3 <span class="pull-right text-muted"><i class="fa fa-fw fa-angle-right text"></i></span></a></li>
-					<li><a href="">属性值4 <span class="pull-right text-muted"><i class="fa fa-fw fa-angle-right text"></i></span></a></li>
-				</ul>-->
+				<!--<div class="form-inline text-center">
+					<button type="submit" class="btn btn-success btn-xxs"><i class="glyphicon glyphicon-plus"></i>&nbsp;请自动添加类目</button>
+				</div>-->
+				<ul>
+					<li><a href="">属性值1 <input /><span class="pull-right text-muted"><i class="fa fa-fw fa-angle-right text"></i></span></a></li>
+					<li><a href="">属性值2 <input /><span class="pull-right text-muted"><i class="fa fa-fw fa-angle-right text"></i></span></a></li>
+					<li><a href="">属性值3 <input /><span class="pull-right text-muted"><i class="fa fa-fw fa-angle-right text"></i></span></a></li>
+					<li><a href="">属性值4 <input /><span class="pull-right text-muted"><i class="fa fa-fw fa-angle-right text"></i></span></a></li>
+				</ul>
 			</div>
 		</div>
 	</div>
 		<div class="col-sm-12 m-t-md text-center">
 			<p>
-				<a href="#/store/custom_translate/" target="_blank">
+				<a href="#/channel/custom/translate" target="_blank">
 					<button class="btn btn-vo btn-sm"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;保存</button>
 				</a>
-				<a href="#/store/custom_translate/" target="_blank">
+				<a href="#/channel/custom/translate" target="_blank">
 					<button class="btn btn-success btn-sm"><i class="fa fa-mortar-board (alias) icon"></i>&nbsp;翻译自定义属性</button>
 				</a>
 			</p>

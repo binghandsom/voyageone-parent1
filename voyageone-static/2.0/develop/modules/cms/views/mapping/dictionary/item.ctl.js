@@ -68,11 +68,13 @@ define([
           data.modified = $scope.vm.modified;
           $dictionaryService.setDict(data)
               .then(function () {
+                notify.success ($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
                 $location.path(cRoutes.mapping_dict_index.hash);
               })
         } else {
           $dictionaryService.addDict(data)
               .then(function () {
+                notify.success ($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
                 $location.path(cRoutes.mapping_dict_index.hash);
               })
         }
@@ -89,7 +91,7 @@ define([
       confirm($translate.instant('TXT_MSG_DELETE_ITEM')).result
           .then(function () {
             $scope.vm.dictionary.expression.ruleWordList.splice(index, 1);
-            notify.success ($translate.instant('TXT_DELETE_SUCCESS'));
+            notify.success ($translate.instant('TXT_MSG_DELETE_SUCCESS'));
           });
     }
 
