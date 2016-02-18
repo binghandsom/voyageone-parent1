@@ -11,6 +11,7 @@ import com.voyageone.batch.synship.dao.TrackingDao;
 import com.voyageone.batch.synship.modelbean.ReservationClientBean;
 import com.voyageone.batch.synship.modelbean.TrackingBean;
 import com.voyageone.common.components.channelAdvisor.service.OrderService;
+import com.voyageone.common.components.gilt.GiltOrderService;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.components.tmall.TbLogisticsService;
 import com.voyageone.common.configs.Enums.CarrierEnums;
@@ -26,7 +27,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 /**
- * Created by jack on 2016-01-07.
+ * Created by jack on 2016-02-17.
  */
 @Service
 public abstract class GetClientShippingBaseService extends BaseTaskService {
@@ -39,6 +40,9 @@ public abstract class GetClientShippingBaseService extends BaseTaskService {
 
     @Autowired
     MagentoApiServiceImpl magentoApiServiceImpl;
+
+    @Autowired
+    GiltOrderService giltOrderService;
 
     @Autowired
     ClientTrackingDao clientTrackingDao;

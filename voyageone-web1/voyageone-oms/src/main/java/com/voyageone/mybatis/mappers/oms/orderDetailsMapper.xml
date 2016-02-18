@@ -121,6 +121,7 @@
 		<result column="cancelClientOrderFlag" property="origCancelClientOrderFlag"/>
 		<result column="clientOrderSendFlag" property="clientOrderSendFlag"/>
 		<result column="thirdPartyCancelOrderFlag" property="thirdPartyCancelOrderFlag"/>
+		<result column="preClientOrderSendFlag" property="preClientOrderSendFlag"/>
 		<result column="customer_refused" property="customerRefused"/>
 		<result column="customer_refused" property="origCustomerRefused"/>
 		<result column="seller_order_id" property="sellerOrderId"/>
@@ -204,6 +205,7 @@
 		IFNULL(ox.send_flg, false) as clientOrderSendFlag,
 		IFNULL(ox.ext_flg1, false) as cancelClientOrderFlag,
 		IFNULL(ox.ext_flg3, false) as thirdPartyCancelOrderFlag,
+		IFNULL(ox.ext_flg4, false) as preClientOrderSendFlag,
 		customer_refused,
 		ox.seller_order_id
 	</sql>
