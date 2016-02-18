@@ -15,9 +15,12 @@ import com.voyageone.common.components.yimei.YMSmsSendService;
 import com.voyageone.common.components.yimei.bean.YMSMSSendBean;
 import com.voyageone.common.configs.ChannelConfigs;
 import com.voyageone.common.configs.Codes;
+import com.voyageone.common.configs.Enums.ShopConfigEnums;
+import com.voyageone.common.configs.ShopConfigs;
 import com.voyageone.common.configs.ThirdPartyConfigs;
 import com.voyageone.common.configs.beans.FtpBean;
 import com.voyageone.common.configs.beans.OrderChannelBean;
+import com.voyageone.common.configs.beans.ShopConfigBean;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -137,11 +140,28 @@ public class SendSMSService  extends BaseTaskService {
                     if (checkSendCount(sendSMSBean.getShip_phone()) == false) {
                         continue;
                     }
+
+                    //聚美订单判定
+                    String jumeiChannelFullName = "";
+                    OrderChannelBean jumeiChannel = new OrderChannelBean();
+                    List<ShopConfigBean> shopConfig = ShopConfigs.getConfigs(channel.getOrder_channel_id(), sendSMSBean.getCart_id(), ShopConfigEnums.Name.main_channel_id);
+                    if (shopConfig != null && shopConfig.size() > 0 && shopConfig.get(0).getCfg_val2().equals(Constants.smsChange.CHANGE_ON)){
+                        jumeiChannel = ChannelConfigs.getChannel(shopConfig.get(0).getCfg_val1());
+                        jumeiChannelFullName = String.format(SynshipConstants.SMS_CHECK.SIGN_NAME, jumeiChannel.getFull_name());
+                        $info("聚美变化后短信签名：" + jumeiChannelFullName);
+                    }
+
                     //ymsmsSendBean = formatYMSMSSendBean("001","13661895431","【Sneakerhead】林冰洁，您购买的宝贝美国洛杉矶发货，请在23点前点击 synship.net.cn/a/UBVrQ3 上传身份证信息用于清关。");
                     // 判断签名是否设定
-                    if (sendSMSBean.getSent_conent().startsWith(signName)) {
-                        // 签名已设定
-                        content = sendSMSBean.getSent_conent();
+                    if (sendSMSBean.getSent_conent().startsWith(signName) || (!StringUtils.isNullOrBlank2(jumeiChannelFullName) && sendSMSBean.getSent_conent().startsWith(jumeiChannelFullName))) {
+                        //聚美变化后短信签名有
+                        if (!StringUtils.isNullOrBlank2(jumeiChannelFullName)){
+                            // 签名已设定
+                            content = sendSMSBean.getSent_conent().replaceFirst(signName,jumeiChannelFullName);
+                        }else {
+                            // 签名已设定
+                            content = sendSMSBean.getSent_conent();
+                        }
                     } else {
                         // 判断现有签名不正确
                         if (sendSMSBean.getSent_conent().startsWith(charCheck)){
@@ -150,12 +170,23 @@ public class SendSMSService  extends BaseTaskService {
                                     ",  phone = " + sendSMSBean.getShip_phone()+ ",  conent = " + sendSMSBean.getSent_conent());
                             continue;
                         } else {
-                            // 签名未设定
-                            content = signName + sendSMSBean.getSent_conent();
+                            //聚美变化后短信签名有
+                            if (!StringUtils.isNullOrBlank2(jumeiChannelFullName)){
+                                // 签名未设定
+                                content = jumeiChannelFullName + sendSMSBean.getSent_conent();
+                            }else {
+                                // 签名未设定
+                                content = signName + sendSMSBean.getSent_conent();
+                            }
                         }
                     }
                     $info("order_channel_id = " + sendSMSBean.getOrder_channel_id() + ",  phone = " + sendSMSBean.getShip_phone() + ",  conent = " + content);
-                    ymsmsSendBean = formatYMSMSSendBean(sendSMSBean.getOrder_channel_id(), sendSMSBean.getShip_phone(), content,sendSMSBean.getSms_type());
+                    //聚美变化后短信签名有
+                    if (!StringUtils.isNullOrBlank2(jumeiChannelFullName)){
+                        ymsmsSendBean = formatYMSMSSendBean(jumeiChannel.getOrder_channel_id(), sendSMSBean.getShip_phone(), content, sendSMSBean.getSms_type());
+                    }else {
+                        ymsmsSendBean = formatYMSMSSendBean(sendSMSBean.getOrder_channel_id(), sendSMSBean.getShip_phone(), content, sendSMSBean.getSms_type());
+                    }
                     try {
                         Integer sendFlg = ymSmsSendService.sendSMS(ymsmsSendBean);
                         $info("发送短信返回值 = " + sendFlg.toString());
@@ -186,7 +217,7 @@ public class SendSMSService  extends BaseTaskService {
                 // 物流短信余额判断
                 checkBalance(sendSMSLstLst.size(),channel.getOrder_channel_id(),Constants.smsInfo.SMS_TYPE_LOGISTICS, SynshipConstants.SMS_CHECK.ACCOUNT_BALANCE_LOGISTICS);
                 // 营销短信余额判断
-                checkBalance(sendSMSLstLst.size(),channel.getOrder_channel_id(),Constants.smsInfo.SMS_TYPE_MARKETING, SynshipConstants.SMS_CHECK.ACCOUNT_BALANCE_MARKETING);
+                checkBalance(sendSMSLstLst.size(), channel.getOrder_channel_id(), Constants.smsInfo.SMS_TYPE_MARKETING, SynshipConstants.SMS_CHECK.ACCOUNT_BALANCE_MARKETING);
 
             } catch (Exception e) {
                 $info(channel.getFull_name() + "定时发送短信发生错误：", e);

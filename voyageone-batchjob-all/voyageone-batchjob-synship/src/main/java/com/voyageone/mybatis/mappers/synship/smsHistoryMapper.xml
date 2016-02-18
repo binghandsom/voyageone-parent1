@@ -19,6 +19,7 @@
             history.sms_type,
             history.order_channel_id,
             history.task_id,
+            history.cart_id,
             history.create_time,
             history.update_time,
             history.create_person,
