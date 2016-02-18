@@ -13,9 +13,8 @@ import com.voyageone.web2.cms.wsdl.dao.CmsPromotionSkuDao;
 import com.voyageone.web2.cms.wsdl.dao.CmsPromotionTaskDao;
 import com.voyageone.web2.sdk.api.VoApiDefaultClient;
 import com.voyageone.web2.sdk.api.domain.*;
-import com.voyageone.web2.sdk.api.request.PromotionDetailAddRequest;
-import com.voyageone.web2.sdk.api.request.PromotionDetailDeleteRequest;
-import com.voyageone.web2.sdk.api.request.PromotionDetailUpdateRequest;
+import com.voyageone.web2.sdk.api.request.*;
+import com.voyageone.web2.sdk.api.response.PromotionModelsGetResponse;
 import com.voyageone.web2.sdk.api.service.ProductSdkClient;
 import com.voyageone.web2.sdk.api.service.ProductTagClient;
 import org.apache.poi.ss.usermodel.Cell;
@@ -46,9 +45,6 @@ public class CmsPromotionDetailService extends BaseAppService {
     private ProductTagClient productTagClient;
 
     @Autowired
-    private CmsPromotionModelDao cmsPromotionModelDao;
-
-    @Autowired
     private CmsPromotionCodeDao cmsPromotionCodeDao;
 
     @Autowired
@@ -56,9 +52,6 @@ public class CmsPromotionDetailService extends BaseAppService {
 
     @Autowired
     private CmsPromotionIndexService cmsPromotionService;
-
-    @Autowired
-    private CmsPromotionTaskDao cmsPromotionTaskDao;
 
     @Autowired
     private SimpleTransaction simpleTransaction;
@@ -142,16 +135,21 @@ public class CmsPromotionDetailService extends BaseAppService {
      * @return 以model为单位的数据
      */
     public List<Map<String, Object>> getPromotionGroup(Map<String, Object> param) {
-        List<Map<String, Object>> promotionGroups = cmsPromotionModelDao.getPromotionModelDetailList(param);
-        promotionGroups.forEach(map -> {
-            CmsBtProductModel cmsBtProductModel = ProductGetClient.getProductById(param.get("channelId").toString(), (Long) map.get("productId"));
+        PromotionModelsGetRequest request=new PromotionModelsGetRequest();
+        request.setParam(param);
+        PromotionModelsGetResponse response=voApiClient.execute(request);
+        List<Map<String, Object>> promotionGroups =new ArrayList<Map<String,Object>>();
+        if(response!=null){
+            promotionGroups = response.getPromotionGroups();
+            promotionGroups.forEach(map -> {
+                CmsBtProductModel cmsBtProductModel = ProductGetClient.getProductById(param.get("channelId").toString(), (Long) map.get("productId"));
 
-            if (cmsBtProductModel != null) {
-                map.put("image", cmsBtProductModel.getFields().getImages1().get(0).getAttribute("image1"));
-                map.put("platformStatus",cmsBtProductModel.getGroups().getPlatforms().get(0).getPlatformStatus());
-            }
-        });
-
+                if (cmsBtProductModel != null) {
+                    map.put("image", cmsBtProductModel.getFields().getImages1().get(0).getAttribute("image1"));
+                    map.put("platformStatus",cmsBtProductModel.getGroups().getPlatforms().get(0).getPlatformStatus());
+                }
+            });
+        }
         return promotionGroups;
     }
 
@@ -211,7 +209,9 @@ public class CmsPromotionDetailService extends BaseAppService {
     }
 
     public int getPromotionModelListCnt(Map<String, Object> params) {
-        return cmsPromotionModelDao.getPromotionModelDetailListCnt(params);
+        PromotionModelCountGetRequest request=new PromotionModelCountGetRequest();
+        request.setParam(params);
+        return voApiClient.execute(request).getCount();
     }
 
     private List<CmsPromotionProductPriceBean> resolvePromotionXls(InputStream xls) throws Exception {
@@ -295,7 +295,9 @@ public class CmsPromotionDetailService extends BaseAppService {
         try {
             codeList.forEach(code -> {
                 CmsBtPromotionTaskModel cmsBtPromotionTask = new CmsBtPromotionTaskModel(promotionId, PromotionTypeEnums.Type.TEJIABAO.getTypeId(), code.getProductCode(),code.getNumIid(), operator);
-                cmsPromotionTaskDao.insertPromotionTask(cmsBtPromotionTask);
+                PromotionTaskAddRequest request=new PromotionTaskAddRequest();
+                request.setCmsBtPromotionTaskModel(cmsBtPromotionTask);
+                voApiClient.execute(request);
             });
         } catch (Exception e) {
             simpleTransaction.rollback();
@@ -346,7 +348,10 @@ public class CmsPromotionDetailService extends BaseAppService {
                     CmsBtPromotionGroupModel model = new CmsBtPromotionGroupModel();
                     model.setModelId(item.getModelId());
                     model.setPromotionId(item.getPromotionId());
-                    cmsPromotionModelDao.deleteCmsPromotionModel(model);
+
+                    PromotionModelDeleteRequest request=new PromotionModelDeleteRequest();
+                    request.setModel(model);
+                    voApiClient.execute(request);
                 }
 
                 cmsPromotionSkuDao.deletePromotionSkuByProductId(item.getPromotionId(), item.getProductId());

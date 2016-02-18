@@ -38,18 +38,18 @@
                 <table class="table table-hover table-hover-new text-center">
                     <thead>
                     <tr>
-                        <th class="text-center" translate="TXT_SEQ"></th>
+                        <th class="mfb-xt text-center" translate="TXT_SEQ"></th>
                         <th class="text-left" translate="TXT_LEVEL"></th>
                         <th class="text-left" translate="TXT_FEED_CATEGORY"></th>
                         <th class="text-left" translate="TXT_MASTER_CATEGORY"></th>
-                        <th class="text-center" translate="TXT_MAPPING_CATEGORY_OR_FORWARD"></th>
-                        <th class="text-center" translate="TXT_MAPPING_ATTRIBUTE_IS_FINISHED"></th>
+                        <th class="mfb-xxs text-center" translate="TXT_MAPPING_CATEGORY_OR_FORWARD"></th>
+                        <th class="mfb-xxs text-center" translate="TXT_MAPPING_ATTRIBUTE_IS_FINISHED"></th>
                         <th class="text-center" translate="TXT_MAPPING_ATTRIBUTE"></th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr ng-repeat="feedCategory in ctrl.tableSource">
-                        <td class="text-center">{{ $index + 1 }}</td>
+                        <td class="mfb-xt text-center">{{ $index + 1 }}</td>
                         <td class="text-left">
                             <span class="badge" ng-class="{'badge-success':feedCategory.level < 2, 'badge-empty': feedCategory.level > 1}">
                                 <span>{{ feedCategory.level }}&nbsp;{{'TXT_SUB_LEVEL' | translate}}</span>
@@ -58,7 +58,7 @@
                         </td>
                         <td class="text-left">{{ feedCategory.model.path }}</td>
                         <td class="text-left">{{ ctrl.getDefaultMapping(feedCategory) }}</td>
-                        <td>
+                        <td class="mfb-xxs">
                             <div class="btn-group" ng-controller="popupCtrl">
                                 <button ng-click="ctrl.openCategoryMapping(feedCategory.model, popupNewCategory)"
                                         class="btn btn-default btn-xs">
@@ -69,9 +69,9 @@
                                 </button>
                             </div>
                         </td>
-                        <td>
+                        <td class="mfb-xxs">
                             <span class="h4" ng-if="feedCategory.mapping && feedCategory.mapping.matchOver">
-                                <i class="fa fa-check-circle"></i>
+                                <i class="fa fa-check-circle text-vo"></i>
                             </span>
                         </td>
                         <td>
