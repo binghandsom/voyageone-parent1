@@ -54,9 +54,6 @@ public class CmsPromotionDetailService extends BaseAppService {
     private CmsPromotionIndexService cmsPromotionService;
 
     @Autowired
-    private CmsPromotionTaskDao cmsPromotionTaskDao;
-
-    @Autowired
     private SimpleTransaction simpleTransaction;
 
     @Autowired
@@ -298,7 +295,9 @@ public class CmsPromotionDetailService extends BaseAppService {
         try {
             codeList.forEach(code -> {
                 CmsBtPromotionTaskModel cmsBtPromotionTask = new CmsBtPromotionTaskModel(promotionId, PromotionTypeEnums.Type.TEJIABAO.getTypeId(), code.getProductCode(),code.getNumIid(), operator);
-                cmsPromotionTaskDao.insertPromotionTask(cmsBtPromotionTask);
+                PromotionTaskAddRequest request=new PromotionTaskAddRequest();
+                request.setCmsBtPromotionTaskModel(cmsBtPromotionTask);
+                voApiClient.execute(request);
             });
         } catch (Exception e) {
             simpleTransaction.rollback();
