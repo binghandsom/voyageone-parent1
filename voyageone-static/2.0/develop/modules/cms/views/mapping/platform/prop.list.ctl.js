@@ -15,10 +15,9 @@
 define([
     'cms',
     'underscore',
-    'modules/cms/enums/MappingTypes',
     'modules/cms/controller/popup.ctl',
-    'modules/cms/views/setting/platform_mapping/prop.item.d'
-], function (cms, _, MappingTypes) {
+    'modules/cms/views/mapping/platform/prop.item.d'
+], function (cms, _) {
     'use strict';
     return cms.controller('platformPropMappingController', (function () {
 
