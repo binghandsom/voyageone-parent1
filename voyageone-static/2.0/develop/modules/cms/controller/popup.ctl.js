@@ -70,8 +70,8 @@ define([
                     "controller": 'popFieldEditCtl'
                 },
                 "category": {
-                    "templateUrl": "views/pop/category/masterCategory.tpl.html",
-                    "controllerUrl": "modules/cms/views/pop/category/masterCategory.ctl",
+                    "templateUrl": "views/pop/bulkUpdate/masterCategory.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/bulkUpdate/masterCategory.ctl",
                     "controller": 'popCategoryCtl as ctrl',
                     "backdrop": 'static',
                     "size": 'lg'
@@ -170,8 +170,8 @@ define([
                     }
                 },
                 "otherPlatform": {
-                    "templateUrl": "views/pop/other/platform.tpl.html",
-                    "controllerUrl": "modules/cms/views/pop/other/platform.ctl",
+                    "templateUrl": "views/pop/platformMapping/ppOtherPlatform.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/platformMapping/ppOtherPlatform.ctl",
                     "controller": 'otherPlatformPopupController as ctrl',
                     "size": 'md'
                 }
