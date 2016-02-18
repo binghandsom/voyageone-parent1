@@ -50,7 +50,7 @@ define([
                     .then(function (res) {
                         this.productDetails.modified = res.data.modified;
                         this.productDetailsCopy = angular.copy(this.productDetails);
-                        this.notify.success (this.translate.instant('TXT_COM_UPDATE_SUCCESS'));
+                        this.notify.success (this.translate.instant('TXT_MSG_UPDATE_SUCCESS'));
                     }.bind(this))
             },
 
@@ -74,7 +74,7 @@ define([
                     .then(function (res) {
                         this.productDetails.modified = res.data.modified;
                         this.productDetailsCopy = angular.copy(this.productDetails);
-                        this.notify.success (this.translate.instant('TXT_COM_UPDATE_SUCCESS'));
+                        this.notify.success (this.translate.instant('TXT_MSG_UPDATE_SUCCESS'));
                     }.bind(this))
             },
 
@@ -135,7 +135,7 @@ define([
                     .then(function (res){
                         this.productDetails.modified = res.data.modified;
                         this.productDetailsCopy = angular.copy(this.productDetails);
-                        this.notify.success (this.translate.instant('TXT_COM_UPDATE_SUCCESS'));
+                        this.notify.success (this.translate.instant('TXT_MSG_UPDATE_SUCCESS'));
                     }.bind(this))
             },
 
@@ -172,7 +172,7 @@ define([
                         };
                         $.productDetailService.changeCategory(data).then(function (res) {
                             if(res.data.isChangeCategory){
-                                $.notify.success($.translate.instant('TXT_COM_UPDATE_SUCCESS'));
+                                $.notify.success($.translate.instant('TXT_MSG_UPDATE_SUCCESS'));
                                 $.initialize()
                             }
                             else
