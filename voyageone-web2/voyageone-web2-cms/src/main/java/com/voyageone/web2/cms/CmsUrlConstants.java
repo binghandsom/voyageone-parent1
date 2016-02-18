@@ -229,14 +229,14 @@ public interface CmsUrlConstants {
 
         interface PRICE {
 
-            String ROOT = "/cms/pop/price/";
+            String ROOT = "/cms/pop/history_price/";
 
             String GET_PRICE_HISTORY = "getPriceHistory";
         }
 
         interface PROMOTION {
 
-            String ROOT = "/cms/pop/promotion/";
+            String ROOT = "/cms/pop/history_promotion/";
 
             String GET_PROMOTION_HISTORY = "getPromotionHistory";
         }

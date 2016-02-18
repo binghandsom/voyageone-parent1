@@ -146,23 +146,13 @@
         "setProductFields": "setProductFields"
       },
       "$promotionHistoryService": {
-        "root": "/cms/pop/promotion/",
+        "root": "/cms/pop/history_promotion/",
         "getPromotionHistory": "getPromotionHistory"
       },
       "$priceHistoryService": {
-        "root": "/cms/pop/price/",
+        "root": "/cms/pop/history_price/",
         "getPriceHistory": "getPriceHistory"
       }
-    },
-
-
-
-
-
-    "taskPriceService": {
-      "root": "/cms/promotion/price",
-      "getPriceList": "getPriceList",
-      "updateTaskStatus":"updateTaskStatus"
     }
   }
 }
