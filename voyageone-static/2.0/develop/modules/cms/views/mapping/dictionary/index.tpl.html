@@ -13,7 +13,7 @@
 									<label class="col-sm-3 control-label" translate="TXT_PLATFORM_TYPE"></label>
 									<div class="col-sm-9">
 										<select class="form-control" ng-model="vm.searchInfo.cart_id"
-												ng-options="platform.value as platform.name for platform in vm.masterData.platformList">
+												ng-options="platform.value as platform.displayName for platform in vm.masterData.platformList">
 											<option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
 										</select>
 									</div>
