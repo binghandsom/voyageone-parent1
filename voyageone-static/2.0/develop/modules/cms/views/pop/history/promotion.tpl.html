@@ -4,16 +4,18 @@
                 aria-hidden="true"><i class="fa fa-close"></i></span></button>
         <h5 class="modal-title"><i class="glyphicons glyphicons-edit"></i>&nbsp;{{ 'TXT_PROMOTION_HISTORY' | translate}}</h5>
     </div>
-    <div class="modal-body wrapper">
-        <div class="form-group col-sm-4">
-            <label class="col-sm-6  control-label" translate="TXT_PLATFORM_TYPE"></label>
-            <div class="col-sm-6">
+    <div class="modal-body">
+        <div class="form-group">
+            <label class="col-sm-1 control-label m-t-xs" translate="TXT_PLATFORM_TYPE"></label>
+            <div class="col-sm-4">
                 <select class="form-control" ng-model="vm.cartId" ng-change="initialize()">
                     <option value='' translate="TXT_SELECT_NO_VALUE"></option>
                     <option ng-repeat="cart in vm.cartList" value={{cart.value}}>{{cart.displayName}}</option>
                 </select>
             </div>
         </div>
+    </div>
+    <div class="modal-body wrapper">
         <form role="form" class="form-horizontal">
             <div class="box">
                 <div class="box-body">
