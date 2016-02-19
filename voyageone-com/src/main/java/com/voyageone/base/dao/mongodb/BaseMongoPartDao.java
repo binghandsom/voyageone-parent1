@@ -112,4 +112,13 @@ public abstract class BaseMongoPartDao extends BaseJomgoDao {
         return mongoTemplate.remove(strQuery, collectionName);
     }
 
+    public WriteResult updateFirst(String channelId, String strQuery, String strUpdate) {
+        String collectionName = mongoTemplate.getCollectionName(this.collectionName, channelId);
+        return mongoTemplate.updateFirst(strQuery, strUpdate, collectionName);
+    }
+
+    public WriteResult upsertFirst(String channelId, String strQuery, String strUpdate) {
+        String collectionName = mongoTemplate.getCollectionName(this.collectionName, channelId);
+        return mongoTemplate.upsertFirst(strQuery, strUpdate, collectionName);
+    }
 }
