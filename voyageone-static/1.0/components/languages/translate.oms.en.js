@@ -176,6 +176,7 @@ define(function(require) {
                     TXT_ORDER_CANCEL_CLIENT_ORDER: 'Cancel Client Order',
                     TXT_ORDER_CANCEL_CLIENT_ORDER_EXPLAIN: '（Post cancel order apply）',
                     TXT_ORDER_SEND_CLIENT_ORDER: 'Send Client Order',
+                    TXT_ORDER_SEND_CLIENT_ORDER_PRE: 'Send Client Order（Pre）',
                     TXT_ORDER_PARTNER_CANCEL_CLIENT_ORDER: 'Client Cancel Order',
                     TXT_ORDER_PARTNER_CANCEL_CLIENT_ORDER_EXPLAIN: '（Client confirm cancel order）',
 
