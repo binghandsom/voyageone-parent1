@@ -9,7 +9,7 @@
                     <div class="col-sm-12">
                     <div class="form-inline m-b-xs pull-left">
                         <label>
-                            <span translate="TXT_TOP_FEED_CATEGORY"></span>
+                            <span translate="TXT_TOP_FEED_CATEGORY"></span>&nbsp;
                             <select class="form-control m-r-xxs"
                                     ng-change="ctrl.refreshTable()"
                                     ng-model="ctrl.selectedTop"
@@ -48,7 +48,7 @@
                         <th class="text-left" translate="TXT_MASTER_CATEGORY"></th>
                         <th class="mfb-xxs text-center" translate="TXT_MAPPING_CATEGORY_OR_FORWARD"></th>
                         <th class="mfb-xxs text-center" translate="TXT_MAPPING_ATTRIBUTE_IS_FINISHED"></th>
-                        <th class="mfb-xxt text-center" translate="TXT_MAPPING_ATTRIBUTE"></th>
+                        <th class="mfb-xxx text-center" translate="TXT_MAPPING_ATTRIBUTE"></th>
                     </tr>
                     </thead>
                     <tbody>
@@ -78,7 +78,7 @@
                                 <i class="fa fa-check-circle text-vo"></i>
                             </span>
                         </td>
-                        <td class="mfb-xxt text-center">
+                        <td class="mfb-xxx text-center">
                             <div class="btn-group" ng-if="feedCategory.model.attribute && ctrl.findDefaultMapping(feedCategory)">
                                 <a ng-href="#/mapping/feed/prop/{{feedCategory.model.path}}" target="_blank">
                                     <i class="glyphicon glyphicon-link"></i>&nbsp;{{'BTN_MAPPING_ATTRIBUTE' | translate}}

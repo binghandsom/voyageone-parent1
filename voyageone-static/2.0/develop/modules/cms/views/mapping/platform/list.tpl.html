@@ -38,8 +38,8 @@
                         <th class="mfb-xt text-center" translate="TXT_SEQ"></th>
                         <th class="text-left" translate="TXT_MASTER_CATEGORY"></th>
                         <th class="text-left" translate="TXT_PLATFORM_CATEGORY"></th>
-                        <th class="mfb-xxs text-center" translate="TXT_MAPPING_CATEGORY_OR_OTHER_PLATFORM"></th>
-                        <th class="mfb-xxs text-center" translate="TXT_MAPPING_ATTRIBUTE_IS_FINISHED"></th>
+                        <th class="mfb-xxxs text-center" translate="TXT_MAPPING_CATEGORY_OR_OTHER_PLATFORM"></th>
+                        <th class="mfb-xxt text-center" translate="TXT_MAPPING_ATTRIBUTE_IS_FINISHED"></th>
                         <th class="mfb-xxt text-center" translate="TXT_MAPPING_ATTRIBUTE"></th>
                     </tr>
                     </thead>
@@ -49,7 +49,7 @@
                         <td class="mfb-xt text-center">{{::$index + 1}}</td>
                         <td class="text-left">{{::category.catPath}}</td>
                         <td class="text-left">{{category.mapping}}</td>
-                        <td class="mfb-xxs">
+                        <td class="mfb-xxxs">
                             <div class="btn-group">
                                 <button ng-click="$ctrl.popupMapping(category, popupNewCategory)" class="btn btn-default btn-xs">
                                     <i class="glyphicon glyphicon-link"></i>&nbsp;{{'BTN_MAPPING_CATEGORY' | translate}}
@@ -60,7 +60,7 @@
                                 </button>
                             </div>
                         </td>
-                        <td class="mfb-xxs">
+                        <td class="mfb-xxt">
                             <span class="h4" ng-if="category.propertyMatched">
                                 <i class="fa fa-check-circle"></i>
                             </span>
