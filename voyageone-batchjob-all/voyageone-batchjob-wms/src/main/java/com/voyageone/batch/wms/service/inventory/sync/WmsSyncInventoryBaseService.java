@@ -91,8 +91,18 @@ public abstract class WmsSyncInventoryBaseService extends BaseTaskService {
     /**
      * 更新已刷新的数据的标志位
      */
-    protected void updateJMFlg(InventorySynLogBean inventorySynLogBean) {
+    protected void updateJMFlgPass(InventorySynLogBean inventorySynLogBean) {
         inventorySynLogBean.setSyn_flg(SYN_FLAG_PASS);
+        inventorySynLogBean.setModifier(getTaskName());
+
+        inventoryDao.updateJMFlg(inventorySynLogBean);
+    }
+
+    /**
+     * 忽略刷新失败的数据的标志位
+     */
+    protected void updateJMFlgIgnore(InventorySynLogBean inventorySynLogBean) {
+        inventorySynLogBean.setSyn_flg(SYN_FLAG_IGNORE);
         inventorySynLogBean.setModifier(getTaskName());
 
         inventoryDao.updateJMFlg(inventorySynLogBean);

@@ -76,7 +76,7 @@ public class WmsSyncToJuMeiSubService extends WmsSyncInventoryBaseService {
 
                 if (updateFlg.equals(WmsConstants.UPDATE_FLG.ReFlush)) {
                     // 刷新成功时，更新标志位
-                    updateJMFlg(inventorySynLogBean);
+                    updateJMFlgPass(inventorySynLogBean);
                 }
                 else if (updateFlg.equals(WmsConstants.UPDATE_FLG.Update)) {
                     // 更新成功后，迁移数据到历史表
@@ -86,8 +86,12 @@ public class WmsSyncToJuMeiSubService extends WmsSyncInventoryBaseService {
                 return;
             }
             else {
+                if (updateFlg.equals(WmsConstants.UPDATE_FLG.ReFlush)) {
+                    // 刷新失败时，更新标志位
+                    updateJMFlgIgnore(inventorySynLogBean);
+                }
                 // 失败的话，记录失败的信息
-                if (updateFlg.equals(WmsConstants.UPDATE_FLG.Update)) {
+                else if (updateFlg.equals(WmsConstants.UPDATE_FLG.Update)) {
                     moveIgnore(inventorySynLogBean, res);
                 }
 
