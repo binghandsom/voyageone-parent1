@@ -19,6 +19,7 @@
             history.sms_type,
             history.order_channel_id,
             history.task_id,
+            history.cart_id,
             history.create_time,
             history.update_time,
             history.create_person,
@@ -66,10 +67,10 @@
 
     <insert id="tt_sms_history_insert" parameterType="com.voyageone.batch.synship.modelbean.SmsHistoryBean">
         INSERT INTO Synship.tt_sms_history (source_order_id, ship_phone, ship_name, sent_type, sent_person, sent_time,
-                                            sent_conent, sent_cost, port, status, sms_flg, order_channel_id, task_id,
+                                            sent_conent, sent_cost, port, status, sms_flg, order_channel_id, task_id,cart_id,
                                             create_time, update_time, create_person, update_person)
         VALUES (#{source_order_id}, #{ship_phone}, #{ship_name}, #{sent_type}, #{sent_person}, #{sent_time}, #{sent_conent},
-                #{sent_cost}, #{port}, #{status}, #{sms_flg}, #{order_channel_id}, #{task_id}, NOW(), NOW(),
+                #{sent_cost}, #{port}, #{status}, #{sms_flg}, #{order_channel_id}, #{task_id},#{cart_id}, NOW(), NOW(),
                 #{create_person}, #{update_person})
     </insert>
 </mapper>

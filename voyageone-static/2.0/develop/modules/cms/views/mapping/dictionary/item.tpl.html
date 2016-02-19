@@ -6,7 +6,7 @@
                     <div class="panel-heading">
                         <h4 class="panel-title"><i class="glyphicon glyphicon-cog"></i>&nbsp;{{'TXT_DICTIONARY_DETAIL' | translate}}</h4>
                     </div>
-                    <div class="container-fluid m-t-xs m-b-xs">
+                    <div class="container-fluid m-b-xs">
                         <div class="col-sm-12">
                             <div class="col-sm-3">
                                 <div class="form-horizontal">
@@ -21,13 +21,13 @@
                             <div class="col-sm-4">
                                 <div class="form-horizontal">
                                     <div class="form-group">
-                                        <label class="col-sm-4 checkbox-inline c-checkbox">
+                                        <label class="checkbox-inline c-checkbox">
                                             <input type="checkbox" ng-model="vm.dictionary.isUrl"><span class="fa fa-check"></span>&nbsp;{{'TXT_IS_UPLOAD_TO_TMALL' | translate}}
                                         </label>
                                     </div>
                                 </div><!-- .form-group -->
                             </div>
-                            <div class="col-sm-5">
+                            <div class="col-sm-5 m-t-xs">
                                 <div class="form-inline pull-right" ng-controller="popupCtrl">
                                     <button class="btn btn-success" ng-click="openDictValue('md', addNewDictionary)"><i class="fa fa-plus"></i>&nbsp;{{'BTN_NEW_DICTIONARY_VALUE' | translate}}</button>
                                     <button class="btn btn-success" ng-click="openDictCustom('lg', addNewDictionary)"><i class="fa fa-plus"></i>&nbsp;{{'BTN_NEW_DICTIONARY_DEFINE' | translate}}</button>

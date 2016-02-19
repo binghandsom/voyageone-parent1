@@ -43,6 +43,8 @@ public class SmsHistoryBean {
     private String create_person;
     // 更新者
     private String update_person;
+    // 销售商店
+    private String cart_id;
 
 
     public String getAuto_no() {
@@ -195,5 +197,13 @@ public class SmsHistoryBean {
 
     public void setUpdate_person(String update_person) {
         this.update_person = update_person;
+    }
+
+    public String getCart_id() {
+        return cart_id;
+    }
+
+    public void setCart_id(String cart_id) {
+        this.cart_id = cart_id;
     }
 }

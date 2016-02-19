@@ -470,6 +470,7 @@ define([
         function selectLanguage(language) {
             menuService.setLanguage(language).then(function (data) {
                 vm.userInfo.language = data;
+                $window.location.reload();
             })
         }
 
