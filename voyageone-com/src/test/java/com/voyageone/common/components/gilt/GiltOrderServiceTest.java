@@ -1,6 +1,7 @@
 package com.voyageone.common.components.gilt;
 
 import com.voyageone.common.components.gilt.bean.*;
+import com.voyageone.common.components.gilt.exceptions.GiltException;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.JsonUtil;
 import org.junit.Test;
@@ -47,27 +48,42 @@ public class GiltOrderServiceTest {
 
     @Test
     public void testPutOrder() throws Exception {
-             GiltPutOrderRequest request=new GiltPutOrderRequest();
-        request.setId(UUID.randomUUID());
+        GiltPutOrderRequest request=new GiltPutOrderRequest();
+//        request.setId(UUID.randomUUID());
+        request.setId(UUID.fromString("8384a597-bb29-4447-8288-a794ee2eea7c"));
         List<GiltOrderItem> orderItems=new ArrayList<>();
 
         GiltOrderItem orderItem=new GiltOrderItem();
         orderItem.setSku_id(5072313);
         orderItem.setQuantity(1);
-        request.setOrder_items(orderItems);
         orderItems.add(orderItem);
 
+        GiltOrderItem orderItem2=new GiltOrderItem();
+        orderItem2.setSku_id(5072313);
+        orderItem2.setQuantity(1);
+        orderItems.add(orderItem2);
+
+        request.setOrder_items(orderItems);
+
         GiltOrder orders= giltOrderService.putOrder(request);
+        System.out.println(orders.getId().toString());
         System.out.println(JsonUtil.getJsonString(orders));
     }
 
     @Test
-    public void testPatchOrder() throws Exception {
-        GiltPatchOrderRequest request=new GiltPatchOrderRequest();
-        request.setId(UUID.fromString("9ad6d3ea-ea66-4fcc-bbeb-57805f0549b2"));
-        request.setStatus(GiltOrderStatus.confirmed);
-        GiltOrder orders= giltOrderService.patchOrder(request);
-        System.out.println(JsonUtil.getJsonString(orders));
+    public void testPatchOrder() {
+        try {
+            GiltPatchOrderRequest request=new GiltPatchOrderRequest();
+            request.setId(UUID.fromString("9ad6d3ea-ea66-4fcc-bbeb-57805f0549b2"));
+            request.setStatus(GiltOrderStatus.confirmed);
+            GiltOrder orders= giltOrderService.patchOrder(request);
+            System.out.println(JsonUtil.getJsonString(orders));
+        } catch (GiltException e) {
+            System.out.println("GiltException = " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Exception = " + e.getMessage());
+        }
+
     }
 
     @Test

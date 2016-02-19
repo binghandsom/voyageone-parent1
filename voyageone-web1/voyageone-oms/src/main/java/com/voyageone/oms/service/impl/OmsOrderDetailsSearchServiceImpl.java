@@ -3576,6 +3576,14 @@ public class OmsOrderDetailsSearchServiceImpl implements OmsOrderDetailsSearchSe
 					ret = cancelOrderForKitBag(ordersInfo, result, user);
 				}
 			}
+
+			//	第三方订单取消
+			if (ret) {
+				if (isNeedCancelThirdPartyOrder(ordersInfo.getOrderChannelId())) {
+					logger.info("cancelOrderForThirdParty");
+					ret = cancelOrderForThirdParty(ordersInfo, result, user);
+				}
+			}
 			
 			if (ret) {
 				logger.info("cancelOrder success");
@@ -3683,6 +3691,23 @@ public class OmsOrderDetailsSearchServiceImpl implements OmsOrderDetailsSearchSe
 		boolean ret = false;
 		String needCancelKitBag = ChannelConfigs.getVal1(orderChannelId, Name.need_cancel_KitBag);
 		if (!StringUtils.isEmpty(needCancelKitBag) && OmsConstants.PERMIT_OK.equals(needCancelKitBag)) {
+			ret = true;
+		}
+
+		return  ret;
+	}
+
+	/**
+	 * 是否需要取消第三方的订单
+	 *
+	 * @param orderChannelId 订单渠道ID
+	 *
+	 * @return 订单价格
+	 */
+	private boolean isNeedCancelThirdPartyOrder(String orderChannelId) {
+		boolean ret = false;
+		String needCancelThirdParty = ChannelConfigs.getVal1(orderChannelId, Name.need_cancel_ThirdParty);
+		if (!StringUtils.isEmpty(needCancelThirdParty) && OmsConstants.PERMIT_OK.equals(needCancelThirdParty)) {
 			ret = true;
 		}
 
@@ -4831,6 +4856,40 @@ public class OmsOrderDetailsSearchServiceImpl implements OmsOrderDetailsSearchSe
 				if (StringUtils.isEmpty(noteId)) {
 					ret = false;
 				}
+			}
+		}
+
+		return ret;
+	}
+
+	/**
+	 * ThirdParty订单取消子函数
+	 *
+	 * @return
+	 */
+	private boolean cancelOrderForThirdParty(OutFormOrderdetailOrders bean, AjaxResponseBean result, UserSessionBean user) {
+		boolean ret = true;
+
+		logger.info("	cancelOrderForThirdParty");
+
+		//	更新者设定
+		bean.setModifier(user.getUserName());
+
+		ret = orderDetailDao.cancelClientOrder(bean);
+
+		if (ret) {
+
+			String note = String.format(OmsConstants.THIRD_PARTY_ORDER_CANCELLED, bean.isOrigFreightCollect());
+
+			// 订单Notes
+			String noteId = addNotes(bean.getSourceOrderId(),
+					OmsConstants.NotesType.SYSTEM,
+					bean.getOrderNumber(),
+					note,
+					user.getUserName(),
+					user.getUserName());
+			if (StringUtils.isEmpty(noteId)) {
+				ret = false;
 			}
 		}
 

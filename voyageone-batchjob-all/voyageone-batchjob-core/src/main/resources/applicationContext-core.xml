@@ -2,17 +2,22 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
 	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	   xmlns:context="http://www.springframework.org/schema/context"
+	   xmlns:task="http://www.springframework.org/schema/task"
 	   xsi:schemaLocation="http://www.springframework.org/schema/context
           http://www.springframework.org/schema/context/spring-context-3.2.xsd
           http://www.springframework.org/schema/beans
-          http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
+          http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+          http://www.springframework.org/schema/task
+          http://www.springframework.org/schema/task/spring-task.xsd">
 
 	<context:property-placeholder
-		location="classpath*:config/job/**/config.properties" ignore-unresolvable="true" />
+			location="classpath*:config/job/**/config.properties" ignore-unresolvable="true" />
 
 	<!-- 数据源配置 -->
 	<!--<import resource="file:C:/usr/web/spring-config/datasource-config.xml" />-->
 	<import resource="file:/usr/web/spring-config/datasource-config.xml" />
+	<!--<import resource="datasource-config-mongo-sample.xml" />-->
+	<!--<import resource="file:C:/usr/web/spring-config/datasource-config-mongo.xml" />-->
 	<import resource="file:/usr/web/spring-config/datasource-config-mongo.xml" />
 
 	<!-- SDK Client Config -->
@@ -22,11 +27,11 @@
 	<!-- 定时任务 -->
 	<import resource="classpath*:config/job/**/*-config.xml" />
 	<import resource="classpath*:obtainPlatformCategory-config.xml"/>
-    <!-- 自动扫描 -->
+	<!-- 自动扫描 -->
 	<context:component-scan base-package="com.voyageone" />
 
-    <!-- 初始化处理 -->
-    <bean id="init" class="com.voyageone.common.configs.Initializer" init-method="init"/>
+	<!-- 初始化处理 -->
+	<bean id="init" class="com.voyageone.common.configs.Initializer" init-method="init"/>
 
 	<bean class="com.voyageone.batch.core.util.SetPriceUtils"/>
 
