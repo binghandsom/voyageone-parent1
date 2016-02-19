@@ -53,23 +53,23 @@
                     </thead>
                     <tbody>
                     <tr ng-repeat="feedCategory in $ctrl.tableSource track by feedCategory.model.path">
-                        <td class="mfb-xt text-center">{{ $index + 1 }}</td>
+                        <td class="mfb-xt text-center">{{::$index + 1}}</td>
                         <td class="text-left">
-                            <span class="badge" ng-class="{'badge-success':feedCategory.level < 2, 'badge-empty': feedCategory.level > 1}">
-                                <span>{{ feedCategory.level }}&nbsp;{{'TXT_SUB_LEVEL' | translate}}</span>
-                                <i class="fa" ng-class="{'fa-level-down':feedCategory.level < 2, 'fa-level-up': feedCategory.level > 1}"></i>
+                            <span class="badge {{::feedCategory.classes.background}}">
+                                <span>{{::feedCategory.level}}</span>&nbsp;<span translate="TXT_SUB_LEVEL"></span>
+                                <i class="fa {{::feedCategory.classes.icon}}"></i>
                             </span>
                         </td>
-                        <td class="text-left">{{ feedCategory.model.path }}</td>
-                        <td class="text-left">{{ $ctrl.getDefaultMapping(feedCategory) }}</td>
+                        <td class="text-left">{{::feedCategory.model.path}}</td>
+                        <td class="text-left">{{$ctrl.getDefaultMapping(feedCategory)}}</td>
                         <td class="mfb-xxs">
                             <div class="btn-group" ng-controller="popupCtrl">
                                 <button ng-click="$ctrl.openCategoryMapping(feedCategory.model, popupNewCategory)"
                                         class="btn btn-default btn-xs">
-                                    <i class="glyphicon glyphicon-link"></i>&nbsp;{{'BTN_MAPPING_CATEGORY' | translate}}
+                                    <i class="glyphicon glyphicon-link"></i>&nbsp;<span>{{'BTN_MAPPING_CATEGORY' | translate}}</span>
                                 </button>
                                 <button class="btn btn-default btn-xs" ng-click="$ctrl.extendsMapping(feedCategory.model)">
-                                    <i class="fa fa-arrow-circle-up"></i>&nbsp;{{'BTN_FORWARD' | translate}}
+                                    <i class="fa fa-arrow-circle-up"></i>&nbsp;<span>{{'BTN_FORWARD' | translate}}</span>
                                 </button>
                             </div>
                         </td>
@@ -79,8 +79,8 @@
                             </span>
                         </td>
                         <td class="mfb-xxx text-center">
-                            <div class="btn-group" ng-if="feedCategory.model.attribute && $ctrl.findDefaultMapping(feedCategory)">
-                                <a ng-href="#/mapping/feed/prop/{{feedCategory.model.path}}" target="_blank">
+                            <div class="btn-group" ng-if="!!feedCategory.model.attribute && !!feedCategory.mapping">
+                                <a ng-href="#/mapping/feed/prop/{{::feedCategory.model.path}}" target="_blank">
                                     <i class="glyphicon glyphicon-link"></i>&nbsp;{{'BTN_MAPPING_ATTRIBUTE' | translate}}
                                 </a>
                             </div>

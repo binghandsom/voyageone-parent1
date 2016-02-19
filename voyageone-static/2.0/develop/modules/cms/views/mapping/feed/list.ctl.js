@@ -96,6 +96,7 @@ define([
                 var keyWord = ttt.matched.keyWord;
 
                 ttt.blockUI.start();
+                
                 ttt.feedMappingListService.getCategoryMap(ttt.selectedTop).then(function (categoryMap) {
 
                     ttt.currCategoryMap = categoryMap;
@@ -111,7 +112,15 @@ define([
                             result = ttt.matched.category === ttt.isCategoryMatched(feedCategoryBean);
                         else if (ttt.matched.property !== null)
                             result = ttt.matched.property === ttt.isPropertyMatched(feedCategoryBean);
-
+                        
+                        if (result && !feedCategoryBean.classes) {
+                            // 如果没有计算过样式, 就计算
+                            feedCategoryBean.classes = {
+                                background: feedCategoryBean.level > 1 ? 'badge-empty': 'badge-success',
+                                icon: feedCategoryBean.level > 1 ? 'fa-level-up': 'fa-level-down'
+                            };
+                        }
+                        
                         return result;
                     });
 
@@ -156,7 +165,7 @@ define([
                     return '?';
                 }
 
-                var defMapping = this.findDefaultMapping(feedCategory);
+                var defMapping = feedCategory.mapping;
 
                 if (defMapping) {
                     return defMapping.mainCategoryPath;
@@ -164,11 +173,12 @@ define([
 
                 var parent = null;
                 while (!defMapping && (parent = this.findParent(parent || feedCategory))) {
-                    defMapping = this.findDefaultMapping(parent);
+                    defMapping = parent.mapping;
                 }
 
-
-                return defMapping ? (this.$translate.instant('TXT_FORWARD_WITH_COLON') + defMapping.mainCategoryPath) : this.$translate.instant('TXT_UN_SETTING');
+                return defMapping
+                    ? (this.$translate.instant('TXT_FORWARD_WITH_COLON') + defMapping.mainCategoryPath)
+                    : this.$translate.instant('TXT_UN_SETTING');
             },
             /**
              * 查找父级类目
@@ -191,14 +201,7 @@ define([
             findCategory: function (path) {
                 return this.currCategoryMap[path];
             },
-            /**
-             * 在类目中查找默认的 Mapping 关系
-             * @param {FeedCategoryBean} category
-             * @return {object} Mapping 对象
-             */
-            findDefaultMapping: function (category) {
-                return category.mapping;
-            },
+
             /**
              * 在类目 Popup 确定关闭后, 为相关类目进行绑定
              * @param {{from:string, selected:object}} context Popup 返回的结果信息
