@@ -107,6 +107,7 @@
 		AND a.product_code = b.product_code
 		and a.channel_id = c.channel_id
 		AND a.product_code = c.product_code
+		AND a.deal_id = c.deal_id
 
 	) t2
 	 where t1.channel_id = t2.channel_id
