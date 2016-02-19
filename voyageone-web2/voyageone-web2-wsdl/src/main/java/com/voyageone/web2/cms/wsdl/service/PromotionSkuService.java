@@ -2,17 +2,15 @@ package com.voyageone.web2.cms.wsdl.service;
 
 import com.voyageone.web2.cms.wsdl.BaseService;
 import com.voyageone.web2.cms.wsdl.dao.CmsPromotionSkuDao;
-import com.voyageone.web2.sdk.api.request.PromotionSkuCountRequest;
-import com.voyageone.web2.sdk.api.request.PromotionSkuDeleteRequest;
-import com.voyageone.web2.sdk.api.request.PromotionSkuGetRequest;
-import com.voyageone.web2.sdk.api.response.PromotionSkuCountResponse;
-import com.voyageone.web2.sdk.api.response.PromotionSkuDeleteResponse;
-import com.voyageone.web2.sdk.api.response.PromotionSkuGetResponse;
+import com.voyageone.web2.sdk.api.domain.CmsBtInventoryOutputTmpModel;
+import com.voyageone.web2.sdk.api.request.*;
+import com.voyageone.web2.sdk.api.response.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -47,6 +45,36 @@ public class PromotionSkuService extends BaseService {
     public PromotionSkuDeleteResponse remove(PromotionSkuDeleteRequest promotionSkuDeleteRequest){
         PromotionSkuDeleteResponse res=new PromotionSkuDeleteResponse();
         res.setRemovedCount(cmsPromotionSkuDao.deletePromotionSkuByProductId (promotionSkuDeleteRequest.getPromotionId(),promotionSkuDeleteRequest.getProductId()));
+        return res;
+    }
+
+    @Transactional
+    public PromotionSkuInventoryInfoDeleteResponse delSkuInventoryInfo(PromotionSkuInventoryInfoDeleteRequest request) {
+        PromotionSkuInventoryInfoDeleteResponse response=new PromotionSkuInventoryInfoDeleteResponse();
+        response.setDelete(cmsPromotionSkuDao.delSkuInventoryInfo());
+        return response;
+    }
+
+    @Transactional
+    public PromotionSkuInventoryInfoInsertResponse insertSkuInventoryInfo(PromotionSkuInventoryInfoInsertRequest request) {
+        PromotionSkuInventoryInfoInsertResponse res=new PromotionSkuInventoryInfoInsertResponse();
+        res.setInsert(cmsPromotionSkuDao.insertSkuInventoryInfo(request.getInsertRecString()));
+        return  res;
+    }
+
+    public PromotionSkuInventoryInfoGetCountResponse getSkuInventoryInfoRecCount(PromotionSkuInventoryInfoGetRequest request) {
+        PromotionSkuInventoryInfoGetCountResponse res=new PromotionSkuInventoryInfoGetCountResponse();
+        res.setTotalCount(cmsPromotionSkuDao.getSkuInventoryInfoRecCount());
+        return res;
+    }
+
+    public PromotionSkuInventoryInfoGetResponse getSkuInventoryInfoRecInfo(PromotionSkuInventoryInfoGetRequest request) {
+        PromotionSkuInventoryInfoGetResponse res=new PromotionSkuInventoryInfoGetResponse();
+        List<CmsBtInventoryOutputTmpModel> models=cmsPromotionSkuDao.getSkuInventoryInfoRecInfo((request.getPageNo()-1)*request.getPageSize(),request.getPageSize());
+        if(!CollectionUtils.isEmpty(models)){
+            res.setModels(models);
+            res.setTotalCount(Long.parseLong(String.valueOf(models.size())));
+        }
         return res;
     }
 }

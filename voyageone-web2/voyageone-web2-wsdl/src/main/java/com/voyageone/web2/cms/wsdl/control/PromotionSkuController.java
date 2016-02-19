@@ -2,13 +2,18 @@ package com.voyageone.web2.cms.wsdl.control;
 
 import com.voyageone.web2.cms.wsdl.BaseController;
 import com.voyageone.web2.cms.wsdl.service.PromotionSkuService;
+import com.voyageone.web2.sdk.api.domain.CmsBtInventoryOutputTmpModel;
 import com.voyageone.web2.sdk.api.request.*;
 import com.voyageone.web2.sdk.api.response.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 /**
  * @author aooer 2016/2/18.
@@ -42,5 +47,29 @@ public class PromotionSkuController extends BaseController {
             @RequestBody PromotionSkuDeleteRequest promotionSkuDeleteRequest) {
         promotionSkuDeleteRequest.check();
         return promotionSkuService.remove(promotionSkuDeleteRequest);
+    }
+
+    @RequestMapping("inventoryInfo/delete")
+    public PromotionSkuInventoryInfoDeleteResponse delSkuInventoryInfo(PromotionSkuInventoryInfoDeleteRequest request) {
+        request.check();
+        return promotionSkuService.delSkuInventoryInfo(request);
+    }
+
+    @RequestMapping("inventoryInfo/insert")
+    public PromotionSkuInventoryInfoInsertResponse insertSkuInventoryInfo(PromotionSkuInventoryInfoInsertRequest request) {
+        request.check();
+        return promotionSkuService.insertSkuInventoryInfo(request);
+    }
+
+    @RequestMapping("inventoryInfo/getCount")
+    public PromotionSkuInventoryInfoGetCountResponse getSkuInventoryInfoRecCount(PromotionSkuInventoryInfoGetRequest request) {
+        request.check();
+        return promotionSkuService.getSkuInventoryInfoRecCount(request);
+    }
+
+    @RequestMapping("inventoryInfo/getList")
+    public PromotionSkuInventoryInfoGetResponse getSkuInventoryInfoRecInfo(PromotionSkuInventoryInfoGetRequest request) {
+        request.check();
+        return promotionSkuService.getSkuInventoryInfoRecInfo(request);
     }
 }

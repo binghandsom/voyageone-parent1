@@ -88,7 +88,7 @@
             <span ng-if="bean.required">{{'TXT_REQUIRED' | translate}}</span>
         </div>
         <div class="col-sm-1 pull-center" ng-if="bean.isSimple">
-            <button class="badge badge-empty"
+            <button class="btn btn-default btn-xs"
                     ng-click="popupFeed(ctrl.popupContext(bean)).then(ctrl.saveMapping)">
                 {{'TXT_MAPPING_VALUE' | translate}}
             </button>
