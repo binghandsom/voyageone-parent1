@@ -280,7 +280,7 @@
                                 <span class="fa fa-check"></span> {{'TXT_SELECT_ALL' | translate}} </label></td>
                             <td class="mfb-xxt text-center">TAG</td>
                             <td class="mfb-xxt text-center">Inventory</td>
-                            <td class="mfb-xxt text-center">MSRP</td>
+                            <td class="mfb-xxt text-left">MSRP</td>
                             <td class="mfb-xxt text-center">Retail Price</td>
                             <td class="mfb-xxt text-center">Promotion Price</td>
                             <td class="mfb-xxs text-left">Base Property</td>
@@ -306,7 +306,7 @@
                                         class="text-u-l">{{code.productCode}}</a></span> <span>Product Name: <a
                                         href="#/product/detail/{{code.productId}}" target="_blank" class="text-u-l">{{code.productName}}</a></span>
                                 </td>
-                                <th colspan="3" class="text-right">{{code.catPath}}</th>
+                                <th colspan="4" class="text-right">{{code.catPath}}</th>
                             </tr>
                             <tr>
                                 <td class="mfb-xxt">
@@ -319,9 +319,14 @@
                                     <button type="button" popover-placement="left" class="btn btn-default btn-xs">0
                                     </button>
                                 </td>
-                                <td class="mfb-xxt text-center">
-                                    <input type="text" class="col-sm-1 form-control" ng-model="code.promotionPrice">
-                                    <!--<button popover="Sale Price: {{code.salePrice}}" popover-title="Final Price" type="button" popover-placement="left" class="btn btn-default btn-xs">{{code.promotionPrice}}</button>-->
+                                <td class="mfb-xxt text-left">
+                                    <span class="text-l-t">5631</span>
+                                    <p class=""><input type="text" class="col-sm-1 form-control m-b-xs" placeholder="4523"></p>
+                                    <!--<p style="color:#ff0000;">（<span style="vertical-align: sub;font-size:8px"><i class="glyphicon glyphicon-triangle-top" style="font-size:4px"></i></span>&nbsp;520.00） 六折</p>-->
+                                    <p class="text-u-red">（<span class="text-u-sub"><i class="glyphicon glyphicon-triangle-bottom"></i></span>&nbsp;520.00） 六折</p>
+                                      <!--<input type="text" class="col-sm-1 form-control" ng-model="code.promotionPrice">
+                                      <button popover="Sale Price: {{code.salePrice}}" popover-title="Final Price" type="button" popover-placement="left" class="btn btn-default btn-xs">{{code.promotionPrice}}</button>-->
+
                                 </td>
                                 <td class="mfb-xxt text-center">
                                     {{code.msrp}}
