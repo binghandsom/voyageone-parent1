@@ -1,15 +1,10 @@
 package com.voyageone.web2.sdk.api.request;
 
 
-import com.voyageone.web2.sdk.api.VoApiListRequest;
 import com.voyageone.web2.sdk.api.VoApiRequest;
 import com.voyageone.web2.sdk.api.exception.ApiRuleException;
 import com.voyageone.web2.sdk.api.response.ProductPriceLogGetResponse;
-import com.voyageone.web2.sdk.api.response.ProductsGetResponse;
 import com.voyageone.web2.sdk.api.util.RequestUtils;
-
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 /**
  * /product/priceLog/get Request Model
@@ -46,6 +41,11 @@ public class ProductPriceLogGetRequest extends VoApiRequest<ProductPriceLogGetRe
 	 */
 	private String productSkuCode;
 
+	/**
+	 * Product的价格类型
+	 */
+	private String priceType;
+
 	private int offset = 0;
 
 	private int rows = 10;
@@ -60,6 +60,7 @@ public class ProductPriceLogGetRequest extends VoApiRequest<ProductPriceLogGetRe
 	public void requestCheck() throws ApiRuleException {
 		RequestUtils.checkNotEmpty(" channelId", channelId);
 		RequestUtils.checkNotEmpty(" productCode or productSkuCode", productCode, productSkuCode);
+		RequestUtils.checkNotEmpty(" priceType", priceType);
 	}
 
 	public String getChannelId() {
@@ -100,5 +101,13 @@ public class ProductPriceLogGetRequest extends VoApiRequest<ProductPriceLogGetRe
 
 	public void setRows(int rows) {
 		this.rows = rows;
+	}
+
+	public String getPriceType() {
+		return priceType;
+	}
+
+	public void setPriceType(String priceType) {
+		this.priceType = priceType;
 	}
 }

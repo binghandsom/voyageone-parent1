@@ -11,8 +11,8 @@
 						<div class="col-sm-4">
 							<div class="form-horizontal">
 								<div class="form-group">
-									<label class="col-sm-3 control-label" translate="TXT_PLATFORM_TYPE"></label>
-									<div class="col-sm-9">
+									<label class="col-sm-4 control-label" translate="TXT_PLATFORM_TYPE"></label>
+									<div class="col-sm-8">
 										<select class="form-control" ng-model="vm.searchInfo.cartId"
 												ng-options="categoryType.cartId as categoryType.name for categoryType in vm.masterData.categoryTypeList">
 											<option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
@@ -20,8 +20,8 @@
 									</div>
 								</div>
 								<div class="form-group">
-									<label class="col-sm-3 control-label" translate="TXT_MASTER_CATEGORY"></label>
-									<div class="col-sm-9">
+									<label class="col-sm-4 control-label" translate="TXT_MASTER_CATEGORY"></label>
+									<div class="col-sm-8">
 										<select class="form-control" ng-model="vm.searchInfo.catId"
 												ng-options="category.catId as category.catPath for category in vm.masterData.categoryList">
 											<option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
@@ -33,14 +33,14 @@
 						<div class="col-sm-4">
 							<div class="form-horizontal">
 								<div class="form-group">
-									<label class="col-sm-3 control-label" translate="TXT_PRODUCT_NAME"></label>
-									<div class="col-sm-9">
+									<label class="col-sm-4 control-label" translate="TXT_PRODUCT_NAME"></label>
+									<div class="col-sm-8">
 										<input type="text" ng-model="vm.searchInfo.productName" class="form-control">
 									</div>
 								</div>
 								<div class="form-group">
-									<label class="col-sm-3 control-label" translate="TXT_ERROR_TYPE"></label>
-									<div class="col-sm-9">
+									<label class="col-sm-4 control-label" translate="TXT_ERROR_TYPE"></label>
+									<div class="col-sm-8">
 										<select class="form-control" ng-model="vm.searchInfo.errType"
 												ng-options="errorType.value as errorType.name for errorType in vm.masterData.errorTypeList">
 											<option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
@@ -52,9 +52,12 @@
 						<div class="col-sm-4">
 							<div class="form-horizontal">
 								<div class="form-group">
-									<label class="col-sm-3 control-label" translate="TXT_FUZZY_SEARCH"></label>
-									<div class="col-sm-8">
-										<textarea class="form-control inherited" rows="4" ng-model="vm.searchInfo.codes"></textarea>
+									<label class="col-sm-4 control-label" translate="TXT_FUZZY_SEARCH"></label>
+									<div class="col-sm-7">
+										<textarea class="form-control inherited" rows="3" ng-model="vm.searchInfo.codes"></textarea>
+										<div class="text-warnings">
+											<i class="icon fa fa-bell-o"></i>&nbsp;{{'TXT_MSG_SEARCH_INDEX_FUZZY_SEARCH_2' | translate}}
+										</div>
 									</div>
 								</div>
 							</div>

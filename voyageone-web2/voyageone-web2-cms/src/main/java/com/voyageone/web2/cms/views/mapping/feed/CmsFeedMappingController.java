@@ -31,9 +31,17 @@ public class CmsFeedMappingController extends CmsController {
     @Autowired
     private CmsFeedPropMappingService feedPropMappingService;
 
+    @RequestMapping(FEED.GET_TOP_CATEGORIES)
+    public AjaxResponse getTopCategories() {
+        return success(cmsFeedMappingService.getTopCategories(getUser()));
+    }
+
     @RequestMapping(FEED.GET_FEED_CATEGORY_TREE)
-    public AjaxResponse getFeedCategoryTree() {
-        return success(cmsFeedMappingService.getFeedCategoryMap(getUser()));
+    public AjaxResponse getFeedCategoryTree(@RequestBody Map<String, String> params) {
+
+        String topCategoryId = params.get("topCategoryId");
+
+        return success(cmsFeedMappingService.getFeedCategoryMap(topCategoryId, getUser()));
     }
 
     @RequestMapping(FEED.GET_MAIN_CATEGORIES)

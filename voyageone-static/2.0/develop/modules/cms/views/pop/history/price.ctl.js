@@ -12,7 +12,9 @@ define([
             code: data.code,
             type: data.type,
             pageOption: {curr: 1, total: 1, size: 10, fetch: getPriceList},
-            priceList: []
+            priceList: [],
+            priceTypeList: [],
+            priceType: 'msrp'
         };
 
         $scope.initialize = function () {
@@ -22,6 +24,7 @@ define([
         function getPriceList() {
             var data = {
                 code: $scope.vm.code,
+                priceType: $scope.vm.priceType,
                 flag: $scope.vm.type,
                 offset: ($scope.vm.pageOption.curr - 1) * $scope.vm.pageOption.size,
                 rows: $scope.vm.pageOption.size
@@ -30,6 +33,7 @@ define([
             $priceHistoryService.getPriceHistory(data).then(function (res) {
                 $scope.vm.priceList = res.data.list;
                 $scope.vm.pageOption.total = res.data.total;
+                $scope.vm.priceTypeList = res.data.priceTypeList;
             });
         }
     });

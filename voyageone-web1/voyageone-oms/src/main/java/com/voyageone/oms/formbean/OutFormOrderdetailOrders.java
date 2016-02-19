@@ -508,6 +508,11 @@ public class OutFormOrderdetailOrders {
 	private boolean clientOrderSendFlag;
 
 	/**
+	 *		第三方订单推送标志 预处理(ext_flg4)
+	 */
+	private boolean preClientOrderSendFlag;
+
+	/**
 	 *		第三方订单取消标志(ext_flg1)
 	 */
 	private boolean cancelClientOrderFlag;
@@ -1627,6 +1632,14 @@ public class OutFormOrderdetailOrders {
 
 	public void setClientOrderSendFlag(boolean clientOrderSendFlag) {
 		this.clientOrderSendFlag = clientOrderSendFlag;
+	}
+
+	public boolean isPreClientOrderSendFlag() {
+		return preClientOrderSendFlag;
+	}
+
+	public void setPreClientOrderSendFlag(boolean preClientOrderSendFlag) {
+		this.preClientOrderSendFlag = preClientOrderSendFlag;
 	}
 
 	public boolean isThirdPartyCancelOrderFlag() {

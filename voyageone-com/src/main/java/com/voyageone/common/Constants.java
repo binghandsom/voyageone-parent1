@@ -127,6 +127,7 @@ public final class Constants {
 
     public static final class comMtType {
         public static final String BRAND = "brand";
+        public static final String CARTS = "skuCarts";
     }
 
     public static final class productForOtherSystemInfo {
@@ -138,6 +139,13 @@ public final class Constants {
 
         public static final String HS_CODE_PRIVATE = "hsCodePrivate";
 
+    }
+
+
+    //发短信时替换亿美KEY
+    public final static class smsChange {
+        public static final String CHANGE_ON = "1";
+        public static final String CHANGE_OFF = "0";
     }
 
 }

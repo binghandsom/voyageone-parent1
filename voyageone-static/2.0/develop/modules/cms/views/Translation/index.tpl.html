@@ -18,11 +18,11 @@
 								<div class="form-group">
 									<label class="col-sm-4 control-label">分发规则</label>
 									<div class="col-sm-7">
-										<label class="checkbox-inline c-checkbox">
-											<input type="checkbox" value="option1"><span class="fa fa-check"></span>  主商品
+										<label class="checkbox-inline c-radio">
+											<input type="radio" value="option1"><span class="fa fa-check"></span>  主商品
 										</label>
-										<label class="checkbox-inline c-checkbox">
-											<input type="checkbox" value="option2"><span class="fa fa-check"></span>  全部商品
+										<label class="checkbox-inline c-radio">
+											<input type="radio1" value="option2"><span class="fa fa-check"></span>  全部商品
 										</label>
 									</div>
 								</div>
@@ -38,7 +38,7 @@
 									</div>
 								</div>
 								<div class="form-group">
-									<label class="col-sm-4 control-label">Search</label>
+									<label class="col-sm-4 control-label">获取任务数量</label>
 									<div class="col-sm-7">
 										<input type="text" class="form-control">
 									</div>
@@ -54,6 +54,12 @@
 										<input type="text" class="form-control" placeholder="348965" disabled>
 									</div>
 								</div>
+								<div class="form-group">
+									<label class="col-sm-4 control-label">Search</label>
+									<div class="col-sm-7">
+										<input type="text" class="form-control">
+									</div>
+								</div>
 							</form>
 							<!-- .form -->
 						</div>
@@ -61,7 +67,7 @@
 							<div class="form-inline">
 								<button class="btn btn-default" ng-click="clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR' | translate}}</button>
 								<button class="btn btn-vo" ng-click="search()"><i class="fa fa-search"></i> Search</button>
-								<button class="btn btn-success"><i class="glyphicon glyphicon-check"></i> 分发任务</button>
+								<button class="btn btn-success"><i class="glyphicon glyphicon-check"></i> 获取任务</button>
 							</div>
 							<!-- .form-inline -->
 						</div>

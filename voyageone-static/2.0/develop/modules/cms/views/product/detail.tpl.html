@@ -1,5 +1,5 @@
 <div class="wrapper-md" ng-controller="productDetailController as ctrl" ng-init="ctrl.initialize()">
-	<div class="vo_accordion vo_attr">
+	<div class="vo_accordion vo_attr" ng-if="ctrl.productDetails.productDataIsReady">
 		<div class="panel-group">
 			<div class="panel panel-default">
 				<div class="panel-heading">
@@ -77,60 +77,24 @@
 							</div>
 						</div>
 					</div>
-					<div class="row text-center">
-						<div class="col-sm-12">
-							<div class="form-inline">
+					<!--<div class="row text-center">-->
+						<!--<div class="col-sm-12">-->
+							<!--<div class="form-inline">-->
 
-								<button type="submit" class="btn btn-vo" ng-click="ctrl.updateProductInfo()"><i class="glyphicon glyphicon-floppy-disk"></i> {{'BTN_SAVE' | translate}}</button>
-								<button type="submit" class="btn btn-default" ng-click="ctrl.cancelProductInfo()"><i class="fa fa-remove"></i> {{'BTN_CANCEL' | translate}}</button>
-							</div><!-- .form-inline -->
-						</div>
-					</div>
+								<!--<button type="submit" class="btn btn-vo" ng-click="ctrl.updateProductInfo()"><i class="glyphicon glyphicon-floppy-disk"></i> {{'BTN_SAVE' | translate}}</button>-->
+								<!--<button type="submit" class="btn btn-default" ng-click="ctrl.cancelProductInfo()"><i class="fa fa-remove"></i> {{'BTN_CANCEL' | translate}}</button>-->
+							<!--</div>&lt;!&ndash; .form-inline &ndash;&gt;-->
+						<!--</div>-->
+					<!--</div>-->
 				</form><!-- .form -->
 			</tab>
 
-			<tab>
-				<tab-heading>&nbsp;{{'TXT_PRODUCT_CUSTOM' | translate}}</tab-heading>
-				<!-- Products table and controls -->
-				<form class="form-horizontal" name="productCustomForm">
-					<div class="panel vo_panel tab_panel">
-						<div class="row wrapper">
-							<div class="container-fluid">
-								<div class="col-sm-6">
-									<div class="form-group" ng-repeat="feedOrgAttr in ctrl.productDetails.customAttributes.orgAtts">
-										<label class="col-sm-3 control-label" ng-bind="feedOrgAttr.key"></label>
-										<div class="col-sm-8">
-											<input type="text" class="form-control" ng-model="feedOrgAttr.value" readonly>
-										</div>
-										<div class="col-sm-1">
-											<label class="i-checks-sm m-b-none"><input type="checkbox" ng-model="feedOrgAttr.selected"></label>
-										</div>
-									</div>
-								</div><!--.col -->
-								<div class="col-sm-6">
-									<div class="form-group" ng-repeat="feedCnAttr in ctrl.productDetails.customAttributes.cnAtts">
-										<label class="col-sm-3 control-label" ng-bind="feedCnAttr.key"></label>
-										<div class="col-sm-8">
-											<input type="text" class="form-control" ng-model="feedCnAttr.value">
-										</div>
-									</div><!-- .form-group -->
-								</div><!-- .col -->
-							</div>
-						</div>
-					</div>
-					<div class="row text-center">
-						<div class="col-sm-12">
-							<div class="form-inline">
-								<button type="submit" class="btn btn-vo" ng-click="ctrl.updateProductInfo()"><i class="glyphicon glyphicon-floppy-disk"></i> {{'BTN_SAVE' | translate}}</button>
-								<button type="submit" class="btn btn-default" ng-click="ctrl.cancelProductCustomInfo()"><i class="fa fa-remove"></i> {{'BTN_CANCEL' | translate}}</button>
-							</div><!-- .form-inline -->
-						</div>
-					</div>
-				</form><!-- .form -->
-			</tab>
+			<!--<tab>-->
+				<!--<tab-heading>&nbsp;{{'TXT_PRODUCT_CUSTOM' | translate}}</tab-heading>-->
+			<!--</tab>-->
 
 			<tab>
-				<tab-heading>&nbsp;{{'TXT_PRODUCT_SKU_LIST' | translate}}</tab-heading>
+				<tab-heading>&nbsp;{{'TXT_PRODUCT_SKU_DETAIL' | translate}}</tab-heading>
 				<div class="panel vo_panel tab_panel">
 					<div class="row wrapper">
 						<div class="container-fluid">
@@ -142,46 +106,81 @@
 						</div>
 					</div>
 				</div> <!-- .panel -->
-				<div class="row text-center">
-					<div class="col-sm-12">
-						<div class="form-inline">
-							<button type="submit" class="btn btn-vo" ng-click="ctrl.updateSkuInfo()"><i class="glyphicon glyphicon-floppy-disk"></i> {{'BTN_SAVE' | translate}}</button>
-							<button type="submit" class="btn btn-default" ng-click="ctrl.cancelSkuInfo()"><i class="fa fa-remove"></i> {{'BTN_CANCEL' | translate}}</button>
-						</div><!-- .form-inline -->
-					</div>
-				</div>
+				<!--<div class="row text-center">-->
+					<!--<div class="col-sm-12">-->
+						<!--<div class="form-inline">-->
+							<!--<button type="submit" class="btn btn-vo" ng-click="ctrl.updateSkuInfo()"><i class="glyphicon glyphicon-floppy-disk"></i> {{'BTN_SAVE' | translate}}</button>-->
+							<!--<button type="submit" class="btn btn-default" ng-click="ctrl.cancelSkuInfo()"><i class="fa fa-remove"></i> {{'BTN_CANCEL' | translate}}</button>-->
+						<!--</div>&lt;!&ndash; .form-inline &ndash;&gt;-->
+					<!--</div>-->
+				<!--</div>-->
 			</tab>
 
 			<tab>
 				<tab-heading>&nbsp;{{'TXT_PRODUCT_THIRD_PROPERTY' | translate}}</tab-heading>
-				<form class="form-horizontal" name="thirdFeedForm">
-					<!-- Products table and controls -->
+
+				<!-- Products table and controls -->
+				<form class="form-horizontal" name="productCustomForm">
 					<div class="panel vo_panel tab_panel">
 						<div class="row wrapper">
-							<div class="container-fluid">
-								<div class="col-sm-12">
-									<div class="form-group" ng-repeat="feedAttr in ctrl.productDetails.feedInfoModel">
-										<label class="col-sm-2 control-label" ng-bind="feedAttr.key"></label>
+							<div class="container-fluid"  ng-repeat="feedAttr in ctrl.productDetails.feedInfoModel | orderBy: selected">
+								<div class="col-sm-6">
+									<div class="form-group">
+										<label class="col-sm-3 control-label" ng-bind="feedAttr.key"></label>
 										<div class="col-sm-8">
-											<input type="text" class="form-control" ng-model="feedAttr.value" readonly>
+											<input type="text" class="form-control" ng-model="feedAttr.value" readonly ng-if="feedAttr.value.length < 50">
+											<textarea rows="3" class="form-control no-resize" ng-model="feedAttr.value" readonly ng-if="feedAttr.value.length >= 50"></textarea>
 										</div>
 										<div class="col-sm-1">
-											<label class="i-checks-sm m-b-none"><input type="checkbox" ng-model="feedAttr.selected"></label>
+											<label class="i-checks-sm m-b-none"><input type="checkbox" ng-model="feedAttr.selected" disabled></label>
 										</div>
-									</div><!-- .form-group -->
+									</div>
 								</div><!--.col -->
+								<div class="col-sm-6">
+									<div class="form-group">
+										<label class="col-sm-3 control-label" ng-bind="feedAttr.cnKey"></label>
+										<div class="col-sm-8" ng-show="feedAttr.selected">
+											<input type="text" class="form-control" ng-model="feedAttr.cnValue" ng-if="feedAttr.value.length < 50">
+											<textarea rows="3" class="form-control no-resize" ng-model="feedAttr.cnValue" ng-if="feedAttr.value.length >= 50"></textarea>
+										</div>
+										<!--<div class="col-sm-1">-->
+											<!--<label class="i-checks-sm m-b-none"><input type="checkbox" ng-model="feedAttr.selected"></label>-->
+										<!--</div>-->
+									</div>
+								</div><!-- .col -->
 							</div>
 						</div>
 					</div>
-					<div class="row text-center">
-						<div class="col-sm-12">
-							<div class="form-inline">
-								<button type="submit" class="btn btn-vo" ng-click="ctrl.addFeedAttrToCustom()"><i class="glyphicon glyphicon-floppy-disk"></i> {{'BTN_SAVE' | translate}}</button>
-								<button type="submit" class="btn btn-default" ng-click="ctrl.cancelAddFeedAttrToCustom()"><i class="fa fa-remove"></i> {{'BTN_CANCEL' | translate}}</button>
-							</div><!-- .form-inline -->
-						</div>
-					</div>
 				</form><!-- .form -->
+
+				<!--<form class="form-horizontal" name="thirdFeedForm">-->
+					<!--&lt;!&ndash; Products table and controls &ndash;&gt;-->
+					<!--<div class="panel vo_panel tab_panel">-->
+						<!--<div class="row wrapper">-->
+							<!--<div class="container-fluid">-->
+								<!--<div class="col-sm-12">-->
+									<!--<div class="form-group" ng-repeat="feedAttr in ctrl.productDetails.feedInfoModel">-->
+										<!--<label class="col-sm-2 control-label" ng-bind="feedAttr.key"></label>-->
+										<!--<div class="col-sm-4">{{feedAttr.value.length}}-->
+											<!--&lt;!&ndash;<input type="text" class="form-control" ng-model="feedAttr.value" ng-if="" readonly>&ndash;&gt;-->
+										<!--</div>-->
+										<!--<div class="col-sm-1">-->
+											<!--<label class="i-checks-sm m-b-none"><input type="checkbox" ng-model="feedAttr.selected"></label>-->
+										<!--</div>-->
+									<!--</div>&lt;!&ndash; .form-group &ndash;&gt;-->
+								<!--</div>&lt;!&ndash;.col &ndash;&gt;-->
+							<!--</div>-->
+						<!--</div>-->
+					<!--</div>-->
+					<!--<div class="row text-center">-->
+						<!--<div class="col-sm-12">-->
+							<!--<div class="form-inline">-->
+								<!--<button type="submit" class="btn btn-vo" ng-click="ctrl.addFeedAttrToCustom()"><i class="glyphicon glyphicon-floppy-disk"></i> {{'BTN_SAVE' | translate}}</button>-->
+								<!--<button type="submit" class="btn btn-default" ng-click="ctrl.cancelAddFeedAttrToCustom()"><i class="fa fa-remove"></i> {{'BTN_CANCEL' | translate}}</button>-->
+							<!--</div>&lt;!&ndash; .form-inline &ndash;&gt;-->
+						<!--</div>-->
+					<!--</div>-->
+				<!--</form>&lt;!&ndash; .form &ndash;&gt;-->
 			</tab>
 
 		</tabset><!-- tabset -->
@@ -255,7 +254,7 @@
 	<div style="width:80%" ng-if="!ctrl.productDetails.productDataIsReady">
 		<!-- TODO 需要enka设计一个画面,只显示切换类目中的商品的基础信息(code, iamges, ) -->
 		<div class="text-center text-hs ng-binding ng-scope" id="noData">
-			<h4 class="text-vo ng-binding"><i class="icon fa fa-warning"></i>&nbsp;{{'TXT_WARNING' | translate}}</h4>
+			<h4 class="text-vo ng-binding"><i class="icon fa fa-warning"></i>&nbsp;{{'TXT_ALTER' | translate}}</h4>
 			{{'TXT_MSG_PRODUCT_CAN_NOT_EDIT' | translate}}</div>
 	</div>
 </div><!-- end .wrapper-md -->

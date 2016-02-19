@@ -14,8 +14,8 @@
     "templateUrl": "views/promotion/detail.tpl.html",
     "controllerUrl": "modules/cms/views/promotion/detail.ctl"
   },
-  "task_index": {
-    "hash": "/task/index",
+  "promotion_task_index": {
+    "hash": "/promotion/task",
     "templateUrl": "views/task/index.tpl.html",
     "controllerUrl": "modules/cms/views/task/index.ctl"
   },

@@ -286,6 +286,11 @@ public class ChannelConfigEnums {
         need_cancel_KitBag,
 
         /**
+         * 第三方 订单是否取消
+         */
+        need_cancel_ThirdParty,
+
+        /**
          * 报关时的金额单位
          */
         declare_unit,
@@ -405,6 +410,10 @@ public class ChannelConfigEnums {
          * 短信客服号(营销)
          */
         sms_add_serial_marketing,
+        /**
+         * confirmed时间间隔
+         */
+        confirmed_time_interval,
         /**
          * 分配仓库
          */

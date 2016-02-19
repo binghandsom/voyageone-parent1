@@ -3,6 +3,7 @@ package com.voyageone.web2.cms.wsdl.service;
 import com.google.common.base.Joiner;
 import com.mongodb.BasicDBObject;
 import com.mongodb.BulkWriteResult;
+import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.cms.CmsConstants;
@@ -348,6 +349,7 @@ public class ProductService extends BaseService {
         params.put("channelId", channelId);
         params.put("offset", offset);
         params.put("rows", rows);
+        params.put("priceType", request.getPriceType());
 
         boolean isExecute = false;
         List<CmsBtPriceLogModel> priceList;
@@ -876,10 +878,11 @@ public class ProductService extends BaseService {
             if (!StringUtils.isEmpty(hsCodeCrop)) {
                 TypeChannelBean bean = TypeChannel.getTypeChannelByCode(Constants.productForOtherSystemInfo.HS_CODE_CROP, channelId, hsCodeCrop);
                 if (bean != null) {
-                    resultInfo.setHsCodeId(String.valueOf(bean.getId()));
-                    resultInfo.setHsCode(hsCodeCrop);
-                    resultInfo.setUnit(bean.getAdd_name1());
-                    resultInfo.setHsDescription(bean.getName());
+                    String[] hsCode = bean.getName().toString().split(",");
+                    resultInfo.setHsCodeId(hsCodeCrop);
+                    resultInfo.setHsCode(hsCode[1]);
+                    resultInfo.setHsDescription(hsCode[2]);
+                    resultInfo.setUnit(hsCode[3]);
                 }
             }
             // 获取HsCodePrivate
@@ -887,10 +890,11 @@ public class ProductService extends BaseService {
             if (!StringUtils.isEmpty(hsCodePrivate)) {
                 TypeChannelBean bean = TypeChannel.getTypeChannelByCode(Constants.productForOtherSystemInfo.HS_CODE_PRIVATE, channelId, hsCodePrivate);
                 if (bean != null) {
-                    resultInfo.setHsCodePuId(String.valueOf(bean.getId()));
-                    resultInfo.setHsCodePu(hsCodeCrop);
-                    resultInfo.setUnitPu(bean.getAdd_name1());
-                    resultInfo.setHsDescriptionPu(bean.getName());
+                    String[] hsCodePu = bean.getName().toString().split(",");
+                    resultInfo.setHsCodePuId(hsCodePrivate);
+                    resultInfo.setHsCodePu(hsCodePu[0]);
+                    resultInfo.setHsDescriptionPu(hsCodePu[1]);
+                    resultInfo.setUnitPu(hsCodePu[2]);
                 }
             }
 
@@ -996,4 +1000,72 @@ public class ProductService extends BaseService {
 
         return response;
     }
+
+
+    /**
+     * distributeTranslation 分配翻译商品
+     *
+     * @param request ProductTransDistrRequest
+     * @return ProductTransDistrResponse
+     */
+    public ProductTransDistrResponse translateDistribute(ProductTransDistrRequest request) {
+        ProductTransDistrResponse result = new ProductTransDistrResponse();
+        //common check
+        checkCommRequest(request);
+        //check ChannelId
+        String channelId = request.getChannelId();
+        checkRequestChannelId(channelId);
+        //request check
+        request.check();
+
+        /**
+         * lock data
+         */
+        String nowStr = DateTimeUtil.getNow();
+        int getCount = request.getLimit();
+        String translator = request.getTranslator();
+        int translateTimeHDiff = request.getTranslateTimeHDiff();
+
+        // add translateTime condition
+        String queryStrTmp = "{\"$or\":" +
+                "[{\"fields.status\":{\"$nin\":[\"New\"]},\"fields.translateStatus\":{\"$in\":[null,\"\", \"0\"]},\"fields.translator\":{\"$in\":[null,\"\"]}}," +
+                 "{\"fields.status\":{\"$nin\":[\"New\"]},\"fields.translator\":{\"$nin\":[null,\"\"]},\"fields.translateTime\":{\"$lt\":\"%s\"}}]}";
+
+        Date date = DateTimeUtil.addHours(DateTimeUtil.getDate(), -translateTimeHDiff);
+        String translateTimeStr = DateTimeUtil.format(date, null);
+        // create query string
+        String queryStr = String.format(queryStrTmp, translateTimeStr);
+
+        // add Update
+        String strUpdateTmp = "{\"$set\":{\"fields.translateStatus\":0, \"fields.translator\":\"%s\", \"fields.translateTime\":\"%s\"}}";
+        // create Update string
+        String updateStr = String.format(strUpdateTmp, translator, nowStr);
+
+        //update translator translateTime
+        for (int i=0; i<getCount; i++) {
+            WriteResult writeResult = cmsBtProductDao.updateFirst(channelId, queryStr, updateStr);
+            if (writeResult.getN() != 1) {
+                break;
+            }
+        }
+
+        /**
+         * query lock data
+         */
+        JomgoQuery queryObject = new JomgoQuery();
+        //query
+        String getQueryStrTmp = "{\"fields.status\":{\"$nin\":[\"New\"]},\"fields.translateStatus\":0,\"fields.translator\":\"%s\",\"fields.translateTime\":{\"$gt\":\"%s\"}}";
+        queryObject.setQuery(String.format(getQueryStrTmp, translator, translateTimeStr));
+        //fields
+        buildProjection(request, queryObject);
+        //sorts
+        buildSort(request, queryObject);
+
+        List<CmsBtProductModel> products = cmsBtProductDao.select(queryObject, channelId);
+
+        result.setProducts(products);
+
+        return result;
+    }
+
 }

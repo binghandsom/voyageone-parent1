@@ -35,21 +35,21 @@
                 <table class="table table-hover table-hover-new text-center" ng-controller="popupCtrl">
                     <thead>
                     <tr>
-                        <th class="text-center" translate="TXT_SEQ"></th>
+                        <th class="mfb-xt text-center" translate="TXT_SEQ"></th>
                         <th class="text-left" translate="TXT_MASTER_CATEGORY"></th>
                         <th class="text-left" translate="TXT_PLATFORM_CATEGORY"></th>
-                        <th class="text-center" translate="TXT_MAPPING_CATEGORY_OR_OTHER_PLATFORM"></th>
-                        <th class="text-center" translate="TXT_MAPPING_ATTRIBUTE_IS_FINISHED"></th>
-                        <th class="text-center" translate="TXT_MAPPING_ATTRIBUTE"></th>
+                        <th class="mfb-xxxs text-center" translate="TXT_MAPPING_CATEGORY_OR_OTHER_PLATFORM"></th>
+                        <th class="mfb-xxt text-center" translate="TXT_MAPPING_ATTRIBUTE_IS_FINISHED"></th>
+                        <th class="mfb-xxx text-center" translate="TXT_MAPPING_ATTRIBUTE"></th>
                     </tr>
                     </thead>
                     <tbody>
                     <tr ng-repeat="category in $ctrl.mainCategories track by category.catId"
                         ng-if="$ctrl.shown(category)">
-                        <td class="text-center">{{::$index + 1}}</td>
+                        <td class="mfb-xt text-center">{{::$index + 1}}</td>
                         <td class="text-left">{{::category.catPath}}</td>
                         <td class="text-left">{{category.mapping}}</td>
-                        <td>
+                        <td class="mfb-xxxs">
                             <div class="btn-group">
                                 <button ng-click="$ctrl.popupMapping(category, popupNewCategory)" class="btn btn-default btn-xs">
                                     <i class="glyphicon glyphicon-link"></i>&nbsp;{{'BTN_MAPPING_CATEGORY' | translate}}
@@ -60,15 +60,13 @@
                                 </button>
                             </div>
                         </td>
-                        <td>
+                        <td class="mfb-xxt">
                             <span class="h4" ng-if="category.propertyMatched">
                                 <i class="fa fa-check-circle"></i>
                             </span>
                         </td>
-                        <td>
-                            <a class="btn btn-default btn-xs" target="_blank"
-                               ng-href="#/mapping/platform/{{$ctrl.selected.cart}}/{{::category.catId}}"
-                               ng-if="category.matched">
+                        <td class="mfb-xxx text-center">
+                            <a target="_blank" ng-href="#/mapping/platform/{{$ctrl.selected.cart}}/{{::category.catId}}" ng-if="category.matched">
                                 <i class="glyphicon glyphicon-link"></i>&nbsp;{{'BTN_MAPPING_ATTRIBUTE' | translate}}
                             </a>
                         </td>

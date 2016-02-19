@@ -70,7 +70,7 @@ public class CmsFeedPropMappingService extends BaseAppService {
      */
     public Map<String, Object> getCategoryPropsByFeed(String feedCategoryPath, UserSessionBean userSessionBean) {
         // 获取完整的 Feed 类目树
-        CmsMtFeedCategoryTreeModelx treeModelx = cmsMtFeedCategoryTreeDao.selectFeedCategoryx(userSessionBean.getSelChannelId());
+        CmsMtFeedCategoryTreeModelx treeModelx = cmsMtFeedCategoryTreeDao.findFeedCategoryx(userSessionBean.getSelChannelId());
         // 从全部 Feed 类目中查询具体的类目
         CmsFeedCategoryModel feedCategoryModel = feedMappingService.findByPath(feedCategoryPath, treeModelx);
 
@@ -218,7 +218,7 @@ public class CmsFeedPropMappingService extends BaseAppService {
      */
     public Map<String, List<String>> getFeedAttributes(String feedCategoryPath, UserSessionBean userSessionBean) {
 
-        CmsMtFeedCategoryTreeModelx treeModelx = cmsMtFeedCategoryTreeDao.selectFeedCategoryx(userSessionBean.getSelChannelId());
+        CmsMtFeedCategoryTreeModelx treeModelx = cmsMtFeedCategoryTreeDao.findFeedCategoryx(userSessionBean.getSelChannelId());
 
         CmsFeedCategoryModel feedCategoryModel = feedMappingService.findByPath(feedCategoryPath, treeModelx);
 

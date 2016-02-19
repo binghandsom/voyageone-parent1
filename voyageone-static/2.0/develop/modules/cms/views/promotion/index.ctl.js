@@ -8,7 +8,7 @@ define([
 
     function indexController($scope,promotionService,confirm,menuService) {
 
-        $scope.vm = {"promotionList": [],"cartList":[]};
+        $scope.vm = {"promotionList": [],"cartList":[],"promotionStatus":[{"name":"Open","value":false},{"name":"Close","value":true}]};
         $scope.searchInfo = {};
         $scope.groupPageOption = {curr: 1, total: 198, size: 30, fetch: $scope.search};
 

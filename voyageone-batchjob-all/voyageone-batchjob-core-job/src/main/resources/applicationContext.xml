@@ -16,6 +16,8 @@
 			<task:scheduled ref="CheckSlaveStatusTask" method="run" cron="0 0/10 0-23 * * ?"/>
 			<!--每天北京时间20点30分执行 -->
 			<task:scheduled ref="historyDataTransferTask" method="run" cron="0 30 12 * * ?"/>
+			<!--每隔1小时进行API心跳检查-->
+			<task:scheduled ref="healthCheckTask" method="run" cron="0 0 0-23 * * ?"/>
 		</task:scheduled-tasks>
 
 		<task:scheduler id="core-job-scheduler" pool-size="3"/><!-- 必须需要 -->

@@ -1,6 +1,8 @@
 package com.voyageone.web2.cms.views.pop.history;
 
+import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.web2.base.BaseAppService;
+import com.voyageone.web2.core.bean.UserSessionBean;
 import com.voyageone.web2.sdk.api.VoApiDefaultClient;
 import com.voyageone.web2.sdk.api.request.ProductPriceLogGetRequest;
 import com.voyageone.web2.sdk.api.response.ProductPriceLogGetResponse;
@@ -24,11 +26,12 @@ public class CmsPriceHistoryService extends BaseAppService {
      * @param params 检索条件
      * @return 价格修改记录列表
      */
-    public Map<String, Object> getPriceHistory(Map<String, Object> params, String channelId) {
-        ProductPriceLogGetRequest requestModel = new ProductPriceLogGetRequest(channelId);
+    public Map<String, Object> getPriceHistory(Map<String, Object> params, UserSessionBean userInfo, String language) {
+        ProductPriceLogGetRequest requestModel = new ProductPriceLogGetRequest(userInfo.getSelChannelId());
         Map<String, Object> result = new HashMap<>();
         requestModel.setOffset((int)params.get("offset"));
         requestModel.setRows((int) params.get("rows"));
+        requestModel.setPriceType((String) params.get("priceType"));
 
         String flag = (String) params.get("flag");
         if ("code".equals(flag)) {
@@ -42,6 +45,9 @@ public class CmsPriceHistoryService extends BaseAppService {
         ProductPriceLogGetResponse response = voApiClient.execute(requestModel);
         result.put("list", response.getPriceList());
         result.put("total", response.getTotalCount());
+
+        // 获取PriceType
+        result.put("priceTypeList", TypeConfigEnums.MastType.priceType.getList(language));
         return result;
     }
 }

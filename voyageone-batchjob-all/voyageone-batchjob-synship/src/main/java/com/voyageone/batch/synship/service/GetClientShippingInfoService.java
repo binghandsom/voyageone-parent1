@@ -4,6 +4,7 @@ import com.voyageone.batch.base.BaseTaskService;
 import com.voyageone.batch.core.Enums.TaskControlEnums;
 import com.voyageone.batch.core.modelbean.TaskControlBean;
 import com.voyageone.batch.core.util.TaskControlUtils;
+import com.voyageone.batch.synship.service.clientShippingInfo.GetGiltClientShippingInfoService;
 import com.voyageone.batch.synship.service.clientShippingInfo.GetJewelryClientShippingInfoService;
 import com.voyageone.batch.synship.service.clientShippingInfo.GetWmfClientShippingInfoService;
 import com.voyageone.batch.synship.service.clientShippingInfo.GetSpaldingClientShippingInfoService;
@@ -29,6 +30,9 @@ public class GetClientShippingInfoService extends BaseTaskService {
 
     @Autowired
     GetWmfClientShippingInfoService getWmfClientShippingInfoService;
+
+    @Autowired
+    GetGiltClientShippingInfoService getGiltClientShippingInfoService;
 
     @Override
     public SubSystem getSubSystem() {
@@ -64,6 +68,9 @@ public class GetClientShippingInfoService extends BaseTaskService {
                 getWmfClientShippingInfoService.getWmfShippingInfo(channelId, threads);
             } else if (channelId.equals(ChannelConfigEnums.Channel.SP.getId())) {
                 getSpaldingClientShippingInfoService.getSpaldingShippingInfo(channelId, threads);
+            }
+            else if (channelId.equals(ChannelConfigEnums.Channel.GILT.getId())) {
+                getGiltClientShippingInfoService.getGiltShippingInfo(channelId, threads);
             }
         }
         runWithThreadPool(threads, taskControlList);

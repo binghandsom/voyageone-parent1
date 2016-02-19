@@ -108,6 +108,8 @@ public interface CmsUrlConstants {
 
             String ROOT = "/cms/mapping/feed";
 
+            String GET_TOP_CATEGORIES = "getTopCategories";
+
             String GET_FEED_CATEGORY_TREE = "getFeedCategoryTree";
 
             String GET_MAIN_CATEGORIES = "getMainCategories";
