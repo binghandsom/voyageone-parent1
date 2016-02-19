@@ -135,7 +135,7 @@ public class CmsPromotionDetailService extends BaseAppService {
         List<Map<String, Object>> promotionGroups =voApiClient.execute(request).getPromotionGroups();
         if(!CollectionUtils.isEmpty(promotionGroups)){
             promotionGroups.forEach(map -> {
-                CmsBtProductModel cmsBtProductModel = ProductGetClient.getProductById(param.get("channelId").toString(), (Long) map.get("productId"));
+                CmsBtProductModel cmsBtProductModel = ProductGetClient.getProductById(param.get("channelId").toString(), ((Integer) map.get("productId")).longValue());
 
                 if (cmsBtProductModel != null) {
                     map.put("image", cmsBtProductModel.getFields().getImages1().get(0).getAttribute("image1"));
@@ -186,7 +186,7 @@ public class CmsPromotionDetailService extends BaseAppService {
             promotionSkus.forEach(map -> {
                 CmsBtProductModel cmsBtProductModel;
                 if (!temp.containsKey(map.get("productId").toString())) {
-                    cmsBtProductModel = ProductGetClient.getProductById(param.get("channelId").toString(), (Long) map.get("productId"));
+                    cmsBtProductModel = ProductGetClient.getProductById(param.get("channelId").toString(), Long.parseLong(map.get("productId").toString()));
                     temp.put(map.get("productId").toString(), cmsBtProductModel);
                 } else {
                     cmsBtProductModel = temp.get(map.get("productId").toString());
