@@ -160,6 +160,7 @@ public class CmsPromotionDetailService extends BaseAppService {
                     map.setImage((String) cmsBtProductModel.getFields().getImages1().get(0).getAttribute("image1"));
                     map.setSkuCount(cmsBtProductModel.getSkus().size());
                     map.setPlatformStatus(cmsBtProductModel.getGroups().getPlatforms().get(0).getPlatformStatus());
+                    map.setInventory(cmsBtProductModel.getBatchField().getCodeQty() == null?0:cmsBtProductModel.getBatchField().getCodeQty());
                 }
             });
         }

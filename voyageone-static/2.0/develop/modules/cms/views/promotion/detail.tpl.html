@@ -15,14 +15,23 @@
                                         <input type="text" class="form-control" ng-model="vm.promotion.promotionName">
                                     </div>
                                 </div>
+                                <!--<div class="form-group" >-->
+                                    <!--<label class="col-sm-4  control-label" >活动状态</label>-->
+                                    <!--<div class="col-sm-7">-->
+                                        <!--<select class="form-control" ng-model="vm.promotion.promotionStatus">-->
+                                            <!--<option value=false>Open</option>-->
+                                            <!--<option value=true>Close</option>-->
+                                        <!--</select>-->
+                                    <!--</div>-->
+                                <!--</div>-->
                                 <div class="form-group">
-                                    <label class="col-sm-4 control-label">活动状态</label>
-
+                                    <label class="col-sm-4 control-label">活动渠道</label>
                                     <div class="col-sm-7">
-                                        <input ng-show="vm.promotion.promotionStatus==false" value="Open" type="text"
-                                               class="form-control" placeholder="promotion_approved">
-                                        <input ng-show="vm.promotion.promotionStatus==true" value="Close" type="text"
-                                               class="form-control" placeholder="promotion_approved">
+                                        <label ng-repeat="cart in vm.cartList" class="checkbox-inline c-checkbox"><input type="radio" name="cartid" ng-model="vm.promotion.cartId"  ng-required="true" value={{cart.cartId}}><span class="fa fa-check"></span> {{cart.name}} </label>
+                                        <!--<label class="checkbox-inline c-checkbox"><input type="radio" name="cartid" ng-model="promotion.cartId" ng-required="true" value="23"><span class="fa fa-check"></span> 天猫国际 </label>-->
+                                        <!--<label class="checkbox-inline c-checkbox"><input type="radio" name="cartid" ng-model="promotion.cartId" ng-required="true" value="27"><span class="fa fa-check"></span>  聚美</label>-->
+                                        <!--<label class="checkbox-inline c-checkbox"><input type="radio" name="cartid" ng-model="promotion.cartId" ng-required="true" value="24"><span class="fa fa-check"></span> 京东 </label>-->
+                                        <!--<label class="checkbox-inline c-checkbox"><input type="radio" name="cartid" ng-model="promotion.cartId" ng-required="true" value="26"><span class="fa fa-check"></span> 京东国际 </label>-->
                                     </div>
                                 </div>
                                 <!-- .form-group -->
@@ -49,14 +58,18 @@
                             <form class="form-horizontal">
                                 <div class="form-group">
                                     <label class="col-sm-3 control-label">活动时间</label>
-
                                     <div class="col-sm-8 form-inline">
-                                        <div class="input-group col-sm-6"><input type="text" class="form-control inherited"
-                                                                                 ng-model="vm.promotion.activityStart">
-                                        </div>
-                                        &nbsp;~&nbsp;
-                                        <div class="input-group col-sm-5"><input type="text" class="form-control inherited"
-                                                                                 ng-model="vm.promotion.activityEnd">
+                                        <div class="col-sm-6 input-group" ng-controller="datePickerCtrl">
+                                            <input type="text" ng-model="vm.promotion.activityStart" class="form-control" datepicker-popup="{{formatDate}}" is-open="opened" date-model-format="{{formatDate}}" datepicker-options="dateOptions" close-text="Close" />
+								              <span class="input-group-btn">
+								                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+								              </span>
+                                        </div> ~
+                                        <div class="col-sm-5 input-group" ng-controller="datePickerCtrl">
+                                            <input type="text" ng-model="vm.promotion.activityEnd" class="form-control" datepicker-popup="{{formatDate}}" is-open="opened" date-model-format="{{formatDate}}" datepicker-options="dateOptions" close-text="Close" />
+								              <span class="input-group-btn">
+								                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+								              </span>
                                         </div>
                                     </div>
                                 </div>
@@ -64,13 +77,13 @@
                                     <label class="col-sm-3 control-label">预热时间</label>
                                     <div class="col-sm-8 form-inline">
                                         <div class="col-sm-6 input-group" ng-controller="datePickerCtrl">
-                                            <input type="text" ng-model="$parent.promotion.prePeriodStart" class="form-control" datepicker-popup="{{formatDate}}" is-open="opened" date-model-format="{{formatDate}}" datepicker-options="dateOptions" close-text="Close" />
+                                            <input type="text" ng-model="vm.promotion.prePeriodStart" class="form-control" datepicker-popup="{{formatDate}}" is-open="opened" date-model-format="{{formatDate}}" datepicker-options="dateOptions" close-text="Close" />
 								              <span class="input-group-btn">
 								                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
 								              </span>
                                         </div> ~
                                         <div class="col-sm-5 input-group" ng-controller="datePickerCtrl">
-                                            <input type="text" ng-model="$parent.promotion.prePeriodEnd" class="form-control" datepicker-popup="{{formatDate}}" is-open="opened" date-model-format="{{formatDate}}" datepicker-options="dateOptions" close-text="Close" />
+                                            <input type="text" ng-model="vm.promotion.prePeriodEnd" class="form-control" datepicker-popup="{{formatDate}}" is-open="opened" date-model-format="{{formatDate}}" datepicker-options="dateOptions" close-text="Close" />
 								              <span class="input-group-btn">
 								                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
 								              </span>
@@ -81,13 +94,13 @@
                                     <label class="col-sm-3 control-label">预售时间</label>
                                     <div class="col-sm-8 form-inline">
                                         <div class="col-sm-6 input-group" ng-controller="datePickerCtrl">
-                                            <input type="text" ng-model="$parent.promotion.preSaleStart" class="form-control" datepicker-popup="{{formatDate}}" is-open="opened" date-model-format="{{formatDate}}" datepicker-options="dateOptions" close-text="Close" />
+                                            <input type="text" ng-model="vm.promotion.preSaleStart" class="form-control" datepicker-popup="{{formatDate}}" is-open="opened" date-model-format="{{formatDate}}" datepicker-options="dateOptions" close-text="Close" />
 								              <span class="input-group-btn">
 								                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
 								              </span>
                                         </div> ~
                                         <div class="col-sm-5 input-group" ng-controller="datePickerCtrl">
-                                            <input type="text" ng-model="$parent.promotion.preSaleEnd" class="form-control" datepicker-popup="{{formatDate}}" is-open="opened" date-model-format="{{formatDate}}" datepicker-options="dateOptions" close-text="Close" />
+                                            <input type="text" ng-model="vm.promotion.preSaleEnd" class="form-control" datepicker-popup="{{formatDate}}" is-open="opened" date-model-format="{{formatDate}}" datepicker-options="dateOptions" close-text="Close" />
 								              <span class="input-group-btn">
 								                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
 								              </span>
@@ -100,21 +113,21 @@
                         <div class="col-sm-4">
                             <form class="form-horizontal">
 
-                                <div class="form-group">
-                                    <label class="col-sm-3 control-label vo_reqfield">活动渠道</label>
-                                    <div class="col-sm-8">
-                                        <label ng-repeat="cart in cartList" class="checkbox-inline c-checkbox"><input type="radio" name="cartid" ng-model="promotion.cartId"  ng-required="true" value={{cart.cartId}}><span class="fa fa-check"></span> {{cart.name}} </label>
-                                        <!--<label class="checkbox-inline c-checkbox"><input type="radio" name="cartid" ng-model="promotion.cartId" ng-required="true" value="23"><span class="fa fa-check"></span> 天猫国际 </label>-->
-                                        <!--<label class="checkbox-inline c-checkbox"><input type="radio" name="cartid" ng-model="promotion.cartId" ng-required="true" value="27"><span class="fa fa-check"></span>  聚美</label>-->
-                                        <!--<label class="checkbox-inline c-checkbox"><input type="radio" name="cartid" ng-model="promotion.cartId" ng-required="true" value="24"><span class="fa fa-check"></span> 京东 </label>-->
-                                        <!--<label class="checkbox-inline c-checkbox"><input type="radio" name="cartid" ng-model="promotion.cartId" ng-required="true" value="26"><span class="fa fa-check"></span> 京东国际 </label>-->
-                                    </div>
-                                </div><!-- .form-group -->
+                                <!--<div class="form-group">-->
+                                    <!--<label class="col-sm-3 control-label vo_reqfield">活动渠道</label>-->
+                                    <!--<div class="col-sm-8">-->
+                                        <!--<label ng-repeat="cart in cartList" class="checkbox-inline c-checkbox"><input type="radio" name="cartid" ng-model="promotion.cartId"  ng-required="true" value={{cart.cartId}}><span class="fa fa-check"></span> {{cart.name}} </label>-->
+                                        <!--&lt;!&ndash;<label class="checkbox-inline c-checkbox"><input type="radio" name="cartid" ng-model="promotion.cartId" ng-required="true" value="23"><span class="fa fa-check"></span> 天猫国际 </label>&ndash;&gt;-->
+                                        <!--&lt;!&ndash;<label class="checkbox-inline c-checkbox"><input type="radio" name="cartid" ng-model="promotion.cartId" ng-required="true" value="27"><span class="fa fa-check"></span>  聚美</label>&ndash;&gt;-->
+                                        <!--&lt;!&ndash;<label class="checkbox-inline c-checkbox"><input type="radio" name="cartid" ng-model="promotion.cartId" ng-required="true" value="24"><span class="fa fa-check"></span> 京东 </label>&ndash;&gt;-->
+                                        <!--&lt;!&ndash;<label class="checkbox-inline c-checkbox"><input type="radio" name="cartid" ng-model="promotion.cartId" ng-required="true" value="26"><span class="fa fa-check"></span> 京东国际 </label>&ndash;&gt;-->
+                                    <!--</div>-->
+                                <!--</div>&lt;!&ndash; .form-group &ndash;&gt;-->
                                 <div class="form-group">
                                     <label class="col-sm-3 control-label"></label>
                                     <div class="form-inline col-sm-9">
-                                        <input type="text" placeholder="Search"  class="form-control col-sm-8">
-                                        <span class="input-group-btn"><button class="btn btn-vo" type="button">Search</button></span>
+                                        <input type="text" placeholder="Search"  ng-model="vm.searchKey"  class="form-control col-sm-8">
+                                        <span class="input-group-btn"><button class="btn btn-vo" ng-click="search()" type="button">Search</button></span>
                                     </div>
                                 </div>
                             </form>
@@ -122,10 +135,10 @@
                         </div>
 
                         <div class="text-center">
-                            <div class="col-sm-12">
-                                <div class="form-inline" ng-controller="popupCtrl">
-                                    <button class="btn btn-default" ng-click="clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR' | translate}}</button>
-                                    <button class="btn btn-vo" ng-click="search()"><i class="glyphicon glyphicon-floppy-disk"></i> 保存</button>
+                            <div class="col-sm-12" ng-if="compare(vm.promotion, promotionOld)==false">
+                                <div class="form-inline" >
+                                    <button class="btn btn-default" ng-click="clearPromotionInfo()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR' | translate}}</button>
+                                    <button class="btn btn-vo" ng-click="savePromotionInfo()"><i class="glyphicon glyphicon-floppy-disk"></i> 保存</button>
                                     <!--<button class="btn btn-success" ng-click="openPromotion('md',vm.cartList,vm.promotion,null)"><i
                                             class="fa fa-pencil"></i> 修改Promotion
                                     </button>-->
@@ -170,7 +183,7 @@
                                 <span class="m-l-xxl">Primary Product</span>
                             </td>
                             <td class="mfb-xxt text-center">TAG</td>
-                            <td class="mfb-xxt text-left">Inventory</td>
+                            <!--<td class="mfb-xxt text-left">Inventory</td>-->
                             <td class="mfb-xxt text-center">MSRP</td>
                             <td class="mfb-xxt text-center">Retail Price</td>
                             <!--<td class="mfb-xxt text-center">Sale Price</td>-->
@@ -211,28 +224,11 @@
                                         </ul>
                                     </div>
                                 </td>
-                                <td class="mfb-xxt text-center">TAG</td>
-                                <td class="mfb-xxt text-left">
-                                    <!-- TODO 目前库存是假的,而且显示code库存未实现 popover="LDB01-298:20 / LDB01-298: 20 / LDB01-298:20 / LDB01-298: 20" popover-title="Inventory"  -->
-                                    <button type="button" popover-placement="left" class="btn btn-default btn-xs">0
-                                    </button>
-                                </td>
-                                <td class="mfb-xxt text-center">
-                                    <button popover="Sale Price: {{group.salePriceMin != group.salePriceMax?group.salePriceMin +' - '+ group.salePriceMax:group.salePriceMin}}"
-                                            popover-title="Final Price" type="button" popover-placement="left"
-                                            class="btn btn-default btn-xs">{{group.promotionPriceMin !=
-                                        group.promotionPriceMax?group.promotionPriceMin +' - '+
-                                        group.promotionPriceMax:group.promotionPriceMax}}
-                                    </button>
-                                </td>
-                                <td class="mfb-xxt text-center">
-                                    <button type="button" popover-placement="left" class="btn btn-default btn-xs">
-                                        {{group.msrp}}
-                                    </button>
-                                </td>
-                                <td class="mfb-xxt text-left">
-                                    {{(group.promotionPriceMin/group.salePriceMin*100).toFixed(1)}}折
-                                </td>
+                                <td class="mfb-xxt text-center">{{group.tag}}</td>
+                                <!--<td class="mfb-xxt text-left">0</td>-->
+                                <td class="mfb-xxt text-center">{{group.msrp}}</td>
+                                <td class="mfb-xxt text-center">{{group.salePriceMin != group.salePriceMax?group.salePriceMin +' - '+ group.salePriceMax:group.salePriceMin}}</td>
+                                <td class="mfb-xxt text-center">{{group.promotionPriceMin != group.promotionPriceMax?group.promotionPriceMin +' - '+ group.promotionPriceMax:group.promotionPriceMax}}</td>
                                 <!--<td class="mfb-xxt text-left">-->
                                     <!--<div class="table_main">&lt;!&ndash; TODO 未实现 &ndash;&gt;-->
                                         <!--&lt;!&ndash;<ul>&ndash;&gt;-->
@@ -280,8 +276,8 @@
                                 <span class="fa fa-check"></span> {{'TXT_SELECT_ALL' | translate}} </label></td>
                             <td class="mfb-xxt text-center">TAG</td>
                             <td class="mfb-xxt text-center">Inventory</td>
-                            <td class="mfb-xxt text-left">MSRP</td>
                             <td class="mfb-xxt text-center">Retail Price</td>
+                            <td class="mfb-xxt text-center">Sale Price</td>
                             <td class="mfb-xxt text-center">Promotion Price</td>
                             <td class="mfb-xxs text-left">Base Property</td>
                             <td class="mfb-xxt text-center">SKU数</td>
@@ -313,26 +309,18 @@
                                     <img src="http://image.sneakerhead.com/is/image/sneakerhead/{{code.image}}"
                                          alt="{{code.productName}}" class="img-circle pull-left m-r"/>
                                 </td>
-                                <td class="mfb-xxt text-center">{{(code.promotionPrice/code.msrp*100).toFixed(1)}}折</td>
-                                <td class="mfb-xxt text-center">
-                                    <!-- TODO 未实现 popover="LDB01-298:20 / LDB01-298: 20 / LDB01-298:20 / LDB01-298: 20" popover-title="Inventory"  -->
-                                    <button type="button" popover-placement="left" class="btn btn-default btn-xs">0
-                                    </button>
-                                </td>
+                                <td class="mfb-xxt text-center">{{code.tag}}</td>
+                                <td class="mfb-xxt text-center">{{code.inventory}}</td>
+                                <td class="mfb-xxt text-center">{{code.retailPrice}}</td>
+                                <td class="mfb-xxt text-center">{{code.salePrice}}</td>
                                 <td class="mfb-xxt text-left">
-                                    <span class="text-l-t">5631</span>
-                                    <p class=""><input type="text" class="col-sm-1 form-control m-b-xs" placeholder="4523"></p>
+                                    <span class="text-l-t">{{code.msrp}}</span>
+                                    <p class=""><input type="text" class="col-sm-1 form-control m-b-xs" placeholder={{code.promotionPrice}}></p>
                                     <!--<p style="color:#ff0000;">（<span style="vertical-align: sub;font-size:8px"><i class="glyphicon glyphicon-triangle-top" style="font-size:4px"></i></span>&nbsp;520.00） 六折</p>-->
-                                    <p class="text-u-red">（<span class="text-u-sub"><i class="glyphicon glyphicon-triangle-bottom"></i></span>&nbsp;520.00） 六折</p>
+                                    <p class="text-u-red">（<span class="text-u-sub"><i class="glyphicon glyphicon-triangle-bottom"></i></span>&nbsp;{{code.msrp-code.promotionPrice}}） {{(code.promotionPrice/code.msrp*100).toFixed(1)}}折</p>
                                       <!--<input type="text" class="col-sm-1 form-control" ng-model="code.promotionPrice">
                                       <button popover="Sale Price: {{code.salePrice}}" popover-title="Final Price" type="button" popover-placement="left" class="btn btn-default btn-xs">{{code.promotionPrice}}</button>-->
 
-                                </td>
-                                <td class="mfb-xxt text-center">
-                                    {{code.msrp}}
-                                </td>
-                                <td class="mfb-xxt text-center">
-                                    {{code.msrp}}
                                 </td>
                                 <td class="mfb-xxs text-left">
                                     <div class="table_main"><!-- TODO 未实现 -->

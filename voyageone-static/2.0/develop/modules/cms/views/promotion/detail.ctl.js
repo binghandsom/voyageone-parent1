@@ -8,6 +8,7 @@ define([
 
     function detailController($scope, promotionService, promotionDetailService, notify, $routeParams, $location, alert, $translate,menuService) {
         pageSize = 5;
+        $scope.promotionOld={};
         $scope.vm = {
             "promotionId": $routeParams.promotionId,
             "tabIndex": 0,
@@ -45,6 +46,7 @@ define([
             $scope.getCategoryType();
             promotionService.getPromotionList({"promotionId": $routeParams.promotionId}).then(function (res) {
                 $scope.vm.promotion = res.data[0];
+                $scope.promotionOld = _.clone($scope.vm.promotion);
             }, function (err) {
 
             });
@@ -177,6 +179,14 @@ define([
             }
 
         };
+        $scope.savePromotionInfo = function(){
+
+            promotionService.updatePromotion($scope.vm.promotion).then(function (res) {
+                notify.success("success");
+            }, function (res) {
+                notify.warning("fail");
+            })
+        };
         $scope.teJiaBaoInit = function(){
             promotionDetailService.teJiaBaoInit( $routeParams.promotionId).then(function (res) {
                 notify.success("success");
@@ -185,7 +195,13 @@ define([
             }, function (err) {
                 notify.warning("fail");
             })
-        }
+        };
+        $scope.clearPromotionInfo =function(){
+            $scope.vm.promotion = _.clone($scope.promotionOld);
+        };
+        $scope.compare = function(data1,data2){
+            return _.isEqual(data1, data2)
+        };
     };
     detailController.$inject = ['$scope', 'promotionService', 'promotionDetailService', 'notify', '$routeParams', '$location','alert','$translate','menuService'];
     return detailController;
