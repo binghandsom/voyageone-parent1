@@ -8,15 +8,19 @@
         <form role="form" class="form-horizontal">
             <div class="box">
                 <div class="box-body">
-                    <table class="table table-striped text-center">
+                    <table class="table table-hover-new text-center">
+                        <thead>
                         <tr>
                             <th class="text-left" translate="TXT_PLATFORM_TYPE"></th>
                             <th class="text-left" translate="TXT_PLATFORM_CATEGORY"></th>
                         </tr>
+                        </thead>
+                        <tbody>
                         <tr ng-repeat="mapping in ctrl.mappingPaths">
-                            <td class="text-left"><span class="badge badge-empty">{{::ctrl.carts.valueOf(mapping.platform).desc}}</span></td>
+                            <td class="text-left"><span>{{::ctrl.carts.valueOf(mapping.platform).desc}}</span></td>
                             <td class="text-left">{{::mapping.categoryPath}}</td>
                         </tr>
+                        </tbody>
                     </table>
                 </div>
             </div>
