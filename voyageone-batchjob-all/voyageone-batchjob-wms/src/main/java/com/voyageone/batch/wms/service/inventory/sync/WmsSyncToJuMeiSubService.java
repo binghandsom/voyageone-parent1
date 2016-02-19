@@ -61,6 +61,16 @@ public class WmsSyncToJuMeiSubService extends WmsSyncInventoryBaseService {
 
         } catch (Exception e) {
             $info(shopBean.getShop_name() + "（" + shopBean.getComment() + ")库存同步记录：" + new Gson().toJson(req) + "，库存同步结果：" + e);
+            if (updateFlg.equals(WmsConstants.UPDATE_FLG.ReFlush)) {
+                logger.info("刷新失败时，更新标志位");
+                // 刷新失败时，更新标志位
+                updateJMFlgIgnore(inventorySynLogBean);
+            }
+            // 失败的话，记录失败的信息
+            else if (updateFlg.equals(WmsConstants.UPDATE_FLG.Update)) {
+                logger.info("失败的话，记录失败的信息");
+                moveIgnore(inventorySynLogBean, res);
+            }
             logFailRecord(e, inventorySynLogBean);
             return;
         }
