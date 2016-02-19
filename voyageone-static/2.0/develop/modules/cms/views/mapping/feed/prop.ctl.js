@@ -328,6 +328,17 @@ define([
                             ttt.matchOver = !ttt.matchOver;
                         }
                     });
+                },
+
+                /**
+                 * 重置过滤条件
+                 */
+                clear: function() {
+                    this.show = {
+                        hasRequired: null,
+                        matched: null,
+                        keyWord: null
+                    };
                 }
             };
 

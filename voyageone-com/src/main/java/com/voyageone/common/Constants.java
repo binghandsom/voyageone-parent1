@@ -127,6 +127,7 @@ public final class Constants {
 
     public static final class comMtType {
         public static final String BRAND = "brand";
+        public static final String CARTS = "skuCarts";
     }
 
     public static final class productForOtherSystemInfo {

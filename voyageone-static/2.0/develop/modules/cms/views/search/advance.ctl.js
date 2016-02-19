@@ -22,7 +22,9 @@ define([
             currTab: "group",
             status: {
                 open: true
-            }
+            },
+            groupSelList: { selList: []},
+            productSelList: { selList: []}
         };
 
         $scope.initialize = initialize;

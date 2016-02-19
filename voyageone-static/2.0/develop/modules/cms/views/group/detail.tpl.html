@@ -150,7 +150,10 @@
 									<button ng-controller="showPopoverCtrl" popover-html="showInfo({{productInfo.inventoryDetail}})" popover-title="{{'TXT_SKU_INVENTORY' | translate}}" type="button" popover-placement="left" class="btn btn-default btn-xs">{{productInfo.fields.qty || 0}}</button>
 								</td>
 								<td class="mfb-xxt text-right">
-									<button ng-controller="showPopoverCtrl" popover-html="showInfo({{productInfo.groups.priceDetail}})" popover-title="{{'TXT_PRICE' | translate}}" type="button" popover-placement="left" class="btn btn-default btn-xs">{{productInfo.fields.priceSaleSt || 0 | number: 2}}&nbsp;~&nbsp;{{productInfo.fields.priceSaleEd || 0 | number: 2}}</button>
+									<button ng-controller="showPopoverCtrl" popover-html="showInfo({{productInfo.priceDetail}})" popover-title="{{'TXT_PRICE' | translate}}"
+											type="button" popover-placement="left" class="btn btn-default btn-xs">
+										{{productInfo.priceSale}}
+									</button>
 								</td>
 								<td class="mfb-xxt text-left">{{productInfo.fields.sizeType}}</td>
 								<td class="mfb-xxt text-left">

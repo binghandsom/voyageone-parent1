@@ -9,7 +9,7 @@ define([
     'cms',
     'modules/cms/controller/popup.ctl',
     'modules/cms/service/product.detail.service'
-], function (cms, Status) {
+], function (cms) {
     return cms.controller('productDetailController', (function () {
 
         function productDetailController($routeParams, $translate, productDetailService, feedMappingService, notify, confirm) {

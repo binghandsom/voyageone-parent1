@@ -348,6 +348,7 @@ public class ProductService extends BaseService {
         params.put("channelId", channelId);
         params.put("offset", offset);
         params.put("rows", rows);
+        params.put("priceType", request.getPriceType());
 
         boolean isExecute = false;
         List<CmsBtPriceLogModel> priceList;

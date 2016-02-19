@@ -72,6 +72,9 @@
         <if test="promotionName != null and promotionName != ''">
             and a.promotion_name LIKE '%${promotionName}%'
         </if>
+        <if test="promotionStatus != null">
+            and a.promotion_status = #{promotionStatus,jdbcType=BOOLEAN}
+        </if>
         <if test="cartId != null and cartId != ''">
             and a.cart_id = #{cartId,jdbcType=INTEGER}
         </if>
