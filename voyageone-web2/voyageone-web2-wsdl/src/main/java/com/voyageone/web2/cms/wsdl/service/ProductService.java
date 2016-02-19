@@ -878,10 +878,11 @@ public class ProductService extends BaseService {
             if (!StringUtils.isEmpty(hsCodeCrop)) {
                 TypeChannelBean bean = TypeChannel.getTypeChannelByCode(Constants.productForOtherSystemInfo.HS_CODE_CROP, channelId, hsCodeCrop);
                 if (bean != null) {
-                    resultInfo.setHsCodeId(String.valueOf(bean.getId()));
-                    resultInfo.setHsCode(hsCodeCrop);
-                    resultInfo.setUnit(bean.getAdd_name1());
-                    resultInfo.setHsDescription(bean.getName());
+                    String[] hsCode = bean.getName().toString().split(",");
+                    resultInfo.setHsCodeId(hsCodeCrop);
+                    resultInfo.setHsCode(hsCode[1]);
+                    resultInfo.setHsDescription(hsCode[2]);
+                    resultInfo.setUnit(hsCode[3]);
                 }
             }
             // 获取HsCodePrivate
@@ -889,10 +890,11 @@ public class ProductService extends BaseService {
             if (!StringUtils.isEmpty(hsCodePrivate)) {
                 TypeChannelBean bean = TypeChannel.getTypeChannelByCode(Constants.productForOtherSystemInfo.HS_CODE_PRIVATE, channelId, hsCodePrivate);
                 if (bean != null) {
-                    resultInfo.setHsCodePuId(String.valueOf(bean.getId()));
-                    resultInfo.setHsCodePu(hsCodeCrop);
-                    resultInfo.setUnitPu(bean.getAdd_name1());
-                    resultInfo.setHsDescriptionPu(bean.getName());
+                    String[] hsCodePu = bean.getName().toString().split(",");
+                    resultInfo.setHsCodePuId(hsCodePrivate);
+                    resultInfo.setHsCodePu(hsCodePu[0]);
+                    resultInfo.setHsDescriptionPu(hsCodePu[1]);
+                    resultInfo.setUnitPu(hsCodePu[2]);
                 }
             }
 
