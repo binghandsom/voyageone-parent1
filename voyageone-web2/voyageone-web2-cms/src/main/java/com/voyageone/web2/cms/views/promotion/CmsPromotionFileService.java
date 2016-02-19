@@ -6,11 +6,9 @@ import com.voyageone.cms.service.model.CmsBtProductModel_Sku;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.web2.base.BaseAppService;
-import com.voyageone.web2.cms.wsdl.dao.CmsPromotionSkuDao;
 import com.voyageone.web2.sdk.api.VoApiDefaultClient;
 import com.voyageone.web2.sdk.api.domain.CmsBtInventoryOutputTmpModel;
-import com.voyageone.web2.sdk.api.request.ProductsCountRequest;
-import com.voyageone.web2.sdk.api.request.ProductsGetRequest;
+import com.voyageone.web2.sdk.api.request.*;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,9 +45,6 @@ public class CmsPromotionFileService extends BaseAppService {
 //    private int max_excel_reccount = 500;
     private int max_excel_reccount = 1000;
 
-    @Autowired
-    // MysqlDB
-            CmsPromotionSkuDao cmsPromotionSkuDao;
 
     // Sku 文件单线程用
     ReentrantLock lock = new ReentrantLock();
@@ -366,7 +361,7 @@ public class CmsPromotionFileService extends BaseAppService {
             } finally {
                 $info("EXCEL SKU 数据清空");
                 // 临时数据清空
-                cmsPromotionSkuDao.delSkuInventoryInfo();
+                voApiClient.execute(new PromotionSkuInventoryInfoDeleteRequest());
 
                 lock.unlock();
             }
@@ -462,7 +457,9 @@ public class CmsPromotionFileService extends BaseAppService {
         int insertRecCount = (int)insertStringRet.get(0);
         String insertRecString = (String)insertStringRet.get(1);
 
-        ret = cmsPromotionSkuDao.insertSkuInventoryInfo(insertRecString);
+        PromotionSkuInventoryInfoInsertRequest request=new PromotionSkuInventoryInfoInsertRequest();
+        request.setInsertRecString(insertRecString);
+        ret =voApiClient.execute(request).isInsert();
 
         return ret;
     }
@@ -539,7 +536,7 @@ public class CmsPromotionFileService extends BaseAppService {
 //        String templatePath = readValue(CmsConstants.Props.CODE_TEMPLATE);
         String templatePath = "D:/jiming/work/cms/templete/sku-template.xlsx";
 
-        long recCount = cmsPromotionSkuDao.getSkuInventoryInfoRecCount();
+        long recCount = voApiClient.execute(new PromotionSkuInventoryInfoGetCountRequest()).getTotalCount();
 
         int pageCount = 0;
         if ((int) recCount % select_pagesize > 0) {
@@ -556,7 +553,10 @@ public class CmsPromotionFileService extends BaseAppService {
             // 最终行Index
             int endRowIndex = 0;
             for (int i = 0; i < pageCount; i++) {
-                List<CmsBtInventoryOutputTmpModel> items = cmsPromotionSkuDao.getSkuInventoryInfoRecInfo(i, select_pagesize);
+                PromotionSkuInventoryInfoGetRequest request=new PromotionSkuInventoryInfoGetRequest();
+                request.setPageNo(i);
+                request.setPageSize(select_pagesize);
+                List<CmsBtInventoryOutputTmpModel> items = voApiClient.execute(request).getModels();
 
                 if (items.size() == 0) {
                     break;

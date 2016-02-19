@@ -190,8 +190,8 @@ define([
             },
             "file": {
                 "import": {
-                    "templateUrl": "views/pop/import/index.tpl.html",
-                    "controllerUrl": "modules/cms/views/pop/import/index.ctl",
+                    "templateUrl": "views/pop/file/import.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/file/import.ctl",
                     "controller": 'popFileImportCtl'
                 }
             },
