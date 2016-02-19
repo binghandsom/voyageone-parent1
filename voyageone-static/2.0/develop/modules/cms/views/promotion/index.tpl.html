@@ -8,12 +8,11 @@
 				<div class="container-fluid m-t-sm m-b-md">
 					<div class="col-sm-12">
 
-						<div class="col-sm-4">
+						<div class="col-sm-3">
 							<div class="form-horizontal">
-
 								<div class="form-group" >
 									<label class="col-sm-3  control-label" translate="TXT_PLATFORM_TYPE"></label>
-									<div class="col-sm-3">
+									<div class="col-sm-8">
 										<select class="form-control" ng-model="searchInfo.cartId">
 											<option value='' translate="TXT_SELECT_NO_VALUE"></option>
 											<option ng-repeat="cart in vm.cartList" value={{cart.cartId}}>{{cart.name}}</option>
@@ -33,7 +32,7 @@
 							</div>
 						</div>
 
-						<div class="col-sm-4">
+						<div class="col-sm-3">
 							<div class="form-horizontal">
 								<div class="form-group" >
 									<label class="col-sm-3  control-label" translate="TXT_PROMOTION_STATUS"></label>
@@ -47,12 +46,12 @@
 							</div>
 						</div>
 
-						<div class="col-sm-4">
+						<div class="col-sm-6">
 							<div class="form-horizontal">
 								<div class="form-group">
 									<label class="col-sm-3 control-label" translate="TXT_CREATE_TIME"></label>
 									<div class="col-sm-8 form-inline">
-										<div class="col-sm-5 input-group" ng-controller="datePickerCtrl">
+										<div class="col-sm-6 input-group" ng-controller="datePickerCtrl">
 											<input type="text" class="form-control" datepicker-popup="{{formatDate}}" ng-model="$parent.searchInfo.createdStart" date-model-format="{{formatDate}}" is-open="opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" />
 								              <span class="input-group-btn">
 								                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
@@ -86,7 +85,7 @@
 				<thead>
 				<tr>
 					<th class="text-center">Seq.</th>
-					<th class="text-center">Promotion Name</th>
+					<th class="text-left">Promotion Name</th>
 					<th class="text-center">Status</th>
 					<th class="text-center">Cart Type</th>
 					<th class="text-left">Promotion Time</th>
@@ -98,7 +97,7 @@
 				<tbody if-no-rows="vm.promotionList.length">
 				<tr ng-repeat="promotion in vm.promotionList">
 					<td class="text-center">{{promotion.promotionId}}</td>
-					<td class="text-center"><a href="#/promotion/detail/{{promotion.promotionId}}" target="_blank">{{promotion.promotionName}}</a></td>
+					<td class="text-left"><a href="#/promotion/detail/{{promotion.promotionId}}" target="_blank">{{promotion.promotionName}}</a></td>
 					<td class="text-center"><span ng-show="promotion.promotionStatus==false" class="label label-success-new m-r-lg m-l"> Open </span><span ng-show="promotion.promotionStatus==true" class="label label-yellow-new m-r-lg m-l"> Close </span></td>
 					<td class="text-center">{{promotion.cartName}}</td>
 					<td class="text-left">{{promotion.activityStart}}&nbsp;~&nbsp;{{promotion.activityEnd}}</td>
