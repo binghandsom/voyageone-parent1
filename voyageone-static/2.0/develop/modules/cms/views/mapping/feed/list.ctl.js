@@ -18,14 +18,17 @@ define([
          * @param {FeedMappingService} feedMappingService
          * @param {voNotify} notify
          * @param {function} confirm
+         * @param $translate
+         * @param blockUI
          * @constructor
          */
-        function FeedMappingController(feedMappingService, notify, confirm, $translate) {
+        function FeedMappingController(feedMappingService, notify, confirm, $translate, blockUI) {
 
             this.confirm = confirm;
             this.notify = notify;
             this.$translate = $translate;
             this.feedMappingService = feedMappingService;
+            this.blockUI = blockUI;
 
             /**
              * feed 类目集合
@@ -53,7 +56,8 @@ define([
              */
             this.matched = {
                 category: null,
-                property: null
+                property: null,
+                keyWord: null
             };
         }
 
@@ -63,12 +67,12 @@ define([
              */
             options: {
                 category: {
-                    '类目匹配情况(ALL)': null,
+                    '类目匹配情况(所有)': null,
                     '类目已匹配': true,
                     '类目未匹配': false
                 },
                 property: {
-                    '匹配属性情况(ALL)': null,
+                    '匹配属性情况(所有)': null,
                     '属性已匹配完成': true,
                     '属性未匹配完成': false
                 }
@@ -181,6 +185,7 @@ define([
                     });
                 }.bind(this));
             },
+
             /**
              * 检查当前类目是否已进行类目匹配
              * @param {FeedCategoryBean} feedCategoryBean
@@ -190,6 +195,7 @@ define([
                 // 只要默认 mapping 存在即已匹配
                 return !!feedCategoryBean.mapping;
             },
+
             /**
              * 检查当前类目是否已经完成了属性匹配
              * @param {FeedCategoryBean} feedCategoryBean
@@ -200,26 +206,40 @@ define([
                 return this.isCategoryMatched(feedCategoryBean)
                     && !!feedCategoryBean.mapping.matchOver;
             },
+
             /**
              * 刷新表格
              */
             refreshTable: function () {
                 // 选定数据源
-                var rows = this.feedCategories[this.selectedTop];
+                var ttt = this;
+                var rows = ttt.feedCategories[ttt.selectedTop];
+                var keyWord = ttt.matched.keyWord;
+
+                ttt.blockUI.start();
+
                 // 过滤
-                rows = _.filter(rows, function (val) {
+                rows = _.filter(rows, function (feedCategoryBean) {
                     var result = true;
-                    if (this.matched.category !== null) {
-                        result = this.matched.category === this.isCategoryMatched(val);
-                    } else if (this.matched.property !== null) {
-                        result = this.matched.property === this.isPropertyMatched(val);
-                    }
+
+                    // 如果关键字存在, 先进行关键字过滤
+                    if (keyWord && feedCategoryBean.model.path.indexOf(keyWord) < 0)
+                        return false;
+
+                    if (ttt.matched.category !== null)
+                        result = ttt.matched.category === ttt.isCategoryMatched(feedCategoryBean);
+                    else if (ttt.matched.property !== null)
+                        result = ttt.matched.property === ttt.isPropertyMatched(feedCategoryBean);
+
                     return result;
-                }.bind(this));
+                });
+
                 // 绑定&显示
-                this.tableSource = rows.sort(function (a, b) {
+                ttt.tableSource = rows.sort(function (a, b) {
                     return a.seq > b.seq ? 1 : -1;
                 });
+
+                ttt.blockUI.stop();
             },
 
             openCategoryMapping: function (categoryModel, popupNewCategory) {
@@ -235,6 +255,16 @@ define([
                         }).then(this.bindCategory.bind(this));
 
                     }.bind(this));
+            },
+
+            /**
+             * 重置搜索条件
+             */
+            clear: function () {
+                this.matched.category = null;
+                this.matched.property = null;
+                this.matched.keyWord = null;
+                this.refreshTable();
             }
         };
 

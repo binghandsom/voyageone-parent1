@@ -134,6 +134,8 @@ define([
              * @param $scope
              * @param $routeParams
              * @param {FeedMappingService} feedMappingService
+             * @param notify
+             * @param $translate
              * @constructor
              */
             function FeedPropMappingController($scope, $routeParams, feedMappingService, notify, $translate) {
@@ -175,11 +177,11 @@ define([
                 };
                 /**
                  * 显示的过滤条件
-                 * @type {{hasRequired: boolean|null, matched: boolean|null}}
                  */
                 this.show = {
                     hasRequired: null,
-                    matched: null
+                    matched: null,
+                    keyWord: null
                 };
 
                 this.saveMapping = this.saveMapping.bind(this);
@@ -204,40 +206,42 @@ define([
 
                 init: function () {
 
-                    this.feedMappingService.getMainProps({
-                        feedCategoryPath: this.feedCategoryPath
+                    var ttt = this;
+
+                    ttt.feedMappingService.getMainProps({feedCategoryPath: ttt.feedCategoryPath})
+                        .then(function (res) {
+
+                            // 保存主数据类目(完整类目)
+                            ttt.mainCategory = res.data.category;
+
+                            // 保存字段 Map 数据
+                            ttt.fields = res.data.fields;
+                            ttt.skuFields = res.data.sku;
+                            ttt.commonFields = res.data.common;
+
+                            // 根据类目信息继续查询
+                            ttt.feedMappingService.getMatched(
+                                {
+                                    feedCategoryPath: ttt.feedCategoryPath,
+                                    mainCategoryPath: ttt.mainCategory.catFullPath
+                                }
+                            ).then(function (res) {
+
+                                // 保存已匹配的属性
+                                toArray.matchedMains = res.data;
+
+                                // 包装数据源
+                                ttt.dataSources.fields = toArray(ttt.fields);
+                                ttt.dataSources.common = toArray(ttt.commonFields);
+                                ttt.dataSources.sku = toArray(ttt.skuFields);
+
+                            });
+                        });
+
+                    ttt.feedMappingService.getMatchOver({
+                        feedCategoryPath: ttt.feedCategoryPath
                     }).then(function (res) {
-
-                        // 保存主数据类目(完整类目)
-                        this.mainCategory = res.data.category;
-
-                        // 保存字段 Map 数据
-                        this.fields = res.data.fields;
-                        this.skuFields = res.data.sku;
-                        this.commonFields = res.data.common;
-
-                        // 根据类目信息继续查询
-                        this.feedMappingService.getMatched({
-                            feedCategoryPath: this.feedCategoryPath,
-                            mainCategoryPath: this.mainCategory.catFullPath
-                        }).then(function (res) {
-
-                            // 保存已匹配的属性
-                            toArray.matchedMains = res.data;
-
-                            // 包装数据源
-                            this.dataSources.fields = toArray(this.fields);
-                            this.dataSources.common = toArray(this.commonFields);
-                            this.dataSources.sku = toArray(this.skuFields);
-
-                        }.bind(this));
-                    }.bind(this));
-
-                    var ttthis = this;
-                    this.feedMappingService.getMatchOver({
-                        feedCategoryPath: this.feedCategoryPath
-                    }).then(function(res) {
-                        ttthis.matchOver = res.data == 1;
+                        ttt.matchOver = res.data == 1;
                     });
                 },
                 popupContext: function (bean) {
@@ -289,35 +293,52 @@ define([
                         }
                     }.bind(this));
                 },
+
                 /**
                  * 确定某字段是否要显示
-                 * @param {object} bean
-                 * @return {boolean}
                  */
                 shown: function (bean) {
+
                     var result = true;
+                    var keyWord = this.show.keyWord;
+
+                    if (keyWord && bean.field.name.indexOf(keyWord) < 0)
+                        return false;
+
                     if (this.show.hasRequired !== null) {
                         result = (this.show.hasRequired ? bean.hasRequired : bean.hasOptional);
-                    } else if (this.show.matched !== null) {
+                    }
+
+                    if (result && this.show.matched !== null) {
                         result = (this.show.matched ? bean.hasMatched : bean.hasUnMatched);
                     }
+
                     return result;
                 },
 
                 switchMatchOver: function () {
-
-                    var me = this;
-
-                    me.feedMappingService.directMatchOver({
-                        feedCategoryPath: me.feedCategoryPath
+                    var ttt = this;
+                    ttt.feedMappingService.directMatchOver({
+                        feedCategoryPath: ttt.feedCategoryPath
                     }).then(function (res) {
                         if (res.data)
-                            me.notify.success(this.$translate.instant('TXT_MSG_UPDATE_SUCCESS'));
+                            ttt.notify.success(ttt.$translate.instant('TXT_MSG_UPDATE_SUCCESS'));
                         else {
-                            me.notify.danger(this.$translate.instant('TXT_MSG_UPDATE_FAIL'));
-                            me.matchOver = !me.matchOver;
+                            ttt.notify.danger(ttt.$translate.instant('TXT_MSG_UPDATE_FAIL'));
+                            ttt.matchOver = !ttt.matchOver;
                         }
                     });
+                },
+
+                /**
+                 * 重置过滤条件
+                 */
+                clear: function() {
+                    this.show = {
+                        hasRequired: null,
+                        matched: null,
+                        keyWord: null
+                    };
                 }
             };
 

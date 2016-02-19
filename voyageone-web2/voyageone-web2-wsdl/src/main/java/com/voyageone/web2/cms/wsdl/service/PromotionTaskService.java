@@ -7,6 +7,7 @@ import com.voyageone.web2.sdk.api.request.PromotionTaskAddRequest;
 import com.voyageone.web2.sdk.api.response.PromotionTaskAddResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author aooer 2016/2/18.
@@ -19,6 +20,7 @@ public class PromotionTaskService extends BaseService {
     @Autowired
     private CmsPromotionTaskDao cmsPromotionTaskDao;
 
+    @Transactional
     public PromotionTaskAddResponse insertPromotionTask(PromotionTaskAddRequest promotionTaskAddRequest){
         PromotionTaskAddResponse res=new PromotionTaskAddResponse();
         res.setInsertedCount(cmsPromotionTaskDao.insertPromotionTask(promotionTaskAddRequest.getCmsBtPromotionTaskModel()));

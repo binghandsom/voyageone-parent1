@@ -41,7 +41,8 @@ define([
 
             this.selected = {
                 required: null,
-                matched: null
+                matched: null,
+                keyWord: null
             };
         }
 
@@ -78,12 +79,23 @@ define([
             },
             setHide: function (property) {
 
+                var keyWord = this.selected.keyWord;
+
                 // 如果是简单类型
                 // 如果强制显示, 则直接显示, 否则计算显示
-                if (property.isSimple)
-                    return property.hide = (
+                if (property.isSimple) {
+
+                    if (keyWord && property.name.indexOf(keyWord) < 0) {
+                        return property.hide = true;
+                    }
+
+                    property.hide = (
                         this.selected.required !== null && this.selected.required !== (property.required || property.parentRequired)
                     );
+
+                    return property.hide;
+                }
+
 
                 // 复杂类型计算前, 默认其不显示
                 property.hide = true;
