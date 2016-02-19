@@ -66,11 +66,11 @@ public class WmsSyncToJuMeiSubService extends WmsSyncInventoryBaseService {
                 // 刷新失败时，更新标志位
                 updateJMFlgIgnore(inventorySynLogBean);
             }
-            // 失败的话，记录失败的信息
-            else if (updateFlg.equals(WmsConstants.UPDATE_FLG.Update)) {
-                logger.info("失败的话，记录失败的信息");
-                moveIgnore(inventorySynLogBean, res);
-            }
+//            // 失败的话，记录失败的信息
+//            else if (updateFlg.equals(WmsConstants.UPDATE_FLG.Update)) {
+//                logger.info("失败的话，记录失败的信息");
+//                moveIgnore(inventorySynLogBean, res);
+//            }
             logFailRecord(e, inventorySynLogBean);
             return;
         }
