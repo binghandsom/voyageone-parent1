@@ -6,7 +6,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
     http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
     http://www.springframework.org/schema/data/mongo
-    http://www.springframework.org/schema/data/mongo/spring-mongo-1.8.xsd">
+    http://www.springframework.org/schema/data/mongo/spring-mongo.xsd">
 
     <!-- Default bean name is 'mongo' -->
     <mongo:mongo id="mongo" host="10.0.0.59" port="27017">
@@ -23,7 +23,7 @@
                        write-fsync="true"/>
     </mongo:mongo>
 
-    <mongo:db-factory id="mongoDbFactory" mongo-ref="mongo" username="admin" password="123456" dbname="cms" authentication-dbname="admin"/>
+    <mongo:db-factory id="mongoDbFactory" mongo-ref="mongo" username="cms" password="cms" dbname="cms"/>
 
     <!-- 映射转换器，扫描back-package目录下的文件，根据注释，把它们作为mongodb的一个collection的映射 -->
     <!--<mongo:mapping-converter id="mongoConverter" base-package="com.voyageone.base.dao.mongodb.test.dao">-->
