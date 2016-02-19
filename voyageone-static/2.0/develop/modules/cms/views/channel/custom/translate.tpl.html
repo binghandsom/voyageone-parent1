@@ -51,9 +51,14 @@
 		</div>
 	</div>
 	<div class="box">
+		<!--right-btn-->
+		<div class="form-inline m-b-xs pull-right">
+			<button class="btn btn-default"><i class="fa fa-pencil-square"></i>&nbsp;匹配类目</button>
+			<button class="btn btn-default"><i class="fa fa-arrow-circle-right"></i>&nbsp;新增xxxxx</button>
+		</div><!-- /right-btn -->
 		<tabset class="tab-container vo_nav-tabs">
 			<!--tab-->
-			<tab>
+			<!--<tab>
 				<tab-heading>&nbsp;Category - Customize Property</tab-heading>
 				<div class="table-responsive">
 					<table class="table table-hover-new table-hover" ng-controller="popupCtrl">
@@ -92,8 +97,8 @@
 					<div class="col-sm-12 m-t-sm">
 						<vpagination config="vm.productPageOption"></vpagination>
 					</div>
-				</div><!-- .table-responsive -->
-			</tab>
+				</div>&lt;!&ndash; .table-responsive &ndash;&gt;
+			</tab>-->
 
 			<tab>
 				<tab-heading>&nbsp;Customize Property</tab-heading>
@@ -107,6 +112,7 @@
 							<th class="text-center">Customize Property Value</th>
 							<th class="text-center">自定义属性值</th>
 							<th class="text-center">Sample(Product Code)</th>
+							<th class="text-center">翻译情况</th>
 							<th class="text-center">Action</th>
 						</tr>
 						</thead>
@@ -118,6 +124,7 @@
 							<td class="text-center">1.5CT</td>
 							<td class="text-center"><input class="form-control" placeholder="1.5CT"/></td>
 							<td class="text-center text-u-l"><a href="#/product/detail/1" target="_blank"> 123456 </a></td>
+							<td class="text-center">已翻译</td>
 							<td class="text-center">
 								<button title="取消" class="btn btn-default btn-xs">取消</button>
 								<button title="保存" class="btn btn-vo btn-xs"> 保存</button>
@@ -130,6 +137,7 @@
 							<td class="text-center">RED</td>
 							<td class="text-center"><input class="form-control" placeholder="红色"/></td>
 							<td class="text-center text-u-l"><a href="#/product/detail/1" target="_blank"> 123456 </a></td>
+							<td class="text-center">未翻译</td>
 							<td class="text-center">
 								<button title="取消" class="btn btn-default btn-xs">取消</button>
 								<button title="保存" class="btn btn-vo btn-xs"> 保存</button>
