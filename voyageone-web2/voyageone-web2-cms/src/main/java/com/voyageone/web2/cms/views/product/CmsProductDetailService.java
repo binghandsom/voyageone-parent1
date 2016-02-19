@@ -22,6 +22,8 @@ import com.voyageone.common.util.StringUtils;
 import com.voyageone.web2.cms.bean.CmsCategoryInfoBean;
 import com.voyageone.web2.cms.bean.CmsProductInfoBean;
 import com.voyageone.web2.cms.bean.CustomAttributesBean;
+import com.voyageone.web2.cms.dao.CmsBtFeedCustomPropDao;
+import com.voyageone.web2.cms.model.CmsBtFeedCustomPropModel;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import com.voyageone.web2.sdk.api.VoApiDefaultClient;
 import com.voyageone.web2.sdk.api.request.CategorySchemaGetRequest;
@@ -59,6 +61,9 @@ public class CmsProductDetailService {
 
     @Autowired
     private CmsBtFeedInfoDao cmsBtFeedInfoDao;
+
+    @Autowired
+    private CmsBtFeedCustomPropDao cmsBtFeedCustomPropDao;
 
     @Autowired
     private CmsBtProductDao cmsBtProductDao;
@@ -161,6 +166,7 @@ public class CmsProductDetailService {
         customAttributes.setOrgAtts(productValueModel.getFeed().getOrgAtts());
         customAttributes.setCnAtts(productValueModel.getFeed().getCnAtts());
         customAttributes.setCustomIds(productValueModel.getFeed().getCustomIds());
+        customAttributes.setCnAttsShow(getCustomAttributesCnAttsShow(feedInfoModel.get("category").toString(), productValueModel.getFeed(), channelId));
 
         productInfo.setMasterFields(masterSchemaFields);
         productInfo.setChannelId(channelId);
@@ -428,6 +434,9 @@ public class CmsProductDetailService {
 
         Map<String, String> feedAttributes = new HashMap<>();
 
+        if (!StringUtils.isEmpty(feedInfoModel.getCategory())) {
+            feedAttributes.put("category", feedInfoModel.getCategory());
+        }
 
         if (!StringUtils.isEmpty(feedInfoModel.getCode())) {
             feedAttributes.put("code", feedInfoModel.getCode());
@@ -907,5 +916,35 @@ public class CmsProductDetailService {
             }
         }
 
+    }
+
+    /**
+     * 取得自定义属性的属性名称的中文翻译
+     * @param feedCategory
+     * @param feed
+     * @param channelId
+     * @return
+     */
+    private Map<String, String[]> getCustomAttributesCnAttsShow(String feedCategory, CmsBtProductModel_Feed feed, String channelId) {
+
+        // 获取
+        Map<String, Object> params = new HashMap<>();
+        params.put("channelId", channelId);
+        params.put("feedCatPath", feedCategory);
+        List<CmsBtFeedCustomPropModel> feedPropTranslateList = cmsBtFeedCustomPropDao.selectWithCategory(params);
+
+        // 获取
+        Map<String, String[]> result = new HashMap<>();
+        for(CmsBtFeedCustomPropModel feedProp: feedPropTranslateList) {
+            // 如果自定义属性包含在翻译的内容中
+            if (feed.getCustomIds().contains(feedProp.getFeedProp())) {
+                String[] cnAttWithTranslate = new String[2];
+                cnAttWithTranslate[0] = feedProp.getFeedPropTranslate();
+                cnAttWithTranslate[1] = feed.getCnAtts().containsKey(feedProp.getFeedProp()) ? feed.getCnAtts().get(feedProp.getFeedProp()).toString() : "";
+                result.put(feedProp.getFeedProp(), cnAttWithTranslate);
+            }
+        }
+
+        return result;
     }
 }

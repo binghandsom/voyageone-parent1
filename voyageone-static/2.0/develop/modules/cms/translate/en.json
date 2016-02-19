@@ -153,6 +153,8 @@
   "TXT_PRODUCT_THIRD_PROPERTY": "3rd Custom Attributes",
   "TXT_FEED_ATTRIBUTE": "Feed Attribute",
   "TXT_SELECT_CONDITION": "Select Condition",
+  "TXT_IS_FIX_EDIT": "Is Fix Edit?",
+  "TXT_IS_FIX_APPROVED": "Is Publish?",
 
 
   "TXT_MSG_SEARCH": "Search...",
@@ -181,6 +183,7 @@
   "TXT_MSG_TYPE_VALUE": " 类型的匹配值.",
   "TXT_MSG_MUST_GET_ONE_VALUE": "必须匹配一类值才能保存.",
   "TXT_MSG_NO_VALUE_IS_ON_THE_ATTRIBUTE": "没有匹配到任何属性或内容上.",
+  "TXT_MSG_PRODUCT_CAN_NOT_EDIT": "该商品正在主类目切换中,请稍等...",
 
 
   "BTN_ADD_CONDITION": "Add Condition",
