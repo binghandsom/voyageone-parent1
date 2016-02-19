@@ -87,6 +87,8 @@ public class CmsFeedMappingService extends BaseAppService {
             feedCategoryBeanStream = Stream.concat(feedCategoryBeanStream,
                     children.stream().flatMap(this::buildFeedCategoryBean));
 
+        // 减少 JSON 重复输出
+        feedCategoryModel.setChild(null);
         return feedCategoryBeanStream;
     }
 
