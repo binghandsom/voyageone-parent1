@@ -141,4 +141,11 @@ public final class Constants {
 
     }
 
+
+    //发短信时替换亿美KEY
+    public final static class smsChange {
+        public static final String CHANGE_ON = "1";
+        public static final String CHANGE_OFF = "0";
+    }
+
 }

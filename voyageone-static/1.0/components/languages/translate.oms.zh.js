@@ -177,6 +177,7 @@ define (function (require) {
                     TXT_ORDER_CANCEL_CLIENT_ORDER: '顾客取消订单',
                     TXT_ORDER_CANCEL_CLIENT_ORDER_EXPLAIN: '（向品牌方推送取消订单申请）',
                     TXT_ORDER_SEND_CLIENT_ORDER: '品牌方订单推送',
+                    TXT_ORDER_SEND_CLIENT_ORDER_PRE: '品牌方订单推送（预）',
                     TXT_ORDER_PARTNER_CANCEL_CLIENT_ORDER: '品牌方取消订单',
                     TXT_ORDER_PARTNER_CANCEL_CLIENT_ORDER_EXPLAIN: '（品牌方确认该订单取消）',
 
