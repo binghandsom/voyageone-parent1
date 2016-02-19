@@ -7,16 +7,16 @@
 				</div>
 				<div class="container-fluid m-t-sm m-b-md">
 					<div class="col-sm-12">
-					<!--<div class="col-sm-5">
-						<div class="form-horizontal">
-							<div class="form-group">
-								<label class="col-sm-3 control-label" translate="TXT_PROMOTION_STATUS"></label>
-								<div class="col-sm-9">
-									<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option1"><span class="fa fa-check"></span></label>
-								</div>
-							</div>&lt;!&ndash; .form-group &ndash;&gt;
-						</div>
-					</div>-->
+					<!--&lt;!&ndash;<div class="col-sm-5">-->
+						<!--<div class="form-horizontal">-->
+							<!--<div class="form-group">-->
+								<!--<label class="col-sm-3 control-label" translate="TXT_PROMOTION_STATUS"></label>-->
+								<!--<div class="col-sm-9">-->
+									<!--<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option1"><span class="fa fa-check"></span></label>-->
+								<!--</div>-->
+							<!--</div>&lt;!&ndash; .form-group &ndash;&gt;-->
+						<!--</div>-->
+					<!--</div>&ndash;&gt;-->
 					<div class="col-sm-4">
 						<div class="form-horizontal">
 							<div class="form-group">
@@ -36,12 +36,21 @@
 									</div>
 								</div>
 							</div>
-							<div class="form-group">
+							<div class="form-group" >
 								<label class="col-sm-3  control-label" translate="TXT_PLATFORM_TYPE"></label>
-								<div class="col-sm-7">
+								<div class="col-sm-3">
 									<select class="form-control" ng-model="searchInfo.cartId">
 										<option value='' translate="TXT_SELECT_NO_VALUE"></option>
 										<option ng-repeat="cart in vm.cartList" value={{cart.cartId}}>{{cart.name}}</option>
+									</select>
+								</div>
+							</div>
+							<div class="form-group" >
+								<label class="col-sm-3  control-label" translate="TXT_PROMOTION_STATUS"></label>
+								<div class="col-sm-3">
+									<select class="form-control" ng-model="searchInfo.promotionStatus">
+										<option value='' translate="TXT_SELECT_NO_VALUE"></option>
+										<option ng-repeat="status in vm.promotionStatus" value={{status.value}}>{{status.name}}</option>
 									</select>
 								</div>
 							</div>
