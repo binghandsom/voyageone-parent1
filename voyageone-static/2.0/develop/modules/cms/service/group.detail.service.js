@@ -78,7 +78,9 @@ define([
 				productInfo.skuDetail = _setSkuDetail(productInfo.skus);
 
 				// 设置price detail
-				productInfo.groups.priceDetail = _setPriceDetail(productInfo.fields);
+				productInfo.priceDetail = _setPriceDetail(productInfo.fields);
+
+				productInfo.priceSale = _setPriceSale(productInfo.fields);
 
 				// 设置time detail
 				productInfo.groups.platforms[0].timeDetail = _setTimeDetail(productInfo);
@@ -122,6 +124,19 @@ define([
 				result.push(tempRetailPriceDetail);
 
 			return result;
+		}
+
+		/**
+		 * 设置页面上显示的价格
+		 * @param object
+		 * @returns {*}
+		 * @private
+		 */
+		function _setPriceSale(object) {
+			if (object.priceSaleSt == object.priceSaleEd)
+				return object.priceSaleSt != null ? $filter('number : 2')(object.priceSaleSt) : '0.00';
+			else
+				return $filter('number : 2')(object.priceSaleSt) + '~' + $filter('number : 2')(object.priceSaleEd);
 		}
 
 		/**

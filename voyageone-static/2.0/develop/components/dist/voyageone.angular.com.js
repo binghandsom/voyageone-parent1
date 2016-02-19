@@ -1,4 +1,91 @@
 define(function() {
+  angular.module("voyageone.angular.controllers.datePicker", []).controller("datePickerCtrl", [ "$scope", function($scope) {
+    var vm = this;
+    vm.formats = [ "yyyy-MM-dd", "yyyy-MM-dd HH:mm:ss" ];
+    $scope.formatDate = vm.formats[0];
+    $scope.formatDateTime = vm.formats[1];
+    $scope.open = open;
+    function open($event) {
+      $event.preventDefault();
+      $event.stopPropagation();
+      $scope.opened = true;
+    }
+  } ]);
+  angular.module("voyageone.angular.controllers.selectRows", []).controller("selectRowsCtrl", [ "$scope", function($scope) {
+    $scope.selectAll = selectAll;
+    $scope.selectOne = selectOne;
+    $scope.isAllSelected = isAllSelected;
+    function selectAll(objectList, id) {
+      objectList.selAllFlag = !objectList.selAllFlag;
+      if (!id) {
+        id = "id";
+      }
+      angular.forEach(objectList.currPageRows, function(object) {
+        objectList.selFlag[object[id]] = objectList.selAllFlag;
+        if (objectList.hasOwnProperty("selList")) {
+          var tempList = _.pluck(objectList.selList, id);
+          if (objectList.selAllFlag && tempList.indexOf(object[id]) < 0) {
+            objectList.selList.push(object);
+          } else if (!objectList.selAllFlag && tempList.indexOf(object[id]) > -1) {
+            objectList.selList.splice(tempList.indexOf(object[id]), 1);
+          }
+        }
+      });
+    }
+    function selectOne(currentId, objectList, id) {
+      if (!id) {
+        id = "id";
+      }
+      if (objectList.hasOwnProperty("selList")) {
+        angular.forEach(objectList.currPageRows, function(object) {
+          var tempList = _.pluck(objectList.selList, id);
+          if (_.isEqual(object[id], currentId)) {
+            if (tempList.indexOf(object[id]) > -1) {
+              objectList.selList.splice(tempList.indexOf(object[id]), 1);
+            } else {
+              objectList.selList.push(object);
+            }
+          }
+        });
+      }
+      objectList.selAllFlag = true;
+      tempList = _.pluck(objectList.selList, id);
+      angular.forEach(objectList.currPageRows, function(object) {
+        if (tempList.indexOf(object[id]) == -1) {
+          objectList.selAllFlag = false;
+        }
+      });
+    }
+    function isAllSelected(objectList, id) {
+      if (!id) {
+        id = "id";
+      }
+      if (objectList != undefined) {
+        objectList.selAllFlag = true;
+        var tempList = _.pluck(objectList.selList, id);
+        angular.forEach(objectList.currPageRows, function(object) {
+          if (tempList.indexOf(object[id]) == -1) {
+            objectList.selAllFlag = false;
+          }
+        });
+        return objectList.selAllFlag;
+      }
+      return false;
+    }
+  } ]);
+  angular.module("voyageone.angular.controllers.showPopover", []).controller("showPopoverCtrl", [ "$scope", function($scope) {
+    $scope.showInfo = showInfo;
+    function showInfo(values) {
+      var tempHtml = "";
+      angular.forEach(values, function(data, index) {
+        tempHtml += data;
+        if (index !== values.length) {
+          tempHtml += "<br>";
+        }
+      });
+      return tempHtml;
+    }
+  } ]);
   angular.module("voyageone.angular.directives.dateModelFormat", []).directive("dateModelFormat", [ "$filter", function($filter) {
     return {
       restrict: "A",
@@ -258,7 +345,7 @@ define(function() {
     }
     var templateKey_multiComplex = "voyageone.angular.directives.schemaMultiComplex.tpl.html";
     if (!$templateCache.get(templateKey_multiComplex)) {
-      $templateCache.put(templateKey_multiComplex, '<table class="table text-center">' + "<thead><tr>" + '<th ng-repeat="field in vm.$$data.fields" ng-class="{\'vo_reqfield\': showHtmlData.isRequired}" class="text-center" style="min-width: 180px;">{{field.name}}</th>' + '<th ng-if="!showHtmlData.notShowEdit" style="min-width: 60px;" class="text-center" translate="TXT_EDIT"></th>' + "</tr></thead>" + '<tbody><tr ng-repeat="value in vm.$$data.complexValues">' + '<td class="text-left" ng-repeat="field in value.fieldMap"><div class="tableLayer"><p ng-if="field.type != \'COMPLEX\'">&nbsp;</p><p><schema-item data="field" hastip="true" complex="true"></schema-item></p></div></td>' + '<td ng-if="!showHtmlData.notShowEdit" style="min-width: 60px;"><button title="{\'BTN_DELETE\' | translate}" class="btn btn-danger btn-xs" ng-click="delField($index)"><i class="fa  fa-trash-o"></i></button></td>' + "</tr></tbody>" + "</table>");
+      $templateCache.put(templateKey_multiComplex, '<table class="table text-center">' + "<thead><tr>" + '<th ng-repeat="field in vm.$$data.fields" ng-class="{\'vo_reqfield\': showHtmlData.isRequired}" class="text-center" style="min-width: 180px;">{{field.name}}</th>' + '<th ng-if="!showHtmlData.notShowEdit" style="min-width: 60px;" class="text-center" translate="TXT_ACTION"></th>' + "</tr></thead>" + '<tbody><tr ng-repeat="value in vm.$$data.complexValues">' + '<td class="text-left" ng-repeat="field in value.fieldMap"><div class="tableLayer"><p ng-if="field.type != \'COMPLEX\'">&nbsp;</p><p><schema-item data="field" hastip="true" complex="true"></schema-item></p></div></td>' + '<td ng-if="!showHtmlData.notShowEdit" style="min-width: 60px;"><button title="{\'BTN_DELETE\' | translate}" class="btn btn-danger btn-xs" ng-click="delField($index)"><i class="fa  fa-trash-o"></i></button></td>' + "</tr></tbody>" + "</table>");
     }
     var templateKey_complex = "voyageone.angular.directives.schemaComplex.tpl.html";
     if (!$templateCache.get(templateKey_complex)) {
@@ -644,7 +731,7 @@ define(function() {
     var templateKey = "voyageone.angular.directives.pagination.tpl.html";
     var templateKeyNoData = "voyageone.angular.directives.paginationNoData.tpl.html";
     if (!$templateCache.get(templateKey)) {
-      $templateCache.put(templateKey, '<div class="col-sm-2">\n' + '    <div class="page-main form-inline">{{\'TXT_SHOWING_NO\' | translate}}&nbsp;<input class="text-center" type="text" ng-model="curr.pageNo"/>&nbsp;/&nbsp;{{totalPages}}&nbsp;{{\'TXT_PAGE\' | translate}}&nbsp;' + '        <button class="btn btn-xs btn-default" type="button" ng-click="goPage(curr.pageNo)" translate="BTN_GO"></button>\n' + "    </div>\n" + "</div>\n" + '<div class="col-sm-7 text-center">\n' + "    <small class=\"text-muted inline m-t-sm m-b-sm\">{{'TXT_SHOWING' | translate}}&nbsp;{{curr.start}}-{{curr.end}}&nbsp;{{'TXT_OF' | translate}}&nbsp;{{totalItems}}&nbsp{{'TXT_ITEMS' | translate}}</small>\n" + "</div>\n" + '<div class="col-sm-3 text-right text-center-xs"><div>' + '    <ul class="pagination-sm m-t-none m-b pagination ng-isolate-scope ng-valid ng-dirty ng-valid-parse">\n' + '        <li ng-class="{disabled: curr.isFirst ||ngDisabled}" class="pagination-first"><a href ng-click="goPage(1)" ng-disabled="curr.isFirst">&laquo;</a></li>\n' + '        <li ng-class="{disabled: curr.isFirst ||ngDisabled}" class="pagination-prev"><a href ng-click="goPage(curr.pageNo - 1)" ng-disabled="curr.isFirst">&lsaquo;</a></li>\n' + '        <li ng-if="curr.isShowStart" class="disabled" disabled><a href>...</a></li>\n' + '        <li ng-repeat="page in curr.pages track by $index" ng-class="{active: isCurr(page)}" class="pagination-page"><a href ng-click="goPage(page)">{{page}}</a></li>\n' + '        <li ng-if="curr.isShowEnd" class="disabled" disabled><a href>...</a></li>\n' + '        <li ng-class="{disabled: curr.isLast ||ngDisabled}" class="pagination-next"><a href ng-click="goPage(curr.pageNo + 1)" ng-disabled="curr.isLast">&rsaquo;</a></li>\n' + '        <li ng-class="{disabled: curr.isLast ||ngDisabled}" class="pagination-last"><a href ng-click="goPage(totalPages)" ng-disabled="curr.isLast">&raquo;</a></li>\n' + "    </ul>\n" + "</div>");
+      $templateCache.put(templateKey, '<div class="col-sm-3">\n' + '    <div class="page-main form-inline">{{\'TXT_SHOWING_NO\' | translate}}&nbsp;<input class="text-center" type="text" ng-model="curr.pageNo"/>&nbsp;/&nbsp;{{totalPages}}&nbsp;{{\'TXT_PAGE\' | translate}}&nbsp;' + '        <button class="btn btn-xs btn-default" type="button" ng-click="goPage(curr.pageNo)" translate="BTN_GO"></button>\n' + "    </div>\n" + "</div>\n" + '<div class="col-sm-6 text-center">\n' + "    <small class=\"text-muted inline m-t-sm m-b-sm\">{{'TXT_SHOWING' | translate}}&nbsp;{{curr.start}}-{{curr.end}}&nbsp;{{'TXT_OF' | translate}}&nbsp;{{totalItems}}&nbsp{{'TXT_ITEMS' | translate}}</small>\n" + "</div>\n" + '<div class="col-sm-3 text-right text-center-xs"><div>' + '    <ul class="pagination-sm m-t-none m-b pagination ng-isolate-scope ng-valid ng-dirty ng-valid-parse">\n' + '        <li ng-class="{disabled: curr.isFirst ||ngDisabled}" class="pagination-first"><a href ng-click="goPage(1)" ng-disabled="curr.isFirst">&laquo;</a></li>\n' + '        <li ng-class="{disabled: curr.isFirst ||ngDisabled}" class="pagination-prev"><a href ng-click="goPage(curr.pageNo - 1)" ng-disabled="curr.isFirst">&lsaquo;</a></li>\n' + '        <li ng-if="curr.isShowStart" class="disabled" disabled><a href>...</a></li>\n' + '        <li ng-repeat="page in curr.pages track by $index" ng-class="{active: isCurr(page)}" class="pagination-page"><a href ng-click="goPage(page)">{{page}}</a></li>\n' + '        <li ng-if="curr.isShowEnd" class="disabled" disabled><a href>...</a></li>\n' + '        <li ng-class="{disabled: curr.isLast ||ngDisabled}" class="pagination-next"><a href ng-click="goPage(curr.pageNo + 1)" ng-disabled="curr.isLast">&rsaquo;</a></li>\n' + '        <li ng-class="{disabled: curr.isLast ||ngDisabled}" class="pagination-last"><a href ng-click="goPage(totalPages)" ng-disabled="curr.isLast">&raquo;</a></li>\n' + "    </ul>\n" + "</div>");
     }
     if (!$templateCache.get(templateKeyNoData)) {
       $templateCache.put(templateKeyNoData, '<div class="col-sm-7 col-sm-offset-2 text-center">\n' + "    <small class=\"text-muted inline m-t-sm m-b-sm\">{{'TXT_SHOWING' | translate}}&nbsp;0-0&nbsp;{{'TXT_OF' | translate}}&nbsp;0&nbsp{{'TXT_ITEMS' | translate}}</small>\n" + "</div>");
@@ -821,96 +908,10 @@ define(function() {
       }
     };
   });
-  angular.module("voyageone.angular.controllers.datePicker", []).controller("datePickerCtrl", [ "$scope", function($scope) {
-    var vm = this;
-    vm.formats = [ "yyyy-MM-dd", "yyyy-MM-dd HH:mm:ss" ];
-    $scope.formatDate = vm.formats[0];
-    $scope.formatDateTime = vm.formats[1];
-    $scope.open = open;
-    function open($event) {
-      $event.preventDefault();
-      $event.stopPropagation();
-      $scope.opened = true;
-    }
-  } ]);
-  angular.module("voyageone.angular.controllers.selectRows", []).controller("selectRowsCtrl", [ "$scope", function($scope) {
-    $scope.selectAll = selectAll;
-    $scope.selectOne = selectOne;
-    $scope.isAllSelected = isAllSelected;
-    function selectAll(objectList, id) {
-      objectList.selAllFlag = !objectList.selAllFlag;
-      if (!id) {
-        id = "id";
-      }
-      angular.forEach(objectList.currPageRows, function(object) {
-        objectList.selFlag[object[id]] = objectList.selAllFlag;
-        if (objectList.hasOwnProperty("selList")) {
-          var tempList = _.pluck(objectList.selList, id);
-          if (objectList.selAllFlag && tempList.indexOf(object[id]) < 0) {
-            objectList.selList.push(object);
-          } else if (!objectList.selAllFlag && tempList.indexOf(object[id]) > -1) {
-            objectList.selList.splice(tempList.indexOf(object[id]), 1);
-          }
-        }
-      });
-    }
-    function selectOne(currentId, objectList, id) {
-      if (!id) {
-        id = "id";
-      }
-      if (objectList.hasOwnProperty("selList")) {
-        angular.forEach(objectList.currPageRows, function(object) {
-          var tempList = _.pluck(objectList.selList, id);
-          if (_.isEqual(object[id], currentId)) {
-            if (tempList.indexOf(object[id]) > -1) {
-              objectList.selList.splice(tempList.indexOf(object[id]), 1);
-            } else {
-              objectList.selList.push(object);
-            }
-          }
-        });
-      }
-      objectList.selAllFlag = true;
-      tempList = _.pluck(objectList.selList, id);
-      angular.forEach(objectList.currPageRows, function(object) {
-        if (tempList.indexOf(object[id]) == -1) {
-          objectList.selAllFlag = false;
-        }
-      });
-    }
-    function isAllSelected(objectList, id) {
-      if (!id) {
-        id = "id";
-      }
-      if (objectList != undefined) {
-        objectList.selAllFlag = true;
-        var tempList = _.pluck(objectList.selList, id);
-        angular.forEach(objectList.currPageRows, function(object) {
-          if (tempList.indexOf(object[id]) == -1) {
-            objectList.selAllFlag = false;
-          }
-        });
-        return objectList.selAllFlag;
-      }
-      return false;
-    }
-  } ]);
-  angular.module("voyageone.angular.controllers.showPopover", []).controller("showPopoverCtrl", [ "$scope", function($scope) {
-    $scope.showInfo = showInfo;
-    function showInfo(values) {
-      var tempHtml = "";
-      angular.forEach(values, function(data, index) {
-        tempHtml += data;
-        if (index !== values.length) {
-          tempHtml += "<br>";
-        }
-      });
-      return tempHtml;
-    }
-  } ]);
   angular.module("voyageone.angular.factories.dialogs", []).factory("$dialogs", [ "$modal", "$filter", "$templateCache", function($modal, $filter, $templateCache) {
     var templateName = "voyageone.angular.factories.dialogs.tpl.html";
-    $templateCache.put(templateName, '<div class="vo_modal"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="close()"><span aria-hidden="true"><i ng-click="close()" class="fa fa-close"></i></span></button><h4 class="modal-title" ng-bind-html="title"></h4></div><div class="modal-body wrapper-lg"><div class="row"><h5 class="text-center text-hs"><p class="text-center" ng-bind-html="content"></p></h5></div></div><div class="modal-footer"><button class="btn btn-default btn-sm" ng-if="!isAlert" ng-click="close()" translate="BTN_CANCEL"></button><button class="btn btn-vo btn-sm" ng-click="ok()" translate="BTN_OK"></button></div></div>');
+    var template = '<div class="vo_modal">' + '<div class="modal-header">' + '<button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="close()">' + '<span aria-hidden="true"><i ng-click="close()" class="fa fa-close"></i></span>' + "</button>" + '<h5 class="modal-title" ng-bind-html="title"></h5>' + "</div>" + '<div class="modal-body wrapper-lg">' + '<div class="row">' + '<h5 class="text-center text-hs"><p class="text-center" ng-bind-html="content"></p></h5>' + "</div>" + "</div>" + '<div class="modal-footer">' + '<button class="btn btn-default btn-sm" ng-if="!isAlert" ng-click="close()" translate="BTN_CANCEL"></button>' + '<button class="btn btn-vo btn-sm" ng-click="ok()" translate="BTN_OK"></button>' + "</div>" + "</div>";
+    $templateCache.put(templateName, template);
     function tran(translationId, values) {
       return $filter("translate")(translationId, values);
     }

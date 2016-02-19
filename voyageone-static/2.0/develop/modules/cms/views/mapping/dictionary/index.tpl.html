@@ -3,7 +3,7 @@
 		<div class="panel-group">
 			<div class="panel panel-default">
 				<div class="panel-heading">
-					<h4 class="panel-title"><i class="fa fa-cogs"></i>&nbsp;{{'TXT_DICTIONARY_INDEX' | translate}}</h4>
+					<h4 class="panel-title"><i class="glyphicon glyphicon-cog"></i>&nbsp;{{'TXT_DICTIONARY_INDEX' | translate}}</h4>
 				</div>
 				<div class="container-fluid m-t-xs m-b-xs">
 					<div class="col-sm-12">
@@ -12,8 +12,8 @@
 								<div class="form-group">
 									<label class="col-sm-3 control-label" translate="TXT_PLATFORM_TYPE"></label>
 									<div class="col-sm-9">
-										<select class="form-control" ng-model="vm.searchInfo.cartId"
-												ng-options="categoryType.cartId as categoryType.name for categoryType in vm.masterData.categoryTypeList">
+										<select class="form-control" ng-model="vm.searchInfo.cart_id"
+												ng-options="platform.value as platform.name for platform in vm.masterData.platformList">
 											<option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
 										</select>
 									</div>
@@ -35,7 +35,7 @@
 							<div class="form-group form-inline">
 								<button class="btn btn-default" ng-click="clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR' | translate}}</button>
 								<button class="btn btn-vo" ng-click="search()"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}</button>
-								<button class="btn btn-success" ng-click="create()"><i class="fa fa-plus"></i>&nbsp;<a href="#/mapping/dictionary/item">{{'BTN_CREATE' | translate}}</a></button>
+								<button class="btn btn-success" ng-click="create()"><i class="fa fa-plus"></i>&nbsp;<a href="#/mapping/dictionary/item">{{'BTN_NEW_DICTIONARY' | translate}}</a></button>
 							</div><!-- .form-inline -->
 								</div>
 						</div>
@@ -66,7 +66,7 @@
 						<tr ng-repeat="dictionaryInfo in vm.dictionaryList">
 							<td class="mfb-xt text-center" ng-bind="dictionaryInfo.id"></td>
 							<td class="mfb-xxs text-left text-u-l"><a ng-click="openDictionaryItem(dictionaryInfo.id)" ng-bind="dictionaryInfo.name"></a></td>
-							<td class="mfb-xxt text-left"><span class="badge badge-empty"></span></td>
+							<td class="mfb-xxt text-left"><span class="badge badge-empty" ng-bind="dictionaryInfo.cartName"></span></td>
 							<td class="mfb-xxxs text-left"><div class="line-height">{{dictionaryInfo.value}}</div></td>
 							<td class="mfb-xxt text-left" ng-bind="dictionaryInfo.created"></td>
 							<td class="mfb-xxt text-left" ng-bind="dictionaryInfo.modified"></td>

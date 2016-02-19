@@ -3,6 +3,8 @@ package com.voyageone.web2.cms.views.mapping.dictionary;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.cms.bean.DictionaryMasterPropBean;
 import com.voyageone.cms.enums.DictionaryMasterProp;
+import com.voyageone.common.Constants;
+import com.voyageone.common.configs.TypeChannel;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.web2.cms.bean.system.dictionary.CmsDictionaryIndexBean;
 import com.voyageone.web2.cms.dao.CmsMtDictDao;
@@ -42,12 +44,12 @@ public class CmsDictManageService {
      * @param userInfo
      * @return
      */
-    public Map<String, Object> getMasterData(UserSessionBean userInfo) throws IOException {
+    public Map<String, Object> getMasterData(UserSessionBean userInfo, String language) throws IOException {
 
         Map<String, Object> masterData = new HashMap<>();
 
         // 获取platform信息
-        masterData.put("categoryTypeList", channelShopDao.selectChannelShop(userInfo.getSelChannelId()));
+        masterData.put("platformList", TypeChannel.getOptionsWithLang(Constants.comMtType.CARTS, userInfo.getSelChannelId(), language));
 
         return masterData;
     }
@@ -59,9 +61,10 @@ public class CmsDictManageService {
      * @param channel_id 渠道
      * @return 字典集合
      */
-    public Map<String, Object> dtGetAllDict(CmsDictionaryIndexBean params, String channel_id) {
+    public Map<String, Object> dtGetAllDict(CmsDictionaryIndexBean params, String channel_id, String language) {
 
         params.setOrder_channel_id(channel_id);
+        params.setLang(language);
 
         Map<String, Object> resultInfo = new HashMap<>();
         resultInfo.put("dictionaryList", cmsMtDictDao.selectByChannel(params));

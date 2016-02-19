@@ -10,7 +10,7 @@ define([
     angularAMD
         .service('searchAdvanceService', searchAdvanceService);
 
-    function searchAdvanceService($q, $translate, selectRowsFactory, $searchAdvanceService) {
+    function searchAdvanceService($q, $translate, selectRowsFactory, $searchAdvanceService, $filter) {
 
         this.init = init;
         this.search = search;
@@ -163,7 +163,9 @@ define([
                 //groupInfo.inventoryDetail = _setInventoryDetail(groupInfo.skus);
 
                 // 设置price detail
-                groupInfo.groups.priceDetail = _setPriceDetail(groupInfo.groups);
+                groupInfo.groups.priceDetail = _setPriceDetail(groupInfo.groups.platforms[0]);
+
+                groupInfo.groups.priceSale = _setPriceSale(groupInfo.groups.platforms[0]);
 
                 // 设置time detail
                 groupInfo.groups.platforms[0].timeDetail = _setTimeDetail(groupInfo);
@@ -193,7 +195,9 @@ define([
                 productInfo.skuDetail = _setSkuDetail(productInfo.skus);
 
                 // 设置price detail
-                productInfo.groups.priceDetail = _setPriceDetail(productInfo.fields);
+                productInfo.priceDetail = _setPriceDetail(productInfo.fields);
+
+                productInfo.priceSale = _setPriceSale(productInfo.fields);
 
                 // 设置time detail
                 productInfo.groups.platforms[0].timeDetail = _setTimeDetail(productInfo);
@@ -253,6 +257,19 @@ define([
                 result.push(tempRetailPriceDetail);
 
             return result;
+        }
+
+        /**
+         * 设置页面上显示的价格
+         * @param object
+         * @returns {*}
+         * @private
+         */
+        function _setPriceSale(object) {
+            if (object.priceSaleSt == object.priceSaleEd)
+                return object.priceSaleSt != null ? $filter('number : 2')(object.priceSaleSt) : '0.00';
+            else
+                return $filter('number : 2')(object.priceSaleSt) + '~' + $filter('number : 2')(object.priceSaleEd);
         }
 
         /**

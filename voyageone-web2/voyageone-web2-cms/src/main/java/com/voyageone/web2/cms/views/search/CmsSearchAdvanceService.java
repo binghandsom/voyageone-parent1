@@ -68,7 +68,7 @@ public class CmsSearchAdvanceService extends BaseAppService{
         masterData.put("compareTypeList", TypeConfigEnums.MastType.compareType.getList(language));
 
         // 获取brand list
-        masterData.put("brandList", TypeChannel.getOptions(Constants.comMtType.BRAND, userInfo.getSelChannelId(), language));
+        masterData.put("brandList", TypeChannel.getOptionsWithLang(Constants.comMtType.BRAND, userInfo.getSelChannelId(), language));
 
         // 获取category list
         masterData.put("categoryList", cmsBtChannelCategoryService.getFinallyCategoriesByChannelId(userInfo.getSelChannelId()));

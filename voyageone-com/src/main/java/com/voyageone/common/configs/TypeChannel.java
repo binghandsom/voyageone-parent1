@@ -3,6 +3,7 @@ package com.voyageone.common.configs;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.configs.dao.TypeChannelDao;
 import com.voyageone.common.masterdate.schema.option.Option;
+import com.voyageone.common.util.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -110,7 +111,7 @@ public class TypeChannel {
      * @param channel_id 渠道id
      * @return List<Option>
      */
-    public static List<Option> getOptions(String type, String channel_id, String...lang_id) {
+    public static List<Option> getOptions(String type, String channel_id) {
         String key = type + "-" + channel_id;
         List<Option> ret = new ArrayList<>();
 
@@ -122,6 +123,34 @@ public class TypeChannel {
                 opt.setDisplayName(bean.getName());
                 opt.setValue(bean.getValue());
                 ret.add(opt);
+            }
+        } else {
+            logger.warn("channel id: " + channel_id + "property id: "+type +" 对应的options没有配置！！！");
+        }
+
+        return ret;
+    }
+
+    /**
+     * @param type       type_code
+     * @param channel_id 渠道id
+     * @return List<Option>
+     */
+    public static List<Option> getOptionsWithLang(String type, String channel_id, String lang_id) {
+        String key = type + "-" + channel_id;
+        List<Option> ret = new ArrayList<>();
+
+        List<TypeChannelBean> typeList = typeMap.get(key);
+
+        if (typeList != null){
+            for (TypeChannelBean bean : typeList) {
+                if (!StringUtils.isEmpty(bean.getLang_id())
+                        && bean.getLang_id().equals(lang_id)) {
+                    Option opt = new Option();
+                    opt.setDisplayName(bean.getName());
+                    opt.setValue(bean.getValue());
+                    ret.add(opt);
+                }
             }
         } else {
             logger.warn("channel id: " + channel_id + "property id: "+type +" 对应的options没有配置！！！");

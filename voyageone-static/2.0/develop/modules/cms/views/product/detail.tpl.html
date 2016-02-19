@@ -89,48 +89,48 @@
 				</form><!-- .form -->
 			</tab>
 
-			<tab>
-				<tab-heading>&nbsp;{{'TXT_PRODUCT_CUSTOM' | translate}}</tab-heading>
-				<!-- Products table and controls -->
-				<form class="form-horizontal" name="productCustomForm">
-					<div class="panel vo_panel tab_panel">
-						<div class="row wrapper">
-							<div class="container-fluid">
-								<div class="col-sm-6">
-									<div class="form-group" ng-repeat="feedOrgAttr in ctrl.productDetails.customAttributes.orgAtts">
-										<label class="col-sm-3 control-label" ng-bind="feedOrgAttr.key"></label>
-										<div class="col-sm-8">
-											<input type="text" class="form-control" ng-model="feedOrgAttr.value" readonly>
-										</div>
-										<div class="col-sm-1">
-											<label class="i-checks-sm m-b-none"><input type="checkbox" ng-model="feedOrgAttr.selected"></label>
-										</div>
-									</div>
-								</div><!--.col -->
-								<div class="col-sm-6">
-									<div class="form-group" ng-repeat="feedCnAttr in ctrl.productDetails.customAttributes.cnAtts">
-										<label class="col-sm-3 control-label" ng-bind="feedCnAttr.key"></label>
-										<div class="col-sm-8">
-											<input type="text" class="form-control" ng-model="feedCnAttr.value">
-										</div>
-									</div><!-- .form-group -->
-								</div><!-- .col -->
-							</div>
-						</div>
-					</div>
-					<div class="row text-center">
-						<div class="col-sm-12">
-							<div class="form-inline">
-								<button type="submit" class="btn btn-vo" ng-click="ctrl.updateProductInfo()"><i class="glyphicon glyphicon-floppy-disk"></i> {{'BTN_SAVE' | translate}}</button>
-								<button type="submit" class="btn btn-default" ng-click="ctrl.cancelProductCustomInfo()"><i class="fa fa-remove"></i> {{'BTN_CANCEL' | translate}}</button>
-							</div><!-- .form-inline -->
-						</div>
-					</div>
-				</form><!-- .form -->
-			</tab>
+			<!--<tab>-->
+				<!--<tab-heading>&nbsp;{{'TXT_PRODUCT_CUSTOM' | translate}}</tab-heading>-->
+				<!--&lt;!&ndash; Products table and controls &ndash;&gt;-->
+				<!--<form class="form-horizontal" name="productCustomForm">-->
+					<!--<div class="panel vo_panel tab_panel">-->
+						<!--<div class="row wrapper">-->
+							<!--<div class="container-fluid">-->
+								<!--<div class="col-sm-6">-->
+									<!--<div class="form-group" ng-repeat="feedOrgAttr in ctrl.productDetails.customAttributes.orgAtts">-->
+										<!--<label class="col-sm-3 control-label" ng-bind="feedOrgAttr.key"></label>-->
+										<!--<div class="col-sm-8">-->
+											<!--<input type="text" class="form-control" ng-model="feedOrgAttr.value" readonly>-->
+										<!--</div>-->
+										<!--<div class="col-sm-1">-->
+											<!--<label class="i-checks-sm m-b-none"><input type="checkbox" ng-model="feedOrgAttr.selected"></label>-->
+										<!--</div>-->
+									<!--</div>-->
+								<!--</div>&lt;!&ndash;.col &ndash;&gt;-->
+								<!--<div class="col-sm-6">-->
+									<!--<div class="form-group" ng-repeat="feedCnAttr in ctrl.productDetails.customAttributes.cnAtts">-->
+										<!--<label class="col-sm-3 control-label" ng-bind="feedCnAttr.key"></label>-->
+										<!--<div class="col-sm-8">-->
+											<!--<input type="text" class="form-control" ng-model="feedCnAttr.value">-->
+										<!--</div>-->
+									<!--</div>&lt;!&ndash; .form-group &ndash;&gt;-->
+								<!--</div>&lt;!&ndash; .col &ndash;&gt;-->
+							<!--</div>-->
+						<!--</div>-->
+					<!--</div>-->
+					<!--<div class="row text-center">-->
+						<!--<div class="col-sm-12">-->
+							<!--<div class="form-inline">-->
+								<!--<button type="submit" class="btn btn-vo" ng-click="ctrl.updateProductInfo()"><i class="glyphicon glyphicon-floppy-disk"></i> {{'BTN_SAVE' | translate}}</button>-->
+								<!--<button type="submit" class="btn btn-default" ng-click="ctrl.cancelProductCustomInfo()"><i class="fa fa-remove"></i> {{'BTN_CANCEL' | translate}}</button>-->
+							<!--</div>&lt;!&ndash; .form-inline &ndash;&gt;-->
+						<!--</div>-->
+					<!--</div>-->
+				<!--</form>&lt;!&ndash; .form &ndash;&gt;-->
+			<!--</tab>-->
 
 			<tab>
-				<tab-heading>&nbsp;{{'TXT_PRODUCT_SKU_LIST' | translate}}</tab-heading>
+				<tab-heading>&nbsp;{{'TXT_PRODUCT_SKU_DETAIL' | translate}}</tab-heading>
 				<div class="panel vo_panel tab_panel">
 					<div class="row wrapper">
 						<div class="container-fluid">

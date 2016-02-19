@@ -3,13 +3,13 @@
 <mapper namespace="com.voyageone.web2.wsdl.sql">
     <resultMap id="PriceLogMap" type="com.voyageone.web2.sdk.api.domain.CmsBtPriceLogModel">
         <id column="seq" property="seq" jdbcType="INTEGER" />
-        <result column="channelId" property="channelId" jdbcType="VARCHAR" />
+        <result column="channel_id" property="channelId" jdbcType="VARCHAR" />
         <result column="product_id" property="productId" jdbcType="INTEGER" />
         <result column="code" property="code" jdbcType="VARCHAR" />
         <result column="sku" property="sku" jdbcType="VARCHAR" />
-        <result column="msrp_price" property="msrpPrice" jdbcType="VARCHAR" />
-        <result column="retail_price" property="retailPrice" jdbcType="VARCHAR" />
-        <result column="sale_price" property="salePrice" jdbcType="VARCHAR" />
+        <!--<result column="msrp_price" property="msrpPrice" jdbcType="VARCHAR" />-->
+        <!--<result column="retail_price" property="retailPrice" jdbcType="VARCHAR" />-->
+        <result column="price" property="salePrice" jdbcType="VARCHAR" />
         <result column="comment" property="comment" jdbcType="VARCHAR" />
         <result column="created" property="created" jdbcType="TIMESTAMP" />
         <result column="creater" property="creater" jdbcType="VARCHAR" />
@@ -18,15 +18,21 @@
     </resultMap>
 
     <select id="select_price_log_by_code" resultMap="PriceLogMap" parameterType="HashMap">
-        select
+        select DISTINCT
             log.seq,
-            log.channelId,
+            log.channel_id,
             log.product_id,
             log.code,
             log.sku,
-            log.msrp_price,
-            log.retail_price,
-            log.sale_price,
+        <if test="priceType !=null and priceType == 'msrp'">
+            log.msrp_price as price,
+        </if>
+        <if test="priceType !=null and priceType == 'retailPrice'">
+            log.retail_price as price,
+        </if>
+        <if test="priceType !=null and priceType == 'salePrice'">
+            log.sale_price as price,
+        </if>
             log.comment,
             log.created,
             log.creater,
@@ -35,24 +41,50 @@
         from voyageone_cms2.cms_bt_price_log log
         where log.code = #{code}
           and log.sku = #{sku}
+          and log.channel_id = #{channelId}
+        <if test="priceType !=null and priceType == 'msrp'">
+          and log.msrp_price != 'null-null'
+        </if>
+        <if test="priceType !=null and priceType == 'retailPrice'">
+            and log.retail_price != 'null-null'
+        </if>
+        <if test="priceType !=null and priceType == 'salePrice'">
+            and log.sale_price != 'null-null'
+        </if>
         order by log.modified desc
         limit #{offset}, #{rows}
     </select>
 
     <select id="select_price_log_by_code_cnt" resultType="int" parameterType="HashMap">
-        select count(1) from voyageone_cms2.cms_bt_price_log log where log.code = #{code}
+        select count(1) from voyageone_cms2.cms_bt_price_log log
+         where log.code = #{code} and log.sku = #{sku} and log.channel_id = #{channelId}
+        <if test="priceType !=null and priceType == 'msrp'">
+            and log.msrp_price != 'null-null'
+        </if>
+        <if test="priceType !=null and priceType == 'retailPrice'">
+            and log.retail_price != 'null-null'
+        </if>
+        <if test="priceType !=null and priceType == 'salePrice'">
+            and log.sale_price != 'null-null'
+        </if>
     </select>
 
     <select id="select_price_log_by_sku" resultMap="PriceLogMap" parameterType="HashMap">
-        select
+        select DISTINCT
             log.seq,
-            log.channelId,
+            log.channel_id,
             log.product_id,
             log.code,
             log.sku,
-            log.msrp_price,
-            log.retail_price,
-            log.sale_price,
+        <if test="priceType !=null and priceType == 'msrp'">
+            log.msrp_price as price,
+        </if>
+        <if test="priceType !=null and priceType == 'retailPrice'">
+            log.retail_price as price,
+        </if>
+        <if test="priceType !=null and priceType == 'salePrice'">
+            log.sale_price as price,
+        </if>
             log.comment,
             log.created,
             log.creater,
@@ -60,17 +92,37 @@
             log.modifier
         from voyageone_cms2.cms_bt_price_log log
         where log.sku = #{sku}
+          and log.channel_id = #{channelId}
+        <if test="priceType !=null and priceType == 'msrp'">
+            and log.msrp_price != 'null-null'
+        </if>
+        <if test="priceType !=null and priceType == 'retailPrice'">
+            and log.retail_price != 'null-null'
+        </if>
+        <if test="priceType !=null and priceType == 'salePrice'">
+            and log.sale_price != 'null-null'
+        </if>
         order by log.modified desc
         limit #{offset}, #{rows}
     </select>
 
     <select id="select_price_log_by_sku_cnt" resultType="int" parameterType="HashMap">
-        select count(1) from voyageone_cms2.cms_bt_price_log log where log.sku = #{sku}
+        select count(1) from voyageone_cms2.cms_bt_price_log log
+        where log.sku = #{sku} and log.channel_id = #{channelId}
+        <if test="priceType !=null and priceType == 'msrp'">
+            and log.msrp_price != 'null-null'
+        </if>
+        <if test="priceType !=null and priceType == 'retailPrice'">
+            and log.retail_price != 'null-null'
+        </if>
+        <if test="priceType !=null and priceType == 'salePrice'">
+            and log.sale_price != 'null-null'
+        </if>
     </select>
 
     <insert id="insert_cms_bt_price_log" parameterType="com.voyageone.web2.sdk.api.domain.CmsBtPriceLogModel" useGeneratedKeys="true" keyProperty="seq">
         insert into voyageone_cms2.cms_bt_price_log (
-            channelId,
+            channel_id,
             product_id,
             code,
             sku,
@@ -100,7 +152,7 @@
 
     <insert id="insert_cms_bt_price_log_list" parameterType="java.util.List" useGeneratedKeys="true" keyProperty="seq">
         insert into voyageone_cms2.cms_bt_price_log (
-            channelId,
+            channel_id,
             product_id,
             code,
             sku,

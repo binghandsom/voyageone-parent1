@@ -27,9 +27,7 @@ public class CmsPromotionHistoryController extends CmsController {
 
     @RequestMapping(CmsUrlConstants.POP.PROMOTION.GET_PROMOTION_HISTORY)
     public AjaxResponse getPromotionHistory(@RequestBody Map<String, Object> params) {
-        String channel_id = this.getUser().getSelChannelId();
-        params.put("channelId", channel_id);
-        Map<String, Object> result = cmsPromotionHistoryService.getPromotionList(params);
+        Map<String, Object> result = cmsPromotionHistoryService.getPromotionList(params, getUser(), getLang());
         return success(result);
     }
 }
