@@ -90,6 +90,12 @@ public class GiltAnalysisContext {
 
         Map<String, String> updateFields = new HashMap<>();
 
+        /*
+         * 价格部分后续修改时请注意
+         * 因为 DB 是 SKU 级别数据, 所以为了 DISTINCT 时减小误差几率
+         * 查询时, 尽量少的 SELECT 字段. 如果需要使用新价格字段, 需要同时修改 SQL
+         */
+
         if (!newItem.getPrices_retail_value().equals(oldItem.getPrices_retail_value())) {
             updateFields.put(CmsConstants.FEED_IO_UPDATEFIELDS_MSRP, newItem.getPrices_retail_value());
             updateFields.put(CmsConstants.FEED_IO_UPDATEFIELDS_CN_PRICE, newItem.getPrices_retail_value());
@@ -103,7 +109,7 @@ public class GiltAnalysisContext {
             updateFields.put(CmsConstants.FEED_IO_UPDATEFIELDS_PRICE, newItem.getPrices_cost_value());
 //            updateFields.put(CmsConstants.FEED_IO_UPDATEFIELDS_CN_PRICE, newItem.getPrices_sale_value());
 //            updateFields.put(CmsConstants.FEED_IO_UPDATEFIELDS_CN_PRICE_RMB, newItem.getPrices_sale_value());
-//            if (isSyncFinalRmb())
+            if (isSyncFinalRmb())
                 updateFields.put(CmsConstants.FEED_IO_UPDATEFIELDS_CN_PRICE_FINAL_RMB, newItem.getPrices_cost_value());
         }
 
@@ -121,6 +127,12 @@ public class GiltAnalysisContext {
     }
 
     private Map<String, String> getFocusUpdateFields(SuperFeedGiltBean newItem) {
+
+        /*
+         * 价格部分后续修改时请注意
+         * 因为 DB 是 SKU 级别数据, 所以为了 DISTINCT 时减小误差几率
+         * 查询时, 尽量少的 SELECT 字段. 如果需要使用新价格字段, 需要同时修改 SQL
+         */
 
         Map<String, String> updateFields = new HashMap<>();
         String separator = CmsConstants.FEED_IO_UPDATEFIELDS_IMAGE_SPLIT;
@@ -264,6 +276,7 @@ public class GiltAnalysisContext {
             curr.setC_name(key);
             curr.setC_header_title(key);
             curr.setUrl_key(url_key);
+            curr.setModelbeans(new ArrayList<>());
 
             if (parent != null)
                 curr.setParent_url_key(parent.getUrl_key());
@@ -277,9 +290,6 @@ public class GiltAnalysisContext {
 
         if (categoryBeanList.size() > 0)
             categoriesList.add(categoryBeanList);
-
-        if (curr != null)
-            curr.setModelbeans(new ArrayList<>());
 
         return curr;
     }

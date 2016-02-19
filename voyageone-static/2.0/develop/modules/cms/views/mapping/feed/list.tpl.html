@@ -1,4 +1,4 @@
-<div class="wrapper-md" ng-controller="feedMappingController as $ctrl" ng-init="$ctrl.init()">
+<div class="wrapper-md" ng-controller="feedMappingController as ctrl" ng-init="ctrl.init()">
     <div class="vo_accordion vo_attr">
         <div class="panel-group">
             <div class="panel panel-default">
@@ -7,37 +7,35 @@
                 </div>
                 <div class="container-fluid m-l-md m-t-sm m-b-xs">
                     <div class="col-sm-12">
-                        <div class="form-inline m-b-xs pull-left">
-                            <label>
-                                <span translate="TXT_TOP_FEED_CATEGORY"></span>
-                                <select class="form-control m-r-xxs"
-                                        ng-change="$ctrl.refreshTable()"
-                                        ng-model="$ctrl.selectedTop"
-                                        ng-options="cate.cid as cate.path for cate in $ctrl.topCategories"></select>
-                            </label>
-                            <select class="form-control m-r-xxs" title="{{'TXT_FILTER_CATEGORY' | translate}}"
-                                    ng-change="$ctrl.refreshTable()"
-                                    ng-options="v as k for (k,v) in $ctrl.options.category"
-                                    ng-model="$ctrl.matched.category"></select>
-                            <select class="form-control m-r-xxs" title="{{'TXT_FILTER_ATTRIBUTE' | translate}}"
-                                    ng-change="$ctrl.refreshTable()"
-                                    ng-options="v as k for (k,v) in $ctrl.options.property"
-                                    ng-model="$ctrl.matched.property"></select>
-                            <input type="text" placeholder="{{'TXT_MSG_SEARCH' | translate}}"
-                                   ng-model="$ctrl.matched.keyWord" enter-click="$ctrl.refreshTable()"
-                                   class="form-control"/>
-                            <button class="btn btn-default" ng-click="$ctrl.clear()">
-                                <i class="fa fa-remove"></i>&nbsp;<span>{{'BTN_CLEAR' | translate}}</span>
-                            </button>
-                            <button class="btn btn-vo btn-xxs" ng-click="$ctrl.refreshTable()">
-                                <i class="fa fa-search"></i>&nbsp;<span>{{'BTN_SEARCH' | translate}}</span>
-                            </button>
-                        </div>
+                    <div class="form-inline m-b-xs pull-left">
+                        <label>
+                            <span translate="TXT_TOP_FEED_CATEGORY"></span>&nbsp;
+                            <select class="form-control m-r-xxs"
+                                    ng-change="ctrl.refreshTable()"
+                                    ng-model="ctrl.selectedTop"
+                                    ng-options="cate as cate for cate in ctrl.topKeys"></select>
+                        </label>
+                        <select class="form-control m-r-xxs" title="{{'TXT_FILTER_CATEGORY' | translate}}"
+                                ng-change="ctrl.refreshTable()"
+                                ng-options="v as k for (k,v) in ctrl.options.category"
+                                ng-model="ctrl.matched.category"></select>
+                        <select class="form-control m-r-xxs" title="{{'TXT_FILTER_ATTRIBUTE' | translate}}"
+                                ng-change="ctrl.refreshTable()"
+                                ng-options="v as k for (k,v) in ctrl.options.property"
+                                ng-model="ctrl.matched.property"></select>
+                        <input type="text" placeholder="{{'TXT_MSG_SEARCH' | translate}}"
+                               ng-model="ctrl.matched.keyWord" enter-click="ctrl.refreshTable()"
+                               class="form-control"/>
+                        <button class="btn btn-default" ng-click="ctrl.clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR' | translate}}</button>
+                        <button class="btn btn-vo btn-xxs" ng-click="ctrl.refreshTable()">
+                            <i class="fa fa-search"></i>&nbsp;<span>{{'BTN_SEARCH' | translate}}</span>
+                        </button>
                     </div>
+                    </div>
+                </div>
                 </div>
             </div>
         </div>
-    </div>
     <div class="m-b-lg">
         <div class="box">
             <div class="box-body">
@@ -50,11 +48,11 @@
                         <th class="text-left" translate="TXT_MASTER_CATEGORY"></th>
                         <th class="mfb-xxs text-center" translate="TXT_MAPPING_CATEGORY_OR_FORWARD"></th>
                         <th class="mfb-xxs text-center" translate="TXT_MAPPING_ATTRIBUTE_IS_FINISHED"></th>
-                        <th class="text-center" translate="TXT_MAPPING_ATTRIBUTE"></th>
+                        <th class="mfb-xxx text-center" translate="TXT_MAPPING_ATTRIBUTE"></th>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr ng-repeat="feedCategory in $ctrl.tableSource">
+                    <tr ng-repeat="feedCategory in ctrl.tableSource">
                         <td class="mfb-xt text-center">{{ $index + 1 }}</td>
                         <td class="text-left">
                             <span class="badge" ng-class="{'badge-success':feedCategory.level < 2, 'badge-empty': feedCategory.level > 1}">
@@ -63,14 +61,14 @@
                             </span>
                         </td>
                         <td class="text-left">{{ feedCategory.model.path }}</td>
-                        <td class="text-left">{{ $ctrl.getDefaultMapping(feedCategory) }}</td>
+                        <td class="text-left">{{ ctrl.getDefaultMapping(feedCategory) }}</td>
                         <td class="mfb-xxs">
                             <div class="btn-group" ng-controller="popupCtrl">
-                                <button ng-click="$ctrl.openCategoryMapping(feedCategory.model, popupNewCategory)"
+                                <button ng-click="ctrl.openCategoryMapping(feedCategory.model, popupNewCategory)"
                                         class="btn btn-default btn-xs">
                                     <i class="glyphicon glyphicon-link"></i>&nbsp;{{'BTN_MAPPING_CATEGORY' | translate}}
                                 </button>
-                                <button class="btn btn-default btn-xs" ng-click="$ctrl.extendsMapping(feedCategory.model)">
+                                <button class="btn btn-default btn-xs" ng-click="ctrl.extendsMapping(feedCategory.model)">
                                     <i class="fa fa-arrow-circle-up"></i>&nbsp;{{'BTN_FORWARD' | translate}}
                                 </button>
                             </div>
@@ -80,8 +78,8 @@
                                 <i class="fa fa-check-circle text-vo"></i>
                             </span>
                         </td>
-                        <td>
-                            <div class="btn-group" ng-if="feedCategory.model.attribute && $ctrl.findDefaultMapping(feedCategory)">
+                        <td class="mfb-xxx text-center">
+                            <div class="btn-group" ng-if="feedCategory.model.attribute && ctrl.findDefaultMapping(feedCategory)">
                                 <a ng-href="#/mapping/feed/prop/{{feedCategory.model.path}}" target="_blank">
                                     <i class="glyphicon glyphicon-link"></i>&nbsp;{{'BTN_MAPPING_ATTRIBUTE' | translate}}
                                 </a>

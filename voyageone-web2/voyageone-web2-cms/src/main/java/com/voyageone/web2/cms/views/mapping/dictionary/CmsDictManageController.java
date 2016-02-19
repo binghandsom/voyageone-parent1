@@ -31,7 +31,7 @@ public class CmsDictManageController extends CmsController {
      */
     @RequestMapping(CmsUrlConstants.MAPPING.DICTIONARY.INIT)
     public AjaxResponse init() throws Exception {
-        return success(dictManageService.getMasterData(getUser()));
+        return success(dictManageService.getMasterData(getUser(), getLang()));
     }
 
     /**
@@ -41,7 +41,7 @@ public class CmsDictManageController extends CmsController {
      */
     @RequestMapping(CmsUrlConstants.MAPPING.DICTIONARY.GET_DICT_LIST)
     public AjaxResponse getDictList(@RequestBody CmsDictionaryIndexBean request) {
-        return success(dictManageService.dtGetAllDict(request, getUser().getSelChannelId()));
+        return success(dictManageService.dtGetAllDict(request, getUser().getSelChannelId(), getLang()));
     }
 
     /**

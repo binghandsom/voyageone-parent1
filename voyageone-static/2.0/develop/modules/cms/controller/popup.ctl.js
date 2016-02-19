@@ -190,8 +190,8 @@ define([
             },
             "file": {
                 "import": {
-                    "templateUrl": "views/pop/import/index.tpl.html",
-                    "controllerUrl": "modules/cms/views/pop/import/index.ctl",
+                    "templateUrl": "views/pop/file/import.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/file/import.ctl",
                     "controller": 'popFileImportCtl'
                 }
             },
@@ -527,7 +527,7 @@ define([
          */
         $scope.openHistoryPromotion = openHistoryPromotion;
         function openHistoryPromotion(viewSize, data) {
-            require([popActions.product.promotion.controllerUrl], function () {
+            require([popActions.history.promotion.controllerUrl], function () {
                 $modal.open({
                     templateUrl: popActions.history.promotion.templateUrl,
                     controller: popActions.history.promotion.controller,
@@ -547,7 +547,7 @@ define([
          */
         $scope.openHistoryPrice = openHistoryPrice;
         function openHistoryPrice(viewSize, data, type) {
-            require([popActions.product.price.controllerUrl], function () {
+            require([popActions.history.price.controllerUrl], function () {
                 $modal.open({
                     templateUrl: popActions.history.price.templateUrl,
                     controller: popActions.history.price.controller,

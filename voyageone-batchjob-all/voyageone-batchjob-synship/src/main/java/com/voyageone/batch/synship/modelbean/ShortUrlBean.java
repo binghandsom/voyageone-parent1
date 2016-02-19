@@ -93,6 +93,8 @@ public class ShortUrlBean {
      */
     protected String orders_name;
 
+    protected String cart_id;
+
     public String getId() {
         return id;
     }
@@ -227,5 +229,13 @@ public class ShortUrlBean {
 
     public void setOrders_name(String orders_name) {
         this.orders_name = orders_name;
+    }
+
+    public String getCart_id() {
+        return cart_id;
+    }
+
+    public void setCart_id(String cart_id) {
+        this.cart_id = cart_id;
     }
 }

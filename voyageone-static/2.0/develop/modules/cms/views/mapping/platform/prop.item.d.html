@@ -5,8 +5,8 @@
         <span ng-if="::property.required">{{'TXT_REQUIRED' | translate}}</span>
     </div>
     <div class="col-sm-3 pull-center" ng-if="!isChildOfMulti()">
-        <button class="badge badge-empty"
-                ng-click="popup({property: property})">{{'TXT_MAPPING_VALUE' | translate}}
+        <button class="btn btn-default btn-xs"
+                ng-click="popup({property: property})"><i class="fa fa-pencil"></i>&nbsp;<span>{{'TXT_MAPPING_VALUE' | translate}}</span>
         </button>
     </div>
     <div class="col-sm-1 pull-right text-right">

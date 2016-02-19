@@ -145,7 +145,7 @@ public class WmsSynInventoryToCmsService extends BaseTaskService {
                 codeQty.put("code_qty", codeInventory.getQty());
 
                 HashMap<String, Object> updateMap = new HashMap<>();
-                updateMap.put("batch_update", codeQty);
+                updateMap.put("batchField", codeQty);
                 HashMap<String, Object> queryMap = new HashMap<>();
                 queryMap.put("fields.code", codeInventory.getCode());
                 BulkUpdateModel model = new BulkUpdateModel();

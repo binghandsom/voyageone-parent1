@@ -11,12 +11,13 @@ define([
 
     return cms.controller('propFeedMappingValueController', (function () {
 
-        function propFeedMappingValueController(context, feedMappingService, $uibModalInstance, alert) {
+        function propFeedMappingValueController(context, feedMappingService, $uibModalInstance, alert, $translate) {
 
             this.alert = alert;
             this.$uibModalInstance = $uibModalInstance;
             this.feedMappingService = feedMappingService;
             this.operations = operations;
+            this.$translate = $translate
 
             /**
              * 画面传递的上下文参数
@@ -90,7 +91,7 @@ define([
                             return v.value;
                         }).join(',');
                     default:
-                        this.alert('无法取得 ' + field.type + ' 类型的匹配值.');
+                        this.alert(this.$translate.instant('TXT_MSG_CANNOT_GET') + field.type + this.$translate.instant('TXT_MSG_TYPE_VALUE'));
                         return null;
                 }
             },
@@ -99,7 +100,7 @@ define([
                 var type = this.mappingSetting.type;
 
                 if (!type) {
-                    this.alert('必须匹配一类值才能保存.');
+                    this.alert(this.$translate.instant('TXT_MSG_MUST_GET_ONE_VALUE'));
                     return;
                 }
 
@@ -108,7 +109,7 @@ define([
                 this.field.value = null;
 
                 if (!value) {
-                    this.alert('没有匹配到任何属性或内容上.');
+                    this.alert(this.$translate.instant('TXT_MSG_NO_VALUE_IS_ON_THE_ATTRIBUTE'));
                     return;
                 }
 

@@ -55,7 +55,7 @@
 						<div class="form-group">
 							<label class="col-sm-3 control-label"></label>
 							<div class="col-sm-8 form-inline">
-								<div class="input-group col-sm-4"><input type="text" class="form-control" ng-model="vm.searchInfo.priceStart" ng-pattern="/^(\d+)(\.[0-9]{0,2})?$/"></div>&nbsp;~
+								<div class="input-group col-sm-4"><input type="text" class="form-control" ng-model="vm.searchInfo.priceStart" ng-pattern="/^(\d+)(\.[0-9]{0,2})?$/"></div>&nbsp;~&nbsp;
 								<div class="input-group col-sm-4"><input type="text" class="form-control" ng-model="vm.searchInfo.priceEnd" ng-pattern="/^(\d+)(\.[0-9]{0,2})?$/"></div>
 							</div>
 						</div><!-- .form-group -->
@@ -240,7 +240,7 @@
 							<a href ng-click="openAddToPromotion('md', promotion, vm.currTab === 'group' ? vm.groupSelList.selList : vm.productSelList.selList, search)">{{promotion.promotionName}}|{{promotion.cartName}}</a>
 						</li>
 					</ul>
-				</div>
+				</div>&nbsp;
 				<button class="btn btn-default" ng-click="openBulkUpdate('md', vm.currTab === 'group' ? vm.groupSelList.selList : vm.productSelList.selList, search)"><i class="fa fa-pencil-square"></i>&nbsp;{{'BTN_BATCH_UPDATE_ATTRIBUTE' | translate}}</button>
 				<button class="btn btn-default" ng-click="$parent.openCategoryMapping(popupNewCategory)"><i class="fa fa-arrow-circle-right"></i>&nbsp;{{'BTN_CHANGE_MASTER_CATEGORY' | translate}}</button>
 			</div><!-- /right-btn -->
@@ -304,7 +304,10 @@
 									<button ng-controller="showPopoverCtrl" popover-title="{{'TXT_SKU_INVENTORY' | translate}}" type="button" popover-placement="left" class="btn btn-default btn-xs">{{groupInfo.fields.inventory || 0}}</button>
 								</td>
 								<td class="mfb-xxt text-center">
-									<button ng-controller="showPopoverCtrl" popover-html="showInfo({{groupInfo.groups.priceDetail}})" popover-title="{{'TXT_PRICE' | translate}}" type="button" popover-placement="left" class="btn btn-default btn-xs">{{groupInfo.groups.priceSaleSt || 0 | number: 2}}&nbsp;~&nbsp;{{groupInfo.groups.priceSaleEd || 0 | number: 2}}</button>
+									<button ng-controller="showPopoverCtrl" popover-html="showInfo({{groupInfo.groups.priceDetail}})"
+											popover-title="{{'TXT_PRICE' | translate}}" type="button" popover-placement="left" class="btn btn-default btn-xs">
+										{{groupInfo.groups.priceSale}}
+									</button>
 								</td>
 								<td class="mfb-xxt text-left">{{groupInfo.fields.brand}}</td>
 								<td class="mfb-xxxs text-left">
@@ -395,10 +398,15 @@
 									</td>
 									<td class="mfb-xxt text-left">{{productInfo.fields.brand}}</td>
 									<td class="mfb-xxs text-center">
-										<button ng-controller="showPopoverCtrl" popover-html="showInfo({{productInfo.inventoryDetail}})" popover-title="{{'TXT_SKU_INVENTORY' | translate}}" type="button" popover-placement="left" class="btn btn-default btn-xs">{{productInfo.fields.qty || 0}}</button>
+										<button ng-controller="showPopoverCtrl" popover-html="showInfo({{productInfo.inventoryDetail}})"
+												popover-title="{{'TXT_SKU_INVENTORY' | translate}}" type="button" popover-placement="left"
+												class="btn btn-default btn-xs">{{productInfo.fields.qty || 0}}</button>
 									</td>
 									<td class="mfb-xxt text-center">
-										<button ng-controller="showPopoverCtrl" popover-html="showInfo({{productInfo.groups.priceDetail}})" popover-title="{{'TXT_PRICE' | translate}}" type="button" popover-placement="left" class="btn btn-default btn-xs">{{productInfo.fields.priceSaleSt || 0 | number: 2}}&nbsp;~&nbsp;{{productInfo.fields.priceSaleEd || 0 | number: 2}}</button>
+										<button ng-controller="showPopoverCtrl" popover-html="showInfo({{productInfo.priceDetail}})"
+												popover-title="{{'TXT_PRICE' | translate}}" type="button" popover-placement="left" class="btn btn-default btn-xs">
+											{{productInfo.priceSale}}
+										</button>
 									</td>
 									<td class="mfb-xxt text-center">{{productInfo.fields.sizeType}}</td>
 									<td class="mfb-xxs text-left">

@@ -339,6 +339,7 @@ public class SynShipValidIdCardService extends BaseTaskService {
         smsHistoryBean.setUpdate_time(dateTime);
         smsHistoryBean.setCreate_person(getTaskName());
         smsHistoryBean.setUpdate_person(getTaskName());
+        smsHistoryBean.setCart_id(shortUrlBean.getCart_id());
 
         smsHistoryDao.insertSmsHistory(smsHistoryBean);
     }
