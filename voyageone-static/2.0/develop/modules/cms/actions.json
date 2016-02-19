@@ -51,6 +51,7 @@
     "mapping": {
       "feedMappingService": {
         "root": "/cms/mapping/feed",
+        "getTopCategories": "getTopCategories",
         "getFeedCategoryTree": "getFeedCategoryTree",
         "getMainCategories": "getMainCategories",
         "setMapping": "setFeedMapping",

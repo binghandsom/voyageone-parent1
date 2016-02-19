@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -42,31 +41,35 @@ public class CmsFeedMappingService extends BaseAppService {
     @Autowired
     private com.voyageone.cms.service.CmsFeedMappingService cmsFeedMappingService;
 
-    public Map<String, Map<String, FeedCategoryBean>> getFeedCategoryMap(UserSessionBean user) {
+    public List<CmsFeedCategoryModel> getTopCategories(UserSessionBean user) {
 
-        CmsMtFeedCategoryTreeModelx treeModelx = cmsMtFeedCategoryTreeDao.selectFeedCategoryx(user.getSelChannelId());
+        CmsMtFeedCategoryTreeModelx treeModelx = cmsMtFeedCategoryTreeDao.findTopCategories(user.getSelChannelId());
+
+        return treeModelx.getCategoryTree();
+    }
+
+    public Map<String, FeedCategoryBean> getFeedCategoryMap(String topCategoryId, UserSessionBean user) {
+
+        CmsMtFeedCategoryTreeModelx treeModelx = cmsMtFeedCategoryTreeDao.findTopCategory(user.getSelChannelId(), topCategoryId);
+
+        if (treeModelx.getCategoryTree().isEmpty())
+            throw new BusinessException("未找到类目");
+
+        CmsFeedCategoryModel feedCategoryModel = treeModelx.getCategoryTree().get(0);
 
         // 将树形转化为利于画面查询数据的键值结构
-        Map<String, Map<String, FeedCategoryBean>> map = new HashMap<>();
 
-        for (CmsFeedCategoryModel feedCategoryModel : treeModelx.getCategoryTree()) {
+        final int[] seq = {0};
 
-            final int[] seq = {0};
+        Stream<FeedCategoryBean> feedCategoryBeanStream = buildFeedCategoryBean(feedCategoryModel);
 
-            Stream<FeedCategoryBean> feedCategoryBeanStream = buildFeedCategoryBean(feedCategoryModel);
-
-            Map<String, FeedCategoryBean> children = feedCategoryBeanStream
-                    .map(f -> {
-                        f.setSeq(seq[0]);
-                        seq[0]++;
-                        return f;
-                    })
-                    .collect(toMap(f -> f.getModel().getPath(), f -> f));
-
-            map.put(feedCategoryModel.getPath(), children);
-        }
-
-        return map;
+        return feedCategoryBeanStream
+                .map(f -> {
+                    f.setSeq(seq[0]);
+                    seq[0]++;
+                    return f;
+                })
+                .collect(toMap(f -> f.getModel().getPath(), f -> f));
     }
 
     private Stream<FeedCategoryBean> buildFeedCategoryBean(CmsFeedCategoryModel feedCategoryModel) {
@@ -103,7 +106,7 @@ public class CmsFeedMappingService extends BaseAppService {
         if (StringUtils.isAnyEmpty(setMappingBean.getFrom(), setMappingBean.getTo()))
             throw new BusinessException("木有参数");
 
-        CmsMtFeedCategoryTreeModelx treeModelx = cmsMtFeedCategoryTreeDao.selectFeedCategoryx(user.getSelChannelId());
+        CmsMtFeedCategoryTreeModelx treeModelx = cmsMtFeedCategoryTreeDao.findFeedCategoryx(user.getSelChannelId());
 
         // 按 Path 查 FeedCategory
         CmsFeedCategoryModel cmsFeedCategoryModel = findByPath(setMappingBean.getFrom(), treeModelx);
@@ -267,7 +270,7 @@ public class CmsFeedMappingService extends BaseAppService {
      */
     public List<CmsFeedMappingModel> extendsMapping(CmsFeedCategoryModel feedCategoryModel, UserSessionBean user) {
 
-        CmsMtFeedCategoryTreeModelx treeModelx = cmsMtFeedCategoryTreeDao.selectFeedCategoryx(user.getSelChannelId());
+        CmsMtFeedCategoryTreeModelx treeModelx = cmsMtFeedCategoryTreeDao.findFeedCategoryx(user.getSelChannelId());
 
         CmsFeedMappingModel feedMappingModel = findParentDefaultMapping(feedCategoryModel, treeModelx);
 
@@ -352,7 +355,7 @@ public class CmsFeedMappingService extends BaseAppService {
      */
     public boolean switchMatchOver(String feedCategoryPath, UserSessionBean user) {
 
-        CmsMtFeedCategoryTreeModelx treeModelx = cmsMtFeedCategoryTreeDao.selectFeedCategoryx(user.getSelChannelId());
+        CmsMtFeedCategoryTreeModelx treeModelx = cmsMtFeedCategoryTreeDao.findFeedCategoryx(user.getSelChannelId());
 
         CmsFeedCategoryModel feedCategoryModel = findByPath(feedCategoryPath, treeModelx);
 
@@ -373,7 +376,7 @@ public class CmsFeedMappingService extends BaseAppService {
 
     public int getMatchOver(String feedCategoryPath, UserSessionBean user) {
 
-        CmsMtFeedCategoryTreeModelx treeModelx = cmsMtFeedCategoryTreeDao.selectFeedCategoryx(user.getSelChannelId());
+        CmsMtFeedCategoryTreeModelx treeModelx = cmsMtFeedCategoryTreeDao.findFeedCategoryx(user.getSelChannelId());
 
         CmsFeedCategoryModel feedCategoryModel = findByPath(feedCategoryPath, treeModelx);
 
