@@ -169,13 +169,16 @@
                                         class="fa fa-check"></span> {{'TXT_SELECT_ALL' | translate}} </label>
                                 <span class="m-l-xxl">Primary Product</span>
                             </td>
+                            <td class="mfb-xxt text-center">TAG</td>
                             <td class="mfb-xxt text-left">Inventory</td>
-                            <td class="mfb-xxt text-center">Promotion Price</td>
                             <td class="mfb-xxt text-center">MSRP</td>
-                            <td class="mfb-xxt text-left">折扣</td>
-                            <td class="mfb-xxt text-left">Base Property</td>
+                            <td class="mfb-xxt text-center">Retail Price</td>
+                            <!--<td class="mfb-xxt text-center">Sale Price</td>-->
+                            <td class="mfb-xxt text-center">Promotion Price</td>
+                            <!--<td class="mfb-xxt text-left">折扣</td>-->
+                            <!--<td class="mfb-xxt text-left">Base Property</td>-->
                             <td class="mfb-xxt text-left">Time</td>
-                            <td class="mfb-xxt text-center"></td>
+                            <td class="mfb-xxt text-center">Action</td>
                         </tr>
                         </thead>
                     </table>
@@ -208,6 +211,7 @@
                                         </ul>
                                     </div>
                                 </td>
+                                <td class="mfb-xxt text-center">TAG</td>
                                 <td class="mfb-xxt text-left">
                                     <!-- TODO 目前库存是假的,而且显示code库存未实现 popover="LDB01-298:20 / LDB01-298: 20 / LDB01-298:20 / LDB01-298: 20" popover-title="Inventory"  -->
                                     <button type="button" popover-placement="left" class="btn btn-default btn-xs">0
@@ -229,14 +233,14 @@
                                 <td class="mfb-xxt text-left">
                                     {{(group.promotionPriceMin/group.salePriceMin*100).toFixed(1)}}折
                                 </td>
-                                <td class="mfb-xxt text-left">
-                                    <div class="table_main"><!-- TODO 未实现 -->
-                                        <!--<ul>-->
-                                        <!--<li>Size Type：Women</li>-->
-                                        <!--<li>Style：欧美</li>-->
-                                        <!--</ul>-->
-                                    </div>
-                                </td>
+                                <!--<td class="mfb-xxt text-left">-->
+                                    <!--<div class="table_main">&lt;!&ndash; TODO 未实现 &ndash;&gt;-->
+                                        <!--&lt;!&ndash;<ul>&ndash;&gt;-->
+                                        <!--&lt;!&ndash;<li>Size Type：Women</li>&ndash;&gt;-->
+                                        <!--&lt;!&ndash;<li>Style：欧美</li>&ndash;&gt;-->
+                                        <!--&lt;!&ndash;</ul>&ndash;&gt;-->
+                                    <!--</div>-->
+                                <!--</td>-->
                                 <td class="mfb-xxt text-left"><!-- TODO 显示产品的publish时间未实现-->
                                     <small popover-trigger="mouseenter" popover-placement="left">
                                         <div class="table_main">
@@ -274,14 +278,15 @@
                             <td class="mfb-xxt"><label class="checkbox-inline c-checkbox">
                                 <input type="checkbox" ng-checked="vm.codeSelList.selAllFlag" ng-click="selectAll(vm.codeSelList,'productCode')">
                                 <span class="fa fa-check"></span> {{'TXT_SELECT_ALL' | translate}} </label></td>
-                            <td class="mfb-xxt text-center">折扣</td>
+                            <td class="mfb-xxt text-center">TAG</td>
                             <td class="mfb-xxt text-center">Inventory</td>
-                            <td class="mfb-xxt text-center">Promotion Price</td>
                             <td class="mfb-xxt text-center">MSRP</td>
+                            <td class="mfb-xxt text-center">Retail Price</td>
+                            <td class="mfb-xxt text-center">Promotion Price</td>
                             <td class="mfb-xxs text-left">Base Property</td>
                             <td class="mfb-xxt text-center">SKU数</td>
                             <td class="mfb-xxt text-left">Time</td>
-                            <td class="mfb-xxt text-right"></td>
+                            <td class="mfb-xxt text-right">Action</td>
                         </tr>
                         </thead>
                     </table>
@@ -317,6 +322,9 @@
                                 <td class="mfb-xxt text-center">
                                     <input type="text" class="col-sm-1 form-control" ng-model="code.promotionPrice">
                                     <!--<button popover="Sale Price: {{code.salePrice}}" popover-title="Final Price" type="button" popover-placement="left" class="btn btn-default btn-xs">{{code.promotionPrice}}</button>-->
+                                </td>
+                                <td class="mfb-xxt text-center">
+                                    {{code.msrp}}
                                 </td>
                                 <td class="mfb-xxt text-center">
                                     {{code.msrp}}
@@ -361,7 +369,8 @@
                 </div>
                 <!-- .table-responsive -->
             </tab>
-            <tab>
+            <!-- TODO 暂时不显示SKU列表,如果以后需要根据SKU列表来制定 促销价格再放开 -->
+            <!--<tab>
                 <tab-heading ng-click="vm.tabIndex = 2"><i class="fa fa-list"></i> {{'TXT_SKU_LIST' | translate}}
                 </tab-heading>
                 <div class="panel vo_panel tab_panel">
@@ -370,12 +379,14 @@
                             <thead>
                             <tr>
                                 <td class="mfb-xxs">SKU</td>
-                                <td class="mfb-xx">折扣</td>
+                                <td class="mfb-xx">Code</td>
                                 <td class="mfb-x text-left">Size</td>
                                 <td class="mfb-x">Inventory</td>
-                                <td class="mfb-x text-center">Promotion Price</td>
+                                <td class="mfb-x">MSRP</td>
+                                <td class="mfb-x text-center">Retail sale</td>
                                 <td class="mfb-x text-center">price sale</td>
-                                <!--<th class="mfb-xt">Edit</th>-->
+                                &lt;!&ndash;<td class="mfb-x text-center">Promotion Price</td>&ndash;&gt;
+                                &lt;!&ndash;<th class="mfb-xt">Edit</th>&ndash;&gt;
                             </tr>
                             </thead>
                         </table>
@@ -384,44 +395,46 @@
                                 <tbody>
                                 <tr ng-repeat="sku in vm.skuList">
                                     <td class="mfb-xxs">{{sku.productSku}}</td>
-                                    <td  class="mfb-xx">{{(sku.promotionPrice/sku.salePrice*100).toFixed(1)}}折</td>
+                                    <td></td>
+                                    &lt;!&ndash;<td  class="mfb-xx">{{(sku.promotionPrice/sku.salePrice*100).toFixed(1)}}折</td>&ndash;&gt;
                                     <td class="mfb-x text-left">{{sku.size}}</td>
                                     <td class="mfb-x"><input type="text" class="col-sm-1 form-control" placeholder="{{sku.qty}}"
                                                popover-placement="left" popover="原始库存：{{sku.qty}}"></td>
+                                    <td></td>
                                     <td class="mfb-x text-center">
-                                        <!--<button type="button" popover-placement="left" class="btn btn-default btn-xs">{{sku.promotionPrice}}</button>-->
-                                        {{sku.promotionPrice}}
-                                    </td>
-                                    <td class="mfb-x text-center">
-                                        <!--<input type="text" class="form-control col-sm-2" popover-placement="left" popover="price retail：1200">-->
-                                        <!--<button type="button" popover-placement="left" class="btn btn-default btn-xs">{{sku.salePrice}}</button>-->
+                                        &lt;!&ndash;<input type="text" class="form-control col-sm-2" popover-placement="left" popover="price retail：1200">&ndash;&gt;
+                                        &lt;!&ndash;<button type="button" popover-placement="left" class="btn btn-default btn-xs">{{sku.salePrice}}</button>&ndash;&gt;
                                         {{sku.salePrice}}
                                     </td>
-                                    <!--<td>-->
-                                    <!--<button title="保存" class="btn btn-success btn-xs"><i class="fa fa-floppy-o"></i></button>-->
-                                    <!--<button class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i></button>-->
-                                    <!--</td>-->
+                                    <td class="mfb-x text-center">
+                                        &lt;!&ndash;<button type="button" popover-placement="left" class="btn btn-default btn-xs">{{sku.promotionPrice}}</button>&ndash;&gt;
+                                        {{sku.promotionPrice}}
+                                    </td>
+                                    &lt;!&ndash;<td>&ndash;&gt;
+                                    &lt;!&ndash;<button title="保存" class="btn btn-success btn-xs"><i class="fa fa-floppy-o"></i></button>&ndash;&gt;
+                                    &lt;!&ndash;<button class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i></button>&ndash;&gt;
+                                    &lt;!&ndash;</td>&ndash;&gt;
                                 </tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
-                    <!-- .table-responsive -->
+                    &lt;!&ndash; .table-responsive &ndash;&gt;
 
                     <div class="col-sm-12 m-t-xs">
                         <vpagination config="vm.skuPageOption" total="{{vm.skuPageOption.total}}"></vpagination>
                     </div>
                 </div>
-                <!-- .panel -->
+                &lt;!&ndash; .panel &ndash;&gt;
                 <div class="row text-center">
                     <div class="col-sm-12">
                         <div class="form-inline">
                         </div>
-                        <!-- .form-inline -->
+                        &lt;!&ndash; .form-inline &ndash;&gt;
                     </div>
                 </div>
 
-            </tab>
+            </tab>-->
         </tabset>
         <!-- tabset -->
     </div>
