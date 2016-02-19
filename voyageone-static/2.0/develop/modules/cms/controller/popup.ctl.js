@@ -125,7 +125,7 @@ define([
                     "controllerUrl": "modules/cms/views/pop/feedMapping/value.ctl",
                     "controller": 'propFeedMappingValueController as ctrl',
                     "backdrop": 'static',
-                    "size": 'lg'
+                    "size": 'xlg'
                 }
             },
             "platformMapping": {
