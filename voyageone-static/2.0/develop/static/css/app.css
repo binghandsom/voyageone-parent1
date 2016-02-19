@@ -5137,6 +5137,12 @@ a.text-black:hover {
 .text-u-l {
   text-decoration: underline;
 }
+.text-u-sub{
+  vertical-align:sub;
+}
+.text-u-red{
+  color:#ff0000;
+}
 .text-active,
 .active > .text,
 .active > .auto .text {
