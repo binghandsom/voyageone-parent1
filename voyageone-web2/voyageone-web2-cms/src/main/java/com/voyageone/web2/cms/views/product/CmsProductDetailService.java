@@ -703,30 +703,19 @@ public class CmsProductDetailService {
         BaseMongoMap<String, Object> orgAtts = new BaseMongoMap<>();
         BaseMongoMap<String, Object> cnAtts = new BaseMongoMap<>();
 
-        List<String> customIds = new ArrayList<>();
+        Map<String, String> orgAttsList = (Map<String, String>) customAttributesValue.get("orgAtts");
 
-        List<Map<String, String>> orgAttsList = (List<Map<String, String>>) customAttributesValue.get("orgAtts");
-        for (Map<String, String> orgAttMap : orgAttsList) {
-
-            orgAtts.put(orgAttMap.get("key"), orgAttMap.get("value"));
-
-            Object selected = orgAttMap.get("selected");
-
-            Boolean isSelected = (Boolean) selected;
-
-            if (isSelected) {
-                customIds.add(orgAttMap.get("key"));
-            }
+        for(Map.Entry orgAtt : orgAttsList.entrySet()) {
+            orgAtts.put(orgAtt.getKey().toString(), orgAtt.getValue());
         }
 
-        List<Map<String, String>> cnAttsList = (List<Map<String, String>>) customAttributesValue.get("cnAtts");
-        for (Map<String, String> cnAttsMap : cnAttsList) {
-            cnAtts.put(cnAttsMap.get("key"), cnAttsMap.get("value"));
+        Map<String, Object> cnAttsList = (Map<String, Object>) customAttributesValue.get("cnAtts");
+        for(Map.Entry cnAtt : cnAttsList.entrySet()) {
+            cnAtts.put(cnAtt.getKey().toString(), cnAtt.getValue());
         }
 
         feedModel.setOrgAtts(orgAtts);
         feedModel.setCnAtts(cnAtts);
-        feedModel.setCustomIds(customIds);
         return feedModel;
     }
 
