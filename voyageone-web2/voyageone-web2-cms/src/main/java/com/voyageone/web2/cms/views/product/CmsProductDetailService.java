@@ -9,7 +9,9 @@ import com.voyageone.cms.service.dao.mongodb.CmsBtProductDao;
 import com.voyageone.cms.service.dao.mongodb.CmsMtCategorySchemaDao;
 import com.voyageone.cms.service.dao.mongodb.CmsMtCommonSchemaDao;
 import com.voyageone.cms.service.model.*;
+import com.voyageone.common.Constants;
 import com.voyageone.common.configs.TypeChannel;
+import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.factory.SchemaJsonReader;
 import com.voyageone.common.masterdate.schema.field.*;
@@ -74,9 +76,13 @@ public class CmsProductDetailService {
     @Autowired
     protected VoApiDefaultClient voApiClient;
 
-    private static final String optionDataSource = "optConfig";
+    private static final String OPTION_DATA_SOURCE = "optConfig";
 
-    private static final String completeStatus = "1";
+    private static final String OPTION_DATA_SOURCE_CHANNEL = "optConfigChannel";
+    
+    private static final String FIELD_SKU_CARTS = "skuCarts";
+
+    private static final String COMPLETE_STATUS = "1";
 
     /**
      * 获取类目以及类目属性信息.
@@ -87,7 +93,7 @@ public class CmsProductDetailService {
      * @return
      * @throws BusinessException
      */
-    public CmsProductInfoBean getProductInfo(String channelId, Long prodId) throws BusinessException {
+    public CmsProductInfoBean getProductInfo(String channelId, Long prodId, String language) throws BusinessException {
 
         CmsProductInfoBean productInfo = new CmsProductInfoBean();
 
@@ -104,13 +110,13 @@ public class CmsProductDetailService {
         CmsProductInfoBean.ProductStatus productStatus = productInfo.getProductStatusInstance();
         productStatus.setApproveStatus(productValueModel.getFields().getStatus());
 
-        if (completeStatus.equals(productValueModel.getFields().getTranslateStatus())) {
+        if (COMPLETE_STATUS.equals(productValueModel.getFields().getTranslateStatus())) {
             productStatus.setTranslateStatus(true);
         } else {
             productStatus.setTranslateStatus(false);
         }
 
-        if (completeStatus.equals(productValueModel.getFields().getEditStatus())) {
+        if (COMPLETE_STATUS.equals(productValueModel.getFields().getEditStatus())) {
             productStatus.setEditStatus(true);
         } else {
             productStatus.setEditStatus(false);
@@ -130,7 +136,7 @@ public class CmsProductDetailService {
 
         List<Field> comSchemaFields = comSchemaModel.getFields();
 
-        this.fillFieldOptions(comSchemaFields, channelId);
+        this.fillFieldOptions(comSchemaFields, channelId, language);
 
         // 获取master schema.
         List<Field> masterSchemaFields = categorySchemaModel.getFields();
@@ -154,7 +160,7 @@ public class CmsProductDetailService {
 
         List<Field> subSkuFields = skuField.getFields();
 
-        this.fillFieldOptions(subSkuFields, channelId);
+        this.fillFieldOptions(subSkuFields, channelId, language);
 
         //获取sku schemaValue
         Map<String, Object> skuSchemaValue = buildSkuSchemaValue(productValueModel, categorySchemaModel);
@@ -889,11 +895,12 @@ public class CmsProductDetailService {
      * @param fields
      * @param channelId
      */
-    private void fillFieldOptions(List<Field> fields, String channelId) {
+    private void fillFieldOptions(List<Field> fields, String channelId, String language) {
 
         for (Field field : fields) {
 
-            if (optionDataSource.equals(field.getDataSource())) {
+            if (OPTION_DATA_SOURCE.equals(field.getDataSource())
+                    || OPTION_DATA_SOURCE_CHANNEL.equals(field.getDataSource())) {
 
                 FieldTypeEnum type = field.getType();
 
@@ -904,9 +911,30 @@ public class CmsProductDetailService {
                         break;
                     case SINGLECHECK:
                     case MULTICHECK:
-                        List<Option> options = TypeChannel.getOptions(field.getId(), channelId);
-                        OptionsField optionsField = (OptionsField) field;
-                        optionsField.setOptions(options);
+                        if (OPTION_DATA_SOURCE.equals(field.getDataSource())) {
+                            List<Option> options = TypeChannel.getOptions(field.getId(), channelId);
+                            OptionsField optionsField = (OptionsField) field;
+                            optionsField.setOptions(options);
+                        } else if (OPTION_DATA_SOURCE_CHANNEL.equals(field.getDataSource())) {
+                            // 获取type channel bean
+                            List<TypeChannelBean> typeChannelBeanList = new ArrayList<>();
+                            if (FIELD_SKU_CARTS.equals(field.getId())) {
+                                typeChannelBeanList = TypeChannel.getTypeListSkuCarts(channelId, Constants.comMtTypeChannel.SKU_CARTS_53_A, language);
+                            } else {
+                                typeChannelBeanList = TypeChannel.getTypeWithLang(field.getId(), channelId, language);
+                            }
+
+                            // 替换成field需要的样式
+                            List<Option> options = new ArrayList<>();
+                            for (TypeChannelBean typeChannelBean : typeChannelBeanList) {
+                                Option opt = new Option();
+                                opt.setDisplayName(typeChannelBean.getName());
+                                opt.setValue(typeChannelBean.getValue());
+                                options.add(opt);
+                            }
+                            OptionsField optionsField = (OptionsField) field;
+                            optionsField.setOptions(options);
+                        }
                         break;
                     default:
                         break;

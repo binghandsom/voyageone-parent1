@@ -20,13 +20,18 @@ define([
             });
         };
 
+        $scope.clear = function () {
+            $scope.searchInfo = {};
+        };
+
         $scope.search = function () {
             promotionService.getPromotionList($scope.searchInfo).then(function(res){
                 $scope.vm.promotionList = res.data;
                 $scope.groupPageOption.total = $scope.vm.promotionList.size;
             },function(res){
             })
-        }
+        };
+
         $scope.del = function (data) {
             confirm("是否要删除  "+data.promotionName,'删除').result.then(function(){
                 var index = _.indexOf($scope.vm.promotionList,data);

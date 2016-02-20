@@ -134,9 +134,9 @@
 										</span>&nbsp;
 										<span>{{'TXT_PRODUCT_NAME_WITH_COLON' | translate}}&nbsp;
 											<a ng-if="productInfo.fields.productNameCn" href="#/product/detail/{{productInfo.prodId}}" target="_blank" class="text-u-l"
-											   title="{{productInfo.fields.productNameCn}}">{{productInfo.fields.productNameCn | limitTo: 50}}{{productInfo.fields.productNameCn.length > 50 ? '...' : ''}}</a>
+											   title="{{productInfo.fields.productNameCn}}">{{productInfo.fields.productNameCn | limitTo: 30}}{{productInfo.fields.productNameCn.length > 30 ? '...' : ''}}</a>
 											<a ng-if="!productInfo.fields.productNameCn" href="#/product/detail/{{productInfo.prodId}}" target="_blank" class="text-u-l"
-											   title="{{productInfo.fields.productNameEn}}">{{productInfo.fields.productNameEn | limitTo: 50}}{{productInfo.fields.productNameEn.length > 50 ? '...' : ''}}</a>
+											   title="{{productInfo.fields.productNameEn}}">{{productInfo.fields.productNameEn | limitTo: 30}}{{productInfo.fields.productNameEn.length > 30 ? '...' : ''}}</a>
 										</span>
 								</td>
 								<td colspan="2" class="text-right">{{'TXT_CATEGORY_WITH_COLON' | translate}}&nbsp;{{productInfo.catPath}}</td>

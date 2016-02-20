@@ -41,7 +41,7 @@
                             </select>
                             <input ng-model="$ctrl.selected.keyWord" enter-click="#btn-filter"
                                    type="text" placeholder="{{'TXT_MSG_SEARCH' | translate}}" class="form-control">
-                            <button class="btn btn-default" ng-click="clear()">
+                            <button class="btn btn-default" ng-click="$ctrl.clear()">
                                 <i class="fa fa-remove"></i>&nbsp;<span>{{'BTN_CLEAR' | translate}}</span>
                             </button>
                             <button id="btn-filter" class="btn btn-vo btn-xxs" ng-click="$ctrl.filteringData()">

@@ -142,7 +142,7 @@
   "TXT_PROMOTION_NAME": "活动名称",
   "TXT_PROMOTION_TIME": "活动时间",
   "TXT_MSRP": "官方售价",
-  "TXT_PROMOTION_PRICE": "活动价格",
+  "TXT_PROMOTION_PRICE": "活动售价",
   "TXT_CODE_OR_SKU": "产品Code / SKU",
   "TXT_COMMENT": "备注",
   "TXT_UPDATE_BY": "修改折",
@@ -162,9 +162,11 @@
   "TXT_STATUS": "状态",
   "TXT_PREHEATING_TIME": "预热时间",
   "TXT_PRE_SALE_TIME": "预售时间",
-  "TXT_PROMOTION_DETAIL": "活动信息",
   "TXT_IS_START_TE_JIA_BAO": "启用特价宝？",
   "TXT_TE_JIA_BAO_ID": "特价宝ID",
+  "TXT_PROMOTION_DETAIL": "活动详情",
+  "TXT_PROMOTION_TAG": "折扣标签",
+  "TXT_RETAIL_PRICE": "指导售价",
 
 
 
@@ -231,5 +233,7 @@
   "BTN_REFRESH": "刷新",
   "BTN_PROMOTION_HISTORY": "活动履历",
   "BTN_PRICE_HISTORY": "价格履历",
-  "BTN_DOWNLOAD": "下载"
+  "BTN_DOWNLOAD": "下载",
+  "BTN_BULK_UPLOAD": "批量导入",
+  "BTN_BULK_UPLOAD_PRICE": "批量刷价格"
 }

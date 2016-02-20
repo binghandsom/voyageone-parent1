@@ -281,10 +281,10 @@
 									</span>&nbsp;
 									<span>{{'TXT_GROUP_NAME_WITH_COLON' | translate}}&nbsp;
 										<a ng-if="groupInfo.fields.productNameCn" ng-href="#/group/detail/{{groupInfo.groups.platforms[0].groupId}}" title="{{groupInfo.fields.productNameCn}}"
-										   target="_blank">{{groupInfo.fields.productNameCn | limitTo: 50}}{{groupInfo.fields.productNameCn.length > 50 ? '...' : ''}}
+										   target="_blank">{{groupInfo.fields.productNameCn | limitTo: 30}}{{groupInfo.fields.productNameCn.length > 30 ? '...' : ''}}
 										</a>
 										<a ng-if="!groupInfo.fields.productNameCn" ng-href="#/group/detail/{{groupInfo.groups.platforms[0].groupId}}" title="{{groupInfo.fields.productNameEn}}"
-										   target="_blank">{{groupInfo.fields.productNameEn | limitTo: 50}}{{groupInfo.fields.productNameEn.length > 50 ? '...' : ''}}
+										   target="_blank">{{groupInfo.fields.productNameEn | limitTo: 30}}{{groupInfo.fields.productNameEn.length > 30 ? '...' : ''}}
 										</a>
 									</span>
 									<span class="pull-right">{{'TXT_CATEGORY' | translate}}&nbsp;{{groupInfo.catPath}}</span>
@@ -324,12 +324,12 @@
 											<ul ng-if="groupInfo.groups.platforms[0].publishTime">
 												<li>{{'TXT_PUBLISH_TIME' | translate}}</li>
 												<!--<li><span>{{groupInfo.publishDate}}</span></li>-->
-												<li><span>{{groupInfo.groups.platforms[0].publishTime}}</span></li>
+												<li><span>{{groupInfo.groups.platforms[0].publishTime.substring(0,19)}}</span></li>
 											</ul>
 											<ul ng-if="!groupInfo.groups.platforms[0].publishTime">
 												<li>{{'TXT_CREATE_TIME' | translate}}</li>
 												<!--<li><span>{{groupInfo.publishDate}}</span></li>-->
-												<li><span>{{groupInfo.created}}</span></li>
+												<li><span>{{groupInfo.created.substring(0,19)}}</span></li>
 											</ul>
 										</div>
 									</small>
@@ -385,9 +385,9 @@
 										</span>&nbsp;
 										<span>{{'TXT_PRODUCT_NAME_WITH_COLON' | translate}}&nbsp;
 											<a ng-if="productInfo.fields.productNameCn" href="#/product/detail/{{productInfo.prodId}}" title="{{productInfo.fields.productNameCn}}"
-											   target="_blank">{{productInfo.fields.productNameCn | limitTo: 50}}{{productInfo.fields.productNameCn.length > 50 ? '...' : ''}}</a>
+											   target="_blank">{{productInfo.fields.productNameCn | limitTo: 30}}{{productInfo.fields.productNameCn.length > 30 ? '...' : ''}}</a>
 											<a ng-if="!productInfo.fields.productNameCn" href="#/product/detail/{{productInfo.prodId}}" title="{{productInfo.fields.productNameEn}}"
-											   target="_blank">{{productInfo.fields.productNameEn | limitTo: 50}}{{productInfo.fields.productNameEn.length > 50 ? '...' : ''}}</a>
+											   target="_blank">{{productInfo.fields.productNameEn | limitTo: 30}}{{productInfo.fields.productNameEn.length > 30 ? '...' : ''}}</a>
 										</span>
 										<span class="pull-right">{{'TXT_CATEGORY' | translate}}&nbsp;{{productInfo.catPath}}</span>
 									</td>

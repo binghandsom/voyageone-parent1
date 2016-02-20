@@ -23,11 +23,11 @@ define([
          * @param $translate
          * @constructor
          */
-        function PlatformMappingController(platformMappingService, alert, $translate) {
+        function PlatformMappingController($rootScope, platformMappingService, alert, $translate) {
 
             this.alert = alert;
             this.platformMappingService = platformMappingService;
-            this.carts = Carts;
+            this.carts = [];
             this.$translate = $translate;
 
             /**
@@ -35,7 +35,7 @@ define([
              * @type {{cart: number}}
              */
             this.selected = {
-                cart: this.carts.TM.id
+                cart: $rootScope.platformType.cartId.toString()
             };
 
             this.matched = {
@@ -83,6 +83,7 @@ define([
                 }).then(function (res) {
 
                     ttt.mainCategories = res.data.categories;
+                    ttt.carts = res.data.carts;
                     var mappings = res.data.mappings;
 
                     // 追加附加属性

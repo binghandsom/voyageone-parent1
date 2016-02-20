@@ -49,7 +49,7 @@ public class CmsDictManageService {
         Map<String, Object> masterData = new HashMap<>();
 
         // 获取platform信息
-        masterData.put("platformList", TypeChannel.getTypeListSkuCarts(userInfo.getSelChannelId(), Constants.comMtTypeChannel.SKU_CARTS_53_D , language));
+        masterData.put("platformList", TypeChannel.getTypeListSkuCarts(userInfo.getSelChannelId(), Constants.comMtTypeChannel.SKU_CARTS_53_A , language));
 
         return masterData;
     }

@@ -13,7 +13,7 @@
 									<label class="col-sm-3 control-label" translate="TXT_PLATFORM_TYPE"></label>
 									<div class="col-sm-9">
 										<select class="form-control" ng-model="vm.searchInfo.cart_id"
-												ng-options="platform.value as platform.displayName for platform in vm.masterData.platformList">
+												ng-options="platform.value as platform.name for platform in vm.masterData.platformList">
 											<option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
 										</select>
 									</div>
@@ -35,7 +35,7 @@
 							<div class="form-group form-inline">
 								<button class="btn btn-default" ng-click="clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR' | translate}}</button>
 								<button class="btn btn-vo" ng-click="search()"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}</button>
-								<button class="btn btn-success" ng-click="create()"><i class="fa fa-plus"></i>&nbsp;<a href="#/mapping/dictionary/item">{{'BTN_NEW_DICTIONARY' | translate}}</a></button>
+								<button class="btn btn-success"><i class="fa fa-plus"></i>&nbsp;<a href="#/mapping/dictionary/item">{{'BTN_NEW_DICTIONARY' | translate}}</a></button>
 							</div><!-- .form-inline -->
 								</div>
 						</div>

@@ -3,14 +3,15 @@
         <div class="panel-group">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h4 class="panel-title"><i class="glyphicon glyphicon-star"></i>&nbsp;活动详情</h4>
+                    <h4 class="panel-title"><i class="glyphicon glyphicon-star"></i>
+                    <span translate="TXT_PROMOTION_DETAIL"></span></h4>
                 </div>
                 <div class="container-fluid m-t-sm m-b-md">
                     <div class="col-sm-12">
                         <div class="col-sm-4">
                             <form class="form-horizontal">
                                 <div class="form-group">
-                                    <label class="col-sm-4 control-label">活动名称</label>
+                                    <label class="col-sm-4 control-label" translate="TXT_PROMOTION_NAME"></label>
                                     <div class="col-sm-7">
                                         <input type="text" class="form-control" ng-model="vm.promotion.promotionName">
                                     </div>
@@ -25,18 +26,17 @@
                                     <!--</div>-->
                                 <!--</div>-->
                                 <div class="form-group">
-                                    <label class="col-sm-4 control-label">活动渠道</label>
+                                    <label class="col-sm-4 control-label" translate="TXT_PLATFORM_TYPE"></label>
                                     <div class="col-sm-7">
-                                        <label ng-repeat="cart in vm.cartList" class="checkbox-inline c-checkbox"><input type="radio" name="cartid" ng-model="vm.promotion.cartId"  ng-required="true" value={{cart.cartId}}><span class="fa fa-check"></span> {{cart.name}} </label>
-                                        <!--<label class="checkbox-inline c-checkbox"><input type="radio" name="cartid" ng-model="promotion.cartId" ng-required="true" value="23"><span class="fa fa-check"></span> 天猫国际 </label>-->
-                                        <!--<label class="checkbox-inline c-checkbox"><input type="radio" name="cartid" ng-model="promotion.cartId" ng-required="true" value="27"><span class="fa fa-check"></span>  聚美</label>-->
-                                        <!--<label class="checkbox-inline c-checkbox"><input type="radio" name="cartid" ng-model="promotion.cartId" ng-required="true" value="24"><span class="fa fa-check"></span> 京东 </label>-->
-                                        <!--<label class="checkbox-inline c-checkbox"><input type="radio" name="cartid" ng-model="promotion.cartId" ng-required="true" value="26"><span class="fa fa-check"></span> 京东国际 </label>-->
+                                        <label ng-repeat="cart in vm.platformTypeList" class="checkbox-inline c-checkbox">
+                                            <input type="radio" name="cartid" ng-model="vm.promotion.cartId"  ng-required="true" value={{cart.value}}>
+                                            <span class="fa fa-check"></span> {{cart.name}}
+                                        </label>
                                     </div>
                                 </div>
                                 <!-- .form-group -->
                                 <div class="form-group" ng-show="promotion.cartId == 20 || promotion.cartId == 23">
-                                    <div class="col-sm-3 control-label"><label class="">启用特价宝？</label></div>
+                                    <div class="col-sm-3 control-label"><label class="" translate="TXT_IS_START_TE_JIA_BAO"></label></div>
                                     <div class="col-sm-2">
                                         <div class="onoffswitch">
                                             <input type="checkbox" name="onoffswitch" ng-model="tejiabao" class="onoffswitch-checkbox" id="myonoffswitch4" checked>
@@ -47,7 +47,7 @@
                                         </div>
                                     </div>
                                     <div class="col-sm-4">
-                                        <input class="form-control" ng-if="tejiabao == true" ng-model="promotion.tejiabaoId" placeholder="特价宝ID">
+                                        <input class="form-control" ng-if="tejiabao == true" ng-model="promotion.tejiabaoId" placeholder="{{'TXT_TE_JIA_BAO_ID' | translate}}">
                                     </div><!-- onoff switch -->
                                 </div>
                             </form>
@@ -57,26 +57,9 @@
                         <div class="col-sm-4">
                             <form class="form-horizontal">
                                 <div class="form-group">
-                                    <label class="col-sm-3 control-label">活动时间</label>
+                                    <label class="col-sm-3 control-label" translate="TXT_PREHEATING_TIME"></label>
                                     <div class="col-sm-8 form-inline">
-                                        <div class="col-sm-6 input-group" ng-controller="datePickerCtrl">
-                                            <input type="text" ng-model="vm.promotion.activityStart" class="form-control" datepicker-popup="{{formatDate}}" is-open="opened" date-model-format="{{formatDate}}" datepicker-options="dateOptions" close-text="Close" />
-								              <span class="input-group-btn">
-								                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
-								              </span>
-                                        </div> ~
                                         <div class="col-sm-5 input-group" ng-controller="datePickerCtrl">
-                                            <input type="text" ng-model="vm.promotion.activityEnd" class="form-control" datepicker-popup="{{formatDate}}" is-open="opened" date-model-format="{{formatDate}}" datepicker-options="dateOptions" close-text="Close" />
-								              <span class="input-group-btn">
-								                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
-								              </span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-sm-3 control-label">预热时间</label>
-                                    <div class="col-sm-8 form-inline">
-                                        <div class="col-sm-6 input-group" ng-controller="datePickerCtrl">
                                             <input type="text" ng-model="vm.promotion.prePeriodStart" class="form-control" datepicker-popup="{{formatDate}}" is-open="opened" date-model-format="{{formatDate}}" datepicker-options="dateOptions" close-text="Close" />
 								              <span class="input-group-btn">
 								                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
@@ -91,9 +74,9 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="col-sm-3 control-label">预售时间</label>
+                                    <label class="col-sm-3 control-label" translate="TXT_PRE_SALE_TIME"></label>
                                     <div class="col-sm-8 form-inline">
-                                        <div class="col-sm-6 input-group" ng-controller="datePickerCtrl">
+                                        <div class="col-sm-5 input-group" ng-controller="datePickerCtrl">
                                             <input type="text" ng-model="vm.promotion.preSaleStart" class="form-control" datepicker-popup="{{formatDate}}" is-open="opened" date-model-format="{{formatDate}}" datepicker-options="dateOptions" close-text="Close" />
 								              <span class="input-group-btn">
 								                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
@@ -107,41 +90,44 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label" translate="TXT_PROMOTION_TIME"></label>
+                                    <div class="col-sm-8 form-inline">
+                                        <div class="col-sm-5 input-group" ng-controller="datePickerCtrl">
+                                            <input type="text" ng-model="vm.promotion.activityStart" class="form-control" datepicker-popup="{{formatDate}}" is-open="opened" date-model-format="{{formatDate}}" datepicker-options="dateOptions" close-text="Close" />
+								              <span class="input-group-btn">
+								                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+								              </span>
+                                        </div>&nbsp;~&nbsp;
+                                        <div class="col-sm-5 input-group" ng-controller="datePickerCtrl">
+                                            <input type="text" ng-model="vm.promotion.activityEnd" class="form-control" datepicker-popup="{{formatDate}}" is-open="opened" date-model-format="{{formatDate}}" datepicker-options="dateOptions" close-text="Close" />
+								              <span class="input-group-btn">
+								                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+								              </span>
+                                        </div>
+                                    </div>
+                                </div>
                             </form>
                             <!-- .form -->
                         </div>
                         <div class="col-sm-4">
                             <form class="form-horizontal">
-
-                                <!--<div class="form-group">-->
-                                    <!--<label class="col-sm-3 control-label vo_reqfield">活动渠道</label>-->
-                                    <!--<div class="col-sm-8">-->
-                                        <!--<label ng-repeat="cart in cartList" class="checkbox-inline c-checkbox"><input type="radio" name="cartid" ng-model="promotion.cartId"  ng-required="true" value={{cart.cartId}}><span class="fa fa-check"></span> {{cart.name}} </label>-->
-                                        <!--&lt;!&ndash;<label class="checkbox-inline c-checkbox"><input type="radio" name="cartid" ng-model="promotion.cartId" ng-required="true" value="23"><span class="fa fa-check"></span> 天猫国际 </label>&ndash;&gt;-->
-                                        <!--&lt;!&ndash;<label class="checkbox-inline c-checkbox"><input type="radio" name="cartid" ng-model="promotion.cartId" ng-required="true" value="27"><span class="fa fa-check"></span>  聚美</label>&ndash;&gt;-->
-                                        <!--&lt;!&ndash;<label class="checkbox-inline c-checkbox"><input type="radio" name="cartid" ng-model="promotion.cartId" ng-required="true" value="24"><span class="fa fa-check"></span> 京东 </label>&ndash;&gt;-->
-                                        <!--&lt;!&ndash;<label class="checkbox-inline c-checkbox"><input type="radio" name="cartid" ng-model="promotion.cartId" ng-required="true" value="26"><span class="fa fa-check"></span> 京东国际 </label>&ndash;&gt;-->
-                                    <!--</div>-->
-                                <!--</div>&lt;!&ndash; .form-group &ndash;&gt;-->
                                 <div class="form-group">
                                     <label class="col-sm-3 control-label"></label>
                                     <div class="form-inline col-sm-9">
-                                        <input type="text" placeholder="Search"  ng-model="vm.searchKey"  class="form-control col-sm-8">
-                                        <span class="input-group-btn"><button class="btn btn-vo" ng-click="search()" type="button">Search</button></span>
+                                        <input type="text" placeholder="{{'TXT_MSG_SEARCH' | translate}}"  ng-model="vm.searchKey"  class="form-control col-sm-8">
+                                        <span class="input-group-btn"><button class="btn btn-vo" ng-click="search()" type="button" translate="BTN_SEARCH"></button></span>
                                     </div>
                                 </div>
                             </form>
                             <!-- .form -->
                         </div>
 
-                        <div class="text-center">
-                            <div class="col-sm-12" ng-if="compare(vm.promotion, promotionOld)==false">
+                        <div class="text-center" ng-if="vm.promotion.isActive">
+                            <div class="col-sm-12">
                                 <div class="form-inline" >
-                                    <button class="btn btn-default" ng-click="clearPromotionInfo()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR' | translate}}</button>
-                                    <button class="btn btn-vo" ng-click="savePromotionInfo()"><i class="glyphicon glyphicon-floppy-disk"></i> 保存</button>
-                                    <!--<button class="btn btn-success" ng-click="openPromotion('md',vm.cartList,vm.promotion,null)"><i
-                                            class="fa fa-pencil"></i> 修改Promotion
-                                    </button>-->
+                                    <button class="btn btn-default" ng-click="cannelPromotionInfo()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CANCEL' | translate}}</button>
+                                    <button class="btn btn-vo" ng-click="savePromotionInfo()"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;{{'BTN_SAVE' | translate}}</button>
                                 </div>
                                 <!-- .form-inline -->
                             </div>
@@ -156,14 +142,15 @@
             <!--right-btn-->
             <div class="form-inline m-b-xs pull-right" ng-controller="popupCtrl">
                 <button class="btn btn-default" ng-click="openImport('md',vm.promotionId)"><i
-                        class="fa fa-mail-forward"></i> 批量导入
+                        class="fa fa-mail-forward"></i>
+                    <span translate="BTN_BULK_UPLOAD"></span>
                 </button>
                 <!-- TODO 暂时未实现 -->
                 <!--<button class="btn btn-success">&lt;!&ndash;ng-click="openOtherProgress('lg')"&ndash;&gt;<i class="fa fa-mail-reply"></i> 批量导出</button>-->
                 <!--<button class="btn btn-success"><i class="fa fa-refresh"></i> 全部刷新</button>
                 <button class="btn btn-danger"><i class="fa fa-warning"></i> 全部停止</button>-->
-                <button class="btn btn-default" ng-click="$parent.teJiaBaoInit()"><i class="fa fa-cny"></i> 批量刷价格</button>
-                <button class="btn btn-danger btn-xs" ng-click="delSelPromotion()"><i class="fa fa-trash-o"></i> 删除</button>
+                <button class="btn btn-default" ng-click="$parent.teJiaBaoInit()"><i class="fa fa-cny"></i>&nbsp;{{'BTN_BULK_UPLOAD_PRICE' | translate}}</button>
+                <button class="btn btn-danger btn-xs" ng-click="delSelPromotion()"><i class="fa fa-trash-o"></i>&nbsp;{{'BTN_DELETE' | translate}}</button>
             </div>
             <!-- /right-btn -->
             <!--tab-->
@@ -175,45 +162,46 @@
                     <table class="table table-hover vo_models dropdown_table_bk font-bold" style="background:#e67e22;color:#fff">
                         <thead>
                         <tr>
-                            <td class="mfb-xxxs" ng-controller="selectRowsCtrl">
+                            <td class="mfb-xxxs text-center" ng-controller="selectRowsCtrl">
                                 <label class="checkbox-inline c-checkbox">
                                     <input type="checkbox" ng-checked="vm.groupSelList.selAllFlag"
                                            ng-click="selectAll(vm.groupSelList,'modelId')"><span
                                         class="fa fa-check"></span> {{'TXT_SELECT_ALL' | translate}} </label>
-                                <span class="m-l-xxl">Primary Product</span>
+                                <span class="m-l-xxl" translate="TXT_PRIMARY_PRODUCT"></span>
                             </td>
-                            <td class="mfb-xxt text-center">TAG</td>
-                            <!--<td class="mfb-xxt text-left">Inventory</td>-->
-                            <td class="mfb-xxt text-center">MSRP</td>
-                            <td class="mfb-xxt text-center">Retail Price</td>
-                            <!--<td class="mfb-xxt text-center">Sale Price</td>-->
-                            <td class="mfb-xxt text-center">Promotion Price</td>
-                            <!--<td class="mfb-xxt text-left">折扣</td>-->
-                            <!--<td class="mfb-xxt text-left">Base Property</td>-->
-                            <td class="mfb-xxt text-left">Time</td>
-                            <td class="mfb-xxt text-center">Action</td>
+                            <td class="mfb-xxt text-left" translate="TXT_PROMOTION_TAG"></td>
+                            <td class="mfb-xxt text-right" translate="TXT_MSRP"></td>
+                            <td class="mfb-xxt text-right" translate="TXT_RETAIL_PRICE"></td>
+                            <td class="mfb-xxt text-right" translate="TXT_PROMOTION_PRICE"></td>
+                            <td class="mfb-xxt text-left" translate="TXT_TIME"></td>
+                            <td class="mfb-xxt text-center" translate="TXT_ACTION"></td>
                         </tr>
                         </thead>
                     </table>
-                    <div class="col-sm-12 dropdown_table_main">
-                        <table if-no-rows="vm.groupList.length" class="table table-hover vo_table vo_models">
+                    <div class="col-sm-12 dropdown_table_main" if-no-rows="vm.groupList.length">
+                        <table if-no-rows="vm.groupList.length" class="table table-hover vo_table vo_models" ng-if="vm.groupList.length">
                             <tbody ng-repeat="group in vm.groupList">
                             <tr class="table_bg_gray">
-                                <td colspan="4" class="control-label text-left form-inline">
+                                <td colspan="7" class="control-label text-left form-inline">
                                     <label class="checkbox-inline c-checkbox"><input
                                             ng-model="vm.groupSelList.selFlag[group.modelId]" type="checkbox"
                                             ng-controller="selectRowsCtrl"
-                                            ng-click="selectOne(group.modelId, vm.groupSelList, 'modelId')"><span
-                                            class="fa fa-check"></span></label>
-                                    <span class="label label-success-new m-r-lg m-l"> {{group.platformStatus}} </span> <span class="m-r-lg">Number IID: <a
-                                        ng-href="https://detail.tmall.com/item.htm?id={{group.numIid}}" target="_blank"
-                                        class="text-u-l">{{group.numIid}}</a></span> <span>Group Name:<a
-                                        ng-href="#/group/list/{{group.modelId}}" target="_blank" class="text-u-l">{{group.productModel}}</a></span>
+                                            ng-click="selectOne(group.modelId, vm.groupSelList, 'modelId')">
+                                        <span class="fa fa-check"></span>
+                                    </label>
+									<span class="m-r-sm" ng-if="group.numIid">{{'TXT_NUMBER_IID_WITH_COLON' | translate}}&nbsp;
+										<a ng-href="https://detail.tmall.com/item.htm?id={{group.numIid}}" target="_blank"  ng-bind="group.numIid"></a>
+									</span>&nbsp;
+									<span>{{'TXT_GROUP_NAME_WITH_COLON' | translate}}&nbsp;
+										<a ng-href="#/group/detail/{{group.modelId}}" title="{{group.productModel}}"
+                                           target="_blank">{{group.productModel | limitTo: 30}}{{group.productModel.length > 30 ? '...' : ''}}
+                                        </a>
+									</span>&nbsp;
+                                    <span class="pull-right">{{'TXT_CATEGORY' | translate}}&nbsp;{{group.catPath}}</span>
                                 </td>
-                                <td colspan="4" class="text-right">{{group.catPath}}</td>
                             </tr>
                             <tr>
-                                <td class="mfb-xxxs">
+                                <td class="mfb-xxxs text-left">
                                     <img src="http://image.sneakerhead.com/is/image/sneakerhead/{{group.image}}"
                                          alt="{{group.productName}}" class="img-circle pull-left m-r"/>
 
@@ -224,26 +212,16 @@
                                         </ul>
                                     </div>
                                 </td>
-                                <td class="mfb-xxt text-center">{{group.tag}}</td>
-                                <!--<td class="mfb-xxt text-left">0</td>-->
-                                <td class="mfb-xxt text-center">{{group.msrp}}</td>
-                                <td class="mfb-xxt text-center">{{group.salePriceMin != group.salePriceMax?group.salePriceMin +' - '+ group.salePriceMax:group.salePriceMin}}</td>
-                                <td class="mfb-xxt text-center">{{group.promotionPriceMin != group.promotionPriceMax?group.promotionPriceMin +' - '+ group.promotionPriceMax:group.promotionPriceMax}}</td>
-                                <!--<td class="mfb-xxt text-left">-->
-                                    <!--<div class="table_main">&lt;!&ndash; TODO 未实现 &ndash;&gt;-->
-                                        <!--&lt;!&ndash;<ul>&ndash;&gt;-->
-                                        <!--&lt;!&ndash;<li>Size Type：Women</li>&ndash;&gt;-->
-                                        <!--&lt;!&ndash;<li>Style：欧美</li>&ndash;&gt;-->
-                                        <!--&lt;!&ndash;</ul>&ndash;&gt;-->
-                                    <!--</div>-->
-                                <!--</td>-->
+                                <td class="mfb-xxt text-left">{{group.tag}}</td>
+                                <td class="mfb-xxt text-right">{{group.msrp | number: 2}}</td>
+                                <td class="mfb-xxt text-right">{{group.salePriceMin != group.salePriceMax ? group.salePriceMin | number: 2 +' ~ '+ group.salePriceMax | number: 2 : group.salePriceMin  | number: 2}}</td>
+                                <td class="mfb-xxt text-right">{{group.promotionPriceMin != group.promotionPriceMax ? group.promotionPriceMin | number: 2 +' ~ '+ group.promotionPriceMax | number: 2 : group.promotionPriceMax | number: 2}}</td>
                                 <td class="mfb-xxt text-left"><!-- TODO 显示产品的publish时间未实现-->
                                     <small popover-trigger="mouseenter" popover-placement="left">
                                         <div class="table_main">
                                             <ul>
-                                                <li>Created Time</li>
-                                                <li><span>{{(group.created).substring(0,10)}}</span></li>
-                                                <li><span>{{(group.created).substring(11,19)}}</span></li>
+                                                <li>{{'TXT_CREATE_TIME'| translate}}</li>
+                                                <li><span>{{(group.created).substring(0,19)}}</span></li>
                                             </ul>
                                         </div>
                                     </small>
@@ -274,15 +252,15 @@
                             <td class="mfb-xxt"><label class="checkbox-inline c-checkbox">
                                 <input type="checkbox" ng-checked="vm.codeSelList.selAllFlag" ng-click="selectAll(vm.codeSelList,'productCode')">
                                 <span class="fa fa-check"></span> {{'TXT_SELECT_ALL' | translate}} </label></td>
-                            <td class="mfb-xxt text-center">TAG</td>
-                            <td class="mfb-xxt text-center">Inventory</td>
-                            <td class="mfb-xxt text-center">Retail Price</td>
-                            <td class="mfb-xxt text-center">Sale Price</td>
-                            <td class="mfb-xxt text-center">Promotion Price</td>
-                            <td class="mfb-xxs text-left">Base Property</td>
-                            <td class="mfb-xxt text-center">SKU数</td>
-                            <td class="mfb-xxt text-left">Time</td>
-                            <td class="mfb-xxt text-right">Action</td>
+                            <td class="mfb-xxt text-left" translate="TXT_PROMOTION_TAG"></td>
+                            <td class="mfb-xxt text-center" translate="TXT_INVENTORY"></td>
+                            <td class="mfb-xxt text-right" translate="TXT_RETAIL_PRICE"></td>
+                            <td class="mfb-xxt text-right" translate="TXT_SALE_PRICE"></td>
+                            <td class="mfb-xxt text-right" translate="TXT_PROMOTION_PRICE"></td>
+                            <td class="mfb-xxs text-left" translate="TXT_BASE_PROPERTY"></td>
+                            <td class="mfb-xxt text-center" translate="TXT_SKU_COUNT"></td>
+                            <td class="mfb-xxt text-left" translate="TXT_TIME"></td>
+                            <td class="mfb-xxt text-center" translate="TXT_ACTION"></td>
                         </tr>
                         </thead>
                     </table>
@@ -290,46 +268,52 @@
                         <table if-no-rows="vm.codeList.length" class="table table-hover vo_table vo_models">
                             <tbody ng-repeat="code in vm.codeList">
                             <tr class="table_bg_gray">
-                                <td colspan="6" class="control-label text-left form-inline">
-                                    <label class="checkbox-inline c-checkbox"><input type="checkbox"
-                                                                                     ng-model="vm.codeSelList.selFlag[code.productCode]"
-                                                                                     type="checkbox"
-                                                                                     ng-controller="selectRowsCtrl"
-                                                                                     ng-click="selectOne(code.productCode, vm.codeSelList, 'productCode')"><span
-                                            class="fa fa-check"></span></label>
-                                    <span class="label label-success-new m-r-lg m-l"> {{code.platformStatus}} </span> <span class="m-r-lg">Product Code: <a
-                                        ng-href="https://detail.tmall.com/item.htm?id={{code.numIid}}" target="_blank"
-                                        class="text-u-l">{{code.productCode}}</a></span> <span>Product Name: <a
-                                        href="#/product/detail/{{code.productId}}" target="_blank" class="text-u-l">{{code.productName}}</a></span>
+                                <td colspan="10" class="control-label text-left form-inline">
+                                    <label class="checkbox-inline c-checkbox">
+                                        <input type="checkbox"
+                                               ng-model="vm.codeSelList.selFlag[code.productCode]"
+                                               type="checkbox"
+                                               ng-controller="selectRowsCtrl"
+                                               ng-click="selectOne(code.productCode, vm.codeSelList, 'productCode')">
+                                        <span class="fa fa-check"></span>
+                                    </label>
+									<span class="label m-r-sm m-l">
+										&nbsp;{{code.platformStatus}}&nbsp;
+									</span>
+									<span class="m-r-sm" ng-if="code.numIid">{{'TXT_NUMBER_IID_WITH_COLON' | translate}}&nbsp;
+										<a ng-href="https://detail.tmall.com/item.htm?id={{code.numIid}}" target="_blank"  ng-bind="code.numIid"></a>
+									</span>&nbsp;
+										<span class="m-r-sm">{{'TXT_PRODUCT_CODE_WITH_COLON' | translate}}&nbsp;
+											<a ng-href="#/product/detail/{{code.productId}}" target="_blank" ng-bind="code.productCode"></a>
+										</span>&nbsp;
+										<span>{{'TXT_PRODUCT_NAME_WITH_COLON' | translate}}&nbsp;
+											<a href="#/product/detail/{{code.productId}}" title="{{code.productName}}"
+                                               target="_blank">{{code.productName | limitTo: 30}}{{code.productName.length > 30 ? '...' : ''}}</a>
+										</span>
+                                    <span class="pull-right">{{'TXT_CATEGORY' | translate}}&nbsp;{{code.catPath}}</span>
                                 </td>
-                                <th colspan="4" class="text-right">{{code.catPath}}</th>
                             </tr>
                             <tr>
-                                <td class="mfb-xxt">
+                                <td class="mfb-xxt text-center">
                                     <img src="http://image.sneakerhead.com/is/image/sneakerhead/{{code.image}}"
                                          alt="{{code.productName}}" class="img-circle pull-left m-r"/>
                                 </td>
-                                <td class="mfb-xxt text-center">{{code.tag}}</td>
+                                <td class="mfb-xxt text-left">{{code.tag}}</td>
                                 <td class="mfb-xxt text-center">{{code.inventory}}</td>
-                                <td class="mfb-xxt text-center">{{code.retailPrice}}</td>
-                                <td class="mfb-xxt text-center">{{code.salePrice}}</td>
-                                <td class="mfb-xxt text-left">
-                                    <span class="text-l-t">{{code.msrp}}</span>
-                                    <p class=""><input type="text" class="col-sm-1 form-control m-b-xs" placeholder={{code.promotionPrice}}></p>
-                                    <!--<p style="color:#ff0000;">（<span style="vertical-align: sub;font-size:8px"><i class="glyphicon glyphicon-triangle-top" style="font-size:4px"></i></span>&nbsp;520.00） 六折</p>-->
-                                    <p class="text-u-red">（<span class="text-u-sub"><i class="glyphicon glyphicon-triangle-bottom"></i></span>&nbsp;{{code.msrp-code.promotionPrice}}） {{(code.promotionPrice/code.msrp*100).toFixed(1)}}折</p>
-                                      <!--<input type="text" class="col-sm-1 form-control" ng-model="code.promotionPrice">
-                                      <button popover="Sale Price: {{code.salePrice}}" popover-title="Final Price" type="button" popover-placement="left" class="btn btn-default btn-xs">{{code.promotionPrice}}</button>-->
-
+                                <td class="mfb-xxt text-right">{{code.retailPrice | number : 2}}</td>
+                                <td class="mfb-xxt text-right">{{code.salePrice | number : 2}}</td>
+                                <td class="mfb-xxt text-right">
+                                    <span class="text-right text-l-t">{{code.msrp | number: 2}}</span>
+                                    <p class="">
+                                        <input type="text" class="col-sm-1 form-control m-b-xs" ng-model="code.promotionPrice" ng-pattern="/^(\d+)(\.[0-9]{0,2})?$/">
+                                    </p>
+                                    <p class="text-u-red">
+                                        （<span class="text-u-sub"><i class="glyphicon glyphicon-triangle-bottom"></i></span>&nbsp;{{code.msrp-code.promotionPrice | number: 2}}
+                                        {{(code.promotionPrice/code.msrp*100).toFixed(2)}}{{'TXT_DISCOUNT_WORD' | translate}}</p>
                                 </td>
                                 <td class="mfb-xxs text-left">
-                                    <div class="table_main"><!-- TODO 未实现 -->
-                                        <!--<ul>-->
-                                        <!--<li>产地：中国</li>-->
-                                        <!--<li>颜色：红色</li>-->
-                                        <!--<li>材质：PU</li>-->
-                                        <!--<li>风格：欧美</li>-->
-                                        <!--</ul>-->
+                                    <div class="table_main">
+                                        <!-- TODO 未实现 -->
                                     </div>
                                 </td>
                                 <td class="mfb-xxt text-center">{{code.skuCount}}</td>
@@ -338,7 +322,7 @@
                                         <!-- TODO 未实现pulishtime -->
                                         <div class="table_main">
                                             <ul>
-                                                <li>Created Time</li>
+                                                <li>{{'TXT_CREATE_TIME' | translate}}</li>
                                                 <li><span>{{(code.created).substring(0,10)}}</span></li>
                                                 <li><span>{{(code.created).substring(11,19)}}</span></li>
                                             </ul>

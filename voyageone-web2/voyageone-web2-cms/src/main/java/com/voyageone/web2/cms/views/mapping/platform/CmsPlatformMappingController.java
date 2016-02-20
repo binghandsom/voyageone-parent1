@@ -35,7 +35,7 @@ public class CmsPlatformMappingController extends CmsController {
 
         Integer cartId = params.get("cartId");
 
-        return success(platformMappingService.getMainFinalCategoryMap(cartId, getUser()));
+        return success(platformMappingService.getMainFinalCategoryMap(cartId, getUser(), getLang()));
     }
 
     @RequestMapping(CmsUrlConstants.MAPPING.PLATFORM.GET_OTHER_MAPPING_PATH)

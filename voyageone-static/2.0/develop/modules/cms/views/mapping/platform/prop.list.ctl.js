@@ -77,6 +77,13 @@ define([
                     this.setHide(property);
                 }.bind(this));
             },
+            clear: function () {
+                this.selected = {
+                    required: null,
+                    matched: null,
+                    keyWord: null
+                };
+            },
             setHide: function (property) {
 
                 var keyWord = this.selected.keyWord;

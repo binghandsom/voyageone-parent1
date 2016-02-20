@@ -8,7 +8,13 @@ define([
 
         $scope.initialize  = function () {
             search();
-        }
+        };
+
+        $scope.search = search;
+
+        $scope.clear = function () {
+            $scope.searchInfo = {};
+        };
 
         function search() {
             systemCategoryService.getCategoryList({
@@ -23,7 +29,6 @@ define([
 
             })
         }
-        $scope.search = search;
     }
 
     indexController.$inject = ['$scope', 'systemCategoryService'];

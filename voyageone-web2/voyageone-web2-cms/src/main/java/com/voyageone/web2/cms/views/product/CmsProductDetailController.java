@@ -32,7 +32,7 @@ public class CmsProductDetailController extends CmsController{
 
         Map<String,Object> categoryInfo = new HashMap<>();
 
-        CmsProductInfoBean productInfo = productPropsEditService.getProductInfo(channelId,productId);
+        CmsProductInfoBean productInfo = productPropsEditService.getProductInfo(channelId,productId,getLang());
 
         categoryInfo.put("productInfo",productInfo);
 

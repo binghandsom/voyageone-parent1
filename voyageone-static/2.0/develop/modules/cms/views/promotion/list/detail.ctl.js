@@ -43,12 +43,13 @@ define([
 
 
         $scope.initialize = function () {
-            $scope.getPlatformType();
-            promotionService.getPromotionList({"promotionId": $routeParams.promotionId}).then(function (res) {
-                $scope.vm.promotion = res.data[0];
-                $scope.promotionOld = _.clone($scope.vm.promotion);
-            }, function (err) {
-
+            promotionService.init().then(function (res) {
+                $scope.vm.platformTypeList = res.data.platformTypeList;
+                $scope.vm.promotionStatus = res.data.promotionStatus;
+                promotionService.getPromotionList({"promotionId": $routeParams.promotionId}).then(function (res) {
+                    $scope.vm.promotion = res.data[0];
+                    $scope.promotionOld = _.clone($scope.vm.promotion);
+                });
             });
             $scope.search();
         }
@@ -109,11 +110,6 @@ define([
                 $scope.vm.skuList = res.data.resultData;
             }, function (err) {
 
-            })
-        }
-        $scope.getPlatformType = function() {
-            menuService.getPlatformType().then(function(res){
-                $scope.vm.cartList = res;
             })
         };
         $scope.search = function () {
@@ -196,7 +192,7 @@ define([
                 notify.warning("fail");
             })
         };
-        $scope.clearPromotionInfo =function(){
+        $scope.cannelPromotionInfo =function(){
             $scope.vm.promotion = _.clone($scope.promotionOld);
         };
         $scope.compare = function(data1,data2){

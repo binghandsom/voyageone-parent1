@@ -162,9 +162,11 @@
   "TXT_STATUS": "Status",
   "TXT_PREHEATING_TIME": "Preheating Time",
   "TXT_PRE_SALE_TIME": "Pre-sale Time",
-  "TXT_PROMOTION_DETAIL": "Promotion Detail",
   "TXT_IS_START_TE_JIA_BAO": "Start TeJiaBao?",
   "TXT_TE_JIA_BAO_ID": "TeJiaBao ID",
+  "TXT_PROMOTION_DETAIL": "Promotion Detail",
+  "TXT_PROMOTION_TAG": "Dis. TAG",
+  "TXT_RETAIL_PRICE": "Retail Price",
 
 
   "TXT_MSG_SEARCH": "Search...",
@@ -228,5 +230,7 @@
   "BTN_REFRESH": "Refresh",
   "BTN_PROMOTION_HISTORY": "Promotion History",
   "BTN_PRICE_HISTORY": "Price History",
-  "BTN_DOWNLOAD": "Download"
+  "BTN_DOWNLOAD": "Download",
+  "BTN_BULK_UPLOAD": "批量导入",
+  "BTN_BULK_UPLOAD_PRICE": "批量刷价格"
 }

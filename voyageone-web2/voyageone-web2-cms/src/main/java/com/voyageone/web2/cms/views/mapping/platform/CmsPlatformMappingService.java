@@ -9,7 +9,9 @@ import com.voyageone.cms.service.model.CmsMtCategoryTreeModel;
 import com.voyageone.cms.service.model.CmsMtPlatformCategorySchemaModel;
 import com.voyageone.cms.service.model.CmsMtPlatformCategoryTreeModel;
 import com.voyageone.cms.service.model.CmsMtPlatformMappingModel;
+import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
+import com.voyageone.common.configs.TypeChannel;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.apache.commons.lang3.StringUtils;
@@ -52,7 +54,7 @@ public class CmsPlatformMappingService extends BaseAppService {
      * @param user   用户配置
      * @return Map, Key: categoryMap, mappings
      */
-    public Map<String, Object> getMainFinalCategoryMap(Integer cartId, UserSessionBean user) {
+    public Map<String, Object> getMainFinalCategoryMap(Integer cartId, UserSessionBean user, String language) {
 
         // 拍平
 
@@ -79,6 +81,7 @@ public class CmsPlatformMappingService extends BaseAppService {
         return new HashMap<String, Object>() {{
             put("categories", treeModelMap);
             put("mappings", mappings);
+            put("carts", TypeChannel.getTypeListSkuCarts(user.getSelChannelId(), Constants.comMtTypeChannel.SKU_CARTS_53_A, language));
         }};
     }
 
