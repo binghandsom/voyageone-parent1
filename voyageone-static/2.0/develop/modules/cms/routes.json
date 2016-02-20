@@ -1,33 +1,33 @@
 {
   "home": {
     "hash": "/home",
-    "templateUrl": "views/home/index.tpl.html",
-    "controllerUrl": "modules/cms/views/home/index.ctl"
+    "templateUrl": "views/home/welcome/index.tpl.html",
+    "controllerUrl": "modules/cms/views/home/welcome/index.ctl"
   },
   "promotion_index": {
     "hash": "/promotion/index",
-    "templateUrl": "views/promotion/index.tpl.html",
-    "controllerUrl": "modules/cms/views/promotion/index.ctl"
+    "templateUrl": "views/promotion/list/index.tpl.html",
+    "controllerUrl": "modules/cms/views/promotion/list/index.ctl"
   },
   "promotion_detail": {
     "hash": "/promotion/detail/:promotionId",
-    "templateUrl": "views/promotion/detail.tpl.html",
-    "controllerUrl": "modules/cms/views/promotion/detail.ctl"
+    "templateUrl": "views/promotion/list/detail.tpl.html",
+    "controllerUrl": "modules/cms/views/promotion/list/detail.ctl"
   },
   "promotion_task_index": {
     "hash": "/promotion/task",
-    "templateUrl": "views/task/index.tpl.html",
-    "controllerUrl": "modules/cms/views/task/index.ctl"
+    "templateUrl": "views/promotion/task/index.tpl.html",
+    "controllerUrl": "modules/cms/views/promotion/task/index.ctl"
   },
-  "task_detail": {
-    "hash": "/task/detail",
-    "templateUrl": "views/task/detail.tpl.html",
-    "controllerUrl": "modules/cms/views/task/detail.ctl"
+  "promotion_task_detail": {
+    "hash": "/promotion/task/detail",
+    "templateUrl": "views/promotion/task/detail.tpl.html",
+    "controllerUrl": "modules/cms/views/promotion/task/detail.ctl"
   },
-  "task_price": {
-    "hash": "/task/price/:promotionId",
-    "templateUrl": "views/task/price.tpl.html",
-    "controllerUrl": "modules/cms/views/task/price.ctl"
+  "promotion_task_price": {
+    "hash": "/promotion/task/price/:promotionId",
+    "templateUrl": "views/promotion/task/price.tpl.html",
+    "controllerUrl": "modules/cms/views/promotion/task/price.ctl"
   },
   "search_advance": {
     "hash": "/search/advance",

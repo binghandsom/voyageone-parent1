@@ -1,5 +1,6 @@
 package com.voyageone.web2.cms.views.promotion;
 
+import com.voyageone.web2.cms.views.promotion.list.CmsPromotionFileService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

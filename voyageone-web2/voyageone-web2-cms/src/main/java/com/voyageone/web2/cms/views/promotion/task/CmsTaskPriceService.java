@@ -1,4 +1,4 @@
-package com.voyageone.web2.cms.views.task;
+package com.voyageone.web2.cms.views.promotion.task;
 
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.sdk.api.VoApiDefaultClient;
