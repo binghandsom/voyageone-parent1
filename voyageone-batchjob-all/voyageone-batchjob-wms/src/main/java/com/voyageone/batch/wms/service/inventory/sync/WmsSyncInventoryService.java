@@ -8,6 +8,8 @@ import com.voyageone.batch.wms.modelbean.InventorySynLogBean;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
 import com.voyageone.common.configs.ShopConfigs;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -50,6 +52,15 @@ public class WmsSyncInventoryService extends WmsSyncInventoryBaseService {
 
         final int intRowCount = Integer.valueOf(com.voyageone.common.util.StringUtils.isNullOrBlank2(row_count)? "1":row_count);
 
+        // 重试时间间隔
+        String retry_time_interval =  TaskControlUtils.getVal1(taskControlList, TaskControlEnums.Name.retry_time_interval);
+
+        if (StringUtils.isNullOrBlank2(retry_time_interval)) {
+            retry_time_interval = "4";
+        }
+
+        String process_time = DateTimeUtil.getLocalTime(DateTimeUtil.getDate(), Integer.valueOf(retry_time_interval) * -1);
+
         // 检查并同步销售商的前端库存
         for (final ShopBean shopBean : shopBeans) {
 
@@ -90,24 +101,32 @@ public class WmsSyncInventoryService extends WmsSyncInventoryBaseService {
                     case JM:
                         // 取得刚上新但没库存同步过的记录（由于为了能够自动审核，聚美上新时库存都是设置为1）
                         inventorySynLogBeans =
-                                inventoryDao.getInventorySynLogForJMReFlush(getTaskName(), shopBean.getOrder_channel_id(), shopBean.getCart_id(), intRowCount);
+                                inventoryDao.getInventorySynLogForJMReFlush(getTaskName(), shopBean.getOrder_channel_id(), shopBean.getCart_id(), WmsConstants.SYN_FLG.INITAL,process_time, intRowCount);
                         // 如果不存在需刷新的记录时，则取得有库存变化的记录
                         if (inventorySynLogBeans.size() == 0) {
                             inventorySynLogBeans =
                                     inventoryDao.getInventorySynLogForJM(getTaskName(), shopBean.getOrder_channel_id(), shopBean.getCart_id(), intRowCount);
+
                         }else {
                             updateFlg = WmsConstants.UPDATE_FLG.ReFlush;
+
+                            // 库存刷新失败记录取得
+                            List<InventorySynLogBean> inventorySynIgnores=
+                                    inventoryDao.getInventorySynLogForJMReFlush(getTaskName(), shopBean.getOrder_channel_id(), shopBean.getCart_id(), WmsConstants.SYN_FLG.IGONRE, process_time, intRowCount);
+
+                            inventorySynLogBeans.addAll(inventorySynIgnores);
+
                         }
                         break;
                 }
 
                 if (!needSync(shopBean) && updateFlg.equals(WmsConstants.UPDATE_FLG.Update)) {
 
-                    // 不需要同步的，则直接转为忽略
-                    for (InventorySynLogBean inventorySynLogBean : inventorySynLogBeans)
-
-                        moveIgnore(inventorySynLogBean, "该 Cart 不需要更新");
-
+                    // 不需要同步的，则直接转为忽略（TODO：暂时不再忽略而是等待允许同步后再次同步）
+//                    for (InventorySynLogBean inventorySynLogBean : inventorySynLogBeans) {
+//
+//                        moveIgnore(inventorySynLogBean, "该 Cart 不需要更新");
+//                    }
                     return;
                 }
 

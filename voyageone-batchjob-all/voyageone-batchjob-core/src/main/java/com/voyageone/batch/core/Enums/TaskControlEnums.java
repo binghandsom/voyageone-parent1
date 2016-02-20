@@ -64,7 +64,11 @@ public class TaskControlEnums {
         /**
          * 删除历史记录间隔
          */
-        delete_time_interval
+        delete_time_interval,
+        /**
+         * 重试时间间隔
+         */
+        retry_time_interval
     }
 
     /**

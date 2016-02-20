@@ -62,15 +62,15 @@ public class WmsSyncToJuMeiSubService extends WmsSyncInventoryBaseService {
         } catch (Exception e) {
             $info(shopBean.getShop_name() + "（" + shopBean.getComment() + ")库存同步记录：" + new Gson().toJson(req) + "，库存同步结果：" + e);
             if (updateFlg.equals(WmsConstants.UPDATE_FLG.ReFlush)) {
-                logger.info("刷新失败时，更新标志位");
+//                logger.info("刷新失败时，更新标志位");
                 // 刷新失败时，更新标志位
-                updateJMFlgIgnore(inventorySynLogBean);
+                updateReFlushFlgIgnore(inventorySynLogBean);
             }
-//            // 失败的话，记录失败的信息
-//            else if (updateFlg.equals(WmsConstants.UPDATE_FLG.Update)) {
+            // 失败的话，记录失败的信息
+            else if (updateFlg.equals(WmsConstants.UPDATE_FLG.Update)) {
 //                logger.info("失败的话，记录失败的信息");
-//                moveIgnore(inventorySynLogBean, res);
-//            }
+                moveIgnore(inventorySynLogBean, e.getMessage());
+            }
             logFailRecord(e, inventorySynLogBean);
             return;
         }
@@ -85,12 +85,12 @@ public class WmsSyncToJuMeiSubService extends WmsSyncInventoryBaseService {
                     (resultMap.containsKey("message") && "success!".equals(resultMap.get("message"))))  {
 
                 if (updateFlg.equals(WmsConstants.UPDATE_FLG.ReFlush)) {
-                    logger.info("刷新成功时，更新标志位");
+//                    logger.info("刷新成功时，更新标志位");
                     // 刷新成功时，更新标志位
-                    updateJMFlgPass(inventorySynLogBean);
+                    updateReFlushFlgPass(inventorySynLogBean);
                 }
                 else if (updateFlg.equals(WmsConstants.UPDATE_FLG.Update)) {
-                    logger.info("更新成功后，迁移数据到历史表");
+//                    logger.info("更新成功后，迁移数据到历史表");
                     // 更新成功后，迁移数据到历史表
                     movePass(inventorySynLogBean);
                 }
@@ -99,13 +99,13 @@ public class WmsSyncToJuMeiSubService extends WmsSyncInventoryBaseService {
             }
             else {
                 if (updateFlg.equals(WmsConstants.UPDATE_FLG.ReFlush)) {
-                    logger.info("刷新失败时，更新标志位");
+//                    logger.info("刷新失败时，更新标志位");
                     // 刷新失败时，更新标志位
-                    updateJMFlgIgnore(inventorySynLogBean);
+                    updateReFlushFlgIgnore(inventorySynLogBean);
                 }
                 // 失败的话，记录失败的信息
                 else if (updateFlg.equals(WmsConstants.UPDATE_FLG.Update)) {
-                    logger.info("失败的话，记录失败的信息");
+//                    logger.info("失败的话，记录失败的信息");
                     moveIgnore(inventorySynLogBean, res);
                 }
 
