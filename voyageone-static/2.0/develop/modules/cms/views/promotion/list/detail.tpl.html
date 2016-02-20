@@ -123,7 +123,7 @@
                             <!-- .form -->
                         </div>
 
-                        <div class="text-center" ng-if="vm.promotion.isActive">
+                        <div class="text-center" ng-if="vm.promotion.isActive && !compare(vm.promotion,promotionOld)">
                             <div class="col-sm-12">
                                 <div class="form-inline" >
                                     <button class="btn btn-default" ng-click="cannelPromotionInfo()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CANCEL' | translate}}</button>
@@ -214,8 +214,8 @@
                                 </td>
                                 <td class="mfb-xxt text-left">{{group.tag}}</td>
                                 <td class="mfb-xxt text-right">{{group.msrp | number: 2}}</td>
-                                <td class="mfb-xxt text-right">{{group.salePriceMin != group.salePriceMax ? group.salePriceMin | number: 2 +' ~ '+ group.salePriceMax | number: 2 : group.salePriceMin  | number: 2}}</td>
-                                <td class="mfb-xxt text-right">{{group.promotionPriceMin != group.promotionPriceMax ? group.promotionPriceMin | number: 2 +' ~ '+ group.promotionPriceMax | number: 2 : group.promotionPriceMax | number: 2}}</td>
+                                <td class="mfb-xxt text-right">{{group.salePriceMin != group.salePriceMax ? (group.salePriceMin | number: 2) +' ~ '+ (group.salePriceMax | number: 2) : (group.salePriceMin  | number: 2)}}</td>
+                                <td class="mfb-xxt text-right">{{group.promotionPriceMin != group.promotionPriceMax ? (group.promotionPriceMin | number: 2) +' ~ '+ (group.promotionPriceMax | number: 2) : (group.promotionPriceMax | number: 2)}}</td>
                                 <td class="mfb-xxt text-left"><!-- TODO 显示产品的publish时间未实现-->
                                     <small popover-trigger="mouseenter" popover-placement="left">
                                         <div class="table_main">
