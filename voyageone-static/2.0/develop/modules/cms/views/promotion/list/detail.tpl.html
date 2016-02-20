@@ -178,7 +178,7 @@
                         </tr>
                         </thead>
                     </table>
-                    <div class="col-sm-12 dropdown_table_main" if-no-rows="vm.groupList.length">
+                    <div class="col-sm-12 dropdown_table_main box-body" if-no-rows="vm.groupList.length">
                         <table if-no-rows="vm.groupList.length" class="table table-hover vo_table vo_models" ng-if="vm.groupList.length">
                             <tbody ng-repeat="group in vm.groupList">
                             <tr class="table_bg_gray">
@@ -207,8 +207,9 @@
 
                                     <div class="table_main pull-left" style="width:60%">
                                         <ul>
-                                            <li>{{group.productCode}}</li>
-                                            <li>{{group.productName}}</li>
+
+                                            <li><a ng-href="#/product/detail/{{group.productId}}" target="_blank" ng-bind="group.productCode"></a></li>
+                                            <li><a ng-href="#/product/detail/{{group.productId}}" target="_blank" ng-bind="group.productName"></a></li>
                                         </ul>
                                     </div>
                                 </td>
@@ -264,7 +265,7 @@
                         </tr>
                         </thead>
                     </table>
-                    <div class="col-sm-12 dropdown_table_main">
+                    <div class="col-sm-12 dropdown_table_main box-body">
                         <table if-no-rows="vm.codeList.length" class="table table-hover vo_table vo_models">
                             <tbody ng-repeat="code in vm.codeList">
                             <tr class="table_bg_gray">
