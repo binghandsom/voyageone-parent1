@@ -6,16 +6,19 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function () {
 
-    function indexController($scope,promotionService,confirm,menuService) {
+    function indexController($scope,promotionService,confirm) {
 
-        $scope.vm = {"promotionList": [],"cartList":[],"promotionStatus":[{"name":"Open","value":false},{"name":"Close","value":true}]};
+        $scope.vm = {"promotionList": [],"platformTypeList":[],"promotionStatus":[]};
         $scope.searchInfo = {};
         $scope.groupPageOption = {curr: 1, total: 198, size: 30, fetch: $scope.search};
 
         $scope.initialize  = function () {
-            $scope.getCategoryType();
-            $scope.search();
-        }
+            promotionService.init().then(function (res) {
+                $scope.vm.platformTypeList = res.data.platformTypeList;
+                $scope.vm.promotionStatus = res.data.promotionStatus;
+                $scope.search();
+            });
+        };
 
         $scope.search = function () {
             promotionService.getPromotionList($scope.searchInfo).then(function(res){
@@ -37,14 +40,7 @@ define([
 
             })
 
-        }
-
-
-        $scope.getCategoryType = function() {
-            menuService.getCategoryType().then(function(res){
-                $scope.vm.cartList = res;
-            })
-        }
+        };
     };
 
     indexController.$inject = ['$scope','promotionService', 'confirm', 'menuService'];

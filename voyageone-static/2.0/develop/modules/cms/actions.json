@@ -16,8 +16,8 @@
     "home": {
       "menu": {
         "getCategoryInfo": "/cms/home/menu/getCategoryInfo",
-        "getCategoryType": "/cms/home/menu/getCategoryType",
-        "setCategoryType": "/cms/home/menu/setCategoryType"
+        "getPlatformType": "/cms/home/menu/getPlatformType",
+        "setPlatformType": "/cms/home/menu/setPlatformType"
       }
     },
     "search": {
@@ -93,6 +93,7 @@
     "promotion": {
       "promotionService" : {
         "root": "/cms/promotion/index",
+        "init": "init",
         "getPromotionList": "getPromotionList",
         "insertPromotion": "insertPromotion",
         "updatePromotion": "updatePromotion",

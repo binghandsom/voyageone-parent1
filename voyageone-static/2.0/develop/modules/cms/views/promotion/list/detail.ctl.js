@@ -43,7 +43,7 @@ define([
 
 
         $scope.initialize = function () {
-            $scope.getCategoryType();
+            $scope.getPlatformType();
             promotionService.getPromotionList({"promotionId": $routeParams.promotionId}).then(function (res) {
                 $scope.vm.promotion = res.data[0];
                 $scope.promotionOld = _.clone($scope.vm.promotion);
@@ -111,11 +111,11 @@ define([
 
             })
         }
-        $scope.getCategoryType = function() {
-            menuService.getCategoryType().then(function(res){
+        $scope.getPlatformType = function() {
+            menuService.getPlatformType().then(function(res){
                 $scope.vm.cartList = res;
             })
-        }
+        };
         $scope.search = function () {
             searchGroup();
             searchCode();

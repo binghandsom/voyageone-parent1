@@ -1,15 +1,17 @@
-package com.voyageone.web2.cms.views.home;
+package com.voyageone.web2.cms.views.home.menu;
 
 import com.voyageone.cms.service.CmsBtChannelCategoryService;
 import com.voyageone.cms.service.FeedToCmsService;
 import com.voyageone.cms.service.model.CmsMtCategoryTreeModel;
+import com.voyageone.common.Constants;
+import com.voyageone.common.configs.TypeChannel;
+import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.core.dao.ChannelShopDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author Edward
@@ -35,8 +37,8 @@ public class CmsMenuService extends BaseAppService{
      * @param channelId
      * @return
      */
-    public List<Map<String, Object>> getCategoryTypeList (String channelId) {
-        return channelShopDao.selectChannelShop(channelId);
+    public List<TypeChannelBean> getPlatformTypeList (String channelId, String language) {
+        return TypeChannel.getTypeListSkuCarts(channelId, Constants.comMtTypeChannel.SKU_CARTS_53_D, language);
     }
 
     /**

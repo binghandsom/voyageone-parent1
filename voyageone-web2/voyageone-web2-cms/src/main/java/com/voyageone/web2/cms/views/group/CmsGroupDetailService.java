@@ -103,7 +103,7 @@ public class CmsGroupDetailService {
         StringBuffer resultPlatforms = new StringBuffer();
 
         // 添加platform cart
-        resultPlatforms.append(MongoUtils.splicingValue("cartId", cmsSessionBean.getCategoryType().get("cartId")).toString());
+        resultPlatforms.append(MongoUtils.splicingValue("cartId", cmsSessionBean.getPlatformType().get("cartId")).toString());
         resultPlatforms.append(",");
 
         // 添加platform id

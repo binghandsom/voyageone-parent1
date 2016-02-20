@@ -1,11 +1,11 @@
-package com.voyageone.web2.cms.views.home;
+package com.voyageone.web2.cms.views.home.menu;
 
 import com.voyageone.cms.enums.CartType;
 import com.voyageone.cms.service.model.CmsMtCategoryTreeModel;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
-import com.voyageone.web2.cms.CmsUrlConstants.MENU;
+import com.voyageone.web2.cms.CmsUrlConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,7 +23,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping(
-        value = MENU.ROOT,
+        value = CmsUrlConstants.HOME.MENU.ROOT,
         method = RequestMethod.POST
 )
 public class CmsMenuController extends CmsController {
@@ -34,15 +34,15 @@ public class CmsMenuController extends CmsController {
     /**
      * 返回categoryType, categoryList, categoryTreeList
      */
-    @RequestMapping(MENU.GET_CATE_INFO)
+    @RequestMapping(CmsUrlConstants.HOME.MENU.GET_CATE_INFO)
     public AjaxResponse getCategoryInfo() {
 
         Map<String, Object> resultBean = new HashMap<>();
 
-        String cTypeId = getCmsSession().getCategoryType().get("cTypeId").toString();
+        String cTypeId = getCmsSession().getPlatformType().get("cTypeId").toString();
         String channelId = getUser().getSelChannelId();
 
-        resultBean.put("categoryType", getCmsSession().getCategoryType());
+        resultBean.put("platformType", getCmsSession().getPlatformType());
 
         // 获取CategoryList
         List<Map<String, Object>> categoryList = new ArrayList<>();
@@ -60,26 +60,21 @@ public class CmsMenuController extends CmsController {
     /**
      * 返回categoryTypeList
      */
-    @RequestMapping(MENU.GET_CATE_TYPE)
-    public AjaxResponse getCategoryType() {
-
-        String channelId = getUser().getSelChannelId();
-
-        // 获取CategoryTypeList
-        List<Map<String, Object>> categoryTypeList = menuService.getCategoryTypeList(channelId);
+    @RequestMapping(CmsUrlConstants.HOME.MENU.GET_CATE_TYPE)
+    public AjaxResponse getPlatformType() {
 
         // 返回用户信息
-        return success(categoryTypeList);
+        return success(menuService.getPlatformTypeList(getUser().getSelChannelId(), getLang()));
     }
 
     /**
      * 设置当前用户的categoryType.
      */
-    @RequestMapping(MENU.SET_CATE_TYPE)
-    public AjaxResponse setCategoryType(@RequestBody Map<String, Object> params) {
+    @RequestMapping(CmsUrlConstants.HOME.MENU.SET_CATE_TYPE)
+    public AjaxResponse setPlatformType(@RequestBody Map<String, Object> params) {
 
         String cTypeId = (String) params.get("cTypeId");
-        Integer cartId = (Integer) params.get("cartId");
+        Integer cartId = Integer.valueOf(params.get("cartId").toString());
 
         // 如果cTypeId为空,设置成其默认值.
         if (StringUtils.isEmpty(cTypeId)) {
@@ -90,7 +85,7 @@ public class CmsMenuController extends CmsController {
             params.put("cartId", CartType.TMALLG.getCartId());
         }
 
-        getCmsSession().setCategoryType(params);
+        getCmsSession().setPlatformType(params);
 
         return getCategoryInfo();
     }

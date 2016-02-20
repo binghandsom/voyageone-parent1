@@ -511,7 +511,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 ////            group.setSalePriceEnd(maxSale);
 
             // 获取当前channel, 有多少个platform
-            List<TypeChannelBean> typeChannelBeanList = TypeChannel.getTypeList_skuCarts(feed.getChannelId(), "D"); // 取得展示用数据
+            List<TypeChannelBean> typeChannelBeanList = TypeChannel.getTypeListSkuCarts(feed.getChannelId(), "D", "en"); // 取得展示用数据
             if (typeChannelBeanList == null) {
                 return null;
             }

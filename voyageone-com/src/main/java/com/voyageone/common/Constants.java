@@ -125,9 +125,15 @@ public final class Constants {
     public static final int PHONE_NUM_ERR = -3;
 
 
-    public static final class comMtType {
-        public static final String BRAND = "brand";
-        public static final String CARTS = "skuCarts";
+    public static final class comMtTypeChannel {
+        public static final String COUNTRY_10 = "country";
+        public static final String BRAND_41 = "brand";
+        public static final String HS_CODE_CROP_42 = "hsCodeCrop";
+        public static final String HS_CODE_CROP_43 = "hsCodePrivate";
+        public static final String SKU_CARTS_53 = "skuCarts";
+        public static final String SKU_CARTS_53_D = "D";
+        public static final String SKU_CARTS_53_A = "A";
+        public static final String SKU_CARTS_53_O = "O";
     }
 
     public static final class productForOtherSystemInfo {

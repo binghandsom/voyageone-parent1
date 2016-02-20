@@ -159,6 +159,12 @@
   "TXT_SELECT_CONDITION": "选择条件",
   "TXT_IS_FIX_EDIT": "编辑完成?",
   "TXT_IS_FIX_APPROVED": "是否上新?",
+  "TXT_STATUS": "状态",
+  "TXT_PREHEATING_TIME": "预热时间",
+  "TXT_PRE_SALE_TIME": "预售时间",
+  "TXT_PROMOTION_DETAIL": "活动信息",
+  "TXT_IS_START_TE_JIA_BAO": "启用特价宝？",
+  "TXT_TE_JIA_BAO_ID": "特价宝ID",
 
 
 
@@ -224,5 +230,6 @@
   "BTN_ADD": "追加",
   "BTN_REFRESH": "刷新",
   "BTN_PROMOTION_HISTORY": "活动履历",
-  "BTN_PRICE_HISTORY": "价格履历"
+  "BTN_PRICE_HISTORY": "价格履历",
+  "BTN_DOWNLOAD": "下载"
 }

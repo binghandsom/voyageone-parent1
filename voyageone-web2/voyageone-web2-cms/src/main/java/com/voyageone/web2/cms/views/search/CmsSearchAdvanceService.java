@@ -68,7 +68,7 @@ public class CmsSearchAdvanceService extends BaseAppService{
         masterData.put("compareTypeList", TypeConfigEnums.MastType.compareType.getList(language));
 
         // 获取brand list
-        masterData.put("brandList", TypeChannel.getOptionsWithLang(Constants.comMtType.BRAND, userInfo.getSelChannelId(), language));
+        masterData.put("brandList", TypeChannel.getTypeWithLang(Constants.comMtTypeChannel.BRAND_41, userInfo.getSelChannelId(), language));
 
         // 获取category list
         masterData.put("categoryList", cmsBtChannelCategoryService.getFinallyCategoriesByChannelId(userInfo.getSelChannelId()));
@@ -133,7 +133,7 @@ public class CmsSearchAdvanceService extends BaseAppService{
         StringBuffer resultPlatforms = new StringBuffer();
 
         // 添加platform cart
-        resultPlatforms.append(MongoUtils.splicingValue("cartId", cmsSessionBean.getCategoryType().get("cartId")).toString());
+        resultPlatforms.append(MongoUtils.splicingValue("cartId", cmsSessionBean.getPlatformType().get("cartId")).toString());
         resultPlatforms.append(",");
 
         // 获取platform status
@@ -186,7 +186,7 @@ public class CmsSearchAdvanceService extends BaseAppService{
         StringBuffer resultPlatforms = new StringBuffer();
 
         // 添加platform cart
-        resultPlatforms.append(MongoUtils.splicingValue("cartId", cmsSessionBean.getCategoryType().get("cartId")).toString());
+        resultPlatforms.append(MongoUtils.splicingValue("cartId", cmsSessionBean.getPlatformType().get("cartId")).toString());
         resultPlatforms.append(",");
 
         // 获取platform status

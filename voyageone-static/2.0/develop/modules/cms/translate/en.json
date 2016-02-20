@@ -159,6 +159,12 @@
   "TXT_SELECT_CONDITION": "Select Condition",
   "TXT_IS_FIX_EDIT": "Is Fix Edit?",
   "TXT_IS_FIX_APPROVED": "Is Publish?",
+  "TXT_STATUS": "Status",
+  "TXT_PREHEATING_TIME": "Preheating Time",
+  "TXT_PRE_SALE_TIME": "Pre-sale Time",
+  "TXT_PROMOTION_DETAIL": "Promotion Detail",
+  "TXT_IS_START_TE_JIA_BAO": "Start TeJiaBao?",
+  "TXT_TE_JIA_BAO_ID": "TeJiaBao ID",
 
 
   "TXT_MSG_SEARCH": "Search...",
@@ -221,5 +227,6 @@
   "BTN_ADD": "Add",
   "BTN_REFRESH": "Refresh",
   "BTN_PROMOTION_HISTORY": "Promotion History",
-  "BTN_PRICE_HISTORY": "Price History"
+  "BTN_PRICE_HISTORY": "Price History",
+  "BTN_DOWNLOAD": "Download"
 }

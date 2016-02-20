@@ -1,5 +1,6 @@
 package com.voyageone.common.configs;
 
+import com.voyageone.common.Constants;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.configs.dao.TypeChannelDao;
 import com.voyageone.common.masterdate.schema.option.Option;
@@ -136,27 +137,24 @@ public class TypeChannel {
      * @param channel_id 渠道id
      * @return List<Option>
      */
-    public static List<Option> getOptionsWithLang(String type, String channel_id, String lang_id) {
+    public static List<TypeChannelBean> getTypeWithLang(String type, String channel_id, String lang_id) {
         String key = type + "-" + channel_id;
-        List<Option> ret = new ArrayList<>();
-
         List<TypeChannelBean> typeList = typeMap.get(key);
+
+        List<TypeChannelBean> res = new ArrayList<>();
 
         if (typeList != null){
             for (TypeChannelBean bean : typeList) {
                 if (!StringUtils.isEmpty(bean.getLang_id())
                         && bean.getLang_id().equals(lang_id)) {
-                    Option opt = new Option();
-                    opt.setDisplayName(bean.getName());
-                    opt.setValue(bean.getValue());
-                    ret.add(opt);
+                    res.add(bean);
                 }
             }
         } else {
             logger.warn("channel id: " + channel_id + "property id: "+type +" 对应的options没有配置！！！");
         }
 
-        return ret;
+        return res;
     }
 
     /**
@@ -196,19 +194,19 @@ public class TypeChannel {
      * @param strDAO 大写的字母D的场合代表display, 大写的字母A的场合代表approve, 大写的字母O的场合代表order, 之外的场合返回null
      * @return skuCarts
      */
-    public static List<TypeChannelBean> getTypeList_skuCarts(String channel_id, String strDAO) {
-        String type = "skuCarts";
+    public static List<TypeChannelBean> getTypeListSkuCarts(String channel_id, String strDAO, String language) {
+        String type = Constants.comMtTypeChannel.SKU_CARTS_53;
         int charIndex = 0;
         switch (strDAO) {
-            case "D": {
+            case Constants.comMtTypeChannel.SKU_CARTS_53_D: {
                 charIndex = 0;
                 break;
             }
-            case "A": {
+            case Constants.comMtTypeChannel.SKU_CARTS_53_A: {
                 charIndex = 1;
                 break;
             }
-            case "O": {
+            case Constants.comMtTypeChannel.SKU_CARTS_53_O: {
                 charIndex = 2;
                 break;
             }
@@ -228,7 +226,9 @@ public class TypeChannel {
                 if (!StringUtils.isEmpty(add_name1)) {
                     if (add_name1.length() == 3) {
                         add_name1 = add_name1.substring(charIndex, charIndex + 1);
-                        if ("1".equals(add_name1)) {
+                        if ("1".equals(add_name1)
+                                && !StringUtils.isEmpty(typeChannelBean.getLang_id())
+                                && typeChannelBean.getLang_id().equals(language)) {
                             // 这条记录是属于需要返回的数据
                             resultList.add(typeChannelBean);
                         }

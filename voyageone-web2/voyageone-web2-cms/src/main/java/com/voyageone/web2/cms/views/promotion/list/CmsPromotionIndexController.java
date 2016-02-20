@@ -25,6 +25,11 @@ public class CmsPromotionIndexController extends CmsController {
     @Autowired
     private CmsPromotionIndexService cmsPromotionService;
 
+    @RequestMapping(PROMOTION.LIST.INDEX.INIT)
+    public AjaxResponse init() {
+        return success(cmsPromotionService.init(getUser().getSelChannelId(), getLang()));
+    }
+
     @RequestMapping(PROMOTION.LIST.INDEX.GET_PROMOTION_LIST)
     public AjaxResponse queryList(@RequestBody Map params) {
         String channelId = getUser().getSelChannelId();

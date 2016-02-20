@@ -6,7 +6,7 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function (angularAMD) {
 
-    angularAMD.controller('popPromotionDetailCtl', function ($scope,promotionService,cartList,items) {
+    angularAMD.controller('popPromotionDetailCtl', function ($scope,promotionService, cartList,items) {
 
         $scope.promotion = {};
         $scope.tejiabao=false;
@@ -19,7 +19,7 @@ define([
                     $scope.tejiabao=true;
                 }
             }
-        }
+        };
 
         $scope.ok = function(){
 

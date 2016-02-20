@@ -8,16 +8,20 @@ package com.voyageone.web2.cms;
  */
 public interface CmsUrlConstants {
 
-    // menu
-    interface MENU {
+    interface HOME {
 
-        String ROOT = "/cms/home/menu/";
+        // menu
+        interface MENU {
 
-        String GET_CATE_INFO = "getCategoryInfo";
+            String ROOT = "/cms/home/menu/";
 
-        String GET_CATE_TYPE = "getCategoryType";
+            String GET_CATE_INFO = "getCategoryInfo";
 
-        String SET_CATE_TYPE = "setCategoryType";
+            String GET_CATE_TYPE = "getPlatformType";
+
+            String SET_CATE_TYPE = "setPlatformType";
+        }
+
     }
 
     // 活动管理
@@ -26,6 +30,8 @@ public interface CmsUrlConstants {
             interface INDEX {
 
                 String ROOT = "/cms/promotion/index";
+
+                String INIT = "init";
 
                 String GET_PROMOTION_LIST = "getPromotionList";
 
