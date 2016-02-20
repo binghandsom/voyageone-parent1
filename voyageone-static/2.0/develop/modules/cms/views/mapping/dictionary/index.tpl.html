@@ -66,7 +66,7 @@
 						<tr ng-repeat="dictionaryInfo in vm.dictionaryList">
 							<td class="mfb-xt text-center" ng-bind="dictionaryInfo.id"></td>
 							<td class="mfb-xxs text-left text-u-l"><a ng-click="openDictionaryItem(dictionaryInfo.id)" ng-bind="dictionaryInfo.name"></a></td>
-							<td class="mfb-xxt text-left"><span class="badge badge-empty" ng-bind="dictionaryInfo.cartName"></span></td>
+							<td class="mfb-xxt text-left"><span ng-bind="dictionaryInfo.cartName"></span></td>
 							<td class="mfb-xxxs text-left"><div class="line-height">{{dictionaryInfo.value}}</div></td>
 							<td class="mfb-xxt text-left" ng-bind="dictionaryInfo.created"></td>
 							<td class="mfb-xxt text-left" ng-bind="dictionaryInfo.modified"></td>
