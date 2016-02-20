@@ -36,19 +36,19 @@ public class PromotionTaskController extends BaseController {
     }
 
     @RequestMapping("price/getCount")
-    public PromotionTaskPriceGetCountResponse getPromotionTaskPriceListCnt(PromotionTaskPriceGetCountRequest request){
+    public PromotionTaskPriceGetCountResponse getPromotionTaskPriceListCnt(@RequestBody PromotionTaskPriceGetCountRequest request){
         request.check();
         return promotionTaskService.getPromotionTaskPriceListCnt(request);
     }
 
     @RequestMapping("price/getList")
-    public PromotionTaskPriceGetResponse getPromotionTaskPriceList(PromotionTaskPriceGetRequest request){
+    public PromotionTaskPriceGetResponse getPromotionTaskPriceList(@RequestBody PromotionTaskPriceGetRequest request){
         request.check();
         return promotionTaskService.getPromotionTaskPriceList(request);
     }
 
     @RequestMapping("price/update")
-    public PromotionTaskPriceUpdateResponse updatePromotionTask(PromotionTaskPriceUpdateRequest request){
+    public PromotionTaskPriceUpdateResponse updatePromotionTask(@RequestBody PromotionTaskPriceUpdateRequest request){
         request.check();
         return promotionTaskService.updatePromotionTask(request);
     }
