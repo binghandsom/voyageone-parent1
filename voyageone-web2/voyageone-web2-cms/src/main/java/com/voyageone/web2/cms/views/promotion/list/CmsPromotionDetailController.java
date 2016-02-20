@@ -1,4 +1,4 @@
-package com.voyageone.web2.cms.views.promotion;
+package com.voyageone.web2.cms.views.promotion.list;
 
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
@@ -21,7 +21,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping(
-        value = PROMOTION.DETAIL.ROOT,
+        value = PROMOTION.LIST.DETAIL.ROOT,
         method = RequestMethod.POST
 )
 public class CmsPromotionDetailController extends CmsController {
@@ -29,7 +29,7 @@ public class CmsPromotionDetailController extends CmsController {
     @Autowired
     private CmsPromotionDetailService cmsPromotionDetailService;
 
-    @RequestMapping(PROMOTION.DETAIL.GET_PROMOTION_GROUP)
+    @RequestMapping(PROMOTION.LIST.DETAIL.GET_PROMOTION_GROUP)
     public AjaxResponse getPromotionGroup(@RequestBody Map params) {
 
         String channelId = getUser().getSelChannelId();
@@ -44,7 +44,7 @@ public class CmsPromotionDetailController extends CmsController {
         return success(result);
     }
 
-    @RequestMapping(PROMOTION.DETAIL.GET_PROMOTION_CODE)
+    @RequestMapping(PROMOTION.LIST.DETAIL.GET_PROMOTION_CODE)
     public AjaxResponse getPromotionCode(@RequestBody Map params) {
 
         String channelId = getUser().getSelChannelId();
@@ -58,7 +58,7 @@ public class CmsPromotionDetailController extends CmsController {
         // 返回用户信息
         return success(result);
     }
-    @RequestMapping(PROMOTION.DETAIL.GET_PROMOTION_SKU)
+    @RequestMapping(PROMOTION.LIST.DETAIL.GET_PROMOTION_SKU)
     public AjaxResponse getPromotionSku(@RequestBody Map params) {
 
         String channelId = getUser().getSelChannelId();
@@ -73,7 +73,7 @@ public class CmsPromotionDetailController extends CmsController {
         return success(result);
     }
 
-    @RequestMapping(PROMOTION.DETAIL.GET_PROMOTION_UPLOAD)
+    @RequestMapping(PROMOTION.LIST.DETAIL.GET_PROMOTION_UPLOAD)
     public AjaxResponse uploadPromotion(HttpServletRequest request, @RequestParam int promotionId) throws Exception {
         MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
         MultipartFile file = multipartRequest.getFile("file");
@@ -86,14 +86,14 @@ public class CmsPromotionDetailController extends CmsController {
         return success(reponse);
     }
 
-    @RequestMapping(PROMOTION.DETAIL.TE_JIA_BAO_INIT)
+    @RequestMapping(PROMOTION.LIST.DETAIL.TE_JIA_BAO_INIT)
     public AjaxResponse tejiabaoInit(@RequestBody int promotionId) throws Exception {
 
         cmsPromotionDetailService.teJiaBaoInit(promotionId,getUser().getUserName());
         // 返回用户信息
         return success(null);
     }
-    @RequestMapping(PROMOTION.DETAIL.UPDATE_PROMOTION_PRODUCT)
+    @RequestMapping(PROMOTION.LIST.DETAIL.UPDATE_PROMOTION_PRODUCT)
     public AjaxResponse updatePromotionProduct(@RequestBody CmsBtPromotionCodeModel params) {
 
         cmsPromotionDetailService.updatePromotionProduct(params, getUser().getUserName());
@@ -101,7 +101,7 @@ public class CmsPromotionDetailController extends CmsController {
         return success(null);
     }
 
-    @RequestMapping(PROMOTION.DETAIL.DEL_PROMOTION_MODEL)
+    @RequestMapping(PROMOTION.LIST.DETAIL.DEL_PROMOTION_MODEL)
     public AjaxResponse delPromotionModel(@RequestBody List<CmsBtPromotionGroupModel> params) {
 
         cmsPromotionDetailService.delPromotionModel(params, getUser().getSelChannelId(), getUser().getUserName());
@@ -109,7 +109,7 @@ public class CmsPromotionDetailController extends CmsController {
         return success(null);
     }
 
-    @RequestMapping(PROMOTION.DETAIL.DEL_PROMOTION_CODE)
+    @RequestMapping(PROMOTION.LIST.DETAIL.DEL_PROMOTION_CODE)
     public AjaxResponse delPromotionCode(@RequestBody List<CmsBtPromotionCodeModel> params) {
 
         cmsPromotionDetailService.delPromotionCode(params, getUser().getSelChannelId(),getUser().getUserName());

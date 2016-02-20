@@ -1,4 +1,4 @@
-package com.voyageone.web2.cms.views.promotion;
+package com.voyageone.web2.cms.views.promotion.list;
 
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.web2.cms.CmsController;

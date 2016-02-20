@@ -3,7 +3,7 @@ package com.voyageone.web2.cms.views.pop.bulkUpdate;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.CommonUtil;
 import com.voyageone.web2.base.BaseAppService;
-import com.voyageone.web2.cms.views.promotion.CmsPromotionIndexService;
+import com.voyageone.web2.cms.views.promotion.list.CmsPromotionIndexService;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import com.voyageone.web2.sdk.api.VoApiDefaultClient;
 import com.voyageone.web2.sdk.api.domain.CmsBtPromotionModel;

@@ -1,4 +1,4 @@
-package com.voyageone.web2.cms.views.promotion;
+package com.voyageone.web2.cms.views.promotion.list;
 
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.cms.service.model.CmsBtProductModel;

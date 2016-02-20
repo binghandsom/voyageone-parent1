@@ -16,30 +16,25 @@ define([
          * @description
          * Feed Mapping 画面的 Controller 类
          * @param {FeedMappingService} feedMappingService
+         * @param feedMappingListService
          * @param {voNotify} notify
          * @param {function} confirm
          * @param $translate
          * @param blockUI
          * @constructor
          */
-        function FeedMappingController(feedMappingService, notify, confirm, $translate, blockUI) {
+        function FeedMappingController(feedMappingService, feedMappingListService, notify, confirm, $translate, blockUI) {
 
             this.confirm = confirm;
             this.notify = notify;
             this.$translate = $translate;
             this.feedMappingService = feedMappingService;
+            this.feedMappingListService = feedMappingListService;
             this.blockUI = blockUI;
 
-            /**
-             * feed 类目集合
-             * @type {object}
-             */
-            this.feedCategories = null;
-            /**
-             * 所有顶层的 Key 值
-             * @type {string[]}
-             */
-            this.topKeys = null;
+            this.currCategoryMap = null;
+
+            this.topCategories = null;
             /**
              * 当前选择的 TOP 类目
              * @type {string}
@@ -82,16 +77,62 @@ define([
              */
             init: function () {
 
-                this.feedMappingService.getFeedCategoryTree().then(function (res) {
-                    this.feedCategories = res.data;
-                    this.topKeys = _.keys(this.feedCategories);
-                    // 如果有数据就默认选中
-                    if (this.topKeys.length) {
-                        this.selectedTop = this.topKeys[0];
-                    }
-                    this.refreshTable();
-                }.bind(this));
+                var ttt = this;
+
+                ttt.feedMappingService.getTopCategories().then(function (res) {
+                    ttt.topCategories = res.data;
+                    ttt.selectedTop = ttt.topCategories[0].cid;
+
+                    ttt.refreshTable();
+                });
             },
+
+            /**
+             * 刷新表格
+             */
+            refreshTable: function () {
+
+                var ttt = this;
+                var keyWord = ttt.matched.keyWord;
+
+                ttt.blockUI.start();
+                
+                ttt.feedMappingListService.getCategoryMap(ttt.selectedTop).then(function (categoryMap) {
+
+                    ttt.currCategoryMap = categoryMap;
+
+                    var rows = _.filter(categoryMap, function (feedCategoryBean) {
+                        var result = true;
+
+                        // 如果关键字存在, 先进行关键字过滤
+                        if (keyWord && feedCategoryBean.model.path.indexOf(keyWord) < 0)
+                            return false;
+
+                        if (ttt.matched.category !== null)
+                            result = ttt.matched.category === ttt.isCategoryMatched(feedCategoryBean);
+                        else if (ttt.matched.property !== null)
+                            result = ttt.matched.property === ttt.isPropertyMatched(feedCategoryBean);
+                        
+                        if (result && !feedCategoryBean.classes) {
+                            // 如果没有计算过样式, 就计算
+                            feedCategoryBean.classes = {
+                                background: feedCategoryBean.level > 1 ? 'badge-empty': 'badge-success',
+                                icon: feedCategoryBean.level > 1 ? 'fa-level-up': 'fa-level-down'
+                            };
+                        }
+                        
+                        return result;
+                    });
+
+                    // 绑定&显示
+                    ttt.tableSource = rows.sort(function (a, b) {
+                        return a.seq > b.seq ? 1 : -1;
+                    });
+
+                    ttt.blockUI.stop();
+                });
+            },
+
             /**
              * 继承其父类目的 Mapping
              * @param {object} feedCategory Feed 类目
@@ -124,7 +165,7 @@ define([
                     return '?';
                 }
 
-                var defMapping = this.findDefaultMapping(feedCategory);
+                var defMapping = feedCategory.mapping;
 
                 if (defMapping) {
                     return defMapping.mainCategoryPath;
@@ -132,11 +173,12 @@ define([
 
                 var parent = null;
                 while (!defMapping && (parent = this.findParent(parent || feedCategory))) {
-                    defMapping = this.findDefaultMapping(parent);
+                    defMapping = parent.mapping;
                 }
 
-
-                return defMapping ? (this.$translate.instant('TXT_FORWARD_WITH_COLON') + defMapping.mainCategoryPath) : this.$translate.instant('TXT_UN_SETTING');
+                return defMapping
+                    ? (this.$translate.instant('TXT_FORWARD_WITH_COLON') + defMapping.mainCategoryPath)
+                    : this.$translate.instant('TXT_UN_SETTING');
             },
             /**
              * 查找父级类目
@@ -157,16 +199,9 @@ define([
              * @return {object|undefined} Feed 类目对象
              */
             findCategory: function (path) {
-                return this.feedCategories[this.selectedTop][path];
+                return this.currCategoryMap[path];
             },
-            /**
-             * 在类目中查找默认的 Mapping 关系
-             * @param {FeedCategoryBean} category
-             * @return {object} Mapping 对象
-             */
-            findDefaultMapping: function (category) {
-                return category.mapping;
-            },
+
             /**
              * 在类目 Popup 确定关闭后, 为相关类目进行绑定
              * @param {{from:string, selected:object}} context Popup 返回的结果信息
@@ -207,41 +242,6 @@ define([
                     && !!feedCategoryBean.mapping.matchOver;
             },
 
-            /**
-             * 刷新表格
-             */
-            refreshTable: function () {
-                // 选定数据源
-                var ttt = this;
-                var rows = ttt.feedCategories[ttt.selectedTop];
-                var keyWord = ttt.matched.keyWord;
-
-                ttt.blockUI.start();
-
-                // 过滤
-                rows = _.filter(rows, function (feedCategoryBean) {
-                    var result = true;
-
-                    // 如果关键字存在, 先进行关键字过滤
-                    if (keyWord && feedCategoryBean.model.path.indexOf(keyWord) < 0)
-                        return false;
-
-                    if (ttt.matched.category !== null)
-                        result = ttt.matched.category === ttt.isCategoryMatched(feedCategoryBean);
-                    else if (ttt.matched.property !== null)
-                        result = ttt.matched.property === ttt.isPropertyMatched(feedCategoryBean);
-
-                    return result;
-                });
-
-                // 绑定&显示
-                ttt.tableSource = rows.sort(function (a, b) {
-                    return a.seq > b.seq ? 1 : -1;
-                });
-
-                ttt.blockUI.stop();
-            },
-
             openCategoryMapping: function (categoryModel, popupNewCategory) {
 
                 this.feedMappingService.getMainCategories()
@@ -268,6 +268,37 @@ define([
             }
         };
 
-        return FeedMappingController
+        return FeedMappingController;
+
+    })()).service('feedMappingListService', (function () {
+
+        function FeedMappingListService(feedMappingService, $q) {
+            this.feedMappingService = feedMappingService;
+            this.$q = $q;
+            this.categoryTrees = {};
+        }
+
+        FeedMappingListService.prototype = {
+            getCategoryMap: function (categoryId) {
+                var ttt = this;
+                var cache = ttt.categoryTrees;
+                var deferred = ttt.$q.defer();
+
+                if (cache[categoryId]) {
+                    deferred.resolve(cache[categoryId]);
+                    return deferred.promise;
+                }
+
+                ttt.feedMappingService.getFeedCategoryTree({topCategoryId: categoryId})
+                    .then(function (res) {
+                        deferred.resolve(cache[categoryId] = res.data);
+                    });
+
+                return deferred.promise;
+            }
+        };
+
+        return FeedMappingListService;
+
     })());
 });

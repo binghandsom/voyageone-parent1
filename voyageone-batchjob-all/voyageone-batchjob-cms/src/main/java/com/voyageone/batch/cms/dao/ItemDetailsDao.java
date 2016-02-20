@@ -2,6 +2,7 @@ package com.voyageone.batch.cms.dao;
 
 import com.voyageone.base.dao.BaseDao;
 import com.voyageone.batch.cms.bean.*;
+import com.voyageone.common.Constants;
 import org.springframework.stereotype.Repository;
 
 import java.util.HashMap;
@@ -24,7 +25,7 @@ public class ItemDetailsDao extends BaseDao {
         params.put("channelId", channelId);
         params.put("code", code);
 
-        return updateTemplate.selectList("wms_bt_item_details_select_by_code", params);
+        return updateTemplate.selectList(Constants.DAO_NAME_SPACE_CMS + "wms_bt_item_details_select_by_code", params);
     }
 
     /**
@@ -36,6 +37,18 @@ public class ItemDetailsDao extends BaseDao {
         params.put("itemDetailsBean", itemDetailsBean);
         params.put("taskName", taskName);
 
-        return updateTemplate.insert("wms_bt_item_details_insert", params);
+        return updateTemplate.insert(Constants.DAO_NAME_SPACE_CMS + "wms_bt_item_details_insert", params);
+    }
+
+    /**
+     * 更新item details的数据
+     */
+    public int updateItemDetails(ItemDetailsBean itemDetailsBean, String taskName) {
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("itemDetailsBean", itemDetailsBean);
+        params.put("taskName", taskName);
+
+        return updateTemplate.insert(Constants.DAO_NAME_SPACE_CMS + "wms_bt_item_details_update", params);
     }
 }

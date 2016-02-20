@@ -276,6 +276,7 @@ public class GiltAnalysisContext {
             curr.setC_name(key);
             curr.setC_header_title(key);
             curr.setUrl_key(url_key);
+            curr.setModelbeans(new ArrayList<>());
 
             if (parent != null)
                 curr.setParent_url_key(parent.getUrl_key());
@@ -289,9 +290,6 @@ public class GiltAnalysisContext {
 
         if (categoryBeanList.size() > 0)
             categoriesList.add(categoryBeanList);
-
-        if (curr != null)
-            curr.setModelbeans(new ArrayList<>());
 
         return curr;
     }

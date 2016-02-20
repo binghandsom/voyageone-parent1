@@ -1,4 +1,4 @@
-package com.voyageone.web2.cms.views.promotion;
+package com.voyageone.web2.cms.views.promotion.list;
 
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
@@ -17,7 +17,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping(
-        value = PROMOTION.INDEX.ROOT,
+        value = PROMOTION.LIST.INDEX.ROOT,
         method = RequestMethod.POST
 )
 public class CmsPromotionIndexController extends CmsController {
@@ -25,14 +25,14 @@ public class CmsPromotionIndexController extends CmsController {
     @Autowired
     private CmsPromotionIndexService cmsPromotionService;
 
-    @RequestMapping(PROMOTION.INDEX.GET_PROMOTION_LIST)
+    @RequestMapping(PROMOTION.LIST.INDEX.GET_PROMOTION_LIST)
     public AjaxResponse queryList(@RequestBody Map params) {
         String channelId = getUser().getSelChannelId();
         params.put("channelId", channelId);
         return success(cmsPromotionService.queryByCondition(params));
     }
 
-    @RequestMapping({PROMOTION.INDEX.INSERT_PROMOTION,PROMOTION.INDEX.UPDATE_PROMOTION})
+    @RequestMapping({PROMOTION.LIST.INDEX.INSERT_PROMOTION,PROMOTION.LIST.INDEX.UPDATE_PROMOTION})
     public AjaxResponse insertOrUpdate(@RequestBody CmsBtPromotionModel cmsBtPromotionModel) {
         String channelId = getUser().getSelChannelId();
         cmsBtPromotionModel.setChannelId(channelId);

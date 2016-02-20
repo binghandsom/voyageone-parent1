@@ -190,7 +190,7 @@ define([
         $scope.teJiaBaoInit = function(){
             promotionDetailService.teJiaBaoInit( $routeParams.promotionId).then(function (res) {
                 notify.success("success");
-                $location.path("/task/price/"+$routeParams.promotionId);
+                $location.path("/promotion/task/price/"+$routeParams.promotionId);
                 //href="#/promotion/task/price" target="_blank"-->
             }, function (err) {
                 notify.warning("fail");

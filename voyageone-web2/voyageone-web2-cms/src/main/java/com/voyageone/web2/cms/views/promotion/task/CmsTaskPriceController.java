@@ -1,4 +1,4 @@
-package com.voyageone.web2.cms.views.task;
+package com.voyageone.web2.cms.views.promotion.task;
 
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
@@ -19,7 +19,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping(
-        value = CmsUrlConstants.TASK.PRICE.ROOT,
+        value = CmsUrlConstants.PROMOTION.TASK.PRICE.ROOT,
         method = RequestMethod.POST
 )
 public class CmsTaskPriceController extends CmsController {
@@ -27,7 +27,7 @@ public class CmsTaskPriceController extends CmsController {
     @Autowired
     private CmsTaskPriceService cmsTaskPriceService;
 
-    @RequestMapping(CmsUrlConstants.TASK.PRICE.GET_PRICE_LIST)
+    @RequestMapping(CmsUrlConstants.PROMOTION.TASK.PRICE.GET_PRICE_LIST)
     public AjaxResponse getPriceList(@RequestBody Map param) {
 
         int cnt = cmsTaskPriceService.getPriceListCnt(param);
@@ -39,7 +39,7 @@ public class CmsTaskPriceController extends CmsController {
         return success(result);
     }
 
-    @RequestMapping(CmsUrlConstants.TASK.PRICE.UPDATE_TASK_STATUS)
+    @RequestMapping(CmsUrlConstants.PROMOTION.TASK.PRICE.UPDATE_TASK_STATUS)
     public AjaxResponse updateTaskStatus(@RequestBody CmsBtPromotionTaskModel param) {
 
         param.setModifier(getUser().getUserName());

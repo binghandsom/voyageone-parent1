@@ -1,6 +1,7 @@
 package com.voyageone.web2.cms.views.promotion;
 
 import com.voyageone.web2.cms.bean.CmsPromotionProductPriceBean;
+import com.voyageone.web2.cms.views.promotion.list.CmsPromotionDetailService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
