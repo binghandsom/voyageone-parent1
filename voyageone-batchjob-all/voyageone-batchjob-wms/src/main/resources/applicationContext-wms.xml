@@ -21,11 +21,11 @@
         <task:scheduled ref="wmsCompareStockTask" method="run" cron="0 0/1 0-23 * * ?"/>
         <!--每隔1分钟同步物品变化信息到synship-->
         <task:scheduled ref="wmsSyncChangeToSynShipTask" method="run" cron="0 0/1 0-23 * * ?"/>
-        <!--每1分钟同步一次库存-->
-        <task:scheduled ref="wmsSyncInventoryJobTask" method="run" cron="0 0/1 0-23 * * ?"/>
+        <!--每1分30同步一次库存-->
+        <task:scheduled ref="wmsSyncInventoryJobTask" method="run" cron="30 0/1 0-23 * * ?"/>
         <!--每天凌晨4点刷新一次斯伯丁的库存-->
         <task:scheduled ref="wmsReflushInventoryJobTask" method="run" cron="0 0 20 * * ?"/>
-        <!--每2分钟与第三方ftp服务连接-->
+        <!--每2分钟与第三方秒ftp服务连接-->
         <task:scheduled ref="wmsThirdFtpDownloadFileJobTask" method="run" cron="0 0/5 0-23 * * ?"/>
         <!--每1分钟将下载的ftp库存文件，进行数据处理-->
         <task:scheduled ref="wmsThirdFileDataProcessingJobTask" method="run" cron="0 0/2 0-23 * * ?"/>
@@ -51,7 +51,6 @@
         <!--<task:scheduled ref="wmsUpdateStatusTask" method="run" cron="0 0/5 0-23 * * ?"/>-->
         <!--生成给斯伯丁第三方仓库发货日报， （北京时间11点到24点之间运行）　-->
         <task:scheduled ref="wmsSPThirdWarehouseReportTask" method="run" cron="0 0/5 3-15 * * ?"/>
-        <!--<task:scheduled ref="wmsSPThirdWarehouseReportTask" method="run" cron="0 0/1 0-23 * * ?"/>                -->
     </task:scheduled-tasks>
 
     <!-- 必须需要 -->

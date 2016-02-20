@@ -102,6 +102,11 @@ public class WmsSyncInventoryService extends WmsSyncInventoryBaseService {
                         // 取得刚上新但没库存同步过的记录（由于为了能够自动审核，聚美上新时库存都是设置为1）
                         inventorySynLogBeans =
                                 inventoryDao.getInventorySynLogForJMReFlush(getTaskName(), shopBean.getOrder_channel_id(), shopBean.getCart_id(), WmsConstants.SYN_FLG.INITAL,process_time, intRowCount);
+                        // 库存刷新失败记录取得
+                        List<InventorySynLogBean> inventorySynIgnores=
+                                inventoryDao.getInventorySynLogForJMReFlush(getTaskName(), shopBean.getOrder_channel_id(), shopBean.getCart_id(), WmsConstants.SYN_FLG.IGONRE, process_time, intRowCount);
+                        inventorySynLogBeans.addAll(inventorySynIgnores);
+
                         // 如果不存在需刷新的记录时，则取得有库存变化的记录
                         if (inventorySynLogBeans.size() == 0) {
                             inventorySynLogBeans =
@@ -109,13 +114,6 @@ public class WmsSyncInventoryService extends WmsSyncInventoryBaseService {
 
                         }else {
                             updateFlg = WmsConstants.UPDATE_FLG.ReFlush;
-
-                            // 库存刷新失败记录取得
-                            List<InventorySynLogBean> inventorySynIgnores=
-                                    inventoryDao.getInventorySynLogForJMReFlush(getTaskName(), shopBean.getOrder_channel_id(), shopBean.getCart_id(), WmsConstants.SYN_FLG.IGONRE, process_time, intRowCount);
-
-                            inventorySynLogBeans.addAll(inventorySynIgnores);
-
                         }
                         break;
                 }
