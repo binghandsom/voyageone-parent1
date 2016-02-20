@@ -6,7 +6,7 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function () {
 
-    function detailController($scope, promotionService, promotionDetailService, notify, $routeParams, $location, alert, $translate,menuService) {
+    function detailController($scope, promotionService, promotionDetailService, notify, $routeParams, $location, alert, $translate, confirm) {
         pageSize = 5;
         $scope.promotionOld={};
         $scope.vm = {
@@ -128,47 +128,59 @@ define([
         };
 
         $scope.delPromotionModel = function(group){
-            var data = [];
-            data.push(group);
-            promotionDetailService.delPromotionModel(data).then(function (res) {
-                notify.success("success");
-                $scope.search();
-            }, function (err) {
-                notify.warning("fail");
-            })
+            confirm($translate.instant('TXT_MSG_DELETE_ITEM')).result
+                .then(function () {
+                    var data = [];
+                    data.push(group);
+                    promotionDetailService.delPromotionModel(data).then(function (res) {
+                        notify.success($translate.instant('TXT_MSG_DELETE_SUCCESS'));
+                        $scope.search();
+                        $scope.vm.groupSelList.selList = [];
+                    })
+                });
         };
 
         $scope.delPromotionCode = function(code){
-            var parameter = [];
-            parameter.push(code);
-            promotionDetailService.delPromotionCode(parameter).then(function (res) {
-                notify.success("success");
-                $scope.search();
-            }, function (err) {
-                notify.warning("fail");
-            })
+            confirm($translate.instant('TXT_MSG_DELETE_ITEM')).result
+                .then(function () {
+                    var parameter = [];
+                    parameter.push(code);
+                    promotionDetailService.delPromotionCode(parameter).then(function () {
+                        notify.success($translate.instant('TXT_MSG_DELETE_SUCCESS'));
+                        $scope.search();
+                        $scope.vm.codeSelList.selList = [];
+                    });
+                });
         };
 
         $scope.delSelPromotion = function(){
             if($scope.vm.tabIndex == 0){
                 if($scope.vm.groupSelList.selList.length>0){
-                    promotionDetailService.delPromotionModel($scope.vm.groupSelList.selList).then(function (res) {
-                        notify.success("success");
-                        $scope.search();
-                    }, function (err) {
-                        notify.warning("fail");
-                    })
+                    confirm($translate.instant('TXT_MSG_DELETE_ITEM')).result
+                        .then(function () {
+                            var data = [];
+                            data.push(group);
+                            promotionDetailService.delPromotionModel(data).then(function (res) {
+                                notify.success($translate.instant('TXT_MSG_DELETE_SUCCESS'));
+                                $scope.search();
+                                $scope.vm.groupSelList.selList = [];
+                            })
+                        });
                 } else {
                     alert($translate.instant('TXT_MSG_NO_ROWS_SELECT'));
                 }
-            }else if($scope.vm.tabIndex == 1){
+            } else if($scope.vm.tabIndex == 1){
                 if($scope.vm.codeSelList.selList.length>0) {
-                    promotionDetailService.delPromotionCode($scope.vm.codeSelList.selList).then(function (res) {
-                        notify.success("success");
-                        $scope.search();
-                    }, function (err) {
-                        notify.warning("fail");
-                    })
+                    confirm($translate.instant('TXT_MSG_DELETE_ITEM')).result
+                        .then(function () {
+                            var parameter = [];
+                            parameter.push(code);
+                            promotionDetailService.delPromotionCode(parameter).then(function () {
+                                notify.success($translate.instant('TXT_MSG_DELETE_SUCCESS'));
+                                $scope.search();
+                                $scope.vm.codeSelList.selList = [];
+                            });
+                        });
                 } else {
                     alert($translate.instant('TXT_MSG_NO_ROWS_SELECT'));
                 }
@@ -199,6 +211,6 @@ define([
             return _.isEqual(data1, data2)
         };
     };
-    detailController.$inject = ['$scope', 'promotionService', 'promotionDetailService', 'notify', '$routeParams', '$location','alert','$translate','menuService'];
+    detailController.$inject = ['$scope', 'promotionService', 'promotionDetailService', 'notify', '$routeParams', '$location','alert','$translate','confirm'];
     return detailController;
 });

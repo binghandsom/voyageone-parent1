@@ -123,7 +123,7 @@
                             <!-- .form -->
                         </div>
 
-                        <div class="text-center" ng-if="vm.promotion.isActive && !compare(vm.promotion,promotionOld)">
+                        <div class="text-center" ng-if="vm.promotion.isActive">
                             <div class="col-sm-12">
                                 <div class="form-inline" >
                                     <button class="btn btn-default" ng-click="cannelPromotionInfo()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CANCEL' | translate}}</button>
@@ -162,7 +162,7 @@
                     <table class="table table-hover vo_models dropdown_table_bk font-bold" style="background:#e67e22;color:#fff">
                         <thead>
                         <tr>
-                            <td class="mfb-xxxs text-center" ng-controller="selectRowsCtrl">
+                            <td class="mfb-xxxs text-left" ng-controller="selectRowsCtrl">
                                 <label class="checkbox-inline c-checkbox">
                                     <input type="checkbox" ng-checked="vm.groupSelList.selAllFlag"
                                            ng-click="selectAll(vm.groupSelList,'modelId')"><span
@@ -227,7 +227,7 @@
                                         </div>
                                     </small>
                                 </td>
-                                <td class="mfb-xxt text-right">
+                                <td class="mfb-xxt text-center">
                                     <button class="btn btn-danger btn-xs" ng-click="delPromotionModel(group)"><i
                                             class="fa fa-trash-o"></i></button>
                                 </td>
@@ -258,7 +258,7 @@
                             <td class="mfb-xxt text-right" translate="TXT_RETAIL_PRICE"></td>
                             <td class="mfb-xxt text-right" translate="TXT_SALE_PRICE"></td>
                             <td class="mfb-xxt text-right" translate="TXT_PROMOTION_PRICE"></td>
-                            <td class="mfb-xxs text-left" translate="TXT_BASE_PROPERTY"></td>
+                            <td class="mfb-xxx text-left" translate="TXT_BASE_PROPERTY"></td>
                             <td class="mfb-xxt text-center" translate="TXT_SKU_COUNT"></td>
                             <td class="mfb-xxt text-left" translate="TXT_TIME"></td>
                             <td class="mfb-xxt text-center" translate="TXT_ACTION"></td>
@@ -278,7 +278,7 @@
                                                ng-click="selectOne(code.productCode, vm.codeSelList, 'productCode')">
                                         <span class="fa fa-check"></span>
                                     </label>
-									<span class="label m-r-sm m-l">
+									<span class="label m-r-sm m-l" ng-class="{'label-success-new': code.platformStatus == 'Onsale','label-yellow-new': code.platformStatus == 'Instock', 'label-danger-new': code.platformStatus == 'Waitingpublish'}">
 										&nbsp;{{code.platformStatus}}&nbsp;
 									</span>
 									<span class="m-r-sm" ng-if="code.numIid">{{'TXT_NUMBER_IID_WITH_COLON' | translate}}&nbsp;
@@ -309,10 +309,10 @@
                                         <input type="text" class="col-sm-1 form-control m-b-xs" ng-model="code.promotionPrice" ng-pattern="/^(\d+)(\.[0-9]{0,2})?$/">
                                     </p>
                                     <p class="text-u-red">
-                                        （<span class="text-u-sub"><i class="glyphicon glyphicon-triangle-bottom"></i></span>&nbsp;{{code.msrp-code.promotionPrice | number: 2}}
+                                        （<span class="text-u-sub"><i class="glyphicon glyphicon-triangle-bottom"></i></span>&nbsp;{{code.msrp-code.promotionPrice | number: 2}})
                                         {{(code.promotionPrice/code.msrp*100).toFixed(2)}}{{'TXT_DISCOUNT_WORD' | translate}}</p>
                                 </td>
-                                <td class="mfb-xxs text-left">
+                                <td class="mfb-xxx text-left">
                                     <div class="table_main">
                                         <!-- TODO 未实现 -->
                                     </div>
@@ -324,13 +324,12 @@
                                         <div class="table_main">
                                             <ul>
                                                 <li>{{'TXT_CREATE_TIME' | translate}}</li>
-                                                <li><span>{{(code.created).substring(0,10)}}</span></li>
-                                                <li><span>{{(code.created).substring(11,19)}}</span></li>
+                                                <li><span>{{(code.created).substring(0,19)}}</span></li>
                                             </ul>
                                         </div>
                                     </small>
                                 </td>
-                                <td class="mfb-xxt text-right">
+                                <td class="mfb-xxt text-center">
                                     <button ng-if="code.promotionPrice != code.promotionPriceBak" title="保存"
                                             class="btn btn-success btn-xs" ng-click="updateCode(code)"><i
                                             class="fa fa-floppy-o"></i></button>
