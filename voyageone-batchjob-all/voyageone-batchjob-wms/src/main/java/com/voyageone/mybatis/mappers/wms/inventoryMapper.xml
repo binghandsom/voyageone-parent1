@@ -219,8 +219,8 @@
             i.modifier,
             i.created,
             i.creater,
-            d.barcode,
-            d.itemcode
+            e.upc_code as barcode,
+            e.product_code itemcode
         FROM
             (SELECT
               MAX(i.seq) seq
@@ -242,15 +242,9 @@
         JOIN
           voyageone_ims.ims_bt_log_syn_inventory i ON i.seq = ii.seq
         JOIN
-          wms_bt_item_details d ON i.order_channel_id = d.order_channel_id
-        AND i.sku = d.sku
-        JOIN
           jumei.jm_bt_sku e ON i.order_channel_id = e.channel_id
         AND i.sku = e.sku
         AND e.send_flg = '1'
-        JOIN
-          jumei.jm_bt_product p ON i.order_channel_id = p.channel_id
-        AND d.itemcode = p.product_code
         LIMIT #{limit};
     </select>
 
