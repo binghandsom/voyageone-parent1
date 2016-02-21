@@ -3,6 +3,7 @@ package com.voyageone.wms.dao;
 import com.voyageone.base.dao.BaseDao;
 import com.voyageone.common.Constants;
 import com.voyageone.wms.formbean.FormStocktake;
+import com.voyageone.wms.modelbean.StocktakeBean;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -213,6 +214,16 @@ public class StocktakeDao extends BaseDao {
     public List<FormStocktake> getSessionSectionItem(FormStocktake formStocktake) {
         return selectList(Constants.DAO_NAME_SPACE_WMS + "wms_stocktake_getSessionSectionItem", formStocktake);
     }
+
+    /**
+     * @Description 获取该stocktakeId的信息
+     * @param formStocktake (需要： 1、stocktakeId )
+     * @return StocktakeBean
+     */
+    public StocktakeBean getStocktake(FormStocktake formStocktake) {
+        return selectOne(Constants.DAO_NAME_SPACE_WMS + "wms_stocktake_get", formStocktake);
+    }
+
 
     /**
      * @Description 根据Upc获取产品信息

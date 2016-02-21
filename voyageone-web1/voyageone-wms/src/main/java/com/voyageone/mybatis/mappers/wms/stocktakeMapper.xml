@@ -278,6 +278,12 @@
 		</if>
 	</select>
 
+	<select id="wms_stocktake_get" parameterType="com.voyageone.wms.formbean.FormStocktake" resultType="com.voyageone.wms.modelbean.StocktakeBean">
+		select *
+		from wms_bt_take_stock
+		where take_stock_id = #{stocktake_id}
+	</select>
+
 	<select id="wms_stocktake_getProductByUpcOrSku" parameterType="com.voyageone.wms.formbean.FormStocktake" resultMap="stocktakeMap">
 		select itemDel.barcode upc,
 			   itemDel.size,
