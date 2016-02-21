@@ -1023,11 +1023,30 @@ public class ProductService extends BaseService {
         int getCount = request.getLimit();
         String translator = request.getTranslator();
         int translateTimeHDiff = request.getTranslateTimeHDiff();
+        int distributeRule = request.getDistributeRule();
 
-        // add translateTime condition
-        String queryStrTmp = "{\"$or\":" +
-                "[{\"fields.status\":{\"$nin\":[\"New\"]},\"fields.translateStatus\":{\"$in\":[null,\"\", \"0\"]},\"fields.translator\":{\"$in\":[null,\"\"]}}," +
-                 "{\"fields.status\":{\"$nin\":[\"New\"]},\"fields.translator\":{\"$nin\":[null,\"\"]},\"fields.translateTime\":{\"$lt\":\"%s\"}}]}";
+        String queryStrTmp = null;
+
+        switch (distributeRule){
+            case 0:
+                // add translateTime condition
+                queryStrTmp = "{\"$or\":" +
+                        "[{\"fields.status\":{\"$nin\":[\"New\"]},\"fields.translateStatus\":{\"$in\":[null,\"\", \"0\"]},\"fields.translator\":{\"$in\":[null,\"\"]}}," +
+                        "{\"fields.status\":{\"$nin\":[\"New\"]},\"fields.translator\":{\"$nin\":[null,\"\"]},\"fields.translateTime\":{\"$lt\":\"%s\"}}]}";
+                break;
+            case 1:
+                queryStrTmp = "{\"$or\":" +
+                        "[{\"fields.status\":{\"$nin\":[\"New\"]},\"fields.translateStatus\":{\"$in\":[null,\"\",\"0\"]},\"fields.translator\":{\"$in\":[null,\"\"]},\"groups.platforms.isMain\":1}," +
+                        "{\"fields.status\":{\"$nin\":[\"New\"]},\"fields.translator\":{\"$nin\":[null,\"\"]},\"fields.translateTime\":{\"$lt\":\"%s\"},\"groups.platforms.isMain\":1}]}";
+                break;
+            default:
+                // add translateTime condition
+                queryStrTmp = "{\"$or\":" +
+                        "[{\"fields.status\":{\"$nin\":[\"New\"]},\"fields.translateStatus\":{\"$in\":[null,\"\", \"0\"]},\"fields.translator\":{\"$in\":[null,\"\"]}}," +
+                        "{\"fields.status\":{\"$nin\":[\"New\"]},\"fields.translator\":{\"$nin\":[null,\"\"]},\"fields.translateTime\":{\"$lt\":\"%s\"}}]}";
+                break;
+        }
+
 
         Date date = DateTimeUtil.addHours(DateTimeUtil.getDate(), -translateTimeHDiff);
         String translateTimeStr = DateTimeUtil.format(date, null);
