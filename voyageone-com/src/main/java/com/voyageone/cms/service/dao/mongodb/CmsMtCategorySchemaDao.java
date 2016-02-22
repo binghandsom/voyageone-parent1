@@ -33,8 +33,8 @@ public class CmsMtCategorySchemaDao extends BaseMongoDao {
         return mongoTemplate.find(jomgoQuery,getEntityClass());
     }
 
-    public Long getCategoryCount(){
-        return mongoTemplate.count(collectionName);
+    public Long getCategoryCount(String params){
+        return mongoTemplate.count(params, collectionName);
     }
 
     public JSONObject selectByIdRetrunJson(String _id) {

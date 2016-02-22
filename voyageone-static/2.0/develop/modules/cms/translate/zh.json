@@ -88,6 +88,7 @@
   "TXT_MAPPING_ATTRIBUTE_IS_FINISHED": "属性匹配完成?",
   "TXT_MAPPING_ATTRIBUTE": "属性匹配",
   "TXT_MASTER_DATA_ATTRIBUTE_MAPPING": "主数据属性匹配",
+  "TXT_PLATFORM_ATTRIBUTE_MAPPING": "平台属性匹配",
   "TXT_ATTRIBUTE_MAPPING": "属性匹配",
   "TXT_ATTRIBUTE_MAPPING_VALUE_TYPE": "值类型",
   "TXT_ATTRIBUTE_MAPPING_CONDITION_COUNT": "条件个数",
@@ -134,7 +135,7 @@
   "TXT_ERROR_CODE": "异常Code",
   "TXT_ERROR_MESSAGE": "异常消息",
   "TXT_ERROR_CREATE_TIME": "异常创建时间",
-  "TXT_ERROR_IS_FIX": "是否已经解决?",
+  "TXT_ERROR_IS_FIX": "已解决?",
   "TXT_ATTRIBUTE_ID": "属性ID",
   "TXT_ATTRIBUTE_NAME": "属性名称",
   "TXT_ATTRIBUTE_TYPE": "属性类型",
@@ -169,8 +170,9 @@
   "TXT_RETAIL_PRICE": "指导售价",
   "TXT_FILE_IMPORT": "导入文件",
   "TXT_FILE_WITH_COLON": "文件路径:",
-
-
+  "TXT_PRODUCT_TYPE": "产品类型",
+  "TXT_PLATFORM_TYPE_WITH_COLON": "平台类型:",
+  "TXT_INPUT_ONLY_CHAR_AND_NUMBER": "这里只能输入:英数字 _ .，别输火星文!",
 
 
 

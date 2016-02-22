@@ -12,7 +12,7 @@ define([
 ], function (cms) {
     return cms.controller('productDetailController', (function () {
 
-        function productDetailController($routeParams, $translate, productDetailService, feedMappingService, notify, confirm) {
+        function productDetailController($routeParams, $translate, productDetailService, feedMappingService, notify, confirm, $translate) {
 
             this.routeParams = $routeParams;
             this.translate = $translate;
@@ -27,6 +27,7 @@ define([
             this.bulkCartStatus = [];
             this.currentImage = "";
             this.isApprovedStatus = false;
+            this.errorMsg = "";
         }
 
         productDetailController.prototype = {
@@ -34,13 +35,14 @@ define([
             // 获取初始化数据
             initialize: function () {
                 var data = {productId: this.routeParams.productId};
+                var ttt = this;
                 this.productDetailService.getProductInfo(data)
                     .then(function (res) {
                         this.productDetails = res.data.productInfo;
                         this.productDetailsCopy = angular.copy(this.productDetails);
 
                     }.bind(this), function (res) {
-                        this.notify(res.message);
+                        ttt.errorMsg = res.message;
                     }.bind(this))
             },
 

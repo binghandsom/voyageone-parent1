@@ -8,9 +8,9 @@
         <div class="form-group">
             <label class="col-sm-2 control-label m-t-xs" translate="TXT_PLATFORM_TYPE"></label>
             <div class="col-sm-4">
-                <select class="form-control" ng-model="vm.cartId" ng-change="initialize()">
-                    <option value='' translate="TXT_SELECT_NO_VALUE"></option>
-                    <option ng-repeat="cart in vm.cartList" value={{cart.value}}>{{cart.displayName}}</option>
+                <select class="form-control" ng-model="vm.cartId"  ng-change="initialize()"
+                        ng-options="cart.value as cart.name for cart in vm.cartList">
+                    <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                 </select>
             </div>
         </div>
@@ -22,12 +22,12 @@
                     <table class="table table-hover-new vo_table text-center">
                         <thead>
                         <tr>
-                            <th class="text-left mfb-xxt" translate="TXT_PROMOTION_NAME"></th>
-                            <th class="text-left mfb-x" translate="TXT_PLATFORM_TYPE"></th>
-                            <th class="text-left mfb-xxs" translate="TXT_PROMOTION_TIME"></th>
-                            <th class="text-right mfb-xx" translate="TXT_MSRP"></th>
-                            <th class="text-right mfb-xx" translate="TXT_SALE_PRICE"></th>
-                            <th class="text-right mfb-x" translate="TXT_PROMOTION_PRICE"></th>
+                            <th class="text-left mfb-xxs" translate="TXT_PROMOTION_NAME"></th>
+                            <th class="text-left mfb-xxt" translate="TXT_PLATFORM_TYPE"></th>
+                            <th class="text-left mfb-xxx" translate="TXT_PROMOTION_TIME"></th>
+                            <th class="text-right mfb-x" translate="TXT_MSRP"></th>
+                            <th class="text-right mfb-x" translate="TXT_SALE_PRICE"></th>
+                            <th class="text-right mfb-xx" translate="TXT_PROMOTION_PRICE"></th>
                             <!-- TODO 暂时未实现 -->
                             <!--<th class="text-center mfb-xxs" translate="TXT_ISOLATE_QUANTITY"></th>-->
                         </tr>
