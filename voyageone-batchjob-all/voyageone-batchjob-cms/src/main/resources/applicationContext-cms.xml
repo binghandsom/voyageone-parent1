@@ -27,7 +27,7 @@
         <!-- CMS统计日报 -->
         <task:scheduled ref="BcbgAnalySisJob" method="run" cron="0 0/1 0-23 * * ?"/>
 
-        <task:scheduled ref="SearsAnalySisJob" method="run" cron="0 0/3 * * * ?"/>
+        <task:scheduled ref="GiltAnalysisJob" method="run" cron="0 0 0/6 * * ?"/>
 
         <!-- 聚美活动文件导入 -->
         <!--<task:scheduled ref="ImportExcelFileJob" method="run" cron="0 0/1 0-23 * * ?"/>-->
@@ -37,7 +37,7 @@
 
         <task:scheduled ref="CmsUploadJmPicJob" method="run" cron="0 0/1 * * * ?"/>
 
-        <task:scheduled ref="GiltAnalysisJob" method="run" cron="0 0 0/6 * * ?"/>
+
 
         <!-- Gilt订单推送(待Placed) -->
         <task:scheduled ref="OmsPostGiltNormalOrderJob" method="run" cron="0 0/5 0-23 * * ?"/>
@@ -45,6 +45,24 @@
         <task:scheduled ref="OmsPostGiltConfOrderJob" method="run" cron="0 0/5 0-23 * * ?"/>
         <!-- Gilt订单推送(待Cancelled) -->
         <task:scheduled ref="OmsPostGiltCancelOrderJob" method="run" cron="0 0/5 0-23 * * ?"/>
+
+
+        <!-- cms2 batch add    -->
+
+        <task:scheduled ref="getPlatformCategoryTreesTask" method="run" cron="0 0/1 0-23 * * ?"/>
+
+        <task:scheduled ref="getPlatformCategorySchemaTask" method="run" cron="0 0/1 0-23 * * ?"/>
+
+        <task:scheduled ref="buildMasterSchemaFromPlatformTask" method="run" cron="0 0/1 0-23 * * ?"/>
+
+        <!--&lt;!&ndash; 主数据到平台的默认mapping数据做成&ndash;&gt;-->
+        <task:scheduled ref="CmsPlatformMappingJob" method="run" cron="0 0/1 0-23 * * ?"/>
+
+        <!-- cms2的图片推送到Scene7-->
+        <task:scheduled ref="CmsImagePostScene7Job" method="run" cron="0/30 * * * * ?"/>
+
+        <!-- Jewelry feed 导入 cms2 -->
+        <task:scheduled ref="JewelryAnalysis" method="run" cron="0 0 0/6 * * ?"/>
 
     </task:scheduled-tasks>
 
