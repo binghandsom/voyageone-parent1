@@ -39,6 +39,27 @@
         AND itemcode = #{code}
     </select>
 
+    <select id="wms_bt_item_details_search_sku" resultType="HashMap">
+        SELECT
+            sku, itemcode
+        FROM
+            wms_bt_item_details
+        WHERE
+            order_channel_id = #{order_channel_id}
+        AND barcode = #{sku}
+        AND active = '1'
+
+        UNION
+
+        SELECT
+            sku, itemcode
+        FROM
+            wms_bt_item_details
+        WHERE
+            order_channel_id = #{order_channel_id}
+        AND sku = #{sku}
+    </select>
+
     <select id="wms_bt_item_details_count_by_code" resultType="int">
         SELECT
             count(1)
@@ -47,6 +68,16 @@
         WHERE
             order_channel_id = #{order_channel_id}
         AND itemcode = #{code}
+    </select>
+
+    <select id="wms_bt_item_details_count_by_sku" resultType="int">
+        SELECT
+            count(1)
+        FROM
+            wms_bt_item_details
+        WHERE
+            order_channel_id = #{order_channel_id}
+        AND sku = #{sku}
     </select>
 
     <select id="wms_bt_item_details_selectItemDetails" resultMap="itemDetailMap">

@@ -27,7 +27,11 @@ public interface WmsLocationService {
 
     Map<String, Object> searchItemLocations(String code, int store_id, UserSessionBean user);
 
-    Map<String, Object> addItemLocation(int store_id, String code, String location_name, UserSessionBean user);
+    Map<String, Object> searchItemLocationsBySku(String sku, int store_id, UserSessionBean user);
+
+    Map<String, Object> searchItemLocationsByLocationId(int location_id, int store_id, UserSessionBean user);
+
+    Map<String, Object> addItemLocation(int store_id, String code, String sku, String location_name, UserSessionBean user);
 
     ItemLocationLogFormBean deleteItemLocation(int item_location_id, String modified, UserSessionBean user);
 

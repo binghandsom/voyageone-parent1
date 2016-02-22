@@ -142,13 +142,40 @@ public class WmsLocationController extends BaseController {
                 .writeTo(getRequest(), response);
     }
 
+    @RequestMapping(LocationUrls.Bind.SEARCH_BY_SKU)
+    public void searchItemLocationsBySku(@RequestBody Map<String, Object> params, HttpServletResponse response) {
+        String sku = (String) params.get("sku");
+        int store_id = (int) params.get("store_id");
+
+        Map<String, Object> result = locationService.searchItemLocationsBySku(sku, store_id, getUser());
+
+        AjaxResponseBean
+                .newResult(true)
+                .setResultInfo(result)
+                .writeTo(getRequest(), response);
+    }
+
+    @RequestMapping(LocationUrls.Bind.SEARCH_BY_LOCATION_ID)
+    public void searchItemLocationsByLocationId(@RequestBody Map<String, Object> params, HttpServletResponse response) {
+        int sku = (int) params.get("locantion_id");
+        int store_id = (int) params.get("store_id");
+
+        Map<String, Object> result = locationService.searchItemLocationsByLocationId(sku, store_id, getUser());
+
+        AjaxResponseBean
+                .newResult(true)
+                .setResultInfo(result)
+                .writeTo(getRequest(), response);
+    }
+
     @RequestMapping(LocationUrls.Bind.ADD)
     public void addItemLocation(@RequestBody Map<String, Object> params, HttpServletResponse response) {
         String location_name = (String) params.get("location_name");
         String code = (String) params.get("code");
+        String sku = (String) params.get("sku");
         int store_id = (int) params.get("store_id");
 
-        Map<String, Object> result = locationService.addItemLocation(store_id, code, location_name, getUser());
+        Map<String, Object> result = locationService.addItemLocation(store_id, code, sku, location_name, getUser());
 
         AjaxResponseBean
                 .newResult(true)

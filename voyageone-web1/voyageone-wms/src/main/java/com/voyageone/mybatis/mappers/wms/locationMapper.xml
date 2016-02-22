@@ -25,6 +25,7 @@
         wms_bt_item_location.order_channel_id,
         wms_bt_item_location.store_id,
         wms_bt_item_location.`code`,
+        wms_bt_item_location.`sku`,
         wms_bt_item_location.location_id
     </sql>
 
@@ -149,6 +150,42 @@
         AND wms_bt_item_location.`code` = #{code}
     </select>
 
+    <select id="wms_bt_item_location_select_item_locationsBySku" resultType="com.voyageone.wms.formbean.ItemLocationFormBean">
+        SELECT
+            <include refid="item_location_select_cols"></include>,
+            wms_bt_item_location.active,
+            wms_bt_item_location.created,
+            wms_bt_item_location.creater,
+            wms_bt_item_location.modified,
+            wms_bt_item_location.modifier,
+            location.location_name
+        FROM
+            wms_bt_item_location
+        JOIN
+            wms_mt_location location ON wms_bt_item_location.location_id = location.location_id
+        WHERE
+            wms_bt_item_location.store_id = #{store_id}
+            AND wms_bt_item_location.`sku` = #{sku}
+    </select>
+
+    <select id="wms_bt_item_location_select_item_locationsByLocationId" resultType="com.voyageone.wms.formbean.ItemLocationFormBean">
+        SELECT
+        <include refid="item_location_select_cols"></include>,
+            wms_bt_item_location.active,
+            wms_bt_item_location.created,
+            wms_bt_item_location.creater,
+            wms_bt_item_location.modified,
+            wms_bt_item_location.modifier,
+            location.location_name
+        FROM
+            wms_bt_item_location
+        JOIN
+            wms_mt_location location ON wms_bt_item_location.location_id = location.location_id
+        WHERE
+            wms_bt_item_location.store_id = #{store_id}
+        AND wms_bt_item_location.location_id = #{locantion_id}
+    </select>
+
     <select id="wms_bt_item_location_logs_select_item_location_logs" resultType="com.voyageone.wms.formbean.ItemLocationLogFormBean">
         SELECT
             <include refid="item_location_log_select_cols"></include>,
@@ -168,12 +205,32 @@
         ORDER BY wms_bt_item_location_log.modified DESC
     </select>
 
+    <select id="wms_bt_item_location_logs_select_item_location_logsBySku" resultType="com.voyageone.wms.formbean.ItemLocationLogFormBean">
+        SELECT
+            <include refid="item_location_log_select_cols"></include>,
+            wms_bt_item_location_log.active,
+            wms_bt_item_location_log.created,
+            wms_bt_item_location_log.creater,
+            wms_bt_item_location_log.modified,
+            wms_bt_item_location_log.modifier,
+            location.location_name
+        FROM
+            wms_bt_item_location_log
+        JOIN
+            wms_mt_location location ON wms_bt_item_location_log.location_id = location.location_id
+        WHERE
+            wms_bt_item_location_log.store_id = #{store_id}
+        AND wms_bt_item_location_log.`sku` = #{sku}
+        ORDER BY wms_bt_item_location_log.modified DESC
+    </select>
+
     <insert id="wms_bt_item_location_insert">
         INSERT wms_bt_item_location (
             item_location_id,
             order_channel_id,
             store_id,
             `code`,
+            sku,
             location_id,
             active,
             created,
@@ -187,6 +244,7 @@
                 #{order_channel_id},
                 #{store_id},
                 #{code},
+                #{sku},
                 #{location_id},
                 #{active},
                 now(),
@@ -212,6 +270,7 @@
         WHERE
             wms_bt_item_location.store_id = #{store_id}
         AND wms_bt_item_location.`code` = #{code}
+        AND wms_bt_item_location.`sku` = #{sku}
         AND wms_bt_item_location.location_id = #{location_id}
     </select>
 
@@ -254,6 +313,7 @@
             order_channel_id,
             store_id,
             `code`,
+            sku,
             location_id,
             `comment`,
             active,
@@ -268,6 +328,7 @@
                 #{order_channel_id},
                 #{store_id},
                 #{code},
+                #{sku},
                 #{location_id},
                 #{comment},
                 #{active},

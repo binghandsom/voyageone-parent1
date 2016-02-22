@@ -46,6 +46,7 @@ define([
         vm.itemLocationLogs = [];
 
         $scope.searchItemLocation = searchItemLocation;
+        $scope.searchItemLocationBySku = searchItemLocationBySku;
         $scope.deleteItemLocation = deleteItemLocation;
         $scope.addItemLocation = addItemLocation;
 
@@ -83,6 +84,41 @@ define([
                 function (res) {
                     // 搜索成功之后，将搜索的条件保存到非公开的变量上
                     vm.curr.code = res.code;
+                    vm.curr.sku = res.sku;
+                    vm.curr.store = res.store_id;
+                    vm.curr.store_name = res.storeName;
+
+                    vm.itemLocations = res.itemLocations;
+                    vm.itemLocationLogs = res.itemLocationLogs;
+
+                    location.focus();
+                });
+        }
+
+        function searchItemLocationBySku() {
+
+            var sku = $('#location-bind-sku');
+            var location = $('#location-bind-location');
+
+            sku.focus();
+
+            if (!vm.search.sku) {
+                notify("WMS_LOCATION_SKU_UN_VALID");
+                return;
+            }
+
+            var search_sku = vm.search.sku;
+            vm.search.sku = "";
+
+            // 根据条件搜索
+            locationService.doSearchItemLocationBySku(
+                search_sku,
+                vm.search.store
+            ).then(
+                function (res) {
+                    // 搜索成功之后，将搜索的条件保存到非公开的变量上
+                    vm.curr.code = res.code;
+                    vm.curr.sku = res.sku;
                     vm.curr.store = res.store_id;
                     vm.curr.store_name = res.storeName;
 
@@ -127,6 +163,7 @@ define([
             locationService.doAddItemLocation(
                 location_name,
                 vm.curr.code,
+                vm.curr.sku,
                 vm.curr.store
             ).then(
                 function(res) {

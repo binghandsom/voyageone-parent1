@@ -69,17 +69,32 @@ define([
         };
 
         /**
+         * 获取商品货位，返回 { itemLocations, itemLocationLogs }
+         * @param code 商品的 code 或 Barcode
+         * @param store_id 仓库 id
+         * @returns {*}
+         */
+        this.doSearchItemLocationBySku = function(sku, store_id){
+            if (store_id == "") {
+                store_id = 0;
+            }
+            return http.ajaxPost({sku: sku, store_id: store_id}, location.bind.searchBySku).then(function (res){
+                return res.data;
+            });
+        };
+
+        /**
          * 在仓库，添加商品到货位。返回 ItemLocationBean 和 itemLocationLog
          * @param location_name 货位名
          * @param code 商品的 Code
          * @param store_id 仓库 id
          * @returns {*}
          */
-        this.doAddItemLocation = function(location_name, code, store_id){
+        this.doAddItemLocation = function(location_name, code, sku, store_id){
             if (store_id == "") {
                 store_id = 0;
             }
-            return http.ajaxPost({location_name: location_name, code: code, store_id: store_id}, location.bind.add).then(function (res) {
+            return http.ajaxPost({location_name: location_name, code: code, sku: sku, store_id: store_id}, location.bind.add).then(function (res) {
                 return res.data;
             });
         };

@@ -232,9 +232,106 @@ public class WmsLocationServiceImpl implements WmsLocationService {
 
         map.put("code", code);
 
+        map.put("sku", "");
+
         map.put("itemLocations", itemLocations);
 
         map.put("itemLocationLogs", itemLocationLogs);
+
+        return map;
+    }
+
+    /**
+     * 在目标仓库，检索目标商品的所有位置，以及其变更记录
+     *
+     * @param sku     商品的 sku
+     * @param store_id 目标仓库
+     * @return Map/ itemLocations/ itemLocationLogs
+     */
+    @Override
+    public Map<String, Object> searchItemLocationsBySku(String sku, int store_id, UserSessionBean user) {
+        // 检索渠道
+        String order_channel_id = storeDao.getChannel_id(store_id);
+
+        // 没找到仓库的渠道
+        if (StringUtils.isEmpty(order_channel_id))
+            throw new BusinessException(ItemLocationMsg.NOT_FOUND_CHANNEL);
+
+        // 根据输入的条形码找到对应的UPC
+        sku = itemDao.getUPC(order_channel_id, sku);
+
+        // 通过 sku 和 barcode 进行匹配。检索所有匹配商品的 sku （去重复）
+        List<HashMap<String, String>> skus = itemDao.searchSku(sku, order_channel_id);
+
+        // 如果结果有多个，说明输入的 sku 不能唯一匹配
+        if (skus.size() != 1)
+            throw new BusinessException(ItemLocationMsg.CANT_MATCH_UNIQUE_ITEM, sku);
+
+        HashMap<String, String> skuAndCode = skus.get(0);
+        sku = skuAndCode.get("sku");
+        String code = skuAndCode.get("itemcode");
+
+        // 取得仓库的名称
+        String storeName = StoreConfigs.getStore(store_id).getStore_name();
+
+        // 检索货位
+        List<ItemLocationFormBean> itemLocations = locationDao.selectItemLocationsBySku(sku, store_id);
+
+        // 检索日志
+        List<ItemLocationLogFormBean> itemLocationLogs = locationDao.selectItemLocationLogsBySku(sku, store_id);
+
+        // 格式化日志对象的“修改”时间字段，对其进行时区处理
+        int timeZone = user.getTimeZone();
+        for (ItemLocationLogFormBean bean : itemLocationLogs) bean.setModified_local(timeZone);
+
+        Map<String, Object> map = new HashMap<>();
+
+        map.put("store_id", store_id);
+
+        map.put("storeName", storeName);
+
+        map.put("code", code);
+
+        map.put("sku", sku);
+
+        map.put("itemLocations", itemLocations);
+
+        map.put("itemLocationLogs", itemLocationLogs);
+
+        return map;
+    }
+
+    /**
+     * 在目标仓库，检索货架上的所有商品
+     *
+     * @param location_id 货架Id
+     * @param store_id 目标仓库
+     * @return Map/ itemLocations/ itemLocationLogs
+     */
+    @Override
+    public Map<String, Object> searchItemLocationsByLocationId(int location_id, int store_id, UserSessionBean user) {
+        // 检索渠道
+        String order_channel_id = storeDao.getChannel_id(store_id);
+
+        // 没找到仓库的渠道
+        if (StringUtils.isEmpty(order_channel_id))
+            throw new BusinessException(ItemLocationMsg.NOT_FOUND_CHANNEL);
+
+        // 取得仓库的名称
+        String storeName = StoreConfigs.getStore(store_id).getStore_name();
+
+        // 检索货位
+        List<ItemLocationFormBean> itemLocations = locationDao.selectItemLocationsByLocationId(location_id, store_id);
+
+        Map<String, Object> map = new HashMap<>();
+
+        map.put("store_id", store_id);
+
+        map.put("storeName", storeName);
+
+//        map.put("locationName", location_name);
+
+        map.put("itemLocations", itemLocations);
 
         return map;
     }
@@ -250,7 +347,7 @@ public class WmsLocationServiceImpl implements WmsLocationService {
      * @return ItemLocationBean
      */
     @Override
-    public Map<String, Object> addItemLocation(int store_id, String code, String location_name, UserSessionBean user) {
+    public Map<String, Object> addItemLocation(int store_id, String code, String sku, String location_name, UserSessionBean user) {
         // 检索渠道
         String order_channel_id = storeDao.getChannel_id(store_id);
 
@@ -258,11 +355,17 @@ public class WmsLocationServiceImpl implements WmsLocationService {
         if (StringUtils.isEmpty(order_channel_id))
             throw new BusinessException(ItemLocationMsg.NOT_FOUND_CHANNEL);
 
-        // 检查 Code 在目标渠道里，是否存在
-        if (!hasCodeInChannel(order_channel_id, code))
-            throw new BusinessException(ItemLocationMsg.NOT_FOUND_CODE_IN_CHANNEL, code);
+        if (StringUtils.isEmpty(sku)) {
+            // 检查 Code 在目标渠道里，是否存在
+            if (!hasCodeInChannel(order_channel_id, code))
+                throw new BusinessException(ItemLocationMsg.NOT_FOUND_CODE_IN_CHANNEL, code);
+        } else {
+            // 检查 SKU 在目标渠道里，是否存在
+            if (!hasSkuInChannel(order_channel_id, sku))
+                throw new BusinessException(ItemLocationMsg.NOT_FOUND_SKU_IN_CHANNEL, sku);
+        }
 
-        ItemLocationBean itemLocation = createItemLocation(order_channel_id, store_id, code, location_name, user);
+        ItemLocationBean itemLocation = createItemLocation(order_channel_id, store_id, code, sku, location_name, user);
 
         // 检查，这个商品，是否之前就已经在相同的位置上了。
         if (isItemLocationExists(itemLocation))
@@ -294,7 +397,8 @@ public class WmsLocationServiceImpl implements WmsLocationService {
         if (itemLocation == null)
             throw new BusinessException(ComMsg.UPDATE_BY_OTHER);
 
-        locationDao.deleteItemLocationExt(itemLocation);
+        // wms_bt_item_location_ext删除
+//        locationDao.deleteItemLocationExt(itemLocation);
 
         int count = locationDao.deleteItemLocation(item_location_id, modified);
 
@@ -342,6 +446,7 @@ public class WmsLocationServiceImpl implements WmsLocationService {
         itemLocationLog.setOrder_channel_id(itemLocation.getOrder_channel_id());
         itemLocationLog.setStore_id(itemLocation.getStore_id());
         itemLocationLog.setCode(itemLocation.getCode());
+        itemLocationLog.setSku(itemLocation.getSku());
         itemLocationLog.setLocation_id(itemLocation.getLocation_id());
         itemLocationLog.setComment(
                 add
@@ -376,7 +481,7 @@ public class WmsLocationServiceImpl implements WmsLocationService {
      * @param user             操作人
      * @return ItemLocationBean
      */
-    private ItemLocationBean createItemLocation(String order_channel_id, int store_id, String code, String location_name, UserSessionBean user) {
+    private ItemLocationBean createItemLocation(String order_channel_id, int store_id, String code, String sku, String location_name, UserSessionBean user) {
         LocationFormBean location = locationDao.getLocationByName(location_name, store_id);
 
         if (location == null)
@@ -387,6 +492,7 @@ public class WmsLocationServiceImpl implements WmsLocationService {
         itemLocation.setOrder_channel_id(order_channel_id);
         itemLocation.setStore_id(store_id);
         itemLocation.setCode(code);
+        itemLocation.setSku(sku);
         itemLocation.setLocation_id(location.getLocation_id());
 
         itemLocation.setActive(true);
@@ -406,6 +512,17 @@ public class WmsLocationServiceImpl implements WmsLocationService {
      */
     private boolean hasCodeInChannel(String order_channel_id, String code) {
         return itemDao.countByCode(order_channel_id, code) > 0;
+    }
+
+    /**
+     * 检查目标渠道下，是否有该 Code 的商品
+     *
+     * @param order_channel_id 渠道
+     * @param sku             商品 Sku
+     * @return boolean
+     */
+    private boolean hasSkuInChannel(String order_channel_id, String sku) {
+        return itemDao.countBySku(order_channel_id, sku) > 0;
     }
 
     /**
