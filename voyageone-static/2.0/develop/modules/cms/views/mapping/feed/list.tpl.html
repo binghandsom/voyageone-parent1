@@ -45,9 +45,9 @@
                         <th class="mfb-xt text-center" translate="TXT_SEQ"></th>
                         <th class="text-left" translate="TXT_LEVEL"></th>
                         <th class="text-left" translate="TXT_FEED_CATEGORY"></th>
-                        <th class="text-left" translate="TXT_MASTER_CATEGORY"></th>
+                        <th class="mfb-xxs text-left" translate="TXT_MASTER_CATEGORY"></th>
                         <th class="mfb-xxs text-center" translate="TXT_MAPPING_CATEGORY_OR_FORWARD"></th>
-                        <th class="mfb-xxs text-center" translate="TXT_MAPPING_ATTRIBUTE_IS_FINISHED"></th>
+                        <th class="mfb-xxt text-center" translate="TXT_MAPPING_ATTRIBUTE_IS_FINISHED"></th>
                         <th class="mfb-xxx text-center" translate="TXT_MAPPING_ATTRIBUTE"></th>
                     </tr>
                     </thead>
@@ -61,7 +61,7 @@
                             </span>
                         </td>
                         <td class="text-left">{{::feedCategory.model.path}}</td>
-                        <td class="text-left">{{$ctrl.getDefaultMapping(feedCategory)}}</td>
+                        <td class="mfb-xxs text-left">{{$ctrl.getDefaultMapping(feedCategory)}}</td>
                         <td class="mfb-xxs">
                             <div class="btn-group" ng-controller="popupCtrl">
                                 <button ng-click="$ctrl.openCategoryMapping(feedCategory.model, popupNewCategory)"
@@ -73,7 +73,7 @@
                                 </button>
                             </div>
                         </td>
-                        <td class="mfb-xxs">
+                        <td class="mfb-xxt">
                             <span class="h4" ng-if="feedCategory.mapping && feedCategory.mapping.matchOver">
                                 <i class="fa fa-check-circle text-vo"></i>
                             </span>

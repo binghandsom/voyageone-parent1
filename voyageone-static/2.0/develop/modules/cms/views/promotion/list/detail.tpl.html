@@ -57,8 +57,8 @@
                         <div class="col-sm-4">
                             <form class="form-horizontal">
                                 <div class="form-group">
-                                    <label class="col-sm-3 control-label" translate="TXT_PREHEATING_TIME"></label>
-                                    <div class="col-sm-8 form-inline">
+                                    <label class="col-sm-4 control-label" translate="TXT_PREHEATING_TIME"></label>
+                                    <div class="col-sm-7 form-inline">
                                         <div class="col-sm-5 input-group" ng-controller="datePickerCtrl">
                                             <input type="text" ng-model="vm.promotion.prePeriodStart" class="form-control" datepicker-popup="{{formatDate}}" is-open="opened" date-model-format="{{formatDate}}" datepicker-options="dateOptions" close-text="Close" />
 								              <span class="input-group-btn">
@@ -74,8 +74,8 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="col-sm-3 control-label" translate="TXT_PRE_SALE_TIME"></label>
-                                    <div class="col-sm-8 form-inline">
+                                    <label class="col-sm-4 control-label" translate="TXT_PRE_SALE_TIME"></label>
+                                    <div class="col-sm-7 form-inline">
                                         <div class="col-sm-5 input-group" ng-controller="datePickerCtrl">
                                             <input type="text" ng-model="vm.promotion.preSaleStart" class="form-control" datepicker-popup="{{formatDate}}" is-open="opened" date-model-format="{{formatDate}}" datepicker-options="dateOptions" close-text="Close" />
 								              <span class="input-group-btn">
@@ -91,8 +91,8 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="col-sm-3 control-label" translate="TXT_PROMOTION_TIME"></label>
-                                    <div class="col-sm-8 form-inline">
+                                    <label class="col-sm-4 control-label" translate="TXT_PROMOTION_TIME"></label>
+                                    <div class="col-sm-7 form-inline">
                                         <div class="col-sm-5 input-group" ng-controller="datePickerCtrl">
                                             <input type="text" ng-model="vm.promotion.activityStart" class="form-control" datepicker-popup="{{formatDate}}" is-open="opened" date-model-format="{{formatDate}}" datepicker-options="dateOptions" close-text="Close" />
 								              <span class="input-group-btn">
@@ -116,7 +116,7 @@
                                     <label class="col-sm-3 control-label"></label>
                                     <div class="form-inline col-sm-9">
                                         <input type="text" placeholder="{{'TXT_MSG_SEARCH' | translate}}"  ng-model="vm.searchKey"  class="form-control col-sm-8">
-                                        <span class="input-group-btn"><button class="btn btn-vo" ng-click="search()" type="button" translate="BTN_SEARCH"></button></span>
+                                        <span class="input-group-btn"><button class="btn btn-vo" ng-click="search()" type="button" ><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}</button></span>
                                     </div>
                                 </div>
                             </form>
