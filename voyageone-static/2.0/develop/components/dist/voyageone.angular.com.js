@@ -140,7 +140,7 @@ define(function() {
   angular.module("voyageone.angular.directives.ifNoRows", []).directive("ifNoRows", [ "$templateCache", "$compile", function($templateCache, $compile) {
     var tempNoDataKey = "voyageone.angular.directives.ifNoRows.tpl.html";
     if (!$templateCache.get(tempNoDataKey)) {
-      $templateCache.put(tempNoDataKey, '<div class="text-center text-hs" id="noData">\n' + '    <h4 class="text-vo"><i class="icon fa fa-warning"></i>&nbsp;{{\'TXT_WARNING\' | translate}}</h4>\n' + "{{'TXT_MSG_NO_DATE' | translate}}" + "</dv>");
+      $templateCache.put(tempNoDataKey, '<div class="text-center text-hs" id="noData">\n' + '    <h4 class="text-vo"><i class="icon fa fa-warning"></i>&nbsp;{{\'TXT_ALERT\' | translate}}</h4>\n' + "{{'TXT_MSG_NO_DATE' | translate}}" + "</dv>");
     }
     return {
       restrict: "A",
@@ -1470,9 +1470,9 @@ define(function() {
     }
   };
   angular.module("voyageone.angular.controllers", [ "voyageone.angular.controllers.datePicker", "voyageone.angular.controllers.selectRows", "voyageone.angular.controllers.showPopover" ]);
-  angular.module("voyageone.angular.directives", [ "voyageone.angular.directives.dateModelFormat", "voyageone.angular.directives.enterClick", "voyageone.angular.directives.fileStyle", "voyageone.angular.directives.ifNoRows", "voyageone.angular.directives.uiNav", "voyageone.angular.directives.schema", "voyageone.angular.directives.voption", "voyageone.angular.directives.vpagination", "voyageone.angular.directives.validator" ]);
   angular.module("voyageone.angular.factories", [ "voyageone.angular.factories.dialogs", "voyageone.angular.factories.interceptor", "voyageone.angular.factories.notify", "voyageone.angular.factories.pppAutoImpl", "voyageone.angular.factories.schema", "voyageone.angular.factories.selectRows", "voyageone.angular.factories.vpagination" ]);
+  angular.module("voyageone.angular.directives", [ "voyageone.angular.directives.dateModelFormat", "voyageone.angular.directives.enterClick", "voyageone.angular.directives.fileStyle", "voyageone.angular.directives.ifNoRows", "voyageone.angular.directives.uiNav", "voyageone.angular.directives.schema", "voyageone.angular.directives.voption", "voyageone.angular.directives.vpagination", "voyageone.angular.directives.validator" ]);
   angular.module("voyageone.angular.services", [ "voyageone.angular.services.ajax", "voyageone.angular.services.cookie", "voyageone.angular.services.message", "voyageone.angular.services.permission", "voyageone.angular.services.translate" ]);
-  return angular.module("voyageone.angular", [ "voyageone.angular.controllers", "voyageone.angular.directives", "voyageone.angular.factories", "voyageone.angular.services" ]);
+  return angular.module("voyageone.angular", [ "voyageone.angular.controllers", "voyageone.angular.factories", "voyageone.angular.directives", "voyageone.angular.services" ]);
 });
 //# sourceMappingURL=voyageone.angular.com.js.map

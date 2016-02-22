@@ -10,7 +10,7 @@ require.config({
     baseUrl: '../../',
     paths: {
         'voyageone-angular-com': 'components/dist/voyageone.angular.com',
-        'voyageone-com': 'components/dist/voyageone.com',
+        'voyageone-com': 'components/dist/voyageone.com.min',
         'angular-animate': 'libs/angular.js/1.5.0/angular-animate.min',
         'angular-route': 'libs/angular.js/1.5.0/angular-route.min',
         'angular-sanitize': 'libs/angular.js/1.5.0/angular-sanitize.min',

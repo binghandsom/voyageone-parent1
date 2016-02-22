@@ -6,41 +6,24 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function () {
 
-    function detailController($scope, promotionService, promotionDetailService, notify, $routeParams, $location, alert, $translate, confirm) {
-        pageSize = 5;
+    function detailController($scope, promotionService, promotionDetailService, notify, $routeParams, $location, alert, $translate, confirm, cRoutes) {
         $scope.promotionOld={};
         $scope.vm = {
             "promotionId": $routeParams.promotionId,
             "tabIndex": 0,
             "searchKey": '',
             "promotion": {},
+            "cartList":[],
+            "groupPageOption": {curr: 1, total: 0, size: 20, fetch: searchGroup},
+            "codePageOption": {curr: 1, total: 0, size: 20, fetch: searchCode},
+            "skuPageOption": {curr: 1, total: 0, size: 20, fetch: searchSku},
             "groupList": [],
             "codeList": [],
             "skuList": [],
-            "cartList":[],
-            "groupPageOption": {curr: 1, total: 5, size: 5, fetch: searchGroup},
-            "codePageOption": {curr: 1, total: 5, size: 5, fetch: searchCode},
-            "skuPageOption": {curr: 1, total: 7, size: 10, fetch: searchSku},
-            groupSelList: {
-                currPageRows: [],
-                selFlag: [],
-                selAllFlag: false,
-                selList: []
-            },
-            codeSelList: {
-                currPageRows: [],
-                selFlag: [],
-                selAllFlag: false,
-                selList: []
-            },
-            skuSelList: {
-                currPageRows: [],
-                selFlag: [],
-                selAllFlag: false,
-                selList: []
-            }
+            groupSelList: {currPageRows: [], selFlag: [], selAllFlag: false, selList: []},
+            codeSelList: {currPageRows: [], selFlag: [], selAllFlag: false, selList: []},
+            skuSelList: {currPageRows: [], selFlag: [], selAllFlag: false, selList: []}
         };
-
 
         $scope.initialize = function () {
             promotionService.init().then(function (res) {
@@ -49,69 +32,14 @@ define([
                 promotionService.getPromotionList({"promotionId": $routeParams.promotionId}).then(function (res) {
                     $scope.vm.promotion = res.data[0];
                     $scope.promotionOld = _.clone($scope.vm.promotion);
+                    if($scope.vm.promotion.tejiabaoId != "0"){
+                        $scope.vm.promotion.tejiabao=true;
+                    }
                 });
             });
             $scope.search();
-        }
-        function selAllFlag(objectList,id){
-            objectList.selAllFlag = true;
-            if(!id){
-                id="id";
-            }
-            angular.forEach(objectList.currPageRows, function(object) {
-                if (!objectList.selFlag[object[id]]) {
-                    objectList.selAllFlag = false;
-                }
-            })
-        }
-        function searchGroup() {
-            promotionDetailService.getPromotionGroup({
-                "promotionId": $routeParams.promotionId,
-                "key": $scope.vm.searchKey,
-                "start": ($scope.vm.groupPageOption.curr - 1) * $scope.vm.groupPageOption.size,
-                "length": $scope.vm.groupPageOption.size
-            }).then(function (res) {
-                $scope.vm.groupPageOption.total = res.data.total;
-                $scope.vm.groupList = res.data.resultData;
-                $scope.vm.groupSelList.currPageRows = res.data.resultData;
-                selAllFlag($scope.vm.groupSelList,"modelId");
-            }, function (err) {
-
-            })
-        }
-
-        function searchCode() {
-            promotionDetailService.getPromotionCode({
-                "promotionId": $routeParams.promotionId,
-                "key": $scope.vm.searchKey,
-                "start": ($scope.vm.codePageOption.curr - 1) * $scope.vm.codePageOption.size,
-                "length": $scope.vm.codePageOption.size
-            }).then(function (res) {
-                $scope.vm.codePageOption.total = res.data.total;
-                $scope.vm.codeList = res.data.resultData;
-                _.each($scope.vm.codeList,function(item){
-                    item.promotionPriceBak = item.promotionPrice;
-                });
-                $scope.vm.codeSelList.currPageRows = res.data.resultData;
-                selAllFlag($scope.vm.codeSelList,"productCode");
-            }, function (err) {
-
-            })
-        }
-
-        function searchSku() {
-            promotionDetailService.getPromotionSku({
-                "promotionId": $routeParams.promotionId,
-                "key": $scope.vm.searchKey,
-                "start": ($scope.vm.skuPageOption.curr - 1) * $scope.vm.skuPageOption.size,
-                "length": $scope.vm.skuPageOption.size
-            }).then(function (res) {
-                $scope.vm.skuPageOption.total = res.data.total;
-                $scope.vm.skuList = res.data.resultData;
-            }, function (err) {
-
-            })
         };
+
         $scope.search = function () {
             searchGroup();
             searchCode();
@@ -121,9 +49,7 @@ define([
         $scope.updateCode = function(code){
             promotionDetailService.updatePromotionProduct(code).then(function (res) {
                 code.promotionPriceBak = code.promotionPrice;
-                notify.success("success");
-            }, function (err) {
-                notify.warning("fail");
+                notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
             })
         };
 
@@ -189,20 +115,22 @@ define([
         };
         $scope.savePromotionInfo = function(){
 
+            if(!$scope.vm.promotion.tejiabao){
+                $scope.vm.promotion.tejiabaoId = "0";
+            }
             promotionService.updatePromotion($scope.vm.promotion).then(function (res) {
-                notify.success("success");
-            }, function (res) {
-                notify.warning("fail");
+                notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
             })
         };
         $scope.teJiaBaoInit = function(){
-            promotionDetailService.teJiaBaoInit( $routeParams.promotionId).then(function (res) {
-                notify.success("success");
-                $location.path("/promotion/task/price/"+$routeParams.promotionId);
-                //href="#/promotion/task/price" target="_blank"-->
-            }, function (err) {
-                notify.warning("fail");
-            })
+            if($scope.vm.codeList.length>0) {
+                promotionDetailService.teJiaBaoInit( $routeParams.promotionId).then(function (res) {
+                    notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
+                    $location.path(cRoutes.promotion_task_price.url + $routeParams.promotionId);
+                })
+            } else {
+                alert($translate.instant('TXT_MSG_NO_PRODUCT_ROWS'));
+            }
         };
         $scope.cannelPromotionInfo =function(){
             $scope.vm.promotion = _.clone($scope.promotionOld);
@@ -210,7 +138,68 @@ define([
         $scope.compare = function(data1,data2){
             return _.isEqual(data1, data2)
         };
+
+
+        function selAllFlag(objectList,id){
+            objectList.selAllFlag = true;
+            if(!id){
+                id="id";
+            }
+            angular.forEach(objectList.currPageRows, function(object) {
+                if (!objectList.selFlag[object[id]]) {
+                    objectList.selAllFlag = false;
+                }
+            })
+        }
+        function searchGroup() {
+            promotionDetailService.getPromotionGroup({
+                "promotionId": $routeParams.promotionId,
+                "key": $scope.vm.searchKey,
+                "start": ($scope.vm.groupPageOption.curr - 1) * $scope.vm.groupPageOption.size,
+                "length": $scope.vm.groupPageOption.size
+            }).then(function (res) {
+                $scope.vm.groupPageOption.total = res.data.total;
+                $scope.vm.groupList = res.data.resultData == null ? [] : res.data.resultData;
+                $scope.vm.groupSelList.currPageRows = res.data.resultData;
+                selAllFlag($scope.vm.groupSelList,"modelId");
+            }, function (err) {
+
+            })
+        }
+
+        function searchCode() {
+            promotionDetailService.getPromotionCode({
+                "promotionId": $routeParams.promotionId,
+                "key": $scope.vm.searchKey,
+                "start": ($scope.vm.codePageOption.curr - 1) * $scope.vm.codePageOption.size,
+                "length": $scope.vm.codePageOption.size
+            }).then(function (res) {
+                $scope.vm.codePageOption.total = res.data.total;
+                $scope.vm.codeList = res.data.resultData == null ? [] : res.data.resultData;
+                _.each($scope.vm.codeList,function(item){
+                    item.promotionPriceBak = item.promotionPrice;
+                });
+                $scope.vm.codeSelList.currPageRows = res.data.resultData;
+                selAllFlag($scope.vm.codeSelList,"productCode");
+            }, function (err) {
+
+            })
+        }
+
+        function searchSku() {
+            promotionDetailService.getPromotionSku({
+                "promotionId": $routeParams.promotionId,
+                "key": $scope.vm.searchKey,
+                "start": ($scope.vm.skuPageOption.curr - 1) * $scope.vm.skuPageOption.size,
+                "length": $scope.vm.skuPageOption.size
+            }).then(function (res) {
+                $scope.vm.skuPageOption.total = res.data.total;
+                $scope.vm.skuList = res.data.resultData == null ? [] : res.data.resultData;
+            }, function (err) {
+
+            })
+        }
     };
-    detailController.$inject = ['$scope', 'promotionService', 'promotionDetailService', 'notify', '$routeParams', '$location','alert','$translate','confirm'];
+    detailController.$inject = ['$scope', 'promotionService', 'promotionDetailService', 'notify', '$routeParams', '$location','alert','$translate','confirm', 'cRoutes'];
     return detailController;
 });

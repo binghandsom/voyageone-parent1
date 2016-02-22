@@ -35,11 +35,11 @@
                                     </div>
                                 </div>
                                 <!-- .form-group -->
-                                <div class="form-group" ng-show="promotion.cartId == 20 || promotion.cartId == 23">
+                                <div class="form-group" ng-show="vm.promotion.cartId == 20 || vm.promotion.cartId == 23">
                                     <div class="col-sm-3 control-label"><label class="" translate="TXT_IS_START_TE_JIA_BAO"></label></div>
                                     <div class="col-sm-2">
                                         <div class="onoffswitch">
-                                            <input type="checkbox" name="onoffswitch" ng-model="tejiabao" class="onoffswitch-checkbox" id="myonoffswitch4" checked>
+                                            <input type="checkbox" name="onoffswitch" ng-model="vm.promotion.tejiabao" class="onoffswitch-checkbox" id="myonoffswitch4">
                                             <label class="onoffswitch-label" for="myonoffswitch4">
                                                 <span class="onoffswitch-inner"></span>
                                                 <span class="onoffswitch-switch"></span>
@@ -47,7 +47,7 @@
                                         </div>
                                     </div>
                                     <div class="col-sm-4">
-                                        <input class="form-control" ng-if="tejiabao == true" ng-model="promotion.tejiabaoId" placeholder="{{'TXT_TE_JIA_BAO_ID' | translate}}">
+                                        <input class="form-control" ng-if="vm.promotion.tejiabao == true" ng-model="vm.promotion.tejiabaoId" placeholder="{{'TXT_TE_JIA_BAO_ID' | translate}}">
                                     </div><!-- onoff switch -->
                                 </div>
                             </form>
@@ -60,13 +60,17 @@
                                     <label class="col-sm-3 control-label" translate="TXT_PREHEATING_TIME"></label>
                                     <div class="col-sm-8 form-inline">
                                         <div class="col-sm-5 input-group" ng-controller="datePickerCtrl">
-                                            <input type="text" ng-model="vm.promotion.prePeriodStart" class="form-control" datepicker-popup="{{formatDate}}" is-open="opened" date-model-format="{{formatDate}}" datepicker-options="dateOptions" close-text="Close" />
+                                            <input type="text" ng-model="vm.promotion.prePeriodStart" class="form-control" datepicker-popup="{{formatDate}}"
+                                                   is-open="opened" date-model-format="{{formatDate}}" datepicker-options="dateOptions" close-text="Close"
+                                                   max-date="$parent.vm.promotion.prePeriodEnd"/>
 								              <span class="input-group-btn">
 								                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
 								              </span>
                                         </div>&nbsp;~&nbsp;
                                         <div class="col-sm-5 input-group" ng-controller="datePickerCtrl">
-                                            <input type="text" ng-model="vm.promotion.prePeriodEnd" class="form-control" datepicker-popup="{{formatDate}}" is-open="opened" date-model-format="{{formatDate}}" datepicker-options="dateOptions" close-text="Close" />
+                                            <input type="text" ng-model="vm.promotion.prePeriodEnd" class="form-control" datepicker-popup="{{formatDate}}"
+                                                   is-open="opened" date-model-format="{{formatDate}}" datepicker-options="dateOptions" close-text="Close"
+                                                   min-date="$parent.vm.promotion.prePeriodStart"/>
 								              <span class="input-group-btn">
 								                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
 								              </span>
@@ -77,13 +81,17 @@
                                     <label class="col-sm-3 control-label" translate="TXT_PRE_SALE_TIME"></label>
                                     <div class="col-sm-8 form-inline">
                                         <div class="col-sm-5 input-group" ng-controller="datePickerCtrl">
-                                            <input type="text" ng-model="vm.promotion.preSaleStart" class="form-control" datepicker-popup="{{formatDate}}" is-open="opened" date-model-format="{{formatDate}}" datepicker-options="dateOptions" close-text="Close" />
+                                            <input type="text" ng-model="vm.promotion.preSaleStart" class="form-control" datepicker-popup="{{formatDate}}"
+                                                   is-open="opened" date-model-format="{{formatDate}}" datepicker-options="dateOptions" close-text="Close"
+                                                   max-date="$parent.vm.promotion.preSaleEnd"/>
 								              <span class="input-group-btn">
 								                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
 								              </span>
                                         </div>&nbsp;~&nbsp;
                                         <div class="col-sm-5 input-group" ng-controller="datePickerCtrl">
-                                            <input type="text" ng-model="vm.promotion.preSaleEnd" class="form-control" datepicker-popup="{{formatDate}}" is-open="opened" date-model-format="{{formatDate}}" datepicker-options="dateOptions" close-text="Close" />
+                                            <input type="text" ng-model="vm.promotion.preSaleEnd" class="form-control" datepicker-popup="{{formatDate}}"
+                                                   is-open="opened" date-model-format="{{formatDate}}" datepicker-options="dateOptions" close-text="Close"
+                                                   min-date="$parent.vm.promotion.preSaleStart"/>
 								              <span class="input-group-btn">
 								                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
 								              </span>
@@ -94,13 +102,17 @@
                                     <label class="col-sm-3 control-label" translate="TXT_PROMOTION_TIME"></label>
                                     <div class="col-sm-8 form-inline">
                                         <div class="col-sm-5 input-group" ng-controller="datePickerCtrl">
-                                            <input type="text" ng-model="vm.promotion.activityStart" class="form-control" datepicker-popup="{{formatDate}}" is-open="opened" date-model-format="{{formatDate}}" datepicker-options="dateOptions" close-text="Close" />
+                                            <input type="text" ng-model="vm.promotion.activityStart" class="form-control" datepicker-popup="{{formatDate}}"
+                                                   is-open="opened" date-model-format="{{formatDate}}" datepicker-options="dateOptions" close-text="Close"
+                                                   max-date="$parent.vm.promotion.activityEnd"/>
 								              <span class="input-group-btn">
 								                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
 								              </span>
                                         </div>&nbsp;~&nbsp;
                                         <div class="col-sm-5 input-group" ng-controller="datePickerCtrl">
-                                            <input type="text" ng-model="vm.promotion.activityEnd" class="form-control" datepicker-popup="{{formatDate}}" is-open="opened" date-model-format="{{formatDate}}" datepicker-options="dateOptions" close-text="Close" />
+                                            <input type="text" ng-model="vm.promotion.activityEnd" class="form-control" datepicker-popup="{{formatDate}}"
+                                                   is-open="opened" date-model-format="{{formatDate}}" datepicker-options="dateOptions" close-text="Close"
+                                                   min-date="$parent.vm.promotion.activityStart"/>
 								              <span class="input-group-btn">
 								                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
 								              </span>
@@ -143,13 +155,13 @@
             <div class="form-inline m-b-xs pull-right" ng-controller="popupCtrl">
                 <button class="btn btn-default" ng-click="openImport('md',vm.promotionId)"><i
                         class="fa fa-mail-forward"></i>
-                    <span translate="BTN_BULK_UPLOAD"></span>
-                </button>
+                    <span translate="BTN_IMPORT_PROMOTION_FILE"></span>
+                </button>&nbsp;
                 <!-- TODO 暂时未实现 -->
                 <!--<button class="btn btn-success">&lt;!&ndash;ng-click="openOtherProgress('lg')"&ndash;&gt;<i class="fa fa-mail-reply"></i> 批量导出</button>-->
                 <!--<button class="btn btn-success"><i class="fa fa-refresh"></i> 全部刷新</button>
                 <button class="btn btn-danger"><i class="fa fa-warning"></i> 全部停止</button>-->
-                <button class="btn btn-default" ng-click="$parent.teJiaBaoInit()"><i class="fa fa-cny"></i>&nbsp;{{'BTN_BULK_UPLOAD_PRICE' | translate}}</button>
+                <button class="btn btn-default" ng-click="$parent.teJiaBaoInit()"><i class="fa fa-cny"></i>&nbsp;{{'BTN_CREATE_TE_JIA_BAO_TASK' | translate}}</button>
                 <button class="btn btn-danger btn-xs" ng-click="delSelPromotion()"><i class="fa fa-trash-o"></i>&nbsp;{{'BTN_DELETE' | translate}}</button>
             </div>
             <!-- /right-btn -->
@@ -165,7 +177,7 @@
                             <td class="mfb-xxxs text-left" ng-controller="selectRowsCtrl">
                                 <label class="checkbox-inline c-checkbox">
                                     <input type="checkbox" ng-checked="vm.groupSelList.selAllFlag"
-                                           ng-click="selectAll(vm.groupSelList,'modelId')"><span
+                                           ng-click="selectAll(vm.groupSelList,'modelId')" ng-disabled="!vm.groupSelList.length"><span
                                         class="fa fa-check"></span> {{'TXT_SELECT_ALL' | translate}} </label>
                                 <span class="m-l-xxl" translate="TXT_PRIMARY_PRODUCT"></span>
                             </td>
@@ -179,7 +191,7 @@
                         </thead>
                     </table>
                     <div class="col-sm-12 dropdown_table_main box-body" if-no-rows="vm.groupList.length">
-                        <table if-no-rows="vm.groupList.length" class="table table-hover vo_table vo_models" ng-if="vm.groupList.length">
+                        <table class="table table-hover vo_table vo_models" ng-if="vm.groupList.length">
                             <tbody ng-repeat="group in vm.groupList">
                             <tr class="table_bg_gray">
                                 <td colspan="7" class="control-label text-left form-inline">
@@ -251,7 +263,7 @@
                         <thead>
                         <tr ng-controller="selectRowsCtrl">
                             <td class="mfb-xxt"><label class="checkbox-inline c-checkbox">
-                                <input type="checkbox" ng-checked="vm.codeSelList.selAllFlag" ng-click="selectAll(vm.codeSelList,'productCode')">
+                                <input type="checkbox" ng-checked="vm.codeSelList.selAllFlag" ng-click="selectAll(vm.codeSelList,'productCode')" ng-disabled="!vm.codeSelList.length">
                                 <span class="fa fa-check"></span> {{'TXT_SELECT_ALL' | translate}} </label></td>
                             <td class="mfb-xxt text-left" translate="TXT_PROMOTION_TAG"></td>
                             <td class="mfb-xxt text-center" translate="TXT_INVENTORY"></td>
@@ -265,8 +277,8 @@
                         </tr>
                         </thead>
                     </table>
-                    <div class="col-sm-12 dropdown_table_main box-body">
-                        <table if-no-rows="vm.codeList.length" class="table table-hover vo_table vo_models">
+                    <div class="col-sm-12 dropdown_table_main box-body" if-no-rows="vm.codeList.length">
+                        <table class="table table-hover vo_table vo_models" ng-if="vm.codeList.length">
                             <tbody ng-repeat="code in vm.codeList">
                             <tr class="table_bg_gray">
                                 <td colspan="10" class="control-label text-left form-inline">
