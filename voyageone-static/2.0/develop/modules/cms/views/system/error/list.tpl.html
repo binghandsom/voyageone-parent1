@@ -91,7 +91,7 @@
 						<th class="mfb-x text-center" translate="TXT_ERROR_IS_FIX"></th>
 					</tr>
 					</thead>
-					<tbody ng-if="">
+					<tbody ng-if="vm.errorList.length">
 					<tr ng-repeat="errorInfo in vm.errorList">
 						<td class="mfb-xt text-center" ng-bind="errorInfo.seq"></td>
 						<td class="mfb-xxx text-left text-u-l">
@@ -122,6 +122,7 @@
 					</tr>
 					</tbody>
 				</table>
+				<div if-no-rows="vm.errorList.length"></div>
 			</div>
 		</div><!-- /.box-body -->
 		<div class="m-t-xs">
