@@ -160,13 +160,15 @@
   "TXT_IS_FIX_EDIT": "Is Fix Edit?",
   "TXT_IS_FIX_APPROVED": "Is Publish?",
   "TXT_STATUS": "Status",
-  "TXT_PREHEATING_TIME": "Preheating Time",
+  "TXT_PREHEATING_TIME": "preheat Time",
   "TXT_PRE_SALE_TIME": "Pre-sale Time",
-  "TXT_IS_START_TE_JIA_BAO": "Start TeJiaBao?",
+  "TXT_IS_START_TE_JIA_BAO": "TeJiaBao?",
   "TXT_TE_JIA_BAO_ID": "TeJiaBao ID",
   "TXT_PROMOTION_DETAIL": "Promotion Detail",
   "TXT_PROMOTION_TAG": "Dis. TAG",
   "TXT_RETAIL_PRICE": "Retail Price",
+  "TXT_FILE_IMPORT": "Import File",
+  "TXT_FILE_WITH_COLON": "File Path:",
 
 
   "TXT_MSG_SEARCH": "Search...",
@@ -176,6 +178,7 @@
   "TXT_MSG_UPDATE_SUCCESS": "Update is successful.",
   "TXT_MSG_UPDATE_FAIL": "Update is fail.",
   "TXT_MSG_NO_ROWS_SELECT": "No rows was selected.",
+  "TXT_MSG_NO_PRODUCT_ROWS": "No products was in this table",
   "TXT_MSG_NO_CATEGORY_SELECT": "No leaf category was selected.",
   "TXT_MSG_IS_NOT_CHILE_CATEGORY": "Selected category is not leaf category.",
   "TXT_MSG_CONFIRM_CHANGE_MASTER_PRODUCT": "If you change the primary product,some changing will be happened in platform.<br>Are you sure to continue?",
@@ -231,6 +234,8 @@
   "BTN_PROMOTION_HISTORY": "Promotion History",
   "BTN_PRICE_HISTORY": "Price History",
   "BTN_DOWNLOAD": "Download",
-  "BTN_BULK_UPLOAD": "批量导入",
-  "BTN_BULK_UPLOAD_PRICE": "批量刷价格"
+  "BTN_IMPORT_PROMOTION_FILE": "Import Promotion File",
+  "BTN_CREATE_TE_JIA_BAO_TASK": "Create TeJiaBao Task",
+  "BTN_CHOOSE_FILE": "Choose File",
+  "BTN_IMPORT_FILE": "Import File"
 }

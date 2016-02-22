@@ -140,7 +140,7 @@ define(function() {
   angular.module("voyageone.angular.directives.ifNoRows", []).directive("ifNoRows", [ "$templateCache", "$compile", function($templateCache, $compile) {
     var tempNoDataKey = "voyageone.angular.directives.ifNoRows.tpl.html";
     if (!$templateCache.get(tempNoDataKey)) {
-      $templateCache.put(tempNoDataKey, '<div class="text-center text-hs" id="noData">\n' + '    <h4 class="text-vo"><i class="icon fa fa-warning"></i>&nbsp;{{\'TXT_WARNING\' | translate}}</h4>\n' + "{{'TXT_MSG_NO_DATE' | translate}}" + "</dv>");
+      $templateCache.put(tempNoDataKey, '<div class="text-center text-hs" id="noData">\n' + '    <h4 class="text-vo"><i class="icon fa fa-warning"></i>&nbsp;{{\'TXT_ALERT\' | translate}}</h4>\n' + "{{'TXT_MSG_NO_DATE' | translate}}" + "</dv>");
     }
     return {
       restrict: "A",
@@ -912,6 +912,56 @@ define(function() {
       }
     };
   });
+  angular.module("voyageone.angular.vresources", []).provider("$vresources", [ "$provide", function($provide) {
+    function getActionUrl(root, action) {
+      return root + (root.lastIndexOf("/") === root.length - 1 ? "" : "/") + action;
+    }
+    function closureDataService(name, actions, ajaxService) {
+      function DataResource() {
+        if (!actions) {
+          return;
+        }
+        if (typeof actions !== "object") {
+          console.log("Failed to new DataResource: [" + actions + "] is not a object");
+          return;
+        }
+        if (!actions.root) {
+          console.log("Failed to new DataResource: no root prop" + (JSON && JSON.stringify ? ": " + JSON.stringify(actions) : ""));
+          return;
+        }
+        for (var name in actions) {
+          if (name === "root") continue;
+          if (actions.hasOwnProperty(name)) {
+            this[name] = function(actionUrl) {
+              return function(data) {
+                return ajaxService.post(actionUrl, data);
+              };
+            }(getActionUrl(actions.root, actions[name]));
+          }
+        }
+      }
+      $provide.service(name, DataResource);
+    }
+    this.$get = [ "ajaxService", function(ajaxService) {
+      return {
+        register: function(name, actions) {
+          if (!actions) return;
+          if (typeof actions !== "object") return;
+          if (actions.root) {
+            closureDataService(name, actions, ajaxService);
+            return;
+          }
+          for (var childName in actions) {
+            if (actions.hasOwnProperty(childName)) {
+              this.register(childName, actions[childName]);
+            }
+          }
+        }
+      };
+    } ];
+  } ]).run([ "$vresources", "$actions", function($vresources, $actions) {
+    $vresources.register(null, $actions);
+  } ]);
   angular.module("voyageone.angular.factories.dialogs", []).factory("$dialogs", [ "$modal", "$filter", "$templateCache", function($modal, $filter, $templateCache) {
     var templateName = "voyageone.angular.factories.dialogs.tpl.html";
     var template = '<div class="vo_modal">' + '<div class="modal-header">' + '<button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="close()">' + '<span aria-hidden="true"><i ng-click="close()" class="fa fa-close"></i></span>' + "</button>" + '<h5 class="modal-title" ng-bind-html="title"></h5>' + "</div>" + '<div class="modal-body wrapper-lg">' + '<div class="row">' + '<h5 class="text-center text-hs"><p class="text-center" ng-bind-html="content"></p></h5>' + "</div>" + "</div>" + '<div class="modal-footer">' + '<button class="btn btn-default btn-sm" ng-if="!isAlert" ng-click="close()" translate="BTN_CANCEL"></button>' + '<button class="btn btn-vo btn-sm" ng-click="ok()" translate="BTN_OK"></button>' + "</div>" + "</div>";
@@ -1262,56 +1312,6 @@ define(function() {
       }
     };
   });
-  angular.module("voyageone.angular.vresources", []).provider("$vresources", [ "$provide", function($provide) {
-    function getActionUrl(root, action) {
-      return root + (root.lastIndexOf("/") === root.length - 1 ? "" : "/") + action;
-    }
-    function closureDataService(name, actions, ajaxService) {
-      function DataResource() {
-        if (!actions) {
-          return;
-        }
-        if (typeof actions !== "object") {
-          console.log("Failed to new DataResource: [" + actions + "] is not a object");
-          return;
-        }
-        if (!actions.root) {
-          console.log("Failed to new DataResource: no root prop" + (JSON && JSON.stringify ? ": " + JSON.stringify(actions) : ""));
-          return;
-        }
-        for (var name in actions) {
-          if (name === "root") continue;
-          if (actions.hasOwnProperty(name)) {
-            this[name] = function(actionUrl) {
-              return function(data) {
-                return ajaxService.post(actionUrl, data);
-              };
-            }(getActionUrl(actions.root, actions[name]));
-          }
-        }
-      }
-      $provide.service(name, DataResource);
-    }
-    this.$get = [ "ajaxService", function(ajaxService) {
-      return {
-        register: function(name, actions) {
-          if (!actions) return;
-          if (typeof actions !== "object") return;
-          if (actions.root) {
-            closureDataService(name, actions, ajaxService);
-            return;
-          }
-          for (var childName in actions) {
-            if (actions.hasOwnProperty(childName)) {
-              this.register(childName, actions[childName]);
-            }
-          }
-        }
-      };
-    } ];
-  } ]).run([ "$vresources", "$actions", function($vresources, $actions) {
-    $vresources.register(null, $actions);
-  } ]);
   angular.module("voyageone.angular.services.ajax", []).service("$ajax", $Ajax).service("ajaxService", AjaxService);
   function $Ajax($http, blockUI, $q) {
     this.$http = $http;

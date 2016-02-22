@@ -162,11 +162,13 @@
   "TXT_STATUS": "状态",
   "TXT_PREHEATING_TIME": "预热时间",
   "TXT_PRE_SALE_TIME": "预售时间",
-  "TXT_IS_START_TE_JIA_BAO": "启用特价宝？",
+  "TXT_IS_START_TE_JIA_BAO": "特价宝？",
   "TXT_TE_JIA_BAO_ID": "特价宝ID",
   "TXT_PROMOTION_DETAIL": "活动详情",
   "TXT_PROMOTION_TAG": "折扣标签",
   "TXT_RETAIL_PRICE": "指导售价",
+  "TXT_FILE_IMPORT": "导入文件",
+  "TXT_FILE_WITH_COLON": "文件路径:",
 
 
 
@@ -180,6 +182,7 @@
   "TXT_MSG_UPDATE_SUCCESS": "更新操作成功.",
   "TXT_MSG_UPDATE_FAIL": "更新操作失败.",
   "TXT_MSG_NO_ROWS_SELECT": "请至少选择一条数据.",
+  "TXT_MSG_NO_PRODUCT_ROWS": "请至少保证有一条产品数据",
   "TXT_MSG_NO_CATEGORY_SELECT": "请选择一个子类目.",
   "TXT_MSG_IS_NOT_CHILE_CATEGORY": "选择的类目不是一个子类目.",
   "TXT_MSG_CONFIRM_CHANGE_MASTER_PRODUCT": "如果您变更主商品,将会对平台的商品信息产生一些影响.<br>您确定要执行这个操作吗?",
@@ -234,6 +237,8 @@
   "BTN_PROMOTION_HISTORY": "活动履历",
   "BTN_PRICE_HISTORY": "价格履历",
   "BTN_DOWNLOAD": "下载",
-  "BTN_BULK_UPLOAD": "批量导入",
-  "BTN_BULK_UPLOAD_PRICE": "批量刷价格"
+  "BTN_IMPORT_PROMOTION_FILE": "导入活动文件",
+  "BTN_CREATE_TE_JIA_BAO_TASK": "创建特价宝任务",
+  "BTN_CHOOSE_FILE": "选择文件",
+  "BTN_IMPORT_FILE": "Import File"
 }

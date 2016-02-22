@@ -103,7 +103,7 @@
 						</div>
 						<div class="form-group">
 							<label class="col-sm-3 control-label" translate="TXT_INVENTORY"></label>
-							<div class="col-sm-8 form-inline">
+							<div class="col-sm-8 form-inline" style="padding-left:0px">
 								<div class="col-sm-5">
 									<select class="form-control m-r-xs" ng-model="vm.searchInfo.compareType"
 											ng-options="compareType.value as compareType.name for compareType in vm.masterData.compareTypeList">
@@ -356,8 +356,9 @@
 								<span class="fa fa-check"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}&nbsp;</label>
 							</td>
 							<td class="mfb-xxt text-left" translate="TXT_BRAND"></td>
-							<td class="mfb-xxs text-center" translate="TXT_INVENTORY"></td>
+							<td class="mfb-xxt text-center" translate="TXT_INVENTORY"></td>
 							<td class="mfb-xxt text-center" translate="TXT_SALE_PRICE"></td>
+							<td class="mfb-xxt text-center">产品类型</td>
 							<td class="mfb-xxt text-center" translate="TXT_SIZE_TYPE"></td>
 							<td class="mfb-xxs text-left" translate="TXT_BASE_PROPERTY"></td>
 							<td class="mfb-xxt text-center" translate="TXT_SKU_COUNT"></td>
@@ -369,7 +370,7 @@
 						<table class="table table-hover vo_table vo_models" ng-if="vm.productList.length">
 							<tbody ng-repeat="productInfo in vm.productList">
 								<tr ng-class="{'table_bg_green_mint': productInfo.groups.platforms[0].publishTime}" class="table_bg_gray">
-									<td colspan="8" class="control-label text-left form-inline">
+									<td colspan="9" class="control-label text-left form-inline">
 										<label class="checkbox-inline c-checkbox">
 											<input ng-model="vm.productSelList.selFlag[productInfo.prodId]" type="checkbox" ng-controller="selectRowsCtrl" ng-click="selectOne(productInfo.prodId, vm.productSelList)">
 											<span class="fa fa-check"></span>
@@ -397,7 +398,7 @@
 										<img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{productInfo.fields.images1[0].image1}}" alt="{{productInfo.fields.code}}" class="img-circle pull-left m-r"/>
 									</td>
 									<td class="mfb-xxt text-left">{{productInfo.fields.brand}}</td>
-									<td class="mfb-xxs text-center">
+									<td class="mfb-xxt text-center">
 										<button ng-controller="showPopoverCtrl" popover-html="showInfo({{productInfo.inventoryDetail}})"
 												popover-title="{{'TXT_SKU_INVENTORY' | translate}}" type="button" popover-placement="left"
 												class="btn btn-default btn-xs">{{productInfo.fields.qty || 0}}</button>
@@ -408,6 +409,7 @@
 											{{productInfo.priceSale}}
 										</button>
 									</td>
+									<td class="mfb-xxt text-center">产品类型</td>
 									<td class="mfb-xxt text-center">{{productInfo.fields.sizeType}}</td>
 									<td class="mfb-xxs text-left">
 										<div class="table_main">
