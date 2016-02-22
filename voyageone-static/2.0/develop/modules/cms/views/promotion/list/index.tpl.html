@@ -15,7 +15,7 @@
 									<div class="col-sm-7">
 										<select class="form-control" ng-model="searchInfo.cartId">
 											<option value='' translate="TXT_SELECT_NO_VALUE"></option>
-											<option ng-repeat="platform in vm.platformTypeList" value={{platform.add_name2}}>{{platform.name}}</option>
+											<option ng-repeat="platform in vm.platformTypeList" value={{platform.value}}>{{platform.name}}</option>
 										</select>
 									</div>
 								</div>
@@ -88,7 +88,7 @@
 					<th class="text-center" translate="TXT_SEQ"></th>
 					<th class="text-left" translate="TXT_PROMOTION_NAME"></th>
 					<th class="text-left" translate="TXT_STATUS"></th>
-					<th class="text-center" translate="TXT_PLATFORM_TYPE"></th>
+					<th class="text-left" translate="TXT_PLATFORM_TYPE"></th>
 					<th class="text-left" translate="TXT_PROMOTION_TIME"></th>
 					<th class="text-left" translate="TXT_PREHEATING_TIME"></th>
 					<th class="text-left" translate="TXT_PRE_SALE_TIME"></th>
@@ -98,13 +98,13 @@
 				<tbody if-no-rows="vm.promotionList.length">
 				<tr ng-repeat="promotion in vm.promotionList">
 					<td class="text-center">{{promotion.promotionId}}</td>
-					<td class="text-left"><a href="#/promotion/detail/{{promotion.promotionId}}" target="_blank">{{promotion.promotionName}}</a></td>
-					<td class="text-center"><span ng-show="promotion.promotionStatus==false" class="label label-success-new m-r-lg m-l"> Open </span><span ng-show="promotion.promotionStatus==true" class="label label-yellow-new m-r-lg m-l"> Close </span></td>
+					<td class="text-left"><a href="#/promotion/detail/{{promotion.promotionId}}" target="_blank">{{promotion.promotionName}}</a>&nbsp;<span ng-if="promotion.tejiabaoId != 0">({{promotion.tejiabaoId}})</span></td>
+					<td class="text-left"><span ng-show="promotion.promotionStatus==false" class="label label-success-new m-r-lg m-l"> Open </span><span ng-show="promotion.promotionStatus==true" class="label label-yellow-new m-r-lg m-l"> Close </span></td>
 					<td class="text-left">{{promotion.cartName}}</td>
 					<td class="text-left">{{promotion.activityStart}}&nbsp;~&nbsp;{{promotion.activityEnd}}</td>
-					<td class="text-left"></td>
-					<td class="text-left"></td>
-					<td ng-controller="popupCtrl"><button title="{{'BTN_EDIT' | translate}}" class="btn btn-success btn-xs" ng-click="openPromotion('md',vm.cartList,promotion)"><i class="fa fa-pencil"></i></button>
+					<td class="text-left">{{promotion.prePeriodStart}}&nbsp;~&nbsp;{{promotion.prePeriodEnd}}</td>
+					<td class="text-left">{{promotion.preSaleStart}}&nbsp;~&nbsp;{{promotion.preSaleEnd}}</td>
+					<td class="text-center" ng-controller="popupCtrl"><button title="{{'BTN_EDIT' | translate}}" class="btn btn-success btn-xs" ng-click="openPromotion('md',vm.cartList,promotion)"><i class="fa fa-pencil"></i></button>
 						<button title="{{'BTN_DELETE' | translate}}" class="btn btn-danger btn-xs"  ng-click="del(promotion)"><i class="fa  fa-trash-o"></i></button>
 						<button title="{{'BTN_DOWNLOAD' | translate}}" class="btn btn-dangerdel btn-xs" ng-click="openOtherDownload()"><i class="fa fa-cloud-download"></i></button>
 					</td>
