@@ -18,6 +18,14 @@
                     <input class="form-control" ng-required="true" ng-model="vm.schema.id" ng-disabled="addOrEditFlg == 1" required>
                 </div>
             </div><!-- .form-group -->
+
+            <div class="form-group">
+                <label class="col-sm-3 control-label"></label>
+                <div class="col-sm-8 text-vo">
+                    <i class="icon fa fa-bell-o"></i>&nbsp;这里只能输入英文哦，别输火星文!
+                </div>
+            </div><!-- .form-group -->
+
             <div class="form-group">
                 <label class="col-sm-3 control-label" translate="TXT_ATTRIBUTE_NAME"></label>
                 <div class="col-sm-8">
@@ -47,12 +55,12 @@
                         <div class="input-group">
                             <input type="text" class="input-sm form-control">
 											          <span class="input-group-btn">
-                                                          <button class="btn btn-sm btn-default" type="button"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}</button>
+                                                          <button class="btn btn-sm btn-vo" type="button"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}</button>
 											          </span>
                         </div>
                     </div>
                     <div class="col-sm-4">
-                        <button class="btn m-b-xs btn-sm btn-success btn-addon pull-right"><i class="fa fa-plus"></i>{{'BTN_ADD' | translate}}</button>
+                        <button class="btn m-b-xs btn-sm btn-success btn-addon pull-right" ng-click="addOption()"><i class="fa fa-plus"></i>{{'BTN_ADD' | translate}}</button>
                     </div>
                 </div>
                 <div class="table-responsive m-l-xs m-r-xs">
@@ -69,12 +77,12 @@
                             <td><input class="form-control" ng-model="option.displayName"></td>
                             <td><input class="form-control" ng-model="option.value"></td>
                             <td><button title="{{'BTN_DELETE' | translate}}" ng-click="delOption(option)" class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i></button></td>
-                        </tr>
+                        </tr><!--
                         <tr>
                             <td><input class="form-control" ng-model="newOption.displayName"></td>
                             <td><input class="form-control" ng-model="newOption.value"></td>
-                            <td><button title="追加" ng-click="addOption()" class="btn btn-success btn-xs"><i class="fa fa-plus"></i></button></td>
-                        </tr>
+                            <td><button title="追加" class="btn btn-success btn-xs"><i class="fa fa-plus"></i></button></td>
+                        </tr>-->
                         </tbody>
                     </table>
                 </div>

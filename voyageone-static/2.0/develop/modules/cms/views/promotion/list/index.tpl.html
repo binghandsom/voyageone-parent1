@@ -95,11 +95,11 @@
 					<th class="text-center" translate="TXT_ACTION"></th>
 				</tr>
 				</thead>
-				<tbody if-no-rows="vm.promotionList.length">
+				<tbody ng-if="vm.promotionList.length">
 				<tr ng-repeat="promotion in vm.promotionList">
 					<td class="text-center">{{promotion.promotionId}}</td>
 					<td class="text-left"><a href="#/promotion/detail/{{promotion.promotionId}}" target="_blank">{{promotion.promotionName}}</a>&nbsp;<span ng-if="promotion.tejiabaoId != 0">({{promotion.tejiabaoId}})</span></td>
-					<td class="text-left"><span ng-show="promotion.promotionStatus==false" class="label label-success-new m-r-lg m-l"> Open </span><span ng-show="promotion.promotionStatus==true" class="label label-yellow-new m-r-lg m-l"> Close </span></td>
+					<td class="text-left"><span ng-show="promotion.promotionStatus==false" class="label label-success-new m-r-lg"> Open </span><span ng-show="promotion.promotionStatus==true" class="label label-yellow-new m-r-lg"> Close </span></td>
 					<td class="text-left">{{promotion.cartName}}</td>
 					<td class="text-left">{{promotion.activityStart}}&nbsp;~&nbsp;{{promotion.activityEnd}}</td>
 					<td class="text-left">{{promotion.prePeriodStart}}&nbsp;~&nbsp;{{promotion.prePeriodEnd}}</td>
@@ -111,6 +111,7 @@
 				</tr>
 				</tbody>
 			</table>
+			<div  if-no-rows="vm.promotionList.length"></div>
 		</div><!-- /.box-body -->
 	</div>
 </div><!-- end .wrapper-md -->
