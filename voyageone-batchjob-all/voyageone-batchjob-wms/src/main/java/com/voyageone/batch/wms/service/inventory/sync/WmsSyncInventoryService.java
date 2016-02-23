@@ -85,7 +85,7 @@ public class WmsSyncInventoryService extends WmsSyncInventoryBaseService {
             }
 
             if (!needSync(shopBean)) {
-                $info(shopBean.getShop_name() + "（" + shopBean.getComment() + " 不需要同步库存");
+                $info(shopBean.getShop_name() + "（" + shopBean.getComment() + "） 不需要同步库存");
                 continue;
             }
 
