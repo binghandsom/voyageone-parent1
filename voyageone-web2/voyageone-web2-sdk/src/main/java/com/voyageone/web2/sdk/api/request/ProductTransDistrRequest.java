@@ -33,6 +33,11 @@ public class ProductTransDistrRequest extends VoApiRequest<ProductTransDistrResp
 	private String translator;
 
 	/**
+	 * 任务分发策略，0:默认分发全部未未分配的商品，1:只对主商品进行分配.
+	 */
+	private int distributeRule = 0;
+
+	/**
 	 * translateTimeHDiff
 	 */
 	private int translateTimeHDiff = 4;
@@ -87,5 +92,13 @@ public class ProductTransDistrRequest extends VoApiRequest<ProductTransDistrResp
 
 	public void setLimit(int limit) {
 		this.limit = limit;
+	}
+
+	public int getDistributeRule() {
+		return distributeRule;
+	}
+
+	public void setDistributeRule(int distributeRule) {
+		this.distributeRule = distributeRule;
 	}
 }

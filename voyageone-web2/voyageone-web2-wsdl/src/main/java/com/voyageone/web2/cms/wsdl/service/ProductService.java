@@ -473,9 +473,10 @@ public class ProductService extends BaseService {
                 throw new ApiException(codeEnum.getErrorCode(), "product not found!");
             }
 
+            codeEnum = VoApiConstants.VoApiErrorCodeEnum.ERROR_CODE_70011;
             if (request.getIsCheckModifed()) {
                 if (findModel.getModified() != null && !findModel.getModified().equals(productModel.getModified())) {
-                    throw new ApiException(codeEnum.getErrorCode(), "product has been update, not update!");
+                    throw new ApiException(codeEnum.getErrorCode(), codeEnum.getErrorMsg());
                 }
             }
 
