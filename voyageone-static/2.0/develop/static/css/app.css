@@ -2034,7 +2034,8 @@ a.text-vo:focus {
 .vo_reqfield:after {
   content: " *";
   color: #ff0000;
-  font-size:16px;
+  font-size:13px;
+  font-weight:bold;
 }
 .mar-top{margin-top:40px;}
 /*
