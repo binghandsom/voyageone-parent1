@@ -60,13 +60,15 @@ angular.module('voyageone.angular.directives.schema', [])
 
         // 定义header
         var templateKey_header = "voyageone.angular.directives.schemaHeader.tpl.html";
-        if (!$templateCache.get(templateKey_header)) {$templateCache.put(templateKey_header
-            , '<div class="form-group">' +
-              '  <label class="col-sm-2 control-label" ng-class="{\'vo_reqfield\': showHtmlData.isRequired}" ng-bind="$$data.name"></label>' +
-              '  <div class="col-sm-8" ng-class="{\'modal-open\' : showHtmlData.isMultiComplex, \'hierarchy_main\': showHtmlData.isComplex}" ng-transclude></div>' +
-              '  <div class="col-sm-2" ng-if="showHtmlData.isMultiComplex"><button class="btn btn-success" ng-click="addField($$data)"><i class="fa fa-plus"></i>{{\'BTN_ADD\' | translate}}</button></div>' +
-              '  <div class="row" ng-repeat="tipMsg in showHtmlData.tipMsg"><div class="col-sm-8 col-sm-offset-2 text-warnings"><i class="icon fa fa-bell-o"></i>&nbsp;{{tipMsg}}</div></div>' +
-              '</div>');}
+        if (!$templateCache.get(templateKey_header)) {
+            $templateCache.put(templateKey_header
+                , '<div class="form-group">' +
+                '  <label class="col-sm-2 control-label" ng-class="{\'vo_reqfield\': showHtmlData.isRequired}" ng-bind="$$data.name"></label>' +
+                '  <div class="col-sm-8" ng-class="{\'modal-open\' : showHtmlData.isMultiComplex, \'hierarchy_main\': showHtmlData.isComplex}" ng-transclude></div>' +
+                '  <div class="col-sm-2" ng-if="showHtmlData.isMultiComplex"><button class="btn btn-success" ng-click="addField($$data)"><i class="fa fa-plus"></i>{{\'BTN_ADD\' | translate}}</button></div>' +
+                '  <div class="row" ng-repeat="tipMsg in showHtmlData.tipMsg"><div class="col-sm-8 col-sm-offset-2 text-warnings"><i class="icon fa fa-bell-o"></i>&nbsp;{{tipMsg}}</div></div>' +
+                '</div>');
+        }
 
         return {
             restrict: "E",
@@ -79,15 +81,15 @@ angular.module('voyageone.angular.directives.schema', [])
             link: function (scope) {
                 var schemaHeader = new schemaHeaderFactory();
 
-                _returnType (scope.$$data.type);
-                _operateRule (scope.$$data.rules);
+                _returnType(scope.$$data.type);
+                _operateRule(scope.$$data.rules);
                 scope.showHtmlData = angular.copy(schemaHeader.schemaHearInfo);
 
                 /**
                  * 设置multi complex添加一条新记录
                  * @param data
                  */
-                scope.addField= function (data) {
+                scope.addField = function (data) {
                     var newFieldMap = {};
                     angular.forEach(data.fields, function (field) {
                         newFieldMap[field.id] = field;
@@ -103,7 +105,7 @@ angular.module('voyageone.angular.directives.schema', [])
                  * @param valueTypeRule
                  * @private
                  */
-                function _returnType (type) {
+                function _returnType(type) {
 
                     switch (type) {
                         case fieldTypes.MULTI_COMPLEX:
@@ -120,7 +122,7 @@ angular.module('voyageone.angular.directives.schema', [])
                  * @param rules
                  * @private
                  */
-                function _operateRule (rules) {
+                function _operateRule(rules) {
                     angular.forEach(rules, function (rule) {
                         switch (rule.name) {
                             case ruleTypes.REQUIRED_RULE:
@@ -139,18 +141,18 @@ angular.module('voyageone.angular.directives.schema', [])
                  * @param requiredRule
                  * @private
                  */
-                function _requiredRule (requiredRule) {
+                function _requiredRule(requiredRule) {
                     if ("true" == requiredRule.value) {
                         schemaHeader.isRequired(true);
                     }
                 }
 
                 /**
-                * 处理tipRule
-                * @param tipRule
-                * @private
-                */
-                function _tipRule (tipRule) {
+                 * 处理tipRule
+                 * @param tipRule
+                 * @private
+                 */
+                function _tipRule(tipRule) {
                     schemaHeader.tipMsg(tipRule.value);
                 }
             }
@@ -161,73 +163,97 @@ angular.module('voyageone.angular.directives.schema', [])
 
         // label
         var templateKey_label = "voyageone.angular.directives.schemaLabel.tpl.html";
-        if (!$templateCache.get(templateKey_label)) {$templateCache.put(templateKey_label,
-            '<input style="min-width: 150px; max-width: 250px;" type="text" readonly ng-model="vm.$$data.value" class="form-control inherited">');}
+        if (!$templateCache.get(templateKey_label)) {
+            $templateCache.put(templateKey_label,
+                '<input style="min-width: 150px; max-width: 250px;" type="text" readonly ng-model="vm.$$data.value" class="form-control inherited">');
+        }
 
         // input
         var templateKey_input = "voyageone.angular.directives.schemaInput.tpl.html";
-        if (!$templateCache.get(templateKey_input)) {$templateCache.put(templateKey_input,
-            '<input style="min-width: 150px; max-width: 250px;" ng-model="vm.$$data.value" class="form-control inherited" replaceInfo>');}
+        if (!$templateCache.get(templateKey_input)) {
+            $templateCache.put(templateKey_input,
+                '<input style="min-width: 150px; max-width: 250px;" ng-model="vm.$$data.value" class="form-control inherited" replaceInfo>');
+        }
 
         // data
         var templateKey_date = "voyageone.angular.directives.schemaDate.tpl.html";
-        if (!$templateCache.get(templateKey_date)) {$templateCache.put(templateKey_date,
-            '<div class="input-group" style="width: 180px;" ng-controller="datePickerCtrl"><input replaceInfo type="text" class="form-control" datepicker-popup="{{formatDate}}" ng-model="$parent.vm.$$data.value" date-model-format="{{formatDate}}" is-open="opened" datepicker-options="dateOptions" close-text="Close" /><span class="input-group-btn"><button replaceInfo type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button></span></div>');}
+        if (!$templateCache.get(templateKey_date)) {
+            $templateCache.put(templateKey_date,
+                '<div class="input-group" style="width: 180px;" ng-controller="datePickerCtrl"><input replaceInfo type="text" class="form-control" datepicker-popup="{{formatDate}}" ng-model="$parent.vm.$$data.value" date-model-format="{{formatDate}}" is-open="opened" datepicker-options="dateOptions" close-text="Close" /><span class="input-group-btn"><button replaceInfo type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button></span></div>');
+        }
 
         // datetime
         var templateKey_datetime = "voyageone.angular.directives.schemaDatetime.tpl.html";
-        if (!$templateCache.get(templateKey_datetime)) {$templateCache.put(templateKey_datetime,
-            '<div class="input-group" style="width: 180px;" ng-controller="datePickerCtrl"><input replaceInfo type="text" class="form-control" datepicker-popup="{{formatDateTime}}" ng-model="$parent.vm.$$data.value" date-model-format="{{formatDateTime}}" is-open="opened" datepicker-options="dateOptions" close-text="Close" /><span class="input-group-btn"><button replaceInfo type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button></span></div>');}
+        if (!$templateCache.get(templateKey_datetime)) {
+            $templateCache.put(templateKey_datetime,
+                '<div class="input-group" style="width: 180px;" ng-controller="datePickerCtrl"><input replaceInfo type="text" class="form-control" datepicker-popup="{{formatDateTime}}" ng-model="$parent.vm.$$data.value" date-model-format="{{formatDateTime}}" is-open="opened" datepicker-options="dateOptions" close-text="Close" /><span class="input-group-btn"><button replaceInfo type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button></span></div>');
+        }
 
         // textarea
         var templateKey_textarea = "voyageone.angular.directives.schemaTextarea.tpl.html";
-        if (!$templateCache.get(templateKey_textarea)) {$templateCache.put(templateKey_textarea,
-            '<textarea style="min-width: 150px; max-width: 650px;" class="form-control no-resize" ng-model="vm.$$data.value" rows="{{showHtmlData.rowNum}}" replaceInfo></textarea>');}
+        if (!$templateCache.get(templateKey_textarea)) {
+            $templateCache.put(templateKey_textarea,
+                '<textarea style="min-width: 150px; max-width: 650px;" class="form-control no-resize" ng-model="vm.$$data.value" rows="{{showHtmlData.rowNum}}" replaceInfo></textarea>');
+        }
 
         // single check-select
         var templateKey_select = "voyageone.angular.directives.schemaSelect.tpl.html";
-        if (!$templateCache.get(templateKey_select)) {$templateCache.put(templateKey_select,
-            '<select style="min-width: 150px; max-width: 250px;" replaceInfo class="form-control" ng-model="vm.$$data.value.value" ng-options="option.value as option.displayName for option in vm.$$data.options"> <option value="">{{\'TXT_SELECT_NO_VALUE\' | translate}}</option></select>');}
+        if (!$templateCache.get(templateKey_select)) {
+            $templateCache.put(templateKey_select,
+                '<select style="min-width: 150px; max-width: 250px;" replaceInfo class="form-control" ng-model="vm.$$data.value.value" ng-options="option.value as option.displayName for option in vm.$$data.options"> <option value="">{{\'TXT_SELECT_NO_VALUE\' | translate}}</option></select>');
+        }
 
         // single check-radio
         var templateKey_radio = "voyageone.angular.directives.schemaRadio.tpl.html";
-        if (!$templateCache.get(templateKey_radio)) {$templateCache.put(templateKey_radio,
-            '<label class="checkbox-inline c-radio" ng-repeat="option in vm.$$data.options"><input name="{{vm.$$data.id}}" type="radio" ng-value="option.value" ng-model="vm.$$data.value.value"><span class="fa fa-check"></span> {{option.displayName}}</label>');}
+        if (!$templateCache.get(templateKey_radio)) {
+            $templateCache.put(templateKey_radio,
+                '<label class="checkbox-inline c-radio" ng-repeat="option in vm.$$data.options"><input name="{{vm.$$data.id}}" type="radio" ng-value="option.value" ng-model="vm.$$data.value.value"><span class="fa fa-check"></span> {{option.displayName}}</label>');
+        }
 
         // multi check-checkbox
         var templateKey_checkbox = "voyageone.angular.directives.schemaCheckbox.tpl.html";
-        if (!$templateCache.get(templateKey_checkbox)) {$templateCache.put(templateKey_checkbox,
-            '<label class="checkbox-inline c-checkbox" ng-repeat="option in vm.$$data.options"><input type="checkbox" ng-value="option.value" ng-click="checkboxValue(option.value)" ng-checked="isSelected(option.value)"><span class="fa fa-check"></span> {{option.displayName}}</label>');}
+        if (!$templateCache.get(templateKey_checkbox)) {
+            $templateCache.put(templateKey_checkbox,
+                '<label class="checkbox-inline c-checkbox" ng-repeat="option in vm.$$data.options"><input type="checkbox" ng-value="option.value" ng-click="checkboxValue(option.value)" ng-checked="isSelected(option.value)"><span class="fa fa-check"></span> {{option.displayName}}</label>');
+        }
 
         // multi complex
         var templateKey_multiComplex = "voyageone.angular.directives.schemaMultiComplex.tpl.html";
-        if (!$templateCache.get(templateKey_multiComplex)) {$templateCache.put(templateKey_multiComplex,
-            '<table class="table text-center">' +
-            '<thead><tr>' +
-                //'<schema-header ng-repeat="field in vm.$$data.fields" data="field" is-complex="true"></schema-header>' +
-            '<th ng-repeat="field in vm.$$data.fields" ng-class="{\'vo_reqfield\': showHtmlData.isRequired}" class="text-center" style="min-width: 180px;">{{field.name}}</th>' +
-            '<th ng-if="!showHtmlData.notShowEdit" style="min-width: 60px;" class="text-center" translate="TXT_ACTION"></th>' +
-            '</tr></thead>' +
-            '<tbody><tr ng-repeat="value in vm.$$data.complexValues">' +
-            '<td class="text-left" ng-repeat="field in value.fieldMap"><div class="tableLayer"><p ng-if="field.type != \'COMPLEX\'">&nbsp;</p><p><schema-item data="field" hastip="true" complex="true"></schema-item></p></div></td>' +
-            '<td ng-if="!showHtmlData.notShowEdit" style="min-width: 60px;"><button title="{\'BTN_DELETE\' | translate}" class="btn btn-danger btn-xs" ng-click="delField($index)"><i class="fa  fa-trash-o"></i></button></td>' +
-            '</tr></tbody>' +
-            '</table>');}
+        if (!$templateCache.get(templateKey_multiComplex)) {
+            $templateCache.put(templateKey_multiComplex,
+                '<table class="table text-center">' +
+                '<thead><tr>' +
+                    //'<schema-header ng-repeat="field in vm.$$data.fields" data="field" is-complex="true"></schema-header>' +
+                '<th ng-repeat="field in vm.$$data.fields" ng-class="{\'vo_reqfield\': showHtmlData.isRequired}" class="text-center" style="min-width: 180px;">{{field.name}}</th>' +
+                '<th ng-if="!showHtmlData.notShowEdit" style="min-width: 60px;" class="text-center" translate="TXT_ACTION"></th>' +
+                '</tr></thead>' +
+                '<tbody><tr ng-repeat="value in vm.$$data.complexValues">' +
+                '<td class="text-left" ng-repeat="field in value.fieldMap"><div class="tableLayer"><p ng-if="field.type != \'COMPLEX\'">&nbsp;</p><p><schema-item data="field" hastip="true" complex="true"></schema-item></p></div></td>' +
+                '<td ng-if="!showHtmlData.notShowEdit" style="min-width: 60px;"><button title="{\'BTN_DELETE\' | translate}" class="btn btn-danger btn-xs" ng-click="delField($index)"><i class="fa  fa-trash-o"></i></button></td>' +
+                '</tr></tbody>' +
+                '</table>');
+        }
 
         // complex
         var templateKey_complex = "voyageone.angular.directives.schemaComplex.tpl.html";
-        if (!$templateCache.get(templateKey_complex)) {$templateCache.put(templateKey_complex,
-            '<schema-header ng-repeat="field in vm.$$data.fields" data="field"><schema-item data="field" ></schema-item></schema-header>');}
+        if (!$templateCache.get(templateKey_complex)) {
+            $templateCache.put(templateKey_complex,
+                '<schema-header ng-repeat="field in vm.$$data.fields" data="field"><schema-item data="field" ></schema-item></schema-header>');
+        }
 
         // complex
         var templateKey_multi_in_complex = "voyageone.angular.directives.schemaMultiInComplex.tpl.html";
-        if (!$templateCache.get(templateKey_multi_in_complex)) {$templateCache.put(templateKey_multi_in_complex,
-            '<div ng-repeat="field in vm.$$data.fields"><p ng-bind="field.name"></p><p><schema-item data="field" hastip="true" complex="true"></schema-item></p></div>');}
+        if (!$templateCache.get(templateKey_multi_in_complex)) {
+            $templateCache.put(templateKey_multi_in_complex,
+                '<div ng-repeat="field in vm.$$data.fields"><p ng-bind="field.name"></p><p><schema-item data="field" hastip="true" complex="true"></schema-item></p></div>');
+        }
 
         // multi complex tip
         var templateKey_multiComplex_tip = "voyageone.angular.directives.schemaMultiComplexTip.tpl.html";
-        if (!$templateCache.get(templateKey_multiComplex_tip)) {$templateCache.put(templateKey_multiComplex_tip,
-            '<div class="text-warnings" ng-repeat="tipMsg in showHtmlData.tipMsg"><br><i class="icon fa fa-bell-o"></i>&nbsp;{{tipMsg}}</div>');}
+        if (!$templateCache.get(templateKey_multiComplex_tip)) {
+            $templateCache.put(templateKey_multiComplex_tip,
+                '<div class="text-warnings" ng-repeat="tipMsg in showHtmlData.tipMsg"><br><i class="icon fa fa-bell-o"></i>&nbsp;{{tipMsg}}</div>');
+        }
 
         return {
             restrict: "E",
@@ -235,7 +261,8 @@ angular.module('voyageone.angular.directives.schema', [])
             replace: true,
             bindToController: true,
             controllerAs: "vm",
-            controller: function () {},
+            controller: function () {
+            },
             scope: {
                 $$data: "=data",
                 $$hastip: "=hastip",
@@ -246,10 +273,10 @@ angular.module('voyageone.angular.directives.schema', [])
 
                 // 监视配置变动
                 scope.$watch('vm.$$data', function () {
-                    refresh ();
+                    refresh();
                 });
 
-                function refresh () {
+                function refresh() {
 
                     var schema = new schemaFactory();
                     scope.vm.$$from = ctrl;
@@ -260,8 +287,8 @@ angular.module('voyageone.angular.directives.schema', [])
                     // 设置edit是否显示
                     schema.notShowEdit(scope.vm.$$notShowEdit == undefined ? false : scope.vm.$$notShowEdit);
 
-                    _returnType (scope.vm.$$data.type);
-                    _operateRule (scope.vm.$$data.rules);
+                    _returnType(scope.vm.$$data.type);
+                    _operateRule(scope.vm.$$data.rules);
 
                     var tempHtml = "";
                     // 拼接body
@@ -343,7 +370,7 @@ angular.module('voyageone.angular.directives.schema', [])
                      * @param valueTypeRule
                      * @private
                      */
-                    function _returnType (type) {
+                    function _returnType(type) {
                         schema.type(type);
                         switch (type) {
                             case fieldTypes.RADIO:
@@ -367,7 +394,7 @@ angular.module('voyageone.angular.directives.schema', [])
                      * @param values
                      * @private
                      */
-                    function _setCheckValues (values) {
+                    function _setCheckValues(values) {
                         if (values != undefined && values != null) {
                             angular.forEach(values, function (obj) {
                                 schema.checkValues(obj.value);
@@ -380,7 +407,7 @@ angular.module('voyageone.angular.directives.schema', [])
                      * @param fields
                      * @private
                      */
-                    function _resetMultiComplex (data) {
+                    function _resetMultiComplex(data) {
                         var tempValues = [];
                         angular.forEach(data.complexValues, function (value) {
                             var tempFieldMap = {};
@@ -433,7 +460,7 @@ angular.module('voyageone.angular.directives.schema', [])
                      * @param data
                      * @private
                      */
-                    function _resetComplex (data) {
+                    function _resetComplex(data) {
                         angular.forEach(data.fields, function (field) {
                             switch (field.type) {
                                 case fieldTypes.INPUT:
@@ -476,7 +503,7 @@ angular.module('voyageone.angular.directives.schema', [])
                      * @param rules
                      * @private
                      */
-                    function _operateRule (rules) {
+                    function _operateRule(rules) {
                         angular.forEach(rules, function (rule) {
                             switch (rule.name) {
                                 case ruleTypes.VALUE_TYPE_RULE:
@@ -524,7 +551,7 @@ angular.module('voyageone.angular.directives.schema', [])
                      * @param valueTypeRule
                      * @private
                      */
-                    function _valueTypeRule (valueTypeRule) {
+                    function _valueTypeRule(valueTypeRule) {
                         switch (valueTypeRule.value) {
                             case valueTypes.TEXT:
                             case valueTypes.DECIMAL:
@@ -559,7 +586,7 @@ angular.module('voyageone.angular.directives.schema', [])
                      * @param requiredRule
                      * @private
                      */
-                    function _requiredRule (requiredRule) {
+                    function _requiredRule(requiredRule) {
                         if ("true" == requiredRule.value) {
                             schema.isRequired(true);
                             schema.html("required");
@@ -571,7 +598,7 @@ angular.module('voyageone.angular.directives.schema', [])
                      * @param disableRule
                      * @private
                      */
-                    function _disableRule (disableRule) {
+                    function _disableRule(disableRule) {
                         if ("true" == disableRule.value
                             && disableRule.dependGroup == null) {
                             schema.html("ng-disabled=\"true\"");
@@ -583,7 +610,7 @@ angular.module('voyageone.angular.directives.schema', [])
                      * @param readOnlyRule
                      * @private
                      */
-                    function _readOnlyRule (readOnlyRule) {
+                    function _readOnlyRule(readOnlyRule) {
                         if ("true" == readOnlyRule.value) {
                             schema.html("readonly");
                         }
@@ -594,8 +621,8 @@ angular.module('voyageone.angular.directives.schema', [])
                      * @param regexRule
                      * @private
                      */
-                    function _regexRule (regexRule) {
-                        schema.html("ng-pattern=\"/" + regexRule.value +"/\"");
+                    function _regexRule(regexRule) {
+                        schema.html("ng-pattern=\"/" + regexRule.value + "/\"");
                     }
 
                     /**
@@ -603,7 +630,7 @@ angular.module('voyageone.angular.directives.schema', [])
                      * @param tipRule
                      * @private
                      */
-                    function _tipRule (tipRule) {
+                    function _tipRule(tipRule) {
                         schema.tipMsg(tipRule.value);
                     }
 
@@ -612,16 +639,16 @@ angular.module('voyageone.angular.directives.schema', [])
                      * @param minLengthRule
                      * @private
                      */
-                    function _minLengthRule (minLengthRule) {
+                    function _minLengthRule(minLengthRule) {
                         var value = isNaN(parseInt(minLengthRule.value)) ? 0 : minLengthRule.value;
 
                         if ("not include" === minLengthRule.exProperty)
-                            value = (value > 0) ? value -1 : 0;
+                            value = (value > 0) ? value - 1 : 0;
 
                         if ("character" == minLengthRule.unit)
-                            schema.html("ng-minlength=\"" + value +"\"");
+                            schema.html("ng-minlength=\"" + value + "\"");
                         else
-                            schema.html("ng-char-minlength=\"" + value +"\"");
+                            schema.html("ng-char-minlength=\"" + value + "\"");
                     }
 
                     /**
@@ -629,16 +656,16 @@ angular.module('voyageone.angular.directives.schema', [])
                      * @param maxLengthRule
                      * @private
                      */
-                    function _maxLengthRule (maxLengthRule) {
+                    function _maxLengthRule(maxLengthRule) {
                         var value = isNaN(parseInt(maxLengthRule.value)) ? 0 : maxLengthRule.value;
 
                         if ("not include" === maxLengthRule.exProperty)
-                            value = (value > 0) ? value -1 : 0;
+                            value = (value > 0) ? value - 1 : 0;
 
                         if ("character" == maxLengthRule.unit)
-                            schema.html("ng-maxlength=\"" + value +"\"");
+                            schema.html("ng-maxlength=\"" + value + "\"");
                         else
-                            schema.html("ng-char-maxlength=\"" + value +"\"");
+                            schema.html("ng-char-maxlength=\"" + value + "\"");
                     }
 
                     /**
@@ -646,13 +673,13 @@ angular.module('voyageone.angular.directives.schema', [])
                      * @param minValueRule
                      * @private
                      */
-                    function _minValueRule (minValueRule) {
+                    function _minValueRule(minValueRule) {
                         var value = isNaN(parseFloat(minValueRule.value)) ? 0 : parseFloat(minValueRule.value);
 
                         if ("not include" === minValueRule.exProperty)
                             value = (value > 0) ? value - 0.01 : 0;
 
-                        schema.html("ng-minvalue=\"" + value +"\"");
+                        schema.html("ng-minvalue=\"" + value + "\"");
                     }
 
                     /**
@@ -660,13 +687,13 @@ angular.module('voyageone.angular.directives.schema', [])
                      * @param maxValueRule
                      * @private
                      */
-                    function _maxValueRule (maxValueRule) {
+                    function _maxValueRule(maxValueRule) {
                         var value = isNaN(parseFloat(maxValueRule.value)) ? 0 : parseFloat(maxValueRule.value);
 
                         if ("not include" === maxValueRule.exProperty)
                             value = (value > 0) ? value - 0.01 : 0;
 
-                        schema.html("ng-maxvalue=\"" + value +"\"");
+                        schema.html("ng-maxvalue=\"" + value + "\"");
 
                     }
 
@@ -675,13 +702,13 @@ angular.module('voyageone.angular.directives.schema', [])
                      * @param minInputNumRule
                      * @private
                      */
-                    function _minInputNumRule (minInputNumRule) {
+                    function _minInputNumRule(minInputNumRule) {
                         var value = isNaN(parseInt(minInputNumRule.value)) ? 0 : parseInt(minInputNumRule.value);
 
                         if ("not include" === minInputNumRule.exProperty)
                             value = (value > 0) ? value - 1 : 0;
 
-                        schema.html("ng-mininputnum=\"" + value +"\"");
+                        schema.html("ng-mininputnum=\"" + value + "\"");
                     }
 
                     /**
@@ -689,13 +716,13 @@ angular.module('voyageone.angular.directives.schema', [])
                      * @param maxInputNumRule
                      * @private
                      */
-                    function _maxInputNumRule (maxInputNumRule) {
+                    function _maxInputNumRule(maxInputNumRule) {
                         var value = isNaN(parseInt(maxInputNumRule.value)) ? 0 : parseInt(maxInputNumRule.value);
 
                         if ("not include" === maxInputNumRule.exProperty)
                             value = (value > 0) ? value - 1 : 0;
 
-                        schema.html("ng-maxinputnum=\"" + value +"\"");
+                        schema.html("ng-maxinputnum=\"" + value + "\"");
                     }
 
                     /**
