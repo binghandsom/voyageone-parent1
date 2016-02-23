@@ -62,11 +62,12 @@ angular.module('voyageone.angular.directives.schema', [])
         var templateKey_header = "voyageone.angular.directives.schemaHeader.tpl.html";
         if (!$templateCache.get(templateKey_header)) {
             $templateCache.put(templateKey_header
-                , '<div class="form-group">' +
-                '  <label class="col-sm-2 control-label" ng-class="{\'vo_reqfield\': showHtmlData.isRequired}" ng-bind="$$data.name"></label>' +
-                '  <div class="col-sm-8" ng-class="{\'modal-open\' : showHtmlData.isMultiComplex, \'hierarchy_main\': showHtmlData.isComplex}" ng-transclude></div>' +
-                '  <div class="col-sm-2" ng-if="showHtmlData.isMultiComplex"><button class="btn btn-success" ng-click="addField($$data)"><i class="fa fa-plus"></i>{{\'BTN_ADD\' | translate}}</button></div>' +
-                '  <div class="row" ng-repeat="tipMsg in showHtmlData.tipMsg"><div class="col-sm-8 col-sm-offset-2 text-warnings"><i class="icon fa fa-bell-o"></i>&nbsp;{{tipMsg}}</div></div>' +
+                ,
+                '<div class="form-group">' +
+                '<label class="col-sm-2 control-label" ng-class="{\'vo_reqfield\': showHtmlData.isRequired}" ng-bind="$$data.name"></label>' +
+                '<div class="col-sm-8" ng-class="{\'modal-open\' : showHtmlData.isMultiComplex, \'hierarchy_main\': showHtmlData.isComplex}" ng-transclude></div>' +
+                '<div class="col-sm-2" ng-if="showHtmlData.isMultiComplex"><button class="btn btn-success" ng-click="addField($$data)"><i class="fa fa-plus"></i>{{\'BTN_ADD\' | translate}}</button></div>' +
+                '<div class="row" ng-repeat="tipMsg in showHtmlData.tipMsg"><div class="col-sm-8 col-sm-offset-2 text-warnings"><i class="icon fa fa-bell-o"></i>&nbsp;{{tipMsg}}</div></div>' +
                 '</div>');
         }
 
@@ -79,10 +80,12 @@ angular.module('voyageone.angular.directives.schema', [])
                 $$data: "=data"
             },
             link: function (scope) {
+
                 var schemaHeader = new schemaHeaderFactory();
 
                 _returnType(scope.$$data.type);
                 _operateRule(scope.$$data.rules);
+
                 scope.showHtmlData = angular.copy(schemaHeader.schemaHearInfo);
 
                 /**
