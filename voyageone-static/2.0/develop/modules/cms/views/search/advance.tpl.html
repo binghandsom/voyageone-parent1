@@ -301,7 +301,7 @@
 									</div>
 								</td>
 								<td class="mfb-xxt text-center"><!--TODO 目前只能返回group的主product,所有拿不到group下面所有的product的库存--><!--popover-html="showInfo({{groupInfo.inventoryDetail}})"-->
-									<button ng-controller="showPopoverCtrl" popover-title="{{'TXT_SKU_INVENTORY' | translate}}" type="button" popover-placement="left" class="btn btn-default btn-xs">{{groupInfo.fields.inventory || 0}}</button>
+									<button ng-controller="showPopoverCtrl" popover-title="{{'TXT_SKU_INVENTORY' | translate}}" type="button" popover-placement="left" class="btn btn-default btn-xs">{{groupInfo.groups.platforms[0].inventory || 0}}</button>
 								</td>
 								<td class="mfb-xxt text-right">
 									<button ng-controller="showPopoverCtrl" popover-html="showInfo({{groupInfo.groups.priceDetail}})"

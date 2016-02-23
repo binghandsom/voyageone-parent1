@@ -10,7 +10,9 @@ import com.voyageone.cms.service.dao.mongodb.CmsMtCategorySchemaDao;
 import com.voyageone.cms.service.dao.mongodb.CmsMtCommonSchemaDao;
 import com.voyageone.cms.service.model.*;
 import com.voyageone.common.Constants;
+import com.voyageone.common.configs.Type;
 import com.voyageone.common.configs.TypeChannel;
+import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.factory.SchemaJsonReader;
@@ -901,7 +903,17 @@ public class CmsProductDetailService {
                     case SINGLECHECK:
                     case MULTICHECK:
                         if (OPTION_DATA_SOURCE.equals(field.getDataSource())) {
-                            List<Option> options = TypeChannel.getOptions(field.getId(), channelId);
+                            List<TypeBean> typeBeanList = Type.getTypeList(field.getId(), language);
+
+                            // 替换成field需要的样式
+                            List<Option> options = new ArrayList<>();
+                            for (TypeBean typeBean : typeBeanList) {
+                                Option opt = new Option();
+                                opt.setDisplayName(typeBean.getName());
+                                opt.setValue(typeBean.getValue());
+                                options.add(opt);
+                            }
+
                             OptionsField optionsField = (OptionsField) field;
                             optionsField.setOptions(options);
                         } else if (OPTION_DATA_SOURCE_CHANNEL.equals(field.getDataSource())) {
