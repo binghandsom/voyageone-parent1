@@ -6,7 +6,7 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function () {
 
-    function indexController($scope,promotionService,confirm) {
+    function indexController($scope,promotionService,confirm,$translate) {
 
         $scope.vm = {"promotionList": [],"platformTypeList":[],"promotionStatus":[]};
         $scope.searchInfo = {};
@@ -33,21 +33,19 @@ define([
         };
 
         $scope.del = function (data) {
-            confirm("是否要删除  "+data.promotionName,'删除').result.then(function(){
+            confirm($translate.instant('TXT_MSG_DO_DELETE') +data.promotionName).result.then(function(){
                 var index = _.indexOf($scope.vm.promotionList,data);
                 data.isActive = false
-                promotionService.updatePromotion(data).then(function(res){
+                promotionService.updatePromotion(data).then(function(){
                     $scope.vm.promotionList.splice(index,1);
                     $scope.groupPageOption.total = $scope.vm.promotionList.size;
                 },function(res){
                 })
-            },function(){
-
             })
 
         };
     };
 
-    indexController.$inject = ['$scope','promotionService', 'confirm', 'menuService'];
+    indexController.$inject = ['$scope','promotionService', 'confirm', '$translate'];
     return indexController;
 });

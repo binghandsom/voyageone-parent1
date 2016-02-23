@@ -205,6 +205,7 @@
   "TXT_MSG_MUST_GET_ONE_VALUE": "必须匹配一类值才能保存.",
   "TXT_MSG_NO_VALUE_IS_ON_THE_ATTRIBUTE": "没有匹配到任何属性或内容上.",
   "TXT_MSG_PRODUCT_CAN_NOT_EDIT": "该商品正在主类目切换中,请稍等...",
+  "TXT_MSG_DO_DELETE": "您确定要删除 ",
 
   "BTN_ADD_CONDITION": "新增条件",
   "BTN_CANCEL": "取消",
