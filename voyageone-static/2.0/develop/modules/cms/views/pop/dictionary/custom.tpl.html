@@ -33,9 +33,9 @@
                         <td class="mfb-xt3 text-center">{{$index+1}}</td>
                         <td class="mfb-xxx text-left" ng-bind="param.param_name"></td>
                         <td class="mfb-xxxs text-left" ng-bind="param.param_desc"></td>
-                        <td class="mfb-xxxs text-left">{{param.value}}</td>
+                        <td class="mfb-xxxs text-left">{{param.value[0]}}</td>
                         <td class="mfb-xxt text-center" ng-controller="popupCtrl">
-                            <button class="btn btn-success btn-xs" ng-click="openDictValue('md', editDictionary, $index, param.value)"><i class="fa fa-pencil"></i></button>
+                            <button class="btn btn-success btn-xs" ng-click="openDictValue('md', editDictionary, $index, param.value[0])"><i class="fa fa-pencil"></i></button>
                             <button ng-if="param.value" class="btn btn-danger btn-xs"  ng-click="param.value = null"><i class="fa fa-trash-o"></i></button>
                         </td>
                     </tr>
