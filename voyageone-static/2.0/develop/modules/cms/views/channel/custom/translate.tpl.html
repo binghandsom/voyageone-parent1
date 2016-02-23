@@ -50,12 +50,20 @@
 			</div>
 		</div>
 	</div>
+	<div class="custom_ts" style="background:#fff">
+		<div class="pull-right m-t-xs m-r-xs" ng-controller="popupCtrl">
+			<button ng-click="ctrl.openCategoryMapping(feedCategory.model, popupNewCategory)" class="btn btn-default btn-xs"><i class="glyphicon glyphicon-link"></i> 类目匹配</button>
+			<button type="submit" class="btn btn-default btn-xs" ng-click="openAddattributevaluenew('md')"><i class="glyphicon glyphicon-plus"></i>&nbsp;新增自定义属性值</button>
+			<button type="submit" class="btn btn-default btn-xs" ng-click="openAddattributevaluenews('md')"><i class="glyphicon glyphicon-plus"></i>&nbsp;新增共通自定义属性值</button>
+		</div><!-- .form-inline -->
+		<p class="m-l-sm m-t-xs">您当前选择的是：<span>珠宝 / 钻石 / 翡翠 / 黄金 > 彩色宝石 / 贵重宝石</span> </p>
+	</div>
 	<div class="box">
 		<!--right-btn-->
-		<div class="form-inline m-b-xs pull-right">
+		<!--<div class="form-inline m-b-xs pull-right" ng-controller="popupCtrl">
 			<button class="btn btn-default"><i class="fa fa-pencil-square"></i>&nbsp;匹配类目</button>
-			<button class="btn btn-default"><i class="fa fa-arrow-circle-right"></i>&nbsp;新增xxxxx</button>
-		</div><!-- /right-btn -->
+			<button class="btn btn-default" ng-click="openAddattributevaluenew('md')"><i class="fa fa-arrow-circle-right"></i>&nbsp;</button>
+		</div>--><!-- /right-btn -->
 		<tabset class="tab-container vo_nav-tabs">
 			<!--tab-->
 			<!--<tab>
@@ -107,40 +115,100 @@
 						<thead>
 						<tr>
 							<th class="text-center">Seq.</th>
-							<th class="text-center">Feed Property Name</th>
-							<th class="text-center">自定义属性值名称</th>
+							<th class="text-center">共通属性</th>
 							<th class="text-center">Customize Property Value</th>
 							<th class="text-center">自定义属性值</th>
 							<th class="text-center">Sample(Product Code)</th>
-							<th class="text-center">翻译情况</th>
 							<th class="text-center">Action</th>
 						</tr>
 						</thead>
 						<tbody>
 						<tr>
 							<td class="text-center">1</td>
-							<td class="text-center">Stone</td>
-							<td class="text-center">1.5CT</td>
+							<td class="text-center">共通属性</td>
 							<td class="text-center">1.5CT</td>
 							<td class="text-center"><input class="form-control" placeholder="1.5CT"/></td>
 							<td class="text-center text-u-l"><a href="#/product/detail/1" target="_blank"> 123456 </a></td>
-							<td class="text-center">已翻译</td>
 							<td class="text-center">
-								<button title="取消" class="btn btn-default btn-xs">取消</button>
-								<button title="保存" class="btn btn-vo btn-xs"> 保存</button>
+								<button title="保存" class="btn btn-vo btn-xs"><i class="glyphicon glyphicon-floppy-disk"></i></button>
+								<button title="删除" class="btn btn-danger btn-xs"><i class="fa  fa-trash-o"></i></button>
 							</td>
 						</tr>
 						<tr>
 							<td class="text-center">2</td>
-							<td class="text-center">Family Color</td>
-							<td class="text-center">RED</td>
+							<td class="text-center">共通属性</td>
 							<td class="text-center">RED</td>
 							<td class="text-center"><input class="form-control" placeholder="红色"/></td>
 							<td class="text-center text-u-l"><a href="#/product/detail/1" target="_blank"> 123456 </a></td>
-							<td class="text-center">未翻译</td>
 							<td class="text-center">
-								<button title="取消" class="btn btn-default btn-xs">取消</button>
-								<button title="保存" class="btn btn-vo btn-xs"> 保存</button>
+								<button title="保存" class="btn btn-vo btn-xs"><i class="glyphicon glyphicon-floppy-disk"></i></button>
+								<button title="删除" class="btn btn-danger btn-xs"><i class="fa  fa-trash-o"></i></button>
+							</td>
+						</tr>
+						<tr>
+							<td class="text-center">3</td>
+							<td class="text-center">共通属性</td>
+							<td class="text-center">color</td>
+							<td class="text-center"><input class="form-control" placeholder="颜色"/></td>
+							<td class="text-center text-u-l"><a href="#/product/detail/1" target="_blank"> 123456 </a></td>
+							<td class="text-center">
+								<button title="保存" class="btn btn-vo btn-xs"><i class="glyphicon glyphicon-floppy-disk"></i></button>
+								<button title="删除" class="btn btn-danger btn-xs"><i class="fa  fa-trash-o"></i></button>
+							</td>
+						</tr>
+						<tr>
+							<td class="text-center">4</td>
+							<td class="text-center">共通属性</td>
+							<td class="text-center">Material</td>
+							<td class="text-center"><input class="form-control" placeholder="材质"/></td>
+							<td class="text-center text-u-l"><a href="#/product/detail/1" target="_blank"> 123456 </a></td>
+							<td class="text-center">
+								<button title="保存" class="btn btn-vo btn-xs"><i class="glyphicon glyphicon-floppy-disk"></i></button>
+								<button title="删除" class="btn btn-danger btn-xs"><i class="fa  fa-trash-o"></i></button>
+							</td>
+						</tr>
+						</tbody>
+					</table>
+					<div class="col-sm-12 m-t-sm">
+						<vpagination config="vm.productPageOption"></vpagination>
+					</div>
+				</div><!-- .table-responsive -->
+			</tab>
+			<tab>
+				<tab-heading>&nbsp;共通属性</tab-heading>
+				<div class="table-responsive">
+					<table class="table table-hover-new table-hover">
+						<thead>
+						<tr>
+							<th class="text-center">Seq.</th>
+							<th class="text-center">共通属性</th>
+							<th class="text-center">Customize Property Value</th>
+							<th class="text-center">自定义属性值</th>
+							<th class="text-center">Sample(Product Code)</th>
+							<th class="text-center">Action</th>
+						</tr>
+						</thead>
+						<tbody>
+						<tr>
+							<td class="text-center">1</td>
+							<td class="text-center">共通属性</td>
+							<td class="text-center">1.5CT</td>
+							<td class="text-center"><input class="form-control" placeholder="1.5CT"/></td>
+							<td class="text-center text-u-l"><a href="#/product/detail/1" target="_blank"> 123456 </a></td>
+							<td class="text-center">
+								<button title="保存" class="btn btn-vo btn-xs"><i class="glyphicon glyphicon-floppy-disk"></i></button>
+								<button title="删除" class="btn btn-danger btn-xs"><i class="fa  fa-trash-o"></i></button>
+							</td>
+						</tr>
+						<tr>
+							<td class="text-center">2</td>
+							<td class="text-center">共通属性</td>
+							<td class="text-center">RED</td>
+							<td class="text-center"><input class="form-control" placeholder="红色"/></td>
+							<td class="text-center text-u-l"><a href="#/product/detail/1" target="_blank"> 123456 </a></td>
+							<td class="text-center">
+								<button title="保存" class="btn btn-vo btn-xs"><i class="glyphicon glyphicon-floppy-disk"></i></button>
+								<button title="删除" class="btn btn-danger btn-xs"><i class="fa  fa-trash-o"></i></button>
 							</td>
 						</tr>
 						</tbody>
