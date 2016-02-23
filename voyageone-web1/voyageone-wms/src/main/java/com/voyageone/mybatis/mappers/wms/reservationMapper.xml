@@ -682,6 +682,8 @@
                 </if>
                 and
                     location.active = '1'
+                and
+                    item.sku = ''
                 group by
                     item.order_channel_id,
                     item.store_id,
@@ -700,7 +702,7 @@
                 item.sku,
                 GROUP_CONCAT(IFNULL(location.location_name,'')) as location_name
             from
-                wms_bt_item_location_ext item,
+                wms_bt_item_location item,
                 wms_mt_location location
             where
                 item.location_id = location.location_id
@@ -718,6 +720,8 @@
                 </if>
             and
                 location.active = '1'
+            and
+                item.sku != ''
             group by
                 item.order_channel_id,
                 item.store_id,
@@ -828,6 +832,8 @@
                 </if>
             and
                 location.active = '1'
+            and
+                item.sku = ''
             group by
                 item.order_channel_id,
                 item.store_id,
@@ -846,7 +852,7 @@
                 item.sku,
                 GROUP_CONCAT(IFNULL(location.location_name,'')) as location_name
             from
-                wms_bt_item_location_ext item,
+                wms_bt_item_location item,
                 wms_mt_location location
             where
                 item.location_id = location.location_id
@@ -864,6 +870,8 @@
                 </if>
             and
                 location.active = '1'
+            and
+                item.sku != ''
             group by
                 item.order_channel_id,
                 item.store_id,
@@ -891,12 +899,9 @@
             rsv.sku
     </select>
 
-    <select id="wms_reservation_getLocationBySKU" resultType="string">
-        SELECT
-            ifnull((CASE WHEN (ifnull(location_ext.location_name,'') = '') THEN location.location_name ELSE location_ext.location_name END),'') AS location_name
-        from
-        (select
-                details.sku,GROUP_CONCAT(IFNULL(location.location_name,'')) as location_name
+    <select id="wms_reservation_getLocationBySKU" resultType="HashMap">
+        select
+                item.sku,GROUP_CONCAT(IFNULL(location.location_name,'')) as location_name
         from
                 wms_bt_item_location item,
                 wms_mt_location location,
@@ -915,17 +920,19 @@
                 item.location_id = location.location_id
         and
                 location.active = '1'
+        and
+                item.sku = ''
         group by
                 item.order_channel_id,
                 item.store_id,
-                item.code) location
+                item.code
 
-        left join
+        union
 
-        (select
-                details.sku,GROUP_CONCAT(IFNULL(location.location_name,'')) as location_name
+        select
+                item.sku,GROUP_CONCAT(IFNULL(location.location_name,'')) as location_name
         from
-                wms_bt_item_location_ext item,
+                wms_bt_item_location item,
                 wms_mt_location location,
                 wms_bt_item_details details
         where
@@ -944,11 +951,12 @@
                 item.location_id = location.location_id
         and
                 location.active = '1'
+        and
+                item.sku != ''
         group by
                 item.order_channel_id,
                 item.store_id,
-                item.sku) location_ext
-        on location.sku = location_ext.sku
+                item.sku
     </select>
 
     <select id="wms_reservation_getClientSKU" resultType="string">

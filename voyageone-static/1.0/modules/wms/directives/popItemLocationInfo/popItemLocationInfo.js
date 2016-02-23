@@ -103,20 +103,31 @@ define(["modules/wms/wms.module",
                     // 绑定追加
                     function addItemLocation() {
                         var location_name = vm.location_name;
-                        //var location = $('#location-bind-location');
+                        var code = vm.code;
+                        var sku = vm.sku;
 
-                        //vm.add.location = "";
-                        //location.focus();
+                        var code_input = $('#location-bind-code');
+                        var sku_input = $('#location-bind-sku');
 
                         if (!vm.code && !vm.sku) {
                             notify("WMS_LOCATION_INPUT");
                             return;
                         }
 
+                        if (vm.code) {
+                            vm.code = "";
+                            code_input.focus();
+                        }
+                        if (vm.sku) {
+                            vm.sku = "";
+                            sku_input.focus();
+                        }
+
+
                         locationService.doAddItemLocation(
                             location_name,
-                            vm.code,
-                            vm.sku,
+                            code,
+                            sku,
                             vm.store_id,
                             '1'
                         ).then(

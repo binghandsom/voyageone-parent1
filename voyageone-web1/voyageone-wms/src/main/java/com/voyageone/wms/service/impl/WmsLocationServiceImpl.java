@@ -424,8 +424,13 @@ public class WmsLocationServiceImpl implements WmsLocationService {
         ItemLocationBean itemLocation = createItemLocation(order_channel_id, store_id, code, sku, location_name, user);
 
         // 检查，这个商品，是否之前就已经在相同的位置上了。
-        if (isItemLocationExists(itemLocation))
-            throw new BusinessException(ItemLocationMsg.ITEM_ALREADY_IN_THERE, code, location_name);
+        if (isItemLocationExists(itemLocation)) {
+            if (StringUtils.isEmpty(sku)) {
+                throw new BusinessException(ItemLocationMsg.ITEM_ALREADY_IN_THERE, code, location_name);
+            } else {
+                throw new BusinessException(ItemLocationMsg.ITEM_ALREADY_IN_THERE, sku, location_name);
+            }
+        }
 
         int count = locationDao.insertItemLocation(itemLocation);
 
