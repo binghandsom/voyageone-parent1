@@ -34,14 +34,14 @@ public class WmsSyncToTaobaoSubService extends WmsSyncInventoryBaseService {
 
     public void syncTaobao(List<InventorySynLogBean> inventorySynLogBeans, ShopBean shopBean) {
 
-        $info(shopBean.getShop_name() + "（" + shopBean.getComment() + ")库存同步开始");
-        $info(shopBean.getShop_name() + "（" + shopBean.getComment() + ")库存需要同步件数："+inventorySynLogBeans.size());
+        $info("-----" +shopBean.getShop_name() + "（" + shopBean.getComment() + ")库存同步开始");
+        $info("-----" +shopBean.getShop_name() + "（" + shopBean.getComment() + ")库存需要同步件数："+inventorySynLogBeans.size());
 
         for (InventorySynLogBean inventorySynLogBean : inventorySynLogBeans)
 
             syncTaobao(inventorySynLogBean, shopBean);
 
-        $info(shopBean.getShop_name() + "（" + shopBean.getComment() + ")库存同步结束");
+        $info("-----" +shopBean.getShop_name() + "（" + shopBean.getComment() + ")库存同步结束");
     }
 
     private void syncTaobao(InventorySynLogBean inventorySynLogBean, ShopBean shopBean) {

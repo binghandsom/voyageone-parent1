@@ -30,14 +30,14 @@ public class WmsSyncToJingDongSubService extends WmsSyncInventoryBaseService {
 
     public void syncJingdong(List<InventorySynLogBean> inventorySynLogBeans, ShopBean shopBean) {
 
-        $info(shopBean.getShop_name() + "（" + shopBean.getComment() + ")库存同步开始");
-        $info(shopBean.getShop_name() + "（" + shopBean.getComment() + ")库存需要同步件数："+inventorySynLogBeans.size());
+        $info("-----" +shopBean.getShop_name() + "（" + shopBean.getComment() + ")库存同步开始");
+        $info("-----" +shopBean.getShop_name() + "（" + shopBean.getComment() + ")库存需要同步件数："+inventorySynLogBeans.size());
 
         for (InventorySynLogBean inventorySynLogBean : inventorySynLogBeans)
 
             syncJingdong(inventorySynLogBean, shopBean);
 
-        $info(shopBean.getShop_name() + "（" + shopBean.getComment() + ")库存同步结束");
+        $info("-----" +shopBean.getShop_name() + "（" + shopBean.getComment() + ")库存同步结束");
     }
 
     private void syncJingdong(InventorySynLogBean inventorySynLogBean, ShopBean shopBean) {

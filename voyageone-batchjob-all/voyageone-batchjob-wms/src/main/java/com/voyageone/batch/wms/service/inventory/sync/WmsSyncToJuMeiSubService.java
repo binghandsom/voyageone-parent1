@@ -33,16 +33,16 @@ public class WmsSyncToJuMeiSubService extends WmsSyncInventoryBaseService {
 
     public void syncJumei(List<InventorySynLogBean> inventorySynLogBeans, ShopBean shopBean, String updateFlg) {
 
-        $info(shopBean.getShop_name() + "（" + shopBean.getComment() + ")库存同步开始");
-        $info(shopBean.getShop_name() + "（" + shopBean.getComment() + ")库存同步类型："+ updateFlg);
-        $info(shopBean.getShop_name() + "（" + shopBean.getComment() + ")库存需要同步件数："+inventorySynLogBeans.size());
+        $info("-----" +shopBean.getShop_name() + "（" + shopBean.getComment() + ")库存同步开始");
+        $info("-----" +shopBean.getShop_name() + "（" + shopBean.getComment() + ")库存同步类型："+ updateFlg);
+        $info("-----" +shopBean.getShop_name() + "（" + shopBean.getComment() + ")库存需要同步件数："+inventorySynLogBeans.size());
 
         for (InventorySynLogBean inventorySynLogBean : inventorySynLogBeans) {
-//            $info(shopBean.getShop_name() + "（" + shopBean.getComment() + ")库存同步记录：" + new Gson().toJson(inventorySynLogBean));
+//            $info("-----" +shopBean.getShop_name() + "（" + shopBean.getComment() + ")库存同步记录：" + new Gson().toJson(inventorySynLogBean));
             syncJumei(inventorySynLogBean, shopBean, updateFlg);
         }
 
-        $info(shopBean.getShop_name() + "（" + shopBean.getComment() + ")库存同步结束");
+        $info("-----" +shopBean.getShop_name() + "（" + shopBean.getComment() + ")库存同步结束");
     }
 
     private void syncJumei(InventorySynLogBean inventorySynLogBean, ShopBean shopBean, String updateFlg) {
@@ -56,19 +56,19 @@ public class WmsSyncToJuMeiSubService extends WmsSyncInventoryBaseService {
 
             res = jumeiService.stockSync(shopBean, req);
 
-            $info(shopBean.getShop_name() + "（" + shopBean.getComment() + ")库存同步记录：" + new Gson().toJson(req) + "，库存同步结果：" + res);
+            $info("-----" +shopBean.getShop_name() + "（" + shopBean.getComment() + ")库存同步记录：" + new Gson().toJson(req) + "，库存同步结果：" + res);
 
 
         } catch (Exception e) {
-            $info(shopBean.getShop_name() + "（" + shopBean.getComment() + ")库存同步记录：" + new Gson().toJson(req) + "，库存同步结果：" + e);
+            $info("-----" +shopBean.getShop_name() + "（" + shopBean.getComment() + ")库存同步记录：" + new Gson().toJson(req) + "，库存同步结果：" + e);
             if (updateFlg.equals(WmsConstants.UPDATE_FLG.ReFlush)) {
-//                $info("刷新失败时，更新标志位");
+//                $info("-----" +"刷新失败时，更新标志位");
                 // 刷新失败时，更新标志位
                 updateReFlushFlgIgnore(inventorySynLogBean);
             }
             // 失败的话，记录失败的信息
             else if (updateFlg.equals(WmsConstants.UPDATE_FLG.Update)) {
-//                $info("失败的话，记录失败的信息");
+//                $info("-----" +"失败的话，记录失败的信息");
                 moveIgnore(inventorySynLogBean, e.getMessage());
             }
             logFailRecord(e, inventorySynLogBean);
@@ -85,12 +85,12 @@ public class WmsSyncToJuMeiSubService extends WmsSyncInventoryBaseService {
                     (resultMap.containsKey("message") && "success!".equals(resultMap.get("message"))))  {
 
                 if (updateFlg.equals(WmsConstants.UPDATE_FLG.ReFlush)) {
-//                    $info("刷新成功时，更新标志位");
+//                    $info("-----" +"刷新成功时，更新标志位");
                     // 刷新成功时，更新标志位
                     updateReFlushFlgPass(inventorySynLogBean);
                 }
                 else if (updateFlg.equals(WmsConstants.UPDATE_FLG.Update)) {
-//                    $info("更新成功后，迁移数据到历史表");
+//                    $info("-----" +"更新成功后，迁移数据到历史表");
                     // 更新成功后，迁移数据到历史表
                     movePass(inventorySynLogBean);
                 }
@@ -99,13 +99,13 @@ public class WmsSyncToJuMeiSubService extends WmsSyncInventoryBaseService {
             }
             else {
                 if (updateFlg.equals(WmsConstants.UPDATE_FLG.ReFlush)) {
-//                    $info("刷新失败时，更新标志位");
+//                    $info("-----" +"刷新失败时，更新标志位");
                     // 刷新失败时，更新标志位
                     updateReFlushFlgIgnore(inventorySynLogBean);
                 }
                 // 失败的话，记录失败的信息
                 else if (updateFlg.equals(WmsConstants.UPDATE_FLG.Update)) {
-//                    $info("失败的话，记录失败的信息");
+//                    $info("-----" +"失败的话，记录失败的信息");
                     moveIgnore(inventorySynLogBean, res);
                 }
 
