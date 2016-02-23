@@ -50,6 +50,10 @@ public class Initializer {
     @Autowired
     private TypeChannelDao channelValueDao;
 
+    @Autowired
+    private CmsChannelConfigDao cmsChannelConfigDao;
+
+
     /**
      * 初始化所有配置类的内容
      */
@@ -79,5 +83,8 @@ public class Initializer {
 
         // 初始化 Carrier
         TypeChannel.init(channelValueDao);
+
+        // 初始化 cmsChannelConfig(cms_mt_channel_config)
+        CmsChannelConfigs.init(cmsChannelConfigDao);
     }
 }
