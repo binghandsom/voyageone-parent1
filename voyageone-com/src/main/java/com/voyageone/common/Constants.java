@@ -134,6 +134,8 @@ public final class Constants {
         public static final String SKU_CARTS_53_D = "D";
         public static final String SKU_CARTS_53_A = "A";
         public static final String SKU_CARTS_53_O = "O";
+        public static final String PROUDCT_TYPE_57 = "productType";
+        public static final String PROUDCT_TYPE_58 = "sizeType";
     }
 
     public static final class productForOtherSystemInfo {
