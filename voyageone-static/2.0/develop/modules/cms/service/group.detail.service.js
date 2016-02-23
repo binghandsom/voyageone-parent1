@@ -88,7 +88,7 @@ define([
 
 			var tempProductIds = [];
 			_.forEach(data.productIds, function (productInfo) {
-				tempProductIds.push({id: productInfo.prodId});
+				tempProductIds.push({id: productInfo.prodId, code: productInfo.fields.code});
 			});
 			data.productIds = tempProductIds;
 		}

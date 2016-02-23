@@ -268,11 +268,15 @@ define([
                         size: viewSize,
                         resolve: {
                             promotion: function () {
+                                //var productIds = [];
+                                //_.forEach(selList, function (object) {
+                                //    productIds.push(object);
+                                //});
                                 var productIds = [];
                                 _.forEach(selList, function (object) {
                                     productIds.push(object.id);
                                 });
-                                return {"promotion": promotion, "productIds": productIds};
+                                return {"promotion": promotion, "productIds": productIds, "products": selList};
                             }
                         }
                     });

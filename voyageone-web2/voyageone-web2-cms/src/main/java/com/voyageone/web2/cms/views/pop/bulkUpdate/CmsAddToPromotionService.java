@@ -60,6 +60,7 @@ public class CmsAddToPromotionService extends BaseAppService {
         Integer tagId = Integer.valueOf(params.get("tagId").toString());
         Integer cartId = Integer.valueOf(params.get("cartId").toString());
         List<Long> productIds = CommonUtil.changeListType((ArrayList<Integer>) params.get("productIds"));
+        List<Map<String, String>> products = (ArrayList<Map<String, String>>) params.get("products");
 
 
         // 获取promotion信息
@@ -79,13 +80,14 @@ public class CmsAddToPromotionService extends BaseAppService {
         Map<String, Object> result = productTagClient.addTagProducts(channelId, tagInfo.getTagPath(), productIds, modifier);
         if ("success".equals(result.get("result"))) {
 
-            productIds.forEach(item -> {
+            products.forEach(item -> {
 
                 PromotionDetailAddRequest request=new PromotionDetailAddRequest();
                 request.setModifier(modifier);
                 request.setChannelId(channelId);
                 request.setCartId(cartId);
-                request.setProductId(Long.valueOf(item.toString()));
+                request.setProductId(Long.valueOf(String.valueOf(item.get("id"))));
+                request.setProductCode(String.valueOf(item.get("code")));
                 request.setPromotionId(promotionId);
                 request.setPromotionPrice(0.00);
                 request.setTagId(tagInfo.getTagId());

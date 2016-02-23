@@ -156,7 +156,7 @@ define([
             tempGroupSelect.clearCurrPageRows();
             _.forEach(data.groupList, function (groupInfo) {
                 // 初始化数据选中需要的数组
-                tempGroupSelect.currPageRows({"id": groupInfo.prodId});
+                tempGroupSelect.currPageRows({"id": groupInfo.prodId, "code": groupInfo.fields["code"]});
 
                 // 设置Inventory Detail
                 // TODO 因为group显示的时候只返回了主商品的信息,所以无法拿到下面所有product的库存.
@@ -186,7 +186,7 @@ define([
             tempProductSelect.clearCurrPageRows();
             _.forEach(data.productList, function (productInfo) {
                 // 初始化数据选中需要的数组
-                tempProductSelect.currPageRows({"id": productInfo.prodId});
+                tempProductSelect.currPageRows({"id": productInfo.prodId, "code": productInfo.fields["code"]});
 
                 // 设置Inventory Detail
                 productInfo.inventoryDetail = _setInventoryDetail(productInfo.skus);

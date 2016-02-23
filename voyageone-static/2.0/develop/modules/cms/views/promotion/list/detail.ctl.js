@@ -6,7 +6,7 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function () {
 
-    function detailController($scope, promotionService, promotionDetailService, notify, $routeParams, $location, alert, $translate, confirm, cRoutes) {
+    function detailController($scope, promotionService, promotionDetailService, notify, $routeParams, $location, alert, $translate, confirm, cRoutes, selectRowsFactory) {
         $scope.promotionOld={};
         $scope.vm = {
             "promotionId": $routeParams.promotionId,
@@ -20,10 +20,13 @@ define([
             "groupList": [],
             "codeList": [],
             "skuList": [],
-            groupSelList: {currPageRows: [], selFlag: [], selAllFlag: false, selList: []},
-            codeSelList: {currPageRows: [], selFlag: [], selAllFlag: false, selList: []},
-            skuSelList: {currPageRows: [], selFlag: [], selAllFlag: false, selList: []}
+            groupSelList: { selList: []},
+            codeSelList: { selList: []},
+            skuSelList: { selList: []}
         };
+
+        var tempGroupSelect = new selectRowsFactory();
+        var tempProductSelect = new selectRowsFactory();
 
         $scope.initialize = function () {
             promotionService.init().then(function (res) {
@@ -41,9 +44,13 @@ define([
         };
 
         $scope.search = function () {
+
+            // 重新初始化选中标签
+            tempGroupSelect = new selectRowsFactory();
+            tempProductSelect = new selectRowsFactory();
             searchGroup();
             searchCode();
-            searchSku();
+            //searchSku();
         };
 
         $scope.updateCode = function(code){
@@ -74,7 +81,7 @@ define([
                     promotionDetailService.delPromotionCode(parameter).then(function () {
                         notify.success($translate.instant('TXT_MSG_DELETE_SUCCESS'));
                         $scope.search();
-                        $scope.vm.codeSelList.selList = [];
+                        //$scope.vm.codeSelList.selList = [];
                     });
                 });
         };
@@ -86,10 +93,11 @@ define([
                         .then(function () {
                             var data = [];
                             data.push(group);
-                            promotionDetailService.delPromotionModel(data).then(function (res) {
+                            // TODO 去哪里拿这个group?
+                            promotionDetailService.delPromotionModel(data).then(function () {
                                 notify.success($translate.instant('TXT_MSG_DELETE_SUCCESS'));
                                 $scope.search();
-                                $scope.vm.groupSelList.selList = [];
+                                //$scope.vm.groupSelList.selList = [];
                             })
                         });
                 } else {
@@ -101,10 +109,11 @@ define([
                         .then(function () {
                             var parameter = [];
                             parameter.push(code);
+                            // TODO 去哪里拿这个code?
                             promotionDetailService.delPromotionCode(parameter).then(function () {
                                 notify.success($translate.instant('TXT_MSG_DELETE_SUCCESS'));
                                 $scope.search();
-                                $scope.vm.codeSelList.selList = [];
+                                //$scope.vm.codeSelList.selList = [];
                             });
                         });
                 } else {
@@ -140,17 +149,17 @@ define([
         };
 
 
-        function selAllFlag(objectList,id){
-            objectList.selAllFlag = true;
-            if(!id){
-                id="id";
-            }
-            angular.forEach(objectList.currPageRows, function(object) {
-                if (!objectList.selFlag[object[id]]) {
-                    objectList.selAllFlag = false;
-                }
-            })
-        }
+        //function selAllFlag(objectList,id){
+        //    objectList.selAllFlag = true;
+        //    if(!id){
+        //        id="id";
+        //    }
+        //    angular.forEach(objectList.currPageRows, function(object) {
+        //        if (!objectList.selFlag[object[id]]) {
+        //            objectList.selAllFlag = false;
+        //        }
+        //    })
+        //}
         function searchGroup() {
             promotionDetailService.getPromotionGroup({
                 "promotionId": $routeParams.promotionId,
@@ -158,12 +167,16 @@ define([
                 "start": ($scope.vm.groupPageOption.curr - 1) * $scope.vm.groupPageOption.size,
                 "length": $scope.vm.groupPageOption.size
             }).then(function (res) {
+                tempGroupSelect.clearCurrPageRows();
+
                 $scope.vm.groupPageOption.total = res.data.total;
                 $scope.vm.groupList = res.data.resultData == null ? [] : res.data.resultData;
-                $scope.vm.groupSelList.currPageRows = res.data.resultData;
-                selAllFlag($scope.vm.groupSelList,"modelId");
-            }, function (err) {
-
+                _.forEach(res.data.resultData, function(data) {
+                    // 初始化数据选中需要的数组
+                    tempGroupSelect.currPageRows({"id": data.modelId});
+                });
+                $scope.vm.groupSelList = tempGroupSelect.selectRowsInfo;
+                //selAllFlag($scope.vm.groupSelList,"modelId");
             })
         }
 
@@ -174,15 +187,17 @@ define([
                 "start": ($scope.vm.codePageOption.curr - 1) * $scope.vm.codePageOption.size,
                 "length": $scope.vm.codePageOption.size
             }).then(function (res) {
+                tempProductSelect.clearCurrPageRows();
                 $scope.vm.codePageOption.total = res.data.total;
                 $scope.vm.codeList = res.data.resultData == null ? [] : res.data.resultData;
                 _.each($scope.vm.codeList,function(item){
                     item.promotionPriceBak = item.promotionPrice;
+                    // 初始化数据选中需要的数组
+                    tempProductSelect.currPageRows({id: item.productCode});
                 });
-                $scope.vm.codeSelList.currPageRows = res.data.resultData;
-                selAllFlag($scope.vm.codeSelList,"productCode");
-            }, function (err) {
-
+                $scope.vm.codeSelList = tempProductSelect.selectRowsInfo;
+                //$scope.vm.codeSelList.currPageRows = res.data.resultData;
+                //selAllFlag($scope.vm.codeSelList,"productCode");
             })
         }
 
@@ -195,11 +210,9 @@ define([
             }).then(function (res) {
                 $scope.vm.skuPageOption.total = res.data.total;
                 $scope.vm.skuList = res.data.resultData == null ? [] : res.data.resultData;
-            }, function (err) {
-
             })
         }
     };
-    detailController.$inject = ['$scope', 'promotionService', 'promotionDetailService', 'notify', '$routeParams', '$location','alert','$translate','confirm', 'cRoutes'];
+    detailController.$inject = ['$scope', 'promotionService', 'promotionDetailService', 'notify', '$routeParams', '$location','alert','$translate','confirm', 'cRoutes', 'selectRowsFactory'];
     return detailController;
 });
