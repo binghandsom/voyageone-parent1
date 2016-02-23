@@ -109,7 +109,7 @@
 							<td class="mfb-xxt text-left" translate="TXT_BRAND"></td>
 							<td class="mfb-xxt text-center" translate="TXT_INVENTORY"></td>
 							<td class="mfb-xxt text-right" translate="TXT_SALE_PRICE"></td>
-							<td class="mfb-xxt text-left" translate="TXT_PRODUCT_PRICE"></td>
+							<td class="mfb-xxt text-left" translate="TXT_PRODUCT_TYPE"></td>
 							<td class="mfb-xxt text-left" translate="TXT_SIZE_TYPE"></td>
 							<td class="mfb-xxt text-left" translate="TXT_BASE_PROPERTY"></td>
 							<td class="mfb-xxt text-center" translate="TXT_SKU_COUNT"></td>
@@ -148,7 +148,10 @@
 								</td>
 								<td class="mfb-xxt text-left">{{productInfo.fields.brand}}</td>
 								<td class="mfb-xxt text-center">
-									<button ng-controller="showPopoverCtrl" popover-html="showInfo({{productInfo.inventoryDetail}})" popover-title="{{'TXT_SKU_INVENTORY' | translate}}" type="button" popover-placement="left" class="btn btn-default btn-xs">{{productInfo.fields.qty || 0}}</button>
+									<!--<button ng-controller="showPopoverCtrl" popover-html="showInfo({{productInfo.inventoryDetail}})"
+											popover-title="{{'TXT_SKU_INVENTORY' | translate}}" type="button" popover-placement="left"
+											class="btn btn-default btn-xs">{{productInfo.fields.qty || 0}}</button>-->
+									{{productInfo.fields.qty || 0}}
 								</td>
 								<td class="mfb-xxt text-right">
 									<button ng-controller="showPopoverCtrl" popover-html="showInfo({{productInfo.priceDetail}})" popover-title="{{'TXT_PRICE' | translate}}"

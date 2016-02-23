@@ -30,12 +30,10 @@ import com.voyageone.web2.cms.dao.CmsBtFeedCustomPropDao;
 import com.voyageone.web2.cms.model.CmsBtFeedCustomPropModel;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import com.voyageone.web2.sdk.api.VoApiDefaultClient;
-import com.voyageone.web2.sdk.api.request.CategorySchemaGetRequest;
-import com.voyageone.web2.sdk.api.request.ProductGroupMainCategoryUpdateRequest;
-import com.voyageone.web2.sdk.api.request.ProductUpdateRequest;
-import com.voyageone.web2.sdk.api.request.ProductsGetRequest;
+import com.voyageone.web2.sdk.api.request.*;
 import com.voyageone.web2.sdk.api.response.CategorySchemaGetResponse;
 import com.voyageone.web2.sdk.api.response.ProductGroupMainCategoryUpdateResponse;
+import com.voyageone.web2.sdk.api.response.ProductSkuResponse;
 import com.voyageone.web2.sdk.api.response.ProductsGetResponse;
 import com.voyageone.web2.sdk.api.service.ProductSdkClient;
 import org.apache.commons.logging.Log;
@@ -164,8 +162,15 @@ public class CmsProductDetailService {
 
         this.fillFieldOptions(subSkuFields, channelId, language);
 
+        // TODO 取得Sku的库存
+        ProductSkuRequest request = new ProductSkuRequest();
+        request.setChannelId(channelId);
+        request.setCode(productValueModel.getFields().getCode());
+
+        ProductSkuResponse skuInventoryList = voApiClient.execute(request);
+
         //获取sku schemaValue
-        Map<String, Object> skuSchemaValue = buildSkuSchemaValue(productValueModel, categorySchemaModel);
+        Map<String, Object> skuSchemaValue = buildSkuSchemaValue(productValueModel, categorySchemaModel, skuInventoryList.getSkuInventories());
 
         //填充sku schema.
         FieldUtil.setFieldsValueFromMap(skuSchemaFields, skuSchemaValue);
@@ -526,12 +531,13 @@ public class CmsProductDetailService {
      * @param categorySchemaModel
      * @return
      */
-    private Map<String, Object> buildSkuSchemaValue(CmsBtProductModel productValueModel, CmsMtCategorySchemaModel categorySchemaModel) {
+    private Map<String, Object> buildSkuSchemaValue(CmsBtProductModel productValueModel, CmsMtCategorySchemaModel categorySchemaModel, Map<String, Integer> inventoryList) {
         List<Map<String, Object>> skuValueModel = new ArrayList<>();
 
         List<CmsBtProductModel_Sku> valueSkus = productValueModel.getSkus();
 
         for (CmsBtProductModel_Sku model_sku : valueSkus) {
+            model_sku.setQty(inventoryList.get(model_sku.getSkuCode()));
             skuValueModel.add(model_sku);
         }
 
@@ -642,6 +648,8 @@ public class CmsProductDetailService {
 
         for (Map skuMap : skuValuesMap) {
             CmsBtProductModel_Sku skuModel = new CmsBtProductModel_Sku(skuMap);
+            // 特殊处理qty不更新到数据库
+            skuModel.remove("qty");
             skuValues.add(skuModel);
         }
         return skuValues;
