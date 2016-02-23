@@ -157,6 +157,7 @@ define(function () {
                     init: '/wms/location/bind/init',
                     search: "/wms/location/bind/searchItemLocation",
                     searchBySku: "/wms/location/bind/searchItemLocationBySku",
+                    searchByLocationId: "/wms/location/bind/searchItemLocationByLocationId",
                     add: "/wms/location/bind/addItemLocation",
                     delete: "/wms/location/bind/deleteItemLocation"
                 }

@@ -157,10 +157,11 @@ public class WmsLocationController extends BaseController {
 
     @RequestMapping(LocationUrls.Bind.SEARCH_BY_LOCATION_ID)
     public void searchItemLocationsByLocationId(@RequestBody Map<String, Object> params, HttpServletResponse response) {
-        int sku = (int) params.get("locantion_id");
-        int store_id = (int) params.get("store_id");
+        int location_id = Integer.valueOf((String) params.get("location_id"));
+        int store_id = Integer.valueOf((String) params.get("store_id"));
+        String location_name = (String) params.get("location_name");
 
-        Map<String, Object> result = locationService.searchItemLocationsByLocationId(sku, store_id, getUser());
+        Map<String, Object> result = locationService.searchItemLocationsByLocationId(location_id, store_id, location_name, getUser());
 
         AjaxResponseBean
                 .newResult(true)
@@ -173,9 +174,12 @@ public class WmsLocationController extends BaseController {
         String location_name = (String) params.get("location_name");
         String code = (String) params.get("code");
         String sku = (String) params.get("sku");
-        int store_id = (int) params.get("store_id");
+//        int store_id = (int) params.get("store_id");
+        int store_id = Integer.valueOf(getObjValue(params.get("store_id")));
+        // 绑定区分（根据货架，绑定对应的物品）
+        String bind_by_Location = (String) params.get("bind_by_Location");
 
-        Map<String, Object> result = locationService.addItemLocation(store_id, code, sku, location_name, getUser());
+        Map<String, Object> result = locationService.addItemLocation(store_id, code, sku, location_name, bind_by_Location, getUser());
 
         AjaxResponseBean
                 .newResult(true)
@@ -194,5 +198,22 @@ public class WmsLocationController extends BaseController {
                 .newResult(true)
                 .setResultInfo(itemLocationLogFormBean)
                 .writeTo(getRequest(), response);
+    }
+
+    /**
+     * 根据传递对象类型，取得对应的String
+     *
+     * @param para 画面传递对象
+     * @return 对应的String值
+     */
+    private String getObjValue(Object para) {
+        String ret = "";
+        if (para instanceof java.lang.String) {
+            ret = (String) para;
+        } else {
+            ret = String.valueOf((Integer) para);
+        }
+
+        return ret;
     }
 }

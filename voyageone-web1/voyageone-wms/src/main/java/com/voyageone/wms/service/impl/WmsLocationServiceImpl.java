@@ -21,6 +21,7 @@ import com.voyageone.wms.service.WmsLocationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -199,17 +200,8 @@ public class WmsLocationServiceImpl implements WmsLocationService {
         if (StringUtils.isEmpty(order_channel_id))
             throw new BusinessException(ItemLocationMsg.NOT_FOUND_CHANNEL);
 
-        // 根据输入的条形码找到对应的UPC
-        code = itemDao.getUPC(order_channel_id, code);
-
-        // 通过 itemcode 和 barcode 进行匹配。检索所有匹配商品的 itemcode （去重复）
-        List<String> codes = itemDao.searchItemCode(code, order_channel_id);
-
-        // 如果结果有多个，说明输入的 code 不能唯一匹配
-        if (codes.size() != 1)
-            throw new BusinessException(ItemLocationMsg.CANT_MATCH_UNIQUE_ITEM, code);
-
-        code = codes.get(0);
+        // 根据画面输入code，取得真实的code
+        code = getCode(code, order_channel_id);
 
         // 取得仓库的名称
         String storeName = StoreConfigs.getStore(store_id).getStore_name();
@@ -257,19 +249,10 @@ public class WmsLocationServiceImpl implements WmsLocationService {
         if (StringUtils.isEmpty(order_channel_id))
             throw new BusinessException(ItemLocationMsg.NOT_FOUND_CHANNEL);
 
-        // 根据输入的条形码找到对应的UPC
-        sku = itemDao.getUPC(order_channel_id, sku);
-
-        // 通过 sku 和 barcode 进行匹配。检索所有匹配商品的 sku （去重复）
-        List<HashMap<String, String>> skus = itemDao.searchSku(sku, order_channel_id);
-
-        // 如果结果有多个，说明输入的 sku 不能唯一匹配
-        if (skus.size() != 1)
-            throw new BusinessException(ItemLocationMsg.CANT_MATCH_UNIQUE_ITEM, sku);
-
-        HashMap<String, String> skuAndCode = skus.get(0);
-        sku = skuAndCode.get("sku");
-        String code = skuAndCode.get("itemcode");
+        // 根据画面输入sku，取得真实的sku，和code
+        ArrayList<String> codeAndSku = getSkuAndCode(sku, order_channel_id);
+        sku = codeAndSku.get(0);
+        String code = codeAndSku.get(1);
 
         // 取得仓库的名称
         String storeName = StoreConfigs.getStore(store_id).getStore_name();
@@ -304,12 +287,69 @@ public class WmsLocationServiceImpl implements WmsLocationService {
     /**
      * 在目标仓库，检索货架上的所有商品
      *
+     * @param skuPara 画面输入Sku（Barcode）
+     * @param order_channel_id 当前渠道
+     * @return ArrayList[0] sku
+     *          ArrayList[1] code
+     */
+    private ArrayList<String> getSkuAndCode(String skuPara, String order_channel_id) {
+        ArrayList<String> ret = new ArrayList<String>();
+        String sku = skuPara;
+        String code = "";
+
+        // 根据输入的条形码找到对应的UPC
+        sku = itemDao.getUPC(order_channel_id, sku);
+
+        // 通过 sku 和 barcode 进行匹配。检索所有匹配商品的 sku （去重复）
+        List<HashMap<String, String>> skus = itemDao.searchSku(sku, order_channel_id);
+
+        // 如果结果有多个，说明输入的 sku 不能唯一匹配
+        if (skus.size() != 1)
+            throw new BusinessException(ItemLocationMsg.CANT_MATCH_UNIQUE_ITEM, sku);
+
+        HashMap<String, String> skuAndCode = skus.get(0);
+        sku = skuAndCode.get("sku");
+        code = skuAndCode.get("itemcode");
+
+        ret.add(sku);
+        ret.add(code);
+
+        return ret;
+    }
+
+    /**
+     * 在目标仓库，检索货架上的所有商品
+     *
+     * @param codePara 画面输入code（Barcode）
+     * @param order_channel_id 当前渠道
+     * @return code
+     */
+    private String getCode(String codePara, String order_channel_id) {
+        String code = codePara;
+        // 根据输入的条形码找到对应的UPC
+        code = itemDao.getUPC(order_channel_id, code);
+
+        // 通过 itemcode 和 barcode 进行匹配。检索所有匹配商品的 itemcode （去重复）
+        List<String> codes = itemDao.searchItemCode(code, order_channel_id);
+
+        // 如果结果有多个，说明输入的 code 不能唯一匹配
+        if (codes.size() != 1)
+            throw new BusinessException(ItemLocationMsg.CANT_MATCH_UNIQUE_ITEM, code);
+
+        code = codes.get(0);
+
+        return code;
+    }
+
+    /**
+     * 在目标仓库，检索货架上的所有商品
+     *
      * @param location_id 货架Id
      * @param store_id 目标仓库
      * @return Map/ itemLocations/ itemLocationLogs
      */
     @Override
-    public Map<String, Object> searchItemLocationsByLocationId(int location_id, int store_id, UserSessionBean user) {
+    public Map<String, Object> searchItemLocationsByLocationId(int location_id, int store_id, String location_name, UserSessionBean user) {
         // 检索渠道
         String order_channel_id = storeDao.getChannel_id(store_id);
 
@@ -329,9 +369,11 @@ public class WmsLocationServiceImpl implements WmsLocationService {
 
         map.put("storeName", storeName);
 
-//        map.put("locationName", location_name);
+        map.put("locationName", location_name);
 
         map.put("itemLocations", itemLocations);
+
+        map.put("total", itemLocations.size());
 
         return map;
     }
@@ -347,13 +389,27 @@ public class WmsLocationServiceImpl implements WmsLocationService {
      * @return ItemLocationBean
      */
     @Override
-    public Map<String, Object> addItemLocation(int store_id, String code, String sku, String location_name, UserSessionBean user) {
+    public Map<String, Object> addItemLocation(int store_id, String code, String sku, String location_name, String bind_by_Location, UserSessionBean user) {
         // 检索渠道
         String order_channel_id = storeDao.getChannel_id(store_id);
 
         // 没找到仓库，所属的渠道
         if (StringUtils.isEmpty(order_channel_id))
             throw new BusinessException(ItemLocationMsg.NOT_FOUND_CHANNEL);
+
+        // 根据货架，绑定对应的物品
+        if (!StringUtils.isEmpty(bind_by_Location) && "1".equals(bind_by_Location)) {
+            // 根据code绑定
+            if (StringUtils.isEmpty(sku)) {
+                sku = "";
+                code = getCode(code, order_channel_id);
+            } else {
+            // 根据sku绑定
+                ArrayList<String> codeAndSku = getSkuAndCode(sku, order_channel_id);
+                sku = codeAndSku.get(0);
+                code = codeAndSku.get(1);
+            }
+        }
 
         if (StringUtils.isEmpty(sku)) {
             // 检查 Code 在目标渠道里，是否存在

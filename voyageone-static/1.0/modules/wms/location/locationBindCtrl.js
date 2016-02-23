@@ -164,7 +164,8 @@ define([
                 location_name,
                 vm.curr.code,
                 vm.curr.sku,
-                vm.curr.store
+                vm.curr.store,
+                '0'
             ).then(
                 function(res) {
                     vm.itemLocations.push(res.itemLocation);

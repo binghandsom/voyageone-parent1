@@ -90,11 +90,11 @@ define([
          * @param store_id 仓库 id
          * @returns {*}
          */
-        this.doAddItemLocation = function(location_name, code, sku, store_id){
+        this.doAddItemLocation = function(location_name, code, sku, store_id, bind_by_Location){
             if (store_id == "") {
                 store_id = 0;
             }
-            return http.ajaxPost({location_name: location_name, code: code, sku: sku, store_id: store_id}, location.bind.add).then(function (res) {
+            return http.ajaxPost({location_name: location_name, code: code, sku: sku, store_id: store_id, bind_by_Location: bind_by_Location}, location.bind.add).then(function (res) {
                 return res.data;
             });
         };

@@ -184,6 +184,7 @@
         WHERE
             wms_bt_item_location.store_id = #{store_id}
         AND wms_bt_item_location.location_id = #{locantion_id}
+        order by item_location_id desc
     </select>
 
     <select id="wms_bt_item_location_logs_select_item_location_logs" resultType="com.voyageone.wms.formbean.ItemLocationLogFormBean">
