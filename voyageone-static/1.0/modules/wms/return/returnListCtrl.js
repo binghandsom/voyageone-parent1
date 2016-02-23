@@ -21,8 +21,9 @@ define([
 			"notify",
 			"$filter",
 			"$location",
-            function ($scope, returnService, alert, printService, wmsConstant, confirm, notify, $filter, $location) {
-            	
+            "$window",
+            function ($scope, returnService, alert, printService, wmsConstant, confirm, notify, $filter, $location, $window) {
+
                 //检索条件结构体
                 $scope.search = {
                 	page:1,   //分頁用
@@ -55,6 +56,9 @@ define([
 				//打印行
 				$scope.printRow = printRow;
 
+                //下载退货数据
+                $scope.doReturnListDownload = doReturnListDownload;
+
                 function changeToSessionListPage(){
                     $location.path("wms/return/sessionList");
                 }
@@ -64,15 +68,28 @@ define([
 				}
 
 				function initialize(){
-            		returnService.doInit({ "returnStatus" : wmsConstant.return.typeId.returnStatus}, $scope)
-            			.then(function(response){
-            				$scope.returnStatus = response.data.returnStatus;
-							//默认查询条件为目前日期往前推一个月
-							$scope.search.updateTime_s  = response.data.fromDate;
-							$scope.search.updateTime_e  = response.data.toDate;
-							//按默认条件展示数据
-							doSearch(1);
-						})
+                    returnService.doInit({
+                            "returnStatus": wmsConstant.return.typeId.returnStatus,
+                            "returnCondition": wmsConstant.return.typeId.returnCondition
+                        }, $scope)
+                        .then(function (response) {
+                            $scope.returnStatus = response.data.returnStatus;
+                            $scope.returnCondition = response.data.returnCondition;
+                            //默认查询条件为目前日期往前推一个月
+                            $scope.search.updateTime_s = response.data.fromDate;
+                            $scope.search.updateTime_e = response.data.toDate;
+
+                            $scope.stores = response.data.storeList;
+                            $scope.search.store_id = $scope.stores[0].store_id;
+                            $scope.search.store_id_list = $scope.stores;
+
+                            $scope.returnCondition[0].id = 0;
+                            $scope.search.condition_id = $scope.returnCondition[0].id;
+                            $scope.search.condition_id_list = $scope.returnCondition;
+
+                            //按默认条件展示数据
+                            doSearch(1);
+                        })
             	}
 
 				function changeStatus(return_id) {
@@ -123,6 +140,19 @@ define([
 					printService.doPrint(wmsConstant.print.business.ReturnLabel, wmsConstant.print.hardware_key.Print_Return, jsonData);
 
 				}
+
+				function doReturnListDownload(){
+
+                    // 格式化时间
+                    $scope.search.updateTime_s = formatDate($scope.search.updateTime_s);
+                    $scope.search.updateTime_e = formatDate($scope.search.updateTime_e);
+
+                    //var downloadUrl = "./wms/return/list/doReturnListDownload?param={0}";
+                    //var realPage = downloadUrl.replace ("{0}",$scope.search);
+                    var downloadUrl = "./wms/return/list/doReturnListDownload?param="+ JSON.stringify($scope.search) ;
+                    $window.open(downloadUrl);
+
+                }
 
             }
         ]);

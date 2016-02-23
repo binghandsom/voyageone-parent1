@@ -225,6 +225,34 @@ public final class WmsConstants {
             }
         }
 
+        // GoodsReturn模板配置
+        public final static class GoodsReturn {
+            public final static String TEMPLATE_PATH = "wms.report.template.path";
+            public final static String TEMPLATE_NAME = "goodsReturn.xls";
+            public final static String RPT_NAME = "goodsReturn";
+            public final static String RPT_SUFFIX = ".xls";
+            public final static String RPT_SHEET_NAME = "GoodsReturn";
+            public final static int TEMPLATE_SHEET_NO = 0;
+            public final static int TEMPLATE_FIRSTROW_NO = 1;
+            public final static int COLNUM_MAX = 14;
+            public final static class Col{
+                public final static int COLNUM_NO = 0;
+                public final static int COLNUM_ORDER_CHANNEL = 1;
+                public final static int COLNUM_STORE = 2;
+                public final static int COLNUM_RETURN_TIME = 3;
+                public final static int COLNUM_ORDER_TIME = 4;
+                public final static int COLNUM_SOURCE_ORDER_ID = 5;
+                public final static int COLNUM_CLIENT_ORDER_ID = 6;
+                public final static int COLNUM_ORDER_NUM = 7;
+                public final static int COLNUM_RES_ID = 8;
+                public final static int COLNUM_SKU = 9;
+                public final static int COLNUM_CONDITION = 10;
+                public final static int COLNUM_RECEIVED_FROM = 11;
+                public final static int COLNUM_TRACKING_NO = 12;
+                public final static int COLNUM_NOTES = 13;
+            }
+        }
+
     }
 
     /**

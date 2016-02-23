@@ -3,6 +3,7 @@ package com.voyageone.wms.dao;
 import com.voyageone.base.dao.BaseDao;
 import com.voyageone.common.Constants;
 import com.voyageone.wms.formbean.FormReturn;
+import com.voyageone.wms.formbean.FormReturnDownloadBean;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -192,5 +193,14 @@ public class ReturnDao extends BaseDao {
      */
 	public int getSessionListSize(FormReturn formReturn) {
 		return selectOne(Constants.DAO_NAME_SPACE_WMS + "wms_return_getSessionListSizeSize", formReturn);
+	}
+
+	/**
+	 * @Description downloadList Search
+	 * @param formReturn 对象
+	 * @return list
+	 */
+	public List<FormReturnDownloadBean> getDownloadList(FormReturn formReturn) {
+		return selectList(Constants.DAO_NAME_SPACE_WMS + "wms_return_getDownloadList", formReturn);
 	}
 }

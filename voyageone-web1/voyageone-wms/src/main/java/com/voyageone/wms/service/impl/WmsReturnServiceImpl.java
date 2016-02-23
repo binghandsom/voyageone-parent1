@@ -26,7 +26,9 @@ import com.voyageone.wms.dao.ReservationDao;
 import com.voyageone.wms.dao.ReservationLogDao;
 import com.voyageone.wms.dao.ReturnDao;
 import com.voyageone.wms.formbean.FormReturn;
+import com.voyageone.wms.formbean.FormReturnDownloadBean;
 import com.voyageone.wms.service.WmsReturnService;
+import com.voyageone.wms.service.impl.reportImpl.WmsGoodsReturnReportService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,6 +71,9 @@ public class WmsReturnServiceImpl implements WmsReturnService {
 
 	@Autowired
 	private ItemDao itemDao;
+
+    @Autowired
+    private WmsGoodsReturnReportService wmsGoodsReturnReportService;
 
 //	@Override
 //	public void changeStatus(HttpServletRequest request, HttpServletResponse response, String returnId) {
@@ -338,7 +343,14 @@ public class WmsReturnServiceImpl implements WmsReturnService {
 		//logger.info(result.toString());
 	}
 
-	@Override
+    @Override
+    public byte[] doReturnListDownload(String param, UserSessionBean user) {
+        FormReturn formReturn = JsonUtil.jsonToBean(param, FormReturn.class);
+        List<FormReturnDownloadBean> returnDownloads  = returnDao.getDownloadList(formReturn);
+        return wmsGoodsReturnReportService.createReportByte(returnDownloads, formReturn);
+    }
+
+    @Override
 	public void doNewSessionInit(HttpServletRequest request, HttpServletResponse response, Map<String, String> paramMap, UserSessionBean user) {
 		FormReturn formReturnParam = new FormReturn();
 		setFormCommonValue(request, formReturnParam, user);

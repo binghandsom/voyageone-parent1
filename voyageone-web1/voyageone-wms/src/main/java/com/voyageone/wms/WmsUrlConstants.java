@@ -195,6 +195,7 @@ public final class WmsUrlConstants {
             public static final String INIT = "/wms/return/list/doInit";
             public static final String SEARCH = "/wms/return/list/doReturnListSearch";
             public static final String CHANGESTATUS = "/wms/return/list/doChangeStatus";
+            public static final String DOWNLOAD = "/wms/return/list/doReturnListDownload";
         }
 
         /**

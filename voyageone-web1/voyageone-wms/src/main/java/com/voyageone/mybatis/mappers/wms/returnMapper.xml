@@ -419,4 +419,64 @@
 		 </if>		
     </select>
 
+    <resultMap id="returnDownloadMap" type="com.voyageone.wms.formbean.FormReturnDownloadBean">
+        <result column="order_channel" property="order_channel"/>
+        <result column="store" property="store"/>
+        <result column="return_time" property="return_time"/>
+        <result column="order_time" property="order_time"/>
+        <result column="source_order_id" property="source_order_id"/>
+        <result column="client_order_id" property="client_order_id"/>
+        <result column="order_num" property="order_num"/>
+        <result column="res_id" property="res_id"/>
+        <result column="sku" property="sku"/>
+        <result column="condition" property="condition"/>
+        <result column="received_from" property="received_from"/>
+        <result column="tracking_no" property="tracking_no"/>
+        <result column="notes" property="notes"/>
+    </resultMap>
+
+    <select id="wms_return_getDownloadList" parameterType="com.voyageone.wms.formbean.FormReturn" resultMap="returnDownloadMap">
+        select
+            (select channel.full_name from tm_order_channel channel where channel.order_channel_id = a.order_channel_id) order_channel,
+            (select store.store_name from wms_mt_store store where store.store_id = a.store_id) store,
+            date_add(a.created,interval 8 hour) return_time,
+            date_add(b.order_date_time,interval 8 hour) order_time,
+            b.source_order_id,
+            b.client_order_id,
+            a.order_num,
+            a.res_id,
+            a.sku,
+            (select c.`name` from com_mt_value c where c.type_id = 20 and c.`value` = a.`condition`) 'condition',
+            (select c.`name` from com_mt_value c where c.type_id = 19 and c.`value` = a.received_from) received_from,
+            a.tracking_no,
+            a.notes
+        from
+            wms_bt_return a,
+            oms_bt_orders b
+        where
+            a.order_channel_id = #{order_channel_id}
+        and a.order_num = b.order_number
+		<if test="order_num != null and order_num != '' ">
+			and a.order_num = #{order_num}
+		</if>
+		<if test="updateTime_s != null and updateTime_s != '' ">
+			and a.created &gt;= #{updateTime_s}
+		</if>
+		<if test="updateTime_e != null and updateTime_e != '' ">
+			and a.created &lt;= #{updateTime_e}
+		</if>
+		<if test="storeList != null and storeList.size() != 0">
+			and a.store_id in
+			<foreach collection="storeList" item="id"  open="(" separator="," close=")">
+				#{id}
+			</foreach>
+		</if>
+		<if test="conditionList != null and conditionList.size() != 0">
+			and a.`condition` in
+			<foreach collection="conditionList" item="id"  open="(" separator="," close=")">
+				#{id}
+			</foreach>
+		</if>
+        order by a.created, a.`condition`
+    </select>
 </mapper>

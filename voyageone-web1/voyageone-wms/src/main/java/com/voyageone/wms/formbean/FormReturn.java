@@ -67,6 +67,8 @@ public class FormReturn extends AjaxRequestBean {
 	private String label_type;
 	private String location_name;
 	private String Upc;
+    private List<String> store_id_list;
+    private List<String> condition_id_list;
 
 	public String getReservationLog_notes() {
 		return reservationLog_notes;
@@ -452,7 +454,23 @@ public class FormReturn extends AjaxRequestBean {
 		Upc = upc;
 	}
 
-	@Override
+    public List<String> getStore_id_list() {
+        return store_id_list;
+    }
+
+    public void setStore_id_list(List<String> store_id_list) {
+        this.store_id_list = store_id_list;
+    }
+
+    public List<String> getCondition_id_list() {
+        return condition_id_list;
+    }
+
+    public void setCondition_id_list(List<String> condition_id_list) {
+        this.condition_id_list = condition_id_list;
+    }
+
+    @Override
 	protected String[] getValidateSorts() {
 		// TODO Auto-generated method stub
 		return null;

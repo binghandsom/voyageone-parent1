@@ -108,6 +108,13 @@ public interface WmsReturnService {
 	 */
 	void doReturnListSearch(HttpServletRequest request, HttpServletResponse response, FormReturn formReturn, UserSessionBean user);
 
+    /**
+     * @description returnList下载
+     * @param param 下载条件
+     * @param user 用户信息
+     */
+    byte[] doReturnListDownload(String param, UserSessionBean user);
+
 	/**
 	 * @description newSession
 	 * @param request HttpServletRequest
