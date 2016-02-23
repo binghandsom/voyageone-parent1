@@ -243,7 +243,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 blnProductExist = false;
 
                 // 获取类目属性匹配关系(默认的)
-                mapping = cmsBtFeedMappingDao.selectByDefault(channelId, feedCategory);
+                mapping = cmsBtFeedMappingDao.findDefault(channelId, feedCategory, true);
             } else {
                 // 已经存在
                 blnProductExist = true;

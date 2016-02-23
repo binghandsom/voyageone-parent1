@@ -25,10 +25,7 @@ import com.voyageone.web2.sdk.api.response.FeedMappingsGetResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.*;
@@ -50,13 +47,10 @@ public class CmsFeedPropMappingService extends BaseAppService {
     private CmsMtCategorySchemaDao categorySchemaDao;
 
     @Autowired
-    private CmsFeedMappingService feedMappingService;
-
-    @Autowired
     private CmsMtCommonPropDefDao commonPropDefDao;
 
     @Autowired
-    private com.voyageone.cms.service.CmsFeedMappingService com$feedMappingService;
+    private com.voyageone.cms.service.CmsFeedMappingService feedMappingService;
 
     @Autowired
     protected VoApiDefaultClient voApiClient;
@@ -65,26 +59,20 @@ public class CmsFeedPropMappingService extends BaseAppService {
      * 通过 Feed 类目,获取其默认匹配的主类目
      *
      * @param feedCategoryPath Feed 类目路径
-     * @param userSessionBean  当前用户及配置
+     * @param user  当前用户及配置
      * @return 主类目
      */
-    public Map<String, Object> getCategoryPropsByFeed(String feedCategoryPath, UserSessionBean userSessionBean) {
-        // 获取完整的 Feed 类目树
-        CmsMtFeedCategoryTreeModelx treeModelx = cmsMtFeedCategoryTreeDao.findFeedCategoryx(userSessionBean.getSelChannelId());
-        // 从全部 Feed 类目中查询具体的类目
-        CmsFeedCategoryModel feedCategoryModel = feedMappingService.findByPath(feedCategoryPath, treeModelx);
+    public Map<String, Object> getCategoryPropsByFeed(String feedCategoryPath, UserSessionBean user) {
 
-        if (feedCategoryModel == null)
-            throw new BusinessException("根据路径没找到类目");
-        // 从查询到的 Feed 类目查询默认的 Mapping 关系
-        CmsFeedMappingModel feedMappingModel = feedMappingService.findMapping(feedCategoryModel, m -> m.getDefaultMapping() == 1);
+        CmsBtFeedMappingModel feedMappingModel = feedMappingService.getDefault(user.getSelChannel(), feedCategoryPath);
 
         if (feedMappingModel == null)
-            throw new BusinessException("类目没有默认的类目匹配");
+            throw new BusinessException("没找到 Mapping");
 
         // 通过 Mapping 获取主类目的 Path
         // 通过 Path 转换获取到 ID (这部分是规定的 MD5 转换)
-        String categoryId = convertPathToId(feedMappingModel.getMainCategoryPath());
+        String categoryId = convertPathToId(feedMappingModel.getScope().getMainCategoryPath());
+
         // 查询主类目信息
         CmsMtCategorySchemaModel categorySchemaModel = categorySchemaDao.getMasterSchemaModelByCatId(categoryId);
 
@@ -183,7 +171,7 @@ public class CmsFeedPropMappingService extends BaseAppService {
      */
     public Map<MappingPropType, List<String>> getMatched(String feedCategoryPath, String mainCategoryPath, UserSessionBean userSessionBean) {
 
-        CmsBtFeedMappingModel btFeedMappingModel = com$feedMappingService.getMapping(userSessionBean.getSelChannel(),
+        CmsBtFeedMappingModel btFeedMappingModel = feedMappingService.getMapping(userSessionBean.getSelChannel(),
                 feedCategoryPath, mainCategoryPath);
 
         if (btFeedMappingModel == null)
@@ -220,7 +208,7 @@ public class CmsFeedPropMappingService extends BaseAppService {
 
         CmsMtFeedCategoryTreeModelx treeModelx = cmsMtFeedCategoryTreeDao.findFeedCategoryx(userSessionBean.getSelChannelId());
 
-        CmsFeedCategoryModel feedCategoryModel = feedMappingService.findByPath(feedCategoryPath, treeModelx);
+        CmsFeedCategoryModel feedCategoryModel = findByPath(feedCategoryPath, treeModelx);
 
         // 从 type/value 中取得 Feed 通用的属性
         Map<String, List<String>> attributes = Type.getTypeList(49, "en")
@@ -243,7 +231,7 @@ public class CmsFeedPropMappingService extends BaseAppService {
      */
     public void saveFeedMapping(SaveFieldMappingBean saveFieldMappingBean, UserSessionBean userSessionBean) {
 
-        CmsBtFeedMappingModel feedMappingModel = com$feedMappingService.getMapping(userSessionBean.getSelChannel(),
+        CmsBtFeedMappingModel feedMappingModel = feedMappingService.getMapping(userSessionBean.getSelChannel(),
                 saveFieldMappingBean.getFeedCategoryPath(), saveFieldMappingBean.getMainCategoryPath());
 
         if (feedMappingModel == null)
@@ -266,7 +254,7 @@ public class CmsFeedPropMappingService extends BaseAppService {
 
         feedMappingModel.setMatchOver(hasComplete(feedMappingModel) ? 1 : 0);
 
-        com$feedMappingService.setMapping(feedMappingModel);
+        feedMappingService.setMapping(feedMappingModel);
     }
 
     private boolean hasComplete(CmsBtFeedMappingModel feedMappingModel) {
@@ -394,5 +382,30 @@ public class CmsFeedPropMappingService extends BaseAppService {
         }
 
         return Stream.of(field);
+    }
+
+    private CmsFeedCategoryModel findByPath(String path, CmsMtFeedCategoryTreeModelx treeModel) {
+
+        String[] fromPath = path.split("-");
+
+        Stream<CmsFeedCategoryModel> feedCategoryModelStream = treeModel.getCategoryTree().stream();
+
+        for (int i = 0; i < fromPath.length; i++) {
+
+            String name = fromPath[i];
+
+            feedCategoryModelStream = feedCategoryModelStream
+                    .filter(c -> c.getName().equals(name));
+
+            if (i == fromPath.length - 1) {
+                break;
+            }
+
+            feedCategoryModelStream = feedCategoryModelStream
+                    .map(CmsFeedCategoryModel::getChild)
+                    .flatMap(Collection::stream);
+        }
+
+        return feedCategoryModelStream.findFirst().orElse(null);
     }
 }
