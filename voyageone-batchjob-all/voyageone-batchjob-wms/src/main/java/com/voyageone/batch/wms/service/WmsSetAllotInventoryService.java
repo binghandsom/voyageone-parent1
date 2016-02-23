@@ -498,12 +498,7 @@ public class WmsSetAllotInventoryService extends BaseTaskService {
 
             dataBodyMap.put("orderChannelId", orderChannelId);
 
-            // 区分是聚美相关WebService还是CMS相关WebService
-            if(postURI.contains("Jm2Wms")) {
-                dataBodyMap.put("sku", sku);
-            }else {
-                dataBodyMap.put("itemCode", itemCode);
-            }
+            dataBodyMap.put("itemCode", itemCode);
 
 //            String dataBody = new Gson().toJson(dataBodyMap);
 
