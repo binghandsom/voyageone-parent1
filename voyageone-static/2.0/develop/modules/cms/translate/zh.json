@@ -89,6 +89,7 @@
   "TXT_MAPPING_ATTRIBUTE_IS_FINISHED": "属性匹配完成?",
   "TXT_MAPPING_ATTRIBUTE": "属性匹配",
   "TXT_MASTER_DATA_ATTRIBUTE_MAPPING": "主数据属性匹配",
+  "TXT_PLATFORM_ATTRIBUTE_MAPPING": "平台属性匹配",
   "TXT_ATTRIBUTE_MAPPING": "属性匹配",
   "TXT_ATTRIBUTE_MAPPING_VALUE_TYPE": "值类型",
   "TXT_ATTRIBUTE_MAPPING_CONDITION_COUNT": "条件个数",
@@ -135,7 +136,7 @@
   "TXT_ERROR_CODE": "异常Code",
   "TXT_ERROR_MESSAGE": "异常消息",
   "TXT_ERROR_CREATE_TIME": "异常创建时间",
-  "TXT_ERROR_IS_FIX": "是否已经解决?",
+  "TXT_ERROR_IS_FIX": "已解决?",
   "TXT_ATTRIBUTE_ID": "属性ID",
   "TXT_ATTRIBUTE_NAME": "属性名称",
   "TXT_ATTRIBUTE_TYPE": "属性类型",
@@ -163,13 +164,16 @@
   "TXT_STATUS": "状态",
   "TXT_PREHEATING_TIME": "预热时间",
   "TXT_PRE_SALE_TIME": "预售时间",
-  "TXT_IS_START_TE_JIA_BAO": "启用特价宝？",
+  "TXT_IS_START_TE_JIA_BAO": "特价宝？",
   "TXT_TE_JIA_BAO_ID": "特价宝ID",
   "TXT_PROMOTION_DETAIL": "活动详情",
   "TXT_PROMOTION_TAG": "折扣标签",
   "TXT_RETAIL_PRICE": "指导售价",
-
-
+  "TXT_FILE_IMPORT": "导入文件",
+  "TXT_FILE_WITH_COLON": "文件路径:",
+  "TXT_PRODUCT_TYPE": "产品类型",
+  "TXT_PLATFORM_TYPE_WITH_COLON": "平台类型:",
+  "TXT_INPUT_ONLY_CHAR_AND_NUMBER": "这里只能输入:英数字 _ .，别输火星文!",
 
 
 
@@ -181,6 +185,7 @@
   "TXT_MSG_UPDATE_SUCCESS": "更新操作成功.",
   "TXT_MSG_UPDATE_FAIL": "更新操作失败.",
   "TXT_MSG_NO_ROWS_SELECT": "请至少选择一条数据.",
+  "TXT_MSG_NO_PRODUCT_ROWS": "请至少保证有一条产品数据",
   "TXT_MSG_NO_CATEGORY_SELECT": "请选择一个子类目.",
   "TXT_MSG_IS_NOT_CHILE_CATEGORY": "选择的类目不是一个子类目.",
   "TXT_MSG_CONFIRM_CHANGE_MASTER_PRODUCT": "如果您变更主商品,将会对平台的商品信息产生一些影响.<br>您确定要执行这个操作吗?",
@@ -201,6 +206,7 @@
   "TXT_MSG_MUST_GET_ONE_VALUE": "必须匹配一类值才能保存.",
   "TXT_MSG_NO_VALUE_IS_ON_THE_ATTRIBUTE": "没有匹配到任何属性或内容上.",
   "TXT_MSG_PRODUCT_CAN_NOT_EDIT": "该商品正在主类目切换中,请稍等...",
+  "TXT_MSG_DO_DELETE": "您确定要删除 ",
 
   "BTN_ADD_CONDITION": "新增条件",
   "BTN_CANCEL": "取消",
@@ -236,6 +242,8 @@
   "BTN_PROMOTION_HISTORY": "活动履历",
   "BTN_PRICE_HISTORY": "价格履历",
   "BTN_DOWNLOAD": "下载",
-  "BTN_BULK_UPLOAD": "批量导入",
-  "BTN_BULK_UPLOAD_PRICE": "批量刷价格"
+  "BTN_IMPORT_PROMOTION_FILE": "导入活动文件",
+  "BTN_CREATE_TE_JIA_BAO_TASK": "创建特价宝任务",
+  "BTN_CHOOSE_FILE": "选择文件",
+  "BTN_IMPORT_FILE": "Import File"
 }

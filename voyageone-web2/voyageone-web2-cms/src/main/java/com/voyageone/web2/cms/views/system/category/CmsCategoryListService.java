@@ -6,6 +6,7 @@ import com.voyageone.cms.service.model.CmsMtCategorySchemaModel;
 import com.voyageone.common.masterdate.schema.factory.SchemaJsonReader;
 import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.StringUtils;
 import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,11 +26,11 @@ public class CmsCategoryListService {
 
     public List<JSONObject> getCategoryList(Map<String,Object> param){
         String columnResult="{_id:1,catId:1,catFullPath:1}";
-        return cmsMtCategorySchemaDao.getSchemaList(columnResult,null,(Integer)param.get("skip"),(Integer)param.get("limit"));
+        return cmsMtCategorySchemaDao.getSchemaList(columnResult,getSearchParams(param),(Integer)param.get("skip"),(Integer)param.get("limit"));
     }
 
     public Long getCategoryCount(Map<String,Object> param){
-        return cmsMtCategorySchemaDao.getCategoryCount();
+        return cmsMtCategorySchemaDao.getCategoryCount(getSearchParams(param));
     }
 
     public CmsMtCategorySchemaModel getMasterSchemaModelByCatId(String id){
@@ -62,4 +63,22 @@ public class CmsCategoryListService {
         throw new BusinessException("4000010",oldData.getModifier());
     }
 
+    /**
+     * 获取检索参数
+     * @param param
+     * @return
+     */
+    private String getSearchParams (Map<String,Object> param) {
+        StringBuffer sbResult = new StringBuffer();
+        String cartName = String.valueOf(param.get("catName"));
+        String catId = String.valueOf(param.get("catId"));
+
+        if(!StringUtils.isEmpty(cartName))
+            sbResult.append("\"catFullPath\":{$regex:\"").append(cartName).append("\"},");
+
+        if(!StringUtils.isEmpty(catId))
+            sbResult.append("\"catId\":\"").append(catId).append("\",");
+
+        return sbResult.toString().length() >0 ? "{" + sbResult.toString().substring(0, sbResult.toString().length()-1) + "}" : "";
+    }
 }

@@ -12,6 +12,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author james.li on 2016/1/25.
@@ -36,6 +37,10 @@ public class CmsGetJmMasterServiceTest {
 
     @Test
     public void testInsertCategory() throws Exception {
+        String categorPath = "Necklaces & Pendants - Pendants - Mother-of-Pearl";
+        List<String> categors = java.util.Arrays.asList(categorPath.split(" - "));
+        categorPath = categors.stream().map(s -> s.replace("-", "－")).collect(Collectors.joining("-"));
+
         List<JmCategoryBean> categorys = new ArrayList<>();
         JmCategoryBean cat= new JmCategoryBean();
         cat.setCategory_id(1);

@@ -88,7 +88,7 @@ define([
 
 			var tempProductIds = [];
 			_.forEach(data.productIds, function (productInfo) {
-				tempProductIds.push({id: productInfo.prodId});
+				tempProductIds.push({id: productInfo.prodId, code: productInfo.fields.code});
 			});
 			data.productIds = tempProductIds;
 		}
@@ -173,14 +173,14 @@ define([
 			var result = [];
 
 			if(!_.isEmpty(product.created))
-				result.push($translate.instant('TXT_CREATE_TIME_WITH_COLON') + product.created);
+				result.push($translate.instant('TXT_CREATE_TIME_WITH_COLON') + product.created.substring(0, 19));
 
 			var platforms = product.groups.platforms[0];
 			if(!_.isEmpty(platforms.publishTime))
-				result.push($translate.instant('TXT_PUBLISH_TIME_WITH_COLON') + platforms.publishTime);
+				result.push($translate.instant('TXT_PUBLISH_TIME_WITH_COLON') + platforms.publishTime.substring(0, 19));
 
 			if(!_.isEmpty(platforms.instockTime))
-				result.push($translate.instant('TXT_ON_SALE_TIME_WITH_COLON') + platforms.instockTime);
+				result.push($translate.instant('TXT_ON_SALE_TIME_WITH_COLON') + platforms.instockTime.substring(0, 19));
 
 			return result;
 		}

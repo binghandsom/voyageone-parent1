@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.web2.wsdl.sql">
+
+    <!-- 根据条件查询 -->
+    <select id="select_wms_bt_inventory_center_logic_byChannelWithCodeOrSku" resultType="com.voyageone.web2.sdk.api.domain.WmsBtInventoryCenterLogicModel" parameterType="Map" >
+        SELECT
+            seq,
+            order_channel_id as orderChannelId,
+            code,
+            sku,
+            qty_orgin as qtyOrgin,
+            qty_china as qtyChina,
+            active,
+            created,
+            creater,
+            modified,
+            modifier
+        FROM
+            wms_bt_inventory_center_logic
+        WHERE order_channel_id = #{channelId}
+        <if test="sku != null and sku != ''" >
+         AND sku = #{sku}
+        </if>
+        <if test="code != null and code != ''" >
+            AND code = #{code}
+        </if>
+    </select>
+
+
+</mapper>

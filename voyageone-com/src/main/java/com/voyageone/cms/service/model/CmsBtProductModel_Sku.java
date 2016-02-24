@@ -2,7 +2,6 @@ package com.voyageone.cms.service.model;
 
 
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
-import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Enums.CartEnums;
 
 import java.util.ArrayList;
@@ -116,4 +115,11 @@ public class CmsBtProductModel_Sku extends BaseMongoMap<String, Object> {
         }
     }
 
+    public int getQty() {
+        return getAttribute("qty");
+    }
+
+    public void setQty(int qty) {
+        setAttribute("qty", qty);
+    }
 }

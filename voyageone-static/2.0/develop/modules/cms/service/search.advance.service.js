@@ -156,7 +156,7 @@ define([
             tempGroupSelect.clearCurrPageRows();
             _.forEach(data.groupList, function (groupInfo) {
                 // 初始化数据选中需要的数组
-                tempGroupSelect.currPageRows({"id": groupInfo.prodId});
+                tempGroupSelect.currPageRows({"id": groupInfo.prodId, "code": groupInfo.fields["code"]});
 
                 // 设置Inventory Detail
                 // TODO 因为group显示的时候只返回了主商品的信息,所以无法拿到下面所有product的库存.
@@ -186,7 +186,7 @@ define([
             tempProductSelect.clearCurrPageRows();
             _.forEach(data.productList, function (productInfo) {
                 // 初始化数据选中需要的数组
-                tempProductSelect.currPageRows({"id": productInfo.prodId});
+                tempProductSelect.currPageRows({"id": productInfo.prodId, "code": productInfo.fields["code"]});
 
                 // 设置Inventory Detail
                 productInfo.inventoryDetail = _setInventoryDetail(productInfo.skus);
@@ -306,14 +306,14 @@ define([
             var result = [];
 
             if(!_.isEmpty(product.created))
-                result.push($translate.instant('TXT_CREATE_TIME_WITH_COLON') + product.created);
+                result.push($translate.instant('TXT_CREATE_TIME_WITH_COLON') + product.created.substring(0, 19));
 
             var platforms = product.groups.platforms[0];
             if(!_.isEmpty(platforms.publishTime))
-                result.push($translate.instant('TXT_PUBLISH_TIME_WITH_COLON') + platforms.publishTime);
+                result.push($translate.instant('TXT_PUBLISH_TIME_WITH_COLON') + platforms.publishTime.substring(0, 19));
 
             if(!_.isEmpty(platforms.instockTime))
-                result.push($translate.instant('TXT_ON_SALE_TIME_WITH_COLON') + platforms.instockTime);
+                result.push($translate.instant('TXT_ON_SALE_TIME_WITH_COLON') + platforms.instockTime.substring(0, 19));
 
             return result;
         }

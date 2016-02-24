@@ -60,27 +60,20 @@ public class CmsUploadJmProductServiceTest {
         shopBean.setSessionKey("7e059a48c30c67d2693be14275c2d3be");
         shopBean.setAppSecret("0f9e3437ca010f63f2c4f3a216b7f4bc9698f071");
         shopBean.setApp_url("http://openapi.ext.jumei.com/");
-        String[] productList= {"2364636",
-                "2371378",
-                "2372326",
-                "2372327",
-                "2372335",
-                "2372337",
-                "2372339",
-                "2372342",
-                "2372344",
-                "2382646",
+        String[] productList= {"2382646",
+                "2383491",
                 "2382859",
-                "2382860",
+                "2382969",
+                "2382868",
+                "2382966",
+                "2382867",
                 "2382861",
                 "2382863",
-                "2382867",
-                "2382868",
-                "2382871",
-                "2382969",
-                "2382965",
-                "2382966",
                 "2382974",
+                "2382965",
+                "2382871",
+                "2382860",
+                "2385006",
                 "2383903",
                 "2383905",
                 "2383906",
@@ -88,6 +81,7 @@ public class CmsUploadJmProductServiceTest {
                 "2383913",
                 "2383914",
                 "2383915",
+                "2384829",
                 "2383929",
                 "2383930",
                 "2383932",
@@ -99,9 +93,24 @@ public class CmsUploadJmProductServiceTest {
                 "2383949",
                 "2383952",
                 "2383953",
-                "2383955"};
+                "2383955",
+                "2385276",
+                "2385491",
+                "2385493",
+                "2385492",
+                "2385275",
+                "2385525",
+                "2385530",
+                "2385515",
+                "2385521",
+                "2385498",
+                "2385509",
+                "2385504",
+                "2385506",
+                "2385502",
+                "2385511"};
 
-        FileWriter fw=new FileWriter("f:\\jumei_hash_id3.csv");
+        FileWriter fw=new FileWriter("f:\\jumei_hash_id4.csv");
         PrintWriter pw=new PrintWriter(fw);
 
         try {

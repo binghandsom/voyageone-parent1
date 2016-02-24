@@ -55,8 +55,8 @@ define([
                 },
                 matched: {
                     '设定情况(ALL)': null,
-                    '已设定': true,
-                    '未设定': false
+                    '已匹配': true,
+                    '未匹配': false
                 }
             },
             init: function () {

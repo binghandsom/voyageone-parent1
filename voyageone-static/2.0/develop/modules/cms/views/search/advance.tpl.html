@@ -67,14 +67,14 @@
 							<label class="col-sm-3 control-label" translate="TXT_CREATE_TIME"></label>
 							<div class="col-sm-8 form-inline">
 								<div class="col-sm-5 input-group" ng-controller="datePickerCtrl">
-									<input type="text" class="form-control" datepicker-popup="{{formatDateTime}}" ng-model="$parent.vm.searchInfo.createTimeStart" date-model-format
+									<input type="text" class="form-control" datepicker-popup="{{formatDate}}" ng-model="$parent.vm.searchInfo.createTimeStart" date-model-format="{{formatDate}}"
 										   max-date="$parent.vm.searchInfo.createTimeTo" is-open="opened" datepicker-options="dateOptions" close-text="Close" />
 								              <span class="input-group-btn">
 								                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
 								              </span>
 								</div>&nbsp;~&nbsp;
 								<div class="col-sm-5 input-group" ng-controller="datePickerCtrl">
-									<input type="text" class="form-control" datepicker-popup="{{formatDateTime}}" ng-model="$parent.vm.searchInfo.createTimeTo" date-model-format
+									<input type="text" class="form-control" datepicker-popup="{{formatDate}}" ng-model="$parent.vm.searchInfo.createTimeTo" date-model-format="{{formatDate}}"
 										   min-date="$parent.vm.searchInfo.createTimeStart" is-open="opened" datepicker-options="dateOptions" close-text="Close" />
 								              <span class="input-group-btn">
 								                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
@@ -86,14 +86,14 @@
 							<label class="col-sm-3 control-label" translate="TXT_PUBLISH_TIME"></label>
 							<div class="col-sm-8 form-inline">
 								<div class="col-sm-5 input-group" ng-controller="datePickerCtrl">
-									<input type="text" class="form-control" datepicker-popup="{{formatDateTime}}" ng-model="$parent.vm.searchInfo.publishTimeStart" date-model-format
+									<input type="text" class="form-control" datepicker-popup="{{formatDate}}" ng-model="$parent.vm.searchInfo.publishTimeStart" date-model-format="{{formatDate}}"
 										   max-date="$parent.vm.searchInfo.publishTimeTo" is-open="opened" datepicker-options="dateOptions" close-text="Close" />
 								              <span class="input-group-btn">
 								                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
 								              </span>
 								</div>&nbsp;~&nbsp;
 								<div class="col-sm-5 input-group" ng-controller="datePickerCtrl">
-									<input type="text" class="form-control" datepicker-popup="{{formatDateTime}}" ng-model="$parent.vm.searchInfo.publishTimeTo" date-model-format
+									<input type="text" class="form-control" datepicker-popup="{{formatDate}}" ng-model="$parent.vm.searchInfo.publishTimeTo" date-model-format="{{formatDate}}"
 										   min-date="$parent.vm.searchInfo.publishTimeStart" is-open="opened" datepicker-options="dateOptions" close-text="Close" />
 								              <span class="input-group-btn">
 								                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
@@ -103,7 +103,7 @@
 						</div>
 						<div class="form-group">
 							<label class="col-sm-3 control-label" translate="TXT_INVENTORY"></label>
-							<div class="col-sm-8 form-inline">
+							<div class="col-sm-8 form-inline" style="padding-left:0px">
 								<div class="col-sm-5">
 									<select class="form-control m-r-xs" ng-model="vm.searchInfo.compareType"
 											ng-options="compareType.value as compareType.name for compareType in vm.masterData.compareTypeList">
@@ -257,7 +257,7 @@
 								<span class="m-l-xxl" translate="TXT_PRIMARY_PRODUCT"></span>
 							</th>
 							<th class="mfb-xxt text-center" translate="TXT_INVENTORY"></th>
-							<th class="mfb-xxt text-center" translate="TXT_SALE_PRICE"></th>
+							<th class="mfb-xxt text-right" translate="TXT_SALE_PRICE"></th>
 							<th class="mfb-xxt text-left" translate="TXT_BRAND"></th>
 							<th class="mfb-xxxs text-left" translate="TXT_BASE_PROPERTY"></th>
 							<th class="mfb-xxt text-left" translate="TXT_TIME"></th>
@@ -270,7 +270,8 @@
 							<tr ng-class="{'table_bg_green_mint': groupInfo.groups.platforms[0].publishTime}" class="table_bg_gray">
 								<td colspan="8" class="control-label text-left form-inline">
 									<label class="checkbox-inline c-checkbox">
-										<input ng-model="vm.groupSelList.selFlag[groupInfo.prodId]" type="checkbox"  ng-controller="selectRowsCtrl" ng-click="selectOne(groupInfo.prodId, vm.groupSelList)">
+										<input ng-model="vm.groupSelList.selFlag[groupInfo.prodId]" type="checkbox"  ng-controller="selectRowsCtrl"
+											   ng-click="selectOne(groupInfo.prodId, vm.groupSelList)">
 										<span class="fa fa-check"></span>
 									</label>
 									<span class="label m-r-sm m-l" ng-class="{'label-success-new': groupInfo.groups.platforms[0].platformStatus == 'Onsale','label-yellow-new': groupInfo.groups.platforms[0].platformStatus == 'Instock', 'label-danger-new': groupInfo.groups.platforms[0].platformStatus == 'Waitingpublish'}">
@@ -301,9 +302,11 @@
 									</div>
 								</td>
 								<td class="mfb-xxt text-center"><!--TODO 目前只能返回group的主product,所有拿不到group下面所有的product的库存--><!--popover-html="showInfo({{groupInfo.inventoryDetail}})"-->
-									<button ng-controller="showPopoverCtrl" popover-title="{{'TXT_SKU_INVENTORY' | translate}}" type="button" popover-placement="left" class="btn btn-default btn-xs">{{groupInfo.fields.inventory || 0}}</button>
+									<!--<button ng-controller="showPopoverCtrl" popover-title="{{'TXT_SKU_INVENTORY' | translate}}" type="button" popover-placement="left"
+											class="btn btn-default btn-xs">{{groupInfo.groups.platforms[0].inventory || 0}}</button>-->
+									{{groupInfo.groups.platforms[0].qty || 0}}
 								</td>
-								<td class="mfb-xxt text-center">
+								<td class="mfb-xxt text-right">
 									<button ng-controller="showPopoverCtrl" popover-html="showInfo({{groupInfo.groups.priceDetail}})"
 											popover-title="{{'TXT_PRICE' | translate}}" type="button" popover-placement="left" class="btn btn-default btn-xs">
 										{{groupInfo.groups.priceSale}}
@@ -356,9 +359,10 @@
 								<span class="fa fa-check"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}&nbsp;</label>
 							</td>
 							<td class="mfb-xxt text-left" translate="TXT_BRAND"></td>
-							<td class="mfb-xxs text-center" translate="TXT_INVENTORY"></td>
-							<td class="mfb-xxt text-center" translate="TXT_SALE_PRICE"></td>
-							<td class="mfb-xxt text-center" translate="TXT_SIZE_TYPE"></td>
+							<td class="mfb-xxt text-center" translate="TXT_INVENTORY"></td>
+							<td class="mfb-xxt text-right" translate="TXT_SALE_PRICE"></td>
+							<td class="mfb-xxt text-left" translate="TXT_PRODUCT_TYPE"></td>
+							<td class="mfb-xxt text-left" translate="TXT_SIZE_TYPE"></td>
 							<td class="mfb-xxs text-left" translate="TXT_BASE_PROPERTY"></td>
 							<td class="mfb-xxt text-center" translate="TXT_SKU_COUNT"></td>
 							<td class="mfb-xxt text-left" translate="TXT_TIME"></td>
@@ -369,9 +373,10 @@
 						<table class="table table-hover vo_table vo_models" ng-if="vm.productList.length">
 							<tbody ng-repeat="productInfo in vm.productList">
 								<tr ng-class="{'table_bg_green_mint': productInfo.groups.platforms[0].publishTime}" class="table_bg_gray">
-									<td colspan="8" class="control-label text-left form-inline">
+									<td colspan="9" class="control-label text-left form-inline">
 										<label class="checkbox-inline c-checkbox">
-											<input ng-model="vm.productSelList.selFlag[productInfo.prodId]" type="checkbox" ng-controller="selectRowsCtrl" ng-click="selectOne(productInfo.prodId, vm.productSelList)">
+											<input ng-model="vm.productSelList.selFlag[productInfo.prodId]" type="checkbox" ng-controller="selectRowsCtrl"
+												   ng-click="selectOne(productInfo.prodId, vm.productSelList)">
 											<span class="fa fa-check"></span>
 										</label>
 										<span class="label m-r-sm m-l" ng-class="{'label-yellow-new': productInfo.fields.status == 'Pending','label-info': productInfo.fields.status == 'Ready', 'label-primary': productInfo.fields.status == 'Approved', 'label-danger-new': productInfo.fields.status == 'Deleted', 'label-success-new': productInfo.fields.status == 'New'}">
@@ -397,18 +402,20 @@
 										<img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{productInfo.fields.images1[0].image1}}" alt="{{productInfo.fields.code}}" class="img-circle pull-left m-r"/>
 									</td>
 									<td class="mfb-xxt text-left">{{productInfo.fields.brand}}</td>
-									<td class="mfb-xxs text-center">
-										<button ng-controller="showPopoverCtrl" popover-html="showInfo({{productInfo.inventoryDetail}})"
-												popover-title="{{'TXT_SKU_INVENTORY' | translate}}" type="button" popover-placement="left"
-												class="btn btn-default btn-xs">{{productInfo.fields.qty || 0}}</button>
-									</td>
 									<td class="mfb-xxt text-center">
+										<!--<button ng-controller="showPopoverCtrl" popover-html="showInfo({{productInfo.inventoryDetail}})"
+												popover-title="{{'TXT_SKU_INVENTORY' | translate}}" type="button" popover-placement="left"
+												class="btn btn-default btn-xs">{{productInfo.fields.qty || 0}}</button>-->
+										{{productInfo.fields.qty || 0}}
+									</td>
+									<td class="mfb-xxt text-right">
 										<button ng-controller="showPopoverCtrl" popover-html="showInfo({{productInfo.priceDetail}})"
 												popover-title="{{'TXT_PRICE' | translate}}" type="button" popover-placement="left" class="btn btn-default btn-xs">
 											{{productInfo.priceSale}}
 										</button>
 									</td>
-									<td class="mfb-xxt text-center">{{productInfo.fields.sizeType}}</td>
+									<td class="mfb-xxt text-left">{{productInfo.fields.productType}}</td>
+									<td class="mfb-xxt text-left">{{productInfo.fields.sizeType}}</td>
 									<td class="mfb-xxs text-left">
 										<div class="table_main">
 											<ul>
@@ -426,12 +433,12 @@
 												<ul ng-if="productInfo.groups.platforms[0].publishTime">
 													<li>{{'TXT_PUBLISH_TIME' | translate}}</li>
 													<!--<li><span>{{groupInfo.publishDate}}</span></li>-->
-													<li><span>{{productInfo.groups.platforms[0].publishTime}}</span></li>
+													<li><span>{{productInfo.groups.platforms[0].publishTime.substring(0, 19)}}</span></li>
 												</ul>
 												<ul ng-if="!productInfo.groups.platforms[0].publishTime">
 													<li>{{'TXT_CREATE_TIME' | translate}}</li>
 													<!--<li><span>{{productInfo.publishDate}}</span></li>-->
-													<li><span>{{productInfo.created}}</span></li>
+													<li><span>{{productInfo.created.substring(0, 19)}}</span></li>
 												</ul>
 											</div>
 										</small>

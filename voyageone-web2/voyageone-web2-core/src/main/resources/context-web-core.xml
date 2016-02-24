@@ -8,6 +8,10 @@
     <!--<import resource="classpath*:context-test-datasource-mongo.xml" />-->
     <import resource="file:/usr/web/spring-config/datasource-cms2-config.xml" />
     <import resource="file:/usr/web/spring-config/datasource-config-mongo.xml" />
+
+    <!-- SDK Client Config -->
+    <import resource="file:/usr/web/spring-config/sdk-client-config-sample.xml" />
+
 	<!-- 异常处理 -->
 	<bean class="com.voyageone.web2.base.ExceptionHandler">
         <property name="debug" value="true"/>

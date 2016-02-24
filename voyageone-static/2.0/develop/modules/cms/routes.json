@@ -25,6 +25,7 @@
     "controllerUrl": "modules/cms/views/promotion/task/detail.ctl"
   },
   "promotion_task_price": {
+    "url": "/promotion/task/price/",
     "hash": "/promotion/task/price/:promotionId",
     "templateUrl": "views/promotion/task/price.tpl.html",
     "controllerUrl": "modules/cms/views/promotion/task/price.ctl"

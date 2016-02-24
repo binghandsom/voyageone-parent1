@@ -14,7 +14,7 @@ angular.module('voyageone.angular.directives.ifNoRows', [])
         if (!$templateCache.get(tempNoDataKey)) {
             $templateCache.put(tempNoDataKey,
             '<div class="text-center text-hs" id="noData">\n' +
-            '    <h4 class="text-vo"><i class="icon fa fa-warning"></i>&nbsp;{{\'TXT_WARNING\' | translate}}</h4>\n' +
+            '    <h4 class="text-vo"><i class="icon fa fa-warning"></i>&nbsp;{{\'TXT_ALERT\' | translate}}</h4>\n' +
             '{{\'TXT_MSG_NO_DATE\' | translate}}' +
             '</dv>');
         }
