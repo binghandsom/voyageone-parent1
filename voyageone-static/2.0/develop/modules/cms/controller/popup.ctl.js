@@ -50,6 +50,27 @@ define([
                     "controller": 'popAuthorityNewCtl'
                 }
             },
+        "addattributevalue": {
+            "new": {
+                "templateUrl": "views/pop/addattributevalue/add.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/addattributevalue/add.ctl",
+                "controller": 'popAddAttributeValueCtl'
+            }
+        },
+        "addattributevaluenew": {
+            "new": {
+                "templateUrl": "views/pop/addattributevalue/new.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/addattributevalue/new.ctl",
+                "controller": 'popAddAttributeValueNewCtl'
+            }
+        },
+        "addattributevaluenews": {
+            "new": {
+                "templateUrl": "views/pop/addattributevalue/news.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/addattributevalue/news.ctl",
+                "controller": 'popAddAttributeValueNewsCtl'
+            }
+        },
             "bulkUpdate": {
                 "addToPromotion": {
                     "templateUrl": "views/pop/bulkUpdate/addToPromotion.tpl.html",
@@ -236,6 +257,56 @@ define([
                 $modal.open({
                     templateUrl: popActions.authority.new.templateUrl,
                     controller: popActions.authority.new.controller,
+                    size: viewSize,
+                    resolve: {
+                        data: function () {
+                            return data;
+                        }
+                    }
+                });
+            });
+        }
+
+        /**
+         * 新增属性值
+         * @type {openAddattributevalueNew}
+         */
+        $scope.openAddattributevaluenew = openAddattributevaluenew;
+        function openAddattributevaluenew(viewSize, data) {
+            require([popActions.addattributevaluenew.new.controllerUrl], function () {
+                $modal.open({
+                    templateUrl: popActions.addattributevaluenew.new.templateUrl,
+                    controller: popActions.addattributevaluenew.new.controller,
+                    size: viewSize,
+                    resolve: {
+                        data: function () {
+                            return data;
+                        }
+                    }
+                });
+            });
+        }
+        $scope.openAddattributevaluenews = openAddattributevaluenews;
+        function openAddattributevaluenews(viewSize, data) {
+            require([popActions.addattributevaluenews.new.controllerUrl], function () {
+                $modal.open({
+                    templateUrl: popActions.addattributevaluenews.new.templateUrl,
+                    controller: popActions.addattributevaluenews.new.controller,
+                    size: viewSize,
+                    resolve: {
+                        data: function () {
+                            return data;
+                        }
+                    }
+                });
+            });
+        }
+        $scope.openAddattributevalue = openAddattributevalue;
+        function openAddattributevalue(viewSize, data) {
+            require([popActions.addattributevalue.new.controllerUrl], function () {
+                $modal.open({
+                    templateUrl: popActions.addattributevalue.new.templateUrl,
+                    controller: popActions.addattributevalue.new.controller,
                     size: viewSize,
                     resolve: {
                         data: function () {
