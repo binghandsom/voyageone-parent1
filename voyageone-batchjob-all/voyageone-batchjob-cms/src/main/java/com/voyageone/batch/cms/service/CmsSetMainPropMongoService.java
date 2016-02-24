@@ -555,7 +555,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 platform.setDisplayOrder(0); // TODO: 不重要且有影响效率的可能, 有空再设置
 
                 // platform status:发布状态: 未上新 // Synship.com_mt_type : id = 45
-                platform.setPlatformStatus(com.voyageone.cms.CmsConstants.PlatformStatus.Waitingpublish);
+                platform.setPlatformStatus(com.voyageone.cms.CmsConstants.PlatformStatus.WaitingPublish);
                 // platform active:上新的动作: 暂时默认所有店铺是放到:仓库中
                 platform.setPlatformActive(CmsConstants.PlatformActive.Instock);
 
@@ -731,7 +731,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
             // 更新状态, 准备重新上传到各个平台
             for (CmsBtProductModel_Group_Platform platform : product.getGroups().getPlatforms()) {
-                platform.setPlatformStatus(CmsConstants.PlatformStatus.Waitingpublish);
+                platform.setPlatformStatus(CmsConstants.PlatformStatus.WaitingPublish);
             }
 
 
