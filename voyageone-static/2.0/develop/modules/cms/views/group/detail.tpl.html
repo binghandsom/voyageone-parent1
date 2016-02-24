@@ -86,7 +86,7 @@
 				<div class="btn-group" dropdown>
 					<button type="button" class="btn btn-default" ng-disabled="vm.masterData.promotionList.length < 0">
 						<i class="fa fa-arrow-circle-right"></i>&nbsp;{{'BTN_ADD_TO_PROMOTION' | translate}}
-					</button>
+					</button>&nbsp;
 					<button type="button" class="btn btn-default dropdown-toggle" dropdown-toggle ng-disabled="vm.masterData.promotionList.length < 0">
 						<span class="caret"></span>
 					</button>
@@ -109,7 +109,7 @@
 							<td class="mfb-xxt text-left" translate="TXT_BRAND"></td>
 							<td class="mfb-xxt text-center" translate="TXT_INVENTORY"></td>
 							<td class="mfb-xxt text-right" translate="TXT_SALE_PRICE"></td>
-							<td class="mfb-xxt text-center">产品类型</td>
+							<td class="mfb-xxt text-left" translate="TXT_PRODUCT_TYPE"></td>
 							<td class="mfb-xxt text-left" translate="TXT_SIZE_TYPE"></td>
 							<td class="mfb-xxt text-left" translate="TXT_BASE_PROPERTY"></td>
 							<td class="mfb-xxt text-center" translate="TXT_SKU_COUNT"></td>
@@ -127,18 +127,18 @@
 										<input type="radio" name="radioMainProduct" ng-checked="productInfo.groups.platforms[0].isMain" ng-click="setMainProduct(productInfo)">
 										<span class="fa fa-check"></span>
 									</label>
-										<span class="label m-r-lg m-l" ng-class="{'label-yellow-new': productInfo.fields.status == 'Pending','label-info': productInfo.fields.status == 'Ready', 'label-primary': productInfo.fields.status == 'Approved', 'label-danger-new': productInfo.fields.status == 'Deleted', 'label-success-new': productInfo.fields.status == 'New'}">
-											&nbsp;{{productInfo.fields.status}}&nbsp;
-										</span>
-										<span class="m-r-lg">{{'TXT_PRODUCT_CODE_WITH_COLON' | translate}}&nbsp;
-											<a ng-href="#/product/detail/{{productInfo.prodId}}" target="_blank" class="text-u-l" ng-bind="productInfo.fields.code"></a>
-										</span>&nbsp;
-										<span>{{'TXT_PRODUCT_NAME_WITH_COLON' | translate}}&nbsp;
-											<a ng-if="productInfo.fields.productNameCn" href="#/product/detail/{{productInfo.prodId}}" target="_blank" class="text-u-l"
-											   title="{{productInfo.fields.productNameCn}}">{{productInfo.fields.productNameCn | limitTo: 30}}{{productInfo.fields.productNameCn.length > 30 ? '...' : ''}}</a>
-											<a ng-if="!productInfo.fields.productNameCn" href="#/product/detail/{{productInfo.prodId}}" target="_blank" class="text-u-l"
-											   title="{{productInfo.fields.productNameEn}}">{{productInfo.fields.productNameEn | limitTo: 30}}{{productInfo.fields.productNameEn.length > 30 ? '...' : ''}}</a>
-										</span>
+									<span class="label m-r-lg m-l" ng-class="{'label-yellow-new': productInfo.fields.status == 'Pending','label-info': productInfo.fields.status == 'Ready', 'label-primary': productInfo.fields.status == 'Approved', 'label-danger-new': productInfo.fields.status == 'Deleted', 'label-success-new': productInfo.fields.status == 'New'}">
+										&nbsp;{{productInfo.fields.status}}&nbsp;
+									</span>
+									<span class="m-r-lg">{{'TXT_PRODUCT_CODE_WITH_COLON' | translate}}&nbsp;
+										<a ng-href="#/product/detail/{{productInfo.prodId}}" target="_blank" class="text-u-l" ng-bind="productInfo.fields.code"></a>
+									</span>&nbsp;
+									<span>{{'TXT_PRODUCT_NAME_WITH_COLON' | translate}}&nbsp;
+										<a ng-if="productInfo.fields.productNameCn" href="#/product/detail/{{productInfo.prodId}}" target="_blank" class="text-u-l"
+										   title="{{productInfo.fields.productNameCn}}">{{productInfo.fields.productNameCn | limitTo: 30}}{{productInfo.fields.productNameCn.length > 30 ? '...' : ''}}</a>
+										<a ng-if="!productInfo.fields.productNameCn" href="#/product/detail/{{productInfo.prodId}}" target="_blank" class="text-u-l"
+										   title="{{productInfo.fields.productNameEn}}">{{productInfo.fields.productNameEn | limitTo: 30}}{{productInfo.fields.productNameEn.length > 30 ? '...' : ''}}</a>
+									</span>
 									<span class="pull-right">{{'TXT_CATEGORY_WITH_COLON' | translate}}&nbsp;{{productInfo.catPath}}</span>
 								</td>
 							</tr>
@@ -148,7 +148,10 @@
 								</td>
 								<td class="mfb-xxt text-left">{{productInfo.fields.brand}}</td>
 								<td class="mfb-xxt text-center">
-									<button ng-controller="showPopoverCtrl" popover-html="showInfo({{productInfo.inventoryDetail}})" popover-title="{{'TXT_SKU_INVENTORY' | translate}}" type="button" popover-placement="left" class="btn btn-default btn-xs">{{productInfo.fields.qty || 0}}</button>
+									<!--<button ng-controller="showPopoverCtrl" popover-html="showInfo({{productInfo.inventoryDetail}})"
+											popover-title="{{'TXT_SKU_INVENTORY' | translate}}" type="button" popover-placement="left"
+											class="btn btn-default btn-xs">{{productInfo.fields.qty || 0}}</button>-->
+									{{productInfo.fields.qty || 0}}
 								</td>
 								<td class="mfb-xxt text-right">
 									<button ng-controller="showPopoverCtrl" popover-html="showInfo({{productInfo.priceDetail}})" popover-title="{{'TXT_PRICE' | translate}}"
@@ -156,7 +159,7 @@
 										{{productInfo.priceSale}}
 									</button>
 								</td>
-								<td class="mfb-xxt text-center">产品类型</td>
+								<td class="mfb-xxt text-center">{{productInfo.fields.productType}}</td>
 								<td class="mfb-xxt text-left">{{productInfo.fields.sizeType}}</td>
 								<td class="mfb-xxt text-left">
 									<div class="table_main">

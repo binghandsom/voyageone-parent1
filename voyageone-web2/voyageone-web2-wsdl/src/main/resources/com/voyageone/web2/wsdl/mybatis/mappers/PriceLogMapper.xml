@@ -24,13 +24,13 @@
             log.product_id,
             log.code,
             log.sku,
-        <if test="priceType !=null and priceType == 'msrp'">
+        <if test="priceType !=null and priceType == 'priceMsrp'">
             log.msrp_price as price,
         </if>
-        <if test="priceType !=null and priceType == 'retailPrice'">
+        <if test="priceType !=null and priceType == 'priceRetail'">
             log.retail_price as price,
         </if>
-        <if test="priceType !=null and priceType == 'salePrice'">
+        <if test="priceType !=null and priceType == 'priceSale'">
             log.sale_price as price,
         </if>
             log.comment,
@@ -42,13 +42,13 @@
         where log.code = #{code}
           and log.sku = #{sku}
           and log.channel_id = #{channelId}
-        <if test="priceType !=null and priceType == 'msrp'">
+        <if test="priceType !=null and priceType == 'priceMsrp'">
           and log.msrp_price != 'null-null'
         </if>
-        <if test="priceType !=null and priceType == 'retailPrice'">
+        <if test="priceType !=null and priceType == 'priceRetail'">
             and log.retail_price != 'null-null'
         </if>
-        <if test="priceType !=null and priceType == 'salePrice'">
+        <if test="priceType !=null and priceType == 'priceSale'">
             and log.sale_price != 'null-null'
         </if>
         order by log.modified desc
@@ -58,13 +58,13 @@
     <select id="select_price_log_by_code_cnt" resultType="int" parameterType="HashMap">
         select count(1) from voyageone_cms2.cms_bt_price_log log
          where log.code = #{code} and log.sku = #{sku} and log.channel_id = #{channelId}
-        <if test="priceType !=null and priceType == 'msrp'">
+        <if test="priceType !=null and priceType == 'priceMsrp'">
             and log.msrp_price != 'null-null'
         </if>
-        <if test="priceType !=null and priceType == 'retailPrice'">
+        <if test="priceType !=null and priceType == 'priceRetail'">
             and log.retail_price != 'null-null'
         </if>
-        <if test="priceType !=null and priceType == 'salePrice'">
+        <if test="priceType !=null and priceType == 'priceSale'">
             and log.sale_price != 'null-null'
         </if>
     </select>
@@ -76,13 +76,13 @@
             log.product_id,
             log.code,
             log.sku,
-        <if test="priceType !=null and priceType == 'msrp'">
+        <if test="priceType !=null and priceType == 'priceMsrp'">
             log.msrp_price as price,
         </if>
-        <if test="priceType !=null and priceType == 'retailPrice'">
+        <if test="priceType !=null and priceType == 'priceRetail'">
             log.retail_price as price,
         </if>
-        <if test="priceType !=null and priceType == 'salePrice'">
+        <if test="priceType !=null and priceType == 'priceSale'">
             log.sale_price as price,
         </if>
             log.comment,
@@ -93,13 +93,13 @@
         from voyageone_cms2.cms_bt_price_log log
         where log.sku = #{sku}
           and log.channel_id = #{channelId}
-        <if test="priceType !=null and priceType == 'msrp'">
+        <if test="priceType !=null and priceType == 'priceMsrp'">
             and log.msrp_price != 'null-null'
         </if>
-        <if test="priceType !=null and priceType == 'retailPrice'">
+        <if test="priceType !=null and priceType == 'priceRetail'">
             and log.retail_price != 'null-null'
         </if>
-        <if test="priceType !=null and priceType == 'salePrice'">
+        <if test="priceType !=null and priceType == 'priceSale'">
             and log.sale_price != 'null-null'
         </if>
         order by log.modified desc
@@ -109,13 +109,13 @@
     <select id="select_price_log_by_sku_cnt" resultType="int" parameterType="HashMap">
         select count(1) from voyageone_cms2.cms_bt_price_log log
         where log.sku = #{sku} and log.channel_id = #{channelId}
-        <if test="priceType !=null and priceType == 'msrp'">
+        <if test="priceType !=null and priceType == 'priceMsrp'">
             and log.msrp_price != 'null-null'
         </if>
-        <if test="priceType !=null and priceType == 'retailPrice'">
+        <if test="priceType !=null and priceType == 'priceRetail'">
             and log.retail_price != 'null-null'
         </if>
-        <if test="priceType !=null and priceType == 'salePrice'">
+        <if test="priceType !=null and priceType == 'priceSale'">
             and log.sale_price != 'null-null'
         </if>
     </select>

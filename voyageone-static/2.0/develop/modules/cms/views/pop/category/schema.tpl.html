@@ -22,7 +22,7 @@
             <div class="form-group">
                 <label class="col-sm-3 control-label"></label>
                 <div class="col-sm-8 text-vo">
-                    <i class="icon fa fa-bell-o"></i>&nbsp;这里只能输入英文哦，别输火星文!
+                    <i class="icon fa fa-bell-o"></i>&nbsp;{{'TXT_INPUT_ONLY_CHAR_AND_NUMBER' | translate}}
                 </div>
             </div><!-- .form-group -->
 
@@ -52,12 +52,13 @@
                 <tab-heading> Options</tab-heading>
                 <div class="table-responsive">
                     <div class="col-sm-8">
-                        <div class="input-group">
+                        <!-- TODO 检索功能未实现,并且好像意义不大,如果以后有需要再开启 -->
+                        <!--<div class="input-group">
                             <input type="text" class="input-sm form-control">
 											          <span class="input-group-btn">
                                                           <button class="btn btn-sm btn-vo" type="button"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}</button>
 											          </span>
-                        </div>
+                        </div>-->
                     </div>
                     <div class="col-sm-4">
                         <button class="btn m-b-xs btn-sm btn-success btn-addon pull-right" ng-click="addOption()"><i class="fa fa-plus"></i>{{'BTN_ADD' | translate}}</button>

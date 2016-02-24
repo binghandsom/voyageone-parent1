@@ -22,11 +22,13 @@ import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.web2.cms.wsdl.BaseService;
 import com.voyageone.web2.cms.wsdl.dao.CmsBtPriceLogDao;
+import com.voyageone.web2.cms.wsdl.dao.WmsBtInventoryCenterLogicDao;
 import com.voyageone.web2.sdk.api.VoApiConstants;
 import com.voyageone.web2.sdk.api.VoApiUpdateResponse;
 import com.voyageone.web2.sdk.api.domain.CmsBtPriceLogModel;
 import com.voyageone.web2.sdk.api.domain.ProductPriceModel;
 import com.voyageone.web2.sdk.api.domain.ProductSkuPriceModel;
+import com.voyageone.web2.sdk.api.domain.WmsBtInventoryCenterLogicModel;
 import com.voyageone.web2.sdk.api.exception.ApiException;
 import com.voyageone.web2.sdk.api.request.*;
 import com.voyageone.web2.sdk.api.response.*;
@@ -64,6 +66,9 @@ public class ProductService extends BaseService {
 
     @Autowired
     private CmsBtFeedInfoDao cmsBtFeedInfoDao;
+
+    @Autowired
+    private WmsBtInventoryCenterLogicDao wmsBtInventoryCenterLogicDao;
 
     /**
      * selectOne
@@ -850,7 +855,7 @@ public class ProductService extends BaseService {
             resultInfo.setShortDescription(product.getFields().getShortDesEn());
             resultInfo.setLongDescription(product.getFields().getLongDesEn());
             // TODO set productType(but now productType is not commen field)
-            resultInfo.setDescription("");
+            resultInfo.setDescription(product.getFields().getProductType());
             resultInfo.setBrandName(product.getFields().getBrand());
             resultInfo.setGender(product.getFields().getSizeType());
             // TODO 无法提供,属于主数据的非共通属性
@@ -974,7 +979,15 @@ public class ProductService extends BaseService {
                 bean.setDescription(product.getFields().getLongDesEn());
                 bean.setPricePerUnit(sku.getPriceSale() != null ? sku.getPriceSale().toString() : "0.00");
                 // TODO 目前无法取得库存值
-                bean.setInventory("0");
+//                Map<String, Object> param = new HashMap<>();
+//                param.put("channelId", channelId);
+//                param.put("sku", sku.getSkuCode());
+                ProductSkuRequest param = new ProductSkuRequest();
+                param.setChannelId(channelId);
+                param.setSku(sku.getSkuCode());
+
+                WmsBtInventoryCenterLogicModel skuInfo = wmsBtInventoryCenterLogicDao.getItemDetailBySku(param);
+                bean.setInventory(String.valueOf(skuInfo.getQtyChina()));
                 // TODO 写死,取得是S7图片显示的路径
                 String imagePath = "";
                 if (product.getFields().getImages1().size() > 0) {
@@ -1066,6 +1079,23 @@ public class ProductService extends BaseService {
         result.setProducts(products);
 
         return result;
+    }
+
+    /**
+     * 获取Sku的库存信息
+     * @param param
+     * @return
+     */
+    public ProductSkuResponse getProductSkuQty (ProductSkuRequest param) {
+        List<WmsBtInventoryCenterLogicModel> inventoryList = wmsBtInventoryCenterLogicDao.getItemDetailByCode(param);
+        ProductSkuResponse response = new ProductSkuResponse();
+        Map<String, Integer> result = new HashMap<>();
+
+        for (WmsBtInventoryCenterLogicModel inventory : inventoryList) {
+            result.put(inventory.getSku(), inventory.getQtyChina());
+        }
+        response.setSkuInventories(result);
+        return response;
     }
 
 }

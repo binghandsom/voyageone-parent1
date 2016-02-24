@@ -8,8 +8,9 @@
     <div class="form-group">
         <label class="col-sm-2 control-label m-t-xs" translate="TXT_PRICE_TYPE"></label>
         <div class="col-sm-4">
-            <select class="form-control" ng-model="vm.priceType" ng-change="initialize()"
+            <select class="form-control" ng-model="vm.priceType"  ng-change="initialize()"
                     ng-options="priceType.value as priceType.name for priceType in vm.priceTypeList">
+                <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
             </select>
         </div>
     </div>
@@ -34,7 +35,7 @@
                             <td class="text-left" ng-if="vm.type == 'sku'">{{list.sku}}</td>
                             <td class="text-center">{{list.salePrice}}</td>
                             <td class="text-left">{{list.comment}}</td>
-                            <td class="text-left">{{list.modified}}</td>
+                            <td class="text-left">{{list.modified.substring(0, 19)}}</td>
                             <td class="text-left">{{list.modifier}}</td>
                         </tr>
                         </tbody>

@@ -10,6 +10,7 @@ define([
         $scope.vm = {
             promotionInfo: {
                 tagId: null,
+                products: promotion.products,
                 productIds: promotion.productIds,
                 promotionId: promotion.promotion.promotionId,
                 cartId: promotion.promotion.cartId

@@ -10,22 +10,24 @@
         <form role="form" class="form-horizontal" name="promotionFrom">
             <div class="form-group">
                 <label class="col-sm-3 control-label vo_reqfield" translate="TXT_PROMOTION_NAME"></label>
-                <div class="col-sm-8">
+                <div class="col-sm-7">
                     <input class="form-control" ng-model="promotion.promotionName" ng-required="true" >
                 </div>
+                <label class="col-sm-1 control-label text-u-red text-left" translate="TXT_REQUIRED"></label>
             </div><!-- .form-group -->
             <div class="form-group">
                 <label class="col-sm-3 control-label vo_reqfield" translate="TXT_PLATFORM_TYPE"></label>
-                <div class="col-sm-8">
+                <div class="col-sm-7">
                     <label ng-repeat="cart in cartList" class="checkbox-inline c-checkbox">
                         <input type="radio" name="cartid" ng-model="promotion.cartId"  ng-required="true" value={{cart.value}}>
                         <span class="fa fa-check"></span> {{cart.name}}
                     </label>
                 </div>
+                <label class="col-sm-1 control-label text-u-red text-left" translate="TXT_REQUIRED"></label>
             </div><!-- .form-group -->
             <div class="form-group">
                 <label class="col-sm-3 control-label" translate="TXT_PREHEATING_TIME"></label>
-                <div class="col-sm-8 form-inline">
+                <div class="col-sm-7 form-inline">
                     <div class="col-sm-5 input-group" ng-controller="datePickerCtrl">
                         <input type="text" ng-model="$parent.promotion.prePeriodStart" class="form-control" datepicker-popup="{{formatDate}}" is-open="opened" date-model-format="{{formatDate}}" datepicker-options="dateOptions" close-text="Close" />
 								              <span class="input-group-btn">
@@ -42,7 +44,7 @@
             </div>
             <div class="form-group">
                 <label class="col-sm-3 control-label" translate="TXT_PRE_SALE_TIME"></label>
-                <div class="col-sm-8 form-inline">
+                <div class="col-sm-7 form-inline">
                     <div class="col-sm-5 input-group" ng-controller="datePickerCtrl">
                         <input type="text" ng-model="$parent.promotion.preSaleStart" class="form-control" datepicker-popup="{{formatDate}}" is-open="opened" date-model-format="{{formatDate}}" datepicker-options="dateOptions" close-text="Close" />
 								              <span class="input-group-btn">
@@ -59,7 +61,7 @@
             </div>
             <div class="form-group">
                 <label class="col-sm-3 control-label vo_reqfield" translate="TXT_PROMOTION_TIME"></label>
-                <div class="col-sm-8 form-inline">
+                <div class="col-sm-7 form-inline">
                     <div class="col-sm-5 input-group" ng-controller="datePickerCtrl">
                         <input type="text" ng-model="$parent.promotion.activityStart" class="form-control" datepicker-popup="{{formatDate}}" is-open="opened" datepicker-options="dateOptions" date-model-format="{{formatDate}}" ng-required="true" close-text="Close" />
 								              <span class="input-group-btn">
@@ -73,6 +75,7 @@
 								              </span>
                     </div>
                 </div>
+                <label class="col-sm-1 control-label text-u-red text-left" translate="TXT_REQUIRED"></label>
             </div>
             <div class="form-group" ng-show="promotion.cartId == 20 || promotion.cartId == 23">
                 <div class="col-sm-3 control-label"><label class="" translate="TXT_IS_START_TE_JIA_BAO"></label></div>

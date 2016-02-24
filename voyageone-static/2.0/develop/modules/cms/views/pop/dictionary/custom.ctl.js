@@ -81,7 +81,8 @@ define([
      */
     function editDictionary (info, index) {
       if(!_.isUndefined(info)) {
-        $scope.vm.customInfo.params[index].value = info;
+        var Object = [info];
+        $scope.vm.customInfo.params[index].value = Object;
       }
     }
 

@@ -375,6 +375,14 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
         setAttribute("sizeType", sizeType);
     }
 
+    //产品分类
+    public String getProductType() {
+        return getAttribute("productType");
+    }
+    public void setProductType(String productType) {
+        setAttribute("productType", productType);
+    }
+
     @Override
     public Object put(String key, Object value) {
         if (key != null && key.startsWith("images")) {

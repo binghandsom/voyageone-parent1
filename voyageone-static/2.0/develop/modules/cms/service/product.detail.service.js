@@ -14,7 +14,7 @@ define([
 
 	cms.service("productDetailService", productDetailService);
 
-	function productDetailService ($q, $productDetailService) {
+	function productDetailService ($q, $productDetailService, $filter) {
 
 		this.getProductInfo = getProductInfo;
 		//this.updateProductInfo = updateProductInfo;
@@ -191,7 +191,7 @@ define([
 				else
 					result.push({key: key, value: data[key], cnKey: cnKey, cnValue: cnValue});
 			}
-			return result;
+			return $filter('orderBy')(result, "selected", true);
 		}
 
 		///**

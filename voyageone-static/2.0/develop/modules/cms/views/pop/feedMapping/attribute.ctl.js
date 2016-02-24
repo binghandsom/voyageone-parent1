@@ -6,15 +6,17 @@ define(['cms'], function (cms) {
 
     return cms.controller('propFeedMappingAttributeController', (function () {
 
-        function propFeedMappingAttributeController(context, feedMappingService, $uibModalInstance) {
+        function PropFeedMappingAttributeController(context, feedMappingService, $uibModalInstance) {
 
             this.$uibModalInstance = $uibModalInstance;
             this.feedMappingService = feedMappingService;
 
-            /**
-             * @type {FeedPropMappingPopupContext}
-             */
             this.context = context;
+
+            this.field = context.field;
+
+            this.mappingModel = context.mappingModel;
+
             /**
              * 具体到字段的 Mapping 设定
              * @typedef {{property:string,operation:string,value:string}} Condition
@@ -22,29 +24,26 @@ define(['cms'], function (cms) {
              * @type {{prop:string,mappings:Mapping[]}}
              */
             this.fieldMapping = null;
-            /**
-             * 当前编辑的主类目字段
-             */
-            this.field = this.context.field;
 
             this.addValueMapping = this.addValueMapping.bind(this);
         }
 
-        propFeedMappingAttributeController.prototype = {
+        PropFeedMappingAttributeController.prototype = {
+
             init: function () {
 
-                this.feedMappingService.getFieldMapping({
+                var ttt = this;
 
-                    feedCategoryPath: this.context.feedCategoryPath,
-                    mainCategoryPath: this.context.mainCategoryPath,
-                    field: this.context.field.id,
-                    type: this.context.bean.type
-
-                }).then(function (res) {
-
-                    this.fieldMapping = res.data;
-                }.bind(this));
+                ttt.feedMappingService.getFieldMapping({
+                        mappingId: ttt.mappingModel._id,
+                        fieldId: ttt.field.id,
+                        fieldType: ttt.context.bean.type
+                    })
+                    .then(function (res) {
+                        ttt.fieldMapping = res.data;
+                    });
             },
+
             /**
              * 增加值匹配到属性匹配中
              * @param mapping 由上层 Popup 返回的值
@@ -58,6 +57,7 @@ define(['cms'], function (cms) {
                 }
                 this.fieldMapping.mappings.push(mapping);
             },
+            
             /**
              * 移除一个mapping
              * @param {number} index
@@ -65,15 +65,17 @@ define(['cms'], function (cms) {
             remove: function (index) {
                 this.fieldMapping.mappings.splice(index, 1);
             },
+            
             ok: function () {
                 this.context.fieldMapping = this.fieldMapping;
                 this.$uibModalInstance.close(this.context);
             },
+            
             cancel: function () {
                 this.$uibModalInstance.dismiss('cancel');
             }
         };
 
-        return propFeedMappingAttributeController;
+        return PropFeedMappingAttributeController;
     })());
 });
