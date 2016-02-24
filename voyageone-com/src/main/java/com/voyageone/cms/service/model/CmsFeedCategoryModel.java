@@ -1,6 +1,5 @@
 package com.voyageone.cms.service.model;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -19,8 +18,6 @@ public class CmsFeedCategoryModel {
     private String cid;
 
     private int isChild;
-
-    private List<CmsFeedMappingModel> mapping;
 
     private List<CmsFeedCategoryModel> child;
 
@@ -56,16 +53,6 @@ public class CmsFeedCategoryModel {
 
     public void setIsChild(int isChild) {
         this.isChild = isChild;
-    }
-
-    public List<CmsFeedMappingModel> getMapping() {
-        if (mapping == null)
-            mapping = new ArrayList<>();
-        return mapping;
-    }
-
-    public void setMapping(List<CmsFeedMappingModel> mapping) {
-        this.mapping = mapping;
     }
 
     public List<CmsFeedCategoryModel> getChild() {

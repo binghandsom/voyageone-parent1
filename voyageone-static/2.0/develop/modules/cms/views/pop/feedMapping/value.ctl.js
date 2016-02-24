@@ -11,24 +11,22 @@ define([
 
     return cms.controller('propFeedMappingValueController', (function () {
 
-        function propFeedMappingValueController(context, feedMappingService, $uibModalInstance, alert, $translate) {
+        function PropFeedMappingValueController(context, feedMappingService, $uibModalInstance, alert, $translate) {
 
             this.alert = alert;
             this.$uibModalInstance = $uibModalInstance;
             this.feedMappingService = feedMappingService;
             this.operations = operations;
-            this.$translate = $translate
+            this.$translate = $translate;
 
-            /**
-             * 画面传递的上下文参数
-             * @type {FeedPropMappingPopupContext}
-             */
             this.context = context;
+
+            this.feedPath = context.mappingModel.scope.feedCategoryPath;
             /**
              * 当前处理的主类目属性
              * @type {Field}
              */
-            this.field = this.context.field;
+            this.field = context.field;
             /**
              * feed 类目的所有属性
              * @type {object[]}
@@ -49,21 +47,21 @@ define([
             this.conditions = null;
         }
 
-        propFeedMappingValueController.prototype = {
+        PropFeedMappingValueController.prototype = {
+            
             init: function () {
-
-                this.feedMappingService.getFeedAttrs({
-
-                    feedCategoryPath: this.context.feedCategoryPath
-
+                var ttt = this;
+                ttt.feedMappingService.getFeedAttrs({
+                    feedCategoryPath: ttt.feedPath
                 }).then(function (res) {
-
-                    this.feedAttributes = res.data;
-                }.bind(this));
+                    ttt.feedAttributes = res.data;
+                });
             },
+            
             removeCondition: function (index) {
                 (this.conditions || (this.conditions = [])).splice(index, 1);
             },
+
             addCondition: function () {
                 (this.conditions || (this.conditions = [])).push({
                     property: null,
@@ -71,6 +69,7 @@ define([
                     value: null
                 });
             },
+
             getValue: function (field) {
                 switch (field.type) {
                     case FieldTypes.input:
@@ -130,6 +129,6 @@ define([
             }
         };
 
-        return propFeedMappingValueController;
+        return PropFeedMappingValueController;
     })());
 });

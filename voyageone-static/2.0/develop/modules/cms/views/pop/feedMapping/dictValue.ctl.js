@@ -18,10 +18,6 @@ define([
             this.feedMappingService = feedMappingService;
             this.operations = operations;
 
-            /**
-             * 画面传递的上下文参数
-             * @type {FeedPropMappingPopupContext}
-             */
             this.context = context;
             /**
              * 当前处理的主类目属性

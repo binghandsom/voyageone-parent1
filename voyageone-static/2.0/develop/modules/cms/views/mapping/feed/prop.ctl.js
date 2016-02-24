@@ -142,6 +142,7 @@ define([
 
                 this.$scope = $scope;
                 this.feedCategoryPath = $routeParams['feedCategoryPath'];
+                this.isCommon = $routeParams['commonFlg'] === '0';
                 this.feedMappingService = feedMappingService;
                 this.notify = notify;
                 this.$translate = $translate;
@@ -183,6 +184,8 @@ define([
                     matched: null,
                     keyWord: null
                 };
+                
+                this.mappingModel = null;
 
                 this.saveMapping = this.saveMapping.bind(this);
 
@@ -208,7 +211,10 @@ define([
 
                     var ttt = this;
 
-                    ttt.feedMappingService.getMainProps({feedCategoryPath: ttt.feedCategoryPath})
+                    ttt.feedMappingService.getMainProps({
+                            feedCategoryPath: ttt.feedCategoryPath
+                        })
+
                         .then(function (res) {
 
                             // 保存主数据类目(完整类目)
@@ -222,13 +228,17 @@ define([
                             // 根据类目信息继续查询
                             ttt.feedMappingService.getMatched(
                                 {
-                                    feedCategoryPath: ttt.feedCategoryPath,
-                                    mainCategoryPath: ttt.mainCategory.catFullPath
+                                    from: ttt.feedCategoryPath,
+                                    isCommon: ttt.isCommon
                                 }
                             ).then(function (res) {
 
+                                var resultMap = res.data;
+                                
                                 // 保存已匹配的属性
-                                toArray.matchedMains = res.data;
+                                toArray.matchedMains = resultMap.propMap;
+                                
+                                ttt.mappingModel = resultMap.mappingModel;
 
                                 // 包装数据源
                                 ttt.dataSources.fields = toArray(ttt.fields);
@@ -239,15 +249,17 @@ define([
                         });
 
                     ttt.feedMappingService.getMatchOver({
-                        feedCategoryPath: ttt.feedCategoryPath
-                    }).then(function (res) {
-                        ttt.matchOver = res.data == 1;
-                    });
+                            from: ttt.feedCategoryPath,
+                            isCommon: ttt.isCommon
+                        })
+                        .then(function (res) {
+                            ttt.matchOver = res.data == 1;
+                        });
                 },
                 popupContext: function (bean) {
                     return {
-                        feedCategoryPath: this.feedCategoryPath,
-                        mainCategoryPath: this.mainCategory.catFullPath,
+                        isCommon: this.isCommon,
+                        mappingModel: this.mappingModel,
                         field: bean.field,
                         bean: bean
                     };
@@ -272,8 +284,7 @@ define([
                     context.fieldMapping.type = bean.type;
 
                     this.feedMappingService.saveFieldMapping({
-                        feedCategoryPath: context.feedCategoryPath,
-                        mainCategoryPath: context.mainCategoryPath,
+                        mappingId: this.mappingModel._id,
                         fieldPath: path.reverse(),
                         propMapping: context.fieldMapping
                     }).then(function (res) {
@@ -319,21 +330,23 @@ define([
                 switchMatchOver: function () {
                     var ttt = this;
                     ttt.feedMappingService.directMatchOver({
-                        feedCategoryPath: ttt.feedCategoryPath
-                    }).then(function (res) {
-                        if (res.data)
-                            ttt.notify.success(ttt.$translate.instant('TXT_MSG_UPDATE_SUCCESS'));
-                        else {
-                            ttt.notify.danger(ttt.$translate.instant('TXT_MSG_UPDATE_FAIL'));
-                            ttt.matchOver = !ttt.matchOver;
-                        }
-                    });
+                            from: ttt.feedCategoryPath,
+                            isCommon: ttt.isCommon
+                        })
+                        .then(function (res) {
+                            if (res.data)
+                                ttt.notify.success(ttt.$translate.instant('TXT_MSG_UPDATE_SUCCESS'));
+                            else {
+                                ttt.notify.danger(ttt.$translate.instant('TXT_MSG_UPDATE_FAIL'));
+                                ttt.matchOver = !ttt.matchOver;
+                            }
+                        });
                 },
 
                 /**
                  * 重置过滤条件
                  */
-                clear: function() {
+                clear: function () {
                     this.show = {
                         hasRequired: null,
                         matched: null,
