@@ -58,10 +58,10 @@
     "controller": "feedMappingController"
   },
   "mapping_feed_prop": {
-    "hash": "/mapping/feed/prop/:feedCategoryPath",
+    "hash": "/mapping/feed/:feedCategoryPath/:commonFlg",
     "templateUrl": "views/mapping/feed/prop.tpl.html",
     "controllerUrl": "modules/cms/views/mapping/feed/prop.ctl",
-    "controller": "feedPropMappingController"
+    "controller": "feedPropMappingController as $ctrl"
   },
   "mapping_platform_list": {
     "hash": "/mapping/platform",

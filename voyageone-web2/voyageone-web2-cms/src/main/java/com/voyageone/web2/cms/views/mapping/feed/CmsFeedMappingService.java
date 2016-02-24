@@ -217,17 +217,10 @@ public class CmsFeedMappingService extends BaseAppService {
 
     /**
      * 切换 MatchOver
-     *
-     * @param feedCategoryPath Feed 类目路径
-     * @param user             UserSessionBean
-     * @return Update 结果
      */
-    public boolean switchMatchOver(String feedCategoryPath, UserSessionBean user) {
+    public boolean switchMatchOver(SetMappingBean setMappingBean, UserSessionBean user) {
 
-        CmsBtFeedMappingModel feedMappingModel = cmsFeedMappingService.getDefault(user.getSelChannel(), feedCategoryPath);
-
-        if (feedMappingModel == null)
-            throw new BusinessException("没找到 Mapping");
+        CmsBtFeedMappingModel feedMappingModel = getMapping(setMappingBean, user);
 
         feedMappingModel.setMatchOver(feedMappingModel.getMatchOver() == 1 ? 0 : 1);
 
@@ -236,13 +229,33 @@ public class CmsFeedMappingService extends BaseAppService {
         return result.getN() > 0;
     }
 
-    public int getMatchOver(String feedCategoryPath, UserSessionBean user) {
+    public int getMatchOver(SetMappingBean setMappingBean, UserSessionBean user) {
 
-        CmsBtFeedMappingModel feedMappingModel = cmsFeedMappingService.getDefault(user.getSelChannel(), feedCategoryPath);
+        return getMapping(setMappingBean, user).getMatchOver();
+    }
+
+    /**
+     * 获取 Default Mapping 或 DefaultMain Mapping
+     *
+     * @param setMappingBean 参数模型, isCommon 用于控制获取的是 Default 还是 DefaultMain
+     * @param user           包含渠道的用户信息
+     * @return Mapping 模型
+     */
+    protected CmsBtFeedMappingModel getMapping(SetMappingBean setMappingBean, UserSessionBean user) {
+
+        CmsBtFeedMappingModel feedMappingModel = cmsFeedMappingService.getDefault(user.getSelChannel(),
+                setMappingBean.getFrom());
 
         if (feedMappingModel == null)
             throw new BusinessException("没找到 Mapping");
 
-        return feedMappingModel.getMatchOver();
+        if (setMappingBean.isCommon())
+            feedMappingModel = cmsFeedMappingService.getDefaultMain(user.getSelChannel(),
+                    feedMappingModel.getScope().getMainCategoryPath());
+
+        if (feedMappingModel == null)
+            throw new BusinessException("没找到主类目 Mapping");
+
+        return feedMappingModel;
     }
 }

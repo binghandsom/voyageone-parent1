@@ -3,6 +3,7 @@ package com.voyageone.cms.service.dao.mongodb;
 import com.voyageone.base.dao.mongodb.BaseMongoDao;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.cms.service.model.CmsBtFeedMappingModel;
+import org.bson.types.ObjectId;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -100,5 +101,14 @@ public class CmsBtFeedMappingDao extends BaseMongoDao {
                 channelId, mainCategoryPath);
 
         return selectOneWithQuery(query);
+    }
+
+    public CmsBtFeedMappingModel findOne(ObjectId objectId) {
+
+        JomgoQuery jomgoQuery = new JomgoQuery();
+
+        jomgoQuery.setObjectId(objectId);
+
+        return selectOneWithQuery(jomgoQuery);
     }
 }

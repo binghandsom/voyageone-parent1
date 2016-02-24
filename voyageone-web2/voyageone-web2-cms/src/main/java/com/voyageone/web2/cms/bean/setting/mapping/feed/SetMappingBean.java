@@ -14,6 +14,8 @@ public class SetMappingBean {
 
     private String to;
 
+    private boolean isCommon;
+
     public SetMappingBean() {
     }
 
@@ -36,5 +38,13 @@ public class SetMappingBean {
 
     public void setFrom(String from) {
         this.from = from;
+    }
+
+    public boolean isCommon() {
+        return isCommon;
+    }
+
+    public void setIsCommon(boolean common) {
+        isCommon = common;
     }
 }

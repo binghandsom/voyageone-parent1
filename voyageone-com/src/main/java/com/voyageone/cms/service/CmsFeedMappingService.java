@@ -4,6 +4,7 @@ import com.mongodb.WriteResult;
 import com.voyageone.cms.service.dao.mongodb.CmsBtFeedMappingDao;
 import com.voyageone.cms.service.model.CmsBtFeedMappingModel;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums.Channel;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,6 +35,10 @@ public class CmsFeedMappingService {
 
     public CmsBtFeedMappingModel getMapping(Channel channel, String feedCategory, String mainCategoryPath) {
         return cmsBtFeedMappingDao.selectByKey(channel.getId(), feedCategory, mainCategoryPath);
+    }
+
+    public CmsBtFeedMappingModel getMapping(ObjectId objectId) {
+        return cmsBtFeedMappingDao.findOne(objectId);
     }
 
     public WriteResult setMapping(CmsBtFeedMappingModel feedMappingModel) {

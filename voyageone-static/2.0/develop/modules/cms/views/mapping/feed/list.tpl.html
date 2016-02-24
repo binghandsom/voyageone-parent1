@@ -80,7 +80,10 @@
                         </td>
                         <td class="mfb-xxx text-center">
                             <div class="btn-group" ng-if="!!feedCategory.model.attribute && !!feedCategory.mapping">
-                                <a ng-href="#/mapping/feed/prop/{{::feedCategory.model.path}}" target="_blank">
+                                <a ng-href="#/mapping/feed/{{::feedCategory.model.path}}/0" target="_blank">
+                                    <i class="glyphicon glyphicon-link"></i>&nbsp;{{'BTN_MAPPING_ATTRIBUTE_COMMON_MAIN' | translate}}
+                                </a>&nbsp;
+                                <a ng-href="#/mapping/feed/{{::feedCategory.model.path}}/1" target="_blank">
                                     <i class="glyphicon glyphicon-link"></i>&nbsp;{{'BTN_MAPPING_ATTRIBUTE' | translate}}
                                 </a>
                             </div>
