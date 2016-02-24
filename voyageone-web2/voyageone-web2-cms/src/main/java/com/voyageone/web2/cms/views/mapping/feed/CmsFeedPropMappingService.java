@@ -5,11 +5,15 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.cms.enums.MappingPropType;
 import com.voyageone.cms.service.dao.mongodb.CmsMtCategorySchemaDao;
 import com.voyageone.cms.service.dao.mongodb.CmsMtFeedCategoryTreeDao;
-import com.voyageone.cms.service.model.*;
+import com.voyageone.cms.service.model.CmsBtFeedMappingModel;
+import com.voyageone.cms.service.model.CmsFeedCategoryModel;
+import com.voyageone.cms.service.model.CmsMtCategorySchemaModel;
+import com.voyageone.cms.service.model.CmsMtFeedCategoryTreeModelx;
 import com.voyageone.cms.service.model.feed.mapping.Prop;
 import com.voyageone.common.configs.Type;
 import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
+import com.voyageone.common.masterdate.schema.factory.SchemaJsonReader;
 import com.voyageone.common.masterdate.schema.field.ComplexField;
 import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.masterdate.schema.field.MultiComplexField;
@@ -19,9 +23,10 @@ import com.voyageone.web2.cms.bean.setting.mapping.feed.FieldBean;
 import com.voyageone.web2.cms.bean.setting.mapping.feed.GetFieldMappingBean;
 import com.voyageone.web2.cms.bean.setting.mapping.feed.SaveFieldMappingBean;
 import com.voyageone.web2.cms.bean.setting.mapping.feed.SetMappingBean;
-import com.voyageone.web2.cms.dao.CmsMtCommonPropDefDao;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import com.voyageone.web2.sdk.api.VoApiDefaultClient;
+import com.voyageone.web2.sdk.api.request.CommonSchemaGetRequest;
+import com.voyageone.web2.sdk.api.response.CommonSchemaGetResponse;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -46,9 +51,6 @@ public class CmsFeedPropMappingService extends BaseAppService {
 
     @Autowired
     private CmsMtCategorySchemaDao categorySchemaDao;
-
-    @Autowired
-    private CmsMtCommonPropDefDao commonPropDefDao;
 
     @Autowired
     private com.voyageone.cms.service.CmsFeedMappingService feedMappingService;
@@ -98,11 +100,11 @@ public class CmsFeedPropMappingService extends BaseAppService {
                 .distinct()
                 .collect(toList());
 
+        List<Field> commonFields = getCommonSchema();
+
         // 对共通属性同样处理
         // 但如果普通属性里已经有的则需要忽略掉
-        Stream<Field> commonFieldStream = commonPropDefDao.selectAll()
-                .stream()
-                .map(CmsMtCommonPropDefModel::getField)
+        Stream<Field> commonFieldStream = commonFields.stream()
                 .filter(f -> {
                     // 过滤 ID 相同的
                     if (mainFieldBeanMap.containsKey(f.getId()))
@@ -347,17 +349,6 @@ public class CmsFeedPropMappingService extends BaseAppService {
         return children == null ? stream : Stream.concat(stream, children);
     }
 
-    private Stream<Field> flattenFinalField(Field field) {
-
-        if (field.getType() == FieldTypeEnum.COMPLEX) {
-            return ((ComplexField) field).getFields().stream().flatMap(this::flattenFinalField);
-        } else if (field.getType() == FieldTypeEnum.MULTICOMPLEX) {
-            return ((MultiComplexField) field).getFields().stream().flatMap(this::flattenFinalField);
-        }
-
-        return Stream.of(field);
-    }
-
     private CmsFeedCategoryModel findByPath(String path, CmsMtFeedCategoryTreeModelx treeModel) {
 
         String[] fromPath = path.split("-");
@@ -381,5 +372,14 @@ public class CmsFeedPropMappingService extends BaseAppService {
         }
 
         return feedCategoryModelStream.findFirst().orElse(null);
+    }
+
+    private List<Field> getCommonSchema() {
+
+        CommonSchemaGetRequest request = new CommonSchemaGetRequest();
+
+        CommonSchemaGetResponse response = voApiClient.execute(request);
+
+        return SchemaJsonReader.readJsonForList(response.getFields());
     }
 }

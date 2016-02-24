@@ -1,11 +1,8 @@
 package com.voyageone.web2.cms.wsdl.control;
 
 import com.voyageone.web2.cms.wsdl.BaseController;
-import com.voyageone.web2.cms.wsdl.service.CategorySchemaService;
 import com.voyageone.web2.cms.wsdl.service.CommonSchemaService;
-import com.voyageone.web2.sdk.api.request.CategorySchemaGetRequest;
 import com.voyageone.web2.sdk.api.request.CommonSchemaGetRequest;
-import com.voyageone.web2.sdk.api.response.CategorySchemaGetResponse;
 import com.voyageone.web2.sdk.api.response.CommonSchemaGetResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -31,7 +28,7 @@ public class CommonSchemaController extends BaseController {
     @RequestMapping("selectAll")
     public CommonSchemaGetResponse selectAll(@RequestBody CommonSchemaGetRequest request) {
         request.check();
-        return commonSchemaService.selectAll(request);
+        return commonSchemaService.selectAll();
     }
 
 }
