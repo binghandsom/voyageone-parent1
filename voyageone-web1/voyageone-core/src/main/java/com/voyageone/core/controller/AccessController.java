@@ -98,12 +98,6 @@ public class AccessController {
             selfCompany.setCompanyName(companyList.get(0).get("self_company").toString());
             user.setSelfCompany(selfCompany);
 
-            // 设置默认选中公司
-            CompanyBean selectCompany = new CompanyBean();
-            selectCompany.setCompanyId(Integer.parseInt(companyList.get(0).get("self_company_id").toString()));
-            selectCompany.setCompanyName(companyList.get(0).get("self_company").toString());
-            user.setSelectCompany(selectCompany);
-
             // 设置权限公司列表
             List<CompanyBean> permissionCompanies = new ArrayList<>();
             for (Map<String, Object> aCompanyList : companyList) {
@@ -112,6 +106,9 @@ public class AccessController {
                 company.setCompanyName(aCompanyList.get("company").toString());
                 permissionCompanies.add(company);
             }
+
+            // 设置默认选中公司
+            user.setSelectCompany(permissionCompanies.get(0));
             user.setPermissionCompanies(permissionCompanies);
 
             //TODO 要修改时区
