@@ -18,6 +18,8 @@ import com.voyageone.batch.synship.service.ems.EmsService;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Codes;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums.Channel;
+import com.voyageone.common.configs.ShopConfigs;
+import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.mail.Mail;
 import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.DateTimeUtil;
@@ -313,7 +315,10 @@ public class SynShipValidIdCardService extends BaseTaskService {
         String smsContent = configBean.getContent();
 
         // 短信内容中各参数的设定
-        smsContent = String.format(smsContent, channel.getFullName(), idCardBean.getReceive_name(), shortUrlBean.getShort_key());
+        //取得comment
+        ShopBean shop = ShopConfigs.getShop(idCardHistory.getOrder_channel_id(), shortUrlBean.getCart_id());
+        String comment = shop.getComment();
+        smsContent = String.format(smsContent, channel.getFullName(),comment, idCardBean.getReceive_name(), shortUrlBean.getShort_key());
 
         // 发送履历的做成
         SmsHistoryBean smsHistoryBean = new SmsHistoryBean();

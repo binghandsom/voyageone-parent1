@@ -37,9 +37,10 @@ public class WmsSyncToJuMeiSubService extends WmsSyncInventoryBaseService {
         logger.info(shopBean.getShop_name() + "（" + shopBean.getComment() + ")库存同步类型："+ updateFlg);
         logger.info(shopBean.getShop_name() + "（" + shopBean.getComment() + ")库存需要同步件数："+inventorySynLogBeans.size());
 
-        for (InventorySynLogBean inventorySynLogBean : inventorySynLogBeans)
-
+        for (InventorySynLogBean inventorySynLogBean : inventorySynLogBeans) {
+//            $info(shopBean.getShop_name() + "（" + shopBean.getComment() + ")库存同步记录：" + new Gson().toJson(inventorySynLogBean));
             syncJumei(inventorySynLogBean, shopBean, updateFlg);
+        }
 
         logger.info(shopBean.getShop_name() + "（" + shopBean.getComment() + ")库存同步结束");
     }
@@ -53,7 +54,6 @@ public class WmsSyncToJuMeiSubService extends WmsSyncInventoryBaseService {
             req.setBusinessman_code(inventorySynLogBean.getSku());
             req.setEnable_num(String.valueOf(inventorySynLogBean.getQty()));
 
-
             res = jumeiService.stockSync(shopBean, req);
 
             $info(shopBean.getShop_name() + "（" + shopBean.getComment() + ")库存同步记录：" + new Gson().toJson(req) + "，库存同步结果：" + res);
@@ -61,6 +61,16 @@ public class WmsSyncToJuMeiSubService extends WmsSyncInventoryBaseService {
 
         } catch (Exception e) {
             $info(shopBean.getShop_name() + "（" + shopBean.getComment() + ")库存同步记录：" + new Gson().toJson(req) + "，库存同步结果：" + e);
+            if (updateFlg.equals(WmsConstants.UPDATE_FLG.ReFlush)) {
+//                logger.info("刷新失败时，更新标志位");
+                // 刷新失败时，更新标志位
+                updateReFlushFlgIgnore(inventorySynLogBean);
+            }
+            // 失败的话，记录失败的信息
+            else if (updateFlg.equals(WmsConstants.UPDATE_FLG.Update)) {
+//                logger.info("失败的话，记录失败的信息");
+                moveIgnore(inventorySynLogBean, e.getMessage());
+            }
             logFailRecord(e, inventorySynLogBean);
             return;
         }
@@ -75,10 +85,12 @@ public class WmsSyncToJuMeiSubService extends WmsSyncInventoryBaseService {
                     (resultMap.containsKey("message") && "success!".equals(resultMap.get("message"))))  {
 
                 if (updateFlg.equals(WmsConstants.UPDATE_FLG.ReFlush)) {
+//                    logger.info("刷新成功时，更新标志位");
                     // 刷新成功时，更新标志位
-                    updateJMFlg(inventorySynLogBean);
+                    updateReFlushFlgPass(inventorySynLogBean);
                 }
                 else if (updateFlg.equals(WmsConstants.UPDATE_FLG.Update)) {
+//                    logger.info("更新成功后，迁移数据到历史表");
                     // 更新成功后，迁移数据到历史表
                     movePass(inventorySynLogBean);
                 }
@@ -86,8 +98,14 @@ public class WmsSyncToJuMeiSubService extends WmsSyncInventoryBaseService {
                 return;
             }
             else {
+                if (updateFlg.equals(WmsConstants.UPDATE_FLG.ReFlush)) {
+//                    logger.info("刷新失败时，更新标志位");
+                    // 刷新失败时，更新标志位
+                    updateReFlushFlgIgnore(inventorySynLogBean);
+                }
                 // 失败的话，记录失败的信息
-                if (updateFlg.equals(WmsConstants.UPDATE_FLG.Update)) {
+                else if (updateFlg.equals(WmsConstants.UPDATE_FLG.Update)) {
+//                    logger.info("失败的话，记录失败的信息");
                     moveIgnore(inventorySynLogBean, res);
                 }
 
