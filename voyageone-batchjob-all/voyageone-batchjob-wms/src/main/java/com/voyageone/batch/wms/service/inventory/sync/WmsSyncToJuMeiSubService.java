@@ -39,7 +39,14 @@ public class WmsSyncToJuMeiSubService extends WmsSyncInventoryBaseService {
 
         for (InventorySynLogBean inventorySynLogBean : inventorySynLogBeans) {
 //            $info("-----" +shopBean.getShop_name() + "（" + shopBean.getComment() + ")库存同步记录：" + new Gson().toJson(inventorySynLogBean));
-            syncJumei(inventorySynLogBean, shopBean, updateFlg);
+            if (updateFlg.equals(WmsConstants.UPDATE_FLG.ReFlush)) {
+                // 刷新更新标志位
+                updateReFlushFlgPass(inventorySynLogBean);
+            }
+            else{
+                syncJumei(inventorySynLogBean, shopBean, updateFlg);
+            }
+
         }
 
         $info("-----" +shopBean.getShop_name() + "（" + shopBean.getComment() + ")库存同步结束");

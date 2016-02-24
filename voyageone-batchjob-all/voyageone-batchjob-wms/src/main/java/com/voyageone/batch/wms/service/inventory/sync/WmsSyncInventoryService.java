@@ -134,10 +134,6 @@ public class WmsSyncInventoryService extends WmsSyncInventoryBaseService {
                         }else {
                             updateFlg = WmsConstants.UPDATE_FLG.ReFlush;
 
-                            // 刷新标志位
-                            for (InventorySynLogBean inventorySynLogBean : inventorySynLogBeans) {
-                                updateReFlushFlgPass(inventorySynLogBean);
-                            }
                         }
                         break;
                 }
