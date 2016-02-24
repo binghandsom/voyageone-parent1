@@ -9,21 +9,20 @@ import java.util.Map;
 
 import org.springframework.stereotype.Repository;
 
-import com.voyageone.base.dao.BaseDao;
 import com.voyageone.web2.sdk.api.domain.CmsBtPromotionModel;
 
 /**
- * @description promotion 数据持久层
+ * promotion 数据持久层
  * @author gbb
  */
 @Repository
-public class CmsBtPromotionDao extends BaseDao {
+public class CmsBtPromotionDao extends WsdlBaseDao {
 
 	/**
 	 * 条件查询
 	 *
-	 * @param condtionParams
-	 * @return
+	 * @param condtionParams condtionParams
+	 * @return List<CmsBtPromotionModel>
 	 */
 	public List<CmsBtPromotionModel> findByCondition(Map<?, ?> condtionParams) {
 		return selectList("select_By_Condtion", condtionParams);
@@ -32,8 +31,8 @@ public class CmsBtPromotionDao extends BaseDao {
 	/**
 	 * 根据id查询
 	 *
-	 * @param condtionParams
-	 * @return
+	 * @param condtionParams condtion Params
+	 * @return CmsBtPromotionModel
 	 */
 	public CmsBtPromotionModel findById(Map<?, ?> condtionParams) {
 		return selectOne("select_By_Id", condtionParams);
@@ -42,8 +41,8 @@ public class CmsBtPromotionDao extends BaseDao {
 	/**
 	 * 修改
 	 *
-	 * @param cmsBtPromotionModel
-	 * @return
+	 * @param cmsBtPromotionModel CmsBtPromotionModel
+	 * @return int
 	 */
 	public int update(CmsBtPromotionModel cmsBtPromotionModel) {
 		return updateTemplate.update("update", cmsBtPromotionModel);
@@ -52,8 +51,8 @@ public class CmsBtPromotionDao extends BaseDao {
 	/**
 	 * 插入
 	 *
-	 * @param cmsBtPromotionModel
-	 * @return
+	 * @param cmsBtPromotionModel CmsBtPromotionModel
+	 * @return int
 	 */
 	public int insert(CmsBtPromotionModel cmsBtPromotionModel) {
 		return updateTemplate.insert("insert", cmsBtPromotionModel);
@@ -62,8 +61,8 @@ public class CmsBtPromotionDao extends BaseDao {
 	/**
 	 * 删除(逻辑删除，修改is_active=0)
 	 *
-	 * @param condtionParams
-	 * @return
+	 * @param condtionParams condtion Params
+	 * @return int
 	 */
 	public int deleteById(Map<?, ?> condtionParams) {
 		return updateTemplate.update("delete_By_Id", condtionParams);
