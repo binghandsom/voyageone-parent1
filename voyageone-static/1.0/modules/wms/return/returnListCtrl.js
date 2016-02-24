@@ -7,6 +7,7 @@ define([
     "modules/wms/wms.module",
     "components/directives/paging",
     "modules/wms/return/returnService",
+	"../directives/popChangeReturn/popChangeReturn",
 	"components/services/printService",
 	"components/directives/dialogs/dialogs"
 ], function (wms) {
@@ -21,7 +22,8 @@ define([
 			"notify",
 			"$filter",
 			"$location",
-            function ($scope, returnService, alert, printService, wmsConstant, confirm, notify, $filter, $location) {
+			"wmsChangeReturn",
+            function ($scope, returnService, alert, printService, wmsConstant, confirm, notify, $filter, $location, wmsChangeReturn) {
             	
                 //检索条件结构体
                 $scope.search = {
@@ -54,6 +56,8 @@ define([
 
 				//打印行
 				$scope.printRow = printRow;
+				//Return编辑
+				$scope.changeKind = changeKind;
 
                 function changeToSessionListPage(){
                     $location.path("wms/return/sessionList");
@@ -121,6 +125,17 @@ define([
 						"label_type" : returnInfo.label_type}];
 					var jsonData = JSON.stringify(data);
 					printService.doPrint(wmsConstant.print.business.ReturnLabel, wmsConstant.print.hardware_key.Print_Return, jsonData);
+
+				}
+
+				//根据所选状态更新Return物品
+				function changeKind(changeKind,processContent){
+					var returnItem = $scope.returnList.selected;
+
+					returnItem.changeKind = changeKind;
+					returnItem.processContent = processContent;
+
+					wmsChangeReturn($scope,returnItem);
 
 				}
 

@@ -5,7 +5,9 @@ import com.voyageone.common.configs.beans.MasterInfoBean;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.core.ajax.AjaxResponseBean;
 import com.voyageone.base.BaseController;
+import com.voyageone.wms.WmsUrlConstants;
 import com.voyageone.wms.WmsUrlConstants.ReturnUrls;
+import com.voyageone.wms.formbean.FormReservation;
 import com.voyageone.wms.formbean.FormReturn;
 import com.voyageone.wms.service.WmsReturnService;
 import org.apache.commons.logging.Log;
@@ -250,5 +252,27 @@ public class WmsReturnController extends BaseController{
 	@RequestMapping(ReturnUrls.newSession.GETRETURNTYPE)
 	public void doGetReturnType( HttpServletResponse response) {
 		wmsReturnService.getReturnType(getRequest(), response, getUser());
+	}
+
+	/**
+	 * 更新状态
+	 *
+	 * @param paramMap   id/status
+	 * @param response data
+	 */
+	@RequestMapping(ReturnUrls.PopChange.CHANGE)
+	public void doChange(@RequestBody Map<String, Object> paramMap, HttpServletResponse response) {
+
+		// 根据检索条件取得抽出记录
+		FormReturn formReturn = wmsReturnService.doChange(paramMap, getUser());
+
+		// 设置返回画面的值
+		JsonObj result = new JsonObj()
+				.add("data", formReturn);
+
+		AjaxResponseBean
+				.newResult(true)
+				.setResultInfo(result)
+				.writeTo(getRequest(), response);
 	}
 }

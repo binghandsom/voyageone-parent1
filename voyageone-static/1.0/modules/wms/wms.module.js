@@ -135,6 +135,10 @@ define(function () {
 
                 sessionDetail: {
                     init: '/wms/return/sessionDetail/doSessionDetailInit'
+                },
+
+                popChangeReturn: {
+                    change: '/wms/return/popchange/doChange'
                 }
             },
 

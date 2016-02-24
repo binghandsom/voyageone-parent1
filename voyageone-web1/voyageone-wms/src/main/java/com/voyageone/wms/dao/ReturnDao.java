@@ -3,9 +3,13 @@ package com.voyageone.wms.dao;
 import com.voyageone.base.dao.BaseDao;
 import com.voyageone.common.Constants;
 import com.voyageone.wms.formbean.FormReturn;
+import com.voyageone.wms.modelbean.ReservationBean;
+import com.voyageone.wms.modelbean.ReturnBean;
 import org.springframework.stereotype.Repository;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**   
  * Simple to Introduction  
@@ -29,6 +33,15 @@ public class ReturnDao extends BaseDao {
      */
 	public List<FormReturn> getReturnList(FormReturn formReturn) {
 		return selectList(Constants.DAO_NAME_SPACE_WMS + "wms_return_getReturnList", formReturn);
+	}
+
+	/**
+	 * @Description 获得returnInfo
+	 * @param return_id
+	 * @return FormReturn
+	 */
+	public FormReturn getReturnInfoByReturnId(int return_id) {
+		return selectOne(Constants.DAO_NAME_SPACE_WMS + "wms_return_getReturnInfoByReturnId", return_id);
 	}
 
     /**
@@ -192,5 +205,15 @@ public class ReturnDao extends BaseDao {
      */
 	public int getSessionListSize(FormReturn formReturn) {
 		return selectOne(Constants.DAO_NAME_SPACE_WMS + "wms_return_getSessionListSizeSize", formReturn);
+	}
+
+	/**
+	 * 更新状态
+	 * @param returnInfo 更新记录
+	 * @return int
+	 */
+	public int changeReturn(ReturnBean returnInfo) {
+
+		return updateTemplate.update(Constants.DAO_NAME_SPACE_WMS + "wms_bt_return_changeReturn", returnInfo);
 	}
 }

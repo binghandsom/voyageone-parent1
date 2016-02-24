@@ -133,4 +133,11 @@ public interface WmsReturnService {
 	 * @param user 用户信息
 	 */
 	void getReturnType(HttpServletRequest request, HttpServletResponse response, UserSessionBean user);
+
+	/**
+	 * @description Return 更新
+	 * @param paramMap 参数 map
+	 * @param user 用户信息
+	 */
+	FormReturn doChange(Map<String, Object> paramMap, UserSessionBean user);
 }

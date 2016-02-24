@@ -21,11 +21,14 @@ import com.voyageone.core.modelbean.UserSessionBean;
 import com.voyageone.core.util.PageUtil;
 import com.voyageone.wms.WmsCodeConstants;
 import com.voyageone.wms.WmsConstants;
+import com.voyageone.wms.WmsMsgConstants;
 import com.voyageone.wms.dao.ItemDao;
 import com.voyageone.wms.dao.ReservationDao;
 import com.voyageone.wms.dao.ReservationLogDao;
 import com.voyageone.wms.dao.ReturnDao;
+import com.voyageone.wms.formbean.FormReservation;
 import com.voyageone.wms.formbean.FormReturn;
+import com.voyageone.wms.modelbean.ReturnBean;
 import com.voyageone.wms.service.WmsReturnService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -563,4 +566,40 @@ public class WmsReturnServiceImpl implements WmsReturnService {
 		logger.info(result.toString());
 	}
 
+	@Override
+	public FormReturn doChange(Map<String, Object> paramMap, UserSessionBean user){
+		// 取得画面的参数
+		String returnID = (String) paramMap.get("returnID");
+		String changeKind = (String) paramMap.get("changeKind");
+		String notes = (String) paramMap.get("notes");
+
+		ReturnBean returnInfo = new ReturnBean();
+		returnInfo.setReturn_id(Integer.valueOf(returnID));
+		returnInfo.setNotes(notes);
+		returnInfo.setModifier(user.getUserName());
+
+		int updateResult = returnDao.changeReturn(returnInfo);
+
+//		// 更新失败的场合，直接抛出错误
+//		if (updateResult == 0) {
+//			throw new BusinessException(WmsMsgConstants.RsvListMsg.UPDATE_ERROR, reservationID);
+//		}
+
+		// 返回画面用(刷新纪录)
+		FormReturn formReturn = returnDao.getReturnInfoByReturnId(Integer.valueOf(returnID)) ;
+		// 画面显示再设定
+		setReturnDisplayInfo(formReturn, user);
+
+		return formReturn;
+	}
+
+	/**
+	 * 对于一些画面表示用项目进行设置
+	 * @param formReturn 抽出退货记录
+	 * @param user 用户登录信息
+	 */
+	private void setReturnDisplayInfo(FormReturn formReturn, UserSessionBean user) {
+		// 更新时间（本地时间）
+		formReturn.setModified_local(StringUtils.isNullOrBlank2(formReturn.getModified()) ? "" : DateTimeUtil.getLocalTime(formReturn.getModified(), user.getTimeZone()));
+	}
 }

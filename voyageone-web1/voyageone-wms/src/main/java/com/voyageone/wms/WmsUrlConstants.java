@@ -236,6 +236,10 @@ public final class WmsUrlConstants {
         public static final class SessionDetail {
             public static final String INIT = "/wms/return/sessionDetail/doSessionDetailInit";
         }
+
+        public static final class PopChange {
+            public static final String CHANGE = "/wms/return/popchange/doChange";
+        }
     }
 
     //盘点管理
