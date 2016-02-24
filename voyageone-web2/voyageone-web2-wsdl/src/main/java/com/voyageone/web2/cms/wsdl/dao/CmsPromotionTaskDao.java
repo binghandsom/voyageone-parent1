@@ -41,4 +41,9 @@ public class CmsPromotionTaskDao extends BaseDao{
     public int updatePromotionTask(CmsBtPromotionTaskModel params){
         return updateTemplate.update("update_cms_bt_promotion_task", params);
     }
+
+
+    public List<CmsBtPromotionTaskModel> getPromotionByCodeNotInAllPromotion(Map<String,Object> params){
+        return selectList("select_cms_bt_promotion_by_code_in_no_all_promotion",params);
+    }
 }

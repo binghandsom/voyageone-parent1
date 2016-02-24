@@ -58,6 +58,9 @@ public class CmsBtPromotionModel extends BaseMongoModel {
 	/** refTagId */
 	private int refTagId;
 
+	/** isAllPromotion */
+	private Boolean isAllPromotion;
+
 	/**
 	 * @return the promotionId
 	 */
@@ -294,4 +297,11 @@ public class CmsBtPromotionModel extends BaseMongoModel {
 				.trim();
 	}
 
+	public Boolean getIsAllPromotion() {
+		return isAllPromotion;
+	}
+
+	public void setIsAllPromotion(Boolean isAllPromotion) {
+		this.isAllPromotion = isAllPromotion;
+	}
 }
