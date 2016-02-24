@@ -19,6 +19,7 @@ public class FormReturnDownloadBean {
     private String received_from;
     private String tracking_no;
     private String notes;
+    private String session_status;
 
     public String getOrder_channel() {
         return order_channel;
@@ -122,5 +123,13 @@ public class FormReturnDownloadBean {
 
     public void setNotes(String notes) {
         this.notes = notes;
+    }
+
+    public String getSession_status() {
+        return session_status;
+    }
+
+    public void setSession_status(String session_status) {
+        this.session_status = session_status;
     }
 }

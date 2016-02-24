@@ -26,13 +26,13 @@
                 </div>
             </div>
             <div class="input-group">
-                <label for="return-condition" class="input-group-addon" translate="WMS_CONDITION"></label>
-                <select chosen style="width: 100px"
-                        id="return-condition"
-                        class="form-control"
-                        ng-model="search.condition_id"
-                        ng-options="i.id as i.name for i in returnCondition">
-                </select>
+                <label class="input-group-addon" translate="WMS_CONDITION"></label>
+                <ui-select ng-model="search.condition_id" style="min-width: 150px">
+                    <ui-select-match placeholder="select a condition">{{$select.selected.name}}</ui-select-match>
+                    <ui-select-choices repeat="i.id as i in returnCondition | filter: $select.search">
+                        <div ng-bind-html="i.name"></div>
+                    </ui-select-choices>
+                </ui-select>
             </div>
             <div class="form-group">
                 <div class="input-group">
@@ -44,6 +44,17 @@
                     <input class="form-control" type="text" ng-model="search.updateTime_e" min-date="search.updateTime_s"
                            is-open="toOpened" ng-click="toOpened = true" placeholder="Select a date"
                            datepicker-popup="yyyy-MM-dd" datepicker-append-to-body="1" />
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="input-group">
+                    <label class="input-group-addon" translate="WMS_STATUS"></label>
+                    <ui-select ng-model="search.return_session_status" style="min-width: 150px">
+                        <ui-select-match placeholder="select a session status">{{$select.selected.name}}</ui-select-match>
+                        <ui-select-choices repeat="i.id as i in sessionStatus | filter: $select.search">
+                            <div ng-bind-html="i.name"></div>
+                        </ui-select-choices>
+                    </ui-select>
                 </div>
             </div>
             <div class="form-group">
@@ -75,6 +86,7 @@
                         <th translate="WMS_CONDITION"></th>
                         <th translate="WMS_STATUS"></th>
                         <th translate="WMS_REASON"></th>
+                        <th translate="WMS_STATUS"></th>
                         <th translate="WMS_EXPRESSCOMPANY"></th>
                         <th translate="WMS_TRACKINGNO"></th>
                         <th translate="WMS_NOTE"></th>
@@ -93,6 +105,7 @@
                         <td>{{returnInfo.condition}}</td>
                         <td>{{returnInfo.status_name}}</td>
                         <td>{{returnInfo.reason_name}}</td>
+                        <td>{{returnInfo.return_session_status_name}}</td>
                         <td>{{returnInfo.received_from}}</td>
                         <td>{{returnInfo.tracking_no}}</td>
                         <td>{{returnInfo.notes}}</td>

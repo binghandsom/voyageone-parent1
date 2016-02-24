@@ -234,7 +234,7 @@ public final class WmsConstants {
             public final static String RPT_SHEET_NAME = "GoodsReturn";
             public final static int TEMPLATE_SHEET_NO = 0;
             public final static int TEMPLATE_FIRSTROW_NO = 1;
-            public final static int COLNUM_MAX = 14;
+            public final static int COLNUM_MAX = 15;
             public final static class Col{
                 public final static int COLNUM_NO = 0;
                 public final static int COLNUM_ORDER_CHANNEL = 1;
@@ -250,6 +250,7 @@ public final class WmsConstants {
                 public final static int COLNUM_RECEIVED_FROM = 11;
                 public final static int COLNUM_TRACKING_NO = 12;
                 public final static int COLNUM_NOTES = 13;
+                public final static int COLNUM_SESSION_STATUS = 14;
             }
         }
 

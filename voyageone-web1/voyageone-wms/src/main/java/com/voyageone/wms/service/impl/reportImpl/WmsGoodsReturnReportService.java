@@ -105,7 +105,8 @@ public class WmsGoodsReturnReportService extends WmsReportBaseService {
             currentRow.getCell(WmsConstants.ReportItems.GoodsReturn.Col.COLNUM_TRACKING_NO).setCellValue(StringUtils.null2Space(formReturnDownloadBean.getTracking_no()));
             // notes
             currentRow.getCell(WmsConstants.ReportItems.GoodsReturn.Col.COLNUM_NOTES).setCellValue(StringUtils.null2Space(formReturnDownloadBean.getNotes()));
-
+            // session_status
+            currentRow.getCell(WmsConstants.ReportItems.GoodsReturn.Col.COLNUM_SESSION_STATUS).setCellValue(StringUtils.null2Space(formReturnDownloadBean.getSession_status()));
             intRow = intRow + 1;
         }
         // 如果有记录的话，删除模板sheet

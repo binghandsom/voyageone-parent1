@@ -28,7 +28,8 @@
         <result column="modifier" property="modifier"/>
         <result column="modified" property="modified"/> 
         <result column="barCode" property="barCode"/>  
-        <result column="return_session_id" property="return_session_id"/>    
+        <result column="return_session_id" property="return_session_id"/>
+		<result column="return_session_status_name" property="return_session_status_name"/>
         <result column="close_day_flg" property="close_day_flg"/>         
         <result column="created" property="created"/>      
         <result column="creater" property="creater"/>
@@ -53,6 +54,7 @@
 			   itemDel.size,
 			   reservation.product,
 			   store.label_type,
+			   rtn_s_t.`name` return_session_status_name,
          	   rtn.modifier,
 			   date_format(rtn.modified, '%Y-%m-%d %H:%i:%s') modified
           from wms_bt_return rtn
@@ -64,6 +66,13 @@
 				tt_reservation reservation
 		    on rtn.res_id = reservation.id
 		  left join
+			   (select rtn_s.return_session_id, cmv_sessionStatus.value, cmv_sessionStatus.name from wms_bt_return_session rtn_s
+				left join
+					(select t.value, t.name from com_mt_value t where t.type_id = #{typeIdMap.returnSessionStatus}) cmv_sessionStatus
+				on cmv_sessionStatus.`value`  = rtn_s.return_session_status
+				) rtn_s_t
+		  on rtn_s_t.return_session_id = rtn.return_session_id
+		  left join
 		       (select t.value, t.name from com_mt_value t where t.type_id = #{typeIdMap.returnExpress}) cmv_receivedFrom
 		    on rtn.received_from = cmv_receivedFrom.`value`,
         	   (select t.value, t.name from com_mt_value t where t.type_id = #{typeIdMap.returnStatus}) cmv_stauts,
@@ -72,6 +81,25 @@
          where cmv_stauts.`value`  = rtn.return_status
        		   and cmv_reason.`value` = rtn.reason
        		   and rtn.store_id = store.store_id
+			<choose>
+				<when test="store_id != null and store_id != 0">
+					and rtn.store_id = #{store_id}
+				</when>
+				<otherwise>
+					<if test="store_id_list != null and store_id_list.size() != 0">
+						and rtn.store_id in
+						<foreach collection="store_id_list" item="id"  open="(" separator="," close=")">
+							#{id}
+						</foreach>
+					</if>
+				</otherwise>
+			</choose>
+            <if test="condition_id != null">
+                and rtn.`condition` = #{condition_id}
+            </if>
+            <if test="return_session_status != null">
+                and rtn_s_t.`value` = #{return_session_status}
+            </if>
 			<if test="orderChannelId != null and orderChannelId.size() != 0 ">
 				and rtn.order_channel_id in
 				<foreach item="item" index="index" collection="orderChannelId" open="(" separator="," close=")">
@@ -96,6 +124,13 @@
     <select id="wms_return_getReturnListSize" parameterType="com.voyageone.wms.formbean.FormReturn" resultType="int">
         select count(1)
 		from wms_bt_return rtn
+        left join
+        (select rtn_s.return_session_id, cmv_sessionStatus.value, cmv_sessionStatus.name from wms_bt_return_session rtn_s
+        left join
+        (select t.value, t.name from com_mt_value t where t.type_id = #{typeIdMap.returnSessionStatus}) cmv_sessionStatus
+        on cmv_sessionStatus.`value`  = rtn_s.return_session_status
+        ) rtn_s_t
+        on rtn_s_t.return_session_id = rtn.return_session_id
 		left join
 		(select t.value, t.name from com_mt_value t where t.type_id = #{typeIdMap.returnExpress}) cmv_receivedFrom
 		on rtn.received_from = cmv_receivedFrom.`value`,
@@ -105,6 +140,25 @@
 		where cmv_stauts.`value`  = rtn.return_status
 		and cmv_reason.`value` = rtn.reason
 		and rtn.store_id = store.store_id
+		<choose>
+			<when test="store_id != null and store_id != 0">
+				and rtn.store_id = #{store_id}
+			</when>
+			<otherwise>
+				<if test="store_id_list != null and store_id_list.size() != 0">
+					and rtn.store_id in
+					<foreach collection="store_id_list" item="id"  open="(" separator="," close=")">
+						#{id}
+					</foreach>
+				</if>
+			</otherwise>
+		</choose>
+        <if test="condition_id != null">
+            and rtn.`condition` = #{condition_id}
+        </if>
+        <if test="return_session_status != null">
+            and rtn_s_t.`value` = #{return_session_status}
+        </if>
 		<if test="orderChannelId != null and orderChannelId.size() != 0 ">
 			and rtn.order_channel_id in
 			<foreach item="item" index="index" collection="orderChannelId" open="(" separator="," close=")">
@@ -433,6 +487,7 @@
         <result column="received_from" property="received_from"/>
         <result column="tracking_no" property="tracking_no"/>
         <result column="notes" property="notes"/>
+        <result column="session_status" property="session_status"/>
     </resultMap>
 
     <select id="wms_return_getDownloadList" parameterType="com.voyageone.wms.formbean.FormReturn" resultMap="returnDownloadMap">
@@ -449,34 +504,53 @@
             (select c.`name` from com_mt_value c where c.type_id = 20 and c.`value` = a.`condition`) 'condition',
             (select c.`name` from com_mt_value c where c.type_id = 19 and c.`value` = a.received_from) received_from,
             a.tracking_no,
-            a.notes
+            a.notes,
+            c.`name` session_status
         from
             wms_bt_return a,
-            oms_bt_orders b
+            oms_bt_orders b,
+            (
+                select rtn_s.return_session_id, cmv_sessionStatus.value, cmv_sessionStatus.name from wms_bt_return_session rtn_s
+                left join (select t.value, t.name from com_mt_value t where t.type_id = 23) cmv_sessionStatus
+                on cmv_sessionStatus.`value`  = rtn_s.return_session_status
+            ) c
         where
-            a.order_channel_id = #{order_channel_id}
-        and a.order_num = b.order_number
+            a.order_num = b.order_number
+        and c.return_session_id = a.return_session_id
 		<if test="order_num != null and order_num != '' ">
 			and a.order_num = #{order_num}
 		</if>
 		<if test="updateTime_s != null and updateTime_s != '' ">
-			and a.created &gt;= #{updateTime_s}
+			and a.modified &gt;= #{updateTime_s}
 		</if>
 		<if test="updateTime_e != null and updateTime_e != '' ">
-			and a.created &lt;= #{updateTime_e}
+			and a.modified &lt;= #{updateTime_e}
 		</if>
-		<if test="storeList != null and storeList.size() != 0">
-			and a.store_id in
-			<foreach collection="storeList" item="id"  open="(" separator="," close=")">
-				#{id}
+		<choose>
+			<when test="store_id != null and store_id != 0">
+				and a.store_id = #{store_id}
+			</when>
+			<otherwise>
+				<if test="store_id_list != null and store_id_list.size() != 0">
+					and a.store_id in
+					<foreach collection="store_id_list" item="id"  open="(" separator="," close=")">
+						#{id}
+					</foreach>
+				</if>
+			</otherwise>
+		</choose>
+        <if test="condition_id != null">
+            and a.`condition` = #{condition_id}
+        </if>
+        <if test="return_session_status != null">
+            and c.`value` = #{return_session_status}
+        </if>
+		<if test="orderChannelId != null and orderChannelId.size() != 0 ">
+			and a.order_channel_id in
+			<foreach item="item" index="index" collection="orderChannelId" open="(" separator="," close=")">
+				#{item}
 			</foreach>
 		</if>
-		<if test="conditionList != null and conditionList.size() != 0">
-			and a.`condition` in
-			<foreach collection="conditionList" item="id"  open="(" separator="," close=")">
-				#{id}
-			</foreach>
-		</if>
-        order by a.created, a.`condition`
+        order by a.modified, a.`condition`
     </select>
 </mapper>

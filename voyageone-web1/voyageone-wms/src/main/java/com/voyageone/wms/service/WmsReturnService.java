@@ -30,6 +30,8 @@ public interface WmsReturnService {
 //	 */
 //	void changeStatus(HttpServletRequest request, HttpServletResponse response, String string);
 
+	void returnListInit(HttpServletRequest request, HttpServletResponse response, Map<String, String> paramMap,	HttpSession session, UserSessionBean user);
+
 	/**
 	 * @description 根据orderNo获取orderInfo
 	 * @param orderNumber 订单号

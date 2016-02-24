@@ -60,6 +60,7 @@ public class FormReturn extends AjaxRequestBean {
 	private String close_day_flg;
 	private String lang;
 	private String return_session_status;
+    private String return_session_status_name;
 	private List<String> orderChannelId;
 	private Map<String, Integer> typeIdMap;
 	private String reservationLog_notes;
@@ -68,7 +69,6 @@ public class FormReturn extends AjaxRequestBean {
 	private String location_name;
 	private String Upc;
     private List<String> store_id_list;
-    private List<String> condition_id_list;
 
 	public String getReservationLog_notes() {
 		return reservationLog_notes;
@@ -126,7 +126,15 @@ public class FormReturn extends AjaxRequestBean {
 		this.return_session_status = return_session_status;
 	}
 
-	public String getLang() {
+    public String getReturn_session_status_name() {
+        return return_session_status_name;
+    }
+
+    public void setReturn_session_status_name(String return_session_status_name) {
+        this.return_session_status_name = return_session_status_name;
+    }
+
+    public String getLang() {
 		return lang;
 	}
 
@@ -460,14 +468,6 @@ public class FormReturn extends AjaxRequestBean {
 
     public void setStore_id_list(List<String> store_id_list) {
         this.store_id_list = store_id_list;
-    }
-
-    public List<String> getCondition_id_list() {
-        return condition_id_list;
-    }
-
-    public void setCondition_id_list(List<String> condition_id_list) {
-        this.condition_id_list = condition_id_list;
     }
 
     @Override

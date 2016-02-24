@@ -24,6 +24,8 @@ define([
             "$window",
             function ($scope, returnService, alert, printService, wmsConstant, confirm, notify, $filter, $location, $window) {
 
+				var _ = require('underscore');
+
                 //检索条件结构体
                 $scope.search = {
                 	page:1,   //分頁用
@@ -70,22 +72,20 @@ define([
 				function initialize(){
                     returnService.doInit({
                             "returnStatus": wmsConstant.return.typeId.returnStatus,
-                            "returnCondition": wmsConstant.return.typeId.returnCondition
+                            "returnCondition": wmsConstant.return.typeId.returnCondition,
+                            "sessionStatus": wmsConstant.return.typeId.sessionStatus
                         }, $scope)
                         .then(function (response) {
                             $scope.returnStatus = response.data.returnStatus;
                             $scope.returnCondition = response.data.returnCondition;
+                            $scope.sessionStatus = response.data.sessionStatus;
                             //默认查询条件为目前日期往前推一个月
                             $scope.search.updateTime_s = response.data.fromDate;
                             $scope.search.updateTime_e = response.data.toDate;
 
                             $scope.stores = response.data.storeList;
                             $scope.search.store_id = $scope.stores[0].store_id;
-                            $scope.search.store_id_list = $scope.stores;
-
-                            $scope.returnCondition[0].id = 0;
-                            $scope.search.condition_id = $scope.returnCondition[0].id;
-                            $scope.search.condition_id_list = $scope.returnCondition;
+                            $scope.search.store_id_list = getStoreIds($scope.stores);
 
                             //按默认条件展示数据
                             doSearch(1);
@@ -124,6 +124,15 @@ define([
                     return v ? (_.isDate(v) ? dateFilter(v, f) : v) : "";
                 }
 
+                function getStoreIds(list) {
+                    var ids = [];
+                    _.each(list, function (item) {
+                        if (!_.isEqual(item.store_id, 0))
+                            ids.push(item.store_id);
+                    });
+                    return ids;
+                }
+
 				function printRow(){
 					var returnInfo = $scope.returnList.selected;
 					var data = [{"codition" : returnInfo.condition_id,
@@ -147,8 +156,6 @@ define([
                     $scope.search.updateTime_s = formatDate($scope.search.updateTime_s);
                     $scope.search.updateTime_e = formatDate($scope.search.updateTime_e);
 
-                    //var downloadUrl = "./wms/return/list/doReturnListDownload?param={0}";
-                    //var realPage = downloadUrl.replace ("{0}",$scope.search);
                     var downloadUrl = "./wms/return/list/doReturnListDownload?param="+ JSON.stringify($scope.search) ;
                     $window.open(downloadUrl);
 

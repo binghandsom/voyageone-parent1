@@ -98,6 +98,32 @@ public class WmsReturnServiceImpl implements WmsReturnService {
 //		logger.info(result.toString());
 //	}
 
+    @Override
+    public void returnListInit(HttpServletRequest request, HttpServletResponse response, Map<String, String> paramMap,	HttpSession session, UserSessionBean user) {
+        Map<String, Object> resultMap = new HashMap<>();
+        // 获得用户下的仓库
+        ArrayList<ChannelStoreBean> storeList = new ArrayList<>();
+        ChannelStoreBean channelStoreBean = new ChannelStoreBean();
+        channelStoreBean.setStore_id(0);
+        channelStoreBean.setStore_name("ALL");
+        storeList.add(channelStoreBean);
+        // 排除品牌方管理库存的仓库
+        for (ChannelStoreBean storeBean : user.getCompanyRealStoreList()) {
+            if (StoreConfigs.getStore(new Long(storeBean.getStore_id())).getInventory_manager().equals(StoreConfigEnums.Manager.YES.getId())) {
+                storeList.add(storeBean);
+            }
+        }
+        resultMap.put("storeList", storeList);
+
+        // 获取开始日期（当前日期的一个月前）
+        String date_from = DateTimeUtil.parseStr(DateTimeUtil.getLocalTime(DateTimeUtil.addMonths(DateTimeUtil.getDate(), -1), user.getTimeZone()), DateTimeUtil.DEFAULT_DATE_FORMAT);
+        resultMap.put("fromDate", date_from);
+        // 获取结束日期（当前日期）
+        String date_to = DateTimeUtil.parseStr(DateTimeUtil.getLocalTime(DateTimeUtil.getNow(), user.getTimeZone()), DateTimeUtil.DEFAULT_DATE_FORMAT);
+        resultMap.put("toDate", date_to);
+        doGetComBoxInfo(request, response, paramMap, resultMap);
+    }
+
 	@Override
 	public void getOrderInfoByOrdNo(HttpServletRequest request, HttpServletResponse response, String orderNumber, UserSessionBean user) {
 		Map<String, Object> resultMap = new HashMap<>();
@@ -346,7 +372,8 @@ public class WmsReturnServiceImpl implements WmsReturnService {
     @Override
     public byte[] doReturnListDownload(String param, UserSessionBean user) {
         FormReturn formReturn = JsonUtil.jsonToBean(param, FormReturn.class);
-        List<FormReturnDownloadBean> returnDownloads  = returnDao.getDownloadList(formReturn);
+        changeDateTimeToGMT(formReturn, user);
+        List<FormReturnDownloadBean> returnDownloads = returnDao.getDownloadList(formReturn);
         return wmsGoodsReturnReportService.createReportByte(returnDownloads, formReturn);
     }
 

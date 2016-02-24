@@ -55,37 +55,8 @@ public class WmsReturnController extends BaseController{
 	 * @create 20150427
 	 */
 	@RequestMapping(ReturnUrls.ReturnList.INIT)
-	public void doInit(HttpServletResponse response, @RequestBody Map<String,Integer> paramMap) {
-		Map<String, Object> resultMap = new HashMap<>();
-		AjaxResponseBean result = new AjaxResponseBean();
-		for(String strkey : paramMap.keySet()){
-			List<MasterInfoBean> list = Type.getMasterInfoFromId(paramMap.get(strkey), true);
-			resultMap.put(strkey, list);
-		}
-        // 获得用户下的仓库
-        ArrayList<ChannelStoreBean> storeList = new ArrayList<>();
-        ChannelStoreBean channelStoreBean = new ChannelStoreBean();
-        channelStoreBean.setStore_id(0);
-        channelStoreBean.setStore_name("ALL");
-        storeList.add(channelStoreBean);
-        // 排除品牌方管理库存的仓库
-        for (ChannelStoreBean storeBean : this.getUser().getCompanyRealStoreList() ) {
-            if (StoreConfigs.getStore(new Long(storeBean.getStore_id())).getInventory_manager().equals(StoreConfigEnums.Manager.YES.getId())) {
-                storeList.add(storeBean);
-            }
-        }
-        resultMap.put("storeList", storeList);
-
-		// 获取开始日期（当前日期的一个月前）
-		String date_from = DateTimeUtil.parseStr(DateTimeUtil.getLocalTime(DateTimeUtil.addMonths(DateTimeUtil.getDate(), -1), getUser().getTimeZone()), DateTimeUtil.DEFAULT_DATE_FORMAT);
-		resultMap.put("fromDate", date_from);
-		// 获取结束日期（当前日期）
-		String date_to = DateTimeUtil.parseStr(DateTimeUtil.getLocalTime(DateTimeUtil.getNow(), getUser().getTimeZone()), DateTimeUtil.DEFAULT_DATE_FORMAT);
-		resultMap.put("toDate", date_to);
-		result.setResult(true);
-		result.setResultInfo(resultMap);
-		result.writeTo(getRequest(), response);
-		logger.info(result.toString());
+	public void doInit(HttpServletResponse response, @RequestBody Map<String,String> paramMap) {
+        wmsReturnService.returnListInit(getRequest(), response, paramMap, getSession(), getUser());
 	}
 
 	/**
