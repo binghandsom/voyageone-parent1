@@ -2,11 +2,13 @@ package com.voyageone.wms.service.impl;
 
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.*;
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.StoreConfigEnums;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.beans.MasterInfoBean;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JsonUtil;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.core.CoreConstants;
 import com.voyageone.core.MessageConstants;
 import com.voyageone.core.ajax.AjaxResponseBean;
@@ -16,9 +18,13 @@ import com.voyageone.core.modelbean.UserSessionBean;
 import com.voyageone.core.util.PageUtil;
 import com.voyageone.wms.WmsConstants;
 import com.voyageone.wms.WmsMsgConstants;
+import com.voyageone.wms.dao.ClientSkuDao;
 import com.voyageone.wms.dao.ItemDao;
 import com.voyageone.wms.dao.StocktakeDao;
 import com.voyageone.wms.formbean.FormStocktake;
+import com.voyageone.wms.formbean.TransferItemMapBean;
+import com.voyageone.wms.modelbean.ClientSkuBean;
+import com.voyageone.wms.modelbean.StocktakeBean;
 import com.voyageone.wms.service.WmsStocktakeService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -29,7 +35,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
-import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -63,6 +68,9 @@ public class WmsStocktakeServiceImpl implements WmsStocktakeService {
 
 	@Autowired
 	private ItemDao itemDao;
+
+	@Autowired
+	private ClientSkuDao clientSkuDao;
 	
 	@Autowired
 	private DataSourceTransactionManager transactionManager;
@@ -298,6 +306,17 @@ public class WmsStocktakeServiceImpl implements WmsStocktakeService {
 			}
 			resultMap.put("total", total);
 			resultMap.put("itemList", itemList);
+
+			//取得是否自动打印面单标志
+			StocktakeBean stocktakeBean = stocktakeDao.getStocktake(formStocktake);
+			boolean auto_print = false;
+
+			if (stocktakeBean != null){
+				auto_print = StringUtils.null2Space2(ChannelConfigs.getVal1(stocktakeBean.getOrder_channel_id(), ChannelConfigEnums.Name.print_sku_label)).equals(ChannelConfigEnums.Print.YES.getIs());
+			}
+
+			resultMap.put("auto_print", auto_print);
+
 			resultDeal(request, response, resultMap);
 		}catch (Exception e){
 			logger.error(e);
@@ -344,6 +363,10 @@ public class WmsStocktakeServiceImpl implements WmsStocktakeService {
 			if(!flag){
 				resultMap.put(WmsConstants.Common.RESMSG, "Add or update item faild");
 			}
+
+			// 获取打印面单信息
+			resultMap.putAll(getSku(formStocktake, fstNew.getUpc(), fstNew.getSku()));
+
 		}
 		resultMap.put(WmsConstants.Common.SUCCESEFLG, flag);
 		resultDeal(request, response, resultMap);
@@ -726,5 +749,40 @@ public class WmsStocktakeServiceImpl implements WmsStocktakeService {
 	//通过storeId获取orderChannelId
 	private String getChannelIdByStoreId(int storeId){
 		return stocktakeDao.getChannelIdByStoreId(storeId);
+	}
+
+	/**
+	 * 获取Sku信息
+	 *
+	 * @return List
+	 */
+	@Override
+	public Map<String, Object> getSku(FormStocktake formStocktake, String barcode, String sku) {
+		Map<String, Object> resultMap = new HashMap<>();
+
+		StocktakeBean stocktakeBean = stocktakeDao.getStocktake(formStocktake);
+
+		String labelType = "0";
+		String clientSku = "";
+		String Sku = sku;
+		String Upc = barcode;
+
+		logger.info("Order_channel_id："+stocktakeBean.getOrder_channel_id()+"，Barcode："+barcode+"，Sku："+sku);
+
+		ClientSkuBean clientSkuBean = clientSkuDao.getSkuInfo(stocktakeBean.getOrder_channel_id(),barcode);
+
+		if (clientSkuBean != null) {
+			clientSku = clientSkuBean.getItem_code() + " " + clientSkuBean.getColor() + " " + clientSkuBean.getSize();
+			Upc = clientSkuBean.getUpc();
+		}
+
+		logger.info("Order_channel_id："+stocktakeBean.getOrder_channel_id()+"，clientSku："+clientSku+"，Sku："+Sku+"，Upc："+Upc);
+
+		resultMap.put("labelType", labelType);
+		resultMap.put("clientSku", clientSku);
+		resultMap.put("Sku", Sku);
+		resultMap.put("Upc", Upc);
+
+		return resultMap;
 	}
 }
