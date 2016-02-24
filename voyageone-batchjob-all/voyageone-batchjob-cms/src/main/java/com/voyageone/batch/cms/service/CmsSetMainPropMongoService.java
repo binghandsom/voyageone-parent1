@@ -460,6 +460,16 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
             product.setFields(field);
 
+            // 获取当前channel, 有多少个platform
+            List<TypeChannelBean> typeChannelBeanListApprove = TypeChannel.getTypeListSkuCarts(feed.getChannelId(), "A", "en"); // 取得允许Approve的数据
+            if (typeChannelBeanListApprove == null) {
+                return null;
+            }
+            List<Integer> skuCarts = new ArrayList<>();
+            for (TypeChannelBean typeChannelBean : typeChannelBeanListApprove) {
+                skuCarts.add(Integer.parseInt(typeChannelBean.getValue()));
+            }
+
             // --------- 商品Sku信息设定 ------------------------------------------------------
             List<CmsBtProductModel_Sku> mainSkuList = new ArrayList<>();
             for (CmsBtFeedInfoModel_Sku sku : feed.getSkus()) {
@@ -473,6 +483,9 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 //                mainSku.setPriceMsrp(sku.getPrice_msrp());// msrp -> 共通API进行设置
 //                mainSku.setPriceRetail(sku.getPrice_current()); // 零售价: 未审批 -> 共通API进行设置
 //                mainSku.setPriceSale(sku); // 销售价: 已审批 (不用自动设置)
+
+                // 增加默认渠道
+                mainSku.setSkuCarts(skuCarts);
 
                 mainSkuList.add(mainSku);
             }
@@ -567,6 +580,11 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             group.setPlatforms(platformList);
 
             product.setGroups(group);
+
+            // --------- batchFields ------------------------------------------------------
+            CmsBtProductModel_BatchField batchField = new CmsBtProductModel_BatchField();
+            batchField.setAttribute("switchCategory", "0"); // 初始化: 切换主类目->完成
+            product.setBatchField(batchField);
 
             // --------- 商品Feed信息设定 ------------------------------------------------------
             BaseMongoMap mainFeedOrgAtts = new BaseMongoMap();
