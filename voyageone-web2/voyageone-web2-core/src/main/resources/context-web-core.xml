@@ -4,13 +4,8 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
      http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
     <!-- DAO相关配置 -->
-    <!--<import resource="classpath*:context-test-datasource.xml" />-->
-    <!--<import resource="classpath*:context-test-datasource-mongo.xml" />-->
-    <import resource="file:/usr/web/spring-config/datasource-cms2-config.xml" />
-    <import resource="file:/usr/web/spring-config/datasource-config-mongo.xml" />
-
-    <!-- SDK Client Config -->
-    <import resource="file:/usr/web/spring-config/sdk-client-config-sample.xml" />
+    <import resource="classpath*:context-test-datasource.xml" />
+    <import resource="classpath*:context-test-datasource-mongo.xml" />
 
 	<!-- 异常处理 -->
 	<bean class="com.voyageone.web2.base.ExceptionHandler">

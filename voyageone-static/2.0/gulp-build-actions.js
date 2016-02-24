@@ -38,7 +38,7 @@ module.exports = function () {
       }
     }
 
-    return `class ${name.charAt(0).toUpperCase() + name.slice(1)} {\n${members}}\n\n`;
+    return 'class ${name.charAt(0).toUpperCase() + name.slice(1)} {\n${members}}\n\n';
   }
 
   function register(name, actions) {
