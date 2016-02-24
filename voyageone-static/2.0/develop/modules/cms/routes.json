@@ -50,13 +50,13 @@
     "hash": "/product/detail/:productId",
     "templateUrl": "views/product/detail.tpl.html",
     "controllerUrl": "modules/cms/views/product/detail.ctl",
-    "controller": "productDetailController"
+    "controller": "productDetailController as ctrl"
   },
   "mapping_feed_list": {
     "hash": "/mapping/feed",
     "templateUrl": "views/mapping/feed/list.tpl.html",
     "controllerUrl": "modules/cms/views/mapping/feed/list.ctl",
-    "controller": "feedMappingController"
+    "controller": "feedMappingController as $ctrl"
   },
   "mapping_feed_prop": {
     "hash": "/mapping/feed/:feedCategoryPath/:commonFlg",
@@ -68,13 +68,13 @@
     "hash": "/mapping/platform",
     "templateUrl": "views/mapping/platform/list.tpl.html",
     "controllerUrl": "modules/cms/views/mapping/platform/list.ctl",
-    "controller": "platformMappingController"
+    "controller": "platformMappingController as $ctrl"
   },
   "mapping_platform_prop": {
     "hash": "/mapping/platform/:cartId/:mainCategoryId",
     "templateUrl": "views/mapping/platform/prop.list.tpl.html",
     "controllerUrl": "modules/cms/views/mapping/platform/prop.list.ctl",
-    "controller": "platformPropMappingController"
+    "controller": "platformPropMappingController as $ctrl"
   },
   "mapping_dict_index": {
     "hash": "/mapping/dictionary",
