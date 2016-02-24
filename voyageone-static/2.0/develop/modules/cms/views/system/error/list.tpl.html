@@ -87,7 +87,7 @@
 						<th class="mfb-xxs text-left" translate="TXT_PRODUCT_NAME"></th>
 						<!--<th class="mfb-xxt text-left" translate="TXT_ERROR_CODE"></th>-->
 						<th class="mfb-xxs text-left" translate="TXT_ERROR_MESSAGE"></th>
-						<th class="mfb-xxxt text-left" translate="TXT_ERROR_CREATE_TIME"></th>
+						<th class="mfb-xxx text-left" translate="TXT_ERROR_CREATE_TIME"></th>
 						<th class="mfb-x text-center" translate="TXT_ERROR_IS_FIX"></th>
 					</tr>
 					</thead>
@@ -109,7 +109,7 @@
 						<!--<td class="mfb-xxt text-left" ng-bind="errorInfo.productName"></td>-->
 						<!--<td class="mfb-xxt text-left" ng-bind=""></td>-->
 						<td class="mfb-xxs text-left" >{{errorInfo.errorCode}}<br/>{{errorInfo.errMsg}}</td>
-						<td class="mfb-xxxt text-left" ng-bind="errorInfo.created.substring(0, 19)"></td>
+						<td class="mfb-xxx text-left" ng-bind="errorInfo.created.substring(0, 19)"></td>
 						<td class="mfb-x text-left">
 							<div class="onoffswitch">
 								<input type="checkbox" ng-model="errorInfo.status" name="onoffswitch" ng-change="updateFinishStatus(errorInfo.seq)" class="onoffswitch-checkbox" id="myonoffswitch5">
