@@ -3,9 +3,11 @@ package com.voyageone.web2.cms.views.promotion.list;
 import com.voyageone.cms.service.model.CmsBtProductModel;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
+import com.voyageone.common.configs.Properties;
 import com.voyageone.common.configs.TypeChannel;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.web2.base.BaseAppService;
+import com.voyageone.web2.cms.CmsConstants;
 import com.voyageone.web2.sdk.api.VoApiDefaultClient;
 import com.voyageone.web2.sdk.api.domain.CmsBtPromotionCodeModel;
 import com.voyageone.web2.sdk.api.domain.CmsBtPromotionModel;
@@ -86,7 +88,7 @@ public class CmsPromotionIndexService extends BaseAppService {
     public byte[] getCodeExcelFile(Integer promotionId) throws IOException, InvalidFormatException {
 
 //        String templatePath = readValue(CmsConstants.Props.CODE_TEMPLATE);
-        String templatePath = "d:/promotion.xlsx";
+        String templatePath = Properties.readValue(CmsConstants.Props.PROMOTION_EXPORT_TEMPLATE);
 
         PromotionCodeGetRequest request=new PromotionCodeGetRequest();
         Map<String ,Object> param = new HashMap<>();
@@ -111,7 +113,6 @@ public class CmsPromotionIndexService extends BaseAppService {
 
             $info("文档写入完成");
 
-//            // TODO test
 //            try (FileOutputStream outputFileStream = new FileOutputStream("d:/test.xlsx")) {
 //
 //                book.write(outputFileStream);
