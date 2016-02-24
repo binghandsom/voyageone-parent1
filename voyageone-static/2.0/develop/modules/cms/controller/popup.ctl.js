@@ -411,7 +411,6 @@ define([
 
         /**
          * @param {FeedPropMappingPopupContext} context
-         * @returns {Promise}
          */
         $scope.popupFeed = function (context) {
             return openModel(popActions.feedMapping.attribute, context);
