@@ -116,11 +116,11 @@ public class CmsProductDetailService {
             productStatus.setTranslateStatus(false);
         }
 
-        if (COMPLETE_STATUS.equals(productValueModel.getFields().getEditStatus())) {
-            productStatus.setEditStatus(true);
-        } else {
-            productStatus.setEditStatus(false);
-        }
+//        if (COMPLETE_STATUS.equals(productValueModel.getFields().getEditStatus())) {
+//            productStatus.setEditStatus(true);
+//        } else {
+//            productStatus.setEditStatus(false);
+//        }
 
         //获取商品图片信息.
         List<CmsBtProductModel_Field_Image> productImages = productValueModel.getFields().getImages(CmsBtProductConstants.FieldImageType.PRODUCT_IMAGE);
@@ -695,7 +695,7 @@ public class CmsProductDetailService {
             Map status = (Map) requestMap.get("productStatus");
             masterFieldsValue.setStatus(status.get("approveStatus").toString());
             masterFieldsValue.setTranslateStatus(status.get("translateStatus").toString());
-            masterFieldsValue.setEditStatus(status.get("editStatus").toString());
+//            masterFieldsValue.setEditStatus(status.get("editStatus").toString());
         }
 
         Map masterFieldsValueMap = FieldUtil.getFieldsValueToMap(masterFields);

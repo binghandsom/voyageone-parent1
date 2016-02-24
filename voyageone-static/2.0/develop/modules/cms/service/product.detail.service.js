@@ -61,20 +61,31 @@ define([
 
 				// 设置产品状态
 				if (result.data.productInfo.productStatus) {
-					var status = result.data.productInfo.productStatus.approveStatus;
 
-					if (_.isEqual(status, Status.NEW)
-							|| _.isEqual(status, Status.PENDING)
-							|| _.isEqual(status, Status.READY))
-						result.data.productInfo.productStatus.statusInfo = {
-							isApproved: false,
-							isDisable: false
-						};
-					else
-						result.data.productInfo.productStatus.statusInfo = {
-							isApproved: true,
-							isDisable: true
-						};
+					switch (result.data.productInfo.productStatus.approveStatus) {
+						case Status.NEW:
+						case Status.PENDING:
+							result.data.productInfo.productStatus.statusInfo = {
+								isWaitingApprove: false,
+								isApproved: false,
+								isDisable: false
+							};
+							break;
+						case Status.READY:
+							result.data.productInfo.productStatus.statusInfo = {
+								isWaitingApprove: true,
+								isApproved: false,
+								isDisable: false
+							};
+							break;
+						case Status.APPROVED:
+							result.data.productInfo.productStatus.statusInfo = {
+								isWaitingApprove: false,
+								isApproved: true,
+								isDisable: true
+							};
+							break;
+					}
 				}
 
 				defer.resolve(result);
@@ -143,11 +154,11 @@ define([
 				masterFields: [],
 				customAttributes: formData.customAttributes,
 				productStatus: {
-					approveStatus: (formData.productStatus.statusInfo.isApproved && formData.productStatus.statusInfo.isDisable)
-					|| (!formData.productStatus.statusInfo.isApproved && !formData.productStatus.statusInfo.isDisable)
-							? formData.productStatus.approveStatus : Status.APPROVED,
-					translateStatus: formData.productStatus.translateStatus ? "1" : "0",
-					editStatus: formData.productStatus.editStatus ? "1" : "0"
+					approveStatus: formData.productStatus.statusInfo.isApproved
+							? Status.APPROVED
+							: (formData.productStatus.statusInfo.isWaitingApprove ? Status.READY : formData.productStatus.approveStatus),
+					translateStatus: formData.productStatus.translateStatus ? "1" : "0"/*,
+					editStatus: formData.productStatus.editStatus ? "1" : "0"*/
 				},
 				skuFields: formData.skuFields
 			};
