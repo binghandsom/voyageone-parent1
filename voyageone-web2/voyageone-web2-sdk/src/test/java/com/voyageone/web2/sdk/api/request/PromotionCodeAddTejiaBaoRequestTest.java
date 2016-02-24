@@ -36,7 +36,7 @@ public class PromotionCodeAddTejiaBaoRequestTest {
         request.setModifier("lijun");
         request.setChannelId("010");
         request.setCartId(23);
-        request.setProductCode("ESJ9293LBS-SC");
+        request.getProductId(1L);
         request.setPromotionId(45);
         request.setPromotionPrice(90.0);
 

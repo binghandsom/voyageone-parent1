@@ -67,7 +67,7 @@ public class PromotionCodeUpdateTejiaBaoRequest extends VoApiRequest<PromotionCo
         this.productCode = productCode;
     }
 
-    public Long getProductId() {
+    public Long getProductId(long l) {
         return productId;
     }
 

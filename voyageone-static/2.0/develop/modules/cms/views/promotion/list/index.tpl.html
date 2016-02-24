@@ -7,7 +7,6 @@
 				</div>
 				<div class="container-fluid m-t-sm m-b-md">
 					<div class="col-sm-12">
-
 						<div class="col-sm-4">
 							<div class="form-horizontal">
 								<div class="form-group" >
@@ -96,7 +95,7 @@
 				</tr>
 				</thead>
 				<tbody ng-if="vm.promotionList.length">
-				<tr ng-repeat="promotion in vm.promotionList">
+				<tr ng-repeat="promotion in vm.promotionList | filter: {isAllPromotion : false}">
 					<td class="text-center">{{promotion.promotionId}}</td>
 					<td class="text-left"><a href="#/promotion/detail/{{promotion.promotionId}}" target="_blank">{{promotion.promotionName}}</a>&nbsp;<span ng-if="promotion.tejiabaoId != 0">({{promotion.tejiabaoId}})</span></td>
 					<td class="text-left"><span ng-show="promotion.promotionStatus==false" class="label label-success-new m-r-lg"> Open </span><span ng-show="promotion.promotionStatus==true" class="label label-yellow-new m-r-lg"> Close </span></td>
@@ -106,7 +105,7 @@
 					<td class="text-left">{{promotion.preSaleStart}}&nbsp;~&nbsp;{{promotion.preSaleEnd}}</td>
 					<td class="text-center" ng-controller="popupCtrl"><button title="{{'BTN_EDIT' | translate}}" class="btn btn-success btn-xs" ng-click="openPromotion('md',vm.cartList,promotion)"><i class="fa fa-pencil"></i></button>
 						<button title="{{'BTN_DELETE' | translate}}" class="btn btn-danger btn-xs"  ng-click="del(promotion)"><i class="fa  fa-trash-o"></i></button>
-						<button title="{{'BTN_DOWNLOAD' | translate}}" class="btn btn-dangerdel btn-xs" ng-click="openOtherDownload()"><i class="fa fa-cloud-download"></i></button>
+						<button title="{{'BTN_DOWNLOAD' | translate}}" class="btn btn-dangerdel btn-xs" ng-click="openOtherDownload(promotion.promotionId)"><i class="fa fa-cloud-download"></i></button>
 					</td>
 				</tr>
 				</tbody>

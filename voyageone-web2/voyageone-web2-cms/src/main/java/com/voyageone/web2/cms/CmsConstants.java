@@ -30,5 +30,7 @@ public interface CmsConstants extends BaseConstants{
 
         //  Code 文件模板文件
         String CODE_TEMPLATE = "cms.code.template.file";
+
+        String PROMOTION_EXPORT_TEMPLATE = "cms.promotion.export.file";
     }
 }

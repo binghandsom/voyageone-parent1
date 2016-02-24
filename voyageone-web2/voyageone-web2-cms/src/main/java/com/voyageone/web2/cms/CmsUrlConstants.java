@@ -38,6 +38,8 @@ public interface CmsUrlConstants {
                 String INSERT_PROMOTION = "insertPromotion";
 
                 String UPDATE_PROMOTION = "updatePromotion";
+
+                String PROMOTION_EXPORT = "ExportPromotion";
             }
 
             interface DETAIL {
@@ -288,21 +290,23 @@ public interface CmsUrlConstants {
 
     interface TRANSLATION {
 
-        interface DETAIL {
+        interface TASKS {
 
-            String ROOT = "/cms/translation/detail";
-
-            String INIT = "init";
-
-            String SEARCH = "search";
+            String ROOT = "/cms/translation/tasks";
 
             String GET_TASKS = "getTasks";
 
+            String SEARCH_HISTORY_TASKS = "searchHistoryTasks";
+
+            String ASSIGN_TASKS = "assignTasks";
+
             String COPY_FORM_MAIN_PRODUCT = "copyFormMainProduct";
 
-            String SAVE = "save";
+            String SAVE_TASK = "saveTask";
 
-            String SUBMIT = "submit";
+            String SUBMIT_TASK = "submitTask";
+
+            String GET_FEED_ATTRIBUTES = "getFeedAttributes";
         }
     }
 

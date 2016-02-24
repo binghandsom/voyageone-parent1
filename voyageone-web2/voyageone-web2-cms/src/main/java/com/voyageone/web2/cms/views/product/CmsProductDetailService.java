@@ -614,6 +614,7 @@ public class CmsProductDetailService {
      * @return
      */
     private CmsMtComSchemaModel getComSchemaModel() {
+
         CmsMtComSchemaModel comSchemaModel = cmsMtCommonSchemaDao.getComSchema();
 
         if (comSchemaModel == null) {
