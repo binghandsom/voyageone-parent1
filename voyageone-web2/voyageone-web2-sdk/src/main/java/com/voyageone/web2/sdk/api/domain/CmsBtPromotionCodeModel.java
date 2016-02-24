@@ -36,6 +36,8 @@ public class CmsBtPromotionCodeModel extends CmsBtPromotionGroupModel {
 
     private String tagPath;
 
+    private String tagPathName;
+
     public CmsBtPromotionCodeModel(CmsBtProductModel productInfo, int cartId, int promotionId, String operator) {
         super(productInfo, cartId, promotionId, operator);
         this.setProductId(productInfo.getProdId());
@@ -159,5 +161,13 @@ public class CmsBtPromotionCodeModel extends CmsBtPromotionGroupModel {
 
     public void setRetailPrice(Double retailPrice) {
         this.retailPrice = retailPrice;
+    }
+
+    public String getTagPathName() {
+        return tagPathName;
+    }
+
+    public void setTagPathName(String tagPathName) {
+        this.tagPathName = tagPathName;
     }
 }

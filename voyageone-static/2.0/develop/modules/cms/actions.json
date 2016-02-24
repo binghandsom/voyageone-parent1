@@ -97,7 +97,8 @@
         "getPromotionList": "getPromotionList",
         "insertPromotion": "insertPromotion",
         "updatePromotion": "updatePromotion",
-        "delPromotion": "delPromotion"
+        "delPromotion": "delPromotion",
+        "ExportPromotion":"ExportPromotion"
       },
       "promotionDetailService": {
         "root": "/cms/promotion/detail",
