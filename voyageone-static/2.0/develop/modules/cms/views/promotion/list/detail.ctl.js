@@ -91,10 +91,7 @@ define([
                 if($scope.vm.groupSelList.selList.length>0){
                     confirm($translate.instant('TXT_MSG_DELETE_ITEM')).result
                         .then(function () {
-                            var data = [];
-                            data.push(group);
-                            // TODO 去哪里拿这个group?
-                            promotionDetailService.delPromotionModel(data).then(function () {
+                            promotionDetailService.delPromotionModel($scope.vm.groupSelList.selList).then(function () {
                                 notify.success($translate.instant('TXT_MSG_DELETE_SUCCESS'));
                                 $scope.search();
                                 //$scope.vm.groupSelList.selList = [];
@@ -107,10 +104,7 @@ define([
                 if($scope.vm.codeSelList.selList.length>0) {
                     confirm($translate.instant('TXT_MSG_DELETE_ITEM')).result
                         .then(function () {
-                            var parameter = [];
-                            parameter.push(code);
-                            // TODO 去哪里拿这个code?
-                            promotionDetailService.delPromotionCode(parameter).then(function () {
+                            promotionDetailService.delPromotionCode($scope.vm.codeSelList.selList).then(function () {
                                 notify.success($translate.instant('TXT_MSG_DELETE_SUCCESS'));
                                 $scope.search();
                                 //$scope.vm.codeSelList.selList = [];
