@@ -274,6 +274,50 @@ public class TranslationService {
         return translationBean;
     }
 
+    /**
+     * 获取当前用户未完成的任务.
+     *
+     * @param channelId
+     * @param userName
+     * @return
+     * @throws BusinessException
+     */
+    public TranslateTaskBean searchUserTasks(String channelId, String userName,String condition) throws BusinessException {
+
+        if (StringUtils.isEmpty(condition)){
+
+            return this.getUndoneTasks(channelId,userName);
+
+        }
+
+        ProductsGetRequest productsGetRequest = new ProductsGetRequest();
+
+        TranslateTaskBean translateTaskBean = new TranslateTaskBean();
+
+        String tasksQueryStr = String.format("{'fields.translator':'%s',$or:[{'fields.code':{$regex:'%s'}},{'fields.productNameEn':{$regex:'%s'}},{'fields.longDesEn':{$regex:'%s'}},{'fields.shortDesEn':{$regex:'%s'}},{'fields.longTitle':{$regex:'%s'}},{'fields.middleTitle':{$regex:'%s'}},{'fields.shortTitle':{$regex:'%s'}},{'fields.longDesCn':{$regex:'%s'}},{'fields.shortDesCn':{$regex:'%s'}}]}",userName,condition,condition,condition,condition,condition,condition,condition,condition,condition);
+
+        productsGetRequest.setChannelId(channelId);
+
+        productsGetRequest.setQueryString(tasksQueryStr);
+        //设定返回值.
+        setReturnValue(productsGetRequest);
+
+
+        ProductsGetResponse responses = voApiClient.execute(productsGetRequest);
+
+        List<CmsBtProductModel> cmsBtProductModels = responses.getProducts();
+
+        List<ProductTranslationBean> translateTaskBeanList = buildTranslateTaskBeen(cmsBtProductModels);
+
+        translateTaskBean.setProductTranslationBeanList(translateTaskBeanList);
+
+        translateTaskBean.setTotalDoneCount(this.getTotalDoneCount(channelId));
+        translateTaskBean.setUserDoneCount(this.getDoneTaskCount(channelId,userName));
+        translateTaskBean.setTotalUndoneCount(this.getTotalUndoneCount(channelId));
+
+        return translateTaskBean;
+    }
+
 
     /**
      * 组装task beans。
@@ -446,6 +490,35 @@ public class TranslationService {
         feedAttributes.putAll(attributesMap);
 
         return feedAttributes;
+    }
+
+    /**
+     *
+     * @param requestBean
+     */
+    public void verifyParameter(ProductTranslationBean requestBean){
+
+        if (StringUtils.isEmpty(requestBean.getLongTitle())){
+
+            throw new BusinessException("长标题不能为空");
+        }
+        if (StringUtils.isEmpty(requestBean.getMiddleTitle())){
+
+            throw new BusinessException("中标题不能为空");
+        }
+        if (StringUtils.isEmpty(requestBean.getShortTitle())){
+
+            throw new BusinessException("短标题不能为空");
+        }
+        if (StringUtils.isEmpty(requestBean.getLongDesCn())){
+
+            throw new BusinessException("长描述不能为空");
+        }
+        if (StringUtils.isEmpty(requestBean.getShortDesCn())){
+
+            throw new BusinessException("短描述不能为空");
+        }
+
     }
 
 }

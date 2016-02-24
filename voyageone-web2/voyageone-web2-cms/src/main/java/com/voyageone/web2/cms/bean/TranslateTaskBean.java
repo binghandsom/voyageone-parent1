@@ -38,6 +38,11 @@ public class TranslateTaskBean {
     private String modifiedTime;
 
     /**
+     * 模糊查询条件.
+     */
+    private String searchCondition;
+
+    /**
      * 待翻译商品信息列表.
      */
     List<ProductTranslationBean> productTranslationBeanList;
@@ -97,5 +102,13 @@ public class TranslateTaskBean {
 
     public void setModifiedTime(String modifiedTime) {
         this.modifiedTime = modifiedTime;
+    }
+
+    public String getSearchCondition() {
+        return searchCondition;
+    }
+
+    public void setSearchCondition(String searchCondition) {
+        this.searchCondition = searchCondition;
     }
 }

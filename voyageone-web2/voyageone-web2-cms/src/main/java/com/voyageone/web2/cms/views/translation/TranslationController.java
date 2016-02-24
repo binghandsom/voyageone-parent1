@@ -66,6 +66,8 @@ public class TranslationController extends CmsController{
     @RequestMapping(CmsUrlConstants.TRANSLATION.TASKS.SAVE_TASK)
     public AjaxResponse doSaveTask(@RequestBody ProductTranslationBean requestBean){
 
+        feedPropsTranslateService.verifyParameter(requestBean);
+
         String channelId = getUser().getSelChannelId();
         String userName = getUser().getUserName();
         String modified = requestBean.getModifiedTime();
@@ -82,6 +84,8 @@ public class TranslationController extends CmsController{
 
     @RequestMapping(CmsUrlConstants.TRANSLATION.TASKS.SUBMIT_TASK)
     public AjaxResponse doSubmitTask(@RequestBody ProductTranslationBean requestBean){
+
+        feedPropsTranslateService.verifyParameter(requestBean);
 
         String channelId = getUser().getSelChannelId();
         String userName = getUser().getUserName();
@@ -133,18 +137,22 @@ public class TranslationController extends CmsController{
 
     // TODO
     @RequestMapping(CmsUrlConstants.TRANSLATION.TASKS.SEARCH_HISTORY_TASKS)
-    public AjaxResponse doSearchHistoryTasks(@RequestBody Map request) {
+    public AjaxResponse doSearchTasks(@RequestBody TranslateTaskBean requestBean) {
 
         String channelId = getUser().getSelChannelId();
 
         String userName = getUser().getUserName();
 
-        Map<String,Object> TranslateTaskBeanInfo = new HashMap<>();
+        Map<String,Object> translateTaskBeanInfo = new HashMap<>();
 
-        return success(TranslateTaskBeanInfo);
+        TranslateTaskBean taskBean = feedPropsTranslateService.searchUserTasks(channelId,userName,requestBean.getSearchCondition());
+
+        translateTaskBeanInfo.put("taskInfo",taskBean);
+
+        return success(translateTaskBeanInfo);
+
 
     }
-
 
 
 }
