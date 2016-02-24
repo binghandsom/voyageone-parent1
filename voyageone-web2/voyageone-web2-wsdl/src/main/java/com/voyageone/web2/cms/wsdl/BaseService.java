@@ -4,13 +4,13 @@ import com.mongodb.BulkWriteResult;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.cms.service.model.CmsBtProductModel;
 import com.voyageone.common.util.StringUtils;
-import com.voyageone.web2.base.BaseAppComponent;
 import com.voyageone.web2.sdk.api.VoApiConstants;
 import com.voyageone.web2.sdk.api.VoApiListRequest;
 import com.voyageone.web2.sdk.api.VoApiRequest;
 import com.voyageone.web2.sdk.api.VoApiUpdateResponse;
 import com.voyageone.web2.sdk.api.exception.ApiException;
-import com.voyageone.web2.sdk.api.request.ProductSkusGetRequest;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.util.List;
 
@@ -19,8 +19,9 @@ import java.util.List;
  * Created by chuanyu.liang on 15/6/26.
  * @author chuanyu.liang
  */
-public abstract class BaseService extends BaseAppComponent {
+public abstract class BaseService {
 
+    protected Log logger = LogFactory.getLog(getClass());
     /**
      * Check Request
      * @param request Request

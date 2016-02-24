@@ -1,6 +1,5 @@
 package com.voyageone.web2.cms.wsdl.dao;
 
-import com.voyageone.base.dao.BaseDao;
 import com.voyageone.web2.sdk.api.domain.CmsBtPriceLogModel;
 import org.springframework.stereotype.Repository;
 
@@ -13,7 +12,8 @@ import java.util.Map;
  * @version 2.0.0
  */
 @Repository
-public class CmsBtPriceLogDao extends BaseDao {
+public class CmsBtPriceLogDao extends WsdlBaseDao {
+
     public List<CmsBtPriceLogModel> selectPriceLogByCode(Map<String, Object> param) {
         return updateTemplate.selectList("select_price_log_by_code", param);
     }
