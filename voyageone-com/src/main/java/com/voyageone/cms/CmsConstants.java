@@ -17,7 +17,7 @@ public class CmsConstants {
      * platform的发布状态
      */
     public enum PlatformStatus {
-        Waitingpublish,		// 等待上新
+        WaitingPublish,		// 等待上新
         Onsale, 			// 在售
         Instock 			// 在库
     }

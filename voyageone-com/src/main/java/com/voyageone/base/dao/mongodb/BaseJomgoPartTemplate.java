@@ -126,10 +126,12 @@ public class BaseJomgoPartTemplate {
         FindOne find;
 
         //condition
-        if (StringUtils.isEmpty(queryObject.getQuery())) {
-            find = getCollection(collectionName).findOne();
-        } else {
+        if (!StringUtils.isEmpty(queryObject.getQuery())) {
             find = getCollection(collectionName).findOne(queryObject.getQuery());
+        } else if (queryObject.getObjectId() != null) {
+            find = getCollection(collectionName).findOne(queryObject.getObjectId());
+        } else {
+            find = getCollection(collectionName).findOne();
         }
 
         //column

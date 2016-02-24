@@ -13,28 +13,18 @@ import java.util.List;
  */
 public class SaveFieldMappingBean {
 
-    private String feedCategoryPath;
-
-    private String mainCategoryPath;
+    private String mappingId;
 
     private List<String> fieldPath;
 
     private Prop propMapping;
 
-    public String getFeedCategoryPath() {
-        return feedCategoryPath;
+    public String getMappingId() {
+        return mappingId;
     }
 
-    public void setFeedCategoryPath(String feedCategoryPath) {
-        this.feedCategoryPath = feedCategoryPath;
-    }
-
-    public String getMainCategoryPath() {
-        return mainCategoryPath;
-    }
-
-    public void setMainCategoryPath(String mainCategoryPath) {
-        this.mainCategoryPath = mainCategoryPath;
+    public void setMappingId(String mappingId) {
+        this.mappingId = mappingId;
     }
 
     public List<String> getFieldPath() {

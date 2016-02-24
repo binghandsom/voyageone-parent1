@@ -17,14 +17,6 @@
  */
 
 /**
- * @typedef {object} FeedPropMappingPopupContext
- * @property {string} feedCategoryPath
- * @property {string} mainCategoryPath
- * @property {Field} field
- * @property {FieldBean} bean
- */
-
-/**
  * Simple Mapping List 设定弹出框的上下文参数
  * @name SimpleListMappingPopupContext
  * @class
@@ -413,10 +405,6 @@ define([
             });
         }
 
-        /**
-         * @param {FeedPropMappingPopupContext} context
-         * @returns {Promise}
-         */
         $scope.popupFeed = function (context) {
             return openModel(popActions.feedMapping.attribute, context);
         };
