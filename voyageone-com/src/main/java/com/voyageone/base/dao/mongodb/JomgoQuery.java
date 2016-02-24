@@ -1,6 +1,7 @@
 package com.voyageone.base.dao.mongodb;
 
 import org.apache.commons.lang3.StringUtils;
+import org.bson.types.ObjectId;
 
 import java.util.Arrays;
 import java.util.List;
@@ -27,6 +28,11 @@ public class JomgoQuery {
      * query condition
      */
     private String query;
+
+    /**
+     * query key
+     */
+    private ObjectId objectId;
 
     /**
      * sort condition
@@ -123,5 +129,13 @@ public class JomgoQuery {
     public JomgoQuery setSkip(Integer skip) {
         this.skip = skip;
         return this;
+    }
+
+    public ObjectId getObjectId() {
+        return objectId;
+    }
+
+    public void setObjectId(ObjectId objectId) {
+        this.objectId = objectId;
     }
 }

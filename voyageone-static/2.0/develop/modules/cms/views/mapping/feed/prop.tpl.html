@@ -1,4 +1,4 @@
-<div class="wrapper-md" ng-controller="feedPropMappingController as ctrl" ng-init="ctrl.init()">
+<div class="wrapper-md" ng-init="$ctrl.init()">
     <div class="vo_accordion vo_attr">
         <div class="panel-group">
             <div class="panel panel-default">
@@ -7,12 +7,21 @@
                 </div>
                 <div class="container-fluid m-t-sm m-b-xs m-l-xs m-r-xs">
                     <div class="col-sm-12">
-                        <div class="col-sm-12 m-t-xs m-b-xs font-bold text-vo" style="border-bottom:1px solid #efefef;padding-bottom:4px">
-                            <span>{{::$ctrl.feedCategoryPath}}</span>
-                            <sup><strong>{{'TXT_FEED_CATEGORY' | translate}}</strong></sup>
-                            <span class="fa fa-exchange"></span>
+                        <div class="col-sm-12 m-t-xs m-b-xs" style="border-bottom:1px solid #efefef;padding-bottom:4px">
+                            <span>
+                                <span>{{::$ctrl.mappingModel.scope.feedCategoryPath}}</span>
+                                <sup>{{'TXT_FEED_CATEGORY' | translate}}</sup>
+                                <span class="fa fa-exchange"></span>
+                            </span>
                             <span>{{$ctrl.mainCategory.catFullPath}}</span>
-                            <sup><strong>{{'TXT_MASTER_CATEGORY' | translate}}</strong></sup>
+                            <sup>{{'TXT_MASTER_CATEGORY' | translate}}</sup>
+                            <sup ng-if="$ctrl.isCommon">
+                                <strong>
+                                    <span>(</span>
+                                    <span>{{'TXT_MASTER_CATEGORY_COMMON_FLG' | translate}}</span>
+                                    <span>)</span>
+                                </strong>
+                            </sup>
                         </div>
                         <div class="form-inline pull-left m-r-lg">
                             <label class="m-t-xs col-sm-9" translate="TXT_MAPPING_ATTRIBUTE_IS_FINISHED"></label>
@@ -89,7 +98,7 @@
         </div>
         <div class="col-sm-1 pull-center" ng-if="bean.isSimple">
             <button class="btn btn-default btn-xs"
-                    ng-click="popupFeed(ctrl.popupContext(bean)).then(ctrl.saveMapping)"><i class="fa fa-pencil"></i>&nbsp;<span>
+                    ng-click="popupFeed($ctrl.popupContext(bean)).then($ctrl.saveMapping)"><i class="fa fa-pencil"></i>&nbsp;<span>
                 {{'TXT_MAPPING_VALUE' | translate}}</span>
             </button>
         </div>

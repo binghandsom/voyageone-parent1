@@ -8,55 +8,63 @@ package com.voyageone.web2.cms;
  */
 public interface CmsUrlConstants {
 
-    // menu
-    interface MENU {
+    interface HOME {
 
-        String ROOT = "/cms/home/menu/";
+        // menu
+        interface MENU {
 
-        String GET_CATE_INFO = "getCategoryInfo";
+            String ROOT = "/cms/home/menu/";
 
-        String GET_CATE_TYPE = "getCategoryType";
+            String GET_CATE_INFO = "getCategoryInfo";
 
-        String SET_CATE_TYPE = "setCategoryType";
+            String GET_CATE_TYPE = "getPlatformType";
+
+            String SET_CATE_TYPE = "setPlatformType";
+        }
+
     }
 
     // 活动管理
     interface PROMOTION {
+        interface LIST {
+            interface INDEX {
 
-        interface INDEX {
+                String ROOT = "/cms/promotion/index";
 
-            String ROOT = "/cms/promotion/index";
+                String INIT = "init";
 
-            String GET_PROMOTION_LIST = "getPromotionList";
+                String GET_PROMOTION_LIST = "getPromotionList";
 
-            String INSERT_PROMOTION = "insertPromotion";
+                String INSERT_PROMOTION = "insertPromotion";
 
-            String UPDATE_PROMOTION = "updatePromotion";
+                String UPDATE_PROMOTION = "updatePromotion";
+
+                String PROMOTION_EXPORT = "ExportPromotion";
+            }
+
+            interface DETAIL {
+
+                String ROOT = "/cms/promotion/detail";
+
+                String GET_PROMOTION_GROUP = "getPromotionGroup";
+
+                String GET_PROMOTION_CODE = "getPromotionCode";
+
+                String GET_PROMOTION_SKU = "getPromotionSku";
+
+                String GET_PROMOTION_UPLOAD = "uploadPromotion";
+
+                String TE_JIA_BAO_INIT = "teJiaBaoInit";
+
+                String UPDATE_PROMOTION_PRODUCT = "updatePromotionProduct";
+
+                String DEL_PROMOTION_MODEL = "delPromotionModel";
+
+                String DEL_PROMOTION_CODE = "delPromotionCode";
+            }
         }
 
-        interface DETAIL {
-
-            String ROOT = "/cms/promotion/detail";
-
-            String GET_PROMOTION_GROUP = "getPromotionGroup";
-
-            String GET_PROMOTION_CODE = "getPromotionCode";
-
-            String GET_PROMOTION_SKU = "getPromotionSku";
-
-            String GET_PROMOTION_UPLOAD = "uploadPromotion";
-
-            String TE_JIA_BAO_INIT = "teJiaBaoInit";
-
-            String UPDATE_PROMOTION_PRODUCT = "updatePromotionProduct";
-
-            String DEL_PROMOTION_MODEL = "delPromotionModel";
-
-            String DEL_PROMOTION_CODE = "delPromotionCode";
-        }
-    }
-
-    interface TASK {
+        interface TASK {
 
 //            interface INDEX {
 //
@@ -67,20 +75,21 @@ public interface CmsUrlConstants {
 //                String UPDATE_TASK_STATUS = "updateTaskStatus";
 //            }
 
-        interface PRICE {
+            interface PRICE {
 
-            String ROOT = "/cms/task/price";
+                String ROOT = "/cms/task/price";
 
-            String GET_PRICE_LIST = "getPriceList";
+                String GET_PRICE_LIST = "getPriceList";
 
-            String UPDATE_TASK_STATUS = "updateTaskStatus";
-        }
+                String UPDATE_TASK_STATUS = "updateTaskStatus";
+            }
 
-        interface FILE {
+            interface FILE {
 
-            String ROOT = "/cms/promotion/file";
+                String ROOT = "/cms/promotion/file";
 
 //                String GET_CODE_FILE = "getCodeFile";
+            }
         }
     }
 
@@ -107,6 +116,8 @@ public interface CmsUrlConstants {
         interface FEED {
 
             String ROOT = "/cms/mapping/feed";
+
+            String GET_TOP_CATEGORIES = "getTopCategories";
 
             String GET_FEED_CATEGORY_TREE = "getFeedCategoryTree";
 

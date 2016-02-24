@@ -3,23 +3,20 @@
         <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="ctrl.cancel()">
             <span aria-hidden="true"><i class="fa fa-close"></i></span>
         </button>
-        <h5 class="modal-title"><i class="fa fa-crosshairs"></i> 属性设定: {{:: ctrl.context.field.name }}</h5>
+        <h5 class="modal-title">
+            <i class="fa fa-crosshairs"></i>
+            <span translate="TXT_ATTRIBUTE_MAPPING"></span>&nbsp;:
+            <span>{{::ctrl.context.field.name}}</span>
+        </h5>
     </div>
-    <h5 class="m-l m-t-md">
-        <span class="text-vo">{{::ctrl.context.feedCategoryPath}}</span>
-        <sup  class="text-vo"><strong>品牌数据</strong></sup>
-        <span class="fa fa-exchange"></span>
-        <span>{{::ctrl.context.mainCategoryPath}}</span>
-        <sup><strong>主数据</strong></sup>
-    </h5>
-    <div class="m-l m-r">
+    <div class="m-l m-r m-t">
         <table class="table box table-hover">
             <thead>
             <tr>
-                <th>类型</th>
-                <th>值</th>
-                <th>条件数</th>
-                <th class="wntab-xxs text-center">删除</th>
+                <th translate="TXT_ATTRIBUTE_MAPPING_VALUE_TYPE"></th>
+                <th translate="TXT_VALUE"></th>
+                <th translate="TXT_ATTRIBUTE_MAPPING_CONDITION_COUNT"></th>
+                <th class="wntab-xxs"></th>
             </tr>
             </thead>
             <tbody>
@@ -38,18 +35,25 @@
         <div ng-controller="popupCtrl">
             <button class="btn btn-sm btn-success btn-addon"
                     ng-click="popupFeedValue(ctrl.context).then(ctrl.addValueMapping)">
-                <i class="fa fa-plus"></i>添加
+                <i class="fa fa-plus"></i>
+                <span translate="BTN_ADD"></span>
             </button>
         </div>
     </div>
     <div class="attribute_top">
-        <h5 class="text-vo m-l font-bold">输入规则：</h5>
+        <h5 class="text-vo m-l font-bold">Rules：</h5>
         <ul>
             <li ng-repeat="rule in ctrl.field.rules">{{:: rule.name }}：{{:: rule.value }}</li>
         </ul>
     </div>
     <div class="modal-footer">
-        <button class="btn btn-default" ng-click="ctrl.cancel()"><i class="fa fa-remove"></i> 取消</button>
-        <button class="btn btn-vo" ng-click="ctrl.ok()"><i class="glyphicon glyphicon-floppy-disk"></i> 保存</button>
+        <button class="btn btn-default" ng-click="ctrl.cancel()">
+            <i class="fa fa-remove"></i>
+            <span translate="BTN_CANCEL"></span>
+        </button>
+        <button class="btn btn-vo" ng-click="ctrl.ok()">
+            <i class="glyphicon glyphicon-floppy-disk"></i>
+            <span translate="BTN_OK"></span>
+        </button>
     </div>
 </div>

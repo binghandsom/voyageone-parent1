@@ -16,12 +16,16 @@ public class TmpOldCmsDataBean {
     private String category_path;
     private String product_id;
     private String num_iid;
+    private String title_en;
     private String title_cn;
+    private String description_en;
     private String description_cn;
     private String img1; // 商品图片
     private String img2; // 包装图片
     private String img3; // 带角度图片
     private String img4; // 自定义图片
+    private String color_en;
+    private String hs_code_pu; // 个人行邮税号
     private int finish_flg; // 已经处理过了的商品为1, 等待处理的为0
 
     public String getChannel_id() {
@@ -80,12 +84,28 @@ public class TmpOldCmsDataBean {
         this.num_iid = num_iid;
     }
 
+    public String getTitle_en() {
+        return title_en;
+    }
+
+    public void setTitle_en(String title_en) {
+        this.title_en = title_en;
+    }
+
     public String getTitle_cn() {
         return title_cn;
     }
 
     public void setTitle_cn(String title_cn) {
         this.title_cn = title_cn;
+    }
+
+    public String getDescription_en() {
+        return description_en;
+    }
+
+    public void setDescription_en(String description_en) {
+        this.description_en = description_en;
     }
 
     public String getDescription_cn() {
@@ -126,6 +146,22 @@ public class TmpOldCmsDataBean {
 
     public void setImg4(String img4) {
         this.img4 = img4;
+    }
+
+    public String getColor_en() {
+        return color_en;
+    }
+
+    public void setColor_en(String color_en) {
+        this.color_en = color_en;
+    }
+
+    public String getHs_code_pu() {
+        return hs_code_pu;
+    }
+
+    public void setHs_code_pu(String hs_code_pu) {
+        this.hs_code_pu = hs_code_pu;
     }
 
     public int getFinish_flg() {

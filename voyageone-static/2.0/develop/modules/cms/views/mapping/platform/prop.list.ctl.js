@@ -55,8 +55,8 @@ define([
                 },
                 matched: {
                     '设定情况(ALL)': null,
-                    '已设定': true,
-                    '未设定': false
+                    '已匹配': true,
+                    '未匹配': false
                 }
             },
             init: function () {
@@ -76,6 +76,13 @@ define([
                 _.each(this.platform.properties, function (property) {
                     this.setHide(property);
                 }.bind(this));
+            },
+            clear: function () {
+                this.selected = {
+                    required: null,
+                    matched: null,
+                    keyWord: null
+                };
             },
             setHide: function (property) {
 

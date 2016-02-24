@@ -52,11 +52,12 @@ public class CmsUploadJmPicServiceTest {
         shopBean.setApp_url("http://openapi.ext.jumei.com/");
 
         JmImageFileBean jmImageFileBean = new JmImageFileBean();
-        String juUrl = jumeiImageFileService.imageFileUpload(shopBean, convertJmPicToImageFileBean("http://p0.jmstatic.com/global/image/201509/11/1441943880.848.jpg"));
+        String juUrl = jumeiImageFileService.imageFileUpload(shopBean, convertJmPicToImageFileBean("http://p0.jmstatic.com/global/image/201509/11/1441943882.369.jpg"));
         System.out.println(juUrl);
     }
 
     private static JmImageFileBean convertJmPicToImageFileBean(String  url) throws Exception {
+
         JmImageFileBean jmImageFileBean = new JmImageFileBean();
 //            File imageFile=new File(jmPicBean.getOriginUrl());
         int retryCount = 5;
@@ -64,7 +65,7 @@ public class CmsUploadJmPicServiceTest {
         Assert.notNull(inputStream, "inputStream为null，图片流获取失败！" + url);
         jmImageFileBean.setInputStream(inputStream);
         jmImageFileBean.setDirName("/001/brand/5");
-        jmImageFileBean.setImgName("21411411588a4ce65582b4340e4064cb_5_2");
+        jmImageFileBean.setImgName("1cccf2d7682aeb877832bc9b72237b09_5_1");
         jmImageFileBean.setNeedReplace(true);
         jmImageFileBean.setExtName("jpg");
         return jmImageFileBean;

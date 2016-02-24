@@ -30,7 +30,7 @@ public class ProductController extends BaseController {
     private ProductService productService;
 
     // TODO 好像不能只取到group的platforms数据
-    private final String searchItems = "fields;skus.$;groups";
+    private final String searchItems = "prodId;channelId;fields;skus;groups";
 
     /**
      * selectOne
@@ -168,5 +168,10 @@ public class ProductController extends BaseController {
     public ProductForOmsGetResponse getOmsProductsInfo(@RequestBody ProductForOmsGetRequest request) {
         request.setFields(searchItems);
         return productService.getOmsProductsInfo(request);
+    }
+
+    @RequestMapping("getProductSkuQty")
+    public ProductSkuResponse getProductSkuQty(@RequestBody ProductSkuRequest request) {
+        return productService.getProductSkuQty(request);
     }
 }

@@ -50,25 +50,25 @@ public class PromotionSkuController extends BaseController {
     }
 
     @RequestMapping("inventoryInfo/delete")
-    public PromotionSkuInventoryInfoDeleteResponse delSkuInventoryInfo(PromotionSkuInventoryInfoDeleteRequest request) {
+    public PromotionSkuInventoryInfoDeleteResponse delSkuInventoryInfo(@RequestBody PromotionSkuInventoryInfoDeleteRequest request) {
         request.check();
         return promotionSkuService.delSkuInventoryInfo(request);
     }
 
     @RequestMapping("inventoryInfo/insert")
-    public PromotionSkuInventoryInfoInsertResponse insertSkuInventoryInfo(PromotionSkuInventoryInfoInsertRequest request) {
+    public PromotionSkuInventoryInfoInsertResponse insertSkuInventoryInfo(@RequestBody PromotionSkuInventoryInfoInsertRequest request) {
         request.check();
         return promotionSkuService.insertSkuInventoryInfo(request);
     }
 
     @RequestMapping("inventoryInfo/getCount")
-    public PromotionSkuInventoryInfoGetCountResponse getSkuInventoryInfoRecCount(PromotionSkuInventoryInfoGetRequest request) {
+    public PromotionSkuInventoryInfoGetCountResponse getSkuInventoryInfoRecCount(@RequestBody PromotionSkuInventoryInfoGetRequest request) {
         request.check();
         return promotionSkuService.getSkuInventoryInfoRecCount(request);
     }
 
     @RequestMapping("inventoryInfo/getList")
-    public PromotionSkuInventoryInfoGetResponse getSkuInventoryInfoRecInfo(PromotionSkuInventoryInfoGetRequest request) {
+    public PromotionSkuInventoryInfoGetResponse getSkuInventoryInfoRecInfo(@RequestBody PromotionSkuInventoryInfoGetRequest request) {
         request.check();
         return promotionSkuService.getSkuInventoryInfoRecInfo(request);
     }

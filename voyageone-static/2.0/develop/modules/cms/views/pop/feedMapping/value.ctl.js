@@ -11,24 +11,22 @@ define([
 
     return cms.controller('propFeedMappingValueController', (function () {
 
-        function propFeedMappingValueController(context, feedMappingService, $uibModalInstance, alert, $translate) {
+        function PropFeedMappingValueController(context, feedMappingService, $uibModalInstance, alert, $translate) {
 
             this.alert = alert;
             this.$uibModalInstance = $uibModalInstance;
             this.feedMappingService = feedMappingService;
             this.operations = operations;
-            this.$translate = $translate
+            this.$translate = $translate;
 
-            /**
-             * 画面传递的上下文参数
-             * @type {FeedPropMappingPopupContext}
-             */
             this.context = context;
+
+            this.feedPath = context.mappingModel.scope.feedCategoryPath;
             /**
              * 当前处理的主类目属性
              * @type {Field}
              */
-            this.field = this.context.field;
+            this.field = context.field;
             /**
              * feed 类目的所有属性
              * @type {object[]}
@@ -49,21 +47,21 @@ define([
             this.conditions = null;
         }
 
-        propFeedMappingValueController.prototype = {
+        PropFeedMappingValueController.prototype = {
+            
             init: function () {
-
-                this.feedMappingService.getFeedAttrs({
-
-                    feedCategoryPath: this.context.feedCategoryPath
-
+                var ttt = this;
+                ttt.feedMappingService.getFeedAttrs({
+                    feedCategoryPath: ttt.feedPath
                 }).then(function (res) {
-
-                    this.feedAttributes = res.data;
-                }.bind(this));
+                    ttt.feedAttributes = res.data;
+                });
             },
+            
             removeCondition: function (index) {
                 (this.conditions || (this.conditions = [])).splice(index, 1);
             },
+
             addCondition: function () {
                 (this.conditions || (this.conditions = [])).push({
                     property: null,
@@ -71,6 +69,7 @@ define([
                     value: null
                 });
             },
+
             getValue: function (field) {
                 switch (field.type) {
                     case FieldTypes.input:
@@ -97,32 +96,41 @@ define([
             },
             ok: function () {
 
+                var ttt = this;
                 var type = this.mappingSetting.type;
 
                 if (!type) {
-                    this.alert(this.$translate.instant('TXT_MSG_MUST_GET_ONE_VALUE'));
+                    ttt.alert(ttt.$translate.instant('TXT_MSG_MUST_GET_ONE_VALUE'));
                     return;
                 }
-
-                // value 会保存在 field 中. 取出后,需要清空
-                var value = this.getValue(this.field);
-                this.field.value = null;
+                
+                var value = ttt.getValue(ttt.field);
 
                 if (!value) {
-                    this.alert(this.$translate.instant('TXT_MSG_NO_VALUE_IS_ON_THE_ATTRIBUTE'));
+                    ttt.alert(ttt.$translate.instant('TXT_MSG_NO_VALUE_IS_ON_THE_ATTRIBUTE'));
                     return;
                 }
 
                 // 需要转换 Condition 中 Operation 的存储类型
                 // 否则服务端无法转换
-                _.each(this.conditions, function (condition) {
+                var isBreak = ttt.conditions.some(function(condition) {
+                    if (!condition.property || !condition.operation) return true;
+                    if (!condition.operation.isSingle && !condition.value) return true;
                     condition.operation = condition.operation.name;
                 });
+                
+                if (isBreak) {
+                    ttt.alert(ttt.$translate.instant('TXT_MSG_UNVALID_CONDITION'));
+                    return;
+                }
 
-                this.$uibModalInstance.close({
+                // value 会保存在 field 中. 取出后,需要清空
+                ttt.field.value = null;
+                
+                ttt.$uibModalInstance.close({
                     type: type,
                     val: value,
-                    condition: this.conditions
+                    condition: ttt.conditions
                 });
             },
             cancel: function () {
@@ -130,6 +138,6 @@ define([
             }
         };
 
-        return propFeedMappingValueController;
+        return PropFeedMappingValueController;
     })());
 });

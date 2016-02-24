@@ -6,7 +6,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans
     http://www.springframework.org/schema/beans/spring-beans.xsd
     http://www.springframework.org/schema/data/mongo
-    http://www.springframework.org/schema/data/mongo/spring-mongo-1.8.xsd">
+    http://www.springframework.org/schema/data/mongo/spring-mongo.xsd">
 
     <!-- Default bean name is 'mongo' -->
     <mongo:mongo id="mongo" host="10.0.0.59" port="27017">
@@ -23,7 +23,7 @@
                        write-fsync="false"/>
     </mongo:mongo>
 
-    <mongo:db-factory id="mongoDbFactory" mongo-ref="mongo" username="admin" password="123456" dbname="cms" authentication-dbname="admin"/>
+    <mongo:db-factory id="mongoDbFactory" mongo-ref="mongo" username="cms" password="cms" dbname="cms"/>
 
     <!-- mongodb的主要操作对象，所有对mongodb的增删改查的操作都是通过它完成 -->
     <bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">

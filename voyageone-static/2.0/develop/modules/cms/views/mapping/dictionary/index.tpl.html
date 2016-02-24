@@ -13,7 +13,7 @@
 									<label class="col-sm-3 control-label" translate="TXT_PLATFORM_TYPE"></label>
 									<div class="col-sm-9">
 										<select class="form-control" ng-model="vm.searchInfo.cart_id"
-												ng-options="platform.value as platform.displayName for platform in vm.masterData.platformList">
+												ng-options="platform.value as platform.name for platform in vm.masterData.platformList">
 											<option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
 										</select>
 									</div>
@@ -35,7 +35,7 @@
 							<div class="form-group form-inline">
 								<button class="btn btn-default" ng-click="clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR' | translate}}</button>
 								<button class="btn btn-vo" ng-click="search()"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}</button>
-								<button class="btn btn-success" ng-click="create()"><i class="fa fa-plus"></i>&nbsp;<a href="#/mapping/dictionary/item">{{'BTN_NEW_DICTIONARY' | translate}}</a></button>
+								<button class="btn btn-success"><i class="fa fa-plus"></i>&nbsp;<a href="#/mapping/dictionary/item">{{'BTN_NEW_DICTIONARY' | translate}}</a></button>
 							</div><!-- .form-inline -->
 								</div>
 						</div>
@@ -51,12 +51,12 @@
 					<tbody>
 					<tr class="font-bold" style="background:#e67e22;color:#fff">
 						<td class="mfb-xt text-center" translate="TXT_SEQ"></td>
-						<td class="mfb-xxs text-left" translate="TXT_DICTIONARY_NAME"></td>
+						<td class="mfb-xxx text-left" translate="TXT_DICTIONARY_NAME"></td>
 						<td class="mfb-xxt text-left" translate="TXT_PLATFORM_TYPE"></td>
-						<td class="mfb-xxxs text-left" translate="TXT_DICTIONARY_COMMENT"></td>
-						<td class="mfb-xxt text-left" translate="TXT_CREATE_TIME"></td>
-						<td class="mfb-xxt text-left" translate="TXT_UPDATE_TIME"></td>
-						<td class="mfb-xxt text-center" translate="TXT_ACTION"></td>
+						<td class="mfb-xxs text-left" translate="TXT_DICTIONARY_COMMENT"></td>
+						<td class="mfb-xx text-left" translate="TXT_CREATE_TIME"></td>
+						<td class="mfb-xx text-left" translate="TXT_UPDATE_TIME"></td>
+						<td class="mfb-xt text-center" translate="TXT_ACTION"></td>
 					</tr>
 					</tbody>
 				</table>
@@ -65,12 +65,12 @@
 						<tbody>
 						<tr ng-repeat="dictionaryInfo in vm.dictionaryList">
 							<td class="mfb-xt text-center" ng-bind="dictionaryInfo.id"></td>
-							<td class="mfb-xxs text-left text-u-l"><a ng-click="openDictionaryItem(dictionaryInfo.id)" ng-bind="dictionaryInfo.name"></a></td>
-							<td class="mfb-xxt text-left"><span class="badge badge-empty" ng-bind="dictionaryInfo.cartName"></span></td>
-							<td class="mfb-xxxs text-left"><div class="line-height">{{dictionaryInfo.value}}</div></td>
-							<td class="mfb-xxt text-left" ng-bind="dictionaryInfo.created"></td>
-							<td class="mfb-xxt text-left" ng-bind="dictionaryInfo.modified"></td>
-							<td class="mfb-xxt text-center">
+							<td class="mfb-xxx text-left text-u-l"><a ng-click="openDictionaryItem(dictionaryInfo.id)" ng-bind="dictionaryInfo.name"></a></td>
+							<td class="mfb-xxt text-left"><span ng-bind="dictionaryInfo.cartName"></span></td>
+							<td class="mfb-xxs text-left"><div class="line-height">{{dictionaryInfo.value}}</div></td>
+							<td class="mfb-xx text-left" ng-bind="dictionaryInfo.created.substring(0, 19)"></td>
+							<td class="mfb-xx text-left" ng-bind="dictionaryInfo.modified.substring(0, 19)"></td>
+							<td class="mfb-xt text-center">
 								<button class="btn btn-danger btn-xs"  ng-click="delDictItem(dictionaryInfo)"><i class="fa  fa-trash-o"></i></button>
 							</td>
 						</tr>

@@ -8,13 +8,14 @@
                     </div>
                     <div class="container-fluid m-b-xs">
                         <div class="col-sm-12">
-                            <div class="col-sm-3">
+                            <div class="col-sm-4">
                                 <div class="form-horizontal">
                                     <div class="form-group">
                                         <label class="col-sm-3 control-label vo_reqfield" translate="TXT_NAME"></label>
-                                        <div class="col-sm-8">
+                                        <div class="col-sm-7">
                                             <input type="text" class="form-control" ng-model="vm.dictionary.value" required>
                                         </div>
+                                        <label class="col-sm-2 control-label text-u-red text-left" translate="TXT_REQUIRED"></label>
                                     </div>
                                 </div>
                             </div>
@@ -27,7 +28,7 @@
                                     </div>
                                 </div><!-- .form-group -->
                             </div>
-                            <div class="col-sm-5 m-t-xs">
+                            <div class="col-sm-4 m-t-xs">
                                 <div class="form-inline pull-right" ng-controller="popupCtrl">
                                     <button class="btn btn-success" ng-click="openDictValue('md', addNewDictionary)"><i class="fa fa-plus"></i>&nbsp;{{'BTN_NEW_DICTIONARY_VALUE' | translate}}</button>
                                     <button class="btn btn-success" ng-click="openDictCustom('lg', addNewDictionary)"><i class="fa fa-plus"></i>&nbsp;{{'BTN_NEW_DICTIONARY_DEFINE' | translate}}</button>

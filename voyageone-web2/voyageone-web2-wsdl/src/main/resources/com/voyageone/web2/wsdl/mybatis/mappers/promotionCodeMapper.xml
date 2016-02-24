@@ -3,6 +3,7 @@
 <mapper namespace="com.voyageone.web2.wsdl.sql">
     <resultMap id="bt_promotion_code_map" extends="bt_promotion_model_map" type="com.voyageone.web2.sdk.api.domain.CmsBtPromotionCodeModel" >
         <result column="sale_price" property="salePrice" jdbcType="DOUBLE" />
+        <result column="retail_price" property="retailPrice" jdbcType="DOUBLE" />
         <result column="msrp" property="msrp" jdbcType="DOUBLE" />
         <result column="promotion_price" property="promotionPrice" jdbcType="DOUBLE" />
         <result column="product_id" property="productId" jdbcType="INTEGER" />
@@ -12,6 +13,8 @@
         <result column="image_url_sale_out" property="imageUrlSaleOut" jdbcType="VARCHAR" />
         <result column="tag_id" property="tagId" jdbcType="INTEGER" />
         <result column="tag_path" property="tagPath" jdbcType="VARCHAR" />
+        <result column="tag_path_name" property="tagPathName" jdbcType="VARCHAR" />
+        <result column="tag_name" property="tag"  jdbcType="VARCHAR" />
     </resultMap>
     <select id="select_cms_bt_promotion_code" resultMap="bt_promotion_code_map" parameterType="HashMap" >
         SELECT
@@ -23,6 +26,7 @@
             a.product_code,
             a.product_name,
             a.cat_path,
+            a.retail_price,
             a.sale_price,
             a.msrp,
             a.tag_id,
@@ -34,7 +38,9 @@
             a.creater,
             a.modified,
             a.modifier,
-            b.tag_path
+            b.tag_path,
+            b.tag_name,
+            b.tag_path_name
         FROM
           voyageone_cms2.cms_bt_promotion_code a
           LEFT JOIN voyageone_cms2.cms_bt_tag b ON a.tag_id = b.tag_id
@@ -103,6 +109,9 @@
             <if test="catPath != null" >
                 cat_path,
             </if>
+            <if test="retailPrice != null" >
+                retail_price,
+            </if>
             <if test="salePrice != null" >
                 sale_price,
             </if>
@@ -154,6 +163,9 @@
             </if>
             <if test="catPath != null" >
                 #{catPath,jdbcType=VARCHAR},
+            </if>
+            <if test="retailPrice != null" >
+                #{retailPrice,jdbcType=DOUBLE},
             </if>
             <if test="salePrice != null" >
                 #{salePrice,jdbcType=DOUBLE},
@@ -209,6 +221,9 @@
             </if>
             <if test="catPath != null" >
                 cat_path = #{catPath,jdbcType=VARCHAR},
+            </if>
+            <if test="retailPrice != null" >
+                retail_price = #{retailPrice,jdbcType=DOUBLE},
             </if>
             <if test="salePrice != null" >
                 sale_price = #{salePrice,jdbcType=DOUBLE},

@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * (临时) 为插入接口提供专门服务
@@ -146,6 +147,9 @@ class SearsWsdlInsert extends SearsWsdlBase {
 
 
             for (String categorPath : categoriePaths) {
+                // 把类目名中的【-】替换成全角的【－】
+                List<String> categors = java.util.Arrays.asList(categorPath.split(" - "));
+                categorPath = categors.stream().map(s -> s.replace("-", "－")).collect(Collectors.joining("-"));
 
                 List<CmsBtFeedInfoModel> productSucceeList = new ArrayList<>();
 

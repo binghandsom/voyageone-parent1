@@ -17,14 +17,6 @@
  */
 
 /**
- * @typedef {object} FeedPropMappingPopupContext
- * @property {string} feedCategoryPath
- * @property {string} mainCategoryPath
- * @property {Field} field
- * @property {FieldBean} bean
- */
-
-/**
  * Simple Mapping List 设定弹出框的上下文参数
  * @name SimpleListMappingPopupContext
  * @class
@@ -58,6 +50,27 @@ define([
                     "controller": 'popAuthorityNewCtl'
                 }
             },
+        "addattributevalue": {
+            "new": {
+                "templateUrl": "views/pop/addattributevalue/add.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/addattributevalue/add.ctl",
+                "controller": 'popAddAttributeValueCtl'
+            }
+        },
+        "addattributevaluenew": {
+            "new": {
+                "templateUrl": "views/pop/addattributevalue/new.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/addattributevalue/new.ctl",
+                "controller": 'popAddAttributeValueNewCtl'
+            }
+        },
+        "addattributevaluenews": {
+            "new": {
+                "templateUrl": "views/pop/addattributevalue/news.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/addattributevalue/news.ctl",
+                "controller": 'popAddAttributeValueNewsCtl'
+            }
+        },
             "bulkUpdate": {
                 "addToPromotion": {
                     "templateUrl": "views/pop/bulkUpdate/addToPromotion.tpl.html",
@@ -125,7 +138,7 @@ define([
                     "controllerUrl": "modules/cms/views/pop/feedMapping/value.ctl",
                     "controller": 'propFeedMappingValueController as ctrl',
                     "backdrop": 'static',
-                    "size": 'lg'
+                    "size": 'xlg'
                 }
             },
             "platformMapping": {
@@ -255,6 +268,56 @@ define([
         }
 
         /**
+         * 新增属性值
+         * @type {openAddattributevalueNew}
+         */
+        $scope.openAddattributevaluenew = openAddattributevaluenew;
+        function openAddattributevaluenew(viewSize, data) {
+            require([popActions.addattributevaluenew.new.controllerUrl], function () {
+                $modal.open({
+                    templateUrl: popActions.addattributevaluenew.new.templateUrl,
+                    controller: popActions.addattributevaluenew.new.controller,
+                    size: viewSize,
+                    resolve: {
+                        data: function () {
+                            return data;
+                        }
+                    }
+                });
+            });
+        }
+        $scope.openAddattributevaluenews = openAddattributevaluenews;
+        function openAddattributevaluenews(viewSize, data) {
+            require([popActions.addattributevaluenews.new.controllerUrl], function () {
+                $modal.open({
+                    templateUrl: popActions.addattributevaluenews.new.templateUrl,
+                    controller: popActions.addattributevaluenews.new.controller,
+                    size: viewSize,
+                    resolve: {
+                        data: function () {
+                            return data;
+                        }
+                    }
+                });
+            });
+        }
+        $scope.openAddattributevalue = openAddattributevalue;
+        function openAddattributevalue(viewSize, data) {
+            require([popActions.addattributevalue.new.controllerUrl], function () {
+                $modal.open({
+                    templateUrl: popActions.addattributevalue.new.templateUrl,
+                    controller: popActions.addattributevalue.new.controller,
+                    size: viewSize,
+                    resolve: {
+                        data: function () {
+                            return data;
+                        }
+                    }
+                });
+            });
+        }
+
+        /**
          * pop出promotion选择页面,用于设置
          * @type {openAddToPromotion}
          */
@@ -268,11 +331,15 @@ define([
                         size: viewSize,
                         resolve: {
                             promotion: function () {
+                                //var productIds = [];
+                                //_.forEach(selList, function (object) {
+                                //    productIds.push(object);
+                                //});
                                 var productIds = [];
                                 _.forEach(selList, function (object) {
                                     productIds.push(object.id);
                                 });
-                                return {"promotion": promotion, "productIds": productIds};
+                                return {"promotion": promotion, "productIds": productIds, "products": selList};
                             }
                         }
                     });
@@ -409,10 +476,6 @@ define([
             });
         }
 
-        /**
-         * @param {FeedPropMappingPopupContext} context
-         * @returns {Promise}
-         */
         $scope.popupFeed = function (context) {
             return openModel(popActions.feedMapping.attribute, context);
         };

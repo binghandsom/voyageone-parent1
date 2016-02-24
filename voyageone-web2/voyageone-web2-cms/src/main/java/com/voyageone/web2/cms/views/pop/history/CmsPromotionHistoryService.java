@@ -37,7 +37,7 @@ public class CmsPromotionHistoryService extends BaseAppService {
         result.put("total", count);
 
         // 获取cart list
-        result.put("cartList", TypeChannel.getOptionsWithLang(Constants.comMtType.CARTS, userInfo.getSelChannelId(), language));
+        result.put("cartList", TypeChannel.getTypeListSkuCarts(userInfo.getSelChannelId(),Constants.comMtTypeChannel.SKU_CARTS_53_D,  language));
         return result;
     }
 

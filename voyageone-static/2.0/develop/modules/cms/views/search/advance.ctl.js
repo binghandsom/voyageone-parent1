@@ -99,7 +99,7 @@ define([
 
             searchAdvanceService.getGroupList($scope.vm.searchInfo, $scope.vm.groupPageOption, $scope.vm.groupSelList)
             .then(function (res) {
-                $scope.vm.groupList = res.data.groupList;
+                $scope.vm.groupList = res.data.groupList == null ? [] : res.data.groupList;
                 $scope.vm.groupPageOption.total = res.data.groupListTotal;
                 $scope.vm.groupSelList = res.data.groupSelList;
             });
@@ -112,7 +112,7 @@ define([
 
             searchAdvanceService.getProductList($scope.vm.searchInfo, $scope.vm.productPageOption, $scope.vm.productSelList)
                 .then(function (res) {
-                    $scope.vm.productList = res.data.productList;
+                    $scope.vm.productList = res.data.productList == null ? [] : res.data.productList;
                     $scope.vm.productPageOption.total = res.data.productListTotal;
                     $scope.vm.productSelList = res.data.productSelList;
                 });

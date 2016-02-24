@@ -9,7 +9,11 @@ import com.voyageone.cms.service.dao.mongodb.CmsBtProductDao;
 import com.voyageone.cms.service.dao.mongodb.CmsMtCategorySchemaDao;
 import com.voyageone.cms.service.dao.mongodb.CmsMtCommonSchemaDao;
 import com.voyageone.cms.service.model.*;
+import com.voyageone.common.Constants;
+import com.voyageone.common.configs.Type;
 import com.voyageone.common.configs.TypeChannel;
+import com.voyageone.common.configs.beans.TypeBean;
+import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.factory.SchemaJsonReader;
 import com.voyageone.common.masterdate.schema.field.*;
@@ -26,12 +30,10 @@ import com.voyageone.web2.cms.dao.CmsBtFeedCustomPropDao;
 import com.voyageone.web2.cms.model.CmsBtFeedCustomPropModel;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import com.voyageone.web2.sdk.api.VoApiDefaultClient;
-import com.voyageone.web2.sdk.api.request.CategorySchemaGetRequest;
-import com.voyageone.web2.sdk.api.request.ProductGroupMainCategoryUpdateRequest;
-import com.voyageone.web2.sdk.api.request.ProductUpdateRequest;
-import com.voyageone.web2.sdk.api.request.ProductsGetRequest;
+import com.voyageone.web2.sdk.api.request.*;
 import com.voyageone.web2.sdk.api.response.CategorySchemaGetResponse;
 import com.voyageone.web2.sdk.api.response.ProductGroupMainCategoryUpdateResponse;
+import com.voyageone.web2.sdk.api.response.ProductSkuResponse;
 import com.voyageone.web2.sdk.api.response.ProductsGetResponse;
 import com.voyageone.web2.sdk.api.service.ProductSdkClient;
 import org.apache.commons.logging.Log;
@@ -74,9 +76,13 @@ public class CmsProductDetailService {
     @Autowired
     protected VoApiDefaultClient voApiClient;
 
-    private static final String optionDataSource = "optConfig";
+    private static final String OPTION_DATA_SOURCE = "optConfig";
 
-    private static final String completeStatus = "1";
+    private static final String OPTION_DATA_SOURCE_CHANNEL = "optConfigChannel";
+    
+    private static final String FIELD_SKU_CARTS = "skuCarts";
+
+    private static final String COMPLETE_STATUS = "1";
 
     /**
      * 获取类目以及类目属性信息.
@@ -87,7 +93,7 @@ public class CmsProductDetailService {
      * @return
      * @throws BusinessException
      */
-    public CmsProductInfoBean getProductInfo(String channelId, Long prodId) throws BusinessException {
+    public CmsProductInfoBean getProductInfo(String channelId, Long prodId, String language) throws BusinessException {
 
         CmsProductInfoBean productInfo = new CmsProductInfoBean();
 
@@ -104,13 +110,13 @@ public class CmsProductDetailService {
         CmsProductInfoBean.ProductStatus productStatus = productInfo.getProductStatusInstance();
         productStatus.setApproveStatus(productValueModel.getFields().getStatus());
 
-        if (completeStatus.equals(productValueModel.getFields().getTranslateStatus())) {
+        if (COMPLETE_STATUS.equals(productValueModel.getFields().getTranslateStatus())) {
             productStatus.setTranslateStatus(true);
         } else {
             productStatus.setTranslateStatus(false);
         }
 
-        if (completeStatus.equals(productValueModel.getFields().getEditStatus())) {
+        if (COMPLETE_STATUS.equals(productValueModel.getFields().getEditStatus())) {
             productStatus.setEditStatus(true);
         } else {
             productStatus.setEditStatus(false);
@@ -130,7 +136,7 @@ public class CmsProductDetailService {
 
         List<Field> comSchemaFields = comSchemaModel.getFields();
 
-        this.fillFieldOptions(comSchemaFields, channelId);
+        this.fillFieldOptions(comSchemaFields, channelId, language);
 
         // 获取master schema.
         List<Field> masterSchemaFields = categorySchemaModel.getFields();
@@ -154,10 +160,17 @@ public class CmsProductDetailService {
 
         List<Field> subSkuFields = skuField.getFields();
 
-        this.fillFieldOptions(subSkuFields, channelId);
+        this.fillFieldOptions(subSkuFields, channelId, language);
+
+        // TODO 取得Sku的库存
+        ProductSkuRequest request = new ProductSkuRequest();
+        request.setChannelId(channelId);
+        request.setCode(productValueModel.getFields().getCode());
+
+        ProductSkuResponse skuInventoryList = voApiClient.execute(request);
 
         //获取sku schemaValue
-        Map<String, Object> skuSchemaValue = buildSkuSchemaValue(productValueModel, categorySchemaModel);
+        Map<String, Object> skuSchemaValue = buildSkuSchemaValue(productValueModel, categorySchemaModel, skuInventoryList.getSkuInventories());
 
         //填充sku schema.
         FieldUtil.setFieldsValueFromMap(skuSchemaFields, skuSchemaValue);
@@ -518,12 +531,13 @@ public class CmsProductDetailService {
      * @param categorySchemaModel
      * @return
      */
-    private Map<String, Object> buildSkuSchemaValue(CmsBtProductModel productValueModel, CmsMtCategorySchemaModel categorySchemaModel) {
+    private Map<String, Object> buildSkuSchemaValue(CmsBtProductModel productValueModel, CmsMtCategorySchemaModel categorySchemaModel, Map<String, Integer> inventoryList) {
         List<Map<String, Object>> skuValueModel = new ArrayList<>();
 
         List<CmsBtProductModel_Sku> valueSkus = productValueModel.getSkus();
 
         for (CmsBtProductModel_Sku model_sku : valueSkus) {
+            model_sku.setQty(inventoryList.get(model_sku.getSkuCode()));
             skuValueModel.add(model_sku);
         }
 
@@ -635,6 +649,8 @@ public class CmsProductDetailService {
 
         for (Map skuMap : skuValuesMap) {
             CmsBtProductModel_Sku skuModel = new CmsBtProductModel_Sku(skuMap);
+            // 特殊处理qty不更新到数据库
+            skuModel.remove("qty");
             skuValues.add(skuModel);
         }
         return skuValues;
@@ -698,30 +714,19 @@ public class CmsProductDetailService {
         BaseMongoMap<String, Object> orgAtts = new BaseMongoMap<>();
         BaseMongoMap<String, Object> cnAtts = new BaseMongoMap<>();
 
-        List<String> customIds = new ArrayList<>();
+        Map<String, String> orgAttsList = (Map<String, String>) customAttributesValue.get("orgAtts");
 
-        List<Map<String, String>> orgAttsList = (List<Map<String, String>>) customAttributesValue.get("orgAtts");
-        for (Map<String, String> orgAttMap : orgAttsList) {
-
-            orgAtts.put(orgAttMap.get("key"), orgAttMap.get("value"));
-
-            Object selected = orgAttMap.get("selected");
-
-            Boolean isSelected = (Boolean) selected;
-
-            if (isSelected) {
-                customIds.add(orgAttMap.get("key"));
-            }
+        for(Map.Entry orgAtt : orgAttsList.entrySet()) {
+            orgAtts.put(orgAtt.getKey().toString(), orgAtt.getValue());
         }
 
-        List<Map<String, String>> cnAttsList = (List<Map<String, String>>) customAttributesValue.get("cnAtts");
-        for (Map<String, String> cnAttsMap : cnAttsList) {
-            cnAtts.put(cnAttsMap.get("key"), cnAttsMap.get("value"));
+        Map<String, Object> cnAttsList = (Map<String, Object>) customAttributesValue.get("cnAtts");
+        for(Map.Entry cnAtt : cnAttsList.entrySet()) {
+            cnAtts.put(cnAtt.getKey().toString(), cnAtt.getValue());
         }
 
         feedModel.setOrgAtts(orgAtts);
         feedModel.setCnAtts(cnAtts);
-        feedModel.setCustomIds(customIds);
         return feedModel;
     }
 
@@ -890,11 +895,12 @@ public class CmsProductDetailService {
      * @param fields
      * @param channelId
      */
-    private void fillFieldOptions(List<Field> fields, String channelId) {
+    private void fillFieldOptions(List<Field> fields, String channelId, String language) {
 
         for (Field field : fields) {
 
-            if (optionDataSource.equals(field.getDataSource())) {
+            if (OPTION_DATA_SOURCE.equals(field.getDataSource())
+                    || OPTION_DATA_SOURCE_CHANNEL.equals(field.getDataSource())) {
 
                 FieldTypeEnum type = field.getType();
 
@@ -905,9 +911,40 @@ public class CmsProductDetailService {
                         break;
                     case SINGLECHECK:
                     case MULTICHECK:
-                        List<Option> options = TypeChannel.getOptions(field.getId(), channelId);
-                        OptionsField optionsField = (OptionsField) field;
-                        optionsField.setOptions(options);
+                        if (OPTION_DATA_SOURCE.equals(field.getDataSource())) {
+                            List<TypeBean> typeBeanList = Type.getTypeList(field.getId(), language);
+
+                            // 替换成field需要的样式
+                            List<Option> options = new ArrayList<>();
+                            for (TypeBean typeBean : typeBeanList) {
+                                Option opt = new Option();
+                                opt.setDisplayName(typeBean.getName());
+                                opt.setValue(typeBean.getValue());
+                                options.add(opt);
+                            }
+
+                            OptionsField optionsField = (OptionsField) field;
+                            optionsField.setOptions(options);
+                        } else if (OPTION_DATA_SOURCE_CHANNEL.equals(field.getDataSource())) {
+                            // 获取type channel bean
+                            List<TypeChannelBean> typeChannelBeanList = new ArrayList<>();
+                            if (FIELD_SKU_CARTS.equals(field.getId())) {
+                                typeChannelBeanList = TypeChannel.getTypeListSkuCarts(channelId, Constants.comMtTypeChannel.SKU_CARTS_53_A, language);
+                            } else {
+                                typeChannelBeanList = TypeChannel.getTypeWithLang(field.getId(), channelId, language);
+                            }
+
+                            // 替换成field需要的样式
+                            List<Option> options = new ArrayList<>();
+                            for (TypeChannelBean typeChannelBean : typeChannelBeanList) {
+                                Option opt = new Option();
+                                opt.setDisplayName(typeChannelBean.getName());
+                                opt.setValue(typeChannelBean.getValue());
+                                options.add(opt);
+                            }
+                            OptionsField optionsField = (OptionsField) field;
+                            optionsField.setOptions(options);
+                        }
                         break;
                     default:
                         break;
