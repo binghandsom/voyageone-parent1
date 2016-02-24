@@ -2,18 +2,23 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function () {
     function indexController($scope,systemCategoryService) {
-        $scope.vm = {"categoryList": []};
-        $scope.searchInfo = {};
+        $scope.vm = {categoryList: [], searchInfo : {catName: "", catId: ""}};
         $scope.categoryPageOption = {curr: 1, total: 198, size: 30, fetch: search};
 
         $scope.initialize  = function () {
             search();
-        }
+        };
+
+        $scope.search = search;
+
+        $scope.clear = function () {
+            $scope.vm.searchInfo = {catName: "", catId: ""};
+        };
 
         function search() {
             systemCategoryService.getCategoryList({
-                "catName":$scope.vm.catName,
-                "catId": $scope.vm.catId,
+                "catName":$scope.vm.searchInfo.catName,
+                "catId": $scope.vm.searchInfo.catId,
                 "skip": ($scope.categoryPageOption.curr - 1) * $scope.categoryPageOption.size,
                 "limit": $scope.categoryPageOption.size
             }).then(function (res) {
@@ -23,7 +28,6 @@ define([
 
             })
         }
-        $scope.search = search;
     }
 
     indexController.$inject = ['$scope', 'systemCategoryService'];

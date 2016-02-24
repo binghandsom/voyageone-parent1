@@ -1,7 +1,7 @@
 package com.voyageone.web2.cms.views;
 
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
-import com.voyageone.web2.cms.views.setting.mapping.feed.CmsFeedMappingService;
+import com.voyageone.web2.cms.views.mapping.feed.CmsFeedMappingService;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

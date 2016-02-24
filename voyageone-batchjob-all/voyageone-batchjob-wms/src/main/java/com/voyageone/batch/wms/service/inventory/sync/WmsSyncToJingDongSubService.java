@@ -48,6 +48,7 @@ public class WmsSyncToJingDongSubService extends WmsSyncInventoryBaseService {
             res = jdInventoryService.skuStockUpdate(shopBean, inventorySynLogBean.getSku(), String.valueOf(inventorySynLogBean.getQty()));
         } catch (JdException e) {
             logFailRecord(e, inventorySynLogBean);
+            return;
         }
 
         // 有返回内容，但没有错误代码，就认为是成功调用

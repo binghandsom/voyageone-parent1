@@ -19,12 +19,13 @@ define([
         "vConfirm",
         "$filter",
         "notify",
+        "$window",
         "wmsConstant",
         "wmsChangeReservation",
-        pickupListCtrl
+        receiveListCtrl
     ]);
 
-    function pickupListCtrl($scope, receiveService, printService, confirm, $filter, notify, wmsConstant, wmsChangeReservation) {
+    function receiveListCtrl($scope, receiveService, printService, confirm, $filter, notify, $window, wmsConstant, wmsChangeReservation) {
 
         var vm = $scope.vm = {};
 
@@ -46,12 +47,22 @@ define([
         //根据所选种类更新物品
         $scope.changeKind = changeKind;
 
+        //已收货报告下载
+        $scope.downloadReportReceived = downloadReportReceived;
+
+
         //检索条件初始化
         vm.search = {
             orderNumber:"",
             reservationId: "",
             sku:"",
             status:"",
+            fromDate:null,
+            toDate:null
+        };
+
+        //检索条件初始化
+        vm.report = {
             fromDate:null,
             toDate:null
         };
@@ -103,6 +114,10 @@ define([
             vm.search.fromDate = response.data.fromDate;
             vm.search.toDate = response.data.toDate;
 
+            vm.report.store =vm.stores[0].store_id;
+            vm.report.fromDate = response.data.reportFromDate;
+            vm.report.toDate = response.data.reportToDate;
+            console.log(vm.report);
             vm.selectStores = response.data.selectStoreList;
             if (response.data.selectStoreList.length == 1) {
                 vm.scan.store = vm.selectStores[0].store_id;
@@ -313,6 +328,31 @@ define([
             wmsChangeReservation($scope,reservation);
 
         }
+
+        // 已拣货报告下载
+        function downloadReportReceived() {
+            var f = "yyyy-MM-dd";
+            var dateFilter = $filter("date");
+            var format = function(v) {
+                return v ? (_.isDate(v) ?dateFilter(v, f) : v) : "";
+            };
+
+            // 格式化时间
+            var from = format(vm.report.fromDate),
+                to = format(vm.report.toDate);
+            //var checkFrom = getNextDay(from)
+
+            //js日期比较(yyyy-mm-dd)
+            //if (checkDate(checkFrom, to) == false){
+            //    notify({"message": "WMS_DEL_REPORT_CHECK_DATE","status":"warning"});
+            //    return;
+            //}
+            var downloadUrl = "./wms/receive/report/download?store_id={0}&from={1}&to={2}";
+            var realPage = downloadUrl.replace ("{0}",vm.report.store).replace ("{1}",from).replace ("{2}",to);
+            $window.open(realPage);
+
+        }
+
 
 
     }

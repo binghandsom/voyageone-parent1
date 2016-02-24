@@ -194,7 +194,12 @@ public class TypeConfigEnums {
 		/**
 		 * 错误类别:cms2
 		 */
-		errorType(55);
+		errorType(55),
+
+		/**
+		 * 活动状态:cms2
+		 */
+		promotionStatus(56);
 
     	private int id;
 

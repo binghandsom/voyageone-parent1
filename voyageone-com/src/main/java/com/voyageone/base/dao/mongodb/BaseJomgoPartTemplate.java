@@ -126,10 +126,12 @@ public class BaseJomgoPartTemplate {
         FindOne find;
 
         //condition
-        if (StringUtils.isEmpty(queryObject.getQuery())) {
-            find = getCollection(collectionName).findOne();
-        } else {
+        if (!StringUtils.isEmpty(queryObject.getQuery())) {
             find = getCollection(collectionName).findOne(queryObject.getQuery());
+        } else if (queryObject.getObjectId() != null) {
+            find = getCollection(collectionName).findOne(queryObject.getObjectId());
+        } else {
+            find = getCollection(collectionName).findOne();
         }
 
         //column
@@ -291,7 +293,11 @@ public class BaseJomgoPartTemplate {
         return getCollection(collectionName).update(strQuery).multi().with(strUpdate);
     }
 
-    public WriteResult upsert(String strQuery, String strUpdate, String collectionName) {
+    public WriteResult upsertFirst(String strQuery, String strUpdate, String collectionName) {
+        return getCollection(collectionName).update(strQuery).upsert().with(strUpdate);
+    }
+
+    public WriteResult upsertMulti(String strQuery, String strUpdate, String collectionName) {
         return getCollection(collectionName).update(strQuery).upsert().multi().with(strUpdate);
     }
 

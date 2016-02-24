@@ -15,9 +15,12 @@ import com.voyageone.common.components.yimei.YMSmsSendService;
 import com.voyageone.common.components.yimei.bean.YMSMSSendBean;
 import com.voyageone.common.configs.ChannelConfigs;
 import com.voyageone.common.configs.Codes;
+import com.voyageone.common.configs.Enums.ShopConfigEnums;
+import com.voyageone.common.configs.ShopConfigs;
 import com.voyageone.common.configs.ThirdPartyConfigs;
 import com.voyageone.common.configs.beans.FtpBean;
 import com.voyageone.common.configs.beans.OrderChannelBean;
+import com.voyageone.common.configs.beans.ShopConfigBean;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -137,11 +140,28 @@ public class SendSMSService  extends BaseTaskService {
                     if (checkSendCount(sendSMSBean.getShip_phone()) == false) {
                         continue;
                     }
+
+                    //主渠道订单判定
+                    String mainChannelFullName = "";
+                    OrderChannelBean mainChannel = new OrderChannelBean();
+                    List<ShopConfigBean> shopConfig = ShopConfigs.getConfigs(channel.getOrder_channel_id(), sendSMSBean.getCart_id(), ShopConfigEnums.Name.main_channel_id);
+                    if (shopConfig != null && shopConfig.size() > 0 && shopConfig.get(0).getCfg_val2().equals(Constants.smsChange.CHANGE_ON)){
+                        mainChannel = ChannelConfigs.getChannel(shopConfig.get(0).getCfg_val1());
+                        mainChannelFullName = String.format(SynshipConstants.SMS_CHECK.SIGN_NAME, mainChannel.getFull_name());
+                        $info("聚美变化后短信签名：" + mainChannelFullName);
+                    }
+
                     //ymsmsSendBean = formatYMSMSSendBean("001","13661895431","【Sneakerhead】林冰洁，您购买的宝贝美国洛杉矶发货，请在23点前点击 synship.net.cn/a/UBVrQ3 上传身份证信息用于清关。");
                     // 判断签名是否设定
-                    if (sendSMSBean.getSent_conent().startsWith(signName)) {
-                        // 签名已设定
-                        content = sendSMSBean.getSent_conent();
+                    if (sendSMSBean.getSent_conent().startsWith(signName) || (!StringUtils.isNullOrBlank2(mainChannelFullName) && sendSMSBean.getSent_conent().startsWith(mainChannelFullName))) {
+                        //聚美变化后短信签名有
+                        if (!StringUtils.isNullOrBlank2(mainChannelFullName)){
+                            // 签名已设定
+                            content = sendSMSBean.getSent_conent().replaceFirst(signName,mainChannelFullName);
+                        }else {
+                            // 签名已设定
+                            content = sendSMSBean.getSent_conent();
+                        }
                     } else {
                         // 判断现有签名不正确
                         if (sendSMSBean.getSent_conent().startsWith(charCheck)){
@@ -150,12 +170,23 @@ public class SendSMSService  extends BaseTaskService {
                                     ",  phone = " + sendSMSBean.getShip_phone()+ ",  conent = " + sendSMSBean.getSent_conent());
                             continue;
                         } else {
-                            // 签名未设定
-                            content = signName + sendSMSBean.getSent_conent();
+                            //变化后短信签名有
+                            if (!StringUtils.isNullOrBlank2(mainChannelFullName)){
+                                // 签名未设定
+                                content = mainChannelFullName + sendSMSBean.getSent_conent();
+                            }else {
+                                // 签名未设定
+                                content = signName + sendSMSBean.getSent_conent();
+                            }
                         }
                     }
                     $info("order_channel_id = " + sendSMSBean.getOrder_channel_id() + ",  phone = " + sendSMSBean.getShip_phone() + ",  conent = " + content);
-                    ymsmsSendBean = formatYMSMSSendBean(sendSMSBean.getOrder_channel_id(), sendSMSBean.getShip_phone(), content,sendSMSBean.getSms_type());
+                    //主渠道变化后短信签名有
+                    if (!StringUtils.isNullOrBlank2(mainChannelFullName)){
+                        ymsmsSendBean = formatYMSMSSendBean(mainChannel.getOrder_channel_id(), sendSMSBean.getShip_phone(), content, sendSMSBean.getSms_type());
+                    }else {
+                        ymsmsSendBean = formatYMSMSSendBean(sendSMSBean.getOrder_channel_id(), sendSMSBean.getShip_phone(), content, sendSMSBean.getSms_type());
+                    }
                     try {
                         Integer sendFlg = ymSmsSendService.sendSMS(ymsmsSendBean);
                         $info("发送短信返回值 = " + sendFlg.toString());
@@ -184,9 +215,9 @@ public class SendSMSService  extends BaseTaskService {
                     }
                 }
                 // 物流短信余额判断
-                checkBalance(sendSMSLstLst.size(),channel.getOrder_channel_id(),Constants.smsInfo.SMS_TYPE_LOGISTICS);
+                checkBalance(sendSMSLstLst.size(),channel.getOrder_channel_id(),Constants.smsInfo.SMS_TYPE_LOGISTICS, SynshipConstants.SMS_CHECK.ACCOUNT_BALANCE_LOGISTICS);
                 // 营销短信余额判断
-                checkBalance(sendSMSLstLst.size(),channel.getOrder_channel_id(),Constants.smsInfo.SMS_TYPE_MARKETING);
+                checkBalance(sendSMSLstLst.size(), channel.getOrder_channel_id(), Constants.smsInfo.SMS_TYPE_MARKETING, SynshipConstants.SMS_CHECK.ACCOUNT_BALANCE_MARKETING);
 
             } catch (Exception e) {
                 $info(channel.getFull_name() + "定时发送短信发生错误：", e);
@@ -328,7 +359,7 @@ public class SendSMSService  extends BaseTaskService {
          * @param
          *
          */
-        private void checkBalance(int sendSMSLstLstSize,String orderChannelId,String sms_type) {
+        private void checkBalance(int sendSMSLstLstSize,String orderChannelId,String sms_type, Double accountBalance) {
             // 余额不足的场合
             if (sendSMSLstLstSize > 0) {
                 double balance = 0d;
@@ -346,7 +377,7 @@ public class SendSMSService  extends BaseTaskService {
 
                     $info(strValue + "短信账户的剩余金额(实际金额)： " + (balance / 2));
                     // 余额不足200的场合，发送要求充值邮件(之所以用大于零而不是大于等于零的原因是防止误报)
-                    if (balance > 0d && (balance / 2) < SynshipConstants.SMS_CHECK.ACCOUNT_BALANCE) {
+                    if (balance > 0d && (balance / 2) < accountBalance) {
                         logIssue(strValue + "短信账户的剩余金额不足，请尽快充值", "短信账户的剩余金额:" + (balance / 2));
                     }
                 } catch (Exception e) {

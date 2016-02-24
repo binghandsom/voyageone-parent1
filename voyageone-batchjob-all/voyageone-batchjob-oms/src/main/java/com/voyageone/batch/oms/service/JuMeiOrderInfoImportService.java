@@ -577,6 +577,8 @@ public class JuMeiOrderInfoImportService {
 		rec.setBuyer_nick(StringUtils.null2Space2(trade.getBuyer_nick()));
 		// 追加身份证信息
 		rec.setId_card(StringUtils.null2Space2(trade.getId_card()));
+		// cartId
+		rec.setCartId(trade.getCartId());
 		String orderComment = JsonUtil.getJsonString(rec);
 		
 		// 调用wsdl验证数据拼装

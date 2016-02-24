@@ -211,7 +211,7 @@ public class WmsUpdateStatusService extends BaseTaskService {
                                         }
                                         break;
 
-                                    case CodeConstants.Reservation_Status.ShippedUS:
+                                    case CodeConstants.Reservation_Status.Shipped:
                                     case CodeConstants.Reservation_Status.Arrived:
                                         reservation.setClient_status(SerasConstants.Status.Shipped);
                                         reservation.setClient_status_comment(SerasConstants.Notes.Shipped);
@@ -220,7 +220,7 @@ public class WmsUpdateStatusService extends BaseTaskService {
 //                                        updateStatusItem.setInternationalTrackingNumber(reservation.getSyn_ship_no());
 
                                         // 该状态已更新的场合，忽略此记录
-                                        if (reservation.getReservation_status().equals(CodeConstants.Reservation_Status.ShippedUS)) {
+                                        if (reservation.getReservation_status().equals(CodeConstants.Reservation_Status.Shipped)) {
                                             reservation.setClient_status_update(true);
                                         }
                                         break;

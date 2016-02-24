@@ -1,6 +1,6 @@
 package com.voyageone.web2.cms.bean.setting.mapping.feed;
 
-import com.voyageone.web2.cms.views.setting.mapping.feed.CmsFeedMappingController;
+import com.voyageone.web2.cms.views.mapping.feed.CmsFeedMappingController;
 
 /**
  * {@link CmsFeedMappingController } setMapping 的请求参数
@@ -13,6 +13,8 @@ public class SetMappingBean {
     private String from;
 
     private String to;
+
+    private boolean isCommon;
 
     public SetMappingBean() {
     }
@@ -36,5 +38,13 @@ public class SetMappingBean {
 
     public void setFrom(String from) {
         this.from = from;
+    }
+
+    public boolean isCommon() {
+        return isCommon;
+    }
+
+    public void setIsCommon(boolean common) {
+        isCommon = common;
     }
 }

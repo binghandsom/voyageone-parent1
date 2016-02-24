@@ -1,7 +1,6 @@
 package com.voyageone.web2.sdk.api.request;
 
 import com.voyageone.web2.sdk.api.VoApiRequest;
-import com.voyageone.web2.sdk.api.domain.CmsBtPromotionCodeModel;
 import com.voyageone.web2.sdk.api.exception.ApiRuleException;
 import com.voyageone.web2.sdk.api.response.PromotionDetailPutResponse;
 import com.voyageone.web2.sdk.api.util.RequestUtils;
@@ -22,6 +21,7 @@ public class PromotionDetailAddRequest extends VoApiRequest<PromotionDetailPutRe
     private String channelId;
     private Double promotionPrice;
     private String productCode;
+    private Long productId;
 
     @Override
     public String getApiURLPath() {
@@ -35,7 +35,7 @@ public class PromotionDetailAddRequest extends VoApiRequest<PromotionDetailPutRe
         RequestUtils.checkNotEmpty("cartId",cartId);
         RequestUtils.checkNotEmpty("channelId",channelId);
         RequestUtils.checkNotEmpty("promotionPrice",promotionPrice);
-        RequestUtils.checkNotEmpty("productCode",productCode);
+        RequestUtils.checkNotEmpty("productCode, productId",productCode, productId);
     }
 
     public Integer getTagId() {
@@ -92,6 +92,14 @@ public class PromotionDetailAddRequest extends VoApiRequest<PromotionDetailPutRe
 
     public void setTagPath(String tagPath) {
         this.tagPath = tagPath;
+    }
+
+    public Long getProductId() {
+        return productId;
+    }
+
+    public void setProductId(Long productId) {
+        this.productId = productId;
     }
 
 }

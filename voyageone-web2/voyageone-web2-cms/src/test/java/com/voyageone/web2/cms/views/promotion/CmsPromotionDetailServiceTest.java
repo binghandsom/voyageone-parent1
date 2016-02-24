@@ -1,6 +1,7 @@
 package com.voyageone.web2.cms.views.promotion;
 
 import com.voyageone.web2.cms.bean.CmsPromotionProductPriceBean;
+import com.voyageone.web2.cms.views.promotion.list.CmsPromotionDetailService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,8 +14,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static org.junit.Assert.*;
 
 /**
  * @author james.li on 2015/12/16.

@@ -25,6 +25,7 @@ public final class WmsMsgConstants {
         public static String IN_OUT_NOT_MATCH = "3000013";
         public static String PACKAGE_NOT_CLOSE = "3000014";
         public static final String DOWNLOAD_FAILED = "3000027";
+        public static final String REPORT_FAILED = "3000066";
     }
 
     /**

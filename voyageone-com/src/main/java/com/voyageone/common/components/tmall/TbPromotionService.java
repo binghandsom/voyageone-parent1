@@ -5,9 +5,11 @@ import com.taobao.api.domain.TipItemPromDTO;
 import com.taobao.api.request.TmallProductMatchSchemaGetRequest;
 import com.taobao.api.request.TmallPromotionTipItemAddRequest;
 import com.taobao.api.request.TmallPromotionTipItemModifyRequest;
+import com.taobao.api.request.TmallPromotionTipItemRemoveRequest;
 import com.taobao.api.response.TmallProductMatchSchemaGetResponse;
 import com.taobao.api.response.TmallPromotionTipItemAddResponse;
 import com.taobao.api.response.TmallPromotionTipItemModifyResponse;
+import com.taobao.api.response.TmallPromotionTipItemRemoveResponse;
 import com.voyageone.common.components.tmall.base.TbBase;
 import com.voyageone.common.configs.beans.ShopBean;
 import org.apache.commons.logging.Log;
@@ -46,6 +48,19 @@ public class TbPromotionService extends TbBase {
         req.setItemProm(ItemProm);
 
         TmallPromotionTipItemModifyResponse response = reqTaobaoApi(shopBean, req);
+        if (response.getErrorCode() != null)
+        {
+            logger.error(response.getSubMsg());
+        }
+        return response;
+    }
+
+    public TmallPromotionTipItemRemoveResponse removePromotion(ShopBean shopBean, Long num_iid, Long campaign_id) throws ApiException {
+        logger.info("天猫特价宝删除活动商品 " + num_iid);
+        TmallPromotionTipItemRemoveRequest req = new TmallPromotionTipItemRemoveRequest();
+        req.setItemId(num_iid);
+        req.setCampaignId(campaign_id);
+        TmallPromotionTipItemRemoveResponse response = reqTaobaoApi(shopBean, req);
         if (response.getErrorCode() != null)
         {
             logger.error(response.getSubMsg());

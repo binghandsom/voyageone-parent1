@@ -18,6 +18,9 @@
 
 				<!-- Sears向scene7上传产品图片 -->
 				<ref bean="searsImagePostScene7TaskContri" />
+
+				<!-- Gilt向scene7上传产品图片 -->
+				<ref bean="giltImagePostScene7TaskContri"/>
 			</list>
 		</property>
 		<property name="quartzProperties">

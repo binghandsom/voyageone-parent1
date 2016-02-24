@@ -41,6 +41,9 @@ public class SynShipSimShipmentService  extends BaseTaskService {
     ReservationDao reservationDao;
 
     @Autowired
+    OrderDao orderDao;
+
+    @Autowired
     private TransactionRunner transactionRunner;
 
     @Override
@@ -264,7 +267,7 @@ public class SynShipSimShipmentService  extends BaseTaskService {
 
                             if (port.equals(PortConfigEnums.Port.LA.getId())) {
                                 // 更新物品状态
-                                reservationDao.UpdateReservationStatus(clientTracking.getSyn_ship_no(), CodeConstants.Reservation_Status.ShippedUS, "2",getTaskName());
+                                reservationDao.UpdateReservationStatus(clientTracking.getSyn_ship_no(), CodeConstants.Reservation_Status.ShippedTP, "2",getTaskName());
 
                                 // 插入物品日志
                                 reservationDao.insertReservationLog(clientTracking.getSyn_ship_no(), "Sim LA Port Shipment", getTaskName());
@@ -272,6 +275,9 @@ public class SynShipSimShipmentService  extends BaseTaskService {
                             else  if (port.equals(PortConfigEnums.Port.CN.getId())) {
                                 // 更新物品状态
                                 reservationDao.UpdateReservationStatus(clientTracking.getSyn_ship_no(), CodeConstants.Reservation_Status.ShippedCN, "2",getTaskName());
+
+                                // 更新订单状态
+                                orderDao.updateOrderStatus(clientTracking.getSyn_ship_no(), CodeConstants.Reservation_Status.ShippedCN, getTaskName());
 
                                 // 插入物品日志
                                 reservationDao.insertReservationLog(clientTracking.getSyn_ship_no(), "Sim CN Port Shipment", getTaskName());
@@ -465,6 +471,10 @@ public class SynShipSimShipmentService  extends BaseTaskService {
         trackingBean.setSent_kd100_poll_count("0");
         trackingBean.setSent_kd100_flg("0");
         trackingBean.setPrint_type("0");
+        // 顺丰时，为了向快递100订阅信息，将打印类型设为1
+        if (trackingBean.getTracking_type().equals("SF")) {
+            trackingBean.setPrint_type("1");
+        }
         trackingBean.setCreate_time(DateTimeUtil.getNow());
         trackingBean.setUpdate_time(DateTimeUtil.getNow());
         trackingBean.setCreate_person(getTaskName());

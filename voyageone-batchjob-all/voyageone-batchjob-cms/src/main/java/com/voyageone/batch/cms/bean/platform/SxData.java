@@ -3,6 +3,7 @@ package com.voyageone.batch.cms.bean.platform;
 import com.voyageone.cms.service.model.CmsBtProductModel;
 import com.voyageone.cms.service.model.CmsBtProductModel_Group_Platform;
 import com.voyageone.cms.service.model.CmsBtProductModel_Sku;
+import com.voyageone.common.configs.beans.ShopBean;
 
 import java.util.List;
 import java.util.Map;
@@ -14,6 +15,7 @@ public class SxData {
 	private String channelId;
 	private Integer cartId;
 	private Long groupId;
+	private ShopBean shopBean;
 	private int promotionId;										// 活动id (目前只有聚美用到, 由cms进行管理)
 	private int publishStatus;										// 上新状态
 
@@ -22,8 +24,20 @@ public class SxData {
 	private List<CmsBtProductModel_Sku> skuList;					// 只包含当前group中, 允许使用的sku信息
 	private Map<String, Integer> qtyList;							// 只包含当前group中, 允许使用的库存信息
 
+	// ***************************
+	// 聚美专用数据
+	// ...
+	// ***************************
+
+	private String platformCategoryId;
 	private String platformProductId;
 	private String platformNumIId;
+
+	// 存放平台上新需要的数据 （最后调用上新API用的那些数据结构）
+	// 例： "TM_Product", xxxBean
+	// 例： "TM_Item", xxxBean
+	// 例： "JM_Product", JmProductBean
+	private Map<String, Object> platformSxData;
 
 	public String getChannelId() {
 		return channelId;
@@ -47,6 +61,14 @@ public class SxData {
 
 	public void setGroupId(Long groupId) {
 		this.groupId = groupId;
+	}
+
+	public ShopBean getShopBean() {
+		return shopBean;
+	}
+
+	public void setShopBean(ShopBean shopBean) {
+		this.shopBean = shopBean;
 	}
 
 	public int getPromotionId() {
@@ -97,6 +119,14 @@ public class SxData {
 		this.qtyList = qtyList;
 	}
 
+	public String getPlatformCategoryId() {
+		return platformCategoryId;
+	}
+
+	public void setPlatformCategoryId(String platformCategoryId) {
+		this.platformCategoryId = platformCategoryId;
+	}
+
 	public String getPlatformProductId() {
 		return platformProductId;
 	}
@@ -111,5 +141,13 @@ public class SxData {
 
 	public void setPlatformNumIId(String platformNumIId) {
 		this.platformNumIId = platformNumIId;
+	}
+
+	public Map<String, Object> getPlatformSxData() {
+		return platformSxData;
+	}
+
+	public void setPlatformSxData(Map<String, Object> platformSxData) {
+		this.platformSxData = platformSxData;
 	}
 }

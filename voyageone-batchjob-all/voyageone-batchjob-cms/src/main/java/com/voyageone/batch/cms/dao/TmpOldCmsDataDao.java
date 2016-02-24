@@ -18,7 +18,18 @@ public class TmpOldCmsDataDao extends BaseDao {
 	public List<TmpOldCmsDataBean> getList() {
 		return selectList(Constants.DAO_NAME_SPACE_CMS + "cms_tmp_old_cms_data_select");
 	}
-	
+
+	/**
+	 * 看看数据库中是否存在
+	 */
+	public int checkExist(String channelId, String code) {
+		Map<String, Object> paramMap = new HashMap<String, Object>();
+		paramMap.put("channel_id", channelId);
+		paramMap.put("code", code);
+
+		return selectOne(Constants.DAO_NAME_SPACE_CMS + "cms_tmp_old_cms_data_check_exist", paramMap);
+	}
+
 	/**
 	 * 将cms_tmp_old_cms_data表的 标志置位->1
 	 */

@@ -9,8 +9,8 @@ import com.voyageone.common.util.StringUtils;
  * @author Jonas
  */
 public class TransferDetailBean {
-    private int transfer_package_id;
-    private int transfer_id;
+    private long transfer_package_id;
+    private long transfer_id;
     private long transfer_package_qty;
     private String transfer_package_name;
     private String package_status;
@@ -30,19 +30,19 @@ public class TransferDetailBean {
         this.transfer_package_qty = transfer_package_qty;
     }
 
-    public int getTransfer_package_id() {
+    public long getTransfer_package_id() {
         return transfer_package_id;
     }
 
-    public void setTransfer_package_id(int transfer_package_id) {
+    public void setTransfer_package_id(long transfer_package_id) {
         this.transfer_package_id = transfer_package_id;
     }
 
-    public int getTransfer_id() {
+    public long getTransfer_id() {
         return transfer_id;
     }
 
-    public void setTransfer_id(int transfer_id) {
+    public void setTransfer_id(long transfer_id) {
         this.transfer_id = transfer_id;
     }
 

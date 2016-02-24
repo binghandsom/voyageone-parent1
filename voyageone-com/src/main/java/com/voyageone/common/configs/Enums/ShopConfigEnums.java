@@ -50,7 +50,17 @@ public class ShopConfigEnums {
         /**
          * 天猫特价宝的活动ID
          */
-        promotion_id
+        promotion_id,
+
+        /**
+         * barcode转sku设置名
+         */
+        barcode_2_sku,
+
+        /**
+         * 主渠道
+         */
+        main_channel_id
     }
 
     /**

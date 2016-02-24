@@ -6,6 +6,7 @@
         <id column="promotion_id" property="promotionId" jdbcType="INTEGER" />
         <id column="task_type" property="taskType" jdbcType="INTEGER" />
         <id column="key" property="key" jdbcType="VARCHAR" />
+        <result column="num_iid" property="numIid" jdbcType="VARCHAR" />
         <result column="syn_flg" property="synFlg" jdbcType="INTEGER" />
         <result column="err_msg" property="errMsg" jdbcType="VARCHAR" />
         <result column="created" property="created" jdbcType="TIMESTAMP" />
@@ -19,6 +20,7 @@
           promotion_id,
           task_type,
           `key`,
+          num_iid,
           syn_flg,
           err_msg,
           created,
@@ -106,6 +108,9 @@
             <if test="key != null" >
                 `key`,
             </if>
+            <if test="numIid != null" >
+                num_iid,
+            </if>
             <if test="synFlg != null" >
                 syn_flg,
             </if>
@@ -130,6 +135,9 @@
             </if>
             <if test="key != null" >
                 #{key,jdbcType=VARCHAR},
+            </if>
+            <if test="numIid != null" >
+                #{numIid,jdbcType=VARCHAR},
             </if>
             <if test="synFlg != null" >
                 #{synFlg,jdbcType=INTEGER},

@@ -1,5 +1,6 @@
 package com.voyageone.batch.wms.service.thirdFilePro;
 
+import com.voyageone.batch.core.CodeConstants;
 import com.voyageone.batch.core.modelbean.TaskControlBean;
 import com.voyageone.batch.wms.modelbean.OrderUpdateBean;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
@@ -91,8 +92,8 @@ import java.util.Map;
         params.put(ParamKey.ORDERCHANNELID, orderChannelId);
         //11（Open），12（Reserved）或99（Cancelled）
         params.put(ParamKey.PREREQUISITE,"('11', '12', '99')");
-        //状态修改为 13（装箱）
-        params.put(ParamKey.STATUS, "13");
+        //状态修改为 24（品牌方发货）
+        params.put(ParamKey.STATUS, CodeConstants.Reservation_Status.ShippedTP);
         //设置reservationLog的notes
         params.put(ParamKey.NOTES, "Status change to Package");
         return params;

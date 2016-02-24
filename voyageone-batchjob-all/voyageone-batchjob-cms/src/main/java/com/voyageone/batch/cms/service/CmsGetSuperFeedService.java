@@ -855,17 +855,49 @@ public class CmsGetSuperFeedService extends BaseTaskService {
                 productsFeed.setCategorybeans(categoryBeans);
                 productsFeed.setChannel_id(channel_id);
 
+
+                /************* 2015-12-31 16:29:55 By Jonas *************/
+                // 在输出之前输出所有将处理的 Model 标识类字段
+                $info("准备调用 WS API");
+                for (CategoryBean categoryBean : categoryBeans) {
+                    $info("\t处理类目是: %s", categoryBean.getUrl_key());
+                    for (ModelBean modelBean : notNull(categoryBean.getModelbeans())) {
+                        $info("\t\t处理 Model 是: %s", modelBean.getUrl_key());
+                        for (ProductBean productBean : notNull(modelBean.getProductbeans())) {
+                            $info("\t\t\t处理 Product Code: %s", productBean.getP_code());
+                        }
+                    }
+                }
+                /************* 2015-12-31 16:29:55 By Jonas *************/
+
                 // post web servies
                 WsdlResponseBean wsdlResponseBean = jsonBeanOutInsert(channel_id, productsFeed);
+
                 // 处理失败
                 if (wsdlResponseBean == null) {
-                    logger.error("cms 数据导入处理，新产品推送失败！");
                     $info("cms 数据导入处理，新产品推送失败！");
                     isPostSuccess = false;
                     break;
                 }
 
                 ProductFeedResponseBean productFeedResponseBean = JsonUtil.jsonToBean(JsonUtil.getJsonString(wsdlResponseBean.getResultInfo()), ProductFeedResponseBean.class);
+
+                /************* 2015-12-31 16:29:55 By Jonas *************/
+                // 输出处理结果
+                $info("调用 WS API 完成");
+                $info("\t最终结果: %s", wsdlResponseBean.getResult());
+                $info("\t携带信息及代码: %s / %s", wsdlResponseBean.getMessageCode(), wsdlResponseBean.getMessage());
+                $info("\t以下是成功的");
+                for (ProductFeedDetailBean productFeedDetailBean : notNull(productFeedResponseBean.getSuccess())) {
+                    $info("\t\t(%s)%s", productFeedDetailBean.getBeanType(), productFeedDetailBean.getDealObject().getUrl_key());
+                }
+                $info("\t以下是失败的");
+                for (ProductFeedDetailBean productFeedDetailBean : notNull(productFeedResponseBean.getFailure())) {
+                    $info("\t\t(%s)%s", productFeedDetailBean.getResultMessage(), productFeedDetailBean.getDealObject().getUrl_key());
+                }
+                $info("调用日志输出完毕");
+                /************* 2015-12-31 16:29:55 By Jonas *************/
+
                 if (wsdlResponseBean.getResult().equals("OK") && productFeedResponseBean.getSuccess().size() > 0) {
                     // 出错统计
                     List<ProductFeedDetailBean> productFeedDetailBeans = productFeedResponseBean.getFailure();
@@ -916,7 +948,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
      */
     public boolean AttributeInsert(String channel_id, String keyword, String category, String product) {
         boolean isSuccess = true;
-        $info("产品Attribute处理开始");
+
         AttributeBean attributebean_param = new AttributeBean();
 
         attributebean_param.setCategory_url_key(Feed.getVal1(channel_id, FeedEnums.Name.product_category_url_key));
@@ -1020,7 +1052,6 @@ public class CmsGetSuperFeedService extends BaseTaskService {
             isSuccess = false;
         }
 
-        $info("产品Attribute处理结束");
         return isSuccess;
     }
 
@@ -1236,7 +1267,6 @@ public class CmsGetSuperFeedService extends BaseTaskService {
      * @return productBeans
      */
     public List<ProductBean> createProduct(String channel_id, String category, String models, String codes, String keyword, String tablename) {
-        $info("产品Product处理开始");
 
         List<ProductBean> productBeans;
         String category_keyword = "";
@@ -1349,7 +1379,6 @@ public class CmsGetSuperFeedService extends BaseTaskService {
             productBeans.set(i, productbean);
         }
 
-        $info("产品Product处理完成");
         return productBeans;
     }
 
@@ -1687,8 +1716,6 @@ public class CmsGetSuperFeedService extends BaseTaskService {
      * 更新ZZ_Work_Superfeed_Full产品信息
      */
     private boolean SuperfeedFullUpdate(String channel_id, String product_code) {
-        $info("更新ZZ_Work_Superfeed_Full产品处理开始");
-
         // 单事务处理
         transactionRunner.runWithTran(() -> {
 
@@ -1712,8 +1739,11 @@ public class CmsGetSuperFeedService extends BaseTaskService {
             }
         });
 
-        $info("更新ZZ_Work_Superfeed_Full产品处理结束");
+        $info("更新ZZ_Work_Superfeed_Full产品处理结束 [ %s ]", product_code);
         return true;
     }
-}
 
+    private <T> List<T> notNull(List<T> list) {
+        return list == null ? new ArrayList<>(0) : list;
+    }
+}

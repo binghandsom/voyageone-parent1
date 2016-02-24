@@ -66,6 +66,7 @@ public class FormReturn extends AjaxRequestBean {
 	private String returnType_name;
 	private String label_type;
 	private String location_name;
+	private String Upc;
 
 	public String getReservationLog_notes() {
 		return reservationLog_notes;
@@ -441,6 +442,14 @@ public class FormReturn extends AjaxRequestBean {
 
 	public void setRes_status_name(String res_status_name) {
 		this.res_status_name = res_status_name;
+	}
+
+	public String getUpc() {
+		return Upc;
+	}
+
+	public void setUpc(String upc) {
+		Upc = upc;
 	}
 
 	@Override

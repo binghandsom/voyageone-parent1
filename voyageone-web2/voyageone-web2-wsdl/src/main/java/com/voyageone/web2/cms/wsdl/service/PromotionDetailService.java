@@ -2,6 +2,7 @@ package com.voyageone.web2.cms.wsdl.service;
 
 import com.voyageone.cms.service.model.CmsBtProductModel;
 import com.voyageone.common.configs.Enums.PromotionTypeEnums;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.web2.cms.wsdl.BaseService;
 import com.voyageone.web2.cms.wsdl.dao.CmsPromotionCodeDao;
 import com.voyageone.web2.cms.wsdl.dao.CmsPromotionModelDao;
@@ -63,12 +64,16 @@ public class PromotionDetailService extends BaseService {
         Integer tagId = promotionDetailAddRequest.getTagId();
         String tagPath = promotionDetailAddRequest.getTagPath();
         String productCode = promotionDetailAddRequest.getProductCode();
+        Long productId = promotionDetailAddRequest.getProductId();
         Double promotionPrice = promotionDetailAddRequest.getPromotionPrice();
         String operator = promotionDetailAddRequest.getModifier();
 
         // 获取Product信息
         ProductGetRequest productGetRequest = new ProductGetRequest(channelId);
-        productGetRequest.setProductCode(productCode);
+        if (!StringUtils.isEmpty(productCode))
+            productGetRequest.setProductCode(productCode);
+        else
+            productGetRequest.setProductId(productId);
         CmsBtProductModel productInfo = productService.selectOne(productGetRequest).getProduct();
 
         // 插入cms_bt_promotion_model表
@@ -95,8 +100,8 @@ public class PromotionDetailService extends BaseService {
         prodIds.add(productInfo.getProdId());
         ProductsTagPutRequest productsTagPutRequest = new ProductsTagPutRequest(channelId);
         productsTagPutRequest.setModifier(operator);
-        for (Long productId : prodIds) {
-            productsTagPutRequest.addProductIdTagPathsMap(productId, tagPath);
+        for (Long productId2 : prodIds) {
+            productsTagPutRequest.addProductIdTagPathsMap(productId2, tagPath);
         }
         productTagService.saveTagProducts(productsTagPutRequest);
 
@@ -117,7 +122,7 @@ public class PromotionDetailService extends BaseService {
         CmsBtPromotionCodeModel promotionCodeModel = promotionDetailUpdateRequest.getPromotionCodeModel();
         String operator = promotionDetailUpdateRequest.getModifier();
         if (cmsPromotionCodeDao.updatePromotionCode(promotionCodeModel) != 0) {
-            CmsBtPromotionTaskModel cmsBtPromotionTask = new CmsBtPromotionTaskModel(promotionCodeModel.getPromotionId(), PromotionTypeEnums.Type.TEJIABAO.getTypeId(), promotionCodeModel.getProductCode(), operator);
+            CmsBtPromotionTaskModel cmsBtPromotionTask = new CmsBtPromotionTaskModel(promotionCodeModel.getPromotionId(), PromotionTypeEnums.Type.TEJIABAO.getTypeId(), promotionCodeModel.getProductCode(),promotionCodeModel.getNumIid(), operator);
             cmsPromotionTaskDao.updatePromotionTask(cmsBtPromotionTask);
         }
         response.setModifiedCount(1);

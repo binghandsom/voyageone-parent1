@@ -107,7 +107,7 @@
             GROUP_CONCAT(DISTINCT a.`value`) as value
         FROM
             voyageone_cms2.cms_zz_worktable_sears_attribute a
-        LEFT JOIN voyageone_cms2.cms_mt_feed_config b ON a.attribute = b.cfg_val1
+        LEFT JOIN voyageone_cms.cms_mt_feed_config b ON a.attribute = b.cfg_val1
         AND b.order_channel_id = '013'
         WHERE
              b.is_attribute = 1

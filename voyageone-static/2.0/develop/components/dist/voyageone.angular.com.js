@@ -101,23 +101,24 @@ define(function() {
     return {
       restrict: "A",
       link: function(scope, elem, attr) {
-        $(elem).keyup(function(e) {
+        angular.element(elem).on("keyup", function(e) {
           if (e.keyCode !== 13) return;
           var selectExp = attr.enterClick;
           var targetElem, handler = function() {
-            targetElem.click();
+            targetElem.triggerHandler("click");
           };
           try {
-            targetElem = angular.element(selectExp);
+            targetElem = document.querySelector(selectExp);
           } catch (e) {
             targetElem = null;
           }
-          if (!targetElem || !targetElem.length) {
+          if (!targetElem) {
             handler = function() {
               scope.$eval(selectExp);
             };
-          } else if (targetElem.attr("disabled")) {
-            return;
+          } else {
+            targetElem = angular.element(targetElem);
+            if (targetElem.attr("disabled")) return;
           }
           handler();
         });
@@ -139,7 +140,7 @@ define(function() {
   angular.module("voyageone.angular.directives.ifNoRows", []).directive("ifNoRows", [ "$templateCache", "$compile", function($templateCache, $compile) {
     var tempNoDataKey = "voyageone.angular.directives.ifNoRows.tpl.html";
     if (!$templateCache.get(tempNoDataKey)) {
-      $templateCache.put(tempNoDataKey, '<div class="text-center text-hs" id="noData">\n' + '    <h4 class="text-vo"><i class="icon fa fa-warning"></i>&nbsp;{{\'TXT_COM_WARNING\' | translate}}</h4>\n' + "{{'TXT_COM_MSG_NO_DATE' | translate}}" + "</dv>");
+      $templateCache.put(tempNoDataKey, '<div class="text-center text-hs" id="noData">\n' + '    <h4 class="text-vo"><i class="icon fa fa-warning"></i>&nbsp;{{\'TXT_ALERT\' | translate}}</h4>\n' + "{{'TXT_MSG_NO_DATE' | translate}}" + "</dv>");
     }
     return {
       restrict: "A",
@@ -255,7 +256,7 @@ define(function() {
   }).directive("schemaHeader", [ "$templateCache", "schemaHeaderFactory", "fieldTypes", "ruleTypes", "valueTypes", function($templateCache, schemaHeaderFactory, fieldTypes, ruleTypes, valueTypes) {
     var templateKey_header = "voyageone.angular.directives.schemaHeader.tpl.html";
     if (!$templateCache.get(templateKey_header)) {
-      $templateCache.put(templateKey_header, '<div class="form-group">' + '  <label class="col-sm-2 control-label" ng-class="{\'vo_reqfield\': showHtmlData.isRequired}" ng-bind="$$data.name"></label>' + "  <div class=\"col-sm-8\" ng-class=\"{'modal-open' : showHtmlData.isMultiComplex, 'hierarchy_main': showHtmlData.isComplex}\" ng-transclude></div>" + '  <div class="col-sm-2" ng-if="showHtmlData.isMultiComplex"><button class="btn btn-success" ng-click="addField($$data)"><i class="fa fa-plus"></i>{{\'BTN_COM_ADD\' | translate}}</button></div>' + '  <div class="row" ng-repeat="tipMsg in showHtmlData.tipMsg"><div class="col-sm-8 col-sm-offset-2 text-warnings"><i class="icon fa fa-bell-o"></i>&nbsp;{{tipMsg}}</div></div>' + "</div>");
+      $templateCache.put(templateKey_header, '<div class="form-group">' + '<label class="col-sm-2 control-label" ng-class="{\'vo_reqfield\': showHtmlData.isRequired}" ng-bind="$$data.name"></label>' + "<div class=\"col-sm-8\" ng-class=\"{'modal-open' : showHtmlData.isMultiComplex, 'hierarchy_main': showHtmlData.isComplex}\" ng-transclude></div>" + '<div class="col-sm-2" ng-if="showHtmlData.isMultiComplex"><button class="btn btn-success" ng-click="addField($$data)"><i class="fa fa-plus"></i>{{\'BTN_ADD\' | translate}}</button></div>' + '<div class="row" ng-repeat="tipMsg in showHtmlData.tipMsg"><div class="col-sm-8 col-sm-offset-2 text-warnings"><i class="icon fa fa-bell-o"></i>&nbsp;{{tipMsg}}</div></div>' + "</div>");
     }
     return {
       restrict: "E",
@@ -348,7 +349,7 @@ define(function() {
     }
     var templateKey_multiComplex = "voyageone.angular.directives.schemaMultiComplex.tpl.html";
     if (!$templateCache.get(templateKey_multiComplex)) {
-      $templateCache.put(templateKey_multiComplex, '<table class="table text-center">' + "<thead><tr>" + '<th ng-repeat="field in vm.$$data.fields" ng-class="{\'vo_reqfield\': showHtmlData.isRequired}" class="text-center" style="min-width: 180px;">{{field.name}}</th>' + '<th ng-if="!showHtmlData.notShowEdit" style="min-width: 60px;" class="text-center" translate="TXT_COM_EDIT"></th>' + "</tr></thead>" + '<tbody><tr ng-repeat="value in vm.$$data.complexValues">' + '<td class="text-left" ng-repeat="field in value.fieldMap"><div class="tableLayer"><p ng-if="field.type != \'COMPLEX\'">&nbsp;</p><p><schema-item data="field" hastip="true" complex="true"></schema-item></p></div></td>' + '<td ng-if="!showHtmlData.notShowEdit" style="min-width: 60px;"><button title="{\'BTN_COM_DELETE\' | translate}" class="btn btn-danger btn-xs" ng-click="delField($index)"><i class="fa  fa-trash-o"></i></button></td>' + "</tr></tbody>" + "</table>");
+      $templateCache.put(templateKey_multiComplex, '<table class="table text-center">' + "<thead><tr>" + '<th ng-repeat="field in vm.$$data.fields" ng-class="{\'vo_reqfield\': showHtmlData.isRequired}" class="text-center" style="min-width: 180px;">{{field.name}}</th>' + '<th ng-if="!showHtmlData.notShowEdit" style="min-width: 60px;" class="text-center" translate="TXT_ACTION"></th>' + "</tr></thead>" + '<tbody><tr ng-repeat="value in vm.$$data.complexValues">' + '<td class="text-left" ng-repeat="field in value.fieldMap"><div class="tableLayer"><p ng-if="field.type != \'COMPLEX\'">&nbsp;</p><p><schema-item data="field" hastip="true" complex="true"></schema-item></p></div></td>' + '<td ng-if="!showHtmlData.notShowEdit" style="min-width: 60px;"><button title="{\'BTN_DELETE\' | translate}" class="btn btn-danger btn-xs" ng-click="delField($index)"><i class="fa  fa-trash-o"></i></button></td>' + "</tr></tbody>" + "</table>");
     }
     var templateKey_complex = "voyageone.angular.directives.schemaComplex.tpl.html";
     if (!$templateCache.get(templateKey_complex)) {
@@ -734,10 +735,10 @@ define(function() {
     var templateKey = "voyageone.angular.directives.pagination.tpl.html";
     var templateKeyNoData = "voyageone.angular.directives.paginationNoData.tpl.html";
     if (!$templateCache.get(templateKey)) {
-      $templateCache.put(templateKey, '<div class="col-sm-2">\n' + '    <div class="page-main form-inline">{{\'TXT_COM_SHOWING_NO\' | translate}}&nbsp;<input class="text-center" type="text" ng-model="curr.pageNo"/>&nbsp;/&nbsp;{{totalPages}}&nbsp;{{\'TXT_COM_PAGE\' | translate}}&nbsp;' + '        <button class="btn btn-xs btn-default" type="button" ng-click="goPage(curr.pageNo)" translate="BTN_GO"></button>\n' + "    </div>\n" + "</div>\n" + '<div class="col-sm-7 text-center">\n' + "    <small class=\"text-muted inline m-t-sm m-b-sm\">{{'TXT_COM_SHOWING' | translate}}&nbsp;{{curr.start}}-{{curr.end}}&nbsp;{{'TXT_COM_OF' | translate}}&nbsp;{{totalItems}}&nbsp{{'TXT_COM_ITEMS' | translate}}</small>\n" + "</div>\n" + '<div class="col-sm-3 text-right text-center-xs"><div>' + '    <ul class="pagination-sm m-t-none m-b pagination ng-isolate-scope ng-valid ng-dirty ng-valid-parse">\n' + '        <li ng-class="{disabled: curr.isFirst ||ngDisabled}" class="pagination-first"><a href ng-click="goPage(1)" ng-disabled="curr.isFirst">&laquo;</a></li>\n' + '        <li ng-class="{disabled: curr.isFirst ||ngDisabled}" class="pagination-prev"><a href ng-click="goPage(curr.pageNo - 1)" ng-disabled="curr.isFirst">&lsaquo;</a></li>\n' + '        <li ng-if="curr.isShowStart" class="disabled" disabled><a href>...</a></li>\n' + '        <li ng-repeat="page in curr.pages track by $index" ng-class="{active: isCurr(page)}" class="pagination-page"><a href ng-click="goPage(page)">{{page}}</a></li>\n' + '        <li ng-if="curr.isShowEnd" class="disabled" disabled><a href>...</a></li>\n' + '        <li ng-class="{disabled: curr.isLast ||ngDisabled}" class="pagination-next"><a href ng-click="goPage(curr.pageNo + 1)" ng-disabled="curr.isLast">&rsaquo;</a></li>\n' + '        <li ng-class="{disabled: curr.isLast ||ngDisabled}" class="pagination-last"><a href ng-click="goPage(totalPages)" ng-disabled="curr.isLast">&raquo;</a></li>\n' + "    </ul>\n" + "</div>");
+      $templateCache.put(templateKey, '<div class="col-sm-3">\n' + '    <div class="page-main form-inline">{{\'TXT_SHOWING_NO\' | translate}}&nbsp;<input class="text-center" type="text" ng-model="curr.pageNo"/>&nbsp;/&nbsp;{{totalPages}}&nbsp;{{\'TXT_PAGE\' | translate}}&nbsp;' + '        <button class="btn btn-xs btn-default" type="button" ng-click="goPage(curr.pageNo)" translate="BTN_GO"></button>\n' + "    </div>\n" + "</div>\n" + '<div class="col-sm-4 text-center">\n' + "    <small class=\"text-muted inline m-t-sm m-b-sm\">{{'TXT_SHOWING' | translate}}&nbsp;{{curr.start}}-{{curr.end}}&nbsp;{{'TXT_OF' | translate}}&nbsp;{{totalItems}}&nbsp{{'TXT_ITEMS' | translate}}</small>\n" + "</div>\n" + '<div class="col-sm-5 text-right text-center-xs"><div>' + '    <ul class="pagination-sm m-t-none m-b pagination ng-isolate-scope ng-valid ng-dirty ng-valid-parse">\n' + '        <li ng-class="{disabled: curr.isFirst ||ngDisabled}" class="pagination-first"><a href ng-click="goPage(1)" ng-disabled="curr.isFirst">&laquo;</a></li>\n' + '        <li ng-class="{disabled: curr.isFirst ||ngDisabled}" class="pagination-prev"><a href ng-click="goPage(curr.pageNo - 1)" ng-disabled="curr.isFirst">&lsaquo;</a></li>\n' + '        <li ng-if="curr.isShowStart" class="disabled" disabled><a href>...</a></li>\n' + '        <li ng-repeat="page in curr.pages track by $index" ng-class="{active: isCurr(page)}" class="pagination-page"><a href ng-click="goPage(page)">{{page}}</a></li>\n' + '        <li ng-if="curr.isShowEnd" class="disabled" disabled><a href>...</a></li>\n' + '        <li ng-class="{disabled: curr.isLast ||ngDisabled}" class="pagination-next"><a href ng-click="goPage(curr.pageNo + 1)" ng-disabled="curr.isLast">&rsaquo;</a></li>\n' + '        <li ng-class="{disabled: curr.isLast ||ngDisabled}" class="pagination-last"><a href ng-click="goPage(totalPages)" ng-disabled="curr.isLast">&raquo;</a></li>\n' + "    </ul>\n" + "</div>");
     }
     if (!$templateCache.get(templateKeyNoData)) {
-      $templateCache.put(templateKeyNoData, '<div class="col-sm-7 col-sm-offset-2 text-center">\n' + "    <small class=\"text-muted inline m-t-sm m-b-sm\">{{'TXT_COM_SHOWING' | translate}}&nbsp;0-0&nbsp;{{'TXT_COM_OF' | translate}}&nbsp;0&nbsp{{'TXT_COM_ITEMS' | translate}}</small>\n" + "</div>");
+      $templateCache.put(templateKeyNoData, '<div class="col-sm-7 col-sm-offset-2 text-center">\n' + "    <small class=\"text-muted inline m-t-sm m-b-sm\">{{'TXT_SHOWING' | translate}}&nbsp;0-0&nbsp;{{'TXT_OF' | translate}}&nbsp;0&nbsp{{'TXT_ITEMS' | translate}}</small>\n" + "</div>");
     }
     var defConfig = {
       curr: 1,
@@ -913,7 +914,8 @@ define(function() {
   });
   angular.module("voyageone.angular.factories.dialogs", []).factory("$dialogs", [ "$modal", "$filter", "$templateCache", function($modal, $filter, $templateCache) {
     var templateName = "voyageone.angular.factories.dialogs.tpl.html";
-    $templateCache.put(templateName, '<div class="vo_modal"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="close()"><span aria-hidden="true"><i ng-click="close()" class="fa fa-close"></i></span></button><h4 class="modal-title" ng-bind-html="title"></h4></div><div class="modal-body wrapper-lg"><div class="row"><h5 class="text-center text-vo"><i class="fa fa-warning"></i><span ng-bind-html="content"></span></h5></div></div><div class="modal-footer"><button class="btn btn-default btn-sm" ng-if="!isAlert" ng-click="close()" translate="BTN_COM_CANCEL"></button><button class="btn btn-vo btn-sm" ng-click="ok()" translate="BTN_COM_OK"></button></div></div>');
+    var template = '<div class="vo_modal">' + '<div class="modal-header">' + '<button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="close()">' + '<span aria-hidden="true"><i ng-click="close()" class="fa fa-close"></i></span>' + "</button>" + '<h5 class="modal-title" ng-bind-html="title"></h5>' + "</div>" + '<div class="modal-body wrapper-lg">' + '<div class="row">' + '<h5 class="text-center text-hs"><p class="text-center" ng-bind-html="content"></p></h5>' + "</div>" + "</div>" + '<div class="modal-footer">' + '<button class="btn btn-default btn-sm" ng-if="!isAlert" ng-click="close()" translate="BTN_CANCEL"></button>' + '<button class="btn btn-vo btn-sm" ng-click="ok()" translate="BTN_OK"></button>' + "</div>" + "</div>";
+    $templateCache.put(templateName, template);
     function tran(translationId, values) {
       return $filter("translate")(translationId, values);
     }
@@ -944,7 +946,7 @@ define(function() {
   } ]).factory("alert", [ "$dialogs", function($dialogs) {
     return function(content, title) {
       return $dialogs({
-        title: title || "TXT_COM_ALERT",
+        title: title || "TXT_ALERT",
         content: content,
         isAlert: true
       });
@@ -952,7 +954,7 @@ define(function() {
   } ]).factory("confirm", [ "$dialogs", function vConfirm($dialogs) {
     return function(content, title) {
       return $dialogs({
-        title: title || "TXT_COM_CONFIRM",
+        title: title || "TXT_CONFIRM",
         content: content,
         isAlert: false
       });
@@ -1038,31 +1040,79 @@ define(function() {
     };
     return notify;
   } ]);
+  angular.module("voyageone.angular.factories.pppAutoImpl", []).factory("pppAutoImpl", [ "$q", "$modal", function($q, $modal) {
+    return function(declares, viewBaseUrl, jsBaseUrl) {
+      if (!declares.$$$ || !declares.$$$.impl) declares.$$$ = {
+        impl: declarePopupMethods(declares, viewBaseUrl, jsBaseUrl, "")
+      };
+      return declares.$$$.impl;
+    };
+    function declarePopupMethods(declares, viewBaseUrl, jsBaseUrl, popupBaseKey) {
+      var impl = {};
+      if (popupBaseKey) popupBaseKey += "/";
+      _.each(declares, function(declare, parentDir) {
+        if (!declare.popupKey) {
+          if (_.isObject(declare) || _.isArray(declare)) _.extend(impl, declarePopupMethods(declare, viewBaseUrl, jsBaseUrl, popupBaseKey + parentDir, $q, $modal));
+          return;
+        }
+        var options = _.clone(declare.options) || {};
+        var pathBase = "/" + popupBaseKey;
+        if (_.isString(parentDir)) pathBase += parentDir + "/";
+        pathBase += declare.popupKey;
+        options.templateUrl = viewBaseUrl + pathBase + ".tpl.html";
+        options.controllerUrl = jsBaseUrl + pathBase + ".ctl";
+        if (declare.controllerAs || declare.controller) options.controller = getControllerName(declare.popupKey);
+        if (declare.controllerAs) options.controller += " as " + (_.isString(declare.controllerAs) ? declare.controllerAs : "ctrl");
+        impl[declare.popupKey] = function(context) {
+          if (context) options.resolve = {
+            context: function() {
+              return context;
+            }
+          };
+          var defer = $q.defer();
+          require([ options.controllerUrl ], function() {
+            defer.resolve($modal.open(options).result);
+          });
+          return defer.promise;
+        };
+      });
+      return impl;
+    }
+    function getControllerName(key) {
+      return key.replace(/\.(\w)/g, function(m, m1) {
+        return m1.toUpperCase();
+      }).replace(/^(\w)/, function(m, m1) {
+        return m1.toLowerCase();
+      }) + "PopupController";
+    }
+  } ]);
   angular.module("voyageone.angular.factories.schema", []).factory("schemaHeaderFactory", function() {
-    return function(config) {
-      var _schemaHeaderInfo = config ? config : {
+    function SchemaHeaderFactory(config) {
+      this.schemaHearInfo = config || {
         isRequired: false,
         isMultiComplex: false,
         isComplex: false,
         tipMsg: []
       };
-      this.isRequired = function(value) {
-        return value !== undefined ? _schemaHeaderInfo.isRequired = value : _schemaHeaderInfo.isRequired;
-      };
-      this.isComplex = function(value) {
-        return value !== undefined ? _schemaHeaderInfo.isComplex = value : _schemaHeaderInfo.isComplex;
-      };
-      this.isMultiComplex = function(value) {
-        return value !== undefined ? _schemaHeaderInfo.isMultiComplex = value : _schemaHeaderInfo.isMultiComplex;
-      };
-      this.tipMsg = function(value) {
-        return value !== undefined ? _schemaHeaderInfo.tipMsg.push(value) : _schemaHeaderInfo.tipMsg;
-      };
-      this.schemaHearInfo = _schemaHeaderInfo;
+    }
+    SchemaHeaderFactory.prototype = {
+      isRequired: function(value) {
+        return value !== undefined ? this.schemaHearInfo.isRequired = value : this.schemaHearInfo.isRequired;
+      },
+      isComplex: function(value) {
+        return value !== undefined ? this.schemaHearInfo.isComplex = value : this.schemaHearInfo.isComplex;
+      },
+      isMultiComplex: function(value) {
+        return value !== undefined ? this.schemaHearInfo.isMultiComplex = value : this.schemaHearInfo.isMultiComplex;
+      },
+      tipMsg: function(value) {
+        return value !== undefined ? this.schemaHearInfo.tipMsg.push(value) : this.schemaHearInfo.tipMsg;
+      }
     };
+    return SchemaHeaderFactory;
   }).factory("schemaFactory", function() {
-    return function(config) {
-      var _schemaInfo = config ? config : {
+    function SchemaFactory(config) {
+      this._schemaInfo = config || {
         type: null,
         name: null,
         rowNum: null,
@@ -1072,41 +1122,37 @@ define(function() {
         html: [],
         notShowEdit: true
       };
-      this.type = function(value) {
-        return value !== undefined ? _schemaInfo.type = value : _schemaInfo.type;
-      };
-      this.name = function(value) {
-        return value !== undefined ? _schemaInfo.name = value : _schemaInfo.name;
-      };
-      this.html = function(value) {
-        return value !== undefined ? _schemaInfo.html.push(value) : htmlToString(_schemaInfo.html);
-      };
-      this.isRequired = function(value) {
-        return value !== undefined ? _schemaInfo.isRequired = value : _schemaInfo.isRequired;
-      };
-      this.rowNum = function(value) {
-        return value !== undefined ? _schemaInfo.rowNum = value : _schemaInfo.rowNum;
-      };
-      this.tipMsg = function(value) {
-        return value !== undefined ? _schemaInfo.tipMsg.push(value) : _schemaInfo.tipMsg;
-      };
-      this.checkValues = function(value) {
-        return value !== undefined ? _schemaInfo.checkValues.push(value) : _schemaInfo.checkValues;
-      };
-      this.notShowEdit = function(value) {
-        return value !== undefined ? _schemaInfo.notShowEdit = value : _schemaInfo.notShowEdit;
-      };
-      this.schemaInfo = function() {
-        return _schemaInfo;
-      };
-      function htmlToString(htmls) {
-        var result = "";
-        angular.forEach(htmls, function(html) {
-          result += " " + html + " ";
-        });
-        return result;
+    }
+    SchemaFactory.prototype = {
+      type: function(value) {
+        return value !== undefined ? this._schemaInfo.type = value : this._schemaInfo.type;
+      },
+      name: function(value) {
+        return value !== undefined ? this._schemaInfo.name = value : this._schemaInfo.name;
+      },
+      html: function(value) {
+        return value !== undefined ? this._schemaInfo.html.push(value) : this._schemaInfo.html.join(" ");
+      },
+      isRequired: function(value) {
+        return value !== undefined ? this._schemaInfo.isRequired = value : this._schemaInfo.isRequired;
+      },
+      rowNum: function(value) {
+        return value !== undefined ? this._schemaInfo.rowNum = value : this._schemaInfo.rowNum;
+      },
+      tipMsg: function(value) {
+        return value !== undefined ? this._schemaInfo.tipMsg.push(value) : this._schemaInfo.tipMsg;
+      },
+      checkValues: function(value) {
+        return value !== undefined ? this._schemaInfo.checkValues.push(value) : this._schemaInfo.checkValues;
+      },
+      notShowEdit: function(value) {
+        return value !== undefined ? this._schemaInfo.notShowEdit = value : this._schemaInfo.notShowEdit;
+      },
+      schemaInfo: function() {
+        return this._schemaInfo;
       }
     };
+    return SchemaFactory;
   });
   angular.module("voyageone.angular.factories.selectRows", []).factory("selectRowsFactory", function() {
     return function(config) {
@@ -1264,13 +1310,14 @@ define(function() {
   } ]).run([ "$vresources", "$actions", function($vresources, $actions) {
     $vresources.register(null, $actions);
   } ]);
+  $Ajax.$inject = [ "$http", "blockUI", "$q" ];
+  AjaxService.$inject = [ "$q", "$ajax", "messageService" ];
   angular.module("voyageone.angular.services.ajax", []).service("$ajax", $Ajax).service("ajaxService", AjaxService);
   function $Ajax($http, blockUI, $q) {
     this.$http = $http;
     this.blockUI = blockUI;
     this.$q = $q;
   }
-  $Ajax.$inject = [ "$http", "blockUI", "$q" ];
   $Ajax.prototype.post = function(url, data) {
     var defer = this.$q.defer();
     this.$http.post(url, data).then(function(response) {
@@ -1295,7 +1342,6 @@ define(function() {
     this.$ajax = $ajax;
     this.messageService = messageService;
   }
-  AjaxService.$inject = [ "$q", "$ajax", "messageService" ];
   AjaxService.prototype.post = function(url, data) {
     var defer = this.$q.defer();
     this.$ajax.post(url, data).then(function(res) {
@@ -1310,6 +1356,7 @@ define(function() {
     }(this));
     return defer.promise;
   };
+  CookieService.$inject = [ "$cookieStore" ];
   angular.module("voyageone.angular.services.cookie", []).service("cookieService", CookieService);
   var keys = {
     language: "voyageone.user.language",
@@ -1330,7 +1377,6 @@ define(function() {
   function CookieService($cookieStore) {
     this.$cookieStore = $cookieStore;
   }
-  CookieService.$inject = [ "$cookieStore" ];
   CookieService.prototype.get = function(key) {
     var result = this.$cookieStore.get(key);
     return result == undefined || result == null ? "" : this.$cookieStore.get(key);
@@ -1348,6 +1394,7 @@ define(function() {
     this.$cookieStore.remove(keys.channel);
     this.$cookieStore.remove(keys.application);
   };
+  MessageService.$inject = [ "alert", "confirm", "notify" ];
   angular.module("voyageone.angular.services.message", []).service("messageService", MessageService);
   var DISPLAY_TYPES = {
     ALERT: 1,
@@ -1360,7 +1407,6 @@ define(function() {
     this.confirm = confirm;
     this.notify = notify;
   }
-  MessageService.$inject = [ "alert", "confirm", "notify" ];
   MessageService.prototype = {
     show: function(res) {
       var displayType = res.displayType;
@@ -1383,12 +1429,12 @@ define(function() {
       }
     }
   };
+  PermissionService.$inject = [ "$rootScope" ];
   angular.module("voyageone.angular.services.permission", []).service("permissionService", PermissionService);
   function PermissionService($rootScope) {
     this.$rootScope = $rootScope;
     this.permissions = [];
   }
-  PermissionService.$inject = [ "$rootScope" ];
   PermissionService.prototype = {
     setPermissions: function(permissions) {
       this.permissions = permissions;
@@ -1398,11 +1444,11 @@ define(function() {
       return _.contains(this.permissions, permission.trim());
     }
   };
+  TranslateService.$inject = [ "$translate" ];
   angular.module("voyageone.angular.services.translate", []).service("translateService", TranslateService);
   function TranslateService($translate) {
     this.$translate = $translate;
   }
-  TranslateService.$inject = [ "$translate" ];
   TranslateService.prototype = {
     languages: {
       en: "en",
@@ -1421,10 +1467,10 @@ define(function() {
       return currentLang.substr(0, 2);
     }
   };
-  angular.module("voyageone.angular.directives", [ "voyageone.angular.directives.dateModelFormat", "voyageone.angular.directives.enterClick", "voyageone.angular.directives.fileStyle", "voyageone.angular.directives.ifNoRows", "voyageone.angular.directives.uiNav", "voyageone.angular.directives.schema", "voyageone.angular.directives.voption", "voyageone.angular.directives.vpagination", "voyageone.angular.directives.validator" ]);
   angular.module("voyageone.angular.controllers", [ "voyageone.angular.controllers.datePicker", "voyageone.angular.controllers.selectRows", "voyageone.angular.controllers.showPopover" ]);
-  angular.module("voyageone.angular.factories", [ "voyageone.angular.factories.dialogs", "voyageone.angular.factories.interceptor", "voyageone.angular.factories.notify", "voyageone.angular.factories.schema", "voyageone.angular.factories.selectRows", "voyageone.angular.factories.vpagination" ]);
+  angular.module("voyageone.angular.directives", [ "voyageone.angular.directives.dateModelFormat", "voyageone.angular.directives.enterClick", "voyageone.angular.directives.fileStyle", "voyageone.angular.directives.ifNoRows", "voyageone.angular.directives.uiNav", "voyageone.angular.directives.schema", "voyageone.angular.directives.voption", "voyageone.angular.directives.vpagination", "voyageone.angular.directives.validator" ]);
+  angular.module("voyageone.angular.factories", [ "voyageone.angular.factories.dialogs", "voyageone.angular.factories.interceptor", "voyageone.angular.factories.notify", "voyageone.angular.factories.pppAutoImpl", "voyageone.angular.factories.schema", "voyageone.angular.factories.selectRows", "voyageone.angular.factories.vpagination" ]);
   angular.module("voyageone.angular.services", [ "voyageone.angular.services.ajax", "voyageone.angular.services.cookie", "voyageone.angular.services.message", "voyageone.angular.services.permission", "voyageone.angular.services.translate" ]);
-  return angular.module("voyageone.angular", [ "voyageone.angular.directives", "voyageone.angular.controllers", "voyageone.angular.factories", "voyageone.angular.services" ]);
+  return angular.module("voyageone.angular", [ "voyageone.angular.controllers", "voyageone.angular.directives", "voyageone.angular.factories", "voyageone.angular.services" ]);
 });
 //# sourceMappingURL=voyageone.angular.com.js.map

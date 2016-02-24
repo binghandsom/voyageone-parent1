@@ -774,7 +774,7 @@ select
   <select id="cms_superfeed_selectAttributeList" parameterType="HashMap"
 resultType="String">
 select cfg_val1
-from voyageone_cms2.cms_mt_feed_config
+from voyageone_cms.cms_mt_feed_config
 where is_attribute  = ${isAttribute}
 and attribute_type = ${attributeType}
 and order_channel_id = ${channelId}

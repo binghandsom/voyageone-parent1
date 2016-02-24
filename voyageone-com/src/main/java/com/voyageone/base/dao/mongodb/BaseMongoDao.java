@@ -124,4 +124,12 @@ public abstract class BaseMongoDao extends BaseJomgoDao {
     public WriteResult deleteWithQuery(String strQuery) {
         return mongoTemplate.remove(strQuery, collectionName);
     }
+
+    public WriteResult updateFirst(String strQuery, String strUpdate) {
+        return mongoTemplate.updateFirst(strQuery, strUpdate, collectionName);
+    }
+
+    public WriteResult upsertFirst(String strQuery, String strUpdate) {
+        return mongoTemplate.upsertFirst(strQuery, strUpdate, collectionName);
+    }
 }

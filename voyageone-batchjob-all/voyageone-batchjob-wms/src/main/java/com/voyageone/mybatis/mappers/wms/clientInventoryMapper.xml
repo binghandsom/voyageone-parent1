@@ -213,6 +213,17 @@
            and t.prop_name = #{propName}
     </update>
 
+    <!-- pv3:Sales更新最后全量更新时间 -->
+    <update id="wms_getClientInv_setLastSalesUpdateTime">
+        update com_mt_third_party_config t
+        set
+            t.prop_val3 = #{currDate},
+            t.modifier = #{modifier},
+            t.modified = now()
+        where t.channel_id = #{order_channel_id}
+        and t.prop_name = #{propName}
+    </update>
+
     <!-- pv4:pv4为上一次获取库存失败时间; pv5、pv5为上一次获取库存失败时候的pageIndex -->
     <update id="wms_getClientInv_setFaildConfig">
         update com_mt_third_party_config t

@@ -2,7 +2,6 @@ package com.voyageone.cms.service.model;
 
 
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
-import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Enums.CartEnums;
 
 import java.util.ArrayList;
@@ -66,7 +65,13 @@ public class CmsBtProductModel_Sku extends BaseMongoMap<String, Object> {
     }
 
     public Double getPriceSale() {
-        return getAttribute("priceSale");
+        // 注: 有时候这个值在数据库里被读出来会变成int型, 为了避免错误, 增加了转换
+        Object result = getAttribute("priceSale");
+        if (result == null) {
+            return null;
+        } else {
+            return Double.parseDouble(result.toString());
+        }
     }
 
     public void setPriceSale(Double priceSale) {
@@ -110,4 +115,11 @@ public class CmsBtProductModel_Sku extends BaseMongoMap<String, Object> {
         }
     }
 
+    public int getQty() {
+        return getAttribute("qty");
+    }
+
+    public void setQty(int qty) {
+        setAttribute("qty", qty);
+    }
 }

@@ -39,9 +39,13 @@
             <mvc:exclude-mapping path="/**/*.less"/>
             <mvc:exclude-mapping path="/core/account/login/doLogin"/>
             <mvc:exclude-mapping path="/wms/pickup/list/download"/>
+            <mvc:exclude-mapping path="/wms/pickup/report/download"/>
+            <mvc:exclude-mapping path="/wms/receive/report/download"/>
             <mvc:exclude-mapping path="/wms/report/list/download"/>
             <mvc:exclude-mapping path="/wms/stockTake/compare/compResdownload"/>
             <mvc:exclude-mapping path="/wms/transfer/list/download"/>
+            <mvc:exclude-mapping path="/wms/transfer/edit/downloadClientShipment"/>
+            <mvc:exclude-mapping path="/wms/transfer/edit/downloadTransferCompare"/>
 
             <mvc:exclude-mapping path="/ims/beatIcon/index/saveItems"/>
             <mvc:exclude-mapping path="/ims/beatIcon/index/addItems"/>

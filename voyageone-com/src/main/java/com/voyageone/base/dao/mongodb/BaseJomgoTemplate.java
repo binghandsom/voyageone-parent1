@@ -118,9 +118,14 @@ public class BaseJomgoTemplate extends BaseJomgoPartTemplate {
         return updateMulti(strQuery, strUpdate, collectionName);
     }
 
-    public WriteResult upsert(String strQuery, String strUpdate, Class<?> entityClass) {
+    public WriteResult upsertFirst(final String strQuery, final String strUpdate, Class<?> entityClass) {
         String collectionName = getCollectionName(entityClass);
-        return upsert(strQuery, strUpdate, collectionName);
+        return upsertFirst(strQuery, strUpdate, collectionName);
+    }
+
+    public WriteResult upsertMulti(String strQuery, String strUpdate, Class<?> entityClass) {
+        String collectionName = getCollectionName(entityClass);
+        return upsertMulti(strQuery, strUpdate, collectionName);
     }
 
     public WriteResult removeById(String id, Class<?> entityClass) {

@@ -1,17 +1,17 @@
 package com.voyageone.batch.cms.service;
 
 import com.mongodb.WriteResult;
-import com.voyageone.cms.service.dao.mongodb.CmsMtCommonSchemaDao;
-import com.voyageone.cms.service.model.CmsMtCategorySchemaModel;
 import com.voyageone.batch.base.BaseTaskService;
 import com.voyageone.batch.cms.dao.mongo.CmsMtPlatformFieldsRemoveHistoryDao;
 import com.voyageone.batch.cms.model.mongo.CmsMtPlatformRemoveFieldsModel;
 import com.voyageone.batch.core.modelbean.TaskControlBean;
 import com.voyageone.cms.service.dao.CmsMtCommonPropDao;
 import com.voyageone.cms.service.dao.mongodb.CmsMtCategorySchemaDao;
+import com.voyageone.cms.service.dao.mongodb.CmsMtCommonSchemaDao;
+import com.voyageone.cms.service.dao.mongodb.CmsMtPlatformCategorySchemaDao;
+import com.voyageone.cms.service.model.CmsMtCategorySchemaModel;
 import com.voyageone.cms.service.model.CmsMtComSchemaModel;
 import com.voyageone.cms.service.model.CmsMtPlatformCategorySchemaModel;
-import com.voyageone.cms.service.dao.mongodb.CmsMtPlatformCategorySchemaDao;
 import com.voyageone.cms.service.model.MtCommPropActionDefModel;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.ActionType;
@@ -22,6 +22,7 @@ import com.voyageone.common.masterdate.schema.exception.TopSchemaException;
 import com.voyageone.common.masterdate.schema.factory.SchemaReader;
 import com.voyageone.common.masterdate.schema.field.*;
 import com.voyageone.common.masterdate.schema.label.Label;
+import com.voyageone.common.masterdate.schema.rule.Rule;
 import com.voyageone.common.masterdate.schema.utils.FieldUtil;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.StringUtils;
@@ -31,10 +32,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by lewis on 15-12-3.
@@ -204,7 +202,6 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
                     }
 
                     Field skuField = FieldUtil.getFieldById(masterFields,"sku");
-
                     Field darwinSkuField = FieldUtil.getFieldById(masterFields,"darwin_sku");
 
                     //5. 添加sku field
@@ -272,6 +269,8 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
                     masterModel.setCatFullPath(schemaModel.getCatFullPath());
                     FieldUtil.replaceFieldIdDot(masterFields);
                     Field sku = FieldUtil.getFieldById(masterFields, "sku");
+                    if(sku instanceof MultiComplexField)
+                        skusSort(((MultiComplexField) sku).getFields());
                     FieldUtil.removeFieldById(masterFields, "sku");
                     masterModel.setSku(sku);
 
@@ -280,7 +279,7 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
                         comCategorySchema.add(comField);
                         FieldUtil.removeFieldById(masterFields,comModel.getPropId());
                     }
-
+                    fieldsSort(masterFields);
                     masterModel.setFields(masterFields);
                     masterModel.setCreater(this.JOB_NAME);
                     masterModel.setModifier(this.JOB_NAME);
@@ -315,6 +314,33 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
             }
 
         }
+    }
+
+    //Field字段排序方法
+    private static void fieldsSort(List<Field> masterFields){
+        Collections.sort(masterFields,(a, b) ->{
+                //1.b为true, B前置
+                if(b.getRuleByName("requiredRule")!=null&&!StringUtils.isNullOrBlank2(b.getRuleByName("requiredRule").getValue())&&b.getRuleByName("requiredRule").getValue().equals("true"))
+                    return 1;
+                return -1;
+        });
+    }
+
+    //Sku Field字段排序方法
+    private static void skusSort(List<Field> masterFields){
+        Map<String,Integer> sortIndex=new HashMap<>();
+        //排序
+        Arrays.asList(new String[]{"skuCode:1","size:2","qty:3","priceMsrp:4","priceRetail:5","priceSale:6","skuCarts:7","barcode:8"}).forEach(a->{
+           sortIndex.put(a.split(":")[0],Integer.parseInt(a.split(":")[1]));
+        });
+        Collections.sort(masterFields, (a,b) -> {
+                //1.a为空b非空 b前置 2.a>b b前置
+                Integer aIndex=sortIndex.get(a.getId());
+                Integer bIndex=sortIndex.get(b.getId());
+                if((aIndex==null&&bIndex!=null)||(aIndex!=null&&bIndex!=null&&aIndex>bIndex))
+                    return 1;
+                return -1;
+        });
     }
 
     private void setValueType(MtCommPropActionDefModel actionDefModel, Field updField) {

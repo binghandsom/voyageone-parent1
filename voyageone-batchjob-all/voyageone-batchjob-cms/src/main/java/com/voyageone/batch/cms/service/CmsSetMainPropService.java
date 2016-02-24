@@ -1,56 +1,26 @@
 package com.voyageone.batch.cms.service;
 
-import com.google.common.base.Joiner;
-import com.mongodb.BulkWriteResult;
-import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
-import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.batch.base.BaseTaskService;
-import com.voyageone.batch.cms.bean.ItemDetailsBean;
-import com.voyageone.batch.cms.dao.ItemDetailsDao;
+import com.voyageone.batch.cms.bean.*;
 import com.voyageone.batch.cms.dao.MainPropDao;
 import com.voyageone.batch.cms.dao.SuperFeedDao;
+
+import com.voyageone.batch.cms.enums.FeedPropMappingType;
 import com.voyageone.batch.core.Enums.TaskControlEnums;
 import com.voyageone.batch.core.modelbean.TaskControlBean;
 import com.voyageone.batch.core.util.TaskControlUtils;
-import com.voyageone.cms.CmsConstants;
-import com.voyageone.cms.enums.MappingPropType;
-import com.voyageone.cms.enums.SrcType;
 import com.voyageone.cms.feed.Condition;
-import com.voyageone.cms.feed.Operation;
-import com.voyageone.cms.service.CommSequenceMongoService;
-import com.voyageone.cms.service.dao.mongodb.CmsBtFeedInfoDao;
-import com.voyageone.cms.service.dao.mongodb.CmsBtFeedMappingDao;
-import com.voyageone.cms.service.dao.mongodb.CmsBtProductDao;
-import com.voyageone.cms.service.dao.mongodb.CmsMtCategorySchemaDao;
-import com.voyageone.cms.service.model.*;
-import com.voyageone.cms.service.model.feed.mapping.Mapping;
-import com.voyageone.cms.service.model.feed.mapping.Prop;
-import com.voyageone.common.Constants;
-import com.voyageone.common.components.baidu.translate.BaiduTranslateUtil;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
+import com.voyageone.common.components.transaction.TransactionRunner;
 import com.voyageone.common.configs.ChannelConfigs;
-import com.voyageone.common.configs.ShopConfigs;
-import com.voyageone.common.configs.TypeChannel;
 import com.voyageone.common.configs.beans.OrderChannelBean;
-import com.voyageone.common.configs.beans.ShopBean;
-import com.voyageone.common.configs.beans.TypeChannelBean;
-import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
-import com.voyageone.common.masterdate.schema.field.ComplexField;
-import com.voyageone.common.masterdate.schema.field.Field;
-import com.voyageone.common.masterdate.schema.field.MultiComplexField;
-import com.voyageone.common.util.MD5;
+import com.voyageone.common.util.JsonUtil;
 import com.voyageone.common.util.StringUtils;
-import com.voyageone.web2.sdk.api.VoApiDefaultClient;
-import com.voyageone.web2.sdk.api.domain.ProductPriceModel;
-import com.voyageone.web2.sdk.api.domain.ProductSkuPriceModel;
-import com.voyageone.web2.sdk.api.request.ProductUpdatePriceRequest;
-import com.voyageone.web2.sdk.api.request.ProductUpdateRequest;
-import com.voyageone.web2.sdk.api.request.ProductsAddRequest;
-import com.voyageone.web2.sdk.api.response.ProductUpdateResponse;
-import com.voyageone.web2.sdk.api.response.ProductsAddResponse;
+import com.voyageone.ims.enums.MasterPropTypeEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.DecimalFormat;
 import java.util.*;
 
 @Service
@@ -59,23 +29,11 @@ public class CmsSetMainPropService extends BaseTaskService {
     @Autowired
     SuperFeedDao superfeeddao;
 
+    @Autowired
+    private TransactionRunner transactionRunner;
+
 	@Autowired
 	MainPropDao mainPropDao;
-
-    @Autowired
-    CmsBtFeedInfoDao cmsBtFeedInfoDao; // DAO: feed数据
-    @Autowired
-    CmsBtFeedMappingDao cmsBtFeedMappingDao; // DAO: feed->主数据的mapping关系
-    @Autowired
-    CmsBtProductDao cmsBtProductDao; // DAO: 商品的值
-    @Autowired
-    CommSequenceMongoService commSequenceMongoService; // DAO: Sequence
-    @Autowired
-    CmsMtCategorySchemaDao cmsMtCategorySchemaDao; // DAO: 主类目属性结构
-    @Autowired
-    ItemDetailsDao itemDetailsDao; // DAO: ItemDetailsDao
-    @Autowired
-    protected VoApiDefaultClient voApiClient; // VoyageOne共通API
 
 	@Override
     public SubSystem getSubSystem() {
@@ -87,16 +45,6 @@ public class CmsSetMainPropService extends BaseTaskService {
         return "CmsSetMainPropJob";
     }
 
-    /**
-     * feed数据 -> 主数据
-     *     关联代码1 (从天猫获取Fields):
-     *         当需要从天猫上,拉下数据填充到product表里的场合, skip_mapping_check会是1
-     *         并且生成product之后, 会有一个程序来填满fields, 测试程序是:CmsPlatformProductImportServiceTest
-     *     关联代码2 (切换主类目的时候):
-     *         切换主类目的时候, 切换完毕后, 需要删除batchField里的switchFlg
-     * @param taskControlList job 配置
-     * @throws Exception
-     */
     public void onStartup(List<TaskControlBean> taskControlList) throws Exception {
 
         // 允许运行的订单渠道取得
@@ -111,14 +59,7 @@ public class CmsSetMainPropService extends BaseTaskService {
             threads.add(new Runnable() {
                 @Override
                 public void run() {
-                    // 获取是否跳过mapping check
-                    String skip_mapping_check = TaskControlUtils.getVal2(taskControlList, TaskControlEnums.Name.order_channel_id, orderChannelID);
-                    boolean bln_skip_mapping_check = true;
-                    if (StringUtils.isEmpty(skip_mapping_check) || "0".equals(skip_mapping_check)) {
-                        bln_skip_mapping_check = false;
-                    }
-                    // 主逻辑
-                    new setMainProp(orderChannelID, bln_skip_mapping_check).doRun();
+                    new setMainProp(orderChannelID).doRun();
                 }
             });
         }
@@ -130,775 +71,669 @@ public class CmsSetMainPropService extends BaseTaskService {
      * 按渠道进行设置
      */
     public class setMainProp {
-        private OrderChannelBean channel;
-        private boolean skip_mapping_check;
+        private OrderChannelBean channel; 
 
-        public setMainProp(String orderChannelId, boolean skip_mapping_check) {
-            this.channel = ChannelConfigs.getChannel(orderChannelId);
-            this.skip_mapping_check = skip_mapping_check;
+        public setMainProp(String orderChannelId) {
+            this.channel = ChannelConfigs.getChannel(orderChannelId); 
         }
 
         public void doRun() {
-            logger.info(channel.getFull_name() + "产品导入主数据开始");
+            logger.info(channel.getFull_name() + "产品导入主数据开始" );
 
-            String channelId = this.channel.getOrder_channel_id();
+            String channel_id = this.channel.getOrder_channel_id();
+            String level_model = "2";
 
-            // 查找当前渠道,所有等待反映到主数据的商品
-            List<CmsBtFeedInfoModel> feedList = cmsBtFeedInfoDao.selectProductByUpdFlg(channelId, 0);
+            // 查找所有的商品
+            List<MainPropTodoListBean> mainPropTodoListBeanList;
+            mainPropTodoListBeanList = mainPropDao.getPlatformSubCatsWithoutShop(channel_id);
 
-            Map<String, String> mapBrandMapping = new HashMap<>();
-            if (feedList.size() > 0) {
-                List<TypeChannelBean> typeChannelBeanList;
-                typeChannelBeanList = TypeChannel.getTypeList("brand", channelId);
+            // 所有的类目匹配关系
+            Map<String, String> mainCategoryIdList = new HashMap<>();
+            // 已经完成属性匹配的主类目列表
+            List<String> categoryListSetted = new ArrayList<>();
+            // 如果检索到数据
+            if (mainPropTodoListBeanList.size() > 0) {
+                // 一次性获取所有的类目匹配关系（根据channel_id）
+                mainCategoryIdList = mainPropDao.selectMainCategoryIdList(channel_id);
 
-                if (typeChannelBeanList != null) {
-                    for (TypeChannelBean typeChannelBean : typeChannelBeanList) {
-                        if (
-                                !StringUtils.isEmpty(typeChannelBean.getAdd_name1())
-                                && !StringUtils.isEmpty(typeChannelBean.getName())
-                                && Constants.LANGUAGE.EN.equals(typeChannelBean.getLang_id())
-                                ) {
-                            mapBrandMapping.put(typeChannelBean.getAdd_name1(), typeChannelBean.getName());
-                        }
-                    }
-                }
-            }
-
-            // 遍历所有数据
-            for (CmsBtFeedInfoModel feed : feedList) {
-                // 将商品从feed导入主数据
-                // 注意: 保存单条数据到主数据的时候, 由于要生成group数据, group数据的生成需要检索数据库进行一系列判断
-                //       所以单个渠道的数据, 最好不要使用多线程, 如果以后一定要加多线程的话, 注意要自己写带锁的代码.
-                feed.setFullAttribute();
-                doSaveProductMainProp(feed, channelId, mapBrandMapping);
-            }
-
-            logger.info(channel.getFull_name() + "产品导入主数据结束");
-
-        }
-
-        /**
-         * 将商品从feed导入主数据
-         * @param feed 商品信息
-         * @param channelId channel id
-         * @param mapBrandMapping 品牌mapping一览
-         */
-        private void doSaveProductMainProp(CmsBtFeedInfoModel feed, String channelId, Map<String, String> mapBrandMapping) {
-            // feed类目名称
-            String feedCategory = feed.getCategory();
-
-            // [ feed -> main ] 类目属性的匹配关系
-            CmsBtFeedMappingModel mapping;
-
-            // 查看当前商品, 在主数据中, 是否已经存在
-            boolean blnProductExist;
-            CmsBtProductModel cmsProduct;
-            cmsProduct = cmsBtProductDao.selectProductByCode(channelId, feed.getCode());
-            if (cmsProduct == null) {
-                // 不存在
-                blnProductExist = false;
-
-                // 获取类目属性匹配关系(默认的)
-                mapping = cmsBtFeedMappingDao.selectByDefault(channelId, feedCategory);
-            } else {
-                // 已经存在
-                blnProductExist = true;
-
-                // 获取类目属性匹配关系(指定的主类目)
-                mapping = cmsBtFeedMappingDao.selectByKey(channelId, feedCategory, cmsProduct.getCatPath());
-            }
-
-            // 默认不忽略mapping check的场合, 需要做mapping check
-            if (!this.skip_mapping_check) {
-                // 查看类目是否匹配完成
-                if (mapping == null) {
-                    // 记下log, 跳过当前记录
-                    logIssue(getTaskName(), String.format("[CMS2.0][测试]该feed类目, 没有匹配到主数据的类目 ( channel: [%s], feed: [%s] )", channelId, feed.getCategory()));
-
-                    return;
-                }
-                // 查看属性是否匹配完成
-                if (mapping.getMatchOver() == 0) {
-                    // 记下log, 跳过当前记录
-                    logIssue(getTaskName(), String.format("[CMS2.0][测试]该主类目的属性匹配尚未完成 ( channel: [%s], feed: [%s], main: [%s] )", channelId, feed.getCategory(), mapping.getScope().getMainCategoryPath()));
-
-                    return;
-                }
-            }
-
-            if (blnProductExist) {
-                // 修改商品数据
-                // 一般只改改价格神马的
-                cmsProduct = doUpdateCmsBtProductModel(feed, cmsProduct, mapping, mapBrandMapping);
-                // TODO: 没有设置的fields里的内容, 不会被清除? 这个应该是在共通里做掉的吧, 要是共通里不做的话就要自己写了
-
-                // 清除一些batch的标记 // TODO: 梁兄坑爹啊, batchField的更新没有放到product更新里, 暂时自己写一个用, 这里暂时注释掉
-//                CmsBtProductModel_BatchField batchField = cmsProduct.getBatchField();
-//                batchField.setAttribute("switchCategory", "0"); // 切换主类目->完成
-//                cmsProduct.setBatchField(batchField);
-
-                ProductUpdateRequest requestModel = new ProductUpdateRequest(channelId);
-                requestModel.setProductModel(cmsProduct);
-                requestModel.setModifier(getTaskName());
-                requestModel.setIsCheckModifed(false); // 不做最新修改时间ｃｈｅｃｋ
-
-                ProductUpdateResponse response = voApiClient.execute(requestModel);
-
-                // TODO: 梁兄坑爹啊, batchField的更新没有放到product更新里, 暂时自己写一个用
-                // TODO: 等改好后下面这段内容就可以删掉了
-                {
-                    List<BulkUpdateModel> bulkList = new ArrayList<>();
-
-                    HashMap<String, Object> updateMap = new HashMap<>();
-                    updateMap.put("batchField.switchCategory",0);
-
-                    HashMap<String, Object> queryMap = new HashMap<>();
-                    queryMap.put("prodId", cmsProduct.getProdId());
-
-                    BulkUpdateModel model = new BulkUpdateModel();
-                    model.setUpdateMap(updateMap);
-                    model.setQueryMap(queryMap);
-                    bulkList.add(model);
-
-                    BulkWriteResult result = cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, getTaskName(), "$set");
-
-                }
-
-                logger.info(getTaskName() + ":更新:" + cmsProduct.getChannelId() + ":" + cmsProduct.getFields().getCode() + ":" + response.getCode() + ":" + response.getMessage());
-
-            } else {
-                // 不存在的场合, 新建一个product
-                cmsProduct = doCreateCmsBtProductModel(feed, mapping, mapBrandMapping);
-                if (cmsProduct == null) {
-                    // 有出错, 跳过
-                    logger.error(getTaskName() + ":新增:编辑商品的时候出错:" + cmsProduct.getChannelId() + ":" + cmsProduct.getFields().getCode());
-
-                    return;
-                }
-
-                ProductsAddRequest requestModel = new ProductsAddRequest(channelId);
-                requestModel.addProduct(cmsProduct);
-                requestModel.setModifier(getTaskName());
-                ProductsAddResponse response = voApiClient.execute(requestModel);
-
-                logger.info(getTaskName() + ":新增:" + cmsProduct.getChannelId() + ":" + cmsProduct.getFields().getCode() + ":" + response.getCode() + ":" + response.getMessage());
+                // 查看已经完成属性匹配的主类目列表
+                categoryListSetted = mainPropDao.getMainCategoryListWhereAttrIsSetted(channel_id);
 
             }
 
-            // 调用共通方法来设置价格
-            doSetPrice(channelId, feed, cmsProduct);
+            // 循环所有的商品
+            for (MainPropTodoListBean mainPropTodoListBean : mainPropTodoListBeanList) {
+                // 遍历每个商品
+                String category_id = mainPropTodoListBean.getCategory_id();
+                String model_id = mainPropTodoListBean.getModel_id();
+                String product_id = mainPropTodoListBean.getProduct_id();
 
-            // 更新wms_bt_item_details表的数据
-            doSaveItemDetails(channelId, cmsProduct.getProdId(), feed);
+                // 获取主类目
+                String mainCategoryId;
+                // 有可能已经设置过主类目了，去获取一下
+                List<String> resultModel = mainPropDao.selectModelIdByModelName(channel_id, model_id);
 
-            // 更新price_log信息
-            // TODO:更新price_log信息 -> 共通代码里会处理的,我这边就不需要写了
-            // 更新product_log信息
-            // TODO:更新product_log信息 -> 还要不要写呢? 状态变化的话,共通代码里已经有了,其他的变化,这里是否要更新进去? 应该不用了吧.
-//            cms_bt_product_log
+                if (resultModel != null && resultModel.size() > 0) {
+                    // 2015-10-14 tom modify 主数据类目的数据源从cms_bt_model_extend，改为cms_bt_cn_model_extend START
+//                    mainCategoryId = resultModel.get(1);
+                    mainCategoryId = resultModel.get(2);
+                    // 2015-10-14 tom modify 主数据类目的数据源从cms_bt_model_extend，改为cms_bt_cn_model_extend END
+                } else {
+                    mainCategoryId = "";
+                }
 
-            // 设置商品更新完成
-            feed.setUpdFlg(1);
-            cmsBtFeedInfoDao.update(feed);
+                // 如果没有设置过主类目的话，使用默认匹配的主类目
+                if (StringUtils.isEmpty(mainCategoryId)) {
+                    if (mainCategoryIdList.containsKey(category_id)) {
+                        mainCategoryId = mainCategoryIdList.get(category_id);
 
-            // ------------- 函数结束
+                        // 将该商品的主类目，设为默认匹配好的值
+                        mainPropDao.doSetMainCategoryId(resultModel, channel_id, mainCategoryId, getTaskName());
+                    } else {
+//                            // 如果没有设定过匹配用的主类目，那么认为出错了，并要求运营设置主类目
+//                            blnError = true;
+//                            break;
 
-        }
-
-        /**
-         * 生成Fields的内容
-         * @param feed feed的商品信息
-         * @param mapping feed与main的匹配关系
-         * @param mapBrandMapping 品牌mapping一览
-         * @param mainCategoryId 主类目的id
-         * @return 返回整个儿的Fields的内容
-         */
-        private CmsBtProductModel_Field doCreateCmsBtProductModelField(CmsBtFeedInfoModel feed, CmsBtFeedMappingModel mapping, Map<String, String> mapBrandMapping, String mainCategoryId) {
-            // --------- 获取主类目的schema信息 ------------------------------------------------------
-            CmsMtCategorySchemaModel schemaModel = cmsMtCategorySchemaDao.getMasterSchemaModelByCatId(mainCategoryId);
-
-            // --------- 商品属性信息设定 ------------------------------------------------------
-            CmsBtProductModel_Field field = new CmsBtProductModel_Field();
-
-            if (!skip_mapping_check) {
-                // 遍历mapping,设置主数据的属性
-                for (Prop prop : mapping.getProps()) {
-                    if (MappingPropType.SKU.equals(prop.getType())) {
-                        // 这段逻辑只处理公共属性(COMMON类型)和类目属性(FIELD类型)的,如果是SKU属性,则跳过
+                        // 如果没有设定过匹配用的主类目，那么认为无法继续了，跳过
+                        logger.warn("尚未指定主类目：category_id=" + category_id);
+                        logger.warn("尚未指定主类目：model_id=" + model_id);
+                        logger.warn("尚未指定主类目：product_id=" + product_id);
                         continue;
                     }
-
-                    // 递归设置属性
-                    field.put(prop.getProp(), getPropValueByMapping(prop.getProp(), prop, feed, field, schemaModel));
-                }
-            }
-
-            // 主数据的field里,强制写死的字段
-            // code
-            field.setCode(feed.getCode());
-            // 英文名字
-            field.setProductNameEn(feed.getName());
-            // model
-            field.setModel(feed.getModel());
-            // 产品状态
-            field.setStatus(com.voyageone.cms.CmsConstants.ProductStatus.New); // 产品状态: 初始时期为(新建) Synship.com_mt_type : id = 44 : productStatus
-            // 品牌
-            if (mapBrandMapping.containsKey(feed.getBrand())) {
-                field.setBrand(mapBrandMapping.get(feed.getBrand()));
-            } else {
-                logger.error(getTaskName() + ":" + String.format("[CMS2.0][测试]feed->main的品牌mapping没做 ( channel id: [%s], feed brand: [%s] )", feed.getChannelId(), feed.getBrand()));
-
-                // 记下log, 跳过当前记录
-                logIssue(getTaskName(), String.format("[CMS2.0][测试]feed->main的品牌mapping没做 ( channel id: [%s], feed brand: [%s] )", feed.getChannelId(), feed.getBrand()));
-
-                return null;
-            }
-
-            return field;
-        }
-
-        /**
-         * 生成一个新的product
-         * @param feed feed的商品信息
-         * @param mapping feed与main的匹配关系
-         * @param mapBrandMapping 品牌mapping一览
-         * @return 一个新的product的内容
-         */
-        private CmsBtProductModel doCreateCmsBtProductModel(CmsBtFeedInfoModel feed, CmsBtFeedMappingModel mapping, Map<String, String> mapBrandMapping) {
-            // 新创建的product
-            CmsBtProductModel product = new CmsBtProductModel();
-
-            // --------- 基本信息设定 ------------------------------------------------------
-            product.setChannelId(feed.getChannelId());
-
-            if (!skip_mapping_check) {
-                String catPath = mapping.getScope().getMainCategoryPath();
-                product.setCatId(MD5.getMD5(catPath)); // 主类目id
-                product.setCatPath(catPath); // 主类目path
-            }
-            product.setProdId(commSequenceMongoService.getNextSequence(CommSequenceMongoService.CommSequenceName.CMS_BT_PRODUCT_PROD_ID)); // 商品的id
-
-            CmsBtProductModel_Field field = doCreateCmsBtProductModelField(feed, mapping, mapBrandMapping, product.getCatId());
-            if (field == null) {
-                return null;
-            }
-
-            product.setFields(field);
-
-            // --------- 商品Sku信息设定 ------------------------------------------------------
-            List<CmsBtProductModel_Sku> mainSkuList = new ArrayList<>();
-            for (CmsBtFeedInfoModel_Sku sku : feed.getSkus()) {
-                // 设置单个sku的信息
-                CmsBtProductModel_Sku mainSku = new CmsBtProductModel_Sku();
-
-                mainSku.setSkuCode(sku.getSku()); // sku
-                mainSku.setBarcode(sku.getBarcode()); // barcode
-                mainSku.setSize(sku.getSize()); // 尺码
-
-//                mainSku.setPriceMsrp(sku.getPrice_msrp());// msrp -> 共通API进行设置
-//                mainSku.setPriceRetail(sku.getPrice_current()); // 零售价: 未审批 -> 共通API进行设置
-//                mainSku.setPriceSale(sku); // 销售价: 已审批 (不用自动设置)
-
-                mainSkuList.add(mainSku);
-            }
-            product.setSkus(mainSkuList);
-
-            // --------- 商品Group信息设定 ------------------------------------------------------
-            // 创建新的group
-            CmsBtProductModel_Group group = new CmsBtProductModel_Group();
-
-//            // 价格区间设置 ( -> 调用顾步春的api自动会去设置,这里不需要设置了)
-//            Double minMsrp = 99999999.99; // 九千九百九十九万 九千九百九十九 点 九九
-//            Double maxMsrp = 0.0;
-//            Double minRetail = 99999999.99; // 九千九百九十九万 九千九百九十九 点 九九
-//            Double maxRetail = 0.0;
-////            Double minSale = 99999999.99; // 九千九百九十九万 九千九百九十九 点 九九
-////            Double maxSale = 0.0;
-//            for (CmsBtProductModel_Sku sku : mainSkuList) {
-//                Double nowMsrp = sku.getPriceMsrp();
-//                Double nowRetail = sku.getPriceRetail();
-////                Double nowSale = sku.getPriceSale();
-//
-//                if (nowMsrp < minMsrp) minMsrp = nowMsrp;
-//                if (nowMsrp > maxMsrp) maxMsrp = nowMsrp;
-//
-//                if (nowRetail < minRetail) minRetail = nowRetail;
-//                if (nowRetail > maxRetail) maxRetail = nowRetail;
-//
-////                if (nowSale < minSale) minSale = nowSale;
-////                if (nowSale > maxSale) maxSale = nowSale;
-//            }
-//            group.setMsrpStart(minMsrp);
-//            group.setMsrpEnd(maxMsrp);
-//            group.setRetailPriceStart(minRetail);
-//            group.setRetailPriceEnd(maxRetail);
-////            group.setSalePriceStart(minSale);
-////            group.setSalePriceEnd(maxSale);
-
-            // 获取当前channel, 有多少个platform, 最后增加一个id为0的platform
-            List<ShopBean> shopList = ShopConfigs.getChannelShopList(feed.getChannelId());
-            List<CmsBtProductModel_Group_Platform> platformList = new ArrayList<>();
-            // 循环一下
-            for (ShopBean shop : shopList) {
-                // 创建一个platform
-                CmsBtProductModel_Group_Platform platform = new CmsBtProductModel_Group_Platform();
-
-                // cart id
-                platform.setCartId(Integer.parseInt(shop.getCart_id()));
-
-                // 获取group id
-                long groupId;
-                groupId = getGroupIdByFeedModel(feed.getChannelId(), feed.getModel(), shop.getCart_id());
-
-                // group id
-                // 看看同一个model里是否已经有数据在cms里存在的
-                //   如果已经有存在的话: 直接用哪个group id
-                //   如果没有的话: 取一个最大的 + 1
-                if (groupId == -1) {
-                    // 获取唯一编号
-                    platform.setGroupId(
-                            commSequenceMongoService.getNextSequence(CommSequenceMongoService.CommSequenceName.CMS_BT_PRODUCT_GROUP_ID)
-                    );
-
-                    // is Main
-                    platform.setIsMain(true);
-                } else {
-                    platform.setGroupId(groupId);
-
-                    // is Main
-                    platform.setIsMain(false);
                 }
 
-                // num iid
-                platform.setNumIId(""); // 因为没有上新, 所以不会有值
-
-                // display order
-                platform.setDisplayOrder(0); // TODO: 不重要且有影响效率的可能, 有空再设置
-
-                // platform status:发布状态: 未上新 // Synship.com_mt_type : id = 45
-                platform.setPlatformStatus(com.voyageone.cms.CmsConstants.PlatformStatus.Waitingpublish);
-                // platform active:上新的动作: 暂时默认所有店铺是放到:仓库中
-                platform.setPlatformActive(CmsConstants.PlatformActive.Instock);
-
-                // qty
-                platform.setQty(0); // 初始为0, 之后会有库存同步程序把这个地方的值设为正确的值的
-
-                platformList.add(platform);
-            }
-            group.setPlatforms(platformList);
-
-            product.setGroups(group);
-
-            // --------- 商品Feed信息设定 ------------------------------------------------------
-            BaseMongoMap mainFeedOrgAtts = new BaseMongoMap();
-            List<String> mainFeedOrgAttsKeyList = new ArrayList<>();
-            List<String> mainFeedOrgAttsValueList = new ArrayList<>();
-            // 遍历所有的feed属性
-            for (Map.Entry<String,List<String>> attr : feed.getAttribute().entrySet() ) {
-                String valString = Joiner.on(", ").skipNulls().join(attr.getValue());
-                // 原始语言
-                mainFeedOrgAtts.setAttribute(attr.getKey(), valString);
-
-                // 放到list里, 用来后面的程序翻译用
-                mainFeedOrgAttsKeyList.add(attr.getKey());
-                mainFeedOrgAttsValueList.add(valString);
-            }
-            // 增加一个modelCode(来源是feed的field的model, 无需翻译)
-            mainFeedOrgAtts.setAttribute("modelCode", feed.getModel());
-            mainFeedOrgAtts.setAttribute("categoryCode", feed.getCategory());
-
-            product.getFeed().setOrgAtts(mainFeedOrgAtts);
-
-            // 翻译成中文
-            BaseMongoMap mainFeedCnAtts = new BaseMongoMap();
-
-            // TOM 测试的时候不要翻译, 节约额度 START
-//            // 翻译成中文
-//            List<String> mainFeedCnAttsValueList;
-//            try {
-//                mainFeedCnAttsValueList = BaiduTranslateUtil.translate(mainFeedOrgAttsValueList);
-//
-//                for (int i = 0; i < mainFeedOrgAttsKeyList.size(); i++) {
-//                    mainFeedCnAtts.setAttribute(mainFeedOrgAttsKeyList.get(i), mainFeedCnAttsValueList.get(i));
-//                }
-//            } catch (Exception e) {
-//                // 翻译失败的场合,全部设置为空, 运营自己翻译吧
-//                for (String aMainFeedOrgAttsKeyList : mainFeedOrgAttsKeyList) {
-//                    mainFeedCnAtts.setAttribute(aMainFeedOrgAttsKeyList, "");
-//                }
-//            }
-            // TOM 测试的时候不要翻译, 节约额度 END
-            // 增加一个modelCode(来源是feed的field的model, 无需翻译)
-            mainFeedCnAtts.setAttribute("modelCode", feed.getModel());
-            mainFeedCnAtts.setAttribute("categoryCode", feed.getCategory());
-            product.getFeed().setCnAtts(mainFeedCnAtts);
-
-            return product;
-        }
-
-        /**
-         * 更新product
-         * @param feed feed的商品信息
-         * @param product 主数据的product
-         * @param mapping feed与main的匹配关系
-         * @param mapBrandMapping 品牌mapping一览
-         * @return 修改过的product的内容
-         */
-        private CmsBtProductModel doUpdateCmsBtProductModel(CmsBtFeedInfoModel feed, CmsBtProductModel product, CmsBtFeedMappingModel mapping, Map<String, String> mapBrandMapping) {
-
-            // 注意: 价格是在外面共通方法更新的, 这里不需要更新
-
-            // 更新Fields字段
-            CmsBtProductModel_Field field = doCreateCmsBtProductModelField(feed, mapping, mapBrandMapping, product.getCatId());
-            if (field == null) {
-                return null;
-            }
-
-            product.setFields(field);
-
-            // 遍历feed的skus
-            for (CmsBtFeedInfoModel_Sku feedSku : feed.getSkus()) {
-                // 遍历主数据product里的sku,看看有没有
-                boolean blnFound = false;
-                for (CmsBtProductModel_Sku sku : product.getSkus()) {
-                    if (feedSku.getSku().equals(sku.getSkuCode())) {
-                        blnFound = true;
-                        break;
-                    }
-                }
-
-                // 如果找到了,那就什么都不做,如果没有找到,那么就需要添加
-                if (!blnFound) {
-                    CmsBtProductModel_Sku sku = new CmsBtProductModel_Sku();
-                    sku.setSkuCode(feedSku.getSku());
-                    sku.setBarcode(feedSku.getBarcode()); // barcode
-                    sku.setSize(feedSku.getSize()); // 尺码
-
-//                    sku.setPriceMsrp(feedSku.getPrice_msrp()); // msrp -> 共通API进行设置
-//                    sku.setPriceRetail(feedSku.getPrice_current()); // 零售价: 未审批 -> 共通API进行设置
-
-                    product.getSkus().add(sku);
-                }
-
-            }
-
-            // 更新状态, 准备重新上传到各个平台
-            for (CmsBtProductModel_Group_Platform platform : product.getGroups().getPlatforms()) {
-                platform.setPlatformStatus(CmsConstants.PlatformStatus.Waitingpublish);
-            }
-
-
-            return product;
-        }
-
-        /**
-         * 根据model, 到product表中去查找, 看看这家店里, 是否有相同的model已经存在
-         *   如果已经存在, 返回 找到了的那个group id
-         *   如果不存在, 返回 -1
-         * @param channelId channel id
-         * @param modelCode 品牌方给的model
-         * @param cartId cart id
-         * @return group id
-         */
-        private long getGroupIdByFeedModel(String channelId, String modelCode, String cartId) {
-
-            // 先去看看是否有存在的了
-            CmsBtProductModel product = cmsBtProductDao.selectProductGroupByModelCodeAndCartId(channelId, modelCode, cartId);
-
-            if (product == null
-                    || product.getGroups() == null
-                    || product.getGroups().getPlatforms() == null
-                    || product.getGroups().getPlatforms().size() == 0) {
-                return -1;
-            }
-
-            return product.getGroups().getPlatforms().get(0).getGroupId();
-        }
-
-        private int m_mulitComplex_index = 0; // 暂时只支持一层multiComplex, 如果需要多层, 就需要改成list, 先进后出
-        private boolean m_mulitComplex_run = false; // 暂时只支持一层multiComplex, 如果需要多层, 就需要改成list, 先进后出
-        /**
-         * getPropValueByMapping 属性匹配(递归)
-         * @param prop mapping表里的一个属性
-         * @param feed feed表的信息
-         * @param field 当前匹配好的属性(需要返回)
-         * @param schemaModel 主类目的schema信息
-         * @return 匹配好的属性
-         */
-        private Object getPropValueByMapping(
-                String propPath,
-                Prop prop,
-                CmsBtFeedInfoModel feed,
-                CmsBtProductModel_Field field,
-                CmsMtCategorySchemaModel schemaModel) {
-
-            String strPathSplit = ">";
-
-            Map<String, Object> complexChildren = new HashMap<>();
-            List<Map<String, Object>> multiComplexChildren = new LinkedList<>();
-
-            // 分割propPath
-            String[] propPathSplit = propPath.split(strPathSplit);
-            // 获取当前需要处理的这个属性,在主类目属性中的信息
-            Field fieldCurrent = null;
-            List<Field> schemaFieldList = schemaModel.getFields();
-            for (String value : propPathSplit) {
-
-                for (Field fieldOne : schemaFieldList) {
-                    if (value.equals(fieldOne.getId())) {
-
-                        // 看看类型
-                        if (FieldTypeEnum.COMPLEX.equals(fieldOne.getType())) {
-                            // 切换循环属性, 继续循环
-                            schemaFieldList = ((ComplexField)fieldOne).getFields();
-                        } else if (FieldTypeEnum.MULTICOMPLEX.equals(fieldOne.getType())) {
-                            // 切换循环属性, 继续循环
-                            schemaFieldList = ((MultiComplexField)fieldOne).getFields();
-                        }
-
-                        fieldCurrent = fieldOne;
-
-                        break;
-                    }
-
-                }
-            }
-
-            // 看看是否有子属性
-            if (prop.getChildren() != null && prop.getChildren().size() > 0) {
-
-                // 处理子属性
-                if (FieldTypeEnum.COMPLEX.equals(fieldCurrent.getType())) {
-                    for (Prop p : prop.getChildren()) {
-                        complexChildren.put(p.getProp(), getPropValueByMapping(propPath + strPathSplit + p.getProp(), p, feed, field, schemaModel));
-                    }
-
-                    // 处理完所有的子属性之后就可以返回了
-                    return complexChildren;
-                } else if (FieldTypeEnum.MULTICOMPLEX.equals(fieldCurrent.getType())) {
-
-                    m_mulitComplex_run = true;
-                    m_mulitComplex_index = 0;
-
-                    while (m_mulitComplex_run) {
-                        complexChildren = new HashMap<>();
-                        for (Prop p : prop.getChildren()) {
-                            complexChildren.put(p.getProp(), getPropValueByMapping(propPath + strPathSplit + p.getProp(), p, feed, field, schemaModel));
-                        }
-                        multiComplexChildren.add(complexChildren);
-                        m_mulitComplex_index++;
-                    }
-
-                    // 处理完所有的子属性之后就可以返回了
-                    return multiComplexChildren;
-                }
-
-            }
-
-            // 检查条件是否满足
-            for (Mapping mappingCondition : prop.getMappings()) {
-                boolean blnMeetRequirements = true;
-
-                // 遍历条件(需要符合所有条件才算通过)
-                if (mappingCondition != null && mappingCondition.getCondition() != null) {
-                    for (Condition c : mappingCondition.getCondition()) {
-                        if (Operation.IS_NULL.equals(c.getOperation())) {
-                            if (feed.getAttribute().get(c.getProperty()) != null
-                                    && feed.getAttribute().get(c.getProperty()).size() > 0
-                                    ) {
-                                boolean blnError = false;
-                                for (String s : feed.getAttribute().get(c.getProperty())) {
-                                    if (!StringUtils.isEmpty(s)) {
-                                        blnError = true;
-                                    }
-                                }
-                                if (blnError) {
-                                    // 不符合条件
-                                    blnMeetRequirements = false;
-                                    break;
-                                }
-                            }
-                        } else if (Operation.IS_NOT_NULL.equals(c.getOperation())) {
-                            if (feed.getAttribute().get(c.getProperty()) == null
-                                    || feed.getAttribute().get(c.getProperty()).size() == 0
-                                    ) {
-                                // 不符合条件
-                                blnMeetRequirements = false;
-                                break;
-                            } else {
-
-                                boolean blnError = true;
-                                for (String s : feed.getAttribute().get(c.getProperty())) {
-                                    if (!StringUtils.isEmpty(s)) {
-                                        blnError = false;
-                                    }
-                                }
-                                if (blnError) {
-                                    // 不符合条件
-                                    blnMeetRequirements = false;
-                                    break;
-                                }
-                            }
-                        } else if (Operation.EQUALS.equals(c.getOperation())) {
-                            List<String> feedProp = feed.getAttribute().get(c.getProperty());
-                            if (feedProp == null || feedProp.size() == 0) {
-                                // 不符合条件
-                                blnMeetRequirements = false;
-                                break;
-                            }
-
-                            if (!c.getValue().equals(feedProp.get(0))) {
-                                // 不符合条件
-                                blnMeetRequirements = false;
-                                break;
-                            }
-
-                        } else if (Operation.NOT_EQUALS.equals(c.getOperation())) {
-                            List<String> feedProp = feed.getAttribute().get(c.getProperty());
-                            if (feedProp == null || feedProp.size() == 0) {
-                                // 不符合条件
-                                blnMeetRequirements = false;
-                                break;
-                            }
-
-                            if (c.getValue().equals(feedProp.get(0))) {
-                                // 不符合条件
-                                blnMeetRequirements = false;
-                                break;
-                            }
-
-                        }
-                    }
-                }
-
-                // 符合条件的场合
-                if (blnMeetRequirements) {
-                    // 设置值
-                    Object attributeValue = null;
-
-                    if (SrcType.text.equals(mappingCondition.getType())) {
-                        // 如果是多选框的话,那么就要生成一个数组
-                        if (FieldTypeEnum.MULTICHECK.equals(fieldCurrent.getType())) {
-                            List<String> lst = new ArrayList<>();
-                            lst.add(mappingCondition.getVal());
-                            attributeValue = lst;
-                        } else {
-                            attributeValue = mappingCondition.getVal();
-                        }
-                    } else if (SrcType.propFeed.equals(mappingCondition.getType())) {
-
-                        if (feed.getAttribute().containsKey(mappingCondition.getVal())) {
-                            // 先看看attribute里有没有
-                            attributeValue = feed.getAttribute().get(mappingCondition.getVal());
-                        } else if (feed.getFullAttribute().containsKey(mappingCondition.getVal())) {
-                            // 看看外面有没有
-                            attributeValue = feed.getFullAttribute().get(mappingCondition.getVal());
-                        } else {
-                            // 记下log, 无视当前属性
-                            logIssue(getTaskName(), String.format("[CMS2.0][测试] 找不到feed的这个属性 ( channel: [%s], code: [%s], attr: [%s] )", feed.getChannelId(), feed.getCode(), mappingCondition.getVal()));
-                            logger.info(String.format("[CMS2.0][测试] 找不到feed的这个属性 ( channel: [%s], code: [%s], attr: [%s] )", feed.getChannelId(), feed.getCode(), mappingCondition.getVal()));
-                        }
-
-                        if (m_mulitComplex_run) {
-                            if (attributeValue.getClass().equals(ArrayList.class)) {
-                                Object attTemp = ((List)attributeValue).get(m_mulitComplex_index);
-
-                                if (m_mulitComplex_index == (((List) attributeValue).size() - 1)) {
-                                    m_mulitComplex_run = false;
-                                }
-                                attributeValue = attTemp;
-                            }
-                        }
-
-                    }
-
-                    return attributeValue;
-
-                }
-            }
-
-            return null;
-
-        }
-
-        /**
-         * doSetPrice 设置product的价格
-         * @param channelId channel id
-         * @param feed feed信息
-         * @param cmsProduct cms product信息
-         */
-        private void doSetPrice(String channelId, CmsBtFeedInfoModel feed, CmsBtProductModel cmsProduct) {
-            ProductUpdatePriceRequest requestModel = new ProductUpdatePriceRequest(channelId);
-            ProductPriceModel model = new ProductPriceModel();
-            ProductSkuPriceModel skuPriceModel;
-
-            model.setProductId(cmsProduct.getProdId());
-
-            for (CmsBtFeedInfoModel_Sku sku : feed.getSkus()) {
-                skuPriceModel = new ProductSkuPriceModel();
-
-                skuPriceModel.setSkuCode(sku.getSku());
-                skuPriceModel.setPriceMsrp(sku.getPrice_msrp());
-                skuPriceModel.setPriceRetail(sku.getPrice_current());
-                model.addSkuPrice(skuPriceModel);
-            }
-
-            requestModel.setModifier(getTaskName());
-            requestModel.addProductPrices(model);
-
-            //SDK取得Product 数据
-            voApiClient.execute(requestModel);
-
-        }
-
-        /**
-         * doSaveItemDetails 保存item details的数据
-         * @param channelId channel id
-         * @param productId product id
-         * @param feed feed信息
-         */
-        private void doSaveItemDetails(String channelId, Long productId, CmsBtFeedInfoModel feed) {
-
-            // 如果feed里,没有sku的数据的话,那么就不需要做下去了
-            if (feed.getSkus() == null || feed.getSkus().size() == 0) {
-                return;
-            }
-
-            // 根据product id, 获取现有的item details表的数据
-            List<String> skuList = new ArrayList<>();
-            List<ItemDetailsBean> itemDetailsBeanList = itemDetailsDao.selectByCode(channelId, feed.getCode());
-            for (ItemDetailsBean itemDetailsBean : itemDetailsBeanList) {
-                skuList.add(itemDetailsBean.getSku());
-            }
-
-            // 遍历feed的sku信息
-            for (CmsBtFeedInfoModel_Sku feedSku : feed.getSkus()) {
-                // 如果有存在的话,那么就跳过不需要再插入了
-                if (skuList.contains(feedSku.getSku())) {
+                if (!categoryListSetted.contains(mainCategoryId)) {
+                    // 如果没有设定过匹配用的主类目，那么认为无法继续了，跳过
+                    logger.warn("主类目属性未设定完成：mainCategoryId=" + mainCategoryId);
                     continue;
                 }
 
-                // 数据准备
-                ItemDetailsBean itemDetailsBean = new ItemDetailsBean();
-                itemDetailsBean.setOrder_channel_id(channelId);
-                itemDetailsBean.setSku(feedSku.getSku());
-                itemDetailsBean.setProduct_id(productId);
-                itemDetailsBean.setItemcode(feed.getCode());
-                itemDetailsBean.setSize(feedSku.getSize());
-                itemDetailsBean.setBarcode(feedSku.getBarcode());
-                itemDetailsBean.setIs_sale("1");
-                itemDetailsBean.setClient_sku(feedSku.getClientSku());
-                itemDetailsBean.setActive(1);
+                // 获取feed内容
+                List<MainPropTodoItemListBean> mainPropTodoItemListBeanList = mainPropDao.selectMainPropTodoItemListBean(channel_id, product_id);
+                Map<String, String> mapMainPropTodoItemListBeanList = new HashMap<>();
+                for (MainPropTodoItemListBean mainPropTodoItemListBean : mainPropTodoItemListBeanList) {
+                    mapMainPropTodoItemListBeanList.put(mainPropTodoItemListBean.getAttribute_name(), mainPropTodoItemListBean.getAttribute_value());
+                }
 
-                // 插入数据库
-                itemDetailsDao.insertItemDetails(itemDetailsBean, getTaskName());
+                // 根据product id，获取sku列表
+                List<String> skuList = mainPropDao.getSkuListFromProductId(channel_id, product_id);
+
+                // 如果sku的数据不存在的话，那就没必要做这些处理了
+                if (skuList != null && skuList.size() > 0) {
+
+                    // 遍历SKU级别的数据
+                    // 获取ims_bt_sku_prop_mapping的数据
+                    List<FeedMappingSkuBean> feedMappingBeanSkuList = mainPropDao.selectFeedMappingSkuList(channel_id, mainCategoryId);
+                    // 获取ims_bt_prop_value_sku_template的数据
+                    List<PropValueSkuTemplateBean> propValueSkuTemplateBeanList = mainPropDao.selectPropValueSkuTemplateList();
+                    Map<String, PropValueSkuTemplateBean> propValueSkuTemplateBeanMap = new HashMap<>();
+                    for (PropValueSkuTemplateBean propValueSkuTemplateBean : propValueSkuTemplateBeanList) {
+                        propValueSkuTemplateBeanMap.put(propValueSkuTemplateBean.getProp_name(), propValueSkuTemplateBean);
+                    }
+
+                    // 设置sku的属性
+                    List<ImsPropValueSkuBean> mainPropSkuList = new ArrayList<>();
+
+                    // 遍历FeedMapping
+                    for (FeedMappingSkuBean feedMappingSkuBean : feedMappingBeanSkuList) {
+
+                        // 如果有条件的话，看看是否符合条件
+                        if (!StringUtils.isEmpty(feedMappingSkuBean.getConditions())) {
+                            // 条件
+                            Condition condition = JsonUtil.jsonToBean(feedMappingSkuBean.getConditions(), Condition.class);
+
+                            // 判断条件是否满足
+                            String strFeedValue = mapMainPropTodoItemListBeanList.get(condition.getProperty());
+                            switch (condition.getOperation()) {
+                                case IS_NULL:
+                                    if (!StringUtils.isEmpty(strFeedValue)) {
+                                        // 条件不满足，跳过
+                                        continue;
+                                    }
+                                    break;
+                                case IS_NOT_NULL:
+                                    if (StringUtils.isEmpty(strFeedValue)) {
+                                        // 条件不满足，跳过
+                                        continue;
+                                    }
+                                    break;
+                                case EQUALS:
+                                    // 禁止为空
+                                    if (strFeedValue == null) {
+                                        continue;
+                                    }
+                                    if (condition.getValue() == null) {
+                                        continue;
+                                    }
+
+                                    if (!strFeedValue.equals(condition.getValue())) {
+                                        // 条件不满足，跳过
+                                        continue;
+                                    }
+                                    break;
+                                case NOT_EQUALS:
+                                    // 禁止为空
+                                    if (strFeedValue == null) {
+                                        continue;
+                                    }
+                                    if (condition.getValue() == null) {
+                                        continue;
+                                    }
+
+                                    if (strFeedValue.equals(condition.getValue())) {
+                                        // 条件不满足，跳过
+                                        continue;
+                                    }
+                                    break;
+                            }
+
+                        }
+
+                        // 准备设定值
+                        String value = "";
+                        FeedPropMappingType feedPropMappingType;
+                        feedPropMappingType = FeedPropMappingType.valueOf(Integer.parseInt(feedMappingSkuBean.getType()));
+                        if (feedPropMappingType == FeedPropMappingType.FEED) {
+                            // 获取属性的值
+                            value = mapMainPropTodoItemListBeanList.get(feedMappingSkuBean.getValue());
+
+                            // 获取template，看看是否要进行运算
+                            PropValueSkuTemplateBean propValueSkuTemplateBean;
+                            if (propValueSkuTemplateBeanMap.containsKey(feedMappingSkuBean.getProp_name())) {
+                                propValueSkuTemplateBean = propValueSkuTemplateBeanMap.get(feedMappingSkuBean.getProp_name());
+
+                                value = doEditSkuTemplate(
+                                        value,
+                                        propValueSkuTemplateBean.getEdit(),
+                                        propValueSkuTemplateBean.getPrefix(),
+                                        propValueSkuTemplateBean.getSuffix()
+                                        );
+                            }
+
+                        } else if (feedPropMappingType == FeedPropMappingType.VALUE) {
+                            // 直接设定值
+                            value = feedMappingSkuBean.getValue();
+                        }
+
+                        // 循环sku列表
+                        for (String sku : skuList) {
+                            List<ImsPropValueSkuBean> imsPropValueSkuBeanList = mainPropDao.selectPropValueSku(
+                                    channel_id,
+                                    sku,
+                                    feedMappingSkuBean.getProp_name()
+                            );
+
+                            // 查看当前属性是否已经设定过了
+                            if (imsPropValueSkuBeanList != null && imsPropValueSkuBeanList.size() > 0) {
+                                // 如果这个属性已经设置过了，那么根据先来后到的优先度，之后的就不用设置了
+                                continue;
+                            }
+
+                            // 添加自己
+                            ImsPropValueSkuBean imsPropValueSkuBean = new ImsPropValueSkuBean();
+
+                            imsPropValueSkuBean.setSku(sku);
+                            imsPropValueSkuBean.setProp_name(feedMappingSkuBean.getProp_name());
+                            imsPropValueSkuBean.setProp_value(value);
+                            imsPropValueSkuBean.setOrder_channel_id(channel_id);
+
+                            mainPropSkuList.add(imsPropValueSkuBean);
+
+                        }
+
+                    }
+
+                    if (mainPropSkuList.size() > 0) {
+                        // 插入数据库
+                        mainPropDao.doInsertSkuValue(mainPropSkuList, getTaskName());
+                        logger.info("主数据属性值设定（SKU）：model_id=" + model_id + "; product_id=" + product_id + "; main_category_id=" + mainCategoryId);
+                    }
+                }
+
+                // 去value表检索一下，看看这个model是否已经设置过了
+                boolean blnMainValueExist = mainPropDao.selectMainValue(channel_id, level_model, model_id);
+                // 已经存在了，那就是已经设置过了
+                if (blnMainValueExist) {
+                    // 更新处理flag
+                    mainPropDao.doFinishProduct(channel_id, product_id);
+
+                    // 跳过这条数据吧
+                    continue;
+                }
+
+                // 获取该类目（主数据类目）的所有属性， 放入map
+                Map<String, ImsPropBean> imsPropMap = mainPropDao.selectImsPropByCategoryId(mainCategoryId);
+
+                // 获取mapping的内容，放入需要操作的对象
+                List<FeedMappingBean> feedMappingBeanList = mainPropDao.selectFeedMappingList(channel_id, mainCategoryId);
+
+                // 获取mapping default的内容，放入需要操作的对象
+                List<FeedMappingDefaultBean> feedMappingDefaultBeanList = mainPropDao.selectFeedMappingDefaultList(channel_id);
+                Map<String, List<String>> mapFeedMappingDefaultBeanList = new HashMap<>();
+                for (FeedMappingDefaultBean feedMappingDefaultBean : feedMappingDefaultBeanList) {
+                    List<String> lstProp = new ArrayList<>();
+                    lstProp.add(feedMappingDefaultBean.getProp_type());
+                    lstProp.add(feedMappingDefaultBean.getProp_value());
+
+                    mapFeedMappingDefaultBeanList.put(feedMappingDefaultBean.getProp_name(), lstProp);
+                }
+
+                // 设置主数据的属性
+                Map<String, ImsPropValueBean> mainPropList = new HashMap<>();
+
+                // 遍历FeedMapping
+                for (FeedMappingBean feedMappingBean : feedMappingBeanList) {
+                    if (mainPropList.containsKey(feedMappingBean.getProp_id())) {
+                        // 如果这个属性已经设置过了，那么根据先来后到的优先度，之后的就不用设置了
+                        continue;
+                    }
+
+                    // 如果有条件的话，看看是否符合条件
+                    if (!StringUtils.isEmpty(feedMappingBean.getConditions())) {
+                        // 条件
+                        Condition condition = JsonUtil.jsonToBean(feedMappingBean.getConditions(), Condition.class);
+
+                        // 判断条件是否满足
+                        String strFeedValue = mapMainPropTodoItemListBeanList.get(condition.getProperty());
+                        switch (condition.getOperation()) {
+                            case IS_NULL:
+                                if (!StringUtils.isEmpty(strFeedValue)) {
+                                    // 条件不满足，跳过
+                                    continue;
+                                }
+                                break;
+                            case IS_NOT_NULL:
+                                if (StringUtils.isEmpty(strFeedValue)) {
+                                    // 条件不满足，跳过
+                                    continue;
+                                }
+                                break;
+                            case EQUALS:
+                                // 禁止为空
+                                if (strFeedValue == null) {
+                                    continue;
+                                }
+                                if (condition.getValue() == null) {
+                                    continue;
+                                }
+
+                                if (!strFeedValue.equals(condition.getValue())) {
+                                    // 条件不满足，跳过
+                                    continue;
+                                }
+                                break;
+                            case NOT_EQUALS:
+                                // 禁止为空
+                                if (strFeedValue == null) {
+                                    continue;
+                                }
+                                if (condition.getValue() == null) {
+                                    continue;
+                                }
+
+                                if (strFeedValue.equals(condition.getValue())) {
+                                    // 条件不满足，跳过
+                                    continue;
+                                }
+                                break;
+                        }
+
+                    }
+
+                    // 准备设定值
+                    String value = "";
+                    FeedPropMappingType feedPropMappingType;
+                    feedPropMappingType = FeedPropMappingType.valueOf(Integer.parseInt(feedMappingBean.getType()));
+                    if (feedPropMappingType == FeedPropMappingType.FEED) {
+                        // 获取属性的值
+                        value = mapMainPropTodoItemListBeanList.get(feedMappingBean.getValue());
+                        value = "{\"ruleWordList\":[{\"type\":\"TEXT\", \"value\":\"" + value.replace("\"", "\\\"") + "\"}]}";
+                    } else if (feedPropMappingType == FeedPropMappingType.OPTIONS) {
+                        value = feedMappingBean.getValue();
+                        value = "{\"ruleWordList\":[{\"type\":\"TEXT\", \"value\":\"" + value.replace("\"", "\\\"") + "\"}]}";
+                    } else if (feedPropMappingType == FeedPropMappingType.CMS) {
+                        value = feedMappingBean.getValue();
+                        value = "{\"ruleWordList\":[{\"type\":\"CMS\", \"value\":[\"CmsModelEnum\",\"" + value + "\"]}]}";
+                    } else if (feedPropMappingType == FeedPropMappingType.VALUE) {
+                        if (feedMappingBean.getValue().startsWith("{")
+                                || feedMappingBean.getValue().startsWith("[{")
+                                ) {
+                            value = feedMappingBean.getValue();
+                        } else {
+                            value = feedMappingBean.getValue();
+                            value = "{\"ruleWordList\":[{\"type\":\"TEXT\", \"value\":\"" + value.replace("\"", "\\\"") + "\"}]}";
+                        }
+
+                    }
+
+                    // 设定值
+                    {
+                        // 添加一个父
+                        String strParentUuidMulti = "";
+                        String strParentUuid = "";
+
+                        // 看看自己的类型
+                        int intType = imsPropMap.get(feedMappingBean.getProp_id()).getPropType();
+                        if (intType == MasterPropTypeEnum.MULTICHECK.getValue()
+                                || intType == MasterPropTypeEnum.MULTICOMPLEX.getValue()
+                                ) {
+                            // 需要待会儿在最后插入数据的时候，添加一个父
+                            strParentUuidMulti = getUUID();
+                        }
+
+                        // 看看自己是否有父
+                        int intParentId = imsPropMap.get(feedMappingBean.getProp_id()).getParentPropId();
+                        if (intParentId != 0) {
+                            // 有父，添加父（包括所有父）
+                            List<ImsPropValueBean> imsParentPropValueBeanList =  doAddParentProp(channel_id, level_model, model_id, String.valueOf(intParentId), imsPropMap, mainPropList);
+
+                            for (ImsPropValueBean bean : imsParentPropValueBeanList) {
+                                mainPropList.put(bean.getPropId(), bean);
+                            }
+
+                            strParentUuid = imsParentPropValueBeanList.get(imsParentPropValueBeanList.size() - 1).getUuid();
+
+                        }
+
+                        // 添加自己
+                        ImsPropValueBean imsPropValueBean = new ImsPropValueBean();
+                        // 算一个uuid出来
+                        imsPropValueBean.setUuid(getUUID());
+                        // channel id
+                        imsPropValueBean.setChannelId(channel_id);
+                        // level
+                        imsPropValueBean.setLevel(level_model);
+                        // level value
+                        imsPropValueBean.setLevelValue(model_id);
+                        // prop id
+                        imsPropValueBean.setPropId(feedMappingBean.getProp_id());
+                        // prop value
+                        imsPropValueBean.setPropValue(value.replace("'", "''"));
+                        // parent
+                        imsPropValueBean.setParent(strParentUuid);
+                        // parent multi
+                        imsPropValueBean.setParentMulti(strParentUuidMulti);
+
+                        mainPropList.put(feedMappingBean.getProp_id(), imsPropValueBean);
+
+                    }
+                }
+
+                // 设置默认值
+                // 遍历主类目的所有属性
+                Iterator iter = imsPropMap.entrySet().iterator();
+                while (iter.hasNext()) {
+                    Map.Entry entry = (Map.Entry) iter.next();
+
+                    String key = entry.getKey().toString();
+                    ImsPropBean val = (ImsPropBean) entry.getValue();
+
+                    // 遍历FeedMappingDefault
+                    if (mapFeedMappingDefaultBeanList.containsKey(val.getPropName())) {
+                        List<String> feedMappingDefaultBean = mapFeedMappingDefaultBeanList.get(val.getPropName());
+                        if (String.valueOf(val.getPropType()).equals(feedMappingDefaultBean.get(0))) {
+                            // 这个属性还没有被设置过的话，可以设置一下
+                            if (!mainPropList.containsKey(key)) {
+
+                                // 设定值
+                                {
+                                    // 添加一个父
+                                    String strParentUuidMulti = "";
+                                    String strParentUuid = "";
+
+                                    // 看看自己的类型
+                                    int intType = imsPropMap.get(key).getPropType();
+                                    if (intType == MasterPropTypeEnum.MULTICHECK.getValue()
+                                            || intType == MasterPropTypeEnum.MULTICOMPLEX.getValue()
+                                            ) {
+                                        // 需要待会儿在最后插入数据的时候，添加一个父
+                                        strParentUuidMulti = getUUID();
+                                    }
+
+                                    // 看看自己是否有父
+                                    int intParentId = imsPropMap.get(key).getParentPropId();
+                                    if (intParentId != 0) {
+                                        // 有父，添加父（包括所有父）
+                                        List<ImsPropValueBean> imsParentPropValueBeanList =  doAddParentProp(channel_id, level_model, model_id, String.valueOf(intParentId), imsPropMap, mainPropList);
+
+                                        for (ImsPropValueBean bean : imsParentPropValueBeanList) {
+                                            mainPropList.put(bean.getPropId(), bean);
+                                        }
+
+                                        strParentUuid = imsParentPropValueBeanList.get(imsParentPropValueBeanList.size() - 1).getUuid();
+
+                                    }
+
+                                    // 添加自己
+                                    ImsPropValueBean imsPropValueBean = new ImsPropValueBean();
+                                    // 算一个uuid出来
+                                    imsPropValueBean.setUuid(getUUID());
+                                    // channel id
+                                    imsPropValueBean.setChannelId(channel_id);
+                                    // level
+                                    imsPropValueBean.setLevel(level_model);
+                                    // level value
+                                    imsPropValueBean.setLevelValue(model_id);
+                                    // prop id
+                                    imsPropValueBean.setPropId(key);
+                                    // prop value
+                                    imsPropValueBean.setPropValue(feedMappingDefaultBean.get(1).replace("'", "''"));
+                                    // parent
+                                    imsPropValueBean.setParent(strParentUuid);
+                                    // parent multi
+                                    imsPropValueBean.setParentMulti(strParentUuidMulti);
+
+                                    mainPropList.put(key, imsPropValueBean);
+
+                                }
+
+
+                            }
+                        }
+                    }
+
+                }
+
+                // 插入到数据库里（主数据的值表）
+                List<ImsPropValueBean> imsPropValueBeanList = new ArrayList<>();
+                Set<String> set_MainPropList = mainPropList.keySet();
+                for (String propId : set_MainPropList) {
+
+                    // 操作对象
+                    ImsPropValueBean imsPropValueBean = mainPropList.get(propId);
+
+                    // 操作对象的类型
+                    int intType = imsPropMap.get(imsPropValueBean.getPropId()).getPropType();
+
+                    // 判断是否是多选（需要特殊处理）
+                    String uuidNew;
+                    if (intType == MasterPropTypeEnum.MULTICHECK.getValue()
+                            || intType == MasterPropTypeEnum.MULTICOMPLEX.getValue()
+                            ) {
+                        ImsPropValueBean tempBean = new ImsPropValueBean();
+
+                        // uuid
+                        uuidNew = getUUID();
+                        tempBean.setUuid(uuidNew);// imsPropValueBean.getParent()
+                        // channel id
+                        tempBean.setChannelId(channel_id);
+                        // level
+                        tempBean.setLevel(level_model);
+                        // level value
+                        tempBean.setLevelValue(model_id);
+                        // prop id
+                        tempBean.setPropId(imsPropValueBean.getPropId());
+                        // prop value
+                        tempBean.setPropValue("");
+                        // parent
+                        // 看看自己是否有父
+                        int intParentId = imsPropMap.get(imsPropValueBean.getPropId()).getParentPropId();
+                        if (intParentId != 0) {
+                            // 如果有父
+                            String strParentUuid = mainPropList.get(String.valueOf(intParentId)).getUuid();
+                            tempBean.setParent(strParentUuid);
+                        } else {
+                            // 没有
+                            tempBean.setParent("");
+                        }
+
+                        // 直接插入
+                        imsPropValueBeanList.add(tempBean);
+
+                        imsPropValueBean.setParent(uuidNew);
+
+                    }
+
+                    imsPropValueBeanList.add(imsPropValueBean);
+
+                }
+                if (imsPropValueBeanList.size() > 0) {
+                    mainPropDao.doInsertMainValue(imsPropValueBeanList, getTaskName());
+                    logger.info("主数据属性值设定（CODE）：model_id=" + model_id + "; product_id=" + product_id + "; main_category_id=" + mainCategoryId);
+                }
+
+                // 更新处理flag
+                mainPropDao.doFinishProduct(channel_id, product_id);
 
             }
 
+            logger.info(channel.getFull_name() + "产品导入主数据结束");
+        }
+	}
 
+    private String doEditSkuTemplate(String inputValue, String edit, String prefix, String suffix) {
+        String value = inputValue;
 
+        // 根据edit进行变换
+        if (!StringUtils.isEmpty(edit)) {
+            if ("in2cm".equals(edit)) {
+                // 奇怪的数据转换
+                // 有时候别人提供的数字中会有类似于这样的数据：
+                // 33 3/4 意思是 33又四分之三 -> 33.75
+                // 33 1/2 意思是 33又二分之一 -> 33.5
+                // 33 1/4 意思是 33又四分之一 -> 33.25
+                // 33 5/8 意思是 33又八分之五 -> 33.625
+                // 直接这边代码处理掉避免人工干预
+                if (value.contains(" ")) {
+                    value = value.replaceAll(" +", " ");
+                    String[] strSplit = value.split(" ");
+
+                    // 修改：直接用除法来过滤掉所有这类问题 tom 20151014 START
+//                    switch (strSplit[1]) {
+//                        case "3/4":
+//                            value = String.valueOf(Float.valueOf(strSplit[0]) + 0.75);
+//                            break;
+//                        case "1/2":
+//                            value = String.valueOf(Float.valueOf(strSplit[0]) + 0.5);
+//                            break;
+//                        case "1/4":
+//                            value = String.valueOf(Float.valueOf(strSplit[0]) + 0.25);
+//                            break;
+//                        case "5/8":
+//                            value = String.valueOf(Float.valueOf(strSplit[0]) + 0.625);
+//                            break;
+//                    }
+                    String[] strSplitSub = strSplit[1].split("/");
+                    value = String.valueOf(
+                            Float.valueOf(strSplit[0]) +
+                                    (Float.valueOf(strSplitSub[0]) / Float.valueOf(strSplitSub[1]))
+                    );
+                    // 修改：直接用除法来过滤掉所有这类问题 tom 20151014 END
+
+                }
+
+                // 英寸转厘米
+                value = String.valueOf(Float.valueOf(value) * 2.54);
+
+                DecimalFormat df = new DecimalFormat("0.00");
+                value = df.format(Float.valueOf(value));
+
+            }
         }
 
+        // 设置前缀
+        if (!StringUtils.isEmpty(prefix)) {
+            value = prefix + value;
+        }
+
+        // 设置后缀
+        if (!StringUtils.isEmpty(suffix)) {
+            value = value + suffix;
+        }
+
+        return value;
+
     }
+
+    private String getUUID() {
+        // 创建 GUID 对象
+        UUID uuid = UUID.randomUUID();
+        // 得到对象产生的ID
+        String value = uuid.toString();
+        // 替换 -
+        value = value.replaceAll("-", "");
+
+        return value;
+    }
+
+    private List<ImsPropValueBean> doAddParentProp(String channel_id, String level, String modelId, String parentPropId, Map<String, ImsPropBean> imsPropMap, Map<String, ImsPropValueBean> mainPropList) {
+
+        List<ImsPropValueBean> result = new ArrayList<>();
+
+        String strParentUuid = "";
+
+        // 看看是否有父的父
+        int intParentId = imsPropMap.get(parentPropId).getParentPropId();
+        if (intParentId != 0) {
+            // 有父，添加父（包括所有父）
+            result.addAll(doAddParentProp(channel_id, level, modelId, String.valueOf(intParentId), imsPropMap, mainPropList));
+        }
+
+        if (result.size() > 0) {
+            strParentUuid = result.get(result.size() - 1).getUuid();
+        }
+
+        // 看看自己是否已经被添加过了
+        String uuid;
+        if (mainPropList.containsKey(parentPropId)) {
+            uuid  = mainPropList.get(parentPropId).getUuid();
+        } else {
+            uuid = getUUID();
+        }
+
+        // 看看自己的类型
+        String strParentUuidMulti = "";
+        int intType = imsPropMap.get(parentPropId).getPropType();
+        if (intType == MasterPropTypeEnum.MULTICHECK.getValue()
+                || intType == MasterPropTypeEnum.MULTICOMPLEX.getValue()
+                ) {
+            // 需要待会儿在最后插入数据的时候，添加一个父
+            strParentUuidMulti = getUUID();
+        }
+
+        // 添加自己
+        ImsPropValueBean imsPropValueBean = new ImsPropValueBean();
+        // 算一个uuid出来
+        imsPropValueBean.setUuid(uuid);
+        // channel id
+        imsPropValueBean.setChannelId(channel_id);
+        // level
+        imsPropValueBean.setLevel(level);
+        // level value
+        imsPropValueBean.setLevelValue(modelId);
+        // prop id
+        imsPropValueBean.setPropId(parentPropId);
+        // prop value
+        imsPropValueBean.setPropValue("");
+        // parent
+        imsPropValueBean.setParent(strParentUuid);
+        // parent multi
+        imsPropValueBean.setParentMulti(strParentUuidMulti);
+
+        result.add(imsPropValueBean);
+
+        return result;
+    }
+
 
 }

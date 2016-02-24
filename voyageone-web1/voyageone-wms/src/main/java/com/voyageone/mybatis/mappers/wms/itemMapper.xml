@@ -15,7 +15,7 @@
     </sql>
 
     <select id="wms_bt_item_details_get_sku" resultType="string">
-        select sku from wms_bt_item_details where order_channel_id = #{channel_id} and barcode = #{barcode} and active = '1'
+        select sku from wms_bt_item_details where order_channel_id = #{channel_id} and barcode = #{barcode}  order by active desc limit 1
     </select>
 
     <select id="wms_bt_item_details_search_item_code" resultType="string">
@@ -111,4 +111,42 @@
             item_details_id = #{item_details_id}
         AND modified = #{modified}
     </update>
+
+    <select id="wms_bt_item_details_count_by_upc" resultType="int">
+        SELECT
+          count(1)
+        FROM
+          wms_bt_item_details
+        WHERE
+          order_channel_id = #{order_channel_id}
+        AND barcode = #{barcode}
+    </select>
+
+    <select id="wms_bt_client_sku_getUpc" resultType="string">
+        SELECT
+            client_sku.upc
+        FROM
+          wms_bt_client_sku client_sku
+        WHERE
+          client_sku.barcode = #{barcode}
+        <if test="order_channel_id != null and order_channel_id != ''">
+          AND client_sku.order_channel_id = #{order_channel_id}
+        </if>
+        AND client_sku.upc != ''
+        AND exists (select 1
+                      from wms_bt_item_details details
+                      where details.order_channel_id = client_sku.order_channel_id
+                      and details.barcode = client_sku.upc)
+    </select>
+
+    <select id="wms_bt_client_sku_getClientBarcode" resultType="string">
+        SELECT
+          client_sku.barcode
+        FROM
+          wms_bt_client_sku client_sku
+        WHERE
+          client_sku.order_channel_id = #{order_channel_id}
+        AND client_sku.upc = #{barcode}
+        AND client_sku.upc != ''
+    </select>
 </mapper>

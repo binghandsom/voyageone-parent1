@@ -4,9 +4,7 @@ import com.voyageone.batch.base.BaseTaskService;
 import com.voyageone.batch.core.Enums.TaskControlEnums;
 import com.voyageone.batch.core.modelbean.TaskControlBean;
 import com.voyageone.batch.core.util.TaskControlUtils;
-import com.voyageone.batch.wms.service.clientInventory.WmsGetCAClientInvService;
-import com.voyageone.batch.wms.service.clientInventory.WmsGetJewelryClientInvService;
-import com.voyageone.batch.wms.service.clientInventory.WmsGetSearsClientInvService;
+import com.voyageone.batch.wms.service.clientInventory.*;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +31,12 @@ public class WmsGetClientInvService extends BaseTaskService {
     @Autowired
     WmsGetSearsClientInvService wmsGetSearsClientInvService;
 
+    @Autowired
+    WmsGetWmfClientInvService wmsGetWmfClientInvService;
+
+    @Autowired
+    WmsGetGiltClientInvService wmsGetGiltClientInvService;
+
     @Override
     public SubSystem getSubSystem() {
         return SubSystem.WMS;
@@ -58,6 +62,12 @@ public class WmsGetClientInvService extends BaseTaskService {
             }
             else if (channelId.equals(ChannelConfigEnums.Channel.SEARS.getId())) {
                 wmsGetSearsClientInvService.sysSearsInventoryByClient(channelId, threads);
+            }
+            else if(channelId.equals(ChannelConfigEnums.Channel.WMF.getId())) {
+                wmsGetWmfClientInvService.sysWmfInventoryByClient(channelId, threads);
+            }
+            else if(channelId.equals(ChannelConfigEnums.Channel.GILT.getId())) {
+                wmsGetGiltClientInvService.sysGiltInventoryByClient(channelId, threads);
             }
 
         }

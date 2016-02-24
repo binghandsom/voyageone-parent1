@@ -1,13 +1,58 @@
-<div class="wrapper-md" ng-controller="productDetailController as ctrl" ng-init="ctrl.initialize()">
+<div class="wrapper-md" ng-init="ctrl.initialize()">
+	<div class="vo_accordion vo_attr" ng-if="ctrl.productDetails.productDataIsReady">
+		<div class="panel-group">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h4 class="panel-title">&nbsp;{{'TXT_PRODUCT_DETAIL' | translate}}</h4>
+				</div>
+				<div class="container-fluid m-t-sm m-l-xs m-r-xs">
+					<div class="col-sm-12">
+						<div class="col-sm-12  m-b-sm font-bold text-vo">
+							<span>{{'TXT_MASTER_CATEGORY_WITH_COLON' | translate}}</b>{{ctrl.productDetails.categoryFullPath}}</span>
+							<div class="form-inline pull-right" ng-controller="popupCtrl">
+								<!-- TODO 暂时未实现 -->
+								<!--<button class="btn btn-default" ng-click="ctrl.openCategoryMapping(ctrl.productDetails, popupNewCategory)"><i class="fa fa-arrow-circle-right"></i>&nbsp;{{'TXT_SELECT_STORE_CATEGORY' | translate}}</button>-->
+								<button type="button" class="btn btn-default" ng-click="openHistoryPromotion('lg', ctrl.productDetails.productCode)"><i class="fa fa-rotate-left"></i>&nbsp;{{'BTN_PROMOTION_HISTORY' | translate}}</button>
+								<button type="button" class="btn btn-default" ng-click="openHistoryPrice('lg', ctrl.productDetails.productCode, 'code')"><i class="fa fa-jpy"></i>&nbsp;{{'BTN_PRICE_HISTORY' | translate}}</button>
+								<button class="btn btn-default" ng-click="ctrl.openCategoryMapping(ctrl.productDetails, popupNewCategory)"><i class="fa fa-arrow-circle-right"></i>&nbsp;{{'BTN_CHANGE_MASTER_CATEGORY' | translate}}</button>
+
+							</div>
+						</div>
+						<div class="col-sm-8 form-inline pull-left m-b-xs m-r-sm">
+							<label class="m-t-xs col-sm-2" translate="TXT_IS_FIX_TRANSLATED"></label>
+							<div class="col-sm-2 text-left">
+								<div class="onoffswitch">
+									<input type="checkbox" name="switchIsTranslated" class="onoffswitch-checkbox" id="switchIsTranslated" ng-model="ctrl.productDetails.productStatus.translateStatus">
+									<label class="onoffswitch-label" for="switchIsTranslated">
+										<span class="onoffswitch-inner"></span>
+										<span class="onoffswitch-switch"></span>
+									</label>
+								</div><!-- onoff switch -->
+							</div>
+							<label class="m-t-xs col-sm-2" translate="TXT_IS_FIX_EDIT"></label>
+							<div class="col-sm-2 text-left">
+								<div class="onoffswitch">
+									<input type="checkbox" name="switchIsEdit" class="onoffswitch-checkbox" id="switchIsEdit" ng-model="ctrl.productDetails.productStatus.editStatus">
+									<label class="onoffswitch-label" for="switchIsEdit">
+										<span class="onoffswitch-inner"></span>
+										<span class="onoffswitch-switch"></span>
+									</label>
+								</div><!-- onoff switch -->
+							</div>
+						</div>
+						<!--<div class="form-inline pull-right">
+							<button type="submit" class="btn btn-default" ng-click="ctrl.cancelProductInfo()"><i class="fa fa-remove"></i> {{'BTN_CANCEL' | translate}}</button>
+							<button type="submit" class="btn btn-vo" ng-click="ctrl.updateProductInfo()"><i class="glyphicon glyphicon-floppy-disk"></i> {{'BTN_SAVE' | translate}}</button>
+						</div>-->
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
 	<div style="width:80%" ng-if="ctrl.productDetails.productDataIsReady">
 		<tabset class="tab-container vo_nav-tabs">
-			<div class="form-inline pull-right" ng-controller="popupCtrl">
-				<!-- TODO 暂时未实现 -->
-				<!--<button class="btn btn-default" ng-click="ctrl.openCategoryMapping(ctrl.productDetails, popupNewCategory)"><i class="fa fa-arrow-circle-right"></i>&nbsp;{{'TXT_SELECT_STORE_CATEGORY' | translate}}</button>-->
-				<button type="button" class="btn btn-default" ng-click="openHistoryPromotion('lg', ctrl.productDetails.productCode)"><i class="fa fa-rotate-left"></i>&nbsp;{{'TXT_HISTORY_PROMOTION' | translate}}</button>
-				<button type="button" class="btn btn-default" ng-click="openHistoryPrice('lg', ctrl.productDetails.productCode, 'code')"><i class="fa fa-jpy"></i>&nbsp;{{'TXT_HISTORY_PRICE' | translate}}</button>
-				<button class="btn btn-default" ng-click="ctrl.openCategoryMapping(ctrl.productDetails, popupNewCategory)"><i class="fa fa-arrow-circle-right"></i>&nbsp;{{'TXT_CHANGE_CATEGORY' | translate}}</button>
-			</div>
+
 			<tab>
 				<tab-heading>&nbsp;{{'TXT_PRODUCT_DETAIL' | translate}}</tab-heading>
 				<!-- Products table and controls -->
@@ -32,59 +77,24 @@
 							</div>
 						</div>
 					</div>
-					<div class="row text-center">
-						<div class="col-sm-12">
-							<div class="form-inline">
-								<button type="submit" class="btn btn-vo" ng-click="ctrl.updateProductInfo()"><i class="glyphicon glyphicon-floppy-disk"></i> {{'BTN_SAVE' | translate}}</button>
-								<button type="submit" class="btn btn-default" ng-click="ctrl.cancelProductInfo()"><i class="fa fa-remove"></i> {{'BTN_CANCEL' | translate}}</button>
-							</div><!-- .form-inline -->
-						</div>
-					</div>
+					<!--<div class="row text-center">-->
+						<!--<div class="col-sm-12">-->
+							<!--<div class="form-inline">-->
+
+								<!--<button type="submit" class="btn btn-vo" ng-click="ctrl.updateProductInfo()"><i class="glyphicon glyphicon-floppy-disk"></i> {{'BTN_SAVE' | translate}}</button>-->
+								<!--<button type="submit" class="btn btn-default" ng-click="ctrl.cancelProductInfo()"><i class="fa fa-remove"></i> {{'BTN_CANCEL' | translate}}</button>-->
+							<!--</div>&lt;!&ndash; .form-inline &ndash;&gt;-->
+						<!--</div>-->
+					<!--</div>-->
 				</form><!-- .form -->
 			</tab>
 
-			<tab>
-				<tab-heading>&nbsp;{{'TXT_PRODUCT_CUSTOM' | translate}}</tab-heading>
-				<!-- Products table and controls -->
-				<form class="form-horizontal" name="productCustomForm">
-					<div class="panel vo_panel tab_panel">
-						<div class="row wrapper">
-							<div class="container-fluid">
-								<div class="col-sm-6">
-									<div class="form-group" ng-repeat="feedOrgAttr in ctrl.productDetails.customAttributes.orgAtts">
-										<label class="col-sm-3 control-label" ng-bind="feedOrgAttr.key"></label>
-										<div class="col-sm-8">
-											<input type="text" class="form-control" ng-model="feedOrgAttr.value" readonly>
-										</div>
-										<div class="col-sm-1">
-											<label class="i-checks-sm m-b-none"><input type="checkbox" ng-model="feedOrgAttr.selected"></label>
-										</div>
-									</div>
-								</div><!--.col -->
-								<div class="col-sm-6">
-									<div class="form-group" ng-repeat="feedCnAttr in ctrl.productDetails.customAttributes.cnAtts">
-										<label class="col-sm-3 control-label" ng-bind="feedCnAttr.key"></label>
-										<div class="col-sm-8">
-											<input type="text" class="form-control" ng-model="feedCnAttr.value">
-										</div>
-									</div><!-- .form-group -->
-								</div><!-- .col -->
-							</div>
-						</div>
-					</div>
-					<div class="row text-center">
-						<div class="col-sm-12">
-							<div class="form-inline">
-								<button type="submit" class="btn btn-vo" ng-click="ctrl.updateProductInfo()"><i class="glyphicon glyphicon-floppy-disk"></i> {{'BTN_SAVE' | translate}}</button>
-								<button type="submit" class="btn btn-default" ng-click="ctrl.cancelProductCustomInfo()"><i class="fa fa-remove"></i> {{'BTN_CANCEL' | translate}}</button>
-							</div><!-- .form-inline -->
-						</div>
-					</div>
-				</form><!-- .form -->
-			</tab>
+			<!--<tab>-->
+				<!--<tab-heading>&nbsp;{{'TXT_PRODUCT_CUSTOM' | translate}}</tab-heading>-->
+			<!--</tab>-->
 
 			<tab>
-				<tab-heading>&nbsp;{{'TXT_PRODUCT_SKU_LIST' | translate}}</tab-heading>
+				<tab-heading>&nbsp;{{'TXT_PRODUCT_SKU_DETAIL' | translate}}</tab-heading>
 				<div class="panel vo_panel tab_panel">
 					<div class="row wrapper">
 						<div class="container-fluid">
@@ -96,50 +106,85 @@
 						</div>
 					</div>
 				</div> <!-- .panel -->
-				<div class="row text-center">
-					<div class="col-sm-12">
-						<div class="form-inline">
-							<button type="submit" class="btn btn-vo" ng-click="ctrl.updateSkuInfo()"><i class="glyphicon glyphicon-floppy-disk"></i> {{'BTN_SAVE' | translate}}</button>
-							<button type="submit" class="btn btn-default" ng-click="ctrl.cancelSkuInfo()"><i class="fa fa-remove"></i> {{'BTN_CANCEL' | translate}}</button>
-						</div><!-- .form-inline -->
-					</div>
-				</div>
+				<!--<div class="row text-center">-->
+					<!--<div class="col-sm-12">-->
+						<!--<div class="form-inline">-->
+							<!--<button type="submit" class="btn btn-vo" ng-click="ctrl.updateSkuInfo()"><i class="glyphicon glyphicon-floppy-disk"></i> {{'BTN_SAVE' | translate}}</button>-->
+							<!--<button type="submit" class="btn btn-default" ng-click="ctrl.cancelSkuInfo()"><i class="fa fa-remove"></i> {{'BTN_CANCEL' | translate}}</button>-->
+						<!--</div>&lt;!&ndash; .form-inline &ndash;&gt;-->
+					<!--</div>-->
+				<!--</div>-->
 			</tab>
 
 			<tab>
 				<tab-heading>&nbsp;{{'TXT_PRODUCT_THIRD_PROPERTY' | translate}}</tab-heading>
-				<form class="form-horizontal" name="thirdFeedForm">
-					<!-- Products table and controls -->
+
+				<!-- Products table and controls -->
+				<form class="form-horizontal" name="productCustomForm">
 					<div class="panel vo_panel tab_panel">
 						<div class="row wrapper">
-							<div class="container-fluid">
-								<div class="col-sm-12">
-									<div class="form-group" ng-repeat="feedAttr in ctrl.productDetails.feedInfoModel">
-										<label class="col-sm-2 control-label" ng-bind="feedAttr.key"></label>
-										<div class="col-sm-8">
-											<input type="text" class="form-control" ng-model="feedAttr.value" readonly>
+							<div class="container-fluid"  ng-repeat="feedAttr in ctrl.productDetails.feedInfoModel">
+								<div class="col-sm-7">
+									<div class="form-group">
+										<label class="col-sm-4 control-label" ng-bind="feedAttr.key"></label>
+										<div class="col-sm-6">
+											<input type="text" class="form-control" ng-model="feedAttr.value" readonly ng-if="feedAttr.value.length < 50">
+											<textarea rows="3" class="form-control no-resize" ng-model="feedAttr.value" readonly ng-if="feedAttr.value.length >= 50"></textarea>
 										</div>
 										<div class="col-sm-1">
-											<label class="i-checks-sm m-b-none"><input type="checkbox" ng-model="feedAttr.selected"></label>
+											<label class="i-checks-sm m-b-none"><input type="checkbox" ng-model="feedAttr.selected" disabled></label>
 										</div>
-									</div><!-- .form-group -->
+									</div>
 								</div><!--.col -->
+								<div class="col-sm-5">
+									<div class="form-group">
+										<label class="col-sm-4 control-label" ng-bind="feedAttr.cnKey"></label>
+										<div class="col-sm-7" ng-show="feedAttr.selected">
+											<input type="text" class="form-control" ng-model="feedAttr.cnValue" ng-if="feedAttr.value.length < 50">
+											<textarea rows="3" class="form-control no-resize" ng-model="feedAttr.cnValue" ng-if="feedAttr.value.length >= 50"></textarea>
+										</div>
+										<!--<div class="col-sm-1">-->
+											<!--<label class="i-checks-sm m-b-none"><input type="checkbox" ng-model="feedAttr.selected"></label>-->
+										<!--</div>-->
+									</div>
+								</div><!-- .col -->
 							</div>
 						</div>
 					</div>
-					<div class="row text-center">
-						<div class="col-sm-12">
-							<div class="form-inline">
-								<button type="submit" class="btn btn-vo" ng-click="ctrl.addFeedAttrToCustom()"><i class="glyphicon glyphicon-floppy-disk"></i> {{'BTN_SAVE' | translate}}</button>
-								<button type="submit" class="btn btn-default" ng-click="ctrl.cancelAddFeedAttrToCustom()"><i class="fa fa-remove"></i> {{'BTN_CANCEL' | translate}}</button>
-							</div><!-- .form-inline -->
-						</div>
-					</div>
 				</form><!-- .form -->
+
+				<!--<form class="form-horizontal" name="thirdFeedForm">-->
+					<!--&lt;!&ndash; Products table and controls &ndash;&gt;-->
+					<!--<div class="panel vo_panel tab_panel">-->
+						<!--<div class="row wrapper">-->
+							<!--<div class="container-fluid">-->
+								<!--<div class="col-sm-12">-->
+									<!--<div class="form-group" ng-repeat="feedAttr in ctrl.productDetails.feedInfoModel">-->
+										<!--<label class="col-sm-2 control-label" ng-bind="feedAttr.key"></label>-->
+										<!--<div class="col-sm-4">{{feedAttr.value.length}}-->
+											<!--&lt;!&ndash;<input type="text" class="form-control" ng-model="feedAttr.value" ng-if="" readonly>&ndash;&gt;-->
+										<!--</div>-->
+										<!--<div class="col-sm-1">-->
+											<!--<label class="i-checks-sm m-b-none"><input type="checkbox" ng-model="feedAttr.selected"></label>-->
+										<!--</div>-->
+									<!--</div>&lt;!&ndash; .form-group &ndash;&gt;-->
+								<!--</div>&lt;!&ndash;.col &ndash;&gt;-->
+							<!--</div>-->
+						<!--</div>-->
+					<!--</div>-->
+					<!--<div class="row text-center">-->
+						<!--<div class="col-sm-12">-->
+							<!--<div class="form-inline">-->
+								<!--<button type="submit" class="btn btn-vo" ng-click="ctrl.addFeedAttrToCustom()"><i class="glyphicon glyphicon-floppy-disk"></i> {{'BTN_SAVE' | translate}}</button>-->
+								<!--<button type="submit" class="btn btn-default" ng-click="ctrl.cancelAddFeedAttrToCustom()"><i class="fa fa-remove"></i> {{'BTN_CANCEL' | translate}}</button>-->
+							<!--</div>&lt;!&ndash; .form-inline &ndash;&gt;-->
+						<!--</div>-->
+					<!--</div>-->
+				<!--</form>&lt;!&ndash; .form &ndash;&gt;-->
 			</tab>
 
 		</tabset><!-- tabset -->
-		<div style="width:16%;position: fixed;right:1%;top:106px;">
+		<div style="width:16%;position: fixed;right:1%;top:242px;">
 			<!-- product detail panel starts here -->
 			<div class="col no-padder w-lg bg-light vo_prodDetailPanel">
 				<div id="vo_fixProdPanel" >
@@ -157,7 +202,7 @@
 					</div><!-- .vo_prodGallery -->
 
 					<div class="wrapper-sm">
-						<div class="form-group">
+						<!--<div class="form-group">
 							<label class="col-sm-4 control-label m-t-xs" translate="TXT_IS_FIX_TRANSLATED"></label>
 							<div class="col-sm-8 text-left">
 								<div class="onoffswitch">
@@ -166,10 +211,10 @@
 										<span class="onoffswitch-inner"></span>
 										<span class="onoffswitch-switch"></span>
 									</label>
-								</div><!-- onoff switch -->
+								</div>&lt;!&ndash; onoff switch &ndash;&gt;
 							</div>
-						</div>
-						<div class="form-group">
+						</div>-->
+						<!--<div class="form-group">
 							<label class="col-sm-4 control-label m-t-xs" translate="TXT_IS_FIX_EDIT"></label>
 							<div class="col-sm-8 text-left">
 								<div class="onoffswitch">
@@ -178,10 +223,10 @@
 										<span class="onoffswitch-inner"></span>
 										<span class="onoffswitch-switch"></span>
 									</label>
-								</div><!-- onoff switch -->
+								</div>&lt;!&ndash; onoff switch &ndash;&gt;
 							</div>
-						</div>
-						<div class="form-group">
+						</div>-->
+						<!--<div class="form-group">
 							<label class="col-sm-4 control-label m-t-xs" translate="TXT_IS_FIX_APPROVED"></label>
 							<div class="col-sm-8 text-left">
 								<div class="onoffswitch">
@@ -190,15 +235,15 @@
 										<span class="onoffswitch-inner"></span>
 										<span class="onoffswitch-switch"></span>
 									</label>
-								</div><!-- onoff switch -->
+								</div>&lt;!&ndash; onoff switch &ndash;&gt;
 							</div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-12 m-t-xs m-b-xs"><b>{{'TXT_MASTER_CATEGORY_WITH_COLON' | translate}}</b>{{ctrl.productDetails.categoryFullPath}}</label>
-						</div>
+						</div>-->
+						<!--<div class="form-group">
+							<label class="col-sm-12 m-t-xs m-b-xs"><b></label>
+						</div>-->
 						<div class="form-inline text-center">
-							<button type="submit" class="btn btn-vo" ng-click="ctrl.updateProductDetail()"><i class="glyphicon glyphicon-floppy-disk"></i> {{'BTN_SAVE' | translate}}</button>
 							<button type="submit" class="btn btn-default" ng-click="ctrl.cancelProductDetail()"><i class="fa fa-remove"></i> {{'BTN_CANCEL' | translate}}</button>
+							<button type="submit" class="btn btn-vo" ng-click="ctrl.updateProductDetail()"><i class="glyphicon glyphicon-floppy-disk"></i> {{'BTN_SAVE' | translate}}</button>
 						</div><!-- .form-inline -->
 					</div><!-- .wrapper -->
 				</div><!-- #prodFixed -->
@@ -206,11 +251,11 @@
 
 		</div>
 	</div><!-- tabs ng-controller -->
-	<div style="width:80%" ng-if="!ctrl.productDetails.productDataIsReady">
+	<div style="width:80%" hidden ng-show="!ctrl.productDetails.productDataIsReady || ctrl.errorMsg !== ''">
 		<!-- TODO 需要enka设计一个画面,只显示切换类目中的商品的基础信息(code, iamges, ) -->
 		<div class="text-center text-hs ng-binding ng-scope" id="noData">
-			<h4 class="text-vo ng-binding"><i class="icon fa fa-warning"></i>&nbsp;{{'TXT_COM_WARNING' | translate}}</h4>
-			{{'TXT_MSG_PRODUCT_CAN_NOT_EDIT' | translate}}</div>
+			<h4 class="text-vo ng-binding"><i class="icon fa fa-warning"></i>&nbsp;{{'TXT_REMINDER_WITH_COLON' | translate}}</h4>
+			{{!ctrl.productDetails.productDataIsReady ? ('TXT_MSG_PRODUCT_CAN_NOT_EDIT' | translate) : ctrl.errorMsg}}</div>
 	</div>
 </div><!-- end .wrapper-md -->
 

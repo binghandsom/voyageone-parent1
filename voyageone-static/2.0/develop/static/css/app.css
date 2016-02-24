@@ -1097,7 +1097,7 @@ body {
     overflow-x: visible !important;
   }
   .app-content {
-    min-width: 1200px;
+    min-width: 991px;
   }
   .navbar-right {
     margin-right: -15px;
@@ -2033,7 +2033,9 @@ a.text-vo:focus {
 }
 .vo_reqfield:after {
   content: " *";
-  color: #f05050;
+  color: #ff0000;
+  font-size:13px;
+  font-weight:bold;
 }
 .mar-top{margin-top:40px;}
 /*
@@ -2085,7 +2087,7 @@ a.text-vo:focus {
 .vo_prodGallery .thumbnailWrapper {
   display: inline-block;
   width: 100%;
-  text-align: center;
+  text-align: left;
   margin-top: 0px;
   padding-top: 8px;
   padding-bottom: 10px;
@@ -5136,6 +5138,12 @@ a.text-black:hover {
 .text-u-l {
   text-decoration: underline;
 }
+.text-u-sub{
+  vertical-align:sub;
+}
+.text-u-red{
+  color:#ff0000;
+}
 .text-active,
 .active > .text,
 .active > .auto .text {
@@ -6059,6 +6067,7 @@ a.text-black:hover {
   border-radius: 2px;
   border: 1px solid #ccc;
   text-align: center;
+  background:#fff;
 }
 
 .c-checkbox span:before,
@@ -6210,6 +6219,9 @@ a.text-black:hover {
   background: #e67e22;
   color:#fff;
 }
+.table_bg_green_mint{
+  background: #fafff5;
+}
 
 a.btn-main:link {color:#333;text-decoration:underline;}
 a.btn-main:hover {color:#e67e22;text-decoration:underline;}
@@ -6323,10 +6335,10 @@ a.btn-main:hover {color:#e67e22;text-decoration:underline;}
 }
 .btn-img-txt a{
   text-decoration: underline;
-  color:#282828;
+  color:#e67e22;
 }
 .btn-img-txt a:hover{
-  color:#e67e22;
+  color:#282828;
   text-decoration:none;
 }
 .vo_table img{/*
@@ -6459,12 +6471,12 @@ a.btn-main:hover {color:#e67e22;text-decoration:underline;}
   /*text-align:center*/
 }
 .box-body a{
-  color:#7c7c7c;
-  text-decoration: none;
-}
-.box-body a:hover{
   color:#e67e22;
   text-decoration: underline;
+}
+.box-body a:hover{
+  color:#282828;
+  text-decoration: none;
 }
 #container { margin: 50px; }
 #content img { height: 80px; margin-right: 10px; margin-bottom: 10px; border: 2px solid #043a6b; padding: 2px; }
@@ -6704,7 +6716,7 @@ input:checked + ol > li {
   /*float:left;*/
   margin:0px;
   padding:4px 4px 0px 4px;
-  height:250px;
+  height:180px;
   overflow-y: auto;
   overflow-scrolling: touch;
   -webkit-overflow-scrolling: touch;
@@ -6715,14 +6727,23 @@ input:checked + ol > li {
   padding:0px;
   list-style-type: none;
 }
-.category_drag_list li a{
+.category_drag_list li a:link{
    float: left;
-   width:185px;
+   width:100%;
    display: block;
    position: relative;
    list-style-type: none;
    padding:4px;
  }
+.category_drag_list li a:visited {
+  float: left;
+  display:block;
+  position: relative;
+  list-style-type: none;
+  padding: 2px;
+  background:#dcf3f9;
+  color:#333
+}
 .category_drag_list li a:hover {
   float: left;
   display:block;
@@ -6732,12 +6753,12 @@ input:checked + ol > li {
   background:#dcf3f9;
   color:#333
 }
-.category_drag_list li a:visited {
+.category_drag_list li a:active {
   float: left;
   display:block;
   position: relative;
   list-style-type: none;
-  padding: 2px;
+  padding: 4px;
   background:#dcf3f9;
   color:#333
 }
@@ -6777,6 +6798,56 @@ input:checked + ol > li {
 .category_ts span{
   color:#e67e22;
 }
+
+.custom_ts{
+  background:#fffaf4;
+  border:1px solid #e7dfd4;
+  margin:10px 0px 10px 0px;
+}
+.custom_ts span{
+  color:#e67e22;
+}
+.category_drag_list_qh{
+  /*float:left;*/
+  margin:0px;
+  padding:4px 4px 0px 4px;
+  height:300px;
+  overflow-y: auto;
+  overflow-scrolling: touch;
+  -webkit-overflow-scrolling: touch;
+  color:#3366cc;
+}
+.category_drag_list_qh ul{
+  margin:0px;
+  padding:0px;
+  list-style-type: none;
+}
+.category_drag_list_qh li a{
+  float: left;
+  width:100%;
+  display: block;
+  position: relative;
+  list-style-type: none;
+  padding:4px;
+}
+.category_drag_list_qh li a:hover {
+  float: left;
+  display:block;
+  position: relative;
+  list-style-type: none;
+  padding: 4px;
+  background:#dcf3f9;
+  color:#333
+}/*
+.category_drag_list_qh li a:visited {
+  float: left;
+  display:block;
+  position: relative;
+  list-style-type: none;
+  padding: 2px;
+  background:#dcf3f9;
+  color:#333
+}*/
 .tableLayer{
   display: block;
   margin: 0px;
@@ -7221,4 +7292,8 @@ whirl.duo:after{
   border-top:4px solid #777;
   border-left:4px solid #999;
   border-bottom:4px solid #bbb
+}
+
+.modal-xlg {
+  width: 650px;
 }

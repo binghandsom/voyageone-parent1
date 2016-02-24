@@ -9,6 +9,8 @@
     <!-- 数据源配置 -->
     <!--<import resource="file:C:/usr/web/spring-config/datasource-config.xml" />-->
     <import resource="file:/usr/web/spring-config/datasource-config.xml" />
+    <import resource="file:/usr/web/spring-config/datasource-config-mongo.xml" />
+    <!--<import resource="dao-mongo-sample.xml" />-->
 
     <context:component-scan base-package="com.voyageone">
         <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>

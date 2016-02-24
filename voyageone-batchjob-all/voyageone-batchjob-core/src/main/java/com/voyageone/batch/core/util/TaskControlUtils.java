@@ -12,7 +12,7 @@ import static java.util.stream.Collectors.toList;
 
 public class TaskControlUtils {
 
-    private static Log logger = LogFactory.getLog(TaskControlUtils.class.getName());
+    private static Log logger = LogFactory.getLog(TaskControlUtils.class);
 
     /**
      * 取得任务是否可以运行的标志位

@@ -1,218 +1,199 @@
 <div class="wrapper-md" ng-init="initialize()">
-	<div class="col-sm-12">
-		<tabset class="tab-container vo_nav-tabs">
-			<!--tab-->
-			<div class="form-inline m-b-xs pull-right">
-				<button class="btn btn-default">&nbsp;个人完成翻译数：123</button>
-				<button class="btn btn-success">&nbsp;完成翻译总数：12345</button>
-				<button class="btn btn-danger">&nbsp;待翻译总数：123</button>
-			</div><!-- /right-btn -->
-			<tab>
-				<tab-heading>&nbsp;Product</tab-heading>
-				<div class="table-responsive">
-					<table class="table table-hover-new table-hover">
-						<thead>
-						<tr>
-							<th class="text-center">Seq.</th>
-							<th class="text-center mfb-x">Product Code</th>
-							<th class="text-center mfb-xxs">Product Name / Long Description</th>
-							<th class="text-center">长标题/ 详情描述中文</th>
-							<th class="text-center">中标题/ Short Description</th>
-							<th class="text-center">短标题标题/ 简短描述中文</th>
-							<th class="text-center">Action</th>
-						</tr>
-						</thead>
-						<tbody>
-						<tr>
-							<td class="text-center">1</td>
-							<td class="text-center mfb-x text-u-l"><a href="#/product/detail/1" target="_blank"> 1100112 </a></td>
-							<td class="text-left">Crystaluxe Stud Earrings with Swarovski Crystals in Sterling Silver</td>
-							<td class="text-center"><textarea class="form-control" rows="4" placeholder="Crystaluxe 925银白色施华洛世奇水晶耳钉 欧美简约时尚女款耳饰 1100112"></textarea></td>
-							<td class="text-center"><textarea class="form-control" rows="4" placeholder="Crystaluxe 925银白色施华洛世奇水晶耳钉 欧美简约时尚女款耳饰"></textarea></td>
-							<td class="text-center"><textarea class="form-control" rows="4" placeholder="Jewelry.com耳环"></textarea></td>
-							<td class="text-center ">
-								<button title="取消" class="btn btn-default btn-xs">取消</button>
-								<button title="保存" class="btn btn-success btn-xs"> 保存</button>
-							</td>
-						</tr>
-						<tr>
-							<td class="text-center" style="border-top:0px"></td>
-							<td class="text-center mfb-x" style="border-top:0px"></td>
-							<td class="text-left">Classic with a touch of glamor, illuminate your everyday look with these stud earrings. Two 9 mm round, faceted Swarovski crystals are set in textured sterling silver. Pieces measure 5/16 by 5/16 inches.</td>
-							<td class="text-center"><textarea class="form-control" rows="6" placeholder="此款耳钉经典，且略带优雅，为佩戴者增添一份时尚光彩。富有质感的标准925银，镶嵌2颗9 mm 圆形施华洛世奇水晶，简约时尚。耳钉尺寸为5/16 × 5/16 英寸（约0.8 cm × 0.8 cm）。"></textarea></td>
-							<td class="text-left mfb-xxs">Classic with a touch of glamor, illuminate your everyday look with these stud earrings. Two 9 mm round, faceted Swarovski crystals are set in textured sterling silver. Pieces measure 5/16 by 5/16 inches.</td>
-							<td class="text-center"><textarea class="form-control" rows="6" placeholder="此款耳钉经典，且略带优雅，为佩戴者增添一份时尚光彩。富有质感的标准925银，镶嵌2颗9 mm 圆形施华洛世奇水晶，简约时尚。耳钉尺寸为5/16 × 5/16 英寸（约0.8 cm × 0.8 cm）。"></textarea></td>
-							<td class="text-center" style="border-top:0px">
-							</td>
-						</tr>
-						<tr>
-							<td class="text-center">2</td>
-							<td class="text-center mfb-x text-u-l"><a href="#/product/detail/1" target="_blank"> 1100112 </a></td>
-							<td class="text-left">Crystaluxe Stud Earrings with Swarovski Crystals in Sterling Silver</td>
-							<td class="text-center"><textarea class="form-control" rows="4" placeholder="Crystaluxe 925银白色施华洛世奇水晶耳钉 欧美简约时尚女款耳饰 1100112"></textarea></td>
-							<td class="text-center"><textarea class="form-control" rows="4" placeholder="Crystaluxe 925银白色施华洛世奇水晶耳钉 欧美简约时尚女款耳饰"></textarea></td>
-							<td class="text-center"><textarea class="form-control" rows="4" placeholder="Jewelry.com耳环"></textarea></td>
-							<td class="text-center ">
-								<button title="取消" class="btn btn-default btn-xs">取消</button>
-								<button title="保存" class="btn btn-success btn-xs"> 保存</button>
-							</td>
-						</tr>
-						<tr>
-							<td class="text-center" style="border-top:0px"></td>
-							<td class="text-center mfb-x text-u-l" style="border-top:0px"><a href="#/product/detail/1" target="_blank"></a></td>
-							<td class="text-left">Classic with a touch of glamor, illuminate your everyday look with these stud earrings. Two 9 mm round, faceted Swarovski crystals are set in textured sterling silver. Pieces measure 5/16 by 5/16 inches.</td>
-							<td class="text-center"><textarea class="form-control" rows="6" placeholder="此款耳钉经典，且略带优雅，为佩戴者增添一份时尚光彩。富有质感的标准925银，镶嵌2颗9 mm 圆形施华洛世奇水晶，简约时尚。耳钉尺寸为5/16 × 5/16 英寸（约0.8 cm × 0.8 cm）。"></textarea></td>
-							<td class="text-left mfb-xxs">Classic with a touch of glamor, illuminate your everyday look with these stud earrings. Two 9 mm round, faceted Swarovski crystals are set in textured sterling silver. Pieces measure 5/16 by 5/16 inches.</td>
-							<td class="text-center"><textarea class="form-control" rows="6" placeholder="此款耳钉经典，且略带优雅，为佩戴者增添一份时尚光彩。富有质感的标准925银，镶嵌2颗9 mm 圆形施华洛世奇水晶，简约时尚。耳钉尺寸为5/16 × 5/16 英寸（约0.8 cm × 0.8 cm）。"></textarea></td>
-							<td class="text-center" style="border-top:0px">
-							</td>
-						</tr>
-						<tr>
-							<td class="text-center">3</td>
-							<td class="text-center mfb-x text-u-l"><a href="#/product/detail/1" target="_blank"> 1100112 </a></td>
-							<td class="text-left">Crystaluxe Stud Earrings with Swarovski Crystals in Sterling Silver</td>
-							<td class="text-center"><textarea class="form-control" rows="4" placeholder="Crystaluxe 925银白色施华洛世奇水晶耳钉 欧美简约时尚女款耳饰 1100112"></textarea></td>
-							<td class="text-center"><textarea class="form-control" rows="4" placeholder="Crystaluxe 925银白色施华洛世奇水晶耳钉 欧美简约时尚女款耳饰"></textarea></td>
-							<td class="text-center"><textarea class="form-control" rows="4" placeholder="Jewelry.com耳环"></textarea></td>
-							<td class="text-center ">
-								<button title="取消" class="btn btn-default btn-xs">取消</button>
-								<button title="保存" class="btn btn-success btn-xs"> 保存</button>
-							</td>
-						</tr>
-						<tr>
-							<td class="text-center" style="border-top:0px"></td>
-							<td class="text-center mfb-x" style="border-top:0px"></td>
-							<td class="text-left">Classic with a touch of glamor, illuminate your everyday look with these stud earrings. Two 9 mm round, faceted Swarovski crystals are set in textured sterling silver. Pieces measure 5/16 by 5/16 inches.</td>
-							<td class="text-center"><textarea class="form-control" rows="6" placeholder="此款耳钉经典，且略带优雅，为佩戴者增添一份时尚光彩。富有质感的标准925银，镶嵌2颗9 mm 圆形施华洛世奇水晶，简约时尚。耳钉尺寸为5/16 × 5/16 英寸（约0.8 cm × 0.8 cm）。"></textarea></td>
-							<td class="text-left mfb-xxs">Classic with a touch of glamor, illuminate your everyday look with these stud earrings. Two 9 mm round, faceted Swarovski crystals are set in textured sterling silver. Pieces measure 5/16 by 5/16 inches.</td>
-							<td class="text-center"><textarea class="form-control" rows="6" placeholder="此款耳钉经典，且略带优雅，为佩戴者增添一份时尚光彩。富有质感的标准925银，镶嵌2颗9 mm 圆形施华洛世奇水晶，简约时尚。耳钉尺寸为5/16 × 5/16 英寸（约0.8 cm × 0.8 cm）。"></textarea></td>
-							<td class="text-center" style="border-top:0px">
-							</td>
-						</tr>
-						<tr>
-							<td class="text-center">4</td>
-							<td class="text-center mfb-x text-u-l"><a href="#/product/detail/1" target="_blank"> 1100112 </a></td>
-							<td class="text-left">Crystaluxe Stud Earrings with Swarovski Crystals in Sterling Silver</td>
-							<td class="text-center"><textarea class="form-control" rows="4" placeholder="Crystaluxe 925银白色施华洛世奇水晶耳钉 欧美简约时尚女款耳饰 1100112"></textarea></td>
-							<td class="text-center"><textarea class="form-control" rows="4" placeholder="Crystaluxe 925银白色施华洛世奇水晶耳钉 欧美简约时尚女款耳饰"></textarea></td>
-							<td class="text-center"><textarea class="form-control" rows="4" placeholder="Jewelry.com耳环"></textarea></td>
-							<td class="text-center ">
-								<button title="取消" class="btn btn-default btn-xs">取消</button>
-								<button title="保存" class="btn btn-success btn-xs"> 保存</button>
-							</td>
-						</tr>
-						<tr>
-							<td class="text-center" style="border-top:0px"></td>
-							<td class="text-center mfb-x text-u-l" style="border-top:0px"><a href="#/product/detail/1" target="_blank"></a></td>
-							<td class="text-left">Classic with a touch of glamor, illuminate your everyday look with these stud earrings. Two 9 mm round, faceted Swarovski crystals are set in textured sterling silver. Pieces measure 5/16 by 5/16 inches.</td>
-							<td class="text-center"><textarea class="form-control" rows="6" placeholder="此款耳钉经典，且略带优雅，为佩戴者增添一份时尚光彩。富有质感的标准925银，镶嵌2颗9 mm 圆形施华洛世奇水晶，简约时尚。耳钉尺寸为5/16 × 5/16 英寸（约0.8 cm × 0.8 cm）。"></textarea></td>
-							<td class="text-left mfb-xxs">Classic with a touch of glamor, illuminate your everyday look with these stud earrings. Two 9 mm round, faceted Swarovski crystals are set in textured sterling silver. Pieces measure 5/16 by 5/16 inches.</td>
-							<td class="text-center"><textarea class="form-control" rows="6" placeholder="此款耳钉经典，且略带优雅，为佩戴者增添一份时尚光彩。富有质感的标准925银，镶嵌2颗9 mm 圆形施华洛世奇水晶，简约时尚。耳钉尺寸为5/16 × 5/16 英寸（约0.8 cm × 0.8 cm）。"></textarea></td>
-							<td class="text-center" style="border-top:0px">
-							</td>
-						</tr>
-						</tbody>
-					</table>
-					<div class="col-sm-12 m-t-xs">
-						<vpagination config="vm.groupPageOption"></vpagination>
+	<div class="vo_accordion vo_attr">
+		<div class="panel-group">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h4 class="panel-title"><i class="fa fa-reorder"></i>&nbsp;翻译管理</h4>
+				</div>
+				<div class="container-fluid m-t-xs m-b-xs">
+					<div class="col-sm-12">
+						<div class="col-sm-4">
+							<form class="form-horizontal">
+								<div class="form-group">
+									<label class="col-sm-4 control-label">个人完成翻译数</label>
+									<div class="col-sm-7">
+										<input type="text" class="form-control" placeholder="56948" disabled>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-4 control-label">分发规则</label>
+									<div class="col-sm-7">
+										<label class="checkbox-inline c-radio">
+											<input type="radio" value="option1"><span class="fa fa-check"></span>  主商品
+										</label>
+										<label class="checkbox-inline c-radio">
+											<input type="radio1" value="option2"><span class="fa fa-check"></span>  全部商品
+										</label>
+									</div>
+								</div>
+							</form>
+							<!-- .form -->
+						</div>
+						<div class="col-sm-4">
+							<form class="form-horizontal">
+								<div class="form-group">
+									<label class="col-sm-4 control-label">完成翻译总数</label>
+									<div class="col-sm-7">
+										<input type="text" class="form-control" placeholder="1547963" disabled>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-4 control-label">获取任务数量</label>
+									<div class="col-sm-7">
+										<input type="text" class="form-control">
+									</div>
+								</div>
+							</form>
+							<!-- .form -->
+						</div>
+						<div class="col-sm-4">
+							<form class="form-horizontal">
+								<div class="form-group">
+									<label class="col-sm-4 control-label">待翻译总数</label>
+									<div class="col-sm-7">
+										<input type="text" class="form-control" placeholder="348965" disabled>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-4 control-label">Search</label>
+									<div class="col-sm-7">
+										<input type="text" class="form-control">
+									</div>
+								</div>
+							</form>
+							<!-- .form -->
+						</div>
+						<div class="col-sm-12 text-center m-t-xs m-b-sm">
+							<div class="form-inline">
+								<button class="btn btn-default" ng-click="clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR' | translate}}</button>
+								<button class="btn btn-vo" ng-click="search()"><i class="fa fa-search"></i> Search</button>
+								<button class="btn btn-success"><i class="glyphicon glyphicon-check"></i> 获取任务</button>
+							</div>
+							<!-- .form-inline -->
+						</div>
+
 					</div>
 				</div>
-			</tab>
-			<tab>
-				<tab-heading>&nbsp;Category - Customize Property</tab-heading>
-				<div class="table-responsive">
-					<table class="table table-hover-new table-hover">
-						<thead>
-						<tr>
-							<th class="text-center">Seq.</th>
-							<th class="text-center">Main Category</th>
-							<th class="text-center">Feed Property Name</th>
-							<th class="text-center">自定义属性名称</th>
-							<th class="text-center">Action</th>
-							<th class="text-center">Sample(Product Code)</th>
-						</tr>
-						</thead>
-						<tbody>
-						<tr>
-							<td class="text-center">1</td>
-							<td class="text-center mfb-xxs">珠宝 / 钻石 / 翡翠 / 黄金 > 彩色宝石</td>
-							<td class="text-center">Stone</td>
-							<td class="text-center"><input class="form-control" placeholder="宝石"/></td>
-							<td class="text-center">
-								<button title="取消" class="btn btn-default btn-xs">取消</button>
-								<button title="保存" class="btn btn-success btn-xs"> 保存</button>
-							</td>
-							<td class="text-center text-u-l"><a href="#/product/detail/1" target="_blank"> 123456 </a></td>
-						</tr>
-						<tr>
-							<td class="text-center">2</td>
-							<td class="text-center mfb-xxs">珠宝 / 钻石 / 翡翠 / 黄金 > 彩色宝石</td>
-							<td class="text-center">Family Color</td>
-							<td class="text-center"><input class="form-control" placeholder="颜色"/></td>
-							<td class="text-center">
-								<button title="取消" class="btn btn-default btn-xs">取消</button>
-								<button title="保存" class="btn btn-success btn-xs"> 保存</button>
-							</td>
-							<td class="text-center text-u-l"><a href="#/product/detail/1" target="_blank"> 123456 </a></td>
-						</tr>
-						</tbody>
-					</table>
-					<div class="col-sm-12 m-t-sm">
-						<vpagination config="vm.productPageOption"></vpagination>
-					</div>
-				</div><!-- .table-responsive -->
-			</tab>
+			</div>
+		</div>
+	</div>
+	<div class="box">
+		<div class="box-body">
+			<table class="table table-hover-new table-hover" ng-controller="popupCtrl">
+				<thead>
+				<tr>
+					<th class="text-center">Seq.</th>
+					<th class="text-center mfb-x">Product Code</th>
+					<th class="text-center mfb-xxxs">Product Name / Long Description</th>
+					<th class="text-center">长标题/ 详情描述中文</th>
+					<th class="text-center">中标题/ Short Description</th>
+					<th class="text-center">短标题标题/ 简短描述中文</th>
+					<th class="text-center">Action</th>
+				</tr>
+				</thead>
+				<tbody>
+				<tr>
+					<td class="text-center">1</td>
+					<td class="text-center mfb-x text-u-l"><a ng-click="openTranslate('md')">1100112</a>
+						<img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/snusa-detail_20?$650$&$img=sneakerhead/air-jordan-1-retro-high-839115-839115013-1"  alt="" class="thumb-lg pull-left"/>
+					</td>
+					<td class="text-left">Crystaluxe Stud Earrings with Swarovski Crystals in Sterling Silver</td>
+					<td class="text-center"><textarea class="form-control" rows="6"></textarea></td>
+					<td class="text-center"><textarea class="form-control" rows="6"></textarea></td>
+					<td class="text-center"><textarea class="form-control" rows="6"></textarea></td>
+					<td class="text-center ">
+						<button title="从主数据拷贝" class="btn btn-default btn-xs m-b-xs"><i class="fa fa-cloud-download"></i> 从主数据完全拷贝</button>
+						<br/>
+						<button title="保存" class="btn btn-vo btn-xs"><i class="glyphicon glyphicon-floppy-disk"></i> 保存</button>
+						<button title="完成" class="btn btn-success btn-xs"><i class="glyphicon glyphicon-star"></i> 完成</button>
+					</td>
+				</tr>
+				<tr>
+					<td class="text-center" style="border-top:0px"></td>
+					<td class="text-center mfb-x" style="border-top:0px"></td>
+					<td class="text-left" style="border-top:0px">Classic with a touch of glamor, illuminate your everyday look with these stud earrings. Two 9 mm round, faceted Swarovski crystals are set in textured sterling silver. Pieces measure 5/16 by 5/16 inches.</td>
+					<td class="text-center" colspan="3" style="border-top:0px"><textarea class="form-control" rows="6"></textarea></td>
+					<td class="text-center" style="border-top:0px">
+					</td>
+				</tr>
+				<tr>
+					<td class="text-center" style="border-top:0px"></td>
+					<td class="text-center mfb-x" style="border-top:0px"></td>
+					<td class="text-left" style="border-top:0px">Classic with a touch of glamor, illuminate your everyday look with these stud earrings. Two 9 mm round, faceted Swarovski crystals are set in textured sterling silver. Pieces measure 5/16 by 5/16 inches.</td>
+					<td class="text-center" colspan="3" style="border-top:0px"><textarea class="form-control" rows="6"></textarea></td>
+					<td class="text-center" style="border-top:0px">
+					</td>
+				</tr>
+				<tr>
+					<td class="text-center">2</td>
+					<td class="text-center mfb-x text-u-l"><a ng-click="openTranslate('md')">1100112</a>
+					<img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/snusa-detail_20?$650$&$img=sneakerhead/air-jordan-1-retro-high-839115-839115013-1"  alt="" class="thumb-lg pull-left"/>
+				</td>
+					<td class="text-left">Crystaluxe Stud Earrings with Swarovski Crystals in Sterling Silver</td>
+					<td class="text-center"><textarea class="form-control" rows="6"></textarea></td>
+					<td class="text-center"><textarea class="form-control" rows="6"></textarea></td>
+					<td class="text-center"><textarea class="form-control" rows="6"></textarea></td>
+					<td class="text-center ">
+						<button title="从主数据拷贝" class="btn btn-default btn-xs m-b-xs"><i class="fa fa-cloud-download"></i> 从主数据完全拷贝</button>
+						<br/>
+						<button title="保存" class="btn btn-vo btn-xs"><i class="glyphicon glyphicon-floppy-disk"></i> 保存</button>
+						<button title="完成" class="btn btn-success btn-xs"><i class="glyphicon glyphicon-star"></i> 完成</button>
+					</td>
+				</tr>
+				<tr>
+					<td class="text-center" style="border-top:0px"></td>
+					<td class="text-center mfb-x" style="border-top:0px"></td>
+					<td class="text-left" style="border-top:0px">Classic with a touch of glamor, illuminate your everyday look with these stud earrings. Two 9 mm round, faceted Swarovski crystals are set in textured sterling silver. Pieces measure 5/16 by 5/16 inches.</td>
+					<td class="text-center" colspan="3" style="border-top:0px"><textarea class="form-control" rows="6"></textarea></td>
+					<td class="text-center" style="border-top:0px">
+					</td>
+				</tr>
+				<tr>
+					<td class="text-center" style="border-top:0px"></td>
+					<td class="text-center mfb-x" style="border-top:0px"></td>
+					<td class="text-left" style="border-top:0px">Classic with a touch of glamor, illuminate your everyday look with these stud earrings. Two 9 mm round, faceted Swarovski crystals are set in textured sterling silver. Pieces measure 5/16 by 5/16 inches.</td>
+					<td class="text-center" colspan="3" style="border-top:0px"><textarea class="form-control" rows="6"></textarea></td>
+					<td class="text-center" style="border-top:0px">
+					</td>
+				</tr>
+				<tr>
+					<td class="text-center">3</td>
+					<td class="text-center mfb-x text-u-l"><a ng-click="openTranslate('md')">1100112</a>
+						<img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/snusa-detail_20?$650$&$img=sneakerhead/air-jordan-1-retro-high-839115-839115013-1"  alt="" class="thumb-lg pull-left"/>
+					</td>
+					<td class="text-left">Crystaluxe Stud Earrings with Swarovski Crystals in Sterling Silver</td>
+					<td class="text-center"><textarea class="form-control" rows="6"></textarea></td>
+					<td class="text-center"><textarea class="form-control" rows="6"></textarea></td>
+					<td class="text-center"><textarea class="form-control" rows="6"></textarea></td>
+					<td class="text-center ">
+						<button title="从主数据拷贝" class="btn btn-default btn-xs m-b-xs"><i class="fa fa-cloud-download"></i> 从主数据完全拷贝</button>
+						<br/>
+						<button title="保存" class="btn btn-vo btn-xs"><i class="glyphicon glyphicon-floppy-disk"></i> 保存</button>
+						<button title="完成" class="btn btn-success btn-xs"><i class="glyphicon glyphicon-star"></i> 完成</button>
+					</td>
+				</tr>
+				<tr>
+					<td class="text-center" style="border-top:0px"></td>
+					<td class="text-center mfb-x" style="border-top:0px"></td>
+					<td class="text-left" style="border-top:0px">Classic with a touch of glamor, illuminate your everyday look with these stud earrings. Two 9 mm round, faceted Swarovski crystals are set in textured sterling silver. Pieces measure 5/16 by 5/16 inches.</td>
+					<td class="text-center" colspan="3" style="border-top:0px"><textarea class="form-control" rows="6"></textarea></td>
+					<td class="text-center" style="border-top:0px">
+					</td>
+				</tr>
+				<tr>
+					<td class="text-center" style="border-top:0px"></td>
+					<td class="text-center mfb-x" style="border-top:0px"></td>
+					<td class="text-left" style="border-top:0px">Classic with a touch of glamor, illuminate your everyday look with these stud earrings. Two 9 mm round, faceted Swarovski crystals are set in textured sterling silver. Pieces measure 5/16 by 5/16 inches.</td>
+					<td class="text-center" colspan="3" style="border-top:0px"><textarea class="form-control" rows="6"></textarea></td>
+					<td class="text-center" style="border-top:0px">
+					</td>
+				</tr>
+				</tbody>
+			</table>
+			<div class="col-sm-12 m-t-xs">
+				<vpagination config="vm.groupPageOption"></vpagination>
+			</div>
+		</div>
 
-			<tab>
-				<tab-heading>&nbsp;Customize Property</tab-heading>
-				<div class="table-responsive">
-					<table class="table table-hover-new table-hover">
-						<thead>
-						<tr>
-							<th class="text-center">Seq.</th>
-							<th class="text-center">Main Category</th>
-							<th class="text-center">Feed Property Name</th>
-							<th class="text-center">Customize Property Value</th>
-							<th class="text-center">自定义属性值名称</th>
-							<th class="text-center">自定义属性值</th>
-							<th class="text-center">Action</th>
-							<th class="text-center">Sample(Product Code)</th>
-						</tr>
-						</thead>
-						<tbody>
-						<tr>
-							<td class="text-center">1</td>
-							<td class="text-center mfb-xxs">珠宝 / 钻石 / 翡翠 / 黄金 > 彩色宝石</td>
-							<td class="text-center">Stone</td>
-							<td class="text-center">1.5CT</td>
-							<td class="text-center">1.5CT</td>
-							<td class="text-center"><input class="form-control" placeholder="1.5CT"/></td>
-							<td class="text-center">
-								<button title="取消" class="btn btn-default btn-xs">取消</button>
-								<button title="保存" class="btn btn-success btn-xs"> 保存</button>
-							</td>
-							<td class="text-center text-u-l"><a href="#/product/detail/1" target="_blank"> 123456 </a></td>
-						</tr>
-						<tr>
-							<td class="text-center">2</td>
-							<td class="text-center mfb-xxs">珠宝 / 钻石 / 翡翠 / 黄金 > 彩色宝石</td>
-							<td class="text-center">Family Color</td>
-							<td class="text-center">RED</td>
-							<td class="text-center">RED</td>
-							<td class="text-center"><input class="form-control" placeholder="红色"/></td>
-							<td class="text-center">
-								<button title="取消" class="btn btn-default btn-xs">取消</button>
-								<button title="保存" class="btn btn-success btn-xs"> 保存</button>
-							</td>
-							<td class="text-center text-u-l"><a href="#/product/detail/1" target="_blank"> 123456 </a></td>
-						</tr>
-						</tbody>
-					</table>
-					<div class="col-sm-12 m-t-sm">
-						<vpagination config="vm.productPageOption"></vpagination>
-					</div>
-				</div><!-- .table-responsive -->
-			</tab>
-		</tabset><!-- tabset -->
 	</div><!-- tabs ng-controller -->
 </div><!-- .col-lg-12 -->
