@@ -8,10 +8,10 @@
                 </div>
                 <div class="container-fluid m-t-sm m-b-md">
                     <div class="col-sm-12">
-                        <div class="col-sm-4">
+                        <div class="col-sm-3">
                             <form class="form-horizontal">
                                 <div class="form-group">
-                                    <label class="col-sm-4 control-label" translate="TXT_PROMOTION_NAME"></label>
+                                    <label class="col-sm-5 control-label" translate="TXT_PROMOTION_NAME"></label>
                                     <div class="col-sm-7">
                                         <input type="text" class="form-control" ng-model="vm.promotion.promotionName">
                                     </div>
@@ -26,7 +26,7 @@
                                     <!--</div>-->
                                 <!--</div>-->
                                 <div class="form-group">
-                                    <label class="col-sm-4 control-label" translate="TXT_PLATFORM_TYPE"></label>
+                                    <label class="col-sm-5 control-label" translate="TXT_PLATFORM_TYPE"></label>
                                     <div class="col-sm-7">
                                         <label ng-repeat="cart in vm.platformTypeList" class="checkbox-inline c-checkbox">
                                             <input type="radio" name="cartid" ng-model="vm.promotion.cartId"  ng-required="true" value={{cart.value}}>
@@ -36,7 +36,7 @@
                                 </div>
                                 <!-- .form-group -->
                                 <div class="form-group" ng-show="vm.promotion.cartId == 20 || vm.promotion.cartId == 23">
-                                    <div class="col-sm-4 control-label"><label class="" translate="TXT_IS_START_TE_JIA_BAO"></label></div>
+                                    <div class="col-sm-5 control-label"><label class="" translate="TXT_IS_START_TE_JIA_BAO"></label></div>
                                     <div class="col-sm-2">
                                         <div class="onoffswitch">
                                             <input type="checkbox" name="onoffswitch" ng-model="vm.promotion.tejiabao" class="onoffswitch-checkbox" id="myonoffswitch4">
@@ -54,7 +54,7 @@
                             <!-- .form -->
                         </div>
                         <!--.col -->
-                        <div class="col-sm-4">
+                        <div class="col-sm-5">
                             <form class="form-horizontal">
                                 <div class="form-group">
                                     <label class="col-sm-4 control-label" translate="TXT_PREHEATING_TIME"></label>
@@ -272,7 +272,7 @@
                             <td class="mfb-xxx text-left" translate="TXT_BASE_PROPERTY"></td>
                             <td class="mfb-xxt text-center" translate="TXT_SKU_COUNT"></td>
                             <td class="mfb-xxt text-left" translate="TXT_TIME"></td>
-                            <td class="mfb-xxt text-center" translate="TXT_ACTION"></td>
+                            <td class="mfb-xx text-center" translate="TXT_ACTION"></td>
                         </tr>
                         </thead>
                     </table>
@@ -342,9 +342,9 @@
                                         </div>
                                     </small>
                                 </td>
-                                <td class="mfb-xxt text-center">
+                                <td class="mfb-xx text-center">
                                     <button ng-if="code.promotionPrice != code.promotionPriceBak" title="保存"
-                                            class="btn btn-success btn-xs" ng-click="updateCode(code)"><i
+                                            class="btn btn-vo btn-xs" ng-click="updateCode(code)"><i
                                             class="fa fa-floppy-o"></i></button>
                                     <button class="btn btn-danger btn-xs" ng-click="delPromotionCode(code)"><i
                                             class="fa fa-trash-o"></i></button>
