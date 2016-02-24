@@ -1,9 +1,9 @@
 package com.voyageone.web2.sdk.api.response;
 
-import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.web2.sdk.api.VoApiListResponse;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author aooer 2016/2/24.
@@ -12,13 +12,13 @@ import java.util.List;
  */
 public class CommonSchemaGetResponse extends VoApiListResponse {
 
-    private List<Field> fields;
+    private List<Map<String, Object>> fields;
 
-    public List<Field> getFields() {
+    public List<Map<String, Object>> getFields() {
         return fields;
     }
 
-    public void setFields(List<Field> fields) {
+    public void setFields(List<Map<String, Object>> fields) {
         this.fields = fields;
     }
 }
