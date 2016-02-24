@@ -156,6 +156,18 @@
         "root": "/cms/pop/history_price/",
         "getPriceHistory": "getPriceHistory"
       }
+    },
+    "translation": {
+      "translationService":{
+        "root":"/cms/translation/tasks/",
+        "getTasks":"getTasks",
+        "searchHistoryTasks":"searchHistoryTasks",
+        "assignTasks":"assignTasks",
+        "copyFormMainProduct":"copyFormMainProduct",
+        "saveTask":"saveTask",
+        "submitTask":"submitTask",
+        "getFeedAttributes":"getFeedAttributes"
+      }
     }
   }
 }
