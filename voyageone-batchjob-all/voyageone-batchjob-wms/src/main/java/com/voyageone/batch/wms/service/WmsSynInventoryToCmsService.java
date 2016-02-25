@@ -100,12 +100,12 @@ public class WmsSynInventoryToCmsService extends BaseTaskService {
             for (int j = 0; j < cartList.size(); j++) {
 
                 int cartId = Integer.parseInt(cartList.get(j).getValue());
+                $info("cartId:" + cartId + "   start" );
 
                 //获取本Cart下所有group TODO
                 Map<String, List<String>> groupList = getGroupByCartList(orderChannelID, cartId);
 
                 groupList.forEach((s, codes) -> {
-                    $info("groupId:" + s + "    code数:" + codes.size());
                     int Inventory = getGroupInventory(codeInventoryList, codes);
                     for (String code : codes) {
                         HashMap<String, Object> updateMap = new HashMap<>();
