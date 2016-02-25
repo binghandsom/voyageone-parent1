@@ -325,11 +325,11 @@ public class CmsUploadJmProductService extends BaseTaskService {
         String partner_sku_nos = "";
         JmProductBean jmProductBean = new JmProductBean();
 
-        jmProductBean.setName(special_symbol.matcher(jmBtProductImport.getProductName()).replaceAll(" "));
+        jmProductBean.setName(jmBtProductImport.getProductName());
         jmProductBean.setProduct_spec_number(jmBtProductImport.getProductCode());
         jmProductBean.setCategory_v3_4_id(jmBtProductImport.getCategoryLv4Id());
         jmProductBean.setBrand_id(jmBtProductImport.getBrandId());
-        jmProductBean.setForeign_language_name(special_symbol.matcher(jmBtProductImport.getForeignLanguageName()).replaceAll(" "));
+        jmProductBean.setForeign_language_name(jmBtProductImport.getForeignLanguageName());
         // Todo
 
         // sku
@@ -350,7 +350,7 @@ public class CmsUploadJmProductService extends BaseTaskService {
             sku.setPartner_sku_no(jmBtSkuImportModel.getSku());
             sku.setSale_on_this_deal("1");
             sku.setBusinessman_num(jmBtSkuImportModel.getSku());
-            sku.setStocks("0");
+            sku.setStocks("1");
             sku.setDeal_price(jmBtSkuImportModel.getDealPrice().toString());
             sku.setMarket_price(jmBtSkuImportModel.getMarketPrice().toString());
             if(jmBtSkuImportModel.getDealPrice() < 1 || jmBtSkuImportModel.getMarketPrice() < 1){
