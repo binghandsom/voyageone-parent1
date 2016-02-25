@@ -1,6 +1,5 @@
 package com.voyageone.web2.cms.wsdl.dao;
 
-import com.voyageone.base.dao.BaseDao;
 import com.voyageone.web2.sdk.api.domain.CmsBtTagProductLogModel;
 import org.springframework.stereotype.Repository;
 
@@ -13,7 +12,7 @@ import java.util.Map;
  * @version 2.0.0
  */
 @Repository
-public class CmsBtTagProductLogDao extends BaseDao {
+public class CmsBtTagProductLogDao extends WsdlBaseDao {
 
     public int insertCmsBtTagLogList(List<CmsBtTagProductLogModel> cmsBtTagLogModelList){
         Map<String, List<CmsBtTagProductLogModel>> insertDataMap = new HashMap<>();
