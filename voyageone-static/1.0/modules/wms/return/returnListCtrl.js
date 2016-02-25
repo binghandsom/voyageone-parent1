@@ -22,11 +22,9 @@ define([
 			"notify",
 			"$filter",
 			"$location",
-			"wmsChangeReturn",
-            function ($scope, returnService, alert, printService, wmsConstant, confirm, notify, $filter, $location, wmsChangeReturn) {
-            	
             "$window",
-            function ($scope, returnService, alert, printService, wmsConstant, confirm, notify, $filter, $location, $window) {
+			"wmsChangeReturn",
+            function ($scope, returnService, alert, printService, wmsConstant, confirm, notify, $filter, $location, $window, wmsChangeReturn) {
 
 				var _ = require('underscore');
 

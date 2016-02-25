@@ -81,6 +81,25 @@
          where cmv_stauts.`value`  = rtn.return_status
        		   and cmv_reason.`value` = rtn.reason
        		   and rtn.store_id = store.store_id
+			<choose>
+				<when test="store_id != null and store_id != 0">
+					and rtn.store_id = #{store_id}
+				</when>
+				<otherwise>
+					<if test="store_id_list != null and store_id_list.size() != 0">
+						and rtn.store_id in
+						<foreach collection="store_id_list" item="id"  open="(" separator="," close=")">
+							#{id}
+						</foreach>
+					</if>
+				</otherwise>
+			</choose>
+			<if test="condition_id != null">
+				and rtn.`condition` = #{condition_id}
+			</if>
+			<if test="return_session_status != null">
+				and rtn_s_t.`value` = #{return_session_status}
+			</if>
 			<if test="orderChannelId != null and orderChannelId.size() != 0 ">
 				and rtn.order_channel_id in
 				<foreach item="item" index="index" collection="orderChannelId" open="(" separator="," close=")">
@@ -96,7 +115,7 @@
 		   <if test="updateTime_e != null and updateTime_e != '' ">
   	       	   and rtn.modified &lt;= #{updateTime_e}
 		   </if>
-  	     order by rtn.modified desc
+  	     	order by rtn.modified desc
  		   <if test="rows != 0">
 		       limit #{offset}, #{rows}
 		   </if>
@@ -495,6 +514,7 @@
 		WHERE
 			return_id = #{return_id}
 	</update>
+
     <resultMap id="returnDownloadMap" type="com.voyageone.wms.formbean.FormReturnDownloadBean">
         <result column="order_channel" property="order_channel"/>
         <result column="store" property="store"/>
