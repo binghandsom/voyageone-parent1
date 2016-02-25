@@ -35,7 +35,7 @@
                         <tbody>
                         <tr ng-repeat="list in vm.promotionList">
                             <td class="text-left" ng-bind="list.promotionName"></td>
-                            <td class="text-left"><span class="badge badge-empty" ng-bind="list.name"></span></td>
+                            <td class="text-left" ng-bind="list.name"></td>
                             <td class="text-left">{{list.activityStart}}&nbsp;~&nbsp;{{list.activityEnd}}</td>
                             <td class="text-right">{{list.msrp | number: 2}}</td><!--&nbsp;({{(list.promotionPrice/list.msrp).toFixed(2)*100}}&nbsp;{{ 'TXT_DISCOUNT_WORD' | translate}})-->
                             <td class="text-right">{{list.salePrice | number: 2}}</td><!--&nbsp;({{(list.promotionPrice/list.salePrice).toFixed(2)*100}}&nbsp;{{ 'TXT_DISCOUNT_WORD' | translate}})-->
