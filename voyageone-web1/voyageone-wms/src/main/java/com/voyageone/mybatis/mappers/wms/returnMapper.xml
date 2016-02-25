@@ -81,25 +81,6 @@
          where cmv_stauts.`value`  = rtn.return_status
        		   and cmv_reason.`value` = rtn.reason
        		   and rtn.store_id = store.store_id
-			<choose>
-				<when test="store_id != null and store_id != 0">
-					and rtn.store_id = #{store_id}
-				</when>
-				<otherwise>
-					<if test="store_id_list != null and store_id_list.size() != 0">
-						and rtn.store_id in
-						<foreach collection="store_id_list" item="id"  open="(" separator="," close=")">
-							#{id}
-						</foreach>
-					</if>
-				</otherwise>
-			</choose>
-            <if test="condition_id != null">
-                and rtn.`condition` = #{condition_id}
-            </if>
-            <if test="return_session_status != null">
-                and rtn_s_t.`value` = #{return_session_status}
-            </if>
 			<if test="orderChannelId != null and orderChannelId.size() != 0 ">
 				and rtn.order_channel_id in
 				<foreach item="item" index="index" collection="orderChannelId" open="(" separator="," close=")">
@@ -120,7 +101,38 @@
 		       limit #{offset}, #{rows}
 		   </if>
     </select>
-    
+
+	<resultMap id="returnInfoMap" type="com.voyageone.wms.formbean.FormReturn">
+		<result column="order_channel_id" property="order_channel_id"/>
+		<result column="return_id" property="return_id"/>
+		<result column="return_session_id" property="return_session_id"/>
+		<result column="res_id" property="res_id"/>
+		<result column="order_num" property="order_num"/>
+		<result column="sku" property="sku"/>
+		<result column="condition_id" property="condition_id"/>
+		<result column="condition" property="condition"/>
+		<result column="tracking_no" property="tracking_no"/>
+		<result column="notes" property="notes"/>
+		<result column="modifier" property="modifier"/>
+		<result column="modified" property="modified"/>
+	</resultMap>
+	<select id="wms_return_getReturnInfoByReturnId" parameterType="com.voyageone.wms.modelbean.ReturnBean" resultMap="returnInfoMap">
+		select rtn.order_channel_id,
+			   rtn.return_id,
+			   rtn.return_session_id,
+               rtn.res_id,
+         	   rtn.order_num,
+         	   rtn.sku,
+			   rtn.`condition` condition_id,
+         	   if(rtn.`condition` = '01', 'Good','Damaged')  'condition',
+			   rtn.tracking_no,
+         	   rtn.notes,
+         	   rtn.modifier,
+			   rtn.modified
+          from wms_bt_return rtn
+          where rtn.return_id = #{return_id}
+	</select>
+
     <select id="wms_return_getReturnListSize" parameterType="com.voyageone.wms.formbean.FormReturn" resultType="int">
         select count(1)
 		from wms_bt_return rtn
@@ -473,6 +485,16 @@
 		 </if>		
     </select>
 
+	<update id="wms_bt_return_changeReturn" >
+		UPDATE
+			wms_bt_return
+		SET
+			notes = #{notes},
+			modified = now(),
+			modifier =#{modifier}
+		WHERE
+			return_id = #{return_id}
+	</update>
     <resultMap id="returnDownloadMap" type="com.voyageone.wms.formbean.FormReturnDownloadBean">
         <result column="order_channel" property="order_channel"/>
         <result column="store" property="store"/>

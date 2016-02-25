@@ -33,7 +33,7 @@ public class WmsSyncToCnSubService extends WmsSyncInventoryBaseService {
 
     public void syncSite(List<InventorySynLogBean> inventorySynLogBeans, ShopBean shopBean) {
 
-        logger.info(shopBean.getShop_name() + "（" + shopBean.getComment() + ")库存同步开始");
+        $info("-----" + shopBean.getShop_name() + "（" + shopBean.getComment() + ")库存同步开始");
 
         List<InventoryUpdateBean> infoBeans = new ArrayList<>();
 
@@ -45,7 +45,7 @@ public class WmsSyncToCnSubService extends WmsSyncInventoryBaseService {
 
             infoBeans.add(bean);
         }
-        logger.info(shopBean.getShop_name() + "（" + shopBean.getComment() + ")库存需要同步件数："+infoBeans.size());
+        $info("-----" +shopBean.getShop_name() + "（" + shopBean.getComment() + ")库存需要同步件数：" + infoBeans.size());
         String res = null;
 
         if (infoBeans.size() > 0 ) {
@@ -59,12 +59,12 @@ public class WmsSyncToCnSubService extends WmsSyncInventoryBaseService {
                         movePass(inventorySynLogBean);
                 }
             } catch (Exception e) {
-                logger.info(shopBean.getShop_name() + "（" + shopBean.getComment() + ")库存同步失败：" + e);
+                $info("-----" +shopBean.getShop_name() + "（" + shopBean.getComment() + ")库存同步失败：" + e);
                 logFailRecord(e, shopBean);
             }
 
         }
 
-        logger.info(shopBean.getShop_name() + "（" + shopBean.getComment() + ")库存同步结束。" + StringUtils.null2Space2(res));
+        $info("-----" +shopBean.getShop_name() + "（" + shopBean.getComment() + ")库存同步结束。" + StringUtils.null2Space2(res));
     }
 }

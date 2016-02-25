@@ -102,6 +102,38 @@ public class LocationDao extends BaseDao {
     }
 
     /**
+     * 根据 sku 查询商品的所有所在位置
+     *
+     * @param sku     商品的 sku
+     * @param store_id 目标仓库
+     * @return List
+     */
+    public List<ItemLocationFormBean> selectItemLocationsBySku(String sku, int store_id) {
+        Map<String, Object> params = new HashMap<>();
+
+        params.put("sku", sku);
+        params.put("store_id", store_id);
+
+        return selectList("wms_bt_item_location_select_item_locationsBySku", params);
+    }
+
+    /**
+     * 根据 货架ID 查询货架上的商品（Code或Sku）
+     *
+     * @param location_id     货架Id
+     * @param store_id 目标仓库
+     * @return List
+     */
+    public List<ItemLocationFormBean> selectItemLocationsByLocationId(int location_id, int store_id) {
+        Map<String, Object> params = new HashMap<>();
+
+        params.put("locantion_id", location_id);
+        params.put("store_id", store_id);
+
+        return selectList("wms_bt_item_location_select_item_locationsByLocationId", params);
+    }
+
+    /**
      * 根据 code 查询商品的位置变更日志
      *
      * @param code     商品的 Code
@@ -115,6 +147,22 @@ public class LocationDao extends BaseDao {
         params.put("store_id", store_id);
 
         return selectList("wms_bt_item_location_logs_select_item_location_logs", params);
+    }
+
+    /**
+     * 根据 sku 查询商品的位置变更日志
+     *
+     * @param sku     商品的 sku
+     * @param store_id 目标仓库
+     * @return List
+     */
+    public List<ItemLocationLogFormBean> selectItemLocationLogsBySku(String sku, int store_id) {
+        Map<String, Object> params = new HashMap<>();
+
+        params.put("sku", sku);
+        params.put("store_id", store_id);
+
+        return selectList("wms_bt_item_location_logs_select_item_location_logsBySku", params);
     }
 
     /**

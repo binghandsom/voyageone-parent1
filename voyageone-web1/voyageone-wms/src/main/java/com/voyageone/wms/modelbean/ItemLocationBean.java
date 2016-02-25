@@ -11,6 +11,7 @@ public class ItemLocationBean {
     private String order_channel_id;
     private int store_id;
     private String code;
+    private String sku;
     private int location_id;
     private boolean active;
     private String created;
@@ -48,6 +49,14 @@ public class ItemLocationBean {
 
     public void setCode(String code) {
         this.code = code;
+    }
+
+    public String getSku() {
+        return sku;
+    }
+
+    public void setSku(String sku) {
+        this.sku = sku;
     }
 
     public int getLocation_id() {
