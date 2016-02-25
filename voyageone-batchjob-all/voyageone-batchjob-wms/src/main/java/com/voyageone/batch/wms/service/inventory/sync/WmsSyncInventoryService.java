@@ -133,6 +133,7 @@ public class WmsSyncInventoryService extends WmsSyncInventoryBaseService {
 
                         }else {
                             updateFlg = WmsConstants.UPDATE_FLG.ReFlush;
+
                         }
                         break;
                 }
@@ -196,7 +197,7 @@ public class WmsSyncInventoryService extends WmsSyncInventoryBaseService {
 
                 // 清除历史库存记录
                 List<InventorySynLogBean> inventoryHistorySynLogBeans =
-                        inventoryDao.getInventoryHistorySynLog(shopBean.getOrder_channel_id(),shopBean.getCart_id(), intRowCount);
+                        inventoryDao.getInventoryHistorySynLog(shopBean.getOrder_channel_id(),shopBean.getCart_id(), limit);
 
                 logger.info(shopBean.getShop_name() + "（" + shopBean.getComment() + ")清除历史库存记录件数："+inventoryHistorySynLogBeans.size());
 

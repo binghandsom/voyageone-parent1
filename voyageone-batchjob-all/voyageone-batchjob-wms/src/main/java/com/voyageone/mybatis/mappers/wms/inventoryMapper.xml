@@ -166,7 +166,6 @@
         WHERE
             channel_id = #{order_channel_id}
         AND send_flg = #{syn_flg}
-        AND jumei_sku_no != '0'
         <if test="syn_flg == 4 ">
             AND modified &lt;= #{process_time}
         </if>
