@@ -107,6 +107,8 @@ public interface CmsUrlConstants {
             String GET_GROUP_LIST = "getGroupList";
 
             String GET_PRODUCT_LIST = "getProductList";
+
+            String EXPORT_PRODUCTS = "exportProducts";
         }
     }
 

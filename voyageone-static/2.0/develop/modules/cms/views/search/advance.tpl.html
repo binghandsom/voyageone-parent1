@@ -215,7 +215,7 @@
 						<button class="btn btn-default" ng-click="clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR' | translate}}</button>
 						<button class="btn btn-vo" ng-click="search()"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}</button>
 						<!-- TODO 暂时未实现-->
-						<!--<button class="btn btn-success" ng-click="exportFile()"><i class="fa fa-reply-all"></i>&nbsp;{{'BTN_EXPORT' | translate}}</button>-->
+						<button class="btn btn-success" ng-click="exportFile()"><i class="fa fa-reply-all"></i>&nbsp;{{'BTN_EXPORT' | translate}}</button>
 					</div><!-- .form-inline -->
 				</div>
 			</div>
@@ -406,7 +406,7 @@
 										<!--<button ng-controller="showPopoverCtrl" popover-html="showInfo({{productInfo.inventoryDetail}})"
 												popover-title="{{'TXT_SKU_INVENTORY' | translate}}" type="button" popover-placement="left"
 												class="btn btn-default btn-xs">{{productInfo.fields.qty || 0}}</button>-->
-										{{productInfo.fields.qty || 0}}
+										{{productInfo.fields.quantity || 0}}
 									</td>
 									<td class="mfb-xxt text-right">
 										<button ng-controller="showPopoverCtrl" popover-html="showInfo({{productInfo.priceDetail}})"
