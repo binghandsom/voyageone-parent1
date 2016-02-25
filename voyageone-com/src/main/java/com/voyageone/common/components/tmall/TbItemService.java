@@ -29,8 +29,8 @@ public class TbItemService extends TbBase {
      * 淘宝接口名：tmall.item.update.schema.get。
      * 文档地址：http://open.taobao.com/apidoc/api.htm?spm=a219a.7386789.1998342952.14.0uzLoC&path=scopeId:11430-apiId:23435
      *
-     * @param shopBean  店铺
-     * @param num_iid   商品
+     * @param shopBean 店铺
+     * @param num_iid  商品
      * @return 查询到的所有字段
      * @throws ApiException
      * @throws TopSchemaException
@@ -53,7 +53,7 @@ public class TbItemService extends TbBase {
 
     /**
      * 全量更新淘宝的商品。
-     *
+     * <p>
      * 淘宝接口名：tmall.item.schema.update
      * 文档地址：http://open.taobao.com/apidoc/api.htm?spm=a219a.7386789.1998342952.66.rW9rTR&path=cid:4-apiId:23434
      */
@@ -72,22 +72,18 @@ public class TbItemService extends TbBase {
 
     /**
      * 根据商品ID列表获取SKU信息
-     * @param shopBean
-     * @param numIid
-     * @param fields
-     * @return
+     *
      * @throws ApiException
      */
-    public ItemSkusGetResponse getSkuInfo(ShopBean shopBean,String numIid,String fields ) throws ApiException {
+    public ItemSkusGetResponse getSkuInfo(ShopBean shopBean, String numIid, String fields) throws ApiException {
 
         logger.info("根据商品ID列表获取SKU信息 " + numIid);
         ItemSkusGetRequest req = new ItemSkusGetRequest();
         req.setFields(fields);
         req.setNumIids(numIid);
 
-        ItemSkusGetResponse response = reqTaobaoApi (shopBean, req);
-        if (response.getErrorCode() != null)
-        {
+        ItemSkusGetResponse response = reqTaobaoApi(shopBean, req);
+        if (response.getErrorCode() != null) {
             logger.error(response.getSubMsg());
         }
         return reqTaobaoApi(shopBean, req);

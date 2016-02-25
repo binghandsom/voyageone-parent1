@@ -97,7 +97,6 @@ public class TbPictureService extends TbBase {
      * 获取图片信息
      * 淘宝接口名：taobao.picture.delete
      * 文档地址：http://open.taobao.com/apidoc/api.htm?path=cid:10122-apiId:139
-     *
      */
     public PictureDeleteResponse deletePictures(ShopBean shopBean, Long... pictureIds) throws ApiException {
         if (pictureIds.length < 1)
@@ -162,5 +161,29 @@ public class TbPictureService extends TbBase {
      */
     public PictureCategoryAddResponse addCategory(ShopBean shopBean, String name) throws ApiException {
         return addCategory(shopBean, name, 0L);
+    }
+
+    /**
+     * 添加商品图片
+     * <p>
+     * 淘宝接口名：taobao.item.img.upload
+     * 文档地址：http://open.taobao.com/doc2/apiDetail.htm?apiId=23
+     *
+     * @throws ApiException
+     */
+    public ItemImgUploadResponse uploadItemPicture(ShopBean shopBean, ItemImgUploadRequest request) throws ApiException {
+        return reqTaobaoApi(shopBean, request);
+    }
+
+    /**
+     * 删除商品图片
+     * <p>
+     * 淘宝接口名：taobao.item.img.delete
+     * 文档地址：http://open.taobao.com/doc2/apiDetail.htm?apiId=24
+     *
+     * @throws ApiException
+     */
+    public ItemImgDeleteResponse deleteItemPicture(ShopBean shopBean, ItemImgDeleteRequest request) throws ApiException {
+        return reqTaobaoApi(shopBean, request);
     }
 }
