@@ -16,17 +16,23 @@
 									</div>
 								</div>
 								<div class="form-group">
-									<label class="col-sm-4 control-label">分发规则</label>
+									<label class="col-sm-4 control-label">待翻译总数</label>
 									<div class="col-sm-7">
-										<label class="checkbox-inline c-radio">
-											<input type="radio" ng-model="ctrl.distributeRule" value="0"><span class="fa fa-check"></span>  全部商品
-										</label>
-										<label class="checkbox-inline c-radio">
-											<input type="radio" ng-model="ctrl.distributeRule" value="1"><span class="fa fa-check"></span>  主商品
-										</label>
-
+										<input type="text" class="form-control" placeholder="{{ctrl.totalUndoneCount}}" disabled>
 									</div>
 								</div>
+								<div class="form-group">
+								<label class="col-sm-4 control-label">分发规则</label>
+								<div class="col-sm-7">
+									<label class="checkbox-inline c-radio">
+										<input type="radio" ng-model="ctrl.distributeRule" value="0"><span class="fa fa-check"></span>  全部商品
+									</label>
+									<label class="checkbox-inline c-radio">
+										<input type="radio" ng-model="ctrl.distributeRule" value="1"><span class="fa fa-check"></span>  主商品
+									</label>
+
+								</div>
+							</div>
 							</form>
 							<!-- .form -->
 						</div>
@@ -39,9 +45,13 @@
 									</div>
 								</div>
 								<div class="form-group">
-									<label class="col-sm-4 control-label">获取任务数量</label>
+									<label class="col-sm-4 control-label">产品库存优先级</label>
 									<div class="col-sm-7">
-										<input type="text" class="form-control" ng-model="ctrl.distributeCount">
+										<select class="form-control">
+											<option>条件一</option>
+											<option>条件二</option>
+											<option>条件三</option>
+										</select>
 									</div>
 								</div>
 							</form>
@@ -50,9 +60,9 @@
 						<div class="col-sm-4">
 							<form class="form-horizontal">
 								<div class="form-group">
-									<label class="col-sm-4 control-label">待翻译总数</label>
+									<label class="col-sm-4 control-label">获取任务数量</label>
 									<div class="col-sm-7">
-										<input type="text" class="form-control" placeholder="{{ctrl.totalUndoneCount}}" disabled>
+										<input type="text" class="form-control" ng-model="ctrl.distributeCount">
 									</div>
 								</div>
 								<div class="form-group">
