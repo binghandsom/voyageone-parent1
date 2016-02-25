@@ -263,4 +263,9 @@ public class OmsOrdersSearchServiceImpl implements OmsOrdersSearchService {
     }
 		return listmap;
 	}*/
+
+	@Override
+	public List<String> getOrderNumbersByTrackingNo(InFormSearch bean) {
+		return orderDao.getOrderNumbersByTrackingNo(bean);
+	}
 }
