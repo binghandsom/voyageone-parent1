@@ -29,7 +29,7 @@ public class CmsPromotionFileServiceTest {
                         para.put("channelId", "100");
 
 //        cmsPromotionFileService.getModelExcelFile(para);
-        cmsPromotionFileService.getCodeExcelFile(para);
+//        cmsPromotionFileService.getCodeExcelFile(para);
 //        cmsPromotionFileService.getSkuExcelFile(para);
 
 

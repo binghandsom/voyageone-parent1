@@ -383,6 +383,14 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
         setAttribute("productType", productType);
     }
 
+    //产品库存
+    public Integer getQuantity() {
+        return getAttribute("quantity");
+    }
+    public void setQuantity(Integer quantity) {
+        setAttribute("quantity", quantity);
+    }
+
     @Override
     public Object put(String key, Object value) {
         if (key != null && key.startsWith("images")) {

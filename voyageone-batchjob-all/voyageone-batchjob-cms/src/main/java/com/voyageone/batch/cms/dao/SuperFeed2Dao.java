@@ -12,14 +12,14 @@ import java.util.List;
 import java.util.Map;
 
 @Repository
-public class SuperFeedDao extends BaseDao {
+public class SuperFeed2Dao extends BaseDao {
 
     /**
      * 获取 mapper 的 namespace，只在初始化时调用
      */
     @Override
     protected String namespace() {
-        return Constants.getDaoNameSpace(SubSystem.CMS);
+        return "com.voyageone.cms2.sql";
     }
 
     /**
@@ -296,7 +296,7 @@ public class SuperFeedDao extends BaseDao {
         params.put("tableNameFull", tableNameFull);
         params.put("keyword", keyword);
 
-        return insert("cms_superfeed_inertSuperfeedFull", params);
+        return updateTemplate.insert("cms_superfeed_inertSuperfeedFull", params);
     }
 
 

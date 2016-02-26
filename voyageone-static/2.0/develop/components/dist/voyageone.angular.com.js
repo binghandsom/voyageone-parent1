@@ -256,7 +256,7 @@ define(function() {
   }).directive("schemaHeader", [ "$templateCache", "schemaHeaderFactory", "fieldTypes", "ruleTypes", "valueTypes", function($templateCache, schemaHeaderFactory, fieldTypes, ruleTypes, valueTypes) {
     var templateKey_header = "voyageone.angular.directives.schemaHeader.tpl.html";
     if (!$templateCache.get(templateKey_header)) {
-      $templateCache.put(templateKey_header, '<div class="form-group">' + '  <label class="col-sm-2 control-label" ng-class="{\'vo_reqfield\': showHtmlData.isRequired}" ng-bind="$$data.name"></label>' + "  <div class=\"col-sm-8\" ng-class=\"{'modal-open' : showHtmlData.isMultiComplex, 'hierarchy_main': showHtmlData.isComplex}\" ng-transclude></div>" + '  <div class="col-sm-2" ng-if="showHtmlData.isMultiComplex"><button class="btn btn-success" ng-click="addField($$data)"><i class="fa fa-plus"></i>{{\'BTN_ADD\' | translate}}</button></div>' + '  <div class="row" ng-repeat="tipMsg in showHtmlData.tipMsg"><div class="col-sm-8 col-sm-offset-2 text-warnings"><i class="icon fa fa-bell-o"></i>&nbsp;{{tipMsg}}</div></div>' + "</div>");
+      $templateCache.put(templateKey_header, '<div class="form-group">' + '<label class="col-sm-2 control-label" ng-class="{\'vo_reqfield\': showHtmlData.isRequired}" ng-bind="$$data.name"></label>' + "<div class=\"col-sm-8\" ng-class=\"{'modal-open' : showHtmlData.isMultiComplex, 'hierarchy_main': showHtmlData.isComplex}\" ng-transclude></div>" + '<div class="col-sm-2" ng-if="showHtmlData.isMultiComplex"><button class="btn btn-success" ng-click="addField($$data)"><i class="fa fa-plus"></i>{{\'BTN_ADD\' | translate}}</button></div>' + '<div class="row" ng-repeat="tipMsg in showHtmlData.tipMsg"><div class="col-sm-8 col-sm-offset-2 text-warnings"><i class="icon fa fa-bell-o"></i>&nbsp;{{tipMsg}}</div></div>' + "</div>");
     }
     return {
       restrict: "E",
@@ -912,56 +912,6 @@ define(function() {
       }
     };
   });
-  angular.module("voyageone.angular.vresources", []).provider("$vresources", [ "$provide", function($provide) {
-    function getActionUrl(root, action) {
-      return root + (root.lastIndexOf("/") === root.length - 1 ? "" : "/") + action;
-    }
-    function closureDataService(name, actions, ajaxService) {
-      function DataResource() {
-        if (!actions) {
-          return;
-        }
-        if (typeof actions !== "object") {
-          console.log("Failed to new DataResource: [" + actions + "] is not a object");
-          return;
-        }
-        if (!actions.root) {
-          console.log("Failed to new DataResource: no root prop" + (JSON && JSON.stringify ? ": " + JSON.stringify(actions) : ""));
-          return;
-        }
-        for (var name in actions) {
-          if (name === "root") continue;
-          if (actions.hasOwnProperty(name)) {
-            this[name] = function(actionUrl) {
-              return function(data) {
-                return ajaxService.post(actionUrl, data);
-              };
-            }(getActionUrl(actions.root, actions[name]));
-          }
-        }
-      }
-      $provide.service(name, DataResource);
-    }
-    this.$get = [ "ajaxService", function(ajaxService) {
-      return {
-        register: function(name, actions) {
-          if (!actions) return;
-          if (typeof actions !== "object") return;
-          if (actions.root) {
-            closureDataService(name, actions, ajaxService);
-            return;
-          }
-          for (var childName in actions) {
-            if (actions.hasOwnProperty(childName)) {
-              this.register(childName, actions[childName]);
-            }
-          }
-        }
-      };
-    } ];
-  } ]).run([ "$vresources", "$actions", function($vresources, $actions) {
-    $vresources.register(null, $actions);
-  } ]);
   angular.module("voyageone.angular.factories.dialogs", []).factory("$dialogs", [ "$modal", "$filter", "$templateCache", function($modal, $filter, $templateCache) {
     var templateName = "voyageone.angular.factories.dialogs.tpl.html";
     var template = '<div class="vo_modal">' + '<div class="modal-header">' + '<button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="close()">' + '<span aria-hidden="true"><i ng-click="close()" class="fa fa-close"></i></span>' + "</button>" + '<h5 class="modal-title" ng-bind-html="title"></h5>' + "</div>" + '<div class="modal-body wrapper-lg">' + '<div class="row">' + '<h5 class="text-center text-hs"><p class="text-center" ng-bind-html="content"></p></h5>' + "</div>" + "</div>" + '<div class="modal-footer">' + '<button class="btn btn-default btn-sm" ng-if="!isAlert" ng-click="close()" translate="BTN_CANCEL"></button>' + '<button class="btn btn-vo btn-sm" ng-click="ok()" translate="BTN_OK"></button>' + "</div>" + "</div>";
@@ -1137,30 +1087,32 @@ define(function() {
     }
   } ]);
   angular.module("voyageone.angular.factories.schema", []).factory("schemaHeaderFactory", function() {
-    return function(config) {
-      var _schemaHeaderInfo = config ? config : {
+    function SchemaHeaderFactory(config) {
+      this.schemaHearInfo = config || {
         isRequired: false,
         isMultiComplex: false,
         isComplex: false,
         tipMsg: []
       };
-      this.isRequired = function(value) {
-        return value !== undefined ? _schemaHeaderInfo.isRequired = value : _schemaHeaderInfo.isRequired;
-      };
-      this.isComplex = function(value) {
-        return value !== undefined ? _schemaHeaderInfo.isComplex = value : _schemaHeaderInfo.isComplex;
-      };
-      this.isMultiComplex = function(value) {
-        return value !== undefined ? _schemaHeaderInfo.isMultiComplex = value : _schemaHeaderInfo.isMultiComplex;
-      };
-      this.tipMsg = function(value) {
-        return value !== undefined ? _schemaHeaderInfo.tipMsg.push(value) : _schemaHeaderInfo.tipMsg;
-      };
-      this.schemaHearInfo = _schemaHeaderInfo;
+    }
+    SchemaHeaderFactory.prototype = {
+      isRequired: function(value) {
+        return value !== undefined ? this.schemaHearInfo.isRequired = value : this.schemaHearInfo.isRequired;
+      },
+      isComplex: function(value) {
+        return value !== undefined ? this.schemaHearInfo.isComplex = value : this.schemaHearInfo.isComplex;
+      },
+      isMultiComplex: function(value) {
+        return value !== undefined ? this.schemaHearInfo.isMultiComplex = value : this.schemaHearInfo.isMultiComplex;
+      },
+      tipMsg: function(value) {
+        return value !== undefined ? this.schemaHearInfo.tipMsg.push(value) : this.schemaHearInfo.tipMsg;
+      }
     };
+    return SchemaHeaderFactory;
   }).factory("schemaFactory", function() {
-    return function(config) {
-      var _schemaInfo = config ? config : {
+    function SchemaFactory(config) {
+      this._schemaInfo = config || {
         type: null,
         name: null,
         rowNum: null,
@@ -1170,41 +1122,37 @@ define(function() {
         html: [],
         notShowEdit: true
       };
-      this.type = function(value) {
-        return value !== undefined ? _schemaInfo.type = value : _schemaInfo.type;
-      };
-      this.name = function(value) {
-        return value !== undefined ? _schemaInfo.name = value : _schemaInfo.name;
-      };
-      this.html = function(value) {
-        return value !== undefined ? _schemaInfo.html.push(value) : htmlToString(_schemaInfo.html);
-      };
-      this.isRequired = function(value) {
-        return value !== undefined ? _schemaInfo.isRequired = value : _schemaInfo.isRequired;
-      };
-      this.rowNum = function(value) {
-        return value !== undefined ? _schemaInfo.rowNum = value : _schemaInfo.rowNum;
-      };
-      this.tipMsg = function(value) {
-        return value !== undefined ? _schemaInfo.tipMsg.push(value) : _schemaInfo.tipMsg;
-      };
-      this.checkValues = function(value) {
-        return value !== undefined ? _schemaInfo.checkValues.push(value) : _schemaInfo.checkValues;
-      };
-      this.notShowEdit = function(value) {
-        return value !== undefined ? _schemaInfo.notShowEdit = value : _schemaInfo.notShowEdit;
-      };
-      this.schemaInfo = function() {
-        return _schemaInfo;
-      };
-      function htmlToString(htmls) {
-        var result = "";
-        angular.forEach(htmls, function(html) {
-          result += " " + html + " ";
-        });
-        return result;
+    }
+    SchemaFactory.prototype = {
+      type: function(value) {
+        return value !== undefined ? this._schemaInfo.type = value : this._schemaInfo.type;
+      },
+      name: function(value) {
+        return value !== undefined ? this._schemaInfo.name = value : this._schemaInfo.name;
+      },
+      html: function(value) {
+        return value !== undefined ? this._schemaInfo.html.push(value) : this._schemaInfo.html.join(" ");
+      },
+      isRequired: function(value) {
+        return value !== undefined ? this._schemaInfo.isRequired = value : this._schemaInfo.isRequired;
+      },
+      rowNum: function(value) {
+        return value !== undefined ? this._schemaInfo.rowNum = value : this._schemaInfo.rowNum;
+      },
+      tipMsg: function(value) {
+        return value !== undefined ? this._schemaInfo.tipMsg.push(value) : this._schemaInfo.tipMsg;
+      },
+      checkValues: function(value) {
+        return value !== undefined ? this._schemaInfo.checkValues.push(value) : this._schemaInfo.checkValues;
+      },
+      notShowEdit: function(value) {
+        return value !== undefined ? this._schemaInfo.notShowEdit = value : this._schemaInfo.notShowEdit;
+      },
+      schemaInfo: function() {
+        return this._schemaInfo;
       }
     };
+    return SchemaFactory;
   });
   angular.module("voyageone.angular.factories.selectRows", []).factory("selectRowsFactory", function() {
     return function(config) {
@@ -1469,6 +1417,56 @@ define(function() {
       return currentLang.substr(0, 2);
     }
   };
+  angular.module("voyageone.angular.vresources", []).provider("$vresources", [ "$provide", function($provide) {
+    function getActionUrl(root, action) {
+      return root + (root.lastIndexOf("/") === root.length - 1 ? "" : "/") + action;
+    }
+    function closureDataService(name, actions, ajaxService) {
+      function DataResource() {
+        if (!actions) {
+          return;
+        }
+        if (typeof actions !== "object") {
+          console.log("Failed to new DataResource: [" + actions + "] is not a object");
+          return;
+        }
+        if (!actions.root) {
+          console.log("Failed to new DataResource: no root prop" + (JSON && JSON.stringify ? ": " + JSON.stringify(actions) : ""));
+          return;
+        }
+        for (var name in actions) {
+          if (name === "root") continue;
+          if (actions.hasOwnProperty(name)) {
+            this[name] = function(actionUrl) {
+              return function(data) {
+                return ajaxService.post(actionUrl, data);
+              };
+            }(getActionUrl(actions.root, actions[name]));
+          }
+        }
+      }
+      $provide.service(name, DataResource);
+    }
+    this.$get = [ "ajaxService", function(ajaxService) {
+      return {
+        register: function(name, actions) {
+          if (!actions) return;
+          if (typeof actions !== "object") return;
+          if (actions.root) {
+            closureDataService(name, actions, ajaxService);
+            return;
+          }
+          for (var childName in actions) {
+            if (actions.hasOwnProperty(childName)) {
+              this.register(childName, actions[childName]);
+            }
+          }
+        }
+      };
+    } ];
+  } ]).run([ "$vresources", "$actions", function($vresources, $actions) {
+    $vresources.register(null, $actions);
+  } ]);
   angular.module("voyageone.angular.controllers", [ "voyageone.angular.controllers.datePicker", "voyageone.angular.controllers.selectRows", "voyageone.angular.controllers.showPopover" ]);
   angular.module("voyageone.angular.directives", [ "voyageone.angular.directives.dateModelFormat", "voyageone.angular.directives.enterClick", "voyageone.angular.directives.fileStyle", "voyageone.angular.directives.ifNoRows", "voyageone.angular.directives.uiNav", "voyageone.angular.directives.schema", "voyageone.angular.directives.voption", "voyageone.angular.directives.vpagination", "voyageone.angular.directives.validator" ]);
   angular.module("voyageone.angular.factories", [ "voyageone.angular.factories.dialogs", "voyageone.angular.factories.interceptor", "voyageone.angular.factories.notify", "voyageone.angular.factories.pppAutoImpl", "voyageone.angular.factories.schema", "voyageone.angular.factories.selectRows", "voyageone.angular.factories.vpagination" ]);
