@@ -54,8 +54,8 @@ public class CmsPromotionDetailService extends BaseAppService {
 
 
     private static final int codeCellNum = 1;
-    private static final int priceCellNum = 2;
-    private static final int tagCellNum = 3;
+    private static final int priceCellNum = 8;
+    private static final int tagCellNum = 9;
 
     /**
      * promotion商品插入
