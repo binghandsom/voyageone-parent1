@@ -53,12 +53,20 @@ public abstract class BaseService {
      * @param queryObject JomgoQuery
      */
     protected void buildProjection(VoApiRequest request, JomgoQuery queryObject) {
+        queryObject.setProjection(getProjection(request));
+    }
+
+    /**
+     * getProjection
+     * @param request VoApiRequest
+     * @return String
+     */
+    protected String[] getProjection(VoApiRequest request) {
         if (StringUtils.isEmpty(request.getFields())) {
-            return;
+            return null;
         }
         String fieldsTmp = request.getFields().replaceAll("[\\s]*;[\\s]*", " ; ");
-        String[] fieldsTmpArr = fieldsTmp.split(" ; ");
-        queryObject.setProjection(fieldsTmpArr);
+        return fieldsTmp.split(" ; ");
     }
 
     /**
@@ -67,13 +75,27 @@ public abstract class BaseService {
      * @param queryObject queryObject
      */
     protected void buildSort(VoApiRequest request, JomgoQuery queryObject) {
-        if (StringUtils.isEmpty(request.getSorts())) {
-            return;
-        }
-        String sortsTmp = request.getSorts().replaceAll("[\\s]*;[\\s]*", ", ");
-        queryObject.setSort("{ " + sortsTmp + " }");
+        queryObject.setSort(getSort(request));
     }
 
+    /**
+     * getSort
+     * @param request VoApiRequest
+     * @return String
+     */
+    protected String getSort(VoApiRequest request) {
+        if (StringUtils.isEmpty(request.getSorts())) {
+            return null;
+        }
+        String sortsTmp = request.getSorts().replaceAll("[\\s]*;[\\s]*", ", ");
+        return "{ " + sortsTmp + " }";
+    }
+
+    /**
+     * buildLimit
+     * @param request VoApiListRequest
+     * @param queryObject JomgoQuery
+     */
     protected void buildLimit(VoApiListRequest request, JomgoQuery queryObject) {
         if (request.getIsPage()) {
             int pageSize = request.getPageSize();
@@ -94,6 +116,11 @@ public abstract class BaseService {
         }
     }
 
+    /**
+     * setResultCount
+     * @param response VoApiUpdateResponse
+     * @param bulkWriteResult BulkWriteResult
+     */
     protected void setResultCount(VoApiUpdateResponse response, BulkWriteResult bulkWriteResult) {
         response.setInsertedCount(response.getInsertedCount() + bulkWriteResult.getInsertedCount());
         response.setMatchedCount(response.getMatchedCount() + bulkWriteResult.getMatchedCount());

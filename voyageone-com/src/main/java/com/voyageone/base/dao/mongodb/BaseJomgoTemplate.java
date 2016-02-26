@@ -79,11 +79,11 @@ public class BaseJomgoTemplate extends BaseJomgoPartTemplate {
         return findById(id, entityClass, collectionName);
     }
 
-//    public void findAndModify(String strQuery, String strUpdate) {
-//        String collectionName = getCollectionName(entityClass);
-//        findAndModify(strQuery, strUpdate, collectionName);
-//    }
-//
+    public <T> T findAndModify(JomgoUpdate updateObject, Class<T> entityClass) {
+        String collectionName = getCollectionName(entityClass);
+        return findAndModify(updateObject, entityClass, collectionName);
+    }
+
 //    public void findAndRemove(String strQuery) {
 //        String collectionName = getCollectionName(entityClass);
 //        findAndRemove(strQuery, collectionName);
