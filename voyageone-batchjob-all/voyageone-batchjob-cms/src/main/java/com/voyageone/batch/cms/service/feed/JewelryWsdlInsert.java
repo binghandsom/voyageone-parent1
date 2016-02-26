@@ -4,8 +4,6 @@ import com.voyageone.batch.cms.dao.feed.JewelryDao;
 import com.voyageone.batch.cms.model.CmsBtFeedInfoJewelryModel;
 import com.voyageone.cms.service.FeedToCmsService;
 import com.voyageone.cms.service.model.CmsBtFeedInfoModel;
-import com.voyageone.common.components.issueLog.enums.ErrorType;
-import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.FeedEnums;
 import com.voyageone.common.configs.Feed;
@@ -20,15 +18,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * @author james.li on 2016/1/15.
  * @version 2.0.0
  */
 @Service
-public class JewelryWsdlInsert extends SearsWsdlBase {
-    private static final String INSERT_FLG = "UpdateFlag = 1";
+public class JewelryWsdlInsert extends JewelryWsdlBase {
+    private static final String INSERT_FLG = "(UpdateFlag = 1 or UpdateFlag = 2)";
 
     @Autowired
     private FeedToCmsService feedToCmsService;
@@ -61,15 +58,15 @@ public class JewelryWsdlInsert extends SearsWsdlBase {
             String where = String.format("WHERE %s AND %s = '%s' %s", INSERT_FLG, colums.get("category").toString(),
                     category.replace("'", "\\\'"), Feed.getVal1(channel, FeedEnums.Name.model_sql_ending));
 
-            List<CmsBtFeedInfoJewelryModel> jewmodelBeans = jewelryDao.selectSuperfeedModel(where, colums, Feed.getVal1(channel, FeedEnums.Name.table_id));
+            List<CmsBtFeedInfoJewelryModel> jewmodelBeans = jewelryDao.selectSuperfeedModel(where, colums, Feed.getVal1(channel, FeedEnums.Name.table_id2));
             List<CmsBtFeedInfoModel> modelBeans = new ArrayList<>();
-            for (CmsBtFeedInfoJewelryModel jewmodelBean : jewmodelBeans) {
-                Map temp = JacksonUtil.json2Bean(JacksonUtil.bean2Json(jewmodelBean), HashMap.class);
-                Map<String, List<String>> attribute = new HashMap<>();
-                for (int i = 0; i < 99; i++) {
-                    String value = (String) temp.get("attribute" + i + "Value");
-                    if (!StringUtil.isEmpty(value)) {
-                        List<String> values = new ArrayList<>();
+            for(CmsBtFeedInfoJewelryModel jewmodelBean : jewmodelBeans){
+                Map temp= JacksonUtil.json2Bean(JacksonUtil.bean2Json(jewmodelBean), HashMap.class);
+                Map<String,List<String>> attribute = new HashMap<>();
+                for(int i = 0;i<99;i++){
+                    String value= (String)temp.get("attribute"+i+"Value");
+                    if(!StringUtil.isEmpty(value)){
+                        List<String> values= new ArrayList<>();
                         values.add(value);
                         attribute.put(temp.get("attribute" + i + "Name").toString(), values);
                     }
@@ -136,7 +133,7 @@ public class JewelryWsdlInsert extends SearsWsdlBase {
             // update flg 标记, 只获取哪些即将进行新增的商品的类目
             List<String> categoryPaths = superFeedDao.selectSuperfeedCategory(
                     Feed.getVal1(channel, FeedEnums.Name.category_column),
-                    table, " AND " + INSERT_FLG + " AND " + Feed.getVal1(channel, FeedEnums.Name.model_m_model) + " != '' AND " + Feed.getVal1(channel, FeedEnums.Name.model_m_brand) + " != ''");
+                    table, " AND " + INSERT_FLG + " AND " + Feed.getVal1(channel, FeedEnums.Name.model_m_model) + " != '' AND "+Feed.getVal1(channel, FeedEnums.Name.model_m_brand)+" != ''");
             $info("获取类目路径数 %s , 准备拆分继续处理", categoryPaths.size());
 
             return categoryPaths;
@@ -152,7 +149,6 @@ public class JewelryWsdlInsert extends SearsWsdlBase {
 
             return getModels(categoryPath);
         }
-
         /**
          * 调用 WsdlProductService 提交新商品
          *
@@ -174,23 +170,12 @@ public class JewelryWsdlInsert extends SearsWsdlBase {
 
                 // 分每棵树的信息取得
                 List<CmsBtFeedInfoModel> product = getCategoryInfo(categorPath);
-
-                product.forEach(cmsBtFeedInfoModel -> {
-                    List<String> categors = java.util.Arrays.asList(cmsBtFeedInfoModel.getCategory().split(" - "));
-                    cmsBtFeedInfoModel.setCategory(categors.stream().map(s -> s.replace("-", "－")).collect(Collectors.joining("-")));
-                });
-
-                try{
-                    Map response = feedToCmsService.updateProduct(channel.getId(), product, getTaskName());
-                    List<String> itemIds = new ArrayList<>();
-                    productSucceeList = (List<CmsBtFeedInfoModel>) response.get("succeed");
-                    productSucceeList.forEach(feedProductModel -> feedProductModel.getSkus().forEach(feedSkuModel -> itemIds.add(feedSkuModel.getClientSku())));
-                    updateFull(itemIds);
-                    productFailAllList.addAll((List<CmsBtFeedInfoModel>) response.get("fail"));
-                }catch (Exception e){
-                    logger.error(e.getMessage());
-                    issueLog.log(e, ErrorType.BatchJob, SubSystem.CMS);
-                }
+                Map response = feedToCmsService.updateProduct(channel.getId(), product, getTaskName());
+                List<String> itemIds = new ArrayList<>();
+                productSucceeList = (List<CmsBtFeedInfoModel>) response.get("succeed");
+                productSucceeList.forEach(feedProductModel -> feedProductModel.getSkus().forEach(feedSkuModel -> itemIds.add(feedSkuModel.getClientSku())));
+                updateFull(itemIds);
+                productFailAllList.addAll((List<CmsBtFeedInfoModel>) response.get("fail"));
             }
             $info("总共~ 失败的 Product: %s", productFailAllList.size());
 
