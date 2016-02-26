@@ -1,15 +1,17 @@
 package com.voyageone.web2.cms.views.promotion.list;
 
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants.PROMOTION;
 import com.voyageone.web2.sdk.api.domain.CmsBtPromotionModel;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.Map;
 
 /**
@@ -45,4 +47,12 @@ public class CmsPromotionIndexController extends CmsController {
         return success(cmsPromotionService.addOrUpdate(cmsBtPromotionModel));
     }
 
+    @RequestMapping(PROMOTION.LIST.INDEX.PROMOTION_EXPORT)
+    public ResponseEntity<byte[]> doExport(HttpServletRequest request, HttpServletResponse response, @RequestParam Integer  promotionId)
+            throws Exception {
+
+        byte[] data = cmsPromotionService.getCodeExcelFile(promotionId);
+        return genResponseEntityFromBytes(DateTimeUtil.getLocalTime(getUserTimeZone())+"promotion.xlsx", data);
+
+    }
 }

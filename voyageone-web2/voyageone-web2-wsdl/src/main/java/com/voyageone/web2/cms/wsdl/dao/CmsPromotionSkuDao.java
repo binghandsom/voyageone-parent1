@@ -1,6 +1,5 @@
 package com.voyageone.web2.cms.wsdl.dao;
 
-import com.voyageone.base.dao.BaseDao;
 import com.voyageone.web2.sdk.api.domain.CmsBtInventoryOutputTmpModel;
 import com.voyageone.web2.sdk.api.domain.CmsBtPromotionSkuModel;
 import org.springframework.stereotype.Repository;
@@ -15,7 +14,7 @@ import java.util.Map;
  * @version 2.0.0
  */
 @Repository
-public class CmsPromotionSkuDao extends BaseDao{
+public class CmsPromotionSkuDao extends WsdlBaseDao {
 
     public List<Map<String,Object>> getPromotionSkuList(Map<String,Object> params){
         List<Map<String,Object>> ret = selectList("select_cms_bt_promotion_sku",params);

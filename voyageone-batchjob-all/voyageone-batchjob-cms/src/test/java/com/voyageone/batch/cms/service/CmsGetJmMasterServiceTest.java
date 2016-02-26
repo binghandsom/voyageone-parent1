@@ -4,6 +4,11 @@ import com.voyageone.batch.cms.dao.JmCategoryDao;
 import com.voyageone.batch.cms.dao.JmMasterDao;
 import com.voyageone.batch.core.modelbean.TaskControlBean;
 import com.voyageone.common.components.jumei.Bean.JmCategoryBean;
+import com.voyageone.common.configs.Enums.CartEnums;
+import com.voyageone.common.configs.ShopConfigs;
+import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.web2.sdk.api.VoApiDefaultClient;
+import com.voyageone.web2.sdk.api.request.PromotionCodeAddTejiaBaoRequest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,4 +88,21 @@ public class CmsGetJmMasterServiceTest {
         //jmMasterDao.clearJmMaster();
         jmCategoryDao.insertJmCategory(categorys);
     }
+
+    @Test
+    public void testInsertBrand() throws Exception {
+
+    }
+
+    @Test
+    public void testInserCurrency() throws Exception {
+        ShopBean shopBean = new ShopBean();
+        shopBean.setAppKey("131");
+        shopBean.setSessionKey("7e059a48c30c67d2693be14275c2d3be");
+        shopBean.setAppSecret("0f9e3437ca010f63f2c4f3a216b7f4bc9698f071");
+        shopBean.setApp_url("http://openapi.ext.jumei.com/");
+        cmsGetJmMasterService.insertBrand(shopBean);
+
+    }
+
 }

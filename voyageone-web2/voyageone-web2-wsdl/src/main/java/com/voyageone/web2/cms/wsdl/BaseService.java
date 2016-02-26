@@ -4,13 +4,13 @@ import com.mongodb.BulkWriteResult;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.cms.service.model.CmsBtProductModel;
 import com.voyageone.common.util.StringUtils;
-import com.voyageone.web2.base.BaseAppComponent;
 import com.voyageone.web2.sdk.api.VoApiConstants;
 import com.voyageone.web2.sdk.api.VoApiListRequest;
 import com.voyageone.web2.sdk.api.VoApiRequest;
 import com.voyageone.web2.sdk.api.VoApiUpdateResponse;
 import com.voyageone.web2.sdk.api.exception.ApiException;
-import com.voyageone.web2.sdk.api.request.ProductSkusGetRequest;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import java.util.List;
 
@@ -19,8 +19,9 @@ import java.util.List;
  * Created by chuanyu.liang on 15/6/26.
  * @author chuanyu.liang
  */
-public abstract class BaseService extends BaseAppComponent {
+public abstract class BaseService {
 
+    protected Log logger = LogFactory.getLog(getClass());
     /**
      * Check Request
      * @param request Request
@@ -74,22 +75,23 @@ public abstract class BaseService extends BaseAppComponent {
     }
 
     protected void buildLimit(VoApiListRequest request, JomgoQuery queryObject) {
-        int pageSize = request.getPageSize();
-        if (pageSize < 1) {
-            pageSize = 1;
-        }
-        if (pageSize > 100) {
-            pageSize = 100;
-        }
+        if (request.getIsPage()) {
+            int pageSize = request.getPageSize();
+            if (pageSize < 1) {
+                pageSize = 1;
+            }
+            if (pageSize > 100) {
+                pageSize = 100;
+            }
 
-        int pageNo = request.getPageNo();
-        if (pageNo < 1) {
-            pageNo = 1;
-        }
+            int pageNo = request.getPageNo();
+            if (pageNo < 1) {
+                pageNo = 1;
+            }
 
-        queryObject.setLimit(pageSize);
-        queryObject.setSkip((pageNo-1) * pageSize);
-        request.getPageSize();
+            queryObject.setLimit(pageSize);
+            queryObject.setSkip((pageNo - 1) * pageSize);
+        }
     }
 
     protected void setResultCount(VoApiUpdateResponse response, BulkWriteResult bulkWriteResult) {

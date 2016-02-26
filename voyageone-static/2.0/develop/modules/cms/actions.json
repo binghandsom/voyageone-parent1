@@ -26,7 +26,8 @@
         "init": "init",
         "search": "search",
         "getGroupList": "getGroupList",
-        "getProductList": "getProductList"
+        "getProductList": "getProductList",
+        "exportProducts":"exportProducts"
       }
     },
     "group": {
@@ -97,7 +98,8 @@
         "getPromotionList": "getPromotionList",
         "insertPromotion": "insertPromotion",
         "updatePromotion": "updatePromotion",
-        "delPromotion": "delPromotion"
+        "delPromotion": "delPromotion",
+        "ExportPromotion":"ExportPromotion"
       },
       "promotionDetailService": {
         "root": "/cms/promotion/detail",
@@ -154,6 +156,18 @@
       "$priceHistoryService": {
         "root": "/cms/pop/history_price/",
         "getPriceHistory": "getPriceHistory"
+      }
+    },
+    "translation": {
+      "translationService":{
+        "root":"/cms/translation/tasks/",
+        "getTasks":"getTasks",
+        "searchHistoryTasks":"searchHistoryTasks",
+        "assignTasks":"assignTasks",
+        "copyFormMainProduct":"copyFormMainProduct",
+        "saveTask":"saveTask",
+        "submitTask":"submitTask",
+        "getFeedAttributes":"getFeedAttributes"
       }
     }
   }

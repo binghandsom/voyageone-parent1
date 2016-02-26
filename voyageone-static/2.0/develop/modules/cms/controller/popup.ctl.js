@@ -196,8 +196,8 @@ define([
                     "controller": 'popFieldColumnCtl'
                 },
                 "feedDetail": {
-                    "templateUrl": "views/pop/custom/feedDetail.tpl.html",
-                    "controllerUrl": "modules/cms/views/pop/custom/feedDetail.ctl",
+                    "templateUrl": "views/pop/field/feedDetail.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/field/feedDetail.ctl",
                     "controller": 'popFieldFeedDetailCtl'
                 }
             },

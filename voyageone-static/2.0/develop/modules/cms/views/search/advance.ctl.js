@@ -30,7 +30,7 @@ define([
         $scope.initialize = initialize;
         $scope.clear = clear;
         $scope.search = search;
-        $scope.export = exportFile;
+        $scope.exportFile = exportFile;
         $scope.getGroupList = getGroupList;
         $scope.getProductList = getProductList;
         $scope.openCategoryMapping = openCategoryMapping;
@@ -87,9 +87,8 @@ define([
         /**
          * 数据导出
          */
-        // TODO
         function exportFile () {
-
+            searchAdvanceService.exportFile($scope.vm.searchInfo);
         }
 
         /**
