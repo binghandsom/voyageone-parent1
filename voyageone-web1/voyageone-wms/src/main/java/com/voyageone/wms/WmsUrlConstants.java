@@ -167,6 +167,7 @@ public final class WmsUrlConstants {
             public static final String INIT = "/wms/reservation/popInventory/doPopInventoryInit";
             public static final String SEARCH = "/wms/reservation/popInventory/doPopInventorySearch";
             public static final String RESET = "/wms/reservation/popInventory/doPopInventoryReset";
+            public static final String DOWNLOAD = "/wms/reservation/popInventory/doPopInventoryDownload";
         }
 
         /**

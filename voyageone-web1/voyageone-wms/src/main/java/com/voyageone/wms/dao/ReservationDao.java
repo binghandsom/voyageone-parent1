@@ -436,4 +436,22 @@ public class ReservationDao extends BaseDao {
         return updateTemplate.selectOne(Constants.DAO_NAME_SPACE_WMS + "order_getOrderNumber", params);
 
     }
+
+    /**
+     * @description 根据orderChannelId获取所有Sku级别产品的库存信息
+     * @param formReservation 通过bean对象传递参数
+     * @return formReservation 对象获取传回参数
+     */
+    public List<FormReservation> getInventoryDownloadBySku(FormReservation formReservation) {
+        return selectList(Constants.DAO_NAME_SPACE_WMS + "wms_reservation_getInventoryDownloadBySku", formReservation);
+    }
+
+    /**
+     * @description 根据orderChannelId获取所有Code级别产品的库存信息
+     * @param formReservation 通过bean对象传递参数
+     * @return formReservation 对象获取传回参数
+     */
+    public List<FormReservation> getInventoryDownloadByCode(FormReservation formReservation) {
+        return selectList(Constants.DAO_NAME_SPACE_WMS + "wms_reservation_getInventoryDownloadByCode", formReservation);
+    }
 }
