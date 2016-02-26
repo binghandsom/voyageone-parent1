@@ -1,6 +1,5 @@
 package com.voyageone.web2.cms.wsdl.dao;
 
-import com.voyageone.base.dao.BaseDao;
 import com.voyageone.web2.sdk.api.domain.CmsBtBusinessLogModel;
 import org.springframework.stereotype.Repository;
 
@@ -13,7 +12,7 @@ import java.util.Map;
  * @since 2.0.0
  */
 @Repository
-public class CmsBtBusinessLogDao extends BaseDao {
+public class CmsBtBusinessLogDao extends WsdlBaseDao {
 
     /**
      * 条件查询
@@ -27,8 +26,8 @@ public class CmsBtBusinessLogDao extends BaseDao {
 
     /**
      * 根据查询条件获得总件数
-     * @param conditionParams
-     * @return
+     * @param conditionParams condition Params
+     * @return int
      */
     public int findByConditionCnt(Map<?, ?> conditionParams) {
 

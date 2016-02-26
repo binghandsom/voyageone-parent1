@@ -66,6 +66,8 @@ public final class WmsUrlConstants {
         public static final class Bind {
             public static final String INIT = "/wms/location/bind/init";
             public static final String SEARCH = "/wms/location/bind/searchItemLocation";
+            public static final String SEARCH_BY_SKU = "/wms/location/bind/searchItemLocationBySku";
+            public static final String SEARCH_BY_LOCATION_ID = "/wms/location/bind/searchItemLocationByLocationId";
             public static final String ADD = "/wms/location/bind/addItemLocation";
             public static final String DELETE = "/wms/location/bind/deleteItemLocation";
         }
@@ -195,6 +197,7 @@ public final class WmsUrlConstants {
             public static final String INIT = "/wms/return/list/doInit";
             public static final String SEARCH = "/wms/return/list/doReturnListSearch";
             public static final String CHANGESTATUS = "/wms/return/list/doChangeStatus";
+            public static final String DOWNLOAD = "/wms/return/list/doReturnListDownload";
         }
 
         /**
@@ -233,6 +236,10 @@ public final class WmsUrlConstants {
          */
         public static final class SessionDetail {
             public static final String INIT = "/wms/return/sessionDetail/doSessionDetailInit";
+        }
+
+        public static final class PopChange {
+            public static final String CHANGE = "/wms/return/popchange/doChange";
         }
     }
 

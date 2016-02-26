@@ -1,6 +1,5 @@
 package com.voyageone.web2.cms.wsdl.dao;
 
-import com.voyageone.base.dao.BaseDao;
 import com.voyageone.web2.sdk.api.domain.CmsBtPromotionGroupModel;
 import org.springframework.stereotype.Repository;
 
@@ -13,7 +12,7 @@ import java.util.Map;
  * @version 2.0.0
  */
 @Repository
-public class CmsPromotionModelDao extends BaseDao{
+public class CmsPromotionModelDao extends WsdlBaseDao {
 
     public List<CmsBtPromotionGroupModel> getPromotionModelList(Map<String,Object> params){
         List<CmsBtPromotionGroupModel> ret = selectList("select_cms_bt_promotion_model",params);

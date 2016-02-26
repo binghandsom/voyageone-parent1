@@ -63,6 +63,11 @@ public final class WmsMsgConstants {
          * 1: 货架名称
          */
         public static final String NOT_FOUND_LOCATION = "3000021";
+
+        /**
+         * 1: 商品的 SKU
+         */
+        public static final String NOT_FOUND_SKU_IN_CHANNEL = "3000067";
     }
 
     /**

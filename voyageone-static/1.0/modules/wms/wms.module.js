@@ -136,6 +136,10 @@ define(function () {
 
                 sessionDetail: {
                     init: '/wms/return/sessionDetail/doSessionDetailInit'
+                },
+
+                popChangeReturn: {
+                    change: '/wms/return/popchange/doChange'
                 }
             },
 
@@ -157,6 +161,8 @@ define(function () {
                 bind: {
                     init: '/wms/location/bind/init',
                     search: "/wms/location/bind/searchItemLocation",
+                    searchBySku: "/wms/location/bind/searchItemLocationBySku",
+                    searchByLocationId: "/wms/location/bind/searchItemLocationByLocationId",
                     add: "/wms/location/bind/addItemLocation",
                     delete: "/wms/location/bind/deleteItemLocation"
                 }
