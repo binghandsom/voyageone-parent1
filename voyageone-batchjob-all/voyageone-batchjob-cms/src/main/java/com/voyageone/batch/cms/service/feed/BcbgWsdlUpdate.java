@@ -137,7 +137,7 @@ public class BcbgWsdlUpdate extends BcbgWsdlBase {
     private boolean setUpdated(List<String> codes) {
         int count0 = bcbgSuperFeedDao.deleteUpdating();
         int count1 = bcbgSuperFeedDao.selectInsertUpdated();
-        int count2 = bcbgSuperFeedDao.updateFlgToUpdated(codes);
+        int count2 = codes.isEmpty() ? 0 : bcbgSuperFeedDao.updateFlgToUpdated(codes);
         $info("更新结束, 原数据删除 [ %s ] 补充数据 [ %s ] 标记成功数据 [ %s ]", count0, count1, count2);
         return count2 > 0;
     }
