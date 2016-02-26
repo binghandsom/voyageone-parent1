@@ -32,10 +32,10 @@ public class PromotionCodeService extends BaseService {
     public PromotionCodeGetResponse getPromotionCodeList(PromotionCodeGetRequest promotionCodeGetRequest){
         PromotionCodeGetResponse res=new PromotionCodeGetResponse();
         List<CmsBtPromotionCodeModel> ret = cmspromotionCodeDao.getPromotionCodeList(promotionCodeGetRequest.getParam());
-        if(!CollectionUtils.isEmpty(ret)){
-            res.setCodeList(ret);
-            res.setTotalCount(Long.parseLong(String.valueOf(ret.size())));
-        }
+//        if(!CollectionUtils.isEmpty(ret)){
+        res.setCodeList(ret);
+        res.setTotalCount(Long.parseLong(String.valueOf(ret.size())));
+//        }
         return res;
     }
 
