@@ -102,9 +102,10 @@ public abstract class BaseService {
             if (pageSize < 1) {
                 pageSize = 1;
             }
-            if (pageSize > 100) {
-                pageSize = 100;
-            }
+            // TODO 因为下载取数据的分页不能最大100,所以取消这个设置
+//            if (pageSize > 100) {
+//                pageSize = 100;
+//            }
 
             int pageNo = request.getPageNo();
             if (pageNo < 1) {

@@ -56,7 +56,8 @@ public abstract class VoApiListRequest<T extends VoApiResponse> extends VoApiReq
         super.check();
 
         RequestUtils.checkMinValue((long) pageSize, 1, "pageSize");
-        RequestUtils.checkMaxValue((long) pageSize, 100, "pageSize");
+        // TODO 因为下载不能只限制取100条数据
+//        RequestUtils.checkMaxValue((long) pageSize, 100, "pageSize");
 
         RequestUtils.checkMinValue((long) pageNo, 1, "pageNo");
     }
