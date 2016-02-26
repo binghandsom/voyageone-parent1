@@ -1,6 +1,7 @@
 package com.voyageone.batch.cms.service.rule_parser;
 
 import com.voyageone.cms.service.model.CmsBtProductModel;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.ims.rule_expression.FeedOrgWord;
 import com.voyageone.ims.rule_expression.RuleWord;
 import com.voyageone.ims.rule_expression.WordType;
@@ -34,6 +35,31 @@ public class FeedOrgWordParser {
         {
             FeedOrgWord feedOrgWord = (FeedOrgWord) ruleWord;
             String propName = feedOrgWord.getValue();
+
+            // 如果propName为空的话, 就说明是应该看index, 而不是看propName
+            if (StringUtils.isEmpty(propName)) {
+                // 看的内容是feed.customIds 和 feed.customIdsCn, 配合 feed.cnAtts的内容, 进行返回
+                if (feedOrgWord.isTitle()) {
+                    // 返回原始的名字
+                    // ( 注: 其实这边取得的是feed原始的名字, 而不是真正的英文名字, 也无法自定义, 不过暂时也用不掉. 以后如果有需要, 表结构改善一下, 这段代码可以再改进下)
+                    try {
+                        return cmsBtProductModel.getFeed().getCustomIds().get(feedOrgWord.getFeedIndex());
+                    } catch (Exception e) {
+                        // 没有的话直接返回一个有值得空字符串
+                        return "";
+                    }
+                } else {
+                    // 返回原始的值
+                    try {
+                        String key = cmsBtProductModel.getFeed().getCustomIds().get(feedOrgWord.getFeedIndex());
+                        return cmsBtProductModel.getFeed().getOrgAtts().getAttribute(key);
+                    } catch (Exception e) {
+                        // 没有的话直接返回一个有值得空字符串
+                        return "";
+                    }
+                }
+            }
+            // 如果propName有内容的话, 那就按照原来的逻辑进行处理
             Map<String, String> extra = feedOrgWord.getExtra();
             Object plainPropValueObj;
 
