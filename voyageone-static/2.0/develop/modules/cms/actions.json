@@ -26,7 +26,8 @@
         "init": "init",
         "search": "search",
         "getGroupList": "getGroupList",
-        "getProductList": "getProductList"
+        "getProductList": "getProductList",
+        "exportProducts":"exportProducts"
       }
     },
     "group": {

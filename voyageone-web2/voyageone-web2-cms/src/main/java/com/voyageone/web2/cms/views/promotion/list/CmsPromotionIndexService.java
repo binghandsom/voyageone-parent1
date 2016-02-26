@@ -1,11 +1,10 @@
 package com.voyageone.web2.cms.views.promotion.list;
 
-import com.voyageone.cms.service.model.CmsBtProductModel;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.Properties;
 import com.voyageone.common.configs.TypeChannel;
-import com.voyageone.common.util.StringUtils;
+import com.voyageone.common.util.FileUtils;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.CmsConstants;
 import com.voyageone.web2.sdk.api.VoApiDefaultClient;
@@ -21,7 +20,10 @@ import org.apache.poi.ss.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -136,8 +138,7 @@ public class CmsPromotionIndexService extends BaseAppService {
      * Code单位，文件输出
      *
      * @param book 输出Excel文件对象
-     * @param items 待输出DB数据
-     * @param cartId
+     * @param item 待输出DB数据
      * @param startRowIndex 开始
      * @return boolean 是否终止输出
      */
@@ -145,7 +146,7 @@ public class CmsPromotionIndexService extends BaseAppService {
         boolean isContinueOutput = true;
         Sheet sheet = book.getSheetAt(0);
 
-        Row row = row(sheet, 1);
+        Row row = FileUtils.row(sheet, 1);
         CellStyle unlock = row.getRowStyle();;
 
             /*
@@ -163,77 +164,28 @@ public class CmsPromotionIndexService extends BaseAppService {
              */
 
 
-        row = row(sheet, startRowIndex);
+        row = FileUtils.row(sheet, startRowIndex);
         // 内容输出
-        cell(row, 0, unlock).setCellValue(startRowIndex);
+        FileUtils.cell(row, 0, unlock).setCellValue(startRowIndex);
 
-        cell(row, 1, unlock).setCellValue(item.getProductCode());
+        FileUtils.cell(row, 1, unlock).setCellValue(item.getProductCode());
 
-        cell(row, 2, unlock).setCellValue(item.getProductName());
+        FileUtils.cell(row, 2, unlock).setCellValue(item.getProductName());
 
-        cell(row, 3, unlock).setCellValue(item.getCatPath());
+        FileUtils.cell(row, 3, unlock).setCellValue(item.getCatPath());
 
-        cell(row, 4, unlock).setCellValue(item.getNumIid());
+        FileUtils.cell(row, 4, unlock).setCellValue(item.getNumIid());
 
-        cell(row, 5, unlock).setCellValue(item.getMsrp());
+        FileUtils.cell(row, 5, unlock).setCellValue(item.getMsrp());
 
-        cell(row, 6, unlock).setCellValue(item.getRetailPrice());
+        FileUtils.cell(row, 6, unlock).setCellValue(item.getRetailPrice());
 
-        cell(row, 7, unlock).setCellValue(item.getSalePrice());
+        FileUtils.cell(row, 7, unlock).setCellValue(item.getSalePrice());
 
-        cell(row, 8, unlock).setCellValue(item.getPromotionPrice());
+        FileUtils.cell(row, 8, unlock).setCellValue(item.getPromotionPrice());
 
-        cell(row, 9, unlock).setCellValue(item.getTagPathName());
+        FileUtils.cell(row, 9, unlock).setCellValue(item.getTagPathName());
 
         return isContinueOutput;
-    }
-
-    /**
-     * Excel Cell样式取得
-     *
-     * @param book Excel Book对象
-     * @return CellStyle Excel Cell样式
-     */
-    private CellStyle createUnLockStyle(Workbook book) {
-        CellStyle cellStyle = book.createCellStyle();
-
-        cellStyle.setLocked(false);
-
-        return cellStyle;
-    }
-
-    /**
-     * Excel 行对象取得
-     *
-     * @param sheet Excel Sheet对象
-     * @param rowIndex Excel RowIndex
-     * @return Row Excel Row对象
-     */
-    private Row row(Sheet sheet, int rowIndex) {
-
-        Row row = sheet.getRow(rowIndex);
-
-        if (row == null) row = sheet.createRow(rowIndex);
-
-        return row;
-    }
-
-    /**
-     * Excel Cell对象取得
-     *
-     * @param row Excel Row对象
-     * @param index Excel CellIndex
-     * @param cellStyle Excel Cell样式
-     * @return Row Excel Cell对象
-     */
-    private Cell cell(Row row, int index, CellStyle cellStyle) {
-
-        Cell cell = row.getCell(index);
-
-        if (cell == null) cell = row.createCell(index);
-
-        if (cellStyle != null) cell.setCellStyle(cellStyle);
-
-        return cell;
     }
 }

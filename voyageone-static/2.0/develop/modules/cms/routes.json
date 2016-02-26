@@ -102,10 +102,10 @@
     "templateUrl": "views/channel/custom/attribute.tpl.html",
     "controllerUrl": "modules/cms/views/channel/custom/attribute.ctl"
   },
-  "channel_custom_translate": {
-    "hash": "/channel/custom/translate",
-    "templateUrl": "views/channel/custom/translate.tpl.html",
-    "controllerUrl": "modules/cms/views/channel/custom/translate.ctl"
+  "channel_custom_value": {
+    "hash": "/channel/custom/value",
+    "templateUrl": "views/channel/custom/value.tpl.html",
+    "controllerUrl": "modules/cms/views/channel/custom/value.ctl"
   },
   "channel_authority": {
     "hash": "/channel/authority",
