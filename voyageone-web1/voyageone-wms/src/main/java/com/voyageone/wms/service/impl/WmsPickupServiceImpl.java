@@ -80,7 +80,6 @@ public class WmsPickupServiceImpl implements WmsPickupService {
         //获取Reservation状态、默认状态
         List<MasterInfoBean> statusList = Type.getMasterInfoFromId(MastType.reservationStatus.getId(), false);
         resultMap.put("status", statusList);
-        resultMap.put("defaultStatus", WmsCodeConstants.Reservation_Status.Open);
 
 		//获取用户仓库
         ArrayList<ChannelStoreBean> channelStoreList = new ArrayList<>();
@@ -162,6 +161,7 @@ public class WmsPickupServiceImpl implements WmsPickupService {
                 relabelPort = ChannelConfigs.getVal2(orderChannelList.get(0), ChannelConfigEnums.Name.receive_relabel_status, relabelStatus);
             }
         }
+        resultMap.put("defaultStatus", StringUtils.isNullOrBlank2(pickupStatus)?WmsCodeConstants.Reservation_Status.Open:pickupStatus);
         // 如没有设定值，则默认允许打印拣货单
         resultMap.put("labelPrint", StringUtils.isNullOrBlank2(labelPrint)? ChannelConfigEnums.Print.YES.getIs() : labelPrint);
         resultMap.put("permit", permit);
