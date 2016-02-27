@@ -46,7 +46,7 @@
                            datepicker-popup="yyyy-MM-dd" datepicker-append-to-body="1" />
                 </div>
                 <div class="input-group col-sm-4">
-                    <label class="input-group-addon" translate="WMS_STATUS"></label>
+                    <label class="input-group-addon" translate="WMS_SESSION_STATUS"></label>
                     <ui-select ng-model="search.return_session_status" style="min-width: 150px">
                         <ui-select-match placeholder="select a session status">{{$select.selected.name}}</ui-select-match>
                         <ui-select-choices repeat="i.id as i in sessionStatus | filter: $select.search">

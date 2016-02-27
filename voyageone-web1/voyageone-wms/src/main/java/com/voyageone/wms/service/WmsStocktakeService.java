@@ -193,4 +193,5 @@ public interface WmsStocktakeService {
 	 */
 	Map<String, Object> getSku(FormStocktake formStocktake, String barcode, String sku);
 
+	Map<String,Object> deleteItem(long stocktake_id, long stocktake_detail_id, String sku);
 }

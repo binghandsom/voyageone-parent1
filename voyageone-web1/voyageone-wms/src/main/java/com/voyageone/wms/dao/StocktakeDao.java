@@ -6,7 +6,9 @@ import com.voyageone.wms.formbean.FormStocktake;
 import com.voyageone.wms.modelbean.StocktakeBean;
 import org.springframework.stereotype.Repository;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**   
  * Simple to Introduction  
@@ -266,6 +268,23 @@ public class StocktakeDao extends BaseDao {
             return false;
         }
         return true;
+    }
+
+    /**
+     * @Description 根据stocktakeDetailId删除Item
+     * @param stocktake_detail_id sectionId
+     * @return true 删除成功
+     */
+    public Integer DeleteItemBySKU(long stocktake_id, long stocktake_detail_id, String sku) {
+
+        Map<String, Object> params = new HashMap<>();
+
+        params.put("stocktake_id", stocktake_id);
+        params.put("stocktake_detail_id", stocktake_detail_id);
+        params.put("sku", sku);
+
+        return updateTemplate.delete(Constants.DAO_NAME_SPACE_WMS + "wms_stocktake_deleteItemBySKU", params);
+
     }
 
     /**
