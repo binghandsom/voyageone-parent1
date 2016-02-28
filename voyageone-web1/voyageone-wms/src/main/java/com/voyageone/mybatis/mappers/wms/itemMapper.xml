@@ -22,11 +22,14 @@
         SELECT
             itemcode
         FROM
-            wms_bt_item_details
-        WHERE
-            order_channel_id = #{order_channel_id}
-        AND barcode = #{code}
-        AND active = '1'
+            (SELECT
+                itemcode
+            FROM
+                wms_bt_item_details
+            WHERE
+                order_channel_id = #{order_channel_id}
+            AND barcode = #{code}
+            order by active desc limit 1) item
 
         UNION
 
@@ -41,13 +44,16 @@
 
     <select id="wms_bt_item_details_search_sku" resultType="HashMap">
         SELECT
-            sku, itemcode
+          sku,itemcode
         FROM
-            wms_bt_item_details
-        WHERE
-            order_channel_id = #{order_channel_id}
-        AND barcode = #{sku}
-        AND active = '1'
+            (SELECT
+                sku, itemcode
+            FROM
+                wms_bt_item_details
+            WHERE
+                order_channel_id = #{order_channel_id}
+            AND barcode = #{sku}
+            order by active desc limit 1) item
 
         UNION
 

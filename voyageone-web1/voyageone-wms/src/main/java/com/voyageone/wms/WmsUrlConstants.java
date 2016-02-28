@@ -273,6 +273,7 @@ public final class WmsUrlConstants {
             public static final String INIT = "/wms/stockTake/inventory/doInventoryInit";
             public static final String SCAN = "/wms/stockTake/inventory/doUpcScan";
             public static final String GETSKU = "/wms/stockTake/inventory/getSku";
+            public static final String DELETEITEM = "/wms/stockTake/inventory/deleteItem";
             public static final String CHECKSECTIONSTATUS = "/wms/stockTake/inventory/doCheckSectionStatus";
         }
 

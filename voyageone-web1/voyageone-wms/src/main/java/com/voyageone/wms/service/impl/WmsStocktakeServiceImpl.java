@@ -331,22 +331,27 @@ public class WmsStocktakeServiceImpl implements WmsStocktakeService {
 		boolean flag;
 		FormStocktake formStocktake = JsonUtil.jsonToBean(JsonUtil.getJsonString(object), FormStocktake.class);
 		setFormCommonValue(request,formStocktake, user);
+		StocktakeBean stocktakeBean = stocktakeDao.getStocktake(formStocktake);
+		formStocktake.setOrder_channel_id(stocktakeBean.getOrder_channel_id());
+		formStocktake.setStore_id(stocktakeBean.getStore_id());
         String paramUpc = formStocktake.getUpc();
-        String paramSku = formStocktake.getSku();
-        if(StringUtils.isEmpty(paramSku) && StringUtils.isEmpty(paramUpc)){
-            throw new BusinessException(WmsMsgConstants.TakeStockMsg.UPCSKU_CANNOT_BOTH_NULL);
-        }
+//        String paramSku = formStocktake.getSku();
+//        if(StringUtils.isEmpty(paramSku) && StringUtils.isEmpty(paramUpc)){
+//            throw new BusinessException(WmsMsgConstants.TakeStockMsg.UPCSKU_CANNOT_BOTH_NULL);
+//        }
         FormStocktake fstNew = getProductByUpcOrSku(formStocktake);
 		if(fstNew == null){
-            resultMap.put(WmsConstants.Common.SUCCESEFLG, false);
+//            resultMap.put(WmsConstants.Common.SUCCESEFLG, false);
+			flag = false;
             String msg = "";
             if(!StringUtils.isEmpty(paramUpc)){
-                msg = "barCode【" + paramUpc + "】";
+				msg = "barCode【" + paramUpc + "】";
             }
-            if(!StringUtils.isEmpty(paramSku)){
-                msg = msg + "sku【" + paramSku + "】";
-            }
-			throw new BusinessException(WmsMsgConstants.TakeStockMsg.NONEXISTENT_BARCODE, msg);
+//            if(!StringUtils.isEmpty(paramSku)){
+//                msg = msg + "sku【" + paramSku + "】";
+//            }
+//			throw new BusinessException(WmsMsgConstants.TakeStockMsg.NONEXISTENT_BARCODE, msg);
+			resultMap.put(WmsConstants.Common.RESMSG, msg +  " is not exist");
 		}else{
 			//获取对应的Item的信息
 			formStocktake.setUpc(fstNew.getUpc());
@@ -782,6 +787,22 @@ public class WmsStocktakeServiceImpl implements WmsStocktakeService {
 		resultMap.put("clientSku", clientSku);
 		resultMap.put("Sku", Sku);
 		resultMap.put("Upc", Upc);
+
+		return resultMap;
+	}
+
+	/**
+	 * 删除一个ITem
+	 *
+	 * @return List
+	 */
+	@Override
+	public Map<String,Object> deleteItem(long stocktake_id, long stocktake_detail_id, String sku) {
+		Map<String, Object> resultMap = new HashMap<>();
+
+		stocktakeDao.DeleteItemBySKU(stocktake_id, stocktake_detail_id, sku);
+
+		resultMap.put(WmsConstants.Common.SUCCESEFLG, true);
 
 		return resultMap;
 	}

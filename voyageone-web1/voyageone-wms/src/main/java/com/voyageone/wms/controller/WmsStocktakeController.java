@@ -270,4 +270,23 @@ public class WmsStocktakeController extends BaseController {
 				.writeTo(getRequest(), response);
 	}
 
+	/**
+	 * 获取SKU信息
+	 */
+	@RequestMapping(WmsUrlConstants.StockTakeUrls.Inventory.DELETEITEM)
+	public void deleteItem(@RequestBody Map<String, Object> params, HttpServletResponse response) {
+
+		long stocktake_id = Long.valueOf((String) params.get("stocktake_id"));
+		long stocktake_detail_id = Long.valueOf((String) params.get("stocktake_detail_id"));
+		String sku = (String) params.get("sku");
+
+
+		Map<String, Object> result = wmsStocktakeService.deleteItem(stocktake_id,stocktake_detail_id, sku);
+
+		AjaxResponseBean
+				.newResult(true)
+				.setResultInfo(result)
+				.writeTo(getRequest(), response);
+	}
+
 }

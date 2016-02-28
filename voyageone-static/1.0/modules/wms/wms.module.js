@@ -87,6 +87,7 @@ define(function () {
                     init: '/wms/stockTake/inventory/doInventoryInit',
                     scan: '/wms/stockTake/inventory/doUpcScan',
                     getSku: '/wms/stockTake/inventory/getSku',
+                    deleteItem: '/wms/stockTake/inventory/deleteItem',
                     checkSectionStatus: '/wms/stockTake/inventory/doCheckSectionStatus'
                 },
 
