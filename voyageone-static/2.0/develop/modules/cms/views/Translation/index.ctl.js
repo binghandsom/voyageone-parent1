@@ -14,13 +14,14 @@ define([
 ], function (cms, Status) {
     return cms.controller('translationDetailController', (function () {
 
-        function translationDetailController($routeParams, $translate, translationService, notify, confirm) {
+        function translationDetailController($routeParams, $translate, translationService, notify, confirm,alert) {
 
             this.routeParams = $routeParams;
             this.translate = $translate;
             this.translationService = translationService;
             this.notify = notify;
             this.confirm = confirm;
+            this.alert = alert;
         }
 
         translationDetailController.prototype = {
@@ -34,7 +35,17 @@ define([
                         this.totalUndoneCount = this.taskInfos.totalUndoneCount;
                         this.userDoneCount = this.taskInfos.userDoneCount;
                         this.searchCondition = this.taskInfos.searchCondition;
+                        this.distributeRule = this.taskInfos.distributeRule;
+                        this.distributeCount = 10;
                         this.productTranslationBeanList = res.data.taskInfo.productTranslationBeanList;
+                        this.sortFieldOptions = [];
+                        this.sortRule = "true";
+                        var options = res.data.sortFieldOptions;
+
+                        for (var key in options){
+                            var item = {value:key,name:options[key]}
+                            this.sortFieldOptions.push(item);
+                        }
 
                     }.bind(this), function (res) {
                         this.notify(res.message);
@@ -42,18 +53,46 @@ define([
             },
 
             // 分发翻译任务.
-            assignTasks: function (assignRule,assignCount) {
-                var assignParms = {"distributeRule":assignRule,"distributeCount":assignCount}
-                this.translationService.assignTasks(assignParms)
-                    .then(function (res) {
+            assignTasks: function (model) {
 
-                        this.taskInfos = res.data.taskInfo;
-                        this.totalDoneCount = this.taskInfos.totalDoneCount;
-                        this.totalUndoneCount = this.taskInfos.totalUndoneCount;
-                        this.userDoneCount = this.taskInfos.userDoneCount;
-                        this.productTranslationBeanList = res.data.taskInfo.productTranslationBeanList;
+                var assignRule = model.distributeRule;
+                var assignCount = model.distributeCount;
 
-                    }.bind(this))
+                if (this.productTranslationBeanList.length > 0){
+
+                    this.alert("您尚有未完成任务，请先完成所有任务！")
+
+                }else if (assignCount>20){
+
+                    //alert(this.translate.instant(''))
+                    this.alert("最多不能超过20个任务!")
+
+                } else if(assignCount > this.totalUndoneCount){
+
+                    this.alert("获取任务数量不能超过剩余任务数量！")
+
+                } else {
+                    var assignParms = {};
+
+                    if (model.sortCondition != null && model.sortCondition != ''){
+
+                        assignParms = {"sortCondition":model.sortCondition,"sortRule":model.sortRule,"distributeRule":assignRule,"distributeCount":assignCount}
+                    }else {
+                        assignParms = {"distributeRule":assignRule,"distributeCount":assignCount}
+                    }
+
+                    this.translationService.assignTasks(assignParms)
+                        .then(function (res) {
+
+                            this.taskInfos = res.data.taskInfo;
+                            this.totalDoneCount = this.taskInfos.totalDoneCount;
+                            this.totalUndoneCount = this.taskInfos.totalUndoneCount;
+                            this.userDoneCount = this.taskInfos.userDoneCount;
+                            this.productTranslationBeanList = res.data.taskInfo.productTranslationBeanList;
+
+                        }.bind(this))
+                }
+
             },
 
             // 暂存当前任务
@@ -74,7 +113,7 @@ define([
                 this.index = index;
                 this.translationService.submitTask(productItem,index)
                     .then(function (res){
-                        this.productTranslationBeanList[this.index].modifiedTime = res.data.taskInfo.modifiedTime;
+                        this.productTranslationBeanList.splice(this.index,1);
                         this.totalDoneCount = res.data.taskInfo.totalDoneCount;
                         this.totalUndoneCount = res.data.taskInfo.totalUndoneCount;
                         this.userDoneCount = res.data.taskInfo.userDoneCount;
@@ -88,7 +127,6 @@ define([
                 this.translationService.copyFormMainProduct(productItem)
                     .then(function (res){
                         this.productTranslationBeanList[this.index] = res.data.translationInfo;
-                        //this.notify.success (this.translate.instant('TXT_MSG_UPDATE_SUCCESS'));
                     }.bind(this))
             },
 
@@ -103,8 +141,7 @@ define([
 
             // 清空查询条件.
             clearConditions: function () {
-                this.distributeRule = "";
-                this.conditions = "";
+                this.searchCondition = "";
                 this.distributeCount = "";
             }
 

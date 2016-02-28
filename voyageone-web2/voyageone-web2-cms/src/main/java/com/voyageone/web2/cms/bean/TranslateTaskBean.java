@@ -43,6 +43,16 @@ public class TranslateTaskBean {
     private String searchCondition;
 
     /**
+     * 排序条件.
+     */
+    private String sortCondition;
+
+    /**
+     * 排序规则.
+     */
+    private Boolean sortRule;
+
+    /**
      * 待翻译商品信息列表.
      */
     List<ProductTranslationBean> productTranslationBeanList;
@@ -111,4 +121,21 @@ public class TranslateTaskBean {
     public void setSearchCondition(String searchCondition) {
         this.searchCondition = searchCondition;
     }
+
+    public String getSortCondition() {
+        return sortCondition;
+    }
+
+    public void setSortCondition(String sortCondition) {
+        this.sortCondition = sortCondition;
+    }
+
+    public Boolean getSortRule() {
+        return sortRule;
+    }
+
+    public void setSortRule(Boolean sortRule) {
+        this.sortRule = sortRule;
+    }
+
 }
