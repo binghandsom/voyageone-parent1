@@ -64,7 +64,8 @@ define([
         }
 
         function exportFile (data) {
-            $.download.post(cActions.cms.search.$searchAdvanceService.root+cActions.cms.search.$searchAdvanceService.exportProducts, resetSearchInfo(data));
+            data = resetSearchInfo(data);
+            $.download.post(cActions.cms.search.$searchAdvanceService.root + cActions.cms.search.$searchAdvanceService.exportProducts, {params: JSON.stringify(data)});
         }
 
         /**

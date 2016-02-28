@@ -99,7 +99,7 @@
         "insertPromotion": "insertPromotion",
         "updatePromotion": "updatePromotion",
         "delPromotion": "delPromotion",
-        "ExportPromotion":"ExportPromotion"
+        "exportPromotion":"exportPromotion"
       },
       "promotionDetailService": {
         "root": "/cms/promotion/detail",

@@ -26,7 +26,7 @@ define([
 
         $scope.openOtherDownload = function(promotionId){
 
-            $.download.post(cActions.cms.promotion.promotionService.root+"/"+cActions.cms.promotion.promotionService.ExportPromotion,{"promotionId":promotionId});
+            $.download.post(cActions.cms.promotion.promotionService.root+"/"+cActions.cms.promotion.promotionService.exportPromotion,{"promotionId":promotionId});
         }
 
         $scope.search = function () {

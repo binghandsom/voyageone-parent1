@@ -57,10 +57,10 @@ public class CmsSearchAdvanceService extends BaseAppService{
     private String other_User_Process_Message = "其他用户正在使用，请5分钟后再试！";
 
     // DB检索页大小
-    private int SELECT_PAGESIZE = 50;
+    private int SELECT_PAGE_SIZE = 2000;
 
     // Excel 文件最大行数
-    private int MAX_EXCEL_RECCOUNT = 1000;
+    private int MAX_EXCEL_REC_COUNT = 10000;
 
 
     // Sku 文件单线程用
@@ -155,10 +155,11 @@ public class CmsSearchAdvanceService extends BaseAppService{
             throws IOException, InvalidFormatException {
 
         String templatePath = Properties.readValue(CmsConstants.Props.SEARCH_ADVANCE_EXPORT_TEMPLATE);
-//        String templatePath = "D:/jiming/work/cms/templete/code-template.xlsx";
 
         ProductsGetRequest productRequest = new ProductsGetRequest(userInfo.getSelChannelId());
-        // TODO 等待liang兄的不分页要求
+//        productRequest.setIsPage(false);
+        productRequest.setPageNo(1);
+        productRequest.setPageSize(SELECT_PAGE_SIZE);
         productRequest.setQueryString(getSearchQueryForProduct(searchValue, cmsSessionBean));
         productRequest.setFields(searchItems);
 
@@ -167,10 +168,10 @@ public class CmsSearchAdvanceService extends BaseAppService{
         long recCount = response.getTotalCount();
 
         int pageCount = 0;
-        if ((int) recCount % SELECT_PAGESIZE > 0) {
-            pageCount =(int) recCount / SELECT_PAGESIZE + 1;
+        if ((int) recCount % SELECT_PAGE_SIZE > 0) {
+            pageCount =(int) recCount / SELECT_PAGE_SIZE + 1;
         } else {
-            pageCount =(int) recCount / SELECT_PAGESIZE;
+            pageCount =(int) recCount / SELECT_PAGE_SIZE;
         }
 
         $info("准备生成 Item 文档 [ %s ]", recCount);
@@ -181,14 +182,24 @@ public class CmsSearchAdvanceService extends BaseAppService{
 
             for (int i = 0; i < pageCount; i++) {
 //                List<CmsBtProductModel> items = cmsBtProductDao.selectProductByCartId(channelId, cartId, i, select_pagesize);
-                List<CmsBtProductModel> items = response.getProducts();
+                List<CmsBtProductModel> items = new ArrayList<>();
+                if (i == 0) {
+                    items = response.getProducts();
+                } else {
+                    productRequest.setPageNo(i+1);
+                    productRequest.setPageSize(SELECT_PAGE_SIZE);
+                    productRequest.setQueryString(getSearchQueryForProduct(searchValue, cmsSessionBean));
+                    productRequest.setFields(searchItems);
+
+                    items = voApiClient.execute(productRequest).getProducts();
+                }
 
                 if (items.size() == 0) {
                     break;
                 }
 
                 // 每页开始行
-                int startRowIndex =  i * SELECT_PAGESIZE + 1;
+                int startRowIndex =  i * SELECT_PAGE_SIZE + 1;
                 boolean isContinueOutput = writeRecordToFile(book, items, cmsSessionBean.getPlatformType().get("cartId").toString(), startRowIndex);
                 // 超过最大行的场合
                 if (!isContinueOutput) {
@@ -197,15 +208,6 @@ public class CmsSearchAdvanceService extends BaseAppService{
             }
 
             $info("文档写入完成");
-
-            // TODO test
-            try (FileOutputStream outputFileStream = new FileOutputStream("D:\\jiming\\work\\cms\\temp\\test.xlsx")) {
-
-                book.write(outputFileStream);
-
-                outputFileStream.flush();
-                outputFileStream.close();
-            }
 
             // 返回值设定
             try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
@@ -455,7 +457,7 @@ public class CmsSearchAdvanceService extends BaseAppService{
             Row row = FileUtils.row(sheet, startRowIndex);
 
             // 最大行限制
-            if ( startRowIndex + 1 > MAX_EXCEL_RECCOUNT -1) {
+            if ( startRowIndex + 1 > MAX_EXCEL_REC_COUNT -1) {
                 isContinueOutput = false;
 
                 FileUtils.cell(row, 0, unlock).setCellValue("未完，存在未抽出数据！");
@@ -505,15 +507,16 @@ public class CmsSearchAdvanceService extends BaseAppService{
      * @param endPrice 最大金额
      * @return String 输出金额
      */
-    private String getOutputPrice(double strPrice, double endPrice) {
+    private String getOutputPrice(Double strPrice, Double endPrice) {
         String output = "";
 
-        if (strPrice == endPrice) {
-            output = String.valueOf(strPrice);
-        } else {
-            output = strPrice + "～" + endPrice;
+        if(strPrice != null && endPrice != null) {
+            if (strPrice.equals(endPrice)) {
+                output = String.valueOf(strPrice);
+            } else {
+                output = strPrice + "～" + endPrice;
+            }
         }
-
         return output;
     }
 }

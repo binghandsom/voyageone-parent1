@@ -19,6 +19,10 @@ import static java.util.stream.Collectors.toList;
 public abstract class BaseCondition {
 
     public String buildProjection(String... projection) {
+        if (projection == null) {
+            return null;
+        }
+
         // 当没有参数时,不需要设定任何内容
         if (projection.length == 0)
             return null;
