@@ -36,6 +36,14 @@ public class WmsSyncInventoryService extends WmsSyncInventoryBaseService {
     @Autowired
     private WmsSyncToJuMeiSubService wmsSyncToJuMeiSubService;
 
+    /**
+     * 获取打印的日志是否需要包含线程
+     */
+    @Override
+    public boolean getLogWithThread() {
+        return true;
+    }
+
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
 
@@ -73,6 +81,11 @@ public class WmsSyncInventoryService extends WmsSyncInventoryBaseService {
 
             if (platForm == null) {
                 logFailRecord("没有找到对应的 Cart", shopBean);
+                continue;
+            }
+
+            if (!needSync(shopBean)) {
+                $info(shopBean.getShop_name() + "（" + shopBean.getComment() + "） 不需要同步库存");
                 continue;
             }
 
@@ -120,18 +133,9 @@ public class WmsSyncInventoryService extends WmsSyncInventoryBaseService {
 
                         }else {
                             updateFlg = WmsConstants.UPDATE_FLG.ReFlush;
+
                         }
                         break;
-                }
-
-                if (!needSync(shopBean) && updateFlg.equals(WmsConstants.UPDATE_FLG.Update)) {
-
-                    // 不需要同步的，则直接转为忽略（TODO：暂时不再忽略而是等待允许同步后再次同步）
-//                    for (InventorySynLogBean inventorySynLogBean : inventorySynLogBeans) {
-//
-//                        moveIgnore(inventorySynLogBean, "该 Cart 不需要更新");
-//                    }
-                    return;
                 }
 
                 List<Runnable> runnable = new ArrayList<>();
@@ -193,7 +197,7 @@ public class WmsSyncInventoryService extends WmsSyncInventoryBaseService {
 
                 // 清除历史库存记录
                 List<InventorySynLogBean> inventoryHistorySynLogBeans =
-                        inventoryDao.getInventoryHistorySynLog(shopBean.getOrder_channel_id(),shopBean.getCart_id(), intRowCount);
+                        inventoryDao.getInventoryHistorySynLog(shopBean.getOrder_channel_id(),shopBean.getCart_id(), limit);
 
                 logger.info(shopBean.getShop_name() + "（" + shopBean.getComment() + ")清除历史库存记录件数："+inventoryHistorySynLogBeans.size());
 

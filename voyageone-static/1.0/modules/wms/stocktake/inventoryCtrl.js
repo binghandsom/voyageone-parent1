@@ -53,11 +53,16 @@ define(["modules/wms/wms.module",
             //提交section 【submit按钮】
             $scope.submit = submit;
 
+            //返回section 【back按钮】
+            $scope.back = back;
+
             //撤销已经扫描的Item 【ReScan按钮】
             $scope.reScan = reScan;
 
             //打印面单
             $scope.printItem = printItem;
+
+            $scope.deleteItem = deleteItem;
 
             //分页调用函数
             function reqSearch(page, rows) {
@@ -102,7 +107,14 @@ define(["modules/wms/wms.module",
                 });
             }
 
+            function back(){
+                $location.path("/wms/stockTake/sectionList");
+            }
+
             function scanUpc(){
+                if (vm.upc == "") {
+                    return;
+                }
                 stocktakeService.doUpcScan(vm, $scope).then(function(response){
                     //response.data.successFlg ? notify(response.data.returnResMsg) : alert(response.data.returnResMsg);
                     init();
@@ -110,11 +122,16 @@ define(["modules/wms/wms.module",
                     vm.upc = "";
                     //vm.sku = "";
 
+                    // 重置焦点到 barcode 输入框
+                    angular.element("#inventory-upc").focus();
+
                     if(response.data.successFlg){
-                        notify.success("WMS_NOTIFY_OP_SUCCESS");
+                        //notify.success("WMS_NOTIFY_OP_SUCCESS");
                         if　(vm.auto_print == true) {
                             reqPrintSKU(response.data.labelType, response.data.clientSku, response.data.Sku, response.data.Upc);
                         }
+                    }else {
+                        alert(response.data.returnResMsg);
                     }
                 });
             }
@@ -127,6 +144,24 @@ define(["modules/wms/wms.module",
 
                 stocktakeService.getSku(vm.stocktake_id,item.upc,item.sku).then(function (res) {
                     reqPrintSKU(res.labelType, res.clientSku,res.Sku,res.Upc);
+                });
+
+            }
+
+            function deleteItem(index) {
+                var item =$scope.itemList[index];
+
+                if (!item) {
+                    alert("WMS_TRANSFER_EDIT_NO_ITEM");
+                    return;
+                }
+
+                stocktakeService.deleteItem(vm.stocktake_id,vm.stocktake_detail_id,item.sku).then(function (res) {
+                    //response.data.successFlg ? notify(response.data.returnResMsg) : alert(response.data.returnResMsg);
+                    if(res.successFlg){
+                        notify.success("WMS_NOTIFY_OP_SUCCESS");
+                    }
+                    init();
                 });
 
             }

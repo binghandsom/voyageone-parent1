@@ -14,11 +14,11 @@
 	<name>Voyageone Web2 Cms WSDL</name>
 	<url>http://maven.apache.org</url>
 	<dependencies>
-		<dependency>
-			<groupId>com.voyageone</groupId>
-			<artifactId>voyageone-web2-core</artifactId>
-			<version>${voyageone.web2.core.version}</version>
-		</dependency>
+		<!--<dependency>-->
+			<!--<groupId>com.voyageone</groupId>-->
+			<!--<artifactId>voyageone-web2-core</artifactId>-->
+			<!--<version>${voyageone.web2.core.version}</version>-->
+		<!--</dependency>-->
 		<dependency>
 			<groupId>com.voyageone</groupId>
 			<artifactId>voyageone-web2-sdk</artifactId>

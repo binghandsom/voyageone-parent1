@@ -23,6 +23,9 @@ import com.voyageone.common.configs.beans.OrderChannelBean;
 import com.voyageone.common.configs.beans.OrderChannelConfigBean;
 import com.voyageone.common.configs.beans.StoreBean;
 import com.voyageone.common.util.*;
+import com.voyageone.web2.sdk.api.VoApiDefaultClient;
+import com.voyageone.web2.sdk.api.request.ProductForWmsGetRequest;
+import com.voyageone.web2.sdk.api.response.ProductForWmsGetResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -41,6 +44,9 @@ public class WmsAllotInventoryService extends BaseTaskService {
 
     @Autowired
     ReservationLogDao reservationLogDao;
+
+    @Autowired
+    protected VoApiDefaultClient voApiClient;
 
     @Autowired
     private TransactionRunner transactionRunner;
@@ -153,10 +159,15 @@ public class WmsAllotInventoryService extends BaseTaskService {
                                     List<ItemCodeBean> itemCodeInfoList = new ArrayList<>();
                                     String errorMessage = "";
 
-                                    // 老的webService（调用老的webService, Spling）
+                                    // 老的webService（调用老的webService）
                                     if (postURI.contains("aspx")) {
                                         itemCodeInfoList = JsonUtil.jsonToBeanList(result, ItemCodeBean.class);
-                                        // 新的webService（Jewelry）
+                                    }
+                                    else if ( postURI.contains("sdk-client"))
+                                    {
+                                        ProductBean productBean = JsonUtil.jsonToBean(result, ProductBean.class);
+                                        itemCodeInfoList = proResult(productBean);
+
                                     } else {
                                         CmsWsdlResponseBean cmsWsdlResponseBean = JsonUtil.jsonToBean(result, CmsWsdlResponseBean.class);
 
@@ -263,7 +274,7 @@ public class WmsAllotInventoryService extends BaseTaskService {
             itemCodeBean.setProduct_type(productBean.getDescription());
             itemCodeBean.setSalePrice(productBean.getPrice());
             itemCodeBean.setPrice(productBean.getMsrp());
-            itemCodeBean.setShortDescription(productBean.getShortDescription());
+            itemCodeBean.setShortDescription(StringUtils.isNullOrBlank2(productBean.getShortDescription())? productBean.getName():productBean.getShortDescription());
             itemCodeBean.setOrigin(productBean.getCountryName());
             itemCodeBean.setUnit(productBean.getUnit());
             itemCodeBean.setWeight(productBean.getWeightlb());
@@ -287,6 +298,7 @@ public class WmsAllotInventoryService extends BaseTaskService {
 
         String json = "";
         Map<String, Object> jsonMap = new HashMap<>();
+        String result = "";
 
         // 使用新旧WebService的判断
         if(postURI.contains("aspx")) {
@@ -295,7 +307,28 @@ public class WmsAllotInventoryService extends BaseTaskService {
 
             jsonMap.put("code", itemCode);
 
-        } else {
+            json = new Gson().toJson(jsonMap);
+
+            $info(json);
+
+            result = HttpUtils.post(postURI, json);
+
+        }
+        // 使用新CMS的判断
+        if(postURI.contains("sdk-client")) {
+
+            ProductForWmsGetRequest requestModel = new ProductForWmsGetRequest(orderChannelId);
+            requestModel.setCode(itemCode);
+
+            //SDK取得Product 数据
+            ProductForWmsGetResponse response = voApiClient.execute(requestModel);
+
+            if (response.getResultInfo() != null ) {
+                result = JsonUtil.getJsonString(response.getResultInfo());
+            }
+
+        }
+        else {
 
             Map<String, Object> dataBodyMap = new HashMap<>();
 
@@ -313,12 +346,15 @@ public class WmsAllotInventoryService extends BaseTaskService {
 
             jsonMap.put("dataBody", dataBodyMap);
 
+            json = new Gson().toJson(jsonMap);
+
+            $info(json);
+
+            result = HttpUtils.post(postURI, json);
+
         }
 
-        json = new Gson().toJson(jsonMap);
-
-        logger.info(json);
-        return HttpUtils.post(postURI, json);
+        return result;
 
     }
 

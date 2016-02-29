@@ -120,6 +120,24 @@ define(function (require) {
                         return res.data;
                     });
             };
+
+            /**
+             * 删除一个Item
+             * @param
+             */
+            this.deleteItem = function (stocktake_id,stocktake_detail_id, sku) {
+
+                return ajaxService.ajaxPost({
+                        stocktake_id: stocktake_id.toString(),
+                        stocktake_detail_id: stocktake_detail_id.toString(),
+                        sku: sku.toString()
+                    },
+                    wmsActions.stockTake.inventory.deleteItem)
+
+                    .then(function (res) {
+                        return res.data;
+                    });
+            };
         }]);
     return wmsApp;
 });

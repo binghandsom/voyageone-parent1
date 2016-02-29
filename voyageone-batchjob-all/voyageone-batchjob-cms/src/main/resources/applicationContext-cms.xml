@@ -25,9 +25,9 @@
         <task:scheduled ref="cmsStatisticsReportTask" method="run" cron="5 0 16 * * ?"/>
 
         <!-- CMS统计日报 -->
-        <task:scheduled ref="BcbgAnalySisJob" method="run" cron="0 0/1 0-23 * * ?"/>
+        <task:scheduled ref="BcbgAnalySisJob" method="run" cron="0 0 0/3 * * ?"/>
 
-        <task:scheduled ref="SearsAnalySisJob" method="run" cron="0 0/3 * * * ?"/>
+        <task:scheduled ref="SearsAnalySisJob" method="run" cron="0 0 0/3 * * ?"/>
 
         <!-- 聚美活动文件导入 -->
         <!--<task:scheduled ref="ImportExcelFileJob" method="run" cron="0 0/1 0-23 * * ?"/>-->

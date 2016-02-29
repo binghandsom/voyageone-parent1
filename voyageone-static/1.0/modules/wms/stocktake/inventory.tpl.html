@@ -59,6 +59,7 @@
                         <!--<button id="upc-scan" class="btn btn-sm btn-primary" ng-disabled="btnCtrl.disabledFlg" ng-click="scanUpc()" translate="WMS_ADD"></button>-->
                         <button ng-click="submit()" class="btn btn-sm btn-warning" ng-disabled="btnCtrl.disabledFlg" translate="WMS_SUBMIT"></button>
                         <button class="btn btn-sm btn-danger" ng-disabled="btnCtrl.disabledFlg" ng-click="reScan()" translate="WMS_RESCAN"></button>
+                        <button ng-click="back()" class="btn btn-sm btn-info" translate="WMS_BACK"></button>
                     </div>
                 </div>
             </div>
@@ -87,6 +88,7 @@
                         <td>{{iteminfo.stocktake_qty}}</td>
                         <td class="col-fix-op">
                             <button class="btn btn-xs btn-success" ng-click="printItem($index)"  translate="WMS_PRINT"></button>
+                            <button class="btn btn-xs btn-danger" ng-click="deleteItem($index)"  ng-disabled="btnCtrl.disabledFlg" translate="WMS_DELETE"></button>
                         </td>
                     </tr>
                     </tbody>
