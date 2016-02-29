@@ -382,6 +382,11 @@ define([
         function printItem(index) {
             var item = vm.packageItems[index];
 
+            if (!isPackageClosed(vm.package)) {
+                // 重置焦点到 code 输入框
+                angular.element("#transfer-item-barcode").focus();
+            }
+
             if (!item) {
                 alert("WMS_TRANSFER_EDIT_NO_ITEM");
                 return;

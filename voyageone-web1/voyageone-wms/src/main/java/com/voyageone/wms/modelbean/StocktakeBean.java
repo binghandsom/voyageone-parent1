@@ -1,30 +1,26 @@
 package com.voyageone.wms.modelbean;
 
-/**
- * wms_bt_item_location
- * Created by Tester on 5/18/2015.
- *
- * @author Jonas
- */
-public class ItemLocationBean {
-    private int item_location_id;
+public class StocktakeBean {
+    private long take_stock_id;
     private String order_channel_id;
+    private String take_stock_name;
     private int store_id;
-    private String code;
-    private String sku;
-    private int location_id;
+    private String take_stock_type;
+    private String take_stock_status;
+    private String syn_flg;
     private boolean active;
     private String created;
     private String creater;
     private String modified;
     private String modifier;
 
-    public int getItem_location_id() {
-        return item_location_id;
+
+    public long getTake_stock_id() {
+        return take_stock_id;
     }
 
-    public void setItem_location_id(int item_location_id) {
-        this.item_location_id = item_location_id;
+    public void setTake_stock_id(long take_stock_id) {
+        this.take_stock_id = take_stock_id;
     }
 
     public String getOrder_channel_id() {
@@ -35,6 +31,14 @@ public class ItemLocationBean {
         this.order_channel_id = order_channel_id;
     }
 
+    public String getTake_stock_name() {
+        return take_stock_name;
+    }
+
+    public void setTake_stock_name(String take_stock_name) {
+        this.take_stock_name = take_stock_name;
+    }
+
     public int getStore_id() {
         return store_id;
     }
@@ -43,28 +47,28 @@ public class ItemLocationBean {
         this.store_id = store_id;
     }
 
-    public String getCode() {
-        return code;
+    public String getTake_stock_type() {
+        return take_stock_type;
     }
 
-    public void setCode(String code) {
-        this.code = code;
+    public void setTake_stock_type(String take_stock_type) {
+        this.take_stock_type = take_stock_type;
     }
 
-    public String getSku() {
-        return sku;
+    public String getTake_stock_status() {
+        return take_stock_status;
     }
 
-    public void setSku(String sku) {
-        this.sku = sku;
+    public void setTake_stock_status(String take_stock_status) {
+        this.take_stock_status = take_stock_status;
     }
 
-    public int getLocation_id() {
-        return location_id;
+    public String getSyn_flg() {
+        return syn_flg;
     }
 
-    public void setLocation_id(int location_id) {
-        this.location_id = location_id;
+    public void setSyn_flg(String syn_flg) {
+        this.syn_flg = syn_flg;
     }
 
     public boolean isActive() {

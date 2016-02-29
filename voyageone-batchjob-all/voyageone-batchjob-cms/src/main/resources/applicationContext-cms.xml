@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:task="http://www.springframework.org/schema/task"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
           http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
           http://www.springframework.org/schema/task
           http://www.springframework.org/schema/task/spring-task.xsd">
-    <task:scheduled-tasks scheduler="cms-job-scheduler">
+    <task:scheduled-tasks scheduler="cms-job-scheduler"> 
         <!--每天凌晨4点开始产品导入
         <task:scheduled ref="cmsGetSuperFeedTask" method="run" cron="0 0 20 * * ?"/>-->
         <!--test 每5分钟运行一次　
@@ -16,7 +16,7 @@
 
         <!-- 每天凌晨5点开始将产品导入到主数据的值表 > 由于运营可能需要随时修改主类目，所以改为3分钟运行一次 -->
         <!--<task:scheduled ref="cmsSetMainPropTask" method="run" cron="0 0 5 * * ?"/>-->
-        <!--<task:scheduled ref="cmsSetMainPropTask" method="run" cron="0 0/3 0-23 * * ?"/>-->
+        <task:scheduled ref="cmsSetMainPropTask" method="run" cron="0 0/3 0-23 * * ?"/>
 
         <!-- 产品属性值翻译 -->
         <task:scheduled ref="attributeTranslateJob" method="run" cron="15 0/5 0-23 * * ?"/>
@@ -25,9 +25,9 @@
         <task:scheduled ref="cmsStatisticsReportTask" method="run" cron="5 0 16 * * ?"/>
 
         <!-- CMS统计日报 -->
-        <task:scheduled ref="BcbgAnalySisJob" method="run" cron="0 0/1 0-23 * * ?"/>
+        <task:scheduled ref="BcbgAnalySisJob" method="run" cron="0 0 0/3 * * ?"/>
 
-        <task:scheduled ref="GiltAnalysisJob" method="run" cron="0 0 0/6 * * ?"/>
+        <task:scheduled ref="SearsAnalySisJob" method="run" cron="0 0 0/3 * * ?"/>
 
         <!-- 聚美活动文件导入 -->
         <!--<task:scheduled ref="ImportExcelFileJob" method="run" cron="0 0/1 0-23 * * ?"/>-->
@@ -37,7 +37,7 @@
 
         <task:scheduled ref="CmsUploadJmPicJob" method="run" cron="0 0/1 * * * ?"/>
 
-
+        <task:scheduled ref="GiltAnalysisJob" method="run" cron="0 0 0/6 * * ?"/>
 
         <!-- Gilt订单推送(待Placed) -->
         <task:scheduled ref="OmsPostGiltNormalOrderJob" method="run" cron="0 0/5 0-23 * * ?"/>
@@ -45,32 +45,6 @@
         <task:scheduled ref="OmsPostGiltConfOrderJob" method="run" cron="0 0/5 0-23 * * ?"/>
         <!-- Gilt订单推送(待Cancelled) -->
         <task:scheduled ref="OmsPostGiltCancelOrderJob" method="run" cron="0 0/5 0-23 * * ?"/>
-
-
-        <!-- cms2 batch add    -->
-
-        <!-- 取得平台类目 -->
-        <task:scheduled ref="getPlatformCategoryTreesTask" method="run" cron="0 0/1 0-23 * * ?"/>
-
-        <!-- 取得平台类目的schema -->
-        <task:scheduled ref="getPlatformCategorySchemaTask" method="run" cron="0 0/1 0-23 * * ?"/>
-
-        <!-- 生成主数据的schema -->
-        <task:scheduled ref="buildMasterSchemaFromPlatformTask" method="run" cron="0 0/1 0-23 * * ?"/>
-
-        <!-- 生成主数据的类目树 -->
-        <task:scheduled ref="CmsCreateCmsMtCategoryTreeJob" method="run" cron="0 0/1 0-23 * * ?"/>
-
-        <!-- 主数据到平台的默认mapping数据做成 -->
-        <task:scheduled ref="CmsPlatformMappingJob" method="run" cron="0 0/1 0-23 * * ?"/>
-
-        <!-- cms2的图片推送到Scene7-->
-        <task:scheduled ref="CmsImagePostScene7Job" method="run" cron="0/30 * * * * ?"/>
-
-        <!-- Jewelry feed 导入 cms2 -->
-        <task:scheduled ref="CmsJEAnalySisJob" method="run" cron="0 0/1 0-23 * * ?"/>
-
-
 
     </task:scheduled-tasks>
 

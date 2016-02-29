@@ -17,12 +17,12 @@ public interface WmsConstants {
     }
 
     /**
-     * 库存分配时标志位设置（WmsSetAllotInventoryJob）
+     * 同步标志位设置
      */
     final class SYN_FLG {
         //syn_flg更新忽略
         public final static String IGONRE = "4";
-        //syn_flg更新ItemDetails成功
+        //syn_flg更新成功
         public final static String SUCCESS = "1";
         //syn_flg初期值
         public final static String INITAL  = "0";

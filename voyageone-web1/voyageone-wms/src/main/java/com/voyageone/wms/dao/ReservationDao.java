@@ -330,6 +330,7 @@ public class ReservationDao extends BaseDao {
      * @return List<FormPickupBean>
      */
     public String getLocationBySKU(String order_channel_id,String  sku,String store_id) {
+        String location = "";
 
         Map<String, Object> params = new HashMap<>();
 
@@ -337,8 +338,26 @@ public class ReservationDao extends BaseDao {
         params.put("sku", sku);
         params.put("store_id", store_id);
 
-        return updateTemplate.selectOne(Constants.DAO_NAME_SPACE_WMS + "wms_reservation_getLocationBySKU", params);
+        List<HashMap<String, String>> locationArr = updateTemplate.selectList(Constants.DAO_NAME_SPACE_WMS + "wms_reservation_getLocationBySKU", params);
 
+        // 仅存SKU或Code的场合
+        if (locationArr.size() == 1) {
+            location = (String) locationArr.get(0).get("location_name");
+
+        // SKU和Code两者都存的场合（SKU 优先）
+        } else if (locationArr.size() == 2) {
+            for (int i = 0; i < locationArr.size(); i++){
+                HashMap<String, String> locationItem = locationArr.get(i);
+
+                // SKU 优先
+                if (!StringUtils.isEmpty(locationItem.get("sku"))) {
+                    location = (String) locationItem.get("location_name");
+                    break;
+                }
+            }
+        }
+
+        return location;
     }
 
     /**
