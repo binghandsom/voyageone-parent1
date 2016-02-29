@@ -44,6 +44,7 @@ public class CmsPromotionIndexController extends CmsController {
         String channelId = getUser().getSelChannelId();
         cmsBtPromotionModel.setChannelId(channelId);
         cmsBtPromotionModel.setCreater(getUser().getUserName());
+        cmsBtPromotionModel.setModifier(getUser().getUserName());
         return success(cmsPromotionService.addOrUpdate(cmsBtPromotionModel));
     }
 
