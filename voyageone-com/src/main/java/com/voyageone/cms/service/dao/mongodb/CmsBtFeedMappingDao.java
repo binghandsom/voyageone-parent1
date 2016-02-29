@@ -81,7 +81,7 @@ public class CmsBtFeedMappingDao extends BaseMongoDao {
      */
     public List<CmsBtFeedMappingModel> findMappingWithoutProps(String selChannelId, String topCategoryPath) {
 
-        String strQuery = String.format("{\"scope.channelId\": \"%s\", \"scope.feedCategoryPath\": { '$regex': '%s.+' } }",
+        String strQuery = String.format("{\"scope.channelId\": \"%s\", \"scope.feedCategoryPath\": { '$regex': '%s.*' } }",
                 selChannelId, topCategoryPath);
 
         String projection = "{\"props\": 0}";
