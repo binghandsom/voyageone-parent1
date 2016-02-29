@@ -2,6 +2,8 @@ package com.voyageone.web2.sdk.api.domain;
 
 import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
 
+import java.util.List;
+
 /**
  * @description
  *
@@ -60,6 +62,8 @@ public class CmsBtPromotionModel extends BaseMongoModel {
 
 	/** isAllPromotion */
 	private Boolean isAllPromotion;
+
+	private List<CmsBtTagModel> tagList;
 
 	/**
 	 * @return the promotionId
@@ -303,5 +307,13 @@ public class CmsBtPromotionModel extends BaseMongoModel {
 
 	public void setIsAllPromotion(Boolean isAllPromotion) {
 		this.isAllPromotion = isAllPromotion;
+	}
+
+	public List<CmsBtTagModel> getTagList() {
+		return tagList;
+	}
+
+	public void setTagList(List<CmsBtTagModel> tagList) {
+		this.tagList = tagList;
 	}
 }
