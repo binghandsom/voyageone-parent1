@@ -6,6 +6,6 @@
 
     <!-- DAO相关配置 -->
 
-    <import resource="file:/usr/web/spring-config/datasource-cms-config.xml" />
-    <import resource="file:/usr/web/spring-config/datasource-config-mongo.xml" />
+    <import resource="file:c:/usr/web/spring-config/datasource-cms-config.xml" />
+    <import resource="file:c:/usr/web/spring-config/datasource-config-mongo-sample.xml" />
 </beans>
