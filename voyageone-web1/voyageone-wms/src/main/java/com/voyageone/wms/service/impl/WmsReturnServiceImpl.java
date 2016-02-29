@@ -21,12 +21,17 @@ import com.voyageone.core.modelbean.UserSessionBean;
 import com.voyageone.core.util.PageUtil;
 import com.voyageone.wms.WmsCodeConstants;
 import com.voyageone.wms.WmsConstants;
+import com.voyageone.wms.WmsMsgConstants;
 import com.voyageone.wms.dao.ItemDao;
 import com.voyageone.wms.dao.ReservationDao;
 import com.voyageone.wms.dao.ReservationLogDao;
 import com.voyageone.wms.dao.ReturnDao;
+import com.voyageone.wms.formbean.FormReservation;
 import com.voyageone.wms.formbean.FormReturn;
+import com.voyageone.wms.formbean.FormReturnDownloadBean;
+import com.voyageone.wms.modelbean.ReturnBean;
 import com.voyageone.wms.service.WmsReturnService;
+import com.voyageone.wms.service.impl.reportImpl.WmsGoodsReturnReportService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,6 +75,9 @@ public class WmsReturnServiceImpl implements WmsReturnService {
 	@Autowired
 	private ItemDao itemDao;
 
+    @Autowired
+    private WmsGoodsReturnReportService wmsGoodsReturnReportService;
+
 //	@Override
 //	public void changeStatus(HttpServletRequest request, HttpServletResponse response, String returnId) {
 //		Map<String, Object> resultMap = new HashMap<>();
@@ -92,6 +100,32 @@ public class WmsReturnServiceImpl implements WmsReturnService {
 //		result.writeTo(request, response);
 //		logger.info(result.toString());
 //	}
+
+    @Override
+    public void returnListInit(HttpServletRequest request, HttpServletResponse response, Map<String, String> paramMap,	HttpSession session, UserSessionBean user) {
+        Map<String, Object> resultMap = new HashMap<>();
+        // 获得用户下的仓库
+        ArrayList<ChannelStoreBean> storeList = new ArrayList<>();
+        ChannelStoreBean channelStoreBean = new ChannelStoreBean();
+        channelStoreBean.setStore_id(0);
+        channelStoreBean.setStore_name("ALL");
+        storeList.add(channelStoreBean);
+        // 排除品牌方管理库存的仓库
+        for (ChannelStoreBean storeBean : user.getCompanyRealStoreList()) {
+            if (StoreConfigs.getStore(new Long(storeBean.getStore_id())).getInventory_manager().equals(StoreConfigEnums.Manager.YES.getId())) {
+                storeList.add(storeBean);
+            }
+        }
+        resultMap.put("storeList", storeList);
+
+        // 获取开始日期（当前日期的一个月前）
+        String date_from = DateTimeUtil.parseStr(DateTimeUtil.getLocalTime(DateTimeUtil.addMonths(DateTimeUtil.getDate(), -1), user.getTimeZone()), DateTimeUtil.DEFAULT_DATE_FORMAT);
+        resultMap.put("fromDate", date_from);
+        // 获取结束日期（当前日期）
+        String date_to = DateTimeUtil.parseStr(DateTimeUtil.getLocalTime(DateTimeUtil.getNow(), user.getTimeZone()), DateTimeUtil.DEFAULT_DATE_FORMAT);
+        resultMap.put("toDate", date_to);
+        doGetComBoxInfo(request, response, paramMap, resultMap);
+    }
 
 	@Override
 	public void getOrderInfoByOrdNo(HttpServletRequest request, HttpServletResponse response, String orderNumber, UserSessionBean user) {
@@ -338,7 +372,15 @@ public class WmsReturnServiceImpl implements WmsReturnService {
 		//logger.info(result.toString());
 	}
 
-	@Override
+    @Override
+    public byte[] doReturnListDownload(String param, UserSessionBean user) {
+        FormReturn formReturn = JsonUtil.jsonToBean(param, FormReturn.class);
+        changeDateTimeToGMT(formReturn, user);
+        List<FormReturnDownloadBean> returnDownloads = returnDao.getDownloadList(formReturn);
+        return wmsGoodsReturnReportService.createReportByte(returnDownloads, formReturn);
+    }
+
+    @Override
 	public void doNewSessionInit(HttpServletRequest request, HttpServletResponse response, Map<String, String> paramMap, UserSessionBean user) {
 		FormReturn formReturnParam = new FormReturn();
 		setFormCommonValue(request, formReturnParam, user);
@@ -563,4 +605,40 @@ public class WmsReturnServiceImpl implements WmsReturnService {
 		logger.info(result.toString());
 	}
 
+	@Override
+	public FormReturn doChange(Map<String, Object> paramMap, UserSessionBean user){
+		// 取得画面的参数
+		String returnID = (String) paramMap.get("returnID");
+		String changeKind = (String) paramMap.get("changeKind");
+		String notes = (String) paramMap.get("notes");
+
+		ReturnBean returnInfo = new ReturnBean();
+		returnInfo.setReturn_id(Integer.valueOf(returnID));
+		returnInfo.setNotes(notes);
+		returnInfo.setModifier(user.getUserName());
+
+		int updateResult = returnDao.changeReturn(returnInfo);
+
+//		// 更新失败的场合，直接抛出错误
+//		if (updateResult == 0) {
+//			throw new BusinessException(WmsMsgConstants.RsvListMsg.UPDATE_ERROR, reservationID);
+//		}
+
+		// 返回画面用(刷新纪录)
+		FormReturn formReturn = returnDao.getReturnInfoByReturnId(Integer.valueOf(returnID)) ;
+		// 画面显示再设定
+		setReturnDisplayInfo(formReturn, user);
+
+		return formReturn;
+	}
+
+	/**
+	 * 对于一些画面表示用项目进行设置
+	 * @param formReturn 抽出退货记录
+	 * @param user 用户登录信息
+	 */
+	private void setReturnDisplayInfo(FormReturn formReturn, UserSessionBean user) {
+		// 更新时间（本地时间）
+		formReturn.setModified_local(StringUtils.isNullOrBlank2(formReturn.getModified()) ? "" : DateTimeUtil.getLocalTime(formReturn.getModified(), user.getTimeZone()));
+	}
 }

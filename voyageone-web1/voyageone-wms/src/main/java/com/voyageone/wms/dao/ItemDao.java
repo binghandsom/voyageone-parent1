@@ -56,6 +56,22 @@ public class ItemDao extends BaseDao {
     }
 
     /**
+     * 根据 sku 或 Barcode 匹配商品，获取匹配的商品 sku
+     *
+     * @param sku
+     * @param order_channel_id 目标渠道
+     * @return List
+     */
+    public List<HashMap<String, String>> searchSku(String sku, String order_channel_id) {
+        Map<String, Object> params = new HashMap<>();
+
+        params.put("sku", sku);
+        params.put("order_channel_id", order_channel_id);
+
+        return selectList("wms_bt_item_details_search_sku", params);
+    }
+
+    /**
      * 获取渠道下，该 Code (wms_bt_item_detail.itemcode) 的商品总数
      *
      * @param order_channel_id 目标渠道
@@ -69,6 +85,22 @@ public class ItemDao extends BaseDao {
         params.put("order_channel_id", order_channel_id);
 
         return selectOne("wms_bt_item_details_count_by_code", params);
+    }
+
+    /**
+     * 获取渠道下，该 Code (wms_bt_item_detail.sku) 的商品总数
+     *
+     * @param order_channel_id 目标渠道
+     * @param sku             商品 sku
+     * @return int
+     */
+    public int countBySku(String order_channel_id, String sku) {
+        Map<String, Object> params = new HashMap<>();
+
+        params.put("sku", sku);
+        params.put("order_channel_id", order_channel_id);
+
+        return selectOne("wms_bt_item_details_count_by_sku", params);
     }
 
     /**

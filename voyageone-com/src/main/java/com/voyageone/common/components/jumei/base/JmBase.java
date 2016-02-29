@@ -32,13 +32,14 @@ public class JmBase {
     }
 
     private String replaceSpicialChart(String org) {
-        String result = null;
-        if (org != null) {
-            result = org.replaceAll("&", "、");
-            result = result.replaceAll("\\?", "？");
-            result = result.replaceAll("\\+", "＋");
-        }
-        return result;
+//        String result = null;
+//        if (org != null) {
+//            result = org.replaceAll("&", "、");
+//            result = result.replaceAll("\\?", "？");
+//            result = result.replaceAll("\\+", "＋");
+//        }
+//        return result;
+        return org;
     }
 
     protected String reqJmApi(ShopBean shopBean, String api_url, Map<String, Object> params) throws Exception {
@@ -87,8 +88,8 @@ public class JmBase {
             Object value = entry.getValue();
             if (value instanceof String) {
                 if(!StringUtils.isEmpty((String)value)){
-//                    parm_url.append(URLEncoder.encode((String) value, "UTF-8"));
-                    parm_url.append(value);
+                    parm_url.append(URLEncoder.encode((String) value, "UTF-8"));
+//                    parm_url.append(value);
                 }
             } else if (value instanceof NotSignString) {
                 NotSignString notSignString = (NotSignString)value;

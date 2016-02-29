@@ -9,6 +9,7 @@
 define([
     "modules/wms/wms.module",
     "../directives/popInventoryInfo/popInventoryInfo",
+    "../directives/popItemLocationInfo/popItemLocationInfo",
     "components/directives/dialogs/dialogs",
     "modules/wms/location/location.service",
     "components/services/printService",

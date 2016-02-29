@@ -98,13 +98,14 @@ public class InventoryDao extends BaseDao {
      * @param cart_id          店铺
      * @return InventorySynLogBean
      */
-    public List<InventorySynLogBean> getInventorySynLogForJMReFlush(String task_name, String order_channel_id, String cart_id, int row_count) {
+    public List<InventorySynLogBean> getInventorySynLogForJMReFlush(String task_name, String order_channel_id, String cart_id, String syn_flg, String process_time, int row_count) {
         Map<String, Object> params = new HashMap<>();
 
         params.put("task_name", task_name);
         params.put("order_channel_id", order_channel_id);
         params.put("cart_id", cart_id);
-        params.put("syn_flg", "0");
+        params.put("syn_flg", syn_flg);
+        params.put("process_time", process_time);
         params.put("limit", row_count);
 
         return selectList(Constants.DAO_NAME_SPACE_WMS + "wms_selectInventorySynLogsForJMReFlush", params);
@@ -146,8 +147,15 @@ public class InventoryDao extends BaseDao {
     /**
      * 更新刷新完毕的JmSKU
      */
-    public int updateJMFlg(InventorySynLogBean inventorySynLogBean) {
-        return updateTemplate.insert(Constants.DAO_NAME_SPACE_WMS + "wms_updateJMFlg", inventorySynLogBean);
+    public int updateReFlushFlg(InventorySynLogBean inventorySynLogBean) {
+        return updateTemplate.insert(Constants.DAO_NAME_SPACE_WMS + "wms_updateReFlushFlg", inventorySynLogBean);
+    }
+
+    /**
+     * 更新刷新完毕的JmSKU
+     */
+    public int updateSynFlg(InventorySynLogBean inventorySynLogBean) {
+        return updateTemplate.insert(Constants.DAO_NAME_SPACE_WMS + "wms_updateSynFlg", inventorySynLogBean);
     }
 
     /**

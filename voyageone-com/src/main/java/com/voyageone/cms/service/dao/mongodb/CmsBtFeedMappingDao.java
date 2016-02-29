@@ -47,7 +47,8 @@ public class CmsBtFeedMappingDao extends BaseMongoDao {
 
         JomgoQuery query = new JomgoQuery();
 
-        query.setQuery(String.format("{ 'scope.channelId': '%s', 'scope.feedCategoryPath': '%s', defaultMapping: 1 }",
+        // 为了防止categoryPath里有单引号, 这里外侧改为双引号
+        query.setQuery(String.format("{ \"scope.channelId\": \"%s\", \"scope.feedCategoryPath\": \"%s\", defaultMapping: 1 }",
                 channelId, feedCategory));
 
         if (!withProps)

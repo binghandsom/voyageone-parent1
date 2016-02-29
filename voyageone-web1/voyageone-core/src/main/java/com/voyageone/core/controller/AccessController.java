@@ -112,6 +112,7 @@ public class AccessController {
                 company.setCompanyName(aCompanyList.get("company").toString());
                 permissionCompanies.add(company);
             }
+
             user.setPermissionCompanies(permissionCompanies);
 
             //TODO 要修改时区

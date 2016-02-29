@@ -2,6 +2,7 @@ package com.voyageone.wms.service;
 
 import com.taobao.api.domain.User;
 import com.voyageone.core.modelbean.UserSessionBean;
+import com.voyageone.wms.formbean.FormStocktake;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -186,4 +187,11 @@ public interface WmsStocktakeService {
 	 * @param user 用户信息
 	 */
 	byte[] downloadCompResReport(String param, UserSessionBean user);
+
+	/**
+	 * @description 【inventory 页面】 获取SKU信息
+	 */
+	Map<String, Object> getSku(FormStocktake formStocktake, String barcode, String sku);
+
+	Map<String,Object> deleteItem(long stocktake_id, long stocktake_detail_id, String sku);
 }

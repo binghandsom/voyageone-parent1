@@ -27,7 +27,7 @@
 			voyageone_cms2.cms_tmp_old_cms_data
 		where
 			finish_flg = 0
-		limit 2000
+		limit 3000
 	</select>
 
 	<!-- 看看数据库中是否存在 -->
