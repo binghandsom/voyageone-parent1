@@ -34,7 +34,7 @@
     <bean id="sqlSessionFactoryMaster"
           class="org.mybatis.spring.SqlSessionFactoryBean"
           p:dataSource-ref="dataSourceMaster"
-          p:configLocation="classpath:com/voyageone/web2/core/mybatis/myBatisConfig.xml"
+          p:configLocation="classpath:com/voyageone/mybatis/myBatisConfig.xml"
           p:mapperLocations="classpath*:com/voyageone/**/*Mapper.xml"/>
 
     <bean id="updateTemplate" class="org.mybatis.spring.SqlSessionTemplate">
@@ -78,7 +78,7 @@
     <bean id="sqlSessionFactorySlave"
           class="org.mybatis.spring.SqlSessionFactoryBean"
           p:dataSource-ref="dataSourceSlave"
-          p:configLocation="classpath:com/voyageone/web2/core/mybatis/myBatisConfig.xml"
+          p:configLocation="classpath:com/voyageone/mybatis/myBatisConfig.xml"
           p:mapperLocations="classpath*:com/voyageone/**/*Mapper.xml"/>
 
     <bean id="selectTemplate" class="org.mybatis.spring.SqlSessionTemplate">
