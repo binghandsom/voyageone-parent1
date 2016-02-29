@@ -202,7 +202,6 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
                     }
 
                     Field skuField = FieldUtil.getFieldById(masterFields,"sku");
-
                     Field darwinSkuField = FieldUtil.getFieldById(masterFields,"darwin_sku");
 
                     //5. 添加sku field
@@ -270,6 +269,8 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
                     masterModel.setCatFullPath(schemaModel.getCatFullPath());
                     FieldUtil.replaceFieldIdDot(masterFields);
                     Field sku = FieldUtil.getFieldById(masterFields, "sku");
+                    if(sku instanceof MultiComplexField)
+                        skusSort(((MultiComplexField) sku).getFields());
                     FieldUtil.removeFieldById(masterFields, "sku");
                     masterModel.setSku(sku);
 
@@ -316,20 +317,29 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
     }
 
     //Field字段排序方法
-    private void fieldsSort(List<Field> masterFields){
-        Collections.sort(masterFields, new Comparator<Field>() {
-            @Override
-            public int compare(Field a, Field b) {
-                if(a.getInputLevel()<b.getInputLevel())
-                    return -2;
-                else if(a.getInputLevel()>b.getInputLevel())
-                    return 2;
-                for(Rule rule:b.getRules()){
-                    if(rule.getName()!=null&&rule.getName().equals("requiredRule")&&rule.getValue()!=null&&rule.getValue().equals("true"))
-                        return 1;
-                }
-                return 0;
-            };
+    private static void fieldsSort(List<Field> masterFields){
+        Collections.sort(masterFields,(a, b) ->{
+                //1.b为true, B前置
+                if(b.getRuleByName("requiredRule")!=null&&!StringUtils.isNullOrBlank2(b.getRuleByName("requiredRule").getValue())&&b.getRuleByName("requiredRule").getValue().equals("true"))
+                    return 1;
+                return -1;
+        });
+    }
+
+    //Sku Field字段排序方法
+    private static void skusSort(List<Field> masterFields){
+        Map<String,Integer> sortIndex=new HashMap<>();
+        //排序
+        Arrays.asList(new String[]{"skuCode:1","size:2","qty:3","priceMsrp:4","priceRetail:5","priceSale:6","skuCarts:7","barcode:8"}).forEach(a->{
+           sortIndex.put(a.split(":")[0],Integer.parseInt(a.split(":")[1]));
+        });
+        Collections.sort(masterFields, (a,b) -> {
+                //1.a为空b非空 b前置 2.a>b b前置
+                Integer aIndex=sortIndex.get(a.getId());
+                Integer bIndex=sortIndex.get(b.getId());
+                if((aIndex==null&&bIndex!=null)||(aIndex!=null&&bIndex!=null&&aIndex>bIndex))
+                    return 1;
+                return -1;
         });
     }
 

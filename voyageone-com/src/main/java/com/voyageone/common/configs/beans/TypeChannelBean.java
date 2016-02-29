@@ -13,6 +13,7 @@ public class TypeChannelBean {
     private String add_name1;
     private String add_name2;
     private String lang_id;
+    private int display_order;
     private String comment;
 
     public int getId() {
@@ -85,6 +86,14 @@ public class TypeChannelBean {
 
     public void setLang_id(String lang_id) {
         this.lang_id = lang_id;
+    }
+
+    public int getDisplay_order() {
+        return display_order;
+    }
+
+    public void setDisplay_order(int display_order) {
+        this.display_order = display_order;
     }
 
     public String getComment() {

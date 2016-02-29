@@ -16,6 +16,4 @@ public class WebServiceUtil {
     public static String postByJsonStr(String url, String jsonData) {
         return HttpUtils.post(url, jsonData, 60000, 120000);
     }
-
-
 }

@@ -1,21 +1,12 @@
 package com.voyageone.common.util;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.LineNumberReader;
-import java.util.*;
-
 import com.jcraft.jsch.*;
 import com.voyageone.common.configs.beans.FtpBean;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.apache.commons.net.ftp.FTP;
-import org.apache.commons.net.ftp.FTPFile;
+
+import java.io.*;
+import java.util.*;
 
 /**
  * @author fred

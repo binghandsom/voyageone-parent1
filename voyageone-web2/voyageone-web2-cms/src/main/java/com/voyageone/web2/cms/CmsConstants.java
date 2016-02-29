@@ -29,6 +29,8 @@ public interface CmsConstants extends BaseConstants{
     interface Props {
 
         //  Code 文件模板文件
-        String CODE_TEMPLATE = "cms.code.template.file";
+        String SEARCH_ADVANCE_EXPORT_TEMPLATE = "cms.search.advance.export.file";
+
+        String PROMOTION_EXPORT_TEMPLATE = "cms.promotion.export.file";
     }
 }

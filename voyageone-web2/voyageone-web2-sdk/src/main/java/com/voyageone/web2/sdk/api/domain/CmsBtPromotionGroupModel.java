@@ -24,7 +24,11 @@ public class CmsBtPromotionGroupModel  extends BaseMongoModel {
 
     private Boolean synFlg;
 
+    private Integer inventory;
+
     private CmsConstants.PlatformStatus platformStatus;
+
+    private String tag;
 
     public CmsBtPromotionGroupModel(){
         super();
@@ -115,5 +119,21 @@ public class CmsBtPromotionGroupModel  extends BaseMongoModel {
 
     public void setPlatformStatus(CmsConstants.PlatformStatus platformStatus) {
         this.platformStatus = platformStatus;
+    }
+
+    public String getTag() {
+        return tag;
+    }
+
+    public void setTag(String tag) {
+        this.tag = tag;
+    }
+
+    public Integer getInventory() {
+        return inventory;
+    }
+
+    public void setInventory(Integer inventory) {
+        this.inventory = inventory;
     }
 }

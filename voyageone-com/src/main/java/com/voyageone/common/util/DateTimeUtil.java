@@ -7,7 +7,8 @@
 package com.voyageone.common.util;
 
 
-import org.apache.commons.logging.*;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -664,10 +665,10 @@ public final class DateTimeUtil {
             if (result.length() == 10) {
                 result = result + " 00:00:00";
             }
-            obj = java.sql.Timestamp.valueOf(result);
+            obj = Timestamp.valueOf(result);
         }
         SimpleDateFormat dateFormat = new SimpleDateFormat(DateTimeUtil.DEFAULT_DATETIME_FORMAT);
-        return dateFormat.format((java.sql.Timestamp) obj);
+        return dateFormat.format((Timestamp) obj);
     }
 
     /**
@@ -682,7 +683,7 @@ public final class DateTimeUtil {
      * 格式化java.sql.Date对象成字符串
      */
     public static String parseSqlDate(Object obj) {
-        if (obj instanceof java.sql.Timestamp) {
+        if (obj instanceof Timestamp) {
             String result = obj.toString().trim();
             if (result.length() > 10) {
                 result = result.substring(0, 10);
@@ -1118,7 +1119,7 @@ public final class DateTimeUtil {
      */
     public static String getGMTTimeFrom(int timezone) {
         try {
-            String date = getLocalTime(timezone,DateTimeUtil.DEFAULT_DATE_FORMAT) + " 00:00:00";
+            String date = getLocalTime(timezone, DateTimeUtil.DEFAULT_DATE_FORMAT) + " 00:00:00";
 
             SimpleDateFormat df = new SimpleDateFormat(DateTimeUtil.DEFAULT_DATETIME_FORMAT);
             Date fromDate = df.parse(date);
@@ -1139,7 +1140,7 @@ public final class DateTimeUtil {
      */
     public static String getGMTTimeTo(int timezone) {
         try {
-            String date = getLocalTime(timezone,DateTimeUtil.DEFAULT_DATE_FORMAT) + " 23:59:59";
+            String date = getLocalTime(timezone, DateTimeUtil.DEFAULT_DATE_FORMAT) + " 23:59:59";
 
             SimpleDateFormat df = new SimpleDateFormat(DateTimeUtil.DEFAULT_DATETIME_FORMAT);
             Date fromDate = df.parse(date);
@@ -1161,7 +1162,7 @@ public final class DateTimeUtil {
      */
     public static String getGMTTimeFrom(int timezone,int days) {
         try {
-            String date = getLocalTime(timezone,DateTimeUtil.DEFAULT_DATE_FORMAT) + " 00:00:00";
+            String date = getLocalTime(timezone, DateTimeUtil.DEFAULT_DATE_FORMAT) + " 00:00:00";
 
             SimpleDateFormat df = new SimpleDateFormat(DateTimeUtil.DEFAULT_DATETIME_FORMAT);
             Date fromDate = df.parse(date);
@@ -1184,7 +1185,7 @@ public final class DateTimeUtil {
      */
     public static String getGMTTimeTo(int timezone,int days) {
         try {
-            String date = getLocalTime(timezone,DateTimeUtil.DEFAULT_DATE_FORMAT) + " 23:59:59";
+            String date = getLocalTime(timezone, DateTimeUtil.DEFAULT_DATE_FORMAT) + " 23:59:59";
 
             SimpleDateFormat df = new SimpleDateFormat(DateTimeUtil.DEFAULT_DATETIME_FORMAT);
             Date fromDate = df.parse(date);

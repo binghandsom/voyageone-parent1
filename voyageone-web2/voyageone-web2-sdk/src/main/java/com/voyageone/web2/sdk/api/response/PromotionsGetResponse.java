@@ -3,10 +3,10 @@
  */
 package com.voyageone.web2.sdk.api.response;
 
-import java.util.List;
-
 import com.voyageone.web2.sdk.api.VoApiListResponse;
 import com.voyageone.web2.sdk.api.domain.CmsBtPromotionModel;
+
+import java.util.List;
 
 /**
  * /promotion/selectByCondtion Response Model

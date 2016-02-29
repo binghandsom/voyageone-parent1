@@ -4,7 +4,6 @@ package com.voyageone.web2.sdk.api.request;
 import com.voyageone.web2.sdk.api.VoApiRequest;
 import com.voyageone.web2.sdk.api.exception.ApiRuleException;
 import com.voyageone.web2.sdk.api.response.FeedMappingsGetResponse;
-import com.voyageone.web2.sdk.api.response.ProductsGetResponse;
 import com.voyageone.web2.sdk.api.util.RequestUtils;
 
 /**
@@ -18,7 +17,7 @@ import com.voyageone.web2.sdk.api.util.RequestUtils;
  *
  * @author chuanyu.liang
  * @version 2.0.0
- * @since. 2.0.0
+ * @since 2.0.0
  */
 public class FeedMappingsGetRequest extends VoApiRequest<FeedMappingsGetResponse> {
 

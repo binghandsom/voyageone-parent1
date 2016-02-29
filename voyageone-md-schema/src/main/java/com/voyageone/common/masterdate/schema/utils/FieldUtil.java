@@ -274,9 +274,15 @@ public class FieldUtil {
      */
     public static void setFieldsValueFromMap(List<Field> rootFields, Map<String, Object> valueMap){
         if (rootFields != null && valueMap != null) {
+            List<Field> delResult = new ArrayList<>();
             for (Field rootField : rootFields) {
-                rootField.setFieldValueFromMap(valueMap);
+                if (rootField.getIsDisplay() == 1) {
+                    rootField.setFieldValueFromMap(valueMap);
+                } else {
+                    delResult.add(rootField);
+                }
             }
+            rootFields.removeAll(delResult);
         }
     }
 

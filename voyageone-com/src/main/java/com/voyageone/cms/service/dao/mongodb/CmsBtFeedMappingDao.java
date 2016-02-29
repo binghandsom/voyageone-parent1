@@ -1,9 +1,9 @@
 package com.voyageone.cms.service.dao.mongodb;
 
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBCollection;
 import com.voyageone.base.dao.mongodb.BaseMongoDao;
+import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.cms.service.model.CmsBtFeedMappingModel;
+import org.bson.types.ObjectId;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -40,12 +40,19 @@ public class CmsBtFeedMappingDao extends BaseMongoDao {
      *
      * @param channelId    channel id
      * @param feedCategory feed category
+     * @param withProps    是否输出属性信息
      * @return 类目和属性对应关系
      */
-    public CmsBtFeedMappingModel selectByDefault(String channelId, String feedCategory) {
+    public CmsBtFeedMappingModel findDefault(String channelId, String feedCategory, boolean withProps) {
 
-        // 除了传入的参数之外,还需要一个条件,就是default=1
-        String query = String.format("{ \"scope.channelId\": \"%s\", \"scope.feedCategoryPath\": \"%s\", defaultMapping: 1}", channelId, feedCategory);
+        JomgoQuery query = new JomgoQuery();
+
+        // 为了防止categoryPath里有单引号, 这里外侧改为双引号
+        query.setQuery(String.format("{ \"scope.channelId\": \"%s\", \"scope.feedCategoryPath\": \"%s\", defaultMapping: 1 }",
+                channelId, feedCategory));
+
+        if (!withProps)
+            query.setProjection("{'props':0}");
 
         return selectOneWithQuery(query);
     }
@@ -63,5 +70,46 @@ public class CmsBtFeedMappingDao extends BaseMongoDao {
                 channelId, feedCategory, mainCategoryIdPath);
 
         return selectOneWithQuery(query);
+    }
+
+    /**
+     * 查询 selChannelId 渠道下, 类目路径包含 topCategoryPath 的 Mapping
+     *
+     * @param selChannelId    渠道 ID
+     * @param topCategoryPath 类目路径
+     * @return 一组不带有 Prop Mapping 信息的类目 Mapping
+     */
+    public List<CmsBtFeedMappingModel> findMappingWithoutProps(String selChannelId, String topCategoryPath) {
+
+        String strQuery = String.format("{\"scope.channelId\": \"%s\", \"scope.feedCategoryPath\": { '$regex': '%s.+' } }",
+                selChannelId, topCategoryPath);
+
+        String projection = "{\"props\": 0}";
+
+        return selectWithProjection(strQuery, projection);
+    }
+
+    /**
+     * 查询主类目为 mainCategoryPath 的默认 Mapping
+     *
+     * @param channelId        渠道 ID
+     * @param mainCategoryPath 主数据类目路径
+     * @return Mapping 模型
+     */
+    public CmsBtFeedMappingModel findDefaultMainMapping(String channelId, String mainCategoryPath) {
+
+        String query = String.format("{ 'scope.channelId': '%s', 'scope.mainCategoryPath': '%s', 'defaultMain': 1 }",
+                channelId, mainCategoryPath);
+
+        return selectOneWithQuery(query);
+    }
+
+    public CmsBtFeedMappingModel findOne(ObjectId objectId) {
+
+        JomgoQuery jomgoQuery = new JomgoQuery();
+
+        jomgoQuery.setObjectId(objectId);
+
+        return selectOneWithQuery(jomgoQuery);
     }
 }

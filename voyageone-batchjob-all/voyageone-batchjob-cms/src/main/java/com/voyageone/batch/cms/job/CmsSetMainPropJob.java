@@ -2,7 +2,7 @@ package com.voyageone.batch.cms.job;
 
 import com.voyageone.batch.base.BaseTaskJob;
 import com.voyageone.batch.base.BaseTaskService;
-import com.voyageone.batch.cms.service.CmsSetMainPropService;
+import com.voyageone.batch.cms.service.CmsSetMainPropMongoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -15,11 +15,11 @@ import org.springframework.stereotype.Component;
 public class CmsSetMainPropJob extends BaseTaskJob {
 
     @Autowired
-    private CmsSetMainPropService cmsSetMainPropService;
+    private CmsSetMainPropMongoService cmsSetMainPropMongoService;
 
     @Override
     protected BaseTaskService getTaskService() {
-        return cmsSetMainPropService;
+        return cmsSetMainPropMongoService;
     }
 }
 

@@ -4,11 +4,12 @@
 
 package com.voyageone.web2.cms.wsdl.dao;
 
-import com.voyageone.web2.sdk.api.domain.CmsBtPromotionModel;
-import org.springframework.stereotype.Repository;
-
 import java.util.List;
 import java.util.Map;
+
+import org.springframework.stereotype.Repository;
+
+import com.voyageone.web2.sdk.api.domain.CmsBtPromotionModel;
 
 /**
  * promotion 数据持久层

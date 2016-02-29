@@ -12,10 +12,7 @@
         <result column="rules" property="rules" jdbcType="VARCHAR" />
         <result column="defult" property="defult" jdbcType="VARCHAR" />
         <result column="tips" property="tips" jdbcType="VARCHAR" />
-        <result column="created" property="created" jdbcType="TIMESTAMP" />
-        <result column="creater" property="creater" jdbcType="VARCHAR" />
-        <result column="modified" property="modified" jdbcType="TIMESTAMP" />
-        <result column="modifier" property="modifier" jdbcType="VARCHAR" />
+
     </resultMap>
     <select id="select_CmsMtCommonProp" parameterType="HashMap"  resultMap="BaseResultMap">
         select
@@ -27,11 +24,7 @@
             platform_prop_ref_id,
             rules,
             defult,
-            tips,
-            created,
-            creater,
-            modified,
-            modifier
+            tips
         from voyageone_cms2.cms_mt_common_prop
     </select>
 

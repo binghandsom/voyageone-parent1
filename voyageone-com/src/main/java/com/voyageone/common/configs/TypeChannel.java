@@ -1,8 +1,10 @@
 package com.voyageone.common.configs;
 
+import com.voyageone.common.Constants;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.configs.dao.TypeChannelDao;
 import com.voyageone.common.masterdate.schema.option.Option;
+import com.voyageone.common.util.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -110,7 +112,7 @@ public class TypeChannel {
      * @param channel_id 渠道id
      * @return List<Option>
      */
-    public static List<Option> getOptions(String type, String channel_id, String...lang_id) {
+    public static List<Option> getOptions(String type, String channel_id) {
         String key = type + "-" + channel_id;
         List<Option> ret = new ArrayList<>();
 
@@ -128,6 +130,31 @@ public class TypeChannel {
         }
 
         return ret;
+    }
+
+    /**
+     * @param type       type_code
+     * @param channel_id 渠道id
+     * @return List<Option>
+     */
+    public static List<TypeChannelBean> getTypeWithLang(String type, String channel_id, String lang_id) {
+        String key = type + "-" + channel_id;
+        List<TypeChannelBean> typeList = typeMap.get(key);
+
+        List<TypeChannelBean> res = new ArrayList<>();
+
+        if (typeList != null){
+            for (TypeChannelBean bean : typeList) {
+                if (!StringUtils.isEmpty(bean.getLang_id())
+                        && bean.getLang_id().equals(lang_id)) {
+                    res.add(bean);
+                }
+            }
+        } else {
+            logger.warn("channel id: " + channel_id + "property id: "+type +" 对应的options没有配置！！！");
+        }
+
+        return res;
     }
 
     /**
@@ -150,5 +177,68 @@ public class TypeChannel {
         return null;
     }
 
+	/**
+     * ------------------------------------------------------------------------------
+     * 只获取skuCarts的数据
+     * ------------------------------------------------------------------------------
+     * 在表中, add_name1里存放的是三位数字
+     *   第一位是display: 用来判断页面是否展示出来
+     *   第二位是approve: 用来判断这个渠道是否允许approve这个sku到平台上去售卖
+     *   第三位是order: 代表的是这个渠道是否会存在有订单
+     * 一般来说:
+     *   主数据的cart id是0, add_name1是100 (只展示)
+     *   平台数据cart id不固定, add_name1是111 (展示, 允许approve到平台售卖, 存在订单)
+     *   线下数据cart id是22, add_name1是001 (只存在订单)
+     * ------------------------------------------------------------------------------
+     * @param channel_id channel id
+     * @param strDAO 大写的字母D的场合代表display, 大写的字母A的场合代表approve, 大写的字母O的场合代表order, 之外的场合返回null
+     * @return skuCarts
+     */
+    public static List<TypeChannelBean> getTypeListSkuCarts(String channel_id, String strDAO, String language) {
+        String type = Constants.comMtTypeChannel.SKU_CARTS_53;
+        int charIndex = 0;
+        switch (strDAO) {
+            case Constants.comMtTypeChannel.SKU_CARTS_53_D: {
+                charIndex = 0;
+                break;
+            }
+            case Constants.comMtTypeChannel.SKU_CARTS_53_A: {
+                charIndex = 1;
+                break;
+            }
+            case Constants.comMtTypeChannel.SKU_CARTS_53_O: {
+                charIndex = 2;
+                break;
+            }
+            default: {
+                // 不合法的输入参数
+                return null;
+            }
+        }
+        List<TypeChannelBean> typeChannelBeanList = getTypeList(type, channel_id);
+        List<TypeChannelBean> resultList = new ArrayList<>();
+
+        if (typeChannelBeanList != null) {
+
+            for (TypeChannelBean typeChannelBean : typeChannelBeanList) {
+                // 如果add_name1里为空, 说明这家店没有好好配置过, 所以不返回记录, 只有配置好了之后才能正常使用
+                String add_name1 = typeChannelBean.getAdd_name1();
+                if (!StringUtils.isEmpty(add_name1)) {
+                    if (add_name1.length() == 3) {
+                        add_name1 = add_name1.substring(charIndex, charIndex + 1);
+                        if ("1".equals(add_name1)
+                                && !StringUtils.isEmpty(typeChannelBean.getLang_id())
+                                && typeChannelBean.getLang_id().equals(language)) {
+                            // 这条记录是属于需要返回的数据
+                            resultList.add(typeChannelBean);
+                        }
+                    }
+                }
+            }
+
+        }
+
+        return resultList;
+    }
 
 }

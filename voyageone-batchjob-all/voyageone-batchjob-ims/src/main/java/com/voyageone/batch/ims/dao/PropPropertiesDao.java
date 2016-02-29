@@ -49,7 +49,7 @@ public class PropPropertiesDao extends BaseDao {
     {
         Map<String, Object> dataMap = new HashMap<>();
         dataMap.put("category_id", category_id);
-        dataMap.put("brand_id", brand_id);
+        dataMap.put("brand", brand_id);
         if (is_product)
             dataMap.put("is_product", 1);
         else

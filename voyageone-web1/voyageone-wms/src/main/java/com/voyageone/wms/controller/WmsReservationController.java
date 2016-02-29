@@ -1,32 +1,33 @@
 package com.voyageone.wms.controller;
 
+import com.voyageone.base.BaseController;
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JsonUtil;
 import com.voyageone.core.ajax.AjaxResponseBean;
-import com.voyageone.base.BaseController;
+import com.voyageone.wms.WmsConstants;
 import com.voyageone.wms.WmsUrlConstants.ReservationUrls;
 import com.voyageone.wms.formbean.FormReservation;
 import com.voyageone.wms.service.WmsReservationService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletResponse;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
- * Simple to Introduction  
+ * Simple to Introduction
  * @Package      [com.voyageone.wms.controller]
  * @ClassName    [WmsReservationController]
- *  [ReservationLog 控制类]   
+ *  [ReservationLog 控制类]
  * @Author       [sky]
  * @CreateDate   [20150421]
- * @UpdateUser   [${user}]   
+ * @UpdateUser   [${user}]
  * @UpdateDate   [20150529]
  * @UpdateRemark [说明本次修改内容]
  * @Version      [v1.0]
@@ -167,5 +168,16 @@ public class WmsReservationController extends BaseController{
 				.newResult(true)
 				.setResultInfo(result)
 				.writeTo(getRequest(), response);
+	}
+
+    /**
+     * 库存下载
+     * @create 20160225
+     */
+	@RequestMapping(value = ReservationUrls.PopInventory.DOWNLOAD, method = RequestMethod.GET)
+	public ResponseEntity<byte[]> doPopInventoryDownload(String param) {
+		byte[] bytes = wmsReservationService.downloadInventoryInfo(param, getUser());
+		String outFile = WmsConstants.ReportItems.InvListRpt.RPT_NAME + "_" + DateTimeUtil.getNow() + WmsConstants.ReportItems.InvListRpt.RPT_SUFFIX;
+		return genResponseEntityFromBytes(outFile, bytes);
 	}
 }

@@ -37,26 +37,43 @@
             null
         )
         ;
- </insert>
+    </insert>
+
+    <!-- 插入item details的数据 -->
+    <update id="wms_bt_item_details_update" parameterType="HashMap">
+        update Synship.wms_bt_item_details
+        set  `product_id` = #{itemDetailsBean.product_id},
+             `itemcode` = #{itemDetailsBean.itemcode},
+             `size` = #{itemDetailsBean.size},
+             `barcode` = #{itemDetailsBean.barcode},
+             `is_sale` = #{itemDetailsBean.is_sale},
+             `client_sku` = #{itemDetailsBean.client_sku},
+             `active` = #{itemDetailsBean.active},
+             `modifier` = #{taskName},
+             `modified` = NOW()
+        where `order_channel_id` = #{itemDetailsBean.order_channel_id}
+          and `sku` = #{itemDetailsBean.sku}
+        ;
+    </update>
 
   <!-- 根据product id, 获取item details表的数据 -->
   <select id="wms_bt_item_details_select_by_code"
           parameterType="HashMap"
           resultType="com.voyageone.batch.cms.bean.ItemDetailsBean">
-  select
-	order_channel_id,
-	sku,
-	product_id,
-	itemcode,
-	size,
-	barcode,
-	is_sale,
-	client_sku,
-	active
-  from  Synship.wms_bt_item_details
-  where order_channel_id = #{channelId}
-    and itemcode = #{code}
-    ;
+      select
+        order_channel_id,
+        sku,
+        product_id,
+        itemcode,
+        size,
+        barcode,
+        is_sale,
+        client_sku,
+        active
+      from  Synship.wms_bt_item_details
+      where order_channel_id = #{channelId}
+        and itemcode = #{code}
+        ;
   </select>
 
 </mapper>

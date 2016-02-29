@@ -11,43 +11,33 @@ import com.voyageone.cms.enums.MappingPropType;
  */
 public class GetFieldMappingBean {
 
-    private String feedCategoryPath;
+    private String mappingId;
 
-    private String mainCategoryPath;
+    private String fieldId;
 
-    private String field;
+    private MappingPropType fieldType;
 
-    private MappingPropType type;
-
-    public String getFeedCategoryPath() {
-        return feedCategoryPath;
+    public String getMappingId() {
+        return mappingId;
     }
 
-    public void setFeedCategoryPath(String feedCategoryPath) {
-        this.feedCategoryPath = feedCategoryPath;
+    public void setMappingId(String mappingId) {
+        this.mappingId = mappingId;
     }
 
-    public String getMainCategoryPath() {
-        return mainCategoryPath;
+    public String getFieldId() {
+        return fieldId;
     }
 
-    public void setMainCategoryPath(String mainCategoryPath) {
-        this.mainCategoryPath = mainCategoryPath;
+    public void setFieldId(String fieldId) {
+        this.fieldId = fieldId;
     }
 
-    public String getField() {
-        return field;
+    public MappingPropType getFieldType() {
+        return fieldType;
     }
 
-    public void setField(String field) {
-        this.field = field;
-    }
-
-    public MappingPropType getType() {
-        return type;
-    }
-
-    public void setType(MappingPropType type) {
-        this.type = type;
+    public void setFieldType(MappingPropType fieldType) {
+        this.fieldType = fieldType;
     }
 }
