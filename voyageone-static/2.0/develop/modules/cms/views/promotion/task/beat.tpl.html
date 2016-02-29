@@ -1,0 +1,193 @@
+<div class="wrapper-md" ng-init="initialize()">
+	<div class="vo_accordion vo_attr">
+		<div class="panel-group">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h4 class="panel-title"><i class="fa fa-codepen"></i>&nbsp;任务一览明细</h4>
+				</div>
+				<div class="container-fluid" ng-controller="popupCtrl">
+					<div class="col-sm-6">
+						<div class="form-horizontal m-l-md">
+						<div class="form-group form-inline">
+							<input filestyle="" type="file" data-button-text="Choose file" data-class-button="btn btn-default" tabindex="-1" id="filestyle-0" style="position: absolute; clip: rect(0px 0px 0px 0px);">
+							<div class="bootstrap-filestyle input-group">
+								<input type="text" class="form-control" disabled="">
+								<span class="group-span-filestyle input-group-btn" tabindex="0">
+									<label for="filestyle-0" class="btn btn-default ">
+										<span class="glyphicon glyphicon-folder-open"></span> Choose file</label></span>
+							</div>
+							<button class="btn btn-vo"><i class="glyphicon glyphicon-check"></i>&nbsp;提交商品表</button>
+							<button class="btn btn-success" ng-click="openTaskcommodity('md')"><i class="fa fa-plus"></i>&nbsp;添加商品</button>
+						  </div>
+						</div>
+					</div>
+					<div class="pull-right m-r-xs">
+						<div class="form-horizontal form-inline">
+							<button class="btn btn-danger"><i class="fa fa-cloud-download"></i>&nbsp;下载错误表 A</button>
+							<button class="btn btn-danger"><i class="fa fa-cloud-download"></i>&nbsp;下载错误表 B</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="col-sm-12 m-b-xs" style="padding-left:0px;padding-right:0px">
+		<div class="btn-group pull-left">
+			<button class="btn btn-primary btn-xs"><i class="glyphicon glyphicon-play"></i>&nbsp;启动所有</button>
+			<button class="btn btn-danger btn-xs"><i class="glyphicon glyphicon-pause"></i>&nbsp;停止所有</button>
+			<button class="btn btn-success btn-xs"><i class="glyphicon glyphicon-share-alt"></i>&nbsp;还原所有</button>
+		</div>
+		<div class="btn-group pull-right">
+			<button class="btn btn-default-vo btn-xs">显示所有</button>
+			<button class="btn btn-default-vo btn-xs">显示 还原成功:1220</button>
+			<button class="btn btn-default-vo btn-xs">显示 取消成功:66</button>
+			<button type="button" class="btn btn-default btn-xs"><i class="fa fa-refresh"></i>&nbsp;刷新</button>
+		</div>
+	</div>
+	<div class="box">
+		<div class="box-body col-sm-12">
+			<div class="table-responsive">
+				<div class="dropdown_table_main">
+					<table class="table table-hover-new vo_table tableWordBreak" style="margin-bottom:0px" ng-controller="popupCtrl">
+						<thead>
+						<tr>
+							<th class="mfb-xxt text-center">Code</th>
+							<th class="mfb-xxt text-center">Num iid</th>
+							<th class="mfb-xxt text-right">Price</th>
+							<th class="mfb-xxt text-center">Status</th>
+							<th class="mfb-xxx text-center">Comment</th>
+							<th class="mfb-xxx text-center">Modify</th>
+							<th class="mfb-xxx text-center">Edit</th>
+						</tr>
+						</thead>
+						<tbody>
+						<tr>
+							<td class="mfb-xxt text-center">2561-8121</td>
+							<td class="mfb-xxt text-center"><a href="https://detail.tmall.hk/hk/item.htm?id=521788267914" target="_blank">5034296159</a></td>
+							<td class="mfb-xxt text-right">85621</td>
+							<td class="mfb-xxt text-center">取消成功</td>
+							<td class="mfb-xxx text-center">45034296159</td>
+							<td class="mfb-xxx text-center">2016-02-24 18:15:17</td>
+							<td class="mfb-xxx text-center">
+								<div class="btn-group text-center">
+							  	   <button title="启动" class="btn btn-default-purple btn-xs"><i class="glyphicon glyphicon-play"></i>&nbsp;启动</button>
+								   <button title="停止" class="btn btn-default-red btn-xs"><i class="glyphicon glyphicon-pause"></i>&nbsp;停止</button>
+								   <button title="还原" class="btn btn-default-green btn-xs"><i class="glyphicon glyphicon-share-alt"></i>&nbsp;还原</button>
+							   </div>
+							</td>
+						</tr>
+						<tr>
+							<td class="mfb-xxt text-center">2561-8121</td>
+							<td class="mfb-xxt text-center"><a href="https://detail.tmall.hk/hk/item.htm?id=521788267914" target="_blank">45034296159</a></td>
+							<td class="mfb-xxt text-right">85621</td>
+							<td class="mfb-xxt text-center">取消成功</td>
+							<td class="mfb-xxx text-center">45034296159</td>
+							<td class="mfb-xxx text-center">2016-02-24 18:15:17</td>
+							<td class="mfb-xxx text-center">
+								<div class="btn-group text-center">
+									<button title="启动" class="btn btn-default-purple btn-xs"><i class="glyphicon glyphicon-play"></i>&nbsp;启动</button>
+									<button title="停止" class="btn btn-default-red btn-xs"><i class="glyphicon glyphicon-pause"></i>&nbsp;停止</button>
+									<button title="还原" class="btn btn-default-green btn-xs"><i class="glyphicon glyphicon-share-alt"></i>&nbsp;还原</button>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td class="mfb-xxt text-center">2561-8121</td>
+							<td class="mfb-xxt text-center"><a href="https://detail.tmall.hk/hk/item.htm?id=521788267914" target="_blank">45034296159</a></td>
+							<td class="mfb-xxt text-right">85621</td>
+							<td class="mfb-xxt text-center">取消成功</td>
+							<td class="mfb-xxx text-center">45034296159</td>
+							<td class="mfb-xxx text-center">2016-02-24 18:15:17</td>
+							<td class="mfb-xxx text-center">
+								<div class="btn-group text-center">
+									<button title="启动" class="btn btn-default-purple btn-xs"><i class="glyphicon glyphicon-play"></i>&nbsp;启动</button>
+									<button title="停止" class="btn btn-default-red btn-xs"><i class="glyphicon glyphicon-pause"></i>&nbsp;停止</button>
+									<button title="还原" class="btn btn-default-green btn-xs"><i class="glyphicon glyphicon-share-alt"></i>&nbsp;还原</button>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td class="mfb-xxt text-center">2561-8121</td>
+							<td class="mfb-xxt text-center"><a href="https://detail.tmall.hk/hk/item.htm?id=521788267914" target="_blank">45034296159</a></td>
+							<td class="mfb-xxt text-right">85621</td>
+							<td class="mfb-xxt text-center">取消成功</td>
+							<td class="mfb-xxx text-center">45034296159</td>
+							<td class="mfb-xxx text-center">2016-02-24 18:15:17</td>
+							<td class="mfb-xxx text-center">
+								<div class="btn-group text-center">
+									<button title="启动" class="btn btn-default-purple btn-xs"><i class="glyphicon glyphicon-play"></i>&nbsp;启动</button>
+									<button title="停止" class="btn btn-default-red btn-xs"><i class="glyphicon glyphicon-pause"></i>&nbsp;停止</button>
+									<button title="还原" class="btn btn-default-green btn-xs"><i class="glyphicon glyphicon-share-alt"></i>&nbsp;还原</button>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td class="mfb-xxt text-center">2561-8121</td>
+							<td class="mfb-xxt text-center"><a href="https://detail.tmall.hk/hk/item.htm?id=521788267914" target="_blank">45034296159</a></td>
+							<td class="mfb-xxt text-right">85621</td>
+							<td class="mfb-xxt text-center">取消成功</td>
+							<td class="mfb-xxx text-center">45034296159</td>
+							<td class="mfb-xxx text-center">2016-02-24 18:15:17</td>
+							<td class="mfb-xxx text-center">
+								<div class="btn-group text-center">
+									<button title="启动" class="btn btn-default-purple btn-xs"><i class="glyphicon glyphicon-play"></i>&nbsp;启动</button>
+									<button title="停止" class="btn btn-default-red btn-xs"><i class="glyphicon glyphicon-pause"></i>&nbsp;停止</button>
+									<button title="还原" class="btn btn-default-green btn-xs"><i class="glyphicon glyphicon-share-alt"></i>&nbsp;还原</button>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td class="mfb-xxt text-center">2561-8121</td>
+							<td class="mfb-xxt text-center"><a href="https://detail.tmall.hk/hk/item.htm?id=521788267914" target="_blank">45034296159</a></td>
+							<td class="mfb-xxt text-right">85621</td>
+							<td class="mfb-xxt text-center">取消成功</td>
+							<td class="mfb-xxx text-center">45034296159</td>
+							<td class="mfb-xxx text-center">2016-02-24 18:15:17</td>
+							<td class="mfb-xxx text-center">
+								<div class="btn-group text-center">
+									<button title="启动" class="btn btn-default-purple btn-xs"><i class="glyphicon glyphicon-play"></i>&nbsp;启动</button>
+									<button title="停止" class="btn btn-default-red btn-xs"><i class="glyphicon glyphicon-pause"></i>&nbsp;停止</button>
+									<button title="还原" class="btn btn-default-green btn-xs"><i class="glyphicon glyphicon-share-alt"></i>&nbsp;还原</button>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td class="mfb-xxt text-center">2561-8121</td>
+							<td class="mfb-xxt text-center"><a href="https://detail.tmall.hk/hk/item.htm?id=521788267914" target="_blank">45034296159</a></td>
+							<td class="mfb-xxt text-right">85621</td>
+							<td class="mfb-xxt text-center">取消成功</td>
+							<td class="mfb-xxx text-center">45034296159</td>
+							<td class="mfb-xxx text-center">2016-02-24 18:15:17</td>
+							<td class="mfb-xxx text-center">
+								<div class="btn-group text-center">
+									<button title="启动" class="btn btn-default-purple btn-xs"><i class="glyphicon glyphicon-play"></i>&nbsp;启动</button>
+									<button title="停止" class="btn btn-default-red btn-xs"><i class="glyphicon glyphicon-pause"></i>&nbsp;停止</button>
+									<button title="还原" class="btn btn-default-green btn-xs"><i class="glyphicon glyphicon-share-alt"></i>&nbsp;还原</button>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td class="mfb-xxt text-center">2561-8121</td>
+							<td class="mfb-xxt text-center"><a href="https://detail.tmall.hk/hk/item.htm?id=521788267914" target="_blank">45034296159</a></td>
+							<td class="mfb-xxt text-right">85621</td>
+							<td class="mfb-xxt text-center">取消成功</td>
+							<td class="mfb-xxx text-center">45034296159</td>
+							<td class="mfb-xxx text-center">2016-02-24 18:15:17</td>
+							<td class="mfb-xxx text-center">
+								<div class="btn-group text-center">
+									<button title="启动" class="btn btn-default-purple btn-xs"><i class="glyphicon glyphicon-play"></i>&nbsp;启动</button>
+									<button title="停止" class="btn btn-default-red btn-xs"><i class="glyphicon glyphicon-pause"></i>&nbsp;停止</button>
+									<button title="还原" class="btn btn-default-green btn-xs"><i class="glyphicon glyphicon-share-alt"></i>&nbsp;还原</button>
+								</div>
+							</td>
+						</tr>
+						</tbody>
+					</table>
+				</div><!-- .table-responsive -->
+			</div>
+		</div><!-- /.box-body -->
+		<div class="m-t-xs">
+			<vpagination config="vm.errorPageOption"></vpagination>
+		</div>
+	</div>
+</div><!-- end .wrapper-md -->
