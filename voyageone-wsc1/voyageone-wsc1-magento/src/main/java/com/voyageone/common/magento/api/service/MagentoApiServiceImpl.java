@@ -1,5 +1,6 @@
 package com.voyageone.common.magento.api.service;
 
+import com.voyageone.common.components.baidu.translate.BaiduTranslateUtil;
 import com.voyageone.common.components.issueLog.IssueLog;
 import com.voyageone.common.configs.Codes;
 import com.voyageone.common.configs.ThirdPartyConfigs;
@@ -577,11 +578,23 @@ public class MagentoApiServiceImpl {
 										// 账单人信息
 										ShoppingCartCustomerAddressEntity billingAddress = new ShoppingCartCustomerAddressEntity();
 										billingAddress.setMode("billing");
-										billingAddress.setFirstname(StringUtils.isNullOrBlank2(order.getBillingName())? "DummyName" : order.getBillingName());
-										billingAddress.setLastname(StringUtils.isNullOrBlank2(order.getBillingName())? "DummyName" : order.getBillingName());
-										billingAddress.setCity(StringUtils.isNullOrBlank2(order.getBillingCity())? "DummyCity" : order.getBillingCity());
-										billingAddress.setRegion(StringUtils.isNullOrBlank2(order.getBillingState())? "DummyState" : order.getBillingState());
-										billingAddress.setStreet(StringUtils.isNullOrBlank2(order.getBillingAddress())? "DummyAddress" : order.getBillingAddress());
+
+										// 翻译准备
+										List<String> billingInfoList = new ArrayList<String>();
+										// 中文头
+										billingInfoList.add("中国");
+										billingInfoList.add(order.getBillingName());
+										billingInfoList.add(order.getBillingCity());
+										billingInfoList.add(order.getBillingState());
+										billingInfoList.add(order.getBillingAddress());
+										// 百度翻译
+										List<String> billingResultList = BaiduTranslateUtil.translate(billingInfoList);
+
+										billingAddress.setFirstname(StringUtils.isNullOrBlank2(billingResultList.get(1))? "DummyName" : billingResultList.get(1));
+										billingAddress.setLastname(StringUtils.isNullOrBlank2(billingResultList.get(1))? "DummyName" : billingResultList.get(1));
+										billingAddress.setCity(StringUtils.isNullOrBlank2(billingResultList.get(2))? "DummyCity" : billingResultList.get(2));
+										billingAddress.setRegion(StringUtils.isNullOrBlank2(billingResultList.get(3))? "DummyState" : billingResultList.get(3));
+										billingAddress.setStreet(StringUtils.isNullOrBlank2(billingResultList.get(4))? "DummyAddress" : billingResultList.get(4));
 										billingAddress.setTelephone(StringUtils.isNullOrBlank2(order.getShippingTelephone())? "00000000" : order.getShippingTelephone());
 										billingAddress.setFax(StringUtils.isNullOrBlank2(order.getShippingTelephone())? "00000000" : order.getShippingTelephone());
 										billingAddress.setPostcode(StringUtils.isNullOrBlank2(order.getBillingPostcode())? "000000" : order.getBillingPostcode());
@@ -603,11 +616,23 @@ public class MagentoApiServiceImpl {
 										// 收货人信息
 										ShoppingCartCustomerAddressEntity shippingAddress = new ShoppingCartCustomerAddressEntity();
 										shippingAddress.setMode("shipping");
-										shippingAddress.setFirstname(StringUtils.isNullOrBlank2(order.getShippingName())? "DummyName" : order.getShippingName());
-										shippingAddress.setLastname(StringUtils.isNullOrBlank2(order.getShippingName())? "DummyName" : order.getShippingName());
-										shippingAddress.setCity(StringUtils.isNullOrBlank2(order.getShippingCity())? "DummyCity" : order.getShippingCity());
-										shippingAddress.setRegion(StringUtils.isNullOrBlank2(order.getShippingState())? "DummyState" : order.getShippingState());
-										shippingAddress.setStreet(StringUtils.isNullOrBlank2(order.getShippingAddress())? "DummyAddress" : order.getShippingAddress());
+
+										// 翻译准备
+										List<String> shippingInfoList = new ArrayList<String>();
+										// 中文头
+										shippingInfoList.add("中国");
+										shippingInfoList.add(order.getShippingName());
+										shippingInfoList.add(order.getShippingCity());
+										shippingInfoList.add(order.getShippingState());
+										shippingInfoList.add(order.getShippingAddress());
+										// 百度翻译
+										List<String> shippingResultList = BaiduTranslateUtil.translate(shippingInfoList);
+
+										shippingAddress.setFirstname(StringUtils.isNullOrBlank2(shippingResultList.get(1))? "DummyName" : shippingResultList.get(1));
+										shippingAddress.setLastname(StringUtils.isNullOrBlank2(shippingResultList.get(1))? "DummyName" : shippingResultList.get(1));
+										shippingAddress.setCity(StringUtils.isNullOrBlank2(shippingResultList.get(2))? "DummyCity" : shippingResultList.get(2));
+										shippingAddress.setRegion(StringUtils.isNullOrBlank2(shippingResultList.get(3))? "DummyState" : shippingResultList.get(3));
+										shippingAddress.setStreet(StringUtils.isNullOrBlank2(shippingResultList.get(4))? "DummyAddress" : shippingResultList.get(4));
 										shippingAddress.setTelephone(StringUtils.isNullOrBlank2(order.getShippingTelephone())? "00000000" : order.getShippingTelephone());
 										shippingAddress.setFax(StringUtils.isNullOrBlank2(order.getShippingTelephone())? "00000000" : order.getShippingTelephone());
 										shippingAddress.setPostcode(StringUtils.isNullOrBlank2(order.getShippingPostcode())? "000000" : order.getShippingPostcode());
