@@ -59,6 +59,8 @@ public class ProductTranslationBean {
      */
     private String productImage;
 
+    private String translator;
+
     public String getProductImage() {
         return productImage;
     }
@@ -171,5 +173,13 @@ public class ProductTranslationBean {
 
     public void setProductCode(String productCode) {
         this.productCode = productCode;
+    }
+
+    public String getTranslator() {
+        return translator;
+    }
+
+    public void setTranslator(String translator) {
+        this.translator = translator;
     }
 }

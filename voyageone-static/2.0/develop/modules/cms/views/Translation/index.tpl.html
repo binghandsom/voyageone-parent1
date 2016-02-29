@@ -44,13 +44,23 @@
 									</div>
 								</div>
 								<div class="form-group">
-									<label class="col-sm-4 control-label">产品库存优先级</label>
+									<label class="col-sm-4 control-label">排序条件</label>
 									<div class="col-sm-7">
-										<select class="form-control">
-											<option>条件一</option>
-											<option>条件二</option>
-											<option>条件三</option>
+										<select class="form-control" ng-model="ctrl.sortCondition">
+											<option value="">-- 选择排序条件 --</option>
+											<option ng-repeat="option in ctrl.sortFieldOptions" value="{{option.value}}">{{option.name}}</option>
 										</select>
+									</div>
+ 								</div>
+								<div class="form-group" ng-if="ctrl.sortCondition != null && ctrl.sortCondition !=''">
+									<label class="col-sm-4 control-label">排序规则</label>
+									<div class="col-sm-7" style="padding-left:0px">
+										<label class="checkbox-inline c-radio">
+											<input type="radio" ng-model="ctrl.sortRule" value="true"><span class="fa fa-check"></span>  升序
+										</label>
+										<label class="checkbox-inline c-radio">
+											<input type="radio" ng-model="ctrl.sortRule" value="false"><span class="fa fa-check"></span>  降序
+										</label>
 									</div>
 								</div>
 								<div class="form-group">
@@ -78,7 +88,7 @@
 							<div class="form-inline">
 								<button class="btn btn-default" ng-click="ctrl.clearConditions()"><i class="fa fa-remove"></i> 清空</button>
 								<!--<button class="btn btn-vo" ng-click="ctrl.searchHistoryTasks(ctrl)"><i class="fa fa-search"></i> Search</button>-->
-								<button class="btn btn-success" ng-click="ctrl.assignTasks(ctrl.distributeRule,ctrl.distributeCount)"><i class="glyphicon glyphicon-check"></i> 获取任务</button>
+								<button class="btn btn-success" ng-click="ctrl.assignTasks(ctrl)"><i class="glyphicon glyphicon-check"></i> 获取任务</button>
 							</div>
 							<!-- .form-inline -->
 						</div>
@@ -108,23 +118,23 @@
 						<td class="text-center mfb-x" ng-controller="popupCtrl">
 							<p><a ng-click="openTranslate('md',translationModel)">{{translationModel.productCode}}</a></p>
 							<p><img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{translationModel.productImage}}"  alt="" class="thumb-lg pull-left"/></p>
-							<p class="col-sm-12 text-left text-vo m-t-xs">Edward翻译</p>
+							<p class="col-sm-12 text-left text-vo m-t-xs">译者：{{translationModel.translator}}</p>
 						</td>
 						<td class="text-left">{{translationModel.productName}}</td>
 						<td class="text-center">
-							<textarea class="form-control" rows="6" ng-model="translationModel.longTitle" ng-required="required" placeholder="此处为长标题/ 详情描述中文"></textarea>
+							<textarea class="form-control" rows="6" ng-model="translationModel.longTitle" ng-char-maxlength="40" ng-required="required" placeholder="{{'TXT_MSG_LONG_TITLE' | translate}}"></textarea>
 							<div class="text-warnings text-left" style="padding-left:0px">
 								<i class="icon fa fa-bell-o"></i>&nbsp;{{'TXT_MSG_SEARCH_INDEX_FUZZY_SEARCH' | translate}}
 							</div>
 						</td>
 						<td class="text-center">
-							<textarea class="form-control" rows="6" ng-model="translationModel.middleTitle" ng-required="required" placeholder="此处为中标题/ Short Description"></textarea>
+							<textarea class="form-control" rows="6" ng-model="translationModel.middleTitle" ng-char-maxlength="30" ng-required="required" placeholder="{{'TXT_MSG_MIDDLE_TITLE' | translate}}"></textarea>
 							<div class="text-warnings text-left" style="padding-left:0px">
 								<i class="icon fa fa-bell-o"></i>&nbsp;{{'TXT_MSG_SEARCH_INDEX_FUZZY_SEARCH' | translate}}
 							</div>
 						</td>
 						<td class="text-center">
-							<textarea class="form-control" rows="6" ng-model="translationModel.shortTitle" ng-required="required" placeholder="此处为短标题/ 简短描述中文"></textarea>
+							<textarea class="form-control" rows="6" ng-model="translationModel.shortTitle" ng-char-maxlength="30" ng-required="required" placeholder="{{'TXT_MSG_SHORT_TITLE' | translate}}"></textarea>
 							<div class="text-warnings text-left" style="padding-left:0px">
 								<i class="icon fa fa-bell-o"></i>&nbsp;{{'TXT_MSG_SEARCH_INDEX_FUZZY_SEARCH' | translate}}
 							</div>
@@ -141,7 +151,7 @@
 						<td class="text-center mfb-x" style="border-top:0px"></td>
 						<td class="text-left" style="border-top:0px">{{translationModel.longDescription}}</td>
 						<td class="text-center" colspan="3" style="border-top:0px">
-							<textarea class="form-control" rows="6" ng-model="translationModel.longDesCn" ng-required="required" placeholder="此处为长标题/ 详情描述中文"></textarea>
+							<textarea class="form-control" rows="6" ng-model="translationModel.longDesCn" ng-char-maxlength="60" ng-required="required" placeholder="{{'TXT_MSG_LONG_DESCRIPTION' | translate}}"></textarea>
 							<div class="text-warnings text-left" style="padding-left:0px">
 								<i class="icon fa fa-bell-o"></i>&nbsp;{{'TXT_MSG_SEARCH_INDEX_FUZZY_SEARCH' | translate}}
 							</div>
@@ -154,7 +164,7 @@
 						<td class="text-center mfb-x" style="border-top:0px"></td>
 						<td class="text-left" style="border-top:0px" ng-model="translationModel.shortDescription"></td>
 						<td class="text-center" colspan="3" style="border-top:0px">
-							<textarea class="form-control" rows="6" ng-model="translationModel.shortDesCn" ng-required="required" placeholder="此处为短标题/ 简短描述中文"></textarea>
+							<textarea class="form-control" rows="6" ng-model="translationModel.shortDesCn" ng-char-maxlength="40" ng-required="required" placeholder="{{'TXT_MSG_SHORT_DESCRIPTION' | translate}}"></textarea>
 							<div class="text-warnings text-left" style="padding-left:0px">
 								<i class="icon fa fa-bell-o"></i>&nbsp;{{'TXT_MSG_SEARCH_INDEX_FUZZY_SEARCH' | translate}}
 							</div>

@@ -36,6 +36,7 @@ public class TranslationController extends CmsController{
         TranslateTaskBean taskBean = feedPropsTranslateService.getUndoneTasks(channelId,userName);
 
         translateTaskBeanInfo.put("taskInfo",taskBean);
+        translateTaskBeanInfo.put("sortFieldOptions",feedPropsTranslateService.getSortFieldOptions());
 
         return success(translateTaskBeanInfo);
 
@@ -55,7 +56,7 @@ public class TranslationController extends CmsController{
 
         Map<String,Object> TranslateTaskBeanInfo = new HashMap<>();
 
-        TranslateTaskBean taskBean = feedPropsTranslateService.assignTask(channelId,userName,distributeStrategy,distCount);
+        TranslateTaskBean taskBean = feedPropsTranslateService.assignTask(channelId,userName,distributeStrategy,distCount,request.getSortCondition(),request.getSortRule());
 
         TranslateTaskBeanInfo.put("taskInfo",taskBean);
 
