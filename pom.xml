@@ -22,6 +22,7 @@
         <module>voyageone-web2</module>
         <module>voyageone-components</module>
         <module>voyageone-md-schema</module>
+        <module>voyageone-task2</module>
     </modules>
 
     <repositories>
