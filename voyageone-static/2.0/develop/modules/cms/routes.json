@@ -30,6 +30,12 @@
     "templateUrl": "views/promotion/task/price.tpl.html",
     "controllerUrl": "modules/cms/views/promotion/task/price.ctl"
   },
+  "promotion_task_beat": {
+    "url": "/promotion/task/beat/",
+    "hash": "/promotion/task/beat/:beatId",
+    "templateUrl": "views/promotion/task/beat.tpl.html",
+    "controllerUrl": "modules/cms/views/promotion/task/beat.ctl"
+  },
   "search_advance": {
     "hash": "/search/advance",
     "templateUrl": "views/search/advance.tpl.html",
