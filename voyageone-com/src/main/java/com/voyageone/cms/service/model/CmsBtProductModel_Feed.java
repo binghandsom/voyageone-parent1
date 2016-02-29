@@ -7,18 +7,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 的商品Model feed
+ * Product 的商品Model feed
  * @author chuanyu.liang, 12/11/15
  * @version 2.0.0
  * @since 2.0.0
  */
 public class CmsBtProductModel_Feed  {
 
-    private BaseMongoMap<String, Object> orgAtts = new BaseMongoMap<String, Object>();
+    private BaseMongoMap<String, Object> orgAtts = new BaseMongoMap<>();
 
-    private BaseMongoMap<String, Object> cnAtts = new BaseMongoMap<String, Object>();
+    private BaseMongoMap<String, Object> cnAtts = new BaseMongoMap<>();
 
-    private List<String> customIds = new ArrayList<String>();
+    private List<String> customIds = new ArrayList<>();
+
+    private List<String> customIdsCn = new ArrayList<>();
 
     public BaseMongoMap<String, Object> getOrgAtts() {
         return orgAtts;
@@ -42,5 +44,13 @@ public class CmsBtProductModel_Feed  {
 
     public void setCustomIds(List<String> customIds) {
         this.customIds = customIds;
+    }
+
+    public List<String> getCustomIdsCn() {
+        return customIdsCn;
+    }
+
+    public void setCustomIdsCn(List<String> customIdsCn) {
+        this.customIdsCn = customIdsCn;
     }
 }

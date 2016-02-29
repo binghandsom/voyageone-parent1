@@ -15,6 +15,7 @@ import com.voyageone.cms.enums.MappingPropType;
 import com.voyageone.cms.enums.SrcType;
 import com.voyageone.cms.feed.Condition;
 import com.voyageone.cms.feed.Operation;
+import com.voyageone.cms.service.CmsBtFeedCustomPropService;
 import com.voyageone.cms.service.CommSequenceMongoService;
 import com.voyageone.cms.service.dao.mongodb.CmsBtFeedInfoDao;
 import com.voyageone.cms.service.dao.mongodb.CmsBtFeedMappingDao;
@@ -73,9 +74,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
     @Autowired
     TmpOldCmsDataDao tmpOldCmsDataDao; // DAO: 旧数据
     @Autowired
-    FeedCustomPropDao feedCustomPropDao; // DAO: 自定义属性表
-    @Autowired
-    FeedCustomPropValueDao feedCustomPropValueDao; // DAO: 自定义翻译表
+    CmsBtFeedCustomPropService customPropService;
     @Autowired
     protected VoApiDefaultClient voApiClient; // VoyageOne共通API
 
@@ -152,15 +151,6 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             // 品牌mapping表
             Map<String, String> mapBrandMapping = new HashMap<>();
             // --------------------------------------------------------------------------------------------
-            // 自定义属性列表 - 店铺级共通 (属性)
-            List<String> feedCustomProp = null;
-            // 自定义属性列表 - 非共通 (类目path, 属性列表)
-            Map<String, List<String>> feedCustomProp_not_common = null;
-            // 自定义翻译 - 店铺级共通 (属性, 翻译)
-            Map<String, String> feedCustomPropValue_common = null;
-            // 自定义翻译 - 非共通 (类目path, <属性, 翻译>)
-            Map<String, Map<String, String>> feedCustomPropValue_not_common = null;
-            // --------------------------------------------------------------------------------------------
 
             if (feedList.size() > 0) {
                 // --------------------------------------------------------------------------------------------
@@ -180,14 +170,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                     }
                 }
                 // --------------------------------------------------------------------------------------------
-                // 自定义属性列表 - 店铺级共通 (属性)
-                feedCustomProp = feedCustomPropDao.getList_common(channelId);
-                // 自定义属性列表 - 非共通 (类目path, 属性列表)
-                feedCustomProp_not_common = feedCustomPropDao.getList_not_common(channelId);
-                // 自定义翻译 - 店铺级共通 (属性, 翻译)
-                feedCustomPropValue_common = feedCustomPropValueDao.getList_common(channelId);
-                // 自定义翻译 - 非共通 (类目path, <属性, 翻译>)
-                feedCustomPropValue_not_common = feedCustomPropValueDao.getList_not_common(channelId);
+                // 自定义属性 - 初始化
+                customPropService.doInit(channelId);
                 // --------------------------------------------------------------------------------------------
             }
 
@@ -197,12 +181,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 // 注意: 保存单条数据到主数据的时候, 由于要生成group数据, group数据的生成需要检索数据库进行一系列判断
                 //       所以单个渠道的数据, 最好不要使用多线程, 如果以后一定要加多线程的话, 注意要自己写带锁的代码.
                 feed.setFullAttribute();
-                doSaveProductMainProp(feed, channelId, mapBrandMapping
-                        , feedCustomProp
-                        , feedCustomProp_not_common
-                        , feedCustomPropValue_common
-                        , feedCustomPropValue_not_common
-                );
+                doSaveProductMainProp(feed, channelId, mapBrandMapping);
             }
 
             logger.info(channel.getFull_name() + "产品导入主数据结束");
@@ -214,19 +193,11 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
          * @param feed 商品信息
          * @param channelId channel id
          * @param mapBrandMapping 品牌mapping一览
-         * @param feedCustomProp 自定义属性列表 - 店铺级共通 (属性)
-         * @param feedCustomProp_not_common 自定义属性列表 - 非共通 (类目path, 属性列表)
-         * @param feedCustomPropValue_common 自定义翻译 - 店铺级共通 (属性, 翻译)
-         * @param feedCustomPropValue_not_common 自定义翻译 - 非共通 (类目path, <属性, 翻译>)
          */
         private void doSaveProductMainProp(
                 CmsBtFeedInfoModel feed
                 , String channelId
                 , Map<String, String> mapBrandMapping
-                , List<String> feedCustomProp
-                , Map<String, List<String>> feedCustomProp_not_common
-                , Map<String, String> feedCustomPropValue_common
-                , Map<String, Map<String, String>> feedCustomPropValue_not_common
         ) {
             // feed类目名称
             String feedCategory = feed.getCategory();
@@ -312,15 +283,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
             } else {
                 // 不存在的场合, 新建一个product
-                cmsProduct = doCreateCmsBtProductModel(
-                        feed
-                        , mapping
-                        , mapBrandMapping
-                        , feedCustomProp
-                        , feedCustomProp_not_common
-                        , feedCustomPropValue_common
-                        , feedCustomPropValue_not_common
-                );
+                cmsProduct = doCreateCmsBtProductModel(feed, mapping, mapBrandMapping);
                 if (cmsProduct == null) {
                     // 有出错, 跳过
                     logger.error(getTaskName() + ":新增:编辑商品的时候出错:" + feed.getChannelId() + ":" + feed.getCode());
@@ -344,10 +307,9 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             doSaveItemDetails(channelId, cmsProduct.getProdId(), feed);
 
             // 更新price_log信息
-            // TODO:更新price_log信息 -> 共通代码里会处理的,我这边就不需要写了
+            // 更新price_log信息 -> 共通代码里会处理的,我这边就不需要写了
             // 更新product_log信息
-            // TODO:更新product_log信息 -> 还要不要写呢? 状态变化的话,共通代码里已经有了,其他的变化,这里是否要更新进去? 应该不用了吧.
-//            cms_bt_product_log
+            // 更新product_log信息 -> 还要不要写呢? 状态变化的话,共通代码里已经有了,其他的变化,这里是否要更新进去? 应该不用了吧.
 
             // 设置商品更新完成
             feed.setUpdFlg(1);
@@ -414,20 +376,12 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
          * @param feed feed的商品信息
          * @param mapping feed与main的匹配关系
          * @param mapBrandMapping 品牌mapping一览
-         * @param feedCustomProp 自定义属性列表 - 店铺级共通 (属性)
-         * @param feedCustomProp_not_common 自定义属性列表 - 非共通 (类目path, 属性列表)
-         * @param feedCustomPropValue_common 自定义翻译 - 店铺级共通 (属性, 翻译)
-         * @param feedCustomPropValue_not_common 自定义翻译 - 非共通 (类目path, <属性, 翻译>)
          * @return 一个新的product的内容
          */
         private CmsBtProductModel doCreateCmsBtProductModel(
                 CmsBtFeedInfoModel feed
                 , CmsBtFeedMappingModel mapping
                 , Map<String, String> mapBrandMapping
-                , List<String> feedCustomProp
-                , Map<String, List<String>> feedCustomProp_not_common
-                , Map<String, String> feedCustomPropValue_common
-                , Map<String, Map<String, String>> feedCustomPropValue_not_common
         ) {
             if (skip_mapping_check) {
                 // 如果允许条股检查的场合, 说明是正在执行旧系统迁移到新系统
@@ -496,32 +450,6 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             CmsBtProductModel_Group group = new CmsBtProductModel_Group();
 
 //            // 价格区间设置 ( -> 调用顾步春的api自动会去设置,这里不需要设置了)
-//            Double minMsrp = 99999999.99; // 九千九百九十九万 九千九百九十九 点 九九
-//            Double maxMsrp = 0.0;
-//            Double minRetail = 99999999.99; // 九千九百九十九万 九千九百九十九 点 九九
-//            Double maxRetail = 0.0;
-////            Double minSale = 99999999.99; // 九千九百九十九万 九千九百九十九 点 九九
-////            Double maxSale = 0.0;
-//            for (CmsBtProductModel_Sku sku : mainSkuList) {
-//                Double nowMsrp = sku.getPriceMsrp();
-//                Double nowRetail = sku.getPriceRetail();
-////                Double nowSale = sku.getPriceSale();
-//
-//                if (nowMsrp < minMsrp) minMsrp = nowMsrp;
-//                if (nowMsrp > maxMsrp) maxMsrp = nowMsrp;
-//
-//                if (nowRetail < minRetail) minRetail = nowRetail;
-//                if (nowRetail > maxRetail) maxRetail = nowRetail;
-//
-////                if (nowSale < minSale) minSale = nowSale;
-////                if (nowSale > maxSale) maxSale = nowSale;
-//            }
-//            group.setMsrpStart(minMsrp);
-//            group.setMsrpEnd(maxMsrp);
-//            group.setRetailPriceStart(minRetail);
-//            group.setRetailPriceEnd(maxRetail);
-////            group.setSalePriceStart(minSale);
-////            group.setSalePriceEnd(maxSale);
 
             // 获取当前channel, 有多少个platform
             List<TypeChannelBean> typeChannelBeanList = TypeChannel.getTypeListSkuCarts(feed.getChannelId(), "D", "en"); // 取得展示用数据
@@ -589,56 +517,40 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             // --------- 商品Feed信息设定 ------------------------------------------------------
             BaseMongoMap mainFeedOrgAtts = new BaseMongoMap();
             List<String> mainFeedOrgAttsKeyList = new ArrayList<>(); // 等待翻译的key
+            List<String> mainFeedOrgAttsKeyCnList = new ArrayList<>(); // 等待翻译的key的中文
             List<String> mainFeedOrgAttsValueList = new ArrayList<>(); // 等待翻译的value
             // 遍历所有的feed属性
+            List<CmsBtFeedCustomPropModel> feedCustomPropList = customPropService.getPropList(feed.getChannelId(), feed.getCategory());
+            Map<String, String> feedCustomProp = new HashMap<>();
+            for (CmsBtFeedCustomPropModel propModel : feedCustomPropList) {
+                feedCustomProp.put(propModel.getFeed_prop_original(), propModel.getFeed_prop_translation());
+            }
             for (Map.Entry<String,Object> attr : feed.getFullAttribute().entrySet() ) {
                 String valString = String.valueOf(attr.getValue());
 
                 // 看看这个字段是否需要翻译
-                if (feedCustomProp.contains(attr.getKey())) {
+                if (feedCustomProp.containsKey(attr.getKey())) {
                     // 原始语言
                     mainFeedOrgAtts.setAttribute(attr.getKey(), valString);
 
                     // 放到list里, 用来后面的程序翻译用
                     mainFeedOrgAttsKeyList.add(attr.getKey());
+                    mainFeedOrgAttsKeyCnList.add(feedCustomProp.get(attr.getKey()));
                     mainFeedOrgAttsValueList.add(valString);
-                } else {
-                    // 共通里没有的场合, 看看有没有根据feed category的
-                    if (feedCustomProp_not_common.containsKey(feed.getCategory())) {
-                        if (feedCustomProp_not_common.get(feed.getCategory()).contains(attr.getKey())) {
-                            // 原始语言
-                            mainFeedOrgAtts.setAttribute(attr.getKey(), valString);
-
-                            // 放到list里, 用来后面的程序翻译用
-                            mainFeedOrgAttsKeyList.add(attr.getKey());
-                            mainFeedOrgAttsValueList.add(valString);
-                        }
-                    }
                 }
             }
             for (Map.Entry<String,List<String>> attr : feed.getAttribute().entrySet() ) {
                 String valString = Joiner.on(", ").skipNulls().join(attr.getValue());
 
                 // 看看这个字段是否需要翻译
-                if (feedCustomProp.contains(attr.getKey())) {
+                if (feedCustomProp.containsKey(attr.getKey())) {
                     // 原始语言
                     mainFeedOrgAtts.setAttribute(attr.getKey(), valString);
 
                     // 放到list里, 用来后面的程序翻译用
                     mainFeedOrgAttsKeyList.add(attr.getKey());
+                    mainFeedOrgAttsKeyCnList.add(feedCustomProp.get(attr.getKey()));
                     mainFeedOrgAttsValueList.add(valString);
-                } else {
-                    // 共通里没有的场合, 看看有没有根据feed category的
-                    if (feedCustomProp_not_common.containsKey(feed.getCategory())) {
-                        if (feedCustomProp_not_common.get(feed.getCategory()).contains(attr.getKey())) {
-                            // 原始语言
-                            mainFeedOrgAtts.setAttribute(attr.getKey(), valString);
-
-                            // 放到list里, 用来后面的程序翻译用
-                            mainFeedOrgAttsKeyList.add(attr.getKey());
-                            mainFeedOrgAttsValueList.add(valString);
-                        }
-                    }
                 }
             }
             // 增加一个modelCode(来源是feed的field的model, 无需翻译)
@@ -650,39 +562,13 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             // 翻译成中文
             BaseMongoMap mainFeedCnAtts = new BaseMongoMap();
 
-            // 翻译成中文
-            // 翻译用的数据准备
-            Map<String, String> traslate = feedCustomPropValue_common; // 默认全部用当前店铺共通的
-            {
-                // 看看当前feed category path是否有特殊的内容
-                if (feedCustomPropValue_not_common.containsKey(feed.getCategory())) {
-                    // 有特殊的场合, 直接覆盖掉
-                    traslate.putAll(feedCustomPropValue_not_common.get(feed.getCategory()));
-                }
-            }
-
-            // 先自己用属性值的翻译表翻译一遍
-            for (int i = 0; i < mainFeedOrgAttsValueList.size(); i++) {
-                String value = mainFeedOrgAttsValueList.get(i);
-
-                for (Map.Entry entry : traslate.entrySet()) {
-                    String key = entry.getKey().toString();
-                    String val = entry.getValue().toString();
-
-                    value = value.replaceAll(key, val);
-                }
-
-                mainFeedOrgAttsValueList.set(i, value);
-            }
-
-            // TOM 测试的时候不要翻译, 节约额度, 等正式运行的时候是需要放开的 START
             // 调用百度翻译
-            List<String> mainFeedCnAttsValueList;
+            List<String> mainFeedCnAttsBaidu; // 给百度翻译用来存放翻译结果用的
             try {
-                mainFeedCnAttsValueList = BaiduTranslateUtil.translate(mainFeedOrgAttsValueList);
+                mainFeedCnAttsBaidu = BaiduTranslateUtil.translate(mainFeedOrgAttsValueList);
 
                 for (int i = 0; i < mainFeedOrgAttsKeyList.size(); i++) {
-                    mainFeedCnAtts.setAttribute(mainFeedOrgAttsKeyList.get(i), mainFeedCnAttsValueList.get(i));
+                    mainFeedCnAtts.setAttribute(mainFeedOrgAttsKeyList.get(i), mainFeedCnAttsBaidu.get(i));
                 }
             } catch (Exception e) {
                 // 翻译失败的场合,全部设置为空, 运营自己翻译吧
@@ -690,13 +576,55 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                     mainFeedCnAtts.setAttribute(aMainFeedOrgAttsKeyList, "");
                 }
             }
-            // TOM 测试的时候不要翻译, 节约额度, 等正式运行的时候是需要放开的 END
+
+            // 等百度翻译完成之后, 再自己根据customPropValue表里的翻译再翻译一次, 因为百度翻译的内容可能不是很适合某些专业术语
+            {
+                // 最终存放的地方(中文): mainFeedCnAtts
+                // 属性名列表(英文): mainFeedOrgAttsKeyList
+                // 属性值列表(英文): mainFeedOrgAttsValueList
+                for (int i = 0; i < mainFeedOrgAttsKeyList.size(); i++) {
+                    String strTrans = customPropService.getPropTrans(
+                            feed.getChannelId(),
+                            feed.getCategory(),
+                            mainFeedOrgAttsKeyList.get(i),
+                            mainFeedOrgAttsValueList.get(i));
+                    // 如果有定义过的话, 那么就用翻译过的
+                    if (!StringUtils.isEmpty(strTrans)) {
+                        mainFeedCnAtts.setAttribute(mainFeedOrgAttsKeyList.get(i), strTrans);
+                        continue;
+                    }
+
+                    // ------------------------------------------------------------------------
+                    // 看看是否属于不想翻译的, 如果是不想翻译的内容, 那就直接用英文还原
+                    //   TODO: 目前能想到的就是(品牌)(全数字)(含有英寸的), 如果以后店铺开得多了知道得比较全面了之后, 这段要共通出来的
+                    // ------------------------------------------------------------------------START
+                    // 看看是否是品牌
+                    if ("brand".equals(mainFeedOrgAttsKeyList.get(i))) {
+                        mainFeedCnAtts.setAttribute(mainFeedOrgAttsKeyList.get(i), mainFeedOrgAttsValueList.get(i));
+                        continue;
+                    }
+                    // 看看是否是数字
+                    if (StringUtils.isNumeric(mainFeedOrgAttsValueList.get(i))) {
+                        mainFeedCnAtts.setAttribute(mainFeedOrgAttsKeyList.get(i), mainFeedOrgAttsValueList.get(i));
+                        continue;
+                    }
+                    // 看看字符串里是否包含英寸
+                    if (mainFeedOrgAttsValueList.get(i).contains("inches")) {
+                        mainFeedCnAtts.setAttribute(mainFeedOrgAttsKeyList.get(i), mainFeedOrgAttsValueList.get(i));
+                        continue;
+                    }
+                    // ------------------------------------------------------------------------END
+
+                }
+            }
+
             // 增加一个modelCode(来源是feed的field的model, 无需翻译)
             mainFeedCnAtts.setAttribute("modelCode", feed.getModel());
             mainFeedCnAtts.setAttribute("categoryCode", feed.getCategory());
             product.getFeed().setCnAtts(mainFeedCnAtts);
 
-            product.getFeed().setCustomIds(mainFeedOrgAttsKeyList);
+            product.getFeed().setCustomIds(mainFeedOrgAttsKeyList); // 自定义字段列表
+            product.getFeed().setCustomIdsCn(mainFeedOrgAttsKeyCnList); // 自定义字段列表(中文)
 
             return product;
         }
