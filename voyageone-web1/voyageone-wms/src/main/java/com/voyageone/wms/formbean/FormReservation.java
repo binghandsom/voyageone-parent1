@@ -24,6 +24,7 @@ public class FormReservation extends AjaxRequestBean {
 	private String reservation_id;
 	private String order_number;
 	private String sku;
+    private String barcode;
 	private String product;
 	private String store_name;
 	private String store_id;
@@ -496,7 +497,15 @@ public class FormReservation extends AjaxRequestBean {
 		this.client_sku = client_sku;
 	}
 
-	@Override
+    public String getBarcode() {
+        return barcode;
+    }
+
+    public void setBarcode(String barcode) {
+        this.barcode = barcode;
+    }
+
+    @Override
 	protected String[] getValidateSorts() {
 		// TODO Auto-generated method stub
 		return null;

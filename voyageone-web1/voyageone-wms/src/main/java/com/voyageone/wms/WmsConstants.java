@@ -1,9 +1,6 @@
 package com.voyageone.wms;
 
 
-import java.util.HashMap;
-import java.util.Map;
-
 public final class WmsConstants {
 
     public final static class Return {
@@ -251,6 +248,44 @@ public final class WmsConstants {
                 public final static int COLNUM_TRACKING_NO = 12;
                 public final static int COLNUM_NOTES = 13;
                 public final static int COLNUM_SESSION_STATUS = 14;
+            }
+        }
+
+        // 库存一览模板配置
+        public final static class InvListRpt {
+            public final static String TEMPLATE_PATH = "wms.report.template.path";
+            public final static String TEMPLATE_NAME = "invListRptTemplate.xlsx";
+            public final static String RPT_NAME = "SalesInventoryList";
+            public final static String RPT_SUFFIX = ".xlsx";
+
+            public final static class RptType1 {
+                public final static String RPT_SHEET_NAME = "SalesInventoryListBySku";
+                public final static int TEMPLATE_SHEET_NO = 0;
+                public final static int TEMPLATE_FIRSTROW_NO = 2;
+                public final static int START = 0;
+                public final static int COLNUM = 5;
+
+                public final static class Col {
+                    public final static int COLNUM_CHANNEL_NAME = 0;
+                    public final static int COLNUM_CODE = 1;
+                    public final static int COLNUM_SKU = 2;
+                    public final static int COLNUM_BARCODE = 3;
+                    public final static int COLNUM_QTY = 4;
+                }
+            }
+
+            public final static class RptType2 {
+                public final static String RPT_SHEET_NAME = "SalesInventoryListByCode";
+                public final static int TEMPLATE_SHEET_NO = 1;
+                public final static int TEMPLATE_FIRSTROW_NO = 2;
+                public final static int START = 0;
+                public final static int COLNUM = 3;
+
+                public final static class Col {
+                    public final static int COLNUM_CHANNEL_NAME = 0;
+                    public final static int COLNUM_CODE = 1;
+                    public final static int COLNUM_QTY = 2;
+                }
             }
         }
 
