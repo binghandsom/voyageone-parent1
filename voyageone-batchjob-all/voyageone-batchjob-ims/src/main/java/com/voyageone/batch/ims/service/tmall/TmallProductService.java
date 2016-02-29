@@ -1754,7 +1754,7 @@ public class TmallProductService implements PlatformServiceInterface {
                 String propValue = propValueBean.getProp_value();
                 //如果有值，那么直接使用该表中的表达式值
                 if (propValue != null && !"".equals(propValue)) {
-                        RuleExpression ruleExpression = ruleJsonMapper.deserializeRuleExpression(propValue);
+                    RuleExpression ruleExpression = ruleJsonMapper.deserializeRuleExpression(propValue);
                     if (ruleExpression == null)
                     {
                         String error = "master prop[id=" + masterPropMapping.getPropId() + "]'s value is illegal! value=" + propValue;
@@ -1767,7 +1767,7 @@ public class TmallProductService implements PlatformServiceInterface {
                     }
                 }
                 else
-                 continue;//如果没有值，那么要看主数据属性表中是否有默认值,如果有,则使用默认值
+                    continue;//如果没有值，那么要看主数据属性表中是否有默认值,如果有,则使用默认值
                 //暂时认为默认值由保存数据时考虑
                 /*
                 else {

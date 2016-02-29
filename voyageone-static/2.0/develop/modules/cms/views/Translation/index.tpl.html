@@ -1,4 +1,4 @@
-<div class="wrapper-md" ng-init="initialize()">
+<div class="wrapper-md" ng-controller="translationDetailController as ctrl" ng-init="ctrl.initialize()">
 	<div class="vo_accordion vo_attr">
 		<div class="panel-group">
 			<div class="panel panel-default">
@@ -12,46 +12,73 @@
 								<div class="form-group">
 									<label class="col-sm-4 control-label">个人完成翻译数</label>
 									<div class="col-sm-7">
-										<input type="text" class="form-control" placeholder="56948" disabled>
+										<input type="text" class="form-control" placeholder="{{ctrl.userDoneCount}}" disabled>
 									</div>
 								</div>
-								<div class="form-group">
-									<label class="col-sm-4 control-label">分发规则</label>
-									<div class="col-sm-7">
-										<label class="checkbox-inline c-checkbox">
-											<input type="checkbox" value="option1"><span class="fa fa-check"></span>  主商品
-										</label>
-										<label class="checkbox-inline c-checkbox">
-											<input type="checkbox" value="option2"><span class="fa fa-check"></span>  全部商品
-										</label>
-									</div>
-								</div>
-							</form>
-							<!-- .form -->
-						</div>
-						<div class="col-sm-4">
-							<form class="form-horizontal">
-								<div class="form-group">
-									<label class="col-sm-4 control-label">完成翻译总数</label>
-									<div class="col-sm-7">
-										<input type="text" class="form-control" placeholder="1547963" disabled>
-									</div>
-								</div>
-								<div class="form-group">
-									<label class="col-sm-4 control-label">Search</label>
-									<div class="col-sm-7">
-										<input type="text" class="form-control">
-									</div>
-								</div>
-							</form>
-							<!-- .form -->
-						</div>
-						<div class="col-sm-4">
-							<form class="form-horizontal">
 								<div class="form-group">
 									<label class="col-sm-4 control-label">待翻译总数</label>
 									<div class="col-sm-7">
-										<input type="text" class="form-control" placeholder="348965" disabled>
+										<input type="text" class="form-control" placeholder="{{ctrl.totalUndoneCount}}" disabled>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-4 control-label">完成翻译总数</label>
+									<div class="col-sm-7">
+										<input type="text" class="form-control" placeholder="{{ctrl.totalDoneCount}}" disabled>
+									</div>
+								</div>
+							</form>
+							<!-- .form -->
+						</div>
+						<div class="col-sm-4">
+							<form class="form-horizontal">
+								<div class="form-group">
+									<label class="col-sm-4 control-label">分发规则</label>
+									<div class="col-sm-7" style="padding-left:0px">
+										<label class="checkbox-inline c-radio">
+											<input type="radio" ng-model="ctrl.distributeRule" value="0"><span class="fa fa-check"></span>  全部商品
+										</label>
+										<label class="checkbox-inline c-radio">
+											<input type="radio" ng-model="ctrl.distributeRule" value="1"><span class="fa fa-check"></span>  主商品
+										</label>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-4 control-label">排序条件</label>
+									<div class="col-sm-7">
+										<select class="form-control" ng-model="ctrl.sortCondition">
+											<option value="">-- 选择排序条件 --</option>
+											<option ng-repeat="option in ctrl.sortFieldOptions" value="{{option.value}}">{{option.name}}</option>
+										</select>
+									</div>
+ 								</div>
+								<div class="form-group" ng-if="ctrl.sortCondition != null && ctrl.sortCondition !=''">
+									<label class="col-sm-4 control-label">排序规则</label>
+									<div class="col-sm-7" style="padding-left:0px">
+										<label class="checkbox-inline c-radio">
+											<input type="radio" ng-model="ctrl.sortRule" value="true"><span class="fa fa-check"></span>  升序
+										</label>
+										<label class="checkbox-inline c-radio">
+											<input type="radio" ng-model="ctrl.sortRule" value="false"><span class="fa fa-check"></span>  降序
+										</label>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-4 control-label">获取任务数量</label>
+									<div class="col-sm-7">
+										<input type="text" class="form-control" ng-model="ctrl.distributeCount">
+									</div>
+								</div>
+							</form>
+							<!-- .form -->
+						</div>
+						<div class="col-sm-4">
+							<form class="form-horizontal">
+								<div class="form-group">
+									<label class="col-sm-1 control-label"></label>
+									<div class="form-inline col-sm-10">
+										<input type="text" ng-model="ctrl.searchCondition"  class="form-control col-sm-10">
+										<span class="input-group-btn"><button class="btn btn-vo"  ng-click="ctrl.searchHistoryTasks(ctrl)" type="button" ><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}</button></span>
 									</div>
 								</div>
 							</form>
@@ -59,9 +86,9 @@
 						</div>
 						<div class="col-sm-12 text-center m-t-xs m-b-sm">
 							<div class="form-inline">
-								<button class="btn btn-default" ng-click="clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR' | translate}}</button>
-								<button class="btn btn-vo" ng-click="search()"><i class="fa fa-search"></i> Search</button>
-								<button class="btn btn-success"><i class="glyphicon glyphicon-check"></i> 分发任务</button>
+								<button class="btn btn-default" ng-click="ctrl.clearConditions()"><i class="fa fa-remove"></i> 清空</button>
+								<!--<button class="btn btn-vo" ng-click="ctrl.searchHistoryTasks(ctrl)"><i class="fa fa-search"></i> Search</button>-->
+								<button class="btn btn-success" ng-click="ctrl.assignTasks(ctrl)"><i class="glyphicon glyphicon-check"></i> 获取任务</button>
 							</div>
 							<!-- .form-inline -->
 						</div>
@@ -73,7 +100,7 @@
 	</div>
 	<div class="box">
 		<div class="box-body">
-			<table class="table table-hover-new table-hover" ng-controller="popupCtrl">
+			<table class="table table-hover-new table-hover">
 				<thead>
 				<tr>
 					<th class="text-center">Seq.</th>
@@ -85,103 +112,66 @@
 					<th class="text-center">Action</th>
 				</tr>
 				</thead>
-				<tbody>
-				<tr>
-					<td class="text-center">1</td>
-					<td class="text-center mfb-x text-u-l"><a ng-click="openTranslate('md')">1100112</a>
-						<img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/snusa-detail_20?$650$&$img=sneakerhead/air-jordan-1-retro-high-839115-839115013-1"  alt="" class="thumb-lg pull-left"/>
-					</td>
-					<td class="text-left">Crystaluxe Stud Earrings with Swarovski Crystals in Sterling Silver</td>
-					<td class="text-center"><textarea class="form-control" rows="6"></textarea></td>
-					<td class="text-center"><textarea class="form-control" rows="6"></textarea></td>
-					<td class="text-center"><textarea class="form-control" rows="6"></textarea></td>
-					<td class="text-center ">
-						<button title="从主数据拷贝" class="btn btn-default btn-xs m-b-xs"><i class="fa fa-cloud-download"></i> 从主数据完全拷贝</button>
-						<br/>
-						<button title="保存" class="btn btn-vo btn-xs"><i class="glyphicon glyphicon-floppy-disk"></i> 保存</button>
-						<button title="完成" class="btn btn-success btn-xs"><i class="glyphicon glyphicon-star"></i> 完成</button>
-					</td>
-				</tr>
-				<tr>
-					<td class="text-center" style="border-top:0px"></td>
-					<td class="text-center mfb-x" style="border-top:0px"></td>
-					<td class="text-left" style="border-top:0px">Classic with a touch of glamor, illuminate your everyday look with these stud earrings. Two 9 mm round, faceted Swarovski crystals are set in textured sterling silver. Pieces measure 5/16 by 5/16 inches.</td>
-					<td class="text-center" colspan="3" style="border-top:0px"><textarea class="form-control" rows="6"></textarea></td>
-					<td class="text-center" style="border-top:0px">
-					</td>
-				</tr>
-				<tr>
-					<td class="text-center" style="border-top:0px"></td>
-					<td class="text-center mfb-x" style="border-top:0px"></td>
-					<td class="text-left" style="border-top:0px">Classic with a touch of glamor, illuminate your everyday look with these stud earrings. Two 9 mm round, faceted Swarovski crystals are set in textured sterling silver. Pieces measure 5/16 by 5/16 inches.</td>
-					<td class="text-center" colspan="3" style="border-top:0px"><textarea class="form-control" rows="6"></textarea></td>
-					<td class="text-center" style="border-top:0px">
-					</td>
-				</tr>
-				<tr>
-					<td class="text-center">2</td>
-					<td class="text-center mfb-x text-u-l"><a ng-click="openTranslate('md')">1100112</a>
-					<img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/snusa-detail_20?$650$&$img=sneakerhead/air-jordan-1-retro-high-839115-839115013-1"  alt="" class="thumb-lg pull-left"/>
-				</td>
-					<td class="text-left">Crystaluxe Stud Earrings with Swarovski Crystals in Sterling Silver</td>
-					<td class="text-center"><textarea class="form-control" rows="6"></textarea></td>
-					<td class="text-center"><textarea class="form-control" rows="6"></textarea></td>
-					<td class="text-center"><textarea class="form-control" rows="6"></textarea></td>
-					<td class="text-center ">
-						<button title="从主数据拷贝" class="btn btn-default btn-xs m-b-xs"><i class="fa fa-cloud-download"></i> 从主数据完全拷贝</button>
-						<br/>
-						<button title="保存" class="btn btn-vo btn-xs"><i class="glyphicon glyphicon-floppy-disk"></i> 保存</button>
-						<button title="完成" class="btn btn-success btn-xs"><i class="glyphicon glyphicon-star"></i> 完成</button>
-					</td>
-				</tr>
-				<tr>
-					<td class="text-center" style="border-top:0px"></td>
-					<td class="text-center mfb-x" style="border-top:0px"></td>
-					<td class="text-left" style="border-top:0px">Classic with a touch of glamor, illuminate your everyday look with these stud earrings. Two 9 mm round, faceted Swarovski crystals are set in textured sterling silver. Pieces measure 5/16 by 5/16 inches.</td>
-					<td class="text-center" colspan="3" style="border-top:0px"><textarea class="form-control" rows="6"></textarea></td>
-					<td class="text-center" style="border-top:0px">
-					</td>
-				</tr>
-				<tr>
-					<td class="text-center" style="border-top:0px"></td>
-					<td class="text-center mfb-x" style="border-top:0px"></td>
-					<td class="text-left" style="border-top:0px">Classic with a touch of glamor, illuminate your everyday look with these stud earrings. Two 9 mm round, faceted Swarovski crystals are set in textured sterling silver. Pieces measure 5/16 by 5/16 inches.</td>
-					<td class="text-center" colspan="3" style="border-top:0px"><textarea class="form-control" rows="6"></textarea></td>
-					<td class="text-center" style="border-top:0px">
-					</td>
-				</tr>
-				<tr>
-					<td class="text-center">3</td>
-					<td class="text-center mfb-x text-u-l"><a ng-click="openTranslate('md')">1100112</a>
-						<img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/snusa-detail_20?$650$&$img=sneakerhead/air-jordan-1-retro-high-839115-839115013-1"  alt="" class="thumb-lg pull-left"/>
-					</td>
-					<td class="text-left">Crystaluxe Stud Earrings with Swarovski Crystals in Sterling Silver</td>
-					<td class="text-center"><textarea class="form-control" rows="6"></textarea></td>
-					<td class="text-center"><textarea class="form-control" rows="6"></textarea></td>
-					<td class="text-center"><textarea class="form-control" rows="6"></textarea></td>
-					<td class="text-center ">
-						<button title="从主数据拷贝" class="btn btn-default btn-xs m-b-xs"><i class="fa fa-cloud-download"></i> 从主数据完全拷贝</button>
-						<br/>
-						<button title="保存" class="btn btn-vo btn-xs"><i class="glyphicon glyphicon-floppy-disk"></i> 保存</button>
-						<button title="完成" class="btn btn-success btn-xs"><i class="glyphicon glyphicon-star"></i> 完成</button>
-					</td>
-				</tr>
-				<tr>
-					<td class="text-center" style="border-top:0px"></td>
-					<td class="text-center mfb-x" style="border-top:0px"></td>
-					<td class="text-left" style="border-top:0px">Classic with a touch of glamor, illuminate your everyday look with these stud earrings. Two 9 mm round, faceted Swarovski crystals are set in textured sterling silver. Pieces measure 5/16 by 5/16 inches.</td>
-					<td class="text-center" colspan="3" style="border-top:0px"><textarea class="form-control" rows="6"></textarea></td>
-					<td class="text-center" style="border-top:0px">
-					</td>
-				</tr>
-				<tr>
-					<td class="text-center" style="border-top:0px"></td>
-					<td class="text-center mfb-x" style="border-top:0px"></td>
-					<td class="text-left" style="border-top:0px">Classic with a touch of glamor, illuminate your everyday look with these stud earrings. Two 9 mm round, faceted Swarovski crystals are set in textured sterling silver. Pieces measure 5/16 by 5/16 inches.</td>
-					<td class="text-center" colspan="3" style="border-top:0px"><textarea class="form-control" rows="6"></textarea></td>
-					<td class="text-center" style="border-top:0px">
-					</td>
-				</tr>
+				<tbody ng-repeat = "translationModel in ctrl.productTranslationBeanList">
+					<tr>
+						<td class="text-center">{{$index + 1}}</td>
+						<td class="text-center mfb-x" ng-controller="popupCtrl">
+							<p><a ng-click="openTranslate('md',translationModel)">{{translationModel.productCode}}</a></p>
+							<p><img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{translationModel.productImage}}"  alt="" class="thumb-lg pull-left"/></p>
+							<p class="col-sm-12 text-left text-vo m-t-xs">译者：{{translationModel.translator}}</p>
+						</td>
+						<td class="text-left">{{translationModel.productName}}</td>
+						<td class="text-center">
+							<textarea class="form-control" rows="6" ng-model="translationModel.longTitle" ng-char-maxlength="40" ng-required="required" placeholder="{{'TXT_MSG_LONG_TITLE' | translate}}"></textarea>
+							<div class="text-warnings text-left" style="padding-left:0px">
+								<i class="icon fa fa-bell-o"></i>&nbsp;{{'TXT_MSG_SEARCH_INDEX_FUZZY_SEARCH' | translate}}
+							</div>
+						</td>
+						<td class="text-center">
+							<textarea class="form-control" rows="6" ng-model="translationModel.middleTitle" ng-char-maxlength="30" ng-required="required" placeholder="{{'TXT_MSG_MIDDLE_TITLE' | translate}}"></textarea>
+							<div class="text-warnings text-left" style="padding-left:0px">
+								<i class="icon fa fa-bell-o"></i>&nbsp;{{'TXT_MSG_SEARCH_INDEX_FUZZY_SEARCH' | translate}}
+							</div>
+						</td>
+						<td class="text-center">
+							<textarea class="form-control" rows="6" ng-model="translationModel.shortTitle" ng-char-maxlength="30" ng-required="required" placeholder="{{'TXT_MSG_SHORT_TITLE' | translate}}"></textarea>
+							<div class="text-warnings text-left" style="padding-left:0px">
+								<i class="icon fa fa-bell-o"></i>&nbsp;{{'TXT_MSG_SEARCH_INDEX_FUZZY_SEARCH' | translate}}
+							</div>
+						</td>
+						<td class="text-center">
+							<button title="从已有数据拷贝" class="btn btn-danger btn-xs m-b-xs" ng-click="ctrl.copyFormMainProduct(translationModel,$index)"><i class="fa fa-cloud-download"></i> 从已有数据拷贝</button>
+							<br/>
+							<button title="保存" class="btn btn-vo btn-xs" ng-click="ctrl.saveTask(translationModel,$index)"><i class="glyphicon glyphicon-floppy-disk"></i> 保存</button>
+							<button title="完成" class="btn btn-success btn-xs" ng-click="ctrl.submitTask(translationModel,$index)"><i class="glyphicon glyphicon-star"></i> 完成</button>
+						</td>
+					</tr>
+					<tr>
+						<td class="text-center" style="border-top:0px"></td>
+						<td class="text-center mfb-x" style="border-top:0px"></td>
+						<td class="text-left" style="border-top:0px">{{translationModel.longDescription}}</td>
+						<td class="text-center" colspan="3" style="border-top:0px">
+							<textarea class="form-control" rows="6" ng-model="translationModel.longDesCn" ng-char-maxlength="60" ng-required="required" placeholder="{{'TXT_MSG_LONG_DESCRIPTION' | translate}}"></textarea>
+							<div class="text-warnings text-left" style="padding-left:0px">
+								<i class="icon fa fa-bell-o"></i>&nbsp;{{'TXT_MSG_SEARCH_INDEX_FUZZY_SEARCH' | translate}}
+							</div>
+						</td>
+						<td class="text-center" style="border-top:0px">
+						</td>
+					</tr>
+					<tr>
+						<td class="text-center" style="border-top:0px"></td>
+						<td class="text-center mfb-x" style="border-top:0px"></td>
+						<td class="text-left" style="border-top:0px" ng-model="translationModel.shortDescription"></td>
+						<td class="text-center" colspan="3" style="border-top:0px">
+							<textarea class="form-control" rows="6" ng-model="translationModel.shortDesCn" ng-char-maxlength="40" ng-required="required" placeholder="{{'TXT_MSG_SHORT_DESCRIPTION' | translate}}"></textarea>
+							<div class="text-warnings text-left" style="padding-left:0px">
+								<i class="icon fa fa-bell-o"></i>&nbsp;{{'TXT_MSG_SEARCH_INDEX_FUZZY_SEARCH' | translate}}
+							</div>
+						</td>
+						<td class="text-center" style="border-top:0px">
+						</td>
+					</tr>
 				</tbody>
 			</table>
 			<div class="col-sm-12 m-t-xs">

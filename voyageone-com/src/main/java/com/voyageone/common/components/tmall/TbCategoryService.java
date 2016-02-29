@@ -128,7 +128,7 @@ public class TbCategoryService extends TbBase {
         TmallProductAddSchemaGetRequest request = new TmallProductAddSchemaGetRequest();
         request.setCategoryId(cid);
         TmallProductAddSchemaGetResponse response = reqTaobaoApi(shop, request);
-        if (response.getErrorCode() == null) {
+        if (response!=null && response.getErrorCode() == null) {
             // 设置返回值
             return response.getAddProductRule();
         } else if (response != null){

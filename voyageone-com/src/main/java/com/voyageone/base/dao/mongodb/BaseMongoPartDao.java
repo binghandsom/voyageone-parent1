@@ -86,6 +86,11 @@ public abstract class BaseMongoPartDao extends BaseJomgoDao {
         return mongoTemplate.findById(id, (Class<T>) entityClass, collectionName);
     }
 
+    public <T> T findAndModify(JomgoUpdate updateObject, String channelId) {
+        String collectionName = mongoTemplate.getCollectionName(this.collectionName, channelId);
+        return mongoTemplate.findAndModify(updateObject, (Class<T>) entityClass, collectionName);
+    }
+
     public long count(String channelId) {
         String collectionName = mongoTemplate.getCollectionName(this.collectionName, channelId);
         return mongoTemplate.count(collectionName);
@@ -112,4 +117,13 @@ public abstract class BaseMongoPartDao extends BaseJomgoDao {
         return mongoTemplate.remove(strQuery, collectionName);
     }
 
+    public WriteResult updateFirst(String channelId, String strQuery, String strUpdate) {
+        String collectionName = mongoTemplate.getCollectionName(this.collectionName, channelId);
+        return mongoTemplate.updateFirst(strQuery, strUpdate, collectionName);
+    }
+
+    public WriteResult upsertFirst(String channelId, String strQuery, String strUpdate) {
+        String collectionName = mongoTemplate.getCollectionName(this.collectionName, channelId);
+        return mongoTemplate.upsertFirst(strQuery, strUpdate, collectionName);
+    }
 }

@@ -28,6 +28,8 @@ public class PromotionsGetRequest extends VoApiListRequest<PromotionsGetResponse
 	/** promotionId */
 	private Integer promotionId;
 
+	private Boolean promotionStatus;
+
 	private String promotionName;
 
 	private Integer cartId;
@@ -121,5 +123,13 @@ public class PromotionsGetRequest extends VoApiListRequest<PromotionsGetResponse
 
 	public void setCreatedEnd(String createdEnd) {
 		this.createdEnd = createdEnd;
+	}
+
+	public Boolean getPromotionStatus() {
+		return promotionStatus;
+	}
+
+	public void setPromotionStatus(Boolean promotionStatus) {
+		this.promotionStatus = promotionStatus;
 	}
 }

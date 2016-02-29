@@ -17,6 +17,8 @@ public class CmsMtDictModel extends BaseModel {
 
     private String cart_id;
 
+    private String cartName;
+
     private String name;
 
     private String value;
@@ -45,6 +47,14 @@ public class CmsMtDictModel extends BaseModel {
 
     public void setCart_id(String cart_id) {
         this.cart_id = cart_id;
+    }
+
+    public String getCartName() {
+        return cartName;
+    }
+
+    public void setCartName(String cartName) {
+        this.cartName = cartName;
     }
 
     public String getName() {

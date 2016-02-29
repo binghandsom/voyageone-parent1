@@ -1,23 +1,23 @@
 {
   "home": {
     "hash": "/home",
-    "templateUrl": "views/welcome/index.tpl.html",
-    "controllerUrl": "modules/cms/views/welcome/index.ctl"
+    "templateUrl": "views/home/welcome/index.tpl.html",
+    "controllerUrl": "modules/cms/views/home/welcome/index.ctl"
   },
-  "promotion_list": {
-    "hash": "/promotion/list",
-    "templateUrl": "views/promotion/list.tpl.html",
-    "controllerUrl": "modules/cms/views/promotion/list.ctl"
+  "promotion_index": {
+    "hash": "/promotion/index",
+    "templateUrl": "views/promotion/list/index.tpl.html",
+    "controllerUrl": "modules/cms/views/promotion/list/index.ctl"
   },
   "promotion_detail": {
     "hash": "/promotion/detail/:promotionId",
-    "templateUrl": "views/promotion/detail.tpl.html",
-    "controllerUrl": "modules/cms/views/promotion/detail.ctl"
+    "templateUrl": "views/promotion/list/detail.tpl.html",
+    "controllerUrl": "modules/cms/views/promotion/list/detail.ctl"
   },
-  "promotion_task_list": {
-    "hash": "/promotion/task/list",
-    "templateUrl": "views/promotion/task/list.tpl.html",
-    "controllerUrl": "modules/cms/views/promotion/task/list.ctl"
+  "promotion_task_index": {
+    "hash": "/promotion/task",
+    "templateUrl": "views/promotion/task/index.tpl.html",
+    "controllerUrl": "modules/cms/views/promotion/task/index.ctl"
   },
   "promotion_task_detail": {
     "hash": "/promotion/task/detail",
@@ -25,125 +25,117 @@
     "controllerUrl": "modules/cms/views/promotion/task/detail.ctl"
   },
   "promotion_task_price": {
-    "hash": "/task/price/:promotionId",
-    "templateUrl": "views/task/price.tpl.html",
-    "controllerUrl": "modules/cms/views/task/price.ctl"
+    "url": "/promotion/task/price/",
+    "hash": "/promotion/task/price/:promotionId",
+    "templateUrl": "views/promotion/task/price.tpl.html",
+    "controllerUrl": "modules/cms/views/promotion/task/price.ctl"
   },
-  "search_index": {
-    "hash": "/search/index",
-    "templateUrl": "views/search/index.tpl.html",
-    "controllerUrl": "modules/cms/views/search/index.ctl"
+  "search_advance": {
+    "hash": "/search/advance",
+    "templateUrl": "views/search/advance.tpl.html",
+    "controllerUrl": "modules/cms/views/search/advance.ctl"
   },
-  "search_index_param": {
-    "url": "/search/index/",
-    "hash": "/search/index/:type/:value",
-    "templateUrl": "views/search/index.tpl.html",
-    "controllerUrl": "modules/cms/views/search/index.ctl"
+  "search_advance_param": {
+    "url": "/search/advance/",
+    "hash": "/search/advance/:type/:value",
+    "templateUrl": "views/search/advance.tpl.html",
+    "controllerUrl": "modules/cms/views/search/advance.ctl"
   },
-  "group_list": {
-    "hash": "/group/list/:id",
-    "templateUrl": "views/group/list.tpl.html",
-    "controllerUrl": "modules/cms/views/group/list.ctl"
+  "group_detail": {
+    "hash": "/group/detail/:id",
+    "templateUrl": "views/group/detail.tpl.html",
+    "controllerUrl": "modules/cms/views/group/detail.ctl"
   },
   "product_detail": {
     "hash": "/product/detail/:productId",
     "templateUrl": "views/product/detail.tpl.html",
     "controllerUrl": "modules/cms/views/product/detail.ctl",
-    "controller": "productDetailController"
+    "controller": "productDetailController as ctrl"
   },
-  "setting_feed_mapping_list": {
-    "hash": "/setting/feed_mapping/list",
-    "templateUrl": "views/setting/feed_mapping/list.tpl.html",
-    "controllerUrl": "modules/cms/views/setting/feed_mapping/list.ctl",
-    "controller": "feedMappingController"
+  "mapping_feed_list": {
+    "hash": "/mapping/feed",
+    "templateUrl": "views/mapping/feed/list.tpl.html",
+    "controllerUrl": "modules/cms/views/mapping/feed/list.ctl",
+    "controller": "feedMappingController as $ctrl"
   },
-  "setting_feed_mapping_prop": {
-    "hash": "/setting/feed_mapping/prop/:feedCategoryPath",
-    "templateUrl": "views/setting/feed_mapping/prop.tpl.html",
-    "controllerUrl": "modules/cms/views/setting/feed_mapping/prop.ctl",
-    "controller": "feedPropMappingController"
+  "mapping_feed_prop": {
+    "hash": "/mapping/feed/:feedCategoryPath/:commonFlg",
+    "templateUrl": "views/mapping/feed/prop.tpl.html",
+    "controllerUrl": "modules/cms/views/mapping/feed/prop.ctl",
+    "controller": "feedPropMappingController as $ctrl"
   },
-  "setting_platform_mapping_list": {
-    "hash": "/setting/platform_mapping/list",
-    "templateUrl": "views/setting/platform_mapping/list.tpl.html",
-    "controllerUrl": "modules/cms/views/setting/platform_mapping/list.ctl",
-    "controller": "platformMappingController"
+  "mapping_platform_list": {
+    "hash": "/mapping/platform",
+    "templateUrl": "views/mapping/platform/list.tpl.html",
+    "controllerUrl": "modules/cms/views/mapping/platform/list.ctl",
+    "controller": "platformMappingController as $ctrl"
   },
-  "setting_platform_mapping_prop": {
-    "hash": "/setting/platform_mapping/:cartId/:mainCategoryId",
-    "templateUrl": "views/setting/platform_mapping/prop.list.tpl.html",
-    "controllerUrl": "modules/cms/views/setting/platform_mapping/prop.list.ctl",
-    "controller": "platformPropMappingController"
+  "mapping_platform_prop": {
+    "hash": "/mapping/platform/:cartId/:mainCategoryId",
+    "templateUrl": "views/mapping/platform/prop.list.tpl.html",
+    "controllerUrl": "modules/cms/views/mapping/platform/prop.list.ctl",
+    "controller": "platformPropMappingController as $ctrl"
   },
-  "system_category": {
+  "mapping_dict_index": {
+    "hash": "/mapping/dictionary",
+    "templateUrl": "views/mapping/dictionary/index.tpl.html",
+    "controllerUrl": "modules/cms/views/mapping/dictionary/index.ctl"
+  },
+  "mapping_dict_item_new": {
+    "hash": "/mapping/dictionary/item",
+    "templateUrl": "views/mapping/dictionary/item.tpl.html",
+    "controllerUrl": "modules/cms/views/mapping/dictionary/item.ctl"
+  },
+  "mapping_dict_item_edit": {
+    "url": "/mapping/dictionary/item/",
+    "hash": "/mapping/dictionary/item/:id",
+    "templateUrl": "views/mapping/dictionary/item.tpl.html",
+    "controllerUrl": "modules/cms/views/mapping/dictionary/item.ctl"
+  },
+  "channel_common": {
+    "hash": "/channel/common",
+    "templateUrl": "views/channel/common/attribute.tpl.html",
+    "controllerUrl": "modules/cms/views/channel/common/attribute.ctl"
+  },
+  "channel_custom_attribute": {
+    "hash": "/channel/custom",
+    "templateUrl": "views/channel/custom/attribute.tpl.html",
+    "controllerUrl": "modules/cms/views/channel/custom/attribute.ctl"
+  },
+  "channel_custom_value": {
+    "hash": "/channel/custom/value",
+    "templateUrl": "views/channel/custom/value.tpl.html",
+    "controllerUrl": "modules/cms/views/channel/custom/value.ctl"
+  },
+  "channel_authority": {
+    "hash": "/channel/authority",
+    "templateUrl": "views/channel/authority/authority.tpl.html",
+    "controllerUrl": "modules/cms/views/channel/authority/authority.ctl"
+  },
+  "channel_configuration": {
+    "hash": "/channel/configuration",
+    "templateUrl": "views/channel/configuration/configuration.tpl.html",
+    "controllerUrl": "modules/cms/views/channel/configuration/configuration.ctl"
+  },
+  "translation_index": {
+    "hash": "/translation/index",
+    "templateUrl": "views/translation/index.tpl.html",
+    "controllerUrl": "modules/cms/views/translation/index.ctl",
+    "controller": "translationDetailController"
+  },
+  "system_category_index": {
     "hash": "/system/category",
     "templateUrl": "views/system/category/index.tpl.html",
     "controllerUrl": "modules/cms/views/system/category/index.ctl"
   },
-  "translation": {
-    "hash": "/translation",
-    "templateUrl": "views/translation/index.tpl.html",
-    "controllerUrl": "modules/cms/views/translation/index.ctl"
-  },
   "system_category_edit": {
-    "hash": "/system/category/edit/:catId",
+    "hash": "/system/category/:catId",
     "templateUrl": "views/system/category/edit.tpl.html",
     "controllerUrl": "modules/cms/views/system/category/edit.ctl"
   },
-  "system_category_edit2": {
-    "hash": "/system/category/edit2",
-    "templateUrl": "views/system/category/edit2.tpl.html",
-    "controllerUrl": "modules/cms/views/system/category/edit.ctl"
-  },
-  "system_error_op": {
-    "hash": "/system/error/management/:type",
-    "templateUrl": "views/system/error/management.tpl.html",
-    "controllerUrl": "modules/cms/views/system/error/management.ctl"
-  },
-  "system_error_con": {
-    "hash": "/system/error/management/:type",
-    "templateUrl": "views/system/error/management.tpl.html",
-    "controllerUrl": "modules/cms/views/system/error/management.ctl"
-  },
-  "system_dict_list": {
-    "hash": "/system/dictionary/list",
-    "templateUrl": "views/system/dictionary/index.tpl.html",
-    "controllerUrl": "modules/cms/views/system/dictionary/index.ctl"
-  },
-  "system_dict_item_new": {
-    "hash": "/system/dictionary/item",
-    "templateUrl": "views/system/dictionary/item.tpl.html",
-    "controllerUrl": "modules/cms/views/system/dictionary/item.ctl"
-  },
-  "system_dict_item_edit": {
-    "url": "/system/dictionary/item/",
-    "hash": "/system/dictionary/item/:id",
-    "templateUrl": "views/system/dictionary/item.tpl.html",
-    "controllerUrl": "modules/cms/views/system/dictionary/item.ctl"
-  },
-  "store_common_attribute": {
-    "hash": "/store/common_attribute/",
-    "templateUrl": "views/store/common_attribute.tpl.html",
-    "controllerUrl": "modules/cms/views/store/common_attribute.ctl"
-  },
-  "store_custom_attribute": {
-    "hash": "/store/custom_attribute/",
-    "templateUrl": "views/store/custom_attribute.tpl.html",
-    "controllerUrl": "modules/cms/views/store/custom_attribute.ctl"
-  },
-  "store_authority_management": {
-    "hash": "/store/authority_management/",
-    "templateUrl": "views/store/authority_management.tpl.html",
-    "controllerUrl": "modules/cms/views/store/authority_management.ctl"
-  },
-  "store_custom_translate": {
-    "hash": "/store/custom_translate/",
-    "templateUrl": "views/store/custom_translate.tpl.html",
-    "controllerUrl": "modules/cms/views/store/custom_translate.ctl"
-  },
-  "store_configuration_management": {
-    "hash": "/store/configuration_management/",
-    "templateUrl": "views/store/configuration_management.tpl.html",
-    "controllerUrl": "modules/cms/views/store/configuration_management.ctl"
+  "system_error_list": {
+    "hash": "/system/error/:type",
+    "templateUrl": "views/system/error/list.tpl.html",
+    "controllerUrl": "modules/cms/views/system/error/list.ctl"
   }
 }

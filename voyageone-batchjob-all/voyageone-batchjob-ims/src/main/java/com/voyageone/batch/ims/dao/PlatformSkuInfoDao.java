@@ -20,11 +20,11 @@ public class PlatformSkuInfoDao extends BaseDao{
         Map<String, Object> dataMap = new HashMap<>();
         dataMap.put("prop_id", propId);
         dataMap.put("cart_id", cartId);
-        return selectList(Constants.DAO_NAME_SPACE_IMS + "ims_selectSkuInfoByPropId", dataMap);
+        return selectList(Constants.DAO_NAME_SPACE_CMS + "cms_selectSkuInfoByPropId", dataMap);
     }
 
     public void insertPlatformSkuInfo(PlatformSkuInfoBean tmallSkuInfo)
     {
-        updateTemplate.insert(Constants.DAO_NAME_SPACE_IMS + "ims_insertSkuInfo", tmallSkuInfo);
+        updateTemplate.insert(Constants.DAO_NAME_SPACE_CMS + "cms_insertSkuInfo", tmallSkuInfo);
     }
 }

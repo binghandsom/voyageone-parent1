@@ -24,8 +24,8 @@ import java.util.Map;
  * @version 2.0.0
  */
 @Service
-public class JewelryWsdlInsert extends SearsWsdlBase {
-    private static final String INSERT_FLG = "UpdateFlag = 1";
+public class JewelryWsdlInsert extends JewelryWsdlBase {
+    private static final String INSERT_FLG = "(UpdateFlag = 1 or UpdateFlag = 2)";
 
     @Autowired
     private FeedToCmsService feedToCmsService;
@@ -58,7 +58,7 @@ public class JewelryWsdlInsert extends SearsWsdlBase {
             String where = String.format("WHERE %s AND %s = '%s' %s", INSERT_FLG, colums.get("category").toString(),
                     category.replace("'", "\\\'"), Feed.getVal1(channel, FeedEnums.Name.model_sql_ending));
 
-            List<CmsBtFeedInfoJewelryModel> jewmodelBeans = jewelryDao.selectSuperfeedModel(where, colums, Feed.getVal1(channel, FeedEnums.Name.table_id));
+            List<CmsBtFeedInfoJewelryModel> jewmodelBeans = jewelryDao.selectSuperfeedModel(where, colums, Feed.getVal1(channel, FeedEnums.Name.table_id2));
             List<CmsBtFeedInfoModel> modelBeans = new ArrayList<>();
             for(CmsBtFeedInfoJewelryModel jewmodelBean : jewmodelBeans){
                 Map temp= JacksonUtil.json2Bean(JacksonUtil.bean2Json(jewmodelBean), HashMap.class);

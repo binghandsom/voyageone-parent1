@@ -205,8 +205,13 @@ public class CmsPlatformProductImportService extends BaseTaskService {
             // 固定字段设定 ==========================================================================================
             // 货号
             cmsFields.setAttribute("prop_13021751", oldCmsDataBean.getModel());
+            // 英文标题
+            cmsFields.setProductNameEn(oldCmsDataBean.getTitle_en());
             // 中文标题
+            cmsFields.setProductNameCn(oldCmsDataBean.getTitle_cn());
             cmsFields.setLongTitle(oldCmsDataBean.getTitle_cn());
+            // 英文描述
+            cmsFields.setLongDesEn(oldCmsDataBean.getDescription_en());
             // 中文描述
             cmsFields.setLongDesCn(oldCmsDataBean.getDescription_cn());
             // 图片1
@@ -229,6 +234,10 @@ public class CmsPlatformProductImportService extends BaseTaskService {
             List<CmsBtProductModel_Field_Image> imgList4 = new ArrayList<>();
             imgListString.forEach(img->imgList4.add(new CmsBtProductModel_Field_Image("image4", img)));
             cmsFields.setImages4(imgList4);
+            // 英文颜色
+            cmsFields.setColor(oldCmsDataBean.getColor_en());
+            // hs_code_pu 个人行邮税号
+            cmsFields.setHsCodePrivate(oldCmsDataBean.getHs_code_pu());
 
             // product ==========================================================================================
             cmsProduct.setFields(cmsFields);

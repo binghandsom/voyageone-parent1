@@ -18,6 +18,7 @@ import java.util.*;
  */
 public class Type {
     private static HashMap<Integer, List<TypeBean>> typeMap;
+    private static HashMap<String, List<TypeBean>> typeMapName;
 
     private static Log logger = LogFactory.getLog(Type.class);
 
@@ -25,6 +26,7 @@ public class Type {
         if (typeMap != null) return;
 
         typeMap = new HashMap<>();
+        typeMapName = new HashMap<>();
 
         logger.debug("Type 初始化");
 
@@ -33,13 +35,19 @@ public class Type {
         logger.info("Type 读取数量：" + beans.size());
 
         List<TypeBean> childList;
+        List<TypeBean> childListName;
 
         for (TypeBean bean : beans) {
             childList = typeMap.get(bean.getType_id());
+            childListName = typeMapName.get(bean.getType_code());
 
-            if (childList == null) typeMap.put(bean.getType_id(), childList = new ArrayList<>());
+            if (childList == null) {
+                typeMap.put(bean.getType_id(), childList = new ArrayList<>());
+                typeMapName.put(bean.getType_code(), childListName = new ArrayList<>());
+            }
 
             childList.add(bean);
+            childListName.add(bean);
         }
 
         logger.debug("Type 按 ID 已存入：" + typeMap.size());
@@ -89,6 +97,26 @@ public class Type {
      */
     public static TypeBean getTypeBean(int typeId, String langId) {
         List<TypeBean> typeList = typeMap.get(typeId);
+
+        if (typeList != null) {
+            for (TypeBean bean : typeList) {
+                if (bean.getLang_id().equals(langId)) {
+                    return bean;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * 获取 type_code 的第一个 TypeBean
+     *
+     * @param typeName Type 的 type_code 字段
+     * @param langId TypeBean 的 lang_Id 字段
+     * @return TypeBean
+     */
+    public static TypeBean getTypeBean(String typeName, String langId) {
+        List<TypeBean> typeList = typeMapName.get(typeName);
 
         if (typeList != null) {
             for (TypeBean bean : typeList) {
@@ -182,6 +210,19 @@ public class Type {
     public static List<TypeBean> getTypeList(int typeId, String langId) {
 
         List<TypeBean> typeList = typeMap.get(typeId);
+        List<TypeBean> retTypeList = new ArrayList<>();
+
+        for (TypeBean bean : typeList) {
+            if (langId.equals(bean.getLang_id())) {
+                retTypeList.add(bean);
+            }
+        }
+        return retTypeList;
+    }
+
+    public static List<TypeBean> getTypeList(String typeName, String langId) {
+
+        List<TypeBean> typeList = typeMapName.get(typeName);
         List<TypeBean> retTypeList = new ArrayList<>();
 
         for (TypeBean bean : typeList) {
@@ -344,6 +385,19 @@ public class Type {
     public static List<TypeBean> getTypeList(int typeId) {
 
         List<TypeBean> typeList = typeMap.get(typeId);
+        List<TypeBean> retTypeList = new ArrayList<>();
+
+        for (TypeBean bean : typeList) {
+            if (Constants.LANGUAGE.EN.equals(bean.getLang_id())) {
+                retTypeList.add(bean);
+            }
+        }
+        return retTypeList;
+    }
+
+    public static List<TypeBean> getTypeList(String typeName) {
+
+        List<TypeBean> typeList = typeMapName.get(typeName);
         List<TypeBean> retTypeList = new ArrayList<>();
 
         for (TypeBean bean : typeList) {

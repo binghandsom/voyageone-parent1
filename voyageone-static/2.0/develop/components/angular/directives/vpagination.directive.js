@@ -14,15 +14,15 @@ angular.module('voyageone.angular.directives.vpagination', [])
         // 有数据分页样式
         if (!$templateCache.get(templateKey)) {
             $templateCache.put(templateKey,
-                '<div class="col-sm-2">\n' +
-                '    <div class="page-main form-inline">{{\'TXT_COM_SHOWING_NO\' | translate}}&nbsp;<input class="text-center" type="text" ng-model="curr.pageNo"/>&nbsp;/&nbsp;{{totalPages}}&nbsp;{{\'TXT_COM_PAGE\' | translate}}&nbsp;' +
+                '<div class="col-sm-3">\n' +
+                '    <div class="page-main form-inline">{{\'TXT_SHOWING_NO\' | translate}}&nbsp;<input class="text-center" type="text" ng-model="curr.pageNo"/>&nbsp;/&nbsp;{{totalPages}}&nbsp;{{\'TXT_PAGE\' | translate}}&nbsp;' +
                 '        <button class="btn btn-xs btn-default" type="button" ng-click="goPage(curr.pageNo)" translate="BTN_GO"></button>\n' +
                 '    </div>\n' +
                 '</div>\n' +
-                '<div class="col-sm-7 text-center">\n' +
-                '    <small class="text-muted inline m-t-sm m-b-sm">{{\'TXT_COM_SHOWING\' | translate}}&nbsp;{{curr.start}}-{{curr.end}}&nbsp;{{\'TXT_COM_OF\' | translate}}&nbsp;{{totalItems}}&nbsp{{\'TXT_COM_ITEMS\' | translate}}</small>\n' +
+                '<div class="col-sm-4 text-center">\n' +
+                '    <small class="text-muted inline m-t-sm m-b-sm">{{\'TXT_SHOWING\' | translate}}&nbsp;{{curr.start}}-{{curr.end}}&nbsp;{{\'TXT_OF\' | translate}}&nbsp;{{totalItems}}&nbsp{{\'TXT_ITEMS\' | translate}}</small>\n' +
                 '</div>\n' +
-                '<div class="col-sm-3 text-right text-center-xs"><div>' +
+                '<div class="col-sm-5 text-right text-center-xs"><div>' +
                 '    <ul class="pagination-sm m-t-none m-b pagination ng-isolate-scope ng-valid ng-dirty ng-valid-parse">\n' +
                 '        <li ng-class="{disabled: curr.isFirst ||ngDisabled}" class="pagination-first"><a href ng-click="goPage(1)" ng-disabled="curr.isFirst">&laquo;</a></li>\n' +
                 '        <li ng-class="{disabled: curr.isFirst ||ngDisabled}" class="pagination-prev"><a href ng-click="goPage(curr.pageNo - 1)" ng-disabled="curr.isFirst">&lsaquo;</a></li>\n' +
@@ -39,7 +39,7 @@ angular.module('voyageone.angular.directives.vpagination', [])
         if (!$templateCache.get(templateKeyNoData)) {
             $templateCache.put(templateKeyNoData,
                 '<div class="col-sm-7 col-sm-offset-2 text-center">\n' +
-                '    <small class="text-muted inline m-t-sm m-b-sm">{{\'TXT_COM_SHOWING\' | translate}}&nbsp;0-0&nbsp;{{\'TXT_COM_OF\' | translate}}&nbsp;0&nbsp{{\'TXT_COM_ITEMS\' | translate}}</small>\n' +
+                '    <small class="text-muted inline m-t-sm m-b-sm">{{\'TXT_SHOWING\' | translate}}&nbsp;0-0&nbsp;{{\'TXT_OF\' | translate}}&nbsp;0&nbsp{{\'TXT_ITEMS\' | translate}}</small>\n' +
                 '</div>');
         }
 

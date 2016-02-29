@@ -1,7 +1,5 @@
 package com.voyageone.batch.cms.service;
 
-import com.voyageone.batch.cms.mongoDao.PlatformCategoryDao;
-import com.voyageone.batch.cms.mongoModel.CmsMtPlatformCategoryTreeModel;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;

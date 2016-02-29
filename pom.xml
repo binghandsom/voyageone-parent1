@@ -306,7 +306,7 @@
                 <version>1.0</version>
             </dependency>
 
-           <dependency>
+            <dependency>
                 <groupId>taobao</groupId>
                 <artifactId>taobao-sdk-java</artifactId>
                 <version>1445566890094</version>

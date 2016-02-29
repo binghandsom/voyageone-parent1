@@ -126,10 +126,12 @@ public class BaseJomgoPartTemplate {
         FindOne find;
 
         //condition
-        if (StringUtils.isEmpty(queryObject.getQuery())) {
-            find = getCollection(collectionName).findOne();
-        } else {
+        if (!StringUtils.isEmpty(queryObject.getQuery())) {
             find = getCollection(collectionName).findOne(queryObject.getQuery());
+        } else if (queryObject.getObjectId() != null) {
+            find = getCollection(collectionName).findOne(queryObject.getObjectId());
+        } else {
+            find = getCollection(collectionName).findOne();
         }
 
         //column
@@ -254,11 +256,51 @@ public class BaseJomgoPartTemplate {
         return findOne(query, entityClass, collectionName);
     }
 
-//    public void findAndModify(String strQuery, String strUpdate, String collectionName) {
-//        // ???
-//        getCollection(collectionName).update(strQuery).upsert().multi().with(strUpdate);
-//    }
-//
+    public <T> T findAndModify(JomgoUpdate updateObject, Class<T> entityClass, String collectionName) {
+        FindAndModify findAndModify;
+
+        //condition
+        if (StringUtils.isEmpty(updateObject.getQuery())) {
+            findAndModify = getCollection(collectionName).findAndModify();
+        } else {
+            findAndModify = getCollection(collectionName).findAndModify(updateObject.getQuery());
+        }
+
+        //column
+        if (!StringUtils.isEmpty(updateObject.getProjection())) {
+            findAndModify = findAndModify.projection(updateObject.getProjection());
+        }
+
+        //sort
+        if (!StringUtils.isEmpty(updateObject.getSort())) {
+            findAndModify = findAndModify.sort(updateObject.getSort());
+        }
+
+        //update
+        if (!StringUtils.isEmpty(updateObject.getUpdate())) {
+            findAndModify = findAndModify.with(updateObject.getUpdate());
+        }
+
+        //remove
+        if (updateObject.isRemove()) {
+            findAndModify = findAndModify.remove();
+        }
+
+        //returnNew
+        if (updateObject.isReturnNew()) {
+            findAndModify = findAndModify.returnNew();
+        }
+
+        //returnNew
+        if (updateObject.isUpsert()) {
+            findAndModify = findAndModify.upsert();
+        }
+
+
+        //execute
+        return findAndModify.as(entityClass);
+    }
+
 //    public void findAndRemove(String strQuery, String collectionName) {
 //        getCollection(collectionName).remove(strQuery);
 //    }
@@ -291,7 +333,11 @@ public class BaseJomgoPartTemplate {
         return getCollection(collectionName).update(strQuery).multi().with(strUpdate);
     }
 
-    public WriteResult upsert(String strQuery, String strUpdate, String collectionName) {
+    public WriteResult upsertFirst(String strQuery, String strUpdate, String collectionName) {
+        return getCollection(collectionName).update(strQuery).upsert().with(strUpdate);
+    }
+
+    public WriteResult upsertMulti(String strQuery, String strUpdate, String collectionName) {
         return getCollection(collectionName).update(strQuery).upsert().multi().with(strUpdate);
     }
 

@@ -274,11 +274,10 @@ define([
         this.setMenu = setMenu;
         this.clearChannel = clearChannel;
         this.setLanguage = setLanguage;
-        this.setCategoryType = setCategoryType;
+        this.setPlatformType = setPlatformType;
         this.logout = logout;
         this.getCategoryInfo = getCategoryInfo;
-        this.getCategoryType = getCategoryType;
-        this.getCategoryTree = getCategoryTree;
+        this.getPlatformType = getPlatformType;
 
         /**
          * get the system info.
@@ -292,18 +291,18 @@ define([
                     var data = response.data;
 
                     // 获取用户语言
-                    var userlanguage = translateService.getBrowserLanguage();
-                    if (!_.isEmpty(cookieService.language()))
-                        userlanguage = cookieService.language();
-                    else if (!_.isEmpty(data.userInfo.language))
+                    //var userlanguage = translateService.getBrowserLanguage();
+                    //if (!_.isEmpty(cookieService.language()))
+                    //    userlanguage = cookieService.language();
+                    //else if (!_.isEmpty(data.userInfo.language))
                         userlanguage = data.userInfo.language;
-                    translateService.setLanguage(userlanguage);
 
                     // 设置画面用户显示的语言
                     _.forEach(data.languageList, function (language) {
 
-                        if (_.isEqual(userlanguage, language.add_name2)) {
+                        if (_.isEqual(userlanguage, language.name)) {
                             data.userInfo.language = language.add_name1;
+                            translateService.setLanguage(language.add_name2);
                         }
                     });
 
@@ -343,7 +342,7 @@ define([
          */
         function setLanguage(language) {
             var defer = $q.defer();
-            ajaxService.post(cActions.core.home.menu.selectLanguage, {"language": language.name})
+            ajaxService.post(cActions.core.home.menu.setLanguage, {"language": language.name})
                 .then(function () {
                     cookieService.language(language.add_name2);
                     translateService.setLanguage(language.add_name2);
@@ -380,40 +379,40 @@ define([
         }
 
         /**
-         * get categoryTypeList.
+         * get platformShowTypeList.
          * @returns {*}
          */
-        function getCategoryType() {
+        function getPlatformType() {
             var defer = $q.defer();
-            ajaxService.post(cActions.cms.home.menu.getCategoryType)
+            ajaxService.post(cActions.cms.home.menu.getPlatformType)
                 .then(function (response) {
                     defer.resolve(response.data);
                 });
             return defer.promise;
         }
 
-        /**
-         * get categoryTree.
-         * @returns {*}
-         */
-        function getCategoryTree() {
-            var defer = $q.defer();
-            ajaxService.post(cActions.cms.home.menu.getCategoryTree)
-                .then(function (response) {
-                    defer.resolve(response.data);
-                });
-            return defer.promise;
-        }
+        ///**
+        // * get categoryTree.
+        // * @returns {*}
+        // */
+        //function getCategoryTree() {
+        //    var defer = $q.defer();
+        //    ajaxService.post(cActions.cms.home.menu.getCategoryTree)
+        //        .then(function (response) {
+        //            defer.resolve(response.data);
+        //        });
+        //    return defer.promise;
+        //}
 
         /**
          *
-         * set categoryType.
+         * set platformType.
          * @param cTypeId
          * @returns {*}
          */
-        function setCategoryType(cType) {
+        function setPlatformType(cType) {
             var defer = $q.defer();
-            ajaxService.post(cActions.cms.home.menu.setCategoryType, {"cTypeId": cType.cTypeId, "cartId": cType.cartId})
+            ajaxService.post(cActions.cms.home.menu.setPlatformType, {"cTypeId": cType.add_name2, "cartId": cType.value})
                 .then(function (response) {
                     defer.resolve(response.data);
                 });
@@ -470,6 +469,7 @@ define([
         function selectLanguage(language) {
             menuService.setLanguage(language).then(function (data) {
                 vm.userInfo.language = data;
+                $window.location.reload();
             })
         }
 
@@ -482,7 +482,7 @@ define([
                 //searchInfoFactory.codeList(value);
                 //searchInfoFactory.platformCart(23);
                 vm.searchValue = "";
-                $location.path(cRoutes.search_index_param.url + "2/" + value);
+                $location.path(cRoutes.search_advance_param.url + "2/" + value);
             }
         }
 
@@ -511,7 +511,7 @@ define([
             menuService.getCategoryInfo().then(function (data) {
                 vm.navigation = data.categoryList;
                 // TODO 来至服务器端的session
-                $rootScope.categoryType = data.categoryType;
+                $rootScope.platformType = data.platformType;
             });
         }
 
@@ -528,12 +528,12 @@ define([
 
         $scope.menuInfo = {};
         $scope.initialize = initialize;
-        $scope.selectCategoryType = selectCategoryType;
+        $scope.selectPlatformType = selectPlatformType;
         $scope.goSearchPage = goSearchPage;
 
         function initialize() {
-            menuService.getCategoryType().then(function (data) {
-                $scope.menuInfo.categoryTypeList = data;
+            menuService.getPlatformType().then(function (data) {
+                $scope.menuInfo.platformTypeList = data;
             });
             menuService.getCategoryInfo().then(function (data) {
                 $scope.menuInfo.categoryTreeList = data.categoryTreeList;
@@ -541,12 +541,12 @@ define([
         }
 
         /**
-         * change your current categoryTYpe.
+         * change your current platformType.
          * @param cTypeId
          */
-        function selectCategoryType(cType) {
-            menuService.setCategoryType(cType).then(function (data) {
-                $rootScope.categoryType = {cTypeId: cType.cTypeId, cartId: cType.cartId};
+        function selectPlatformType(cType) {
+            menuService.setPlatformType(cType).then(function (data) {
+                $rootScope.platformType = {cTypeId: cType.add_name2, cartId: cType.value};
                 $scope.menuInfo.categoryTreeList = data.categoryTreeList;
             });
         }
@@ -557,7 +557,7 @@ define([
          */
         function goSearchPage(catId) {
             if(catId){
-                $location.path(cRoutes.search_index_param.url + "1/" + catId);
+                $location.path(cRoutes.search_advance_param.url + "1/" + catId);
             }
         }
     }

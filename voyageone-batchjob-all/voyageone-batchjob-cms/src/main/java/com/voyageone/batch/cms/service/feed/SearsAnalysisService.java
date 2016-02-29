@@ -75,20 +75,20 @@ public class SearsAnalysisService extends BaseTaskService {
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
 
         // 插入数据库
-        clearLastData();
-
-        // 取得feedList
-        getSearsFeedList();
-
-        // 取得feed数据
-        getSearsFeedData();
-
-        // 开始数据分析处理阶段
+//        clearLastData();
+//
+//        // 取得feedList
+//        getSearsFeedList();
+//
+//        // 取得feed数据
+//        getSearsFeedData();
+//
+//        // 开始数据分析处理阶段
         transformer.new Context(SEARS, this).transform();
         $info("数据处理阶段结束");
 
         insertService.new Context(SEARS).postNewProduct();
-        updateService.new Context(SEARS).postUpdatedProduct();
+//        updateService.new Context(SEARS).postUpdatedProduct();
     }
 
     /**

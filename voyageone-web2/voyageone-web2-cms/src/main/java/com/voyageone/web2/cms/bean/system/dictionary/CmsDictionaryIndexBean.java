@@ -21,6 +21,8 @@ public class CmsDictionaryIndexBean {
 
     private String comment;
 
+    private String lang;
+
     private int offset;
 
     private int rows;
@@ -71,6 +73,14 @@ public class CmsDictionaryIndexBean {
 
     public void setComment(String comment) {
         this.comment = comment;
+    }
+
+    public String getLang() {
+        return lang;
+    }
+
+    public void setLang(String lang) {
+        this.lang = lang;
     }
 
     public int getOffset() {

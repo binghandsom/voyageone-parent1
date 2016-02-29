@@ -26,14 +26,14 @@ public class SuperFeedDao extends BaseDao {
      * 插入Jewelry产品信息
      */
     public int insertSuperfeedJEInfo(SuperFeedJEBean superfeedjebean) {
-        return updateTemplate.insert("cms_superfeed_insertSuperfeedJEInfo", superfeedjebean);
+        return insert("cms_superfeed_insertSuperfeedJEInfo", superfeedjebean);
     }
 
     /**
      * 插入LOCONDO产品信息
      */
     public int insertSuperfeedLCInfo(SuperFeedLCBean superfeedlcbean) {
-        return updateTemplate.insert("cms_superfeed_insertSuperfeedLCInfo", superfeedlcbean);
+        return insert("cms_superfeed_insertSuperfeedLCInfo", superfeedlcbean);
     }
 
     /**
@@ -43,7 +43,7 @@ public class SuperFeedDao extends BaseDao {
      */
     public List<AttributeBean> selectAttribute(AttributeBean attributebean, String tablename, String keyword) {
 
-        return updateTemplate.selectList("cms_superfeed_selectAttribute", parameters("attributebean", attributebean, "tablename", tablename, "keyword", keyword));
+        return selectList("cms_superfeed_selectAttribute", parameters("attributebean", attributebean, "tablename", tablename, "keyword", keyword));
     }
 
     /**
@@ -55,7 +55,7 @@ public class SuperFeedDao extends BaseDao {
 
         params.put("tableName", tableName);
 
-        return updateTemplate.delete("cms_deletetableInfo", params);
+        return delete("cms_deletetableInfo", params);
     }
 
     /**
@@ -67,7 +67,7 @@ public class SuperFeedDao extends BaseDao {
         Map<String, Object> params = new HashMap<>();
         params.put("sql", sql);
 
-        return updateTemplate.selectList("cms_superfeed_selectErrData", params);
+        return selectList("cms_superfeed_selectErrData", params);
     }
 
     /**
@@ -77,7 +77,7 @@ public class SuperFeedDao extends BaseDao {
         Map<String, Object> params = new HashMap<>();
         params.put("sql", sql);
 
-        return updateTemplate.delete("cms_deletData", params);
+        return delete("cms_deletData", params);
     }
 
     /**
@@ -89,7 +89,7 @@ public class SuperFeedDao extends BaseDao {
         params.put("tableName", tableName);
         params.put("keyword", keyword);
 
-        return updateTemplate.delete("cms_deletErrData", params);
+        return delete("cms_deletErrData", params);
     }
 
     /**
@@ -105,7 +105,7 @@ public class SuperFeedDao extends BaseDao {
         params.put("code", code);
         params.put("codes", codes);
 
-        return updateTemplate.update("cms_updateInsertData", params);
+        return update("cms_updateInsertData", params);
     }
 
     /**
@@ -122,7 +122,7 @@ public class SuperFeedDao extends BaseDao {
         params.put("codes", codes);
         params.put("keyword", keyword.replace(model, "a." + model));
 
-        return updateTemplate.update("cms_updateInsertModelData", params);
+        return update("cms_updateInsertModelData", params);
     }
 
     /**
@@ -137,7 +137,7 @@ public class SuperFeedDao extends BaseDao {
         params.put("code", code);
         params.put("codes", codes);
 
-        return updateTemplate.update("cms_updateUpdateData", params);
+        return update("cms_updateUpdateData", params);
     }
 
     /**
@@ -151,7 +151,7 @@ public class SuperFeedDao extends BaseDao {
         params.put("tableName", tableName);
         params.put("keyword", keyword);
 
-        return updateTemplate.selectList("cms_superfeed_selectSuperfeedCategory", params);
+        return selectList("cms_superfeed_selectSuperfeedCategory", params);
     }
 
     /**
@@ -296,7 +296,7 @@ public class SuperFeedDao extends BaseDao {
         params.put("tableNameFull", tableNameFull);
         params.put("keyword", keyword);
 
-        return updateTemplate.insert("cms_superfeed_inertSuperfeedFull", params);
+        return insert("cms_superfeed_inertSuperfeedFull", params);
     }
 
 
@@ -344,7 +344,7 @@ public class SuperFeedDao extends BaseDao {
         params.put("category", category);
         params.put("categoryvalue", categoryvalue);
 
-        return updateTemplate.update("cms_changeUpdateDateFlag", params);
+        return update("cms_changeUpdateDateFlag", params);
     }
 
 
@@ -358,7 +358,7 @@ public class SuperFeedDao extends BaseDao {
         params.put("attributeName", attributeName);
         params.put("tableName", tableName);
 
-        return updateTemplate.selectList("cms_superfeed_selectAllAttribute", params);
+        return selectList("cms_superfeed_selectAllAttribute", params);
     }
 
 
@@ -373,7 +373,7 @@ public class SuperFeedDao extends BaseDao {
         params.put("attributeName", attributeName);
         params.put("attributeValue", attributeValue);
 
-        return updateTemplate.selectOne("cms_superfeed_selectFeedAttribute", params);
+        return selectOne("cms_superfeed_selectFeedAttribute", params);
     }
 
     /**
@@ -385,6 +385,6 @@ public class SuperFeedDao extends BaseDao {
         params.put("attributeName", attributeName);
         params.put("attributeValue", attributeValue);
 
-        return updateTemplate.insert("cms_superfeed_insertFeedAttributeNew", params);
+        return insert("cms_superfeed_insertFeedAttributeNew", params);
     }
 }

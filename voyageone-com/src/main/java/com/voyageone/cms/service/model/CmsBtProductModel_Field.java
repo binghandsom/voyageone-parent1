@@ -344,6 +344,21 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
         setAttribute("translateStatus", status);
     }
 
+    public String getTranslator() {
+        return getAttribute("translator");
+    }
+    public void setTranslator(String translator) {
+        setAttribute("translator", translator);
+    }
+
+    public String getTranslateTime() {
+        return getAttribute("translateTime");
+    }
+    public void setTranslateTime(String translateTime) {
+        setAttribute("translateTime", translateTime);
+    }
+
+
     //editStatus "0":未完成；"1":完成
     public String getEditStatus() {
         return getAttribute("editStatus");
@@ -358,6 +373,22 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
     }
     public void setSizeType(String sizeType) {
         setAttribute("sizeType", sizeType);
+    }
+
+    //产品分类
+    public String getProductType() {
+        return getAttribute("productType");
+    }
+    public void setProductType(String productType) {
+        setAttribute("productType", productType);
+    }
+
+    //产品库存
+    public Integer getQuantity() {
+        return getAttribute("quantity");
+    }
+    public void setQuantity(Integer quantity) {
+        setAttribute("quantity", quantity);
     }
 
     @Override
