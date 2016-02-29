@@ -1603,8 +1603,8 @@ public class ConstructPropValue {
         RuleJsonMapper ruleJsonMapper = new RuleJsonMapper();
         ConstructPropValue util = new ConstructPropValue();
 
-        //constructPlatformPropMappingCustom(platformPropCustomMappingDao);
-        constructTmallSkuInfo(platformSkuInfoDao);
+        constructPlatformPropMappingCustom(platformPropCustomMappingDao);
+//        constructTmallSkuInfo(platformSkuInfoDao);
 //        constructTmallSkuInfo(platformSkuInfoDao);
         /*
         constructProductValue(ruleJsonMapper, propValueDao, util);

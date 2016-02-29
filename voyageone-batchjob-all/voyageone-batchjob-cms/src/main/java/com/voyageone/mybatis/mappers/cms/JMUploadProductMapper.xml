@@ -107,6 +107,7 @@
 		AND a.product_code = b.product_code
 		and a.channel_id = c.channel_id
 		AND a.product_code = c.product_code
+		AND a.deal_id = c.deal_id
 
 	) t2
 	 where t1.channel_id = t2.channel_id
@@ -358,11 +359,12 @@
 		FROM
 			jumei.jm_bt_images
 		WHERE
+			syn_flg = 1
 
-			(channel_id = #{channelId}
+			and ((channel_id = #{channelId}
 			and (image_key = #{productCode,jdbcType=VARCHAR} or image_type = 6 ))
 			or  (image_key =#{brand,jdbcType=VARCHAR} and image_type = 4)
-			or  (image_key = #{brand,jdbcType=VARCHAR} and image_type_extend = #{sizeType,jdbcType=VARCHAR})
+			or  (image_key = #{brand,jdbcType=VARCHAR} and image_type_extend = #{sizeType,jdbcType=VARCHAR}))
 		ORDER BY imageType,image_index
 
 	</select>

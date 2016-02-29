@@ -474,20 +474,20 @@ public class ProductSkuService extends BaseService {
         cmsBtPriceLogModel.setCode(productModel.getFields().getCode());
         cmsBtPriceLogModel.setSku(skuModel.getSkuCode());
 
-        Double priceMsrp  = -1d;
-        if (skuModel.getPriceMsrp() != null) {
+        Double priceMsrp  = 0d;
+        if (skuModel.getPriceMsrp() != null && !"null-null".equals(skuModel.getPriceMsrp())) {
             priceMsrp = skuModel.getPriceMsrp();
         }
         cmsBtPriceLogModel.setMsrpPrice(priceMsrp.toString());
 
-        Double priceRetail  = -1d;
-        if (skuModel.getPriceRetail() != null) {
+        Double priceRetail  = 0d;
+        if (skuModel.getPriceRetail() != null && !"null-null".equals(skuModel.getPriceRetail())) {
             priceRetail = skuModel.getPriceRetail();
         }
         cmsBtPriceLogModel.setRetailPrice(priceRetail.toString());
 
-        Double priceSale  = -1d;
-        if (skuModel.getPriceSale() != null) {
+        Double priceSale  = 0d;
+        if (skuModel.getPriceSale() != null && !"null-null".equals(skuModel.getPriceSale())) {
             priceSale = skuModel.getPriceSale();
         }
         cmsBtPriceLogModel.setSalePrice(priceSale.toString());

@@ -17,11 +17,11 @@
      'app-aside-folded': app.settings.asideFolded,
      'container': app.settings.container}">
     <!-- navbar -->
-    <div ng-include=" 'views/menu/header.tpl.html' " class="app-header navbar"></div>
+    <div ng-include=" 'views/home/menu/header.tpl.html' " class="app-header navbar"></div>
     <!-- / navbar -->
 
     <!-- menu -->
-    <div ng-include=" 'views/menu/aside.tpl.html' " class="app-aside hidden-xs bg-dark"></div>
+    <div ng-include=" 'views/home/menu/aside.tpl.html' " class="app-aside hidden-xs bg-dark"></div>
     <!-- / menu -->
 
     <!-- content -->
@@ -31,7 +31,7 @@
         <a href class="off-screen-toggle hide" ui-toggle-class="off-screen" data-target=".app-aside" ></a>
 
         <!-- breadcrumbs -->
-        <div ng-include=" 'views/menu/breadcrumbs.tpl.html' " class="bg-light lter hidden-xs"></div>
+        <div ng-include=" 'views/home/menu/breadcrumbs.tpl.html' " class="bg-light lter hidden-xs"></div>
 
         <!-- page content -->
         <div class="app-content-body fade-in-up" ng-view></div>

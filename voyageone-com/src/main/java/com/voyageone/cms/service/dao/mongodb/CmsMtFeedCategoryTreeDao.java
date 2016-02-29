@@ -38,8 +38,33 @@ public class CmsMtFeedCategoryTreeDao extends BaseMongoDao {
      * @param channelId 渠道
      * @return Feed 类目的强类型模型
      */
-    public CmsMtFeedCategoryTreeModelx selectFeedCategoryx(String channelId) {
+    public CmsMtFeedCategoryTreeModelx findFeedCategoryx(String channelId) {
         String query = "{\"channelId\":\"" + channelId + "\"}";
-        return mongoTemplate.findOne(query, CmsMtFeedCategoryTreeModelx.class, collectionName);
+        return mongoTemplate.findOne(query, CmsMtFeedCategoryTreeModelx.class);
+    }
+
+    /**
+     * 查询 channelId 下的顶级类目信息
+     *
+     * @param channelId 渠道
+     * @return Feed 类目的强类型模型
+     */
+    public CmsMtFeedCategoryTreeModelx findTopCategories(String channelId) {
+        String query = "{\"channelId\":\"" + channelId + "\"}";
+        String projection = "{'categoryTree.child':0}";
+        return mongoTemplate.findOne(query, projection, CmsMtFeedCategoryTreeModelx.class);
+    }
+
+    /**
+     * 查询 channelId 下 cid 为 categoryId 的顶级类目
+     *
+     * @param channelId  渠道
+     * @param categoryId 类目 ID
+     * @return 只包含目标类目的强类型模型
+     */
+    public CmsMtFeedCategoryTreeModelx findTopCategory(String channelId, String categoryId) {
+        String query = String.format("{channelId: '%s', 'categoryTree.cid': '%s'}", channelId, categoryId);
+        String projection = "{'categoryTree.$':1}";
+        return mongoTemplate.findOne(query, projection, CmsMtFeedCategoryTreeModelx.class);
     }
 }

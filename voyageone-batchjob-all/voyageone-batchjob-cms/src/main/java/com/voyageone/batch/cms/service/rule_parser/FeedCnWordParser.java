@@ -1,6 +1,7 @@
 package com.voyageone.batch.cms.service.rule_parser;
 
 import com.voyageone.cms.service.model.CmsBtProductModel;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.ims.rule_expression.FeedCnWord;
 import com.voyageone.ims.rule_expression.RuleWord;
 import com.voyageone.ims.rule_expression.WordType;
@@ -33,6 +34,30 @@ public class FeedCnWordParser {
         {
             FeedCnWord feedCnWord = (FeedCnWord) ruleWord;
             String propName = feedCnWord.getValue();
+
+            // 如果propName为空的话, 就说明是应该看index, 而不是看propName
+            if (StringUtils.isEmpty(propName)) {
+                // 看的内容是feed.customIds 和 feed.customIdsCn, 配合 feed.cnAtts的内容, 进行返回
+                if (feedCnWord.isTitle()) {
+                    // 返回中文标题
+                    try {
+                        return cmsBtProductModel.getFeed().getCustomIdsCn().get(feedCnWord.getFeedIndex());
+                    } catch (Exception e) {
+                        // 没有的话直接返回一个有值得空字符串
+                        return "";
+                    }
+                } else {
+                    // 返回中文的值
+                    try {
+                        String key = cmsBtProductModel.getFeed().getCustomIds().get(feedCnWord.getFeedIndex());
+                        return cmsBtProductModel.getFeed().getCnAtts().getAttribute(key);
+                    } catch (Exception e) {
+                        // 没有的话直接返回一个有值得空字符串
+                        return "";
+                    }
+                }
+            }
+            // 如果propName有内容的话, 那就按照原来的逻辑进行处理
             Map<String, String> extra = feedCnWord.getExtra();
             Object plainPropValueObj = cmsBtProductModel.getFeed().getCnAtts().getAttribute(propName);
 

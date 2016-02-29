@@ -181,4 +181,29 @@
             </if>
         </where>
     </update>
+
+    <select id="select_cms_bt_promotion_by_code_in_no_all_promotion" resultMap="cms_bt_promotion_task_map" parameterType="HashMap" >
+        select
+        a.promotion_id,
+        task_type,
+        a.`key`,
+        a.num_iid,
+        a.syn_flg,
+        a.err_msg,
+        a.created,
+        a.creater,
+        a.modified,
+        a.modifier
+        from voyageone_cms2.cms_bt_promotion_task a,
+              voyageone_cms2.cms_bt_promotion b
+        where
+            a.promotion_id = b.promotion_id
+            and b.promotion_status = 0
+            and b.is_all_promotion = 0
+            and task_type = 0
+            and b.channel_id = #{channelId}
+            and b.cart_id = #{cartId}
+            and `key` = #{code,jdbcType=VARCHAR}
+    </select>
+
 </mapper>

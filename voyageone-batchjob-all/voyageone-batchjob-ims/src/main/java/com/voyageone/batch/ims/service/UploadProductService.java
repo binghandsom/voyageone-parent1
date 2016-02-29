@@ -275,10 +275,12 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
                     }
                 }
 
+                boolean hasMainProduct = false;
                 for (ProductPublishBean productPublishBean : productPublishBeans)
                 {
                     if (productPublishBean.getCode().equals(workLoadBean.getMainCode())) {
                         productPublishBean.setMain_product_flg(1);
+                        hasMainProduct = true;
                     } else {
                         productPublishBean.setMain_product_flg(0);
                     }
@@ -306,6 +308,9 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
                     productPublishBean.setModifier(getTaskName());
                     productPublishBean.setModified(DateTimeUtil.getNow());
                     productPublishDao.updateProductPublish(productPublishBean);
+                }
+                if (!hasMainProduct) {
+                    logger.error("No main product find, there must be some errors! workload:" + workLoadBean);
                 }
                 break;
             case PlatformWorkloadStatus.JOB_ABORT:

@@ -1,14 +1,11 @@
 package com.voyageone.web2.cms.views.menu;
 
-import com.voyageone.cms.service.model.CmsMtCategoryTreeModel;
+import com.voyageone.web2.cms.views.home.menu.CmsMenuService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author Edward
@@ -23,16 +20,16 @@ public class CmsMenuServiceTest {
 
     @Test
     public void testGetCategoryTypeList() throws Exception {
-        List<Map<String, Object>> resultList = cmsMenuService.getCategoryTypeList("004");
-        System.out.println(resultList);
-        assert resultList.size() > 0;
+//        List<Map<String, Object>> resultList = cmsMenuService.getPlatformShowTypeList("004");
+//        System.out.println(resultList);
+//        assert resultList.size() > 0;
     }
 
     @Test
     public void testGetCategoryTreeList() throws Exception {
-        List<CmsMtCategoryTreeModel> resultList = cmsMenuService.getCategoryTreeList("Feed", "013");
-        System.out.println(resultList);
-        assert resultList.size() > 0;
+//        List<CmsMtCategoryTreeModel> resultList = cmsMenuService.getCategoryTreeList("Feed", "013");
+//        System.out.println(resultList);
+//        assert resultList.size() > 0;
 
     }
 }

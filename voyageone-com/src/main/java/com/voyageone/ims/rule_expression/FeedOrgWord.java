@@ -8,6 +8,8 @@ import java.util.Map;
 public class FeedOrgWord extends RuleWord{
     private String value;
     private Map<String, String> extra;
+    private boolean isTitle = false; // 当value为空的时候, 这个字段起作用
+    private int feedIndex; // 当value为空的时候, 这个字段起作用
 
     public FeedOrgWord() {
         setWordType(WordType.FEED_ORG);
@@ -16,6 +18,14 @@ public class FeedOrgWord extends RuleWord{
     public FeedOrgWord(String value) {
         this();
         this.value = value;
+    }
+
+    public FeedOrgWord(boolean isTitle, int feedIndex) {
+        this();
+        this.value = null;
+
+        this.setTitle(isTitle);
+        this.feedIndex = feedIndex;
     }
 
     public Map<String, String> getExtra() {
@@ -32,5 +42,21 @@ public class FeedOrgWord extends RuleWord{
 
     public void setValue(String value) {
         this.value = value;
+    }
+
+    public boolean isTitle() {
+        return isTitle;
+    }
+
+    public void setTitle(boolean title) {
+        isTitle = title;
+    }
+
+    public int getFeedIndex() {
+        return feedIndex;
+    }
+
+    public void setFeedIndex(int feedIndex) {
+        this.feedIndex = feedIndex;
     }
 }

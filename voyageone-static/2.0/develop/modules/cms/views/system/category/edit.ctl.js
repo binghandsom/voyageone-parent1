@@ -6,7 +6,7 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function () {
 
-    function editController($scope,systemCategoryService,$routeParams,notify) {
+    function editController($scope,systemCategoryService,$routeParams,notify,$translate,confirm) {
         $scope.vm={"category":{},"isEditFlg":false};
         $scope.initialize  = function () {
             $scope.getCategoryDetail();
@@ -22,24 +22,27 @@ define([
             })
         };
         $scope.delNode = function(parent,node){
-            var index;
-            index=_.indexOf(parent,node);
-            if(index >-1 ){
-                parent.splice(index,1);
-                $scope.vm.isEditFlg = true;
-            }
+            confirm($translate.instant('TXT_MSG_DELETE_ITEM')).result
+                .then(function () {
+                    var index;
+                    index=_.indexOf(parent,node);
+                    if(index >-1 ){
+                        parent.splice(index,1);
+                        $scope.vm.isEditFlg = true;
+                    }
+                });
         };
 
         $scope.update = function(data){
             systemCategoryService.updateCategorySchema(data).then(function(res){
                 $scope.vm.category.modified = res.data;
                 $scope.vm.isEditFlg = false;
-                notify.success("success");
+                notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
             },function(err){
             })
         }
     };
 
-    editController.$inject = ['$scope', 'systemCategoryService', '$routeParams', 'notify'];
+    editController.$inject = ['$scope', 'systemCategoryService', '$routeParams', 'notify', '$translate', 'confirm'];
     return editController;
 });

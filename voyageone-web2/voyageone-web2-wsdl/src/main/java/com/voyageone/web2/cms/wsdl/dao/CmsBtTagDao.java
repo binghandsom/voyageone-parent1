@@ -12,7 +12,7 @@ import java.util.List;
  */
 
 @Repository("web2.cms.wsdl.CmsBtTagDao")
-public class CmsBtTagDao extends WsdlBaseDao {
+public class CmsBtTagDao extends WsdlBaseDao{
 
     public int insertCmsBtTag(CmsBtTagModel cmsBtTagModel){
         return insert("insert_cms_bt_tag", cmsBtTagModel);

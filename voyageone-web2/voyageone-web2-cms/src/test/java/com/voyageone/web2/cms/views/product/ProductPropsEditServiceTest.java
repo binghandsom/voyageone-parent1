@@ -18,7 +18,7 @@ import java.util.Map;
 public class ProductPropsEditServiceTest {
 
     @Autowired
-    ProductPropsEditService productPropsEditService;
+    CmsProductDetailService productPropsEditService;
 
     @Test
     public void testConfirmChangeCategory() throws Exception {

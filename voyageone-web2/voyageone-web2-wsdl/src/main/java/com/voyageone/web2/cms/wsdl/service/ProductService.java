@@ -4,6 +4,7 @@ import com.google.common.base.Joiner;
 import com.mongodb.BasicDBObject;
 import com.mongodb.BulkWriteResult;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
+import com.voyageone.base.dao.mongodb.JomgoUpdate;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.cms.CmsConstants;
 import com.voyageone.cms.service.CmsProductLogService;
@@ -21,11 +22,13 @@ import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.web2.cms.wsdl.BaseService;
 import com.voyageone.web2.cms.wsdl.dao.CmsBtPriceLogDao;
+import com.voyageone.web2.cms.wsdl.dao.WmsBtInventoryCenterLogicDao;
 import com.voyageone.web2.sdk.api.VoApiConstants;
 import com.voyageone.web2.sdk.api.VoApiUpdateResponse;
 import com.voyageone.web2.sdk.api.domain.CmsBtPriceLogModel;
 import com.voyageone.web2.sdk.api.domain.ProductPriceModel;
 import com.voyageone.web2.sdk.api.domain.ProductSkuPriceModel;
+import com.voyageone.web2.sdk.api.domain.WmsBtInventoryCenterLogicModel;
 import com.voyageone.web2.sdk.api.exception.ApiException;
 import com.voyageone.web2.sdk.api.request.*;
 import com.voyageone.web2.sdk.api.response.*;
@@ -63,6 +66,9 @@ public class ProductService extends BaseService {
 
     @Autowired
     private CmsBtFeedInfoDao cmsBtFeedInfoDao;
+
+    @Autowired
+    private WmsBtInventoryCenterLogicDao wmsBtInventoryCenterLogicDao;
 
     /**
      * selectOne
@@ -348,6 +354,7 @@ public class ProductService extends BaseService {
         params.put("channelId", channelId);
         params.put("offset", offset);
         params.put("rows", rows);
+        params.put("priceType", request.getPriceType());
 
         boolean isExecute = false;
         List<CmsBtPriceLogModel> priceList;
@@ -471,9 +478,10 @@ public class ProductService extends BaseService {
                 throw new ApiException(codeEnum.getErrorCode(), "product not found!");
             }
 
+            codeEnum = VoApiConstants.VoApiErrorCodeEnum.ERROR_CODE_70011;
             if (request.getIsCheckModifed()) {
                 if (findModel.getModified() != null && !findModel.getModified().equals(productModel.getModified())) {
-                    throw new ApiException(codeEnum.getErrorCode(), "product has been update, not update!");
+                    throw new ApiException(codeEnum.getErrorCode(), codeEnum.getErrorMsg());
                 }
             }
 
@@ -768,9 +776,6 @@ public class ProductService extends BaseService {
 
     /**
      * confirm change category
-     *
-     * @param request
-     * @return
      */
     public VoApiUpdateResponse changeProductCategory(ProductGroupMainCategoryUpdateRequest request) {
 
@@ -798,24 +803,22 @@ public class ProductService extends BaseService {
         }
 
         // 批量更新feed表
-        int updateFeedInfoCount = cmsBtFeedInfoDao.updateFeedInfoUpdFlg(request.getChannelId(), (String[]) request.getModels().toArray(new String[request.getModels().size()]));
+        int updateFeedInfoCount = cmsBtFeedInfoDao.updateFeedInfoUpdFlg(request.getChannelId(), request.getModels().toArray(new String[request.getModels().size()]));
 
         ProductGroupMainCategoryUpdateResponse response = new ProductGroupMainCategoryUpdateResponse();
 
         response.setUpdFeedInfoCount(updateFeedInfoCount);
 
-        response.setUpdProductCount(result.getModifiedCount());
-
-        response.setModifiedCount(result.getModifiedCount() + updateFeedInfoCount);
+        if (result != null) {
+            response.setUpdProductCount(result.getModifiedCount());
+            response.setModifiedCount(result.getModifiedCount() + updateFeedInfoCount);
+        }
 
         return response;
     }
 
     /**
      * get the product info from wms's request
-     *
-     * @param request
-     * @return
      */
     public ProductForWmsGetResponse getWmsProductsInfo(ProductForWmsGetRequest request) {
         ProductForWmsGetResponse response = new ProductForWmsGetResponse();
@@ -848,7 +851,7 @@ public class ProductService extends BaseService {
             resultInfo.setShortDescription(product.getFields().getShortDesEn());
             resultInfo.setLongDescription(product.getFields().getLongDesEn());
             // TODO set productType(but now productType is not commen field)
-            resultInfo.setDescription("");
+            resultInfo.setDescription(product.getFields().getProductType());
             resultInfo.setBrandName(product.getFields().getBrand());
             resultInfo.setGender(product.getFields().getSizeType());
             // TODO 无法提供,属于主数据的非共通属性
@@ -876,10 +879,11 @@ public class ProductService extends BaseService {
             if (!StringUtils.isEmpty(hsCodeCrop)) {
                 TypeChannelBean bean = TypeChannel.getTypeChannelByCode(Constants.productForOtherSystemInfo.HS_CODE_CROP, channelId, hsCodeCrop);
                 if (bean != null) {
-                    resultInfo.setHsCodeId(String.valueOf(bean.getId()));
-                    resultInfo.setHsCode(hsCodeCrop);
-                    resultInfo.setUnit(bean.getAdd_name1());
-                    resultInfo.setHsDescription(bean.getName());
+                    String[] hsCode = bean.getName().split(",");
+                    resultInfo.setHsCodeId(hsCodeCrop);
+                    resultInfo.setHsCode(hsCode[1]);
+                    resultInfo.setHsDescription(hsCode[2]);
+                    resultInfo.setUnit(hsCode[3]);
                 }
             }
             // 获取HsCodePrivate
@@ -887,10 +891,11 @@ public class ProductService extends BaseService {
             if (!StringUtils.isEmpty(hsCodePrivate)) {
                 TypeChannelBean bean = TypeChannel.getTypeChannelByCode(Constants.productForOtherSystemInfo.HS_CODE_PRIVATE, channelId, hsCodePrivate);
                 if (bean != null) {
-                    resultInfo.setHsCodePuId(String.valueOf(bean.getId()));
-                    resultInfo.setHsCodePu(hsCodeCrop);
-                    resultInfo.setUnitPu(bean.getAdd_name1());
-                    resultInfo.setHsDescriptionPu(bean.getName());
+                    String[] hsCodePu = bean.getName().split(",");
+                    resultInfo.setHsCodePuId(hsCodePrivate);
+                    resultInfo.setHsCodePu(hsCodePu[0]);
+                    resultInfo.setHsDescriptionPu(hsCodePu[1]);
+                    resultInfo.setUnitPu(hsCodePu[2]);
                 }
             }
 
@@ -901,9 +906,6 @@ public class ProductService extends BaseService {
 
     /**
      * get the product list from oms's request
-     *
-     * @param request
-     * @return
      */
     public ProductForOmsGetResponse getOmsProductsInfo(ProductForOmsGetRequest request) {
         ProductForOmsGetResponse response = new ProductForOmsGetResponse();
@@ -919,7 +921,7 @@ public class ProductService extends BaseService {
         // set fields
         buildProjection(request, queryObject);
 
-        StringBuffer sbQuery = new StringBuffer();
+        StringBuilder sbQuery = new StringBuilder();
         // 设定sku的模糊查询
         String skuIncludes = request.getSkuIncludes();
         // 根据具体的sku取值
@@ -929,7 +931,7 @@ public class ProductService extends BaseService {
             sbQuery.append(MongoUtils.splicingValue("skus.skuCode", skuIncludes, "$regex"));
             sbQuery.append(",");
         } else if (skuList != null && skuList.size() > 0) {
-            sbQuery.append(MongoUtils.splicingValue("skus.skuCode", (String[]) skuList.toArray(new String[skuList.size()])));
+            sbQuery.append(MongoUtils.splicingValue("skus.skuCode", skuList.toArray(new String[skuList.size()])));
             sbQuery.append(",");
         }
 
@@ -970,7 +972,15 @@ public class ProductService extends BaseService {
                 bean.setDescription(product.getFields().getLongDesEn());
                 bean.setPricePerUnit(sku.getPriceSale() != null ? sku.getPriceSale().toString() : "0.00");
                 // TODO 目前无法取得库存值
-                bean.setInventory("0");
+//                Map<String, Object> param = new HashMap<>();
+//                param.put("channelId", channelId);
+//                param.put("sku", sku.getSkuCode());
+                ProductSkuRequest param = new ProductSkuRequest();
+                param.setChannelId(channelId);
+                param.setSku(sku.getSkuCode());
+
+                WmsBtInventoryCenterLogicModel skuInfo = wmsBtInventoryCenterLogicDao.getItemDetailBySku(param);
+                bean.setInventory(String.valueOf(skuInfo.getQtyChina()));
                 // TODO 写死,取得是S7图片显示的路径
                 String imagePath = "";
                 if (product.getFields().getImages1().size() > 0) {
@@ -996,4 +1006,116 @@ public class ProductService extends BaseService {
 
         return response;
     }
+
+
+    /**
+     * distributeTranslation 分配翻译商品
+     *
+     * @param request ProductTransDistrRequest
+     * @return ProductTransDistrResponse
+     */
+    public ProductTransDistrResponse translateDistribute(ProductTransDistrRequest request) {
+        ProductTransDistrResponse result = new ProductTransDistrResponse();
+        //common check
+        checkCommRequest(request);
+        //check ChannelId
+        String channelId = request.getChannelId();
+        checkRequestChannelId(channelId);
+        //request check
+        request.check();
+
+        /**
+         * lock data
+         */
+        String nowStr = DateTimeUtil.getNow();
+        int getCount = request.getLimit();
+        String translator = request.getTranslator();
+        int translateTimeHDiff = request.getTranslateTimeHDiff();
+        int distributeRule = request.getDistributeRule();
+
+        String queryStrTmp;
+        switch (distributeRule){
+            case 0:
+                // add translateTime condition
+                queryStrTmp = "{\"$or\":" +
+                        "[{\"fields.status\":{\"$nin\":[\"New\"]},\"fields.translateStatus\":{\"$in\":[null,\"\", \"0\"]},\"fields.translator\":{\"$in\":[null,\"\"]}}," +
+                        "{\"fields.status\":{\"$nin\":[\"New\"]},\"fields.translator\":{\"$nin\":[null,\"\"]},\"fields.translateTime\":{\"$lt\":\"%s\"}}]}";
+                break;
+            case 1:
+                queryStrTmp = "{\"$or\":" +
+                        "[{\"fields.status\":{\"$nin\":[\"New\"]},\"fields.translateStatus\":{\"$in\":[null,\"\",\"0\"]},\"fields.translator\":{\"$in\":[null,\"\"]},\"groups.platforms.isMain\":1}," +
+                        "{\"fields.status\":{\"$nin\":[\"New\"]},\"fields.translator\":{\"$nin\":[null,\"\"]},\"fields.translateTime\":{\"$lt\":\"%s\"},\"groups.platforms.isMain\":1}]}";
+                break;
+            default:
+                // add translateTime condition
+                queryStrTmp = "{\"$or\":" +
+                        "[{\"fields.status\":{\"$nin\":[\"New\"]},\"fields.translateStatus\":{\"$in\":[null,\"\", \"0\"]},\"fields.translator\":{\"$in\":[null,\"\"]}}," +
+                        "{\"fields.status\":{\"$nin\":[\"New\"]},\"fields.translator\":{\"$nin\":[null,\"\"]},\"fields.translateTime\":{\"$lt\":\"%s\"}}]}";
+                break;
+        }
+
+        Date date = DateTimeUtil.addHours(DateTimeUtil.getDate(), -translateTimeHDiff);
+        String translateTimeStr = DateTimeUtil.format(date, null);
+
+        JomgoUpdate updateObject = new JomgoUpdate();
+        // create query string
+        String queryStr = String.format(queryStrTmp, translateTimeStr);
+        updateObject.setQuery(queryStr);
+
+        // create Projection String
+        String[] projectionStr = getProjection(request);
+        updateObject.setProjection(projectionStr);
+
+        // create sort String
+        String sortStr = getSort(request);
+        updateObject.setSort(sortStr);
+
+        // create Update string
+        String strUpdateTmp = "{\"$set\":{\"fields.translateStatus\":\"0\", \"fields.translator\":\"%s\", \"fields.translateTime\":\"%s\"}}";
+        String updateStr = String.format(strUpdateTmp, translator, nowStr);
+        updateObject.setUpdate(updateStr);
+
+        List<CmsBtProductModel> products = new ArrayList<>();
+        //update translator translateTime
+        for (int i=0; i<getCount; i++) {
+            CmsBtProductModel productModel = cmsBtProductDao.findAndModify(updateObject, channelId);
+            if (productModel != null) {
+                products.add(productModel);
+            } else {
+                break;
+            }
+        }
+//        /**
+//         * query lock data
+//         */
+//        JomgoQuery queryObject = new JomgoQuery();
+//        //query
+//        String getQueryStrTmp = "{\"fields.status\":{\"$nin\":[\"New\"]},\"fields.translateStatus\":0,\"fields.translator\":\"%s\",\"fields.translateTime\":{\"$gt\":\"%s\"}}";
+//        queryObject.setQuery(String.format(getQueryStrTmp, translator, translateTimeStr));
+//        //fields
+//        buildProjection(request, queryObject);
+//        //sorts
+//        buildSort(request, queryObject);
+//        List<CmsBtProductModel> products = cmsBtProductDao.select(queryObject, channelId);
+
+        result.setProducts(products);
+
+        return result;
+    }
+
+    /**
+     * 获取Sku的库存信息
+     */
+    public ProductSkuResponse getProductSkuQty(ProductSkuRequest param) {
+        List<WmsBtInventoryCenterLogicModel> inventoryList = wmsBtInventoryCenterLogicDao.getItemDetailByCode(param);
+        ProductSkuResponse response = new ProductSkuResponse();
+        Map<String, Integer> result = new HashMap<>();
+
+        for (WmsBtInventoryCenterLogicModel inventory : inventoryList) {
+            result.put(inventory.getSku(), inventory.getQtyChina());
+        }
+        response.setSkuInventories(result);
+        return response;
+    }
+
 }

@@ -3,6 +3,7 @@ package com.voyageone.web2.sdk.api.response;
 import com.voyageone.web2.sdk.api.VoApiResponse;
 import com.voyageone.web2.sdk.api.domain.CmsBtTagModel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -22,7 +23,7 @@ public class TagsGetResponse extends VoApiResponse {
     private List<CmsBtTagModel> tags;
 
 	public List<CmsBtTagModel> getTags() {
-		return tags;
+		return tags == null?new ArrayList<>():tags;
 	}
 
 	public void setTags(List<CmsBtTagModel> tags) {

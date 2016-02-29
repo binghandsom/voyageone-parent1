@@ -13,11 +13,11 @@ import java.util.Map;
 public class CmsSessionBean implements Serializable {
 
     // categoryType
-    private Map<String, Object> categoryType;
+    private Map<String, Object> platformType;
 
-    public Map<String, Object> getCategoryType() {
-        if (categoryType != null) {
-            return categoryType;
+    public Map<String, Object> getPlatformType() {
+        if (platformType != null) {
+            return platformType;
         } else {
             Map<String, Object> newCategoryType = new HashMap<String, Object>();
             newCategoryType.put("cTypeId", CartType.TMALLG.getShortName());
@@ -26,7 +26,7 @@ public class CmsSessionBean implements Serializable {
         }
     }
 
-    public void setCategoryType(Map<String, Object> categoryType) {
-        this.categoryType = categoryType;
+    public void setPlatformType(Map<String, Object> platformType) {
+        this.platformType = platformType;
     }
 }

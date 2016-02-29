@@ -4,6 +4,7 @@ package com.voyageone.common.util;
 import com.voyageone.common.configs.Properties;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.poi.ss.usermodel.*;
 
 import java.io.*;
 import java.net.*;
@@ -311,6 +312,55 @@ public final class FileUtils {
             }
         }
         return result;
+    }
+
+    /**
+     * Excel Cell样式取得
+     *
+     * @param book Excel Book对象
+     * @return CellStyle Excel Cell样式
+     */
+    public static CellStyle createUnLockStyle(Workbook book) {
+        CellStyle cellStyle = book.createCellStyle();
+
+        cellStyle.setLocked(false);
+
+        return cellStyle;
+    }
+
+    /**
+     * Excel 行对象取得
+     *
+     * @param sheet Excel Sheet对象
+     * @param rowIndex Excel RowIndex
+     * @return Row Excel Row对象
+     */
+    public static Row row(Sheet sheet, int rowIndex) {
+
+        Row row = sheet.getRow(rowIndex);
+
+        if (row == null) row = sheet.createRow(rowIndex);
+
+        return row;
+    }
+
+    /**
+     * Excel Cell对象取得
+     *
+     * @param row Excel Row对象
+     * @param index Excel CellIndex
+     * @param cellStyle Excel Cell样式
+     * @return Row Excel Cell对象
+     */
+    public static Cell cell(Row row, int index, CellStyle cellStyle) {
+
+        Cell cell = row.getCell(index);
+
+        if (cell == null) cell = row.createCell(index);
+
+        if (cellStyle != null) cell.setCellStyle(cellStyle);
+
+        return cell;
     }
 
 }

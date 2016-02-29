@@ -104,6 +104,10 @@ public abstract class BaseMongoDao extends BaseJomgoDao {
         return mongoTemplate.findById(id, (Class<T>) entityClass, collectionName);
     }
 
+    public <T> T findAndModify(JomgoUpdate updateObject) {
+        return mongoTemplate.findAndModify(updateObject, (Class<T>) entityClass, collectionName);
+    }
+
     public long count() {
         return mongoTemplate.count(collectionName);
     }
@@ -123,5 +127,13 @@ public abstract class BaseMongoDao extends BaseJomgoDao {
 
     public WriteResult deleteWithQuery(String strQuery) {
         return mongoTemplate.remove(strQuery, collectionName);
+    }
+
+    public WriteResult updateFirst(String strQuery, String strUpdate) {
+        return mongoTemplate.updateFirst(strQuery, strUpdate, collectionName);
+    }
+
+    public WriteResult upsertFirst(String strQuery, String strUpdate) {
+        return mongoTemplate.upsertFirst(strQuery, strUpdate, collectionName);
     }
 }

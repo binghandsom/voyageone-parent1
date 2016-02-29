@@ -26,6 +26,6 @@
         <session-timeout>30</session-timeout>
     </session-config>
     <absolute-ordering>
-        <name>web1</name>
+        <name>web2</name>
     </absolute-ordering>
 </web-app>
