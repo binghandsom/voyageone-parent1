@@ -71,7 +71,7 @@ define(["modules/wms/wms.module",
                 stocktakeService.doInventoryInit(vm, $scope).then(function (response){
                     $scope.pageOption.total = response.data.total;
                     $scope.itemList = response.data.itemList;
-                    vm.auto_print =  response.data.auto_print;
+                    //vm.auto_print =  response.data.auto_print;
                     //submit按钮禁用控制
                     stocktakeService.doCheckSectionStatus(vm, $scope).then(function (response){
                         var sectionInfo = _.find(response.data.sectionList, function(obj){
