@@ -7,6 +7,7 @@ define([
     "modules/wms/wms.module",
     "components/directives/paging",
     "modules/wms/return/returnService",
+	"../directives/popChangeReturn/popChangeReturn",
 	"components/services/printService",
 	"components/directives/dialogs/dialogs"
 ], function (wms) {
@@ -21,8 +22,12 @@ define([
 			"notify",
 			"$filter",
 			"$location",
-            function ($scope, returnService, alert, printService, wmsConstant, confirm, notify, $filter, $location) {
-            	
+            "$window",
+			"wmsChangeReturn",
+            function ($scope, returnService, alert, printService, wmsConstant, confirm, notify, $filter, $location, $window, wmsChangeReturn) {
+
+				var _ = require('underscore');
+
                 //检索条件结构体
                 $scope.search = {
                 	page:1,   //分頁用
@@ -54,6 +59,11 @@ define([
 
 				//打印行
 				$scope.printRow = printRow;
+				//Return编辑
+				$scope.changeKind = changeKind;
+
+                //下载退货数据
+                $scope.doReturnListDownload = doReturnListDownload;
 
                 function changeToSessionListPage(){
                     $location.path("wms/return/sessionList");
@@ -64,15 +74,26 @@ define([
 				}
 
 				function initialize(){
-            		returnService.doInit({ "returnStatus" : wmsConstant.return.typeId.returnStatus}, $scope)
-            			.then(function(response){
-            				$scope.returnStatus = response.data.returnStatus;
-							//默认查询条件为目前日期往前推一个月
-							$scope.search.updateTime_s  = response.data.fromDate;
-							$scope.search.updateTime_e  = response.data.toDate;
-							//按默认条件展示数据
-							doSearch(1);
-						})
+                    returnService.doInit({
+                            "returnStatus": wmsConstant.return.typeId.returnStatus,
+                            "returnCondition": wmsConstant.return.typeId.returnCondition,
+                            "sessionStatus": wmsConstant.return.typeId.sessionStatus
+                        }, $scope)
+                        .then(function (response) {
+                            $scope.returnStatus = response.data.returnStatus;
+                            $scope.returnCondition = response.data.returnCondition;
+                            $scope.sessionStatus = response.data.sessionStatus;
+                            //默认查询条件为目前日期往前推一个月
+                            $scope.search.updateTime_s = response.data.fromDate;
+                            $scope.search.updateTime_e = response.data.toDate;
+
+                            $scope.stores = response.data.storeList;
+                            $scope.search.store_id = $scope.stores[0].store_id;
+                            $scope.search.store_id_list = getStoreIds($scope.stores);
+
+                            //按默认条件展示数据
+                            doSearch(1);
+                        })
             	}
 
 				function changeStatus(return_id) {
@@ -107,6 +128,15 @@ define([
                     return v ? (_.isDate(v) ? dateFilter(v, f) : v) : "";
                 }
 
+                function getStoreIds(list) {
+                    var ids = [];
+                    _.each(list, function (item) {
+                        if (!_.isEqual(item.store_id, 0))
+                            ids.push(item.store_id);
+                    });
+                    return ids;
+                }
+
 				function printRow(){
 					var returnInfo = $scope.returnList.selected;
 					var data = [{"codition" : returnInfo.condition_id,
@@ -123,6 +153,28 @@ define([
 					printService.doPrint(wmsConstant.print.business.ReturnLabel, wmsConstant.print.hardware_key.Print_Return, jsonData);
 
 				}
+
+				//根据所选状态更新Return物品
+				function changeKind(changeKind,processContent){
+					var returnItem = $scope.returnList.selected;
+
+					returnItem.changeKind = changeKind;
+					returnItem.processContent = processContent;
+
+					wmsChangeReturn($scope,returnItem);
+
+				}
+
+				function doReturnListDownload(){
+
+                    // 格式化时间
+                    $scope.search.updateTime_s = formatDate($scope.search.updateTime_s);
+                    $scope.search.updateTime_e = formatDate($scope.search.updateTime_e);
+
+                    var downloadUrl = "./wms/return/list/doReturnListDownload?param="+ JSON.stringify($scope.search) ;
+                    $window.open(downloadUrl);
+
+                }
 
             }
         ]);

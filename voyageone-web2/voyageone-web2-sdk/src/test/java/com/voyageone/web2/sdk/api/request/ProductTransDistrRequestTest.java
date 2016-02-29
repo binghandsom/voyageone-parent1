@@ -23,15 +23,22 @@ public class ProductTransDistrRequestTest {
     public void testGet() {
 
         ProductTransDistrRequest requestModel = new ProductTransDistrRequest("013");
-        requestModel.setTranslator("chuanyu.liang");
+        requestModel.addSort("fields.code", true);
+        requestModel.addSort("fields.brand", false);
+
+        requestModel.setTranslator("chuanyu.liang3");
         requestModel.setTranslateTimeHDiff(24);
 
+        requestModel.addField("fields.code");
+        requestModel.addField("fields.brand");
         requestModel.addField("fields.translateStatus");
         requestModel.addField("fields.translator");
         requestModel.addField("fields.translateTime");
 
         //SDK取得Product 数据
         ProductTransDistrResponse response = voApiClient.execute(requestModel);
+
+
 
         System.out.println(response);
     }

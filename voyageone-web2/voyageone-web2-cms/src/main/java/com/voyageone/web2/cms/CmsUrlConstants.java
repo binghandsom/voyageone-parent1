@@ -39,7 +39,7 @@ public interface CmsUrlConstants {
 
                 String UPDATE_PROMOTION = "updatePromotion";
 
-                String PROMOTION_EXPORT = "ExportPromotion";
+                String PROMOTION_EXPORT = "exportPromotion";
             }
 
             interface DETAIL {

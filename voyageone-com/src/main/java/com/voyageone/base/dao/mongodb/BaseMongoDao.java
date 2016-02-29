@@ -104,6 +104,10 @@ public abstract class BaseMongoDao extends BaseJomgoDao {
         return mongoTemplate.findById(id, (Class<T>) entityClass, collectionName);
     }
 
+    public <T> T findAndModify(JomgoUpdate updateObject) {
+        return mongoTemplate.findAndModify(updateObject, (Class<T>) entityClass, collectionName);
+    }
+
     public long count() {
         return mongoTemplate.count(collectionName);
     }

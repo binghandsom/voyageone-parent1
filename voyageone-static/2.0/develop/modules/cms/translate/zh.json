@@ -208,6 +208,11 @@
   "TXT_MSG_UNVALID_CONDITION": "无效的条件.",
   "TXT_MSG_PRODUCT_CAN_NOT_EDIT": "该商品正在主类目切换中,请稍等...",
   "TXT_MSG_DO_DELETE": "您确定要删除 ",
+  "TXT_MSG_LONG_TITLE":"长标题",
+  "TXT_MSG_MIDDLE_TITLE":"中标题",
+  "TXT_MSG_SHORT_TITLE":"短标题",
+  "TXT_MSG_LONG_DESCRIPTION":"长描述",
+  "TXT_MSG_SHORT_DESCRIPTION":"短描述",
 
   "BTN_ADD_CONDITION": "新增条件",
   "BTN_CANCEL": "取消",

@@ -10,14 +10,32 @@
             </h3>
         </div>
         <div class="panel-body ng-binding form-inline">
-            <div class="form-group">
-                <div class="input-group">
+            <div class="form-group col-sm-12">
+            <div class="input-group col-sm-4">
+                <label for="return-store" class="input-group-addon" translate="WMS_STORE"></label>
+                <select chosen
+                        id="return-store"
+                        class="form-control"
+                        ng-model="search.store_id"
+                        ng-options="i.store_id as i.store_name for i in stores">
+                </select>
+            </div>
+                <div class="input-group col-sm-4">
+                    <label class="input-group-addon" translate="WMS_CONDITION"></label>
+                    <ui-select ng-model="search.condition_id" style="min-width: 150px">
+                        <ui-select-match placeholder="select a condition">{{$select.selected.name}}</ui-select-match>
+                        <ui-select-choices repeat="i.id as i in returnCondition | filter: $select.search">
+                            <div ng-bind-html="i.name"></div>
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
+                <div class="input-group col-sm-3">
                     <label class="input-group-addon" translate="WMS_ORDERNUMBER"></label>
                     <input class="form-control" ng-model="search.order_num" type="text" title=""/>
                 </div>
-            </div>
-            <div class="form-group">
-                <div class="input-group">
+                </div>
+            <div class="form-group col-sm-12" style="margin-top:10px">
+                <div class="input-group col-sm-4">
                     <label class="input-group-addon" translate="WMS_FROM"></label>
                     <input class="form-control" type="text" ng-model="search.updateTime_s"
                            is-open="fromOpened" ng-click="fromOpened = true" placeholder="Select a date"
@@ -27,8 +45,17 @@
                            is-open="toOpened" ng-click="toOpened = true" placeholder="Select a date"
                            datepicker-popup="yyyy-MM-dd" datepicker-append-to-body="1" />
                 </div>
+                <div class="input-group col-sm-4">
+                    <label class="input-group-addon" translate="WMS_SESSION_STATUS"></label>
+                    <ui-select ng-model="search.return_session_status" style="min-width: 150px">
+                        <ui-select-match placeholder="select a session status">{{$select.selected.name}}</ui-select-match>
+                        <ui-select-choices repeat="i.id as i in sessionStatus | filter: $select.search">
+                            <div ng-bind-html="i.name"></div>
+                        </ui-select-choices>
+                    </ui-select>
+                </div>
             </div>
-            <div class="form-group">
+            <div class="col-sm-12 text-center" style="margin-top:10px">
                 <div class="input-group">
                     <button class="btn btn-sm btn-primary" ng-click="doSearch(1)"><i class="fa fa-search"></i>&nbsp;<span translate="WMS_SEARCH"></span></button>
                 </div>
@@ -37,6 +64,9 @@
                 </div>
                 <div class="input-group">
                     <button class="btn btn-sm btn-primary btn-warning" ng-click="changeToSessionListPage()" translate="WMS_SESSIONLIST"></button>
+                </div>
+                <div class="input-group">
+                    <button class="btn btn-sm btn-primary btn-success"  ng-click="doReturnListDownload()" ><i class="fa fa-download"></i>&nbsp;<span translate="WMS_DOWNLOAD"></span></button>
                 </div>
             </div>
         </div>
@@ -52,8 +82,8 @@
                         <th translate="WMS_ORDERNUMBER"></th>
                         <th translate="WMS_SKU"></th>
                         <th translate="WMS_CONDITION"></th>
-                        <th translate="WMS_STATUS"></th>
                         <th translate="WMS_REASON"></th>
+                        <th translate="WMS_SESSION_STATUS"></th>
                         <th translate="WMS_EXPRESSCOMPANY"></th>
                         <th translate="WMS_TRACKINGNO"></th>
                         <th translate="WMS_NOTE"></th>
@@ -70,8 +100,8 @@
                         <td>{{returnInfo.order_num}}</td>
                         <td>{{returnInfo.sku}}</td>
                         <td>{{returnInfo.condition}}</td>
-                        <td>{{returnInfo.status_name}}</td>
                         <td>{{returnInfo.reason_name}}</td>
+                        <td>{{returnInfo.return_session_status_name}}</td>
                         <td>{{returnInfo.received_from}}</td>
                         <td>{{returnInfo.tracking_no}}</td>
                         <td>{{returnInfo.notes}}</td>
@@ -93,5 +123,6 @@
     </div>
     <ul id="session-info-operations" role="menu" class="dropdown-menu">
         <li><a href="javascript:" ng-click="printRow()"><i class="fa fa-print"></i>&nbsp;<span translate="WMS_PRINT"></span></a></li>
+        <li><a href="javascript:" ng-click="changeKind('1','')"><span translate="WMS_NOTE"></span></a></li>
     </ul>
 </div>

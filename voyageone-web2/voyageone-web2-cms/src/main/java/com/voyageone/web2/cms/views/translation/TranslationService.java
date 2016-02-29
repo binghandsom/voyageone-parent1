@@ -38,6 +38,24 @@ public class TranslationService {
     @Autowired
     protected VoApiDefaultClient voApiClient;
 
+    private Map sortFields;
+
+
+    /**
+     * TODO 将来应该从配置数据库中读取.
+     */
+    public Map getSortFieldOptions(){
+
+        if (sortFields == null){
+            sortFields = new HashMap<>();
+        }
+
+        sortFields.put("quantity","库存");
+
+        return sortFields;
+
+    }
+
     /**
      * 获取当前用户未完成的任务.
      *
@@ -55,7 +73,7 @@ public class TranslationService {
         Date date = DateTimeUtil.addHours(DateTimeUtil.getDate(), -48);
         String translateTimeStr = DateTimeUtil.format(date, null);
 
-        String tasksQueryStr = String.format("{'fields.status':{'$nin':['New']},'fields.translateStatus':0,'fields.translator':'%s','fields.translateTime':{'$gt':'%s'}}",userName,translateTimeStr);
+        String tasksQueryStr = String.format("{'fields.status':{'$nin':['New']},'fields.translateStatus':'0','fields.translator':'%s','fields.translateTime':{'$gt':'%s'}}",userName,translateTimeStr);
 
         productsGetRequest.setChannelId(channelId);
         productsGetRequest.setQueryString(tasksQueryStr);
@@ -84,9 +102,14 @@ public class TranslationService {
      * @param channelId
      * @param userName
      */
-    public TranslateTaskBean assignTask(String channelId, String userName,int distributeRule,int distCount) {
+    public TranslateTaskBean assignTask(String channelId, String userName,int distributeRule,int distCount,String sortCondition, Boolean sortRule) {
 
         ProductTransDistrRequest requestModel = new ProductTransDistrRequest(channelId);
+
+        if (!StringUtils.isEmpty(sortCondition)){
+            String sortField = "fields." + sortCondition;
+            requestModel.addSort(sortField,sortRule);
+        }
 
         requestModel.setTranslator(userName);
         requestModel.setTranslateTimeHDiff(24);
@@ -135,6 +158,7 @@ public class TranslationService {
         productsGetRequest.addField("fields.shortDesCn");
         productsGetRequest.addField("fields.model");
         productsGetRequest.addField("fields.images1");
+        productsGetRequest.addField("fields.translator");
         productsGetRequest.addField("modified");
     }
 
@@ -344,6 +368,7 @@ public class TranslationService {
             translationBean.setProductImage(productModel.getFields().getImages1().get(0).getName());
             translationBean.setModifiedTime(productModel.getModified());
             translationBean.setProdId(productModel.getProdId());
+            translationBean.setTranslator(productModel.getFields().getTranslator());
 
             translateTaskBeanList.add(translationBean);
 
@@ -385,7 +410,7 @@ public class TranslationService {
      */
     private int getTotalUndoneCount(String channelId) {
 
-        String totalUndoneCountQueryStr = String.format("{'fields.status':{'$nin':['New']},'fields.translateStatus':{'$in':[null,'',0]}}");
+        String totalUndoneCountQueryStr = String.format("{'fields.status':{'$nin':['New']},'fields.translateStatus':{'$in':[null,'','0']}}");
         ProductsCountRequest totalUndoneCountRequest = new ProductsCountRequest();
         totalUndoneCountRequest.setChannelId(channelId);
         totalUndoneCountRequest.setQueryString(totalUndoneCountQueryStr);

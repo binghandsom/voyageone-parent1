@@ -8,6 +8,7 @@ define(["modules/wms/wms.module",
         "components/directives/getFocus",
         "components/directives/enterClick",
         "components/directives/dialogs/dialogs",
+        "components/services/printService",
         "components/directives/paging"
     ],
     function(wms) {
@@ -15,13 +16,15 @@ define(["modules/wms/wms.module",
             ["$scope",
             "$routeParams",
             "stocktakeService",
+            "printService",
             "vAlert",
             "vConfirm",
             "notify",
             "$location",
+            "wmsConstant",
             inventoryCtrl]);
 
-        function inventoryCtrl($scope, routeParams, stocktakeService, alert, confirm, notify, $location) {
+        function inventoryCtrl($scope, routeParams, stocktakeService, printService, alert, confirm, notify, $location, wmsConstant) {
 
             //变量Map
             var vm = $scope.vm = {
@@ -50,8 +53,16 @@ define(["modules/wms/wms.module",
             //提交section 【submit按钮】
             $scope.submit = submit;
 
+            //返回section 【back按钮】
+            $scope.back = back;
+
             //撤销已经扫描的Item 【ReScan按钮】
             $scope.reScan = reScan;
+
+            //打印面单
+            $scope.printItem = printItem;
+
+            $scope.deleteItem = deleteItem;
 
             //分页调用函数
             function reqSearch(page, rows) {
@@ -60,6 +71,7 @@ define(["modules/wms/wms.module",
                 stocktakeService.doInventoryInit(vm, $scope).then(function (response){
                     $scope.pageOption.total = response.data.total;
                     $scope.itemList = response.data.itemList;
+                    //vm.auto_print =  response.data.auto_print;
                     //submit按钮禁用控制
                     stocktakeService.doCheckSectionStatus(vm, $scope).then(function (response){
                         var sectionInfo = _.find(response.data.sectionList, function(obj){
@@ -95,17 +107,63 @@ define(["modules/wms/wms.module",
                 });
             }
 
+            function back(){
+                $location.path("/wms/stockTake/sectionList");
+            }
+
             function scanUpc(){
+                if (vm.upc == "") {
+                    return;
+                }
                 stocktakeService.doUpcScan(vm, $scope).then(function(response){
                     //response.data.successFlg ? notify(response.data.returnResMsg) : alert(response.data.returnResMsg);
-                    if(response.data.successFlg){
-                        notify.success("WMS_NOTIFY_OP_SUCCESS");
-                    }
                     init();
                     //扫描完成之后清空barcode、sku
                     vm.upc = "";
-                    vm.sku = "";
+                    //vm.sku = "";
+
+                    // 重置焦点到 barcode 输入框
+                    angular.element("#inventory-upc").focus();
+
+                    if(response.data.successFlg){
+                        //notify.success("WMS_NOTIFY_OP_SUCCESS");
+                        if　(vm.auto_print == true) {
+                            reqPrintSKU(response.data.labelType, response.data.clientSku, response.data.Sku, response.data.Upc);
+                        }
+                    }else {
+                        alert(response.data.returnResMsg);
+                    }
                 });
+            }
+
+            function printItem(index) {
+                var item =$scope.itemList[index];
+
+                // 重置焦点到 barcode 输入框
+                angular.element("#inventory-upc").focus();
+
+                stocktakeService.getSku(vm.stocktake_id,item.upc,item.sku).then(function (res) {
+                    reqPrintSKU(res.labelType, res.clientSku,res.Sku,res.Upc);
+                });
+
+            }
+
+            function deleteItem(index) {
+                var item =$scope.itemList[index];
+
+                if (!item) {
+                    alert("WMS_TRANSFER_EDIT_NO_ITEM");
+                    return;
+                }
+
+                stocktakeService.deleteItem(vm.stocktake_id,vm.stocktake_detail_id,item.sku).then(function (res) {
+                    //response.data.successFlg ? notify(response.data.returnResMsg) : alert(response.data.returnResMsg);
+                    if(res.successFlg){
+                        notify.success("WMS_NOTIFY_OP_SUCCESS");
+                    }
+                    init();
+                });
+
             }
 
             function init() {
@@ -115,7 +173,20 @@ define(["modules/wms/wms.module",
                 vm.stocktake_detail_id = routeParams.stocktake_detail_id;
                 //默认扫描数量为1，可手工输入数量
                 vm.stocktake_qty = 1;
+                // 重置焦点到 barcode 输入框
+                angular.element("#inventory-upc").focus();
                 reqSearch(1);
+            }
+
+            function reqPrintSKU(labelType, clientSku, Sku, Upc) {
+
+                var data = [{"label_type" : labelType,
+                    "client_sku" : clientSku,
+                    "sku" : Sku,
+                    "upc" : Upc}];
+                var jsonData = JSON.stringify(data);
+
+                printService.doPrint(wmsConstant.print.business.SKU, wmsConstant.print.hardware_key.Print_SKU, jsonData);
             }
         }
     });
