@@ -6,7 +6,7 @@
         <span translate="TXT_PROMOTION_DETAIL"></span>
         </h5>
     </div>
-    <div class="modal-body wrapper">
+    <div class="m-t-md m-b-md">
         <form role="form" class="form-horizontal" name="promotionFrom">
             <div class="form-group">
                 <label class="col-sm-3 control-label vo_reqfield" translate="TXT_PROMOTION_NAME"></label>
@@ -93,6 +93,29 @@
                 </div><!-- onoff switch -->
             </div>
         </form>
+    </div>
+    <div class="table-responsive m-l-md m-r-md m-b-md">
+        <table class="table table-hover-new table-hover">
+            <thead>
+            <tr class="control-label">
+                <th>折扣</th>
+                <th class="mfb-xxt text-center">操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td><input class="form-control"></td>
+                <td class="mfb-xxt text-center"><button title="删除" class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i></button></td>
+            </tr>
+            <tr>
+                <td><input class="form-control"></td>
+                <td class="mfb-xxt text-center"><button title="删除" class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i></button></td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="form-group">
+            <button class="btn btn-sm btn-success btn-addon pull-right"><i class="fa fa-plus"></i>追加</button>
+        </div>
     </div>
     <div class="modal-footer">
         <button class="btn btn-default" ng-click="$close()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CANCEL' | translate}}</button>
