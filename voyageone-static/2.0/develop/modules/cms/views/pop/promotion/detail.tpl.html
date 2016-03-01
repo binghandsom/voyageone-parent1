@@ -98,23 +98,19 @@
         <table class="table table-hover-new table-hover">
             <thead>
             <tr class="control-label">
-                <th>折扣</th>
-                <th class="mfb-xxt text-center">操作</th>
+                <th>TAG</th>
+                <th class="mfb-xxt text-center">{{'BTN_DELETE' | translate}}</th>
             </tr>
             </thead>
             <tbody>
-            <tr>
-                <td><input class="form-control"></td>
-                <td class="mfb-xxt text-center"><button title="删除" class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i></button></td>
-            </tr>
-            <tr>
-                <td><input class="form-control"></td>
-                <td class="mfb-xxt text-center"><button title="删除" class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i></button></td>
+            <tr ng-repeat="tag in promotion.tagList">
+                <td><input class="form-control" ng-model="tag.tagName"></td>
+                <td class="mfb-xxt text-center"><button title="{{'BTN_DELETE' | translate}}" class="btn btn-danger btn-xs" ng-disabled="tag.tagId != ''" ng-click="delTag(promotion.tagList,tag)"><i class="fa fa-trash-o"></i></button></td>
             </tr>
             </tbody>
         </table>
         <div class="form-group">
-            <button class="btn btn-sm btn-success btn-addon pull-right"><i class="fa fa-plus"></i>追加</button>
+            <button class="btn btn-sm btn-success btn-addon pull-right" ng-click="addTag()"><i class="fa fa-plus"></i>追加</button>
         </div>
     </div>
     <div class="modal-footer">

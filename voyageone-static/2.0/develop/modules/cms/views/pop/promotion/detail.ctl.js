@@ -6,7 +6,7 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function (angularAMD) {
 
-    angularAMD.controller('popPromotionDetailCtl', function ($scope,promotionService, cartList,items) {
+    angularAMD.controller('popPromotionDetailCtl', function ($scope,promotionService, cartList,items,confirm,$translate) {
 
         $scope.promotion = {};
         $scope.tejiabao=false;
@@ -20,14 +20,31 @@ define([
                 }
             }
         };
+        $scope.addTag = function(){
+            if($scope.promotion.tagList)
+            {
+                $scope.promotion.tagList.push({"tagId":"","channelId":"","tagName":""});
+            }else{
+                $scope.promotion.tagList=[{"tagId":"","channelId":"","tagName":""}];
+            }
 
+        };
+        $scope.delTag = function(parent,node){
+            confirm($translate.instant('TXT_MSG_DELETE_ITEM')).result
+                .then(function () {
+                    var index;
+                    index=_.indexOf(parent,node);
+                    if(index >-1 ){
+                        parent.splice(index,1);
+                    }
+                });
+        };
         $scope.ok = function(){
 
             if(!$scope.tejiabao){
                 $scope.promotion.tejiabaoId = "0";
             }
             if(!items) {
-                $scope.promotion.tagList=[{"tagName":"7.5折"}]
                 promotionService.insertPromotion($scope.promotion).then(function (res) {
 
                     $scope.$close();
