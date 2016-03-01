@@ -1,4 +1,4 @@
-package com.voyageone.web2.cms.views.translate;
+package com.voyageone.web2.cms.views.channel;
 
 import com.voyageone.cms.service.dao.mongodb.CmsMtFeedCategoryTreeDao;
 import com.voyageone.cms.service.model.CmsFeedCategoryModel;
