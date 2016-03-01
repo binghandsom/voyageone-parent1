@@ -175,6 +175,11 @@
   "TXT_INPUT_ONLY_CHAR_AND_NUMBER": "Input Include:English numbers _ .",
   "TXT_REQUIRED": "(required)",
   "TXT_TAG": "Tag",
+  "TXT_SORT_1": "Sort Attribute 1",
+  "TXT_SORT_2": "Sort Attribute 2",
+  "TXT_SORT_3": "Sort Attribute 3",
+  "TXT_SORT_ASC": "Asc",
+  "TXT_SORT_DESC": "Desc",
 
 
   "TXT_MSG_SEARCH": "Search...",

@@ -175,6 +175,11 @@
   "TXT_PLATFORM_TYPE_WITH_COLON": "平台类型:",
   "TXT_INPUT_ONLY_CHAR_AND_NUMBER": "这里只能输入:英数字 _ .，别输火星文!",
   "TXT_TAG": "标签",
+  "TXT_SORT_1": "排序属性1",
+  "TXT_SORT_2": "排序属性2",
+  "TXT_SORT_3": "排序属性3",
+  "TXT_SORT_ASC": "升序",
+  "TXT_SORT_DESC": "降序",
 
 
 
