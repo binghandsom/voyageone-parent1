@@ -55,7 +55,11 @@ define (function (require) {
                     TXT_ORDERS_SEARCH_SEARCH_ORDER_KIND_Present:'Present',
                     TXT_ORDERS_SEARCH_SEARCH_ORDER_KIND_Exchange:'Exchange',
                     TXT_ORDERS_SEARCH_SEARCH_ORDER_KIND_PriceDifference:'Price Difference',
-                    
+
+                    TXT_ORDERS_SEARCH_CLIENT_ORDER_FLAG:'第三方标志',
+                    TXT_ORDERS_SEARCH_CLIENT_ORDER_FLAG_NORMAL_SEND:'正常推送',
+                    TXT_ORDERS_SEARCH_CLIENT_ORDER_FLAG_CANCEL_SEND:'取消推送',
+                    TXT_ORDERS_SEARCH_CLIENT_ORDER_FLAG_CANCEL_CONFIRM:'取消确认',
 
                     TXT_ORDERS_SEARCH_SEARCH_ORDER_STATUS: '订单状态',
                     TXT_ORDERS_SEARCH_SEARCH_CLIENT_ORDER_ID:'第三方订单号',

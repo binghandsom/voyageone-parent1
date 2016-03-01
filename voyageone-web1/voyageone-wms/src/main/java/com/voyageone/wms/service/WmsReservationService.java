@@ -78,4 +78,11 @@ public interface WmsReservationService {
 	 * @param user 登陆用户信息
 	 */
 	void initSkuHisList(HttpServletRequest request, HttpServletResponse response, UserSessionBean user);
+
+    /**
+     * @description 库存下载
+     * @param param 下载条件
+     * @param user 用户信息
+     */
+	byte[] downloadInventoryInfo(String param, UserSessionBean user);
 }

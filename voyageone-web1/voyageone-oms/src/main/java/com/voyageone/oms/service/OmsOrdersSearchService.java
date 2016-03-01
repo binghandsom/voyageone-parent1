@@ -68,4 +68,11 @@ public interface OmsOrdersSearchService {
 	public List<Map<String,Object>> gerRefundsCounts(List<String> channelId,String orderStatusReturnRequested);
 	
 	public Map<String,Object> getOrderIndexCount(List<String> channelId,String fromTime,String endTime);
+
+	/**
+	 * 根据物流单号获得订单号列表
+	 *
+	 * @return
+	 */
+	public List<String> getOrderNumbersByTrackingNo(InFormSearch bean);
 }

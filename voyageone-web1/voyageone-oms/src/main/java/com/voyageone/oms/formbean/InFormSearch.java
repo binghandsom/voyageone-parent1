@@ -303,6 +303,15 @@ public class InFormSearch extends AjaxRequestBean {
     private String orderKindPriceDifference;
     
     private List<String> orderKindList;
+
+	private List<String> orderNumberList;
+
+	private String extNormalSend;
+
+	private String extCancelSend;
+
+	private String extCancelConfirm;
+
     /**
      * 
      * 第三方订单号
@@ -835,5 +844,37 @@ public class InFormSearch extends AjaxRequestBean {
 	@Override
 	protected String[] getValidateSorts() {
 		return new String[]{"orderNumber", "paymentStatus"};
+	}
+
+	public List<String> getOrderNumberList() {
+		return orderNumberList;
+	}
+
+	public void setOrderNumberList(List<String> orderNumberList) {
+		this.orderNumberList = orderNumberList;
+	}
+
+	public String getExtNormalSend() {
+		return extNormalSend;
+	}
+
+	public void setExtNormalSend(String extNormalSend) {
+		this.extNormalSend = extNormalSend;
+	}
+
+	public String getExtCancelSend() {
+		return extCancelSend;
+	}
+
+	public void setExtCancelSend(String extCancelSend) {
+		this.extCancelSend = extCancelSend;
+	}
+
+	public String getExtCancelConfirm() {
+		return extCancelConfirm;
+	}
+
+	public void setExtCancelConfirm(String extCancelConfirm) {
+		this.extCancelConfirm = extCancelConfirm;
 	}
 }
