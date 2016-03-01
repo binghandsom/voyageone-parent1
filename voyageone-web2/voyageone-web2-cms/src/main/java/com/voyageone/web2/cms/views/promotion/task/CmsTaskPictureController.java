@@ -3,12 +3,18 @@ package com.voyageone.web2.cms.views.promotion.task;
 import com.voyageone.web2.base.BaseController;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsUrlConstants.PROMOTION.TASK.BEAT;
+import com.voyageone.web2.cms.bean.beat.ReqParam;
 import com.voyageone.web2.cms.bean.beat.TaskBean;
+import com.voyageone.web2.cms.model.CmsBtBeatInfoModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by jonasvlag on 16/3/1.
@@ -27,5 +33,16 @@ public class CmsTaskPictureController extends BaseController {
     public AjaxResponse create(@RequestBody TaskBean taskBean) {
         TaskBean newBean = taskPictureService.create(taskBean, getUser());
         return success(newBean);
+    }
+
+    @RequestMapping(BEAT.PAGE)
+    public AjaxResponse page(@RequestBody ReqParam param) {
+        List<CmsBtBeatInfoModel> beatInfoModels =
+                taskPictureService.getAllBeat(param.getTask_id(), param.getOffset(), param.getSize());
+        int total = taskPictureService.getAllBeatCount(param.getTask_id());
+        Map<String, Object> map = new HashMap<>();
+        map.put("list", beatInfoModels);
+        map.put("total", total);
+        return success(map);
     }
 }

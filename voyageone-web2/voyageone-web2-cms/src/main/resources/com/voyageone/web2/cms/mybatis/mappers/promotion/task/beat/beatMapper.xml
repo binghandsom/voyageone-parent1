@@ -26,7 +26,7 @@
           AND pc.product_code IS NULL;
     </update>
 
-    <select id="cms_bt_beat_info_selectListByTask">
+    <select id="cms_bt_beat_info_selectListByTask" resultType="com.voyageone.web2.cms.model.CmsBtBeatInfoModel">
         SELECT
         id,
         task_id,
@@ -42,7 +42,7 @@
         WHERE task_id = #{task_id}
     </select>
 
-    <select id="cms_bt_beat_info_selectListByTask_page">
+    <select id="cms_bt_beat_info_selectListByTask_page" resultType="com.voyageone.web2.cms.model.CmsBtBeatInfoModel">
         SELECT
             id,
             task_id,
@@ -59,7 +59,7 @@
         LIMIT #{offset}, #{size}
     </select>
 
-    <select id="cms_bt_beat_info_selectListByTask_count">
+    <select id="cms_bt_beat_info_selectListByTask_count" resultType="int">
         SELECT COUNT(1)
         FROM voyageone_cms2.cms_bt_beat_info
         WHERE task_id = #{task_id}

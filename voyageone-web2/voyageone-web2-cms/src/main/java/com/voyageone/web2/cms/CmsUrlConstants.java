@@ -78,6 +78,8 @@ public interface CmsUrlConstants {
                 String ROOT = "/cms/task/beat";
 
                 String CREATE = "create";
+
+                String PAGE = "page";
             }
 
             interface PRICE {

@@ -33,9 +33,10 @@
   },
   "promotion_task_beat": {
     "url": "/promotion/task/beat/",
-    "hash": "/promotion/task/beat/:beatId",
+    "hash": "/promotion/task/beat/:task_id",
     "templateUrl": "views/promotion/task/beat.tpl.html",
-    "controllerUrl": "modules/cms/views/promotion/task/beat.ctl"
+    "controllerUrl": "modules/cms/views/promotion/task/beat.ctl",
+    "controller": "taskBeatController as $ctrl"
   },
   "search_advance": {
     "hash": "/search/advance",

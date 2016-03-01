@@ -88,7 +88,7 @@ public class CmsTaskPictureService extends BaseAppService {
         return beatInfoDao.selectListByTask(task_id, offset, size);
     }
 
-    public List<CmsBtBeatInfoModel> getAllBeatCount(int task_id) {
+    public int getAllBeatCount(int task_id) {
 
         return beatInfoDao.selectListByTaskCount(task_id);
     }

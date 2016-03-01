@@ -120,7 +120,8 @@
       },
       "taskBeatService": {
         "root": "/cms/task/beat",
-        "create": "create"
+        "create": "create",
+        "page": "page"
       },
       "taskPriceService" : {
         "root": "/cms/task/price",

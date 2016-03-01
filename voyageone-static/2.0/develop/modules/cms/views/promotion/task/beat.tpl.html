@@ -1,4 +1,4 @@
-<div class="wrapper-md" ng-init="initialize()">
+<div class="wrapper-md" ng-init="$ctrl.init()">
 	<div class="vo_accordion vo_attr">
 		<div class="panel-group">
 			<div class="panel panel-default">
@@ -187,7 +187,7 @@
 			</div>
 		</div><!-- /.box-body -->
 		<div class="m-t-xs">
-			<vpagination config="vm.errorPageOption"></vpagination>
+			<vpagination config="$ctrl.pageOption"></vpagination>
 		</div>
 	</div>
 </div><!-- end .wrapper-md -->

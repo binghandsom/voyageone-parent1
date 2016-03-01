@@ -43,8 +43,8 @@ public class CmsBtBeatInfoDao extends WebBaseDao {
                 "size", size));
     }
 
-    public List<CmsBtBeatInfoModel> selectListByTaskCount(int task_id) {
-        return selectList("cms_bt_beat_info_selectListByTask_count", parameters(
+    public int selectListByTaskCount(int task_id) {
+        return selectOne("cms_bt_beat_info_selectListByTask_count", parameters(
                 "task_id", task_id));
     }
 
