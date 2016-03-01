@@ -2,7 +2,6 @@ package com.voyageone.web2.cms.views.channel;
 
 import static org.junit.Assert.*;
 import com.voyageone.cms.service.model.CmsFeedCategoryModel;
-import com.voyageone.web2.cms.views.channel.CmsFeedCustPropService;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.junit.Test;
 import org.junit.runner.RunWith;
