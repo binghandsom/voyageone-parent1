@@ -7298,3 +7298,8 @@ whirl.duo:after{
 .modal-xlg {
   width: 650px;
 }
+
+a.btn-default-vo {
+  background-color: buttonface;
+  text-decoration: none;
+}

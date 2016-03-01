@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.voyageone.web2.cms.sql">
+
+    <insert id="cms_bt_beat_info_insertList">
+        INSERT INTO voyageone_cms2.cms_bt_beat_info (
+        task_id, num_iid, product_code, syn_flag, message, created, creater, modified, modifier
+        ) VALUES
+        <foreach collection="modelList" item="i">
+            (
+            #{i.task_id}, #{i.num_iid}, #{i.product_code}, #{i.syn_flag}, #{i.message}, #{i.created}, #{i.creater},
+            #{i.modified}, #{i.modifier}
+            )
+        </foreach>
+    </insert>
+
+    <update id="cms_bt_beat_info_updateNoCodeMessage">
+        UPDATE voyageone_cms2.cms_bt_beat_info b
+            JOIN voyageone_cms2.cms_bt_tasks t
+                ON b.task_id = t.task_id
+            LEFT JOIN voyageone_cms2.cms_bt_promotion_code pc
+                ON pc.promotion_id = t.promotion_id
+                   AND pc.product_code = b.product_code
+          SET b.message = #{message}
+        WHERE t.task_id = #{task_id}
+          AND pc.product_code IS NULL;
+    </update>
+
+    <select id="cms_bt_beat_info_selectListByTask">
+        SELECT
+        id,
+        task_id,
+        num_iid,
+        product_code,
+        syn_flag,
+        message,
+        created,
+        creater,
+        modified,
+        modifier
+        FROM voyageone_cms2.cms_bt_beat_info
+        WHERE task_id = #{task_id}
+    </select>
+
+    <select id="cms_bt_beat_info_selectListByTask_page">
+        SELECT
+            id,
+            task_id,
+            num_iid,
+            product_code,
+            syn_flag,
+            message,
+            created,
+            creater,
+            modified,
+            modifier
+        FROM voyageone_cms2.cms_bt_beat_info
+        WHERE task_id = #{task_id}
+        LIMIT #{offset}, #{size}
+    </select>
+
+    <select id="cms_bt_beat_info_selectListByTask_count">
+        SELECT COUNT(1)
+        FROM voyageone_cms2.cms_bt_beat_info
+        WHERE task_id = #{task_id}
+    </select>
+
+    <delete id="cms_bt_beat_info_deleteByTask">
+        DELETE FROM voyageone_cms2.cms_bt_beat_info
+        WHERE task_id = #{task_id}
+    </delete>
+
+</mapper>

@@ -17,7 +17,8 @@
   "promotion_task_index": {
     "hash": "/promotion/task",
     "templateUrl": "views/promotion/task/index.tpl.html",
-    "controllerUrl": "modules/cms/views/promotion/task/index.ctl"
+    "controllerUrl": "modules/cms/views/promotion/task/index.ctl",
+    "controller": "taskIndexController as $ctrl"
   },
   "promotion_task_detail": {
     "hash": "/promotion/task/detail",

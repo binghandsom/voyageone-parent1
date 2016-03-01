@@ -213,6 +213,7 @@
   "TXT_MSG_SHORT_DESCRIPTION":"Short description",
 
 
+  "BTN_CREATE_TASK": "New Task",
   "BTN_ADD_CONDITION": "Add Condition",
   "BTN_CLEAR": "Clear",
   "BTN_SAVE": "Save",

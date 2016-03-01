@@ -114,6 +114,14 @@
       }
     },
     "task": {
+      "taskService": {
+        "root": "/cms/promotion/task",
+        "page": "page"
+      },
+      "taskBeatService": {
+        "root": "/cms/task/beat",
+        "create": "create"
+      },
       "taskPriceService" : {
         "root": "/cms/task/price",
         "getPriceList": "getPriceList",

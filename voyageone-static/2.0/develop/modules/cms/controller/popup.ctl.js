@@ -229,7 +229,8 @@ define([
                 "newBeat": {
                     "templateUrl": "views/pop/promotion/newBeatTask.tpl.html",
                     "controllerUrl": "modules/cms/views/pop/promotion/newBeatTask.ctl",
-                    "controller": 'popNewBeatCtl'
+                    "controller": 'popNewBeatCtl as $ctrl',
+                    "size": "md"
                 }
             }
         })
@@ -660,22 +661,14 @@ define([
                 })
             });
         }
+
         /**
          * 打开promotion页面
-         * @type {openPromotion}
          */
-        $scope.openTask = openTask;
-        function openTask(viewSize) {
-            require([popActions.promotion.newBeat.controllerUrl], function () {
-                $modal.open({
-                    templateUrl: popActions.promotion.newBeat.templateUrl,
-                    controller: popActions.promotion.newBeat.controller,
-                    size: viewSize,
-                    resolve: {
-                    }
-                });
-            });
-        }
+        $scope.openTask = function (context) {
+            return openModel(popActions.promotion.newBeat, context);
+        };
+
 
         //$scope.openshop_category = openshop_category;
         //function openshop_category(viewSize) {

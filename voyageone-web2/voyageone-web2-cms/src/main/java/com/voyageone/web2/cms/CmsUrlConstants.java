@@ -66,14 +66,19 @@ public interface CmsUrlConstants {
 
         interface TASK {
 
-//            interface INDEX {
-//
-//                String ROOT = "/cms/promotion/task";
-//
-//                String GET_PRICE_LIST = "getPriceList";
-//
-//                String UPDATE_TASK_STATUS = "updateTaskStatus";
-//            }
+            interface INDEX {
+
+                String ROOT = "/cms/promotion/task";
+
+                String PAGE = "page";
+            }
+
+            interface BEAT {
+
+                String ROOT = "/cms/task/beat";
+
+                String CREATE = "create";
+            }
 
             interface PRICE {
 

@@ -214,6 +214,7 @@
   "TXT_MSG_LONG_DESCRIPTION":"长描述",
   "TXT_MSG_SHORT_DESCRIPTION":"短描述",
 
+  "BTN_CREATE_TASK": "新建任务",
   "BTN_ADD_CONDITION": "新增条件",
   "BTN_CANCEL": "取消",
   "BTN_SAVE": "保存",
