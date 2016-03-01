@@ -9,22 +9,17 @@
 					<div class="col-sm-6">
 						<div class="form-horizontal m-l-md">
 						<div class="form-group form-inline">
-							<input filestyle="" type="file" data-button-text="Choose file" data-class-button="btn btn-default" tabindex="-1" id="filestyle-0" style="position: absolute; clip: rect(0px 0px 0px 0px);">
-							<div class="bootstrap-filestyle input-group">
-								<input type="text" class="form-control" disabled="">
-								<span class="group-span-filestyle input-group-btn" tabindex="0">
-									<label for="filestyle-0" class="btn btn-default ">
-										<span class="glyphicon glyphicon-folder-open"></span> Choose file</label></span>
-							</div>
-							<button class="btn btn-vo"><i class="glyphicon glyphicon-check"></i>&nbsp;提交商品表</button>
+							<input type="file" tabindex="-1" accept=".xls,.xlsx" file-style
+								   data-button-text="Choose file" data-class-button="btn btn-default" data-classinput="form-control inline"
+								   nv-file-select uploader="$ctrl.uploader"/>
+							<button class="btn btn-vo" ng-click="$ctrl.importBeat()"><i class="glyphicon glyphicon-check"></i>&nbsp;提交商品表</button>
 							<button class="btn btn-success" ng-click="openTaskcommodity('md')"><i class="fa fa-plus"></i>&nbsp;添加商品</button>
 						  </div>
 						</div>
 					</div>
 					<div class="pull-right m-r-xs">
 						<div class="form-horizontal form-inline">
-							<button class="btn btn-danger"><i class="fa fa-cloud-download"></i>&nbsp;下载错误表 A</button>
-							<button class="btn btn-danger"><i class="fa fa-cloud-download"></i>&nbsp;下载错误表 B</button>
+							<button class="btn btn-danger"><i class="fa fa-cloud-download"></i>&nbsp;下载任务信息</button>
 						</div>
 					</div>
 				</div>
@@ -61,124 +56,21 @@
 						</tr>
 						</thead>
 						<tbody>
-						<tr>
-							<td class="mfb-xxt text-center">2561-8121</td>
-							<td class="mfb-xxt text-center"><a href="https://detail.tmall.hk/hk/item.htm?id=521788267914" target="_blank">5034296159</a></td>
-							<td class="mfb-xxt text-right">85621</td>
-							<td class="mfb-xxt text-center">取消成功</td>
-							<td class="mfb-xxx text-center">45034296159</td>
-							<td class="mfb-xxx text-center">2016-02-24 18:15:17</td>
+						<tr ng-repeat="info in $ctrl.data">
+							<td class="mfb-xxt text-center">{{info.product_code}}</td>
+							<td class="mfb-xxt text-center">
+								<a ng-href="https://detail.tmall.hk/hk/item.htm?id={{info.num_iid}}" target="_blank">{{info.num_iid}}</a>
+							</td>
+							<td class="mfb-xxt text-right"> ??? </td>
+							<td class="mfb-xxt text-center">{{info.beatFlag}}</td>
+							<td class="mfb-xxx text-center">{{info.message}}</td>
+							<td class="mfb-xxx text-center">{{info.modified}}</td>
 							<td class="mfb-xxx text-center">
 								<div class="btn-group text-center">
 							  	   <button title="启动" class="btn btn-default-purple btn-xs"><i class="glyphicon glyphicon-play"></i>&nbsp;启动</button>
 								   <button title="停止" class="btn btn-default-red btn-xs"><i class="glyphicon glyphicon-pause"></i>&nbsp;停止</button>
 								   <button title="还原" class="btn btn-default-green btn-xs"><i class="glyphicon glyphicon-share-alt"></i>&nbsp;还原</button>
-							   </div>
-							</td>
-						</tr>
-						<tr>
-							<td class="mfb-xxt text-center">2561-8121</td>
-							<td class="mfb-xxt text-center"><a href="https://detail.tmall.hk/hk/item.htm?id=521788267914" target="_blank">45034296159</a></td>
-							<td class="mfb-xxt text-right">85621</td>
-							<td class="mfb-xxt text-center">取消成功</td>
-							<td class="mfb-xxx text-center">45034296159</td>
-							<td class="mfb-xxx text-center">2016-02-24 18:15:17</td>
-							<td class="mfb-xxx text-center">
-								<div class="btn-group text-center">
-									<button title="启动" class="btn btn-default-purple btn-xs"><i class="glyphicon glyphicon-play"></i>&nbsp;启动</button>
-									<button title="停止" class="btn btn-default-red btn-xs"><i class="glyphicon glyphicon-pause"></i>&nbsp;停止</button>
-									<button title="还原" class="btn btn-default-green btn-xs"><i class="glyphicon glyphicon-share-alt"></i>&nbsp;还原</button>
-								</div>
-							</td>
-						</tr>
-						<tr>
-							<td class="mfb-xxt text-center">2561-8121</td>
-							<td class="mfb-xxt text-center"><a href="https://detail.tmall.hk/hk/item.htm?id=521788267914" target="_blank">45034296159</a></td>
-							<td class="mfb-xxt text-right">85621</td>
-							<td class="mfb-xxt text-center">取消成功</td>
-							<td class="mfb-xxx text-center">45034296159</td>
-							<td class="mfb-xxx text-center">2016-02-24 18:15:17</td>
-							<td class="mfb-xxx text-center">
-								<div class="btn-group text-center">
-									<button title="启动" class="btn btn-default-purple btn-xs"><i class="glyphicon glyphicon-play"></i>&nbsp;启动</button>
-									<button title="停止" class="btn btn-default-red btn-xs"><i class="glyphicon glyphicon-pause"></i>&nbsp;停止</button>
-									<button title="还原" class="btn btn-default-green btn-xs"><i class="glyphicon glyphicon-share-alt"></i>&nbsp;还原</button>
-								</div>
-							</td>
-						</tr>
-						<tr>
-							<td class="mfb-xxt text-center">2561-8121</td>
-							<td class="mfb-xxt text-center"><a href="https://detail.tmall.hk/hk/item.htm?id=521788267914" target="_blank">45034296159</a></td>
-							<td class="mfb-xxt text-right">85621</td>
-							<td class="mfb-xxt text-center">取消成功</td>
-							<td class="mfb-xxx text-center">45034296159</td>
-							<td class="mfb-xxx text-center">2016-02-24 18:15:17</td>
-							<td class="mfb-xxx text-center">
-								<div class="btn-group text-center">
-									<button title="启动" class="btn btn-default-purple btn-xs"><i class="glyphicon glyphicon-play"></i>&nbsp;启动</button>
-									<button title="停止" class="btn btn-default-red btn-xs"><i class="glyphicon glyphicon-pause"></i>&nbsp;停止</button>
-									<button title="还原" class="btn btn-default-green btn-xs"><i class="glyphicon glyphicon-share-alt"></i>&nbsp;还原</button>
-								</div>
-							</td>
-						</tr>
-						<tr>
-							<td class="mfb-xxt text-center">2561-8121</td>
-							<td class="mfb-xxt text-center"><a href="https://detail.tmall.hk/hk/item.htm?id=521788267914" target="_blank">45034296159</a></td>
-							<td class="mfb-xxt text-right">85621</td>
-							<td class="mfb-xxt text-center">取消成功</td>
-							<td class="mfb-xxx text-center">45034296159</td>
-							<td class="mfb-xxx text-center">2016-02-24 18:15:17</td>
-							<td class="mfb-xxx text-center">
-								<div class="btn-group text-center">
-									<button title="启动" class="btn btn-default-purple btn-xs"><i class="glyphicon glyphicon-play"></i>&nbsp;启动</button>
-									<button title="停止" class="btn btn-default-red btn-xs"><i class="glyphicon glyphicon-pause"></i>&nbsp;停止</button>
-									<button title="还原" class="btn btn-default-green btn-xs"><i class="glyphicon glyphicon-share-alt"></i>&nbsp;还原</button>
-								</div>
-							</td>
-						</tr>
-						<tr>
-							<td class="mfb-xxt text-center">2561-8121</td>
-							<td class="mfb-xxt text-center"><a href="https://detail.tmall.hk/hk/item.htm?id=521788267914" target="_blank">45034296159</a></td>
-							<td class="mfb-xxt text-right">85621</td>
-							<td class="mfb-xxt text-center">取消成功</td>
-							<td class="mfb-xxx text-center">45034296159</td>
-							<td class="mfb-xxx text-center">2016-02-24 18:15:17</td>
-							<td class="mfb-xxx text-center">
-								<div class="btn-group text-center">
-									<button title="启动" class="btn btn-default-purple btn-xs"><i class="glyphicon glyphicon-play"></i>&nbsp;启动</button>
-									<button title="停止" class="btn btn-default-red btn-xs"><i class="glyphicon glyphicon-pause"></i>&nbsp;停止</button>
-									<button title="还原" class="btn btn-default-green btn-xs"><i class="glyphicon glyphicon-share-alt"></i>&nbsp;还原</button>
-								</div>
-							</td>
-						</tr>
-						<tr>
-							<td class="mfb-xxt text-center">2561-8121</td>
-							<td class="mfb-xxt text-center"><a href="https://detail.tmall.hk/hk/item.htm?id=521788267914" target="_blank">45034296159</a></td>
-							<td class="mfb-xxt text-right">85621</td>
-							<td class="mfb-xxt text-center">取消成功</td>
-							<td class="mfb-xxx text-center">45034296159</td>
-							<td class="mfb-xxx text-center">2016-02-24 18:15:17</td>
-							<td class="mfb-xxx text-center">
-								<div class="btn-group text-center">
-									<button title="启动" class="btn btn-default-purple btn-xs"><i class="glyphicon glyphicon-play"></i>&nbsp;启动</button>
-									<button title="停止" class="btn btn-default-red btn-xs"><i class="glyphicon glyphicon-pause"></i>&nbsp;停止</button>
-									<button title="还原" class="btn btn-default-green btn-xs"><i class="glyphicon glyphicon-share-alt"></i>&nbsp;还原</button>
-								</div>
-							</td>
-						</tr>
-						<tr>
-							<td class="mfb-xxt text-center">2561-8121</td>
-							<td class="mfb-xxt text-center"><a href="https://detail.tmall.hk/hk/item.htm?id=521788267914" target="_blank">45034296159</a></td>
-							<td class="mfb-xxt text-right">85621</td>
-							<td class="mfb-xxt text-center">取消成功</td>
-							<td class="mfb-xxx text-center">45034296159</td>
-							<td class="mfb-xxx text-center">2016-02-24 18:15:17</td>
-							<td class="mfb-xxx text-center">
-								<div class="btn-group text-center">
-									<button title="启动" class="btn btn-default-purple btn-xs"><i class="glyphicon glyphicon-play"></i>&nbsp;启动</button>
-									<button title="停止" class="btn btn-default-red btn-xs"><i class="glyphicon glyphicon-pause"></i>&nbsp;停止</button>
-									<button title="还原" class="btn btn-default-green btn-xs"><i class="glyphicon glyphicon-share-alt"></i>&nbsp;还原</button>
-								</div>
+							    </div>
 							</td>
 						</tr>
 						</tbody>

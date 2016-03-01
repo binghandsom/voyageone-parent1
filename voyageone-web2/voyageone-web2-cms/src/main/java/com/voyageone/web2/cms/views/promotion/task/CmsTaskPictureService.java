@@ -95,6 +95,15 @@ public class CmsTaskPictureService extends BaseAppService {
 
     public List<CmsBtBeatInfoModel> importBeatInfo(int task_id, int size, MultipartFile file, UserSessionBean user) {
 
+        // 如果存在以下标识数据, 就不能重新导入
+        int count = beatInfoDao.selectCountInFlags(task_id,
+                BeatFlag.BEATING, BeatFlag.RE_FAIL, BeatFlag.REVERT, BeatFlag.SUCCESS);
+
+        if (count > 0)
+            throw new BusinessException("存在[等待刷图, 还原失败, 等待还原, 刷图成功]的数据时,不能重新导入. 请人工处理后重新再试.");
+
+        beatInfoDao.deleteByTask(task_id);
+
         Workbook wb;
 
         try {

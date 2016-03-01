@@ -1,6 +1,7 @@
 package com.voyageone.web2.cms.model;
 
 import com.voyageone.cms.enums.BeatFlag;
+import com.voyageone.common.Constants;
 
 /**
  * Created by jonasvlag on 16/2/29.
@@ -20,7 +21,7 @@ public class CmsBtBeatInfoModel {
 
     private int syn_flag;
 
-    private String message;
+    private String message = Constants.EmptyString;
 
     private String created;
 

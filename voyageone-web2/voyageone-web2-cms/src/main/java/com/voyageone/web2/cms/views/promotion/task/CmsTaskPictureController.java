@@ -7,10 +7,8 @@ import com.voyageone.web2.cms.bean.beat.ReqParam;
 import com.voyageone.web2.cms.bean.beat.TaskBean;
 import com.voyageone.web2.cms.model.CmsBtBeatInfoModel;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
 import java.util.List;
@@ -40,6 +38,16 @@ public class CmsTaskPictureController extends BaseController {
         List<CmsBtBeatInfoModel> beatInfoModels =
                 taskPictureService.getAllBeat(param.getTask_id(), param.getOffset(), param.getSize());
         int total = taskPictureService.getAllBeatCount(param.getTask_id());
+        Map<String, Object> map = new HashMap<>();
+        map.put("list", beatInfoModels);
+        map.put("total", total);
+        return success(map);
+    }
+
+    @RequestMapping(BEAT.IMPORT)
+    public AjaxResponse importBeat(@RequestParam int task_id, @RequestParam int size, @RequestParam MultipartFile file) {
+        List<CmsBtBeatInfoModel> beatInfoModels = taskPictureService.importBeatInfo(task_id, size, file, getUser());
+        int total = taskPictureService.getAllBeatCount(task_id);
         Map<String, Object> map = new HashMap<>();
         map.put("list", beatInfoModels);
         map.put("total", total);
