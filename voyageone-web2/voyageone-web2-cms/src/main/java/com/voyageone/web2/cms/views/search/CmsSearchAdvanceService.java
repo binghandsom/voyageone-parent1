@@ -16,7 +16,9 @@ import com.voyageone.web2.cms.bean.search.index.CmsSearchInfoBean;
 import com.voyageone.web2.cms.views.promotion.list.CmsPromotionIndexService;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import com.voyageone.web2.sdk.api.VoApiDefaultClient;
+import com.voyageone.web2.sdk.api.domain.CmsBtTagModel;
 import com.voyageone.web2.sdk.api.request.ProductsGetRequest;
+import com.voyageone.web2.sdk.api.request.TagsGetRequest;
 import com.voyageone.web2.sdk.api.response.ProductsGetResponse;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
@@ -82,7 +84,7 @@ public class CmsSearchAdvanceService extends BaseAppService{
         masterData.put("platformStatusList", TypeConfigEnums.MastType.platFormStatus.getList(language));
 
         // 获取label
-        masterData.put("labelTypeList", TypeConfigEnums.MastType.label.getList(language));
+        masterData.put("tagList", selectTagList(userInfo.getSelChannelId()));
 
         // 获取price type
         masterData.put("priceTypeList", TypeConfigEnums.MastType.priceType.getList(language));
@@ -341,7 +343,7 @@ public class CmsSearchAdvanceService extends BaseAppService{
 
         // 获取category Id
         if (searchValue.getCatPath() != null) {
-            result.append(MongoUtils.splicingValue("catPath", searchValue.getCatPath(), "$leftLike"));
+            result.append(MongoUtils.splicingValue("catPath", searchValue.getCatPath(), "$regex"));
             result.append(",");
         }
 
@@ -392,8 +394,8 @@ public class CmsSearchAdvanceService extends BaseAppService{
         }
 
         // 获取promotion
-        if (searchValue.getPromotion() != null) {
-            result.append(MongoUtils.splicingValue("tags", searchValue.getPromotion()));
+        if (searchValue.getTags().length > 0) {
+            result.append(MongoUtils.splicingValue("tags", searchValue.getTags()));
             result.append(",");
         }
 
@@ -518,5 +520,15 @@ public class CmsSearchAdvanceService extends BaseAppService{
             }
         }
         return output;
+    }
+
+    /**
+     * 获取二级Tag
+     */
+    private List<CmsBtTagModel> selectTagList(String channelId) {
+        //设置参数
+        TagsGetRequest requestModel = new TagsGetRequest();
+        requestModel.setChannelId(channelId);
+        return voApiClient.execute(requestModel).getTags();
     }
 }
