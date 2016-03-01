@@ -9,7 +9,7 @@
 		from 
 			ct_message_info
 	</select>
-	
+
 	<!-- 获得订单数 -->
 	<!-- oms_bt_payments -> oms_bt_settlement 20150824 -->
 	<!-- oms_bt_group_orders payment_total -> payment_total_settle 20150824 -->
@@ -18,12 +18,12 @@
 		from (select distinct o.order_number,
 					o.cart_id,
 					o.order_channel_id
-				from 
-			oms_bt_orders o 
+				from
+			oms_bt_orders o
 			<if test="
 				(skuStartsWith != null and skuStartsWith != '') or 
 				(skuIncludes != null and skuIncludes != '') " >
-				inner join oms_bt_order_details d on o.order_number = d.order_number 
+				inner join oms_bt_order_details d on o.order_number = d.order_number
 			</if>
 
 			<if test="(customerId != null and customerId != '')" >
@@ -34,36 +34,50 @@
 					left join synship.tt_reservation syn_re on o.order_number = syn_re.order_number
 				</if>
 			</if>
-			<if test="trackingNumber != null and trackingNumber != '' ">
-				left join oms_bt_tracking tr on o.order_number = tr.order_num
-			</if>
+			<if test="
+				(extNormalSend != null and extNormalSend == 'true'.toString()) or
+				(extCancelSend != null and extCancelSend == 'true'.toString()) or
+				(extCancelConfirm != null and extCancelConfirm == 'true'.toString()) " >
+			    left join oms_bt_ext_orders ext on o.order_number = ext.order_number
+		    </if>
+		<!--
+        <if test="trackingNumber != null and trackingNumber != '' ">
+            left join oms_bt_tracking tr on o.order_number = tr.order_num
+        </if>
+        -->
 			<if test="quickFilter == '01' ">
-			    INNER JOIN oms_bt_order_refunds r ON o.source_order_id=r.source_order_id 
+			    INNER JOIN oms_bt_order_refunds r ON o.source_order_id=r.source_order_id
 			</if>
 			    INNER JOIN oms_bt_group_orders go ON o.source_order_id = go.source_order_id
 			<if test="paymentMethod != null and paymentMethod != '' ">
 			    INNER JOIN oms_bt_settlement p ON o.source_order_id = p.source_order_id
 			</if>
-		<where>		
+		<where>
 
 			<if test="storeId != null ">
-				o.order_channel_id in 
-				<foreach item="item" index="index" collection="storeId" open="(" separator="," close=")">  
+				o.order_channel_id in
+				<foreach item="item" index="index" collection="storeId" open="(" separator="," close=")">
 					#{item}
 				</foreach>
 			</if>
 			<if test="channelId != null ">
-				and o.cart_id in 
-				<foreach item="item" index="index" collection="channelId" open="(" separator="," close=")">  
+				and o.cart_id in
+				<foreach item="item" index="index" collection="channelId" open="(" separator="," close=")">
 					#{item}
 				</foreach>
 			</if>
 			<if test="(skuStartsWith != null and skuStartsWith != '') or
 				(skuIncludes != null and skuIncludes != '') " >
-				and d.adjustment = 0 
+				and d.adjustment = 0
 			</if>
 			<if test="orderNumber != null and orderNumber != '' ">
 				and o.order_number = #{orderNumber}
+			</if>
+			<if test="orderNumberList != null ">
+				and o.order_number in
+				<foreach item="item" index="index" collection="orderNumberList" open="(" separator="," close=")">
+					#{item}
+				</foreach>
 			</if>
 			<if test="sourceOrderId != null and sourceOrderId != '' ">
 				and o.source_order_id = #{sourceOrderId}
@@ -141,7 +155,7 @@
 				<choose>
 					<!-- Today's Orders -->
 					<when test="quickFilter == '04'">
-						and o.order_date_time>=#{fromTime} 
+						and o.order_date_time>=#{fromTime}
 						and #{endTime}>=o.order_date_time
 					</when>
 					<!-- All Orders missing Date Shipped -->
@@ -158,7 +172,7 @@
 						and r.process_flag = 0
 					</when>
 					<when test="quickFilter == '02' ">
-					   and o.customer_comments is not NULL 
+					   and o.customer_comments is not NULL
 					   and o.customer_comments !=''
 					</when>
 					<when test="quickFilter == '03' ">
@@ -172,9 +186,11 @@
 			<if test="shippingMethod != null and shippingMethod != '' ">
 				and o.shipping = #{shippingMethod}
 			</if>
-			<if test="trackingNumber != null and trackingNumber != '' ">
-				and tr.tracking_id = #{trackingNumber}
-			</if>
+			<!--
+            <if test="trackingNumber != null and trackingNumber != '' ">
+                and tr.tracking_id = #{trackingNumber}
+            </if>
+            -->
 			<if test="customerId != null and customerId != '' ">
 				and cu.customer_id = #{customerId}
 			</if>
@@ -236,14 +252,45 @@
 			</if>
 			<if test="orderKindList !=null and orderKindList !='' ">
 			 	and o.order_kind in
-			 	<foreach item="item" index="index" collection="orderKindList" open="(" separator="," close=")">  
+			 	<foreach item="item" index="index" collection="orderKindList" open="(" separator="," close=")">
 					#{item}
 				</foreach>
 			</if>
 			<if test="clientOrderId != null and clientOrderId !='' ">
 			   and o.client_order_id = #{clientOrderId}
 			</if>
-		
+
+			<if test="
+				(extNormalSend != null and extNormalSend == 'true'.toString()) or
+				(extCancelSend != null and extCancelSend == 'true'.toString()) or
+				(extCancelConfirm != null and extCancelConfirm == 'true'.toString()) " >
+				and
+				(
+				<!-- 品牌方推送 -->
+				<if test="extNormalSend != null and extNormalSend == 'true'.toString() ">
+					ext.send_flg = true
+					<if test="
+						(extCancelSend != null and extCancelSend == 'true'.toString()) or
+						(extCancelConfirm != null and extCancelConfirm == 'true'.toString()) " >
+						or
+					</if>
+				</if>
+
+				<!-- 品牌方取消推送 -->
+				<if test="extCancelSend != null and extCancelSend == 'true'.toString() ">
+					ext.ext_flg2 = true
+					<if test="extCancelConfirm != null and extCancelConfirm == 'true'.toString() " >
+						or
+					</if>
+				</if>
+
+				<!-- 品牌方取消确认 -->
+				<if test="extCancelConfirm != null and extCancelConfirm == 'true'.toString() ">
+					ext.ext_flg3 = true
+				</if>
+				)
+			</if>
+
 		<!-- 	<if test="approved !=null and approved !=''">
 			      and o.approved= 0
 			</if> -->
@@ -285,21 +332,21 @@
 				and o.coupon = #{couponId}
 			</if>-->
 		</where>
-		order by o.order_number desc) o left join ct_cart c on o.cart_id = c.cart_id 
-		left join tm_order_channel p on o.order_channel_id = p.order_channel_id 
+		order by o.order_number desc) o left join ct_cart c on o.cart_id = c.cart_id
+		left join tm_order_channel p on o.order_channel_id = p.order_channel_id
 	</select>
-	
+
 	<!-- 获得订单号列表 -->
 	<!-- oms_bt_payments -> oms_bt_settlement 20150824 -->
 	<!-- oms_bt_group_orders payment_total -> payment_total_settle 20150824 -->
 	<select id="oms_bt_orders_getOrderNumbers" parameterType="com.voyageone.oms.formbean.InFormSearch" resultType="String" >
 		select distinct o.order_number
-		from 
-			oms_bt_orders o 
+		from
+			oms_bt_orders o
 			<if test="
 				(skuStartsWith != null and skuStartsWith != '') or 
 				(skuIncludes != null and skuIncludes != '') " >
-				inner join oms_bt_order_details d on o.order_number = d.order_number 
+				inner join oms_bt_order_details d on o.order_number = d.order_number
 			</if>
 			<if test="
 				(customerId != null and customerId != '')" >
@@ -310,17 +357,25 @@
 					left join synship.tt_reservation syn_re on o.order_number = syn_re.order_number
 				</if>
 			</if>
-			<if test="trackingNumber != null and trackingNumber != '' ">
-				left join oms_bt_tracking tr on o.order_number = tr.order_num
-			</if>
+            <if test="
+                        (extNormalSend != null and extNormalSend == 'true'.toString()) or
+                        (extCancelSend != null and extCancelSend == 'true'.toString()) or
+                        (extCancelConfirm != null and extCancelConfirm == 'true'.toString()) " >
+                left join oms_bt_ext_orders ext on o.order_number = ext.order_number
+            </if>
+            <!--
+            <if test="trackingNumber != null and trackingNumber != '' ">
+                left join oms_bt_tracking tr on o.order_number = tr.order_num
+            </if>
+            -->
 			<if test="quickFilter == '01' ">
-			    left JOIN oms_bt_order_refunds r ON o.source_order_id=r.source_order_id 
+			    left JOIN oms_bt_order_refunds r ON o.source_order_id=r.source_order_id
 			</if>
 			<if test="(paymentStatus != null and paymentStatus != '') or
 				(transactionStatus != null and transactionStatus != '') or
 				(grandTotalAmountFrom != null and grandTotalAmountFrom != '') or
 				(grandTotalAmountTo != null and grandTotalAmountTo != '')">
-			    INNER JOIN oms_bt_group_orders go ON o.source_order_id = go.source_order_id 
+			    INNER JOIN oms_bt_group_orders go ON o.source_order_id = go.source_order_id
 			</if>
 			<if test="paymentMethod != null and paymentMethod != '' ">
 			    INNER JOIN oms_bt_settlement p ON o.source_order_id = p.source_order_id
@@ -328,24 +383,30 @@
 		<where>
 
 			<if test="storeId != null ">
-				o.order_channel_id in 
-				<foreach item="item" index="index" collection="storeId" open="(" separator="," close=")">  
+				o.order_channel_id in
+				<foreach item="item" index="index" collection="storeId" open="(" separator="," close=")">
 					#{item}
 				</foreach>
 			</if>
 			<if test="channelId != null ">
-				and o.cart_id in 
-				<foreach item="item" index="index" collection="channelId" open="(" separator="," close=")">  
+				and o.cart_id in
+				<foreach item="item" index="index" collection="channelId" open="(" separator="," close=")">
 					#{item}
 				</foreach>
 			</if>
 			<if test="
-				(skuStartsWith != null and skuStartsWith != '') or 
+				(skuStartsWith != null and skuStartsWith != '') or
 				(skuIncludes != null and skuIncludes != '') " >
-				and d.adjustment = 0 
+				and d.adjustment = 0
 			</if>
 			<if test="orderNumber != null and orderNumber != '' ">
 				and o.order_number = #{orderNumber}
+			</if>
+			<if test="orderNumberList != null ">
+				and o.order_number in
+				<foreach item="item" index="index" collection="orderNumberList" open="(" separator="," close=")">
+					#{item}
+				</foreach>
 			</if>
 			<if test="sourceOrderId != null and sourceOrderId != '' ">
 				and o.source_order_id = #{sourceOrderId}
@@ -388,7 +449,7 @@
 					<when test="paymentStatus == 'p'.toString() ">
 						and  (go.payment_total_settle - go.expected) = 0
 					</when>
-					
+
 				</choose>
 			</if>
 			<if test="transactionStatus != null and transactionStatus != '' ">
@@ -424,7 +485,7 @@
 				<choose>
 					<!-- Today's Orders -->
 					<when test="quickFilter == '04'">
-							and o.order_date_time>=#{fromTime} 
+							and o.order_date_time>=#{fromTime}
 							and #{endTime}>=o.order_date_time
 					</when>
 					<!-- All Orders missing Date Shipped -->
@@ -441,7 +502,7 @@
 						and r.process_flag = 0
 					</when>
 					<when test="quickFilter == '02' ">
-					   and o.customer_comments is not NULL 
+					   and o.customer_comments is not NULL
 					   and o.customer_comments !=''
 					</when>
 					<when test="quickFilter == '03' ">
@@ -455,9 +516,11 @@
 			<if test="shippingMethod != null and shippingMethod != '' ">
 				and o.shipping = #{shippingMethod}
 			</if>
-			<if test="trackingNumber != null and trackingNumber != '' ">
-				and tr.tracking_id = #{trackingNumber}
-			</if>
+			<!--
+            <if test="trackingNumber != null and trackingNumber != '' ">
+                and tr.tracking_id = #{trackingNumber}
+            </if>
+            -->
 			<if test="customerId != null and customerId != '' ">
 				and cu.customer_id = #{customerId}
 			</if>
@@ -519,12 +582,43 @@
 			</if>
 			<if test="orderKindList !=null and orderKindList !='' ">
 			 	and o.order_kind in
-			 	<foreach item="item" index="index" collection="orderKindList" open="(" separator="," close=")">  
+			 	<foreach item="item" index="index" collection="orderKindList" open="(" separator="," close=")">
 					#{item}
 				</foreach>
 			</if>
 			<if test="clientOrderId != null and clientOrderId !='' ">
 			   and o.client_order_id = #{clientOrderId}
+			</if>
+
+			<if test="
+				(extNormalSend != null and extNormalSend == 'true'.toString()) or
+				(extCancelSend != null and extCancelSend == 'true'.toString()) or
+				(extCancelConfirm != null and extCancelConfirm == 'true'.toString()) " >
+				and
+				(
+				<!-- 品牌方推送 -->
+				<if test="extNormalSend != null and extNormalSend == 'true'.toString() ">
+					ext.send_flg = true
+					<if test="
+						(extCancelSend != null and extCancelSend == 'true'.toString()) or
+						(extCancelConfirm != null and extCancelConfirm == 'true'.toString()) " >
+						or
+					</if>
+				</if>
+
+				<!-- 品牌方取消推送 -->
+				<if test="extCancelSend != null and extCancelSend == 'true'.toString() ">
+					ext.ext_flg2 = true
+					<if test="extCancelConfirm != null and extCancelConfirm == 'true'.toString() " >
+						or
+					</if>
+				</if>
+
+				<!-- 品牌方取消确认 -->
+				<if test="extCancelConfirm != null and extCancelConfirm == 'true'.toString() ">
+					ext.ext_flg3 = true
+				</if>
+				)
 			</if>
 			<!-- <if test="approved !=null and approved !=''">
 			      and o.approved= 0
@@ -563,7 +657,7 @@
 		</where>
 		order by o.order_number desc
 	</select>
-	
+
 	<!-- 获得订单信息 -->
 	<!-- oms_bt_payments -> oms_bt_settlement 20150824 -->
 	<!-- oms_bt_group_orders payment_total -> payment_total_settle 20150824 -->
@@ -580,20 +674,20 @@
 		<result column="wangwangId" property="wangwangId"/>
 	</resultMap>
 	<sql id="orders_column">
-		distinct o.order_number, 
-		o.source_order_id, 
-		o.order_date_time, 
+		distinct o.order_number,
+		o.source_order_id,
+		o.order_date_time,
 		o.final_grand_total,
 		o.paymentBalanceDue,
 		o.transactionBalanceDue,
-		o.order_status, 
-		c.name as channel, 
+		o.order_status,
+		c.name as channel,
 		p.name as store,
 		o.name as wangwangId
 	</sql>
 	<select id="oms_bt_orders_getOrdersInfo" parameterType="com.voyageone.oms.formbean.InFormSearch" resultMap="ordersInfoMap" >
 		select <include refid="orders_column"/>
-		from ( select 
+		from ( select
 					distinct o.order_number,
 					o.source_order_id,
 					o.order_date_time,
@@ -604,12 +698,12 @@
 					o.name,
 					o.cart_id,
 					o.order_channel_id
-				from 
-			oms_bt_orders o 
+				from
+			oms_bt_orders o
 			<if test="
-				(skuStartsWith != null and skuStartsWith != '') or 
+				(skuStartsWith != null and skuStartsWith != '') or
 				(skuIncludes != null and skuIncludes != '') " >
-				inner join oms_bt_order_details d on o.order_number = d.order_number 
+				inner join oms_bt_order_details d on o.order_number = d.order_number
 			</if>
 
 			<if test="(customerId != null and customerId != '')" >
@@ -620,36 +714,50 @@
 					left join synship.tt_reservation syn_re on o.order_number = syn_re.order_number
 				</if>
 			</if>
-			<if test="trackingNumber != null and trackingNumber != '' ">
-				left join oms_bt_tracking tr on o.order_number = tr.order_num
-			</if>
+			<if test="
+					(extNormalSend != null and extNormalSend == 'true'.toString()) or
+					(extCancelSend != null and extCancelSend == 'true'.toString()) or
+					(extCancelConfirm != null and extCancelConfirm == 'true'.toString()) " >
+			    left join oms_bt_ext_orders ext on o.order_number = ext.order_number
+            </if>
+            <!--
+            <if test="trackingNumber != null and trackingNumber != '' ">
+                left join oms_bt_tracking tr on o.order_number = tr.order_num
+            </if>
+            -->
 			<if test="quickFilter == '01' ">
-			    INNER JOIN oms_bt_order_refunds r ON o.source_order_id=r.source_order_id 
+			    INNER JOIN oms_bt_order_refunds r ON o.source_order_id=r.source_order_id
 			</if>
 			    INNER JOIN oms_bt_group_orders go ON o.source_order_id = go.source_order_id
 			<if test="paymentMethod != null and paymentMethod != '' ">
 			    INNER JOIN oms_bt_settlement p ON o.source_order_id = p.source_order_id
 			</if>
-		<where>		
+		<where>
 
 			<if test="storeId != null ">
-				o.order_channel_id in 
-				<foreach item="item" index="index" collection="storeId" open="(" separator="," close=")">  
+				o.order_channel_id in
+				<foreach item="item" index="index" collection="storeId" open="(" separator="," close=")">
 					#{item}
 				</foreach>
 			</if>
 			<if test="channelId != null ">
-				and o.cart_id in 
-				<foreach item="item" index="index" collection="channelId" open="(" separator="," close=")">  
+				and o.cart_id in
+				<foreach item="item" index="index" collection="channelId" open="(" separator="," close=")">
 					#{item}
 				</foreach>
 			</if>
 			<if test="(skuStartsWith != null and skuStartsWith != '') or
 				(skuIncludes != null and skuIncludes != '') " >
-				and d.adjustment = 0 
+				and d.adjustment = 0
 			</if>
 			<if test="orderNumber != null and orderNumber != '' ">
 				and o.order_number = #{orderNumber}
+			</if>
+			<if test="orderNumberList != null ">
+				and o.order_number in
+				<foreach item="item" index="index" collection="orderNumberList" open="(" separator="," close=")">
+					#{item}
+				</foreach>
 			</if>
 			<if test="sourceOrderId != null and sourceOrderId != '' ">
 				and o.source_order_id = #{sourceOrderId}
@@ -692,7 +800,7 @@
 					<when test="paymentStatus == 'p'.toString() ">
 						and  (go.payment_total_settle - go.expected) = 0
 					</when>
-					
+
 				</choose>
 			</if>
 			<if test="transactionStatus != null and transactionStatus != '' ">
@@ -728,7 +836,7 @@
 				<choose>
 					<!-- Today's Orders -->
 					<when test="quickFilter == '04'">
-						and o.order_date_time>=#{fromTime} 
+						and o.order_date_time>=#{fromTime}
 						and #{endTime}>=o.order_date_time
 					</when>
 					<!-- All Orders missing Date Shipped -->
@@ -745,7 +853,7 @@
 						and r.process_flag = 0
 					</when>
 					<when test="quickFilter == '02' ">
-					   and o.customer_comments is not NULL 
+					   and o.customer_comments is not NULL
 					   and o.customer_comments !=''
 					</when>
 					<when test="quickFilter == '03' ">
@@ -759,9 +867,11 @@
 			<if test="shippingMethod != null and shippingMethod != '' ">
 				and o.shipping = #{shippingMethod}
 			</if>
+			<!--
 			<if test="trackingNumber != null and trackingNumber != '' ">
 				and tr.tracking_id = #{trackingNumber}
 			</if>
+			-->
 			<if test="customerId != null and customerId != '' ">
 				and cu.customer_id = #{customerId}
 			</if>
@@ -823,12 +933,43 @@
 			</if>
 			<if test="orderKindList !=null and orderKindList !='' ">
 			 	and o.order_kind in
-			 	<foreach item="item" index="index" collection="orderKindList" open="(" separator="," close=")">  
+			 	<foreach item="item" index="index" collection="orderKindList" open="(" separator="," close=")">
 					#{item}
 				</foreach>
 			</if>
 			<if test="clientOrderId != null and clientOrderId !='' ">
 			   and o.client_order_id = #{clientOrderId}
+			</if>
+
+			<if test="
+				(extNormalSend != null and extNormalSend == 'true'.toString()) or
+				(extCancelSend != null and extCancelSend == 'true'.toString()) or
+				(extCancelConfirm != null and extCancelConfirm == 'true'.toString()) " >
+				and
+				(
+				<!-- 品牌方推送 -->
+				<if test="extNormalSend != null and extNormalSend == 'true'.toString() ">
+					ext.send_flg = true
+					<if test="
+						(extCancelSend != null and extCancelSend == 'true'.toString()) or
+						(extCancelConfirm != null and extCancelConfirm == 'true'.toString()) " >
+						or
+					</if>
+				</if>
+
+				<!-- 品牌方取消推送 -->
+				<if test="extCancelSend != null and extCancelSend == 'true'.toString() ">
+					ext.ext_flg2 = true
+					<if test="extCancelConfirm != null and extCancelConfirm == 'true'.toString() " >
+						or
+					</if>
+				</if>
+
+				<!-- 品牌方取消确认 -->
+				<if test="extCancelConfirm != null and extCancelConfirm == 'true'.toString() ">
+					ext.ext_flg3 = true
+				</if>
+				)
 			</if>
 			<!-- <if test="approved !=null and approved !=''">
 			      and o.approved = 0 
@@ -873,18 +1014,18 @@
 		</where>
 		order by o.order_number desc
 		limit #{offset}, #{rows}
-		)o left join ct_cart c on o.cart_id = c.cart_id 
-		left join tm_order_channel p on o.order_channel_id = p.order_channel_id 
+		)o left join ct_cart c on o.cart_id = c.cart_id
+		left join tm_order_channel p on o.order_channel_id = p.order_channel_id
 	</select>
-	
+
 	<update id="oms_bt_orders_updateGiftMessage" parameterType="com.voyageone.oms.modelbean.OrdersBean">
 		update oms_bt_orders
 		   set gift_message = #{giftMessage},
 		       modified = now(),
 		       modifier = #{modifier}
-		 where order_number = #{orderNumber} 	   
+		 where order_number = #{orderNumber}
 	</update>
- 
+
  <update id="oms_bt_orders_updateAddress" parameterType="com.voyageone.oms.modelbean.OrdersBean" >
     update oms_bt_orders o
     <set>
@@ -967,10 +1108,10 @@
 			modified = now(),
 			modifier = #{modifier}
        </set>
-       
+
     where order_number = #{orderNumber,jdbcType=INTEGER}
   </update>
-  
+
   <!-- SoldToAddress信息更新 -->
   <update id="oms_bt_orders_updateSoldToAddress" parameterType="com.voyageone.oms.modelbean.OrdersBean" >
 	    update oms_bt_orders o
@@ -986,11 +1127,11 @@
 			o.country = #{country},
 			o.phone = #{phone},
 			modified = now(),
-			modifier = #{modifier}       
+			modifier = #{modifier}
     	where order_number = #{orderNumber}
   </update>
-  
-  <!-- ShipToAddress信息更新 -->  
+
+  <!-- ShipToAddress信息更新 -->
   <update id="oms_bt_orders_updateShipToAddress" parameterType="com.voyageone.oms.modelbean.OrdersBean" >
     	update oms_bt_orders o
     	set
@@ -1005,11 +1146,11 @@
 			o.ship_country = #{shipCountry},
 			o.ship_phone = #{shipPhone},
 			modified = now(),
-			modifier = #{modifier}       
+			modifier = #{modifier}
     	where order_number = #{orderNumber}
   </update>
-  
-  <!-- Invoice信息更新 -->  
+
+  <!-- Invoice信息更新 -->
   <update id="oms_bt_orders_updateInvoice" parameterType="com.voyageone.oms.modelbean.OrdersBean" >
     	update oms_bt_orders o
     	set
@@ -1017,10 +1158,10 @@
 			o.invoice_info = #{invoiceInfo},
 			o.invoice_kind = #{invoiceKind},
 			modified = now(),
-			modifier = #{modifier}       
+			modifier = #{modifier}
     	where order_number = #{orderNumber}
   </update>
-  
+
   <select id="tm_channel_shop_getshoppingCarts" resultType="com.voyageone.core.modelbean.MasterInfoBean" parameterType="String">
 		select
 			c.cart_id as id,
@@ -1029,15 +1170,15 @@
 		where c.cart_id = t.cart_id
 			and t.order_channel_id = #{propertyId}
   </select>
- 
+
   <select id="oms_bt_orders_getOrdersUnApprovedCount"  parameterType="HashMap" resultType="HashMap" >
   	<if test="channelId != null and channelId!=''">
-  		<foreach item="item" index="index" collection="channelId" open="" separator="union" close="">  
+  		<foreach item="item" index="index" collection="channelId" open="" separator="union" close="">
 	  		select
 	   			#{item} as channelId,
 	   			count(1) as count
-	  		from 
-	   			oms_bt_orders o 
+	  		from
+	   			oms_bt_orders o
 	   		<where>
 				o.order_kind in ('0','4')
 		       	<!-- and o.approved = 0 -->
@@ -1049,49 +1190,72 @@
 	 	</foreach>
 	 </if>
   </select>
-  
+
   <select  id="oms_bt_orders_getOrderCurrentDayCount" parameterType="HashMap" resultType="HashMap">
   	<if test="channelId != null and channelId!=''">
-  		<foreach item="item" index="index" collection="channelId" open="" separator="union" close="">  
-	  		select 
+  		<foreach item="item" index="index" collection="channelId" open="" separator="union" close="">
+	  		select
 	  			#{item} as channelId,
 	  			count(1) as count,
 	  			IFNULL(sum(o.grand_total),0) as totalPrice
-	  		from 
+	  		from
 	  			oms_bt_orders o
 	  		<where>
 				o.order_kind in ('0','4')
 				and o.order_channel_id = #{item}
-				 
+
 			<if test="fromTime!=null and fromTime!=''">
 				and o.order_date_time>=#{fromTime}
 			</if>
 	  		<if test="endTime!=null and endTime!=''">
 				and #{endTime}>=o.order_date_time
 			</if>
-	  		</where> 
+	  		</where>
   		</foreach>
 	</if>
   </select>
-  
+
   <select id="oms_bt_orders_getRefundOrdersCount" parameterType="HashMap" resultType="HashMap">
 	<if test="channelId != null and channelId !=''">
-  		<foreach item="item" index="index" collection="channelId" open="" separator="union" close="">  
-				select 
+  		<foreach item="item" index="index" collection="channelId" open="" separator="union" close="">
+				select
 			    #{item} as channelId,
 				count(DISTINCT r.source_order_id) as count
-	  	 		from 
-	  	 		
-	     		oms_bt_order_refunds r 
-	  
+	  	 		from
+
+	     		oms_bt_order_refunds r
+
 	  	 	<where>
 	  	    <if test="orderStatusReturnRequested !=null and orderStatusReturnRequested !=''">
 	  	   		r.refund_status = #{orderStatusReturnRequested}
 	  	   	  </if>
-				and r.order_channel_id = #{item} 
+				and r.order_channel_id = #{item}
 				and r.process_flag = 0
 	 		</where>
 	   	</foreach>
    	</if>
   </select>
+
+	<!-- 根据物流单号获得订单号列表 -->
+	<select id="oms_bt_orders_getOrderNumbersByTrackingNo" parameterType="com.voyageone.oms.formbean.InFormSearch" resultType="String" >
+		select order_number from tt_res_tracking t
+		INNER JOIN
+		(
+		SELECT
+		t.tracking_no,
+		t.tracking_type
+		FROM tt_tracking t
+		<where>
+			<if test="storeId != null ">
+				t.order_channel_id in
+				<foreach item="item" index="index" collection="storeId" open="(" separator="," close=")">
+					#{item}
+				</foreach>
+			</if>
+			and t.tracking_no = #{trackingNumber}
+			and t.use_flg = '1'
+		</where>
+		) as tt
+		on t.tracking_no = tt.tracking_no and t.tracking_type = tt.tracking_type;
+	</select>
 </mapper>

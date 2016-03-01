@@ -86,6 +86,8 @@ define(function () {
                 inventory: {
                     init: '/wms/stockTake/inventory/doInventoryInit',
                     scan: '/wms/stockTake/inventory/doUpcScan',
+                    getSku: '/wms/stockTake/inventory/getSku',
+                    deleteItem: '/wms/stockTake/inventory/deleteItem',
                     checkSectionStatus: '/wms/stockTake/inventory/doCheckSectionStatus'
                 },
 
@@ -135,6 +137,10 @@ define(function () {
 
                 sessionDetail: {
                     init: '/wms/return/sessionDetail/doSessionDetailInit'
+                },
+
+                popChangeReturn: {
+                    change: '/wms/return/popchange/doChange'
                 }
             },
 
@@ -156,6 +162,8 @@ define(function () {
                 bind: {
                     init: '/wms/location/bind/init',
                     search: "/wms/location/bind/searchItemLocation",
+                    searchBySku: "/wms/location/bind/searchItemLocationBySku",
+                    searchByLocationId: "/wms/location/bind/searchItemLocationByLocationId",
                     add: "/wms/location/bind/addItemLocation",
                     delete: "/wms/location/bind/deleteItemLocation"
                 }

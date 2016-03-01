@@ -13,6 +13,7 @@
         <result column="image_url_sale_out" property="imageUrlSaleOut" jdbcType="VARCHAR" />
         <result column="tag_id" property="tagId" jdbcType="INTEGER" />
         <result column="tag_path" property="tagPath" jdbcType="VARCHAR" />
+        <result column="tag_path_name" property="tagPathName" jdbcType="VARCHAR" />
         <result column="tag_name" property="tag"  jdbcType="VARCHAR" />
     </resultMap>
     <select id="select_cms_bt_promotion_code" resultMap="bt_promotion_code_map" parameterType="HashMap" >
@@ -38,7 +39,8 @@
             a.modified,
             a.modifier,
             b.tag_path,
-            b.tag_name
+            b.tag_name,
+            b.tag_path_name
         FROM
           voyageone_cms2.cms_bt_promotion_code a
           LEFT JOIN voyageone_cms2.cms_bt_tag b ON a.tag_id = b.tag_id

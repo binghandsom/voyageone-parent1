@@ -30,7 +30,7 @@ define([
         $scope.initialize = initialize;
         $scope.clear = clear;
         $scope.search = search;
-        $scope.export = exportFile;
+        $scope.exportFile = exportFile;
         $scope.getGroupList = getGroupList;
         $scope.getProductList = getProductList;
         $scope.openCategoryMapping = openCategoryMapping;
@@ -72,6 +72,10 @@ define([
          * 检索
          */
         function search () {
+            // 对应根据父类目检索
+            var catInfo = getCatPath($scope.vm.searchInfo.catId);
+            if (catInfo)
+                $scope.vm.searchInfo.catPath = catInfo.catPath;
             searchAdvanceService.search($scope.vm.searchInfo, $scope.vm.groupPageOption, $scope.vm.productPageOption)
                 .then(function (res) {
                     $scope.vm.groupList = res.data.groupList;
@@ -87,9 +91,8 @@ define([
         /**
          * 数据导出
          */
-        // TODO
         function exportFile () {
-
+            searchAdvanceService.exportFile($scope.vm.searchInfo);
         }
 
         /**
@@ -165,6 +168,10 @@ define([
                             notify($translate.instant('TXT_MSG_PRODUCT_IS_PUBLISHING'));
                     })
                 });
+        }
+
+        function getCatPath (catId) {
+            return _.findWhere($scope.vm.masterData.categoryList, {catId: catId});
         }
     };
 

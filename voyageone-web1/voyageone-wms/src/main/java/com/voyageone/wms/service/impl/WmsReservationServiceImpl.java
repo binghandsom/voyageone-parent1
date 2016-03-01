@@ -1,14 +1,7 @@
 package com.voyageone.wms.service.impl;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
-import com.google.gson.Gson;
-import com.taobao.top.schema.Util.StringUtil;
-import com.voyageone.base.BaseAppService;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.ChannelConfigs;
-import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.StoreConfigEnums;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.StoreConfigs;
@@ -28,20 +21,28 @@ import com.voyageone.wms.WmsCodeConstants;
 import com.voyageone.wms.WmsConstants;
 import com.voyageone.wms.WmsMsgConstants;
 import com.voyageone.wms.dao.BackorderDao;
+import com.voyageone.wms.dao.ReservationDao;
 import com.voyageone.wms.dao.ReservationLogDao;
+import com.voyageone.wms.formbean.FormReservation;
 import com.voyageone.wms.modelbean.ReservationBean;
+import com.voyageone.wms.service.WmsReservationService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.poi.ss.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import com.voyageone.wms.dao.ReservationDao;
-import com.voyageone.wms.formbean.FormReservation;
-import com.voyageone.wms.service.WmsReservationService;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Simple to Introduction  
@@ -321,6 +322,128 @@ public class WmsReservationServiceImpl implements WmsReservationService {
 		result.writeTo(request, response);
 		logger.info(result.toString());
 	}
+
+    @Override
+    public byte[] downloadInventoryInfo(String param, UserSessionBean user) {
+        FormReservation download_param = JsonUtil.jsonToBean(param, FormReservation.class);
+
+        List<FormReservation> download_sku, download_code;
+        download_sku = reservationDao.getInventoryDownloadBySku(download_param);
+        download_code = reservationDao.getInventoryDownloadByCode(download_param);
+
+        return createReportByte(download_sku, download_code);
+    }
+
+    private byte[] createReportByte(List<FormReservation> download_sku, List<FormReservation> download_code) {
+        byte[] bytes;
+        try {
+            // 报表模板名取得
+            String templateFile = com.voyageone.common.configs.Properties.readValue(WmsConstants.ReportItems.InvListRpt.TEMPLATE_PATH) + WmsConstants.ReportItems.InvListRpt.TEMPLATE_NAME;
+            // 报表模板名读入
+            InputStream templateInput = new FileInputStream(templateFile);
+            Workbook workbook = WorkbookFactory.create(templateInput);
+
+            setInvListRptContentSku(workbook, download_sku);
+            setInvListRptContentCode(workbook, download_code);
+
+            // 输出内容
+            ByteArrayOutputStream outData = new ByteArrayOutputStream();
+            workbook.write(outData);
+            bytes = outData.toByteArray();
+            // 关闭
+            templateInput.close();
+            workbook.close();
+            outData.close();
+        } catch (Exception e) {
+            logger.info("库存一览下载失败：" + e);
+            throw new BusinessException(WmsMsgConstants.ReportMsg.INVDELRPT_DOWNLOAD_FAILED);
+        }
+        return bytes;
+    }
+
+    private void setInvListRptContentSku(Workbook workbook, List<FormReservation> download_sku) {
+
+        // 模板Sheet
+        int sheetNo = WmsConstants.ReportItems.InvListRpt.RptType1.TEMPLATE_SHEET_NO;
+
+        // 初始行
+        int intRow = WmsConstants.ReportItems.InvListRpt.RptType1.TEMPLATE_FIRSTROW_NO;
+
+        // 按照模板克隆一个sheet
+        Sheet sheet = workbook.cloneSheet(sheetNo);
+
+        // 设置模板sheet页后的sheet名为报告sheet名
+        workbook.setSheetName(sheetNo + 2, WmsConstants.ReportItems.InvListRpt.RptType1.RPT_SHEET_NAME);
+
+        for (FormReservation formReservation : download_sku) {
+            if (intRow != WmsConstants.ReportItems.InvListRpt.RptType1.TEMPLATE_FIRSTROW_NO) {
+                Row newRow = sheet.createRow(intRow);
+                //根据第2行（第一行是标题）格式设置每行的格式
+                for (int col = WmsConstants.ReportItems.InvListRpt.RptType1.START; col < WmsConstants.ReportItems.InvListRpt.RptType1.COLNUM; col++) {
+                    Cell newCell = newRow.createCell(col);
+                    Cell oldCell = sheet.getRow(WmsConstants.ReportItems.InvListRpt.RptType1.TEMPLATE_FIRSTROW_NO).getCell(col);
+                    newCell.setCellStyle(oldCell.getCellStyle());
+                }
+            }
+            // 得到当前行
+            Row currentRow = sheet.getRow(intRow);
+            // order_channel_id
+            currentRow.getCell(WmsConstants.ReportItems.InvListRpt.RptType1.Col.COLNUM_CHANNEL_NAME).setCellValue(StringUtils.null2Space(ChannelConfigs.getChannel(formReservation.getOrder_channel_id()).getFull_name()));
+            // code
+            currentRow.getCell(WmsConstants.ReportItems.InvListRpt.RptType1.Col.COLNUM_CODE).setCellValue(StringUtils.null2Space(formReservation.getItemCode()));
+            // sku
+            currentRow.getCell(WmsConstants.ReportItems.InvListRpt.RptType1.Col.COLNUM_SKU).setCellValue(StringUtils.null2Space(formReservation.getSku()));
+            // barcode
+            currentRow.getCell(WmsConstants.ReportItems.InvListRpt.RptType1.Col.COLNUM_BARCODE).setCellValue(StringUtils.null2Space(formReservation.getBarcode()));
+            // qty
+            currentRow.getCell(WmsConstants.ReportItems.InvListRpt.RptType1.Col.COLNUM_QTY).setCellValue(StringUtils.null2Space(formReservation.getInventory_qty()));
+            intRow = intRow + 1;
+        }
+        // 如果有记录的话，删除模板sheet
+        if (download_sku.size() > 0) {
+            workbook.removeSheetAt(sheetNo);
+        }
+    }
+
+	private void setInvListRptContentCode(Workbook workbook, List<FormReservation> download_code) {
+
+        // 模板Sheet
+        int sheetNo = WmsConstants.ReportItems.InvListRpt.RptType2.TEMPLATE_SHEET_NO - 1;
+
+        // 初始行
+        int intRow = WmsConstants.ReportItems.InvListRpt.RptType2.TEMPLATE_FIRSTROW_NO;
+
+        // 按照模板克隆一个sheet
+        Sheet sheet = workbook.cloneSheet(sheetNo);
+
+        // 设置模板sheet页后的sheet名为报告sheet名
+        workbook.setSheetName(sheetNo + 2, WmsConstants.ReportItems.InvListRpt.RptType2.RPT_SHEET_NAME);
+
+        for (FormReservation formReservation : download_code) {
+            if (intRow != WmsConstants.ReportItems.InvListRpt.RptType2.TEMPLATE_FIRSTROW_NO) {
+                Row newRow = sheet.createRow(intRow);
+                //根据第2行（第一行是标题）格式设置每行的格式
+                for (int col = WmsConstants.ReportItems.InvListRpt.RptType2.START; col < WmsConstants.ReportItems.InvListRpt.RptType2.COLNUM; col++) {
+                    Cell newCell = newRow.createCell(col);
+                    Cell oldCell = sheet.getRow(WmsConstants.ReportItems.InvListRpt.RptType2.TEMPLATE_FIRSTROW_NO).getCell(col);
+                    newCell.setCellStyle(oldCell.getCellStyle());
+                }
+            }
+            // 得到当前行
+            Row currentRow = sheet.getRow(intRow);
+            // order_channel_id
+            currentRow.getCell(WmsConstants.ReportItems.InvListRpt.RptType2.Col.COLNUM_CHANNEL_NAME).setCellValue(StringUtils.null2Space(ChannelConfigs.getChannel(formReservation.getOrder_channel_id()).getFull_name()));
+            // code
+            currentRow.getCell(WmsConstants.ReportItems.InvListRpt.RptType2.Col.COLNUM_CODE).setCellValue(StringUtils.null2Space(formReservation.getItemCode()));
+            // qty
+            currentRow.getCell(WmsConstants.ReportItems.InvListRpt.RptType2.Col.COLNUM_QTY).setCellValue(StringUtils.null2Space(formReservation.getInventory_qty()));
+            intRow = intRow + 1;
+        }
+        // 如果有记录的话，删除模板sheet
+        if (download_code.size() > 0) {
+            workbook.removeSheetAt(sheetNo);
+        }
+    }
 
     /**
      * 【skuHisList 页面】 viw_wms_transfer_item里面的transfer_origin;

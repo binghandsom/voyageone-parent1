@@ -27,6 +27,7 @@ define([
                 $scope.promotion.tejiabaoId = "0";
             }
             if(!items) {
+                $scope.promotion.tagList=[{"tagName":"7.5折"}]
                 promotionService.insertPromotion($scope.promotion).then(function (res) {
 
                     $scope.$close();

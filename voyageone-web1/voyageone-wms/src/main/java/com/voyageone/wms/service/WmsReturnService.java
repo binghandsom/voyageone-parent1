@@ -30,6 +30,8 @@ public interface WmsReturnService {
 //	 */
 //	void changeStatus(HttpServletRequest request, HttpServletResponse response, String string);
 
+	void returnListInit(HttpServletRequest request, HttpServletResponse response, Map<String, String> paramMap,	HttpSession session, UserSessionBean user);
+
 	/**
 	 * @description 根据orderNo获取orderInfo
 	 * @param orderNumber 订单号
@@ -108,6 +110,13 @@ public interface WmsReturnService {
 	 */
 	void doReturnListSearch(HttpServletRequest request, HttpServletResponse response, FormReturn formReturn, UserSessionBean user);
 
+    /**
+     * @description returnList下载
+     * @param param 下载条件
+     * @param user 用户信息
+     */
+    byte[] doReturnListDownload(String param, UserSessionBean user);
+
 	/**
 	 * @description newSession
 	 * @param request HttpServletRequest
@@ -133,4 +142,11 @@ public interface WmsReturnService {
 	 * @param user 用户信息
 	 */
 	void getReturnType(HttpServletRequest request, HttpServletResponse response, UserSessionBean user);
+
+	/**
+	 * @description Return 更新
+	 * @param paramMap 参数 map
+	 * @param user 用户信息
+	 */
+	FormReturn doChange(Map<String, Object> paramMap, UserSessionBean user);
 }

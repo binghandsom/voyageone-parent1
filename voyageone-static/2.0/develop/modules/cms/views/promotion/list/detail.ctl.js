@@ -91,10 +91,11 @@ define([
                 if($scope.vm.groupSelList.selList.length>0){
                     confirm($translate.instant('TXT_MSG_DELETE_ITEM')).result
                         .then(function () {
-                            var data = [];
-                            data.push(group);
-                            // TODO 去哪里拿这个group?
-                            promotionDetailService.delPromotionModel(data).then(function () {
+                            var parameter = [];
+                            _.forEach($scope.vm.groupSelList.selList, function (object) {
+                                parameter.push(object.data);
+                            });
+                            promotionDetailService.delPromotionModel(parameter).then(function () {
                                 notify.success($translate.instant('TXT_MSG_DELETE_SUCCESS'));
                                 $scope.search();
                                 //$scope.vm.groupSelList.selList = [];
@@ -108,8 +109,9 @@ define([
                     confirm($translate.instant('TXT_MSG_DELETE_ITEM')).result
                         .then(function () {
                             var parameter = [];
-                            parameter.push(code);
-                            // TODO 去哪里拿这个code?
+                            _.forEach($scope.vm.codeSelList.selList, function (object) {
+                                parameter.push(object.data);
+                            });
                             promotionDetailService.delPromotionCode(parameter).then(function () {
                                 notify.success($translate.instant('TXT_MSG_DELETE_SUCCESS'));
                                 $scope.search();
@@ -171,9 +173,9 @@ define([
 
                 $scope.vm.groupPageOption.total = res.data.total;
                 $scope.vm.groupList = res.data.resultData == null ? [] : res.data.resultData;
-                _.forEach(res.data.resultData, function(data) {
+                _.forEach(res.data.resultData, function(item) {
                     // 初始化数据选中需要的数组
-                    tempGroupSelect.currPageRows({"id": data.modelId});
+                    tempGroupSelect.currPageRows({"id": item.modelId, data:item});
                 });
                 $scope.vm.groupSelList = tempGroupSelect.selectRowsInfo;
                 //selAllFlag($scope.vm.groupSelList,"modelId");
@@ -193,7 +195,7 @@ define([
                 _.each($scope.vm.codeList,function(item){
                     item.promotionPriceBak = item.promotionPrice;
                     // 初始化数据选中需要的数组
-                    tempProductSelect.currPageRows({id: item.productCode});
+                    tempProductSelect.currPageRows({id: item.productCode, data:item});
                 });
                 $scope.vm.codeSelList = tempProductSelect.selectRowsInfo;
                 //$scope.vm.codeSelList.currPageRows = res.data.resultData;

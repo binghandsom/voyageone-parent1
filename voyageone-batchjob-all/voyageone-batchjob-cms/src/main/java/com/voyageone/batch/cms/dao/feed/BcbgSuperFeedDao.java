@@ -96,6 +96,7 @@ public class BcbgSuperFeedDao extends BaseDao {
      * 如果传递的 codes 是空的, 那么会更新所有的内容
      */
     public int updateFlgToUpdated(List<String> codes) {
-        return update("cms_zz_worktable_bcbg_superfeed_full_updateFlgToUpdated", parameters("updatingFlg", 30, "updatedFlg", 40, "updatedCodes", codes));
+        return update("cms_zz_worktable_bcbg_superfeed_full_updateFlgToUpdated",
+                parameters("updatingFlg", 30, "updatedFlg", 40, "updatedCodes", codes));
     }
 }

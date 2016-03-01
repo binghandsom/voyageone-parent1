@@ -14,10 +14,15 @@
                     </select>
                 </span>
                 <span class="input-group">
-                    <label for="location-bind-code" class="input-group-addon" translate="WMS_PRODUCTCODE"></label>
+                    <label for="location-bind-code" class="input-group-addon" translate="WMS_PRODUCTCODE_BIND"></label>
                     <input id="location-bind-code" type="text" class="form-control" ng-model="vm.search.code" enter-click="#location-bind-search"/>
                 </span>
                 <button id="location-bind-search" class="btn btn-primary" ng-click="searchItemLocation()" translate="WMS_SEARCH"></button>
+                <span class="input-group">
+                    <label for="location-bind-sku" class="input-group-addon" translate="WMS_PRODUCTSKU_BIND"></label>
+                    <input id="location-bind-sku" type="text" class="form-control" ng-model="vm.search.sku" enter-click="#location-bind-searchBySKU"/>
+                </span>
+                <button id="location-bind-searchBySKU" class="btn btn-primary" ng-click="searchItemLocationBySku()" translate="WMS_SEARCH"></button>
             </div>
             <div class="row">
                 <div class="col-md-8">
@@ -26,7 +31,7 @@
                             <thead>
                             <tr>
                                 <th colspan="3">
-                                    Store：{{ vm.curr.store }}({{ vm.curr.store_name }}) &nbsp; Code：{{ vm.curr.code }}
+                                    Store：{{ vm.curr.store }}({{ vm.curr.store_name }}) &nbsp; Code：{{ vm.curr.code }}  &nbsp; SKU：{{ vm.curr.sku }}
                                 </th>
                             </tr>
                             <tr>

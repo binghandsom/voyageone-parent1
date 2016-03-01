@@ -102,6 +102,42 @@ define(function (require) {
             this.doCheckSectionStatus = function (data, scope) {
                 return ajaxService.ajaxPost(data, wmsActions.stockTake.inventory.checkSectionStatus, scope);
             };
+
+            /**
+             * 获取一个SKU信息
+             * @param
+             */
+            this.getSku = function (stocktake_id, barcode, sku) {
+
+                return ajaxService.ajaxPost({
+                        stocktake_id: stocktake_id.toString(),
+                        barcode: barcode.toString(),
+                        sku: sku.toString()
+                    },
+                    wmsActions.stockTake.inventory.getSku)
+
+                    .then(function (res) {
+                        return res.data;
+                    });
+            };
+
+            /**
+             * 删除一个Item
+             * @param
+             */
+            this.deleteItem = function (stocktake_id,stocktake_detail_id, sku) {
+
+                return ajaxService.ajaxPost({
+                        stocktake_id: stocktake_id.toString(),
+                        stocktake_detail_id: stocktake_detail_id.toString(),
+                        sku: sku.toString()
+                    },
+                    wmsActions.stockTake.inventory.deleteItem)
+
+                    .then(function (res) {
+                        return res.data;
+                    });
+            };
         }]);
     return wmsApp;
 });

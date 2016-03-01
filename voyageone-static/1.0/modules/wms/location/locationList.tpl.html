@@ -40,7 +40,8 @@
                     <tr ng-repeat="i in vm.locations">
                         <td class="col-fix-no">{{ $index | dbIndex:vm.paging }}</td>
                         <td>{{ i.store_name }}</td>
-                        <td>{{ i.location_name }}</td>
+                        <td><span itemlocation-info="{{::i.store_id + ',' + i.store_name + ',' + i.location_id + ',' + i.location_name}}"><a>{{i.location_name}}</a></span></td>
+                        <!--<td>{{ i.location_name }}</td>-->
                         <td>{{ i.modifier }}</td>
                         <td>{{ i.modified_local }}</td>
                         <td class="col-fix-op">

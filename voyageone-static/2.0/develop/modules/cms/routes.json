@@ -30,6 +30,12 @@
     "templateUrl": "views/promotion/task/price.tpl.html",
     "controllerUrl": "modules/cms/views/promotion/task/price.ctl"
   },
+  "promotion_task_beat": {
+    "url": "/promotion/task/beat/",
+    "hash": "/promotion/task/beat/:beatId",
+    "templateUrl": "views/promotion/task/beat.tpl.html",
+    "controllerUrl": "modules/cms/views/promotion/task/beat.ctl"
+  },
   "search_advance": {
     "hash": "/search/advance",
     "templateUrl": "views/search/advance.tpl.html",
@@ -102,10 +108,10 @@
     "templateUrl": "views/channel/custom/attribute.tpl.html",
     "controllerUrl": "modules/cms/views/channel/custom/attribute.ctl"
   },
-  "channel_custom_translate": {
-    "hash": "/channel/custom/translate",
-    "templateUrl": "views/channel/custom/translate.tpl.html",
-    "controllerUrl": "modules/cms/views/channel/custom/translate.ctl"
+  "channel_custom_value": {
+    "hash": "/channel/custom/value",
+    "templateUrl": "views/channel/custom/value.tpl.html",
+    "controllerUrl": "modules/cms/views/channel/custom/value.ctl"
   },
   "channel_authority": {
     "hash": "/channel/authority",
@@ -120,7 +126,8 @@
   "translation_index": {
     "hash": "/translation/index",
     "templateUrl": "views/translation/index.tpl.html",
-    "controllerUrl": "modules/cms/views/translation/index.ctl"
+    "controllerUrl": "modules/cms/views/translation/index.ctl",
+    "controller": "translationDetailController"
   },
   "system_category_index": {
     "hash": "/system/category",

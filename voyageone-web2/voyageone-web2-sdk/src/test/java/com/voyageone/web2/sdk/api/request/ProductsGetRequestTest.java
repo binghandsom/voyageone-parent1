@@ -30,12 +30,18 @@ public class ProductsGetRequestTest {
 //        String queryString = "{\"groups.platforms\":{$elemMatch: {\"groupId\":589, \"isMain\":1}}}";
 //        requestModel.setQueryString(queryString);
 
+        //requestModel.setIsPage(false);
+        requestModel.setPageNo(1);
+        requestModel.setPageSize(2);
 
-        List<Long> listProductIds= new ArrayList<Long>();
-        listProductIds.add(163L);
-        Set<Long> productIds = new HashSet<Long>(listProductIds);
+//        List<Long> listProductIds= new ArrayList<Long>();
+//        listProductIds.add(163L);
+//        Set<Long> productIds = new HashSet<Long>(listProductIds);
+//
+//        requestModel.setProductIds(productIds);
 
-        requestModel.setProductIds(productIds);
+        requestModel.setQueryString("{\"modifier\":\"will\"}");
+
         requestModel.addField("prodId");
         requestModel.addField("fields.code");
         requestModel.addField("fields.brand");

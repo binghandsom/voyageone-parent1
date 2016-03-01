@@ -96,32 +96,41 @@ define([
             },
             ok: function () {
 
+                var ttt = this;
                 var type = this.mappingSetting.type;
 
                 if (!type) {
-                    this.alert(this.$translate.instant('TXT_MSG_MUST_GET_ONE_VALUE'));
+                    ttt.alert(ttt.$translate.instant('TXT_MSG_MUST_GET_ONE_VALUE'));
                     return;
                 }
-
-                // value 会保存在 field 中. 取出后,需要清空
-                var value = this.getValue(this.field);
-                this.field.value = null;
+                
+                var value = ttt.getValue(ttt.field);
 
                 if (!value) {
-                    this.alert(this.$translate.instant('TXT_MSG_NO_VALUE_IS_ON_THE_ATTRIBUTE'));
+                    ttt.alert(ttt.$translate.instant('TXT_MSG_NO_VALUE_IS_ON_THE_ATTRIBUTE'));
                     return;
                 }
 
                 // 需要转换 Condition 中 Operation 的存储类型
                 // 否则服务端无法转换
-                _.each(this.conditions, function (condition) {
+                var isBreak = ttt.conditions.some(function(condition) {
+                    if (!condition.property || !condition.operation) return true;
+                    if (!condition.operation.isSingle && !condition.value) return true;
                     condition.operation = condition.operation.name;
                 });
+                
+                if (isBreak) {
+                    ttt.alert(ttt.$translate.instant('TXT_MSG_UNVALID_CONDITION'));
+                    return;
+                }
 
-                this.$uibModalInstance.close({
+                // value 会保存在 field 中. 取出后,需要清空
+                ttt.field.value = null;
+                
+                ttt.$uibModalInstance.close({
                     type: type,
                     val: value,
-                    condition: this.conditions
+                    condition: ttt.conditions
                 });
             },
             cancel: function () {

@@ -3,8 +3,8 @@ package com.voyageone.web2.cms.wsdl.service;
 import com.google.common.base.Joiner;
 import com.mongodb.BasicDBObject;
 import com.mongodb.BulkWriteResult;
-import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
+import com.voyageone.base.dao.mongodb.JomgoUpdate;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.cms.CmsConstants;
 import com.voyageone.cms.service.CmsProductLogService;
@@ -478,9 +478,10 @@ public class ProductService extends BaseService {
                 throw new ApiException(codeEnum.getErrorCode(), "product not found!");
             }
 
+            codeEnum = VoApiConstants.VoApiErrorCodeEnum.ERROR_CODE_70011;
             if (request.getIsCheckModifed()) {
                 if (findModel.getModified() != null && !findModel.getModified().equals(productModel.getModified())) {
-                    throw new ApiException(codeEnum.getErrorCode(), "product has been update, not update!");
+                    throw new ApiException(codeEnum.getErrorCode(), codeEnum.getErrorMsg());
                 }
             }
 
@@ -775,9 +776,6 @@ public class ProductService extends BaseService {
 
     /**
      * confirm change category
-     *
-     * @param request
-     * @return
      */
     public VoApiUpdateResponse changeProductCategory(ProductGroupMainCategoryUpdateRequest request) {
 
@@ -805,24 +803,22 @@ public class ProductService extends BaseService {
         }
 
         // 批量更新feed表
-        int updateFeedInfoCount = cmsBtFeedInfoDao.updateFeedInfoUpdFlg(request.getChannelId(), (String[]) request.getModels().toArray(new String[request.getModels().size()]));
+        int updateFeedInfoCount = cmsBtFeedInfoDao.updateFeedInfoUpdFlg(request.getChannelId(), request.getModels().toArray(new String[request.getModels().size()]));
 
         ProductGroupMainCategoryUpdateResponse response = new ProductGroupMainCategoryUpdateResponse();
 
         response.setUpdFeedInfoCount(updateFeedInfoCount);
 
-        response.setUpdProductCount(result.getModifiedCount());
-
-        response.setModifiedCount(result.getModifiedCount() + updateFeedInfoCount);
+        if (result != null) {
+            response.setUpdProductCount(result.getModifiedCount());
+            response.setModifiedCount(result.getModifiedCount() + updateFeedInfoCount);
+        }
 
         return response;
     }
 
     /**
      * get the product info from wms's request
-     *
-     * @param request
-     * @return
      */
     public ProductForWmsGetResponse getWmsProductsInfo(ProductForWmsGetRequest request) {
         ProductForWmsGetResponse response = new ProductForWmsGetResponse();
@@ -883,7 +879,7 @@ public class ProductService extends BaseService {
             if (!StringUtils.isEmpty(hsCodeCrop)) {
                 TypeChannelBean bean = TypeChannel.getTypeChannelByCode(Constants.productForOtherSystemInfo.HS_CODE_CROP, channelId, hsCodeCrop);
                 if (bean != null) {
-                    String[] hsCode = bean.getName().toString().split(",");
+                    String[] hsCode = bean.getName().split(",");
                     resultInfo.setHsCodeId(hsCodeCrop);
                     resultInfo.setHsCode(hsCode[1]);
                     resultInfo.setHsDescription(hsCode[2]);
@@ -895,7 +891,7 @@ public class ProductService extends BaseService {
             if (!StringUtils.isEmpty(hsCodePrivate)) {
                 TypeChannelBean bean = TypeChannel.getTypeChannelByCode(Constants.productForOtherSystemInfo.HS_CODE_PRIVATE, channelId, hsCodePrivate);
                 if (bean != null) {
-                    String[] hsCodePu = bean.getName().toString().split(",");
+                    String[] hsCodePu = bean.getName().split(",");
                     resultInfo.setHsCodePuId(hsCodePrivate);
                     resultInfo.setHsCodePu(hsCodePu[0]);
                     resultInfo.setHsDescriptionPu(hsCodePu[1]);
@@ -910,9 +906,6 @@ public class ProductService extends BaseService {
 
     /**
      * get the product list from oms's request
-     *
-     * @param request
-     * @return
      */
     public ProductForOmsGetResponse getOmsProductsInfo(ProductForOmsGetRequest request) {
         ProductForOmsGetResponse response = new ProductForOmsGetResponse();
@@ -928,7 +921,7 @@ public class ProductService extends BaseService {
         // set fields
         buildProjection(request, queryObject);
 
-        StringBuffer sbQuery = new StringBuffer();
+        StringBuilder sbQuery = new StringBuilder();
         // 设定sku的模糊查询
         String skuIncludes = request.getSkuIncludes();
         // 根据具体的sku取值
@@ -938,7 +931,7 @@ public class ProductService extends BaseService {
             sbQuery.append(MongoUtils.splicingValue("skus.skuCode", skuIncludes, "$regex"));
             sbQuery.append(",");
         } else if (skuList != null && skuList.size() > 0) {
-            sbQuery.append(MongoUtils.splicingValue("skus.skuCode", (String[]) skuList.toArray(new String[skuList.size()])));
+            sbQuery.append(MongoUtils.splicingValue("skus.skuCode", skuList.toArray(new String[skuList.size()])));
             sbQuery.append(",");
         }
 
@@ -1038,43 +1031,72 @@ public class ProductService extends BaseService {
         int getCount = request.getLimit();
         String translator = request.getTranslator();
         int translateTimeHDiff = request.getTranslateTimeHDiff();
+        int distributeRule = request.getDistributeRule();
 
-        // add translateTime condition
-        String queryStrTmp = "{\"$or\":" +
-                "[{\"fields.status\":{\"$nin\":[\"New\"]},\"fields.translateStatus\":{\"$in\":[null,\"\", \"0\"]},\"fields.translator\":{\"$in\":[null,\"\"]}}," +
-                 "{\"fields.status\":{\"$nin\":[\"New\"]},\"fields.translator\":{\"$nin\":[null,\"\"]},\"fields.translateTime\":{\"$lt\":\"%s\"}}]}";
+        String queryStrTmp;
+        switch (distributeRule){
+            case 0:
+                // add translateTime condition
+                queryStrTmp = "{\"$or\":" +
+                        "[{\"fields.status\":{\"$nin\":[\"New\"]},\"fields.translateStatus\":{\"$in\":[null,\"\", \"0\"]},\"fields.translator\":{\"$in\":[null,\"\"]}}," +
+                        "{\"fields.status\":{\"$nin\":[\"New\"]},\"fields.translator\":{\"$nin\":[null,\"\"]},\"fields.translateTime\":{\"$lt\":\"%s\"}}]}";
+                break;
+            case 1:
+                queryStrTmp = "{\"$or\":" +
+                        "[{\"fields.status\":{\"$nin\":[\"New\"]},\"fields.translateStatus\":{\"$in\":[null,\"\",\"0\"]},\"fields.translator\":{\"$in\":[null,\"\"]},\"groups.platforms.isMain\":1}," +
+                        "{\"fields.status\":{\"$nin\":[\"New\"]},\"fields.translator\":{\"$nin\":[null,\"\"]},\"fields.translateTime\":{\"$lt\":\"%s\"},\"groups.platforms.isMain\":1}]}";
+                break;
+            default:
+                // add translateTime condition
+                queryStrTmp = "{\"$or\":" +
+                        "[{\"fields.status\":{\"$nin\":[\"New\"]},\"fields.translateStatus\":{\"$in\":[null,\"\", \"0\"]},\"fields.translator\":{\"$in\":[null,\"\"]}}," +
+                        "{\"fields.status\":{\"$nin\":[\"New\"]},\"fields.translator\":{\"$nin\":[null,\"\"]},\"fields.translateTime\":{\"$lt\":\"%s\"}}]}";
+                break;
+        }
 
         Date date = DateTimeUtil.addHours(DateTimeUtil.getDate(), -translateTimeHDiff);
         String translateTimeStr = DateTimeUtil.format(date, null);
+
+        JomgoUpdate updateObject = new JomgoUpdate();
         // create query string
         String queryStr = String.format(queryStrTmp, translateTimeStr);
+        updateObject.setQuery(queryStr);
 
-        // add Update
-        String strUpdateTmp = "{\"$set\":{\"fields.translateStatus\":0, \"fields.translator\":\"%s\", \"fields.translateTime\":\"%s\"}}";
+        // create Projection String
+        String[] projectionStr = getProjection(request);
+        updateObject.setProjection(projectionStr);
+
+        // create sort String
+        String sortStr = getSort(request);
+        updateObject.setSort(sortStr);
+
         // create Update string
+        String strUpdateTmp = "{\"$set\":{\"fields.translateStatus\":\"0\", \"fields.translator\":\"%s\", \"fields.translateTime\":\"%s\"}}";
         String updateStr = String.format(strUpdateTmp, translator, nowStr);
+        updateObject.setUpdate(updateStr);
 
+        List<CmsBtProductModel> products = new ArrayList<>();
         //update translator translateTime
         for (int i=0; i<getCount; i++) {
-            WriteResult writeResult = cmsBtProductDao.updateFirst(channelId, queryStr, updateStr);
-            if (writeResult.getN() != 1) {
+            CmsBtProductModel productModel = cmsBtProductDao.findAndModify(updateObject, channelId);
+            if (productModel != null) {
+                products.add(productModel);
+            } else {
                 break;
             }
         }
-
-        /**
-         * query lock data
-         */
-        JomgoQuery queryObject = new JomgoQuery();
-        //query
-        String getQueryStrTmp = "{\"fields.status\":{\"$nin\":[\"New\"]},\"fields.translateStatus\":0,\"fields.translator\":\"%s\",\"fields.translateTime\":{\"$gt\":\"%s\"}}";
-        queryObject.setQuery(String.format(getQueryStrTmp, translator, translateTimeStr));
-        //fields
-        buildProjection(request, queryObject);
-        //sorts
-        buildSort(request, queryObject);
-
-        List<CmsBtProductModel> products = cmsBtProductDao.select(queryObject, channelId);
+//        /**
+//         * query lock data
+//         */
+//        JomgoQuery queryObject = new JomgoQuery();
+//        //query
+//        String getQueryStrTmp = "{\"fields.status\":{\"$nin\":[\"New\"]},\"fields.translateStatus\":0,\"fields.translator\":\"%s\",\"fields.translateTime\":{\"$gt\":\"%s\"}}";
+//        queryObject.setQuery(String.format(getQueryStrTmp, translator, translateTimeStr));
+//        //fields
+//        buildProjection(request, queryObject);
+//        //sorts
+//        buildSort(request, queryObject);
+//        List<CmsBtProductModel> products = cmsBtProductDao.select(queryObject, channelId);
 
         result.setProducts(products);
 
@@ -1083,10 +1105,8 @@ public class ProductService extends BaseService {
 
     /**
      * 获取Sku的库存信息
-     * @param param
-     * @return
      */
-    public ProductSkuResponse getProductSkuQty (ProductSkuRequest param) {
+    public ProductSkuResponse getProductSkuQty(ProductSkuRequest param) {
         List<WmsBtInventoryCenterLogicModel> inventoryList = wmsBtInventoryCenterLogicDao.getItemDetailByCode(param);
         ProductSkuResponse response = new ProductSkuResponse();
         Map<String, Integer> result = new HashMap<>();

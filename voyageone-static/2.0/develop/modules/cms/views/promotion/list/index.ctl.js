@@ -6,7 +6,7 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function () {
 
-    function indexController($scope,promotionService,confirm,$translate) {
+    function indexController($scope,promotionService,confirm,$translate,cActions) {
 
         $scope.vm = {"promotionList": [],"platformTypeList":[],"promotionStatus":[]};
         $scope.searchInfo = {};
@@ -23,6 +23,11 @@ define([
         $scope.clear = function () {
             $scope.searchInfo = {};
         };
+
+        $scope.openOtherDownload = function(promotionId){
+
+            $.download.post(cActions.cms.promotion.promotionService.root+"/"+cActions.cms.promotion.promotionService.exportPromotion,{"promotionId":promotionId});
+        }
 
         $scope.search = function () {
             promotionService.getPromotionList($scope.searchInfo).then(function(res){
@@ -46,6 +51,6 @@ define([
         };
     };
 
-    indexController.$inject = ['$scope','promotionService', 'confirm', '$translate'];
+    indexController.$inject = ['$scope','promotionService', 'confirm', '$translate','cActions'];
     return indexController;
 });

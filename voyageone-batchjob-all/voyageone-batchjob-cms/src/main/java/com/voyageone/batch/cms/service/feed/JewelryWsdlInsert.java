@@ -27,8 +27,8 @@ import java.util.stream.Collectors;
  * @version 2.0.0
  */
 @Service
-public class JewelryWsdlInsert extends SearsWsdlBase {
-    private static final String INSERT_FLG = "UpdateFlag = 1";
+public class JewelryWsdlInsert extends JewelryWsdlBase {
+    private static final String INSERT_FLG = "(UpdateFlag = 1 or UpdateFlag = 2)";
 
     @Autowired
     private FeedToCmsService feedToCmsService;
@@ -61,15 +61,15 @@ public class JewelryWsdlInsert extends SearsWsdlBase {
             String where = String.format("WHERE %s AND %s = '%s' %s", INSERT_FLG, colums.get("category").toString(),
                     category.replace("'", "\\\'"), Feed.getVal1(channel, FeedEnums.Name.model_sql_ending));
 
-            List<CmsBtFeedInfoJewelryModel> jewmodelBeans = jewelryDao.selectSuperfeedModel(where, colums, Feed.getVal1(channel, FeedEnums.Name.table_id));
+            List<CmsBtFeedInfoJewelryModel> jewmodelBeans = jewelryDao.selectSuperfeedModel(where, colums, Feed.getVal1(channel, FeedEnums.Name.table_id2));
             List<CmsBtFeedInfoModel> modelBeans = new ArrayList<>();
-            for (CmsBtFeedInfoJewelryModel jewmodelBean : jewmodelBeans) {
-                Map temp = JacksonUtil.json2Bean(JacksonUtil.bean2Json(jewmodelBean), HashMap.class);
-                Map<String, List<String>> attribute = new HashMap<>();
-                for (int i = 0; i < 99; i++) {
-                    String value = (String) temp.get("attribute" + i + "Value");
-                    if (!StringUtil.isEmpty(value)) {
-                        List<String> values = new ArrayList<>();
+            for(CmsBtFeedInfoJewelryModel jewmodelBean : jewmodelBeans){
+                Map temp= JacksonUtil.json2Bean(JacksonUtil.bean2Json(jewmodelBean), HashMap.class);
+                Map<String,List<String>> attribute = new HashMap<>();
+                for(int i = 0;i<99;i++){
+                    String value= (String)temp.get("attribute"+i+"Value");
+                    if(!StringUtil.isEmpty(value)){
+                        List<String> values= new ArrayList<>();
                         values.add(value);
                         attribute.put(temp.get("attribute" + i + "Name").toString(), values);
                     }
@@ -136,7 +136,7 @@ public class JewelryWsdlInsert extends SearsWsdlBase {
             // update flg 标记, 只获取哪些即将进行新增的商品的类目
             List<String> categoryPaths = superFeedDao.selectSuperfeedCategory(
                     Feed.getVal1(channel, FeedEnums.Name.category_column),
-                    table, " AND " + INSERT_FLG + " AND " + Feed.getVal1(channel, FeedEnums.Name.model_m_model) + " != '' AND " + Feed.getVal1(channel, FeedEnums.Name.model_m_brand) + " != ''");
+                    table, " AND " + INSERT_FLG + " AND " + Feed.getVal1(channel, FeedEnums.Name.model_m_model) + " != '' AND "+Feed.getVal1(channel, FeedEnums.Name.model_m_brand)+" != ''");
             $info("获取类目路径数 %s , 准备拆分继续处理", categoryPaths.size());
 
             return categoryPaths;
@@ -152,7 +152,6 @@ public class JewelryWsdlInsert extends SearsWsdlBase {
 
             return getModels(categoryPath);
         }
-
         /**
          * 调用 WsdlProductService 提交新商品
          *

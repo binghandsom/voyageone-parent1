@@ -1,6 +1,7 @@
 package com.voyageone.oms.service.impl;
 
 import com.google.gson.GsonBuilder;
+import com.voyageone.cms.service.bean.ProductForOmsBean;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.ChannelConfigs;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
@@ -15,6 +16,9 @@ import com.voyageone.oms.formbean.InFormServiceSearchSKU;
 import com.voyageone.oms.formbean.OutFormServiceSearchSKU;
 import com.voyageone.oms.service.OmsCommonService;
 import com.voyageone.oms.utils.WebServiceUtil;
+import com.voyageone.web2.sdk.api.VoApiDefaultClient;
+import com.voyageone.web2.sdk.api.request.ProductForOmsGetRequest;
+import com.voyageone.web2.sdk.api.response.ProductForOmsGetResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +37,9 @@ public class OmsCommonServiceImpl implements OmsCommonService {
 
 	@Autowired
 	private InventoryDao inventoryDao;
+
+	@Autowired
+	protected VoApiDefaultClient voApiClient;
 	
 	/**
 	 * 获得SKU信息
@@ -42,61 +49,17 @@ public class OmsCommonServiceImpl implements OmsCommonService {
 	public List<OutFormServiceSearchSKU> getSKUList(InFormServiceSearchSKU inFormServiceSearchSKU,String type) {
 		List<OutFormServiceSearchSKU> ret = new ArrayList<OutFormServiceSearchSKU>();
 
-//		String param = JsonUtil.getJsonString(inFormServiceSearchSKU);
-//		String result=null;
+		String searchskuPath = ChannelConfigs.getVal1(inFormServiceSearchSKU.getChannelId(), ChannelConfigEnums.Name.searchsku_path);
+		// SDK方式调用
+		if ("SDK".equals(searchskuPath)) {
+			ret = getSKUInfoByWebServiceBySDK(inFormServiceSearchSKU, type);
+		} else {
+		// http请求方式调用
+			String result = null;
+			result = getSKUInfoByWebService(inFormServiceSearchSKU, type);
+			ret = JsonUtil.jsonToBeanList(result, OutFormServiceSearchSKU.class);
+		}
 
-		//WebService 调用
-//		// 斯伯丁，CHAMPION，皇马 的场合（CMS 在国内）
-//		if(OmsCodeConstants.OrderChannelId.SP.equals(inFormServiceSearchSKU.getChannelId()) ||
-//				OmsCodeConstants.OrderChannelId.CHAMPION.equals(inFormServiceSearchSKU.getChannelId()) ||
-//				OmsCodeConstants.OrderChannelId.RM.equals(inFormServiceSearchSKU.getChannelId())) {
-//			if (type.equals(OmsConstants.SKU_TYPE_ADDNEWORDER)) {
-//				String searchskuPath = Properties.readValue(PropKey.SEARCHSKUCN_PATH);
-//				result = HttpUtils.post(searchskuPath, param);
-//			}
-//			//OrderDetail调用
-//			if (type.equals(OmsConstants.SKU_TYPE_ORDERDETAIL)) {
-//				String searchskuPath = Properties.readValue(PropKey.SEARCHSKUListCN_PATH);
-//				result = HttpUtils.post(searchskuPath, param);
-//			}
-//		// SN，PA，JC，BHFO 的场合(CMS 在美国)
-//		} else if(OmsCodeConstants.OrderChannelId.SN.equals(inFormServiceSearchSKU.getChannelId()) ||
-//						OmsCodeConstants.OrderChannelId.PA.equals(inFormServiceSearchSKU.getChannelId()) ||
-//						OmsCodeConstants.OrderChannelId.JC.equals(inFormServiceSearchSKU.getChannelId()) ||
-//						OmsCodeConstants.OrderChannelId.BHFO.equals(inFormServiceSearchSKU.getChannelId())) {
-//
-//			if(type.equals(OmsConstants.SKU_TYPE_ADDNEWORDER)){
-//				String searchskuPath = Properties.readValue(PropKey.SEARCHSKU_PATH);
-//				result = HttpUtils.post(searchskuPath, param);
-//			}
-//			//OrderDetail调用
-//			if(type.equals(OmsConstants.SKU_TYPE_ORDERDETAIL)){
-//				String searchskuPath = Properties.readValue(PropKey.SEARCHSKUList_PATH);
-//				result = HttpUtils.post(searchskuPath, param);
-//			}
-//		// 其他的场合 珠宝,BCBG的场合（新CMS）
-//		} else {
-//			String searchskuPath = Properties.readValue(PropKey.SEARCHSKUINFO_PATH);
-//			result = getSKUInfoByWebService(searchskuPath, inFormServiceSearchSKU);
-//		}
-		String result = null;
-		result = getSKUInfoByWebService(inFormServiceSearchSKU, type);
-
-		ret = JsonUtil.jsonToBeanList(result, OutFormServiceSearchSKU.class);
-
-//		// 库存再设定
-//		if (OmsCodeConstants.OrderChannelId.SP.equals(inFormServiceSearchSKU.getChannelId()) ||
-//				OmsCodeConstants.OrderChannelId.CHAMPION.equals(inFormServiceSearchSKU.getChannelId()) ||
-//				OmsCodeConstants.OrderChannelId.RM.equals(inFormServiceSearchSKU.getChannelId()) ||
-//				OmsCodeConstants.OrderChannelId.JC.equals(inFormServiceSearchSKU.getChannelId()) ||
-//				OmsCodeConstants.OrderChannelId.BHFO.equals(inFormServiceSearchSKU.getChannelId())) {
-//			for (OutFormServiceSearchSKU outFormServiceSearchSKU : ret) {
-//				int quantity = 0;
-//
-//				quantity = inventoryDao.getLogicQuantity(inFormServiceSearchSKU.getChannelId(), outFormServiceSearchSKU.getSku());
-//				outFormServiceSearchSKU.setInventory(String.valueOf(quantity));
-//			}
-//		}
 		// 库存再设定
 		String isNeedResetInventory = ChannelConfigs.getVal1(inFormServiceSearchSKU.getChannelId(), ChannelConfigEnums.Name.searchsku_reset_inventory);
 		if (!StringUtils.isEmpty(isNeedResetInventory)) {
@@ -109,19 +72,65 @@ public class OmsCommonServiceImpl implements OmsCommonService {
 				}
 			}
 		}
+		return ret;
+	}
 
+	/**
+	 * 根据SDK取得产品信息
+	 *
+	 * @return
+	 */
+	private List<OutFormServiceSearchSKU> getSKUInfoByWebServiceBySDK(InFormServiceSearchSKU inFormServiceSearchSKU, String type) {
+		List<OutFormServiceSearchSKU> ret = null;
 
-//		for (OutFormServiceSearchSKU outFormServiceSearchSKU : ret) {
-//			// TODO 转换什么字符？
-//			if (!StringUtils.isEmpty(outFormServiceSearchSKU.getDescription())) {
-//				outFormServiceSearchSKU.setDescription(outFormServiceSearchSKU.getDescription());
-//			}
-//			if (!StringUtils.isEmpty(outFormServiceSearchSKU.getProduct())) {
-//				outFormServiceSearchSKU.setProduct(outFormServiceSearchSKU.getProduct());
-//			}
-//		}
-		
-		
+		if (type.equals(OmsConstants.SKU_TYPE_ADDNEWORDER)) {
+			ProductForOmsGetRequest requestModel = new ProductForOmsGetRequest(inFormServiceSearchSKU.getChannelId());
+			requestModel.setSkuIncludes(inFormServiceSearchSKU.getSkuIncludes());
+			requestModel.setNameIncludes(inFormServiceSearchSKU.getNameIncludes());
+			requestModel.setDescriptionIncludes(inFormServiceSearchSKU.getDescriptionIncludes());
+
+			//SDK取得Product 数据
+			ProductForOmsGetResponse response = voApiClient.execute(requestModel);
+
+			ret = getFromProductForOmsGetResponse(response);
+		} else {
+			ProductForOmsGetRequest requestModel = new ProductForOmsGetRequest(inFormServiceSearchSKU.getChannelId());
+			List<String> skuList = inFormServiceSearchSKU.getSkuList();
+			requestModel.setSkuList(skuList);
+//			requestModel.setCartId(inFormServiceSearchSKU.getCartId());
+
+			//SDK取得Product 数据
+			ProductForOmsGetResponse response = voApiClient.execute(requestModel);
+
+			ret = getFromProductForOmsGetResponse(response);
+		}
+		return ret;
+	}
+
+	/**
+	 * SDK 产品信息转化 ProductForOmsBean -> OutFormServiceSearchSKU
+	 *
+	 * @return
+	 */
+	private List<OutFormServiceSearchSKU> getFromProductForOmsGetResponse(ProductForOmsGetResponse response) {
+		List<OutFormServiceSearchSKU> ret = new ArrayList<OutFormServiceSearchSKU>();
+
+		List<ProductForOmsBean> lstProductForOmsBean = response.getResultInfo();
+		for (int i = 0; i < lstProductForOmsBean.size(); i++) {
+			ProductForOmsBean productForOmsBean = lstProductForOmsBean.get(i);
+
+			OutFormServiceSearchSKU outFormServiceSearchSKU = new OutFormServiceSearchSKU();
+			outFormServiceSearchSKU.setSku(productForOmsBean.getSku());
+			outFormServiceSearchSKU.setDescription(productForOmsBean.getDescription());
+			outFormServiceSearchSKU.setImgPath(productForOmsBean.getImgPath());
+			outFormServiceSearchSKU.setInventory(productForOmsBean.getInventory());
+			outFormServiceSearchSKU.setPricePerUnit(productForOmsBean.getPricePerUnit());
+			outFormServiceSearchSKU.setProduct(productForOmsBean.getProduct());
+			outFormServiceSearchSKU.setSkuTmallUrl(productForOmsBean.getSkuTmallUrl());
+
+			ret.add(outFormServiceSearchSKU);
+		}
+
 		return ret;
 	}
 

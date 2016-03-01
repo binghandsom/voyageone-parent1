@@ -10,12 +10,13 @@ define([
     angularAMD
         .service('searchAdvanceService', searchAdvanceService);
 
-    function searchAdvanceService($q, $translate, selectRowsFactory, $searchAdvanceService, $filter) {
+    function searchAdvanceService($q, $translate, selectRowsFactory, $searchAdvanceService, $filter, cActions) {
 
         this.init = init;
         this.search = search;
         this.getGroupList = getGroupList;
         this.getProductList = getProductList;
+        this.exportFile = exportFile;
 
         var tempGroupSelect = new selectRowsFactory();
         var tempProductSelect = new selectRowsFactory();
@@ -60,6 +61,11 @@ define([
                 defer.resolve (res);
             });
             return defer.promise;
+        }
+
+        function exportFile (data) {
+            data = resetSearchInfo(data);
+            $.download.post(cActions.cms.search.$searchAdvanceService.root + cActions.cms.search.$searchAdvanceService.exportProducts, {params: JSON.stringify(data)});
         }
 
         /**

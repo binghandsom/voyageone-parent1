@@ -1,9 +1,12 @@
 package com.voyageone.web2.cms.views.promotion.list;
 
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.cms.service.model.CmsBtProductModel;
 import com.voyageone.cms.service.model.CmsBtProductModel_Sku;
 import com.voyageone.common.components.transaction.SimpleTransaction;
 import com.voyageone.common.configs.Enums.PromotionTypeEnums;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.bean.CmsPromotionProductPriceBean;
 import com.voyageone.web2.cms.views.pop.bulkUpdate.CmsAddToPromotionService;
@@ -54,8 +57,8 @@ public class CmsPromotionDetailService extends BaseAppService {
 
 
     private static final int codeCellNum = 1;
-    private static final int priceCellNum = 2;
-    private static final int tagCellNum = 3;
+    private static final int priceCellNum = 8;
+    private static final int tagCellNum = 9;
 
     /**
      * promotion商品插入
@@ -160,7 +163,7 @@ public class CmsPromotionDetailService extends BaseAppService {
                     map.setImage((String) cmsBtProductModel.getFields().getImages1().get(0).getAttribute("image1"));
                     map.setSkuCount(cmsBtProductModel.getSkus().size());
                     map.setPlatformStatus(cmsBtProductModel.getGroups().getPlatforms().get(0).getPlatformStatus());
-                    map.setInventory(cmsBtProductModel.getBatchField().getCodeQty() == null?0:cmsBtProductModel.getBatchField().getCodeQty());
+                    map.setInventory(cmsBtProductModel.getBatchField().getCodeQty() == null ? 0 : cmsBtProductModel.getBatchField().getCodeQty());
                 }
             });
         }
@@ -221,27 +224,34 @@ public class CmsPromotionDetailService extends BaseAppService {
         Sheet sheet1 = wb.getSheetAt(0);
         int rowNum = 0;
         for (Row row : sheet1) {
-            rowNum++;
-            // 跳过第一行
-            if (rowNum == 1) {
-                continue;
-            }
-            CmsPromotionProductPriceBean item = new CmsPromotionProductPriceBean();
-            if (row.getCell(codeCellNum).getCellType() == Cell.CELL_TYPE_NUMERIC) {
-                int code = (int) row.getCell(codeCellNum).getNumericCellValue();
-                item.setCode(code + "");
-            } else {
-                item.setCode(row.getCell(codeCellNum).getStringCellValue());
-            }
+            try {
+                rowNum++;
+                // 跳过第一行
+                if (rowNum == 1) {
+                    continue;
+                }
+                CmsPromotionProductPriceBean item = new CmsPromotionProductPriceBean();
+                if (row.getCell(codeCellNum).getCellType() == Cell.CELL_TYPE_NUMERIC) {
+                    int code = (int) row.getCell(codeCellNum).getNumericCellValue();
+                    item.setCode(code + "");
+                } else {
+                    item.setCode(row.getCell(codeCellNum).getStringCellValue());
+                }
+                if (StringUtil.isEmpty(item.getCode())) {
+                    continue;
+                }
 
-            if (row.getCell(priceCellNum).getCellType() == Cell.CELL_TYPE_NUMERIC) {
-                item.setPrice(row.getCell(priceCellNum).getNumericCellValue());
-            } else {
-                item.setPrice(Double.parseDouble(row.getCell(priceCellNum).getStringCellValue()));
-            }
+                if (row.getCell(priceCellNum).getCellType() == Cell.CELL_TYPE_NUMERIC || row.getCell(priceCellNum).getCellType() == Cell.CELL_TYPE_FORMULA) {
+                    item.setPrice(Double.parseDouble(StringUtils.getNumPrecision2(row.getCell(priceCellNum).getNumericCellValue())));
+                } else {
+                    item.setPrice(Double.parseDouble(row.getCell(priceCellNum).getStringCellValue()));
+                }
 
-            item.setTag(row.getCell(tagCellNum).getStringCellValue());
-            respones.add(item);
+                item.setTag(row.getCell(tagCellNum).getStringCellValue());
+                respones.add(item);
+            }catch (Exception e){
+                throw new BusinessException(String.format("第%d行数据格式不对",rowNum));
+            }
         }
         return respones;
     }

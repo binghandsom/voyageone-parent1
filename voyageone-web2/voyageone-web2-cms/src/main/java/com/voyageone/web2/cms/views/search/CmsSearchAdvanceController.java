@@ -1,15 +1,15 @@
 package com.voyageone.web2.cms.views.search;
 
+import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
 import com.voyageone.web2.cms.bean.search.index.CmsSearchInfoBean;
 import com.voyageone.web2.sdk.api.response.ProductsGetResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -95,6 +95,17 @@ public class CmsSearchAdvanceController extends CmsController {
 
         // 返回用户信息
         return success(resultBean);
+    }
+
+    @RequestMapping(CmsUrlConstants.SEARCH.ADVANCE.EXPORT_PRODUCTS)
+    public ResponseEntity<byte[]> doExport(@RequestParam String params)
+            throws Exception {
+
+        CmsSearchInfoBean p = JacksonUtil.json2Bean(params,CmsSearchInfoBean.class);
+        byte[] data = searchIndexService.getCodeExcelFile(p, getUser(), getCmsSession());
+//        byte[] data = new byte[2];
+        return genResponseEntityFromBytes("product_" + DateTimeUtil.getLocalTime(getUserTimeZone())+".xlsx", data);
+
     }
 
 }

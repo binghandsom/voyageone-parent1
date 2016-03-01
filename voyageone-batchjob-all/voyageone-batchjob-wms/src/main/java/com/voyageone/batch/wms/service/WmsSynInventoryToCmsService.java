@@ -9,9 +9,12 @@ import com.voyageone.batch.wms.dao.InventoryDao;
 import com.voyageone.batch.wms.modelbean.InventoryForCmsBean;
 import com.voyageone.cms.service.CmsProductService;
 import com.voyageone.cms.service.dao.mongodb.CmsBtProductDao;
+import com.voyageone.common.Constants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.ShopConfigs;
+import com.voyageone.common.configs.TypeChannel;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.CommonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -87,24 +90,26 @@ public class WmsSynInventoryToCmsService extends BaseTaskService {
             bulkUpdateCodeQty(orderChannelID, codeInventoryList, getTaskName());
 
             //获取本渠道的cart
-            List<ShopBean> cartList = ShopConfigs.getChannelShopList(orderChannelID);
+
+//            List<ShopBean> cartList = ShopConfigs.getChannelShopList(orderChannelID);
+            List<TypeChannelBean> cartList = TypeChannel.getTypeListSkuCarts(orderChannelID, Constants.comMtTypeChannel.SKU_CARTS_53_D, "en");
             $info("orderChannelID:" + orderChannelID + "    cart数:" + cartList.size());
 
 
             List<BulkUpdateModel> bulkList = new ArrayList<>();
             for (int j = 0; j < cartList.size(); j++) {
 
-                int cartId = Integer.parseInt(cartList.get(j).getCart_id());
+                int cartId = Integer.parseInt(cartList.get(j).getValue());
+                $info("cartId:" + cartId + "   start" );
 
                 //获取本Cart下所有group TODO
                 Map<String, List<String>> groupList = getGroupByCartList(orderChannelID, cartId);
 
                 groupList.forEach((s, codes) -> {
-                    $info("groupId:" + s + "    code数:" + codes.size());
                     int Inventory = getGroupInventory(codeInventoryList, codes);
                     for (String code : codes) {
                         HashMap<String, Object> updateMap = new HashMap<>();
-                        updateMap.put("groups.platforms.$.inventory", Inventory);
+                        updateMap.put("groups.platforms.$.qty", Inventory);
                         HashMap<String, Object> queryMap = new HashMap<>();
                         queryMap.put("fields.code", code);
                         queryMap.put("groups.platforms.cartId", cartId);
@@ -113,7 +118,7 @@ public class WmsSynInventoryToCmsService extends BaseTaskService {
                         model.setQueryMap(queryMap);
                         bulkList.add(model);
                         //批量插入group级记录到mysql 10000条插入一次 TODO
-                        if (bulkList.size() >= 1000) {
+                        if (bulkList.size() >= 10) {
                             cmsBtProductDao.bulkUpdateWithMap(orderChannelID, bulkList, getTaskName(), "$set");
                             bulkList.clear();
                         }
@@ -137,22 +142,22 @@ public class WmsSynInventoryToCmsService extends BaseTaskService {
         Map<String, Object> ret = new HashMap<>();
 
         //以500条更新一次数据库
-        List<List<InventoryForCmsBean>> codeInventoryListSplit = CommonUtil.splitList(codeInventoryList, 5000);
+        List<List<InventoryForCmsBean>> codeInventoryListSplit = CommonUtil.splitList(codeInventoryList, 500);
         for (List<InventoryForCmsBean> codeInventoryListItem : codeInventoryListSplit) {
             List<BulkUpdateModel> bulkList = new ArrayList<>();
             for (InventoryForCmsBean codeInventory : codeInventoryListItem) {
-                Map<String, Integer> codeQty = new HashMap<>();
-                codeQty.put("code_qty", codeInventory.getQty());
 
                 HashMap<String, Object> updateMap = new HashMap<>();
-                updateMap.put("batchField", codeQty);
+                updateMap.put("fields.quantity", codeInventory.getQty());
                 HashMap<String, Object> queryMap = new HashMap<>();
                 queryMap.put("fields.code", codeInventory.getCode());
                 BulkUpdateModel model = new BulkUpdateModel();
                 model.setUpdateMap(updateMap);
                 model.setQueryMap(queryMap);
                 bulkList.add(model);
+//                logger.info("fields.code:"+ codeInventory.getCode());
             }
+
             cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, modifier, "$set");
         }
         ret.put("result", "success");

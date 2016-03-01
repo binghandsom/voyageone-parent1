@@ -50,11 +50,11 @@ public class MasterCatSchemaBuildFromTmallServiceTest {
     @Test
     public void verify() throws TopSchemaException {
         logger.info("");
-        List<JSONObject> maseterSchemaIds = cmsMtCategorySchemaDao.getAllSchemaIds();
-        logger.info("总件数： "+maseterSchemaIds.size());
+        List<JSONObject> masterSchemaIds = cmsMtCategorySchemaDao.getAllSchemaIds();
+        logger.info("总件数： "+masterSchemaIds.size());
         List<MtCommPropActionDefModel> commPropActionDefModels = cmsMtCommonPropDao.getActionModelList();
         int schemaCount = 0;
-        for (JSONObject schemaId:maseterSchemaIds) {
+        for (JSONObject schemaId:masterSchemaIds) {
             schemaCount++;
             String id = schemaId.get("_id").toString();
 

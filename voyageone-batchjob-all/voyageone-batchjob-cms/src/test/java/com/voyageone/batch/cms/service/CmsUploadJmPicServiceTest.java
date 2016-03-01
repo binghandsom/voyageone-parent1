@@ -52,7 +52,7 @@ public class CmsUploadJmPicServiceTest {
         shopBean.setApp_url("http://openapi.ext.jumei.com/");
 
         JmImageFileBean jmImageFileBean = new JmImageFileBean();
-        String juUrl = jumeiImageFileService.imageFileUpload(shopBean, convertJmPicToImageFileBean("http://p0.jmstatic.com/global/image/201509/11/1441943882.369.jpg"));
+        String juUrl = jumeiImageFileService.imageFileUpload(shopBean, convertJmPicToImageFileBean("http://p0.jmstatic.com/global/image/201602/24/1456296871.9148.jpg"));
         System.out.println(juUrl);
     }
 
@@ -64,8 +64,8 @@ public class CmsUploadJmPicServiceTest {
         InputStream inputStream = getImgInputStream(url, retryCount);
         Assert.notNull(inputStream, "inputStream为null，图片流获取失败！" + url);
         jmImageFileBean.setInputStream(inputStream);
-        jmImageFileBean.setDirName("/001/brand/5");
-        jmImageFileBean.setImgName("1cccf2d7682aeb877832bc9b72237b09_5_1");
+        jmImageFileBean.setDirName("015/channel");
+        jmImageFileBean.setImgName("Gilt6_4");
         jmImageFileBean.setNeedReplace(true);
         jmImageFileBean.setExtName("jpg");
         return jmImageFileBean;

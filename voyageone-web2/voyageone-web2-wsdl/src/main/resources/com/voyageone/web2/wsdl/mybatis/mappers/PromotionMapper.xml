@@ -7,6 +7,7 @@
         <result column="cart_id" property="cartId" jdbcType="INTEGER" />
         <result column="promotion_status" property="promotionStatus" jdbcType="BOOLEAN"/>
         <result column="is_active" property="isActive" jdbcType="BOOLEAN"/>
+        <result column="is_all_promotion" property="isAllPromotion" jdbcType="BOOLEAN"/>
         <result column="ref_tag_id" property="refTagId" jdbcType="INTEGER"/>
         <result column="promotion_name" property="promotionName" jdbcType="VARCHAR" />
         <result column="pre_period_start" property="prePeriodStart" jdbcType="VARCHAR" />
@@ -22,6 +23,17 @@
         <result column="modified" property="modified" jdbcType="TIMESTAMP" />
         <result column="modifier" property="modifier" jdbcType="VARCHAR" />
         <result column="cartName" property="cartName" jdbcType="VARCHAR" />
+        <collection property="tagList" javaType="ArrayList" ofType="com.voyageone.web2.sdk.api.domain.CmsBtTagModel" >
+            <id column="tag_id" property="tagId" jdbcType="INTEGER" />
+            <result column="tag_name" property="tagName" jdbcType="VARCHAR" />
+            <result column="tag_channel_id" property="channelId" jdbcType="VARCHAR" />
+            <result column="tag_path" property="tagPath" jdbcType="VARCHAR" />
+            <result column="tag_path_name" property="tagPathName" jdbcType="VARCHAR" />
+            <result column="tag_type" property="tagType" jdbcType="INTEGER" />
+            <result column="tag_status" property="tagStatus" jdbcType="INTEGER" />
+            <result column="sort_order" property="sortOrder" jdbcType="INTEGER" />
+            <result column="parent_tag_id" property="parentTagId" jdbcType="INTEGER" />
+        </collection>
     </resultMap>
 
     <sql id="promotion_fileds">
@@ -39,6 +51,7 @@
         a.tejiabao_id,
         a.promotion_type,
         a.is_active,
+        a.is_all_promotion,
         a.ref_tag_id,
         a.created,
         a.creater,
@@ -50,8 +63,18 @@
     <select id="select_By_Id" resultMap="PromotionMap" parameterType="Map" >
         select
         <include refid="promotion_fileds"/>
-        b.name as cartName
+        b.name as cartName,
+        c.tag_id,
+        c.channel_id  as tag_channel_id,
+        c.tag_name,
+        c.tag_path,
+        c.tag_path_name,
+        c.tag_type,
+        c.tag_status,
+        c.sort_order,
+        c.parent_tag_id
         from voyageone_cms2.cms_bt_promotion a left join Synship.ct_cart b on a.cart_id = b.cart_id
+        left join voyageone_cms2.cms_bt_tag c on c.parent_tag_id = a.ref_tag_id
         where a.is_active = 1 and a.promotion_id = #{promotionId}
     </select>
 
@@ -59,8 +82,18 @@
     <select id="select_By_Condtion" resultMap="PromotionMap" parameterType="Map" >
         select
         <include refid="promotion_fileds"/>
-        b.name as cartName
+        b.name as cartName,
+        c.tag_id,
+        c.channel_id as tag_channel_id,
+        c.tag_name,
+        c.tag_path,
+        c.tag_path_name,
+        c.tag_type,
+        c.tag_status,
+        c.sort_order,
+        c.parent_tag_id
         from voyageone_cms2.cms_bt_promotion a left join ct_cart b on a.cart_id = b.cart_id
+        left join voyageone_cms2.cms_bt_tag c on c.parent_tag_id = a.ref_tag_id
         where
         a.is_active = 1
         <if test="channelId != null and channelId != ''">
