@@ -35,15 +35,6 @@
 								</label>
 							</div>
 						</div>
-						<!-- TODO 暂时未实现 -->
-						<div class="form-group">
-							<!--<label class="col-sm-3 control-label" translate="TXT_LABEL"></label>-->
-							<!--<div class="col-sm-9">-->
-								<!--<label class="checkbox-inline c-checkbox" ng-repeat="labelType in vm.masterData.labelTypeList">-->
-									<!--<input type="checkbox" ng-value="labelType.value" ng-model="vm.searchInfo.labelType[labelType.value]"><span class="fa fa-check"></span> {{labelType.name}}-->
-								<!--</label>-->
-							<!--</div>-->
-						</div>
 						<div class="form-group">
 							<label class="col-sm-3 control-label" translate="TXT_PRICE"></label>
 							<div class="col-sm-8">
@@ -122,14 +113,18 @@
 								</select>
 							</div>
 						</div>
+						<!-- TODO 暂时未实现 -->
 						<div class="form-group">
-							<!--<label class="col-sm-3 control-label" translate="TXT_PROMOTION_INFO"></label>-->
-							<!--<div class="col-sm-9">-->
-								<!--<select class="form-control" ng-model="vm.searchInfo.promotion"-->
-										<!--ng-options="promotion.promotionId as promotion.promotionName for promotion in vm.masterData.promotionList">-->
+							<label class="col-sm-3 control-label" translate="TXT_TAG"></label>
+							<div class="col-sm-8">
+								<!--<select class="form-control" ng-model="vm.searchInfo.tag"-->
+										<!--ng-options="tag.tagPath as tag.tagPathName for tag in vm.masterData.tagList">-->
 									<!--<option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>-->
 								<!--</select>-->
-							<!--</div>-->
+								<label class="checkbox-inline c-radio" ng-repeat="tag in vm.masterData.tagList">
+									<input name="priceType" type="radio" ng-value="tag.tagPath" ng-model="vm.searchInfo.tags[tag.tagPath]"><span class="fa fa-check"></span> {{tag.tagPathName}}
+								</label>
+							</div>
 						</div>
 					</div><!-- .form-group -->
 				</div>
