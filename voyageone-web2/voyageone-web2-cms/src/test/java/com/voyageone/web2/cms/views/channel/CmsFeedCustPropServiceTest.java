@@ -1,9 +1,7 @@
-package com.voyageone.web2.cms.views.translate;
+package com.voyageone.web2.cms.views.channel;
 
 import static org.junit.Assert.*;
 import com.voyageone.cms.service.model.CmsFeedCategoryModel;
-import com.voyageone.common.configs.Enums.ChannelConfigEnums;
-import com.voyageone.web2.cms.views.mapping.feed.CmsFeedMappingService;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,7 +10,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author Jonas, 12/10/15

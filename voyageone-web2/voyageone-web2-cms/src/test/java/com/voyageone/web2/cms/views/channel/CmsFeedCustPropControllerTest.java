@@ -1,4 +1,4 @@
-package com.voyageone.web2.cms.views.translate;
+package com.voyageone.web2.cms.views.channel;
 
 import com.voyageone.web2.base.BaseConstants;
 import com.voyageone.web2.core.bean.UserSessionBean;
