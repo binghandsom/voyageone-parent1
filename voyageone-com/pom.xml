@@ -288,11 +288,6 @@
 			<groupId>com.jayway.jsonpath</groupId>
 			<artifactId>json-path</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>com.voyageone</groupId>
-			<artifactId>voyageone-masterdata-schema</artifactId>
-			<version>${voyageone.md.schema.version}</version>
-		</dependency>
 
 		<!-- httpclient -->
 		<dependency>
