@@ -1,0 +1,21 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:rabbit="http://www.springframework.org/schema/rabbit"
+       xsi:schemaLocation="
+    http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+    http://www.springframework.org/schema/rabbit
+    http://www.springframework.org/schema/rabbit/spring-rabbit-1.2.xsd">
+
+    <!-- 连接配置 -->
+    <rabbit:connection-factory id="connectionFactory"
+                               host="192.168.150.130"
+                               port="5672"
+                               username="guest"
+                               password="guest"/>
+    <rabbit:admin connection-factory="connectionFactory"/>
+
+    <!-- spring template声明-->
+    <rabbit:template id="amqpTemplate" connection-factory="connectionFactory" />
+
+</beans>
