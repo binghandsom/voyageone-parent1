@@ -4,11 +4,11 @@
 
     <select id="cms_bt_feed_custom_prop_selectWithCatPath" resultType="com.voyageone.web2.cms.model.CmsBtFeedCustomPropModel" parameterType="HashMap">
         SELECT
-            a.seq,
+            a.id as seq,
             a.channel_id as channelId,
             a.feed_cat_path as feedCatPath,
-            a.feed_prop as feedProp,
-            a.feed_prop_translate as feedPropTranslate,
+            a.feed_prop_original as feedProp,
+            a.feed_prop_translation as feedPropTranslate,
             a.display_order as displayOrder,
             a.created,
             a.creater,
@@ -19,4 +19,55 @@
           AND (a.feed_cat_path = #{feedCatPath}
            OR a.feed_cat_path = '0')
     </select>
+
+    <!-- 查询指定类目未翻译属性 -->
+    <select id="cms_bt_feed_custom_prop_selectWithCat1" resultType="HashMap" parameterType="HashMap">
+        SELECT
+        a.id as prop_id,
+        a.channel_id,
+        a.feed_cat_path,
+        a.feed_prop_original,
+        a.display_order,
+        a.created,
+        a.creater,
+        a.modified,
+        a.modifier
+        FROM voyageone_cms2.cms_bt_feed_custom_prop a
+        WHERE a.channel_id = #{channelId}
+        AND a.feed_cat_path = #{feedCatPath}
+        AND (a.feed_prop_translation is null OR LENGTH(trim(a.feed_prop_translation)) = 0)
+        ORDER BY a.display_order
+    </select>
+
+    <!-- 查询指定类目已翻译属性 -->
+    <select id="cms_bt_feed_custom_prop_selectWithCat2" resultType="HashMap" parameterType="HashMap">
+        SELECT
+        a.id as prop_id,
+        a.channel_id,
+        a.feed_cat_path,
+        a.feed_prop_original,
+        a.feed_prop_translation,
+        a.display_order,
+        a.created,
+        a.creater,
+        a.modified,
+        a.modifier
+        FROM voyageone_cms2.cms_bt_feed_custom_prop a
+        WHERE a.channel_id = #{channelId}
+        AND a.feed_cat_path = #{feedCatPath}
+        AND (a.feed_prop_translation is not null AND LENGTH(trim(a.feed_prop_translation)) > 0)
+        ORDER BY a.display_order
+    </select>
+
+    <!-- 查询指定类目已翻译属性 -->
+    <select id="cms_bt_feed_custom_prop_getSameAttr" resultType="HashMap" parameterType="HashMap">
+        SELECT
+          a.config_code
+        FROM voyageone_cms2.cms_mt_channel_config a
+        WHERE a.channel_id = #{channelId}
+        AND a.config_key = 'SAME_ATTR'
+    </select>
+
+
+
 </mapper>
