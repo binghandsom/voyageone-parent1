@@ -118,11 +118,7 @@ public abstract class BaseController extends BaseAppComponent {
 
         AjaxResponse response = new AjaxResponse();
         response.setData(data);
-        try {
-            logger.debug(JacksonUtil.bean2Json(response));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        logger.debug(JacksonUtil.bean2Json(response));
         return response;
     }
 
