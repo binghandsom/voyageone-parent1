@@ -14,10 +14,12 @@ define([
 
         $scope.initialize  = function () {
             if(items){
-                $scope.promotion = _.clone(items);
+                $scope.promotion = angular.copy(items);
                 if($scope.promotion.tejiabaoId != "0"){
                     $scope.tejiabao=true;
                 }
+            }else{
+                $scope.promotion.tagList=[{"tagId":"","channelId":"","tagName":""}];
             }
         };
         $scope.addTag = function(){
@@ -43,6 +45,14 @@ define([
 
             if(!$scope.tejiabao){
                 $scope.promotion.tejiabaoId = "0";
+            }
+            if(!$scope.promotionFrom.$valid || !$scope.promotion.tagList){
+                return;
+            }
+            for(var i=0;i<$scope.promotion.tagList.length;i++){
+                if($scope.promotion.tagList[i].tagName == ""){
+                    return;
+                }
             }
             if(!items) {
                 promotionService.insertPromotion($scope.promotion).then(function (res) {
