@@ -194,4 +194,15 @@ public class OrderDao extends BaseDao {
 		
 		return count;
 	}
+
+	/**
+	 * 根据物流单号获得订单号列表
+	 *
+	 * @return
+	 */
+	public List<String> getOrderNumbersByTrackingNo(InFormSearch bean) {
+		List<String> orderNumberList = (List) selectList(Constants.DAO_NAME_SPACE_OMS + "oms_bt_orders_getOrderNumbersByTrackingNo", bean);
+
+		return orderNumberList;
+	}
 }

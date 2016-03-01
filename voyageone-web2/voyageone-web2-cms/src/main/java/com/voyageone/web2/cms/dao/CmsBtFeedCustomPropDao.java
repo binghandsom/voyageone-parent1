@@ -20,7 +20,26 @@ public class CmsBtFeedCustomPropDao extends WebBaseDao {
         return WebDaoNs.CMS;
     }
 
+    // 根据类目路径查询自定义属性信息(包含共通属性)
     public List<CmsBtFeedCustomPropModel> selectWithCategory(Map<String, Object> params) {
         return selectList("cms_bt_feed_custom_prop_selectWithCatPath", params);
+    }
+
+    // 根据类目路径查询自定义已翻译属性信息(不包含共通属性)
+    public List<Map<String, Object>> selectTransProp(Map<String, Object> params) {
+        return selectList("cms_bt_feed_custom_prop_selectWithCat2", params);
+    }
+
+    // 根据类目路径查询自定义未翻译属性信息(不包含共通属性)
+    public List<Map<String, Object>> selectOrigProp(Map<String, Object> params) {
+        return selectList("cms_bt_feed_custom_prop_selectWithCat1", params);
+    }
+
+    public String getSameAttr(Map<String, Object> params) {
+        List<Map<String, Object>> rslt = selectList("cms_bt_feed_custom_prop_getSameAttr", params);
+        if (rslt != null && rslt.size() > 0) {
+            return (String) rslt.get(0).get("config_code");
+        }
+        return "";
     }
 }

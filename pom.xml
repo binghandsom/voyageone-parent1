@@ -474,6 +474,12 @@
                 <version>20090211</version>
             </dependency>
 
+            <!-- rabbitmq -->
+            <dependency>
+                <groupId>org.springframework.amqp</groupId>
+                <artifactId>spring-rabbit</artifactId>
+                <version>1.5.4.RELEASE</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

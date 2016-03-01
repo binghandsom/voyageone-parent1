@@ -41,12 +41,12 @@ module.exports = function (path) {
 
     // 简单检查格式
     if (moduleName.indexOf(pref) !== 0) {
-      gutil.log(`cant support this module name (must start with "${pref}"): ${moduleName}`);
+      gutil.log('cant support this module name (must start with "${pref}"): ${moduleName}');
       return cb();
     }
     var lastPointIndex = moduleName.lastIndexOf('.');
     if (lastPointIndex < 1) {
-      gutil.log(`cant support this module name: ${moduleName}`);
+      gutil.log('cant support this module name: ${moduleName}');
       return cb();
     }
 
@@ -68,11 +68,11 @@ module.exports = function (path) {
     for (var parent in modules){
       if (modules.hasOwnProperty(parent)) {
         parents.push(parent);
-        content += `angular.module("${parent}",["${modules[parent].join('","')}"]);\n`;
+        content += 'angular.module("${parent}",["${modules[parent].join(\'","\')}"]);\n';
       }
     }
     // 最后追加所有父级的父级声明
-    content += `return angular.module("${pref}",["${parents.join('","')}"])`;
+    content += 'return angular.module("${pref}",["${parents.join(\'","\')}"])';
     // 生成最终文件的文件名
     var suff = new File({ path: path });
     suff.contents = new Buffer(content);

@@ -10,6 +10,8 @@ public class CmsSearchInfoBean {
 
     private String catId;
 
+    private String catPath;
+
     private String[] productStatus;
 
     private Integer platformCart;
@@ -68,6 +70,14 @@ public class CmsSearchInfoBean {
 
     public void setCatId(String catId) {
         this.catId = catId;
+    }
+
+    public String getCatPath() {
+        return catPath;
+    }
+
+    public void setCatPath(String catPath) {
+        this.catPath = catPath;
     }
 
     public String[] getProductStatus() {

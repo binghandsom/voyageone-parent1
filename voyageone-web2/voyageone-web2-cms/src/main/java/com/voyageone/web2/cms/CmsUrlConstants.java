@@ -90,6 +90,36 @@ public interface CmsUrlConstants {
 
 //                String GET_CODE_FILE = "getCodeFile";
             }
+
+            interface STOCK {
+
+                String ROOT = "/cms/promotion/task_stock";
+
+                String GET_PLATFORM_INFO = "getPlatformInfo";
+
+                String SAVE_TASK = "saveTask";
+
+                String SEARCH = "search";
+
+                String GET_COMMON_STOCK_LIST = "getCommonStockList";
+
+                String GET_REAL_STOCK_INFO = "getRealStockInfo";
+
+                String CREATE_NEW_RECORD = "createNewRecord";
+            }
+
+            interface INCREMENT_STOCK {
+
+                String ROOT = "/cms/promotion/task_add_stock";
+
+                String GET_TASK_LIST = "getTaskList";
+
+                String GET_PLATFORM_INFO = "getPlatformInfo";
+
+                String SAVE_TASK = "saveTask";
+
+                String DEL_TASK = "delTask";
+            }
         }
     }
 
@@ -309,6 +339,32 @@ public interface CmsUrlConstants {
             String SUBMIT_TASK = "submitTask";
 
             String GET_FEED_ATTRIBUTES = "getFeedAttributes";
+        }
+    }
+
+    interface CHANNEL {
+
+        interface CUSTOM_PROP {
+
+            String ROOT = "/cms/channel/custom/prop";
+
+            String INIT = "get";
+
+            String SAVE = "update";
+
+            String GETCATTREE = "getCatTree";
+
+            String GETCATLIST = "getCatList";
+        }
+        interface CUSTOM_VALUE {
+
+            String ROOT = "/cms/channel/custom/value";
+
+            String INIT = "get";
+
+            String ADD = "create";
+
+            String SAVE = "update";
         }
     }
 

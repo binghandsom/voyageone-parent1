@@ -28,8 +28,11 @@
                         <input id="inventory_sku" class="form-control" ng-model="vm.sku" />
                     </div>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-1">
                     <button class="btn btn-sm btn-primary" ng-click="doSearch(1)"><i class="fa fa-search"></i>&nbsp;<span translate="WMS_SEARCH"></span></button>
+                </div>
+                <div class="col-md-1">
+                    <button class="btn btn-sm btn-primary btn-success"  ng-click="doDownload()" ><i class="fa fa-download"></i>&nbsp;<span translate="WMS_DOWNLOAD"></span></button>
                 </div>
             </div>
             <div class="table-responsive mb10">

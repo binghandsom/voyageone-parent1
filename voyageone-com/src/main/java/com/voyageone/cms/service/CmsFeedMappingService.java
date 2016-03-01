@@ -4,6 +4,7 @@ import com.mongodb.WriteResult;
 import com.voyageone.cms.service.dao.mongodb.CmsBtFeedMappingDao;
 import com.voyageone.cms.service.model.CmsBtFeedMappingModel;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums.Channel;
+import com.voyageone.common.util.StringUtils;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -47,5 +48,12 @@ public class CmsFeedMappingService {
 
     public List<CmsBtFeedMappingModel> getMappingWithoutProps(String selChannelId, String topCategoryPath) {
         return cmsBtFeedMappingDao.findMappingWithoutProps(selChannelId, topCategoryPath);
+    }
+
+    public boolean isCanBeDefaultMain(Channel channel, String topCategoryPath) {
+
+        String topObjectId = cmsBtFeedMappingDao.findHasTrueChild(channel.getId(), topCategoryPath);
+
+        return StringUtils.isEmpty(topObjectId);
     }
 }

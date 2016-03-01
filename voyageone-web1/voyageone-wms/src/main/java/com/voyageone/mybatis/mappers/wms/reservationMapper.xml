@@ -565,6 +565,31 @@
           group by sku
     </select>
 
+    <select id="wms_reservation_getInventoryDownloadBySku" parameterType="com.voyageone.wms.formbean.FormReservation" resultMap="reservationInfoMap">
+        select logic.order_channel_id,
+                logic.code itemCode,
+                logic.sku,
+                detail.barcode,
+                logic.qty_china inventory_qty
+        from wms_bt_inventory_center_logic logic
+        left join wms_bt_item_details detail
+        on logic.order_channel_id = detail.order_channel_id
+        and logic.sku = detail.sku
+        where logic.order_channel_id = #{order_channel_id}
+        order by logic.code
+    </select>
+
+    <select id="wms_reservation_getInventoryDownloadByCode" parameterType="com.voyageone.wms.formbean.FormReservation" resultMap="reservationInfoMap">
+        select order_channel_id,
+                code as itemCode,
+                sum(qty_china) as inventory_qty
+        from wms_bt_inventory_center_logic
+        where order_channel_id = #{order_channel_id}
+        group by code
+        order by code
+    </select>
+
+
     <select id="wms_reservation_getStoreByChannelId" parameterType="com.voyageone.wms.formbean.FormReservation" resultMap="reservationInfoMap">
         select t_store.store_id,
 			   t_store.store_name

@@ -18,10 +18,11 @@ define([
         "vConfirm",
         "notify",
         "vAlert",
+        "$window",
         inventoryCtrl
     ]);
 
-    function inventoryCtrl($scope, $modal, popInventoryService, confirm, notify, alert) {
+    function inventoryCtrl($scope, $modal, popInventoryService, confirm, notify, alert, $window) {
 
         //页面变量Map
         var vm = $scope.vm = {
@@ -36,6 +37,8 @@ define([
 
         $scope.init = init;
 
+        $scope.doDownload = doDownload;
+
         //同步对应行的库存
         $scope.syncRow = syncRow;
 
@@ -47,13 +50,13 @@ define([
             fetch: reqSearch
         };
 
-        function doSearch(page){
+        function doSearch(page) {
             reqSearch($scope.pageOption.curr = page);
         }
 
         //初始化
         function init() {
-            popInventoryService.popInit(vm).then(function(response) {
+            popInventoryService.popInit(vm).then(function (response) {
                 cb.channel = response.data.channel;
                 if (response.data.channel.length > 0) {
                     vm.order_channel_id = response.data.channel[0].propertyId;
@@ -64,7 +67,7 @@ define([
 
         function reqSearch(page) {
             $scope.vm.page = page;
-            popInventoryService.doSearch(vm).then(function(response) {
+            popInventoryService.doSearch(vm).then(function (response) {
                 $scope.storeList = response.data.storeList;
                 $scope.inventoryList = response.data.inventoryList;
                 $scope.pageOption.total = response.data.total;
@@ -79,16 +82,20 @@ define([
             }
         }
 
-        function syncRow(){
-            confirm("WMS_INVENTORY_SYNC").then(function(){
+        function syncRow() {
+            confirm("WMS_INVENTORY_SYNC").then(function () {
                 var order_channel_id = $scope.inventoryList.selected.order_channel_id;
                 var sku = $scope.inventoryList.selected.sku;
-                popInventoryService.doReset(order_channel_id,sku).then(function(response){
-                    if(response.data.successFlg){
+                popInventoryService.doReset(order_channel_id, sku).then(function (response) {
+                    if (response.data.successFlg) {
                         notify.success("WMS_NOTIFY_OP_SUCCESS");
                     }
                 });
             });
+        }
+
+        function doDownload() {
+            $window.open("./wms/reservation/popInventory/doPopInventoryDownload?param="+ JSON.stringify($scope.vm));
         }
     }
 });

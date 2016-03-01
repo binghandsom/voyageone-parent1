@@ -24,6 +24,9 @@
 	<import resource="file:/usr/web/spring-config/sdk-client-config-sample.xml" />
 	<!--<import resource="sdk-client-config-sample.xml" />-->
 
+	<!-- MQ Config -->
+	<import resource="file:c:/usr/web/spring-config/mq-config-sample.xml" />
+
 	<!-- 定时任务 -->
 	<import resource="classpath*:config/job/**/*-config.xml" />
 	<import resource="classpath*:obtainPlatformCategory-config.xml"/>

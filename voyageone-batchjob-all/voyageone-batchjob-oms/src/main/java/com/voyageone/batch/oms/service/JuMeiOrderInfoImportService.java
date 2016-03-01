@@ -66,8 +66,9 @@ public class JuMeiOrderInfoImportService {
 	 * @return
 	 */
 	public List<TaobaoTradeBean> getJumeiNewOrder(String startOrderTime, String cartId, String logTitle) {
-		// 获得当前时间
-		String endOrderTime = DateTimeUtil.getNow();
+		// 获得当前时间-20分钟
+		Date date = DateTimeUtil.addMinutes(DateTimeUtil.getDate(), -20);
+		String endOrderTime = DateTimeUtil.format(date, DateTimeUtil.DEFAULT_DATETIME_FORMAT);
 		// 格林威治时间转北京时间
 		endOrderTime = DateTimeUtil.getLocalTime(endOrderTime, OmsConstants.TIME_ZONE_8);
 		

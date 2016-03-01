@@ -60,7 +60,7 @@ public abstract class BaseTaskService {
     /**
      * 获取 job 配置
      */
-    private List<TaskControlBean> getControls() {
+    protected List<TaskControlBean> getControls() {
         return taskDao.getTaskControlList(getTaskName());
     }
 
