@@ -320,6 +320,28 @@ public interface CmsUrlConstants {
         }
     }
 
+    interface TRANSLATION {
+
+        interface TASKS {
+
+            String ROOT = "/cms/translation/tasks";
+
+            String GET_TASKS = "getTasks";
+
+            String SEARCH_HISTORY_TASKS = "searchHistoryTasks";
+
+            String ASSIGN_TASKS = "assignTasks";
+
+            String COPY_FORM_MAIN_PRODUCT = "copyFormMainProduct";
+
+            String SAVE_TASK = "saveTask";
+
+            String SUBMIT_TASK = "submitTask";
+
+            String GET_FEED_ATTRIBUTES = "getFeedAttributes";
+        }
+    }
+
     interface CHANNEL {
 
         interface CUSTOM_PROP {
