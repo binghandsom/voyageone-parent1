@@ -3,17 +3,6 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
      http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
-    <!-- DAO相关配置 -->
-    <import resource="classpath*:context-test-datasource.xml" />
-    <import resource="classpath*:context-test-datasource-mongo.xml" />
 
-
-    <!-- SDK Client Config -->
-<import resource="sdk-client-config-sample.xml" />
-
-	<!-- 异常处理 -->
-	<bean id="exceptionHandler" class="com.voyageone.web2.base.ExceptionHandler"/>
-    <!-- 配置内容初始化Bean -->
-    <bean id="commonConfigInit" class="com.voyageone.common.configs.Initializer" init-method="init"/>
 
 </beans>
