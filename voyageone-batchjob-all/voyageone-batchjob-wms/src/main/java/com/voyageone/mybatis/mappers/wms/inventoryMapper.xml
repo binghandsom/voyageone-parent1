@@ -166,7 +166,9 @@
         WHERE
             channel_id = #{order_channel_id}
         AND send_flg = #{syn_flg}
-        AND jumei_sku_no != '0'
+        <if test="syn_flg == 4 ">
+            AND modified &lt;= #{process_time}
+        </if>
         AND EXISTS( SELECT
                         1
                       FROM
@@ -178,7 +180,7 @@
         LIMIT #{limit};
     </select>
 
-    <delete id="wms_updateJMFlg">
+    <update id="wms_updateReFlushFlg">
         UPDATE
             jumei.jm_bt_sku
         SET
@@ -189,7 +191,19 @@
             channel_id = #{order_channel_id}
         AND
             sku = #{sku}
-    </delete>
+    </update>
+
+    <update id="wms_updateSynFlg">
+        UPDATE
+            voyageone_ims.ims_bt_log_syn_inventory
+        SET
+            syn_flg = #{syn_flg},
+            remarks = #{remarks},
+            modified = NOW(),
+            modifier = #{modifier}
+        WHERE
+            seq = #{seq}
+    </update>
 
     <select id="wms_selectInventorySynLogsForJM" resultType="com.voyageone.batch.wms.modelbean.InventorySynLogBean">
         SELECT
@@ -204,8 +218,8 @@
             i.modifier,
             i.created,
             i.creater,
-            d.barcode,
-            d.itemcode
+            e.upc_code as barcode,
+            e.product_code itemcode
         FROM
             (SELECT
               MAX(i.seq) seq
@@ -227,15 +241,9 @@
         JOIN
           voyageone_ims.ims_bt_log_syn_inventory i ON i.seq = ii.seq
         JOIN
-          wms_bt_item_details d ON i.order_channel_id = d.order_channel_id
-        AND i.sku = d.sku
-        JOIN
           jumei.jm_bt_sku e ON i.order_channel_id = e.channel_id
         AND i.sku = e.sku
         AND e.send_flg = '1'
-        JOIN
-          jumei.jm_bt_product p ON i.order_channel_id = p.channel_id
-        AND d.itemcode = p.product_code
         LIMIT #{limit};
     </select>
 

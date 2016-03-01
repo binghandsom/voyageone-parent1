@@ -138,11 +138,14 @@ public class CmsFeedMappingService extends BaseAppService {
         CmsBtFeedMappingModel defaultMainMapping =
                 cmsFeedMappingService.getDefaultMain(user.getSelChannel(), setMappingBean.getTo());
 
+        boolean canBeDefaultMain =
+                cmsFeedMappingService.isCanBeDefaultMain(user.getSelChannel(), setMappingBean.getTo());
+
         if (defaultMapping != null) {
 
             if (!defaultMapping.getScope().getMainCategoryPath().equals(setMappingBean.getTo())) {
                 defaultMapping.getScope().setMainCategoryPath(setMappingBean.getTo());
-                defaultMapping.setDefaultMain(defaultMainMapping != null ? 0 : 1);
+                defaultMapping.setDefaultMain(defaultMainMapping != null && canBeDefaultMain ? 0 : 1);
                 defaultMapping.setMatchOver(0);
                 defaultMapping.setProps(new ArrayList<>());
 
@@ -172,7 +175,7 @@ public class CmsFeedMappingService extends BaseAppService {
         defaultMapping.setScope(scope);
         defaultMapping.setMatchOver(0);
         defaultMapping.setDefaultMapping(1);
-        defaultMapping.setDefaultMain(defaultMainMapping != null ? 0 : 1);
+        defaultMapping.setDefaultMain(defaultMainMapping != null && canBeDefaultMain ? 0 : 1);
 
         cmsFeedMappingService.setMapping(defaultMapping);
 

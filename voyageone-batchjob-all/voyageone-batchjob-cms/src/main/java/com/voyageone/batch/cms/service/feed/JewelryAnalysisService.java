@@ -582,8 +582,8 @@ public class JewelryAnalysisService extends BaseTaskService {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
         String date_ymd = sdf.format(date);
 
-        String filename = Feed.getVal1(channel_id, FeedEnums.Name.feed_ftp_localpath) + "/" + StringUtils.null2Space(Feed.getVal1(channel_id, FeedEnums.Name.file_id));
-        String filename_backup = Feed.getVal1(channel_id, FeedEnums.Name.feed_ftp_localpath) + "/" + date_ymd + "_"
+        String filename = Feed.getVal1(channel_id, FeedEnums.Name.feed_ftp_localpath2) + "/" + StringUtils.null2Space(Feed.getVal1(channel_id, FeedEnums.Name.file_id));
+        String filename_backup = Feed.getVal1(channel_id, FeedEnums.Name.feed_ftp_localpath2) + "/" + date_ymd + "_"
                 + StringUtils.null2Space(Feed.getVal1(channel_id, FeedEnums.Name.file_id));
         File file = new File(filename);
         File file_backup = new File(filename_backup);

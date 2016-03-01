@@ -46,6 +46,8 @@
             <mvc:exclude-mapping path="/wms/transfer/list/download"/>
             <mvc:exclude-mapping path="/wms/transfer/edit/downloadClientShipment"/>
             <mvc:exclude-mapping path="/wms/transfer/edit/downloadTransferCompare"/>
+            <mvc:exclude-mapping path="/wms/return/list/doReturnListDownload"/>
+            <mvc:exclude-mapping path="/wms/reservation/popInventory/doPopInventoryDownload"/>
 
             <mvc:exclude-mapping path="/ims/beatIcon/index/saveItems"/>
             <mvc:exclude-mapping path="/ims/beatIcon/index/addItems"/>

@@ -34,6 +34,10 @@ define (function (require) {
             $scope.search.paymentStatus = "";
             $scope.search.transactionStatus = "";
             $scope.search.orderKindOriginal = "";
+
+            $scope.search.extNormalSend = "";
+            $scope.search.extCancelSend = "";
+            $scope.search.extCancelConfirm = "";
            
 
             /* 日期控件定义使用 start */
@@ -108,6 +112,11 @@ define (function (require) {
                  $scope.search.orderKindPresent=true;
                  $scope.search.orderKindExchange=true;
                  $scope.search.orderKindPriceDifference=true;
+
+                $scope.search.extNormalSend=false;
+                $scope.search.extCancelSend=false;
+                $scope.search.extCancelConfirm=false;
+
                 searchService.doGetCodeList ()
                     .then (function (data) {
                     // 共通下拉列表初始化

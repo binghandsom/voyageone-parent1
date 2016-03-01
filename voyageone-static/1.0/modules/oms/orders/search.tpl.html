@@ -83,6 +83,24 @@
                                    <input type="text" class="form-control" ng-model="search.clientOrderId" placeholder="Client Order ID"/>
                                 </div>
                             </div>
+                            <div class="form-group">
+                                <label class="control-label col-xs-4" translate="TXT_ORDERS_SEARCH_CLIENT_ORDER_FLAG"></label>
+                                <div class="col-xs-8">
+                                    <label class="checkbox-inline">
+                                        <input  id="ordersend1"  name="ordersend" type="checkbox"  value="n"  ng-model="search.extNormalSend"/>
+                                        <span translate="TXT_ORDERS_SEARCH_CLIENT_ORDER_FLAG_NORMAL_SEND"></span>
+                                    </label>
+                                    <label class="checkbox-inline">
+                                        <input  id="ordersend2" name="ordersend" type="checkbox" value="c" ng-model="search.extCancelSend"/>
+                                        <span translate="TXT_ORDERS_SEARCH_CLIENT_ORDER_FLAG_CANCEL_SEND"></span>
+                                    </label>
+                                    <label class="checkbox-inline">
+                                        <input  id="ordersend3" name="ordersend" type="checkbox" value="cc" ng-model="search.extCancelConfirm"/>
+                                        <span translate="TXT_ORDERS_SEARCH_CLIENT_ORDER_FLAG_CANCEL_CONFIRM"></span>
+                                    </label>
+                                </div>
+
+                            </div>
                         </div>
                     </div>
                     <div class="col-xs-6">
@@ -126,13 +144,13 @@
                                     </select>
                                 </div>
                             </div>
-                            <!-- <div class="form-group ">
+                            <div class="form-group ">
                                 <label class="control-label col-xs-4" translate="TXT_ORDERS_SEARCH_SEARCH_TRACKING"></label>
 
                                 <div class="col-xs-8">
                                     <input type="text" class="form-control" ng-model="search.trackingNumber" placeholder="Tracking Number">
                                 </div>
-                            </div> -->
+                            </div>
                             <div class="form-group">
                                 <label class="control-label col-xs-4" translate="TXT_ORDERS_SEARCH_SEARCH_SKU_INCLUDES"></label>
 

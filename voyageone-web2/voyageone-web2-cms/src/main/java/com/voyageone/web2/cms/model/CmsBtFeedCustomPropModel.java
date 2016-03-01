@@ -9,7 +9,7 @@ import com.voyageone.base.dao.mysql.BaseModel;
  */
 public class CmsBtFeedCustomPropModel extends BaseModel {
 
-    private Integer seq;
+    private Integer id;
 
     private String channelId;
 
@@ -21,12 +21,12 @@ public class CmsBtFeedCustomPropModel extends BaseModel {
 
     private String displayOrder;
 
-    public Integer getSeq() {
-        return seq;
+    public Integer getId() {
+        return id;
     }
 
-    public void setSeq(Integer seq) {
-        this.seq = seq;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     public String getChannelId() {

@@ -4,10 +4,10 @@
 	"http://mybatis.org/dtd/mybatis-3-config.dtd">
 	
 <configuration>
-	<settings>
-		<setting name="lazyLoadingEnabled" value="true" />
-		<setting name="defaultStatementTimeout" value="20000" />
-	</settings>
+	<!--<settings>-->
+		<!--<setting name="lazyLoadingEnabled" value="true" />-->
+		<!--<setting name="defaultStatementTimeout" value="20000" />-->
+	<!--</settings>-->
 	
 	<typeAliases>
 		<!-- core bean -->

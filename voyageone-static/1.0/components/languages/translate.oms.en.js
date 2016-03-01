@@ -56,6 +56,11 @@ define(function(require) {
                     TXT_ORDERS_SEARCH_SEARCH_ORDER_KIND_Exchange:'Exchange',
                     TXT_ORDERS_SEARCH_SEARCH_ORDER_KIND_PriceDifference:'Price Difference',
 
+                    TXT_ORDERS_SEARCH_CLIENT_ORDER_FLAG:'Client Send Flag',
+                    TXT_ORDERS_SEARCH_CLIENT_ORDER_FLAG_NORMAL_SEND:'Normal Send',
+                    TXT_ORDERS_SEARCH_CLIENT_ORDER_FLAG_CANCEL_SEND:'Cancel Send',
+                    TXT_ORDERS_SEARCH_CLIENT_ORDER_FLAG_CANCEL_CONFIRM:'Cancel Confirm',
+
                     TXT_ORDERS_SEARCH_SEARCH_ORDER_STATUS: 'Order Status',
                     TXT_ORDERS_SEARCH_SEARCH_CLIENT_ORDER_ID: 'Client Order ID',
 

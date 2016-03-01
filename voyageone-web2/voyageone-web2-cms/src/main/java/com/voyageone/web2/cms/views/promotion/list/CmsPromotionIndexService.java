@@ -1,5 +1,6 @@
 package com.voyageone.web2.cms.views.promotion.list;
 
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.Properties;
@@ -10,6 +11,7 @@ import com.voyageone.web2.cms.CmsConstants;
 import com.voyageone.web2.sdk.api.VoApiDefaultClient;
 import com.voyageone.web2.sdk.api.domain.CmsBtPromotionCodeModel;
 import com.voyageone.web2.sdk.api.domain.CmsBtPromotionModel;
+import com.voyageone.web2.sdk.api.exception.ApiException;
 import com.voyageone.web2.sdk.api.request.PromotionCodeGetRequest;
 import com.voyageone.web2.sdk.api.request.PromotionDeleteRequest;
 import com.voyageone.web2.sdk.api.request.PromotionPutRequest;
@@ -74,10 +76,14 @@ public class CmsPromotionIndexService extends BaseAppService {
     public int addOrUpdate(CmsBtPromotionModel cmsBtPromotionModel) {
         PromotionPutRequest request=new PromotionPutRequest();
         request.setCmsBtPromotionModel(cmsBtPromotionModel);
-        if(cmsBtPromotionModel.getPromotionId()!=null){
-            return voApiClient.execute(request).getModifiedCount();
-        }else{
-            return voApiClient.execute(request).getInsertedCount();
+        try {
+            if (cmsBtPromotionModel.getPromotionId() != null) {
+                return voApiClient.execute(request).getModifiedCount();
+            } else {
+                return voApiClient.execute(request).getInsertedCount();
+            }
+        }catch (ApiException e){
+            throw new BusinessException(e.getErrCode()+":"+e.getErrMsg(),e.getErrMsg());
         }
     }
 

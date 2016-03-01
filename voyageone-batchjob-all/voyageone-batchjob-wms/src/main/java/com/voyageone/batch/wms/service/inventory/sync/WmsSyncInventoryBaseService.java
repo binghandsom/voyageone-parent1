@@ -3,6 +3,7 @@ package com.voyageone.batch.wms.service.inventory.sync;
 import com.google.gson.Gson;
 import com.voyageone.batch.base.BaseTaskService;
 import com.voyageone.batch.core.modelbean.TaskControlBean;
+import com.voyageone.batch.wms.WmsConstants;
 import com.voyageone.batch.wms.dao.InventoryDao;
 import com.voyageone.batch.wms.modelbean.InventorySynLogBean;
 import com.voyageone.common.Constants;
@@ -21,9 +22,6 @@ import java.util.List;
  * Created by jonas on 15/6/10.
  */
 public abstract class WmsSyncInventoryBaseService extends BaseTaskService {
-    private final static String SYN_FLAG_IGNORE = "4";
-
-    private final static String SYN_FLAG_PASS = "1";
 
     @Autowired
     protected InventoryDao inventoryDao;
@@ -73,7 +71,7 @@ public abstract class WmsSyncInventoryBaseService extends BaseTaskService {
      * 移动因某些原因忽略的数据
      */
     protected void moveIgnore(InventorySynLogBean inventorySynLogBean, String remarks) {
-        inventorySynLogBean.setSyn_flg(SYN_FLAG_IGNORE);
+        inventorySynLogBean.setSyn_flg(WmsConstants.SYN_FLG.IGONRE);
         inventorySynLogBean.setRemarks(remarks == null ? Constants.EmptyString : remarks);
 
         moveData(inventorySynLogBean);
@@ -83,7 +81,7 @@ public abstract class WmsSyncInventoryBaseService extends BaseTaskService {
      * 移动已完成的数据到备份数据表
      */
     protected void movePass(InventorySynLogBean inventorySynLogBean) {
-        inventorySynLogBean.setSyn_flg(SYN_FLAG_PASS);
+        inventorySynLogBean.setSyn_flg(WmsConstants.SYN_FLG.SUCCESS);
 
         moveData(inventorySynLogBean);
     }
@@ -91,11 +89,32 @@ public abstract class WmsSyncInventoryBaseService extends BaseTaskService {
     /**
      * 更新已刷新的数据的标志位
      */
-    protected void updateJMFlg(InventorySynLogBean inventorySynLogBean) {
-        inventorySynLogBean.setSyn_flg(SYN_FLAG_PASS);
+    protected void updateReFlushFlgPass(InventorySynLogBean inventorySynLogBean) {
+        inventorySynLogBean.setSyn_flg(WmsConstants.SYN_FLG.SUCCESS);
         inventorySynLogBean.setModifier(getTaskName());
 
-        inventoryDao.updateJMFlg(inventorySynLogBean);
+        inventoryDao.updateReFlushFlg(inventorySynLogBean);
+    }
+
+    /**
+     * 忽略刷新失败的数据的标志位
+     */
+    protected void updateReFlushFlgIgnore(InventorySynLogBean inventorySynLogBean) {
+        inventorySynLogBean.setSyn_flg(WmsConstants.SYN_FLG.IGONRE);
+        inventorySynLogBean.setModifier(getTaskName());
+
+        inventoryDao.updateReFlushFlg(inventorySynLogBean);
+    }
+
+    /**
+     * 忽略同步失败的数据的标志位
+     */
+    protected void updateSynFlgIgnore(InventorySynLogBean inventorySynLogBean, String remarks) {
+        inventorySynLogBean.setSyn_flg(WmsConstants.SYN_FLG.IGONRE);
+        inventorySynLogBean.setRemarks(remarks == null ? Constants.EmptyString : remarks);
+        inventorySynLogBean.setModifier(getTaskName());
+
+        inventoryDao.updateSynFlg(inventorySynLogBean);
     }
 
     /**

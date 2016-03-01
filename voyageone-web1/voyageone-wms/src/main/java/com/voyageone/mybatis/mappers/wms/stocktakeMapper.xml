@@ -278,22 +278,21 @@
 		</if>
 	</select>
 
+	<select id="wms_stocktake_get" parameterType="com.voyageone.wms.formbean.FormStocktake" resultType="com.voyageone.wms.modelbean.StocktakeBean">
+		select *
+		from wms_bt_take_stock
+		where take_stock_id = #{stocktake_id}
+	</select>
+
 	<select id="wms_stocktake_getProductByUpcOrSku" parameterType="com.voyageone.wms.formbean.FormStocktake" resultMap="stocktakeMap">
 		select itemDel.barcode upc,
 			   itemDel.size,
 			   itemDel.sku,
-			   itemDel.itemcode code,
-			   location.location_id
-  		  from wms_bt_item_details itemDel,
-  		  	   wms_mt_location location
-  		 where itemDel.order_channel_id = location.order_channel_id
-		<if test="upc != null and upc != '' ">
-			and itemDel.barcode = #{upc}   AND itemDel.active = '1'
-		</if>
-		<if test="sku != null and sku != '' ">
-			and itemDel.sku = #{sku}
-		</if>
-		   and location.location_name = #{location_name}
+			   itemDel.itemcode code
+  		  from wms_bt_item_details itemDel
+  		 where itemDel.order_channel_id = #{order_channel_id}
+		 and itemDel.barcode = #{upc}
+		order by itemDel.active desc limit 1
 	</select>
     
 	<update id="wms_stocktake_updateSessionSectionItem" parameterType="com.voyageone.wms.formbean.FormStocktake">
@@ -305,6 +304,13 @@
    	   	   and tsItem.take_stock_detail_id = #{stocktake_detail_id}
    		   and tsItem.upc = #{upc}
 	</update>
+
+	<delete id="wms_stocktake_deleteItemBySKU">
+		delete from wms_bt_take_stock_item
+		where take_stock_id = #{stocktake_id}
+		and take_stock_detail_id = #{stocktake_detail_id}
+		and sku = #{sku}
+	</delete>
 
 	<insert id="wms_stocktake_insertSessionSectionItem" parameterType="com.voyageone.wms.formbean.FormStocktake">
 		insert into wms_bt_take_stock_item

@@ -94,7 +94,7 @@ public class CmsSearchAdvanceService extends BaseAppService{
         masterData.put("brandList", TypeChannel.getTypeWithLang(Constants.comMtTypeChannel.BRAND_41, userInfo.getSelChannelId(), language));
 
         // 获取category list
-        masterData.put("categoryList", cmsBtChannelCategoryService.getFinallyCategoriesByChannelId(userInfo.getSelChannelId()));
+        masterData.put("categoryList", cmsBtChannelCategoryService.getAllCategoriesByChannelId(userInfo.getSelChannelId()));
 
         // 获取promotion list
         Map<String, Object> params = new HashMap<>();
@@ -340,8 +340,8 @@ public class CmsSearchAdvanceService extends BaseAppService{
         StringBuffer result = new StringBuffer();
 
         // 获取category Id
-        if (searchValue.getCatId() != null) {
-            result.append(MongoUtils.splicingValue("catId", searchValue.getCatId()));
+        if (searchValue.getCatPath() != null) {
+            result.append(MongoUtils.splicingValue("catPath", searchValue.getCatPath(), "$leftLike"));
             result.append(",");
         }
 

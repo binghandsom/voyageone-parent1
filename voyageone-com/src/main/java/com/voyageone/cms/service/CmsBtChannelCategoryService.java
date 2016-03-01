@@ -41,6 +41,42 @@ public class CmsBtChannelCategoryService {
     }
 
     /**
+     * 获取父级类目及其子类目
+     * @param channelId
+     * @return
+     * @throws IOException
+     */
+    public List<CmsMtCategoryTreeModel> getAllCategoriesByChannelId(String channelId) throws IOException{
+        List<CmsMtCategoryTreeModel> result = new ArrayList<>();
+
+        List<CmsBtChannelCategoryModel> mappings = getByChannelId(channelId);
+        for (CmsBtChannelCategoryModel mapping : mappings) {
+            String catId = mapping.getCatId();
+            CmsMtCategoryTreeModel category = cmsMtCategoryTreeDao.selectByCatId(catId);
+
+            if (category.getIsParent() == 1) {
+
+                // 将父类添加到result结果集
+                result.add(category);
+
+                // 返回子类
+                List<CmsMtCategoryTreeModel> childCategory
+                        = JsonPath.parse(JacksonUtil.bean2Json(category)).read("$..children[?(@.catPath != null )]"
+                        , new TypeRef<List<CmsMtCategoryTreeModel>>() {});
+                result.addAll(childCategory);
+            } else {
+                result.add(category);
+            }
+        }
+
+        for (CmsMtCategoryTreeModel info : result) {
+
+        }
+
+        return result;
+    }
+
+    /**
      * 返回子category列表
      * @param channelId channel Id
      * @return List<CmsMtCategoryTreeModel>

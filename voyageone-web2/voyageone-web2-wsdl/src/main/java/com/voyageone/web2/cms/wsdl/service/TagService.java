@@ -96,7 +96,7 @@ public class TagService extends BaseService {
      * @param request TagAddRequest
      * @return 新追加TagID
      */
-    private int insertTag(TagAddRequest request) {
+    public int insertTag(TagAddRequest request) {
         int tagId = 0;
 
         CmsBtTagModel cmsBtTagModel = new CmsBtTagModel();

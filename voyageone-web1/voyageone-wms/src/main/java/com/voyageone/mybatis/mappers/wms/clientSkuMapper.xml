@@ -6,7 +6,7 @@
         select count(1)
         from wms_bt_client_sku
         where order_channel_id = #{order_channel_id}
-            and barcode = #{barcode}
+            and (barcode = #{barcode} or upc =  #{barcode})
     </select>
 
     <select id="wms_bt_client_sku_get_rec_countByItemCodeAndSize" resultType="int">

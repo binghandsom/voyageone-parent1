@@ -2,9 +2,11 @@ package com.voyageone.wms.controller;
 
 import com.voyageone.base.BaseController;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.core.ajax.AjaxResponseBean;
 import com.voyageone.wms.WmsConstants;
 import com.voyageone.wms.WmsUrlConstants;
 import com.voyageone.wms.WmsUrlConstants.StockTakeUrls;
+import com.voyageone.wms.formbean.FormStocktake;
 import com.voyageone.wms.service.WmsStocktakeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -245,6 +247,46 @@ public class WmsStocktakeController extends BaseController {
 		byte[] bytes = wmsStocktakeService.downloadCompResReport(param, getUser());
 		String outFile = StocktakeCompResRpt.RPT_NAME + "_" + DateTimeUtil.getNow() + WmsConstants.ReportItems.StocktakeCompResRpt.RPT_SUFFIX;
 		return  genResponseEntityFromBytes(outFile, bytes);
+	}
+
+	/**
+	 * 获取SKU信息
+	 */
+	@RequestMapping(WmsUrlConstants.StockTakeUrls.Inventory.GETSKU)
+	public void getSku(@RequestBody Map<String, Object> params, HttpServletResponse response) {
+
+		int stocktake_id = Integer.valueOf((String) params.get("stocktake_id"));
+		String barcode = (String) params.get("barcode");
+		String sku = (String) params.get("sku");
+
+		FormStocktake formStocktake = new FormStocktake();
+		formStocktake.setStocktake_id(stocktake_id);
+
+		Map<String, Object> result = wmsStocktakeService.getSku(formStocktake,barcode,sku );
+
+		AjaxResponseBean
+				.newResult(true)
+				.setResultInfo(result)
+				.writeTo(getRequest(), response);
+	}
+
+	/**
+	 * 获取SKU信息
+	 */
+	@RequestMapping(WmsUrlConstants.StockTakeUrls.Inventory.DELETEITEM)
+	public void deleteItem(@RequestBody Map<String, Object> params, HttpServletResponse response) {
+
+		long stocktake_id = Long.valueOf((String) params.get("stocktake_id"));
+		long stocktake_detail_id = Long.valueOf((String) params.get("stocktake_detail_id"));
+		String sku = (String) params.get("sku");
+
+
+		Map<String, Object> result = wmsStocktakeService.deleteItem(stocktake_id,stocktake_detail_id, sku);
+
+		AjaxResponseBean
+				.newResult(true)
+				.setResultInfo(result)
+				.writeTo(getRequest(), response);
 	}
 
 }
