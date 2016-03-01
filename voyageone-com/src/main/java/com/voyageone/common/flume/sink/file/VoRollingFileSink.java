@@ -126,6 +126,7 @@ public class VoRollingFileSink extends AbstractSink implements Configurable {
                                     logFileBean.serializer = null;
                                     logFileBean.outputStream = null;
                                     logFileBean.pathController = null;
+                                    logFileBean.currentFile = null;
                                 }
                             }
                         }
@@ -147,7 +148,6 @@ public class VoRollingFileSink extends AbstractSink implements Configurable {
         Channel channel = getChannel();
         Transaction transaction = channel.getTransaction();
         Status result = Status.READY;
-        System.out.println("start:=" + System.currentTimeMillis());
         try {
             transaction.begin();
             int eventAttemptCounter = 0;
@@ -159,6 +159,10 @@ public class VoRollingFileSink extends AbstractSink implements Configurable {
                         logFileBeanMap.put(projectFile, new LogFileBean(projectFile));
                     }
                     LogFileBean logFileBean = logFileBeanMap.get(projectFile);
+                    if (!logFileBean.currentFile.exists()) {
+                        logFileBeanMap.put(projectFile, new LogFileBean(projectFile));
+                        logFileBeanMap.get(projectFile);
+                    }
 
                     sinkCounter.incrementEventDrainAttemptCount();
                     eventAttemptCounter++;
@@ -181,11 +185,11 @@ public class VoRollingFileSink extends AbstractSink implements Configurable {
                 // No events found, request back-off semantics from runner
                 result = Status.BACKOFF;
             }
-            System.out.println("  end:=" + System.currentTimeMillis());
             transaction.commit();
             sinkCounter.addToEventDrainSuccessCount(eventAttemptCounter);
         } catch (Exception ex) {
             transaction.rollback();
+            logger.error("process error:", ex);
             throw new EventDeliveryException("Failed to process transaction", ex);
         } finally {
             transaction.close();
@@ -215,8 +219,10 @@ public class VoRollingFileSink extends AbstractSink implements Configurable {
                         sinkCounter.incrementConnectionFailedCount();
                         logger.error("Unable to close output stream. Exception follows.", e);
                     } finally {
-                        logFileBean.outputStream = null;
                         logFileBean.serializer = null;
+                        logFileBean.outputStream = null;
+                        logFileBean.pathController = null;
+                        logFileBean.currentFile = null;
                     }
                 }
             }
@@ -261,7 +267,9 @@ public class VoRollingFileSink extends AbstractSink implements Configurable {
     }
 
     private class LogFileBean {
-        private VoPathManagerForFile pathController;
+        public File currentFile;
+
+        public VoPathManagerForFile pathController;
 
         public OutputStream outputStream;
 
@@ -271,7 +279,7 @@ public class VoRollingFileSink extends AbstractSink implements Configurable {
             pathController = new VoPathManagerForFile();
             pathController.setBaseDirectory(directory);
 
-            File currentFile = pathController.getCurrentFile(projectFile);
+            currentFile = pathController.getCurrentFile(projectFile);
             if (!currentFile.getParentFile().exists()) {
                 currentFile.getParentFile().mkdir();
             }
