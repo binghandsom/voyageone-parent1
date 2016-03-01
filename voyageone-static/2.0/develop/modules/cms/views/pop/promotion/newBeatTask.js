@@ -6,6 +6,6 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function (angularAMD) {
 
-    angularAMD.controller('popTaskNewCtl', function ($scope) {
+    angularAMD.controller('popNewBeatCtl', function ($scope) {
     });
 });
