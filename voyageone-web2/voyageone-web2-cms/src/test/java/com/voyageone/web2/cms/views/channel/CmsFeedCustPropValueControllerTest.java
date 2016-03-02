@@ -1,7 +1,9 @@
 package com.voyageone.web2.cms.views.channel;
 
-import com.google.gson.*;
-import com.voyageone.common.util.HttpUtils;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import com.voyageone.web2.base.BaseConstants;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.junit.Before;
@@ -20,32 +22,88 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import static org.junit.Assert.assertEquals;
 
 /**
- * @author jiang, 2016/2/26
+ * @author jiang, 2016/3/2
  * @version 2.0.0
  * @since 2.0.0
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
 @ContextConfiguration({"classpath*:META-INF/context-web2.xml","classpath*:META-INF/context-web2-mvc.xml"})
-public class CmsFeedCustPropControllerTest {
+public class CmsFeedCustPropValueControllerTest {
 
     @Autowired
-    CmsFeedCustPropController cmsFeedCustPropController;
+    CmsFeedCustPropValueController cmsFeedCustPropValueController;
     private MockMvc mockMvc;
 
     @Before
     public void setup() {
-        this.mockMvc = MockMvcBuilders.standaloneSetup(cmsFeedCustPropController).build();
+        this.mockMvc = MockMvcBuilders.standaloneSetup(cmsFeedCustPropValueController).build();
     }
 
-    // 测试类目属性查询(两个list)
+    // 测试类目属性产值查询(查询所有)
     @Test
-    public void testGetFeedCustProp1() throws Exception {
+    public void testGetFeedCustPropValueList1() throws Exception {
         UserSessionBean userInfo = new UserSessionBean();
         userInfo.setSelChannelId("010");
 
-        MockHttpServletRequestBuilder mb = MockMvcRequestBuilders.get("/cms/channel/custom/prop/get").sessionAttr(BaseConstants.SESSION_USER, userInfo);
+        MockHttpServletRequestBuilder mb = MockMvcRequestBuilders.get("/cms/channel/custom/value/get").sessionAttr(BaseConstants.SESSION_USER, userInfo);
+        mb.param("cat_path", "");
+        mb.param("sts", "");
+        mb.param("propName", "");
+        mb.param("propValue", "");
+        mb.param("skip", "0");
+        mb.param("limit", "30");
+
+        MockHttpServletResponse msr = mockMvc.perform(mb).andReturn().getResponse();
+        String json = msr.getContentAsString();
+        int sts = msr.getStatus();
+        Gson gson3 = new GsonBuilder().serializeNulls().setPrettyPrinting().create();
+        JsonParser jp = new JsonParser();
+        JsonElement je = jp.parse(json);
+        String prettyJsonStr2 = gson3.toJson(je);
+        System.out.println("prettyJsonStr: " + prettyJsonStr2);
+        assertEquals(sts, 200);
+    }
+
+    // 测试类目属性产值查询(查询共通属性)
+    @Test
+    public void testGetFeedCustPropValueList2() throws Exception {
+        UserSessionBean userInfo = new UserSessionBean();
+        userInfo.setSelChannelId("010");
+
+        MockHttpServletRequestBuilder mb = MockMvcRequestBuilders.get("/cms/channel/custom/value/get").sessionAttr(BaseConstants.SESSION_USER, userInfo);
+        mb.param("cat_path", "0");
+        mb.param("sts", "1");
+        mb.param("propName", "35");
+        mb.param("propValue", "y");
+        mb.param("skip", "0");
+        mb.param("limit", "30");
+
+        MockHttpServletResponse msr = mockMvc.perform(mb).andReturn().getResponse();
+        String json = msr.getContentAsString();
+        int sts = msr.getStatus();
+        Gson gson3 = new GsonBuilder().serializeNulls().setPrettyPrinting().create();
+        JsonParser jp = new JsonParser();
+        JsonElement je = jp.parse(json);
+        String prettyJsonStr2 = gson3.toJson(je);
+        System.out.println("prettyJsonStr: " + prettyJsonStr2);
+        assertEquals(sts, 200);
+    }
+
+    // 测试类目属性产值查询(查询指定类目)
+    @Test
+    public void testGetFeedCustPropValueList3() throws Exception {
+        UserSessionBean userInfo = new UserSessionBean();
+        userInfo.setSelChannelId("010");
+
+        MockHttpServletRequestBuilder mb = MockMvcRequestBuilders.get("/cms/channel/custom/value/get").sessionAttr(BaseConstants.SESSION_USER, userInfo);
         mb.param("cat_path", "NOT_APPLICABLE - NOT_APPLICABLE - No Stone");
+        mb.param("sts", "");
+        mb.param("propName", "");
+        mb.param("propValue", "");
+        mb.param("skip", "0");
+        mb.param("limit", "30");
+
         MockHttpServletResponse msr = mockMvc.perform(mb).andReturn().getResponse();
         String json = msr.getContentAsString();
         int sts = msr.getStatus();
@@ -57,74 +115,16 @@ public class CmsFeedCustPropControllerTest {
         assertEquals(sts, 200);
     }
 
-    // 测试取得类目属性一览
+    // 测试新增Feed自定义属性值
     @Test
-    public void testGetFeedCustProp2() throws Exception {
-        UserSessionBean userInfo = new UserSessionBean();
-        userInfo.setSelChannelId("010");
-
-        MockHttpServletRequestBuilder mb = MockMvcRequestBuilders.get("/cms/channel/custom/prop/get").sessionAttr(BaseConstants.SESSION_USER, userInfo);
-        mb.param("cat_path", "NOT_APPLICABLE - NOT_APPLICABLE - No Stone");
-        mb.param("unsplitFlg", "1");
-        MockHttpServletResponse msr = mockMvc.perform(mb).andReturn().getResponse();
-        String json = msr.getContentAsString();
-        int sts = msr.getStatus();
-        Gson gson3 = new GsonBuilder().serializeNulls().setPrettyPrinting().create();
-        JsonParser jp = new JsonParser();
-        JsonElement je = jp.parse(json);
-        String prettyJsonStr2 = gson3.toJson(je);
-        System.out.println("prettyJsonStr: " + prettyJsonStr2);
-        assertEquals(sts, 200);
-    }
-
-    // 测试取得类目树
-    @Test
-    public void testGetCatTree1() throws Exception {
-        UserSessionBean userInfo = new UserSessionBean();
-        userInfo.setSelChannelId("010");
-
-        MockHttpServletRequestBuilder mb = MockMvcRequestBuilders.get("/cms/channel/custom/prop/getCatTree").sessionAttr(BaseConstants.SESSION_USER, userInfo);
-        MockHttpServletResponse msr = mockMvc.perform(mb).andReturn().getResponse();
-        String json = msr.getContentAsString();
-        int sts = msr.getStatus();
-        Gson gson3 = new GsonBuilder().serializeNulls().setPrettyPrinting().create();
-        JsonParser jp = new JsonParser();
-        JsonElement je = jp.parse(json);
-        String prettyJsonStr2 = gson3.toJson(je);
-        System.out.println("prettyJsonStr: " + prettyJsonStr2);
-        assertEquals(sts, 200);
-    }
-
-    // 测试取得类目一览
-    @Test
-    public void testGetCatList1() throws Exception {
-        UserSessionBean userInfo = new UserSessionBean();
-        userInfo.setSelChannelId("010");
-
-        MockHttpServletRequestBuilder mb = MockMvcRequestBuilders.get("/cms/channel/custom/prop/getCatList").sessionAttr(BaseConstants.SESSION_USER, userInfo);
-        MockHttpServletResponse msr = mockMvc.perform(mb).andReturn().getResponse();
-        String json = msr.getContentAsString();
-        int sts = msr.getStatus();
-        Gson gson3 = new GsonBuilder().serializeNulls().setPrettyPrinting().create();
-        JsonParser jp = new JsonParser();
-        JsonElement je = jp.parse(json);
-        String prettyJsonStr2 = gson3.toJson(je);
-        System.out.println("prettyJsonStr: " + prettyJsonStr2);
-        assertEquals(sts, 200);
-    }
-
-    // 测试保存类目属性
-    @Test
-    public void testSaveFeedCustProp1() throws Exception {
+    public void testAddFeedCustPropValue1() throws Exception {
         UserSessionBean userInfo = new UserSessionBean();
         userInfo.setSelChannelId("010");
         userInfo.setUserName("jason");
 
-        String paraStr = "{\"cat_path\":\"NOT_APPLICABLE - NOT_APPLICABLE - No Stone\", " +
-                "\"valList\":[{\"prop_id\":\"\", \"prop_original\":\"size\", \"prop_translation\":\"尺寸\"}]，" +
-                "\"unvalList\":[{\"prop_id\":\"\", \"prop_original\":\"size\", \"prop_translation\":\"尺寸\"}] }";
+        String paraStr = "{\"prop_id\":\"62\", \"value_original\":\"size\", \"value_translation\":\"尺寸\"}";
 
-        MockHttpServletRequestBuilder mb = MockMvcRequestBuilders.post("/cms/channel/custom/prop/update").sessionAttr(BaseConstants.SESSION_USER, userInfo)
+        MockHttpServletRequestBuilder mb = MockMvcRequestBuilders.post("/cms/channel/custom/value/create").sessionAttr(BaseConstants.SESSION_USER, userInfo)
                 .accept("application/json").contentType("application/json").content(paraStr);
 
         MockHttpServletResponse msr = mockMvc.perform(mb).andReturn().getResponse();
@@ -138,17 +138,16 @@ public class CmsFeedCustPropControllerTest {
         assertEquals(sts, 200);
     }
 
-    // 测试新增类目属性
+    // 测试保存Feed自定义属性值
     @Test
-    public void testSaveFeedCustProp2() throws Exception {
+    public void testSaveFeedCustPropValue1() throws Exception {
         UserSessionBean userInfo = new UserSessionBean();
         userInfo.setSelChannelId("010");
         userInfo.setUserName("jason");
 
-        String paraStr = "{\"cat_path\":\"NOT_APPLICABLE - NOT_APPLICABLE - No Stone\"," +
-                "\"valList\":[{\"prop_id\":\"\", \"prop_original\":\"size\", \"prop_translation\":\"尺寸\"}] }";
+        String paraStr = "{\"value_id\":\"56\", \"value_translation\":\"尺寸\" }";
 
-        MockHttpServletRequestBuilder mb = MockMvcRequestBuilders.post("/cms/channel/custom/prop/update").sessionAttr(BaseConstants.SESSION_USER, userInfo)
+        MockHttpServletRequestBuilder mb = MockMvcRequestBuilders.post("/cms/channel/custom/value/update").sessionAttr(BaseConstants.SESSION_USER, userInfo)
                 .accept("application/json").contentType("application/json").content(paraStr);
 
         MockHttpServletResponse msr = mockMvc.perform(mb).andReturn().getResponse();

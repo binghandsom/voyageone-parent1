@@ -80,6 +80,7 @@ public class CmsFeedCustPropService extends BaseAppService {
         //TODO-- 这里只能使用Object对象来影射，不能使用Map.class，可能是spring mongoTemplate的问题
     }
 
+    // 查询指定类目属性是否存在
     public boolean isAttrExist(Map<String, Object> params, String catPath, String chnId) {
         Map<String, Object> sqlPara = new HashMap<String, Object>();
         sqlPara.putAll(params);
@@ -114,5 +115,52 @@ public class CmsFeedCustPropService extends BaseAppService {
                 logger.debug("修改属性成功 实际更新件数=" + tslt);
             }
         }
+    }
+
+    // 查询指定属性值是否存在
+    public boolean isPropValueExist(int propId, String chnId, String origValue) {
+        Map<String, Object> sqlPara = new HashMap<String, Object>();
+        sqlPara.put("propId", propId);
+        sqlPara.put("channelId", chnId);
+        sqlPara.put("origValue", origValue);
+        return cmsBtFeedCustomPropDao.isPropValueExist(sqlPara);
+    }
+
+    // 查询指定属性值是否存在
+    public boolean isPropValueExist(int valueId) {
+        Map<String, Object> sqlPara = new HashMap<String, Object>();
+        sqlPara.put("valueId", valueId);
+        return cmsBtFeedCustomPropDao.isPropValueExistById(sqlPara);
+    }
+
+    // 添加属性值
+    public int addPropValue(int propId, String chnId, String origValue, String transValue, String userName) {
+        Map<String, Object> sqlPara = new HashMap<String, Object>();
+        sqlPara.put("propId", propId);
+        sqlPara.put("channelId", chnId);
+        sqlPara.put("origValue", origValue);
+        sqlPara.put("transValue", transValue);
+        sqlPara.put("userName", userName);
+        return cmsBtFeedCustomPropDao.addPropValue(sqlPara);
+    }
+
+    // 修改属性值
+    public int updatePropValue(int valueId, String transValue, String userName) {
+        Map<String, Object> sqlPara = new HashMap<String, Object>();
+        sqlPara.put("valueId", valueId);
+        sqlPara.put("transValue", transValue);
+        sqlPara.put("userName", userName);
+        return cmsBtFeedCustomPropDao.updatePropValue(sqlPara);
+    }
+
+    // 查询属性值
+    public List<Map<String, Object>> selectPropValue(String catPath, int tSts, String propName, String propValue, String chaId) {
+        Map<String, Object> sqlPara = new HashMap<String, Object>();
+        sqlPara.put("feedCatPath", catPath);
+        sqlPara.put("propName", propName);
+        sqlPara.put("propValue", propValue);
+        sqlPara.put("tSts", tSts);
+        sqlPara.put("channelId", chaId);
+        return cmsBtFeedCustomPropDao.selectPropValue(sqlPara);
     }
 }
