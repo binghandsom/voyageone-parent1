@@ -49,6 +49,9 @@ public class ProductsGetRequestTest {
         requestModel.addField("groups.platforms.cartId");
         requestModel.addField("feed.orgAtts.modelCode");
 
+        //requestModel.addSort("fields.brand", true);
+        requestModel.setSorts("\"fields.brand\": -1, \"fields.code\": 1");
+
         //SDK取得Product 数据
         ProductsGetResponse response = voApiClient.execute(requestModel);
 

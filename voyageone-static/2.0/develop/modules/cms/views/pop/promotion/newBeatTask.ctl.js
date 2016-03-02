@@ -5,4 +5,7 @@ define([
     'angularAMD',
     'modules/cms/controller/popup.ctl'
 ], function (angularAMD) {
+
+    angularAMD.controller('popNewBeatCtl', function ($scope) {
+    });
 });
