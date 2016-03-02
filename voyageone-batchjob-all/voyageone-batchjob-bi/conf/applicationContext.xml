@@ -11,16 +11,9 @@
 
     <!-- 类扫描路径配置 -->
     <context:component-scan base-package="com.voyageone"/>
-    <!-- 数据源配置 -->
-    <import resource="config/job/datasource-config.xml" />
-    <!-- DAO相关配置 -->
-    <import resource="dao-config.xml"/>
 
-    <!-- mongo DAO相关配置 -->
-    <import resource="datasource-config-mongo-sample.xml"/>
-
-    <!-- sdk-client相关配置 -->
-    <import resource="sdk-client-config-sample.xml"/>
+    <!-- 共通相关配置 -->
+    <import resource="classpath*:voyageone-config.xml" />
 
     <!-- 异常处理 -->
     <!-- <bean id="exceptionHandler" class="com.voyageone.core.exception.ExceptionHandler"/> -->
