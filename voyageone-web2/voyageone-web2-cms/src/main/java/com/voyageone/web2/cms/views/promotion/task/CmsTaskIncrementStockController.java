@@ -26,33 +26,33 @@ public class CmsTaskIncrementStockController extends CmsController {
 
 
 
-    @RequestMapping(CmsUrlConstants.PROMOTION.TASK.INCREMENT_STOCK.GET_TASK_LIST)
-    public AjaxResponse getTaskList(@RequestBody Map param) {
-
-        // 返回
-        return success(null);
-    }
-
-    @RequestMapping(CmsUrlConstants.PROMOTION.TASK.INCREMENT_STOCK.GET_PLATFORM_INFO)
-    public AjaxResponse getPlatformInfo(@RequestBody Map param) {
-
-        // 返回
-        return success(null);
-    }
-
-
-    @RequestMapping(CmsUrlConstants.PROMOTION.TASK.INCREMENT_STOCK.SAVE_TASK)
-    public AjaxResponse saveTask(@RequestBody Map param) {
-
-        // 返回
-        return success(null);
-    }
-
-    @RequestMapping(CmsUrlConstants.PROMOTION.TASK.INCREMENT_STOCK.DEL_TASK)
-    public AjaxResponse delTask(@RequestBody Map param) {
-
-        // 返回
-        return success(null);
-    }
+//    @RequestMapping(CmsUrlConstants.PROMOTION.TASK.INCREMENT_STOCK.GET_TASK_LIST)
+//    public AjaxResponse getTaskList(@RequestBody Map param) {
+//
+//        // 返回
+//        return success(null);
+//    }
+//
+//    @RequestMapping(CmsUrlConstants.PROMOTION.TASK.INCREMENT_STOCK.GET_PLATFORM_INFO)
+//    public AjaxResponse getPlatformInfo(@RequestBody Map param) {
+//
+//        // 返回
+//        return success(null);
+//    }
+//
+//
+//    @RequestMapping(CmsUrlConstants.PROMOTION.TASK.INCREMENT_STOCK.SAVE_TASK)
+//    public AjaxResponse saveTask(@RequestBody Map param) {
+//
+//        // 返回
+//        return success(null);
+//    }
+//
+//    @RequestMapping(CmsUrlConstants.PROMOTION.TASK.INCREMENT_STOCK.DEL_TASK)
+//    public AjaxResponse delTask(@RequestBody Map param) {
+//
+//        // 返回
+//        return success(null);
+//    }
 
 }
