@@ -2,9 +2,9 @@
 	<div class="vo_accordion vo_attr">
 		<div class="panel-group">
 			<div class="panel panel-default">
-				<!--<div class="panel-heading">-->
-					<!--<h4 class="panel-title"><i class="fa fa-reorder"></i>&nbsp;自定义属性管理</h4>-->
-				<!--</div>-->
+				<div class="panel-heading">
+					<h4 class="panel-title"><i class="fa fa-reorder"></i>&nbsp;自定义属性管理</h4>
+				</div>
 				<div class="container-fluid">
 					<!--<div class="col-sm-12">-->
 						<!--<div class="col-sm-4">-->
@@ -81,12 +81,12 @@
 			<p class="m-l-sm m-t-xs">您当前选择的是：<span>共通属性</span></p>
 		</div>
 
-		<div class="category_drag col-sm-6">
+		<div class="category_drag col-sm-5 col-off-sm-1">
 		<div class="category_drag_main">
 			<!--<p class="text-center text-vo font-bold">一级类目</p>-->
 			<div class="form-inline m-l-xs">
 				<input type="text" placeholder="快速检索" class="form-control" style="width:94%" ng-model="searchUnval">
-				<button type="submit" class="btn btn-vo btn-xxs"><i class="fa fa-search"></i></button>
+				<!--<button type="submit" class="btn btn-vo btn-xxs"><i class="fa fa-search"></i></button>-->
 			</div>
 			<div class="category_drag_list_qh">
 				<ul>
@@ -99,10 +99,10 @@
 			<p class="m-t-lg"><a href="#"><i class="glyphicon glyphicon-arrow-left btn-lg"></i></a></p>
 			<p><a href="#"><i class="glyphicon glyphicon-arrow-right btn-lg"></i></a></p>
 		</div>-->
-		<div class="category_drag col-sm-6">
+		<div class="category_drag col-sm-5">
 			<div class="form-inline m-l-xs m-t-xs">
 				<input type="text" placeholder="快速检索" class="form-control" style="width:94%" ng-model="searchVal">
-				<button type="submit" class="btn btn-vo btn-xxs"><i class="fa fa-search"></i></button>
+				<!--<button type="submit" class="btn btn-vo btn-xxs"><i class="fa fa-search"></i></button>-->
 			</div>
 			<div class="category_drag_list_qh">
 				<div class="col-sm-12" ng-repeat="valData in vm.valList | filter:searchVal">
@@ -121,7 +121,7 @@
 		</div>
 		<div class="col-sm-12 m-t-md text-center">
 			<!--<a href="#/channel/custom/value" target="_blank">-->
-				<button class="btn btn-success btn-sm" ng-click="save();"><i class="fa fa-mortar-board (alias) icon"></i>&nbsp;保存</button>
+			<button class="btn btn-vo btn-sm"  ng-click="save();"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;保存</button>
 
 			<!--</a>-->
 			<a href="#/channel/custom/value" target="_blank">
