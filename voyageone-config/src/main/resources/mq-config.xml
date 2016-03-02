@@ -13,6 +13,7 @@
                                port="5672"
                                username="mqadmin"
                                password="pile12rdis"/>
+
     <rabbit:admin connection-factory="connectionFactory"/>
 
     <!-- spring template声明-->
