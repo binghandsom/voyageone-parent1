@@ -123,7 +123,8 @@
         "create": "create",
         "page": "page",
         "import": "import",
-        "download": "download"
+        "download": "download",
+        "control": "control"
       },
       "taskPriceService" : {
         "root": "/cms/task/price",

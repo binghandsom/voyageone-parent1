@@ -84,6 +84,8 @@ public interface CmsUrlConstants {
                 String IMPORT = "import";
 
                 String DOWNLOAD = "download";
+
+                String CONTROL = "control";
             }
 
             interface PRICE {

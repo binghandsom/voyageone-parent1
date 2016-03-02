@@ -66,4 +66,9 @@ public class CmsTaskPictureController extends BaseController {
         return genResponseEntityFromBytes(filename,
                 taskPictureService.downloadBeatInfo(task_id));
     }
+
+    @RequestMapping(BEAT.CONTROL)
+    public AjaxResponse control(@RequestBody ReqParam param) {
+        return success(taskPictureService.control(param.getBeat_id(), param.getTask_id(), param.getFlag(), getUser()));
+    }
 }

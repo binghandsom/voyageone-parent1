@@ -7,12 +7,20 @@ define([
 ], function (cms) {
     cms.controller("taskBeatController", (function () {
 
-        function TaskBeatController($routeParams, taskBeatService, cActions, FileUploader) {
+        function TaskBeatController($routeParams, taskBeatService, cActions, FileUploader, alert, notify, $location) {
             var urls = cActions.cms.task.taskBeatService;
+            var task_id = $routeParams['task_id'];
+            if (!task_id)
+                alert('地址错误').result.then(function() {
+                    $location.path('/promotion/task');
+                });
+            task_id = parseInt(task_id);
 
             this.taskBeatService = taskBeatService;
+            this.alert = alert;
+            this.notify = notify;
 
-            this.task_id = $routeParams['task_id'];
+            this.task_id = task_id;
             this.data = [];
             this.pageOption = {
                 curr: 1,
@@ -36,11 +44,12 @@ define([
                 var uploadQueue = ttt.uploader.queue;
                 var uploadItem = uploadQueue[uploadQueue.length - 1];
                 if (!uploadItem) {
-                    alert('没选择文件');
-                    return;
+                    return ttt.alert('没选择文件');
                 }
                 uploadItem.onSuccess = function (res) {
-                    alert(res.message || '上传成功');
+                    if (res.message)
+                        return ttt.alert(res.message);
+                    ttt.notify.success('上传成功');
                     if (res.data) {
                         ttt.data = res.data.list;
                         ttt.pageOption.curr = 1;
@@ -71,6 +80,30 @@ define([
             download: function () {
                 var ttt = this;
                 $.download.post(ttt.downloadUrl, {task_id: ttt.task_id});
+            },
+
+            controlOne: function(beat_id, flag) {
+                var ttt = this;
+                ttt.taskBeatService.control({
+                    beat_id: beat_id,
+                    flag: flag
+                }).then(function(res) {
+                    if (!res.data)
+                        return ttt.alert('失败了');
+                    ttt.getData();
+                });
+            },
+
+            controlAll: function(flag) {
+                var ttt = this;
+                ttt.taskBeatService.control({
+                    task_id: ttt.task_id,
+                    flag: flag
+                }).then(function(res) {
+                    if (!res.data)
+                        return ttt.alert('失败了');
+                    ttt.getData();
+                });
             }
         };
 

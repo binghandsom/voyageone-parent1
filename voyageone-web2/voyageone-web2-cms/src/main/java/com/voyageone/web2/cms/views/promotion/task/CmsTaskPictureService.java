@@ -178,6 +178,38 @@ public class CmsTaskPictureService extends BaseAppService {
         }
     }
 
+    public int setFlag(int beat_id, BeatFlag flag, UserSessionBean user) {
+
+        if (flag == null)
+            throw new BusinessException("参数错误");
+
+        CmsBtBeatInfoModel beatInfoModel = beatInfoDao.selectOneById(beat_id);
+
+        if (beatInfoModel == null)
+            return 0;
+
+        beatInfoModel.setBeatFlag(flag);
+        beatInfoModel.setModifier(user.getUserName());
+        return beatInfoDao.updateFlag(beatInfoModel);
+    }
+
+    public int setFlags(int task_id, BeatFlag flag, UserSessionBean user) {
+
+        if (flag == null)
+            throw new BusinessException("参数错误");
+
+        return beatInfoDao.updateFlags(task_id, flag, user.getUserName());
+    }
+
+    public int control(Integer beat_id, Integer task_id, BeatFlag flag, UserSessionBean user) {
+        if (beat_id != null)
+            return setFlag(beat_id, flag, user);
+        else if (task_id != null)
+            return setFlags(task_id, flag, user);
+        else
+            return 0;
+    }
+
     private CmsBtPromotionModel getPromotion(int promotion_id) {
 
         PromotionsGetRequest request = new PromotionsGetRequest();

@@ -59,4 +59,19 @@ public class CmsBtBeatInfoDao extends WebBaseDao {
     public int selectCountInFlags(int task_id, BeatFlag... flags) {
         return selectOne("cms_bt_beat_info_selectCountInFlags", parameters("task_id", task_id, "flags", flags));
     }
+
+    public CmsBtBeatInfoModel selectOneById(int beat_id) {
+        return selectOne("cms_bt_beat_info_selectOneById", parameters("beat_id", beat_id));
+    }
+
+    public int updateFlag(CmsBtBeatInfoModel beatInfoModel) {
+        return update("cms_bt_beat_info_updateFlag", beatInfoModel);
+    }
+
+    public int updateFlags(Integer task_id, BeatFlag flag, String userName) {
+        return update("cms_bt_beat_info_updateFlags", parameters(
+                "task_id", task_id,
+                "modifier", userName,
+                "syn_flag", flag.getFlag()));
+    }
 }
