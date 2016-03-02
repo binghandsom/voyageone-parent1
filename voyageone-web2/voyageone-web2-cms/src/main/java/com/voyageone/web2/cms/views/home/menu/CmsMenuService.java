@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Edward
@@ -48,18 +49,23 @@ public class CmsMenuService extends BaseAppService{
 
         List<CmsMtCategoryTreeModel> categoryTreeList;
 
-//        switch (cTypeId) {
-//            case CATEGORY_TYPE_FEED:
-//                categoryTreeList = feedToCmsService.getFeedCategory(channelId).getCategoryTree();
-//                break;
-//            default:
+        switch (cTypeId) {
+            case CATEGORY_TYPE_FEED:
+                List<Map<String, Object>> result = feedToCmsService.getFeedCategory(channelId).getCategoryTree();
+                categoryTreeList = null;
+                break;
+            default:
                 // TODO 取得主数据的类目树,暂时使用feed的类目树
                 categoryTreeList = cmsBtChannelCategoryService.getCategoriesByChannelId(channelId);
-//                        feedToCmsService.getFeedCategory(channelId).getCategoryTree();
-//                break;
-//        }
+                break;
+        }
 
         return categoryTreeList;
     }
 
+
+//
+//    private changeToCategoryList () {
+//
+//    }
 }

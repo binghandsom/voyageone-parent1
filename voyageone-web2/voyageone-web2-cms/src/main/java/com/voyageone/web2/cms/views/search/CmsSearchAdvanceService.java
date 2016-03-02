@@ -122,7 +122,6 @@ public class CmsSearchAdvanceService extends BaseAppService{
         groupRequest.setPageNo(searchValue.getGroupPageNum());
         groupRequest.setPageSize(searchValue.getGroupPageSize());
         groupRequest.setQueryString(getSearchQueryForGroup(searchValue, cmsSessionBean));
-        // TODO 设置排序
         groupRequest.setSorts(setSortValue(searchValue));
         groupRequest.setFields(searchItems);
 
@@ -143,7 +142,6 @@ public class CmsSearchAdvanceService extends BaseAppService{
         productRequest.setPageNo(searchValue.getProductPageNum());
         productRequest.setPageSize(searchValue.getProductPageSize());
         productRequest.setQueryString(getSearchQueryForProduct(searchValue, cmsSessionBean));
-        // TODO 设置排序
         productRequest.setSorts(setSortValue(searchValue));
         productRequest.setFields(searchItems);
 
@@ -191,7 +189,6 @@ public class CmsSearchAdvanceService extends BaseAppService{
              Workbook book = WorkbookFactory.create(inputStream)) {
 
             for (int i = 0; i < pageCount; i++) {
-//                List<CmsBtProductModel> items = cmsBtProductDao.selectProductByCartId(channelId, cartId, i, select_pagesize);
                 List<CmsBtProductModel> items = new ArrayList<>();
                 if (i == 0) {
                     items = response.getProducts();
@@ -570,7 +567,8 @@ public class CmsSearchAdvanceService extends BaseAppService{
             result.append(",");
         }
 
-        return result.toString().length() > 0 ? "{" + result.toString().substring(0, result.toString().length()-1) + "}" : null;
+//        return result.toString().length() > 0 ? "{" + result.toString().substring(0, result.toString().length()-1) + "}" : null;
+        return result.toString().length() > 0 ? result.toString().substring(0, result.toString().length()-1) : null;
 
     }
 }
