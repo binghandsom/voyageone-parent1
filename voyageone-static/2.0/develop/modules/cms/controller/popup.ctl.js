@@ -231,6 +231,12 @@ define([
                     "controllerUrl": "modules/cms/views/pop/promotion/newBeatTask.ctl",
                     "controller": 'popNewBeatCtl as $ctrl',
                     "size": "md"
+                },
+                "addBeat": {
+                    "templateUrl": "views/pop/promotion/addBeat.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/promotion/addBeat.ctl",
+                    "controller": 'popAddBeatCtl as $ctrl',
+                    "size": "md"
                 }
             }
         })
@@ -667,6 +673,10 @@ define([
          */
         $scope.openTask = function (context) {
             return openModel(popActions.promotion.newBeat, context);
+        };
+
+        $scope.popAddBeat = function (context) {
+            return openModel(popActions.promotion.addBeat, context);
         };
 
 

@@ -73,4 +73,19 @@ public class CmsTaskPictureController extends BaseController {
     public AjaxResponse control(@RequestBody ReqParam param) {
         return success(taskPictureService.control(param.getBeat_id(), param.getTask_id(), param.getFlag(), getUser()));
     }
+
+    @RequestMapping(BEAT.ADD)
+    public AjaxResponse add(@RequestBody ReqParam param) {
+        return success(taskPictureService.add(param.getTask_id(), param.getNum_iid(), param.getCode(), getUser()));
+    }
+
+    @RequestMapping(BEAT.ADD_CODE)
+    public AjaxResponse addCode(@RequestBody ReqParam param) {
+        return success(taskPictureService.getCodes(param.getPromotionId(), param.getModelId()));
+    }
+
+    @RequestMapping(BEAT.ADD_NUMIID)
+    public AjaxResponse addNumiid(@RequestBody ReqParam param) {
+        return success(taskPictureService.getNewNumiid(param.getTask_id()));
+    }
 }

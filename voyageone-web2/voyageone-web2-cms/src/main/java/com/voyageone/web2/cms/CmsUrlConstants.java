@@ -86,6 +86,12 @@ public interface CmsUrlConstants {
                 String DOWNLOAD = "download";
 
                 String CONTROL = "control";
+
+                String ADD = "add";
+
+                String ADD_CODE = "addCode";
+
+                String ADD_NUMIID = "addNumiid";
             }
 
             interface PRICE {

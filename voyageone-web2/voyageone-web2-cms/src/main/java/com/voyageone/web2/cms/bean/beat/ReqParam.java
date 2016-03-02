@@ -21,6 +21,14 @@ public class ReqParam {
 
     private Integer task_id;
 
+    private String num_iid;
+
+    private String code;
+
+    private int modelId;
+
+    private int promotionId;
+
     public int getOffset() {
         return offset;
     }
@@ -59,5 +67,37 @@ public class ReqParam {
 
     public void setTask_id(Integer task_id) {
         this.task_id = task_id;
+    }
+
+    public String getNum_iid() {
+        return num_iid;
+    }
+
+    public void setNum_iid(String num_iid) {
+        this.num_iid = num_iid;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public int getModelId() {
+        return modelId;
+    }
+
+    public void setModelId(int modelId) {
+        this.modelId = modelId;
+    }
+
+    public int getPromotionId() {
+        return promotionId;
+    }
+
+    public void setPromotionId(int promotionId) {
+        this.promotionId = promotionId;
     }
 }

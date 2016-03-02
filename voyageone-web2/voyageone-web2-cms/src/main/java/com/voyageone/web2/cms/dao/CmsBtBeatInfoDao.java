@@ -27,13 +27,16 @@ public class CmsBtBeatInfoDao extends WebBaseDao {
     }
 
     /**
-     * 更新 BeatInfo 的 Message, 为那些在 Beat 中但不在 Promotion 中的 Code
+     * 更新 BeatInfo 的 Message, 为那些在 Beat 中但不在 Promotion 中的 Code/Numiid
      */
-    public int updateNoCodeMessage(int task_id, String message) {
-        return update("cms_bt_beat_info_updateNoCodeMessage", parameters(
+    public int updateDiffPromotionMessage(int task_id, String message) {
+        Map params = parameters(
                 "task_id", task_id,
                 "message", message,
-                "syn_flag", BeatFlag.CANT_BEAT.getFlag()));
+                "syn_flag", BeatFlag.CANT_BEAT.getFlag());
+        int count0 = update("cms_bt_beat_info_updateNoCodeMessage", params);
+        int count1 = update("cms_bt_beat_info_updateNoNumiidMessage", params);
+        return count0 + count1;
     }
 
     public List<CmsBtBeatInfoModel> selectListByTask(int task_id) {

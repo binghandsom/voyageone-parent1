@@ -124,7 +124,10 @@
         "page": "page",
         "import": "import",
         "download": "download",
-        "control": "control"
+        "control": "control",
+        "addNumiid": "addNumiid",
+        "addCode": "addCode",
+        "add": "add"
       },
       "taskPriceService" : {
         "root": "/cms/task/price",

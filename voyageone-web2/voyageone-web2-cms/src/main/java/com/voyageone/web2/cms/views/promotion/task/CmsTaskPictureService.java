@@ -3,6 +3,7 @@ package com.voyageone.web2.cms.views.promotion.task;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.cms.enums.BeatFlag;
 import com.voyageone.common.configs.Enums.PromotionTypeEnums;
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.bean.beat.TaskBean;
 import com.voyageone.web2.cms.dao.CmsBtBeatInfoDao;
@@ -11,8 +12,13 @@ import com.voyageone.web2.cms.model.CmsBtBeatInfoModel;
 import com.voyageone.web2.cms.model.CmsBtTaskModel;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import com.voyageone.web2.sdk.api.VoApiClient;
+import com.voyageone.web2.sdk.api.domain.CmsBtPromotionCodeModel;
 import com.voyageone.web2.sdk.api.domain.CmsBtPromotionModel;
+import com.voyageone.web2.sdk.api.request.PromotionCodeGetRequest;
+import com.voyageone.web2.sdk.api.request.PromotionModelsGetRequest;
 import com.voyageone.web2.sdk.api.request.PromotionsGetRequest;
+import com.voyageone.web2.sdk.api.response.PromotionCodeGetResponse;
+import com.voyageone.web2.sdk.api.response.PromotionModelsGetResponse;
 import com.voyageone.web2.sdk.api.response.PromotionsGetResponse;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -24,6 +30,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -135,17 +142,20 @@ public class CmsTaskPictureService extends BaseAppService {
 
             model.setNum_iid(value.longValue());
             model.setProduct_code(getString(row, 1));
-            model.setCreater(user.getUserName());
-            model.setModifier(user.getUserName());
             model.setBeatFlag(BeatFlag.STOP); // syn_flag
             model.setTask_id(task_id);
+            model.setCreater(user.getUserName());
+            model.setModifier(user.getUserName());
+            String now = DateTimeUtil.getNow();
+            model.setCreated(now);
+            model.setModified(now);
 
             models.add(model);
         }
 
         beatInfoDao.insertList(models);
 
-        beatInfoDao.updateNoCodeMessage(task_id, "该 Code 不在 Promotion 内");
+        beatInfoDao.updateDiffPromotionMessage(task_id, "与 Promotion 信息不符");
 
         return getAllBeat(task_id, null, 0, size);
     }
@@ -216,6 +226,49 @@ public class CmsTaskPictureService extends BaseAppService {
             return setFlags(task_id, flag, user);
         else
             return 0;
+    }
+
+    public List<Map<String, Object>> getNewNumiid(Integer task_id) {
+        if (task_id == null) return null;
+        CmsBtTaskModel taskModel = taskDao.selectByIdWithPromotion(task_id);
+        if (taskModel == null) return null;
+        Map<String, Object> map = new HashMap<>();
+        map.put("promotionId", taskModel.getPromotion_id());
+        PromotionModelsGetRequest request = new PromotionModelsGetRequest();
+        request.setParam(map);
+        PromotionModelsGetResponse response = apiClient.execute(request);
+        return response.getPromotionGroups();
+    }
+
+    public List<CmsBtPromotionCodeModel> getCodes(int promotionId, int modelId) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("promotionId", promotionId);
+        map.put("modelId", modelId);
+        PromotionCodeGetRequest request = new PromotionCodeGetRequest();
+        request.setParam(map);
+        PromotionCodeGetResponse response = apiClient.execute(request);
+        return response.getCodeList();
+    }
+
+    public Integer add(int task_id, String num_iid, String code, UserSessionBean user) {
+        CmsBtTaskModel taskModel = taskDao.selectByIdWithPromotion(task_id);
+        if (taskModel == null) return null;
+
+        // TODO 检查是否已经存在, 因为在获取 code 和 numiid 时, 没有过滤掉这些
+
+        CmsBtBeatInfoModel model = new CmsBtBeatInfoModel();
+        model.setNum_iid(Long.valueOf(num_iid));
+        model.setProduct_code(code);
+        model.setBeatFlag(BeatFlag.STOP);
+        model.setTask_id(task_id);
+        model.setCreater(user.getUserName());
+        model.setModifier(user.getUserName());
+        String now = DateTimeUtil.getNow();
+        model.setCreated(now);
+        model.setModified(now);
+        List<CmsBtBeatInfoModel> list = new ArrayList<>();
+        list.add(model);
+        return beatInfoDao.insertList(list);
     }
 
     private CmsBtPromotionModel getPromotion(int promotion_id) {
