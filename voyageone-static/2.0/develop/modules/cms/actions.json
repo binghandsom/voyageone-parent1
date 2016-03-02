@@ -169,6 +169,14 @@
         "submitTask":"submitTask",
         "getFeedAttributes":"getFeedAttributes"
       }
+    },
+    "channel": {
+      "custom": {
+        "attributeService": {
+          "root":"/cms/channel/custom_prop/",
+          "init": "init"
+        }
+      }
     }
   }
 }

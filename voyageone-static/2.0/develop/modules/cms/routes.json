@@ -104,7 +104,7 @@
     "controllerUrl": "modules/cms/views/channel/common/attribute.ctl"
   },
   "channel_custom_attribute": {
-    "hash": "/channel/custom",
+    "hash": "/channel/custom/:catPath",
     "templateUrl": "views/channel/custom/attribute.tpl.html",
     "controllerUrl": "modules/cms/views/channel/custom/attribute.ctl"
   },
