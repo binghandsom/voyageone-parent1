@@ -122,7 +122,8 @@
         "root": "/cms/task/beat",
         "create": "create",
         "page": "page",
-        "import": "import"
+        "import": "import",
+        "download": "download"
       },
       "taskPriceService" : {
         "root": "/cms/task/price",

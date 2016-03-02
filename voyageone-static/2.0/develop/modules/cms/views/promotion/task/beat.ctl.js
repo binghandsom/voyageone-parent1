@@ -9,7 +9,7 @@ define([
 
         function TaskBeatController($routeParams, taskBeatService, cActions, FileUploader) {
             var urls = cActions.cms.task.taskBeatService;
-            
+
             this.taskBeatService = taskBeatService;
 
             this.task_id = $routeParams['task_id'];
@@ -23,14 +23,15 @@ define([
             this.uploader = new FileUploader({
                 url: urls.root + "/" + urls.import
             });
+            this.downloadUrl = urls.root + "/" + urls.download;
         }
 
         TaskBeatController.prototype = {
-            init: function() {
+            init: function () {
                 this.getData();
             },
 
-            importBeat: function() {
+            importBeat: function () {
                 var ttt = this;
                 var uploadQueue = ttt.uploader.queue;
                 var uploadItem = uploadQueue[uploadQueue.length - 1];
@@ -38,7 +39,7 @@ define([
                     alert('没选择文件');
                     return;
                 }
-                uploadItem.onSuccess = function(res) {
+                uploadItem.onSuccess = function (res) {
                     alert(res.message || '上传成功');
                     if (res.data) {
                         ttt.data = res.data.list;
@@ -65,6 +66,11 @@ define([
                     ttt.data = res.data.list;
                     ttt.pageOption.total = res.data.total;
                 })
+            },
+
+            download: function () {
+                var ttt = this;
+                $.download.post(ttt.downloadUrl, {task_id: ttt.task_id});
             }
         };
 

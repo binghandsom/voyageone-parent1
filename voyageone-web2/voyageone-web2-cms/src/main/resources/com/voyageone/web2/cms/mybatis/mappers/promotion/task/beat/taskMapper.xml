@@ -82,18 +82,39 @@
         </association>
     </resultMap>
 
-    <select id="cms_bt_tasks_selectById" resultType="com.voyageone.web2.cms.model.CmsBtTaskModel">
+    <select id="cms_bt_tasks_selectByIdWithPromotion" resultMap="taskWithPromotion">
         SELECT
             task_id,
             task_name,
             task_type,
-            promotion_id,
+            t.promotion_id,
             config,
-            created,
-            creater,
-            modified,
-            modifier
-        FROM voyageone_cms2.cms_bt_tasks
+            t.created,
+            t.creater,
+            t.modified,
+            t.modifier,
+            channel_id,
+            cart_id,
+            promotion_status,
+            promotion_name,
+            pre_sale_end,
+            pre_sale_start,
+            pre_period_start,
+            pre_period_end,
+            activity_start,
+            activity_end,
+            tejiabao_id,
+            promotion_type,
+            ref_tag_id,
+            is_active,
+            is_all_promotion,
+            p.created p_created,
+            p.creater p_creater,
+            p.modified p_modified,
+            p.modifier p_modifier
+        FROM voyageone_cms2.cms_bt_tasks t
+            JOIN voyageone_cms2.cms_bt_promotion p
+                ON t.promotion_id = p.promotion_id
         WHERE task_id = #{task_id}
     </select>
 

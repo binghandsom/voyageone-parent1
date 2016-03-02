@@ -30,8 +30,8 @@ public class CmsBtTaskDao extends WebBaseDao {
         return update("cms_bt_tasks_update", model);
     }
 
-    public CmsBtTaskModel selectById(int task_id) {
-        return selectOne("cms_bt_tasks_selectById", parameters("task_id", task_id));
+    public CmsBtTaskModel selectByIdWithPromotion(int task_id) {
+        return selectOne("cms_bt_tasks_selectByIdWithPromotion", parameters("task_id", task_id));
     }
 
     public List<CmsBtTaskModel> selectByName(int promotion_id, String task_name, int task_type) {

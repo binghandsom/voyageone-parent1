@@ -26,8 +26,8 @@ public class CmsTaskService extends BaseAppService {
         return taskDao.selectTaskWithPromotionByChannel(user.getSelChannelId());
     }
 
-    public CmsBtTaskModel getTask(int task_id) {
+    public CmsBtTaskModel getTaskWithPromotion(int task_id) {
 
-        return taskDao.selectById(task_id);
+        return taskDao.selectByIdWithPromotion(task_id);
     }
 }

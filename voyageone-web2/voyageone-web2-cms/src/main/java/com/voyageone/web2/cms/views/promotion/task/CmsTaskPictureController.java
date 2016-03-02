@@ -6,7 +6,9 @@ import com.voyageone.web2.cms.CmsUrlConstants.PROMOTION.TASK.BEAT;
 import com.voyageone.web2.cms.bean.beat.ReqParam;
 import com.voyageone.web2.cms.bean.beat.TaskBean;
 import com.voyageone.web2.cms.model.CmsBtBeatInfoModel;
+import com.voyageone.web2.cms.model.CmsBtTaskModel;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,6 +28,9 @@ public class CmsTaskPictureController extends BaseController {
 
     @Autowired
     private CmsTaskPictureService taskPictureService;
+
+    @Autowired
+    private CmsTaskService taskService;
 
     @RequestMapping(BEAT.CREATE)
     public AjaxResponse create(@RequestBody TaskBean taskBean) {
@@ -52,5 +57,13 @@ public class CmsTaskPictureController extends BaseController {
         map.put("list", beatInfoModels);
         map.put("total", total);
         return success(map);
+    }
+
+    @RequestMapping(BEAT.DOWNLOAD)
+    public ResponseEntity<byte[]> downloadBeat(@RequestParam int task_id) {
+        CmsBtTaskModel task = taskService.getTaskWithPromotion(task_id);
+        String filename = String.format("%s-%s.xls", task.getPromotion().getPromotionName(), task.getTask_name());
+        return genResponseEntityFromBytes(filename,
+                taskPictureService.downloadBeatInfo(task_id));
     }
 }

@@ -82,6 +82,8 @@ public interface CmsUrlConstants {
                 String PAGE = "page";
 
                 String IMPORT = "import";
+
+                String DOWNLOAD = "download";
             }
 
             interface PRICE {

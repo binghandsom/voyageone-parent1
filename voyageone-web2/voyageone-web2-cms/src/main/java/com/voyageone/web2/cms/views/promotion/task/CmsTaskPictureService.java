@@ -156,7 +156,7 @@ public class CmsTaskPictureService extends BaseAppService {
 
                 CmsBtBeatInfoModel model = beatInfoModels.get(i);
 
-                Row row = row(sheet, i + 1);
+                Row row = row(sheet, i);
 
                 cell(row, 0, null).setCellValue(model.getNum_iid());
 
