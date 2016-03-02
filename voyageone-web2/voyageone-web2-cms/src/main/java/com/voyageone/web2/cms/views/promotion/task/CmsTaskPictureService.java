@@ -139,7 +139,7 @@ public class CmsTaskPictureService extends BaseAppService {
 
         beatInfoDao.updateNoCodeMessage(task_id, "该 Code 不在 Promotion 内");
 
-        return beatInfoDao.selectListByTask(task_id, 0, size);
+        return getAllBeat(task_id, 0, size);
     }
 
     public byte[] downloadBeatInfo(int task_id) {
