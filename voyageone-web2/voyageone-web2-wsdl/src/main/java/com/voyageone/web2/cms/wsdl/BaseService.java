@@ -87,8 +87,15 @@ public abstract class BaseService {
         if (StringUtils.isEmpty(request.getSorts())) {
             return null;
         }
-        String sortsTmp = request.getSorts().replaceAll("[\\s]*;[\\s]*", ", ");
-        return "{ " + sortsTmp + " }";
+        String sortsTmp = request.getSorts().replaceAll("[\\s]*;[\\s]*", ", ").trim();
+
+        String result = "";
+        if (sortsTmp.startsWith("{") && sortsTmp.endsWith("}")) {
+            result = sortsTmp;
+        } else {
+            result = "{ " + sortsTmp + " }";
+        }
+        return result;
     }
 
     /**
