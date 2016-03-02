@@ -41,18 +41,20 @@ public class CmsTaskPictureController extends BaseController {
     @RequestMapping(BEAT.PAGE)
     public AjaxResponse page(@RequestBody ReqParam param) {
         List<CmsBtBeatInfoModel> beatInfoModels =
-                taskPictureService.getAllBeat(param.getTask_id(), param.getOffset(), param.getSize());
-        int total = taskPictureService.getAllBeatCount(param.getTask_id());
+                taskPictureService.getAllBeat(param.getTask_id(), param.getFlag(), param.getOffset(), param.getSize());
+        int total = taskPictureService.getAllBeatCount(param.getTask_id(), param.getFlag());
+        List<Map> summary = taskPictureService.getBeatSummary(param.getTask_id());
         Map<String, Object> map = new HashMap<>();
         map.put("list", beatInfoModels);
         map.put("total", total);
+        map.put("summary", summary);
         return success(map);
     }
 
     @RequestMapping(BEAT.IMPORT)
     public AjaxResponse importBeat(@RequestParam int task_id, @RequestParam int size, @RequestParam MultipartFile file) {
         List<CmsBtBeatInfoModel> beatInfoModels = taskPictureService.importBeatInfo(task_id, size, file, getUser());
-        int total = taskPictureService.getAllBeatCount(task_id);
+        int total = taskPictureService.getAllBeatCount(task_id, null);
         Map<String, Object> map = new HashMap<>();
         map.put("list", beatInfoModels);
         map.put("total", total);

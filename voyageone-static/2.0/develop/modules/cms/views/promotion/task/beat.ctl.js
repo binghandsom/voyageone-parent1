@@ -32,6 +32,7 @@ define([
                 url: urls.root + "/" + urls.import
             });
             this.downloadUrl = urls.root + "/" + urls.download;
+            this.summary = {};
         }
 
         TaskBeatController.prototype = {
@@ -63,17 +64,20 @@ define([
                 uploadItem.upload();
             },
 
-            getData: function () {
+            getData: function (flag) {
                 var ttt = this;
                 var po = ttt.pageOption;
+                if (flag) po.curr = 1;
                 var offset = (po.curr - 1) * po.size;
                 ttt.taskBeatService.page({
                     task_id: ttt.task_id,
+                    flag: flag,
                     offset: offset,
                     size: ttt.pageOption.size
                 }).then(function (res) {
                     ttt.data = res.data.list;
                     ttt.pageOption.total = res.data.total;
+                    ttt.summary = res.data.summary;
                 })
             },
 

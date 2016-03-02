@@ -25,6 +25,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static com.voyageone.common.util.ExcelUtils.getNum;
 import static com.voyageone.common.util.ExcelUtils.getString;
@@ -83,14 +84,21 @@ public class CmsTaskPictureService extends BaseAppService {
         return new TaskBean(taskModels.get(0));
     }
 
-    public List<CmsBtBeatInfoModel> getAllBeat(int task_id, int offset, int size) {
+    public List<CmsBtBeatInfoModel> getAllBeat(int task_id, BeatFlag flag, int offset, int size) {
 
-        return beatInfoDao.selectListByTask(task_id, offset, size);
+        return beatInfoDao.selectListByTask(task_id, flag, offset, size);
     }
 
-    public int getAllBeatCount(int task_id) {
+    public int getAllBeatCount(int task_id, BeatFlag flag) {
 
-        return beatInfoDao.selectListByTaskCount(task_id);
+        return beatInfoDao.selectListByTaskCount(task_id, flag);
+    }
+
+    public List<Map> getBeatSummary(int task_id) {
+        List<Map> result = beatInfoDao.selectSummary(task_id);
+        for (Map map : result)
+            map.put("flag", BeatFlag.valueOf((Integer) map.get("flag")));
+        return result;
     }
 
     public List<CmsBtBeatInfoModel> importBeatInfo(int task_id, int size, MultipartFile file, UserSessionBean user) {
@@ -139,7 +147,7 @@ public class CmsTaskPictureService extends BaseAppService {
 
         beatInfoDao.updateNoCodeMessage(task_id, "该 Code 不在 Promotion 内");
 
-        return getAllBeat(task_id, 0, size);
+        return getAllBeat(task_id, null, 0, size);
     }
 
     public byte[] downloadBeatInfo(int task_id) {

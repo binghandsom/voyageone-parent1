@@ -7,6 +7,7 @@ import com.voyageone.web2.cms.model.CmsBtBeatInfoModel;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by jonasvlag on 16/2/29.
@@ -40,16 +41,18 @@ public class CmsBtBeatInfoDao extends WebBaseDao {
                 "task_id", task_id));
     }
 
-    public List<CmsBtBeatInfoModel> selectListByTask(int task_id, int offset, int size) {
+    public List<CmsBtBeatInfoModel> selectListByTask(int task_id, BeatFlag flag, int offset, int size) {
         return selectList("cms_bt_beat_info_selectListByTask_page", parameters(
                 "task_id", task_id,
+                "flag", flag,
                 "offset", offset,
                 "size", size));
     }
 
-    public int selectListByTaskCount(int task_id) {
+    public int selectListByTaskCount(int task_id, BeatFlag flag) {
         return selectOne("cms_bt_beat_info_selectListByTask_count", parameters(
-                "task_id", task_id));
+                "task_id", task_id,
+                "flag", flag));
     }
 
     public int deleteByTask(int task_id) {
@@ -73,5 +76,9 @@ public class CmsBtBeatInfoDao extends WebBaseDao {
                 "task_id", task_id,
                 "modifier", userName,
                 "syn_flag", flag.getFlag()));
+    }
+
+    public List<Map> selectSummary(int task_id) {
+        return selectList("cms_bt_beat_info_selectSummary", parameters("task_id", task_id));
     }
 }
