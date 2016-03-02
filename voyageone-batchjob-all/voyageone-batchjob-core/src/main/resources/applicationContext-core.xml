@@ -13,19 +13,8 @@
 	<context:property-placeholder
 			location="classpath*:config/job/**/config.properties" ignore-unresolvable="true" />
 
-	<!-- 数据源配置 -->
-	<!--<import resource="file:C:/usr/web/spring-config/datasource-config.xml" />-->
-	<import resource="file:/usr/web/spring-config/datasource-cms2-config.xml" />
-	<!--<import resource="datasource-config-mongo-sample.xml" />-->
-	<!--<import resource="file:C:/usr/web/spring-config/datasource-config-mongo.xml" />-->
-	<import resource="file:/usr/web/spring-config/datasource-config-mongo.xml" />
-
-	<!-- SDK Client Config -->
-	<import resource="file:/usr/web/spring-config/sdk-client-config-sample.xml" />
-	<!--<import resource="sdk-client-config-sample.xml" />-->
-
-	<!-- MQ Config -->
-	<import resource="file:c:/usr/web/spring-config/mq-config-sample.xml" />
+	<!-- 共通相关配置 -->
+	<import resource="classpath*:voyageone-config.xml" />
 
 	<!-- 定时任务 -->
 	<import resource="classpath*:config/job/**/*-config.xml" />
