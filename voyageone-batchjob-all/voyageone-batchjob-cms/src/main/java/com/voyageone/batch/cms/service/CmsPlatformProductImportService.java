@@ -1,11 +1,13 @@
 package com.voyageone.batch.cms.service;
 
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.batch.base.BaseTaskService;
 import com.voyageone.batch.cms.bean.TmpOldCmsDataBean;
 import com.voyageone.batch.cms.dao.TmpOldCmsDataDao;
 import com.voyageone.batch.core.modelbean.TaskControlBean;
 import com.voyageone.cms.CmsConstants;
 import com.voyageone.cms.service.dao.mongodb.CmsMtCategorySchemaDao;
+import com.voyageone.cms.service.dao.mongodb.CmsMtCommonSchemaDao;
 import com.voyageone.cms.service.model.*;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.components.tmall.TbProductService;
@@ -40,11 +42,13 @@ public class CmsPlatformProductImportService extends BaseTaskService {
     private TbProductService tbProductService;
 
     @Autowired
-    CmsMtCategorySchemaDao cmsMtCategorySchemaDao; // DAO: 主类目属性结构
+    private CmsMtCategorySchemaDao cmsMtCategorySchemaDao; // DAO: 主类目属性结构
     @Autowired
-    TmpOldCmsDataDao tmpOldCmsDataDao; // DAO: 旧cms数据
+    private CmsMtCommonSchemaDao cmsMtCommonSchemaDao; // DAO: 共通属性结构
     @Autowired
-    protected VoApiDefaultClient voApiClient; // VoyageOne共通API
+    private TmpOldCmsDataDao tmpOldCmsDataDao; // DAO: 旧cms数据
+    @Autowired
+    private VoApiDefaultClient voApiClient; // VoyageOne共通API
 
     @Override
     public SubSystem getSubSystem() {
@@ -53,7 +57,7 @@ public class CmsPlatformProductImportService extends BaseTaskService {
 
     @Override
     public String getTaskName() {
-        return "CmsPlatformProductJob";
+        return "CmsPlatformProductImportService";
     }
 
     @Override
@@ -69,13 +73,6 @@ public class CmsPlatformProductImportService extends BaseTaskService {
         List<TmpOldCmsDataBean> oldCmsDataBeenList = tmpOldCmsDataDao.getList();
 
         // 遍历, 并设置主数据
-        // tom 20160129 测试代码, 正式发布时要删除的 START
-//        String code = "SGM8057AMPE.-7";
-//        String model = "SGM8057AMPE.-7";
-//        Long productId = 423802042L;
-//        String numIid = "524395554281";
-//        String categoryPath = "饰品/流行首饰/时尚饰品新>手镯";
-        // tom 20160129 测试代码, 正式发布时要删除的 END
         for (TmpOldCmsDataBean oldCmsDataBean : oldCmsDataBeenList) {
             doSetProduct(oldCmsDataBean);
         }
@@ -97,13 +94,21 @@ public class CmsPlatformProductImportService extends BaseTaskService {
 //        shopBean.setOrder_channel_id("010");
         // tom 20160129 测试代码, 正式发布时要删除的 END
 
+        // 属性名字列表
+        List<String> schemaFieldList = new ArrayList<>();
+
+        // 获取共通schema数据 ==========================================================================================
+        CmsMtComSchemaModel comSchemaModel = getComSchemaModel();
+        for (Field field : comSchemaModel.getFields()) {
+            schemaFieldList.add(field.getId());
+        }
+
         // 获取主数据当前类目的schema数据 ==========================================================================================
         CmsMtCategorySchemaModel schemaModel = cmsMtCategorySchemaDao.getMasterSchemaModelByCatId(MD5.getMD5(oldCmsDataBean.getCategory_path()));
         if (schemaModel == null) {
             // 指定的category在主数据里没有的话, 跳过
             return;
         }
-        List<String> schemaFieldList = new ArrayList<>();
         for (Field field : schemaModel.getFields()) {
             schemaFieldList.add(field.getId());
         }
@@ -126,6 +131,26 @@ public class CmsPlatformProductImportService extends BaseTaskService {
         // 保存到product表 ==========================================================================================
         update2ProductFields(oldCmsDataBean, fieldMap, cmsProduct, schemaFieldList);
 
+    }
+
+    /**
+     * 获取common schema.
+     * @return
+     */
+    private CmsMtComSchemaModel getComSchemaModel() {
+        CmsMtComSchemaModel comSchemaModel = cmsMtCommonSchemaDao.getComSchema();
+
+        if (comSchemaModel == null){
+
+            //common schema 不存在时异常处理.
+            String errMsg = "共通schema（cms_mt_common_schema）的信息不存在！";
+
+            logger.error(errMsg);
+
+            throw new BusinessException(errMsg);
+        }
+
+        return comSchemaModel;
     }
 
     private CmsBtProductModel getCmsProduct(String channelId, String code) {
