@@ -85,12 +85,12 @@
 		<div class="category_drag_main">
 			<!--<p class="text-center text-vo font-bold">一级类目</p>-->
 			<div class="form-inline m-l-xs">
-				<input type="text" placeholder="快速检索" class="form-control" style="width:94%">
+				<input type="text" placeholder="快速检索" class="form-control" style="width:94%" ng-model="searchUnval">
 				<button type="submit" class="btn btn-vo btn-xxs"><i class="fa fa-search"></i></button>
 			</div>
 			<div class="category_drag_list_qh">
 				<ul>
-					<li ng-repeat="unvalData in vm.unvalList | filter:{prop_original == 'status'}">{{unvalData.prop_original}} <span class="pull-right text-muted" style="" ng-click="addVal($index);"><i class="fa fa-fw fa-angle-right text-vo"></i></span></li>
+					<li ng-repeat="unvalData in vm.unvalList | filter:searchUnval">{{unvalData.prop_original}} <span class="pull-right text-muted" style="" ng-click="addVal($index);"><i class="fa fa-fw fa-angle-right text-vo"></i></span></li>
 				</ul>
 			</div>
 		</div>
@@ -101,11 +101,11 @@
 		</div>-->
 		<div class="category_drag col-sm-6">
 			<div class="form-inline m-l-xs m-t-xs">
-				<input type="text" placeholder="快速检索" class="form-control" style="width:94%">
+				<input type="text" placeholder="快速检索" class="form-control" style="width:94%" ng-model="searchVal">
 				<button type="submit" class="btn btn-vo btn-xxs"><i class="fa fa-search"></i></button>
 			</div>
 			<div class="category_drag_list_qh">
-				<div class="col-sm-12" ng-repeat="valData in vm.valList">
+				<div class="col-sm-12" ng-repeat="valData in vm.valList | filter:searchVal">
 					<div class="col-sm-2 form-group text-left m-t-xs">
 						<label class="text-left">{{valData.prop_original}}</label>
 					</div>
@@ -121,8 +121,12 @@
 		</div>
 		<div class="col-sm-12 m-t-md text-center">
 			<!--<a href="#/channel/custom/value" target="_blank">-->
-				<button class="btn btn-success btn-sm" ng-click="save();"><i class="fa fa-mortar-board (alias) icon"></i>&nbsp;翻译自定义属性</button>
+				<button class="btn btn-success btn-sm" ng-click="save();"><i class="fa fa-mortar-board (alias) icon"></i>&nbsp;保存</button>
+
 			<!--</a>-->
+			<a href="#/channel/custom/value" target="_blank">
+				<button class="btn btn-success btn-sm">翻译自定义属性</button>
+			</a>
 		</div>
 
 			<!--<div class="category_drags">
