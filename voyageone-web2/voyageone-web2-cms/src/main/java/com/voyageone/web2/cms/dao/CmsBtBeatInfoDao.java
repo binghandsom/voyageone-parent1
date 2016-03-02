@@ -84,4 +84,23 @@ public class CmsBtBeatInfoDao extends WebBaseDao {
     public List<Map> selectSummary(int task_id) {
         return selectList("cms_bt_beat_info_selectSummary", parameters("task_id", task_id));
     }
+
+    public List<CmsBtBeatInfoModel> selectListByNumiidInOtherTask(int promotion_id, int task_id, String num_iid) {
+        return selectList("cms_bt_beat_info_selectListByNumiidInOtherTask", parameters(
+                "promotion_id", promotion_id,
+                "task_id", task_id,
+                "num_iid", num_iid
+        ));
+    }
+
+    public CmsBtBeatInfoModel selectOneByNumiid(int task_id, String num_iid) {
+        return selectOne("cms_bt_beat_info_selectOneByNumiid", parameters(
+                "task_id", task_id,
+                "num_iid", num_iid
+        ));
+    }
+
+    public Integer updateCode(CmsBtBeatInfoModel model) {
+        return update("cms_bt_beat_info_updateCode", model);
+    }
 }

@@ -250,13 +250,25 @@ public class CmsTaskPictureService extends BaseAppService {
         return response.getCodeList();
     }
 
+    public List<CmsBtBeatInfoModel> addCheck(int task_id, String num_iid) {
+        CmsBtTaskModel taskModel = taskDao.selectByIdWithPromotion(task_id);
+        if (taskModel == null)
+            throw new BusinessException("没找到 Promotion");
+        return beatInfoDao.selectListByNumiidInOtherTask(taskModel.getPromotion_id(), task_id, num_iid);
+    }
+
     public Integer add(int task_id, String num_iid, String code, UserSessionBean user) {
         CmsBtTaskModel taskModel = taskDao.selectByIdWithPromotion(task_id);
         if (taskModel == null) return null;
-
-        // TODO 检查是否已经存在, 因为在获取 code 和 numiid 时, 没有过滤掉这些
-
-        CmsBtBeatInfoModel model = new CmsBtBeatInfoModel();
+        CmsBtBeatInfoModel model = beatInfoDao.selectOneByNumiid(task_id, num_iid);
+        if (model != null) {
+            if (model.getProduct_code().equals(code))
+                return 0;
+            model.setProduct_code(code);
+            model.setModifier(user.getUserName());
+            return beatInfoDao.updateCode(model);
+        }
+        model = new CmsBtBeatInfoModel();
         model.setNum_iid(Long.valueOf(num_iid));
         model.setProduct_code(code);
         model.setBeatFlag(BeatFlag.STOP);

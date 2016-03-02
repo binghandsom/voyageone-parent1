@@ -3,6 +3,7 @@ package com.voyageone.web2.cms.model;
 import com.voyageone.cms.enums.BeatFlag;
 import com.voyageone.common.Constants;
 import com.voyageone.web2.sdk.api.domain.CmsBtPromotionCodeModel;
+import com.voyageone.web2.sdk.api.domain.CmsBtPromotionModel;
 
 /**
  * Created by jonasvlag on 16/2/29.
@@ -33,6 +34,8 @@ public class CmsBtBeatInfoModel {
     private String modifier;
 
     private CmsBtPromotionCodeModel promotion_code;
+
+    private CmsBtPromotionModel promotion;
 
     public int getId() {
         return id;
@@ -128,5 +131,13 @@ public class CmsBtBeatInfoModel {
 
     public void setPromotion_code(CmsBtPromotionCodeModel promotion_code) {
         this.promotion_code = promotion_code;
+    }
+
+    public CmsBtPromotionModel getPromotion() {
+        return promotion;
+    }
+
+    public void setPromotion(CmsBtPromotionModel promotion) {
+        this.promotion = promotion;
     }
 }

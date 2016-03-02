@@ -127,6 +127,7 @@
         "control": "control",
         "addNumiid": "addNumiid",
         "addCode": "addCode",
+        "addCheck": "addCheck",
         "add": "add"
       },
       "taskPriceService" : {

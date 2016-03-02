@@ -92,6 +92,8 @@ public interface CmsUrlConstants {
                 String ADD_CODE = "addCode";
 
                 String ADD_NUMIID = "addNumiid";
+
+                String ADD_CHECK = "addCheck";
             }
 
             interface PRICE {
