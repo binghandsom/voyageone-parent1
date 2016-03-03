@@ -81,7 +81,7 @@
 	</div><!-- .accordion -->
 	<div class="box">
 		<div class="box-body">
-			<table class="table table-hover-new text-center">
+			<table class="table table-hover-new text-center" ng-controller="popupCtrl">
 				<thead>
 				<tr>
 					<th class="text-center" translate="TXT_SEQ"></th>
@@ -91,6 +91,7 @@
 					<th class="text-left" translate="TXT_PROMOTION_TIME"></th>
 					<th class="text-left" translate="TXT_PREHEATING_TIME"></th>
 					<th class="text-left" translate="TXT_PRE_SALE_TIME"></th>
+					<th class="text-center">操作</th>
 					<th class="text-center" translate="TXT_ACTION"></th>
 				</tr>
 				</thead>
@@ -103,6 +104,7 @@
 					<td class="text-left">{{promotion.activityStart}}&nbsp;~&nbsp;{{promotion.activityEnd}}</td>
 					<td class="text-left">{{promotion.prePeriodStart}}&nbsp;~&nbsp;{{promotion.prePeriodEnd}}</td>
 					<td class="text-left">{{promotion.preSaleStart}}&nbsp;~&nbsp;{{promotion.preSaleEnd}}</td>
+					<td class="text-center"><button class="btn btn-default btn-xs" ng-click="openTask('md')"><i class="fa fa-plus"></i> 新建任务</button></td>
 					<td class="text-center" ng-controller="popupCtrl"><button title="{{'BTN_EDIT' | translate}}" class="btn btn-success btn-xs" ng-click="openPromotion('md',vm.cartList,promotion)"><i class="fa fa-pencil"></i></button>
 						<button title="{{'BTN_DELETE' | translate}}" class="btn btn-danger btn-xs"  ng-click="del(promotion)"><i class="fa  fa-trash-o"></i></button>
 						<button title="{{'BTN_DOWNLOAD' | translate}}" class="btn btn-dangerdel btn-xs" ng-click="openOtherDownload(promotion.promotionId)"><i class="fa fa-cloud-download"></i></button>
@@ -114,11 +116,3 @@
 		</div><!-- /.box-body -->
 	</div>
 </div><!-- end .wrapper-md -->
-
-
-
-
-
-
-
-

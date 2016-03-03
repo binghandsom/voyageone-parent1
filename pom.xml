@@ -23,6 +23,7 @@
         <module>voyageone-components</module>
         <module>voyageone-md-schema</module>
         <module>voyageone-task2</module>
+        <module>voyageone-config</module>
     </modules>
 
     <repositories>
@@ -90,6 +91,7 @@
         <voyageone.md.schema.version>2.0.0-SNAPSHOT</voyageone.md.schema.version>
         <voyageone.web2.sdk.version>2.0.0-SNAPSHOT</voyageone.web2.sdk.version>
         <voyageone.web2.wsdl.version>2.0.0-SNAPSHOT</voyageone.web2.wsdl.version>
+        <voyageone.config.version>2.0.0-SNAPSHOT</voyageone.config.version>
     </properties>
 
     <dependencyManagement>
@@ -216,6 +218,17 @@
                 <artifactId>log4j</artifactId>
                 <version>1.2.17</version>
             </dependency>
+            <dependency>
+                <groupId>org.apache.flume.flume-ng-clients</groupId>
+                <artifactId>flume-ng-log4jappender</artifactId>
+                <version>1.6.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.flume</groupId>
+                <artifactId>flume-ng-core</artifactId>
+                <version>1.6.0</version>
+            </dependency>
+
 
             <!-- mybatis -->
             <dependency>
@@ -270,11 +283,11 @@
                 <artifactId>jackson-databind</artifactId>
                 <version>2.5.3</version>
             </dependency>
-            <dependency>
-                <groupId>org.codehaus.jackson</groupId>
-                <artifactId>jackson-mapper-asl</artifactId>
-                <version>1.9.13</version>
-            </dependency>
+            <!--<dependency>-->
+                <!--<groupId>org.codehaus.jackson</groupId>-->
+                <!--<artifactId>jackson-mapper-asl</artifactId>-->
+                <!--<version>1.9.13</version>-->
+            <!--</dependency>-->
 
             <!-- mail -->
             <dependency>
@@ -474,6 +487,12 @@
                 <version>20090211</version>
             </dependency>
 
+            <!-- rabbitmq -->
+            <dependency>
+                <groupId>org.springframework.amqp</groupId>
+                <artifactId>spring-rabbit</artifactId>
+                <version>1.5.4.RELEASE</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

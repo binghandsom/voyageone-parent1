@@ -11,9 +11,8 @@
     <!-- 类扫描路径配置 -->
     <context:component-scan base-package="com.voyageone"/>
 
-    <!-- DAO相关配置 -->
-    <import resource="test-context-datasource.xml"/>
-    <import resource="test-context-mongo.xml"/>
+    <!-- 共通相关配置 -->
+    <import resource="classpath*:voyageone-config.xml" />
 
     <!-- 初始化处理 -->
     <bean class="com.voyageone.common.configs.Initializer" init-method="init"/>
