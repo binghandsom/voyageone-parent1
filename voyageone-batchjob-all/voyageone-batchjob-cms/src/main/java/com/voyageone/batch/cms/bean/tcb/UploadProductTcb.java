@@ -3,7 +3,7 @@ package com.voyageone.batch.cms.bean.tcb;
 import com.voyageone.batch.cms.bean.PlatformUploadRunState;
 import com.voyageone.batch.cms.bean.UploadImageResult;
 import com.voyageone.batch.cms.bean.WorkLoadBean;
-import com.voyageone.batch.cms.service.rule_parser.ExpressionParser;
+import com.voyageone.batch.cms.service.putaway.rule_parser.ExpressionParser;
 
 /**
  * Created by Leo on 15-6-9.
