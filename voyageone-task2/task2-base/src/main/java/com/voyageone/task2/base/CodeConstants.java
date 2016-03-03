@@ -1,4 +1,4 @@
-package com.voyageone.task2.core;
+package com.voyageone.task2.base;
 
 
 public interface CodeConstants {

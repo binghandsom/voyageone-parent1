@@ -1,4 +1,4 @@
-package com.voyageone.task2.core.Enums;
+package com.voyageone.task2.base.Enums;
 
 /**
  * Created by Jack on 4/19/2015.

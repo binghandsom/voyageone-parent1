@@ -1,7 +1,7 @@
-package com.voyageone.task2.core.util;
+package com.voyageone.task2.base.util;
 
-import com.voyageone.task2.core.Enums.TaskControlEnums;
-import com.voyageone.task2.core.modelbean.TaskControlBean;
+import com.voyageone.task2.base.Enums.TaskControlEnums;
+import com.voyageone.task2.base.modelbean.TaskControlBean;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

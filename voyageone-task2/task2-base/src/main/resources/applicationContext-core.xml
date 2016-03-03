@@ -25,6 +25,6 @@
 	<!-- 初始化处理 -->
 	<bean id="init" class="com.voyageone.common.configs.Initializer" init-method="init"/>
 
-	<bean class="com.voyageone.task2.core.util.SetPriceUtils"/>
+	<bean class="com.voyageone.task2.base.util.SetPriceUtils"/>
 
 </beans>

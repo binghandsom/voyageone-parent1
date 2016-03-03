@@ -1,4 +1,4 @@
-package com.voyageone.task2.core.modelbean;
+package com.voyageone.task2.base.modelbean;
 
 /**
  * Created by fred on 2015/8/10.

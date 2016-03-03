@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.voyageone.task2.core.mapper.MonitorMapper">
+<mapper namespace="com.voyageone.task2.base.mapper.MonitorMapper">
 
-	<select id="getSlaveStatus" resultType="com.voyageone.task2.core.modelbean.MonitorBean">
+	<select id="getSlaveStatus" resultType="com.voyageone.task2.base.modelbean.MonitorBean">
 		show slave STATUS
 	</select>
 

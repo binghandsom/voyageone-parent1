@@ -1,4 +1,4 @@
-package com.voyageone.task2.core.modelbean;
+package com.voyageone.task2.base.modelbean;
 
 public class ExceptionLogBean {
 	/**

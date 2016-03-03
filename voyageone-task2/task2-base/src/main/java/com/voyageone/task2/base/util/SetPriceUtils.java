@@ -1,7 +1,7 @@
-package com.voyageone.task2.core.util;
+package com.voyageone.task2.base.util;
 
-import com.voyageone.task2.core.dao.SetPriceDao;
-import com.voyageone.task2.core.modelbean.SetPriceBean;
+import com.voyageone.task2.base.dao.SetPriceDao;
+import com.voyageone.task2.base.modelbean.SetPriceBean;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;

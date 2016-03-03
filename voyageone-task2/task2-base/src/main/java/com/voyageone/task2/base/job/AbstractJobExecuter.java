@@ -1,12 +1,12 @@
-package com.voyageone.task2.core.job;
+package com.voyageone.task2.base.job;
 
 import java.util.List;
 
 import javax.mail.MessagingException;
 
-import com.voyageone.task2.core.dao.TaskDao;
-import com.voyageone.task2.core.modelbean.TaskControlBean;
-import com.voyageone.task2.core.util.TaskControlUtils;
+import com.voyageone.task2.base.dao.TaskDao;
+import com.voyageone.task2.base.modelbean.TaskControlBean;
+import com.voyageone.task2.base.util.TaskControlUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;

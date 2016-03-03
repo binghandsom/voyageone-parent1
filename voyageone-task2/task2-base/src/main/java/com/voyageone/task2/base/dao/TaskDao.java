@@ -1,8 +1,8 @@
-package com.voyageone.task2.core.dao;
+package com.voyageone.task2.base.dao;
 
 import com.voyageone.base.dao.BaseDao;
-import com.voyageone.task2.core.modelbean.TaskControlBean;
-import com.voyageone.task2.core.modelbean.TaskHistoryBean;
+import com.voyageone.task2.base.modelbean.TaskControlBean;
+import com.voyageone.task2.base.modelbean.TaskHistoryBean;
 import com.voyageone.common.Constants;
 import com.voyageone.common.util.DateTimeUtil;
 import org.springframework.stereotype.Repository;

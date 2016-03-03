@@ -1,7 +1,7 @@
-package com.voyageone.task2.core.dao;
+package com.voyageone.task2.base.dao;
 
 import com.voyageone.base.dao.BaseDao;
-import com.voyageone.task2.core.modelbean.SetPriceBean;
+import com.voyageone.task2.base.modelbean.SetPriceBean;
 import com.voyageone.common.Constants;
 import org.springframework.stereotype.Repository;
 

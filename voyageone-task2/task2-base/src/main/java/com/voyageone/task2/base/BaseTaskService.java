@@ -2,10 +2,10 @@ package com.voyageone.task2.base;
 
 import com.google.gson.Gson;
 import com.voyageone.base.exception.BusinessException;
-import com.voyageone.task2.core.Enums.TaskControlEnums;
-import com.voyageone.task2.core.dao.TaskDao;
-import com.voyageone.task2.core.modelbean.TaskControlBean;
-import com.voyageone.task2.core.util.TaskControlUtils;
+import com.voyageone.task2.base.Enums.TaskControlEnums;
+import com.voyageone.task2.base.dao.TaskDao;
+import com.voyageone.task2.base.modelbean.TaskControlBean;
+import com.voyageone.task2.base.util.TaskControlUtils;
 import com.voyageone.common.Constants;
 import com.voyageone.common.components.issueLog.IssueLog;
 import com.voyageone.common.components.issueLog.enums.ErrorType;

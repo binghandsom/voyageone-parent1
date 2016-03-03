@@ -1,4 +1,4 @@
-package com.voyageone.task2.core.job;
+package com.voyageone.task2.base.job;
 
 /**
  * Job执行接口

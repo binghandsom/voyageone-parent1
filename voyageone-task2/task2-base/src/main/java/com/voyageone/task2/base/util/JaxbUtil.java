@@ -1,4 +1,4 @@
-package com.voyageone.task2.core.util;
+package com.voyageone.task2.base.util;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;

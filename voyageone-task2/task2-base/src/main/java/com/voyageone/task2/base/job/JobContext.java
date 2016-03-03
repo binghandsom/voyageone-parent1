@@ -1,4 +1,4 @@
-package com.voyageone.task2.core.job;
+package com.voyageone.task2.base.job;
 
 import java.util.HashMap;
 

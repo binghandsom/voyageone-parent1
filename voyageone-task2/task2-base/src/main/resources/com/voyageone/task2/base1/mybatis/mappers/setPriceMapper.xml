@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.voyageone.core.sql">
     <!-- 汇总价格取得（大礼包解决方案）-->
-    <select id="getVirtualPriceData" resultType="com.voyageone.task2.core.modelbean.SetPriceBean">
+    <select id="getVirtualPriceData" resultType="com.voyageone.task2.base.modelbean.SetPriceBean">
         SELECT
         orders.source_order_id,
         orders.order_date_time,
@@ -125,7 +125,7 @@
 
 
     <!-- 汇总价格取得-->
-    <select id="getPriceData" resultType="com.voyageone.task2.core.modelbean.SetPriceBean">
+    <select id="getPriceData" resultType="com.voyageone.task2.base.modelbean.SetPriceBean">
         SELECT
         orders.source_order_id,
         orders.order_date_time,
@@ -218,7 +218,7 @@
 
 
     <!-- 汇总价格取得（不包含运费，正常订单）-->
-    <select id="getPriceDataNotShipping" resultType="com.voyageone.task2.core.modelbean.SetPriceBean">
+    <select id="getPriceDataNotShipping" resultType="com.voyageone.task2.base.modelbean.SetPriceBean">
         select
         orders.source_order_id,
         orders.order_date_time,
@@ -260,7 +260,7 @@
     </select>
 
     <!-- 汇总价格取得（含运费，正常订单）-->
-    <select id="getPriceDataIncludeShipping" resultType="com.voyageone.task2.core.modelbean.SetPriceBean">
+    <select id="getPriceDataIncludeShipping" resultType="com.voyageone.task2.base.modelbean.SetPriceBean">
         select
             orders.source_order_id,
             orders.order_date_time,
@@ -307,7 +307,7 @@
     </select>
 
     <!-- 汇总价格取得（不包含运费，Cancel，Return 订单）-->
-    <select id="getPriceDataNotShippingForCancelOrReturn" resultType="com.voyageone.task2.core.modelbean.SetPriceBean">
+    <select id="getPriceDataNotShippingForCancelOrReturn" resultType="com.voyageone.task2.base.modelbean.SetPriceBean">
         select
         orders.source_order_id,
         orders.order_date_time,
@@ -359,7 +359,7 @@
     </select>
 
     <!-- 退货汇总价格取得-->
-    <select id="getReturnedPriceData" resultType="com.voyageone.task2.core.modelbean.SetPriceBean">
+    <select id="getReturnedPriceData" resultType="com.voyageone.task2.base.modelbean.SetPriceBean">
         SELECT
         orders.source_order_id,
         orders.order_date_time,
@@ -447,7 +447,7 @@
 
 
     <!-- 汇总价格取得,运费单独算-->
-    <select id="getPriceShippingData" resultType="com.voyageone.task2.core.modelbean.SetPriceBean">
+    <select id="getPriceShippingData" resultType="com.voyageone.task2.base.modelbean.SetPriceBean">
         select
         orders.source_order_id,
         orders.order_date_time,
