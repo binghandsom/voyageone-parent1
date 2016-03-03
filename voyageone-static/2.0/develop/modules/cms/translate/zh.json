@@ -192,6 +192,8 @@
   "TXT_STARTUP": "启动",
   "TXT_STOP": "停止",
   "TXT_REVERT": "还原",
+  "TXT_NUMIID_FULL": "商品的数字 ID ( num_iid )",
+  "TXT_CODE_FULL": "商品的 Code",
 
 
   "TXT_MSG_SEARCH": "检索...",

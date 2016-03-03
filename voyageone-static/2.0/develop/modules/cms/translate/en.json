@@ -192,6 +192,8 @@
   "TXT_STARTUP": "Startup",
   "TXT_STOP": "Stop",
   "TXT_REVERT": "Revert",
+  "TXT_NUMIID_FULL": "Model Platform ID",
+  "TXT_CODE_FULL": "Product Code",
 
   "TXT_MSG_SEARCH": "Search...",
   "TXT_MSG_PAGE_IS_BUILDING": "This page is building...",
