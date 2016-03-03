@@ -181,6 +181,17 @@
   "TXT_NEED_VERTICAL": "是否更新竖图",
   "TXT_VERTICAL_TEMPLATE": "竖图模板",
   "TXT_VERTICAL_REVERT_TEMPLATE": "竖图还原模板",
+  "TXT_TASK_DETAIL": "任务明细一览",
+  "TXT_IMPORT_GOOD": "导入商品",
+  "TXT_ADD_MOD_GOOD": "添加/修改 商品",
+  "TXT_DOWNLOAD_TASK_DETAIL": "下载任务明细",
+  "TXT_STARTUP_ALL": "启动所有",
+  "TXT_STOP_ALL": "停止所有",
+  "TXT_REVERT_ALL": "还原所有",
+  "TXT_SHOW_ALL": "显示所有",
+  "TXT_STARTUP": "启动",
+  "TXT_STOP": "停止",
+  "TXT_REVERT": "还原",
 
 
   "TXT_MSG_SEARCH": "检索...",

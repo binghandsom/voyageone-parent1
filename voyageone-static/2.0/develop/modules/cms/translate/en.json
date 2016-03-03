@@ -181,7 +181,17 @@
   "TXT_NEED_VERTICAL": "Update Vertical Image",
   "TXT_VERTICAL_TEMPLATE": "Vertical Template",
   "TXT_VERTICAL_REVERT_TEMPLATE": "Vertical Revert Template",
-
+  "TXT_TASK_DETAIL": "Task Detail",
+  "TXT_IMPORT_GOOD": "Import Codes",
+  "TXT_ADD_MOD_GOOD": "Add/Modify Code",
+  "TXT_DOWNLOAD_TASK_DETAIL": "Download Details",
+  "TXT_STARTUP_ALL": "Startup All !",
+  "TXT_STOP_ALL": "Stop All !",
+  "TXT_REVERT_ALL": "Revert All !",
+  "TXT_SHOW_ALL": "Show All",
+  "TXT_STARTUP": "Startup",
+  "TXT_STOP": "Stop",
+  "TXT_REVERT": "Revert",
 
   "TXT_MSG_SEARCH": "Search...",
   "TXT_MSG_PAGE_IS_BUILDING": "This page is building...",
