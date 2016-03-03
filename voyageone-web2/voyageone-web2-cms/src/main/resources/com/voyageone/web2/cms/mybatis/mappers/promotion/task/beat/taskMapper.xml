@@ -4,9 +4,13 @@
 
     <insert id="cms_bt_tasks_insert" parameterType="com.voyageone.web2.cms.model.CmsBtTaskModel">
         INSERT INTO voyageone_cms2.cms_bt_tasks (
-            task_name, task_type, promotion_id, config, created, creater, modified, modifier
+            task_name, task_type, promotion_id,
+            <if test="config != null">
+              config,
+            </if>
+            created, creater, modified, modifier
         ) VALUES (
-            #{task_name}, #{task_type}, #{promotion_id}, #{config}, #{created}, #{creater}, #{modified}, #{modifier}
+            #{task_name}, #{task_type}, #{promotion_id}, <if test="config != null">#{config},</if> now(), #{creater}, now(), #{modifier}
         )
     </insert>
 
@@ -131,7 +135,9 @@
             modifier
         FROM voyageone_cms2.cms_bt_tasks
         WHERE promotion_id = #{promotion_id}
+              <if test="task_name != null and task_name != ''">
               AND task_name = #{task_name}
+              </if>
               AND task_type = #{task_type}
     </select>
 

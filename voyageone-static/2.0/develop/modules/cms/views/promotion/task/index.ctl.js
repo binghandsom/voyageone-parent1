@@ -23,6 +23,8 @@ define([
 
             typeName: function(task) {
                 switch (task.task_type) {
+                    case 0:
+                        return '特价宝';
                     case 1:
                         return '价格披露';
                     default:
