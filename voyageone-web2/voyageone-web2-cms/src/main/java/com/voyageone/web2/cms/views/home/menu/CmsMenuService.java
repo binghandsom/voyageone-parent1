@@ -1,5 +1,6 @@
 package com.voyageone.web2.cms.views.home.menu;
 
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.cms.service.CmsBtChannelCategoryService;
 import com.voyageone.cms.service.model.CmsMtCategoryTreeModel;
 import com.voyageone.common.Constants;
@@ -9,6 +10,7 @@ import com.voyageone.web2.base.BaseAppService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -40,20 +42,25 @@ public class CmsMenuService extends BaseAppService{
     /**
      * 根据userId和ChannelId获取Menu列表.
      */
-    public List<CmsMtCategoryTreeModel> getCategoryTreeList (String cTypeId, String channelId) {
+    public List<CmsMtCategoryTreeModel> getCategoryTreeList (String cTypeId, String channelId){
 
-        List<CmsMtCategoryTreeModel> categoryTreeList;
+        try {
 
-        switch (cTypeId) {
-            case CATEGORY_TYPE_FEED:
-                categoryTreeList = cmsFeedCategoriesService.getFeedCategoryMap(channelId);
-                break;
-            default:
-                // TODO 取得主数据的类目树,暂时使用feed的类目树
-                categoryTreeList = cmsBtChannelCategoryService.getCategoriesByChannelId(channelId);
-                break;
+            List<CmsMtCategoryTreeModel> categoryTreeList;
+
+            switch (cTypeId) {
+                case CATEGORY_TYPE_FEED:
+                    categoryTreeList = cmsFeedCategoriesService.getFeedCategoryMap(channelId);
+                    break;
+                default:
+                    // TODO 取得主数据的类目树,暂时使用feed的类目树
+                    categoryTreeList = cmsBtChannelCategoryService.getCategoriesByChannelId(channelId);
+                    break;
+            }
+
+            return categoryTreeList;
+        } catch (IOException ex) {
+          throw new BusinessException("获取类目失败");
         }
-
-        return categoryTreeList;
     }
 }
