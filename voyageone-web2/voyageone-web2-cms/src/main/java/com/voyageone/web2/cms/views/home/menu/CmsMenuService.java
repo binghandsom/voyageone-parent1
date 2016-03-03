@@ -1,18 +1,15 @@
 package com.voyageone.web2.cms.views.home.menu;
 
 import com.voyageone.cms.service.CmsBtChannelCategoryService;
-import com.voyageone.cms.service.FeedToCmsService;
 import com.voyageone.cms.service.model.CmsMtCategoryTreeModel;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.TypeChannel;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.web2.base.BaseAppService;
-import com.voyageone.web2.core.dao.ChannelShopDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author Edward
@@ -22,16 +19,14 @@ import java.util.Map;
 public class CmsMenuService extends BaseAppService{
 
     @Autowired
-    private ChannelShopDao channelShopDao;
-
-    @Autowired
-    private FeedToCmsService feedToCmsService;
-
-    @Autowired
     private CmsBtChannelCategoryService cmsBtChannelCategoryService;
 
+    @Autowired
+    private CmsFeedCategoriesService cmsFeedCategoriesService;
+
+
     //TODO 临时使用
-    private static final String CATEGORY_TYPE_FEED = "Feed";
+    private static final String CATEGORY_TYPE_FEED = "TH";
 
     /**
      * 获取该channel的category类型.
@@ -51,8 +46,7 @@ public class CmsMenuService extends BaseAppService{
 
         switch (cTypeId) {
             case CATEGORY_TYPE_FEED:
-                List<Map<String, Object>> result = feedToCmsService.getFeedCategory(channelId).getCategoryTree();
-                categoryTreeList = null;
+                categoryTreeList = cmsFeedCategoriesService.getFeedCategoryMap(channelId);
                 break;
             default:
                 // TODO 取得主数据的类目树,暂时使用feed的类目树
@@ -62,10 +56,4 @@ public class CmsMenuService extends BaseAppService{
 
         return categoryTreeList;
     }
-
-
-//
-//    private changeToCategoryList () {
-//
-//    }
 }
