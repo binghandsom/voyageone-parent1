@@ -1,0 +1,508 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.core.sql">
+    <!-- 汇总价格取得（大礼包解决方案）-->
+    <select id="getVirtualPriceData" resultType="com.voyageone.batch.core.modelbean.SetPriceBean">
+        SELECT
+        orders.source_order_id,
+        orders.order_date_time,
+        orders.cart_id,
+        provisional.sku,
+        SUM(
+        provisional.price_per_unit + ifnull(
+        (
+        SELECT
+        SUM(price_per_unit)
+        FROM
+        oms_bt_order_details discount
+        WHERE
+        provisional.order_number = discount.order_number
+        AND provisional.item_number = discount.sub_item_number
+        AND discount.ship_date IS NOT NULL
+        ),
+        0
+        )
+        ) AS price,
+        ifnull(
+        (
+        SELECT
+        SUM(price_per_unit)
+        FROM
+        oms_bt_order_details shipdetails
+        WHERE
+        shipdetails.order_number = #{order_number}
+        AND shipdetails.adjustment = 1
+        AND shipdetails.sub_item_number = 0
+        AND shipdetails.sku = 'Shipping'
+        AND shipdetails.ship_date IS NOT NULL
+        ),
+        0
+        ) AS shipping_price,
+        ifnull(
+        (
+        SELECT
+        SUM(price_per_unit)
+        FROM
+        oms_bt_order_details shipdetails
+        WHERE
+        shipdetails.order_number = #{order_number}
+        AND shipdetails.adjustment = 1
+        AND shipdetails.sub_item_number = 0
+        AND shipdetails.sku IN ('Discount','Surcharge')
+        AND shipdetails.ship_date IS NOT NULL
+        ),
+        0
+        ) AS discount,
+        count(0) as sum_unit
+        FROM
+        oms_bt_orders orders,
+        (
+        SELECT
+        details.`order_number`,
+        CASE
+        WHEN ifnull(
+        virtual.item_number,
+        details.`item_number`
+        ) = - 1 THEN
+        virtual.item_number
+        WHEN ifnull(
+        virtual.item_number,
+        details.`item_number`
+        ) = 0 THEN
+        details.`item_number`
+        ELSE
+        details.`item_number`
+        END AS `item_number`,
+        details.`detail_date`,
+        details.`adjustment`,
+        details.`product`,
+        details.`sub_item_number`,
+        ifnull(
+        virtual.provisional_price,
+        details.`price_per_unit`
+        ) AS price_per_unit,
+        details.`quantity_ordered`,
+        details.`quantity_shipped`,
+        details.`quantity_returned`,
+        ifnull(virtual.sku, details.sku) AS sku,
+        details.`status`,
+        details.`return_id`,
+        details.`freight_collect`,
+        details.`res_allot_flg`,
+        details.`synship_flg`,
+        details.`res_id`,
+        details.`syn_ship_no`,
+        details.`ship_date`
+        FROM
+        oms_bt_order_details details
+        LEFT JOIN wms_bt_virtual_sku virtual ON details.sku = virtual.provisional_sku
+        WHERE
+        details.synship_flg = '1'
+        AND details.res_allot_flg = '1'
+        AND details.adjustment = 0
+        AND details.res_id > 0
+        AND details.order_number = #{order_number}
+        AND details.ship_date IS NOT NULL
+        AND NOT EXISTS (
+        SELECT
+        1
+        FROM
+        voyageone_ims.ims_bt_product_except except
+        WHERE
+        except.order_channel_id = #{order_channel_id}
+        AND except.cart_id = #{cart_id}
+        AND except.`comment` LIKE '%赠品%'
+        AND except.except_sku = details.sku
+        )
+        ) provisional
+        WHERE
+        orders.order_channel_id = #{order_channel_id}
+        AND orders.order_number = provisional.order_number
+        GROUP BY
+        provisional.sku;
+
+    </select>
+
+
+    <!-- 汇总价格取得-->
+    <select id="getPriceData" resultType="com.voyageone.batch.core.modelbean.SetPriceBean">
+        SELECT
+        orders.source_order_id,
+        orders.order_date_time,
+        orders.cart_id,
+        details.sku,
+        SUM(
+        details.price_per_unit + ifnull(
+        (
+        SELECT
+        SUM(price_per_unit)
+        FROM
+        oms_bt_order_details discount
+        WHERE
+        details.order_number = discount.order_number
+        AND (
+        discount. STATUS NOT IN ('Canceled', 'Returned')
+        OR discount. STATUS IS NULL
+        )
+        AND details.item_number = discount.sub_item_number
+        ),
+        0
+        )
+        ) AS price,
+        ifnull(
+        (
+        SELECT
+        SUM(price_per_unit)
+        FROM
+        oms_bt_order_details shipdetails
+        WHERE
+        shipdetails.order_number = #{order_number}
+        AND shipdetails.adjustment = 1
+        AND (
+        shipdetails.STATUS NOT IN ('Canceled', 'Returned')
+        OR shipdetails.STATUS IS NULL
+        )
+        AND shipdetails.sub_item_number = 0
+        AND shipdetails.sku = 'Shipping'
+        ),
+        0
+        ) AS shipping_price,
+        ifnull(
+        (
+        SELECT
+        SUM(price_per_unit)
+        FROM
+        oms_bt_order_details shipdetails
+        WHERE
+        shipdetails.order_number = #{order_number}
+        AND shipdetails.adjustment = 1
+        AND (
+        shipdetails.STATUS NOT IN ('Canceled', 'Returned')
+        OR shipdetails.STATUS IS NULL
+        )
+        AND shipdetails.sub_item_number = 0
+        AND shipdetails.sku IN ('Discount','Surcharge')
+        ),
+        0
+        ) AS discount,
+        count(0) as sum_unit
+        FROM
+        oms_bt_orders orders,
+        oms_bt_order_details details
+        WHERE
+        orders.order_channel_id = #{order_channel_id}
+        AND orders.order_number = details.order_number
+        AND details.synship_flg = '1'
+        AND details.res_allot_flg = '1'
+        AND details.adjustment = 0
+        AND details.res_id > 0
+        AND details.order_number = #{order_number}
+        AND (
+        details. STATUS NOT IN ('Canceled', 'Returned')
+        OR details. STATUS IS NULL
+        )
+        AND NOT EXISTS (
+        SELECT
+        1
+        FROM
+        voyageone_ims.ims_bt_product_except except
+        WHERE
+        except.order_channel_id = #{order_channel_id}
+        AND except.cart_id = #{cart_id}
+        AND except.`comment` LIKE '%赠品%'
+        AND except.except_sku = details.sku
+        )
+        GROUP BY
+        details.sku
+    </select>
+
+
+    <!-- 汇总价格取得（不包含运费，正常订单）-->
+    <select id="getPriceDataNotShipping" resultType="com.voyageone.batch.core.modelbean.SetPriceBean">
+        select
+        orders.source_order_id,
+        orders.order_date_time,
+        orders.cart_id,
+        details.sku,
+        SUM(details.price_per_unit + ifnull((select SUM(price_per_unit)
+        from oms_bt_order_details discount
+        where details.order_number = discount.order_number
+        AND (discount.STATUS not in ( 'Canceled','Returned') or discount.STATUS is null)
+        and details.item_number = discount.sub_item_number),0)) as price,
+        ifnull((select SUM(price_per_unit)
+        from oms_bt_order_details shipdetails
+        where shipdetails.order_number = #{order_number}
+        and shipdetails.adjustment = 1
+        AND (shipdetails.STATUS not in ( 'Canceled','Returned') or shipdetails.STATUS is null)
+        and shipdetails.sub_item_number = 0 AND shipdetails.sku not in ('Shipping')),0) as shipping_price
+        from
+        oms_bt_orders orders,
+        oms_bt_order_details details
+        where
+        orders.order_channel_id = #{order_channel_id}
+        and orders.order_number = details.order_number
+
+
+        and details.adjustment = 0
+
+        and details.order_number = #{order_number}
+        AND (details.STATUS not in ( 'Canceled','Returned') or details.STATUS is null)
+        AND NOT EXISTS (SELECT
+        1
+        FROM
+        voyageone_ims.ims_bt_product_except except
+        WHERE
+        except.order_channel_id = #{order_channel_id}
+        AND except.cart_id = #{cart_id}
+        AND except.`comment` LIKE '%赠品%'
+        AND except.except_sku = details.sku)
+        GROUP BY details.sku
+    </select>
+
+    <!-- 汇总价格取得（含运费，正常订单）-->
+    <select id="getPriceDataIncludeShipping" resultType="com.voyageone.batch.core.modelbean.SetPriceBean">
+        select
+            orders.source_order_id,
+            orders.order_date_time,
+            orders.cart_id,
+            details.sku,
+            SUM(details.price_per_unit + ifnull((select SUM(price_per_unit)
+                                                    from oms_bt_order_details discount
+                                                    where details.order_number = discount.order_number
+                                                        AND (discount.STATUS not in ( 'Canceled','Returned') or discount.STATUS is null)
+                                                        and details.item_number = discount.sub_item_number),0)) as price,
+            ifnull((select SUM(price_per_unit)
+                    from oms_bt_order_details shipdetails
+                    where shipdetails.order_number	= #{order_number}
+                        and shipdetails.adjustment = 1
+                        AND (shipdetails.STATUS not in ( 'Canceled','Returned') or shipdetails.STATUS is null)
+                        and shipdetails.sub_item_number = 0 AND shipdetails.sku not in ('Shipping')),0) as shipping_price,
+            ifnull((select SUM(price_per_unit)
+                    from oms_bt_order_details shipdetails
+                    where shipdetails.order_number	= #{order_number}
+                        and shipdetails.adjustment = 1
+                        AND (shipdetails.STATUS not in ( 'Canceled','Returned') or shipdetails.STATUS is null)
+                        and shipdetails.sku = 'Shipping'),0) as shipping_fee,
+            sum(details.quantity_ordered) as quantity_ordered,
+            wdetails.client_sku,
+            ifnull(taxRate.rate,'') as duty_rate
+        from
+            oms_bt_orders orders,
+            wms_bt_item_details wdetails,
+            oms_bt_order_details details
+        left join tt_reservation re
+            on details.res_id = re.id
+        left join vf_tax_rate taxRate
+            on re.hs_code_pu = taxRate.hs_code
+            and taxRate.tax_object_id = 1
+        where
+            orders.order_channel_id = #{order_channel_id}
+            and orders.order_number = details.order_number
+            and details.adjustment = 0
+            and details.order_number = #{order_number}
+            and details.sku = wdetails.sku
+            and wdetails.order_channel_id = #{order_channel_id}
+        AND (details.STATUS not in ( 'Canceled','Returned') or details.STATUS is null)
+        GROUP BY details.sku
+    </select>
+
+    <!-- 汇总价格取得（不包含运费，Cancel，Return 订单）-->
+    <select id="getPriceDataNotShippingForCancelOrReturn" resultType="com.voyageone.batch.core.modelbean.SetPriceBean">
+        select
+        orders.source_order_id,
+        orders.order_date_time,
+        orders.cart_id,
+        details.sku,
+        SUM(details.price_per_unit + ifnull((select SUM(price_per_unit)
+        from oms_bt_order_details discount,
+        oms_bt_ext_order_details odx
+        where details.order_number = discount.order_number
+        and discount.order_number = odx.order_number
+        and discount.item_number = odx.item_number
+        and odx.send_flg = 0 and odx.ext_flg1 = 0
+        AND discount.STATUS in ( 'Canceled','Returned')
+        and details.item_number = discount.sub_item_number),0)) as price,
+        ifnull((select SUM(price_per_unit)
+        from oms_bt_order_details shipdetails ,
+        oms_bt_ext_order_details odx
+        where shipdetails.order_number = #{order_number}
+        and shipdetails.adjustment = 1
+        and shipdetails.order_number = odx.order_number
+        and shipdetails.item_number = odx.item_number
+        and odx.send_flg = 0 and odx.ext_flg1 = 0
+        AND shipdetails.STATUS in ( 'Canceled','Returned')
+        and shipdetails.sub_item_number = 0 AND shipdetails.sku not in ('Shipping')),0) as shipping_price
+        from
+        oms_bt_orders orders,
+        oms_bt_order_details details,
+        oms_bt_ext_order_details odx
+        where
+        orders.order_channel_id = #{order_channel_id}
+        and orders.order_number = details.order_number
+        and details.order_number = odx.order_number
+        and details.item_number = odx.item_number
+        and details.adjustment = 0
+        and odx.send_flg = 0 and odx.ext_flg1 = 0
+        and details.order_number = #{order_number}
+        AND details.STATUS in ( 'Canceled','Returned')
+        AND NOT EXISTS (SELECT
+        1
+        FROM
+        voyageone_ims.ims_bt_product_except except
+        WHERE
+        except.order_channel_id = #{order_channel_id}
+        AND except.cart_id = #{cart_id}
+        AND except.`comment` LIKE '%赠品%'
+        AND except.except_sku = details.sku)
+        GROUP BY details.sku
+
+    </select>
+
+    <!-- 退货汇总价格取得-->
+    <select id="getReturnedPriceData" resultType="com.voyageone.batch.core.modelbean.SetPriceBean">
+        SELECT
+        orders.source_order_id,
+        orders.order_date_time,
+        orders.cart_id,
+        details.sku,
+        SUM(
+        details.price_per_unit + ifnull(
+        (
+        SELECT
+        SUM(price_per_unit)
+        FROM
+        oms_bt_order_details discount
+        WHERE
+        details.order_number = discount.order_number
+        AND discount. STATUS IN ('Canceled', 'Returned')
+        AND details.item_number = discount.sub_item_number
+        AND discount.ship_date IS NOT NULL
+        ),
+        0
+        )
+        ) AS price,
+        ifnull(
+        (
+        SELECT
+        SUM(price_per_unit)
+        FROM
+        oms_bt_order_details shipdetails
+        WHERE
+        shipdetails.order_number = #{order_number}
+        AND shipdetails.adjustment = 1
+        AND shipdetails. STATUS IN ('Canceled', 'Returned')
+        AND shipdetails.sub_item_number = 0
+        AND shipdetails.sku = 'Shipping'
+        AND shipdetails.ship_date IS NOT NULL
+        ),
+        0
+        ) AS shipping_price,
+        ifnull(
+        (
+        SELECT
+        SUM(price_per_unit)
+        FROM
+        oms_bt_order_details shipdetails
+        WHERE
+        shipdetails.order_number = #{order_number}
+        AND shipdetails.adjustment = 1
+        AND (
+        shipdetails.STATUS IN ('Canceled', 'Returned')
+        )
+        AND shipdetails.sub_item_number = 0
+        AND shipdetails.sku IN ('Discount','Surcharge')
+        AND shipdetails.ship_date IS NOT NULL
+        ),
+        0
+        ) AS discount,
+        count(0) as sum_unit
+
+        FROM
+        oms_bt_orders orders,
+        oms_bt_order_details details
+        WHERE
+        orders.order_channel_id = #{order_channel_id}
+        AND orders.order_number = details.order_number
+        AND details.synship_flg = '1'
+        AND details.res_allot_flg = '1'
+        AND details.adjustment = 0
+        AND details.res_id > 0
+        AND details.order_number = #{order_number}
+        AND details. STATUS IN ('Canceled', 'Returned')
+        AND details.ship_date IS NOT NULL
+        AND NOT EXISTS (
+        SELECT
+        1
+        FROM
+        voyageone_ims.ims_bt_product_except except
+        WHERE
+        except.order_channel_id = #{order_channel_id}
+        AND except.cart_id = #{cart_id}
+        AND except.`comment` LIKE '%赠品%'
+        AND except.except_sku = details.sku
+        )
+        GROUP BY
+        details.sku
+    </select>
+
+
+    <!-- 汇总价格取得,运费单独算-->
+    <select id="getPriceShippingData" resultType="com.voyageone.batch.core.modelbean.SetPriceBean">
+        select
+        orders.source_order_id,
+        orders.order_date_time,
+        orders.cart_id,
+        details.sku,
+        SUM(details.price_per_unit + ifnull((select SUM(price_per_unit)
+        from oms_bt_order_details discount
+        where details.order_number = discount.order_number
+        AND (discount.STATUS not in ( 'Canceled','Returned') or discount.STATUS is null)
+        and details.item_number = discount.sub_item_number),0)) as price,
+        ifnull((select SUM(price_per_unit)
+        from oms_bt_order_details shipdetails
+        where shipdetails.order_number = #{order_number}
+        and shipdetails.adjustment = 1
+        AND (shipdetails.STATUS not in ( 'Canceled','Returned') or shipdetails.STATUS is null)
+        and shipdetails.sub_item_number = 0 AND shipdetails.sku not in ('Shipping')),0) AS discount_price,
+        ifnull(
+        (
+        SELECT
+        SUM(price_per_unit)
+        FROM
+        oms_bt_order_details shipdetails
+        WHERE
+        shipdetails.order_number = #{order_number}
+        AND shipdetails.adjustment = 1
+        AND (
+        shipdetails. STATUS NOT IN ('Canceled', 'Returned')
+        OR shipdetails. STATUS IS NULL
+        )
+        AND shipdetails.sub_item_number = 0
+        AND shipdetails.sku = 'Shipping'
+        ),
+        0
+        ) AS shipping_price
+        from
+        oms_bt_orders orders,
+        oms_bt_order_details details
+        where
+        orders.order_channel_id = #{order_channel_id}
+        and orders.order_number = details.order_number
+        and details.synship_flg = '1'
+        and details.res_allot_flg = '1'
+        and details.adjustment = 0
+        and details.res_id > 0
+        and details.order_number = #{order_number}
+        AND (details.STATUS not in ( 'Canceled','Returned') or details.STATUS is null)
+        AND NOT EXISTS (SELECT
+        1
+        FROM
+        voyageone_ims.ims_bt_product_except except
+        WHERE
+        except.order_channel_id = #{order_channel_id}
+        AND except.cart_id = #{cart_id}
+        AND except.`comment` LIKE '%赠品%'
+        AND except.except_sku = details.sku)
+        GROUP BY details.sku
+    </select>
+</mapper>
