@@ -243,7 +243,7 @@ public class CmsSearchAdvanceService extends BaseAppService{
         StringBuffer resultPlatforms = new StringBuffer();
 
         // 添加platform cart
-        resultPlatforms.append(MongoUtils.splicingValue("cartId", cmsSessionBean.getPlatformType().get("cartId")).toString());
+        resultPlatforms.append(MongoUtils.splicingValue("cartId", Integer.valueOf(cmsSessionBean.getPlatformType().get("cartId").toString())));
         resultPlatforms.append(",");
 
         // 获取platform status
@@ -296,7 +296,7 @@ public class CmsSearchAdvanceService extends BaseAppService{
         StringBuffer resultPlatforms = new StringBuffer();
 
         // 添加platform cart
-        resultPlatforms.append(MongoUtils.splicingValue("cartId", cmsSessionBean.getPlatformType().get("cartId")).toString());
+        resultPlatforms.append(MongoUtils.splicingValue("cartId", Integer.valueOf(cmsSessionBean.getPlatformType().get("cartId").toString())));
         resultPlatforms.append(",");
 
         // 获取platform status
