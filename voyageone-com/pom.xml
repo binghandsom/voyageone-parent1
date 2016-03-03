@@ -18,6 +18,11 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.voyageone</groupId>
+			<artifactId>voyageone-config</artifactId>
+			<version>${voyageone.config.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.voyageone</groupId>
 			<artifactId>voyageone-masterdata-schema</artifactId>
 			<version>${voyageone.md.schema.version}</version>
 		</dependency>
@@ -122,6 +127,15 @@
 			<groupId>log4j</groupId>
 			<artifactId>log4j</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.flume.flume-ng-clients</groupId>
+			<artifactId>flume-ng-log4jappender</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.flume</groupId>
+			<artifactId>flume-ng-core</artifactId>
+		</dependency>
+
 		<!-- mybatis -->
 		<dependency>
 			<groupId>mysql</groupId>
@@ -147,10 +161,10 @@
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>org.codehaus.jackson</groupId>
-			<artifactId>jackson-mapper-asl</artifactId>
-		</dependency>
+		<!--<dependency>-->
+			<!--<groupId>org.codehaus.jackson</groupId>-->
+			<!--<artifactId>jackson-mapper-asl</artifactId>-->
+		<!--</dependency>-->
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-core</artifactId>
@@ -199,10 +213,6 @@
 		<dependency>
 			<groupId>taobao</groupId>
 			<artifactId>taobao-sdk-java</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.mchange</groupId>
-			<artifactId>c3p0</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>com.mchange</groupId>
@@ -279,11 +289,6 @@
 			<groupId>com.jayway.jsonpath</groupId>
 			<artifactId>json-path</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>com.voyageone</groupId>
-			<artifactId>voyageone-masterdata-schema</artifactId>
-			<version>${voyageone.md.schema.version}</version>
-		</dependency>
 
 		<!-- httpclient -->
 		<dependency>
@@ -293,6 +298,12 @@
 		<dependency>
 			<groupId>org.json</groupId>
 			<artifactId>json</artifactId>
+		</dependency>
+
+		<!-- rabbitmq -->
+		<dependency>
+			<groupId>org.springframework.amqp</groupId>
+			<artifactId>spring-rabbit</artifactId>
 		</dependency>
 	</dependencies>
 	<build>
