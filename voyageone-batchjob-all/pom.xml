@@ -19,33 +19,6 @@
 
 	<modules>
 		<module>voyageone-batchjob-core</module>
-		<module>voyageone-batchjob-core-job</module>
 		<module>voyageone-batchjob-cms</module>
 	</modules>
-	<build>
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-compiler-plugin</artifactId>
-					<configuration>
-						<source>${jdk.version}</source>
-						<target>${jdk.version}</target>
-					</configuration>
-				</plugin>
-			</plugins>
-		</pluginManagement>
-		<resources>
-			<resource>
-				<directory>src/main/resources</directory>
-			</resource>
-			<resource>
-				<directory>src/main/java</directory>
-				<includes>
-					<include>**/*.xml</include>
-					<include>**/*.properties</include>
-				</includes>
-			</resource>
-		</resources>
-	</build>
 </project>
