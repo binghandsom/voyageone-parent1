@@ -92,7 +92,10 @@
 					<td class="mfb-xxs text-left">{{::task.task_name}}</td>
 					<td class="mfb-xt text-center">{{::$ctrl.typeName(task)}}</td>
 					<td class="mfb-xxs text-left">
-						<a ng-href="#/promotion/task/beat/{{::task.task_id}}" class="btn btn-default-vo btn-xs">
+						<a ng-if="task.task_type == 1" ng-href="#/promotion/task/beat/{{::task.task_id}}" class="btn btn-default-vo btn-xs">
+							<i class="fa fa-reorder"></i>&nbsp;任务明细
+						</a>
+						<a ng-if="task.task_type == 0" ng-href="#/promotion/task/price/{{::task.promotion.promotionId}}" class="btn btn-default-vo btn-xs">
 							<i class="fa fa-reorder"></i>&nbsp;任务明细
 						</a>
 					</td>
