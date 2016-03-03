@@ -20,12 +20,7 @@
 	<modules>
 		<module>voyageone-batchjob-core</module>
 		<module>voyageone-batchjob-core-job</module>
-		<module>voyageone-batchjob-ims</module>
-		<module>voyageone-batchjob-oms</module>
-		<module>voyageone-batchjob-wms</module>
 		<module>voyageone-batchjob-cms</module>
-		<module>voyageone-batchjob-bi</module>
-		<module>voyageone-batchjob-synship</module>
 	</modules>
 	<build>
 		<pluginManagement>
