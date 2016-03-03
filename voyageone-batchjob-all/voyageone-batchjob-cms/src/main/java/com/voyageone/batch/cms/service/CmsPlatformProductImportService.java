@@ -228,6 +228,8 @@ public class CmsPlatformProductImportService extends BaseTaskService {
             }
 
             // 固定字段设定 ==========================================================================================
+            // product状态: 因为已经上了第三方平台, 所以默认设置为Approved
+            cmsFields.setStatus(CmsConstants.ProductStatus.Approved);
             // 货号
             cmsFields.setAttribute("prop_13021751", oldCmsDataBean.getModel());
             // 英文标题
