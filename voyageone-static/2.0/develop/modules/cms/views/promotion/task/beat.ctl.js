@@ -3,18 +3,20 @@
  */
 define([
     'cms',
+    'underscore',
     'modules/cms/controller/popup.ctl'
-], function (cms) {
+], function (cms, _) {
     cms.controller("taskBeatController", (function () {
 
         function TaskBeatController($routeParams, taskBeatService, cActions, FileUploader, alert, notify, $location) {
             var urls = cActions.cms.task.taskBeatService;
-            var task_id = $routeParams['task_id'];
-            if (!task_id)
-                alert('地址错误').result.then(function() {
+            var task_id = parseInt($routeParams['task_id']);
+            if (_.isNaN(task_id)) {
+                this.init = null;
+                alert('TXT_MSG_UNVALID_URL').result.then(function() {
                     $location.path('/promotion/task');
                 });
-            task_id = parseInt(task_id);
+            }
 
             this.taskBeatService = taskBeatService;
             this.alert = alert;
@@ -45,12 +47,12 @@ define([
                 var uploadQueue = ttt.uploader.queue;
                 var uploadItem = uploadQueue[uploadQueue.length - 1];
                 if (!uploadItem) {
-                    return ttt.alert('没选择文件');
+                    return ttt.alert('TXT_MSG_NO_UPLOAD');
                 }
                 uploadItem.onSuccess = function (res) {
                     if (res.message)
                         return ttt.alert(res.message);
-                    ttt.notify.success('上传成功');
+                    ttt.notify.success('TXT_MSG_UPDATE_SUCCESS');
                     if (res.data) {
                         ttt.data = res.data.list;
                         ttt.pageOption.curr = 1;
@@ -93,7 +95,7 @@ define([
                     flag: flag
                 }).then(function(res) {
                     if (!res.data)
-                        return ttt.alert('失败了');
+                        return ttt.alert('TXT_MSG_UPDATE_FAIL');
                     ttt.getData();
                 });
             },
@@ -105,7 +107,7 @@ define([
                     flag: flag
                 }).then(function(res) {
                     if (!res.data)
-                        return ttt.alert('失败了');
+                        return ttt.alert('TXT_MSG_UPDATE_FAIL');
                     ttt.getData();
                 });
             }

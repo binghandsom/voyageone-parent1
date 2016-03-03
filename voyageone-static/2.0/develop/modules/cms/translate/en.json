@@ -230,6 +230,9 @@
   "TXT_MSG_SHORT_TITLE":"Short title",
   "TXT_MSG_LONG_DESCRIPTION":"Long description",
   "TXT_MSG_SHORT_DESCRIPTION":"Short description",
+  "TXT_MSG_UNVALID_URL": "Unvalid location.",
+  "TXT_MSG_NO_UPLOAD": "Please choose your file.",
+  "TXT_MSG_CODE_IN_OTHER": "The code you submit, already in other task. Go on ?",
 
 
   "BTN_CREATE_TASK": "New Task",

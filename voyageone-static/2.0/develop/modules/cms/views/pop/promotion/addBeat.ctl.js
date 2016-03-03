@@ -45,7 +45,7 @@ define([
                 ttt.taskBeatService.addCheck(param).then(function (res) {
                     var otherBeats = res.data;
                     if (otherBeats.length)
-                        return ttt.confirm('你提交的商品,已经在其他任务中.你确定要继续?').result;
+                        return ttt.confirm('TXT_MSG_CODE_IN_OTHER').result;
                     return true;
                 }).then(function (goon) {
                     if (!goon) return;
@@ -54,7 +54,7 @@ define([
                             ttt.$uibModalInstance.close();
                             ttt.parent.getData();
                         } else {
-                            ttt.alert('添加/更改失败.');
+                            ttt.alert('TXT_MSG_UPDATE_FAIL');
                         }
                     });
                 });
