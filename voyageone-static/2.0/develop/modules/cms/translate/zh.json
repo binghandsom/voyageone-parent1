@@ -97,7 +97,6 @@
   "TXT_NORMAL_ATTRIBUTE": "普通属性",
   "TXT_COMMON_ATTRIBUTE": "共通属性",
   "TXT_SKU_ATTRIBUTE": "SKU属性",
-  "TXT_REQUIRED": "(必填)",
   "TXT_COMPLETE": "已匹配",
   "TXT_INCOMPLETE": "未匹配",
   "TXT_MAPPING_CATEGORY_OR_OTHER_PLATFORM": "类目匹配 / 其他平台",
@@ -174,8 +173,14 @@
   "TXT_PRODUCT_TYPE": "产品类型",
   "TXT_PLATFORM_TYPE_WITH_COLON": "平台类型:",
   "TXT_INPUT_ONLY_CHAR_AND_NUMBER": "这里只能输入:英数字 _ .，别输火星文!",
-
-
+  "TXT_REQUIRED": "(必填)",
+  "TXT_BEAT_TASK": "价格披露",
+  "TXT_UNIQUE": "唯一",
+  "TXT_TEMPLATE": "模板",
+  "TXT_REVERT_TEMPLATE": "还原模板",
+  "TXT_NEED_VERTICAL": "是否更新竖图",
+  "TXT_VERTICAL_TEMPLATE": "竖图模板",
+  "TXT_VERTICAL_REVERT_TEMPLATE": "竖图还原模板",
 
 
   "TXT_MSG_SEARCH": "检索...",
@@ -213,6 +218,7 @@
   "TXT_MSG_SHORT_TITLE":"短标题",
   "TXT_MSG_LONG_DESCRIPTION":"长描述",
   "TXT_MSG_SHORT_DESCRIPTION":"短描述",
+
 
   "BTN_CREATE_TASK": "新建任务",
   "BTN_ADD_CONDITION": "新增条件",
