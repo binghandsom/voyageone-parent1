@@ -138,12 +138,10 @@ public class ExceptionHandler implements HandlerExceptionResolver {
         // 尝试根据信息获取指定的错误提示
         String msg = exception.getMessage();
 
-        if (isDebug()) msg = "Server Exception\nException Name: " +
-                exception.getClass().getName() +
-                "\nTrace Message 1: " +
-                exception.getStackTrace()[0].toString() +
-                "\nTrace Message 2: " +
-                CommonUtil.getExceptionSimpleContent(exception);
+        if (isDebug()) msg = "Server Exception\nException Name: " + exception.getClass().getName() +
+                "\nException Message: " + exception.getMessage() +
+                "\nTrace Message 1: " + exception.getStackTrace()[0].toString() +
+                "\nTrace Message 2: " + CommonUtil.getExceptionSimpleContent(exception);
 
         if (StringUtils.isEmpty(msg))
             msg = "maybe in ct exception info (db)";
