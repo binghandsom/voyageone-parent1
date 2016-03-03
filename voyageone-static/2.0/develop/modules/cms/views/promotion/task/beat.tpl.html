@@ -22,19 +22,22 @@
 							<button class="btn btn-danger" ng-click="$ctrl.download()"><i class="fa fa-cloud-download"></i>&nbsp;<span translate="TXT_DOWNLOAD_TASK_DETAIL"></span></button>
 						</div>
 					</div>
+					<div class="col-sm-12 progress progress-xxs m-t-xs" style="padding-left:0px;margin-bottom:0px">
+						<div class="progress-bar progress-bar-warning" role="progressbar"style="width: 20%"></div>
+					</div>
 				</div>
 			</div>
 		</div>
 	</div>
 	<div class="col-sm-12 m-b-xs" style="padding-left:0px;padding-right:0px">
 		<div class="btn-group pull-left">
-			<button ng-click="$ctrl.controlAll('BEATING')" class="btn btn-primary btn-xs"><i class="glyphicon glyphicon-play"></i>&nbsp;<span translate="TXT_STARTUP_ALL"></span></button>
-			<button ng-click="$ctrl.controlAll('STOP')" class="btn btn-danger btn-xs"><i class="glyphicon glyphicon-pause"></i>&nbsp;<span translate="TXT_STOP_ALL"></span></button>
-			<button ng-click="$ctrl.controlAll('REVERT')" class="btn btn-success btn-xs"><i class="glyphicon glyphicon-share-alt"></i>&nbsp;<span translate="TXT_REVERT_ALL"></span></button>
+			<button ng-click="$ctrl.controlAll('BEATING')" class="btn btn-primary"><i class="glyphicon glyphicon-play"></i>&nbsp;<span translate="TXT_STARTUP_ALL"></span></button>
+			<button ng-click="$ctrl.controlAll('STOP')" class="btn btn-danger"><i class="glyphicon glyphicon-pause"></i>&nbsp;<span translate="TXT_STOP_ALL"></span></button>
+			<button ng-click="$ctrl.controlAll('REVERT')" class="btn btn-success"><i class="glyphicon glyphicon-share-alt"></i>&nbsp;<span translate="TXT_REVERT_ALL"></span></button>
 		</div>
 		<div class="btn-group pull-right">
-			<button class="btn btn-default-vo btn-xs" ng-click="$ctrl.getData()" translate="TXT_SHOW_ALL"></button>
-			<button class="btn btn-default-vo btn-xs" ng-repeat="item in $ctrl.summary" ng-click="$ctrl.getData(item.flag)">
+			<button class="btn btn-default-vo" ng-click="$ctrl.getData()" translate="TXT_SHOW_ALL"></button>
+			<button class="btn btn-default-vo" ng-repeat="item in $ctrl.summary" ng-click="$ctrl.getData(item.flag)">
 				<span>{{item.flag}}</span>:<span>{{item.count}}</span>
 			</button>
 		</div>
