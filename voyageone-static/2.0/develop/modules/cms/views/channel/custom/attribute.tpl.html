@@ -68,15 +68,15 @@
 		<div class="custom_ts" style="background:#fff" ng-if="!flg">
 			<div class="pull-right m-t-xs m-r-xs" ng-controller="popupCtrl">
 				<button ng-click="onclick()" class="btn btn-default btn-xs"><i class="glyphicon glyphicon-refresh"></i> 切换到共通属性</button>
-		    	<button ng-click="ctrl.openCategoryMapping(feedCategory.model, popupNewCategory)" class="btn btn-default btn-xs"><i class="glyphicon glyphicon-link"></i> 类目选择</button>
+		    	<button ng-click="openCategoryMapping(popupNewCategory)" class="btn btn-default btn-xs"><i class="glyphicon glyphicon-link"></i> 类目选择</button>
 		</div><!-- .form-inline -->
 			<p class="m-l-sm m-t-xs">您当前选择的是：<span>珠宝 / 钻石 / 翡翠 / 黄金 > 彩色宝石 / 贵重宝石</span> </p>
 		</div>
 		<div class="custom_ts" style="background:#fff" ng-if="flg">
 			<div class="pull-right m-t-xs m-r-xs" ng-controller="popupCtrl">
-				<button ng-if="vm.sameAttr == '1'" ng-click="onclick()" class="btn btn-default btn-xs"><i class="glyphicon glyphicon-refresh"></i> 类目选择</button>
+				<button ng-if="vm.sameAttr == '1'" ng-click="openCategoryMapping(popupNewCategory)" class="btn btn-default btn-xs"><i class="glyphicon glyphicon-refresh"></i> 类目选择</button>
 				<button ng-if="vm.sameAttr == '1'" ng-click="ctrl.openCategoryMapping(feedCategory.model, popupNewCategory)" class="btn btn-default btn-xs"><i class="glyphicon glyphicon-link"></i> 类目匹配</button>
-				<button type="submit" class="btn btn-default btn-xs" ng-click="openAddattributevalue('md')"><i class="glyphicon glyphicon-plus"></i>&nbsp;添加自定义属性</button>
+				<button type="submit" class="btn btn-default btn-xs" ng-click="openAddAttributeValue(openAddAttribute)"><i class="glyphicon glyphicon-plus"></i>&nbsp;添加自定义属性</button>
 			</div><!-- .form-inline -->
 			<p class="m-l-sm m-t-xs">您当前选择的是：<span>共通属性</span></p>
 		</div>
@@ -125,9 +125,8 @@
 			<button class="btn btn-vo btn-sm"  ng-click="save();"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;保存</button>
 
 			<!--</a>-->
-			<a href="#/channel/custom/value" target="_blank">
-				<button class="btn btn-success btn-sm">翻译自定义属性</button>
-			</a>
+				<button class="btn btn-success btn-sm" ng-click="getTranslation();">翻译自定义属性</button>
+
 		</div>
 
 			<!--<div class="category_drags">

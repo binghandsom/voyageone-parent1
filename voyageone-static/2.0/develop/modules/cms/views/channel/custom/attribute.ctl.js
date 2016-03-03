@@ -6,7 +6,8 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function () {
 
-    function attributeController($scope, $routeParams, attributeService) {
+    function attributeController($scope, $routeParams, attributeService, feedMappingService, notify, confirm, $translate, $location) {
+        this.feedMappingService = feedMappingService;
         $scope.vm = {
             saveInfo: {
                 cat_path:"",
@@ -14,11 +15,14 @@ define([
             },
             sameAttr: "",
             unvalList: [],
-            valList: [],
+            valList: []
         };
 
         $scope.initialize = initialize;
         $scope.save = save;
+        $scope.openCategoryMapping = openCategoryMapping;
+        $scope.bindCategory = bindCategory;
+        $scope.openAddAttributeValue = openAddAttributeValue;
 
         /**
          * 初始化数据:
@@ -27,14 +31,7 @@ define([
          */
         $scope.flg = false;
         function initialize () {
-            console.log(999);
             $scope.vm.unsplitFlg="";
-            //
-            //if($scope.flg){
-            //}else{
-            //    $scope.vm.cat_path="0";
-            //$scope.vm.cat_path= ;
-            //
             //var data = ;
             $scope.flg = $routeParams.catPath == "0" ? true : false;
 
@@ -85,8 +82,73 @@ define([
             nData.unvalList = $scope.vm.unvalList;
             nData.sameAttr = $scope.vm.sameAttr;
         }
+
+        //页面跳转
+        $scope.addVal = function (){
+            $location.path("/channel/custom/value");
+        };
+
+        //打开类目选择popup
+        function openCategoryMapping (popupNewCategory) {
+
+            feedMappingService.getMainCategories()
+                .then(function (res) {
+
+                    popupNewCategory({
+
+                        categories: res.data,
+                        from: null
+                    }).then( function (res) {
+                            bindCategory (res.selected.catPath)
+                        }
+                    );
+
+                });
+        }
+        //类目选择跳转至类目页面
+        function bindCategory (catPath) {
+            $location.path("/channel/custom/" + catPath);
+            //confirm($translate.instant('TXT_MSG_CONFIRM_IS_CHANGE_CATEGORY')).result
+            //    .then(function () {
+                    //var data = {
+                    //    redirectTo: context.selected.redirectTo
+                    //};
+                    //directToService.changeCategory(data).then(function (res) {
+                    //    if(res.data.isChangeCategory) {
+                    //        notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
+                    //        $scope.initialize();
+                    //    }
+                    //    else
+                    //    // TODO 需要enka设计一个错误页面 res.data.publishInfo
+                    //        notify($translate.instant('TXT_MSG_PRODUCT_IS_PUBLISHING'));
+                    //})
+                //});
+
+        }
+
+        //打开添加自定义属性popup -- newAttribute
+        function openAddAttributeValue (openAddAttribute) {
+
+            var attributeList = angular.copy($scope.vm.unvalList);
+            openAddAttribute({
+                from: attributeList.concat($scope.vm.valList)
+            }).then( function (res) {
+                    delNewAttribute (res)
+                }
+            );
+        }
+
+        function delNewAttribute (nData) {
+            if (_.isEmpty(nData.value_translation)) {
+                $scope.vm.unvalList.push({"prop_original":nData.prop_original, "cat_path":"0"})
+            } else {
+                $scope.vm.valList.push({"prop_original":nData.prop_original, "prop_translation": nData.prop_translation, "cat_path":"0"})
+            }
+
+            $scope.save();
+        }
     }
 
-    attributeController.$inject = ['$scope', '$routeParams', 'attributeService'];
+    attributeController.$inject = ['$scope', '$routeParams', 'attributeService', 'feedMappingService', 'notify', 'confirm', '$translate', '$location'];
     return attributeController;
 });

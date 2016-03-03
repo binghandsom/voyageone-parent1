@@ -99,6 +99,15 @@ define([
                     "size": 'md'
                 }
             },
+            "custom": {
+                "newAttribute": {
+                    "templateUrl": "views/pop/custom/newAttribute.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/custom/newAttribute.ctl",
+                    "controller": 'popAddAttributeValueCtl as ctrl',
+                    "backdrop": 'static',
+                    "size": 'md'
+                }
+            },
             "configuration": {
                 "new": {
                     "templateUrl": "views/pop/configuration/new.tpl.html",
@@ -409,6 +418,15 @@ define([
          */
         $scope.openSystemCategory = function (context) {
             return openModel(popActions.category.schema, context);
+        };
+
+        /**
+         * 打开添加自定义属性编辑页面
+         * @param context
+         * @returns {*}
+         */
+        $scope.openAddAttribute = function (context) {
+            return openModel(popActions.custom.newAttribute, context);
         };
 
         /**
