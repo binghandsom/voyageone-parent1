@@ -20,9 +20,11 @@ public class CmsBtPromotionCodeModel extends CmsBtPromotionGroupModel {
 
     private Double promotionPrice;
 
-    private String imageUrlSale;
+    private String image_url_1;
 
-    private String imageUrlSaleOut;
+    private String image_url_2;
+
+    private String image_url_3;
 
     private String image;
 
@@ -91,20 +93,28 @@ public class CmsBtPromotionCodeModel extends CmsBtPromotionGroupModel {
         this.promotionPrice = promotionPrice;
     }
 
-    public String getImageUrlSale() {
-        return imageUrlSale;
+    public String getImage_url_1() {
+        return image_url_1;
     }
 
-    public void setImageUrlSale(String imageUrlSale) {
-        this.imageUrlSale = imageUrlSale;
+    public void setImage_url_1(String image_url_1) {
+        this.image_url_1 = image_url_1;
     }
 
-    public String getImageUrlSaleOut() {
-        return imageUrlSaleOut;
+    public String getImage_url_2() {
+        return image_url_2;
     }
 
-    public void setImageUrlSaleOut(String imageUrlSaleOut) {
-        this.imageUrlSaleOut = imageUrlSaleOut;
+    public void setImage_url_2(String image_url_2) {
+        this.image_url_2 = image_url_2;
+    }
+
+    public String getImage_url_3() {
+        return image_url_3;
+    }
+
+    public void setImage_url_3(String image_url_3) {
+        this.image_url_3 = image_url_3;
     }
 
     public String getImage() {
