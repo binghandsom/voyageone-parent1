@@ -13,7 +13,7 @@
           cfg_name = #{cfg_name}
     </select>
 
-    <select id="tm_task_control_selectByName" parameterType="string" resultType="com.voyageone.batch.core.modelbean.TaskControlBean">
+    <select id="tm_task_control_selectByName" parameterType="string" resultType="com.voyageone.task2.core.modelbean.TaskControlBean">
         select
           task.task_id,
           task.task_type,
@@ -34,7 +34,7 @@
           control.cfg_val1
     </select>
 
-    <select id="com_bt_task_history_insertTaskHistory" parameterType="com.voyageone.batch.core.modelbean.TaskHistoryBean" resultType="int">
+    <select id="com_bt_task_history_insertTaskHistory" parameterType="com.voyageone.task2.core.modelbean.TaskHistoryBean" resultType="int">
         insert into
           com_bt_task_history
           (
