@@ -7,6 +7,9 @@
     <!-- 共通相关配置 -->
     <import resource="classpath*:voyageone-config.xml" />
 
+    <!-- SDK Client Config -->
+    <import resource="file:D:\work\IdeaProjects\voyageone\voyageone-web2\voyageone-web2-cms\src\main\resources\sdk-client-config-sample.xml" />
+
 	<!-- 异常处理 -->
 	<bean class="com.voyageone.web2.base.ExceptionHandler">
         <property name="debug" value="true"/>
