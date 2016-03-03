@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * 价格披露画面的控制器
  * Created by jonasvlag on 16/3/1.
  *
  * @version 2.0.0

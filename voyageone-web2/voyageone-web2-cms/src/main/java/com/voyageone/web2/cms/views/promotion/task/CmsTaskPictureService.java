@@ -38,6 +38,7 @@ import static com.voyageone.common.util.ExcelUtils.getNum;
 import static com.voyageone.common.util.ExcelUtils.getString;
 
 /**
+ * 价格披露的数据服务
  * Created by jonasvlag on 16/2/29.
  *
  * @version 2.0.0
@@ -54,23 +55,31 @@ public class CmsTaskPictureService extends BaseAppService {
     @Autowired
     private CmsBtBeatInfoDao beatInfoDao;
 
+    /**
+     * 创建一个价格披露任务
+     *
+     * @param taskBean 输入的创建参数
+     * @param user     当前用户
+     * @return 创建完成后的模型
+     */
     public TaskBean create(TaskBean taskBean, UserSessionBean user) {
 
         CmsBtPromotionModel promotion = getPromotion(taskBean.getPromotion_id());
 
         if (promotion == null)
-            throw new BusinessException("没找到 Promotion");
+            throw new BusinessException("7000001");
 
         if (!taskBean.getConfig().isValid())
-            throw new BusinessException("配置错误");
+            throw new BusinessException("7000002");
 
+        // 尝试检查任务的名称, 是否已经存在
         List<CmsBtTaskModel> taskModels = taskDao.selectByName(
                 taskBean.getPromotion_id(),
                 taskBean.getTask_name(),
                 PromotionTypeEnums.Type.JIAGEPILU.getTypeId());
 
         if (!taskModels.isEmpty())
-            throw new BusinessException("Task 重名");
+            throw new BusinessException("7000003");
 
         taskBean.setTask_type(PromotionTypeEnums.Type.JIAGEPILU);
         taskBean.getConfig().setBeat_time(promotion.getPrePeriodStart());
@@ -91,22 +100,45 @@ public class CmsTaskPictureService extends BaseAppService {
         return new TaskBean(taskModels.get(0));
     }
 
+    /**
+     * 获取 task_id 任务下的所有价格披露信息
+     *
+     * @param task_id 任务 ID
+     * @param flag    指定的任务状态
+     * @param offset  分页偏移量
+     * @param size    分页数
+     * @return 数据集合
+     */
     public List<CmsBtBeatInfoModel> getAllBeat(int task_id, BeatFlag flag, int offset, int size) {
 
         return beatInfoDao.selectListByTask(task_id, flag, offset, size);
     }
 
+    /**
+     * 获取 task_id 任务下的所有价格披露信息的总数, 参看方法 getAllBeat
+     *
+     * @param task_id 任务 ID
+     * @param flag    指定的任务状态
+     * @return 数据集合
+     */
     public int getAllBeatCount(int task_id, BeatFlag flag) {
 
         return beatInfoDao.selectListByTaskCount(task_id, flag);
     }
 
+    /**
+     * 获取价格披露的统计信息
+     * @param task_id 任务 ID
+     * @return 统计信息, List[Map{flag&count}]
+     */
     public List<Map> getBeatSummary(int task_id) {
         List<Map> result = beatInfoDao.selectSummary(task_id);
+        // 数据查询出来的是整数, 转换为枚举
         for (Map map : result)
             map.put("flag", BeatFlag.valueOf((Integer) map.get("flag")));
         return result;
     }
+
 
     public List<CmsBtBeatInfoModel> importBeatInfo(int task_id, int size, MultipartFile file, UserSessionBean user) {
 
@@ -115,7 +147,7 @@ public class CmsTaskPictureService extends BaseAppService {
                 BeatFlag.BEATING, BeatFlag.RE_FAIL, BeatFlag.REVERT, BeatFlag.SUCCESS);
 
         if (count > 0)
-            throw new BusinessException("存在[等待刷图, 还原失败, 等待还原, 刷图成功]的数据时,不能重新导入. 请人工处理后重新再试.");
+            throw new BusinessException("7000004");
 
         beatInfoDao.deleteByTask(task_id);
 
@@ -124,7 +156,7 @@ public class CmsTaskPictureService extends BaseAppService {
         try {
             wb = WorkbookFactory.create(file.getInputStream());
         } catch (IOException | InvalidFormatException e) {
-            throw new BusinessException("导入失败");
+            throw new BusinessException("7000005");
         }
 
         Sheet sheet = wb.getSheetAt(0);
@@ -136,7 +168,7 @@ public class CmsTaskPictureService extends BaseAppService {
             Double value = getNum(row, 0);
 
             if (value == null)
-                throw new BusinessException("格式不对");
+                throw new BusinessException("7000006");
 
             CmsBtBeatInfoModel model = new CmsBtBeatInfoModel();
 
@@ -192,14 +224,14 @@ public class CmsTaskPictureService extends BaseAppService {
             }
 
         } catch (IOException e) {
-            throw new BusinessException("写入失败", e);
+            throw new BusinessException("7000007", e);
         }
     }
 
     public int setFlag(int beat_id, BeatFlag flag, UserSessionBean user) {
 
         if (flag == null)
-            throw new BusinessException("参数错误");
+            throw new BusinessException("7000002");
 
         CmsBtBeatInfoModel beatInfoModel = beatInfoDao.selectOneById(beat_id);
 
@@ -214,7 +246,7 @@ public class CmsTaskPictureService extends BaseAppService {
     public int setFlags(int task_id, BeatFlag flag, UserSessionBean user) {
 
         if (flag == null)
-            throw new BusinessException("参数错误");
+            throw new BusinessException("7000002");
 
         return beatInfoDao.updateFlags(task_id, flag, user.getUserName());
     }
