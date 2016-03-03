@@ -20,6 +20,7 @@ import com.voyageone.web2.sdk.api.request.PromotionsGetRequest;
 import com.voyageone.web2.sdk.api.response.PromotionCodeGetResponse;
 import com.voyageone.web2.sdk.api.response.PromotionModelsGetResponse;
 import com.voyageone.web2.sdk.api.response.PromotionsGetResponse;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
@@ -34,7 +35,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.voyageone.common.util.ExcelUtils.getNum;
 import static com.voyageone.common.util.ExcelUtils.getString;
 
 /**
@@ -165,14 +165,14 @@ public class CmsTaskPictureService extends BaseAppService {
 
         for (Row row : sheet) {
 
-            Double value = getNum(row, 0);
+            String value = getString(row, 0, "#");
 
-            if (value == null)
+            if (!StringUtils.isNumeric(value))
                 throw new BusinessException("7000006");
 
             CmsBtBeatInfoModel model = new CmsBtBeatInfoModel();
 
-            model.setNum_iid(value.longValue());
+            model.setNum_iid(Long.valueOf(value));
             model.setProduct_code(getString(row, 1));
             model.setBeatFlag(BeatFlag.STOP); // syn_flag
             model.setTask_id(task_id);
