@@ -1,4 +1,4 @@
-package com.voyageone.web2.cms.wsdl.bean;
+package com.voyageone.web2.cms.wsdl.bean.task.beat;
 
 import com.voyageone.common.configs.Enums.PromotionTypeEnums;
 import com.voyageone.common.util.JacksonUtil;

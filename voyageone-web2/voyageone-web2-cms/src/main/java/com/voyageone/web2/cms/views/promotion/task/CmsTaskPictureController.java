@@ -4,7 +4,7 @@ import com.voyageone.web2.base.BaseController;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsUrlConstants.PROMOTION.TASK.BEAT;
 import com.voyageone.web2.cms.bean.beat.ReqParam;
-import com.voyageone.web2.cms.wsdl.bean.TaskBean;
+import com.voyageone.web2.cms.wsdl.bean.task.beat.TaskBean;
 import com.voyageone.web2.cms.wsdl.models.CmsBtBeatInfoModel;
 import com.voyageone.web2.cms.wsdl.models.CmsBtTaskModel;
 import org.springframework.beans.factory.annotation.Autowired;

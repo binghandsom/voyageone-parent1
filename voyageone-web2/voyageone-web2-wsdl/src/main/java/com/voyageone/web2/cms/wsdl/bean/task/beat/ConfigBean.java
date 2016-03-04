@@ -1,4 +1,4 @@
-package com.voyageone.web2.cms.bean.beat;
+package com.voyageone.web2.cms.wsdl.bean.task.beat;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang3.StringUtils;

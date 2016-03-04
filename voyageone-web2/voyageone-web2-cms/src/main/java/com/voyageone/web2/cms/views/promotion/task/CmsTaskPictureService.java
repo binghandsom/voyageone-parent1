@@ -5,7 +5,7 @@ import com.voyageone.cms.enums.BeatFlag;
 import com.voyageone.common.configs.Enums.PromotionTypeEnums;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.web2.base.BaseAppService;
-import com.voyageone.web2.cms.wsdl.bean.TaskBean;
+import com.voyageone.web2.cms.wsdl.bean.task.beat.TaskBean;
 import com.voyageone.web2.cms.wsdl.dao.CmsBtBeatInfoDao;
 import com.voyageone.web2.cms.wsdl.dao.CmsBtTaskDao;
 import com.voyageone.web2.cms.wsdl.models.CmsBtBeatInfoModel;
