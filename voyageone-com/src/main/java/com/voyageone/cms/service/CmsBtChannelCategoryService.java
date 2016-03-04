@@ -69,8 +69,9 @@ public class CmsBtChannelCategoryService {
             }
         }
 
+        // 清空children
         for (CmsMtCategoryTreeModel info : result) {
-
+            info.setChildren(null);
         }
 
         return result;
