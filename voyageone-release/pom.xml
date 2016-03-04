@@ -10,7 +10,7 @@
 	</parent>
 	<artifactId>voyageone-release</artifactId>
 	<packaging>war</packaging>
-	<name>voyageone-release Maven Webapp</name>
+	<name>VoyageOne - Web Container ( web-release )</name>
 	<url>http://maven.apache.org</url>
 	<version>0.0.1-SNAPSHOT</version>
 	<dependencies>

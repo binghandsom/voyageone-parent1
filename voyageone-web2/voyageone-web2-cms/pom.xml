@@ -11,7 +11,7 @@
 	<artifactId>voyageone-web2-cms</artifactId>
 	<version>${voyageone.web2.cms.version}</version>
 	<packaging>jar</packaging>
-	<name>Voyageone Web2 Cms Maven Webapp</name>
+	<name>VoyageOne Web2 - CMS</name>
 	<url>http://maven.apache.org</url>
 	<dependencies>
 		<dependency>

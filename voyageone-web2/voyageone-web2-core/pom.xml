@@ -10,7 +10,7 @@
 	</parent>
 	<artifactId>voyageone-web2-core</artifactId>
 	<packaging>jar</packaging>
-	<name>Voyageone Web2 Core Maven Webapp</name>
+	<name>VoyageOne Web2 - Core ( with Base )</name>
 	<url>http://maven.apache.org</url>
 	<version>${voyageone.web2.core.version}</version>
 	<dependencies>
