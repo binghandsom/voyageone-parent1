@@ -24,6 +24,7 @@
 			<groupId>com.voyageone</groupId>
 			<artifactId>jaxrpc</artifactId>
 		</dependency>
+
 		<dependency>
 			<groupId>com.voyageone</groupId>
 			<artifactId>axis</artifactId>
@@ -48,6 +49,12 @@
 			<groupId>commons-discovery</groupId>
 			<artifactId>commons-discovery</artifactId>
 		</dependency>
+
+        <dependency>
+            <groupId>com.voyageone</groupId>
+            <artifactId>voyageone-web2-wsdl</artifactId>
+            <version>${voyageone.web2.wsdl.version}</version>
+        </dependency>
 
 	</dependencies>
 	<build>
