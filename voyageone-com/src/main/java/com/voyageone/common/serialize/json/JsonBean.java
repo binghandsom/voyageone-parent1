@@ -1,6 +1,7 @@
 package com.voyageone.common.serialize.json;
 
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(value={"obj"})
 public class JsonBean {

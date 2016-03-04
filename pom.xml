@@ -14,15 +14,14 @@
 
     <modules>
         <module>voyageone-com</module>
-        <module>voyageone-wsc1</module>
-        <module>voyageone-wsdl1</module>
         <module>voyageone-release</module>
         <module>voyageone-batchjob-all</module>
-        <module>voyageone-web1</module>
         <module>voyageone-web2</module>
+        <!--<module>voyageone-service2</module>-->
         <module>voyageone-components</module>
         <module>voyageone-md-schema</module>
         <module>voyageone-task2</module>
+        <module>voyageone-config</module>
     </modules>
 
     <repositories>
@@ -68,28 +67,20 @@
 
         <!-- voyageone module version -->
         <voyageone.common.version>0.2.19-SNAPSHOT</voyageone.common.version>
-        <voyageone.web.core.version>0.2.5-SNAPSHOT</voyageone.web.core.version>
-        <voyageone.web.oms.version>0.2.19-SNAPSHOT</voyageone.web.oms.version>
-        <voyageone.web.ims.version>0.0.5-SNAPSHOT</voyageone.web.ims.version>
-        <voyageone.web.wms.version>0.2.37-SNAPSHOT</voyageone.web.wms.version>
-        <voyageone.web.cms.version>0.2.1-SNAPSHOT</voyageone.web.cms.version>
-        <voyageone.batchjob.core.version>0.2.0-SNAPSHOT</voyageone.batchjob.core.version>
-        <voyageone.wsdl.core.version>0.0.1-SNAPSHOT</voyageone.wsdl.core.version>
-        <voyageone.wsdl.wms.version>0.0.1-SNAPSHOT</voyageone.wsdl.wms.version>
-        <voyageone.wsdl.synship.version>0.0.1-SNAPSHOT</voyageone.wsdl.synship.version>
-        <voyageone.wsdl.ims.version>0.0.1-SNAPSHOT</voyageone.wsdl.ims.version>
-        <voyageone.wsdl.cms.version>0.0.1-SNAPSHOT</voyageone.wsdl.cms.version>
-        <voyageone.wsdl.oms.version>0.0.1-SNAPSHOT</voyageone.wsdl.oms.version>
-        <voyageone.wsc1.magento.version>0.0.1-SNAPSHOT</voyageone.wsc1.magento.version>
-        <voyageone.wsc1.getOrderService.version>0.0.1-SNAPSHOT</voyageone.wsc1.getOrderService.version>
 
         <!-- voyageone 2 module version -->
-        <voyageone.web2.core.version>2.0.0-SNAPSHOT</voyageone.web2.core.version>
-        <voyageone.web2.cms.version>2.0.0-SNAPSHOT</voyageone.web2.cms.version>
         <voyageone.components.version>2.0.0-SNAPSHOT</voyageone.components.version>
         <voyageone.md.schema.version>2.0.0-SNAPSHOT</voyageone.md.schema.version>
-        <voyageone.web2.sdk.version>2.0.0-SNAPSHOT</voyageone.web2.sdk.version>
+        <voyageone.config.version>2.0.0-SNAPSHOT</voyageone.config.version>
+
+        <!-- voyageone.web2 version -->
+        <voyageone.web2.core.version>2.0.0-SNAPSHOT</voyageone.web2.core.version>
+        <voyageone.web2.cms.version>2.0.0-SNAPSHOT</voyageone.web2.cms.version>
         <voyageone.web2.wsdl.version>2.0.0-SNAPSHOT</voyageone.web2.wsdl.version>
+
+        <!-- voyageone.web2.sdk version -->
+        <voyageone.web2.sdk.version>2.0.0-SNAPSHOT</voyageone.web2.sdk.version>
+
     </properties>
 
     <dependencyManagement>
@@ -216,6 +207,17 @@
                 <artifactId>log4j</artifactId>
                 <version>1.2.17</version>
             </dependency>
+            <dependency>
+                <groupId>org.apache.flume.flume-ng-clients</groupId>
+                <artifactId>flume-ng-log4jappender</artifactId>
+                <version>1.6.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.flume</groupId>
+                <artifactId>flume-ng-core</artifactId>
+                <version>1.6.0</version>
+            </dependency>
+
 
             <!-- mybatis -->
             <dependency>
@@ -270,11 +272,11 @@
                 <artifactId>jackson-databind</artifactId>
                 <version>2.5.3</version>
             </dependency>
-            <dependency>
-                <groupId>org.codehaus.jackson</groupId>
-                <artifactId>jackson-mapper-asl</artifactId>
-                <version>1.9.13</version>
-            </dependency>
+            <!--<dependency>-->
+                <!--<groupId>org.codehaus.jackson</groupId>-->
+                <!--<artifactId>jackson-mapper-asl</artifactId>-->
+                <!--<version>1.9.13</version>-->
+            <!--</dependency>-->
 
             <!-- mail -->
             <dependency>
@@ -474,6 +476,12 @@
                 <version>20090211</version>
             </dependency>
 
+            <!-- rabbitmq -->
+            <dependency>
+                <groupId>org.springframework.amqp</groupId>
+                <artifactId>spring-rabbit</artifactId>
+                <version>1.5.4.RELEASE</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

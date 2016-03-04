@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.voyageone.web2.wsdl.sql">
-    <resultMap id="bt_promotion_code_map" extends="bt_promotion_model_map" type="com.voyageone.web2.sdk.api.domain.CmsBtPromotionCodeModel" >
+    <resultMap id="bt_promotion_code_map" autoMapping="true" extends="bt_promotion_model_map" type="com.voyageone.web2.sdk.api.domain.CmsBtPromotionCodeModel" >
         <result column="sale_price" property="salePrice" jdbcType="DOUBLE" />
         <result column="retail_price" property="retailPrice" jdbcType="DOUBLE" />
         <result column="msrp" property="msrp" jdbcType="DOUBLE" />
@@ -9,8 +9,6 @@
         <result column="product_id" property="productId" jdbcType="INTEGER" />
         <result column="product_code" property="productCode" jdbcType="VARCHAR" />
         <result column="product_name" property="productName" jdbcType="VARCHAR" />
-        <result column="image_url_sale" property="imageUrlSale" jdbcType="VARCHAR" />
-        <result column="image_url_sale_out" property="imageUrlSaleOut" jdbcType="VARCHAR" />
         <result column="tag_id" property="tagId" jdbcType="INTEGER" />
         <result column="tag_path" property="tagPath" jdbcType="VARCHAR" />
         <result column="tag_path_name" property="tagPathName" jdbcType="VARCHAR" />
@@ -32,8 +30,9 @@
             a.tag_id,
             a.promotion_price,
             a.num_iid,
-            a.image_url_sale,
-            a.image_url_sale_out,
+            a.image_url_1,
+            a.image_url_2,
+            a.image_url_3,
             a.created,
             a.creater,
             a.modified,

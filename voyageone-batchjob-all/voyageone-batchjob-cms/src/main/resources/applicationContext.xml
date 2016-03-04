@@ -9,4 +9,6 @@
 	
 	<import resource="applicationContext-cms.xml"/>
 
+	<import resource="applicationContext-mq.xml"/>
+
 </beans>
