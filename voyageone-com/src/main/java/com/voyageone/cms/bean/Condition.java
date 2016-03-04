@@ -1,6 +1,7 @@
-package com.voyageone.cms.feed;
+package com.voyageone.cms.bean;
 
 import com.google.gson.Gson;
+import com.voyageone.cms.enums.Operation;
 import org.apache.commons.lang3.StringUtils;
 
 /**

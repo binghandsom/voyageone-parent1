@@ -1,4 +1,4 @@
-package com.voyageone.web2.cms.model;
+package com.voyageone.web2.cms.wsdl.models;
 
 import com.voyageone.web2.sdk.api.domain.CmsBtPromotionModel;
 
@@ -17,6 +17,10 @@ public class CmsBtTaskModel {
     private int task_type;
 
     private int promotion_id;
+
+    private String activity_start;
+
+    private String activity_end;
 
     private String config;
 
@@ -60,6 +64,22 @@ public class CmsBtTaskModel {
 
     public void setPromotion_id(int promotion_id) {
         this.promotion_id = promotion_id;
+    }
+
+    public String getActivity_start() {
+        return activity_start;
+    }
+
+    public void setActivity_start(String activity_start) {
+        this.activity_start = activity_start;
+    }
+
+    public String getActivity_end() {
+        return activity_end;
+    }
+
+    public void setActivity_end(String activity_end) {
+        this.activity_end = activity_end;
     }
 
     public String getConfig() {

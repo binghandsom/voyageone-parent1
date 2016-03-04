@@ -1,8 +1,7 @@
-package com.voyageone.web2.cms.dao;
+package com.voyageone.web2.cms.wsdl.dao;
 
-import com.voyageone.web2.base.dao.WebBaseDao;
-import com.voyageone.web2.base.dao.WebDaoNs;
-import com.voyageone.web2.cms.model.CmsBtTaskModel;
+import com.voyageone.base.dao.BaseDao;
+import com.voyageone.web2.cms.wsdl.models.CmsBtTaskModel;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -12,11 +11,11 @@ import java.util.List;
  * @version 2.0.0
  */
 @Repository
-public class CmsBtTaskDao extends WebBaseDao {
+public class CmsBtTaskDao extends BaseDao {
 
     @Override
-    protected WebDaoNs webNs() {
-        return WebDaoNs.CMS;
+    protected String namespace() {
+        return "com.voyageone.web2.cms.sql";
     }
 
     public int insert(CmsBtTaskModel model) {

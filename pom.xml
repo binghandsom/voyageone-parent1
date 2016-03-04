@@ -7,10 +7,7 @@
     <artifactId>voyageone-parent</artifactId>
     <version>0.2.0-SNAPSHOT</version>
     <packaging>pom</packaging>
-
-
-    <name>voyageone-parent</name>
-    <url>http://maven.apache.org</url>
+    <name>VoyageOne</name>
 
     <modules>
         <module>voyageone-com</module>

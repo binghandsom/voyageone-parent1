@@ -2,11 +2,15 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.voyageone.web2.cms.sql">
 
-    <insert id="cms_bt_tasks_insert" parameterType="com.voyageone.web2.cms.model.CmsBtTaskModel">
+    <insert id="cms_bt_tasks_insert" parameterType="com.voyageone.web2.cms.wsdl.models.CmsBtTaskModel">
         INSERT INTO voyageone_cms2.cms_bt_tasks (
-            task_name, task_type, promotion_id, config, created, creater, modified, modifier
+            task_name, task_type, promotion_id, activity_start, activity_end,
+            <if test="config != null">
+              config,
+            </if>
+            created, creater, modified, modifier
         ) VALUES (
-            #{task_name}, #{task_type}, #{promotion_id}, #{config}, #{created}, #{creater}, #{modified}, #{modifier}
+            #{task_name}, #{task_type}, #{promotion_id}, #{activity_start}, #{activity_end}, <if test="config != null">#{config},</if> now(), #{creater}, now(), #{modifier}
         )
     </insert>
 
@@ -26,6 +30,8 @@
             task_name,
             task_type,
             t.promotion_id,
+            t.activity_start t_start,
+            t.activity_end t_end,
             config,
             t.created,
             t.creater,
@@ -39,8 +45,8 @@
             pre_sale_start,
             pre_period_start,
             pre_period_end,
-            activity_start,
-            activity_end,
+            p.activity_start,
+            p.activity_end,
             tejiabao_id,
             promotion_type,
             ref_tag_id,
@@ -56,8 +62,10 @@
         WHERE p.channel_id = #{channel_id};
     </select>
 
-    <resultMap id="taskWithPromotion" type="com.voyageone.web2.cms.model.CmsBtTaskModel" autoMapping="true">
+    <resultMap id="taskWithPromotion" type="com.voyageone.web2.cms.wsdl.models.CmsBtTaskModel" autoMapping="true">
         <id property="task_id" column="task_id"/>
+        <result property="activity_start" column="t_start"/>
+        <result property="activity_end" column="t_end"/>
         <association property="promotion" autoMapping="true" javaType="com.voyageone.web2.sdk.api.domain.CmsBtPromotionModel">
             <id property="promotionId" column="promotion_id"/>
             <result property="channelId" column="channel_id"/>
@@ -88,6 +96,8 @@
             task_name,
             task_type,
             t.promotion_id,
+            t.activity_start t_start,
+            t.activity_end t_end,
             config,
             t.created,
             t.creater,
@@ -101,8 +111,8 @@
             pre_sale_start,
             pre_period_start,
             pre_period_end,
-            activity_start,
-            activity_end,
+            p.activity_start,
+            p.activity_end,
             tejiabao_id,
             promotion_type,
             ref_tag_id,
@@ -118,7 +128,7 @@
         WHERE task_id = #{task_id}
     </select>
 
-    <select id="cms_bt_tasks_selectByName" resultType="com.voyageone.web2.cms.model.CmsBtTaskModel">
+    <select id="cms_bt_tasks_selectByName" resultType="com.voyageone.web2.cms.wsdl.models.CmsBtTaskModel">
         SELECT
             task_id,
             task_name,
@@ -131,7 +141,9 @@
             modifier
         FROM voyageone_cms2.cms_bt_tasks
         WHERE promotion_id = #{promotion_id}
+              <if test="task_name != null and task_name != ''">
               AND task_name = #{task_name}
+              </if>
               AND task_type = #{task_type}
     </select>
 

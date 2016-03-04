@@ -40,7 +40,7 @@
               AND pm.seq IS NULL;
     </update>
 
-    <select id="cms_bt_beat_info_selectListByTask" resultType="com.voyageone.web2.cms.model.CmsBtBeatInfoModel">
+    <select id="cms_bt_beat_info_selectListByTask" resultType="com.voyageone.web2.cms.wsdl.models.CmsBtBeatInfoModel">
         SELECT
             id,
             task_id,
@@ -82,7 +82,7 @@
         LIMIT #{offset}, #{size}
     </select>
 
-    <resultMap id="beatInfoWithPromotionCode" type="com.voyageone.web2.cms.model.CmsBtBeatInfoModel" autoMapping="true">
+    <resultMap id="beatInfoWithPromotionCode" type="com.voyageone.web2.cms.wsdl.models.CmsBtBeatInfoModel" autoMapping="true">
         <id column="id" property="id"/>
         <association property="promotion_code" javaType="com.voyageone.web2.sdk.api.domain.CmsBtPromotionCodeModel">
             <result column="promotion_price" property="promotionPrice"/>
@@ -114,7 +114,7 @@
         )
     </select>
 
-    <select id="cms_bt_beat_info_selectOneById" resultType="com.voyageone.web2.cms.model.CmsBtBeatInfoModel">
+    <select id="cms_bt_beat_info_selectOneById" resultType="com.voyageone.web2.cms.wsdl.models.CmsBtBeatInfoModel">
         SELECT
             id,
             task_id,
@@ -163,7 +163,7 @@
         AND b.num_iid = #{num_iid}
     </select>
 
-    <select id="cms_bt_beat_info_selectOneByNumiid" resultType="com.voyageone.web2.cms.model.CmsBtBeatInfoModel">
+    <select id="cms_bt_beat_info_selectOneByNumiid" resultType="com.voyageone.web2.cms.wsdl.models.CmsBtBeatInfoModel">
         SELECT
             id,
             task_id,
@@ -226,7 +226,7 @@
                 ON t.task_id = b.task_id
     </sql>
 
-    <resultMap id="beatInfoWithPromotion" type="com.voyageone.web2.cms.model.CmsBtBeatInfoModel" autoMapping="true">
+    <resultMap id="beatInfoWithPromotion" type="com.voyageone.web2.cms.wsdl.models.CmsBtBeatInfoModel" autoMapping="true">
         <association property="promotion" javaType="com.voyageone.web2.sdk.api.domain.CmsBtPromotionModel"
                      autoMapping="true">
             <result column="p_created" property="created"/>

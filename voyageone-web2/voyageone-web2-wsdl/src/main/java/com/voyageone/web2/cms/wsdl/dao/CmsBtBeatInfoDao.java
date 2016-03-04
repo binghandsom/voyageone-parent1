@@ -1,9 +1,8 @@
-package com.voyageone.web2.cms.dao;
+package com.voyageone.web2.cms.wsdl.dao;
 
+import com.voyageone.base.dao.BaseDao;
 import com.voyageone.cms.enums.BeatFlag;
-import com.voyageone.web2.base.dao.WebBaseDao;
-import com.voyageone.web2.base.dao.WebDaoNs;
-import com.voyageone.web2.cms.model.CmsBtBeatInfoModel;
+import com.voyageone.web2.cms.wsdl.models.CmsBtBeatInfoModel;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -15,11 +14,11 @@ import java.util.Map;
  * @version 2.0.0
  */
 @Repository
-public class CmsBtBeatInfoDao extends WebBaseDao {
+public class CmsBtBeatInfoDao extends BaseDao {
 
     @Override
-    protected WebDaoNs webNs() {
-        return WebDaoNs.CMS;
+    protected String namespace() {
+        return "com.voyageone.web2.cms.sql";
     }
 
     public int insertList(List<CmsBtBeatInfoModel> modelList) {

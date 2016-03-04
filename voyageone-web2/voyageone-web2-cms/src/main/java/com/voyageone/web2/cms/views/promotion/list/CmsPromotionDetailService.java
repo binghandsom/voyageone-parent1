@@ -9,6 +9,8 @@ import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.bean.CmsPromotionProductPriceBean;
+import com.voyageone.web2.cms.wsdl.dao.CmsBtTaskDao;
+import com.voyageone.web2.cms.wsdl.models.CmsBtTaskModel;
 import com.voyageone.web2.cms.views.pop.bulkUpdate.CmsAddToPromotionService;
 import com.voyageone.web2.sdk.api.VoApiDefaultClient;
 import com.voyageone.web2.sdk.api.domain.*;
@@ -39,6 +41,9 @@ public class CmsPromotionDetailService extends BaseAppService {
 
     @Autowired
     protected ProductSdkClient ProductGetClient;
+
+    @Autowired
+    private CmsBtTaskDao cmsBtTaskDao;
 
     @Autowired
     private ProductTagClient productTagClient;
@@ -137,7 +142,7 @@ public class CmsPromotionDetailService extends BaseAppService {
 
                 if (cmsBtProductModel != null) {
                     map.put("image", cmsBtProductModel.getFields().getImages1().get(0).getAttribute("image1"));
-                    map.put("platformStatus",cmsBtProductModel.getGroups().getPlatforms().get(0).getPlatformStatus());
+                    map.put("platformStatus", cmsBtProductModel.getGroups().getPlatforms().get(0).getPlatformStatus());
                 }
             });
         }
@@ -298,16 +303,30 @@ public class CmsPromotionDetailService extends BaseAppService {
      * @param operator    操作者
      */
     public void teJiaBaoInit(Integer promotionId, String operator) {
-        Map<String, Object> param = new HashMap<>();
-        param.put("promotionId", promotionId);
-        PromotionCodeGetRequest requestc=new PromotionCodeGetRequest();
-        requestc.setParam(param);
-        List<CmsBtPromotionCodeModel> codeList = voApiClient.execute(requestc).getCodeList();
+
         simpleTransaction.openTransaction();
         try {
+            List<CmsBtTaskModel> tasks = cmsBtTaskDao.selectByName(promotionId, null, PromotionTypeEnums.Type.TEJIABAO.getTypeId());
+            if (tasks.size() == 0) {
+                CmsBtPromotionModel cmsBtPromotionModel = cmsPromotionService.queryById(promotionId);
+                CmsBtTaskModel cmsBtTaskModel = new CmsBtTaskModel();
+                cmsBtTaskModel.setModifier(operator);
+                cmsBtTaskModel.setCreater(operator);
+                cmsBtTaskModel.setPromotion_id(promotionId);
+                cmsBtTaskModel.setTask_type(PromotionTypeEnums.Type.TEJIABAO.getTypeId());
+                cmsBtTaskModel.setTask_name(cmsBtPromotionModel.getPromotionName());
+                cmsBtTaskDao.insert(cmsBtTaskModel);
+            }
+
+            Map<String, Object> param = new HashMap<>();
+            param.put("promotionId", promotionId);
+            PromotionCodeGetRequest requestc = new PromotionCodeGetRequest();
+            requestc.setParam(param);
+            List<CmsBtPromotionCodeModel> codeList = voApiClient.execute(requestc).getCodeList();
+
             codeList.forEach(code -> {
-                CmsBtPromotionTaskModel cmsBtPromotionTask = new CmsBtPromotionTaskModel(promotionId, PromotionTypeEnums.Type.TEJIABAO.getTypeId(), code.getProductCode(),code.getNumIid(), operator);
-                PromotionTaskAddRequest request=new PromotionTaskAddRequest();
+                CmsBtPromotionTaskModel cmsBtPromotionTask = new CmsBtPromotionTaskModel(promotionId, PromotionTypeEnums.Type.TEJIABAO.getTypeId(), code.getProductCode(), code.getNumIid(), operator);
+                PromotionTaskAddRequest request = new PromotionTaskAddRequest();
                 request.setCmsBtPromotionTaskModel(cmsBtPromotionTask);
                 voApiClient.execute(request);
             });
