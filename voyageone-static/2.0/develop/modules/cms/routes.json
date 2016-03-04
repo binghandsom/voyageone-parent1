@@ -17,7 +17,8 @@
   "promotion_task_index": {
     "hash": "/promotion/task",
     "templateUrl": "views/promotion/task/index.tpl.html",
-    "controllerUrl": "modules/cms/views/promotion/task/index.ctl"
+    "controllerUrl": "modules/cms/views/promotion/task/index.ctl",
+    "controller": "taskIndexController as $ctrl"
   },
   "promotion_task_detail": {
     "hash": "/promotion/task/detail",
@@ -32,9 +33,10 @@
   },
   "promotion_task_beat": {
     "url": "/promotion/task/beat/",
-    "hash": "/promotion/task/beat/:beatId",
+    "hash": "/promotion/task/beat/:task_id",
     "templateUrl": "views/promotion/task/beat.tpl.html",
-    "controllerUrl": "modules/cms/views/promotion/task/beat.ctl"
+    "controllerUrl": "modules/cms/views/promotion/task/beat.ctl",
+    "controller": "taskBeatController as $ctrl"
   },
   "search_advance": {
     "hash": "/search/advance",

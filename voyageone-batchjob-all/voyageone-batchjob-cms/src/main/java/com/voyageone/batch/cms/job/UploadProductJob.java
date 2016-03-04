@@ -3,7 +3,7 @@ package com.voyageone.batch.cms.job;
 import com.voyageone.batch.Context;
 import com.voyageone.batch.base.BaseTaskJob;
 import com.voyageone.batch.base.BaseTaskService;
-import com.voyageone.batch.cms.service.UploadProductService;
+import com.voyageone.batch.cms.service.putaway.UploadProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.GenericXmlApplicationContext;

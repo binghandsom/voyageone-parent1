@@ -6,7 +6,7 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function (angularAMD) {
 
-    angularAMD.controller('popPromotionDetailCtl', function ($scope,promotionService, cartList,items) {
+    angularAMD.controller('popPromotionDetailCtl', function ($scope,promotionService, cartList,items,confirm,$translate) {
 
         $scope.promotion = {};
         $scope.tejiabao=false;
@@ -14,20 +14,47 @@ define([
 
         $scope.initialize  = function () {
             if(items){
-                $scope.promotion = _.clone(items);
+                $scope.promotion = angular.copy(items);
                 if($scope.promotion.tejiabaoId != "0"){
                     $scope.tejiabao=true;
                 }
+            }else{
+                $scope.promotion.tagList=[{"tagId":"","channelId":"","tagName":""}];
             }
         };
+        $scope.addTag = function(){
+            if($scope.promotion.tagList)
+            {
+                $scope.promotion.tagList.push({"tagId":"","channelId":"","tagName":""});
+            }else{
+                $scope.promotion.tagList=[{"tagId":"","channelId":"","tagName":""}];
+            }
 
+        };
+        $scope.delTag = function(parent,node){
+            confirm($translate.instant('TXT_MSG_DELETE_ITEM')).result
+                .then(function () {
+                    var index;
+                    index=_.indexOf(parent,node);
+                    if(index >-1 ){
+                        parent.splice(index,1);
+                    }
+                });
+        };
         $scope.ok = function(){
 
             if(!$scope.tejiabao){
                 $scope.promotion.tejiabaoId = "0";
             }
+            if(!$scope.promotionFrom.$valid || !$scope.promotion.tagList){
+                return;
+            }
+            for(var i=0;i<$scope.promotion.tagList.length;i++){
+                if($scope.promotion.tagList[i].tagName == ""){
+                    return;
+                }
+            }
             if(!items) {
-                $scope.promotion.tagList=[{"tagName":"7.5折"}]
                 promotionService.insertPromotion($scope.promotion).then(function (res) {
 
                     $scope.$close();

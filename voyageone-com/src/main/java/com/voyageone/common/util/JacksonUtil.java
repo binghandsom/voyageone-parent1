@@ -6,6 +6,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.voyageone.base.exception.SystemException;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -21,14 +22,29 @@ public final class JacksonUtil {
      * @param obj Object
      * @return String
      */
-    public static String bean2Json(Object obj) throws IOException {
+    public static String bean2Json(Object obj) {
+
         ObjectMapper mapper = new ObjectMapper();
         StringWriter sw = new StringWriter();
-        JsonGenerator gen = new JsonFactory().createGenerator(sw);
-        mapper.writeValue(gen, obj);
-        gen.close();
+
+        JsonGenerator gen;
+
+        try {
+            gen = new JsonFactory().createGenerator(sw);
+            mapper.writeValue(gen, obj);
+        } catch (IOException e) {
+            throw new SystemException(e.getMessage(), e);
+        }
+
+        if (gen != null) try {
+            gen.close();
+        } catch (IOException e) {
+            throw new SystemException(e.getMessage(), e);
+        }
+
         return sw.toString();
     }
+
     public static String bean2JsonNotNull(Object obj) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
@@ -43,12 +59,16 @@ public final class JacksonUtil {
      * 根据json字符串返回对应java类型
      *
      * @param jsonStr String
-     * @param cls Class<T>
+     * @param cls     Class<T>
      * @return T
      */
-    public static <T> T json2Bean(String jsonStr, Class<T> cls) throws IOException {
+    public static <T> T json2Bean(String jsonStr, Class<T> cls) {
         ObjectMapper mapper = new ObjectMapper();
-        return mapper.readValue(jsonStr, cls);
+        try {
+            return mapper.readValue(jsonStr, cls);
+        } catch (IOException e) {
+            throw new SystemException(e.getMessage(), e);
+        }
     }
 
     /**
@@ -67,7 +87,7 @@ public final class JacksonUtil {
      * 根据json字符串返回对应java类型List
      *
      * @param jsonString String
-     * @param cls Class
+     * @param cls        Class
      * @return List
      */
     public static <T> List<T> jsonToBeanList(String jsonString, Class<T> cls) throws IOException {
