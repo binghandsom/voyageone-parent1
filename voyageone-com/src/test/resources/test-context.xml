@@ -19,4 +19,7 @@
     <!-- 初始化处理 -->
     <bean class="com.voyageone.common.configs.Initializer" init-method="init"/>
     <!-- <bean id="initial" class="com.voyageone.batch.bi.configs.Initializer" init-method="init"/>-->
+
+
+
 </beans>
