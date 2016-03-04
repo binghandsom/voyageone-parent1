@@ -1,0 +1,479 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.cms.sql">
+
+    <resultMap id="resultMap_jewelry" type="com.voyageone.task2.cms.model.CmsBtFeedInfoJewelryModel">
+        <result column="category" property="category" />
+        <result column="channel_id" property="channelId" />
+        <result column="m_product_type" property="sizeType" />
+        <result column="m_brand" property="brand" />
+        <result column="m_model" property="model" />
+        <result column="p_name" property="name" />
+        <result column="pe_short_description" property="short_description" />
+        <result column="pe_long_description" property="long_description" />
+        <result column="m_size_type" property="sizeType" />
+        <result column="m_weight" property="weight" />
+        <result column="p_code" property="code" />
+        <result column="p_color" property="color" />
+        <result column="p_made_in_country" property="origin" />
+        <result column="Attribute1Name" property="Attribute1Name" />
+        <result column="Attribute2Name" property="Attribute2Name" />
+        <result column="Attribute3Name" property="Attribute3Name" />
+        <result column="Attribute4Name" property="Attribute4Name" />
+        <result column="Attribute5Name" property="Attribute5Name" />
+        <result column="Attribute6Name" property="Attribute6Name" />
+        <result column="Attribute7Name" property="Attribute7Name" />
+        <result column="Attribute8Name" property="Attribute8Name" />
+        <result column="Attribute9Name" property="Attribute9Name" />
+        <result column="Attribute10Name" property="Attribute10Name" />
+        <result column="Attribute11Name" property="Attribute11Name" />
+        <result column="Attribute12Name" property="Attribute12Name" />
+        <result column="Attribute13Name" property="Attribute13Name" />
+        <result column="Attribute14Name" property="Attribute14Name" />
+        <result column="Attribute15Name" property="Attribute15Name" />
+        <result column="Attribute16Name" property="Attribute16Name" />
+        <result column="Attribute17Name" property="Attribute17Name" />
+        <result column="Attribute18Name" property="Attribute18Name" />
+        <result column="Attribute19Name" property="Attribute19Name" />
+        <result column="Attribute20Name" property="Attribute20Name" />
+        <result column="Attribute21Name" property="Attribute21Name" />
+        <result column="Attribute22Name" property="Attribute22Name" />
+        <result column="Attribute23Name" property="Attribute23Name" />
+        <result column="Attribute24Name" property="Attribute24Name" />
+        <result column="Attribute25Name" property="Attribute25Name" />
+        <result column="Attribute26Name" property="Attribute26Name" />
+        <result column="Attribute27Name" property="Attribute27Name" />
+        <result column="Attribute28Name" property="Attribute28Name" />
+        <result column="Attribute29Name" property="Attribute29Name" />
+        <result column="Attribute30Name" property="Attribute30Name" />
+        <result column="Attribute31Name" property="Attribute31Name" />
+        <result column="Attribute32Name" property="Attribute32Name" />
+        <result column="Attribute33Name" property="Attribute33Name" />
+        <result column="Attribute34Name" property="Attribute34Name" />
+        <result column="Attribute35Name" property="Attribute35Name" />
+        <result column="Attribute36Name" property="Attribute36Name" />
+        <result column="Attribute37Name" property="Attribute37Name" />
+        <result column="Attribute38Name" property="Attribute38Name" />
+        <result column="Attribute39Name" property="Attribute39Name" />
+        <result column="Attribute40Name" property="Attribute40Name" />
+        <result column="Attribute41Name" property="Attribute41Name" />
+        <result column="Attribute42Name" property="Attribute42Name" />
+        <result column="Attribute43Name" property="Attribute43Name" />
+        <result column="Attribute44Name" property="Attribute44Name" />
+        <result column="Attribute47Name" property="Attribute47Name" />
+        <result column="Attribute48Name" property="Attribute48Name" />
+        <result column="Attribute49Name" property="Attribute49Name" />
+        <result column="Attribute50Name" property="Attribute50Name" />
+        <result column="Attribute51Name" property="Attribute51Name" />
+        <result column="Attribute52Name" property="Attribute52Name" />
+        <result column="Attribute53Name" property="Attribute53Name" />
+        <result column="Attribute54Name" property="Attribute54Name" />
+        <result column="Attribute55Name" property="Attribute55Name" />
+        <result column="Attribute56Name" property="Attribute56Name" />
+        <result column="Attribute57Name" property="Attribute57Name" />
+        <result column="Attribute58Name" property="Attribute58Name" />
+        <result column="Attribute59Name" property="Attribute59Name" />
+        <result column="Attribute60Name" property="Attribute60Name" />
+        <result column="Attribute61Name" property="Attribute61Name" />
+        <result column="Attribute62Name" property="Attribute62Name" />
+        <result column="Attribute63Name" property="Attribute63Name" />
+        <result column="Attribute64Name" property="Attribute64Name" />
+        <result column="Attribute65Name" property="Attribute65Name" />
+        <result column="Attribute66Name" property="Attribute66Name" />
+        <result column="Attribute67Name" property="Attribute67Name" />
+        <result column="Attribute68Name" property="Attribute68Name" />
+        <result column="Attribute69Name" property="Attribute69Name" />
+        <result column="Attribute70Name" property="Attribute70Name" />
+        <result column="Attribute71Name" property="Attribute71Name" />
+        <result column="Attribute72Name" property="Attribute72Name" />
+        <result column="Attribute73Name" property="Attribute73Name" />
+        <result column="Attribute74Name" property="Attribute74Name" />
+        <result column="Attribute75Name" property="Attribute75Name" />
+        <result column="Attribute76Name" property="Attribute76Name" />
+        <result column="Attribute77Name" property="Attribute77Name" />
+        <result column="Attribute78Name" property="Attribute78Name" />
+        <result column="Attribute79Name" property="Attribute79Name" />
+        <result column="Attribute80Name" property="Attribute80Name" />
+        <result column="Attribute81Name" property="Attribute81Name" />
+        <result column="Attribute82Name" property="Attribute82Name" />
+        <result column="Attribute83Name" property="Attribute83Name" />
+        <result column="Attribute84Name" property="Attribute84Name" />
+        <result column="Attribute85Name" property="Attribute85Name" />
+        <result column="Attribute86Name" property="Attribute86Name" />
+        <result column="Attribute87Name" property="Attribute87Name" />
+        <result column="Attribute88Name" property="Attribute88Name" />
+        <result column="Attribute89Name" property="Attribute89Name" />
+        <result column="Attribute90Name" property="Attribute90Name" />
+        <result column="Attribute91Name" property="Attribute91Name" />
+        <result column="Attribute92Name" property="Attribute92Name" />
+        <result column="Attribute93Name" property="Attribute93Name" />
+        <result column="Attribute94Name" property="Attribute94Name" />
+        <result column="Attribute95Name" property="Attribute95Name" />
+        <result column="Attribute96Name" property="Attribute96Name" />
+        <result column="Attribute97Name" property="Attribute97Name" />
+        <result column="Attribute98Name" property="Attribute98Name" />
+        <result column="Attribute1Value" property="Attribute1Value" />
+        <result column="Attribute2Value" property="Attribute2Value" />
+        <result column="Attribute3Value" property="Attribute3Value" />
+        <result column="Attribute4Value" property="Attribute4Value" />
+        <result column="Attribute5Value" property="Attribute5Value" />
+        <result column="Attribute6Value" property="Attribute6Value" />
+        <result column="Attribute7Value" property="Attribute7Value" />
+        <result column="Attribute8Value" property="Attribute8Value" />
+        <result column="Attribute9Value" property="Attribute9Value" />
+        <result column="Attribute10Value" property="Attribute10Value" />
+        <result column="Attribute11Value" property="Attribute11Value" />
+        <result column="Attribute12Value" property="Attribute12Value" />
+        <result column="Attribute13Value" property="Attribute13Value" />
+        <result column="Attribute14Value" property="Attribute14Value" />
+        <result column="Attribute15Value" property="Attribute15Value" />
+        <result column="Attribute16Value" property="Attribute16Value" />
+        <result column="Attribute17Value" property="Attribute17Value" />
+        <result column="Attribute18Value" property="Attribute18Value" />
+        <result column="Attribute19Value" property="Attribute19Value" />
+        <result column="Attribute20Value" property="Attribute20Value" />
+        <result column="Attribute21Value" property="Attribute21Value" />
+        <result column="Attribute22Value" property="Attribute22Value" />
+        <result column="Attribute23Value" property="Attribute23Value" />
+        <result column="Attribute24Value" property="Attribute24Value" />
+        <result column="Attribute25Value" property="Attribute25Value" />
+        <result column="Attribute26Value" property="Attribute26Value" />
+        <result column="Attribute27Value" property="Attribute27Value" />
+        <result column="Attribute28Value" property="Attribute28Value" />
+        <result column="Attribute29Value" property="Attribute29Value" />
+        <result column="Attribute30Value" property="Attribute30Value" />
+        <result column="Attribute31Value" property="Attribute31Value" />
+        <result column="Attribute32Value" property="Attribute32Value" />
+        <result column="Attribute33Value" property="Attribute33Value" />
+        <result column="Attribute34Value" property="Attribute34Value" />
+        <result column="Attribute35Value" property="Attribute35Value" />
+        <result column="Attribute36Value" property="Attribute36Value" />
+        <result column="Attribute37Value" property="Attribute37Value" />
+        <result column="Attribute38Value" property="Attribute38Value" />
+        <result column="Attribute39Value" property="Attribute39Value" />
+        <result column="Attribute40Value" property="Attribute40Value" />
+        <result column="Attribute41Value" property="Attribute41Value" />
+        <result column="Attribute42Value" property="Attribute42Value" />
+        <result column="Attribute43Value" property="Attribute43Value" />
+        <result column="Attribute44Value" property="Attribute44Value" />
+        <result column="Attribute47Value" property="Attribute47Value" />
+        <result column="Attribute48Value" property="Attribute48Value" />
+        <result column="Attribute49Value" property="Attribute49Value" />
+        <result column="Attribute50Value" property="Attribute50Value" />
+        <result column="Attribute51Value" property="Attribute51Value" />
+        <result column="Attribute52Value" property="Attribute52Value" />
+        <result column="Attribute53Value" property="Attribute53Value" />
+        <result column="Attribute54Value" property="Attribute54Value" />
+        <result column="Attribute55Value" property="Attribute55Value" />
+        <result column="Attribute56Value" property="Attribute56Value" />
+        <result column="Attribute57Value" property="Attribute57Value" />
+        <result column="Attribute58Value" property="Attribute58Value" />
+        <result column="Attribute59Value" property="Attribute59Value" />
+        <result column="Attribute60Value" property="Attribute60Value" />
+        <result column="Attribute61Value" property="Attribute61Value" />
+        <result column="Attribute62Value" property="Attribute62Value" />
+        <result column="Attribute63Value" property="Attribute63Value" />
+        <result column="Attribute64Value" property="Attribute64Value" />
+        <result column="Attribute65Value" property="Attribute65Value" />
+        <result column="Attribute66Value" property="Attribute66Value" />
+        <result column="Attribute67Value" property="Attribute67Value" />
+        <result column="Attribute68Value" property="Attribute68Value" />
+        <result column="Attribute69Value" property="Attribute69Value" />
+        <result column="Attribute70Value" property="Attribute70Value" />
+        <result column="Attribute71Value" property="Attribute71Value" />
+        <result column="Attribute72Value" property="Attribute72Value" />
+        <result column="Attribute73Value" property="Attribute73Value" />
+        <result column="Attribute74Value" property="Attribute74Value" />
+        <result column="Attribute75Value" property="Attribute75Value" />
+        <result column="Attribute76Value" property="Attribute76Value" />
+        <result column="Attribute77Value" property="Attribute77Value" />
+        <result column="Attribute78Value" property="Attribute78Value" />
+        <result column="Attribute79Value" property="Attribute79Value" />
+        <result column="Attribute80Value" property="Attribute80Value" />
+        <result column="Attribute81Value" property="Attribute81Value" />
+        <result column="Attribute82Value" property="Attribute82Value" />
+        <result column="Attribute83Value" property="Attribute83Value" />
+        <result column="Attribute84Value" property="Attribute84Value" />
+        <result column="Attribute85Value" property="Attribute85Value" />
+        <result column="Attribute86Value" property="Attribute86Value" />
+        <result column="Attribute87Value" property="Attribute87Value" />
+        <result column="Attribute88Value" property="Attribute88Value" />
+        <result column="Attribute89Value" property="Attribute89Value" />
+        <result column="Attribute90Value" property="Attribute90Value" />
+        <result column="Attribute91Value" property="Attribute91Value" />
+        <result column="Attribute92Value" property="Attribute92Value" />
+        <result column="Attribute93Value" property="Attribute93Value" />
+        <result column="Attribute94Value" property="Attribute94Value" />
+        <result column="Attribute95Value" property="Attribute95Value" />
+        <result column="Attribute96Value" property="Attribute96Value" />
+        <result column="Attribute97Value" property="Attribute97Value" />
+        <result column="Attribute98Value" property="Attribute98Value" />
+        <collection property="skus" javaType="ArrayList" ofType="com.voyageone.cms.service.model.CmsBtFeedInfoModel_Sku" >
+            <result column="i_sku" property="sku" />
+            <result column="i_size" property="size" />
+            <result column="i_barcode" property="barcode" />
+            <result column="i_client_sku" property="clientSku" />
+            <result column="p_msrp" property="price_msrp" />
+            <result column="cps_cn_price_rmb" property="price_current" />
+        </collection>
+        <collection property="image" javaType="ArrayList" ofType="String" >
+            <result column="image" property="image" />
+        </collection>
+    </resultMap>
+    <select id="cms_jewelryfeed_select" resultMap="resultMap_jewelry" parameterType="HashMap">
+        select
+        ${category} as category
+        ,#{channel_id} as channel_id
+        ,${m_product_type} as m_product_type
+        ,${m_brand} as m_brand
+        ,${m_model} as m_model
+        ,${m_name} as m_name
+        ,${m_size_type} as m_size_type
+        ,${m_weight} as m_weight
+        ,${p_code} as p_code
+        ,${p_name} as p_name
+        ,${p_color} as p_color
+        ,${p_msrp} as p_msrp
+        ,${p_made_in_country} as p_made_in_country
+        ,${pe_short_description} as pe_short_description
+        <if test="p_product_type != null">
+            ,${p_product_type} as p_product_type
+        </if>
+        ,${pe_long_description} as pe_long_description
+        ,${cps_cn_price_rmb}  as cps_cn_price_rmb
+        ,${i_sku} as i_sku
+        ,${i_itemcode} as i_itemcode
+        ,${i_size} as i_size
+        ,${i_barcode} as i_barcode
+        ,${i_client_sku} as i_client_sku
+        ,1 as i_active
+        ,${image} as image
+        ,1 as image_type
+        ,0 as display_order,
+        Attribute1Name,
+        Attribute2Name,
+        Attribute3Name,
+        Attribute4Name,
+        Attribute5Name,
+        Attribute6Name,
+        Attribute7Name,
+        Attribute8Name,
+        Attribute9Name,
+        Attribute10Name,
+        Attribute11Name,
+        Attribute12Name,
+        Attribute13Name,
+        Attribute14Name,
+        Attribute15Name,
+        Attribute16Name,
+        Attribute17Name,
+        Attribute18Name,
+        Attribute19Name,
+        Attribute20Name,
+        Attribute21Name,
+        Attribute22Name,
+        Attribute23Name,
+        Attribute24Name,
+        Attribute25Name,
+        Attribute26Name,
+        Attribute27Name,
+        Attribute28Name,
+        Attribute29Name,
+        Attribute30Name,
+        Attribute31Name,
+        Attribute32Name,
+        Attribute33Name,
+        Attribute34Name,
+        Attribute35Name,
+        Attribute36Name,
+        Attribute37Name,
+        Attribute38Name,
+        Attribute39Name,
+        Attribute40Name,
+        Attribute41Name,
+        Attribute42Name,
+        Attribute43Name,
+        Attribute44Name,
+        Attribute47Name,
+        Attribute48Name,
+        Attribute49Name,
+        Attribute50Name,
+        Attribute51Name,
+        Attribute52Name,
+        Attribute53Name,
+        Attribute54Name,
+        Attribute55Name,
+        Attribute56Name,
+        Attribute57Name,
+        Attribute58Name,
+        Attribute59Name,
+        Attribute60Name,
+        Attribute61Name,
+        Attribute62Name,
+        Attribute63Name,
+        Attribute64Name,
+        Attribute65Name,
+        Attribute66Name,
+        Attribute67Name,
+        Attribute68Name,
+        Attribute69Name,
+        Attribute70Name,
+        Attribute71Name,
+        Attribute72Name,
+        Attribute73Name,
+        Attribute74Name,
+        Attribute75Name,
+        Attribute76Name,
+        Attribute77Name,
+        Attribute78Name,
+        Attribute79Name,
+        Attribute80Name,
+        Attribute81Name,
+        Attribute82Name,
+        Attribute83Name,
+        Attribute84Name,
+        Attribute85Name,
+        Attribute86Name,
+        Attribute87Name,
+        Attribute88Name,
+        Attribute89Name,
+        Attribute90Name,
+        Attribute91Name,
+        Attribute92Name,
+        Attribute93Name,
+        Attribute94Name,
+        Attribute95Name,
+        Attribute96Name,
+        Attribute97Name,
+        Attribute98Name,
+        Attribute1Value,
+        Attribute2Value,
+        Attribute3Value,
+        Attribute4Value,
+        Attribute5Value,
+        Attribute6Value,
+        Attribute7Value,
+        Attribute8Value,
+        Attribute9Value,
+        Attribute10Value,
+        Attribute11Value,
+        Attribute12Value,
+        Attribute13Value,
+        Attribute14Value,
+        Attribute15Value,
+        Attribute16Value,
+        Attribute17Value,
+        Attribute18Value,
+        Attribute19Value,
+        Attribute20Value,
+        Attribute21Value,
+        Attribute22Value,
+        Attribute23Value,
+        Attribute24Value,
+        Attribute25Value,
+        Attribute26Value,
+        Attribute27Value,
+        Attribute28Value,
+        Attribute29Value,
+        Attribute30Value,
+        Attribute31Value,
+        Attribute32Value,
+        Attribute33Value,
+        Attribute34Value,
+        Attribute35Value,
+        Attribute36Value,
+        Attribute37Value,
+        Attribute38Value,
+        Attribute39Value,
+        Attribute40Value,
+        Attribute41Value,
+        Attribute42Value,
+        Attribute43Value,
+        Attribute44Value,
+        Attribute47Value,
+        Attribute48Value,
+        Attribute49Value,
+        Attribute50Value,
+        Attribute51Value,
+        Attribute52Value,
+        Attribute53Value,
+        Attribute54Value,
+        Attribute55Value,
+        Attribute56Value,
+        Attribute57Value,
+        Attribute58Value,
+        Attribute59Value,
+        Attribute60Value,
+        Attribute61Value,
+        Attribute62Value,
+        Attribute63Value,
+        Attribute64Value,
+        Attribute65Value,
+        Attribute66Value,
+        Attribute67Value,
+        Attribute68Value,
+        Attribute69Value,
+        Attribute70Value,
+        Attribute71Value,
+        Attribute72Value,
+        Attribute73Value,
+        Attribute74Value,
+        Attribute75Value,
+        Attribute76Value,
+        Attribute77Value,
+        Attribute78Value,
+        Attribute79Value,
+        Attribute80Value,
+        Attribute81Value,
+        Attribute82Value,
+        Attribute83Value,
+        Attribute84Value,
+        Attribute85Value,
+        Attribute86Value,
+        Attribute87Value,
+        Attribute88Value,
+        Attribute89Value,
+        Attribute90Value,
+        Attribute91Value,
+        Attribute92Value,
+        Attribute93Value,
+        Attribute94Value,
+        Attribute95Value,
+        Attribute96Value,
+        Attribute97Value,
+        Attribute98Value
+        from
+        ${tableName}
+        ${keyword}
+    </select>
+
+
+    <update id="cms_zz_worktable_je_superfeed_update"  parameterType="java.util.List">
+        UPDATE voyageone_cms2.cms_zz_worktable_je_superfeed set UpdateFlag = 3 where `Inventory Number` in (
+        <foreach collection="list" item="itemIds" index="index" separator=",">
+            #{itemIds}
+        </foreach>
+        )
+    </update>
+
+    <insert id="cms_zz_worktable_je_superfeed_full_insert"  parameterType="java.util.List">
+        INSERT INTO voyageone_cms2.cms_zz_worktable_je_superfeed_full SELECT * from
+        voyageone_cms2.cms_zz_worktable_je_superfeed where `Inventory Number` in
+        (
+        <foreach collection="list" item="itemIds" index="index" separator=",">
+            #{itemIds}
+        </foreach>
+        )
+    </insert>
+
+    <delete id="cms_zz_worktable_je_superfeed_full_del" parameterType="java.util.List">
+        DELETE
+        FROM
+        voyageone_cms2.cms_zz_worktable_je_superfeed_full
+        where `Inventory Number` in (
+        <foreach collection="list" item="itemIds" index="index" separator=",">
+            #{itemIds}
+        </foreach>
+        )
+    </delete>
+</mapper>

@@ -117,23 +117,23 @@ public class CmsPlatformMappingService extends BaseTaskService {
     /**
      * Props生成
      */
-    private List<MappingBean> makeProps(int cartId, String categoryId) throws Exception {
+    private List<Map<String, Object>> makeProps(int cartId, String categoryId) throws Exception {
 
-        List<MappingBean> props = new ArrayList<>();
+        List<Map<String, Object>> props = new ArrayList<>();
         CmsMtPlatformCategorySchemaModel cmsMtPlatformCategorySchemaModel = cmsMtPlatformCategorySchemaDao.getPlatformCatSchemaModel(categoryId, cartId);
         if (cmsMtPlatformCategorySchemaModel != null) {
             //PropsItem 生成props
             if (!StringUtils.isEmpty(cmsMtPlatformCategorySchemaModel.getPropsItem())) {
                 List<Field> fields = SchemaReader.readXmlForList(cmsMtPlatformCategorySchemaModel.getPropsItem());
                 for (Field field : fields) {
-                    props.add(makeMapping(field));
+                    props.add(JsonUtil.jsonToMap(JsonUtil.bean2Json(makeMapping(field))));
                 }
             }
             //PropsProduct 生成props
             if (!StringUtils.isEmpty(cmsMtPlatformCategorySchemaModel.getPropsProduct())) {
                 List<Field> fields = SchemaReader.readXmlForList(cmsMtPlatformCategorySchemaModel.getPropsProduct());
                 for (Field field : fields) {
-                    props.add(makeMapping(field));
+                    props.add(JsonUtil.jsonToMap(JsonUtil.bean2Json(makeMapping(field))));
                 }
             }
         }
@@ -158,38 +158,39 @@ public class CmsPlatformMappingService extends BaseTaskService {
         }
 
         if("wap_desc".equalsIgnoreCase(field.getId())){
-            ComplexMappingBean complexMappingBean = new ComplexMappingBean();
-            complexMappingBean.setPlatformPropId("wap_desc");
-
-            RuleExpression summaryExpression = new RuleExpression();
-            summaryExpression.addRuleWord(new TextWord("summary desc"));
-            SimpleMappingBean simpleMappingBean = new SimpleMappingBean("wap_desc_summary", summaryExpression);
-            complexMappingBean.addSubMapping(simpleMappingBean);
-
-            MultiComplexCustomMappingBean mappingBean = new MultiComplexCustomMappingBean();
-            mappingBean.setPlatformPropId("wap_desc_content");
-            MultiComplexCustomMappingValue value1 = new MultiComplexCustomMappingValue();
-            RuleExpression ruleExpression11 = new RuleExpression();
-            RuleExpression ruleExpression12 = new RuleExpression();
-            ruleExpression11.addRuleWord(new TextWord("image"));
-            TextWord textWord = new TextWord("http://img4.imgtn.bdimg.com/it/u=783206025,938869075&fm=21&gp=0.jpg");
-            textWord.setUrl(true);
-            ruleExpression12.addRuleWord(textWord);
-            value1.addSubMapping(new SimpleMappingBean("wap_desc_content_type", ruleExpression11));
-            value1.addSubMapping(new SimpleMappingBean("wap_desc_content_content", ruleExpression12));
-
-            MultiComplexCustomMappingValue value2 = new MultiComplexCustomMappingValue();
-            RuleExpression ruleExpression21 = new RuleExpression();
-            RuleExpression ruleExpression22 = new RuleExpression();
-            ruleExpression21.addRuleWord(new TextWord("text"));
-            ruleExpression22.addRuleWord(new MasterWord("longTitle"));
-            value2.addSubMapping(new SimpleMappingBean("wap_desc_content_type", ruleExpression21));
-            value2.addSubMapping(new SimpleMappingBean("wap_desc_content_content", ruleExpression22));
-            mappingBean.addValue(value1);
-            mappingBean.addValue(value2);
-
-            complexMappingBean.addSubMapping(mappingBean);
-            return complexMappingBean;
+            return null;
+//            ComplexMappingBean complexMappingBean = new ComplexMappingBean();
+//            complexMappingBean.setPlatformPropId("wap_desc");
+//
+//            RuleExpression summaryExpression = new RuleExpression();
+//            summaryExpression.addRuleWord(new TextWord("summary desc"));
+//            SimpleMappingBean simpleMappingBean = new SimpleMappingBean("wap_desc_summary", summaryExpression);
+//            complexMappingBean.addSubMapping(simpleMappingBean);
+//
+//            MultiComplexCustomMappingBean mappingBean = new MultiComplexCustomMappingBean();
+//            mappingBean.setPlatformPropId("wap_desc_content");
+//            MultiComplexCustomMappingValue value1 = new MultiComplexCustomMappingValue();
+//            RuleExpression ruleExpression11 = new RuleExpression();
+//            RuleExpression ruleExpression12 = new RuleExpression();
+//            ruleExpression11.addRuleWord(new TextWord("image"));
+//            TextWord textWord = new TextWord("http://img4.imgtn.bdimg.com/it/u=783206025,938869075&fm=21&gp=0.jpg");
+//            textWord.setUrl(true);
+//            ruleExpression12.addRuleWord(textWord);
+//            value1.addSubMapping(new SimpleMappingBean("wap_desc_content_type", ruleExpression11));
+//            value1.addSubMapping(new SimpleMappingBean("wap_desc_content_content", ruleExpression12));
+//
+//            MultiComplexCustomMappingValue value2 = new MultiComplexCustomMappingValue();
+//            RuleExpression ruleExpression21 = new RuleExpression();
+//            RuleExpression ruleExpression22 = new RuleExpression();
+//            ruleExpression21.addRuleWord(new TextWord("text"));
+//            ruleExpression22.addRuleWord(new MasterWord("longTitle"));
+//            value2.addSubMapping(new SimpleMappingBean("wap_desc_content_type", ruleExpression21));
+//            value2.addSubMapping(new SimpleMappingBean("wap_desc_content_content", ruleExpression22));
+//            mappingBean.addValue(value1);
+//            mappingBean.addValue(value2);
+//
+//            complexMappingBean.addSubMapping(mappingBean);
+//            return complexMappingBean;
         }
         // 把类目ID中的【.】替换成【->】
 //        field.setId(StringUtils.replaceDot(field.getId()));
@@ -202,6 +203,33 @@ public class CmsPlatformMappingService extends BaseTaskService {
             case INPUT:
             case MULTIINPUT:
             case LABEL:
+
+                List<String> a = new ArrayList<>();
+                List<String> b = new ArrayList<>();
+                a.add("sku_price");
+                a.add("sku_quantity");
+                a.add("sku_outerId");
+                a.add("sku_barcode");
+                b.add("priceSale");
+                b.add("qty");
+                b.add("skuCode");
+                b.add("barcode");
+                if (a.contains(field.getId())) {
+                    simpleMappingBean = new SimpleMappingBean();
+                    // 设置平台的属性ID
+                    simpleMappingBean.setPlatformPropId(field.getId());
+                    // 设置对应的主数据的属性ID
+                    SkuWord skuWord = new SkuWord(b.get(a.indexOf(field.getId())));
+                    // 生成表达式
+                    ruleExpression = new RuleExpression();
+                    ruleExpression.addRuleWord(skuWord);
+                    simpleMappingBean.setExpression(ruleExpression);
+                    mapping = simpleMappingBean;
+
+                    break;
+                }
+
+
                 simpleMappingBean = new SimpleMappingBean();
                 // 设置平台的属性ID
                 simpleMappingBean.setPlatformPropId(field.getId());

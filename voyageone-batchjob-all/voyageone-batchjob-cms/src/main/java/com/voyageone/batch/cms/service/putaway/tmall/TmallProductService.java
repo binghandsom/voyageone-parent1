@@ -37,6 +37,7 @@ import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.components.tmall.TbProductService;
 import com.voyageone.common.configs.ShopConfigs;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.util.JsonUtil;
 import com.voyageone.ims.modelbean.DictWordBean;
 import com.voyageone.ims.rule_expression.DictWord;
 import com.voyageone.ims.rule_expression.RuleExpression;
@@ -1561,7 +1562,8 @@ public class TmallProductService {
         List<Field> mappingFields = tmallUploadRunState.getContextBuildFields().getMappingFields();
         Map<String, List<TmallUploadRunState.UrlStashEntity>> srcUrlStashEntityMap = tmallUploadRunState.getContextBuildFields().getSrcUrlStashEntityMap();
 
-       List<MappingBean> propMapings = cmsMtPlatformMappingModel.getProps();
+        List<Map<String, Object>> map = cmsMtPlatformMappingModel.getProps();
+        List<MappingBean> propMapings = JsonUtil.jsonToBeanList(JsonUtil.getJsonString(map),MappingBean.class);
 
         for (MappingBean mappingBean : propMapings) {
             Field field = fieldMap.get(mappingBean.getPlatformPropId());
