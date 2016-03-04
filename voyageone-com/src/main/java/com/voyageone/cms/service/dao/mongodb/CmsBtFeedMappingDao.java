@@ -77,6 +77,21 @@ public class CmsBtFeedMappingDao extends BaseMongoDao {
      * 查询 selChannelId 渠道下, 类目路径包含 topCategoryPath 的 Mapping
      *
      * @param selChannelId    渠道 ID
+     * @return 一组不带有 Prop Mapping 信息的类目 Mapping
+     */
+    public List<CmsBtFeedMappingModel> findMappingByChannelId(String selChannelId) {
+
+        String strQuery = String.format("{\"scope.channelId\": \"%s\"}", selChannelId);
+
+        String projection = "{\"props\": 0}";
+
+        return selectWithProjection(strQuery, projection);
+    }
+
+    /**
+     * 查询 selChannelId 渠道下, 类目路径包含 topCategoryPath 的 Mapping
+     *
+     * @param selChannelId    渠道 ID
      * @param topCategoryPath 类目路径
      * @return 一组不带有 Prop Mapping 信息的类目 Mapping
      */
