@@ -12,7 +12,8 @@
                                host="10.0.0.59"
                                port="5672"
                                username="mqadmin"
-                               password="pile12rdis"/>
+                               password="pile12rdis"
+                                />
 
     <rabbit:admin connection-factory="connectionFactory"/>
 
