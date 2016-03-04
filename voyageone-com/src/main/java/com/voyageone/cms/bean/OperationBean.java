@@ -1,6 +1,7 @@
-package com.voyageone.cms.feed;
+package com.voyageone.cms.bean;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.voyageone.cms.enums.Operation;
 
 /**
  * 枚举 Operation 的 Bean 定义
@@ -12,7 +13,7 @@ public class OperationBean {
 
     private final Operation operation;
 
-    protected OperationBean(Operation operation) {
+    public OperationBean(Operation operation) {
         this.operation = operation;
     }
 
