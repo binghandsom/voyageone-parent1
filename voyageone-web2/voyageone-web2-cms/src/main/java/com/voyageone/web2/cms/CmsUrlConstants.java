@@ -138,9 +138,9 @@ public interface CmsUrlConstants {
                 String EXPORT_ERROR_INFO = "exportErrorInfo";
             }
 
-            interface INCREMENT_STOCK {
+            interface INCREMENT_STOCK_LIST {
 
-                String ROOT = "/cms/promotion/task_add_stock";
+                String ROOT = "/cms/promotion/task_increment_stock_list";
 
                 String SEARCH_TASK = "searchTask";
 
@@ -148,13 +148,18 @@ public interface CmsUrlConstants {
 
                 String DEL_TASK = "delTask";
 
-                String GET_PLATFORM_INFO = "getPlatformInfo";
+                String GET_PLATFORM_LIST = "getPlatFormList";
+            }
+
+            interface INCREMENT_STOCK_DETAIL {
+
+                String ROOT = "/cms/promotion/task_increment_stock_detail";
 
                 String SEARCH_ITEM = "searchItem";
 
-                String SAVE_RECORD = "saveRecord";
+                String SAVE_ITEM = "saveItem";
 
-                String DEL_RECORD = "delRecord";
+                String DEL_ITEM = "delItem";
 
                 String IMPORT_STOCK_INFO = "importStockInfo";
 
