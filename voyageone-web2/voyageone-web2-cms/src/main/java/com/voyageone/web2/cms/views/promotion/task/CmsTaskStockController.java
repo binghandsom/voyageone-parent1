@@ -128,7 +128,7 @@ public class CmsTaskStockController extends CmsController {
      *  2.将隔离任务信息（任务名，对应平台隔离比例，还原时间，优先顺等）反应到cms_bt_tasks表和cms_bt_stock_separate_platform_info表。(新建的场合，任务状态 0:Ready；修改的场合，隔离比例不能变更)
      *  新建的场合，继续下面的步骤
      *  3.抽出隔离平台下面的所有Sku，取得商品基本情报，计算出可用库存数和各隔离平台的隔离数。
-     *     3.0.从某表（待定）取得Sku一览和商品基本情报(每个channel的商品基本情报是不一样的，需要读取com_mt_value_channel的配置type_id=61)
+     *     3.0.从某表（待定cms_bt_promotion_sku）取得Sku一览和商品基本情报(每个channel的商品基本情报是不一样的，需要读取com_mt_value_channel的配置type_id=61)
      *    如果参数.只导入Sku和库存 = false,计算出可用库存，将Sku基本情报信息到和可用库存插入到cms_bt_stock_separate_item表（只有基本信息和可用库存，各平台的隔离库存为0，状态为"0:未进行"）
      *    如果参数.只导入Sku和库存 = true,则按设定的隔离比例计算出各个平台的隔离库存更新到cms_bt_stock_separate_item表。（状态为"0:未进行"）
      *    3.1.根据sku从wms_bt_inventory_center_logic表取得逻辑库存。
@@ -144,7 +144,7 @@ public class CmsTaskStockController extends CmsController {
      *  cms_bt_stock_separate_platform_info
      *  cms_bt_stock_separate_item
      *  com_mt_value_channel
-     *  某表（待定）
+     *  某表（待定cms_bt_promotion_sku）
      *  wms_bt_inventory_center_logic
      *  cms_bt_stock_separate_item
      *  cms_bt_increment_stock_separate_item
