@@ -40,7 +40,7 @@ public class CmsSearchInfoBean {
 
     private String brand;
 
-    private String promotion;
+    private String[] tags;
 
     private String[] codeList;
 
@@ -192,12 +192,12 @@ public class CmsSearchInfoBean {
         this.brand = brand;
     }
 
-    public String getPromotion() {
-        return promotion;
+    public String[] getTags() {
+        return tags;
     }
 
-    public void setPromotion(String promotion) {
-        this.promotion = promotion;
+    public void setTags(String[] tags) {
+        this.tags = tags;
     }
 
     public String[] getCodeList() {
