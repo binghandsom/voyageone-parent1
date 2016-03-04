@@ -3,7 +3,7 @@
 		<div class="panel-group">
 			<div class="panel panel-default">
 				<div class="panel-heading">
-					<h4 class="panel-title"><i class="glyphicon glyphicon-star"></i>&nbsp;任务一览</h4>
+					<h4 class="panel-title"><i class="glyphicon glyphicon-star"></i>&nbsp;{{'TXT_TASK_LIST' | translate}}</h4>
 				</div>
 				<div class="container-fluid m-t-sm m-b-md">
 					<div class="col-sm-12">
@@ -62,9 +62,8 @@
 								<div ng-include="'tpl/popup_new_promotion.html'"></div>
 							</script>
 							<div class="form-inline">
-								<button class="btn btn-default" ng-click="clear()"><i class="fa fa-remove"></i>&nbsp;清除</button>
-								<button class="btn btn-vo" ng-click="ok()"><i class="fa fa-search"></i>&nbsp;检索</button>
-								<button class="btn btn-success" ng-click="openPromotion('md')"><i class="fa fa-plus"></i>&nbsp;新增活动</button>
+								<button class="btn btn-default" ng-click="clear()"><i class="fa fa-remove"></i>&nbsp;{{'TXT_SEARCH' | translate}}</button>
+								<button class="btn btn-vo" ng-click="ok()"><i class="fa fa-search"></i>&nbsp;{{'BTN_CLEAR' | translate}}</button>
 							</div>
 						</div>
 					</div>
@@ -78,11 +77,10 @@
 				<thead>
 				<tr>
 					<th class="mfb-xt3 text-center">Seq.</th>
-					<th class="mfb-xxs text-left">所属活动</th>
-					<th class="mfb-xxs text-left">任务名</th>
-					<th class="mfb-xt text-center">类型</th>
-					<th class="mfb-xxs text-left">操作</th>
-					<th class="mfb-xxt text-center">编辑</th>
+					<th class="mfb-xxs text-left">{{'TXT_PROMOTION_NAME' | translate}}</th>
+					<th class="mfb-xxs text-left">{{'TXT_TASK_NAME' | translate}}</th>
+					<th class="mfb-xt text-center">{{'TXT_TYPE' | translate}}</th>
+					<th class="mfb-xxs text-left">{{'TXT_ACTION' | translate}}</th>
 				</tr>
 				</thead>
 				<tbody>
@@ -93,14 +91,11 @@
 					<td class="mfb-xt text-center">{{::$ctrl.typeName(task)}}</td>
 					<td class="mfb-xxs text-left">
 						<a ng-if="task.task_type == 1" ng-href="#/promotion/task/beat/{{::task.task_id}}" class="btn btn-default-vo btn-xs">
-							<i class="fa fa-reorder"></i>&nbsp;任务明细
+							<i class="fa fa-reorder"></i>&nbsp;{{'TXT_TASK_DETAIL' | translate}}
 						</a>
 						<a ng-if="task.task_type == 0" ng-href="#/promotion/task/price/{{::task.promotion.promotionId}}" class="btn btn-default-vo btn-xs">
-							<i class="fa fa-reorder"></i>&nbsp;任务明细
+							<i class="fa fa-reorder"></i>&nbsp;{{'TXT_TASK_DETAIL' | translate}}
 						</a>
-					</td>
-					<td class="mfb-xxt text-center">
-
 					</td>
 				</tr>
 				</tbody>
