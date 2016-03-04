@@ -1,4 +1,4 @@
-<div class="wrapper-md">
+<div class="wrapper-md" ng-init="$ctrl.init()">
 	<div class="vo_accordion vo_attr">
 		<div class="panel-group">
 			<div class="panel panel-default">
@@ -16,14 +16,14 @@
 										<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option2"><span class="fa fa-check"></span> promotion_ready </label>
 										<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option3"><span class="fa fa-check"></span>  promotion_approved</label>
 									</div>
-								</div><!-- .form-group -->
+								</div>
 								<div class="form-group">
 									<label class="col-sm-2 control-label"></label>
 									<div class="col-sm-9">
 										<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option4"><span class="fa fa-check"></span> promotion_saled </label>
 										<label class="checkbox-inline c-checkbox"><input type="checkbox" value="option5"><span class="fa fa-check"></span> promotion_over </label>
 									</div>
-								</div><!-- .form-group -->
+								</div>
 							</div>
 						</div>
 						<div class="col-sm-4">
@@ -45,7 +45,7 @@
 										</div>
 									</div>
 								</div>
-							</div><!-- .form-group -->
+							</div>
 						</div>
 						<div class="col-sm-3">
 							<div class="form-horizontal">
@@ -54,7 +54,7 @@
 									<div class="col-sm-7">
 										<input class="form-control" placeholder="天猫双11大促">
 									</div>
-								</div><!-- .form-group -->
+								</div>
 							</div>
 						</div>
 						<div class="col-sm-12 text-center" ng-controller="popupCtrl">
@@ -65,127 +65,43 @@
 								<button class="btn btn-default" ng-click="clear()"><i class="fa fa-remove"></i>&nbsp;清除</button>
 								<button class="btn btn-vo" ng-click="ok()"><i class="fa fa-search"></i>&nbsp;检索</button>
 								<button class="btn btn-success" ng-click="openPromotion('md')"><i class="fa fa-plus"></i>&nbsp;新增活动</button>
-							</div><!-- .form-inline -->
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
-	</div><!-- .accordion -->
+	</div>
 	<div class="box">
 		<div class="box-body">
 			<table class="table table-hover-new text-center" ng-controller="popupCtrl">
 				<thead>
 				<tr>
 					<th class="mfb-xt3 text-center">Seq.</th>
-					<!--<th class="text-center"><label class="checkbox-inline c-checkbox"><input type="checkbox" value="option5"><span class="fa fa-check"></span></label></th>-->
-					<th class="mfb-xt text-left">Status</th>
+					<th class="mfb-xxs text-left">所属活动</th>
 					<th class="mfb-xxs text-left">任务名</th>
 					<th class="mfb-xt text-center">类型</th>
-					<th class="mfb-xxt text-center">还原时间</th>
 					<th class="mfb-xxs text-left">操作</th>
 					<th class="mfb-xxt text-center">编辑</th>
 				</tr>
 				</thead>
 				<tbody>
-				<tr>
-					<td class="mfb-xt3 text-center">1</td>
-					<!--<td><label class="checkbox-inline c-checkbox"><input type="checkbox" value="option5"><span class="fa fa-check"></span></label></td>-->
-					<td class="mfb-xt text-left"><span class="label label-success-new"> Open </span></td>
-					<td class="mfb-xxs text-left"><a href="#/promotion/detail" target="_blank">天猫国际双十一</a></td>
-					<td class="mfb-xt text-center">价格披露</td>
-					<td class="mfb-xxt text-center">2016.1.2</td>
+				<tr ng-repeat="task in $ctrl.tasks">
+					<td class="mfb-xt3 text-center">{{::$index+1}}</td>
+					<td class="mfb-xt text-left"><a ng-href="#/promotion/detail/{{::task.promotion.promotionId}}" target="_blank">{{::task.promotion.promotionName}}</a></td>
+					<td class="mfb-xxs text-left">{{::task.task_name}}</td>
+					<td class="mfb-xt text-center">{{::$ctrl.typeName(task)}}</td>
 					<td class="mfb-xxs text-left">
-						<a href="#/promotion/task/beat/1" target="_blank"><button title="任务明细" class="btn btn-default-vo btn-xs"><i class="fa fa-reorder"></i>&nbsp;任务明细</button></a>
+						<a ng-href="#/promotion/task/beat/{{::task.task_id}}" class="btn btn-default-vo btn-xs">
+							<i class="fa fa-reorder"></i>&nbsp;任务明细
+						</a>
 					</td>
 					<td class="mfb-xxt text-center">
-						<button title="编辑" class="btn btn-success btn-xs" ng-click="openMrbstock('lg')"><i class="fa fa-pencil"></i></button>
-						<button title="删除" class="btn btn-danger btn-xs"><i class="fa  fa-trash-o"></i></button>
-						<button title="下载" class="btn btn-dangerdel btn-xs"><i class="fa fa-cloud-download"></i></button>
-					</td>
-				</tr>
-				<tr>
-					<td class="mfb-xt3 text-center">2</td>
-					<td class="mfb-xt text-left"><span class="label label-danger-new"> Close </span></td>
-					<td class="mfb-xxs text-left"><a href="#/promotion/detail" target="_blank">天猫国际双十一</a></td>
-					<td class="mfb-xt text-center">库存隔离</td>
-					<td class="mfb-xxt text-center">2016.1.2</td>
-					<td class="mfb-xxs text-left">
-						<a href="#/mrbstock/list" target="_blank"><button title="库存隔离明细" class="btn btn-default-vo btn-xs"><i class="fa fa-reorder"></i>&nbsp;库存隔离明细</button></a>
-						<a href="#/mrbstock/add" target="_blank"><button title="增量库存隔离" class="btn btn-default-vo btn-xs"><i class="fa fa-reorder"></i>&nbsp;增量库存隔离</button></a>
-						<button title="Error日志" class="btn btn-default-vo btn-xs"><i class="fa fa-cloud-download"></i>&nbsp;Error日志</button>
-					</td>
-					<td class="mfb-xxt text-center"><button title="编辑" class="btn btn-success btn-xs" ng-click="openMrbstock('lg')"><i class="fa fa-pencil"></i></button>
-						<button title="删除" class="btn btn-danger btn-xs"><i class="fa  fa-trash-o"></i></button>
-						<button title="下载" class="btn btn-dangerdel btn-xs"><i class="fa fa-cloud-download"></i></button>
-					</td>
-				</tr>
-				<tr>
-					<td class="mfb-xt3 text-center">3</td>
-					<!--<td><label class="checkbox-inline c-checkbox"><input type="checkbox" value="option5"><span class="fa fa-check"></span></label></td>-->
-					<td class="mfb-xt text-left"><span class="label label-success-new"> Open </span></td>
-					<td class="mfb-xxs text-left"><a href="#/promotion/detail" target="_blank">天猫国际双十一</a></td>
-					<td class="mfb-xt text-center">特价宝</td>
-					<td class="mfb-xxt text-center">2016.1.2</td>
-					<td class="mfb-xxs text-left"></td>
-					<td class="mfb-xxt text-center"><button title="编辑" class="btn btn-success btn-xs" ng-click="openMrbstock('lg')"><i class="fa fa-pencil"></i></button>
-						<button title="删除" class="btn btn-danger btn-xs"><i class="fa  fa-trash-o"></i></button>
-						<button title="下载" class="btn btn-dangerdel btn-xs"><i class="fa fa-cloud-download"></i></button>
-					</td>
-				</tr>
-				<tr>
-					<td class="mfb-xt3 text-center">4</td>
-					<td class="mfb-xt text-left"><span class="label label-danger-new"> Close </span></td>
-					<td class="mfb-xxs text-left"><a href="#/promotion/detail" target="_blank">天猫国际双十一</a></td>
-					<td class="mfb-xt text-center">特价宝</td>
-					<td class="mfb-xxt text-center">2016.1.2</td>
-					<td class="mfb-xxs text-left"></td>
-					<td class="mfb-xxt text-center"><button title="编辑" class="btn btn-success btn-xs" ng-click="openMrbstock('lg')"><i class="fa fa-pencil"></i></button>
-						<button title="删除" class="btn btn-danger btn-xs"><i class="fa  fa-trash-o"></i></button>
-						<button title="下载" class="btn btn-dangerdel btn-xs"><i class="fa fa-cloud-download"></i></button>
-					</td>
-				</tr>
-				<tr>
-					<td class="mfb-xt3 text-center">5</td>
-					<!--<td><label class="checkbox-inline c-checkbox"><input type="checkbox" value="option5"><span class="fa fa-check"></span></label></td>-->
-					<td class="mfb-xt text-left"><span class="label label-success-new"> Open </span></td>
-					<td class="mfb-xxs text-left"><a href="#/promotion/detail" target="_blank">天猫国际双十一</a></td>
-					<td class="mfb-xt text-center">库存隔离</td>
-					<td class="mfb-xxt text-center">2016.1.2</td>
-					<td class="mfb-xxs text-left">
-						<a href="#/mrbstock/list" target="_blank"><button title="库存隔离明细" class="btn btn-default-vo btn-xs"><i class="fa fa-reorder"></i>&nbsp;库存隔离明细</button></a>
-						<a href="#/mrbstock/add" target="_blank"><button title="增量库存隔离" class="btn btn-default-vo btn-xs"><i class="fa fa-reorder"></i>&nbsp;增量库存隔离</button></a>
-						<button title="Error日志" class="btn btn-default-vo btn-xs"><i class="fa fa-cloud-download"></i>&nbsp;Error日志</button>
-					</td>
-					<td class="mfb-xxt text-center"><button title="编辑" class="btn btn-success btn-xs" ng-click="openMrbstock('lg')"><i class="fa fa-pencil"></i></button>
-						<button title="删除" class="btn btn-danger btn-xs"><i class="fa  fa-trash-o"></i></button>
-						<button title="下载" class="btn btn-dangerdel btn-xs"><i class="fa fa-cloud-download"></i></button>
-					</td>
-				</tr>
-				<tr>
-					<td class="mfb-xt3 text-center">6</td>
-					<td class="mfb-xt text-left"><span class="label label-danger-new"> Close </span></td>
-					<td class="mfb-xxs text-left"><a href="#/promotion/detail" target="_blank">天猫国际双十一</a></td>
-					<td class="mfb-xt text-center">价格披露</td>
-					<td class="mfb-xxt text-center">2016.1.2</td>
-					<td class="mfb-xxs text-left">
-						<a href="#/promotion/task/beat/1" target="_blank"><button title="任务明细" class="btn btn-default-vo btn-xs"><i class="fa fa-reorder"></i>&nbsp;任务明细</button></a>
-					</td>
-					<td class="mfb-xxt text-center"><button title="编辑" class="btn btn-success btn-xs" ng-click="openMrbstock('lg')"><i class="fa fa-pencil"></i></button>
-						<button title="删除" class="btn btn-danger btn-xs"><i class="fa  fa-trash-o"></i></button>
-						<button title="下载" class="btn btn-dangerdel btn-xs"><i class="fa fa-cloud-download"></i></button>
+
 					</td>
 				</tr>
 				</tbody>
 			</table>
 		</div>
-	</div><!-- /.box-body -->
-</div><!-- end .wrapper-md -->
-
-
-
-
-
-
-
-
+	</div>
+</div>

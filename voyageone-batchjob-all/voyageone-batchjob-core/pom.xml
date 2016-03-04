@@ -32,11 +32,6 @@
 			<version>${voyageone.web2.sdk.version}</version>
 		</dependency>
 
-		<dependency>
-			<groupId>com.voyageone</groupId>
-			<artifactId>voyageone-wsc1-magento</artifactId>
-			<version>${voyageone.wsc1.magento.version}</version>
-		</dependency>
 	</dependencies>
 	<build>
 		<finalName>voyageone-batchjob-core</finalName>
