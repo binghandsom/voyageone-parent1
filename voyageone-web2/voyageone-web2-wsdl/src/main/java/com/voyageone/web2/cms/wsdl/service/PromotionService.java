@@ -4,10 +4,13 @@
 
 package com.voyageone.web2.cms.wsdl.service;
 
+import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.web2.cms.wsdl.BaseService;
 import com.voyageone.web2.cms.wsdl.dao.CmsBtPromotionDao;
 import com.voyageone.web2.cms.wsdl.dao.CmsBtTagDao;
 import com.voyageone.web2.sdk.api.domain.CmsBtPromotionModel;
+import com.voyageone.web2.sdk.api.exception.ApiException;
 import com.voyageone.web2.sdk.api.request.*;
 import com.voyageone.web2.sdk.api.response.PromotionsGetResponse;
 import com.voyageone.web2.sdk.api.response.PromotionsPutResponse;
@@ -54,6 +57,21 @@ public class PromotionService extends BaseService {
         if (promotionPutRequest.getCmsBtPromotionModel().getPromotionId() != null) {
             response.setMatchedCount(cmsBtPromotionDao
                     .update(promotionPutRequest.getCmsBtPromotionModel()));
+            promotionPutRequest.getCmsBtPromotionModel().getTagList().forEach(cmsBtTagModel -> {
+                if(cmsBtTagDao.updateCmsBtTag(cmsBtTagModel) == 0){
+                    cmsBtTagModel.setChannelId(promotionPutRequest.getCmsBtPromotionModel().getChannelId());
+                    cmsBtTagModel.setParentTagId(promotionPutRequest.getCmsBtPromotionModel().getRefTagId());
+                    cmsBtTagModel.setTagType(2);
+                    cmsBtTagModel.setTagStatus(0);
+                    cmsBtTagModel.setTagPathName(String.format("-%s-%s-", promotionPutRequest.getCmsBtPromotionModel().getPromotionName(), cmsBtTagModel.getTagName()));
+                    cmsBtTagModel.setTagPath("");
+                    cmsBtTagModel.setCreater(promotionPutRequest.getCmsBtPromotionModel().getModifier());
+                    cmsBtTagModel.setModifier(promotionPutRequest.getCmsBtPromotionModel().getModifier());
+                    cmsBtTagDao.insertCmsBtTag(cmsBtTagModel);
+                    cmsBtTagModel.setTagPath(String.format("-%s-%s-", cmsBtTagModel.getParentTagId(), cmsBtTagModel.getTagId()));
+                    cmsBtTagDao.updateCmsBtTag(cmsBtTagModel);
+                }
+            });
         } else {
             response.setInsertedCount(cmsBtPromotionDao
                     .insert(insertTagsAndGetNewModel(promotionPutRequest.getCmsBtPromotionModel())));
@@ -75,6 +93,9 @@ public class PromotionService extends BaseService {
         requestModel.setSortOrder(0);
         requestModel.setModifier(cmsBtPromotionModel.getModifier());
         TagAddResponse res = tagService.addTag(requestModel);
+        if(!res.getCode().equalsIgnoreCase("0")){
+            throw new ApiException(res.getCode(),res.getMessage());
+        }
         cmsBtPromotionModel.setRefTagId(res.getTag().getTagId());
 
         // 子TAG追加
@@ -88,7 +109,7 @@ public class PromotionService extends BaseService {
             cmsBtTagModel.setCreater(cmsBtPromotionModel.getCreater());
             cmsBtTagModel.setModifier(cmsBtPromotionModel.getCreater());
             cmsBtTagDao.insertCmsBtTag(cmsBtTagModel);
-            cmsBtTagModel.setTagPath(String.format("-%s-%s-",res.getTag().getTagId(),cmsBtTagModel.getTagId()));
+            cmsBtTagModel.setTagPath(String.format("-%s-%s-", res.getTag().getTagId(), cmsBtTagModel.getTagId()));
             cmsBtTagDao.updateCmsBtTag(cmsBtTagModel);
         });
         return cmsBtPromotionModel;

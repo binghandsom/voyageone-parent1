@@ -35,7 +35,7 @@ public class CmsMenuController extends CmsController {
      * 返回categoryType, categoryList, categoryTreeList
      */
     @RequestMapping(CmsUrlConstants.HOME.MENU.GET_CATE_INFO)
-    public AjaxResponse getCategoryInfo() {
+    public AjaxResponse getCategoryInfo(){
 
         Map<String, Object> resultBean = new HashMap<>();
 

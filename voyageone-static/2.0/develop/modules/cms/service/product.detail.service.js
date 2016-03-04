@@ -80,7 +80,7 @@ define([
 							break;
 						case Status.APPROVED:
 							result.data.productInfo.productStatus.statusInfo = {
-								isWaitingApprove: false,
+								isWaitingApprove: true,
 								isApproved: true,
 								isDisable: true
 							};

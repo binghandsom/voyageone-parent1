@@ -1,4 +1,6 @@
-package com.voyageone.cms.feed;
+package com.voyageone.cms.enums;
+
+import com.voyageone.cms.bean.OperationBean;
 
 /**
  * 第三方品牌数据条件可用的比较操作

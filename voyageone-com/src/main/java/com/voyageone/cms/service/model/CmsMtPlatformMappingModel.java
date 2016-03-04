@@ -5,6 +5,7 @@ import com.voyageone.cms.service.bean.MappingBean;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by james.li on 2015/12/7.
@@ -29,7 +30,7 @@ public class CmsMtPlatformMappingModel extends BaseMongoModel {
     //1 属性匹配完成  0 属性尚未匹配完成
     private int matchOver;
 
-    private List<MappingBean> props;
+    private List<Map<String, Object>> props;
 
     public String getChannelId() {
         return channelId;
@@ -71,11 +72,11 @@ public class CmsMtPlatformMappingModel extends BaseMongoModel {
         this.matchOver = matchOver;
     }
 
-    public List<MappingBean> getProps() {
+    public List<Map<String, Object>> getProps() {
         return props;
     }
 
-    public void setProps(List<MappingBean> props) {
+    public void setProps(List<Map<String, Object>> props) {
         this.props = props;
     }
 }

@@ -35,15 +35,6 @@
 								</label>
 							</div>
 						</div>
-						<!-- TODO 暂时未实现 -->
-						<div class="form-group">
-							<!--<label class="col-sm-3 control-label" translate="TXT_LABEL"></label>-->
-							<!--<div class="col-sm-9">-->
-								<!--<label class="checkbox-inline c-checkbox" ng-repeat="labelType in vm.masterData.labelTypeList">-->
-									<!--<input type="checkbox" ng-value="labelType.value" ng-model="vm.searchInfo.labelType[labelType.value]"><span class="fa fa-check"></span> {{labelType.name}}-->
-								<!--</label>-->
-							<!--</div>-->
-						</div>
 						<div class="form-group">
 							<label class="col-sm-3 control-label" translate="TXT_PRICE"></label>
 							<div class="col-sm-8">
@@ -122,14 +113,14 @@
 								</select>
 							</div>
 						</div>
+						<!-- TODO 暂时未实现 -->
 						<div class="form-group">
-							<!--<label class="col-sm-3 control-label" translate="TXT_PROMOTION_INFO"></label>-->
-							<!--<div class="col-sm-9">-->
-								<!--<select class="form-control" ng-model="vm.searchInfo.promotion"-->
-										<!--ng-options="promotion.promotionId as promotion.promotionName for promotion in vm.masterData.promotionList">-->
-									<!--<option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>-->
-								<!--</select>-->
-							<!--</div>-->
+							<label class="col-sm-3 control-label" translate="TXT_TAG"></label>
+							<div class="col-sm-8">
+								<label class="checkbox-inline c-checkbox" ng-repeat="tag in vm.masterData.tagList">
+									<input type="checkbox" ng-value="tag.tagPath" ng-model="vm.searchInfo.tags[tag.tagPath]"><span class="fa fa-check"></span> {{tag.tagPathName}}
+								</label>
+							</div>
 						</div>
 					</div><!-- .form-group -->
 				</div>
@@ -147,66 +138,66 @@
 						</div>
 						<!-- TODO 暂时未实现 -->
 						<div class="form-group">
-							<!--<label class="col-sm-3 control-label" translate="TXT_SORT_1"></label>-->
-							<!--<div class="col-sm-8">-->
-								<!--<div class="col-sm-5">-->
-									<!--<select class="form-control" ng-model="vm.searchInfo.sortOneName"-->
-											<!--ng-options="sortOne.id as sortOne.name for sortOne in vm.masterData.sortList">-->
-									<!--</select>-->
-								<!--</div>-->
-								<!--<div class="col-sm-3 text-right">-->
-									<!--<label class="checkbox-inline c-radio">-->
-										<!--<input name="sortOne" type="radio" value="asc" ng-model="vm.searchInfo.sortOneType"><span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_ASC' | translate }}-->
-									<!--</label>-->
-								<!--</div>-->
-								<!--<div class="col-sm-3">-->
-									<!--<label class="checkbox-inline c-radio">-->
-										<!--<input name="sortOne" type="radio" value="desc" ng-model="vm.searchInfo.sortOneType"><span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_DESC' | translate }}-->
-									<!--</label>-->
-								<!--</div>-->
-							<!--</div>-->
+							<label class="col-sm-3 control-label" translate="TXT_SORT_1"></label>
+							<div class="col-sm-8">
+								<div class="col-sm-5">
+									<select class="form-control" ng-model="vm.searchInfo.sortOneName"
+											ng-options="sortOne.value as sortOne.name for sortOne in vm.masterData.sortList">
+									</select>
+								</div>
+								<div class="col-sm-3 text-right">
+									<label class="checkbox-inline c-radio">
+										<input name="sortOne" type="radio" value="1" ng-model="vm.searchInfo.sortOneType"><span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_ASC' | translate }}
+									</label>
+								</div>
+								<div class="col-sm-3">
+									<label class="checkbox-inline c-radio">
+										<input name="sortOne" type="radio" value="-1" ng-model="vm.searchInfo.sortOneType"><span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_DESC' | translate }}
+									</label>
+								</div>
+							</div>
 						</div>
 						<!-- TODO 暂时未实现 -->
 						<div class="form-group">
-							<!--<label class="col-sm-3 control-label" translate="TXT_SORT_2"></label>-->
-							<!--<div class="col-sm-8">-->
-								<!--<div class="col-sm-5">-->
-									<!--<select class="form-control" ng-model="vm.searchInfo.sortTwoName"-->
-											<!--ng-options="sortTwo.id as sortTwo.name for sortTwo in vm.masterData.sortList">-->
-									<!--</select>-->
-								<!--</div>-->
-								<!--<div class="col-sm-3 text-right">-->
-									<!--<label class="checkbox-inline c-radio">-->
-										<!--<input name="sortTwo" type="radio" value="asc" ng-model="vm.searchInfo.sortTwoType"><span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_ASC' | translate }}-->
-									<!--</label>-->
-								<!--</div>-->
-								<!--<div class="col-sm-3">-->
-									<!--<label class="checkbox-inline c-radio">-->
-										<!--<input name="sortTwo" type="radio" value="desc" ng-model="vm.searchInfo.sortTwoType"><span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_DESC' | translate }}-->
-									<!--</label>-->
-								<!--</div>-->
-							<!--</div>-->
+							<label class="col-sm-3 control-label" translate="TXT_SORT_2"></label>
+							<div class="col-sm-8">
+								<div class="col-sm-5">
+									<select class="form-control" ng-model="vm.searchInfo.sortTwoName"
+											ng-options="sortTwo.value as sortTwo.name for sortTwo in vm.masterData.sortList">
+									</select>
+								</div>
+								<div class="col-sm-3 text-right">
+									<label class="checkbox-inline c-radio">
+										<input name="sortTwo" type="radio" value="1" ng-model="vm.searchInfo.sortTwoType"><span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_ASC' | translate }}
+									</label>
+								</div>
+								<div class="col-sm-3">
+									<label class="checkbox-inline c-radio">
+										<input name="sortTwo" type="radio" value="-1" ng-model="vm.searchInfo.sortTwoType"><span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_DESC' | translate }}
+									</label>
+								</div>
+							</div>
 						</div>
 						<!-- TODO 暂时未实现 -->
 						<div class="form-group">
-							<!--<label class="col-sm-3 control-label" translate="TXT_SORT_3"></label>-->
-							<!--<div class="col-sm-8">-->
-								<!--<div class="col-sm-5">-->
-									<!--<select class="form-control" ng-model="vm.searchInfo.sortThreeName"-->
-											<!--ng-options="sortThree.id as sortThree.name for sortThree in vm.masterData.sortList">-->
-									<!--</select>-->
-								<!--</div>-->
-								<!--<div class="col-sm-3 text-right">-->
-									<!--<label class="checkbox-inline c-radio">-->
-										<!--<input name="sortThree" type="radio" value="asc" ng-model="vm.searchInfo.sortThreeType"><span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_ASC' | translate }}-->
-									<!--</label>-->
-								<!--</div>-->
-								<!--<div class="col-sm-3">-->
-									<!--<label class="checkbox-inline c-radio">-->
-										<!--<input name="sortThree" type="radio" value="desc" ng-model="vm.searchInfo.sortThreeType"><span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_DESC' | translate }}-->
-									<!--</label>-->
-								<!--</div>-->
-							<!--</div>-->
+							<label class="col-sm-3 control-label" translate="TXT_SORT_3"></label>
+							<div class="col-sm-8">
+								<div class="col-sm-5">
+									<select class="form-control" ng-model="vm.searchInfo.sortThreeName"
+											ng-options="sortThree.value as sortThree.name for sortThree in vm.masterData.sortList">
+									</select>
+								</div>
+								<div class="col-sm-3 text-right">
+									<label class="checkbox-inline c-radio">
+										<input name="sortThree" type="radio" value="1" ng-model="vm.searchInfo.sortThreeType"><span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_ASC' | translate }}
+									</label>
+								</div>
+								<div class="col-sm-3">
+									<label class="checkbox-inline c-radio">
+										<input name="sortThree" type="radio" value="-1" ng-model="vm.searchInfo.sortThreeType"><span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_DESC' | translate }}
+									</label>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -274,7 +265,7 @@
 											   ng-click="selectOne(groupInfo.prodId, vm.groupSelList)">
 										<span class="fa fa-check"></span>
 									</label>
-									<span class="label m-r-sm m-l" ng-class="{'label-success-new': groupInfo.groups.platforms[0].platformStatus == 'Onsale','label-yellow-new': groupInfo.groups.platforms[0].platformStatus == 'Instock', 'label-danger-new': groupInfo.groups.platforms[0].platformStatus == 'Waitingpublish'}">
+									<span class="label m-r-sm m-l" ng-class="{'label-success-new': groupInfo.groups.platforms[0].platformStatus == 'Onsale','label-yellow-new': groupInfo.groups.platforms[0].platformStatus == 'Instock', 'label-danger-new': groupInfo.groups.platforms[0].platformStatus == 'WaitingPublish'}">
 										&nbsp;{{groupInfo.groups.platforms[0].platformStatus}}&nbsp;
 									</span>
 									<span class="m-r-sm" ng-if="groupInfo.groups.platforms[0].numIId">{{'TXT_NUMBER_IID_WITH_COLON' | translate}}&nbsp;

@@ -1,8 +1,8 @@
-package com.voyageone.web2.cms.bean.beat;
+package com.voyageone.web2.cms.wsdl.bean.task.beat;
 
 import com.voyageone.common.configs.Enums.PromotionTypeEnums;
 import com.voyageone.common.util.JacksonUtil;
-import com.voyageone.web2.cms.model.CmsBtTaskModel;
+import com.voyageone.web2.cms.wsdl.models.CmsBtTaskModel;
 import com.voyageone.web2.sdk.api.domain.CmsBtPromotionModel;
 
 /**
@@ -20,6 +20,10 @@ public class TaskBean {
     private PromotionTypeEnums.Type task_type;
 
     private int promotion_id;
+
+    private String activity_start;
+
+    private String activity_end;
 
     private ConfigBean config;
 
@@ -41,6 +45,8 @@ public class TaskBean {
         setTask_name(taskModel.getTask_name());
         setTask_type(PromotionTypeEnums.Type.valueOf(taskModel.getTask_type()));
         setPromotion_id(taskModel.getPromotion_id());
+        setActivity_start(taskModel.getActivity_start());
+        setActivity_end(taskModel.getActivity_end());
         setConfig(JacksonUtil.json2Bean(taskModel.getConfig(), ConfigBean.class));
         setCreated(taskModel.getCreated());
         setCreater(taskModel.getCreater());
@@ -79,6 +85,22 @@ public class TaskBean {
 
     public void setPromotion_id(int promotion_id) {
         this.promotion_id = promotion_id;
+    }
+
+    public String getActivity_start() {
+        return activity_start;
+    }
+
+    public void setActivity_start(String activity_start) {
+        this.activity_start = activity_start;
+    }
+
+    public String getActivity_end() {
+        return activity_end;
+    }
+
+    public void setActivity_end(String activity_end) {
+        this.activity_end = activity_end;
     }
 
     public ConfigBean getConfig() {
@@ -137,6 +159,8 @@ public class TaskBean {
         taskModel.setTask_name(getTask_name());
         taskModel.setTask_type(getTask_type().getTypeId());
         taskModel.setPromotion_id(getPromotion_id());
+        taskModel.setActivity_start(getActivity_start());
+        taskModel.setActivity_end(getActivity_end());
         taskModel.setConfig(JacksonUtil.bean2Json(getConfig()));
         taskModel.setCreated(getCreated());
         taskModel.setCreater(getCreater());

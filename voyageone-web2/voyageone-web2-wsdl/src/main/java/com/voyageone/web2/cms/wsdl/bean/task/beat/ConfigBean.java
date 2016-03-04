@@ -1,4 +1,4 @@
-package com.voyageone.web2.cms.bean.beat;
+package com.voyageone.web2.cms.wsdl.bean.task.beat;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang3.StringUtils;
@@ -20,10 +20,6 @@ public class ConfigBean {
     private String beat_vtemplate;
 
     private String revert_vtemplate;
-
-    private String beat_time;
-
-    private String revert_time;
 
     public boolean isNeed_vimage() {
         return need_vimage;
@@ -63,22 +59,6 @@ public class ConfigBean {
 
     public void setRevert_vtemplate(String revert_vtemplate) {
         this.revert_vtemplate = revert_vtemplate;
-    }
-
-    public String getBeat_time() {
-        return beat_time;
-    }
-
-    public void setBeat_time(String beat_time) {
-        this.beat_time = beat_time;
-    }
-
-    public String getRevert_time() {
-        return revert_time;
-    }
-
-    public void setRevert_time(String revert_time) {
-        this.revert_time = revert_time;
     }
 
     @JsonIgnore

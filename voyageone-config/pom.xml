@@ -9,7 +9,7 @@
         <version>0.2.0-SNAPSHOT</version>
     </parent>
     <artifactId>voyageone-config</artifactId>
-    <name>voyageone config</name>
+    <name>VoyageOne - Config</name>
     <url>http://maven.apache.org</url>
     <version>${voyageone.config.version}</version>
     <properties>
