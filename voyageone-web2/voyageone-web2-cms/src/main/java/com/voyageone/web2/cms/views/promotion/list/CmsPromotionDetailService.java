@@ -315,6 +315,8 @@ public class CmsPromotionDetailService extends BaseAppService {
                 cmsBtTaskModel.setPromotion_id(promotionId);
                 cmsBtTaskModel.setTask_type(PromotionTypeEnums.Type.TEJIABAO.getTypeId());
                 cmsBtTaskModel.setTask_name(cmsBtPromotionModel.getPromotionName());
+                cmsBtTaskModel.setActivity_start(cmsBtPromotionModel.getActivityStart());
+                cmsBtTaskModel.setActivity_end(cmsBtPromotionModel.getActivityEnd());
                 cmsBtTaskDao.insert(cmsBtTaskModel);
             }
 
