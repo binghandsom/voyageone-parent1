@@ -18,7 +18,7 @@ public class CmsBtBeatInfoDao extends BaseDao {
 
     @Override
     protected String namespace() {
-        return "";
+        return "com.voyageone.web2.cms.sql";
     }
 
     public int insertList(List<CmsBtBeatInfoModel> modelList) {

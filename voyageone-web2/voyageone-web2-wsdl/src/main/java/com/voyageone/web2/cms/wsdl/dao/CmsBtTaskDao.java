@@ -15,7 +15,7 @@ public class CmsBtTaskDao extends BaseDao {
 
     @Override
     protected String namespace() {
-        return "";
+        return "com.voyageone.web2.cms.sql";
     }
 
     public int insert(CmsBtTaskModel model) {
