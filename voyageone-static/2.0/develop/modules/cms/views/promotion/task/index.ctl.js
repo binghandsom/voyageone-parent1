@@ -11,12 +11,16 @@ define([
             this.taskService = taskService;
             
             this.tasks = [];
+
+            this.searchInfo={};
+
+            this.taskType=[{"name":"特价宝","value":"0"},{"name":"价格披露","value":"1"}]
         }
     
         TaskIndexController.prototype = {
             init: function () {
                 var ttt = this;
-                ttt.taskService.page().then(function(res){
+                ttt.taskService.page(ttt.searchInfo).then(function(res){
                     ttt.tasks = res.data;
                 });
             },
@@ -30,6 +34,11 @@ define([
                     default:
                         return '未知类型';
                 }
+            },
+            search: function(){
+                this.taskService.page(this.searchInfo).then(function(res){
+                    this.tasks = res.data;
+                });
             }
         };
             
