@@ -81,9 +81,15 @@ public class CmsTaskPictureService extends BaseAppService {
         if (!taskModels.isEmpty())
             throw new BusinessException("7000003");
 
+        // 如果没提交刷图时间, 则使用 Promotion 的预热时间
+        if (StringUtils.isEmpty(taskBean.getActivity_start()))
+            taskBean.setActivity_start(taskBean.getPromotion().getPrePeriodStart());
+
+        // 如果没提交还原时间, 则使用 Promotion 的结束时间
+        if (StringUtils.isEmpty(taskBean.getActivity_end()))
+            taskBean.setActivity_end(taskBean.getPromotion().getActivityEnd());
+
         taskBean.setTask_type(PromotionTypeEnums.Type.JIAGEPILU);
-        taskBean.getConfig().setBeat_time(promotion.getPrePeriodStart());
-        taskBean.getConfig().setRevert_time(promotion.getActivityEnd());
         taskBean.setCreater(user.getUserName());
         taskBean.setModifier(user.getUserName());
 

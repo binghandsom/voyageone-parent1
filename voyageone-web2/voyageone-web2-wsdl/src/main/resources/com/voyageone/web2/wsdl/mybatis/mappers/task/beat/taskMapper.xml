@@ -30,6 +30,8 @@
             task_name,
             task_type,
             t.promotion_id,
+            t.activity_start t_start,
+            t.activity_end t_end,
             config,
             t.created,
             t.creater,
@@ -43,8 +45,8 @@
             pre_sale_start,
             pre_period_start,
             pre_period_end,
-            activity_start,
-            activity_end,
+            p.activity_start,
+            p.activity_end,
             tejiabao_id,
             promotion_type,
             ref_tag_id,
@@ -62,6 +64,8 @@
 
     <resultMap id="taskWithPromotion" type="com.voyageone.web2.cms.wsdl.models.CmsBtTaskModel" autoMapping="true">
         <id property="task_id" column="task_id"/>
+        <result property="activity_start" column="t_start"/>
+        <result property="activity_end" column="t_end"/>
         <association property="promotion" autoMapping="true" javaType="com.voyageone.web2.sdk.api.domain.CmsBtPromotionModel">
             <id property="promotionId" column="promotion_id"/>
             <result property="channelId" column="channel_id"/>
@@ -92,6 +96,8 @@
             task_name,
             task_type,
             t.promotion_id,
+            t.activity_start t_start,
+            t.activity_end t_end,
             config,
             t.created,
             t.creater,
@@ -105,8 +111,8 @@
             pre_sale_start,
             pre_period_start,
             pre_period_end,
-            activity_start,
-            activity_end,
+            p.activity_start,
+            p.activity_end,
             tejiabao_id,
             promotion_type,
             ref_tag_id,
