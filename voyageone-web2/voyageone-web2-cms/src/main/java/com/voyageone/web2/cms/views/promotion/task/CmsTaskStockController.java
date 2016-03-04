@@ -29,7 +29,7 @@ public class CmsTaskStockController extends CmsController {
 //    private CmsTaskStockService cmsTaskStockService;
 
     /**
-     * @api {post} /cms/promotion/task_stock/initNewTaskFromPromotion 从活动一览新建库存隔离任务前初始化数据取得（取得隔离平台和共享平台）
+     * @api {post} /cms/promotion/task_stock/initNewTaskFromPromotion 1.01 从活动一览新建库存隔离任务前初始化数据取得（取得隔离平台和共享平台）
      * @apiName initNewTaskFromPromotion
      * @apiDescription 从活动一览新建库存隔离任务前初始化数据取得（取得隔离平台和共享平台）
      * @apiGroup promotion
@@ -82,7 +82,7 @@ public class CmsTaskStockController extends CmsController {
     }
 
     /**
-     * @api {post} /cms/promotion/task_stock/initNewTaskFromTask 从任务一栏新建库存隔离任务前初始化数据取得（取得这个渠道对应的所有平台）
+     * @api {post} /cms/promotion/task_stock/initNewTaskFromTask 1.02 从任务一栏新建库存隔离任务前初始化数据取得（取得这个渠道对应的所有平台）
      * @apiName initNewTaskFromTask
      * @apiDescription 从任务一栏新建库存隔离任务前初始化数据取得（取得这个渠道对应的所有平台）
      * @apiGroup promotion
@@ -127,80 +127,7 @@ public class CmsTaskStockController extends CmsController {
     }
 
     /**
-     * @api {post} /cms/promotion/task_stock/saveTask 新建/修改库存隔离任务
-     * @apiName saveTask
-     * @apiDescription 新建/修改库存隔离任务
-     * @apiGroup promotion
-     * @apiVersion 0.0.1
-     * @apiPermission 认证商户
-     * @apiParam (系统级参数) {String} channelId 渠道id
-     * @apiParam (应用级参数) {Object} taskInfo（json格式） 选择的Promotion列表
-     * @apiParamExample  taskInfo参数示例1（从活动一览新建）
-     *  "taskInfo":{
-     *   "showType":"1",
-     *   "taskName":"天猫国际双11库存隔离任务",
-     *   "onlySku":false,
-     *   "platformList": [ {"cartId":"23", "cartName":"天猫国际", "value":"70%", "type":"2", "restoreTime":"2016/11/2 03:00:00", "addPriority":"1", "subtractPriority":"3},
-     *                     {"cartId":"27", "cartName":"聚美优品", "value":"30%", "type":"2", "restoreTime":"2016/11/2 10:00:00", "addPriority":"2", "subtractPriority":"2"}
-     *                     {"cartId":"-1", "cartName":"共享（京东|京东国际|官网）", "value":"", "type":"2", "restoreTime":"", "addPriority":"3", "subtractPriority":"1"}...],
-     *  }
-     *  @apiParamExample  taskInfo参数示例2（从任务一览新建）
-     *  "taskInfo":{
-     *   "showType":"2",
-     *   "taskName":"天猫国际双11库存隔离任务",
-     *   "platformList": [ {"cartId":"23", "cartName":"天猫国际", "value":"70%", "type":"2", "promotionStartTime":"2016/11/1 00:00:00", "restoreTime":"2016/11/2 03:00:00", "addPriority":"1", "subtractPriority":"3},
-     *                     {"cartId":"24", "cartName":"京东", "value":"20%", "type":"2", "promotionStartTime":"2016/11/1 03:00:00", "restoreTime":"2016/11/2 10:00:00", "addPriority":"2", "subtractPriority":"2"},
-     *                     {"cartId":"26", "cartName":"京东国际", "value":"", "type":"1", "promotionStartTime":"", "restoreTime":"", "addPriority":"3", "subtractPriority":"1"}，
-     *                     {"cartId":"27", "cartName":"聚美优品", "value":"", "type":"1", "promotionStartTime":"", "restoreTime":", "addPriority":"3", "subtractPriority":"1"}...],
-     *  }
-     * @apiParamExample  taskInfo参数示例3（修改）
-     *  "taskInfo":{
-     *   "taskId":1，
-     *   "taskName":"天猫国际双11库存隔离任务",
-     *   "platformList": [ {"cartId":"23", "cartName":"天猫国际", "value":"70%", "type":"2", "restoreTime":"2016/11/2 03:00:00", "addPriority":"1", "subtractPriority":"3},
-     *                     {"cartId":"27", "cartName":"聚美优品", "value":"30%", "type":"2", "restoreTime":"2016/11/2 10:00:00", "addPriority":"2", "subtractPriority":"2"}
-     *                     {"cartId":"-1", "cartName":"共享（京东|京东国际|官网）", "value":"", "type":"2", "restoreTime":"", "addPriority":"3", "subtractPriority":"1"}...],
-     *  }
-     *  说明： showType：显示类型（1：从活动一览新建，2：从任务一览新建）；
-     * @apiSuccess (系统级返回字段) {String} code 处理结果代码编号
-     * @apiSuccess (系统级返回字段) {String} message 处理结果描述
-     * @apiSuccess (系统级返回字段) {String} displayType 消息的提示方式
-     * @apiSuccess (系统级返回字段) {String} redirectTo 跳转地址
-     * @apiSuccessExample 成功响应更新请求
-     * {
-     *  "code":"0", "message":null, "displayType":null, "redirectTo":null, "data":null
-     * }
-     * @apiErrorExample  错误示例
-     * {
-     *  "code": "1", "message": "隔离比例不正确", "displayType":null, "redirectTo":null, "data":null
-     * }
-     * @apiExample  业务说明
-     *  1.check输入信息。隔离平台的隔离比例和所有平台的优先顺必须设定而且为大于0的整数。优先顺必须是1开始的连续整数。 隔离结束时间必须是时间格式。
-     *                   如果从任务一览新建，那么共享平台的优先顺必须一致。
-     *                   如果从任务一览新建活动时，隔离结束时间可以不输入，不输入的情况下，指定为活动结束的时间 加上 指定的分钟数（在com_mt_value表中定义id=426）。
-     *                                             隔离结束时间输入时，必须大于指定为活动结束的时间 加上 指定的分钟数。
-     *  2.将隔离信息（对应平台隔离比例，活动开始时间，还原时间，优先顺等）反应到cms_bt_tasks表和cms_bt_stock_separate_platform_info表。(新建的场合，任务状态 0:Ready；修改的场合，隔离比例不能变更)
-     *  新建的场合，继续下面的步骤
-     *  3.如果从活动一览新建活动时，抽出隔离平台下面的所有Sku后，取得商品基本情报，计算出可用库存数和各隔离平台的隔离数。
-     *     3.0.从mangoDB的商品表，取得商品基本情报(每个channel需要取得的字段是不一样的，需要读取com_mt_value_channel的配置type_id=61)
-     *    如果参数stockTaskInfo.onlySku = false,将隔离平台的信息插入到cms_bt_stock_separate_item表（只有基本信息和可用库存，各平台的隔离库存为0，状态为"0:未进行"）
-     *    如果参数stockTaskInfo.onlySku = true,则按设定的隔离比例计算出各个平台的隔离库存更新到cms_bt_stock_separate_item表。（状态为"0:未进行"）
-     *    3.1.根据sku从wms_bt_inventory_center_logic表取得逻辑库存。
-     *    3.2.根据sku从cms_bt_stock_separate_item表取得状态='2:隔离成功'的隔离库存数。
-     *    3.3.根据sku从cms_bt_increment_stock_separate_item表取得状态='2:隔离成功'的增量隔离库存数。
-     *    3.4.根据sku从cms_bt_sales_quantity表取得隔离期间各个隔离平台的销售数量。
-     *    3.5.可用库存数 = 1：取得逻辑库存 - （2：隔离库存数 + 3：增量隔离库存数 - 4：隔离平台的销售数量）
-     *    3.6.隔离平台隔离库存 = 可用库存数 * 设定的百分比
-     * @apiExample 使用表
-     *  cms_bt_promotion
-     *  cms_bt_tasks
-     *  cms_bt_stock_separate_platform_info
-     *  cms_bt_stock_separate_item
-     *  com_mt_value_channel
-     *  cms_bt_product_cxxx
-     *
-     */    /**
-     * @api {post} /cms/promotion/task_stock/saveTask 新建/修改库存隔离任务
+     * @api {post} /cms/promotion/task_stock/saveTask 1.03 新建/修改库存隔离任务
      * @apiName saveTask
      * @apiDescription 新建/修改库存隔离任务
      * @apiGroup promotion
@@ -281,7 +208,7 @@ public class CmsTaskStockController extends CmsController {
     }
 
     /**
-     * @api {post} /cms/promotion/task_stock/delTask 删除库存隔离任务
+     * @api {post} /cms/promotion/task_stock/delTask 1.05 删除库存隔离任务
      * @apiName delTask
      * @apiDescription 删除库存隔离任务
      * @apiGroup promotion
@@ -317,9 +244,9 @@ public class CmsTaskStockController extends CmsController {
     }
 
     /**
-     * @api {post} /cms/promotion/task_stock/search 检索
+     * @api {post} /cms/promotion/task_stock/search 1.06 检索库存隔离明细
      * @apiName search
-     * @apiDescription 检索
+     * @apiDescription 检索库存隔离明细
      * @apiGroup promotion
      * @apiVersion 0.0.1
      * @apiPermission 认证商户
@@ -370,8 +297,8 @@ public class CmsTaskStockController extends CmsController {
      *   "changedNum":0,
      *   "propertyList": [ {"name":"品牌", "show":false},
      *                     {"name":"英文短描述", "show":false},
-     *                     {"name":"性别", "show":false},]，
-     *                     {"name":"Size", "show":false}
+     *                     {"name":"性别", "show":false}，
+     *                     {"name":"Size", "show":false}],
      *   "platformList": [ {"cartId":"23", "cartName":"天猫国际"},
      *                     {"cartId":"27", "cartName":"聚美优品"} ]，
      *   "stockList": [ {"code":"35265465", "sku":"256354566-9", "property1":"Puma", "property2":"Puma Suede Classic+", "property3":"women", "property4":"10", "qty":50,
@@ -400,7 +327,7 @@ public class CmsTaskStockController extends CmsController {
      * propertyList是通过在com_mt_value_channel中通过配置来取得。（配置这个channel显示几个属性，每个属性在画面上的显示名称是什么）
      * @apiExample  业务说明
      *  1.根据任务ID，Code，Sku，状态和各个属性从cms_bt_stock_separate_item表检索库存隔离明细。（按一个sku一条记录，按sku进行分页）
-     *  2.取得实时库存状态
+     *  2.取得实时库存状态（任务的状态为未开始时，不取得）
      *    2.0 根据任务ID，Code，Sku，状态和各个属性从cms_bt_stock_separate_item表取得Sku信息。（按一个sku一条记录，按sku进行分页）
      *    2.1.根据sku从wms_bt_inventory_center_logic表取得逻辑库存。
      *    2.2.根据sku从cms_bt_stock_separate_item表取得状态='2:隔离成功'的隔离库存数。
@@ -432,7 +359,7 @@ public class CmsTaskStockController extends CmsController {
 
 
     /**
-     * @api {post} /cms/promotion/task_stock/getCommonStockList 获取库存隔离明细(翻页用)
+     * @api {post} /cms/promotion/task_stock/getCommonStockList 1.07 获取库存隔离明细(翻页用)
      * @apiName getCommonStockList
      * @apiDescription 获取库存隔离明细
      * @apiGroup promotion
@@ -489,7 +416,7 @@ public class CmsTaskStockController extends CmsController {
     }
 
     /**
-     * @api {post} /cms/promotion/task_stock/getRealStockInfo 获取实时库存状态(翻页用)
+     * @api {post} /cms/promotion/task_stock/getRealStockInfo 1.08 获取实时库存状态(翻页用)
      * @apiName getRealStockInfo
      * @apiDescription 获取实时库存状态
      * @apiGroup promotion
@@ -557,8 +484,6 @@ public class CmsTaskStockController extends CmsController {
     }
 
     /**
-     * @api {post} /cms/promotion/task_stock/initNewRecord 新建一条新隔离明细前初始化操作（取得隔离平台）
-     * @apiName initNewRecord
      * @apiDescription 新建一条新隔离明细前初始化操作（取得隔离平台）
      * @apiGroup promotion
      * @apiVersion 0.0.1
@@ -591,7 +516,7 @@ public class CmsTaskStockController extends CmsController {
     }
 
     /**
-     * @api {post} /cms/promotion/task_stock/getUsableStock 取得可用库存
+     * @api {post} /cms/promotion/task_stock/getUsableStock 1.10 取得可用库存
      * @apiName getUsableStock
      * @apiDescription 取得可用库存
      * @apiGroup promotion
@@ -633,7 +558,7 @@ public class CmsTaskStockController extends CmsController {
     }
 
     /**
-     * @api {post} /cms/promotion/task_stock/saveNewRecord 保存新增库存隔离明细
+     * @api {post} /cms/promotion/task_stock/saveNewRecord 1.11 保存新增库存隔离明细
      * @apiName saveNewRecord
      * @apiDescription 保存新增库存隔离明细
      * @apiGroup promotion
@@ -671,7 +596,7 @@ public class CmsTaskStockController extends CmsController {
     }
 
     /**
-     * @api {post} /cms/promotion/task_stock/importSkuInfo 批量导入Sku
+     * @api {post} /cms/promotion/task_stock/importSkuInfo 1.12 批量导入Sku
      * @apiName importSkuInfo
      * @apiDescription 批量导入Sku
      * @apiGroup promotion
@@ -696,7 +621,7 @@ public class CmsTaskStockController extends CmsController {
      *  从任务一览新建好隔离任务之后，需要进行批量Sku导入。
      *  1.进行导入Sku的文件Check。
      *      1.1 Code和Sku都不能为空白。
-     *      1.2 从com_mt_value_channel表（type=61）取得有几个属性（例如 N个），属性名是多少。check属性名和第一行第两列开始是否匹配。
+     *      1.2 从com_mt_value_channel表（type=62）取得有几个属性（例如 N个），属性名是多少。check属性名和第一行第两列开始是否匹配。
      *      1.3 第一行的第N+2列之后（平台信息）必须和任务所对应的平台匹配。（N由1.2计算出来）
      *      1.4 第二行开始，第N+2列之后只要有内容只，则内容必须是"动态"。
      *  2.按导入的Sku，取得可用库存，计算隔离库存后，插入到cms_bt_stock_separate_item表。（内容为"动态"的数据不插入）
@@ -729,7 +654,7 @@ public class CmsTaskStockController extends CmsController {
 
 
     /**
-     * @api {post} /cms/promotion/task_stock/importStockInfo 批量导入库存明细
+     * @api {post} /cms/promotion/task_stock/importStockInfo 1.13 批量导入库存明细
      * @apiName importStockInfo
      * @apiDescription 批量导入库存明细
      * @apiGroup promotion
@@ -754,7 +679,7 @@ public class CmsTaskStockController extends CmsController {
      *  1.系统时间已经超过这个任务中最晚的平台活动开始时间的话，不能进行导入。
      *  2.进行导入Sku的文件Check。
      *      2.1 Code和Sku都不能为空白。
-     *      2.2 根据渠道id从com_mt_value_channel表（type=61）取得有几个属性（例如 N个）
+     *      2.2 根据渠道id从com_mt_value_channel表（type=62）取得有几个属性（例如 N个）
      *      2.3 第一行的第N+2列之后（平台信息）必须和任务所对应的平台匹配。（N由1.2计算出来）
      *      2.4 第二行开始，第N+2列之后，内容必须是"动态"，或者是大于0的整数。
      *      2.5 导入方式：增量方式。
@@ -787,7 +712,7 @@ public class CmsTaskStockController extends CmsController {
     }
 
     /**
-     * @api {post} /cms/promotion/task_stock/exportStockInfo 批量导出
+     * @api {post} /cms/promotion/task_stock/exportStockInfo 1.14 批量导出
      * @apiName exportStockInfo
      * @apiDescription 批量导出
      * @apiGroup promotion
@@ -798,7 +723,7 @@ public class CmsTaskStockController extends CmsController {
      * @apiSuccess (系统级返回字段) {String} statusCode HttpStatus（eg:200:"OK"）
      * @apiSuccess (系统级返回字段) {byte[]} byte 导出的文件流
      * @apiExample  业务说明
-     *  根据渠道id从com_mt_value_channel表（type=61）取得有几个属性（例如 N个），和属性的名称
+     *  根据渠道id从com_mt_value_channel表（type=62）取得有几个属性（例如 N个），和属性的名称
      *  根据任务id以Sku为单位从cms_bt_stock_separate_item表导出库存隔离数据。
      *
      *  导出文件示例
@@ -819,7 +744,7 @@ public class CmsTaskStockController extends CmsController {
     }
 
     /**
-     * @api {post} /cms/promotion/task_stock/executeStockSeparation 启动/重刷库存隔离
+     * @api {post} /cms/promotion/task_stock/executeStockSeparation 1.15 启动/重刷库存隔离
      * @apiName executeStockSeparation
      * @apiDescription 启动/重刷库存隔离
      * @apiGroup promotion
@@ -852,7 +777,7 @@ public class CmsTaskStockController extends CmsController {
     }
 
     /**
-     * @api {post} /cms/promotion/task_stock/executeStockRestore 还原库存隔离
+     * @api {post} /cms/promotion/task_stock/executeStockRestore 1.16 还原库存隔离
      * @apiName executeStockRestore
      * @apiDescription 还原库存隔离
      * @apiGroup promotion
@@ -885,7 +810,7 @@ public class CmsTaskStockController extends CmsController {
     }
 
     /**
-     * @api {post} /cms/promotion/task_stock/saveSkuRecord 保存一条Sku隔离库存明细
+     * @api {post} /cms/promotion/task_stock/saveSkuRecord 1.17 保存一条Sku隔离库存明细
      * @apiName saveSkuRecord
      * @apiDescription 保存一条Sku隔离库存明细
      * @apiGroup promotion
@@ -933,7 +858,7 @@ public class CmsTaskStockController extends CmsController {
     }
 
     /**
-     * @api {post} /cms/promotion/task_stock/saveSkuRecord 保存一条Sku隔离库存明细
+     * @api {post} /cms/promotion/task_stock/saveSkuRecord 1.18 保存一条Sku隔离库存明细
      * @apiName saveSkuRecord
      * @apiDescription 保存一条Sku隔离库存明细
      * @apiGroup promotion
@@ -995,7 +920,7 @@ public class CmsTaskStockController extends CmsController {
     }
 
     /**
-     * @api {post} /cms/promotion/task_stock/delRecord 删除一条Sku相关的隔离库存明细
+     * @api {post} /cms/promotion/task_stock/delRecord 1.19 删除一条Sku相关的隔离库存明细
      * @apiName delRecord
      * @apiDescription 删除一条Sku相关的隔离库存明细
      * @apiGroup promotion
@@ -1036,7 +961,7 @@ public class CmsTaskStockController extends CmsController {
     }
 
     /**
-     * @api {post} /cms/promotion/task_stock/getSkuSeparationDetail 获取某个Sku的所有隔离详细
+     * @api {post} /cms/promotion/task_stock/getSkuSeparationDetail 1.20 获取某个Sku的所有隔离详细
      * @apiName getSkuSeparationDetail
      * @apiDescription 获取某个Sku的所有隔离详细
      * @apiGroup promotion
@@ -1082,42 +1007,12 @@ public class CmsTaskStockController extends CmsController {
         return success(null);
     }
 
-//    /**
-//     * @api {post} /cms/promotion/task_stock/exportRealStockInfo 批量库存实时状态
-//     * @apiName exportRealStockInfo
-//     * @apiDescription 批量库存实时状态
-//     * @apiGroup promotion
-//     * @apiVersion 0.0.1
-//     * @apiPermission 认证商户
-//     * @apiParam (系统级参数) {String} channelId 渠道id
-//     * @apiParam (应用级参数) {String} taskId 任务id
-//     * @apiSuccess (系统级返回字段) {String} statusCode HttpStatus（eg:200:"OK"）
-//     * @apiSuccess (系统级返回字段) {byte[]} byte 导出的文件流
-//     * @apiExample  业务说明
-//     *  根据渠道id从com_mt_value_channel表（type=61）取得有几个属性（例如 N个），和属性的名称
-//     *  根据任务id以Sku为单位从cms_bt_stock_separate_item表导出库存隔离数据。
-//     *
-//     *  导出文件示例
-//     *  Code	    Sku	            品牌	    Name(英文)	            性别	SIZE	可用库存	天猫	京东	其他
-//     *  302370-013	302370-013-10	Air Jordan	Air Jordan IX (9) Retro	Women	10	    100      	50	    30	    动态
-//     *  302370-013	302370-013-10.5	Air Jordan	Air Jordan IX (9) Retro	Women	10.5	200	        100	    60	    动态
-//     *   302370-013	302370-013-11	Air Jordan	Air Jordan IX (9) Retro	Man   	11	    100	        动态	50	    动态
-//     * @apiExample 使用表
-//     *  cms_bt_stock_separate_item
-//     *  com_mt_value_channel
-//     *
-//     */
-//    @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK.EXPORT_REAL_STOCK_INFO)
-//    public AjaxResponse exportRealStockInfo(@RequestBody Map param) {
-//
-//        // 返回
-//        return success(null);
-//    }
+
 
     /**
-     * @api {post} /cms/promotion/task_stock/exportStockInfo 批量导出
-     * @apiName exportStockInfo
-     * @apiDescription 批量导出
+     * @api {post} /cms/promotion/task_stock/exportErrorInfo 1.21 导出Error日志
+     * @apiName exportErrorInfo
+     * @apiDescription 导出Error日志
      * @apiGroup promotion
      * @apiVersion 0.0.1
      * @apiPermission 认证商户
