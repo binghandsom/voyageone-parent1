@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.cms.sql">
+
+	<!-- 获得要翻译的属性数据 -->
+	<select id="cms_mt_product_attribute_getAttributeValue" resultType="HashMap">
+		select
+			channel_id,
+			product_url_key,
+			attribute_name,
+			attribute_value
+		from
+			voyageone_cms.cms_mt_product_attribute
+		where
+			attribute_value is not null
+			and attribute_value != ''
+			and (attribute_value_cn = BINARY'' or attribute_value_cn is NULL)
+		order by created asc
+		limit 500
+	</select>
+
+	<!-- 将cms_mt_product_attribute表的 订单发送标志置位->1-->
+	<update id="cms_mt_product_attribute_updateAttributeValueCn" parameterType="HashMap">
+		update voyageone_cms.cms_mt_product_attribute
+		set
+			attribute_value_cn = #{attribute_value_cn},
+			modified = now(),
+			modifier = #{taskName}
+		<where>
+			channel_id = #{channel_id}
+			and product_url_key = #{product_url_key}
+			and attribute_name = #{attribute_name}
+		</where>
+	</update>
+
+</mapper>

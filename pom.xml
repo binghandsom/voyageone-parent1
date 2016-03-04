@@ -12,7 +12,7 @@
     <modules>
         <module>voyageone-com</module>
         <module>voyageone-release</module>
-        <module>voyageone-batchjob-all</module>
+        <!--<module>voyageone-batchjob-all</module>-->
         <module>voyageone-web2</module>
         <!--<module>voyageone-service2</module>-->
         <module>voyageone-components</module>
