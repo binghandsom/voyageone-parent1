@@ -20,6 +20,7 @@ import com.voyageone.cms.service.bean.SimpleMappingBean;
 import com.voyageone.cms.service.model.CmsBtProductConstants;
 import com.voyageone.cms.service.model.CmsBtProductModel_Sku;
 import com.voyageone.cms.service.model.CmsMtPlatformMappingModel;
+import com.voyageone.common.util.JsonUtil;
 import com.voyageone.ims.rule_expression.RuleExpression;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -285,7 +286,11 @@ public class TmallGjSkuFieldBuilderImpl_0 extends AbstractSkuFieldBuilder {
 
         MappingBean skuMappingBean = null;
         MappingBean colorExtendMappingBean = null;
-        for (MappingBean mappingBean : cmsMtPlatformMappingModel.getProps()) {
+
+        List<Map<String, Object>> map = cmsMtPlatformMappingModel.getProps();
+        List<MappingBean> mappingBeenList = JsonUtil.jsonToBeanList(JsonUtil.getJsonString(map),MappingBean.class);
+
+        for (MappingBean mappingBean : mappingBeenList) {
             if (mappingBean.getPlatformPropId().equals(skuField.getId())) {
                 skuMappingBean = mappingBean;
             }
