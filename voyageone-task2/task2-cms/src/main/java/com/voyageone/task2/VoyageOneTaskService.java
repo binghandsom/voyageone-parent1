@@ -11,14 +11,14 @@ import org.springframework.context.support.GenericXmlApplicationContext;
 /**
  * @author jacky.zhu
  */
-public class VoyageOneBatchJobService {
+public class VoyageOneTaskService {
 
-    private static final Log log = LogFactory.getLog(VoyageOneBatchJobService.class);
+    private static final Log log = LogFactory.getLog(VoyageOneTaskService.class);
 
     private static final String BATCH_JOB_NAME = "VoyageOne_BatchJob";
 
     public static void main(String[] args) {
-        VoyageOneBatchJobService service = new VoyageOneBatchJobService();
+        VoyageOneTaskService service = new VoyageOneTaskService();
         try {
             log.info(BATCH_JOB_NAME + "启动中......");
             service.startServer();
