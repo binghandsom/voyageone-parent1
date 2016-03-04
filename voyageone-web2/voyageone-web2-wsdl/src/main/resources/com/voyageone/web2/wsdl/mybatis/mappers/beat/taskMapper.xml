@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.voyageone.web2.cms.sql">
 
-    <insert id="cms_bt_tasks_insert" parameterType="com.voyageone.web2.cms.model.CmsBtTaskModel">
+    <insert id="cms_bt_tasks_insert" parameterType="com.voyageone.web2.cms.wsdl.models.CmsBtTaskModel">
         INSERT INTO voyageone_cms2.cms_bt_tasks (
             task_name, task_type, promotion_id,
             <if test="config != null">
@@ -60,7 +60,7 @@
         WHERE p.channel_id = #{channel_id};
     </select>
 
-    <resultMap id="taskWithPromotion" type="com.voyageone.web2.cms.model.CmsBtTaskModel" autoMapping="true">
+    <resultMap id="taskWithPromotion" type="com.voyageone.web2.cms.wsdl.models.CmsBtTaskModel" autoMapping="true">
         <id property="task_id" column="task_id"/>
         <association property="promotion" autoMapping="true" javaType="com.voyageone.web2.sdk.api.domain.CmsBtPromotionModel">
             <id property="promotionId" column="promotion_id"/>
@@ -122,7 +122,7 @@
         WHERE task_id = #{task_id}
     </select>
 
-    <select id="cms_bt_tasks_selectByName" resultType="com.voyageone.web2.cms.model.CmsBtTaskModel">
+    <select id="cms_bt_tasks_selectByName" resultType="com.voyageone.web2.cms.wsdl.models.CmsBtTaskModel">
         SELECT
             task_id,
             task_name,

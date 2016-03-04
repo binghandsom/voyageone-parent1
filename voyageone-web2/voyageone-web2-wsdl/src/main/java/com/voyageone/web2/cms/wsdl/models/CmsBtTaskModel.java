@@ -1,4 +1,4 @@
-package com.voyageone.web2.cms.model;
+package com.voyageone.web2.cms.wsdl.models;
 
 import com.voyageone.web2.sdk.api.domain.CmsBtPromotionModel;
 

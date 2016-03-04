@@ -1,8 +1,8 @@
-package com.voyageone.web2.cms.bean.beat;
+package com.voyageone.web2.cms.wsdl.bean;
 
 import com.voyageone.common.configs.Enums.PromotionTypeEnums;
 import com.voyageone.common.util.JacksonUtil;
-import com.voyageone.web2.cms.model.CmsBtTaskModel;
+import com.voyageone.web2.cms.wsdl.models.CmsBtTaskModel;
 import com.voyageone.web2.sdk.api.domain.CmsBtPromotionModel;
 
 /**
