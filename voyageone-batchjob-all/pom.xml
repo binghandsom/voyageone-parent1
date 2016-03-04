@@ -10,47 +10,15 @@
 	</parent>
 	<artifactId>voyageone-batchjob-all</artifactId>
 	<name>voyageone-batchjob-all</name>
+	<version>0.2.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
-	<url>http://maven.apache.org</url>
 
 	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<voyageone.batchjob.core.version>0.2.0-SNAPSHOT</voyageone.batchjob.core.version>
 	</properties>
 
 	<modules>
 		<module>voyageone-batchjob-core</module>
-		<module>voyageone-batchjob-core-job</module>
-		<module>voyageone-batchjob-ims</module>
-		<module>voyageone-batchjob-oms</module>
-		<module>voyageone-batchjob-wms</module>
 		<module>voyageone-batchjob-cms</module>
-		<module>voyageone-batchjob-bi</module>
-		<module>voyageone-batchjob-synship</module>
 	</modules>
-	<build>
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-compiler-plugin</artifactId>
-					<configuration>
-						<source>${jdk.version}</source>
-						<target>${jdk.version}</target>
-					</configuration>
-				</plugin>
-			</plugins>
-		</pluginManagement>
-		<resources>
-			<resource>
-				<directory>src/main/resources</directory>
-			</resource>
-			<resource>
-				<directory>src/main/java</directory>
-				<includes>
-					<include>**/*.xml</include>
-					<include>**/*.properties</include>
-				</includes>
-			</resource>
-		</resources>
-	</build>
 </project>
