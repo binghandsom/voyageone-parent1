@@ -9,7 +9,7 @@
 
     <rabbit:queue name="voyageone_batchjob_queue_1" durable="true" auto-delete="false" exclusive="false"/>
 
-    <rabbit:listener-container connection-factory="connectionFactory" acknowledge="auto">
+    <rabbit:listener-container connection-factory="rabbitConnFactory" acknowledge="auto">
         <rabbit:listener queue-names="voyageone_batchjob_queue_1" ref="mqConsumJob"/>
     </rabbit:listener-container>
 
