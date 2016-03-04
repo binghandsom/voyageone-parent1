@@ -239,7 +239,6 @@
         from voyageone_cms2.cms_bt_tag tag
         where
             channel_id = #{channelId,jdbcType=VARCHAR}
-            and parent_tag_id = 0
         order by tag.tag_id
     </select>
 </mapper>

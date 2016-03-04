@@ -27,9 +27,9 @@ public class MqTest extends TestCase {
     @Test
     public void testSendMessage() throws Exception {
         Map<String,Object> message=new HashMap<String,Object>();
-        message.put("fromBundle","voyageone-batch");
-        message.put("message","vooo");
-        sender.sendMessage(MqRoutingKey.KEY1, message);
+        message.put("promotionId","111");
+        message.put("code","35476451212");
+        sender.sendMessage(MqRoutingKey.CMS_BATCH_PROMOTION, message);
     }
 
 }
