@@ -4,7 +4,7 @@ import com.taobao.top.schema.field.Field;
 import com.taobao.top.schema.field.InputField;
 import com.taobao.top.schema.value.ComplexValue;
 import com.voyageone.batch.cms.bean.tcb.UploadProductTcb;
-import com.voyageone.batch.cms.service.AbstractSkuFieldBuilder;
+import com.voyageone.batch.cms.service.putaway.AbstractSkuFieldBuilder;
 
 import java.util.ArrayList;
 import java.util.HashMap;
