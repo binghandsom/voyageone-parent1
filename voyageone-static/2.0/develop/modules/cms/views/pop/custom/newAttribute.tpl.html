@@ -7,9 +7,15 @@
     <div class="modal-body wrapper">
         <form role="form" class="form-horizontal">
             <div class="form-group">
-                <label class="col-sm-3 control-label">属性名称</label>
+                <label class="col-sm-3 control-label">属性名（EN）</label>
                 <div class="col-sm-6">
-                    <input class="form-control"/>
+                    <input class="form-control" ng-model="vm.value_original"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">属性名（CN）</label>
+                <div class="col-sm-6">
+                    <input class="form-control" ng-model="vm.value_translation"/>
                 </div>
             </div><!-- .form-group -->
         </form>

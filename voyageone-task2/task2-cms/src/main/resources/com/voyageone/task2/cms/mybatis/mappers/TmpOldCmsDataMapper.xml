@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.cms.sql">
+
+	<!-- 取出要处理的商品列表 -->
+	<select id="cms_tmp_old_cms_data_select" resultType="com.voyageone.task2.cms.bean.TmpOldCmsDataBean">
+		select
+			channel_id
+			,cart_id
+			,code
+			,model
+			,category_path
+			,product_id
+			,num_iid
+			,title_en
+			,title_cn
+			,description_en
+			,description_cn
+			,img1
+			,img2
+			,img3
+			,img4
+			,color_en
+			,hs_code_pu
+			,finish_flg
+		from
+			voyageone_cms2.cms_tmp_old_cms_data
+		where
+			finish_flg = 0
+		limit 3000
+	</select>
+
+	<!-- 看看数据库中是否存在 -->
+	<select id="cms_tmp_old_cms_data_check_exist" parameterType="HashMap" resultType="Integer">
+		select count(code)
+		from   voyageone_cms2.cms_tmp_old_cms_data
+		where  channel_id = #{channel_id}
+		  and  code = #{code}
+	</select>
+
+	<!-- 将cms_tmp_old_cms_data表的 标志置位->1-->
+	<update id="cms_tmp_old_cms_data_set_finish" parameterType="HashMap">
+		update voyageone_cms2.cms_tmp_old_cms_data
+		set
+			finish_flg = 1
+		where channel_id = #{channel_id}
+		  and cart_id = #{cart_id}
+		  and code = #{code}
+	</update>
+
+</mapper>
