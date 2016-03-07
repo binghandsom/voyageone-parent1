@@ -195,7 +195,8 @@
                 modifier = #{modifier,jdbcType=VARCHAR},
             </if>
         </set>
-        where seq = #{seq,jdbcType=INTEGER}
+        where promotion_id = #{promotionId,jdbcType=INTEGER}
+              and  product_model = #{productModel,jdbcType=VARCHAR}
     </update>
     <delete id="delete_cms_bt_promotion_model" parameterType="com.voyageone.web2.sdk.api.domain.CmsBtPromotionGroupModel">
         delete

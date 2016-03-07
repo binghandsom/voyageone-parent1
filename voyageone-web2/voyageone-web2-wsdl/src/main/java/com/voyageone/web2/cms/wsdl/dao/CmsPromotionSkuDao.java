@@ -49,6 +49,12 @@ public class CmsPromotionSkuDao extends WsdlBaseDao {
         params.setProductId(productId);
         return updateTemplate.delete("delete_cms_bt_promotion_sku", params);
     }
+    public int deletePromotionSkuByProductCode(Integer promotionId, String productCode){
+        CmsBtPromotionSkuModel params = new CmsBtPromotionSkuModel();
+        params.setPromotionId(promotionId);
+        params.setProductCode(productCode);
+        return updateTemplate.delete("delete_cms_bt_promotion_sku", params);
+    }
     public boolean insertSkuInventoryInfo(String values) {
         boolean ret = true;
 
