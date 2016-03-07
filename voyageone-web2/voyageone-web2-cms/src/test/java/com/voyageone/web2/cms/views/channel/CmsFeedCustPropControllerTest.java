@@ -82,7 +82,7 @@ public class CmsFeedCustPropControllerTest {
     @Test
     public void testGetCatTree1() throws Exception {
         UserSessionBean userInfo = new UserSessionBean();
-        userInfo.setSelChannelId("010");
+        userInfo.setSelChannelId("015");
 
         MockHttpServletRequestBuilder mb = MockMvcRequestBuilders.get("/cms/channel/custom/prop/getCatTree").sessionAttr(BaseConstants.SESSION_USER, userInfo);
         MockHttpServletResponse msr = mockMvc.perform(mb).andReturn().getResponse();
@@ -100,7 +100,7 @@ public class CmsFeedCustPropControllerTest {
     @Test
     public void testGetCatList1() throws Exception {
         UserSessionBean userInfo = new UserSessionBean();
-        userInfo.setSelChannelId("010");
+        userInfo.setSelChannelId("015");
 
         MockHttpServletRequestBuilder mb = MockMvcRequestBuilders.get("/cms/channel/custom/prop/getCatList").sessionAttr(BaseConstants.SESSION_USER, userInfo);
         MockHttpServletResponse msr = mockMvc.perform(mb).andReturn().getResponse();
