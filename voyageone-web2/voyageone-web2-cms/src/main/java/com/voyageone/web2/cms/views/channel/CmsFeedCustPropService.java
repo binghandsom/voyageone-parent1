@@ -33,7 +33,7 @@ public class CmsFeedCustPropService extends BaseAppService {
     @Autowired
     private MongoTemplate mongoTemplate;
 
-    // 取得类目路径数据(树型结构)
+    // 取得类目路径数据
     public List<CmsFeedCategoryModel> getTopCategories(UserSessionBean user) {
         CmsMtFeedCategoryTreeModelx treeModelx = cmsMtFeedCategoryTreeDao.findFeedCategoryx(user.getSelChannelId());
         return treeModelx.getCategoryTree();
