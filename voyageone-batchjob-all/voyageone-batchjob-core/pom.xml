@@ -9,7 +9,7 @@
 		<version>0.2.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>voyageone-batchjob-core</artifactId>
-	<name>voyageone-batchjob-core</name>
+	<name>VoyageOne Task1 - Base</name>
 	<url>http://maven.apache.org</url>
 	<packaging>jar</packaging>
 	<version>${voyageone.batchjob.core.version}</version>

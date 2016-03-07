@@ -9,7 +9,7 @@ import com.voyageone.batch.cms.enums.FeedPropMappingType;
 import com.voyageone.batch.core.Enums.TaskControlEnums;
 import com.voyageone.batch.core.modelbean.TaskControlBean;
 import com.voyageone.batch.core.util.TaskControlUtils;
-import com.voyageone.cms.feed.Condition;
+import com.voyageone.cms.bean.Condition;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.components.transaction.TransactionRunner;
 import com.voyageone.common.configs.ChannelConfigs;

@@ -29,6 +29,12 @@
             <version>${voyageone.web2.sdk.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.voyageone</groupId>
+            <artifactId>voyageone-web2-wsdl</artifactId>
+            <version>${voyageone.web2.wsdl.version}</version>
+        </dependency>
+
     </dependencies>
 </project>
 

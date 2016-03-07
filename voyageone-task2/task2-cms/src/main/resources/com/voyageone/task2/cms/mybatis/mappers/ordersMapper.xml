@@ -1,0 +1,420 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.cms.sql">
+
+	<!-- 将oms_bt_ext_orders表的 ext_flg4->1-->
+	<update id="oms_bt_ext_orders_updateExtFlg4" parameterType="HashMap">
+		update oms_bt_ext_orders
+		set
+		ext_flg4 = true,
+		ext_txt1 = #{extTxt1},
+		modified = now(),
+		modifier = #{taskName}
+		where
+		<if test="orderNumberList != null ">
+			order_number in
+			<foreach item="item" index="index" collection="orderNumberList" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+	</update>
+
+	<!-- 把品牌方订单号更新到数据库中 -->
+	<update id="update_ClientOrderId" parameterType="HashMap" >
+		Update oms_bt_orders
+		set client_order_id = #{clientOrderId},
+		modifier = #{modifier},
+		modified = now()
+		where order_number = #{order_number}
+	</update>
+
+	<!-- 第三方未推送订单取得 （未Placed）-->
+	<!-- 获得订单详细信息 （根据订单渠道）-->
+	<resultMap id="ordersInfoMapforPush" type="com.voyageone.task2.cms.formbean.OutFormOrderdetailOrders">
+		<result column="order_number" property="orderNumber"/>
+		<result column="order_date_time" property="orderDateTime"/>
+		<result column="customer_id" property="customerId"/>
+		<result column="name" property="name"/>
+		<result column="company" property="company"/>
+		<result column="email" property="email"/>
+		<result column="address" property="address"/>
+		<result column="address2" property="address2"/>
+		<result column="city" property="city"/>
+		<result column="state" property="state"/>
+		<result column="zip" property="zip"/>
+		<result column="country" property="country"/>
+		<result column="phone" property="phone"/>
+		<result column="ship_name" property="shipName"/>
+		<result column="ship_company" property="shipCompany"/>
+		<result column="ship_email" property="shipEmail"/>
+		<result column="ship_address" property="shipAddress"/>
+		<result column="ship_address2" property="shipAddress2"/>
+		<result column="ship_city" property="shipCity"/>
+		<result column="ship_state" property="shipState"/>
+		<result column="ship_zip" property="shipZip"/>
+		<result column="ship_country" property="shipCountry"/>
+		<result column="ship_phone" property="shipPhone"/>
+		<result column="account" property="account"/>
+		<result column="customerComment" property="customerComment"/>
+		<result column="internalMessage" property="internalMessage"/>
+		<result column="giftMessage" property="giftMessage"/>
+		<result column="product_total" property="productTotal"/>
+		<result column="shipping_total" property="shippingTotal"/>
+		<result column="grand_total" property="grandTotal"/>
+		<result column="shipping" property="shipping"/>
+
+		<result column="discount" property="discount"/>
+		<result column="revised_discount" property="revisedDiscount"/>
+		<result column="coupon" property="coupon"/>
+		<result column="coupon_discount" property="couponDiscount"/>
+		<result column="coupon_ok" property="couponOk"/>
+		<result column="surcharge" property="surcharge"/>
+		<result column="revised_surcharge" property="revisedSurcharge"/>
+		<result column="approved" property="approved"/>
+		<result column="cancelled" property="cancelled"/>
+		<result column="final_product_total" property="finalProductTotal"/>
+		<result column="final_shipping_total" property="finalShippingTotal"/>
+		<result column="final_grand_total" property="finalGrandTotal"/>
+
+
+
+
+		<result column="lock_ship" property="lockShip"/>
+		<result column="invoice" property="invoice"/>
+		<result column="invoice_kind" property="invoiceKind"/>
+		<result column="invoice_info" property="invoiceInfo"/>
+
+		<result column="source_order_id" property="sourceOrderId"/>
+		<result column="origin_source_order_id" property="originSourceOrderId"/>
+		<result column="use_tmall_point_fee" property="useTmallPointFee"/>
+		<result column="order_status" property="orderStatus"/>
+
+		<result column="cart_id" property="cartId"/>
+		<result column="approval_date" property="approvalDate"/>
+		<result column="pay_no" property="poNumber"/>
+
+		<result column="order_channel_id" property="orderChannelId"/>
+		<!-- <result column="channel" property="channel"/> -->
+		<!-- <result column="store" property="store"/> -->
+
+
+
+		<result column="discount_type" property="discountType"/>
+		<result column="discount_percent" property="discountPercent"/>
+		<result column="order_kind" property="orderKind"/>
+		<result column="sub_source_order_id" property="subSourceOrderId"/>
+
+		<result column="customerComment" property="origCustomerComment"/>
+		<result column="internalMessage" property="origInternalMessage"/>
+		<result column="giftMessage" property="origGiftMessage"/>
+
+		<result column="invoice" property="origInvoice"/>
+		<result column="invoice_info" property="origInvoiceInfo"/>
+		<result column="invoice_kind" property="origInvoiceKind"/>
+
+		<result column="shipping" property="origShipping"/>
+
+
+		<result column="name" property="origName"/>
+		<result column="company" property="origCompany"/>
+		<result column="email" property="origEmail"/>
+		<result column="address" property="origAddress"/>
+		<result column="address2" property="origAddress2"/>
+		<result column="city" property="origCity"/>
+		<result column="state" property="origState"/>
+		<result column="zip" property="origZip"/>
+		<result column="country" property="origCountry"/>
+		<result column="phone" property="origPhone"/>
+
+		<result column="ship_name" property="origShipName"/>
+		<result column="ship_company" property="origShipCompany"/>
+		<result column="ship_email" property="origShipEmail"/>
+		<result column="ship_address" property="origShipAddress"/>
+		<result column="ship_address2" property="origShipAddress2"/>
+		<result column="ship_city" property="origShipCity"/>
+		<result column="ship_state" property="origShipState"/>
+		<result column="ship_zip" property="origShipZip"/>
+		<result column="ship_country" property="origShipCountry"/>
+		<result column="ship_phone" property="origShipPhone"/>
+
+		<result column="price_difference_flag" property="priceDifferenceFlag"/>
+
+		<result column="client_order_id" property="clientOrderId"/>
+		<result column="freight_collect" property="freightCollect"/>
+		<result column="freight_collect" property="origFreightCollect"/>
+		<result column="cancelClientOrderFlag" property="cancelClientOrderFlag"/>
+		<result column="cancelClientOrderFlag" property="origCancelClientOrderFlag"/>
+		<result column="clientOrderSendFlag" property="clientOrderSendFlag"/>
+		<result column="thirdPartyCancelOrderFlag" property="thirdPartyCancelOrderFlag"/>
+		<result column="taobao_logistics_id" property="taobaoLogisticsId"/>
+		<result column="ext_txt1" property="extTxt1"/>
+	</resultMap>
+	<sql id="orders_columnforpush">
+		o.order_number,
+		o.order_date_time,
+		o.customer_id,
+		IFNULL(o.name,'') as name,
+		IFNULL(o.company,'') as company,
+		IFNULL(o.email,'') as email,
+		IFNULL(o.address,'') as address,
+		IFNULL(o.address2,'') as address2,
+		IFNULL(o.city,'') as city,
+		IFNULL(o.state,'') as state,
+		IFNULL(o.zip,'') as zip,
+		IFNULL(o.country,'') as country,
+		IFNULL(o.phone,'') as phone,
+		IFNULL(o.ship_name,'') as ship_name,
+		IFNULL(o.ship_company,'') as ship_company,
+		IFNULL(o.ship_email,'') as ship_email,
+		IFNULL(o.ship_address,'') as ship_address,
+		IFNULL(o.ship_address2,'') as ship_address2,
+		IFNULL(o.ship_city,'') as ship_city,
+		IFNULL(o.ship_state,'') as ship_state,
+		IFNULL(o.ship_zip,'') as ship_zip,
+		IFNULL(o.ship_country,'') as ship_country,
+		IFNULL(o.ship_phone,'') as ship_phone,
+		o.pay_account as account,
+		IFNULL(o.customer_comments,'') as customerComment,
+		IFNULL(o.internal_message,'') as internalMessage,
+		IFNULL(o.gift_message,'') as giftMessage,
+		o.product_total,
+		o.shipping_total,
+		o.grand_total,
+		IFNULL(o.shipping,'') as shipping,
+
+		o.discount,
+		o.revised_discount,
+		o.coupon,
+		o.coupon_discount,
+		o.coupon_ok,
+		o.surcharge,
+		o.revised_surcharge,
+		o.approved,
+		o.cancelled,
+		o.final_product_total,
+		o.final_shipping_total,
+		o.final_grand_total,
+
+
+
+
+		o.lock_ship as lock_ship,
+		IFNULL(o.need_invoice,'') as invoice,
+
+		o.source_order_id,
+		o.origin_source_order_id,
+		o.channel_point_fee as use_tmall_point_fee,
+		o.order_status,
+
+		o.cart_id,
+		o.approval_date,
+		o.pay_no,
+
+		o.order_channel_id,
+		IFNULL(o.invoice_info, '') as invoice_info,
+
+
+		o.discount_type,
+		o.discount_percent,
+		o.order_kind,
+		o.sub_source_order_id,
+		o.price_difference_flag,
+		IFNULL(o.invoice_kind, '') as invoice_kind,
+
+		IFNULL(o.client_order_id, '') as client_order_id,
+		freight_collect,
+		IFNULL(ox.send_flg, false) as clientOrderSendFlag,
+		IFNULL(ox.ext_flg1, false) as cancelClientOrderFlag,
+		IFNULL(ox.ext_flg3, false) as thirdPartyCancelOrderFlag,
+		IFNULL(ox.ext_txt1, '') as ext_txt1,
+		co.taobao_logistics_id
+	</sql>
+	<!-- 第三方未推送订单取得 （未placed）-->
+	<select id="oms_bt_orders_getOrdersListByOrderChannelIdForNotSend" parameterType="String" resultMap="ordersInfoMapforPush" >
+		select <include refid="orders_columnforpush"/>
+		from
+			oms_bt_orders o
+		left join oms_bt_ext_orders ox
+			on o.order_number = ox.order_number
+		left join tt_cainiao_order co
+			on o.order_number = co.order_number
+		where
+			o.order_channel_id = #{orderChannelId} and
+			o.order_status != 'Canceled' and
+			o.approved = true and
+			o.lock_ship != 'YES' and
+			ox.ext_txt1 = '' and
+			ox.ext_flg4 = false
+	</select>
+	<!-- 第三方未推送订单取得 （未confirmed，ext_txt1中没有Gilt异常）-->
+	<select id="oms_bt_orders_getOrdersListByOrderChannelIdForNotConfirmed" parameterType="HashMap" resultMap="ordersInfoMapforPush" >
+		select <include refid="orders_columnforpush"/>
+		from
+			oms_bt_orders o
+		left join oms_bt_ext_orders ox
+			on o.order_number = ox.order_number
+		left join tt_cainiao_order co
+			on o.order_number = co.order_number
+		where
+			o.order_channel_id = #{orderChannelId} and
+			o.order_status != 'Canceled' and
+			o.approved = true and
+			o.lock_ship != 'YES' and
+			ox.ext_txt1 = '' and
+			ox.ext_flg4 = true and
+			ox.ext_flg1 = false and
+			ox.send_flg = false and
+			o.order_date_time &lt; #{orderDateTime}
+	</select>
+	<!-- 第三方取消订单取得 （未Confirm订单，ext_txt1中没有Gilt异常）-->
+	<select id="oms_bt_orders_getOrdersListByOrderChannelIdForCancel" parameterType="String" resultMap="ordersInfoMapforPush" >
+		select <include refid="orders_columnforpush"/>
+		from
+			oms_bt_orders o
+		left join oms_bt_ext_orders ox
+			on o.order_number = ox.order_number
+		left join tt_cainiao_order co
+			on o.order_number = co.order_number
+		where
+			o.order_channel_id = #{orderChannelId} and
+			o.order_status = 'Canceled' and
+			o.approved = true and
+			ox.ext_txt1 = '' and
+			ox.ext_flg4 = true and
+			ox.ext_flg1 = true and
+			ox.ext_flg2 = false and
+			ox.send_flg = false
+	</select>
+
+
+	<!-- 获得订单详细信息 -->
+	<resultMap id="orderDetailsInfoMap" type="com.voyageone.task2.cms.formbean.OutFormOrderDetailOrderDetail">
+		<result column="order_number" property="orderNumber"/>
+		<result column="item_number" property="itemNumber"/>
+		<result column="sub_item_number" property="subItemNumber"/>
+		<result column="adjustment" property="adjustment"/>
+		<result column="product" property="product"/>
+		<result column="price_per_unit" property="pricePerUnit"/>
+		<result column="quantity_ordered" property="quantityOrdered"/>
+		<result column="quantity_shipped" property="quantityShipped"/>
+		<result column="quantity_returned" property="quantityReturned"/>
+		<result column="sku" property="sku"/>
+		<result column="status" property="status"/>
+		<result column="sync_synship" property="syncSynship"/>
+		<result column="res_id" property="resId"/>
+		<result column="syn_ship_no" property="synShipNo"/>
+		<result column="client_sku" property="clientSku"/>
+	</resultMap>
+	<sql id="orderDetails_column">
+		od.order_number,
+		od.item_number,
+		od.sub_item_number,
+		od.adjustment,
+		od.product,
+		od.price_per_unit,
+		od.quantity_ordered,
+		od.quantity_shipped,
+		od.quantity_returned,
+		od.sku,
+		IFNULL(od.status,'') as status,
+		od.synship_flg as sync_synship,
+		od.res_id as res_id,
+		od.syn_ship_no as syn_ship_no,
+		s.client_sku
+	</sql>
+	<select id="oms_bt_order_details_getOrderDetailsInfoByOrderNumList" parameterType="HashMap" resultMap="orderDetailsInfoMap" >
+		select <include refid="orderDetails_column"/>
+		from
+		oms_bt_order_details od
+		left join oms_bt_orders o
+		on o.order_number = od.order_number
+		left join wms_bt_item_details s
+		on o.order_channel_id = s.order_channel_id and od.sku = s.sku
+		where
+		o.order_channel_id = #{orderChannelId}
+		<if test="orderNumberList != null ">
+			and od.order_number in
+			<foreach item="item" index="index" collection="orderNumberList" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+		order by
+		od.order_number, od.adjustment, od.item_number
+	</select>
+
+	<!-- 将oms_bt_ext_orders表的 订单发送标志置位->1-->
+	<update id="oms_bt_ext_orders_updateSendFlag" parameterType="HashMap">
+		update oms_bt_ext_orders
+		set
+		send_flg = true,
+		modified = now(),
+		modifier = #{taskName}
+		where
+		<if test="orderNumberList != null ">
+			order_number in
+			<foreach item="item" index="index" collection="orderNumberList" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+	</update>
+
+	<!-- 将oms_bt_ext_orders表的 订单发送标志置位->1-->
+	<update id="oms_bt_ext_orders_updateSendFlagAndExtTxt1" parameterType="HashMap">
+		update oms_bt_ext_orders
+		set
+			send_flg = true,
+			ext_txt1 = #{extTxt1},
+			modified = now(),
+			modifier = #{taskName}
+		where
+		<if test="orderNumberList != null ">
+			order_number in
+			<foreach item="item" index="index" collection="orderNumberList" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+	</update>
+
+	<!-- 将oms_bt_ext_orders表的 ext_flg2,3->1-->
+	<update id="oms_bt_ext_orders_updateExtFlg2and3andExtTxt1" parameterType="HashMap">
+		update oms_bt_ext_orders
+		set
+			ext_flg2 = #{cancelClientOrderSendFlag},
+			ext_flg3 = #{thirdPartyCancelOrderFlag},
+			ext_txt1 = #{extTxt1},
+			modified = now(),
+			modifier = #{taskName}
+		where
+		<if test="orderNumberList != null ">
+			order_number in
+			<foreach item="item" index="index" collection="orderNumberList" open="(" separator="," close=")">
+				#{item}
+			</foreach>
+		</if>
+	</update>
+
+	<!-- 批处理插入notes表数据(字符串拼接)-->
+	<insert id="oms_bt_notes_insertNotesBatchData" parameterType="HashMap">
+		insert into oms_bt_notes
+		(
+			type,
+			numeric_key,
+			item_number,
+			entry_date,
+			entry_time,
+			notes,
+			entered_by,
+			parent_type,
+			parent_key,
+			source_order_id,
+			creater,
+			created,
+			modifier,
+			modified
+		)
+		values
+			${values}
+	</insert>
+
+</mapper>
+
