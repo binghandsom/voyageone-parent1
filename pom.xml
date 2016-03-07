@@ -13,7 +13,7 @@
         <module>voyageone-com</module>
         <module>voyageone-release</module>
         <module>voyageone-web2</module>
-        <!--<module>voyageone-service2</module>-->
+        <module>voyageone-service2</module>
         <module>voyageone-components</module>
         <module>voyageone-md-schema</module>
         <module>voyageone-task2</module>
