@@ -1,0 +1,13 @@
+{
+  "code": null,
+  "displayType": null,
+  "message": null,
+  "redirectTo":null,
+  "data": {
+    "categoryTree":
+    [
+      {"path":"a_a_a", "name":"yourname1", "cid":"O0012","isChild":1, "child":"child子节点1", "attribute":"attribute子节点1"},
+      {"path":"b_b_c", "name":"yourname2", "cid":"O0013","isChild":1, "child":"child子节点2", "attribute":"attribute子节点2"}
+    ]
+  }
+}

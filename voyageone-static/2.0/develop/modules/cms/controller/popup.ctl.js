@@ -106,7 +106,15 @@ define([
                     "controller": 'popAddAttributeValueCtl as ctrl',
                     "backdrop": 'static',
                     "size": 'md'
+                },
+                "newValue": {
+                    "templateUrl": "views/pop/custom/newValue.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/custom/newValue.ctl",
+                    "controller": 'popAddAttributeValueNewCtl as ctrl',
+                    "backdrop": 'static',
+                    "size": 'md'
                 }
+
             },
             "configuration": {
                 "new": {
@@ -434,6 +442,15 @@ define([
          */
         $scope.openAddAttribute = function (context) {
             return openModel(popActions.custom.newAttribute, context);
+        };
+
+        /**
+         * 打开添加自定义属性-值，编辑页面
+         * @param context
+         * @returns {*}
+         */
+        $scope.openAddNewValue = function (context) {
+            return openModel(popActions.custom.newValue, context);
         };
 
         /**

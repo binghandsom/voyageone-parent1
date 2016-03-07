@@ -18,11 +18,20 @@ define([
             nData.prop_original = $scope.vm.value_original;
             nData.prop_translation = $scope.vm.value_translation;
 
-            if (!_.isEmpty(_.where(context.from, nData))) {
-                alert("该属性已经存在");
-            } else {
-                $modalInstance.close(nData);
-            }
+            //if (!_.isEmpty(_.where(context.from, nData))) {
+            //    alert("该属性已经存在");
+            //} else {
+            //    $modalInstance.close(nData);
+            //}
+
+            _.each(context.from, function(value) {
+                if (value.prop_original==nData.prop_original || value.prop_translation==nData.prop_translation) {
+                    alert("该属性已经存在");
+                }else {
+                     $modalInstance.close(nData);
+                }
+
+            });
             //$scope.$close();
         };
     });
