@@ -176,6 +176,12 @@ public class CmsPromotionDetailService extends BaseAppService {
         Integer cartId = promotion.getCartId();
 
         for (CmsBtPromotionGroupModel productModel : productModels) {
+            productModel.getCodes().forEach(cmsBtPromotionCodeModel1 -> {
+                CmsBtTagModel tag = searchTag(tags, cmsBtPromotionCodeModel1.getTag());
+                if(tag != null){
+                    cmsBtPromotionCodeModel1.setTagId(tag.getTagId());
+                }
+            });
             simpleTransaction.openTransaction();
             boolean errflg = false;
             try {
@@ -510,7 +516,7 @@ public class CmsPromotionDetailService extends BaseAppService {
     private CmsBtTagModel searchTag(List<CmsBtTagModel> tags, String tagName) {
 
         for (CmsBtTagModel tag : tags) {
-            if (tag.getTagPathName().equalsIgnoreCase(tagName)) {
+            if (tag.getTagName().equalsIgnoreCase(tagName)) {
                 return tag;
             }
         }

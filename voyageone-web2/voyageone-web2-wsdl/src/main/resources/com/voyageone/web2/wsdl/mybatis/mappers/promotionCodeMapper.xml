@@ -324,5 +324,8 @@
         <if test="modelId != null and modelId != ''">
             and model_id = #{modelId,jdbcType=INTEGER}
         </if>
+        <if test="productCode != null and productCode != ''">
+            and product_code = #{productCode,jdbcType=INTEGER}
+        </if>
     </delete>
 </mapper>
