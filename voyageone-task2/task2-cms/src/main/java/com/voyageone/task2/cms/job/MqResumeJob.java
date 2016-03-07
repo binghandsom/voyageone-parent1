@@ -12,14 +12,14 @@ import org.springframework.stereotype.Component;
  * @author aooer 2016/2/29.
  */
 
-//@Component("mqResumeJob")
-public class MqResumeJob {//extends BaseTaskJob {
+@Component("mqResumeJob")
+public class MqResumeJob extends BaseTaskJob {
 
-//    @Autowired
-//    private MqResumeService mqResumeService;
-//
-//    @Override
-//    protected BaseTaskService getTaskService() {
-//        return mqResumeService;
-//    }
+    @Autowired
+    private MqResumeService mqResumeService;
+
+    @Override
+    protected BaseTaskService getTaskService() {
+        return mqResumeService;
+    }
 }

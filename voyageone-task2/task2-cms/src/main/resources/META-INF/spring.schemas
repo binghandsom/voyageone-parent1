@@ -61,6 +61,7 @@ http\://www.springframework.org/schema/data/mongo/spring-mongo-1.8.xsd=org/sprin
 http\://www.springframework.org/schema/data/mongo/spring-mongo.xsd=org/springframework/data/mongodb/config/spring-mongo-1.0.xsd
 http\://www.springframework.org/schema/data/repository/spring-repository-1.0.xsd=org/springframework/data/repository/config/spring-repository-1.0.xsd
 http\://www.springframework.org/schema/data/repository/spring-repository.xsd=org/springframework/data/repository/config/spring-repository-1.0.xsd
-
+http\://www.springframework.org/schema/rabbit/spring-rabbit-1.5.xsd=org/springframework/amqp/rabbit/config/spring-rabbit-1.5.xsd
+http\://www.springframework.org/schema/rabbit/spring-rabbit.xsd=org/springframework/amqp/rabbit/config/spring-rabbit-1.5.xsd
 
 
