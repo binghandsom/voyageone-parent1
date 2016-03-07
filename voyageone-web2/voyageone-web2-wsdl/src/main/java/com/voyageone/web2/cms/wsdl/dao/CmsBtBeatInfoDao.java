@@ -2,6 +2,7 @@ package com.voyageone.web2.cms.wsdl.dao;
 
 import com.voyageone.base.dao.BaseDao;
 import com.voyageone.cms.enums.BeatFlag;
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.web2.cms.wsdl.models.CmsBtBeatInfoModel;
 import org.springframework.stereotype.Repository;
 
@@ -101,5 +102,25 @@ public class CmsBtBeatInfoDao extends BaseDao {
 
     public Integer updateCode(CmsBtBeatInfoModel model) {
         return update("cms_bt_beat_info_updateCode", model);
+    }
+
+    /**
+     * 查询在特定条件下的, 需要处理的价格披露信息
+     *
+     * @param limit TOP 行数
+     * @return 带有 Promotion_Code 和 Task 信息 CmsBtBeatInfoModel
+     */
+    public List<CmsBtBeatInfoModel> selectListNeedBeatFullData(int limit) {
+        return selectList("cms_bt_beat_info_selectListNeedBeatFullData", parameters(
+                "upFlag", BeatFlag.BEATING,
+                "revertFlag", BeatFlag.REVERT,
+                "downFlag", BeatFlag.SUCCESS,
+                "now", DateTimeUtil.getNow(),
+                "limit", limit
+        ));
+    }
+
+    public int updateFlagAndMessage(CmsBtBeatInfoModel beatInfoModel) {
+        return update("cms_bt_beat_info_updateFlagAndMessage", beatInfoModel);
     }
 }
