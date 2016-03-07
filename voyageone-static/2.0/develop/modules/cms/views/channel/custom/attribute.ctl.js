@@ -96,8 +96,8 @@ define([
         //打开类目选择popup
         function openCategoryMapping (popupNewCategory) {
 
-            feedMappingService.getMainCategories()
-            //attributeService.getCatTree()
+            //feedMappingService.getMainCategories()
+            attributeService.getCatTree()
                 .then(function (res) {
 
                     popupNewCategory({

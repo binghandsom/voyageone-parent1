@@ -9,7 +9,7 @@
             <div class="form-group">
                 <label class="col-sm-4 control-label">属性名</label>
                 <div class="col-sm-6">
-                    <select name="" id="" class="form-control" ng-model="searchInfo.cat_path" ng-options="category.cid as category.path for category in vm.categoryTree">
+                    <select name="" id="" class="form-control" ng-model="searchInfo.cat_path" ng-options="category.cid as category.path for category in vm.categoryList" ng-change="valueChange(searchInfo.cat_path)">
 
                     </select>
                 </div>
@@ -17,7 +17,7 @@
             <div class="form-group">
                 <label class="col-sm-4 control-label">Customize Value</label>
                 <div class="col-sm-6">
-                    <select name="" id="" class="form-control" ng-model="searchInfo.cat_path" ng-options="category.cid as category.path for category in vm.categoryTree">
+                    <select name="" id="" class="form-control" ng-model="searchInfo.cat_path" ng-options="category.cid as category.path for category in vm.valList">
 
                     </select>
                 </div>

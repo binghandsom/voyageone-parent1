@@ -14,11 +14,20 @@ define([
             value_translation:""
         };
 
-        attributeService.getCatTree()
+        attributeService.getCatList()
             .then(function (res){
-            $scope.vm.categoryTree = res.data.categoryTree;
+            $scope.vm.categoryList = res.data.categoryList;
 
         });
+
+
+        $scope.valueChange=function(catPath){
+            attributeService.getCatTree({cat_path:catPath,unsplitFlg:1})
+                .then(function (res){
+                    $scope.vm.valList = res.data.valList;
+
+                });
+        };
 
         $scope.ok = function () {
             var nData = {};
