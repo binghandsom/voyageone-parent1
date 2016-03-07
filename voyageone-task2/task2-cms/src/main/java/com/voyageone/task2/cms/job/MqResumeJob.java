@@ -2,7 +2,7 @@ package com.voyageone.task2.cms.job;
 
 import com.voyageone.task2.base.BaseTaskJob;
 import com.voyageone.task2.base.BaseTaskService;
-import com.voyageone.task2.cms.service.feed.BcbgAnalysisService;
+import com.voyageone.task2.cms.service.MqResumeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -16,10 +16,10 @@ import org.springframework.stereotype.Component;
 public class MqResumeJob extends BaseTaskJob {
 
     @Autowired
-    private BcbgAnalysisService analysisService;
+    private MqResumeService mqResumeService;
 
     @Override
     protected BaseTaskService getTaskService() {
-        return analysisService;
+        return mqResumeService;
     }
 }

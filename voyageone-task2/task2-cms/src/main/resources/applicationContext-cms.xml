@@ -9,7 +9,7 @@
     <task:scheduled-tasks scheduler="cms-job-scheduler">
 
         <!-- mq resume task 每5分钟运行一次 -->
-        <task:scheduled ref="mqResumeJob" method="run" cron="0/5 * * * * ?"/>
+        <!--<task:scheduled ref="mqResumeJob" method="run" cron="0/5 * * * * ?"/>-->
 
         <!--每天凌晨4点开始产品导入
         <task:scheduled ref="cmsGetSuperFeedTask" method="run" cron="0 0 20 * * ?"/>-->
