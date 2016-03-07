@@ -106,12 +106,12 @@
     "controllerUrl": "modules/cms/views/channel/common/attribute.ctl"
   },
   "channel_custom_attribute": {
-    "hash": "/channel/custom",
+    "hash": "/channel/custom/:catPath",
     "templateUrl": "views/channel/custom/attribute.tpl.html",
     "controllerUrl": "modules/cms/views/channel/custom/attribute.ctl"
   },
   "channel_custom_value": {
-    "hash": "/channel/custom/value",
+    "hash": "/channel/custom/value/:catPath",
     "templateUrl": "views/channel/custom/value.tpl.html",
     "controllerUrl": "modules/cms/views/channel/custom/value.ctl"
   },

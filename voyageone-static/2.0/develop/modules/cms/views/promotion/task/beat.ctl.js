@@ -8,12 +8,12 @@ define([
 ], function (cms, _) {
     cms.controller("taskBeatController", (function () {
 
-        function TaskBeatController($routeParams, taskBeatService, cActions, FileUploader, alert, notify, $location) {
+        function TaskBeatController($routeParams, taskBeatService, cActions, FileUploader, alert, notify, $location, $timeout) {
             var urls = cActions.cms.task.taskBeatService;
             var task_id = parseInt($routeParams['task_id']);
             if (_.isNaN(task_id)) {
                 this.init = null;
-                alert('TXT_MSG_UNVALID_URL').result.then(function() {
+                alert('TXT_MSG_UNVALID_URL').result.then(function () {
                     $location.path('/promotion/task');
                 });
             }
@@ -33,8 +33,10 @@ define([
             this.uploader = new FileUploader({
                 url: urls.root + "/" + urls.import
             });
+            this.uploadItem = null;
             this.downloadUrl = urls.root + "/" + urls.download;
             this.summary = {};
+            this.$timeout = $timeout;
         }
 
         TaskBeatController.prototype = {
@@ -49,7 +51,11 @@ define([
                 if (!uploadItem) {
                     return ttt.alert('TXT_MSG_NO_UPLOAD');
                 }
+                ttt.uploadItem = uploadItem;
                 uploadItem.onSuccess = function (res) {
+                    ttt.$timeout(function () {
+                        ttt.uploadItem = null;
+                    }, 500);
                     if (res.message)
                         return ttt.alert(res.message);
                     ttt.notify.success('TXT_MSG_UPDATE_SUCCESS');
@@ -88,24 +94,24 @@ define([
                 $.download.post(ttt.downloadUrl, {task_id: ttt.task_id});
             },
 
-            controlOne: function(beat_id, flag) {
+            controlOne: function (beat_id, flag) {
                 var ttt = this;
                 ttt.taskBeatService.control({
                     beat_id: beat_id,
                     flag: flag
-                }).then(function(res) {
+                }).then(function (res) {
                     if (!res.data)
                         return ttt.alert('TXT_MSG_UPDATE_FAIL');
                     ttt.getData();
                 });
             },
 
-            controlAll: function(flag) {
+            controlAll: function (flag) {
                 var ttt = this;
                 ttt.taskBeatService.control({
                     task_id: ttt.task_id,
                     flag: flag
-                }).then(function(res) {
+                }).then(function (res) {
                     if (!res.data)
                         return ttt.alert('TXT_MSG_UPDATE_FAIL');
                     ttt.getData();

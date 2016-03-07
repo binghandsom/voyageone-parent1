@@ -16,6 +16,7 @@ import com.voyageone.cms.service.model.CmsMtCategorySchemaModel;
 import com.voyageone.cms.service.model.CmsMtPlatformCategorySchemaModel;
 import com.voyageone.cms.service.model.CmsMtPlatformMappingModel;
 import com.voyageone.cms.service.model.CmsMtPlatformSpecialFieldModel;
+import com.voyageone.common.util.JsonUtil;
 import com.voyageone.ims.rule_expression.RuleExpression;
 import com.voyageone.ims.rule_expression.RuleWord;
 import com.voyageone.web2.base.BaseAppService;
@@ -91,7 +92,10 @@ public class CmsPlatformPropMappingService extends BaseAppService {
         fieldMap.remove("wap_desc");
 
         // 转换简化的 mapping 信息
-        Map<String, Object> mappingMap = platformMappingModel.getProps().stream()
+        List<Map<String, Object>> map = platformMappingModel.getProps();
+        List<MappingBean> mappingBeen = JsonUtil.jsonToBeanList(JsonUtil.getJsonString(map),MappingBean.class);
+
+        Map<String, Object> mappingMap = mappingBeen.stream()
                 .collect(toMap(MappingBean::getPlatformPropId, this::getMatched));
 
         // 清除信息
@@ -282,7 +286,8 @@ public class CmsPlatformPropMappingService extends BaseAppService {
     private MappingBean fixMappingStruct(CmsMtPlatformMappingModel platformMappingModel, Map<String, Field> fieldMap,
                                          List<String> mappingPath) {
 
-        List<MappingBean> mappingBeen = platformMappingModel.getProps();
+        List<Map<String, Object>> map = platformMappingModel.getProps();
+        List<MappingBean> mappingBeen = JsonUtil.jsonToBeanList(JsonUtil.getJsonString(map),MappingBean.class);
 
         List<MultiComplexCustomMappingValue> values = null;
 
@@ -395,7 +400,8 @@ public class CmsPlatformPropMappingService extends BaseAppService {
      */
     private MappingBean searchPropertyMappingByPath(CmsMtPlatformMappingModel platformMappingModel, List<String> mappingPath) {
 
-        List<MappingBean> mappingBeen = platformMappingModel.getProps();
+        List<Map<String, Object>> map = platformMappingModel.getProps();
+        List<MappingBean> mappingBeen = JsonUtil.jsonToBeanList(JsonUtil.getJsonString(map),MappingBean.class);
 
         List<MultiComplexCustomMappingValue> values = null;
 

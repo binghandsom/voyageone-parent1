@@ -1,8 +1,8 @@
 package com.voyageone.web2.cms.views.promotion.task;
 
 import com.voyageone.web2.base.BaseAppService;
-import com.voyageone.web2.cms.dao.CmsBtTaskDao;
-import com.voyageone.web2.cms.model.CmsBtTaskModel;
+import com.voyageone.web2.cms.wsdl.dao.CmsBtTaskDao;
+import com.voyageone.web2.cms.wsdl.models.CmsBtTaskModel;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

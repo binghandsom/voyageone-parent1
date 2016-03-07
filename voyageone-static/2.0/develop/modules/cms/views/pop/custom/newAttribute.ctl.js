@@ -6,44 +6,26 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function (angularAMD) {
 
-    angularAMD.controller('popAddAttributeValueCtl', function ($scope) {
+    angularAMD.controller('popAddAttributeValueCtl', function ($scope, $modalInstance, context, alert) {
 
-        //$scope.vm={"messager":""};
-        //var uploader = $scope.uploader = new FileUploader({
-        //    url: '/cms/promotion/detail/uploadPromotion'
-        //});
-        //
-        //$scope.initialize  = function () {
-        //
-        //}
-        //$scope.upload = function(){
-        //    uploader.queue[0].formData = [{"promotionId":data}];
-        //    uploader.queue[0].upload();
-        //    $scope.vm.messager ="读入中";
-        //}
-        //
-        //uploader.onProgressItem = function(fileItem, progress) {
-        //    console.info('onProgressItem', fileItem, progress);
-        //};
-        //
-        //uploader.onSuccessItem = function(fileItem, response, status, headers) {
-        //    console.info('onSuccessItem', fileItem, response, status, headers);
-        //    $scope.vm.messager ="读入完毕！成功"+response.data.succeed.length +"条  失败"+response.data.fail.length +"条";
-        //};
+        $scope.vm = {
+            value_original:"",
+            value_translation:""
+        };
+
+        $scope.ok = function () {
+            var nData = {};
+            nData.prop_original = $scope.vm.value_original;
+            nData.prop_translation = $scope.vm.value_translation;
+
+            if (!_.isEmpty(_.where(context.from, nData))) {
+                alert("该属性已经存在");
+            } else {
+                $modalInstance.close(nData);
+            }
+            //$scope.$close();
+        };
     });
 
-    //return function ($scope,promotionService) {
-    //
-    //    $scope.promotion = {};
-    //    $scope.name = "123";
-    //
-    //    $scope.initialize  = function () {
-    //        alert("a");
-    //    }
-    //
-    //    $scope.ok = function(){
-    //        alert("e");
-    //    }
-    //
-    //};
+
 });

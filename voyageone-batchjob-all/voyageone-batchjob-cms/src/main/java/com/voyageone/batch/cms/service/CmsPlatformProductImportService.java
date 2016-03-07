@@ -1,11 +1,13 @@
 package com.voyageone.batch.cms.service;
 
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.batch.base.BaseTaskService;
 import com.voyageone.batch.cms.bean.TmpOldCmsDataBean;
 import com.voyageone.batch.cms.dao.TmpOldCmsDataDao;
 import com.voyageone.batch.core.modelbean.TaskControlBean;
 import com.voyageone.cms.CmsConstants;
 import com.voyageone.cms.service.dao.mongodb.CmsMtCategorySchemaDao;
+import com.voyageone.cms.service.dao.mongodb.CmsMtCommonSchemaDao;
 import com.voyageone.cms.service.model.*;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.components.tmall.TbProductService;
@@ -40,11 +42,13 @@ public class CmsPlatformProductImportService extends BaseTaskService {
     private TbProductService tbProductService;
 
     @Autowired
-    CmsMtCategorySchemaDao cmsMtCategorySchemaDao; // DAO: 主类目属性结构
+    private CmsMtCategorySchemaDao cmsMtCategorySchemaDao; // DAO: 主类目属性结构
     @Autowired
-    TmpOldCmsDataDao tmpOldCmsDataDao; // DAO: 旧cms数据
+    private CmsMtCommonSchemaDao cmsMtCommonSchemaDao; // DAO: 共通属性结构
     @Autowired
-    protected VoApiDefaultClient voApiClient; // VoyageOne共通API
+    private TmpOldCmsDataDao tmpOldCmsDataDao; // DAO: 旧cms数据
+    @Autowired
+    private VoApiDefaultClient voApiClient; // VoyageOne共通API
 
     @Override
     public SubSystem getSubSystem() {
@@ -53,7 +57,7 @@ public class CmsPlatformProductImportService extends BaseTaskService {
 
     @Override
     public String getTaskName() {
-        return "CmsPlatformProductJob";
+        return "CmsPlatformProductImportService";
     }
 
     @Override
@@ -69,13 +73,6 @@ public class CmsPlatformProductImportService extends BaseTaskService {
         List<TmpOldCmsDataBean> oldCmsDataBeenList = tmpOldCmsDataDao.getList();
 
         // 遍历, 并设置主数据
-        // tom 20160129 测试代码, 正式发布时要删除的 START
-//        String code = "SGM8057AMPE.-7";
-//        String model = "SGM8057AMPE.-7";
-//        Long productId = 423802042L;
-//        String numIid = "524395554281";
-//        String categoryPath = "饰品/流行首饰/时尚饰品新>手镯";
-        // tom 20160129 测试代码, 正式发布时要删除的 END
         for (TmpOldCmsDataBean oldCmsDataBean : oldCmsDataBeenList) {
             doSetProduct(oldCmsDataBean);
         }
@@ -90,12 +87,22 @@ public class CmsPlatformProductImportService extends BaseTaskService {
         }
 
         // tom 20160129 测试代码, 正式发布时要删除的 START
-//        shopBean.setApp_url("http://gw.api.taobao.com/router/rest");
-//        shopBean.setAppKey("21008948");
-//        shopBean.setSessionKey("6201d2770dbfa1a88af5acfd330fd334fb4ZZa8ff26a40b2641101981");
-//        shopBean.setAppSecret("0a16bd08019790b269322e000e52a19f");
-//        shopBean.setOrder_channel_id("010");
+        shopBean.setApp_url("http://gw.api.taobao.com/router/rest");
+        shopBean.setAppKey("21008948");
+        shopBean.setSessionKey("6201d2770dbfa1a88af5acfd330fd334fb4ZZa8ff26a40b2641101981");
+        shopBean.setAppSecret("0a16bd08019790b269322e000e52a19f");
+        shopBean.setOrder_channel_id("010");
         // tom 20160129 测试代码, 正式发布时要删除的 END
+
+        // 属性名字列表
+        List<String> schemaFieldList = new ArrayList<>();
+        List<String> schemaFieldSkuList = new ArrayList<>(); // sku级
+
+        // 获取共通schema数据 ==========================================================================================
+        CmsMtComSchemaModel comSchemaModel = getComSchemaModel();
+        for (Field field : comSchemaModel.getFields()) {
+            schemaFieldList.add(field.getId());
+        }
 
         // 获取主数据当前类目的schema数据 ==========================================================================================
         CmsMtCategorySchemaModel schemaModel = cmsMtCategorySchemaDao.getMasterSchemaModelByCatId(MD5.getMD5(oldCmsDataBean.getCategory_path()));
@@ -103,9 +110,12 @@ public class CmsPlatformProductImportService extends BaseTaskService {
             // 指定的category在主数据里没有的话, 跳过
             return;
         }
-        List<String> schemaFieldList = new ArrayList<>();
         for (Field field : schemaModel.getFields()) {
             schemaFieldList.add(field.getId());
+        }
+        MultiComplexField multiComplexField = (MultiComplexField)schemaModel.getSku();
+        for (Field field : multiComplexField.getFields()) {
+            schemaFieldSkuList.add(field.getId());
         }
 
         // 获取product表的数据 ==========================================================================================
@@ -124,8 +134,28 @@ public class CmsPlatformProductImportService extends BaseTaskService {
         }
 
         // 保存到product表 ==========================================================================================
-        update2ProductFields(oldCmsDataBean, fieldMap, cmsProduct, schemaFieldList);
+        update2ProductFields(oldCmsDataBean, fieldMap, cmsProduct, schemaFieldList, schemaFieldSkuList);
 
+    }
+
+    /**
+     * 获取common schema.
+     * @return
+     */
+    private CmsMtComSchemaModel getComSchemaModel() {
+        CmsMtComSchemaModel comSchemaModel = cmsMtCommonSchemaDao.getComSchema();
+
+        if (comSchemaModel == null){
+
+            //common schema 不存在时异常处理.
+            String errMsg = "共通schema（cms_mt_common_schema）的信息不存在！";
+
+            logger.error(errMsg);
+
+            throw new BusinessException(errMsg);
+        }
+
+        return comSchemaModel;
     }
 
     private CmsBtProductModel getCmsProduct(String channelId, String code) {
@@ -164,7 +194,12 @@ public class CmsPlatformProductImportService extends BaseTaskService {
 
     }
 
-    private void update2ProductFields(TmpOldCmsDataBean oldCmsDataBean, Map<String, Object> fields, CmsBtProductModel cmsProduct, List<String> schemaFieldList) {
+    private void update2ProductFields(
+            TmpOldCmsDataBean oldCmsDataBean,
+            Map<String, Object> fields,
+            CmsBtProductModel cmsProduct,
+            List<String> schemaFieldList,
+            List<String> schemaFieldSkuList) {
 
         ShopBean shopBean = ShopConfigs.getShop(oldCmsDataBean.getChannel_id(), oldCmsDataBean.getCart_id());
         if (shopBean == null) {
@@ -174,11 +209,12 @@ public class CmsPlatformProductImportService extends BaseTaskService {
             // 只有天猫系才会更新fields字段
 
             CmsBtProductModel_Field cmsFields = new CmsBtProductModel_Field();
+            List<CmsBtProductModel_Sku> skuList = new ArrayList<>();
 
             // 天猫取得的字段设定 ==========================================================================================
             for (String key : fields.keySet()) {
                 // 看看schema里是否存在
-                if (!schemaFieldList.contains(key)) {
+                if (!schemaFieldList.contains(key) && !"sku".equals(key)) {
                     // schema里没有的字段, 无需设置
                     continue;
                 }
@@ -199,10 +235,64 @@ public class CmsPlatformProductImportService extends BaseTaskService {
                 }
 
                 // 设定
-                cmsFields.setAttribute(key, fields.get(key));
+                if (schemaFieldList.contains(key)) {
+                    // 商品信息
+                    cmsFields.setAttribute(key, fields.get(key));
+                } else if ("sku".equals(key)) {
+                    // sku级别信息
+                    List<Map<String, Object>> tmallSkuList = (List<Map<String, Object>>)fields.get(key);
+                    for (Map<String, Object> tmallSku : tmallSkuList) {
+
+                        CmsBtProductModel_Sku sku = new CmsBtProductModel_Sku();
+
+                        tmallSku.forEach((k,v)->{
+                            // 去除不想设置的字段
+                            if ("sku_outerId".equals(k)
+                                    // 天猫上拉下来的字段
+                                    || "sku_price".equals(k)
+                                    || "sku_id".equals(k)
+                                    || "sku_quantity".equals(k)
+                                    || "sku_barcode".equals(k)
+
+                                    // 万一有遇到与主数据的字段名称一样的, 那也不需要更新
+                                    || "skuCode".equals(k)
+                                    || "size".equals(k)
+                                    || "qty".equals(k)
+                                    || "priceMsrp".equals(k)
+                                    || "priceRetail".equals(k)
+                                    || "priceSale".equals(k)
+                                    || "skuCarts".equals(k)
+                                    || "barcode".equals(k)
+
+                                    ) {
+                                // 不想设置的字段, 就跳过
+
+                            } else {
+                                // 看看schema里是否存在
+                                if (!schemaFieldSkuList.contains(k)) {
+                                    // schema里没有的字段, 无需设置
+                                } else {
+                                    // 设定
+                                    cmsProduct.getSkus().forEach((item)->{
+                                        if (item.getSkuCode().equals(tmallSku.get("sku_outerId"))) {
+                                            item.put(k, v);
+                                        }
+                                    });
+                                }
+
+                            }
+
+                        });
+
+                    }
+
+                    System.out.println(oldCmsDataBean.getCode() + ":" + key + ":" + fields.get(key));
+                }
             }
 
             // 固定字段设定 ==========================================================================================
+            // product状态: 因为已经上了第三方平台, 所以默认设置为Approved
+            cmsFields.setStatus(CmsConstants.ProductStatus.Approved);
             // 货号
             cmsFields.setAttribute("prop_13021751", oldCmsDataBean.getModel());
             // 英文标题
@@ -326,12 +416,14 @@ public class CmsPlatformProductImportService extends BaseTaskService {
                 break;
             case MULTICOMPLEX:
                 MultiComplexField multiComplexField = (MultiComplexField) field;
-                List<Object> multiComplexValues = new ArrayList<>();
+                List<Map<String, Object>> multiComplexValues = new ArrayList<>();
                 if (multiComplexField.getDefaultComplexValues() != null) {
                     for(ComplexValue item : multiComplexField.getDefaultComplexValues()){
+                        Map<String, Object> obj = new HashMap<>();
                         for(String fieldId : item.getFieldKeySet()){
-                            multiComplexValues.add(getFieldValue(item.getValueField(fieldId)));
+                            obj.put(fieldId, getFieldValue(item.getValueField(fieldId)));
                         }
+                        multiComplexValues.add(obj);
                     }
                 }
                 fieldMap.put(multiComplexField.getId(), multiComplexValues);

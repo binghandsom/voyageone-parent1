@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.voyageone.cms.sql" >
+	<select id="advance_search_count" resultType="Integer"  parameterType="HashMap">
+		select count(1) from
+		(SELECT
+		r.product_id
+		FROM
+		voyageone_cms.cms_bt_cn_product_share r
+		<if test="publishStatus != null and publishStatus != ''">
+			left join voyageone_ims.ims_bt_product s on r.product_id = s.product_id and r.channel_id = s.channel_id and r.cart_id = s.cart_id
+		</if>
+		<if test="isApprovedDescription != null and isApprovedDescription != ''">
+			left join voyageone_cms.cms_bt_cn_product t on r.product_id = t.product_id and r.channel_id = t.channel_id
+		</if>
+		WHERE
+		r.channel_id = #{channelId}
+		<if test="isOnSale != null and isOnSale != ''">
+			AND r.is_on_sale = #{isOnSale}
+		</if>
+		<if test="cartId != null and cartId != ''">
+			AND r.cart_id = #{cartId}
+		</if>
+		<if test="isApproved != null and isApproved != ''">
+			AND r.is_approved = #{isApproved}
+		</if>
+		<if test="publishStatus != null and publishStatus != ''">
+			AND s.publish_status = #{publishStatus}
+		</if>
+		<if test="isPublished != null and isPublished != ''">
+			AND s.is_published = #{isPublished}
+		</if>
+		<if test="isApprovedDescription != null and isApprovedDescription != ''">
+			AND t.cn_is_approved_description = #{isApprovedDescription}
+		</if>
+
+		GROUP BY r.product_id, r.channel_id
+		) a
+	</select>
+	<select id="category_unmapping_count" resultType="Integer"  parameterType="String">
+		SELECT
+			count(1)
+		FROM
+			voyageone_cms.cms_bt_relation_category AS relation
+			LEFT JOIN voyageone_cms.cms_bt_category AS us ON relation.category_id = us.category_id AND relation.channel_id = us.channel_id
+			LEFT JOIN voyageone_cms.cms_bt_cn_category_extend AS cn_extend ON relation.category_id = cn_extend.category_id AND relation.channel_id = cn_extend.channel_id
+		where us.is_effective = '1'
+			and relation.category_id > 500
+			and relation.channel_id = #{channelId}
+			and (cn_extend.main_category_id is null or cn_extend.main_category_id = 0)
+		order by relation.parent_category_id,relation.category_id
+	</select>
+	<select id="category_property_unmapping_count" resultType="Integer"  parameterType="String">
+	select count(1) from (SELECT
+				t1.main_category_id,IFNULL(t2.is_set_attr,0) as is_set_attr
+			FROM
+				voyageone_cms.cms_bt_cn_category_extend t1
+			LEFT JOIN voyageone_ims.ims_bt_category_extend t2 ON t1.main_category_id = t2.main_category_id and t1.channel_id = t2.channel_id
+			WHERE
+				 t1.main_category_id != - 1
+			AND t1.channel_id = #{channelId}
+			GROUP BY
+			t1.main_category_id)a where is_set_attr = 0
+	</select>
+</mapper>
