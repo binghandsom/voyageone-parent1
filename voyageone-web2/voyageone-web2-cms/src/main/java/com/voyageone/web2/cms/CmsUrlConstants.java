@@ -116,9 +116,13 @@ public interface CmsUrlConstants {
 
                 String ROOT = "/cms/promotion/task_stock";
 
-                String GET_PLATFORM_INFO = "getPlatformInfo";
+                String INIT_NEW_TASK_FROM_PROMOTION = "initNewTaskFromPromotion";
+
+                String INIT_NEW_TASK_FROM_TASK = "initNewTaskFromTask";
 
                 String SAVE_TASK = "saveTask";
+
+                String DEL_TASK = "delTask";
 
                 String SEARCH = "search";
 
@@ -126,20 +130,58 @@ public interface CmsUrlConstants {
 
                 String GET_REAL_STOCK_INFO = "getRealStockInfo";
 
-                String CREATE_NEW_RECORD = "createNewRecord";
+                String INIT_NEW_RECORD = "initNewRecord";
+
+                String GET_USABLE_STOCK = "getUsableStock";
+
+                String SAVE_NEW_RECORD = "saveNewRecord";
+
+                String IMPORT_SKU_INFO = "importSkuInfo";
+
+                String IMPORT_STOCK_INFO = "importStockInfo";
+
+                String EXPORT_STOCK_INFO = "exportStockInfo";
+
+                String EXECUTE_STOCK_SEPARATION = "executeStockSeparation";
+
+                String EXECUTE_STOCK_RESTORE = "executeStockRestore";
+
+                String SAVE_SKU_RECORD = "saveSkuRecord";
+
+                String SAVE_ALL_RECORD = "saveAllRecord";
+
+                String DEL_RECORD = "delRecord";
+
+                String GET_SKU_SEPARATION_DETAIL = "getSkuSeparationDetail";
+
+                String EXPORT_REAL_STOCK_INFO = "exportRealStockInfo";
+
+                String EXPORT_ERROR_INFO = "exportErrorInfo";
             }
 
             interface INCREMENT_STOCK {
 
                 String ROOT = "/cms/promotion/task_add_stock";
 
-                String GET_TASK_LIST = "getTaskList";
-
-                String GET_PLATFORM_INFO = "getPlatformInfo";
+                String SEARCH_TASK = "searchTask";
 
                 String SAVE_TASK = "saveTask";
 
                 String DEL_TASK = "delTask";
+
+                String GET_PLATFORM_INFO = "getPlatformInfo";
+
+                String SEARCH_ITEM = "searchItem";
+
+                String SAVE_RECORD = "saveRecord";
+
+                String DEL_RECORD = "delRecord";
+
+                String IMPORT_STOCK_INFO = "importStockInfo";
+
+                String EXPORT_STOCK_INFO = "exportStockInfo";
+
+                String EXECUTE_INCREMENT_STOCK_SEPARATION = "executeIncrementStockSeparation";
             }
         }
     }
