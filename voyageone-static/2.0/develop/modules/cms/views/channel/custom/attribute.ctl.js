@@ -81,17 +81,23 @@ define([
             nData.valList = $scope.vm.valList;
             nData.unvalList = $scope.vm.unvalList;
             nData.sameAttr = $scope.vm.sameAttr;
+            attributeService.save(nData);
+            //attributeService.save(nData)
+            //    .then(function(res){
+            //
+            //    });
         }
 
         //页面跳转
-        $scope.addVal = function (){
-            $location.path("/channel/custom/value");
+        $scope.getTranslation = function (catPath){
+            $location.path("/channel/custom/value" + catPath);
         };
 
         //打开类目选择popup
         function openCategoryMapping (popupNewCategory) {
 
             feedMappingService.getMainCategories()
+            //attributeService.getCatTree()
                 .then(function (res) {
 
                     popupNewCategory({
@@ -108,22 +114,6 @@ define([
         //类目选择跳转至类目页面
         function bindCategory (catPath) {
             $location.path("/channel/custom/" + catPath);
-            //confirm($translate.instant('TXT_MSG_CONFIRM_IS_CHANGE_CATEGORY')).result
-            //    .then(function () {
-                    //var data = {
-                    //    redirectTo: context.selected.redirectTo
-                    //};
-                    //directToService.changeCategory(data).then(function (res) {
-                    //    if(res.data.isChangeCategory) {
-                    //        notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
-                    //        $scope.initialize();
-                    //    }
-                    //    else
-                    //    // TODO 需要enka设计一个错误页面 res.data.publishInfo
-                    //        notify($translate.instant('TXT_MSG_PRODUCT_IS_PUBLISHING'));
-                    //})
-                //});
-
         }
 
         //打开添加自定义属性popup -- newAttribute

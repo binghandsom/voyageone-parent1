@@ -9,27 +9,27 @@
             <div class="form-group">
                 <label class="col-sm-4 control-label">属性名</label>
                 <div class="col-sm-6">
-                    <select class="form-control">
-                        <option>Color</option>
-                        <option>1.5CT</option>
-                        <option>RED</option>
-                        <option>Material</option>
+                    <select name="" id="" class="form-control" ng-model="searchInfo.cat_path" ng-options="category.cid as category.path for category in vm.categoryTree">
+
                     </select>
                 </div>
             </div><!-- .form-group -->
             <div class="form-group">
                 <label class="col-sm-4 control-label">Customize Value</label>
                 <div class="col-sm-6">
-                    <select class="form-control">
-                        <option>red</option>
-                        <option>yellow</option>
-                        <option>green</option>
-                        <option>blue</option>
+                    <select name="" id="" class="form-control" ng-model="searchInfo.cat_path" ng-options="category.cid as category.path for category in vm.categoryTree">
+
                     </select>
                 </div>
             </div>
             <div class="form-group">
-                <label class="col-sm-4 control-label">翻译中文</label>
+                <label class="col-sm-4 control-label" ng-model="value_original">翻译英文</label>
+                <div class="col-sm-6">
+                    <input class="form-control">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-4 control-label" ng-model="value_translation">翻译中文</label>
                 <div class="col-sm-6">
                     <input class="form-control">
                 </div>
