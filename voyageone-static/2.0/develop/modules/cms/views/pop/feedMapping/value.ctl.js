@@ -44,7 +44,7 @@ define([
              * @typedef {{property: string, operation: Operation, value: string}} Condition
              * @type {Condition[]}
              */
-            this.conditions = null;
+            this.conditions = [];
         }
 
         PropFeedMappingValueController.prototype = {

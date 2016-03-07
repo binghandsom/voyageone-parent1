@@ -1,6 +1,5 @@
 package com.voyageone.batch.base;
 
-import com.voyageone.batch.core.util.TaskControlUtils;
 import com.voyageone.common.components.issueLog.IssueLog;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import org.apache.commons.logging.Log;
@@ -48,10 +47,16 @@ public abstract class BaseTaskJob {
 
         logger.info(taskCheck + "任务开始");
 
-        getTaskService().startup();
+        // If you want custom run
+        // override this method ↓
+        onRun();
 
         getLogger().info(taskCheck + "任务结束");
 
         running = false;
+    }
+
+    protected void onRun() {
+        getTaskService().startup();
     }
 }

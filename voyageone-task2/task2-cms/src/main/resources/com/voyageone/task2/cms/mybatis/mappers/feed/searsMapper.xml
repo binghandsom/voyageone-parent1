@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.cms.sql">
+
+
+    <delete id="cms_zz_worktable_sears_superfeed_delete">
+        DELETE FROM voyageone_cms2.cms_zz_worktable_sears_superfeed;
+    </delete>
+
+    <insert id="cms_zz_worktable_sears_superfeed_insert" parameterType="com.voyageone.common.components.sears.bean.ProductResponse" >
+        insert into voyageone_cms2.cms_zz_worktable_sears_superfeed (
+                item_id,
+                product_id,
+                product_name,
+                brand,
+                description,
+                featureDescription,
+                manufacturer_name,
+                manufacturer_part_number,
+                image_url,
+                upc,
+                weight,
+                category_id,
+                categorization,
+                mailable,
+                store_pickup_eligible,
+                htc_code,
+                model_number,
+                country_groups,
+                country_of_origin,
+                price,
+                intl_reg_price)
+        values
+        <foreach collection="product" item="item" index="index"
+                 separator=",">
+            (#{item.itemId,jdbcType=VARCHAR},
+                    #{item.productDetails.productId,jdbcType=VARCHAR},
+                    #{item.productDetails.productName,jdbcType=VARCHAR},
+                    #{item.productDetails.brand,jdbcType=VARCHAR},
+                    #{item.productDetails.description,jdbcType=VARCHAR},
+                    #{item.productDetails.featureDescription,jdbcType=VARCHAR},
+                    #{item.productDetails.manufacturerName,jdbcType=VARCHAR},
+                    #{item.productDetails.manufacturerPartNumber,jdbcType=INTEGER},
+                    #{item.productDetails.imageUrl,jdbcType=VARCHAR},
+                    #{item.productDetails.upc,jdbcType=VARCHAR},
+                    #{item.productDetails.weight,jdbcType=DECIMAL},
+                    #{item.productDetails.categoryId,jdbcType=INTEGER},
+                    #{item.productDetails.category,jdbcType=VARCHAR},
+                    #{item.productDetails.mailable,jdbcType=CHAR},
+                    #{item.productDetails.storePickupEligible,jdbcType=CHAR},
+                    #{item.productDetails.htcCode,jdbcType=VARCHAR},
+                    #{item.productDetails.modelNumber,jdbcType=VARCHAR},
+                    #{item.productDetails.countryGroups,jdbcType=VARCHAR},
+                    #{item.productDetails.countryOfOrigin,jdbcType=VARCHAR},
+                    #{item.price.sellPrice,jdbcType=DECIMAL},
+                    #{item.price.intlRegPrice,jdbcType=DECIMAL})
+        </foreach>
+    </insert>
+    <insert id="cms_zz_worktable_sears_attribute_insert" parameterType="com.voyageone.common.components.sears.bean.ProductResponse" >
+        insert ignore into voyageone_cms2.cms_zz_worktable_sears_attribute (
+        item_id,
+        label,
+        attribute,
+        value)
+        values
+        <foreach collection="product" item="item" index="index"
+                 separator=",">
+            <if test="item.productDetails.specifications != null and item.productDetails.specifications.size >0 ">
+                <foreach collection="item.productDetails.specifications" item="specification" index="index"
+                         separator=",">
+                    (#{item.itemId,jdbcType=VARCHAR},
+                    #{specification.label,jdbcType=VARCHAR},
+                    #{specification.key,jdbcType=VARCHAR},
+                    #{specification.value,jdbcType=VARCHAR})
+                </foreach>
+            </if>
+        </foreach>
+    </insert>
+    <delete id="cms_zz_worktable_sears_attribute_delete">
+        DELETE FROM voyageone_cms2.cms_zz_worktable_sears_attribute;
+    </delete>
+    <delete id="cms_zz_worktable_sears_list_delete">
+        DELETE FROM voyageone_cms2.cms_zz_worktable_sears_list;
+    </delete>
+    <insert id="cms_zz_worktable_sears_list_insert" parameterType="com.voyageone.common.components.sears.bean.ProductResponse" >
+        insert into voyageone_cms2.cms_zz_worktable_sears_list (
+        item_id,
+        status)
+        values
+        <foreach collection="product" item="item" index="index"
+                 separator=",">
+                (#{item.itemId,jdbcType=VARCHAR},
+                #{item.status,jdbcType=VARCHAR})
+        </foreach>
+    </insert>
+    <select id="cms_zz_worktable_sears_list_select" parameterType="String" resultType="String">
+        select
+          item_id
+        from
+          voyageone_cms2.cms_zz_worktable_sears_list
+        where
+          status = #{status}
+    </select>
+    <select id="cms_attribute_select" parameterType="com.voyageone.task2.cms.bean.ProductBean" resultType="HashMap">
+        SELECT
+            b.cfg_name,
+            GROUP_CONCAT(DISTINCT a.`value`) as value
+        FROM
+            voyageone_cms2.cms_zz_worktable_sears_attribute a
+        LEFT JOIN voyageone_cms.cms_mt_feed_config b ON a.attribute = b.cfg_val1
+        AND b.order_channel_id = '013'
+        WHERE
+             b.is_attribute = 1
+        AND a.item_id IN (
+            <foreach collection="itembeans" item="item" separator=",">
+                #{item.i_client_sku}
+            </foreach>
+        )
+        GROUP BY
+           cfg_name
+    </select>
+    <resultMap id="resultMap_sears" type="com.voyageone.cms.service.model.CmsBtFeedInfoModel">
+        <result column="category" property="category" />
+        <result column="channel_id" property="channelId" />
+        <result column="m_product_type" property="sizeType" />
+        <result column="m_brand" property="brand" />
+        <result column="m_model" property="model" />
+        <result column="p_name" property="name" />
+        <result column="pe_short_description" property="short_description" />
+        <result column="pe_long_description" property="long_description" />
+        <result column="m_size_type" property="sizeType" />
+        <result column="m_weight" property="weight" />
+        <result column="p_code" property="code" />
+        <result column="p_color" property="color" />
+        <result column="p_made_in_country" property="origin" />
+            <collection property="skus" javaType="ArrayList" ofType="com.voyageone.cms.service.model.CmsBtFeedInfoModel_Sku" >
+                <result column="i_sku" property="sku" />
+                <result column="i_size" property="size" />
+                <result column="i_barcode" property="barcode" />
+                <result column="i_client_sku" property="clientSku" />
+                <result column="p_msrp" property="price_msrp" />
+                <result column="cps_cn_price_rmb" property="price_current" />
+            </collection>
+            <collection property="image" javaType="ArrayList" ofType="String" >
+                <result column="image" property="image" />
+            </collection>
+        <collection property="attributeList"  javaType="ArrayList" ofType="HashMap" >
+            <result property="attribute" column="attribute"/>
+            <result property="value" column="value"/>
+        </collection>
+    </resultMap>
+    <select id="cms_searsfeed_select" resultMap="resultMap_sears" parameterType="HashMap">
+        select
+        ${category} as category
+        ,#{channel_id} as channel_id
+        ,${model_url_key} as model_url_key
+        ,${category_url_key} as category_url_key
+        ,${m_product_type} as m_product_type
+        ,${m_brand} as m_brand
+        ,${m_model} as m_model
+        ,${m_name} as m_name
+        ,${m_short_description} as m_short_description
+        ,${m_long_description} as m_long_description
+        ,${m_size_type} as m_size_type
+        ,${m_is_unisex} as m_is_unisex
+        ,${m_weight} as m_weight
+        ,${m_is_taxable} as m_is_taxable
+        ,${m_is_effective} as m_is_effective
+        ,${p_url_key} as url_key
+        ,${p_code} as p_code
+        ,${p_name} as p_name
+        ,${p_color} as p_color
+        ,${p_msrp} as p_msrp
+        ,${p_made_in_country} as p_made_in_country
+        ,${pe_short_description} as pe_short_description
+        <if test="p_product_type != null">
+            ,${p_product_type} as p_product_type
+        </if>
+        ,${pe_long_description} as pe_long_description
+        ,${ps_price}  as ps_price
+        ,${cps_cn_price}  as cps_cn_price
+        ,${cps_cn_price_rmb}  as cps_cn_price_rmb
+        ,${cps_cn_price_final_rmb}  as cps_cn_price_final_rmb
+        ,${item_code} as item_code
+        ,${i_sku} as i_sku
+        ,${i_itemcode} as i_itemcode
+        ,${i_size} as i_size
+        ,${i_barcode} as i_barcode
+        ,${i_client_sku} as i_client_sku
+        ,1 as i_active
+        ,${image} as image
+        ,1 as image_type
+        ,0 as display_order
+        ,att.attribute as attribute
+        ,att.value as value
+        from
+        ${tableName}
+        ${keyword}
+    </select>
+    <delete id="cms_zz_worktable_sears_superfeed_full_del" parameterType="java.util.List">
+        DELETE
+        FROM
+        voyageone_cms2.cms_zz_worktable_sears_superfeed_full
+        where item_id in (
+        <foreach collection="list" item="itemIds" index="index" separator=",">
+            #{itemIds}
+        </foreach>
+        )
+    </delete>
+    <insert id="cms_zz_worktable_sears_superfeed_full_insert"  parameterType="java.util.List">
+        INSERT INTO voyageone_cms2.cms_zz_worktable_sears_superfeed_full SELECT * from
+        voyageone_cms2.cms_zz_worktable_sears_superfeed where item_id in
+        (
+        <foreach collection="list" item="itemIds" index="index" separator=",">
+            #{itemIds}
+        </foreach>
+        )
+    </insert>
+    <update id="cms_zz_worktable_sears_superfeed_update"  parameterType="java.util.List">
+        UPDATE voyageone_cms2.cms_zz_worktable_sears_superfeed set update_flg = 3 where item_id in (
+        <foreach collection="list" item="itemIds" index="index" separator=",">
+            #{itemIds}
+        </foreach>
+        )
+    </update>
+
+
+
+    <delete id="cms_zz_worktable_sears_superfeed_full_code_del" parameterType="java.util.List">
+        DELETE
+        FROM
+        voyageone_cms2.cms_zz_worktable_sears_superfeed_full
+        where model_number = #{model}
+        <if test="color != null and color != ''">
+            and  color =  #{color}
+        </if>
+    </delete>
+    <insert id="cms_zz_worktable_sears_superfeed_full_code_insert"  parameterType="java.util.List">
+        INSERT INTO voyageone_cms2.cms_zz_worktable_sears_superfeed_full SELECT * from
+        voyageone_cms2.cms_zz_worktable_sears_superfeed where model_number = #{model}
+        <if test="color != null and color != ''">
+           and color =  #{color}
+        </if>
+    </insert>
+    <update id="cms_zz_worktable_sears_superfeed_code_update"  parameterType="java.util.List">
+        UPDATE voyageone_cms2.cms_zz_worktable_sears_superfeed set update_flg = 3
+        where model_number = #{model}
+        <if test="color != null and color != ''">
+            and  color =  #{color}
+        </if>
+    </update>
+</mapper>

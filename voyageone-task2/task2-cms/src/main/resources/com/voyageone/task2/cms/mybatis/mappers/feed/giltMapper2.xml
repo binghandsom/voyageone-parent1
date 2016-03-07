@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.cms.sql">
+
+    <!-- 清空gilt商品临时表 -->
+    <delete id="cms2_zz_worktable_gilt_superfeed_clear">
+        DELETE FROM voyageone_cms2.cms_zz_worktable_gilt_superfeed;
+    </delete>
+
+    <!-- 插入数据到gilt商品临时表 -->
+    <insert id="cms2_zz_worktable_gilt_superfeed_insertList">
+        INSERT INTO voyageone_cms2.cms_zz_worktable_gilt_superfeed (id, product_id, product_look_id, locale, name,
+        description, country_code, brand_id, brand_name, images_url, attributes_color_nfr_code, attributes_color_name,
+        attributes_style_name, attributes_material_value, attributes_size_size_chart_id, attributes_size_type,
+        attributes_size_value, prices_retail_currency, prices_retail_value, prices_sale_currencty, prices_sale_value,
+        prices_cost_currency, prices_cost_value, product_codes, product_codes_first, categories_id, categories_name,
+        categories_key, updateFlag) VALUES
+        <foreach collection="items" item="i" separator=",">
+            (#{i.id}, #{i.product_id}, #{i.product_look_id}, #{i.locale}, #{i.name}, #{i.description},
+            #{i.country_code}, #{i.brand_id},
+            #{i.brand_name}, #{i.images_url}, #{i.attributes_color_nfr_code}, #{i.attributes_color_name},
+            #{i.attributes_style_name},
+            #{i.attributes_material_value}, #{i.attributes_size_size_chart_id}, #{i.attributes_size_type},
+            #{i.attributes_size_value}, #{i.prices_retail_currency}, #{i.prices_retail_value},
+            #{i.prices_sale_currencty},
+            #{i.prices_sale_value}, #{i.prices_cost_currency}, #{i.prices_cost_value}, #{i.product_codes},
+            #{i.product_codes_first},
+            #{i.categories_id}, #{i.categories_name}, #{i.categories_key}, #{i.updateFlag})
+        </foreach>
+    </insert>
+
+    <!-- 查询gilt商品一览总表，该商品是否存在 -->
+    <select id="cms2_zz_worktable_gilt_superfeed_full_select4exist"
+            resultType="HashMap">
+        SELECT id
+        FROM voyageone_cms2.cms_zz_worktable_gilt_superfeed_full
+        WHERE id = #{id};
+    </select>
+
+    <!-- 插入数据到gilt商品一览总表 -->
+    <insert id="cms2_zz_worktable_gilt_superfeed_full_insert">
+        INSERT INTO voyageone_cms2.cms_zz_worktable_gilt_superfeed (id, product_id, product_look_id, locale, name,
+        description, country_code, brand_id, brand_name, images_url, attributes_color_nfr_code, attributes_color_name,
+        attributes_style_name, attributes_material_value, attributes_size_size_chart_id, attributes_size_type,
+        attributes_size_value, prices_retail_currency, prices_retail_value, prices_sale_currencty, prices_sale_value,
+        prices_cost_currency, prices_cost_value, product_codes, product_codes_first, categories_id, categories_name,
+        categories_key, updateFlag) VALUES
+        <foreach collection="items" item="i" separator=",">
+            (#{i.id}, #{i.product_id}, #{i.product_look_id}, #{i.locale}, #{i.name}, #{i.description},
+            #{i.country_code}, #{i.brand_id},
+            #{i.brand_name}, #{i.images_url}, #{i.attributes_color_nfr_code}, #{i.attributes_color_name},
+            #{i.attributes_style_name},
+            #{i.attributes_material_value}, #{i.attributes_size_size_chart_id}, #{i.attributes_size_type},
+            #{i.attributes_size_value}, #{i.prices_retail_currency}, #{i.prices_retail_value},
+            #{i.prices_sale_currencty},
+            #{i.prices_sale_value}, #{i.prices_cost_currency}, #{i.prices_cost_value}, #{i.product_codes},
+            #{i.product_codes_first},
+            #{i.categories_id}, #{i.categories_name}, #{i.categories_key}, #{i.updateFlag})
+        </foreach>
+    </insert>
+
+    <!-- 更新数据到gilt商品一览总表 -->
+    <update id="cms2_zz_worktable_gilt_superfeed_full_update">
+        INSERT INTO voyageone_cms2.cms_zz_worktable_gilt_superfeed (id, product_id, product_look_id, locale, name,
+        description, country_code, brand_id, brand_name, images_url, attributes_color_nfr_code, attributes_color_name,
+        attributes_style_name, attributes_material_value, attributes_size_size_chart_id, attributes_size_type,
+        attributes_size_value, prices_retail_currency, prices_retail_value, prices_sale_currencty, prices_sale_value,
+        prices_cost_currency, prices_cost_value, product_codes, product_codes_first, categories_id, categories_name,
+        categories_key, updateFlag) VALUES
+        <foreach collection="items" item="i" separator=",">
+            (#{i.id}, #{i.product_id}, #{i.product_look_id}, #{i.locale}, #{i.name}, #{i.description},
+            #{i.country_code}, #{i.brand_id},
+            #{i.brand_name}, #{i.images_url}, #{i.attributes_color_nfr_code}, #{i.attributes_color_name},
+            #{i.attributes_style_name},
+            #{i.attributes_material_value}, #{i.attributes_size_size_chart_id}, #{i.attributes_size_type},
+            #{i.attributes_size_value}, #{i.prices_retail_currency}, #{i.prices_retail_value},
+            #{i.prices_sale_currencty},
+            #{i.prices_sale_value}, #{i.prices_cost_currency}, #{i.prices_cost_value}, #{i.product_codes},
+            #{i.product_codes_first},
+            #{i.categories_id}, #{i.categories_name}, #{i.categories_key}, #{i.updateFlag})
+        </foreach>
+    </update>
+
+
+
+
+</mapper>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mongo="http://www.springframework.org/schema/data/mongo"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+          http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
+
+	<bean autowire="no"
+		  class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<list>
+				<!-- jewely向scene7上传产品图片 -->
+				<ref bean="jewelyImagePostScene7TaskContri" />
+
+				<!-- BCBG向scene7上传产品图片 -->
+				<ref bean="bcbgImagePostScene7TaskContri" />
+
+				<!-- Sears向scene7上传产品图片 -->
+				<ref bean="searsImagePostScene7TaskContri" />
+
+				<!-- Gilt向scene7上传产品图片 -->
+				<ref bean="giltImagePostScene7TaskContri"/>
+			</list>
+		</property>
+		<property name="quartzProperties">
+			<map>
+				<entry key="org.quartz.threadPool.threadCount" value="1"></entry>
+			</map>
+		</property>
+	</bean>
+
+</beans>

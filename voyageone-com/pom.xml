@@ -9,7 +9,7 @@
 		<version>0.2.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>voyageone-com</artifactId>
-	<name>voyageone-com</name>
+	<name>VoyageOne - Common ( voyageone-com )</name>
 	<url>http://maven.apache.org</url>
 	<version>${voyageone.common.version}</version>
 	<properties>

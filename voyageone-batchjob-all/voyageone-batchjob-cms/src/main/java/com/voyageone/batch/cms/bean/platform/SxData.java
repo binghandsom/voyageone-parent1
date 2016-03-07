@@ -24,6 +24,9 @@ public class SxData {
 	private List<CmsBtProductModel_Sku> skuList;					// 只包含当前group中, 允许使用的sku信息
 	private Map<String, Integer> qtyList;							// 只包含当前group中, 允许使用的库存信息
 
+	private Map<String, String> referenceBrandMapping;				// 参考数据: 品牌mapping(master->platform)
+	private Map<String, String> referenceSizeMapping;				// 参考数据: 尺码mapping(size->在platform显示的尺码, 比如鞋子原始尺码10, 天猫显示44码)
+
 	// ***************************
 	// 聚美专用数据
 	// ...
