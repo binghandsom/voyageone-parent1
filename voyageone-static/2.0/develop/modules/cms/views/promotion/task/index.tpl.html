@@ -82,7 +82,7 @@
 			<table class="table table-hover-new text-center" ng-controller="popupCtrl">
 				<thead>
 				<tr>
-					<th class="mfb-xt3 text-center">Seq.</th>
+					<th class="mfb-xt3 text-center">{{::$index+1}}</th>
 					<!--<th class="text-center"><label class="checkbox-inline c-checkbox"><input type="checkbox" value="option5"><span class="fa fa-check"></span></label></th>-->
 					<th class="mfb-xt text-left">{{'TXT_STATUS' | translate}}</th>
 					<th class="mfb-xxs text-left">{{'TXT_TASK_NAME' | translate}}</th>
@@ -102,10 +102,10 @@
 					<td class="mfb-xxt text-center">{{task.activity_start}} ~ {{task.activity_end}}</td>
 					<td class="mfb-xxs text-left">
 						<a ng-if="task.task_type == 1" ng-href="#/promotion/task/beat/{{task.task_id}}"  target="_blank" class="btn btn-default-vo btn-xs">
-							<button title={{'TXT_TASK_DETAIL' | translate}} class="btn btn-default-vo btn-xs"><i class="fa fa-reorder"></i>&nbsp;{{'TXT_TASK_DETAIL' | translate}}</button>
+							<button title="{{'TXT_TASK_DETAIL' | translate}}" class="btn btn-default-vo btn-xs"><i class="fa fa-reorder"></i>&nbsp;{{'TXT_TASK_DETAIL' | translate}}</button>
 						</a>
 						<a ng-if="task.task_type == 0" ng-href="#/promotion/task/price/{{task.promotion.promotionId}}" target="_blank" class="btn btn-default-vo btn-xs">
-							<button title={{'TXT_TASK_DETAIL' | translate}} class="btn btn-default-vo btn-xs"><i class="fa fa-reorder"></i>&nbsp;{{'TXT_TASK_DETAIL' | translate}}</button>
+							<button title="{{'TXT_TASK_DETAIL' | translate}}" class="btn btn-default-vo btn-xs"><i class="fa fa-reorder"></i>&nbsp;{{'TXT_TASK_DETAIL' | translate}}</button>
 						</a>
 						<a ng-if="task.task_type == 2" ng-href="/mrbstock/list/{{task.promotion.promotionId}}" target="_blank" class="btn btn-default-vo btn-xs">
 							<button title="库存隔离明细" class="btn btn-default-vo btn-xs"><i class="fa fa-reorder"></i>&nbsp;库存隔离明细</button>
@@ -115,9 +115,9 @@
 						</a>
 					</td>
 					<td class="mfb-xxt text-center">
-						<button title="编辑" class="btn btn-success btn-xs" ng-click="openMrbstock('lg')"><i class="fa fa-pencil"></i></button>
-						<button title="删除" class="btn btn-danger btn-xs"><i class="fa  fa-trash-o"></i></button>
-						<button title="下载" class="btn btn-dangerdel btn-xs"><i class="fa fa-cloud-download"></i></button>
+						<button title="{{'BTN_EDIT' | translate}}" class="btn btn-success btn-xs" ng-click="openMrbstock('lg')"><i class="fa fa-pencil"></i></button>
+						<button title="{{'BTN_DELETE' | translate}}" class="btn btn-danger btn-xs"><i class="fa  fa-trash-o"></i></button>
+						<button title="{{'BTN_ADD' | translate}}" class="btn btn-dangerdel btn-xs"><i class="fa fa-cloud-download"></i></button>
 					</td>
 				</tr>
 				</tbody>
