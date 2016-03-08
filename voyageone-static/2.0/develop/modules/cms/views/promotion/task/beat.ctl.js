@@ -49,28 +49,40 @@ define([
                 var ttt = this;
                 var uploadQueue = ttt.uploader.queue;
                 var uploadItem = uploadQueue[uploadQueue.length - 1];
+                var uploadIt = function() {
+                    ttt.uploadItem = uploadItem;
+                    uploadItem.onSuccess = function (res) {
+                        ttt.$timeout(function () {
+                            ttt.uploadItem = null;
+                        }, 500);
+                        if (res.message) {
+                            ttt.alert(res.message);
+                            ttt.data = [];
+                            ttt.pageOption.curr = 1;
+                            ttt.pageOption.total = 0;
+                            return;
+                        }
+                        ttt.notify.success('TXT_MSG_UPDATE_SUCCESS');
+                        if (res.data) {
+                            ttt.data = res.data.list;
+                            ttt.pageOption.curr = 1;
+                            ttt.pageOption.total = res.data.total;
+                        }
+                    };
+                    uploadItem.formData = [{
+                        task_id: ttt.task_id,
+                        size: ttt.pageOption.size
+                    }];
+                    uploadItem.upload();
+                };
                 if (!uploadItem) {
                     return ttt.alert('TXT_MSG_NO_UPLOAD');
                 }
-                ttt.uploadItem = uploadItem;
-                uploadItem.onSuccess = function (res) {
-                    ttt.$timeout(function () {
-                        ttt.uploadItem = null;
-                    }, 500);
-                    if (res.message)
-                        return ttt.alert(res.message);
-                    ttt.notify.success('TXT_MSG_UPDATE_SUCCESS');
-                    if (res.data) {
-                        ttt.data = res.data.list;
-                        ttt.pageOption.curr = 1;
-                        ttt.pageOption.total = res.data.total;
-                    }
-                };
-                uploadItem.formData = [{
-                    task_id: ttt.task_id,
-                    size: ttt.pageOption.size
-                }];
-                uploadItem.upload();
+                if (!ttt.data.length) {
+                    uploadIt();
+                    return;
+                }
+                ttt.confirm('TXT_MSG_REIMPORT_BEAT').result.then(uploadIt);
             },
 
             getData: function (flag) {
@@ -112,9 +124,7 @@ define([
                     changeIt();
                     return;
                 }
-                ttt.confirm('这个任务的商品信息好像有问题? 你确定要修改它的状态?')
-                    .result
-                    .then(changeIt);
+                ttt.confirm('TXT_MSG_ERROR_BEAT_ITEM').result.then(changeIt);
             },
 
             controlAll: function (flag) {
