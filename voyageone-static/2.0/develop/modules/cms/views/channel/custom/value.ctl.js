@@ -6,131 +6,98 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function () {
 
-    function attributeValueController($scope, $routeParams, attributeValueService, attributeService, feedMappingService, $translate,notify) {
+    function attributeValueController($scope, $routeParams, attributeValueService, attributeService, $translate,notify) {
         $scope.vm = {
-            skip:"",
-            limit:"",
-            total:"",
+            searchInfo: {
+                cat_path: $routeParams.catPath,
+                sts : 1,
+                propName: "",
+                propValue: "",
+                skip: "",
+                limit: ""
+            },
             path:"",
             categoryList:[],
-            resultData: []
-        };
-
-        $scope.searchInfo= {};
-        $scope.searchInfo.cat_path=$routeParams.catPath;
-        $scope.searchInfo.sts = 1;
-        $scope.searchInfo.propName ="";
-        $scope.searchInfo.propValue ="";
-
-        // 检索页
-        $scope.searchInfo.page = 0;
-        $scope.searchInfo.offset = 0;
-        // 页面大小
-        $scope.searchInfo.rows = 0;
-
-        $scope.pageOption = {
-            curr: 1,
-            size: 10,
-            total: 1
+            resultData: [],
+            valuesPageOption: {curr: 1, total: 0, size: 20, fetch: search}
         };
 
         $scope.initialize = initialize;
         $scope.clear = clear;
         $scope.search = search;
         $scope.openAddAttributeValue = openAddAttributeValue;
-        $scope.flg = false;
+        $scope.save = save;
 
         function initialize () {
-            $scope.flg = $routeParams.catPath == "0" ? true : false;
+
             attributeService.getCatList().then(function (res){
                 // 给画面的categorylist 赋值
                 $scope.vm.categoryList = res.data.categoryList;
-                //$scope.searchInfo.cat_path=$routeParams.catPath;
-                //$scope.search();
-                attributeValueService.init({cat_path:$routeParams.catPath})
-                    .then(function (res) {
-                        $scope.vm.total = res.data.total;
-                        //$scope.vm.categoryList = res.data.categoryList;
-                        $scope.vm.resultData = res.data.resultData;
-                    });
-
+                // 获取页面一览
+                $scope.search();
             })
         }
 
-        function save(){
-            $scope.changeData = {
-                value_translation : ""
-            };
-            attributeValueService.save(changeData)
-                .then(function (res) {
-                    if(res.code == 0){
-                        notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
-                        $scope.$parent.initialize();
-
-                    }else if(res.code == 1){
-                        notify($translate.instant('TXT_MSG_PRODUCT_IS_PUBLISHING'));
-                    }
-                });
-            $scope.$close();
-        }
-
+        /**
+         * 清空检索条件
+         */
         function clear(){
-            $scope.searchInfo= {};
-            $scope.searchInfo.categorySelected=$routeParams.catPath;
-            $scope.searchInfo.sts = 1;
-            $scope.searchInfo.propName ="";
-            $scope.searchInfo.propValue ="";
+            $scope.vm = {
+                searchInfo: {
+                    cat_path: $routeParams.catPath,
+                    sts: 1,
+                    propName: "",
+                    propValue: "",
+                    skip: "",
+                    limit: ""
+                }
+            }
         }
 
+        /**
+         * 检索数据
+         */
         function search(){
-            $scope.search.page = $scope.pageOption.curr - 1;
-            $scope.search.rows = $scope.pageOption.size;
-            $scope.search.offset = $scope.search.page * $scope.search.rows;
-
-            attributeValueService.init({cat_path:$routeParams.catPath},$scope.searchInfo)
+            $scope.vm.searchInfo.skip = $scope.vm.valuesPageOption.curr;
+            $scope.vm.searchInfo.limit = $scope.vm.valuesPageOption.size;
+            attributeValueService.init($scope.vm.searchInfo)
                 .then(function (res) {
-                    $scope.vm.total = res.data.total;
-                    $scope.vm.categoryList = res.data.categoryList;
-                    $scope.vm.resultData =res.resultData;
+                    $scope.vm.valuesPageOption.total = res.data.total;
+                    $scope.vm.resultData =res.data.resultData;
                 })
         }
 
+        /**
+         * 保存数据
+         */
+        function save(item){
+            var changeData = {
+                value_id : item.value_id,
+                value_translation: item.value_translation
+            };
+            attributeValueService.save(changeData)
+                .then(function () {
+                    notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
+                    $scope.search();
+                });
+        }
 
-        //打开添加自定义属性popup -- newAttribute
+        /**
+         * 打开添加自定义属性popup -- newAttribute
+         * @param openAddNewValue
+         */
         function openAddAttributeValue (openAddNewValue) {
 
             openAddNewValue({
-                from: null
-            }).then( function (res) {
-                addNewAttribute (res)
+                from: $routeParams.catPath
+            }).then( function () {
+                    $scope.search();
                 }
             );
-
-            //feedMappingService.getMainCategories()
-            //    .then(function (res) {
-            //
-            //        openAddNewValue({
-            //
-            //            categories: res.data,
-            //            from: null
-            //        }).then(function (res) {
-            //            addNewAttribute (res)
-            //            }
-            //        );
-            //
-            //    });
-        }
-
-        function addNewAttribute (nData) {
-            if (_.isEmpty(nData.value_translation)) {
-                $scope.vm.unvalList.push({"prop_original":nData.prop_original, "cat_path":"0"})
-            } else {
-                $scope.vm.valList.push({"prop_original":nData.prop_original, "prop_translation": nData.prop_translation, "cat_path":"0"})
-            }
         }
 
     }
 
-    attributeValueController.$inject = ['$scope', '$routeParams', 'attributeValueService', 'attributeService','feedMappingService','$translate','notify'];
+    attributeValueController.$inject = ['$scope', '$routeParams', 'attributeValueService', 'attributeService','$translate','notify'];
     return attributeValueController;
 });
