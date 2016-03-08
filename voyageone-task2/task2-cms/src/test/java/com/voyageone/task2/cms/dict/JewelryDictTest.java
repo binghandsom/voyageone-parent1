@@ -152,7 +152,7 @@ public class JewelryDictTest {
 							// 第一张商品图片
 							CustomModuleUserParamGetMainPrductImages userParam = new CustomModuleUserParamGetMainPrductImages();
 							RuleExpression img_imageIndex = new RuleExpression();
-							img_imageIndex.addRuleWord(new TextWord("1"));
+							img_imageIndex.addRuleWord(new TextWord("0"));
 							userParam.setImageIndex(img_imageIndex);
 							RuleExpression img_imageType = new RuleExpression();
 							img_imageType.addRuleWord(new TextWord(C_商品图片));
