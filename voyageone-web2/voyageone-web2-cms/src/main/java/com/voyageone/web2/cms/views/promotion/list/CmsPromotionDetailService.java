@@ -178,7 +178,7 @@ public class CmsPromotionDetailService extends BaseAppService {
         for (CmsBtPromotionGroupModel productModel : productModels) {
             productModel.getCodes().forEach(cmsBtPromotionCodeModel1 -> {
                 CmsBtTagModel tag = searchTag(tags, cmsBtPromotionCodeModel1.getTag());
-                if(tag != null){
+                if (tag != null) {
                     cmsBtPromotionCodeModel1.setTagId(tag.getTagId());
                 }
             });
@@ -215,11 +215,13 @@ public class CmsPromotionDetailService extends BaseAppService {
         List<Map<String, Object>> promotionGroups = voApiClient.execute(request).getPromotionGroups();
         if (!CollectionUtils.isEmpty(promotionGroups)) {
             promotionGroups.forEach(map -> {
-                CmsBtProductModel cmsBtProductModel = ProductGetClient.getProductById(param.get("channelId").toString(), ((Integer) map.get("productId")).longValue());
+                if (map.get("productId") != null && !map.get("productId").toString().equalsIgnoreCase("0")) {
+                    CmsBtProductModel cmsBtProductModel = ProductGetClient.getProductById(param.get("channelId").toString(), ((Integer) map.get("productId")).longValue());
 
-                if (cmsBtProductModel != null) {
+                    if (cmsBtProductModel != null) {
 //                    map.put("image", cmsBtProductModel.getFields().getImages1().get(0).getAttribute("image1"));
-                    map.put("platformStatus", cmsBtProductModel.getGroups().getPlatforms().get(0).getPlatformStatus());
+                        map.put("platformStatus", cmsBtProductModel.getGroups().getPlatforms().get(0).getPlatformStatus());
+                    }
                 }
             });
         }
@@ -638,7 +640,7 @@ public class CmsPromotionDetailService extends BaseAppService {
                 poIds.add(item.getProductId());
                 //liang change
                 //cmsPromotionSelectService.remove(poIds, channelId, item.getTagPath(), operator);
-                if(!StringUtil.isEmpty(item.getTagPath())){
+                if (!StringUtil.isEmpty(item.getTagPath())) {
                     productTagClient.removeTagProducts(channelId, item.getTagPath(), poIds, operator);
                 }
             }
