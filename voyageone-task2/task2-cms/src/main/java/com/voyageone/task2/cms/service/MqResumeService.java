@@ -8,6 +8,7 @@ import com.voyageone.common.util.JsonUtil;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -17,6 +18,8 @@ import java.util.List;
  * @version 2.0.0
  * @since 2.0.0
  */
+
+@Service
 public class MqResumeService extends BaseTaskService {
 
     @Autowired

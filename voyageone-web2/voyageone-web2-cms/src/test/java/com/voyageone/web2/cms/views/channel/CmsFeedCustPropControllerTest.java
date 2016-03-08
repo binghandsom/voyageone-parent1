@@ -3,6 +3,7 @@ package com.voyageone.web2.cms.views.channel;
 import com.google.gson.*;
 import com.voyageone.common.util.HttpUtils;
 import com.voyageone.web2.base.BaseConstants;
+import com.voyageone.web2.cms.views.channel.CmsFeedCustPropController;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.junit.Before;
 import org.junit.Test;
@@ -81,7 +82,7 @@ public class CmsFeedCustPropControllerTest {
     @Test
     public void testGetCatTree1() throws Exception {
         UserSessionBean userInfo = new UserSessionBean();
-        userInfo.setSelChannelId("010");
+        userInfo.setSelChannelId("015");
 
         MockHttpServletRequestBuilder mb = MockMvcRequestBuilders.get("/cms/channel/custom/prop/getCatTree").sessionAttr(BaseConstants.SESSION_USER, userInfo);
         MockHttpServletResponse msr = mockMvc.perform(mb).andReturn().getResponse();
@@ -99,7 +100,7 @@ public class CmsFeedCustPropControllerTest {
     @Test
     public void testGetCatList1() throws Exception {
         UserSessionBean userInfo = new UserSessionBean();
-        userInfo.setSelChannelId("010");
+        userInfo.setSelChannelId("015");
 
         MockHttpServletRequestBuilder mb = MockMvcRequestBuilders.get("/cms/channel/custom/prop/getCatList").sessionAttr(BaseConstants.SESSION_USER, userInfo);
         MockHttpServletResponse msr = mockMvc.perform(mb).andReturn().getResponse();
