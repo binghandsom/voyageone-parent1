@@ -4,6 +4,7 @@ import com.voyageone.cms.enums.BeatFlag;
 import com.voyageone.common.Constants;
 import com.voyageone.web2.sdk.api.domain.CmsBtPromotionCodeModel;
 import com.voyageone.web2.sdk.api.domain.CmsBtPromotionModel;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Created by jonasvlag on 16/2/29.
@@ -36,6 +37,8 @@ public class CmsBtBeatInfoModel {
     private CmsBtPromotionCodeModel promotion_code;
 
     private CmsBtPromotionModel promotion;
+
+    private CmsBtTaskModel task;
 
     public int getId() {
         return id;
@@ -90,7 +93,10 @@ public class CmsBtBeatInfoModel {
     }
 
     public void setMessage(String message) {
-        this.message = message;
+        if (this.message == null)
+            this.message = message;
+        else if (!StringUtils.isEmpty(message))
+            this.message += ";" + message;
     }
 
     public String getCreated() {
@@ -139,5 +145,13 @@ public class CmsBtBeatInfoModel {
 
     public void setPromotion(CmsBtPromotionModel promotion) {
         this.promotion = promotion;
+    }
+
+    public CmsBtTaskModel getTask() {
+        return task;
+    }
+
+    public void setTask(CmsBtTaskModel task) {
+        this.task = task;
     }
 }

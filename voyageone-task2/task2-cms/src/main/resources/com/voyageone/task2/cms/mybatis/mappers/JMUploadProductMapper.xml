@@ -67,6 +67,7 @@
 					#{item}
 				</foreach>
 			</if>
+			ORDER BY a.modifier desc
 			LIMIT 0,
 			#{count,jdbcType=INTEGER}
 		) t1,
@@ -360,7 +361,6 @@
 			jumei.jm_bt_images
 		WHERE
 			syn_flg = 1
-
 			and ((channel_id = #{channelId}
 			and (image_key = #{productCode,jdbcType=VARCHAR} or image_type = 6 ))
 			or  (image_key =#{brand,jdbcType=VARCHAR} and image_type = 4)

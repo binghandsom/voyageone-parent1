@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.cms.sql">
+    <select id="cms_mt_image_category_select" resultType="com.voyageone.task2.cms.model.CmsMtImageCategoryModel">
+        SELECT
+        category_id,
+        category_tid,
+        category_name,
+        type,
+        channel_id,
+        cart_id,
+        created,
+        creater,
+        modified,
+        modifier
+        FROM voyageone_cms2.cms_mt_image_category
+    </select>
+
+    <update id="cms_mt_image_category_updateTid" parameterType="com.voyageone.task2.cms.model.CmsMtImageCategoryModel">
+        UPDATE voyageone_cms2.cms_mt_image_category
+        SET category_tid = #{category_tid}, modified = NOW(), modifier = #{modifier}
+        WHERE category_id = #{category_id}
+        AND modified = #{modified}
+    </update>
+
+    <select id="cms_mt_image_category_select_byCart" resultType="com.voyageone.task2.cms.model.CmsMtImageCategoryModel">
+        SELECT
+        category_id,
+        category_tid,
+        category_name,
+        type,
+        channel_id,
+        cart_id,
+        created,
+        creater,
+        modified,
+        modifier
+        FROM voyageone_cms2.cms_mt_image_category
+        WHERE cart_id = #{cart_id} AND channel_id = #{channel_id} AND type = #{type}
+    </select>
+</mapper>

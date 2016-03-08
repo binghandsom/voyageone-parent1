@@ -34,7 +34,5 @@ public class VoyageOneTaskService {
         Context conext = Context.getContext();
         ApplicationContext ctx = new GenericXmlApplicationContext("applicationContext.xml");
         conext.putAttribute("springContext", ctx);
-
-        String aa = "";
     }
 }

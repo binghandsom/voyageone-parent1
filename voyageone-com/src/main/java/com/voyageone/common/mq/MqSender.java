@@ -37,6 +37,7 @@ public class MqSender {
             }
             amqpTemplate.convertAndSend(routingKey.getValue(), JsonUtil.getJsonString(messageMap));
         }catch (Exception e){
+            e.printStackTrace();
             msgBackDao.insertBatchMessage(routingKey.toString(),messageMap);
         }
     }

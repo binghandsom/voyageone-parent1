@@ -18,6 +18,8 @@ public class CmsBtTaskModel {
 
     private int promotion_id;
 
+    private Integer status;
+
     private String activity_start;
 
     private String activity_end;
@@ -128,5 +130,13 @@ public class CmsBtTaskModel {
 
     public void setPromotion(CmsBtPromotionModel promotion) {
         this.promotion = promotion;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
     }
 }

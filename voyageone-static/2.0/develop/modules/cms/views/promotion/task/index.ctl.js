@@ -36,8 +36,9 @@ define([
                 }
             },
             search: function(){
+                var ttt = this;
                 this.taskService.page(this.searchInfo).then(function(res){
-                    this.tasks = res.data;
+                    ttt.tasks = res.data;
                 });
             }
         };

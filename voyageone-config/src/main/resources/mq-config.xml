@@ -1,15 +1,14 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:rabbit="http://www.springframework.org/schema/rabbit"
-       xsi:schemaLocation="
-    http://www.springframework.org/schema/beans
-    http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans.xsd
     http://www.springframework.org/schema/rabbit
-    http://www.springframework.org/schema/rabbit/spring-rabbit-1.2.xsd">
+    http://www.springframework.org/schema/rabbit/spring-rabbit.xsd">
 
     <!-- 连接配置 -->
     <bean id="rabbitConnectionFactory" class="com.rabbitmq.client.ConnectionFactory">
-        <property name="host" value="10.0.0.59" />
+        <property name="host" value="10.0.0.44" />
         <property name="port" value="5672" />
         <property name="username" value="mqadmin" />
         <property name="password" value="pile12rdis" />

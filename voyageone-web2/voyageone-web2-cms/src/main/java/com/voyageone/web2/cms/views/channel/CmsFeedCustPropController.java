@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 import javax.servlet.ServletInputStream;
+
+import com.voyageone.cms.service.model.CmsFeedCategoryModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
@@ -387,7 +389,11 @@ public class CmsFeedCustPropController extends CmsController {
      */
     @RequestMapping(value = CmsUrlConstants.CHANNEL.CUSTOM_PROP.GETCATTREE, method = RequestMethod.GET)
     public AjaxResponse getCategoryTree() {
-        return success(cmsFeedMappingService.getMainCategories(getUser()));
+        HashMap dataMap = new HashMap(1);
+        dataMap.put("categoryTree", cmsFeedCustPropService.getTopCategories(getUser()));
+        AjaxResponse resp = success(null);
+        resp.setData(dataMap);
+        return resp;
     }
 
     /**
@@ -417,6 +423,27 @@ public class CmsFeedCustPropController extends CmsController {
      */
     @RequestMapping(value = CmsUrlConstants.CHANNEL.CUSTOM_PROP.GETCATLIST, method = RequestMethod.GET)
     public AjaxResponse getCategoryList() {
-        return success(cmsFeedCustPropService.getTopCategories(getUser()));
+        HashMap dataMap = new HashMap(1);
+        List<CmsFeedCategoryModel> topTree = cmsFeedCustPropService.getTopCategories(getUser());
+        List<CmsFeedCategoryModel> rsltList = new ArrayList<CmsFeedCategoryModel>();
+        getSubCatTree2List(topTree, rsltList);
+        for (CmsFeedCategoryModel catItem : rsltList) {
+            catItem.setChild(null);
+            catItem.setAttribute(null);
+        }
+
+        dataMap.put("categoryList", rsltList);
+        AjaxResponse resp = success(null);
+        resp.setData(dataMap);
+        return resp;
+    }
+
+    private void getSubCatTree2List(List<CmsFeedCategoryModel> childList, List<CmsFeedCategoryModel> rsltList) {
+        for (CmsFeedCategoryModel catItem : childList) {
+            rsltList.add(catItem);
+            if (catItem.getIsChild() == 0) {
+                getSubCatTree2List(catItem.getChild(), rsltList);
+            }
+        }
     }
 }

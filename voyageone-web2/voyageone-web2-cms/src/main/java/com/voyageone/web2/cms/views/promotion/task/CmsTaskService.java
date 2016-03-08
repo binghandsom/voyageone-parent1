@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by jonasvlag on 16/3/1.
@@ -21,9 +22,9 @@ public class CmsTaskService extends BaseAppService {
     @Autowired
     private CmsBtTaskDao taskDao;
 
-    public List<CmsBtTaskModel> getAllTasks(UserSessionBean user) {
+    public List<CmsBtTaskModel> getAllTasks(Map<String,Object>searchInfo) {
 
-        return taskDao.selectTaskWithPromotionByChannel(user.getSelChannelId());
+        return taskDao.selectTaskWithPromotionByChannel(searchInfo);
     }
 
     public CmsBtTaskModel getTaskWithPromotion(int task_id) {
