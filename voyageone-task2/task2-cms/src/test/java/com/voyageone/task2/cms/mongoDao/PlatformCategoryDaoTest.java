@@ -1,8 +1,8 @@
 package com.voyageone.task2.cms.mongoDao;
 
 import com.jayway.jsonpath.JsonPath;
-import com.voyageone.cms.service.model.CmsMtPlatformCategoryTreeModel;
-import com.voyageone.cms.service.dao.mongodb.CmsMtPlatformCategoryDao;
+import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategoryDao;
+import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryTreeModel;
 import org.apache.commons.beanutils.BeanUtils;
 import org.junit.Assert;
 import org.junit.Test;

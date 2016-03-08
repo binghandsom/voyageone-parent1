@@ -3,12 +3,6 @@ package com.voyageone.web2.cms.views.product;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.cms.enums.CartType;
-import com.voyageone.cms.service.CmsProductService;
-import com.voyageone.cms.service.dao.mongodb.CmsBtFeedInfoDao;
-import com.voyageone.cms.service.dao.mongodb.CmsBtProductDao;
-import com.voyageone.cms.service.dao.mongodb.CmsMtCategorySchemaDao;
-import com.voyageone.cms.service.dao.mongodb.CmsMtCommonSchemaDao;
-import com.voyageone.cms.service.model.*;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Type;
 import com.voyageone.common.configs.TypeChannel;
@@ -23,6 +17,15 @@ import com.voyageone.common.masterdate.schema.value.ComplexValue;
 import com.voyageone.common.masterdate.schema.value.Value;
 import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
+import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
+import com.voyageone.service.dao.cms.mongo.CmsMtCategorySchemaDao;
+import com.voyageone.service.dao.cms.mongo.CmsMtCommonSchemaDao;
+import com.voyageone.service.impl.cms.CmsProductService;
+import com.voyageone.service.model.cms.mongo.CmsMtCategorySchemaModel;
+import com.voyageone.service.model.cms.mongo.CmsMtCommonSchemaModel;
+import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
+import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.web2.cms.bean.CmsCategoryInfoBean;
 import com.voyageone.web2.cms.bean.CmsProductInfoBean;
 import com.voyageone.web2.cms.bean.CustomAttributesBean;
@@ -53,7 +56,7 @@ public class CmsProductDetailService {
     @Autowired
     private CmsMtCategorySchemaDao cmsMtCategorySchemaDao;
 
-    Log logger = LogFactory.getLog(CmsProductDetailService.class);
+    private Log logger = LogFactory.getLog(CmsProductDetailService.class);
 
     @Autowired
     private CmsProductService cmsProductService;
@@ -132,7 +135,7 @@ public class CmsProductDetailService {
         CmsMtCategorySchemaModel categorySchemaModel = getCmsMtCategorySchemaModel(productValueModel.getCatId());
 
         // 获取共通schema.
-        CmsMtComSchemaModel comSchemaModel = getComSchemaModel();
+        CmsMtCommonSchemaModel comSchemaModel = getComSchemaModel();
 
         List<Field> comSchemaFields = comSchemaModel.getFields();
 
@@ -613,9 +616,9 @@ public class CmsProductDetailService {
      *
      * @return
      */
-    private CmsMtComSchemaModel getComSchemaModel() {
+    private CmsMtCommonSchemaModel getComSchemaModel() {
 
-        CmsMtComSchemaModel comSchemaModel = cmsMtCommonSchemaDao.getComSchema();
+        CmsMtCommonSchemaModel comSchemaModel = cmsMtCommonSchemaDao.getComSchema();
 
         if (comSchemaModel == null) {
 

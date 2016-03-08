@@ -1,17 +1,17 @@
 package com.voyageone.web2.cms.views.mapping.platform;
 
 import com.voyageone.base.exception.BusinessException;
-import com.voyageone.cms.service.CmsBtChannelCategoryService;
-import com.voyageone.cms.service.dao.mongodb.CmsMtPlatformCategoryDao;
-import com.voyageone.cms.service.dao.mongodb.CmsMtPlatformCategorySchemaDao;
-import com.voyageone.cms.service.dao.mongodb.CmsMtPlatformMappingDao;
-import com.voyageone.cms.service.model.CmsMtCategoryTreeModel;
-import com.voyageone.cms.service.model.CmsMtPlatformCategorySchemaModel;
-import com.voyageone.cms.service.model.CmsMtPlatformCategoryTreeModel;
-import com.voyageone.cms.service.model.CmsMtPlatformMappingModel;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.TypeChannel;
+import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategoryDao;
+import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategorySchemaDao;
+import com.voyageone.service.dao.cms.mongo.CmsMtPlatformMappingDao;
+import com.voyageone.service.impl.cms.CmsBtChannelCategoryService;
+import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeModel;
+import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
+import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryTreeModel;
+import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingModel;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.apache.commons.lang3.StringUtils;

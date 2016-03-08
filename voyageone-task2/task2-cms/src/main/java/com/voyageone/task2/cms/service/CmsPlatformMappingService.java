@@ -1,13 +1,19 @@
 package com.voyageone.task2.cms.service;
 
 import com.jayway.jsonpath.JsonPath;
+import com.voyageone.service.bean.cms.ComplexMappingBean;
+import com.voyageone.service.bean.cms.MappingBean;
+import com.voyageone.service.bean.cms.SimpleMappingBean;
+import com.voyageone.service.dao.cms.CmsMtCommonPropDao;
+import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategoryDao;
+import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategorySchemaDao;
+import com.voyageone.service.dao.cms.mongo.CmsMtPlatformMappingDao;
+import com.voyageone.service.model.cms.CmsMtCommonPropModel;
+import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
+import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryTreeModel;
+import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductConstants;
 import com.voyageone.task2.base.BaseTaskService;
-import com.voyageone.cms.service.bean.*;
-import com.voyageone.cms.service.dao.CmsMtCommonPropDao;
-import com.voyageone.cms.service.dao.mongodb.CmsMtPlatformCategoryDao;
-import com.voyageone.cms.service.dao.mongodb.CmsMtPlatformCategorySchemaDao;
-import com.voyageone.cms.service.dao.mongodb.CmsMtPlatformMappingDao;
-import com.voyageone.cms.service.model.*;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.masterdate.schema.factory.SchemaReader;
 import com.voyageone.common.masterdate.schema.field.*;

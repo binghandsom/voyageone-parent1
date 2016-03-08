@@ -1,6 +1,6 @@
 package com.voyageone.web2.sdk.api;
 
-import com.voyageone.cms.service.model.CmsBtProductModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.web2.sdk.api.request.ProductGetRequest;
 import com.voyageone.web2.sdk.api.response.ProductGetResponse;
 import org.junit.Test;
