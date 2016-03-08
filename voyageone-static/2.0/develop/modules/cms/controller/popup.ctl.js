@@ -215,6 +215,11 @@ define([
                     "templateUrl": "views/pop/file/import.tpl.html",
                     "controllerUrl": "modules/cms/views/pop/file/import.ctl",
                     "controller": 'popFileImportCtl'
+                },
+                "stock": {
+                    "templateUrl": "views/pop/file/stockImport.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/file/stockImport.ctl",
+                    "controller": 'popFileStockImportCtl'
                 }
             },
             "history": {
@@ -712,6 +717,26 @@ define([
                 $modal.open({
                     templateUrl: popActions.promotion.newMrbStock.templateUrl,
                     controller: popActions.promotion.newMrbStock.controller,
+                    size: viewSize,
+                    resolve: {
+                        data: function () {
+                            return data;
+                        }
+                    }
+                });
+            });
+        }
+
+        /**
+         * 导入库存隔离数据
+         * @type {openImportStock}
+         */
+        $scope.openImportStock = openImportStock;
+        function openImportStock(viewSize, data) {
+            require([popActions.file.stock.controllerUrl], function () {
+                $modal.open({
+                    templateUrl: popActions.file.stock.templateUrl,
+                    controller: popActions.file.stock.controller,
                     size: viewSize,
                     resolve: {
                         data: function () {
