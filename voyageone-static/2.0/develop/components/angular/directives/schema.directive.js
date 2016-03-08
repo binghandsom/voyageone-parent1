@@ -332,6 +332,10 @@ angular.module('voyageone.angular.directives.schema', [])
                     if (schema.tipMsg() != null && scope.vm.$$hastip) {
                         tempHtml += $templateCache.get(templateKey_multiComplex_tip);
                     }
+
+                    // 包裹 ng-form
+                    tempHtml = '<ng-form>' + tempHtml + '</ng-form>';
+
                     scope.showHtmlData = angular.copy(schema.schemaInfo());
                     element.html($compile(tempHtml)(scope));
 

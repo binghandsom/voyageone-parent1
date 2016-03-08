@@ -25,7 +25,7 @@ public class ReqParam {
 
     private String code;
 
-    private int modelId;
+    private String productModel;
 
     private int promotionId;
 
@@ -85,12 +85,12 @@ public class ReqParam {
         this.code = code;
     }
 
-    public int getModelId() {
-        return modelId;
+    public String getProductModel() {
+        return productModel;
     }
 
-    public void setModelId(int modelId) {
-        this.modelId = modelId;
+    public void setProductModel(String productModel) {
+        this.productModel = productModel;
     }
 
     public int getPromotionId() {

@@ -112,9 +112,9 @@ public class CmsBtBeatInfoDao extends BaseDao {
      */
     public List<CmsBtBeatInfoModel> selectListNeedBeatFullData(int limit) {
         return selectList("cms_bt_beat_info_selectListNeedBeatFullData", parameters(
-                "upFlag", BeatFlag.BEATING,
-                "revertFlag", BeatFlag.REVERT,
-                "downFlag", BeatFlag.SUCCESS,
+                "upFlag", BeatFlag.BEATING.getFlag(),
+                "revertFlag", BeatFlag.REVERT.getFlag(),
+                "downFlag", BeatFlag.SUCCESS.getFlag(),
                 "now", DateTimeUtil.getNow(),
                 "limit", limit
         ));
