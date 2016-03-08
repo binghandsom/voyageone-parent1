@@ -266,6 +266,11 @@ define([
                     "templateUrl": "views/pop/promotion/skuMrbStockDetail.tpl.html",
                     "controllerUrl": "modules/cms/views/pop/promotion/skuMrbStockDetail.ctl",
                     "controller": 'popSkuMrbStockDetailCtl'
+                },
+                "addMrbStockIncrement": {
+                    "templateUrl": "views/pop/promotion/addStockIncrement.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/promotion/addStockIncrement.ctl",
+                    "controller": 'popAddStockIncrementCtl'
                 }
             }
         })
@@ -797,6 +802,25 @@ define([
             });
         }
 
+        /**
+         * 新增增量隔离库存任务
+         * @type {openMrbstockadd}
+         */
+        $scope.openAddMrbStockIncrement = openAddMrbStockIncrement;
+        function openAddMrbStockIncrement(viewSize, data) {
+            require([popActions.promotion.addMrbStockIncrement.controllerUrl], function () {
+                $modal.open({
+                    templateUrl: popActions.promotion.addMrbStockIncrement.templateUrl,
+                    controller: popActions.promotion.addMrbStockIncrement.controller,
+                    size: viewSize,
+                    resolve: {
+                        data: function () {
+                            return data;
+                        }
+                    }
+                });
+            });
+        }
         //$scope.openshop_category = openshop_category;
         //function openshop_category(viewSize) {
         //    $modal.open({
