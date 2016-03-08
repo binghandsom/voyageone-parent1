@@ -20,11 +20,6 @@
     "controllerUrl": "modules/cms/views/promotion/task/index.ctl",
     "controller": "taskIndexController as $ctrl"
   },
-  "promotion_task_detail": {
-    "hash": "/promotion/task/detail",
-    "templateUrl": "views/promotion/task/detail.tpl.html",
-    "controllerUrl": "modules/cms/views/promotion/task/detail.ctl"
-  },
   "promotion_task_price": {
     "url": "/promotion/task/price/",
     "hash": "/promotion/task/price/:promotionId",
@@ -37,6 +32,20 @@
     "templateUrl": "views/promotion/task/beat.tpl.html",
     "controllerUrl": "modules/cms/views/promotion/task/beat.ctl",
     "controller": "taskBeatController as $ctrl"
+  },
+  "promotion_task_stock_detail": {
+    "url": "/promotion/task/stock/",
+    "hash": "/promotion/task/stock/:task_id",
+    "templateUrl": "views/promotion/task/stock.tpl.html",
+    "controllerUrl": "modules/cms/views/promotion/task/stock.ctl",
+    "controller": "taskStockController as $ctrl"
+  },
+  "promotion_task_stock_increment": {
+    "url": "/promotion/task/stock_increment/",
+    "hash": "/promotion/task/stock_increment/:task_id",
+    "templateUrl": "views/promotion/task/stockIncrement.tpl.html",
+    "controllerUrl": "modules/cms/views/promotion/task/stockIncrement.ctl",
+    "controller": "taskStockIncrementController as $ctrl"
   },
   "search_advance": {
     "hash": "/search/advance",

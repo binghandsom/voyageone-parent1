@@ -246,6 +246,11 @@ define([
                     "controllerUrl": "modules/cms/views/pop/promotion/addBeat.ctl",
                     "controller": 'popAddBeatCtl as $ctrl',
                     "size": "md"
+                },
+                "newMrbStock": {
+                    "templateUrl": "views/pop/promotion/newMrbStock.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/promotion/newMrbStock.ctl",
+                    "controller": 'popNewMrbStockCtl'
                 }
             }
         })
@@ -696,6 +701,26 @@ define([
         $scope.popAddBeat = function (context) {
             return openModel(popActions.promotion.addBeat, context);
         };
+
+        /**
+         * 打开新建库存隔离任务
+         * @type {openMrbstock}
+         */
+        $scope.openMrbstock = openMrbstock;
+        function openMrbstock(viewSize, data) {
+            require([popActions.promotion.newMrbStock.controllerUrl], function () {
+                $modal.open({
+                    templateUrl: popActions.promotion.newMrbStock.templateUrl,
+                    controller: popActions.promotion.newMrbStock.controller,
+                    size: viewSize,
+                    resolve: {
+                        data: function () {
+                            return data;
+                        }
+                    }
+                });
+            });
+        }
 
 
         //$scope.openshop_category = openshop_category;
