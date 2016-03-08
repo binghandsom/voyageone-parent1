@@ -47,6 +47,13 @@
     "controllerUrl": "modules/cms/views/promotion/task/stockIncrement.ctl",
     "controller": "taskStockIncrementController as $ctrl"
   },
+  "promotion_task_stock_increment_detail": {
+    "url": "/promotion/task/stock_increment_detail/",
+    "hash": "/promotion/task/stock_increment_detail/:task_id",
+    "templateUrl": "views/promotion/task/stockIncrementDetail.tpl.html",
+    "controllerUrl": "modules/cms/views/promotion/task/stockIncrementDetail.ctl",
+    "controller": "stockIncrementDetailController as $ctrl"
+  },
   "search_advance": {
     "hash": "/search/advance",
     "templateUrl": "views/search/advance.tpl.html",
