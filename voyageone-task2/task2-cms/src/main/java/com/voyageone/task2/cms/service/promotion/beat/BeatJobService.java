@@ -47,7 +47,7 @@ import static java.lang.String.format;
  * @since 2.0.0
  */
 @Service
-public class BeatService extends BaseTaskService {
+public class BeatJobService extends BaseTaskService {
 
     @Override
     public SubSystem getSubSystem() {

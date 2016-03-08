@@ -22,7 +22,7 @@ import java.util.Map;
 )
 public class CmsTaskIncrementStockController extends CmsController {
 
-    @Autowired
+//    @Autowired
 //    private CmsTaskIncrementStockService cmsTaskIncrementStockService;
 
     /**

@@ -218,7 +218,7 @@ public class CmsPromotionDetailService extends BaseAppService {
                 CmsBtProductModel cmsBtProductModel = ProductGetClient.getProductById(param.get("channelId").toString(), ((Integer) map.get("productId")).longValue());
 
                 if (cmsBtProductModel != null) {
-                    map.put("image", cmsBtProductModel.getFields().getImages1().get(0).getAttribute("image1"));
+//                    map.put("image", cmsBtProductModel.getFields().getImages1().get(0).getAttribute("image1"));
                     map.put("platformStatus", cmsBtProductModel.getGroups().getPlatforms().get(0).getPlatformStatus());
                 }
             });
@@ -242,8 +242,8 @@ public class CmsPromotionDetailService extends BaseAppService {
                 //SDK取得Product 数据
                 CmsBtProductModel cmsBtProductModel = ProductGetClient.getProductById(param.get("channelId").toString(), map.getProductId());
                 if (cmsBtProductModel != null) {
-                    map.setImage((String) cmsBtProductModel.getFields().getImages1().get(0).getAttribute("image1"));
-                    map.setSkuCount(cmsBtProductModel.getSkus().size());
+//                    map.setImage((String) cmsBtProductModel.getFields().getImages1().get(0).getAttribute("image1"));
+//                    map.setSkuCount(cmsBtProductModel.getSkus().size());
                     map.setPlatformStatus(cmsBtProductModel.getGroups().getPlatforms().get(0).getPlatformStatus());
                     map.setInventory(cmsBtProductModel.getBatchField().getCodeQty() == null ? 0 : cmsBtProductModel.getBatchField().getCodeQty());
                 }
@@ -638,7 +638,9 @@ public class CmsPromotionDetailService extends BaseAppService {
                 poIds.add(item.getProductId());
                 //liang change
                 //cmsPromotionSelectService.remove(poIds, channelId, item.getTagPath(), operator);
-                productTagClient.removeTagProducts(channelId, item.getTagPath(), poIds, operator);
+                if(!StringUtil.isEmpty(item.getTagPath())){
+                    productTagClient.removeTagProducts(channelId, item.getTagPath(), poIds, operator);
+                }
             }
         } catch (Exception e) {
             simpleTransaction.rollback();
