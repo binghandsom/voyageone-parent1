@@ -1562,8 +1562,7 @@ public class TmallProductService {
         List<Field> mappingFields = tmallUploadRunState.getContextBuildFields().getMappingFields();
         Map<String, List<TmallUploadRunState.UrlStashEntity>> srcUrlStashEntityMap = tmallUploadRunState.getContextBuildFields().getSrcUrlStashEntityMap();
 
-        List<Map<String, Object>> map = cmsMtPlatformMappingModel.getProps();
-        List<MappingBean> propMapings = JsonUtil.jsonToBeanList(JsonUtil.getJsonString(map),MappingBean.class);
+        List<MappingBean> propMapings = cmsMtPlatformMappingModel.getProps();
 
         for (MappingBean mappingBean : propMapings) {
             Field field = fieldMap.get(mappingBean.getPlatformPropId());

@@ -284,4 +284,50 @@ public class CmsBtFeedCustomPropService {
 		return result;
 	}
 
+	/**
+	 * 获取所有的翻译列表
+	 * @param channel_id channel id
+	 * @param feed_cat_path feed category path
+	 * @return
+	 */
+	public Map<String, String> getTransList(String channel_id, String feed_cat_path) {
+		if (!blnInit) {
+			doInit(channel_id);
+		}
+
+		Map<String, String> result = new HashMap<>();
+
+		// 全局共通
+		result.putAll(propCommonPublic);
+
+		// 从customPropList的简化版中获取数据
+		Map<String, Map<String, List<String>>> propMap = null;
+		if (customPropMap.containsKey(feed_cat_path.toLowerCase())) {
+			// 指定类目
+			propMap = customPropMap.get(feed_cat_path.toLowerCase());
+		} else if (customPropMap.containsKey("0")) {
+			// 类目级共通
+			propMap = customPropMap.get("0");
+		}
+
+		if (propMap != null) {
+			propMap.forEach((kProp, vProp)->{
+				vProp.forEach((k, v)->{
+					String value = "";
+					for (String trans : v) {
+						if (!StringUtils.isEmpty(trans)) {
+							value = trans;
+							break;
+						}
+					}
+					result.put(k, value);
+
+				});
+
+			});
+		}
+
+		return result;
+	}
+
 }
