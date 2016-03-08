@@ -25,9 +25,9 @@ define([
             //}
 
             _.each(context.from, function(value) {
-                if (value.prop_original==nData.prop_original || value.prop_translation==nData.prop_translation) {
+                if (value.prop_original==nData.prop_original) {
                     alert("该属性已经存在");
-                }else {
+                } else {
                      $modalInstance.close(nData);
                 }
 
