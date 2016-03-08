@@ -55,7 +55,7 @@ public class UserController extends BaseController {
 
     @RequestMapping(CoreUrlConstants.USER.SELECT_CHANNEL)
     public AjaxResponse selectChannel(@RequestBody Map<String, Object> params) {
-        userService.setSelectChannel(getUser(), String.valueOf(params.get("channelId")));
+        userService.setSelectChannel(getUser(), String.valueOf(params.get("channelId")),String.valueOf(params.get("applicationId")));
         // 只要不报异常就是ok
         return success(true);
     }

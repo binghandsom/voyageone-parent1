@@ -11,14 +11,12 @@
             <i class="glyphicon glyphicon-th-list icon text-vo"></i>
             <span class="" translate="TXT_CATEGORY_MANAGER"></span>
         </a>
-
         <ul class="nav nav-sub dk">
             <li class="nav-sub-header">
                 <a href>
                     <span translate="TXT_CATEGORY_MANAGER"></span>
                 </a>
             </li>
-
             <li  ng-repeat="item in menuInfo.categoryTreeList">
                 <a class="auto" ng-if="item.isParent == 1">
                     <span class="pull-right text-muted">
@@ -34,10 +32,8 @@
                 </a>
                 <ul class="nav nav-sub dk" style="padding-left:10px" ng-if="item.isParent == 1" ng-include="'categoryMenu'" ng-init="categoryMenu = item.children"></ul>
             </li>
-
         </ul>
     </li>
-
     <!-- Promotion管理 -->
     <li>
         <a class="auto">

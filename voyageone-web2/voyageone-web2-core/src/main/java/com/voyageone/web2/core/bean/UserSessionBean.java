@@ -50,7 +50,7 @@ public class UserSessionBean implements Serializable {
      * 当前选择的 Channel (渠道)
      */
     private Channel selChannel;
-
+    private String applicationId;
     public int getUserId() {
         return userId;
     }
@@ -114,4 +114,12 @@ public class UserSessionBean implements Serializable {
     public void setSelChannelId(String selChannelId) {
         this.selChannel = Channel.valueOfId(selChannelId);
     }
+    public String getApplicationId() {
+        return applicationId;
+    }
+
+    public void setApplicationId(String applicationId) {
+        this.applicationId = applicationId;
+    }
+
 }
