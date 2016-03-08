@@ -1,5 +1,7 @@
 package com.voyageone.common.configs.beans;
 
+import java.util.Date;
+
 /**
  * Created by Zero on 8/18/2015.
  */
@@ -22,6 +24,10 @@ public class FeedBean {
     private int display_sort;
 
     private String comment;
+
+    private Date modified;
+
+    private int status;
 
     public String getOrder_channel_id() {
         return order_channel_id;
@@ -93,5 +99,21 @@ public class FeedBean {
 
     public void setComment(String comment) {
         this.comment = comment;
+    }
+
+    public Date getModified() {
+        return modified;
+    }
+
+    public void setModified(Date modified) {
+        this.modified = modified;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
     }
 }

@@ -15,6 +15,8 @@
     <import resource="classpath*:datasource-config-mongo.xml" />
     <!-- MQ Config -->
     <import resource="classpath*:mq-config.xml" />
+    <!-- Redis Config -->
+    <import resource="classpath*:redis-config.xml" />
 
     <!-- 初始化处理 -->
     <bean class="com.voyageone.common.configs.Initializer" init-method="init"/>
