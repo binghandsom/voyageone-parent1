@@ -89,7 +89,9 @@ define([
         function openAddAttributeValue (openAddNewValue) {
 
             openAddNewValue({
-                from: $routeParams.catPath
+                from: $routeParams.catPath,
+                categoryList: $scope.vm.categoryList,
+                valueList: $scope.vm.resultData
             }).then( function () {
                     $scope.search();
                 }
