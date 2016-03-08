@@ -178,6 +178,9 @@ public class PromotionDetailService extends BaseService {
         CmsBtPromotionCodeModel cmsBtPromotionCodeModel = new CmsBtPromotionCodeModel(productInfo, cartId, promotionId, operator);
         cmsBtPromotionCodeModel.setPromotionPrice(promotionPrice);
         cmsBtPromotionCodeModel.setTagId(tagId == null ? 0 : tagId);
+        if(productInfo.getFields().getImages1().size() > 0){
+            cmsBtPromotionCodeModel.setImage_url_1(productInfo.getFields().getImages1().get(0).getName());
+        }
         if (cmsPromotionCodeDao.updatePromotionCode(cmsBtPromotionCodeModel) == 0) {
             cmsPromotionCodeDao.insertPromotionCode(cmsBtPromotionCodeModel);
         }

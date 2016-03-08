@@ -237,18 +237,18 @@ public class CmsPromotionDetailService extends BaseAppService {
         PromotionCodeGetRequest request = new PromotionCodeGetRequest();
         request.setParam(param);
         List<CmsBtPromotionCodeModel> promotionCodes = voApiClient.execute(request).getCodeList();
-        if (!CollectionUtils.isEmpty(promotionCodes)) {
-            promotionCodes.forEach(map -> {
-                //SDK取得Product 数据
-                CmsBtProductModel cmsBtProductModel = ProductGetClient.getProductById(param.get("channelId").toString(), map.getProductId());
-                if (cmsBtProductModel != null) {
-//                    map.setImage((String) cmsBtProductModel.getFields().getImages1().get(0).getAttribute("image1"));
-//                    map.setSkuCount(cmsBtProductModel.getSkus().size());
-                    map.setPlatformStatus(cmsBtProductModel.getGroups().getPlatforms().get(0).getPlatformStatus());
-                    map.setInventory(cmsBtProductModel.getBatchField().getCodeQty() == null ? 0 : cmsBtProductModel.getBatchField().getCodeQty());
-                }
-            });
-        }
+//        if (!CollectionUtils.isEmpty(promotionCodes)) {
+//            promotionCodes.forEach(map -> {
+//                //SDK取得Product 数据
+//                CmsBtProductModel cmsBtProductModel = ProductGetClient.getProductById(param.get("channelId").toString(), map.getProductId());
+//                if (cmsBtProductModel != null) {
+////                    map.setImage((String) cmsBtProductModel.getFields().getImages1().get(0).getAttribute("image1"));
+////                    map.setSkuCount(cmsBtProductModel.getSkus().size());
+//                    map.setPlatformStatus(cmsBtProductModel.getGroups().getPlatforms().get(0).getPlatformStatus());
+//                    map.setInventory(cmsBtProductModel.getBatchField().getCodeQty() == null ? 0 : cmsBtProductModel.getBatchField().getCodeQty());
+//                }
+//            });
+//        }
         return promotionCodes;
     }
 
