@@ -18,6 +18,7 @@ public class CmsProductLogService {
     public void insertProductHistory(CmsBtProductModel product) {
         CmsBtProductLogModel logModel = new CmsBtProductLogModel();
         BeanUtil.copy(product, logModel);
+        logModel.set_id(null);
         cmsBtProductLogDao.insert(logModel);
     }
 

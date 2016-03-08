@@ -1,7 +1,7 @@
 package com.voyageone.service.model.cms.mongo.feed.mapping;
 
+import com.voyageone.cms.bean.Condition;
 import com.voyageone.cms.enums.SrcType;
-import com.voyageone.cms.enums.bean.Condition;
 
 import java.util.List;
 
