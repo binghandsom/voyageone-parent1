@@ -44,7 +44,7 @@ gulp.task(tasks.build.angular, [tasks.build.angular_suff], function () {
     // 合并到一个文件
     .pipe(concat(build.common.angular.concat))
     // 追加尾部声明
-    .pipe(footer(fs.readFileSync(( build.common.angular.dist + '/' + build.common.angular.footerFile), encode)))
+    .pipe(footer(fs.readFile((build.common.angular.dist + '/' + build.common.angular.footerFile), encode)))
     // 包裹整个内容
     .pipe(header(definePrefix))
     .pipe(footer(defineSuffix))
