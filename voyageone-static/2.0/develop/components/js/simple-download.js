@@ -38,22 +38,23 @@
                 });
             });
             var $frame = createIframe(id);
+            $('body').append($form.append($hiddens), $frame);
             $frame.on('load', function () {
                 if (callback) callback($frame, $form, param, context);
                 $form.remove();
                 $frame.remove();
             });
-            $('body').append($form.append($hiddens), $frame);
             $form.submit();
         },
         'get': function (url, param, callback, context) {
 
             var id = newId();
-            var $frame = createIframe(id).on('load', function () {
+            var $frame = createIframe(id);
+            $('body').append($frame);
+            $frame.on('load', function () {
                 if (callback) callback($frame, param, context);
                 $frame.remove();
             });
-            $('body').append($frame);
             $frame[0].contentWindow.href = url + '?' + $.param(param);
         }
     };
