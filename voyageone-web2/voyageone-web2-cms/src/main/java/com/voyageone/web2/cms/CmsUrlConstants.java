@@ -118,8 +118,6 @@ public interface CmsUrlConstants {
 
                 String INIT_NEW_TASK = "initNewTask";
 
-                String INIT_NEW_TASK_FROM_TASK = "initNewTaskFromTask";
-
                 String SAVE_TASK = "saveTask";
 
                 String DEL_TASK = "delTask";
@@ -151,8 +149,6 @@ public interface CmsUrlConstants {
                 String DEL_RECORD = "delRecord";
 
                 String GET_SKU_SEPARATION_DETAIL = "getSkuSeparationDetail";
-
-                String EXPORT_REAL_STOCK_INFO = "exportRealStockInfo";
 
                 String EXPORT_ERROR_INFO = "exportErrorInfo";
             }
