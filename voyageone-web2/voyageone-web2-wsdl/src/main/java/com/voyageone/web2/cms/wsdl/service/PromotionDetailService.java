@@ -136,7 +136,9 @@ public class PromotionDetailService extends BaseService {
                 ProductsTagDeleteRequest productsTagDeleteRequest = new ProductsTagDeleteRequest(channelId);
                 productsTagDeleteRequest.setModifier(operator);
                 for (Long productId : poIds) {
-                    productsTagDeleteRequest.addProductIdTagPathsMap(productId, code.getTagPath());
+                    if (!StringUtils.isEmpty(code.getTagPath())) {
+                        productsTagDeleteRequest.addProductIdTagPathsMap(productId, code.getTagPath());
+                    }
                 }
                 productTagService.delete(productsTagDeleteRequest);
             });
