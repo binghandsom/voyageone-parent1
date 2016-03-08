@@ -13,6 +13,7 @@
         <result column="tag_path" property="tagPath" jdbcType="VARCHAR" />
         <result column="tag_path_name" property="tagPathName" jdbcType="VARCHAR" />
         <result column="tag_name" property="tag"  jdbcType="VARCHAR" />
+        <result column="skuCount" property="skuCount"  jdbcType="INTEGER" />
     </resultMap>
     <select id="select_cms_bt_promotion_code" resultMap="bt_promotion_code_map" parameterType="HashMap" >
         SELECT
@@ -40,25 +41,29 @@
             a.image_url_1 as image,
             b.tag_path,
             b.tag_name,
-            b.tag_path_name
+            b.tag_path_name ,
+            count(1) as skuCount
         FROM
           voyageone_cms2.cms_bt_promotion_code a
           LEFT JOIN voyageone_cms2.cms_bt_tag b ON a.tag_id = b.tag_id
+        LEFT JOIN voyageone_cms2.cms_bt_promotion_sku c on a.promotion_id = c.promotion_id and a.product_code = c.product_code
+
         <where>
             <if test="promotionId != null">
-                promotion_id =  #{promotionId,jdbcType=INTEGER}
+                a.promotion_id =  #{promotionId,jdbcType=INTEGER}
             </if>
-            <if test="modelId != null and modelId != ''">
-                and model_id = #{modelId,jdbcType=INTEGER}
+            <if test="modelId != null">
+                and a.model_id = #{modelId,jdbcType=INTEGER}
             </if>
             <if test="key !=null and key != ''">
                and (
-                product_model like '%${key}%'
-                or product_code like '%${key}%'
-                or product_name like '%${key}%'
+                a.product_model like '%${key}%'
+                or a.product_code like '%${key}%'
+                or a.product_name like '%${key}%'
                 )
             </if>
         </where>
+        GROUP BY a.promotion_id,a.product_code
         <if test="start != null and length != null">
             LIMIT #{start}, #{length}
         </if>

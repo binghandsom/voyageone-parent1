@@ -160,13 +160,13 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
 
     //msrp价格区间
     public Double getPriceMsrpSt() {
-        return getAttribute("priceMsrpSt");
+        return convertToDoubel(getAttribute("priceMsrpSt"));
     }
     public void setPriceMsrpSt(Double priceMsrpSt) {
         setAttribute("priceMsrpSt", priceMsrpSt);
     }
     public Double getPriceMsrpEd() {
-        return getAttribute("priceMsrpEd");
+        return convertToDoubel(getAttribute("priceMsrpEd"));
     }
     public void setPriceMsrpEd(Double priceMsrpEd) {
         setAttribute("priceMsrpEd", priceMsrpEd);
@@ -174,13 +174,13 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
 
     //建议市场价格区间
     public Double getPriceRetailSt() {
-        return getAttribute("priceRetailSt");
+        return convertToDoubel(getAttribute("priceRetailSt"));
     }
     public void setPriceRetailSt(Double priceRetailSt) {
         setAttribute("priceRetailSt", priceRetailSt);
     }
     public Double getPriceRetailEd() {
-        return getAttribute("priceRetailEd");
+        return convertToDoubel(getAttribute("priceRetailEd"));
     }
     public void setPriceRetailEd(Double priceRetailEd) {
         setAttribute("priceRetailEd", priceRetailEd);
@@ -188,13 +188,13 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
 
     //销售价格价格区间
     public Double getPriceSaleSt() {
-        return getAttribute("priceSaleSt");
+        return convertToDoubel(getAttribute("priceSaleSt"));
     }
     public void setPriceSaleSt(Double priceSaleSt) {
         setAttribute("priceSaleSt", priceSaleSt);
     }
     public Double getPriceSaleEd() {
-        return getAttribute("priceSaleEd");
+        return convertToDoubel(getAttribute("priceSaleEd"));
     }
     public void setPriceSaleEd(Double priceSaleEd) {
         setAttribute("priceSaleEd", priceSaleEd);
@@ -202,13 +202,13 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
 
     //当前销售价格价格区间 暂时不使用
     public Double getCurPriceSt() {
-        return getAttribute("curPriceSt");
+        return convertToDoubel(getAttribute("curPriceSt"));
     }
     public void setCurPriceSt(Double curPriceSt) {
         setAttribute("curPriceSt", curPriceSt);
     }
     public Double getCurPriceEd() {
-        return getAttribute("curPriceSt");
+        return convertToDoubel(getAttribute("curPriceSt"));
     }
     public void setCurPriceEd(Double curPriceSt) {
         setAttribute("curPriceSt", curPriceSt);
