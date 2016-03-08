@@ -38,7 +38,7 @@
 		<div class="btn-group pull-right">
 			<button class="btn btn-default-vo" ng-click="$ctrl.getData()" translate="TXT_SHOW_ALL"></button>
 			<button class="btn btn-default-vo" ng-repeat="item in $ctrl.summary" ng-click="$ctrl.getData(item.flag)">
-				<span>{{item.flag}}</span>:<span>{{item.count}}</span>
+				<span>{{item.flag | translate}}</span>&nbsp;:&nbsp;<span>{{item.count}}</span>
 			</button>
 		</div>
 	</div>
@@ -65,7 +65,7 @@
 								<a ng-href="https://detail.tmall.hk/hk/item.htm?id={{info.num_iid}}" target="_blank">{{info.num_iid}}</a>
 							</td>
 							<td class="mfb-xxt text-right">{{info.promotion_code.promotionPrice || '无'}}</td>
-							<td class="mfb-xxt text-center">{{info.beatFlag}}</td>
+							<td class="mfb-xxt text-center">{{info.beatFlag | translate}}</td>
 							<td class="mfb-xxx text-center">{{info.message}}</td>
 							<td class="mfb-xxx text-center">{{info.modified}}</td>
 							<td class="mfb-xxx text-center">

@@ -285,6 +285,16 @@ define(function(){
         "BTN_IMPORT_PROMOTION_FILE": "导入活动文件",
         "BTN_CREATE_TE_JIA_BAO_TASK": "创建特价宝任务",
         "BTN_CHOOSE_FILE": "选择文件",
-        "BTN_IMPORT_FILE": "Import File"
+        "BTN_IMPORT_FILE": "Import File",
+
+        // 枚举 com.voyageone.cms.enums.BeatFlag 的翻译
+        "STOP": "已停止",
+        "BEATING": "正在执行",
+        "SUCCESS": "更新成功",
+        "FAIL": "更新失败",
+        "REVERT": "正在还原",
+        "RE_SUCCESS": "还原成功",
+        "RE_FAIL": "还原失败",
+        "CANT_BEAT": "信息错误"
     };
 });

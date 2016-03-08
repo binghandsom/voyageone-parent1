@@ -284,6 +284,16 @@ define(function() {
         "BTN_IMPORT_PROMOTION_FILE": "Import Promotion File",
         "BTN_CREATE_TE_JIA_BAO_TASK": "Create TeJiaBao Task",
         "BTN_CHOOSE_FILE": "Choose File",
-        "BTN_IMPORT_FILE": "Import File"
+        "BTN_IMPORT_FILE": "Import File",
+
+        // 枚举 com.voyageone.cms.enums.BeatFlag 的翻译
+        "STOP": "Stop",
+        "BEATING": "Running",
+        "SUCCESS": "Success",
+        "FAIL": "Fail",
+        "REVERT": "Reverting",
+        "RE_SUCCESS": "Revert Success",
+        "RE_FAIL": "Revert Fail",
+        "CANT_BEAT": "Info Error"
     };
 });
