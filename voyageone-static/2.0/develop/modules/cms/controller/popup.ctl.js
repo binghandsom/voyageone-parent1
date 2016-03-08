@@ -256,6 +256,16 @@ define([
                     "templateUrl": "views/pop/promotion/newMrbStock.tpl.html",
                     "controllerUrl": "modules/cms/views/pop/promotion/newMrbStock.ctl",
                     "controller": 'popNewMrbStockCtl'
+                },
+                "newMrbStockSku": {
+                    "templateUrl": "views/pop/promotion/newMrbStockSku.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/promotion/newMrbStockSku.ctl",
+                    "controller": 'popNewMrbStockSkuCtl'
+                },
+                "skuMrbStockDetail": {
+                    "templateUrl": "views/pop/promotion/skuMrbStockDetail.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/promotion/skuMrbStockDetail.ctl",
+                    "controller": 'popSkuMrbStockDetailCtl'
                 }
             }
         })
@@ -747,6 +757,45 @@ define([
             });
         }
 
+        /**
+         * 新增一个sku的库存隔离
+         * @type {openMrbstocksku}
+         */
+        $scope.openNewMrbStockSku = openNewMrbStockSku;
+        function openNewMrbStockSku(viewSize, data) {
+            require([popActions.promotion.newMrbStockSku.controllerUrl], function () {
+                $modal.open({
+                    templateUrl: popActions.promotion.newMrbStockSku.templateUrl,
+                    controller: popActions.promotion.newMrbStockSku.controller,
+                    size: viewSize,
+                    resolve: {
+                        data: function () {
+                            return data;
+                        }
+                    }
+                });
+            });
+        }
+
+        /**
+         * 显示该sku的库存隔离明细
+         * @type {openMrbstockdetail}
+         */
+        $scope.openSkuMrbStockDetail = openSkuMrbStockDetail;
+        function openSkuMrbStockDetail(viewSize, data) {
+            require([popActions.promotion.skuMrbStockDetail.controllerUrl], function () {
+                $modal.open({
+                    templateUrl: popActions.promotion.skuMrbStockDetail.templateUrl,
+                    controller: popActions.promotion.skuMrbStockDetail.controller,
+                    size: viewSize,
+                    resolve: {
+                        data: function () {
+                            return data;
+                        }
+                    }
+                });
+            });
+        }
 
         //$scope.openshop_category = openshop_category;
         //function openshop_category(viewSize) {
