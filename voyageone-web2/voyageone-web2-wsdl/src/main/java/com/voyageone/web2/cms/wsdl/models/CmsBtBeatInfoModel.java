@@ -100,7 +100,7 @@ public class CmsBtBeatInfoModel {
     }
 
     public void clearMessage() {
-        this.message = "";
+        this.message = null;
     }
 
     public String getCreated() {
