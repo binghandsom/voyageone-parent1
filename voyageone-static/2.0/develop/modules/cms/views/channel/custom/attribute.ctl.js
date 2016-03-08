@@ -17,7 +17,7 @@ define([
         $scope.initialize = initialize;
         $scope.save = save;
         $scope.openCategoryMapping = openCategoryMapping;
-        $scope.bindCategory = bindCategory;
+        $scope.goAttributePage = goAttributePage;
         $scope.openAddAttributeValue = openAddAttributeValue;
         $scope.remove = remove;
         $scope.addVal = addVal;
@@ -98,10 +98,9 @@ define([
                         categories: res.data,
                         from: $scope.vm.cat_path != '0' ? $scope.vm.cat_path : ""
                     }).then( function (res) {
-                            bindCategory (res.selected.catPath)
+                            goAttributePage (res.selected.catPath)
                         }
                     );
-
                 });
         }
 
@@ -109,7 +108,7 @@ define([
          * 类目选择跳转至类目页面
          * @param catPath
          */
-        function bindCategory (catPath) {
+        function goAttributePage (catPath) {
             $location.path(cRoutes.channel_custom_attribute.url + catPath);
         }
 
