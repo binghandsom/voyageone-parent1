@@ -413,9 +413,15 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             // 商品图片1, 包装图片2, 带角度图片3, 自定义图片4 : 暂时只设置商品图片1
             {
                 List<Map<String, Object>> multiComplex = new LinkedList<>();
-                Map<String, Object> multiComplexChildren = new HashMap<>();
-                multiComplexChildren.put("images1", feed.getImage());
-                multiComplex.add(multiComplexChildren);
+
+                List<String> lstImageOrg = feed.getImage();
+                if (lstImageOrg != null && lstImageOrg.size() > 0) {
+                    for (String imgOrg : lstImageOrg) {
+                        Map<String, Object> multiComplexChildren = new HashMap<>();
+                        multiComplexChildren.put("image1", imgOrg);
+                        multiComplex.add(multiComplexChildren);
+                    }
+                }
 
                 field.put("images1", multiComplex);
             }
