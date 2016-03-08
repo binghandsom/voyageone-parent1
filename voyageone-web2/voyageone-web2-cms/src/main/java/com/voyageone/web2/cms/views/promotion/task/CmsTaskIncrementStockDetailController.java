@@ -72,9 +72,9 @@ public class CmsTaskIncrementStockDetailController extends CmsController {
      *                     {"name":"英文短描述"},
      *                     {"name":"性别"},
      *                     {"name":"Size"}]，
-     *   "stockList": [ {"code":"35265465", "sku":"256354566-9", "property1":"Puma", "property2":"Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"50", "incrementQty":"50", "status":"未进行", "fixFlg":false},
-     *                   {"code":"35265465", "sku":"256354566-10", "property1":"Puma", "property2":"Puma Suede Classic +Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"80", "incrementQty":"80", "status":"未进行", "fixFlg":false},
-     *                   {"code":"35265465", "sku":"256354566-11", "property1":"Puma", "property2":"Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"20", "incrementQty":"20", "status":"增量成功", "fixFlg":false},
+     *   "stockList": [ {"model":"35265", "code":"35265465", "sku":"256354566-9", "property1":"Puma", "property2":"Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"50", "incrementQty":"50", "status":"未进行", "fixFlg":false},
+     *                   {"model":"35265", "code":"35265465", "sku":"256354566-10", "property1":"Puma", "property2":"Puma Suede Classic +Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"80", "incrementQty":"80", "status":"未进行", "fixFlg":false},
+     *                   {"model":"35265", "code":"35265465", "sku":"256354566-11", "property1":"Puma", "property2":"Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"20", "incrementQty":"20", "status":"增量成功", "fixFlg":false},
      *                    ...]
      *  }
      * }
@@ -108,7 +108,7 @@ public class CmsTaskIncrementStockDetailController extends CmsController {
      * @apiParamExample  stockInfo参数示例
      * {
      *   "subTaskId":1,
-     *   "stockInfo":  {"code":"35265465", "sku":"256354566-9", "property1":"Puma", "property2":"Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"50", "incrementQty":"50", "status":"增量失败", "fixFlg":false}
+     *   "stockInfo":  {"model":"35265", "code":"35265465", "sku":"256354566-9", "property1":"Puma", "property2":"Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"50", "incrementQty":"50", "status":"增量失败", "fixFlg":false}
      * }
      * @apiSuccess (系统级返回字段) {String} code 处理结果代码编号
      * @apiSuccess (系统级返回字段) {String} message 处理结果描述
@@ -118,7 +118,7 @@ public class CmsTaskIncrementStockDetailController extends CmsController {
      * {
      *  "code":"0", "message":null, "displayType":null, "redirectTo":null,
      *  "data":{
-     *    "stockInfo":  {"code":"35265465", "sku":"256354566-9", "property1":"Puma", "property2":"Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"50", "incrementQty":"50", "status":"未进行", "fixFlg":false}
+     *    "stockInfo":  {"model":"35265", "code":"35265465", "sku":"256354566-9", "property1":"Puma", "property2":"Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"50", "incrementQty":"50", "status":"未进行", "fixFlg":false}
      *  }
      *  }
      * @apiErrorExample  错误示例
@@ -153,7 +153,7 @@ public class CmsTaskIncrementStockDetailController extends CmsController {
      * @apiParamExample  stockInfo参数示例
      * {
      *   "subTaskId":1,
-     *   "stockInfo":  {"code":"35265465", "sku":"256354566-9", "property1":"Puma", "property2":"Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"50", "incrementQty":"50", "status":"未进行", "fixFlg":false}
+     *   "stockInfo":  {"model":"35265", "code":"35265465", "sku":"256354566-9", "property1":"Puma", "property2":"Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"50", "incrementQty":"50", "status":"未进行", "fixFlg":false}
      * }
      * @apiSuccess (系统级返回字段) {String} code 处理结果代码编号
      * @apiSuccess (系统级返回字段) {String} message 处理结果描述
@@ -196,12 +196,12 @@ public class CmsTaskIncrementStockDetailController extends CmsController {
      *  根据参数.增量任务id从cms_bt_increment_stock_separate_item表导出库存隔离数据。
      *
      *  导出文件示例
-     *  Code        Sku	            品牌        Name(英文)              性别    SIZE    可调配库存  天猫   固定值增量
-     *  302370-013  302370-013-10   Air Jordan  Air Jordan IX (9) Retro	Women   10      13          12     是
-     *  302370-013  302370-013-10.5 Air Jordan  Air Jordan IX (9) Retro	Women   10.5    10          9
-     *  302370-013  302370-013-11   Air Jordan  Air Jordan IX (9) Retro	Man     11      3           3
+     *  Model    Code        Sku	            品牌        Name(英文)              性别    SIZE    可调配库存  天猫   固定值增量
+     *  302370   302370-013  302370-013-10   Air Jordan  Air Jordan IX (9) Retro	Women   10      13          12     yes
+     *  302370   302370-013  302370-013-10.5 Air Jordan  Air Jordan IX (9) Retro	Women   10.5    10          9
+     *  302370   302370-013  302370-013-11   Air Jordan  Air Jordan IX (9) Retro	Man     11      3           3
      * @apiExample 使用表
-     *  cms_bt_increment_stock_separate_item
+     *  cms_bt_stock_separate_increment_item
      *  com_mt_value_channel
      *
      */
@@ -237,29 +237,29 @@ public class CmsTaskIncrementStockDetailController extends CmsController {
      * }
      * @apiExample  业务说明
      *  1.进行导入文件的Check。
-     *      1.0 如果在cms_bt_increment_stock_separate_item表中，这个增量任务有状态<>0:未进行的数据，则不允许导入
+     *      1.0 如果在cms_bt_stock_separate_increment_item表中，这个增量任务有状态<>0:未进行的数据，则不允许导入
      *      1.1 Code和Sku都不能为空白。
      *      1.2 所有字段的长度check。
      *      1.3 根据参数.渠道id从com_mt_value_channel表（type=62）取得有几个属性（例如 N个）
      *      1.4 第一行的第3列开始的属性名称必须和1.3取得的属性名称一致。
-     *      1.5 第一行的第N+4列（平台信息）必须和任务所对应的平台匹配。
-     *      1.6 第二行开始，第N+3列必须和cms_bt_increment_stock_separate_item表的可用库存相同。
-     *      1.7 第二行开始，第N+4列的内容必须是大于0的整数。（增量库存列）
-     *      1.8 第二行开始，第N+5列的内容必须是"是"或者空白。（固定值增量列）
+     *      1.5 第一行的第N+5列（平台信息）必须和任务所对应的平台匹配。
+     *      1.6 第二行开始，第N+4列必须和cms_bt_stock_separate_increment_item表的可用库存相同。
+     *      1.7 第二行开始，第N+5列的内容必须是大于0的整数。（增量库存列）
+     *      1.8 第二行开始，第N+6列的内容必须是"yes"或者空白。（固定值增量列）
      *
-     *  2.将导入的增量库存隔离数据插入到cms_bt_increment_stock_separate_item表。
-     *    2.1 如果这条增量明细信息（参数.增量任务id + sku）在cms_bt_increment_stock_separate_item表中不存在，则追加。
-     *    2.2 如果这条增量明细信息（参数.增量任务id + sku）在cms_bt_increment_stock_separate_item表中存在，则更新增量库存和是否固定值增量两个字段。
+     *  2.将导入的增量库存隔离数据插入到cms_bt_stock_separate_increment_item表。
+     *    2.1 如果这条增量明细信息（参数.增量任务id + sku）在cms_bt_stock_separate_increment_item表中不存在，则追加。
+     *    2.2 如果这条增量明细信息（参数.增量任务id + sku）在cms_bt_stock_separate_increment_item表中存在，则更新增量库存和是否固定值增量两个字段。
      *
      *  导入文件示例
-     *  Code        Sku	            品牌        Name(英文)              性别    SIZE    可调配库存  天猫   固定值增量
-     *  302370-013  302370-013-10   Air Jordan  Air Jordan IX (9) Retro	Women   10      13          12     是
-     *  302370-013  302370-013-10.5 Air Jordan  Air Jordan IX (9) Retro	Women   10.5    10          9
-     *  302370-013  302370-013-11   Air Jordan  Air Jordan IX (9) Retro	Man     11      3           3
+     *  Model    Code        Sku	            品牌        Name(英文)              性别    SIZE    可调配库存  天猫   固定值增量
+     *  302370   302370-013  302370-013-10   Air Jordan  Air Jordan IX (9) Retro	Women   10      13          12     yes
+     *  302370   302370-013  302370-013-10.5 Air Jordan  Air Jordan IX (9) Retro	Women   10.5    10          9
+     *  302370   302370-013  302370-013-11   Air Jordan  Air Jordan IX (9) Retro	Man     11      3           3
      * @apiExample 使用表
      *  com_mt_value_channel
-     *  cms_bt_increment_stock_separate_task
-     *  cms_bt_increment_stock_separate_item
+     *  cms_bt_stock_separate_increment_task
+     *  cms_bt_stock_separate_increment_item
      *
      *
      */

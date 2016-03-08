@@ -1,5 +1,7 @@
 package com.voyageone.web2.cms.views.promotion.task;
 
+import com.voyageone.common.configs.TypeChannel;
+import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
@@ -25,8 +27,8 @@ import java.util.Map;
 )
 public class CmsTaskStockController extends CmsController {
 
-//    @Autowired
-//    private CmsTaskStockService cmsTaskStockService;
+    @Autowired
+    private CmsTaskStockService cmsTaskStockService;
 
     /**
      * @api {post} /cms/promotion/task_stock/initNewTask 1.01 新建库存隔离任务前初始化数据取得
@@ -134,7 +136,7 @@ public class CmsTaskStockController extends CmsController {
      *    3.1.根据sku从wms_bt_inventory_center_logic表取得逻辑库存。
      *    3.2.根据sku从cms_bt_stock_separate_item表取得状态='2:隔离成功'的隔离库存数。
      *    3.3.根据sku从cms_bt_increment_stock_separate_item表取得状态='2:隔离成功'的增量隔离库存数。
-     *    3.4.根据sku从cms_bt_sales_quantity表取得隔离期间各个隔离平台的销售数量。
+     *    3.4.根据sku从cms_bt_stock_sales_quantity表取得隔离期间各个隔离平台的销售数量。
      *    3.5.可用库存数 = 3.1：取得逻辑库存 - （3.2：隔离库存数 + 3.3：增量隔离库存数 - 3.4：隔离平台的销售数量）
      *    3.6.隔离平台隔离库存 = 可用库存数 * 设定的百分比
      * @apiExample 使用表
@@ -148,7 +150,7 @@ public class CmsTaskStockController extends CmsController {
      *  wms_bt_inventory_center_logic
      *  cms_bt_stock_separate_item
      *  cms_bt_increment_stock_separate_item
-     *  cms_bt_sales_quantity
+     *  cms_bt_stock_sales_quantity
      *
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK.SAVE_TASK)
@@ -205,6 +207,8 @@ public class CmsTaskStockController extends CmsController {
      * @apiParam (应用级参数) {String} taskId 任务id
      * @apiParam (应用级参数) {String} code 商品Code
      * @apiParam (应用级参数) {String} sku Sku
+     * @apiParam (应用级参数) {String} qtyFrom 可用库存（下限）
+     * @apiParam (应用级参数) {String} qtyTo 可用库存（上限）
      * @apiParam (应用级参数) {String} status 状态（0：未进行； 1：等待隔离； 2：隔离成功； 3：隔离失败； 4：等待还原； 5：还原成功； 6：还原失败； 7：再修正； 空白:ALL）
      * @apiParam (应用级参数) {String} property1 属性1（品牌）
      * @apiParam (应用级参数) {String} property2 属性2（英文短描述）
@@ -248,31 +252,31 @@ public class CmsTaskStockController extends CmsController {
      *   "restoreFailNum":0,
      *   "changedNum":0,
      *   "realStockStatus":"1",
-     *   "propertyList": [ {"name":"品牌", "show":false},
-     *                     {"name":"英文短描述", "show":false},
-     *                     {"name":"性别", "show":false}，
-     *                     {"name":"Size", "show":false}],
+     *   "propertyList": [ {"value":"property1", "name":"品牌", "logic":"", "show":false},
+     *                     {"value":"property2", "name":"英文短描述", "logic":"Like", "show":false},
+     *                     {"value":"property3", "name":"性别", "logic":"", "show":false}，
+     *                     {"value":"property4", "name":"Size", "logic":"", "show":false}],
      *   "platformList": [ {"cartId":"23", "cartName":"天猫国际"},
      *                     {"cartId":"27", "cartName":"聚美优品"} ]，
-     *   "stockList": [ {"code":"35265465", "sku":"256354566-9", "property1":"Puma", "property2":"Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"50",
+     *   "stockList": [ {"model":"35265", "code":"35265465", "sku":"256354566-9", "property1":"Puma", "property2":"Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"50",
      *                                                         "platformStock":[{"cartId":"23", "qty":"30", "status":"隔离成功"},
      *                                                                          {"cartId":"27", "qty":"10", "status":"隔离失败"}]},
-     *                   {"code":"35265465", "sku":"256354566-10", "property1":"Puma", "property2":"Puma Suede Classic +Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"80",
+     *                   {"model":"35265", "code":"35265465", "sku":"256354566-10", "property1":"Puma", "property2":"Puma Suede Classic +Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"80",
      *                                                         "platformStock":[{"cartId":"23", "qty":"40", "status":"等待隔离"},
      *                                                                          {"cartId":"27", "qty":"30", "status":"还原成功"}]},
-     *                   {"code":"35265465", "sku":"256354566-11", "property1":"Puma", "property2":"Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"80",
+     *                   {"model":"35265", "code":"35265465", "sku":"256354566-11", "property1":"Puma", "property2":"Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"80",
      *                                                         "platformStock":[{"cartId":"23", "qty":"-1", "status":""},
      *                                                                          {"cartId":"27", "qty":"10", "status":"还原成功"}]},
      *                    ...]，
-     *   "realStockList": [ {"code":"35265465", "Sku":"256354566-9", "property1":"Puma", "property2":"Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"50",
-     *                                                         "platformStock":[{"cart_id":"23", "separationQty":"30", "salesQty":"10"},
-     *                                                                          {"cart_id":"27", "separationQty":"20", "salesQty":"0"}]},
-     *                   {"code":"35265465", "Sku":"256354566-10", "property1":"Puma", "property2":"Puma Suede Classic +Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"80",
-     *                                                         "platformStock":[{"cart_id":"23", "separationQty":"30", "salesQty":"10"},
-     *                                                                          {"cart_id":"27", "separationQty":"20", "salesQty":"0"}]},
-     *                   {"code":"35265465", "Sku":"256354566-11", "property1":"Puma", "property2":"Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"80",
-     *                                                         "platformStock":[{"cart_id":"23", "separationQty":"-1", },
-     *                                                                          {"cart_id":"27", "separationQty":"-1", }]}
+     *   "realStockList": [ {"model":"35265", "code":"35265465", "Sku":"256354566-9", "property1":"Puma", "property2":"Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"50",
+     *                                                         "platformStock":[{"cartId":"23", "separationQty":"30", "salesQty":"10"},
+     *                                                                          {"cartId":"27", "separationQty":"20", "salesQty":"0"}]},
+     *                   {"model":"35265", "code":"35265465", "Sku":"256354566-10", "property1":"Puma", "property2":"Puma Suede Classic +Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"80",
+     *                                                         "platformStock":[{"cartId":"23", "separationQty":"30", "salesQty":"10"},
+     *                                                                          {"cartId":"27", "separationQty":"20", "salesQty":"0"}]},
+     *                   {"model":"35265", "code":"35265465", "Sku":"256354566-11", "property1":"Puma", "property2":"Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"80",
+     *                                                         "platformStock":[{"cartId":"23", "separationQty":"-1", },
+     *                                                                          {"cartId":"27", "separationQty":"-1", }]}
      *                    ...]，
      *  }
      * }
@@ -284,12 +288,12 @@ public class CmsTaskStockController extends CmsController {
      *    2.0 根据任务ID，Code，Sku，状态和各个属性从cms_bt_stock_separate_item表取得Sku信息。（按一个sku一条记录，按sku进行分页）
      *    2.1.根据sku从wms_bt_inventory_center_logic表取得逻辑库存。
      *    2.2.根据sku从cms_bt_stock_separate_item表取得状态='2:隔离成功'的隔离库存数。
-     *    2.3.根据sku从cms_bt_increment_stock_separate_item表取得状态='2:隔离成功'的增量隔离库存数。
-     *    2.4.根据sku从cms_bt_sales_quantity表取得隔离期间各个隔离平台的销售数量。
+     *    2.3.根据sku从cms_bt_stock_separate_increment_item表取得状态='2:增量成功'的增量隔离库存数。
+     *    2.4.根据sku从cms_bt_stock_sales_quantity表取得隔离期间各个隔离平台的销售数量。
      *    2.5.可用库存数（realStockList.qty） = 2.1：取得逻辑库存 - （2.2：隔离库存数 + 2.3：增量隔离库存数 - 2.4：隔离平台的销售数量）
      *        平台销售数量(realStockList.platformStock.salesQty) = 2.4
      *        平台隔离数量(realStockList.platformStock.separationQty) = 2.2 + 2.3
-     *   注：如果隔离结束的话，还原后，数据会移动到历史表里，这个时候取数据需要到cms_bt_stock_separate_item_history表和cms_bt_increment_stock_separate_item_history表里取得数据。
+     *   注：如果隔离结束的话，还原后，数据会移动到历史表里，这个时候取数据需要到cms_bt_stock_separate_item_history表和cms_bt_stock_separate_increment_item_history表里取得数据。
      *       对于已经结束的隔离任务来说，实时库存状态页只要显示出平台隔离数量
      *      （是否从history表取得数据的判断依据是 隔离任务状态为3：Close或者任务id在history表中有数据）
      *
@@ -297,10 +301,10 @@ public class CmsTaskStockController extends CmsController {
      * @apiExample 使用表
      *  wms_bt_inventory_center_logic
      *  cms_bt_stock_separate_item
-     *  cms_bt_increment_stock_separate_item
-     *  cms_bt_sales_quantity
+     *  cms_bt_stock_separate_increment_item
+     *  cms_bt_stock_sales_quantity
      *  cms_bt_stock_separate_item_history
-     *  cms_bt_increment_stock_separate_item_history
+     *  cms_bt_stock_separate_increment_item_history
      *  com_mt_value_channel
      *  cms_bt_tasks
      *
@@ -308,9 +312,44 @@ public class CmsTaskStockController extends CmsController {
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK.SEARCH_STOCK)
     public AjaxResponse searchStock(@RequestBody Map param) {
 
+        param.put("channelId", this.getUser().getSelChannelId());
+        param.put("lang", this.getLang());
+
+        Map<String, Object> resultBean = new HashMap<>();
+
+        // 取得属性列表 只有首次取得
+        if (param.get("propertyList") == null) {
+            List<Map<String, Object>> propertyList = cmsTaskStockService.getPropertyList(param);
+            resultBean.put("propertyList", propertyList);
+        } else {
+            resultBean.put("propertyList", param.get("propertyList"));
+        }
+
+        // 任务对应平台信息列表 只有首次取得
+        List<Map<String, Object>> platformList = cmsTaskStockService.getPlatformList(param);
+        resultBean.put("platformList", platformList);
+
+        // 取得任务id在history表中时候有数据
+        boolean historyFlg = cmsTaskStockService.isHistoryExist(param);
+        if (historyFlg) {
+            param.put("tableName", "voyageone_cms2.cms_bt_stock_separate_item_history");
+        } else {
+            param.put("tableName", "voyageone_cms2.cms_bt_stock_separate_item");
+        }
+
+        // 获取当页表示的Sku
+        List<String> skuList = cmsTaskStockService.getCommonStockPageSkuList(param);
+
+        // 获取库存隔离明细
+        List<Map<String, Object>> stockList = cmsTaskStockService.getCommonStockList(param, platformList, skuList);
+        resultBean.put("stockList", stockList);
+
+        // 实时库存状态
+        List<Map<String, Object>> realStockList = cmsTaskStockService.getRealStockList(param, platformList, skuList);
+        resultBean.put("realStockList", realStockList);
 
         // 返回
-        return success(null);
+        return success(resultBean);
     }
 
 
@@ -324,13 +363,15 @@ public class CmsTaskStockController extends CmsController {
      * @apiParam (应用级参数) {String} taskId 任务id
      * @apiParam (应用级参数) {String} code 商品Code
      * @apiParam (应用级参数) {String} sku Sku
+     * @apiParam (应用级参数) {String} qtyFrom 可用库存（下限）
+     * @apiParam (应用级参数) {String} qtyTo 可用库存（上限）
      * @apiParam (应用级参数) {String} status 状态（0：未进行； 1：等待隔离； 2：隔离成功； 3：隔离失败； 4：等待还原； 5：还原成功； 6：还原失败； 7：再修正； 空白:ALL）
      * @apiParam (应用级参数) {String} property1 属性1（品牌）
      * @apiParam (应用级参数) {String} property2 属性2（英文短描述）
      * @apiParam (应用级参数) {String} property3 属性3（性别）
      * @apiParam (应用级参数) {String} property4 属性4（SIZE）
-     * @apiParam (应用级参数) {String} start 检索开始Index
-     * @apiParam (应用级参数) {String} length 检索件数
+     * @apiParam (应用级参数) {String} start1 检索开始Index
+     * @apiParam (应用级参数) {String} length1 检索件数
      * @apiSuccess (系统级返回字段) {String} code 处理结果代码编号
      * @apiSuccess (系统级返回字段) {String} message 处理结果描述
      * @apiSuccess (系统级返回字段) {String} displayType 消息的提示方式
@@ -342,13 +383,13 @@ public class CmsTaskStockController extends CmsController {
      *  "code":"0", "message":null, "displayType":null, "redirectTo":null,
      *  "data":{
      *   "countNum":5000,
-     *   "stockList": [ {"code":"35265465", "sku":"256354566-9", "property1":"Puma", "property2":"Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"50",
+     *   "stockList": [ {"model":"35265", "code":"35265465", "sku":"256354566-9", "property1":"Puma", "property2":"Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"50",
      *                                                         "platformStock":[{"cartId":"23", "qty":"30", "status":"隔离成功"},
      *                                                                          {"cartId":"27", "qty":"10", "status":"隔离失败"}]},
-     *                   {"code":"35265465", "sku":"256354566-10", "property1":"Puma", "property2":"Puma Suede Classic +Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"80",
+     *                   {"model":"35265", "code":"35265465", "sku":"256354566-10", "property1":"Puma", "property2":"Puma Suede Classic +Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"80",
      *                                                         "platformStock":[{"cartId":"23", "qty":"40", "status":"等待隔离"},
      *                                                                          {"cartId":"27", "qty":"30", "status":"还原成功"}]},
-     *                   {"code":"35265465", "sku":"256354566-11", "property1":"Puma", "property2":"Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"80",
+     *                   {"model":"35265", "code":"35265465", "sku":"256354566-11", "property1":"Puma", "property2":"Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"80",
      *                                                         "platformStock":[{"cartId":"23", "qty":"-1", "status":""},
      *                                                                          {"cartId":"27", "qty":"10", "status":"还原成功"}]},
      *                    ...]
@@ -383,13 +424,15 @@ public class CmsTaskStockController extends CmsController {
      * @apiParam (应用级参数) {String} taskId 任务id
      * @apiParam (应用级参数) {String} code 商品Code
      * @apiParam (应用级参数) {String} sku Sku
+     * @apiParam (应用级参数) {String} qtyFrom 可用库存（下限）
+     * @apiParam (应用级参数) {String} qtyTo 可用库存（上限）
      * @apiParam (应用级参数) {String} status 状态（0：未进行； 1：等待隔离； 2：隔离成功； 3：隔离失败； 4：等待还原； 5：还原成功； 6：还原失败； 7：再修正； 空白:ALL）
      * @apiParam (应用级参数) {String} property1 属性1（品牌）
      * @apiParam (应用级参数) {String} property2 属性2（英文短描述）
      * @apiParam (应用级参数) {String} property3 属性3（性别）
      * @apiParam (应用级参数) {String} property4 属性4（SIZE）
-     * @apiParam (应用级参数) {String} start 检索开始Index
-     * @apiParam (应用级参数) {String} length 检索件数
+     * @apiParam (应用级参数) {String} start2 检索开始Index
+     * @apiParam (应用级参数) {String} length2 检索件数
      * @apiSuccess (系统级返回字段) {String} code 处理结果代码编号
      * @apiSuccess (系统级返回字段) {String} message 处理结果描述
      * @apiSuccess (系统级返回字段) {String} displayType 消息的提示方式
@@ -401,15 +444,15 @@ public class CmsTaskStockController extends CmsController {
      *  "code":"0", "message":null, "displayType":null, "redirectTo":null,
      *  "data":{
      *   "countNum":10000,
-     *   "realStockList": [ {"code":"35265465", "Sku":"256354566-9", "property1":"Puma", "property2":"Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"50",
-     *                                                         "platformStock":[{"cart_id":"23", "separationQty":30, "salesQty":"10"},
-     *                                                                          {"cart_id":"27", "separationQty":20, "salesQty":"0"}]},
-     *                   {"code":"35265465", "Sku":"256354566-10", "property1":"Puma", "property2":"Puma Suede Classic +Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"80",
-     *                                                         "platformStock":[{"cart_id":"23", "separationQty":30, "salesQty":"10"},
-     *                                                                          {"cart_id":"27", "separationQty":20, "salesQty":"0"}]},
-     *                   {"code":"35265465", "Sku":"256354566-11", "property1":"Puma", "property2":"Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"80",
-     *                                                         "platformStock":[{"cart_id":"23", "separationQty":"-1", },
-     *                                                                          {"cart_id":"27", "separationQty":"-1", }]},
+     *   "realStockList": [ {"model":"35265", "code":"35265465", "Sku":"256354566-9", "property1":"Puma", "property2":"Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"50",
+     *                                                         "platformStock":[{"cartId":"23", "separationQty":30, "salesQty":"10"},
+     *                                                                          {"cartId":"27", "separationQty":20, "salesQty":"0"}]},
+     *                   {"model":"35265", "code":"35265465", "Sku":"256354566-10", "property1":"Puma", "property2":"Puma Suede Classic +Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"80",
+     *                                                         "platformStock":[{"cartId":"23", "separationQty":30, "salesQty":"10"},
+     *                                                                          {"cartId":"27", "separationQty":20, "salesQty":"0"}]},
+     *                   {"model":"35265", "code":"35265465", "Sku":"256354566-11", "property1":"Puma", "property2":"Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"80",
+     *                                                         "platformStock":[{"cartId":"23", "separationQty":"-1", },
+     *                                                                          {"cartId":"27", "separationQty":"-1", }]},
      *                    ...]
      *  }
      * }
@@ -419,19 +462,19 @@ public class CmsTaskStockController extends CmsController {
      *    1.0 根据参数.任务id，商品Code，Sku，状态和各个属性从cms_bt_stock_separate_item表取得Sku信息。（一个Sku一条记录，按Sku进行分页）
      *    2.1.根据sku从wms_bt_inventory_center_logic表取得逻辑库存。
      *    2.2.根据sku从cms_bt_stock_separate_item表取得状态='2:隔离成功'的隔离库存数。
-     *    2.3.根据sku从cms_bt_increment_stock_separate_item表取得状态='2:隔离成功'的增量隔离库存数。
-     *    2.4.根据sku从cms_bt_sales_quantity表取得隔离期间各个隔离平台的销售数量。
+     *    2.3.根据sku从cms_bt_stock_separate_increment_item表取得状态='2:隔离成功'的增量隔离库存数。
+     *    2.4.根据sku从cms_bt_stock_sales_quantity表取得隔离期间各个隔离平台的销售数量。
      *    2.5.可用库存数（realStockList.qty） = 2.1：取得逻辑库存 - （2.2：隔离库存数 + 2.3：增量隔离库存数 - 2.4：隔离平台的销售数量）
-     *   注：如果隔离结束的话，还原后，数据会移动到历史表里，这个时候取数据需要到cms_bt_stock_separate_item_history表和cms_bt_increment_stock_separate_item_history表里取得数据。
+     *   注：如果隔离结束的话，还原后，数据会移动到历史表里，这个时候取数据需要到cms_bt_stock_separate_item_history表和cms_bt_stock_separate_increment_item_history表里取得数据。
      *       对于已经结束的隔离任务来说，实时库存状态页只要显示出平台隔离数量
      *      （是否从history表取得数据的判断依据是 隔离任务状态为3：Close或者任务id在history表中有数据）
      * @apiExample 使用表
      *  wms_bt_inventory_center_logic
      *  cms_bt_stock_separate_item
-     *  cms_bt_increment_stock_separate_item
-     *  cms_bt_sales_quantity
+     *  cms_bt_stock_separate_increment_item
+     *  cms_bt_stock_sales_quantity
      *  cms_bt_stock_separate_item_history
-     *  cms_bt_increment_stock_separate_item_history
+     *  cms_bt_stock_separate_increment_item_history
      *  cms_bt_tasks
      *
      */
@@ -500,15 +543,15 @@ public class CmsTaskStockController extends CmsController {
      *  按下面的逻辑计算出可用库存数
      *  1.根据参数.Sku从wms_bt_inventory_center_logic表取得逻辑库存。
      *  2.根据参数.Sku从cms_bt_stock_separate_item表取得状态='2:隔离成功'的隔离库存数。
-     *  3.根据参数.Sku从cms_bt_increment_stock_separate_item表取得状态='2:隔离成功'的增量隔离库存数。
-     *  4.根据参数.Sku从cms_bt_sales_quantity表取得隔离期间各个隔离平台的销售数量。
+     *  3.根据参数.Sku从cms_bt_stock_separate_increment_item表取得状态='2:隔离成功'的增量隔离库存数。
+     *  4.根据参数.Sku从cms_bt_stock_sales_quantity表取得隔离期间各个隔离平台的销售数量。
      *  5.可用库存数 = 1：取得逻辑库存 - （2：隔离库存数 + 3：增量隔离库存数 - 4：隔离平台的销售数量）
      *
      * @apiExample 使用表
      *  wms_bt_inventory_center_logic
      *  cms_bt_stock_separate_item
-     *  cms_bt_increment_stock_separate_item
-     *  cms_bt_sales_quantity
+     *  cms_bt_stock_separate_increment_item
+     *  cms_bt_stock_sales_quantity
      *
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK.GET_USABLE_STOCK)
@@ -572,10 +615,10 @@ public class CmsTaskStockController extends CmsController {
      *  根据参数.任务id以Sku为单位从cms_bt_stock_separate_item表导出库存隔离数据。
      *
      *  导出文件示例
-     *  Code          Sku              品牌          Name(英文)                 性别     SIZE    可用库存      天猫    京东      其他
-     *  302370-013    302370-013-10    Air Jordan    Air Jordan IX (9) Retro    Women    10      100         50       30        动态
-     *  302370-013    302370-013-10.5  Air Jordan    Air Jordan IX (9) Retro    Women    10.5    200         100      60        动态
-     *  302370-013    302370-013-11    Air Jordan    Air Jordan IX (9) Retro    Man      11      100         动态     50        动态
+     *  Model    Code          Sku              品牌          Name(英文)                 性别     SIZE    可用库存      天猫    京东      其他
+     *  302370   302370-013    302370-013-10    Air Jordan    Air Jordan IX (9) Retro    Women    10      100         50       30        动态
+     *  302370   302370-013    302370-013-10.5  Air Jordan    Air Jordan IX (9) Retro    Women    10.5    200         100      60        动态
+     *  302370   302370-013    302370-013-11    Air Jordan    Air Jordan IX (9) Retro    Man      11      100         动态     50        动态
      * @apiExample 使用表
      *  cms_bt_stock_separate_item
      *  com_mt_value_channel
@@ -617,9 +660,9 @@ public class CmsTaskStockController extends CmsController {
      *      2.2 所有字段的长度check。
      *      2.3 根据参数.渠道id从com_mt_value_channel表（type=62）取得有几个属性（例如 N个）
      *      2.4 第一行的第3列开始的属性名称必须和2.3取得的属性名称一致。
-     *      2.5 第一行的第N+4列开始的平台信息，必须和任务所对应的平台匹配。
-     *      2.6 第二行开始，第N+3列必须和cms_bt_stock_separate_item表的可用库存相同。
-     *      2.7 第二行开始，第N+4列之后的内容必须是"动态"，或者是大于0的整数。
+     *      2.5 第一行的第N+5列开始的平台信息，必须和任务所对应的平台匹配。
+     *      2.6 第二行开始，第N+4列必须和cms_bt_stock_separate_item表的可用库存相同。
+     *      2.7 第二行开始，第N+5列之后的内容必须是"动态"，或者是大于0的整数。
      *      2.8 导入方式：增量方式。
      *               check文件中的所有sku在cms_bt_stock_separate_item表中不存在
      *          导入方式：变更方式。
@@ -635,10 +678,10 @@ public class CmsTaskStockController extends CmsController {
      *    注：系统时间已经超过导入平台的活动开始时间，则不进行导入。
      *
      *  导入文件示例
-     *  Code          Sku              品牌          Name(英文)                 性别     SIZE    可用库存      天猫    京东      其他
-     *  302370-013    302370-013-10    Air Jordan    Air Jordan IX (9) Retro    Women    10      100         50       30        动态
-     *  302370-013    302370-013-10.5  Air Jordan    Air Jordan IX (9) Retro    Women    10.5    200         100      60        动态
-     *  302370-013    302370-013-11    Air Jordan    Air Jordan IX (9) Retro    Man      11      100         动态     50        动态
+     *  Model    Code          Sku              品牌          Name(英文)                 性别     SIZE    可用库存      天猫    京东      其他
+     *  302370   302370-013    302370-013-10    Air Jordan    Air Jordan IX (9) Retro    Women    10      100         50       30        动态
+     *  302370   302370-013    302370-013-10.5  Air Jordan    Air Jordan IX (9) Retro    Women    10.5    200         100      60        动态
+     *  302370   302370-013    302370-013-11    Air Jordan    Air Jordan IX (9) Retro    Man      11      100         动态     50        动态
      * 说明：设置动态的隔离平台不插入数据，某个平台下面的隔离库存可以设置为0。
      * @apiExample 使用表
      *  cms_bt_promotion
@@ -733,13 +776,13 @@ public class CmsTaskStockController extends CmsController {
      * @apiParamExample  stockList参数示例
      * {
      *   "taskId":1,
-     *   "stockList": [ {"code":"35265465", "sku":"256354566-9", "property1":"Puma", "property2":"Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"50",
+     *   "stockList": [ {"model":"35265", "code":"35265465", "sku":"256354566-9", "property1":"Puma", "property2":"Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"50",
      *                                                         "platformStock":[{"cartId":"23", "qty":"40", "status":"隔离成功"},
      *                                                                          {"cartId":"27", "qty":"10", "status":"隔离失败"}]},
-     *                   {"code":"35265465", "sku":"256354566-10", "property1":"Puma", "property2":"Puma Suede Classic +Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"80",
+     *                   {"model":"35265", "code":"35265465", "sku":"256354566-10", "property1":"Puma", "property2":"Puma Suede Classic +Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"80",
      *                                                         "platformStock":[{"cartId":"23", "qty":"40", "status":"等待隔离"},
      *                                                                          {"cartId":"27", "qty":"30", "status":"还原成功"}]},
-     *                   {"code":"35265465", "sku":"256354566-11", "property1":"Puma", "property2":"Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"80",
+     *                   {"model":"35265", "code":"35265465", "sku":"256354566-11", "property1":"Puma", "property2":"Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"80",
      *                                                         "platformStock":[{"cartId":"23", "qty":"-1", "status":""},
      *                                                                          {"cartId":"27", "qty":"10", "status":"还原成功"}]},
      *                    ...]
@@ -752,13 +795,13 @@ public class CmsTaskStockController extends CmsController {
      * {
      *  "code":"0", "message":null, "displayType":null, "redirectTo":null,
      *  "data":{,
-     *   "stockList": [ {"code":"35265465", "sku":"256354566-9", "property1":"Puma", "property2":"Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"50",
+     *   "stockList": [ {"model":"35265", "code":"35265465", "sku":"256354566-9", "property1":"Puma", "property2":"Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"50",
      *                                                         "platformStock":[{"cartId":"23", "qty":"40", "status":"再修正"},
      *                                                                          {"cartId":"27", "qty":"10", "status":"再修正"}]},
-     *                   {"code":"35265465", "sku":"256354566-10", "property1":"Puma", "property2":"Puma Suede Classic +Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"80",
+     *                   {"model":"35265", "code":"35265465", "sku":"256354566-10", "property1":"Puma", "property2":"Puma Suede Classic +Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"80",
      *                                                         "platformStock":[{"cartId":"23", "qty":"40", "status":"等待隔离"},
      *                                                                          {"cartId":"27", "qty":"30", "status":"还原成功"}]},
-     *                   {"code":"35265465", "sku":"256354566-11", "property1":"Puma", "property2":"Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"80",
+     *                   {"model":"35265", "code":"35265465", "sku":"256354566-11", "property1":"Puma", "property2":"Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"80",
      *                                                         "platformStock":[{"cartId":"23", "qty":"-1", "status":""},
      *                                                                          {"cartId":"27", "qty":"10", "status":"还原成功"}]},
      *                    ...]
@@ -795,7 +838,7 @@ public class CmsTaskStockController extends CmsController {
      * @apiParamExample  stockInfo参数示例
      * {
      *   "taskId":1,
-     *   "stockInfo":  {"code":"35265465", "sku":"256354566-9", "property1":"Puma", "property2":"Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"50",
+     *   "stockInfo":  {"model":"35265", "code":"35265465", "sku":"256354566-9", "property1":"Puma", "property2":"Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"50",
      *                                                         "platformStock":[{"cartId":"23", "qty":"40", "status":"未进行"},
      *                                                                          {"cartId":"27", "qty":"10", "status":"未进行"}]}
      * }
@@ -855,14 +898,14 @@ public class CmsTaskStockController extends CmsController {
      * 说明："type"：隔离类型;"taskName"：隔离/增量任务名；"qty":隔离/增量数量
      * @apiExample  业务说明
      *  1.根据参数.任务id，平台id，Sku从cms_bt_stock_separate_item表里检索一般库存隔离的数据
-     *  2.根据参数.任务id，平台id，Sku从cms_bt_increment_stock_separate_item表里检索增量库存隔离的数据
-     *   注：如果隔离结束的话，还原后，数据会移动到历史表里，这个时候取数据需要到cms_bt_stock_separate_item_history表和cms_bt_increment_stock_separate_item_history表里取得数据。
+     *  2.根据参数.任务id，平台id，Sku从cms_bt_stock_separate_increment_item表里检索增量库存隔离的数据
+     *   注：如果隔离结束的话，还原后，数据会移动到历史表里，这个时候取数据需要到cms_bt_stock_separate_item_history表和cms_bt_stock_separate_increment_item_history表里取得数据。
      *      （是否从history表取得数据的判断依据是 隔离任务状态为3：Close或者任务id在history表中有数据）
      * @apiExample 使用表
      *  cms_bt_stock_separate_item
      *  cms_bt_stock_separate_item_history
-     *  cms_bt_increment_stock_separate_item
-     *  cms_bt_increment_stock_separate_item_history
+     *  cms_bt_stock_separate_increment_item
+     *  cms_bt_stock_separate_increment_item_history
      *
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK.GET_SKU_SEPARATION_DETAIL)
@@ -885,16 +928,16 @@ public class CmsTaskStockController extends CmsController {
      * @apiSuccess (系统级返回字段) {String} statusCode HttpStatus（eg:200:"OK"）
      * @apiSuccess (系统级返回字段) {byte[]} byte 导出的文件流
      * @apiExample  业务说明
-     *  根据参数.任务id以Sku为单位从cms_bt_stock_separate_item表和cms_bt_increment_stock_separate_item表导出库存隔离数据。（按发生时间升序）
+     *  根据参数.任务id以Sku为单位从cms_bt_stock_separate_item表和cms_bt_stock_separate_increment_item表导出库存隔离数据。（按发生时间升序）
      *  导出文件示例
-     *  Code          Sku                  平台    隔离类型    错误信息      发生时间
-     *  302370-013    302370-013-10       天猫    一般        XXXXXXXXXXX    2016/2/19 00:00:13
-     *  302370-013    302370-013-10.5     天猫    一般        XXXXXXXXXXX    2016/2/19 00:00:14
-     *  302370-013    302370-013-10.5     京东    增量        XXXXXXXXXXX    2016/2/19 00:00:15
+     *  Model    Code          Sku                  平台    隔离类型    错误信息      发生时间
+     *  302370   302370-013    302370-013-10       天猫    一般        XXXXXXXXXXX    2016/2/19 00:00:13
+     *  302370   302370-013    302370-013-10.5     天猫    一般        XXXXXXXXXXX    2016/2/19 00:00:14
+     *  302370   302370-013    302370-013-10.5     京东    增量        XXXXXXXXXXX    2016/2/19 00:00:15
      *
      * @apiExample 使用表
      *  cms_bt_stock_separate_item
-     *  cms_bt_increment_stock_separate_item
+     *  cms_bt_stock_separate_increment_item
      *
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK.EXPORT_ERROR_INFO)

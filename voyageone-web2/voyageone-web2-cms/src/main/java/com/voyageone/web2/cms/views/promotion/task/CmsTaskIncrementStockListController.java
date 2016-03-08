@@ -89,9 +89,9 @@ public class CmsTaskIncrementStockListController extends CmsController {
      * }
      * 说明："taskName":增量任务名。"cartName":平台名。
      * @apiExample  业务说明
-     *  1.根据参数.任务id，增量任务名从cms_bt_increment_stock_separate_task表检索增量库存隔离任务。
+     *  1.根据参数.任务id，增量任务名从cms_bt_stock_separate_increment_task表检索增量库存隔离任务。
      * @apiExample 使用表
-     *  cms_bt_increment_stock_separate_task
+     *  cms_bt_stock_separate_increment_task
      *
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.INCREMENT_STOCK_LIST.SEARCH_TASK)
@@ -129,24 +129,24 @@ public class CmsTaskIncrementStockListController extends CmsController {
      * @apiExample  业务说明
      *  1.check输入信息。增量比例或增量值必须输入，并且必须设定而且为大于0的整数。
      *                   任务名长度check。
-     *  2.如果是新建增量任务时（参数.增量任务id没有内容），将增量任务信息插入到cms_bt_increment_stock_separate_task表。
-     *    如果是修改增量任务时（参数.增量任务id有内容），只能修改任务名，将任务名更新到cms_bt_increment_stock_separate_task表。
+     *  2.如果是新建增量任务时（参数.增量任务id没有内容），将增量任务信息插入到cms_bt_stock_separate_increment_task表。
+     *    如果是修改增量任务时（参数.增量任务id有内容），只能修改任务名，将任务名更新到cms_bt_stock_separate_increment_task表。
      *  3.如果是新建增量任务时（参数.增量任务id没有内容），抽出cms_bt_stock_separate_item表中的所有sku后，计算出各sku的可用库存数
-     *    并且根据增量任务的设定，计算出增量库存隔离数，插入到cms_bt_increment_stock_separate_item表中。（固定值隔离标志位=0：按动态值进行增量隔离）
+     *    并且根据增量任务的设定，计算出增量库存隔离数，插入到cms_bt_stock_separate_increment_item表中。（固定值隔离标志位=0：按动态值进行增量隔离）
      *    3.0 参数.任务id从cms_bt_stock_separate_item表抽出所有的sku
      *    3.1.根据sku从wms_bt_inventory_center_logic表取得逻辑库存。
      *    3.2.根据sku从cms_bt_stock_separate_item表取得状态='2:隔离成功'的隔离库存数。
-     *    3.3.根据sku从cms_bt_increment_stock_separate_item表取得状态='2:隔离成功'的增量隔离库存数。
-     *    3.4.根据sku从cms_bt_sales_quantity表取得隔离期间各个隔离平台的销售数量。
+     *    3.3.根据sku从cms_bt_stock_separate_increment_item表取得状态='2:增量成功'的增量隔离库存数。
+     *    3.4.根据sku从cms_bt_stock_sales_quantity表取得隔离期间各个隔离平台的销售数量。
      *    3.5.可用库存数 = 3.1：取得逻辑库存 - （3.2：隔离库存数 + 3.3：增量隔离库存数 - 3.4：隔离平台的销售数量）
      *    3.6.参数.增量类型 = 0：百分比增量时，增量库存隔离数 = 可用库存数 * 增量的百分比
      *        参数.增量类型 = 1：数值增量时，增量库存隔离数 = 增量值
      * @apiExample 使用表
-     *  cms_bt_increment_stock_separate_task
+     *  cms_bt_stock_separate_increment_task
      *  cms_bt_stock_separate_item
-     *  cms_bt_increment_stock_separate_item
+     *  cms_bt_stock_separate_increment_item
      *  wms_bt_inventory_center_logic
-     *  cms_bt_sales_quantity
+     *  cms_bt_stock_sales_quantity
      *
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.INCREMENT_STOCK_LIST.SAVE_TASK)
@@ -178,11 +178,11 @@ public class CmsTaskIncrementStockListController extends CmsController {
      *  "code": "1", "message": "已经开始增量隔离，删除失败", "displayType":null, "redirectTo":null, "data":null
      * }
      * @apiExample  业务说明
-     *  1.check是否可以删除。如果这个任务在cms_bt_increment_stock_separate_item表中存在状态<>0:未进行的增量隔离数据（已经启动过这个任务的增量库存隔离），则不允许删除。
-     *  2.删除cms_bt_increment_stock_separate_item表，cms_bt_increment_stock_separate_task表中对应的数据。
+     *  1.check是否可以删除。如果这个任务在cms_bt_stock_separate_increment_item表中存在状态<>0:未进行的增量隔离数据（已经启动过这个任务的增量库存隔离），则不允许删除。
+     *  2.删除cms_bt_stock_separate_increment_item表，cms_bt_stock_separate_increment_task表中对应的数据。
      * @apiExample 使用表
-     *  cms_bt_increment_stock_separate_item
-     *  cms_bt_increment_stock_separate_task
+     *  cms_bt_stock_separate_increment_item
+     *  cms_bt_stock_separate_increment_task
      *
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.INCREMENT_STOCK_LIST.DEL_TASK)
