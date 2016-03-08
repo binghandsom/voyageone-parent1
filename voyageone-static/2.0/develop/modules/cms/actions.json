@@ -114,6 +114,22 @@
       }
     },
     "task": {
+      "taskService": {
+        "root": "/cms/promotion/task",
+        "page": "page"
+      },
+      "taskBeatService": {
+        "root": "/cms/task/beat",
+        "create": "create",
+        "page": "page",
+        "import": "import",
+        "download": "download",
+        "control": "control",
+        "addNumiid": "addNumiid",
+        "addCode": "addCode",
+        "addCheck": "addCheck",
+        "add": "add"
+      },
       "taskPriceService" : {
         "root": "/cms/task/price",
         "getPriceList": "getPriceList",
@@ -168,6 +184,14 @@
         "saveTask":"saveTask",
         "submitTask":"submitTask",
         "getFeedAttributes":"getFeedAttributes"
+      }
+    },
+    "channel": {
+      "custom": {
+        "attributeService": {
+          "root":"/cms/channel/custom_prop/",
+          "init": "init"
+        }
       }
     }
   }

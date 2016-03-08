@@ -16,6 +16,25 @@
             <artifactId>voyageone-com</artifactId>
             <version>${voyageone.common.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.voyageone</groupId>
+            <artifactId>voyageone-masterdata-schema</artifactId>
+            <version>${voyageone.md.schema.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.voyageone</groupId>
+            <artifactId>voyageone-web2-sdk</artifactId>
+            <version>${voyageone.web2.sdk.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.voyageone</groupId>
+            <artifactId>voyageone-web2-wsdl</artifactId>
+            <version>${voyageone.web2.wsdl.version}</version>
+        </dependency>
+
     </dependencies>
 </project>
 

@@ -226,6 +226,9 @@
         <if test="productId != null and productId != ''">
             and product_id = #{productId,jdbcType=INTEGER}
         </if>
+        <if test="productCode != null and productCode != ''">
+            and product_code = #{productCode,jdbcType=VARCHAR}
+        </if>
     </delete>
 
     <!-- MongoDB 取得 SKU 数据插入-->

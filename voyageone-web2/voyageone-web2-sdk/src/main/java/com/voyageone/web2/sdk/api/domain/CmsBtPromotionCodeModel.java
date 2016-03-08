@@ -2,6 +2,9 @@ package com.voyageone.web2.sdk.api.domain;
 
 import com.voyageone.cms.service.model.CmsBtProductModel;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author james.li on 2015/12/15.
  * @version 2.0.0
@@ -20,9 +23,11 @@ public class CmsBtPromotionCodeModel extends CmsBtPromotionGroupModel {
 
     private Double promotionPrice;
 
-    private String imageUrlSale;
+    private String image_url_1;
 
-    private String imageUrlSaleOut;
+    private String image_url_2;
+
+    private String image_url_3;
 
     private String image;
 
@@ -37,6 +42,20 @@ public class CmsBtPromotionCodeModel extends CmsBtPromotionGroupModel {
     private String tagPath;
 
     private String tagPathName;
+
+    private Double msrpUS;
+
+    private String property1;
+
+    private String property2;
+
+    private String property3;
+
+    private String property4;
+
+    private String time;
+
+    private List<CmsBtPromotionSkuModel> skus;
 
     public CmsBtPromotionCodeModel(CmsBtProductModel productInfo, int cartId, int promotionId, String operator) {
         super(productInfo, cartId, promotionId, operator);
@@ -91,20 +110,28 @@ public class CmsBtPromotionCodeModel extends CmsBtPromotionGroupModel {
         this.promotionPrice = promotionPrice;
     }
 
-    public String getImageUrlSale() {
-        return imageUrlSale;
+    public String getImage_url_1() {
+        return image_url_1;
     }
 
-    public void setImageUrlSale(String imageUrlSale) {
-        this.imageUrlSale = imageUrlSale;
+    public void setImage_url_1(String image_url_1) {
+        this.image_url_1 = image_url_1;
     }
 
-    public String getImageUrlSaleOut() {
-        return imageUrlSaleOut;
+    public String getImage_url_2() {
+        return image_url_2;
     }
 
-    public void setImageUrlSaleOut(String imageUrlSaleOut) {
-        this.imageUrlSaleOut = imageUrlSaleOut;
+    public void setImage_url_2(String image_url_2) {
+        this.image_url_2 = image_url_2;
+    }
+
+    public String getImage_url_3() {
+        return image_url_3;
+    }
+
+    public void setImage_url_3(String image_url_3) {
+        this.image_url_3 = image_url_3;
     }
 
     public String getImage() {
@@ -169,5 +196,64 @@ public class CmsBtPromotionCodeModel extends CmsBtPromotionGroupModel {
 
     public void setTagPathName(String tagPathName) {
         this.tagPathName = tagPathName;
+    }
+
+    public Double getMsrpUS() {
+        return msrpUS;
+    }
+
+    public void setMsrpUS(Double msrpUS) {
+        this.msrpUS = msrpUS;
+    }
+
+    public String getProperty1() {
+        return property1;
+    }
+
+    public void setProperty1(String property1) {
+        this.property1 = property1;
+    }
+
+    public String getProperty2() {
+        return property2;
+    }
+
+    public void setProperty2(String property2) {
+        this.property2 = property2;
+    }
+
+    public String getProperty3() {
+        return property3;
+    }
+
+    public void setProperty3(String property3) {
+        this.property3 = property3;
+    }
+
+    public String getProperty4() {
+        return property4;
+    }
+
+    public void setProperty4(String property4) {
+        this.property4 = property4;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
+    }
+
+    public List<CmsBtPromotionSkuModel> getSkus() {
+        if(skus == null) {
+            skus = new ArrayList<>();
+        }
+        return skus;
+    }
+
+    public void setSkus(List<CmsBtPromotionSkuModel> skus) {
+        this.skus = skus;
     }
 }

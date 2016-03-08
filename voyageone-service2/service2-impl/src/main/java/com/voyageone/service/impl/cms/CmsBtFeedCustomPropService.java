@@ -1,0 +1,287 @@
+package com.voyageone.service.impl.cms;
+
+import com.voyageone.common.util.StringUtils;
+import com.voyageone.service.dao.cms.CmsBtFeedCustomPropAndValueDao;
+import com.voyageone.service.model.cms.CmsBtFeedCustomPropModel;
+import com.voyageone.service.model.cms.CmsBtFeedCustomPropValueModel;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * 获取自定义属性的列表(含翻译), 同时获取属性相应的属性值的列表(含翻译)
+ *
+ * Created by zhujiaye on 16/2/26.
+ */
+@Service
+public class CmsBtFeedCustomPropService {
+	@Autowired
+	private CmsBtFeedCustomPropAndValueDao cmsBtFeedCustomPropAndValueDao;
+
+	// 自定义属性
+	private List<CmsBtFeedCustomPropModel> customPropList;
+	private Map<String, Map<String, Map<String, List<String>>>> customPropMap; // customPropList的简化版 (全小写) (<类目名称 <属性名称, <属性值, 属性值翻译列表>>>)
+	// 翻译: 全店共通
+	private Map<String, String> propCommonPublic;
+
+	// 是否已初始化过了
+	private boolean blnInit = false;
+
+	/**
+	 * 初始化一下 ( 获取最新的数据, 整理好的数据放在: customPropList )
+	 * 每次大量处理之前最好都做一遍, 防止别人修改了什么内容没有及时反映
+	 * @param channel_id	channel id
+	 */
+	public void doInit(String channel_id) {
+		// 翻译: 全店共通
+		propCommonPublic = new HashMap<>();
+		// 翻译: 无视category级别的共通
+		Map<Integer, Map<String, String>> propCommon = new HashMap<>(); // ( <属性id <属性值, 属性值的翻译> > )
+		Map<String, Map<String, String>> propCommonN = new HashMap<>(); // ( <属性名 <属性值, 属性值的翻译> > )
+
+		// 获取表里的数据 (当前渠道的所有数据)
+		customPropList = cmsBtFeedCustomPropAndValueDao.getPropList(channel_id);
+		for (CmsBtFeedCustomPropModel customProp : customPropList) {
+			customProp.setMapPropValue(new HashMap<>());
+		}
+		List<CmsBtFeedCustomPropValueModel> propValueList = cmsBtFeedCustomPropAndValueDao.getPropValue(channel_id);
+
+		// 数据整理 - 将 <属性值得翻译> 的内容整合到 <属性列表> 中去
+		// 注意: 不属于任何prop (就是prop_id为0) 的数据, 将会被扔到 customtranslationList
+		for (CmsBtFeedCustomPropValueModel propValue : propValueList) {
+			if (propValue.getProp_id() == 0) {
+				// 全店共通的翻译
+				propCommonPublic.put(propValue.getFeed_value_original(), propValue.getFeed_value_translation());
+			} else {
+				// 找找看, 找得到就挂上去, 找不到也不管, 直接扔掉
+				for (CmsBtFeedCustomPropModel customProp : customPropList) {
+					if (customProp.getId() == propValue.getProp_id()) {
+						// 找到了
+						List<String> lst = new ArrayList<>();
+						lst.add(propValue.getFeed_value_translation());
+						customProp.getMapPropValue().put(propValue.getFeed_value_original(), lst);
+
+						break;
+					}
+				}
+			}
+		}
+
+		// 获取无视category级别的共通
+		for (CmsBtFeedCustomPropModel customProp : customPropList) {
+			if (StringUtils.isEmpty(customProp.getFeed_cat_path()) || "0".equals(customProp.getFeed_cat_path())) {
+				// 设置属性名称
+				propCommon.put(customProp.getId(), new HashMap<>());
+			}
+		}
+		for (CmsBtFeedCustomPropValueModel customPropValue : propValueList) {
+			if (propCommon.containsKey(customPropValue.getProp_id())) {
+				propCommon.get(customPropValue.getProp_id()).put(customPropValue.getFeed_value_original(), customPropValue.getFeed_value_translation());
+			}
+		}
+		for (Map.Entry<Integer, Map<String, String>> entry : propCommon.entrySet()) {
+			Integer key = entry.getKey(); // 属性id
+			Map<String, String> val = entry.getValue();	// 属性值的翻译列表
+
+			for (CmsBtFeedCustomPropModel customProp : customPropList) {
+				if (customProp.getId() == key) {
+					propCommonN.put(customProp.getFeed_prop_original(), val);
+
+					break;
+				}
+			}
+		}
+
+		// 在category级的结构体中补充一些无视category级别备选的翻译数据
+		for (CmsBtFeedCustomPropModel propModel : customPropList) {
+			// 遍历所有属性值
+			for (Map.Entry<String, List<String>> entry : propModel.getMapPropValue().entrySet()) {
+				String key = entry.getKey();		// 属性值
+				List<String> val = entry.getValue();	// 属性值的翻译列表
+
+				// 自己不是共通的话, 才会走进来. 如果自己就是共通的话, 就没有必要进来了
+				if (!StringUtils.isEmpty(propModel.getFeed_cat_path()) && !"0".equals(propModel.getFeed_cat_path())) {
+					// 看看这个key是否有 <无视category级的翻译> 翻译
+					if (propCommonN.containsKey(propModel.getFeed_prop_original())) { // 找到属性了
+						if (propCommonN.get(propModel.getFeed_prop_original()).containsKey(key)) {
+							String tmpTrans = propCommonN.get(propModel.getFeed_prop_original()).get(key);
+							if (!StringUtils.isEmpty(tmpTrans)) {
+								// 设置一下
+								val.add(tmpTrans);
+							}
+						}
+					}
+				}
+
+				// 看看这个key是否有 <全店铺共通> 翻译
+				if (propCommonPublic.containsKey(key)) {
+					val.add(propCommonPublic.get(key));
+				}
+			}
+		}
+
+		// 设置简化版 (<类目名称 <属性名称, <属性值, 属性值翻译>>>)
+		customPropMap = new HashMap<>();
+		for (CmsBtFeedCustomPropModel propModel : customPropList) {
+			// 属性值英文全部变成小写
+			Map<String, List<String>> propValueLower = new HashMap<>();
+			{
+				for (Map.Entry<String, List<String>> entry : propModel.getMapPropValue().entrySet()) {
+					String key = entry.getKey().toLowerCase();        // 属性值
+					List<String> val = entry.getValue();    // 属性值的翻译列表
+					propValueLower.put(key, val);
+				}
+			}
+
+			// 看看类目是否存在
+			if (customPropMap.containsKey(propModel.getFeed_cat_path().toLowerCase())) {
+				// 存在类目的
+				// 同一个类目里是不可以有相同属性名称的, 所以无需判断是否重复, 如果有就直接覆盖
+				customPropMap.get(propModel.getFeed_cat_path().toLowerCase()).put(propModel.getFeed_prop_original().toLowerCase(), propValueLower);
+
+			} else {
+				// 添加这个类目
+				Map<String, Map<String, List<String>>> mapCat = new HashMap<>();
+
+				// <属性名称 <属性值名, 属性值翻译列表>>
+				mapCat.put(propModel.getFeed_prop_original(), propValueLower);
+
+				customPropMap.put(propModel.getFeed_cat_path().toLowerCase(), mapCat);
+			}
+		}
+
+		// 初始化好了
+		blnInit = true;
+	}
+
+	/**
+	 * 获取自定义属性列表
+	 * 注意点:
+	 * 	1. 如果feed_cat_path为0或空, 那么只显示公共属性
+	 * 	2. 显示优先顺为: 公共属性 -> 类目属性 (数据库里有display_order, 之前init里的sql已经处理掉了)
+	 * 	3. 类目属性名称如果与公共属性名称一致, 那么翻译以类目属性的翻译为准
+	 * 	4. 如果类目属性名称没有翻译, 那么就认为该类目无需显示
+	 * @param channel_id	channel id
+	 * @param feed_cat_path	feed cat path
+	 * @return 自定义属性列表 (返回的内容里, 其实主要就是feed_prop_original 和 feed_prop_translation比较有用)
+	 */
+	public List<CmsBtFeedCustomPropModel> getPropList(
+			String channel_id,
+			String feed_cat_path
+	) {
+		if (!blnInit) {
+			doInit(channel_id);
+		}
+
+		List<CmsBtFeedCustomPropModel> result = new ArrayList<>();
+
+		// 抽出公共字段
+		for (CmsBtFeedCustomPropModel propModel : customPropList) {
+			if (StringUtils.isEmpty(propModel.getFeed_cat_path()) || "0".equals(propModel.getFeed_cat_path())) {
+				result.add(propModel);
+			}
+		}
+
+		// 设定类目字段
+		if (!StringUtils.isEmpty(feed_cat_path) && !"0".equals(feed_cat_path)) {
+			// 遍历一下
+			for (CmsBtFeedCustomPropModel propModel : customPropList) {
+				// 如果类目名称一致
+				if (propModel.getFeed_cat_path().equals(feed_cat_path)) {
+					String fanyi = propModel.getFeed_prop_translation();
+
+					// 看看公共属性里是否有存在
+					boolean blnFound = false;
+					for (CmsBtFeedCustomPropModel prop : result) {
+						// 找到了的场合
+						if (prop.getFeed_prop_original().equals(propModel.getFeed_prop_original())) {
+							// 看看是否有翻译
+							if (!StringUtils.isEmpty(fanyi)) {
+								// 有翻译的话, 那就替换掉翻译
+								prop.setFeed_prop_translation(propModel.getFeed_prop_translation());
+							} else {
+								// 如果没有翻译, 那就删掉这个公共属性
+								result.remove(prop);
+							}
+
+							blnFound = true;
+							break;
+						}
+					}
+					// 如果没找到
+					if (!blnFound) {
+						// 如果有翻译, 那就加上, 如果没有翻译, 那就忽略这个字段
+						if (!StringUtils.isEmpty(fanyi)) {
+							result.add(propModel);
+						}
+					}
+
+				}
+			}
+		}
+
+		return result;
+	}
+
+	public List<CmsBtFeedCustomPropModel> getPropListForEdit() {
+		// TODO: 这里是给前台编辑用的, 用来抽出基本的信息
+
+		return null;
+	}
+
+	/**
+	 * 求翻译 (忽略待翻译的内容的大小写, 包括其所在的类目和属性名,都忽略大小写)
+	 * @param channel_id			channel id
+	 * @param feed_cat_path			要翻译的内容, 所处的feed category path, 如果不知道就设0
+	 * @param prop_name				要翻译的内容, 是哪个属性里的, 如果不知道就设0
+	 * @param value					要翻译的内容
+	 * @return 翻译好的内容
+	 */
+	public String getPropTrans(String channel_id, String feed_cat_path, String prop_name, String value) {
+		if (!blnInit) {
+			doInit(channel_id);
+		}
+
+		String result = "";
+
+		// 从customPropList的简化版中获取数据
+		Map<String, Map<String, List<String>>> propMap = null;
+		if (customPropMap.containsKey(feed_cat_path.toLowerCase())) {
+			// 指定类目
+			propMap = customPropMap.get(feed_cat_path.toLowerCase());
+		} else if (customPropMap.containsKey("0")) {
+			// 类目级共通
+			propMap = customPropMap.get("0");
+		}
+
+		if (propMap != null) {
+			if (propMap.containsKey(prop_name.toLowerCase())) {
+				Map<String, List<String>> valueMap = propMap.get(prop_name.toLowerCase());
+				if (valueMap.containsKey(value.toLowerCase())) {
+					List<String> transList = valueMap.get(value.toLowerCase());
+
+					for (String trans : transList) {
+						if (!StringUtils.isEmpty(trans)) {
+							result = trans;
+							break;
+						}
+					}
+				}
+			}
+		}
+
+		// 如果没有内容, 那么就去看看全局共通里面是否有相同的
+		if (StringUtils.isEmpty(result)) {
+			if (propCommonPublic.containsKey(value.toLowerCase())) {
+				result = propCommonPublic.get(value.toLowerCase());
+			}
+		}
+
+		return result;
+	}
+
+}

@@ -1,18 +1,15 @@
-/**
- * Created by linanbin on 15/12/7.
- */
 
 define([
     'modules/cms/controller/popup.ctl'
 ], function () {
 
-    function indexController($scope,promotionService,confirm,$translate,cActions) {
+    function indexController($scope, promotionService, confirm, $translate, cActions) {
 
-        $scope.vm = {"promotionList": [],"platformTypeList":[],"promotionStatus":[]};
+        $scope.vm = {"promotionList": [], "platformTypeList": [], "promotionStatus": []};
         $scope.searchInfo = {};
         $scope.groupPageOption = {curr: 1, total: 198, size: 30, fetch: $scope.search};
 
-        $scope.initialize  = function () {
+        $scope.initialize = function () {
             promotionService.init().then(function (res) {
                 $scope.vm.platformTypeList = res.data.platformTypeList;
                 $scope.vm.promotionStatus = res.data.promotionStatus;
@@ -24,33 +21,33 @@ define([
             $scope.searchInfo = {};
         };
 
-        $scope.openOtherDownload = function(promotionId){
+        $scope.openOtherDownload = function (promotionId) {
 
-            $.download.post(cActions.cms.promotion.promotionService.root+"/"+cActions.cms.promotion.promotionService.exportPromotion,{"promotionId":promotionId});
-        }
+            $.download.post(cActions.cms.promotion.promotionService.root + "/" + cActions.cms.promotion.promotionService.exportPromotion, {"promotionId": promotionId});
+        };
 
         $scope.search = function () {
-            promotionService.getPromotionList($scope.searchInfo).then(function(res){
+            promotionService.getPromotionList($scope.searchInfo).then(function (res) {
                 $scope.vm.promotionList = res.data;
                 $scope.groupPageOption.total = $scope.vm.promotionList.size;
-            },function(res){
+            }, function (res) {
             })
         };
 
         $scope.del = function (data) {
-            confirm($translate.instant('TXT_MSG_DO_DELETE') +data.promotionName).result.then(function(){
-                var index = _.indexOf($scope.vm.promotionList,data);
-                data.isActive = false
-                promotionService.updatePromotion(data).then(function(){
-                    $scope.vm.promotionList.splice(index,1);
+            confirm($translate.instant('TXT_MSG_DO_DELETE') + data.promotionName).result.then(function () {
+                var index = _.indexOf($scope.vm.promotionList, data);
+                data.isActive = false;
+                promotionService.updatePromotion(data).then(function () {
+                    $scope.vm.promotionList.splice(index, 1);
                     $scope.groupPageOption.total = $scope.vm.promotionList.size;
-                },function(res){
+                }, function (res) {
                 })
             })
 
         };
-    };
+    }
 
-    indexController.$inject = ['$scope','promotionService', 'confirm', '$translate','cActions'];
+    indexController.$inject = ['$scope', 'promotionService', 'confirm', '$translate', 'cActions'];
     return indexController;
 });
