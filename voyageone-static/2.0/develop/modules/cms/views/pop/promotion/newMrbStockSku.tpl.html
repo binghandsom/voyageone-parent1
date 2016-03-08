@@ -1,0 +1,66 @@
+<div class="vo_modal" ng-init="initialize()">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$close()"><span
+                aria-hidden="true"><i class="fa fa-close"></i></span></button>
+        <h5 class="modal-title"><i class="fa fa-codepen"></i>&nbsp;新增库存隔离明细</h5>
+    </div>
+    <div class="modal-body wrapper">
+        <form role="form" class="form-horizontal">
+            <div class="form-group">
+                <label class="col-sm-3 control-label">Model</label>
+                <div class="col-sm-7">
+                    <input type="text" class="form-control">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">Code</label>
+                <div class="col-sm-7">
+                    <input type="text" class="form-control">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">Sku</label>
+                <div class="col-sm-7">
+                    <input type="text" class="form-control">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">可用库存</label>
+                <div class="col-sm-4">
+                    <input type="text" class="form-control">
+                </div>
+                <div class="col-sm-3">
+                    <button class="btn btn-primary btn-xs"><i class="glyphicon glyphicon-share-alt"></i>&nbsp;取得可用库存</button>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">天猫隔离库存</label>
+                <div class="col-sm-4">
+                    <input type="text" class="form-control">
+                </div>
+                <div class="col-sm-3 m-t-xs">
+                    <label class="checkbox-inline c-checkbox">
+                        <input type="checkbox">
+                        <span class="fa fa-check"></span>&nbsp;动态
+                    </label>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">京东隔离库存</label>
+                <div class="col-sm-4">
+                    <input type="text" class="form-control">
+                </div>
+                <div class="col-sm-3 m-t-xs">
+                    <label class="checkbox-inline c-checkbox">
+                        <input type="checkbox">
+                        <span class="fa fa-check"></span>&nbsp;动态
+                    </label>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-default" ng-click="$close()"><i class="fa fa-remove"></i> 取消</button>
+        <button class="btn btn-vo" ng-click="ok()"><i class="glyphicon glyphicon-floppy-disk"></i> 保存</button>
+    </div>
+</div><!-- .vo_modal -->

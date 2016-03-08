@@ -1,0 +1,494 @@
+<div class="wrapper-md" ng-init="initialize()">
+	<div class="vo_accordion vo_attr">
+		<div class="panel-group">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h4 class="panel-title"><i class="fa fa-codepen"></i>&nbsp;库存隔离明细</h4>
+				</div>
+				<div class="container-fluid" ng-controller="popupCtrl">
+					<div class="col-sm-12">
+						<div class="col-sm-3">
+							<div class="form-horizontal">
+								<div class="form-group">
+								<label class="col-sm-3 control-label">品牌</label>
+								<div class="col-sm-9">
+									<input type="text" class="form-control">
+								</div>
+							    </div>
+								<div class="form-group">
+									<label class="col-sm-3 control-label">Model</label>
+									<div class="col-sm-9">
+										<input type="text" class="form-control">
+									</div>
+								</div>
+								<div class="form-group form-inline">
+									<label class="col-sm-3 control-label">是否显示</label>
+									<div class="col-sm-9" style="padding-left:0px">
+										<label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;品牌</label>
+										<label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;Name</label>
+										<label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;性别</label>
+										<label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;SIZE</label>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-sm-3">
+							<div class="form-horizontal">
+								<div class="form-group">
+									<label class="col-sm-3 control-label">Name</label>
+									<div class="col-sm-9">
+										<input type="text" class="form-control">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-3 control-label">Code</label>
+									<div class="col-sm-9">
+										<input type="text" class="form-control">
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-sm-3">
+							<div class="form-horizontal">
+								<div class="form-group">
+									<label class="col-sm-3 control-label">性别</label>
+									<div class="col-sm-9">
+										<input type="text" class="form-control">
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-3 control-label">Sku</label>
+									<div class="col-sm-9">
+										<input type="text" class="form-control">
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-sm-3">
+							<div class="form-horizontal">
+								<div class="form-group">
+									<label class="col-sm-3 control-label">SIZE</label>
+									<div class="col-sm-8">
+										<input type="text" class="form-control">
+									</div>
+								</div>
+								<div class="form-group">
+								<label class="col-sm-3 control-label">可用库存</label>
+								<div class="form-inline col-sm-9">
+									<div class="col-sm-5 input-group">
+										<input type="text" class="form-control">
+									</div>
+									&nbsp;~&nbsp;
+									<div class="col-sm-5 input-group">
+										<input type="text" class="form-control">
+									</div>
+								</div>
+							</div>
+
+							</div>
+						</div>
+						<div class="col-sm-12 text-center m-b-md" ng-controller="popupCtrl">
+							<div class="form-horizontal form-inline">
+								<button class="btn btn-default" ng-click="clear()"><i class="fa fa-remove"></i>&nbsp;清除</button>
+								<button class="btn btn-vo" ng-click="search()"><i class="fa fa-search"></i>&nbsp;搜索</button>
+								<!--<button class="btn btn-success" ng-click="openMrbstockadd('md')"><i class="fa fa-plus"></i>&nbsp;新建任务</button>-->
+							</div><!-- .form-inline -->
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+	<tabset class="tab-container vo_nav-tabs">
+		<!--right-btn-->
+		<div class="form-inline pull-right btn-group">
+			<button class="btn btn-default" disabled>code数：5000</button>
+			<button class="btn btn-default" disabled>sku数：10000</button>
+			<button class="btn btn-default-vo">总数：100000</button>
+			<button class="btn btn-default-vo">未进行：1000</button>
+			<button class="btn btn-default-vo">等待隔离：5000</button>
+			<button class="btn btn-default-vo">隔离成功：1000</button>
+			<button class="btn btn-default-vo">隔离失败：0</button>
+			<button class="btn btn-default-vo">等待还原：5000</button>
+			<button class="btn btn-default-vo">还原成功：10000</button>
+		</div><!-- /right-btn -->
+		<!--tab-->
+		<tab>
+			<tab-heading><i class="glyphicons glyphicons-more-items text-default"></i>&nbsp;库存隔离明细</tab-heading>
+			<div class="box">
+				<div class="table-responsive">
+					<div class="col-sm-12">
+						<div class="pull-right form-inline btn-group" ng-controller="popupCtrl">
+							<!--<button class="btn btn-danger" ng-click="openImport('md')"><i class="fa fa-reply-all"></i>&nbsp;批量导入SKU</button>-->
+							<button class="btn btn-dangers" ng-click="openImportStock('md')"><i class="fa fa-reply-all"></i>&nbsp;批量导入</button>
+							<button class="btn btn-danger"><i class="glyphicon glyphicon-share-alt"></i>&nbsp;批量导出</button>
+							<button class="btn btn-primary"><i class="glyphicon glyphicon-play"></i>&nbsp;启动/重刷所有</button>
+							<button class="btn btn-primarys"><i class="glyphicon glyphicon-share-alt"></i>&nbsp;还原所有</button>
+						</div>
+						<div class="pull-left">
+							<div class="form-group form-inline" ng-controller="popupCtrl">
+								<label class="control-label m-b-md m-r-xs ">批量设定</label>
+								<label class="control-label">
+									<select class="form-control">
+										<option class="form-control">天猫</option>
+										<option class="form-control">京东</option>
+									</select>
+								</label>
+								<input type="text" class="form-control" placeholder="10%">
+								<label class="control-label m-l-xs m-r-xs text-vo"><i class="icon fa fa-bell-o"></i>&nbsp;请填写百分比</label>
+								<button class="btn btn-default"><i class="glyphicon glyphicon-cog"></i>&nbsp;设定</button>
+								<button class="btn btn-vo"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;保存</button>
+								<button class="btn btn-success" ng-click="openNewMrbStockSku('md')"><i class="fa fa-plus"></i>&nbsp;新增</button>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-sm-12 dropdown_table_mains">
+						<table class="table table-hover-new vo_table" style="width:1800px;margin-bottom:0px" ng-controller="popupCtrl">
+							<thead>
+							<tr>
+								<th class="text-center"><label class="checkbox-inline c-checkbox">
+									<input type="checkbox">
+									<span class="fa fa-check"></span>&nbsp;全选</label></th>
+								<th class="text-center">No.</th>
+								<th class="text-center">Model</th>
+								<th class="text-center">Code</th>
+								<th class="text-center">Sku</th>
+								<th class="text-center">品牌</th>
+								<th class="text-left">Name(英文)</th>
+								<th class="text-center">性别</th>
+								<th class="text-center">Size</th>
+								<th class="text-center">可用库存</th>
+								<th class="text-center mfb-xt">天猫</th>
+								<th class="text-center">状态</th>
+								<th class="text-center mfb-xt">京东</th>
+								<th class="text-center">状态</th>
+								<th class="text-center">其它</th>
+								<th class="text-center">操作</th>
+								<th class="text-center">编辑</th>
+							</tr>
+							</thead>
+							<tbody>
+							<tr>
+								<td class="text-center">
+									<label class="checkbox-inline c-checkbox">
+										<input type="checkbox">
+										<span class="fa fa-check"></span>
+									</label></td>
+								<td class="text-center">1</td>
+								<td class="text-center">352665</td>
+								<td class="text-center">35265465</td>
+								<td class="text-center"> 256354566-9</td>
+								<td class="text-center"> Sneakerhead</td>
+								<td class="text-left"> Puma Suede Classic+</td>
+								<td class="text-center"> 男</td>
+								<td class="text-center"> 9</td>
+								<td class="text-center">50</td>
+								<td class="text-center">动态</td>
+								<td class="text-center">/</td>
+								<td class="text-center"><input class="form-control" placeholder="30"></td>
+								<td class="text-center">隔离失败</td>
+								<td class="text-center">动态</td>
+								<td class="text-center">
+									<button title="启动" class="btn btn-default-purple btn-xs"><i class="glyphicon glyphicon-play"></i>&nbsp;启动</button>
+									<button title="还原" class="btn btn-default-green btn-xs"><i class="glyphicon glyphicon-share-alt"></i>&nbsp;还原</button>
+								</td>
+								<td class="text-center">
+									<button title="保存" class="btn btn-vo btn-xs"><i class="glyphicon glyphicon-floppy-disk"></i></button>
+									<button title="删除" class="btn btn-danger btn-xs"><i class="fa  fa-trash-o"></i></button>
+								</td>
+							</tr>
+							<tr>
+								<td class="text-center">
+									<label class="checkbox-inline c-checkbox">
+										<input type="checkbox">
+										<span class="fa fa-check"></span>
+									</label></td>
+								<td class="text-center">2</td>
+								<td class="text-center">352665</td>
+								<td class="text-center">35265465</td>
+								<td class="text-center"> 256354566-10</td>
+								<td class="text-center"> Sneakerhead</td>
+								<td class="text-left"> Puma Suede Classic+</td>
+								<td class="text-center"> 男</td>
+								<td class="text-center"> 9</td>
+								<td class="text-center">60</td>
+								<td class="text-center"><input class="form-control" placeholder="10"></td>
+								<td class="text-center">未进行</td>
+								<td class="text-center"><input class="form-control" placeholder="90"></td>
+								<td class="text-center">未进行</td>
+								<td class="text-center">动态</td>
+								<td class="text-center">
+									<button title="启动" class="btn btn-default-purple btn-xs"><i class="glyphicon glyphicon-play"></i>&nbsp;启动</button>
+									<button title="还原" class="btn btn-default-green btn-xs"><i class="glyphicon glyphicon-share-alt"></i>&nbsp;还原</button>
+								</td>
+								<td class="text-center">
+									<button title="保存" class="btn btn-vo btn-xs"><i class="glyphicon glyphicon-floppy-disk"></i></button>
+									<button title="删除" class="btn btn-danger btn-xs"><i class="fa  fa-trash-o"></i></button>
+								</td>
+							</tr>
+							<tr>
+								<td class="text-center">
+									<label class="checkbox-inline c-checkbox">
+										<input type="checkbox">
+										<span class="fa fa-check"></span>
+									</label></td>
+								<td class="text-center">3</td>
+								<td class="text-center">352665</td>
+								<td class="text-center">35265465</td>
+								<td class="text-center"> 256354566-11</td>
+								<td class="text-center"> Sneakerhead</td>
+								<td class="text-left"> Puma Suede Classic+</td>
+								<td class="text-center"> 女</td>
+								<td class="text-center"> 16</td>
+								<td class="text-center">50</td>
+								<td class="text-center"><input class="form-control" placeholder="20"></td>
+								<td class="text-center">等待隔离</td>
+								<td class="text-center"><input class="form-control" placeholder="30"></td>
+								<td class="text-center">等待隔离</td>
+								<td class="text-center">动态</td>
+								<td class="text-center">
+									<button title="启动" class="btn btn-default-purple btn-xs"><i class="glyphicon glyphicon-play"></i>&nbsp;启动</button>
+									<button title="还原" class="btn btn-default-green btn-xs"><i class="glyphicon glyphicon-share-alt"></i>&nbsp;还原</button>
+								</td>
+								<td class="text-center">
+									<button title="保存" class="btn btn-vo btn-xs"><i class="glyphicon glyphicon-floppy-disk"></i></button>
+									<button title="删除" class="btn btn-danger btn-xs"><i class="fa  fa-trash-o"></i></button>
+								</td>
+							</tr>
+							<tr>
+								<td class="text-center">
+									<label class="checkbox-inline c-checkbox">
+										<input type="checkbox">
+										<span class="fa fa-check"></span>
+									</label></td>
+								<td class="text-center">4</td>
+								<td class="text-center">352665</td>
+								<td class="text-center">35265465</td>
+								<td class="text-center"> 256354566-12</td>
+								<td class="text-center"> Sneakerhead</td>
+								<td class="text-left"> Puma Suede Classic+</td>
+								<td class="text-center"> 男</td>
+								<td class="text-center"> 9</td>
+								<td class="text-center">60</td>
+								<td class="text-center"><input class="form-control" placeholder="10"></td>
+								<td class="text-center">隔离成功</td>
+								<td class="text-center"><input class="form-control" placeholder="90"></td>
+								<td class="text-center">隔离失败</td>
+								<td class="text-center">动态</td>
+								<td class="text-center">
+									<button title="启动" class="btn btn-default-purple btn-xs"><i class="glyphicon glyphicon-play"></i>&nbsp;启动</button>
+									<button title="还原" class="btn btn-default-green btn-xs"><i class="glyphicon glyphicon-share-alt"></i>&nbsp;还原</button>
+								</td>
+								<td class="text-center">
+									<button title="保存" class="btn btn-vo btn-xs"><i class="glyphicon glyphicon-floppy-disk"></i></button>
+									<button title="删除" class="btn btn-danger btn-xs"><i class="fa  fa-trash-o"></i></button>
+								</td>
+							</tr>
+							<tr>
+								<td class="text-center">
+									<label class="checkbox-inline c-checkbox">
+										<input type="checkbox">
+										<span class="fa fa-check"></span>
+									</label></td>
+								<td class="text-center">5</td>
+								<td class="text-center">352665</td>
+								<td class="text-center">35265465</td>
+								<td class="text-center"> 256354566-13</td>
+								<td class="text-center"> Sneakerhead</td>
+								<td class="text-left"> Puma Suede Classic+</td>
+								<td class="text-center"> 女</td>
+								<td class="text-center"> 10</td>
+								<td class="text-center">50</td>
+								<td class="text-center"><input class="form-control" placeholder="20"></td>
+								<td class="text-center">等待还原</td>
+								<td class="text-center"><input class="form-control" placeholder="30"></td>
+								<td class="text-center">等待还原</td>
+								<td class="text-center">动态</td>
+								<td class="text-center">
+									<button title="启动" class="btn btn-default-purple btn-xs"><i class="glyphicon glyphicon-play"></i>&nbsp;启动</button>
+									<button title="还原" class="btn btn-default-green btn-xs"><i class="glyphicon glyphicon-share-alt"></i>&nbsp;还原</button>
+								</td>
+								<td class="text-center">
+									<button title="保存" class="btn btn-vo btn-xs"><i class="glyphicon glyphicon-floppy-disk"></i></button>
+									<button title="删除" class="btn btn-danger btn-xs"><i class="fa  fa-trash-o"></i></button>
+								</td>
+							</tr>
+							<tr>
+								<td class="text-center">
+									<label class="checkbox-inline c-checkbox">
+										<input type="checkbox">
+										<span class="fa fa-check"></span>
+									</label></td>
+								<td class="text-center">6</td>
+								<td class="text-center">352665</td>
+								<td class="text-center">35265465</td>
+								<td class="text-center"> 256354566-14</td>
+								<td class="text-center"> Sneakerhead</td>
+								<td class="text-left"> Puma Suede Classic+</td>
+								<td class="text-center"> 女</td>
+								<td class="text-center"> 12</td>
+								<td class="text-center">60</td>
+								<td class="text-center"><input class="form-control" placeholder="10"></td>
+								<td class="text-center">还原成功</td>
+								<td class="text-center"><input class="form-control" placeholder="90"></td>
+								<td class="text-center">还原成功</td>
+								<td class="text-center">动态</td>
+								<td class="text-center">
+									<button title="启动" class="btn btn-default-purple btn-xs"><i class="glyphicon glyphicon-play"></i>&nbsp;启动</button>
+									<button title="还原" class="btn btn-default-green btn-xs"><i class="glyphicon glyphicon-share-alt"></i>&nbsp;还原</button>
+								</td>
+								<td class="text-center">
+									<button title="保存" class="btn btn-vo btn-xs"><i class="glyphicon glyphicon-floppy-disk"></i></button>
+									<button title="删除" class="btn btn-danger btn-xs"><i class="fa  fa-trash-o"></i></button>
+								</td>
+							</tr>
+							</tbody>
+						</table>
+					</div><!-- .table-responsive -->
+				</div>
+				<div class="m-t-xs">
+					<vpagination config="vm.errorPageOption"></vpagination>
+				</div>
+			</div>
+			</tab>
+		<tab>
+			<tab-heading><i class="glyphicons glyphicons-more-items text-default"></i>&nbsp;实时库存状态</tab-heading>
+			<div class="box">
+				<div class="table-responsive">
+					<!--<div class="col-sm-12">
+						<div class="pull-right form-inline btn-group m-b-xs">
+							<button class="btn btn-danger" ng-click="openImport('md',vm.promotionId)"><i class="glyphicon glyphicon-share-alt"></i>&nbsp;导出库存实时状态</button>
+						</div>
+					</div>-->
+					<div class="col-sm-12 dropdown_table_mains">
+						<table class="table table-hover-new vo_table" style="width:1800px;margin-bottom:0px" >
+							<thead>
+							<tr>
+								<th class="text-center">No.</th>
+								<th class="text-center">Model</th>
+								<th class="text-center">Code</th>
+								<th class="text-center">Sku</th>
+								<th class="text-center">品牌</th>
+								<th class="text-left">Name(英文)</th>
+								<th class="text-center">性别</th>
+								<th class="text-center">Size</th>
+								<th class="text-center">可调用库存</th>
+								<th class="text-center">天猫</th>
+								<th class="text-center">京东</th>
+							</tr>
+							</thead>
+							<tbody ng-controller="popupCtrl">
+							<tr>
+								<td class="text-center">1</td>
+								<td class="text-center">352665</td>
+								<td class="text-center">35265465</td>
+								<td class="text-center"> 256354566-9</td>
+								<td class="text-center"> Sneakerhead</td>
+								<td class="text-left"> Puma Suede Classic+</td>
+								<td class="text-center"> 男</td>
+								<td class="text-center"> 9</td>
+								<td class="text-center">6952</td>
+								<td class="text-center">
+									<div class="form-inline btn-group">
+										<button title="平台销售量" class="badge badge-empty btn-xs">5</button>
+										<button title="平台隔离数量" class="badge badge-empty btn-vo btn-xs" ng-click="openSkuMrbStockDetail('md')">11</button>
+									</div>
+								</td>
+								<td class="text-center">
+									<div class="form-inline btn-group">
+										<button title="平台销售量" class="badge badge-empty btn-xs">6</button>
+										<button title="平台隔离数量" class="badge badge-empty btn-vo btn-xs" ng-click="openSkuMrbStockDetail('md')">12</button>
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<td class="text-center">2</td>
+								<td class="text-center">352665</td>
+								<td class="text-center">35265465</td>
+								<td class="text-center"> 256354566-9</td>
+								<td class="text-center"> Sneakerhead</td>
+								<td class="text-left"> Puma Suede Classic+</td>
+								<td class="text-center"> 男</td>
+								<td class="text-center"> 9</td>
+								<td class="text-center">6952</td>
+								<td class="text-center"><button title="动态" class="badge badge-empty btn-xs">动态</button></td>
+								<td class="text-center">
+									<div class="form-inline btn-group">
+										<button title="平台销售量" class="badge badge-empty btn-xs">7</button>
+										<button title="平台隔离数量" class="badge badge-empty btn-vo btn-xs" ng-click="openMrbstockdetail('md')">14</button>
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<td class="text-center">3</td>
+								<td class="text-center">352665</td>
+								<td class="text-center">35265465</td>
+								<td class="text-center"> 256354566-9</td>
+								<td class="text-center"> Sneakerhead</td>
+								<td class="text-left"> Puma Suede Classic+</td>
+								<td class="text-center"> 女</td>
+								<td class="text-center"> 10</td>
+								<td class="text-center">6952</td>
+								<td class="text-center">
+									<div class="form-inline btn-group">
+										<button title="平台销售量" class="badge badge-empty btn-xs">8</button>
+										<button title="平台隔离数量" class="badge badge-empty btn-vo btn-xs" ng-click="openMrbstockdetail('md')">16</button>
+									</div>
+								</td>
+								<td class="text-center"><button title="动态" class="badge badge-empty btn-xs">动态</button></td>
+							</tr>
+							<tr>
+								<td class="text-center">4</td>
+								<td class="text-center">352665</td>
+								<td class="text-center">35265465</td>
+								<td class="text-center"> 256354566-9</td>
+								<td class="text-center"> Sneakerhead</td>
+								<td class="text-left"> Puma Suede Classic+</td>
+								<td class="text-center"> 女</td>
+								<td class="text-center"> 16</td>
+								<td class="text-center">6952</td>
+								<td class="text-center">
+									<div class="form-inline btn-group">
+										<button title="平台销售量" class="badge badge-empty btn-xs">9</button>
+										<button title="平台隔离数量" class="badge badge-empty btn-vo btn-xs" ng-click="openMrbstockdetail('md')">18</button>
+									</div>
+								</td>
+								<td class="text-center">
+									<div class="form-inline btn-group">
+										<button title="平台销售量" class="badge badge-empty btn-xs">10</button>
+										<button title="平台隔离数量" class="badge badge-empty btn-vo btn-xs" ng-click="openMrbstockdetail('md')">20</button>
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<td class="text-center">5</td>
+								<td class="text-center">352665</td>
+								<td class="text-center">35265465</td>
+								<td class="text-center"> 256354566-9</td>
+								<td class="text-center"> Sneakerhead</td>
+								<td class="text-left"> Puma Suede Classic+</td>
+								<td class="text-center"> 男</td>
+								<td class="text-center"> 9</td>
+								<td class="text-center">6952</td>
+								<td class="text-center">
+									<div class="form-inline btn-group">
+										<button title="平台销售量" class="btn-xs badge badge-empty">20</button>
+										<button title="平台隔离数量" class="btn-xs badge badge-empty btn-vo" ng-click="openMrbstockdetail('md')">4000</button>
+									</div>
+								</td>
+								<td class="text-center"><button title="动态" class="badge badge-empty btn-xs">动态</button></td>
+							</tr>
+							</tbody>
+						</table>
+					</div><!-- .table-responsive -->
+				</div>
+				<div class="m-t-xs">
+					<vpagination config="vm.errorPageOption"></vpagination>
+				</div>
+			</div>
+			</tab>
+
+	</tabset>
+</div><!-- end .wrapper-md -->
