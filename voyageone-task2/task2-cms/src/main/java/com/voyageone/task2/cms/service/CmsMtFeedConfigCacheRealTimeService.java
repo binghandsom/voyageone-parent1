@@ -62,9 +62,7 @@ public class CmsMtFeedConfigCacheRealTimeService extends BaseTaskService {
         if(hashOperations.hasKey(REDIS_KEY_NAME,MODIFYBEAN)) {
             //拿到缓存服务器的ModifyBean
             feedBeanMaps[2].put(MODIFYBEAN, hashOperations.get(REDIS_KEY_NAME, MODIFYBEAN));
-            System.out.println(feedBeanMaps[2].get(MODIFYBEAN).getModified());
             List<FeedBean> feedBeens=feedDao.getAllUpdate(feedBeanMaps[2].get(MODIFYBEAN).getModified());
-            System.out.println(feedBeens);
             if (!CollectionUtils.isEmpty(feedBeens = feedDao.getAllUpdate(feedBeanMaps[2].get(MODIFYBEAN).getModified())))
                 loopAddFeedBeanMap(feedBeens, feedBeanMaps);
         }else
