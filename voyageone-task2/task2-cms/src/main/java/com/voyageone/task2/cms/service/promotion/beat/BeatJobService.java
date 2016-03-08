@@ -103,6 +103,7 @@ public class BeatJobService extends BaseTaskService {
 
             runnableList.add(() -> {
                 for (CmsBtBeatInfoModel bean : subList) {
+                    bean.clearMessage();
                     Context context = null;
                     try {
                         context = new Context(bean);
