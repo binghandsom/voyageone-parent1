@@ -98,6 +98,7 @@ define([
                         categories: res.data,
                         from: $scope.vm.cat_path != '0' ? $scope.vm.cat_path : ""
                     }).then( function (res) {
+                            // TODO 如果类目名字太长有问题
                             goAttributePage (res.selected.catPath)
                         }
                     );
