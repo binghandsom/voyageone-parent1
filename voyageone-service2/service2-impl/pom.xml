@@ -5,11 +5,11 @@
     <parent>
         <groupId>com.voyageone</groupId>
         <artifactId>voyageone-service2</artifactId>
-        <version>2.0.0</version>
+        <version>2.0.0-SNAPSHOT</version>
     </parent>
     <artifactId>service2-impl</artifactId>
     <version>${voyageone.service2.impl.version}</version>
-    <name>VoyageOne service2 Implement </name>
+    <name>VoyageOne Service 2 - Implement</name>
     <dependencies>
         <dependency>
             <groupId>com.voyageone</groupId>
