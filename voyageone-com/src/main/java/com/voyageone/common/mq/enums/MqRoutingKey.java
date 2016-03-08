@@ -8,11 +8,7 @@ package com.voyageone.common.mq.enums;
  */
 public enum MqRoutingKey {
 
-    CMS_BATCH_PROMOTION("voyageone_cms_batchjob_promotion_queue"),
-
-    KEY1("voyageone_batchjob_queue_1")
-
-
+    CMS_BATCH_PROMOTION("voyageone_cms_batchjob_promotion_queue")
     ;
 
     private String value;
