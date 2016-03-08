@@ -67,6 +67,7 @@
 					#{item}
 				</foreach>
 			</if>
+			ORDER BY a.modifier desc
 			LIMIT 0,
 			#{count,jdbcType=INTEGER}
 		) t1,
