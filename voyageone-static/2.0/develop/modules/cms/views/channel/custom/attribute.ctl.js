@@ -133,7 +133,7 @@ define([
          */
         function addNewAttribute (nData) {
             // 未翻译
-            if (_.isEmpty(nData.value_translation)) {
+            if (_.isEmpty(nData.prop_translation)) {
                 $scope.vm.unvalList.push({"prop_original":nData.prop_original, "cat_path":"0"})
             }
             // 已翻译
