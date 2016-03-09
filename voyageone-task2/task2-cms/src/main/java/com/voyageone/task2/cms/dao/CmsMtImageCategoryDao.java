@@ -27,18 +27,18 @@ public class CmsMtImageCategoryDao extends BaseDao {
      * 查询所有的 category
      */
     public List<CmsMtImageCategoryModel> select() {
-        return selectList("ims_bt_pic_category_select");
+        return selectList("cms_mt_image_category_select");
     }
 
     /**
      * 更新 category 的 category_tid
      */
     public int updateTid(CmsMtImageCategoryModel category) {
-        return update("ims_bt_pic_category_updateTid", category);
+        return update("cms_mt_image_category_updateTid", category);
     }
 
     public CmsMtImageCategoryModel select(ShopBean shopBean, ImageCategoryType type) {
-        return selectOne("ims_bt_pic_category_select_byCart", parameters(
+        return selectOne("cms_mt_image_category_select_byCart", parameters(
                 "cart_id", shopBean.getCart_id(),
                 "channel_id", shopBean.getOrder_channel_id(),
                 "type", type.getVal()));

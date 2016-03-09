@@ -1,6 +1,6 @@
 package com.voyageone.web2.cms.wsdl.service;
 
-import com.voyageone.cms.service.dao.mongodb.CmsMtCommonSchemaDao;
+import com.voyageone.service.dao.cms.mongo.CmsMtCommonSchemaDao;
 import com.voyageone.web2.cms.wsdl.BaseService;
 import com.voyageone.web2.sdk.api.response.CommonSchemaGetResponse;
 import org.springframework.beans.factory.annotation.Autowired;

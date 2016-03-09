@@ -50,7 +50,11 @@ public class SkuWordParser {
                 List<String> plainPropValues = (List<String>) plainPropValueObj;
                 return ExpressionParser.encodeStringArray(plainPropValues);
             } else {
-                return plainPropValueObj.toString();
+                if (plainPropValueObj == null) {
+                    return null;
+                } else {
+                    return plainPropValueObj.toString();
+                }
             }
             // 20160120 tom sku级别的数据不一定是string,也可能是数字型 END
         }

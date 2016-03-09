@@ -116,19 +116,17 @@ public interface CmsUrlConstants {
 
                 String ROOT = "/cms/promotion/task_stock";
 
-                String INIT_NEW_TASK_FROM_PROMOTION = "initNewTaskFromPromotion";
-
-                String INIT_NEW_TASK_FROM_TASK = "initNewTaskFromTask";
+                String INIT_NEW_TASK = "initNewTask";
 
                 String SAVE_TASK = "saveTask";
 
                 String DEL_TASK = "delTask";
 
-                String SEARCH = "search";
+                String SEARCH_STOCK = "searchStock";
 
                 String GET_COMMON_STOCK_LIST = "getCommonStockList";
 
-                String GET_REAL_STOCK_INFO = "getRealStockInfo";
+                String GET_REAL_STOCK_LIST = "getRealStockList";
 
                 String INIT_NEW_RECORD = "initNewRecord";
 
@@ -146,22 +144,18 @@ public interface CmsUrlConstants {
 
                 String EXECUTE_STOCK_RESTORE = "executeStockRestore";
 
-                String SAVE_SKU_RECORD = "saveSkuRecord";
-
-                String SAVE_ALL_RECORD = "saveAllRecord";
+                String SAVE_RECORD = "saveRecord";
 
                 String DEL_RECORD = "delRecord";
 
                 String GET_SKU_SEPARATION_DETAIL = "getSkuSeparationDetail";
 
-                String EXPORT_REAL_STOCK_INFO = "exportRealStockInfo";
-
                 String EXPORT_ERROR_INFO = "exportErrorInfo";
             }
 
-            interface INCREMENT_STOCK {
+            interface INCREMENT_STOCK_LIST {
 
-                String ROOT = "/cms/promotion/task_add_stock";
+                String ROOT = "/cms/promotion/task_increment_stock_list";
 
                 String SEARCH_TASK = "searchTask";
 
@@ -169,13 +163,18 @@ public interface CmsUrlConstants {
 
                 String DEL_TASK = "delTask";
 
-                String GET_PLATFORM_INFO = "getPlatformInfo";
+                String GET_PLATFORM_LIST = "getPlatFormList";
+            }
+
+            interface INCREMENT_STOCK_DETAIL {
+
+                String ROOT = "/cms/promotion/task_increment_stock_detail";
 
                 String SEARCH_ITEM = "searchItem";
 
-                String SAVE_RECORD = "saveRecord";
+                String SAVE_ITEM = "saveItem";
 
-                String DEL_RECORD = "delRecord";
+                String DEL_ITEM = "delItem";
 
                 String IMPORT_STOCK_INFO = "importStockInfo";
 

@@ -1,12 +1,12 @@
 package com.voyageone.web2.cms.views.promotion.list;
 
 import com.voyageone.base.exception.BusinessException;
-import com.voyageone.cms.service.model.CmsBtProductModel;
-import com.voyageone.cms.service.model.CmsBtProductModel_Sku;
 import com.voyageone.common.components.transaction.SimpleTransaction;
 import com.voyageone.common.configs.Enums.PromotionTypeEnums;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.bean.CmsPromotionProductPriceBean;
 import com.voyageone.web2.cms.wsdl.dao.CmsBtTaskDao;
@@ -178,7 +178,7 @@ public class CmsPromotionDetailService extends BaseAppService {
         for (CmsBtPromotionGroupModel productModel : productModels) {
             productModel.getCodes().forEach(cmsBtPromotionCodeModel1 -> {
                 CmsBtTagModel tag = searchTag(tags, cmsBtPromotionCodeModel1.getTag());
-                if(tag != null){
+                if (tag != null) {
                     cmsBtPromotionCodeModel1.setTagId(tag.getTagId());
                 }
             });
@@ -215,11 +215,13 @@ public class CmsPromotionDetailService extends BaseAppService {
         List<Map<String, Object>> promotionGroups = voApiClient.execute(request).getPromotionGroups();
         if (!CollectionUtils.isEmpty(promotionGroups)) {
             promotionGroups.forEach(map -> {
-                CmsBtProductModel cmsBtProductModel = ProductGetClient.getProductById(param.get("channelId").toString(), ((Integer) map.get("productId")).longValue());
+                if (map.get("productId") != null && !map.get("productId").toString().equalsIgnoreCase("0")) {
+                    CmsBtProductModel cmsBtProductModel = ProductGetClient.getProductById(param.get("channelId").toString(), ((Integer) map.get("productId")).longValue());
 
-                if (cmsBtProductModel != null) {
+                    if (cmsBtProductModel != null) {
 //                    map.put("image", cmsBtProductModel.getFields().getImages1().get(0).getAttribute("image1"));
-                    map.put("platformStatus", cmsBtProductModel.getGroups().getPlatforms().get(0).getPlatformStatus());
+                        map.put("platformStatus", cmsBtProductModel.getGroups().getPlatforms().get(0).getPlatformStatus());
+                    }
                 }
             });
         }
@@ -237,18 +239,18 @@ public class CmsPromotionDetailService extends BaseAppService {
         PromotionCodeGetRequest request = new PromotionCodeGetRequest();
         request.setParam(param);
         List<CmsBtPromotionCodeModel> promotionCodes = voApiClient.execute(request).getCodeList();
-        if (!CollectionUtils.isEmpty(promotionCodes)) {
-            promotionCodes.forEach(map -> {
-                //SDK取得Product 数据
-                CmsBtProductModel cmsBtProductModel = ProductGetClient.getProductById(param.get("channelId").toString(), map.getProductId());
-                if (cmsBtProductModel != null) {
-//                    map.setImage((String) cmsBtProductModel.getFields().getImages1().get(0).getAttribute("image1"));
-//                    map.setSkuCount(cmsBtProductModel.getSkus().size());
-                    map.setPlatformStatus(cmsBtProductModel.getGroups().getPlatforms().get(0).getPlatformStatus());
-                    map.setInventory(cmsBtProductModel.getBatchField().getCodeQty() == null ? 0 : cmsBtProductModel.getBatchField().getCodeQty());
-                }
-            });
-        }
+//        if (!CollectionUtils.isEmpty(promotionCodes)) {
+//            promotionCodes.forEach(map -> {
+//                //SDK取得Product 数据
+//                CmsBtProductModel cmsBtProductModel = ProductGetClient.getProductById(param.get("channelId").toString(), map.getProductId());
+//                if (cmsBtProductModel != null) {
+////                    map.setImage((String) cmsBtProductModel.getFields().getImages1().get(0).getAttribute("image1"));
+////                    map.setSkuCount(cmsBtProductModel.getSkus().size());
+//                    map.setPlatformStatus(cmsBtProductModel.getGroups().getPlatforms().get(0).getPlatformStatus());
+//                    map.setInventory(cmsBtProductModel.getBatchField().getCodeQty() == null ? 0 : cmsBtProductModel.getBatchField().getCodeQty());
+//                }
+//            });
+//        }
         return promotionCodes;
     }
 
@@ -638,7 +640,7 @@ public class CmsPromotionDetailService extends BaseAppService {
                 poIds.add(item.getProductId());
                 //liang change
                 //cmsPromotionSelectService.remove(poIds, channelId, item.getTagPath(), operator);
-                if(!StringUtil.isEmpty(item.getTagPath())){
+                if (!StringUtil.isEmpty(item.getTagPath())) {
                     productTagClient.removeTagProducts(channelId, item.getTagPath(), poIds, operator);
                 }
             }

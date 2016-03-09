@@ -33,6 +33,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -103,6 +104,7 @@ public class BeatJobService extends BaseTaskService {
 
             runnableList.add(() -> {
                 for (CmsBtBeatInfoModel bean : subList) {
+                    bean.clearMessage();
                     Context context = null;
                     try {
                         context = new Context(bean);
@@ -198,6 +200,13 @@ public class BeatJobService extends BaseTaskService {
             this.beatInfoModel = beatInfoModel;
             this.promotion = beatInfoModel.getPromotion();
             this.shopBean = ShopConfigs.getShop(promotion.getChannelId(), promotion.getCartId());
+
+            // TODO 测试代码
+            this.shopBean.setAppKey("21008948");
+            this.shopBean.setAppSecret("0a16bd08019790b269322e000e52a19f");
+            this.shopBean.setSessionKey("6201d2770dbfa1a88af5acfd330fd334fb4ZZa8ff26a40b2641101981");
+            this.shopBean.setApp_url("http://gw.api.taobao.com/router/rest");
+
             this.tbItemSchema = tbItemService.getUpdateSchema(shopBean, beatInfoModel.getNum_iid());
             this.taskBean = new TaskBean(beatInfoModel.getTask());
             this.configBean = taskBean.getConfig();
@@ -246,37 +255,50 @@ public class BeatJobService extends BaseTaskService {
 
         private String getTaobaoImageUrl(String image_url_key) throws IOException, ApiException {
             String imageUrl, imageName;
+            CmsMtImageCategoryModel categoryModel;
             switch (beatInfoModel.getBeatFlag()) {
                 case BEATING:
-                    imageUrl = configBean.getBeat_template().replace("{key}", image_url_key);
+                    imageUrl = configBean.getBeat_template();
                     imageName = image_url_key + ".beat.jpg";
-                    return getTaobaoImageUrl(imageUrl, imageName, upCategory);
+                    categoryModel = upCategory;
+                    break;
                 case REVERT:
                 case SUCCESS:
-                    imageUrl = configBean.getRevert_template().replace("{key}", image_url_key);
+                    imageUrl = configBean.getRevert_template();
                     imageName = image_url_key + ".jpg";
-                    return getTaobaoImageUrl(imageUrl, imageName, downCategory);
+                    categoryModel = downCategory;
+                    break;
+                default:
+                    return null;
             }
-            return null;
+            return getTaobaoImageUrl(formatUrl(imageUrl, image_url_key, beatInfoModel.getPromotion_code().getPromotionPrice()), imageName, categoryModel);
         }
 
         private String getTaobaoVerticalImageUrl() throws IOException, ApiException {
             CmsBtPromotionCodeModel code = beatInfoModel.getPromotion_code();
             String imageUrl, imageName, image_url_key = code.getImage_url_3();
+            CmsMtImageCategoryModel categoryModel;
             switch (beatInfoModel.getBeatFlag()) {
                 case BEATING:
-                    imageUrl = configBean.getBeat_vtemplate().replace("{key}", image_url_key);
+                    imageUrl = configBean.getBeat_vtemplate();
                     imageName = image_url_key + ".beat.jpg";
-                    return getTaobaoImageUrl(imageUrl, imageName, upCategory);
+                    categoryModel = upCategory;
+                    break;
                 case REVERT:
                 case SUCCESS:
-                    imageUrl = configBean.getRevert_vtemplate().replace("{key}", image_url_key);
+                    imageUrl = configBean.getRevert_vtemplate();
                     imageName = image_url_key + ".jpg";
-                    return getTaobaoImageUrl(imageUrl, imageName, downCategory);
+                    categoryModel = downCategory;
+                    break;
+                default:
+                    return null;
             }
-            return null;
+            return getTaobaoImageUrl(formatUrl(imageUrl, image_url_key, code.getPromotionPrice()), imageName, categoryModel);
         }
 
+        private String formatUrl(String imageUrl, String image_url_key, Double price) {
+            return imageUrl.replace("{key}", image_url_key).replace("{price}", new DecimalFormat("#").format(price));
+        }
 
         private String getTaobaoImageUrl(String imageUrl, String imageName, CmsMtImageCategoryModel categoryModel)
                 throws IOException, ApiException {

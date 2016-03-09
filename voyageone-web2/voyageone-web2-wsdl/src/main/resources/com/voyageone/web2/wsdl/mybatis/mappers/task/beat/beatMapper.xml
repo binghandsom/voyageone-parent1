@@ -317,9 +317,8 @@
         FROM voyageone_cms2.cms_bt_beat_info b
             JOIN voyageone_cms2.cms_bt_tasks t ON t.task_id = b.task_id
             JOIN voyageone_cms2.cms_bt_promotion p ON p.promotion_id = t.promotion_id
-            LEFT JOIN voyageone_cms2.cms_bt_promotion_model m ON m.promotion_id = p.promotion_id
-            LEFT JOIN voyageone_cms2.cms_bt_promotion_code c
-                ON c.promotion_id = p.promotion_id AND c.product_code = b.product_code AND c.model_id = m.model_id
+            LEFT JOIN voyageone_cms2.cms_bt_promotion_model m ON m.promotion_id = p.promotion_id AND b.num_iid = m.num_iid
+            LEFT JOIN voyageone_cms2.cms_bt_promotion_code c ON c.promotion_id = p.promotion_id AND c.product_code = b.product_code
         WHERE (
                   p.is_active = 1
                   AND #{now} > t.activity_start
@@ -351,22 +350,22 @@
             <result property="modifier" column="task_modifier"/>
         </association>
         <association property="promotion" javaType="com.voyageone.web2.sdk.api.domain.CmsBtPromotionModel">
-            <result property="promotion_id" column="promotion_promotion_id"/>
-            <result property="channel_id" column="promotion_channel_id"/>
-            <result property="cart_id" column="promotion_cart_id"/>
-            <result property="promotion_status" column="promotion_promotion_status"/>
-            <result property="promotion_name" column="promotion_promotion_name"/>
-            <result property="pre_sale_end" column="promotion_pre_sale_end"/>
-            <result property="pre_sale_start" column="promotion_pre_sale_start"/>
-            <result property="pre_period_start" column="promotion_pre_period_start"/>
-            <result property="pre_period_end" column="promotion_pre_period_end"/>
-            <result property="activity_start" column="promotion_activity_start"/>
-            <result property="activity_end" column="promotion_activity_end"/>
-            <result property="tejiabao_id" column="promotion_tejiabao_id"/>
-            <result property="promotion_type" column="promotion_promotion_type"/>
-            <result property="ref_tag_id" column="promotion_ref_tag_id"/>
-            <result property="is_active" column="promotion_is_active"/>
-            <result property="is_all_promotion" column="promotion_is_all_promotion"/>
+            <result property="promotionId" column="promotion_promotion_id"/>
+            <result property="channelId" column="promotion_channel_id"/>
+            <result property="cartId" column="promotion_cart_id"/>
+            <result property="promotionStatus" column="promotion_promotion_status"/>
+            <result property="promotionName" column="promotion_promotion_name"/>
+            <result property="preSaleEnd" column="promotion_pre_sale_end"/>
+            <result property="preSaleStart" column="promotion_pre_sale_start"/>
+            <result property="prePeriodStart" column="promotion_pre_period_start"/>
+            <result property="prePeriodEnd" column="promotion_pre_period_end"/>
+            <result property="activityStart" column="promotion_activity_start"/>
+            <result property="activityEnd" column="promotion_activity_end"/>
+            <result property="tejiabaoId" column="promotion_tejiabao_id"/>
+            <result property="promotionType" column="promotion_promotion_type"/>
+            <result property="refTagId" column="promotion_ref_tag_id"/>
+            <result property="isActive" column="promotion_is_active"/>
+            <result property="isAllPromotion" column="promotion_is_all_promotion"/>
             <result property="created" column="promotion_created"/>
             <result property="creater" column="promotion_creater"/>
             <result property="modified" column="promotion_modified"/>
@@ -374,19 +373,19 @@
         </association>
         <association property="promotion_code" javaType="com.voyageone.web2.sdk.api.domain.CmsBtPromotionCodeModel">
             <result property="seq" column="code_seq"/>
-            <result property="promotion_id" column="code_promotion_id"/>
-            <result property="product_id" column="code_product_id"/>
-            <result property="model_id" column="code_model_id"/>
-            <result property="product_model" column="code_product_model"/>
-            <result property="product_code" column="code_product_code"/>
-            <result property="product_name" column="code_product_name"/>
-            <result property="cat_path" column="code_cat_path"/>
-            <result property="retail_price" column="code_retail_price"/>
-            <result property="sale_price" column="code_sale_price"/>
+            <result property="promotionId" column="code_promotion_id"/>
+            <result property="productId" column="code_product_id"/>
+            <result property="modelId" column="code_model_id"/>
+            <result property="productModel" column="code_product_model"/>
+            <result property="productCode" column="code_product_code"/>
+            <result property="productName" column="code_product_name"/>
+            <result property="catPath" column="code_cat_path"/>
+            <result property="retailPrice" column="code_retail_price"/>
+            <result property="salePrice" column="code_sale_price"/>
             <result property="msrp" column="code_msrp"/>
-            <result property="tag_id" column="code_tag_id"/>
-            <result property="promotion_price" column="code_promotion_price"/>
-            <result property="num_iid" column="code_num_iid"/>
+            <result property="tagId" column="code_tag_id"/>
+            <result property="promotionPrice" column="code_promotion_price"/>
+            <result property="numIid" column="code_num_iid"/>
             <result property="image_url_1" column="code_image_url_1"/>
             <result property="image_url_2" column="code_image_url_2"/>
             <result property="image_url_3" column="code_image_url_3"/>

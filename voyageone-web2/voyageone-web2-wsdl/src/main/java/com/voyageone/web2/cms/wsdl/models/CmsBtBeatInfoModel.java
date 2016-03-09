@@ -99,6 +99,10 @@ public class CmsBtBeatInfoModel {
             this.message += ";" + message;
     }
 
+    public void clearMessage() {
+        this.message = null;
+    }
+
     public String getCreated() {
         return created;
     }

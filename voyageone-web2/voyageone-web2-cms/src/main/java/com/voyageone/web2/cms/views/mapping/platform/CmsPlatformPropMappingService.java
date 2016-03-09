@@ -7,18 +7,18 @@ import com.taobao.top.schema.field.ComplexField;
 import com.taobao.top.schema.field.Field;
 import com.taobao.top.schema.field.MultiComplexField;
 import com.voyageone.base.exception.BusinessException;
-import com.voyageone.cms.service.bean.*;
-import com.voyageone.cms.service.dao.CmsMtPlatformSpecialFieldDao;
-import com.voyageone.cms.service.dao.mongodb.CmsMtCategorySchemaDao;
-import com.voyageone.cms.service.dao.mongodb.CmsMtPlatformCategorySchemaDao;
-import com.voyageone.cms.service.dao.mongodb.CmsMtPlatformMappingDao;
-import com.voyageone.cms.service.model.CmsMtCategorySchemaModel;
-import com.voyageone.cms.service.model.CmsMtPlatformCategorySchemaModel;
-import com.voyageone.cms.service.model.CmsMtPlatformMappingModel;
-import com.voyageone.cms.service.model.CmsMtPlatformSpecialFieldModel;
 import com.voyageone.common.util.JsonUtil;
 import com.voyageone.ims.rule_expression.RuleExpression;
 import com.voyageone.ims.rule_expression.RuleWord;
+import com.voyageone.service.bean.cms.*;
+import com.voyageone.service.dao.cms.CmsMtPlatformSpecialFieldDao;
+import com.voyageone.service.dao.cms.mongo.CmsMtCategorySchemaDao;
+import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategorySchemaDao;
+import com.voyageone.service.dao.cms.mongo.CmsMtPlatformMappingDao;
+import com.voyageone.service.model.cms.CmsMtPlatformSpecialFieldModel;
+import com.voyageone.service.model.cms.mongo.CmsMtCategorySchemaModel;
+import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
+import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingModel;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.bean.setting.mapping.platform.PlatformMappingBean;
 import com.voyageone.web2.cms.bean.system.dictionary.CmsDictionaryIndexBean;
@@ -92,8 +92,7 @@ public class CmsPlatformPropMappingService extends BaseAppService {
         fieldMap.remove("wap_desc");
 
         // 转换简化的 mapping 信息
-        List<Map<String, Object>> map = platformMappingModel.getProps();
-        List<MappingBean> mappingBeen = JsonUtil.jsonToBeanList(JsonUtil.getJsonString(map),MappingBean.class);
+        List<MappingBean> mappingBeen = platformMappingModel.getProps();
 
         Map<String, Object> mappingMap = mappingBeen.stream()
                 .collect(toMap(MappingBean::getPlatformPropId, this::getMatched));
@@ -286,8 +285,7 @@ public class CmsPlatformPropMappingService extends BaseAppService {
     private MappingBean fixMappingStruct(CmsMtPlatformMappingModel platformMappingModel, Map<String, Field> fieldMap,
                                          List<String> mappingPath) {
 
-        List<Map<String, Object>> map = platformMappingModel.getProps();
-        List<MappingBean> mappingBeen = JsonUtil.jsonToBeanList(JsonUtil.getJsonString(map),MappingBean.class);
+        List<MappingBean> mappingBeen = platformMappingModel.getProps();
 
         List<MultiComplexCustomMappingValue> values = null;
 
@@ -400,8 +398,7 @@ public class CmsPlatformPropMappingService extends BaseAppService {
      */
     private MappingBean searchPropertyMappingByPath(CmsMtPlatformMappingModel platformMappingModel, List<String> mappingPath) {
 
-        List<Map<String, Object>> map = platformMappingModel.getProps();
-        List<MappingBean> mappingBeen = JsonUtil.jsonToBeanList(JsonUtil.getJsonString(map),MappingBean.class);
+        List<MappingBean> mappingBeen = platformMappingModel.getProps();
 
         List<MultiComplexCustomMappingValue> values = null;
 

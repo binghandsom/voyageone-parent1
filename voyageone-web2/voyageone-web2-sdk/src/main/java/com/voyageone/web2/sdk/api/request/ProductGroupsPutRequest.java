@@ -1,7 +1,7 @@
 package com.voyageone.web2.sdk.api.request;
 
 
-import com.voyageone.cms.service.model.CmsBtProductModel_Group_Platform;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Group_Platform;
 import com.voyageone.web2.sdk.api.VoApiRequest;
 import com.voyageone.web2.sdk.api.exception.ApiRuleException;
 import com.voyageone.web2.sdk.api.response.ProductGroupsPutResponse;

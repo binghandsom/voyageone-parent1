@@ -1,6 +1,6 @@
 package com.voyageone.web2.sdk.api.response;
 
-import com.voyageone.cms.service.bean.ProductForOmsBean;
+import com.voyageone.service.bean.cms.ProductForOmsBean;
 import com.voyageone.web2.sdk.api.VoApiResponse;
 
 import java.util.List;
