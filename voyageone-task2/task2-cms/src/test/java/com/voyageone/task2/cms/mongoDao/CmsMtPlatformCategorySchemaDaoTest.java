@@ -1,10 +1,10 @@
 package com.voyageone.task2.cms.mongoDao;
 
-import com.voyageone.cms.service.model.CmsMtPlatformCategorySchemaModel;
-import com.voyageone.cms.service.dao.mongodb.CmsMtPlatformCategorySchemaDao;
 import com.voyageone.common.masterdate.schema.factory.SchemaReader;
 import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategorySchemaDao;
+import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
 import net.minidev.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;

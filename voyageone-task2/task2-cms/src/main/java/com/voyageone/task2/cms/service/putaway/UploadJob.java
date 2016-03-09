@@ -1,11 +1,11 @@
 package com.voyageone.task2.cms.service.putaway;
 
+import com.voyageone.service.dao.cms.mongo.CmsMtPlatformMappingDao;
 import com.voyageone.task2.cms.bean.WorkLoadBean;
 import com.voyageone.task2.cms.bean.tcb.TaskControlBlock;
 import com.voyageone.task2.cms.bean.tcb.UploadImageTcb;
 import com.voyageone.task2.cms.bean.tcb.UploadProductTcb;
 import com.voyageone.task2.cms.dao.SkuInventoryDao;
-import com.voyageone.cms.service.dao.mongodb.CmsMtPlatformMappingDao;
 import com.voyageone.common.components.issueLog.IssueLog;
 
 import java.util.ArrayList;

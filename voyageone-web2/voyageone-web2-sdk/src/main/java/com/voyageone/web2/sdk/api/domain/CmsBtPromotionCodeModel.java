@@ -1,6 +1,7 @@
 package com.voyageone.web2.sdk.api.domain;
 
-import com.voyageone.cms.service.model.CmsBtProductModel;
+
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 
 import java.util.ArrayList;
 import java.util.List;

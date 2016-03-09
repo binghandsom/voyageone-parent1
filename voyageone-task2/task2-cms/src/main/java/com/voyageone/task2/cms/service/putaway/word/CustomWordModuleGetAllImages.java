@@ -1,11 +1,11 @@
 package com.voyageone.task2.cms.service.putaway.word;
 
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductConstants;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field_Image;
 import com.voyageone.task2.cms.bean.CustomValueSystemParam;
 import com.voyageone.task2.cms.bean.SxProductBean;
 import com.voyageone.task2.cms.service.putaway.UploadImageHandler;
 import com.voyageone.task2.cms.service.putaway.rule_parser.ExpressionParser;
-import com.voyageone.cms.service.model.CmsBtProductConstants;
-import com.voyageone.cms.service.model.CmsBtProductModel_Field_Image;
 import com.voyageone.ims.rule_expression.CustomModuleUserParamGetAllImages;
 import com.voyageone.ims.rule_expression.CustomWord;
 import com.voyageone.ims.rule_expression.CustomWordValueGetAllImages;

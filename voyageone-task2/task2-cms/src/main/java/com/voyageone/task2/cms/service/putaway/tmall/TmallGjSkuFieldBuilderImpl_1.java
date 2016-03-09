@@ -7,17 +7,17 @@ import com.taobao.top.schema.field.SingleCheckField;
 import com.taobao.top.schema.option.Option;
 import com.taobao.top.schema.value.ComplexValue;
 import com.taobao.top.schema.value.Value;
+import com.voyageone.service.bean.cms.ComplexMappingBean;
+import com.voyageone.service.bean.cms.MappingBean;
+import com.voyageone.service.bean.cms.SimpleMappingBean;
+import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import com.voyageone.task2.cms.bean.PlatformUploadRunState;
 import com.voyageone.task2.cms.bean.SkuTemplateSchema;
 import com.voyageone.task2.cms.bean.SxProductBean;
 import com.voyageone.task2.cms.bean.TmallUploadRunState;
 import com.voyageone.task2.cms.model.PlatformSkuInfoModel;
 import com.voyageone.task2.cms.service.putaway.AbstractSkuFieldBuilder;
-import com.voyageone.cms.service.bean.ComplexMappingBean;
-import com.voyageone.cms.service.bean.MappingBean;
-import com.voyageone.cms.service.bean.SimpleMappingBean;
-import com.voyageone.cms.service.model.CmsBtProductModel_Sku;
-import com.voyageone.cms.service.model.CmsMtPlatformMappingModel;
 import com.voyageone.common.util.JsonUtil;
 import com.voyageone.ims.rule_expression.RuleExpression;
 import org.apache.commons.logging.Log;
@@ -254,8 +254,7 @@ public class TmallGjSkuFieldBuilderImpl_1 extends AbstractSkuFieldBuilder {
         MappingBean skuMappingBean = null;
         MappingBean skuExtendMappingBean = null;
 
-        List<Map<String, Object>> map = cmsMtPlatformMappingModel.getProps();
-        List<MappingBean> mappingBeenList = JsonUtil.jsonToBeanList(JsonUtil.getJsonString(map),MappingBean.class);
+        List<MappingBean> mappingBeenList = cmsMtPlatformMappingModel.getProps();
 
         for (MappingBean mappingBean : mappingBeenList) {
             if (mappingBean.getPlatformPropId().equals(skuField.getId())) {

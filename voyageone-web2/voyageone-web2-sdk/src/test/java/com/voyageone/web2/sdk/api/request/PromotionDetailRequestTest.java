@@ -1,21 +1,6 @@
 package com.voyageone.web2.sdk.api.request;
 
-import com.voyageone.web2.sdk.api.VoApiDefaultClient;
-import com.voyageone.web2.sdk.api.VoApiRequest;
-import com.voyageone.web2.sdk.api.domain.CmsBtPromotionModel;
-import com.voyageone.web2.sdk.api.response.PromotionDetailPutResponse;
-import com.voyageone.web2.sdk.api.response.PromotionsGetResponse;
-import com.voyageone.web2.sdk.api.response.PromotionsPutResponse;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.RequestEntity;
-import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.web.client.RestTemplate;
-
-import java.net.URI;
 
 /**
  * @author aooer 2016/1/19.

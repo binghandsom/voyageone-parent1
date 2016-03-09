@@ -1,6 +1,6 @@
 package com.voyageone.web2.cms.views.pop.prop_change;
 
-import com.voyageone.cms.service.model.CmsMtCommonPropDefModel;
+import com.voyageone.service.model.cms.mongo.CmsMtCommonPropDefModel;
 import com.voyageone.web2.cms.views.pop.bulkUpdate.CmsFieldEditService;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import net.minidev.json.JSONArray;

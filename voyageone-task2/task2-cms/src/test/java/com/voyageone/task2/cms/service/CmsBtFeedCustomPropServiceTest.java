@@ -1,7 +1,7 @@
 package com.voyageone.task2.cms.service;
 
-import com.voyageone.cms.service.CmsBtFeedCustomPropService;
-import com.voyageone.cms.service.model.CmsBtFeedCustomPropModel;
+import com.voyageone.service.impl.cms.CmsBtFeedCustomPropService;
+import com.voyageone.service.model.cms.CmsBtFeedCustomPropModel;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

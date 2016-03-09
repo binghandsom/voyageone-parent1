@@ -1,7 +1,5 @@
 package com.voyageone.web2.cms.views.search;
 
-import com.voyageone.cms.service.CmsBtChannelCategoryService;
-import com.voyageone.cms.service.model.CmsBtProductModel;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.Properties;
@@ -9,6 +7,8 @@ import com.voyageone.common.configs.TypeChannel;
 import com.voyageone.common.util.FileUtils;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.service.impl.cms.CmsBtChannelCategoryService;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.CmsConstants;
 import com.voyageone.web2.cms.bean.CmsSessionBean;

@@ -4,6 +4,21 @@ import com.google.common.base.Joiner;
 import com.mongodb.BulkWriteResult;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
+import com.voyageone.common.components.baidu.translate.BaiduTranslateUtil;
+import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
+import com.voyageone.service.dao.cms.mongo.CmsBtFeedMappingDao;
+import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
+import com.voyageone.service.dao.cms.mongo.CmsMtCategorySchemaDao;
+import com.voyageone.service.impl.cms.CmsBtFeedCustomPropService;
+import com.voyageone.service.impl.cms.CommSequenceMongoService;
+import com.voyageone.service.model.cms.CmsBtFeedCustomPropModel;
+import com.voyageone.service.model.cms.mongo.CmsMtCategorySchemaModel;
+import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
+import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;
+import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedMappingModel;
+import com.voyageone.service.model.cms.mongo.feed.mapping.Mapping;
+import com.voyageone.service.model.cms.mongo.feed.mapping.Prop;
+import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
@@ -14,15 +29,6 @@ import com.voyageone.cms.enums.MappingPropType;
 import com.voyageone.cms.enums.SrcType;
 import com.voyageone.cms.bean.Condition;
 import com.voyageone.cms.enums.Operation;
-import com.voyageone.cms.service.CmsBtFeedCustomPropService;
-import com.voyageone.cms.service.CommSequenceMongoService;
-import com.voyageone.cms.service.dao.mongodb.CmsBtFeedInfoDao;
-import com.voyageone.cms.service.dao.mongodb.CmsBtFeedMappingDao;
-import com.voyageone.cms.service.dao.mongodb.CmsBtProductDao;
-import com.voyageone.cms.service.dao.mongodb.CmsMtCategorySchemaDao;
-import com.voyageone.cms.service.model.*;
-import com.voyageone.cms.service.model.feed.mapping.Mapping;
-import com.voyageone.cms.service.model.feed.mapping.Prop;
 import com.voyageone.common.Constants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.ChannelConfigs;
@@ -381,12 +387,46 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             // 产品状态
             field.setStatus(CmsConstants.ProductStatus.New); // 产品状态: 初始时期为(新建) Synship.com_mt_type : id = 44 : productStatus
 
+            {
+                // 所有的翻译内容
+                Map<String, String> mapTrans = customPropService.getTransList(feed.getChannelId(), feed.getCategory());
+                // 翻译(标题 和 长描述)
+                String strProductNameEn = field.getProductNameEn();
+                String strLongDesEn = field.getLongDesEn();
+                for (Map.Entry<String, String> entry : mapTrans.entrySet()) {
+                    strProductNameEn = strProductNameEn.replace(entry.getKey(), entry.getValue());
+                    strLongDesEn = strLongDesEn.replace(entry.getKey(), entry.getValue());
+                }
+                // 调用百度翻译
+                List<String> transBaiduOrg = new ArrayList<>(); // 百度翻译 - 输入参数
+                transBaiduOrg.add(strProductNameEn); // 标题
+                transBaiduOrg.add(strLongDesEn); // 长描述
+                List<String> transBaiduCn; // 百度翻译 - 输出参数
+                try {
+                    transBaiduCn = BaiduTranslateUtil.translate(transBaiduOrg);
+
+                    field.setLongTitle(transBaiduCn.get(0)); // 标题
+                    field.setLongDesCn(transBaiduCn.get(1)); // 长描述
+
+                } catch (Exception e) {
+                    // 翻译失败的场合,全部设置为空, 运营自己翻译吧
+                    field.setLongTitle(""); // 标题
+                    field.setLongDesCn(""); // 长描述
+                }
+            }
+
             // 商品图片1, 包装图片2, 带角度图片3, 自定义图片4 : 暂时只设置商品图片1
             {
                 List<Map<String, Object>> multiComplex = new LinkedList<>();
-                Map<String, Object> multiComplexChildren = new HashMap<>();
-                multiComplexChildren.put("images1", feed.getImage());
-                multiComplex.add(multiComplexChildren);
+
+                List<String> lstImageOrg = feed.getImage();
+                if (lstImageOrg != null && lstImageOrg.size() > 0) {
+                    for (String imgOrg : lstImageOrg) {
+                        Map<String, Object> multiComplexChildren = new HashMap<>();
+                        multiComplexChildren.put("image1", imgOrg);
+                        multiComplex.add(multiComplexChildren);
+                    }
+                }
 
                 field.put("images1", multiComplex);
             }

@@ -1,12 +1,12 @@
 package com.voyageone.web2.cms.views.promotion.list;
 
 import com.voyageone.base.exception.BusinessException;
-import com.voyageone.cms.service.model.CmsBtProductModel;
-import com.voyageone.cms.service.model.CmsBtProductModel_Sku;
 import com.voyageone.common.components.transaction.SimpleTransaction;
 import com.voyageone.common.configs.Enums.PromotionTypeEnums;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.bean.CmsPromotionProductPriceBean;
 import com.voyageone.web2.cms.wsdl.dao.CmsBtTaskDao;

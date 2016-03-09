@@ -1,6 +1,6 @@
 package com.voyageone.web2.sdk.api.response;
 
-import com.voyageone.cms.service.bean.ProductForWmsBean;
+import com.voyageone.service.bean.cms.ProductForWmsBean;
 import com.voyageone.web2.sdk.api.VoApiResponse;
 
 
