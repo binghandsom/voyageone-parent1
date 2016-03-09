@@ -20,7 +20,7 @@
 		</div>
 		<div class="custom_ts" style="background:#fff" ng-if="vm.cat_path == '0'">
 			<div class="pull-right m-t-xs m-r-xs" ng-controller="popupCtrl">
-				<button ng-if="vm.sameAttr == '1'" ng-click="openCategoryMapping(popupNewCategory)" class="btn btn-default btn-xs"><i class="glyphicon glyphicon-refresh"></i> 类目选择</button>
+				<button ng-if="vm.sameAttr != '1'" ng-click="openCategoryMapping(popupNewCategory)" class="btn btn-default btn-xs"><i class="glyphicon glyphicon-refresh"></i> 类目选择</button>
 				<button type="submit" class="btn btn-default btn-xs" ng-click="openAddAttributeValue(openAddAttribute)"><i class="glyphicon glyphicon-plus"></i>&nbsp;添加自定义属性</button>
 			</div><!-- .form-inline -->
 			<p class="m-l-sm m-t-xs">您当前选择的是：<span>共通属性</span></p>
