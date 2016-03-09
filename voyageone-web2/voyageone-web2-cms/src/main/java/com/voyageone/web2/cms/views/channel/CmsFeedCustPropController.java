@@ -239,8 +239,8 @@ public class CmsFeedCustPropController extends CmsController {
      * @apiParam (应用级参数) {Object[]} unvalList 未翻译的属性名列表（json数组）
      * @apiParamExample  valList参数示例
      *  "valList": [ {"prop_id":"01", "prop_original":"size", "prop_translation":"尺寸", "cat_path":"0"}, {"prop_id":"02", "prop_original":"color", "prop_translation":"颜色"}...]
-     *  说明：其中，若项目中"prop_id"为空，则表示该属性为新增Feed自定义属性
-     *       若项目中包含"cat_path"为"0"，则该属性不做任何处理（没有更新操作）
+     *  说明：其中，若项目中"prop_id"为空，则表示该属性为新增Feed自定义属性（只能新增共通属性）
+     *       若当前选择的是具体的类目时，则不可新增该类目下的属性，也不可修改共通属性的值
      * @apiParamExample  unvalList参数示例
      *  "unvalList": [ {"prop_id":"03", "prop_original":"status", "cat_path":"0"}, {"prop_id":"04", "prop_original":"type"}...]
      * @apiSuccess (系统级返回字段) {String} code 处理结果代码编号
@@ -292,40 +292,54 @@ public class CmsFeedCustPropController extends CmsController {
         if (valList != null) {
             for (Map<String, Object> item : valList) {
                 cat_path = StringUtils.trimToNull((String) item.get("cat_path"));
-                if ("0".equals(cat_path)) {
-                    continue;
+                Object propIdObj = item.get("prop_id");
+                propId = null;
+                if (propIdObj != null) {
+                    propId = StringUtils.trimToNull(propIdObj.toString());
                 }
-                propId = StringUtils.trimToNull((String) item.get("prop_id"));
                 if (propId == null) {
-                    // 新增属性
-                    if (cmsFeedCustPropService.isAttrExist(item, catPath, userInfo.getSelChannelId())) {
-                        logger.warn("该属性亦存在 " + item.toString());
-                    } else {
-                        addList.add(item);
+                    if ("0".equals(catPath) && "0".equals(cat_path)) {
+                        // 新增属性,只能新增共通属性
+                        if (cmsFeedCustPropService.isAttrExist(item, catPath, userInfo.getSelChannelId())) {
+                            logger.warn("该属性亦存在 " + item.toString());
+                        } else {
+                            addList.add(item);
+                        }
                     }
                 } else {
                     // 修改属性
-                    updList.add(item);
+                    if ("0".equals(catPath) && "0".equals(cat_path)) {
+                        updList.add(item);
+                    } else if (!"0".equals(catPath) && !"0".equals(cat_path) && catPath.equals(cat_path)) {
+                        updList.add(item);
+                    }
                 }
             }
         }
         if (unvalList != null) {
             for (Map<String, Object> item : unvalList) {
                 cat_path = StringUtils.trimToNull((String) item.get("cat_path"));
-                if ("0".equals(cat_path)) {
-                    continue;
+                Object propIdObj = item.get("prop_id");
+                propId = null;
+                if (propIdObj != null) {
+                    propId = StringUtils.trimToNull(propIdObj.toString());
                 }
-                propId = StringUtils.trimToNull((String) item.get("prop_id"));
                 if (propId == null) {
-                    // 新增属性
-                    if (cmsFeedCustPropService.isAttrExist(item, catPath, userInfo.getSelChannelId())) {
-                        logger.warn("该属性亦存在 " + item.toString());
-                    } else {
-                        addList.add(item);
+                    if ("0".equals(catPath) && "0".equals(cat_path)) {
+                        // 新增属性,只能新增共通属性
+                        if (cmsFeedCustPropService.isAttrExist(item, catPath, userInfo.getSelChannelId())) {
+                            logger.warn("该属性亦存在 " + item.toString());
+                        } else {
+                            addList.add(item);
+                        }
                     }
                 } else {
                     // 修改属性
-                    updList.add(item);
+                    if ("0".equals(catPath) && "0".equals(cat_path)) {
+                        updList.add(item);
+                    } else if (!"0".equals(catPath) && !"0".equals(cat_path) && catPath.equals(cat_path)) {
+                        updList.add(item);
+                    }
                 }
             }
         }
