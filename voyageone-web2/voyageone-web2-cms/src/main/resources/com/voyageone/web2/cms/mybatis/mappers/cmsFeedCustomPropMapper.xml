@@ -111,12 +111,12 @@
     <update id="cms_bt_feed_custom_prop_update" parameterType="HashMap">
         UPDATE voyageone_cms2.cms_bt_feed_custom_prop
         <set>
-            feed_prop_translation = #{prop.prop_translation},
+            feed_prop_translation = #{prop_translation},
             modified = now(),
             modifier = #{userName}
         </set>
         <where>
-            id = #{prop.prop_id}
+            id = #{prop_id}
         </where>
     </update>
 
