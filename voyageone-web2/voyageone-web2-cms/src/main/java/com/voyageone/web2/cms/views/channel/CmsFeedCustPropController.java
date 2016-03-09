@@ -1,13 +1,7 @@
 package com.voyageone.web2.cms.views.channel;
 
-import com.google.gson.JsonParser;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-
-import javax.servlet.ServletInputStream;
-
-import com.voyageone.cms.service.model.CmsFeedCategoryModel;
+import com.voyageone.base.exception.BusinessException;
+import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
@@ -15,12 +9,9 @@ import com.voyageone.web2.cms.views.mapping.feed.CmsFeedMappingService;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
 /**
@@ -415,10 +406,10 @@ public class CmsFeedCustPropController extends CmsController {
     @RequestMapping(value = CmsUrlConstants.CHANNEL.CUSTOM_PROP.GET_CAT_LIST)
     public AjaxResponse getCategoryList() {
         HashMap dataMap = new HashMap(1);
-        List<CmsFeedCategoryModel> topTree = cmsFeedCustPropService.getTopCategories(getUser());
-        List<CmsFeedCategoryModel> rsltList = new ArrayList<CmsFeedCategoryModel>();
+        List<CmsMtFeedCategoryModel> topTree = cmsFeedCustPropService.getTopCategories(getUser());
+        List<CmsMtFeedCategoryModel> rsltList = new ArrayList<CmsMtFeedCategoryModel>();
         getSubCatTree2List(topTree, rsltList);
-        for (CmsFeedCategoryModel catItem : rsltList) {
+        for (CmsMtFeedCategoryModel catItem : rsltList) {
             catItem.setChild(null);
             catItem.setAttribute(null);
         }
@@ -428,8 +419,8 @@ public class CmsFeedCustPropController extends CmsController {
         return resp;
     }
 
-    private void getSubCatTree2List(List<CmsFeedCategoryModel> childList, List<CmsFeedCategoryModel> rsltList) {
-        for (CmsFeedCategoryModel catItem : childList) {
+    private void getSubCatTree2List(List<CmsMtFeedCategoryModel> childList, List<CmsMtFeedCategoryModel> rsltList) {
+        for (CmsMtFeedCategoryModel catItem : childList) {
             rsltList.add(catItem);
             if (catItem.getIsChild() == 0) {
                 getSubCatTree2List(catItem.getChild(), rsltList);

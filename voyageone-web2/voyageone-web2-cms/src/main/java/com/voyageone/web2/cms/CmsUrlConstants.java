@@ -408,7 +408,7 @@ public interface CmsUrlConstants {
 
         interface CUSTOM_PROP {
 
-            String ROOT = "/cms/channel/custom_prop";
+            String ROOT = "/cms/channel/custom/prop";
 
             String INIT = "get";
 
@@ -420,7 +420,7 @@ public interface CmsUrlConstants {
         }
         interface CUSTOM_VALUE {
 
-            String ROOT = "/cms/channel/custom_value";
+            String ROOT = "/cms/channel/custom/value";
 
             String INIT = "get";
 

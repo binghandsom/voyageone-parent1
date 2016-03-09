@@ -26,7 +26,7 @@ public class CmsFeedCustPropValueController extends CmsController {
     private CmsFeedCustPropService cmsFeedCustPropService;
 
     /**
-     * @api {get} /cms/channel/custom_value/get 5. 获取Feed自定义属性值一览
+     * @api {get} /cms/channel/custom/value/get 5. 获取Feed自定义属性值一览
      * @apiName getFeedCustPropValueList
      * @apiDescription 获取Feed自定义属性值一览
      * @apiGroup channel
@@ -113,7 +113,7 @@ public class CmsFeedCustPropValueController extends CmsController {
     }
 
     /**
-     * @api {post} /cms/channel/custom_value/create 6. 新增Feed自定义属性值
+     * @api {post} /cms/channel/custom/value/create 6. 新增Feed自定义属性值
      * @apiName addFeedCustPropValue
      * @apiDescription 新增Feed自定义属性值
      * @apiGroup channel
@@ -172,12 +172,11 @@ public class CmsFeedCustPropValueController extends CmsController {
             logger.debug("新增翻译后的属性值成功");
         }
         AjaxResponse resp = success(null);
-        resp.setCode("0");
         return resp;
     }
 
     /**
-     * @api {post} /cms/channel/custom_value/update 7. 保存Feed自定义属性值
+     * @api {post} /cms/channel/custom/value/update 7. 保存Feed自定义属性值
      * @apiName saveFeedCustPropValue
      * @apiDescription 保存Feed自定义属性值
      * @apiGroup channel
@@ -233,7 +232,6 @@ public class CmsFeedCustPropValueController extends CmsController {
             logger.debug("更新翻译后的属性值成功");
         }
         AjaxResponse resp = success(null);
-        resp.setCode("0");
         return resp;
     }
 }
