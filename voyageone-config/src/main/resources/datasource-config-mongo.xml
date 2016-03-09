@@ -52,7 +52,7 @@
                 <entry key="CmsMtPlatformCategorySchemaModel" value="cms_mt_platform_category_schema"/>
                 <entry key="CmsMtPlatformCategoryTreeModel" value="cms_mt_platform_category_tree"/>
                 <entry key="CmsMtCommonPropDefModel" value="cms_mt_common_prop_def"/>
-                <entry key="CmsMtComSchemaModel" value="cms_mt_common_schema" />
+                <entry key="CmsMtCommonSchemaModel" value="cms_mt_common_schema" />
                 <entry key="CmsMtPlatformMappingModel" value="cms_mt_platform_mapping" />
                 <entry key="CmsMtPlatformRemoveFieldsModel" value="cms_mt_platform_removedFields" />
             </map>
