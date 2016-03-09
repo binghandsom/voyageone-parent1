@@ -1,9 +1,9 @@
 package com.voyageone.task2.cms.service.feed;
 
+import com.voyageone.service.impl.cms.CmsFeedToCmsService;
+import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.task2.cms.dao.feed.JewelryDao;
 import com.voyageone.task2.cms.model.CmsBtFeedInfoJewelryModel;
-import com.voyageone.cms.service.FeedToCmsService;
-import com.voyageone.cms.service.model.CmsBtFeedInfoModel;
 import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
@@ -30,7 +30,7 @@ public class JewelryWsdlInsert extends JewelryWsdlBase {
     private static final String INSERT_FLG = "(UpdateFlag = 1 or UpdateFlag = 2)";
 
     @Autowired
-    private FeedToCmsService feedToCmsService;
+    private CmsFeedToCmsService feedToCmsService;
 
     @Autowired
     private JewelryDao jewelryDao;

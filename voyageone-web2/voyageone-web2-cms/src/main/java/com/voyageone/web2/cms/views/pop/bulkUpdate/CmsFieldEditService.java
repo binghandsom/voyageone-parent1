@@ -1,14 +1,14 @@
 package com.voyageone.web2.cms.views.pop.bulkUpdate;
 
-import com.voyageone.cms.service.dao.mongodb.CmsBtProductDao;
-import com.voyageone.cms.service.model.CmsBtProductModel_Field;
-import com.voyageone.cms.service.model.CmsMtCommonPropDefModel;
 import com.voyageone.common.configs.TypeChannel;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.masterdate.schema.field.OptionsField;
 import com.voyageone.common.masterdate.schema.option.Option;
 import com.voyageone.common.util.CommonUtil;
+import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
+import com.voyageone.service.model.cms.mongo.CmsMtCommonPropDefModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.dao.CmsBtProductLogDao;
 import com.voyageone.web2.cms.dao.CmsMtCommonPropDefDao;

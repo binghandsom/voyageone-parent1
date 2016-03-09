@@ -1,6 +1,6 @@
 package com.voyageone.web2.cms.views.pop.bulkUpdate;
 
-import com.voyageone.cms.service.model.CmsMtCommonPropDefModel;
+import com.voyageone.service.model.cms.mongo.CmsMtCommonPropDefModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;

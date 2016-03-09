@@ -1,6 +1,5 @@
 package com.voyageone.web2.sdk.api.util;
 
-import com.voyageone.common.masterdate.schema.utils.JsonUtil;
 import com.voyageone.web2.sdk.api.request.PromotionsGetRequest;
 import org.junit.Test;
 

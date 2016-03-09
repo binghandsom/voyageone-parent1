@@ -8,7 +8,7 @@ define([
 ], function (cms, _) {
     cms.controller("taskBeatController", (function () {
 
-        function TaskBeatController($routeParams, taskBeatService, cActions, FileUploader, alert, notify, $location, $timeout) {
+        function TaskBeatController($routeParams, taskBeatService, cActions, FileUploader, alert, confirm, notify, $location, $timeout) {
             var urls = cActions.cms.task.taskBeatService;
             var task_id = parseInt($routeParams['task_id']);
             if (_.isNaN(task_id)) {
@@ -21,6 +21,7 @@ define([
             this.taskBeatService = taskBeatService;
             this.alert = alert;
             this.notify = notify;
+            this.confirm = confirm;
 
             this.task_id = task_id;
             this.data = [];
@@ -48,28 +49,40 @@ define([
                 var ttt = this;
                 var uploadQueue = ttt.uploader.queue;
                 var uploadItem = uploadQueue[uploadQueue.length - 1];
+                var uploadIt = function() {
+                    ttt.uploadItem = uploadItem;
+                    uploadItem.onSuccess = function (res) {
+                        ttt.$timeout(function () {
+                            ttt.uploadItem = null;
+                        }, 500);
+                        if (res.message) {
+                            ttt.alert(res.message);
+                            ttt.data = [];
+                            ttt.pageOption.curr = 1;
+                            ttt.pageOption.total = 0;
+                            return;
+                        }
+                        ttt.notify.success('TXT_MSG_UPDATE_SUCCESS');
+                        if (res.data) {
+                            ttt.data = res.data.list;
+                            ttt.pageOption.curr = 1;
+                            ttt.pageOption.total = res.data.total;
+                        }
+                    };
+                    uploadItem.formData = [{
+                        task_id: ttt.task_id,
+                        size: ttt.pageOption.size
+                    }];
+                    uploadItem.upload();
+                };
                 if (!uploadItem) {
                     return ttt.alert('TXT_MSG_NO_UPLOAD');
                 }
-                ttt.uploadItem = uploadItem;
-                uploadItem.onSuccess = function (res) {
-                    ttt.$timeout(function () {
-                        ttt.uploadItem = null;
-                    }, 500);
-                    if (res.message)
-                        return ttt.alert(res.message);
-                    ttt.notify.success('TXT_MSG_UPDATE_SUCCESS');
-                    if (res.data) {
-                        ttt.data = res.data.list;
-                        ttt.pageOption.curr = 1;
-                        ttt.pageOption.total = res.data.total;
-                    }
-                };
-                uploadItem.formData = [{
-                    task_id: ttt.task_id,
-                    size: ttt.pageOption.size
-                }];
-                uploadItem.upload();
+                if (!ttt.data.length) {
+                    uploadIt();
+                    return;
+                }
+                ttt.confirm('TXT_MSG_REIMPORT_BEAT').result.then(uploadIt);
             },
 
             getData: function (flag) {
@@ -94,16 +107,24 @@ define([
                 $.download.post(ttt.downloadUrl, {task_id: ttt.task_id});
             },
 
-            controlOne: function (beat_id, flag) {
+            controlOne: function (beatInfo, flag) {
                 var ttt = this;
-                ttt.taskBeatService.control({
-                    beat_id: beat_id,
-                    flag: flag
-                }).then(function (res) {
-                    if (!res.data)
-                        return ttt.alert('TXT_MSG_UPDATE_FAIL');
-                    ttt.getData();
-                });
+                var beat_id = beatInfo.id;
+                var changeIt = function() {
+                    ttt.taskBeatService.control({
+                        beat_id: beat_id,
+                        flag: flag
+                    }).then(function (res) {
+                        if (!res.data)
+                            return ttt.alert('TXT_MSG_UPDATE_FAIL');
+                        ttt.getData();
+                    });
+                };
+                if (beatInfo.beatFlag !== 'CANT_BEAT') {
+                    changeIt();
+                    return;
+                }
+                ttt.confirm('TXT_MSG_ERROR_BEAT_ITEM').result.then(changeIt);
             },
 
             controlAll: function (flag) {

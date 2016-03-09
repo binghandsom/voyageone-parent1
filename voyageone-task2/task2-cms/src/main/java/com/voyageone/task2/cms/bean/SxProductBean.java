@@ -1,7 +1,8 @@
 package com.voyageone.task2.cms.bean;
 
-import com.voyageone.cms.service.model.CmsBtProductModel;
-import com.voyageone.cms.service.model.CmsBtProductModel_Group_Platform;
+
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Group_Platform;
 
 /**
  * Created by Leo on 15-12-11.

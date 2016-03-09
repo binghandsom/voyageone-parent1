@@ -1,10 +1,10 @@
 package com.voyageone.task2.cms.service.putaway.rule_parser;
 
-import com.voyageone.cms.service.model.CmsBtProductModel;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.ims.rule_expression.FeedOrgWord;
 import com.voyageone.ims.rule_expression.RuleWord;
 import com.voyageone.ims.rule_expression.WordType;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 

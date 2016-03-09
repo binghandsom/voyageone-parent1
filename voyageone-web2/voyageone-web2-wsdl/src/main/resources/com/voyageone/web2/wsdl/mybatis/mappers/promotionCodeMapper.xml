@@ -55,6 +55,9 @@
             <if test="modelId != null">
                 and a.model_id = #{modelId,jdbcType=INTEGER}
             </if>
+            <if test="productModel != null and productModel != ''">
+                and product_model = #{productModel}
+            </if>
             <if test="key !=null and key != ''">
                and (
                 a.product_model like '%${key}%'

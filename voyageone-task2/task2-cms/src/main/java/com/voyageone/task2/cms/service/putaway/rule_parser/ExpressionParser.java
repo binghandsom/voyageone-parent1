@@ -1,9 +1,9 @@
 package com.voyageone.task2.cms.service.putaway.rule_parser;
 
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.task2.cms.bean.CustomValueSystemParam;
 import com.voyageone.task2.cms.bean.SxProductBean;
 import com.voyageone.task2.cms.service.putaway.UploadImageHandler;
-import com.voyageone.cms.service.model.CmsBtProductModel;
 import com.voyageone.ims.rule_expression.DictWord;
 import com.voyageone.ims.rule_expression.RuleExpression;
 import com.voyageone.ims.rule_expression.RuleWord;

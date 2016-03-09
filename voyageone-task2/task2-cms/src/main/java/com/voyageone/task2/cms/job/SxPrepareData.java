@@ -1,11 +1,12 @@
 package com.voyageone.task2.cms.job;
 
 import com.voyageone.cms.CmsConstants;
-import com.voyageone.cms.service.CmsProductService;
-import com.voyageone.cms.service.dao.mongodb.CmsMtCategorySchemaDao;
-import com.voyageone.cms.service.model.*;
 import com.voyageone.common.masterdate.schema.field.*;
 import com.voyageone.common.masterdate.schema.option.Option;
+import com.voyageone.service.dao.cms.mongo.CmsMtCategorySchemaDao;
+import com.voyageone.service.impl.cms.CmsProductService;
+import com.voyageone.service.model.cms.mongo.CmsMtCategorySchemaModel;
+import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.task2.Context;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.GenericXmlApplicationContext;

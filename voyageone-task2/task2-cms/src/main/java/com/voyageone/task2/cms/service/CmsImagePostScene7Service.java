@@ -1,8 +1,6 @@
 package com.voyageone.task2.cms.service;
 
 import com.voyageone.base.exception.BusinessException;
-import com.voyageone.cms.service.dao.CmsBtFeedProductImageDao;
-import com.voyageone.cms.service.model.CmsBtFeedProductImageModel;
 import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.ChannelConfigs;
@@ -13,6 +11,8 @@ import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.FtpUtil;
 import com.voyageone.common.util.HttpUtils;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.service.dao.cms.CmsBtFeedProductImageDao;
+import com.voyageone.service.model.cms.CmsBtFeedProductImageModel;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import org.apache.commons.net.ftp.FTP;

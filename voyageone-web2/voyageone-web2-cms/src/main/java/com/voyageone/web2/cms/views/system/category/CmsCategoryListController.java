@@ -1,6 +1,6 @@
 package com.voyageone.web2.cms.views.system.category;
 
-import com.voyageone.cms.service.model.CmsMtCategorySchemaModel;
+import com.voyageone.service.model.cms.mongo.CmsMtCategorySchemaModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants.SYSTEM;

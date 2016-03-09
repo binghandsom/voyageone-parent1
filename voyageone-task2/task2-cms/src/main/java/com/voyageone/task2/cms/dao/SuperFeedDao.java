@@ -1,9 +1,9 @@
 package com.voyageone.task2.cms.dao;
 
 import com.voyageone.base.dao.BaseDao;
-import com.voyageone.cms.service.model.CmsBtFeedInfoModel;
 import com.voyageone.common.Constants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
+import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.task2.cms.bean.*;
 import org.springframework.stereotype.Repository;
 

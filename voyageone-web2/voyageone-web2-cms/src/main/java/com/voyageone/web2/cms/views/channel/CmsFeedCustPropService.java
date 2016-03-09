@@ -1,12 +1,11 @@
 package com.voyageone.web2.cms.views.channel;
 
-import com.voyageone.cms.service.dao.mongodb.CmsMtFeedCategoryTreeDao;
-import com.voyageone.cms.service.model.CmsFeedCategoryModel;
-import com.voyageone.cms.service.model.CmsMtFeedCategoryTreeModelx;
+import com.voyageone.service.dao.cms.mongo.CmsMtFeedCategoryTreeDao;
+import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryModel;
+import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryTreeModelx;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.dao.CmsBtFeedCustomPropDao;
 import com.voyageone.web2.core.bean.UserSessionBean;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -34,7 +33,7 @@ public class CmsFeedCustPropService extends BaseAppService {
     private MongoTemplate mongoTemplate;
 
     // 取得类目路径数据
-    public List<CmsFeedCategoryModel> getTopCategories(UserSessionBean user) {
+    public List<CmsMtFeedCategoryModel> getTopCategories(UserSessionBean user) {
         CmsMtFeedCategoryTreeModelx treeModelx = cmsMtFeedCategoryTreeDao.findFeedCategoryx(user.getSelChannelId());
         return treeModelx.getCategoryTree();
     }

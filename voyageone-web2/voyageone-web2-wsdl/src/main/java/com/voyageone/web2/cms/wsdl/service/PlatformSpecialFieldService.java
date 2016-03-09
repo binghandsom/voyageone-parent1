@@ -1,7 +1,7 @@
 package com.voyageone.web2.cms.wsdl.service;
 
-import com.voyageone.cms.service.dao.CmsMtPlatformSpecialFieldDao;
-import com.voyageone.cms.service.model.CmsMtPlatformSpecialFieldModel;
+import com.voyageone.service.dao.cms.CmsMtPlatformSpecialFieldDao;
+import com.voyageone.service.model.cms.CmsMtPlatformSpecialFieldModel;
 import com.voyageone.web2.cms.wsdl.BaseService;
 import com.voyageone.web2.sdk.api.request.*;
 import com.voyageone.web2.sdk.api.response.*;

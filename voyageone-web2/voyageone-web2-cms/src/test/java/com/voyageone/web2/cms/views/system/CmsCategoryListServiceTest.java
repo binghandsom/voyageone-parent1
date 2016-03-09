@@ -1,6 +1,6 @@
 package com.voyageone.web2.cms.views.system;
 
-import com.voyageone.cms.service.dao.mongodb.CmsMtCategorySchemaDao;
+import com.voyageone.service.dao.cms.mongo.CmsMtCategorySchemaDao;
 import com.voyageone.web2.cms.views.system.category.CmsCategoryListService;
 import net.minidev.json.JSONObject;
 import org.junit.Test;
