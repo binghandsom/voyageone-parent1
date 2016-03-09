@@ -128,7 +128,7 @@ public class CmsFeedCustPropValueController extends CmsController {
      * @apiSuccess (系统级返回字段) {String} redirectTo 跳转地址
      * @apiSuccessExample 成功响应更新请求
      * {
-     *  "code": "0", "message":null, "displayType":null, "redirectTo":null, "data":null
+     *  "code":null, "message":null, "displayType":null, "redirectTo":null, "data":null
      * }
      * @apiErrorExample  错误示例1
      * {
@@ -190,7 +190,7 @@ public class CmsFeedCustPropValueController extends CmsController {
      * @apiSuccess (系统级返回字段) {String} redirectTo 跳转地址
      * @apiSuccessExample 成功响应更新请求
      * {
-     *  "code": "0", "message":null, "displayType":null, "redirectTo":null, "data":null
+     *  "code":null, "message":null, "displayType":null, "redirectTo":null, "data":null
      * }
      * @apiErrorExample  错误示例1
      * {

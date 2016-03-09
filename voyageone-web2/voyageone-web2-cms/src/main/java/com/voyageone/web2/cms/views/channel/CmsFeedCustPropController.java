@@ -45,7 +45,7 @@ public class CmsFeedCustPropController extends CmsController {
      * @apiSuccess (应用级返回字段) {Object[]} unvalList 未翻译的属性名列表（json数组），没有数据时返回空数组
      * @apiSuccessExample 成功响应查询请求（unsplitFlg未设值）
      * {
-     *  "code":"0", "message":null, "displayType":null, "redirectTo":null,
+     *  "code":null, "message":null, "displayType":null, "redirectTo":null,
      *  "data":{
      *   "sameAttr": "0",
      *   "valList": [ {"prop_id":"01", "prop_original":"size", "prop_translation":"尺寸", "cat_path":"0"}, {"prop_id":"02", "prop_original":"color", "prop_translation":"颜色"}...],
@@ -94,7 +94,6 @@ public class CmsFeedCustPropController extends CmsController {
             HashMap dataMap = new HashMap();
             dataMap.put("valList", valList);
             AjaxResponse resp = success(dataMap);
-            resp.setCode("0");
             return resp;
 
         } else {
@@ -160,7 +159,6 @@ public class CmsFeedCustPropController extends CmsController {
             dataMap.put("valList", valList);
             dataMap.put("unvalList", unvalList);
             AjaxResponse resp = success(dataMap);
-            resp.setCode("0");
             return resp;
         }
     }
@@ -251,7 +249,7 @@ public class CmsFeedCustPropController extends CmsController {
      * @apiSuccess (系统级返回字段) {String} redirectTo 跳转地址
      * @apiSuccessExample 成功响应更新请求
      * {
-     *  "code":"0", "message":null, "displayType":null, "redirectTo":null, "data":null
+     *  "code":null, "message":null, "displayType":null, "redirectTo":null, "data":null
      * }
      * @apiErrorExample  错误示例
      * {
@@ -333,7 +331,6 @@ public class CmsFeedCustPropController extends CmsController {
         }
         cmsFeedCustPropService.saveAttr(addList, updList, catPath, userInfo);
         AjaxResponse resp = success(null);
-        resp.setCode("0");
         return resp;
     }
 
