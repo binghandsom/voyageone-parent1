@@ -30,7 +30,7 @@ public class CmsMtPlatformMappingModel extends BaseMongoModel {
     //1 属性匹配完成  0 属性尚未匹配完成
     private int matchOver;
 
-    private List<Map<String, Object>> props;
+    private List<MappingBean> props;
 
     public String getChannelId() {
         return channelId;
@@ -72,11 +72,11 @@ public class CmsMtPlatformMappingModel extends BaseMongoModel {
         this.matchOver = matchOver;
     }
 
-    public List<Map<String, Object>> getProps() {
+    public List<MappingBean> getProps() {
         return props;
     }
 
-    public void setProps(List<Map<String, Object>> props) {
+    public void setProps(List<MappingBean> props) {
         this.props = props;
     }
 }

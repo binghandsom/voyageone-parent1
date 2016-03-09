@@ -92,8 +92,7 @@ public class CmsPlatformPropMappingService extends BaseAppService {
         fieldMap.remove("wap_desc");
 
         // 转换简化的 mapping 信息
-        List<Map<String, Object>> map = platformMappingModel.getProps();
-        List<MappingBean> mappingBeen = JsonUtil.jsonToBeanList(JsonUtil.getJsonString(map),MappingBean.class);
+        List<MappingBean> mappingBeen = platformMappingModel.getProps();
 
         Map<String, Object> mappingMap = mappingBeen.stream()
                 .collect(toMap(MappingBean::getPlatformPropId, this::getMatched));
@@ -286,8 +285,7 @@ public class CmsPlatformPropMappingService extends BaseAppService {
     private MappingBean fixMappingStruct(CmsMtPlatformMappingModel platformMappingModel, Map<String, Field> fieldMap,
                                          List<String> mappingPath) {
 
-        List<Map<String, Object>> map = platformMappingModel.getProps();
-        List<MappingBean> mappingBeen = JsonUtil.jsonToBeanList(JsonUtil.getJsonString(map),MappingBean.class);
+        List<MappingBean> mappingBeen = platformMappingModel.getProps();
 
         List<MultiComplexCustomMappingValue> values = null;
 
@@ -400,8 +398,7 @@ public class CmsPlatformPropMappingService extends BaseAppService {
      */
     private MappingBean searchPropertyMappingByPath(CmsMtPlatformMappingModel platformMappingModel, List<String> mappingPath) {
 
-        List<Map<String, Object>> map = platformMappingModel.getProps();
-        List<MappingBean> mappingBeen = JsonUtil.jsonToBeanList(JsonUtil.getJsonString(map),MappingBean.class);
+        List<MappingBean> mappingBeen = platformMappingModel.getProps();
 
         List<MultiComplexCustomMappingValue> values = null;
 

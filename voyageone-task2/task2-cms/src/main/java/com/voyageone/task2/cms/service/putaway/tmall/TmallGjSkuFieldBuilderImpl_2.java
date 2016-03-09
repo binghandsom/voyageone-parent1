@@ -388,8 +388,7 @@ public class TmallGjSkuFieldBuilderImpl_2 extends AbstractSkuFieldBuilder {
         MappingBean colorExtendMappingBean = null;
         MappingBean skuExtendMappingBean = null;
 
-        List<Map<String, Object>> map = cmsMtPlatformMappingModel.getProps();
-        List<MappingBean> mappingBeenList = JsonUtil.jsonToBeanList(JsonUtil.getJsonString(map),MappingBean.class);
+        List<MappingBean> mappingBeenList = cmsMtPlatformMappingModel.getProps();
 
         for (MappingBean mappingBean : mappingBeenList) {
             if (mappingBean.getPlatformPropId().equals(skuField.getId())) {
