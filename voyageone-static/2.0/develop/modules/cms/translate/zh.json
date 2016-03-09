@@ -200,6 +200,7 @@
   "TXT_REVERT": "还原",
   "TXT_NUMIID_FULL": "商品的数字 ID ( num_iid )",
   "TXT_CODE_FULL": "商品的 Code",
+  "TXT_CUST_QUERY_ATTR": "自定义查询条件",
   "TXT_TASK_NAME": "任务名",
   "TXT_TIME_START": "开始时间",
   "TXT_TIME_END": "结束时间",
