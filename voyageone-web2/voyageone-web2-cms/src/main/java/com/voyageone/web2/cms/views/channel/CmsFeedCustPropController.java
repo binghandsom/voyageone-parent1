@@ -18,7 +18,7 @@ import java.util.*;
  * Created by jiang on 2016/2/24.
  */
 @RestController
-@RequestMapping(value = CmsUrlConstants.CHANNEL.CUSTOM_PROP.ROOT)
+@RequestMapping(value = CmsUrlConstants.CHANNEL.CUSTOM_PROP.ROOT, method = RequestMethod.POST)
 public class CmsFeedCustPropController extends CmsController {
 
     @Autowired
@@ -55,7 +55,7 @@ public class CmsFeedCustPropController extends CmsController {
      * 说明：当查询类目自定义属性时，输出的共通属性中包含"cat_path"字段，值为"0"，若是类目自定义属性则不包含该字段
      * @apiSuccessExample 成功响应查询请求（unsplitFlg='1'）
      * {
-     *  "code":"0", "message":null, "displayType":null, "redirectTo":null,
+     *  "code":null, "message":null, "displayType":null, "redirectTo":null,
      *  "data":{
      *   "valList": [ {"prop_id":"01", "prop_original":"size", "prop_translation":"尺寸", "cat_path":"0"}, {"prop_id":"02", "prop_original":"color", "prop_translation":""}...]
      *  }
@@ -73,8 +73,8 @@ public class CmsFeedCustPropController extends CmsController {
      *  使用 mongo: cms_mt_feed_category_tree 表
      * @apiSampleRequest off
      */
-    @RequestMapping(value = CmsUrlConstants.CHANNEL.CUSTOM_PROP.INIT, method = RequestMethod.GET)
-    public AjaxResponse getFeedCustProp(@RequestParam Map<String, String> params) {
+    @RequestMapping(value = CmsUrlConstants.CHANNEL.CUSTOM_PROP.INIT)
+    public AjaxResponse getFeedCustProp(@RequestBody Map<String, String> params) {
         logger.debug("getFeedCustProp() >>>> start");
         logger.debug("getFeedCustProp() >>>> params" + params.toString());
         String catPath = StringUtils.trimToNull(params.get("cat_path"));
@@ -265,7 +265,7 @@ public class CmsFeedCustPropController extends CmsController {
      *  使用cms_bt_feed_custom_prop表
      * @apiSampleRequest off
      */
-    @RequestMapping(value = CmsUrlConstants.CHANNEL.CUSTOM_PROP.SAVE, method = RequestMethod.POST)
+    @RequestMapping(value = CmsUrlConstants.CHANNEL.CUSTOM_PROP.SAVE)
     public AjaxResponse saveFeedCustProp(@RequestBody Map<String, Object> params) {
         logger.debug("saveFeedCustProp() >>>> start");
         logger.debug("saveFeedCustProp() >>>> params" + params.toString());
