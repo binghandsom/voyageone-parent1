@@ -43,6 +43,7 @@ public class MenuController extends BaseController {
         userInfo.put("userName", getUser().getUserName());
         userInfo.put("channelName", getUser().getSelChannel().getFullName());
         userInfo.put("language", getLang());
+        userInfo.put("application",getUser().getApplication());
         resultbean.put("userInfo", userInfo);
 
         // 返回用户信息

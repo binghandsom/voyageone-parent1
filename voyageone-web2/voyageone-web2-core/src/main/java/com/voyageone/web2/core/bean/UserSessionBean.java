@@ -51,6 +51,10 @@ public class UserSessionBean implements Serializable {
      */
     private Channel selChannel;
     private String applicationId;
+    private String application;
+
+
+
     public int getUserId() {
         return userId;
     }
@@ -121,5 +125,11 @@ public class UserSessionBean implements Serializable {
     public void setApplicationId(String applicationId) {
         this.applicationId = applicationId;
     }
+    public String getApplication() {
+        return application;
+    }
 
+    public void setApplication(String application) {
+        this.application = application;
+    }
 }

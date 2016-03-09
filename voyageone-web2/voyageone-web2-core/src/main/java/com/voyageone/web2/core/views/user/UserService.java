@@ -68,7 +68,7 @@ public class UserService extends BaseAppService {
         return userDao.selectPermissionChannel(userSessionBean.getUserName());
     }
 
-    public void setSelectChannel(UserSessionBean user, String channelId,String applicationId) {
+    public void setSelectChannel(UserSessionBean user, String channelId,String applicationId,String application) {
 
         if (StringUtils.isEmpty(channelId))
             throw new BusinessException("");
@@ -89,6 +89,7 @@ public class UserService extends BaseAppService {
         user.setSelChannel(channel);
         user.setActionPermission(permissionUrls);
         user.setApplicationId(applicationId);
+        user.setApplication(application);
         // 转换为页面的权限地址
         List<String> pagePermissions = permissionUrls.stream()
                 .map(url -> url.substring(0, url.lastIndexOf("/")))

@@ -28,7 +28,7 @@ public class UserServiceTest {
         UserSessionBean userSessionBean = new UserSessionBean();
         userSessionBean.setUserName("wms");
 
-        userService.setSelectChannel(userSessionBean, "001","112");
+        userService.setSelectChannel(userSessionBean, "001","112","113");
 
         assert userSessionBean.getActionPermission().size() > 0;
     }
