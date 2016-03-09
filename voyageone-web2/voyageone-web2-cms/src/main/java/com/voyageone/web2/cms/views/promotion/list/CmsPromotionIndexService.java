@@ -8,6 +8,7 @@ import com.voyageone.common.configs.TypeChannel;
 import com.voyageone.common.util.FileUtils;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.CmsConstants;
+import com.voyageone.web2.cms.wsdl.dao.CmsBtPromotionDao;
 import com.voyageone.web2.cms.wsdl.dao.CmsPromotionCodeDao;
 import com.voyageone.web2.sdk.api.VoApiDefaultClient;
 import com.voyageone.web2.sdk.api.domain.CmsBtPromotionCodeModel;
@@ -45,6 +46,8 @@ public class CmsPromotionIndexService extends BaseAppService {
     @Autowired
     CmsPromotionCodeDao cmsPromotionCodeDao;
 
+    @Autowired
+    CmsBtPromotionDao cmsPromotionDao;
     /**
      * 获取该channel的category类型.
      *
@@ -108,6 +111,7 @@ public class CmsPromotionIndexService extends BaseAppService {
         param.put("promotionId", promotionId);
         request.setParam(param);
 
+        CmsBtPromotionModel cmsBtPromotionModel = cmsPromotionDao.findById(param);
         List<CmsBtPromotionCodeModel> promotionCodes = cmsPromotionCodeDao.getPromotionCodeSkuList(param);
 //        List<CmsBtPromotionCodeModel> promotionCodes = voApiClient.execute(request).getCodeList();
 
@@ -120,6 +124,8 @@ public class CmsPromotionIndexService extends BaseAppService {
 
             int rowIndex = 1;
             for (int i = 0; i < promotionCodes.size(); i++) {
+                promotionCodes.get(i).setCartId(cmsBtPromotionModel.getCartId());
+                promotionCodes.get(i).setChannelId(cmsBtPromotionModel.getChannelId());
                 boolean isContinueOutput = writeRecordToFile(book, promotionCodes.get(i), rowIndex);
                 // 超过最大行的场合
                 if (!isContinueOutput) {
@@ -169,6 +175,10 @@ public class CmsPromotionIndexService extends BaseAppService {
         if(item.getSkus() != null && item.getSkus().size() > 0) {
             for(CmsBtPromotionSkuModel sku:item.getSkus()){
                 Row row = FileUtils.row(sheet, startRowIndex);
+
+                FileUtils.cell(row, CmsConstants.CellNum.cartIdCellNum, unlock).setCellValue(item.getCartId());
+
+                FileUtils.cell(row, CmsConstants.CellNum.channelIdCellNum, unlock).setCellValue(item.getChannelId());
 
                 FileUtils.cell(row, CmsConstants.CellNum.catPathCellNum, unlock).setCellValue(item.getCatPath());
 

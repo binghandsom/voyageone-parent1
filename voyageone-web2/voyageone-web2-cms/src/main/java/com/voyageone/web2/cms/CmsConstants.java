@@ -34,6 +34,8 @@ public interface CmsConstants extends BaseConstants{
         String PROMOTION_EXPORT_TEMPLATE = "cms.promotion.export.file";
     }
     interface CellNum {
+        int cartIdCellNum = 0;
+        int channelIdCellNum = 1;
         int catPathCellNum = 2;
         int numberIdCellNum = 3;
         int groupIdCellNum = 4;
