@@ -93,6 +93,51 @@
             </if>
         </where>
     </select>
+    <resultMap id="bt_promotion_code_sku_map" autoMapping="true" extends="bt_promotion_code_map" type="com.voyageone.web2.sdk.api.domain.CmsBtPromotionCodeModel" >
+        <collection property="skus" javaType="ArrayList" ofType="com.voyageone.web2.sdk.api.domain.CmsBtPromotionSkuModel" >
+            <result column="product_sku" property="productSku" />
+        </collection>
+    </resultMap>
+    <select id="select_cms_bt_promotion_code_sku" resultMap="bt_promotion_code_sku_map" parameterType="HashMap" >
+        SELECT
+        a.seq,
+        a.promotion_id,
+        a.product_id,
+        a.model_id,
+        a.product_model,
+        a.product_code,
+        a.product_name,
+        a.cat_path,
+        a.retail_price,
+        a.sale_price,
+        a.msrp,
+        a.tag_id,
+        a.promotion_price,
+        a.num_iid,
+        a.image_url_1,
+        a.image_url_2,
+        a.image_url_3,
+        a.created,
+        a.creater,
+        a.modified,
+        a.modifier,
+        a.image_url_1 as image,
+        b.tag_path,
+        b.tag_name,
+        b.tag_path_name,
+        c.product_sku
+        FROM
+        voyageone_cms2.cms_bt_promotion_code a
+        LEFT JOIN voyageone_cms2.cms_bt_tag b ON a.tag_id = b.tag_id
+        LEFT JOIN voyageone_cms2.cms_bt_promotion_sku c on a.promotion_id = c.promotion_id and a.product_code = c.product_code
+
+        <where>
+            <if test="promotionId != null">
+                a.promotion_id =  #{promotionId,jdbcType=INTEGER}
+            </if>
+        </where>
+
+    </select>
     <insert id="insert_cms_bt_promotion_code" parameterType="com.voyageone.web2.sdk.api.domain.CmsBtPromotionCodeModel" >
         insert into voyageone_cms2.cms_bt_promotion_code
         <trim prefix="(" suffix=")" suffixOverrides="," >

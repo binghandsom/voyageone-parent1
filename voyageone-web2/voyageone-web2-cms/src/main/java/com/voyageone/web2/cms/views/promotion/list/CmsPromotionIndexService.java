@@ -8,9 +8,11 @@ import com.voyageone.common.configs.TypeChannel;
 import com.voyageone.common.util.FileUtils;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.CmsConstants;
+import com.voyageone.web2.cms.wsdl.dao.CmsPromotionCodeDao;
 import com.voyageone.web2.sdk.api.VoApiDefaultClient;
 import com.voyageone.web2.sdk.api.domain.CmsBtPromotionCodeModel;
 import com.voyageone.web2.sdk.api.domain.CmsBtPromotionModel;
+import com.voyageone.web2.sdk.api.domain.CmsBtPromotionSkuModel;
 import com.voyageone.web2.sdk.api.exception.ApiException;
 import com.voyageone.web2.sdk.api.request.PromotionCodeGetRequest;
 import com.voyageone.web2.sdk.api.request.PromotionDeleteRequest;
@@ -40,14 +42,17 @@ public class CmsPromotionIndexService extends BaseAppService {
     @Autowired
     VoApiDefaultClient voApiClient;
 
+    @Autowired
+    CmsPromotionCodeDao cmsPromotionCodeDao;
 
     /**
      * 获取该channel的category类型.
+     *
      * @param channelId
      * @param language
      * @return
      */
-    public Map<String, Object> init (String channelId, String language) {
+    public Map<String, Object> init(String channelId, String language) {
         Map<String, Object> result = new HashMap<>();
 
         result.put("platformTypeList", TypeChannel.getTypeListSkuCarts(channelId, Constants.comMtTypeChannel.SKU_CARTS_53_A, language));
@@ -57,24 +62,24 @@ public class CmsPromotionIndexService extends BaseAppService {
     }
 
     public CmsBtPromotionModel queryById(Integer promotionId) {
-        PromotionsGetRequest request=new PromotionsGetRequest();
+        PromotionsGetRequest request = new PromotionsGetRequest();
         request.setPromotionId(promotionId);
-        List<CmsBtPromotionModel> models=voApiClient.execute(request).getCmsBtPromotionModels();
-        if(models!=null&& models.size()==1){
+        List<CmsBtPromotionModel> models = voApiClient.execute(request).getCmsBtPromotionModels();
+        if (models != null && models.size() == 1) {
             return models.get(0);
-        }else {
+        } else {
             return null;
         }
     }
 
     public List<CmsBtPromotionModel> queryByCondition(Map<String, Object> conditionParams) {
-        PromotionsGetRequest request=new PromotionsGetRequest();
+        PromotionsGetRequest request = new PromotionsGetRequest();
         SdkBeanUtils.copyProperties(conditionParams, request);
         return voApiClient.execute(request).getCmsBtPromotionModels();
     }
 
     public int addOrUpdate(CmsBtPromotionModel cmsBtPromotionModel) {
-        PromotionPutRequest request=new PromotionPutRequest();
+        PromotionPutRequest request = new PromotionPutRequest();
         request.setCmsBtPromotionModel(cmsBtPromotionModel);
         try {
             if (cmsBtPromotionModel.getPromotionId() != null) {
@@ -82,13 +87,13 @@ public class CmsPromotionIndexService extends BaseAppService {
             } else {
                 return voApiClient.execute(request).getInsertedCount();
             }
-        }catch (ApiException e){
-            throw new BusinessException(e.getErrCode()+":"+e.getErrMsg(),e.getErrMsg());
+        } catch (ApiException e) {
+            throw new BusinessException(e.getErrCode() + ":" + e.getErrMsg(), e.getErrMsg());
         }
     }
 
     public int deleteById(Integer promotionId) {
-        PromotionDeleteRequest request=new PromotionDeleteRequest();
+        PromotionDeleteRequest request = new PromotionDeleteRequest();
         request.setPromotionId(promotionId);
         return voApiClient.execute(request).getRemovedCount();
     }
@@ -98,11 +103,13 @@ public class CmsPromotionIndexService extends BaseAppService {
 //        String templatePath = readValue(CmsConstants.Props.CODE_TEMPLATE);
         String templatePath = Properties.readValue(CmsConstants.Props.PROMOTION_EXPORT_TEMPLATE);
 
-        PromotionCodeGetRequest request=new PromotionCodeGetRequest();
-        Map<String ,Object> param = new HashMap<>();
-        param.put("promotionId",promotionId);
+        PromotionCodeGetRequest request = new PromotionCodeGetRequest();
+        Map<String, Object> param = new HashMap<>();
+        param.put("promotionId", promotionId);
         request.setParam(param);
-        List<CmsBtPromotionCodeModel> promotionCodes = voApiClient.execute(request).getCodeList();
+
+        List<CmsBtPromotionCodeModel> promotionCodes = cmsPromotionCodeDao.getPromotionCodeSkuList(param);
+//        List<CmsBtPromotionCodeModel> promotionCodes = voApiClient.execute(request).getCodeList();
 
 
         $info("准备生成 Item 文档 [ %s ]", promotionCodes.size());
@@ -111,12 +118,14 @@ public class CmsPromotionIndexService extends BaseAppService {
         try (InputStream inputStream = new FileInputStream(templatePath);
              Workbook book = WorkbookFactory.create(inputStream)) {
 
+            int rowIndex = 1;
             for (int i = 0; i < promotionCodes.size(); i++) {
-                boolean isContinueOutput = writeRecordToFile(book, promotionCodes.get(i), i + 1);
+                boolean isContinueOutput = writeRecordToFile(book, promotionCodes.get(i), rowIndex);
                 // 超过最大行的场合
                 if (!isContinueOutput) {
                     break;
                 }
+                rowIndex += promotionCodes.get(i).getSkus() != null ? promotionCodes.get(i).getSkus().size() : 0;
             }
 
             $info("文档写入完成");
@@ -140,11 +149,12 @@ public class CmsPromotionIndexService extends BaseAppService {
             }
         }
     }
+
     /**
      * Code单位，文件输出
      *
-     * @param book 输出Excel文件对象
-     * @param item 待输出DB数据
+     * @param book          输出Excel文件对象
+     * @param item          待输出DB数据
      * @param startRowIndex 开始
      * @return boolean 是否终止输出
      */
@@ -152,45 +162,68 @@ public class CmsPromotionIndexService extends BaseAppService {
         boolean isContinueOutput = true;
         Sheet sheet = book.getSheetAt(0);
 
-        Row row = FileUtils.row(sheet, 1);
-        CellStyle unlock = row.getRowStyle();;
+        Row styleRow = FileUtils.row(sheet, 1);
 
-            /*
-             * 现有表格的列:
-             * 0: No
-             * 1: productId
-             * 2: groupId
-             * 3: numiid
-             * 4: Model
-             * 5: Code
-             * 6: Product_Name
-             * 7: Qty
-             * 8: Sale_Price
-             * 9: 类目Path
-             */
+        CellStyle unlock = styleRow.getCell(0).getCellStyle();
 
+        if(item.getSkus() != null && item.getSkus().size() > 0) {
+            for(CmsBtPromotionSkuModel sku:item.getSkus()){
+                Row row = FileUtils.row(sheet, startRowIndex);
 
-        row = FileUtils.row(sheet, startRowIndex);
-        // 内容输出
-        FileUtils.cell(row, 0, unlock).setCellValue(startRowIndex);
+                FileUtils.cell(row, CmsConstants.CellNum.catPathCellNum, unlock).setCellValue(item.getCatPath());
 
-        FileUtils.cell(row, 1, unlock).setCellValue(item.getProductCode());
+                FileUtils.cell(row, CmsConstants.CellNum.numberIdCellNum, unlock).setCellValue(item.getNumIid());
 
-        FileUtils.cell(row, 2, unlock).setCellValue(item.getProductName());
+                FileUtils.cell(row, CmsConstants.CellNum.groupIdCellNum, unlock).setCellValue(item.getModelId());
 
-        FileUtils.cell(row, 3, unlock).setCellValue(item.getCatPath());
+                FileUtils.cell(row, CmsConstants.CellNum.groupNameCellNum, unlock).setCellValue(item.getProductModel());
 
-        FileUtils.cell(row, 4, unlock).setCellValue(item.getNumIid());
+                FileUtils.cell(row, CmsConstants.CellNum.productIdCellNum, unlock).setCellValue(item.getProductId());
 
-        FileUtils.cell(row, 5, unlock).setCellValue(item.getMsrp());
+                FileUtils.cell(row, CmsConstants.CellNum.productCodeCellNum, unlock).setCellValue(item.getProductCode());
 
-        FileUtils.cell(row, 6, unlock).setCellValue(item.getRetailPrice());
+                FileUtils.cell(row, CmsConstants.CellNum.productNameCellNum, unlock).setCellValue(item.getProductName());
 
-        FileUtils.cell(row, 7, unlock).setCellValue(item.getSalePrice());
+                FileUtils.cell(row, CmsConstants.CellNum.skuCellNum, unlock).setCellValue(sku.getProductSku());
 
-        FileUtils.cell(row, 8, unlock).setCellValue(item.getPromotionPrice());
+                if(item.getMsrpUS() != null){
+                    FileUtils.cell(row, CmsConstants.CellNum.msrpUSCellNum, unlock).setCellValue(item.getMsrpUS());
+                }
+                if(item.getMsrp() != null){
+                    FileUtils.cell(row, CmsConstants.CellNum.msrpRMBCellNum, unlock).setCellValue(item.getMsrp());
+                }
+                if(item.getRetailPrice() != null){
+                    FileUtils.cell(row, CmsConstants.CellNum.retailPriceCellNum, unlock).setCellValue(item.getRetailPrice());
+                }
+                if(item.getSalePrice() != null){
+                    FileUtils.cell(row, CmsConstants.CellNum.salePriceCellNum, unlock).setCellValue(item.getSalePrice());
+                }
+                if(item.getPromotionPrice() != null){
+                    FileUtils.cell(row, CmsConstants.CellNum.promotionPriceCellNum, unlock).setCellValue(item.getPromotionPrice());
+                }
+                if(item.getInventory() != null){
+                    FileUtils.cell(row, CmsConstants.CellNum.inventoryCellNum, unlock).setCellValue(item.getInventory());
+                }
 
-        FileUtils.cell(row, 9, unlock).setCellValue(item.getTagPathName());
+                FileUtils.cell(row, CmsConstants.CellNum.image1CellNum, unlock).setCellValue(item.getImage_url_1());
+
+                FileUtils.cell(row, CmsConstants.CellNum.image2CellNum, unlock).setCellValue(item.getImage_url_2());
+
+                FileUtils.cell(row, CmsConstants.CellNum.image3CellNum, unlock).setCellValue(item.getImage_url_3());
+
+                FileUtils.cell(row, CmsConstants.CellNum.timeCellNum, unlock).setCellValue(item.getTime());
+
+                FileUtils.cell(row, CmsConstants.CellNum.property1CellNum, unlock).setCellValue(item.getProperty1());
+
+                FileUtils.cell(row, CmsConstants.CellNum.property2CellNum, unlock).setCellValue(item.getProperty2());
+
+                FileUtils.cell(row, CmsConstants.CellNum.property3CellNum, unlock).setCellValue(item.getProperty3());
+
+                FileUtils.cell(row, CmsConstants.CellNum.property4CellNum, unlock).setCellValue(item.getProperty4());
+
+                startRowIndex++;
+            }
+        }
 
         return isContinueOutput;
     }
