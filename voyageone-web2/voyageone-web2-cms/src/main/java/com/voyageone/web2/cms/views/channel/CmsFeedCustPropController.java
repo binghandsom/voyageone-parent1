@@ -27,7 +27,7 @@ import java.util.*;
  * Created by jiang on 2016/2/24.
  */
 @RestController
-@RequestMapping(value = CmsUrlConstants.CHANNEL.CUSTOM_PROP.ROOT)
+@RequestMapping(value = CmsUrlConstants.CHANNEL.CUSTOM_PROP.ROOT, method = RequestMethod.POST)
 public class CmsFeedCustPropController extends CmsController {
 
     @Autowired
@@ -36,7 +36,7 @@ public class CmsFeedCustPropController extends CmsController {
     private CmsFeedCustPropService cmsFeedCustPropService;
 
     /**
-     * @api {get} /cms/channel/custom/prop/get 1. 获取Feed自定义属性
+     * @api {get} /cms/channel/custom_prop/get 1. 获取Feed自定义属性
      * @apiName getFeedCustProp
      * @apiDescription 获取Feed自定义属性
      * @apiGroup channel
@@ -82,7 +82,7 @@ public class CmsFeedCustPropController extends CmsController {
      *  使用 mongo: cms_mt_feed_category_tree 表
      * @apiSampleRequest off
      */
-    @RequestMapping(value = CmsUrlConstants.CHANNEL.CUSTOM_PROP.INIT, method = RequestMethod.GET)
+    @RequestMapping(value = CmsUrlConstants.CHANNEL.CUSTOM_PROP.INIT)
     public AjaxResponse getFeedCustProp(@RequestParam Map<String, String> params) {
         logger.debug("getFeedCustProp() >>>> start");
         logger.debug("getFeedCustProp() >>>> params" + params.toString());
@@ -243,7 +243,7 @@ public class CmsFeedCustPropController extends CmsController {
     }
 
     /**
-     * @api {post} /cms/channel/custom/prop/update 2. 保存Feed自定义属性
+     * @api {post} /cms/channel/custom_prop/update 2. 保存Feed自定义属性
      * @apiName saveFeedCustProp
      * @apiDescription 保存Feed自定义属性，新增Feed自定义属性
      * @apiGroup channel
@@ -280,7 +280,7 @@ public class CmsFeedCustPropController extends CmsController {
      *  使用cms_bt_feed_custom_prop表
      * @apiSampleRequest off
      */
-    @RequestMapping(value = CmsUrlConstants.CHANNEL.CUSTOM_PROP.SAVE, method = RequestMethod.POST)
+    @RequestMapping(value = CmsUrlConstants.CHANNEL.CUSTOM_PROP.SAVE)
     public AjaxResponse saveFeedCustProp(@RequestBody Map<String, Object> params) {
         logger.debug("saveFeedCustProp() >>>> start");
         logger.debug("saveFeedCustProp() >>>> params" + params.toString());
@@ -355,7 +355,7 @@ public class CmsFeedCustPropController extends CmsController {
     }
 
     /**
-     * @api {get} /cms/channel/custom/prop/getCatTree 3. 获取类目一览（树型结构）
+     * @api {get} /cms/channel/custom_prop/getCatTree 3. 获取类目一览（树型结构）
      * @apiName getCategoryTree
      * @apiDescription 获取类目一览（树型结构数据）
      * @apiGroup channel
@@ -387,7 +387,7 @@ public class CmsFeedCustPropController extends CmsController {
      *  使用mongo:cms_mt_feed_category_tree表
      * @apiSampleRequest off
      */
-    @RequestMapping(value = CmsUrlConstants.CHANNEL.CUSTOM_PROP.GETCATTREE, method = RequestMethod.GET)
+    @RequestMapping(value = CmsUrlConstants.CHANNEL.CUSTOM_PROP.GET_CAT_TREE)
     public AjaxResponse getCategoryTree() {
         HashMap dataMap = new HashMap(1);
         dataMap.put("categoryTree", cmsFeedCustPropService.getTopCategories(getUser()));
@@ -397,7 +397,7 @@ public class CmsFeedCustPropController extends CmsController {
     }
 
     /**
-     * @api {get} /cms/channel/custom/prop/getCatList 4. 获取类目一览（数组）
+     * @api {get} /cms/channel/custom_prop/getCatList 4. 获取类目一览（数组）
      * @apiName getCategoryList
      * @apiDescription 获取类目一览（数组结构数据）
      * @apiGroup channel
@@ -421,7 +421,7 @@ public class CmsFeedCustPropController extends CmsController {
      *  使用mongo:cms_mt_feed_category_tree表
      * @apiSampleRequest off
      */
-    @RequestMapping(value = CmsUrlConstants.CHANNEL.CUSTOM_PROP.GETCATLIST, method = RequestMethod.GET)
+    @RequestMapping(value = CmsUrlConstants.CHANNEL.CUSTOM_PROP.GET_CAT_LIST)
     public AjaxResponse getCategoryList() {
         HashMap dataMap = new HashMap(1);
         List<CmsFeedCategoryModel> topTree = cmsFeedCustPropService.getTopCategories(getUser());

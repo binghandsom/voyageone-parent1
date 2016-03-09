@@ -18,14 +18,14 @@ import java.util.Map;
  * Created by jiang on 2016/2/24.
  */
 @RestController
-@RequestMapping(value = CmsUrlConstants.CHANNEL.CUSTOM_VALUE.ROOT)
+@RequestMapping(value = CmsUrlConstants.CHANNEL.CUSTOM_VALUE.ROOT, method = RequestMethod.POST)
 public class CmsFeedCustPropValueController extends CmsController {
 
     @Autowired
     private CmsFeedCustPropService cmsFeedCustPropService;
 
     /**
-     * @api {get} /cms/channel/custom/value/get 5. 获取Feed自定义属性值一览
+     * @api {get} /cms/channel/custom_value/get 5. 获取Feed自定义属性值一览
      * @apiName getFeedCustPropValueList
      * @apiDescription 获取Feed自定义属性值一览
      * @apiGroup channel
@@ -60,7 +60,7 @@ public class CmsFeedCustPropValueController extends CmsController {
      *  使用cms_bt_feed_custom_prop_value表
      * @apiSampleRequest off
      */
-    @RequestMapping(value = CmsUrlConstants.CHANNEL.CUSTOM_VALUE.INIT, method = RequestMethod.GET)
+    @RequestMapping(value = CmsUrlConstants.CHANNEL.CUSTOM_VALUE.INIT)
     public AjaxResponse getFeedCustPropValueList(@RequestParam Map<String, String> params) {
         logger.debug("getFeedCustPropValueList() >>>> start");
         logger.debug("getFeedCustPropValueList() >>>> params" + params.toString());
@@ -113,7 +113,7 @@ public class CmsFeedCustPropValueController extends CmsController {
     }
 
     /**
-     * @api {post} /cms/channel/custom/value/create 6. 新增Feed自定义属性值
+     * @api {post} /cms/channel/custom_value/create 6. 新增Feed自定义属性值
      * @apiName addFeedCustPropValue
      * @apiDescription 新增Feed自定义属性值
      * @apiGroup channel
@@ -145,7 +145,7 @@ public class CmsFeedCustPropValueController extends CmsController {
      *  使用cms_bt_feed_custom_prop_value表
      * @apiSampleRequest off
      */
-    @RequestMapping(value = CmsUrlConstants.CHANNEL.CUSTOM_VALUE.ADD, method = RequestMethod.POST)
+    @RequestMapping(value = CmsUrlConstants.CHANNEL.CUSTOM_VALUE.ADD)
     public AjaxResponse addFeedCustPropValue(@RequestBody Map<String, String> params) {
         logger.debug("addFeedCustPropValue() >>>> start");
         logger.debug("addFeedCustPropValue() >>>> params" + params.toString());
@@ -181,7 +181,7 @@ public class CmsFeedCustPropValueController extends CmsController {
     }
 
     /**
-     * @api {post} /cms/channel/custom/value/update 7. 保存Feed自定义属性值
+     * @api {post} /cms/channel/custom_value/update 7. 保存Feed自定义属性值
      * @apiName saveFeedCustPropValue
      * @apiDescription 保存Feed自定义属性值
      * @apiGroup channel
@@ -211,7 +211,7 @@ public class CmsFeedCustPropValueController extends CmsController {
      *  使用cms_bt_feed_custom_prop_value表
      * @apiSampleRequest off
      */
-    @RequestMapping(value = CmsUrlConstants.CHANNEL.CUSTOM_VALUE.SAVE, method = RequestMethod.POST)
+    @RequestMapping(value = CmsUrlConstants.CHANNEL.CUSTOM_VALUE.SAVE)
     public AjaxResponse saveFeedCustPropValue(@RequestBody Map<String, String> params) {
         logger.debug("saveFeedCustPropValue() >>>> start");
         logger.debug("saveFeedCustPropValue() >>>> params" + params.toString());

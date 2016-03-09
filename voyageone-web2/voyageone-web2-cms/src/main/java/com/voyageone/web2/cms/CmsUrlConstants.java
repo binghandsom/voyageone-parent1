@@ -409,19 +409,19 @@ public interface CmsUrlConstants {
 
         interface CUSTOM_PROP {
 
-            String ROOT = "/cms/channel/custom/prop";
+            String ROOT = "/cms/channel/custom_prop";
 
             String INIT = "get";
 
             String SAVE = "update";
 
-            String GETCATTREE = "getCatTree";
+            String GET_CAT_TREE = "getCatTree";
 
-            String GETCATLIST = "getCatList";
+            String GET_CAT_LIST = "getCatList";
         }
         interface CUSTOM_VALUE {
 
-            String ROOT = "/cms/channel/custom/value";
+            String ROOT = "/cms/channel/custom_value";
 
             String INIT = "get";
 
