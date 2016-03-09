@@ -87,7 +87,7 @@ public class CmsTaskPictureController extends BaseController {
 
     @RequestMapping(BEAT.ADD_CODE)
     public AjaxResponse addCode(@RequestBody ReqParam param) {
-        return success(taskPictureService.getCodes(param.getPromotionId(), param.getModelId()));
+        return success(taskPictureService.getCodes(param.getPromotionId(), param.getProductModel()));
     }
 
     @RequestMapping(BEAT.ADD_NUMIID)

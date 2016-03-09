@@ -278,10 +278,10 @@ public class CmsTaskPictureService extends BaseAppService {
         return response.getPromotionGroups();
     }
 
-    public List<CmsBtPromotionCodeModel> getCodes(int promotionId, int modelId) {
+    public List<CmsBtPromotionCodeModel> getCodes(int promotionId, String productModel) {
         Map<String, Object> map = new HashMap<>();
         map.put("promotionId", promotionId);
-        map.put("modelId", modelId);
+        map.put("productModel", productModel);
         PromotionCodeGetRequest request = new PromotionCodeGetRequest();
         request.setParam(map);
         PromotionCodeGetResponse response = apiClient.execute(request);

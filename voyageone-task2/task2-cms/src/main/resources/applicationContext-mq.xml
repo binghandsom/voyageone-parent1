@@ -6,8 +6,6 @@
            http://www.springframework.org/schema/beans
            http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <rabbit:queue name="voyageone_batchjob_queue_1" durable="true" auto-delete="false" exclusive="false"/>
-
     <rabbit:queue name="voyageone_cms_batchjob_promotion_queue" durable="true" auto-delete="false" exclusive="false"/>
 
     <rabbit:listener-container connection-factory="rabbitConnFactory" acknowledge="auto">
