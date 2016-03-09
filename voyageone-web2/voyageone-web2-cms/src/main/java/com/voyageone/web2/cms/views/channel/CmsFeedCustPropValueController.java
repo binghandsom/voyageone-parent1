@@ -1,5 +1,6 @@
 package com.voyageone.web2.cms.views.channel;
 
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
@@ -107,8 +108,7 @@ public class CmsFeedCustPropValueController extends CmsController {
         }
         dataMap.put("total", listCnt);
         dataMap.put("resultData", rslt1.subList(skip, endIdx));
-        AjaxResponse resp = success(null);
-        resp.setData(dataMap);
+        AjaxResponse resp = success(dataMap);
         return resp;
     }
 
@@ -154,19 +154,15 @@ public class CmsFeedCustPropValueController extends CmsController {
         String transValue = StringUtils.trimToEmpty(params.get("value_translation"));
         if (propId == 0 || origValue == null) {
             // 缺少参数
-            AjaxResponse resp = success(null);
-            resp.setCode("1");
-            resp.setMessage("参数错误/缺少参数");
-            return resp;
+            logger.warn("addFeedCustPropValue() >>>> 参数错误/缺少参数");
+            throw new BusinessException("1", "参数错误/缺少参数", null);
         }
 
         UserSessionBean userInfo = getUser();
         // 先判断该属性值是否已存在
         if (cmsFeedCustPropService.isPropValueExist(propId, userInfo.getSelChannelId(), origValue)) {
-            AjaxResponse resp = success(null);
-            resp.setCode("2");
-            resp.setMessage("重复翻译的属性值");
-            return resp;
+            logger.warn("addFeedCustPropValue() >>>> 重复翻译的属性值");
+            throw new BusinessException("2", "重复翻译的属性值", null);
         }
 
         int rslt = cmsFeedCustPropService.addPropValue(propId, userInfo.getSelChannelId(), origValue, transValue, userInfo.getUserName());
@@ -219,19 +215,15 @@ public class CmsFeedCustPropValueController extends CmsController {
         String transValue = StringUtils.trimToEmpty(params.get("value_translation"));
         if (valueId == 0) {
             // 缺少参数
-            AjaxResponse resp = success(null);
-            resp.setCode("1");
-            resp.setMessage("参数错误/缺少参数");
-            return resp;
+            logger.warn("saveFeedCustPropValue() >>>> 参数错误/缺少参数");
+            throw new BusinessException("1", "参数错误/缺少参数", null);
         }
 
         UserSessionBean userInfo = getUser();
         // 先判断该属性值是否已存在
         if (!cmsFeedCustPropService.isPropValueExist(valueId)) {
-            AjaxResponse resp = success(null);
-            resp.setCode("2");
-            resp.setMessage("该属性值不存在");
-            return resp;
+            logger.warn("saveFeedCustPropValue() >>>> 该属性值不存在");
+            throw new BusinessException("2", "该属性值不存在", null);
         }
 
         int rslt = cmsFeedCustPropService.updatePropValue(valueId, transValue, userInfo.getUserName());

@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 
 import javax.servlet.ServletInputStream;
 
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.cms.service.model.CmsFeedCategoryModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
@@ -89,10 +90,8 @@ public class CmsFeedCustPropController extends CmsController {
         String catPath = StringUtils.trimToNull(params.get("cat_path"));
         if (catPath == null) {
             // 缺少参数
-            AjaxResponse resp = success(null);
-            resp.setCode("1");
-            resp.setMessage("缺少参数");
-            return resp;
+            logger.warn("getFeedCustProp() >>>> 缺少catPath参数");
+            throw new BusinessException("1", "缺少参数", null);
         }
 
         UserSessionBean userInfo = getUser();
@@ -104,9 +103,8 @@ public class CmsFeedCustPropController extends CmsController {
 
             HashMap dataMap = new HashMap();
             dataMap.put("valList", valList);
-            AjaxResponse resp = success(null);
+            AjaxResponse resp = success(dataMap);
             resp.setCode("0");
-            resp.setData(dataMap);
             return resp;
 
         } else {
@@ -171,9 +169,8 @@ public class CmsFeedCustPropController extends CmsController {
             dataMap.put("sameAttr", commFlg);
             dataMap.put("valList", valList);
             dataMap.put("unvalList", unvalList);
-            AjaxResponse resp = success(null);
+            AjaxResponse resp = success(dataMap);
             resp.setCode("0");
-            resp.setData(dataMap);
             return resp;
         }
     }
@@ -287,20 +284,16 @@ public class CmsFeedCustPropController extends CmsController {
         String catPath = StringUtils.trimToNull((String) params.get("cat_path"));
         if (catPath == null) {
             // 缺少参数
-            AjaxResponse resp = success(null);
-            resp.setCode("1");
-            resp.setMessage("缺少参数");
-            return resp;
+            logger.warn("saveFeedCustProp() >>>> 缺少catpath参数");
+            throw new BusinessException("1", "缺少参数", null);
         }
 
         List<Map<String, Object>> valList = (List<Map<String, Object>>) params.get("valList");
         List<Map<String, Object>> unvalList = (List<Map<String, Object>>) params.get("unvalList");
         if ((valList == null || valList.size() == 0) && (unvalList == null || unvalList.size() == 0)) {
             // 缺少参数
-            AjaxResponse resp = success(null);
-            resp.setCode("1");
-            resp.setMessage("缺少参数");
-            return resp;
+            logger.warn("saveFeedCustProp() >>>> 缺少属性相关参数");
+            throw new BusinessException("1", "缺少参数", null);
         }
         UserSessionBean userInfo = getUser();
         List<Map<String, Object>> addList = new ArrayList<Map<String, Object>>();
@@ -391,8 +384,7 @@ public class CmsFeedCustPropController extends CmsController {
     public AjaxResponse getCategoryTree() {
         HashMap dataMap = new HashMap(1);
         dataMap.put("categoryTree", cmsFeedCustPropService.getTopCategories(getUser()));
-        AjaxResponse resp = success(null);
-        resp.setData(dataMap);
+        AjaxResponse resp = success(dataMap);
         return resp;
     }
 
@@ -433,8 +425,7 @@ public class CmsFeedCustPropController extends CmsController {
         }
 
         dataMap.put("categoryList", rsltList);
-        AjaxResponse resp = success(null);
-        resp.setData(dataMap);
+        AjaxResponse resp = success(dataMap);
         return resp;
     }
 
