@@ -4,6 +4,7 @@ import com.taobao.top.schema.enums.FieldTypeEnum;
 import com.taobao.top.schema.field.*;
 import com.taobao.top.schema.value.ComplexValue;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -13,6 +14,8 @@ import java.util.Map;
  */
 public class TbItemSchema {
     private List<Field> fields;
+
+    private Map<String, Field> fieldMap;
 
     private long num_iid;
 
@@ -29,10 +32,23 @@ public class TbItemSchema {
         return fields;
     }
 
+    public Map<String, Field> getFieldMap() {
+
+        if (fieldMap != null)
+            return fieldMap;
+
+        fieldMap = new HashMap<>();
+
+        for (Field field: fields)
+            fieldMap.put(field.getId(), field);
+
+        return fieldMap;
+    }
+
     /**
      * 将所有默认值转换为属性值
      */
-    private void setFieldValue() {
+    public void setFieldValue() {
         // 将所有 Field 的默认值，设置到其值上。等待后续更新提交
         fields.stream().forEach(this::setFieldValue);
     }
@@ -73,7 +89,8 @@ public class TbItemSchema {
      * 获取商品的默认价格
      */
     public String getDefaultPrice() {
-        Field field = fields.stream().filter(f -> f.getId().equals("sku_price")).findFirst().orElse(null);
+
+        Field field = getFieldMap().get("sku_price");
 
         if (field == null || !field.getType().equals(FieldTypeEnum.INPUT)) return null;
 
@@ -89,11 +106,8 @@ public class TbItemSchema {
      */
     public void setMainImage(Map<Integer, String> imageUrls) {
 
-        // 如果更新默认值到值上，则覆盖后续的设置。所以要在这之前设置
-        setFieldValue();
-
         // 找到第一个节点。否则为空
-        Field field = fields.stream().filter(f -> f.getId().equals("item_images")).findFirst().orElse(null);
+        Field field = getFieldMap().get("item_images");
 
         ComplexField complexField = (ComplexField) field;
 
@@ -110,4 +124,16 @@ public class TbItemSchema {
         }
     }
 
+    public Field getVerticalImage() {
+        return getFieldMap().get("vertical_image");
+    }
+
+    public boolean hasVerticalImage() {
+        return getFieldMap().containsKey("vertical_image");
+    }
+
+    public void setVerticalImage(String taobaoVerticalImageUrl) {
+        InputField inputField = (InputField) getVerticalImage();
+        inputField.setValue(taobaoVerticalImageUrl);
+    }
 }

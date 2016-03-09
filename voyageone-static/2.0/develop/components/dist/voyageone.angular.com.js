@@ -1,91 +1,4 @@
 define(function() {
-  angular.module("voyageone.angular.controllers.datePicker", []).controller("datePickerCtrl", [ "$scope", function($scope) {
-    var vm = this;
-    vm.formats = [ "yyyy-MM-dd", "yyyy-MM-dd HH:mm:ss" ];
-    $scope.formatDate = vm.formats[0];
-    $scope.formatDateTime = vm.formats[1];
-    $scope.open = open;
-    function open($event) {
-      $event.preventDefault();
-      $event.stopPropagation();
-      $scope.opened = true;
-    }
-  } ]);
-  angular.module("voyageone.angular.controllers.selectRows", []).controller("selectRowsCtrl", [ "$scope", function($scope) {
-    $scope.selectAll = selectAll;
-    $scope.selectOne = selectOne;
-    $scope.isAllSelected = isAllSelected;
-    function selectAll(objectList, id) {
-      objectList.selAllFlag = !objectList.selAllFlag;
-      if (!id) {
-        id = "id";
-      }
-      angular.forEach(objectList.currPageRows, function(object) {
-        objectList.selFlag[object[id]] = objectList.selAllFlag;
-        if (objectList.hasOwnProperty("selList")) {
-          var tempList = _.pluck(objectList.selList, id);
-          if (objectList.selAllFlag && tempList.indexOf(object[id]) < 0) {
-            objectList.selList.push(object);
-          } else if (!objectList.selAllFlag && tempList.indexOf(object[id]) > -1) {
-            objectList.selList.splice(tempList.indexOf(object[id]), 1);
-          }
-        }
-      });
-    }
-    function selectOne(currentId, objectList, id) {
-      if (!id) {
-        id = "id";
-      }
-      if (objectList.hasOwnProperty("selList")) {
-        angular.forEach(objectList.currPageRows, function(object) {
-          var tempList = _.pluck(objectList.selList, id);
-          if (_.isEqual(object[id], currentId)) {
-            if (tempList.indexOf(object[id]) > -1) {
-              objectList.selList.splice(tempList.indexOf(object[id]), 1);
-            } else {
-              objectList.selList.push(object);
-            }
-          }
-        });
-      }
-      objectList.selAllFlag = true;
-      tempList = _.pluck(objectList.selList, id);
-      angular.forEach(objectList.currPageRows, function(object) {
-        if (tempList.indexOf(object[id]) == -1) {
-          objectList.selAllFlag = false;
-        }
-      });
-    }
-    function isAllSelected(objectList, id) {
-      if (!id) {
-        id = "id";
-      }
-      if (objectList != undefined) {
-        objectList.selAllFlag = true;
-        var tempList = _.pluck(objectList.selList, id);
-        angular.forEach(objectList.currPageRows, function(object) {
-          if (tempList.indexOf(object[id]) == -1) {
-            objectList.selAllFlag = false;
-          }
-        });
-        return objectList.selAllFlag;
-      }
-      return false;
-    }
-  } ]);
-  angular.module("voyageone.angular.controllers.showPopover", []).controller("showPopoverCtrl", [ "$scope", function($scope) {
-    $scope.showInfo = showInfo;
-    function showInfo(values) {
-      var tempHtml = "";
-      angular.forEach(values, function(data, index) {
-        tempHtml += data;
-        if (index !== values.length) {
-          tempHtml += "<br>";
-        }
-      });
-      return tempHtml;
-    }
-  } ]);
   angular.module("voyageone.angular.directives.dateModelFormat", []).directive("dateModelFormat", [ "$filter", function($filter) {
     return {
       restrict: "A",
@@ -432,6 +345,7 @@ define(function() {
           if (schema.tipMsg() != null && scope.vm.$$hastip) {
             tempHtml += $templateCache.get(templateKey_multiComplex_tip);
           }
+          tempHtml = "<ng-form>" + tempHtml + "</ng-form>";
           scope.showHtmlData = angular.copy(schema.schemaInfo());
           element.html($compile(tempHtml)(scope));
           scope.checkboxValue = function(value) {
@@ -912,6 +826,93 @@ define(function() {
       }
     };
   });
+  angular.module("voyageone.angular.controllers.datePicker", []).controller("datePickerCtrl", [ "$scope", function($scope) {
+    var vm = this;
+    vm.formats = [ "yyyy-MM-dd", "yyyy-MM-dd HH:mm:ss" ];
+    $scope.formatDate = vm.formats[0];
+    $scope.formatDateTime = vm.formats[1];
+    $scope.open = open;
+    function open($event) {
+      $event.preventDefault();
+      $event.stopPropagation();
+      $scope.opened = true;
+    }
+  } ]);
+  angular.module("voyageone.angular.controllers.selectRows", []).controller("selectRowsCtrl", [ "$scope", function($scope) {
+    $scope.selectAll = selectAll;
+    $scope.selectOne = selectOne;
+    $scope.isAllSelected = isAllSelected;
+    function selectAll(objectList, id) {
+      objectList.selAllFlag = !objectList.selAllFlag;
+      if (!id) {
+        id = "id";
+      }
+      angular.forEach(objectList.currPageRows, function(object) {
+        objectList.selFlag[object[id]] = objectList.selAllFlag;
+        if (objectList.hasOwnProperty("selList")) {
+          var tempList = _.pluck(objectList.selList, id);
+          if (objectList.selAllFlag && tempList.indexOf(object[id]) < 0) {
+            objectList.selList.push(object);
+          } else if (!objectList.selAllFlag && tempList.indexOf(object[id]) > -1) {
+            objectList.selList.splice(tempList.indexOf(object[id]), 1);
+          }
+        }
+      });
+    }
+    function selectOne(currentId, objectList, id) {
+      if (!id) {
+        id = "id";
+      }
+      if (objectList.hasOwnProperty("selList")) {
+        angular.forEach(objectList.currPageRows, function(object) {
+          var tempList = _.pluck(objectList.selList, id);
+          if (_.isEqual(object[id], currentId)) {
+            if (tempList.indexOf(object[id]) > -1) {
+              objectList.selList.splice(tempList.indexOf(object[id]), 1);
+            } else {
+              objectList.selList.push(object);
+            }
+          }
+        });
+      }
+      objectList.selAllFlag = true;
+      tempList = _.pluck(objectList.selList, id);
+      angular.forEach(objectList.currPageRows, function(object) {
+        if (tempList.indexOf(object[id]) == -1) {
+          objectList.selAllFlag = false;
+        }
+      });
+    }
+    function isAllSelected(objectList, id) {
+      if (!id) {
+        id = "id";
+      }
+      if (objectList != undefined) {
+        objectList.selAllFlag = true;
+        var tempList = _.pluck(objectList.selList, id);
+        angular.forEach(objectList.currPageRows, function(object) {
+          if (tempList.indexOf(object[id]) == -1) {
+            objectList.selAllFlag = false;
+          }
+        });
+        return objectList.selAllFlag;
+      }
+      return false;
+    }
+  } ]);
+  angular.module("voyageone.angular.controllers.showPopover", []).controller("showPopoverCtrl", [ "$scope", function($scope) {
+    $scope.showInfo = showInfo;
+    function showInfo(values) {
+      var tempHtml = "";
+      angular.forEach(values, function(data, index) {
+        tempHtml += data;
+        if (index !== values.length) {
+          tempHtml += "<br>";
+        }
+      });
+      return tempHtml;
+    }
+  } ]);
   angular.module("voyageone.angular.factories.dialogs", []).factory("$dialogs", [ "$modal", "$filter", "$templateCache", function($modal, $filter, $templateCache) {
     var templateName = "voyageone.angular.factories.dialogs.tpl.html";
     var template = '<div class="vo_modal">' + '<div class="modal-header">' + '<button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="close()">' + '<span aria-hidden="true"><i ng-click="close()" class="fa fa-close"></i></span>' + "</button>" + '<h5 class="modal-title" ng-bind-html="title"></h5>' + "</div>" + '<div class="modal-body wrapper-lg">' + '<div class="row">' + '<h5 class="text-center text-hs"><p class="text-center" ng-bind-html="content"></p></h5>' + "</div>" + "</div>" + '<div class="modal-footer">' + '<button class="btn btn-default btn-sm" ng-if="!isAlert" ng-click="close()" translate="BTN_CANCEL"></button>' + '<button class="btn btn-vo btn-sm" ng-click="ok()" translate="BTN_OK"></button>' + "</div>" + "</div>";
@@ -1260,163 +1261,6 @@ define(function() {
       }
     };
   });
-  angular.module("voyageone.angular.services.ajax", []).service("$ajax", $Ajax).service("ajaxService", AjaxService);
-  function $Ajax($http, blockUI, $q) {
-    this.$http = $http;
-    this.blockUI = blockUI;
-    this.$q = $q;
-  }
-  $Ajax.$inject = [ "$http", "blockUI", "$q" ];
-  $Ajax.prototype.post = function(url, data) {
-    var defer = this.$q.defer();
-    this.$http.post(url, data).then(function(response) {
-      var res = response.data;
-      if (!res) {
-        alert("相应结果不存在?????");
-        defer.reject(null);
-        return;
-      }
-      if (res.message || res.code) {
-        defer.reject(res);
-        return;
-      }
-      defer.resolve(res);
-    }, function(response) {
-      defer.reject(null, response);
-    });
-    return defer.promise;
-  };
-  function AjaxService($q, $ajax, messageService) {
-    this.$q = $q;
-    this.$ajax = $ajax;
-    this.messageService = messageService;
-  }
-  AjaxService.$inject = [ "$q", "$ajax", "messageService" ];
-  AjaxService.prototype.post = function(url, data) {
-    var defer = this.$q.defer();
-    this.$ajax.post(url, data).then(function(res) {
-      defer.resolve(res);
-      return res;
-    }, function(_this) {
-      return function(res) {
-        _this.messageService.show(res);
-        defer.reject(res);
-        return res;
-      };
-    }(this));
-    return defer.promise;
-  };
-  angular.module("voyageone.angular.services.cookie", []).service("cookieService", CookieService);
-  var keys = {
-    language: "voyageone.user.language",
-    company: "voyageone.user.company",
-    channel: "voyageone.user.channel",
-    application: "voyageone.user.application"
-  };
-  function gentProps(key) {
-    return function(val) {
-      if (arguments.length === 1) {
-        return this.set(key, val);
-      } else if (arguments.length > 1) {
-        return this.set(key, arguments);
-      }
-      return this.get(key);
-    };
-  }
-  function CookieService($cookieStore) {
-    this.$cookieStore = $cookieStore;
-  }
-  CookieService.$inject = [ "$cookieStore" ];
-  CookieService.prototype.get = function(key) {
-    var result = this.$cookieStore.get(key);
-    return result == undefined || result == null ? "" : this.$cookieStore.get(key);
-  };
-  CookieService.prototype.set = function(key, value) {
-    return this.$cookieStore.put(key, value);
-  };
-  CookieService.prototype.language = gentProps(keys.language);
-  CookieService.prototype.company = gentProps(keys.company);
-  CookieService.prototype.channel = gentProps(keys.channel);
-  CookieService.prototype.application = gentProps(keys.application);
-  CookieService.prototype.removeAll = function() {
-    this.$cookieStore.remove(keys.language);
-    this.$cookieStore.remove(keys.company);
-    this.$cookieStore.remove(keys.channel);
-    this.$cookieStore.remove(keys.application);
-  };
-  angular.module("voyageone.angular.services.message", []).service("messageService", MessageService);
-  var DISPLAY_TYPES = {
-    ALERT: 1,
-    NOTIFY: 2,
-    POP: 3,
-    CUSTOM: 4
-  };
-  function MessageService(alert, confirm, notify) {
-    this.alert = alert;
-    this.confirm = confirm;
-    this.notify = notify;
-  }
-  MessageService.$inject = [ "alert", "confirm", "notify" ];
-  MessageService.prototype = {
-    show: function(res) {
-      var displayType = res.displayType;
-      var message = res.message;
-      switch (displayType) {
-       case DISPLAY_TYPES.ALERT:
-        this.alert(message);
-        break;
-
-       case DISPLAY_TYPES.NOTIFY:
-        this.notify(message);
-        break;
-
-       case DISPLAY_TYPES.POP:
-        this.notify({
-          message: message,
-          position: "right bottom"
-        });
-        break;
-      }
-    }
-  };
-  angular.module("voyageone.angular.services.permission", []).service("permissionService", PermissionService);
-  function PermissionService($rootScope) {
-    this.$rootScope = $rootScope;
-    this.permissions = [];
-  }
-  PermissionService.$inject = [ "$rootScope" ];
-  PermissionService.prototype = {
-    setPermissions: function(permissions) {
-      this.permissions = permissions;
-      this.$rootScope.$broadcast("permissionsChanged");
-    },
-    has: function(permission) {
-      return _.contains(this.permissions, permission.trim());
-    }
-  };
-  angular.module("voyageone.angular.services.translate", []).service("translateService", TranslateService);
-  function TranslateService($translate) {
-    this.$translate = $translate;
-  }
-  TranslateService.$inject = [ "$translate" ];
-  TranslateService.prototype = {
-    languages: {
-      en: "en",
-      zh: "zh"
-    },
-    setLanguage: function(language) {
-      if (!_.contains(this.languages, language)) {
-        language = this.getBrowserLanguage();
-      }
-      this.$translate.use(language);
-      return language;
-    },
-    getBrowserLanguage: function() {
-      var currentLang = navigator.language;
-      if (!currentLang) currentLang = navigator.browserLanguage;
-      return currentLang.substr(0, 2);
-    }
-  };
   angular.module("voyageone.angular.vresources", []).provider("$vresources", [ "$provide", function($provide) {
     function getActionUrl(root, action) {
       return root + (root.lastIndexOf("/") === root.length - 1 ? "" : "/") + action;
@@ -1467,6 +1311,163 @@ define(function() {
   } ]).run([ "$vresources", "$actions", function($vresources, $actions) {
     $vresources.register(null, $actions);
   } ]);
+  $Ajax.$inject = [ "$http", "blockUI", "$q" ];
+  AjaxService.$inject = [ "$q", "$ajax", "messageService" ];
+  angular.module("voyageone.angular.services.ajax", []).service("$ajax", $Ajax).service("ajaxService", AjaxService);
+  function $Ajax($http, blockUI, $q) {
+    this.$http = $http;
+    this.blockUI = blockUI;
+    this.$q = $q;
+  }
+  $Ajax.prototype.post = function(url, data) {
+    var defer = this.$q.defer();
+    this.$http.post(url, data).then(function(response) {
+      var res = response.data;
+      if (!res) {
+        alert("相应结果不存在?????");
+        defer.reject(null);
+        return;
+      }
+      if (res.message || res.code) {
+        defer.reject(res);
+        return;
+      }
+      defer.resolve(res);
+    }, function(response) {
+      defer.reject(null, response);
+    });
+    return defer.promise;
+  };
+  function AjaxService($q, $ajax, messageService) {
+    this.$q = $q;
+    this.$ajax = $ajax;
+    this.messageService = messageService;
+  }
+  AjaxService.prototype.post = function(url, data) {
+    var defer = this.$q.defer();
+    this.$ajax.post(url, data).then(function(res) {
+      defer.resolve(res);
+      return res;
+    }, function(_this) {
+      return function(res) {
+        _this.messageService.show(res);
+        defer.reject(res);
+        return res;
+      };
+    }(this));
+    return defer.promise;
+  };
+  CookieService.$inject = [ "$cookieStore" ];
+  angular.module("voyageone.angular.services.cookie", []).service("cookieService", CookieService);
+  var keys = {
+    language: "voyageone.user.language",
+    company: "voyageone.user.company",
+    channel: "voyageone.user.channel",
+    application: "voyageone.user.application"
+  };
+  function gentProps(key) {
+    return function(val) {
+      if (arguments.length === 1) {
+        return this.set(key, val);
+      } else if (arguments.length > 1) {
+        return this.set(key, arguments);
+      }
+      return this.get(key);
+    };
+  }
+  function CookieService($cookieStore) {
+    this.$cookieStore = $cookieStore;
+  }
+  CookieService.prototype.get = function(key) {
+    var result = this.$cookieStore.get(key);
+    return result == undefined || result == null ? "" : this.$cookieStore.get(key);
+  };
+  CookieService.prototype.set = function(key, value) {
+    return this.$cookieStore.put(key, value);
+  };
+  CookieService.prototype.language = gentProps(keys.language);
+  CookieService.prototype.company = gentProps(keys.company);
+  CookieService.prototype.channel = gentProps(keys.channel);
+  CookieService.prototype.application = gentProps(keys.application);
+  CookieService.prototype.removeAll = function() {
+    this.$cookieStore.remove(keys.language);
+    this.$cookieStore.remove(keys.company);
+    this.$cookieStore.remove(keys.channel);
+    this.$cookieStore.remove(keys.application);
+  };
+  MessageService.$inject = [ "alert", "confirm", "notify" ];
+  angular.module("voyageone.angular.services.message", []).service("messageService", MessageService);
+  var DISPLAY_TYPES = {
+    ALERT: 1,
+    NOTIFY: 2,
+    POP: 3,
+    CUSTOM: 4
+  };
+  function MessageService(alert, confirm, notify) {
+    this.alert = alert;
+    this.confirm = confirm;
+    this.notify = notify;
+  }
+  MessageService.prototype = {
+    show: function(res) {
+      var displayType = res.displayType;
+      var message = res.message;
+      switch (displayType) {
+       case DISPLAY_TYPES.ALERT:
+        this.alert(message);
+        break;
+
+       case DISPLAY_TYPES.NOTIFY:
+        this.notify(message);
+        break;
+
+       case DISPLAY_TYPES.POP:
+        this.notify({
+          message: message,
+          position: "right bottom"
+        });
+        break;
+      }
+    }
+  };
+  PermissionService.$inject = [ "$rootScope" ];
+  angular.module("voyageone.angular.services.permission", []).service("permissionService", PermissionService);
+  function PermissionService($rootScope) {
+    this.$rootScope = $rootScope;
+    this.permissions = [];
+  }
+  PermissionService.prototype = {
+    setPermissions: function(permissions) {
+      this.permissions = permissions;
+      this.$rootScope.$broadcast("permissionsChanged");
+    },
+    has: function(permission) {
+      return _.contains(this.permissions, permission.trim());
+    }
+  };
+  TranslateService.$inject = [ "$translate" ];
+  angular.module("voyageone.angular.services.translate", []).service("translateService", TranslateService);
+  function TranslateService($translate) {
+    this.$translate = $translate;
+  }
+  TranslateService.prototype = {
+    languages: {
+      en: "en",
+      zh: "zh"
+    },
+    setLanguage: function(language) {
+      if (!_.contains(this.languages, language)) {
+        language = this.getBrowserLanguage();
+      }
+      this.$translate.use(language);
+      return language;
+    },
+    getBrowserLanguage: function() {
+      var currentLang = navigator.language;
+      if (!currentLang) currentLang = navigator.browserLanguage;
+      return currentLang.substr(0, 2);
+    }
+  };
   angular.module("voyageone.angular.controllers", [ "voyageone.angular.controllers.datePicker", "voyageone.angular.controllers.selectRows", "voyageone.angular.controllers.showPopover" ]);
   angular.module("voyageone.angular.directives", [ "voyageone.angular.directives.dateModelFormat", "voyageone.angular.directives.enterClick", "voyageone.angular.directives.fileStyle", "voyageone.angular.directives.ifNoRows", "voyageone.angular.directives.uiNav", "voyageone.angular.directives.schema", "voyageone.angular.directives.voption", "voyageone.angular.directives.vpagination", "voyageone.angular.directives.validator" ]);
   angular.module("voyageone.angular.factories", [ "voyageone.angular.factories.dialogs", "voyageone.angular.factories.interceptor", "voyageone.angular.factories.notify", "voyageone.angular.factories.pppAutoImpl", "voyageone.angular.factories.schema", "voyageone.angular.factories.selectRows", "voyageone.angular.factories.vpagination" ]);

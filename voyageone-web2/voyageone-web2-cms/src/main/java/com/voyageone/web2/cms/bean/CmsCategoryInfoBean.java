@@ -1,10 +1,8 @@
 package com.voyageone.web2.cms.bean;
 
-import com.voyageone.cms.service.model.CmsBtProductModel_Field_Image;
 import com.voyageone.common.masterdate.schema.field.Field;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by lewis on 16-1-5.

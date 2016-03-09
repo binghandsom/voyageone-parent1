@@ -1,6 +1,6 @@
 package com.voyageone.web2.sdk.api.response;
 
-import com.voyageone.cms.service.model.CmsMtPlatformSpecialFieldModel;
+import com.voyageone.service.model.cms.CmsMtPlatformSpecialFieldModel;
 import com.voyageone.web2.sdk.api.VoApiListResponse;
 
 import java.util.List;

@@ -13,6 +13,8 @@ define([
             this.taskBean = {
                 task_name: '',
                 promotion_id: context.promotionId,
+                activity_start: context.activityStart,
+                activity_end: context.activityEnd,
                 config: {
                     need_vimage: false,
                     beat_template: '',

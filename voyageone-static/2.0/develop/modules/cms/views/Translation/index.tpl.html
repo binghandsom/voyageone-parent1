@@ -105,7 +105,7 @@
 				<tr>
 					<th class="text-center">Seq.</th>
 					<th class="text-center mfb-x">Product Code</th>
-					<th class="text-center mfb-xxxs">Product Name / Long Description</th>
+					<th class="text-center mfb-xxs">Product Name / Long Description</th>
 					<th class="text-center">长标题/ 详情描述中文</th>
 					<th class="text-center">中标题/ Short Description</th>
 					<th class="text-center">短标题标题/ 简短描述中文</th>
@@ -147,10 +147,19 @@
 						</td>
 					</tr>
 					<tr>
-						<td class="text-center" style="border-top:0px"></td>
-						<td class="text-center mfb-x" style="border-top:0px"></td>
-						<td class="text-left" style="border-top:0px">{{translationModel.longDescription}}</td>
-						<td class="text-center" colspan="3" style="border-top:0px">
+						<td class="text-center" colspan="2" style="border-top:0px">
+							<div class="form-inline">
+								<a href="#"><img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{translationModel.productImage}}"  alt="" class="thumb-xs m-b-xs"/></a>
+								<a href="#"><img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{translationModel.productImage}}"  alt="" class="thumb-xs m-b-xs"/></a>
+								<a href="#"><img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{translationModel.productImage}}"  alt="" class="thumb-xs m-b-xs"/></a>
+								<a href="#"><img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{translationModel.productImage}}"  alt="" class="thumb-xs m-b-xs"/></a>
+								<a href="#"><img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{translationModel.productImage}}"  alt="" class="thumb-xs m-b-xs"/></a>
+								<a href="#"><img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{translationModel.productImage}}"  alt="" class="thumb-xs m-b-xs"/></a>
+						    </div>
+						</td>
+						<!--<td class="text-center mfb-x" style="border-top:0px"></td>-->
+						<td class="text-left" colspan="2" style="border-top:0px">{{translationModel.longDescription}}</td>
+						<td class="text-center" colspan="2" style="border-top:0px">
 							<textarea class="form-control" rows="6" ng-model="translationModel.longDesCn" ng-char-maxlength="60" ng-required="required" placeholder="{{'TXT_MSG_LONG_DESCRIPTION' | translate}}"></textarea>
 							<div class="text-warnings text-left" style="padding-left:0px">
 								<i class="icon fa fa-bell-o"></i>&nbsp;{{'TXT_MSG_SEARCH_INDEX_FUZZY_SEARCH' | translate}}
@@ -162,8 +171,8 @@
 					<tr>
 						<td class="text-center" style="border-top:0px"></td>
 						<td class="text-center mfb-x" style="border-top:0px"></td>
-						<td class="text-left" style="border-top:0px" ng-model="translationModel.shortDescription"></td>
-						<td class="text-center" colspan="3" style="border-top:0px">
+						<td class="text-left" colspan="2" style="border-top:0px" ng-model="translationModel.shortDescription"></td>
+						<td class="text-center" colspan="2" style="border-top:0px">
 							<textarea class="form-control" rows="6" ng-model="translationModel.shortDesCn" ng-char-maxlength="40" ng-required="required" placeholder="{{'TXT_MSG_SHORT_DESCRIPTION' | translate}}"></textarea>
 							<div class="text-warnings text-left" style="padding-left:0px">
 								<i class="icon fa fa-bell-o"></i>&nbsp;{{'TXT_MSG_SEARCH_INDEX_FUZZY_SEARCH' | translate}}

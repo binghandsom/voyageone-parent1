@@ -1,8 +1,8 @@
 package com.voyageone.web2.cms.bean.setting.mapping.feed;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.voyageone.cms.service.model.CmsBtFeedMappingModel;
-import com.voyageone.cms.service.model.CmsFeedCategoryModel;
+import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedMappingModel;
+import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryModel;
 
 /**
  * FeedMapping 画面特供数据模型,将画面需要的数据事先找好
@@ -15,7 +15,7 @@ public class FeedCategoryBean {
 
     private int seq;
 
-    private CmsFeedCategoryModel model;
+    private CmsMtFeedCategoryModel model;
 
     private int level;
 
@@ -29,11 +29,11 @@ public class FeedCategoryBean {
         this.seq = seq;
     }
 
-    public CmsFeedCategoryModel getModel() {
+    public CmsMtFeedCategoryModel getModel() {
         return model;
     }
 
-    public void setModel(CmsFeedCategoryModel model) {
+    public void setModel(CmsMtFeedCategoryModel model) {
         this.model = model;
     }
 

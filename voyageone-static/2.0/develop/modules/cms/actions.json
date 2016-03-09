@@ -185,6 +185,26 @@
         "submitTask":"submitTask",
         "getFeedAttributes":"getFeedAttributes"
       }
+    },
+    "channel": {
+      "custom": {
+        "attributeService": {
+          "root":"/cms/channel/custom_prop/",
+          "init": "init",
+          "getCatTree": "getCatTree",
+          "save": "save",
+          "getCatList": "getCatList"
+
+        }
+      },
+      "value": {
+        "attributeValueService": {
+          "root":"/cms/channel/custom_value/",
+          "init": "init",
+          "add" : "add",
+          "save": "save"
+        }
+      }
     }
   }
 }

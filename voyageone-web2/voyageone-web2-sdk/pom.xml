@@ -10,7 +10,7 @@
     </parent>
     <artifactId>voyageone-web2-sdk</artifactId>
     <packaging>jar</packaging>
-    <name>Voyageone Web2 SDK</name>
+    <name>VoyageOne Web2 - SDK</name>
     <version>${voyageone.web2.sdk.version}</version>
     <dependencies>
         <dependency>
@@ -18,7 +18,11 @@
             <artifactId>voyageone-com</artifactId>
             <version>${voyageone.common.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>com.voyageone</groupId>
+            <artifactId>voyageone-service2-model</artifactId>
+            <version>${voyageone.service2.model.version}</version>
+        </dependency>
 
     </dependencies>
     <build>

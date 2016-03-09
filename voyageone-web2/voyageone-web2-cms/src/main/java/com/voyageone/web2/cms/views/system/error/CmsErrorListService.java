@@ -1,9 +1,9 @@
 package com.voyageone.web2.cms.views.system.error;
 
-import com.voyageone.cms.service.CmsBtChannelCategoryService;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.TypeChannel;
+import com.voyageone.service.impl.cms.CmsBtChannelCategoryService;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import com.voyageone.web2.core.dao.ChannelShopDao;

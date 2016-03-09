@@ -5,6 +5,7 @@ classes/
 .settings/
 .classpath
 .tern-project
+contents/ant/
 *.iml
 *.patch
 *.diff

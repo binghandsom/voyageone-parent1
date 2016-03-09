@@ -1,8 +1,8 @@
 package com.voyageone.web2.cms.views.home.menu;
 
 import com.voyageone.cms.enums.CartType;
-import com.voyageone.cms.service.model.CmsMtCategoryTreeModel;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;

@@ -4,7 +4,7 @@ import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.BaseMongoDao;
 import com.voyageone.common.masterdate.schema.factory.SchemaJsonReader;
 import com.voyageone.common.masterdate.schema.field.Field;
-import com.voyageone.cms.service.model.CmsMtCommonPropDefModel;
+import com.voyageone.service.model.cms.mongo.CmsMtCommonPropDefModel;
 import net.minidev.json.JSONObject;
 import org.springframework.stereotype.Repository;
 

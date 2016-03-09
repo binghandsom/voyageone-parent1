@@ -13,6 +13,7 @@
         <result column="tag_path" property="tagPath" jdbcType="VARCHAR" />
         <result column="tag_path_name" property="tagPathName" jdbcType="VARCHAR" />
         <result column="tag_name" property="tag"  jdbcType="VARCHAR" />
+        <result column="skuCount" property="skuCount"  jdbcType="INTEGER" />
     </resultMap>
     <select id="select_cms_bt_promotion_code" resultMap="bt_promotion_code_map" parameterType="HashMap" >
         SELECT
@@ -37,27 +38,35 @@
             a.creater,
             a.modified,
             a.modifier,
+            a.image_url_1 as image,
             b.tag_path,
             b.tag_name,
-            b.tag_path_name
+            b.tag_path_name ,
+            count(1) as skuCount
         FROM
           voyageone_cms2.cms_bt_promotion_code a
           LEFT JOIN voyageone_cms2.cms_bt_tag b ON a.tag_id = b.tag_id
+        LEFT JOIN voyageone_cms2.cms_bt_promotion_sku c on a.promotion_id = c.promotion_id and a.product_code = c.product_code
+
         <where>
             <if test="promotionId != null">
-                promotion_id =  #{promotionId,jdbcType=INTEGER}
+                a.promotion_id =  #{promotionId,jdbcType=INTEGER}
             </if>
-            <if test="modelId != null and modelId != ''">
-                and model_id = #{modelId,jdbcType=INTEGER}
+            <if test="modelId != null">
+                and a.model_id = #{modelId,jdbcType=INTEGER}
+            </if>
+            <if test="productModel != null and productModel != ''">
+                and product_model = #{productModel}
             </if>
             <if test="key !=null and key != ''">
                and (
-                product_model like '%${key}%'
-                or product_code like '%${key}%'
-                or product_name like '%${key}%'
+                a.product_model like '%${key}%'
+                or a.product_code like '%${key}%'
+                or a.product_name like '%${key}%'
                 )
             </if>
         </where>
+        GROUP BY a.promotion_id,a.product_code
         <if test="start != null and length != null">
             LIMIT #{start}, #{length}
         </if>
@@ -117,17 +126,35 @@
             <if test="msrp != null" >
                 msrp,
             </if>
+            <if test="msrpUS != null" >
+                msrpUS,
+            </if>
             <if test="promotionPrice != null" >
                 promotion_price,
             </if>
             <if test="numIid != null" >
                 num_iid,
             </if>
-            <if test="imageUrlSale != null" >
-                image_url_sale,
+            <if test="image_url_1 != null">
+                image_url_1,
             </if>
-            <if test="imageUrlSaleOut != null" >
-                image_url_sale_out,
+            <if test="image_url_2 != null">
+                image_url_2,
+            </if>
+            <if test="image_url_3 != null">
+                image_url_3,
+            </if>
+            <if test="property1 != null">
+                property1,
+            </if>
+            <if test="property2 != null">
+                property2,
+            </if>
+            <if test="property3 != null">
+                property3,
+            </if>
+            <if test="property4 != null">
+                property4,
             </if>
             <if test="tagId != null" >
                 tag_id,
@@ -172,17 +199,35 @@
             <if test="msrp != null" >
                 #{msrp,jdbcType=DOUBLE},
             </if>
+            <if test="msrpUS != null" >
+                #{msrpUS,jdbcType=DOUBLE},
+            </if>
             <if test="promotionPrice != null" >
                 #{promotionPrice,jdbcType=DOUBLE},
             </if>
             <if test="numIid != null" >
                 #{numIid,jdbcType=VARCHAR},
             </if>
-            <if test="imageUrlSale != null" >
-                #{imageUrlSale,jdbcType=VARCHAR},
+            <if test="image_url_1 != null">
+                #{image_url_1,jdbcType=VARCHAR},
             </if>
-            <if test="imageUrlSaleOut != null" >
-                #{imageUrlSaleOut,jdbcType=VARCHAR},
+            <if test="image_url_2 != null">
+                #{image_url_2,jdbcType=VARCHAR},
+            </if>
+            <if test="image_url_3 != null">
+                #{image_url_3,jdbcType=VARCHAR},
+            </if>
+            <if test="property1 != null">
+                #{property1,jdbcType=VARCHAR},
+            </if>
+            <if test="property2 != null">
+                #{property2,jdbcType=VARCHAR},
+            </if>
+            <if test="property3 != null">
+                #{property3,jdbcType=VARCHAR},
+            </if>
+            <if test="property4 != null">
+                #{property4,jdbcType=VARCHAR},
             </if>
             <if test="tagId != null" >
                 #{tagId,jdbcType=INTEGER},
@@ -230,17 +275,35 @@
             <if test="msrp != null" >
                 msrp = #{msrp,jdbcType=DOUBLE},
             </if>
+            <if test="msrpUS != null" >
+                msrpUS = #{msrpUS,jdbcType=DOUBLE},
+            </if>
             <if test="promotionPrice != null" >
                 promotion_price = #{promotionPrice,jdbcType=DOUBLE},
             </if>
             <if test="numIid != null" >
                 num_iid = #{numIid,jdbcType=VARCHAR},
             </if>
-            <if test="imageUrlSale != null" >
-                image_url_sale = #{imageUrlSale,jdbcType=VARCHAR},
+            <if test="image_url_1 != null">
+                image_url_1 = #{image_url_1,jdbcType=VARCHAR},
             </if>
-            <if test="imageUrlSaleOut != null" >
-                image_url_sale_out = #{imageUrlSaleOut,jdbcType=VARCHAR},
+            <if test="image_url_2 != null">
+                image_url_2 = #{image_url_2,jdbcType=VARCHAR},
+            </if>
+            <if test="image_url_3 != null">
+                image_url_3 = #{image_url_3,jdbcType=VARCHAR},
+            </if>
+            <if test="property1 != null">
+                property1 =  #{property1,jdbcType=VARCHAR},
+            </if>
+            <if test="property2 != null">
+                property2 =  #{property2,jdbcType=VARCHAR},
+            </if>
+            <if test="property3 != null">
+                property3 =  #{property3,jdbcType=VARCHAR},
+            </if>
+            <if test="property4 != null">
+                property4 =  #{property4,jdbcType=VARCHAR},
             </if>
             <if test="tagId != null" >
                 tag_id = #{tagId,jdbcType=INTEGER},
@@ -254,8 +317,8 @@
             <if test="promotionId != null" >
                 promotion_id = #{promotionId,jdbcType=INTEGER}
             </if>
-            <if test="productId != null" >
-                and product_id = #{productId,jdbcType=INTEGER}
+            <if test="productCode != null" >
+                and product_code = #{productCode,jdbcType=INTEGER}
             </if>
         </where>
     </update>
@@ -264,11 +327,14 @@
         from voyageone_cms2.cms_bt_promotion_code
         where
         promotion_id = #{promotionId,jdbcType=INTEGER}
-        <if test="productId != null and productId != ''">
+        <if test="productId != null">
             and product_id = #{productId,jdbcType=INTEGER}
         </if>
-        <if test="modelId != null and modelId != ''">
+        <if test="modelId != null">
             and model_id = #{modelId,jdbcType=INTEGER}
+        </if>
+        <if test="productCode != null and productCode != ''">
+            and product_code = #{productCode,jdbcType=VARCHAR}
         </if>
     </delete>
 </mapper>

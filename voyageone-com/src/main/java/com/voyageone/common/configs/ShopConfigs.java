@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
  * Created by Jack on 4/17/2015.
  */
 public class ShopConfigs {
+
     private static Configs configs;
     private static Shops shops;
     private static List<ShopBean> allShops;
@@ -319,10 +320,7 @@ public class ShopConfigs {
                 map.put(name, config);
                 put(id, map);
             } catch (IllegalArgumentException e) {
-                logger.warn("=== ShopConfig.Configs.put ===");
-                logger.warn(e);
-                logger.warn(e.getMessage());
-                logger.warn(String.format("Channel: %s ; Name: %s", config.getOrder_channel_id(), config.getCfg_name()));
+                logger.warn(String.format("Feed 枚举匹配警告: [%s] NO \"%s\"", config.getOrder_channel_id(), config.getCfg_name()));
             }
         }
     }
