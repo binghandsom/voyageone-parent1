@@ -64,6 +64,10 @@ public class CmsSearchInfoBean {
 
     private Integer productPageSize;
 
+    // 自定义查询条件
+    private String custAttrKey;
+    private String custAttrValue;
+
     public String getCatId() {
         return catId;
     }
@@ -286,5 +290,21 @@ public class CmsSearchInfoBean {
 
     public void setProductPageSize(Integer productPageSize) {
         this.productPageSize = productPageSize != null && productPageSize > 0 ? productPageSize : 1;
+    }
+
+    public String getCustAttrValue() {
+        return custAttrValue;
+    }
+
+    public void setCustAttrValue(String custAttrValue) {
+        this.custAttrValue = custAttrValue;
+    }
+
+    public String getCustAttrKey() {
+        return custAttrKey;
+    }
+
+    public void setCustAttrKey(String custAttrKey) {
+        this.custAttrKey = custAttrKey;
     }
 }
