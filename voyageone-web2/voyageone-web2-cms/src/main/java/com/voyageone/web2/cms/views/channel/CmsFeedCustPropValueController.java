@@ -61,7 +61,7 @@ public class CmsFeedCustPropValueController extends CmsController {
      * @apiSampleRequest off
      */
     @RequestMapping(value = CmsUrlConstants.CHANNEL.CUSTOM_VALUE.INIT)
-    public AjaxResponse getFeedCustPropValueList(@RequestParam Map<String, String> params) {
+    public AjaxResponse getFeedCustPropValueList(@RequestBody Map<String, String> params) {
         logger.debug("getFeedCustPropValueList() >>>> start");
         logger.debug("getFeedCustPropValueList() >>>> params" + params.toString());
         String catPath = StringUtils.trimToNull(params.get("cat_path"));
