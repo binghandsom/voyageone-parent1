@@ -7,14 +7,14 @@
     <div class="modal-body wrapper">
         <form role="form" class="form-horizontal">
             <div class="form-group">
-                <label class="col-sm-4 control-label">属性名</label>
+                <label class="col-sm-4 control-label">种类</label>
                 <div class="col-sm-6">
                     <select class="form-control" ng-model="cat_path" ng-options="category.cid as category.path for category in categoryList" ng-change="valueChange(cat_path)">
                     </select>
                 </div>
             </div><!-- .form-group -->
             <div class="form-group">
-                <label class="col-sm-4 control-label">Customize Value</label>
+                <label class="col-sm-4 control-label">属性</label>
                 <div class="col-sm-6">
                     <select name="" id="" class="form-control" ng-model="vm.prop_id" ng-options="propInfo.prop_id as propInfo.prop_original for propInfo in vm.valList">
 
@@ -22,13 +22,14 @@
                 </div>
             </div>
             <div class="form-group">
-                <label class="col-sm-4 control-label" ng-model="vm.value_original">翻译英文</label>
+                <label class="col-sm-4 control-label" ng-model="vm.value_original">英文属性值</label>
                 <div class="col-sm-6">
-                    <input class="form-control">
+                    <input class="form-control" ng-required="true">
                 </div>
+                <label class="col-sm-1 control-label text-u-red text-left" translate="TXT_REQUIRED"></label>
             </div>
             <div class="form-group">
-                <label class="col-sm-4 control-label" ng-model="vm.value_translation">翻译中文</label>
+                <label class="col-sm-4 control-label" ng-model="vm.value_translation">翻译属性值</label>
                 <div class="col-sm-6">
                     <input class="form-control">
                 </div>
