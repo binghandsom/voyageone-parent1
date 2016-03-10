@@ -429,6 +429,42 @@ public class CmsPlatformMappingService extends BaseTaskService {
                 mapping = complexMappingBean;
                 break;
         }
+
+        // 普通的特殊处理
+        if ("prop_extend_1627207".equals(field.getId())) {
+            // 颜色分类扩展(prop_extend_1627207)
+            System.out.println("颜色分类扩展");
+
+            // 修改别名
+            ComplexMappingBean complexMappingBean = (ComplexMappingBean)mapping;
+            for (MappingBean mappingBean : complexMappingBean.getSubMappings()) {
+                if ("alias_name".equals(mappingBean.getPlatformPropId())) {
+
+                    MasterWord master = new MasterWord("code");
+                    RuleExpression rule = new RuleExpression();
+                    rule.addRuleWord(master);
+
+                    SimpleMappingBean simple = (SimpleMappingBean) mappingBean;
+                    simple.setExpression(rule);
+
+                    break;
+                }
+
+            }
+
+        } else if ("prop_extend_122276380".equals(field.getId())) {
+            // 颜色扩展(prop_extend_122276380)
+            // TODO: 这种情况在珠宝店里没有, 所以没找到, 如果以后有的话, 再单独做处理
+            System.out.println("颜色分类扩展");
+
+        } else if ("prop_extend_1627975".equals(field.getId())) {
+            // 颜色扩展(prop_extend_1627975)
+            // TODO: 这种情况在珠宝店里没有, 所以没找到, 如果以后有的话, 再单独做处理
+            System.out.println("颜色分类扩展");
+        }
+
+
+
         return mapping;
     }
 
