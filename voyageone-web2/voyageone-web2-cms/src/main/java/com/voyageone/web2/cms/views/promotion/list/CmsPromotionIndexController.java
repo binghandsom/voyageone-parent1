@@ -39,7 +39,7 @@ public class CmsPromotionIndexController extends CmsController {
         return success(cmsPromotionService.queryByCondition(params));
     }
 
-    @RequestMapping({PROMOTION.LIST.INDEX.INSERT_PROMOTION,PROMOTION.LIST.INDEX.UPDATE_PROMOTION})
+    @RequestMapping({PROMOTION.LIST.INDEX.INSERT_PROMOTION, PROMOTION.LIST.INDEX.UPDATE_PROMOTION})
     public AjaxResponse insertOrUpdate(@RequestBody CmsBtPromotionModel cmsBtPromotionModel) {
         String channelId = getUser().getSelChannelId();
         cmsBtPromotionModel.setChannelId(channelId);
@@ -49,11 +49,11 @@ public class CmsPromotionIndexController extends CmsController {
     }
 
     @RequestMapping(PROMOTION.LIST.INDEX.PROMOTION_EXPORT)
-    public ResponseEntity<byte[]> doExport(HttpServletRequest request, HttpServletResponse response, @RequestParam Integer  promotionId)
+    public ResponseEntity<byte[]> doExport(HttpServletRequest request, HttpServletResponse response, @RequestParam Integer promotionId)
             throws Exception {
 
         byte[] data = cmsPromotionService.getCodeExcelFile(promotionId);
-        return genResponseEntityFromBytes(DateTimeUtil.getLocalTime(getUserTimeZone())+"promotion.xlsx", data);
+        return genResponseEntityFromBytes("promotion" + DateTimeUtil.getLocalTime(getUserTimeZone(), "yyyyMMddHHmmss") + ".xlsx", data);
 
     }
 }

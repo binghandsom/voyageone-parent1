@@ -4,6 +4,7 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.transaction.SimpleTransaction;
 import com.voyageone.common.configs.Enums.PromotionTypeEnums;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
+import com.voyageone.common.util.ExcelUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
@@ -375,7 +376,7 @@ public class CmsPromotionDetailService extends BaseAppService {
         String modelId;
         if (row.getCell(CmsConstants.CellNum.groupIdCellNum) != null) {
             if (row.getCell(CmsConstants.CellNum.groupIdCellNum).getCellType() == Cell.CELL_TYPE_NUMERIC) {
-                modelId = row.getCell(CmsConstants.CellNum.groupIdCellNum).getNumericCellValue() + "";
+                modelId = ExcelUtils.getString(row,CmsConstants.CellNum.groupIdCellNum,"#");
             } else {
                 modelId = row.getCell(CmsConstants.CellNum.groupIdCellNum).getStringCellValue();
             }
@@ -393,7 +394,7 @@ public class CmsPromotionDetailService extends BaseAppService {
         CmsBtPromotionCodeModel code = new CmsBtPromotionCodeModel();
 
         if (row.getCell(CmsConstants.CellNum.productIdCellNum) != null) {
-            code.setProductId((long) row.getCell(CmsConstants.CellNum.productIdCellNum).getNumericCellValue());
+            code.setProductId(Long.parseLong(ExcelUtils.getString(row,CmsConstants.CellNum.productIdCellNum,"#")));
         }
         code.setProductModel(row.getCell(CmsConstants.CellNum.groupNameCellNum).getStringCellValue());
 

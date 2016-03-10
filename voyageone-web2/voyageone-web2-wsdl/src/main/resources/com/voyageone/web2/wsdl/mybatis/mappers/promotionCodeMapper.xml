@@ -13,6 +13,10 @@
         <result column="tag_path" property="tagPath" jdbcType="VARCHAR" />
         <result column="tag_path_name" property="tagPathName" jdbcType="VARCHAR" />
         <result column="tag_name" property="tag"  jdbcType="VARCHAR" />
+        <result column="property_1" property="property1"  jdbcType="VARCHAR" />
+        <result column="property_2" property="property2"  jdbcType="VARCHAR" />
+        <result column="property_3" property="property3"  jdbcType="VARCHAR" />
+        <result column="property_4" property="property4"  jdbcType="VARCHAR" />
         <result column="skuCount" property="skuCount"  jdbcType="INTEGER" />
     </resultMap>
     <select id="select_cms_bt_promotion_code" resultMap="bt_promotion_code_map" parameterType="HashMap" >
@@ -34,6 +38,10 @@
             a.image_url_1,
             a.image_url_2,
             a.image_url_3,
+            a.property_1,
+            a.property_2,
+            a.property_3,
+            a.property_4,
             a.created,
             a.creater,
             a.modified,
@@ -117,6 +125,10 @@
         a.image_url_1,
         a.image_url_2,
         a.image_url_3,
+        a.property_1,
+        a.property_2,
+        a.property_3,
+        a.property_4,
         a.created,
         a.creater,
         a.modified,
@@ -190,16 +202,16 @@
                 image_url_3,
             </if>
             <if test="property1 != null">
-                property1,
+                property_1,
             </if>
             <if test="property2 != null">
-                property2,
+                property_2,
             </if>
             <if test="property3 != null">
-                property3,
+                property_3,
             </if>
             <if test="property4 != null">
-                property4,
+                property_4,
             </if>
             <if test="tagId != null" >
                 tag_id,
@@ -339,16 +351,16 @@
                 image_url_3 = #{image_url_3,jdbcType=VARCHAR},
             </if>
             <if test="property1 != null">
-                property1 =  #{property1,jdbcType=VARCHAR},
+                property_1 =  #{property1,jdbcType=VARCHAR},
             </if>
             <if test="property2 != null">
-                property2 =  #{property2,jdbcType=VARCHAR},
+                property_2 =  #{property2,jdbcType=VARCHAR},
             </if>
             <if test="property3 != null">
-                property3 =  #{property3,jdbcType=VARCHAR},
+                property_3 =  #{property3,jdbcType=VARCHAR},
             </if>
             <if test="property4 != null">
-                property4 =  #{property4,jdbcType=VARCHAR},
+                property_4 =  #{property4,jdbcType=VARCHAR},
             </if>
             <if test="tagId != null" >
                 tag_id = #{tagId,jdbcType=INTEGER},
