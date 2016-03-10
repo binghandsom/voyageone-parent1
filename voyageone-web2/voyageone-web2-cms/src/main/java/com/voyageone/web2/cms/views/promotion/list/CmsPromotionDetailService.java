@@ -396,7 +396,7 @@ public class CmsPromotionDetailService extends BaseAppService {
         if (row.getCell(CmsConstants.CellNum.productIdCellNum) != null) {
             code.setProductId(Long.parseLong(ExcelUtils.getString(row,CmsConstants.CellNum.productIdCellNum,"#")));
         }
-        code.setProductModel(row.getCell(CmsConstants.CellNum.groupNameCellNum).getStringCellValue());
+        code.setProductModel(ExcelUtils.getString(row,CmsConstants.CellNum.groupNameCellNum));
 
         code.setCatPath(row.getCell(CmsConstants.CellNum.catPathCellNum).getStringCellValue());
 
@@ -420,7 +420,7 @@ public class CmsPromotionDetailService extends BaseAppService {
 
         code.setProductName(row.getCell(CmsConstants.CellNum.productNameCellNum).getStringCellValue());
 
-        code.setTag(row.getCell(CmsConstants.CellNum.tagCellNum).getStringCellValue());
+        code.setTag(ExcelUtils.getString(row,CmsConstants.CellNum.tagCellNum));
 
         if (row.getCell(CmsConstants.CellNum.timeCellNum) != null) {
             code.setTime(row.getCell(CmsConstants.CellNum.timeCellNum).getStringCellValue());
