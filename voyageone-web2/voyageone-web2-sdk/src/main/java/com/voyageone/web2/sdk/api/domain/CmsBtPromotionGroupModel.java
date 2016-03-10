@@ -15,6 +15,10 @@ import java.util.List;
 public class CmsBtPromotionGroupModel extends BaseMongoModel {
     private int seq;
 
+    private String channelId;
+
+    private Integer cartId;
+
     private int promotionId;
 
     private Long modelId;
@@ -34,6 +38,22 @@ public class CmsBtPromotionGroupModel extends BaseMongoModel {
     private String tag;
 
     private List<CmsBtPromotionCodeModel> codes;
+
+    public String getChannelId() {
+        return channelId;
+    }
+
+    public void setChannelId(String channelId) {
+        this.channelId = channelId;
+    }
+
+    public Integer getCartId() {
+        return cartId;
+    }
+
+    public void setCartId(Integer cartId) {
+        this.cartId = cartId;
+    }
 
     public CmsBtPromotionGroupModel(){
         super();
