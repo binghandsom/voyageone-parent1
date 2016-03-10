@@ -1,6 +1,5 @@
 package com.voyageone.web2.cms.wsdl.dao;
 
-import com.voyageone.base.dao.BaseDao;
 import com.voyageone.web2.cms.wsdl.models.CmsBtTaskModel;
 import org.springframework.stereotype.Repository;
 
@@ -12,12 +11,7 @@ import java.util.Map;
  * @version 2.0.0
  */
 @Repository
-public class CmsBtTaskDao extends BaseDao {
-
-    @Override
-    protected String namespace() {
-        return "com.voyageone.web2.cms.sql";
-    }
+public class CmsBtTaskDao extends WsdlBaseDao {
 
     public int insert(CmsBtTaskModel model) {
         return insert("cms_bt_tasks_insert", model);

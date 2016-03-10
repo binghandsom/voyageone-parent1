@@ -4,7 +4,7 @@
 
 package com.voyageone.service.dao.cms;
 
-import com.voyageone.base.dao.BaseDao;
+import com.voyageone.service.dao.ServiceBaseDao;
 import com.voyageone.service.model.cms.CmsBtPromotionModel;
 import org.springframework.stereotype.Repository;
 
@@ -16,7 +16,7 @@ import java.util.Map;
  * @author gbb
  */
 //Repository
-public class CmsBtPromotionDao extends BaseDao {
+public class CmsBtPromotionDao extends ServiceBaseDao {
 
 	/**
 	 * 条件查询
@@ -45,7 +45,7 @@ public class CmsBtPromotionDao extends BaseDao {
 	 * @return int
 	 */
 	public int update(CmsBtPromotionModel cmsBtPromotionModel) {
-		return updateTemplate.update("update_cms_bt_promotion", cmsBtPromotionModel);
+		return update("update_cms_bt_promotion", cmsBtPromotionModel);
 	}
 
 	/**
@@ -55,7 +55,7 @@ public class CmsBtPromotionDao extends BaseDao {
 	 * @return int
 	 */
 	public int insert(CmsBtPromotionModel cmsBtPromotionModel) {
-		return updateTemplate.insert("insert_cms_bt_promotion", cmsBtPromotionModel);
+		return insert("insert_cms_bt_promotion", cmsBtPromotionModel);
 	}
 
 	/**
@@ -65,7 +65,7 @@ public class CmsBtPromotionDao extends BaseDao {
 	 * @return int
 	 */
 	public int deleteById(Map<?, ?> condtionParams) {
-		return updateTemplate.update("delete_cms_bt_promotion_by_id", condtionParams);
+		return update("delete_cms_bt_promotion_by_id", condtionParams);
 	}
 
 }
