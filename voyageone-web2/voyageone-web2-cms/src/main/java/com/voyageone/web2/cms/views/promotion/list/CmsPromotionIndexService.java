@@ -196,6 +196,8 @@ public class CmsPromotionIndexService extends BaseAppService {
 
                 FileUtils.cell(row, CmsConstants.CellNum.skuCellNum, unlock).setCellValue(sku.getProductSku());
 
+                FileUtils.cell(row, CmsConstants.CellNum.tagCellNum, unlock).setCellValue(item.getTag());
+
                 if(item.getMsrpUS() != null){
                     FileUtils.cell(row, CmsConstants.CellNum.msrpUSCellNum, unlock).setCellValue(item.getMsrpUS());
                 }

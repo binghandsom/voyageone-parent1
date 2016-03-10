@@ -69,6 +69,7 @@ public class PromotionDetailService extends BaseService {
             code.setNumIid(cmsBtPromotionGroupModel.getNumIid());
             code.setModifier(cmsBtPromotionGroupModel.getModifier());
             code.setCreater(cmsBtPromotionGroupModel.getModified());
+            code.setModelId(cmsBtPromotionGroupModel.getModelId());
             if (cmsPromotionCodeDao.updatePromotionCode(code) == 0) {
                 cmsPromotionCodeDao.insertPromotionCode(code);
             }
