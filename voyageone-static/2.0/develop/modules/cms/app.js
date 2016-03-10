@@ -10,7 +10,6 @@ define([
     'voyageone-com',
     'angular-block-ui',
     'angular-ui-bootstrap',
-    'angular-ui-select',
     'angular-ngStorage',
     'angular-route',
     'angular-sanitize',
