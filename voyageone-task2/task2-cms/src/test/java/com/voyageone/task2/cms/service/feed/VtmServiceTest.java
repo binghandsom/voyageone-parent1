@@ -1,6 +1,6 @@
-package com.voyageone.batch.cms.service.feed;
+package com.voyageone.task2.cms.service.feed;
 
-import com.voyageone.batch.core.modelbean.TaskControlBean;
+import com.voyageone.task2.base.modelbean.TaskControlBean;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +13,7 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 /**
- * Created by dell on 2016/3/8.
+ * Created by dell on 2016/3/10.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath:context-cms-test.xml")
@@ -21,6 +21,7 @@ public class VtmServiceTest {
 
     @Autowired
     VtmService vtmService;
+
     @Test
     public void testOnStartup() throws Exception {
 

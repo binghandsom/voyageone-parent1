@@ -1,19 +1,18 @@
-package com.voyageone.batch.cms.service.feed;
+package com.voyageone.task2.cms.service.feed;
 
 import com.csvreader.CsvReader;
-import com.voyageone.batch.base.BaseTaskService;
-import com.voyageone.batch.cms.bean.SuperFeedVtmBean;
-import com.voyageone.batch.cms.dao.SuperFeed2Dao;
-import com.voyageone.batch.core.modelbean.TaskControlBean;
+import com.voyageone.task2.base.BaseTaskService;
+
+import com.voyageone.task2.cms.bean.SuperFeedVtmBean;
+import com.voyageone.task2.cms.dao.SuperFeed2Dao;
+import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.FeedEnums;
 import com.voyageone.common.configs.Feed;
-import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.io.FileInputStream;

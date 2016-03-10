@@ -45,6 +45,9 @@
         <!-- 价格披露 v2 -->
         <task:scheduled ref="CmsBeatJob" method="run" cron="0 0/1 0-23 * * ?"/>
 
+        <!-- 维他命 feed 导入 cms2 -->
+        <task:scheduled ref="CmsVtmJob" method="run" cron="0 0 * * * ?"/>
+
     </task:scheduled-tasks>
 
     <!-- 必须需要 -->

@@ -8,7 +8,7 @@
   </delete>
 
   <!-- 插入维他命产品文件信息 -->
-  <insert id="cms_superfeed_insertSuperfeedVtmInfo" parameterType="com.voyageone.batch.cms.bean.SuperFeedVtmBean">
+  <insert id="cms_superfeed_insertSuperfeedVtmInfo" parameterType="com.voyageone.task2.cms.bean.SuperFeedVtmBean">
     insert into
     voyageone_cms2.cms_zz_worktable_vtm_superfeed
     (

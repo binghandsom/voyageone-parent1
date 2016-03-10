@@ -1,12 +1,5 @@
-package com.voyageone.batch.cms.service.feed;
+package com.voyageone.task2.cms.service.feed;
 
-import com.voyageone.batch.base.BaseTaskService;
-import com.voyageone.batch.cms.dao.SuperFeed2Dao;
-import com.voyageone.batch.cms.dao.feed.VtmDao;
-import com.voyageone.batch.cms.model.CmsBtFeedInfoVtmModel;
-import com.voyageone.batch.core.modelbean.TaskControlBean;
-import com.voyageone.cms.service.FeedToCmsService;
-import com.voyageone.cms.service.model.CmsBtFeedInfoModel;
 import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
@@ -14,6 +7,13 @@ import com.voyageone.common.configs.Enums.FeedEnums;
 import com.voyageone.common.configs.Feed;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.service.impl.cms.CmsFeedToCmsService;
+import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
+import com.voyageone.task2.base.BaseTaskService;
+import com.voyageone.task2.base.modelbean.TaskControlBean;
+import com.voyageone.task2.cms.dao.SuperFeed2Dao;
+import com.voyageone.task2.cms.dao.feed.VtmDao;
+import com.voyageone.task2.cms.model.CmsBtFeedInfoVtmModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,7 +33,7 @@ public class VtmWsdlInsert extends BaseTaskService {
     private static final String INSERT_FLG = " UpdateFlag = 1 ";
 
     @Autowired
-    private FeedToCmsService feedToCmsService;
+    private CmsFeedToCmsService feedToCmsService;
 
     @Autowired
     protected SuperFeed2Dao superFeedDao;

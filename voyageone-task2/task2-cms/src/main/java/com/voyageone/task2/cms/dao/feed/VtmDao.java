@@ -1,7 +1,7 @@
-package com.voyageone.batch.cms.dao.feed;
+package com.voyageone.task2.cms.dao.feed;
 
 import com.voyageone.base.dao.BaseDao;
-import com.voyageone.batch.cms.model.CmsBtFeedInfoVtmModel;
+import com.voyageone.task2.cms.model.CmsBtFeedInfoVtmModel;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

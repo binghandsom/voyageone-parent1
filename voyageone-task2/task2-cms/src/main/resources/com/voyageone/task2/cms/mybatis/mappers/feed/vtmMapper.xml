@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.voyageone.cms.sql">
 
-    <resultMap id="resultMap_vtm" type="com.voyageone.batch.cms.model.CmsBtFeedInfoVtmModel">
+    <resultMap id="resultMap_vtm" type="com.voyageone.task2.cms.model.CmsBtFeedInfoVtmModel">
         <result column="category" property="category" />
         <result column="channel_id" property="channelId" />
         <result column="m_product_type" property="sizeType" />
@@ -88,7 +88,7 @@
         <result column="VoyageOne Price" property="VoyageOnePrice"/>
         <result column="Quantity" property="Quantity"/>
         <result column="VoyageOne MSRP" property="VoyageOneMSRP"/>
-        <collection property="skus" javaType="ArrayList" ofType="com.voyageone.cms.service.model.CmsBtFeedInfoModel_Sku" >
+        <collection property="skus" javaType="ArrayList" ofType="com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku" >
             <result column="i_sku" property="sku" />
             <result column="i_size" property="size" />
             <result column="i_barcode" property="barcode" />

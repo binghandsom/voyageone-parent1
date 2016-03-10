@@ -1,4 +1,4 @@
-package com.voyageone.batch.cms.bean;
+package com.voyageone.task2.cms.bean;
 
 import com.voyageone.common.util.MD5;
 

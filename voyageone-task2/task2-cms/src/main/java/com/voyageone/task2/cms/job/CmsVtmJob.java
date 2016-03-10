@@ -1,8 +1,8 @@
-package com.voyageone.batch.cms.job;
+package com.voyageone.task2.cms.job;
 
-import com.voyageone.batch.base.BaseTaskJob;
-import com.voyageone.batch.base.BaseTaskService;
-import com.voyageone.batch.cms.service.feed.VtmService;
+import com.voyageone.task2.base.BaseTaskJob;
+import com.voyageone.task2.base.BaseTaskService;
+import com.voyageone.task2.cms.service.feed.VtmService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

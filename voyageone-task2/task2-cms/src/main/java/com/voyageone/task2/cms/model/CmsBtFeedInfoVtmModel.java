@@ -1,6 +1,5 @@
-package com.voyageone.batch.cms.model;
-
-import com.voyageone.cms.service.model.CmsBtFeedInfoModel;
+package com.voyageone.task2.cms.model;
+import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 
 import java.util.ArrayList;
 import java.util.Arrays;
