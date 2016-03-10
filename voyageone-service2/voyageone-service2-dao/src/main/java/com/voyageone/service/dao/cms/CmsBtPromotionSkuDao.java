@@ -14,7 +14,7 @@ import java.util.Map;
  * @author james 15/12/11
  * @version 2.0.0
  */
-//Repository
+@Repository
 public class CmsBtPromotionSkuDao extends ServiceBaseDao {
 
     public List<Map<String,Object>> getPromotionSkuList(Map<String,Object> params){

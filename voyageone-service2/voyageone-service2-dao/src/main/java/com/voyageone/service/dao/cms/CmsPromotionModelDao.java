@@ -12,7 +12,7 @@ import java.util.Map;
  * @author james 15/12/11
  * @version 2.0.0
  */
-//Repository
+@Repository
 public class CmsPromotionModelDao extends ServiceBaseDao {
 
     public List<CmsBtPromotionGroupModel> getPromotionModelList(Map<String,Object> params){

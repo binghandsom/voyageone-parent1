@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.voyageone.service.dao.sql">
-    <resultMap id="bt_promotion_model_map" type="com.voyageone.web2.sdk.api.domain.CmsBtPromotionGroupModel" >
+    <resultMap id="bt_promotion_model_map" type="com.voyageone.service.model.cms.CmsBtPromotionGroupModel" >
         <id column="seq" property="seq" jdbcType="INTEGER" />
         <result column="promotion_id" property="promotionId" jdbcType="INTEGER" />
         <result column="model_id" property="modelId" jdbcType="INTEGER" />
@@ -79,7 +79,9 @@
                 a.product_id,
                 a.product_code,
                 a.product_name,
+                a.product_model,
                 a.tag_id,
+                a.image_url_1 as image,
                 MAX(a.promotion_price) AS promotion_price_max,
                 MIN(a.promotion_price) AS promotion_price_min,
                 MAX(a.sale_price) AS sale_price_max,
@@ -89,8 +91,8 @@
                 voyageone_cms2.cms_bt_promotion_code a
             GROUP BY
                 a.promotion_id,
-                a.model_id
-        ) t2 ON t1.model_id = t2.model_id
+                a.product_model
+        ) t2 ON t1.product_model = t2.product_model
         AND t1.promotion_id = t2.promotion_id left join voyageone_cms2.cms_bt_tag t3 on t2.tag_id = t3.tag_id
     </select>
     <select id="select_promotion_detail_cnt" resultType="int" parameterType="HashMap">
@@ -110,7 +112,7 @@
             </if>
         </where>
     </select>
-    <insert id="insert_cms_bt_promotion_model" parameterType="com.voyageone.web2.sdk.api.domain.CmsBtPromotionGroupModel" >
+    <insert id="insert_cms_bt_promotion_model" parameterType="com.voyageone.service.model.cms.CmsBtPromotionGroupModel" >
         insert IGNORE into voyageone_cms2.cms_bt_promotion_model
         <trim prefix="(" suffix=")" suffixOverrides="," >
             <if test="promotionId != null" >
@@ -169,7 +171,7 @@
             </if>
         </trim>
     </insert>
-    <update id="update_cms_bt_promotion_model" parameterType="com.voyageone.web2.sdk.api.domain.CmsBtPromotionGroupModel" >
+    <update id="update_cms_bt_promotion_model" parameterType="com.voyageone.service.model.cms.CmsBtPromotionGroupModel" >
         update cms_bt_promotion_model
         <set >
             <if test="promotionId != null" >
@@ -195,13 +197,19 @@
                 modifier = #{modifier,jdbcType=VARCHAR},
             </if>
         </set>
-        where seq = #{seq,jdbcType=INTEGER}
+        where promotion_id = #{promotionId,jdbcType=INTEGER}
+              and  product_model = #{productModel,jdbcType=VARCHAR}
     </update>
-    <delete id="delete_cms_bt_promotion_model" parameterType="com.voyageone.web2.sdk.api.domain.CmsBtPromotionGroupModel">
+    <delete id="delete_cms_bt_promotion_model" parameterType="com.voyageone.service.model.cms.CmsBtPromotionGroupModel">
         delete
             from voyageone_cms2.cms_bt_promotion_model
         where
             promotion_id = #{promotionId,jdbcType=INTEGER}
+        <if test="modelId != null">
             and model_id = #{modelId,jdbcType=INTEGER}
+        </if>
+        <if test="productModel != null and productModel != ''">
+            and product_model = #{productModel,jdbcType=VARCHAR}
+        </if>
     </delete>
 </mapper>

@@ -12,7 +12,7 @@ import java.util.Map;
  * @author gubuchun 15/12/18
  * @version 2.0.0
  */
-//Repository
+@Repository
 public class CmsBtPriceLogDao extends ServiceBaseDao {
 
     public List<CmsBtPriceLogModel> selectPriceLogByCode(Map<String, Object> param) {

@@ -71,7 +71,7 @@
             </if>
         </where>
     </select>
-    <insert id="insert_cms_bt_promotion_sku" parameterType="com.voyageone.web2.sdk.api.domain.CmsBtPromotionSkuModel" >
+    <insert id="insert_cms_bt_promotion_sku" parameterType="com.voyageone.service.model.cms.CmsBtPromotionSkuModel" >
         insert into voyageone_cms2.cms_bt_promotion_sku
         <trim prefix="(" suffix=")" suffixOverrides="," >
             <if test="promotionId != null" >
@@ -154,7 +154,7 @@
             </if>
         </trim>
     </insert>
-    <update id="update_cms_bt_promotion_sku" parameterType="com.voyageone.web2.sdk.api.domain.CmsBtPromotionSkuModel" >
+    <update id="update_cms_bt_promotion_sku" parameterType="com.voyageone.service.model.cms.CmsBtPromotionSkuModel" >
         update voyageone_cms2.cms_bt_promotion_sku
         <set >
             <if test="promotionId != null" >
@@ -212,7 +212,7 @@
             </if>
         </where>
     </update>
-    <delete id="delete_cms_bt_promotion_sku" parameterType="com.voyageone.web2.sdk.api.domain.CmsBtPromotionSkuModel">
+    <delete id="delete_cms_bt_promotion_sku" parameterType="com.voyageone.service.model.cms.CmsBtPromotionSkuModel">
         delete
         from voyageone_cms2.cms_bt_promotion_sku
         where
@@ -226,70 +226,10 @@
         <if test="productId != null and productId != ''">
             and product_id = #{productId,jdbcType=INTEGER}
         </if>
+        <if test="productCode != null and productCode != ''">
+            and product_code = #{productCode,jdbcType=VARCHAR}
+        </if>
     </delete>
 
-    <!-- MongoDB 取得 SKU 数据插入-->
-    <insert id="wms_bt_inventory_center_output_tmp_insertSKUData" parameterType="HashMap">
-        insert into wms_bt_inventory_center_output_tmp
-        (
-            order_channel_id,
-            prodId,
-            groupId,
-            numIid,
-            model,
-            code,
-            skuCode,
-            productName,
-            priceSale,
-            created
-        )
-        values
-          ${values}
-    </insert>
 
-    <!-- SKU 数据清空-->
-    <delete id="wms_bt_inventory_center_output_tmp_deleteAll">
-        delete from
-          wms_bt_inventory_center_output_tmp
-    </delete>
-
-    <!-- SKU 数据总数取得 -->
-    <select id="wms_bt_inventory_center_output_tmp_getRecCount" resultType="int" >
-        select count(1)
-        from
-            wms_bt_inventory_center_output_tmp
-    </select>
-
-    <!-- SKU 库存数据取得 -->
-    <resultMap id="skuInventoryMap" type="com.voyageone.web2.sdk.api.domain.CmsBtInventoryOutputTmpModel" >
-        <result column="order_channel_id" property="orderChannelId"/>
-        <result column="prodId" property="prodId"/>
-        <result column="groupId" property="groupId"/>
-        <result column="numIid" property="numIid"/>
-        <result column="model" property="model"/>
-        <result column="code" property="code"/>
-        <result column="skuCode" property="skuCode"/>
-        <result column="productName" property="productName"/>
-        <result column="priceSale" property="priceSale"/>
-        <result column="qty_orgin" property="qtyOrgin"/>
-    </resultMap>
-    <select id="wms_bt_inventory_center_output_tmp_getRecInfo" resultMap="skuInventoryMap" >
-        select
-            tmp.order_channel_id as order_channel_id,
-            tmp.prodId as prodId,
-            tmp.groupId as groupId,
-            tmp.numIid as numIid,
-            tmp.model as model,
-            tmp.code as code,
-            tmp.skuCode as skuCode,
-            tmp.productName as productName,
-            tmp.priceSale as priceSale,
-            inventory.qty_orgin as qty_orgin
-        from
-              wms_bt_inventory_center_output_tmp tmp
-        left join wms_bt_inventory_center_logic inventory
-              on tmp.order_channel_id = inventory.order_channel_id
-              and tmp.skuCode = inventory.sku
-        limit #{offset},#{pagesize}
-    </select>
 </mapper>

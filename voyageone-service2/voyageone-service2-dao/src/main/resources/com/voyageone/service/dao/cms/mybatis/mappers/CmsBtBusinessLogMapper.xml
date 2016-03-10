@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.voyageone.service.dao.sql">
 
-    <!--<resultMap id="CmsBtBusinessLogModel" type="com.voyageone.web2.sdk.api.domain.CmsBtBusinessLogModel"/>
+    <!--<resultMap id="CmsBtBusinessLogModel" type="com.voyageone.service.model.cms.CmsBtBusinessLogModel"/>
 -->
     <sql id="fields">
 	   seq,
@@ -29,7 +29,7 @@
 	</sql>
 
     <!-- 根据条件查询 -->
-    <select id="select_business_log_By_Condition" resultType="com.voyageone.web2.sdk.api.domain.CmsBtBusinessLogModel" parameterType="Map" >
+    <select id="select_business_log_By_Condition" resultType="com.voyageone.service.model.cms.CmsBtBusinessLogModel" parameterType="Map" >
         select <include refid="fields"/> from voyageone_cms2.cms_bt_business_log
         where status = 0
         <if test="channelId != null and channelId != ''">
