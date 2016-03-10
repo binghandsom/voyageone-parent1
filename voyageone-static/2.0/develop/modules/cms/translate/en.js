@@ -201,6 +201,7 @@ define(function() {
         "TXT_REVERT": "Revert",
         "TXT_NUMIID_FULL": "Model Platform ID",
         "TXT_CODE_FULL": "Product Code",
+        "TXT_CUST_QUERY_ATTR": "Custom Query",
         "TXT_TASK_NAME": "Task Name",
         "TXT_TIME_START": "Start Time",
         "TXT_TIME_END": "End Time",

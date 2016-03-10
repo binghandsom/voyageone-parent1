@@ -87,8 +87,8 @@ gulp.task(tasks.publish.modules, function () {
       .pipe(fixCommonRef())
       //.pipe(sourceMaps.init())
       // 追加依赖注入语法
-      //.pipe(ngAnnotate())
-      //.pipe(uglify())
+      .pipe(ngAnnotate())
+      .pipe(uglify())
       //.pipe(sourceMaps.write('./'))
       .pipe(gulp.dest(publish.release.modules));
 
