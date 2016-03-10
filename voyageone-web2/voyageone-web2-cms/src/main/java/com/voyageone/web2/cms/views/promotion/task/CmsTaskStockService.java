@@ -10,10 +10,7 @@ import com.voyageone.web2.cms.dao.CmsBtStockSeparatePlatformInfoDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by jeff.duan on 2016/03/04.
@@ -28,12 +25,42 @@ public class CmsTaskStockService extends BaseAppService {
     private CmsBtStockSeparateItemDao cmsBtStockSeparateItemDao;
 
     /**
+     * 取得库存隔离数据各种状态的数量
+     *
+     * @param param 客户端参数
+     * @return 某种状态的数量
+     */
+    public List<Map<String,Object>>  getStockStatusCount(Map param){
+//        Map<String, Object> sqlParam = new HashMap<String, Object>();
+//        sqlParam.put("taskId", taskId);
+//        sqlParam.put("status", status);
+//        return cmsBtStockSeparateItemDao.selectStockSeparateItemCnt(sqlParam);
+        Map<String,Object> sqlParam = new HashMap<String,Object>();
+        sqlParam.put("sql", getStockStatusCountSql(param));
+        List<Map<String,Object>> statusCountList = cmsBtStockSeparateItemDao.selectStockSeparateItemBySqlMap(sqlParam);
+        return statusCountList;
+    }
+
+    /**
+     * 取得符合条件的sku数量
+     *
+     * @param param 客户端参数
+     * @return 某种状态的数量
+     */
+    public int getStockSkuCount(Map param){
+        Map<String,Object> sqlParam = new HashMap<String,Object>();
+        sqlParam.put("sql", getStockSkuCountSql(param));
+        List<Object> countInfo = cmsBtStockSeparateItemDao.selectStockSeparateItemBySqlObject(sqlParam);
+        return  Integer.parseInt(String.valueOf(countInfo.get(0)));
+    }
+
+    /**
      * 取得属性列表
      * 属性列表数据结构
-     *    {"value":"property1", "name":"品牌", "logic":"", "show":false},
-     *    {"value":"property2", "name":"英文短描述", "logic":"Like", "show":false},
-     *    {"value":"property3", "name":"性别", "logic":"", "show":false}，
-     *    {"value":"property4", "name":"Size", "logic":"", "show":false}...
+     *    {"value":"property1", "name":"品牌", "logic":"", "type":"", "show":false},
+     *    {"value":"property2", "name":"英文短描述", "logic":"Like", "type":"", "show":false},
+     *    {"value":"property3", "name":"性别", "logic":"", "type":"", "show":false}，
+     *    {"value":"property4", "name":"Size", "logic":"", "type":"int", "show":false}...
      *
      * @param param 客户端参数
      * @return 获取取得属性列表
@@ -43,12 +70,16 @@ public class CmsTaskStockService extends BaseAppService {
 
         List<TypeChannelBean> dynamicPropertyList = TypeChannel.getTypeList("dynamicProperty", (String) param.get("channelId"));
         for (TypeChannelBean dynamicProperty : dynamicPropertyList) {
-            Map<String,Object> propertyItem = new HashMap<String,Object>();
-            propertyItem.put("value", dynamicProperty.getValue());
-            propertyItem.put("name", dynamicProperty.getName());
-            propertyItem.put("logic", dynamicProperty.getAdd_name1());
-            propertyItem.put("show", false);
-            propertyList.add(propertyItem);
+            if (((String) param.get("lang")).equals(dynamicProperty.getLang_id())) {
+                Map<String, Object> propertyItem = new HashMap<String, Object>();
+                propertyItem.put("property", dynamicProperty.getValue());
+                propertyItem.put("name", dynamicProperty.getName());
+                propertyItem.put("logic", dynamicProperty.getAdd_name1());
+                propertyItem.put("type", dynamicProperty.getAdd_name2());
+                propertyItem.put("show", false);
+                propertyItem.put("value", "");
+                propertyList.add(propertyItem);
+            }
         }
         return propertyList;
     }
@@ -70,17 +101,18 @@ public class CmsTaskStockService extends BaseAppService {
      * 获取库存隔离明细
      *
      * @param param 客户端参数
-     * @param platformList 任务对应平台信息列表
      * @param skuList 当页的sku列表
      * @return 获取库存隔离明细列表
      */
-    public List<Map<String,Object>> getCommonStockList(Map param, List<Map<String, Object>> platformList, List<String>skuList){
+    public List<Map<String,Object>> getCommonStockList(Map param, List<Object>skuList){
         // 库存隔离明细列表
         List<Map<String,Object>> stockList = new ArrayList<Map<String,Object>>();
-
         Map<String, Object> sqlParam = new HashMap<String, Object>();
+        List<Map<String,Object>> platformList = (List<Map<String,Object>>) param.get("platformList");
         sqlParam.put("taskId", param.get("taskId"));
         sqlParam.put("skuList", skuList);
+        sqlParam.put("tableName", param.get("tableName"));
+        sqlParam.put("lang", param.get("lang"));
         // 获取当页表示的库存隔离数据
         List<Map<String,Object>> stockAllList = cmsBtStockSeparateItemDao.selectStockSeparateItem(sqlParam);
         // sku临时变量
@@ -93,7 +125,7 @@ public class CmsTaskStockService extends BaseAppService {
             String model = (String) stockInfo.get("product_model");
             String code = (String) stockInfo.get("product_code");
             String currentSku = (String) stockInfo.get("sku");  //当前行的sku
-            String cartId = (String) stockInfo.get("cart_id");
+            String cartId = String.valueOf(stockInfo.get("cart_id"));
             String property1 = (String) stockInfo.get("property1");
             String property2 = (String) stockInfo.get("property2");
             String property3 = (String) stockInfo.get("property3");
@@ -103,6 +135,18 @@ public class CmsTaskStockService extends BaseAppService {
             String statusName = (String) stockInfo.get("status_name");
             // 加入一条新的库存隔离明细
             if (!currentSku.equals(skuTemp)) {
+                // 加入隔离平台为"动态"的信息
+                // 例：{"cartId":"20", "qty":"-1", "status":""},{"cartId":"23", "qty":"-1", "status":""}
+                if (platformIndex > 0) {
+                    for (int i = platformIndex; i < platformList.size(); i++) {
+                        Map<String, Object> linePlatformInfo = new HashMap<String, Object>();
+                        linePlatformInfo.put("cartId", (String) ((HashMap<String, Object>) platformList.get(platformIndex)).get("cartId"));
+                        linePlatformInfo.put("qty", "-1");
+                        linePlatformInfo.put("status", "");
+                        linePlatformInfoList.add(linePlatformInfo);
+                        platformIndex++;
+                    }
+                }
                 skuTemp = currentSku;
                 platformIndex = 0;
                 lineInfo = new HashMap<String, Object>();
@@ -147,11 +191,10 @@ public class CmsTaskStockService extends BaseAppService {
      * 实时库存状态
      *
      * @param param 客户端参数
-     * @param platformList 任务对应平台信息列表
      * @param skuList 当页的sku列表
      * @return 实时库存状态列表
      */
-    public List<Map<String,Object>> getRealStockList(Map param, List<Map<String, Object>> platformList, List<String>skuList){
+    public List<Map<String,Object>> getRealStockList(Map param, List<Object>skuList){
         List<Map<String,Object>> realStockList = new ArrayList<Map<String,Object>>();
         return realStockList;
     }
@@ -163,10 +206,10 @@ public class CmsTaskStockService extends BaseAppService {
      * @param param 客户端参数
      * @return 一页表示的Sku
      */
-    public List<String> getCommonStockPageSkuList(Map param) {
+    public List<Object> getCommonStockPageSkuList(Map param) {
         Map<String,Object> sqlParam = new HashMap<String,Object>();
         sqlParam.put("sql", getCommonStockPageSkuSql(param));
-        List<String> skuList = cmsBtStockSeparateItemDao.selectStockSeparateItemPageSku(sqlParam);
+        List<Object> skuList = cmsBtStockSeparateItemDao.selectStockSeparateItemBySqlObject(sqlParam);
         return  skuList;
     }
 
@@ -188,19 +231,37 @@ public class CmsTaskStockService extends BaseAppService {
      * @return 一页表示的Sku的Sql
      */
     private String getCommonStockPageSkuSql(Map param){
-        String sql = "";
-        sql = "select sku from ( select distinct sku as sku from " + (String) param.get("tableName");
-        sql += getWhereSql(param) + " )t1 ";
-        String start = "";
-        String length = "";
-        if (StringUtils.isEmpty((String) param.get("start1"))) {
-            start = "0";
-        }
-        if (StringUtils.isEmpty((String) param.get("length1"))) {
-            length = "10";
-        }
-
+        String sql = "select sku from ( select distinct sku as sku from " + (String) param.get("tableName");
+        sql += getWhereSql(param, true) + " order by product_code,sku) t1 ";
+        String start = String.valueOf(param.get("start1"));
+        String length = String.valueOf(param.get("length1"));
         sql += " limit " + start + "," + length;
+        return sql;
+    }
+
+    /**
+     * 取得各种状态数量的Sql
+     *
+     * @param param 客户端参数
+     * @return 各种状态数量的Sql
+     */
+    private String getStockStatusCountSql(Map param){
+//        String sql = "select count(*) as count from " + (String) param.get("tableName");
+        String sql = "select status,count(*) as count from " + (String) param.get("tableName");
+        sql += getWhereSql(param, false);
+        sql += " group by status";
+        return sql;
+    }
+
+    /**
+     * 取得Sku的数量
+     *
+     * @param param 客户端参数
+     * @return 一页表示的Sku的Sql
+     */
+    private String getStockSkuCountSql(Map param){
+        String sql = "select count(distinct sku) as count from " + (String) param.get("tableName");
+        sql += getWhereSql(param, true);
         return sql;
     }
 
@@ -220,10 +281,14 @@ public class CmsTaskStockService extends BaseAppService {
      * 取得where条件的Sql文
      *
      * @param param
+     * @param statusFlg 状态Flg
      * @return where条件的Sql文
      */
-    private String getWhereSql(Map param){
-        String whereSql = " where 1=1";
+    private String getWhereSql(Map param, boolean statusFlg){
+        String whereSql = " where 1=1 ";
+        // 任务Id
+        whereSql += " and task_id = " + String.valueOf(param.get("taskId")) + " ";
+
         // 商品code
         if (!StringUtils.isEmpty((String) param.get("code"))) {
             whereSql += " and product_code = '" + escapeSpecialChar((String) param.get("code")) + "'";
@@ -234,55 +299,62 @@ public class CmsTaskStockService extends BaseAppService {
         }
         // 可用库存（下限）
         if (!StringUtils.isEmpty((String) param.get("qtyFrom"))) {
-            whereSql += " and qtyFrom >= " + escapeSpecialChar((String) param.get("qtyFrom"));
+            whereSql += " and qty >= " + escapeSpecialChar((String) param.get("qtyFrom"));
         }
         // 可用库存（上限）
-        if (!StringUtils.isEmpty((String) param.get("qtTo"))) {
-            whereSql += " and qtTo <= " + escapeSpecialChar((String) param.get("qtTo"));
+        if (!StringUtils.isEmpty((String) param.get("qtyTo"))) {
+            whereSql += " and qty <= " + escapeSpecialChar((String) param.get("qtyTo"));
         }
         //状态
-        if (!StringUtils.isEmpty((String) param.get("status"))) {
+        if (statusFlg && !StringUtils.isEmpty((String) param.get("status"))) {
             whereSql += " and status = '" + (String) param.get("status") + "'";
         }
 
-        if (param.get("propertyList") == null) {
-            for (Map<String,Object> property : (List<Map<String,Object>>)param.get("propertyList")) {
-                // 动态属性名
-                String propertyName = (String) property.get("value");
-                // 动态属性值
-                String propertyValue = (String) param.get(propertyName);
-                // 逻辑，例如：Like，默认为=
-                String logic = (String) property.get("logic");
-//                if (StringUtils.isEmpty(logic)) {
-//                    logic = "=";
-//                }
-                // 存在~则加上大于等于和小于等于的条件
-                if (propertyValue.contains("~")) {
-                    String values[] = propertyValue.split("~");
-                    for (int i = 0;i <  2; i++) {
-                        if (i == 0) {
-                            whereSql += " and" + propertyName + " >= " + values[i];
-                        } else {
-                            whereSql += " and" + propertyName + " <= " + values[i];
+        for (Map<String,Object> property : (List<Map<String,Object>>)param.get("propertyList")) {
+            // 动态属性名
+            String propertyName = (String) property.get("property");
+            // 动态属性值
+            String propertyValue = (String) property.get("value");
+            // 逻辑，支持：Like，默认为空白
+            String logic = (String) property.get("logic");
+            // 类型，支持：int，默认为空白
+            String type = (String) property.get("type");
+            if (StringUtils.isEmpty(propertyValue)) {
+                continue;
+            }
+            // 存在~则加上大于等于和小于等于的条件
+            if (propertyValue.contains("~")) {
+                String values[] = propertyValue.split("~");
+                for (int i = 0;i <  2; i++) {
+                    if ("int".equals(type)) {
+                        propertyName = "convert(" + propertyName + ",signed)";
+                    }
+                    if (i == 0) {
+                        if (!StringUtils.isEmpty(values[i])) {
+                            whereSql += " and " + propertyName + " >= '" + escapeSpecialChar(values[i]) + "' ";
+                        }
+                    } else {
+                        if (!StringUtils.isEmpty(values[i])) {
+                            whereSql += " and " + propertyName + " <= '" + escapeSpecialChar(values[i]) + "' ";
                         }
                     }
-                    continue;
                 }
+                continue;
+            }
 
-                // 按逗号分割则生成多个用 or 分割的条件
-                String values[] = propertyValue.split(",");
-                String propertySql = "";
-                for (String value : values) {
-                    propertySql += propertyName;
-                    if (logic.toLowerCase().equals("like")) {
-                        propertySql += " like '%" + escapeSpecialChar(value) + "%' or ";
-                    } else {
-                        propertySql += " = '" + escapeSpecialChar(value) + "' or ";
-                    }
+            // 按逗号分割则生成多个用 or 分割的条件
+            String values[] = propertyValue.split(",");
+            String propertySql = "";
+            for (String value : values) {
+                propertySql += propertyName;
+                if (logic.toLowerCase().equals("like")) {
+                    propertySql += " like '%" + escapeSpecialChar(value) + "%' or ";
+                } else {
+                    propertySql += " = '" + escapeSpecialChar(value) + "' or ";
                 }
-                if(values != null && values.length > 0 ) {
-                    whereSql += " and " + propertySql.substring(0,propertySql.length()-3);
-                }
+            }
+            if(values != null && values.length > 0 ) {
+                whereSql += " and ( " + propertySql.substring(0,propertySql.length()-3) + " ) ";
             }
         }
 

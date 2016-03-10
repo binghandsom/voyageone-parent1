@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,13 +53,13 @@ public class CmsTaskStockController extends CmsController {
      *  "data":{
      *      "taskName":"",
      *      "onlySku":false,
-     *      "platformList": [ {"carId":"23", "cartName":"天猫国际", "value":"", "type":"1", "restoreTime":"2016-11-02 03:00:00", "addPriority":"3", "subtractPriority":"3},
-     *                        {"cartId":"27", "cartName":"聚美优品", "value":"", "type":"1", "restoreTime":"2016-11-02 10:00:00", "addPriority":"2", "subtractPriority":"2"}
-     *                        {"cartId":"-1", "cartName":"共享（京东|京东国际|官网）", "value":"", "type":"2", "restoreTime":"", "addPriority":"1", "subtractPriority":"1"}...],
+     *      "platformList": [ {"carId":"23", "cartName":"天猫国际", "value":"", "type":"1", "revertTime":"2016-11-02 03:00:00", "addPriority":"3", "subtractPriority":"3},
+     *                        {"cartId":"27", "cartName":"聚美优品", "value":"", "type":"1", "revertTime":"2016-11-02 10:00:00", "addPriority":"2", "subtractPriority":"2"}
+     *                        {"cartId":"-1", "cartName":"共享（京东|京东国际|官网）", "value":"", "type":"2", "revertTime":"", "addPriority":"1", "subtractPriority":"1"}...],
      * }
      * 说明："platformList":先列出隔离平台，后列出共享平台，共享平台合并成一条数据，并且共享平台的"cart_id":"-1"。
      * "taskName"：任务名；"onlySku"：是否只导入Sku和库存
-     * "carId"：平台id；"cartName"：平台名；"value"：隔离比例；"type"：类型（1：隔离，2：共享）；"restoreTime"：还原时间；"addPriority"：增优先顺；"subtractPriority"：减优先顺
+     * "carId"：平台id；"cartName"：平台名；"value"：隔离比例；"type"：类型（1：隔离，2：共享）；"revertTime"：还原时间；"addPriority"：增优先顺；"subtractPriority"：减优先顺
      *
      * @apiErrorExample  错误示例
      * {
@@ -100,17 +101,17 @@ public class CmsTaskStockController extends CmsController {
      *  {
      *   "taskName":"天猫国际双11库存隔离任务",
      *   "onlySku":false,
-     *   "platformList": [ {"cartId":"23", "cartName":"天猫国际", "value":"70%", "type":"2", "restoreTime":"2016/11/2 03:00:00", "addPriority":"1", "subtractPriority":"3},
-     *                     {"cartId":"27", "cartName":"聚美优品", "value":"30%", "type":"2", "restoreTime":"2016/11/2 10:00:00", "addPriority":"2", "subtractPriority":"2"}
-     *                     {"cartId":"-1", "cartName":"共享（京东|京东国际|官网）", "value":"", "type":"2", "restoreTime":"", "addPriority":"3", "subtractPriority":"1"}...],
+     *   "platformList": [ {"cartId":"23", "cartName":"天猫国际", "value":"70%", "type":"2", "revertTime":"2016/11/2 03:00:00", "addPriority":"1", "subtractPriority":"3},
+     *                     {"cartId":"27", "cartName":"聚美优品", "value":"30%", "type":"2", "revertTime":"2016/11/2 10:00:00", "addPriority":"2", "subtractPriority":"2"}
+     *                     {"cartId":"-1", "cartName":"共享（京东|京东国际|官网）", "value":"", "type":"2", "revertTime":"", "addPriority":"3", "subtractPriority":"1"}...],
      *  }
      * @apiParamExample  参数示例2（修改）
      *  {
      *   "taskId":1，
      *   "taskName":"天猫国际双11库存隔离任务",
-     *   "platformList": [ {"cartId":"23", "cartName":"天猫国际", "value":"70%", "type":"2", "restoreTime":"2016/11/2 03:00:00", "addPriority":"1", "subtractPriority":"3},
-     *                     {"cartId":"27", "cartName":"聚美优品", "value":"30%", "type":"2", "restoreTime":"2016/11/2 10:00:00", "addPriority":"2", "subtractPriority":"2"}
-     *                     {"cartId":"-1", "cartName":"共享（京东|京东国际|官网）", "value":"", "type":"2", "restoreTime":"", "addPriority":"3", "subtractPriority":"1"}...],
+     *   "platformList": [ {"cartId":"23", "cartName":"天猫国际", "value":"70%", "type":"2", "revertTime":"2016/11/2 03:00:00", "addPriority":"1", "subtractPriority":"3},
+     *                     {"cartId":"27", "cartName":"聚美优品", "value":"30%", "type":"2", "revertTime":"2016/11/2 10:00:00", "addPriority":"2", "subtractPriority":"2"}
+     *                     {"cartId":"-1", "cartName":"共享（京东|京东国际|官网）", "value":"", "type":"2", "revertTime":"", "addPriority":"3", "subtractPriority":"1"}...],
      *  }
      * @apiSuccess (系统级返回字段) {String} code 处理结果代码编号
      * @apiSuccess (系统级返回字段) {String} message 处理结果描述
@@ -205,15 +206,22 @@ public class CmsTaskStockController extends CmsController {
      * @apiPermission 认证商户
      * @apiParam (系统级参数) {String} channelId 渠道id
      * @apiParam (应用级参数) {String} taskId 任务id
+     * @apiParam (应用级参数) {String} model 商品model
      * @apiParam (应用级参数) {String} code 商品Code
      * @apiParam (应用级参数) {String} sku Sku
      * @apiParam (应用级参数) {String} qtyFrom 可用库存（下限）
      * @apiParam (应用级参数) {String} qtyTo 可用库存（上限）
      * @apiParam (应用级参数) {String} status 状态（0：未进行； 1：等待隔离； 2：隔离成功； 3：隔离失败； 4：等待还原； 5：还原成功； 6：还原失败； 7：再修正； 空白:ALL）
-     * @apiParam (应用级参数) {String} property1 属性1（品牌）
-     * @apiParam (应用级参数) {String} property2 属性2（英文短描述）
-     * @apiParam (应用级参数) {String} property3 属性3（性别）
-     * @apiParam (应用级参数) {String} property4 属性4（SIZE）
+     * @apiParam (应用级参数) {Object} propertyList 属性列表（json数组）
+     * @apiParamExample  propertyList参数示例
+     *   "propertyList": [ {"property":"property1", "name":"品牌", "logic":"", "type":"", "show":false, "value"=""},
+     *                     {"property":"property2", "name":"英文短描述", "logic":"Like", "type":"", "show":false, "value"=""},
+     *                     {"property":"property3", "name":"性别", "logic":"", "type":"", "show":false, "value"=""}，
+     *                     {"property":"property4", "name":"Size", "logic":"", "type":"int", "show":false, "value"=""}]
+     * @apiParam (应用级参数) {Object} platformList 隔离平台列表（json数组）
+     * @apiParamExample  propertyList参数示例
+     *   "platformList": [ {"cartId":"23", "cartName":"天猫国际"},
+     *                     {"cartId":"27", "cartName":"聚美优品"} ]
      * @apiParam (应用级参数) {String} start1 库存隔离明细页检索开始Index
      * @apiParam (应用级参数) {String} length1 库存隔离明细页检索件数
      * @apiParam (应用级参数) {String} start2 实时库存状态页检索开始Index
@@ -222,16 +230,16 @@ public class CmsTaskStockController extends CmsController {
      * @apiSuccess (系统级返回字段) {String} message 处理结果描述
      * @apiSuccess (系统级返回字段) {String} displayType 消息的提示方式
      * @apiSuccess (系统级返回字段) {String} redirectTo 跳转地址
-     * @apiSuccess (应用级返回字段) {String} codeNum 商品Code数
-     * @apiSuccess (应用级返回字段) {String} skuNum Sku数
+     * @apiSuccess (应用级返回字段) {String} allNum 总数
      * @apiSuccess (应用级返回字段) {String} readyNum 未进行数
      * @apiSuccess (应用级返回字段) {String} waitSeparationNum 等待隔离数
      * @apiSuccess (应用级返回字段) {String} separationOKNum 隔离成功数
      * @apiSuccess (应用级返回字段) {String} separationFailNum 隔离失败数
      * @apiSuccess (应用级返回字段) {String} waitRestoreNum 等待还原数
-     * @apiSuccess (应用级返回字段) {String} restoreOKNum 还原成功数
-     * @apiSuccess (应用级返回字段) {String} restoreFailNum 还原失败数
+     * @apiSuccess (应用级返回字段) {String} revertOKNum 还原成功数
+     * @apiSuccess (应用级返回字段) {String} revertFailNum 还原失败数
      * @apiSuccess (应用级返回字段) {String} changedNum 再修正数
+     * @apiSuccess (应用级返回字段) {String} skuNum sku数
      * @apiSuccess (应用级返回字段) {String} realStockStatus 实时库存表示状态(0:不表示,1:活动中表示,2:活动结束后表示）
      * @apiSuccess (应用级返回字段) {Object} propertyList 属性列表（json数组）
      * @apiSuccess (应用级返回字段) {Object} platformList 隔离平台列表（json数组）
@@ -241,21 +249,21 @@ public class CmsTaskStockController extends CmsController {
      * {
      *  "code":"0", "message":null, "displayType":null, "redirectTo":null,
      *  "data":{
-     *   "codeNum":5000,
-     *   "skuNum":10000,
+     *   "allNum":30000,
      *   "readyNum":1000,
      *   "waitSeparationNum":5000,
      *   "separationOKNum":1000,
      *   "separationFailNum":0,
      *   "waitRestoreNum":5000,
-     *   "restoreOKNum":1000,
-     *   "restoreFailNum":0,
+     *   "revertOKNum":1000,
+     *   "revertFailNum":0,
      *   "changedNum":0,
+     *   "skuNum":10000,
      *   "realStockStatus":"1",
-     *   "propertyList": [ {"value":"property1", "name":"品牌", "logic":"", "show":false},
-     *                     {"value":"property2", "name":"英文短描述", "logic":"Like", "show":false},
-     *                     {"value":"property3", "name":"性别", "logic":"", "show":false}，
-     *                     {"value":"property4", "name":"Size", "logic":"", "show":false}],
+     *   "propertyList": [ {"property":"property1", "name":"品牌", "logic":"", "type":"", "show":false, "value"=""},
+     *                     {"property":"property2", "name":"英文短描述", "logic":"Like", "type":"", "show":false, "value"=""},
+     *                     {"property":"property3", "name":"性别", "logic":"", "type":"", "show":false, "value"=""}，
+     *                     {"property":"property4", "name":"Size", "logic":"", "type":"int", "show":false, "value"=""}],
      *   "platformList": [ {"cartId":"23", "cartName":"天猫国际"},
      *                     {"cartId":"27", "cartName":"聚美优品"} ]，
      *   "stockList": [ {"model":"35265", "code":"35265465", "sku":"256354566-9", "property1":"Puma", "property2":"Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"50",
@@ -317,18 +325,6 @@ public class CmsTaskStockController extends CmsController {
 
         Map<String, Object> resultBean = new HashMap<>();
 
-        // 取得属性列表 只有首次取得
-        if (param.get("propertyList") == null) {
-            List<Map<String, Object>> propertyList = cmsTaskStockService.getPropertyList(param);
-            resultBean.put("propertyList", propertyList);
-        } else {
-            resultBean.put("propertyList", param.get("propertyList"));
-        }
-
-        // 任务对应平台信息列表 只有首次取得
-        List<Map<String, Object>> platformList = cmsTaskStockService.getPlatformList(param);
-        resultBean.put("platformList", platformList);
-
         // 取得任务id在history表中时候有数据
         boolean historyFlg = cmsTaskStockService.isHistoryExist(param);
         if (historyFlg) {
@@ -337,15 +333,127 @@ public class CmsTaskStockController extends CmsController {
             param.put("tableName", "voyageone_cms2.cms_bt_stock_separate_item");
         }
 
-        // 获取当页表示的Sku
-        List<String> skuList = cmsTaskStockService.getCommonStockPageSkuList(param);
+        // 取得库存隔离数据各种状态的数量
+        // 状态 = "未进行"的件数
+        int cntAll = 0;
+//        List<Object> statusCount = cmsTaskStockService.getStockStatusCount(param, "0");
+        List<Map<String,Object>> statusCountList = cmsTaskStockService.getStockStatusCount(param);
+        for (Map<String,Object> statusInfo : statusCountList) {
+            String status = (String) statusInfo.get("status");
+            int cnt = Integer.parseInt(String.valueOf(statusInfo.get("count")));
+            cntAll += cnt;
+            String key = "";
+            if ("0".equals(status)) {
+                key = "readyNum";
+            } else if ("1".equals(status)) {
+                key = "waitSeparationNum";
+            } else if ("2".equals(status)) {
+                key = "separationOKNum";
+            } else if ("3".equals(status)) {
+                key = "separationFailNum";
+            } else if ("4".equals(status)) {
+                key = "waitRestoreNum";
+            } else if ("5".equals(status)) {
+                key = "revertOKNum";
+            } else if ("6".equals(status)) {
+                key = "revertFailNum";
+            } else if ("7".equals(status)) {
+                key = "changedNum";
+            }
+            resultBean.put(key, cnt);
+        }
+        if (!resultBean.containsKey("readyNum")) {
+            resultBean.put("readyNum", 0);
+        }
+        if (!resultBean.containsKey("waitSeparationNum")) {
+            resultBean.put("waitSeparationNum", 0);
+        }
+        if (!resultBean.containsKey("separationOKNum")) {
+            resultBean.put("separationOKNum", 0);
+        }
+        if (!resultBean.containsKey("separationFailNum")) {
+            resultBean.put("separationFailNum", 0);
+        }
+        if (!resultBean.containsKey("waitRestoreNum")) {
+            resultBean.put("waitRestoreNum", 0);
+        }
+        if (!resultBean.containsKey("revertOKNum")) {
+            resultBean.put("revertOKNum", 0);
+        }
+        if (!resultBean.containsKey("changedNum")) {
+            resultBean.put("changedNum", 0);
+        }
 
-        // 获取库存隔离明细
-        List<Map<String, Object>> stockList = cmsTaskStockService.getCommonStockList(param, platformList, skuList);
+
+
+//        resultBean.put("readyNum", cnt);
+//        // 状态 = "等待隔离"的件数
+//        cnt = cmsTaskStockService.getStockStatusCount(param, "1");
+//        cntAll += cnt;
+//        resultBean.put("waitSeparationNum", cnt);
+//        // 状态 = "隔离成功"的件数
+//        cnt = cmsTaskStockService.getStockStatusCount(param, "2");
+//        cntAll += cnt;
+//        resultBean.put("separationOKNum", cnt);
+//        // 状态 = "隔离失败"的件数
+//        cnt = cmsTaskStockService.getStockStatusCount(param, "3");
+//        cntAll += cnt;
+//        resultBean.put("separationFailNum", cnt);
+//        // 状态 = "等待还原"的件数
+//        cnt = cmsTaskStockService.getStockStatusCount(param, "4");
+//        cntAll += cnt;
+//        resultBean.put("waitRestoreNum", cnt);
+//        // 状态 = "还原成功"的件数
+//        cnt = cmsTaskStockService.getStockStatusCount(param, "5");
+//        cntAll += cnt;
+//        resultBean.put("revertOKNum", cnt);
+//        // 状态 = "还原失败"的件数
+//        cnt = cmsTaskStockService.getStockStatusCount(param, "6");
+//        cntAll += cnt;
+//        resultBean.put("revertFailNum", cnt);
+//        // 状态 = "再修正"的件数
+//        cnt = cmsTaskStockService.getStockStatusCount(param, "7");
+//        cntAll += cnt;
+//        resultBean.put("changedNum", cnt);
+        // 总数
+        resultBean.put("allNum", cntAll);
+
+        // 取得属性列表 只有首次取得
+        if (param.get("propertyList") == null || ((ArrayList) param.get("propertyList")).size() == 0) {
+            List<Map<String, Object>> propertyList = cmsTaskStockService.getPropertyList(param);
+            resultBean.put("propertyList", propertyList);
+            param.put("propertyList", propertyList);
+        } else {
+            resultBean.put("propertyList", param.get("propertyList"));
+        }
+
+        // 任务对应平台信息列表 只有首次取得
+        if (param.get("platformList") == null || ((ArrayList) param.get("platformList")).size() == 0) {
+            List<Map<String, Object>> platformList = cmsTaskStockService.getPlatformList(param);
+            resultBean.put("platformList", platformList);
+            param.put("platformList", platformList);
+        } else {
+            resultBean.put("platformList", param.get("platformList"));
+        }
+
+        // sku总数
+        int cnt = cmsTaskStockService.getStockSkuCount(param);
+        resultBean.put("skuNum", cnt);
+        if (cnt == 0) {
+            resultBean.put("stockList", new ArrayList());
+            resultBean.put("realStockList", new ArrayList());
+            return success(resultBean);
+        }
+
+        // 取得当页表示的Sku
+        List<Object> skuList = cmsTaskStockService.getCommonStockPageSkuList(param);
+
+        // 取得库存隔离明细
+        List<Map<String, Object>> stockList = cmsTaskStockService.getCommonStockList(param, skuList);
         resultBean.put("stockList", stockList);
 
         // 实时库存状态
-        List<Map<String, Object>> realStockList = cmsTaskStockService.getRealStockList(param, platformList, skuList);
+        List<Map<String, Object>> realStockList = cmsTaskStockService.getRealStockList(param, skuList);
         resultBean.put("realStockList", realStockList);
 
         // 返回
@@ -354,35 +462,42 @@ public class CmsTaskStockController extends CmsController {
 
 
     /**
-     * @api {post} /cms/promotion/task_stock/getCommonStockList 1.05 获取库存隔离明细(翻页用)
+     * @api {post} /cms/promotion/task_stock/getCommonStockList 1.05 取得库存隔离明细(翻页用)
      * @apiName CmsTaskStockController.getCommonStockList
-     * @apiDescription 获取库存隔离明细(翻页用)
+     * @apiDescription 取得库存隔离明细(翻页用)
      * @apiGroup promotion
      * @apiVersion 0.0.1
      * @apiPermission 认证商户
      * @apiParam (应用级参数) {String} taskId 任务id
+     * @apiParam (应用级参数) {String} model 商品model
      * @apiParam (应用级参数) {String} code 商品Code
      * @apiParam (应用级参数) {String} sku Sku
      * @apiParam (应用级参数) {String} qtyFrom 可用库存（下限）
      * @apiParam (应用级参数) {String} qtyTo 可用库存（上限）
      * @apiParam (应用级参数) {String} status 状态（0：未进行； 1：等待隔离； 2：隔离成功； 3：隔离失败； 4：等待还原； 5：还原成功； 6：还原失败； 7：再修正； 空白:ALL）
-     * @apiParam (应用级参数) {String} property1 属性1（品牌）
-     * @apiParam (应用级参数) {String} property2 属性2（英文短描述）
-     * @apiParam (应用级参数) {String} property3 属性3（性别）
-     * @apiParam (应用级参数) {String} property4 属性4（SIZE）
+     * @apiParam (应用级参数) {Object} propertyList 属性列表（json数组）
+     * @apiParamExample  propertyList参数示例
+     *   "propertyList": [ {"property":"property1", "name":"品牌", "logic":"", "type":"", "show":false, "value"=""},
+     *                     {"property":"property2", "name":"英文短描述", "logic":"Like", "type":"", "show":false, "value"=""},
+     *                     {"property":"property3", "name":"性别", "logic":"", "type":"", "show":false, "value"=""}，
+     *                     {"property":"property4", "name":"Size", "logic":"", "type":"int", "show":false, "value"=""}]
+     * @apiParam (应用级参数) {Object} platformList 隔离平台列表（json数组）
+     * @apiParamExample  propertyList参数示例
+     *   "platformList": [ {"cartId":"23", "cartName":"天猫国际"},
+     *                     {"cartId":"27", "cartName":"聚美优品"} ]
      * @apiParam (应用级参数) {String} start1 检索开始Index
      * @apiParam (应用级参数) {String} length1 检索件数
      * @apiSuccess (系统级返回字段) {String} code 处理结果代码编号
      * @apiSuccess (系统级返回字段) {String} message 处理结果描述
      * @apiSuccess (系统级返回字段) {String} displayType 消息的提示方式
      * @apiSuccess (系统级返回字段) {String} redirectTo 跳转地址
-     * @apiSuccess (应用级返回字段) {String} countNum 合计数
+     * @apiSuccess (应用级返回字段) {String} skuNum sku数
      * @apiSuccess (应用级返回字段) {Object} stockList 库存隔离明细（json数组）
      * @apiSuccessExample 成功响应更新请求
      * {
      *  "code":"0", "message":null, "displayType":null, "redirectTo":null,
      *  "data":{
-     *   "countNum":5000,
+     *   "skuNum":5000,
      *   "stockList": [ {"model":"35265", "code":"35265465", "sku":"256354566-9", "property1":"Puma", "property2":"Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"50",
      *                                                         "platformStock":[{"cartId":"23", "qty":"30", "status":"隔离成功"},
      *                                                                          {"cartId":"27", "qty":"10", "status":"隔离失败"}]},
@@ -408,42 +523,76 @@ public class CmsTaskStockController extends CmsController {
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK.GET_COMMON_STOCK_LIST)
     public AjaxResponse getCommonStockList(@RequestBody Map param) {
+        Map<String, Object> resultBean = new HashMap<>();
 
+        // 取得任务id在history表中时候有数据
+        boolean historyFlg = cmsTaskStockService.isHistoryExist(param);
+        if (historyFlg) {
+            param.put("tableName", "voyageone_cms2.cms_bt_stock_separate_item_history");
+        } else {
+            param.put("tableName", "voyageone_cms2.cms_bt_stock_separate_item");
+        }
+
+        // sku总数
+//        int cnt = cmsTaskStockService.getStockSkuCount(param);
+//        resultBean.put("skuNum", cnt);
+//        if (cnt == 0) {
+//            resultBean.put("stockList", new ArrayList());
+//            return success(resultBean);
+//        }
+
+        // 取得当页表示的Sku
+        List<Object> skuList = cmsTaskStockService.getCommonStockPageSkuList(param);
+        if (skuList.size() == 0) {
+            resultBean.put("stockList", new ArrayList());
+            return success(resultBean);
+        }
+
+        // 取得库存隔离明细
+        List<Map<String, Object>> stockList = cmsTaskStockService.getCommonStockList(param, skuList);
+        resultBean.put("stockList", stockList);
 
         // 返回
-        return success(null);
+        return success(resultBean);
     }
 
     /**
-     * @api {post} /cms/promotion/task_stock/getRealStockList 1.06 获取实时库存状态(翻页用)
+     * @api {post} /cms/promotion/task_stock/getRealStockList 1.06 取得实时库存状态(翻页用)
      * @apiName CmsTaskStockController.getRealStockInfo
-     * @apiDescription 获取实时库存状态(翻页用)
+     * @apiDescription 取得实时库存状态(翻页用)
      * @apiGroup promotion
      * @apiVersion 0.0.1
      * @apiPermission 认证商户
      * @apiParam (应用级参数) {String} taskId 任务id
+     * @apiParam (应用级参数) {String} model 商品model
      * @apiParam (应用级参数) {String} code 商品Code
      * @apiParam (应用级参数) {String} sku Sku
      * @apiParam (应用级参数) {String} qtyFrom 可用库存（下限）
      * @apiParam (应用级参数) {String} qtyTo 可用库存（上限）
      * @apiParam (应用级参数) {String} status 状态（0：未进行； 1：等待隔离； 2：隔离成功； 3：隔离失败； 4：等待还原； 5：还原成功； 6：还原失败； 7：再修正； 空白:ALL）
-     * @apiParam (应用级参数) {String} property1 属性1（品牌）
-     * @apiParam (应用级参数) {String} property2 属性2（英文短描述）
-     * @apiParam (应用级参数) {String} property3 属性3（性别）
-     * @apiParam (应用级参数) {String} property4 属性4（SIZE）
+     * @apiParam (应用级参数) {Object} propertyList 属性列表（json数组）
+     * @apiParamExample  propertyList参数示例
+     *   "propertyList": [ {"property":"property1", "name":"品牌", "logic":"", "type":"", "show":false, "value"=""},
+     *                     {"property":"property2", "name":"英文短描述", "logic":"Like", "type":"", "show":false, "value"=""},
+     *                     {"property":"property3", "name":"性别", "logic":"", "type":"", "show":false, "value"=""}，
+     *                     {"property":"property4", "name":"Size", "logic":"", "type":"int", "show":false, "value"=""}]
+     * @apiParam (应用级参数) {Object} platformList 隔离平台列表（json数组）
+     * @apiParamExample  propertyList参数示例
+     *   "platformList": [ {"cartId":"23", "cartName":"天猫国际"},
+     *                     {"cartId":"27", "cartName":"聚美优品"} ]
      * @apiParam (应用级参数) {String} start2 检索开始Index
      * @apiParam (应用级参数) {String} length2 检索件数
      * @apiSuccess (系统级返回字段) {String} code 处理结果代码编号
      * @apiSuccess (系统级返回字段) {String} message 处理结果描述
      * @apiSuccess (系统级返回字段) {String} displayType 消息的提示方式
      * @apiSuccess (系统级返回字段) {String} redirectTo 跳转地址
-     * @apiSuccess (应用级返回字段) {String} countNum 合计数
+     * @apiSuccess (应用级返回字段) {String} skuNum sku数
      * @apiSuccess (应用级返回字段) {Object} realStockList 实时库存状态（json数组）
      * @apiSuccessExample 成功响应更新请求
      * {
      *  "code":"0", "message":null, "displayType":null, "redirectTo":null,
      *  "data":{
-     *   "countNum":10000,
+     *   "skuNum":10000,
      *   "realStockList": [ {"model":"35265", "code":"35265465", "Sku":"256354566-9", "property1":"Puma", "property2":"Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"50",
      *                                                         "platformStock":[{"cartId":"23", "separationQty":30, "salesQty":"10"},
      *                                                                          {"cartId":"27", "separationQty":20, "salesQty":"0"}]},
@@ -656,10 +805,10 @@ public class CmsTaskStockController extends CmsController {
      * @apiExample  业务说明
      *  1.系统时间已经超过这个任务中最晚的平台活动开始时间的话，不能进行导入。
      *  2.进行导入Sku的文件Check。
-     *      2.1 Code和Sku都不能为空白。
+     *      2.1 Model,Code和Sku都不能为空白。
      *      2.2 所有字段的长度check。
      *      2.3 根据参数.渠道id从com_mt_value_channel表（type=62）取得有几个属性（例如 N个）
-     *      2.4 第一行的第3列开始的属性名称必须和2.3取得的属性名称一致。
+     *      2.4 第一行的第4列开始的属性名称必须和2.3取得的属性名称一致。
      *      2.5 第一行的第N+5列开始的平台信息，必须和任务所对应的平台匹配。
      *      2.6 第二行开始，第N+4列必须和cms_bt_stock_separate_item表的可用库存相同。
      *      2.7 第二行开始，第N+5列之后的内容必须是"动态"，或者是大于0的整数。
@@ -670,7 +819,7 @@ public class CmsTaskStockController extends CmsController {
      *
      *  3.将导入的库存隔离数据插入到cms_bt_stock_separate_item表。
      *    导入方式：增量方式。（只插入数据，导入后状态为"0：未进行"）
-     *    导入方式：变更方式。（只有文件内容和DB的实际值发生变化时才修改数据和状态，只更新增量库存和状态两个字段。
+     *    导入方式：变更方式。（只有文件内容和DB的实际值发生变化时才修改库存和状态，只更新增量库存和状态两个字段。
      *                          导入前状态为"7：再修正"和"2 隔离成功"以外，则导入后状态为"0：未进行"，
      *                          导入前状态为"7：再修正"或"2 隔离成功"，则导入后状态为"7：再修正"，
      *                          导入前为动态，导入后增加一条数据状态为"0：未进行"，
@@ -868,9 +1017,9 @@ public class CmsTaskStockController extends CmsController {
     }
 
     /**
-     * @api {post} /cms/promotion/task_stock/getSkuSeparationDetail 1.16 获取某个Sku的所有隔离详细
+     * @api {post} /cms/promotion/task_stock/getSkuSeparationDetail 1.16 取得某个Sku的所有隔离详细
      * @apiName CmsTaskStockController.getSkuSeparationDetail
-     * @apiDescription 获取某个Sku的所有隔离详细
+     * @apiDescription 取得某个Sku的所有隔离详细
      * @apiGroup promotion
      * @apiVersion 0.0.1
      * @apiPermission 认证商户

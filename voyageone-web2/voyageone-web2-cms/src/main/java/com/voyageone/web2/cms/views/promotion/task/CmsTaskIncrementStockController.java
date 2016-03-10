@@ -17,17 +17,17 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping(
-        value = CmsUrlConstants.PROMOTION.TASK.INCREMENT_STOCK_LIST.ROOT,
+        value = CmsUrlConstants.PROMOTION.TASK.STOCK_INCREMENT.ROOT,
         method = RequestMethod.POST
 )
-public class CmsTaskIncrementStockListController extends CmsController {
+public class CmsTaskIncrementStockController extends CmsController {
 
 //    @Autowired
 //    private CmsTaskIncrementStockListService cmsTaskIncrementStockListService;
 
     /**
-     * @api {post} /cms/promotion/task_increment_stock_list/getPlatFormList 2.1 取得隔离任务的隔离平台
-     * @apiName getPlatFormList
+     * @api {post} /cms/promotion/task_stock_increment/getPlatFormList 2.1 取得隔离任务的隔离平台
+     * @apiName CmsTaskIncrementStockController.getPlatFormList
      * @apiDescription 取得隔离任务的隔离平台（新建增量库存隔离任务前初始化操作/ 增量库存隔离任务一览表示后）
      * @apiGroup promotion
      * @apiVersion 0.0.1
@@ -52,7 +52,7 @@ public class CmsTaskIncrementStockListController extends CmsController {
      *  cms_bt_stock_separate_platform_info
      *
      */
-    @RequestMapping(CmsUrlConstants.PROMOTION.TASK.INCREMENT_STOCK_LIST.GET_PLATFORM_LIST)
+    @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK_INCREMENT.GET_PLATFORM_LIST)
     public AjaxResponse getPlatFormList(@RequestBody Map param) {
 
         // 返回
@@ -60,8 +60,8 @@ public class CmsTaskIncrementStockListController extends CmsController {
     }
 
     /**
-     * @api {post} /cms/promotion/task_increment_stock_list/searchTask 2.2 检索增量库存隔离任务
-     * @apiName searchTask
+     * @api {post} /cms/promotion/task_stock_increment/searchTask 2.2 检索增量库存隔离任务
+     * @apiName CmsTaskIncrementStockController.searchTask
      * @apiDescription 检索增量库存隔离任务
      * @apiGroup promotion
      * @apiVersion 0.0.1
@@ -94,7 +94,7 @@ public class CmsTaskIncrementStockListController extends CmsController {
      *  cms_bt_stock_separate_increment_task
      *
      */
-    @RequestMapping(CmsUrlConstants.PROMOTION.TASK.INCREMENT_STOCK_LIST.SEARCH_TASK)
+    @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK_INCREMENT.SEARCH_TASK)
     public AjaxResponse searchTask(@RequestBody Map param) {
 
         // 返回
@@ -102,8 +102,8 @@ public class CmsTaskIncrementStockListController extends CmsController {
     }
 
     /**
-     * @api {post} /cms/promotion/task_increment_stock_list/saveTask 2.3 新建/修改增量库存隔离任务
-     * @apiName CmsTaskIncrementStockListController.saveTask
+     * @api {post} /cms/promotion/task_stock_increment/saveTask 2.3 新建/修改增量库存隔离任务
+     * @apiName CmsTaskIncrementStockController.saveTask
      * @apiDescription 新建/修改增量库存隔离任务
      * @apiGroup promotion
      * @apiVersion 0.0.1
@@ -149,7 +149,7 @@ public class CmsTaskIncrementStockListController extends CmsController {
      *  cms_bt_stock_sales_quantity
      *
      */
-    @RequestMapping(CmsUrlConstants.PROMOTION.TASK.INCREMENT_STOCK_LIST.SAVE_TASK)
+    @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK_INCREMENT.SAVE_TASK)
     public AjaxResponse saveTask(@RequestBody Map param) {
 
         // 返回
@@ -157,8 +157,8 @@ public class CmsTaskIncrementStockListController extends CmsController {
     }
 
     /**
-     * @api {post} /cms/promotion/task_increment_stock_list/delTask 2.4 删除增量库存隔离任务
-     * @apiName CmsTaskIncrementStockListController.delTask
+     * @api {post} /cms/promotion/task_stock_increment/delTask 2.4 删除增量库存隔离任务
+     * @apiName CmsTaskIncrementStockController.delTask
      * @apiDescription 删除增量库存隔离任务
      * @apiGroup promotion
      * @apiVersion 0.0.1
@@ -185,7 +185,7 @@ public class CmsTaskIncrementStockListController extends CmsController {
      *  cms_bt_stock_separate_increment_task
      *
      */
-    @RequestMapping(CmsUrlConstants.PROMOTION.TASK.INCREMENT_STOCK_LIST.DEL_TASK)
+    @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK_INCREMENT.DEL_TASK)
     public AjaxResponse delTask(@RequestBody Map param) {
 
         // 返回

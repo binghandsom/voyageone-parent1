@@ -17,7 +17,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping(
-        value = CmsUrlConstants.PROMOTION.TASK.INCREMENT_STOCK_DETAIL.ROOT,
+        value = CmsUrlConstants.PROMOTION.TASK.STOCK_INCREMENT_DETAIL.ROOT,
         method = RequestMethod.POST
 )
 public class CmsTaskIncrementStockDetailController extends CmsController {
@@ -27,7 +27,7 @@ public class CmsTaskIncrementStockDetailController extends CmsController {
 
 
     /**
-     * @api {post} /cms/promotion/task_increment_stock_detail/searchItem 3.1 检索增量隔离明细
+     * @api {post} /cms/promotion/task_stock_increment_detail/searchItem 3.1 检索增量隔离明细
      * @apiName CmsTaskIncrementStockDetailController.searchItem
      * @apiDescription 检索增量隔离明细
      * @apiGroup promotion
@@ -35,20 +35,23 @@ public class CmsTaskIncrementStockDetailController extends CmsController {
      * @apiPermission 认证商户
      * @apiParam (系统级参数) {String} channelId 渠道id
      * @apiParam (应用级参数) {String} subTaskId 增量任务id
+     * @apiParam (应用级参数) {String} model 商品model
      * @apiParam (应用级参数) {String} code 商品Code
      * @apiParam (应用级参数) {String} sku Sku
      * @apiParam (应用级参数) {String} status 状态（0：未进行； 1：等待隔离； 2：隔离成功； 3：隔离失败； 空白:ALL）
-     * @apiParam (应用级参数) {String} property1 属性1（品牌）
-     * @apiParam (应用级参数) {String} property2 属性2（英文短描述）
-     * @apiParam (应用级参数) {String} property3 属性3（性别）
-     * @apiParam (应用级参数) {String} property4 属性4（SIZE）
+     * @apiParam (应用级参数) {Object} propertyList 属性列表（json数组）
+     * @apiParamExample  propertyList参数示例
+     *   "propertyList": [ {"property":"property1", "name":"品牌", "logic":"", "type":"", "show":false, "value"=""},
+     *                     {"property":"property2", "name":"英文短描述", "logic":"Like", "type":"", "show":false, "value"=""},
+     *                     {"property":"property3", "name":"性别", "logic":"", "type":"", "show":false, "value"=""}，
+     *                     {"property":"property4", "name":"Size", "logic":"", "type":"int", "show":false, "value"=""}]
      * @apiParam (应用级参数) {String} start 检索开始Index
      * @apiParam (应用级参数) {String} length 检索件数
      * @apiSuccess (系统级返回字段) {String} code 处理结果代码编号
      * @apiSuccess (系统级返回字段) {String} message 处理结果描述
      * @apiSuccess (系统级返回字段) {String} displayType 消息的提示方式
      * @apiSuccess (系统级返回字段) {String} redirectTo 跳转地址
-     * @apiSuccess (应用级返回字段) {String} countNum 总数
+     * @apiSuccess (应用级返回字段) {String} allNum 总数
      * @apiSuccess (应用级返回字段) {String} readyNum 未进行数
      * @apiSuccess (应用级返回字段) {String} waitSeparationNum 等待增量数
      * @apiSuccess (应用级返回字段) {String} separationOKNum 增量成功数
@@ -61,17 +64,17 @@ public class CmsTaskIncrementStockDetailController extends CmsController {
      * {
      *  "code":"0", "message":null, "displayType":null, "redirectTo":null,
      *  "data":{
-     *   "countNum":10000,
+     *   "allNum":10000,
      *   "readyNum":1000,
      *   "waitSeparationNum":5000,
      *   "separationOKNum":1000,
      *   "separationFailNum":0,
      *   "cartId":"23",
      *   "cartName":"天猫国际",
-     *   "propertyList": [ {"name":"品牌"},
-     *                     {"name":"英文短描述"},
-     *                     {"name":"性别"},
-     *                     {"name":"Size"}]，
+     *   "propertyList": [ {"property":"property1", "name":"品牌", "logic":"", "type":"", "show":false, "value"=""},
+     *                     {"property":"property2", "name":"英文短描述", "logic":"Like", "type":"", "show":false, "value"=""},
+     *                     {"property":"property3", "name":"性别", "logic":"", "type":"", "show":false, "value"=""}，
+     *                     {"property":"property4", "name":"Size", "logic":"", "type":"int", "show":false, "value"=""}],
      *   "stockList": [ {"model":"35265", "code":"35265465", "sku":"256354566-9", "property1":"Puma", "property2":"Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"50", "incrementQty":"50", "status":"未进行", "fixFlg":false},
      *                   {"model":"35265", "code":"35265465", "sku":"256354566-10", "property1":"Puma", "property2":"Puma Suede Classic +Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"80", "incrementQty":"80", "status":"未进行", "fixFlg":false},
      *                   {"model":"35265", "code":"35265465", "sku":"256354566-11", "property1":"Puma", "property2":"Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"20", "incrementQty":"20", "status":"增量成功", "fixFlg":false},
@@ -89,7 +92,7 @@ public class CmsTaskIncrementStockDetailController extends CmsController {
      *  com_mt_value_channel
      *
      */
-    @RequestMapping(CmsUrlConstants.PROMOTION.TASK.INCREMENT_STOCK_DETAIL.SEARCH_ITEM)
+    @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK_INCREMENT_DETAIL.SEARCH_ITEM)
     public AjaxResponse searchItem(@RequestBody Map param) {
 
         // 返回
@@ -97,7 +100,7 @@ public class CmsTaskIncrementStockDetailController extends CmsController {
     }
 
     /**
-     * @api {post} /cms/promotion/task_increment_stock_detail/saveItem 3.2 保存一条增量隔离库存明细
+     * @api {post} /cms/promotion/task_stock_increment_detail/saveItem 3.2 保存一条增量隔离库存明细
      * @apiName CmsTaskIncrementStockDetailController.saveItem
      * @apiDescription 保存一条增量隔离库存明细
      * @apiGroup promotion
@@ -134,7 +137,7 @@ public class CmsTaskIncrementStockDetailController extends CmsController {
      *  cms_bt_increment_stock_separate_item
      *
      */
-    @RequestMapping(CmsUrlConstants.PROMOTION.TASK.INCREMENT_STOCK_DETAIL.SAVE_ITEM)
+    @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK_INCREMENT_DETAIL.SAVE_ITEM)
     public AjaxResponse saveItem(@RequestBody Map param) {
 
         // 返回
@@ -142,7 +145,7 @@ public class CmsTaskIncrementStockDetailController extends CmsController {
     }
 
     /**
-     * @api {post} /cms/promotion/task_increment_stock_detail/delItem 3.3 删除一条增量隔离库存明细
+     * @api {post} /cms/promotion/task_stock_increment_detail/delItem 3.3 删除一条增量隔离库存明细
      * @apiName CmsTaskIncrementStockDetailController.delItem
      * @apiDescription 删除一条增量隔离库存明细
      * @apiGroup promotion
@@ -173,7 +176,7 @@ public class CmsTaskIncrementStockDetailController extends CmsController {
      *  cms_bt_increment_stock_separate_item
      *
      */
-    @RequestMapping(CmsUrlConstants.PROMOTION.TASK.INCREMENT_STOCK_DETAIL.DEL_ITEM)
+    @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK_INCREMENT_DETAIL.DEL_ITEM)
     public AjaxResponse delItem1(@RequestBody Map param) {
 
         // 返回
@@ -181,7 +184,7 @@ public class CmsTaskIncrementStockDetailController extends CmsController {
     }
 
     /**
-     * @api {post} /cms/promotion/task_increment_stock_detail/exportStockInfo 3.4 批量导出增量隔离库存明细
+     * @api {post} /cms/promotion/task_stock_increment_detail/exportStockInfo 3.4 批量导出增量隔离库存明细
      * @apiName CmsTaskIncrementStockDetailController.exportStockInfo
      * @apiDescription 批量导出增量隔离库存明细
      * @apiGroup promotion
@@ -205,7 +208,7 @@ public class CmsTaskIncrementStockDetailController extends CmsController {
      *  com_mt_value_channel
      *
      */
-    @RequestMapping(CmsUrlConstants.PROMOTION.TASK.INCREMENT_STOCK_DETAIL.EXPORT_STOCK_INFO)
+    @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK_INCREMENT_DETAIL.EXPORT_STOCK_INFO)
     public ResponseEntity exportStockInfo(@RequestBody Map param) {
 
         // 返回
@@ -214,7 +217,7 @@ public class CmsTaskIncrementStockDetailController extends CmsController {
 
 
     /**
-     * @api {post} /cms/promotion/task_increment_stock_detail/importStockInfo 3.5 批量导入增量隔离库存明细
+     * @api {post} /cms/promotion/task_stock_increment_detail/importStockInfo 3.5 批量导入增量隔离库存明细
      * @apiName CmsTaskIncrementStockDetailController.importStockInfo
      * @apiDescription 批量导入增量隔离库存明细
      * @apiGroup promotion
@@ -250,6 +253,7 @@ public class CmsTaskIncrementStockDetailController extends CmsController {
      *  2.将导入的增量库存隔离数据插入到cms_bt_stock_separate_increment_item表。
      *    2.1 如果这条增量明细信息（参数.增量任务id + sku）在cms_bt_stock_separate_increment_item表中不存在，则追加。
      *    2.2 如果这条增量明细信息（参数.增量任务id + sku）在cms_bt_stock_separate_increment_item表中存在，则更新增量库存和是否固定值增量两个字段。
+     *    2.3 删除怎么办？
      *
      *  导入文件示例
      *  Model    Code        Sku	            品牌        Name(英文)              性别    SIZE    可调配库存  天猫   固定值增量
@@ -263,7 +267,7 @@ public class CmsTaskIncrementStockDetailController extends CmsController {
      *
      *
      */
-    @RequestMapping(CmsUrlConstants.PROMOTION.TASK.INCREMENT_STOCK_DETAIL.IMPORT_STOCK_INFO)
+    @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK_INCREMENT_DETAIL.IMPORT_STOCK_INFO)
     public AjaxResponse importStockInfo(@RequestBody Map param) {
 
         // 返回
@@ -272,8 +276,8 @@ public class CmsTaskIncrementStockDetailController extends CmsController {
 
 
     /**
-     * @api {post} /cms/promotion/task_stock/executeIncrementStockSeparation 3.6 启动/重刷增量库存隔离
-     * @apiName CmsTaskIncrementStockDetailController.executeIncrementStockSeparation
+     * @api {post} /cms/promotion/task_stock_increment_detail/executeStockIncrementSeparation 3.6 启动/重刷增量库存隔离
+     * @apiName CmsTaskIncrementStockDetailController.executeStockIncrementSeparation
      * @apiDescription 启动/重刷增量库存隔离
      * @apiGroup promotion
      * @apiVersion 0.0.1
@@ -294,8 +298,8 @@ public class CmsTaskIncrementStockDetailController extends CmsController {
      *  cms_bt_stock_separate_platform_info
      *
      */
-    @RequestMapping(CmsUrlConstants.PROMOTION.TASK.INCREMENT_STOCK_DETAIL.EXECUTE_INCREMENT_STOCK_SEPARATION)
-    public AjaxResponse executeIncrementStockSeparation(@RequestBody Map param) {
+    @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK_INCREMENT_DETAIL.EXECUTE_STOCK_INCREMENT_SEPARATION)
+    public AjaxResponse executeStockIncrementSeparation(@RequestBody Map param) {
 
         // 返回
         return success(null);
