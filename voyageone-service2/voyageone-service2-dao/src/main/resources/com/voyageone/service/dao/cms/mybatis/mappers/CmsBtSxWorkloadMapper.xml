@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.voyageone.service.dao.cms.sql">
+<mapper namespace="com.voyageone.service.dao.sql">
 
     <!-- 批量插入授权类目表查询若干条任务-->
     <select id="cms_select_sx_workload" resultType="com.voyageone.service.model.cms.CmsBtSxWorkloadModel">

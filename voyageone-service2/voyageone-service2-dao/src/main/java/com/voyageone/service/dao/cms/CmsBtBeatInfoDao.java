@@ -1,7 +1,7 @@
 package com.voyageone.service.dao.cms;
 
-import com.voyageone.base.dao.BaseDao;
 import com.voyageone.cms.enums.BeatFlag;
+import com.voyageone.service.dao.ServiceBaseDao;
 import com.voyageone.service.model.cms.CmsBtBeatInfoModel;
 import org.springframework.stereotype.Repository;
 
@@ -14,7 +14,7 @@ import java.util.Map;
  * @version 2.0.0
  */
 //@Repository
-public class CmsBtBeatInfoDao extends BaseDao {
+public class CmsBtBeatInfoDao extends ServiceBaseDao {
 
     public int insertList(List<CmsBtBeatInfoModel> modelList) {
         return insert("cms_bt_beat_info_insertList", parameters("modelList", modelList));

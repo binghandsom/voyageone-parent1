@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.voyageone.service.dao.cms.sql">
+<mapper namespace="com.voyageone.service.dao.sql">
     <resultMap id="PromotionMap" type="com.voyageone.web2.sdk.api.domain.CmsBtPromotionModel" >
         <id column="promotion_id" property="promotionId" jdbcType="INTEGER" />
         <result column="channel_id" property="channelId" jdbcType="VARCHAR" />
