@@ -12,6 +12,7 @@
         where
           channel_id = #{channelId}
           and config_key = 'ADVQRY_KEYS'
+          and (config_value2 = #{langId} or (config_value2 is null OR LENGTH(trim(config_value2)) = 0))
     </select>
 
 
