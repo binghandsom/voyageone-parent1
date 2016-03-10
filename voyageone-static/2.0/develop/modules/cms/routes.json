@@ -35,7 +35,7 @@
   },
   "promotion_task_stock_detail": {
     "url": "/promotion/task_stock/",
-    "hash": "/promotion/task/stock/:task_id",
+    "hash": "/promotion/task_stock/:task_id",
     "templateUrl": "views/promotion/task/stock.tpl.html",
     "controllerUrl": "modules/cms/views/promotion/task/stock.ctl",
     "controller": "taskStockController as $ctrl"
