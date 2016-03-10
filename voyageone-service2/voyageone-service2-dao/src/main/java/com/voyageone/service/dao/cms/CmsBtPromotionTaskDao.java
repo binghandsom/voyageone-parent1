@@ -15,6 +15,11 @@ import java.util.Map;
 //Repository
 public class CmsBtPromotionTaskDao extends BaseDao {
 
+    @Override
+    protected String namespace(){
+        return "com.voyageone.service.dao.cms.sql";
+    }
+
     public List<CmsBtPromotionTaskModel> getPromotionTaskList(Map<String,Object> params){
         List<CmsBtPromotionTaskModel> ret = selectList("select_cms_bt_promotion_task",params);
         if (ret == null){
@@ -35,11 +40,11 @@ public class CmsBtPromotionTaskDao extends BaseDao {
     }
 
     public int insertPromotionTask(CmsBtPromotionTaskModel params){
-        return updateTemplate.insert("insert_cms_bt_promotion_task", params);
+        return insert("insert_cms_bt_promotion_task", params);
     }
 
     public int updatePromotionTask(CmsBtPromotionTaskModel params){
-        return updateTemplate.update("update_cms_bt_promotion_task", params);
+        return update("cms.sql.update_cms_bt_promotion_task", params);
     }
 
 
