@@ -318,6 +318,7 @@ public class CmsFeedCustPropController extends CmsController {
         }
         if (unvalList != null) {
             for (Map<String, Object> item : unvalList) {
+                item.put("prop_translation", "");
                 cat_path = StringUtils.trimToNull((String) item.get("cat_path"));
                 Object propIdObj = item.get("prop_id");
                 propId = null;

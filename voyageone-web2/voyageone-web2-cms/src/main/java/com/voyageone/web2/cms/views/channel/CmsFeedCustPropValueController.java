@@ -106,11 +106,12 @@ public class CmsFeedCustPropValueController extends CmsController {
         if (listCnt == 0) {
             dataMap.put("resultData", rslt1);
         } else {
-            int endIdx = skip + limit;
+            int staIdx = skip - 1;
+            int endIdx = staIdx + limit;
             if (listCnt < endIdx) {
                 endIdx = listCnt;
             }
-            dataMap.put("resultData", rslt1.subList(skip, endIdx));
+            dataMap.put("resultData", rslt1.subList(staIdx, endIdx));
         }
         AjaxResponse resp = success(dataMap);
         return resp;

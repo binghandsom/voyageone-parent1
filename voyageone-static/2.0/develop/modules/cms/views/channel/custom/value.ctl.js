@@ -50,7 +50,8 @@ define([
                     propValue: "",
                     skip: "",
                     limit: ""
-                }
+                },
+                valuesPageOption: {curr: 1, total: 0, size: 20, fetch: search}
             }
         }
 
