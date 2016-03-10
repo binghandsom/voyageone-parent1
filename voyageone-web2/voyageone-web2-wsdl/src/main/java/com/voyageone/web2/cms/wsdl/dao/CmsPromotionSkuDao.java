@@ -23,45 +23,57 @@ public class CmsPromotionSkuDao extends WsdlBaseDao {
         }
         return ret;
     }
+
     public int getPromotionSkuListCnt(Map<String,Object> params){
         return selectOne("select_cms_bt_promotion_sku_cnt",params);
     }
+
     public int insertPromotionSku(CmsBtPromotionSkuModel params){
-        return updateTemplate.insert("insert_cms_bt_promotion_sku", params);
+        return insert("insert_cms_bt_promotion_sku", params);
     }
 
     public int updatePromotionSku(CmsBtPromotionSkuModel params){
-        return updateTemplate.update("update_cms_bt_promotion_sku", params);
+        return update("update_cms_bt_promotion_sku", params);
     }
+
     public int deletePromotionSku(CmsBtPromotionSkuModel params){
-        return updateTemplate.delete("delete_cms_bt_promotion_sku", params);
+        return delete("delete_cms_bt_promotion_sku", params);
     }
 
     public int deletePromotionSkuByModelId(Integer promotionId, Long modelId){
         CmsBtPromotionSkuModel params = new CmsBtPromotionSkuModel();
         params.setPromotionId(promotionId);
         params.setModelId(modelId);
-        return updateTemplate.delete("delete_cms_bt_promotion_sku", params);
+        return delete("delete_cms_bt_promotion_sku", params);
     }
+
     public int deletePromotionSkuByProductId(Integer promotionId, Long productId){
         CmsBtPromotionSkuModel params = new CmsBtPromotionSkuModel();
         params.setPromotionId(promotionId);
         params.setProductId(productId);
-        return updateTemplate.delete("delete_cms_bt_promotion_sku", params);
+        return delete("delete_cms_bt_promotion_sku", params);
     }
+
+    public int deletePromotionSkuByProductCode(Integer promotionId, String productCode){
+        CmsBtPromotionSkuModel params = new CmsBtPromotionSkuModel();
+        params.setPromotionId(promotionId);
+        params.setProductCode(productCode);
+        return delete("delete_cms_bt_promotion_sku", params);
+    }
+
     public boolean insertSkuInventoryInfo(String values) {
         boolean ret = true;
 
         Map<String, String> dataMap = new HashMap<String, String>();
         dataMap.put("values", values);
 
-        int retCount = updateTemplate.insert("wms_bt_inventory_center_output_tmp_insertSKUData", dataMap);
+        int retCount = insert("wms_bt_inventory_center_output_tmp_insertSKUData", dataMap);
 
         return  ret;
     }
 
     public boolean delSkuInventoryInfo() {
-        updateTemplate.delete("wms_bt_inventory_center_output_tmp_deleteAll");
+        delete("wms_bt_inventory_center_output_tmp_deleteAll");
 
         return true;
     }

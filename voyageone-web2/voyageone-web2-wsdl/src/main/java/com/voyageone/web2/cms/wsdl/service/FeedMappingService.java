@@ -1,7 +1,7 @@
 package com.voyageone.web2.cms.wsdl.service;
 
-import com.voyageone.cms.service.dao.mongodb.CmsBtFeedMappingDao;
-import com.voyageone.cms.service.model.CmsBtFeedMappingModel;
+import com.voyageone.service.dao.cms.mongo.CmsBtFeedMappingDao;
+import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedMappingModel;
 import com.voyageone.web2.cms.wsdl.BaseService;
 import com.voyageone.web2.sdk.api.request.FeedMappingsGetRequest;
 import com.voyageone.web2.sdk.api.response.FeedMappingsGetResponse;

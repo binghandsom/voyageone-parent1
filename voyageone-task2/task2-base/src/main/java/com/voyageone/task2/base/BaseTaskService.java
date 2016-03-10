@@ -2,17 +2,13 @@ package com.voyageone.task2.base;
 
 import com.google.gson.Gson;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.components.issueLog.enums.ErrorType;
+import com.voyageone.common.components.issueLog.enums.SubSystem;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.dao.TaskDao;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.base.util.TaskControlUtils;
-import com.voyageone.common.Constants;
-import com.voyageone.common.components.issueLog.IssueLog;
-import com.voyageone.common.components.issueLog.enums.ErrorType;
-import com.voyageone.common.components.issueLog.enums.SubSystem;
-import com.voyageone.common.util.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
@@ -27,14 +23,9 @@ import static java.lang.String.format;
  * <p>
  * Created by neil on 2015-05-26.
  */
-public abstract class BaseTaskService {
+public abstract class BaseTaskService extends LoggedService {
 
     protected static final Gson gson = new Gson();
-
-    protected final Log logger = LogFactory.getLog(getClass());
-
-    @Autowired
-    protected IssueLog issueLog;
 
     @Autowired
     protected TaskDao taskDao;
@@ -48,13 +39,6 @@ public abstract class BaseTaskService {
      * 获取任务名称
      */
     public abstract String getTaskName();
-
-    /**
-     * 获取打印的日志是否需要包含线程
-     */
-    public boolean getLogWithThread() {
-        return false;
-    }
 
     /**
      * 获取 job 配置
@@ -175,13 +159,6 @@ public abstract class BaseTaskService {
     /**
      * 错误信息记录
      */
-    public void logIssue(Exception ex, Object attJson) {
-        issueLog.log(ex, ErrorType.BatchJob, getSubSystem(), format("<p>出现未处理异常的任务是: [ %s ]</p>%s", getTaskName(), makeIssueAttach(attJson)));
-    }
-
-    /**
-     * 错误信息记录
-     */
     public void logIssue(String msg, Object attJson) {
         if (attJson == null) {
             logIssue(msg);
@@ -189,6 +166,14 @@ public abstract class BaseTaskService {
             logIssue(msg, makeIssueAttach(attJson));
         }
     }
+
+    /**
+     * 错误信息记录
+     */
+    public void logIssue(Exception ex, Object attJson) {
+        issueLog.log(ex, ErrorType.BatchJob, getSubSystem(), format("<p>出现未处理异常的任务是: [ %s ]</p>%s", getTaskName(), makeIssueAttach(attJson)));
+    }
+
 
     /**
      * 错误信息记录
@@ -205,45 +190,10 @@ public abstract class BaseTaskService {
     }
 
     private String makeIssueAttach(Object attach) {
-        if (attach == null) return Constants.EmptyString;
+        if (attach == null) return com.voyageone.common.Constants.EmptyString;
 
         if (attach instanceof String) return (String) attach;
 
         return gson.toJson(attach);
-    }
-
-    /**
-     * logger.info 的辅助方法
-     *
-     * @param arg 日志信息
-     */
-    public void $info(String arg) {
-        if (!getLogWithThread()) {
-            logger.info(arg);
-            return;
-        }
-
-        logger.info(String.format("Thread-%s\t| %s", Thread.currentThread().getId(), arg));
-    }
-
-    /**
-     * logger.info 的辅助方法
-     *
-     * @param template 格式化字符串
-     * @param args     格式化参数
-     */
-    public void $info(String template, Object... args) {
-        $info(format(template, args));
-    }
-
-    /**
-     * logger.info 的辅助方法
-     *
-     * @param obj   属性的对象类型
-     * @param name  属性的名称
-     * @param value 属性的值
-     */
-    protected void $prop(String obj, String name, Object value) {
-        $info("\"%s\".\"%s\": \"%s\"", obj, name, value);
     }
 }

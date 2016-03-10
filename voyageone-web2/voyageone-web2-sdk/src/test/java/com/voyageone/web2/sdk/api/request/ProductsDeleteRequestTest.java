@@ -1,10 +1,6 @@
 package com.voyageone.web2.sdk.api.request;
 
-import com.voyageone.cms.service.model.CmsBtProductModel;
-import com.voyageone.cms.service.model.CmsBtProductModel_Field_Image;
-import com.voyageone.common.util.StringUtils;
 import com.voyageone.web2.sdk.api.VoApiDefaultClient;
-import com.voyageone.web2.sdk.api.response.ProductsAddResponse;
 import com.voyageone.web2.sdk.api.response.ProductsDeleteResponse;
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -90,10 +90,14 @@ public final class JacksonUtil {
      * @param cls        Class
      * @return List
      */
-    public static <T> List<T> jsonToBeanList(String jsonString, Class<T> cls) throws IOException {
+    public static <T> List<T> jsonToBeanList(String jsonString, Class<T> cls) {
         ObjectMapper mapper = new ObjectMapper();
         JavaType javaType = mapper.getTypeFactory().constructParametrizedType(ArrayList.class, List.class, cls);
-        return mapper.readValue(jsonString, javaType);
+        try {
+            return mapper.readValue(jsonString, javaType);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**

@@ -1,0 +1,850 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.cms.sql">
+
+  <!-- 清表 -->
+  <delete id="cms_deletetableInfo" parameterType="HashMap">
+    delete from ${tableName}
+  </delete>
+
+    <!-- 插入Jewelry产品文件信息 -->
+    <insert id="cms_superfeed_insertSuperfeedJEInfo" parameterType="com.voyageone.task2.cms.bean.SuperFeedJEBean">
+  insert into
+   voyageone_cms.cms_zz_worktable_je_superfeed
+  (
+  `Auction Title`
+  ,`Inventory Number`
+  ,`Weight`
+  ,`ISBN`
+  ,`UPC`
+  ,`EAN`
+  ,`ASIN`
+  ,`MPN`
+  ,`Short Description`
+  ,`Description`
+  ,`Flag`
+  ,`FlagDescription`
+  ,`Blocked`
+  ,`Blocked Comment`
+  ,`Manufacturer`
+  ,`Brand`
+  ,`Condition`
+  ,`Warranty`
+  ,`Seller Cost`
+  ,`Product Margin`
+  ,`Buy It Now Price`
+  ,`Retail Price`
+  ,`Picture URLs`
+  ,`TaxProductCode`
+  ,`Supplier Code`
+  ,`Supplier PO`
+  ,`Warehouse Location`
+  ,`Inventory Subtitle`
+  ,`Relationship Name`
+  ,`Variation Parent SKU`
+  ,`Labels`
+  ,`Attribute1Name`
+  ,`Attribute1Value`
+  ,`Attribute2Name`
+  ,`Attribute2Value`
+  ,`Attribute3Name`
+  ,`Attribute3Value`
+  ,`Attribute4Name`
+  ,`Attribute4Value`
+  ,`Attribute5Name`
+  ,`Attribute5Value`
+  ,`Attribute6Name`
+  ,`Attribute6Value`
+  ,`Attribute7Name`
+  ,`Attribute7Value`
+  ,`Attribute8Name`
+  ,`Attribute8Value`
+  ,`Attribute9Name`
+  ,`Attribute9Value`
+  ,`Attribute10Name`
+  ,`Attribute10Value`
+  ,`Attribute11Name`
+  ,`Attribute11Value`
+  ,`Attribute12Name`
+  ,`Attribute12Value`
+  ,`Attribute13Name`
+  ,`Attribute13Value`
+  ,`Attribute14Name`
+  ,`Attribute14Value`
+  ,`Attribute15Name`
+  ,`Attribute15Value`
+  ,`Attribute16Name`
+  ,`Attribute16Value`
+  ,`Attribute17Name`
+  ,`Attribute17Value`
+  ,`Attribute18Name`
+  ,`Attribute18Value`
+  ,`Attribute19Name`
+  ,`Attribute19Value`
+  ,`Attribute20Name`
+  ,`Attribute20Value`
+  ,`Attribute21Name`
+  ,`Attribute21Value`
+  ,`Attribute22Name`
+  ,`Attribute22Value`
+  ,`Attribute23Name`
+  ,`Attribute23Value`
+  ,`Attribute24Name`
+  ,`Attribute24Value`
+  ,`Attribute25Name`
+  ,`Attribute25Value`
+  ,`Attribute26Name`
+  ,`Attribute26Value`
+  ,`Attribute27Name`
+  ,`Attribute27Value`
+  ,`Attribute28Name`
+  ,`Attribute28Value`
+  ,`Attribute29Name`
+  ,`Attribute29Value`
+  ,`Attribute30Name`
+  ,`Attribute30Value`
+  ,`Attribute31Name`
+  ,`Attribute31Value`
+  ,`Attribute32Name`
+  ,`Attribute32Value`
+  ,`Attribute33Name`
+  ,`Attribute33Value`
+  ,`Attribute34Name`
+  ,`Attribute34Value`
+  ,`Attribute35Name`
+  ,`Attribute35Value`
+  ,`Attribute36Name`
+  ,`Attribute36Value`
+  ,`Attribute37Name`
+  ,`Attribute37Value`
+  ,`Attribute38Name`
+  ,`Attribute38Value`
+  ,`Attribute39Name`
+  ,`Attribute39Value`
+  ,`Attribute40Name`
+  ,`Attribute40Value`
+  ,`Attribute41Name`
+  ,`Attribute41Value`
+  ,`Attribute42Name`
+  ,`Attribute42Value`
+  ,`Attribute43Name`
+  ,`Attribute43Value`
+  ,`Attribute44Name`
+  ,`Attribute44Value`
+  ,`Attribute47Name`
+  ,`Attribute47Value`
+  ,`Attribute48Name`
+  ,`Attribute48Value`
+  ,`Attribute49Name`
+  ,`Attribute49Value`
+  ,`Attribute50Name`
+  ,`Attribute50Value`
+  ,`Attribute51Name`
+  ,`Attribute51Value`
+  ,`Attribute52Name`
+  ,`Attribute52Value`
+  ,`Attribute53Name`
+  ,`Attribute53Value`
+  ,`Attribute54Name`
+  ,`Attribute54Value`
+  ,`Attribute55Name`
+  ,`Attribute55Value`
+  ,`Attribute56Name`
+  ,`Attribute56Value`
+  ,`Attribute57Name`
+  ,`Attribute57Value`
+  ,`Attribute58Name`
+  ,`Attribute58Value`
+  ,`Attribute59Name`
+  ,`Attribute59Value`
+  ,`Attribute60Name`
+  ,`Attribute60Value`
+  ,`Attribute61Name`
+  ,`Attribute61Value`
+  ,`Attribute62Name`
+  ,`Attribute62Value`
+  ,`Attribute63Name`
+  ,`Attribute63Value`
+  ,`Attribute64Name`
+  ,`Attribute64Value`
+  ,`Attribute65Name`
+  ,`Attribute65Value`
+  ,`Attribute66Name`
+  ,`Attribute66Value`
+  ,`Attribute67Name`
+  ,`Attribute67Value`
+  ,`Attribute68Name`
+  ,`Attribute68Value`
+  ,`Attribute69Name`
+  ,`Attribute69Value`
+  ,`Attribute70Name`
+  ,`Attribute70Value`
+  ,`Attribute71Name`
+  ,`Attribute71Value`
+  ,`Attribute72Name`
+  ,`Attribute72Value`
+  ,`Attribute73Name`
+  ,`Attribute73Value`
+  ,`Attribute74Name`
+  ,`Attribute74Value`
+  ,`Attribute75Name`
+  ,`Attribute75Value`
+  ,`Attribute76Name`
+  ,`Attribute76Value`
+  ,`Attribute77Name`
+  ,`Attribute77Value`
+  ,`Attribute78Name`
+  ,`Attribute78Value`
+  ,`Attribute79Name`
+  ,`Attribute79Value`
+  ,`Attribute80Name`
+  ,`Attribute80Value`
+  ,`Attribute81Name`
+  ,`Attribute81Value`
+  ,`Attribute82Name`
+  ,`Attribute82Value`
+  ,`Attribute83Name`
+  ,`Attribute83Value`
+  ,`Attribute84Name`
+  ,`Attribute84Value`
+  ,`Attribute85Name`
+  ,`Attribute85Value`
+  ,`Attribute86Name`
+  ,`Attribute86Value`
+  ,`Attribute87Name`
+  ,`Attribute87Value`
+  ,`Attribute88Name`
+  ,`Attribute88Value`
+  ,`Attribute89Name`
+  ,`Attribute89Value`
+  ,`Attribute90Name`
+  ,`Attribute90Value`
+  ,`Attribute91Name`
+  ,`Attribute91Value`
+  ,`Attribute92Name`
+  ,`Attribute92Value`
+  ,`Attribute93Name`
+  ,`Attribute93Value`
+  ,`Attribute94Name`
+  ,`Attribute94Value`
+  ,`Harmonized Code`
+  ,`Height`
+  ,`Length`
+  ,`Width`
+  ,`DC Code`
+  ,`Classification`
+  ,`Attribute95Name`
+  ,`Attribute95Value`
+  ,`Attribute96Name`
+  ,`Attribute96Value`
+    ,`Attribute97Name`
+    ,`Attribute97Value`
+    ,`Attribute98Name`
+    ,`Attribute98Value`
+  ,UpdateFlag
+  )
+  values
+  (#{AuctionTitle},
+  #{InventoryNumber},
+  #{Weight},
+  #{ISBN},
+  #{UPC},
+  #{EAN},
+  #{ASIN},
+  #{MPN},
+  #{ShortDescription},
+  #{Description},
+  #{Flag},
+  #{FlagDescription},
+  #{Blocked},
+  #{BlockedComment},
+  #{Manufacturer},
+  #{Brand},
+  #{Condition},
+  #{Warranty},
+  #{SellerCost},
+  #{ProductMargin},
+  #{BuyItNowPrice},
+  #{RetailPrice},
+  #{PictureURLs},
+  #{TaxProductCode},
+  #{SupplierCode},
+  #{SupplierPO},
+  #{WarehouseLocation},
+  #{InventorySubtitle},
+  #{RelationshipName},
+  #{VariationParentSKU},
+  #{Labels},
+  #{Attribute1Name},
+  #{Attribute1Value},
+  #{Attribute2Name},
+  #{Attribute2Value},
+  #{Attribute3Name},
+  #{Attribute3Value},
+  #{Attribute4Name},
+  #{Attribute4Value},
+  #{Attribute5Name},
+  #{Attribute5Value},
+  #{Attribute6Name},
+  #{Attribute6Value},
+  #{Attribute7Name},
+  #{Attribute7Value},
+  #{Attribute8Name},
+  #{Attribute8Value},
+  #{Attribute9Name},
+  #{Attribute9Value},
+  #{Attribute10Name},
+  #{Attribute10Value},
+  #{Attribute11Name},
+  #{Attribute11Value},
+  #{Attribute12Name},
+  #{Attribute12Value},
+  #{Attribute13Name},
+  #{Attribute13Value},
+  #{Attribute14Name},
+  #{Attribute14Value},
+  #{Attribute15Name},
+  #{Attribute15Value},
+  #{Attribute16Name},
+  #{Attribute16Value},
+  #{Attribute17Name},
+  #{Attribute17Value},
+  #{Attribute18Name},
+  #{Attribute18Value},
+  #{Attribute19Name},
+  #{Attribute19Value},
+  #{Attribute20Name},
+  #{Attribute20Value},
+  #{Attribute21Name},
+  #{Attribute21Value},
+  #{Attribute22Name},
+  #{Attribute22Value},
+  #{Attribute23Name},
+  #{Attribute23Value},
+  #{Attribute24Name},
+  #{Attribute24Value},
+  #{Attribute25Name},
+  #{Attribute25Value},
+  #{Attribute26Name},
+  #{Attribute26Value},
+  #{Attribute27Name},
+  #{Attribute27Value},
+  #{Attribute28Name},
+  #{Attribute28Value},
+  #{Attribute29Name},
+  #{Attribute29Value},
+  #{Attribute30Name},
+  #{Attribute30Value},
+  #{Attribute31Name},
+  #{Attribute31Value},
+  #{Attribute32Name},
+  #{Attribute32Value},
+  #{Attribute33Name},
+  #{Attribute33Value},
+  #{Attribute34Name},
+  #{Attribute34Value},
+  #{Attribute35Name},
+  #{Attribute35Value},
+  #{Attribute36Name},
+  #{Attribute36Value},
+  #{Attribute37Name},
+  #{Attribute37Value},
+  #{Attribute38Name},
+  #{Attribute38Value},
+  #{Attribute39Name},
+  #{Attribute39Value},
+  #{Attribute40Name},
+  #{Attribute40Value},
+  #{Attribute41Name},
+  #{Attribute41Value},
+  #{Attribute42Name},
+  #{Attribute42Value},
+  #{Attribute43Name},
+  #{Attribute43Value},
+  #{Attribute44Name},
+  #{Attribute44Value},
+  #{Attribute47Name},
+  #{Attribute47Value},
+  #{Attribute48Name},
+  #{Attribute48Value},
+  #{Attribute49Name},
+  #{Attribute49Value},
+  #{Attribute50Name},
+  #{Attribute50Value},
+  #{Attribute51Name},
+  #{Attribute51Value},
+  #{Attribute52Name},
+  #{Attribute52Value},
+  #{Attribute53Name},
+  #{Attribute53Value},
+  #{Attribute54Name},
+  #{Attribute54Value},
+  #{Attribute55Name},
+  #{Attribute55Value},
+  #{Attribute56Name},
+  #{Attribute56Value},
+  #{Attribute57Name},
+  #{Attribute57Value},
+  #{Attribute58Name},
+  #{Attribute58Value},
+  #{Attribute59Name},
+  #{Attribute59Value},
+  #{Attribute60Name},
+  #{Attribute60Value},
+  #{Attribute61Name},
+  #{Attribute61Value},
+  #{Attribute62Name},
+  #{Attribute62Value},
+  #{Attribute63Name},
+  #{Attribute63Value},
+  #{Attribute64Name},
+  #{Attribute64Value},
+  #{Attribute65Name},
+  #{Attribute65Value},
+  #{Attribute66Name},
+  #{Attribute66Value},
+  #{Attribute67Name},
+  #{Attribute67Value},
+  #{Attribute68Name},
+  #{Attribute68Value},
+  #{Attribute69Name},
+  #{Attribute69Value},
+  #{Attribute70Name},
+  #{Attribute70Value},
+  #{Attribute71Name},
+  #{Attribute71Value},
+  #{Attribute72Name},
+  #{Attribute72Value},
+  #{Attribute73Name},
+  #{Attribute73Value},
+  #{Attribute74Name},
+  #{Attribute74Value},
+  #{Attribute75Name},
+  #{Attribute75Value},
+  #{Attribute76Name},
+  #{Attribute76Value},
+  #{Attribute77Name},
+  #{Attribute77Value},
+  #{Attribute78Name},
+  #{Attribute78Value},
+  #{Attribute79Name},
+  #{Attribute79Value},
+  #{Attribute80Name},
+  #{Attribute80Value},
+  #{Attribute81Name},
+  #{Attribute81Value},
+  #{Attribute82Name},
+  #{Attribute82Value},
+  #{Attribute83Name},
+  #{Attribute83Value},
+  #{Attribute84Name},
+  #{Attribute84Value},
+  #{Attribute85Name},
+  #{Attribute85Value},
+  #{Attribute86Name},
+  #{Attribute86Value},
+  #{Attribute87Name},
+  #{Attribute87Value},
+  #{Attribute88Name},
+  #{Attribute88Value},
+  #{Attribute89Name},
+  #{Attribute89Value},
+  #{Attribute90Name},
+  #{Attribute90Value},
+  #{Attribute91Name},
+  #{Attribute91Value},
+  #{Attribute92Name},
+  #{Attribute92Value},
+  #{Attribute93Name},
+  #{Attribute93Value},
+  #{Attribute94Name},
+  #{Attribute94Value},
+  #{HarmonizedCode},
+  #{Height},
+  #{Length},
+  #{Width},
+  #{DCCode},
+  #{Classification},
+  #{Attribute95Name},
+  #{Attribute95Value},
+  #{Attribute96Name},
+  #{Attribute96Value},
+   #{Attribute97Name},
+   #{Attribute97Value},
+   #{Attribute98Name},
+   #{Attribute98Value},
+  '0'
+  )
+ </insert>
+
+  <!-- 插入Locondo产品文件信息 -->
+  <insert id="cms_superfeed_insertSuperfeedLCInfo" parameterType="com.voyageone.task2.cms.bean.SuperFeedLCBean">
+    insert into
+    voyageone_cms.cms_zz_worktable_lc_superfeed
+    (Path
+    ,`Name`
+    ,Code
+    ,Sub_code
+    ,Original_price
+    ,Price
+    ,Sale_price
+    ,Options
+    ,Headline
+    ,Caption
+    ,Abstract
+    ,Explanation
+    ,Additional1
+    ,Additional2
+    ,Additional3
+    ,Relevant_links
+    ,Ship_weight
+    ,Taxable
+    ,Release_date
+    ,Temporary_point_term
+    ,Point_code
+    ,Meta_key
+    ,Meta_desc
+    ,Display
+    ,Template
+    ,Sale_period_start
+    ,Sale_period_end
+    ,Sale_limit
+    ,Sp_code
+    ,Brand_code
+    ,Yahoo_product_code
+    ,Product_code
+    ,Jan
+    ,Delivery
+    ,Astk_code
+    ,`Condition`
+    ,Product_category
+    ,Spec1
+    ,Spec2
+    ,Spec3
+    ,Spec4
+    ,Spec5
+    ,Sort
+    ,Sp_additional
+    ,UpdateFlag
+    )
+    values
+    (#{Path},
+    #{Name},
+    #{Code},
+    #{Sub_code},
+    #{Original_price},
+    #{Price},
+    #{Sale_price},
+    #{Options},
+    #{Headline},
+    #{Caption},
+    #{Abstract},
+    #{Explanation},
+    #{Additional1},
+    #{Additional2},
+    #{Additional3},
+    #{Relevant_links},
+    #{Ship_weight},
+    #{Taxable},
+    #{Release_date},
+    #{Temporary_point_term},
+    #{Point_code},
+    #{Meta_key},
+    #{Meta_desc},
+    #{Display},
+    #{Template},
+    #{Sale_period_start},
+    #{Sale_period_end},
+    #{Sale_limit},
+    #{Sp_code},
+    #{Brand_code},
+    #{Yahoo_product_code},
+    #{Product_code},
+    #{Jan},
+    #{Delivery},
+    #{Astk_code},
+    #{Condition},
+    #{Product_category},
+    #{Spec1},
+    #{Spec2},
+    #{Spec3},
+    #{Spec4},
+    #{Spec5},
+    #{Sort},
+    #{Sp_additional},
+    '0'
+    )
+  </insert>
+
+  <select id="cms_superfeed_selectAttribute"
+          resultType="com.voyageone.task2.cms.bean.AttributeBean">
+  select
+ ${attributebean.category_url_key} as category_url_key
+,${attributebean.model_url_key} as  model_url_key
+,${attributebean.product_url_key} as  product_url_key
+,${attributebean.attribute1} as  attribute1
+,${attributebean.attribute2} as  attribute2
+,${attributebean.attribute3} as  attribute3
+,${attributebean.attribute4} as  attribute4
+,${attributebean.attribute5} as  attribute5
+,${attributebean.attribute6} as  attribute6
+,${attributebean.attribute7} as  attribute7
+,${attributebean.attribute8} as  attribute8
+,${attributebean.attribute9} as  attribute9
+,${attributebean.attribute10} as  attribute10
+,${attributebean.attribute11} as  attribute11
+,${attributebean.attribute12} as  attribute12
+,${attributebean.attribute13} as  attribute13
+,${attributebean.attribute14} as  attribute14
+,${attributebean.attribute15} as  attribute15
+,${attributebean.attribute16} as  attribute16
+,${attributebean.attribute17} as  attribute17
+,${attributebean.attribute18} as  attribute18
+,${attributebean.attribute19} as  attribute19
+,${attributebean.attribute20} as  attribute20
+,${attributebean.attribute21} as  attribute21
+,${attributebean.attribute22} as  attribute22
+,${attributebean.attribute23} as  attribute23
+,${attributebean.attribute24} as  attribute24
+,${attributebean.attribute25} as  attribute25
+,${attributebean.attribute26} as  attribute26
+,${attributebean.attribute27} as  attribute27
+,${attributebean.attribute28} as  attribute28
+,${attributebean.attribute29} as  attribute29
+,${attributebean.attribute30} as  attribute30
+,${attributebean.attribute31} as  attribute31
+,${attributebean.attribute32} as  attribute32
+,${attributebean.attribute33} as  attribute33
+,${attributebean.attribute34} as  attribute34
+,${attributebean.attribute35} as  attribute35
+,${attributebean.attribute36} as  attribute36
+,${attributebean.attribute37} as  attribute37
+,${attributebean.attribute38} as  attribute38
+,${attributebean.attribute39} as  attribute39
+,${attributebean.attribute40} as  attribute40
+,${attributebean.attribute41} as  attribute41
+,${attributebean.attribute42} as  attribute42
+,${attributebean.attribute43} as  attribute43
+,${attributebean.attribute44} as  attribute44
+,${attributebean.attribute45} as  attribute45
+,${attributebean.attribute46} as  attribute46
+,${attributebean.attribute47} as  attribute47
+,${attributebean.attribute48} as  attribute48
+,${attributebean.attribute49} as  attribute49
+,${attributebean.attribute50} as  attribute50
+from  ${tablename}
+  ${keyword}
+  </select>
+
+  <select id="cms_superfeed_selectErrData" parameterType="HashMap"
+          resultType="String">
+    ${sql}
+  </select>
+
+  <!-- 清异常数据 -->
+  <delete id="cms_deletErrData" parameterType="HashMap">
+    delete from ${tableName}
+    where  ${keyword}
+  </delete>
+
+  <delete id="cms_deletData" parameterType="HashMap">
+  ${sql}
+  </delete>
+
+  <!-- 更新UpdateFlag :insert -->
+  <update id="cms_updateInsertData" parameterType="HashMap">
+    update  ${tableName} set UpdateFlag = '1'
+     ${keyword}
+     and ${code} in (${codes})
+  </update>
+
+  <!-- 更新UpdateFlag :insert model -->
+  <update id="cms_updateInsertModelData" parameterType="HashMap">
+     update ${tableName} a
+    left join   ${tableName} b on a.${code}  = b.${model}
+    set a.UpdateFlag = '1'
+    where ${keyword}
+    and  b.${code} in (${codes})
+  </update>
+
+  <!-- 更新UpdateFlag :update -->
+  <update id="cms_updateUpdateData" parameterType="HashMap">
+    update ${tableName} a set a.UpdateFlag = case when a.UpdateFlag = '1' then '3' else  '2' end
+    where  ${code} in (${codes})
+  </update>
+
+  <!-- Category信息 -->
+    <select id="cms_superfeed_selectSuperfeedCategory" parameterType="HashMap" resultType="String">
+  select distinct ${column_name}
+  from
+  ${tableName}
+  where
+  ${column_name} is not null
+  ${keyword}
+  and ${column_name} != ''
+  order by ${column_name}
+ </select>
+
+    <!-- Model信息 -->
+    <select id="cms_superfeed_selectSuperfeedModel" parameterType="HashMap"
+            resultType="com.voyageone.task2.cms.bean.ModelBean">
+  select
+   ${url_key} as url_key
+  ,${category_url_key} as category_url_key
+  ,${m_product_type} as m_product_type
+  ,${m_brand} as m_brand
+  ,${m_model} as m_model
+  ,${m_name} as m_name
+  ,${m_short_description} as m_short_description
+  ,${m_long_description} as m_long_description
+  ,${m_size_type} as m_size_type
+  ,${m_is_unisex} as m_is_unisex
+  ,${m_weight} as m_weight
+  ,${m_is_taxable} as m_is_taxable
+  ,${m_is_effective} as m_is_effective
+  from
+  ${tableName}
+  ${keyword}
+ </select>
+
+  <!-- Product信息 -->
+  <select id="cms_superfeed_selectSuperfeedProduct" parameterType="HashMap"
+          resultType="com.voyageone.task2.cms.bean.ProductBean">
+select
+ ${url_key} as url_key
+,${model_url_key} as model_url_key
+,${category_url_key} as category_url_key
+,${p_code} as p_code
+,${p_name} as p_name
+,${p_color} as p_color
+,${p_msrp} as p_msrp
+,${p_made_in_country} as p_made_in_country
+,${pe_short_description} as pe_short_description
+<if test="p_product_type != null">
+  ,${p_product_type} as p_product_type
+</if>
+,${pe_long_description} as pe_long_description
+,${ps_price}  as ps_price
+,${cps_cn_price}  as cps_cn_price
+,${cps_cn_price_rmb}  as cps_cn_price_rmb
+,${cps_cn_price_final_rmb}  as cps_cn_price_final_rmb
+    from
+   ${tableName}
+   ${keyword}
+  </select>
+
+  <!-- Image信息 -->
+  <select id="cms_superfeed_selectSuperfeedImage" parameterType="HashMap"
+          resultType="String">
+    select
+    ${image} as image
+    from
+    ${tableName}
+    ${keyword}
+    order by ${image}
+    limit 1
+  </select>
+
+  <select id="cms_superfeed_selectAllfeedImage" parameterType="HashMap"
+          resultType="String">
+    select
+    ${image} as image
+    from
+    ${tableName}
+    ${keyword}
+  </select>
+
+  <!-- Item信息 -->
+  <select id="cms_superfeed_selectSuperfeedItem" parameterType="HashMap"
+          resultType="com.voyageone.task2.cms.bean.ItemBean">
+    select
+    ${code} as code
+    ,${i_sku} as i_sku
+    ,${i_itemcode} as i_itemcode
+    ,${i_size} as i_size
+    ,${i_barcode} as i_barcode
+    ,${i_client_sku} as i_client_sku
+    ,1 as i_active
+    from
+   ${tableName}
+    ${keyword}
+  </select>
+
+  <!-- 取得attributelist信息 -->
+  <select id="cms_superfeed_selectAttributeList" parameterType="HashMap"
+resultType="String">
+select cfg_val1
+from voyageone_cms.cms_mt_feed_config
+where is_attribute  = ${isAttribute}
+and attribute_type = ${attributeType}
+and order_channel_id = ${channelId}
+  </select>
+
+  <!-- 插入SuperfeedFull产品信息 -->
+  <insert id="cms_superfeed_inertSuperfeedFull" parameterType="HashMap">
+insert ignore into  ${tableNameFull}
+(select * from ${tableName} a
+    ${keyword} )
+</insert>
+
+  <!-- 取得insert-->
+  <select id="cms_superfeed_selectInsertData" parameterType="HashMap"
+          resultType="String">
+    select a.${code}
+    from ${tableName} a
+    left join ${tableNameFull} b ON a.${code}  = b.${code}
+    where b.${code} is null
+     or   (b.${code} is not null
+      and (a.${category} != b.${category}
+       or  a.${model} != b.${model}))
+  </select>
+
+  <!-- 取得update-->
+  <select id="cms_superfeed_selectUpdateData" parameterType="HashMap"
+          resultType="String">
+    select a.${code}
+    from ${tableName} a
+    left join ${tableNameFull} b ON a.${code}  = b.${code}
+    where b.${code} is not null
+  </select>
+
+  <!-- 取得 AllAttribute-->
+  <select id="cms_superfeed_selectAllAttribute" parameterType="HashMap"
+          resultType="String">
+    select distinct ${attributeName}
+    from  ${tableName}
+  </select>
+
+  <!-- 插入Attribute产品信息 -->
+  <insert id="cms_superfeed_insertFeedAttributeNew" parameterType="HashMap">
+    insert into  voyageone_cms.cms_mt_feed_attribute(
+    channel_id,
+    attribute_name,
+    attribute_value,
+    create_on)
+    values (
+    #{channelId},
+    #{attributeName},
+    #{attributeValue},
+    sysdate()
+    )
+  </insert>
+
+  <!-- 取得 FeedAttribute-->
+  <select id="cms_superfeed_selectFeedAttribute" parameterType="HashMap"
+          resultType="String">
+    select count(*)
+    from   voyageone_cms.cms_mt_feed_attribute
+    where channel_id = #{channelId}
+    and attribute_name = #{attributeName}
+    and attribute_value = #{attributeValue}
+  </select>
+
+  <!-- 更新UpdateFlag 清除update -->
+  <update id="cms_changeUpdateDateFlag" parameterType="HashMap">
+    update ${tableName}
+    set UpdateFlag = '0'
+    where ${keyword}
+    and ${category} in (${categoryvalue})
+  </update>
+</mapper>

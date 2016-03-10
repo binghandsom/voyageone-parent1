@@ -1,12 +1,10 @@
 package com.voyageone.web2.sdk.api.service;
 
-import com.voyageone.cms.service.model.*;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.web2.sdk.api.VoApiDefaultClient;
 import com.voyageone.web2.sdk.api.request.ProductGetRequest;
 import com.voyageone.web2.sdk.api.request.ProductUpdateRequest;
-import com.voyageone.web2.sdk.api.response.ProductGetResponse;
-import com.voyageone.web2.sdk.api.response.ProductUpdateResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

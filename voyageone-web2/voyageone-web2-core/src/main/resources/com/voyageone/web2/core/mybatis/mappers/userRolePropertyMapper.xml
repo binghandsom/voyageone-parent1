@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.voyageone.web2.core.sql">
-    <select id="ct_user_role_property_selectUserMenu" resultType="HashMap">
+    <select id="ct_user_role_property_selectUserApplication" resultType="HashMap">
         SELECT DISTINCT
             f.menu_title as menuTitle,
             f.default_url as defaultUrl
@@ -14,5 +14,54 @@
             LEFT JOIN Synship.ct_application f ON e.application_id = f.id
         WHERE a.user_id = #{userId}#
               AND a.property_id = #{channelId}#
+    </select>
+    <!--<select id="ct_user_role_property_getListUserMenu">-->
+<!--SELECT b.id AS controllerId,c.`id` AS parentId,b.`menu_title` AS menuTitle,b.`default_url` AS defaultUrl-->
+<!--FROM Synship.ct_user_permission  a-->
+<!--JOIN Synship.ct_controller AS b ON a.`controller_id`=b.`id`-->
+<!--JOIN Synship.`ct_module`   AS c ON b.module_id=c.id-->
+<!--WHERE a.user_id=#{userId} AND a.`property_id`=#{propertyId}  AND c.`application_id`=#{applicationId} AND b.`show_in_menu`=1 and b.active=1;-->
+    <!--</select>-->
+    <!--<select id="ct_user_role_property_getListRoleMenu">-->
+     <!--SELECT b.id AS controllerId,c.`id` AS parentId,b.`menu_title` AS menuTitle,b.`default_url` AS defaultUrl-->
+<!--FROM Synship.`ct_user_role_property` AS d-->
+<!--JOIN Synship.ct_role_permission  AS a ON a.`role_id`=d.`role_id` AND d.`property_id`=a.`property_id`-->
+<!--JOIN Synship.ct_controller AS b ON a.`controller_id`=b.`id`-->
+<!--JOIN Synship.`ct_module`   AS c ON b.module_id=c.id-->
+<!--WHERE d.`user_id`=#{userId} AND a.`property_id`=#{propertyId} AND c.`application_id`=#{applicationId} AND b.`show_in_menu`=1 and b.active=1-->
+    <!--</select>-->
+
+    <select id="ct_user_role_property_getListControllerByWhere" resultType="Map">
+        SELECT b.id ,c.`id` AS parentId,b.`menu_title` AS menuTitle,b.`default_url` AS defaultUrl
+FROM Synship.ct_user_permission  a
+JOIN Synship.ct_controller AS b ON a.`controller_id`=b.`id`
+JOIN Synship.`ct_module`   AS c ON b.module_id=c.id
+WHERE a.user_id=#{userId} AND a.`property_id`=#{propertyId}  AND c.`application_id`=#{applicationId} AND b.`show_in_menu`=1 and b.active=1
+
+UNION
+
+SELECT b.id ,c.`id` AS parentId,b.`menu_title` AS menuTitle,b.`default_url` AS defaultUrl
+FROM Synship.`ct_user_role_property` AS d
+JOIN Synship.ct_role_permission  AS a ON a.`role_id`=d.`role_id` AND d.`property_id`=a.`property_id`
+JOIN Synship.ct_controller AS b ON a.`controller_id`=b.`id`
+JOIN Synship.`ct_module`   AS c ON b.module_id=c.id
+WHERE d.`user_id`=#{userId} AND a.`property_id`=#{propertyId} AND c.`application_id`=#{applicationId} AND b.`show_in_menu`=1 and b.active=1
+    </select>
+    <select id="ct_user_role_property_getListModuleByWhere" resultType="Map">
+
+SELECT c.id,0 AS parentId,b.`menu_title` AS menuTitle,b.`default_url` AS defaultUrl
+FROM Synship.ct_user_permission  a
+JOIN Synship.ct_controller AS b ON a.`controller_id`=b.`id`
+JOIN Synship.`ct_module`   AS c ON b.module_id=c.id
+WHERE a.user_id=#{userId} AND a.`property_id`=#{propertyId}  AND c.`application_id`=#{applicationId} AND b.`show_in_menu`=1 and b.active=1
+
+UNION
+
+SELECT c.id,0 AS parentId,c.`menu_title` AS menuTitle,c.`default_url` AS defaultUrl
+FROM Synship.`ct_user_role_property` AS d
+JOIN Synship.ct_role_permission  AS a ON a.`role_id`=d.`role_id` AND d.`property_id`=a.`property_id`
+JOIN Synship.ct_controller AS b ON a.`controller_id`=b.`id`
+JOIN Synship.`ct_module`   AS c ON b.module_id=c.id
+WHERE d.`user_id`=#{userId} AND a.`property_id`=#{propertyId} AND c.`application_id`=#{applicationId} AND b.`show_in_menu`=1 and b.active=1
     </select>
 </mapper>

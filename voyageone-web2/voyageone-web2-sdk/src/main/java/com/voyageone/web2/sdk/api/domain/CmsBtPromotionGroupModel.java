@@ -2,15 +2,22 @@ package com.voyageone.web2.sdk.api.domain;
 
 import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
 import com.voyageone.cms.CmsConstants;
-import com.voyageone.cms.service.model.CmsBtProductModel;
-import com.voyageone.cms.service.model.CmsBtProductModel_Group_Platform;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Group_Platform;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author james.li on 2015/12/15.
  * @version 2.0.0
  */
-public class CmsBtPromotionGroupModel  extends BaseMongoModel {
+public class CmsBtPromotionGroupModel extends BaseMongoModel {
     private int seq;
+
+    private String channelId;
+
+    private Integer cartId;
 
     private int promotionId;
 
@@ -29,6 +36,24 @@ public class CmsBtPromotionGroupModel  extends BaseMongoModel {
     private CmsConstants.PlatformStatus platformStatus;
 
     private String tag;
+
+    private List<CmsBtPromotionCodeModel> codes;
+
+    public String getChannelId() {
+        return channelId;
+    }
+
+    public void setChannelId(String channelId) {
+        this.channelId = channelId;
+    }
+
+    public Integer getCartId() {
+        return cartId;
+    }
+
+    public void setCartId(Integer cartId) {
+        this.cartId = cartId;
+    }
 
     public CmsBtPromotionGroupModel(){
         super();
@@ -135,5 +160,25 @@ public class CmsBtPromotionGroupModel  extends BaseMongoModel {
 
     public void setInventory(Integer inventory) {
         this.inventory = inventory;
+    }
+
+    public List<CmsBtPromotionCodeModel> getCodes() {
+        if(codes == null) {
+            codes = new ArrayList<>();
+        }
+        return codes;
+    }
+
+    public void setCodes(List<CmsBtPromotionCodeModel> codes) {
+        this.codes = codes;
+    }
+
+    public CmsBtPromotionCodeModel getProductByCode(String code) {
+        for(CmsBtPromotionCodeModel item:codes){
+            if(item.getProductCode().equalsIgnoreCase(code)){
+                return item;
+            }
+        }
+        return null;
     }
 }

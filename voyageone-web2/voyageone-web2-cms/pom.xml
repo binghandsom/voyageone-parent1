@@ -11,7 +11,7 @@
 	<artifactId>voyageone-web2-cms</artifactId>
 	<version>${voyageone.web2.cms.version}</version>
 	<packaging>jar</packaging>
-	<name>Voyageone Web2 Cms Maven Webapp</name>
+	<name>VoyageOne Web2 - CMS</name>
 	<url>http://maven.apache.org</url>
 	<dependencies>
 		<dependency>
@@ -30,22 +30,34 @@
 			<version>${voyageone.web2.wsdl.version}</version>
 		</dependency>
 
+		<!--<dependency>-->
+			<!--<groupId>com.voyageone</groupId>-->
+			<!--<artifactId>voyageone-service2-model</artifactId>-->
+			<!--<version>${voyageone.service2.model.version}</version>-->
+		<!--</dependency>-->
+
 		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>javax.servlet-api</artifactId>
+			<groupId>com.voyageone</groupId>
+			<artifactId>voyageone-service2-impl</artifactId>
+			<version>${voyageone.service2.impl.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>javax.servlet.jsp</groupId>
-			<artifactId>javax.servlet.jsp-api</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>jstl</groupId>
-			<artifactId>jstl</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.shiro</groupId>
-			<artifactId>shiro-all</artifactId>
-		</dependency>
+
+		<!--<dependency>-->
+			<!--<groupId>javax.servlet</groupId>-->
+			<!--<artifactId>javax.servlet-api</artifactId>-->
+		<!--</dependency>-->
+		<!--<dependency>-->
+			<!--<groupId>javax.servlet.jsp</groupId>-->
+			<!--<artifactId>javax.servlet.jsp-api</artifactId>-->
+		<!--</dependency>-->
+		<!--<dependency>-->
+			<!--<groupId>jstl</groupId>-->
+			<!--<artifactId>jstl</artifactId>-->
+		<!--</dependency>-->
+		<!--<dependency>-->
+			<!--<groupId>org.apache.shiro</groupId>-->
+			<!--<artifactId>shiro-all</artifactId>-->
+		<!--</dependency>-->
 	</dependencies>
 	<build>
 		<finalName>voyageone-core</finalName>

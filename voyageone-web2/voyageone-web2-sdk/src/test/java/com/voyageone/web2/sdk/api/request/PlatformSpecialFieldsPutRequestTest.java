@@ -1,6 +1,6 @@
 package com.voyageone.web2.sdk.api.request;
 
-import com.voyageone.cms.service.model.CmsMtPlatformSpecialFieldModel;
+import com.voyageone.service.model.cms.CmsMtPlatformSpecialFieldModel;
 import com.voyageone.web2.sdk.api.VoApiDefaultClient;
 import com.voyageone.web2.sdk.api.response.PlatformSpecialFieldsPutResponse;
 import org.junit.Test;

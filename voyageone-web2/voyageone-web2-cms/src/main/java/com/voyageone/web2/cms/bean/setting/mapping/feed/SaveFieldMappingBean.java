@@ -1,6 +1,6 @@
 package com.voyageone.web2.cms.bean.setting.mapping.feed;
 
-import com.voyageone.cms.service.model.feed.mapping.Prop;
+import com.voyageone.service.model.cms.mongo.feed.mapping.Prop;
 
 import java.util.List;
 

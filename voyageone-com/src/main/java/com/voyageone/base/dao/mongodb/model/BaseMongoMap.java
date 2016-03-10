@@ -53,4 +53,17 @@ public class BaseMongoMap<K, V> extends LinkedHashMap<K, V> implements Map<K, V>
         }
         return result;
     }
+
+    public double convertToDoubel(Object input) {
+        double result = 0;
+        if (input == null) {
+            return result;
+        }
+        if (input instanceof Double) {
+            result = (Double)input;
+        } else {
+            result = Double.parseDouble(input.toString());
+        }
+        return result;
+    }
 }

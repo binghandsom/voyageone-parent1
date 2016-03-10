@@ -7,19 +7,21 @@ import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.dao.mongodb.JomgoUpdate;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.cms.CmsConstants;
-import com.voyageone.cms.service.CmsProductLogService;
-import com.voyageone.cms.service.bean.ProductForOmsBean;
-import com.voyageone.cms.service.bean.ProductForWmsBean;
-import com.voyageone.cms.service.dao.CmsBtSxWorkloadDao;
-import com.voyageone.cms.service.dao.mongodb.CmsBtFeedInfoDao;
-import com.voyageone.cms.service.dao.mongodb.CmsBtProductDao;
-import com.voyageone.cms.service.model.*;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.TypeChannel;
 import com.voyageone.common.configs.beans.TypeChannelBean;
+import com.voyageone.common.util.BeanUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.service.bean.cms.ProductForOmsBean;
+import com.voyageone.service.bean.cms.ProductForWmsBean;
+import com.voyageone.service.dao.cms.CmsBtSxWorkloadDao;
+import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
+import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
+import com.voyageone.service.dao.cms.mongo.CmsBtProductLogDao;
+import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
+import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.web2.cms.wsdl.BaseService;
 import com.voyageone.web2.cms.wsdl.dao.CmsBtPriceLogDao;
 import com.voyageone.web2.cms.wsdl.dao.WmsBtInventoryCenterLogicDao;
@@ -53,7 +55,7 @@ public class ProductService extends BaseService {
     private CmsBtProductDao cmsBtProductDao;
 
     @Autowired
-    protected CmsProductLogService cmsProductLogService;
+    protected CmsBtProductLogDao cmsBtProductLogDao;
 
     @Autowired
     private CmsBtPriceLogDao cmsBtPriceLogDao;
@@ -743,7 +745,10 @@ public class ProductService extends BaseService {
         if (befStatus != null && aftStatus != null && !befStatus.equals(aftStatus)) {
             if (productId != null) {
                 CmsBtProductModel productModel = cmsBtProductDao.selectProductById(channelId, productId);
-                cmsProductLogService.insertProductHistory(productModel);
+                CmsBtProductLogModel logModel = new CmsBtProductLogModel();
+                BeanUtil.copy(productModel, logModel);
+                logModel.set_id(null);
+                cmsBtProductLogDao.insert(logModel);
             }
         }
     }
@@ -754,11 +759,11 @@ public class ProductService extends BaseService {
         if (befStatus != null && aftStatus != null) {
             boolean isNeed = false;
             // 从其他状态转为Pending
-            if (befStatus != CmsConstants.ProductStatus.Pending && aftStatus == CmsConstants.ProductStatus.Pending) {
+            if (befStatus != CmsConstants.ProductStatus.Approved && aftStatus == CmsConstants.ProductStatus.Approved) {
                 isNeed = true;
                 // 从Pending转为其他状态
                 // 在Pending下变更了
-            } else if (befStatus == CmsConstants.ProductStatus.Pending) {
+            } else if (befStatus == CmsConstants.ProductStatus.Approved) {
                 isNeed = true;
             }
 

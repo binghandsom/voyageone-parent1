@@ -6,44 +6,41 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function (angularAMD) {
 
-    angularAMD.controller('popAddAttributeValueNewCtl', function ($scope) {
+    angularAMD.controller('popAddAttributeValueNewCtl', function ($scope,$modalInstance, attributeValueService, attributeService , notify ,$translate, context) {
 
-        //$scope.vm={"messager":""};
-        //var uploader = $scope.uploader = new FileUploader({
-        //    url: '/cms/promotion/detail/uploadPromotion'
-        //});
-        //
-        //$scope.initialize  = function () {
-        //
-        //}
-        //$scope.upload = function(){
-        //    uploader.queue[0].formData = [{"promotionId":data}];
-        //    uploader.queue[0].upload();
-        //    $scope.vm.messager ="读入中";
-        //}
-        //
-        //uploader.onProgressItem = function(fileItem, progress) {
-        //    console.info('onProgressItem', fileItem, progress);
-        //};
-        //
-        //uploader.onSuccessItem = function(fileItem, response, status, headers) {
-        //    console.info('onSuccessItem', fileItem, response, status, headers);
-        //    $scope.vm.messager ="读入完毕！成功"+response.data.succeed.length +"条  失败"+response.data.fail.length +"条";
-        //};
+        $scope.vm = {
+            prop_id:"",
+            value_original:"",
+            value_translation:""
+        };
+        $scope.categoryList = context.categoryList;
+
+        /**
+         * 类目发生变化时,动态获取对应的属性值
+         * @param catPath
+         */
+        $scope.valueChange = function(catPath){
+            attributeService.init({cat_path:catPath,unsplitFlg:1})
+                .then(function (res){
+                    $scope.vm.valList = res.data.valList;
+                });
+        };
+
+        /**
+         * 保存新增属性值数据
+         */
+        $scope.ok = function () {
+
+            // TODO 用$filter过滤出来该prop_id一样的数据.
+
+
+            attributeValueService.add($scope.vm)
+                .then(function () {
+                    notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
+                    $modalInstance.close();
+                });
+        };
+
     });
 
-    //return function ($scope,promotionService) {
-    //
-    //    $scope.promotion = {};
-    //    $scope.name = "123";
-    //
-    //    $scope.initialize  = function () {
-    //        alert("a");
-    //    }
-    //
-    //    $scope.ok = function(){
-    //        alert("e");
-    //    }
-    //
-    //};
 });

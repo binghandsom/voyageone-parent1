@@ -2,7 +2,6 @@ package com.voyageone.web2.sdk.api.request;
 
 import com.voyageone.web2.sdk.api.VoApiDefaultClient;
 import com.voyageone.web2.sdk.api.response.FeedMappingsGetResponse;
-import com.voyageone.web2.sdk.api.response.PlatformSpecialFieldDeleteResponse;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -5,11 +5,11 @@ import com.voyageone.cms.enums.BeatFlag;
 import com.voyageone.common.configs.Enums.PromotionTypeEnums;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.web2.base.BaseAppService;
-import com.voyageone.web2.cms.bean.beat.TaskBean;
-import com.voyageone.web2.cms.dao.CmsBtBeatInfoDao;
-import com.voyageone.web2.cms.dao.CmsBtTaskDao;
-import com.voyageone.web2.cms.model.CmsBtBeatInfoModel;
-import com.voyageone.web2.cms.model.CmsBtTaskModel;
+import com.voyageone.web2.cms.wsdl.bean.task.beat.TaskBean;
+import com.voyageone.web2.cms.wsdl.dao.CmsBtBeatInfoDao;
+import com.voyageone.web2.cms.wsdl.dao.CmsBtTaskDao;
+import com.voyageone.web2.cms.wsdl.models.CmsBtBeatInfoModel;
+import com.voyageone.web2.cms.wsdl.models.CmsBtTaskModel;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import com.voyageone.web2.sdk.api.VoApiClient;
 import com.voyageone.web2.sdk.api.domain.CmsBtPromotionCodeModel;
@@ -81,9 +81,15 @@ public class CmsTaskPictureService extends BaseAppService {
         if (!taskModels.isEmpty())
             throw new BusinessException("7000003");
 
+        // 如果没提交刷图时间, 则使用 Promotion 的预热时间
+        if (StringUtils.isEmpty(taskBean.getActivity_start()))
+            taskBean.setActivity_start(taskBean.getPromotion().getPrePeriodStart());
+
+        // 如果没提交还原时间, 则使用 Promotion 的结束时间
+        if (StringUtils.isEmpty(taskBean.getActivity_end()))
+            taskBean.setActivity_end(taskBean.getPromotion().getActivityEnd());
+
         taskBean.setTask_type(PromotionTypeEnums.Type.JIAGEPILU);
-        taskBean.getConfig().setBeat_time(promotion.getPrePeriodStart());
-        taskBean.getConfig().setRevert_time(promotion.getActivityEnd());
         taskBean.setCreater(user.getUserName());
         taskBean.setModifier(user.getUserName());
 
@@ -272,10 +278,10 @@ public class CmsTaskPictureService extends BaseAppService {
         return response.getPromotionGroups();
     }
 
-    public List<CmsBtPromotionCodeModel> getCodes(int promotionId, int modelId) {
+    public List<CmsBtPromotionCodeModel> getCodes(int promotionId, String productModel) {
         Map<String, Object> map = new HashMap<>();
         map.put("promotionId", promotionId);
-        map.put("modelId", modelId);
+        map.put("productModel", productModel);
         PromotionCodeGetRequest request = new PromotionCodeGetRequest();
         request.setParam(map);
         PromotionCodeGetResponse response = apiClient.execute(request);

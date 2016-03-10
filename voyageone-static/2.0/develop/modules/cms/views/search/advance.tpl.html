@@ -199,6 +199,18 @@
 								</div>
 							</div>
 						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label" translate="TXT_CUST_QUERY_ATTR"></label>
+							<div class="col-sm-8 form-inline" style="padding-left:4px">
+								<div class="col-sm-5">
+									<select class="form-control m-r-xs" ng-model="vm.searchInfo.custAttrKey"
+											ng-options="custAtts.configCode as custAtts.configValue1 for custAtts in vm.masterData.custAttsList">
+										<option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+									</select>
+								</div>
+								<div class="col-sm-4"><input class="form-control" type="text" ng-model="vm.searchInfo.custAttrValue"></div>
+							</div>
+						</div>
 					</div>
 				</div>
 				<div class="col-sm-12 text-center m-b-sm">
@@ -284,13 +296,21 @@
 							</tr>
 							<tr ng-class="{'table_bg_green_mint': groupInfo.groups.platforms[0].publishTime}">
 								<td colspan="3" class="mfb-xxxs text-left">
-									<img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{groupInfo.fields.images1[0].image1}}" alt="{{groupInfo.fields.code}}" class="img-circle pull-left m-r"/>
+										<img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{groupInfo.fields.images1[0].image1}}" alt="{{groupInfo.fields.code}}" class="thumb-sm-search pull-left m-r"/>
 									<div class="table_main pull-left" style="width:60%">
 										<ul>
 											<li><a ng-href="#/product/detail/{{groupInfo.prodId}}" ng-bind="groupInfo.fields.code" target="_blank"></a></li>
 											<li><a ng-href="#/product/detail/{{groupInfo.prodId}}" ng-bind="groupInfo.fields.productNameCn || groupInfo.fields.productNameEn" target="_blank"></a></li>
+											<!--<div class="form-inline thumb-xs-search">-->
+												<!--<a href="#"><img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{groupInfo.fields.images1[0].image1}}" alt=""/></a>-->
+												<!--<a href="#"><img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{groupInfo.fields.images1[0].image1}}" alt=""/></a>-->
+												<!--<a href="#"><img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{groupInfo.fields.images1[0].image1}}" alt=""/></a>-->
+												<!--<a href="#"><img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{groupInfo.fields.images1[0].image1}}" alt=""/></a>-->
+												<!--<a href="#"><img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{groupInfo.fields.images1[0].image1}}" alt=""/></a>-->
+											<!--</div>-->
 										</ul>
 									</div>
+
 								</td>
 								<td class="mfb-xxt text-center"><!--TODO 目前只能返回group的主product,所有拿不到group下面所有的product的库存--><!--popover-html="showInfo({{groupInfo.inventoryDetail}})"-->
 									<!--<button ng-controller="showPopoverCtrl" popover-title="{{'TXT_SKU_INVENTORY' | translate}}" type="button" popover-placement="left"
@@ -390,7 +410,7 @@
 								</tr>
 								<tr ng-class="{'table_bg_green_mint': productInfo.groups.platforms[0].publishTime}">
 									<td class="mfb-xxt text-left">
-										<img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{productInfo.fields.images1[0].image1}}" alt="{{productInfo.fields.code}}" class="img-circle pull-left m-r"/>
+										<img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{productInfo.fields.images1[0].image1}}" alt="{{productInfo.fields.code}}" class="thumb-sm-search pull-left m-r"/>
 									</td>
 									<td class="mfb-xxt text-left">{{productInfo.fields.brand}}</td>
 									<td class="mfb-xxt text-center">

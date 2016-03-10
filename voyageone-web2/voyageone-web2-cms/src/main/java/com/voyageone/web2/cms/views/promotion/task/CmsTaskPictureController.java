@@ -4,9 +4,9 @@ import com.voyageone.web2.base.BaseController;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsUrlConstants.PROMOTION.TASK.BEAT;
 import com.voyageone.web2.cms.bean.beat.ReqParam;
-import com.voyageone.web2.cms.bean.beat.TaskBean;
-import com.voyageone.web2.cms.model.CmsBtBeatInfoModel;
-import com.voyageone.web2.cms.model.CmsBtTaskModel;
+import com.voyageone.web2.cms.wsdl.bean.task.beat.TaskBean;
+import com.voyageone.web2.cms.wsdl.models.CmsBtBeatInfoModel;
+import com.voyageone.web2.cms.wsdl.models.CmsBtTaskModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -87,7 +87,7 @@ public class CmsTaskPictureController extends BaseController {
 
     @RequestMapping(BEAT.ADD_CODE)
     public AjaxResponse addCode(@RequestBody ReqParam param) {
-        return success(taskPictureService.getCodes(param.getPromotionId(), param.getModelId()));
+        return success(taskPictureService.getCodes(param.getPromotionId(), param.getProductModel()));
     }
 
     @RequestMapping(BEAT.ADD_NUMIID)

@@ -96,6 +96,10 @@ public class JumeiProductService extends JmBase {
             for(Map<String, Object> dealInfo : dealInfos){
                 if(product.getDealInfo().getPartner_deal_id().equalsIgnoreCase((String) dealInfo.get("partner_deal_id"))){
                     product.getDealInfo().setJumei_hash_id((String) dealInfo.get("jumei_hash_id"));
+                    String jumei_hash_id = product.getDealInfo().getJumei_hash_id();
+                    if(StringUtils.isEmpty(jumei_hash_id) || jumei_hash_id.substring(jumei_hash_id.length()-2).equalsIgnoreCase("p0")){
+                        throw new BusinessException("jumei_hash_id不正确："+jumei_hash_id);
+                    }
                     break;
                 }
             }

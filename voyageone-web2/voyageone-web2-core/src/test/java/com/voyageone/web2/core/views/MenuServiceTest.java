@@ -26,13 +26,13 @@ public class MenuServiceTest {
 
     @Test
     public void testGetMenuList() throws Exception {
-        List<Map<String, Object>> resultList = menuService.getMenuList(26, "001");
+        List<Map<String, Object>> resultList = menuService.getApplicationList(26, "001");
         assert resultList.size() > 0;
     }
 
     @Test
     public void testGetMenuListNoValue() throws Exception {
-        List<Map<String, Object>> resultList = menuService.getMenuList(1, "001");
+        List<Map<String, Object>> resultList = menuService.getApplicationList(1, "001");
         assert resultList.size() == 0;
     }
 }

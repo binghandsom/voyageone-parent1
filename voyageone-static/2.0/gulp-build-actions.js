@@ -10,20 +10,20 @@ var File = gutil.File;
 module.exports = function () {
 
   var headDesc =
-    "/**\n" +
-    " * @description\n" +
-    " * 该文件用于描述 actions.json 的内容, 不需要被任何模块引用!\n" +
-    " * 注意: 该文件由 gulp 生成! 请不要手动修改\n" +
-    " */\n\n";
+      "/**\n" +
+      " * @description\n" +
+      " * 该文件用于描述 actions.json 的内容, 不需要被任何模块引用!\n" +
+      " * 注意: 该文件由 gulp 生成! 请不要手动修改\n" +
+      " */\n\n";
 
   var methodTemplate =
-    "  /**\n" +
-    "   * @param {object} [data] 远程请求的参数\n" +
-    "   * @return {Promise} Promise\n" +
-    "   */\n" +
-    "  ${method} (data) {\n" +
-    "    /* auto imp by vresource */\n" +
-    "  }\n";
+      "  /**\n" +
+      "   * @param {object} [data] 远程请求的参数\n" +
+      "   * @return {Promise} Promise\n" +
+      "   */\n" +
+      "  ${method} (data) {\n" +
+      "    /* auto imp by vresource */\n" +
+      "  }\n";
 
   function gentDoc(name, actions) {
 
@@ -38,7 +38,7 @@ module.exports = function () {
       }
     }
 
-    return 'class ${name.charAt(0).toUpperCase() + name.slice(1)} {\n${members}}\n\n';
+    return `class ${name.charAt(0).toUpperCase() + name.slice(1)} {\n${members}}\n\n`;
   }
 
   function register(name, actions) {
