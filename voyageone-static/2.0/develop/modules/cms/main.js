@@ -30,7 +30,8 @@ require.config({
         'text': 'libs/require-text/2.0.12/text.min',
         'filestyle': 'libs/bootstrap-filestyle/1.2.1/bootstrap-filestyle.min',
         'notify': 'libs/notify/0.4.0/notify.min',
-        'cms': 'modules/cms/app'
+        'cms': 'modules/cms/app',
+        'chosen': 'libs/chosen/1.4.2/chosen.jquery.min'
     },
     shim: {
         'voyageone-com': ['jquery'],
@@ -48,7 +49,8 @@ require.config({
         'jquery': {exports: 'jQuery'},
         'filestyle': ['jquery'],
         'json': ['text'],
-        'angularAMD': ['angular', 'ngload']
+        'angularAMD': ['angular', 'ngload'],
+        'chosen': ['jquery', 'css!libs/chosen/1.4.2/chosen.min.css']
     },
     deps: ['cms']
 });

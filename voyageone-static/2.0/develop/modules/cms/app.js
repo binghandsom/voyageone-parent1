@@ -18,7 +18,8 @@ define([
     'angular-cookies',
     'angular-file-upload',
     'filestyle',
-    'notify'
+    'notify',
+    'chosen'
 ], function (angularAMD, angular, _, cRoutes, cActions, enTranslate, zhTranslate) {
 
     var mainApp = angular.module('voyageone.cms', [
