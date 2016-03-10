@@ -245,6 +245,8 @@
   "TXT_MSG_UNVALID_URL": "无效的地址.",
   "TXT_MSG_NO_UPLOAD": "请选择要提交的文件",
   "TXT_MSG_CODE_IN_OTHER": "你提交的商品,已经在其他任务中.你确定要继续?",
+  "TXT_MSG_INPUT_WORD_LENCHK": "你还可以输入",
+  "TXT_MSG_INPUT_WORD_LENCHK2": "个文字",
 
 
   "BTN_CREATE_TASK": "新建任务",
