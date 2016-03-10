@@ -14,6 +14,11 @@ import java.util.Map;
 @Repository
 public class CmsPromotionTaskDao extends WsdlBaseDao {
 
+    @Override
+    protected String namespace(){
+        return "com.voyageone.web2.wsdl.sql";
+    }
+
     public List<CmsBtPromotionTaskModel> getPromotionTaskList(Map<String,Object> params){
         List<CmsBtPromotionTaskModel> ret = selectList("select_cms_bt_promotion_task",params);
         if (ret == null){

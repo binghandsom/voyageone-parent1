@@ -1,6 +1,6 @@
 package com.voyageone.service.dao.cms;
 
-import com.voyageone.service.dao.ServiceBaseDao;
+import com.voyageone.base.dao.BaseDao;
 import com.voyageone.service.model.cms.CmsBtPromotionTaskModel;
 import org.springframework.stereotype.Repository;
 
@@ -13,7 +13,7 @@ import java.util.Map;
  * @version 2.0.0
  */
 //Repository
-public class CmsPromotionTaskDao extends ServiceBaseDao {
+public class CmsPromotionTaskDao extends BaseDao {
 
     public List<CmsBtPromotionTaskModel> getPromotionTaskList(Map<String,Object> params){
         List<CmsBtPromotionTaskModel> ret = selectList("select_cms_bt_promotion_task",params);
@@ -35,11 +35,11 @@ public class CmsPromotionTaskDao extends ServiceBaseDao {
     }
 
     public int insertPromotionTask(CmsBtPromotionTaskModel params){
-        return insert("insert_cms_bt_promotion_task", params);
+        return updateTemplate.insert("insert_cms_bt_promotion_task", params);
     }
 
     public int updatePromotionTask(CmsBtPromotionTaskModel params){
-        return update("update_cms_bt_promotion_task", params);
+        return updateTemplate.update("update_cms_bt_promotion_task", params);
     }
 
 
