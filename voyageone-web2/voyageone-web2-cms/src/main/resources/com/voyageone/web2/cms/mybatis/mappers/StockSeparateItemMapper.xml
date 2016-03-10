@@ -19,7 +19,7 @@
         left outer join (select value,name from com_mt_value where type_id= '63' and lang_id = #{lang}) t2
         on t1.status = t2.value
         where task_id = #{taskId}
-        <if test="skuList != null skuList.size() > 0">
+        <if test="skuList != null and skuList.size() > 0">
             and (sku in
             <foreach collection="skuList" item="sku" open="(" separator="," close=")">
                 #{sku}
@@ -29,14 +29,18 @@
         order by sku,cart_id
     </select>
 
-    <select id="select_stock_separate_item_page_sku" resultType="String" parameterType="HashMap">
+    <select id="select_stock_separate_item_by_sql_object" resultType="Object" parameterType="HashMap">
+        ${sql}
+    </select>
+
+    <select id="select_stock_separate_item_by_sql_map" resultType="HashMap" parameterType="HashMap">
         ${sql}
     </select>
 
     <select id="select_stock_separate_item_cnt" resultType="int" parameterType="HashMap">
          select count(*)
             from   voyageone_cms2.cms_bt_stock_separate_item
-            where task_id = #{task_id}
+            where task_id = #{taskId}
             <if test="status !=null and status != ''">
                 and status = #{status}
             </if>
@@ -45,7 +49,7 @@
     <select id="select_stock_separate_item_history_cnt" resultType="int" parameterType="HashMap">
          select count(*)
             from   voyageone_cms2.cms_bt_stock_separate_item_history
-            where task_id = #{task_id}
+            where task_id = #{taskId}
           limit 0,1
     </select>
 </mapper>

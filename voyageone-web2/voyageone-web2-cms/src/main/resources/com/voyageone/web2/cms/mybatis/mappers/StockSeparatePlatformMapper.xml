@@ -4,13 +4,12 @@
 
     <select id="select_stock_separate_platform" resultType="HashMap" parameterType="HashMap">
         select
-            t1.cart_id,
-            t2.name
+            convert(t1.cart_id, char) as cartId,
+            t2.name as cartName
         from voyageone_cms2.cms_bt_stock_separate_platform_info t1
-        <!--left outer join (select cart_id,comment from tm_channel_shop where order_channel_id = #{channelId}) t2-->
         left outer join (select value,name from com_mt_value_channel where type_id= '53'and channel_id = #{channelId} and lang_id = #{lang}) t2
         on t1.cart_id = t2.value
-        where t1.task_id = #{taskId}
+        where t1.task_id = #{taskId} and t1.cart_id != -1
         order by t1.cart_id
     </select>
 </mapper>
