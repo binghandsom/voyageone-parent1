@@ -150,3 +150,26 @@ define([
         return translationDetailController
     })());
 });
+
+// 检查输入字数
+var timeoutID = "";
+function chkWordSize(maxLen, tobj) {
+    clearTimeout(timeoutID);
+    timeoutID = setTimeout(function() {
+        var curLength = $(tobj).val().length;
+        if (curLength >= maxLen) {
+            var od = $(tobj.parentNode).find("i.icon.fa.fa-bell-o.ng-binding");
+            od[0].innerHTML = '已经达到最大长度字符数限制';
+        } else {
+            var od = $(tobj.parentNode).find("div#wordsizemsg");
+            od[0].innerHTML = maxLen - curLength;
+        }
+    },500);
+}
+
+function cmtWordSize(maxLen, tobj) {
+    var od = $(tobj.parentNode).find("i.icon.fa.fa-bell-o.ng-binding");
+    $(od[0]).css("visibility", "visible");
+    var od2 = $(tobj.parentNode).find("div#wordsizemsg");
+    od2[0].innerHTML = maxLen - $(tobj).val().length;
+}
