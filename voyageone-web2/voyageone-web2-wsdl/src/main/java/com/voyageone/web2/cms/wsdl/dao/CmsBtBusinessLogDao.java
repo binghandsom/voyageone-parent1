@@ -40,7 +40,7 @@ public class CmsBtBusinessLogDao extends WsdlBaseDao {
      * @return effect count
      */
     public int updateStatusFinish(Map<?,?> conditionParams){
-        return updateTemplate.update("update_business_log_status_finish",conditionParams);
+        return update("update_business_log_status_finish",conditionParams);
     }
 
 }

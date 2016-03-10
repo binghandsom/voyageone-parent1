@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.voyageone.service.dao.cms.sql">
+<mapper namespace="com.voyageone.service.dao.sql">
     <resultMap id="bt_promotion_sku_map" extends="bt_promotion_model_map" type="HashMap" >
         <result column="sale_price" property="salePrice" jdbcType="DOUBLE" />
         <result column="promotion_price" property="promotionPrice" jdbcType="DOUBLE" />

@@ -1,6 +1,5 @@
 package com.voyageone.web2.cms.wsdl.dao;
 
-import com.voyageone.base.dao.BaseDao;
 import com.voyageone.cms.enums.BeatFlag;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.web2.cms.wsdl.models.CmsBtBeatInfoModel;
@@ -15,12 +14,7 @@ import java.util.Map;
  * @version 2.0.0
  */
 @Repository
-public class CmsBtBeatInfoDao extends BaseDao {
-
-    @Override
-    protected String namespace() {
-        return "com.voyageone.web2.cms.sql";
-    }
+public class CmsBtBeatInfoDao extends WsdlBaseDao {
 
     public int insertList(List<CmsBtBeatInfoModel> modelList) {
         return insert("cms_bt_beat_info_insertList", parameters("modelList", modelList));

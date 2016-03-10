@@ -1,6 +1,6 @@
 package com.voyageone.service.dao.cms;
 
-import com.voyageone.base.dao.BaseDao;
+import com.voyageone.service.dao.ServiceBaseDao;
 import com.voyageone.service.model.cms.CmsBtTaskModel;
 import org.springframework.stereotype.Repository;
 
@@ -11,7 +11,7 @@ import java.util.List;
  * @version 2.0.0
  */
 //Repository
-public class CmsBtTaskDao extends BaseDao {
+public class CmsBtTaskDao extends ServiceBaseDao {
 
     public int insert(CmsBtTaskModel model) {
         return insert("cms_bt_tasks_insert", model);

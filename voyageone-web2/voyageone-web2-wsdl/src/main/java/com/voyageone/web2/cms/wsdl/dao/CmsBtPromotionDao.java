@@ -45,7 +45,7 @@ public class CmsBtPromotionDao extends WsdlBaseDao {
 	 * @return int
 	 */
 	public int update(CmsBtPromotionModel cmsBtPromotionModel) {
-		return updateTemplate.update("update", cmsBtPromotionModel);
+		return update("update", cmsBtPromotionModel);
 	}
 
 	/**
@@ -55,7 +55,7 @@ public class CmsBtPromotionDao extends WsdlBaseDao {
 	 * @return int
 	 */
 	public int insert(CmsBtPromotionModel cmsBtPromotionModel) {
-		return updateTemplate.insert("insert", cmsBtPromotionModel);
+		return insert("insert", cmsBtPromotionModel);
 	}
 
 	/**
@@ -65,7 +65,7 @@ public class CmsBtPromotionDao extends WsdlBaseDao {
 	 * @return int
 	 */
 	public int deleteById(Map<?, ?> condtionParams) {
-		return updateTemplate.update("delete_By_Id", condtionParams);
+		return update("delete_By_Id", condtionParams);
 	}
 
 }

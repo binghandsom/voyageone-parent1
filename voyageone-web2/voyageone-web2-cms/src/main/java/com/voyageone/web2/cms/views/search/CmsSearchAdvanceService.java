@@ -109,7 +109,7 @@ public class CmsSearchAdvanceService extends BaseAppService{
         masterData.put("promotionList", cmsPromotionService.queryByCondition(params));
 
         // 获取自定义查询用的属性
-        masterData.put("custAttsList", customWordDao.selectCustAttrs(userInfo.getSelChannelId()));
+        masterData.put("custAttsList", customWordDao.selectCustAttrs(userInfo.getSelChannelId(), language));
 
         return masterData;
     }

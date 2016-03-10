@@ -12,7 +12,7 @@ define([
 ], function (cms) {
     return cms.controller('productDetailController', (function () {
 
-        function productDetailController($routeParams, $translate, productDetailService, feedMappingService, notify, confirm, $translate) {
+        function ProductDetailController($routeParams, $translate, productDetailService, feedMappingService, notify, confirm) {
 
             this.routeParams = $routeParams;
             this.translate = $translate;
@@ -30,20 +30,20 @@ define([
             this.errorMsg = "";
         }
 
-        productDetailController.prototype = {
+        ProductDetailController.prototype = {
 
             // 获取初始化数据
             initialize: function () {
-                var data = {productId: this.routeParams.productId};
-                var ttt = this;
-                this.productDetailService.getProductInfo(data)
+                var self = this;
+                var data = {productId: self.routeParams.productId};
+                self.productDetailService.getProductInfo(data)
                     .then(function (res) {
-                        this.productDetails = res.data.productInfo;
-                        this.productDetailsCopy = angular.copy(this.productDetails);
+                        self.productDetails = res.data.productInfo;
+                        self.productDetailsCopy = angular.copy(this.productDetails);
 
-                    }.bind(this), function (res) {
-                        ttt.errorMsg = res.message;
-                    }.bind(this))
+                    }, function (res) {
+                        self.errorMsg = res.message;
+                    })
             },
 
             // 保存product详情和product自定义
@@ -135,10 +135,10 @@ define([
             updateProductDetail: function () {
 
                 this.productDetailService.updateProductDetail(this.productDetails)
-                    .then(function (res){
+                    .then(function (res) {
                         this.productDetails.modified = res.data.modified;
                         this.productDetailsCopy = angular.copy(this.productDetails);
-                        this.notify.success (this.translate.instant('TXT_MSG_UPDATE_SUCCESS'));
+                        this.notify.success(this.translate.instant('TXT_MSG_UPDATE_SUCCESS'));
                     }.bind(this))
             },
 
@@ -174,7 +174,7 @@ define([
                             catPath: context.selected.catPath
                         };
                         $.productDetailService.changeCategory(data).then(function (res) {
-                            if(res.data.isChangeCategory){
+                            if (res.data.isChangeCategory) {
                                 $.notify.success($.translate.instant('TXT_MSG_UPDATE_SUCCESS'));
                                 $.initialize()
                             }
@@ -199,6 +199,6 @@ define([
             }
         };
 
-        return productDetailController
+        return ProductDetailController
     })());
 });

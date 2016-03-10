@@ -24,7 +24,7 @@ public class CustomWordDao extends WebBaseDao {
         return selectList("cms_mt_custom_word_selectWithParam");
     }
 
-    public List<Map<String, Object>> selectCustAttrs(String chnId) {
-        return selectList("cms2_mt_channel_config_getCustAttr", parameters("channelId", chnId));
+    public List<Map<String, Object>> selectCustAttrs(String chnId, String language) {
+        return selectList("cms2_mt_channel_config_getCustAttr", parameters("channelId", chnId, "langId", language));
     }
 }

@@ -248,6 +248,8 @@ define(function(){
         "TXT_MSG_CODE_IN_OTHER": "你提交的商品,已经在其他任务中.你确定要继续?",
         "TXT_MSG_REIMPORT_BEAT": "从新上传会覆盖原数据, 意味着之前的数据将被清空. 你确定要继续么?",
         "TXT_MSG_ERROR_BEAT_ITEM": "这个任务的商品信息好像有问题? 你确定要修改它的状态?",
+        "TXT_MSG_INPUT_WORD_LENCHK": "你还可以输入",
+        "TXT_MSG_INPUT_WORD_LENCHK2": "个文字",
 
 
         "BTN_CREATE_TASK": "新建任务",

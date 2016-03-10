@@ -17,6 +17,6 @@ public class CmsBtTagProductLogDao extends WsdlBaseDao {
     public int insertCmsBtTagLogList(List<CmsBtTagProductLogModel> cmsBtTagLogModelList){
         Map<String, List<CmsBtTagProductLogModel>> insertDataMap = new HashMap<>();
         insertDataMap.put("list", cmsBtTagLogModelList);
-        return updateTemplate.insert("insert_cms_bt_tag_product_log_list",insertDataMap);
+        return insert("insert_cms_bt_tag_product_log_list",insertDataMap);
     }
 }
