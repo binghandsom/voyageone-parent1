@@ -516,6 +516,11 @@ public class ChannelConfigEnums {
         SHOE_CITY("016"),
 
         /**
+         * Vitamin
+         */
+        VITAMIN("017"),
+
+        /**
          * VOYAGEONE
          */
         VOYAGEONE("997"),
@@ -564,6 +569,7 @@ public class ChannelConfigEnums {
                 case "014": return WMF;
                 case "015": return GILT;
                 case "016": return SHOE_CITY;
+                case "017": return VITAMIN;
                 case "997": return VOYAGEONE;
                 case "998": return THIRD_PARTY;
                 default: return null;
