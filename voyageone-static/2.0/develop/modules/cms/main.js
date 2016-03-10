@@ -31,7 +31,8 @@ require.config({
         'filestyle': 'libs/bootstrap-filestyle/1.2.1/bootstrap-filestyle.min',
         'notify': 'libs/notify/0.4.0/notify.min',
         'cms': 'modules/cms/app',
-        'chosen': 'libs/chosen/1.4.2/chosen.jquery.min'
+        'chosen': 'libs/chosen/1.4.2/chosen.jquery.min',
+        'angular-chosen': 'libs/angular-chosen/1.2.0/angular-chosen.min'
     },
     shim: {
         'voyageone-com': ['jquery'],
@@ -50,7 +51,8 @@ require.config({
         'filestyle': ['jquery'],
         'json': ['text'],
         'angularAMD': ['angular', 'ngload'],
-        'chosen': ['jquery', 'css!libs/chosen/1.4.2/chosen.min.css']
+        'chosen': ['jquery', 'css!libs/chosen/1.4.2/chosen.min.css'],
+        'angular-chosen': ['angular', 'chosen']
     },
     deps: ['cms']
 });
