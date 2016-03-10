@@ -308,7 +308,7 @@ define([
                         }
                     });
 
-                    data.userInfo.application = cookieService.application();
+                    //data.userInfo.application = cookieService.application();  服务端已经返回
                     defer.resolve(data);
                 });
             return defer.promise;
@@ -423,7 +423,7 @@ define([
 
     }
 
-    function headerCtrl($scope, $window, $location, menuService, cRoutes, cCommonRoutes) {
+    function headerCtrl($scope,$rootScope, $window, $location, menuService, cRoutes, cCommonRoutes) {
         var vm = this;
         vm.menuList = {};
         vm.languageList = {};
@@ -439,9 +439,11 @@ define([
 
         function initialize() {
             menuService.getMenuHeaderInfo().then(function (data) {
-                vm.menuList = data.menuList;
+                vm.applicationList = data.applicationList;
                 vm.languageList = data.languageList;
                 vm.userInfo = data.userInfo;
+                $rootScope.menuTree=data.menuTree
+                $rootScope.application=data.userInfo.application;
             });
         }
 
@@ -526,13 +528,12 @@ define([
         }
     }
 
-    function asideCtrl($scope, $rootScope, $location, menuService, cRoutes) {
+    function asideCtrl($scope, $rootScope, $location, menuService, cRoutes,cookieService) {
 
         $scope.menuInfo = {};
         $scope.initialize = initialize;
         $scope.selectPlatformType = selectPlatformType;
         $scope.goSearchPage = goSearchPage;
-
         function initialize() {
             menuService.getPlatformType().then(function (data) {
                 $scope.menuInfo.platformTypeList = data;

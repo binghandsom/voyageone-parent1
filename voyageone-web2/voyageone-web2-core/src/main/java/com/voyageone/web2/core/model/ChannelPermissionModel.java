@@ -1,6 +1,7 @@
 package com.voyageone.web2.core.model;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 渠道下应用系统的权限
@@ -21,7 +22,7 @@ public class ChannelPermissionModel {
 
     private String channelImgUrl;
 
-    private List<String> apps;
+    private List<Map<String,Object>> apps;
 
     public String getCompanyName() {
         return companyName;
@@ -63,11 +64,11 @@ public class ChannelPermissionModel {
         this.channelImgUrl = channelImgUrl;
     }
 
-    public List<String> getApps() {
+    public  List<Map<String,Object>> getApps() {
         return apps;
     }
 
-    public void setApps(List<String> apps) {
+    public void setApps(List<Map<String,Object>> apps) {
         this.apps = apps;
     }
 }

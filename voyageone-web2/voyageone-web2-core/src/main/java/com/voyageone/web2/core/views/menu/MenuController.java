@@ -31,26 +31,19 @@ public class MenuController extends BaseController {
 
     @RequestMapping(CoreUrlConstants.MENU.GET_MENU_HEADER_INFO)
     public AjaxResponse getMenuHeaderInfo() {
-
-        Map<String, Object> resultbean = new HashMap<>();
-
         //获取userId和channelId.
         Integer userId = getUser().getUserId();
         String channelId = getUser().getSelChannelId();
+        String applicationId=getUser().getApplicationId();
+        Map<String, Object> resultbean =menuService.getMenuHeaderInfo(userId,channelId,applicationId);
 
-        // 获取menu列表.
-        List<Map<String, Object>> menuList = menuService.getMenuList(userId, channelId);
-        resultbean.put("menuList", menuList);
-
-        // 获取language列表.
-        List<TypeBean> languageList = menuService.getLanguageList();
-        resultbean.put("languageList", languageList);
 
         // 获取用户相关信息
         Map<String, Object> userInfo = new HashMap<>();
         userInfo.put("userName", getUser().getUserName());
         userInfo.put("channelName", getUser().getSelChannel().getFullName());
         userInfo.put("language", getLang());
+        userInfo.put("application",getUser().getApplication());
         resultbean.put("userInfo", userInfo);
 
         // 返回用户信息
