@@ -158,7 +158,7 @@
     </update>
 
     <!-- 查询指定类目属性值 -->
-    <select id="cms_bt_feed_custom_prop_value_select" resultType="HashMap" parameterType="HashMap">
+    <select id="cms_bt_feed_custom_prop_value_selectById" resultType="HashMap" parameterType="HashMap">
         SELECT
           v1.id as value_id, v1.prop_id, p1.feed_cat_path as cat_path,
           p1.feed_prop_original as prop_original, p1.feed_prop_translation as prop_translation,
