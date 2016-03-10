@@ -1,13 +1,13 @@
 package com.voyageone.task2.cms.service.putaway;
 
+import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import com.voyageone.task2.cms.bean.PlatformUploadRunState;
 import com.voyageone.task2.cms.bean.SxProductBean;
 import com.voyageone.task2.cms.bean.tcb.TaskSignal;
 import com.voyageone.task2.cms.dao.CustomSizePropDao;
 import com.voyageone.task2.cms.dao.PlatformSkuInfoDao;
 import com.voyageone.task2.cms.service.putaway.rule_parser.ExpressionParser;
-import com.voyageone.cms.service.model.CmsBtProductModel_Sku;
-import com.voyageone.cms.service.model.CmsMtPlatformMappingModel;
 
 import java.util.List;
 import java.util.Map;

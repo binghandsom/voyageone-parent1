@@ -1,8 +1,8 @@
 package com.voyageone.web2.cms.wsdl.service;
 
-import com.voyageone.cms.service.model.CmsBtProductModel;
 import com.voyageone.common.configs.Enums.PromotionTypeEnums;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.web2.cms.wsdl.BaseService;
 import com.voyageone.web2.cms.wsdl.dao.*;
 import com.voyageone.web2.sdk.api.domain.*;

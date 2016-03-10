@@ -1,6 +1,5 @@
 package com.voyageone.web2.cms.views.promotion.task;
-;
-import com.voyageone.cms.service.model.CmsBtFeedInfoModel;
+
 import com.voyageone.common.configs.TypeChannel;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.StringUtils;
@@ -86,7 +85,7 @@ public class CmsTaskStockService extends BaseAppService {
         // sku临时变量
         String skuTemp = "";
         Map<String, Object> lineInfo = null;
-        List<Map<String, Object>> linePlatformInfoList = null;
+        List<Map<String, Object>> linePlatformInfoList = new ArrayList<>();
         // 平台列表的索引
         int  platformIndex = 0;
         for (Map<String,Object> stockInfo : stockAllList) {
@@ -105,8 +104,7 @@ public class CmsTaskStockService extends BaseAppService {
             if (!currentSku.equals(skuTemp)) {
                 skuTemp = currentSku;
                 platformIndex = 0;
-                lineInfo = new HashMap<String, Object>();
-                linePlatformInfoList = new ArrayList<Map<String, Object>>();
+                lineInfo = new HashMap<>();
                 stockList.add(lineInfo);
                 lineInfo.put("model", model);
                 lineInfo.put("code", code);
@@ -152,7 +150,7 @@ public class CmsTaskStockService extends BaseAppService {
      * @return 实时库存状态列表
      */
     public List<Map<String,Object>> getRealStockList(Map param, List<Map<String, Object>> platformList, List<String>skuList){
-        List<Map<String,Object>> realStockList = new ArrayList<Map<String,Object>>();
+        List<Map<String,Object>> realStockList = new ArrayList<>();
         return realStockList;
     }
 
@@ -166,8 +164,7 @@ public class CmsTaskStockService extends BaseAppService {
     public List<String> getCommonStockPageSkuList(Map param) {
         Map<String,Object> sqlParam = new HashMap<String,Object>();
         sqlParam.put("sql", getCommonStockPageSkuSql(param));
-        List<String> skuList = cmsBtStockSeparateItemDao.selectStockSeparateItemPageSku(sqlParam);
-        return  skuList;
+        return cmsBtStockSeparateItemDao.selectStockSeparateItemPageSku(sqlParam);
     }
 
     /**
@@ -178,7 +175,7 @@ public class CmsTaskStockService extends BaseAppService {
      * @return 获取取得属性列表
      */
     public boolean isHistoryExist(Map param){
-        return (cmsBtStockSeparateItemDao.selectStockSeparateItemHistoryCnt(param) !=  0) ? true : false;
+        return (cmsBtStockSeparateItemDao.selectStockSeparateItemHistoryCnt(param) != 0);
     }
 
     /**
@@ -219,7 +216,7 @@ public class CmsTaskStockService extends BaseAppService {
     /**
      * 取得where条件的Sql文
      *
-     * @param param
+     * @param param Map
      * @return where条件的Sql文
      */
     private String getWhereSql(Map param){
@@ -280,7 +277,7 @@ public class CmsTaskStockService extends BaseAppService {
                         propertySql += " = '" + escapeSpecialChar(value) + "' or ";
                     }
                 }
-                if(values != null && values.length > 0 ) {
+                if(values.length > 0) {
                     whereSql += " and " + propertySql.substring(0,propertySql.length()-3);
                 }
             }

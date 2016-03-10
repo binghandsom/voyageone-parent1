@@ -1,6 +1,5 @@
 package com.voyageone.web2.sdk.api.request;
 
-import com.voyageone.cms.service.model.CmsBtProductModel_Sku;
 import com.voyageone.web2.sdk.api.VoApiDefaultClient;
 import com.voyageone.web2.sdk.api.domain.ProductPriceModel;
 import com.voyageone.web2.sdk.api.domain.ProductSkuPriceModel;

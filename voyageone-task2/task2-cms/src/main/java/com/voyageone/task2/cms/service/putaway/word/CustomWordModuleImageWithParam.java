@@ -49,6 +49,9 @@ public class CustomWordModuleImageWithParam extends CustomWordModule {
         List<String> imageParams = new ArrayList<>();
         for (RuleExpression imageParamExpression : imageParamExpressions) {
             String imageParam = expressionParser.parse(imageParamExpression, null);
+            if (imageParam == null) {
+                continue;
+            }
             try {
                 imageParam = URLEncoder.encode(imageParam, "UTF-8");
             } catch (UnsupportedEncodingException e) {

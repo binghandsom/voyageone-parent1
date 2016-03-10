@@ -1,6 +1,6 @@
 package com.voyageone.web2.cms.bean.setting.mapping.platform;
 
-import com.voyageone.cms.service.bean.MappingBean;
+import com.voyageone.service.bean.cms.MappingBean;
 
 import java.util.List;
 

@@ -1,13 +1,12 @@
 package com.voyageone.task2.cms.service;
 
-import com.voyageone.task2.cms.service.GetPlatformCategorySchemaService;
+import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategoryDao;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.voyageone.cms.service.dao.mongodb.CmsMtPlatformCategoryDao;
 
 /**
  * Created by lewis on 15-11-28.

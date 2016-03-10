@@ -1,6 +1,5 @@
 package com.voyageone.web2.sdk.api.request;
 
-
 import com.voyageone.web2.sdk.api.VoApiDefaultClient;
 import com.voyageone.web2.sdk.api.domain.CmsBtPriceLogModel;
 import org.junit.Test;

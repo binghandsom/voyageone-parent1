@@ -2,14 +2,14 @@ package com.voyageone.web2.cms.views.mapping.feed;
 
 import com.mongodb.WriteResult;
 import com.voyageone.base.exception.BusinessException;
-import com.voyageone.cms.service.CmsBtChannelCategoryService;
-import com.voyageone.cms.service.dao.mongodb.CmsMtFeedCategoryTreeDao;
-import com.voyageone.cms.service.model.CmsBtFeedMappingModel;
-import com.voyageone.cms.service.model.CmsFeedCategoryModel;
-import com.voyageone.cms.service.model.CmsMtCategoryTreeModel;
-import com.voyageone.cms.service.model.CmsMtFeedCategoryTreeModelx;
-import com.voyageone.cms.service.model.feed.mapping.Scope;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
+import com.voyageone.service.dao.cms.mongo.CmsMtFeedCategoryTreeDao;
+import com.voyageone.service.impl.cms.CmsBtChannelCategoryService;
+import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeModel;
+import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedMappingModel;
+import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryModel;
+import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryTreeModelx;
+import com.voyageone.service.model.cms.mongo.feed.mapping.Scope;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.bean.setting.mapping.feed.FeedCategoryBean;
 import com.voyageone.web2.cms.bean.setting.mapping.feed.SetMappingBean;
@@ -40,9 +40,9 @@ public class CmsFeedMappingService extends BaseAppService {
     private CmsBtChannelCategoryService cmsBtChannelCategoryService;
 
     @Autowired
-    private com.voyageone.cms.service.CmsFeedMappingService cmsFeedMappingService;
+    private com.voyageone.service.impl.cms.CmsFeedMappingService cmsFeedMappingService;
 
-    public List<CmsFeedCategoryModel> getTopCategories(UserSessionBean user) {
+    public List<CmsMtFeedCategoryModel> getTopCategories(UserSessionBean user) {
 
         CmsMtFeedCategoryTreeModelx treeModelx = cmsMtFeedCategoryTreeDao.findTopCategories(user.getSelChannelId());
 
@@ -56,7 +56,7 @@ public class CmsFeedMappingService extends BaseAppService {
         if (treeModelx.getCategoryTree().isEmpty())
             throw new BusinessException("未找到类目");
 
-        CmsFeedCategoryModel topCategory = treeModelx.getCategoryTree().get(0);
+        CmsMtFeedCategoryModel topCategory = treeModelx.getCategoryTree().get(0);
 
         // 查询 Mapping 信息
 
@@ -89,10 +89,10 @@ public class CmsFeedMappingService extends BaseAppService {
                 .collect(toMap(f -> f.getModel().getPath(), f -> f));
     }
 
-    private Stream<FeedCategoryBean> buildFeedCategoryBean(CmsFeedCategoryModel feedCategoryModel, Map<String, CmsBtFeedMappingModel> feedMappingModelMap) {
+    private Stream<FeedCategoryBean> buildFeedCategoryBean(CmsMtFeedCategoryModel feedCategoryModel, Map<String, CmsBtFeedMappingModel> feedMappingModelMap) {
 
         // 先取出暂时保存
-        List<CmsFeedCategoryModel> children = feedCategoryModel.getChild();
+        List<CmsMtFeedCategoryModel> children = feedCategoryModel.getChild();
 
         // 创建新模型
         FeedCategoryBean feedCategoryBean = new FeedCategoryBean();
@@ -189,7 +189,7 @@ public class CmsFeedMappingService extends BaseAppService {
      * @param user              变动用户
      * @return 更新后的 Mapping 关系
      */
-    public CmsBtFeedMappingModel extendsMapping(CmsFeedCategoryModel feedCategoryModel, UserSessionBean user) {
+    public CmsBtFeedMappingModel extendsMapping(CmsMtFeedCategoryModel feedCategoryModel, UserSessionBean user) {
 
         CmsBtFeedMappingModel feedMappingModel = findParentDefaultMapping(user.getSelChannel(), feedCategoryModel.getPath());
 

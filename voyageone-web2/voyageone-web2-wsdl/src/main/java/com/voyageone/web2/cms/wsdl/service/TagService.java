@@ -1,6 +1,6 @@
 package com.voyageone.web2.cms.wsdl.service;
 
-import com.voyageone.cms.service.dao.mongodb.CmsBtProductDao;
+import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.web2.cms.wsdl.BaseService;
 import com.voyageone.web2.cms.wsdl.dao.CmsBtTagDao;
 import com.voyageone.web2.sdk.api.VoApiConstants;
@@ -59,7 +59,7 @@ public class TagService extends BaseService {
         // 新追加TagId
         int tagId = 0;
 
-        TransactionStatus status=transactionManager.getTransaction(def);
+        TransactionStatus status = transactionManager.getTransaction(def);
 
         // 输入参数检查
         ret = checkAddTagParam(request, result);

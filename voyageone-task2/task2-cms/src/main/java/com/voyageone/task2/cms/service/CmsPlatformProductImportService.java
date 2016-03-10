@@ -1,14 +1,16 @@
 package com.voyageone.task2.cms.service;
 
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.service.dao.cms.mongo.CmsMtCategorySchemaDao;
+import com.voyageone.service.dao.cms.mongo.CmsMtCommonSchemaDao;
+import com.voyageone.service.model.cms.mongo.CmsMtCategorySchemaModel;
+import com.voyageone.service.model.cms.mongo.CmsMtCommonSchemaModel;
+import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.cms.bean.TmpOldCmsDataBean;
 import com.voyageone.task2.cms.dao.TmpOldCmsDataDao;
 import com.voyageone.cms.CmsConstants;
-import com.voyageone.cms.service.dao.mongodb.CmsMtCategorySchemaDao;
-import com.voyageone.cms.service.dao.mongodb.CmsMtCommonSchemaDao;
-import com.voyageone.cms.service.model.*;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.components.tmall.TbProductService;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
@@ -99,7 +101,7 @@ public class CmsPlatformProductImportService extends BaseTaskService {
         List<String> schemaFieldSkuList = new ArrayList<>(); // sku级
 
         // 获取共通schema数据 ==========================================================================================
-        CmsMtComSchemaModel comSchemaModel = getComSchemaModel();
+        CmsMtCommonSchemaModel comSchemaModel = getComSchemaModel();
         for (Field field : comSchemaModel.getFields()) {
             schemaFieldList.add(field.getId());
         }
@@ -142,8 +144,8 @@ public class CmsPlatformProductImportService extends BaseTaskService {
      * 获取common schema.
      * @return
      */
-    private CmsMtComSchemaModel getComSchemaModel() {
-        CmsMtComSchemaModel comSchemaModel = cmsMtCommonSchemaDao.getComSchema();
+    private CmsMtCommonSchemaModel getComSchemaModel() {
+        CmsMtCommonSchemaModel comSchemaModel = cmsMtCommonSchemaDao.getComSchema();
 
         if (comSchemaModel == null){
 

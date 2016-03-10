@@ -1,6 +1,6 @@
 package com.voyageone.web2.cms.views.mapping.feed;
 
-import com.voyageone.cms.service.model.CmsFeedCategoryModel;
+import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants.MAPPING.FEED;
@@ -55,7 +55,7 @@ public class CmsFeedMappingController extends CmsController {
     }
 
     @RequestMapping(FEED.EXTENDS_MAPPING)
-    public AjaxResponse extendsMapping(@RequestBody CmsFeedCategoryModel feedCategoryModel) {
+    public AjaxResponse extendsMapping(@RequestBody CmsMtFeedCategoryModel feedCategoryModel) {
         return success(cmsFeedMappingService.extendsMapping(feedCategoryModel, getUser()));
     }
 

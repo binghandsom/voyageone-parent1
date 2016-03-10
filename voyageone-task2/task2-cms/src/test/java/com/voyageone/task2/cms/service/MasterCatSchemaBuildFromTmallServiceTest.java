@@ -1,13 +1,13 @@
 package com.voyageone.task2.cms.service;
 
-import com.voyageone.cms.service.dao.CmsMtCommonPropDao;
-import com.voyageone.cms.service.dao.mongodb.CmsMtCategorySchemaDao;
-import com.voyageone.cms.service.model.MtCommPropActionDefModel;
 import com.voyageone.common.configs.Enums.ActionType;
 import com.voyageone.common.masterdate.schema.exception.TopSchemaException;
 import com.voyageone.common.masterdate.schema.factory.SchemaJsonReader;
 import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.masterdate.schema.utils.FieldUtil;
+import com.voyageone.service.dao.cms.CmsMtCommonPropDao;
+import com.voyageone.service.dao.cms.mongo.CmsMtCategorySchemaDao;
+import com.voyageone.service.model.cms.CmsMtCommonPropActionDefModel;
 import net.minidev.json.JSONObject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -52,7 +52,7 @@ public class MasterCatSchemaBuildFromTmallServiceTest {
         logger.info("");
         List<JSONObject> masterSchemaIds = cmsMtCategorySchemaDao.getAllSchemaIds();
         logger.info("总件数： "+masterSchemaIds.size());
-        List<MtCommPropActionDefModel> commPropActionDefModels = cmsMtCommonPropDao.getActionModelList();
+        List<CmsMtCommonPropActionDefModel> commPropActionDefModels = cmsMtCommonPropDao.getActionModelList();
         int schemaCount = 0;
         for (JSONObject schemaId:masterSchemaIds) {
             schemaCount++;
@@ -70,7 +70,7 @@ public class MasterCatSchemaBuildFromTmallServiceTest {
 
             logger.info("Schema 数:"+schemaCount+"件， Category Id: " + schemaModel.get("catId"));
 
-            for (MtCommPropActionDefModel defModel:commPropActionDefModels){
+            for (CmsMtCommonPropActionDefModel defModel:commPropActionDefModels){
                 ActionType actionType = ActionType.valueOf(Integer.valueOf(defModel.getActionType()));
                 Field verifyField = null;
                     switch (actionType){

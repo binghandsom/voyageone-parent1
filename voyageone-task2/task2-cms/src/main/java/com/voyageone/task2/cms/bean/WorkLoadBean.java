@@ -1,10 +1,10 @@
 package com.voyageone.task2.cms.bean;
 
+import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
+import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
+import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import com.voyageone.task2.cms.enums.PlatformWorkloadStatus;
-import com.voyageone.cms.service.model.CmsBtProductModel_Sku;
-import com.voyageone.cms.service.model.CmsMtPlatformCategorySchemaModel;
-import com.voyageone.cms.service.model.CmsMtPlatformMappingModel;
-import com.voyageone.cms.service.model.CmsBtSxWorkloadModel;
 
 import java.util.*;
 
