@@ -42,17 +42,16 @@ define([
          * 清空检索条件
          */
         function clear(){
-            $scope.vm = {
-                searchInfo: {
-                    cat_path: $routeParams.catPath,
-                    sts: 1,
-                    propName: "",
-                    propValue: "",
-                    skip: "",
-                    limit: ""
-                },
-                valuesPageOption: {curr: 1, total: 0, size: 20, fetch: search}
-            }
+            $scope.vm.searchInfo={
+                cat_path: $routeParams.catPath,
+                sts: 1,
+                propName: "",
+                propValue: "",
+                skip: "",
+                limit: ""
+            };
+            $scope.vm.valuesPageOption= {curr: 1, total: 0, size: 20, fetch: search};
+
         }
 
         /**
