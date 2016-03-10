@@ -134,8 +134,6 @@ public interface CmsUrlConstants {
 
                 String SAVE_NEW_RECORD = "saveNewRecord";
 
-                String IMPORT_SKU_INFO = "importSkuInfo";
-
                 String IMPORT_STOCK_INFO = "importStockInfo";
 
                 String EXPORT_STOCK_INFO = "exportStockInfo";
@@ -153,9 +151,9 @@ public interface CmsUrlConstants {
                 String EXPORT_ERROR_INFO = "exportErrorInfo";
             }
 
-            interface INCREMENT_STOCK_LIST {
+            interface STOCK_INCREMENT {
 
-                String ROOT = "/cms/promotion/task_increment_stock_list";
+                String ROOT = "/cms/promotion/task_stock_increment";
 
                 String SEARCH_TASK = "searchTask";
 
@@ -166,9 +164,9 @@ public interface CmsUrlConstants {
                 String GET_PLATFORM_LIST = "getPlatFormList";
             }
 
-            interface INCREMENT_STOCK_DETAIL {
+            interface STOCK_INCREMENT_DETAIL {
 
-                String ROOT = "/cms/promotion/task_increment_stock_detail";
+                String ROOT = "/cms/promotion/task_stock_increment_detail";
 
                 String SEARCH_ITEM = "searchItem";
 
@@ -180,7 +178,7 @@ public interface CmsUrlConstants {
 
                 String EXPORT_STOCK_INFO = "exportStockInfo";
 
-                String EXECUTE_INCREMENT_STOCK_SEPARATION = "executeIncrementStockSeparation";
+                String EXECUTE_STOCK_INCREMENT_SEPARATION = "executeStockIncrementSeparation";
             }
         }
     }
