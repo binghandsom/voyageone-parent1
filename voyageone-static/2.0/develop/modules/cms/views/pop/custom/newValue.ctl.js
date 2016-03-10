@@ -50,7 +50,7 @@ define([
                     .then(function () {
                         notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
                         $modalInstance.close();
-                        $scope.$parent.initialize();
+                        //$scope.$parent.initialize();
                     });
             }
 
@@ -61,6 +61,9 @@ define([
             //    });
         };
 
+        $scope.close = function () {
+            $modalInstance.dismiss();
+        }
     });
 
 });

@@ -76,30 +76,13 @@ public class CmsFeedCustPropValueController extends CmsController {
         int skip = NumberUtils.toInt(params.get("skip"));
         int limit = NumberUtils.toInt(params.get("limit"));
         UserSessionBean userInfo = getUser();
-        List<Map<String, Object>> rslt1 = null;
 
-        if (catPath == null) {
-            // 查询所有属性
-            rslt1 = cmsFeedCustPropService.selectPropValue("0", tSts, propName, propValue, userInfo.getSelChannelId());
-            List<Map<String, Object>> rslt2 = cmsFeedCustPropService.selectPropValue(null, tSts, propName, propValue, userInfo.getSelChannelId());
-            if (rslt1 == null) {
-                if (rslt2 == null) {
-                   rslt1 = new ArrayList<Map<String, Object>>(0);
-                } else {
-                    rslt1 = rslt2;
-                }
-            } else {
-                if (rslt2 != null) {
-                    rslt1.addAll(rslt2);
-                }
-            }
-        } else {
-            // 查询共通属性及类目属性
-            rslt1 = cmsFeedCustPropService.selectPropValue(catPath, tSts, propName, propValue, userInfo.getSelChannelId());
-            if (rslt1 == null) {
-                rslt1 = new ArrayList<Map<String, Object>>(0);
-            }
+        // 查询共通属性及类目属性
+        List<Map<String, Object>> rslt1 = cmsFeedCustPropService.selectPropValue(catPath, tSts, propName, propValue, userInfo.getSelChannelId());
+        if (rslt1 == null) {
+            rslt1 = new ArrayList<Map<String, Object>>(0);
         }
+
         HashMap dataMap = new HashMap();
         int listCnt = rslt1.size();
         dataMap.put("total", listCnt);

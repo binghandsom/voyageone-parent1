@@ -170,7 +170,9 @@
             LEFT JOIN voyageone_cms2.cms_bt_feed_custom_prop_value v2
             ON v1.feed_value_original = v2.feed_value_original and v2.prop_id = 0 and v2.channel_id = #{channelId}
         WHERE p1.channel_id = #{channelId}
-        AND  p1.feed_cat_path = #{feedCatPath}
+        <if test="feedCatPath != null">
+          AND p1.feed_cat_path = #{feedCatPath}
+        </if>
         <if test="tSts == 0">
             AND (v1.feed_value_translation is null OR LENGTH(trim(v1.feed_value_translation)) = 0)
         </if>

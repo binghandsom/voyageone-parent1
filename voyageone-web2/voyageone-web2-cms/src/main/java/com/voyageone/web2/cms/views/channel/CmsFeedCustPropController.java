@@ -420,6 +420,11 @@ public class CmsFeedCustPropController extends CmsController {
         HashMap dataMap = new HashMap(1);
         List<CmsMtFeedCategoryModel> topTree = cmsFeedCustPropService.getTopCategories(getUser());
         List<CmsMtFeedCategoryModel> rsltList = new ArrayList<CmsMtFeedCategoryModel>();
+        CmsMtFeedCategoryModel comMdl = new CmsMtFeedCategoryModel();
+        comMdl.setPath("0");
+        comMdl.setName("共通属性");
+        comMdl.setCid("共通属性");
+        rsltList.add(comMdl);
         getSubCatTree2List(topTree, rsltList);
         for (CmsMtFeedCategoryModel catItem : rsltList) {
             catItem.setChild(null);
