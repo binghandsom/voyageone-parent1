@@ -41,10 +41,16 @@ define([
                 }
             });
             if (checkResult) {
-                attributeValueService.add($scope.vm)
+                $scope.vmInfo ={
+                    prop_id: $scope.vm.prop_id,
+                    value_original: $scope.vm.value_original,
+                    value_translation: $scope.vm.value_translation
+                };
+                attributeValueService.add($scope.vmInfo)
                     .then(function () {
                         notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
                         $modalInstance.close();
+                        $scope.$parent.initialize();
                     });
             }
 

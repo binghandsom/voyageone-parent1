@@ -22,16 +22,16 @@
                 </div>
             </div>
             <div class="form-group">
-                <label class="col-sm-4 control-label" ng-model="vm.value_original">英文属性值</label>
+                <label class="col-sm-4 control-label">英文属性值</label>
                 <div class="col-sm-6">
-                    <input class="form-control" ng-required="true">
+                    <input class="form-control" ng-required="true" ng-model="vm.value_original">
                 </div>
                 <label class="col-sm-1 control-label text-u-red text-left" translate="TXT_REQUIRED"></label>
             </div>
             <div class="form-group">
-                <label class="col-sm-4 control-label" ng-model="vm.value_translation">翻译属性值</label>
+                <label class="col-sm-4 control-label">翻译属性值</label>
                 <div class="col-sm-6">
-                    <input class="form-control">
+                    <input class="form-control" ng-model="vm.value_translation">
                 </div>
             </div>
         </form>
