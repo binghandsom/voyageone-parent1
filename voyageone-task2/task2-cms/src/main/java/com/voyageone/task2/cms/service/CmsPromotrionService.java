@@ -50,11 +50,19 @@ public class CmsPromotrionService extends BaseTaskService {
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
 
-
+        updatePromotion("010", "23");
+        for (TaskControlBean taskControlBean : taskControlList) {
+            if ("order_channel_id".equalsIgnoreCase(taskControlBean.getCfg_name())) {
+                String channelId  = taskControlBean.getCfg_val1();
+                String cartId  = taskControlBean.getCfg_val2();
+                updatePromotion(channelId,cartId);
+            }
+        }
     }
 
     private void updatePromotion(String channelId, String cartId) {
         List<Map> items = promotionDao.getPromotionItem(channelId, cartId);
+        if (items.size() == 0) return;
         // 取得shop信息
         ShopBean shopBean = ShopConfigs.getShop(channelId, cartId);
 //        shopBean.setAppKey("21008948");
@@ -65,7 +73,7 @@ public class CmsPromotrionService extends BaseTaskService {
         items.forEach(item -> {
             TaobaoResponse response;
             try {
-                Long promotionId = Long.parseLong(item.get("promotionId").toString());
+                Long promotionId = Long.parseLong(item.get("tejiabaoId").toString());
                 // 先删除之前的提价商品
                 tbPromotionService.removePromotion(shopBean, Long.parseLong(item.get("num_iid").toString()), promotionId);
 
@@ -90,7 +98,7 @@ public class CmsPromotrionService extends BaseTaskService {
                             // 价格与MSRP价格不一致的sku才加特价宝
                             if (!StringUtils.isEmpty((String) map.get("promotionPrice"))) {
                                 TipSkuPromUnitDTO tipSkuPromUnitDTO = new TipSkuPromUnitDTO();
-                                tipSkuPromUnitDTO.setDiscount(Long.parseLong(map.get("promotionPrice").toString()));
+                                tipSkuPromUnitDTO.setDiscount(Long.parseLong(map.get("promotionPrice").toString()) * 100);
                                 // 获取SKU对已TM的SKUID
                                 skuids.getSkus().forEach(sku -> {
                                     if (sku.getOuterId() != null) {
@@ -111,7 +119,7 @@ public class CmsPromotrionService extends BaseTaskService {
                     List<Map> skuList = (List<Map>) productList.get(0).get("skuList");
                     if (!StringUtils.isEmpty((String) skuList.get(0).get("promotionPrice"))) {
                         TipPromUnitDTO tipPromUnitDTO = new TipPromUnitDTO();
-                        tipPromUnitDTO.setDiscount(Long.parseLong(skuList.get(0).get("promotionPrice").toString()));
+                        tipPromUnitDTO.setDiscount(Long.parseLong(skuList.get(0).get("promotionPrice").toString()) * 100);
                         tipItemPromDTO.setItemLevelProm(tipPromUnitDTO);
                     }
                 }
@@ -120,7 +128,7 @@ public class CmsPromotrionService extends BaseTaskService {
 
                 // 成功的场合把product_id保存起来
                 if (response != null && response.getErrorCode() == null) {
-                    succeedProduct.add(item.get("num_iid").toString());
+                    succeedProduct.add(item.get("promotionId").toString() + "," + item.get("num_iid").toString());
                 } else {
                     // 失败的场合 错误信息取得
                     String fail = "";
@@ -156,9 +164,9 @@ public class CmsPromotrionService extends BaseTaskService {
             Map<String, Object> parameter = new HashMap<>();
             parameter.put("promotionId", s.split(",")[0]);
             parameter.put("taskType", 0);
-            parameter.put("key", s.split(",")[1]);
-            parameter.put("syn_flg", "2");
-            parameter.put("err_msg", "");
+            parameter.put("num_iid", s.split(",")[1]);
+            parameter.put("synFlg", "2");
+            parameter.put("errMsg", "");
             parameter.put("modifier", getTaskName());
             promotionDao.updatePromotionStatus(parameter);
         });
@@ -170,9 +178,9 @@ public class CmsPromotrionService extends BaseTaskService {
                 Map<String, Object> parameter = new HashMap<>();
                 parameter.put("promotionId", numIid.split(",")[0]);
                 parameter.put("taskType", 0);
-                parameter.put("key", numIid.split(",")[1]);
-                parameter.put("syn_flg", "9");
-                parameter.put("err_msg", s);
+                parameter.put("num_iid", numIid.split(",")[1]);
+                parameter.put("synFlg", "3");
+                parameter.put("errMsg", s);
                 parameter.put("modifier", getTaskName());
                 promotionDao.updatePromotionStatus(parameter);
             });

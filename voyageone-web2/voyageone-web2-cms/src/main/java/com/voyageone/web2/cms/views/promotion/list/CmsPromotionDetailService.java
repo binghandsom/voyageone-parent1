@@ -162,6 +162,7 @@ public class CmsPromotionDetailService extends BaseAppService {
                 productModel.setModifier(operator);
                 promotionDetailService.insert(productModel);
             } catch (Exception e) {
+                e.printStackTrace();
                 simpleTransaction.rollback();
                 productModel.getCodes().forEach(cmsBtPromotionCodeModel -> response.get("fail").add(cmsBtPromotionCodeModel.getProductCode()));
                 errflg = true;

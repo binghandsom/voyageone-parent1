@@ -46,8 +46,8 @@ public class CmsFeedMappingService {
         return cmsBtFeedMappingDao.update(feedMappingModel);
     }
 
-    public List<CmsBtFeedMappingModel> getMappingWithoutProps(String selChannelId, String topCategoryPath) {
-        return cmsBtFeedMappingDao.findMappingWithoutProps(selChannelId, topCategoryPath);
+    public List<CmsBtFeedMappingModel> getMappingWithoutProps(String selChannelId) {
+        return cmsBtFeedMappingDao.findMappingWithoutProps(selChannelId);
     }
 
     public boolean isCanBeDefaultMain(Channel channel, String topCategoryPath) {
