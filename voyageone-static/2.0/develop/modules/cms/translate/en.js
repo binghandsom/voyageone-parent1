@@ -247,8 +247,10 @@ define(function() {
         "TXT_MSG_CODE_IN_OTHER": "The code you submit, already in other task. Go on ?",
         "TXT_MSG_REIMPORT_BEAT": "Reimport data, will clear last data. Go on (・ˍ・ ? )",
         "TXT_MSG_ERROR_BEAT_ITEM": "The data seems to be wrong. Are you sure you want to change the status of it (⊙＿⊙ ?)",
-        "TXT_MSG_INPUT_WORD_LENCHK": "you can input",
-        "TXT_MSG_INPUT_WORD_LENCHK2": "words",
+        "TXT_MSG_INPUT_WORD_LENCHK": "you can input ",
+        "TXT_MSG_INPUT_WORD_LENCHK2": " words",
+        "TXT_MSG_INPUT_WORD_LENLOWLIMIT": "Please enter at least ",
+        "TXT_MSG_INPUT_WORD_LENLIMIT": "Maximum length limit of character",
 
 
         "BTN_CREATE_TASK": "New Task",

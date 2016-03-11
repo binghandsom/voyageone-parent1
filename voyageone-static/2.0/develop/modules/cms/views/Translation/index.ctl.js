@@ -187,11 +187,11 @@ function chkWordSize(lenType, tobj) {
         var curLength = $(tobj).val().length;
         var od = $(tobj.parentNode).find("i#wordsizemsg");
         if (curLength < minLen) {
-            od[0].innerHTML = '&nbsp;请至少输入' + minLen + '个字符';
+            od[0].innerHTML = '&nbsp;' + translateex.instant('TXT_MSG_INPUT_WORD_LENLOWLIMIT') + minLen + translateex.instant('TXT_MSG_INPUT_WORD_LENCHK2');
         } else if (curLength >= maxLen) {
-            od[0].innerHTML = '&nbsp;已经达到最大长度字符数限制';
+            od[0].innerHTML = '&nbsp;' + translateex.instant('TXT_MSG_INPUT_WORD_LENLIMIT');
         } else {
-            od[0].innerHTML =  '&nbsp;' + translateex.instant('TXT_MSG_INPUT_WORD_LENCHK') + (maxLen - curLength) + translateex.instant('TXT_MSG_INPUT_WORD_LENCHK2');
+            od[0].innerHTML = '&nbsp;' + translateex.instant('TXT_MSG_INPUT_WORD_LENCHK') + (maxLen - curLength) + translateex.instant('TXT_MSG_INPUT_WORD_LENCHK2');
         }
     },500);
 }
@@ -202,10 +202,10 @@ function cmtWordSize(lenType, tobj) {
     $(od[0]).css("visibility", "visible");
     var curLength = $(tobj).val().length;
     if (curLength < minLen) {
-        od[0].innerHTML = '&nbsp;请至少输入' + minLen + '个字符';
+        od[0].innerHTML = '&nbsp;' + translateex.instant('TXT_MSG_INPUT_WORD_LENLOWLIMIT') + minLen + translateex.instant('TXT_MSG_INPUT_WORD_LENCHK2');
     } else if (curLength >= maxLen) {
-        od[0].innerHTML = '&nbsp;已经达到最大长度字符数限制';
+        od[0].innerHTML = '&nbsp;' + translateex.instant('TXT_MSG_INPUT_WORD_LENLIMIT');
     } else {
-        od[0].innerHTML =  '&nbsp;' + translateex.instant('TXT_MSG_INPUT_WORD_LENCHK') + (maxLen - curLength) + translateex.instant('TXT_MSG_INPUT_WORD_LENCHK2');
+        od[0].innerHTML = '&nbsp;' + translateex.instant('TXT_MSG_INPUT_WORD_LENCHK') + (maxLen - curLength) + translateex.instant('TXT_MSG_INPUT_WORD_LENCHK2');
     }
 }

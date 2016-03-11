@@ -250,6 +250,8 @@ define(function(){
         "TXT_MSG_ERROR_BEAT_ITEM": "这个任务的商品信息好像有问题? 你确定要修改它的状态?",
         "TXT_MSG_INPUT_WORD_LENCHK": "你还可以输入",
         "TXT_MSG_INPUT_WORD_LENCHK2": "个文字",
+        "TXT_MSG_INPUT_WORD_LENLOWLIMIT": "请至少输入",
+        "TXT_MSG_INPUT_WORD_LENLIMIT": "已经达到最大长度字符数限制",
 
 
         "BTN_CREATE_TASK": "新建任务",
