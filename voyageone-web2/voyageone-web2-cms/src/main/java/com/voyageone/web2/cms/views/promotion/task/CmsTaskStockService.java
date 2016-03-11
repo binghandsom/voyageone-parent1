@@ -1,14 +1,10 @@
 package com.voyageone.web2.cms.views.promotion.task;
 ;
-import com.voyageone.cms.service.model.CmsBtFeedInfoModel;
 import com.voyageone.common.configs.TypeChannel;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.web2.base.BaseAppService;
-import com.voyageone.web2.cms.dao.CmsBtStockSeparateIncrementItemDao;
-import com.voyageone.web2.cms.dao.CmsBtStockSeparateItemDao;
-import com.voyageone.web2.cms.dao.CmsBtStockSeparatePlatformInfoDao;
-import com.voyageone.web2.cms.dao.WmsBtLogicInventoryDao;
+import com.voyageone.web2.cms.dao.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +24,9 @@ public class CmsTaskStockService extends BaseAppService {
 
     @Autowired
     private CmsBtStockSeparateIncrementItemDao cmsBtStockSeparateIncrementItemDao;
+
+    @Autowired
+    private CmsBtStockSalesQuantityDao cmsBtStockSalesQuantityDao;
 
     @Autowired
     private WmsBtLogicInventoryDao wmsBtLogicInventoryDao;
@@ -229,40 +228,214 @@ public class CmsTaskStockService extends BaseAppService {
      */
     public List<Map<String,Object>> getRealStockList(Map param, List<Object>skuList){
         List<Map<String,Object>> realStockList = new ArrayList<Map<String,Object>>();
+        // 库存隔离明细列表
+        Map<String, Object> sqlParam = new HashMap<String, Object>();
+        List<Map<String,Object>> platformList = (List<Map<String,Object>>) param.get("platformList");
+        sqlParam.put("taskId", param.get("taskId"));
+        sqlParam.put("skuList", skuList);
+        sqlParam.put("tableName", param.get("tableName"));
+        sqlParam.put("lang", param.get("lang"));
+        // 获取当页表示的库存隔离数据
+        List<Map<String,Object>> stockAllList = cmsBtStockSeparateItemDao.selectStockSeparateItem(sqlParam);
+        // sku临时变量
+        String skuTemp = "";
+        Map<String, Object> lineInfo = null;
+        List<Map<String, Object>> linePlatformInfoList = null;
+        // 平台列表的索引
+        int  platformIndex = 0;
+        for (Map<String,Object> stockInfo : stockAllList) {
+            String model = (String) stockInfo.get("product_model");
+            String code = (String) stockInfo.get("product_code");
+            String currentSku = (String) stockInfo.get("sku");  //当前行的sku
+            String cartId = String.valueOf(stockInfo.get("cart_id"));
+            String property1 = (String) stockInfo.get("property1");
+            String property2 = (String) stockInfo.get("property2");
+            String property3 = (String) stockInfo.get("property3");
+            String property4 = (String) stockInfo.get("property4");
+            String qty = String.valueOf(stockInfo.get("qty"));
+            String separateQty = String.valueOf(stockInfo.get("separate_qty"));
+            String statusName = (String) stockInfo.get("status_name");
+            // 加入一条新的库存隔离明细
+            if (!currentSku.equals(skuTemp)) {
+                // 加入隔离平台为"动态"的信息
+                // 例：{"cartId":"20", "separationQty":"-1", },{"cartId":"23", "separationQty":"-1", }
+                if (platformIndex > 0) {
+                    for (int i = platformIndex; i < platformList.size(); i++) {
+                        Map<String, Object> linePlatformInfo = new HashMap<String, Object>();
+                        linePlatformInfo.put("cartId", (String) ((HashMap<String, Object>) platformList.get(platformIndex)).get("cartId"));
+                        linePlatformInfo.put("separationQty", "-1");
+                        linePlatformInfoList.add(linePlatformInfo);
+                        platformIndex++;
+                    }
+                }
+                // 取得某个sku的逻辑库存
+                int logicStock = 0;
+                Map<String,Object> sqlParam1 = new HashMap<String,Object>();
+                sqlParam1.put("sku", currentSku);
+                Object logicStockInfo = wmsBtLogicInventoryDao.selectLogicInventoryCnt(sqlParam1);
+                if (logicStockInfo != null) {
+                    logicStock = Integer.parseInt(String.valueOf(logicStockInfo));
+                }
+                // 取得所有平台的隔离库存
+                int stockSeparateSuccessAll = 0;
+                Map<String,Object> sqlParam2 = new HashMap<String,Object>();
+                sqlParam2.put("sku", currentSku);
+                sqlParam2.put("status", "2"); //隔离成功
+                Object stockSeparateSuccessAllInfo = cmsBtStockSeparateItemDao.selectStockSeparateSuccessQty(sqlParam2);
+                if (stockSeparateSuccessAllInfo != null) {
+                    stockSeparateSuccessAll = Integer.parseInt(String.valueOf(stockSeparateSuccessAllInfo));
+                }
+                // 取得所有平台的增量隔离库存
+                int stockSeparateIncrementSuccessAll = 0;
+                Object stockSeparateIncrementSuccessAllInfo = cmsBtStockSeparateIncrementItemDao.selectStockSeparateIncrementSuccessQty(sqlParam1);
+                if (stockSeparateIncrementSuccessAllInfo != null) {
+                    stockSeparateIncrementSuccessAll = Integer.parseInt(String.valueOf(stockSeparateIncrementSuccessAllInfo));
+                }
+                // 取得隔离期间各个隔离平台的销售数量
+                int stockSalesQuantityAll = 0;
+                Map<String,Object> sqlParam3 = new HashMap<String,Object>();
+                sqlParam3.put("channelId", param.get("channelId"));
+                sqlParam3.put("sku", currentSku);
+                sqlParam3.put("endFlg", "0");
+                Object stockSalesQuantityAllInfo = cmsBtStockSalesQuantityDao.selectStockSalesQuantity(sqlParam2);
+                if (stockSalesQuantityAllInfo != null) {
+                    stockSalesQuantityAll = Integer.parseInt(String.valueOf(stockSalesQuantityAllInfo));
+                }
+                skuTemp = currentSku;
+                platformIndex = 0;
+                lineInfo = new HashMap<String, Object>();
+                linePlatformInfoList = new ArrayList<Map<String, Object>>();
+                realStockList.add(lineInfo);
+                lineInfo.put("model", model);
+                lineInfo.put("code", code);
+                lineInfo.put("sku", currentSku);
+                lineInfo.put("property1", property1);
+                lineInfo.put("property2", property2);
+                lineInfo.put("property3", property3);
+                lineInfo.put("property4", property4);
+                lineInfo.put("qty", String.valueOf(logicStock - (stockSeparateSuccessAll + stockSeparateIncrementSuccessAll - stockSalesQuantityAll)));
+                lineInfo.put("platformStock", linePlatformInfoList);
+            }
+            // 加入隔离平台为"动态"的信息
+            // 例：{"cartId":"20", "separationQty":"-1", },{"cartId":"23", "separationQty":"-1", }
+            while (!((HashMap<String, Object>) platformList.get(platformIndex)).get("cartId").equals(cartId)) {
+                Map<String, Object> linePlatformInfo = new HashMap<String, Object>();
+                linePlatformInfo.put("cartId", (String)((HashMap<String, Object>) platformList.get(platformIndex)).get("cartId"));
+                linePlatformInfo.put("separationQty", "-1");
+                linePlatformInfoList.add(linePlatformInfo);
+                platformIndex++;
+            }
+            // 加入平台库存隔离信息
+            // 例：{"cartId":"23", "separationQty":"30", "salesQty":"10"}
+            if (((HashMap<String, Object>) platformList.get(platformIndex)).get("cartId").equals(cartId)) {
+                // 取得该任务下某个平台的隔离库存
+                int stockSeparateSuccess = 0;
+                Map<String,Object> sqlParam4 = new HashMap<String,Object>();
+                sqlParam4.put("sku", currentSku);
+                sqlParam4.put("status", "2"); //隔离成功
+                sqlParam4.put("taskId", param.get("taskId"));
+                sqlParam4.put("cartId",cartId);
+                Object stockSeparateSuccessInfo = cmsBtStockSeparateItemDao.selectStockSeparateSuccessQty(sqlParam4);
+                if (stockSeparateSuccessInfo != null) {
+                    stockSeparateSuccess = Integer.parseInt(String.valueOf(stockSeparateSuccessInfo));
+                }
+                // 取得该任务下某个平台的增量隔离库存
+                int stockSeparateIncrementSuccess = 0;
+                Object stockSeparateIncrementSuccessInfo = cmsBtStockSeparateIncrementItemDao.selectStockSeparateIncrementSuccessQtyByTask(sqlParam4);
+                if (stockSeparateIncrementSuccessInfo != null) {
+                    stockSeparateIncrementSuccess = Integer.parseInt(String.valueOf(stockSeparateIncrementSuccessInfo));
+                }
 
-        for (Object sku:skuList) {
-            // 取得某个sku的逻辑库存
-            int logicStock = getLogicStock((String) sku);
+                // 取得隔离期间某个隔离平台的销售数量
+                int stockSalesQuantity = 0;
+                Map<String,Object> sqlParam5 = new HashMap<String,Object>();
+                sqlParam5.put("channelId", param.get("channelId"));
+                sqlParam5.put("sku", currentSku);
+                sqlParam5.put("endFlg", "0");
+                sqlParam5.put("cartId",cartId);
+                Object stockSalesQuantityInfo = cmsBtStockSalesQuantityDao.selectStockSalesQuantity(sqlParam5);
+                if (stockSalesQuantityInfo != null) {
+                    stockSalesQuantity = Integer.parseInt(String.valueOf(stockSalesQuantityInfo));
+                }
 
-            // 取得所有平台的隔离库存
-            Map<String,Object> sqlParam = new HashMap<String,Object>();
-            sqlParam.put("sku", sku);
-            sqlParam.put("status", "2"); //隔离成功
-            int stockSeparateSuccessAll = cmsBtStockSeparateItemDao.selectStockSeparateSuccessQty(sqlParam);
-
-            // 取得所有平台的增量隔离库存
-            int stockSeparateIncrementSuccessAll = cmsBtStockSeparateIncrementItemDao.selectStockSeparateIncrementSuccessQty(sqlParam);
-
-            // 取得隔离期间各个隔离平台的销售数量
-
+                Map<String, Object> linePlatformInfo = new HashMap<String, Object>();
+                linePlatformInfo.put("cartId", cartId);
+                linePlatformInfo.put("separationQty", String.valueOf(stockSeparateSuccess + stockSeparateIncrementSuccess));
+                linePlatformInfo.put("salesQty",  String.valueOf(stockSalesQuantity));
+                linePlatformInfoList.add(linePlatformInfo);
+            }
+            platformIndex++;
         }
+
+
+
+
+
+
+
+
+//        for (Object sku:skuList) {
+
+//            // 取得某个sku的逻辑库存
+//            int logicStock = 0;
+//            Map<String,Object> sqlParam = new HashMap<String,Object>();
+//            sqlParam.put("sku", sku);
+//            Object logicStockInfo = wmsBtLogicInventoryDao.selectLogicInventoryCnt(sqlParam);
+//            if (logicStockInfo != null) {
+//                logicStock = Integer.parseInt(String.valueOf(logicStockInfo));
+//            }
+
+//            // 取得所有平台的隔离库存
+//            int stockSeparateSuccessAll = 0;
+//            Map<String,Object> sqlParam1 = new HashMap<String,Object>();
+//            sqlParam1.put("sku", sku);
+//            sqlParam1.put("status", "2"); //隔离成功
+//            Object stockSeparateSuccessAllInfo = cmsBtStockSeparateItemDao.selectStockSeparateSuccessQty(sqlParam1);
+//            if (stockSeparateSuccessAllInfo != null) {
+//                stockSeparateSuccessAll = Integer.parseInt(String.valueOf(stockSeparateSuccessAllInfo));
+//            }
+//
+//            // 取得所有平台的增量隔离库存
+//            int stockSeparateIncrementSuccessAll = 0;
+//            Object stockSeparateIncrementSuccessAllInfo = cmsBtStockSeparateIncrementItemDao.selectStockSeparateIncrementSuccessQty(sqlParam1);
+//            if (stockSeparateIncrementSuccessAllInfo != null) {
+//                stockSeparateIncrementSuccessAll = Integer.parseInt(String.valueOf(stockSeparateIncrementSuccessAllInfo));
+//            }
+
+//            // 取得隔离期间各个隔离平台的销售数量
+//            int stockSalesQuantity = 0;
+//            Map<String,Object>sqlParam2 = new HashMap<String,Object>();
+//            sqlParam2.put("channelId", param.get("channelId"));
+//            sqlParam2.put("sku", sku);
+//            sqlParam2.put("endFlg", "0");
+//            Object stockSalesQuantityInfo = cmsBtStockSalesQuantityDao.selectStockSalesQuantity(sqlParam2);
+//            if (stockSalesQuantityInfo != null) {
+//                stockSalesQuantity = Integer.parseInt(String.valueOf(stockSalesQuantityInfo));
+//            }
+
+//            // 取得该任务下某个平台的隔离库存
+//            int stockSeparateSuccess = 0;
+//            sqlParam1 = new HashMap<String,Object>();
+//            sqlParam1.put("sku", sku);
+//            sqlParam1.put("status", "2"); //隔离成功
+//            sqlParam1.put("taskId", param.get("taskId"));
+//            Object stockSeparateSuccessInfo = cmsBtStockSeparateItemDao.selectStockSeparateSuccessQty(sqlParam1);
+//            if (stockSeparateSuccessInfo != null) {
+//                stockSeparateSuccess = Integer.parseInt(String.valueOf(stockSeparateSuccessInfo));
+//            }
+
+//            // 取得该任务下所有平台的增量隔离库存
+//            int stockSeparateIncrementSuccess = 0;
+//            Object stockSeparateIncrementSuccessInfo = cmsBtStockSeparateIncrementItemDao.selectStockSeparateIncrementSuccessQtyByTask(sqlParam1);
+//            if (stockSeparateIncrementSuccessInfo != null) {
+//                stockSeparateIncrementSuccess = Integer.parseInt(String.valueOf(stockSeparateIncrementSuccessInfo));
+//            }
+
+
+
+//        }
         return realStockList;
     }
-
-    /**
-     * 取得某个sku的逻辑库存
-     *
-     * @param sku sku
-     * @return 某个sku的逻辑库存
-     */
-    public int getLogicStock(String sku){
-        Map<String,Object> sqlParam = new HashMap<String,Object>();
-        sqlParam.put("sku", sku);
-        int logicStock = wmsBtLogicInventoryDao.selectLogicInventoryCnt(sqlParam);
-        return  logicStock;
-    }
-
-
 
 
     /**

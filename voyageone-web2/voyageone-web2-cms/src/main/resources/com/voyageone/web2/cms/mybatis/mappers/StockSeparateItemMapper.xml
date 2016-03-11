@@ -45,13 +45,16 @@
             </if>
     </select>
 
-    <select id="select_stock_separate_success_qty" resultType="int" parameterType="HashMap">
+    <select id="select_stock_separate_success_qty" resultType="Object" parameterType="HashMap">
         select sum(qty)
         from   voyageone_cms2.cms_bt_stock_separate_item
         where sku = #{sku}
         and status = #{status}
         <if test="taskId !=null and taskId != ''">
             and task_id = #{taskId}
+        </if>
+        <if test="cartId !=null and cartId != ''">
+            and cart_id = #{cartId}
         </if>
     </select>
 

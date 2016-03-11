@@ -2,12 +2,21 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.voyageone.web2.cms.sql">
 
-    <select id="select_stock_sales_quantity" resultType="int" parameterType="HashMap">
-         select sum(qty)
+    <select id="select_stock_sales_quantity" resultType="Object" parameterType="HashMap">
+            select sum(qty)
             from   voyageone_cms2.cms_bt_stock_sales_quantity
-            where sub_task_id in (select sub_task_id from voyageone_cms2.cms_bt_stock_separate_increment_task
-                                        where task_id = #{taskId} )
-                and sku = #{sku}
-                and status = #{status}
+            where channel_id = #{channelId}
+                <if test="cartId !=null and cartId != ''">
+                    and cart_id = #{cartId}
+                </if>
+                <if test="sku !=null and sku != ''">
+                    and sku = #{sku}
+                </if>
+                <if test="endFlg !=null and endFlg != ''">
+                    and end_flg = #{endFlg}
+                </if>
+                <if test="sysTime !=null and sysTime != ''">
+                    <![CDATA[ and start_time <= #{sysTime} ]]>
+                </if>
     </select>
 </mapper>
