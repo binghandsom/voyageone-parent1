@@ -43,13 +43,13 @@ define([
             this.stockPageOption = {
                 curr: 1,
                 total: 0,
-                size: 10,
+                size: 100,
                 fetch: this.getCommonStockList.bind(this)
             };
             this.realStockPageOption = {
                 curr: 1,
                 total: 0,
-                size: 10,
+                size: 100,
                 fetch: this.search.bind(this)
             };
 
@@ -92,9 +92,9 @@ define([
                     "propertyList" : this.propertyList,
                     "platformList" : this.platformList,
                     "start1" :  0,
-                    "length1" : 10,
+                    "length1" : 100,
                     "start2" :  0,
-                    "length2" : 10
+                    "length2" : 100
                 }).then(function (res) {
                     main.readyNum = res.data.readyNum;
                     main.waitSeparationNum = res.data.waitSeparationNum;
