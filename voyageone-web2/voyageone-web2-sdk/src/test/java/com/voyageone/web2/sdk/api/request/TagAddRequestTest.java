@@ -1,9 +1,7 @@
 package com.voyageone.web2.sdk.api.request;
 
-import com.voyageone.cms.service.model.CmsBtProductModel_Sku;
 import com.voyageone.web2.sdk.api.VoApiDefaultClient;
-import com.voyageone.web2.sdk.api.domain.CmsBtTagModel;
-import com.voyageone.web2.sdk.api.request.*;
+import com.voyageone.service.model.cms.CmsBtTagModel;
 import com.voyageone.web2.sdk.api.response.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -74,8 +72,8 @@ public class TagAddRequestTest {
         System.out.println("tagList.size = " + tagModelList.size());
 
         if (tagModelList.size() > 0) {
-            for (int i = 0; i < tagModelList.size(); i++) {
-                System.out.println("tag id = " + tagModelList.get(i).getTagId());
+            for (CmsBtTagModel aTagModelList : tagModelList) {
+                System.out.println("tag id = " + aTagModelList.getTagId());
             }
         }
     }

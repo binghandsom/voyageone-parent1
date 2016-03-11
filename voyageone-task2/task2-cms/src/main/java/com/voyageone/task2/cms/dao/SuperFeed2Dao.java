@@ -1,7 +1,7 @@
 package com.voyageone.task2.cms.dao;
 
 import com.voyageone.base.dao.BaseDao;
-import com.voyageone.cms.service.model.CmsBtFeedInfoModel;
+import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.task2.cms.bean.*;
 import org.springframework.stereotype.Repository;
 
@@ -18,6 +18,13 @@ public class SuperFeed2Dao extends BaseDao {
     @Override
     protected String namespace() {
         return "com.voyageone.cms2.sql";
+    }
+
+    /**
+     * 插入维他命产品信息
+     */
+    public int insertSuperfeedVtmInfo(SuperFeedVtmBean superfeedvtmbean) {
+        return insert("cms_superfeed_insertSuperfeedVtmInfo", superfeedvtmbean);
     }
 
     /**

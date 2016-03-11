@@ -1,10 +1,6 @@
 package com.voyageone.web2.cms.wsdl.service;
 
 import com.voyageone.base.exception.BusinessException;
-import com.voyageone.cms.service.dao.mongodb.CmsMtCategorySchemaDao;
-import com.voyageone.cms.service.dao.mongodb.CmsMtCommonSchemaDao;
-import com.voyageone.cms.service.model.CmsMtCategorySchemaModel;
-import com.voyageone.cms.service.model.CmsMtComSchemaModel;
 import com.voyageone.common.configs.TypeChannel;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.field.ComplexField;
@@ -13,6 +9,10 @@ import com.voyageone.common.masterdate.schema.field.MultiComplexField;
 import com.voyageone.common.masterdate.schema.field.OptionsField;
 import com.voyageone.common.masterdate.schema.option.Option;
 import com.voyageone.common.masterdate.schema.value.ComplexValue;
+import com.voyageone.service.dao.cms.mongo.CmsMtCategorySchemaDao;
+import com.voyageone.service.dao.cms.mongo.CmsMtCommonSchemaDao;
+import com.voyageone.service.model.cms.mongo.CmsMtCategorySchemaModel;
+import com.voyageone.service.model.cms.mongo.CmsMtCommonSchemaModel;
 import com.voyageone.web2.cms.wsdl.BaseService;
 import com.voyageone.web2.sdk.api.response.CategorySchemaGetResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,8 +43,8 @@ public class CategorySchemaService extends BaseService {
 
     /**
      * 通过
-     * @param categoryId
-     * @return
+     * @param categoryId String
+     * @return CategorySchemaGetResponse
      */
     public CategorySchemaGetResponse getCategorySchemaByCatId(String categoryId){
 
@@ -53,7 +53,7 @@ public class CategorySchemaService extends BaseService {
         CmsMtCategorySchemaModel categorySchemaModel = getCmsMtCategorySchemaModel(categoryId);
 
         // 获取共通schema.
-        CmsMtComSchemaModel comSchemaModel = getComSchemaModel();
+        CmsMtCommonSchemaModel comSchemaModel = getComSchemaModel();
 
         List<Field> comSchemaFields = comSchemaModel.getFields();
 
@@ -90,8 +90,8 @@ public class CategorySchemaService extends BaseService {
 
     /**
      * 获取 master schema.
-     * @param categoryId
-     * @return
+     * @param categoryId String
+     * @return CmsMtCategorySchemaModel
      */
     private CmsMtCategorySchemaModel getCmsMtCategorySchemaModel(String categoryId) {
 
@@ -109,10 +109,10 @@ public class CategorySchemaService extends BaseService {
 
     /**
      * 获取common schema.
-     * @return
+     * @return CmsMtCommonSchemaModel
      */
-    private CmsMtComSchemaModel getComSchemaModel() {
-        CmsMtComSchemaModel comSchemaModel = cmsMtCommonSchemaDao.getComSchema();
+    private CmsMtCommonSchemaModel getComSchemaModel() {
+        CmsMtCommonSchemaModel comSchemaModel = cmsMtCommonSchemaDao.getComSchema();
 
         if (comSchemaModel == null){
 
@@ -129,8 +129,8 @@ public class CategorySchemaService extends BaseService {
 
     /**
      * 填充field选项值.
-     * @param fields
-     * @param channelId
+     * @param fields List<Field>
+     * @param channelId String
      */
     private void fillFieldOptions(List<Field> fields,String channelId){
 
@@ -163,7 +163,7 @@ public class CategorySchemaService extends BaseService {
 
     /**
      * complex field值为空时设定默认值.
-     * @param fields
+     * @param fields List<Field>
      */
     private void setDefaultComplexValues(List<Field> fields){
 
@@ -207,10 +207,10 @@ public class CategorySchemaService extends BaseService {
 
     /**
      * 设定Field 的valueFieldMap.
-     * @param fields
-     * @param complexValueMap
+     * @param fields List<Field>
+     * @param complexValueMap Map<String,Field>
      */
-    private void setDefaultValueFieldMap(List<Field> fields,Map<String,Field> complexValueMap){
+    private void setDefaultValueFieldMap(List<Field> fields,Map<String, Field> complexValueMap){
 
         for (Field field:fields){
             FieldTypeEnum type = field.getType();
@@ -265,8 +265,8 @@ public class CategorySchemaService extends BaseService {
 
     /**
      * 构建sku schema.
-     * @param categorySchemaModel
-     * @return
+     * @param categorySchemaModel CmsMtCategorySchemaModel
+     * @return List<Field>
      */
     private List<Field> buildSkuSchema(CmsMtCategorySchemaModel categorySchemaModel){
 

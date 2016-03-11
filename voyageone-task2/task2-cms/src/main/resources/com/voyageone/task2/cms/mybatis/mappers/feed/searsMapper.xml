@@ -119,7 +119,7 @@
         GROUP BY
            cfg_name
     </select>
-    <resultMap id="resultMap_sears" type="com.voyageone.cms.service.model.CmsBtFeedInfoModel">
+    <resultMap id="resultMap_sears" type="com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel">
         <result column="category" property="category" />
         <result column="channel_id" property="channelId" />
         <result column="m_product_type" property="sizeType" />
@@ -133,7 +133,7 @@
         <result column="p_code" property="code" />
         <result column="p_color" property="color" />
         <result column="p_made_in_country" property="origin" />
-            <collection property="skus" javaType="ArrayList" ofType="com.voyageone.cms.service.model.CmsBtFeedInfoModel_Sku" >
+            <collection property="skus" javaType="ArrayList" ofType="com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku" >
                 <result column="i_sku" property="sku" />
                 <result column="i_size" property="size" />
                 <result column="i_barcode" property="barcode" />

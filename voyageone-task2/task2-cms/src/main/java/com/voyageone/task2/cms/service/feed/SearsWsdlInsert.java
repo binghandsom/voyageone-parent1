@@ -1,10 +1,10 @@
 package com.voyageone.task2.cms.service.feed;
 
-import com.voyageone.cms.service.FeedToCmsService;
-import com.voyageone.cms.service.model.CmsBtFeedInfoModel;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.FeedEnums;
 import com.voyageone.common.configs.Feed;
+import com.voyageone.service.impl.cms.CmsFeedToCmsService;
+import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +24,7 @@ class SearsWsdlInsert extends SearsWsdlBase {
     private static final String INSERT_FLG = "update_flg = 1";
 
     @Autowired
-    private FeedToCmsService feedToCmsService;
+    private CmsFeedToCmsService feedToCmsService;
 
     /**
      * 获取任务名称

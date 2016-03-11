@@ -1,6 +1,6 @@
 package com.voyageone.web2.sdk.api.request;
 
-import com.voyageone.cms.service.model.CmsBtProductModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.web2.sdk.api.VoApiDefaultClient;
 import com.voyageone.web2.sdk.api.response.ProductGetResponse;
 import org.junit.Test;
@@ -68,8 +68,8 @@ public class ProductGetRequestTest {
 
     @Test
     public void testCountWithQueryString() {
-        ProductGetRequest requestModel = new ProductGetRequest("001");
-        String queryString = "{\"groups.platforms\":{$elemMatch: {\"groupId\":589, \"isMain\":1}}}";
+        ProductGetRequest requestModel = new ProductGetRequest("010");
+        String queryString = "{\"prodId\" : 13614}";
         requestModel.setQueryString(queryString);
         //SDK取得Product 数据
         System.out.println(voApiClient.execute(requestModel).getProduct());

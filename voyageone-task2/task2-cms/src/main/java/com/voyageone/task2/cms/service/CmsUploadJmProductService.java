@@ -153,8 +153,13 @@ public class CmsUploadJmProductService extends BaseTaskService {
             logger.info(jmBtProductImport.getChannelId() + "|" + jmBtProductImport.getProductCode() + " 聚美上新结束");
         } catch (Exception e) {
             e.printStackTrace();
-            issueLog.log(e, ErrorType.BatchJob, getSubSystem(),jmBtProductImport.getChannelId() + "  " +  jmBtProductImport.getProductCode());
-            jmBtProductImport.setSynFlg("3");
+            issueLog.log(e, ErrorType.BatchJob, getSubSystem(), jmBtProductImport.getChannelId() + "  " + jmBtProductImport.getProductCode());
+
+            if(e.getMessage().indexOf("产品审核失败")>=0 || e.getMessage().indexOf("jumei_hash_id不正确")>=0){
+                jmBtProductImport.setSynFlg("1");
+            }else{
+                jmBtProductImport.setSynFlg("3");
+            }
             jmBtProductImport.setUploadErrorInfo(CommonUtil.getMessages(e));
             jmBtProductImport.setModifier(getTaskName());
             productImportDao.updateProductImportInfo(jmBtProductImport);
@@ -268,9 +273,20 @@ public class CmsUploadJmProductService extends BaseTaskService {
             throw new BusinessException("产品图不存在");
         }
         pics = imagesMap.get(JumeiImageType.LOGISTICS.getId());
+        boolean logisticeBrand = false;
         if (pics != null) {
+            // 先找出和品牌有关的物流图
             for (JmPicBean jmPicBean : pics) {
-                stringBuffer.append(String.format(IMG_HTML, jmPicBean.getJmUrl()));
+                if(jmBtProductImport.getBrandName().equalsIgnoreCase(jmPicBean.getImageTypeExtend())){
+                    stringBuffer.append(String.format(IMG_HTML, jmPicBean.getJmUrl()));
+                    logisticeBrand = true;
+                }
+            }
+            //如果没有找到和品牌有关的物流图就用默认的
+            if(logisticeBrand == false){
+                for (JmPicBean jmPicBean : pics) {
+                    stringBuffer.append(String.format(IMG_HTML, jmPicBean.getJmUrl()));
+                }
             }
         } else {
             throw new BusinessException("物流图不存在");

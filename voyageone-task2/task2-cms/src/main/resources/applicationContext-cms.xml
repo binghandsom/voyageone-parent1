@@ -8,6 +8,9 @@
           http://www.springframework.org/schema/task/spring-task.xsd">
     <task:scheduled-tasks scheduler="cms-job-scheduler">
 
+        <!-- redis更新 task 每5分钟运行一次 -->
+        <!--<task:scheduled ref="cmsMtFeedConfigCacheRealTimeJob" method="run" cron="0/5 * * * * ?"/>-->
+
         <!-- mq resume task 每5分钟运行一次 -->
         <!--<task:scheduled ref="mqResumeJob" method="run" cron="0/5 * * * * ?"/>-->
 
@@ -38,6 +41,15 @@
 
         <!-- Jewelry feed 导入 cms2 -->
         <task:scheduled ref="CmsJEAnalySisJob" method="run" cron="0 0/1 0-23 * * ?"/>
+
+        <!-- 价格披露 v2 -->
+        <task:scheduled ref="CmsBeatJob" method="run" cron="0 0/1 0-23 * * ?"/>
+
+        <!-- 特价宝  -->
+        <task:scheduled ref="CmsPromotionJob" method="run" cron="0 0/1 0-23 * * ?"/>
+
+        <!-- 维他命 feed 导入 cms2 -->
+        <task:scheduled ref="CmsVtmJob" method="run" cron="0 0 * * * ?"/>
 
     </task:scheduled-tasks>
 

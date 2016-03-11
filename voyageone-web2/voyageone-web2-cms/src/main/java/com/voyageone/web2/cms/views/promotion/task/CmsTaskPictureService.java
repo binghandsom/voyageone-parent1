@@ -6,14 +6,14 @@ import com.voyageone.common.configs.Enums.PromotionTypeEnums;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.wsdl.bean.task.beat.TaskBean;
-import com.voyageone.web2.cms.wsdl.dao.CmsBtBeatInfoDao;
-import com.voyageone.web2.cms.wsdl.dao.CmsBtTaskDao;
-import com.voyageone.web2.cms.wsdl.models.CmsBtBeatInfoModel;
-import com.voyageone.web2.cms.wsdl.models.CmsBtTaskModel;
+import com.voyageone.service.dao.cms.CmsBtBeatInfoDao;
+import com.voyageone.service.dao.cms.CmsBtTasksDao;
+import com.voyageone.service.model.cms.CmsBtBeatInfoModel;
+import com.voyageone.service.model.cms.CmsBtTasksModel;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import com.voyageone.web2.sdk.api.VoApiClient;
-import com.voyageone.web2.sdk.api.domain.CmsBtPromotionCodeModel;
-import com.voyageone.web2.sdk.api.domain.CmsBtPromotionModel;
+import com.voyageone.service.model.cms.CmsBtPromotionCodeModel;
+import com.voyageone.service.model.cms.CmsBtPromotionModel;
 import com.voyageone.web2.sdk.api.request.PromotionCodeGetRequest;
 import com.voyageone.web2.sdk.api.request.PromotionModelsGetRequest;
 import com.voyageone.web2.sdk.api.request.PromotionsGetRequest;
@@ -50,7 +50,7 @@ public class CmsTaskPictureService extends BaseAppService {
     private VoApiClient apiClient;
 
     @Autowired
-    private CmsBtTaskDao taskDao;
+    private CmsBtTasksDao taskDao;
 
     @Autowired
     private CmsBtBeatInfoDao beatInfoDao;
@@ -73,7 +73,7 @@ public class CmsTaskPictureService extends BaseAppService {
             throw new BusinessException("7000002");
 
         // 尝试检查任务的名称, 是否已经存在
-        List<CmsBtTaskModel> taskModels = taskDao.selectByName(
+        List<CmsBtTasksModel> taskModels = taskDao.selectByName(
                 taskBean.getPromotion_id(),
                 taskBean.getTask_name(),
                 PromotionTypeEnums.Type.JIAGEPILU.getTypeId());
@@ -268,7 +268,7 @@ public class CmsTaskPictureService extends BaseAppService {
 
     public List<Map<String, Object>> getNewNumiid(Integer task_id) {
         if (task_id == null) return null;
-        CmsBtTaskModel taskModel = taskDao.selectByIdWithPromotion(task_id);
+        CmsBtTasksModel taskModel = taskDao.selectByIdWithPromotion(task_id);
         if (taskModel == null) return null;
         Map<String, Object> map = new HashMap<>();
         map.put("promotionId", taskModel.getPromotion_id());
@@ -278,10 +278,10 @@ public class CmsTaskPictureService extends BaseAppService {
         return response.getPromotionGroups();
     }
 
-    public List<CmsBtPromotionCodeModel> getCodes(int promotionId, int modelId) {
+    public List<CmsBtPromotionCodeModel> getCodes(int promotionId, String productModel) {
         Map<String, Object> map = new HashMap<>();
         map.put("promotionId", promotionId);
-        map.put("modelId", modelId);
+        map.put("productModel", productModel);
         PromotionCodeGetRequest request = new PromotionCodeGetRequest();
         request.setParam(map);
         PromotionCodeGetResponse response = apiClient.execute(request);
@@ -289,14 +289,14 @@ public class CmsTaskPictureService extends BaseAppService {
     }
 
     public List<CmsBtBeatInfoModel> addCheck(int task_id, String num_iid) {
-        CmsBtTaskModel taskModel = taskDao.selectByIdWithPromotion(task_id);
+        CmsBtTasksModel taskModel = taskDao.selectByIdWithPromotion(task_id);
         if (taskModel == null)
             throw new BusinessException("没找到 Promotion");
         return beatInfoDao.selectListByNumiidInOtherTask(taskModel.getPromotion_id(), task_id, num_iid);
     }
 
     public Integer add(int task_id, String num_iid, String code, UserSessionBean user) {
-        CmsBtTaskModel taskModel = taskDao.selectByIdWithPromotion(task_id);
+        CmsBtTasksModel taskModel = taskDao.selectByIdWithPromotion(task_id);
         if (taskModel == null) return null;
         CmsBtBeatInfoModel model = beatInfoDao.selectOneByNumiid(task_id, num_iid);
         if (model != null) {

@@ -18,7 +18,11 @@
             <artifactId>voyageone-com</artifactId>
             <version>${voyageone.common.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>com.voyageone</groupId>
+            <artifactId>voyageone-service2-model</artifactId>
+            <version>${voyageone.service2.model.version}</version>
+        </dependency>
 
     </dependencies>
     <build>

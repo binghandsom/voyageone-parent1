@@ -1,9 +1,9 @@
 package com.voyageone.task2.cms.bean.platform;
 
-import com.voyageone.cms.service.model.CmsBtProductModel;
-import com.voyageone.cms.service.model.CmsBtProductModel_Group_Platform;
-import com.voyageone.cms.service.model.CmsBtProductModel_Sku;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Group_Platform;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 
 import java.util.List;
 import java.util.Map;

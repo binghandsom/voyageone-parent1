@@ -3,7 +3,7 @@
   "displayType": null,
   "message": null,
   "data": {
-    "sameAttr": "0",
+    "sameAttr": "1",
     "valList":
     [
       {"prop_id":"01", "prop_original":"size", "prop_translation":"尺寸", "cat_path":"0"},

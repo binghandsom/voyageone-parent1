@@ -9,21 +9,24 @@ define([
     angularAMD.controller('popAddAttributeValueCtl', function ($scope, $modalInstance, context, alert) {
 
         $scope.vm = {
-            value_original:"",
-            value_translation:""
+            prop_original:"",
+            prop_translation:""
         };
 
+        /**
+         * 提交属性追加
+         */
         $scope.ok = function () {
-            var nData = {};
-            nData.prop_original = $scope.vm.value_original;
-            nData.prop_translation = $scope.vm.value_translation;
-
-            if (!_.isEmpty(_.where(context.from, nData))) {
-                alert("该属性已经存在");
-            } else {
-                $modalInstance.close(nData);
+            var checkResult = true;
+            _.each(context.from, function(value) {
+                if (_.isEqual(value.prop_original, $scope.vm.prop_original)) {
+                    alert("该属性已经存在");
+                    checkResult = false;
+                }
+            });
+            if (checkResult) {
+                $modalInstance.close($scope.vm);
             }
-            //$scope.$close();
         };
     });
 

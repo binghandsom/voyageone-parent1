@@ -1,13 +1,13 @@
 package com.voyageone.task2.cms.service.platform.common;
 
+import com.voyageone.service.dao.cms.mongo.CmsMtPlatformMappingDao;
+import com.voyageone.service.impl.cms.CmsProductService;
+import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Group_Platform;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import com.voyageone.task2.cms.bean.platform.SxData;
 import com.voyageone.task2.cms.dao.SkuInventoryDao;
-import com.voyageone.cms.service.CmsProductService;
-import com.voyageone.cms.service.dao.mongodb.CmsMtPlatformMappingDao;
-import com.voyageone.cms.service.model.CmsBtProductModel;
-import com.voyageone.cms.service.model.CmsBtProductModel_Group_Platform;
-import com.voyageone.cms.service.model.CmsBtProductModel_Sku;
-import com.voyageone.cms.service.model.CmsMtPlatformMappingModel;
 import com.voyageone.common.configs.ShopConfigs;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.StringUtils;

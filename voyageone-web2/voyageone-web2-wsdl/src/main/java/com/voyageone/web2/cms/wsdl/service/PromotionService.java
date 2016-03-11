@@ -4,12 +4,10 @@
 
 package com.voyageone.web2.cms.wsdl.service;
 
-import com.voyageone.base.exception.BusinessException;
-import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.web2.cms.wsdl.BaseService;
-import com.voyageone.web2.cms.wsdl.dao.CmsBtPromotionDao;
-import com.voyageone.web2.cms.wsdl.dao.CmsBtTagDao;
-import com.voyageone.web2.sdk.api.domain.CmsBtPromotionModel;
+import com.voyageone.service.dao.cms.CmsBtPromotionDao;
+import com.voyageone.service.dao.cms.CmsBtTagDao;
+import com.voyageone.service.model.cms.CmsBtPromotionModel;
 import com.voyageone.web2.sdk.api.exception.ApiException;
 import com.voyageone.web2.sdk.api.request.*;
 import com.voyageone.web2.sdk.api.response.PromotionsGetResponse;

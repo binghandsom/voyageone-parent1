@@ -2,12 +2,12 @@ package com.voyageone.web2.cms.wsdl.service;
 
 import com.mongodb.BulkWriteResult;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
-import com.voyageone.cms.service.dao.mongodb.CmsBtProductDao;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.web2.cms.wsdl.BaseService;
-import com.voyageone.web2.cms.wsdl.dao.CmsBtTagProductLogDao;
+import com.voyageone.service.dao.cms.CmsBtTagProductLogDao;
 import com.voyageone.web2.sdk.api.VoApiConstants;
-import com.voyageone.web2.sdk.api.domain.CmsBtTagProductLogModel;
+import com.voyageone.service.model.cms.CmsBtTagProductLogModel;
 import com.voyageone.web2.sdk.api.exception.ApiException;
 import com.voyageone.web2.sdk.api.request.ProductSkusGetRequest;
 import com.voyageone.web2.sdk.api.request.ProductsGetRequest;

@@ -1,7 +1,7 @@
 package com.voyageone.task2.cms.service.promotion.beat;
 
-import com.voyageone.web2.cms.wsdl.dao.CmsBtBeatInfoDao;
-import com.voyageone.web2.cms.wsdl.models.CmsBtBeatInfoModel;
+import com.voyageone.service.dao.cms.CmsBtBeatInfoDao;
+import com.voyageone.service.model.cms.CmsBtBeatInfoModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

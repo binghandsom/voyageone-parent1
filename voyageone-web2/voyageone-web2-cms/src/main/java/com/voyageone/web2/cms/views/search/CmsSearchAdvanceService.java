@@ -1,7 +1,5 @@
 package com.voyageone.web2.cms.views.search;
 
-import com.voyageone.cms.service.CmsBtChannelCategoryService;
-import com.voyageone.cms.service.model.CmsBtProductModel;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.Properties;
@@ -9,14 +7,17 @@ import com.voyageone.common.configs.TypeChannel;
 import com.voyageone.common.util.FileUtils;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.service.impl.cms.CmsBtChannelCategoryService;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.CmsConstants;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.cms.bean.search.index.CmsSearchInfoBean;
+import com.voyageone.web2.cms.dao.CustomWordDao;
 import com.voyageone.web2.cms.views.promotion.list.CmsPromotionIndexService;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import com.voyageone.web2.sdk.api.VoApiDefaultClient;
-import com.voyageone.web2.sdk.api.domain.CmsBtTagModel;
+import com.voyageone.service.model.cms.CmsBtTagModel;
 import com.voyageone.web2.sdk.api.request.ProductsGetRequest;
 import com.voyageone.web2.sdk.api.request.TagsGetRequest;
 import com.voyageone.web2.sdk.api.response.ProductsGetResponse;
@@ -41,7 +42,8 @@ public class CmsSearchAdvanceService extends BaseAppService{
 
     @Autowired
     private CmsPromotionIndexService cmsPromotionService;
-
+    @Autowired
+    private CustomWordDao customWordDao;
     @Autowired
     protected VoApiDefaultClient voApiClient;
 
@@ -105,6 +107,9 @@ public class CmsSearchAdvanceService extends BaseAppService{
         Map<String, Object> params = new HashMap<>();
         params.put("channelId", userInfo.getSelChannelId());
         masterData.put("promotionList", cmsPromotionService.queryByCondition(params));
+
+        // 获取自定义查询用的属性
+        masterData.put("custAttsList", customWordDao.selectCustAttrs(userInfo.getSelChannelId(), language));
 
         return masterData;
     }
@@ -422,6 +427,12 @@ public class CmsSearchAdvanceService extends BaseAppService{
             result.append(",");
         }
 
+        // 获取自定义查询条件
+        if (searchValue.getCustAttrKey() != null  && searchValue.getCustAttrKey().length() > 0
+                && searchValue.getCustAttrValue() != null  && searchValue.getCustAttrValue().length() > 0) {
+            result.append(MongoUtils.splicingValue(searchValue.getCustAttrKey(), searchValue.getCustAttrValue()));
+            result.append(",");
+        }
         return result.toString();
     }
 

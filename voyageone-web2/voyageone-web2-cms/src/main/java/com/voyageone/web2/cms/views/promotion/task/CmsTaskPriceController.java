@@ -3,7 +3,7 @@ package com.voyageone.web2.cms.views.promotion.task;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
-import com.voyageone.web2.sdk.api.domain.CmsBtPromotionTaskModel;
+import com.voyageone.service.model.cms.CmsBtPromotionTaskModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;

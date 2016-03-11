@@ -5,8 +5,8 @@ import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsUrlConstants.PROMOTION.TASK.BEAT;
 import com.voyageone.web2.cms.bean.beat.ReqParam;
 import com.voyageone.web2.cms.wsdl.bean.task.beat.TaskBean;
-import com.voyageone.web2.cms.wsdl.models.CmsBtBeatInfoModel;
-import com.voyageone.web2.cms.wsdl.models.CmsBtTaskModel;
+import com.voyageone.service.model.cms.CmsBtBeatInfoModel;
+import com.voyageone.service.model.cms.CmsBtTasksModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -64,7 +64,7 @@ public class CmsTaskPictureController extends BaseController {
 
     @RequestMapping(BEAT.DOWNLOAD)
     public ResponseEntity<byte[]> downloadBeat(@RequestParam int task_id) {
-        CmsBtTaskModel task = taskService.getTaskWithPromotion(task_id);
+        CmsBtTasksModel task = taskService.getTaskWithPromotion(task_id);
         String filename = String.format("%s-%s.xls", task.getPromotion().getPromotionName(), task.getTask_name());
         return genResponseEntityFromBytes(filename,
                 taskPictureService.downloadBeatInfo(task_id));
@@ -87,7 +87,7 @@ public class CmsTaskPictureController extends BaseController {
 
     @RequestMapping(BEAT.ADD_CODE)
     public AjaxResponse addCode(@RequestBody ReqParam param) {
-        return success(taskPictureService.getCodes(param.getPromotionId(), param.getModelId()));
+        return success(taskPictureService.getCodes(param.getPromotionId(), param.getProductModel()));
     }
 
     @RequestMapping(BEAT.ADD_NUMIID)

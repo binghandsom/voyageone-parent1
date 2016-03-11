@@ -7,28 +7,30 @@ import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.dao.mongodb.JomgoUpdate;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.cms.CmsConstants;
-import com.voyageone.cms.service.CmsProductLogService;
-import com.voyageone.cms.service.bean.ProductForOmsBean;
-import com.voyageone.cms.service.bean.ProductForWmsBean;
-import com.voyageone.cms.service.dao.CmsBtSxWorkloadDao;
-import com.voyageone.cms.service.dao.mongodb.CmsBtFeedInfoDao;
-import com.voyageone.cms.service.dao.mongodb.CmsBtProductDao;
-import com.voyageone.cms.service.model.*;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.TypeChannel;
 import com.voyageone.common.configs.beans.TypeChannelBean;
+import com.voyageone.common.util.BeanUtil;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.service.bean.cms.ProductForOmsBean;
+import com.voyageone.service.bean.cms.ProductForWmsBean;
+import com.voyageone.service.dao.cms.CmsBtSxWorkloadDao;
+import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
+import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
+import com.voyageone.service.dao.cms.mongo.CmsBtProductLogDao;
+import com.voyageone.service.dao.wms.WmsBtInventoryCenterLogicDao;
+import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
+import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.web2.cms.wsdl.BaseService;
-import com.voyageone.web2.cms.wsdl.dao.CmsBtPriceLogDao;
-import com.voyageone.web2.cms.wsdl.dao.WmsBtInventoryCenterLogicDao;
+import com.voyageone.service.dao.cms.CmsBtPriceLogDao;
 import com.voyageone.web2.sdk.api.VoApiConstants;
 import com.voyageone.web2.sdk.api.VoApiUpdateResponse;
-import com.voyageone.web2.sdk.api.domain.CmsBtPriceLogModel;
-import com.voyageone.web2.sdk.api.domain.ProductPriceModel;
-import com.voyageone.web2.sdk.api.domain.ProductSkuPriceModel;
-import com.voyageone.web2.sdk.api.domain.WmsBtInventoryCenterLogicModel;
+import com.voyageone.service.model.cms.CmsBtPriceLogModel;
+import com.voyageone.service.bean.cms.ProductPriceModel;
+import com.voyageone.service.bean.cms.ProductSkuPriceModel;
+import com.voyageone.service.model.wms.WmsBtInventoryCenterLogicModel;
 import com.voyageone.web2.sdk.api.exception.ApiException;
 import com.voyageone.web2.sdk.api.request.*;
 import com.voyageone.web2.sdk.api.response.*;
@@ -44,7 +46,6 @@ import java.util.*;
  *
  * @author chuanyu.liang 15/12/9
  * @version 2.0.1
- * @since. 2.0.0
  */
 @Service
 public class ProductService extends BaseService {
@@ -53,7 +54,7 @@ public class ProductService extends BaseService {
     private CmsBtProductDao cmsBtProductDao;
 
     @Autowired
-    protected CmsProductLogService cmsProductLogService;
+    protected CmsBtProductLogDao cmsBtProductLogDao;
 
     @Autowired
     private CmsBtPriceLogDao cmsBtPriceLogDao;
@@ -743,7 +744,10 @@ public class ProductService extends BaseService {
         if (befStatus != null && aftStatus != null && !befStatus.equals(aftStatus)) {
             if (productId != null) {
                 CmsBtProductModel productModel = cmsBtProductDao.selectProductById(channelId, productId);
-                cmsProductLogService.insertProductHistory(productModel);
+                CmsBtProductLogModel logModel = new CmsBtProductLogModel();
+                BeanUtil.copy(productModel, logModel);
+                logModel.set_id(null);
+                cmsBtProductLogDao.insert(logModel);
             }
         }
     }
@@ -754,11 +758,11 @@ public class ProductService extends BaseService {
         if (befStatus != null && aftStatus != null) {
             boolean isNeed = false;
             // 从其他状态转为Pending
-            if (befStatus != CmsConstants.ProductStatus.Pending && aftStatus == CmsConstants.ProductStatus.Pending) {
+            if (befStatus != CmsConstants.ProductStatus.Approved && aftStatus == CmsConstants.ProductStatus.Approved) {
                 isNeed = true;
                 // 从Pending转为其他状态
                 // 在Pending下变更了
-            } else if (befStatus == CmsConstants.ProductStatus.Pending) {
+            } else if (befStatus == CmsConstants.ProductStatus.Approved) {
                 isNeed = true;
             }
 
@@ -972,13 +976,12 @@ public class ProductService extends BaseService {
                 bean.setDescription(product.getFields().getLongDesEn());
                 bean.setPricePerUnit(sku.getPriceSale() != null ? sku.getPriceSale().toString() : "0.00");
                 // TODO 目前无法取得库存值
-//                Map<String, Object> param = new HashMap<>();
-//                param.put("channelId", channelId);
-//                param.put("sku", sku.getSkuCode());
-                ProductSkuRequest param = new ProductSkuRequest();
-                param.setChannelId(channelId);
-                param.setSku(sku.getSkuCode());
-
+                Map<String, Object> param = new HashMap<>();
+                param.put("channelId", channelId);
+                param.put("sku", sku.getSkuCode());
+//                ProductSkuRequest param = new ProductSkuRequest();
+//                param.setChannelId(channelId);
+//                param.setSku(sku.getSkuCode());
                 WmsBtInventoryCenterLogicModel skuInfo = wmsBtInventoryCenterLogicDao.getItemDetailBySku(param);
                 bean.setInventory(String.valueOf(skuInfo.getQtyChina()));
                 // TODO 写死,取得是S7图片显示的路径
@@ -1107,7 +1110,13 @@ public class ProductService extends BaseService {
      * 获取Sku的库存信息
      */
     public ProductSkuResponse getProductSkuQty(ProductSkuRequest param) {
-        List<WmsBtInventoryCenterLogicModel> inventoryList = wmsBtInventoryCenterLogicDao.getItemDetailByCode(param);
+
+        Map<String, String> queryMap = new HashMap<>();
+        queryMap.put("channelId", param.getChannelId());
+        queryMap.put("code", param.getCode());
+        queryMap.put("sku", param.getSku());
+
+        List<WmsBtInventoryCenterLogicModel> inventoryList = wmsBtInventoryCenterLogicDao.getItemDetailByCode(queryMap);
         ProductSkuResponse response = new ProductSkuResponse();
         Map<String, Integer> result = new HashMap<>();
 

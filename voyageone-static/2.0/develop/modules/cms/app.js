@@ -4,8 +4,8 @@ define([
     'underscore',
     'json!modules/cms/routes.json',
     'json!modules/cms/actions.json',
-    'json!modules/cms/translate/en.json',
-    'json!modules/cms/translate/zh.json',
+    'modules/cms/translate/en',
+    'modules/cms/translate/zh',
     'voyageone-angular-com',
     'voyageone-com',
     'angular-block-ui',
@@ -18,7 +18,8 @@ define([
     'angular-cookies',
     'angular-file-upload',
     'filestyle',
-    'notify'
+    'notify',
+    'angular-chosen'
 ], function (angularAMD, angular, _, cRoutes, cActions, enTranslate, zhTranslate) {
 
     var mainApp = angular.module('voyageone.cms', [
@@ -32,7 +33,8 @@ define([
             'voyageone.angular.vresources',
             'ui.bootstrap',
             'ngStorage',
-            'angularFileUpload'
+            'angularFileUpload',
+            'localytics.directives'
         ])
 
         // define
@@ -306,7 +308,7 @@ define([
                         }
                     });
 
-                    data.userInfo.application = cookieService.application();
+                    //data.userInfo.application = cookieService.application();  服务端已经返回
                     defer.resolve(data);
                 });
             return defer.promise;
@@ -421,7 +423,7 @@ define([
 
     }
 
-    function headerCtrl($scope, $window, $location, menuService, cRoutes, cCommonRoutes) {
+    function headerCtrl($scope,$rootScope, $window, $location, menuService, cRoutes, cCommonRoutes) {
         var vm = this;
         vm.menuList = {};
         vm.languageList = {};
@@ -437,9 +439,11 @@ define([
 
         function initialize() {
             menuService.getMenuHeaderInfo().then(function (data) {
-                vm.menuList = data.menuList;
+                vm.applicationList = data.applicationList;
                 vm.languageList = data.languageList;
                 vm.userInfo = data.userInfo;
+                $rootScope.menuTree=data.menuTree
+                $rootScope.application=data.userInfo.application;
             });
         }
 
@@ -524,13 +528,12 @@ define([
         }
     }
 
-    function asideCtrl($scope, $rootScope, $location, menuService, cRoutes) {
+    function asideCtrl($scope, $rootScope, $location, menuService, cRoutes,cookieService) {
 
         $scope.menuInfo = {};
         $scope.initialize = initialize;
         $scope.selectPlatformType = selectPlatformType;
         $scope.goSearchPage = goSearchPage;
-
         function initialize() {
             menuService.getPlatformType().then(function (data) {
                 $scope.menuInfo.platformTypeList = data;

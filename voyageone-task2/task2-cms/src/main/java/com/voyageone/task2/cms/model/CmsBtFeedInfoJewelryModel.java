@@ -1,7 +1,6 @@
 package com.voyageone.task2.cms.model;
 
-import com.voyageone.cms.service.model.CmsBtFeedInfoModel;
-import com.voyageone.cms.service.model.CmsBtFeedInfoModel_Sku;
+import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 
 import java.util.*;
 

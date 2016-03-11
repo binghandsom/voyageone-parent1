@@ -35,6 +35,18 @@
             <version>${voyageone.web2.wsdl.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.voyageone</groupId>
+            <artifactId>voyageone-service2-model</artifactId>
+            <version>${voyageone.service2.model.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.voyageone</groupId>
+            <artifactId>voyageone-service2-impl</artifactId>
+            <version>${voyageone.service2.impl.version}</version>
+        </dependency>
+
     </dependencies>
 </project>
 

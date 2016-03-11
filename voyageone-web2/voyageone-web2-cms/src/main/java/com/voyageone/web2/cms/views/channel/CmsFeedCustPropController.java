@@ -1,13 +1,7 @@
 package com.voyageone.web2.cms.views.channel;
 
-import com.google.gson.JsonParser;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-
-import javax.servlet.ServletInputStream;
-
-import com.voyageone.cms.service.model.CmsFeedCategoryModel;
+import com.voyageone.base.exception.BusinessException;
+import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
@@ -15,19 +9,16 @@ import com.voyageone.web2.cms.views.mapping.feed.CmsFeedMappingService;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
 /**
  * Created by jiang on 2016/2/24.
  */
 @RestController
-@RequestMapping(value = CmsUrlConstants.CHANNEL.CUSTOM_PROP.ROOT)
+@RequestMapping(value = CmsUrlConstants.CHANNEL.CUSTOM_PROP.ROOT, method = RequestMethod.POST)
 public class CmsFeedCustPropController extends CmsController {
 
     @Autowired
@@ -54,7 +45,7 @@ public class CmsFeedCustPropController extends CmsController {
      * @apiSuccess (应用级返回字段) {Object[]} unvalList 未翻译的属性名列表（json数组），没有数据时返回空数组
      * @apiSuccessExample 成功响应查询请求（unsplitFlg未设值）
      * {
-     *  "code":"0", "message":null, "displayType":null, "redirectTo":null,
+     *  "code":null, "message":null, "displayType":null, "redirectTo":null,
      *  "data":{
      *   "sameAttr": "0",
      *   "valList": [ {"prop_id":"01", "prop_original":"size", "prop_translation":"尺寸", "cat_path":"0"}, {"prop_id":"02", "prop_original":"color", "prop_translation":"颜色"}...],
@@ -64,7 +55,7 @@ public class CmsFeedCustPropController extends CmsController {
      * 说明：当查询类目自定义属性时，输出的共通属性中包含"cat_path"字段，值为"0"，若是类目自定义属性则不包含该字段
      * @apiSuccessExample 成功响应查询请求（unsplitFlg='1'）
      * {
-     *  "code":"0", "message":null, "displayType":null, "redirectTo":null,
+     *  "code":null, "message":null, "displayType":null, "redirectTo":null,
      *  "data":{
      *   "valList": [ {"prop_id":"01", "prop_original":"size", "prop_translation":"尺寸", "cat_path":"0"}, {"prop_id":"02", "prop_original":"color", "prop_translation":""}...]
      *  }
@@ -82,17 +73,15 @@ public class CmsFeedCustPropController extends CmsController {
      *  使用 mongo: cms_mt_feed_category_tree 表
      * @apiSampleRequest off
      */
-    @RequestMapping(value = CmsUrlConstants.CHANNEL.CUSTOM_PROP.INIT, method = RequestMethod.GET)
-    public AjaxResponse getFeedCustProp(@RequestParam Map<String, String> params) {
+    @RequestMapping(value = CmsUrlConstants.CHANNEL.CUSTOM_PROP.INIT)
+    public AjaxResponse getFeedCustProp(@RequestBody Map<String, String> params) {
         logger.debug("getFeedCustProp() >>>> start");
         logger.debug("getFeedCustProp() >>>> params" + params.toString());
         String catPath = StringUtils.trimToNull(params.get("cat_path"));
         if (catPath == null) {
             // 缺少参数
-            AjaxResponse resp = success(null);
-            resp.setCode("1");
-            resp.setMessage("缺少参数");
-            return resp;
+            logger.warn("getFeedCustProp() >>>> 缺少catPath参数");
+            throw new BusinessException("1", "缺少参数", null);
         }
 
         UserSessionBean userInfo = getUser();
@@ -104,9 +93,7 @@ public class CmsFeedCustPropController extends CmsController {
 
             HashMap dataMap = new HashMap();
             dataMap.put("valList", valList);
-            AjaxResponse resp = success(null);
-            resp.setCode("0");
-            resp.setData(dataMap);
+            AjaxResponse resp = success(dataMap);
             return resp;
 
         } else {
@@ -171,9 +158,7 @@ public class CmsFeedCustPropController extends CmsController {
             dataMap.put("sameAttr", commFlg);
             dataMap.put("valList", valList);
             dataMap.put("unvalList", unvalList);
-            AjaxResponse resp = success(null);
-            resp.setCode("0");
-            resp.setData(dataMap);
+            AjaxResponse resp = success(dataMap);
             return resp;
         }
     }
@@ -254,8 +239,8 @@ public class CmsFeedCustPropController extends CmsController {
      * @apiParam (应用级参数) {Object[]} unvalList 未翻译的属性名列表（json数组）
      * @apiParamExample  valList参数示例
      *  "valList": [ {"prop_id":"01", "prop_original":"size", "prop_translation":"尺寸", "cat_path":"0"}, {"prop_id":"02", "prop_original":"color", "prop_translation":"颜色"}...]
-     *  说明：其中，若项目中"prop_id"为空，则表示该属性为新增Feed自定义属性
-     *       若项目中包含"cat_path"为"0"，则该属性不做任何处理（没有更新操作）
+     *  说明：其中，若项目中"prop_id"为空，则表示该属性为新增Feed自定义属性（只能新增共通属性）
+     *       若当前选择的是具体的类目时，则不可新增该类目下的属性，也不可修改共通属性的值
      * @apiParamExample  unvalList参数示例
      *  "unvalList": [ {"prop_id":"03", "prop_original":"status", "cat_path":"0"}, {"prop_id":"04", "prop_original":"type"}...]
      * @apiSuccess (系统级返回字段) {String} code 处理结果代码编号
@@ -264,7 +249,7 @@ public class CmsFeedCustPropController extends CmsController {
      * @apiSuccess (系统级返回字段) {String} redirectTo 跳转地址
      * @apiSuccessExample 成功响应更新请求
      * {
-     *  "code":"0", "message":null, "displayType":null, "redirectTo":null, "data":null
+     *  "code":null, "message":null, "displayType":null, "redirectTo":null, "data":null
      * }
      * @apiErrorExample  错误示例
      * {
@@ -280,27 +265,23 @@ public class CmsFeedCustPropController extends CmsController {
      *  使用cms_bt_feed_custom_prop表
      * @apiSampleRequest off
      */
-    @RequestMapping(value = CmsUrlConstants.CHANNEL.CUSTOM_PROP.SAVE, method = RequestMethod.POST)
+    @RequestMapping(value = CmsUrlConstants.CHANNEL.CUSTOM_PROP.SAVE)
     public AjaxResponse saveFeedCustProp(@RequestBody Map<String, Object> params) {
         logger.debug("saveFeedCustProp() >>>> start");
         logger.debug("saveFeedCustProp() >>>> params" + params.toString());
         String catPath = StringUtils.trimToNull((String) params.get("cat_path"));
         if (catPath == null) {
             // 缺少参数
-            AjaxResponse resp = success(null);
-            resp.setCode("1");
-            resp.setMessage("缺少参数");
-            return resp;
+            logger.warn("saveFeedCustProp() >>>> 缺少catpath参数");
+            throw new BusinessException("1", "缺少参数", null);
         }
 
         List<Map<String, Object>> valList = (List<Map<String, Object>>) params.get("valList");
         List<Map<String, Object>> unvalList = (List<Map<String, Object>>) params.get("unvalList");
         if ((valList == null || valList.size() == 0) && (unvalList == null || unvalList.size() == 0)) {
             // 缺少参数
-            AjaxResponse resp = success(null);
-            resp.setCode("1");
-            resp.setMessage("缺少参数");
-            return resp;
+            logger.warn("saveFeedCustProp() >>>> 缺少属性相关参数");
+            throw new BusinessException("1", "缺少参数", null);
         }
         UserSessionBean userInfo = getUser();
         List<Map<String, Object>> addList = new ArrayList<Map<String, Object>>();
@@ -311,46 +292,60 @@ public class CmsFeedCustPropController extends CmsController {
         if (valList != null) {
             for (Map<String, Object> item : valList) {
                 cat_path = StringUtils.trimToNull((String) item.get("cat_path"));
-                if ("0".equals(cat_path)) {
-                    continue;
+                Object propIdObj = item.get("prop_id");
+                propId = null;
+                if (propIdObj != null) {
+                    propId = StringUtils.trimToNull(propIdObj.toString());
                 }
-                propId = StringUtils.trimToNull((String) item.get("prop_id"));
                 if (propId == null) {
-                    // 新增属性
-                    if (cmsFeedCustPropService.isAttrExist(item, catPath, userInfo.getSelChannelId())) {
-                        logger.warn("该属性亦存在 " + item.toString());
-                    } else {
-                        addList.add(item);
+                    if ("0".equals(catPath) && "0".equals(cat_path)) {
+                        // 新增属性,只能新增共通属性
+                        if (cmsFeedCustPropService.isAttrExist(item, catPath, userInfo.getSelChannelId())) {
+                            logger.warn("该属性亦存在 " + item.toString());
+                        } else {
+                            addList.add(item);
+                        }
                     }
                 } else {
                     // 修改属性
-                    updList.add(item);
+                    if ("0".equals(catPath) && "0".equals(cat_path)) {
+                        updList.add(item);
+                    } else if (!"0".equals(catPath) && !"0".equals(cat_path) && catPath.equals(cat_path)) {
+                        updList.add(item);
+                    }
                 }
             }
         }
         if (unvalList != null) {
             for (Map<String, Object> item : unvalList) {
+                item.put("prop_translation", "");
                 cat_path = StringUtils.trimToNull((String) item.get("cat_path"));
-                if ("0".equals(cat_path)) {
-                    continue;
+                Object propIdObj = item.get("prop_id");
+                propId = null;
+                if (propIdObj != null) {
+                    propId = StringUtils.trimToNull(propIdObj.toString());
                 }
-                propId = StringUtils.trimToNull((String) item.get("prop_id"));
                 if (propId == null) {
-                    // 新增属性
-                    if (cmsFeedCustPropService.isAttrExist(item, catPath, userInfo.getSelChannelId())) {
-                        logger.warn("该属性亦存在 " + item.toString());
-                    } else {
-                        addList.add(item);
+                    if ("0".equals(catPath) && "0".equals(cat_path)) {
+                        // 新增属性,只能新增共通属性
+                        if (cmsFeedCustPropService.isAttrExist(item, catPath, userInfo.getSelChannelId())) {
+                            logger.warn("该属性亦存在 " + item.toString());
+                        } else {
+                            addList.add(item);
+                        }
                     }
                 } else {
                     // 修改属性
-                    updList.add(item);
+                    if ("0".equals(catPath) && "0".equals(cat_path)) {
+                        updList.add(item);
+                    } else if (!"0".equals(catPath) && !"0".equals(cat_path) && catPath.equals(cat_path)) {
+                        updList.add(item);
+                    }
                 }
             }
         }
         cmsFeedCustPropService.saveAttr(addList, updList, catPath, userInfo);
         AjaxResponse resp = success(null);
-        resp.setCode("0");
         return resp;
     }
 
@@ -387,12 +382,11 @@ public class CmsFeedCustPropController extends CmsController {
      *  使用mongo:cms_mt_feed_category_tree表
      * @apiSampleRequest off
      */
-    @RequestMapping(value = CmsUrlConstants.CHANNEL.CUSTOM_PROP.GETCATTREE, method = RequestMethod.GET)
+    @RequestMapping(value = CmsUrlConstants.CHANNEL.CUSTOM_PROP.GET_CAT_TREE)
     public AjaxResponse getCategoryTree() {
         HashMap dataMap = new HashMap(1);
         dataMap.put("categoryTree", cmsFeedCustPropService.getTopCategories(getUser()));
-        AjaxResponse resp = success(null);
-        resp.setData(dataMap);
+        AjaxResponse resp = success(dataMap);
         return resp;
     }
 
@@ -421,25 +415,29 @@ public class CmsFeedCustPropController extends CmsController {
      *  使用mongo:cms_mt_feed_category_tree表
      * @apiSampleRequest off
      */
-    @RequestMapping(value = CmsUrlConstants.CHANNEL.CUSTOM_PROP.GETCATLIST, method = RequestMethod.GET)
+    @RequestMapping(value = CmsUrlConstants.CHANNEL.CUSTOM_PROP.GET_CAT_LIST)
     public AjaxResponse getCategoryList() {
         HashMap dataMap = new HashMap(1);
-        List<CmsFeedCategoryModel> topTree = cmsFeedCustPropService.getTopCategories(getUser());
-        List<CmsFeedCategoryModel> rsltList = new ArrayList<CmsFeedCategoryModel>();
+        List<CmsMtFeedCategoryModel> topTree = cmsFeedCustPropService.getTopCategories(getUser());
+        List<CmsMtFeedCategoryModel> rsltList = new ArrayList<CmsMtFeedCategoryModel>();
+        CmsMtFeedCategoryModel comMdl = new CmsMtFeedCategoryModel();
+        comMdl.setPath("0");
+        comMdl.setName("共通属性");
+        comMdl.setCid("共通属性");
+        rsltList.add(comMdl);
         getSubCatTree2List(topTree, rsltList);
-        for (CmsFeedCategoryModel catItem : rsltList) {
+        for (CmsMtFeedCategoryModel catItem : rsltList) {
             catItem.setChild(null);
             catItem.setAttribute(null);
         }
 
         dataMap.put("categoryList", rsltList);
-        AjaxResponse resp = success(null);
-        resp.setData(dataMap);
+        AjaxResponse resp = success(dataMap);
         return resp;
     }
 
-    private void getSubCatTree2List(List<CmsFeedCategoryModel> childList, List<CmsFeedCategoryModel> rsltList) {
-        for (CmsFeedCategoryModel catItem : childList) {
+    private void getSubCatTree2List(List<CmsMtFeedCategoryModel> childList, List<CmsMtFeedCategoryModel> rsltList) {
+        for (CmsMtFeedCategoryModel catItem : childList) {
             rsltList.add(catItem);
             if (catItem.getIsChild() == 0) {
                 getSubCatTree2List(catItem.getChild(), rsltList);

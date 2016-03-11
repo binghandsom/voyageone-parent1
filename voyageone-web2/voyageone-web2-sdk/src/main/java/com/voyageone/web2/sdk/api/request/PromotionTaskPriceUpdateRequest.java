@@ -1,9 +1,8 @@
 package com.voyageone.web2.sdk.api.request;
 
 import com.voyageone.web2.sdk.api.VoApiRequest;
-import com.voyageone.web2.sdk.api.domain.CmsBtPromotionTaskModel;
+import com.voyageone.service.model.cms.CmsBtPromotionTaskModel;
 import com.voyageone.web2.sdk.api.exception.ApiRuleException;
-import com.voyageone.web2.sdk.api.response.PromotionTaskPriceGetResponse;
 import com.voyageone.web2.sdk.api.response.PromotionTaskPriceUpdateResponse;
 import org.springframework.util.Assert;
 

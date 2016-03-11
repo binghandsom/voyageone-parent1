@@ -1,13 +1,20 @@
 package com.voyageone.task2.cms.service;
 
 import com.jayway.jsonpath.JsonPath;
+import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
+import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.service.bean.cms.*;
+import com.voyageone.service.dao.cms.CmsMtCommonPropDao;
+import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategoryDao;
+import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategorySchemaDao;
+import com.voyageone.service.dao.cms.mongo.CmsMtPlatformMappingDao;
+import com.voyageone.service.model.cms.CmsMtCommonPropModel;
+import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
+import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryTreeModel;
+import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingForInsertModel;
+import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductConstants;
 import com.voyageone.task2.base.BaseTaskService;
-import com.voyageone.cms.service.bean.*;
-import com.voyageone.cms.service.dao.CmsMtCommonPropDao;
-import com.voyageone.cms.service.dao.mongodb.CmsMtPlatformCategoryDao;
-import com.voyageone.cms.service.dao.mongodb.CmsMtPlatformCategorySchemaDao;
-import com.voyageone.cms.service.dao.mongodb.CmsMtPlatformMappingDao;
-import com.voyageone.cms.service.model.*;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.masterdate.schema.factory.SchemaReader;
 import com.voyageone.common.masterdate.schema.field.*;
@@ -78,7 +85,21 @@ public class CmsPlatformMappingService extends BaseTaskService {
                             logger.info(finallyCategory.getCatPath());
                             finallyCategory.setCartId(platformCategory.getCartId());
                             // 生成mapping关系数据并插入
-                            cmsMtPlatformMappingDao.insert(makePlatformMapping(finallyCategory));
+                            {
+                                CmsMtPlatformMappingModel cmsMtPlatformMappingModel = makePlatformMapping(finallyCategory);
+
+                                List<MappingBean> mappingBeanList = cmsMtPlatformMappingModel.getProps();
+                                List<Map<String, Object>> testList = JacksonUtil.jsonToMapList(JacksonUtil.bean2JsonNotNull(mappingBeanList));
+
+                                CmsMtPlatformMappingForInsertModel cmsMtPlatformMappingForInsertModel = new CmsMtPlatformMappingForInsertModel();
+                                cmsMtPlatformMappingForInsertModel.setChannelId(cmsMtPlatformMappingModel.getChannelId());
+                                cmsMtPlatformMappingForInsertModel.setMainCategoryId(cmsMtPlatformMappingModel.getMainCategoryId());
+                                cmsMtPlatformMappingForInsertModel.setPlatformCartId(cmsMtPlatformMappingModel.getPlatformCartId());
+                                cmsMtPlatformMappingForInsertModel.setPlatformCategoryId(cmsMtPlatformMappingModel.getPlatformCategoryId());
+                                cmsMtPlatformMappingForInsertModel.setMatchOver(cmsMtPlatformMappingModel.getMatchOver());
+                                cmsMtPlatformMappingForInsertModel.setProps(testList);
+                                cmsMtPlatformMappingDao.insert(cmsMtPlatformMappingForInsertModel);
+                            }
                         }
                     }
                 }
@@ -117,23 +138,29 @@ public class CmsPlatformMappingService extends BaseTaskService {
     /**
      * Props生成
      */
-    private List<Map<String, Object>> makeProps(int cartId, String categoryId) throws Exception {
+    private List<MappingBean> makeProps(int cartId, String categoryId) throws Exception {
 
-        List<Map<String, Object>> props = new ArrayList<>();
+        List<MappingBean> props = new ArrayList<>();
         CmsMtPlatformCategorySchemaModel cmsMtPlatformCategorySchemaModel = cmsMtPlatformCategorySchemaDao.getPlatformCatSchemaModel(categoryId, cartId);
         if (cmsMtPlatformCategorySchemaModel != null) {
             //PropsItem 生成props
             if (!StringUtils.isEmpty(cmsMtPlatformCategorySchemaModel.getPropsItem())) {
                 List<Field> fields = SchemaReader.readXmlForList(cmsMtPlatformCategorySchemaModel.getPropsItem());
                 for (Field field : fields) {
-                    props.add(JsonUtil.jsonToMap(JsonUtil.bean2Json(makeMapping(field))));
+                    MappingBean temp = makeMapping(field);
+                    if (temp != null) {
+                        props.add(temp);
+                    }
                 }
             }
             //PropsProduct 生成props
             if (!StringUtils.isEmpty(cmsMtPlatformCategorySchemaModel.getPropsProduct())) {
                 List<Field> fields = SchemaReader.readXmlForList(cmsMtPlatformCategorySchemaModel.getPropsProduct());
                 for (Field field : fields) {
-                    props.add(JsonUtil.jsonToMap(JsonUtil.bean2Json(makeMapping(field))));
+                    MappingBean temp = makeMapping(field);
+                    if (temp != null) {
+                        props.add(temp);
+                    }
                 }
             }
         }
@@ -151,10 +178,127 @@ public class CmsPlatformMappingService extends BaseTaskService {
         }
 
         if("description".equalsIgnoreCase(field.getId())){
-            RuleExpression ruleExpression = new RuleExpression();
-            ruleExpression.addRuleWord(new DictWord("详情页描述"));
-            SimpleMappingBean simpleMappingBean = new SimpleMappingBean(field.getId(),ruleExpression);
-            return simpleMappingBean;
+            // 这段内容有点复杂, 需要做一个判断
+            // 一种是简单类型
+            // 一种是复杂类型
+
+            // -------------------------------------------------------------------------------- START
+            // 详情页描述这个字段的mapping有时候要改成这样的
+//         {
+//             "mappingType" : "0",
+//             "platformPropId" : "description",
+//             "mappingType" : "0",
+//             "expression" : {
+//                 "ruleWordList" : [
+//                     {
+//                         "type" : "DICT",
+//                         "value" : "详情页描述"
+//                     }
+//                 ]
+//             }
+//         },
+//
+//
+//         {
+//             "mappingType" : "1",
+//             "platformPropId" : "description",
+//             "subMappings" : [
+//                 {
+//                     "mappingType" : "1",
+//                     "platformPropId" : "desc_module_25_cat_mod",
+//                     "subMappings" : [
+//                         {
+//                             "mappingType" : "0",
+//                             "platformPropId" : "desc_module_25_cat_mod_content",
+//                             "expression" : {
+//                                 "ruleWordList" : [
+//                                     {
+//                                         "type" : "DICT",
+//                                         "value" : "详情页描述"
+//                                     }
+//                                 ]
+//                             }
+//                         }
+//                     ]
+//                 }
+//             ]
+//         },
+            // -------------------------------------------------------------------------------- END
+
+            if (FieldTypeEnum.INPUT.equals(field.getType())) {
+                System.out.println("商品描述之简单类型");
+                RuleExpression ruleExpression = new RuleExpression();
+                ruleExpression.addRuleWord(new DictWord("详情页描述"));
+                SimpleMappingBean simpleMappingBean = new SimpleMappingBean(field.getId(),ruleExpression);
+                return simpleMappingBean;
+            } else if (FieldTypeEnum.COMPLEX.equals(field.getType())) {
+                System.out.println("商品描述之复杂类型");
+                ComplexField complexField = (ComplexField)field;
+                boolean blnFound = false;
+                for (Field f : complexField.getFields()) {
+                    if ("desc_module_user_mods".equals(f.getId())) {
+                        if (!f.getType().equals(FieldTypeEnum.MULTICOMPLEX)) {
+                            System.out.println("出错啦, 好惨...虽然找到了,但是类型不一样");
+                        }
+                        // 找到了
+                        blnFound = true;
+                    }
+                }
+                if (blnFound) {
+
+//                    RuleExpression ruleExpression1 = new RuleExpression();
+//                    ruleExpression1.addRuleWord(new DictWord("详情页描述"));
+//                    SimpleMappingBean 自定义模块内容 = new SimpleMappingBean("desc_module_user_mod_content",ruleExpression1);
+//
+//                    RuleExpression ruleExpression2 = new RuleExpression();
+//                    ruleExpression2.addRuleWord(new TextWord("详情页描述"));
+//                    SimpleMappingBean 自定义模块名称 = new SimpleMappingBean("desc_module_user_mod_name",ruleExpression2);
+//
+//                    ComplexMappingBean subComplexMappingBean = new ComplexMappingBean();
+//                    subComplexMappingBean.setMasterPropId("desc_module_user_mods");
+//                    subComplexMappingBean.setPlatformPropId("desc_module_user_mods");
+//                    subComplexMappingBean.addSubMapping(自定义模块内容);
+//                    subComplexMappingBean.addSubMapping(自定义模块名称);
+//
+//                    MultiComplexCustomMappingValue value = new MultiComplexCustomMappingValue();
+//                    value.addSubMapping(subComplexMappingBean);
+//
+//                    MultiComplexCustomMappingBean multiComplexCustomMappingBean = new MultiComplexCustomMappingBean();
+//                    multiComplexCustomMappingBean.addValue(value);
+//                    multiComplexCustomMappingBean.setPlatformPropId("desc_module_user_mods");
+//
+//                    List<MappingBean> mappingBeanList = new ArrayList<>();
+//                    mappingBeanList.add(multiComplexCustomMappingBean);
+//
+//                    ComplexMappingBean complexMappingBean = new ComplexMappingBean();
+//                    complexMappingBean.setMasterPropId(field.getId());
+//                    complexMappingBean.setPlatformPropId(field.getId());
+//                    complexMappingBean.setSubMappings(mappingBeanList);
+
+
+                    RuleExpression ruleExpression = new RuleExpression();
+                    ruleExpression.addRuleWord(new DictWord("详情页描述"));
+                    SimpleMappingBean 详情页描述 = new SimpleMappingBean("desc_module_25_cat_mod_content",ruleExpression);
+
+                    ComplexMappingBean c1 = new ComplexMappingBean();
+                    c1.setPlatformPropId("desc_module_25_cat_mod");
+                    c1.addSubMapping(详情页描述);
+
+                    ComplexMappingBean complexMappingBean = new ComplexMappingBean();
+                    complexMappingBean.setPlatformPropId(field.getId());
+                    complexMappingBean.addSubMapping(c1);
+
+                    return complexMappingBean;
+
+                } else {
+                    System.out.println("出错啦, 没找到");
+                }
+
+            } else {
+                System.out.println("出错啦, 商品描述之未知类型");
+
+            }
+
         }
 
         if("wap_desc".equalsIgnoreCase(field.getId())){
@@ -278,11 +422,49 @@ public class CmsPlatformMappingService extends BaseTaskService {
                 }
                 for (Field fd : fields) {
                     MappingBean temp = makeMapping(fd);
-                    subMappings.add(temp);
+                    if (temp != null) {
+                        subMappings.add(temp);
+                    }
                 }
                 mapping = complexMappingBean;
                 break;
         }
+
+        // 普通的特殊处理
+        if ("prop_extend_1627207".equals(field.getId())) {
+            // 颜色分类扩展(prop_extend_1627207)
+            System.out.println("颜色分类扩展");
+
+            // 修改别名
+            ComplexMappingBean complexMappingBean = (ComplexMappingBean)mapping;
+            for (MappingBean mappingBean : complexMappingBean.getSubMappings()) {
+                if ("alias_name".equals(mappingBean.getPlatformPropId())) {
+
+                    MasterWord master = new MasterWord("code");
+                    RuleExpression rule = new RuleExpression();
+                    rule.addRuleWord(master);
+
+                    SimpleMappingBean simple = (SimpleMappingBean) mappingBean;
+                    simple.setExpression(rule);
+
+                    break;
+                }
+
+            }
+
+        } else if ("prop_extend_122276380".equals(field.getId())) {
+            // 颜色扩展(prop_extend_122276380)
+            // TODO: 这种情况在珠宝店里没有, 所以没找到, 如果以后有的话, 再单独做处理
+            System.out.println("颜色分类扩展");
+
+        } else if ("prop_extend_1627975".equals(field.getId())) {
+            // 颜色扩展(prop_extend_1627975)
+            // TODO: 这种情况在珠宝店里没有, 所以没找到, 如果以后有的话, 再单独做处理
+            System.out.println("颜色分类扩展");
+        }
+
+
+
         return mapping;
     }
 

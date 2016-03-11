@@ -10,6 +10,12 @@ import com.taobao.top.schema.factory.SchemaReader;
 import com.taobao.top.schema.factory.SchemaWriter;
 import com.taobao.top.schema.field.*;
 import com.taobao.top.schema.value.ComplexValue;
+import com.voyageone.service.bean.cms.*;
+import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategorySchemaDao;
+import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
+import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import com.voyageone.task2.cms.bean.*;
 import com.voyageone.task2.cms.bean.tcb.*;
 import com.voyageone.task2.cms.dao.BrandMapDao;
@@ -25,12 +31,6 @@ import com.voyageone.task2.cms.service.putaway.SkuFieldBuilderFactory;
 import com.voyageone.task2.cms.service.putaway.UploadProductHandler;
 import com.voyageone.task2.cms.service.putaway.rule_parser.ExpressionParser;
 import com.voyageone.cms.CmsConstants;
-import com.voyageone.cms.service.bean.*;
-import com.voyageone.cms.service.dao.mongodb.CmsMtPlatformCategorySchemaDao;
-import com.voyageone.cms.service.model.CmsBtProductModel;
-import com.voyageone.cms.service.model.CmsBtProductModel_Sku;
-import com.voyageone.cms.service.model.CmsMtPlatformCategorySchemaModel;
-import com.voyageone.cms.service.model.CmsMtPlatformMappingModel;
 import com.voyageone.common.components.issueLog.IssueLog;
 import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
@@ -1562,8 +1562,7 @@ public class TmallProductService {
         List<Field> mappingFields = tmallUploadRunState.getContextBuildFields().getMappingFields();
         Map<String, List<TmallUploadRunState.UrlStashEntity>> srcUrlStashEntityMap = tmallUploadRunState.getContextBuildFields().getSrcUrlStashEntityMap();
 
-        List<Map<String, Object>> map = cmsMtPlatformMappingModel.getProps();
-        List<MappingBean> propMapings = JsonUtil.jsonToBeanList(JsonUtil.getJsonString(map),MappingBean.class);
+        List<MappingBean> propMapings = cmsMtPlatformMappingModel.getProps();
 
         for (MappingBean mappingBean : propMapings) {
             Field field = fieldMap.get(mappingBean.getPlatformPropId());

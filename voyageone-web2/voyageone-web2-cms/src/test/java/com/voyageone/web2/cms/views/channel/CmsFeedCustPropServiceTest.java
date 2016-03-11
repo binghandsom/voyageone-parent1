@@ -1,7 +1,8 @@
 package com.voyageone.web2.cms.views.channel;
 
 import static org.junit.Assert.*;
-import com.voyageone.cms.service.model.CmsFeedCategoryModel;
+
+import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryModel;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,7 +29,7 @@ public class CmsFeedCustPropServiceTest {
         UserSessionBean userInfo = new UserSessionBean();
         userInfo.setSelChannelId("010");
 
-        List<CmsFeedCategoryModel> resultInfo = cmsFeedCustPropService.getTopCategories(userInfo);
+        List<CmsMtFeedCategoryModel> resultInfo = cmsFeedCustPropService.getTopCategories(userInfo);
         assertNotNull(resultInfo);
     }
 }
