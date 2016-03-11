@@ -14,7 +14,6 @@ import org.jongo.*;
 import org.springframework.data.mongodb.core.CollectionOptions;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
-import javax.annotation.Resource;
 import java.util.Collection;
 import java.util.List;
 
@@ -54,15 +53,15 @@ public class BaseJomgoPartTemplate {
     }
 
     public String getCollectionName(Class<?> entityClass) {
-        return MongoCollectionMapping.getCollectionName(entityClass);
+        return MongoCollectionName.getCollectionName(entityClass);
     }
 
     public String getCollectionName(Class<?> entityClass, String channelId) {
-        return MongoCollectionMapping.getCollectionName(entityClass, channelId);
+        return MongoCollectionName.getCollectionName(entityClass, channelId);
     }
 
     public String getCollectionName(String collectionName, String channelId) {
-        return MongoCollectionMapping.getCollectionName(collectionName, channelId);
+        return MongoCollectionName.getCollectionName(collectionName, channelId);
     }
 
     public String getCollectionName(BaseMongoModel model) {
