@@ -178,6 +178,8 @@ function cvtLen(lenType) {
     }
 }
 
+
+
 function chkWordSize(lenType, tobj) {
     cvtLen(lenType);
     clearTimeout(timeoutID);
