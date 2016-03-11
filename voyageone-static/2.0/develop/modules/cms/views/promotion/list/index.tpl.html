@@ -74,7 +74,8 @@
 							<button class="btn btn-default" ng-click="$parent.clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR' | translate}}</button>
 							<button class="btn btn-vo" ng-click="search()"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}</button>
 							<button class="btn btn-success" ng-click="openPromotion('md',vm.platformTypeList,null,search)"><i class="fa fa-plus"></i>&nbsp;{{'BTN_NEW_PROMOTION' | translate}}</button>
-							<button class="btn btn-primary" ng-click="openMrbstock('lg')"><i class="fa fa-plus"></i>&nbsp;新建隔离任务</button>
+							<!-- TODO 库存隔离正在开发中-->
+							<!--<button class="btn btn-primary" ng-click="openMrbstock('lg')"><i class="fa fa-plus"></i>&nbsp;新建隔离任务</button>-->
 						</div><!-- .form-inline -->
 					</div>
 					</div>
@@ -87,10 +88,11 @@
 			<table class="table table-hover-new text-center" ng-controller="popupCtrl">
 				<thead>
 				<tr>
-					<th class="text-left mfb-x"><label class="checkbox-inline c-checkbox" ng-controller="selectRowsCtrl">
-						<input type="checkbox">
-						<span class="fa fa-check"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}&nbsp;</label>
-					</th>
+					<!-- TODO 库存隔离正在开发中-->
+					<!--<th class="text-left mfb-x"><label class="checkbox-inline c-checkbox" ng-controller="selectRowsCtrl">-->
+						<!--<input type="checkbox">-->
+						<!--<span class="fa fa-check"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}&nbsp;</label>-->
+					<!--</th>-->
 					<th class="text-center" translate="TXT_SEQ"></th>
 					<th class="text-left" translate="TXT_PROMOTION_NAME"></th>
 					<th class="text-left" translate="TXT_STATUS"></th>
@@ -104,11 +106,12 @@
 				</thead>
 				<tbody ng-if="vm.promotionList.length">
 				<tr ng-repeat="promotion in vm.promotionList | filter: {isAllPromotion : false}">
-					<td class="text-left mfb-x"><label class="checkbox-inline c-checkbox">
-						<input type="checkbox" ng-controller="selectRowsCtrl">
-						<span class="fa fa-check"></span>
-					</label>
-					</td>
+					<!-- TODO 库存隔离正在开发中-->
+					<!--<td class="text-left mfb-x"><label class="checkbox-inline c-checkbox">-->
+						<!--<input type="checkbox" ng-controller="selectRowsCtrl">-->
+						<!--<span class="fa fa-check"></span>-->
+					<!--</label>-->
+					<!--</td>-->
 					<td class="text-center">{{promotion.promotionId}}</td>
 					<td class="text-left"><a href="#/promotion/detail/{{promotion.promotionId}}" target="_blank">{{promotion.promotionName}}</a>&nbsp;<span ng-if="promotion.tejiabaoId != 0">({{promotion.tejiabaoId}})</span></td>
 					<td class="text-left"><span ng-show="promotion.promotionStatus==false" class="label label-success-new m-r-lg"> Open </span><span ng-show="promotion.promotionStatus==true" class="label label-yellow-new m-r-lg"> Close </span></td>
@@ -117,11 +120,18 @@
 					<td class="text-left">{{promotion.prePeriodStart}}&nbsp;~&nbsp;{{promotion.prePeriodEnd}}</td>
 					<td class="text-left">{{promotion.preSaleStart}}&nbsp;~&nbsp;{{promotion.preSaleEnd}}</td>
 					<td class="text-center">
-						<button class="btn btn-default btn-xs" ng-click="openTask(promotion)">
-							<i class="fa fa-plus"></i>
-							&nbsp;
-							<span translate="BTN_CREATE_TASK"></span>
-						</button>
+						<div class="btn-group" uib-dropdown>
+							<button type="button" class="btn btn-default" uib-dropdown-toggle>
+								<i class="fa fa-arrow-circle-right"></i>&nbsp;{{'BTN_CREATE_TASK' | translate}}&nbsp;<span class="caret"></span>
+							</button>
+							<!--<button type="button" class="btn btn-default dropdown-toggle" dropdown-toggle ng-disabled="vm.masterData.promotionList.length < 0">-->
+							<!--<span class="caret"></span>-->
+							<!--</button>-->
+							<ul uib-dropdown-menu>
+								<li><a href ng-click="openTask(promotion)" translate="BTN_CREATE_TASK"></a></li>
+								<li><a href translate="BTN_CREATE_TE_JIA_BAO_TASK"></a></li>
+							</ul>
+						</div>
 					</td>
 					<td class="text-center" ng-controller="popupCtrl"><button title="{{'BTN_EDIT' | translate}}" class="btn btn-success btn-xs" ng-click="openPromotion('md',vm.platformTypeList,promotion)"><i class="fa fa-pencil"></i></button>
 						<button title="{{'BTN_DELETE' | translate}}" class="btn btn-danger btn-xs"  ng-click="del(promotion)"><i class="fa  fa-trash-o"></i></button>

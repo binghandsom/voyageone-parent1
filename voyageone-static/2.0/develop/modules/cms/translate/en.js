@@ -252,6 +252,8 @@ define(function() {
 
 
         "BTN_CREATE_TASK": "New Task",
+        "BTN_CREATE_BEAT_TASK": "New BEAT Task",
+        "BTN_CREATE_TE_JIA_BAO_TASK": "New TeJiaBao Task",
         "BTN_ADD_CONDITION": "Add Condition",
         "BTN_CLEAR": "Clear",
         "BTN_CLOSE": "Close",
@@ -289,7 +291,6 @@ define(function() {
         "BTN_PRICE_HISTORY": "Price History",
         "BTN_DOWNLOAD": "Download",
         "BTN_IMPORT_PROMOTION_FILE": "Import Promotion File",
-        "BTN_CREATE_TE_JIA_BAO_TASK": "Create TeJiaBao Task",
         "BTN_CHOOSE_FILE": "Choose File",
         "BTN_IMPORT_FILE": "Import File",
 

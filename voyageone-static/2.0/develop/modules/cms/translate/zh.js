@@ -253,6 +253,8 @@ define(function(){
 
 
         "BTN_CREATE_TASK": "新建任务",
+        "BTN_CREATE_BEAT_TASK": "新建价格披露任务",
+        "BTN_CREATE_TE_JIA_BAO_TASK": "新建特价宝任务",
         "BTN_ADD_CONDITION": "新增条件",
         "BTN_CANCEL": "取消",
         "BTN_CLOSE": "关闭",
@@ -290,7 +292,6 @@ define(function(){
         "BTN_PRICE_HISTORY": "价格履历",
         "BTN_DOWNLOAD": "下载",
         "BTN_IMPORT_PROMOTION_FILE": "导入活动文件",
-        "BTN_CREATE_TE_JIA_BAO_TASK": "创建特价宝任务",
         "BTN_CHOOSE_FILE": "选择文件",
         "BTN_IMPORT_FILE": "Import File",
 

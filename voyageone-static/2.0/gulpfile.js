@@ -1,2 +1,2 @@
 require('./gulp-build');
-require('./gulp-publish');
+require('./gulp-publish-aliyun');

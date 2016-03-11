@@ -116,11 +116,11 @@
             </tbody>
         </table>
         <div class="form-group">
-            <button class="btn btn-sm btn-success btn-addon pull-right" ng-click="addTag()"><i class="fa fa-plus"></i>追加</button>
+            <button ng-disabled="isEdit" class="btn btn-sm btn-success btn-addon pull-right" ng-click="addTag()"><i class="fa fa-plus"></i>追加</button>
         </div>
     </div>
     <div class="modal-footer">
         <button class="btn btn-default" ng-click="$close()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CANCEL' | translate}}</button>
-        <button class="btn btn-vo" ng-click="ok()"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;{{'BTN_SAVE' | translate}}</button>
+        <button class="btn btn-vo" ng-click="ok()" ng-disabled="isEdit"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;{{'BTN_SAVE' | translate}}</button>
     </div>
 </div><!-- .vo_modal -->
