@@ -6,7 +6,7 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function (angularAMD) {
 
-    angularAMD.controller('popAddAttributeValueNewCtl', function ($scope,$modalInstance, attributeValueService, attributeService , notify ,$translate, context) {
+    angularAMD.controller('popAddAttributeValueNewCtl', function ($scope,$modalInstance, attributeValueService, attributeService , notify ,$translate, context,alert) {
 
         $scope.vm = {
             prop_id:"",
@@ -33,14 +33,29 @@ define([
 
             // TODO 用$filter过滤出来该prop_id一样的数据.
 
-            var checkResult = true;
-            _.each(context.from, function(value) {
-                if (_.isEqual(value.value_original, $scope.vm.value_original)) {
-                    alert("该属性已经存在");
-                    checkResult = false;
-                }
-            });
-            if (checkResult) {
+            /*var checkResult = true;
+            if($scope.cat_path == "0"){
+                _.each($scope.vm.valList, function(value) {
+                    if (_.isEqual(value.prop_id, $scope.vm.prop_id)) {
+                        alert("该属性已经存在");
+                        checkResult = false;
+                    }
+                });
+            }else{
+                _.each($scope.categoryList, function(value) {
+                    if (_.isEqual(value.value_original, $scope.vm.value_original)) {
+                        alert("该属性已经存在");
+                        checkResult = false;
+                    }
+                });
+            }*/
+            //_.each(context.from, function(value) {
+            //    if (_.isEqual(value.value_original, $scope.vm.value_original)) {
+            //        alert("该属性已经存在");
+            //        checkResult = false;
+            //    }
+            //});
+            /*if (checkResult) {
                 $scope.vmInfo ={
                     prop_id: $scope.vm.prop_id,
                     value_original: $scope.vm.value_original,
@@ -52,13 +67,17 @@ define([
                         $modalInstance.close();
                         //$scope.$parent.initialize();
                     });
-            }
-
-            //attributeValueService.add($scope.vm)
-            //    .then(function () {
-            //        notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
-            //        $modalInstance.close();
-            //    });
+            }*/
+            $scope.vmInfo ={
+                prop_id: $scope.vm.prop_id,
+                value_original: $scope.vm.value_original,
+                value_translation: $scope.vm.value_translation
+            };
+            attributeValueService.add($scope.vmInfo)
+                .then(function () {
+                    notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
+                    $modalInstance.close();
+                });
         };
 
         $scope.close = function () {
