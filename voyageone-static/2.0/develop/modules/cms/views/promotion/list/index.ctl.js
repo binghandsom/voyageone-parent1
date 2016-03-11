@@ -8,6 +8,7 @@ define([
         $scope.vm = {"promotionList": [], "platformTypeList": [], "promotionStatus": []};
         $scope.searchInfo = {};
         $scope.groupPageOption = {curr: 1, total: 198, size: 30, fetch: $scope.search};
+        $scope.datePicker = [];
 
         $scope.initialize = function () {
             promotionService.init().then(function (res) {

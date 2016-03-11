@@ -24,15 +24,17 @@
 									<label class="col-sm-4 control-label" translate="TXT_CREATE_TIME"></label>
 									<div class="col-sm-8 form-inline">
 										<div class="col-sm-5 input-group" ng-controller="datePickerCtrl">
-											<input type="text" class="form-control" datepicker-popup="{{formatDate}}" ng-model="$parent.searchInfo.createdStart" date-model-format="{{formatDate}}" is-open="opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" />
+											<input type="text" class="form-control" datepicker-popup="{{formatDate}}" ng-model="$parent.searchInfo.createdStart"
+												   date-model-format="{{formatDate}}" is-open="datePicker[0].opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" />
 								              <span class="input-group-btn">
-								                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+								                <button type="button" class="btn btn-default" ng-click="open($event,0,2)"><i class="glyphicon glyphicon-calendar"></i></button>
 								              </span>
 										</div>&nbsp;~&nbsp;
 										<div class="col-sm-5 input-group" ng-controller="datePickerCtrl">
-											<input type="text" class="form-control" datepicker-popup="{{formatDate}}" ng-model="$parent.searchInfo.createdEnd" date-model-format="{{formatDate}}" is-open="opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" />
+											<input type="text" class="form-control" datepicker-popup="{{formatDate}}" ng-model="$parent.searchInfo.createdEnd"
+												   date-model-format="{{formatDate}}" is-open="datePicker[1].opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" />
 								              <span class="input-group-btn">
-								                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+								                <button type="button" class="btn btn-default" ng-click="open($event,1,2)"><i class="glyphicon glyphicon-calendar"></i></button>
 								              </span>
 										</div>
 									</div>
@@ -121,7 +123,7 @@
 							<span translate="BTN_CREATE_TASK"></span>
 						</button>
 					</td>
-					<td class="text-center" ng-controller="popupCtrl"><button title="{{'BTN_EDIT' | translate}}" class="btn btn-success btn-xs" ng-click="openPromotion('md',vm.cartList,promotion)"><i class="fa fa-pencil"></i></button>
+					<td class="text-center" ng-controller="popupCtrl"><button title="{{'BTN_EDIT' | translate}}" class="btn btn-success btn-xs" ng-click="openPromotion('md',vm.platformTypeList,promotion)"><i class="fa fa-pencil"></i></button>
 						<button title="{{'BTN_DELETE' | translate}}" class="btn btn-danger btn-xs"  ng-click="del(promotion)"><i class="fa  fa-trash-o"></i></button>
 						<button title="{{'BTN_DOWNLOAD' | translate}}" class="btn btn-dangerdel btn-xs" ng-click="openOtherDownload(promotion.promotionId)"><i class="fa fa-cloud-download"></i></button>
 					</td>

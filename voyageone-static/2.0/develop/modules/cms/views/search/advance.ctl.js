@@ -26,6 +26,7 @@ define([
             groupSelList: { selList: []},
             productSelList: { selList: []}
         };
+        $scope.datePicker = [];
 
         $scope.initialize = initialize;
         $scope.clear = clear;

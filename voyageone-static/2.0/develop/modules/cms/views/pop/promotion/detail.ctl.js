@@ -11,6 +11,7 @@ define([
         $scope.promotion = {};
         $scope.tejiabao=false;
         $scope.cartList = cartList;
+        $scope.datePicker = [];
 
         $scope.initialize  = function () {
             if(items){

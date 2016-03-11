@@ -255,6 +255,8 @@ define(function(){
         "BTN_CREATE_TASK": "新建任务",
         "BTN_ADD_CONDITION": "新增条件",
         "BTN_CANCEL": "取消",
+        "BTN_CLOSE": "关闭",
+        "BTN_TODAY": "今日",
         "BTN_SAVE": "保存",
         "BTN_SEARCH": "检索",
         "BTN_ADD_TO_PROMOTION": "参加活动",

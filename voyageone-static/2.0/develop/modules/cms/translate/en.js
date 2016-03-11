@@ -254,6 +254,8 @@ define(function() {
         "BTN_CREATE_TASK": "New Task",
         "BTN_ADD_CONDITION": "Add Condition",
         "BTN_CLEAR": "Clear",
+        "BTN_CLOSE": "Close",
+        "BTN_TODAY": "Today",
         "BTN_SAVE": "Save",
         "BTN_SEARCH": "Search",
         "BTN_ADD_TO_PROMOTION": "Join Promotion",

@@ -8,6 +8,7 @@ define([
 
     function detailController($scope, promotionService, promotionDetailService, notify, $routeParams, $location, alert, $translate, confirm, cRoutes, selectRowsFactory) {
         $scope.promotionOld={};
+        $scope.datePicker = [];
         $scope.vm = {
             "promotionId": $routeParams.promotionId,
             "tabIndex": 0,
