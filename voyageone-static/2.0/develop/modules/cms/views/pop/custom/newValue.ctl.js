@@ -35,22 +35,10 @@ define([
             // TODO 用$filter过滤出来该prop_id一样的数据.
 
             var checkResult = true;
+            //var propData = _.find($scope.valueList, function(prop_id){return prop_id == $scope.vm.prop_id});
+            //var propData = _.filter($scope.valueList, function(propData){return propData.prop_id == $scope.vm.prop_id});
+            //var propData = _.where($scope.valueList, {prop_id: $scope.vm.prop_id});
 
-            /*if($scope.cat_path == "0"){
-                _.each($scope.vm.valList, function(value) {
-                    if (_.isEqual(value.prop_id, $scope.vm.prop_id)) {
-                        alert("该属性已经存在");
-                        checkResult = false;
-                    }
-                });
-            }else{
-                _.each($scope.categoryList, function(value) {
-                    if (_.isEqual(value.value_original, $scope.vm.value_original)) {
-                        alert("该属性已经存在");
-                        checkResult = false;
-                    }
-                });
-            }*/
             _.each($scope.valueList, function(value) {
 
                 if (_.isEqual(value.value_original, $scope.vm.value_original)) {
@@ -58,12 +46,7 @@ define([
                     checkResult = false;
                 }
             });
-            //_.each(context.from, function(value) {
-            //    if (_.isEqual(value.value_original, $scope.vm.value_original)) {
-            //        alert("该属性已经存在");
-            //        checkResult = false;
-            //    }
-            //});
+
             if (checkResult) {
                 $scope.vmInfo ={
                     prop_id: $scope.vm.prop_id,

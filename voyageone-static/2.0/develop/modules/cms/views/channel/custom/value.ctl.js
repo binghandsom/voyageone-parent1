@@ -10,7 +10,7 @@ define([
         $scope.vm = {
             searchInfo: {
                 cat_path: '',
-                sts : "",
+                sts : "2",
                 propName: "",
                 propValue: "",
                 skip: "",
@@ -45,7 +45,7 @@ define([
             $scope.vm.searchInfo={
                 //cat_path: $routeParams.catPath,
                 cat_path: '',
-                sts: "",
+                sts: "2",
                 propName: "",
                 propValue: "",
                 skip: "",
