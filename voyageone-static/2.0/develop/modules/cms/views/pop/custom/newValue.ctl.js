@@ -32,13 +32,7 @@ define([
          */
         $scope.ok = function () {
 
-            // TODO 用$filter过滤出来该prop_id一样的数据.
-
             var checkResult = true;
-            //var propData = _.find($scope.valueList, function(prop_id){return prop_id == $scope.vm.prop_id});
-            //var propData = _.filter($scope.valueList, function(propData){return propData.prop_id == $scope.vm.prop_id});
-            //var propData = _.where($scope.valueList, {prop_id: $scope.vm.prop_id});
-
             _.each($scope.valueList, function(value) {
 
                 if (_.isEqual(value.value_original, $scope.vm.value_original)) {
@@ -60,16 +54,7 @@ define([
                         //$scope.$parent.initialize();
                     });
             }
-            /*$scope.vmInfo ={
-                prop_id: $scope.vm.prop_id,
-                value_original: $scope.vm.value_original,
-                value_translation: $scope.vm.value_translation
-            };
-            attributeValueService.add($scope.vmInfo)
-                .then(function () {
-                    notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
-                    $modalInstance.close();
-                });*/
+
         };
 
         $scope.close = function () {
