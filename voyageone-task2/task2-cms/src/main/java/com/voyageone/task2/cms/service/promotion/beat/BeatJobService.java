@@ -244,7 +244,7 @@ public class BeatJobService extends BaseTaskService {
                     updateResponse.getSubCode(), updateResponse.getSubMsg());
 
             if (StringUtils.isEmpty(updateResponse.getSubCode())) {
-                beatInfoModel.setMessage(updateResponse.getUpdateItemResult());
+                beatInfoModel.setMessage("success");
                 return true;
             }
 
