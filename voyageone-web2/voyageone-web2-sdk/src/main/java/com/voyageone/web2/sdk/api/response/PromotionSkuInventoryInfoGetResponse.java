@@ -1,8 +1,7 @@
 package com.voyageone.web2.sdk.api.response;
 
-import com.voyageone.web2.sdk.api.VoApiListRequest;
 import com.voyageone.web2.sdk.api.VoApiListResponse;
-import com.voyageone.web2.sdk.api.domain.CmsBtInventoryOutputTmpModel;
+import com.voyageone.service.model.cms.CmsBtInventoryOutputTmpModel;
 
 import java.util.List;
 

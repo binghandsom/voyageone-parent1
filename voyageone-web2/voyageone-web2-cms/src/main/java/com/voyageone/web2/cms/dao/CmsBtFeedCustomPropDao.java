@@ -98,6 +98,6 @@ public class CmsBtFeedCustomPropDao extends WebBaseDao {
 
     // 查询属性值
     public List<Map<String, Object>> selectPropValue(Map<String, Object> params) {
-        return selectList("cms_bt_feed_custom_prop_value_select", params);
+        return selectList("cms_bt_feed_custom_prop_value_selectById", params);
     }
 }

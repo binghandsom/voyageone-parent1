@@ -69,7 +69,7 @@ public class ProductGetRequestTest {
     @Test
     public void testCountWithQueryString() {
         ProductGetRequest requestModel = new ProductGetRequest("010");
-        String queryString = "{\"prodId\" : 377}";
+        String queryString = "{\"prodId\" : 13614}";
         requestModel.setQueryString(queryString);
         //SDK取得Product 数据
         System.out.println(voApiClient.execute(requestModel).getProduct());

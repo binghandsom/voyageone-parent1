@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.voyageone.service.dao.wms.sql">
+<mapper namespace="com.voyageone.service.dao.sql">
 
     <!-- 根据条件查询 -->
-    <select id="select_wms_bt_inventory_center_logic_byChannelWithCodeOrSku" resultType="com.voyageone.web2.sdk.api.domain.WmsBtInventoryCenterLogicModel" parameterType="Map" >
+    <select id="select_wms_bt_inventory_center_logic_byChannelWithCodeOrSku" resultType="com.voyageone.service.model.wms.WmsBtInventoryCenterLogicModel" parameterType="Map" >
         SELECT
             seq,
             order_channel_id as orderChannelId,

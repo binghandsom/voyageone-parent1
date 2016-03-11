@@ -14,7 +14,8 @@
 									<div class="col-sm-6">
 										<!--<input type="text" class="form-control"/>-->
 										<!-- TODO categoryList返回的接口发生变化了 -->
-										<select name="" id="" class="form-control" ng-model="vm.searchInfo.cat_path" ng-options="category.cid as category.path for category in vm.categoryList">
+										<select name="" id="" class="form-control" ng-model="vm.searchInfo.cat_path" ng-options="category.path as category.cid for category in vm.categoryList">
+											<option value=""></option>
 										</select>
 									</div>
 								</div>
@@ -88,7 +89,7 @@
 						</thead>
 						<tbody ng-if="vm.resultData.length">
 						<tr ng-repeat="resultValue in vm.resultData">
-							<td class="text-center">{{$index}}</td>
+							<td class="text-center">{{$index + 1}}</td>
 							<td class="text-center">{{resultValue.cat_path}}</td>
 							<td class="text-center">{{resultValue.prop_original}}</td>
 							<td class="text-center">{{resultValue.prop_translation}}</td>
@@ -96,7 +97,7 @@
 							<td class="text-center"><input class="form-control" placeholder="resultValue.value_translation" ng-model="resultValue.value_translation"/></td>
 							<td class="text-center">{{resultValue.ref_value}}</td>
 							<td class="text-center">
-								<button title="保存" ng-click="save()" class="btn btn-vo btn-xs"><i class="glyphicon glyphicon-floppy-disk"></i></button>
+								<button title="保存" ng-click="save(resultValue)" class="btn btn-vo btn-xs"><i class="glyphicon glyphicon-floppy-disk"></i></button>
 								<!-- TODO 暂时不考虑删除,如果要删除就把数据清空保存 -->
 								<!--<button title="删除" ng-click="delete()" class="btn btn-danger btn-xs"><i class="fa  fa-trash-o"></i></button>-->
 							</td>

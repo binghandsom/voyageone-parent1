@@ -189,20 +189,20 @@
     "channel": {
       "custom": {
         "attributeService": {
-          "root":"/cms/channel/custom_prop/",
-          "init": "init",
+          "root":"/cms/channel/custom/prop/",
+          "init": "get",
           "getCatTree": "getCatTree",
-          "save": "save",
+          "save": "update",
           "getCatList": "getCatList"
 
         }
       },
       "value": {
         "attributeValueService": {
-          "root":"/cms/channel/custom_value/",
-          "init": "init",
-          "add" : "add",
-          "save": "save"
+          "root":"/cms/channel/custom/value/",
+          "init": "get",
+          "add" : "create",
+          "save": "update"
         }
       }
     }

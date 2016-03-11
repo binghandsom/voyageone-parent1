@@ -20,17 +20,17 @@ import com.voyageone.service.dao.cms.CmsBtSxWorkloadDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductLogDao;
+import com.voyageone.service.dao.wms.WmsBtInventoryCenterLogicDao;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.web2.cms.wsdl.BaseService;
-import com.voyageone.web2.cms.wsdl.dao.CmsBtPriceLogDao;
-import com.voyageone.web2.cms.wsdl.dao.WmsBtInventoryCenterLogicDao;
+import com.voyageone.service.dao.cms.CmsBtPriceLogDao;
 import com.voyageone.web2.sdk.api.VoApiConstants;
 import com.voyageone.web2.sdk.api.VoApiUpdateResponse;
-import com.voyageone.web2.sdk.api.domain.CmsBtPriceLogModel;
-import com.voyageone.web2.sdk.api.domain.ProductPriceModel;
-import com.voyageone.web2.sdk.api.domain.ProductSkuPriceModel;
-import com.voyageone.web2.sdk.api.domain.WmsBtInventoryCenterLogicModel;
+import com.voyageone.service.model.cms.CmsBtPriceLogModel;
+import com.voyageone.service.bean.cms.ProductPriceModel;
+import com.voyageone.service.bean.cms.ProductSkuPriceModel;
+import com.voyageone.service.model.wms.WmsBtInventoryCenterLogicModel;
 import com.voyageone.web2.sdk.api.exception.ApiException;
 import com.voyageone.web2.sdk.api.request.*;
 import com.voyageone.web2.sdk.api.response.*;
@@ -46,7 +46,6 @@ import java.util.*;
  *
  * @author chuanyu.liang 15/12/9
  * @version 2.0.1
- * @since. 2.0.0
  */
 @Service
 public class ProductService extends BaseService {
@@ -977,13 +976,12 @@ public class ProductService extends BaseService {
                 bean.setDescription(product.getFields().getLongDesEn());
                 bean.setPricePerUnit(sku.getPriceSale() != null ? sku.getPriceSale().toString() : "0.00");
                 // TODO 目前无法取得库存值
-//                Map<String, Object> param = new HashMap<>();
-//                param.put("channelId", channelId);
-//                param.put("sku", sku.getSkuCode());
-                ProductSkuRequest param = new ProductSkuRequest();
-                param.setChannelId(channelId);
-                param.setSku(sku.getSkuCode());
-
+                Map<String, Object> param = new HashMap<>();
+                param.put("channelId", channelId);
+                param.put("sku", sku.getSkuCode());
+//                ProductSkuRequest param = new ProductSkuRequest();
+//                param.setChannelId(channelId);
+//                param.setSku(sku.getSkuCode());
                 WmsBtInventoryCenterLogicModel skuInfo = wmsBtInventoryCenterLogicDao.getItemDetailBySku(param);
                 bean.setInventory(String.valueOf(skuInfo.getQtyChina()));
                 // TODO 写死,取得是S7图片显示的路径
@@ -1112,7 +1110,13 @@ public class ProductService extends BaseService {
      * 获取Sku的库存信息
      */
     public ProductSkuResponse getProductSkuQty(ProductSkuRequest param) {
-        List<WmsBtInventoryCenterLogicModel> inventoryList = wmsBtInventoryCenterLogicDao.getItemDetailByCode(param);
+
+        Map<String, String> queryMap = new HashMap<>();
+        queryMap.put("channelId", param.getChannelId());
+        queryMap.put("code", param.getCode());
+        queryMap.put("sku", param.getSku());
+
+        List<WmsBtInventoryCenterLogicModel> inventoryList = wmsBtInventoryCenterLogicDao.getItemDetailByCode(queryMap);
         ProductSkuResponse response = new ProductSkuResponse();
         Map<String, Integer> result = new HashMap<>();
 

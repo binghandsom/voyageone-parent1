@@ -1,8 +1,8 @@
 package com.voyageone.web2.cms.wsdl.service;
 
 import com.voyageone.web2.cms.wsdl.BaseService;
-import com.voyageone.web2.cms.wsdl.dao.CmsBtBusinessLogDao;
-import com.voyageone.web2.sdk.api.domain.CmsBtBusinessLogModel;
+import com.voyageone.service.dao.cms.CmsBtBusinessLogDao;
+import com.voyageone.service.model.cms.CmsBtBusinessLogModel;
 import com.voyageone.web2.sdk.api.request.BusinessLogGetRequest;
 import com.voyageone.web2.sdk.api.request.BusinessLogUpdateRequest;
 import com.voyageone.web2.sdk.api.response.BusinessLogGetResponse;

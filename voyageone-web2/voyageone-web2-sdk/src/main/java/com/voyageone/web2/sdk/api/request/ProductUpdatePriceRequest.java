@@ -1,7 +1,7 @@
 package com.voyageone.web2.sdk.api.request;
 
 import com.voyageone.web2.sdk.api.VoApiRequest;
-import com.voyageone.web2.sdk.api.domain.ProductPriceModel;
+import com.voyageone.service.bean.cms.ProductPriceModel;
 import com.voyageone.web2.sdk.api.exception.ApiRuleException;
 import com.voyageone.web2.sdk.api.response.ProductUpdatePriceResponse;
 import com.voyageone.web2.sdk.api.util.RequestUtils;

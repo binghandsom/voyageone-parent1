@@ -2,8 +2,8 @@ package com.voyageone.web2.cms.wsdl.bean.task.beat;
 
 import com.voyageone.common.configs.Enums.PromotionTypeEnums;
 import com.voyageone.common.util.JacksonUtil;
-import com.voyageone.web2.cms.wsdl.models.CmsBtTaskModel;
-import com.voyageone.web2.sdk.api.domain.CmsBtPromotionModel;
+import com.voyageone.service.model.cms.CmsBtTasksModel;
+import com.voyageone.service.model.cms.CmsBtPromotionModel;
 
 /**
  * Created by jonasvlag on 16/2/29.
@@ -40,7 +40,7 @@ public class TaskBean {
     public TaskBean() {
     }
 
-    public TaskBean(CmsBtTaskModel taskModel) {
+    public TaskBean(CmsBtTasksModel taskModel) {
         setTask_id(taskModel.getTask_id());
         setTask_name(taskModel.getTask_name());
         setTask_type(PromotionTypeEnums.Type.valueOf(taskModel.getTask_type()));
@@ -151,9 +151,9 @@ public class TaskBean {
         this.promotion = promotion;
     }
 
-    public CmsBtTaskModel toModel() {
+    public CmsBtTasksModel toModel() {
 
-        CmsBtTaskModel taskModel = new CmsBtTaskModel();
+        CmsBtTasksModel taskModel = new CmsBtTasksModel();
 
         taskModel.setTask_id(getTask_id());
         taskModel.setTask_name(getTask_name());

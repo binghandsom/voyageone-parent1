@@ -21,6 +21,8 @@ public class FeedCategoryBean {
 
     private CmsBtFeedMappingModel mapping;
 
+    private CmsBtFeedMappingModel mainMapping;
+
     public int getSeq() {
         return seq;
     }
@@ -51,6 +53,14 @@ public class FeedCategoryBean {
 
     public void setMapping(CmsBtFeedMappingModel mapping) {
         this.mapping = mapping;
+    }
+
+    public CmsBtFeedMappingModel getMainMapping() {
+        return mainMapping;
+    }
+
+    public void setMainMapping(CmsBtFeedMappingModel mainMapping) {
+        this.mainMapping = mainMapping;
     }
 
     @JsonProperty

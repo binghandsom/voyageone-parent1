@@ -1,16 +1,14 @@
 package com.voyageone.web2.sdk.api.request;
 
 import com.voyageone.web2.sdk.api.VoApiDefaultClient;
-import com.voyageone.web2.sdk.api.domain.ProductPriceModel;
-import com.voyageone.web2.sdk.api.domain.ProductSkuPriceModel;
+import com.voyageone.service.bean.cms.ProductPriceModel;
+import com.voyageone.service.bean.cms.ProductSkuPriceModel;
 import com.voyageone.web2.sdk.api.response.ProductUpdatePriceResponse;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import java.util.List;
 
 /**
  * Created by DELL on 2015/12/29.

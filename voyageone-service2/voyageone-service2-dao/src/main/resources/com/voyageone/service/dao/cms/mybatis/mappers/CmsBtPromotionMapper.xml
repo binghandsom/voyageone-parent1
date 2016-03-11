@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.voyageone.service.dao.cms.sql">
-    <resultMap id="PromotionMap" type="com.voyageone.web2.sdk.api.domain.CmsBtPromotionModel" >
+<mapper namespace="com.voyageone.service.dao.sql">
+    <resultMap id="PromotionMap" type="com.voyageone.service.model.cms.CmsBtPromotionModel" >
         <id column="promotion_id" property="promotionId" jdbcType="INTEGER" />
         <result column="channel_id" property="channelId" jdbcType="VARCHAR" />
         <result column="cart_id" property="cartId" jdbcType="INTEGER" />
@@ -23,7 +23,7 @@
         <result column="modified" property="modified" jdbcType="TIMESTAMP" />
         <result column="modifier" property="modifier" jdbcType="VARCHAR" />
         <result column="cartName" property="cartName" jdbcType="VARCHAR" />
-        <collection property="tagList" javaType="ArrayList" ofType="com.voyageone.web2.sdk.api.domain.CmsBtTagModel" >
+        <collection property="tagList" javaType="ArrayList" ofType="com.voyageone.service.model.cms.CmsBtTagModel" >
             <id column="tag_id" property="tagId" jdbcType="INTEGER" />
             <result column="tag_name" property="tagName" jdbcType="VARCHAR" />
             <result column="tag_channel_id" property="channelId" jdbcType="VARCHAR" />
@@ -123,7 +123,7 @@
     </select>
 
     <!-- 插入 -->
-    <insert id="insert_cms_bt_promotion" parameterType="com.voyageone.web2.sdk.api.domain.CmsBtPromotionModel" >
+    <insert id="insert_cms_bt_promotion" parameterType="com.voyageone.service.model.cms.CmsBtPromotionModel" >
         insert into voyageone_cms2.cms_bt_promotion
         <trim prefix="(" suffix=")" suffixOverrides="," >
             <if test="channelId != null" >
@@ -220,7 +220,7 @@
     </insert>
 
     <!-- 修改 -->
-    <update id="update_cms_bt_promotion" parameterType="com.voyageone.web2.sdk.api.domain.CmsBtPromotionModel" >
+    <update id="update_cms_bt_promotion" parameterType="com.voyageone.service.model.cms.CmsBtPromotionModel" >
         update voyageone_cms2.cms_bt_promotion
         <set >
             <if test="channelId != null" >

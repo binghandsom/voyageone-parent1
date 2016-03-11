@@ -1,6 +1,6 @@
 package com.voyageone.service.dao.cms;
 
-import com.voyageone.base.dao.BaseDao;
+import com.voyageone.service.dao.ServiceBaseDao;
 import com.voyageone.service.model.cms.CmsBtTagModel;
 import org.springframework.stereotype.Repository;
 
@@ -12,8 +12,8 @@ import java.util.List;
  * @version 2.0.0
  */
 
-//Repository
-public class CmsBtTagDao extends BaseDao {
+@Repository
+public class CmsBtTagDao extends ServiceBaseDao {
 
     public int insertCmsBtTag(CmsBtTagModel cmsBtTagModel){
         return insert("insert_cms_bt_tag", cmsBtTagModel);

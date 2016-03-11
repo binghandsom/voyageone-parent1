@@ -4,14 +4,13 @@ import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants.PROMOTION;
-import com.voyageone.web2.sdk.api.domain.CmsBtPromotionModel;
+import com.voyageone.service.model.cms.CmsBtPromotionModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.Map;
 
 /**
@@ -39,7 +38,7 @@ public class CmsPromotionIndexController extends CmsController {
         return success(cmsPromotionService.queryByCondition(params));
     }
 
-    @RequestMapping({PROMOTION.LIST.INDEX.INSERT_PROMOTION,PROMOTION.LIST.INDEX.UPDATE_PROMOTION})
+    @RequestMapping({PROMOTION.LIST.INDEX.INSERT_PROMOTION, PROMOTION.LIST.INDEX.UPDATE_PROMOTION})
     public AjaxResponse insertOrUpdate(@RequestBody CmsBtPromotionModel cmsBtPromotionModel) {
         String channelId = getUser().getSelChannelId();
         cmsBtPromotionModel.setChannelId(channelId);
@@ -49,11 +48,11 @@ public class CmsPromotionIndexController extends CmsController {
     }
 
     @RequestMapping(PROMOTION.LIST.INDEX.PROMOTION_EXPORT)
-    public ResponseEntity<byte[]> doExport(HttpServletRequest request, HttpServletResponse response, @RequestParam Integer  promotionId)
+    public ResponseEntity<byte[]> doExport(HttpServletRequest request, HttpServletResponse response, @RequestParam Integer promotionId)
             throws Exception {
 
         byte[] data = cmsPromotionService.getCodeExcelFile(promotionId);
-        return genResponseEntityFromBytes(DateTimeUtil.getLocalTime(getUserTimeZone())+"promotion.xlsx", data);
+        return genResponseEntityFromBytes("promotion" + DateTimeUtil.getLocalTime(getUserTimeZone(), "yyyyMMddHHmmss") + ".xlsx", data);
 
     }
 }
