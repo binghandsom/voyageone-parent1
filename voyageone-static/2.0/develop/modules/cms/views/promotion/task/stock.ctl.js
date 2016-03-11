@@ -43,14 +43,14 @@ define([
             this.stockPageOption = {
                 curr: 1,
                 total: 0,
-                size: 100,
+                size: 3,
                 fetch: this.getCommonStockList.bind(this)
             };
             this.realStockPageOption = {
                 curr: 1,
                 total: 0,
-                size: 100,
-                fetch: this.search.bind(this)
+                size: 3,
+                fetch: this.getRealStockList.bind(this)
             };
 
             this.taskStockService = taskStockService;
@@ -92,9 +92,9 @@ define([
                     "propertyList" : this.propertyList,
                     "platformList" : this.platformList,
                     "start1" :  0,
-                    "length1" : 100,
+                    "length1" : 3,
                     "start2" :  0,
-                    "length2" : 100
+                    "length2" : 3
                 }).then(function (res) {
                     main.readyNum = res.data.readyNum;
                     main.waitSeparationNum = res.data.waitSeparationNum;
@@ -106,11 +106,13 @@ define([
                     main.changedNum = res.data.changedNum;
                     main.allNum = res.data.allNum;
                     main.stockPageOption.total = res.data.skuNum;
+                    main.realStockPageOption.total = res.data.skuNum;
                     main.propertyList = res.data.propertyList;
                     main.platformList = res.data.platformList;
                     main.stockList = res.data.stockList;
                     main.realStockList = res.data.realStockList;
                     main.stockPageOption.curr = 1;
+                    main.realStockPageOption.curr = 1;
                 })
             },
 
@@ -128,6 +130,25 @@ define([
                     "platformList" : this.platformList,
                     "start1" :  (this.stockPageOption.curr - 1) * this.stockPageOption.size,
                     "length1" : this.stockPageOption.size
+                }).then(function (res) {
+                    main.stockList = res.data.stockList;;
+                })
+            },
+
+            getRealStockList: function () {
+                var main = this;
+                this.taskStockService.getRealStockList({
+                    "taskId" : this.taskId,
+                    "model" : this.model,
+                    "code" : this.code,
+                    "sku" : this.sku,
+                    "qtyFrom" : this.qtyFrom,
+                    "qtyTo" : this.qtyTo,
+                    "status" : this.status,
+                    "propertyList" : this.propertyList,
+                    "platformList" : this.platformList,
+                    "start2" :  (this.realStockPageOption.curr - 1) * this.realStockPageOption.size,
+                    "length2" : this.realStockPageOption.size
                 }).then(function (res) {
                     main.stockList = res.data.stockList;;
                 })
