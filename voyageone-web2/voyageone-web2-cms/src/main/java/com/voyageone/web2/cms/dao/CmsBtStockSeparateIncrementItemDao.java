@@ -13,11 +13,11 @@ import java.util.Map;
 @Repository
 public class CmsBtStockSeparateIncrementItemDao extends BaseDao {
 
-    public int selectStockSeparateIncrementSuccessQty(Map<String, Object> param) {
+    public Object selectStockSeparateIncrementSuccessQty(Map<String, Object> param) {
         return selectOne("select_stock_separate_increment_success_qty", param);
     }
 
-    public int selectStockSeparateIncrementSuccessQtyByTask(Map<String, Object> param) {
+    public Object selectStockSeparateIncrementSuccessQtyByTask(Map<String, Object> param) {
         return selectOne("select_stock_separate_increment_success_qty_by_task", param);
     }
 }
