@@ -96,7 +96,8 @@ define([
 
                     popupNewCategory({
                         categories: res.data.categoryTree,
-                        from: $scope.vm.cat_path != '0' ? $scope.vm.cat_path : ""
+                        from: $scope.vm.cat_path != '0' ? $scope.vm.cat_path : "",
+                        divType: '-'
                     }).then( function (res) {
                             // TODO 如果类目名字太长有问题
                             goAttributePage (res.selected.catPath)
