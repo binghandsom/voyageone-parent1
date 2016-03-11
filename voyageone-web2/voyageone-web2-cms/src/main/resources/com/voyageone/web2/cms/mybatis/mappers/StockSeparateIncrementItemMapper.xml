@@ -2,12 +2,25 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.voyageone.web2.cms.sql">
 
-    <select id="select_stock_separate_increment_item_cnt" resultType="int" parameterType="HashMap">
-         select count(*)
+    <select id="select_stock_separate_increment_success_qty" resultType="int" parameterType="HashMap">
+         select sum(qty)
             from   voyageone_cms2.cms_bt_stock_separate_increment_item
-            where sub_task_id in (select sub_task_id from cms_bt_stock_separate_increment_task where task_id = #{taskId})
-            <if test="status !=null and status != ''">
+            where sub_task_id in (select sub_task_id from voyageone_cms2.cms_bt_stock_separate_increment_task where task_id in(
+                                        select distinct task_id
+                                        from   voyageone_cms2.cms_bt_stock_separate_item
+                                        where sku = #{sku}
+                                        and status = #{status}
+                                        ))
+                and sku = #{sku}
                 and status = #{status}
-            </if>
+    </select>
+
+    <select id="select_stock_separate_increment_success_qty_by_task" resultType="int" parameterType="HashMap">
+         select sum(qty)
+            from   voyageone_cms2.cms_bt_stock_separate_increment_item
+            where sub_task_id in (select sub_task_id from voyageone_cms2.cms_bt_stock_separate_increment_task
+                                        where task_id = #{taskId} )
+                and sku = #{sku}
+                and status = #{status}
     </select>
 </mapper>

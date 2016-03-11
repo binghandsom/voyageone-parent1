@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.voyageone.web2.cms.sql">
-
     <select id="select_stock_separate_item" resultType="HashMap" parameterType="HashMap">
         select
             product_model,
@@ -44,6 +43,16 @@
             <if test="status !=null and status != ''">
                 and status = #{status}
             </if>
+    </select>
+
+    <select id="select_stock_separate_success_qty" resultType="int" parameterType="HashMap">
+        select sum(qty)
+        from   voyageone_cms2.cms_bt_stock_separate_item
+        where sku = #{sku}
+        and status = #{status}
+        <if test="taskId !=null and taskId != ''">
+            and task_id = #{taskId}
+        </if>
     </select>
 
     <select id="select_stock_separate_item_history_cnt" resultType="int" parameterType="HashMap">
