@@ -6,14 +6,14 @@ import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.Properties;
 import com.voyageone.common.configs.TypeChannel;
 import com.voyageone.common.util.FileUtils;
+import com.voyageone.service.dao.cms.CmsBtPromotionDao;
+import com.voyageone.service.dao.cms.CmsPromotionCodeDao;
+import com.voyageone.service.model.cms.CmsBtPromotionCodeModel;
+import com.voyageone.service.model.cms.CmsBtPromotionModel;
+import com.voyageone.service.model.cms.CmsBtPromotionSkuModel;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.CmsConstants;
-import com.voyageone.web2.cms.wsdl.dao.CmsBtPromotionDao;
-import com.voyageone.web2.cms.wsdl.dao.CmsPromotionCodeDao;
 import com.voyageone.web2.sdk.api.VoApiDefaultClient;
-import com.voyageone.web2.sdk.api.domain.CmsBtPromotionCodeModel;
-import com.voyageone.web2.sdk.api.domain.CmsBtPromotionModel;
-import com.voyageone.web2.sdk.api.domain.CmsBtPromotionSkuModel;
 import com.voyageone.web2.sdk.api.exception.ApiException;
 import com.voyageone.web2.sdk.api.request.PromotionCodeGetRequest;
 import com.voyageone.web2.sdk.api.request.PromotionDeleteRequest;
@@ -195,6 +195,8 @@ public class CmsPromotionIndexService extends BaseAppService {
                 FileUtils.cell(row, CmsConstants.CellNum.productNameCellNum, unlock).setCellValue(item.getProductName());
 
                 FileUtils.cell(row, CmsConstants.CellNum.skuCellNum, unlock).setCellValue(sku.getProductSku());
+
+                FileUtils.cell(row, CmsConstants.CellNum.tagCellNum, unlock).setCellValue(item.getTag());
 
                 if(item.getMsrpUS() != null){
                     FileUtils.cell(row, CmsConstants.CellNum.msrpUSCellNum, unlock).setCellValue(item.getMsrpUS());

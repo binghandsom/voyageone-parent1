@@ -1,7 +1,7 @@
 package com.voyageone.web2.sdk.api.response;
 
 import com.voyageone.web2.sdk.api.VoApiListResponse;
-import com.voyageone.web2.sdk.api.domain.CmsBtBusinessLogModel;
+import com.voyageone.service.model.cms.CmsBtBusinessLogModel;
 
 import java.util.List;
 

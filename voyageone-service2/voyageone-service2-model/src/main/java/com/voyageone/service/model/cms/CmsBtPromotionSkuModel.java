@@ -1,6 +1,5 @@
 package com.voyageone.service.model.cms;
 
-
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 
 /**
@@ -17,12 +16,8 @@ public class CmsBtPromotionSkuModel extends CmsBtPromotionGroupModel {
 
     private Integer qty;
 
-    public CmsBtPromotionSkuModel(CmsBtProductModel productInfo,
-                                  int cartId,
-                                  int promotionId,
-                                  String operator,
-                                  String productSku,
-                                  Integer qty) {
+    public CmsBtPromotionSkuModel(CmsBtProductModel productInfo, int cartId, int promotionId, String operator, String productSku, Integer qty) {
+
         super(productInfo, cartId, promotionId, operator);
         this.setProductId(productInfo.getProdId());
         this.setProductCode(productInfo.getFields().getCode());

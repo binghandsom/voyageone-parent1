@@ -1,7 +1,6 @@
 package com.voyageone.web2.sdk.api.response;
 
 import com.voyageone.web2.sdk.api.VoApiResponse;
-import com.voyageone.web2.sdk.api.domain.CmsBtTagModel;
 
 
 /**

@@ -15,7 +15,7 @@ import java.util.Map;
  * promotion 数据持久层
  * @author gbb
  */
-//Repository
+@Repository
 public class CmsBtPromotionDao extends ServiceBaseDao {
 
 	/**

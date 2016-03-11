@@ -12,7 +12,7 @@ import java.util.Map;
  * @author james 15/12/11
  * @version 2.0.0
  */
-//Repository
+@Repository
 public class CmsBtPromotionTaskDao extends ServiceBaseDao {
 
     public List<CmsBtPromotionTaskModel> getPromotionTaskList(Map<String,Object> params){
@@ -22,9 +22,10 @@ public class CmsBtPromotionTaskDao extends ServiceBaseDao {
         }
         return ret;
     }
-//    public int getPromotionTaskListCnt(Map<String,Object> params){
-//        return selectOne("select_cms_bt_promotion_code_cnt",params);
-//    }
+
+    public int getPromotionTaskListCnt(Map<String,Object> params){
+        return selectOne("select_cms_bt_promotion_code_cnt",params);
+    }
 
     public int getPromotionTaskPriceListCnt(Map<String,Object> params){
         return selectOne("select_cms_bt_promotion_task_price_cnt",params);

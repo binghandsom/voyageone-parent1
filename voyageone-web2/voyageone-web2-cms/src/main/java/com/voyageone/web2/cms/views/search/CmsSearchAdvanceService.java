@@ -17,7 +17,7 @@ import com.voyageone.web2.cms.dao.CustomWordDao;
 import com.voyageone.web2.cms.views.promotion.list.CmsPromotionIndexService;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import com.voyageone.web2.sdk.api.VoApiDefaultClient;
-import com.voyageone.web2.sdk.api.domain.CmsBtTagModel;
+import com.voyageone.service.model.cms.CmsBtTagModel;
 import com.voyageone.web2.sdk.api.request.ProductsGetRequest;
 import com.voyageone.web2.sdk.api.request.TagsGetRequest;
 import com.voyageone.web2.sdk.api.response.ProductsGetResponse;

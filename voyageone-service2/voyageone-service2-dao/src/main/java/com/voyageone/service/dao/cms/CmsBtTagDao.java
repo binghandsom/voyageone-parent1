@@ -12,7 +12,7 @@ import java.util.List;
  * @version 2.0.0
  */
 
-//Repository
+@Repository
 public class CmsBtTagDao extends ServiceBaseDao {
 
     public int insertCmsBtTag(CmsBtTagModel cmsBtTagModel){

@@ -14,7 +14,7 @@ import java.util.Map;
  * @author james 15/12/11
  * @version 2.0.0
  */
-//Repository
+@Repository
 public class CmsPromotionSkuDao extends ServiceBaseDao {
 
     public List<Map<String,Object>> getPromotionSkuList(Map<String,Object> params){
@@ -48,6 +48,13 @@ public class CmsPromotionSkuDao extends ServiceBaseDao {
         CmsBtPromotionSkuModel params = new CmsBtPromotionSkuModel();
         params.setPromotionId(promotionId);
         params.setProductId(productId);
+        return delete("delete_cms_bt_promotion_sku", params);
+    }
+
+    public int deletePromotionSkuByProductCode(Integer promotionId, String productCode){
+        CmsBtPromotionSkuModel params = new CmsBtPromotionSkuModel();
+        params.setPromotionId(promotionId);
+        params.setProductCode(productCode);
         return delete("delete_cms_bt_promotion_sku", params);
     }
 

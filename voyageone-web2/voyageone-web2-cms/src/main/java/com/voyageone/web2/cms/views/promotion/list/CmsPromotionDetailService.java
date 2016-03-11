@@ -4,18 +4,18 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.transaction.SimpleTransaction;
 import com.voyageone.common.configs.Enums.PromotionTypeEnums;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
-import com.voyageone.common.util.StringUtils;
+import com.voyageone.common.util.ExcelUtils;
+import com.voyageone.service.model.cms.*;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.CmsConstants;
 import com.voyageone.web2.cms.bean.CmsPromotionProductPriceBean;
-import com.voyageone.web2.cms.wsdl.dao.CmsBtTaskDao;
-import com.voyageone.web2.cms.wsdl.models.CmsBtTaskModel;
+import com.voyageone.service.dao.cms.CmsBtTasksDao;
+import com.voyageone.service.model.cms.CmsBtTasksModel;
 import com.voyageone.web2.cms.views.pop.bulkUpdate.CmsAddToPromotionService;
 import com.voyageone.web2.cms.wsdl.service.PromotionDetailService;
 import com.voyageone.web2.sdk.api.VoApiDefaultClient;
-import com.voyageone.web2.sdk.api.domain.*;
 import com.voyageone.web2.sdk.api.request.*;
 import com.voyageone.web2.sdk.api.service.ProductSdkClient;
 import com.voyageone.web2.sdk.api.service.ProductTagClient;
@@ -45,7 +45,7 @@ public class CmsPromotionDetailService extends BaseAppService {
     protected ProductSdkClient ProductGetClient;
 
     @Autowired
-    private CmsBtTaskDao cmsBtTaskDao;
+    private CmsBtTasksDao cmsBtTaskDao;
 
     @Autowired
     private ProductTagClient productTagClient;
@@ -375,7 +375,7 @@ public class CmsPromotionDetailService extends BaseAppService {
         String modelId;
         if (row.getCell(CmsConstants.CellNum.groupIdCellNum) != null) {
             if (row.getCell(CmsConstants.CellNum.groupIdCellNum).getCellType() == Cell.CELL_TYPE_NUMERIC) {
-                modelId = row.getCell(CmsConstants.CellNum.groupIdCellNum).getNumericCellValue() + "";
+                modelId = ExcelUtils.getString(row,CmsConstants.CellNum.groupIdCellNum,"#");
             } else {
                 modelId = row.getCell(CmsConstants.CellNum.groupIdCellNum).getStringCellValue();
             }
@@ -393,9 +393,9 @@ public class CmsPromotionDetailService extends BaseAppService {
         CmsBtPromotionCodeModel code = new CmsBtPromotionCodeModel();
 
         if (row.getCell(CmsConstants.CellNum.productIdCellNum) != null) {
-            code.setProductId((long) row.getCell(CmsConstants.CellNum.productIdCellNum).getNumericCellValue());
+            code.setProductId(Long.parseLong(ExcelUtils.getString(row,CmsConstants.CellNum.productIdCellNum,"#")));
         }
-        code.setProductModel(row.getCell(CmsConstants.CellNum.groupNameCellNum).getStringCellValue());
+        code.setProductModel(ExcelUtils.getString(row,CmsConstants.CellNum.groupNameCellNum));
 
         code.setCatPath(row.getCell(CmsConstants.CellNum.catPathCellNum).getStringCellValue());
 
@@ -419,7 +419,7 @@ public class CmsPromotionDetailService extends BaseAppService {
 
         code.setProductName(row.getCell(CmsConstants.CellNum.productNameCellNum).getStringCellValue());
 
-        code.setTag(row.getCell(CmsConstants.CellNum.tagCellNum).getStringCellValue());
+        code.setTag(ExcelUtils.getString(row,CmsConstants.CellNum.tagCellNum));
 
         if (row.getCell(CmsConstants.CellNum.timeCellNum) != null) {
             code.setTime(row.getCell(CmsConstants.CellNum.timeCellNum).getStringCellValue());
@@ -519,10 +519,10 @@ public class CmsPromotionDetailService extends BaseAppService {
 
         simpleTransaction.openTransaction();
         try {
-            List<CmsBtTaskModel> tasks = cmsBtTaskDao.selectByName(promotionId, null, PromotionTypeEnums.Type.TEJIABAO.getTypeId());
+            List<CmsBtTasksModel> tasks = cmsBtTaskDao.selectByName(promotionId, null, PromotionTypeEnums.Type.TEJIABAO.getTypeId());
             if (tasks.size() == 0) {
                 CmsBtPromotionModel cmsBtPromotionModel = cmsPromotionService.queryById(promotionId);
-                CmsBtTaskModel cmsBtTaskModel = new CmsBtTaskModel();
+                CmsBtTasksModel cmsBtTaskModel = new CmsBtTasksModel();
                 cmsBtTaskModel.setModifier(operator);
                 cmsBtTaskModel.setCreater(operator);
                 cmsBtTaskModel.setPromotion_id(promotionId);

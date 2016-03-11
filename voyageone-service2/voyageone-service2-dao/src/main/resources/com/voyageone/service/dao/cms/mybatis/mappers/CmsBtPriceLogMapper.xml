@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.voyageone.service.dao.sql">
-    <resultMap id="PriceLogMap" type="com.voyageone.web2.sdk.api.domain.CmsBtPriceLogModel">
+    <resultMap id="PriceLogMap" type="com.voyageone.service.model.cms.CmsBtPriceLogModel">
         <id column="seq" property="seq" jdbcType="INTEGER" />
         <result column="channel_id" property="channelId" jdbcType="VARCHAR" />
         <result column="product_id" property="productId" jdbcType="INTEGER" />
@@ -120,7 +120,7 @@
         </if>
     </select>
 
-    <insert id="insert_cms_bt_price_log" parameterType="com.voyageone.web2.sdk.api.domain.CmsBtPriceLogModel" useGeneratedKeys="true" keyProperty="seq">
+    <insert id="insert_cms_bt_cms_bt_price_log" parameterType="com.voyageone.service.model.cms.CmsBtPriceLogModel" useGeneratedKeys="true" keyProperty="seq">
         insert into voyageone_cms2.cms_bt_price_log (
             channel_id,
             product_id,

@@ -3,7 +3,6 @@ package com.voyageone.web2.cms.wsdl.control;
 import com.voyageone.web2.cms.wsdl.BaseController;
 import com.voyageone.web2.cms.wsdl.service.PromotionDetailService;
 import com.voyageone.web2.cms.wsdl.service.PromotionService;
-import com.voyageone.web2.sdk.api.domain.CmsBtPromotionModel;
 import com.voyageone.web2.sdk.api.request.*;
 import com.voyageone.web2.sdk.api.response.PromotionCodeAddTejiaBaoResponse;
 import com.voyageone.web2.sdk.api.response.PromotionDetailPutResponse;
@@ -12,8 +11,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 /**
  * @author aooer 2016/1/19.

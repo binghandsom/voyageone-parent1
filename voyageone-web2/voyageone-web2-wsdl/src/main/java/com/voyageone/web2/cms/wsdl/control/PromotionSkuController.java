@@ -2,18 +2,13 @@ package com.voyageone.web2.cms.wsdl.control;
 
 import com.voyageone.web2.cms.wsdl.BaseController;
 import com.voyageone.web2.cms.wsdl.service.PromotionSkuService;
-import com.voyageone.web2.sdk.api.domain.CmsBtInventoryOutputTmpModel;
 import com.voyageone.web2.sdk.api.request.*;
 import com.voyageone.web2.sdk.api.response.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 /**
  * @author aooer 2016/2/18.
