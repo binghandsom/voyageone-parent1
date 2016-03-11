@@ -9,6 +9,7 @@ import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field;
 import com.voyageone.web2.cms.bean.ProductTranslationBean;
 import com.voyageone.web2.cms.bean.TranslateTaskBean;
+import com.voyageone.web2.cms.dao.CustomWordDao;
 import com.voyageone.web2.sdk.api.VoApiConstants;
 import com.voyageone.web2.sdk.api.VoApiDefaultClient;
 import com.voyageone.web2.sdk.api.VoApiRequest;
@@ -39,7 +40,8 @@ public class TranslationService {
 
     @Autowired
     protected VoApiDefaultClient voApiClient;
-
+    @Autowired
+    protected CustomWordDao customWordDao;
     private Map sortFields;
 
 
@@ -545,7 +547,17 @@ public class TranslationService {
 
             throw new BusinessException("短描述不能为空");
         }
-
     }
 
+    // 获取翻译时标题和描述的长度设置
+    public Map<String, Object> getTransLenSet(String chnId) {
+        Map<String, Object> setInfo = new HashMap<String, Object>();
+        List<Map<String, Object>> rslt = customWordDao.getTransLenSet(chnId);
+        for (Map<String, Object> item : rslt) {
+            String lenType = (String) item.get("lenType");
+            item.remove("lenType");
+            setInfo.put(lenType, item);
+        }
+        return setInfo;
+    }
 }
