@@ -36,7 +36,7 @@ define([
             _.each($scope.valueList, function(value) {
 
                 if (_.isEqual(value.value_original, $scope.vm.value_original)) {
-                    alert("该属性已经存在");
+                    alert("该自定义属性值已经存在");
                     checkResult = false;
                 }
             });
