@@ -2,6 +2,7 @@ package com.voyageone.web2.cms.views.channel;
 
 import com.voyageone.common.components.transaction.SimpleTransaction;
 import com.voyageone.service.dao.cms.mongo.CmsMtFeedCategoryTreeDao;
+import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryTreeModelx;
 import com.voyageone.web2.base.BaseAppService;
@@ -36,9 +37,47 @@ public class CmsFeedCustPropService extends BaseAppService {
     private SimpleTransaction simpleTransaction;
 
     // 取得类目路径数据
-    public List<CmsMtFeedCategoryModel> getTopCategories(UserSessionBean user) {
+    public List<CmsMtFeedCategoryModel> getTopFeedCategories(UserSessionBean user) {
         CmsMtFeedCategoryTreeModelx treeModelx = cmsMtFeedCategoryTreeDao.findFeedCategoryx(user.getSelChannelId());
         return treeModelx.getCategoryTree();
+    }
+
+    // 取得类目路径数据
+    public List<CmsMtCategoryTreeModel> getTopCategories(UserSessionBean user) {
+        CmsMtFeedCategoryTreeModelx treeModelx = cmsMtFeedCategoryTreeDao.findFeedCategoryx(user.getSelChannelId());
+        List<CmsMtFeedCategoryModel> feedBeanList = treeModelx.getCategoryTree();
+        List<CmsMtCategoryTreeModel> result = new ArrayList<>();
+        for(CmsMtFeedCategoryModel feedCategory : feedBeanList) {
+            result.add(buildFeedCategoryBean(feedCategory));
+        }
+        return result;
+    }
+
+    /**
+     * 递归重新给Feed类目赋值 并转换成CmsMtCategoryTreeModel.
+     * @param feedCategoryModel
+     * @return
+     */
+    private CmsMtCategoryTreeModel buildFeedCategoryBean(CmsMtFeedCategoryModel feedCategoryModel) {
+
+        CmsMtCategoryTreeModel cmsMtCategoryTreeModel = new CmsMtCategoryTreeModel();
+
+        cmsMtCategoryTreeModel.setCatId(feedCategoryModel.getCid());
+        cmsMtCategoryTreeModel.setCatName(feedCategoryModel.getName());
+        cmsMtCategoryTreeModel.setCatPath(feedCategoryModel.getPath());
+        cmsMtCategoryTreeModel.setIsParent(feedCategoryModel.getIsChild() == 1 ? 0 : 1);
+
+        // 先取出暂时保存
+        List<CmsMtFeedCategoryModel> children = feedCategoryModel.getChild();
+        List<CmsMtCategoryTreeModel> newChild = new ArrayList<>();
+
+        if (children != null && !children.isEmpty())
+            for (CmsMtFeedCategoryModel child : children) {
+                newChild.add(buildFeedCategoryBean(child));
+            }
+        cmsMtCategoryTreeModel.setChildren(newChild);
+
+        return cmsMtCategoryTreeModel;
     }
 
     // 根据类目路径查询自定义已翻译属性信息
