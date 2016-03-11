@@ -189,6 +189,7 @@ define(function() {
         "TXT_VERTICAL_TEMPLATE": "Vertical Template",
         "TXT_VERTICAL_REVERT_TEMPLATE": "Vertical Revert Template",
         "TXT_TASK_DETAIL": "Task Detail",
+        "TXT_BEAT_TASK_DETAIL": "Beat Task Detail",
         "TXT_IMPORT_GOOD": "Import Codes",
         "TXT_ADD_MOD_GOOD": "Add/Modify Code",
         "TXT_DOWNLOAD_TASK_DETAIL": "Download Details",

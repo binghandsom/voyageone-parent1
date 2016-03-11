@@ -189,6 +189,7 @@ define(function(){
         "TXT_VERTICAL_TEMPLATE": "竖图模板",
         "TXT_VERTICAL_REVERT_TEMPLATE": "竖图还原模板",
         "TXT_TASK_DETAIL": "任务明细一览",
+        "TXT_BEAT_TASK_DETAIL": "价格披露任务明细一览",
         "TXT_IMPORT_GOOD": "导入商品",
         "TXT_ADD_MOD_GOOD": "添加/修改 商品",
         "TXT_DOWNLOAD_TASK_DETAIL": "下载任务明细",
