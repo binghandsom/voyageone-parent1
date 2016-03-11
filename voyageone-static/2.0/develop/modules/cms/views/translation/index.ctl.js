@@ -18,6 +18,7 @@ define([
 
             this.routeParams = $routeParams;
             this.translate = $translate;
+            translateex = $translate;
             this.translationService = translationService;
             this.notify = notify;
             this.confirm = confirm;
@@ -41,11 +42,12 @@ define([
                         this.sortFieldOptions = [];
                         this.sortRule = "true";
                         var options = res.data.sortFieldOptions;
-
                         for (var key in options){
                             var item = {value:key,name:options[key]}
                             this.sortFieldOptions.push(item);
                         }
+                        this.lenInfo = res.data.lenSetInfo;
+                        lenInfo = res.data.lenSetInfo;
 
                     }.bind(this), function (res) {
                         this.notify(res.message);
@@ -143,7 +145,7 @@ define([
             clearConditions: function () {
                 this.searchCondition = "";
                 this.distributeCount = "";
-            }
+            },
 
         };
 
@@ -153,23 +155,55 @@ define([
 
 // 检查输入字数
 var timeoutID = "";
-function chkWordSize(maxLen, tobj) {
+var lenInfo = null;
+var maxLen = 0;
+var minLen = 0;
+var translateex = null;
+function cvtLen(lenType) {
+    if (lenType == 1) {
+        minLen = lenInfo.long_title.minLen;
+        maxLen = lenInfo.long_title.maxLen;
+    } else if (lenType == 2) {
+        minLen = lenInfo.middle_title.minLen;
+        maxLen = lenInfo.middle_title.maxLen;
+    } else if (lenType == 3) {
+        minLen = lenInfo.short_title.minLen;
+        maxLen = lenInfo.short_title.maxLen;
+    } else if (lenType == 4) {
+        minLen = lenInfo.long_desc.minLen;
+        maxLen = lenInfo.long_desc.maxLen;
+    } else if (lenType == 5) {
+        minLen = lenInfo.short_desc.minLen;
+        maxLen = lenInfo.short_desc.maxLen;
+    }
+}
+
+function chkWordSize(lenType, tobj) {
+    cvtLen(lenType);
     clearTimeout(timeoutID);
     timeoutID = setTimeout(function() {
         var curLength = $(tobj).val().length;
-        if (curLength >= maxLen) {
-            var od = $(tobj.parentNode).find("i.icon.fa.fa-bell-o.ng-binding");
-            od[0].innerHTML = '已经达到最大长度字符数限制';
+        var od = $(tobj.parentNode).find("i#wordsizemsg");
+        if (curLength < minLen) {
+            od[0].innerHTML = '&nbsp;请至少输入' + minLen + '个字符';
+        } else if (curLength >= maxLen) {
+            od[0].innerHTML = '&nbsp;已经达到最大长度字符数限制';
         } else {
-            var od = $(tobj.parentNode).find("div#wordsizemsg");
-            od[0].innerHTML = maxLen - curLength;
+            od[0].innerHTML =  '&nbsp;' + translateex.instant('TXT_MSG_INPUT_WORD_LENCHK') + (maxLen - curLength) + translateex.instant('TXT_MSG_INPUT_WORD_LENCHK2');
         }
     },500);
 }
 
-function cmtWordSize(maxLen, tobj) {
-    var od = $(tobj.parentNode).find("i.icon.fa.fa-bell-o.ng-binding");
+function cmtWordSize(lenType, tobj) {
+    cvtLen(lenType);
+    var od = $(tobj.parentNode).find("i#wordsizemsg");
     $(od[0]).css("visibility", "visible");
-    var od2 = $(tobj.parentNode).find("div#wordsizemsg");
-    od2[0].innerHTML = maxLen - $(tobj).val().length;
+    var curLength = $(tobj).val().length;
+    if (curLength < minLen) {
+        od[0].innerHTML = '&nbsp;请至少输入' + minLen + '个字符';
+    } else if (curLength >= maxLen) {
+        od[0].innerHTML = '&nbsp;已经达到最大长度字符数限制';
+    } else {
+        od[0].innerHTML =  '&nbsp;' + translateex.instant('TXT_MSG_INPUT_WORD_LENCHK') + (maxLen - curLength) + translateex.instant('TXT_MSG_INPUT_WORD_LENCHK2');
+    }
 }
