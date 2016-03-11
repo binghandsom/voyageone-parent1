@@ -1,6 +1,7 @@
 package com.voyageone.service.model.cms.mongo.feed;
 
 import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
+import com.voyageone.base.dao.mongodb.support.MongoCollection;
 
 import java.util.List;
 
@@ -12,6 +13,7 @@ import java.util.List;
  * @version 2.0.0
  * @since 2.0.0
  */
+@MongoCollection("cms_mt_feed_category_tree")
 public class CmsMtFeedCategoryTreeModelx extends BaseMongoModel {
 
     private String channelId;

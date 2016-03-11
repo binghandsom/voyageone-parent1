@@ -6,10 +6,8 @@ import com.voyageone.common.configs.dao.FeedDao;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import org.apache.commons.collections.MapUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import java.util.HashMap;
@@ -21,7 +19,7 @@ import java.util.Map;
  * @version 2.0.0
  * @since 2.0.0
  */
-@Service
+//@Service
 public class CmsMtFeedConfigCacheRealTimeService extends BaseTaskService {
 
     private static final String REDIS_KEY_NAME = "cms_mt_feed_config";
@@ -29,12 +27,12 @@ public class CmsMtFeedConfigCacheRealTimeService extends BaseTaskService {
     private static final String MODIFYBEAN="$modify_bean$";
 
     /* redis模板 */
-    @Autowired
+//    @Autowired
     private RedisTemplate<String,Map<String,FeedBean>> redisTemplate;
 
     /* hash操作对象 */
     private HashOperations<String,String,FeedBean> hashOperations;
-    @Autowired
+//    @Autowired
     private FeedDao feedDao;
 
     @Override

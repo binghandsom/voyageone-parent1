@@ -1,13 +1,13 @@
 package com.voyageone.service.dao.cms;
 
-import com.voyageone.base.dao.BaseDao;
+import com.voyageone.service.dao.ServiceBaseDao;
 import com.voyageone.service.model.cms.CmsMtPlatformSpecialFieldModel;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
-public class CmsMtPlatformSpecialFieldDao extends BaseDao {
+public class CmsMtPlatformSpecialFieldDao extends ServiceBaseDao {
 
     public List<CmsMtPlatformSpecialFieldModel> select(int cartId, String catId, String fieldId, String type) {
         CmsMtPlatformSpecialFieldModel model = new CmsMtPlatformSpecialFieldModel();

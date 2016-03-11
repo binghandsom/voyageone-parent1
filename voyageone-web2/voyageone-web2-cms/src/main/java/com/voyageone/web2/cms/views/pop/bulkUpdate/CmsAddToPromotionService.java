@@ -6,8 +6,8 @@ import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.views.promotion.list.CmsPromotionIndexService;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import com.voyageone.web2.sdk.api.VoApiDefaultClient;
-import com.voyageone.web2.sdk.api.domain.CmsBtPromotionModel;
-import com.voyageone.web2.sdk.api.domain.CmsBtTagModel;
+import com.voyageone.service.model.cms.CmsBtPromotionModel;
+import com.voyageone.service.model.cms.CmsBtTagModel;
 import com.voyageone.web2.sdk.api.request.PromotionDetailAddRequest;
 import com.voyageone.web2.sdk.api.request.TagsGetRequest;
 import com.voyageone.web2.sdk.api.service.ProductTagClient;
@@ -101,9 +101,9 @@ public class CmsAddToPromotionService extends BaseAppService {
 
     /**
      * 检测选中的tag是否存在
-     * @param tags
-     * @param tagName
-     * @return
+     * @param tags List<CmsBtTagModel>
+     * @param tagName Integer
+     * @return CmsBtTagModel
      */
     private CmsBtTagModel searchTag(List<CmsBtTagModel> tags, Integer tagName) {
 

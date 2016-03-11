@@ -3,7 +3,7 @@
  */
 package com.voyageone.web2.sdk.api.request;
 
-import com.voyageone.web2.sdk.api.domain.CmsBtPromotionModel;
+import com.voyageone.service.model.cms.CmsBtPromotionModel;
 import org.junit.Test;
 
 /**

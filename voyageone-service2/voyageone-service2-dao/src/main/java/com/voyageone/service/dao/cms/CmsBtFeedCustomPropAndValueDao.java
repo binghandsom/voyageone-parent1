@@ -1,6 +1,6 @@
 package com.voyageone.service.dao.cms;
 
-import com.voyageone.base.dao.BaseDao;
+import com.voyageone.service.dao.ServiceBaseDao;
 import com.voyageone.service.model.cms.CmsBtFeedCustomPropModel;
 import com.voyageone.service.model.cms.CmsBtFeedCustomPropValueModel;
 import org.springframework.stereotype.Repository;
@@ -18,7 +18,7 @@ import java.util.Map;
  * Created by zhujiaye on 16/2/26.
  */
 @Repository
-public class CmsBtFeedCustomPropAndValueDao extends BaseDao {
+public class CmsBtFeedCustomPropAndValueDao extends ServiceBaseDao {
 
 	/**
 	 * 获取自定义属性列表

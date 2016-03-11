@@ -7,8 +7,9 @@
         <result column="img_url" property="channelImgUrl"/>
         <result column="company_id" property="companyId"/>
         <result column="company" property="companyName"/>
-        <collection property="apps" javaType="List" ofType="String">
-            <result column="application"/>
+        <collection property="apps" javaType="List" ofType="Map">
+            <result column="application" property="application"/>
+            <result column="applicationId" property="applicationId"></result>
         </collection>
     </resultMap>
 
@@ -26,6 +27,7 @@
         SELECT *
         FROM (SELECT
                   g.application,
+                  g.id as applicationId,
                   b.property_id,
                   h.full_name,
                   ifnull(h.img_url, '') AS img_url,
@@ -46,6 +48,7 @@
               UNION
               SELECT
                   g.application,
+                  g.id as applicationId,
                   b.property_id,
                   h.full_name,
                   ifnull(h.img_url, '') AS img_url,

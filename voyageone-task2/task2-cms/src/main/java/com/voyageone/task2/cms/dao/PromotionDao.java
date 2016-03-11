@@ -33,6 +33,6 @@ public class PromotionDao extends BaseDao {
     }
 
     public int updatePromotionStatus(Map<String,Object> parameter){
-        return update("update_cms_bt_promotion_task", parameter);
+        return update("com.voyageone.cms.sql.update_cms_bt_promotion_task", parameter);
     }
 }

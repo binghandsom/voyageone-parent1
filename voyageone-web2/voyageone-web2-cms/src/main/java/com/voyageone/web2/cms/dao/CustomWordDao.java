@@ -6,6 +6,7 @@ import com.voyageone.web2.cms.model.CustomWord;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * for voyageone_ims.ims_mt_custom_word and voyageone_ims.ims_mt_custom_word_param
@@ -21,5 +22,9 @@ public class CustomWordDao extends WebBaseDao {
 
     public List<CustomWord> selectWithParam() {
         return selectList("cms_mt_custom_word_selectWithParam");
+    }
+
+    public List<Map<String, Object>> selectCustAttrs(String chnId, String language) {
+        return selectList("cms2_mt_channel_config_getCustAttr", parameters("channelId", chnId, "langId", language));
     }
 }

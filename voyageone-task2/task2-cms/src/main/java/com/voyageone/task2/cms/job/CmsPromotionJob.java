@@ -3,6 +3,7 @@ package com.voyageone.task2.cms.job;
 import com.voyageone.task2.base.BaseTaskJob;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.cms.service.CmsPromotrionService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -11,9 +12,10 @@ import org.springframework.stereotype.Component;
  */
 @Component("CmsPromotionJob")
 public class CmsPromotionJob extends BaseTaskJob {
+    @Autowired
     private CmsPromotrionService cmsPromotrionService;
     @Override
     protected BaseTaskService getTaskService() {
-        return null;
+        return cmsPromotrionService;
     }
 }

@@ -1,6 +1,6 @@
 package com.voyageone.service.dao.cms;
 
-import com.voyageone.base.dao.BaseDao;
+import com.voyageone.service.dao.ServiceBaseDao;
 import com.voyageone.service.model.cms.CmsBtBusinessLogModel;
 import org.springframework.stereotype.Repository;
 
@@ -12,8 +12,8 @@ import java.util.Map;
  * @version 2.0.0
  * @since 2.0.0
  */
-//Repository
-public class CmsBtBusinessLogDao extends BaseDao {
+@Repository
+public class CmsBtBusinessLogDao extends ServiceBaseDao {
 
     /**
      * 条件查询
@@ -41,7 +41,7 @@ public class CmsBtBusinessLogDao extends BaseDao {
      * @return effect count
      */
     public int updateStatusFinish(Map<?,?> conditionParams){
-        return updateTemplate.update("update_business_log_status_finish",conditionParams);
+        return update("update_business_log_status_finish",conditionParams);
     }
 
 }

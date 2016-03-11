@@ -1,7 +1,7 @@
 package com.voyageone.web2.sdk.api.request;
 
 import com.voyageone.web2.sdk.api.VoApiRequest;
-import com.voyageone.web2.sdk.api.domain.CmsBtPromotionCodeModel;
+import com.voyageone.service.model.cms.CmsBtPromotionCodeModel;
 import com.voyageone.web2.sdk.api.exception.ApiRuleException;
 import com.voyageone.web2.sdk.api.response.PromotionDetailPutResponse;
 import com.voyageone.web2.sdk.api.util.RequestUtils;

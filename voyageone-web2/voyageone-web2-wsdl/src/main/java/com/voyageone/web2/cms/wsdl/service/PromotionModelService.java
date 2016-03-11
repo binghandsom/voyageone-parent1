@@ -1,13 +1,10 @@
 package com.voyageone.web2.cms.wsdl.service;
 
 import com.voyageone.web2.cms.wsdl.BaseService;
-import com.voyageone.web2.cms.wsdl.dao.CmsPromotionModelDao;
-import com.voyageone.web2.sdk.api.domain.CmsBtPromotionGroupModel;
-import com.voyageone.web2.sdk.api.request.PromotionDetailAddRequest;
+import com.voyageone.service.dao.cms.CmsPromotionModelDao;
 import com.voyageone.web2.sdk.api.request.PromotionModelCountGetRequest;
 import com.voyageone.web2.sdk.api.request.PromotionModelDeleteRequest;
 import com.voyageone.web2.sdk.api.request.PromotionModelsGetRequest;
-import com.voyageone.web2.sdk.api.response.PromotionDetailPutResponse;
 import com.voyageone.web2.sdk.api.response.PromotionModelCountGetResponse;
 import com.voyageone.web2.sdk.api.response.PromotionModelDeleteResponse;
 import com.voyageone.web2.sdk.api.response.PromotionModelsGetResponse;
@@ -16,7 +13,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 

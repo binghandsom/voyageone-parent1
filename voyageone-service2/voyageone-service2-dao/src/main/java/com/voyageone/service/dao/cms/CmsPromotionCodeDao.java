@@ -1,6 +1,6 @@
 package com.voyageone.service.dao.cms;
 
-import com.voyageone.base.dao.BaseDao;
+import com.voyageone.service.dao.ServiceBaseDao;
 import com.voyageone.service.model.cms.CmsBtPromotionCodeModel;
 import org.springframework.stereotype.Repository;
 
@@ -11,11 +11,15 @@ import java.util.Map;
  * @author james 15/12/11
  * @version 2.0.0
  */
-//Repository
-public class CmsPromotionCodeDao extends BaseDao {
+@Repository
+public class CmsPromotionCodeDao extends ServiceBaseDao {
 
     public List<CmsBtPromotionCodeModel> getPromotionCodeList(Map<String, Object> params) {
         return selectList("select_cms_bt_promotion_code", params);
+    }
+
+    public List<CmsBtPromotionCodeModel> getPromotionCodeSkuList(Map<String, Object> params) {
+        return selectList("select_cms_bt_promotion_code_sku", params);
     }
 
     public int getPromotionCodeListCnt(Map<String, Object> params) {

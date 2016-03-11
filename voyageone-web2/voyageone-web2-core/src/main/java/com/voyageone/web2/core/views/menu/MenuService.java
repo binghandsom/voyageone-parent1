@@ -3,19 +3,19 @@ package com.voyageone.web2.core.views.menu;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.beans.TypeBean;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.base.BaseConstants;
+import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.core.CoreConstants;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import com.voyageone.web2.core.dao.UserRolePropertyDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import javax.servlet.http.HttpSession;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Index 路径
@@ -30,19 +30,59 @@ public class MenuService extends BaseAppService {
     @Autowired
     private UserRolePropertyDao userRolePropertyDao;
 
+    public Map<String, Object> getMenuHeaderInfo(int userId,String channelId,String applicationId) {
+
+        Map<String, Object> resultbean = new HashMap<>();
+
+
+        // 获取menu列表.
+        List<Map<String, Object>> menuList = this.getApplicationList(userId, channelId);
+        resultbean.put("applicationList", menuList);
+        // 获取language列表.
+        List<TypeBean> languageList = this.getLanguageList();
+        resultbean.put("languageList", languageList);
+        Object menuTree = getMenuTree(Integer.toString(userId), channelId, applicationId);
+        resultbean.put("menuTree", menuTree);
+        return resultbean;
+    }
     /**
-     * 根据userId和ChannelId获取Menu列表.
+     * 根据userId,applicationId和ChannelId获取Menu列表.
      * @param userId
      * @param channelId
      * @return
      */
-    public List<Map<String, Object>> getMenuList (Integer userId, String channelId) {
+    public List<Map<String, Object>> getMenuTree(String userId,String channelId,String applicationId) {
 
+        List<Map<String, Object>> listModule = userRolePropertyDao.getListModuleByWhere(userId, channelId, applicationId);
+        List<Map<String, Object>> listControl = userRolePropertyDao.getListControllerByWhere(userId, channelId, applicationId);
+        List<Map<String, Object>> children = null;
+        for (Map<String, Object> map : listModule) {
+            children = getControlListByParentId(listControl, map.get("id"));
+            map.put("children", children);
+        }
+        return listModule;
+    }
+    public List<Map<String,Object>> getControlListByParentId( List<Map<String, Object>> list,Object parentId) {
+        List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
+        for (Map<String, Object> map : list) {
+            if (map.get("parentId").equals(parentId)) {
+                result.add(map);
+            }
+        }
+        return result;
+    }
+    /**
+     * 根据userId和ChannelId获取Application列表.
+     * @param userId
+     * @param channelId
+     * @return
+     */
+    public List<Map<String, Object>> getApplicationList (Integer userId, String channelId) {
         Map<String, Object> data = new HashMap<>();
         data.put("userId", userId);
         data.put("channelId", channelId);
 
-        return userRolePropertyDao.selectUserMenu(data);
+        return userRolePropertyDao.selectUserApplication(data);
     }
 
     /**

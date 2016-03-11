@@ -180,7 +180,7 @@ define([
                  * 显示的过滤条件
                  */
                 this.show = {
-                    hasRequired: null,
+                    hasRequired: true,
                     matched: null,
                     keyWord: null
                 };

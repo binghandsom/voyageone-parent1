@@ -29,11 +29,7 @@ public class BaseJomgoPartTemplate {
 
     protected MongoTemplate mongoTemplate;
 
-
     protected Jongo jongo;
-
-    @Resource
-    MongoCollectionMapping mongoCollectionMapping;
 
     public BaseJomgoPartTemplate(MongoTemplate mongoTemplate) {
         this.mongoTemplate = mongoTemplate;
@@ -58,15 +54,15 @@ public class BaseJomgoPartTemplate {
     }
 
     public String getCollectionName(Class<?> entityClass) {
-        return mongoCollectionMapping.getCollectionName(entityClass);
+        return MongoCollectionMapping.getCollectionName(entityClass);
     }
 
     public String getCollectionName(Class<?> entityClass, String channelId) {
-        return mongoCollectionMapping.getCollectionName(entityClass, channelId);
+        return MongoCollectionMapping.getCollectionName(entityClass, channelId);
     }
 
     public String getCollectionName(String collectionName, String channelId) {
-        return mongoCollectionMapping.getCollectionName(collectionName, channelId);
+        return MongoCollectionMapping.getCollectionName(collectionName, channelId);
     }
 
     public String getCollectionName(BaseMongoModel model) {

@@ -2,7 +2,7 @@ package com.voyageone.web2.cms.views.promotion.task;
 
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.sdk.api.VoApiDefaultClient;
-import com.voyageone.web2.sdk.api.domain.CmsBtPromotionTaskModel;
+import com.voyageone.service.model.cms.CmsBtPromotionTaskModel;
 import com.voyageone.web2.sdk.api.request.PromotionTaskPriceGetCountRequest;
 import com.voyageone.web2.sdk.api.request.PromotionTaskPriceGetRequest;
 import com.voyageone.web2.sdk.api.request.PromotionTaskPriceUpdateRequest;

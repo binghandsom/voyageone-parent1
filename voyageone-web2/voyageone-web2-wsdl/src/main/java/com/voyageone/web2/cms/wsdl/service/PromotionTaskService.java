@@ -1,8 +1,7 @@
 package com.voyageone.web2.cms.wsdl.service;
 
+import com.voyageone.service.dao.cms.CmsPromotionTaskDao;
 import com.voyageone.web2.cms.wsdl.BaseService;
-import com.voyageone.web2.cms.wsdl.dao.CmsPromotionTaskDao;
-import com.voyageone.web2.sdk.api.domain.CmsBtPromotionTaskModel;
 import com.voyageone.web2.sdk.api.request.PromotionTaskAddRequest;
 import com.voyageone.web2.sdk.api.request.PromotionTaskPriceGetCountRequest;
 import com.voyageone.web2.sdk.api.request.PromotionTaskPriceGetRequest;
@@ -39,7 +38,7 @@ public class PromotionTaskService extends BaseService {
 
     public PromotionTaskPriceGetCountResponse getPromotionTaskPriceListCnt(PromotionTaskPriceGetCountRequest request){
         PromotionTaskPriceGetCountResponse res=new PromotionTaskPriceGetCountResponse();
-        res.setTotalCount(cmsPromotionTaskDao.getPromotionTaskListCnt(request.getParams()));
+        res.setTotalCount(cmsPromotionTaskDao.getPromotionTaskPriceListCnt(request.getParams()));
         return res;
     }
 
