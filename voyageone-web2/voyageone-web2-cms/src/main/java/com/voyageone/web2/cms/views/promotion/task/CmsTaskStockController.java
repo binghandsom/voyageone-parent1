@@ -300,10 +300,10 @@ public class CmsTaskStockController extends CmsController {
      *    2.4.根据sku从cms_bt_stock_sales_quantity表取得隔离期间各个隔离平台的销售数量。
      *    2.5.可用库存数（realStockList.qty） = 2.1：取得逻辑库存 - （2.2：隔离库存数 + 2.3：增量隔离库存数 - 2.4：隔离平台的销售数量）
      *        平台销售数量(realStockList.platformStock.salesQty) = 2.4
-     *        平台隔离数量(realStockList.platformStock.separationQty) = 2.2 + 2.3
+     *        平台隔离数量(realStockList.platformStock.separationQty) = 2.2 + 2.3(该任务id下的值)
      *   注：如果隔离结束的话，还原后，数据会移动到历史表里，这个时候取数据需要到cms_bt_stock_separate_item_history表和cms_bt_stock_separate_increment_item_history表里取得数据。
      *       对于已经结束的隔离任务来说，实时库存状态页只要显示出平台隔离数量
-     *      （是否从history表取得数据的判断依据是 隔离任务状态为3：Close或者任务id在history表中有数据）
+     *      （是否从history表取得数据的判断依据是 任务id在history表中有数据）
      *
      *
      * @apiExample 使用表
@@ -514,7 +514,7 @@ public class CmsTaskStockController extends CmsController {
      * @apiExample  业务说明
      *  1.根据参数.任务id，商品Code，Sku和状态从cms_bt_stock_separate_item表检索库存隔离明细。（一个Sku一条记录，按Sku进行分页）
      *  注：如果隔离结束的话，还原后，数据会移动到历史表里，这个时候取数据需要到cms_bt_stock_separate_item_history表里取得数据。
-     *  (是否从history表取得数据的判断依据是 隔离任务状态为3：Close或者任务id在history表中有数据）
+     *  (是否从history表取得数据的判断依据是 任务id在history表中有数据）
      * @apiExample 使用表
      *  cms_bt_stock_separate_item
      *  cms_bt_stock_separate_item_history
@@ -614,9 +614,11 @@ public class CmsTaskStockController extends CmsController {
      *    2.3.根据sku从cms_bt_stock_separate_increment_item表取得状态='2:隔离成功'的增量隔离库存数。
      *    2.4.根据sku从cms_bt_stock_sales_quantity表取得隔离期间各个隔离平台的销售数量。
      *    2.5.可用库存数（realStockList.qty） = 2.1：取得逻辑库存 - （2.2：隔离库存数 + 2.3：增量隔离库存数 - 2.4：隔离平台的销售数量）
+     *        平台销售数量(realStockList.platformStock.salesQty) = 2.4
+     *        平台隔离数量(realStockList.platformStock.separationQty) = 2.2 + 2.3(该任务id下的值)
      *   注：如果隔离结束的话，还原后，数据会移动到历史表里，这个时候取数据需要到cms_bt_stock_separate_item_history表和cms_bt_stock_separate_increment_item_history表里取得数据。
      *       对于已经结束的隔离任务来说，实时库存状态页只要显示出平台隔离数量
-     *      （是否从history表取得数据的判断依据是 隔离任务状态为3：Close或者任务id在history表中有数据）
+     *      （是否从history表取得数据的判断依据是 任务id在history表中有数据）
      * @apiExample 使用表
      *  wms_bt_inventory_center_logic
      *  cms_bt_stock_separate_item

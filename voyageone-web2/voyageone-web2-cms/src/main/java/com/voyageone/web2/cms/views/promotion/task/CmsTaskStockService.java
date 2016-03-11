@@ -5,8 +5,10 @@ import com.voyageone.common.configs.TypeChannel;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.web2.base.BaseAppService;
+import com.voyageone.web2.cms.dao.CmsBtStockSeparateIncrementItemDao;
 import com.voyageone.web2.cms.dao.CmsBtStockSeparateItemDao;
 import com.voyageone.web2.cms.dao.CmsBtStockSeparatePlatformInfoDao;
+import com.voyageone.web2.cms.dao.WmsBtLogicInventoryDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +26,12 @@ public class CmsTaskStockService extends BaseAppService {
     @Autowired
     private CmsBtStockSeparateItemDao cmsBtStockSeparateItemDao;
 
+    @Autowired
+    private CmsBtStockSeparateIncrementItemDao cmsBtStockSeparateIncrementItemDao;
+
+    @Autowired
+    private WmsBtLogicInventoryDao wmsBtLogicInventoryDao;
+
     /**
      * 取得库存隔离数据各种状态的数量
      *
@@ -35,6 +43,7 @@ public class CmsTaskStockService extends BaseAppService {
 //        sqlParam.put("taskId", taskId);
 //        sqlParam.put("status", status);
 //        return cmsBtStockSeparateItemDao.selectStockSeparateItemCnt(sqlParam);
+
         Map<String,Object> sqlParam = new HashMap<String,Object>();
         sqlParam.put("sql", getStockStatusCountSql(param));
         List<Map<String,Object>> statusCountList = cmsBtStockSeparateItemDao.selectStockSeparateItemBySqlMap(sqlParam);
@@ -188,19 +197,6 @@ public class CmsTaskStockService extends BaseAppService {
     }
 
     /**
-     * 实时库存状态
-     *
-     * @param param 客户端参数
-     * @param skuList 当页的sku列表
-     * @return 实时库存状态列表
-     */
-    public List<Map<String,Object>> getRealStockList(Map param, List<Object>skuList){
-        List<Map<String,Object>> realStockList = new ArrayList<Map<String,Object>>();
-        return realStockList;
-    }
-
-
-    /**
      * 获取一页表示的Sku
      *
      * @param param 客户端参数
@@ -223,6 +219,51 @@ public class CmsTaskStockService extends BaseAppService {
     public boolean isHistoryExist(Map param){
         return (cmsBtStockSeparateItemDao.selectStockSeparateItemHistoryCnt(param) !=  0) ? true : false;
     }
+
+    /**
+     * 实时库存状态
+     *
+     * @param param 客户端参数
+     * @param skuList 当页的sku列表
+     * @return 实时库存状态列表
+     */
+    public List<Map<String,Object>> getRealStockList(Map param, List<Object>skuList){
+        List<Map<String,Object>> realStockList = new ArrayList<Map<String,Object>>();
+
+        for (Object sku:skuList) {
+            // 取得某个sku的逻辑库存
+            int logicStock = getLogicStock((String) sku);
+
+            // 取得所有平台的隔离库存
+            Map<String,Object> sqlParam = new HashMap<String,Object>();
+            sqlParam.put("sku", sku);
+            sqlParam.put("status", "2"); //隔离成功
+            int stockSeparateSuccessAll = cmsBtStockSeparateItemDao.selectStockSeparateSuccessQty(sqlParam);
+
+            // 取得所有平台的增量隔离库存
+            int stockSeparateIncrementSuccessAll = cmsBtStockSeparateIncrementItemDao.selectStockSeparateIncrementSuccessQty(sqlParam);
+
+            // 取得隔离期间各个隔离平台的销售数量
+
+        }
+        return realStockList;
+    }
+
+    /**
+     * 取得某个sku的逻辑库存
+     *
+     * @param sku sku
+     * @return 某个sku的逻辑库存
+     */
+    public int getLogicStock(String sku){
+        Map<String,Object> sqlParam = new HashMap<String,Object>();
+        sqlParam.put("sku", sku);
+        int logicStock = wmsBtLogicInventoryDao.selectLogicInventoryCnt(sqlParam);
+        return  logicStock;
+    }
+
+
+
 
     /**
      * 取得一页表示的Sku的Sql
