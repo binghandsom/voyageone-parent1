@@ -34,7 +34,7 @@
 				</div>
 				<div class="category_drag_list_qh">
 					<ul>
-						<li ng-repeat="unvalData in vm.unvalList | filter:searchUnval">{{unvalData.prop_original}} <span class="pull-right text-muted" style="" ng-click="addVal(unvalData, $index);"><i class="fa fa-fw fa-angle-right text-vo"></i></span></li>
+						<li ng-repeat="unvalData in vm.unvalList | filter:searchUnval">{{unvalData.prop_original}} <span class="pull-right text-muted" style="cursor:pointer" ng-click="addVal(unvalData, $index);"><i class="fa fa-fw fa-angle-right text-vo"></i></span></li>
 					</ul>
 				</div>
 			</div>
