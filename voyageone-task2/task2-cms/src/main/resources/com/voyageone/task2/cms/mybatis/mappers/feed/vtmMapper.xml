@@ -122,7 +122,7 @@
         ,${pe_long_description} as pe_long_description
         ,${cps_cn_price_rmb}  as cps_cn_price_rmb
         ,${i_sku} as i_sku
-        ,${i_itemcode} as i_itemcode
+        ,CONCAT(#{channel_id},'-',${i_itemcode}) as i_itemcode
         ,${i_size} as i_size
         ,${i_barcode} as i_barcode
         ,${i_client_sku} as i_client_sku
