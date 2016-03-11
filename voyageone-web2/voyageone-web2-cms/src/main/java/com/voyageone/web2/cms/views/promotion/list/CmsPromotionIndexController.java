@@ -52,7 +52,7 @@ public class CmsPromotionIndexController extends CmsController {
             throws Exception {
 
         byte[] data = cmsPromotionService.getCodeExcelFile(promotionId);
-        return genResponseEntityFromBytes(promotionName + DateTimeUtil.getLocalTime(getUserTimeZone(), "yyyyMMddHHmmss") + ".xlsx", data);
+        return genResponseEntityFromBytes(String.format("%s(%s).xlsx",promotionName , DateTimeUtil.getLocalTime(getUserTimeZone(), "yyyyMMddHHmmss") , ".xlsx"), data);
 
     }
 }
