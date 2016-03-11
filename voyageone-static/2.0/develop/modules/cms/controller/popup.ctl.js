@@ -641,9 +641,9 @@ define([
          * @type {openImport}
          */
         $scope.openImport = openImport;
-        function openImport(viewSize, data) {
+        function openImport(viewSize, data, fnInitial) {
             require([popActions.file.import.controllerUrl], function () {
-                $modal.open({
+                var modalInstance = $modal.open({
                     templateUrl: popActions.file.import.templateUrl,
                     controller: popActions.file.import.controller,
                     size: viewSize,
@@ -653,6 +653,13 @@ define([
                         }
                     }
                 });
+                modalInstance.result.then(function () {
+                    if (fnInitial) {
+                        fnInitial();
+                    }
+
+                })
+
             });
         }
 
