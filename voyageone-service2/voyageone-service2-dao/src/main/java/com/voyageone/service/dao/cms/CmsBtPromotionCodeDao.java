@@ -11,7 +11,7 @@ import java.util.Map;
  * @author james 15/12/11
  * @version 2.0.0
  */
-//Repository
+@Repository
 public class CmsBtPromotionCodeDao extends ServiceBaseDao {
 
     public List<CmsBtPromotionCodeModel> getPromotionCodeList(Map<String, Object> params) {

@@ -12,7 +12,7 @@ import java.util.Map;
  * @version 2.0.0
  * @since 2.0.0
  */
-//Repository
+@Repository
 public class CmsBtBusinessLogDao extends ServiceBaseDao {
 
     /**

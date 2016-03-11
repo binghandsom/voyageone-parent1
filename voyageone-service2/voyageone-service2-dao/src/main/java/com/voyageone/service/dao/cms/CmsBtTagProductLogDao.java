@@ -12,7 +12,7 @@ import java.util.Map;
  * @author gubuchun 15/12/14
  * @version 2.0.0
  */
-//Repository
+@Repository
 public class CmsBtTagProductLogDao extends ServiceBaseDao {
 
     public int insertCmsBtTagLogList(List<CmsBtTagProductLogModel> cmsBtTagLogModelList){

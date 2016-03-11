@@ -2,9 +2,9 @@ package com.voyageone.web2.cms.wsdl.service;
 
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.web2.cms.wsdl.BaseService;
-import com.voyageone.web2.cms.wsdl.dao.CmsBtTagDao;
+import com.voyageone.service.dao.cms.CmsBtTagDao;
 import com.voyageone.web2.sdk.api.VoApiConstants;
-import com.voyageone.web2.sdk.api.domain.CmsBtTagModel;
+import com.voyageone.service.model.cms.CmsBtTagModel;
 import com.voyageone.web2.sdk.api.request.TagAddRequest;
 import com.voyageone.web2.sdk.api.request.TagRemoveRequest;
 import com.voyageone.web2.sdk.api.request.TagsGetRequest;

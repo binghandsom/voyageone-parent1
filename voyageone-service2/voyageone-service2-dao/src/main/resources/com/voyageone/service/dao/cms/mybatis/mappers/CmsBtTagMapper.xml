@@ -3,7 +3,7 @@
 <mapper namespace="com.voyageone.service.dao.sql">
 
     <!-- Tag信息追加 -->
-    <insert id="insert_cms_bt_tag" parameterType="com.voyageone.web2.sdk.api.domain.CmsBtTagModel"  useGeneratedKeys="true" keyProperty="tagId">
+    <insert id="insert_cms_bt_tag" parameterType="com.voyageone.service.model.cms.CmsBtTagModel"  useGeneratedKeys="true" keyProperty="tagId">
         insert into voyageone_cms2.cms_bt_tag
         <trim prefix="(" suffix=")" suffixOverrides="," >
             <if test="tagName != null" >
@@ -76,7 +76,7 @@
     </insert>
 
     <!-- Tag信息更新 -->
-    <update id="update_cms_bt_tag" parameterType="com.voyageone.web2.sdk.api.domain.CmsBtTagModel" >
+    <update id="update_cms_bt_tag" parameterType="com.voyageone.service.model.cms.CmsBtTagModel" >
         update voyageone_cms2.cms_bt_tag
         <set >
             <if test="tagName != null" >
@@ -121,7 +121,7 @@
     </delete>
 
     <!-- Tag信息检索 （根据 tag_id，取得对应Tag）-->
-    <resultMap id="TagMap" type="com.voyageone.web2.sdk.api.domain.CmsBtTagModel" >
+    <resultMap id="TagMap" type="com.voyageone.service.model.cms.CmsBtTagModel" >
         <id column="tag_id" property="tagId" jdbcType="INTEGER" />
         <result column="tag_name" property="tagName" jdbcType="VARCHAR" />
         <result column="channel_id" property="channelId" jdbcType="VARCHAR" />

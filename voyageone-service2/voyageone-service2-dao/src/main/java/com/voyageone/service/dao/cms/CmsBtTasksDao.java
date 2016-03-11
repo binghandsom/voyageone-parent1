@@ -1,6 +1,7 @@
-package com.voyageone.web2.cms.wsdl.dao;
+package com.voyageone.service.dao.cms;
 
-import com.voyageone.web2.cms.wsdl.models.CmsBtTaskModel;
+import com.voyageone.service.dao.ServiceBaseDao;
+import com.voyageone.service.model.cms.CmsBtTasksModel;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -11,31 +12,31 @@ import java.util.Map;
  * @version 2.0.0
  */
 @Repository
-public class CmsBtTaskDao extends WsdlBaseDao {
+public class CmsBtTasksDao extends ServiceBaseDao {
 
-    public int insert(CmsBtTaskModel model) {
+    public int insert(CmsBtTasksModel model) {
         return insert("cms_bt_tasks_insert", model);
     }
 
     /**
      * 更新数据, 只更新 Config 和 Name
      */
-    public int update(CmsBtTaskModel model) {
+    public int update(CmsBtTasksModel model) {
         return update("cms_bt_tasks_update", model);
     }
 
-    public CmsBtTaskModel selectByIdWithPromotion(int task_id) {
+    public CmsBtTasksModel selectByIdWithPromotion(int task_id) {
         return selectOne("cms_bt_tasks_select", parameters("task_id", task_id));
     }
 
-    public List<CmsBtTaskModel> selectByName(int promotion_id, String task_name, int task_type) {
+    public List<CmsBtTasksModel> selectByName(int promotion_id, String task_name, int task_type) {
         return selectList("cms_bt_tasks_select", parameters(
                 "promotion_id", promotion_id,
                 "task_name", task_name,
                 "task_type", task_type+""));
     }
 
-    public List<CmsBtTaskModel> selectTaskWithPromotionByChannel(Map<String,Object> searchInfo) {
+    public List<CmsBtTasksModel> selectTaskWithPromotionByChannel(Map<String,Object> searchInfo) {
         return selectList("cms_bt_tasks_select", searchInfo);
     }
 }

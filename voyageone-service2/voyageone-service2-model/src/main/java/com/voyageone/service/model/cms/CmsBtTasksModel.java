@@ -1,6 +1,7 @@
-package com.voyageone.web2.cms.wsdl.models;
+package com.voyageone.service.model.cms;
 
-import com.voyageone.web2.sdk.api.domain.CmsBtPromotionModel;
+import com.voyageone.base.dao.mysql.BaseModel;
+
 
 /**
  * Created by jonasvlag on 16/2/29.
@@ -8,7 +9,7 @@ import com.voyageone.web2.sdk.api.domain.CmsBtPromotionModel;
  * @version 2.0.0
  * @since 2.0.0
  */
-public class CmsBtTaskModel {
+public class CmsBtTasksModel extends BaseModel {
 
     private int task_id;
 
@@ -25,14 +26,6 @@ public class CmsBtTaskModel {
     private String activity_end;
 
     private String config;
-
-    private String created;
-
-    private String creater;
-
-    private String modified;
-
-    private String modifier;
 
     private CmsBtPromotionModel promotion;
 
@@ -90,38 +83,6 @@ public class CmsBtTaskModel {
 
     public void setConfig(String config) {
         this.config = config;
-    }
-
-    public String getCreated() {
-        return created;
-    }
-
-    public void setCreated(String created) {
-        this.created = created;
-    }
-
-    public String getCreater() {
-        return creater;
-    }
-
-    public void setCreater(String creater) {
-        this.creater = creater;
-    }
-
-    public String getModified() {
-        return modified;
-    }
-
-    public void setModified(String modified) {
-        this.modified = modified;
-    }
-
-    public String getModifier() {
-        return modifier;
-    }
-
-    public void setModifier(String modifier) {
-        this.modifier = modifier;
     }
 
     public CmsBtPromotionModel getPromotion() {

@@ -5,18 +5,17 @@ import com.voyageone.common.components.transaction.SimpleTransaction;
 import com.voyageone.common.configs.Enums.PromotionTypeEnums;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.ExcelUtils;
-import com.voyageone.common.util.StringUtils;
+import com.voyageone.service.model.cms.*;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.CmsConstants;
 import com.voyageone.web2.cms.bean.CmsPromotionProductPriceBean;
-import com.voyageone.web2.cms.wsdl.dao.CmsBtTaskDao;
-import com.voyageone.web2.cms.wsdl.models.CmsBtTaskModel;
+import com.voyageone.service.dao.cms.CmsBtTasksDao;
+import com.voyageone.service.model.cms.CmsBtTasksModel;
 import com.voyageone.web2.cms.views.pop.bulkUpdate.CmsAddToPromotionService;
 import com.voyageone.web2.cms.wsdl.service.PromotionDetailService;
 import com.voyageone.web2.sdk.api.VoApiDefaultClient;
-import com.voyageone.web2.sdk.api.domain.*;
 import com.voyageone.web2.sdk.api.request.*;
 import com.voyageone.web2.sdk.api.service.ProductSdkClient;
 import com.voyageone.web2.sdk.api.service.ProductTagClient;
@@ -46,7 +45,7 @@ public class CmsPromotionDetailService extends BaseAppService {
     protected ProductSdkClient ProductGetClient;
 
     @Autowired
-    private CmsBtTaskDao cmsBtTaskDao;
+    private CmsBtTasksDao cmsBtTaskDao;
 
     @Autowired
     private ProductTagClient productTagClient;
@@ -520,10 +519,10 @@ public class CmsPromotionDetailService extends BaseAppService {
 
         simpleTransaction.openTransaction();
         try {
-            List<CmsBtTaskModel> tasks = cmsBtTaskDao.selectByName(promotionId, null, PromotionTypeEnums.Type.TEJIABAO.getTypeId());
+            List<CmsBtTasksModel> tasks = cmsBtTaskDao.selectByName(promotionId, null, PromotionTypeEnums.Type.TEJIABAO.getTypeId());
             if (tasks.size() == 0) {
                 CmsBtPromotionModel cmsBtPromotionModel = cmsPromotionService.queryById(promotionId);
-                CmsBtTaskModel cmsBtTaskModel = new CmsBtTaskModel();
+                CmsBtTasksModel cmsBtTaskModel = new CmsBtTasksModel();
                 cmsBtTaskModel.setModifier(operator);
                 cmsBtTaskModel.setCreater(operator);
                 cmsBtTaskModel.setPromotion_id(promotionId);
