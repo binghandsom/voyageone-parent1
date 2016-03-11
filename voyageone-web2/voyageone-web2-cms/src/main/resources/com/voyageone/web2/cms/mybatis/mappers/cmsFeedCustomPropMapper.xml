@@ -185,7 +185,7 @@
         <if test="propValue != null">
             AND (v1.feed_value_original= #{propValue} or v1.feed_value_translation= #{propValue} )
         </if>
-        ORDER BY p1.display_order,v1.feed_value_original
+        ORDER BY p1.feed_cat_path, p1.display_order,v1.feed_value_original
     </select>
 
 </mapper>
