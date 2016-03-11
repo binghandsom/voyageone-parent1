@@ -129,13 +129,13 @@
 							<!--</button>-->
 							<ul uib-dropdown-menu>
 								<li><a href ng-click="openTask(promotion)" translate="BTN_CREATE_TASK"></a></li>
-								<li><a href translate="BTN_CREATE_TE_JIA_BAO_TASK"></a></li>
+								<li ng-if="promotion.tejiabaoId != 0" ><a href ng-click="teJiaBaoInit(promotion.promotionId)" translate="BTN_CREATE_TE_JIA_BAO_TASK"></a></li>
 							</ul>
 						</div>
 					</td>
 					<td class="text-center" ng-controller="popupCtrl"><button title="{{'BTN_EDIT' | translate}}" class="btn btn-success btn-xs" ng-click="openPromotion('md',vm.platformTypeList,promotion)"><i class="fa fa-pencil"></i></button>
 						<button title="{{'BTN_DELETE' | translate}}" class="btn btn-danger btn-xs"  ng-click="del(promotion)"><i class="fa  fa-trash-o"></i></button>
-						<button title="{{'BTN_DOWNLOAD' | translate}}" class="btn btn-dangerdel btn-xs" ng-click="openOtherDownload(promotion.promotionId)"><i class="fa fa-cloud-download"></i></button>
+						<button title="{{'BTN_DOWNLOAD' | translate}}" class="btn btn-dangerdel btn-xs" ng-click="openOtherDownload(promotion)"><i class="fa fa-cloud-download"></i></button>
 					</td>
 				</tr>
 				</tbody>

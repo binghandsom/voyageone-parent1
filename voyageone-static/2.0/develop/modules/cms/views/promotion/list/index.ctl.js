@@ -3,7 +3,7 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function () {
 
-    function indexController($scope, promotionService, confirm, $translate, cActions) {
+    function indexController($scope, promotionService, promotionDetailService, confirm, $translate, cActions, notify, $location, cRoutes) {
 
         $scope.vm = {"promotionList": [], "platformTypeList": [], "promotionStatus": []};
         $scope.searchInfo = {};
@@ -22,9 +22,9 @@ define([
             $scope.searchInfo = {};
         };
 
-        $scope.openOtherDownload = function (promotionId) {
+        $scope.openOtherDownload = function (promotion) {
 
-            $.download.post(cActions.cms.promotion.promotionService.root + "/" + cActions.cms.promotion.promotionService.exportPromotion, {"promotionId": promotionId});
+            $.download.post(cActions.cms.promotion.promotionService.root + "/" + cActions.cms.promotion.promotionService.exportPromotion, {"promotionId": promotion.promotionId,"promotionName":promotion.promotionName});
         };
 
         $scope.search = function () {
@@ -47,8 +47,15 @@ define([
             })
 
         };
+
+        $scope.teJiaBaoInit = function(promotionId){
+            promotionDetailService.teJiaBaoInit(promotionId).then(function (res) {
+                notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
+                $location.path(cRoutes.promotion_task_price.url + promotionId);
+            })
+        };
     }
 
-    indexController.$inject = ['$scope', 'promotionService', 'confirm', '$translate', 'cActions'];
+    indexController.$inject = ['$scope', 'promotionService', 'promotionDetailService', 'confirm', '$translate', 'cActions', 'notify', '$location', 'cRoutes'];
     return indexController;
 });
