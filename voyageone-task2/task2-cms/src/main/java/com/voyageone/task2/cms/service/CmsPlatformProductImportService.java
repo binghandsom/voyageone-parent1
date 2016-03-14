@@ -300,7 +300,7 @@ public class CmsPlatformProductImportService extends BaseTaskService {
             // 英文标题
             cmsFields.setProductNameEn(oldCmsDataBean.getTitle_en());
             // 中文标题
-            cmsFields.setProductNameCn(oldCmsDataBean.getTitle_cn());
+            cmsFields.setLongTitle(oldCmsDataBean.getTitle_cn());
             // 英文描述
             cmsFields.setLongDesEn(oldCmsDataBean.getDescription_en());
             // 中文描述
