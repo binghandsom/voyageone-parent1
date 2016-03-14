@@ -5,24 +5,23 @@ import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.masterdate.schema.field.OptionsField;
 import com.voyageone.common.masterdate.schema.option.Option;
+import com.voyageone.common.util.CommonUtil;
 import com.voyageone.service.model.cms.mongo.CmsMtCommonPropDefModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.CmsConstants;
 import com.voyageone.web2.cms.dao.CmsMtCommonPropDefDao;
-import com.voyageone.web2.cms.model.CmsBtProductLogModel;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import com.voyageone.web2.sdk.api.VoApiDefaultClient;
+import com.voyageone.web2.sdk.api.request.ProductGetRequest;
 import com.voyageone.web2.sdk.api.request.ProductUpdateRequest;
-import com.voyageone.web2.sdk.api.request.ProductsGetRequest;
-import com.voyageone.web2.sdk.api.response.ProductsGetResponse;
+import com.voyageone.web2.sdk.api.response.ProductGetResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * @author gubuchun 15/12/9
@@ -69,24 +68,29 @@ public class CmsFieldEditService extends BaseAppService {
     public void setProductFields(Map<String, Object> params, UserSessionBean userInfo) {
         Map<String, Object> prop = (Map<String, Object>) params.get("property");
         String prop_id = prop.get("id").toString();
-        Set<Long> prodIdList = (Set<Long>) params.get("productIds");
+        List<Long> prodIdList = CommonUtil.changeListType((ArrayList<Integer>) params.get("productIds"));
 
-        // 获取产品的信息
-        ProductsGetRequest productsGetRequest = new ProductsGetRequest();
-        productsGetRequest.setProductIds(prodIdList);
-        productsGetRequest.setChannelId(userInfo.getSelChannelId());
+        for(Long productId : prodIdList) {
 
-        ProductsGetResponse productsGetResponse = voApiClient.execute(productsGetRequest);
+            // 获取产品的信息
+            ProductGetRequest productGetRequest = new ProductGetRequest();
+            productGetRequest.setProductId(productId);
+            productGetRequest.setChannelId(userInfo.getSelChannelId());
 
-        for(CmsBtProductModel productModel : productsGetResponse.getProducts()) {
+            ProductGetResponse productGetResponse = voApiClient.execute(productGetRequest);
 
             Object[] field = getPropValue(params);
+            CmsBtProductModel productModel = productGetResponse.getProduct();
             productModel.getFields().setAttribute(field[0].toString(), field[1]);
+
+            // 更新状态以外的属性时,check产品状态如果为Approved,则将产品状态设置成Ready
             if (!"status".equals(prop_id) && CmsConstants.productStatus.APPROVED.equals(productModel.getFields().getStatus()))
                 productModel.getFields().setStatus(CmsConstants.productStatus.READY);
 
             ProductUpdateRequest updateRequest = new ProductUpdateRequest(userInfo.getSelChannelId());
             updateRequest.setProductModel(productModel);
+            updateRequest.setIsCheckModifed(false);
+            updateRequest.setModifier(userInfo.getUserName());
 
             voApiClient.execute(updateRequest);
         }
