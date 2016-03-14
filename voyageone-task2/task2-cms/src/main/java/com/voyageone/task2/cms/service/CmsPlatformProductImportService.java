@@ -59,7 +59,7 @@ public class CmsPlatformProductImportService extends BaseTaskService {
 
     @Override
     public String getTaskName() {
-        return "CmsPlatformProductImportService";
+        return "CmsPlatformProductImport";
     }
 
     @Override

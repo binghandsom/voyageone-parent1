@@ -885,7 +885,15 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 return -1;
             }
 
-            return product.getGroups().getPlatforms().get(0).getGroupId();
+            // 看看是否能找到
+            for (CmsBtProductModel_Group_Platform platform : product.getGroups().getPlatforms()) {
+                if (platform.getCartId() == Integer.parseInt(cartId)) {
+                    return platform.getGroupId();
+                }
+            }
+
+            // 找到product但是找不到指定cart, 也认为是找不到 (按理说是不会跑到这里的)
+            return -1;
         }
 
         private int m_mulitComplex_index = 0; // 暂时只支持一层multiComplex, 如果需要多层, 就需要改成list, 先进后出

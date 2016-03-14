@@ -58,7 +58,7 @@ public class CmsBtProductDao extends BaseMongoPartDao {
      * 获取商品的group 根据modelCode, cartId
      */
     public CmsBtProductModel selectProductGroupByModelCodeAndCartId(String channelId, String modelCode, String cartId) {
-        String query = String.format("{\"feed.orgAtts.modelCode\":\"%s\",\"groups.platforms.cartId\":\"%s\"}, {\"groups.platforms.cartId.$\":1}", modelCode, cartId);
+        String query = String.format("{\"feed.orgAtts.modelCode\":\"%s\",\"groups.platforms.cartId\":%s}, {\"groups.platforms.cartId.$\":1}", modelCode, cartId);
         return selectOneWithQuery(query, channelId);
     }
 
