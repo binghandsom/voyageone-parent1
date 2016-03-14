@@ -405,12 +405,12 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 try {
                     transBaiduCn = BaiduTranslateUtil.translate(transBaiduOrg);
 
-                    field.setLongTitle(transBaiduCn.get(0)); // 标题
+                    field.setProductNameCn(transBaiduCn.get(0)); // 标题
                     field.setLongDesCn(transBaiduCn.get(1)); // 长描述
 
                 } catch (Exception e) {
                     // 翻译失败的场合,全部设置为空, 运营自己翻译吧
-                    field.setLongTitle(""); // 标题
+                    field.setProductNameCn(""); // 标题
                     field.setLongDesCn(""); // 长描述
                 }
             }

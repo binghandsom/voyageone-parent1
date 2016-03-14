@@ -46,7 +46,7 @@ public class CmsProductServiceTest {
         fields.setBrand("Jewelry" + random.nextInt(10));
         fields.setAttribute("productName", "Stud Earrings with Cubic Zirconia in Sterling Silver " + code);
 
-        fields.setLongTitle("Stud Earrings with Cubic Zirconia in Sterling Silver- 长标题" + random.nextInt(100));
+        fields.setProductNameCn("Stud Earrings with Cubic Zirconia in Sterling Silver- 长标题" + random.nextInt(100));
         fields.setMiddleTitle("Stud Earrings with Cubic Zirconia in Sterling Silver- 中标题" + random.nextInt(100));
         fields.setShortTitle("Stud Earrings with Cubic Zirconia in Sterling Silver- 短标题" + random.nextInt(100));
 

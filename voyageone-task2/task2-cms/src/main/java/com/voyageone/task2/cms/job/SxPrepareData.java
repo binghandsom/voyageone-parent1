@@ -56,7 +56,7 @@ public class SxPrepareData {
         fields.setBrand(brand);
         fields.setAttribute("productName", "Stud Zirconia in Sterling Silver " + code);
 
-        fields.setLongTitle("Stud Earrings with Cubic Silver- 长标题" + code);
+        fields.setProductNameCn("Stud Earrings with Cubic Silver- 长标题" + code);
         fields.setMiddleTitle("Stud Earrings with Cubic Silver- 中标题" + code);
         fields.setShortTitle("Stud Earrings with Cubic Silver- 短标题" + code);
 
