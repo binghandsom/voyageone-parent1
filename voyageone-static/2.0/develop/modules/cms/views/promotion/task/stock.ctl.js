@@ -43,7 +43,7 @@ define([
             this.stockPageOption = {
                 curr: 1,
                 total: 0,
-                size: 3,
+                size: 10,
                 fetch: this.getCommonStockList.bind(this)
             };
             this.realStockPageOption = {
@@ -92,7 +92,7 @@ define([
                     "propertyList" : this.propertyList,
                     "platformList" : this.platformList,
                     "start1" :  0,
-                    "length1" : 3,
+                    "length1" : 10,
                     "start2" :  0,
                     "length2" : 3
                 }).then(function (res) {
@@ -150,7 +150,7 @@ define([
                     "start2" :  (this.realStockPageOption.curr - 1) * this.realStockPageOption.size,
                     "length2" : this.realStockPageOption.size
                 }).then(function (res) {
-                    main.stockList = res.data.stockList;;
+                    main.realStockList = res.data.realStockList;;
                 })
             }
         };
