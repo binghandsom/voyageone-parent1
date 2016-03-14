@@ -104,7 +104,7 @@ define([
                     return;
                 }
                 
-                var value = ttt.getValue(ttt.field);
+                var value = type === 'propFeed' ? ttt.field.value : ttt.getValue(ttt.field);
 
                 if (!value) {
                     ttt.alert(ttt.$translate.instant('TXT_MSG_NO_VALUE_IS_ON_THE_ATTRIBUTE'));
