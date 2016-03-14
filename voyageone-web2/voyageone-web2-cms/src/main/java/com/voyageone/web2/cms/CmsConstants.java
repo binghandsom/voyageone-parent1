@@ -70,4 +70,11 @@ public interface CmsConstants extends BaseConstants{
         String READY = "Ready";
         String APPROVED = "Approved";
     }
+
+    interface optionConfigType {
+
+        String OPTION_DATA_SOURCE = "optConfig";
+
+        String OPTION_DATA_SOURCE_CHANNEL = "optConfigChannel";
+    }
 }

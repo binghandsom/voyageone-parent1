@@ -7,9 +7,10 @@
 
 define([
     'cms',
+    'modules/cms/enums/Status',
     'modules/cms/controller/popup.ctl',
     'modules/cms/service/product.detail.service'
-], function (cms) {
+], function (cms, Status) {
     return cms.controller('productDetailController', (function () {
 
         function ProductDetailController($routeParams, $translate, productDetailService, feedMappingService, notify, confirm) {
@@ -37,7 +38,7 @@ define([
                 self.productDetailService.getProductInfo(data)
                     .then(function (res) {
                         self.productDetails = res.data.productInfo;
-                        self.productDetailsCopy = angular.copy(this.productDetails);
+                        self.productDetailsCopy = angular.copy(self.productDetails);
                         self.showInfoFlag = self.productDetails.productDataIsReady
 
                     }, function (res) {
@@ -48,18 +49,33 @@ define([
 
             // 保存所有的变更
             updateProductDetail: function () {
+                var self = this;
+
+                // 推算产品状态
+                // 如果该产品以前不是approve,这次变成approve的
+                if (self.productDetails.productStatus.statusInfo.isApproved
+                    && !self.productDetailsCopy.productStatus.statusInfo.isApproved)
+                    self.productDetails.productStatus.approveStatus = Status.APPROVED;
+                // 变成ready,或者以前是approve这次数据发生变化的
+                else if (self.productDetails.productStatus.statusInfo.isWaitingApprove
+                    || (self.productDetails.productStatus.statusInfo.isApproved
+                    && self.productDetailsCopy.productStatus.statusInfo.isApproved
+                    && self.productDetails != self.productDetailsCopy))
+                    self.productDetails.productStatus.approveStatus = Status.READY;
 
                 this.productDetailService.updateProductDetail(this.productDetails)
                     .then(function (res) {
-                        this.productDetails.modified = res.data.modified;
-                        this.productDetailsCopy = angular.copy(this.productDetails);
-                        this.notify.success(this.translate.instant('TXT_MSG_UPDATE_SUCCESS'));
+                        self.productDetails.modified = res.data.modified;
+                        this.productDetailService._setProductStatus(self.productDetails.productStatus)
+                        self.productDetailsCopy = angular.copy(self.productDetails);
+                        self.notify.success(this.translate.instant('TXT_MSG_UPDATE_SUCCESS'));
                     }.bind(this))
             },
 
             // 取消所有的变更
             cancelProductDetail: function () {
                 this.productDetails = angular.copy(this.productDetailsCopy);
+                this.showInfoFlag = this.productDetails.productDataIsReady;
             },
 
             openCategoryMapping: function (productInfo, popupNewCategory) {
@@ -80,22 +96,22 @@ define([
              */
             bindCategory: function (context) {
 
-                var $ = this;
+                var self = this;
                 this.confirm(this.translate.instant('TXT_MSG_CONFIRM_IS_CHANGE_CATEGORY')).result
                     .then(function () {
                         var data = {
-                            prodIds: [$.productDetails.productId],
+                            prodIds: [self.productDetails.productId],
                             catId: context.selected.catId,
                             catPath: context.selected.catPath
                         };
-                        $.productDetailService.changeCategory(data).then(function (res) {
+                        self.productDetailService.changeCategory(data).then(function (res) {
                             if (res.data.isChangeCategory) {
-                                $.notify.success($.translate.instant('TXT_MSG_UPDATE_SUCCESS'));
-                                $.initialize()
+                                self.notify.success(self.translate.instant('TXT_MSG_UPDATE_SUCCESS'));
+                                self.initialize()
                             }
                             else
                             // TODO 需要enka设计一个错误页面 res.data.publishInfo
-                                $.notify("有商品处于上新状态,不能切换类目");
+                                self.notify("有商品处于上新状态,不能切换类目");
                         })
                     });
 

@@ -42,7 +42,9 @@
 							<label class="m-t-xs col-sm-2" translate="TXT_IS_APPROVED" ng-if="ctrl.productDetailsCopy.productStatus.statusInfo.isWaitingApprove"></label>
 							<div class="col-sm-2 text-left" ng-if="ctrl.productDetailsCopy.productStatus.statusInfo.isWaitingApprove">
 								<div class="onoffswitch">
-									<input type="checkbox" name="switchIsApprove" class="onoffswitch-checkbox" id="switchIsApprove" ng-model="ctrl.productDetails.productStatus.statusInfo.isApproved">
+									<input type="checkbox" name="switchIsApprove" class="onoffswitch-checkbox" id="switchIsApprove"
+										   ng-model="ctrl.productDetails.productStatus.statusInfo.isApproved"
+										   ng-disabled="ctrl.productDetails.productStatus.statusInfo.isDisable">
 									<label class="onoffswitch-label" for="switchIsApprove">
 										<span class="onoffswitch-inner"></span>
 										<span class="onoffswitch-switch"></span>
