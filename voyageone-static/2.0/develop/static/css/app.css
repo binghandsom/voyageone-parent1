@@ -7671,3 +7671,7 @@ input:checked + ol > li {
 .modal-xlg {
   width: 650px;
 }
+
+input[datepicker-popup][readonly] {
+  background-color: white;
+}

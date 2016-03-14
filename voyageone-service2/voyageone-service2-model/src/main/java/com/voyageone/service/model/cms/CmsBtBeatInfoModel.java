@@ -84,7 +84,7 @@ public class CmsBtBeatInfoModel extends BaseModel {
     }
 
     public void setMessage(String message) {
-        if (this.message == null)
+        if (StringUtils.isEmpty(this.message))
             this.message = message;
         else if (!StringUtils.isEmpty(message))
             this.message += ";" + message;

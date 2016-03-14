@@ -4,7 +4,9 @@ import com.taobao.api.*;
 import com.voyageone.common.components.issueLog.IssueLog;
 import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
+import com.voyageone.common.components.tmall.bean.ComBtTaobaoApiLogModel;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.common.dao.ComBtTaobaoApiLogDao;
 import com.voyageone.common.util.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -18,6 +20,9 @@ public abstract class TbBase {
 
     @Autowired
     protected IssueLog issueLog;
+
+    @Autowired
+    private ComBtTaobaoApiLogDao apiLogDao;
 
     protected Log logger = LogFactory.getLog(getClass());
 
@@ -175,6 +180,13 @@ public abstract class TbBase {
         @Override
         public void run() {
             TaobaoClient client = getDefaultTaobaoClient(shopBean);
+
+            try {
+                apiLogDao.insert(new ComBtTaobaoApiLogModel(request.getApiMethodName(), shopBean));
+            } catch (Exception e) {
+                setErrorLog(e);
+            }
+
             try {
                 response = setSessionKey
                         ? client.execute(request, shopBean.getSessionKey())
