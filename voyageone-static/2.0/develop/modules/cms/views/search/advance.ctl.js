@@ -77,7 +77,9 @@ define([
             var catInfo = getCatPath($scope.vm.searchInfo.catId);
             if (catInfo)
                 $scope.vm.searchInfo.catPath = catInfo.catPath;
-            searchAdvanceService.search($scope.vm.searchInfo, $scope.vm.groupPageOption, $scope.vm.productPageOption)
+            else
+                $scope.vm.searchInfo.catPath = null;
+                    searchAdvanceService.search($scope.vm.searchInfo, $scope.vm.groupPageOption, $scope.vm.productPageOption)
                 .then(function (res) {
                     $scope.vm.groupList = res.data.groupList;
                     $scope.vm.groupPageOption.total = res.data.groupListTotal;
