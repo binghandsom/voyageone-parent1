@@ -51,6 +51,9 @@
         <!-- 维他命 feed 导入 cms2 -->
         <task:scheduled ref="CmsVtmJob" method="run" cron="0 0 * * * ?"/>
 
+        <!-- 库存数据导入 cms2 -->
+        <task:scheduled ref="CmsSynInventoryToCmsJob" method="run" cron="0 0/5 * * * ?"/>
+
     </task:scheduled-tasks>
 
     <!-- 必须需要 -->

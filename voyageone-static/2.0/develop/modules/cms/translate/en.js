@@ -207,6 +207,8 @@ define(function() {
         "TXT_TIME_START": "Start Time",
         "TXT_TIME_END": "End Time",
         "TXT_TASK_TYPE":"Task Type",
+        "TXT_TASK_DATE":"Task Date",
+        "TXT_TEJIABAO_DETAIL":"Tejiabao Detail",
 
         "TXT_MSG_SEARCH": "Search...",
         "TXT_MSG_PAGE_IS_BUILDING": "This page is building...",
