@@ -59,20 +59,20 @@
                                 <div class="form-group">
                                     <label class="col-sm-4 control-label" translate="TXT_PREHEATING_TIME"></label>
                                     <div class="col-sm-8 form-inline">
-                                        <div class="col-sm-5 input-group" ng-controller="datePickerCtrl">
-                                            <input type="text" ng-model="vm.promotion.prePeriodStart" class="form-control" datepicker-popup="{{formatDate}}"
-                                                   is-open="datePicker[0].opened" date-model-format="{{formatDate}}" datepicker-options="dateOptions" close-text="Close"
-                                                   max-date="$parent.vm.promotion.prePeriodEnd"/>
+                                        <div class="col-sm-5 input-group" >
+                                            <input type="text" ng-model="vm.promotion.prePeriodStart" class="form-control" datepicker-popup
+                                                   is-open="datePicker1" date-model-format="yyyy-MM-dd" close-text="Close"
+                                                   max-date="vm.promotion.prePeriodEnd"/>
 								              <span class="input-group-btn">
-								                <button type="button" class="btn btn-default" ng-click="open($event,0,6)"><i class="glyphicon glyphicon-calendar"></i></button>
+								                <button type="button" class="btn btn-default" ng-click="datePicker1 = !datePicker1"><i class="glyphicon glyphicon-calendar"></i></button>
 								              </span>
                                         </div>&nbsp;~&nbsp;
-                                        <div class="col-sm-5 input-group" ng-controller="datePickerCtrl">
-                                            <input type="text" ng-model="vm.promotion.prePeriodEnd" class="form-control" datepicker-popup="{{formatDate}}"
-                                                   is-open="datePicker[1].opened" date-model-format="{{formatDate}}" datepicker-options="dateOptions" close-text="Close"
-                                                   min-date="$parent.vm.promotion.prePeriodStart"/>
+                                        <div class="col-sm-5 input-group" >
+                                            <input type="text" ng-model="vm.promotion.prePeriodEnd" class="form-control" datepicker-popup
+                                                   is-open="datePicker2" date-model-format="yyyy-MM-dd" close-text="Close"
+                                                   min-date="vm.promotion.prePeriodStart"/>
 								              <span class="input-group-btn">
-								                <button type="button" class="btn btn-default" ng-click="open($event,1,6)"><i class="glyphicon glyphicon-calendar"></i></button>
+								                <button type="button" class="btn btn-default" ng-click="datePicker2 = !datePicker2"><i class="glyphicon glyphicon-calendar"></i></button>
 								              </span>
                                         </div>
                                     </div>
@@ -80,20 +80,20 @@
                                 <div class="form-group">
                                     <label class="col-sm-4 control-label" translate="TXT_PRE_SALE_TIME"></label>
                                     <div class="col-sm-8 form-inline">
-                                        <div class="col-sm-5 input-group" ng-controller="datePickerCtrl">
-                                            <input type="text" ng-model="vm.promotion.preSaleStart" class="form-control" datepicker-popup="{{formatDate}}"
-                                                   is-open="datePicker[2].opened" date-model-format="{{formatDate}}" datepicker-options="dateOptions" close-text="Close"
-                                                   max-date="$parent.vm.promotion.preSaleEnd"/>
+                                        <div class="col-sm-5 input-group" >
+                                            <input type="text" ng-model="vm.promotion.preSaleStart" class="form-control" datepicker-popup
+                                                   is-open="datePicker3" date-model-format="yyyy-MM-dd" close-text="Close"
+                                                   max-date="vm.promotion.preSaleEnd"/>
 								              <span class="input-group-btn">
-								                <button type="button" class="btn btn-default" ng-click="open($event,2,6)"><i class="glyphicon glyphicon-calendar"></i></button>
+								                <button type="button" class="btn btn-default" ng-click="datePicker3 = !datePicker3"><i class="glyphicon glyphicon-calendar"></i></button>
 								              </span>
                                         </div>&nbsp;~&nbsp;
-                                        <div class="col-sm-5 input-group" ng-controller="datePickerCtrl">
-                                            <input type="text" ng-model="vm.promotion.preSaleEnd" class="form-control" datepicker-popup="{{formatDate}}"
-                                                   is-open="datePicker[3].opened" date-model-format="{{formatDate}}" datepicker-options="dateOptions" close-text="Close"
-                                                   min-date="$parent.vm.promotion.preSaleStart"/>
+                                        <div class="col-sm-5 input-group" >
+                                            <input type="text" ng-model="vm.promotion.preSaleEnd" class="form-control" datepicker-popup
+                                                   is-open="datePicker4" date-model-format="yyyy-MM-dd" close-text="Close"
+                                                   min-date="vm.promotion.preSaleStart"/>
 								              <span class="input-group-btn">
-								                <button type="button" class="btn btn-default" ng-click="open($event,3,6)"><i class="glyphicon glyphicon-calendar"></i></button>
+								                <button type="button" class="btn btn-default" ng-click="datePicker4 = !datePicker4"><i class="glyphicon glyphicon-calendar"></i></button>
 								              </span>
                                         </div>
                                     </div>
@@ -101,20 +101,20 @@
                                 <div class="form-group">
                                     <label class="col-sm-4 control-label" translate="TXT_PROMOTION_TIME"></label>
                                     <div class="col-sm-8 form-inline">
-                                        <div class="col-sm-5 input-group" ng-controller="datePickerCtrl">
-                                            <input type="text" ng-model="vm.promotion.activityStart" class="form-control" datepicker-popup="{{formatDate}}"
-                                                   is-open="datePicker[4].opened" date-model-format="{{formatDate}}" datepicker-options="dateOptions" close-text="Close"
-                                                   max-date="$parent.vm.promotion.activityEnd"/>
+                                        <div class="col-sm-5 input-group" >
+                                            <input type="text" ng-model="vm.promotion.activityStart" class="form-control" datepicker-popup
+                                                   is-open="datePicker5" date-model-format="yyyy-MM-dd" close-text="Close"
+                                                   max-date="vm.promotion.activityEnd"/>
 								              <span class="input-group-btn">
-								                <button type="button" class="btn btn-default" ng-click="open($event,4,6)"><i class="glyphicon glyphicon-calendar"></i></button>
+								                <button type="button" class="btn btn-default" ng-click="datePicker5 = !datePicker5"><i class="glyphicon glyphicon-calendar"></i></button>
 								              </span>
                                         </div>&nbsp;~&nbsp;
-                                        <div class="col-sm-5 input-group" ng-controller="datePickerCtrl">
-                                            <input type="text" ng-model="vm.promotion.activityEnd" class="form-control" datepicker-popup="{{formatDate}}"
-                                                   is-open="datePicker[5].opened" date-model-format="{{formatDate}}" datepicker-options="dateOptions" close-text="Close"
-                                                   min-date="$parent.vm.promotion.activityStart"/>
+                                        <div class="col-sm-5 input-group" >
+                                            <input type="text" ng-model="vm.promotion.activityEnd" class="form-control" datepicker-popup
+                                                   is-open="datePicker6" date-model-format="yyyy-MM-dd" close-text="Close"
+                                                   min-date="vm.promotion.activityStart"/>
 								              <span class="input-group-btn">
-								                <button type="button" class="btn btn-default" ng-click="open($event,5,6)"><i class="glyphicon glyphicon-calendar"></i></button>
+								                <button type="button" class="btn btn-default" ng-click="datePicker6 = !datePicker6"><i class="glyphicon glyphicon-calendar"></i></button>
 								              </span>
                                         </div>
                                     </div>
@@ -134,7 +134,6 @@
                             </form>
                             <!-- .form -->
                         </div>
-S
                         <div class="text-center" ng-if="!vm.promotion.promotionStatus">
                             <div class="col-sm-12">
                                 <div class="form-inline" >

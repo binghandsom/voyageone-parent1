@@ -23,18 +23,18 @@
 								<div class="form-group">
 									<label class="col-sm-4 control-label" translate="TXT_TIME_START"></label>
 									<div class="col-sm-8 form-inline">
-										<div class="col-sm-5 input-group" ng-controller="datePickerCtrl">
-											<input type="text" class="form-control" datepicker-popup="{{formatDate}}" ng-model="$parent.$ctrl.searchInfo.activity_start"
-												   date-model-format="{{formatDate}}" is-open="$parent.$ctrl.datePicker[0].opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" />
+										<div class="col-sm-5 input-group">
+											<input type="text" class="form-control" datepicker-popup ng-model="$ctrl.searchInfo.activity_start"
+												   max-date="$ctrl.searchInfo.activity_end" date-model-format="yyyy-MM-dd" is-open="$ctrl.datePicker1" ng-required="true" close-text="Close" />
 								              <span class="input-group-btn">
-								                <button type="button" class="btn btn-default" ng-click="open($event,0,2)"><i class="glyphicon glyphicon-calendar"></i></button>
+								                <button type="button" class="btn btn-default" ng-click="$ctrl.datePicker1 = !$ctrl.datePicker1"><i class="glyphicon glyphicon-calendar"></i></button>
 								              </span>
 										</div>&nbsp;~&nbsp;
-										<div class="col-sm-5 input-group" ng-controller="datePickerCtrl">
-											<input type="text" class="form-control" datepicker-popup="{{formatDate}}" ng-model="$parent.$ctrl.searchInfo.activity_end"
-												   date-model-format="{{formatDate}}" is-open="$parent.$ctrl.datePicker[1].opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" />
+										<div class="col-sm-5 input-group">
+											<input type="text" class="form-control" datepicker-popup ng-model="$ctrl.searchInfo.activity_end"
+												   min-date="$ctrl.searchInfo.activity_start" date-model-format="yyyy-MM-dd" is-open="$ctrl.datePicker2" ng-required="true" close-text="Close" />
 								              <span class="input-group-btn">
-								                <button type="button" class="btn btn-default" ng-click="open($event,1,2)"><i class="glyphicon glyphicon-calendar"></i></button>
+								                <button type="button" class="btn btn-default" ng-click="$ctrl.datePicker2 = !$ctrl.datePicker2"><i class="glyphicon glyphicon-calendar"></i></button>
 								              </span>
 										</div>
 									</div>
