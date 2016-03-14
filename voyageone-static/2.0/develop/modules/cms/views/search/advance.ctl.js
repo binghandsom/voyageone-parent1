@@ -13,7 +13,8 @@ define([
             searchInfo: {
                 compareType: null,
                 brand: null,
-                promotion: null
+                promotion: null,
+                tags:[]
             },
             groupPageOption: {curr: 1, total: 0, size: 20, fetch: getGroupList},
             productPageOption: {curr: 1, total: 0, size: 20, fetch: getProductList},
@@ -65,7 +66,8 @@ define([
             $scope.vm.searchInfo = {
                 compareType: null,
                 brand: null,
-                promotion: null
+                promotion: null,
+                tags:[]
             };
         }
 
@@ -73,6 +75,9 @@ define([
          * 检索
          */
         function search () {
+            // 默认设置成第一页
+            $scope.vm.groupPageOption.curr = 1;
+            $scope.vm.productPageOption.curr = 1;
             // 对应根据父类目检索
             var catInfo = getCatPath($scope.vm.searchInfo.catId);
             if (catInfo)

@@ -261,13 +261,13 @@ public class CmsSearchAdvanceService extends BaseAppService{
 
         // 获取publishTime start
         if (searchValue.getPublishTimeStart() != null ) {
-            resultPlatforms.append(MongoUtils.splicingValue("publishTime", searchValue.getPublishTimeStart(), "$gte"));
+            resultPlatforms.append(MongoUtils.splicingValue("publishTime", searchValue.getPublishTimeStart() + " 00.00.00", "$gte"));
             resultPlatforms.append(",");
         }
 
         // 获取publishTime End
         if (searchValue.getPublishTimeTo() != null) {
-            resultPlatforms.append(MongoUtils.splicingValue("publishTime", searchValue.getPublishTimeTo(), "$lte"));
+            resultPlatforms.append(MongoUtils.splicingValue("publishTime", searchValue.getPublishTimeTo() + " 23.59.59", "$lte"));
             resultPlatforms.append(",");
         }
 
@@ -314,13 +314,13 @@ public class CmsSearchAdvanceService extends BaseAppService{
 
         // 获取publishTime start
         if (searchValue.getPublishTimeStart() != null ) {
-            resultPlatforms.append(MongoUtils.splicingValue("publishTime", searchValue.getPublishTimeStart(), "$gte"));
+            resultPlatforms.append(MongoUtils.splicingValue("publishTime", searchValue.getPublishTimeStart() + " 00.00.00", "$gte"));
             resultPlatforms.append(",");
         }
 
         // 获取publishTime End
         if (searchValue.getPublishTimeTo() != null) {
-            resultPlatforms.append(MongoUtils.splicingValue("publishTime", searchValue.getPublishTimeTo(), "$lte"));
+            resultPlatforms.append(MongoUtils.splicingValue("publishTime", searchValue.getPublishTimeTo() + " 23.59.59", "$lte"));
             resultPlatforms.append(",");
         }
 
@@ -381,20 +381,20 @@ public class CmsSearchAdvanceService extends BaseAppService{
 
         // 获取createdTime start
         if (searchValue.getCreateTimeStart() != null) {
-            result.append(MongoUtils.splicingValue("created", searchValue.getCreateTimeStart(), "$gte"));
+            result.append(MongoUtils.splicingValue("created", searchValue.getCreateTimeStart() + " 00.00.00", "$gte"));
             result.append(",");
         }
 
         // 获取createdTime End
         if (searchValue.getCreateTimeTo() != null) {
-            result.append(MongoUtils.splicingValue("created", searchValue.getCreateTimeTo(), "$lte"));
+            result.append(MongoUtils.splicingValue("created", searchValue.getCreateTimeTo() + " 23.59.59", "$lte"));
             result.append(",");
         }
 
         // 获取inventory
         if (searchValue.getCompareType() != null
                 && searchValue.getInventory() != null) {
-            result.append(MongoUtils.splicingValue("fields.qty", searchValue.getInventory(), searchValue.getCompareType()));
+            result.append(MongoUtils.splicingValue("fields.quantity", searchValue.getInventory(), searchValue.getCompareType()));
             result.append(",");
         }
 
