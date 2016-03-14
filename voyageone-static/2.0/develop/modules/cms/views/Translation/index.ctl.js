@@ -18,7 +18,6 @@ define([
 
             this.routeParams = $routeParams;
             this.translate = $translate;
-            translateex = $translate;
             this.translationService = translationService;
             this.notify = notify;
             this.confirm = confirm;
@@ -47,7 +46,6 @@ define([
                             this.sortFieldOptions.push(item);
                         }
                         this.lenInfo = res.data.lenSetInfo;
-                        lenInfo = res.data.lenSetInfo;
 
                     }.bind(this), function (res) {
                         this.notify(res.message);
@@ -147,6 +145,55 @@ define([
                 this.distributeCount = "";
             },
 
+            cvtLen: function (lenType) {
+                if (lenType == 1) {
+                    minLen = this.lenInfo.long_title.minLen;
+                    maxLen = this.lenInfo.long_title.maxLen;
+                } else if (lenType == 2) {
+                    minLen = this.lenInfo.middle_title.minLen;
+                    maxLen = this.lenInfo.middle_title.maxLen;
+                } else if (lenType == 3) {
+                    minLen = this.lenInfo.short_title.minLen;
+                    maxLen = this.lenInfo.short_title.maxLen;
+                } else if (lenType == 4) {
+                    minLen = this.lenInfo.long_desc.minLen;
+                    maxLen = this.lenInfo.long_desc.maxLen;
+                } else if (lenType == 5) {
+                    minLen = this.lenInfo.short_desc.minLen;
+                    maxLen = this.lenInfo.short_desc.maxLen;
+                }
+            },
+
+            chkWordSize: function(lenType, tobj) {
+                this.cvtLen(lenType);
+                clearTimeout(timeoutID);
+                timeoutID = setTimeout(timeoutFunc(this.translate), 500);
+                function timeoutFunc(transSrv) {
+                    var curLength = $(tobj.target).val().length;
+                    var od = $(tobj.target.parentNode).find("i");
+                    if (curLength < minLen) {
+                        od[0].innerHTML = '&nbsp;' + transSrv.instant('TXT_MSG_INPUT_WORD_LENLOWLIMIT') + minLen + transSrv.instant('TXT_MSG_INPUT_WORD_LENCHK2');
+                    } else if (curLength >= maxLen) {
+                        od[0].innerHTML = '&nbsp;' + transSrv.instant('TXT_MSG_INPUT_WORD_LENLIMIT');
+                    } else {
+                        od[0].innerHTML = '&nbsp;' + transSrv.instant('TXT_MSG_INPUT_WORD_LENCHK') + (maxLen - curLength) + transSrv.instant('TXT_MSG_INPUT_WORD_LENCHK2');
+                    }
+                };
+            },
+
+            cmtWordSize: function(lenType, tobj) {
+                this.cvtLen(lenType);
+                var od = $(tobj.target.parentNode).find("i");
+                $(od[0]).css("visibility", "visible");
+                var curLength = $(tobj.target).val().length;
+                if (curLength < minLen) {
+                    od[0].innerHTML = '&nbsp;' + this.translate.instant('TXT_MSG_INPUT_WORD_LENLOWLIMIT') + minLen + this.translate.instant('TXT_MSG_INPUT_WORD_LENCHK2');
+                } else if (curLength >= maxLen) {
+                    od[0].innerHTML = '&nbsp;' + this.translate.instant('TXT_MSG_INPUT_WORD_LENLIMIT');
+                } else {
+                    od[0].innerHTML = '&nbsp;' + this.translate.instant('TXT_MSG_INPUT_WORD_LENCHK') + (maxLen - curLength) + this.translate.instant('TXT_MSG_INPUT_WORD_LENCHK2');
+                }
+            }
         };
 
         return translationDetailController
@@ -155,57 +202,5 @@ define([
 
 // 检查输入字数
 var timeoutID = "";
-var lenInfo = null;
 var maxLen = 0;
 var minLen = 0;
-var translateex = null;
-function cvtLen(lenType) {
-    if (lenType == 1) {
-        minLen = lenInfo.long_title.minLen;
-        maxLen = lenInfo.long_title.maxLen;
-    } else if (lenType == 2) {
-        minLen = lenInfo.middle_title.minLen;
-        maxLen = lenInfo.middle_title.maxLen;
-    } else if (lenType == 3) {
-        minLen = lenInfo.short_title.minLen;
-        maxLen = lenInfo.short_title.maxLen;
-    } else if (lenType == 4) {
-        minLen = lenInfo.long_desc.minLen;
-        maxLen = lenInfo.long_desc.maxLen;
-    } else if (lenType == 5) {
-        minLen = lenInfo.short_desc.minLen;
-        maxLen = lenInfo.short_desc.maxLen;
-    }
-}
-
-
-
-function chkWordSize(lenType, tobj) {
-    cvtLen(lenType);
-    clearTimeout(timeoutID);
-    timeoutID = setTimeout(function() {
-        var curLength = $(tobj).val().length;
-        var od = $(tobj.parentNode).find("i#wordsizemsg");
-        if (curLength < minLen) {
-            od[0].innerHTML = '&nbsp;' + translateex.instant('TXT_MSG_INPUT_WORD_LENLOWLIMIT') + minLen + translateex.instant('TXT_MSG_INPUT_WORD_LENCHK2');
-        } else if (curLength >= maxLen) {
-            od[0].innerHTML = '&nbsp;' + translateex.instant('TXT_MSG_INPUT_WORD_LENLIMIT');
-        } else {
-            od[0].innerHTML = '&nbsp;' + translateex.instant('TXT_MSG_INPUT_WORD_LENCHK') + (maxLen - curLength) + translateex.instant('TXT_MSG_INPUT_WORD_LENCHK2');
-        }
-    },500);
-}
-
-function cmtWordSize(lenType, tobj) {
-    cvtLen(lenType);
-    var od = $(tobj.parentNode).find("i#wordsizemsg");
-    $(od[0]).css("visibility", "visible");
-    var curLength = $(tobj).val().length;
-    if (curLength < minLen) {
-        od[0].innerHTML = '&nbsp;' + translateex.instant('TXT_MSG_INPUT_WORD_LENLOWLIMIT') + minLen + translateex.instant('TXT_MSG_INPUT_WORD_LENCHK2');
-    } else if (curLength >= maxLen) {
-        od[0].innerHTML = '&nbsp;' + translateex.instant('TXT_MSG_INPUT_WORD_LENLIMIT');
-    } else {
-        od[0].innerHTML = '&nbsp;' + translateex.instant('TXT_MSG_INPUT_WORD_LENCHK') + (maxLen - curLength) + translateex.instant('TXT_MSG_INPUT_WORD_LENCHK2');
-    }
-}

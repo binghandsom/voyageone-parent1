@@ -289,5 +289,6 @@
   "BTN_IMPORT_PROMOTION_FILE": "导入活动文件",
   "BTN_CREATE_TE_JIA_BAO_TASK": "创建特价宝任务",
   "BTN_CHOOSE_FILE": "选择文件",
-  "BTN_IMPORT_FILE": "Import File"
+  "BTN_IMPORT_FILE": "Import File",
+  "BTN_CUSTOMIZE_COLUMNS": "自定义列设置"
 }

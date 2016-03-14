@@ -290,5 +290,6 @@
   "BTN_IMPORT_PROMOTION_FILE": "Import Promotion File",
   "BTN_CREATE_TE_JIA_BAO_TASK": "Create TeJiaBao Task",
   "BTN_CHOOSE_FILE": "Choose File",
-  "BTN_IMPORT_FILE": "Import File"
+  "BTN_IMPORT_FILE": "Import File",
+  "BTN_CUSTOMIZE_COLUMNS": "custmize columns"
 }

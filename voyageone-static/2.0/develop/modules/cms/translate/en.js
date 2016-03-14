@@ -296,6 +296,7 @@ define(function() {
         "BTN_IMPORT_PROMOTION_FILE": "Import Promotion File",
         "BTN_CHOOSE_FILE": "Choose File",
         "BTN_IMPORT_FILE": "Import File",
+        "BTN_CUSTOMIZE_COLUMNS": "custmize columns",
 
         // 枚举 com.voyageone.cms.enums.BeatFlag 的翻译
         "STOP": "Stop",
