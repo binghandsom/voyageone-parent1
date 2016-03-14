@@ -5,21 +5,24 @@ import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.masterdate.schema.field.OptionsField;
 import com.voyageone.common.masterdate.schema.option.Option;
-import com.voyageone.common.util.CommonUtil;
-import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.model.cms.mongo.CmsMtCommonPropDefModel;
-import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.web2.base.BaseAppService;
-import com.voyageone.web2.cms.dao.CmsBtProductLogDao;
+import com.voyageone.web2.cms.CmsConstants;
 import com.voyageone.web2.cms.dao.CmsMtCommonPropDefDao;
 import com.voyageone.web2.cms.model.CmsBtProductLogModel;
 import com.voyageone.web2.core.bean.UserSessionBean;
+import com.voyageone.web2.sdk.api.VoApiDefaultClient;
+import com.voyageone.web2.sdk.api.request.ProductUpdateRequest;
+import com.voyageone.web2.sdk.api.request.ProductsGetRequest;
+import com.voyageone.web2.sdk.api.response.ProductsGetResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * @author gubuchun 15/12/9
@@ -31,11 +34,10 @@ public class CmsFieldEditService extends BaseAppService {
     @Autowired
     private CmsMtCommonPropDefDao cmsMtCommonPropDefDao;
 
+//    @Autowired
+//    private CmsBtProductDao cmsBtProductDao;
     @Autowired
-    private CmsBtProductDao cmsBtProductDao;
-
-    @Autowired
-    private CmsBtProductLogDao cmsBtProductLogDao;
+    protected VoApiDefaultClient voApiClient;
 
     /**
      * 获取pop画面options.
@@ -67,25 +69,26 @@ public class CmsFieldEditService extends BaseAppService {
     public void setProductFields(Map<String, Object> params, UserSessionBean userInfo) {
         Map<String, Object> prop = (Map<String, Object>) params.get("property");
         String prop_id = prop.get("id").toString();
-        List<Long> prodIdList = CommonUtil.changeListType((ArrayList<Integer>) params.get("productIds"));
-        List<CmsBtProductLogModel> modelList = new ArrayList<>();
+        Set<Long> prodIdList = (Set<Long>) params.get("productIds");
 
-        cmsBtProductDao.bulkUpdateFieldsByProdIds(userInfo.getSelChannelId()
-                , prodIdList
-                , getPropValue(params)
-                , userInfo.getUserName());
+        // 获取产品的信息
+        ProductsGetRequest productsGetRequest = new ProductsGetRequest();
+        productsGetRequest.setProductIds(prodIdList);
+        productsGetRequest.setChannelId(userInfo.getSelChannelId());
 
-        if ("status".equals(prop_id)) {
-            for (Long id : prodIdList) {
-                CmsBtProductLogModel model = new CmsBtProductLogModel();
-                model.setChannelId(userInfo.getSelChannelId());
-                model.setProductId(id.intValue());
-                model.setStatus(((Map<String, Object>)prop.get("value")).get("value").toString());
-                model.setComment("1");
-                model.setCreater(userInfo.getUserName());
-                modelList.add(model);
-            }
-            cmsBtProductLogDao.insertCmsBtProductLogList(modelList);
+        ProductsGetResponse productsGetResponse = voApiClient.execute(productsGetRequest);
+
+        for(CmsBtProductModel productModel : productsGetResponse.getProducts()) {
+
+            Object[] field = getPropValue(params);
+            productModel.getFields().setAttribute(field[0].toString(), field[1]);
+            if (!"status".equals(prop_id) && CmsConstants.productStatus.APPROVED.equals(productModel.getFields().getStatus()))
+                productModel.getFields().setStatus(CmsConstants.productStatus.READY);
+
+            ProductUpdateRequest updateRequest = new ProductUpdateRequest(userInfo.getSelChannelId());
+            updateRequest.setProductModel(productModel);
+
+            voApiClient.execute(updateRequest);
         }
     }
 
@@ -95,10 +98,11 @@ public class CmsFieldEditService extends BaseAppService {
      * @param params
      * @return
      */
-    private CmsBtProductModel_Field getPropValue(Map<String, Object> params) {
+    private Object[] getPropValue(Map<String, Object> params) {
         try {
 
-            CmsBtProductModel_Field field = new CmsBtProductModel_Field();
+//            CmsBtProductModel_Field field = new CmsBtProductModel_Field();
+            Object[] field = new Object[2];
 
             String type = ((Map<String, Object>) params.get("property")).get("type").toString();
 //            Field prop = FieldTypeEnum.createField(FieldTypeEnum.getEnum(type));
@@ -116,7 +120,8 @@ public class CmsFieldEditService extends BaseAppService {
                     Map<String, Object> prop = (Map<String, Object>) params.get("property");
                     String prop_id = prop.get("id").toString();
                     String prop_value = ((Map<String, Object>) prop.get("value")).get("value").toString();
-                    field.put(prop_id, prop_value);
+                    field[0] = prop_id;
+                    field[1] = prop_value;
                     break;
 //                case MULTICHECK:
 //                    (List<Value>)prop.getValue(); List<String>
