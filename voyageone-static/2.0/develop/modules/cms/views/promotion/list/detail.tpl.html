@@ -60,7 +60,7 @@
                                     <label class="col-sm-4 control-label" translate="TXT_PREHEATING_TIME"></label>
                                     <div class="col-sm-8 form-inline">
                                         <div class="col-sm-5 input-group" ng-controller="datePickerCtrl">
-                                            <input type="text" ng-model="vm.promotion.prePeriodStart" class="form-control" datepicker-popup="{{formatDate}}"
+                                            <input type="text" ng-model="vm.promotion.prePeriodStart" class="form-control" uib-datepicker-popup="{{formatDate}}"
                                                    is-open="datePicker[0].opened" date-model-format="{{formatDate}}" datepicker-options="dateOptions" close-text="Close"
                                                    max-date="$parent.vm.promotion.prePeriodEnd"/>
 								              <span class="input-group-btn">
@@ -68,7 +68,7 @@
 								              </span>
                                         </div>&nbsp;~&nbsp;
                                         <div class="col-sm-5 input-group" ng-controller="datePickerCtrl">
-                                            <input type="text" ng-model="vm.promotion.prePeriodEnd" class="form-control" datepicker-popup="{{formatDate}}"
+                                            <input type="text" ng-model="vm.promotion.prePeriodEnd" class="form-control" uib-datepicker-popup="{{formatDate}}"
                                                    is-open="datePicker[1].opened" date-model-format="{{formatDate}}" datepicker-options="dateOptions" close-text="Close"
                                                    min-date="$parent.vm.promotion.prePeriodStart"/>
 								              <span class="input-group-btn">
@@ -81,7 +81,7 @@
                                     <label class="col-sm-4 control-label" translate="TXT_PRE_SALE_TIME"></label>
                                     <div class="col-sm-8 form-inline">
                                         <div class="col-sm-5 input-group" ng-controller="datePickerCtrl">
-                                            <input type="text" ng-model="vm.promotion.preSaleStart" class="form-control" datepicker-popup="{{formatDate}}"
+                                            <input type="text" ng-model="vm.promotion.preSaleStart" class="form-control" uib-datepicker-popup="{{formatDate}}"
                                                    is-open="datePicker[2].opened" date-model-format="{{formatDate}}" datepicker-options="dateOptions" close-text="Close"
                                                    max-date="$parent.vm.promotion.preSaleEnd"/>
 								              <span class="input-group-btn">
@@ -89,7 +89,7 @@
 								              </span>
                                         </div>&nbsp;~&nbsp;
                                         <div class="col-sm-5 input-group" ng-controller="datePickerCtrl">
-                                            <input type="text" ng-model="vm.promotion.preSaleEnd" class="form-control" datepicker-popup="{{formatDate}}"
+                                            <input type="text" ng-model="vm.promotion.preSaleEnd" class="form-control" uib-datepicker-popup="{{formatDate}}"
                                                    is-open="datePicker[3].opened" date-model-format="{{formatDate}}" datepicker-options="dateOptions" close-text="Close"
                                                    min-date="$parent.vm.promotion.preSaleStart"/>
 								              <span class="input-group-btn">
@@ -102,7 +102,7 @@
                                     <label class="col-sm-4 control-label" translate="TXT_PROMOTION_TIME"></label>
                                     <div class="col-sm-8 form-inline">
                                         <div class="col-sm-5 input-group" ng-controller="datePickerCtrl">
-                                            <input type="text" ng-model="vm.promotion.activityStart" class="form-control" datepicker-popup="{{formatDate}}"
+                                            <input type="text" ng-model="vm.promotion.activityStart" class="form-control" uib-datepicker-popup="{{formatDate}}"
                                                    is-open="datePicker[4].opened" date-model-format="{{formatDate}}" datepicker-options="dateOptions" close-text="Close"
                                                    max-date="$parent.vm.promotion.activityEnd"/>
 								              <span class="input-group-btn">
@@ -110,7 +110,7 @@
 								              </span>
                                         </div>&nbsp;~&nbsp;
                                         <div class="col-sm-5 input-group" ng-controller="datePickerCtrl">
-                                            <input type="text" ng-model="vm.promotion.activityEnd" class="form-control" datepicker-popup="{{formatDate}}"
+                                            <input type="text" ng-model="vm.promotion.activityEnd" class="form-control" uib-datepicker-popup="{{formatDate}}"
                                                    is-open="datePicker[5].opened" date-model-format="{{formatDate}}" datepicker-options="dateOptions" close-text="Close"
                                                    min-date="$parent.vm.promotion.activityStart"/>
 								              <span class="input-group-btn">
@@ -150,7 +150,7 @@ S
             </div>
         </div>
     <div class="box">
-        <tabset class="tab-container vo_nav-tabs">
+        <uib-tabset class="tab-container vo_nav-tabs">
             <!--right-btn-->
             <div class="form-inline m-b-xs pull-right" ng-controller="popupCtrl">
                 <button class="btn btn-default" ng-click="openImport('md',vm.promotionId,search)"><i
@@ -166,7 +166,7 @@ S
             </div>
             <!-- /right-btn -->
             <!--tab-->
-            <tab>
+            <uib-tab>
                 <tab-heading ng-click="vm.tabIndex = 0"><i class="glyphicons glyphicons-more-items text-default"></i>
                     {{'TXT_GROUP_LIST' | translate}}
                 </tab-heading>
@@ -250,8 +250,8 @@ S
                     </div>
                 </div>
                 <!-- .table-responsive -->
-            </tab>
-            <tab>
+            </uib-tab>
+            <uib-tab>
                 <tab-heading ng-click="vm.tabIndex = 1"><i class="glyphicons glyphicons-sort text-default"></i>
                     {{'TXT_PRODUCT_LIST' | translate}}
                 </tab-heading>
@@ -358,9 +358,9 @@ S
                     </div>
                 </div>
                 <!-- .table-responsive -->
-            </tab>
+            </uib-tab>
             <!-- TODO 暂时不显示SKU列表,如果以后需要根据SKU列表来制定 促销价格再放开 -->
-            <!--<tab>
+            <!--<uib-tab>
                 <tab-heading ng-click="vm.tabIndex = 2"><i class="fa fa-list"></i> {{'TXT_SKU_LIST' | translate}}
                 </tab-heading>
                 <div class="panel vo_panel tab_panel">
@@ -424,8 +424,8 @@ S
                     </div>
                 </div>
 
-            </tab>-->
-        </tabset>
+            </uib-tab>-->
+        </uib-tabset>
         <!-- tabset -->
     </div>
     <!-- tabs ng-controller -->
