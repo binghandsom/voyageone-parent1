@@ -252,6 +252,7 @@ define(function() {
         "TXT_MSG_ERROR_BEAT_ITEM": "The data seems to be wrong. Are you sure you want to change the status of it (⊙＿⊙ ?)",
         "TXT_MSG_INPUT_WORD_LENCHK": "you can input",
         "TXT_MSG_INPUT_WORD_LENCHK2": "words",
+        "TXT_MSG_FIELD_VAL_INVALID": "Invalid field (Text) `s value, please follow the prompts to modify.",
 
 
         "BTN_CREATE_TASK": "New Task",

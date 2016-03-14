@@ -100,14 +100,23 @@ define([
                 var type = this.mappingSetting.type;
 
                 if (!type) {
-                    ttt.alert(ttt.$translate.instant('TXT_MSG_MUST_GET_ONE_VALUE'));
+                    ttt.alert('TXT_MSG_MUST_GET_ONE_VALUE');
                     return;
                 }
-                
-                var value = type === 'propFeed' ? ttt.field.value : ttt.getValue(ttt.field);
+
+                var value;
+
+                if (type === 'propFeed') {
+                    value = ttt.field.value;
+                } else if (!ttt.field.$valid) {
+                    ttt.alert('TXT_MSG_FIELD_VAL_INVALID');
+                    return;
+                } else {
+                    value = ttt.getValue(ttt.field);
+                }
 
                 if (!value) {
-                    ttt.alert(ttt.$translate.instant('TXT_MSG_NO_VALUE_IS_ON_THE_ATTRIBUTE'));
+                    ttt.alert('TXT_MSG_NO_VALUE_IS_ON_THE_ATTRIBUTE');
                     return;
                 }
 
@@ -120,7 +129,7 @@ define([
                 });
                 
                 if (isBreak) {
-                    ttt.alert(ttt.$translate.instant('TXT_MSG_UNVALID_CONDITION'));
+                    ttt.alert('TXT_MSG_UNVALID_CONDITION');
                     return;
                 }
 
