@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.ArrayList;
+
 
 /**
  * Created by lewis on 15-11-28.
@@ -29,4 +31,8 @@ public class GetPlatformCategorySchemaServiceTest {
 
 	}
 
+	@Test
+	public void testOnStartup1() throws Exception {
+		getPlatformCategorySchemaService.onStartup(new ArrayList<>());
+	}
 }
