@@ -73,7 +73,7 @@ define([
 
         // translate config.
         .config(function ($translateProvider, cLanguageType) {
-
+            $translateProvider.useSanitizeValueStrategy('sanitize');
             _.forEach(cLanguageType, function (type) {
                 $translateProvider.translations(type.name, type.value);
             });
