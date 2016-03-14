@@ -3,7 +3,7 @@
 <mapper namespace="com.voyageone.web2.cms.sql">
 
     <select id="select_stock_separate_increment_success_qty" resultType="Object" parameterType="HashMap">
-            select sum(qty)
+            select sum(increment_qty)
             from   voyageone_cms2.cms_bt_stock_separate_increment_item
             where sub_task_id in (select sub_task_id from voyageone_cms2.cms_bt_stock_separate_increment_task where task_id in(
                                         select distinct task_id
@@ -16,7 +16,7 @@
     </select>
 
     <select id="select_stock_separate_increment_success_qty_by_task" resultType="Object" parameterType="HashMap">
-            select sum(qty)
+            select sum(increment_qty)
             from   voyageone_cms2.cms_bt_stock_separate_increment_item
             where sub_task_id in (select sub_task_id from voyageone_cms2.cms_bt_stock_separate_increment_task
                                         where task_id = #{taskId} and cart_id = #{cartId})
