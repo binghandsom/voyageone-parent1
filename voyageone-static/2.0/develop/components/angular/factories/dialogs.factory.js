@@ -5,7 +5,7 @@
  */
 
 angular.module('voyageone.angular.factories.dialogs', [])
-    .factory("$dialogs", function ($modal, $filter, $templateCache) {
+    .factory("$dialogs", function ($uibModal, $filter, $templateCache) {
 
         var templateName = 'voyageone.angular.factories.dialogs.tpl.html';
         var template =
@@ -46,7 +46,7 @@ angular.module('voyageone.angular.factories.dialogs', [])
             options.title = tran(options.title);
             options.content = tran(options.content, values);
 
-            var modalInstance = $modal.open({
+            var modalInstance = $uibModal.open({
                 templateUrl: templateName,
                 controller: ["$scope", function (scope) {
                     _.extend(scope, options);
