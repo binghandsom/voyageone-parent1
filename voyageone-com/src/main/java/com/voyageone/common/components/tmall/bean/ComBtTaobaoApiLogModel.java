@@ -25,12 +25,6 @@ public class ComBtTaobaoApiLogModel extends BaseModel {
 
     private String cart_id;
 
-    private String app_key;
-
-    private String app_secret;
-
-    private String session_key;
-
     private String call_time;
 
     private String time_zone;
@@ -50,9 +44,6 @@ public class ComBtTaobaoApiLogModel extends BaseModel {
         this.apiMethodName = apiMethodName;
         this.channel_id = shopBean.getOrder_channel_id();
         this.cart_id = shopBean.getCart_id();
-        this.app_key = shopBean.getAppKey();
-        this.app_secret = shopBean.getAppSecret();
-        this.session_key = shopBean.getSessionKey();
 
         Calendar calendar = Calendar.getInstance();
 
@@ -100,30 +91,6 @@ public class ComBtTaobaoApiLogModel extends BaseModel {
 
     public void setCart_id(String cart_id) {
         this.cart_id = cart_id;
-    }
-
-    public String getApp_key() {
-        return app_key;
-    }
-
-    public void setApp_key(String app_key) {
-        this.app_key = app_key;
-    }
-
-    public String getApp_secret() {
-        return app_secret;
-    }
-
-    public void setApp_secret(String app_secret) {
-        this.app_secret = app_secret;
-    }
-
-    public String getSession_key() {
-        return session_key;
-    }
-
-    public void setSession_key(String session_key) {
-        this.session_key = session_key;
     }
 
     public String getCall_time() {
