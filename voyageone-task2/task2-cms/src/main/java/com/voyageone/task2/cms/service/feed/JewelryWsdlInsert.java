@@ -58,7 +58,7 @@ public class JewelryWsdlInsert extends JewelryWsdlBase {
 
             // 条件则根据类目筛选
             String where = String.format("WHERE %s AND %s = '%s' %s", INSERT_FLG, colums.get("category").toString(),
-                    category.replace("'", "\\\'"), Feed.getVal1(channel, FeedEnums.Name.model_sql_ending));
+                    category.replace("'", "\\\'"), "and `Variation Parent SKU` != 'parent'");
 
             List<CmsBtFeedInfoJewelryModel> jewmodelBeans = jewelryDao.selectSuperfeedModel(where, colums, Feed.getVal1(channel, FeedEnums.Name.table_id2));
             List<CmsBtFeedInfoModel> modelBeans = new ArrayList<>();

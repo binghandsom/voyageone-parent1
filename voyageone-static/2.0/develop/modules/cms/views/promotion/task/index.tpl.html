@@ -24,15 +24,17 @@
 									<label class="col-sm-4 control-label" translate="TXT_TIME_START"></label>
 									<div class="col-sm-8 form-inline">
 										<div class="col-sm-5 input-group" ng-controller="datePickerCtrl">
-											<input type="text" class="form-control" datepicker-popup="{{formatDate}}" ng-model="$parent.$ctrl.searchInfo.activity_start" date-model-format="{{formatDate}}" is-open="opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" />
+											<input type="text" class="form-control" datepicker-popup="{{formatDate}}" ng-model="$parent.$ctrl.searchInfo.activity_start"
+												   date-model-format="{{formatDate}}" is-open="$parent.$ctrl.datePicker[0].opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" />
 								              <span class="input-group-btn">
-								                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+								                <button type="button" class="btn btn-default" ng-click="open($event,0,2)"><i class="glyphicon glyphicon-calendar"></i></button>
 								              </span>
 										</div>&nbsp;~&nbsp;
 										<div class="col-sm-5 input-group" ng-controller="datePickerCtrl">
-											<input type="text" class="form-control" datepicker-popup="{{formatDate}}" ng-model="$parent.$ctrl.searchInfo.activity_end" date-model-format="{{formatDate}}" is-open="opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" />
+											<input type="text" class="form-control" datepicker-popup="{{formatDate}}" ng-model="$parent.$ctrl.searchInfo.activity_end"
+												   date-model-format="{{formatDate}}" is-open="$parent.$ctrl.datePicker[1].opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" />
 								              <span class="input-group-btn">
-								                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+								                <button type="button" class="btn btn-default" ng-click="open($event,1,2)"><i class="glyphicon glyphicon-calendar"></i></button>
 								              </span>
 										</div>
 									</div>
@@ -68,7 +70,7 @@
 						</div>
 						<div class="col-sm-12 text-center m-t-sm" ng-controller="popupCtrl">
 							<div class="form-inline">
-								<button class="btn btn-default" ng-click="$parent.clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR' | translate}}</button>
+								<button class="btn btn-default" ng-click="$ctrl.clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR' | translate}}</button>
 								<button class="btn btn-vo" ng-click="$ctrl.search()"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}</button>
 							</div><!-- .form-inline -->
 						</div>
@@ -86,8 +88,8 @@
 					<!--<th class="text-center"><label class="checkbox-inline c-checkbox"><input type="checkbox" value="option5"><span class="fa fa-check"></span></label></th>-->
 					<th class="mfb-xt text-left">{{'TXT_STATUS' | translate}}</th>
 					<th class="mfb-xxs text-left">{{'TXT_TASK_NAME' | translate}}</th>
-					<th class="mfb-xt text-center">{{'TXT_TYPE' | translate}}</th>
-					<th class="mfb-xxt text-center">{{'TXT_TIME_START' | translate}}-{{'TXT_TIME_END' | translate}}</th>
+					<th class="mfb-xt text-left">{{'TXT_TYPE' | translate}}</th>
+					<th class="mfb-xxt text-left">{{'TXT_TIME_START' | translate}}-{{'TXT_TIME_END' | translate}}</th>
 					<th class="mfb-xxs text-left">{{'TXT_ACTION' | translate}}</th>
 					<th class="mfb-xxt text-center">{{'BTN_EDIT' | translate}}</th>
 
@@ -98,19 +100,19 @@
 					<td class="mfb-xt3 text-center">{{$index+1}}</td>
 					<td class="mfb-xt text-left"><span ng-show="task.status==0" class="label label-success-new m-r-lg"> Open </span><span ng-show="task.status==1" class="label label-yellow-new m-r-lg"> Close </span></td>
 					<td class="mfb-xxs text-left">{{task.task_name}}</td>
-					<td class="mfb-xt text-center">{{$ctrl.typeName(task)}}</td>
-					<td class="mfb-xxt text-center">{{task.activity_start}} ~ {{task.activity_end}}</td>
+					<td class="mfb-xt text-left">{{$ctrl.typeName(task)}}</td>
+					<td class="mfb-xxt text-left">{{task.activity_start}} ~ {{task.activity_end}}</td>
 					<td class="mfb-xxs text-left">
-						<a ng-if="task.task_type == 1" ng-href="#/promotion/task/beat/{{task.task_id}}"  target="_blank" class="btn btn-default-vo btn-xs">
+						<a ng-if="task.task_type == 1" ng-href="#/promotion/task/beat/{{task.task_id}}"  target="_blank">
 							<button title="{{'TXT_TASK_DETAIL' | translate}}" class="btn btn-default-vo btn-xs"><i class="fa fa-reorder"></i>&nbsp;{{'TXT_TASK_DETAIL' | translate}}</button>
 						</a>
-						<a ng-if="task.task_type == 0" ng-href="#/promotion/task/price/{{task.promotion.promotionId}}" target="_blank" class="btn btn-default-vo btn-xs">
+						<a ng-if="task.task_type == 0" ng-href="#/promotion/task/price/{{task.promotion.promotionId}}" target="_blank" >
 							<button title="{{'TXT_TASK_DETAIL' | translate}}" class="btn btn-default-vo btn-xs"><i class="fa fa-reorder"></i>&nbsp;{{'TXT_TASK_DETAIL' | translate}}</button>
 						</a>
-						<a ng-if="task.task_type == 2" ng-href="/promotion/task_stock/{{task.promotion.promotionId}}" target="_blank" class="btn btn-default-vo btn-xs">
+						<a ng-if="task.task_type == 2" ng-href="/promotion/task_stock/{{task.promotion.promotionId}}" target="_blank" >
 							<button title="库存隔离明细" class="btn btn-default-vo btn-xs"><i class="fa fa-reorder"></i>&nbsp;库存隔离明细</button>
 						</a>
-						<a ng-if="task.task_type == 2" ng-href="/promotion/task_stock_increment/{{task.promotion.promotionId}}" target="_blank" class="btn btn-default-vo btn-xs">
+						<a ng-if="task.task_type == 2" ng-href="/promotion/task_stock_increment/{{task.promotion.promotionId}}" target="_blank" >
 							<button title="增量库存隔离" class="btn btn-default-vo btn-xs"><i class="fa fa-reorder"></i>&nbsp;增量库存隔离</button>
 						</a>
 					</td>

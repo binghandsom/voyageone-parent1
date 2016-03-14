@@ -189,6 +189,7 @@ define(function() {
         "TXT_VERTICAL_TEMPLATE": "Vertical Template",
         "TXT_VERTICAL_REVERT_TEMPLATE": "Vertical Revert Template",
         "TXT_TASK_DETAIL": "Task Detail",
+        "TXT_BEAT_TASK_DETAIL": "Beat Task Detail",
         "TXT_IMPORT_GOOD": "Import Codes",
         "TXT_ADD_MOD_GOOD": "Add/Modify Code",
         "TXT_DOWNLOAD_TASK_DETAIL": "Download Details",
@@ -206,6 +207,8 @@ define(function() {
         "TXT_TIME_START": "Start Time",
         "TXT_TIME_END": "End Time",
         "TXT_TASK_TYPE":"Task Type",
+        "TXT_TASK_DATE":"Task Date",
+        "TXT_TEJIABAO_DETAIL":"Tejiabao Detail",
 
         "TXT_MSG_SEARCH": "Search...",
         "TXT_MSG_PAGE_IS_BUILDING": "This page is building...",
@@ -252,8 +255,12 @@ define(function() {
 
 
         "BTN_CREATE_TASK": "New Task",
+        "BTN_CREATE_BEAT_TASK": "New BEAT Task",
+        "BTN_CREATE_TE_JIA_BAO_TASK": "New TeJiaBao Task",
         "BTN_ADD_CONDITION": "Add Condition",
         "BTN_CLEAR": "Clear",
+        "BTN_CLOSE": "Close",
+        "BTN_TODAY": "Today",
         "BTN_SAVE": "Save",
         "BTN_SEARCH": "Search",
         "BTN_ADD_TO_PROMOTION": "Join Promotion",
@@ -287,7 +294,6 @@ define(function() {
         "BTN_PRICE_HISTORY": "Price History",
         "BTN_DOWNLOAD": "Download",
         "BTN_IMPORT_PROMOTION_FILE": "Import Promotion File",
-        "BTN_CREATE_TE_JIA_BAO_TASK": "Create TeJiaBao Task",
         "BTN_CHOOSE_FILE": "Choose File",
         "BTN_IMPORT_FILE": "Import File",
 
