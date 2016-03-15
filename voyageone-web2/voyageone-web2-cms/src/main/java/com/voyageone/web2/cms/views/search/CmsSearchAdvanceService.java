@@ -588,8 +588,8 @@ public class CmsSearchAdvanceService extends BaseAppService{
             result.append(",");
         }
 
-//        return result.toString().length() > 0 ? "{" + result.toString().substring(0, result.toString().length()-1) + "}" : null;
-        return result.toString().length() > 0 ? result.toString().substring(0, result.toString().length()-1) : null;
+        return result.toString().length() > 0 ? "{" + result.toString().substring(0, result.toString().length()-1) + "}" : null;
+//        return result.toString().length() > 0 ? result.toString().substring(0, result.toString().length()-1) : null;
 
     }
 
