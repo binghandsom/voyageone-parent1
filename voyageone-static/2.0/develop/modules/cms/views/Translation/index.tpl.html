@@ -35,9 +35,9 @@
 								<div class="form-group">
 									<label class="col-sm-4 control-label">分发规则</label>
 									<div class="col-sm-7" style="padding-left:0px">
-										<label class="checkbox-inline c-radio">
-											<input type="radio" ng-model="ctrl.distributeRule" onclick="this.checked=false;" value="0"><span class="fa fa-check"></span>  全部商品
-										</label>
+										<!--<label class="checkbox-inline c-radio">-->
+											<!--<input type="radio" ng-model="ctrl.distributeRule" onclick="this.checked=false;" value="0"><span class="fa fa-check"></span>  全部商品-->
+										<!--</label>-->
 										<label class="checkbox-inline c-radio">
 											<input type="radio" ng-model="ctrl.distributeRule" onclick="this.checked=true;" ng-checked="true" value="1"><span class="fa fa-check"></span>  主商品
 										</label>
@@ -122,16 +122,16 @@
 						</td>
 						<td class="text-left">{{translationModel.productName}}</td>
 						<td class="text-center">
-							<textarea class="form-control" style="resize:none" rows="6" ng-model="translationModel.longTitle" ng-keydown="ctrl.chkWordSize(1,$event)" ng-keyup="ctrl.chkWordSize(1,$event)" ng-focus="ctrl.cmtWordSize(1,$event)" maxlength="{{ctrl.lenInfo.long_title.maxLen}}" ng-required="required" placeholder="{{'TXT_MSG_LONG_TITLE' | translate}}"></textarea>
-							<div class="text-warnings text-left" style="padding-left:0px"><i class="icon fa fa-bell-o" style="visibility:hidden"></i></div>
+							<textarea class="form-control" style="resize:none" rows="6" ng-model="translationModel.longTitle"  maxlength="{{ctrl.lenInfo.long_title.maxLen}}" ng-required="required" placeholder="{{'TXT_MSG_LONG_TITLE' | translate}}"></textarea>
+							<div class="text-warnings text-left" style="padding-left:0px"><i class="icon fa fa-bell-o">{{translationModel.longTitle == null || translationModel.longTitle.length < ctrl.lenInfo.long_title.minLen?(('TXT_MSG_INPUT_WORD_LENLOWLIMIT' | translate)+ctrl.lenInfo.long_title.minLen+('TXT_MSG_INPUT_WORD_LENCHK2' | translate)):(('TXT_MSG_INPUT_WORD_LENCHK' | translate) + (ctrl.lenInfo.long_title.maxLen - translationModel.longTitle.length) + ('TXT_MSG_INPUT_WORD_LENCHK2' | translate))}}</i></div>
 						</td>
 						<td class="text-center">
-							<textarea class="form-control" style="resize:none" rows="6" ng-model="translationModel.middleTitle" ng-keydown="ctrl.chkWordSize(2,$event)" ng-keyup="ctrl.chkWordSize(2,$event)" ng-focus="ctrl.cmtWordSize(2,$event)" maxlength="{{ctrl.lenInfo.middle_title.maxLen}}" ng-required="required" placeholder="{{'TXT_MSG_MIDDLE_TITLE' | translate}}"></textarea>
-							<div class="text-warnings text-left" style="padding-left:0px"><i class="icon fa fa-bell-o" style="visibility:hidden"></i></div>
+							<textarea class="form-control" style="resize:none" rows="6" ng-model="translationModel.middleTitle" maxlength="{{ctrl.lenInfo.middle_title.maxLen}}" ng-required="required" placeholder="{{'TXT_MSG_MIDDLE_TITLE' | translate}}"></textarea>
+							<div class="text-warnings text-left" style="padding-left:0px"><i class="icon fa fa-bell-o">{{translationModel.middleTitle == null || translationModel.middleTitle.length < ctrl.lenInfo.middle_title.minLen?(('TXT_MSG_INPUT_WORD_LENLOWLIMIT' | translate)+ctrl.lenInfo.middle_title.minLen+('TXT_MSG_INPUT_WORD_LENCHK2' | translate)):(('TXT_MSG_INPUT_WORD_LENCHK' | translate) + (ctrl.lenInfo.middle_title.maxLen - translationModel.middleTitle.length) + ('TXT_MSG_INPUT_WORD_LENCHK2' | translate))}}</i></div>
 						</td>
 						<td class="text-center">
-							<textarea class="form-control" style="resize:none" rows="6" ng-model="translationModel.shortTitle" ng-keydown="ctrl.chkWordSize(3,$event)" ng-keyup="ctrl.chkWordSize(3,$event)" ng-focus="ctrl.cmtWordSize(3,$event)" maxlength="{{ctrl.lenInfo.short_title.maxLen}}" ng-required="required" placeholder="{{'TXT_MSG_SHORT_TITLE' | translate}}"></textarea>
-							<div class="text-warnings text-left" style="padding-left:0px"><i class="icon fa fa-bell-o" style="visibility:hidden"></i></div>
+							<textarea class="form-control" style="resize:none" rows="6" ng-model="translationModel.shortTitle" maxlength="{{ctrl.lenInfo.short_title.maxLen}}" ng-required="required" placeholder="{{'TXT_MSG_SHORT_TITLE' | translate}}"></textarea>
+							<div class="text-warnings text-left" style="padding-left:0px"><i class="icon fa fa-bell-o">{{translationModel.shortTitle == null || translationModel.shortTitle.length < ctrl.lenInfo.short_title.minLen?(('TXT_MSG_INPUT_WORD_LENLOWLIMIT' | translate)+ctrl.lenInfo.short_title.minLen+('TXT_MSG_INPUT_WORD_LENCHK2' | translate)):(('TXT_MSG_INPUT_WORD_LENCHK' | translate) + (ctrl.lenInfo.short_title.maxLen - translationModel.shortTitle.length) + ('TXT_MSG_INPUT_WORD_LENCHK2' | translate))}}</i></div>
 						</td>
 						<td class="text-center">
 							<button title="从已有数据拷贝" class="btn btn-danger btn-xs m-b-xs" ng-click="ctrl.copyFormMainProduct(translationModel,$index)"><i class="fa fa-cloud-download"></i> 从已有数据拷贝</button>
@@ -154,8 +154,8 @@
 						<!--<td class="text-center mfb-x" style="border-top:0px"></td>-->
 						<td class="text-left" colspan="2" style="border-top:0px">{{translationModel.longDescription}}</td>
 						<td class="text-center" colspan="2" style="border-top:0px">
-							<textarea class="form-control" style="resize:none" rows="6" ng-model="translationModel.longDesCn" ng-keydown="ctrl.chkWordSize(4,$event)" ng-keyup="ctrl.chkWordSize(4,$event)" ng-focus="ctrl.cmtWordSize(4,$event)"  maxlength="{{ctrl.lenInfo.long_desc.maxLen}}" ng-required="required" placeholder="{{'TXT_MSG_LONG_DESCRIPTION' | translate}}"></textarea>
-							<div class="text-warnings text-left" style="padding-left:0px"><i class="icon fa fa-bell-o" style="visibility:hidden"></i></div>
+							<textarea class="form-control" style="resize:none" rows="6" ng-model="translationModel.longDesCn"  maxlength="{{ctrl.lenInfo.long_desc.maxLen}}" ng-required="required" placeholder="{{'TXT_MSG_LONG_DESCRIPTION' | translate}}"></textarea>
+							<div class="text-warnings text-left" style="padding-left:0px"><i class="icon fa fa-bell-o">{{translationModel.longDesCn == null || translationModel.longDesCn.length < ctrl.lenInfo.long_desc.minLen?(('TXT_MSG_INPUT_WORD_LENLOWLIMIT' | translate)+ctrl.lenInfo.long_desc.minLen+('TXT_MSG_INPUT_WORD_LENCHK2' | translate)):(('TXT_MSG_INPUT_WORD_LENCHK' | translate) + (ctrl.lenInfo.long_desc.maxLen - translationModel.longDesCn.length) + ('TXT_MSG_INPUT_WORD_LENCHK2' | translate))}}</i></div>
 						</td>
 						<td class="text-center" style="border-top:0px">
 						</td>
@@ -165,8 +165,8 @@
 						<td class="text-center mfb-x" style="border-top:0px"></td>
 						<td class="text-left" colspan="2" style="border-top:0px" ng-model="translationModel.shortDescription"></td>
 						<td class="text-center" colspan="2" style="border-top:0px">
-							<textarea class="form-control" style="resize:none" rows="6" ng-model="translationModel.shortDesCn" ng-keydown="ctrl.chkWordSize(5,$event)" ng-keyup="ctrl.chkWordSize(5,$event)" ng-focus="ctrl.cmtWordSize(5,$event)"  maxlength="{{ctrl.lenInfo.short_desc.maxLen}}" ng-required="required" placeholder="{{'TXT_MSG_SHORT_DESCRIPTION' | translate}}"></textarea>
-							<div class="text-warnings text-left" style="padding-left:0px"><i class="icon fa fa-bell-o" style="visibility:hidden"></i></div>
+							<textarea class="form-control" style="resize:none" rows="6" ng-model="translationModel.shortDesCn"  maxlength="{{ctrl.lenInfo.short_desc.maxLen}}" ng-required="required" placeholder="{{'TXT_MSG_SHORT_DESCRIPTION' | translate}}"></textarea>
+							<div class="text-warnings text-left" style="padding-left:0px"><i class="icon fa fa-bell-o" >{{translationModel.shortDesCn == null || translationModel.shortDesCn.length < ctrl.lenInfo.short_desc.minLen?(('TXT_MSG_INPUT_WORD_LENLOWLIMIT' | translate)+ctrl.lenInfo.short_desc.minLen+('TXT_MSG_INPUT_WORD_LENCHK2' | translate)):(('TXT_MSG_INPUT_WORD_LENCHK' | translate) + (ctrl.lenInfo.short_desc.maxLen - translationModel.shortDesCn.length) + ('TXT_MSG_INPUT_WORD_LENCHK2' | translate))}}</i></div>
 						</td>
 						<td class="text-center" style="border-top:0px">
 						</td>
