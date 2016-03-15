@@ -209,6 +209,9 @@ define(function() {
         "TXT_TASK_TYPE":"Task Type",
         "TXT_TASK_DATE":"Task Date",
         "TXT_TEJIABAO_DETAIL":"Tejiabao Detail",
+        "TXT_PENDING":"Pending",
+        "TXT_SUCCESS":"Success",
+        "TXT_FAIL":"Fail",
 
         "TXT_MSG_SEARCH": "Search...",
         "TXT_MSG_PAGE_IS_BUILDING": "This page is building...",
