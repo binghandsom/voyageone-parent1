@@ -7,6 +7,7 @@ import com.voyageone.common.configs.TypeChannel;
 import com.voyageone.common.util.FileUtils;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.service.dao.cms.CmsMtCommonPropDao;
 import com.voyageone.service.impl.cms.CmsBtChannelCategoryService;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.web2.base.BaseAppService;
@@ -44,6 +45,8 @@ public class CmsSearchAdvanceService extends BaseAppService{
     private CmsPromotionIndexService cmsPromotionService;
     @Autowired
     private CustomWordDao customWordDao;
+    @Autowired
+    private CmsMtCommonPropDao cmsMtCommonPropDao;
     @Autowired
     protected VoApiDefaultClient voApiClient;
 
@@ -586,5 +589,10 @@ public class CmsSearchAdvanceService extends BaseAppService{
 //        return result.toString().length() > 0 ? "{" + result.toString().substring(0, result.toString().length()-1) + "}" : null;
         return result.toString().length() > 0 ? result.toString().substring(0, result.toString().length()-1) : null;
 
+    }
+
+    // 取得自定义显示列设置
+    public List<Map<String, Object>> getCustColumns() {
+        return  cmsMtCommonPropDao.getCustColumns();
     }
 }
