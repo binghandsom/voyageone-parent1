@@ -26,14 +26,14 @@ import java.util.Map;
 public class CmsFeedMappingController extends CmsController {
 
     @Autowired
-    private CmsFeedMappingService cmsFeedMappingService;
+    private CmsFeedMappingService feedMappingService;
 
     @Autowired
     private CmsFeedPropMappingService feedPropMappingService;
 
     @RequestMapping(FEED.GET_TOP_CATEGORIES)
     public AjaxResponse getTopCategories() {
-        return success(cmsFeedMappingService.getTopCategories(getUser()));
+        return success(feedMappingService.getTopCategories(getUser()));
     }
 
     @RequestMapping(FEED.GET_FEED_CATEGORY_TREE)
@@ -41,22 +41,22 @@ public class CmsFeedMappingController extends CmsController {
 
         String topCategoryId = params.get("topCategoryId");
 
-        return success(cmsFeedMappingService.getFeedCategoryMap(topCategoryId, getUser()));
+        return success(feedMappingService.getFeedCategoryMap(topCategoryId, getUser()));
     }
 
     @RequestMapping(FEED.GET_MAIN_CATEGORIES)
     public AjaxResponse getMainCategories() {
-        return success(cmsFeedMappingService.getMainCategories(getUser()));
+        return success(feedMappingService.getMainCategories(getUser()));
     }
 
     @RequestMapping(FEED.SET_MAPPING)
     public AjaxResponse setMapping(@RequestBody SetMappingBean setMappingBean) {
-        return success(cmsFeedMappingService.setMapping(setMappingBean, getUser()));
+        return success(feedMappingService.setMapping(setMappingBean, getUser()));
     }
 
     @RequestMapping(FEED.EXTENDS_MAPPING)
     public AjaxResponse extendsMapping(@RequestBody CmsMtFeedCategoryModel feedCategoryModel) {
-        return success(cmsFeedMappingService.extendsMapping(feedCategoryModel, getUser()));
+        return success(feedMappingService.extendsMapping(feedCategoryModel, getUser()));
     }
 
     @RequestMapping(FEED.GET_MAIN_PROPS)
@@ -93,11 +93,16 @@ public class CmsFeedMappingController extends CmsController {
 
     @RequestMapping(FEED.DIRECT_MATCH_OVER)
     public AjaxResponse switchMatchOver(@RequestBody SetMappingBean params) {
-        return success(cmsFeedMappingService.switchMatchOver(params, getUser()));
+        return success(feedMappingService.switchMatchOver(params, getUser()));
     }
 
     @RequestMapping(FEED.GET_MATCH_OVER)
     public AjaxResponse getMatchOver(@RequestBody SetMappingBean params) {
-        return success(cmsFeedMappingService.getMatchOver(params, getUser()));
+        return success(feedMappingService.getMatchOver(params, getUser()));
+    }
+
+    @RequestMapping(FEED.GET_MAIN_MAPPING)
+    public AjaxResponse getMainMapping(@RequestBody SetMappingBean params) {
+        return success(feedMappingService.getMainMapping(params, getUser()));
     }
 }

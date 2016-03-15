@@ -1,10 +1,10 @@
 <div class="wrapper-md" ng-init="initialize()">
-	<accordion class="vo_accordion vo_attr" close-others="oneAtATime">
-		<accordion-group is-open="vm.status.open">
-			<accordion-heading>
+	<uib-accordion class="vo_accordion vo_attr" close-others="oneAtATime">
+		<uib-accordion-group is-open="vm.status.open">
+			<uib-accordion-heading>
 				<i class="fa fa-search"></i>&nbsp;{{'TXT_ADVANCE_SEARCH' | translate}}
 				<i class="pull-right glyphicon glyphicon-menu-down" ng-class="{'glyphicon-menu-up': vm.status.open, 'glyphicon-menu-down': !vm.status.open}"></i>
-			</accordion-heading>
+			</uib-accordion-heading>
 			<!-- search -->
 			<div class="col-sm-12" >
 				<div class="col-sm-4">
@@ -225,8 +225,8 @@
 					</div><!-- .form-inline -->
 				</div>
 			</div>
-		</accordion-group>
-	</accordion><!-- .accordion --><!--/search-->
+		</uib-accordion-group>
+	</uib-accordion><!-- .accordion --><!--/search-->
 	<!--category-->
 	<div>
 		<tabset class="tab-container vo_nav-tabs">

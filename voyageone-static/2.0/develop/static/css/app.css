@@ -7675,3 +7675,6 @@ input:checked + ol > li {
 input[datepicker-popup][readonly] {
   background-color: white;
 }
+
+ul[uib-datepicker-popup-wrap] table { border: 0; }
+ul[uib-datepicker-popup-wrap] button { border: 0; }

@@ -4,14 +4,11 @@
 
     <insert id="com_bt_taobao_api_log_insert">
         INSERT INTO Synship.com_bt_taobao_api_log
-        (apiMethodName,channel_id,cart_id,app_key,app_secret,session_key,call_time,time_zone,username,computer_name,ip,mac,created,creater,modified,modifier)
+        (apiMethodName,channel_id,cart_id,call_time,time_zone,username,computer_name,ip,mac,created,creater,modified,modifier)
         VALUES (
             #{apiMethodName},
             #{channel_id},
             #{cart_id},
-            #{app_key},
-            #{app_secret},
-            #{session_key},
             #{call_time},
             #{time_zone},
             #{username},
