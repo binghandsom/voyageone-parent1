@@ -50,7 +50,7 @@
 							</div>
 						</div><!-- .form-group -->
 						<div class="form-group">
-							<label class="col-sm-3 control-label">自定义列选择</label>
+							<label class="col-sm-3 control-label" translate="TXT_CUST_QUERY_ATTR"></label>
 							<div class="col-sm-8 form-inline">
 								<select class="form-control">
 									<option>1</option>
@@ -281,10 +281,7 @@
 		<tabset class="tab-container vo_nav-tabs">
 			<!--right-btn-->
 			<div class="form-inline m-b-xs pull-right" ng-controller="popupCtrl">
-				<button class="btn btn-vo"
-						ng-click="" >
-					<i class="fa fa-table"></i>&nbsp;<span translate="BTN_CUSTOMIZE_COLUMNS"></span>
-				</button>
+				<button class="btn btn-default" ng-click="openCustomColumn('lg','md')"><i class="fa fa-cog"></i>&nbsp;{{'BTN_CUSTOMIZE_COLUMNS' | translate}}</button>
 				<!-- TODO 暂时未实现-->
 				<!--<button class="btn btn-default" ng-click="openCustomBaseProperty('lg')"><i class="fa fa-cog"></i>&nbsp;{{'TXT_CUSTOM_BASE_PROPERTY' | translate}}</button>-->
 				<div class="btn-group" uib-dropdown>
@@ -357,16 +354,8 @@
 										<ul>
 											<li><a ng-href="#/product/detail/{{groupInfo.prodId}}" ng-bind="groupInfo.fields.code" target="_blank"></a></li>
 											<li><a ng-href="#/product/detail/{{groupInfo.prodId}}" ng-bind="groupInfo.fields.productNameCn || groupInfo.fields.productNameEn" target="_blank"></a></li>
-											<!--<div class="form-inline thumb-xs-search">-->
-												<!--<a href="#"><img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{groupInfo.fields.images1[0].image1}}" alt=""/></a>-->
-												<!--<a href="#"><img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{groupInfo.fields.images1[0].image1}}" alt=""/></a>-->
-												<!--<a href="#"><img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{groupInfo.fields.images1[0].image1}}" alt=""/></a>-->
-												<!--<a href="#"><img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{groupInfo.fields.images1[0].image1}}" alt=""/></a>-->
-												<!--<a href="#"><img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{groupInfo.fields.images1[0].image1}}" alt=""/></a>-->
-											<!--</div>-->
 										</ul>
 									</div>
-
 								</td>
 								<td class="mfb-xxt text-center"><!--TODO 目前只能返回group的主product,所有拿不到group下面所有的product的库存--><!--popover-html="showInfo({{groupInfo.inventoryDetail}})"-->
 									<!--<button ng-controller="showPopoverCtrl" popover-title="{{'TXT_SKU_INVENTORY' | translate}}" type="button" popover-placement="left"

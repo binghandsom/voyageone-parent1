@@ -2,27 +2,85 @@
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$close()"><span
                 aria-hidden="true"><i class="fa fa-close"></i></span></button>
-        <h5 class="modal-title"><i class="fa fa-codepen"></i>&nbsp;自定义列选择</h5>
+        <h5 class="modal-title"><i class="fa fa-codepen"></i>&nbsp;{{'BTN_CUSTOMIZE_COLUMNS' | translate}}</h5>
     </div>
     <div class="modal-body wrapper">
         <form role="form" class="form-horizontal">
-            <div class="column_overflow">
-                <div><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;颜色</label></div>
-                <div><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;库存</label></div>
-                <div><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;尺码类型</label></div>
-                <div><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;大小</label></div>
-                <div><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;最终售价</label></div>
-                <div><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;SKU数</label></div>
-                <div><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;库存</label></div>
-                <div><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;基础属性</label></div>
-                <div><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;时间</label></div>
-                <div><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;库存</label></div>
-                <div><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;最终售价</label></div>
-                <div><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;大小</label></div>
-                <div><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;库存</label></div>
-                <div><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;尺码类型</label></div>
-                <div><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;库存</label></div>
-                <div><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;品牌</label></div>
+            <div class="panel panel-drag  col-sm-4">
+                <h4 translate="TXT_BASE_ATTRIBUTE"></h4>
+                <div class="column_overflow">
+                    <div><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;颜色</label></div>
+                    <div><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;库存</label></div>
+                    <div><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;尺码类型</label></div>
+                    <div><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;大小</label></div>
+                    <div><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;最终售价</label></div>
+                    <div><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;SKU数</label></div>
+                    <div><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;库存</label></div>
+                    <div><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;基础属性</label></div>
+                    <div><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;时间</label></div>
+                    <div><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;库存</label></div>
+                    <div><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;最终售价</label></div>
+                    <div><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;大小</label></div>
+                    <div><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;库存</label></div>
+                    <div><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;尺码类型</label></div>
+                    <div><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;库存</label></div>
+                    <div><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;品牌</label></div>
+                </div>
+            </div>
+            <div class="panel panel-drag col-sm-4">
+                <h4 translate="TXT_PRICE_ATTRIBUTE"></h4>
+                <div class="column_overflow">
+                    <div><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;颜色</label></div>
+                    <div><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;库存</label></div>
+                    <div><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;尺码类型</label></div>
+                    <div><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;大小</label></div>
+                    <div><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;最终售价</label></div>
+                    <div><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;SKU数</label></div>
+                    <div><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;库存</label></div>
+                    <div><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;基础属性</label></div>
+                    <div><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;时间</label></div>
+                    <div><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;库存</label></div>
+                    <div><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;最终售价</label></div>
+                    <div><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;大小</label></div>
+                    <div><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;库存</label></div>
+                    <div><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;尺码类型</label></div>
+                    <div><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;库存</label></div>
+                    <div><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;品牌</label></div>
+                </div>
+            </div>
+            <div class="panel panel-drag col-sm-4">
+                <h4 translate="TXT_SALES_ATTRIBUTE"></h4>
+                <div class="column_overflow">
+                    <div><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;颜色</label></div>
+                    <div><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;库存</label></div>
+                    <div><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;尺码类型</label></div>
+                    <div><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;大小</label></div>
+                    <div><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;最终售价</label></div>
+                    <div><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;SKU数</label></div>
+                    <div><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;库存</label></div>
+                    <div><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;基础属性</label></div>
+                    <div><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;时间</label></div>
+                    <div><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;库存</label></div>
+                    <div><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;最终售价</label></div>
+                    <div><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;大小</label></div>
+                    <div><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;库存</label></div>
+                    <div><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;尺码类型</label></div>
+                    <div><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;库存</label></div>
+                    <div><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;品牌</label></div>
+                    <div><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;大小</label></div>
+                    <div><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;最终售价</label></div>
+                    <div><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;SKU数</label></div>
+                    <div><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;库存</label></div>
+                    <div><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;基础属性</label></div>
+                    <div><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;时间</label></div>
+                    <div><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;库存</label></div>
+                    <div><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;最终售价</label></div>
+                    <div><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;大小</label></div>
+                    <div><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;库存</label></div>
+                    <div><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;尺码类型</label></div>
+                    <div><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;库存</label></div>
+                    <div><label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;品牌</label></div>
+                </div>
             </div>
     </form>
     </div>
