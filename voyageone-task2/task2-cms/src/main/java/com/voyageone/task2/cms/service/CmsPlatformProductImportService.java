@@ -349,9 +349,11 @@ public class CmsPlatformProductImportService extends BaseTaskService {
                 switch (status) {
                     case "0": // 出售中
                         platform.setPlatformStatus(CmsConstants.PlatformStatus.Onsale);
+                        platform.setPlatformActive(CmsConstants.PlatformActive.Onsale);
                         break;
                     default: // 定时上架 或者 仓库中
                         platform.setPlatformStatus(CmsConstants.PlatformStatus.Instock);
+                        platform.setPlatformActive(CmsConstants.PlatformActive.Instock);
                 }
 
                 // 更新group

@@ -343,14 +343,16 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
             if (!skip_mapping_check) {
                 // 遍历mapping,设置主数据的属性
-                for (Prop prop : mapping.getProps()) {
-                    if (!MappingPropType.FIELD.equals(prop.getType())) {
-                        // 这段逻辑只处理类目属性(FIELD类型)的,如果是SKU属性或共通属性,则跳过
-                        continue;
-                    }
+                if (mapping.getProps() != null) {
+                    for (Prop prop : mapping.getProps()) {
+                        if (!MappingPropType.FIELD.equals(prop.getType())) {
+                            // 这段逻辑只处理类目属性(FIELD类型)的,如果是SKU属性或共通属性,则跳过
+                            continue;
+                        }
 
-                    // 递归设置属性
-                    field.put(prop.getProp(), getPropValueByMapping(prop.getProp(), prop, feed, field, schemaModel));
+                        // 递归设置属性
+                        field.put(prop.getProp(), getPropValueByMapping(prop.getProp(), prop, feed, field, schemaModel));
+                    }
                 }
             }
 
@@ -748,7 +750,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                     // jewelry要设置三个属性: 戒指手寸, 项链长度, 手链长度
                     // ==============================================
 
-                    String 戒指手寸_MASTER = "prop_9066257";
+//                    String 戒指手寸_MASTER = "prop_9066257";
+                    String 戒指手寸_MASTER = "alias_name";
                     String 戒指手寸_FEED = "Ringsize";
                     String 项链长度_MASTER = "in_prop_150988152";
                     String 项链长度_FEED = "ChainLength";

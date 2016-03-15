@@ -203,9 +203,19 @@ public class TmallGjSkuFieldBuilderImpl_1 extends AbstractSkuFieldBuilder {
         BuildSkuResult buildSkuResult = (BuildSkuResult) contextBuildCustomFields.getBuildSkuResult();
         Map<String, Field> fieldMap = ((MultiComplexField)skuExtendField).getFieldMap();
 
+        // tom 设置当前的父级内容 START TODO: 这段写的不是优雅, 之后看情况修改
+//        List<Object> masterWordEvaluationContextList = (List<Object>)(expressionParser.getMasterWordCmsBtProduct().getFields().get("prop_extend_9066257"));
+//        Map<String, Object> masterWordEvaluationContext = (Map<String, Object>)(masterWordEvaluationContextList.get(0));
+        // tom 设置当前的父级内容 END TODO: 这段写的不是优雅, 之后看情况修改
+
         List<ComplexValue> complexValues = new ArrayList<>();
         for (Map.Entry<String, CmsBtProductModel_Sku> entry : buildSkuResult.getSizeCmsSkuPropMap().entrySet())
         {
+            // tom 设置当前的父级内容 START TODO: 这段写的不是优雅, 之后看情况修改
+            Map<String, Object> masterWordEvaluationContext = entry.getValue();
+            expressionParser.pushMasterPropContext(masterWordEvaluationContext);
+            // tom 设置当前的父级内容 END TODO: 这段写的不是优雅, 之后看情况修改
+
             expressionParser.setSkuPropContext(entry.getValue());
             ComplexValue complexValue = new ComplexValue();
 
@@ -231,8 +241,16 @@ public class TmallGjSkuFieldBuilderImpl_1 extends AbstractSkuFieldBuilder {
                 }
             }
 
+            // tom 释放 START TODO: 这段写的不是优雅, 之后看情况修改
+            expressionParser.popMasterPropContext();
+            // tom 释放 END TODO: 这段写的不是优雅, 之后看情况修改
+
             complexValues.add(complexValue);
         }
+
+        // tom 释放 START TODO: 这段写的不是优雅, 之后看情况修改
+//        expressionParser.popMasterPropContext();
+        // tom 释放 END TODO: 这段写的不是优雅, 之后看情况修改
 
         ((MultiComplexField)skuExtendField).setComplexValues(complexValues);
         contextBuildCustomFields.getCustomFields().add(skuExtendField);
