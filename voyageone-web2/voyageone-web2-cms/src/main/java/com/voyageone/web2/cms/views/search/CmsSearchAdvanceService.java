@@ -418,9 +418,14 @@ public class CmsSearchAdvanceService extends BaseAppService{
             orSearch.add(MongoUtils.splicingValue("fields.model", searchValue.getCodeList()));
 
             if (searchValue.getCodeList().length == 1) {
+                // 原文查询内容
                 orSearch.add(MongoUtils.splicingValue("fields.productNameEn", searchValue.getCodeList()[0], "$regex"));
                 orSearch.add(MongoUtils.splicingValue("fields.longDesEn", searchValue.getCodeList()[0], "$regex"));
-                orSearch.add(MongoUtils.splicingValue("fields.productNameCn", searchValue.getCodeList()[0], "$regex"));
+                orSearch.add(MongoUtils.splicingValue("fields.shortDesEn", searchValue.getCodeList()[0], "$regex"));
+                // 中文查询内容
+                orSearch.add(MongoUtils.splicingValue("fields.longTitle", searchValue.getCodeList()[0], "$regex"));
+                orSearch.add(MongoUtils.splicingValue("fields.shortTitle", searchValue.getCodeList()[0], "$regex"));
+                orSearch.add(MongoUtils.splicingValue("fields.middleTitle", searchValue.getCodeList()[0], "$regex"));
                 orSearch.add(MongoUtils.splicingValue("fields.longDesCn", searchValue.getCodeList()[0], "$regex"));
             }
             result.append(MongoUtils.splicingValue("", orSearch.toArray(), "$or"));
@@ -501,7 +506,7 @@ public class CmsSearchAdvanceService extends BaseAppService{
 
             FileUtils.cell(row, 7, unlock).setCellValue(item.getFields().getProductNameEn());
 
-            FileUtils.cell(row, 8, unlock).setCellValue(item.getFields().getProductNameCn());
+            FileUtils.cell(row, 8, unlock).setCellValue(item.getFields().getLongTitle());
 
             FileUtils.cell(row, 9, unlock).setCellValue(StringUtils.null2Space2(String.valueOf(item.getFields().getQuantity())));
 

@@ -22,7 +22,7 @@
             AND a.name like CONCAT('%',#{name},'%' )
         </if>
         <if test="cart_id != null and cart_id != ''">
-            AND a.cart_id = #{cart_id}
+            AND a.cart_id in (#{cart_id}, 0)
         </if>
         <if test="offset != null and rows != null and rows != 0">
             LIMIT #{offset}, #{rows};
@@ -39,7 +39,7 @@
             AND a.name like CONCAT('%',#{name},'%' )
         </if>
         <if test="cart_id != null and cart_id != ''">
-            AND a.cart_id = #{cart_id}
+            AND a.cart_id in (#{cart_id}, 0)
         </if>
     </select>
 

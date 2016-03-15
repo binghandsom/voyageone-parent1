@@ -134,9 +134,9 @@
 										<a ng-href="#/product/detail/{{productInfo.prodId}}" target="_blank" class="text-u-l" ng-bind="productInfo.fields.code"></a>
 									</span>&nbsp;
 									<span>{{'TXT_PRODUCT_NAME_WITH_COLON' | translate}}&nbsp;
-										<a ng-if="productInfo.fields.productNameCn" href="#/product/detail/{{productInfo.prodId}}" target="_blank" class="text-u-l"
-										   title="{{productInfo.fields.productNameCn}}">{{productInfo.fields.productNameCn | limitTo: 30}}{{productInfo.fields.productNameCn.length > 30 ? '...' : ''}}</a>
-										<a ng-if="!productInfo.fields.productNameCn" href="#/product/detail/{{productInfo.prodId}}" target="_blank" class="text-u-l"
+										<a ng-if="productInfo.fields.longTitle" href="#/product/detail/{{productInfo.prodId}}" target="_blank" class="text-u-l"
+										   title="{{productInfo.fields.longTitle}}">{{productInfo.fields.longTitle | limitTo: 30}}{{productInfo.fields.longTitle.length > 30 ? '...' : ''}}</a>
+										<a ng-if="!productInfo.fields.longTitle" href="#/product/detail/{{productInfo.prodId}}" target="_blank" class="text-u-l"
 										   title="{{productInfo.fields.productNameEn}}">{{productInfo.fields.productNameEn | limitTo: 30}}{{productInfo.fields.productNameEn.length > 30 ? '...' : ''}}</a>
 									</span>
 									<span class="pull-right">{{'TXT_CATEGORY_WITH_COLON' | translate}}&nbsp;{{productInfo.catPath}}</span>

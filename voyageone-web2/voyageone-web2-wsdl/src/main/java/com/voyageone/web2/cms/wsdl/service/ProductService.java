@@ -914,7 +914,7 @@ public class ProductService extends BaseService {
                     imagePath = Constants.productForOtherSystemInfo.IMG_URL + product.getFields().getImages1().get(0).getName();
             }
             resultInfo.setShowName(imagePath);
-            resultInfo.setCnName(product.getFields().getProductNameCn());
+            resultInfo.setCnName(product.getFields().getLongTitle());
             // 获取HsCodeCrop
             String hsCodeCrop = product.getFields().getHsCodeCrop();
             if (!StringUtils.isEmpty(hsCodeCrop)) {

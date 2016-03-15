@@ -255,9 +255,9 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
                         && workLoadBean.getMainProduct().getCmsBtProductModel() != null
                         && workLoadBean.getMainProduct().getCmsBtProductModel().getFields() != null
                         && workLoadBean.getMainProduct().getCmsBtProductModel().getFields().size() > 0
-                        && workLoadBean.getMainProduct().getCmsBtProductModel().getFields().getProductNameCn() != null
+                        && workLoadBean.getMainProduct().getCmsBtProductModel().getFields().getLongTitle() != null
                         ) {
-                    cmsBusinessLogModel.setProductName(workLoadBean.getMainProduct().getCmsBtProductModel().getFields().getProductNameCn());
+                    cmsBusinessLogModel.setProductName(workLoadBean.getMainProduct().getCmsBtProductModel().getFields().getLongTitle());
                 }
                 cmsBusinessLogModel.setProductId(productId);
                 cmsBusinessLogModel.setCode(mainCode);
