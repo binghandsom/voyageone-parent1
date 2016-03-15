@@ -172,42 +172,64 @@ public class VtmWsdlInsert extends BaseTaskService {
          *
          * @throws Exception
          */
-        @Transactional
         protected void postNewProduct() throws Exception {
 
-            vtmDaotmDao.updateFull();
+//            vtmDaotmDao.updateFull();
 
             $info("准备 <构造> 类目树");
             List<String> categoriePaths = getCategories();
+
+            List<CmsBtFeedInfoModel> productSucceeList = new ArrayList<>();
             // 准备接收失败内容
             List<CmsBtFeedInfoModel> productFailAllList = new ArrayList<>();
+            List<CmsBtFeedInfoModel> productAll = new ArrayList<>();
 
             for (String categorPath : categoriePaths) {
 
-                List<CmsBtFeedInfoModel> productSucceeList = new ArrayList<>();
-
-                // 分每棵树的信息取得
+                // 每棵树的信息取得
+                logger.info("每棵树的信息取得开始");
                 List<CmsBtFeedInfoModel> product = getCategoryInfo(categorPath);
+                logger.info("每棵树的信息取得结束");
 
                 product.forEach(cmsBtFeedInfoModel -> {
                     List<String> categors = java.util.Arrays.asList(cmsBtFeedInfoModel.getCategory().split(":"));
                     cmsBtFeedInfoModel.setCategory(categors.stream().map(s -> s.replace("-", "－")).collect(Collectors.joining("-")));
                 });
-
-                try {
-                    Map response = feedToCmsService.updateProduct(channel.getId(), product, getTaskName());
-                    List<String> itemIds = new ArrayList<>();
-                    productSucceeList = (List<CmsBtFeedInfoModel>) response.get("succeed");
-                    productSucceeList.forEach(feedProductModel -> feedProductModel.getSkus().forEach(feedSkuModel -> itemIds.add(feedSkuModel.getClientSku())));
-                    updateFull(itemIds);
-                    productFailAllList.addAll((List<CmsBtFeedInfoModel>) response.get("fail"));
-                } catch (Exception e) {
-                    logger.error(e.getMessage());
-                    issueLog.log(e, ErrorType.BatchJob, SubSystem.CMS);
+                productAll.addAll(product);
+                if(productAll.size() > 500){
+                    executeMongoDB(productAll, productSucceeList, productFailAllList);
                 }
             }
+            executeMongoDB(productAll, productSucceeList, productFailAllList);
+
             $info("总共~ 失败的 Product: %s", productFailAllList.size());
 
+        }
+
+        /**
+         * MongoDB插入更新
+         *
+         * @param productAll 全部更新对象
+         * @param productSucceeList 接收成功更新对象
+         * @param productFailAllList 全部更新失败对象
+         */
+        private  void executeMongoDB(List<CmsBtFeedInfoModel> productAll, List<CmsBtFeedInfoModel> productSucceeList, List<CmsBtFeedInfoModel> productFailAllList) {
+            try {
+                logger.info("插入mongodb开始");
+                Map response = feedToCmsService.updateProduct(channel.getId(), productAll, getTaskName());
+                logger.info("插入mongodb结束");
+                List<String> itemIds = new ArrayList<>();
+                productSucceeList = (List<CmsBtFeedInfoModel>) response.get("succeed");
+                productSucceeList.forEach(feedProductModel -> feedProductModel.getSkus().forEach(feedSkuModel -> itemIds.add(feedSkuModel.getClientSku())));
+                updateFull(itemIds);
+                productFailAllList.addAll((List<CmsBtFeedInfoModel>) response.get("fail"));
+            } catch (Exception e) {
+                logger.error(e.getMessage());
+                issueLog.log(e, ErrorType.BatchJob, SubSystem.CMS);
+            } finally {
+                productSucceeList.clear();
+                productAll.clear();
+            }
         }
 
         /**
@@ -216,7 +238,7 @@ public class VtmWsdlInsert extends BaseTaskService {
          * @param itemIds
          */
         @Transactional
-        protected void updateFull(List<String> itemIds) {
+        private void updateFull(List<String> itemIds) {
             if (itemIds.size() > 0) {
                 vtmDaotmDao.delFull(itemIds);
                 vtmDaotmDao.insertFull(itemIds);
