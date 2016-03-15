@@ -1,5 +1,6 @@
 package com.voyageone.web2.cms.views.promotion.task;
 
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
@@ -237,7 +238,7 @@ public class CmsTaskStockController extends CmsController {
      * @apiSuccess (应用级返回字段) {String} revertFailNum 还原失败数
      * @apiSuccess (应用级返回字段) {String} changedNum 再修正数
      * @apiSuccess (应用级返回字段) {String} skuNum sku数
-     * @apiSuccess (应用级返回字段) {String} realStockStatus 实时库存表示状态(0:不表示,1:活动中表示,2:活动结束后表示）
+     * @apiSuccess (应用级返回字段) {String} realStockStatus 实时库存表示状态(0:活动期间表示,1:活动结束后表示）
      * @apiSuccess (应用级返回字段) {Object} propertyList 属性列表（json数组）
      * @apiSuccess (应用级返回字段) {Object} platformList 隔离平台列表（json数组）
      * @apiSuccess (应用级返回字段) {Object} stockList 库存隔离明细（json数组）
@@ -256,7 +257,7 @@ public class CmsTaskStockController extends CmsController {
      *   "revertFailNum":0,
      *   "changedNum":0,
      *   "skuNum":10000,
-     *   "realStockStatus":"1",
+     *   "realStockStatus":"0",
      *   "propertyList": [ {"property":"property1", "name":"品牌", "logic":"", "type":"", "show":false, "value"=""},
      *                     {"property":"property2", "name":"英文短描述", "logic":"Like", "type":"", "show":false, "value"=""},
      *                     {"property":"property3", "name":"性别", "logic":"", "type":"", "show":false, "value"=""}，
@@ -264,14 +265,14 @@ public class CmsTaskStockController extends CmsController {
      *   "platformList": [ {"cartId":"23", "cartName":"天猫国际"},
      *                     {"cartId":"27", "cartName":"聚美优品"} ]，
      *   "stockList": [ {"model":"35265", "code":"35265465", "sku":"256354566-9", "property1":"Puma", "property2":"Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"50",
-     *                                                         "platformStock":[{"cartId":"23", "qty":"30", "status":"隔离成功"},
-     *                                                                          {"cartId":"27", "qty":"10", "status":"隔离失败"}]},
+     *                                                         "platformStock":[{"cartId":"23", "separationQty":"30", "status":"隔离成功"},
+     *                                                                          {"cartId":"27", "separationQty":"10", "status":"隔离失败"}]},
      *                   {"model":"35265", "code":"35265465", "sku":"256354566-10", "property1":"Puma", "property2":"Puma Suede Classic +Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"80",
-     *                                                         "platformStock":[{"cartId":"23", "qty":"40", "status":"等待隔离"},
-     *                                                                          {"cartId":"27", "qty":"30", "status":"还原成功"}]},
+     *                                                         "platformStock":[{"cartId":"23", "separationQty":"40", "status":"等待隔离"},
+     *                                                                          {"cartId":"27", "separationQty":"30", "status":"还原成功"}]},
      *                   {"model":"35265", "code":"35265465", "sku":"256354566-11", "property1":"Puma", "property2":"Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"80",
-     *                                                         "platformStock":[{"cartId":"23", "qty":"-1", "status":""},
-     *                                                                          {"cartId":"27", "qty":"10", "status":"还原成功"}]},
+     *                                                         "platformStock":[{"cartId":"23", "separationQty":"-1", "status":""},
+     *                                                                          {"cartId":"27", "separationQty":"10", "status":"还原成功"}]},
      *                    ...]，
      *   "realStockList": [ {"model":"35265", "code":"35265465", "Sku":"256354566-9", "property1":"Puma", "property2":"Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"50",
      *                                                         "platformStock":[{"cartId":"23", "separationQty":"30", "salesQty":"10"},
@@ -281,11 +282,11 @@ public class CmsTaskStockController extends CmsController {
      *                                                                          {"cartId":"27", "separationQty":"20", "salesQty":"0"}]},
      *                   {"model":"35265", "code":"35265465", "Sku":"256354566-11", "property1":"Puma", "property2":"Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"80",
      *                                                         "platformStock":[{"cartId":"23", "separationQty":"-1", },
-     *                                                                          {"cartId":"27", "separationQty":"-1", }]}
+     *                                                                          {"cartId":"27", "separationQty":"20", "salesQty":"0"}]}
      *                    ...]，
      *  }
      * }
-     * 说明："qty":"-1"为动态。"separationQty":"-1"为动态。"salesQty":平台销售数量
+     * 说明："separationQty":"-1"为动态。"salesQty":平台销售数量
      * propertyList是通过在com_mt_value_channel(typeId=62)中通过配置来取得。（配置这个channel显示几个属性，每个属性在画面上的显示名称是什么）
      * @apiExample  业务说明
      *  1.根据参数.任务id，商品Code，Sku，状态和各个属性从cms_bt_stock_separate_item表检索库存隔离明细。（一个Sku一条记录，按Sku进行分页）
@@ -316,13 +317,14 @@ public class CmsTaskStockController extends CmsController {
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK.SEARCH_STOCK)
     public AjaxResponse searchStock(@RequestBody Map param) {
-
+        // 渠道id
         param.put("channelId", this.getUser().getSelChannelId());
+        // 语言
         param.put("lang", this.getLang());
-
+        // 返回内容
         Map<String, Object> resultBean = new HashMap<>();
 
-        // 取得任务id在history表中时候有数据
+        // 任务id对应的库存隔离数据是否移到history表
         boolean historyFlg = cmsTaskStockService.isHistoryExist(param);
         if (historyFlg) {
             param.put("tableName", "voyageone_cms2.cms_bt_stock_separate_item_history");
@@ -331,13 +333,16 @@ public class CmsTaskStockController extends CmsController {
         }
 
         // 取得库存隔离数据各种状态的数量
-        // 状态 = "未进行"的件数
         int cntAll = 0;
+        int cntAllExceptDynamic = 0;
         List<Map<String,Object>> statusCountList = cmsTaskStockService.getStockStatusCount(param);
         for (Map<String,Object> statusInfo : statusCountList) {
             String status = (String) statusInfo.get("status");
             int cnt = Integer.parseInt(String.valueOf(statusInfo.get("count")));
             cntAll += cnt;
+            if (!StringUtils.isEmpty(status)) {
+                cntAllExceptDynamic +=cnt;
+            }
             String key = "";
             if ("0".equals(status)) {
                 key = "readyNum";
@@ -381,10 +386,10 @@ public class CmsTaskStockController extends CmsController {
         }
 
         // 总数
-        resultBean.put("allNum", cntAll);
+        resultBean.put("allNum", cntAllExceptDynamic);
 
         // 取得属性列表 只有首次取得
-        if (param.get("propertyList") == null || ((ArrayList) param.get("propertyList")).size() == 0) {
+        if (param.get("propertyList") == null || ((List<Map<String, Object>>)param.get("propertyList")).size() == 0) {
             List<Map<String, Object>> propertyList = cmsTaskStockService.getPropertyList(param);
             resultBean.put("propertyList", propertyList);
             param.put("propertyList", propertyList);
@@ -393,7 +398,7 @@ public class CmsTaskStockController extends CmsController {
         }
 
         // 任务对应平台信息列表 只有首次取得
-        if (param.get("platformList") == null || ((ArrayList) param.get("platformList")).size() == 0) {
+        if (param.get("platformList") == null || ((List<Map<String, Object>>)param.get("platformList")).size() == 0) {
             List<Map<String, Object>> platformList = cmsTaskStockService.getPlatformList(param);
             resultBean.put("platformList", platformList);
             param.put("platformList", platformList);
@@ -402,27 +407,29 @@ public class CmsTaskStockController extends CmsController {
         }
 
         // 库存隔离明细sku总数
-        int cnt = cmsTaskStockService.getStockSkuCount(param);
-        resultBean.put("skuNum", cnt);
-        if (cnt == 0) {
-            resultBean.put("stockList", new ArrayList());
-            resultBean.put("realStockList", new ArrayList());
-            return success(resultBean);
-        }
+        resultBean.put("skuNum", cntAll/((List<Map<String, Object>>)param.get("platformList")).size());
+//        int cnt = cmsTaskStockService.getStockSkuCount(param);
+//        resultBean.put("skuNum", cnt);
+//        if (cnt == 0) {
+//            resultBean.put("stockList", new ArrayList());
+//            resultBean.put("realStockList", new ArrayList());
+//            return success(resultBean);
+//        }
 
         // 取得库存隔离明细当页表示的Sku
-        List<Object> skuCommonStockList = cmsTaskStockService.getCommonStockPageSkuList(param);
+//        List<Object> skuCommonStockList = cmsTaskStockService.getCommonStockPageSkuList(param);
 
         // 取得库存隔离明细
-        List<Map<String, Object>> stockList = cmsTaskStockService.getCommonStockList(param, skuCommonStockList);
+//        List<Map<String, Object>> stockList = cmsTaskStockService.getCommonStockList(param, skuCommonStockList);
+        List<Map<String, Object>> stockList = cmsTaskStockService.getCommonStockList(param);
         resultBean.put("stockList", stockList);
 
-        // 取得实时库存状态当页表示的Sku
-        List<Object> skuRealStockList = cmsTaskStockService.geRealStockPageSkuList(param);
+//        // 取得实时库存状态当页表示的Sku
+//        List<Object> skuRealStockList = cmsTaskStockService.geRealStockPageSkuList(param);
 
-        // 实时库存状态
-        List<Map<String, Object>> realStockList = cmsTaskStockService.getRealStockList(param, skuRealStockList);
-        resultBean.put("realStockList", realStockList);
+//        // 实时库存状态
+//        List<Map<String, Object>> realStockList = cmsTaskStockService.getRealStockList(param, skuRealStockList);
+//        resultBean.put("realStockList", realStockList);
 
         // 返回
         return success(resultBean);
@@ -467,14 +474,14 @@ public class CmsTaskStockController extends CmsController {
      *  "data":{
      *   "skuNum":5000,
      *   "stockList": [ {"model":"35265", "code":"35265465", "sku":"256354566-9", "property1":"Puma", "property2":"Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"50",
-     *                                                         "platformStock":[{"cartId":"23", "qty":"30", "status":"隔离成功"},
-     *                                                                          {"cartId":"27", "qty":"10", "status":"隔离失败"}]},
+     *                                                         "platformStock":[{"cartId":"23", "separationQty":"30", "status":"隔离成功"},
+     *                                                                          {"cartId":"27", "separationQty":"10", "status":"隔离失败"}]},
      *                   {"model":"35265", "code":"35265465", "sku":"256354566-10", "property1":"Puma", "property2":"Puma Suede Classic +Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"80",
-     *                                                         "platformStock":[{"cartId":"23", "qty":"40", "status":"等待隔离"},
-     *                                                                          {"cartId":"27", "qty":"30", "status":"还原成功"}]},
+     *                                                         "platformStock":[{"cartId":"23", "separationQty":"40", "status":"等待隔离"},
+     *                                                                          {"cartId":"27", "separationQty":"30", "status":"还原成功"}]},
      *                   {"model":"35265", "code":"35265465", "sku":"256354566-11", "property1":"Puma", "property2":"Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"80",
-     *                                                         "platformStock":[{"cartId":"23", "qty":"-1", "status":""},
-     *                                                                          {"cartId":"27", "qty":"10", "status":"还原成功"}]},
+     *                                                         "platformStock":[{"cartId":"23", "separationQty":"-1", "status":""},
+     *                                                                          {"cartId":"27", "separationQty":"10", "status":"还原成功"}]},
      *                    ...]
      *  }
      * }
@@ -491,9 +498,14 @@ public class CmsTaskStockController extends CmsController {
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK.GET_COMMON_STOCK_LIST)
     public AjaxResponse getCommonStockList(@RequestBody Map param) {
+        // 渠道id
+        param.put("channelId", this.getUser().getSelChannelId());
+        // 语言
+        param.put("lang", this.getLang());
+
         Map<String, Object> resultBean = new HashMap<>();
 
-        // 取得任务id在history表中时候有数据
+        // 取得任务id在history表中是否有数据
         boolean historyFlg = cmsTaskStockService.isHistoryExist(param);
         if (historyFlg) {
             param.put("tableName", "voyageone_cms2.cms_bt_stock_separate_item_history");
@@ -501,15 +513,15 @@ public class CmsTaskStockController extends CmsController {
             param.put("tableName", "voyageone_cms2.cms_bt_stock_separate_item");
         }
 
-        // 取得库存隔离明细当页表示的Sku
-        List<Object> skuList = cmsTaskStockService.getCommonStockPageSkuList(param);
-        if (skuList.size() == 0) {
-            resultBean.put("stockList", new ArrayList());
-            return success(resultBean);
-        }
+//        // 取得库存隔离明细当页表示的Sku
+//        List<Object> skuList = cmsTaskStockService.getCommonStockPageSkuList(param);
+//        if (skuList.size() == 0) {
+//            resultBean.put("stockList", new ArrayList());
+//            return success(resultBean);
+//        }
 
         // 取得库存隔离明细
-        List<Map<String, Object>> stockList = cmsTaskStockService.getCommonStockList(param, skuList);
+        List<Map<String, Object>> stockList = cmsTaskStockService.getCommonStockList(param);
         resultBean.put("stockList", stockList);
 
         // 返回
@@ -547,12 +559,14 @@ public class CmsTaskStockController extends CmsController {
      * @apiSuccess (系统级返回字段) {String} displayType 消息的提示方式
      * @apiSuccess (系统级返回字段) {String} redirectTo 跳转地址
      * @apiSuccess (应用级返回字段) {String} skuNum sku数
+     * @apiSuccess (应用级返回字段) {String} realStockStatus 实时库存表示状态(0:活动期间表示,1:活动结束后表示）
      * @apiSuccess (应用级返回字段) {Object} realStockList 实时库存状态（json数组）
      * @apiSuccessExample 成功响应更新请求
      * {
      *  "code":"0", "message":null, "displayType":null, "redirectTo":null,
      *  "data":{
      *   "skuNum":10000,
+     *   "realStockStatus":1,
      *   "realStockList": [ {"model":"35265", "code":"35265465", "Sku":"256354566-9", "property1":"Puma", "property2":"Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"50",
      *                                                         "platformStock":[{"cartId":"23", "separationQty":30, "salesQty":"10"},
      *                                                                          {"cartId":"27", "separationQty":20, "salesQty":"0"}]},
@@ -561,7 +575,7 @@ public class CmsTaskStockController extends CmsController {
      *                                                                          {"cartId":"27", "separationQty":20, "salesQty":"0"}]},
      *                   {"model":"35265", "code":"35265465", "Sku":"256354566-11", "property1":"Puma", "property2":"Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"80",
      *                                                         "platformStock":[{"cartId":"23", "separationQty":"-1", },
-     *                                                                          {"cartId":"27", "separationQty":"-1", }]},
+     *                                                                          {"cartId":"27", "separationQty":"20", "salesQty":"0"}]}
      *                    ...]
      *  }
      * }
@@ -591,8 +605,12 @@ public class CmsTaskStockController extends CmsController {
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK.GET_REAL_STOCK_LIST)
     public AjaxResponse getRealStockList(@RequestBody Map param) {
+        // 渠道id
+        param.put("channelId", this.getUser().getSelChannelId());
+        // 语言
+        param.put("lang", this.getLang());
         Map<String, Object> resultBean = new HashMap<>();
-        // 取得任务id在history表中时候有数据
+        // 取得任务id在history表中是否有数据
         boolean historyFlg = cmsTaskStockService.isHistoryExist(param);
         if (historyFlg) {
             param.put("tableName", "voyageone_cms2.cms_bt_stock_separate_item_history");
@@ -600,15 +618,15 @@ public class CmsTaskStockController extends CmsController {
             param.put("tableName", "voyageone_cms2.cms_bt_stock_separate_item");
         }
 
-        // 取得实时库存状态当页表示的Sku
-        List<Object> skuList = cmsTaskStockService.geRealStockPageSkuList(param);
-        if (skuList.size() == 0) {
-            resultBean.put("realStockList", new ArrayList());
-            return success(resultBean);
-        }
+//        // 取得实时库存状态当页表示的Sku
+//        List<Object> skuList = cmsTaskStockService.geRealStockPageSkuList(param);
+//        if (skuList.size() == 0) {
+//            resultBean.put("realStockList", new ArrayList());
+//            return success(resultBean);
+//        }
 
         // 取得实时库存状态
-        List<Map<String, Object>> realStockList = cmsTaskStockService.getRealStockList(param, skuList);
+        List<Map<String, Object>> realStockList = cmsTaskStockService.getRealStockList(param);
         resultBean.put("realStockList", realStockList);
 
         // 返回
@@ -660,12 +678,12 @@ public class CmsTaskStockController extends CmsController {
      * @apiSuccess (系统级返回字段) {String} message 处理结果描述
      * @apiSuccess (系统级返回字段) {String} displayType 消息的提示方式
      * @apiSuccess (系统级返回字段) {String} redirectTo 跳转地址
-     * @apiSuccess (应用级返回字段) {Integer} stockNum 可用库存数
+     * @apiSuccess (应用级返回字段) {Integer} usableStock 可用库存数
      * @apiSuccessExample 成功响应更新请求
      * {
      *  "code":"0", "message":null, "displayType":null, "redirectTo":null,
      *  "data":{
-     *   "stockNum":10000
+     *   "usableStock":10000
      *  }
      * }
      * @apiExample  业务说明
@@ -698,12 +716,13 @@ public class CmsTaskStockController extends CmsController {
      * @apiVersion 0.0.1
      * @apiPermission 认证商户
      * @apiParam (应用级参数) {String} taskId 任务id
+     * @apiParam (应用级参数) {String} model 商品model
      * @apiParam (应用级参数) {String} code 商品Code
      * @apiParam (应用级参数) {String} sku Sku
      * @apiParam (应用级参数) {String} usableStock 可用库存
      * @apiParam (应用级参数) {Object} platformStockList 平台隔离库存（json数组）
      * @apiParamExample  platformStockList示例
-     *   "platformList": [ {"cartId":"23", "qty":"10"},
+     *   "platformStockList": [ {"cartId":"23", "qty":"10"},
      *                     {"cartId":"24", "qty":"20"}，
      *                     {"cartId":"27", "qty":""，"dynamic":true}]
      * @apiSuccess (系统级返回字段) {String} code 处理结果代码编号
@@ -901,19 +920,21 @@ public class CmsTaskStockController extends CmsController {
      * @apiVersion 0.0.1
      * @apiPermission 认证商户
      * @apiParam (应用级参数) {String} taskId 任务id
+     * @apiParam (应用级参数) {Integer} Integer 选择行
      * @apiParam (应用级参数) {Object} stockList（json数组） 隔离明细
      * @apiParamExample  stockList参数示例
      * {
-     *   "taskId":1,
+     *   "taskId":"1",
+     *   "index":0
      *   "stockList": [ {"model":"35265", "code":"35265465", "sku":"256354566-9", "property1":"Puma", "property2":"Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"50",
-     *                                                         "platformStock":[{"cartId":"23", "qty":"40", "status":"隔离成功"},
-     *                                                                          {"cartId":"27", "qty":"10", "status":"隔离失败"}]},
+     *                                                         "platformStock":[{"cartId":"23", "separationQty":"40", "status":"隔离成功"},
+     *                                                                          {"cartId":"27", "separationQty":"10", "status":"隔离失败"}]},
      *                   {"model":"35265", "code":"35265465", "sku":"256354566-10", "property1":"Puma", "property2":"Puma Suede Classic +Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"80",
-     *                                                         "platformStock":[{"cartId":"23", "qty":"40", "status":"等待隔离"},
-     *                                                                          {"cartId":"27", "qty":"30", "status":"还原成功"}]},
+     *                                                         "platformStock":[{"cartId":"23", "separationQty":"40", "status":"等待隔离"},
+     *                                                                          {"cartId":"27", "separationQty":"30", "status":"还原成功"}]},
      *                   {"model":"35265", "code":"35265465", "sku":"256354566-11", "property1":"Puma", "property2":"Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"80",
-     *                                                         "platformStock":[{"cartId":"23", "qty":"-1", "status":""},
-     *                                                                          {"cartId":"27", "qty":"10", "status":"还原成功"}]},
+     *                                                         "platformStock":[{"cartId":"23", "separationQty":"-1", "status":""},
+     *                                                                          {"cartId":"27", "separationQty":"10", "status":"还原成功"}]},
      *                    ...]
      * }
      * @apiSuccess (系统级返回字段) {String} code 处理结果代码编号
@@ -925,14 +946,14 @@ public class CmsTaskStockController extends CmsController {
      *  "code":"0", "message":null, "displayType":null, "redirectTo":null,
      *  "data":{,
      *   "stockList": [ {"model":"35265", "code":"35265465", "sku":"256354566-9", "property1":"Puma", "property2":"Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"50",
-     *                                                         "platformStock":[{"cartId":"23", "qty":"40", "status":"再修正"},
-     *                                                                          {"cartId":"27", "qty":"10", "status":"再修正"}]},
+     *                                                         "platformStock":[{"cartId":"23", "separationQty":"40", "status":"再修正"},
+     *                                                                          {"cartId":"27", "separationQty":"10", "status":"再修正"}]},
      *                   {"model":"35265", "code":"35265465", "sku":"256354566-10", "property1":"Puma", "property2":"Puma Suede Classic +Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"80",
-     *                                                         "platformStock":[{"cartId":"23", "qty":"40", "status":"等待隔离"},
-     *                                                                          {"cartId":"27", "qty":"30", "status":"还原成功"}]},
+     *                                                         "platformStock":[{"cartId":"23", "separationQty":"40", "status":"等待隔离"},
+     *                                                                          {"cartId":"27", "separationQty":"30", "status":"还原成功"}]},
      *                   {"model":"35265", "code":"35265465", "sku":"256354566-11", "property1":"Puma", "property2":"Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"80",
-     *                                                         "platformStock":[{"cartId":"23", "qty":"-1", "status":""},
-     *                                                                          {"cartId":"27", "qty":"10", "status":"还原成功"}]},
+     *                                                         "platformStock":[{"cartId":"23", "separationQty":"-1", "status":""},
+     *                                                                          {"cartId":"27", "separationQty":"10", "status":"还原成功"}]},
      *                    ...]
      *  }
      * }
@@ -950,9 +971,10 @@ public class CmsTaskStockController extends CmsController {
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK.SAVE_RECORD)
     public AjaxResponse saveRecord(@RequestBody Map param) {
-
+        param.put("lang", this.getLang());
+        cmsTaskStockService.saveRecord(param);
         // 返回
-        return success(null);
+        return success(param);
     }
 
     /**
@@ -966,10 +988,10 @@ public class CmsTaskStockController extends CmsController {
      * @apiParam (应用级参数) {Object} stockInfo（json数据） 一条Sku的隔离明细
      * @apiParamExample  stockInfo参数示例
      * {
-     *   "taskId":1,
+     *   "taskId":"1",
      *   "stockInfo":  {"model":"35265", "code":"35265465", "sku":"256354566-9", "property1":"Puma", "property2":"Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"50",
-     *                                                         "platformStock":[{"cartId":"23", "qty":"40", "status":"未进行"},
-     *                                                                          {"cartId":"27", "qty":"10", "status":"未进行"}]}
+     *                                                         "platformStock":[{"cartId":"23", "separationQty":"40", "status":"未进行"},
+     *                                                                          {"cartId":"27", "separationQty":"10", "status":"未进行"}]}
      * }
      * @apiSuccess (系统级返回字段) {String} code 处理结果代码编号
      * @apiSuccess (系统级返回字段) {String} message 处理结果描述
@@ -991,6 +1013,8 @@ public class CmsTaskStockController extends CmsController {
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK.DEL_RECORD)
     public AjaxResponse delRecord(@RequestBody Map param) {
+        param.put("lang", this.getLang());
+        cmsTaskStockService.delRecord(param);
 
         // 返回
         return success(null);

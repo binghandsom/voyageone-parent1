@@ -13,17 +13,24 @@
             property4,
             qty,
             separate_qty,
+            status,
             t2.name as status_name
         from ${tableName} t1
         left outer join (select value,name from com_mt_value where type_id= '63' and lang_id = #{lang}) t2
         on t1.status = t2.value
         where task_id = #{taskId}
+        <if test="sku !=null">
+            and sku = #{sku}
+        </if>
         <if test="skuList != null and skuList.size() > 0">
             and (sku in
             <foreach collection="skuList" item="sku" open="(" separator="," close=")">
                 #{sku}
             </foreach>
             )
+        </if>
+        <if test="cartId !=null">
+            and cart_id = #{cartId}
         </if>
         order by sku,cart_id
     </select>
@@ -40,7 +47,7 @@
          select count(*)
             from   voyageone_cms2.cms_bt_stock_separate_item
             where task_id = #{taskId}
-            <if test="status !=null and status != ''">
+            <if test="status !=null">
                 and status = #{status}
             </if>
     </select>
@@ -50,10 +57,10 @@
         from   voyageone_cms2.cms_bt_stock_separate_item
         where sku = #{sku}
         and status = #{status}
-        <if test="taskId !=null and taskId != ''">
+        <if test="taskId !=null">
             and task_id = #{taskId}
         </if>
-        <if test="cartId !=null and cartId != ''">
+        <if test="cartId !=null">
             and cart_id = #{cartId}
         </if>
     </select>
@@ -64,4 +71,82 @@
             where task_id = #{taskId}
           limit 0,1
     </select>
+
+    <update id="update_stock_separate_item" parameterType="HashMap" >
+        update voyageone_cms2.cms_bt_stock_separate_item
+        <set >
+            <if test="productModel != null" >
+                product_model = #{productModel,jdbcType=VARCHAR},
+            </if>
+            <if test="productCode != null" >
+                product_code = #{productCode,jdbcType=VARCHAR},
+            </if>
+            <if test="property1 != null" >
+                property1 = #{property1,jdbcType=VARCHAR},
+            </if>
+            <if test="property2 != null" >
+                property1 = #{property2,jdbcType=VARCHAR},
+            </if>
+            <if test="property3 != null" >
+                property1 = #{property3,jdbcType=VARCHAR},
+            </if>
+            <if test="property4 != null" >
+                property1 = #{property4,jdbcType=VARCHAR},
+            </if>
+            <if test="qty != null" >
+                qty = #{qty,jdbcType=INTEGER},
+            </if>
+            <if test="separateQty != null" >
+                separate_qty = #{separateQty,jdbcType=INTEGER},
+            </if>
+            <if test="errorMsg != null" >
+                error_msg = #{errorMsg,jdbcType=VARCHAR},
+            </if>
+            <if test="errorTime != null" >
+                error_time = #{errorTime,jdbcType=VARCHAR},
+            </if>
+            <if test="separateTime != null" >
+                separate_time = #{separateTime,jdbcType=VARCHAR},
+            </if>
+            <if test="restoreTime != null" >
+                restore_time = #{restoreTime,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null" >
+                status = #{status,jdbcType=VARCHAR},
+            </if>
+            modified = now(),
+            <if test="modifier != null" >
+                modifier = #{modifier,jdbcType=VARCHAR},
+            </if>
+        </set>
+        <where>
+            1 = 1
+            <if test="seq != null" >
+                and seq = #{seq,jdbcType=INTEGER}
+            </if>
+            <if test="taskId != null" >
+                and task_id = #{taskId,jdbcType=INTEGER}
+            </if>
+            <if test="sku != null" >
+                and sku = #{sku,jdbcType=VARCHAR}
+            </if>
+            <if test="cartId != null" >
+                and cart_id = #{cartId,jdbcType=INTEGER}
+            </if>
+        </where>
+    </update>
+
+    <delete id="delete_stock_separate_item" parameterType="HashMap">
+        delete
+        from voyageone_cms2.cms_bt_stock_separate_item
+        where
+        task_id = #{taskId,jdbcType=INTEGER}
+        <if test="sku != null" >
+            and sku = #{sku,jdbcType=VARCHAR}
+        </if>
+        <if test="cartId != null" >
+            and cart_id = #{cartId,jdbcType=INTEGER}
+        </if>
+    </delete>
+
 </mapper>
