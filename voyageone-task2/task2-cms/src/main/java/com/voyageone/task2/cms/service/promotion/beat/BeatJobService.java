@@ -221,8 +221,15 @@ public class BeatJobService extends BaseTaskService {
             if (configBean.isNeed_vimage()) {
                 if (tbItemSchema.hasVerticalImage())
                     tbItemSchema.setVerticalImage(getTaobaoVerticalImageUrl());
-                else
-                    images.put(2, getTaobaoImageUrl(beatInfoModel.getPromotion_code().getImage_url_2()));
+                else {
+                    String url_key2 = beatInfoModel.getPromotion_code().getImage_url_2();
+                    if (!StringUtils.isEmpty(url_key2))
+                        images.put(2, getTaobaoImageUrl(beatInfoModel.getPromotion_code().getImage_url_2()));
+                    else {
+                        // 如果不为空, 则还原和刷图有区别, 还原需要清空
+                        images.put(2, beatInfoModel.getBeatFlag().equals(BeatFlag.REVERT) ? "" : images.get(1));
+                    }
+                }
             }
             tbItemSchema.setMainImage(images);
             TmallItemSchemaUpdateResponse updateResponse = tbItemService.updateFields(shopBean, tbItemSchema);
@@ -237,7 +244,7 @@ public class BeatJobService extends BaseTaskService {
                     updateResponse.getSubCode(), updateResponse.getSubMsg());
 
             if (StringUtils.isEmpty(updateResponse.getSubCode())) {
-                beatInfoModel.setMessage(updateResponse.getUpdateItemResult());
+                beatInfoModel.setMessage("success");
                 return true;
             }
 

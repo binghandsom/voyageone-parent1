@@ -26,6 +26,7 @@ import com.voyageone.service.model.cms.mongo.CmsMtCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCommonSchemaModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.*;
+import com.voyageone.web2.cms.CmsConstants;
 import com.voyageone.web2.cms.bean.CmsCategoryInfoBean;
 import com.voyageone.web2.cms.bean.CmsProductInfoBean;
 import com.voyageone.web2.cms.bean.CustomAttributesBean;
@@ -78,10 +79,6 @@ public class CmsProductDetailService {
 
     @Autowired
     protected VoApiDefaultClient voApiClient;
-
-    private static final String OPTION_DATA_SOURCE = "optConfig";
-
-    private static final String OPTION_DATA_SOURCE_CHANNEL = "optConfigChannel";
     
     private static final String FIELD_SKU_CARTS = "skuCarts";
 
@@ -902,8 +899,8 @@ public class CmsProductDetailService {
 
         for (Field field : fields) {
 
-            if (OPTION_DATA_SOURCE.equals(field.getDataSource())
-                    || OPTION_DATA_SOURCE_CHANNEL.equals(field.getDataSource())) {
+            if (CmsConstants.optionConfigType.OPTION_DATA_SOURCE.equals(field.getDataSource())
+                    || CmsConstants.optionConfigType.OPTION_DATA_SOURCE_CHANNEL.equals(field.getDataSource())) {
 
                 FieldTypeEnum type = field.getType();
 
@@ -914,7 +911,7 @@ public class CmsProductDetailService {
                         break;
                     case SINGLECHECK:
                     case MULTICHECK:
-                        if (OPTION_DATA_SOURCE.equals(field.getDataSource())) {
+                        if (CmsConstants.optionConfigType.OPTION_DATA_SOURCE.equals(field.getDataSource())) {
                             List<TypeBean> typeBeanList = Type.getTypeList(field.getId(), language);
 
                             // 替换成field需要的样式
@@ -928,7 +925,7 @@ public class CmsProductDetailService {
 
                             OptionsField optionsField = (OptionsField) field;
                             optionsField.setOptions(options);
-                        } else if (OPTION_DATA_SOURCE_CHANNEL.equals(field.getDataSource())) {
+                        } else if (CmsConstants.optionConfigType.OPTION_DATA_SOURCE_CHANNEL.equals(field.getDataSource())) {
                             // 获取type channel bean
                             List<TypeChannelBean> typeChannelBeanList = new ArrayList<>();
                             if (FIELD_SKU_CARTS.equals(field.getId())) {

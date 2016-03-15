@@ -226,7 +226,7 @@
         ,#{channel_id} as channel_id
         ,${m_product_type} as m_product_type
         ,${m_brand} as m_brand
-        ,${m_model} as m_model
+        ,case when ifnull(`Variation Parent SKU`,'') = '' then `Inventory Number` else `Variation Parent SKU` end as m_model
         ,${m_name} as m_name
         ,${m_size_type} as m_size_type
         ,${m_weight} as m_weight

@@ -108,7 +108,6 @@ define([
 
             searchInfo.platformStatus = _returnKey(searchInfo.platformStatus);
 
-            searchInfo.tags = _returnKey(searchInfo.tags);
             searchInfo.labelType = _returnKey(searchInfo.labelType);
             if (!_.isUndefined(searchInfo.codeList) && !_.isNull(searchInfo.codeList))
                 searchInfo.codeList = searchInfo.codeList.split("\n");

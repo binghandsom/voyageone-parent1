@@ -54,7 +54,7 @@
           mt_value.type_id = mt_type.id
          ORDER BY
           mt_value.type_id,
-          mt_value.value
+          mt_value.id
     </select>
 
     <select id="com_mt_value_channel_getAll" resultType="com.voyageone.common.configs.beans.TypeChannelBean">

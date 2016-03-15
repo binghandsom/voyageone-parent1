@@ -60,4 +60,21 @@ public interface CmsConstants extends BaseConstants{
         int property3CellNum = 23;
         int property4CellNum = 24;
     }
+
+    /**
+     * 产品状态
+     */
+    interface productStatus {
+        String NEW = "New";
+        String PENDING = "Pending";
+        String READY = "Ready";
+        String APPROVED = "Approved";
+    }
+
+    interface optionConfigType {
+
+        String OPTION_DATA_SOURCE = "optConfig";
+
+        String OPTION_DATA_SOURCE_CHANNEL = "optConfigChannel";
+    }
 }

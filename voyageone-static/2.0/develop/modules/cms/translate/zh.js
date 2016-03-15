@@ -207,6 +207,11 @@ define(function(){
         "TXT_TIME_START": "开始时间",
         "TXT_TIME_END": "结束时间",
         "TXT_TASK_TYPE":"任务类型",
+        "TXT_TASK_DATE":"任务时间",
+        "TXT_TEJIABAO_DETAIL":"特价宝明细一览",
+        "TXT_PENDING":"等待",
+        "TXT_SUCCESS":"成功",
+        "TXT_FAIL":"失败",
 
 
         "TXT_MSG_SEARCH": "检索...",

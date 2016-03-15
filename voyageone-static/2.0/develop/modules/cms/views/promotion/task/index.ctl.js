@@ -41,6 +41,9 @@ define([
                 this.taskService.page(this.searchInfo).then(function(res){
                     ttt.tasks = res.data;
                 });
+            },
+            clear: function(){
+                this.searchInfo={};
             }
         };
             

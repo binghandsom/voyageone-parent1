@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.cms.sql">
+       <select id="cms_selectInventoryCode" parameterType="String" resultType="com.voyageone.task2.cms.bean.InventoryForCmsBean">
+              select aa.order_channel_id channelId,
+              aa.code,
+              sum(aa.qty_orgin) qty,
+              #{modified} modifier,
+              #{modified} creater
+              from wms_bt_inventory_center_logic aa
+              where aa.order_channel_id = #{order_channel_id}
+              group by aa.order_channel_id,aa.`code`;
+       </select>
+</mapper>
