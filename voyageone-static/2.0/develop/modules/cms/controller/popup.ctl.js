@@ -268,7 +268,8 @@ define([
                 "newMrbStockSku": {
                     "templateUrl": "views/pop/promotion/newMrbStockSku.tpl.html",
                     "controllerUrl": "modules/cms/views/pop/promotion/newMrbStockSku.ctl",
-                    "controller": 'popNewMrbStockSkuCtl'
+                    "controller": 'popNewMrbStockSkuCtl as $ctrl',
+                    "size": "md"
                 },
                 "skuMrbStockDetail": {
                     "templateUrl": "views/pop/promotion/skuMrbStockDetail.tpl.html",
