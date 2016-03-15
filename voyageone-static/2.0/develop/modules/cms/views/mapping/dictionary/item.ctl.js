@@ -34,14 +34,20 @@ define([
         modified: ""
       };
 
-      if (!_.isUndefined($routeParams.id)) {
-        $scope.vm.idEdit = true;
-        $dictionaryService.getDict({id: $routeParams.id})
-            .then(function (res) {
-              $scope.vm.dictionary = JSON.parse(res.data.value);
-              $scope.vm.modified = res.data.modified;
-            })
-      }
+
+      $dictionaryService.init()
+          .then(function (res) {
+            $scope.vm.masterData = res.data;
+            if (!_.isUndefined($routeParams.id)) {
+              $scope.vm.idEdit = true;
+              $dictionaryService.getDict({id: $routeParams.id})
+                  .then(function (res) {
+                    $scope.vm.dictionary = JSON.parse(res.data.value);
+                    $scope.vm.cart_id = res.data.cart_id;
+                    $scope.vm.modified = res.data.modified;
+                  })
+            }
+          });
     }
 
     /**
@@ -62,7 +68,7 @@ define([
           name: $scope.vm.dictionary.value,
           value: angular.toJson ($scope.vm.dictionary)
         };
-
+        data.cart_id = $scope.vm.cart_id;
         if ($scope.vm.idEdit) {
           data.id = $routeParams.id;
           data.modified = $scope.vm.modified;
