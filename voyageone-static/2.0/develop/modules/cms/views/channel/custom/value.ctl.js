@@ -9,8 +9,8 @@ define([
     function attributeValueController($scope, $routeParams, attributeValueService, attributeService, $translate,notify) {
         $scope.vm = {
             searchInfo: {
-                cat_path: $routeParams.catPath,
-                sts : 1,
+                cat_path: '',
+                sts : "2",
                 propName: "",
                 propValue: "",
                 skip: "",
@@ -43,8 +43,9 @@ define([
          */
         function clear(){
             $scope.vm.searchInfo={
-                cat_path: $routeParams.catPath,
-                sts: 1,
+                //cat_path: $routeParams.catPath,
+                cat_path: '',
+                sts: "2",
                 propName: "",
                 propValue: "",
                 skip: "",
