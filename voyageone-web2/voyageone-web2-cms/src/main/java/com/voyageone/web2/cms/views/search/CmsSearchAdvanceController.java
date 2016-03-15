@@ -6,6 +6,8 @@ import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
 import com.voyageone.web2.cms.bean.search.index.CmsSearchInfoBean;
+import com.voyageone.web2.cms.views.channel.CmsFeedCustPropService;
+import com.voyageone.web2.core.bean.UserSessionBean;
 import com.voyageone.web2.sdk.api.response.ProductsGetResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +29,8 @@ public class CmsSearchAdvanceController extends CmsController {
 
     @Autowired
     private CmsSearchAdvanceService searchIndexService;
+    @Autowired
+    private CmsFeedCustPropService cmsFeedCustPropService;
 
     /**
      * 初始化,获取master数据
@@ -137,12 +141,10 @@ public class CmsSearchAdvanceController extends CmsController {
      */
     @RequestMapping("getCustColumnsInfo")
     public AjaxResponse getCustColumnsInfo() {
-
         Map<String, Object> resultBean = new HashMap<>();
-
-//        ProductsGetResponse groupList = searchIndexService.getGroupList(params, getUser(), getCmsSession());
-//        resultBean.put("groupList", groupList.getProducts());
-//        resultBean.put("groupListTotal", groupList.getTotalCount());
+        UserSessionBean userInfo = getUser();
+        resultBean.put("customProps", cmsFeedCustPropService.selectAllAttr(userInfo.getSelChannelId(), "0"));
+        resultBean.put("commonProps", searchIndexService.getCustColumns());
 
         // 返回用户信息
         return success(resultBean);
