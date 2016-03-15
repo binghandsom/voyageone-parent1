@@ -2,9 +2,11 @@ package com.voyageone.service.impl.cms;
 
 import com.mongodb.WriteResult;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums.Channel;
-import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedMappingDao;
+import com.voyageone.service.dao.cms.mongo.CmsMtFeedCategoryTreeDao;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedMappingModel;
+import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryTreeModel;
+import org.apache.commons.lang3.StringUtils;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,6 +23,9 @@ public class CmsFeedMappingService {
 
     @Autowired
     private CmsBtFeedMappingDao cmsBtFeedMappingDao;
+
+    @Autowired
+    private CmsMtFeedCategoryTreeDao feedCategoryTreeDao;
 
     public CmsBtFeedMappingModel getDefault(Channel channel, String feedCategory) {
         return getDefault(channel, feedCategory, true);
@@ -52,8 +57,8 @@ public class CmsFeedMappingService {
 
     public boolean isCanBeDefaultMain(Channel channel, String topCategoryPath) {
 
-        String topObjectId = cmsBtFeedMappingDao.findHasTrueChild(channel.getId(), topCategoryPath);
+        CmsMtFeedCategoryTreeModel treeModel = feedCategoryTreeDao.findHasTrueChild(channel.getId(), topCategoryPath);
 
-        return StringUtils.isEmpty(topObjectId);
+        return treeModel != null && !StringUtils.isEmpty(treeModel.get_id());
     }
 }
