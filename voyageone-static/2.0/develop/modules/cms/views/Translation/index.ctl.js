@@ -41,11 +41,11 @@ define([
                         this.sortFieldOptions = [];
                         this.sortRule = "true";
                         var options = res.data.sortFieldOptions;
-
                         for (var key in options){
                             var item = {value:key,name:options[key]}
                             this.sortFieldOptions.push(item);
                         }
+                        this.lenInfo = res.data.lenSetInfo;
 
                     }.bind(this), function (res) {
                         this.notify(res.message);
@@ -143,8 +143,57 @@ define([
             clearConditions: function () {
                 this.searchCondition = "";
                 this.distributeCount = "";
-            }
+            },
 
+            cvtLen: function (lenType) {
+                if (lenType == 1) {
+                    minLen = this.lenInfo.long_title.minLen;
+                    maxLen = this.lenInfo.long_title.maxLen;
+                } else if (lenType == 2) {
+                    minLen = this.lenInfo.middle_title.minLen;
+                    maxLen = this.lenInfo.middle_title.maxLen;
+                } else if (lenType == 3) {
+                    minLen = this.lenInfo.short_title.minLen;
+                    maxLen = this.lenInfo.short_title.maxLen;
+                } else if (lenType == 4) {
+                    minLen = this.lenInfo.long_desc.minLen;
+                    maxLen = this.lenInfo.long_desc.maxLen;
+                } else if (lenType == 5) {
+                    minLen = this.lenInfo.short_desc.minLen;
+                    maxLen = this.lenInfo.short_desc.maxLen;
+                }
+            },
+
+            chkWordSize: function(lenType, tobj) {
+                this.cvtLen(lenType);
+                clearTimeout(timeoutID);
+                timeoutID = setTimeout(timeoutFunc(this.translate), 500);
+                function timeoutFunc(transSrv) {
+                    var curLength = $(tobj.target).val().length;
+                    var od = $(tobj.target.parentNode).find("i");
+                    if (curLength < minLen) {
+                        od[0].innerHTML = '&nbsp;' + transSrv.instant('TXT_MSG_INPUT_WORD_LENLOWLIMIT') + minLen + transSrv.instant('TXT_MSG_INPUT_WORD_LENCHK2');
+                    } else if (curLength >= maxLen) {
+                        od[0].innerHTML = '&nbsp;' + transSrv.instant('TXT_MSG_INPUT_WORD_LENLIMIT');
+                    } else {
+                        od[0].innerHTML = '&nbsp;' + transSrv.instant('TXT_MSG_INPUT_WORD_LENCHK') + (maxLen - curLength) + transSrv.instant('TXT_MSG_INPUT_WORD_LENCHK2');
+                    }
+                };
+            },
+
+            cmtWordSize: function(lenType, tobj) {
+                this.cvtLen(lenType);
+                var od = $(tobj.target.parentNode).find("i");
+                $(od[0]).css("visibility", "visible");
+                var curLength = $(tobj.target).val().length;
+                if (curLength < minLen) {
+                    od[0].innerHTML = '&nbsp;' + this.translate.instant('TXT_MSG_INPUT_WORD_LENLOWLIMIT') + minLen + this.translate.instant('TXT_MSG_INPUT_WORD_LENCHK2');
+                } else if (curLength >= maxLen) {
+                    od[0].innerHTML = '&nbsp;' + this.translate.instant('TXT_MSG_INPUT_WORD_LENLIMIT');
+                } else {
+                    od[0].innerHTML = '&nbsp;' + this.translate.instant('TXT_MSG_INPUT_WORD_LENCHK') + (maxLen - curLength) + this.translate.instant('TXT_MSG_INPUT_WORD_LENCHK2');
+                }
+            }
         };
 
         return translationDetailController
@@ -153,23 +202,5 @@ define([
 
 // 检查输入字数
 var timeoutID = "";
-function chkWordSize(maxLen, tobj) {
-    clearTimeout(timeoutID);
-    timeoutID = setTimeout(function() {
-        var curLength = $(tobj).val().length;
-        if (curLength >= maxLen) {
-            var od = $(tobj.parentNode).find("i.icon.fa.fa-bell-o.ng-binding");
-            od[0].innerHTML = '已经达到最大长度字符数限制';
-        } else {
-            var od = $(tobj.parentNode).find("div#wordsizemsg");
-            od[0].innerHTML = maxLen - curLength;
-        }
-    },500);
-}
-
-function cmtWordSize(maxLen, tobj) {
-    var od = $(tobj.parentNode).find("i.icon.fa.fa-bell-o.ng-binding");
-    $(od[0]).css("visibility", "visible");
-    var od2 = $(tobj.parentNode).find("div#wordsizemsg");
-    od2[0].innerHTML = maxLen - $(tobj).val().length;
-}
+var maxLen = 0;
+var minLen = 0;
