@@ -8,18 +8,12 @@ import com.voyageone.common.configs.TypeChannel;
 import com.voyageone.common.util.FileUtils;
 import com.voyageone.service.dao.cms.CmsBtPromotionDao;
 import com.voyageone.service.dao.cms.CmsPromotionCodeDao;
+import com.voyageone.service.impl.cms.promotion.PromotionService;
 import com.voyageone.service.model.cms.CmsBtPromotionCodeModel;
 import com.voyageone.service.model.cms.CmsBtPromotionModel;
 import com.voyageone.service.model.cms.CmsBtPromotionSkuModel;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.CmsConstants;
-import com.voyageone.web2.sdk.api.VoApiDefaultClient;
-import com.voyageone.web2.sdk.api.exception.ApiException;
-import com.voyageone.web2.sdk.api.request.PromotionCodeGetRequest;
-import com.voyageone.web2.sdk.api.request.PromotionDeleteRequest;
-import com.voyageone.web2.sdk.api.request.PromotionPutRequest;
-import com.voyageone.web2.sdk.api.request.PromotionsGetRequest;
-import com.voyageone.web2.sdk.api.util.SdkBeanUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,14 +34,15 @@ import java.util.Map;
 @Service
 public class CmsPromotionIndexService extends BaseAppService {
 
-    @Autowired
-    VoApiDefaultClient voApiClient;
 
     @Autowired
     CmsPromotionCodeDao cmsPromotionCodeDao;
 
     @Autowired
     CmsBtPromotionDao cmsPromotionDao;
+
+    @Autowired
+    PromotionService promotionService;
     /**
      * 获取该channel的category类型.
      *
@@ -65,40 +60,23 @@ public class CmsPromotionIndexService extends BaseAppService {
     }
 
     public CmsBtPromotionModel queryById(Integer promotionId) {
-        PromotionsGetRequest request = new PromotionsGetRequest();
-        request.setPromotionId(promotionId);
-        List<CmsBtPromotionModel> models = voApiClient.execute(request).getCmsBtPromotionModels();
-        if (models != null && models.size() == 1) {
-            return models.get(0);
-        } else {
-            return null;
-        }
+        return promotionService.getByPromotionId(promotionId);
     }
 
     public List<CmsBtPromotionModel> queryByCondition(Map<String, Object> conditionParams) {
-        PromotionsGetRequest request = new PromotionsGetRequest();
-        SdkBeanUtils.copyProperties(conditionParams, request);
-        return voApiClient.execute(request).getCmsBtPromotionModels();
+        return promotionService.getByCondition(conditionParams);
     }
 
     public int addOrUpdate(CmsBtPromotionModel cmsBtPromotionModel) {
-        PromotionPutRequest request = new PromotionPutRequest();
-        request.setCmsBtPromotionModel(cmsBtPromotionModel);
         try {
-            if (cmsBtPromotionModel.getPromotionId() != null) {
-                return voApiClient.execute(request).getModifiedCount();
-            } else {
-                return voApiClient.execute(request).getInsertedCount();
-            }
-        } catch (ApiException e) {
-            throw new BusinessException(e.getErrCode() + ":" + e.getErrMsg(), e.getErrMsg());
+            return promotionService.saveOrUpdate(cmsBtPromotionModel);
+        } catch (Exception e) {
+            throw new BusinessException("addOrUpdate", e);
         }
     }
 
     public int deleteById(Integer promotionId) {
-        PromotionDeleteRequest request = new PromotionDeleteRequest();
-        request.setPromotionId(promotionId);
-        return voApiClient.execute(request).getRemovedCount();
+        return promotionService.deleteById(promotionId);
     }
 
     public byte[] getCodeExcelFile(Integer promotionId) throws IOException, InvalidFormatException {
@@ -106,15 +84,11 @@ public class CmsPromotionIndexService extends BaseAppService {
 //        String templatePath = readValue(CmsConstants.Props.CODE_TEMPLATE);
         String templatePath = Properties.readValue(CmsConstants.Props.PROMOTION_EXPORT_TEMPLATE);
 
-        PromotionCodeGetRequest request = new PromotionCodeGetRequest();
         Map<String, Object> param = new HashMap<>();
         param.put("promotionId", promotionId);
-        request.setParam(param);
 
         CmsBtPromotionModel cmsBtPromotionModel = cmsPromotionDao.findById(param);
         List<CmsBtPromotionCodeModel> promotionCodes = cmsPromotionCodeDao.getPromotionCodeSkuList(param);
-//        List<CmsBtPromotionCodeModel> promotionCodes = voApiClient.execute(request).getCodeList();
-
 
         $info("准备生成 Item 文档 [ %s ]", promotionCodes.size());
         $info("准备打开文档 [ %s ]", templatePath);

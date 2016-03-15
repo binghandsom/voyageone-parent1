@@ -1,11 +1,10 @@
 package com.voyageone.web2.cms.views.group;
 
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
 import com.voyageone.web2.core.bean.UserSessionBean;
-import com.voyageone.web2.sdk.api.VoApiDefaultClient;
-import com.voyageone.web2.sdk.api.response.ProductsGetResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -25,9 +25,6 @@ public class CmsGroupDetailController extends CmsController {
 
     @Autowired
     private CmsGroupDetailService cmsGroupListService;
-
-    @Autowired
-    protected VoApiDefaultClient voApiDefaultClient;
 
     /**
      * 初始化,获取master数据
@@ -42,12 +39,13 @@ public class CmsGroupDetailController extends CmsController {
         resultBean.put("masterData", cmsGroupListService.getMasterData(getUser(), getLang()));
 
         // 返回product数据
-        ProductsGetResponse productList = cmsGroupListService.GetProductList(params, getUser(), getCmsSession());
-        resultBean.put("productList", productList.getProducts());
-        resultBean.put("productListTotal", productList.getTotalCount());
+        List<CmsBtProductModel> productList = cmsGroupListService.getProductList(params, getUser(), getCmsSession());
+        resultBean.put("productList", productList);
+        long totalCount = cmsGroupListService.getProductCnt(params, getUser(), getCmsSession());
+        resultBean.put("productListTotal", totalCount);
 
-        ProductsGetResponse productIds = cmsGroupListService.GetProductIdList(params, getUser(), getCmsSession());
-        resultBean.put("productIds", productIds.getProducts());
+        List<CmsBtProductModel> productIds = cmsGroupListService.getProductIdList(params, getUser(), getCmsSession());
+        resultBean.put("productIds", productIds);
 
         return success(resultBean);
     }
@@ -62,12 +60,13 @@ public class CmsGroupDetailController extends CmsController {
 
         Map<String, Object> resultBean = new HashMap<>();
 
-        ProductsGetResponse productList = cmsGroupListService.GetProductList(params, getUser(), getCmsSession());
-        resultBean.put("productList", productList.getProducts());
-        resultBean.put("productListTotal", productList.getTotalCount());
+        List<CmsBtProductModel> productList = cmsGroupListService.getProductList(params, getUser(), getCmsSession());
+        resultBean.put("productList", productList);
+        long totalCount = cmsGroupListService.getProductCnt(params, getUser(), getCmsSession());
+        resultBean.put("productListTotal", totalCount);
 
-        ProductsGetResponse productIds = cmsGroupListService.GetProductIdList(params, getUser(), getCmsSession());
-        resultBean.put("productIds", productIds.getProducts());
+        List<CmsBtProductModel> productIds = cmsGroupListService.getProductIdList(params, getUser(), getCmsSession());
+        resultBean.put("productIds", productIds);
 
         // 返回用户信息
         return success(resultBean);

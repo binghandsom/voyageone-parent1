@@ -8,17 +8,11 @@ import org.springframework.stereotype.Repository;
 
 
 @Repository
-public class CommSequenceDao extends BaseMongoDao {
+public class CommSequenceDao extends BaseMongoDao<Long> {
 
     public CommSequenceDao() {
         collectionName = "com_sequence";
     }
-
-    @Override
-    public Class getEntityClass() {
-        return null;
-    }
-
 
     public long getNextSequence(String name) {
         DBObject dbObject = getNextSequence_(name);

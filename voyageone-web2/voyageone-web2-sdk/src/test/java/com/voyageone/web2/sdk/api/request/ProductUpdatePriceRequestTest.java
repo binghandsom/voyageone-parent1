@@ -1,8 +1,10 @@
 package com.voyageone.web2.sdk.api.request;
 
+import com.voyageone.service.bean.cms.product.ProductPriceBean;
+import com.voyageone.service.bean.cms.product.ProductSkuPriceBean;
 import com.voyageone.web2.sdk.api.VoApiDefaultClient;
-import com.voyageone.service.bean.cms.ProductPriceModel;
-import com.voyageone.service.bean.cms.ProductSkuPriceModel;
+import com.voyageone.web2.sdk.api.domain.ProductPriceModel;
+import com.voyageone.web2.sdk.api.domain.ProductSkuPriceModel;
 import com.voyageone.web2.sdk.api.response.ProductUpdatePriceResponse;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,17 +25,17 @@ public class ProductUpdatePriceRequestTest {
     @Test
     public void testProductUpdatePrice() {
         ProductUpdatePriceRequest requestModel = new ProductUpdatePriceRequest("300");
-        ProductPriceModel model = new ProductPriceModel();
+        ProductPriceBean model = new ProductPriceBean();
         model.setProductId(1L);
 
-        ProductSkuPriceModel skuPriceModel = new ProductSkuPriceModel();
+        ProductSkuPriceBean skuPriceModel = new ProductSkuPriceBean();
         skuPriceModel.setSkuCode("100001-1");
         skuPriceModel.setPriceMsrp(108d);
         skuPriceModel.setPriceRetail(109d);
         skuPriceModel.setPriceSale(110d);
         model.addSkuPrice(skuPriceModel);
 
-        skuPriceModel = new ProductSkuPriceModel();
+        skuPriceModel = new ProductSkuPriceBean();
         skuPriceModel.setSkuCode("100001-2");
         skuPriceModel.setPriceMsrp(301d);
         skuPriceModel.setPriceRetail(302d);

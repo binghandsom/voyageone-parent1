@@ -3,7 +3,6 @@ package com.voyageone.web2.cms.views.system.error;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
-import com.voyageone.web2.sdk.api.response.BusinessLogGetResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,11 +34,7 @@ public class CmsErrorListController extends CmsController {
 
     @RequestMapping(CmsUrlConstants.SYSTEM.ERROR.SEARCH)
     public AjaxResponse search(@RequestBody Map params) {
-        Map<String, Object> resultBean = new HashMap<>();
-        BusinessLogGetResponse result = cmsSystemErrorConService.search(params, getUser());
-        resultBean.put("errorList", result.getCmsBtBusinessLogModels());
-        resultBean.put("errorCnt", result.getTotalCount());
-        return success(resultBean);
+        return success(cmsSystemErrorConService.search(params, getUser()));
     }
 
     @RequestMapping(CmsUrlConstants.SYSTEM.ERROR.UPDATE_FINISH_STATUS)

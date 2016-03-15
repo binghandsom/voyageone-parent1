@@ -7,7 +7,7 @@ import com.voyageone.common.configs.TypeChannel;
 import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategoryDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategorySchemaDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtPlatformMappingDao;
-import com.voyageone.service.impl.cms.CmsBtChannelCategoryService;
+import com.voyageone.service.impl.cms.ChannelCategoryService;
 import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategoryTreeModel;
@@ -45,7 +45,7 @@ public class CmsPlatformMappingService extends BaseAppService {
     private CmsMtPlatformMappingDao platformMappingDao;
 
     @Autowired
-    private CmsBtChannelCategoryService cmsBtChannelCategoryService;
+    private ChannelCategoryService cmsBtChannelCategoryService;
 
     /**
      * 获取拍平的叶子类目和类目Mapping对应主数据类目名称

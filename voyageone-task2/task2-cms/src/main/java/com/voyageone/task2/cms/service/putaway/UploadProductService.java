@@ -1,7 +1,7 @@
 package com.voyageone.task2.cms.service.putaway;
 
 import com.voyageone.service.dao.cms.CmsBtSxWorkloadDao;
-import com.voyageone.service.impl.cms.CmsProductService;
+import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Group_Platform;
@@ -30,7 +30,7 @@ import java.util.*;
 @Repository
 public class UploadProductService extends BaseTaskService implements WorkloadCompleteIntf {
     @Autowired
-    private CmsProductService cmsProductService;
+    private ProductService productService;
     @Autowired
     private UploadWorkloadDispatcher workloadDispatcher;
     @Autowired
@@ -83,7 +83,7 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
             workload.setOrder_channel_id(channelId);
             workload.setGroupId(groupId);
 
-            List<CmsBtProductModel> cmsBtProductModels = cmsProductService.getProductByGroupId(channelId, groupId);
+            List<CmsBtProductModel> cmsBtProductModels = productService.getProductByGroupId(channelId, groupId);
             List<SxProductBean> sxProductBeans = new ArrayList<>();
             CmsBtProductModel mainProductModel = null;
             CmsBtProductModel_Group_Platform mainProductPlatform = null;
@@ -215,7 +215,7 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
                 } else {
                     newPlatformStatus = CmsConstants.PlatformStatus.Onsale;
                 }
-                cmsProductService.bathUpdateWithSXResult(workLoadBean.getOrder_channel_id(), workLoadBean.getCart_id(), workLoadBean.getGroupId(),
+                productService.bathUpdateWithSXResult(workLoadBean.getOrder_channel_id(), workLoadBean.getCart_id(), workLoadBean.getGroupId(),
                         codeList, workLoadBean.getNumId(), workLoadBean.getProductId(), publishTime, onSaleTime, instockTime, newPlatformStatus);
 
                 CmsBtSxWorkloadModel sxWorkloadModel = workLoadBean.getSxWorkloadModel();
@@ -235,7 +235,7 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
                     //成功时，publish_status设为1
                     codeList.add(cmsBtProductModel.getFields().getCode());
                 }
-                cmsProductService.bathUpdateWithSXResult(workLoadBean.getOrder_channel_id(), workLoadBean.getCart_id(), workLoadBean.getGroupId(),
+                productService.bathUpdateWithSXResult(workLoadBean.getOrder_channel_id(), workLoadBean.getCart_id(), workLoadBean.getGroupId(),
                         codeList, workLoadBean.getNumId(), workLoadBean.getProductId(), null, null, null, null);
 
                 //保存错误的日志

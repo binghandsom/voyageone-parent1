@@ -2,9 +2,6 @@ package com.voyageone.web2.cms.views.promotion;
 
 import com.voyageone.web2.cms.bean.CmsPromotionProductPriceBean;
 import com.voyageone.web2.cms.views.promotion.list.CmsPromotionDetailService;
-import com.voyageone.web2.sdk.api.VoApiDefaultClient;
-import com.voyageone.web2.sdk.api.request.PromotionCodeAddTejiaBaoRequest;
-import com.voyageone.web2.sdk.api.request.PromotionDetailAddRequest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,9 +22,6 @@ import java.util.Map;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("classpath*:META-INF/context-web2.xml")
 public class CmsPromotionDetailServiceTest {
-
-    @Autowired
-    protected VoApiDefaultClient voApiClient;
 
     @Autowired
     CmsPromotionDetailService cmsPromotionDetailService;
@@ -80,15 +74,15 @@ public class CmsPromotionDetailServiceTest {
         cmsPromotionDetailService.teJiaBaoInit(15, "james");
     }
 
-    public void testTejiaBaoInsert(){
-        PromotionCodeAddTejiaBaoRequest request=new PromotionCodeAddTejiaBaoRequest();
-        request.setModifier("lijun");
-        request.setChannelId("013");
-        request.setCartId(23);
-        request.setProductCode("ESJ9293LBS-SC ");
-        request.setPromotionId(45);
-        request.setPromotionPrice(100.0);
-
-        voApiClient.execute(request);
-    }
+//    public void testTejiaBaoInsert(){
+//        PromotionCodeAddTejiaBaoRequest request=new PromotionCodeAddTejiaBaoRequest();
+//        request.setModifier("lijun");
+//        request.setChannelId("013");
+//        request.setCartId(23);
+//        request.setProductCode("ESJ9293LBS-SC ");
+//        request.setPromotionId(45);
+//        request.setPromotionPrice(100.0);
+//
+//        voApiClient.execute(request);
+//    }
 }

@@ -1,15 +1,13 @@
 package com.voyageone.service.impl.cms;
 
-
-import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.cms.CmsConstants;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
+import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.mongo.product.*;
-import net.minidev.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,17 +20,17 @@ import java.util.*;
 @ContextConfiguration(locations = "classpath:applicationContext.xml")
 public class CmsProductServiceTest {
     @Autowired
-    CmsProductService cmsProductService;
+    ProductService cmsProductService;
 
     @Autowired
     CmsBtProductDao cmsBtProductDao;
 
-    @Test
-    public void testInsertCmsBtProduct() throws Exception {
-        CmsBtProductModel productModel = create("001", 1, new Random());
-        WriteResult result = cmsProductService.insert(productModel);
-        System.out.println(result);
-    }
+//    @Test
+//    public void testInsertCmsBtProduct() throws Exception {
+//        CmsBtProductModel productModel = create("001", 1, new Random());
+//        WriteResult result = cmsProductService.insert(productModel);
+//        System.out.println(result);
+//    }
 
     private CmsBtProductModel create(String channelId, int index, Random random) {
         CmsBtProductModel product = new CmsBtProductModel(channelId);
@@ -173,29 +171,30 @@ public class CmsProductServiceTest {
 
     @Test
     public void testSelectCmsBtProductById() throws Exception {
-        CmsBtProductModel ret = cmsProductService.getProductById("001", 1);
+        CmsBtProductModel ret = cmsProductService.getProductById("010", 22139);
+
+        ret = cmsProductService.getProductById("010", 22139);
         System.out.println(ret.getFeed().getCnAtts());
         System.out.println(ret.getSkus().get(0).isIncludeCart(CartEnums.Cart.getValueByID("21")));
         System.out.println(ret.getSkus().get(0).isIncludeCart(CartEnums.Cart.getValueByID("20")));
         System.out.println(ret.getGroups().getCurrentPriceEnd());
-
     }
 
-    @Test
-    public void testSelectCmsBtProductByCode() throws Exception {
-        CmsBtProductModel ret = cmsProductService.getProductByCode("200", "100001");
-        System.out.println(ret.toString());
-        System.out.println(ret.getGroups().getCurrentPriceEnd());
-    }
+//    @Test
+//    public void testSelectCmsBtProductByCode() throws Exception {
+//        CmsBtProductModel ret = cmsProductService.getProductByCode("200", "100001");
+//        System.out.println(ret.toString());
+//        System.out.println(ret.getGroups().getCurrentPriceEnd());
+//    }
 
-    @Test
-    public void testSelectCmsBtProductByGroupId() throws Exception {
-        List<CmsBtProductModel> listRet = cmsProductService.getProductByGroupId("001", 470);
-        for (CmsBtProductModel ret : listRet) {
-            System.out.println(ret.toString());
-            System.out.println(ret.getGroups().getPlatformByGroupId(470L));
-        }
-    }
+//    @Test
+//    public void testSelectCmsBtProductByGroupId() throws Exception {
+//        List<CmsBtProductModel> listRet = cmsProductService.getProductByGroupId("001", 470);
+//        for (CmsBtProductModel ret : listRet) {
+//            System.out.println(ret.toString());
+//            System.out.println(ret.getGroups().getPlatformByGroupId(470L));
+//        }
+//    }
 
 //    @Test
 //    public void testSelectSKUById() throws Exception {
@@ -205,41 +204,41 @@ public class CmsProductServiceTest {
 //        }
 //    }
 
-    @Test
-    public void testInsert10W() {
-        long start = System.currentTimeMillis();
-        List<CmsBtProductModel> lst = new ArrayList<>();
-        int index = 0;
-        for(int i=1; i<=100000; i++) {
-            CmsBtProductModel productModel = create("010", i, new Random());
-            lst.add(productModel);
-            index++;
-            if (i%1000 == 0) {
-                System.out.println("current count:=" + index);
-                cmsProductService.insert(lst);
-                lst.clear();
-            }
-        }
-        if (lst.size()>0) {
-            cmsProductService.insert(lst);
-        }
-        long total = System.currentTimeMillis()-start;
-        System.out.println("total count:=" + index + "; totalTime:="+total);
-    }
+//    @Test
+//    public void testInsert10W() {
+//        long start = System.currentTimeMillis();
+//        List<CmsBtProductModel> lst = new ArrayList<>();
+//        int index = 0;
+//        for(int i=1; i<=100000; i++) {
+//            CmsBtProductModel productModel = create("010", i, new Random());
+//            lst.add(productModel);
+//            index++;
+//            if (i%1000 == 0) {
+//                System.out.println("current count:=" + index);
+//                cmsProductService.insert(lst);
+//                lst.clear();
+//            }
+//        }
+//        if (lst.size()>0) {
+//            cmsProductService.insert(lst);
+//        }
+//        long total = System.currentTimeMillis()-start;
+//        System.out.println("total count:=" + index + "; totalTime:="+total);
+//    }
 
-    @Test
-    public void remove10W(){
-        long start = System.currentTimeMillis();
-        cmsProductService.removeAll("101");
-        long total = System.currentTimeMillis()-start;
-        System.out.println("total totalTime:=" + total);
-    }
+//    @Test
+//    public void remove10W(){
+//        long start = System.currentTimeMillis();
+//        cmsProductService.removeAll("101");
+//        long total = System.currentTimeMillis()-start;
+//        System.out.println("total totalTime:=" + total);
+//    }
 
-    @Test
-    public void testSelectCmsBtProductByIdOnlyProdId() throws Exception {
-        JSONObject ret = cmsProductService.getProductByIdWithJson("001", 1);
-        System.out.println(ret.toString());
-    }
+//    @Test
+//    public void testSelectCmsBtProductByIdOnlyProdId() throws Exception {
+//        JSONObject ret = cmsProductService.getProductByIdWithJson("001", 1);
+//        System.out.println(ret.toString());
+//    }
 
     @Test
     public void bulkUpdate(){
@@ -268,42 +267,42 @@ public class CmsProductServiceTest {
 //        cmsProductService.bathUpdateWithSXResult("001", 21, codeList, "123123123", "product_id1", "2015-11-12 16:19:00", "2015-11-12 16:19:00", CmsConstants.PlatformStatus.Onsale);
     }
 
-    @Test
-    public void testGetProductCodesByCart() {
-        long start = System.currentTimeMillis();
-        List<String> productCodeList = cmsProductService.getProductCodesByCart("300", 21);
-        long end = System.currentTimeMillis();
-
-        int index = 1;
-        for (String productCode : productCodeList) {
-            System.out.println(productCode);
-            index++;
-            if (index > 10) {
-                break;
-            }
-        }
-        System.out.println(productCodeList.size());
-        System.out.println("total time:=" + (end - start));
-    }
-
-    @Test
-    public void testGetProductGroupIdCodesMapByCart() {
-        long start = System.currentTimeMillis();
-        Map<String, List<String>> productCodeMap = cmsProductService.getProductGroupIdCodesMapByCart("300", 21);
-        long end = System.currentTimeMillis();
-
-        int index = 1;
-
-        for (Map.Entry<String, List<String>> entry : productCodeMap.entrySet()) {
-            System.out.println(entry.getKey());
-            System.out.println(entry.getValue());
-            index++;
-            if (index > 10) {
-                break;
-            }
-        }
-        System.out.println(productCodeMap.size());
-        System.out.println("total time:=" + (end-start));
-    }
+//    @Test
+//    public void testGetProductCodesByCart() {
+//        long start = System.currentTimeMillis();
+//        List<String> productCodeList = cmsProductService.getProductCodesByCart("300", 21);
+//        long end = System.currentTimeMillis();
+//
+//        int index = 1;
+//        for (String productCode : productCodeList) {
+//            System.out.println(productCode);
+//            index++;
+//            if (index > 10) {
+//                break;
+//            }
+//        }
+//        System.out.println(productCodeList.size());
+//        System.out.println("total time:=" + (end - start));
+//    }
+//
+//    @Test
+//    public void testGetProductGroupIdCodesMapByCart() {
+//        long start = System.currentTimeMillis();
+//        Map<String, List<String>> productCodeMap = cmsProductService.getProductGroupIdCodesMapByCart("300", 21);
+//        long end = System.currentTimeMillis();
+//
+//        int index = 1;
+//
+//        for (Map.Entry<String, List<String>> entry : productCodeMap.entrySet()) {
+//            System.out.println(entry.getKey());
+//            System.out.println(entry.getValue());
+//            index++;
+//            if (index > 10) {
+//                break;
+//            }
+//        }
+//        System.out.println(productCodeMap.size());
+//        System.out.println("total time:=" + (end-start));
+//    }
 
 }

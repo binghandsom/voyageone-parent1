@@ -20,12 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 @Repository
-public class CmsBtProductDao extends BaseMongoPartDao {
-
-    @Override
-    public Class getEntityClass() {
-        return CmsBtProductModel.class;
-    }
+public class CmsBtProductDao extends BaseMongoPartDao<CmsBtProductModel> {
 
     /**
      * 获取商品 根据ID获
