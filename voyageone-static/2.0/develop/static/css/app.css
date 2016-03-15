@@ -6538,6 +6538,8 @@ a.text-black:hover {
   /* Disable state */
   /* override for radio */
 }
+
+.column_overflow{height:200px;overflow-y:auto;display:block}
 .smatop {padding-top:10px}
 .smaBot {padding-bottom:20px}
 .smacot {text-align:center;margin:5px 0px 5px 0px;}

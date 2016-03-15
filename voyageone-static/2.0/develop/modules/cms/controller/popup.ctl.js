@@ -113,6 +113,11 @@ define([
                     "controller": 'popAddAttributeValueNewCtl as ctrl',
                     "backdrop": 'static',
                     "size": 'md'
+                },
+                "column": {
+                    "templateUrl": "views/pop/custom/column.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/custom/column.ctl",
+                    "controller": 'popCustomColumnCtl'
                 }
 
             },
@@ -836,6 +841,26 @@ define([
                 $modal.open({
                     templateUrl: popActions.promotion.addMrbStockIncrement.templateUrl,
                     controller: popActions.promotion.addMrbStockIncrement.controller,
+                    size: viewSize,
+                    resolve: {
+                        data: function () {
+                            return data;
+                        }
+                    }
+                });
+            });
+        }
+
+        /**
+         * 弹出自定义属性列
+         * @type {openCustomColumn}
+         */
+        $scope.openCustomColumn = openCustomColumn;
+        function openCustomColumn(viewSize, data) {
+            require([popActions.custom.column.controllerUrl], function () {
+                $modal.open({
+                    templateUrl: popActions.custom.column.templateUrl,
+                    controller: popActions.custom.column.controller,
                     size: viewSize,
                     resolve: {
                         data: function () {
