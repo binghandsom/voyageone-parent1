@@ -1,8 +1,10 @@
 package com.voyageone.service.dao.cms.mongo;
 
 import com.voyageone.base.dao.mongodb.BaseMongoDao;
+import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryTreeModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryTreeModelx;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -66,5 +68,26 @@ public class CmsMtFeedCategoryTreeDao extends BaseMongoDao {
         String query = String.format("{channelId: '%s', 'categoryTree.cid': '%s'}", channelId, categoryId);
         String projection = "{'categoryTree.$':1}";
         return mongoTemplate.findOne(query, projection, CmsMtFeedCategoryTreeModelx.class);
+    }
+
+    public CmsMtFeedCategoryTreeModel findHasTrueChild(String channelId, String topCategoryPath) {
+
+        int count = StringUtils.countMatches(topCategoryPath, "-");
+
+        StringBuilder builder = new StringBuilder();
+
+        for (int i = 0; i < count; i++)
+            builder.append(".child");
+
+        String query = String.format("{'channelId':'%s', 'categoryTree%s':{$elemMatch:{'path': '%s', 'isChild': 1}}}",
+                channelId, builder, topCategoryPath);
+
+        JomgoQuery jomgoQuery = new JomgoQuery();
+
+        jomgoQuery.setQuery(query);
+
+        jomgoQuery.setProjection("_id");
+
+        return selectOneWithQuery(jomgoQuery);
     }
 }

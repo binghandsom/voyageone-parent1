@@ -144,13 +144,16 @@ public class CmsFeedMappingService extends BaseAppService {
                 feedMappingService.getDefaultMain(user.getSelChannel(), setMappingBean.getTo());
 
         boolean canBeDefaultMain =
-                feedMappingService.isCanBeDefaultMain(user.getSelChannel(), setMappingBean.getTo());
+                feedMappingService.isCanBeDefaultMain(user.getSelChannel(), setMappingBean.getFrom());
 
+        // 如果当前 Feed 类目已经有了默认的 Mapping
+        // 如果当前的默认 Mapping 就是这次给的主类目的话, 就不用继续了
+        // 如果不是当前的主类目, 就清空属性的 Mapping, 更换主类目路径
         if (defaultMapping != null) {
 
             if (!defaultMapping.getScope().getMainCategoryPath().equals(setMappingBean.getTo())) {
                 defaultMapping.getScope().setMainCategoryPath(setMappingBean.getTo());
-                defaultMapping.setDefaultMain(defaultMainMapping != null && canBeDefaultMain ? 0 : 1);
+                defaultMapping.setDefaultMain(defaultMainMapping == null && canBeDefaultMain ? 1 : 0);
                 defaultMapping.setMatchOver(0);
                 defaultMapping.setProps(new ArrayList<>());
 
@@ -160,6 +163,7 @@ public class CmsFeedMappingService extends BaseAppService {
             return defaultMapping;
         }
 
+        // 如果当前 Feed 类目已经 Mapping 到这个主类目, 只是不是默认 Mapping, 则只更新默认标识位
         CmsBtFeedMappingModel mainCategoryMapping =
                 feedMappingService.getMapping(user.getSelChannel(), setMappingBean.getFrom(), setMappingBean.getTo());
 
@@ -170,6 +174,7 @@ public class CmsFeedMappingService extends BaseAppService {
             return mainCategoryMapping;
         }
 
+        // 如果上面的全部不成立, 就需要全新创建 Mapping
         Scope scope = new Scope();
         scope.setChannelId(user.getSelChannelId());
         scope.setFeedCategoryPath(setMappingBean.getFrom());
@@ -180,7 +185,7 @@ public class CmsFeedMappingService extends BaseAppService {
         defaultMapping.setScope(scope);
         defaultMapping.setMatchOver(0);
         defaultMapping.setDefaultMapping(1);
-        defaultMapping.setDefaultMain(defaultMainMapping != null && canBeDefaultMain ? 0 : 1);
+        defaultMapping.setDefaultMain(defaultMainMapping == null && canBeDefaultMain ? 1 : 0);
 
         feedMappingService.setMapping(defaultMapping);
 
@@ -276,6 +281,8 @@ public class CmsFeedMappingService extends BaseAppService {
      */
     public CmsBtFeedMappingModel getMainMapping(SetMappingBean params, UserSessionBean user) {
         CmsBtFeedMappingModel model = feedMappingService.getDefaultMain(user.getSelChannel(), params.getTo());
+        if (model == null)
+            return null;
         model.setProps(null); // 减小 Json 大小
         return model;
     }
