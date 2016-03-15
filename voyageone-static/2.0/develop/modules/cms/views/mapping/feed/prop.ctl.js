@@ -171,7 +171,7 @@ define([
                     matched: null,
                     keyWord: null
                 };
-                
+
                 this.mappingModel = null;
 
                 this.saveMapping = this.saveMapping.bind(this);
@@ -221,10 +221,10 @@ define([
                             ).then(function (res) {
 
                                 var resultMap = res.data;
-                                
+
                                 // 保存已匹配的属性
                                 toArray.matchedMains = resultMap.propMap;
-                                
+
                                 ttt.mappingModel = resultMap.mappingModel;
 
                                 // 包装数据源
@@ -257,6 +257,7 @@ define([
                  */
                 saveMapping: function (context) {
 
+                    var self = this;
                     var bean = context.bean;
 
                     var path = [];
@@ -270,8 +271,8 @@ define([
 
                     context.fieldMapping.type = bean.type;
 
-                    this.feedMappingService.saveFieldMapping({
-                        mappingId: this.mappingModel._id,
+                    self.feedMappingService.saveFieldMapping({
+                        mappingId: self.mappingModel._id,
                         fieldPath: path.reverse(),
                         propMapping: context.fieldMapping
                     }).then(function (res) {
@@ -282,14 +283,31 @@ define([
                         var mappings = context.fieldMapping.mappings;
 
                         bean.matched = !!mappings && !!mappings.length;
+                        bean.hasMatched = bean.matched;
+                        bean.hasUnMatched = !bean.hasMatched;
 
-                        // 循环设定上层标识
+                        // 重新计算最顶层属性的 match 标识
+                        var fields = self.getDataSource(context.fieldMapping.type);
                         var parent = bean.parent;
-                        while (!!parent) {
-                            parent.hasUnMatched = !(parent.hasMatched = bean.matched);
+                        while (parent && parent.parent)
                             parent = parent.parent;
-                        }
-                    }.bind(this));
+                        parent = parent || bean;
+                        hasMatched(parent, fields, true);
+                        hasMatched(parent, fields, false);
+                    });
+                },
+
+                getDataSource: function (type) {
+                    switch (type){
+                        case "FIELD":
+                            return this.fields;
+                        case "SKU":
+                            return this.skuFields;
+                        case "COMMON":
+                            return this.commonFields;
+                        default:
+                            return null;
+                    }
                 },
 
                 /**
