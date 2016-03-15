@@ -14,9 +14,9 @@
                                 <sup>{{'TXT_FEED_CATEGORY' | translate}}</sup>
                                 <span class="fa fa-exchange"></span>
                             </span>
-                            <span>{{$ctrl.mainCategory.catFullPath}}</span>
-                            <sup>{{'TXT_MASTER_CATEGORY' | translate}}</sup>
-                            <sup ng-if="$ctrl.isCommon">
+                            <span class="font-bold text-vo">{{$ctrl.mainCategory.catFullPath}}</span>
+                            <sup class="font-bold text-vo">{{'TXT_MASTER_CATEGORY' | translate}}</sup>
+                            <sup class="font-bold text-vo" ng-if="$ctrl.isCommon">
                                 <strong>
                                     <span>(</span>
                                     <span>{{'TXT_MASTER_CATEGORY_COMMON_FLG' | translate}}</span>
