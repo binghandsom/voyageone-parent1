@@ -85,7 +85,7 @@ public class TranslationService {
         Date date = DateTimeUtil.addHours(DateTimeUtil.getDate(), -48);
         String translateTimeStr = DateTimeUtil.format(date, null);
 
-        String tasksQueryStr = String.format("{'fields.status':'Pending','fields.translateStatus':'0','fields.translator':'%s','fields.translateTime':{'$gt':'%s'}}",userName,translateTimeStr);
+        String tasksQueryStr = String.format("{'fields.status':{'$nin':['New']},'fields.translateStatus':'0','fields.translator':'%s','fields.translateTime':{'$gt':'%s'}}",userName,translateTimeStr);
 
         productsGetRequest.setChannelId(channelId);
         productsGetRequest.setQueryString(tasksQueryStr);
@@ -224,9 +224,9 @@ public class TranslationService {
         }
 
         DBObject updObj = new BasicDBObject();
-        updObj.put("translator", userName);
-        updObj.put("translateStatus", transSts);
-        updObj.put("translateTime", DateTimeUtil.getNow(DateTimeUtil.DEFAULT_DATETIME_FORMAT));
+        updObj.put("fields.translator", userName);
+        updObj.put("fields.translateStatus", transSts);
+        updObj.put("fields.translateTime", DateTimeUtil.getNow(DateTimeUtil.DEFAULT_DATETIME_FORMAT));
         updObj.put("fields.longTitle", taskBean.getLongTitle());
         updObj.put("fields.middleTitle", taskBean.getMiddleTitle());
         updObj.put("fields.shortTitle", taskBean.getShortTitle());
