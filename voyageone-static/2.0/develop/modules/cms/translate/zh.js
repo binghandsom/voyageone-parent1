@@ -180,7 +180,7 @@ define(function(){
         "TXT_SORT_3": "排序属性3",
         "TXT_SORT_ASC": "升序",
         "TXT_SORT_DESC": "降序",
-        "TXT_REQUIRED": "(必填)",
+        "TXT_REQUIRED": "必填",
         "TXT_BEAT_TASK": "价格披露",
         "TXT_UNIQUE": "唯一",
         "TXT_TEMPLATE": "模板",

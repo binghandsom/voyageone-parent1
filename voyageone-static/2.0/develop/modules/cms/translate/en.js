@@ -174,7 +174,7 @@ define(function() {
         "TXT_PRODUCT_TYPE": "Product Type",
         "TXT_PLATFORM_TYPE_WITH_COLON": "Platform Type:",
         "TXT_INPUT_ONLY_CHAR_AND_NUMBER": "Input Include:English numbers _ .",
-        "TXT_REQUIRED": "(required)",
+        "TXT_REQUIRED": "Required",
         "TXT_TAG": "Tag",
         "TXT_SORT_1": "Sort Attribute 1",
         "TXT_SORT_2": "Sort Attribute 2",

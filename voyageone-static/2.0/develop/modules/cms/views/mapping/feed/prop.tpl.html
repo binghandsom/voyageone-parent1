@@ -92,21 +92,19 @@
     </div>
     <script type="text/ng-template" id="feedMapping.fieldBean.html">
         <div class="col-sm-5 text-left" style="margin-left:{{::bean.level*30}}px">
-            <i class="fa {{::bean.headClass}}"></i>
-            <span>{{::bean.field.name }}</span>
-            <span ng-if="bean.required">{{'TXT_REQUIRED' | translate}}</span>
+            <i class="fa {{::bean.headClass}}"></i>&nbsp;<span>{{::(bean.field.name || bean.field.id) }}</span>&nbsp;<span ng-if="bean.required">(&nbsp;<i>{{::'TXT_REQUIRED'|translate}}</i>&nbsp;)</span>
         </div>
         <div class="col-sm-1 pull-center" ng-if="bean.isSimple">
             <button class="btn btn-default btn-xs"
                     ng-click="popupFeed($ctrl.popupContext(bean)).then($ctrl.saveMapping)"><i class="fa fa-pencil"></i>&nbsp;<span>
-                {{'TXT_MAPPING_VALUE' | translate}}</span>
+                {{::'TXT_MAPPING_VALUE'|translate}}</span>
             </button>
         </div>
         <div class="col-sm-1 pull-right m-r-sm">
             <span ng-if="bean.isSimple"
                   ng-class="{'badge':bean.matched, 'badge badge-failure': !bean.matched}">
-                <span ng-if="bean.matched">{{'TXT_COMPLETE' | translate}}</span>
-                <span ng-if="!bean.matched">{{'TXT_INCOMPLETE' | translate}}</span>
+                <span ng-if="bean.matched">{{::'TXT_COMPLETE'|translate}}</span>
+                <span ng-if="!bean.matched">{{::'TXT_INCOMPLETE'|translate}}</span>
             </span>
         </div>
         <div class="pull-right">
