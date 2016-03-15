@@ -38,9 +38,13 @@ public class ComBtTaobaoApiLogModel extends BaseModel {
     private String mac;
 
     public ComBtTaobaoApiLogModel() {
+        setCreater("System");
+        setModifier("System");
     }
 
     public ComBtTaobaoApiLogModel(String apiMethodName, ShopBean shopBean) {
+
+        this();
         this.apiMethodName = apiMethodName;
         this.channel_id = shopBean.getOrder_channel_id();
         this.cart_id = shopBean.getCart_id();
