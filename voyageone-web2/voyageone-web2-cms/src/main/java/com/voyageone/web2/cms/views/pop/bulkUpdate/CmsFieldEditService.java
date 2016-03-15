@@ -89,10 +89,15 @@ public class CmsFieldEditService extends BaseAppService {
             Object[] field = getPropValue(params);
             CmsBtProductModel productModel = productGetResponse.getProduct();
 
-            // TODO 批量更新操作审核approve去掉
+            // TODO 批量更新操作重置approved->ready这步暂时不执行,因为运营如果批量操作再批量approved,工作量比较大,以后有需要时再放开
             // 更新状态以外的属性时,check产品状态如果为Approved,则将产品状态设置成Ready
 //            if (!"status".equals(prop_id) && CmsConstants.productStatus.APPROVED.equals(productModel.getFields().getStatus()))
 //                productModel.getFields().setStatus(CmsConstants.productStatus.READY);
+
+            // 处理如果是批量更新status,如果该产品以前就是approved,则不做处理
+            if ("status".equals(prop_id)
+                    && CmsConstants.productStatus.APPROVED.equals(productModel.getFields().getStatus()))
+                break;
 
             if ("platformActive".equals(prop_id)) {
                 CmsBtProductModel_Group group = productModel.getGroups();

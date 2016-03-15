@@ -60,6 +60,9 @@ public class ProductService extends BaseService {
     private CmsBtPriceLogDao cmsBtPriceLogDao;
 
     @Autowired
+    private ProductGroupService productGroupService;
+
+    @Autowired
     private ProductSkuService productSkuService;
 
     @Autowired
@@ -472,7 +475,7 @@ public class ProductService extends BaseService {
         if (!StringUtils.isEmpty(queryStr)) {
             JomgoQuery queryObject = new JomgoQuery();
             queryObject.setQuery(queryStr);
-            queryObject.setProjection("prodId", "modified", "fields.status");
+            queryObject.setProjection("prodId", "modified", "fields.status", "groups");
 
             CmsBtProductModel findModel = cmsBtProductDao.selectOneWithQuery(queryObject, channelId);
             if (findModel == null) {
@@ -516,6 +519,21 @@ public class ProductService extends BaseService {
             if (fields != null && fields.size() > 0) {
                 BasicDBObject fieldObj = fields.toUpdateBasicDBObject("fields.");
                 updateMap.putAll(fieldObj);
+            }
+
+            /**
+             * Groups
+             */
+            CmsBtProductModel_Group group = productModel.getGroups();
+            for(CmsBtProductModel_Group_Platform platform : group.getPlatforms()) {
+                Set<Long> productIds = new HashSet<>();
+                productIds.add(prodId);
+
+                ProductGroupsPutRequest productGroupsPutRequest = new ProductGroupsPutRequest(channelId);
+                productGroupsPutRequest.setPlatform(platform);
+                productGroupsPutRequest.setProductIds(productIds);
+
+                productGroupService.saveGroups(productGroupsPutRequest);
             }
 
             /**
@@ -597,7 +615,7 @@ public class ProductService extends BaseService {
                     if (!StringUtils.isEmpty(request.getModifier())) {
                         modifier = request.getModifier();
                     }
-                    insertSxWorkLoad(befStatus, aftStatus, channelId, findModel.getProdId(), modifier);
+                    insertSxWorkLoad(befStatus, aftStatus, channelId, findModel.getGroups().getPlatforms(), modifier);
                 }
 
                 /**
@@ -680,7 +698,7 @@ public class ProductService extends BaseService {
 
         HashMap<String, Object> queryMap = new HashMap<>();
         JomgoQuery queryObject = new JomgoQuery();
-        queryObject.setProjection("prodId", "fields.status");
+        queryObject.setProjection("prodId", "fields.status", "groups");
         if (request.getProductId() != null) {
             queryObject.setQuery("{\"prodId\":" + request.getProductId() + "}");
         } else {
@@ -726,7 +744,8 @@ public class ProductService extends BaseService {
                 if (!StringUtils.isEmpty(request.getModifier())) {
                     modifier = request.getModifier();
                 }
-                insertSxWorkLoad(befStatus, aftStatus, channelId, findModel.getProdId(), modifier);
+
+                insertSxWorkLoad(befStatus, aftStatus, channelId, findModel.getGroups().getPlatforms(), modifier);
             }
 
             // 更新产品状态
@@ -754,26 +773,44 @@ public class ProductService extends BaseService {
 
     private void insertSxWorkLoad(CmsConstants.ProductStatus befStatus,
                                   CmsConstants.ProductStatus aftStatus,
-                                  String channelId, Long groupId, String modifier) {
+                                  String channelId, List<CmsBtProductModel_Group_Platform> platforms, String modifier) {
         if (befStatus != null && aftStatus != null) {
             boolean isNeed = false;
             // 从其他状态转为Pending
-            if (befStatus != CmsConstants.ProductStatus.Approved && aftStatus == CmsConstants.ProductStatus.Approved) {
-                isNeed = true;
-                // 从Pending转为其他状态
-                // 在Pending下变更了
-            } else if (befStatus == CmsConstants.ProductStatus.Approved) {
+//            if (befStatus != CmsConstants.ProductStatus.Approved && aftStatus == CmsConstants.ProductStatus.Approved) {
+//                isNeed = true;
+//                // 从Pending转为其他状态
+//                // 在Pending下变更了
+//            } else if (befStatus == CmsConstants.ProductStatus.Approved) {
+//                isNeed = true;
+//            }
+            // 只有该产品的aftStatus为Approved的时候才更新workload表-edward
+            if (aftStatus == CmsConstants.ProductStatus.Approved) {
                 isNeed = true;
             }
 
-            if (isNeed) {
+            // 获得该店铺的上新平台列表
+            List<Integer> carts = new ArrayList<>();
+            for(TypeChannelBean typeChannelBean : TypeChannel.getTypeListSkuCarts(channelId, Constants.comMtTypeChannel.SKU_CARTS_53_A, "en")){
+                carts.add(Integer.valueOf(typeChannelBean.getValue()));
+            }
+
+            // 获取所有的可上新的平台group信息
+            List<CmsBtSxWorkloadModel> models = new ArrayList<>();
+            for(CmsBtProductModel_Group_Platform platform : platforms) {
                 CmsBtSxWorkloadModel model = new CmsBtSxWorkloadModel();
-                model.setChannelId(channelId);
-                model.setGroupId(groupId);
-                model.setPublishStatus(0);
-                model.setCreater(modifier);
-                model.setModifier(modifier);
-                cmsBtSxWorkloadDao.insertSxWorkloadModel(model);
+                if (carts.contains(platform.getCartId()) && isNeed) {
+                    model.setChannelId(channelId);
+                    model.setGroupId(platform.getGroupId());
+                    model.setPublishStatus(0);
+                    model.setCreater(modifier);
+                    model.setModifier(modifier);
+                    models.add(model);
+                }
+            }
+
+            if (models.size() > 0) {
+                cmsBtSxWorkloadDao.insertSxWorkloadModels(models);
             }
         }
     }
