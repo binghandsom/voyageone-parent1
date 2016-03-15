@@ -118,20 +118,20 @@
 							<div class="form-group form-inline" ng-controller="popupCtrl">
 								<label class="control-label m-b-md m-r-xs ">{{'TXT_SET_ALL' | translate}}</label>
 								<label class="control-label">
-									<select class="form-control">
+									<select class="form-control" id="selPlatform">
 										<option ng-repeat="platform in $ctrl.platformList" class="form-control" value="{{platform.cartId}}">{{platform.cartName}}</option>
 									</select>
 								</label>
-								<input type="text" class="form-control" placeholder="10%">
+								<input type="text" class="form-control" placeholder="10%" id="percent">
 								<label class="control-label m-l-xs m-r-xs text-vo"><i class="icon fa fa-bell-o"></i>&nbsp;{{'TXT_PLEASE_SET_PERCENT' | translate}}</label>
-								<button class="btn btn-default"><i class="glyphicon glyphicon-cog"></i>&nbsp;{{'BTN_SET' | translate}}</button>
-								<button class="btn btn-vo"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;{{'BTN_SAVE' | translate}}</button>
-								<button class="btn btn-success" ng-click="openNewMrbStockSku('md')"><i class="fa fa-plus"></i>&nbsp;{{'BTN_CREATE' | translate}}</button>
+								<button class="btn btn-default" ng-click="$ctrl.setPercent()"><i class="glyphicon glyphicon-cog"></i>&nbsp;{{'BTN_SET' | translate}}</button>
+								<button class="btn btn-vo" ng-click="$ctrl.saveRecord()"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;{{'BTN_SAVE' | translate}}</button>
+								<button class="btn btn-success" ng-click="openNewMrbStockSku('md',$ctrl)"><i class="fa fa-plus"></i>&nbsp;{{'BTN_CREATE' | translate}}</button>
 							</div>
 						</div>
 					</div>
 
-					<div class="col-sm-12 dropdown_table_mains">
+					<div class="col-sm-12 dropdown_table_mains" if-no-rows="$ctrl.stockList.length">
 						<table class="table table-hover-new vo_table" style="width:1800px;margin-bottom:0px" ng-controller="popupCtrl">
 							<thead>
 							<tr>
@@ -164,16 +164,16 @@
 								<td class="text-center" ng-repeat="property in $ctrl.propertyList" class="text-center" ng-show="property.show">{{stock[property.property]}}</th>
 								<td class="text-center">{{stock.qty}}</td>
 								<td ng-repeat-start="platform in stock.platformStock" class="text-center">
-									<input ng-if="platform.qty != -1" class="form-control" ng-model="platform.qty">
-									<span ng-if="platform.qty == -1">
+									<input ng-if="platform.status != null" class="form-control" ng-model="platform.separationQty">
+									<span ng-if="platform.status == null">
 								    {{'TXT_DYNAMIC' | translate}}
 									</span>
 								</td>
 								<td ng-repeat-end class="text-center">
-									<span ng-if="platform.qty != -1">
+									<span ng-if="platform.status != null">
 										{{platform.status}}
 									</span>
-									<span ng-if="platform.qty == -1">
+									<span ng-if="platform.status == null">
 								    /
 									</span>
 								</td>
@@ -183,8 +183,8 @@
 									<button title="还原" class="btn btn-default-green btn-xs"><i class="glyphicon glyphicon-share-alt"></i>&nbsp;{{'TXT_REVERT' | translate}}</button>
 								</td>
 								<td class="text-center">
-									<button title="保存" class="btn btn-vo btn-xs"><i class="glyphicon glyphicon-floppy-disk"></i></button>
-									<button title="删除" class="btn btn-danger btn-xs"><i class="fa  fa-trash-o"></i></button>
+									<button title="保存" class="btn btn-vo btn-xs" ng-click="$ctrl.saveRecord($index)"><i class="glyphicon glyphicon-floppy-disk"></i></button>
+									<button title="删除" class="btn btn-danger btn-xs" ng-click="$ctrl.delRecord(stock)"><i class="fa  fa-trash-o"></i></button>
 								</td>
 							</tr>
 
@@ -206,7 +206,7 @@
 							<button class="btn btn-danger" ng-click="openImport('md',vm.promotionId)"><i class="glyphicon glyphicon-share-alt"></i>&nbsp;导出库存实时状态</button>
 						</div>
 					</div>-->
-					<div class="col-sm-12 dropdown_table_mains">
+					<div class="col-sm-12 dropdown_table_mains" if-no-rows="$ctrl.realStockList.length">
 						<table class="table table-hover-new vo_table" style="width:1800px;margin-bottom:0px" >
 							<thead>
 							<tr>

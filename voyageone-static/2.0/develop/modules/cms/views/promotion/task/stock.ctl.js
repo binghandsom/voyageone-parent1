@@ -8,9 +8,9 @@ define([
 ], function (cms) {
     cms.controller("taskStockController", (function () {
 
-        function TaskStockController($routeParams, taskStockService, cActions, alert, notify, $location) {
+        function TaskStockController($routeParams, taskStockService, cActions, confirm, alert, notify, $location) {
             var urls = cActions.cms.task.taskStockService;
-            var taskId = parseInt($routeParams['task_id']);
+            var taskId = $routeParams['task_id'];
             if (_.isNaN(taskId)) {
                 this.init = null;
                 alert('TXT_MSG_UNVALID_URL').result.then(function () {
@@ -19,6 +19,7 @@ define([
             }
             this.alert = alert;
             this.notify = notify;
+            this.confirm = confirm;
             this.taskId = taskId;
             this.readyNum = 0;
             this.waitSeparationNum = 0;
@@ -43,13 +44,13 @@ define([
             this.stockPageOption = {
                 curr: 1,
                 total: 0,
-                size: 10,
+                size: 20,
                 fetch: this.getCommonStockList.bind(this)
             };
             this.realStockPageOption = {
                 curr: 1,
                 total: 0,
-                size: 3,
+                size: 10,
                 fetch: this.getRealStockList.bind(this)
             };
 
@@ -92,9 +93,9 @@ define([
                     "propertyList" : this.propertyList,
                     "platformList" : this.platformList,
                     "start1" :  0,
-                    "length1" : 10,
+                    "length1" : 20,
                     "start2" :  0,
-                    "length2" : 3
+                    "length2" : 10
                 }).then(function (res) {
                     main.readyNum = res.data.readyNum;
                     main.waitSeparationNum = res.data.waitSeparationNum;
@@ -151,6 +152,55 @@ define([
                     "length2" : this.realStockPageOption.size
                 }).then(function (res) {
                     main.realStockList = res.data.realStockList;;
+                })
+            },
+
+            saveRecord: function (index) {
+                var main = this;
+                main.taskStockService.saveRecord({
+                    "taskId" : this.taskId,
+                    "stockList" : main.stockList,
+                    "index" : index
+                }).then(function (res) {
+                    main.stockList = res.data.stockList;
+                    main.notify.success('更新成功');
+                }, function (err) {
+                    //main.alert('TXT_MSG_UPDATE_FAIL');
+                })
+            },
+
+            setPercent: function () {
+                var main = this;
+                var selPlatform = document.getElementById('selPlatform').value;
+                var percent = document.getElementById('percent').value;
+                if (percent.length > 0 && percent.substring(percent.length - 1) == '%') {
+                    percent = percent.substring(0, percent.length - 1);
+                }
+                var percent = Number(percent);
+                if (_.isNumber(percent) && percent > 0) {
+                    _.each(main.stockList, function (stock) {
+                        _.each(stock.platformStock, function (platform) {
+                            if (platform.cartId == selPlatform) {
+                                platform.separationQty = (Math.floor(percent * 0.01 * stock.qty)).toString();
+                            }
+                        });
+                    });
+                    main.notify.success('设定成功');
+                }
+            },
+
+            delRecord: function (stock) {
+                var main = this;
+                main.confirm('TXT_MSG_DO_DELETE').result.then(function () {
+                    main.taskStockService.delRecord({
+                        "taskId": main.taskId,
+                        "stockInfo": stock
+                    }).then(function (res) {
+                        main.notify.success('删除成功');
+                        main.search();
+                    }, function (err) {
+                        //main.alert('TXT_MSG_DELETE_FAIL');
+                    })
                 })
             }
         };
