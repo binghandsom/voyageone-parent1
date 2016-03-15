@@ -113,6 +113,11 @@ define([
                     "controller": 'popAddAttributeValueNewCtl as ctrl',
                     "backdrop": 'static',
                     "size": 'md'
+                },
+                "column": {
+                    "templateUrl": "views/pop/custom/column.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/custom/column.ctl",
+                    "controller": 'popCustomColumnCtl'
                 }
 
             },
@@ -641,9 +646,9 @@ define([
          * @type {openImport}
          */
         $scope.openImport = openImport;
-        function openImport(viewSize, data) {
+        function openImport(viewSize, data, fnInitial) {
             require([popActions.file.import.controllerUrl], function () {
-                $modal.open({
+                var modalInstance = $modal.open({
                     templateUrl: popActions.file.import.templateUrl,
                     controller: popActions.file.import.controller,
                     size: viewSize,
@@ -653,6 +658,13 @@ define([
                         }
                     }
                 });
+                modalInstance.result.then(function () {
+                    if (fnInitial) {
+                        fnInitial();
+                    }
+
+                })
+
             });
         }
 
@@ -829,6 +841,26 @@ define([
                 $modal.open({
                     templateUrl: popActions.promotion.addMrbStockIncrement.templateUrl,
                     controller: popActions.promotion.addMrbStockIncrement.controller,
+                    size: viewSize,
+                    resolve: {
+                        data: function () {
+                            return data;
+                        }
+                    }
+                });
+            });
+        }
+
+        /**
+         * 弹出自定义属性列
+         * @type {openCustomColumn}
+         */
+        $scope.openCustomColumn = openCustomColumn;
+        function openCustomColumn(viewSize, data) {
+            require([popActions.custom.column.controllerUrl], function () {
+                $modal.open({
+                    templateUrl: popActions.custom.column.templateUrl,
+                    controller: popActions.custom.column.controller,
                     size: viewSize,
                     resolve: {
                         data: function () {

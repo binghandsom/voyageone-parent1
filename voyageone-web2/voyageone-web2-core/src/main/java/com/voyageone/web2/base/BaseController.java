@@ -69,11 +69,12 @@ public abstract class BaseController extends BaseAppComponent {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-        try {
-            headers.setContentDispositionFormData("attachment", URLEncoder.encode(downloadFileName, "UTF-8"));
-        } catch (UnsupportedEncodingException e) {
-            throw new SystemException("Unsupported Encoding", e);
-        }
+//        try {
+//            headers.setContentDispositionFormData("attachment", URLEncoder.encode(downloadFileName, "UTF-8"));
+//        } catch (UnsupportedEncodingException e) {
+//            throw new SystemException("Unsupported Encoding", e);
+//        }
+        headers.setContentDispositionFormData("attachment", downloadFileName);
         return new ResponseEntity<>(bytes, headers, HttpStatus.OK);
     }
 

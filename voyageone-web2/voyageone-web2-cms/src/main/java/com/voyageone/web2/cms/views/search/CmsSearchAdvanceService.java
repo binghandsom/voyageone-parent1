@@ -7,6 +7,7 @@ import com.voyageone.common.configs.TypeChannel;
 import com.voyageone.common.util.FileUtils;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.service.dao.cms.CmsMtCommonPropDao;
 import com.voyageone.service.impl.cms.CmsBtChannelCategoryService;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.web2.base.BaseAppService;
@@ -44,6 +45,8 @@ public class CmsSearchAdvanceService extends BaseAppService{
     private CmsPromotionIndexService cmsPromotionService;
     @Autowired
     private CustomWordDao customWordDao;
+    @Autowired
+    private CmsMtCommonPropDao cmsMtCommonPropDao;
     @Autowired
     protected VoApiDefaultClient voApiClient;
 
@@ -261,13 +264,13 @@ public class CmsSearchAdvanceService extends BaseAppService{
 
         // 获取publishTime start
         if (searchValue.getPublishTimeStart() != null ) {
-            resultPlatforms.append(MongoUtils.splicingValue("publishTime", searchValue.getPublishTimeStart(), "$gte"));
+            resultPlatforms.append(MongoUtils.splicingValue("publishTime", searchValue.getPublishTimeStart() + " 00.00.00", "$gte"));
             resultPlatforms.append(",");
         }
 
         // 获取publishTime End
         if (searchValue.getPublishTimeTo() != null) {
-            resultPlatforms.append(MongoUtils.splicingValue("publishTime", searchValue.getPublishTimeTo(), "$lte"));
+            resultPlatforms.append(MongoUtils.splicingValue("publishTime", searchValue.getPublishTimeTo() + " 23.59.59", "$lte"));
             resultPlatforms.append(",");
         }
 
@@ -314,13 +317,13 @@ public class CmsSearchAdvanceService extends BaseAppService{
 
         // 获取publishTime start
         if (searchValue.getPublishTimeStart() != null ) {
-            resultPlatforms.append(MongoUtils.splicingValue("publishTime", searchValue.getPublishTimeStart(), "$gte"));
+            resultPlatforms.append(MongoUtils.splicingValue("publishTime", searchValue.getPublishTimeStart() + " 00.00.00", "$gte"));
             resultPlatforms.append(",");
         }
 
         // 获取publishTime End
         if (searchValue.getPublishTimeTo() != null) {
-            resultPlatforms.append(MongoUtils.splicingValue("publishTime", searchValue.getPublishTimeTo(), "$lte"));
+            resultPlatforms.append(MongoUtils.splicingValue("publishTime", searchValue.getPublishTimeTo() + " 23.59.59", "$lte"));
             resultPlatforms.append(",");
         }
 
@@ -381,20 +384,20 @@ public class CmsSearchAdvanceService extends BaseAppService{
 
         // 获取createdTime start
         if (searchValue.getCreateTimeStart() != null) {
-            result.append(MongoUtils.splicingValue("created", searchValue.getCreateTimeStart(), "$gte"));
+            result.append(MongoUtils.splicingValue("created", searchValue.getCreateTimeStart() + " 00.00.00", "$gte"));
             result.append(",");
         }
 
         // 获取createdTime End
         if (searchValue.getCreateTimeTo() != null) {
-            result.append(MongoUtils.splicingValue("created", searchValue.getCreateTimeTo(), "$lte"));
+            result.append(MongoUtils.splicingValue("created", searchValue.getCreateTimeTo() + " 23.59.59", "$lte"));
             result.append(",");
         }
 
         // 获取inventory
         if (searchValue.getCompareType() != null
                 && searchValue.getInventory() != null) {
-            result.append(MongoUtils.splicingValue("fields.qty", searchValue.getInventory(), searchValue.getCompareType()));
+            result.append(MongoUtils.splicingValue("fields.quantity", searchValue.getInventory(), searchValue.getCompareType()));
             result.append(",");
         }
 
@@ -581,5 +584,10 @@ public class CmsSearchAdvanceService extends BaseAppService{
 //        return result.toString().length() > 0 ? "{" + result.toString().substring(0, result.toString().length()-1) + "}" : null;
         return result.toString().length() > 0 ? result.toString().substring(0, result.toString().length()-1) : null;
 
+    }
+
+    // 取得自定义显示列设置
+    public List<Map<String, Object>> getCustColumns() {
+        return  cmsMtCommonPropDao.getCustColumns();
     }
 }

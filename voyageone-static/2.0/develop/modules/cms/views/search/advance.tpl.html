@@ -12,8 +12,7 @@
 						<div class="form-group">
 							<label class="col-sm-3 control-label" translate="TXT_CATEGORY"></label>
 							<div class="col-sm-8">
-								<select class="form-control" ng-model="vm.searchInfo.catId"
-										ng-options="category.catId as category.catPath for category in vm.masterData.categoryList">
+								<select search-contains="true" class="form-control" chosen ng-model="vm.searchInfo.catId" ng-options="category.catId as category.catPath for category in vm.masterData.categoryList">
 									<option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
 								</select>
 							</div>
@@ -50,6 +49,55 @@
 								<div class="input-group col-sm-4"><input type="text" class="form-control" ng-model="vm.searchInfo.priceEnd" ng-pattern="/^(\d+)(\.[0-9]{0,2})?$/"></div>
 							</div>
 						</div><!-- .form-group -->
+						<div class="form-group">
+							<label class="col-sm-3 control-label" translate="TXT_CUST_QUERY_ATTR"></label>
+							<div class="col-sm-8 form-inline">
+								<select class="form-control">
+									<option>1</option>
+									<option>2</option>
+									<option>3</option>
+								</select>
+								<select class="form-control">
+									<option><&nbsp;=</option>
+									<option>>&nbsp;=</option>
+									<option>=&nbsp;=</option>
+								</select>
+								<div class="input-group col-sm-5"><input type="text" class="form-control"></div>
+								<button class="btn btn-success"><i class="fa fa-plus"></i></button>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label"></label>
+							<div class="col-sm-8 form-inline">
+								<select class="form-control">
+									<option>1</option>
+									<option>2</option>
+									<option>3</option>
+								</select>
+								<select class="form-control">
+									<option><&nbsp;=</option>
+									<option>>&nbsp;=</option>
+									<option>=&nbsp;=</option>
+								</select>
+								<div class="input-group col-sm-5"><input type="text" class="form-control"></div>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label"></label>
+							<div class="col-sm-8 form-inline">
+								<select class="form-control">
+									<option>1</option>
+									<option>2</option>
+									<option>3</option>
+								</select>
+								<select class="form-control">
+									<option><&nbsp;=</option>
+									<option>>&nbsp;=</option>
+									<option>=&nbsp;=</option>
+								</select>
+								<div class="input-group col-sm-5"><input type="text" class="form-control"></div>
+							</div>
+						</div>
 					</div>
 				</div>
 				<div class="col-sm-4">
@@ -57,18 +105,18 @@
 						<div class="form-group">
 							<label class="col-sm-3 control-label" translate="TXT_CREATE_TIME"></label>
 							<div class="col-sm-8 form-inline">
-								<div class="col-sm-5 input-group" ng-controller="datePickerCtrl">
-									<input type="text" class="form-control" datepicker-popup="{{formatDate}}" ng-model="$parent.vm.searchInfo.createTimeStart" date-model-format="{{formatDate}}"
-										   max-date="$parent.vm.searchInfo.createTimeTo" is-open="opened" datepicker-options="dateOptions" close-text="Close" />
+								<div class="col-sm-5 input-group">
+									<input type="text" class="form-control" datepicker-popup ng-model="vm.searchInfo.createTimeStart" date-model-format="yyyy-MM-dd"
+										   max-date="vm.searchInfo.createTimeTo" is-open="datePicker1" close-text="Close" />
 								              <span class="input-group-btn">
-								                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+								                <button type="button" class="btn btn-default" ng-click="datePicker1 = !datePicker1"><i class="glyphicon glyphicon-calendar"></i></button>
 								              </span>
 								</div>&nbsp;~&nbsp;
-								<div class="col-sm-5 input-group" ng-controller="datePickerCtrl">
-									<input type="text" class="form-control" datepicker-popup="{{formatDate}}" ng-model="$parent.vm.searchInfo.createTimeTo" date-model-format="{{formatDate}}"
-										   min-date="$parent.vm.searchInfo.createTimeStart" is-open="opened" datepicker-options="dateOptions" close-text="Close" />
+								<div class="col-sm-5 input-group">
+									<input type="text" class="form-control" datepicker-popup ng-model="vm.searchInfo.createTimeTo" date-model-format="yyyy-MM-dd"
+										   min-date="vm.searchInfo.createTimeStart" is-open="datePicker2" close-text="Close" />
 								              <span class="input-group-btn">
-								                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+								                <button type="button" class="btn btn-default" ng-click="datePicker2 = !datePicker2"><i class="glyphicon glyphicon-calendar"></i></button>
 								              </span>
 								</div>
 							</div>
@@ -76,18 +124,18 @@
 						<div class="form-group">
 							<label class="col-sm-3 control-label" translate="TXT_PUBLISH_TIME"></label>
 							<div class="col-sm-8 form-inline">
-								<div class="col-sm-5 input-group" ng-controller="datePickerCtrl">
-									<input type="text" class="form-control" datepicker-popup="{{formatDate}}" ng-model="$parent.vm.searchInfo.publishTimeStart" date-model-format="{{formatDate}}"
-										   max-date="$parent.vm.searchInfo.publishTimeTo" is-open="opened" datepicker-options="dateOptions" close-text="Close" />
+								<div class="col-sm-5 input-group">
+									<input type="text" class="form-control" datepicker-popup ng-model="vm.searchInfo.publishTimeStart" date-model-format="yyyy-MM-dd"
+										   max-date="vm.searchInfo.publishTimeTo" is-open="datePicker3" datepicker-options="dateOptions" close-text="Close" />
 								              <span class="input-group-btn">
-								                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+								                <button type="button" class="btn btn-default" ng-click="datePicker3 = !datePicker3"><i class="glyphicon glyphicon-calendar"></i></button>
 								              </span>
 								</div>&nbsp;~&nbsp;
-								<div class="col-sm-5 input-group" ng-controller="datePickerCtrl">
-									<input type="text" class="form-control" datepicker-popup="{{formatDate}}" ng-model="$parent.vm.searchInfo.publishTimeTo" date-model-format="{{formatDate}}"
-										   min-date="$parent.vm.searchInfo.publishTimeStart" is-open="opened" datepicker-options="dateOptions" close-text="Close" />
+								<div class="col-sm-5 input-group">
+									<input type="text" class="form-control" datepicker-popup ng-model="vm.searchInfo.publishTimeTo" date-model-format="yyyy-MM-dd"
+										   min-date="vm.searchInfo.publishTimeStart" is-open="datePicker4" datepicker-options="dateOptions" close-text="Close" />
 								              <span class="input-group-btn">
-								                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+								                <button type="button" class="btn btn-default" ng-click="datePicker4 = !datePicker4"><i class="glyphicon glyphicon-calendar"></i></button>
 								              </span>
 								</div>
 							</div>
@@ -107,7 +155,7 @@
 						<div class="form-group">
 							<label class="col-sm-3 control-label" translate="TXT_BRAND"></label>
 							<div class="col-sm-8">
-								<select class="form-control" ng-model="vm.searchInfo.brand"
+								<select search-contains="true" chosen class="form-control" ng-model="vm.searchInfo.brand"
 										ng-options="brand.value as brand.name for brand in vm.masterData.brandList">
 									<option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
 								</select>
@@ -117,9 +165,13 @@
 						<div class="form-group">
 							<label class="col-sm-3 control-label" translate="TXT_TAG"></label>
 							<div class="col-sm-8">
-								<label class="checkbox-inline c-checkbox" ng-repeat="tag in vm.masterData.tagList">
-									<input type="checkbox" ng-value="tag.tagPath" ng-model="vm.searchInfo.tags[tag.tagPath]"><span class="fa fa-check"></span> {{tag.tagPathName}}
-								</label>
+								<select multiple chosen class="form-control" ng-model="vm.searchInfo.tags"
+										ng-options="tag.tagPath as tag.tagPathName for tag in vm.masterData.tagList">
+									<option value=""></option>
+								</select>
+								<!--<label class="checkbox-inline c-checkbox" ng-repeat="tag in vm.masterData.tagList">-->
+									<!--<input type="checkbox" ng-value="tag.tagPath" ng-model="vm.searchInfo.tags[tag.tagPath]"><span class="fa fa-check"></span> {{tag.tagPathName}}-->
+								<!--</label>-->
 							</div>
 						</div>
 					</div><!-- .form-group -->
@@ -229,16 +281,16 @@
 		<tabset class="tab-container vo_nav-tabs">
 			<!--right-btn-->
 			<div class="form-inline m-b-xs pull-right" ng-controller="popupCtrl">
+				<button class="btn btn-default" ng-click="openCustomColumn('lg','md')"><i class="fa fa-cog"></i>&nbsp;{{'BTN_CUSTOMIZE_COLUMNS' | translate}}</button>
 				<!-- TODO 暂时未实现-->
-				<!--<button class="btn btn-default" ng-click="openCustomBaseProperty('lg')"><i class="fa fa-cog"></i>&nbsp;{{'TXT_CUSTOM_BASE_PROPERTY' | translate}}</button>-->
-				<div class="btn-group" dropdown>
-					<button type="button" class="btn btn-default" ng-disabled="vm.masterData.promotionList.length < 0">
-						<i class="fa fa-arrow-circle-right"></i>&nbsp;{{'BTN_ADD_TO_PROMOTION' | translate}}
+				<div class="btn-group" uib-dropdown>
+					<button type="button" class="btn btn-default" ng-disabled="vm.masterData.promotionList.length < 0" uib-dropdown-toggle>
+						<i class="fa fa-arrow-circle-right"></i>&nbsp;{{'BTN_ADD_TO_PROMOTION' | translate}}&nbsp;<span class="caret"></span>
 					</button>
-					<button type="button" class="btn btn-default dropdown-toggle" dropdown-toggle ng-disabled="vm.masterData.promotionList.length < 0">
-						<span class="caret"></span>
-					</button>
-					<ul class="dropdown-menu" role="menu" ng-if="vm.masterData.promotionList.length">
+					<!--<button type="button" class="btn btn-default dropdown-toggle" dropdown-toggle ng-disabled="vm.masterData.promotionList.length < 0">-->
+						<!--<span class="caret"></span>-->
+					<!--</button>-->
+					<ul uib-dropdown-menu ng-if="vm.masterData.promotionList.length">
 						<li ng-repeat="promotion in vm.masterData.promotionList">
 							<a href ng-click="openAddToPromotion('md', promotion, vm.currTab === 'group' ? vm.groupSelList.selList : vm.productSelList.selList, search)">{{promotion.promotionName}}|{{promotion.cartName}}</a>
 						</li>
@@ -301,16 +353,8 @@
 										<ul>
 											<li><a ng-href="#/product/detail/{{groupInfo.prodId}}" ng-bind="groupInfo.fields.code" target="_blank"></a></li>
 											<li><a ng-href="#/product/detail/{{groupInfo.prodId}}" ng-bind="groupInfo.fields.productNameCn || groupInfo.fields.productNameEn" target="_blank"></a></li>
-											<!--<div class="form-inline thumb-xs-search">-->
-												<!--<a href="#"><img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{groupInfo.fields.images1[0].image1}}" alt=""/></a>-->
-												<!--<a href="#"><img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{groupInfo.fields.images1[0].image1}}" alt=""/></a>-->
-												<!--<a href="#"><img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{groupInfo.fields.images1[0].image1}}" alt=""/></a>-->
-												<!--<a href="#"><img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{groupInfo.fields.images1[0].image1}}" alt=""/></a>-->
-												<!--<a href="#"><img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{groupInfo.fields.images1[0].image1}}" alt=""/></a>-->
-											<!--</div>-->
 										</ul>
 									</div>
-
 								</td>
 								<td class="mfb-xxt text-center"><!--TODO 目前只能返回group的主product,所有拿不到group下面所有的product的库存--><!--popover-html="showInfo({{groupInfo.inventoryDetail}})"-->
 									<!--<button ng-controller="showPopoverCtrl" popover-title="{{'TXT_SKU_INVENTORY' | translate}}" type="button" popover-placement="left"
@@ -347,6 +391,25 @@
 											</ul>
 										</div>
 									</small>
+								</td>
+							</tr>
+							<tr ng-class="{'table_bg_green_mint': groupInfo.groups.platforms[0].publishTime}">
+								<td colspan="8">
+									<span>
+										<img class="thumb-sm-search pull-left m-r" alt="51A0HC13E1-00LCNB0" ng-src="http://image.sneakerhead.com/is/image/sneakerhead/51a0hc13e1-00lcnb0_main_1" src="http://image.sneakerhead.com/is/image/sneakerhead/51a0hc13e1-00lcnb0_main_1">
+									</span>
+									<span>
+										<img class="thumb-sm-search pull-left m-r" alt="51A0HC13E1-00LCNB0" ng-src="http://image.sneakerhead.com/is/image/sneakerhead/51a0hc13e1-00lcnb0_main_1" src="http://image.sneakerhead.com/is/image/sneakerhead/51a0hc13e1-00lcnb0_main_1">
+									</span>
+									<span>
+										<img class="thumb-sm-search pull-left m-r" alt="51A0HC13E1-00LCNB0" ng-src="http://image.sneakerhead.com/is/image/sneakerhead/51a0hc13e1-00lcnb0_main_1" src="http://image.sneakerhead.com/is/image/sneakerhead/51a0hc13e1-00lcnb0_main_1">
+									</span>
+									<span>
+										<img class="thumb-sm-search pull-left m-r" alt="51A0HC13E1-00LCNB0" ng-src="http://image.sneakerhead.com/is/image/sneakerhead/51a0hc13e1-00lcnb0_main_1" src="http://image.sneakerhead.com/is/image/sneakerhead/51a0hc13e1-00lcnb0_main_1">
+									</span>
+									<span>
+										<img class="thumb-sm-search pull-left m-r" alt="51A0HC13E1-00LCNB0" ng-src="http://image.sneakerhead.com/is/image/sneakerhead/51a0hc13e1-00lcnb0_main_1" src="http://image.sneakerhead.com/is/image/sneakerhead/51a0hc13e1-00lcnb0_main_1">
+									</span>
 								</td>
 							</tr>
 							</tbody>

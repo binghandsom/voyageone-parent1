@@ -83,14 +83,14 @@
 			<div class="form-inline m-b-xs pull-right" ng-controller="popupCtrl">
 				<!-- TODO 暂时未实现-->
 				<!--<button class="btn btn-default" ng-click="openCustomBaseProperty('lg')"><i class="fa fa-cog"></i>&nbsp;{{'TXT_CUSTOM_BASE_PROPERTY' | translate}}</button>-->
-				<div class="btn-group" dropdown>
-					<button type="button" class="btn btn-default" ng-disabled="vm.masterData.promotionList.length < 0">
-						<i class="fa fa-arrow-circle-right"></i>&nbsp;{{'BTN_ADD_TO_PROMOTION' | translate}}
-					</button>&nbsp;
-					<button type="button" class="btn btn-default dropdown-toggle" dropdown-toggle ng-disabled="vm.masterData.promotionList.length < 0">
-						<span class="caret"></span>
+				<div class="btn-group" uib-dropdown>
+					<button type="button" class="btn btn-default" ng-disabled="vm.masterData.promotionList.length < 0" uib-dropdown-toggle>
+						<i class="fa fa-arrow-circle-right"></i>&nbsp;{{'BTN_ADD_TO_PROMOTION' | translate}}&nbsp;<span class="caret"></span>
 					</button>
-					<ul class="dropdown-menu" role="menu" ng-if="vm.masterData.promotionList.length">
+					<!--<button type="button" class="btn btn-default dropdown-toggle" dropdown-toggle ng-disabled="vm.masterData.promotionList.length < 0">-->
+						<!--<span class="caret"></span>-->
+					<!--</button>-->
+					<ul uib-dropdown-menu ng-if="vm.masterData.promotionList.length">
 						<li ng-repeat="promotion in vm.masterData.promotionList">
 							<a href ng-click="openAddToPromotion('md', promotion, vm.productIds, vm.productPageOption.fetch)">{{promotion.promotionName}}|{{promotion.cartName}}</a>
 						</li>
@@ -144,7 +144,7 @@
 							</tr>
 							<tr ng-class="{'table_bg_green_mint': productInfo.groups.platforms[0].publishTime}">
 								<td class="mfb-xxt">
-									<img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{productInfo.fields.images1[0].image1}}" alt="{{productInfo.fields.code}}" class="img-circle pull-left m-r"/>
+									<img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{productInfo.fields.images1[0].image1}}" alt="{{productInfo.fields.code}}" class="thumb-sm-search pull-left m-r"/>
 								</td>
 								<td class="mfb-xxt text-left">{{productInfo.fields.brand}}</td>
 								<td class="mfb-xxt text-center">

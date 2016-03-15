@@ -6,6 +6,8 @@ import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
 import com.voyageone.web2.cms.bean.search.index.CmsSearchInfoBean;
+import com.voyageone.web2.cms.views.channel.CmsFeedCustPropService;
+import com.voyageone.web2.core.bean.UserSessionBean;
 import com.voyageone.web2.sdk.api.response.ProductsGetResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +29,8 @@ public class CmsSearchAdvanceController extends CmsController {
 
     @Autowired
     private CmsSearchAdvanceService searchIndexService;
+    @Autowired
+    private CmsFeedCustPropService cmsFeedCustPropService;
 
     /**
      * 初始化,获取master数据
@@ -108,4 +112,41 @@ public class CmsSearchAdvanceController extends CmsController {
 
     }
 
+    /**
+     * @api {post} /cms/search/advance/getCustColumnsInfo 取得自定义显示列设置
+     * @apiName getCustColumnsInfo
+     * @apiDescription 取得自定义显示列设置
+     * @apiGroup search
+     * @apiVersion 0.0.1
+     * @apiPermission 认证商户
+     * @apiSuccess (系统级返回字段) {String} code 处理结果代码编号
+     * @apiSuccess (系统级返回字段) {String} message 处理结果描述
+     * @apiSuccess (系统级返回字段) {String} displayType 消息的提示方式
+     * @apiSuccess (系统级返回字段) {String} redirectTo 跳转地址
+     * @apiSuccess (应用级返回字段) {Object[]} customProps 自定义显示列信息，没有数据时返回空数组
+     * @apiSuccess (应用级返回字段) {Object[]} commonProps 共同属性显示列信息，没有数据时返回空数组
+     * @apiSuccessExample 成功响应查询请求
+     * {
+     *  "code":null, "message":null, "displayType":null, "redirectTo":null,
+     *  "data":{
+     *   "customProps": [ {"feed_prop_original":"a_b_c", "feed_prop_translation":"yourname" }...],
+     *   "commonProps": [ {"propId":"a_b_c", "propName":"yourname" }...]
+     *  }
+     * }
+     * @apiExample  业务说明
+     *  取得自定义显示列设置
+     * @apiExample 使用表
+     *  使用cms_bt_feed_custom_prop表, cms_mt_common_prop表
+     * @apiSampleRequest off
+     */
+    @RequestMapping("getCustColumnsInfo")
+    public AjaxResponse getCustColumnsInfo() {
+        Map<String, Object> resultBean = new HashMap<>();
+        UserSessionBean userInfo = getUser();
+        resultBean.put("customProps", cmsFeedCustPropService.selectAllAttr(userInfo.getSelChannelId(), "0"));
+        resultBean.put("commonProps", searchIndexService.getCustColumns());
+
+        // 返回用户信息
+        return success(resultBean);
+    }
 }

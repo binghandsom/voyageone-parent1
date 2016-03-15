@@ -13,7 +13,8 @@ define([
             searchInfo: {
                 compareType: null,
                 brand: null,
-                promotion: null
+                promotion: null,
+                tags:[]
             },
             groupPageOption: {curr: 1, total: 0, size: 20, fetch: getGroupList},
             productPageOption: {curr: 1, total: 0, size: 20, fetch: getProductList},
@@ -26,6 +27,7 @@ define([
             groupSelList: { selList: []},
             productSelList: { selList: []}
         };
+        $scope.datePicker = [];
 
         $scope.initialize = initialize;
         $scope.clear = clear;
@@ -64,7 +66,8 @@ define([
             $scope.vm.searchInfo = {
                 compareType: null,
                 brand: null,
-                promotion: null
+                promotion: null,
+                tags:[]
             };
         }
 
@@ -72,11 +75,16 @@ define([
          * 检索
          */
         function search () {
+            // 默认设置成第一页
+            $scope.vm.groupPageOption.curr = 1;
+            $scope.vm.productPageOption.curr = 1;
             // 对应根据父类目检索
             var catInfo = getCatPath($scope.vm.searchInfo.catId);
             if (catInfo)
                 $scope.vm.searchInfo.catPath = catInfo.catPath;
-            searchAdvanceService.search($scope.vm.searchInfo, $scope.vm.groupPageOption, $scope.vm.productPageOption)
+            else
+                $scope.vm.searchInfo.catPath = null;
+                    searchAdvanceService.search($scope.vm.searchInfo, $scope.vm.groupPageOption, $scope.vm.productPageOption)
                 .then(function (res) {
                     $scope.vm.groupList = res.data.groupList;
                     $scope.vm.groupPageOption.total = res.data.groupListTotal;

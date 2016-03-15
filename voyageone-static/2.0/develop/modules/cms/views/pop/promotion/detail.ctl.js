@@ -11,10 +11,13 @@ define([
         $scope.promotion = {};
         $scope.tejiabao=false;
         $scope.cartList = cartList;
+        $scope.datePicker = [];
+        $scope.isEdit = false;
 
         $scope.initialize  = function () {
             if(items){
                 $scope.promotion = angular.copy(items);
+                $scope.isEdit = $scope.promotion.promotionStatus;
                 if($scope.promotion.tejiabaoId != "0"){
                     $scope.tejiabao=true;
                 }

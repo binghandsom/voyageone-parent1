@@ -8,6 +8,7 @@ define([
 
     function detailController($scope, promotionService, promotionDetailService, notify, $routeParams, $location, alert, $translate, confirm, cRoutes, selectRowsFactory) {
         $scope.promotionOld={};
+        $scope.datePicker = [];
         $scope.vm = {
             "promotionId": $routeParams.promotionId,
             "tabIndex": 0,
@@ -145,6 +146,9 @@ define([
         };
         $scope.cannelPromotionInfo =function(){
             $scope.vm.promotion = _.clone($scope.promotionOld);
+            if($scope.vm.promotion.tejiabaoId != "0"){
+                $scope.vm.promotion.tejiabao=true;
+            }
         };
         $scope.compare = function(data1,data2){
             return _.isEqual(data1, data2)

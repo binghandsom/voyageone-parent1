@@ -207,12 +207,22 @@ public class CmsTaskPictureService extends BaseAppService {
 
             Sheet sheet = book.createSheet();
 
+            Row row = row(sheet, 0);
+
+            cell(row, 0, null).setCellValue("num_iid");
+
+            cell(row, 1, null).setCellValue("商品 Code");
+
+            cell(row, 2, null).setCellValue("状态");
+
+            cell(row, 3, null).setCellValue("结果信息");
+
             // 设置查询类型
             for (int i = 0; i < beatInfoModels.size(); i++) {
 
                 CmsBtBeatInfoModel model = beatInfoModels.get(i);
 
-                Row row = row(sheet, i);
+                row = row(sheet, i + 1);
 
                 cell(row, 0, null).setCellValue(model.getNum_iid());
 
