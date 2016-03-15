@@ -6698,11 +6698,11 @@ a.btn-main:hover {color:#e67e22;text-decoration:underline;}
   padding:4px 0px 4px 0px;
   text-align:center;
 }
-.btn-img-txt a{
+.btn-img-txt,.yellowLink a{
   text-decoration: underline;
   color:#e67e22;
 }
-.btn-img-txt a:hover{
+.btn-img-txt,.yellowLink a:hover{
   color:#282828;
   text-decoration:none;
 }/*
@@ -6812,7 +6812,7 @@ a.btn-main:hover {color:#e67e22;text-decoration:underline;}
   padding: 10px 15px 5px 5px;
 }
 
-.box .box-body {
+.box .box-body,.box .box-body-new {
   color:#42413a;
   background: #fff;
   padding:0px;
@@ -7671,3 +7671,10 @@ input:checked + ol > li {
 .modal-xlg {
   width: 650px;
 }
+
+input[datepicker-popup][readonly] {
+  background-color: white;
+}
+
+ul[uib-datepicker-popup-wrap] table { border: 0; }
+ul[uib-datepicker-popup-wrap] button { border: 0; }

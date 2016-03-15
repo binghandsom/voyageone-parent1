@@ -40,7 +40,7 @@ public class CmsFeedMappingService extends BaseAppService {
     private CmsBtChannelCategoryService cmsBtChannelCategoryService;
 
     @Autowired
-    private com.voyageone.service.impl.cms.CmsFeedMappingService cmsFeedMappingService;
+    private com.voyageone.service.impl.cms.CmsFeedMappingService feedMappingService;
 
     public List<CmsMtFeedCategoryModel> getTopCategories(UserSessionBean user) {
 
@@ -60,7 +60,7 @@ public class CmsFeedMappingService extends BaseAppService {
 
         // 查询 Mapping 信息
 
-        List<CmsBtFeedMappingModel> feedMappingModels = cmsFeedMappingService.getMappingWithoutProps(user.getSelChannelId());
+        List<CmsBtFeedMappingModel> feedMappingModels = feedMappingService.getMappingWithoutProps(user.getSelChannelId());
 
         // 转 Map 供前台查询
 
@@ -138,38 +138,43 @@ public class CmsFeedMappingService extends BaseAppService {
         // 尝试查询 Mapping
 
         CmsBtFeedMappingModel defaultMapping =
-                cmsFeedMappingService.getDefault(user.getSelChannel(), setMappingBean.getFrom());
+                feedMappingService.getDefault(user.getSelChannel(), setMappingBean.getFrom());
 
         CmsBtFeedMappingModel defaultMainMapping =
-                cmsFeedMappingService.getDefaultMain(user.getSelChannel(), setMappingBean.getTo());
+                feedMappingService.getDefaultMain(user.getSelChannel(), setMappingBean.getTo());
 
         boolean canBeDefaultMain =
-                cmsFeedMappingService.isCanBeDefaultMain(user.getSelChannel(), setMappingBean.getTo());
+                feedMappingService.isCanBeDefaultMain(user.getSelChannel(), setMappingBean.getFrom());
 
+        // 如果当前 Feed 类目已经有了默认的 Mapping
+        // 如果当前的默认 Mapping 就是这次给的主类目的话, 就不用继续了
+        // 如果不是当前的主类目, 就清空属性的 Mapping, 更换主类目路径
         if (defaultMapping != null) {
 
             if (!defaultMapping.getScope().getMainCategoryPath().equals(setMappingBean.getTo())) {
                 defaultMapping.getScope().setMainCategoryPath(setMappingBean.getTo());
-                defaultMapping.setDefaultMain(defaultMainMapping != null && canBeDefaultMain ? 0 : 1);
+                defaultMapping.setDefaultMain(defaultMainMapping == null && canBeDefaultMain ? 1 : 0);
                 defaultMapping.setMatchOver(0);
                 defaultMapping.setProps(new ArrayList<>());
 
-                cmsFeedMappingService.setMapping(defaultMapping);
+                feedMappingService.setMapping(defaultMapping);
             }
 
             return defaultMapping;
         }
 
+        // 如果当前 Feed 类目已经 Mapping 到这个主类目, 只是不是默认 Mapping, 则只更新默认标识位
         CmsBtFeedMappingModel mainCategoryMapping =
-                cmsFeedMappingService.getMapping(user.getSelChannel(), setMappingBean.getFrom(), setMappingBean.getTo());
+                feedMappingService.getMapping(user.getSelChannel(), setMappingBean.getFrom(), setMappingBean.getTo());
 
         if (mainCategoryMapping != null) {
             mainCategoryMapping.setDefaultMapping(1);
-            cmsFeedMappingService.setMapping(defaultMainMapping);
+            feedMappingService.setMapping(defaultMainMapping);
 
             return mainCategoryMapping;
         }
 
+        // 如果上面的全部不成立, 就需要全新创建 Mapping
         Scope scope = new Scope();
         scope.setChannelId(user.getSelChannelId());
         scope.setFeedCategoryPath(setMappingBean.getFrom());
@@ -180,9 +185,9 @@ public class CmsFeedMappingService extends BaseAppService {
         defaultMapping.setScope(scope);
         defaultMapping.setMatchOver(0);
         defaultMapping.setDefaultMapping(1);
-        defaultMapping.setDefaultMain(defaultMainMapping != null && canBeDefaultMain ? 0 : 1);
+        defaultMapping.setDefaultMain(defaultMainMapping == null && canBeDefaultMain ? 1 : 0);
 
-        cmsFeedMappingService.setMapping(defaultMapping);
+        feedMappingService.setMapping(defaultMapping);
 
         return defaultMapping;
     }
@@ -215,7 +220,7 @@ public class CmsFeedMappingService extends BaseAppService {
 
         String parentPath = feedCategoryPath.substring(0, feedCategoryPath.lastIndexOf("-"));
 
-        CmsBtFeedMappingModel parentDefaultMapping = cmsFeedMappingService.getDefault(channel, parentPath, false);
+        CmsBtFeedMappingModel parentDefaultMapping = feedMappingService.getDefault(channel, parentPath, false);
 
         if (parentDefaultMapping == null)
             return findParentDefaultMapping(channel, parentPath);
@@ -232,7 +237,7 @@ public class CmsFeedMappingService extends BaseAppService {
 
         feedMappingModel.setMatchOver(feedMappingModel.getMatchOver() == 1 ? 0 : 1);
 
-        WriteResult result = cmsFeedMappingService.setMapping(feedMappingModel);
+        WriteResult result = feedMappingService.setMapping(feedMappingModel);
 
         return result.getN() > 0;
     }
@@ -251,19 +256,34 @@ public class CmsFeedMappingService extends BaseAppService {
      */
     protected CmsBtFeedMappingModel getMapping(SetMappingBean setMappingBean, UserSessionBean user) {
 
-        CmsBtFeedMappingModel feedMappingModel = cmsFeedMappingService.getDefault(user.getSelChannel(),
+        CmsBtFeedMappingModel feedMappingModel = feedMappingService.getDefault(user.getSelChannel(),
                 setMappingBean.getFrom());
 
         if (feedMappingModel == null)
             throw new BusinessException("没找到 Mapping");
 
         if (setMappingBean.isCommon())
-            feedMappingModel = cmsFeedMappingService.getDefaultMain(user.getSelChannel(),
+            feedMappingModel = feedMappingService.getDefaultMain(user.getSelChannel(),
                     feedMappingModel.getScope().getMainCategoryPath());
 
         if (feedMappingModel == null)
             throw new BusinessException("没找到主类目 Mapping");
 
         return feedMappingModel;
+    }
+
+    /**
+     * 根据 params 查找其主数据类目的默认 mapping, 不包含属性 Mapping 信息
+     *
+     * @param params 带有 to (主数据类目路径) 的参数模型
+     * @param user   带有 selChannel 的用户信息
+     * @return mapping 模型
+     */
+    public CmsBtFeedMappingModel getMainMapping(SetMappingBean params, UserSessionBean user) {
+        CmsBtFeedMappingModel model = feedMappingService.getDefaultMain(user.getSelChannel(), params.getTo());
+        if (model == null)
+            return null;
+        model.setProps(null); // 减小 Json 大小
+        return model;
     }
 }

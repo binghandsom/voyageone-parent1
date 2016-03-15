@@ -14,7 +14,7 @@ define(['cms'], function (cms) {
 
             /**
              * 画面传递的上下文
-             * @type {{categories: object[], from: string}}
+             * @type {{categories: object[], from: string, divType: string}}
              */
             this.context = context;
             /**
@@ -32,6 +32,11 @@ define(['cms'], function (cms) {
              * @type {Array}
              */
             this.categoryPath = [];
+            /**
+             * 父节点与子节点之间的区分符,缺省是'>'
+             * @type {String}
+             */
+            this.divType = null;
         }
 
         popCategoryController.prototype = {
@@ -39,8 +44,10 @@ define(['cms'], function (cms) {
              * 初始化时,加载必需数据
              */
             init: function () {
-
                 this.categories = this.context.categories;
+                if (this.context.divType != undefined) {
+                    this.divType = this.context.divType;
+                }
 
                 // 每次加载,都初始化 TOP 为第一级
                 this.categoryPath = [{level: 1, categories: this.categories}];
@@ -55,7 +62,12 @@ define(['cms'], function (cms) {
                 this.selected = category;
 
                 // 查询当前选中的是第几级
-                var level = category.catPath.split('>').length;
+                var level = 0;
+                if (this.divType == null) {
+                    level = category.catPath.split('>').length;
+                } else {
+                    level = category.catPath.split(this.divType).length;
+                }
                 // 获取这一级别的数据
                 var pathItem = this.categoryPath[level];
 

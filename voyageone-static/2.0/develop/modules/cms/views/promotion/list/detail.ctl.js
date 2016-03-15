@@ -146,6 +146,9 @@ define([
         };
         $scope.cannelPromotionInfo =function(){
             $scope.vm.promotion = _.clone($scope.promotionOld);
+            if($scope.vm.promotion.tejiabaoId != "0"){
+                $scope.vm.promotion.tejiabao=true;
+            }
         };
         $scope.compare = function(data1,data2){
             return _.isEqual(data1, data2)

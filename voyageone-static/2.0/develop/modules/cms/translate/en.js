@@ -189,6 +189,7 @@ define(function() {
         "TXT_VERTICAL_TEMPLATE": "Vertical Template",
         "TXT_VERTICAL_REVERT_TEMPLATE": "Vertical Revert Template",
         "TXT_TASK_DETAIL": "Task Detail",
+        "TXT_BEAT_TASK_DETAIL": "Beat Task Detail",
         "TXT_IMPORT_GOOD": "Import Codes",
         "TXT_ADD_MOD_GOOD": "Add/Modify Code",
         "TXT_DOWNLOAD_TASK_DETAIL": "Download Details",
@@ -206,6 +207,11 @@ define(function() {
         "TXT_TIME_START": "Start Time",
         "TXT_TIME_END": "End Time",
         "TXT_TASK_TYPE":"Task Type",
+        "TXT_TASK_DATE":"Task Date",
+        "TXT_TEJIABAO_DETAIL":"Tejiabao Detail",
+        "TXT_PENDING":"Pending",
+        "TXT_SUCCESS":"Success",
+        "TXT_FAIL":"Fail",
 
         "TXT_MSG_SEARCH": "Search...",
         "TXT_MSG_PAGE_IS_BUILDING": "This page is building...",
@@ -249,6 +255,9 @@ define(function() {
         "TXT_MSG_ERROR_BEAT_ITEM": "The data seems to be wrong. Are you sure you want to change the status of it (⊙＿⊙ ?)",
         "TXT_MSG_INPUT_WORD_LENCHK": "you can input",
         "TXT_MSG_INPUT_WORD_LENCHK2": "words",
+        "TXT_MSG_FIELD_VAL_INVALID": "Invalid field (Text) `s value, please follow the prompts to modify.",
+        "TXT_MSG_INPUT_WORD_LENLOWLIMIT": "Please enter at least ",
+        "TXT_MSG_INPUT_WORD_LENLIMIT": "Maximum length limit of character",
 
 
         "BTN_CREATE_TASK": "New Task",
@@ -293,6 +302,7 @@ define(function() {
         "BTN_IMPORT_PROMOTION_FILE": "Import Promotion File",
         "BTN_CHOOSE_FILE": "Choose File",
         "BTN_IMPORT_FILE": "Import File",
+        "BTN_CUSTOMIZE_COLUMNS": "custmize columns",
 
         // 枚举 com.voyageone.cms.enums.BeatFlag 的翻译
         "STOP": "Stop",

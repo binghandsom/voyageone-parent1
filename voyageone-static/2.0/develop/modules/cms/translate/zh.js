@@ -189,6 +189,7 @@ define(function(){
         "TXT_VERTICAL_TEMPLATE": "竖图模板",
         "TXT_VERTICAL_REVERT_TEMPLATE": "竖图还原模板",
         "TXT_TASK_DETAIL": "任务明细一览",
+        "TXT_BEAT_TASK_DETAIL": "价格披露任务明细",
         "TXT_IMPORT_GOOD": "导入商品",
         "TXT_ADD_MOD_GOOD": "添加/修改 商品",
         "TXT_DOWNLOAD_TASK_DETAIL": "下载任务明细",
@@ -206,6 +207,11 @@ define(function(){
         "TXT_TIME_START": "开始时间",
         "TXT_TIME_END": "结束时间",
         "TXT_TASK_TYPE":"任务类型",
+        "TXT_TASK_DATE":"任务时间",
+        "TXT_TEJIABAO_DETAIL":"特价宝明细一览",
+        "TXT_PENDING":"等待",
+        "TXT_SUCCESS":"成功",
+        "TXT_FAIL":"失败",
 
 
         "TXT_MSG_SEARCH": "检索...",
@@ -250,6 +256,9 @@ define(function(){
         "TXT_MSG_ERROR_BEAT_ITEM": "这个任务的商品信息好像有问题? 你确定要修改它的状态?",
         "TXT_MSG_INPUT_WORD_LENCHK": "你还可以输入",
         "TXT_MSG_INPUT_WORD_LENCHK2": "个文字",
+        "TXT_MSG_FIELD_VAL_INVALID": "属性(字段)的值无效, 请根据提示修改.",
+        "TXT_MSG_INPUT_WORD_LENLOWLIMIT": "请至少输入",
+        "TXT_MSG_INPUT_WORD_LENLIMIT": "已经达到最大长度字符数限制",
 
 
         "BTN_CREATE_TASK": "新建任务",
@@ -294,6 +303,7 @@ define(function(){
         "BTN_IMPORT_PROMOTION_FILE": "导入活动文件",
         "BTN_CHOOSE_FILE": "选择文件",
         "BTN_IMPORT_FILE": "Import File",
+        "BTN_CUSTOMIZE_COLUMNS": "自定义列设置",
 
         // 枚举 com.voyageone.cms.enums.BeatFlag 的翻译
         "STOP": "已停止",

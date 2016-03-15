@@ -38,8 +38,10 @@ public class TranslationController extends CmsController{
         translateTaskBeanInfo.put("taskInfo",taskBean);
         translateTaskBeanInfo.put("sortFieldOptions",feedPropsTranslateService.getSortFieldOptions());
 
-        return success(translateTaskBeanInfo);
+        // 获取翻译时标题和描述的长度设置
+        translateTaskBeanInfo.put("lenSetInfo",feedPropsTranslateService.getTransLenSet(channelId));
 
+        return success(translateTaskBeanInfo);
     }
 
 
@@ -64,40 +66,33 @@ public class TranslationController extends CmsController{
 
     }
 
+    // 保存翻译内容
     @RequestMapping(CmsUrlConstants.TRANSLATION.TASKS.SAVE_TASK)
     public AjaxResponse doSaveTask(@RequestBody ProductTranslationBean requestBean){
-
-        feedPropsTranslateService.verifyParameter(requestBean);
+//        feedPropsTranslateService.verifyParameter(requestBean);
 
         String channelId = getUser().getSelChannelId();
         String userName = getUser().getUserName();
-        String modified = requestBean.getModifiedTime();
 
-        TranslateTaskBean taskBean = feedPropsTranslateService.SaveTask(channelId,userName,modified,requestBean);
+        TranslateTaskBean taskBean = feedPropsTranslateService.saveTask(channelId, userName, requestBean, "0");
 
         Map<String,Object> updateInfo = new HashMap<>();
-
         updateInfo.put("taskInfo",taskBean);
-
         return success(updateInfo);
-
     }
 
+    // 保存并提交翻译内容（完成翻译任务）
     @RequestMapping(CmsUrlConstants.TRANSLATION.TASKS.SUBMIT_TASK)
     public AjaxResponse doSubmitTask(@RequestBody ProductTranslationBean requestBean){
-
         feedPropsTranslateService.verifyParameter(requestBean);
 
         String channelId = getUser().getSelChannelId();
         String userName = getUser().getUserName();
-        String modified = requestBean.getModifiedTime();
 
-        TranslateTaskBean taskBean = feedPropsTranslateService.submitTask(channelId,userName,modified,requestBean);
+        TranslateTaskBean taskBean = feedPropsTranslateService.saveTask(channelId, userName, requestBean, "1");
 
         Map<String,Object> updateInfo = new HashMap<>();
-
         updateInfo.put("taskInfo",taskBean);
-
         return success(updateInfo);
     }
 
