@@ -14,10 +14,10 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 public class CommSequenceMongoServiceTest {
 
     @Autowired
-    CommSequenceMongoService commSequenceMongoService;
+    MongoSequenceService commSequenceMongoService;
 
     @Test
     public void testGetNextSequence() throws Exception {
-        System.out.println(commSequenceMongoService.getNextSequence(CommSequenceMongoService.CommSequenceName.CMS_BT_PRODUCT_PROD_ID));
+        System.out.println(commSequenceMongoService.getNextSequence(MongoSequenceService.CommSequenceName.CMS_BT_PRODUCT_PROD_ID));
     }
 }

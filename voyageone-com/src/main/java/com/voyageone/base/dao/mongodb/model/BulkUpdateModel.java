@@ -1,6 +1,6 @@
 package com.voyageone.base.dao.mongodb.model;
 
-import java.util.HashMap;
+import java.util.Map;
 
 /**
  * BulkUpdateModel
@@ -9,22 +9,22 @@ import java.util.HashMap;
  * @since 2.0.0
  */
 public class BulkUpdateModel {
-    HashMap<String, Object> updateMap;
-    HashMap<String, Object> queryMap;
+    Map<String, Object> updateMap;
+    Map<String, Object> queryMap;
 
-    public HashMap<String, Object> getUpdateMap() {
+    public Map<String, Object> getUpdateMap() {
         return updateMap;
     }
 
-    public void setUpdateMap(HashMap<String, Object> updateMap) {
+    public void setUpdateMap(Map<String, Object> updateMap) {
         this.updateMap = updateMap;
     }
 
-    public HashMap<String, Object> getQueryMap() {
+    public Map<String, Object> getQueryMap() {
         return queryMap;
     }
 
-    public void setQueryMap(HashMap<String, Object> queryMap) {
+    public void setQueryMap(Map<String, Object> queryMap) {
         this.queryMap = queryMap;
     }
 }

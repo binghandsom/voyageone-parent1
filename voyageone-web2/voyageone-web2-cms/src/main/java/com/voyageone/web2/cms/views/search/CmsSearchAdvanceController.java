@@ -2,18 +2,19 @@ package com.voyageone.web2.cms.views.search;
 
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
 import com.voyageone.web2.cms.bean.search.index.CmsSearchInfoBean;
 import com.voyageone.web2.cms.views.channel.CmsFeedCustPropService;
 import com.voyageone.web2.core.bean.UserSessionBean;
-import com.voyageone.web2.sdk.api.response.ProductsGetResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -52,14 +53,16 @@ public class CmsSearchAdvanceController extends CmsController {
         Map<String, Object> resultBean = new HashMap<>();
 
         // 获取product列表
-        ProductsGetResponse productList = searchIndexService.GetProductList(params, getUser(), getCmsSession());
-        resultBean.put("productList", productList.getProducts());
-        resultBean.put("productListTotal", productList.getTotalCount());
+        List<CmsBtProductModel> productList = searchIndexService.getProductList(params, getUser(), getCmsSession());
+        resultBean.put("productList", productList);
+        long productListTotal = searchIndexService.getProductCnt(params, getUser(), getCmsSession());
+        resultBean.put("productListTotal", productListTotal);
 
         // 获取group列表
-        ProductsGetResponse groupList = searchIndexService.getGroupList(params, getUser(), getCmsSession());
-        resultBean.put("groupList", groupList.getProducts());
-        resultBean.put("groupListTotal", groupList.getTotalCount());
+        List<CmsBtProductModel> groupList = searchIndexService.getGroupList(params, getUser(), getCmsSession());
+        resultBean.put("groupList", groupList);
+        long groupListTotal = searchIndexService.getGroupCnt(params, getUser(), getCmsSession());
+        resultBean.put("groupListTotal", groupListTotal);
 
         // 返回用户信息
         return success(resultBean);
@@ -75,9 +78,11 @@ public class CmsSearchAdvanceController extends CmsController {
 
         Map<String, Object> resultBean = new HashMap<>();
 
-        ProductsGetResponse groupList = searchIndexService.getGroupList(params, getUser(), getCmsSession());
-        resultBean.put("groupList", groupList.getProducts());
-        resultBean.put("groupListTotal", groupList.getTotalCount());
+        // 获取group列表
+        List<CmsBtProductModel> groupList = searchIndexService.getGroupList(params, getUser(), getCmsSession());
+        resultBean.put("groupList", groupList);
+        long groupListTotal = searchIndexService.getGroupCnt(params, getUser(), getCmsSession());
+        resultBean.put("groupListTotal", groupListTotal);
 
         // 返回用户信息
         return success(resultBean);
@@ -93,9 +98,11 @@ public class CmsSearchAdvanceController extends CmsController {
 
         Map<String, Object> resultBean = new HashMap<>();
 
-        ProductsGetResponse productList = searchIndexService.GetProductList(params, getUser(), getCmsSession());
-        resultBean.put("productList", productList.getProducts());
-        resultBean.put("productListTotal", productList.getTotalCount());
+        // 获取product列表
+        List<CmsBtProductModel> productList = searchIndexService.getProductList(params, getUser(), getCmsSession());
+        resultBean.put("productList", productList);
+        long productListTotal = searchIndexService.getProductCnt(params, getUser(), getCmsSession());
+        resultBean.put("productListTotal", productListTotal);
 
         // 返回用户信息
         return success(resultBean);

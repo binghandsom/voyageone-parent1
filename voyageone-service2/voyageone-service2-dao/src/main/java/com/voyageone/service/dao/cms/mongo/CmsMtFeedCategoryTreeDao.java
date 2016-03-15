@@ -16,12 +16,7 @@ import org.springframework.stereotype.Repository;
  * @since 2.0.0
  */
 @Repository
-public class CmsMtFeedCategoryTreeDao extends BaseMongoDao {
-
-    @Override
-    public Class getEntityClass() {
-        return CmsMtFeedCategoryTreeModel.class;
-    }
+public class CmsMtFeedCategoryTreeDao extends BaseMongoDao<CmsMtFeedCategoryTreeModel> {
 
     /**
      * 查询 Feed 类目

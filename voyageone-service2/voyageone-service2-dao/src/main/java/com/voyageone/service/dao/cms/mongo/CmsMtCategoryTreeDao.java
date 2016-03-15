@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Repository
-public class CmsMtCategoryTreeDao extends BaseMongoDao {
+public class CmsMtCategoryTreeDao extends BaseMongoDao<CmsMtCategoryTreeModel> {
 
     public static Map<String, CmsMtCategoryTreeModel> cache = new HashMap<>();
 
@@ -27,11 +27,6 @@ public class CmsMtCategoryTreeDao extends BaseMongoDao {
         } else {
             cache.put(key, cacheObj);
         }
-    }
-
-    @Override
-    public Class getEntityClass() {
-        return CmsMtCategoryTreeModel.class;
     }
 
     /**

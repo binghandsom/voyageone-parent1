@@ -13,82 +13,71 @@ import java.util.List;
  * @version 2.0.0
  * @since 2.0.0
  */
-public abstract class BaseMongoPartDao extends BaseJomgoDao {
+public abstract class BaseMongoPartDao<T> extends BaseJomgoDao<T> {
 
     public DBCollection getDBCollection(String channelId) {
         String collectionName = mongoTemplate.getCollectionName(this.collectionName, channelId);
         return mongoTemplate.getDBCollection(collectionName);
     }
 
-    @SuppressWarnings("unchecked")
-    public <T> T selectOne(String channelId) {
+    public T selectOne(String channelId) {
         String collectionName = mongoTemplate.getCollectionName(this.collectionName, channelId);
-        return mongoTemplate.findOne((Class<T>) entityClass, collectionName);
+        return mongoTemplate.findOne(entityClass, collectionName);
     }
 
-    @SuppressWarnings("unchecked")
-    public <T> T selectOneWithQuery(String strQuery, String channelId) {
+    public T selectOneWithQuery(String strQuery, String channelId) {
         String collectionName = mongoTemplate.getCollectionName(this.collectionName, channelId);
-        return mongoTemplate.findOne(strQuery, (Class<T>) entityClass, collectionName);
+        return mongoTemplate.findOne(strQuery, entityClass, collectionName);
     }
 
-    @SuppressWarnings("unchecked")
-    public <T> T selectOneWithQuery(JomgoQuery queryObject, String channelId) {
+    public T selectOneWithQuery(JomgoQuery queryObject, String channelId) {
         String collectionName = mongoTemplate.getCollectionName(this.collectionName, channelId);
-        return mongoTemplate.findOne(queryObject, (Class<T>) entityClass, collectionName);
+        return mongoTemplate.findOne(queryObject, entityClass, collectionName);
     }
 
-    @SuppressWarnings("unchecked")
-    public <T> List<T> selectAll(String channelId) {
+    public List<T> selectAll(String channelId) {
         String collectionName = mongoTemplate.getCollectionName(this.collectionName, channelId);
-        return mongoTemplate.findAll((Class<T>) entityClass, collectionName);
+        return mongoTemplate.findAll(entityClass, collectionName);
     }
 
-    @SuppressWarnings("unchecked")
-    public <T> Iterator<T> selectCursorAll(String channelId) {
+    public Iterator<T> selectCursorAll(String channelId) {
         String collectionName = mongoTemplate.getCollectionName(this.collectionName, channelId);
-        return mongoTemplate.findCursorAll((Class<T>) entityClass, collectionName);
+        return mongoTemplate.findCursorAll(entityClass, collectionName);
     }
 
-    @SuppressWarnings("unchecked")
-    public <T> List<T> select(final String strQuery, String channelId) {
+    public List<T> select(final String strQuery, String channelId) {
         String collectionName = mongoTemplate.getCollectionName(this.collectionName, channelId);
-        return mongoTemplate.find(strQuery, null, (Class<T>) entityClass, collectionName);
+        return mongoTemplate.find(strQuery, null, entityClass, collectionName);
     }
 
-    @SuppressWarnings("unchecked")
-    public <T> List<T> selectWithProjection(final String strQuery, String projection, String channelId) {
+    public List<T> selectWithProjection(final String strQuery, String projection, String channelId) {
         String collectionName = mongoTemplate.getCollectionName(this.collectionName, channelId);
-        return mongoTemplate.find(strQuery, projection, (Class<T>) entityClass, collectionName);
+        return mongoTemplate.find(strQuery, projection, entityClass, collectionName);
     }
 
-    @SuppressWarnings("unchecked")
-    public <T> List<T> select(JomgoQuery queryObject, String channelId) {
+    public List<T> select(JomgoQuery queryObject, String channelId) {
         String collectionName = mongoTemplate.getCollectionName(this.collectionName, channelId);
-        return mongoTemplate.find(queryObject, (Class<T>) entityClass, collectionName);
+        return mongoTemplate.find(queryObject, entityClass, collectionName);
     }
 
-    @SuppressWarnings("unchecked")
-    public <T> Iterator<T> selectCursor(final String strQuery, String channelId) {
+    public Iterator<T> selectCursor(final String strQuery, String channelId) {
         String collectionName = mongoTemplate.getCollectionName(this.collectionName, channelId);
-        return mongoTemplate.findCursor(strQuery, null, (Class<T>) entityClass, collectionName);
+        return mongoTemplate.findCursor(strQuery, null, entityClass, collectionName);
     }
 
-    @SuppressWarnings("unchecked")
-    public <T> Iterator<T> selectCursor(JomgoQuery queryObject, String channelId) {
+    public Iterator<T> selectCursor(JomgoQuery queryObject, String channelId) {
         String collectionName = mongoTemplate.getCollectionName(this.collectionName, channelId);
-        return mongoTemplate.findCursor(queryObject, (Class<T>) entityClass, collectionName);
+        return mongoTemplate.findCursor(queryObject, entityClass, collectionName);
     }
 
-    @SuppressWarnings("unchecked")
-    public <T> T selectById(String id, String channelId) {
+    public T selectById(String id, String channelId) {
         String collectionName = mongoTemplate.getCollectionName(this.collectionName, channelId);
-        return mongoTemplate.findById(id, (Class<T>) entityClass, collectionName);
+        return mongoTemplate.findById(id, entityClass, collectionName);
     }
 
-    public <T> T findAndModify(JomgoUpdate updateObject, String channelId) {
+    public T findAndModify(JomgoUpdate updateObject, String channelId) {
         String collectionName = mongoTemplate.getCollectionName(this.collectionName, channelId);
-        return mongoTemplate.findAndModify(updateObject, (Class<T>) entityClass, collectionName);
+        return mongoTemplate.findAndModify(updateObject, entityClass, collectionName);
     }
 
     public long count(String channelId) {
