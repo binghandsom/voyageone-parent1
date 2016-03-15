@@ -94,6 +94,11 @@ public class CmsFieldEditService extends BaseAppService {
 //            if (!"status".equals(prop_id) && CmsConstants.productStatus.APPROVED.equals(productModel.getFields().getStatus()))
 //                productModel.getFields().setStatus(CmsConstants.productStatus.READY);
 
+            // 处理如果是批量更新status,如果该产品以前就是approved,则不做处理
+            if ("status".equals(prop_id)
+                    && CmsConstants.productStatus.APPROVED.equals(productModel.getFields().getStatus()))
+                break;
+
             if ("platformActive".equals(prop_id)) {
                 CmsBtProductModel_Group group = productModel.getGroups();
                 for(CmsBtProductModel_Group_Platform platform : group.getPlatforms()) {

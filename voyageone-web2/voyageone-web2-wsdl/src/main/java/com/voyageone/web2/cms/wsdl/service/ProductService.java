@@ -758,11 +758,15 @@ public class ProductService extends BaseService {
         if (befStatus != null && aftStatus != null) {
             boolean isNeed = false;
             // 从其他状态转为Pending
-            if (befStatus != CmsConstants.ProductStatus.Approved && aftStatus == CmsConstants.ProductStatus.Approved) {
-                isNeed = true;
-                // 从Pending转为其他状态
-                // 在Pending下变更了
-            } else if (befStatus == CmsConstants.ProductStatus.Approved) {
+//            if (befStatus != CmsConstants.ProductStatus.Approved && aftStatus == CmsConstants.ProductStatus.Approved) {
+//                isNeed = true;
+//                // 从Pending转为其他状态
+//                // 在Pending下变更了
+//            } else if (befStatus == CmsConstants.ProductStatus.Approved) {
+//                isNeed = true;
+//            }
+            // 只有该产品的aftStatus为Approved的时候才更新workload表-edward
+            if (aftStatus == CmsConstants.ProductStatus.Approved) {
                 isNeed = true;
             }
 
