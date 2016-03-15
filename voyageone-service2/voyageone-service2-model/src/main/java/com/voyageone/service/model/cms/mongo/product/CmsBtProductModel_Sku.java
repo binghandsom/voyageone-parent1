@@ -49,7 +49,7 @@ public class CmsBtProductModel_Sku extends BaseMongoMap<String, Object> {
     }
 
     public Double getPriceMsrp() {
-        return getAttribute("priceMsrp");
+        return getDoubleAttribute("priceMsrp");
     }
 
     public void setPriceMsrp(Double priceMsrp) {
@@ -57,7 +57,7 @@ public class CmsBtProductModel_Sku extends BaseMongoMap<String, Object> {
     }
 
     public Double getPriceRetail() {
-        return getAttribute("priceRetail");
+        return getDoubleAttribute("priceRetail");
     }
 
     public void setPriceRetail(Double priceRetail) {
@@ -65,13 +65,7 @@ public class CmsBtProductModel_Sku extends BaseMongoMap<String, Object> {
     }
 
     public Double getPriceSale() {
-        // 注: 有时候这个值在数据库里被读出来会变成int型, 为了避免错误, 增加了转换
-        Object result = getAttribute("priceSale");
-        if (result == null) {
-            return null;
-        } else {
-            return Double.parseDouble(result.toString());
-        }
+        return getDoubleAttribute("priceSale");
     }
 
     public void setPriceSale(Double priceSale) {

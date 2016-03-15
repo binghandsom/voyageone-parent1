@@ -59,7 +59,7 @@ public class CmsPlatformProductImportService extends BaseTaskService {
 
     @Override
     public String getTaskName() {
-        return "CmsPlatformProductImportService";
+        return "CmsPlatformProductImport";
     }
 
     @Override
@@ -300,7 +300,6 @@ public class CmsPlatformProductImportService extends BaseTaskService {
             // 英文标题
             cmsFields.setProductNameEn(oldCmsDataBean.getTitle_en());
             // 中文标题
-            cmsFields.setProductNameCn(oldCmsDataBean.getTitle_cn());
             cmsFields.setLongTitle(oldCmsDataBean.getTitle_cn());
             // 英文描述
             cmsFields.setLongDesEn(oldCmsDataBean.getDescription_en());
@@ -350,9 +349,11 @@ public class CmsPlatformProductImportService extends BaseTaskService {
                 switch (status) {
                     case "0": // 出售中
                         platform.setPlatformStatus(CmsConstants.PlatformStatus.Onsale);
+                        platform.setPlatformActive(CmsConstants.PlatformActive.Onsale);
                         break;
                     default: // 定时上架 或者 仓库中
                         platform.setPlatformStatus(CmsConstants.PlatformStatus.Instock);
+                        platform.setPlatformActive(CmsConstants.PlatformActive.Instock);
                 }
 
                 // 更新group
