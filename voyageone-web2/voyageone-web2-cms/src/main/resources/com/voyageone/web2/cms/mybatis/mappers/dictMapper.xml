@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.voyageone.web2.cms.sql">
     <select id="cms_mt_dict_selectByCondition" resultType="com.voyageone.web2.cms.model.CmsMtDictModel" parameterType="com.voyageone.web2.cms.bean.system.dictionary.CmsDictionaryIndexBean">
-        SELECT
+        SELECT DISTINCT
         a.id,
         a.order_channel_id,
         a.cart_id,
@@ -30,7 +30,7 @@
     </select>
 
     <select id="cms_mt_dict_selectAllCount" resultType="int" parameterType="com.voyageone.web2.cms.bean.system.dictionary.CmsDictionaryIndexBean">
-        SELECT count(1)
+        SELECT count(DISTINCT a.id)
         FROM voyageone_cms2.cms_mt_dict a
         INNER JOIN Synship.com_mt_value_channel b
         ON a.cart_id = b.value and b.type_id = '53' and b.lang_id = #{lang}

@@ -12,7 +12,7 @@
                     <span>&nbsp;{{'TXT_FEED_ATTRIBUTE' | translate}}</span>
                 </label>
                 <div class="col-sm-6" ng-if="ctrl.mappingSetting.type === 'propFeed'">
-                    <select class="form-control" title="Feed Attributes"
+                    <select search-contains="true" chosen class="form-control" title="Feed Attributes"
                             ng-options="k as k for (k,v) in ctrl.feedAttributes"
                             ng-model="ctrl.field.value"></select>
                 </div>
