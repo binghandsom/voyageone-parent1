@@ -14,6 +14,7 @@ import com.voyageone.service.impl.cms.TagService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.web2.base.BaseAppService;
+import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsConstants;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.cms.bean.search.index.CmsSearchInfoBean;
@@ -25,6 +26,8 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -413,7 +416,7 @@ public class CmsSearchAdvanceService extends BaseAppService{
         }
 
         // 获取promotion
-        if (searchValue.getTags().length > 0) {
+        if (searchValue.getTags() != null && searchValue.getTags().length > 0) {
             result.append(MongoUtils.splicingValue("tags", searchValue.getTags()));
             result.append(",");
         }
@@ -596,5 +599,36 @@ public class CmsSearchAdvanceService extends BaseAppService{
     // 取得自定义显示列设置
     public List<Map<String, Object>> getCustColumns() {
         return  cmsMtCommonPropDao.getCustColumns();
+    }
+
+    // 取得用户自定义显示列设置
+    public Map<String, Object> getUserCustColumns(int userId) {
+        Map<String, Object> rsMap = new HashMap<String, Object>();
+
+        List<Map<String, Object>> rsList = cmsMtCommonPropDao.getUserCustColumns(userId);
+        if (rsList == null || rsList.isEmpty()) {
+            rsMap.put("custAttrList", new String[]{});
+            rsMap.put("commList", new String[]{});
+            return rsMap;
+        }
+        String custAttrStr = org.apache.commons.lang3.StringUtils.trimToEmpty((String) rsList.get(0).get("cfg_val1"));
+        String commStr = org.apache.commons.lang3.StringUtils.trimToEmpty((String) rsList.get(0).get("cfg_val2"));
+        rsMap.put("custAttrList", custAttrStr.split(","));
+        rsMap.put("commList", commStr.split(","));
+        return rsMap;
+    }
+
+    // 保存用户自定义显示列设置
+    public void saveCustColumnsInfo(int userId, String userName, String param1, String param2) {
+        List<Map<String, Object>> rsList = cmsMtCommonPropDao.getUserCustColumns(userId);
+        int rs = 0;
+        if (rsList == null || rsList.isEmpty()) {
+            rs = cmsMtCommonPropDao.addUserCustColumns(userId, userName, param1, param2);
+        } else {
+            rs = cmsMtCommonPropDao.saveUserCustColumns(userId, userName, param1, param2);
+        }
+        if (rs == 0) {
+            logger.error("保存设置不成功 userid=" + userId);
+        }
     }
 }

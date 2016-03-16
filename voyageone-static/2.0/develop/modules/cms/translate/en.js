@@ -212,9 +212,8 @@ define(function() {
         "TXT_PENDING":"Pending",
         "TXT_SUCCESS":"Success",
         "TXT_FAIL":"Fail",
-        "TXT_BASE_ATTRIBUTE": "Base Attribute",
-        "TXT_PRICE_ATTRIBUTE": "Price Attribute",
-        "TXT_SALES_ATTRIBUTE": "Sales Attribute",
+        "TXT_BASE_ATTRIBUTE": "Common Attribute",
+        "TXT_CUST_ATTRIBUTE": "Custmize Attribute",
 
 
         "TXT_MSG_SEARCH": "Search...",

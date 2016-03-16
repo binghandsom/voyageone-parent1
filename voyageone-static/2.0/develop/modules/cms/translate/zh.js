@@ -212,9 +212,8 @@ define(function(){
         "TXT_PENDING":"等待",
         "TXT_SUCCESS":"成功",
         "TXT_FAIL":"失败",
-        "TXT_BASE_ATTRIBUTE": "基础属性",
-        "TXT_PRICE_ATTRIBUTE": "价格属性",
-        "TXT_SALES_ATTRIBUTE": "销售属性",
+        "TXT_BASE_ATTRIBUTE": "共通属性",
+        "TXT_CUST_ATTRIBUTE": "自定义属性",
 
 
         "TXT_MSG_SEARCH": "检索...",

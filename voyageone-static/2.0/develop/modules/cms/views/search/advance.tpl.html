@@ -49,6 +49,55 @@
 								<div class="input-group col-sm-4"><input type="text" class="form-control" ng-model="vm.searchInfo.priceEnd" ng-pattern="/^(\d+)(\.[0-9]{0,2})?$/"></div>
 							</div>
 						</div><!-- .form-group -->
+						<div class="form-group">
+							<label class="col-sm-3 control-label" translate="TXT_CUST_QUERY_ATTR"></label>
+							<div class="col-sm-8 form-inline">
+								<select class="form-control">
+									<option>1</option>
+									<option>2</option>
+									<option>3</option>
+								</select>
+								<select class="form-control">
+									<option><&nbsp;=</option>
+									<option>>&nbsp;=</option>
+									<option>=&nbsp;=</option>
+								</select>
+								<div class="input-group col-sm-5"><input type="text" class="form-control"></div>
+								<button class="btn btn-success"><i class="fa fa-plus"></i></button>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label"></label>
+							<div class="col-sm-8 form-inline">
+								<select class="form-control">
+									<option>1</option>
+									<option>2</option>
+									<option>3</option>
+								</select>
+								<select class="form-control">
+									<option><&nbsp;=</option>
+									<option>>&nbsp;=</option>
+									<option>=&nbsp;=</option>
+								</select>
+								<div class="input-group col-sm-5"><input type="text" class="form-control"></div>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label"></label>
+							<div class="col-sm-8 form-inline">
+								<select class="form-control">
+									<option>1</option>
+									<option>2</option>
+									<option>3</option>
+								</select>
+								<select class="form-control">
+									<option><&nbsp;=</option>
+									<option>>&nbsp;=</option>
+									<option>=&nbsp;=</option>
+								</select>
+								<div class="input-group col-sm-5"><input type="text" class="form-control"></div>
+							</div>
+						</div>
 					</div>
 				</div>
 				<div class="col-sm-4">
@@ -232,12 +281,7 @@
 		<tabset class="tab-container vo_nav-tabs">
 			<!--right-btn-->
 			<div class="form-inline m-b-xs pull-right" ng-controller="popupCtrl">
-				<!--<button class="btn btn-vo"-->
-						<!--ng-click="" >-->
-					<!--<i class="fa fa-table"></i>&nbsp;<span translate="BTN_CUSTOMIZE_COLUMNS"></span>-->
-				<!--</button>-->
-				<!-- TODO 暂时未实现-->
-				<!--<button class="btn btn-default" ng-click="openCustomBaseProperty('lg')"><i class="fa fa-cog"></i>&nbsp;{{'BTN_CUSTOMIZE_COLUMNS' | translate}}</button>-->
+				<button class="btn btn-default" ng-click="openCustomColumn('lg','md')"><i class="fa fa-cog"></i>&nbsp;{{'BTN_CUSTOMIZE_COLUMNS' | translate}}</button>
 				<div class="btn-group" uib-dropdown>
 					<button type="button" class="btn btn-default" ng-disabled="vm.masterData.promotionList.length < 0" uib-dropdown-toggle>
 						<i class="fa fa-arrow-circle-right"></i>&nbsp;{{'BTN_ADD_TO_PROMOTION' | translate}}&nbsp;<span class="caret"></span>
@@ -354,6 +398,25 @@
 											</ul>
 										</div>
 									</small>
+								</td>
+							</tr>
+							<tr ng-class="{'table_bg_green_mint': groupInfo.groups.platforms[0].publishTime}">
+								<td colspan="8">
+									<span>
+										<img class="thumb-sm-search pull-left m-r" alt="51A0HC13E1-00LCNB0" ng-src="http://image.sneakerhead.com/is/image/sneakerhead/51a0hc13e1-00lcnb0_main_1" src="http://image.sneakerhead.com/is/image/sneakerhead/51a0hc13e1-00lcnb0_main_1">
+									</span>
+									<span>
+										<img class="thumb-sm-search pull-left m-r" alt="51A0HC13E1-00LCNB0" ng-src="http://image.sneakerhead.com/is/image/sneakerhead/51a0hc13e1-00lcnb0_main_1" src="http://image.sneakerhead.com/is/image/sneakerhead/51a0hc13e1-00lcnb0_main_1">
+									</span>
+									<span>
+										<img class="thumb-sm-search pull-left m-r" alt="51A0HC13E1-00LCNB0" ng-src="http://image.sneakerhead.com/is/image/sneakerhead/51a0hc13e1-00lcnb0_main_1" src="http://image.sneakerhead.com/is/image/sneakerhead/51a0hc13e1-00lcnb0_main_1">
+									</span>
+									<span>
+										<img class="thumb-sm-search pull-left m-r" alt="51A0HC13E1-00LCNB0" ng-src="http://image.sneakerhead.com/is/image/sneakerhead/51a0hc13e1-00lcnb0_main_1" src="http://image.sneakerhead.com/is/image/sneakerhead/51a0hc13e1-00lcnb0_main_1">
+									</span>
+									<span>
+										<img class="thumb-sm-search pull-left m-r" alt="51A0HC13E1-00LCNB0" ng-src="http://image.sneakerhead.com/is/image/sneakerhead/51a0hc13e1-00lcnb0_main_1" src="http://image.sneakerhead.com/is/image/sneakerhead/51a0hc13e1-00lcnb0_main_1">
+									</span>
 								</td>
 							</tr>
 							</tbody>
