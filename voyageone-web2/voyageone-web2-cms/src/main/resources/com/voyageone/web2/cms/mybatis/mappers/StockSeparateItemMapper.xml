@@ -3,6 +3,7 @@
 <mapper namespace="com.voyageone.web2.cms.sql">
     <select id="select_stock_separate_item" resultType="HashMap" parameterType="HashMap">
         select
+            task_id,
             product_model,
             product_code,
             sku,
@@ -13,12 +14,12 @@
             property4,
             qty,
             separate_qty,
-            status,
-            t2.name as status_name
-        from ${tableName} t1
-        left outer join (select value,name from com_mt_value where type_id= '63' and lang_id = #{lang}) t2
-        on t1.status = t2.value
-        where task_id = #{taskId}
+            status
+        from voyageone_cms2.cms_bt_stock_separate_item${tableName}
+        where 1=1
+        <if test="taskId !=null">
+            and task_id = #{taskId}
+        </if>
         <if test="sku !=null">
             and sku = #{sku}
         </if>
@@ -32,7 +33,9 @@
         <if test="cartId !=null">
             and cart_id = #{cartId}
         </if>
-        order by sku,cart_id
+        <if test="status !=null">
+            and status = #{status}
+        </if>
     </select>
 
     <select id="select_stock_separate_item_by_sql_object" resultType="Object" parameterType="HashMap">
@@ -43,27 +46,27 @@
         ${sql}
     </select>
 
-    <select id="select_stock_separate_item_cnt" resultType="int" parameterType="HashMap">
-         select count(*)
-            from   voyageone_cms2.cms_bt_stock_separate_item
-            where task_id = #{taskId}
-            <if test="status !=null">
-                and status = #{status}
-            </if>
-    </select>
+    <!--<select id="select_stock_separate_item_cnt" resultType="int" parameterType="HashMap">-->
+         <!--select count(*)-->
+            <!--from   voyageone_cms2.cms_bt_stock_separate_item-->
+            <!--where task_id = #{taskId}-->
+            <!--<if test="status !=null">-->
+                <!--and status = #{status}-->
+            <!--</if>-->
+    <!--</select>-->
 
-    <select id="select_stock_separate_success_qty" resultType="Object" parameterType="HashMap">
-        select sum(separate_qty)
-        from   voyageone_cms2.cms_bt_stock_separate_item
-        where sku = #{sku}
-        and status = #{status}
-        <if test="taskId !=null">
-            and task_id = #{taskId}
-        </if>
-        <if test="cartId !=null">
-            and cart_id = #{cartId}
-        </if>
-    </select>
+    <!--<select id="select_stock_separate_success_qty" resultType="Object" parameterType="HashMap">-->
+        <!--select sum(separate_qty)-->
+        <!--from   voyageone_cms2.cms_bt_stock_separate_item-->
+        <!--where sku = #{sku}-->
+        <!--and status = #{status}-->
+        <!--<if test="taskId !=null">-->
+            <!--and task_id = #{taskId}-->
+        <!--</if>-->
+        <!--<if test="cartId !=null">-->
+            <!--and cart_id = #{cartId}-->
+        <!--</if>-->
+    <!--</select>-->
 
     <select id="select_stock_separate_item_history_cnt" resultType="int" parameterType="HashMap">
          select count(*)

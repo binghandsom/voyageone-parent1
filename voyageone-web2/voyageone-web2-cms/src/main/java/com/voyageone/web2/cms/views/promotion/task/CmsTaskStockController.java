@@ -327,9 +327,9 @@ public class CmsTaskStockController extends CmsController {
         // 任务id对应的库存隔离数据是否移到history表
         boolean historyFlg = cmsTaskStockService.isHistoryExist(param);
         if (historyFlg) {
-            param.put("tableName", "voyageone_cms2.cms_bt_stock_separate_item_history");
+            param.put("tableNameSuffix", "_history");
         } else {
-            param.put("tableName", "voyageone_cms2.cms_bt_stock_separate_item");
+            param.put("tableNameSuffix", "");
         }
 
         // 取得库存隔离数据各种状态的数量
@@ -406,30 +406,16 @@ public class CmsTaskStockController extends CmsController {
             resultBean.put("platformList", param.get("platformList"));
         }
 
-        // 库存隔离明细sku总数
+        // 库存隔离明细sku总数(分页的明细总数)
         resultBean.put("skuNum", cntAll/((List<Map<String, Object>>)param.get("platformList")).size());
-//        int cnt = cmsTaskStockService.getStockSkuCount(param);
-//        resultBean.put("skuNum", cnt);
-//        if (cnt == 0) {
-//            resultBean.put("stockList", new ArrayList());
-//            resultBean.put("realStockList", new ArrayList());
-//            return success(resultBean);
-//        }
-
-        // 取得库存隔离明细当页表示的Sku
-//        List<Object> skuCommonStockList = cmsTaskStockService.getCommonStockPageSkuList(param);
 
         // 取得库存隔离明细
-//        List<Map<String, Object>> stockList = cmsTaskStockService.getCommonStockList(param, skuCommonStockList);
         List<Map<String, Object>> stockList = cmsTaskStockService.getCommonStockList(param);
         resultBean.put("stockList", stockList);
 
-//        // 取得实时库存状态当页表示的Sku
-//        List<Object> skuRealStockList = cmsTaskStockService.geRealStockPageSkuList(param);
-
-//        // 实时库存状态
-//        List<Map<String, Object>> realStockList = cmsTaskStockService.getRealStockList(param, skuRealStockList);
-//        resultBean.put("realStockList", realStockList);
+        // 实时库存状态
+        List<Map<String, Object>> realStockList = cmsTaskStockService.getRealStockList(param);
+        resultBean.put("realStockList", realStockList);
 
         // 返回
         return success(resultBean);
@@ -508,17 +494,10 @@ public class CmsTaskStockController extends CmsController {
         // 取得任务id在history表中是否有数据
         boolean historyFlg = cmsTaskStockService.isHistoryExist(param);
         if (historyFlg) {
-            param.put("tableName", "voyageone_cms2.cms_bt_stock_separate_item_history");
+            param.put("tableNameSuffix", "_history");
         } else {
-            param.put("tableName", "voyageone_cms2.cms_bt_stock_separate_item");
+            param.put("tableNameSuffix", "");
         }
-
-//        // 取得库存隔离明细当页表示的Sku
-//        List<Object> skuList = cmsTaskStockService.getCommonStockPageSkuList(param);
-//        if (skuList.size() == 0) {
-//            resultBean.put("stockList", new ArrayList());
-//            return success(resultBean);
-//        }
 
         // 取得库存隔离明细
         List<Map<String, Object>> stockList = cmsTaskStockService.getCommonStockList(param);
@@ -613,17 +592,10 @@ public class CmsTaskStockController extends CmsController {
         // 取得任务id在history表中是否有数据
         boolean historyFlg = cmsTaskStockService.isHistoryExist(param);
         if (historyFlg) {
-            param.put("tableName", "voyageone_cms2.cms_bt_stock_separate_item_history");
+            param.put("tableNameSuffix", "_history");
         } else {
-            param.put("tableName", "voyageone_cms2.cms_bt_stock_separate_item");
+            param.put("tableNameSuffix", "");
         }
-
-//        // 取得实时库存状态当页表示的Sku
-//        List<Object> skuList = cmsTaskStockService.geRealStockPageSkuList(param);
-//        if (skuList.size() == 0) {
-//            resultBean.put("realStockList", new ArrayList());
-//            return success(resultBean);
-//        }
 
         // 取得实时库存状态
         List<Map<String, Object>> realStockList = cmsTaskStockService.getRealStockList(param);
