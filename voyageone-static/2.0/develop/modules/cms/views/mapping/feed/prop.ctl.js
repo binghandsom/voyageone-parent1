@@ -317,9 +317,17 @@ define([
 
                     var result = true;
                     var keyWord = this.show.keyWord;
+                    var parent;
 
-                    if (keyWord && bean.field.name.indexOf(keyWord) < 0)
-                        return false;
+                    if (keyWord) {
+                        parent = bean.parent;
+                        while (parent && parent.parent)
+                            parent = parent.parent;
+                        parent = parent || bean;
+
+                        if (parent.field.name.indexOf(keyWord) < 0)
+                            return false;
+                    }
 
                     if (this.show.hasRequired !== null) {
                         result = this.show.hasRequired === bean.inRequired;
