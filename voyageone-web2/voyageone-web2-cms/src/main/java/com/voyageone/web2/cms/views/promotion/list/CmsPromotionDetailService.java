@@ -575,12 +575,19 @@ public class CmsPromotionDetailService extends BaseAppService {
             for (CmsBtPromotionCodeModel item : promotionModes) {
                 promotionCodeService.deletePromotionCode(item);
 
+                CmsBtPromotionTaskModel promotionTask = new CmsBtPromotionTaskModel();
+                promotionTask.setPromotionId(item.getPromotionId());
+                promotionTask.setKey(item.getProductCode());
+                promotionTask.setTaskType(0);
+                promotionTask.setSynFlg(1);
+                promotionTaskService.updatePromotionTask(promotionTask);
+
                 HashMap<String, Object> param = new HashMap<>();
                 param.put("promotionId", item.getPromotionId());
                 param.put("modelId", item.getModelId());
                 // 获取与删除的code在同一个group的code数  如果为0 就要删除group表的数据
                 int count = promotionCodeService.getPromotionCodeListCnt(param);
-                if (count == 0) {
+                if (count == 1) {
                     CmsBtPromotionGroupModel model = new CmsBtPromotionGroupModel();
                     model.setModelId(item.getModelId());
                     model.setPromotionId(item.getPromotionId());

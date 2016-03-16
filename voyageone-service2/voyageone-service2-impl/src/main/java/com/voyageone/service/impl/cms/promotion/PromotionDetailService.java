@@ -163,11 +163,23 @@ public class PromotionDetailService extends BaseService {
                 }
                 List<String> tagPathList = productIdTagsMap.get(productId);
                 tagPathList.add(code.getTagPath());
+
+                CmsBtPromotionTaskModel promotionTask = new CmsBtPromotionTaskModel();
+                promotionTask.setPromotionId(item.getPromotionId());
+                promotionTask.setKey(code.getProductCode());
+                promotionTask.setTaskType(0);
+                promotionTask.setSynFlg(1);
+                cmsPromotionTaskDao.updatePromotionTask(promotionTask);
+
             });
 
-            productTagService.delete(channelId, productIdTagsMap, modifier);
+            if(codes.size() > 0){
+                productTagService.delete(channelId, productIdTagsMap, modifier);
+            }
             cmsPromotionCodeDao.deletePromotionCodeByModelId(item.getPromotionId(), item.getModelId());
             cmsPromotionSkuDao.deletePromotionSkuByModelId(item.getPromotionId(), item.getModelId());
+
+
         }
     }
 
