@@ -1,9 +1,8 @@
 define([
     'cms',
     'underscore',
-    'modules/cms/enums/Carts',
     'modules/cms/controller/popup.ctl'
-], function (cms, _, Carts) {
+], function (cms, _) {
     'use strict';
     /**
      * @ngdoc object
@@ -18,7 +17,8 @@ define([
         /**
          * @description
          * 创建平台到主数据类目匹配的画面 Controller 类
-         * @param {PlatformMappingService} platformMappingService
+         * @param $rootScope
+         * @param platformMappingService
          * @param {function} alert
          * @param $translate
          * @constructor
@@ -71,7 +71,7 @@ define([
             },
 
             loadCategories: function () {
-                
+
                 var ttt = this;
                 var selectedCart = ttt.selected.cart;
 
@@ -150,7 +150,7 @@ define([
                     && (propMatched === null || propMatched === category.propertyMatched);
             },
 
-            clear: function() {
+            clear: function () {
                 this.matched = {
                     category: null,
                     property: null,
