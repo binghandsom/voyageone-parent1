@@ -51,8 +51,9 @@
         prop_name AS propName
         from voyageone_cms2.cms_mt_common_prop
         where
-        (action_type = 0 OR action_type = 2)
+        action_type = 0
         AND is_comm = 1
+        AND (prop_id != 'images1' AND prop_id != 'images2' AND prop_id != 'images3' AND prop_id != 'images4' AND prop_id != 'brand' AND prop_id != 'code' AND prop_id != 'productNameCn' AND prop_id != 'productNameEn')
     </select>
 
 
