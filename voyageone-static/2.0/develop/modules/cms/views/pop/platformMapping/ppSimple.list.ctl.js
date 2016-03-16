@@ -48,27 +48,27 @@ define([
 
             init: function () {
 
-                var $ = this;
-                var $mainCate = $.context.maindata.category;
-                var property = $.property;
-                var $pfCate = $.context.platform.category;
+                var self = this;
+                var $mainCate = self.context.maindata.category;
+                var property = self.property;
+                var $pfCate = self.context.platform.category;
 
                 // 检查 popup 的支持类型
                 switch (property.type) {
                     case FieldTypes.complex:
                     case FieldTypes.multiComplex:
-                        $.alert('当前属性不是 Simple 属性').result.then(function () {
-                            $.cancel();
+                        self.alert('当前属性不是 Simple 属性').result.then(function () {
+                            self.cancel();
                         });
                         return;
                 }
 
                 // 加载原有的匹配
-                $.ppService.getPlatformPropertyMapping(
-                    $.context.path,
+                self.ppService.getPlatformPropertyMapping(
+                    self.context.path,
                     $mainCate.id,
                     $pfCate.id,
-                    $.context.cartId
+                    self.context.cartId
                 ).then(function (simpleMapping) {
 
                     // 如果没拿到, 则创建新的 SimpleMapping
@@ -83,11 +83,11 @@ define([
                     if (!simpleMapping.expression.ruleWordList)
                         simpleMapping.expression.ruleWordList = [];
 
-                    $.simpleMapping = simpleMapping;
-                    $.ruleWords = simpleMapping.expression.ruleWordList;
+                    self.simpleMapping = simpleMapping;
+                    self.ruleWords = simpleMapping.expression.ruleWordList;
 
                     // 加载完数据之后, 进行对 end line 的数据包装
-                    $.wrapRuleList();
+                    self.wrapRuleList();
 
                 });
             },
@@ -112,12 +112,12 @@ define([
                     // 命中时, 把这个空格行移动到平行配置中
 
                     if (this.regulars.endWithBr.test(next.value)) {
-                        lineEnds[i - 1] = {type: 1, value: words.splice(1, 1)[0]};
+                        lineEnds[i - 1] = {type: 1, value: words.splice(i, 1)[0]};
                         continue;
                     }
 
                     if (this.regulars.endWithSpace.test(next.value)) {
-                        lineEnds[i - 1] = {type: 2, value: words.splice(1, 1)[0]};
+                        lineEnds[i - 1] = {type: 2, value: words.splice(i, 1)[0]};
                         continue;
                     }
 
@@ -201,20 +201,20 @@ define([
 
             ok: function () {
 
-                var me = this;
-                var simpleMapping = me.simpleMapping;
-                var platform = me.context.platform;
-                var notify = me.notify;
+                var self = this;
+                var simpleMapping = self.simpleMapping;
+                var platform = self.context.platform;
+                var notify = self.notify;
 
-                simpleMapping.expression.ruleWordList = me.unWrapRuleList();
+                simpleMapping.expression.ruleWordList = self.unWrapRuleList();
 
                 this.ppService
                     .saveMapping(
-                        me.context.maindata.category.id,
+                        self.context.maindata.category.id,
                         platform.category.id,
-                        me.context.cartId,
+                        self.context.cartId,
                         simpleMapping,
-                        me.context.path)
+                        self.context.path)
                 .then(function(updated){
                     if (updated)
                         notify.success('已更新');
@@ -222,13 +222,17 @@ define([
                         notify.warning('没有更新任何数据');
 
                     // 维护 Context 中的 Path, 让对应的属性和窗口同时结束生命周期
-                    me.context.path.shift();
-                    me.$modal.close(updated);
+                    self.context.path.shift();
+                    self.$modal.close(updated);
                 });
             },
 
             cancel: function () {
-                this.$modal.dismiss('cancel');
+                var self = this;
+                var simpleMapping = self.simpleMapping;
+
+                simpleMapping.expression.ruleWordList = self.unWrapRuleList();
+                self.$modal.dismiss('cancel');
             }
         };
 
