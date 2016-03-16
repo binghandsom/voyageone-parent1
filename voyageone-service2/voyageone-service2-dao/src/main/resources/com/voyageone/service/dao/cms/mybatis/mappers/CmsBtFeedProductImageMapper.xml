@@ -43,6 +43,9 @@
             <if test="channelId != null" >
                 channel_id,
             </if>
+            <if test="code != null" >
+                code,
+            </if>
             <if test="imageName != null" >
                 image_name,
             </if>
@@ -67,6 +70,9 @@
         <trim prefix="values (" suffix=")" suffixOverrides="," >
             <if test="channelId != null" >
                 #{channelId,jdbcType=VARCHAR},
+            </if>
+            <if test="code != null" >
+                #{code,jdbcType=VARCHAR},
             </if>
             <if test="imageName != null" >
                 #{imageName,jdbcType=VARCHAR},
