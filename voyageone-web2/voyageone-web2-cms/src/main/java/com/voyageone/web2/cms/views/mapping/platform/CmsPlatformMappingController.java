@@ -59,7 +59,7 @@ public class CmsPlatformMappingController extends CmsController {
 
         String from = (String) params.get("from");
         String to = (String) params.get("to");
-        Integer cartId = (Integer) params.get("cartId");
+        Integer cartId = Integer.valueOf(params.get("cartId").toString()) ;
 
         platformMappingService.setPlatformMapping(from, to, cartId, getUser());
 

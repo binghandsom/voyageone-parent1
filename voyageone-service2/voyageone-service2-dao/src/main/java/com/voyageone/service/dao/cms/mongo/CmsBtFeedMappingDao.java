@@ -15,12 +15,7 @@ import java.util.List;
  * @since 2.0.0
  */
 @Repository
-public class CmsBtFeedMappingDao extends BaseMongoDao {
-
-    @Override
-    public Class getEntityClass() {
-        return CmsBtFeedMappingModel.class;
-    }
+public class CmsBtFeedMappingDao extends BaseMongoDao<CmsBtFeedMappingModel> {
 
     /**
      * 查询渠道的所有类目匹配关系

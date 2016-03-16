@@ -16,7 +16,7 @@
 	</select>
 
 	<!-- 获取指定店铺的所有的自定义属性的值的翻译 -->
-	<select id="cms_bt_feed_custom_prop_value_select" parameterType="HashMap" resultType="com.voyageone.service.model.cms.CmsBtFeedCustomPropModel">
+	<select id="cms_bt_feed_custom_prop_value_select" parameterType="HashMap" resultType="com.voyageone.service.model.cms.CmsBtFeedCustomPropValueModel">
 		select    id
 				, channel_id
 				, prop_id

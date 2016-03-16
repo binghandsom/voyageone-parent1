@@ -13,12 +13,7 @@ import java.util.List;
  */
 
 @Repository
-public class CmsBtFeedInfoDao extends BaseMongoPartDao {
-
-    @Override
-    public Class getEntityClass() {
-        return CmsBtFeedInfoModel.class;
-    }
+public class CmsBtFeedInfoDao extends BaseMongoPartDao<CmsBtFeedInfoModel> {
 
     public CmsBtFeedInfoModel selectProductByCode(String channelId, String code) {
         String query = "{\"code\":\"" + code + "\"}";

@@ -10,18 +10,16 @@ import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.masterdate.schema.field.OptionsField;
 import com.voyageone.common.masterdate.schema.option.Option;
 import com.voyageone.common.util.CommonUtil;
+import com.voyageone.service.bean.cms.product.ProductUpdateBean;
+import com.voyageone.service.dao.cms.mongo.CmsMtCommonPropDefDao;
+import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.mongo.CmsMtCommonPropDefModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Group;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Group_Platform;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.CmsConstants;
-import com.voyageone.web2.cms.dao.CmsMtCommonPropDefDao;
 import com.voyageone.web2.core.bean.UserSessionBean;
-import com.voyageone.web2.sdk.api.VoApiDefaultClient;
-import com.voyageone.web2.sdk.api.request.ProductGetRequest;
-import com.voyageone.web2.sdk.api.request.ProductUpdateRequest;
-import com.voyageone.web2.sdk.api.response.ProductGetResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -39,10 +37,7 @@ public class CmsFieldEditService extends BaseAppService {
     @Autowired
     private CmsMtCommonPropDefDao cmsMtCommonPropDefDao;
 
-//    @Autowired
-//    private CmsBtProductDao cmsBtProductDao;
-    @Autowired
-    protected VoApiDefaultClient voApiClient;
+    private ProductService productService;
 
     private static final String FIELD_SKU_CARTS = "skuCarts";
 
@@ -79,15 +74,9 @@ public class CmsFieldEditService extends BaseAppService {
 
         for(Long productId : prodIdList) {
 
-            // 获取产品的信息
-            ProductGetRequest productGetRequest = new ProductGetRequest();
-            productGetRequest.setProductId(productId);
-            productGetRequest.setChannelId(userInfo.getSelChannelId());
-
-            ProductGetResponse productGetResponse = voApiClient.execute(productGetRequest);
-
             Object[] field = getPropValue(params);
-            CmsBtProductModel productModel = productGetResponse.getProduct();
+            // 获取产品的信息
+            CmsBtProductModel productModel = productService.getProductById(userInfo.getSelChannelId(), productId);;
 
             // TODO 批量更新操作重置approved->ready这步暂时不执行,因为运营如果批量操作再批量approved,工作量比较大,以后有需要时再放开
             // 更新状态以外的属性时,check产品状态如果为Approved,则将产品状态设置成Ready
@@ -111,12 +100,12 @@ public class CmsFieldEditService extends BaseAppService {
                 productModel.getFields().setAttribute(field[0].toString(), field[1]);
             }
 
-            ProductUpdateRequest updateRequest = new ProductUpdateRequest(userInfo.getSelChannelId());
+            ProductUpdateBean updateRequest = new ProductUpdateBean();
             updateRequest.setProductModel(productModel);
             updateRequest.setIsCheckModifed(false);
             updateRequest.setModifier(userInfo.getUserName());
 
-            voApiClient.execute(updateRequest);
+            productService.updateProduct(userInfo.getSelChannelId(), updateRequest);
         }
     }
 

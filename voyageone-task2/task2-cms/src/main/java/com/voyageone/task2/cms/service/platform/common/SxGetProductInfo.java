@@ -1,7 +1,7 @@
 package com.voyageone.task2.cms.service.platform.common;
 
 import com.voyageone.service.dao.cms.mongo.CmsMtPlatformMappingDao;
-import com.voyageone.service.impl.cms.CmsProductService;
+import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Group_Platform;
@@ -24,7 +24,7 @@ import java.util.Map;
 @Repository
 public class SxGetProductInfo {
 	@Autowired
-	private CmsProductService cmsProductService;
+	private ProductService productService;
 	@Autowired
 	private SkuInventoryDao skuInventoryDao;
 	@Autowired
@@ -114,7 +114,7 @@ public class SxGetProductInfo {
 	 * 获取group的所有商品的主数据信息
 	 */
 	private List<CmsBtProductModel> getProductInfo(String channelId, Long groupId) {
-		return cmsProductService.getProductByGroupId(channelId, groupId);
+		return productService.getProductByGroupId(channelId, groupId);
 	}
 
 	/**

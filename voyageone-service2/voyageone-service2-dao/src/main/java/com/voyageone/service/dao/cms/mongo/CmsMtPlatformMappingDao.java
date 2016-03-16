@@ -17,7 +17,7 @@ import java.util.List;
  * @since 2.0.0
  */
 @Repository
-public class CmsMtPlatformMappingDao extends BaseMongoDao {
+public class CmsMtPlatformMappingDao extends BaseMongoDao<CmsMtPlatformMappingModel> {
 
     @Autowired
     BaseJomgoTemplate mongoTemplate;

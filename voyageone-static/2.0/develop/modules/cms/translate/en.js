@@ -174,7 +174,7 @@ define(function() {
         "TXT_PRODUCT_TYPE": "Product Type",
         "TXT_PLATFORM_TYPE_WITH_COLON": "Platform Type:",
         "TXT_INPUT_ONLY_CHAR_AND_NUMBER": "Input Include:English numbers _ .",
-        "TXT_REQUIRED": "(required)",
+        "TXT_REQUIRED": "Required",
         "TXT_TAG": "Tag",
         "TXT_SORT_1": "Sort Attribute 1",
         "TXT_SORT_2": "Sort Attribute 2",
@@ -212,6 +212,10 @@ define(function() {
         "TXT_PENDING":"Pending",
         "TXT_SUCCESS":"Success",
         "TXT_FAIL":"Fail",
+        "TXT_BASE_ATTRIBUTE": "Base Attribute",
+        "TXT_PRICE_ATTRIBUTE": "Price Attribute",
+        "TXT_SALES_ATTRIBUTE": "Sales Attribute",
+
 
         "TXT_MSG_SEARCH": "Search...",
         "TXT_MSG_PAGE_IS_BUILDING": "This page is building...",

@@ -13,6 +13,8 @@ import com.voyageone.common.masterdate.schema.field.MultiComplexField;
 import com.voyageone.common.util.MD5;
 import com.voyageone.service.dao.cms.mongo.CmsMtCategorySchemaDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtFeedCategoryTreeDao;
+import com.voyageone.service.impl.cms.CommonSchemaService;
+import com.voyageone.service.impl.cms.feed.FeedMappingService;
 import com.voyageone.service.model.cms.mongo.CmsMtCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedMappingModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryModel;
@@ -24,9 +26,6 @@ import com.voyageone.web2.cms.bean.setting.mapping.feed.GetFieldMappingBean;
 import com.voyageone.web2.cms.bean.setting.mapping.feed.SaveFieldMappingBean;
 import com.voyageone.web2.cms.bean.setting.mapping.feed.SetMappingBean;
 import com.voyageone.web2.core.bean.UserSessionBean;
-import com.voyageone.web2.sdk.api.VoApiDefaultClient;
-import com.voyageone.web2.sdk.api.request.CommonSchemaGetRequest;
-import com.voyageone.web2.sdk.api.response.CommonSchemaGetResponse;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -53,13 +52,13 @@ public class CmsFeedPropMappingService extends BaseAppService {
     private CmsMtCategorySchemaDao categorySchemaDao;
 
     @Autowired
-    private com.voyageone.service.impl.cms.CmsFeedMappingService feedMappingService;
+    private FeedMappingService feedMappingService;
 
     @Autowired
     private CmsFeedMappingService feedMappingService2;
 
     @Autowired
-    protected VoApiDefaultClient voApiClient;
+    private CommonSchemaService commonSchemaService;
 
     /**
      * 通过 Feed 类目,获取其默认匹配的主类目
@@ -375,11 +374,7 @@ public class CmsFeedPropMappingService extends BaseAppService {
     }
 
     private List<Field> getCommonSchema() {
-
-        CommonSchemaGetRequest request = new CommonSchemaGetRequest();
-
-        CommonSchemaGetResponse response = voApiClient.execute(request);
-
-        return SchemaJsonReader.readJsonForList(response.getFields());
+        List list = commonSchemaService.getAll();
+        return SchemaJsonReader.readJsonForList(list);
     }
 }

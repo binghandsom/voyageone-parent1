@@ -4,22 +4,18 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.cms.enums.BeatFlag;
 import com.voyageone.common.configs.Enums.PromotionTypeEnums;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.service.bean.cms.task.beat.TaskBean;
+import com.voyageone.service.impl.cms.promotion.PromotionCodeService;
+import com.voyageone.service.impl.cms.promotion.PromotionModelService;
+import com.voyageone.service.impl.cms.promotion.PromotionService;
 import com.voyageone.web2.base.BaseAppService;
-import com.voyageone.web2.cms.wsdl.bean.task.beat.TaskBean;
 import com.voyageone.service.dao.cms.CmsBtBeatInfoDao;
 import com.voyageone.service.dao.cms.CmsBtTasksDao;
 import com.voyageone.service.model.cms.CmsBtBeatInfoModel;
 import com.voyageone.service.model.cms.CmsBtTasksModel;
 import com.voyageone.web2.core.bean.UserSessionBean;
-import com.voyageone.web2.sdk.api.VoApiClient;
 import com.voyageone.service.model.cms.CmsBtPromotionCodeModel;
 import com.voyageone.service.model.cms.CmsBtPromotionModel;
-import com.voyageone.web2.sdk.api.request.PromotionCodeGetRequest;
-import com.voyageone.web2.sdk.api.request.PromotionModelsGetRequest;
-import com.voyageone.web2.sdk.api.request.PromotionsGetRequest;
-import com.voyageone.web2.sdk.api.response.PromotionCodeGetResponse;
-import com.voyageone.web2.sdk.api.response.PromotionModelsGetResponse;
-import com.voyageone.web2.sdk.api.response.PromotionsGetResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -47,13 +43,19 @@ import static com.voyageone.common.util.ExcelUtils.getString;
 public class CmsTaskPictureService extends BaseAppService {
 
     @Autowired
-    private VoApiClient apiClient;
-
-    @Autowired
     private CmsBtTasksDao taskDao;
 
     @Autowired
     private CmsBtBeatInfoDao beatInfoDao;
+
+    @Autowired
+    private PromotionService promotionService;
+
+    @Autowired
+    private PromotionModelService promotionModelService;
+
+    @Autowired
+    private PromotionCodeService promotionCodeService;
 
     /**
      * 创建一个价格披露任务
@@ -282,20 +284,14 @@ public class CmsTaskPictureService extends BaseAppService {
         if (taskModel == null) return null;
         Map<String, Object> map = new HashMap<>();
         map.put("promotionId", taskModel.getPromotion_id());
-        PromotionModelsGetRequest request = new PromotionModelsGetRequest();
-        request.setParam(map);
-        PromotionModelsGetResponse response = apiClient.execute(request);
-        return response.getPromotionGroups();
+        return promotionModelService.getPromotionModelDetailList(map);
     }
 
     public List<CmsBtPromotionCodeModel> getCodes(int promotionId, String productModel) {
         Map<String, Object> map = new HashMap<>();
         map.put("promotionId", promotionId);
         map.put("productModel", productModel);
-        PromotionCodeGetRequest request = new PromotionCodeGetRequest();
-        request.setParam(map);
-        PromotionCodeGetResponse response = apiClient.execute(request);
-        return response.getCodeList();
+        return promotionCodeService.getPromotionCodeList(map);
     }
 
     public List<CmsBtBeatInfoModel> addCheck(int task_id, String num_iid) {
@@ -332,15 +328,7 @@ public class CmsTaskPictureService extends BaseAppService {
     }
 
     private CmsBtPromotionModel getPromotion(int promotion_id) {
-
-        PromotionsGetRequest request = new PromotionsGetRequest();
-        request.setPromotionId(promotion_id);
-
-        PromotionsGetResponse response = apiClient.execute(request);
-
-        List<CmsBtPromotionModel> promotionModels = response.getCmsBtPromotionModels();
-
-        return promotionModels.isEmpty() ? null : promotionModels.get(0);
+        return promotionService.getByPromotionId(promotion_id);
     }
 
     private Row row(Sheet sheet, int rowIndex) {

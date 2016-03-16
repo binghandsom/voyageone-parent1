@@ -82,7 +82,7 @@ public class CmsDictManageController extends CmsController {
      */
     @RequestMapping(CmsUrlConstants.MAPPING.DICTIONARY.GET_CONST)
     public AjaxResponse getConst() {
-        return success(dictManageService.getMasterProps(getUser()));
+        return success(dictManageService.getMasterProps(getUser(), getLang(), getCmsSession()));
     }
 
     /**

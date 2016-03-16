@@ -22,7 +22,7 @@
 								<div class="form-group">
 									<label class="col-sm-4 control-label" translate="TXT_MASTER_CATEGORY"></label>
 									<div class="col-sm-8">
-										<select class="form-control" ng-model="vm.searchInfo.catId"
+										<select search-contains="true" chosen class="form-control" ng-model="vm.searchInfo.catId"
 												ng-options="category.catId as category.catPath for category in vm.masterData.categoryList">
 											<option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
 										</select>

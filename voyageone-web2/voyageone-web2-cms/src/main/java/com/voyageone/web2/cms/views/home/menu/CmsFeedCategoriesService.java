@@ -3,7 +3,7 @@ package com.voyageone.web2.cms.views.home.menu;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedMappingDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtFeedCategoryTreeDao;
-import com.voyageone.service.impl.cms.CmsBtChannelCategoryService;
+import com.voyageone.service.impl.cms.ChannelCategoryService;
 import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedMappingModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryModel;
@@ -33,7 +33,7 @@ public final class CmsFeedCategoriesService extends BaseAppService {
     private CmsBtFeedMappingDao cmsBtFeedMappingDao;
 
     @Autowired
-    private CmsBtChannelCategoryService cmsBtChannelCategoryService;
+    private ChannelCategoryService cmsBtChannelCategoryService;
 
     /**
      * 获取feed类目树形结构
