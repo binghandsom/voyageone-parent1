@@ -32,23 +32,30 @@ define([
         $scope.ok = function(){
 
             console.log($scope.cusData.customProps);
+            console.log($scope.cusData.commonProps);
         };
 
-        var updateSelected = function(action,item,inx){
-            if(action == 'add'){
-                $scope.cusData.customProps.push(item);
-            }
-            if(action == 'remove'){
-
-                $scope.cusData.customProps.splice(inx,1);
-            }
-        };
-
-        $scope.updateSelection = function($event,item,inx){
+        $scope.updateSelection = function($event,item,flg){
             var checkbox = $event.target;
             var action = (checkbox.checked?'add':'remove');
 
-            updateSelected(action,item,inx);
+            if(flg){
+                if(action == 'add'){
+                    $scope.cusData.customProps.push(item);
+                }
+                if(action == 'remove'){
+                    var idx_cus = $scope.cusData.customProps.indexOf(item);
+                    $scope.cusData.customProps.splice(idx_cus,1);
+                }
+            }else{
+                if(action == 'add'){
+                    $scope.cusData.commonProps.push(item);
+                }
+                if(action == 'remove'){
+                    var idx_com = $scope.cusData.commonProps.indexOf(item);
+                    $scope.cusData.commonProps.splice(idx_com,1);
+                }
+            }
         };
 
         /**
