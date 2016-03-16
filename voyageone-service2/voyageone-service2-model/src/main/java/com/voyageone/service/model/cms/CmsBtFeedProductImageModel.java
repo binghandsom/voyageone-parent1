@@ -15,7 +15,7 @@ public class CmsBtFeedProductImageModel extends BaseModel {
     public CmsBtFeedProductImageModel(String channelId, String imageUrl,String modifier){
         this.channelId = channelId;
         this.imageUrl = imageUrl;
-        this.imageName = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
+        this.imageName = channelId + "-" + imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
         this.setModifier(modifier);
         this.setCreater(modifier);
     }
