@@ -10,11 +10,11 @@ define([
             customProps:[],
             commonProps:[]
         };
-        $scope.initialize = initialize;
+
         /**
          * 初始化数据.
          */
-        function initialize () {
+        $scope.initialize = function () {
             $searchAdvanceService.getCustColumnsInfo()
                 .then(function (res) {
                 $scope.cus.customProps = res.data.customProps;
@@ -22,6 +22,14 @@ define([
             })
         }
 
+        /**
+         * 提交属性追加
+         */
+        $scope.ok = function () {
+
+            $scope.$close();
+
+        };
     });
 
 });
