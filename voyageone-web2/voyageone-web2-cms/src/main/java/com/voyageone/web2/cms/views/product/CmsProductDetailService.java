@@ -513,7 +513,7 @@ public class CmsProductDetailService {
         List<CmsBtProductModel_Sku> valueSkus = productValueModel.getSkus();
 
         for (CmsBtProductModel_Sku model_sku : valueSkus) {
-            model_sku.setQty(inventoryList.get(model_sku.getSkuCode()));
+            model_sku.setQty(inventoryList.get(model_sku.getSkuCode()) == null ? 0 : inventoryList.get(model_sku.getSkuCode()));
             skuValueModel.add(model_sku);
         }
 
