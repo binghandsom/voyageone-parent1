@@ -32,15 +32,18 @@ define([
         $scope.ok = function(){
 
             console.log($scope.cusData.customProps);
+            console.log($scope.cusData.commonProps);
         };
 
         var updateSelected = function(action,item,inx){
             if(action == 'add'){
                 $scope.cusData.customProps.push(item);
+                $scope.cusData.commonProps.push(item);
             }
             if(action == 'remove'){
 
                 $scope.cusData.customProps.splice(inx,1);
+                $scope.cusData.commonProps.splice(inx,1);
             }
         };
 
