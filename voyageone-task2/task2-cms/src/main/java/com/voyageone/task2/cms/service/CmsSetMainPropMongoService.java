@@ -242,10 +242,16 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 }
                 // 查看属性是否匹配完成
                 if (mapping.getMatchOver() == 0) {
-                    // 记下log, 跳过当前记录
-                    logIssue(getTaskName(), String.format("[CMS2.0][测试]该主类目的属性匹配尚未完成 ( channel: [%s], feed: [%s], main: [%s] )", channelId, feed.getCategory(), mapping.getScope().getMainCategoryPath()));
+                    // 如果没有匹配完成的话, 那就看看是否有共通
+                    mapping = cmsBtFeedMappingDao.findDefaultMainMapping(channelId, mapping.getScope().getMainCategoryPath());
+                    if (mapping == null || mapping.getMatchOver() == 0) {
+                        // 没有共通mapping, 或者没有匹配完成
+                        // 记下log, 跳过当前记录
+                        logIssue(getTaskName(), String.format("[CMS2.0][测试]该主类目的属性匹配尚未完成 ( channel: [%s], feed: [%s], main: [%s] )", channelId, feed.getCategory(), mapping.getScope().getMainCategoryPath()));
 
-                    return;
+                        return;
+                    }
+
                 }
             }
 
@@ -810,6 +816,16 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             if (field == null) {
                 return null;
             }
+
+            // 商品的状态
+            String productStatus = product.getFields().getStatus();
+//            // TODO: 暂时这个功能封印, 有些店铺的运营其实并不是很希望重新确认一下, 而不确认的话, 其实问题也不是很大 START
+//            if (CmsConstants.ProductStatus.Approved.toString().equals(productStatus)) {
+//                // 如果曾经的状态是已经approved的话, 需要把状态改回ready, 让运营重新确认一下商品
+//                productStatus = CmsConstants.ProductStatus.Ready.toString();
+//            }
+//            // TODO: 暂时这个功能封印, 有些店铺的运营其实并不是很希望重新确认一下, 而不确认的话, 其实问题也不是很大 END
+            field.setStatus(productStatus);
 
             product.setFields(field);
 
