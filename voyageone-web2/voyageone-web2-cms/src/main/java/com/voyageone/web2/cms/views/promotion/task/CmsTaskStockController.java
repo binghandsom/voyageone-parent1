@@ -413,6 +413,10 @@ public class CmsTaskStockController extends CmsController {
         List<Map<String, Object>> stockList = cmsTaskStockService.getCommonStockList(param);
         resultBean.put("stockList", stockList);
 
+        // 取得实时库存表示状态(0:活动期间表示,1:活动结束后表示）
+        String realStockStatus = cmsTaskStockService.getRealStockStatus(param);
+        resultBean.put("realStockStatus", realStockStatus);
+
         // 实时库存状态
         List<Map<String, Object>> realStockList = cmsTaskStockService.getRealStockList(param);
         resultBean.put("realStockList", realStockList);

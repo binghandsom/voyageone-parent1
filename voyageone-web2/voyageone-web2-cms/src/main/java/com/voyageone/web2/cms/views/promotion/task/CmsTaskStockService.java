@@ -5,6 +5,7 @@ import com.voyageone.common.components.transaction.SimpleTransaction;
 import com.voyageone.common.configs.Type;
 import com.voyageone.common.configs.TypeChannel;
 import com.voyageone.common.configs.beans.TypeChannelBean;
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.dao.*;
@@ -196,6 +197,34 @@ public class CmsTaskStockService extends BaseAppService {
     }
 
     /**
+     * 取得实时库存表示状态(0:活动期间表示,1:活动结束后表示）
+     *
+     * @param param 客户端参数
+     * @return 实时库存表示状态
+     */
+    public String getRealStockStatus(Map param){
+        String status = "1";
+        // 历史表存在数据时，判定为活动结束
+        if ("_history".equals(param.get("tableNameSuffix"))) {
+            return status;
+        }
+
+        // 取得任务下的平台平台信息
+        Date now = DateTimeUtil.parse(DateTimeUtil.getNow());
+        List<Map<String, Object>> platformList = cmsBtStockSeparatePlatformInfoDao.selectStockSeparatePlatform(param);
+        for (Map<String, Object> platformInfo : platformList) {
+            Date restoreSeparateTime = DateTimeUtil.parse((String) platformInfo.get("restore_separate_time"));
+            if (restoreSeparateTime != null && now.getTime() - restoreSeparateTime.getTime() <= 0) {
+                status = "0";
+                break;
+            }
+        }
+        return status;
+    }
+
+
+
+    /**
      * 取得实时库存状态列表
      *
      * @param param 客户端参数
@@ -206,12 +235,6 @@ public class CmsTaskStockService extends BaseAppService {
         List<Map<String,Object>> realStockList = new ArrayList<Map<String,Object>>();
         // 平台列表
         List<Map<String,Object>> platformList = (List<Map<String,Object>>) param.get("platformList");
-
-//        // 取得任务下的平台平台信息
-//        List<Map<String, Object>> platformList = cmsBtStockSeparatePlatformInfoDao.selectStockSeparatePlatform(param);
-//        for (Map<String, Object> platformInfo : platformList) {
-//           String restoreSeparateTime platformInfo.get("restore_separate_time");
-//        }
 
         // 取得一页中的sku基本信息（含逻辑库存）
         Map<String,Object> sqlParam = new HashMap<String,Object>();
