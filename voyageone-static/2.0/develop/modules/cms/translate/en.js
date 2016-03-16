@@ -209,6 +209,13 @@ define(function() {
         "TXT_TASK_TYPE":"Task Type",
         "TXT_TASK_DATE":"Task Date",
         "TXT_TEJIABAO_DETAIL":"Tejiabao Detail",
+        "TXT_PENDING":"Pending",
+        "TXT_SUCCESS":"Success",
+        "TXT_FAIL":"Fail",
+        "TXT_BASE_ATTRIBUTE": "Base Attribute",
+        "TXT_PRICE_ATTRIBUTE": "Price Attribute",
+        "TXT_SALES_ATTRIBUTE": "Sales Attribute",
+
 
         "TXT_MSG_SEARCH": "Search...",
         "TXT_MSG_PAGE_IS_BUILDING": "This page is building...",
@@ -253,6 +260,8 @@ define(function() {
         "TXT_MSG_INPUT_WORD_LENCHK": "you can input",
         "TXT_MSG_INPUT_WORD_LENCHK2": "words",
         "TXT_MSG_FIELD_VAL_INVALID": "Invalid field (Text) `s value, please follow the prompts to modify.",
+        "TXT_MSG_INPUT_WORD_LENLOWLIMIT": "Please enter at least ",
+        "TXT_MSG_INPUT_WORD_LENLIMIT": "Maximum length limit of character",
 
 
         "BTN_CREATE_TASK": "New Task",
@@ -297,6 +306,7 @@ define(function() {
         "BTN_IMPORT_PROMOTION_FILE": "Import Promotion File",
         "BTN_CHOOSE_FILE": "Choose File",
         "BTN_IMPORT_FILE": "Import File",
+        "BTN_CUSTOMIZE_COLUMNS": "custmize columns",
 
         // 枚举 com.voyageone.cms.enums.BeatFlag 的翻译
         "STOP": "Stop",

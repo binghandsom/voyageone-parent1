@@ -27,7 +27,8 @@
         "search": "search",
         "getGroupList": "getGroupList",
         "getProductList": "getProductList",
-        "exportProducts":"exportProducts"
+        "exportProducts":"exportProducts",
+        "getCustColumnsInfo":"getCustColumnsInfo"
       }
     },
     "group": {

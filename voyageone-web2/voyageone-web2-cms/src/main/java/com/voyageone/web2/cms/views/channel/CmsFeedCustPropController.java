@@ -273,7 +273,7 @@ public class CmsFeedCustPropController extends CmsController {
         if (catPath == null) {
             // 缺少参数
             logger.warn("saveFeedCustProp() >>>> 缺少catpath参数");
-            throw new BusinessException("1", "缺少参数", null);
+            throw new BusinessException("缺少参数");
         }
 
         List<Map<String, Object>> valList = (List<Map<String, Object>>) params.get("valList");
@@ -281,7 +281,7 @@ public class CmsFeedCustPropController extends CmsController {
         if ((valList == null || valList.size() == 0) && (unvalList == null || unvalList.size() == 0)) {
             // 缺少参数
             logger.warn("saveFeedCustProp() >>>> 缺少属性相关参数");
-            throw new BusinessException("1", "缺少参数", null);
+            throw new BusinessException("缺少参数");
         }
         UserSessionBean userInfo = getUser();
         List<Map<String, Object>> addList = new ArrayList<Map<String, Object>>();
@@ -418,7 +418,7 @@ public class CmsFeedCustPropController extends CmsController {
     @RequestMapping(value = CmsUrlConstants.CHANNEL.CUSTOM_PROP.GET_CAT_LIST)
     public AjaxResponse getCategoryList() {
         HashMap dataMap = new HashMap(1);
-        List<CmsMtFeedCategoryModel> topTree = cmsFeedCustPropService.getTopCategories(getUser());
+        List<CmsMtFeedCategoryModel> topTree = cmsFeedCustPropService.getTopFeedCategories(getUser());
         List<CmsMtFeedCategoryModel> rsltList = new ArrayList<CmsMtFeedCategoryModel>();
         CmsMtFeedCategoryModel comMdl = new CmsMtFeedCategoryModel();
         comMdl.setPath("0");

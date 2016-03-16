@@ -4,7 +4,8 @@ import com.mongodb.WriteResult;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.service.dao.cms.mongo.CmsMtFeedCategoryTreeDao;
-import com.voyageone.service.impl.cms.CmsBtChannelCategoryService;
+import com.voyageone.service.impl.cms.ChannelCategoryService;
+import com.voyageone.service.impl.cms.feed.FeedMappingService;
 import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedMappingModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryModel;
@@ -37,10 +38,10 @@ public class CmsFeedMappingService extends BaseAppService {
     private CmsMtFeedCategoryTreeDao cmsMtFeedCategoryTreeDao;
 
     @Autowired
-    private CmsBtChannelCategoryService cmsBtChannelCategoryService;
+    private ChannelCategoryService cmsBtChannelCategoryService;
 
     @Autowired
-    private com.voyageone.service.impl.cms.CmsFeedMappingService feedMappingService;
+    private FeedMappingService feedMappingService;
 
     public List<CmsMtFeedCategoryModel> getTopCategories(UserSessionBean user) {
 

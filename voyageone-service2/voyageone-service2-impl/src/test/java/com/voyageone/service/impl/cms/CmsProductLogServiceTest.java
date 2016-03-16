@@ -2,6 +2,7 @@ package com.voyageone.service.impl.cms;
 
 
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
+import com.voyageone.service.impl.cms.product.ProductLogService;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,7 +17,7 @@ public class CmsProductLogServiceTest {
     CmsBtProductDao cmsBtProductDao;
 
     @Autowired
-    CmsProductLogService productLogService;
+    ProductLogService productLogService;
 
     @Test
     public void testInsertCmsBtProduct() throws Exception {

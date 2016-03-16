@@ -1,20 +1,20 @@
 package com.voyageone.web2.cms.views.group;
 
+import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.MongoUtils;
+import com.voyageone.service.impl.cms.product.ProductGroupService;
+import com.voyageone.service.impl.cms.product.ProductService;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.cms.views.promotion.list.CmsPromotionIndexService;
 import com.voyageone.web2.core.bean.UserSessionBean;
-import com.voyageone.web2.sdk.api.VoApiDefaultClient;
-import com.voyageone.web2.sdk.api.VoApiUpdateResponse;
-import com.voyageone.web2.sdk.api.request.GroupMainProductUpdateRequest;
-import com.voyageone.web2.sdk.api.request.ProductsGetRequest;
-import com.voyageone.web2.sdk.api.response.ProductsGetResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -28,7 +28,10 @@ public class CmsGroupDetailService {
     private CmsPromotionIndexService cmsPromotionService;
 
     @Autowired
-    protected VoApiDefaultClient voApiClient;
+    protected ProductGroupService productGroupService;
+
+    @Autowired
+    private ProductService productService;
 
     private final String searchItems = "channelId;prodId;catId;catPath;created;creater;modified;" +
             "modifier;fields;groups.msrpStart;groups.msrpEnd;groups.retailPriceStart;groups:retailPriceEnd;" +
@@ -60,16 +63,28 @@ public class CmsGroupDetailService {
      * @param cmsSessionBean
      * @return
      */
-    public ProductsGetResponse GetProductList(Map<String, Object> params, UserSessionBean userInfo, CmsSessionBean cmsSessionBean) {
+    public List<CmsBtProductModel> getProductList(Map<String, Object> params, UserSessionBean userInfo, CmsSessionBean cmsSessionBean) {
+        JomgoQuery queryObject = new JomgoQuery();
+        queryObject.setQuery(getSearchValue(params, cmsSessionBean));
+        queryObject.setProjection(searchItems);
+        int pageNum = Integer.valueOf(params.get("pageNum").toString());
+        int pageSize = Integer.valueOf(params.get("pageSize").toString());
+        queryObject.setSkip((pageNum - 1) * pageSize);
+        queryObject.setLimit(pageSize);
 
-        ProductsGetRequest productRequest = new ProductsGetRequest(userInfo.getSelChannelId());
-        productRequest.setPageNo(Integer.valueOf(params.get("pageNum").toString()));
-        productRequest.setPageSize(Integer.valueOf(params.get("pageSize").toString()));
-        productRequest.setQueryString(getSearchValue(params, cmsSessionBean));
-        productRequest.setFields(searchItems);
+        return productService.getList(userInfo.getSelChannelId(), queryObject);
+    }
 
-        //SDK取得Product 数据
-        return voApiClient.execute(productRequest);
+    /**
+     * 获取当前页的product列表
+     * @param params
+     * @param userInfo
+     * @param cmsSessionBean
+     * @return
+     */
+    public long getProductCnt(Map<String, Object> params, UserSessionBean userInfo, CmsSessionBean cmsSessionBean) {
+        String queryStr = getSearchValue(params, cmsSessionBean);
+        return productService.getCnt(userInfo.getSelChannelId(), queryStr);
     }
 
     /**
@@ -79,14 +94,11 @@ public class CmsGroupDetailService {
      * @param cmsSessionBean
      * @return
      */
-    public ProductsGetResponse GetProductIdList(Map<String, Object> params, UserSessionBean userInfo, CmsSessionBean cmsSessionBean) {
-
-        ProductsGetRequest productIdsRequest = new ProductsGetRequest(userInfo.getSelChannelId());
-        productIdsRequest.setQueryString(getSearchValue(params, cmsSessionBean));
-        productIdsRequest.setFields(searchProductIds);
-
-        //SDK取得Product 数据
-        return voApiClient.execute(productIdsRequest);
+    public List<CmsBtProductModel> getProductIdList(Map<String, Object> params, UserSessionBean userInfo, CmsSessionBean cmsSessionBean) {
+        JomgoQuery queryObject = new JomgoQuery();
+        queryObject.setQuery(getSearchValue(params, cmsSessionBean));
+        queryObject.setProjection(searchProductIds);
+        return productService.getList(userInfo.getSelChannelId(), queryObject);
     }
 
     /**
@@ -123,9 +135,7 @@ public class CmsGroupDetailService {
      * @param params
      * @return
      */
-    public Map<String, Object> updateMainProduct(Map<String, Object> params, UserSessionBean userSession){
-
-        GroupMainProductUpdateRequest requestData = new GroupMainProductUpdateRequest();
+    public Map<String, Object> updateMainProduct(Map<String, Object> params, UserSessionBean userSession) {
 
         //参数验证.
         String errMsg =null;
@@ -150,16 +160,10 @@ public class CmsGroupDetailService {
 
         Long productId = Long.parseLong(String.valueOf(prodIdObj));
 
-        requestData.setGroupId(groupId);
-        requestData.setChannelId(channelId);
-        requestData.setProductId(productId);
-        requestData.setModifier(userSession.getUserName());
-
-        VoApiUpdateResponse responseData = voApiClient.execute(requestData);
+        int modifiedCount = productGroupService.updateMainProduct(channelId, productId, groupId, userSession.getUserName());
 
         Map<String,Object> updateResult = new HashMap<>();
-
-        updateResult.put("result",new Integer(responseData.getModifiedCount()));
+        updateResult.put("result", modifiedCount);
 
         return updateResult;
     }

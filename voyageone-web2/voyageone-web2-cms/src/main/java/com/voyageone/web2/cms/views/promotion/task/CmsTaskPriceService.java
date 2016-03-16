@@ -1,11 +1,8 @@
 package com.voyageone.web2.cms.views.promotion.task;
 
+import com.voyageone.service.impl.cms.promotion.PromotionTaskService;
 import com.voyageone.web2.base.BaseAppService;
-import com.voyageone.web2.sdk.api.VoApiDefaultClient;
 import com.voyageone.service.model.cms.CmsBtPromotionTaskModel;
-import com.voyageone.web2.sdk.api.request.PromotionTaskPriceGetCountRequest;
-import com.voyageone.web2.sdk.api.request.PromotionTaskPriceGetRequest;
-import com.voyageone.web2.sdk.api.request.PromotionTaskPriceUpdateRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,23 +17,17 @@ import java.util.Map;
 public class CmsTaskPriceService extends BaseAppService {
 
     @Autowired
-    protected VoApiDefaultClient voApiClient;
+    private PromotionTaskService promotionTaskService;
 
    public List<Map<String,Object>> getPriceList(Map<String,Object> param){
-       PromotionTaskPriceGetRequest request=new PromotionTaskPriceGetRequest();
-       request.setParams(param);
-       return voApiClient.execute(request).getPromotionTaskPrices();
+       return promotionTaskService.getPromotionTaskPriceList(param);
    }
 
     public int getPriceListCnt(Map<String,Object> param){
-        PromotionTaskPriceGetCountRequest request=new PromotionTaskPriceGetCountRequest();
-        request.setParams(param);
-        return voApiClient.execute(request).getTotalCount();
+        return promotionTaskService.getPromotionTaskPriceListCnt(param);
     }
 
     public int updateTaskStatus(CmsBtPromotionTaskModel param){
-        PromotionTaskPriceUpdateRequest request=new PromotionTaskPriceUpdateRequest();
-        request.setParam(param);
-        return voApiClient.execute(request).getModifiedCount();
+        return promotionTaskService.updatePromotionTask(param);
     }
 }

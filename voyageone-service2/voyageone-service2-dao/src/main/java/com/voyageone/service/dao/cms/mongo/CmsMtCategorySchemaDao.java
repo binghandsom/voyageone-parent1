@@ -16,12 +16,7 @@ import java.util.Map;
  * Created by lewis on 15-12-9.
  */
 @Repository
-public class CmsMtCategorySchemaDao extends BaseMongoDao {
-
-    @Override
-    public Class getEntityClass() {
-        return CmsMtCategorySchemaModel.class;
-    }
+public class CmsMtCategorySchemaDao extends BaseMongoDao<CmsMtCategorySchemaModel> {
 
     public List<JSONObject> getAllSchemaIds(){
         String columnResult="{_id:1}";
@@ -30,7 +25,7 @@ public class CmsMtCategorySchemaDao extends BaseMongoDao {
 
     public List<JSONObject> getSchemaList(String columnResult,String query, Integer skip, Integer limit){
         JomgoQuery jomgoQuery = new JomgoQuery(columnResult,query,null,limit,skip);
-        return mongoTemplate.find(jomgoQuery,getEntityClass());
+        return mongoTemplate.find(jomgoQuery, JSONObject.class);
     }
 
     public Long getCategoryCount(String params){

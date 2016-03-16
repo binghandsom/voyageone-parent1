@@ -16,29 +16,26 @@ import com.voyageone.common.masterdate.schema.utils.FieldUtil;
 import com.voyageone.common.masterdate.schema.value.ComplexValue;
 import com.voyageone.common.masterdate.schema.value.Value;
 import com.voyageone.common.util.CommonUtil;
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.service.bean.cms.CmsCategoryInfoBean;
+import com.voyageone.service.bean.cms.product.ProductUpdateBean;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtCategorySchemaDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtCommonSchemaDao;
-import com.voyageone.service.impl.cms.CmsProductService;
+import com.voyageone.service.impl.cms.CategorySchemaService;
+import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.mongo.CmsMtCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCommonSchemaModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.*;
-import com.voyageone.web2.cms.bean.CmsCategoryInfoBean;
+import com.voyageone.web2.cms.CmsConstants;
 import com.voyageone.web2.cms.bean.CmsProductInfoBean;
 import com.voyageone.web2.cms.bean.CustomAttributesBean;
 import com.voyageone.web2.cms.dao.CmsBtFeedCustomPropDao;
 import com.voyageone.web2.cms.model.CmsBtFeedCustomPropModel;
 import com.voyageone.web2.core.bean.UserSessionBean;
-import com.voyageone.web2.sdk.api.VoApiDefaultClient;
-import com.voyageone.web2.sdk.api.request.*;
-import com.voyageone.web2.sdk.api.response.CategorySchemaGetResponse;
-import com.voyageone.web2.sdk.api.response.ProductGroupMainCategoryUpdateResponse;
-import com.voyageone.web2.sdk.api.response.ProductSkuResponse;
-import com.voyageone.web2.sdk.api.response.ProductsGetResponse;
-import com.voyageone.web2.sdk.api.service.ProductSdkClient;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,9 +56,6 @@ public class CmsProductDetailService {
     private Log logger = LogFactory.getLog(CmsProductDetailService.class);
 
     @Autowired
-    private CmsProductService cmsProductService;
-
-    @Autowired
     private CmsMtCommonSchemaDao cmsMtCommonSchemaDao;
 
     @Autowired
@@ -73,15 +67,14 @@ public class CmsProductDetailService {
     @Autowired
     private CmsBtProductDao cmsBtProductDao;
 
-    @Autowired
-    protected ProductSdkClient productClient;
+//    @Autowired
+//    protected VoApiDefaultClient voApiClient;
 
     @Autowired
-    protected VoApiDefaultClient voApiClient;
+    private ProductService productService;
 
-    private static final String OPTION_DATA_SOURCE = "optConfig";
-
-    private static final String OPTION_DATA_SOURCE_CHANNEL = "optConfigChannel";
+    @Autowired
+    protected CategorySchemaService categorySchemaService;
     
     private static final String FIELD_SKU_CARTS = "skuCarts";
 
@@ -166,14 +159,10 @@ public class CmsProductDetailService {
         this.fillFieldOptions(subSkuFields, channelId, language);
 
         // TODO 取得Sku的库存
-        ProductSkuRequest request = new ProductSkuRequest();
-        request.setChannelId(channelId);
-        request.setCode(productValueModel.getFields().getCode());
-
-        ProductSkuResponse skuInventoryList = voApiClient.execute(request);
+        Map<String, Integer> skuInventoryList = productService.getProductSkuQty(channelId, productValueModel.getFields().getCode());
 
         //获取sku schemaValue
-        Map<String, Object> skuSchemaValue = buildSkuSchemaValue(productValueModel, categorySchemaModel, skuInventoryList.getSkuInventories());
+        Map<String, Object> skuSchemaValue = buildSkuSchemaValue(productValueModel, categorySchemaModel, skuInventoryList);
 
         //填充sku schema.
         FieldUtil.setFieldsValueFromMap(skuSchemaFields, skuSchemaValue);
@@ -213,7 +202,6 @@ public class CmsProductDetailService {
 
         Map<String, Object> customAttributesValue = (Map<String, Object>) requestMap.get("customAttributes");
 
-        ProductUpdateRequest updateRequest = new ProductUpdateRequest(channelId);
         CmsBtProductModel productModel = new CmsBtProductModel(channelId);
 
         CmsBtProductModel_Feed feedModel = buildCmsBtProductModel_feed(customAttributesValue);
@@ -229,12 +217,15 @@ public class CmsProductDetailService {
         productModel.setFeed(feedModel);
         productModel.setModified(requestMap.get("modified").toString());
 
-        updateRequest.setProductModel(productModel);
-        updateRequest.setModifier(user);
-        updateRequest.setModified(requestMap.get("modified").toString());
+        ProductUpdateBean productUpdateBean = new ProductUpdateBean();
+        productUpdateBean.setProductModel(productModel);
+        productUpdateBean.setModifier(user);
+        String newModified = DateTimeUtil.getNowTimeStamp();
+        productUpdateBean.setModified(newModified);
 
-        return productClient.updateProductRetModified(updateRequest);
+        productService.updateProduct(channelId, productUpdateBean);
 
+        return newModified;
     }
 
     /**
@@ -249,8 +240,6 @@ public class CmsProductDetailService {
      */
     public String updateProductSkuInfo(String channelId, String user, String categoryId, Long productId, String modified, String categoryFullPath, Map skuFieldMap) {
 
-        ProductUpdateRequest updateRequest = new ProductUpdateRequest(channelId);
-
         CmsBtProductModel productModel = new CmsBtProductModel(channelId);
 
         List<CmsBtProductModel_Sku> skuValues = buildCmsBtProductModel_skus(skuFieldMap);
@@ -261,12 +250,15 @@ public class CmsProductDetailService {
         productModel.setSkus(skuValues);
         productModel.setModified(modified);
 
-        updateRequest.setProductModel(productModel);
-        updateRequest.setModifier(user);
-        updateRequest.setModified(modified);
+        ProductUpdateBean productUpdateBean = new ProductUpdateBean();
+        productUpdateBean.setProductModel(productModel);
+        productUpdateBean.setModifier(user);
+        String newModified = DateTimeUtil.getNowTimeStamp();
+        productUpdateBean.setModified(newModified);
 
-        return productClient.updateProductRetModified(updateRequest);
+        productService.updateProduct(channelId, productUpdateBean);
 
+        return newModified;
     }
 
     /**
@@ -289,8 +281,6 @@ public class CmsProductDetailService {
         Map<String, Object> customAttributesValue = (Map<String, Object>) requestMap.get("customAttributes");
         List<CmsBtProductModel_Sku> skuValues = buildCmsBtProductModel_skus(skuMap);
 
-        ProductUpdateRequest updateRequest = new ProductUpdateRequest(channelId);
-
         CmsBtProductModel productModel = new CmsBtProductModel(channelId);
 
         CmsBtProductModel_Feed feedModel = buildCmsBtProductModel_feed(customAttributesValue);
@@ -307,11 +297,15 @@ public class CmsProductDetailService {
         productModel.setSkus(skuValues);
         productModel.setModified(modified);
 
-        updateRequest.setProductModel(productModel);
-        updateRequest.setModifier(userName);
+        ProductUpdateBean productUpdateBean = new ProductUpdateBean();
+        productUpdateBean.setProductModel(productModel);
+        productUpdateBean.setModifier(userName);
+        String newModified = DateTimeUtil.getNowTimeStamp();
+        productUpdateBean.setModified(newModified);
 
-        return productClient.updateProductRetModified(updateRequest);
+        productService.updateProduct(channelId, productUpdateBean);
 
+        return modified;
     }
 
     /**
@@ -328,20 +322,7 @@ public class CmsProductDetailService {
         // 先是否已在售？
         // 提醒运营人员去天猫后台删除对应产品信息
         // 删除cms系统中对应的产品id.
-
-
-        CmsCategoryInfoBean categoryInfo = new CmsCategoryInfoBean();
-
-        CategorySchemaGetRequest schemaGetRequest = new CategorySchemaGetRequest(categoryId);
-
-        CategorySchemaGetResponse schemaGetResponse = voApiClient.execute(schemaGetRequest);
-
-        categoryInfo.setMasterFields(schemaGetResponse.getMasterFields());
-        categoryInfo.setCategoryId(schemaGetResponse.getCategoryId());
-        categoryInfo.setCategoryFullPath(schemaGetResponse.getCategoryFullPath());
-        categoryInfo.setSkuFields(schemaGetResponse.getSkuFields());
-
-        return categoryInfo;
+        return categorySchemaService.getCategorySchemaByCatId(categoryId);
     }
 
     /**
@@ -371,16 +352,13 @@ public class CmsProductDetailService {
         Set<Long> productIds = new HashSet<Long>(CommonUtil.changeListType((List<Integer>) prodIdObj));
 
         // 取得products对应的所有的groupIds
-        ProductsGetRequest productsGetRequest = new ProductsGetRequest(userSession.getSelChannelId());
-        productsGetRequest.setProductIds(productIds);
-        productsGetRequest.addField("feed.orgAtts.modelCode");
-        productsGetRequest.addField("groups");
-        ProductsGetResponse groups = voApiClient.execute(productsGetRequest);
+        String[] projections = {"feed.orgAtts.modelCode", "groups"};
+        List<CmsBtProductModel> products = productService.getList(userSession.getSelChannelId(), productIds, projections);
 
         // 获取groupId的数据
         List<String> models = new ArrayList<String>();
         Map<String,List<String>> numIids = new HashMap<>();
-        for (CmsBtProductModel product: groups.getProducts()) {
+        for (CmsBtProductModel product: products) {
 
             // 获取所有model
             String model = product.getFeed().getOrgAtts().get("modelCode").toString();
@@ -412,17 +390,12 @@ public class CmsProductDetailService {
         }
         // 如果不存在已经上新过的产品
         else {
-
-            ProductGroupMainCategoryUpdateRequest request = new ProductGroupMainCategoryUpdateRequest(userSession.getSelChannelId(), categoryId, categoryPath, models);
-            request.setModifier(userSession.getUserName());
-            request.setModels(models);
-            ProductGroupMainCategoryUpdateResponse response = voApiClient.execute(request);
-
+            Map<String, Object> response = productService.changeProductCategory(userSession.getSelChannelId(), categoryId, categoryPath, models, userSession.getUserName());
             // 获取更新结果
             resultMap.put("isChangeCategory", true);
-            resultMap.put("updFeedInfoCount", response.getUpdFeedInfoCount());
-            resultMap.put("updProductCount", response.getUpdProductCount());
-            resultMap.put("updateCount", response.getModifiedCount());
+            resultMap.put("updFeedInfoCount", response.get("updFeedInfoCount"));
+            resultMap.put("updProductCount", response.get("updProductCount"));
+            resultMap.put("updateCount", response.get("modifiedCount"));
         }
 
         return resultMap;
@@ -596,7 +569,7 @@ public class CmsProductDetailService {
      */
     private CmsBtProductModel getProductModel(String channelId, Long prodId) {
 
-        CmsBtProductModel productValueModel = cmsProductService.getProductById(channelId, prodId);
+        CmsBtProductModel productValueModel = productService.getProductById(channelId, prodId);
 
         if (productValueModel == null) {
 
@@ -902,8 +875,8 @@ public class CmsProductDetailService {
 
         for (Field field : fields) {
 
-            if (OPTION_DATA_SOURCE.equals(field.getDataSource())
-                    || OPTION_DATA_SOURCE_CHANNEL.equals(field.getDataSource())) {
+            if (CmsConstants.optionConfigType.OPTION_DATA_SOURCE.equals(field.getDataSource())
+                    || CmsConstants.optionConfigType.OPTION_DATA_SOURCE_CHANNEL.equals(field.getDataSource())) {
 
                 FieldTypeEnum type = field.getType();
 
@@ -914,7 +887,7 @@ public class CmsProductDetailService {
                         break;
                     case SINGLECHECK:
                     case MULTICHECK:
-                        if (OPTION_DATA_SOURCE.equals(field.getDataSource())) {
+                        if (CmsConstants.optionConfigType.OPTION_DATA_SOURCE.equals(field.getDataSource())) {
                             List<TypeBean> typeBeanList = Type.getTypeList(field.getId(), language);
 
                             // 替换成field需要的样式
@@ -928,7 +901,7 @@ public class CmsProductDetailService {
 
                             OptionsField optionsField = (OptionsField) field;
                             optionsField.setOptions(options);
-                        } else if (OPTION_DATA_SOURCE_CHANNEL.equals(field.getDataSource())) {
+                        } else if (CmsConstants.optionConfigType.OPTION_DATA_SOURCE_CHANNEL.equals(field.getDataSource())) {
                             // 获取type channel bean
                             List<TypeChannelBean> typeChannelBeanList = new ArrayList<>();
                             if (FIELD_SKU_CARTS.equals(field.getId())) {

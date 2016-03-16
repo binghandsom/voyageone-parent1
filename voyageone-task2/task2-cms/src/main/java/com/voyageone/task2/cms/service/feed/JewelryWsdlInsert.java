@@ -1,6 +1,6 @@
 package com.voyageone.task2.cms.service.feed;
 
-import com.voyageone.service.impl.cms.CmsFeedToCmsService;
+import com.voyageone.service.impl.cms.feed.FeedToCmsService;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.task2.cms.dao.feed.JewelryDao;
 import com.voyageone.task2.cms.model.CmsBtFeedInfoJewelryModel;
@@ -30,7 +30,7 @@ public class JewelryWsdlInsert extends JewelryWsdlBase {
     private static final String INSERT_FLG = "(UpdateFlag = 1 or UpdateFlag = 2)";
 
     @Autowired
-    private CmsFeedToCmsService feedToCmsService;
+    private FeedToCmsService feedToCmsService;
 
     @Autowired
     private JewelryDao jewelryDao;
