@@ -197,7 +197,8 @@ public class CmsPromotionDetailService extends BaseAppService {
         if (!CollectionUtils.isEmpty(promotionGroups)) {
             promotionGroups.forEach(map -> {
                 if (map.get("productId") != null && !map.get("productId").toString().equalsIgnoreCase("0")) {
-                    CmsBtProductModel cmsBtProductModel = productService.getProductById(param.get("channelId").toString(), ((Integer) map.get("productId")).longValue());
+
+                    CmsBtProductModel cmsBtProductModel = productService.getProductById(param.get("channelId").toString(),Long.parseLong(map.get("productId").toString()));
 
                     if (cmsBtProductModel != null) {
 //                    map.put("image", cmsBtProductModel.getFields().getImages1().get(0).getAttribute("image1"));
