@@ -49,7 +49,7 @@
         <task:scheduled ref="CmsPromotionJob" method="run" cron="0 0/1 0-23 * * ?"/>
 
         <!-- 维他命 feed 导入 cms2 -->
-        <task:scheduled ref="CmsVtmJob" method="run" cron="0 0 * * * ?"/>
+        <task:scheduled ref="CmsVtmJob" method="run" cron="0 0/5 * * * ?"/>
 
         <!-- 库存数据导入 cms2 -->
         <task:scheduled ref="CmsSynInventoryToCmsJob" method="run" cron="0 0/5 * * * ?"/>
