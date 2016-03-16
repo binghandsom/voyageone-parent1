@@ -62,4 +62,29 @@
             </if>
         </trim>
     </insert>
+
+    <insert id="cms_insert_sx_workloads" parameterType="java.util.List">
+        insert into voyageone_cms2.cms_bt_sx_workload
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            channel_id,
+            group_id,
+            publish_status,
+            created,
+            creater,
+            modified,
+            modifier
+        </trim>
+        value
+        <foreach collection="list" item="item" separator="," >
+            (
+            #{item.channelId,jdbcType=VARCHAR},
+            #{item.groupId,jdbcType=INTEGER},
+            #{item.publishStatus,jdbcType=INTEGER},
+            now(),
+            #{item.creater,jdbcType=VARCHAR},
+            now(),
+            #{item.modifier,jdbcType=VARCHAR}
+            )
+        </foreach>
+    </insert>
 </mapper>

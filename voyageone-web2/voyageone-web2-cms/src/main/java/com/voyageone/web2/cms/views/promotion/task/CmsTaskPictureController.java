@@ -1,10 +1,10 @@
 package com.voyageone.web2.cms.views.promotion.task;
 
+import com.voyageone.service.bean.cms.task.beat.TaskBean;
 import com.voyageone.web2.base.BaseController;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsUrlConstants.PROMOTION.TASK.BEAT;
 import com.voyageone.web2.cms.bean.beat.ReqParam;
-import com.voyageone.web2.cms.wsdl.bean.task.beat.TaskBean;
 import com.voyageone.service.model.cms.CmsBtBeatInfoModel;
 import com.voyageone.service.model.cms.CmsBtTasksModel;
 import org.springframework.beans.factory.annotation.Autowired;

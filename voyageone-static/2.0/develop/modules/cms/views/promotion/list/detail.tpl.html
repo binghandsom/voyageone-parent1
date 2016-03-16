@@ -149,7 +149,7 @@
             </div>
         </div>
     <div class="box">
-        <tabset class="tab-container vo_nav-tabs">
+        <uib-tabset class="tab-container vo_nav-tabs">
             <!--right-btn-->
             <div class="form-inline m-b-xs pull-right" ng-controller="popupCtrl">
                 <button class="btn btn-default" ng-click="openImport('md',vm.promotionId,search)"><i
@@ -165,7 +165,7 @@
             </div>
             <!-- /right-btn -->
             <!--tab-->
-            <tab>
+            <uib-tab>
                 <tab-heading ng-click="vm.tabIndex = 0"><i class="glyphicons glyphicons-more-items text-default"></i>
                     {{'TXT_GROUP_LIST' | translate}}
                 </tab-heading>
@@ -249,8 +249,8 @@
                     </div>
                 </div>
                 <!-- .table-responsive -->
-            </tab>
-            <tab>
+            </uib-tab>
+            <uib-tab>
                 <tab-heading ng-click="vm.tabIndex = 1"><i class="glyphicons glyphicons-sort text-default"></i>
                     {{'TXT_PRODUCT_LIST' | translate}}
                 </tab-heading>
@@ -357,9 +357,9 @@
                     </div>
                 </div>
                 <!-- .table-responsive -->
-            </tab>
+            </uib-tab>
             <!-- TODO 暂时不显示SKU列表,如果以后需要根据SKU列表来制定 促销价格再放开 -->
-            <!--<tab>
+            <!--<uib-tab>
                 <tab-heading ng-click="vm.tabIndex = 2"><i class="fa fa-list"></i> {{'TXT_SKU_LIST' | translate}}
                 </tab-heading>
                 <div class="panel vo_panel tab_panel">
@@ -423,8 +423,8 @@
                     </div>
                 </div>
 
-            </tab>-->
-        </tabset>
+            </uib-tab>-->
+        </uib-tabset>
         <!-- tabset -->
     </div>
     <!-- tabs ng-controller -->

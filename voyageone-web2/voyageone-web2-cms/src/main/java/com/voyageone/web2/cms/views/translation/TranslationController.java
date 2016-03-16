@@ -69,7 +69,7 @@ public class TranslationController extends CmsController{
     // 保存翻译内容
     @RequestMapping(CmsUrlConstants.TRANSLATION.TASKS.SAVE_TASK)
     public AjaxResponse doSaveTask(@RequestBody ProductTranslationBean requestBean){
-        feedPropsTranslateService.verifyParameter(requestBean);
+//        feedPropsTranslateService.verifyParameter(requestBean);
 
         String channelId = getUser().getSelChannelId();
         String userName = getUser().getUserName();

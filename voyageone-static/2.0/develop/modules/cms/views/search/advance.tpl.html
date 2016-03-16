@@ -1,10 +1,10 @@
 <div class="wrapper-md" ng-init="initialize()">
-	<accordion class="vo_accordion vo_attr" close-others="oneAtATime">
-		<accordion-group is-open="vm.status.open">
-			<accordion-heading>
+	<uib-accordion class="vo_accordion vo_attr" close-others="oneAtATime">
+		<uib-accordion-group is-open="vm.status.open">
+			<uib-accordion-heading>
 				<i class="fa fa-search"></i>&nbsp;{{'TXT_ADVANCE_SEARCH' | translate}}
 				<i class="pull-right glyphicon glyphicon-menu-down" ng-class="{'glyphicon-menu-up': vm.status.open, 'glyphicon-menu-down': !vm.status.open}"></i>
-			</accordion-heading>
+			</uib-accordion-heading>
 			<!-- search -->
 			<div class="col-sm-12" >
 				<div class="col-sm-4">
@@ -49,55 +49,6 @@
 								<div class="input-group col-sm-4"><input type="text" class="form-control" ng-model="vm.searchInfo.priceEnd" ng-pattern="/^(\d+)(\.[0-9]{0,2})?$/"></div>
 							</div>
 						</div><!-- .form-group -->
-						<div class="form-group">
-							<label class="col-sm-3 control-label" translate="TXT_CUST_QUERY_ATTR"></label>
-							<div class="col-sm-8 form-inline">
-								<select class="form-control">
-									<option>1</option>
-									<option>2</option>
-									<option>3</option>
-								</select>
-								<select class="form-control">
-									<option><&nbsp;=</option>
-									<option>>&nbsp;=</option>
-									<option>=&nbsp;=</option>
-								</select>
-								<div class="input-group col-sm-5"><input type="text" class="form-control"></div>
-								<button class="btn btn-success"><i class="fa fa-plus"></i></button>
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-3 control-label"></label>
-							<div class="col-sm-8 form-inline">
-								<select class="form-control">
-									<option>1</option>
-									<option>2</option>
-									<option>3</option>
-								</select>
-								<select class="form-control">
-									<option><&nbsp;=</option>
-									<option>>&nbsp;=</option>
-									<option>=&nbsp;=</option>
-								</select>
-								<div class="input-group col-sm-5"><input type="text" class="form-control"></div>
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-3 control-label"></label>
-							<div class="col-sm-8 form-inline">
-								<select class="form-control">
-									<option>1</option>
-									<option>2</option>
-									<option>3</option>
-								</select>
-								<select class="form-control">
-									<option><&nbsp;=</option>
-									<option>>&nbsp;=</option>
-									<option>=&nbsp;=</option>
-								</select>
-								<div class="input-group col-sm-5"><input type="text" class="form-control"></div>
-							</div>
-						</div>
 					</div>
 				</div>
 				<div class="col-sm-4">
@@ -274,15 +225,19 @@
 					</div><!-- .form-inline -->
 				</div>
 			</div>
-		</accordion-group>
-	</accordion><!-- .accordion --><!--/search-->
+		</uib-accordion-group>
+	</uib-accordion><!-- .accordion --><!--/search-->
 	<!--category-->
 	<div>
 		<tabset class="tab-container vo_nav-tabs">
 			<!--right-btn-->
 			<div class="form-inline m-b-xs pull-right" ng-controller="popupCtrl">
-				<button class="btn btn-default" ng-click="openCustomColumn('lg','md')"><i class="fa fa-cog"></i>&nbsp;{{'BTN_CUSTOMIZE_COLUMNS' | translate}}</button>
+				<!--<button class="btn btn-vo"-->
+						<!--ng-click="" >-->
+					<!--<i class="fa fa-table"></i>&nbsp;<span translate="BTN_CUSTOMIZE_COLUMNS"></span>-->
+				<!--</button>-->
 				<!-- TODO 暂时未实现-->
+				<!--<button class="btn btn-default" ng-click="openCustomBaseProperty('lg')"><i class="fa fa-cog"></i>&nbsp;{{'BTN_CUSTOMIZE_COLUMNS' | translate}}</button>-->
 				<div class="btn-group" uib-dropdown>
 					<button type="button" class="btn btn-default" ng-disabled="vm.masterData.promotionList.length < 0" uib-dropdown-toggle>
 						<i class="fa fa-arrow-circle-right"></i>&nbsp;{{'BTN_ADD_TO_PROMOTION' | translate}}&nbsp;<span class="caret"></span>
@@ -336,10 +291,10 @@
 										<a ng-href="https://detail.tmall.com/item.htm?id={{groupInfo.groups.platforms[0].numIId}}" target="_blank"  ng-bind="groupInfo.groups.platforms[0].numIId"></a>
 									</span>&nbsp;
 									<span>{{'TXT_GROUP_NAME_WITH_COLON' | translate}}&nbsp;
-										<a ng-if="groupInfo.fields.productNameCn" ng-href="#/group/detail/{{groupInfo.groups.platforms[0].groupId}}" title="{{groupInfo.fields.productNameCn}}"
-										   target="_blank">{{groupInfo.fields.productNameCn | limitTo: 30}}{{groupInfo.fields.productNameCn.length > 30 ? '...' : ''}}
+										<a ng-if="groupInfo.fields.longTitle" ng-href="#/group/detail/{{groupInfo.groups.platforms[0].groupId}}" title="{{groupInfo.fields.longTitle}}"
+										   target="_blank">{{groupInfo.fields.longTitle | limitTo: 30}}{{groupInfo.fields.longTitle.length > 30 ? '...' : ''}}
 										</a>
-										<a ng-if="!groupInfo.fields.productNameCn" ng-href="#/group/detail/{{groupInfo.groups.platforms[0].groupId}}" title="{{groupInfo.fields.productNameEn}}"
+										<a ng-if="!groupInfo.fields.longTitle" ng-href="#/group/detail/{{groupInfo.groups.platforms[0].groupId}}" title="{{groupInfo.fields.productNameEn}}"
 										   target="_blank">{{groupInfo.fields.productNameEn | limitTo: 30}}{{groupInfo.fields.productNameEn.length > 30 ? '...' : ''}}
 										</a>
 									</span>
@@ -352,9 +307,17 @@
 									<div class="table_main pull-left" style="width:60%">
 										<ul>
 											<li><a ng-href="#/product/detail/{{groupInfo.prodId}}" ng-bind="groupInfo.fields.code" target="_blank"></a></li>
-											<li><a ng-href="#/product/detail/{{groupInfo.prodId}}" ng-bind="groupInfo.fields.productNameCn || groupInfo.fields.productNameEn" target="_blank"></a></li>
+											<li><a ng-href="#/product/detail/{{groupInfo.prodId}}" ng-bind="groupInfo.fields.longTitle || groupInfo.fields.productNameEn" target="_blank"></a></li>
+											<!--<div class="form-inline thumb-xs-search">-->
+												<!--<a href="#"><img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{groupInfo.fields.images1[0].image1}}" alt=""/></a>-->
+												<!--<a href="#"><img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{groupInfo.fields.images1[0].image1}}" alt=""/></a>-->
+												<!--<a href="#"><img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{groupInfo.fields.images1[0].image1}}" alt=""/></a>-->
+												<!--<a href="#"><img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{groupInfo.fields.images1[0].image1}}" alt=""/></a>-->
+												<!--<a href="#"><img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{groupInfo.fields.images1[0].image1}}" alt=""/></a>-->
+											<!--</div>-->
 										</ul>
 									</div>
+
 								</td>
 								<td class="mfb-xxt text-center"><!--TODO 目前只能返回group的主product,所有拿不到group下面所有的product的库存--><!--popover-html="showInfo({{groupInfo.inventoryDetail}})"-->
 									<!--<button ng-controller="showPopoverCtrl" popover-title="{{'TXT_SKU_INVENTORY' | translate}}" type="button" popover-placement="left"
@@ -391,25 +354,6 @@
 											</ul>
 										</div>
 									</small>
-								</td>
-							</tr>
-							<tr ng-class="{'table_bg_green_mint': groupInfo.groups.platforms[0].publishTime}">
-								<td colspan="8">
-									<span>
-										<img class="thumb-sm-search pull-left m-r" alt="51A0HC13E1-00LCNB0" ng-src="http://image.sneakerhead.com/is/image/sneakerhead/51a0hc13e1-00lcnb0_main_1" src="http://image.sneakerhead.com/is/image/sneakerhead/51a0hc13e1-00lcnb0_main_1">
-									</span>
-									<span>
-										<img class="thumb-sm-search pull-left m-r" alt="51A0HC13E1-00LCNB0" ng-src="http://image.sneakerhead.com/is/image/sneakerhead/51a0hc13e1-00lcnb0_main_1" src="http://image.sneakerhead.com/is/image/sneakerhead/51a0hc13e1-00lcnb0_main_1">
-									</span>
-									<span>
-										<img class="thumb-sm-search pull-left m-r" alt="51A0HC13E1-00LCNB0" ng-src="http://image.sneakerhead.com/is/image/sneakerhead/51a0hc13e1-00lcnb0_main_1" src="http://image.sneakerhead.com/is/image/sneakerhead/51a0hc13e1-00lcnb0_main_1">
-									</span>
-									<span>
-										<img class="thumb-sm-search pull-left m-r" alt="51A0HC13E1-00LCNB0" ng-src="http://image.sneakerhead.com/is/image/sneakerhead/51a0hc13e1-00lcnb0_main_1" src="http://image.sneakerhead.com/is/image/sneakerhead/51a0hc13e1-00lcnb0_main_1">
-									</span>
-									<span>
-										<img class="thumb-sm-search pull-left m-r" alt="51A0HC13E1-00LCNB0" ng-src="http://image.sneakerhead.com/is/image/sneakerhead/51a0hc13e1-00lcnb0_main_1" src="http://image.sneakerhead.com/is/image/sneakerhead/51a0hc13e1-00lcnb0_main_1">
-									</span>
 								</td>
 							</tr>
 							</tbody>
@@ -463,9 +407,9 @@
 											<a ng-href="#/product/detail/{{productInfo.prodId}}" target="_blank" ng-bind="productInfo.fields.code"></a>
 										</span>&nbsp;
 										<span>{{'TXT_PRODUCT_NAME_WITH_COLON' | translate}}&nbsp;
-											<a ng-if="productInfo.fields.productNameCn" href="#/product/detail/{{productInfo.prodId}}" title="{{productInfo.fields.productNameCn}}"
-											   target="_blank">{{productInfo.fields.productNameCn | limitTo: 30}}{{productInfo.fields.productNameCn.length > 30 ? '...' : ''}}</a>
-											<a ng-if="!productInfo.fields.productNameCn" href="#/product/detail/{{productInfo.prodId}}" title="{{productInfo.fields.productNameEn}}"
+											<a ng-if="productInfo.fields.longTitle" href="#/product/detail/{{productInfo.prodId}}" title="{{productInfo.fields.longTitle}}"
+											   target="_blank">{{productInfo.fields.longTitle | limitTo: 30}}{{productInfo.fields.longTitle.length > 30 ? '...' : ''}}</a>
+											<a ng-if="!productInfo.fields.longTitle" href="#/product/detail/{{productInfo.prodId}}" title="{{productInfo.fields.productNameEn}}"
 											   target="_blank">{{productInfo.fields.productNameEn | limitTo: 30}}{{productInfo.fields.productNameEn.length > 30 ? '...' : ''}}</a>
 										</span>
 										<span class="pull-right">{{'TXT_CATEGORY' | translate}}&nbsp;{{productInfo.catPath}}</span>

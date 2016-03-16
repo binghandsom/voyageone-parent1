@@ -34,7 +34,6 @@ import java.util.*;
  *
  * @author chuanyu.liang 15/12/9
  * @version 2.0.1
- * @since. 2.0.0
  */
 @Service
 public class ProductGroupService extends BaseService {
@@ -343,7 +342,7 @@ public class ProductGroupService extends BaseService {
     /**
      * addDeleteGroupBulk
      */
-    public void addDeleteGroupBulk(List<CmsBtProductModel> products,
+    private void addDeleteGroupBulk(List<CmsBtProductModel> products,
                                    Set<Long> groupIds, Integer cartId, Set<String> numIIds,
                                    List<BulkUpdateModel> bulkList) {
         if (products != null) {

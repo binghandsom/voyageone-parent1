@@ -11,9 +11,19 @@
                             <div class="col-sm-4">
                                 <div class="form-horizontal">
                                     <div class="form-group">
-                                        <label class="col-sm-3 control-label vo_reqfield" translate="TXT_NAME"></label>
-                                        <div class="col-sm-7">
-                                            <input type="text" class="form-control" ng-model="vm.dictionary.value" required>
+                                        <label class="col-sm-4 control-label vo_reqfield" translate="TXT_NAME"></label>
+                                        <div class="col-sm-6">
+                                            <input type="text" class="form-control" ng-model="vm.dictionary.value" ng-required="true">
+                                        </div>
+                                        <label class="col-sm-2 control-label text-u-red text-left" translate="TXT_REQUIRED"></label>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-4 control-label vo_reqfield" translate="TXT_PLATFORM_TYPE"></label>
+                                        <div class="col-sm-6">
+                                            <select class="form-control" ng-model="vm.cart_id"
+                                                    ng-options="platform.value as platform.name for platform in vm.masterData.platformList" ng-disabled="vm.idEdit">
+                                                <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                                            </select>
                                         </div>
                                         <label class="col-sm-2 control-label text-u-red text-left" translate="TXT_REQUIRED"></label>
                                     </div>

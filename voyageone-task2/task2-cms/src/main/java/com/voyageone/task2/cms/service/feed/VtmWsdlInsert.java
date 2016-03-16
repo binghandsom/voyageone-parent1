@@ -7,7 +7,7 @@ import com.voyageone.common.configs.Enums.FeedEnums;
 import com.voyageone.common.configs.Feed;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.JacksonUtil;
-import com.voyageone.service.impl.cms.CmsFeedToCmsService;
+import com.voyageone.service.impl.cms.feed.FeedToCmsService;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
@@ -33,7 +33,7 @@ public class VtmWsdlInsert extends BaseTaskService {
     private static final String INSERT_FLG = " UpdateFlag = 1 ";
 
     @Autowired
-    private CmsFeedToCmsService feedToCmsService;
+    private FeedToCmsService feedToCmsService;
 
     @Autowired
     protected SuperFeed2Dao superFeedDao;

@@ -3,13 +3,11 @@ package com.voyageone.task2.cms.service;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.common.Constants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
-import com.voyageone.common.configs.ShopConfigs;
 import com.voyageone.common.configs.TypeChannel;
-import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.CommonUtil;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
-import com.voyageone.service.impl.cms.CmsProductService;
+import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
@@ -40,7 +38,7 @@ public class CmsSynInventoryToCmsService extends BaseTaskService {
     private CmsBtProductDao cmsBtProductDao;
 
     @Autowired
-    private CmsProductService cmsProductService;
+    private ProductService productService;
 
     @Override
     public SubSystem getSubSystem() {
@@ -173,7 +171,7 @@ public class CmsSynInventoryToCmsService extends BaseTaskService {
      * @return
      */
     private Map<String, List<String>> getGroupByCartList(String channelId, int cartId) {
-        return cmsProductService.getProductGroupIdCodesMapByCart(channelId,cartId);
+        return productService.getProductGroupIdCodesMapByCart(channelId, cartId);
     }
 
     /**

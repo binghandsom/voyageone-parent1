@@ -29,7 +29,7 @@ public class CmsFeedCustPropServiceTest {
         UserSessionBean userInfo = new UserSessionBean();
         userInfo.setSelChannelId("010");
 
-        List<CmsMtFeedCategoryModel> resultInfo = cmsFeedCustPropService.getTopCategories(userInfo);
+        List<CmsMtFeedCategoryModel> resultInfo = cmsFeedCustPropService.getTopFeedCategories(userInfo);
         assertNotNull(resultInfo);
     }
 }

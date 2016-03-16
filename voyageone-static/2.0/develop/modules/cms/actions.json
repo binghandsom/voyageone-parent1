@@ -64,7 +64,8 @@
         "getFeedAttrs": "getFeedAttributes",
         "saveFieldMapping": "saveFieldMapping",
         "directMatchOver": "directMatchOver",
-        "getMatchOver": "getMatchOver"
+        "getMatchOver": "getMatchOver",
+        "getMainMapping": "getMainMapping"
       },
       "platformMappingService": {
         "root": "/cms/mapping/platform",
