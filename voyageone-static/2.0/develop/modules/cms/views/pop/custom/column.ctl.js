@@ -8,16 +8,13 @@ define([
     angularAMD.controller('popCustomColumnCtl', function ($scope,$searchAdvanceService) {
         $scope.cus = {
             customProps:[],
-            commonProps:[],
-            feed_prop_original:"",
-            propId:""
+            commonProps:[]
         };
         $scope.cusData = {
             customProps:[],
             commonProps:[]
         };
         $scope.initialize = initialize;
-        //$scope.isSelect = isSelect;
         /**
          * 初始化数据.
          */
@@ -32,8 +29,6 @@ define([
         /**
          * 确定返回，数据传回前端及用户自定义保存
          */
-
-
         $scope.ok = function(){
 
             console.log($scope.cusData.customProps);
