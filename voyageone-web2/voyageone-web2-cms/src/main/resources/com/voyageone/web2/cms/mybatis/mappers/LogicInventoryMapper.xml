@@ -6,6 +6,7 @@
         select
             qty_china
         from wms_bt_inventory_center_logic
-        where sku = #{sku}
+        where order_channel_id = #{channelId}
+        and sku = #{sku}
     </select>
 </mapper>

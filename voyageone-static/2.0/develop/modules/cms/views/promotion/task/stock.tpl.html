@@ -132,11 +132,11 @@
 					</div>
 
 					<div class="col-sm-12 dropdown_table_mains" if-no-rows="$ctrl.stockList.length">
-						<table class="table table-hover-new vo_table" style="width:1800px;margin-bottom:0px" ng-controller="popupCtrl">
+						<table class="table table-hover-new vo_table" style="width:1800px;margin-bottom:0px" ng-controller="selectRowsCtrl">
 							<thead>
 							<tr>
 								<th class="text-center"><label class="checkbox-inline c-checkbox">
-									<input type="checkbox">
+									<input type="checkbox" ng-click="selectAll($ctrl.stockSelList)" ng-checked="isAllSelected($ctrl.stockSelList)" ng-disabled="!$ctrl.stockList.length">
 									<span class="fa fa-check"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}</label></th>
 								<!--<th class="text-center">No.</th>-->
 								<th class="text-center">Model</th>
@@ -155,7 +155,7 @@
 							<tr ng-repeat="stock in $ctrl.stockList">
 								<td class="text-center">
 									<label class="checkbox-inline c-checkbox">
-										<input type="checkbox">
+										<input type="checkbox" ng-model="$ctrl.stockSelList.selFlag[stock.sku]" ng-click="selectOne(stock.sku, $ctrl.stockSelList)" >
 										<span class="fa fa-check"></span>
 									</label></td>
 								<td class="text-center">{{stock.model}}</td>
@@ -214,7 +214,7 @@
 								<th class="text-center">Code</th>
 								<th class="text-center">Sku</th>
 								<th ng-repeat="property in $ctrl.propertyList" class="text-center" ng-show="property.show">{{property.name}}</th>
-								<th class="text-center">可调用库存</th>
+								<th class="text-center" ng-if="$ctrl.realStockStatus == '0'">{{'TXT_AVAILABLE_STOCK' | translate}}</th>
 								<th ng-repeat="platform in $ctrl.platformList" class="text-center">{{platform.cartName}}</th>
 							</tr>
 							</thead>
@@ -224,14 +224,14 @@
 								<td class="text-center">{{realStock.code}}</td>
 								<td class="text-center"> {{realStock.sku}}</td>
 								<td class="text-center" ng-repeat="property in $ctrl.propertyList" class="text-center" ng-show="property.show">{{realStock[property.property]}}</th>
-								<td class="text-center">{{realStock.qty}}</td>
+								<td class="text-center" ng-if="$ctrl.realStockStatus == '0'">{{realStock.qty}}</td>
 								<td ng-repeat="platform in realStock.platformStock" class="text-center">
 									<div class="form-inline btn-group">
 										<span ng-if="platform.separationQty == -1">
 										    <button title="动态" class="badge badge-empty btn-xs">{{'TXT_DYNAMIC' | translate}}</button>
 										</span>
 										<span ng-if="platform.separationQty != -1">
-											<button title="平台销售量" class="badge badge-empty btn-xs">{{platform.salesQty}}</button>
+											<button title="平台销售量" class="badge badge-empty btn-xs" ng-if="$ctrl.realStockStatus == '0'">{{platform.salesQty}}</button>
 											<button title="平台隔离数量" class="badge badge-empty btn-vo btn-xs" ng-click="openSkuMrbStockDetail('md')">{{platform.separationQty}}</button>
 										</span>
 									</div>

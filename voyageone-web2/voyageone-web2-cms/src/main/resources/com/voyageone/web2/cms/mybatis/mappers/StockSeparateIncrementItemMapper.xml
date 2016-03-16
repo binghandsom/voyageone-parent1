@@ -2,50 +2,73 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.voyageone.web2.cms.sql">
 
+    <!--<select id="select_stock_separate_increment_success_all" resultType="HashMap" parameterType="HashMap">-->
+        <!--select-->
+        <!--t1.sku,-->
+        <!--t1.increment_qty,-->
+        <!--t2.cart_id,-->
+        <!--t2.task_id-->
+        <!--from (select * from  voyageone_cms2.cms_bt_stock_separate_increment_item${tableName}-->
+        <!--where sub_task_id in (select sub_task_id from voyageone_cms2.cms_bt_stock_separate_increment_task where task_id in(-->
+        <!--select task_id-->
+        <!--from   voyageone_cms2.cms_bt_stock_separate_item${tableName}-->
+        <!--where 1=1-->
+        <!--<if test="skuList != null and skuList.size() > 0">-->
+            <!--and (sku in-->
+            <!--<foreach collection="skuList" item="sku" open="(" separator="," close=")">-->
+                <!--#{sku}-->
+            <!--</foreach>-->
+            <!--)-->
+        <!--</if>-->
+        <!--<if test="status !=null">-->
+            <!--and status = #{status}-->
+        <!--</if>-->
+        <!--))-->
+        <!--<if test="skuList != null and skuList.size() > 0">-->
+            <!--and (sku in-->
+            <!--<foreach collection="skuList" item="sku" open="(" separator="," close=")">-->
+                <!--#{sku}-->
+            <!--</foreach>-->
+            <!--)-->
+        <!--</if>-->
+        <!--<if test="status !=null">-->
+            <!--and status = #{status}-->
+        <!--</if>-->
+        <!--) t1-->
+        <!--left join-->
+        <!--voyageone_cms2.cms_bt_stock_separate_increment_task t2 on t1.sub_task_id = t2.sub_task_id-->
+    <!--</select>-->
+
     <select id="select_stock_separate_increment_success_all" resultType="HashMap" parameterType="HashMap">
         select
-        t1.sku,
-        t1.increment_qty,
-        t2.cart_id,
-        t2.task_id
-        from (select * from  voyageone_cms2.cms_bt_stock_separate_increment_item${tableName}
-                where sub_task_id in (select sub_task_id from voyageone_cms2.cms_bt_stock_separate_increment_task where task_id in(
-                                        select task_id
-                                        from   voyageone_cms2.cms_bt_stock_separate_item${tableName}
-                                        where 1=1
-                                        <if test="skuList != null and skuList.size() > 0">
-                                            and (sku in
-                                            <foreach collection="skuList" item="sku" open="(" separator="," close=")">
-                                                #{sku}
-                                            </foreach>
-                                            )
-                                        </if>
-                                        <if test="status !=null">
-                                            and status = #{status}
-                                        </if>
-                                    ))
-                <if test="skuList != null and skuList.size() > 0">
-                    and (sku in
-                    <foreach collection="skuList" item="sku" open="(" separator="," close=")">
-                      #{sku}
-                    </foreach>
-                    )
-                </if>
-                <if test="status !=null">
-                    and status = #{status}
-                </if>
-              ) t1
-        left join
-        voyageone_cms2.cms_bt_stock_separate_increment_task t2 on t1.sub_task_id = t2.sub_task_id
+            t1.sku,
+            t1.increment_qty,
+            t1.status,
+            t2.cart_id,
+            t2.task_id
+        from voyageone_cms2.cms_bt_stock_separate_increment_item${tableName} t1
+        inner join voyageone_cms2.cms_bt_stock_separate_increment_task t2 on t1.sub_task_id = t2.sub_task_id
+        where 1=1
+            <if test="skuList != null and skuList.size() > 0">
+                and (sku in
+                <foreach collection="skuList" item="sku" open="(" separator="," close=")">
+                    #{sku}
+                </foreach>
+                )
+            </if>
+            <if test="statusList != null and statusList.size() > 0">
+                and (status in
+                <foreach collection="statusList" item="status" open="(" separator="," close=")">
+                    #{status}
+                </foreach>
+                )
+            </if>
     </select>
 
-    <!--<select id="select_stock_separate_increment_success_qty_by_task" resultType="Object" parameterType="HashMap">-->
-            <!--select sum(increment_qty)-->
-            <!--from   voyageone_cms2.cms_bt_stock_separate_increment_item-->
-            <!--where sub_task_id in (select sub_task_id from voyageone_cms2.cms_bt_stock_separate_increment_task-->
-                                        <!--where task_id = #{taskId} and cart_id = #{cartId})-->
-                <!--and sku = #{sku}-->
-                <!--and status = #{status}-->
-
-    <!--</select>-->
+    <select id="select_stock_separate_increment_success_qty" resultType="int" parameterType="HashMap">
+        select sum(increment_qty) as increment_qty_sum
+        from voyageone_cms2.cms_bt_stock_separate_increment_item
+        where sku = #{sku}
+        and status = #{status}
+    </select>
 </mapper>

@@ -17,7 +17,7 @@ public class CmsBtStockSeparateIncrementItemDao extends BaseDao {
         return selectList("select_stock_separate_increment_success_all", param);
     }
 
-//    public Object selectStockSeparateIncrementSuccessQtyByTask(Map<String, Object> param) {
-//        return selectOne("select_stock_separate_increment_success_qty_by_task", param);
-//    }
+    public Integer selectStockSeparateIncrementSuccessQty(Map<String, Object> param) {
+        return selectOne("select_stock_separate_increment_success_qty", param);
+    }
 }

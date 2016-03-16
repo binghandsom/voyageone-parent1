@@ -659,7 +659,7 @@ public class CmsTaskStockController extends CmsController {
      * {
      *  "code":"0", "message":null, "displayType":null, "redirectTo":null,
      *  "data":{
-     *   "usableStock":10000
+     *   "usableStock":"10000"
      *  }
      * }
      * @apiExample  业务说明
@@ -679,9 +679,15 @@ public class CmsTaskStockController extends CmsController {
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK.GET_USABLE_STOCK)
     public AjaxResponse getUsableStock(@RequestBody Map param) {
+        // 渠道id
+        param.put("channelId", this.getUser().getSelChannelId());
+        // 取得可用库存
+        String usableStock = cmsTaskStockService.getUsableStock(param);
 
+        Map<String, Object> resultBean = new HashMap<>();
+        resultBean.put("usableStock", usableStock);
         // 返回
-        return success(null);
+        return success(resultBean);
     }
 
     /**
@@ -719,6 +725,8 @@ public class CmsTaskStockController extends CmsController {
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK.SAVE_NEW_RECORD)
     public AjaxResponse saveNewRecord(@RequestBody Map param) {
 
+        // 新增库存隔离明细
+        cmsTaskStockService.saveNewRecord(param);
         // 返回
         return success(null);
     }

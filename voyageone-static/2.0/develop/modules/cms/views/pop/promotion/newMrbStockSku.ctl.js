@@ -1,5 +1,6 @@
 define([
-    'cms'
+    'cms',
+    'underscore'
 ], function (cms) {
     cms.controller('popNewMrbStockSkuCtl', (function () {
 
@@ -8,20 +9,27 @@ define([
             this.notify = notify;
             this.confirm = confirm;
             this.taskId = data.taskId;
-            this.platformList = data.platformList;
+            this.platformStockList = [];
+            var main = this;
+            _.each( data.platformList, function(platform) {
+                var obj = {};
+                obj.cartId = platform.cartId;
+                obj.cartName = platform.cartName;
+                obj.qty = "";
+                obj.dynamic = false;
+                main.platformStockList.push(obj);
+            });
             this.taskStockService = taskStockService;
-            this.model;
-            this.code;
-            this.sku;
-            this.usableStock;
-            this.platformStockList;
+            this.model = "";
+            this.code = "";
+            this.sku = "";
+            this.usableStock = "";
         }
 
         PopNewMrbStockSkuCtl.prototype = {
             getUsableStock: function () {
                 var main = this;
                 main.taskStockService.getUsableStock({
-                    "taskId": main.task_id,
                     "sku": main.sku
                 }).then(function (res) {
                     main.usableStock = res.data.usableStock;
@@ -31,7 +39,7 @@ define([
             saveNewRecord: function () {
                 var main = this;
                 main.taskStockService.saveNewRecord({
-                    "taskId": main.task_id,
+                    "taskId": main.taskId,
                     "model": main.model,
                     "code": main.code,
                     "sku": main.sku,

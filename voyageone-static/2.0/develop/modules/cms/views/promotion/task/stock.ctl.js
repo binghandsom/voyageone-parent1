@@ -8,7 +8,7 @@ define([
 ], function (cms) {
     cms.controller("taskStockController", (function () {
 
-        function TaskStockController($routeParams, taskStockService, cActions, confirm, alert, notify, $location) {
+        function TaskStockController($routeParams, taskStockService, cActions, confirm, alert, notify, $location, selectRowsFactory) {
             var urls = cActions.cms.task.taskStockService;
             var taskId = $routeParams['task_id'];
             if (_.isNaN(taskId)) {
@@ -26,8 +26,8 @@ define([
             this.separationOKNum = 0;
             this.separationFailNum = 0;
             this.waitRestoreNum = 0;
-            this.restoreOKNum = 0;
-            this.restoreFailNum = 0;
+            this.revertOKNum = 0;
+            this.revertFailNum = 0;
             this.changedNum = 0;
             this.allNum = 0;
             this.model = "";
@@ -40,7 +40,8 @@ define([
             this.platformList = [];
             this.stockList = [];
             this.realStockList = [];
-            this.stockListSelList = { selList: []};
+            this.realStockStatus = "";
+            this.stockSelList = { selList: []};
             this.stockPageOption = {
                 curr: 1,
                 total: 0,
@@ -53,7 +54,8 @@ define([
                 size: 10,
                 fetch: this.getRealStockList.bind(this)
             };
-
+            this.selectRowsFactory = selectRowsFactory;
+            this.tempStockListSelect = new selectRowsFactory();
             this.taskStockService = taskStockService;
         }
 
@@ -73,8 +75,9 @@ define([
                 });
             },
 
-        search: function (status) {
+        search: function (status, selectRowsFactory) {
                 var main = this;
+                main.tempStockListSelect = new main.selectRowsFactory();
                 if (status != undefined)  {
                     main.status = status;
                 }
@@ -97,6 +100,7 @@ define([
                     "start2" :  0,
                     "length2" : 10
                 }).then(function (res) {
+                    main.tempStockListSelect.clearCurrPageRows();
                     main.readyNum = res.data.readyNum;
                     main.waitSeparationNum = res.data.waitSeparationNum;
                     main.separationOKNum = res.data.separationOKNum;
@@ -112,13 +116,20 @@ define([
                     main.platformList = res.data.platformList;
                     main.stockList = res.data.stockList;
                     main.realStockList = res.data.realStockList;
+                    main.realStockStatus = res.data.realStockStatus;
                     main.stockPageOption.curr = 1;
                     main.realStockPageOption.curr = 1;
+                    _.forEach(res.data.stockList, function(stock) {
+                        // 初始化数据选中需要的数组
+                        main.tempStockListSelect.currPageRows({"id": stock.sku});
+                    });
+                    main.stockSelList = main.tempStockListSelect.selectRowsInfo;
                 })
             },
 
             getCommonStockList: function () {
                 var main = this;
+                main.tempStockListSelect = new main.selectRowsFactory();
                 this.taskStockService.getCommonStockList({
                     "taskId" : this.taskId,
                     "model" : this.model,
@@ -132,7 +143,12 @@ define([
                     "start1" :  (this.stockPageOption.curr - 1) * this.stockPageOption.size,
                     "length1" : this.stockPageOption.size
                 }).then(function (res) {
-                    main.stockList = res.data.stockList;;
+                    main.stockList = res.data.stockList;
+                    _.forEach(res.data.stockList, function(stock) {
+                        // 初始化数据选中需要的数组
+                        main.tempStockListSelect.currPageRows({"id": stock.sku});
+                    });
+                    main.stockSelList = main.tempStockListSelect.selectRowsInfo;
                 })
             },
 
@@ -142,7 +158,7 @@ define([
                     "taskId" : this.taskId,
                     "model" : this.model,
                     "code" : this.code,
-                    "sku" : this.sku,
+                    "sku" : this,
                     "qtyFrom" : this.qtyFrom,
                     "qtyTo" : this.qtyTo,
                     "status" : this.status,
@@ -171,6 +187,10 @@ define([
 
             setPercent: function () {
                 var main = this;
+
+                if(main.stockSelList.selList.length <= 0){
+                    main.alert('TXT_MSG_NO_ROWS_SELECT');
+                }
                 var selPlatform = document.getElementById('selPlatform').value;
                 var percent = document.getElementById('percent').value;
                 if (percent.length > 0 && percent.substring(percent.length - 1) == '%') {
@@ -178,10 +198,14 @@ define([
                 }
                 var percent = Number(percent);
                 if (_.isNumber(percent) && percent > 0) {
-                    _.each(main.stockList, function (stock) {
-                        _.each(stock.platformStock, function (platform) {
-                            if (platform.cartId == selPlatform) {
-                                platform.separationQty = (Math.floor(percent * 0.01 * stock.qty)).toString();
+                    _.each(main.stockSelList.selList, function (item) {
+                        _.each(main.stockList, function (stock) {
+                            if (item.id == stock.sku) {
+                                _.each(stock.platformStock, function (platform) {
+                                    if (platform.cartId == selPlatform && platform.status != null && platform.status != '') {
+                                        platform.separationQty = (Math.floor(percent * 0.01 * stock.qty)).toString();
+                                    }
+                                });
                             }
                         });
                     });
