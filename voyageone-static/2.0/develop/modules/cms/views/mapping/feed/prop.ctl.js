@@ -347,8 +347,13 @@ define([
                             isCommon: ttt.isCommon
                         })
                         .then(function (res) {
-                            if (res.data)
+                            if (res.data) {
                                 ttt.notify.success(ttt.$translate.instant('TXT_MSG_UPDATE_SUCCESS'));
+                                // 通知列表页面切换 MatchOver
+                                var feedMappingController = opener && opener.feedMappingController;
+                                if (feedMappingController)
+                                    feedMappingController.setMatchOver(ttt.mappingModel.scope, ttt.matchOver);
+                            }
                             else {
                                 ttt.notify.danger(ttt.$translate.instant('TXT_MSG_UPDATE_FAIL'));
                                 ttt.matchOver = !ttt.matchOver;

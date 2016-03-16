@@ -15,7 +15,8 @@ define([
         /**
          * @description
          * Feed Mapping 画面的 Controller 类
-         * @param {FeedMappingService} feedMappingService
+         * @param $scope
+         * @param feedMappingService
          * @param feedMappingListService
          * @param {voNotify} notify
          * @param {function} confirm
@@ -23,7 +24,7 @@ define([
          * @param blockUI
          * @constructor
          */
-        function FeedMappingController(feedMappingService, feedMappingListService, notify, confirm, $translate, blockUI) {
+        function FeedMappingController($scope, feedMappingService, feedMappingListService, notify, confirm, $translate, blockUI) {
 
             this.confirm = confirm;
             this.notify = notify;
@@ -53,6 +54,25 @@ define([
                 category: null,
                 property: null,
                 keyWord: null
+            };
+
+            // 在 Window 上注册回调, 用于子页面通知切换 MatchOver
+            var self = this;
+
+            window.feedMappingController = {
+                setMatchOver: function(mappingScope, matchOver) {
+                    $scope.$apply(function() {
+                        var map = self.currCategoryMap;
+                        // 更新目标 Feed Mapping
+                        map[mappingScope.feedCategoryPath].mapping.matchOver = matchOver;
+                        // 更新目标通用 Mapping
+                        Object.keys(map).forEach(function (key) {
+                            var mapping = map[key].mainMapping;
+                            if (mapping && mapping.scope.mainCategoryPath === mappingScope.mainCategoryPath)
+                                mapping.matchOver = matchOver;
+                        });
+                    });
+                }
             };
         }
 
@@ -281,29 +301,17 @@ define([
 
     })()).service('feedMappingListService', (function () {
 
-        function FeedMappingListService(feedMappingService, $q) {
+        function FeedMappingListService(feedMappingService) {
             this.feedMappingService = feedMappingService;
-            this.$q = $q;
-            this.categoryTrees = {};
         }
 
         FeedMappingListService.prototype = {
             getCategoryMap: function (categoryId) {
-                var ttt = this;
-                var cache = ttt.categoryTrees;
-                var deferred = ttt.$q.defer();
-
-                if (cache[categoryId]) {
-                    deferred.resolve(cache[categoryId]);
-                    return deferred.promise;
-                }
-
-                ttt.feedMappingService.getFeedCategoryTree({topCategoryId: categoryId})
+                var self = this;
+                return self.feedMappingService.getFeedCategoryTree({topCategoryId: categoryId})
                     .then(function (res) {
-                        deferred.resolve(cache[categoryId] = res.data);
+                        return res.data;
                     });
-
-                return deferred.promise;
             },
             getMainMapping: function (mainCategoryPath) {
                 var self = this;

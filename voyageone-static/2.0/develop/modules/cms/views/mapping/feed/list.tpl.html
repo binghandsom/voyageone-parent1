@@ -81,7 +81,7 @@
                         <td class=" text-center">
                             <a ng-href="#/mapping/feed/{{::feedCategory.model.path}}/1" target="_blank" ng-if="!!feedCategory.model.attribute && !!feedCategory.mapping">
                                 <i class="glyphicon glyphicon-link"></i>&nbsp;<span>{{::'BTN_MAPPING_ATTRIBUTE'|translate}}</span>
-                            </a>&nbsp;<span class="h4" ng-show="feedCategory.mapping.matchOver"><i class="fa fa-check-circle text-vo"></i></span>
+                            </a>&nbsp;<span class="h4" ng-show="!!feedCategory.model.attribute && feedCategory.mapping.matchOver"><i class="fa fa-check-circle text-vo"></i></span>
                         </td>
                       </tr>
                     </tbody>
