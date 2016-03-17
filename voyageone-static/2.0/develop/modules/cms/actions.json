@@ -28,7 +28,8 @@
         "getGroupList": "getGroupList",
         "getProductList": "getProductList",
         "exportProducts":"exportProducts",
-        "getCustColumnsInfo":"getCustColumnsInfo"
+        "getCustColumnsInfo":"getCustColumnsInfo",
+        "saveCustColumnsInfo":"saveCustColumnsInfo"
       }
     },
     "group": {
