@@ -125,7 +125,7 @@ public class FeedEnums {
         webServiesSessionKey,
         fixed_lens, transform, feed_backup_dir, model_table_id, image_table_id, model_sql_ending, product_table_id,
         image_table_join, product_table_join, model_table_join, product_sql_ending, fixed_exchange_rate, apparels_duty, other_duty, product_type, item_i_client_sku, sync_final_rmb, disable_service, url_special_symbol,
-
+        import_upc,
         feed_ftp_localpath2,table_id2,feed_delete_category_err_sql2,feed_delete_model_no_product_sql2,feed_delete_model_sql2,feed_delete_product_no_model_sql2,feed_delete_product_sql2
     }
 }
