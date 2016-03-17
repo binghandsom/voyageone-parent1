@@ -5,7 +5,7 @@ define([
     'angularAMD'
 ], function (angularAMD) {
 
-    angularAMD.controller('popCustomColumnCtl', function ($scope, $searchAdvanceService) {
+    angularAMD.controller('popCustomColumnCtl', function ($scope, $searchAdvanceService, $modalInstance) {
         // 从后台取得的全部列
         $scope.cus = {
             customProps:[],
@@ -48,7 +48,7 @@ define([
             params.customProps = customProps;
             params.commonProps = commonProps;
             $searchAdvanceService.saveCustColumnsInfo(params);
-            $scope.$close();
+            $modalInstance.close('');
             console.log($scope.cusData);
         };
 
