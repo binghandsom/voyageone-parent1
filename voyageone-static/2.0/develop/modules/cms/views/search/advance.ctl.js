@@ -87,6 +87,7 @@ define([
             searchAdvanceService.search($scope.vm.searchInfo, $scope.vm.groupPageOption, $scope.vm.productPageOption).then(function (res) {
                 $scope.vm.customProps = res.data.customProps;
                 $scope.vm.commonProps = res.data.commonProps;
+
                 $scope.vm.groupList = res.data.groupList;
                 _.forEach($scope.vm.groupList, function (groupInfo) {
                     var commArr = [];
@@ -108,7 +109,10 @@ define([
                     });
                     groupInfo.custArr = custArr;
                 });
-
+                for (idx in $scope.vm.groupList) {
+                    var grpObj = $scope.vm.groupList[idx];
+                    grpObj.grpImgList = res.data.grpImgList[idx];
+                }
                 $scope.vm.groupPageOption.total = res.data.groupListTotal;
                 $scope.vm.groupSelList = res.data.groupSelList;
 

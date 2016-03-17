@@ -6,6 +6,7 @@ import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
+import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.cms.bean.search.index.CmsSearchInfoBean;
 import com.voyageone.web2.cms.views.channel.CmsFeedCustPropService;
 import com.voyageone.web2.core.bean.UserSessionBean;
@@ -54,17 +55,19 @@ public class CmsSearchAdvanceController extends CmsController {
     public AjaxResponse search(@RequestBody CmsSearchInfoBean params) {
         Map<String, Object> resultBean = new HashMap<>();
         UserSessionBean userInfo = getUser();
+        CmsSessionBean cmsSession = getCmsSession();
 
         // 获取product列表
-        List<CmsBtProductModel> productList = searchIndexService.getProductList(params, userInfo, getCmsSession());
+        List<CmsBtProductModel> productList = searchIndexService.getProductList(params, userInfo, cmsSession);
         resultBean.put("productList", productList);
-        long productListTotal = searchIndexService.getProductCnt(params, userInfo, getCmsSession());
+        long productListTotal = searchIndexService.getProductCnt(params, userInfo, cmsSession);
         resultBean.put("productListTotal", productListTotal);
 
         // 获取group列表
-        List<CmsBtProductModel> groupList = searchIndexService.getGroupList(params, userInfo, getCmsSession());
+        List<CmsBtProductModel> groupList = searchIndexService.getGroupList(params, userInfo, cmsSession);
         resultBean.put("groupList", groupList);
-        long groupListTotal = searchIndexService.getGroupCnt(params, userInfo, getCmsSession());
+        resultBean.put("grpImgList", searchIndexService.getGroupImageList(groupList, userInfo.getSelChannelId(), cmsSession.getPlatformType().get("cartId").toString()));
+        long groupListTotal = searchIndexService.getGroupCnt(params, userInfo, cmsSession);
         resultBean.put("groupListTotal", groupListTotal);
 
         // 获取该用户自定义显示列设置

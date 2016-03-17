@@ -353,13 +353,6 @@
 										<ul>
 											<li><a ng-href="#/product/detail/{{groupInfo.prodId}}" ng-bind="groupInfo.fields.code" target="_blank"></a></li>
 											<li><a ng-href="#/product/detail/{{groupInfo.prodId}}" ng-bind="groupInfo.fields.longTitle || groupInfo.fields.productNameEn" target="_blank"></a></li>
-											<!--<div class="form-inline thumb-xs-search">-->
-												<!--<a href="#"><img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{groupInfo.fields.images1[0].image1}}" alt=""/></a>-->
-												<!--<a href="#"><img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{groupInfo.fields.images1[0].image1}}" alt=""/></a>-->
-												<!--<a href="#"><img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{groupInfo.fields.images1[0].image1}}" alt=""/></a>-->
-												<!--<a href="#"><img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{groupInfo.fields.images1[0].image1}}" alt=""/></a>-->
-												<!--<a href="#"><img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{groupInfo.fields.images1[0].image1}}" alt=""/></a>-->
-											<!--</div>-->
 										</ul>
 									</div>
 
@@ -396,22 +389,10 @@
 									</small>
 								</td>
 							</tr>
-							<tr ng-class="{'table_bg_green_mint': groupInfo.groups.platforms[0].publishTime}">
+							<tr ng-if="groupInfo.grpImgList.length > 0">
 								<td colspan="8">
-									<span>
-										<img class="thumb-sm-search pull-left m-r" alt="51A0HC13E1-00LCNB0" ng-src="http://image.sneakerhead.com/is/image/sneakerhead/51a0hc13e1-00lcnb0_main_1" src="http://image.sneakerhead.com/is/image/sneakerhead/51a0hc13e1-00lcnb0_main_1">
-									</span>
-									<span>
-										<img class="thumb-sm-search pull-left m-r" alt="51A0HC13E1-00LCNB0" ng-src="http://image.sneakerhead.com/is/image/sneakerhead/51a0hc13e1-00lcnb0_main_1" src="http://image.sneakerhead.com/is/image/sneakerhead/51a0hc13e1-00lcnb0_main_1">
-									</span>
-									<span>
-										<img class="thumb-sm-search pull-left m-r" alt="51A0HC13E1-00LCNB0" ng-src="http://image.sneakerhead.com/is/image/sneakerhead/51a0hc13e1-00lcnb0_main_1" src="http://image.sneakerhead.com/is/image/sneakerhead/51a0hc13e1-00lcnb0_main_1">
-									</span>
-									<span>
-										<img class="thumb-sm-search pull-left m-r" alt="51A0HC13E1-00LCNB0" ng-src="http://image.sneakerhead.com/is/image/sneakerhead/51a0hc13e1-00lcnb0_main_1" src="http://image.sneakerhead.com/is/image/sneakerhead/51a0hc13e1-00lcnb0_main_1">
-									</span>
-									<span>
-										<img class="thumb-sm-search pull-left m-r" alt="51A0HC13E1-00LCNB0" ng-src="http://image.sneakerhead.com/is/image/sneakerhead/51a0hc13e1-00lcnb0_main_1" src="http://image.sneakerhead.com/is/image/sneakerhead/51a0hc13e1-00lcnb0_main_1">
+									<span ng-repeat="prop2 in groupInfo.grpImgList">
+										<img class="thumb-sm-search pull-left m-r" alt="" ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{prop2.value}}" >
 									</span>
 								</td>
 							</tr>
