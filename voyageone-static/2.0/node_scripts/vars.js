@@ -24,7 +24,7 @@ var build = {
       version: versions.angularCom
     },
     native: {
-      src: 'develop/components/js/*.js',
+      src: 'develop/components/js/*/*.js',
       dist: 'develop/components/dist',
       concat: 'voyageone.com.js',
       map: 'voyageone.com.js.map',

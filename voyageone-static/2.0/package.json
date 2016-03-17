@@ -22,6 +22,7 @@
   },
   "description": "VoyageOne Front Project v2",
   "scripts": {
+    "prebuild-dev-pkg": "gulp build-angular-suff",
     "build-dev-pkg": "node node_scripts/npm-build-dev-package.js"
   },
   "author": "VoyageOne",

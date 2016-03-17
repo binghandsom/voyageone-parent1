@@ -1,14 +1,22 @@
 var fs = require('fs');
 var common = require('./vars').build.common;
 var glob = require('glob');
+var def = 'define(%deps%%body%);';
+var body = ', function () {\n\n%code%\n\n}';
 var angularFiles = common.angular.src;
 var angularPackage = common.angular.dist + '/' + common.angular.concat;
 var commonFiles = common.native.src;
 var commonPackage = common.native.dist + '/' + common.native.concat;
+var suffPath = common.native.dist + '/' + common.angular.footerFile;
+var staticRoot = 'develop/';
 
-var build = function (src, dist) {
+function clearPaths(pathArray) {
+    return pathArray.map(i => i.replace('.js', '').replace(staticRoot, ''));
+}
 
-    console.log("target path -> " + src);
+function build(src, callback) {
+
+    console.log("target path   -> " + src);
 
     glob(src, function (err, files) {
         if (err) {
@@ -17,21 +25,43 @@ var build = function (src, dist) {
         }
 
         if (!files || !files.length) {
-            console.warn('cant find any files !!!');
+            console.warn('cant find any files !!! -> ' + src);
             return;
         }
 
-        fs.writeFile(dist, 'define([\n  \'../' + files.join("',\n  '../") + '\'\n]);');
+        var deps = '[\n  \'' + clearPaths(files).join("',\n  '") + '\'\n]';
+
+        callback(deps);
     });
+}
 
-    console.log("write to    -> " + dist + "\n");
+console.log("suff file     -> " + suffPath);
 
-};
+build(angularFiles, function (deps) {
 
-console.log("\nWill build package for develop.\n");
-console.log("cwd         -> " + process.cwd() + "\n");
+    fs.readFile(suffPath, function (err, data) {
 
-build(angularFiles, angularPackage);
-build(commonFiles, commonPackage);
+        if (err) {
+            console.error(err);
+            return;
+        }
 
-console.log("completed !\n");
+        var angular = def.replace('%deps%', deps).replace('%body%', body.replace('%code%', data));
+
+        console.log("will write to -> " + angularPackage);
+
+        fs.writeFile(angularPackage, angular);
+    });
+});
+
+build(commonFiles, function (deps) {
+
+    var code = def.replace('%deps%', deps).replace('%body%', '');
+
+    console.log("will write to -> " + angularPackage);
+
+    fs.writeFile(commonPackage, code);
+});
+
+
+
