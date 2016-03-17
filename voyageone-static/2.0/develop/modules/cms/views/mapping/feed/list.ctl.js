@@ -136,8 +136,8 @@ define([
                         if (result && !feedCategoryBean.classes) {
                             // 如果没有计算过样式, 就计算
                             feedCategoryBean.classes = {
-                                background: feedCategoryBean.level > 1 ? 'badge-empty' : 'badge-success',
-                                icon: feedCategoryBean.level > 1 ? 'fa-level-up' : 'fa-level-down'
+                                background: feedCategoryBean.model.isChild == 1 ? 'badge-empty' : 'badge-success',
+                                icon: feedCategoryBean.model.isChild == 1 ? 'fa-level-up' : 'fa-level-down'
                             };
                         }
 
