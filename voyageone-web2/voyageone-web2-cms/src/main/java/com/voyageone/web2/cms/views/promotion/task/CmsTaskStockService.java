@@ -750,18 +750,12 @@ public class CmsTaskStockService extends BaseAppService {
 
         try (InputStream inputStream = new FileInputStream(templatePath);
              Workbook book = WorkbookFactory.create(inputStream)) {
-
+            // Titel行
             writeExcelStockInfoHead(book, param);
-
-//            writeExcelStockInfoRecord();
-
-//            for (int i = 0; i < promotionCodes.size(); i++) {
-//                boolean isContinueOutput = writeTmallPromotionRecordToFile(book, promotionCodes.get(i), i + 1);
-//                // 超过最大行的场合
-//                if (!isContinueOutput) {
-//                    break;
-//                }
-//            }
+            // 数据行
+            writeExcelStockInfoRecord(book, param, resultData);
+            // 格式copy用sheet删除
+            book.removeSheetAt(1);
 
             $info("文档写入完成");
 
@@ -782,26 +776,29 @@ public class CmsTaskStockService extends BaseAppService {
      */
     private void writeExcelStockInfoHead(Workbook book, Map param) {
         Sheet sheet = book.getSheetAt(0);
-        CellStyle unlock = FileUtils.createUnLockStyle(book);
-        CellStyle lock = book.createCellStyle();
 
         Row row = FileUtils.row(sheet, 0);
+        CellStyle cellStyleProperty = FileUtils.cell(row, 0, null).getCellStyle(); // 属性的cellStyle
+
+        List<Map> propertyList = (List<Map>) param.get("propertyList");
+        List<Map> platformList = (List<Map>) param.get("platformList");
+
         // 内容输出
-//        FileUtils.cell(row, 0, unlock).setCellValue("Model");
-//        FileUtils.cell(row, 1, unlock).setCellValue("Code");
-//        FileUtils.cell(row, 2, unlock).setCellValue("Sku");
+        int index = 2;
 
-        CellStyle cellStyle = FileUtils.cell(row, 0, null).getCellStyle();
-        FileUtils.cell(row, 3, cellStyle).setCellValue("pro1");
-        CellRangeAddress filter = CellRangeAddress.valueOf("A1:AA1");
+        for (Map property : propertyList) {
+            FileUtils.cell(row, ++index, cellStyleProperty).setCellValue((String) property.get("name"));
+        }
+
+        CellStyle cellStylePlatform = book.getSheetAt(1).getRow(0).getCell(0).getCellStyle(); // 平台的cellStyle
+        for (Map platform : platformList) {
+            FileUtils.cell(row, ++index, cellStylePlatform).setCellValue((String) platform.get("cartName"));
+        }
+        FileUtils.cell(row, ++index, cellStylePlatform).setCellValue("Other");
+
+        // 筛选
+        CellRangeAddress filter = new CellRangeAddress(0, 0, 0, index);
         sheet.setAutoFilter(filter);
-
-        row = FileUtils.row(sheet, 1);
-        FileUtils.cell(row, 0, lock).setCellValue("m1");
-        FileUtils.cell(row, 1, unlock).setCellValue("c1");
-        FileUtils.cell(row, 2, null).setCellValue("s1");
-
-
     }
 
     /**
@@ -809,6 +806,13 @@ public class CmsTaskStockService extends BaseAppService {
      */
     private void writeExcelStockInfoRecord(Workbook book, Map param, List<Map<String, Object>> resultData) {
 
+        Sheet sheet = book.getSheetAt(0);
+        for (Map<String, Object> rowData :resultData) {
+
+        }
+
+//        Cell cellDynamic = book.getSheetAt(1).getRow(0).getCell(1); // 动态的cell
+//        FileUtils.cell(row, ++index, cellDynamic.getCellStyle()).setCellValue(cellDynamic.getStringCellValue());
     }
 
     /**
