@@ -1,7 +1,7 @@
 package com.voyageone.task2.cms.service;
 
 import com.voyageone.common.components.issueLog.enums.SubSystem;
-import com.voyageone.service.impl.cms.CmsMtCategoryTreeService;
+import com.voyageone.service.impl.cms.CategoryTreeService;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,7 @@ import java.util.List;
 public class CmsCreateCmsMtCategoryTreeService extends BaseTaskService {
 
     @Autowired
-    CmsMtCategoryTreeService cmsMtCategoryTree;
+    CategoryTreeService cmsMtCategoryTree;
 
     @Override
     public SubSystem getSubSystem() {

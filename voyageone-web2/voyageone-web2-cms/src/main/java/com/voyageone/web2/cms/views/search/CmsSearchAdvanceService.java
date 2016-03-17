@@ -1,5 +1,6 @@
 package com.voyageone.web2.cms.views.search;
 
+import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.Properties;
@@ -7,7 +8,10 @@ import com.voyageone.common.configs.TypeChannel;
 import com.voyageone.common.util.FileUtils;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
-import com.voyageone.service.impl.cms.CmsBtChannelCategoryService;
+import com.voyageone.service.dao.cms.CmsMtCommonPropDao;
+import com.voyageone.service.impl.cms.ChannelCategoryService;
+import com.voyageone.service.impl.cms.TagService;
+import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.CmsConstants;
@@ -16,11 +20,7 @@ import com.voyageone.web2.cms.bean.search.index.CmsSearchInfoBean;
 import com.voyageone.web2.cms.dao.CustomWordDao;
 import com.voyageone.web2.cms.views.promotion.list.CmsPromotionIndexService;
 import com.voyageone.web2.core.bean.UserSessionBean;
-import com.voyageone.web2.sdk.api.VoApiDefaultClient;
 import com.voyageone.service.model.cms.CmsBtTagModel;
-import com.voyageone.web2.sdk.api.request.ProductsGetRequest;
-import com.voyageone.web2.sdk.api.request.TagsGetRequest;
-import com.voyageone.web2.sdk.api.response.ProductsGetResponse;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,10 +45,13 @@ public class CmsSearchAdvanceService extends BaseAppService{
     @Autowired
     private CustomWordDao customWordDao;
     @Autowired
-    protected VoApiDefaultClient voApiClient;
-
+    private ChannelCategoryService channelCategoryService;
     @Autowired
-    private CmsBtChannelCategoryService cmsBtChannelCategoryService;
+    private CmsMtCommonPropDao cmsMtCommonPropDao;
+    @Autowired
+    private ProductService productService;
+    @Autowired
+    private TagService tagService;
 
     private final String searchItems = "channelId;prodId;catId;catPath;created;creater;modified;" +
             "modifier;fields;groups.msrpStart;groups.msrpEnd;groups.retailPriceStart;groups.retailPriceEnd;" +
@@ -101,7 +104,7 @@ public class CmsSearchAdvanceService extends BaseAppService{
         masterData.put("sortList", TypeChannel.getTypeWithLang(Constants.comMtTypeChannel.SORT_ATTRIBUTES_61, userInfo.getSelChannelId(), language));
 
         // 获取category list
-        masterData.put("categoryList", cmsBtChannelCategoryService.getAllCategoriesByChannelId(userInfo.getSelChannelId()));
+        masterData.put("categoryList", channelCategoryService.getAllCategoriesByChannelId(userInfo.getSelChannelId()));
 
         // 获取promotion list
         Map<String, Object> params = new HashMap<>();
@@ -121,17 +124,27 @@ public class CmsSearchAdvanceService extends BaseAppService{
      * @param cmsSessionBean
      * @return
      */
-    public ProductsGetResponse getGroupList(CmsSearchInfoBean searchValue, UserSessionBean userInfo, CmsSessionBean cmsSessionBean) {
+    public List<CmsBtProductModel> getGroupList(CmsSearchInfoBean searchValue, UserSessionBean userInfo, CmsSessionBean cmsSessionBean) {
 
-        ProductsGetRequest groupRequest = new ProductsGetRequest(userInfo.getSelChannelId());
-        groupRequest.setPageNo(searchValue.getGroupPageNum());
-        groupRequest.setPageSize(searchValue.getGroupPageSize());
-        groupRequest.setQueryString(getSearchQueryForGroup(searchValue, cmsSessionBean));
-        groupRequest.setSorts(setSortValue(searchValue));
-        groupRequest.setFields(searchItems);
+        JomgoQuery queryObject = new JomgoQuery();
+        queryObject.setQuery(getSearchQueryForGroup(searchValue, cmsSessionBean));
+        queryObject.setProjection(searchItems.split(";"));
+        queryObject.setSort(setSortValue(searchValue));
+        queryObject.setSkip((searchValue.getGroupPageNum()-1)*searchValue.getGroupPageSize());
+        queryObject.setLimit(searchValue.getGroupPageSize());
 
-        //SDK取得Product 数据
-        return voApiClient.execute(groupRequest);
+        return productService.getList(userInfo.getSelChannelId(), queryObject);
+    }
+
+    /**
+     * 返回当前页的group列表CNT
+     * @param searchValue
+     * @param userInfo
+     * @param cmsSessionBean
+     * @return
+     */
+    public long getGroupCnt(CmsSearchInfoBean searchValue, UserSessionBean userInfo, CmsSessionBean cmsSessionBean) {
+        return productService.getCnt(userInfo.getSelChannelId(), getSearchQueryForGroup(searchValue, cmsSessionBean));
     }
 
     /**
@@ -141,17 +154,26 @@ public class CmsSearchAdvanceService extends BaseAppService{
      * @param cmsSessionBean
      * @return
      */
-    public ProductsGetResponse GetProductList(CmsSearchInfoBean searchValue, UserSessionBean userInfo, CmsSessionBean cmsSessionBean) {
+    public List<CmsBtProductModel> getProductList(CmsSearchInfoBean searchValue, UserSessionBean userInfo, CmsSessionBean cmsSessionBean) {
 
-        ProductsGetRequest productRequest = new ProductsGetRequest(userInfo.getSelChannelId());
-        productRequest.setPageNo(searchValue.getProductPageNum());
-        productRequest.setPageSize(searchValue.getProductPageSize());
-        productRequest.setQueryString(getSearchQueryForProduct(searchValue, cmsSessionBean));
-        productRequest.setSorts(setSortValue(searchValue));
-        productRequest.setFields(searchItems);
+        JomgoQuery queryObject = new JomgoQuery();
+        queryObject.setQuery(getSearchQueryForProduct(searchValue, cmsSessionBean));
+        queryObject.setProjection(searchItems.split(";"));
+        queryObject.setSort(setSortValue(searchValue));
+        queryObject.setSkip((searchValue.getGroupPageNum() - 1) * searchValue.getGroupPageSize());
+        queryObject.setLimit(searchValue.getGroupPageSize());
+        return productService.getList(userInfo.getSelChannelId(), queryObject);
+    }
 
-        //SDK取得Product 数据
-        return voApiClient.execute(productRequest);
+    /**
+     * 获取当前页的product列表Cnt
+     * @param searchValue
+     * @param userInfo
+     * @param cmsSessionBean
+     * @return
+     */
+    public long getProductCnt(CmsSearchInfoBean searchValue, UserSessionBean userInfo, CmsSessionBean cmsSessionBean) {
+        return productService.getCnt(userInfo.getSelChannelId(), getSearchQueryForProduct(searchValue, cmsSessionBean));
     }
 
     /**
@@ -168,17 +190,7 @@ public class CmsSearchAdvanceService extends BaseAppService{
 
         String templatePath = Properties.readValue(CmsConstants.Props.SEARCH_ADVANCE_EXPORT_TEMPLATE);
 
-        ProductsGetRequest productRequest = new ProductsGetRequest(userInfo.getSelChannelId());
-//        productRequest.setIsPage(false);
-        productRequest.setPageNo(1);
-        productRequest.setPageSize(SELECT_PAGE_SIZE);
-        productRequest.setQueryString(getSearchQueryForProduct(searchValue, cmsSessionBean));
-        productRequest.setSorts(setSortValue(searchValue));
-        productRequest.setFields(searchItems);
-
-        ProductsGetResponse response = voApiClient.execute(productRequest);
-
-        long recCount = response.getTotalCount();
+        long recCount = productService.getCnt(userInfo.getSelChannelId(), getSearchQueryForProduct(searchValue, cmsSessionBean));
 
         int pageCount = 0;
         if ((int) recCount % SELECT_PAGE_SIZE > 0) {
@@ -194,18 +206,14 @@ public class CmsSearchAdvanceService extends BaseAppService{
              Workbook book = WorkbookFactory.create(inputStream)) {
 
             for (int i = 0; i < pageCount; i++) {
-                List<CmsBtProductModel> items = new ArrayList<>();
-                if (i == 0) {
-                    items = response.getProducts();
-                } else {
-                    productRequest.setPageNo(i+1);
-                    productRequest.setPageSize(SELECT_PAGE_SIZE);
-                    productRequest.setQueryString(getSearchQueryForProduct(searchValue, cmsSessionBean));
-                    productRequest.setSorts(setSortValue(searchValue));
-                    productRequest.setFields(searchItems);
 
-                    items = voApiClient.execute(productRequest).getProducts();
-                }
+                JomgoQuery queryObject = new JomgoQuery();
+                queryObject.setQuery(getSearchQueryForProduct(searchValue, cmsSessionBean));
+                queryObject.setProjection(searchItems.split(";"));
+                queryObject.setSort(setSortValue(searchValue));
+                queryObject.setSkip(i*SELECT_PAGE_SIZE);
+                queryObject.setLimit(SELECT_PAGE_SIZE);
+                List<CmsBtProductModel> items = productService.getList(userInfo.getSelChannelId(), queryObject);
 
                 if (items.size() == 0) {
                     break;
@@ -261,13 +269,13 @@ public class CmsSearchAdvanceService extends BaseAppService{
 
         // 获取publishTime start
         if (searchValue.getPublishTimeStart() != null ) {
-            resultPlatforms.append(MongoUtils.splicingValue("publishTime", searchValue.getPublishTimeStart(), "$gte"));
+            resultPlatforms.append(MongoUtils.splicingValue("publishTime", searchValue.getPublishTimeStart() + " 00.00.00", "$gte"));
             resultPlatforms.append(",");
         }
 
         // 获取publishTime End
         if (searchValue.getPublishTimeTo() != null) {
-            resultPlatforms.append(MongoUtils.splicingValue("publishTime", searchValue.getPublishTimeTo(), "$lte"));
+            resultPlatforms.append(MongoUtils.splicingValue("publishTime", searchValue.getPublishTimeTo() + " 23.59.59", "$lte"));
             resultPlatforms.append(",");
         }
 
@@ -314,13 +322,13 @@ public class CmsSearchAdvanceService extends BaseAppService{
 
         // 获取publishTime start
         if (searchValue.getPublishTimeStart() != null ) {
-            resultPlatforms.append(MongoUtils.splicingValue("publishTime", searchValue.getPublishTimeStart(), "$gte"));
+            resultPlatforms.append(MongoUtils.splicingValue("publishTime", searchValue.getPublishTimeStart() + " 00.00.00", "$gte"));
             resultPlatforms.append(",");
         }
 
         // 获取publishTime End
         if (searchValue.getPublishTimeTo() != null) {
-            resultPlatforms.append(MongoUtils.splicingValue("publishTime", searchValue.getPublishTimeTo(), "$lte"));
+            resultPlatforms.append(MongoUtils.splicingValue("publishTime", searchValue.getPublishTimeTo() + " 23.59.59", "$lte"));
             resultPlatforms.append(",");
         }
 
@@ -381,20 +389,20 @@ public class CmsSearchAdvanceService extends BaseAppService{
 
         // 获取createdTime start
         if (searchValue.getCreateTimeStart() != null) {
-            result.append(MongoUtils.splicingValue("created", searchValue.getCreateTimeStart(), "$gte"));
+            result.append(MongoUtils.splicingValue("created", searchValue.getCreateTimeStart() + " 00.00.00", "$gte"));
             result.append(",");
         }
 
         // 获取createdTime End
         if (searchValue.getCreateTimeTo() != null) {
-            result.append(MongoUtils.splicingValue("created", searchValue.getCreateTimeTo(), "$lte"));
+            result.append(MongoUtils.splicingValue("created", searchValue.getCreateTimeTo() + " 23.59.59", "$lte"));
             result.append(",");
         }
 
         // 获取inventory
         if (searchValue.getCompareType() != null
                 && searchValue.getInventory() != null) {
-            result.append(MongoUtils.splicingValue("fields.qty", searchValue.getInventory(), searchValue.getCompareType()));
+            result.append(MongoUtils.splicingValue("fields.quantity", searchValue.getInventory(), searchValue.getCompareType()));
             result.append(",");
         }
 
@@ -418,9 +426,14 @@ public class CmsSearchAdvanceService extends BaseAppService{
             orSearch.add(MongoUtils.splicingValue("fields.model", searchValue.getCodeList()));
 
             if (searchValue.getCodeList().length == 1) {
+                // 原文查询内容
                 orSearch.add(MongoUtils.splicingValue("fields.productNameEn", searchValue.getCodeList()[0], "$regex"));
                 orSearch.add(MongoUtils.splicingValue("fields.longDesEn", searchValue.getCodeList()[0], "$regex"));
-                orSearch.add(MongoUtils.splicingValue("fields.productNameCn", searchValue.getCodeList()[0], "$regex"));
+                orSearch.add(MongoUtils.splicingValue("fields.shortDesEn", searchValue.getCodeList()[0], "$regex"));
+                // 中文查询内容
+                orSearch.add(MongoUtils.splicingValue("fields.longTitle", searchValue.getCodeList()[0], "$regex"));
+                orSearch.add(MongoUtils.splicingValue("fields.shortTitle", searchValue.getCodeList()[0], "$regex"));
+                orSearch.add(MongoUtils.splicingValue("fields.middleTitle", searchValue.getCodeList()[0], "$regex"));
                 orSearch.add(MongoUtils.splicingValue("fields.longDesCn", searchValue.getCodeList()[0], "$regex"));
             }
             result.append(MongoUtils.splicingValue("", orSearch.toArray(), "$or"));
@@ -501,7 +514,7 @@ public class CmsSearchAdvanceService extends BaseAppService{
 
             FileUtils.cell(row, 7, unlock).setCellValue(item.getFields().getProductNameEn());
 
-            FileUtils.cell(row, 8, unlock).setCellValue(item.getFields().getProductNameCn());
+            FileUtils.cell(row, 8, unlock).setCellValue(item.getFields().getLongTitle());
 
             FileUtils.cell(row, 9, unlock).setCellValue(StringUtils.null2Space2(String.valueOf(item.getFields().getQuantity())));
 
@@ -543,10 +556,7 @@ public class CmsSearchAdvanceService extends BaseAppService{
      * 获取二级Tag
      */
     private List<CmsBtTagModel> selectTagList(String channelId) {
-        //设置参数
-        TagsGetRequest requestModel = new TagsGetRequest();
-        requestModel.setChannelId(channelId);
-        return voApiClient.execute(requestModel).getTags();
+        return tagService.getListByChannelId(channelId);
     }
 
     /**
@@ -578,8 +588,13 @@ public class CmsSearchAdvanceService extends BaseAppService{
             result.append(",");
         }
 
-//        return result.toString().length() > 0 ? "{" + result.toString().substring(0, result.toString().length()-1) + "}" : null;
-        return result.toString().length() > 0 ? result.toString().substring(0, result.toString().length()-1) : null;
+        return result.toString().length() > 0 ? "{" + result.toString().substring(0, result.toString().length()-1) + "}" : null;
+//        return result.toString().length() > 0 ? result.toString().substring(0, result.toString().length()-1) : null;
 
+    }
+
+    // 取得自定义显示列设置
+    public List<Map<String, Object>> getCustColumns() {
+        return  cmsMtCommonPropDao.getCustColumns();
     }
 }

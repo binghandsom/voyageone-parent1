@@ -10,15 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public class CmsMtPlatformCategoryDao extends BaseMongoDao {
-
-    @Autowired
-    BaseJomgoTemplate mongoTemplate;
-
-    @Override
-    public Class getEntityClass() {
-        return CmsMtPlatformCategoryTreeModel.class;
-    }
+public class CmsMtPlatformCategoryDao extends BaseMongoDao<CmsMtPlatformCategoryTreeModel> {
 
     public WriteResult deletePlatformCategories(Integer cartId,String channelId){
         String queryStr = "{cartId:"+cartId+",channelId:"+channelId+"}";

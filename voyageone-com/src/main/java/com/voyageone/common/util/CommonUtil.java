@@ -7,8 +7,11 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.List;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.net.UnknownHostException;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -18,6 +21,14 @@ import java.util.stream.Collectors;
  * @version 0.0.2
  */
 public final class CommonUtil {
+
+    public static final String USERNAME = "USERNAME";
+
+    public static final String COMPUTERNAME = "COMPUTERNAME";
+
+    public static final String IP = "IP";
+
+    public static final String MAC = "MAC";
 
     /**
      * 生成token
@@ -229,9 +240,6 @@ public final class CommonUtil {
 
     /**
      * 保留两位小数
-     *
-     * @param doubleValue
-     * @return ret
      */
     public static double getRoundUp2Digits(double doubleValue) {
         double ret = 0d;
@@ -242,16 +250,56 @@ public final class CommonUtil {
 
         return ret;
     }
-	
-	/**
+
+    /**
      * 将integer的list转成long的list
-     * @param list
-     * @return
      */
     public static List<Long> changeListType(List<Integer> list) {
         if (list != null && list.size() > 0)
-            return list.stream().map(m->m.longValue()).collect(Collectors.toList());
+            return list.stream().map(Integer::longValue).collect(Collectors.toList());
         else
             return new ArrayList<Long>();
+    }
+
+
+    public static Map<String, String> getLocalInfo() {
+
+        Map<String, String> infoMap = new HashMap<>();
+
+        try {
+            InetAddress address = InetAddress.getLocalHost();
+
+            infoMap.put(IP, address.getHostAddress());
+
+            infoMap.put(COMPUTERNAME, address.getHostName());
+
+            NetworkInterface ni = NetworkInterface.getByInetAddress(address);
+
+            byte[] mac = ni.getHardwareAddress();
+
+            Formatter formatter = new Formatter();
+
+            for (int i = 0; i < mac.length; i++)
+                formatter.format("%s%X", (i > 0) ? ":" : "", (mac[i] & 0xFF));
+
+            infoMap.put(MAC, formatter.toString());
+
+        } catch (UnknownHostException ignored) {
+            infoMap.put(IP, "UnknownHost");
+        } catch (SocketException e) {
+            infoMap.put(MAC, "SocketException");
+        }
+
+        Map<String, String> env = System.getenv();
+
+        if (env != null) {
+            // 使用 env 数据尝试补全
+            if (!infoMap.containsKey(COMPUTERNAME) && env.containsKey(COMPUTERNAME))
+                infoMap.put(COMPUTERNAME, env.get(COMPUTERNAME));
+
+            infoMap.put(USERNAME, env.get(USERNAME));
+        }
+
+        return infoMap;
     }
 }

@@ -5,6 +5,7 @@ import com.taobao.api.domain.TipItemPromDTO;
 import com.taobao.api.domain.TipPromUnitDTO;
 import com.taobao.api.domain.TipSkuPromUnitDTO;
 import com.taobao.api.response.ItemSkusGetResponse;
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.cms.dao.PromotionDao;
@@ -113,7 +114,10 @@ public class CmsPromotrionService extends BaseTaskService {
                             }
                         });
                     }
-                    tipItemPromDTO.setSkuLevelProms(tipSkuPromUnitDTOs);
+                    if(tipSkuPromUnitDTOs.size() > 0){
+                        tipItemPromDTO.setSkuLevelProms(tipSkuPromUnitDTOs);
+                    }
+
                 } else {
                     // ITEM单位更新
                     List<Map> skuList = (List<Map>) productList.get(0).get("skuList");
@@ -124,7 +128,12 @@ public class CmsPromotrionService extends BaseTaskService {
                     }
                 }
                 // 调用天猫特价宝
-                response = tbPromotionService.updatePromotion(shopBean, tipItemPromDTO);
+                if(tipItemPromDTO.getSkuLevelProms() != null || tipItemPromDTO.getItemLevelProm() != null){
+                    response = tbPromotionService.updatePromotion(shopBean, tipItemPromDTO);
+                }else {
+                    logger.info("活动价格为空可能该商品已从活动中删除");
+                    throw new BusinessException("活动价格为空可能该商品已从活动中删除");
+                }
 
                 // 成功的场合把product_id保存起来
                 if (response != null && response.getErrorCode() == null) {

@@ -18,7 +18,7 @@
 <div class="collapse pos-rlt navbar-collapse box-shadow bg-black" ng-controller="headerCtrl as header" ng-init="initialize()">
     <!-- system selection -->
     <ul class="nav navbar-nav hidden-xs">
-        <li class="dropdown vo_h_system" dropdown>
+        <li class="dropdown vo_h_system" uib-dropdown>
             <a href ng-bind="header.userInfo.channelName" ng-click="selectChannel()">
             </a>
         </li>
@@ -26,8 +26,8 @@
     <!-- / system selection -->
     <!-- system selection -->
     <ul class="nav navbar-nav hidden-xs">
-        <li class="dropdown vo_h_system" dropdown>
-            <a href class="dropdown-toggle" dropdown-toggle>
+        <li class="dropdown vo_h_system" uib-dropdown>
+            <a href class="dropdown-toggle" uib-dropdown-toggle>
                 <span class="m-n font thin" ng-bind="header.userInfo.application.toUpperCase()"></span><span class="caret"></span>
             </a>
             <ul class="dropdown-menu arrow_box left" role="menu" ng-if="header.applicationList.length > 1">
@@ -54,12 +54,12 @@
     <!-- / search form -->
     <!-- nabar right -->
     <ul class="nav navbar-nav navbar-right hidden-sm">
-        <!-- language dropdown -->
-        <li class="dropdown vo_h_locale" dropdown>
-            <a href class="dropdown-toggle clear" dropdown-toggle>
+        <!-- language uib-dropdown -->
+        <li class="dropdown vo_h_locale" uib-dropdown>
+            <a href class="dropdown-toggle clear" uib-dropdown-toggle>
                 <span class="" ng-bind="header.userInfo.language"></span><b class="caret"></b>
             </a>
-            <!-- dropdown -->
+            <!-- uib-dropdown -->
             <ul class="dropdown-menu arrow_box">
                 <li ng-repeat="language in header.languageList" ng-if="language.add_name1 !== header.userInfo.language">
                     <a href="" ng-click="selectLanguage(language)">
@@ -67,29 +67,20 @@
                     </a>
                 </li>
             </ul>
-            <!-- / dropdown -->
+            <!-- / uib-dropdown -->
         </li>
-        <!-- user dropdown -->
-        <li class="dropdown" dropdown>
-            <a href class="dropdown-toggle clear" dropdown-toggle>
+        <!-- user uib-dropdown -->
+        <li class="dropdown" uib-dropdown>
+            <a href class="dropdown-toggle clear" uib-dropdown-toggle>
                 <span class="" ng-bind="header.userInfo.userName"></span> <b class="caret"></b>
             </a>
-            <!-- dropdown -->
+            <!-- uib-dropdown -->
             <ul class="dropdown-menu arrow_box">
-                <!--<li>-->
-                    <!--<a href>-->
-                        <!--<span>Settings</span>-->
-                    <!--</a>-->
-                <!--</li>-->
-                <!--<li>-->
-                    <!--<a href="#"><span>Profile</span></a>-->
-                <!--</li>-->
-                <!--<li class="divider"></li>-->
                 <li>
                     <a href="" translate="TXT_LOGOUT" ng-click="logout()"></a>
                 </li>
             </ul>
-            <!-- / dropdown -->
+            <!-- / uib-dropdown -->
         </li>
     </ul>
     <!-- / navbar right -->

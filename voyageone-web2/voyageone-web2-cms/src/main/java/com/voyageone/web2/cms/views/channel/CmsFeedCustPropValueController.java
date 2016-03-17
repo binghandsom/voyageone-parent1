@@ -33,7 +33,7 @@ public class CmsFeedCustPropValueController extends CmsController {
      * @apiVersion 0.0.1
      * @apiPermission 认证商户
      * @apiParam (应用级参数) {String} cat_path 类目路径（为'0'时表示查询共通属性，不设值时表示查询所有，即包含共通属性和所有类目）
-     * @apiParam (应用级参数) {String} sts 翻译状态（为'1'时表示查询已翻译的属性值，为'0'时表示查询未翻译的属性值）
+     * @apiParam (应用级参数) {String} sts 翻译状态（为'1'时表示查询已翻译的属性值，为'0'时表示查询未翻译的属性值，不设值时表示查询所有）
      * @apiParam (应用级参数) {String} propName 属性名（已翻译或未翻译的属性名）
      * @apiParam (应用级参数) {String} propValue 属性值（已翻译或未翻译的属性值）
      * @apiParam (应用级参数) {Integer} skip 翻页用参数，显示起始序号
@@ -66,7 +66,7 @@ public class CmsFeedCustPropValueController extends CmsController {
         logger.debug("getFeedCustPropValueList() >>>> start");
         logger.debug("getFeedCustPropValueList() >>>> params" + params.toString());
         String catPath = StringUtils.trimToNull(params.get("cat_path"));
-        int tSts = NumberUtils.toInt(params.get("sts"));
+        int tSts = NumberUtils.toInt(params.get("sts"), 2);
         String propName = StringUtils.trimToNull(params.get("propName"));
         String propValue = StringUtils.trimToNull(params.get("propValue"));
         if (tSts == 0) {
@@ -89,7 +89,7 @@ public class CmsFeedCustPropValueController extends CmsController {
         if (listCnt == 0) {
             dataMap.put("resultData", rslt1);
         } else {
-            int staIdx = skip - 1;
+            int staIdx = (skip - 1) * limit;
             int endIdx = staIdx + limit;
             if (listCnt < endIdx) {
                 endIdx = listCnt;
@@ -143,14 +143,14 @@ public class CmsFeedCustPropValueController extends CmsController {
         if (propId == 0 || origValue == null) {
             // 缺少参数
             logger.warn("addFeedCustPropValue() >>>> 参数错误/缺少参数");
-            throw new BusinessException("1", "参数错误/缺少参数", null);
+            throw new BusinessException("参数错误/缺少参数");
         }
 
         UserSessionBean userInfo = getUser();
         // 先判断该属性值是否已存在
         if (cmsFeedCustPropService.isPropValueExist(propId, userInfo.getSelChannelId(), origValue)) {
             logger.warn("addFeedCustPropValue() >>>> 重复翻译的属性值");
-            throw new BusinessException("2", "重复翻译的属性值", null);
+            throw new BusinessException("重复翻译的属性值");
         }
 
         int rslt = cmsFeedCustPropService.addPropValue(propId, userInfo.getSelChannelId(), origValue, transValue, userInfo.getUserName());
@@ -203,14 +203,14 @@ public class CmsFeedCustPropValueController extends CmsController {
         if (valueId == 0) {
             // 缺少参数
             logger.warn("saveFeedCustPropValue() >>>> 参数错误/缺少参数");
-            throw new BusinessException("1", "参数错误/缺少参数", null);
+            throw new BusinessException("参数错误/缺少参数");
         }
 
         UserSessionBean userInfo = getUser();
         // 先判断该属性值是否已存在
         if (!cmsFeedCustPropService.isPropValueExist(valueId)) {
             logger.warn("saveFeedCustPropValue() >>>> 该属性值不存在");
-            throw new BusinessException("2", "该属性值不存在", null);
+            throw new BusinessException("该属性值不存在");
         }
 
         int rslt = cmsFeedCustPropService.updatePropValue(valueId, transValue, userInfo.getUserName());

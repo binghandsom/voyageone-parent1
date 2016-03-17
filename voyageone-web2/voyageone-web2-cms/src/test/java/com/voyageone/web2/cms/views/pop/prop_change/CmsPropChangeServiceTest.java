@@ -26,7 +26,7 @@ public class CmsPropChangeServiceTest {
 
     @Test
     public void testGetPropOptions() throws Exception {
-        List<CmsMtCommonPropDefModel> resultList = cmsPropChangeService.getPopOptions("001");
+        List<CmsMtCommonPropDefModel> resultList = cmsPropChangeService.getPopOptions("en", "001");
         System.out.println(resultList);
         assert resultList.size() > 0;
     }

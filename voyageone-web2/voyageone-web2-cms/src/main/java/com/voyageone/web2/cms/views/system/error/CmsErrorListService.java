@@ -3,20 +3,15 @@ package com.voyageone.web2.cms.views.system.error;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.TypeChannel;
-import com.voyageone.service.impl.cms.CmsBtChannelCategoryService;
+import com.voyageone.service.impl.cms.BusinessLogService;
+import com.voyageone.service.impl.cms.ChannelCategoryService;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import com.voyageone.web2.core.dao.ChannelShopDao;
-import com.voyageone.web2.sdk.api.VoApiDefaultClient;
-import com.voyageone.web2.sdk.api.request.BusinessLogGetRequest;
-import com.voyageone.web2.sdk.api.request.BusinessLogUpdateRequest;
-import com.voyageone.web2.sdk.api.response.BusinessLogGetResponse;
-import com.voyageone.web2.sdk.api.response.BusinessLogUpdateResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,18 +23,18 @@ import java.util.Map;
 public class CmsErrorListService extends BaseAppService{
 
     @Autowired
-    protected VoApiDefaultClient voApiClient;
-
-    @Autowired
-    protected CmsBtChannelCategoryService cmsBtChannelCategoryService;
+    protected ChannelCategoryService cmsBtChannelCategoryService;
 
     @Autowired
     protected ChannelShopDao channelShopDao;
 
+    @Autowired
+    private BusinessLogService businessLogService;
+
     /**
      * 获取检索页面初始化的master data数据
-     * @param userInfo
-     * @return
+     * @param userInfo UserSessionBean
+     * @return Map
      */
     public Map<String, Object> getMasterData(UserSessionBean userInfo, String language) throws IOException{
 
@@ -59,39 +54,30 @@ public class CmsErrorListService extends BaseAppService{
 
     /**
      * 检索错误信息
-     * @param params
-     * @return
+     * @param params Map
+     * @param userInfo UserSessionBean
+     * @return Map
      */
-    public BusinessLogGetResponse search(Map params, UserSessionBean userInfo) {
-        BusinessLogGetRequest request=new BusinessLogGetRequest();
-        request.setChannelId(userInfo.getSelChannelId());
-        if (params.get("codes") != null)
-            request.setCodes((ArrayList<String>)params.get("codes"));
-        if (params.get("errType") != null)
-            request.setErrType(params.get("errType").toString());
-        if (params.get("productName") != null)
-        request.setProductName(params.get("productName").toString());
-        if (params.get("cartId") != null)
-        request.setCartId(params.get("cartId").toString());
-        if (params.get("catId") != null)
-        request.setCatId(params.get("catId").toString());
-        if (params.get("offset") != null)
-        request.setOffset(Integer.valueOf(params.get("offset").toString()));
-        if (params.get("rows") != null)
-        request.setRows(Integer.valueOf(params.get("rows").toString()));
-
-        return voApiClient.execute(request);
+    public Map<String, Object> search(Map params, UserSessionBean userInfo) {
+        Map<String, Object> resultBean = new HashMap<>();
+        resultBean.put("errorList", businessLogService.getList(params));
+        resultBean.put("errorCnt", businessLogService.getCount(params));
+        return resultBean;
     }
 
     /**
      * 更新error错误状态
-     * @param params
-     * @return
+     * @param params Map
+     * @return int
      */
-    public BusinessLogUpdateResponse updateStatus(Map params, UserSessionBean userInfo) {
-        BusinessLogUpdateRequest request = new BusinessLogUpdateRequest();
-        request.setSeq(Integer.parseInt(params.get("seq").toString()));
-        request.setModifier(userInfo.getUserName());
-        return voApiClient.execute(request);
+    public Map<String, Object> updateStatus(Map params, UserSessionBean userInfo) {
+        Map<String, Object> request = new HashMap<>();
+        request.put("seq", Integer.parseInt(params.get("seq").toString()));
+        request.put("modifier", userInfo.getUserName());
+        int modifiedCount = businessLogService.updateFinishStatus(request);
+
+        Map<String, Object> resultBean = new HashMap<>();
+        resultBean.put("modifiedCount", modifiedCount);
+        return resultBean;
     }
 }

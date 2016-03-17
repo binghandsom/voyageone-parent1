@@ -258,8 +258,8 @@ define(function() {
       header: '<div class="form-group">' + '<label class="col-sm-2 control-label" ng-class="{\'vo_reqfield\': showHtmlData.isRequired}" ng-bind="$$data.name"></label>' + "<div class=\"col-sm-8\" ng-class=\"{'modal-open' : showHtmlData.isMultiComplex, 'hierarchy_main': showHtmlData.isComplex}\" ng-transclude></div>" + '<div class="col-sm-2" ng-if="showHtmlData.isMultiComplex"><button class="btn btn-success" ng-click="addField($$data)"><i class="fa fa-plus"></i>{{\'BTN_ADD\' | translate}}</button></div>' + '<div class="row" ng-repeat="tipMsg in showHtmlData.tipMsg"><div class="col-sm-8 col-sm-offset-2 text-warnings"><i class="icon fa fa-bell-o"></i>&nbsp;{{tipMsg}}</div></div>' + "</div>",
       label: '<input style="min-width: 150px; max-width: 250px;" type="text" readonly ng-model="vm.$$data.value" class="form-control">',
       input: '<input style="min-width: 150px; max-width: 250px;" ng-model="vm.$$data.value" class="form-control" %replaceInfo%>',
-      date: '<div class="input-group" style="width: 180px;" ng-controller="datePickerCtrl"><input %replaceInfo% type="text" class="form-control" datepicker-popup="{{formatDate}}" ng-model="$parent.vm.$$data.value" date-model-format="{{formatDate}}" is-open="opened" datepicker-options="dateOptions" close-text="Close" /><span class="input-group-btn"><button %replaceInfo% type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button></span></div>',
-      datetime: '<div class="input-group" style="width: 180px;" ng-controller="datePickerCtrl"><input %replaceInfo% type="text" class="form-control" datepicker-popup="{{formatDateTime}}" ng-model="$parent.vm.$$data.value" date-model-format="{{formatDateTime}}" is-open="opened" datepicker-options="dateOptions" close-text="Close" /><span class="input-group-btn"><button %replaceInfo% type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button></span></div>',
+      date: '<div class="input-group" style="width: 180px;"><input %replaceInfo% type="text" class="form-control" datepicker-popup ng-model="vm.$$data.value" date-model-format="yyyy-MM-dd" is-open="datePicker" close-text="Close" /><span class="input-group-btn"><button %replaceInfo% type="button" class="btn btn-default" ng-click="datePicker = !datePicker"><i class="glyphicon glyphicon-calendar"></i></button></span></div>',
+      datetime: '<div class="input-group" style="width: 180px;"><input %replaceInfo% type="text" class="form-control" datepicker-popup ng-model="vm.$$data.value" date-model-format="yyyy-MM-dd HH:mm:ss" is-open="datePicker" close-text="Close" /><span class="input-group-btn"><button %replaceInfo% type="button" class="btn btn-default" ng-click="datePicker = !datePicker"><i class="glyphicon glyphicon-calendar"></i></button></span></div>',
       textarea: '<textarea style="min-width: 150px; max-width: 650px;" class="form-control no-resize" ng-model="vm.$$data.value" rows="{{showHtmlData.rowNum}}" %replaceInfo%></textarea>',
       select: '<select style="min-width: 150px; max-width: 250px;" %replaceInfo% class="form-control" ng-model="vm.$$data.value.value" ng-options="option.value as option.displayName for option in vm.$$data.options"> <option value="">{{\'TXT_SELECT_NO_VALUE\' | translate}}</option></select>',
       radio: '<label class="checkbox-inline c-radio" ng-repeat="option in vm.$$data.options"><input name="{{vm.$$data.id}}" type="radio" ng-value="option.value" ng-model="vm.$$data.value.value"><span class="fa fa-check"></span> {{option.displayName}}</label>',
@@ -921,7 +921,7 @@ define(function() {
       }
     };
   });
-  angular.module("voyageone.angular.factories.dialogs", []).factory("$dialogs", [ "$modal", "$filter", "$templateCache", function($modal, $filter, $templateCache) {
+  angular.module("voyageone.angular.factories.dialogs", []).factory("$dialogs", [ "$uibModal", "$filter", "$templateCache", function($uibModal, $filter, $templateCache) {
     var templateName = "voyageone.angular.factories.dialogs.tpl.html";
     var template = '<div class="vo_modal">' + '<div class="modal-header">' + '<button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="close()">' + '<span aria-hidden="true"><i ng-click="close()" class="fa fa-close"></i></span>' + "</button>" + '<h5 class="modal-title" ng-bind-html="title"></h5>' + "</div>" + '<div class="modal-body wrapper-lg">' + '<div class="row">' + '<h5 class="text-center text-hs"><p class="text-center" ng-bind-html="content"></p></h5>' + "</div>" + "</div>" + '<div class="modal-footer">' + '<button class="btn btn-default btn-sm" ng-if="!isAlert" ng-click="close()" translate="BTN_CANCEL"></button>' + '<button class="btn btn-vo btn-sm" ng-click="ok()" translate="BTN_OK"></button>' + "</div>" + "</div>";
     $templateCache.put(templateName, template);
@@ -937,7 +937,7 @@ define(function() {
       }
       options.title = tran(options.title);
       options.content = tran(options.content, values);
-      var modalInstance = $modal.open({
+      var modalInstance = $uibModal.open({
         templateUrl: templateName,
         controller: [ "$scope", function(scope) {
           _.extend(scope, options);
@@ -1201,6 +1201,56 @@ define(function() {
       }
     };
   });
+  angular.module("voyageone.angular.vresources", []).provider("$vresources", [ "$provide", function($provide) {
+    function getActionUrl(root, action) {
+      return root + (root.lastIndexOf("/") === root.length - 1 ? "" : "/") + action;
+    }
+    function closureDataService(name, actions, ajaxService) {
+      function DataResource() {
+        if (!actions) {
+          return;
+        }
+        if (typeof actions !== "object") {
+          console.log("Failed to new DataResource: [" + actions + "] is not a object");
+          return;
+        }
+        if (!actions.root) {
+          console.log("Failed to new DataResource: no root prop" + (JSON && JSON.stringify ? ": " + JSON.stringify(actions) : ""));
+          return;
+        }
+        for (var name in actions) {
+          if (name === "root") continue;
+          if (actions.hasOwnProperty(name)) {
+            this[name] = function(actionUrl) {
+              return function(data) {
+                return ajaxService.post(actionUrl, data);
+              };
+            }(getActionUrl(actions.root, actions[name]));
+          }
+        }
+      }
+      $provide.service(name, DataResource);
+    }
+    this.$get = [ "ajaxService", function(ajaxService) {
+      return {
+        register: function(name, actions) {
+          if (!actions) return;
+          if (typeof actions !== "object") return;
+          if (actions.root) {
+            closureDataService(name, actions, ajaxService);
+            return;
+          }
+          for (var childName in actions) {
+            if (actions.hasOwnProperty(childName)) {
+              this.register(childName, actions[childName]);
+            }
+          }
+        }
+      };
+    } ];
+  } ]).run([ "$vresources", "$actions", function($vresources, $actions) {
+    $vresources.register(null, $actions);
+  } ]);
   $Ajax.$inject = [ "$http", "blockUI", "$q" ];
   AjaxService.$inject = [ "$q", "$ajax", "messageService" ];
   angular.module("voyageone.angular.services.ajax", []).service("$ajax", $Ajax).service("ajaxService", AjaxService);
@@ -1358,56 +1408,6 @@ define(function() {
       return currentLang.substr(0, 2);
     }
   };
-  angular.module("voyageone.angular.vresources", []).provider("$vresources", [ "$provide", function($provide) {
-    function getActionUrl(root, action) {
-      return root + (root.lastIndexOf("/") === root.length - 1 ? "" : "/") + action;
-    }
-    function closureDataService(name, actions, ajaxService) {
-      function DataResource() {
-        if (!actions) {
-          return;
-        }
-        if (typeof actions !== "object") {
-          console.log("Failed to new DataResource: [" + actions + "] is not a object");
-          return;
-        }
-        if (!actions.root) {
-          console.log("Failed to new DataResource: no root prop" + (JSON && JSON.stringify ? ": " + JSON.stringify(actions) : ""));
-          return;
-        }
-        for (var name in actions) {
-          if (name === "root") continue;
-          if (actions.hasOwnProperty(name)) {
-            this[name] = function(actionUrl) {
-              return function(data) {
-                return ajaxService.post(actionUrl, data);
-              };
-            }(getActionUrl(actions.root, actions[name]));
-          }
-        }
-      }
-      $provide.service(name, DataResource);
-    }
-    this.$get = [ "ajaxService", function(ajaxService) {
-      return {
-        register: function(name, actions) {
-          if (!actions) return;
-          if (typeof actions !== "object") return;
-          if (actions.root) {
-            closureDataService(name, actions, ajaxService);
-            return;
-          }
-          for (var childName in actions) {
-            if (actions.hasOwnProperty(childName)) {
-              this.register(childName, actions[childName]);
-            }
-          }
-        }
-      };
-    } ];
-  } ]).run([ "$vresources", "$actions", function($vresources, $actions) {
-    $vresources.register(null, $actions);
-  } ]);
-  return angular.module("voyageone.angular", [ "voyageone.angular.controllers.datePicker", "voyageone.angular.controllers.selectRows", "voyageone.angular.controllers.showPopover", "voyageone.angular.directives.dateModelFormat", "voyageone.angular.directives.enterClick", "voyageone.angular.directives.fileStyle", "voyageone.angular.directives.ifNoRows", "voyageone.angular.directives.uiNav", "voyageone.angular.directives.schema", "voyageone.angular.directives.voption", "voyageone.angular.directives.vpagination", "voyageone.angular.directives.validator", "voyageone.angular.factories.dialogs", "voyageone.angular.factories.interceptor", "voyageone.angular.factories.notify", "voyageone.angular.factories.pppAutoImpl", "voyageone.angular.factories.selectRows", "voyageone.angular.factories.vpagination", "voyageone.angular.services.ajax", "voyageone.angular.services.cookie", "voyageone.angular.services.message", "voyageone.angular.services.permission", "voyageone.angular.services.translate" ]);
+  return angular.module("voyageone.angular", [ "voyageone.angular.controllers.datePicker", "voyageone.angular.controllers.selectRows", "voyageone.angular.controllers.showPopover", "voyageone.angular.directives.dateModelFormat", "voyageone.angular.directives.enterClick", "voyageone.angular.directives.fileStyle", "voyageone.angular.directives.ifNoRows", "voyageone.angular.directives.uiNav", "voyageone.angular.directives.schema", "voyageone.angular.directives.voption", "voyageone.angular.directives.vpagination", "voyageone.angular.directives.validator", "voyageone.angular.services.ajax", "voyageone.angular.services.cookie", "voyageone.angular.services.message", "voyageone.angular.services.permission", "voyageone.angular.services.translate", "voyageone.angular.factories.dialogs", "voyageone.angular.factories.interceptor", "voyageone.angular.factories.notify", "voyageone.angular.factories.pppAutoImpl", "voyageone.angular.factories.selectRows", "voyageone.angular.factories.vpagination" ]);
 });
 //# sourceMappingURL=voyageone.angular.com.js.map

@@ -1,24 +1,28 @@
 package com.voyageone.web2.cms.views.translation;
 
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
+import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.cms.enums.LanguageType;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.service.bean.cms.product.ProductTransDistrBean;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
+import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field;
 import com.voyageone.web2.cms.bean.ProductTranslationBean;
 import com.voyageone.web2.cms.bean.TranslateTaskBean;
-import com.voyageone.web2.sdk.api.VoApiConstants;
-import com.voyageone.web2.sdk.api.VoApiDefaultClient;
-import com.voyageone.web2.sdk.api.VoApiRequest;
-import com.voyageone.web2.sdk.api.exception.ApiException;
-import com.voyageone.web2.sdk.api.request.*;
-import com.voyageone.web2.sdk.api.response.*;
-import com.voyageone.web2.sdk.api.service.ProductSdkClient;
+import com.voyageone.web2.cms.dao.CustomWordDao;
+import com.voyageone.web2.cms.dao.MongoNativeDao;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -35,13 +39,32 @@ public class TranslationService {
     private CmsBtFeedInfoDao cmsBtFeedInfoDao;
 
     @Autowired
-    protected ProductSdkClient productClient;
+    private ProductService productService;
 
     @Autowired
-    protected VoApiDefaultClient voApiClient;
+    protected CustomWordDao customWordDao;
+
+    @Autowired
+    private MongoNativeDao mongoDao;
+
 
     private Map sortFields;
 
+    private static String[] RET_FIELDS = {
+            "prodId",
+            "fields.code",
+            "fields.productNameEn",
+            "fields.longDesEn",
+            "fields.shortDesEn",
+            "fields.longTitle",
+            "fields.middleTitle",
+            "fields.shortTitle",
+            "fields.longDesCn",
+            "fields.shortDesCn",
+            "fields.model",
+            "fields.images1",
+            "fields.translator",
+            "modified"};
 
     /**
      * TODO 将来应该从配置数据库中读取.
@@ -68,8 +91,6 @@ public class TranslationService {
      */
     public TranslateTaskBean getUndoneTasks(String channelId, String userName) throws BusinessException {
 
-        ProductsGetRequest productsGetRequest = new ProductsGetRequest();
-
         TranslateTaskBean translateTaskBean = new TranslateTaskBean();
 
         Date date = DateTimeUtil.addHours(DateTimeUtil.getDate(), -48);
@@ -77,20 +98,16 @@ public class TranslationService {
 
         String tasksQueryStr = String.format("{'fields.status':{'$nin':['New']},'fields.translateStatus':'0','fields.translator':'%s','fields.translateTime':{'$gt':'%s'}}",userName,translateTimeStr);
 
-        productsGetRequest.setChannelId(channelId);
-        productsGetRequest.setQueryString(tasksQueryStr);
-        //设定返回值.
-        setReturnValue(productsGetRequest);
+        JomgoQuery queryObject = new JomgoQuery();
+        queryObject.setQuery(tasksQueryStr);
+        queryObject.setProjection(RET_FIELDS);
 
-
-        ProductsGetResponse responses = voApiClient.execute(productsGetRequest);
-
-        List<CmsBtProductModel> cmsBtProductModels = responses.getProducts();
+        List<CmsBtProductModel> cmsBtProductModels = productService.getList(channelId, queryObject);
 
         List<ProductTranslationBean> translateTaskBeanList = buildTranslateTaskBeen(cmsBtProductModels);
 
         translateTaskBean.setProductTranslationBeanList(translateTaskBeanList);
-
+        translateTaskBean.setDistributeRule(1); // 缺省只查询主商品
         translateTaskBean.setTotalDoneCount(this.getTotalDoneCount(channelId));
         translateTaskBean.setUserDoneCount(this.getDoneTaskCount(channelId,userName));
         translateTaskBean.setTotalUndoneCount(this.getTotalUndoneCount(channelId));
@@ -106,26 +123,27 @@ public class TranslationService {
      */
     public TranslateTaskBean assignTask(String channelId, String userName,int distributeRule,int distCount,String sortCondition, Boolean sortRule) {
 
-        ProductTransDistrRequest requestModel = new ProductTransDistrRequest(channelId);
+        ProductTransDistrBean productTransDistrBean = new ProductTransDistrBean();
 
         if (!StringUtils.isEmpty(sortCondition)){
             String sortField = "fields." + sortCondition;
-            requestModel.addSort(sortField,sortRule);
+            if (sortRule) {
+                productTransDistrBean.setSortStr(sortField + ":1");
+            } else {
+                productTransDistrBean.setSortStr(sortField + ":-1");
+            }
         }
 
-        requestModel.setTranslator(userName);
-        requestModel.setTranslateTimeHDiff(24);
-        requestModel.setDistributeRule(distributeRule);
+        productTransDistrBean.setTranslator(userName);
+        productTransDistrBean.setTranslateTimeHDiff(24);
+        productTransDistrBean.setDistributeRule(distributeRule);
         if (distCount > 0){
-            requestModel.setLimit(distCount);
+            productTransDistrBean.setLimit(distCount);
         }
         //设定返回值.
-        setReturnValue(requestModel);
+        productTransDistrBean.setProjectionArr(RET_FIELDS);
 
-        //SDK取得Product 数据
-        ProductTransDistrResponse response = voApiClient.execute(requestModel);
-
-        List<CmsBtProductModel> cmsBtProductModels = response.getProducts();
+        List<CmsBtProductModel> cmsBtProductModels = productService.translateDistribute(channelId, productTransDistrBean);
 
         List<ProductTranslationBean> translateTaskBeanList = buildTranslateTaskBeen(cmsBtProductModels);
 
@@ -141,124 +159,96 @@ public class TranslationService {
 
     }
 
-    /**
-     *
-     * @param productsGetRequest
-     */
-    private void setReturnValue(VoApiRequest productsGetRequest) {
-
-        productsGetRequest.addField("prodId");
-        productsGetRequest.addField("fields.code");
-        productsGetRequest.addField("fields.productNameEn");
-        productsGetRequest.addField("fields.longDesEn");
-        productsGetRequest.addField("fields.shortDesEn");
-
-        productsGetRequest.addField("fields.longTitle");
-        productsGetRequest.addField("fields.middleTitle");
-        productsGetRequest.addField("fields.shortTitle");
-        productsGetRequest.addField("fields.longDesCn");
-        productsGetRequest.addField("fields.shortDesCn");
-        productsGetRequest.addField("fields.model");
-        productsGetRequest.addField("fields.images1");
-        productsGetRequest.addField("fields.translator");
-        productsGetRequest.addField("modified");
-    }
-
-
-    /**
-     * 暂时保存翻译任务.
-     * @param channelId
-     * @param userName
-     * @param modified
-     * @param taskBean
-     * @return
-     */
-    public TranslateTaskBean SaveTask(String channelId, String userName,String modified,ProductTranslationBean taskBean) {
-
-        ProductUpdateRequest updateRequest = new ProductUpdateRequest(channelId);
-
-        CmsBtProductModel productModel = new CmsBtProductModel(channelId);
-
-        TranslateTaskBean translateTaskBean = new TranslateTaskBean();
-
-        productModel.setProdId(taskBean.getProdId());
-        CmsBtProductModel_Field fieldModel = productModel.getFields();
-        fieldModel.setLongDesCn(taskBean.getLongDesCn());
-        fieldModel.setShortDesCn(taskBean.getShortDesCn());
-        fieldModel.setLongTitle(taskBean.getLongTitle());
-        fieldModel.setMiddleTitle(taskBean.getMiddleTitle());
-        fieldModel.setShortTitle(taskBean.getShortTitle());
-        productModel.setModified(modified);
-        productModel.setModifier(userName);
-
-        updateRequest.setProductModel(productModel);
-        updateRequest.setModifier(userName);
-        updateRequest.setModified(modified);
-
-        try {
-            String modifiedTime = productClient.updateProductRetModified(updateRequest);
-            translateTaskBean.setModifiedTime(modifiedTime);
-        }catch (ApiException e){
-            if (VoApiConstants.VoApiErrorCodeEnum.ERROR_CODE_70011.getErrorCode().equals(e.getErrCode())){
-                // TODO 提示用户该产品已经被人修改请重新保存.
-            }
-        }
-
-        translateTaskBean.setTotalDoneCount(this.getTotalDoneCount(channelId));
-        translateTaskBean.setUserDoneCount(this.getDoneTaskCount(channelId,userName));
-        translateTaskBean.setTotalUndoneCount(this.getTotalUndoneCount(channelId));
-
-        return translateTaskBean;
-
-    }
+//    /**
+//     *
+//     * @param productsGetRequest
+//     */
+//    private void setReturnValue(VoApiRequest productsGetRequest) {
+//
+//        productsGetRequest.addField("prodId");
+//        productsGetRequest.addField("fields.code");
+//        productsGetRequest.addField("fields.productNameEn");
+//        productsGetRequest.addField("fields.longDesEn");
+//        productsGetRequest.addField("fields.shortDesEn");
+//
+//        productsGetRequest.addField("fields.longTitle");
+//        productsGetRequest.addField("fields.middleTitle");
+//        productsGetRequest.addField("fields.shortTitle");
+//        productsGetRequest.addField("fields.longDesCn");
+//        productsGetRequest.addField("fields.shortDesCn");
+//        productsGetRequest.addField("fields.model");
+//        productsGetRequest.addField("fields.images1");
+//        productsGetRequest.addField("fields.translator");
+//        productsGetRequest.addField("modified");
+//    }
 
     /**
      * 暂时保存翻译任务.
      * @param channelId
      * @param userName
-     * @param modified
      * @param taskBean
      * @return
      */
-    public TranslateTaskBean submitTask(String channelId, String userName, String modified,ProductTranslationBean taskBean) {
+    public TranslateTaskBean saveTask(String channelId, String userName, ProductTranslationBean taskBean, String transSts) {
+        // 先查询该商品对应的group信息
+        logger.debug("TranslationService.saveTask() 商品ProdId=" + taskBean.getProdId());
+        DBObject excObj = new BasicDBObject();
+        excObj.put("groups.platforms.cartId", 1);
+        excObj.put("groups.platforms.groupId", 1);
+        excObj.put("groups.platforms.isMain", 1);
 
-        ProductUpdateRequest updateRequest = new ProductUpdateRequest(channelId);
-
-        CmsBtProductModel productModel = new CmsBtProductModel(channelId);
-
-        TranslateTaskBean translateTaskBean = new TranslateTaskBean();
-
-        productModel.setProdId(taskBean.getProdId());
-        CmsBtProductModel_Field fieldModel = productModel.getFields();
-        fieldModel.setLongDesCn(taskBean.getLongDesCn());
-        fieldModel.setShortDesCn(taskBean.getShortDesCn());
-        fieldModel.setLongTitle(taskBean.getLongTitle());
-        fieldModel.setMiddleTitle(taskBean.getMiddleTitle());
-        fieldModel.setShortTitle(taskBean.getShortTitle());
-        fieldModel.setTranslateStatus("1");
-        fieldModel.setTranslateTime(DateTimeUtil.getNowTimeStamp());
-        productModel.setModified(modified);
-
-        updateRequest.setProductModel(productModel);
-        updateRequest.setModifier(userName);
-        updateRequest.setModified(modified);
-
-        try {
-            String modifiedTime = productClient.updateProductRetModified(updateRequest);
-            translateTaskBean.setModifiedTime(modifiedTime);
-        }catch (ApiException e){
-            if (VoApiConstants.VoApiErrorCodeEnum.ERROR_CODE_70011.getErrorCode().equals(e.getErrCode())){
-                // TODO 提示用户该产品已经被人修改请重新保存.
+        List<DBObject> rslt = mongoDao.find("cms_bt_product_c" + channelId, new BasicDBObject("prodId", taskBean.getProdId()), excObj);
+        int groupId = 0;
+        for (DBObject obj : rslt) {
+            DBObject groupObj = (DBObject) obj.get("groups");
+            if (groupObj != null) {
+                Object platObj = groupObj.get("platforms");
+                if (platObj != null) {
+                    for (Object obj2 : (List) platObj) {
+                        int cartId = (Integer) ((DBObject) obj2).get("cartId");
+                        int isMain = (Integer) ((DBObject) obj2).get("isMain");
+                        if (cartId == 1 && isMain == 1) {
+                            groupId = (Integer) ((DBObject) obj2).get("groupId");
+                            break;
+                        }
+                    }
+                }
             }
         }
 
+        DBObject params = new BasicDBObject();
+        if (groupId == 0) {
+            logger.warn("TranslationService.saveTask() 无group信息 商品ProdId=" + taskBean.getProdId());
+            // 只更新该商品信息
+            params.put("prodId", taskBean.getProdId());
+        } else {
+            // 更新该group下的商品信息
+            DBObject pal4 = new BasicDBObject();
+            pal4.put("cartId", 1);
+            pal4.put("groupId", groupId);
+            DBObject pal3 = new BasicDBObject();
+            pal3.put("$elemMatch", pal4);
+            params.put("groups.platforms", pal3);
+        }
+
+        DBObject updObj = new BasicDBObject();
+        updObj.put("fields.translator", userName);
+        updObj.put("fields.translateStatus", transSts);
+        updObj.put("fields.translateTime", DateTimeUtil.getNow(DateTimeUtil.DEFAULT_DATETIME_FORMAT));
+        updObj.put("fields.longTitle", taskBean.getLongTitle());
+        updObj.put("fields.middleTitle", taskBean.getMiddleTitle());
+        updObj.put("fields.shortTitle", taskBean.getShortTitle());
+        updObj.put("fields.longDesCn", taskBean.getLongDesCn());
+        updObj.put("fields.shortDesCn", taskBean.getShortDesCn());
+        // 保存翻译后的信息
+        mongoDao.update("cms_bt_product_c" + channelId, params, updObj);
+
+        TranslateTaskBean translateTaskBean = new TranslateTaskBean();
+        translateTaskBean.setModifiedTime(DateTimeUtil.getNowTimeStamp());
         translateTaskBean.setTotalDoneCount(this.getTotalDoneCount(channelId));
-        translateTaskBean.setUserDoneCount(this.getDoneTaskCount(channelId,userName));
+        translateTaskBean.setUserDoneCount(this.getDoneTaskCount(channelId, userName));
         translateTaskBean.setTotalUndoneCount(this.getTotalUndoneCount(channelId));
-
-
         return translateTaskBean;
-
     }
 
     /**
@@ -269,33 +259,26 @@ public class TranslationService {
      */
     public ProductTranslationBean copyFormMainProduct(String channelId,ProductTranslationBean translationBean) {
 
-        ProductGetRequest productGetRequest = new ProductGetRequest();
-
         String tasksQueryStr = String.format("{'fields.status':{'$nin':['New']},'fields.translateStatus':'1','fields.model':'%s'}",translationBean.getModel());
 
-        productGetRequest.setChannelId(channelId);
-        productGetRequest.setQueryString(tasksQueryStr);
+        JomgoQuery queryObject = new JomgoQuery();
+        queryObject.setQuery(tasksQueryStr);
+        queryObject.setProjection("fields.longTitle", "fields.middleTitle", "fields.shortTitle", "fields.longDesCn", "fields.shortDesCn");
 
-        productGetRequest.addField("fields.longTitle");
-        productGetRequest.addField("fields.middleTitle");
-        productGetRequest.addField("fields.shortTitle");
-        productGetRequest.addField("fields.longDesCn");
-        productGetRequest.addField("fields.shortDesCn");
+        CmsBtProductModel productModel = productService.getProductWithQuery(channelId, queryObject);
 
-        ProductGetResponse responseBean = voApiClient.execute(productGetRequest);
-
-        if (responseBean.getProduct() == null){
+        if (productModel == null){
 
            throw new BusinessException("没用可参照的数据，请直接翻译！");
         }
 
-        CmsBtProductModel_Field productModel = responseBean.getProduct().getFields();
+        CmsBtProductModel_Field productFields = productModel.getFields();
 
-        translationBean.setLongTitle(productModel.getLongTitle());
-        translationBean.setMiddleTitle(productModel.getMiddleTitle());
-        translationBean.setShortTitle(productModel.getShortTitle());
-        translationBean.setLongDesCn(productModel.getLongDesCn());
-        translationBean.setShortDesCn(productModel.getShortDesCn());
+        translationBean.setLongTitle(productFields.getLongTitle());
+        translationBean.setMiddleTitle(productFields.getMiddleTitle());
+        translationBean.setShortTitle(productFields.getShortTitle());
+        translationBean.setLongDesCn(productFields.getLongDesCn());
+        translationBean.setShortDesCn(productFields.getShortDesCn());
 
         return translationBean;
     }
@@ -316,27 +299,20 @@ public class TranslationService {
 
         }
 
-        ProductsGetRequest productsGetRequest = new ProductsGetRequest();
-
-        TranslateTaskBean translateTaskBean = new TranslateTaskBean();
-
         String tasksQueryStr = String.format("{'fields.translator':'%s',$or:[{'fields.code':{$regex:'%s'}},{'fields.productNameEn':{$regex:'%s'}},{'fields.longDesEn':{$regex:'%s'}},{'fields.shortDesEn':{$regex:'%s'}},{'fields.longTitle':{$regex:'%s'}},{'fields.middleTitle':{$regex:'%s'}},{'fields.shortTitle':{$regex:'%s'}},{'fields.longDesCn':{$regex:'%s'}},{'fields.shortDesCn':{$regex:'%s'}}]}",userName,condition,condition,condition,condition,condition,condition,condition,condition,condition);
 
-        productsGetRequest.setChannelId(channelId);
-
-        productsGetRequest.setQueryString(tasksQueryStr);
+        JomgoQuery queryObject = new JomgoQuery();
+        queryObject.setQuery(tasksQueryStr);
         //设定返回值.
-        setReturnValue(productsGetRequest);
+        queryObject.setProjection(RET_FIELDS);
 
+        List<CmsBtProductModel> cmsBtProductModels = productService.getList(channelId, queryObject);
 
-        ProductsGetResponse responses = voApiClient.execute(productsGetRequest);
-
-        List<CmsBtProductModel> cmsBtProductModels = responses.getProducts();
 
         List<ProductTranslationBean> translateTaskBeanList = buildTranslateTaskBeen(cmsBtProductModels);
 
+        TranslateTaskBean translateTaskBean = new TranslateTaskBean();
         translateTaskBean.setProductTranslationBeanList(translateTaskBeanList);
-
         translateTaskBean.setTotalDoneCount(this.getTotalDoneCount(channelId));
         translateTaskBean.setUserDoneCount(this.getDoneTaskCount(channelId,userName));
         translateTaskBean.setTotalUndoneCount(this.getTotalUndoneCount(channelId));
@@ -384,12 +360,8 @@ public class TranslationService {
      * @param userName
      */
     private int getDoneTaskCount(String channelId, String userName) {
-        String doneTaskCountQueryStr = String.format("{'fields.status':{'$nin':['New']},'fields.translateStatus':'1','fields.translator':'%s'}",userName);
-        ProductsCountRequest doneTaskCountRequest = new ProductsCountRequest();
-        doneTaskCountRequest.setChannelId(channelId);
-        doneTaskCountRequest.setQueryString(doneTaskCountQueryStr);
-        ProductsCountResponse doneTaskCountResponse = voApiClient.execute(doneTaskCountRequest);
-        return doneTaskCountResponse.getTotalCount().intValue();
+        String doneTaskCountQueryStr = String.format("{'fields.status':{'$nin':['New']},'fields.translateStatus':'1','fields.translator':'%s'}", userName);
+        return ((Long)productService.getCnt(channelId, doneTaskCountQueryStr)).intValue();
     }
 
     /**
@@ -397,13 +369,8 @@ public class TranslationService {
      * @param channelId
      */
     private int getTotalDoneCount(String channelId) {
-
         String totalDoneCountQueryStr = "{'fields.status':{'$nin':['New']},'fields.translateStatus':'1'}";
-        ProductsCountRequest totalDoneCountRequest = new ProductsCountRequest();
-        totalDoneCountRequest.setChannelId(channelId);
-        totalDoneCountRequest.setQueryString(totalDoneCountQueryStr);
-        ProductsCountResponse totalDoneCountResponse = voApiClient.execute(totalDoneCountRequest);
-        return totalDoneCountResponse.getTotalCount().intValue();
+        return ((Long)productService.getCnt(channelId, totalDoneCountQueryStr)).intValue();
     }
 
     /**
@@ -411,14 +378,8 @@ public class TranslationService {
      * @param channelId
      */
     private int getTotalUndoneCount(String channelId) {
-
-        String totalUndoneCountQueryStr = String.format("{'fields.status':{'$nin':['New']},'fields.translateStatus':{'$in':[null,'','0']}}");
-        ProductsCountRequest totalUndoneCountRequest = new ProductsCountRequest();
-        totalUndoneCountRequest.setChannelId(channelId);
-        totalUndoneCountRequest.setQueryString(totalUndoneCountQueryStr);
-        ProductsCountResponse totalUndoneCountResponse = voApiClient.execute(totalUndoneCountRequest);
-
-        return totalUndoneCountResponse.getTotalCount().intValue();
+        String totalUndoneCountQueryStr = "{'fields.status':{'$nin':['New']},'fields.translateStatus':{'$in':[null,'','0']}}";
+        return ((Long)productService.getCnt(channelId, totalUndoneCountQueryStr)).intValue();
     }
 
     /**
@@ -545,7 +506,17 @@ public class TranslationService {
 
             throw new BusinessException("短描述不能为空");
         }
-
     }
 
+    // 获取翻译时标题和描述的长度设置
+    public Map<String, Object> getTransLenSet(String chnId) {
+        Map<String, Object> setInfo = new HashMap<String, Object>();
+        List<Map<String, Object>> rslt = customWordDao.getTransLenSet(chnId);
+        for (Map<String, Object> item : rslt) {
+            String lenType = (String) item.get("lenType");
+            item.remove("lenType");
+            setInfo.put(lenType, item);
+        }
+        return setInfo;
+    }
 }

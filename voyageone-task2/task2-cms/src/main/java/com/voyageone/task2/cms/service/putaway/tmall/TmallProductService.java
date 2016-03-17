@@ -1685,6 +1685,54 @@ public class TmallProductService {
 
                     expressionParser.popMasterPropContext();
                 }
+
+
+//                if (masterWordEvaluationContexts == null || masterWordEvaluationContexts.isEmpty()) {
+//                    MultiComplexField multiComplexField = (MultiComplexField) field;
+//                    List<ComplexValue> complexValues = new ArrayList<>();
+//                    multiComplexField.setComplexValues(complexValues);
+//
+//                    expressionParser.pushMasterPropContext(null);
+//                    ComplexValue complexValue = new ComplexValue();
+//                    complexValues.add(complexValue);
+//
+//                    for (MappingBean subMappingBean : complexMappingBean.getSubMappings()) {
+//                        String platformPropId = subMappingBean.getPlatformPropId();
+//                        Map<String, Field> schemaFieldsMap = multiComplexField.getFieldMap();
+//
+//                        Field schemaField = schemaFieldsMap.get(platformPropId);
+//                        Field valueField = deepCloneField(schemaField);
+//                        resolveMapping(cmsMainProduct, subMappingBean, valueField, srcUrlStashEntityMap, expressionParser, imageSet);
+//                        complexValue.put(valueField);
+//                    }
+//
+//                    expressionParser.popMasterPropContext();
+//
+//                } else {
+//                    MultiComplexField multiComplexField = (MultiComplexField) field;
+//                    List<ComplexValue> complexValues = new ArrayList<>();
+//                    multiComplexField.setComplexValues(complexValues);
+//
+//                    for (Map<String, Object> masterWordEvaluationContext : masterWordEvaluationContexts) {
+//                        expressionParser.pushMasterPropContext(masterWordEvaluationContext);
+//                        ComplexValue complexValue = new ComplexValue();
+//                        complexValues.add(complexValue);
+//
+//                        for (MappingBean subMappingBean : complexMappingBean.getSubMappings()) {
+//                            String platformPropId = subMappingBean.getPlatformPropId();
+//                            Map<String, Field> schemaFieldsMap = multiComplexField.getFieldMap();
+//
+//                            Field schemaField = schemaFieldsMap.get(platformPropId);
+//                            Field valueField = deepCloneField(schemaField);
+//                            resolveMapping(cmsMainProduct, subMappingBean, valueField, srcUrlStashEntityMap, expressionParser, imageSet);
+//                            complexValue.put(valueField);
+//                        }
+//
+//                        expressionParser.popMasterPropContext();
+//                    }
+//                }
+
+
             } else {
                 logger.error("Unexpected field type: " + field.getType());
                 return null;

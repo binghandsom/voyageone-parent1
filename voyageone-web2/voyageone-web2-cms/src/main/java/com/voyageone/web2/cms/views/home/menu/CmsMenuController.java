@@ -78,11 +78,11 @@ public class CmsMenuController extends CmsController {
 
         // 如果cTypeId为空,设置成其默认值.
         if (StringUtils.isEmpty(cTypeId)) {
-            params.put("cTypeId", CartType.TMALLG.getShortName());
+            params.put("cTypeId", CartType.MASTER.getShortName());
         }
 
         if (cartId == null) {
-            params.put("cartId", CartType.TMALLG.getCartId());
+            params.put("cartId", CartType.MASTER.getCartId());
         }
 
         getCmsSession().setPlatformType(params);

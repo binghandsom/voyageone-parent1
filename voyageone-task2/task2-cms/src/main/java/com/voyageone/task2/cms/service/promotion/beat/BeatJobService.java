@@ -15,13 +15,13 @@ import com.voyageone.common.components.tmall.TbPictureService;
 import com.voyageone.common.components.tmall.exceptions.GetUpdateSchemaFailException;
 import com.voyageone.common.configs.ShopConfigs;
 import com.voyageone.common.configs.beans.ShopBean;
+import com.voyageone.service.bean.cms.task.beat.ConfigBean;
+import com.voyageone.service.bean.cms.task.beat.TaskBean;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.base.util.TaskControlUtils;
 import com.voyageone.task2.cms.model.CmsMtImageCategoryModel;
-import com.voyageone.web2.cms.wsdl.bean.task.beat.ConfigBean;
-import com.voyageone.web2.cms.wsdl.bean.task.beat.TaskBean;
 import com.voyageone.service.model.cms.CmsBtBeatInfoModel;
 import com.voyageone.service.model.cms.CmsBtPromotionCodeModel;
 import com.voyageone.service.model.cms.CmsBtPromotionModel;
@@ -221,8 +221,15 @@ public class BeatJobService extends BaseTaskService {
             if (configBean.isNeed_vimage()) {
                 if (tbItemSchema.hasVerticalImage())
                     tbItemSchema.setVerticalImage(getTaobaoVerticalImageUrl());
-                else
-                    images.put(2, getTaobaoImageUrl(beatInfoModel.getPromotion_code().getImage_url_2()));
+                else {
+                    String url_key2 = beatInfoModel.getPromotion_code().getImage_url_2();
+                    if (!StringUtils.isEmpty(url_key2))
+                        images.put(2, getTaobaoImageUrl(beatInfoModel.getPromotion_code().getImage_url_2()));
+                    else {
+                        // 如果不为空, 则还原和刷图有区别, 还原需要清空
+                        images.put(2, beatInfoModel.getBeatFlag().equals(BeatFlag.REVERT) ? "" : images.get(1));
+                    }
+                }
             }
             tbItemSchema.setMainImage(images);
             TmallItemSchemaUpdateResponse updateResponse = tbItemService.updateFields(shopBean, tbItemSchema);
@@ -237,7 +244,7 @@ public class BeatJobService extends BaseTaskService {
                     updateResponse.getSubCode(), updateResponse.getSubMsg());
 
             if (StringUtils.isEmpty(updateResponse.getSubCode())) {
-                beatInfoModel.setMessage(updateResponse.getUpdateItemResult());
+                beatInfoModel.setMessage("success");
                 return true;
             }
 

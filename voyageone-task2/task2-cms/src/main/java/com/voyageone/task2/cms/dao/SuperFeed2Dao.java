@@ -23,7 +23,7 @@ public class SuperFeed2Dao extends BaseDao {
     /**
      * 插入维他命产品信息
      */
-    public int insertSuperfeedVtmInfo(SuperFeedVtmBean superfeedvtmbean) {
+    public int insertSuperfeedVtmInfo(List<SuperFeedVtmBean> superfeedvtmbean) {
         return insert("cms_superfeed_insertSuperfeedVtmInfo", superfeedvtmbean);
     }
 

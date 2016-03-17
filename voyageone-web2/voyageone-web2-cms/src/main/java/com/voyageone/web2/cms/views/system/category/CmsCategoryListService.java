@@ -11,6 +11,7 @@ import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -55,7 +56,13 @@ public class CmsCategoryListService {
                 masterSchemaModel.setCreater((String) schemaModel.get("creater"));
                 masterSchemaModel.setCreated((String) schemaModel.get("created"));
                 masterSchemaModel.setModified(DateTimeUtil.getNowTimeStamp());
-                masterSchemaModel.set_id( schemaModel.get("_id").toString());
+                masterSchemaModel.set_id(schemaModel.get("_id").toString());
+
+                List<Map<String, Object>> skuList = new ArrayList<>();
+                Map<String, Object> skuJson = (Map<String, Object>) schemaModel.get("sku");
+                skuList.add(skuJson);
+                List<Field> skuFields = SchemaJsonReader.readJsonForList(skuList);
+                masterSchemaModel.setSku(skuFields.get(0));
             }
             cmsMtCategorySchemaDao.update(masterSchemaModel);
             return masterSchemaModel;

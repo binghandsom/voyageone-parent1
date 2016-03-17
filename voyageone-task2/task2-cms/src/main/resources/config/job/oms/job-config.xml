@@ -11,16 +11,16 @@
 		<property name="triggers">
 			<list>
 				<!-- jewely向scene7上传产品图片 -->
-				<ref bean="jewelyImagePostScene7TaskContri" />
+				<!--<ref bean="jewelyImagePostScene7TaskContri" />-->
 
 				<!-- BCBG向scene7上传产品图片 -->
-				<ref bean="bcbgImagePostScene7TaskContri" />
+				<!--<ref bean="bcbgImagePostScene7TaskContri" />-->
 
 				<!-- Sears向scene7上传产品图片 -->
-				<ref bean="searsImagePostScene7TaskContri" />
+				<!--<ref bean="searsImagePostScene7TaskContri" />-->
 
 				<!-- Gilt向scene7上传产品图片 -->
-				<ref bean="giltImagePostScene7TaskContri"/>
+				<!--<ref bean="giltImagePostScene7TaskContri"/>-->
 			</list>
 		</property>
 		<property name="quartzProperties">

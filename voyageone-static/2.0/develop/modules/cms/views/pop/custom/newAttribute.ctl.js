@@ -18,12 +18,18 @@ define([
          */
         $scope.ok = function () {
             var checkResult = true;
-            _.each(context.from, function(value) {
-                if (_.isEqual(value.prop_original, $scope.vm.prop_original)) {
-                    alert("该属性已经存在");
-                    checkResult = false;
-                }
-            });
+            if($scope.vm.prop_original==""){
+                alert("请输入属性名");
+                checkResult = false;
+            }else{
+                _.each(context.from, function(value) {
+                    if (_.isEqual(value.prop_original, $scope.vm.prop_original)) {
+                        alert("该属性已经存在");
+                        checkResult = false;
+                    }
+                });
+            }
+
             if (checkResult) {
                 $modalInstance.close($scope.vm);
             }

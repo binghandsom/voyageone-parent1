@@ -13,12 +13,13 @@ import com.voyageone.common.configs.Feed;
 import com.voyageone.common.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.io.File;
-import java.io.FileInputStream;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -65,29 +66,33 @@ public class VtmService extends BaseTaskService {
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
 
         // 清表
+        $info("维他命产品信息清表开始");
         superfeeddao.deleteTableInfo(Feed.getVal1(ChannelConfigEnums.Channel.VITAMIN.getId(), FeedEnums.Name.table_id));
+        $info("维他命产品信息清表结束");
 
         // 插入数据库
         $info("维他命产品信息插入开始");
         int count = vtmSuperFeedImport();
         $info("维他命产品信息插入完成");
 
-        // updateFlag变更，0：原有数据 1：新数据 2：Error数据（category,CNMSRP，CNPrice, Image List,Variation Parent SKU为空）
+        // updateFlag变更，0：原有数据 1：新数据 2：Error数据（category,CNMSRP，CNPrice, Image List为空）
         // 1的sql文：
         // UPDATE voyageone_cms2.cms_zz_worktable_vtm_superfeed b LEFT JOIN voyageone_cms2.cms_zz_worktable_vtm_superfeed_full bf ON b.md5 = bf.md5 SET b.UpdateFlag = 1 WHERE bf.md5 IS NULL;
         // 2的sql文：
-        // UPDATE voyageone_cms2.cms_zz_worktable_vtm_superfeed b SET b.UpdateFlag = 2 WHERE b.MerchantPrimaryCategory="" OR b.CNMSRP="" OR b.CNPrice="" OR b.`Image List`="" OR b.`Variation Parent SKU`="";
+        // UPDATE voyageone_cms2.cms_zz_worktable_vtm_superfeed b SET b.UpdateFlag = 2 WHERE b.MerchantPrimaryCategory="" OR b.CNMSRP="" OR b.CNPrice="" OR b.`Image List`="";
+        logger.info("transform开始");
         transformer.new Context(VITAMIN, this).transform();
+        logger.info("transform结束");
 
         insertService.new Context(VITAMIN).postNewProduct();
         // 更新完成，UpdateFlag结果：
-        // UpdateFlag    cms_zz_worktable_vtm_superfeed           cms_zz_worktable_vtm_superfeed_full
-        // 0             已经加入的原有数据(未变化)               已经加入的原有数据(未变化)
-        // 1             途中OK待加入的数据(追加和变更的数据)     本次导入追加和变更的数据
-        // 2             本次导入error的数据                      /
-        // 3             本次导入完全导入成功的数据               /
+        // UpdateFlag    cms_zz_worktable_vtm_superfeed
+        // 0             已经加入的原有数据(未变化)
+        // 1             途中OK待加入的数据(追加和变更的数据)
+        // 2             本次导入error的数据
+        // 3             本次导入完全导入成功的数据
 
-//        backupFeedFile(VITAMIN.getId());
+        backupFeedFile(VITAMIN.getId());
 
     }
 
@@ -96,35 +101,40 @@ public class VtmService extends BaseTaskService {
      *
      * @return isSuccess
      */
+    @Transactional
     public int insertSuperFeedVtm(List<SuperFeedVtmBean> superfeedlist) {
 
-        int count = 0;
+//        int count = 0;
+//
+//        for (SuperFeedVtmBean superfeed : superfeedlist) {
+//            try {
+//                count = count + superfeeddao.insertSuperfeedVtmInfo(superfeed);
+//            } catch (Exception ex) {
+//                String message = "维他命产品文件插入失败, SKU= " + superfeed.getSKU();
+//                $info(message);
+//                logger.error(ex.getMessage());
+//                logIssue("cms 数据导入处理", message + "  " + ex.getMessage());
+//            }
+//        }
+//
+//        return count;
 
-        for (SuperFeedVtmBean superfeed : superfeedlist) {
-            try {
-                count = count + superfeeddao.insertSuperfeedVtmInfo(superfeed);
-            } catch (Exception ex) {
-                String message = "维他命产品文件插入失败, SKU= " + superfeed.getSKU() + "  " + ex.getMessage();
-                $info(message);
-                logger.error(ex.getMessage());
-                logIssue("cms 数据导入处理", message);
-            }
-        }
-
-        return count;
+        return superfeeddao.insertSuperfeedVtmInfo(superfeedlist);
     }
 
     /**
      * 维他命产品文件读入
      */
-    private int vtmSuperFeedImport() {
+    private int vtmSuperFeedImport() throws IOException {
         $info("维他命产品文件读入开始");
 
         List<SuperFeedVtmBean> superfeed = new ArrayList<>();
 
         int count = 0;
+        String sku = "first";
 
-        CsvReader reader;
+//        CsvReader reader;
+        BufferedReader br = null;
         try {
             String fileName = Feed.getVal1(ChannelConfigEnums.Channel.VITAMIN.getId(), FeedEnums.Name.file_id);
             String filePath = Feed.getVal1(ChannelConfigEnums.Channel.VITAMIN.getId(), FeedEnums.Name.feed_ftp_localpath);
@@ -132,20 +142,26 @@ public class VtmService extends BaseTaskService {
 
             String encode = Feed.getVal1(ChannelConfigEnums.Channel.VITAMIN.getId(), FeedEnums.Name.feed_ftp_file_coding);
 
-            reader = new CsvReader(new FileInputStream(fileFullName), '\t', Charset.forName(encode));
+//            reader = new CsvReader(new FileInputStream(fileFullName), '\t', Charset.forName(encode));
 
+            br = new BufferedReader(new InputStreamReader(new FileInputStream(fileFullName)));// InputStreamReader 是字节流通向字符流的桥梁,
             // Head读入
-            reader.readHeaders();
-            reader.getHeaders();
+//            reader.readHeaders();
+//            reader.getHeaders();
 
             // Body读入
-            while (reader.readRecord()) {
+            String b;
+            br.readLine(); // 跳过第一行
+            while ((b = br.readLine()) != null) {
+
+                List<String> reader = new ArrayList(Arrays.asList(b.split("\t")));
                 SuperFeedVtmBean superfeedvtmbean = new SuperFeedVtmBean();
 
                 int i = 0;
                 superfeedvtmbean.setSKU(reader.get(i++));
+                sku = superfeedvtmbean.getSKU();
                 superfeedvtmbean.setUPC(reader.get(i++));
-                if(StringUtils.isEmpty(superfeedvtmbean.getUPC())) {
+                if (StringUtils.isEmpty(superfeedvtmbean.getUPC())) {
                     continue;
                 }
                 superfeedvtmbean.setEAN(reader.get(i++));
@@ -238,7 +254,12 @@ public class VtmService extends BaseTaskService {
                 superfeedvtmbean.setQuantity(reader.get(i++));
                 superfeedvtmbean.setVoyageOneMSRP(reader.get(i++));
 
+                if(isErrData(superfeedvtmbean)) {
+                    continue;
+                }
+
                 superfeed.add(superfeedvtmbean);
+                sku = sku + " read over, next. ";
 
                 if (superfeed.size() > 100) {
                     count = count + insertSuperFeedVtm(superfeed);
@@ -247,13 +268,41 @@ public class VtmService extends BaseTaskService {
             }
 
             count = count + insertSuperFeedVtm(superfeed);
-            reader.close();
+//            reader.close();
             $info("维他命产品文件读入完成");
         } catch (Exception ex) {
-            $info("维他命产品文件读入失败");
-            logIssue("cms 数据导入处理", "维他命产品文件读入失败 " + ex.getMessage());
+//            $info("维他命产品文件读入失败. SKU=" + sku);
+//            logger.error(ex.getMessage());
+//            logIssue("cms 数据导入处理", "维他命产品文件读入失败. SKU=" + sku + " " + ex.getMessage());
+            String message = "";
+            if (superfeed.size() > 0) {
+                message = "★★★★★从SKU=" + superfeed.get(0).getSKU() + " 开始未成功导入★★★★★";
+            } else {
+                message = "★★★★★从SKU=" + sku + " 开始未成功导入★★★★★";
+            }
+            $info(message);
+            logger.error(ex.getMessage());
+            logIssue("cms 数据导入处理", "维他命产品文件读入失败. " + message + ex.getMessage());
+        } finally {
+            if (br != null) br.close();
         }
         return count;
+    }
+
+    /**
+     * 错误数据把UpdateFlag设置成2
+     * 备注：response的原因，替代transform的sql文 UPDATE voyageone_cms2.cms_zz_worktable_vtm_superfeed b SET b.UpdateFlag = 2 WHERE b.MerchantPrimaryCategory="" OR b.CNMSRP="" OR b.CNPrice="" OR b.`Image List`="";
+     */
+    private boolean isErrData(SuperFeedVtmBean superfeedvtmbean) {
+        if (StringUtils.isEmpty(superfeedvtmbean.getMerchantPrimaryCategory())
+                || StringUtils.isEmpty(superfeedvtmbean.getCNMSRP())
+                || StringUtils.isEmpty(superfeedvtmbean.getCNPrice())
+                || StringUtils.isEmpty(superfeedvtmbean.getImageList())
+                ) {
+            return true;
+        }
+
+        return false;
     }
 
     private boolean backupFeedFile(String channel_id) {

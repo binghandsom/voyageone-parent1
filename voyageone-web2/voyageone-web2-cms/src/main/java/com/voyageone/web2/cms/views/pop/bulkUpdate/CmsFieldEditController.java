@@ -33,8 +33,7 @@ public class CmsFieldEditController extends CmsController {
      */
     @RequestMapping(CmsUrlConstants.POP.FIELD_EDIT.GET_POP_OPTIONS)
     public AjaxResponse getPopOptions(){
-        String channel_id = getUser().getSelChannelId();
-        List<CmsMtCommonPropDefModel> result = propChangeService.getPopOptions(channel_id);
+        List<CmsMtCommonPropDefModel> result = propChangeService.getPopOptions(getLang(), getUser().getSelChannelId());
         return success(result);
     }
 

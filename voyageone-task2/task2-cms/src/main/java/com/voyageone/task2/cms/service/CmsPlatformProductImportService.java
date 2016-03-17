@@ -1,8 +1,11 @@
 package com.voyageone.task2.cms.service;
 
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.service.bean.cms.product.ProductUpdateBean;
 import com.voyageone.service.dao.cms.mongo.CmsMtCategorySchemaDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtCommonSchemaDao;
+import com.voyageone.service.impl.cms.product.ProductGroupService;
+import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.mongo.CmsMtCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCommonSchemaModel;
 import com.voyageone.service.model.cms.mongo.product.*;
@@ -21,13 +24,6 @@ import com.voyageone.common.masterdate.schema.field.*;
 import com.voyageone.common.masterdate.schema.value.ComplexValue;
 import com.voyageone.common.util.MD5;
 import com.voyageone.common.util.StringUtils;
-import com.voyageone.web2.sdk.api.VoApiDefaultClient;
-import com.voyageone.web2.sdk.api.request.ProductGetRequest;
-import com.voyageone.web2.sdk.api.request.ProductGroupsPutRequest;
-import com.voyageone.web2.sdk.api.request.ProductUpdateRequest;
-import com.voyageone.web2.sdk.api.response.ProductGetResponse;
-import com.voyageone.web2.sdk.api.response.ProductGroupsPutResponse;
-import com.voyageone.web2.sdk.api.response.ProductUpdateResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -50,7 +46,9 @@ public class CmsPlatformProductImportService extends BaseTaskService {
     @Autowired
     private TmpOldCmsDataDao tmpOldCmsDataDao; // DAO: 旧cms数据
     @Autowired
-    private VoApiDefaultClient voApiClient; // VoyageOne共通API
+    private ProductGroupService productGroupService;
+    @Autowired
+    private ProductService productService;
 
     @Override
     public SubSystem getSubSystem() {
@@ -59,7 +57,7 @@ public class CmsPlatformProductImportService extends BaseTaskService {
 
     @Override
     public String getTaskName() {
-        return "CmsPlatformProductImportService";
+        return "CmsPlatformProductImport";
     }
 
     @Override
@@ -161,13 +159,7 @@ public class CmsPlatformProductImportService extends BaseTaskService {
     }
 
     private CmsBtProductModel getCmsProduct(String channelId, String code) {
-
-        ProductGetRequest productGetRequest = new ProductGetRequest(channelId);
-        productGetRequest.setProductCode(code);
-        ProductGetResponse productGetResponse = voApiClient.execute(productGetRequest);
-
-        return productGetResponse.getProduct();
-
+        return productService.getProductByCode(channelId, code);
     }
 
     private Map<String, Object> getPlatformProduct(String productId, ShopBean shopBean) throws Exception {
@@ -300,7 +292,6 @@ public class CmsPlatformProductImportService extends BaseTaskService {
             // 英文标题
             cmsFields.setProductNameEn(oldCmsDataBean.getTitle_en());
             // 中文标题
-            cmsFields.setProductNameCn(oldCmsDataBean.getTitle_cn());
             cmsFields.setLongTitle(oldCmsDataBean.getTitle_cn());
             // 英文描述
             cmsFields.setLongDesEn(oldCmsDataBean.getDescription_en());
@@ -350,37 +341,35 @@ public class CmsPlatformProductImportService extends BaseTaskService {
                 switch (status) {
                     case "0": // 出售中
                         platform.setPlatformStatus(CmsConstants.PlatformStatus.Onsale);
+                        platform.setPlatformActive(CmsConstants.PlatformActive.Onsale);
                         break;
                     default: // 定时上架 或者 仓库中
                         platform.setPlatformStatus(CmsConstants.PlatformStatus.Instock);
+                        platform.setPlatformActive(CmsConstants.PlatformActive.Instock);
                 }
 
                 // 更新group
-                ProductGroupsPutRequest productGroupsPutRequest = new ProductGroupsPutRequest();
-                productGroupsPutRequest.setChannelId(oldCmsDataBean.getChannel_id());
-                productGroupsPutRequest.setPlatform(platform);
                 Set<Long> lngSet = new HashSet<>();
                 lngSet.add(cmsProduct.getProdId());
-                productGroupsPutRequest.setProductIds(lngSet);
-                ProductGroupsPutResponse productGroupsPutResponse = voApiClient.execute(productGroupsPutRequest);
-                logger.info(String.format("从天猫获取product数据到cms:group:[code:%s, 结果:%s, 错误内容:%s]", oldCmsDataBean.getCode(), productGroupsPutResponse.getCode(), productGroupsPutResponse.getMessage()));
+                productGroupService.saveGroups(oldCmsDataBean.getChannel_id(), lngSet, platform);
+                logger.info(String.format("从天猫获取product数据到cms:group:[code:%s]", oldCmsDataBean.getCode()));
 
                 break;
             }
         }
 
         // 提交到product表 ==========================================================================================
-        ProductUpdateRequest productUpdateRequest = new ProductUpdateRequest(oldCmsDataBean.getChannel_id());
-        productUpdateRequest.setProductModel(cmsProduct);
-        productUpdateRequest.setModifier(getTaskName());
-        productUpdateRequest.setIsCheckModifed(false); // 不做最新修改时间ｃｈｅｃｋ
+        ProductUpdateBean productUpdateBean = new ProductUpdateBean();
+        productUpdateBean.setProductModel(cmsProduct);
+        productUpdateBean.setModifier(getTaskName());
+        productUpdateBean.setIsCheckModifed(false); // 不做最新修改时间ｃｈｅｃｋ
 
-        ProductUpdateResponse response = voApiClient.execute(productUpdateRequest);
+        productService.updateProduct(oldCmsDataBean.getChannel_id(), productUpdateBean);
 
         // 更新cms_tmp_old_cms_data表
         tmpOldCmsDataDao.setFinish(oldCmsDataBean.getChannel_id(), oldCmsDataBean.getCart_id(), oldCmsDataBean.getCode());
 
-        logger.info(String.format("从天猫获取product数据到cms:[code:%s, 结果:%s, 错误内容:%s]", oldCmsDataBean.getCode(), response.getCode(), response.getMessage()));
+        logger.info(String.format("从天猫获取product数据到cms:[code:%s]", oldCmsDataBean.getCode()));
 
         System.out.println("ok");
     }

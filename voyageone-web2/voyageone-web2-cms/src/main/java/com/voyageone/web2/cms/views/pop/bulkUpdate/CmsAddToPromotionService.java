@@ -2,19 +2,20 @@ package com.voyageone.web2.cms.views.pop.bulkUpdate;
 
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.CommonUtil;
+import com.voyageone.service.bean.cms.PromotionDetailAddBean;
+import com.voyageone.service.impl.cms.TagService;
+import com.voyageone.service.impl.cms.product.ProductTagService;
+import com.voyageone.service.impl.cms.promotion.PromotionDetailService;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.views.promotion.list.CmsPromotionIndexService;
 import com.voyageone.web2.core.bean.UserSessionBean;
-import com.voyageone.web2.sdk.api.VoApiDefaultClient;
 import com.voyageone.service.model.cms.CmsBtPromotionModel;
 import com.voyageone.service.model.cms.CmsBtTagModel;
-import com.voyageone.web2.sdk.api.request.PromotionDetailAddRequest;
-import com.voyageone.web2.sdk.api.request.TagsGetRequest;
-import com.voyageone.web2.sdk.api.service.ProductTagClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -26,13 +27,16 @@ import java.util.Map;
 public class CmsAddToPromotionService extends BaseAppService {
 
     @Autowired
-    private VoApiDefaultClient voApiClient;
+    private TagService tagService;
 
     @Autowired
     private CmsPromotionIndexService cmsPromotionService;
 
     @Autowired
-    private ProductTagClient productTagClient;
+    private ProductTagService productTagService;
+
+    @Autowired
+    private PromotionDetailService promotionDetailService;
 
     public List<CmsBtTagModel> getPromotionTags(Map<String, Object> params) {
         int tag_id = (int) params.get("refTagId");
@@ -43,10 +47,7 @@ public class CmsAddToPromotionService extends BaseAppService {
      * 获取二级Tag
      */
     public List<CmsBtTagModel> selectListByParentTagId(int parentTagId) {
-        //设置参数
-        TagsGetRequest requestModel = new TagsGetRequest();
-        requestModel.setParentTagId(parentTagId);
-        return voApiClient.execute(requestModel).getTags();
+        return tagService.getListByParentTagId(parentTagId);
     }
 
     /**
@@ -77,12 +78,12 @@ public class CmsAddToPromotionService extends BaseAppService {
         }
 
         // 给产品数据添加活动标签
-        Map<String, Object> result = productTagClient.addTagProducts(channelId, tagInfo.getTagPath(), productIds, modifier);
+        Map<String, Object> result = addTagProducts(channelId, tagInfo.getTagPath(), productIds, modifier);
         if ("success".equals(result.get("result"))) {
 
             products.forEach(item -> {
 
-                PromotionDetailAddRequest request=new PromotionDetailAddRequest();
+                PromotionDetailAddBean request=new PromotionDetailAddBean();
                 request.setModifier(modifier);
                 request.setChannelId(channelId);
                 request.setCartId(cartId);
@@ -93,10 +94,21 @@ public class CmsAddToPromotionService extends BaseAppService {
                 request.setTagId(tagInfo.getTagId());
                 request.setTagPath(tagInfo.getTagPath());
 
-                voApiClient.execute(request);
+                promotionDetailService.insertPromotionDetail(request);
 
             });
         }
+    }
+
+    /**
+     * 增加商品的Tag
+     */
+    private Map<String, Object> addTagProducts(String channelId, String tagPath, List<Long> productIds, String modifier) {
+        productTagService.saveTagProducts(channelId, tagPath, productIds, modifier);
+
+        Map<String, Object> ret = new HashMap<>();
+        ret.put("result", "success");
+        return ret;
     }
 
     /**
