@@ -226,6 +226,8 @@ define(function() {
         "TXT_MID_TITLE_WITH_SHORT_DESCRIPTION": "Mid Title/ Long Description(CN)",
         "TXT_SHORT_TITLE_WITH_MORE_SHORT_DESCRIPTION": "Short Title/ Short Description(CN)",
         "TXT_TRANSLATOR_WIT_COLON": "Translator：",
+        "TXT_BASE_ATTRIBUTE": "Common Attribute",
+        "TXT_CUST_ATTRIBUTE": "Custmize Attribute",
 
 
         "TXT_MSG_SEARCH": "Search...",
