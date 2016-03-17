@@ -56,7 +56,9 @@ define([
         };
         $scope.ok = function () {
 
-
+            if(!$scope.schemaFrom.$valid){
+                return;
+            }
             if($scope.vm.schema.type != "SINGLECHECK" && $scope.vm.schema.type != "MULTICHECK"){
                 if ($scope.vm.schema.options) {
                     delete $scope.vm.schema.options;
