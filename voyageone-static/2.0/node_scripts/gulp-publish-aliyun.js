@@ -8,7 +8,7 @@ var replace = require('gulp-replace');
 var rename = require('gulp-rename');
 //var clean = require('gulp-clean')
 
-var vars = require('./gulp-vars');
+var vars = require('./vars');
 var publish = vars.publish;
 var build = vars.build;
 var tasks = vars.tasks;

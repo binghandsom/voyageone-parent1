@@ -6,13 +6,12 @@ var header = require('gulp-header');
 var footer = require('gulp-footer');
 var minifyCss = require('gulp-minify-css');
 var uglify = require('gulp-uglify');
-var sourceMaps = require('gulp-sourcemaps');
 var fs = require('fs');
 var suffBuilder = require('./gulp-build-suff');
 var actionsDesc = require('./gulp-build-actions');
 
-var build = require('./gulp-vars').build;
-var tasks = require('./gulp-vars').tasks;
+var build = require('./vars').build;
+var tasks = require('./vars').tasks;
 
 var definePrefix = 'define(function(){\n';
 var defineSuffix = '});';
@@ -38,7 +37,6 @@ gulp.task(tasks.build.angular_suff, function () {
 gulp.task(tasks.build.angular, [tasks.build.angular_suff], function () {
   return gulp.src(build.common.angular.src)
     .pipe(debug())
-    .pipe(sourceMaps.init())
     // 追加依赖注入语法
     .pipe(ngAnnotate())
     // 合并到一个文件
@@ -54,9 +52,6 @@ gulp.task(tasks.build.angular, [tasks.build.angular_suff], function () {
       compress: false,
       output: {beautify: true, indent_level: 2}
     }))
-    .pipe(sourceMaps.write('./', {
-      sourceRoot: 'components/angular'
-    }))
     .pipe(gulp.dest(build.common.angular.dist));
 });
 
@@ -64,13 +59,11 @@ gulp.task(tasks.build.angular, [tasks.build.angular_suff], function () {
 gulp.task(tasks.build.com, function () {
   return gulp.src(build.common.native.src)
     .pipe(debug())
-    .pipe(sourceMaps.init())
     .pipe(header(headerSingle))
     .pipe(footer(footerSingle))
     .pipe(concat(build.common.native.concat))
     .pipe(header(definePrefix))
     .pipe(footer(defineSuffix))
-    .pipe(sourceMaps.write('./'))
     .pipe(gulp.dest(build.common.native.dist));
 });
 

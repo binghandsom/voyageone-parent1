@@ -3,12 +3,11 @@ var ngAnnotate = require('gulp-ng-annotate');
 var header = require('gulp-header');
 var minifyHtml = require('gulp-minify-html');
 var uglify = require('gulp-uglify');
-var sourceMaps = require('gulp-sourcemaps');
 var replace = require('gulp-replace');
 var rename = require('gulp-rename');
 //var clean = require('gulp-clean')
 
-var vars = require('./gulp-vars');
+var vars = require('./vars');
 var publish = vars.publish;
 var build = vars.build;
 var tasks = vars.tasks;
@@ -39,10 +38,8 @@ gulp.task(tasks.publish.statics, [tasks.build.css.all], function () {
 // release voyageone.angular.com.js
 gulp.task(tasks.publish.angular, [tasks.build.angular], function () {
   gulp.src(build.common.angular.dist + '/' + build.common.angular.concat)
-      .pipe(sourceMaps.init())
       .pipe(uglify())
       .pipe(rename({suffix: '.min'}))
-      .pipe(sourceMaps.write('./'))
       .pipe(gulp.dest(publish.components.angular.dist))
       .pipe(gulp.dest(publish.release.components));
 });
@@ -50,10 +47,8 @@ gulp.task(tasks.publish.angular, [tasks.build.angular], function () {
 // release voyageone.com.js.
 gulp.task(tasks.publish.com, [tasks.build.com], function () {
   gulp.src(build.common.native.dist + '/' + build.common.native.concat)
-      .pipe(sourceMaps.init())
       .pipe(uglify())
       .pipe(rename({suffix: '.min'}))
-      .pipe(sourceMaps.write('./'))
       .pipe(gulp.dest(publish.components.native.dist))
       .pipe(gulp.dest(publish.release.components));
 });
@@ -85,11 +80,8 @@ gulp.task(tasks.publish.modules, function () {
   // 压缩js文件
   gulp.src(publish.modules.js)
       .pipe(fixCommonRef())
-      //.pipe(sourceMaps.init())
-      // 追加依赖注入语法
       .pipe(ngAnnotate())
       .pipe(uglify())
-      //.pipe(sourceMaps.write('./'))
       .pipe(gulp.dest(publish.release.modules));
 
   // 压缩html文件
