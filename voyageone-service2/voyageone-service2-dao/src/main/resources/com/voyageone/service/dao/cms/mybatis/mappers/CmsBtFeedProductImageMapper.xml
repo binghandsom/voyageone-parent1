@@ -3,6 +3,7 @@
 <mapper namespace="com.voyageone.service.dao.sql">
     <resultMap id="feedImageMap" type="com.voyageone.service.model.cms.CmsBtFeedProductImageModel" >
         <id column="channel_id" property="channelId" jdbcType="VARCHAR" />
+        <id column="code" property="code" jdbcType="VARCHAR" />
         <id column="image_name" property="imageName" jdbcType="VARCHAR" />
         <result column="image_type_id" property="imageTypeId" jdbcType="INTEGER" />
         <result column="image_url" property="imageUrl" jdbcType="VARCHAR" />
@@ -16,6 +17,7 @@
     <select id="select_cms_bt_feed_product_image" resultMap="feedImageMap" parameterType="com.voyageone.service.model.cms.CmsBtFeedProductImageModel" >
         select
           channel_id,
+          code,
           image_name,
           image_type_id,
           image_url,
@@ -43,6 +45,9 @@
             <if test="channelId != null" >
                 channel_id,
             </if>
+            <if test="code != null" >
+                code,
+            </if>
             <if test="imageName != null" >
                 image_name,
             </if>
@@ -67,6 +72,9 @@
         <trim prefix="values (" suffix=")" suffixOverrides="," >
             <if test="channelId != null" >
                 #{channelId,jdbcType=VARCHAR},
+            </if>
+            <if test="code != null" >
+                #{code,jdbcType=VARCHAR},
             </if>
             <if test="imageName != null" >
                 #{imageName,jdbcType=VARCHAR},

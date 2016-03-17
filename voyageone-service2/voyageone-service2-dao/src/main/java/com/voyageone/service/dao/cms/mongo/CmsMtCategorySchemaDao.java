@@ -25,7 +25,7 @@ public class CmsMtCategorySchemaDao extends BaseMongoDao<CmsMtCategorySchemaMode
 
     public List<JSONObject> getSchemaList(String columnResult,String query, Integer skip, Integer limit){
         JomgoQuery jomgoQuery = new JomgoQuery(columnResult,query,null,limit,skip);
-        return mongoTemplate.find(jomgoQuery, JSONObject.class);
+        return mongoTemplate.find(jomgoQuery, JSONObject.class, collectionName);
     }
 
     public Long getCategoryCount(String params){

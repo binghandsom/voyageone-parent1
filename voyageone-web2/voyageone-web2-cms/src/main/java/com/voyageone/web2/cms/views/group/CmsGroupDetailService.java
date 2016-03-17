@@ -66,7 +66,7 @@ public class CmsGroupDetailService {
     public List<CmsBtProductModel> getProductList(Map<String, Object> params, UserSessionBean userInfo, CmsSessionBean cmsSessionBean) {
         JomgoQuery queryObject = new JomgoQuery();
         queryObject.setQuery(getSearchValue(params, cmsSessionBean));
-        queryObject.setProjection(searchItems);
+        queryObject.setProjection(searchItems.split(";"));
         int pageNum = Integer.valueOf(params.get("pageNum").toString());
         int pageSize = Integer.valueOf(params.get("pageSize").toString());
         queryObject.setSkip((pageNum - 1) * pageSize);
@@ -115,17 +115,16 @@ public class CmsGroupDetailService {
         StringBuffer resultPlatforms = new StringBuffer();
 
         // 添加platform cart
-        resultPlatforms.append(MongoUtils.splicingValue("cartId", cmsSessionBean.getPlatformType().get("cartId")).toString());
+        resultPlatforms.append(MongoUtils.splicingValue("cartId", Integer.valueOf(cmsSessionBean.getPlatformType().get("cartId").toString())));
         resultPlatforms.append(",");
 
         // 添加platform id
-        resultPlatforms.append(MongoUtils.splicingValue("groupId", Long.valueOf(params.get("id").toString())));
+        resultPlatforms.append(MongoUtils.splicingValue("groupId", Long.valueOf(Long.valueOf(params.get("id").toString()))));
         resultPlatforms.append(",");
 
         result.append(MongoUtils.splicingValue("groups.platforms"
                 , "{" + resultPlatforms.toString().substring(0, resultPlatforms.toString().length() - 1) + "}"
                 , "$elemMatch"));
-        result.append(",");
 
         return "{" + result.toString() + "}";
     }

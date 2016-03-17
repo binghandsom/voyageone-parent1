@@ -131,7 +131,7 @@ public class FeedToCmsService {
                 cmsBtFeedInfoDao.update(product);
 
                 List<CmsBtFeedProductImageModel> imageModels = new ArrayList<>();
-                imageUrls.forEach(s -> imageModels.add(new CmsBtFeedProductImageModel(channelId, s, this.modifier)));
+                imageUrls.forEach(s -> imageModels.add(new CmsBtFeedProductImageModel(channelId, product.getCode(), s, this.modifier)));
                 cmsBtFeedProductImageDao.insertImagebyUrl(imageModels);
 
                 Map<String, List<String>> attributeMtData;
