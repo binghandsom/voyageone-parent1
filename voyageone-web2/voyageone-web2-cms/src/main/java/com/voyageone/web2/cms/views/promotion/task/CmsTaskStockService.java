@@ -673,38 +673,50 @@ public class CmsTaskStockService extends BaseAppService {
         // 可用库存
         String usableStock = (String) param.get("usableStock");
         List<Map<String,Object>> platformStockList = (List<Map<String,Object>>) param.get("platformStockList");
-        // 必须输入check
-        if (StringUtils.isEmpty(model)
-                || StringUtils.isEmpty(code)
-                || StringUtils.isEmpty(sku)
-                || StringUtils.isEmpty(usableStock)
-                ) {
-            throw new BusinessException("请输入内容！");
+        // Model输入check
+        if (StringUtils.isEmpty(model) || model.getBytes().length > 50) {
+            throw new BusinessException("Model必须输入且长度小于50！");
         }
 
-        // 输入长度check
-        if (model.getBytes().length > 50
-                || code.getBytes().length > 50
-                || sku.getBytes().length > 50
-                || usableStock.getBytes().length > 10
-                ) {
-            throw new BusinessException("长度超长！");
+        // Code输入check
+        if (StringUtils.isEmpty(code) || code.getBytes().length > 50) {
+            throw new BusinessException("Code必须输入且长度小于50！");
         }
 
+        // Sku输入check
+        if (StringUtils.isEmpty(sku) || sku.getBytes().length > 50) {
+            throw new BusinessException("Sku必须输入且长度小于50！");
+        }
+
+        // 可用库存输入check
+        if (StringUtils.isEmpty(usableStock) || !StringUtils.isDigit(usableStock) || usableStock.getBytes().length > 10) {
+            throw new BusinessException("可用库存必须输入小于11位的整数！");
+        }
+        // 隔离库存的平台数
+        int stockCnt = 0;
         for (Map<String,Object> platformInfo : platformStockList) {
             // 平台隔离库存
             String qty = (String) platformInfo.get("qty");
             // 是否动态
             boolean dynamic = (boolean) platformInfo.get("dynamic");
+            // 平台隔离库存与是否动态 必须且只能选择一项
             if (StringUtils.isEmpty(qty) && !dynamic) {
                 throw new BusinessException("请输入隔离库存的值或勾选动态！");
             }
             if (!StringUtils.isEmpty(qty) && dynamic) {
                 throw new BusinessException("隔离库存的值或动态,只能选择其一！");
             }
-            if (qty.getBytes().length > 10) {
-                throw new BusinessException("长度超长！");
+            if (!StringUtils.isDigit(qty) || qty.getBytes().length > 10) {
+                throw new BusinessException("隔离库存的值必须输入小于11位的整数！");
             }
+            if (!StringUtils.isEmpty(qty)) {
+                stockCnt++;
+            }
+        }
+
+        // 隔离库存的平台数 = 0
+        if (stockCnt == 0) {
+            throw new BusinessException("至少隔离一个平台的库存值！");
         }
 
         // 验证taskId + sku是否在库存隔离表中存在
