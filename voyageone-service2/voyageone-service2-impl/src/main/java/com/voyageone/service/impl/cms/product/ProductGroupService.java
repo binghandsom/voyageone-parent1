@@ -11,7 +11,6 @@ import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Group_Platform;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.*;
 
@@ -158,6 +157,21 @@ public class ProductGroupService extends BaseService {
 //        return result;
 //    }
 
+    /**
+     * 根据多个groupsIds获取产品列表
+     * @param channelId
+     * @param groupId
+     * @param flag: true:检索主商品以外的商品,false:检索所有的商品
+     * @return
+     */
+    public List<CmsBtProductModel> getProductIdsByGroupId(String channelId, Long groupId, Boolean flag) {
+        JomgoQuery queryObject = new JomgoQuery();
+        if (flag)
+            queryObject.setQuery(String.format("{ \"groups.platforms\": {\"$elemMatch\": {\"groupId\": %d, \"isMain\": 0}}}", groupId));
+        else
+            queryObject.setQuery(String.format("{ \"groups.platforms\": {\"$elemMatch\": {\"groupId\": %d}}}", groupId));
+        return cmsBtProductDao.select(queryObject, channelId);
+    }
     /**
      * save Groups
      */

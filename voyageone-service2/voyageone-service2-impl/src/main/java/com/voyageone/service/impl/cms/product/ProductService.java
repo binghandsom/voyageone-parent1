@@ -1183,7 +1183,32 @@ public class ProductService extends BaseService {
         return resultMap;
     }
 
+    /**
+     * 根据groupId批量更新产品的信息
+     * @param channelId
+     * @param groupId
+     * @param updateMap
+     * @param modifier
+     */
+    public int updateTranslation(String channelId, Long groupId, Map<String, Object> updateMap, String modifier) {
 
+        List<BulkUpdateModel> bulkList = new ArrayList<>();
+
+        Map<String, Object> queryMap = new HashMap<>();
+        queryMap.put("groups.platforms.groupId", groupId);
+        BulkUpdateModel model = new BulkUpdateModel();
+        model.setUpdateMap(updateMap);
+        model.setQueryMap(queryMap);
+        bulkList.add(model);
+
+        // 批量更新product表
+        BulkWriteResult result = null;
+        if (bulkList.size() > 0) {
+            result = cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, modifier, "$set");
+        }
+
+        return result.getModifiedCount();
+    }
 //    /**
 //     * confirm change category
 //     */

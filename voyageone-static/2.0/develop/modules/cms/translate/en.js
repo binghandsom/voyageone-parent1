@@ -215,6 +215,17 @@ define(function() {
         "TXT_BASE_ATTRIBUTE": "Base Attribute",
         "TXT_PRICE_ATTRIBUTE": "Price Attribute",
         "TXT_SALES_ATTRIBUTE": "Sales Attribute",
+        "TXT_PERSONAL_FINISHED_TRANSLATION": "Per. Translated",
+        "TXT_UN_TRANSLATION": "Untranslated",
+        "TXT_TRANSLATED": "Translated",
+        "TXT_DISTRIBUTION_RULE": "Distribution Rule",
+        "TXT_MAIN_PRODUCT": "Main Product",
+        "TXT_GET_TASK_COUNT": "Get Tasks Count",
+        "TXT_PRODUCT_NAME_WITH_LONG_DESCRIPTION": "Product Name / Long Description",
+        "TXT_LONG_TITLE_WITH_LONG_DESCRIPTION": "Long Title(CN)",
+        "TXT_MID_TITLE_WITH_SHORT_DESCRIPTION": "Mid Title/ Long Description(CN)",
+        "TXT_SHORT_TITLE_WITH_MORE_SHORT_DESCRIPTION": "Short Title/ Short Description(CN)",
+        "TXT_TRANSLATOR_WIT_COLON": "Translator：",
 
 
         "TXT_MSG_SEARCH": "Search...",
@@ -307,6 +318,8 @@ define(function() {
         "BTN_CHOOSE_FILE": "Choose File",
         "BTN_IMPORT_FILE": "Import File",
         "BTN_CUSTOMIZE_COLUMNS": "custmize columns",
+        "BTN_GET_TASK": "Get Tasks",
+        "BTN_COMPLETE": "Complete",
 
         // 枚举 com.voyageone.cms.enums.BeatFlag 的翻译
         "STOP": "Stop",

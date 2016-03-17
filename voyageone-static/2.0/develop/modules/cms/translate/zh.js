@@ -215,6 +215,17 @@ define(function(){
         "TXT_BASE_ATTRIBUTE": "基础属性",
         "TXT_PRICE_ATTRIBUTE": "价格属性",
         "TXT_SALES_ATTRIBUTE": "销售属性",
+        "TXT_PERSONAL_FINISHED_TRANSLATION": "个人完成翻译数",
+        "TXT_UN_TRANSLATION": "待翻译总数",
+        "TXT_TRANSLATED": "完成翻译总数",
+        "TXT_DISTRIBUTION_RULE": "分发规则",
+        "TXT_MAIN_PRODUCT": "主商品",
+        "TXT_GET_TASK_COUNT": "获取任务数量",
+        "TXT_PRODUCT_NAME_WITH_LONG_DESCRIPTION": "产品标题 / 长描述",
+        "TXT_LONG_TITLE_WITH_LONG_DESCRIPTION": "长标题中文",
+        "TXT_MID_TITLE_WITH_SHORT_DESCRIPTION": "中标题 / 长描述中文",
+        "TXT_SHORT_TITLE_WITH_MORE_SHORT_DESCRIPTION": "短标题标题 / 短描述中文",
+        "TXT_TRANSLATOR_WIT_COLON": "译者：",
 
 
         "TXT_MSG_SEARCH": "检索...",
@@ -262,6 +273,7 @@ define(function(){
         "TXT_MSG_FIELD_VAL_INVALID": "属性(字段)的值无效, 请根据提示修改.",
         "TXT_MSG_INPUT_WORD_LENLOWLIMIT": "请至少输入",
         "TXT_MSG_INPUT_WORD_LENLIMIT": "已经达到最大长度字符数限制",
+        "TXT_MSG_HAVE_UN_TRANSLATED_TASK": "您尚有未完成任务，请先完成所有任务!",
 
 
         "BTN_CREATE_TASK": "新建任务",
@@ -307,6 +319,8 @@ define(function(){
         "BTN_CHOOSE_FILE": "选择文件",
         "BTN_IMPORT_FILE": "Import File",
         "BTN_CUSTOMIZE_COLUMNS": "自定义列设置",
+        "BTN_GET_TASK": "获取任务",
+        "BTN_COMPLETE": "完成",
 
         // 枚举 com.voyageone.cms.enums.BeatFlag 的翻译
         "STOP": "已停止",
