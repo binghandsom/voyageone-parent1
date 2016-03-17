@@ -7,12 +7,12 @@
                 </div>
                 <div class="container-fluid m-t-sm m-b-xs m-l-xs m-r-xs">
                     <div class="col-sm-12">
-                        <div class="col-sm-12 m-t-xs m-b-xs font-bold text-vo" style="border-bottom:1px solid #efefef;padding-bottom:4px">
+                        <div class="col-sm-12 m-t-xs m-b-xs" style="border-bottom:1px solid #efefef;padding-bottom:4px">
+                            <span class="font-bold text-vo">{{$ctrl.maindata.category.schema.catFullPath}}</span>
+                            <sup class="font-bold text-vo"><strong>{{'TXT_MASTER_CATEGORY' | translate}}</strong></sup>
+                            <span class="font-bold text-vo fa fa-exchange"></span>
                             <span>{{$ctrl.platform.category.catFullPath}}</span>
                             <sup><strong>{{'TXT_PLATFORM_CATEGORY' | translate}}</strong></sup>
-                            <span class="fa fa-exchange"></span>
-                            <span>{{$ctrl.maindata.category.schema.catFullPath}}</span>
-                            <sup><strong>{{'TXT_MASTER_CATEGORY' | translate}}</strong></sup>
                         </div>
                         <div class="form-inline pull-left m-r-lg">
                             <label class="m-t-xs col-sm-9" translate="TXT_MAPPING_ATTRIBUTE_IS_FINISHED"></label>

@@ -7,6 +7,7 @@ import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.service.bean.cms.product.ProductPriceBean;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field;
@@ -15,8 +16,8 @@ import com.voyageone.web2.cms.wsdl.BaseService;
 import com.voyageone.service.dao.cms.CmsBtPriceLogDao;
 import com.voyageone.web2.sdk.api.VoApiConstants;
 import com.voyageone.service.model.cms.CmsBtPriceLogModel;
-import com.voyageone.service.bean.cms.ProductPriceModel;
-import com.voyageone.service.bean.cms.ProductSkuPriceModel;
+import com.voyageone.service.bean.cms.product.ProductSkuPriceBean;
+import com.voyageone.web2.sdk.api.domain.ProductPriceModel;
 import com.voyageone.web2.sdk.api.exception.ApiException;
 import com.voyageone.web2.sdk.api.request.*;
 import com.voyageone.web2.sdk.api.response.*;
@@ -248,7 +249,7 @@ public class ProductSkuService extends BaseService {
         List<BulkUpdateModel> bulkList = new ArrayList<>();
         List<CmsBtPriceLogModel> logList = new ArrayList<>();
 
-        for (ProductPriceModel model : request.getProductPrices()) {
+        for (ProductPriceBean model : request.getProductPrices()) {
             VoApiConstants.VoApiErrorCodeEnum codeEnum = VoApiConstants.VoApiErrorCodeEnum.ERROR_CODE_70007;
             if (model == null) {
                 throw new ApiException(codeEnum.getErrorCode(), "ProductPrices not found!");
@@ -276,7 +277,7 @@ public class ProductSkuService extends BaseService {
     /**
      * 批量更新价格信息 根据CodeList
      */
-    public void updatePricesAddBlukUpdateModel(String channelId, ProductPriceModel model,
+    private void updatePricesAddBlukUpdateModel(String channelId, ProductPriceBean model,
                                                List<BulkUpdateModel> bulkList, List<CmsBtPriceLogModel> logList,
                                                String modifier) {
         VoApiConstants.VoApiErrorCodeEnum codeEnum = VoApiConstants.VoApiErrorCodeEnum.ERROR_CODE_70007;
@@ -313,7 +314,7 @@ public class ProductSkuService extends BaseService {
                 boolean isFindSku = false;
 
                 // 循环变更sku列表
-                for (ProductSkuPriceModel skuModel : model.getSkuPrices()) {
+                for (ProductSkuPriceBean skuModel : model.getSkuPrices()) {
                     if (skuModel.getSkuCode().equals(skuModelBefore.getSkuCode())) {
                         // 判断价格是否发生变化
                         if (isPriceChanged(skuModelBefore, skuModel)) {
@@ -434,7 +435,7 @@ public class ProductSkuService extends BaseService {
     /**
      * 判断价格是否变更
      */
-    private boolean isPriceChanged(CmsBtProductModel_Sku model1, ProductSkuPriceModel model2) {
+    private boolean isPriceChanged(CmsBtProductModel_Sku model1, ProductSkuPriceBean model2) {
         BigDecimal msrp1 = new BigDecimal(0);
         if (model1.getPriceMsrp() != null) {
             msrp1 = new BigDecimal(model1.getPriceMsrp());
@@ -467,7 +468,7 @@ public class ProductSkuService extends BaseService {
     /**
      * 创建 SKU PriceLog Model
      */
-    private CmsBtPriceLogModel createPriceLogModel(String channelId, CmsBtProductModel productModel, ProductSkuPriceModel skuModel, String modifier) {
+    private CmsBtPriceLogModel createPriceLogModel(String channelId, CmsBtProductModel productModel, ProductSkuPriceBean skuModel, String modifier) {
         CmsBtPriceLogModel cmsBtPriceLogModel = new CmsBtPriceLogModel();
         cmsBtPriceLogModel.setChannelId(channelId);
         cmsBtPriceLogModel.setProductId(productModel.getProdId().intValue());
@@ -589,7 +590,7 @@ public class ProductSkuService extends BaseService {
     /**
      * addDeleteSkusBulk
      */
-    public void addDeleteSkusBulk(String channelId, Long productId, String productCode, Set<String> skuCodes, List<BulkUpdateModel> bulkList) {
+    private void addDeleteSkusBulk(String channelId, Long productId, String productCode, Set<String> skuCodes, List<BulkUpdateModel> bulkList) {
         if (skuCodes != null && skuCodes.size()>0) {
             CmsBtProductModel findModel = null;
             JomgoQuery queryObject = new JomgoQuery();

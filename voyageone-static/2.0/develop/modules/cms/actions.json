@@ -28,7 +28,8 @@
         "getGroupList": "getGroupList",
         "getProductList": "getProductList",
         "exportProducts":"exportProducts",
-        "getCustColumnsInfo":"getCustColumnsInfo"
+        "getCustColumnsInfo":"getCustColumnsInfo",
+        "saveCustColumnsInfo":"saveCustColumnsInfo"
       }
     },
     "group": {
@@ -64,7 +65,8 @@
         "getFeedAttrs": "getFeedAttributes",
         "saveFieldMapping": "saveFieldMapping",
         "directMatchOver": "directMatchOver",
-        "getMatchOver": "getMatchOver"
+        "getMatchOver": "getMatchOver",
+        "getMainMapping": "getMainMapping"
       },
       "platformMappingService": {
         "root": "/cms/mapping/platform",

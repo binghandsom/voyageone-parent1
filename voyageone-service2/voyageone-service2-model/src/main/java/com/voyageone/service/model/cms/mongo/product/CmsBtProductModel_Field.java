@@ -335,7 +335,11 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
         setAttribute("status", status);
     }
     public void setStatus(CmsConstants.ProductStatus status) {
-        setAttribute("status", status);
+        String value = null;
+        if (status != null) {
+            value = status.toString();
+        }
+        setAttribute("status", value);
     }
 
     //translateStatus "0":未完成；"1":完成

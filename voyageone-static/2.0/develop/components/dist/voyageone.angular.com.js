@@ -921,7 +921,7 @@ define(function() {
       }
     };
   });
-  angular.module("voyageone.angular.factories.dialogs", []).factory("$dialogs", [ "$modal", "$filter", "$templateCache", function($modal, $filter, $templateCache) {
+  angular.module("voyageone.angular.factories.dialogs", []).factory("$dialogs", [ "$uibModal", "$filter", "$templateCache", function($uibModal, $filter, $templateCache) {
     var templateName = "voyageone.angular.factories.dialogs.tpl.html";
     var template = '<div class="vo_modal">' + '<div class="modal-header">' + '<button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="close()">' + '<span aria-hidden="true"><i ng-click="close()" class="fa fa-close"></i></span>' + "</button>" + '<h5 class="modal-title" ng-bind-html="title"></h5>' + "</div>" + '<div class="modal-body wrapper-lg">' + '<div class="row">' + '<h5 class="text-center text-hs"><p class="text-center" ng-bind-html="content"></p></h5>' + "</div>" + "</div>" + '<div class="modal-footer">' + '<button class="btn btn-default btn-sm" ng-if="!isAlert" ng-click="close()" translate="BTN_CANCEL"></button>' + '<button class="btn btn-vo btn-sm" ng-click="ok()" translate="BTN_OK"></button>' + "</div>" + "</div>";
     $templateCache.put(templateName, template);
@@ -937,7 +937,7 @@ define(function() {
       }
       options.title = tran(options.title);
       options.content = tran(options.content, values);
-      var modalInstance = $modal.open({
+      var modalInstance = $uibModal.open({
         templateUrl: templateName,
         controller: [ "$scope", function(scope) {
           _.extend(scope, options);
@@ -1408,6 +1408,6 @@ define(function() {
       return currentLang.substr(0, 2);
     }
   };
-  return angular.module("voyageone.angular", [ "voyageone.angular.controllers.datePicker", "voyageone.angular.controllers.selectRows", "voyageone.angular.controllers.showPopover", "voyageone.angular.directives.dateModelFormat", "voyageone.angular.directives.enterClick", "voyageone.angular.directives.fileStyle", "voyageone.angular.directives.ifNoRows", "voyageone.angular.directives.uiNav", "voyageone.angular.directives.schema", "voyageone.angular.directives.voption", "voyageone.angular.directives.vpagination", "voyageone.angular.directives.validator", "voyageone.angular.factories.dialogs", "voyageone.angular.factories.interceptor", "voyageone.angular.factories.notify", "voyageone.angular.factories.pppAutoImpl", "voyageone.angular.factories.selectRows", "voyageone.angular.factories.vpagination", "voyageone.angular.services.ajax", "voyageone.angular.services.cookie", "voyageone.angular.services.message", "voyageone.angular.services.permission", "voyageone.angular.services.translate" ]);
+  return angular.module("voyageone.angular", [ "voyageone.angular.controllers.datePicker", "voyageone.angular.controllers.selectRows", "voyageone.angular.controllers.showPopover", "voyageone.angular.directives.dateModelFormat", "voyageone.angular.directives.enterClick", "voyageone.angular.directives.fileStyle", "voyageone.angular.directives.ifNoRows", "voyageone.angular.directives.uiNav", "voyageone.angular.directives.schema", "voyageone.angular.directives.voption", "voyageone.angular.directives.vpagination", "voyageone.angular.directives.validator", "voyageone.angular.services.ajax", "voyageone.angular.services.cookie", "voyageone.angular.services.message", "voyageone.angular.services.permission", "voyageone.angular.services.translate", "voyageone.angular.factories.dialogs", "voyageone.angular.factories.interceptor", "voyageone.angular.factories.notify", "voyageone.angular.factories.pppAutoImpl", "voyageone.angular.factories.selectRows", "voyageone.angular.factories.vpagination" ]);
 });
 //# sourceMappingURL=voyageone.angular.com.js.map

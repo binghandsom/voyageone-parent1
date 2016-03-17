@@ -16,6 +16,7 @@ define([
         $scope.getCategoryDetail = function(){
             systemCategoryService.getCategoryDetail($routeParams.catId).then(function (res) {
                 $scope.vm.category = res.data;
+                $scope.vm.category.fields.push($scope.vm.category.sku);
                 $scope.vm.isEditFlg = false;
             }, function (err) {
 
@@ -34,9 +35,14 @@ define([
         };
 
         $scope.update = function(data){
-            systemCategoryService.updateCategorySchema(data).then(function(res){
+            var temp = angular.copy(data)
+            if(temp.fields[temp.fields.length-1].name == "SKU" || temp.fields[temp.fields.length-1].name == "sku"){
+                temp.fields.pop();
+            }
+            systemCategoryService.updateCategorySchema(temp).then(function(res){
                 $scope.vm.category.modified = res.data;
                 $scope.vm.isEditFlg = false;
+                //$scope.vm.category.fields.push($scope.vm.category.sku);
                 notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
             },function(err){
             })

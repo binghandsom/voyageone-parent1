@@ -1,6 +1,6 @@
 package com.voyageone.task2.cms.service;
 
-import com.voyageone.service.impl.cms.CmsBtFeedCustomPropService;
+import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
 import com.voyageone.service.model.cms.CmsBtFeedCustomPropModel;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,7 +18,7 @@ import java.util.List;
 public class CmsBtFeedCustomPropServiceTest {
 
     @Autowired
-    CmsBtFeedCustomPropService customPropService;
+    FeedCustomPropService customPropService;
 
     @Test
     public void testCustomProp() throws Exception {

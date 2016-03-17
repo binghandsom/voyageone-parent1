@@ -95,8 +95,9 @@ define([
                 .then(function (res) {
 
                     popupNewCategory({
-                        categories: res.data,
-                        from: $scope.vm.cat_path != '0' ? $scope.vm.cat_path : ""
+                        categories: res.data.categoryTree,
+                        from: $scope.vm.cat_path != '0' ? $scope.vm.cat_path : "",
+                        divType: '-'
                     }).then( function (res) {
                             // TODO 如果类目名字太长有问题
                             goAttributePage (res.selected.catPath)

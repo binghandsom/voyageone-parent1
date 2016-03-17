@@ -174,7 +174,7 @@ define(function() {
         "TXT_PRODUCT_TYPE": "Product Type",
         "TXT_PLATFORM_TYPE_WITH_COLON": "Platform Type:",
         "TXT_INPUT_ONLY_CHAR_AND_NUMBER": "Input Include:English numbers _ .",
-        "TXT_REQUIRED": "(required)",
+        "TXT_REQUIRED": "Required",
         "TXT_TAG": "Tag",
         "TXT_SORT_1": "Sort Attribute 1",
         "TXT_SORT_2": "Sort Attribute 2",
@@ -212,9 +212,8 @@ define(function() {
         "TXT_PENDING":"Pending",
         "TXT_SUCCESS":"Success",
         "TXT_FAIL":"Fail",
-        "TXT_BASE_ATTRIBUTE": "Base Attribute",
-        "TXT_PRICE_ATTRIBUTE": "Price Attribute",
-        "TXT_SALES_ATTRIBUTE": "Sales Attribute",
+        "TXT_BASE_ATTRIBUTE": "Common Attribute",
+        "TXT_CUST_ATTRIBUTE": "Custmize Attribute",
 
 
         "TXT_MSG_SEARCH": "Search...",
@@ -257,8 +256,9 @@ define(function() {
         "TXT_MSG_CODE_IN_OTHER": "The code you submit, already in other task. Go on ?",
         "TXT_MSG_REIMPORT_BEAT": "Reimport data, will clear last data. Go on (・ˍ・ ? )",
         "TXT_MSG_ERROR_BEAT_ITEM": "The data seems to be wrong. Are you sure you want to change the status of it (⊙＿⊙ ?)",
-        "TXT_MSG_INPUT_WORD_LENCHK": "you can input ",
-        "TXT_MSG_INPUT_WORD_LENCHK2": " words",
+        "TXT_MSG_INPUT_WORD_LENCHK": "you can input",
+        "TXT_MSG_INPUT_WORD_LENCHK2": "words",
+        "TXT_MSG_FIELD_VAL_INVALID": "Invalid field (Text) `s value, please follow the prompts to modify.",
         "TXT_MSG_INPUT_WORD_LENLOWLIMIT": "Please enter at least ",
         "TXT_MSG_INPUT_WORD_LENLIMIT": "Maximum length limit of character",
 

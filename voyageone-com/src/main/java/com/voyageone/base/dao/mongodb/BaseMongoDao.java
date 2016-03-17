@@ -9,7 +9,6 @@ import com.jayway.jsonpath.spi.mapper.MappingProvider;
 import com.mongodb.CommandResult;
 import com.mongodb.DBCollection;
 import com.mongodb.WriteResult;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
 
@@ -19,7 +18,7 @@ import java.util.*;
  * @version 2.0.0
  * @since 2.0.0
  */
-public abstract class BaseMongoDao extends BaseJomgoDao {
+public abstract class BaseMongoDao<T> extends BaseJomgoDao<T> {
 
     static {
         // 在 BaseMongoDao 静态初始化时, 初始化 JsonPath 的 Provider 配置
@@ -49,63 +48,52 @@ public abstract class BaseMongoDao extends BaseJomgoDao {
         return mongoTemplate.getDBCollection(collectionName);
     }
 
-    @SuppressWarnings("unchecked")
-    public <T> T selectOne() {
-        return mongoTemplate.findOne((Class<T>) entityClass, collectionName);
+    public T selectOne() {
+        return mongoTemplate.findOne(entityClass, collectionName);
     }
 
-    @SuppressWarnings("unchecked")
-    public <T> T selectOneWithQuery(String strQuery) {
-        return mongoTemplate.findOne(strQuery, (Class<T>)entityClass, collectionName);
+    public T selectOneWithQuery(String strQuery) {
+        return mongoTemplate.findOne(strQuery, entityClass, collectionName);
     }
 
-    @SuppressWarnings("unchecked")
-    public <T> T selectOneWithQuery(JomgoQuery queryObject) {
-        return mongoTemplate.findOne(queryObject, (Class<T>)entityClass, collectionName);
+    public T selectOneWithQuery(JomgoQuery queryObject) {
+        return mongoTemplate.findOne(queryObject, entityClass, collectionName);
     }
 
-    @SuppressWarnings("unchecked")
-    public <T> List<T> selectAll() {
-        return mongoTemplate.findAll((Class<T>) entityClass, collectionName);
+    public List<T> selectAll() {
+        return mongoTemplate.findAll(entityClass, collectionName);
     }
 
-    @SuppressWarnings("unchecked")
-    public <T> Iterator<T> selectCursorAll() {
-        return mongoTemplate.findCursorAll((Class<T>) entityClass, collectionName);
+    public Iterator<T> selectCursorAll() {
+        return mongoTemplate.findCursorAll(entityClass, collectionName);
     }
 
-    @SuppressWarnings("unchecked")
-    public <T> List<T> select(final String strQuery) {
-        return mongoTemplate.find(strQuery, null, (Class<T>) entityClass, collectionName);
+    public List<T> select(final String strQuery) {
+        return mongoTemplate.find(strQuery, null, entityClass, collectionName);
     }
 
-    @SuppressWarnings("unchecked")
-    public <T> List<T> selectWithProjection(final String strQuery, String projection) {
-        return mongoTemplate.find(strQuery, projection, (Class<T>) entityClass, collectionName);
+    public List<T> selectWithProjection(final String strQuery, String projection) {
+        return mongoTemplate.find(strQuery, projection, entityClass, collectionName);
     }
 
-    @SuppressWarnings("unchecked")
-    public <T> List<T> select(JomgoQuery queryObject) {
-        return mongoTemplate.find(queryObject, (Class<T>) entityClass, collectionName);
+    public List<T> select(JomgoQuery queryObject) {
+        return mongoTemplate.find(queryObject, entityClass, collectionName);
     }
 
-    @SuppressWarnings("unchecked")
-    public <T> Iterator<T> selectCursor(final String strQuery) {
-        return mongoTemplate.findCursor(strQuery, null, (Class<T>) entityClass, collectionName);
+    public Iterator<T> selectCursor(final String strQuery) {
+        return mongoTemplate.findCursor(strQuery, null, entityClass, collectionName);
     }
 
-    @SuppressWarnings("unchecked")
-    public <T> Iterator<T> selectCursor(JomgoQuery queryObject) {
-        return mongoTemplate.findCursor(queryObject, (Class<T>) entityClass, collectionName);
+    public Iterator<T> selectCursor(JomgoQuery queryObject) {
+        return mongoTemplate.findCursor(queryObject, entityClass, collectionName);
     }
 
-    @SuppressWarnings("unchecked")
-    public <T> T selectById(String id) {
-        return mongoTemplate.findById(id, (Class<T>) entityClass, collectionName);
+    public T selectById(String id) {
+        return mongoTemplate.findById(id, entityClass, collectionName);
     }
 
-    public <T> T findAndModify(JomgoUpdate updateObject) {
-        return mongoTemplate.findAndModify(updateObject, (Class<T>) entityClass, collectionName);
+    public T findAndModify(JomgoUpdate updateObject) {
+        return mongoTemplate.findAndModify(updateObject, entityClass, collectionName);
     }
 
     public long count() {

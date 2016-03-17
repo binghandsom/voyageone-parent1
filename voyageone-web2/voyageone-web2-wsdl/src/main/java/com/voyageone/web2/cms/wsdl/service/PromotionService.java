@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * product Service
  *
  * @author aooer 16/01/14
  * @version 2.0.0
@@ -119,8 +118,7 @@ public class PromotionService extends BaseService {
      * @param promotionGetRequest Request
      * @return PromotionsGetResponse
      */
-    public PromotionsGetResponse selectByCondition(
-            PromotionsGetRequest promotionGetRequest) {
+    public PromotionsGetResponse selectByCondition(PromotionsGetRequest promotionGetRequest) {
         promotionGetRequest.check();
         PromotionsGetResponse response = new PromotionsGetResponse();
         List<CmsBtPromotionModel> models = new ArrayList<>();

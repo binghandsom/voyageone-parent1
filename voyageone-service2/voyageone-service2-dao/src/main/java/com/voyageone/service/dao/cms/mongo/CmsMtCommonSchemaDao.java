@@ -16,12 +16,7 @@ import java.util.Map;
  * @since 2.0.0
  */
 @Repository
-public class CmsMtCommonSchemaDao extends BaseMongoDao {
-
-    @Override
-    public Class getEntityClass() {
-        return CmsMtCommonSchemaModel.class;
-    }
+public class CmsMtCommonSchemaDao extends BaseMongoDao<CmsMtCommonSchemaModel> {
 
     /**
      * 根据category id 查询对应的Schema.

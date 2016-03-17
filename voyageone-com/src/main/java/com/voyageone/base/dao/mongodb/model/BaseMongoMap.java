@@ -23,6 +23,10 @@ public class BaseMongoMap<K, V> extends LinkedHashMap<K, V> implements Map<K, V>
         }
     }
 
+    public double getDoubleAttribute(K key) {
+        return convertToDoubel(getAttribute(key));
+    }
+
     public void setAttribute(K key, V value) {
         if (value == null) {
             super.remove(key);

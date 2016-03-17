@@ -17,7 +17,11 @@ public enum CartType {
 
     JINGDONG("JingDong", "京东", "JD", 24),
 
-    JINGDONGG("JingDongG", "京东国际", "JG", 26);
+    JINGDONGG("JingDongG", "京东国际", "JG", 26),
+
+    MASTER("Master", "主数据", "MT", 0),
+
+    FEED("Feed", "品牌方数据", "TH", 0);
 
     private String name;
 

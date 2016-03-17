@@ -73,7 +73,6 @@ define([
 
         // translate config.
         .config(function ($translateProvider, cLanguageType) {
-
             _.forEach(cLanguageType, function (type) {
                 $translateProvider.translations(type.name, type.value);
             });
@@ -81,9 +80,6 @@ define([
 
         // menu service.
         .service('menuService', menuService)
-
-        // searchInfo factory.
-        //.factory('searchInfoFactory', searchInfoFactory)
 
         .controller('appCtrl', appCtrl)
 
@@ -95,109 +91,6 @@ define([
 
         // menu.aside.
         .controller('asideCtrl', asideCtrl);
-
-    /*function searchInfoFactory() {
-        var searchInfo = {
-            catId: null,
-            productStatus: [],
-            platformCart: null,
-            platformStatus: [],
-            labelType: [],
-            priceType: null,
-            priceStart: null,
-            priceEnd: null,
-            createTimeStart: null,
-            createTimeTo: null,
-            publishTimeStart: null,
-            publishTimeTo: null,
-            compareType: null,
-            inventory: null,
-            brand: null,
-            promotion: null,
-            codeList: null,
-            sortOneName: null,
-            sortOneType: null,
-            sortTwoName: null,
-            sortTwoType: null,
-            sortThreeName: null,
-            sortThreeType: null
-        };
-
-        return {
-            catId: function (value) {
-                return value !== undefined ? searchInfo.catId = value : searchInfo.catId;
-            },
-            productStatus: function (value) {
-                return value !== undefined ? searchInfo.productStatus = value : searchInfo.productStatus;
-            },
-            platformCart: function (value) {
-                return value !== undefined ? searchInfo.platformCart = value : searchInfo.platformCart;
-            },
-            platformStatus: function (value) {
-                return value !== undefined ? searchInfo.platformStatus = value : searchInfo.platformStatus;
-            },
-            labelType: function (value) {
-                return value !== undefined ? searchInfo.labelType = value : searchInfo.labelType;
-            },
-            priceType: function (value) {
-                return value !== undefined ? searchInfo.priceType = value : searchInfo.priceType;
-            },
-            priceStart: function (value) {
-                return value !== undefined ? searchInfo.priceStart = value : searchInfo.priceStart;
-            },
-            priceEnd: function (value) {
-                return value !== undefined ? searchInfo.priceEnd = value : searchInfo.priceEnd;
-            },
-            createTimeStart: function (value) {
-                return value !== undefined ? searchInfo.createTimeStart = value : searchInfo.createTimeStart;
-            },
-            createTimeTo: function (value) {
-                return value !== undefined ? searchInfo.createTimeTo = value : searchInfo.createTimeTo;
-            },
-            publishTimeStart: function (value) {
-                return value !== undefined ? searchInfo.publishTimeStart = value : searchInfo.publishTimeStart;
-            },
-            publishTimeTo: function (value) {
-                return value !== undefined ? searchInfo.publishTimeTo = value : searchInfo.publishTimeTo;
-            },
-            compareType: function (value) {
-                return value !== undefined ? searchInfo.compareType = value : searchInfo.compareType;
-            },
-            inventory: function (value) {
-                return value !== undefined ? searchInfo.inventory = value : searchInfo.inventory;
-            },
-            brand: function (value) {
-                return value !== undefined ? searchInfo.brand = value : searchInfo.brand;
-            },
-            promotion: function (value) {
-                return value !== undefined ? searchInfo.promotion = value : searchInfo.promotion;
-            },
-            codeList: function (value) {
-                return value !== undefined ? searchInfo.codeList = value : searchInfo.codeList;
-            },
-            sortOneName: function (value) {
-                return value !== undefined ? searchInfo.sortOneName = value : searchInfo.sortOneName;
-            },
-            sortOneType: function (value) {
-                return value !== undefined ? searchInfo.sortOneType = value : searchInfo.sortOneType;
-            },
-            sortTwoName: function (value) {
-                return value !== undefined ? searchInfo.sortTwoName = value : searchInfo.sortTwoName;
-            },
-            sortTwoType: function (value) {
-                return value !== undefined ? searchInfo.sortTwoType = value : searchInfo.sortTwoType;
-            },
-            sortThreeName: function (value) {
-                return value !== undefined ? searchInfo.sortThreeName = value : searchInfo.sortThreeName;
-            },
-            sortThreeType: function (value) {
-                return value !== undefined ? searchInfo.sortThreeType = value : searchInfo.sortThreeType;
-            },
-            searchInfo: function (object) {
-                return object != undefined ? searchInfo = value : searchInfo;
-            }
-        }
-    }*/
 
     function appCtrl($scope, $window, translateService) {
 
@@ -442,7 +335,7 @@ define([
                 vm.applicationList = data.applicationList;
                 vm.languageList = data.languageList;
                 vm.userInfo = data.userInfo;
-                $rootScope.menuTree=data.menuTree
+                $rootScope.menuTree=data.menuTree;
                 $rootScope.application=data.userInfo.application;
             });
         }

@@ -2,18 +2,22 @@ package com.voyageone.web2.cms.views.search;
 
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
 import com.voyageone.web2.cms.bean.search.index.CmsSearchInfoBean;
 import com.voyageone.web2.cms.views.channel.CmsFeedCustPropService;
 import com.voyageone.web2.core.bean.UserSessionBean;
-import com.voyageone.web2.sdk.api.response.ProductsGetResponse;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -48,19 +52,48 @@ public class CmsSearchAdvanceController extends CmsController {
      */
     @RequestMapping(CmsUrlConstants.SEARCH.ADVANCE.SEARCH)
     public AjaxResponse search(@RequestBody CmsSearchInfoBean params) {
-
         Map<String, Object> resultBean = new HashMap<>();
+        UserSessionBean userInfo = getUser();
 
         // 获取product列表
-        ProductsGetResponse productList = searchIndexService.GetProductList(params, getUser(), getCmsSession());
-        resultBean.put("productList", productList.getProducts());
-        resultBean.put("productListTotal", productList.getTotalCount());
+        List<CmsBtProductModel> productList = searchIndexService.getProductList(params, userInfo, getCmsSession());
+        resultBean.put("productList", productList);
+        long productListTotal = searchIndexService.getProductCnt(params, userInfo, getCmsSession());
+        resultBean.put("productListTotal", productListTotal);
 
         // 获取group列表
-        ProductsGetResponse groupList = searchIndexService.getGroupList(params, getUser(), getCmsSession());
-        resultBean.put("groupList", groupList.getProducts());
-        resultBean.put("groupListTotal", groupList.getTotalCount());
+        List<CmsBtProductModel> groupList = searchIndexService.getGroupList(params, userInfo, getCmsSession());
+        resultBean.put("groupList", groupList);
+        long groupListTotal = searchIndexService.getGroupCnt(params, userInfo, getCmsSession());
+        resultBean.put("groupListTotal", groupListTotal);
 
+        // 获取该用户自定义显示列设置
+        List<Map<String, Object>> customProps2 = new ArrayList<Map<String, Object>>();
+        Map<String, Object> colData = searchIndexService.getUserCustColumns(userInfo.getUserId());
+        String[] custAttrList = (String[]) colData.get("custAttrList");
+        if (custAttrList.length > 0) {
+            List<Map<String, Object>> customProps = cmsFeedCustPropService.selectAllAttr(userInfo.getSelChannelId(), "0");
+            for (Map<String, Object> props : customProps) {
+                String propId = (String) props.get("feed_prop_original");
+                if (ArrayUtils.contains(custAttrList, propId)) {
+                    customProps2.add(props);
+                }
+            }
+        }
+        List<Map<String, Object>> commonProp2 = new ArrayList<Map<String, Object>>();
+        String[] commList = (String[]) colData.get("commList");
+        if (commList.length > 0) {
+            List<Map<String, Object>> commonProps = searchIndexService.getCustColumns();
+            for (Map<String, Object> props : commonProps) {
+                String propId = (String) props.get("propId");
+                if (ArrayUtils.contains(commList, propId)) {
+                    commonProp2.add(props);
+                }
+            }
+        }
+
+        resultBean.put("customProps", customProps2);
+        resultBean.put("commonProps", commonProp2);
         // 返回用户信息
         return success(resultBean);
     }
@@ -75,9 +108,11 @@ public class CmsSearchAdvanceController extends CmsController {
 
         Map<String, Object> resultBean = new HashMap<>();
 
-        ProductsGetResponse groupList = searchIndexService.getGroupList(params, getUser(), getCmsSession());
-        resultBean.put("groupList", groupList.getProducts());
-        resultBean.put("groupListTotal", groupList.getTotalCount());
+        // 获取group列表
+        List<CmsBtProductModel> groupList = searchIndexService.getGroupList(params, getUser(), getCmsSession());
+        resultBean.put("groupList", groupList);
+        long groupListTotal = searchIndexService.getGroupCnt(params, getUser(), getCmsSession());
+        resultBean.put("groupListTotal", groupListTotal);
 
         // 返回用户信息
         return success(resultBean);
@@ -93,9 +128,11 @@ public class CmsSearchAdvanceController extends CmsController {
 
         Map<String, Object> resultBean = new HashMap<>();
 
-        ProductsGetResponse productList = searchIndexService.GetProductList(params, getUser(), getCmsSession());
-        resultBean.put("productList", productList.getProducts());
-        resultBean.put("productListTotal", productList.getTotalCount());
+        // 获取product列表
+        List<CmsBtProductModel> productList = searchIndexService.getProductList(params, getUser(), getCmsSession());
+        resultBean.put("productList", productList);
+        long productListTotal = searchIndexService.getProductCnt(params, getUser(), getCmsSession());
+        resultBean.put("productListTotal", productListTotal);
 
         // 返回用户信息
         return success(resultBean);
@@ -109,7 +146,6 @@ public class CmsSearchAdvanceController extends CmsController {
         byte[] data = searchIndexService.getCodeExcelFile(p, getUser(), getCmsSession());
 //        byte[] data = new byte[2];
         return genResponseEntityFromBytes("product_" + DateTimeUtil.getLocalTime(getUserTimeZone())+".xlsx", data);
-
     }
 
     /**
@@ -143,10 +179,54 @@ public class CmsSearchAdvanceController extends CmsController {
     public AjaxResponse getCustColumnsInfo() {
         Map<String, Object> resultBean = new HashMap<>();
         UserSessionBean userInfo = getUser();
+
+        // 取得自定义显示列设置
         resultBean.put("customProps", cmsFeedCustPropService.selectAllAttr(userInfo.getSelChannelId(), "0"));
         resultBean.put("commonProps", searchIndexService.getCustColumns());
 
+        // 获取该用户自定义显示列设置
+        Map<String, Object> colData = searchIndexService.getUserCustColumns(userInfo.getUserId());
+        if (colData != null) {
+            resultBean.putAll(colData);
+        }
         // 返回用户信息
         return success(resultBean);
+    }
+
+    /**
+     * @api {post} /cms/search/advance/saveCustColumnsInfo 保存用户自定义显示列设置
+     * @apiName saveCustColumnsInfo
+     * @apiDescription 保存用户自定义显示列设置
+     * @apiGroup search
+     * @apiVersion 0.0.1
+     * @apiPermission 认证商户
+     * @apiParam (应用级参数) {String[]} customProps 自定义显示列信息，空数组表示该用户没有指定要显示的列
+     * @apiParam (应用级参数) {String[]} commonProps 共同属性显示列信息，空数组表示该用户没有指定要显示的列
+     * @apiSuccess (系统级返回字段) {String} code 处理结果代码编号
+     * @apiSuccess (系统级返回字段) {String} message 处理结果描述
+     * @apiSuccess (系统级返回字段) {String} displayType 消息的提示方式
+     * @apiSuccess (系统级返回字段) {String} redirectTo 跳转地址
+     * @apiSuccessExample 成功响应请求
+     * {
+     *  "code":null, "message":null, "displayType":null, "redirectTo":null,
+     *  "data":null
+     * }
+     * @apiExample  业务说明
+     *  保存用户自定义显示列设置
+     *  当参数为空时将清除该用户原有设置
+     * @apiExample 使用表
+     *  使用ct_user_config表
+     * @apiSampleRequest off
+     */
+    @RequestMapping("saveCustColumnsInfo")
+    public AjaxResponse saveCustColumnsInfo(@RequestBody Map<String, Object> params) {
+        List<String> customProps = (List<String>) params.get("customProps");
+        List<String> commonProps = (List<String>) params.get("commonProps");
+        String customStrs = StringUtils.trimToEmpty(StringUtils.join(customProps, ","));
+        String commonStrs = StringUtils.trimToEmpty(StringUtils.join(commonProps, ","));
+
+        searchIndexService.saveCustColumnsInfo(getUser().getUserId(), getUser().getUserName(), customStrs, commonStrs);
+        // 返回用户信息
+        return success(null);
     }
 }

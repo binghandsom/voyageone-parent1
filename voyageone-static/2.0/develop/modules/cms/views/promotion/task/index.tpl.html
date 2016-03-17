@@ -36,96 +36,96 @@
 								              <span class="input-group-btn">
 								                <button type="button" class="btn btn-default" ng-click="$ctrl.datePicker2 = !$ctrl.datePicker2"><i class="glyphicon glyphicon-calendar"></i></button>
 								              </span>
-										</div>
-									</div>
-								</div>
-								<!--</div>-->
-								<!--</div>-->
-							</div>
-						</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="form-horizontal">
+                                <div class="form-group">
+                                    <label class="col-sm-4 control-label" translate="TXT_SEARCH"></label>
+                                    <div class="col-sm-7">
+                                        <input class="form-control" ng-model="$ctrl.searchInfo.searchKey">
+                                    </div>
+                                </div>
+                            </div><!-- .form-group -->
+                        </div>
+                        <div class="col-sm-12 text-center m-t-sm" ng-controller="popupCtrl">
+                            <div class="form-inline">
+                                <button class="btn btn-default" ng-click="$ctrl.clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR'
+                                    | translate}}
+                                </button>
+                                <button class="btn btn-vo" ng-click="$ctrl.search()"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH'
+                                    | translate}}
+                                </button>
+                            </div><!-- .form-inline -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div><!-- .accordion -->
+    <div class="box">
+        <div class="box-body">
+            <table class="table table-hover-new text-center" ng-controller="popupCtrl">
+                <thead>
+                <tr>
+                    <th class="mfb-xt3 text-center">{{::$index+1}}</th>
+                    <!--<th class="text-center"><label class="checkbox-inline c-checkbox"><input type="checkbox" value="option5"><span class="fa fa-check"></span></label></th>-->
+                    <th class="mfb-xt text-left">{{'TXT_STATUS' | translate}}</th>
+                    <th class="mfb-xxs text-left">{{'TXT_TASK_NAME' | translate}}</th>
+                    <th class="mfb-xt text-left">{{'TXT_TYPE' | translate}}</th>
+                    <th class="mfb-xxt text-left">{{'TXT_TIME_START' | translate}}-{{'TXT_TIME_END' | translate}}</th>
+                    <th class="mfb-xxs text-left">{{'TXT_ACTION' | translate}}</th>
+                    <th class="mfb-xxt text-center">{{'BTN_EDIT' | translate}}</th>
 
-						<!--<div class="col-sm-4">-->
-						<!--<div class="form-horizontal">-->
-						<!--<div class="form-group" >-->
-						<!--<label class="col-sm-4  control-label" translate="TXT_PROMOTION_STATUS"></label>-->
-						<!--<div class="col-sm-7">-->
-						<!--<select class="form-control" ng-model="searchInfo.promotionStatus">-->
-						<!--<option value='' translate="TXT_SELECT_NO_VALUE"></option>-->
-						<!--<option ng-repeat="status in vm.promotionStatus" value={{status.value}}>{{status.name}}</option>-->
-						<!--</select>-->
-						<!--</div>-->
-						<!--</div>-->
-						<!--</div>-->
-						<!--</div>-->
-
-						<div class="col-sm-4">
-							<div class="form-horizontal">
-								<div class="form-group">
-									<label class="col-sm-4 control-label" translate="TXT_SEARCH"></label>
-									<div class="col-sm-7">
-										<input class="form-control" ng-model="$ctrl.searchInfo.searchKey">
-									</div>
-								</div>
-							</div><!-- .form-group -->
-						</div>
-						<div class="col-sm-12 text-center m-t-sm" ng-controller="popupCtrl">
-							<div class="form-inline">
-								<button class="btn btn-default" ng-click="$ctrl.clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR' | translate}}</button>
-								<button class="btn btn-vo" ng-click="$ctrl.search()"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}</button>
-							</div><!-- .form-inline -->
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div><!-- .accordion -->
-	<div class="box">
-		<div class="box-body">
-			<table class="table table-hover-new text-center" ng-controller="popupCtrl">
-				<thead>
-				<tr>
-					<th class="mfb-xt3 text-center">{{::$index+1}}</th>
-					<!--<th class="text-center"><label class="checkbox-inline c-checkbox"><input type="checkbox" value="option5"><span class="fa fa-check"></span></label></th>-->
-					<th class="mfb-xt text-left">{{'TXT_STATUS' | translate}}</th>
-					<th class="mfb-xxs text-left">{{'TXT_TASK_NAME' | translate}}</th>
-					<th class="mfb-xt text-left">{{'TXT_TYPE' | translate}}</th>
-					<th class="mfb-xxt text-left">{{'TXT_TIME_START' | translate}}-{{'TXT_TIME_END' | translate}}</th>
-					<th class="mfb-xxs text-left">{{'TXT_ACTION' | translate}}</th>
-					<th class="mfb-xxt text-center">{{'BTN_EDIT' | translate}}</th>
-
-				</tr>
-				</thead>
-				<tbody>
-				<tr ng-repeat="task in $ctrl.tasks">
-					<td class="mfb-xt3 text-center">{{$index+1}}</td>
-					<td class="mfb-xt text-left"><span ng-show="task.status==0" class="label label-success-new m-r-lg"> Open </span><span ng-show="task.status==1" class="label label-yellow-new m-r-lg"> Close </span></td>
-					<td class="mfb-xxs text-left">{{task.task_name}}</td>
-					<td class="mfb-xt text-left">{{$ctrl.typeName(task)}}</td>
-					<td class="mfb-xxt text-left">{{task.activity_start}} ~ {{task.activity_end}}</td>
-					<td class="mfb-xxs text-left">
-						<a ng-if="task.task_type == 1" ng-href="#/promotion/task/beat/{{task.task_id}}"  target="_blank">
-							<button title="{{'TXT_TASK_DETAIL' | translate}}" class="btn btn-default-vo btn-xs"><i class="fa fa-reorder"></i>&nbsp;{{'TXT_TASK_DETAIL' | translate}}</button>
-						</a>
-						<a ng-if="task.task_type == 0" ng-href="#/promotion/task/price/{{task.promotion.promotionId}}" target="_blank" >
-							<button title="{{'TXT_TASK_DETAIL' | translate}}" class="btn btn-default-vo btn-xs"><i class="fa fa-reorder"></i>&nbsp;{{'TXT_TASK_DETAIL' | translate}}</button>
-						</a>
-						<a ng-if="task.task_type == 2" ng-href="/promotion/task_stock/{{task.promotion.promotionId}}" target="_blank" >
-							<button title="库存隔离明细" class="btn btn-default-vo btn-xs"><i class="fa fa-reorder"></i>&nbsp;库存隔离明细</button>
-						</a>
-						<a ng-if="task.task_type == 2" ng-href="/promotion/task_stock_increment/{{task.promotion.promotionId}}" target="_blank" >
-							<button title="增量库存隔离" class="btn btn-default-vo btn-xs"><i class="fa fa-reorder"></i>&nbsp;增量库存隔离</button>
-						</a>
-					</td>
-					<td class="mfb-xxt text-center">
-						<button title="{{'BTN_EDIT' | translate}}" class="btn btn-success btn-xs" ng-click="openMrbstock('lg')"><i class="fa fa-pencil"></i></button>
-						<button title="{{'BTN_DELETE' | translate}}" class="btn btn-danger btn-xs"><i class="fa  fa-trash-o"></i></button>
-						<button title="{{'BTN_ADD' | translate}}" class="btn btn-dangerdel btn-xs"><i class="fa fa-cloud-download"></i></button>
-					</td>
-				</tr>
-				</tbody>
-			</table>
-		</div>
-	</div><!-- /.box-body -->
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="task in $ctrl.tasks">
+                    <td class="mfb-xt3 text-center">{{$index+1}}</td>
+                    <td class="mfb-xt text-left"><span ng-show="task.status==0" class="label label-success-new m-r-lg"> Open </span><span
+                            ng-show="task.status==1" class="label label-yellow-new m-r-lg"> Close </span></td>
+                    <td class="mfb-xxs text-left">{{task.task_name}}</td>
+                    <td class="mfb-xt text-left">{{$ctrl.typeName(task)}}</td>
+                    <td class="mfb-xxt text-left">{{task.activity_start}} ~ {{task.activity_end}}</td>
+                    <td class="mfb-xxs text-left">
+                        <a ng-if="task.task_type == 1" ng-href="#/promotion/task/beat/{{task.task_id}}" target="_blank">
+                            <button title="{{'TXT_TASK_DETAIL' | translate}}" class="btn btn-default-vo btn-xs"><i
+                                    class="fa fa-reorder"></i>&nbsp;{{'TXT_TASK_DETAIL' | translate}}
+                            </button>
+                        </a>
+                        <a ng-if="task.task_type == 0" ng-href="#/promotion/task/price/{{task.promotion.promotionId}}"
+                           target="_blank">
+                            <button title="{{'TXT_TASK_DETAIL' | translate}}" class="btn btn-default-vo btn-xs"><i
+                                    class="fa fa-reorder"></i>&nbsp;{{'TXT_TASK_DETAIL' | translate}}
+                            </button>
+                        </a>
+                        <a ng-if="task.task_type == 2" ng-href="/promotion/task_stock/{{task.promotion.promotionId}}"
+                           target="_blank">
+                            <button title="库存隔离明细" class="btn btn-default-vo btn-xs"><i class="fa fa-reorder"></i>&nbsp;库存隔离明细
+                            </button>
+                        </a>
+                        <a ng-if="task.task_type == 2"
+                           ng-href="/promotion/task_stock_increment/{{task.promotion.promotionId}}" target="_blank">
+                            <button title="增量库存隔离" class="btn btn-default-vo btn-xs"><i class="fa fa-reorder"></i>&nbsp;增量库存隔离
+                            </button>
+                        </a>
+                    </td>
+                    <td class="mfb-xxt text-center">
+                        <button title="{{'BTN_EDIT' | translate}}" class="btn btn-success btn-xs"
+                                ng-click="openMrbstock('lg')"><i class="fa fa-pencil"></i></button>
+                        <button title="{{'BTN_DELETE' | translate}}" class="btn btn-danger btn-xs"><i
+                                class="fa  fa-trash-o"></i></button>
+                        <button title="{{'BTN_ADD' | translate}}" class="btn btn-dangerdel btn-xs"><i
+                                class="fa fa-cloud-download"></i></button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div><!-- /.box-body -->
 </div><!-- end .wrapper-md -->
 
 
