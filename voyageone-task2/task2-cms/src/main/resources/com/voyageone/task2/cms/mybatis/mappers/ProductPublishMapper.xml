@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.cms.sql">
+	
+	<select id="ims_selectProductPublishByChannelCartCode" parameterType="Map" resultType="com.voyageone.task2.cms.bean.ProductPublishBean">
+		SELECT
+			product_id,
+			channel_id,
+			cart_id,
+			model_id,
+			code,
+			is_published,
+			cn_group_id,
+			publish_product_id,
+			publish_product_status,
+			main_product_flg,
+			quantity_update_type,
+			publish_status,
+			num_iid,
+			publish_datetime,
+			publish_faild_comment,
+			creater,
+			created,
+			modifier,
+			modified
+		FROM voyageone_ims.ims_bt_product
+		WHERE channel_id = #{channel_id}
+		  AND cart_id = #{cart_id}
+		  AND code = #{code}
+	</select>
+
+	<insert id="ims_insertProductPublishMini" parameterType="HashMap" >
+		INSERT INTO voyageone_ims.ims_bt_product
+		(
+			channel_id,
+			cart_id,
+			code,
+			num_iid,
+			quantity_update_type,
+			creater
+		)
+		VALUES
+		(
+			#{p.channel_id},
+			#{p.cart_id},
+			#{p.code},
+			#{p.num_iid},
+			#{p.quantity_update_type},
+			#{creater}
+		)
+	</insert>
+
+	<update id="ims_updateProductPublishMini" parameterType="HashMap">
+		update voyageone_ims.ims_bt_product
+		set num_iid = #{p.num_iid},
+			quantity_update_type = #{p.quantity_update_type}
+		where channel_id = #{p.channel_id}
+		  and cart_id = #{p.cart_id}
+		  and code = #{p.code}
+	</update>
+
+</mapper>
