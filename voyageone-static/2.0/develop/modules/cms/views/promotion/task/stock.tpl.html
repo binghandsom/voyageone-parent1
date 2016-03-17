@@ -110,7 +110,7 @@
 						<div class="pull-right form-inline btn-group" ng-controller="popupCtrl">
 							<!--<button class="btn btn-danger" ng-click="openImport('md')"><i class="fa fa-reply-all"></i>&nbsp;批量导入SKU</button>-->
 							<button class="btn btn-dangers" ng-click="openImportStock('md')"><i class="fa fa-reply-all"></i>&nbsp;{{'BTN_IMPORT_ALL' | translate}}</button>
-							<button class="btn btn-danger"><i class="glyphicon glyphicon-share-alt"></i>&nbsp;{{'BTN_EXPORT_ALL' | translate}}</button>
+							<button class="btn btn-danger" ng-click="$ctrl.download()"><i class="glyphicon glyphicon-share-alt"></i>&nbsp;{{'BTN_EXPORT_ALL' | translate}}</button>
 							<button class="btn btn-primary"><i class="glyphicon glyphicon-play"></i>&nbsp;{{'BTN_START_REFRESH_ALL' | translate}}</button>
 							<button class="btn btn-primarys"><i class="glyphicon glyphicon-share-alt"></i>&nbsp;{{'BTN_REVERT_ALL' | translate}}</button>
 						</div>

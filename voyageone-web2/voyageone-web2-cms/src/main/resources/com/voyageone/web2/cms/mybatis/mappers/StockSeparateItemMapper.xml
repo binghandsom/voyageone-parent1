@@ -149,4 +149,22 @@
         </if>
     </delete>
 
+    <select id="select_stock_separate_item_excel_map" resultType="HashMap" parameterType="HashMap">
+        select
+          `product_model`,
+          `product_code`,
+          `sku`,
+          `cart_id`,
+          `property1`,
+          `property2`,
+          `property3`,
+          `property4`,
+          `qty`,
+          `separate_qty`
+        from ${tableName}
+        ${whereSql}
+        order by
+          `product_model`,`product_code`,`sku`,`cart_id`
+    </select>
+
 </mapper>

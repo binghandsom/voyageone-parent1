@@ -1,17 +1,32 @@
 package com.voyageone.web2.cms.views.promotion.task;
-;
+
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.transaction.SimpleTransaction;
+import com.voyageone.common.configs.Properties;
 import com.voyageone.common.configs.Type;
 import com.voyageone.common.configs.TypeChannel;
 import com.voyageone.common.configs.beans.TypeChannelBean;
+import com.voyageone.common.util.FileUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.web2.base.BaseAppService;
+import com.voyageone.web2.cms.CmsConstants;
 import com.voyageone.web2.cms.dao.*;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+;
 
 /**
  * Created by jeff.duan on 2016/03/04.
@@ -587,6 +602,86 @@ public class CmsTaskStockService extends BaseAppService {
         }
 
         simpleTransaction.commit();
+    }
+
+    /**
+     * 库存隔离Excel文档做成，数据流返回
+     *
+     * @param param 客户端参数
+     * @return byte[] 数据流
+     * @throws IOException
+     * @throws InvalidFormatException
+     */
+    public byte[] getExcelFileStockInfo(Map param) throws IOException, InvalidFormatException {
+
+        String templatePath = Properties.readValue(CmsConstants.Props.STOCK_EXPORT_TEMPLATE);
+
+        param.put("whereSql" ,getWhereSql(param, true));
+        List<Map<String, Object>> resultData = cmsBtStockSeparateItemDao.selectExcelStockInfo(param);
+
+        $info("准备打开文档 [ %s ]", templatePath);
+
+        try (InputStream inputStream = new FileInputStream(templatePath);
+             Workbook book = WorkbookFactory.create(inputStream)) {
+
+            writeExcelStockInfoHead(book, param);
+
+//            writeExcelStockInfoRecord();
+
+//            for (int i = 0; i < promotionCodes.size(); i++) {
+//                boolean isContinueOutput = writeTmallPromotionRecordToFile(book, promotionCodes.get(i), i + 1);
+//                // 超过最大行的场合
+//                if (!isContinueOutput) {
+//                    break;
+//                }
+//            }
+
+            $info("文档写入完成");
+
+            // 返回值设定
+            try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+
+                book.write(outputStream);
+
+                $info("已写入输出流");
+
+                return outputStream.toByteArray();
+            }
+        }
+    }
+
+    /**
+     * 库存隔离Excel的第一行Title部写入
+     */
+    private void writeExcelStockInfoHead(Workbook book, Map param) {
+        Sheet sheet = book.getSheetAt(0);
+        CellStyle unlock = FileUtils.createUnLockStyle(book);
+        CellStyle lock = book.createCellStyle();
+
+        Row row = FileUtils.row(sheet, 0);
+        // 内容输出
+//        FileUtils.cell(row, 0, unlock).setCellValue("Model");
+//        FileUtils.cell(row, 1, unlock).setCellValue("Code");
+//        FileUtils.cell(row, 2, unlock).setCellValue("Sku");
+
+        CellStyle cellStyle = FileUtils.cell(row, 0, null).getCellStyle();
+        FileUtils.cell(row, 3, cellStyle).setCellValue("pro1");
+        CellRangeAddress filter = CellRangeAddress.valueOf("A1:AA1");
+        sheet.setAutoFilter(filter);
+
+        row = FileUtils.row(sheet, 1);
+        FileUtils.cell(row, 0, lock).setCellValue("m1");
+        FileUtils.cell(row, 1, unlock).setCellValue("c1");
+        FileUtils.cell(row, 2, null).setCellValue("s1");
+
+
+    }
+
+    /**
+     * 库存隔离Excel的数据写入
+     */
+    private void writeExcelStockInfoRecord(Workbook book, Map param, List<Map<String, Object>> resultData) {
+
     }
 
     /**

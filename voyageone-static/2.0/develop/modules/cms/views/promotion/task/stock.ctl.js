@@ -55,6 +55,8 @@ define([
             };
 
             this.taskStockService = taskStockService;
+
+            this.downloadUrl = urls.root + "/" + urls.exportStockInfo;
         }
 
         TaskStockController.prototype = {
@@ -202,6 +204,25 @@ define([
                         //main.alert('TXT_MSG_DELETE_FAIL');
                     })
                 })
+            },
+
+            download: function () {
+                var main = this;
+                $.download.post(main.downloadUrl, {
+                    task_id: main.taskId,
+                    propertyList: JSON.stringify(main.propertyList),
+                    platformList: JSON.stringify(main.platformList),
+                    "model" : main.model,
+                    "code" : main.code,
+                    "sku" : main.sku,
+                    "qtyFrom" : main.qtyFrom,
+                    "qtyTo" : main.qtyTo,
+                    "status" : main.status,
+                    "start1" :  0,
+                    "length1" : 20,
+                    "start2" :  0,
+                    "length2" : 10
+                });
             }
         };
 
