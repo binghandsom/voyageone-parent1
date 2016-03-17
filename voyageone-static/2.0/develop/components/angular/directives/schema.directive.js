@@ -12,13 +12,13 @@
         DATE: "DATE",
         DATETIME: "DATETIME",
         TEXTAREA: "TEXTAREA",
-        SINGLE_CHECK: "SINGLECHECK",// 在complex中的显示select,以外的默认显示singlecheck,如果用户觉得select显示不方便,就将该field的type改成radio
+        SINGLE_CHECK: "SINGLECHECK", // 在complex中的显示select,以外的默认显示singlecheck,如果用户觉得select显示不方便,就将该field的type改成radio
         RADIO: "RADIO",
         MULTI_INPUT: "MULTIINPUT", // 没有被使用
         MULTI_CHECK: "MULTICHECK",
         COMPLEX: "COMPLEX", // TODO
         MULTI_COMPLEX: "MULTICOMPLEX",
-        LABEL: "LABEL"  // 可以不显示
+        LABEL: "LABEL" // 可以不显示
     }, ruleTypes = {
         VALUE_TYPE_RULE: "valueTypeRule",
         REQUIRED_RULE: "requiredRule",
@@ -50,34 +50,6 @@
         URL: "url",
         TEXTAREA: "textarea",
         HTML: "html"
-    }, templates = {
-        header: '<div class="form-group">' +
-        '<label class="col-sm-2 control-label" ng-class="{\'vo_reqfield\': showHtmlData.isRequired}" ng-bind="$$data.name"></label>' +
-        '<div class="col-sm-8" ng-class="{\'modal-open\' : showHtmlData.isMultiComplex, \'hierarchy_main\': showHtmlData.isComplex}" ng-transclude></div>' +
-        '<div class="col-sm-2" ng-if="showHtmlData.isMultiComplex"><button class="btn btn-success" ng-click="addField($$data)"><i class="fa fa-plus"></i>{{\'BTN_ADD\' | translate}}</button></div>' +
-        '<div class="row" ng-repeat="tipMsg in showHtmlData.tipMsg"><div class="col-sm-8 col-sm-offset-2 text-warnings"><i class="icon fa fa-bell-o"></i>&nbsp;{{tipMsg}}</div></div>' +
-        '</div>',
-        label: '<input  type="text" readonly ng-model="vm.$$data.value" class="form-control">',
-        input: '<input  ng-model="vm.$$data.value" class="form-control" %replaceInfo%>',
-        date: '<div class="input-group" ><input %replaceInfo% type="text" class="form-control" uib-datepicker-popup ng-model="vm.$$data.value" date-model-format="yyyy-MM-dd" is-open="datePicker" close-text="Close" /><span class="input-group-btn"><button %replaceInfo% type="button" class="btn btn-default" ng-click="datePicker = !datePicker"><i class="glyphicon glyphicon-calendar"></i></button></span></div>',
-        datetime: '<div class="input-group" ><input %replaceInfo% type="text" class="form-control" uib-datepicker-popup ng-model="vm.$$data.value" date-model-format="yyyy-MM-dd HH:mm:ss" is-open="datePicker" close-text="Close" /><span class="input-group-btn"><button %replaceInfo% type="button" class="btn btn-default" ng-click="datePicker = !datePicker"><i class="glyphicon glyphicon-calendar"></i></button></span></div>',
-        textarea: '<textarea  class="form-control no-resize" ng-model="vm.$$data.value" rows="{{showHtmlData.rowNum}}" %replaceInfo%></textarea>',
-        select: '<select  %replaceInfo% class="form-control" ng-model="vm.$$data.value.value" ng-options="option.value as option.displayName for option in vm.$$data.options"> <option value="">{{\'TXT_SELECT_NO_VALUE\' | translate}}</option></select>',
-        radio: '<label class="checkbox-inline c-radio" ng-repeat="option in vm.$$data.options"><input name="{{vm.$$data.id}}" type="radio" ng-value="option.value" ng-model="vm.$$data.value.value"><span class="fa fa-check"></span> {{option.displayName}}</label>',
-        checkbox: '<label class="checkbox-inline c-checkbox" ng-repeat="option in vm.$$data.options"><input type="checkbox" ng-value="option.value" ng-click="checkboxValue(option.value)" ng-checked="isSelected(option.value)"><span class="fa fa-check"></span> {{option.displayName}}</label>',
-        multiComplex: '<table class="table text-center">' +
-        '<thead><tr>' +
-        '<th ng-repeat="field in vm.$$data.fields" ng-class="{\'vo_reqfield\': showHtmlData.isRequired}" class="text-center" >{{field.name}}</th>' +
-        '<th ng-if="!showHtmlData.notShowEdit"  class="text-center" translate="TXT_ACTION"></th>' +
-        '</tr></thead>' +
-        '<tbody><tr ng-repeat="value in vm.$$data.complexValues">' +
-        '<td class="text-left" ng-repeat="field in value.fieldMap"><div class="tableLayer"><p ng-if="field.type != \'COMPLEX\'">&nbsp;</p><p><schema-item data="field" hastip="true" complex="true"></schema-item></p></div></td>' +
-        '<td ng-if="!showHtmlData.notShowEdit" ><button title="{\'BTN_DELETE\' | translate}" class="btn btn-danger btn-xs" ng-click="delField($index)"><i class="fa  fa-trash-o"></i></button></td>' +
-        '</tr></tbody>' +
-        '</table>',
-        complex: '<schema-header ng-repeat="field in vm.$$data.fields" data="field"><schema-item data="field"></schema-item></schema-header>',
-        multi_in_complex: '<div ng-repeat="field in vm.$$data.fields"><p ng-bind="field.name"></p><p><schema-item data="field" hastip="true" complex="true"></schema-item></p></div>',
-        multiComplex_tip: '<div class="text-warnings" ng-repeat="tipMsg in showHtmlData.tipMsg"><br><i class="icon fa fa-bell-o"></i>&nbsp;{{tipMsg}}</div>'
     };
 
     var SchemaHeader, Schema;
@@ -138,9 +110,6 @@
         tipMsg: function (value) {
             return value !== undefined ? this.config.tipMsg.push(value) : this.config.tipMsg;
         },
-        checkValues: function (value) {
-            return value !== undefined ? this.config.checkValues.push(value) : this.config.checkValues;
-        },
         notShowEdit: function (value) {
             return value !== undefined ? this.config.notShowEdit = value : this.config.notShowEdit;
         }
@@ -148,20 +117,20 @@
 
     angular.module('voyageone.angular.directives.schema', [])
 
-        .directive('schemaHeader', function () {
+        .directive('schemaHeader', function (templates) {
 
             return {
                 restrict: "E",
                 replace: true,
                 transclude: true,
-                template: templates.header,
+                template: templates.schema.header.url,
                 scope: {
-                    $$data: "=data"
+                    $data: "=data"
                 },
                 link: function (scope) {
 
                     var header = new SchemaHeader();
-                    var field = scope.$$data;
+                    var field = scope.$data;
 
                     // 标记特殊类型的 Field
                     switch (field.type) {
@@ -204,50 +173,48 @@
             };
         })
 
-        .directive('schemaItem', function ($compile) {
+        .directive('schemaItem', function ($compile, templates) {
 
             return {
                 restrict: "E",
                 require: ['^?form'],
-                bindToController: true,
-                controllerAs: "vm",
                 scope: {
-                    $$data: "=data",
-                    $$hastip: "=hastip",
-                    $$complex: "=complex",
-                    $$notShowEdit: "=notShowEdit"
+                    $data: "=data",
+                    $hastip: "=hastip",
+                    $complex: "=complex",
+                    $notShowEdit: "=notShowEdit"
                 },
                 controller: function () {
                 },
                 link: function (scope, element) {
 
                     // 监视配置变动
-                    scope.$watch('vm.$$data', refresh);
+                    scope.$watch('$data', refresh);
 
                     scope.$watch('schemaForm.$valid', function ($valid) {
-                        scope.vm.$$data.$valid = $valid;
+                        scope.$data.$valid = $valid;
                     });
 
                     function refresh() {
 
                         var schema = new Schema();
-                        var field = scope.vm.$$data;
+                        var field = scope.$data;
 
                         // 设置空间name
                         schema.name(field.id);
 
                         // 设置edit是否显示
-                        schema.notShowEdit(scope.vm.$$notShowEdit == undefined ? false : scope.vm.$$notShowEdit);
+                        schema.notShowEdit(scope.$notShowEdit == undefined ? false : scope.$notShowEdit);
 
                         schema.type(field.type);
 
                         switch (field.type) {
                             case fieldTypes.RADIO:
-                                if (scope.vm.$$complex)
+                                if (scope.$complex)
                                     schema.type(fieldTypes.SINGLE_CHECK);
                                 break;
                             case fieldTypes.MULTI_CHECK:
-                                _setCheckValues(field.values);
+                                schema.config.checkValues = field.values;
                                 break;
                             case fieldTypes.MULTI_COMPLEX:
                                 field.complexValues = _resetMultiComplex(field);
@@ -298,56 +265,26 @@
                             }
                         });
 
-                        var tempHtml = "";
+                        getTemplate().getHtml().then(function(html) {
+                            if (schema.tipMsg() != null && scope.$hastip)
+                                return templates.multiComplex_tip.getHtml().then(function(tipHtml){
+                                    compileTemplate(html + tipHtml);
+                                });
+                            compileTemplate(html);
+                        });
 
-                        // 拼接body
-                        switch (schema.type()) {
-                            case fieldTypes.INPUT:
-                                tempHtml = templates.input.replace("%replaceInfo%", schema.html());
-                                break;
-                            case fieldTypes.DATE:
-                                tempHtml = templates.date.replace("%replaceInfo%", schema.html()).replace("%replaceInfo%", schema.html());
-                                break;
-                            case fieldTypes.DATETIME:
-                                tempHtml = templates.datetime.replace("%replaceInfo%", schema.html()).replace("%replaceInfo%", schema.html());
-                                break;
-                            case fieldTypes.TEXTAREA:
-                                tempHtml = templates.textarea.replace("%replaceInfo%", schema.html());
-                                break;
-                            case fieldTypes.SINGLE_CHECK:
-                                tempHtml = templates.select.replace("%replaceInfo%", schema.html());
-                                break;
-                            case fieldTypes.RADIO:
-                                tempHtml = templates.radio.replace("%replaceInfo%", schema.html());
-                                break;
-                            case fieldTypes.MULTI_CHECK:
-                                tempHtml = templates.checkbox.replace("%replaceInfo%", schema.html());
-                                break;
-                            case fieldTypes.LABEL:
-                                tempHtml = templates.label;
-                                break;
-                            case fieldTypes.MULTI_COMPLEX:
-                                tempHtml = templates.multiComplex;
-                                break;
-                            case fieldTypes.COMPLEX:
-                                tempHtml = scope.vm.$$complex ? templates.multi_in_complex : templates.complex;
-                                break;
+                        function compileTemplate(html) {
+                            // 包裹 ng-form, 用于启用 angular 的验证功能
+                            html = '<ng-form name="schemaForm">' + html + '</ng-form>';
+                            // 追加错误信息的显示
+                            html += '<div ng-repeat="(k, v) in schemaForm.$error">{{k}}</div>';
+
+                            scope.showHtmlData = angular.copy(schema.config);
+
+                            element.html($compile(html)(scope));
+
+                            field.form = scope.schemaForm;
                         }
-
-                        // 添加规则说明
-                        if (schema.tipMsg() != null && scope.vm.$$hastip) {
-                            tempHtml += templates.multiComplex_tip;
-                        }
-
-                        // 包裹 ng-form, 用于启用 angular 的验证功能
-                        tempHtml = '<ng-form name="schemaForm">' + tempHtml + '</ng-form>';
-                        // 追加错误信息的显示
-                        tempHtml += '<div ng-repeat="(k, v) in schemaForm.$error">{{k}}</div>';
-
-                        scope.showHtmlData = angular.copy(schema.config);
-                        element.html($compile(tempHtml)(scope));
-
-                        field.form = scope.schemaForm;
 
                         /**
                          * 设置checkbox被选中的value值处理
@@ -381,79 +318,106 @@
                             field.complexValues.splice(index, 1);
                         };
 
-                        /**
-                         * 设置checkvalues
-                         * @param values
-                         * @private
-                         */
-                        function _setCheckValues(values) {
-                            if (values != undefined && values != null) {
-                                angular.forEach(values, function (obj) {
-                                    schema.checkValues(obj.value);
-                                })
+                        function getTemplate() {
+                            switch (schema.type()) {
+                                case fieldTypes.INPUT:
+                                    return templates.input;
+                                case fieldTypes.DATE:
+                                    return templates.date;
+                                case fieldTypes.DATETIME:
+                                    return templates.datetime;
+                                case fieldTypes.TEXTAREA:
+                                    return templates.textarea;
+                                case fieldTypes.SINGLE_CHECK:
+                                    return templates.select;
+                                case fieldTypes.RADIO:
+                                    return templates.radio;
+                                case fieldTypes.MULTI_CHECK:
+                                    return templates.checkbox;
+                                case fieldTypes.LABEL:
+                                    return templates.label;
+                                case fieldTypes.MULTI_COMPLEX:
+                                    return templates.multiComplex;
+                                case fieldTypes.COMPLEX:
+                                    return scope.$complex ? templates.multi_in_complex : templates.complex;
+                                default:
+                                    return null;
                             }
                         }
 
                         /**
-                         * 重新设置multicomplex的一些属性
-                         * @param data
+                         * 重新设置 multi complex 的一些属性
+                         * @param data 一个 multi complex 类型的 field
                          * @private
                          */
                         function _resetMultiComplex(data) {
                             var tempValues = [];
-                            angular.forEach(data.complexValues, function (value) {
-                                var tempFieldMap = {};
-                                angular.forEach(data.fields, function (field) {
+                            var tempFieldMap;
+
+                            data.complexValues.forEach(function(value) {
+
+                                tempFieldMap = {};
+
+                                data.fields.forEach(function (field) {
+
                                     var tempField = angular.copy(field);
-                                    if (value.fieldMap[field.id] != undefined) {
-                                        switch (field.type) {
-                                            case fieldTypes.INPUT:
-                                            case fieldTypes.LABEL:
-                                            case fieldTypes.DATE:
-                                            case fieldTypes.DATETIME:
-                                            case fieldTypes.TEXTAREA:
-                                            case fieldTypes.SINGLE_CHECK:
-                                            case fieldTypes.RADIO:
-                                                tempField.value = value.fieldMap[field.id].value;
-                                                break;
-                                            case fieldTypes.MULTI_INPUT:
-                                            case fieldTypes.MULTI_CHECK:
-                                                tempField.values = value.fieldMap[field.id].values;
-                                                break;
-                                            case fieldTypes.COMPLEX:
-                                                tempField.complexValue = value.fieldMap[field.id].complexValue;
-                                                break;
-                                            case fieldTypes.MULTI_COMPLEX:
-                                                tempField.complexValues = value.fieldMap[field.id].complexValues;
-                                                break;
-                                        }
+                                    var defValue = value.fieldMap[field.id];
+
+                                    if (!defValue) {
+                                        tempFieldMap[field.id] = tempField;
+                                        return;
                                     }
-                                    tempFieldMap[field.id] = tempField;
+
+                                    switch (field.type) {
+                                        case fieldTypes.INPUT:
+                                        case fieldTypes.LABEL:
+                                        case fieldTypes.DATE:
+                                        case fieldTypes.DATETIME:
+                                        case fieldTypes.TEXTAREA:
+                                        case fieldTypes.SINGLE_CHECK:
+                                        case fieldTypes.RADIO:
+                                            tempField.value = defValue.value;
+                                            break;
+                                        case fieldTypes.MULTI_INPUT:
+                                        case fieldTypes.MULTI_CHECK:
+                                            tempField.values = defValue.values;
+                                            break;
+                                        case fieldTypes.COMPLEX:
+                                            tempField.complexValue = defValue.complexValue;
+                                            break;
+                                        case fieldTypes.MULTI_COMPLEX:
+                                            tempField.complexValues = defValue.complexValues;
+                                            break;
+                                    }
                                 });
-                                tempValues.push({fieldMap: angular.copy(tempFieldMap)});
+
+                                tempValues.push({fieldMap: tempFieldMap});
                             });
 
                             // 如果values为空,默认添加空白行
                             if (_.isEmpty(data.complexValues)) {
                                 var newFieldMap = {};
-                                angular.forEach(data.fields, function (field) {
+                                data.fields.forEach(function (field) {
                                     newFieldMap[field.id] = field;
-                                    //eval("newFieldMap." + field.id + "=field");
                                 });
-
-                                tempValues.push({fieldMap: angular.copy(newFieldMap)});
+                                tempValues.push({fieldMap: newFieldMap});
                             }
 
                             return tempValues;
                         }
 
                         /**
-                         * 重新
-                         * @param data
+                         * 为 data 的所有子 field 设置 value
+                         * @param data 一个 complex 类型 field
                          * @private
                          */
                         function _resetComplex(data) {
-                            angular.forEach(data.fields, function (field) {
+                            if (!data || !data.fields || !data.fields.length)
+                                return;
+                            data.fields.forEach(function (field) {
+
+                                var defValue;
+
                                 switch (field.type) {
                                     case fieldTypes.INPUT:
                                     case fieldTypes.LABEL:
@@ -463,12 +427,11 @@
                                     case fieldTypes.SINGLE_CHECK:
                                     case fieldTypes.RADIO:
                                         if (!_.isEmpty(data.complexValue.fieldMap))
-                                            field.value = data.complexValue.fieldMap[field.id].value;
-                                        else {
-                                            field.value = data.defaultComplexValue.fieldMap[field.id].value;
-                                            console.log();
-                                        }
-
+                                            defValue = data.complexValue.fieldMap[field.id];
+                                        else
+                                            defValue = data.defaultComplexValue.fieldMap[field.id];
+                                        if (defValue)
+                                            field.value = defValue.value;
                                         break;
                                     case fieldTypes.MULTI_INPUT:
                                     case fieldTypes.MULTI_CHECK:

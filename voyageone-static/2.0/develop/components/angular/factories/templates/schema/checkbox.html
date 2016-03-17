@@ -1,0 +1,5 @@
+<label class="checkbox-inline c-checkbox" ng-repeat="option in $data.options"><input type="checkbox"
+                                                                                         ng-value="option.value"
+                                                                                         ng-click="checkboxValue(option.value)"
+                                                                                         ng-checked="isSelected(option.value)"><span
+        class="fa fa-check"></span> {{option.displayName}}</label>
