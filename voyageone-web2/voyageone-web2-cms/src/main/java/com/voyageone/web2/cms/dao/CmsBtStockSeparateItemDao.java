@@ -28,7 +28,7 @@ public class CmsBtStockSeparateItemDao extends BaseDao {
         return selectOne("select_stock_separate_item_cnt", param);
     }
 
-    public Object selectStockSeparateSuccessQty(Map<String, Object> param) {
+    public Integer selectStockSeparateSuccessQty(Map<String, Object> param) {
         return selectOne("select_stock_separate_success_qty", param);
     }
 

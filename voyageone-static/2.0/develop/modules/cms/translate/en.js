@@ -223,6 +223,13 @@ define(function() {
         "TXT_PLEASE_SET_PERCENT": "Please Set Percent",
         "TXT_REAL_TIME_STOCK_STATUS":"Real Time Stock Status",
         "TXT_DYNAMIC":"Dynamic",
+        "TXT_AVAILABLE_STOCK":"Available Stock",
+        "TXT_ADD_NEW_STOCK_SEPARATE_DETAIL":"Add New Stock Separate Detail",
+        "TXT_GET_USABLE_STOCK":"Get Usable Stock",
+        "TXT_SEPARATE_QUANTITY":"Separate Quantity",
+        "TXT_STOCK_SEPARATE_DETAIL":"Stock Separate Detail",
+        "TXT_SEPARATE_TYPE":"Separate Type",
+        "TXT_SEPARATE_INCREMENT_QUANTITY":"Separate/Increment Quantity",
 
         "TXT_MSG_SEARCH": "Search...",
         "TXT_MSG_PAGE_IS_BUILDING": "This page is building...",

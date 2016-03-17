@@ -12,7 +12,7 @@ import java.util.Map;
  */
 @Repository
 public class WmsBtLogicInventoryDao extends BaseDao {
-    public Object selectLogicInventoryCnt(Map<String, Object> param) {
+    public Integer selectLogicInventoryCnt(Map<String, Object> param) {
         return selectOne("select_logic_inventory_cnt", param);
     }
 }

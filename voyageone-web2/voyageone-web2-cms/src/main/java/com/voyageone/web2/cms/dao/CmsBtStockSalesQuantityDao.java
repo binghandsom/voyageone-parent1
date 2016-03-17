@@ -3,6 +3,7 @@ package com.voyageone.web2.cms.dao;
 import com.voyageone.base.dao.BaseDao;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -12,7 +13,11 @@ import java.util.Map;
 @Repository
 public class CmsBtStockSalesQuantityDao extends BaseDao {
 
-    public Object selectStockSalesQuantity(Map<String, Object> param) {
-        return selectOne("select_stock_sales_quantity", param);
+    public List<Map<String, Object>> selectStockSalesQuantity(Map<String, Object> param) {
+        return selectList("select_stock_sales_quantity", param);
+    }
+
+    public Integer selectStockSalesQuantityQty(Map<String, Object> param) {
+        return selectOne("select_stock_sales_quantity_qty", param);
     }
 }
