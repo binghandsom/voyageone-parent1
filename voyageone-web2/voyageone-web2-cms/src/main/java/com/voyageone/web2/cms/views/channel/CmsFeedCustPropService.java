@@ -85,7 +85,15 @@ public class CmsFeedCustPropService extends BaseAppService {
         Map<String, Object> params = new HashMap<String, Object>(2);
         params.put("channelId", channelId);
         params.put("feedCatPath", catPath);
-        return cmsBtFeedCustomPropDao.selectAllAttr(params);
+        List<Map<String, Object>> list1 = cmsBtFeedCustomPropDao.selectAllAttr(params);
+        List<Map<String, Object>> list2 = new ArrayList<Map<String, Object>>(list1.size());
+        for (Map<String, Object> obj : list1) {
+            Map<String, Object> obj2 = new HashMap<String, Object>(2);
+            obj2.put("feed_prop_original", obj.get("feed_prop_original"));
+            obj2.put("feed_prop_translation", obj.get("feed_prop_translation"));
+            list2.add(obj2);
+        }
+        return list2;
     }
 
     // 根据类目路径查询自定义已翻译属性信息

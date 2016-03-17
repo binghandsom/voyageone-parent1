@@ -57,7 +57,7 @@ public class CmsSearchAdvanceService extends BaseAppService{
     private TagService tagService;
 
     private final String searchItems = "channelId;prodId;catId;catPath;created;creater;modified;" +
-            "modifier;fields;groups.msrpStart;groups.msrpEnd;groups.retailPriceStart;groups.retailPriceEnd;" +
+            "modifier;fields;feed.cnAtts;groups.msrpStart;groups.msrpEnd;groups.retailPriceStart;groups.retailPriceEnd;" +
             "groups.salePriceStart;groups.salePriceEnd;groups.platforms.$;skus";
 
     // 未结束提示信息

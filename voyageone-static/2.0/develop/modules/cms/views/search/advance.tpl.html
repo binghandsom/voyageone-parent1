@@ -313,7 +313,8 @@
 							<th class="mfb-xxt text-center" translate="TXT_INVENTORY"></th>
 							<th class="mfb-xxt text-right" translate="TXT_SALE_PRICE"></th>
 							<th class="mfb-xxt text-left" translate="TXT_BRAND"></th>
-							<th class="mfb-xxxs text-left" translate="TXT_BASE_PROPERTY"></th>
+							<th class="text-left" ng-repeat="prop1 in vm.commonProps">{{prop1.propName}}</th>
+							<th class="text-left" ng-repeat="prop2 in vm.customProps">{{prop2.feed_prop_translation}}</th>
 							<th class="mfb-xxt text-left" translate="TXT_TIME"></th>
 						</tr>
 						</thead>
@@ -374,15 +375,10 @@
 										{{groupInfo.groups.priceSale}}
 									</button>
 								</td>
-								<td class="mfb-xxt text-left">{{groupInfo.fields.brand}}</td>
-								<td class="mfb-xxxs text-left">
-									<div class="table_main">
-										<ul>
-											<!--TODO 暂时实现不了 -->
-											<!--<li ng-repeat="baseProperty in groupInfo.primaryProduct.basePropertyList">{{baseProperty.name}}&nbsp;{{baseProperty.value}}</li>-->
-										</ul>
-									</div>
-								</td>
+								<td class="mfb-xxt text-left">{{groupInfo.fields.brand}}</td>{{groupInfo.commArr}}{{groupInfo.custArr}}
+								<td class="text-left" ng-repeat="prop1 in groupInfo.commArr">{{prop1.value}}</td>
+								<td class="text-left" ng-repeat="prop2 in groupInfo.custArr">{{prop2.value}}</td>
+
 								<td class="mfb-xxt text-left">
 									<small ng-controller="showPopoverCtrl" popover-html="showInfo({{groupInfo.groups.platforms[0].timeDetail}})" popover-trigger="mouseenter" popover-placement="left">
 										<div class="table_main">
@@ -498,11 +494,7 @@
 									<td class="mfb-xxt text-left">{{productInfo.fields.productType}}</td>
 									<td class="mfb-xxt text-left">{{productInfo.fields.sizeType}}</td>
 									<td class="mfb-xxs text-left">
-										<div class="table_main">
-											<ul>
-												<!--<li ng-repeat="baseProperty in productInfo.basePropertyList">{{baseProperty.name}}&nbsp;{{baseProperty.value}}</li>-->
-											</ul>
-										</div>
+
 									</td>
 									<td class="mfb-xxt text-center">
 										<button ng-controller="showPopoverCtrl" popover-html="showInfo({{productInfo.skuDetail}})" popover-title="{{'TXT_SKU_PLATFORM_INFO' | translate}}"
