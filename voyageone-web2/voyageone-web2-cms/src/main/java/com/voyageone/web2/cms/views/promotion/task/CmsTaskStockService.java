@@ -778,23 +778,25 @@ public class CmsTaskStockService extends BaseAppService {
         Sheet sheet = book.getSheetAt(0);
 
         Row row = FileUtils.row(sheet, 0);
-        CellStyle cellStyleProperty = FileUtils.cell(row, 0, null).getCellStyle(); // 属性的cellStyle
+        CellStyle cellStyleProperty = book.getSheetAt(1).getRow(0).getCell(4).getCellStyle(); // 属性的cellStyle
 
         List<Map> propertyList = (List<Map>) param.get("propertyList");
         List<Map> platformList = (List<Map>) param.get("platformList");
 
         // 内容输出
-        int index = 2;
+        int index = 3;
 
+        // 属性
         for (Map property : propertyList) {
-            FileUtils.cell(row, ++index, cellStyleProperty).setCellValue((String) property.get("name"));
+            FileUtils.cell(row, index++, cellStyleProperty).setCellValue((String) property.get("name"));
         }
 
+        // 平台
         CellStyle cellStylePlatform = book.getSheetAt(1).getRow(0).getCell(0).getCellStyle(); // 平台的cellStyle
         for (Map platform : platformList) {
-            FileUtils.cell(row, ++index, cellStylePlatform).setCellValue((String) platform.get("cartName"));
+            FileUtils.cell(row, index++, cellStylePlatform).setCellValue((String) platform.get("cartName"));
         }
-        FileUtils.cell(row, ++index, cellStylePlatform).setCellValue("Other");
+        FileUtils.cell(row, index++, cellStylePlatform).setCellValue("Other");
 
         // 筛选
         CellRangeAddress filter = new CellRangeAddress(0, 0, 0, index);
@@ -807,12 +809,40 @@ public class CmsTaskStockService extends BaseAppService {
     private void writeExcelStockInfoRecord(Workbook book, Map param, List<Map<String, Object>> resultData) {
 
         Sheet sheet = book.getSheetAt(0);
-        for (Map<String, Object> rowData :resultData) {
+        String preSku = "";
+        int lineIndex = 1; // 行号
+        int colIndex = 0; // 列号
+        Row row;
+
+        Cell cellDynamic = book.getSheetAt(1).getRow(0).getCell(1); // 动态的cell
+        // FileUtils.cell(row, ++index, cellDynamic.getCellStyle()).setCellValue(cellDynamic.getStringCellValue());
+        CellStyle cellStyleDataLock = book.getSheetAt(1).getRow(0).getCell(2).getCellStyle(); // 数据（锁定）的cellStyle
+        CellStyle cellStyleData = book.getSheetAt(1).getRow(0).getCell(3).getCellStyle(); // 数据（不锁定）的cellStyle
+
+        List<Map> propertyList = (List<Map>) param.get("propertyList");
+        List<Map> platformList = (List<Map>) param.get("platformList");
+
+        for (Map<String, Object> rowData : resultData) {
+            if (!preSku.equals(rowData.get("sku"))) {
+                row = FileUtils.row(sheet, lineIndex++);
+                colIndex = 0;
+
+                FileUtils.cell(row, colIndex++, cellStyleDataLock).setCellValue((String) rowData.get("product_model")); // Model
+                FileUtils.cell(row, colIndex++, cellStyleDataLock).setCellValue((String) rowData.get("product_code")); // Code
+                FileUtils.cell(row, colIndex++, cellStyleDataLock).setCellValue((String) rowData.get("sku")); // Sku
+
+                // 属性
+                for (Map property : propertyList) {
+                    FileUtils.cell(row, colIndex++, cellStyleDataLock).setCellValue((String) rowData.get("product_model"));
+                }
+
+
+            } else {
+
+            }
 
         }
 
-//        Cell cellDynamic = book.getSheetAt(1).getRow(0).getCell(1); // 动态的cell
-//        FileUtils.cell(row, ++index, cellDynamic.getCellStyle()).setCellValue(cellDynamic.getStringCellValue());
     }
 
     /**
