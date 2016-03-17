@@ -9,6 +9,7 @@ import com.voyageone.web2.cms.CmsUrlConstants;
 import com.voyageone.web2.cms.bean.search.index.CmsSearchInfoBean;
 import com.voyageone.web2.cms.views.channel.CmsFeedCustPropService;
 import com.voyageone.web2.core.bean.UserSessionBean;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -52,25 +53,47 @@ public class CmsSearchAdvanceController extends CmsController {
     @RequestMapping(CmsUrlConstants.SEARCH.ADVANCE.SEARCH)
     public AjaxResponse search(@RequestBody CmsSearchInfoBean params) {
         Map<String, Object> resultBean = new HashMap<>();
+        UserSessionBean userInfo = getUser();
 
         // 获取product列表
-        List<CmsBtProductModel> productList = searchIndexService.getProductList(params, getUser(), getCmsSession());
+        List<CmsBtProductModel> productList = searchIndexService.getProductList(params, userInfo, getCmsSession());
         resultBean.put("productList", productList);
-        long productListTotal = searchIndexService.getProductCnt(params, getUser(), getCmsSession());
+        long productListTotal = searchIndexService.getProductCnt(params, userInfo, getCmsSession());
         resultBean.put("productListTotal", productListTotal);
 
         // 获取group列表
-        List<CmsBtProductModel> groupList = searchIndexService.getGroupList(params, getUser(), getCmsSession());
+        List<CmsBtProductModel> groupList = searchIndexService.getGroupList(params, userInfo, getCmsSession());
         resultBean.put("groupList", groupList);
-        long groupListTotal = searchIndexService.getGroupCnt(params, getUser(), getCmsSession());
+        long groupListTotal = searchIndexService.getGroupCnt(params, userInfo, getCmsSession());
         resultBean.put("groupListTotal", groupListTotal);
 
         // 获取该用户自定义显示列设置
-        Map<String, Object> colData = searchIndexService.getUserCustColumns(getUser().getUserId());
-        if (colData != null) {
-            resultBean.putAll(colData);
+        List<Map<String, Object>> customProps2 = new ArrayList<Map<String, Object>>();
+        Map<String, Object> colData = searchIndexService.getUserCustColumns(userInfo.getUserId());
+        String[] custAttrList = (String[]) colData.get("custAttrList");
+        if (custAttrList.length > 0) {
+            List<Map<String, Object>> customProps = cmsFeedCustPropService.selectAllAttr(userInfo.getSelChannelId(), "0");
+            for (Map<String, Object> props : customProps) {
+                String propId = (String) props.get("feed_prop_original");
+                if (ArrayUtils.contains(custAttrList, propId)) {
+                    customProps2.add(props);
+                }
+            }
+        }
+        List<Map<String, Object>> commonProp2 = new ArrayList<Map<String, Object>>();
+        String[] commList = (String[]) colData.get("commList");
+        if (commList.length > 0) {
+            List<Map<String, Object>> commonProps = searchIndexService.getCustColumns();
+            for (Map<String, Object> props : commonProps) {
+                String propId = (String) props.get("propId");
+                if (ArrayUtils.contains(commList, propId)) {
+                    commonProp2.add(props);
+                }
+            }
         }
 
+        resultBean.put("customProps", customProps2);
+        resultBean.put("commonProps", commonProp2);
         // 返回用户信息
         return success(resultBean);
     }
@@ -156,16 +179,9 @@ public class CmsSearchAdvanceController extends CmsController {
     public AjaxResponse getCustColumnsInfo() {
         Map<String, Object> resultBean = new HashMap<>();
         UserSessionBean userInfo = getUser();
-        List<Map<String, Object>> list1 = cmsFeedCustPropService.selectAllAttr(userInfo.getSelChannelId(), "0");
-        List<Map<String, Object>> list2 = new ArrayList<Map<String, Object>>(list1.size());
-        for (Map<String, Object> obj : list1) {
-            Map<String, Object> obj2 = new HashMap<String, Object>(2);
-            obj2.put("feed_prop_original", obj.get("feed_prop_original"));
-            obj2.put("feed_prop_translation", obj.get("feed_prop_translation"));
-            list2.add(obj2);
-        }
 
-        resultBean.put("customProps", list2);
+        // 取得自定义显示列设置
+        resultBean.put("customProps", cmsFeedCustPropService.selectAllAttr(userInfo.getSelChannelId(), "0"));
         resultBean.put("commonProps", searchIndexService.getCustColumns());
 
         // 获取该用户自定义显示列设置
