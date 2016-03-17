@@ -15,6 +15,7 @@ return angular.module("voyageone.angular",[
 "voyageone.angular.factories.notify",
 "voyageone.angular.factories.pppAutoImpl",
 "voyageone.angular.factories.selectRows",
+"voyageone.angular.factories.templates",
 "voyageone.angular.factories.vpagination",
 "voyageone.angular.services.ajax",
 "voyageone.angular.services.cookie",
