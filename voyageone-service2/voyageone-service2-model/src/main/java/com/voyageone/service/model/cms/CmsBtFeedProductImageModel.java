@@ -7,15 +7,17 @@ import com.voyageone.base.dao.mysql.BaseModel;
  */
 public class CmsBtFeedProductImageModel extends BaseModel {
     private String channelId;
+    private String code;
     private String imageUrl;
     private String imageName;
     private int imageTypeId = 1;
     private Integer sentFlag = 0;
 
-    public CmsBtFeedProductImageModel(String channelId, String imageUrl,String modifier){
+    public CmsBtFeedProductImageModel(String channelId,String code, String imageUrl,String modifier){
         this.channelId = channelId;
         this.imageUrl = imageUrl;
-        this.imageName = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
+        this.imageName = channelId + "-" + imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
+        this.code = code;
         this.setModifier(modifier);
         this.setCreater(modifier);
     }

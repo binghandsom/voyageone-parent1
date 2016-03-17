@@ -92,7 +92,7 @@ public class VtmService extends BaseTaskService {
         // 2             本次导入error的数据
         // 3             本次导入完全导入成功的数据
 
-//        backupFeedFile(VITAMIN.getId());
+        backupFeedFile(VITAMIN.getId());
 
     }
 

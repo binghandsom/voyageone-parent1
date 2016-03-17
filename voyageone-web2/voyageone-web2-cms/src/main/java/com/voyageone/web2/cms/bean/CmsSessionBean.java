@@ -20,8 +20,8 @@ public class CmsSessionBean implements Serializable {
             return platformType;
         } else {
             Map<String, Object> newCategoryType = new HashMap<String, Object>();
-            newCategoryType.put("cTypeId", CartType.TMALLG.getShortName());
-            newCategoryType.put("cartId", CartType.TMALLG.getCartId());
+            newCategoryType.put("cTypeId", CartType.MASTER.getShortName());
+            newCategoryType.put("cartId", CartType.MASTER.getCartId());
             return newCategoryType;
         }
     }

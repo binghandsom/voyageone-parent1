@@ -37,6 +37,7 @@ public class CmsFieldEditService extends BaseAppService {
     @Autowired
     private CmsMtCommonPropDefDao cmsMtCommonPropDefDao;
 
+    @Autowired
     private ProductService productService;
 
     private static final String FIELD_SKU_CARTS = "skuCarts";
