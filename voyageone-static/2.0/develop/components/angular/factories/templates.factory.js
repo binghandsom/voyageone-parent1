@@ -6,7 +6,7 @@
 (function () {
 
     function Template(key) {
-        this.url = 'components/angular/factories/templates/' + key.replace('.', '/') + '.html';
+        this.url = '/components/angular/factories/templates/' + key.replace('.', '/') + '.html';
     }
 
     Template.prototype = {
@@ -16,26 +16,24 @@
     };
 
     angular.module('voyageone.angular.factories.templates', [])
-        .config(function ($templateRequest) {
+        .run(function ($templateRequest) {
             Template.prototype.$req = $templateRequest;
         })
-        .constant('templates', function () {
-            return {
-                schema: {
-                    header: new Template('schema.header'),
-                    label: new Template('schema.label'),
-                    input: new Template('schema.input'),
-                    date: new Template('schema.date'),
-                    datetime: new Template('schema.datetime'),
-                    textarea: new Template('schema.textarea'),
-                    select: new Template('schema.select'),
-                    radio: new Template('schema.radio'),
-                    checkbox: new Template('schema.checkbox'),
-                    multiComplex: new Template('schema.multiComplex'),
-                    complex: new Template('schema.complex'),
-                    multi_in_complex: new Template('schema.multi_in_complex'),
-                    multiComplex_tip: new Template('schema.lalaa')
-                }
-            };
+        .constant('templates', {
+            schema: {
+                header: new Template('schema.header'),
+                label: new Template('schema.label'),
+                input: new Template('schema.input'),
+                date: new Template('schema.date'),
+                datetime: new Template('schema.datetime'),
+                textarea: new Template('schema.textarea'),
+                select: new Template('schema.select'),
+                radio: new Template('schema.radio'),
+                checkbox: new Template('schema.checkbox'),
+                multiComplex: new Template('schema.multicomplex'),
+                complex: new Template('schema.complex'),
+                multi_in_complex: new Template('schema.multiincomplex'),
+                multiComplex_tip: new Template('schema.multicomplextip')
+            }
         });
 })();

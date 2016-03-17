@@ -123,7 +123,7 @@
                 restrict: "E",
                 replace: true,
                 transclude: true,
-                template: templates.schema.header.url,
+                templateUrl: templates.schema.header.url,
                 scope: {
                     $data: "=data"
                 },
@@ -174,6 +174,8 @@
         })
 
         .directive('schemaItem', function ($compile, templates) {
+
+            var schemas = templates.schema;
 
             return {
                 restrict: "E",
@@ -265,9 +267,9 @@
                             }
                         });
 
-                        getTemplate().getHtml().then(function(html) {
+                        getTemplate().getHtml().then(function (html) {
                             if (schema.tipMsg() != null && scope.$hastip)
-                                return templates.multiComplex_tip.getHtml().then(function(tipHtml){
+                                return schemas.multiComplex_tip.getHtml().then(function (tipHtml) {
                                     compileTemplate(html + tipHtml);
                                 });
                             compileTemplate(html);
@@ -321,25 +323,25 @@
                         function getTemplate() {
                             switch (schema.type()) {
                                 case fieldTypes.INPUT:
-                                    return templates.input;
+                                    return schemas.input;
                                 case fieldTypes.DATE:
-                                    return templates.date;
+                                    return schemas.date;
                                 case fieldTypes.DATETIME:
-                                    return templates.datetime;
+                                    return schemas.datetime;
                                 case fieldTypes.TEXTAREA:
-                                    return templates.textarea;
+                                    return schemas.textarea;
                                 case fieldTypes.SINGLE_CHECK:
-                                    return templates.select;
+                                    return schemas.select;
                                 case fieldTypes.RADIO:
-                                    return templates.radio;
+                                    return schemas.radio;
                                 case fieldTypes.MULTI_CHECK:
-                                    return templates.checkbox;
+                                    return schemas.checkbox;
                                 case fieldTypes.LABEL:
-                                    return templates.label;
+                                    return schemas.label;
                                 case fieldTypes.MULTI_COMPLEX:
-                                    return templates.multiComplex;
+                                    return schemas.multiComplex;
                                 case fieldTypes.COMPLEX:
-                                    return scope.$complex ? templates.multi_in_complex : templates.complex;
+                                    return scope.$complex ? schemas.multi_in_complex : schemas.complex;
                                 default:
                                     return null;
                             }
@@ -354,7 +356,7 @@
                             var tempValues = [];
                             var tempFieldMap;
 
-                            data.complexValues.forEach(function(value) {
+                            data.complexValues.forEach(function (value) {
 
                                 tempFieldMap = {};
 
