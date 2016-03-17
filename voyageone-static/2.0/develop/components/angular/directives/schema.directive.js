@@ -57,22 +57,22 @@
         '<div class="col-sm-2" ng-if="showHtmlData.isMultiComplex"><button class="btn btn-success" ng-click="addField($$data)"><i class="fa fa-plus"></i>{{\'BTN_ADD\' | translate}}</button></div>' +
         '<div class="row" ng-repeat="tipMsg in showHtmlData.tipMsg"><div class="col-sm-8 col-sm-offset-2 text-warnings"><i class="icon fa fa-bell-o"></i>&nbsp;{{tipMsg}}</div></div>' +
         '</div>',
-        label: '<input style="min-width: 150px; max-width: 250px;" type="text" readonly ng-model="vm.$$data.value" class="form-control">',
-        input: '<input style="min-width: 150px; max-width: 250px;" ng-model="vm.$$data.value" class="form-control" %replaceInfo%>',
-        date: '<div class="input-group" style="width: 180px;"><input %replaceInfo% type="text" class="form-control" datepicker-popup ng-model="vm.$$data.value" date-model-format="yyyy-MM-dd" is-open="datePicker" close-text="Close" /><span class="input-group-btn"><button %replaceInfo% type="button" class="btn btn-default" ng-click="datePicker = !datePicker"><i class="glyphicon glyphicon-calendar"></i></button></span></div>',
-        datetime: '<div class="input-group" style="width: 180px;"><input %replaceInfo% type="text" class="form-control" datepicker-popup ng-model="vm.$$data.value" date-model-format="yyyy-MM-dd HH:mm:ss" is-open="datePicker" close-text="Close" /><span class="input-group-btn"><button %replaceInfo% type="button" class="btn btn-default" ng-click="datePicker = !datePicker"><i class="glyphicon glyphicon-calendar"></i></button></span></div>',
-        textarea: '<textarea style="min-width: 150px; max-width: 650px;" class="form-control no-resize" ng-model="vm.$$data.value" rows="{{showHtmlData.rowNum}}" %replaceInfo%></textarea>',
-        select: '<select style="min-width: 150px; max-width: 250px;" %replaceInfo% class="form-control" ng-model="vm.$$data.value.value" ng-options="option.value as option.displayName for option in vm.$$data.options"> <option value="">{{\'TXT_SELECT_NO_VALUE\' | translate}}</option></select>',
+        label: '<input  type="text" readonly ng-model="vm.$$data.value" class="form-control">',
+        input: '<input  ng-model="vm.$$data.value" class="form-control" %replaceInfo%>',
+        date: '<div class="input-group" ><input %replaceInfo% type="text" class="form-control" uib-datepicker-popup ng-model="vm.$$data.value" date-model-format="yyyy-MM-dd" is-open="datePicker" close-text="Close" /><span class="input-group-btn"><button %replaceInfo% type="button" class="btn btn-default" ng-click="datePicker = !datePicker"><i class="glyphicon glyphicon-calendar"></i></button></span></div>',
+        datetime: '<div class="input-group" ><input %replaceInfo% type="text" class="form-control" uib-datepicker-popup ng-model="vm.$$data.value" date-model-format="yyyy-MM-dd HH:mm:ss" is-open="datePicker" close-text="Close" /><span class="input-group-btn"><button %replaceInfo% type="button" class="btn btn-default" ng-click="datePicker = !datePicker"><i class="glyphicon glyphicon-calendar"></i></button></span></div>',
+        textarea: '<textarea  class="form-control no-resize" ng-model="vm.$$data.value" rows="{{showHtmlData.rowNum}}" %replaceInfo%></textarea>',
+        select: '<select  %replaceInfo% class="form-control" ng-model="vm.$$data.value.value" ng-options="option.value as option.displayName for option in vm.$$data.options"> <option value="">{{\'TXT_SELECT_NO_VALUE\' | translate}}</option></select>',
         radio: '<label class="checkbox-inline c-radio" ng-repeat="option in vm.$$data.options"><input name="{{vm.$$data.id}}" type="radio" ng-value="option.value" ng-model="vm.$$data.value.value"><span class="fa fa-check"></span> {{option.displayName}}</label>',
         checkbox: '<label class="checkbox-inline c-checkbox" ng-repeat="option in vm.$$data.options"><input type="checkbox" ng-value="option.value" ng-click="checkboxValue(option.value)" ng-checked="isSelected(option.value)"><span class="fa fa-check"></span> {{option.displayName}}</label>',
         multiComplex: '<table class="table text-center">' +
         '<thead><tr>' +
-        '<th ng-repeat="field in vm.$$data.fields" ng-class="{\'vo_reqfield\': showHtmlData.isRequired}" class="text-center" style="min-width: 180px;">{{field.name}}</th>' +
-        '<th ng-if="!showHtmlData.notShowEdit" style="min-width: 60px;" class="text-center" translate="TXT_ACTION"></th>' +
+        '<th ng-repeat="field in vm.$$data.fields" ng-class="{\'vo_reqfield\': showHtmlData.isRequired}" class="text-center" >{{field.name}}</th>' +
+        '<th ng-if="!showHtmlData.notShowEdit"  class="text-center" translate="TXT_ACTION"></th>' +
         '</tr></thead>' +
         '<tbody><tr ng-repeat="value in vm.$$data.complexValues">' +
         '<td class="text-left" ng-repeat="field in value.fieldMap"><div class="tableLayer"><p ng-if="field.type != \'COMPLEX\'">&nbsp;</p><p><schema-item data="field" hastip="true" complex="true"></schema-item></p></div></td>' +
-        '<td ng-if="!showHtmlData.notShowEdit" style="min-width: 60px;"><button title="{\'BTN_DELETE\' | translate}" class="btn btn-danger btn-xs" ng-click="delField($index)"><i class="fa  fa-trash-o"></i></button></td>' +
+        '<td ng-if="!showHtmlData.notShowEdit" ><button title="{\'BTN_DELETE\' | translate}" class="btn btn-danger btn-xs" ng-click="delField($index)"><i class="fa  fa-trash-o"></i></button></td>' +
         '</tr></tbody>' +
         '</table>',
         complex: '<schema-header ng-repeat="field in vm.$$data.fields" data="field"><schema-item data="field"></schema-item></schema-header>',
@@ -347,6 +347,8 @@
                         scope.showHtmlData = angular.copy(schema.config);
                         element.html($compile(tempHtml)(scope));
 
+                        field.form = scope.schemaForm;
+
                         /**
                          * 设置checkbox被选中的value值处理
                          * @param value
@@ -462,8 +464,11 @@
                                     case fieldTypes.RADIO:
                                         if (!_.isEmpty(data.complexValue.fieldMap))
                                             field.value = data.complexValue.fieldMap[field.id].value;
-                                        else
+                                        else {
                                             field.value = data.defaultComplexValue.fieldMap[field.id].value;
+                                            console.log();
+                                        }
+
                                         break;
                                     case fieldTypes.MULTI_INPUT:
                                     case fieldTypes.MULTI_CHECK:
