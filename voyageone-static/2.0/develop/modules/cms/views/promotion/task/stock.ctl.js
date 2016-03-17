@@ -77,7 +77,7 @@ define([
                 });
             },
 
-        search: function (status, selectRowsFactory) {
+            search: function (status, selectRowsFactory) {
                 var main = this;
                 main.tempStockListSelect = new main.selectRowsFactory();
                 if (status != undefined)  {

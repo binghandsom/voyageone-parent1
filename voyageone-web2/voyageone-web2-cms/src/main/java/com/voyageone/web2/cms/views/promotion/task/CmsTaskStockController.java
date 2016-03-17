@@ -809,7 +809,7 @@ public class CmsTaskStockController extends CmsController {
         byte[] data = cmsTaskStockService.getExcelFileStockInfo(searchParam);
         // 返回
 //        return genResponseEntityFromBytes("fileName", new byte[]{});
-        return genResponseEntityFromBytes("库存隔离_" + DateTimeUtil.getLocalTime(getUserTimeZone())+".xlsx", data);
+        return genResponseEntityFromBytes("StockInfo_" + DateTimeUtil.getLocalTime(getUserTimeZone())+".xlsx", data);
     }
 
     /**
