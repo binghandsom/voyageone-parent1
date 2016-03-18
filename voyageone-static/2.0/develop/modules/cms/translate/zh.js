@@ -212,7 +212,6 @@ define(function(){
         "TXT_PENDING":"等待",
         "TXT_SUCCESS":"成功",
         "TXT_FAIL":"失败",
-        "TXT_BASE_ATTRIBUTE": "基础属性",
         "TXT_PRICE_ATTRIBUTE": "价格属性",
         "TXT_SALES_ATTRIBUTE": "销售属性",
         "TXT_PERSONAL_FINISHED_TRANSLATION": "个人完成翻译数",
@@ -270,11 +269,12 @@ define(function(){
         "TXT_MSG_CODE_IN_OTHER": "你提交的商品,已经在其他任务中.你确定要继续?",
         "TXT_MSG_REIMPORT_BEAT": "从新上传会覆盖原数据, 意味着之前的数据将被清空. 你确定要继续么?",
         "TXT_MSG_ERROR_BEAT_ITEM": "这个任务的商品信息好像有问题? 你确定要修改它的状态?",
-        "TXT_MSG_INPUT_WORD_LENCHK": "你还可以输入",
-        "TXT_MSG_INPUT_WORD_LENCHK2": "个文字",
+        "TXT_MSG_INPUT_WORD_LENCHK": "你还可以输入 ",
+        "TXT_MSG_INPUT_WORD_LENCHK2": " 个文字",
         "TXT_MSG_FIELD_VAL_INVALID": "属性(字段)的值无效, 请根据提示修改.",
-        "TXT_MSG_INPUT_WORD_LENLOWLIMIT": "请至少输入",
+        "TXT_MSG_INPUT_WORD_LENLOWLIMIT": "请至少输入 ",
         "TXT_MSG_INPUT_WORD_LENLIMIT": "已经达到最大长度字符数限制",
+        "TXT_MSG_HAVE_UN_TRANSLATED_TASK": "您还有未完成的翻译项目, 请完成后再获取新的任务!",
 
 
         "BTN_CREATE_TASK": "新建任务",
