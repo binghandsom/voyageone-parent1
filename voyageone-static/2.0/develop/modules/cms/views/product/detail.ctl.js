@@ -7,22 +7,41 @@
 
 define([
     'cms',
+    'underscore',
     'modules/cms/enums/Status',
     'modules/cms/enums/FieldTypes',
     'modules/cms/controller/popup.ctl',
     'modules/cms/service/product.detail.service'
-], function (cms, Status, FieldTypes) {
+], function (cms, _, Status, FieldTypes) {
 
-    function validation(fieldList) {
-        return !fieldList.some(function (field) {
+    /**
+     * 验证一组字段, 是否通过了 ng-form 验证
+     * @param {object|Array} fields
+     * @returns {*}
+     */
+    function validFields(fields) {
+        return _.any(fields, function (field) {
             // 暂时不检查超复杂类型
             if (field.type === FieldTypes.multiComplex)
                 return false;
             // 如果是复杂类型, 并且启用了检查, 那么就递归
             if (field.form && field.type === FieldTypes.complex)
-                return !validation(field.fields);
+                return !validFields(field.fields);
             // 简单类型就直接检查
             return field.$valid === false;
+        });
+    }
+
+    function validSchema(schema) {
+        if (!validFields(schema.masterFields))
+            return false;
+        var skuValues = schema.skuFields.complexValues;
+        // 如果没有 sku 字段, 则默认返回通过.
+        if (!skuValues || !skuValues.length)
+            return true;
+        return !skuValues.some(function(value){
+            if (!value.fieldMap) return false;
+            return !validFields(value.fieldMap);
         });
     }
 
@@ -63,16 +82,17 @@ define([
                     })
             },
 
+            validation: function () {
+
+            },
+
             // 保存所有的变更
             updateProductDetail: function () {
                 var self = this;
 
                 // 尝试检查商品的 field 验证
-                var fields = self.productDetails.masterFields;
-
-                if (!validation(fields)) {
+                if (!validSchema(self.productDetails))
                     return self.alert('TXT_MSG_UPDATE_FAIL');
-                }
 
                 // 推算产品状态
                 // 如果该产品以前不是approve,这次变成approve的
