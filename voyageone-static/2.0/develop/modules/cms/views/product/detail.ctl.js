@@ -21,9 +21,12 @@ define([
      */
     function validFields(fields) {
         return !_.any(fields, function (field) {
-            // 暂时不检查超复杂类型
-            if (field.type === FieldTypes.multiComplex)
-                return false;
+            if (field.form && field.type === FieldTypes.multiComplex) {
+                return !field.complexValues.some(function(value){
+                    if (!value.fieldMap) return false;
+                    return !validFields(value.fieldMap);
+                });
+            }
             // 如果是复杂类型, 并且启用了检查, 那么就递归
             if (field.form && field.type === FieldTypes.complex)
                 return !validFields(field.fields);
