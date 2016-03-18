@@ -228,6 +228,8 @@ public class ProductSkuService extends BaseService {
         if (bulkList.size() > 0) {
             BulkWriteResult bulkWriteResult = cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$set");
             result = bulkWriteResult.getInsertedCount() + bulkWriteResult.getModifiedCount();
+
+            updateGroupPrice(channelId, productPrices);
         }
 
         return result;
@@ -244,21 +246,24 @@ public class ProductSkuService extends BaseService {
         JomgoQuery queryObject = new JomgoQuery();
         queryObject.setProjection("prodId", "fields", "skus", "groups");
 
+        List<BulkUpdateModel> bulkList = new ArrayList<>();
         for(ProductPriceBean model : productPrices){
 
             productQueryMap.put("prodId", model.getProductId());
             queryObject.setQuery("{\"prodId\":" + model.getProductId() + "}");
             findModel = cmsBtProductDao.selectOneWithQuery(queryObject, channelId);
-
             for(CmsBtProductModel_Group_Platform platform : findModel.getGroups().getPlatforms()){
                 List<CmsBtProductModel> products = productGroupService.getProductIdsByGroupId(channelId, platform.getGroupId(), false);
+                bulkList.add(calculatePriceRange(products, platform.getGroupId()));
             }
-
         }
-
+        if(bulkList.size() > 0){
+            cmsBtProductDao.bulkUpdateWithMap(channelId, bulkList, null, "$set");
+            bulkList.clear();
+        }
     }
 
-    private Map<String, Double> calculatePriceRange(List<CmsBtProductModel> products){
+    private BulkUpdateModel calculatePriceRange(List<CmsBtProductModel> products, Long groupId){
 
         Double priceSaleSt = null;
         Double priceSaleEd = null;
@@ -266,6 +271,7 @@ public class ProductSkuService extends BaseService {
         Double priceRetailEd = null;
         Double priceMsrpSt = null;
         Double priceMsrpEd = null;
+
         for(CmsBtProductModel product : products){
             if (priceSaleSt == null || product.getFields().getPriceSaleSt() < priceSaleSt){
                 priceSaleSt = product.getFields().getPriceSaleSt();
@@ -288,8 +294,22 @@ public class ProductSkuService extends BaseService {
                 priceMsrpEd = product.getFields().getPriceMsrpEd();
             }
         }
-//        Map
-        return null;
+
+        Map<String, Object> updateMap = new HashMap<>();
+        updateMap.put("groups.platforms.$.priceSaleSt",priceSaleSt);
+        updateMap.put("groups.platforms.$.priceSaleEd",priceSaleEd);
+        updateMap.put("groups.platforms.$.priceRetailSt",priceRetailSt);
+        updateMap.put("groups.platforms.$.priceRetailEd",priceRetailEd);
+        updateMap.put("groups.platforms.$.priceMsrpSt",priceMsrpSt);
+        updateMap.put("groups.platforms.$.priceMsrpEd",priceMsrpEd);
+
+        BulkUpdateModel bulk = new BulkUpdateModel();
+        bulk.setUpdateMap(updateMap);
+        HashMap<String, Object> queryMap = new HashMap<>();
+        queryMap.put("groups.platforms.groupId", groupId);
+        bulk.setQueryMap(queryMap);
+
+        return bulk;
     }
     /**
      * 批量更新价格信息 根据CodeList
