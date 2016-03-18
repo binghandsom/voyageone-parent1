@@ -8,12 +8,27 @@
 define([
     'cms',
     'modules/cms/enums/Status',
+    'modules/cms/enums/FieldTypes',
     'modules/cms/controller/popup.ctl',
     'modules/cms/service/product.detail.service'
-], function (cms, Status) {
+], function (cms, Status, FieldTypes) {
+
+    function validation(fieldList) {
+        return !fieldList.some(function(field) {
+            // 暂时不检查超复杂类型
+            if (field.type === FieldTypes.multiComplex)
+                return false;
+            // 如果是复杂类型, 并且启用了检查, 那么就递归
+            if (field.form && field.type === FieldTypes.complex)
+                return !validation(field.fields);
+            // 简单类型就直接检查
+            return field.$valid === false;
+        });
+    }
+
     return cms.controller('productDetailController', (function () {
 
-        function ProductDetailController($routeParams, $translate, productDetailService, feedMappingService, notify, confirm) {
+        function ProductDetailController($routeParams, $translate, productDetailService, feedMappingService, notify, confirm, alert) {
 
             this.routeParams = $routeParams;
             this.translate = $translate;
@@ -21,6 +36,7 @@ define([
             this.feedMappingService = feedMappingService;
             this.notify = notify;
             this.confirm = confirm;
+            this.alert = alert;
 
             this.productDetails = null;
             this.productDetailsCopy = null;
@@ -50,6 +66,13 @@ define([
             // 保存所有的变更
             updateProductDetail: function () {
                 var self = this;
+
+                // 尝试检查商品的 field 验证
+                var fields = self.productDetails.masterFields;
+
+                if (!validation(fields)) {
+                    return self.alert('TXT_MSG_UPDATE_FAIL');
+                }
 
                 // 推算产品状态
                 // 如果该产品以前不是approve,这次变成approve的

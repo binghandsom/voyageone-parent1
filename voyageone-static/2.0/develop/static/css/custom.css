@@ -9,6 +9,8 @@ input[datepicker-popup][readonly] {
 ul[uib-datepicker-popup-wrap] table { border: 0; }
 ul[uib-datepicker-popup-wrap] button { border: 0; }
 
-input.ng-invalid, select.ng-invalid {
+schema-item .ng-invalid input,
+schema-item .ng-invalid select,
+schema-item .ng-invalid .c-checkbox span{
     border: 1px solid red;
 }
