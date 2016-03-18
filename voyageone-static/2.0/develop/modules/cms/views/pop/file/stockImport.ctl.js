@@ -13,12 +13,17 @@ define([
                 url: urls.root + "/" + urls.importStockInfo
             });
 
+            var task_id = data.task_id;
+            var platformList = JSON.stringify(data.platformList)
+
             $scope.initialize  = function () {
 
             }
             $scope.upload = function(){
-                uploader.queue[0].formData = [{"task_id":"5"}];
-                uploader.queue[0].upload();
+                var uploadQueue = uploader.queue;
+                var uploadItem = uploadQueue[uploadQueue.length - 1];
+                uploadItem.formData = [{"task_id":task_id,"platformList":platformList}];
+                uploadItem.upload();
                 $scope.vm.messager ="读入中";
             }
 
