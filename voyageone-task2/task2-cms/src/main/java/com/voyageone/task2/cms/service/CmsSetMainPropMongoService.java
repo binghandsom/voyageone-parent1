@@ -94,7 +94,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
     @Override
     public String getTaskName() {
-        return "CmsSetMainPropJob";
+        return "CmsSetMainPropMongoJob";
     }
 
     /**
