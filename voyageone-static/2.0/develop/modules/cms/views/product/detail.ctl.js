@@ -20,7 +20,7 @@ define([
      * @returns {*}
      */
     function validFields(fields) {
-        return _.any(fields, function (field) {
+        return !_.any(fields, function (field) {
             // 暂时不检查超复杂类型
             if (field.type === FieldTypes.multiComplex)
                 return false;
@@ -80,10 +80,6 @@ define([
                         self.errorMsg = res.message;
                         self.showInfoFlag = false;
                     })
-            },
-
-            validation: function () {
-
             },
 
             // 保存所有的变更
