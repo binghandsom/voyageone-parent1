@@ -57,7 +57,7 @@ var publish = {
   static: {
     path: 'publish/static/' + versions.statics,
     fonts: {
-      src: 'develop/static/fonts/**',
+      src: 'develop/static/**/fonts/*',
       dist: 'publish/static/' + versions.statics + '/fonts'
     },
     img: {

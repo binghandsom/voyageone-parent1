@@ -11,6 +11,7 @@
     "gulp-minify-css": "*",
     "gulp-uglify": "*",
     "gulp-sourcemaps": "*",
+    "gulp-ng-html2js": "*",
     "through2": "*",
     "gulp-util": "*",
     "gulp-minify-html": "*",
