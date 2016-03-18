@@ -225,7 +225,48 @@ define([
         function getCatPath (catId) {
             return _.findWhere($scope.vm.masterData.categoryList, {catId: catId});
         }
-    };
+
+        /**
+         * 添加新search选项
+         */
+        $scope.list=[
+            {
+                inputVal:"input value 1",
+                selectOption:[
+                    {options:"option_1"},
+                    {options:"option_2"},
+                    {options:"option_3"},
+                    {options:"option_4"}
+                ]
+            }
+        ];
+        $scope.add=function(){
+            $scope.newObj = {
+                inputVal:"input value 2",
+                selectOption:[
+                    {options:"option_a"},
+                    {options:"option_b"},
+                    {options:"option_c"},
+                    {options:"option_d"}
+                ]
+            };
+            if($scope.list.length < 5){
+                $scope.list.push($scope.newObj);
+            }else{
+                alert("最多只能添加5项")
+            }
+        };
+
+        $scope.del=function(idx){
+            if($scope.list.length >1){
+                $scope.list.splice(idx,1);
+            }else{
+                alert("最少保留一项")
+            }
+
+        };
+
+    }
 
     searchIndex.$inject = ['$scope', '$routeParams', 'searchAdvanceService', 'feedMappingService', '$productDetailService', 'confirm', '$translate', 'notify', 'alert'];
     return searchIndex;
