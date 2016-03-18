@@ -53,7 +53,7 @@ define([
             if ($scope.vm.searchInfo.codes)
                 data.codes = $scope.vm.searchInfo.codes.split("\n");
             data.offset = ($scope.vm.errorPageOption.curr - 1) * $scope.vm.errorPageOption.size;
-            data.size = $scope.vm.errorPageOption.size;
+            data.rows = $scope.vm.errorPageOption.size;
             $errorListService.search(data)
                 .then(function (res) {
                     $scope.vm.errorList = res.data.errorList;
