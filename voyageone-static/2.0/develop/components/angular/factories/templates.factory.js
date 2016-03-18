@@ -10,14 +10,20 @@
     }
 
     Template.prototype = {
-        getHtml: function() {
+        getHtml: function () {
+            var html = this.$cache.get(this.url);
+            if (html) return this.$q(function (resolve) {
+                resolve(html);
+            });
             return this.$req(this.url);
         }
     };
 
     angular.module('voyageone.angular.factories.templates', [])
-        .run(function ($templateRequest) {
+        .run(function ($templateCache, $templateRequest, $q) {
+            Template.prototype.$cache = $templateCache;
             Template.prototype.$req = $templateRequest;
+            Template.prototype.$q = $q;
         })
         .constant('templates', {
             schema: {
