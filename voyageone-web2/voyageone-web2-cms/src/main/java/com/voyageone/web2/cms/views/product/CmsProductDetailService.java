@@ -302,7 +302,7 @@ public class CmsProductDetailService {
 
         productService.updateProduct(channelId, productUpdateBean);
 
-        return modified;
+        return newModified;
     }
 
     /**
