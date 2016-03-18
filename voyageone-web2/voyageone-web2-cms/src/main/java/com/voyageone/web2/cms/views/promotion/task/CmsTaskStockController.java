@@ -827,8 +827,7 @@ public class CmsTaskStockController extends CmsController {
 
         byte[] data = cmsTaskStockService.getExcelFileStockInfo(searchParam);
         // 返回
-//        return genResponseEntityFromBytes("fileName", new byte[]{});
-        return genResponseEntityFromBytes("StockInfo_" + DateTimeUtil.getLocalTime(getUserTimeZone())+".xlsx", data);
+        return genResponseEntityFromBytes("StockInfo_" + DateTimeUtil.getLocalTime(getUserTimeZone(), DateTimeUtil.DATE_TIME_FORMAT_2)+".xlsx", data);
     }
 
     /**
@@ -891,7 +890,7 @@ public class CmsTaskStockController extends CmsController {
      *
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK.IMPORT_STOCK_INFO)
-    public AjaxResponse importStockInfo(@RequestBody Map param) {
+    public AjaxResponse importStockInfo(@RequestParam Map param) {
 
         // 返回
         return success(null);
