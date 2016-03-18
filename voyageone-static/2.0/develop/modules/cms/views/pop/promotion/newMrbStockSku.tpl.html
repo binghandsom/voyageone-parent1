@@ -1,4 +1,4 @@
-<div class="vo_modal" ng-init="$ctrl.init()">
+<div class="vo_modal">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$close()"><span
                 aria-hidden="true"><i class="fa fa-close"></i></span></button>
@@ -33,6 +33,12 @@
                     <button class="btn btn-primary btn-xs" ng-click="$ctrl.getUsableStock()"><i class="glyphicon glyphicon-share-alt"></i>&nbsp;{{'TXT_GET_USABLE_STOCK' | translate}}</button>
                 </div>
             </div>
+            <div class="form-group" ng-repeat="property in $ctrl.propertyStockList">
+                <label class="col-sm-3 control-label">{{property.name}}</label>
+                <div class="col-sm-7">
+                    <input type="text" class="form-control" ng-model="property.value">
+                </div>
+            </div>
             <div ng-repeat="platform in $ctrl.platformStockList" class="form-group">
                 <label class="col-sm-3 control-label">{{platform.cartName}} {{'TXT_SEPARATE_QUANTITY' | translate}}</label>
                 <div class="col-sm-4">
@@ -48,7 +54,7 @@
         </form>
     </div>
     <div class="modal-footer">
-        <button class="btn btn-default" ng-click="$close()"><i class="fa fa-remove"></i> {{'BTN_CANCEL' | translate}}</button>
+        <button class="btn btn-default" ng-click="$ctrl.cancel()"><i class="fa fa-remove"></i> {{'BTN_CANCEL' | translate}}</button>
         <button class="btn btn-vo" ng-click="$ctrl.saveNewRecord()"><i class="glyphicon glyphicon-floppy-disk"></i> {{'BTN_SAVE' | translate}}</button>
     </div>
 </div><!-- .vo_modal -->

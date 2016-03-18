@@ -44,6 +44,14 @@ public class CmsBtStockSeparateItemDao extends BaseDao {
         return delete("delete_stock_separate_item", param);
     }
 
+    public int insertStockSeparateItem(Map<String, Object> param) {
+        return insert("insert_cms_bt_stock_separate_item", param);
+    }
+
+    public List<Map<String, Object>> selectStockSeparateDetailAll(Map<String, Object> param) {
+        return selectList("select_stock_separate_detail_all", param);
+    }
+
     public List<Map<String, Object>> selectExcelStockInfo(Map<String, Object> param) {
         return selectList("select_stock_separate_item_excel_map", param);
     }

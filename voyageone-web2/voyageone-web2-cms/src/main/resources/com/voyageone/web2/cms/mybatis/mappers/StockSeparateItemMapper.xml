@@ -40,9 +40,9 @@
             and (status in
             <foreach collection="statusList" item="status" open="(" separator="," close=")">
                 #{status}
-        </foreach>
-        )
-    </if>
+            </foreach>
+            )
+        </if>
     </select>
 
     <select id="select_stock_separate_item_by_sql_object" resultType="Object" parameterType="HashMap">
@@ -52,9 +52,9 @@
     <select id="select_stock_separate_item_by_sql_map" resultType="HashMap" parameterType="HashMap">
         ${sql}
     </select>
+    <!--select count(*)-->
 
     <!--<select id="select_stock_separate_item_cnt" resultType="int" parameterType="HashMap">-->
-         <!--select count(*)-->
             <!--from   voyageone_cms2.cms_bt_stock_separate_item-->
             <!--where task_id = #{taskId}-->
             <!--<if test="status !=null">-->
@@ -158,6 +158,100 @@
             and cart_id = #{cartId,jdbcType=INTEGER}
         </if>
     </delete>
+
+    <insert id="insert_cms_bt_stock_separate_item" parameterType="HashMap" useGeneratedKeys="true" keyProperty="seq">
+        insert into voyageone_cms2.cms_bt_stock_separate_item (
+        task_id,
+        product_model,
+        product_code,
+        sku,
+        cart_id,
+        <if test="property1 != null" >
+        property1,
+        </if>
+        <if test="property2 != null" >
+        property2,
+        </if>
+        <if test="property3 != null" >
+        property3,
+        </if>
+        <if test="property4 != null" >
+        property4,
+        </if>
+        qty,
+        separate_qty,
+        <if test="status != null" >
+        status,
+        </if>
+        created,
+        creater,
+        modified,
+        modifier
+        ) value (
+        #{taskId},
+        #{productModel},
+        #{productCode},
+        #{sku},
+        #{cartId},
+        <if test="property1 != null" >
+        #{property1},
+        </if>
+        <if test="property2 != null" >
+        #{property2},
+        </if>
+        <if test="property3 != null" >
+        #{property3},
+        </if>
+        <if test="property4 != null" >
+        #{property4},
+        </if>
+        #{qty},
+        #{separateQty},
+        <if test="status != null" >
+        #{status},
+        </if>
+        now(),
+        #{creater},
+        now(),
+        #{creater}
+        )
+    </insert>
+
+    <select id="select_stock_separate_detail_all" resultType="HashMap" parameterType="HashMap">
+        (select
+        '一般库存隔离' as type,
+        t2.task_name as taskName,
+        t1.separate_qty as qty
+        from voyageone_cms2.cms_bt_stock_separate_item${tableNameSuffix} t1
+        inner join voyageone_cms2.cms_bt_tasks t2 on t1.task_id = t2.task_id
+        where
+        t1.sku = #{sku}
+        and t1.cart_id = #{cartId}
+        and t1.task_id = #{taskId}
+        and (t1.status in
+            <foreach collection="statusStockList" item="status" open="(" separator="," close=")">
+                #{status}
+            </foreach>
+            )
+        )
+        union
+        (select
+            '增量库存隔离' as type,
+            t2.sub_task_Name as taskName,
+            t1.increment_qty as qty
+        from voyageone_cms2.cms_bt_stock_separate_increment_item${tableNameSuffix} t1
+        inner join voyageone_cms2.cms_bt_stock_separate_increment_task t2 on t1.sub_task_id = t2.sub_task_id
+        where
+        t1.sku = #{sku}
+        and t2.cart_id = #{cartId}
+        and t2.task_id = #{taskId}
+        and (t1.status in
+            <foreach collection="statusStockIncrementList" item="status" open="(" separator="," close=")">
+                #{status}
+            </foreach>
+            )
+        )
+    </select>
 
     <select id="select_stock_separate_item_excel_map" resultType="HashMap" parameterType="HashMap">
         select

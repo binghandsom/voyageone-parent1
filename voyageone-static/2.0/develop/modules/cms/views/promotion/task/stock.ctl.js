@@ -51,7 +51,7 @@ define([
             this.realStockPageOption = {
                 curr: 1,
                 total: 0,
-                size: 10,
+                size: 20,
                 fetch: this.getRealStockList.bind(this)
             };
             this.selectRowsFactory = selectRowsFactory;
@@ -77,7 +77,7 @@ define([
                 });
             },
 
-        search: function (status, selectRowsFactory) {
+        search: function (status) {
                 var main = this;
                 main.tempStockListSelect = new main.selectRowsFactory();
                 if (status != undefined)  {
@@ -100,7 +100,7 @@ define([
                     "start1" :  0,
                     "length1" : 20,
                     "start2" :  0,
-                    "length2" : 10
+                    "length2" : 20
                 }).then(function (res) {
                     main.tempStockListSelect.clearCurrPageRows();
                     main.readyNum = res.data.readyNum;
@@ -160,7 +160,7 @@ define([
                     "taskId" : this.taskId,
                     "model" : this.model,
                     "code" : this.code,
-                    "sku" : this,
+                    "sku" : this.sku,
                     "qtyFrom" : this.qtyFrom,
                     "qtyTo" : this.qtyTo,
                     "status" : this.status,
@@ -181,9 +181,11 @@ define([
                     "index" : index
                 }).then(function (res) {
                     main.stockList = res.data.stockList;
-                    main.notify.success('更新成功');
+                    main.notify.success('TXT_MSG_UPDATE_SUCCESS');
                 }, function (err) {
-                    //main.alert('TXT_MSG_UPDATE_FAIL');
+                    if (err.displayType == null) {
+                        main.alert('TXT_MSG_UPDATE_FAIL');
+                    }
                 })
             },
 
@@ -222,10 +224,12 @@ define([
                         "taskId": main.taskId,
                         "stockInfo": stock
                     }).then(function (res) {
-                        main.notify.success('删除成功');
+                        main.notify.success('TXT_MSG_DELETE_SUCCESS');
                         main.search();
                     }, function (err) {
-                        //main.alert('TXT_MSG_DELETE_FAIL');
+                        if (err.displayType == null) {
+                            main.alert('TXT_MSG_DELETE_FAIL');
+                        }
                     })
                 })
             },

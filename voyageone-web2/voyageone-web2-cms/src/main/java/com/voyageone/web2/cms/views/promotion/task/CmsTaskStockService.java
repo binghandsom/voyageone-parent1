@@ -80,10 +80,10 @@ public class CmsTaskStockService extends BaseAppService {
     /**
      * 取得属性列表
      * 属性列表数据结构
-     *    {"value":"property1", "name":"品牌", "logic":"", "type":"", "show":false},
-     *    {"value":"property2", "name":"英文短描述", "logic":"Like", "type":"", "show":false},
-     *    {"value":"property3", "name":"性别", "logic":"", "type":"", "show":false}，
-     *    {"value":"property4", "name":"Size", "logic":"", "type":"int", "show":false}...
+     *    {"value":"property1", "name":"品牌", "logic":"", "type":"", "show":false, "value":""},
+     *    {"value":"property2", "name":"英文短描述", "logic":"Like", "type":"", "show":false, "value":""},
+     *    {"value":"property3", "name":"性别", "logic":"", "type":"", "show":false, "value":""}，
+     *    {"value":"property4", "name":"Size", "logic":"", "type":"int", "show":false, "value":""}...
      *
      * @param param 客户端参数
      * @return 获取取得属性列表
@@ -184,19 +184,6 @@ public class CmsTaskStockService extends BaseAppService {
         }
         return stockList;
     }
-
-    /**
-     * 获取实时库存状态一页表示的Sku
-     *
-     * @param param 客户端参数
-     * @return 实时库存状态一页表示的Sku
-     */
-//    public List<Object> geRealStockPageSkuList(Map param) {
-//        Map<String,Object> sqlParam = new HashMap<String,Object>();
-//        sqlParam.put("sql", getRealStockPageSkuSql(param));
-//        List<Object> skuList = cmsBtStockSeparateItemDao.selectStockSeparateItemBySqlObject(sqlParam);
-//        return  skuList;
-//    }
 
     /**
      * 库存隔离数据是否移到history表
@@ -480,7 +467,6 @@ public class CmsTaskStockService extends BaseAppService {
             Map<String, Object> sqlParam = new HashMap<String, Object>();
             sqlParam.put("taskId", taskId);
             sqlParam.put("skuList", skuList);
-//            sqlParam.put("cartId", cartId);
             sqlParam.put("tableNameSuffix", "");
             sqlParam.put("lang", param.get("lang"));
             List<Map<String, Object>> stockSeparateItemList = cmsBtStockSeparateItemDao.selectStockSeparateItem(sqlParam);
@@ -568,7 +554,8 @@ public class CmsTaskStockService extends BaseAppService {
             throw new BusinessException("选择的明细不存在！");
         }
         for (Map<String, Object> stockSeparateItem : stockSeparateItemList) {
-            if (!"0".equals(stockSeparateItem.get("status"))) {
+            String status = (String) stockSeparateItem.get("status");
+            if (!StringUtils.isEmpty(status) && !"0".equals(status)) {
                 throw new BusinessException("选择的明细不能删除！");
             }
         }
@@ -656,6 +643,15 @@ public class CmsTaskStockService extends BaseAppService {
         // 输入验证
         checkInputNewRecord(param);
 
+        // 插入库存隔离明细
+        simpleTransaction.openTransaction();
+        try {
+            insertNewRecord(param);
+        }catch (Exception e) {
+            simpleTransaction.rollback();
+            throw e;
+        }
+        simpleTransaction.commit();
     }
 
     /**
@@ -663,7 +659,7 @@ public class CmsTaskStockService extends BaseAppService {
      *
      * @param param 客户端参数
      */
-    public void checkInputNewRecord(Map param) throws BusinessException{
+    private void checkInputNewRecord(Map param) throws BusinessException{
         // Model
         String model = (String) param.get("model");
         // Code
@@ -672,7 +668,11 @@ public class CmsTaskStockService extends BaseAppService {
         String sku = (String) param.get("sku");
         // 可用库存
         String usableStock = (String) param.get("usableStock");
+        // 属性列表
+        List<Map<String,Object>> propertyStockList = (List<Map<String,Object>>) param.get("propertyStockList");
+        // 平台隔的离库存
         List<Map<String,Object>> platformStockList = (List<Map<String,Object>>) param.get("platformStockList");
+
         // Model输入check
         if (StringUtils.isEmpty(model) || model.getBytes().length > 50) {
             throw new BusinessException("Model必须输入且长度小于50！");
@@ -689,9 +689,22 @@ public class CmsTaskStockService extends BaseAppService {
         }
 
         // 可用库存输入check
-        if (StringUtils.isEmpty(usableStock) || !StringUtils.isDigit(usableStock) || usableStock.getBytes().length > 10) {
-            throw new BusinessException("可用库存必须输入小于11位的整数！");
+        if (StringUtils.isEmpty(usableStock) || !StringUtils.isDigit(usableStock) || usableStock.getBytes().length > 9) {
+            throw new BusinessException("可用库存必须输入小于10位的整数！");
         }
+
+        // 属性列表
+        for (Map<String,Object> property : propertyStockList) {
+            // 属性名
+            String name = (String) property.get("name");
+            // 属性值
+            String value = (String) property.get("value");
+            // 属性输入check
+            if (StringUtils.isEmpty(value) || value.getBytes().length > 500) {
+                throw new BusinessException(name + "必须输入且长度小于500！");
+            }
+        }
+
         // 隔离库存的平台数
         int stockCnt = 0;
         for (Map<String,Object> platformInfo : platformStockList) {
@@ -706,8 +719,8 @@ public class CmsTaskStockService extends BaseAppService {
             if (!StringUtils.isEmpty(qty) && dynamic) {
                 throw new BusinessException("隔离库存的值或动态,只能选择其一！");
             }
-            if (!StringUtils.isDigit(qty) || qty.getBytes().length > 10) {
-                throw new BusinessException("隔离库存的值必须输入小于11位的整数！");
+            if (!StringUtils.isDigit(qty) || qty.getBytes().length > 9) {
+                throw new BusinessException("隔离库存的值必须输入小于10位的整数！");
             }
             if (!StringUtils.isEmpty(qty)) {
                 stockCnt++;
@@ -728,6 +741,98 @@ public class CmsTaskStockService extends BaseAppService {
         if (stockSeparateItem.size() > 0) {
             throw new BusinessException("Sku已经存在！");
         }
+    }
+
+    /**
+     * 插入库存隔离明细
+     *
+     * @param param 客户端参数
+     */
+    private void insertNewRecord(Map param) {
+        // Model
+        String model = (String) param.get("model");
+        // Code
+        String code = (String) param.get("code");
+        // Sku
+        String sku = (String) param.get("sku");
+        // 可用库存
+        String usableStock = (String) param.get("usableStock");
+        // 属性列表
+        List<Map<String,Object>> propertyStockList = (List<Map<String,Object>>) param.get("propertyStockList");
+        // 平台隔的离库存
+        List<Map<String,Object>> platformStockList = (List<Map<String,Object>>) param.get("platformStockList");
+
+        // 插入库存隔离数据库
+        for (Map<String, Object> platformInfo : platformStockList) {
+            // 平台id
+            String cartId = (String) platformInfo.get("cartId");
+            // 平台隔离库存
+            String qty = (String) platformInfo.get("qty");
+            // 是否动态
+            boolean dynamic = (boolean) platformInfo.get("dynamic");
+
+            // 插入库存隔离数据库
+            Map<String, Object> sqlParam = new HashMap<String, Object>();
+            // 任务id
+            sqlParam.put("taskId", param.get("taskId"));
+            // Model
+            sqlParam.put("productModel", model);
+            // Code
+            sqlParam.put("productCode", code);
+            // Sku
+            sqlParam.put("sku", sku);
+            // 平台id
+            sqlParam.put("cartId", cartId);
+            // 属性列表
+            for (Map<String, Object> property : propertyStockList) {
+                // DB字段名
+                String propertyDB = (String) property.get("property");
+                // 属性值
+                String value = (String) property.get("value");
+                // 属性1
+                sqlParam.put(propertyDB, value);
+            }
+            // 可用库存
+            sqlParam.put("qty", usableStock);
+            // 该平台动态库存的场合
+            if (dynamic) {
+                sqlParam.put("separateQty", -1);
+            } else {
+                sqlParam.put("separateQty", qty);
+                sqlParam.put("status", "0");
+            }
+            sqlParam.put("creater", param.get("userName"));
+            cmsBtStockSeparateItemDao.insertStockSeparateItem(sqlParam);
+        }
+    }
+
+    /**
+     * 取得某个Sku的所有隔离详细
+     * 所有隔离详细列表数据结构
+     *              {"type":"一般库存隔离", "taskName":"天猫双11任务", "qty":"10" },
+     *              {"type":"增量库存隔离", "taskName":"天猫双11-增量1", "qty":"1" },
+     *              {"type":"增量库存隔离", "taskName":"天猫双11-增量2", "qty":"2" }...
+     *
+     * @param param 客户端参数
+     * @return 某个Sku的所有隔离详细
+     */
+    public List<Map<String,Object>> getSkuSeparationDetail(Map param) {
+
+        // 某个Sku的所有隔离详细
+        Map<String, Object> sqlParam = new HashMap<String, Object>();
+        // 任务id
+        sqlParam.put("taskId", param.get("taskId"));
+        // 平台id
+        sqlParam.put("cartId", param.get("cartId"));
+        // 平台id
+        sqlParam.put("sku", param.get("sku"));
+        // 一般库存隔离状态
+        sqlParam.put("statusStockList", Arrays.asList("2","4","5","6"));
+        // 增量库存隔离状态
+        sqlParam.put("statusStockIncrementList", Arrays.asList("2","4"));
+        List<Map<String, Object>> stockHistoryList = cmsBtStockSeparateItemDao.selectStockSeparateDetailAll(sqlParam);
+
+        return stockHistoryList;
 
     }
 
@@ -861,7 +966,10 @@ public class CmsTaskStockService extends BaseAppService {
         }
         sql += " t1.qty";
         sql += " from (select * from voyageone_cms2.cms_bt_stock_separate_item" + (String) param.get("tableNameSuffix");
-        sql += getWhereSql(param, true) ;
+        sql += getWhereSql(param, false) ;
+        if (!StringUtils.isEmpty((String) param.get("status"))) {
+            sql += " and sku in (select sku from voyageone_cms2.cms_bt_stock_separate_item" + (String) param.get("tableNameSuffix") + getWhereSql(param, false) +
+                    " and status = '" + (String) param.get("status") + "')";        }
         sql += " and cart_id = " + ((List<Map<String, Object>>)param.get("platformList")).get(0).get("cartId");
         sql += " order by sku";
         if ("1".equals(flg)) {
@@ -893,20 +1001,20 @@ public class CmsTaskStockService extends BaseAppService {
     }
 
 
-    /**
-     * 取得实时库存状态一页表示的Sku的Sql
-     *
-     * @param param 客户端参数
-     * @return 一页表示的Sku的Sql
-     */
-    private String getRealStockPageSkuSql(Map param){
-        String sql = "select sku from ( select distinct sku as sku from voyageone_cms2.cms_bt_stock_separate_item" + (String) param.get("tableNameSuffix");
-        sql += getWhereSql(param, true) + " order by product_code,sku) t1 ";
-        String start = String.valueOf(param.get("start2"));
-        String length = String.valueOf(param.get("length2"));
-        sql += " limit " + start + "," + length;
-        return sql;
-    }
+//    /**
+//     * 取得实时库存状态一页表示的Sku的Sql
+//     *
+//     * @param param 客户端参数
+//     * @return 一页表示的Sku的Sql
+//     */
+//    private String getRealStockPageSkuSql(Map param){
+//        String sql = "select sku from ( select distinct sku as sku from voyageone_cms2.cms_bt_stock_separate_item" + (String) param.get("tableNameSuffix");
+//        sql += getWhereSql(param, true) + " order by product_code,sku) t1 ";
+//        String start = String.valueOf(param.get("start2"));
+//        String length = String.valueOf(param.get("length2"));
+//        sql += " limit " + start + "," + length;
+//        return sql;
+//    }
 
     /**
      * 取得各种状态数量的Sql
@@ -928,9 +1036,8 @@ public class CmsTaskStockService extends BaseAppService {
      * @return 一页表示的Sku的Sql
      */
     private String getStockSkuCountSql(Map param){
-        String sql = "select count(sku) as count from voyageone_cms2.cms_bt_stock_separate_item" + (String) param.get("tableNameSuffix");
+        String sql = "select count(distinct sku) as count from voyageone_cms2.cms_bt_stock_separate_item" + (String) param.get("tableNameSuffix");
         sql += getWhereSql(param, true);
-        sql += " and cart_id = " + ((List<Map<String, Object>>)param.get("platformList")).get(0).get("cartId");
         return sql;
     }
 

@@ -273,7 +273,7 @@ define([
                 "skuMrbStockDetail": {
                     "templateUrl": "views/pop/promotion/skuMrbStockDetail.tpl.html",
                     "controllerUrl": "modules/cms/views/pop/promotion/skuMrbStockDetail.ctl",
-                    "controller": 'popSkuMrbStockDetailCtl'
+                    "controller": 'popSkuMrbStockDetailCtl as $ctrl'
                 },
                 "addMrbStockIncrement": {
                     "templateUrl": "views/pop/promotion/addStockIncrement.tpl.html",
@@ -787,7 +787,7 @@ define([
          * @type {openMrbstocksku}
          */
         $scope.openNewMrbStockSku = openNewMrbStockSku;
-        function openNewMrbStockSku(viewSize, data) {
+        function openNewMrbStockSku(viewSize, data, fnInitial) {
             require([popActions.promotion.newMrbStockSku.controllerUrl], function () {
                 $modal.open({
                     templateUrl: popActions.promotion.newMrbStockSku.templateUrl,
@@ -806,13 +806,19 @@ define([
          * 显示该sku的库存隔离明细
          */
         $scope.openSkuMrbStockDetail = openSkuMrbStockDetail;
-        function openSkuMrbStockDetail(viewSize, data) {
+        function openSkuMrbStockDetail(viewSize, taskId, cartId, data) {
             require([popActions.promotion.skuMrbStockDetail.controllerUrl], function () {
-                $uibModal.open({
+                $modal.open({
                     templateUrl: popActions.promotion.skuMrbStockDetail.templateUrl,
                     controller: popActions.promotion.skuMrbStockDetail.controller,
                     size: viewSize,
                     resolve: {
+                        taskId: function () {
+                            return taskId;
+                        },
+                        cartId: function () {
+                            return cartId;
+                        },
                         data: function () {
                             return data;
                         }
@@ -827,7 +833,7 @@ define([
         $scope.openAddMrbStockIncrement = openAddMrbStockIncrement;
         function openAddMrbStockIncrement(viewSize, data) {
             require([popActions.promotion.addMrbStockIncrement.controllerUrl], function () {
-                $uibModal.open({
+                $modal.open({
                     templateUrl: popActions.promotion.addMrbStockIncrement.templateUrl,
                     controller: popActions.promotion.addMrbStockIncrement.controller,
                     size: viewSize,

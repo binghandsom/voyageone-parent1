@@ -56,12 +56,6 @@
 								<label class="col-sm-4 control-label">{{'TXT_SHOW_FLG' | translate}}</label>
 								<div class="col-sm-8" style="padding-left:0px">
 									<label ng-repeat="property in $ctrl.propertyList" class="checkbox-inline c-checkbox"><input type="checkbox" ng-model="property.show"><span class="fa fa-check"></span>&nbsp;{{property.name}}</label>
-									<!--
-									<label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;品牌</label>
-									<label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;Name</label>
-									<label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;性别</label>
-									<label class="checkbox-inline c-checkbox"><input type="checkbox"><span class="fa fa-check"></span>&nbsp;SIZE</label>
-									-->
 								</div>
 							</div>
 						</div>
@@ -70,7 +64,6 @@
 						<div class="form-horizontal form-inline">
 							<button class="btn btn-default" ng-click="$ctrl.clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR' | translate}}</button>
 							<button class="btn btn-vo" ng-click="$ctrl.search()"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}</button>
-							<!--<button class="btn btn-success" ng-click="openMrbstockadd('md')"><i class="fa fa-plus"></i>&nbsp;新建任务</button>-->
 						</div><!-- .form-inline -->
 					</div>
 				</div>
@@ -80,17 +73,6 @@
 	<tabset class="tab-container vo_nav-tabs">
 		<!--right-btn-->
 		<div class="form-inline pull-right btn-group">
-			<!--<button class="btn btn-default" disabled>code数：5000</button>
-			<button class="btn btn-default" disabled>sku数：10000</button>-->
-			<!--<button class="btn btn-default-vo" ng-click="$ctrl.search('')">总数：{{$ctrl.allNum}}</button>-->
-			<!--<button class="btn btn-default-vo" ng-click="$ctrl.search('0')">未进行：{{$ctrl.readyNum}}</button>-->
-			<!--<button class="btn btn-default-vo" ng-click="$ctrl.search('1')">等待隔离：{{$ctrl.waitSeparationNum}}</button>-->
-			<!--<button class="btn btn-default-vo" ng-click="$ctrl.search('2')">隔离成功：{{$ctrl.separationOKNum}}</button>-->
-			<!--<button class="btn btn-default-vo" ng-click="$ctrl.search('3')">隔离失败：{{$ctrl.separationFailNum}}</button>-->
-			<!--<button class="btn btn-default-vo" ng-click="$ctrl.search('4')">等待还原：{{$ctrl.waitRestoreNum}}</button>-->
-			<!--<button class="btn btn-default-vo" ng-click="$ctrl.search('5')">还原成功：{{$ctrl.revertOKNum}}</button>-->
-			<!--<button class="btn btn-default-vo" ng-click="$ctrl.search('6')">还原失败：{{$ctrl.revertFailNum}}</button>-->
-			<!--<button class="btn btn-default-vo" ng-click="$ctrl.search('7')">再修正：{{$ctrl.changedNum}}</button>-->
 			<label id="allNum" class="btn btn-default-vo btn-vo" ng-model="radioModel" uib-btn-radio="'总数'" ng-click="$ctrl.search('')">{{'TXT_ALL' | translate}}：{{$ctrl.allNum}}</label>
 			<label class="btn btn-default-vo" ng-model="radioModel" uib-btn-radio="'未进行'" ng-click="$ctrl.search('0')">{{'TXT_READY' | translate}}：{{$ctrl.readyNum}}</label>
 			<label class="btn btn-default-vo" ng-model="radioModel" uib-btn-radio="'等待隔离'" ng-click="$ctrl.search('1')">{{'TXT_WAITING_SEPARATE' | translate}}：{{$ctrl.waitSeparationNum}}</label>
@@ -108,7 +90,6 @@
 				<div class="table-responsive">
 					<div class="col-sm-12">
 						<div class="pull-right form-inline btn-group" ng-controller="popupCtrl">
-							<!--<button class="btn btn-danger" ng-click="openImport('md')"><i class="fa fa-reply-all"></i>&nbsp;批量导入SKU</button>-->
 							<button class="btn btn-dangers" ng-click="openImportStock('md')"><i class="fa fa-reply-all"></i>&nbsp;{{'BTN_IMPORT_ALL' | translate}}</button>
 							<button class="btn btn-danger" ng-click="$ctrl.download()"><i class="glyphicon glyphicon-share-alt"></i>&nbsp;{{'BTN_EXPORT_ALL' | translate}}</button>
 							<button class="btn btn-primary"><i class="glyphicon glyphicon-play"></i>&nbsp;{{'BTN_START_REFRESH_ALL' | translate}}</button>
@@ -126,7 +107,7 @@
 								<label class="control-label m-l-xs m-r-xs text-vo"><i class="icon fa fa-bell-o"></i>&nbsp;{{'TXT_PLEASE_SET_PERCENT' | translate}}</label>
 								<button class="btn btn-default" ng-click="$ctrl.setPercent()"><i class="glyphicon glyphicon-cog"></i>&nbsp;{{'BTN_SET' | translate}}</button>
 								<button class="btn btn-vo" ng-click="$ctrl.saveRecord()"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;{{'BTN_SAVE' | translate}}</button>
-								<button class="btn btn-success" ng-click="openNewMrbStockSku('md',$ctrl)"><i class="fa fa-plus"></i>&nbsp;{{'BTN_CREATE' | translate}}</button>
+								<button class="btn btn-success" ng-click="openNewMrbStockSku('md', $ctrl, $ctrl.search)"><i class="fa fa-plus"></i>&nbsp;{{'BTN_CREATE' | translate}}</button>
 							</div>
 						</div>
 					</div>
@@ -138,7 +119,6 @@
 								<th class="text-center"><label class="checkbox-inline c-checkbox">
 									<input type="checkbox" ng-click="selectAll($ctrl.stockSelList)" ng-checked="isAllSelected($ctrl.stockSelList)" ng-disabled="!$ctrl.stockList.length">
 									<span class="fa fa-check"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}</label></th>
-								<!--<th class="text-center">No.</th>-->
 								<th class="text-center">Model</th>
 								<th class="text-center">Code</th>
 								<th class="text-center">Sku</th>
@@ -201,11 +181,6 @@
 			<tab-heading><i class="glyphicons glyphicons-more-items text-default"></i>&nbsp;{{'TXT_REAL_TIME_STOCK_STATUS' | translate}}</tab-heading>
 			<div class="box">
 				<div class="table-responsive">
-					<!--<div class="col-sm-12">
-						<div class="pull-right form-inline btn-group m-b-xs">
-							<button class="btn btn-danger" ng-click="openImport('md',vm.promotionId)"><i class="glyphicon glyphicon-share-alt"></i>&nbsp;导出库存实时状态</button>
-						</div>
-					</div>-->
 					<div class="col-sm-12 dropdown_table_mains" if-no-rows="$ctrl.realStockList.length">
 						<table class="table table-hover-new vo_table" style="width:1800px;margin-bottom:0px" >
 							<thead>
@@ -232,7 +207,7 @@
 										</span>
 										<span ng-if="platform.separationQty != -1">
 											<button title="平台销售量" class="badge badge-empty btn-xs" ng-if="$ctrl.realStockStatus == '0'">{{platform.salesQty}}</button>
-											<button title="平台隔离数量" class="badge badge-empty btn-vo btn-xs" ng-click="openSkuMrbStockDetail('md')">{{platform.separationQty}}</button>
+											<button title="平台隔离数量" class="badge badge-empty btn-vo btn-xs" ng-click="openSkuMrbStockDetail('md', $ctrl.taskId, platform.cartId, realStock)">{{platform.separationQty}}</button>
 										</span>
 									</div>
 								</td>

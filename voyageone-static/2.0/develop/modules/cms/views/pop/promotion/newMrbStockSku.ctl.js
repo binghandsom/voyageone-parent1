@@ -4,12 +4,15 @@ define([
 ], function (cms) {
     cms.controller('popNewMrbStockSkuCtl', (function () {
 
-        function PopNewMrbStockSkuCtl(data, taskStockService, confirm, alert, notify) {
+        function PopNewMrbStockSkuCtl(data, taskStockService, confirm, alert, notify, $uibModalInstance) {
+            this.parent = data;
             this.alert = alert;
             this.notify = notify;
             this.confirm = confirm;
             this.taskId = data.taskId;
+            this.$uibModalInstance = $uibModalInstance;
             this.platformStockList = [];
+            this.propertyStockList = [];
             var main = this;
             _.each( data.platformList, function(platform) {
                 var obj = {};
@@ -18,6 +21,13 @@ define([
                 obj.qty = "";
                 obj.dynamic = false;
                 main.platformStockList.push(obj);
+            });
+            _.each( data.propertyList, function(property) {
+                var obj = {};
+                obj.property = property.property;
+                obj.name = property.name;
+                obj.value = "";
+                main.propertyStockList.push(obj);
             });
             this.taskStockService = taskStockService;
             this.model = "";
@@ -44,13 +54,21 @@ define([
                     "code": main.code,
                     "sku": main.sku,
                     "usableStock": main.usableStock,
+                    "propertyStockList": main.propertyStockList,
                     "platformStockList": main.platformStockList
                 }).then(function (res) {
-                    main.notify.success('更新成功');
+                    main.notify.success('TXT_MSG_INSERT_SUCCESS');
+                    main.$uibModalInstance.close();
+                    main.parent.search();
                 }, function (err) {
-                    //main.alert('TXT_MSG_UPDATE_FAIL');
+                    if (err.displayType == null) {
+                        main.alert('TXT_MSG_INSERT_FAIL');
+                    }
                 });
             },
+            cancel: function () {
+                this.$uibModalInstance.close();
+            }
         };
 
         return PopNewMrbStockSkuCtl;

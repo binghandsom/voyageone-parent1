@@ -407,16 +407,27 @@ public class CmsTaskStockController extends CmsController {
             resultBean.put("platformList", param.get("platformList"));
         }
 
+        // 取得实时库存表示状态(0:活动期间表示,1:活动结束后表示）
+        String realStockStatus = cmsTaskStockService.getRealStockStatus(param);
+        resultBean.put("realStockStatus", realStockStatus);
+
         // 库存隔离明细sku总数(分页的明细总数)
-        resultBean.put("skuNum", cntAll/((List<Map<String, Object>>)param.get("platformList")).size());
+        // 状态选择All的情况下，
+        if (StringUtils.isEmpty((String) param.get("status"))) {
+            resultBean.put("skuNum", cntAll / ((List<Map<String, Object>>) param.get("platformList")).size());
+        } else {
+            int cnt = cmsTaskStockService.getStockSkuCount(param);
+            resultBean.put("skuNum", cnt);
+        }
+        if ((int) resultBean.get("skuNum") == 0) {
+            resultBean.put("stockList", new ArrayList());
+            resultBean.put("realStockList", new ArrayList());
+            return success(resultBean);
+        }
 
         // 取得库存隔离明细
         List<Map<String, Object>> stockList = cmsTaskStockService.getCommonStockList(param);
         resultBean.put("stockList", stockList);
-
-        // 取得实时库存表示状态(0:活动期间表示,1:活动结束后表示）
-        String realStockStatus = cmsTaskStockService.getRealStockStatus(param);
-        resultBean.put("realStockStatus", realStockStatus);
 
         // 实时库存状态
         List<Map<String, Object>> realStockList = cmsTaskStockService.getRealStockList(param);
@@ -703,6 +714,12 @@ public class CmsTaskStockController extends CmsController {
      * @apiParam (应用级参数) {String} code 商品Code
      * @apiParam (应用级参数) {String} sku Sku
      * @apiParam (应用级参数) {String} usableStock 可用库存
+     * @apiParam (应用级参数) {Object} propertyStockList 属性列表（json数组）
+     * @apiParamExample  propertyStockList示例
+     *   "propertyStockList": [ {"property":"property1", "name":"品牌", "logic":"", "value"="Clarks"},
+     *                     {"property":"property2", "name":"英文短描述", "value"="Clarks Fulham Limit"},
+     *                     {"property":"property3", "name":"性别", "value"="women"}，
+     *                     {"property":"property4", "name":"Size", "value"="8"}]
      * @apiParam (应用级参数) {Object} platformStockList 平台隔离库存（json数组）
      * @apiParamExample  platformStockList示例
      *   "platformStockList": [ {"cartId":"23", "qty":"10"},
@@ -725,6 +742,8 @@ public class CmsTaskStockController extends CmsController {
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK.SAVE_NEW_RECORD)
     public AjaxResponse saveNewRecord(@RequestBody Map param) {
+        // 创建者/更新者用
+        param.put("userName", this.getUser().getUserName());
 
         // 新增库存隔离明细
         cmsTaskStockService.saveNewRecord(param);
@@ -989,7 +1008,9 @@ public class CmsTaskStockController extends CmsController {
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK.SAVE_RECORD)
     public AjaxResponse saveRecord(@RequestBody Map param) {
+        // 语言
         param.put("lang", this.getLang());
+        // 保存隔离库存明细
         cmsTaskStockService.saveRecord(param);
         // 返回
         return success(param);
@@ -1031,9 +1052,10 @@ public class CmsTaskStockController extends CmsController {
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK.DEL_RECORD)
     public AjaxResponse delRecord(@RequestBody Map param) {
+        // 语言
         param.put("lang", this.getLang());
+        // 删除隔离库存明细
         cmsTaskStockService.delRecord(param);
-
         // 返回
         return success(null);
     }
@@ -1047,7 +1069,6 @@ public class CmsTaskStockController extends CmsController {
      * @apiPermission 认证商户
      * @apiParam (应用级参数) {String} taskId 任务id
      * @apiParam (应用级参数) {String} cartId 平台id
-     * @apiParam (应用级参数) {String} code 商品Code
      * @apiParam (应用级参数) {String} sku Sku
      * @apiSuccess (系统级返回字段) {String} code 处理结果代码编号
      * @apiSuccess (系统级返回字段) {String} message 处理结果描述
@@ -1058,8 +1079,6 @@ public class CmsTaskStockController extends CmsController {
      * {
      *  "code":"0", "message":null, "displayType":null, "redirectTo":null,
      *  "data":{
-     *   "code":"35265465",
-     *   "sku":"256354566-9",
      *   "stockHistoryList": [ {"type":"一般库存隔离", "taskName":"天猫双11任务", "qty":"10" },
      *                         {"type":"增量库存隔离", "taskName":"天猫双11-增量1", "qty":"1" },
      *                         {"type":"增量库存隔离", "taskName":"天猫双11-增量2", "qty":"2" },
@@ -1082,8 +1101,21 @@ public class CmsTaskStockController extends CmsController {
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK.GET_SKU_SEPARATION_DETAIL)
     public AjaxResponse getSkuSeparationDetail(@RequestBody Map param) {
 
+        // 取得任务id在history表中是否有数据
+        boolean historyFlg = cmsTaskStockService.isHistoryExist(param);
+        if (historyFlg) {
+            param.put("tableNameSuffix", "_history");
+        } else {
+            param.put("tableNameSuffix", "");
+        }
+
+        // 取得某个Sku的所有隔离详细
+        List<Map<String, Object>> stockHistoryList = cmsTaskStockService.getSkuSeparationDetail(param);
+        Map<String, Object> resultBean = new HashMap<>();
+        resultBean.put("stockHistoryList", stockHistoryList);
+
         // 返回
-        return success(null);
+        return success(resultBean);
     }
 
 
