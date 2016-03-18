@@ -189,11 +189,13 @@ public class CmsTaskStockService extends BaseAppService {
     /**
      * 库存隔离数据是否移到history表
      *
-     * @param param 客户端参数
+     * @param taskId 任务id
      * @return 库存隔离数据是否移到history表
      */
-    public boolean isHistoryExist(Map param){
-        return (cmsBtStockSeparateItemDao.selectStockSeparateItemHistoryCnt(param) !=  0) ? true : false;
+    public boolean isHistoryExist(String taskId){
+        Map<String,Object> sqlParam = new HashMap<String,Object>();
+        sqlParam.put("taskId", taskId);
+        return (cmsBtStockSeparateItemDao.selectStockSeparateItemHistoryCnt(sqlParam) !=  0) ? true : false;
     }
 
     /**
@@ -211,12 +213,21 @@ public class CmsTaskStockService extends BaseAppService {
 
         // 取得任务下的平台平台信息
         Date now = DateTimeUtil.parse(DateTimeUtil.getNow());
-        List<Map<String, Object>> platformList = cmsBtStockSeparatePlatformInfoDao.selectStockSeparatePlatform(param);
+        Map<String,Object> sqlParam = new HashMap<String,Object>();
+        sqlParam.put("taskId", (String) param.get("taskId"));
+        List<Map<String, Object>> platformList = cmsBtStockSeparatePlatformInfoDao.selectStockSeparatePlatform(sqlParam);
         for (Map<String, Object> platformInfo : platformList) {
-            Date restoreSeparateTime = DateTimeUtil.parse((String) platformInfo.get("restore_separate_time"));
-            if (restoreSeparateTime != null && now.getTime() - restoreSeparateTime.getTime() <= 0) {
-                status = "0";
-                break;
+            // 库存隔离还原时间
+            String restoreSeparateTime = (String) platformInfo.get("restore_separate_time");
+            if (!StringUtils.isEmpty(restoreSeparateTime)) {
+                if (restoreSeparateTime.length() == 10) {
+                    restoreSeparateTime = restoreSeparateTime + " 00:00:00";
+                }
+                Date restoreSeparateTimeDate = DateTimeUtil.parse(restoreSeparateTime);
+                if (now.getTime() - restoreSeparateTimeDate.getTime() <= 0) {
+                    status = "0";
+                    break;
+                }
             }
         }
         return status;
@@ -444,10 +455,10 @@ public class CmsTaskStockService extends BaseAppService {
      * @param param 客户端参数
      */
     public void saveRecord(Map param){
-        // 取得任务id在history表中是否有数据
-        boolean historyFlg = isHistoryExist(param);
-        if (historyFlg) {
-            throw new BusinessException("隔离任务已经结束，不能修改数据！");
+        // 取得任务id对应的Promotion是否开始
+        boolean promotionStartFlg = isPromotionStart((String) param.get("taskId"));
+        if (promotionStartFlg) {
+            throw new BusinessException("活动已经开始，不能修改数据！");
         }
 
         List<Map<String,Object>> stockList = new ArrayList<Map<String,Object>>();
@@ -537,10 +548,10 @@ public class CmsTaskStockService extends BaseAppService {
      * @param param 客户端参数
      */
     public void delRecord(Map param){
-        // 取得任务id在history表中是否有数据
-        boolean historyFlg = isHistoryExist(param);
-        if (historyFlg) {
-            throw new BusinessException("隔离任务已经结束，不能删除数据！");
+        // 取得任务id对应的Promotion是否开始
+        boolean promotionStartFlg = isPromotionStart((String) param.get("taskId"));
+        if (promotionStartFlg) {
+            throw new BusinessException("活动已经开始，不能删除数据！");
         }
         simpleTransaction.openTransaction();
         // 取得这条sku明细对应的库存隔离信息
@@ -641,6 +652,12 @@ public class CmsTaskStockService extends BaseAppService {
      * @param param 客户端参数
      */
     public void saveNewRecord(Map param){
+        // 取得任务id对应的Promotion是否开始
+        boolean promotionStartFlg = isPromotionStart((String) param.get("taskId"));
+        if (promotionStartFlg) {
+            throw new BusinessException("活动已经开始，不能新增库存隔离明细！");
+        }
+
         // 输入验证
         checkInputNewRecord(param);
 
@@ -1014,14 +1031,8 @@ public class CmsTaskStockService extends BaseAppService {
                 boolean checkResult = true;
                 // 动态以外的场合
                 if (!StringUtils.isEmpty(status)) {
-                    try {
-                        int value = Integer.parseInt(separationQty);
-                        if (value < 0)  checkResult = false;
-                    } catch (NumberFormatException ex) {
-                        checkResult = false;
-                    }
-                    if (!checkResult) {
-                        throw new BusinessException("隔离库存只能是0以上的整数");
+                    if (StringUtils.isEmpty(separationQty) || !StringUtils.isDigit(separationQty) || separationQty.getBytes().length > 9 ) {
+                        throw new BusinessException("隔离库存必须输入小于10位的整数！");
                     }
                 }
             }
@@ -1213,6 +1224,35 @@ public class CmsTaskStockService extends BaseAppService {
         }
 
         return whereSql;
+    }
+
+    /**
+     * 某个任务对应的Promotion是否已经开始（只要有一个Promotion开始就认为已经开始）
+     *
+     * @param taskId 任务id
+     * @return 实时库存表示状态
+     */
+    private boolean isPromotionStart(String taskId){
+
+        // 取得任务下的平台平台信息
+        Date now = DateTimeUtil.parse(DateTimeUtil.getNow());
+        Map<String,Object> sqlParam = new HashMap<String,Object>();
+        sqlParam.put("taskId", taskId);
+        List<Map<String, Object>> platformList = cmsBtStockSeparatePlatformInfoDao.selectStockSeparatePlatform(sqlParam);
+        for (Map<String, Object> platformInfo : platformList) {
+            // Promotion开始时间
+            String activityStart = (String) platformInfo.get("activity_start");
+            if (!StringUtils.isEmpty(activityStart)) {
+                if (activityStart.length() == 10) {
+                    activityStart = activityStart + " 00:00:00";
+                }
+                Date activityStartDate = DateTimeUtil.parse(activityStart);
+                if (now.getTime() - activityStartDate.getTime() > 0) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**

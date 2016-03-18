@@ -326,7 +326,7 @@ public class CmsTaskStockController extends CmsController {
         Map<String, Object> resultBean = new HashMap<>();
 
         // 任务id对应的库存隔离数据是否移到history表
-        boolean historyFlg = cmsTaskStockService.isHistoryExist(param);
+        boolean historyFlg = cmsTaskStockService.isHistoryExist((String) param.get("taskId"));
         if (historyFlg) {
             param.put("tableNameSuffix", "_history");
         } else {
@@ -381,6 +381,9 @@ public class CmsTaskStockController extends CmsController {
         }
         if (!resultBean.containsKey("revertOKNum")) {
             resultBean.put("revertOKNum", 0);
+        }
+        if (!resultBean.containsKey("revertFailNum")) {
+            resultBean.put("revertFailNum", 0);
         }
         if (!resultBean.containsKey("changedNum")) {
             resultBean.put("changedNum", 0);
@@ -508,7 +511,7 @@ public class CmsTaskStockController extends CmsController {
         Map<String, Object> resultBean = new HashMap<>();
 
         // 取得任务id在history表中是否有数据
-        boolean historyFlg = cmsTaskStockService.isHistoryExist(param);
+        boolean historyFlg = cmsTaskStockService.isHistoryExist((String) param.get("taskId"));
         if (historyFlg) {
             param.put("tableNameSuffix", "_history");
         } else {
@@ -606,7 +609,7 @@ public class CmsTaskStockController extends CmsController {
         param.put("lang", this.getLang());
         Map<String, Object> resultBean = new HashMap<>();
         // 取得任务id在history表中是否有数据
-        boolean historyFlg = cmsTaskStockService.isHistoryExist(param);
+        boolean historyFlg = cmsTaskStockService.isHistoryExist((String) param.get("taskId"));
         if (historyFlg) {
             param.put("tableNameSuffix", "_history");
         } else {
@@ -800,7 +803,7 @@ public class CmsTaskStockController extends CmsController {
         searchParam.put("lang", this.getLang());
 
         // 任务id对应的库存隔离数据是否移到history表
-        boolean historyFlg = cmsTaskStockService.isHistoryExist(param);
+        boolean historyFlg = cmsTaskStockService.isHistoryExist((String) param.get("task_id"));
         if (historyFlg) {
             searchParam.put("tableName", "voyageone_cms2.cms_bt_stock_separate_item_history");
         } else {
@@ -1117,7 +1120,7 @@ public class CmsTaskStockController extends CmsController {
     public AjaxResponse getSkuSeparationDetail(@RequestBody Map param) {
 
         // 取得任务id在history表中是否有数据
-        boolean historyFlg = cmsTaskStockService.isHistoryExist(param);
+        boolean historyFlg = cmsTaskStockService.isHistoryExist((String) param.get("taskId"));
         if (historyFlg) {
             param.put("tableNameSuffix", "_history");
         } else {
