@@ -160,7 +160,6 @@ public class CmsSearchAdvanceService extends BaseAppService{
         pal3.put("$elemMatch", pal4);
         DBObject params = new BasicDBObject();
         params.put("groups.platforms", pal3);
-        params.put("fields.images1", new BasicDBObject("$size", 1));
 
         DBObject excObj = new BasicDBObject();
         excObj.put("fields.images1", 1);

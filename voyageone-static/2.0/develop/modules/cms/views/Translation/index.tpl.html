@@ -159,16 +159,12 @@
 						</td>
 						<td class="text-center" style="border-top:0px"></td>
 					</tr>
-					<tr>
-						<td colspan="7" style="border-top:0px">
-							<div class="form-inline">
-							<img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{translationModel.productImage}}"  alt="" class="thumb-xs m-b-xs"/>
-							<img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{translationModel.productImage}}"  alt="" class="thumb-xs m-b-xs"/>
-							<img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{translationModel.productImage}}"  alt="" class="thumb-xs m-b-xs"/>
-							<img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{translationModel.productImage}}"  alt="" class="thumb-xs m-b-xs"/>
-							<img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{translationModel.productImage}}"  alt="" class="thumb-xs m-b-xs"/>
-							<img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{translationModel.productImage}}"  alt="" class="thumb-xs m-b-xs"/>
-							</div>
+					<tr ng-if="translationModel.groupImgList.length > 0">
+						<td style="border-top:0px"></td>
+						<td colspan="6" style="border-top:0px">
+							<span ng-repeat="prop2 in translationModel.groupImgList">
+								<img class="thumb-lg pull-left m-r" alt="" ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{prop2.value}}" >
+							</span>
 						</td>
 					</tr>
 				</tbody>

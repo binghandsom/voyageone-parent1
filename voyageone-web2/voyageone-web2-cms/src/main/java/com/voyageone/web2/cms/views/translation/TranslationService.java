@@ -17,6 +17,7 @@ import com.voyageone.web2.cms.bean.ProductTranslationBean;
 import com.voyageone.web2.cms.bean.TranslateTaskBean;
 import com.voyageone.web2.cms.dao.CustomWordDao;
 import com.voyageone.web2.cms.dao.MongoNativeDao;
+import com.voyageone.web2.cms.views.search.CmsSearchAdvanceService;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +35,8 @@ import java.util.*;
 public class TranslationService {
 
     Log logger = LogFactory.getLog(TranslationService.class);
-
+    @Autowired
+    private CmsSearchAdvanceService searchIndexService;
     @Autowired
     private CmsBtFeedInfoDao cmsBtFeedInfoDao;
 
@@ -47,11 +49,10 @@ public class TranslationService {
     @Autowired
     private MongoNativeDao mongoDao;
 
-
     private Map sortFields;
 
     private static String[] RET_FIELDS = {
-            "prodId",
+            "prodId", "groups",
             "fields.code",
             "fields.productNameEn",
             "fields.longDesEn",
@@ -70,15 +71,12 @@ public class TranslationService {
      * TODO 将来应该从配置数据库中读取.
      */
     public Map getSortFieldOptions(){
-
         if (sortFields == null){
             sortFields = new HashMap<>();
         }
 
         sortFields.put("quantity","库存");
-
         return sortFields;
-
     }
 
     /**
@@ -89,7 +87,7 @@ public class TranslationService {
      * @return
      * @throws BusinessException
      */
-    public TranslateTaskBean getUndoneTasks(String channelId, String userName) throws BusinessException {
+    public TranslateTaskBean getUndoneTasks(String channelId, String userName, int cartId) throws BusinessException {
 
         TranslateTaskBean translateTaskBean = new TranslateTaskBean();
 
@@ -103,8 +101,9 @@ public class TranslationService {
         queryObject.setProjection(RET_FIELDS);
 
         List<CmsBtProductModel> cmsBtProductModels = productService.getList(channelId, queryObject);
+        List<List<Map<String, String>>> grpImgList = searchIndexService.getGroupImageList(cmsBtProductModels, channelId, cartId);
 
-        List<ProductTranslationBean> translateTaskBeanList = buildTranslateTaskBeen(cmsBtProductModels);
+        List<ProductTranslationBean> translateTaskBeanList = buildTranslateTaskBeen(cmsBtProductModels, grpImgList);
 
         translateTaskBean.setProductTranslationBeanList(translateTaskBeanList);
         translateTaskBean.setDistributeRule(1); // 缺省只查询主商品
@@ -121,8 +120,7 @@ public class TranslationService {
      * @param channelId
      * @param userName
      */
-    public TranslateTaskBean assignTask(String channelId, String userName,int distributeRule,int distCount,String sortCondition, Boolean sortRule) {
-
+    public TranslateTaskBean assignTask(String channelId, String userName, int distributeRule, int distCount, String sortCondition, Boolean sortRule, int cartId) {
         ProductTransDistrBean productTransDistrBean = new ProductTransDistrBean();
 
         if (!StringUtils.isEmpty(sortCondition)){
@@ -144,8 +142,9 @@ public class TranslationService {
         productTransDistrBean.setProjectionArr(RET_FIELDS);
 
         List<CmsBtProductModel> cmsBtProductModels = productService.translateDistribute(channelId, productTransDistrBean);
+        List<List<Map<String, String>>> grpImgList = searchIndexService.getGroupImageList(cmsBtProductModels, channelId, cartId);
 
-        List<ProductTranslationBean> translateTaskBeanList = buildTranslateTaskBeen(cmsBtProductModels);
+        List<ProductTranslationBean> translateTaskBeanList = buildTranslateTaskBeen(cmsBtProductModels, grpImgList);
 
         TranslateTaskBean translateTaskBean = new TranslateTaskBean();
 
@@ -154,9 +153,7 @@ public class TranslationService {
         translateTaskBean.setUserDoneCount(this.getDoneTaskCount(channelId,userName));
         translateTaskBean.setTotalUndoneCount(this.getTotalUndoneCount(channelId));
 
-
         return translateTaskBean;
-
     }
 
 //    /**
@@ -291,12 +288,9 @@ public class TranslationService {
      * @return
      * @throws BusinessException
      */
-    public TranslateTaskBean searchUserTasks(String channelId, String userName,String condition) throws BusinessException {
-
-        if (StringUtils.isEmpty(condition)){
-
-            return this.getUndoneTasks(channelId,userName);
-
+    public TranslateTaskBean searchUserTasks(String channelId, String userName,String condition, int cartId) throws BusinessException {
+        if (StringUtils.isEmpty(condition)) {
+            return this.getUndoneTasks(channelId, userName, cartId);
         }
 
         String tasksQueryStr = String.format("{'fields.translator':'%s',$or:[{'fields.code':{$regex:'%s'}},{'fields.productNameEn':{$regex:'%s'}},{'fields.longDesEn':{$regex:'%s'}},{'fields.shortDesEn':{$regex:'%s'}},{'fields.longTitle':{$regex:'%s'}},{'fields.middleTitle':{$regex:'%s'}},{'fields.shortTitle':{$regex:'%s'}},{'fields.longDesCn':{$regex:'%s'}},{'fields.shortDesCn':{$regex:'%s'}}]}",userName,condition,condition,condition,condition,condition,condition,condition,condition,condition);
@@ -307,9 +301,9 @@ public class TranslationService {
         queryObject.setProjection(RET_FIELDS);
 
         List<CmsBtProductModel> cmsBtProductModels = productService.getList(channelId, queryObject);
+        List<List<Map<String, String>>> grpImgList = searchIndexService.getGroupImageList(cmsBtProductModels, channelId, cartId);
 
-
-        List<ProductTranslationBean> translateTaskBeanList = buildTranslateTaskBeen(cmsBtProductModels);
+        List<ProductTranslationBean> translateTaskBeanList = buildTranslateTaskBeen(cmsBtProductModels, grpImgList);
 
         TranslateTaskBean translateTaskBean = new TranslateTaskBean();
         translateTaskBean.setProductTranslationBeanList(translateTaskBeanList);
@@ -320,16 +314,15 @@ public class TranslationService {
         return translateTaskBean;
     }
 
-
     /**
      * 组装task beans。
      * @param cmsBtProductModels
      * @return
      */
-    private List<ProductTranslationBean> buildTranslateTaskBeen(List<CmsBtProductModel> cmsBtProductModels) {
+    private List<ProductTranslationBean> buildTranslateTaskBeen(List<CmsBtProductModel> cmsBtProductModels, List<List<Map<String, String>>> grpImgList) {
         List<ProductTranslationBean> translateTaskBeanList = new ArrayList<>(cmsBtProductModels.size());
-
-        for (CmsBtProductModel productModel:cmsBtProductModels){
+        int idx = 0;
+        for (CmsBtProductModel productModel : cmsBtProductModels) {
             ProductTranslationBean translationBean = new ProductTranslationBean();
 
             translationBean.setLongDescription(productModel.getFields().getLongDesEn());
@@ -348,8 +341,9 @@ public class TranslationService {
             translationBean.setProdId(productModel.getProdId());
             translationBean.setTranslator(productModel.getFields().getTranslator());
 
+            translationBean.setGroupImgList(grpImgList.get(idx));
+            idx ++;
             translateTaskBeanList.add(translationBean);
-
         }
         return translateTaskBeanList;
     }
@@ -390,7 +384,6 @@ public class TranslationService {
      * @return
      */
     public Map<String, String> getFeedAttributes(String channelId, String productCode) {
-
         CmsBtFeedInfoModel feedInfoModel = cmsBtFeedInfoDao.selectProductByCode(channelId, productCode);
 
         if (feedInfoModel == null) {
@@ -472,11 +465,9 @@ public class TranslationService {
             }
 
             attributesMap.put(entry.getKey(), valueStr.toString());
-
         }
 
         feedAttributes.putAll(attributesMap);
-
         return feedAttributes;
     }
 
