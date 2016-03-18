@@ -7,13 +7,50 @@
 
 define([
     'cms',
+    'underscore',
     'modules/cms/enums/Status',
+    'modules/cms/enums/FieldTypes',
     'modules/cms/controller/popup.ctl',
     'modules/cms/service/product.detail.service'
-], function (cms, Status) {
+], function (cms, _, Status, FieldTypes) {
+
+    /**
+     * 验证一组字段, 是否通过了 ng-form 验证
+     * @param {object|Array} fields
+     * @returns {*}
+     */
+    function validFields(fields) {
+        return !_.any(fields, function (field) {
+            if (field.form && field.type === FieldTypes.multiComplex) {
+                return !field.complexValues.some(function(value){
+                    if (!value.fieldMap) return false;
+                    return !validFields(value.fieldMap);
+                });
+            }
+            // 如果是复杂类型, 并且启用了检查, 那么就递归
+            if (field.form && field.type === FieldTypes.complex)
+                return !validFields(field.fields);
+            // 简单类型就直接检查
+            return field.$valid === false;
+        });
+    }
+
+    function validSchema(schema) {
+        if (!validFields(schema.masterFields))
+            return false;
+        var skuValues = schema.skuFields.complexValues;
+        // 如果没有 sku 字段, 则默认返回通过.
+        if (!skuValues || !skuValues.length)
+            return true;
+        return !skuValues.some(function(value){
+            if (!value.fieldMap) return false;
+            return !validFields(value.fieldMap);
+        });
+    }
+
     return cms.controller('productDetailController', (function () {
 
-        function ProductDetailController($routeParams, $translate, productDetailService, feedMappingService, notify, confirm) {
+        function ProductDetailController($routeParams, $translate, productDetailService, feedMappingService, notify, confirm, alert) {
 
             this.routeParams = $routeParams;
             this.translate = $translate;
@@ -21,6 +58,7 @@ define([
             this.feedMappingService = feedMappingService;
             this.notify = notify;
             this.confirm = confirm;
+            this.alert = alert;
 
             this.productDetails = null;
             this.productDetailsCopy = null;
@@ -51,6 +89,10 @@ define([
             updateProductDetail: function () {
                 var self = this;
 
+                // 尝试检查商品的 field 验证
+                if (!validSchema(self.productDetails))
+                    return self.alert('TXT_MSG_UPDATE_FAIL');
+
                 // 推算产品状态
                 // 如果该产品以前不是approve,这次变成approve的
                 if (self.productDetails.productStatus.statusInfo.isApproved
@@ -66,7 +108,7 @@ define([
                 this.productDetailService.updateProductDetail(this.productDetails)
                     .then(function (res) {
                         self.productDetails.modified = res.data.modified;
-                        this.productDetailService._setProductStatus(self.productDetails.productStatus)
+                        this.productDetailService._setProductStatus(self.productDetails.productStatus);
                         self.productDetailsCopy = angular.copy(self.productDetails);
                         self.notify.success(this.translate.instant('TXT_MSG_UPDATE_SUCCESS'));
                     }.bind(this))

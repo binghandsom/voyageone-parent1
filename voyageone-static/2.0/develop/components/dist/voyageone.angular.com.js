@@ -1,91 +1,4 @@
 define(function() {
-  angular.module("voyageone.angular.controllers.datePicker", []).controller("datePickerCtrl", [ "$scope", function($scope) {
-    var vm = this;
-    vm.formats = [ "yyyy-MM-dd", "yyyy-MM-dd HH:mm:ss" ];
-    $scope.formatDate = vm.formats[0];
-    $scope.formatDateTime = vm.formats[1];
-    $scope.open = open;
-    function open($event) {
-      $event.preventDefault();
-      $event.stopPropagation();
-      $scope.opened = true;
-    }
-  } ]);
-  angular.module("voyageone.angular.controllers.selectRows", []).controller("selectRowsCtrl", [ "$scope", function($scope) {
-    $scope.selectAll = selectAll;
-    $scope.selectOne = selectOne;
-    $scope.isAllSelected = isAllSelected;
-    function selectAll(objectList, id) {
-      objectList.selAllFlag = !objectList.selAllFlag;
-      if (!id) {
-        id = "id";
-      }
-      angular.forEach(objectList.currPageRows, function(object) {
-        objectList.selFlag[object[id]] = objectList.selAllFlag;
-        if (objectList.hasOwnProperty("selList")) {
-          var tempList = _.pluck(objectList.selList, id);
-          if (objectList.selAllFlag && tempList.indexOf(object[id]) < 0) {
-            objectList.selList.push(object);
-          } else if (!objectList.selAllFlag && tempList.indexOf(object[id]) > -1) {
-            objectList.selList.splice(tempList.indexOf(object[id]), 1);
-          }
-        }
-      });
-    }
-    function selectOne(currentId, objectList, id) {
-      if (!id) {
-        id = "id";
-      }
-      if (objectList.hasOwnProperty("selList")) {
-        angular.forEach(objectList.currPageRows, function(object) {
-          var tempList = _.pluck(objectList.selList, id);
-          if (_.isEqual(object[id], currentId)) {
-            if (tempList.indexOf(object[id]) > -1) {
-              objectList.selList.splice(tempList.indexOf(object[id]), 1);
-            } else {
-              objectList.selList.push(object);
-            }
-          }
-        });
-      }
-      objectList.selAllFlag = true;
-      tempList = _.pluck(objectList.selList, id);
-      angular.forEach(objectList.currPageRows, function(object) {
-        if (tempList.indexOf(object[id]) == -1) {
-          objectList.selAllFlag = false;
-        }
-      });
-    }
-    function isAllSelected(objectList, id) {
-      if (!id) {
-        id = "id";
-      }
-      if (objectList != undefined) {
-        objectList.selAllFlag = true;
-        var tempList = _.pluck(objectList.selList, id);
-        angular.forEach(objectList.currPageRows, function(object) {
-          if (tempList.indexOf(object[id]) == -1) {
-            objectList.selAllFlag = false;
-          }
-        });
-        return objectList.selAllFlag;
-      }
-      return false;
-    }
-  } ]);
-  angular.module("voyageone.angular.controllers.showPopover", []).controller("showPopoverCtrl", [ "$scope", function($scope) {
-    $scope.showInfo = showInfo;
-    function showInfo(values) {
-      var tempHtml = "";
-      angular.forEach(values, function(data, index) {
-        tempHtml += data;
-        if (index !== values.length) {
-          tempHtml += "<br>";
-        }
-      });
-      return tempHtml;
-    }
-  } ]);
   angular.module("voyageone.angular.directives.dateModelFormat", []).directive("dateModelFormat", [ "$filter", function($filter) {
     return {
       restrict: "A",
@@ -254,20 +167,6 @@ define(function() {
       URL: "url",
       TEXTAREA: "textarea",
       HTML: "html"
-    }, templates = {
-      header: '<div class="form-group">' + '<label class="col-sm-2 control-label" ng-class="{\'vo_reqfield\': showHtmlData.isRequired}" ng-bind="$$data.name"></label>' + "<div class=\"col-sm-8\" ng-class=\"{'modal-open' : showHtmlData.isMultiComplex, 'hierarchy_main': showHtmlData.isComplex}\" ng-transclude></div>" + '<div class="col-sm-2" ng-if="showHtmlData.isMultiComplex"><button class="btn btn-success" ng-click="addField($$data)"><i class="fa fa-plus"></i>{{\'BTN_ADD\' | translate}}</button></div>' + '<div class="row" ng-repeat="tipMsg in showHtmlData.tipMsg"><div class="col-sm-8 col-sm-offset-2 text-warnings"><i class="icon fa fa-bell-o"></i>&nbsp;{{tipMsg}}</div></div>' + "</div>",
-      label: '<input style="min-width: 150px; max-width: 250px;" type="text" readonly ng-model="vm.$$data.value" class="form-control">',
-      input: '<input style="min-width: 150px; max-width: 250px;" ng-model="vm.$$data.value" class="form-control" %replaceInfo%>',
-      date: '<div class="input-group" style="width: 180px;"><input %replaceInfo% type="text" class="form-control" datepicker-popup ng-model="vm.$$data.value" date-model-format="yyyy-MM-dd" is-open="datePicker" close-text="Close" /><span class="input-group-btn"><button %replaceInfo% type="button" class="btn btn-default" ng-click="datePicker = !datePicker"><i class="glyphicon glyphicon-calendar"></i></button></span></div>',
-      datetime: '<div class="input-group" style="width: 180px;"><input %replaceInfo% type="text" class="form-control" datepicker-popup ng-model="vm.$$data.value" date-model-format="yyyy-MM-dd HH:mm:ss" is-open="datePicker" close-text="Close" /><span class="input-group-btn"><button %replaceInfo% type="button" class="btn btn-default" ng-click="datePicker = !datePicker"><i class="glyphicon glyphicon-calendar"></i></button></span></div>',
-      textarea: '<textarea style="min-width: 150px; max-width: 650px;" class="form-control no-resize" ng-model="vm.$$data.value" rows="{{showHtmlData.rowNum}}" %replaceInfo%></textarea>',
-      select: '<select style="min-width: 150px; max-width: 250px;" %replaceInfo% class="form-control" ng-model="vm.$$data.value.value" ng-options="option.value as option.displayName for option in vm.$$data.options"> <option value="">{{\'TXT_SELECT_NO_VALUE\' | translate}}</option></select>',
-      radio: '<label class="checkbox-inline c-radio" ng-repeat="option in vm.$$data.options"><input name="{{vm.$$data.id}}" type="radio" ng-value="option.value" ng-model="vm.$$data.value.value"><span class="fa fa-check"></span> {{option.displayName}}</label>',
-      checkbox: '<label class="checkbox-inline c-checkbox" ng-repeat="option in vm.$$data.options"><input type="checkbox" ng-value="option.value" ng-click="checkboxValue(option.value)" ng-checked="isSelected(option.value)"><span class="fa fa-check"></span> {{option.displayName}}</label>',
-      multiComplex: '<table class="table text-center">' + "<thead><tr>" + '<th ng-repeat="field in vm.$$data.fields" ng-class="{\'vo_reqfield\': showHtmlData.isRequired}" class="text-center" style="min-width: 180px;">{{field.name}}</th>' + '<th ng-if="!showHtmlData.notShowEdit" style="min-width: 60px;" class="text-center" translate="TXT_ACTION"></th>' + "</tr></thead>" + '<tbody><tr ng-repeat="value in vm.$$data.complexValues">' + '<td class="text-left" ng-repeat="field in value.fieldMap"><div class="tableLayer"><p ng-if="field.type != \'COMPLEX\'">&nbsp;</p><p><schema-item data="field" hastip="true" complex="true"></schema-item></p></div></td>' + '<td ng-if="!showHtmlData.notShowEdit" style="min-width: 60px;"><button title="{\'BTN_DELETE\' | translate}" class="btn btn-danger btn-xs" ng-click="delField($index)"><i class="fa  fa-trash-o"></i></button></td>' + "</tr></tbody>" + "</table>",
-      complex: '<schema-header ng-repeat="field in vm.$$data.fields" data="field"><schema-item data="field"></schema-item></schema-header>',
-      multi_in_complex: '<div ng-repeat="field in vm.$$data.fields"><p ng-bind="field.name"></p><p><schema-item data="field" hastip="true" complex="true"></schema-item></p></div>',
-      multiComplex_tip: '<div class="text-warnings" ng-repeat="tipMsg in showHtmlData.tipMsg"><br><i class="icon fa fa-bell-o"></i>&nbsp;{{tipMsg}}</div>'
     };
     var SchemaHeader, Schema;
     SchemaHeader = function(config) {
@@ -323,25 +222,22 @@ define(function() {
       tipMsg: function(value) {
         return value !== undefined ? this.config.tipMsg.push(value) : this.config.tipMsg;
       },
-      checkValues: function(value) {
-        return value !== undefined ? this.config.checkValues.push(value) : this.config.checkValues;
-      },
       notShowEdit: function(value) {
         return value !== undefined ? this.config.notShowEdit = value : this.config.notShowEdit;
       }
     };
-    angular.module("voyageone.angular.directives.schema", []).directive("schemaHeader", function() {
+    angular.module("voyageone.angular.directives.schema", []).directive("schemaHeader", [ "templates", function(templates) {
       return {
         restrict: "E",
         replace: true,
         transclude: true,
-        template: templates.header,
+        templateUrl: templates.schema.header.url,
         scope: {
-          $$data: "=data"
+          $data: "=data"
         },
         link: function(scope) {
           var header = new SchemaHeader();
-          var field = scope.$$data;
+          var field = scope.$data;
           switch (field.type) {
            case fieldTypes.MULTI_COMPLEX:
             header.isMultiComplex(true);
@@ -362,7 +258,7 @@ define(function() {
               break;
             }
           });
-          scope.showHtmlData = angular.copy(header.config);
+          scope.header = angular.copy(header.config);
           scope.addField = function(data) {
             var newFieldMap = {};
             angular.forEach(data.fields, function(field) {
@@ -374,37 +270,36 @@ define(function() {
           };
         }
       };
-    }).directive("schemaItem", [ "$compile", function($compile) {
+    } ]).directive("schemaItem", [ "$compile", "templates", function($compile, templates) {
+      var schemas = templates.schema;
       return {
         restrict: "E",
         require: [ "^?form" ],
-        bindToController: true,
-        controllerAs: "vm",
         scope: {
-          $$data: "=data",
-          $$hastip: "=hastip",
-          $$complex: "=complex",
-          $$notShowEdit: "=notShowEdit"
+          $data: "=data",
+          $hastip: "=hastip",
+          $complex: "=complex",
+          $notShowEdit: "=notShowEdit"
         },
         controller: function() {},
         link: function(scope, element) {
-          scope.$watch("vm.$$data", refresh);
-          scope.$watch("schemaForm.$valid", function($valid) {
-            scope.vm.$$data.$valid = $valid;
+          scope.$watch("$data", refresh);
+          scope.$watch("validForm.$valid", function($valid) {
+            scope.$data.$valid = $valid;
           });
           function refresh() {
             var schema = new Schema();
-            var field = scope.vm.$$data;
+            var field = scope.$data;
             schema.name(field.id);
-            schema.notShowEdit(scope.vm.$$notShowEdit == undefined ? false : scope.vm.$$notShowEdit);
+            schema.notShowEdit(scope.$notShowEdit == undefined ? false : scope.$notShowEdit);
             schema.type(field.type);
             switch (field.type) {
              case fieldTypes.RADIO:
-              if (scope.vm.$$complex) schema.type(fieldTypes.SINGLE_CHECK);
+              if (scope.$complex) schema.type(fieldTypes.SINGLE_CHECK);
               break;
 
              case fieldTypes.MULTI_CHECK:
-              _setCheckValues(field.values);
+              schema.config.checkValues = field.values;
               break;
 
              case fieldTypes.MULTI_COMPLEX:
@@ -466,133 +361,132 @@ define(function() {
                 break;
               }
             });
-            var tempHtml = "";
-            switch (schema.type()) {
-             case fieldTypes.INPUT:
-              tempHtml = templates.input.replace("%replaceInfo%", schema.html());
-              break;
-
-             case fieldTypes.DATE:
-              tempHtml = templates.date.replace("%replaceInfo%", schema.html()).replace("%replaceInfo%", schema.html());
-              break;
-
-             case fieldTypes.DATETIME:
-              tempHtml = templates.datetime.replace("%replaceInfo%", schema.html()).replace("%replaceInfo%", schema.html());
-              break;
-
-             case fieldTypes.TEXTAREA:
-              tempHtml = templates.textarea.replace("%replaceInfo%", schema.html());
-              break;
-
-             case fieldTypes.SINGLE_CHECK:
-              tempHtml = templates.select.replace("%replaceInfo%", schema.html());
-              break;
-
-             case fieldTypes.RADIO:
-              tempHtml = templates.radio.replace("%replaceInfo%", schema.html());
-              break;
-
-             case fieldTypes.MULTI_CHECK:
-              tempHtml = templates.checkbox.replace("%replaceInfo%", schema.html());
-              break;
-
-             case fieldTypes.LABEL:
-              tempHtml = templates.label;
-              break;
-
-             case fieldTypes.MULTI_COMPLEX:
-              tempHtml = templates.multiComplex;
-              break;
-
-             case fieldTypes.COMPLEX:
-              tempHtml = scope.vm.$$complex ? templates.multi_in_complex : templates.complex;
-              break;
-            }
-            if (schema.tipMsg() != null && scope.vm.$$hastip) {
-              tempHtml += templates.multiComplex_tip;
-            }
-            tempHtml = '<ng-form name="schemaForm">' + tempHtml + "</ng-form>";
-            tempHtml += '<div ng-repeat="(k, v) in schemaForm.$error">{{k}}</div>';
-            scope.showHtmlData = angular.copy(schema.config);
-            element.html($compile(tempHtml)(scope));
-            scope.checkboxValue = function(value) {
-              if (_.contains(scope.showHtmlData.checkValues, value)) {
-                scope.showHtmlData.checkValues.splice(_.indexOf(scope.showHtmlData.checkValues, value), 1);
-              } else {
-                scope.showHtmlData.checkValues.push(value);
-              }
-              field.values = [];
-              angular.forEach(scope.showHtmlData.checkValues, function(obj) {
-                field.values.push({
-                  id: null,
-                  value: obj
-                });
+            getTemplate().getHtml().then(function(html) {
+              if (schema.tipMsg() != null && scope.$hastip) return schemas.multiComplex_tip.getHtml().then(function(tipHtml) {
+                compileTemplate(html + tipHtml);
               });
-            };
-            scope.isSelected = function(value) {
-              return _.contains(scope.showHtmlData.checkValues, value);
+              compileTemplate(html);
+            });
+            function compileTemplate(html) {
+              var validAttrs = schema.html();
+              if (validAttrs) {
+                html = html.replace(/validators/g, validAttrs);
+                html = '<ng-form name="validForm">' + html + "</ng-form>";
+                html += '<div ng-repeat="(k, v) in validForm.$error">{{k}}</div>';
+              }
+              scope.schema = angular.copy(schema.config);
+              element.html($compile(html)(scope));
+              field.form = scope.validForm;
+            }
+            scope.changed = function(option) {
+              var values = field.values;
+              if (!values && option.selected) {
+                field.values = [ {
+                  id: null,
+                  value: option.value
+                } ];
+                return;
+              }
+              var index = values.findIndex(function(valWrap) {
+                return valWrap.value === option.value;
+              });
+              if (option.selected && index < 0) values.push({
+                id: null,
+                value: option.value
+              }); else if (!option.selected && index > -1) values.splice(index, 1);
             };
             scope.delField = function(index) {
               field.complexValues.splice(index, 1);
             };
-            function _setCheckValues(values) {
-              if (values != undefined && values != null) {
-                angular.forEach(values, function(obj) {
-                  schema.checkValues(obj.value);
-                });
+            function getTemplate() {
+              switch (schema.type()) {
+               case fieldTypes.INPUT:
+                return schemas.input;
+
+               case fieldTypes.DATE:
+                return schemas.date;
+
+               case fieldTypes.DATETIME:
+                return schemas.datetime;
+
+               case fieldTypes.TEXTAREA:
+                return schemas.textarea;
+
+               case fieldTypes.SINGLE_CHECK:
+                return schemas.select;
+
+               case fieldTypes.RADIO:
+                return schemas.radio;
+
+               case fieldTypes.MULTI_CHECK:
+                return schemas.checkbox;
+
+               case fieldTypes.LABEL:
+                return schemas.label;
+
+               case fieldTypes.MULTI_COMPLEX:
+                return schemas.multiComplex;
+
+               case fieldTypes.COMPLEX:
+                return scope.$complex ? schemas.multi_in_complex : schemas.complex;
+
+               default:
+                return null;
               }
             }
             function _resetMultiComplex(data) {
               var tempValues = [];
-              angular.forEach(data.complexValues, function(value) {
-                var tempFieldMap = {};
-                angular.forEach(data.fields, function(field) {
+              var tempFieldMap;
+              data.complexValues.forEach(function(value) {
+                tempFieldMap = {};
+                data.fields.forEach(function(field) {
                   var tempField = angular.copy(field);
-                  if (value.fieldMap[field.id] != undefined) {
-                    switch (field.type) {
-                     case fieldTypes.INPUT:
-                     case fieldTypes.LABEL:
-                     case fieldTypes.DATE:
-                     case fieldTypes.DATETIME:
-                     case fieldTypes.TEXTAREA:
-                     case fieldTypes.SINGLE_CHECK:
-                     case fieldTypes.RADIO:
-                      tempField.value = value.fieldMap[field.id].value;
-                      break;
+                  var defValue = value.fieldMap[field.id];
+                  if (!defValue) switch (field.type) {
+                   case fieldTypes.INPUT:
+                   case fieldTypes.LABEL:
+                   case fieldTypes.DATE:
+                   case fieldTypes.DATETIME:
+                   case fieldTypes.TEXTAREA:
+                   case fieldTypes.SINGLE_CHECK:
+                   case fieldTypes.RADIO:
+                    tempField.value = defValue.value;
+                    break;
 
-                     case fieldTypes.MULTI_INPUT:
-                     case fieldTypes.MULTI_CHECK:
-                      tempField.values = value.fieldMap[field.id].values;
-                      break;
+                   case fieldTypes.MULTI_INPUT:
+                   case fieldTypes.MULTI_CHECK:
+                    tempField.values = defValue.values;
+                    break;
 
-                     case fieldTypes.COMPLEX:
-                      tempField.complexValue = value.fieldMap[field.id].complexValue;
-                      break;
+                   case fieldTypes.COMPLEX:
+                    tempField.complexValue = defValue.complexValue;
+                    break;
 
-                     case fieldTypes.MULTI_COMPLEX:
-                      tempField.complexValues = value.fieldMap[field.id].complexValues;
-                      break;
-                    }
+                   case fieldTypes.MULTI_COMPLEX:
+                    tempField.complexValues = defValue.complexValues;
+                    break;
                   }
                   tempFieldMap[field.id] = tempField;
                 });
                 tempValues.push({
-                  fieldMap: angular.copy(tempFieldMap)
+                  fieldMap: tempFieldMap
                 });
               });
               if (_.isEmpty(data.complexValues)) {
                 var newFieldMap = {};
-                angular.forEach(data.fields, function(field) {
+                data.fields.forEach(function(field) {
                   newFieldMap[field.id] = field;
                 });
                 tempValues.push({
-                  fieldMap: angular.copy(newFieldMap)
+                  fieldMap: newFieldMap
                 });
               }
               return tempValues;
             }
             function _resetComplex(data) {
-              angular.forEach(data.fields, function(field) {
+              if (!data || !data.fields || !data.fields.length) return;
+              data.fields.forEach(function(field) {
+                var defValue;
                 switch (field.type) {
                  case fieldTypes.INPUT:
                  case fieldTypes.LABEL:
@@ -601,7 +495,8 @@ define(function() {
                  case fieldTypes.TEXTAREA:
                  case fieldTypes.SINGLE_CHECK:
                  case fieldTypes.RADIO:
-                  if (!_.isEmpty(data.complexValue.fieldMap)) field.value = data.complexValue.fieldMap[field.id].value; else field.value = data.defaultComplexValue.fieldMap[field.id].value;
+                  if (!_.isEmpty(data.complexValue.fieldMap)) defValue = data.complexValue.fieldMap[field.id]; else defValue = data.defaultComplexValue.fieldMap[field.id];
+                  if (defValue) field.value = defValue.value;
                   break;
 
                  case fieldTypes.MULTI_INPUT:
@@ -654,10 +549,9 @@ define(function() {
               }
             }
             function _requiredRule(requiredRule) {
-              if ("true" == requiredRule.value) {
-                schema.isRequired(true);
-                schema.html("required");
-              }
+              if (requiredRule.value !== "true") return;
+              schema.isRequired(true);
+              schema.html(field.type === fieldTypes.MULTI_CHECK ? 'ng-required="!$data.values.length"' : "required");
             }
             function _disableRule(disableRule) {
               if ("true" == disableRule.value && disableRule.dependGroup == null) {
@@ -921,6 +815,81 @@ define(function() {
       }
     };
   });
+  angular.module("voyageone.angular.controllers.selectRows", []).controller("selectRowsCtrl", [ "$scope", function($scope) {
+    $scope.selectAll = selectAll;
+    $scope.selectOne = selectOne;
+    $scope.isAllSelected = isAllSelected;
+    function selectAll(objectList, id) {
+      objectList.selAllFlag = !objectList.selAllFlag;
+      if (!id) {
+        id = "id";
+      }
+      angular.forEach(objectList.currPageRows, function(object) {
+        objectList.selFlag[object[id]] = objectList.selAllFlag;
+        if (objectList.hasOwnProperty("selList")) {
+          var tempList = _.pluck(objectList.selList, id);
+          if (objectList.selAllFlag && tempList.indexOf(object[id]) < 0) {
+            objectList.selList.push(object);
+          } else if (!objectList.selAllFlag && tempList.indexOf(object[id]) > -1) {
+            objectList.selList.splice(tempList.indexOf(object[id]), 1);
+          }
+        }
+      });
+    }
+    function selectOne(currentId, objectList, id) {
+      if (!id) {
+        id = "id";
+      }
+      if (objectList.hasOwnProperty("selList")) {
+        angular.forEach(objectList.currPageRows, function(object) {
+          var tempList = _.pluck(objectList.selList, id);
+          if (_.isEqual(object[id], currentId)) {
+            if (tempList.indexOf(object[id]) > -1) {
+              objectList.selList.splice(tempList.indexOf(object[id]), 1);
+            } else {
+              objectList.selList.push(object);
+            }
+          }
+        });
+      }
+      objectList.selAllFlag = true;
+      tempList = _.pluck(objectList.selList, id);
+      angular.forEach(objectList.currPageRows, function(object) {
+        if (tempList.indexOf(object[id]) == -1) {
+          objectList.selAllFlag = false;
+        }
+      });
+    }
+    function isAllSelected(objectList, id) {
+      if (!id) {
+        id = "id";
+      }
+      if (objectList != undefined) {
+        objectList.selAllFlag = true;
+        var tempList = _.pluck(objectList.selList, id);
+        angular.forEach(objectList.currPageRows, function(object) {
+          if (tempList.indexOf(object[id]) == -1) {
+            objectList.selAllFlag = false;
+          }
+        });
+        return objectList.selAllFlag;
+      }
+      return false;
+    }
+  } ]);
+  angular.module("voyageone.angular.controllers.showPopover", []).controller("showPopoverCtrl", [ "$scope", function($scope) {
+    $scope.showInfo = showInfo;
+    function showInfo(values) {
+      var tempHtml = "";
+      angular.forEach(values, function(data, index) {
+        tempHtml += data;
+        if (index !== values.length) {
+          tempHtml += "<br>";
+        }
+      });
+      return tempHtml;
+    }
+  } ]);
   angular.module("voyageone.angular.factories.dialogs", []).factory("$dialogs", [ "$uibModal", "$filter", "$templateCache", function($uibModal, $filter, $templateCache) {
     var templateName = "voyageone.angular.factories.dialogs.tpl.html";
     var template = '<div class="vo_modal">' + '<div class="modal-header">' + '<button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="close()">' + '<span aria-hidden="true"><i ng-click="close()" class="fa fa-close"></i></span>' + "</button>" + '<h5 class="modal-title" ng-bind-html="title"></h5>' + "</div>" + '<div class="modal-body wrapper-lg">' + '<div class="row">' + '<h5 class="text-center text-hs"><p class="text-center" ng-bind-html="content"></p></h5>' + "</div>" + "</div>" + '<div class="modal-footer">' + '<button class="btn btn-default btn-sm" ng-if="!isAlert" ng-click="close()" translate="BTN_CANCEL"></button>' + '<button class="btn btn-vo btn-sm" ng-click="ok()" translate="BTN_OK"></button>' + "</div>" + "</div>";
@@ -1121,6 +1090,35 @@ define(function() {
       this.selectRowsInfo = _selectRowsInfo;
     };
   });
+  (function() {
+    function Template(key) {
+      this.url = "/components/angular/factories/templates/" + key.replace(".", "/") + ".html";
+    }
+    Template.prototype = {
+      getHtml: function() {
+        return this.$req(this.url);
+      }
+    };
+    angular.module("voyageone.angular.factories.templates", []).run([ "$templateRequest", function($templateRequest) {
+      Template.prototype.$req = $templateRequest;
+    } ]).constant("templates", {
+      schema: {
+        header: new Template("schema.header"),
+        label: new Template("schema.label"),
+        input: new Template("schema.input"),
+        date: new Template("schema.date"),
+        datetime: new Template("schema.datetime"),
+        textarea: new Template("schema.textarea"),
+        select: new Template("schema.select"),
+        radio: new Template("schema.radio"),
+        checkbox: new Template("schema.checkbox"),
+        multiComplex: new Template("schema.multicomplex"),
+        complex: new Template("schema.complex"),
+        multi_in_complex: new Template("schema.multiincomplex"),
+        multiComplex_tip: new Template("schema.multicomplextip")
+      }
+    });
+  })();
   angular.module("voyageone.angular.factories.vpagination", []).factory("vpagination", function() {
     return function(config) {
       var _pages, _lastTotal = 0, _showPages = [];
@@ -1408,6 +1406,5 @@ define(function() {
       return currentLang.substr(0, 2);
     }
   };
-  return angular.module("voyageone.angular", [ "voyageone.angular.controllers.datePicker", "voyageone.angular.controllers.selectRows", "voyageone.angular.controllers.showPopover", "voyageone.angular.directives.dateModelFormat", "voyageone.angular.directives.enterClick", "voyageone.angular.directives.fileStyle", "voyageone.angular.directives.ifNoRows", "voyageone.angular.directives.uiNav", "voyageone.angular.directives.schema", "voyageone.angular.directives.voption", "voyageone.angular.directives.vpagination", "voyageone.angular.directives.validator", "voyageone.angular.services.ajax", "voyageone.angular.services.cookie", "voyageone.angular.services.message", "voyageone.angular.services.permission", "voyageone.angular.services.translate", "voyageone.angular.factories.dialogs", "voyageone.angular.factories.interceptor", "voyageone.angular.factories.notify", "voyageone.angular.factories.pppAutoImpl", "voyageone.angular.factories.selectRows", "voyageone.angular.factories.vpagination" ]);
+  return angular.module("voyageone.angular", [ "voyageone.angular.controllers.selectRows", "voyageone.angular.controllers.showPopover", "voyageone.angular.directives.dateModelFormat", "voyageone.angular.directives.enterClick", "voyageone.angular.directives.fileStyle", "voyageone.angular.directives.ifNoRows", "voyageone.angular.directives.uiNav", "voyageone.angular.directives.schema", "voyageone.angular.directives.voption", "voyageone.angular.directives.vpagination", "voyageone.angular.directives.validator", "voyageone.angular.factories.dialogs", "voyageone.angular.factories.interceptor", "voyageone.angular.factories.notify", "voyageone.angular.factories.pppAutoImpl", "voyageone.angular.factories.selectRows", "voyageone.angular.factories.templates", "voyageone.angular.factories.vpagination", "voyageone.angular.services.ajax", "voyageone.angular.services.cookie", "voyageone.angular.services.message", "voyageone.angular.services.permission", "voyageone.angular.services.translate" ]);
 });
-//# sourceMappingURL=voyageone.angular.com.js.map
