@@ -67,9 +67,6 @@ public class CmsProductDetailService {
     @Autowired
     private CmsBtProductDao cmsBtProductDao;
 
-//    @Autowired
-//    protected VoApiDefaultClient voApiClient;
-
     @Autowired
     private ProductService productService;
 

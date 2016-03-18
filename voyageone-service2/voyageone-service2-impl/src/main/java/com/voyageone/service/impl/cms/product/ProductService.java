@@ -8,13 +8,14 @@ import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.base.dao.mongodb.JomgoUpdate;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.cms.CmsConstants;
+import com.voyageone.common.Constants;
+import com.voyageone.common.configs.TypeChannel;
+import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.BeanUtil;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
-import com.voyageone.service.bean.cms.product.ProductPriceBean;
-import com.voyageone.service.bean.cms.product.ProductSkuPriceBean;
-import com.voyageone.service.bean.cms.product.ProductTransDistrBean;
-import com.voyageone.service.bean.cms.product.ProductUpdateBean;
+import com.voyageone.service.bean.cms.product.*;
 import com.voyageone.service.dao.cms.CmsBtPriceLogDao;
 import com.voyageone.service.dao.cms.CmsBtSxWorkloadDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
@@ -1227,194 +1228,172 @@ public class ProductService extends BaseService {
 //        return response;
 //    }
 
-//    /**
-//     * get the product info from wms's request
-//     */
-//    public ProductForWmsGetResponse getWmsProductsInfo(ProductForWmsGetRequest request) {
-//        ProductForWmsGetResponse response = new ProductForWmsGetResponse();
-//
-//        checkCommRequest(request);
-//        //ChannelId
-//        String channelId = request.getChannelId();
-//        checkRequestChannelId(channelId);
-//
-//        request.check();
-//
-//        JomgoQuery queryObject = new JomgoQuery();
-//        // set fields
-//        buildProjection(request, queryObject);
-//
-//        //getProductByCode
-//        String productCode = request.getCode();
-//
-//        if (!StringUtils.isEmpty(productCode)) {
-//            queryObject.setQuery(String.format("{\"fields.code\" : \"%s\" }", productCode));
-//        }
-//
-//        if (queryObject.getQuery() != null) {
-//            CmsBtProductModel product = cmsBtProductDao.selectOneWithQuery(queryObject, channelId);
-//            ProductForWmsBean resultInfo = new ProductForWmsBean();
-//            resultInfo.setChannelId(product.getChannelId());
-//            resultInfo.setCode(product.getFields().getCode());
-//            resultInfo.setName(product.getFields().getProductNameEn());
-//            resultInfo.setProductId(product.getProdId().toString());
-//            resultInfo.setShortDescription(product.getFields().getShortDesEn());
-//            resultInfo.setLongDescription(product.getFields().getLongDesEn());
-//            // TODO set productType(but now productType is not commen field)
-//            resultInfo.setDescription(product.getFields().getProductType());
-//            resultInfo.setBrandName(product.getFields().getBrand());
-//            resultInfo.setGender(product.getFields().getSizeType());
-//            // TODO 无法提供,属于主数据的非共通属性
-//            resultInfo.setMaterialFabricName("");
-//            resultInfo.setCountryName(product.getFields().getOrigin());
-//            resultInfo.setMsrp(product.getFields().getPriceMsrpSt() != null ? product.getFields().getPriceMsrpSt().toString() : "0.00");
-//            resultInfo.setPrice(product.getFields().getPriceSaleSt() != null ? product.getFields().getPriceSaleSt().toString() : "0.00");
-//            // TODO 无法提供,属于主数据的非共通属性
-//            resultInfo.setWeightkg("");
-//            // TODO 无法提供,属于主数据的非共通属性
-//            resultInfo.setWeightlb("");
-//            resultInfo.setModelName(product.getFields().getModel());
-//            // TODO 无法提供,属于主数据的非共通属性
-//            resultInfo.setUrlKey("");
-//            // TODO 写死,取得是S7图片显示的路径
-//            String imagePath = "";
-//            if (product.getFields().getImages1().size() > 0) {
-//                if (!StringUtils.isEmpty(product.getFields().getImages1().get(0).getName()))
-//                    imagePath = Constants.productForOtherSystemInfo.IMG_URL + product.getFields().getImages1().get(0).getName();
-//            }
-//            resultInfo.setShowName(imagePath);
-//            resultInfo.setCnName(product.getFields().getLongTitle());
-//            // 获取HsCodeCrop
-//            String hsCodeCrop = product.getFields().getHsCodeCrop();
-//            if (!StringUtils.isEmpty(hsCodeCrop)) {
-//                TypeChannelBean bean = TypeChannel.getTypeChannelByCode(Constants.productForOtherSystemInfo.HS_CODE_CROP, channelId, hsCodeCrop);
-//                if (bean != null) {
-//                    String[] hsCode = bean.getName().split(",");
-//                    resultInfo.setHsCodeId(hsCodeCrop);
-//                    resultInfo.setHsCode(hsCode[1]);
-//                    resultInfo.setHsDescription(hsCode[2]);
-//                    resultInfo.setUnit(hsCode[3]);
-//                }
-//            }
-//            // 获取HsCodePrivate
-//            String hsCodePrivate = product.getFields().getHsCodePrivate();
-//            if (!StringUtils.isEmpty(hsCodePrivate)) {
-//                TypeChannelBean bean = TypeChannel.getTypeChannelByCode(Constants.productForOtherSystemInfo.HS_CODE_PRIVATE, channelId, hsCodePrivate);
-//                if (bean != null) {
-//                    String[] hsCodePu = bean.getName().split(",");
-//                    resultInfo.setHsCodePuId(hsCodePrivate);
-//                    resultInfo.setHsCodePu(hsCodePu[0]);
-//                    resultInfo.setHsDescriptionPu(hsCodePu[1]);
-//                    resultInfo.setUnitPu(hsCodePu[2]);
-//                }
-//            }
-//
-//            response.setResultInfo(resultInfo);
-//        }
-//        return response;
-//    }
+    /**
+     * get the product info from wms's request
+     */
+    public ProductForWmsBean getWmsProductsInfo(String channelId, String productCode, String[] projection) {
+        JomgoQuery queryObject = new JomgoQuery();
+        // set fields
+        if (projection != null && projection.length > 0) {
+            queryObject.setProjection(projection);
+        }
 
-//    /**
-//     * get the product list from oms's request
-//     */
-//    public ProductForOmsGetResponse getOmsProductsInfo(ProductForOmsGetRequest request) {
-//        ProductForOmsGetResponse response = new ProductForOmsGetResponse();
-//
-//        checkCommRequest(request);
-//        //ChannelId
-//        String channelId = request.getChannelId();
-//        checkRequestChannelId(channelId);
-//
-//        request.check();
-//
-//        JomgoQuery queryObject = new JomgoQuery();
-//        // set fields
-//        buildProjection(request, queryObject);
-//
-//        StringBuilder sbQuery = new StringBuilder();
-//        // 设定sku的模糊查询
-//        String skuIncludes = request.getSkuIncludes();
-//        // 根据具体的sku取值
-//        List<String> skuList = request.getSkuList();
-//
-//        if (!StringUtils.isEmpty(skuIncludes)) {
-//            sbQuery.append(MongoUtils.splicingValue("skus.skuCode", skuIncludes, "$regex"));
-//            sbQuery.append(",");
-//        } else if (skuList != null && skuList.size() > 0) {
-//            sbQuery.append(MongoUtils.splicingValue("skus.skuCode", skuList.toArray(new String[skuList.size()])));
-//            sbQuery.append(",");
-//        }
-//
-//        // 设定name的模糊查询
-//        String nameIncludes = request.getNameIncludes();
-//        if (!StringUtils.isEmpty(nameIncludes)) {
-//            sbQuery.append(MongoUtils.splicingValue("fields.productNameEn", nameIncludes, "$regex"));
-//            sbQuery.append(",");
-//        }
-//
-//        // 设定description的模糊查询
-//        String descriptionIncludes = request.getDescriptionIncludes();
-//        if (!StringUtils.isEmpty(descriptionIncludes)) {
-//            sbQuery.append(MongoUtils.splicingValue("fields.longDesEn", descriptionIncludes, "$regex"));
-//            sbQuery.append(",");
-//        }
-//
-//        String cartId = request.getCartId() == null ? "" : request.getCartId();
-//        if (!StringUtils.isEmpty(cartId)) {
-//            sbQuery.append(MongoUtils.splicingValue("groups.platforms.cartId", Integer.valueOf(cartId)));
-//            sbQuery.append(",");
-//        }
-//
-//
-//        if (!StringUtils.isEmpty(sbQuery.toString())) {
-//            queryObject.setQuery("{" + sbQuery.toString().substring(0, sbQuery.toString().length() - 1) + "}");
-//        }
-//
-//        queryObject.setLimit(50);
-//        List<CmsBtProductModel> products = cmsBtProductDao.select(queryObject, channelId);
-//
-//        List<ProductForOmsBean> resultInfo = new ArrayList<>();
-//        for (CmsBtProductModel product : products) {
-//            for (CmsBtProductModel_Sku sku : product.getSkus()) {
-//                ProductForOmsBean bean = new ProductForOmsBean();
-//                bean.setSku(sku.getSkuCode());
-//                bean.setProduct(product.getFields().getProductNameEn());
-//                bean.setDescription(product.getFields().getLongDesEn());
-//                bean.setPricePerUnit(sku.getPriceSale() != null ? sku.getPriceSale().toString() : "0.00");
-//                // TODO 目前无法取得库存值
-//                Map<String, Object> param = new HashMap<>();
-//                param.put("channelId", channelId);
-//                param.put("sku", sku.getSkuCode());
-////                ProductSkuRequest param = new ProductSkuRequest();
-////                param.setChannelId(channelId);
-////                param.setSku(sku.getSkuCode());
-//                WmsBtInventoryCenterLogicModel skuInfo = wmsBtInventoryCenterLogicDao.getItemDetailBySku(param);
-//                bean.setInventory(String.valueOf(skuInfo.getQtyChina()));
-//                // TODO 写死,取得是S7图片显示的路径
-//                String imagePath = "";
-//                if (product.getFields().getImages1().size() > 0) {
-//                    if (!StringUtils.isEmpty(product.getFields().getImages1().get(0).getName()))
-//                        imagePath = Constants.productForOtherSystemInfo.IMG_URL + product.getFields().getImages1().get(0).getName();
-//                }
-//                bean.setImgPath(imagePath);
-//
-//                // TODO 目前写死,以后再想办法修改
-//                String numIid = "";
-//                switch (cartId) {
-//                    case "23":
-//                        numIid = product.getGroups().getPlatforms().size() > 0 && !StringUtils.isEmpty(product.getGroups().getPlatforms().get(0).getNumIId())
-//                                ? Constants.productForOtherSystemInfo.TMALL_NUM_IID + product.getGroups().getPlatforms().get(0).getNumIId() : "";
-//                        break;
-//                }
-//                bean.setSkuTmallUrl(numIid);
-//
-//                resultInfo.add(bean);
-//            }
-//        }
-//        response.setResultInfo(resultInfo);
-//
-//        return response;
-//    }
+        if (!StringUtils.isEmpty(productCode)) {
+            queryObject.setQuery(String.format("{\"fields.code\" : \"%s\" }", productCode));
+        }
+
+        ProductForWmsBean resultInfo = null;
+        if (queryObject.getQuery() != null) {
+            resultInfo = new ProductForWmsBean();
+
+            CmsBtProductModel product = cmsBtProductDao.selectOneWithQuery(queryObject, channelId);
+            resultInfo.setChannelId(product.getChannelId());
+            resultInfo.setCode(product.getFields().getCode());
+            resultInfo.setName(product.getFields().getProductNameEn());
+            resultInfo.setProductId(product.getProdId().toString());
+            resultInfo.setShortDescription(product.getFields().getShortDesEn());
+            resultInfo.setLongDescription(product.getFields().getLongDesEn());
+            // TODO set productType(but now productType is not commen field)
+            resultInfo.setDescription(product.getFields().getProductType());
+            resultInfo.setBrandName(product.getFields().getBrand());
+            resultInfo.setGender(product.getFields().getSizeType());
+            // TODO 无法提供,属于主数据的非共通属性
+            resultInfo.setMaterialFabricName("");
+            resultInfo.setCountryName(product.getFields().getOrigin());
+            resultInfo.setMsrp(product.getFields().getPriceMsrpSt() != null ? product.getFields().getPriceMsrpSt().toString() : "0.00");
+            resultInfo.setPrice(product.getFields().getPriceSaleSt() != null ? product.getFields().getPriceSaleSt().toString() : "0.00");
+            // TODO 无法提供,属于主数据的非共通属性
+            resultInfo.setWeightkg("");
+            // TODO 无法提供,属于主数据的非共通属性
+            resultInfo.setWeightlb("");
+            resultInfo.setModelName(product.getFields().getModel());
+            // TODO 无法提供,属于主数据的非共通属性
+            resultInfo.setUrlKey("");
+            // TODO 写死,取得是S7图片显示的路径
+            String imagePath = "";
+            if (product.getFields().getImages1().size() > 0) {
+                if (!StringUtils.isEmpty(product.getFields().getImages1().get(0).getName()))
+                    imagePath = Constants.productForOtherSystemInfo.IMG_URL + product.getFields().getImages1().get(0).getName();
+            }
+            resultInfo.setShowName(imagePath);
+            resultInfo.setCnName(product.getFields().getLongTitle());
+            // 获取HsCodeCrop
+            String hsCodeCrop = product.getFields().getHsCodeCrop();
+            if (!StringUtils.isEmpty(hsCodeCrop)) {
+                TypeChannelBean bean = TypeChannel.getTypeChannelByCode(Constants.productForOtherSystemInfo.HS_CODE_CROP, channelId, hsCodeCrop);
+                if (bean != null) {
+                    String[] hsCode = bean.getName().split(",");
+                    resultInfo.setHsCodeId(hsCodeCrop);
+                    resultInfo.setHsCode(hsCode[1]);
+                    resultInfo.setHsDescription(hsCode[2]);
+                    resultInfo.setUnit(hsCode[3]);
+                }
+            }
+            // 获取HsCodePrivate
+            String hsCodePrivate = product.getFields().getHsCodePrivate();
+            if (!StringUtils.isEmpty(hsCodePrivate)) {
+                TypeChannelBean bean = TypeChannel.getTypeChannelByCode(Constants.productForOtherSystemInfo.HS_CODE_PRIVATE, channelId, hsCodePrivate);
+                if (bean != null) {
+                    String[] hsCodePu = bean.getName().split(",");
+                    resultInfo.setHsCodePuId(hsCodePrivate);
+                    resultInfo.setHsCodePu(hsCodePu[0]);
+                    resultInfo.setHsDescriptionPu(hsCodePu[1]);
+                    resultInfo.setUnitPu(hsCodePu[2]);
+                }
+            }
+        }
+        return resultInfo;
+    }
+
+    /**
+     * get the product list from oms's request
+     */
+    public List<ProductForOmsBean> getOmsProductsInfo(String channelId,
+                                                       String skuIncludes, List<String> skuList,
+                                                       String nameIncludes,
+                                                       String descriptionIncludes,
+                                                       String cartId,
+                                                       String[] projection) {
+        JomgoQuery queryObject = new JomgoQuery();
+        // set fields
+        if (projection != null && projection.length > 0) {
+            queryObject.setProjection(projection);
+        }
+
+        StringBuilder sbQuery = new StringBuilder();
+
+        if (!StringUtils.isEmpty(skuIncludes)) {
+            sbQuery.append(MongoUtils.splicingValue("skus.skuCode", skuIncludes, "$regex"));
+            sbQuery.append(",");
+        } else if (skuList != null && skuList.size() > 0) {
+            sbQuery.append(MongoUtils.splicingValue("skus.skuCode", skuList.toArray(new String[skuList.size()])));
+            sbQuery.append(",");
+        }
+
+        // 设定name的模糊查询
+        if (!StringUtils.isEmpty(nameIncludes)) {
+            sbQuery.append(MongoUtils.splicingValue("fields.productNameEn", nameIncludes, "$regex"));
+            sbQuery.append(",");
+        }
+
+        // 设定description的模糊查询
+        if (!StringUtils.isEmpty(descriptionIncludes)) {
+            sbQuery.append(MongoUtils.splicingValue("fields.longDesEn", descriptionIncludes, "$regex"));
+            sbQuery.append(",");
+        }
+
+        if (!StringUtils.isEmpty(cartId)) {
+            sbQuery.append(MongoUtils.splicingValue("groups.platforms.cartId", Integer.valueOf(cartId)));
+            sbQuery.append(",");
+        }
+
+        if (!StringUtils.isEmpty(sbQuery.toString())) {
+            queryObject.setQuery("{" + sbQuery.toString().substring(0, sbQuery.toString().length() - 1) + "}");
+        }
+
+        queryObject.setLimit(50);
+        List<CmsBtProductModel> products = cmsBtProductDao.select(queryObject, channelId);
+
+        List<ProductForOmsBean> resultInfo = new ArrayList<>();
+        for (CmsBtProductModel product : products) {
+            for (CmsBtProductModel_Sku sku : product.getSkus()) {
+                ProductForOmsBean bean = new ProductForOmsBean();
+                // TODO 目前无法取得,先设置“”
+                bean.setChannelId("");
+                bean.setSku(sku.getSkuCode());
+                bean.setProduct(product.getFields().getProductNameEn());
+                bean.setDescription(product.getFields().getLongDesEn());
+                bean.setPricePerUnit(sku.getPriceSale() != null ? sku.getPriceSale().toString() : "0.00");
+                // TODO 目前无法取得库存值
+                Map<String, Object> param = new HashMap<>();
+                param.put("channelId", channelId);
+                param.put("sku", sku.getSkuCode());
+                WmsBtInventoryCenterLogicModel skuInfo = wmsBtInventoryCenterLogicDao.getItemDetailBySku(param);
+                bean.setInventory(String.valueOf(skuInfo.getQtyChina()));
+                // TODO 写死,取得是S7图片显示的路径
+                String imagePath = "";
+                if (product.getFields().getImages1().size() > 0) {
+                    if (!StringUtils.isEmpty(product.getFields().getImages1().get(0).getName()))
+                        imagePath = Constants.productForOtherSystemInfo.IMG_URL + product.getFields().getImages1().get(0).getName();
+                }
+                bean.setImgPath(imagePath);
+
+                // TODO 目前写死,以后再想办法修改
+                String numIid = "";
+                switch (cartId) {
+                    case "23":
+                        numIid = product.getGroups().getPlatforms().size() > 0 && !StringUtils.isEmpty(product.getGroups().getPlatforms().get(0).getNumIId())
+                                ? Constants.productForOtherSystemInfo.TMALL_NUM_IID + product.getGroups().getPlatforms().get(0).getNumIId() : "";
+                        break;
+                }
+                bean.setSkuTmallUrl(numIid);
+
+                resultInfo.add(bean);
+            }
+        }
+
+        return resultInfo;
+    }
 
 
     /**
