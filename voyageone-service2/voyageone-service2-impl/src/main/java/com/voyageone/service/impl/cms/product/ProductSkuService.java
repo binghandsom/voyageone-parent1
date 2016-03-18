@@ -14,6 +14,7 @@ import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsBtPriceLogModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Group_Platform;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -36,6 +37,9 @@ public class ProductSkuService extends BaseService {
 
     @Autowired
     private CmsBtPriceLogDao cmsBtPriceLogDao;
+
+    @Autowired
+    private ProductGroupService productGroupService;
 
 //    /**
 //     * select List
@@ -229,6 +233,64 @@ public class ProductSkuService extends BaseService {
         return result;
     }
 
+    /**
+     *  更新group里的价格
+     */
+    private void updateGroupPrice(String channelId, List<ProductPriceBean> productPrices){
+
+
+        HashMap<String, Object> productQueryMap = new HashMap<>();
+        CmsBtProductModel findModel;
+        JomgoQuery queryObject = new JomgoQuery();
+        queryObject.setProjection("prodId", "fields", "skus", "groups");
+
+        for(ProductPriceBean model : productPrices){
+
+            productQueryMap.put("prodId", model.getProductId());
+            queryObject.setQuery("{\"prodId\":" + model.getProductId() + "}");
+            findModel = cmsBtProductDao.selectOneWithQuery(queryObject, channelId);
+
+            for(CmsBtProductModel_Group_Platform platform : findModel.getGroups().getPlatforms()){
+                List<CmsBtProductModel> products = productGroupService.getProductIdsByGroupId(channelId, platform.getGroupId(), false);
+            }
+
+        }
+
+    }
+
+    private Map<String, Double> calculatePriceRange(List<CmsBtProductModel> products){
+
+        Double priceSaleSt = null;
+        Double priceSaleEd = null;
+        Double priceRetailSt = null;
+        Double priceRetailEd = null;
+        Double priceMsrpSt = null;
+        Double priceMsrpEd = null;
+        for(CmsBtProductModel product : products){
+            if (priceSaleSt == null || product.getFields().getPriceSaleSt() < priceSaleSt){
+                priceSaleSt = product.getFields().getPriceSaleSt();
+            }
+            if (priceSaleEd == null || product.getFields().getPriceSaleEd() > priceSaleEd){
+                priceSaleEd = product.getFields().getPriceSaleEd();
+            }
+
+            if (priceRetailSt == null || product.getFields().getPriceRetailSt() < priceRetailSt){
+                priceRetailSt = product.getFields().getPriceRetailSt();
+            }
+            if (priceRetailEd == null || product.getFields().getPriceRetailEd() > priceRetailEd){
+                priceRetailEd = product.getFields().getPriceRetailEd();
+            }
+
+            if (priceMsrpSt == null || product.getFields().getPriceMsrpSt() < priceMsrpSt){
+                priceMsrpSt = product.getFields().getPriceMsrpSt();
+            }
+            if (priceMsrpEd == null || product.getFields().getPriceMsrpEd() > priceMsrpEd){
+                priceMsrpEd = product.getFields().getPriceMsrpEd();
+            }
+        }
+//        Map
+        return null;
+    }
     /**
      * 批量更新价格信息 根据CodeList
      */
