@@ -934,8 +934,8 @@ public class CmsTaskStockController extends CmsController {
     }
 
     /**
-     * @api {post} /cms/promotion/task_stock/executeStockRestore 1.13 还原库存隔离
-     * @apiName CmsTaskStockController.executeStockRestore
+     * @api {post} /cms/promotion/task_stock/executeStockRevert 1.13 还原库存隔离
+     * @apiName CmsTaskStockController.executeStockRevert
      * @apiDescription 还原库存隔离
      * @apiGroup promotion
      * @apiVersion 0.0.1
@@ -959,8 +959,8 @@ public class CmsTaskStockController extends CmsController {
      *  cms_bt_stock_separate_platform_info
      *
      */
-    @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK.EXECUTE_STOCK_RESTORE)
-    public AjaxResponse executeStockRestore(@RequestBody Map param) {
+    @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK.EXECUTE_STOCK_REVERT)
+    public AjaxResponse executeStockRevert(@RequestBody Map param) {
 
         // 返回
         return success(null);
