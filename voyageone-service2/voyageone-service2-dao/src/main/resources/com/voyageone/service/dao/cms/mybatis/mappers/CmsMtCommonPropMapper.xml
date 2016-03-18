@@ -51,9 +51,43 @@
         prop_name AS propName
         from voyageone_cms2.cms_mt_common_prop
         where
-        (action_type = 0 OR action_type = 2)
+        action_type = 0
         AND is_comm = 1
+        AND (prop_id != 'images1' AND prop_id != 'images2' AND prop_id != 'images3' AND prop_id != 'images4' AND prop_id != 'brand' AND prop_id != 'code' AND prop_id != 'productNameCn' AND prop_id != 'productNameEn')
     </select>
+
+    <!-- 查询用户可显示的自定义列(高级检索画面) -->
+    <select id="select_synship_ct_user_config_cust_cols" parameterType="HashMap"  resultType="HashMap">
+        select
+        cfg_val1,
+        cfg_val2
+        from Synship.ct_user_config
+        where
+        user_id = #{userId}
+        AND cfg_name = 'cms_prod_cust_col'
+    </select>
+
+    <!-- 新增用户可显示的自定义列设置(高级检索画面) -->
+    <insert id="insert_synship_ct_user_config_cust_cols" parameterType="HashMap">
+        INSERT INTO Synship.ct_user_config (
+        user_id, cfg_name, cfg_val1, cfg_val2, created, creater, modified, modifier
+        ) VALUES (
+        #{userId}, 'cms_prod_cust_col', #{cfg_val1}, #{cfg_val2}, now(), #{userName}, now(), #{userName}
+        )
+    </insert>
+
+    <!-- 更新用户可显示的自定义列设置(高级检索画面) -->
+    <update id="update_synship_ct_user_config_cust_cols" parameterType="HashMap">
+        UPDATE Synship.ct_user_config
+        SET
+        cfg_val1 = #{cfg_val1},
+        cfg_val2 = #{cfg_val2},
+        modified = NOW(),
+        modifier  = #{userName}
+        where
+        user_id = #{userId}
+        AND cfg_name = 'cms_prod_cust_col'
+    </update>
 
 
 </mapper>

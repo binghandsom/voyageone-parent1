@@ -85,6 +85,9 @@ public class CmsSynInventoryToCmsService extends BaseTaskService {
             List<InventoryForCmsBean> codeInventoryList = inventoryDao.selectInventoryCode(orderChannelID, this.getTaskName());
             $info("orderChannelID:" + orderChannelID + "    库存记录数:" + codeInventoryList.size());
 
+            if(codeInventoryList.size() == 0){
+                continue;
+            }
             //批量更新code级库存 TODO
             bulkUpdateCodeQty(orderChannelID, codeInventoryList, getTaskName());
 

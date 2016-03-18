@@ -1,22 +1,20 @@
 package com.voyageone.task2.cms.service.feed;
 
-import com.csvreader.CsvReader;
-import com.voyageone.task2.base.BaseTaskService;
-
-import com.voyageone.task2.cms.bean.SuperFeedVtmBean;
-import com.voyageone.task2.cms.dao.SuperFeed2Dao;
-import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.FeedEnums;
 import com.voyageone.common.configs.Feed;
+import com.voyageone.common.configs.beans.FeedBean;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.task2.base.BaseTaskService;
+import com.voyageone.task2.base.modelbean.TaskControlBean;
+import com.voyageone.task2.cms.bean.SuperFeedVtmBean;
+import com.voyageone.task2.cms.dao.SuperFeed2Dao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.*;
-import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -92,7 +90,7 @@ public class VtmService extends BaseTaskService {
         // 2             本次导入error的数据
         // 3             本次导入完全导入成功的数据
 
-//        backupFeedFile(VITAMIN.getId());
+        backupFeedFile(VITAMIN.getId());
 
     }
 
@@ -133,6 +131,8 @@ public class VtmService extends BaseTaskService {
         int count = 0;
         String sku = "first";
 
+        List<String> listImportUPC = getListImportUPC();
+
 //        CsvReader reader;
         BufferedReader br = null;
         try {
@@ -161,7 +161,7 @@ public class VtmService extends BaseTaskService {
                 superfeedvtmbean.setSKU(reader.get(i++));
                 sku = superfeedvtmbean.getSKU();
                 superfeedvtmbean.setUPC(reader.get(i++));
-                if (StringUtils.isEmpty(superfeedvtmbean.getUPC())) {
+                if (StringUtils.isEmpty(superfeedvtmbean.getUPC()) || !listImportUPC.contains(superfeedvtmbean.getUPC())) {
                     continue;
                 }
                 superfeedvtmbean.setEAN(reader.get(i++));
@@ -287,6 +287,19 @@ public class VtmService extends BaseTaskService {
             if (br != null) br.close();
         }
         return count;
+    }
+
+    /**
+     * cms_mt_feed_config中配置的需要导入的产品的UPC列表取得
+     *
+     * @return listImportUPC
+     */
+    private List<String> getListImportUPC() {
+        List<String> listImportUPC = new ArrayList<String>();
+        List<FeedBean> configs = Feed.getConfigs(ChannelConfigEnums.Channel.VITAMIN.getId(), FeedEnums.Name.import_upc);
+        configs.forEach(bean->listImportUPC.add(bean.getCfg_val1()));
+
+        return listImportUPC;
     }
 
     /**
