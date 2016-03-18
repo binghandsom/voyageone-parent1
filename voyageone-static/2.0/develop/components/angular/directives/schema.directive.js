@@ -295,27 +295,27 @@
                         }
 
                         /**
-                         * 设置checkbox被选中的value值处理
-                         * @param value
+                         * 当多选 field 的值变更时, 同步更新 values 数组
+                         * @param option 当前变更的目标选项
                          */
-                        scope.checkboxValue = function (value) {
-                            if (_.contains(scope.showHtmlData.checkValues, value)) {
-                                scope.showHtmlData.checkValues.splice(_.indexOf(scope.showHtmlData.checkValues, value), 1);
-                            } else {
-                                scope.showHtmlData.checkValues.push(value);
+                        scope.changed = function (option) {
+                            var values = field.values;
+                            // 首次只需一个
+                            if (!values && option.selected) {
+                                field.values = [{id: null, value: option.value}];
+                                return;
                             }
-                            field.values = [];
-                            angular.forEach(scope.showHtmlData.checkValues, function (obj) {
-                                field.values.push({id: null, value: obj});
-                            })
-                        };
-
-                        /**
-                         * 判断是否被选中
-                         * @param value
-                         */
-                        scope.isSelected = function (value) {
-                            return _.contains(scope.showHtmlData.checkValues, value)
+                            // 提前计算 index
+                            var index = values.findIndex(function(valWrap) {
+                                return valWrap.value === option.value;
+                            });
+                            // 选中并且没有, 就添加
+                            // 没选中并且有, 就删除
+                            if (option.selected && index < 0)
+                                values.push({id: null, value: option.value});
+                            else if (!option.selected && index > -1)
+                                values.splice(index, 1);
+                            // 其他的无视
                         };
 
                         /**
