@@ -3,6 +3,7 @@ package com.voyageone.service.model.cms;
 import com.voyageone.base.dao.mysql.BaseModel;
 import com.voyageone.cms.enums.BeatFlag;
 import com.voyageone.common.Constants;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Created by jonasvlag on 16/2/29.
@@ -27,6 +28,8 @@ public class CmsBtBeatInfoModel extends BaseModel {
     private CmsBtPromotionCodeModel promotion_code;
 
     private CmsBtPromotionModel promotion;
+
+    private CmsBtTasksModel task;
 
     public int getId() {
         return id;
@@ -81,7 +84,14 @@ public class CmsBtBeatInfoModel extends BaseModel {
     }
 
     public void setMessage(String message) {
-        this.message = message;
+        if (StringUtils.isEmpty(this.message))
+            this.message = message;
+        else if (!StringUtils.isEmpty(message))
+            this.message += ";" + message;
+    }
+
+    public void clearMessage() {
+        this.message = null;
     }
 
     public CmsBtPromotionCodeModel getPromotion_code() {
@@ -98,5 +108,13 @@ public class CmsBtBeatInfoModel extends BaseModel {
 
     public void setPromotion(CmsBtPromotionModel promotion) {
         this.promotion = promotion;
+    }
+
+    public CmsBtTasksModel getTask() {
+        return task;
+    }
+
+    public void setTask(CmsBtTasksModel task) {
+        this.task = task;
     }
 }

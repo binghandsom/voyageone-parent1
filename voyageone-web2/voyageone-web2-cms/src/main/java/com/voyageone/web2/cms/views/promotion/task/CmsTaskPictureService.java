@@ -4,22 +4,18 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.cms.enums.BeatFlag;
 import com.voyageone.common.configs.Enums.PromotionTypeEnums;
 import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.service.bean.cms.task.beat.TaskBean;
+import com.voyageone.service.impl.cms.promotion.PromotionCodeService;
+import com.voyageone.service.impl.cms.promotion.PromotionModelService;
+import com.voyageone.service.impl.cms.promotion.PromotionService;
 import com.voyageone.web2.base.BaseAppService;
-import com.voyageone.web2.cms.wsdl.bean.task.beat.TaskBean;
-import com.voyageone.web2.cms.wsdl.dao.CmsBtBeatInfoDao;
-import com.voyageone.web2.cms.wsdl.dao.CmsBtTaskDao;
-import com.voyageone.web2.cms.wsdl.models.CmsBtBeatInfoModel;
-import com.voyageone.web2.cms.wsdl.models.CmsBtTaskModel;
+import com.voyageone.service.dao.cms.CmsBtBeatInfoDao;
+import com.voyageone.service.dao.cms.CmsBtTasksDao;
+import com.voyageone.service.model.cms.CmsBtBeatInfoModel;
+import com.voyageone.service.model.cms.CmsBtTasksModel;
 import com.voyageone.web2.core.bean.UserSessionBean;
-import com.voyageone.web2.sdk.api.VoApiClient;
-import com.voyageone.web2.sdk.api.domain.CmsBtPromotionCodeModel;
-import com.voyageone.web2.sdk.api.domain.CmsBtPromotionModel;
-import com.voyageone.web2.sdk.api.request.PromotionCodeGetRequest;
-import com.voyageone.web2.sdk.api.request.PromotionModelsGetRequest;
-import com.voyageone.web2.sdk.api.request.PromotionsGetRequest;
-import com.voyageone.web2.sdk.api.response.PromotionCodeGetResponse;
-import com.voyageone.web2.sdk.api.response.PromotionModelsGetResponse;
-import com.voyageone.web2.sdk.api.response.PromotionsGetResponse;
+import com.voyageone.service.model.cms.CmsBtPromotionCodeModel;
+import com.voyageone.service.model.cms.CmsBtPromotionModel;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -47,13 +43,19 @@ import static com.voyageone.common.util.ExcelUtils.getString;
 public class CmsTaskPictureService extends BaseAppService {
 
     @Autowired
-    private VoApiClient apiClient;
-
-    @Autowired
-    private CmsBtTaskDao taskDao;
+    private CmsBtTasksDao taskDao;
 
     @Autowired
     private CmsBtBeatInfoDao beatInfoDao;
+
+    @Autowired
+    private PromotionService promotionService;
+
+    @Autowired
+    private PromotionModelService promotionModelService;
+
+    @Autowired
+    private PromotionCodeService promotionCodeService;
 
     /**
      * 创建一个价格披露任务
@@ -73,7 +75,7 @@ public class CmsTaskPictureService extends BaseAppService {
             throw new BusinessException("7000002");
 
         // 尝试检查任务的名称, 是否已经存在
-        List<CmsBtTaskModel> taskModels = taskDao.selectByName(
+        List<CmsBtTasksModel> taskModels = taskDao.selectByName(
                 taskBean.getPromotion_id(),
                 taskBean.getTask_name(),
                 PromotionTypeEnums.Type.JIAGEPILU.getTypeId());
@@ -207,12 +209,22 @@ public class CmsTaskPictureService extends BaseAppService {
 
             Sheet sheet = book.createSheet();
 
+            Row row = row(sheet, 0);
+
+            cell(row, 0, null).setCellValue("num_iid");
+
+            cell(row, 1, null).setCellValue("商品 Code");
+
+            cell(row, 2, null).setCellValue("状态");
+
+            cell(row, 3, null).setCellValue("结果信息");
+
             // 设置查询类型
             for (int i = 0; i < beatInfoModels.size(); i++) {
 
                 CmsBtBeatInfoModel model = beatInfoModels.get(i);
 
-                Row row = row(sheet, i);
+                row = row(sheet, i + 1);
 
                 cell(row, 0, null).setCellValue(model.getNum_iid());
 
@@ -268,35 +280,29 @@ public class CmsTaskPictureService extends BaseAppService {
 
     public List<Map<String, Object>> getNewNumiid(Integer task_id) {
         if (task_id == null) return null;
-        CmsBtTaskModel taskModel = taskDao.selectByIdWithPromotion(task_id);
+        CmsBtTasksModel taskModel = taskDao.selectByIdWithPromotion(task_id);
         if (taskModel == null) return null;
         Map<String, Object> map = new HashMap<>();
         map.put("promotionId", taskModel.getPromotion_id());
-        PromotionModelsGetRequest request = new PromotionModelsGetRequest();
-        request.setParam(map);
-        PromotionModelsGetResponse response = apiClient.execute(request);
-        return response.getPromotionGroups();
+        return promotionModelService.getPromotionModelDetailList(map);
     }
 
     public List<CmsBtPromotionCodeModel> getCodes(int promotionId, String productModel) {
         Map<String, Object> map = new HashMap<>();
         map.put("promotionId", promotionId);
         map.put("productModel", productModel);
-        PromotionCodeGetRequest request = new PromotionCodeGetRequest();
-        request.setParam(map);
-        PromotionCodeGetResponse response = apiClient.execute(request);
-        return response.getCodeList();
+        return promotionCodeService.getPromotionCodeList(map);
     }
 
     public List<CmsBtBeatInfoModel> addCheck(int task_id, String num_iid) {
-        CmsBtTaskModel taskModel = taskDao.selectByIdWithPromotion(task_id);
+        CmsBtTasksModel taskModel = taskDao.selectByIdWithPromotion(task_id);
         if (taskModel == null)
             throw new BusinessException("没找到 Promotion");
         return beatInfoDao.selectListByNumiidInOtherTask(taskModel.getPromotion_id(), task_id, num_iid);
     }
 
     public Integer add(int task_id, String num_iid, String code, UserSessionBean user) {
-        CmsBtTaskModel taskModel = taskDao.selectByIdWithPromotion(task_id);
+        CmsBtTasksModel taskModel = taskDao.selectByIdWithPromotion(task_id);
         if (taskModel == null) return null;
         CmsBtBeatInfoModel model = beatInfoDao.selectOneByNumiid(task_id, num_iid);
         if (model != null) {
@@ -322,15 +328,7 @@ public class CmsTaskPictureService extends BaseAppService {
     }
 
     private CmsBtPromotionModel getPromotion(int promotion_id) {
-
-        PromotionsGetRequest request = new PromotionsGetRequest();
-        request.setPromotionId(promotion_id);
-
-        PromotionsGetResponse response = apiClient.execute(request);
-
-        List<CmsBtPromotionModel> promotionModels = response.getCmsBtPromotionModels();
-
-        return promotionModels.isEmpty() ? null : promotionModels.get(0);
+        return promotionService.getByPromotionId(promotion_id);
     }
 
     private Row row(Sheet sheet, int rowIndex) {

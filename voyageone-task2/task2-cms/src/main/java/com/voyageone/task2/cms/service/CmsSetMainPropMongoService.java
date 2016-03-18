@@ -5,12 +5,15 @@ import com.mongodb.BulkWriteResult;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.common.components.baidu.translate.BaiduTranslateUtil;
+import com.voyageone.service.bean.cms.product.ProductUpdateBean;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedMappingDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtCategorySchemaDao;
-import com.voyageone.service.impl.cms.CmsBtFeedCustomPropService;
-import com.voyageone.service.impl.cms.CommSequenceMongoService;
+import com.voyageone.service.impl.cms.product.ProductService;
+import com.voyageone.service.impl.cms.product.ProductSkuService;
+import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
+import com.voyageone.service.impl.cms.MongoSequenceService;
 import com.voyageone.service.model.cms.CmsBtFeedCustomPropModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
@@ -45,14 +48,8 @@ import com.voyageone.task2.cms.dao.ItemDetailsDao;
 import com.voyageone.task2.cms.dao.MainPropDao;
 import com.voyageone.task2.cms.dao.SuperFeedDao;
 import com.voyageone.task2.cms.dao.TmpOldCmsDataDao;
-import com.voyageone.web2.sdk.api.VoApiDefaultClient;
-import com.voyageone.web2.sdk.api.domain.ProductPriceModel;
-import com.voyageone.web2.sdk.api.domain.ProductSkuPriceModel;
-import com.voyageone.web2.sdk.api.request.ProductUpdatePriceRequest;
-import com.voyageone.web2.sdk.api.request.ProductUpdateRequest;
-import com.voyageone.web2.sdk.api.request.ProductsAddRequest;
-import com.voyageone.web2.sdk.api.response.ProductUpdateResponse;
-import com.voyageone.web2.sdk.api.response.ProductsAddResponse;
+import com.voyageone.service.bean.cms.product.ProductPriceBean;
+import com.voyageone.service.bean.cms.product.ProductSkuPriceBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -75,7 +72,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
     @Autowired
     CmsBtProductDao cmsBtProductDao; // DAO: 商品的值
     @Autowired
-    CommSequenceMongoService commSequenceMongoService; // DAO: Sequence
+    MongoSequenceService commSequenceMongoService; // DAO: Sequence
     @Autowired
     CmsMtCategorySchemaDao cmsMtCategorySchemaDao; // DAO: 主类目属性结构
     @Autowired
@@ -83,9 +80,11 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
     @Autowired
     TmpOldCmsDataDao tmpOldCmsDataDao; // DAO: 旧数据
     @Autowired
-    CmsBtFeedCustomPropService customPropService;
+    FeedCustomPropService customPropService;
     @Autowired
-    protected VoApiDefaultClient voApiClient; // VoyageOne共通API
+    ProductSkuService productSkuService;
+    @Autowired
+    ProductService productService;
 
 	@Override
     public SubSystem getSubSystem() {
@@ -243,10 +242,16 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 }
                 // 查看属性是否匹配完成
                 if (mapping.getMatchOver() == 0) {
-                    // 记下log, 跳过当前记录
-                    logIssue(getTaskName(), String.format("[CMS2.0][测试]该主类目的属性匹配尚未完成 ( channel: [%s], feed: [%s], main: [%s] )", channelId, feed.getCategory(), mapping.getScope().getMainCategoryPath()));
+                    // 如果没有匹配完成的话, 那就看看是否有共通
+                    mapping = cmsBtFeedMappingDao.findDefaultMainMapping(channelId, mapping.getScope().getMainCategoryPath());
+                    if (mapping == null || mapping.getMatchOver() == 0) {
+                        // 没有共通mapping, 或者没有匹配完成
+                        // 记下log, 跳过当前记录
+                        logIssue(getTaskName(), String.format("[CMS2.0][测试]该主类目的属性匹配尚未完成 ( channel: [%s], feed: [%s], main: [%s] )", channelId, feed.getCategory(), mapping.getScope().getMainCategoryPath()));
 
-                    return;
+                        return;
+                    }
+
                 }
             }
 
@@ -256,19 +261,19 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 cmsProduct = doUpdateCmsBtProductModel(feed, cmsProduct, mapping, mapBrandMapping);
                 // TODO: 没有设置的fields里的内容, 不会被清除? 这个应该是在共通里做掉的吧, 要是共通里不做的话就要自己写了
 
-                // 清除一些batch的标记 // TODO: 梁兄坑爹啊, batchField的更新没有放到product更新里, 暂时自己写一个用, 这里暂时注释掉
+                // 清除一些batch的标记 // TODO: 梁兄啊, batchField的更新没有放到product更新里, 暂时自己写一个用, 这里暂时注释掉
 //                CmsBtProductModel_BatchField batchField = cmsProduct.getBatchField();
 //                batchField.setAttribute("switchCategory", "0"); // 切换主类目->完成
 //                cmsProduct.setBatchField(batchField);
 
-                ProductUpdateRequest requestModel = new ProductUpdateRequest(channelId);
+                ProductUpdateBean requestModel = new ProductUpdateBean();
                 requestModel.setProductModel(cmsProduct);
                 requestModel.setModifier(getTaskName());
                 requestModel.setIsCheckModifed(false); // 不做最新修改时间ｃｈｅｃｋ
 
-                ProductUpdateResponse response = voApiClient.execute(requestModel);
+                productService.updateProduct(channelId, requestModel);
 
-                // TODO: 梁兄坑爹啊, batchField的更新没有放到product更新里, 暂时自己写一个用
+                // TODO: 梁兄啊, batchField的更新没有放到product更新里, 暂时自己写一个用
                 // TODO: 等改好后下面这段内容就可以删掉了
                 {
                     List<BulkUpdateModel> bulkList = new ArrayList<>();
@@ -288,7 +293,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
                 }
 
-                logger.info(getTaskName() + ":更新:" + cmsProduct.getChannelId() + ":" + cmsProduct.getFields().getCode() + ":" + response.getCode() + ":" + response.getMessage());
+                logger.info(getTaskName() + ":更新:" + cmsProduct.getChannelId() + ":" + cmsProduct.getFields().getCode());
 
             } else {
                 // 不存在的场合, 新建一个product
@@ -300,12 +305,9 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                     return;
                 }
 
-                ProductsAddRequest requestModel = new ProductsAddRequest(channelId);
-                requestModel.addProduct(cmsProduct);
-                requestModel.setModifier(getTaskName());
-                ProductsAddResponse response = voApiClient.execute(requestModel);
+                productService.createProduct(channelId, cmsProduct, getTaskName());
 
-                logger.info(getTaskName() + ":新增:" + cmsProduct.getChannelId() + ":" + cmsProduct.getFields().getCode() + ":" + response.getCode() + ":" + response.getMessage());
+                logger.info(getTaskName() + ":新增:" + cmsProduct.getChannelId() + ":" + cmsProduct.getFields().getCode());
 
             }
 
@@ -343,14 +345,16 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
             if (!skip_mapping_check) {
                 // 遍历mapping,设置主数据的属性
-                for (Prop prop : mapping.getProps()) {
-                    if (!MappingPropType.FIELD.equals(prop.getType())) {
-                        // 这段逻辑只处理类目属性(FIELD类型)的,如果是SKU属性或共通属性,则跳过
-                        continue;
-                    }
+                if (mapping.getProps() != null) {
+                    for (Prop prop : mapping.getProps()) {
+                        if (!MappingPropType.FIELD.equals(prop.getType())) {
+                            // 这段逻辑只处理类目属性(FIELD类型)的,如果是SKU属性或共通属性,则跳过
+                            continue;
+                        }
 
-                    // 递归设置属性
-                    field.put(prop.getProp(), getPropValueByMapping(prop.getProp(), prop, feed, field, schemaModel));
+                        // 递归设置属性
+                        field.put(prop.getProp(), getPropValueByMapping(prop.getProp(), prop, feed, field, schemaModel));
+                    }
                 }
             }
 
@@ -490,7 +494,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 product.setCatId(MD5.getMD5(catPath)); // 主类目id
                 product.setCatPath(catPath); // 主类目path
             }
-            product.setProdId(commSequenceMongoService.getNextSequence(CommSequenceMongoService.CommSequenceName.CMS_BT_PRODUCT_PROD_ID)); // 商品的id
+            product.setProdId(commSequenceMongoService.getNextSequence(MongoSequenceService.CommSequenceName.CMS_BT_PRODUCT_PROD_ID)); // 商品的id
 
             // --------- 获取主类目的schema信息 ------------------------------------------------------
             CmsMtCategorySchemaModel schemaModel = cmsMtCategorySchemaDao.getMasterSchemaModelByCatId(product.getCatId());
@@ -579,7 +583,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 if (groupId == -1) {
                     // 获取唯一编号
                     platform.setGroupId(
-                            commSequenceMongoService.getNextSequence(CommSequenceMongoService.CommSequenceName.CMS_BT_PRODUCT_GROUP_ID)
+                            commSequenceMongoService.getNextSequence(MongoSequenceService.CommSequenceName.CMS_BT_PRODUCT_GROUP_ID)
                     );
 
                     // is Main
@@ -748,7 +752,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                     // jewelry要设置三个属性: 戒指手寸, 项链长度, 手链长度
                     // ==============================================
 
-                    String 戒指手寸_MASTER = "prop_9066257";
+//                    String 戒指手寸_MASTER = "prop_9066257";
+                    String 戒指手寸_MASTER = "alias_name";
                     String 戒指手寸_FEED = "Ringsize";
                     String 项链长度_MASTER = "in_prop_150988152";
                     String 项链长度_FEED = "ChainLength";
@@ -811,6 +816,16 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             if (field == null) {
                 return null;
             }
+
+            // 商品的状态
+            String productStatus = product.getFields().getStatus();
+//            // TODO: 暂时这个功能封印, 有些店铺的运营其实并不是很希望重新确认一下, 而不确认的话, 其实问题也不是很大 START
+//            if (CmsConstants.ProductStatus.Approved.toString().equals(productStatus)) {
+//                // 如果曾经的状态是已经approved的话, 需要把状态改回ready, 让运营重新确认一下商品
+//                productStatus = CmsConstants.ProductStatus.Ready.toString();
+//            }
+//            // TODO: 暂时这个功能封印, 有些店铺的运营其实并不是很希望重新确认一下, 而不确认的话, 其实问题也不是很大 END
+            field.setStatus(productStatus);
 
             product.setFields(field);
 
@@ -885,7 +900,15 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 return -1;
             }
 
-            return product.getGroups().getPlatforms().get(0).getGroupId();
+            // 看看是否能找到
+            for (CmsBtProductModel_Group_Platform platform : product.getGroups().getPlatforms()) {
+                if (platform.getCartId() == Integer.parseInt(cartId)) {
+                    return platform.getGroupId();
+                }
+            }
+
+            // 找到product但是找不到指定cart, 也认为是找不到 (按理说是不会跑到这里的)
+            return -1;
         }
 
         private int m_mulitComplex_index = 0; // 暂时只支持一层multiComplex, 如果需要多层, 就需要改成list, 先进后出
@@ -1101,14 +1124,13 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
          * @param cmsProduct cms product信息
          */
         private void doSetPrice(String channelId, CmsBtFeedInfoModel feed, CmsBtProductModel cmsProduct) {
-            ProductUpdatePriceRequest requestModel = new ProductUpdatePriceRequest(channelId);
-            ProductPriceModel model = new ProductPriceModel();
-            ProductSkuPriceModel skuPriceModel;
+            ProductPriceBean model = new ProductPriceBean();
+            ProductSkuPriceBean skuPriceModel;
 
             model.setProductId(cmsProduct.getProdId());
 
             for (CmsBtFeedInfoModel_Sku sku : feed.getSkus()) {
-                skuPriceModel = new ProductSkuPriceModel();
+                skuPriceModel = new ProductSkuPriceBean();
 
                 skuPriceModel.setSkuCode(sku.getSku());
                 skuPriceModel.setPriceMsrp(sku.getPrice_msrp());
@@ -1116,12 +1138,10 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 model.addSkuPrice(skuPriceModel);
             }
 
-            requestModel.setModifier(getTaskName());
-            requestModel.addProductPrices(model);
+            List<ProductPriceBean> productPrices = new ArrayList<>();
+            productPrices.add(model);
 
-            //SDK取得Product 数据
-            voApiClient.execute(requestModel);
-
+            productSkuService.updatePrices(channelId, productPrices, getTaskName());
         }
 
         /**

@@ -14,10 +14,7 @@ import java.util.List;
  * Created by lewis on 15-12-1.
  */
 @Repository
-public class CmsMtPlatformCategorySchemaDao extends BaseMongoDao{
-
-    @Autowired
-    BaseJomgoTemplate mongoTemplate;
+public class CmsMtPlatformCategorySchemaDao extends BaseMongoDao<CmsMtPlatformCategorySchemaModel> {
 
     @Override
     public Class getEntityClass() {

@@ -14,7 +14,8 @@ define([
 
             this.searchInfo={};
 
-            this.taskType=[{"name":"特价宝","value":"0"},{"name":"价格披露","value":"1"}]
+            this.taskType=[{"name":"特价宝","value":"0"},{"name":"价格披露","value":"1"}];
+            this.datePicker = [];
         }
     
         TaskIndexController.prototype = {
@@ -40,6 +41,9 @@ define([
                 this.taskService.page(this.searchInfo).then(function(res){
                     ttt.tasks = res.data;
                 });
+            },
+            clear: function(){
+                this.searchInfo={};
             }
         };
             

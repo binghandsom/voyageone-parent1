@@ -1,16 +1,18 @@
 package com.voyageone.task2.cms.service.putaway;
 
 import com.voyageone.service.dao.cms.CmsBtSxWorkloadDao;
-import com.voyageone.service.impl.cms.CmsProductService;
+import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Group_Platform;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
+import com.voyageone.task2.cms.bean.ProductPublishBean;
 import com.voyageone.task2.cms.bean.SxProductBean;
 import com.voyageone.task2.cms.bean.UpJobParamBean;
 import com.voyageone.task2.cms.dao.CmsBusinessLogDao;
+import com.voyageone.task2.cms.dao.ProductPublishDao;
 import com.voyageone.task2.cms.enums.PlatformWorkloadStatus;
 import com.voyageone.task2.cms.model.CmsBusinessLogModel;
 import com.voyageone.task2.cms.bean.WorkLoadBean;
@@ -30,13 +32,15 @@ import java.util.*;
 @Repository
 public class UploadProductService extends BaseTaskService implements WorkloadCompleteIntf {
     @Autowired
-    private CmsProductService cmsProductService;
+    private ProductService productService;
     @Autowired
     private UploadWorkloadDispatcher workloadDispatcher;
     @Autowired
     private CmsBtSxWorkloadDao sxWorkloadDao;
     @Autowired
     private CmsBusinessLogDao cmsBusinessLogDao;
+    @Autowired
+    private ProductPublishDao productPublishDao;
 
     private static final int PUBLISH_PRODUCT_RECORD_COUNT_ONCE_HANDLE = 100;
     private Map<WorkLoadBean, List<SxProductBean>> workLoadBeanListMap;
@@ -83,7 +87,7 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
             workload.setOrder_channel_id(channelId);
             workload.setGroupId(groupId);
 
-            List<CmsBtProductModel> cmsBtProductModels = cmsProductService.getProductByGroupId(channelId, groupId);
+            List<CmsBtProductModel> cmsBtProductModels = productService.getProductByGroupId(channelId, groupId);
             List<SxProductBean> sxProductBeans = new ArrayList<>();
             CmsBtProductModel mainProductModel = null;
             CmsBtProductModel_Group_Platform mainProductPlatform = null;
@@ -215,12 +219,50 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
                 } else {
                     newPlatformStatus = CmsConstants.PlatformStatus.Onsale;
                 }
-                cmsProductService.bathUpdateWithSXResult(workLoadBean.getOrder_channel_id(), workLoadBean.getCart_id(), workLoadBean.getGroupId(),
+                productService.bathUpdateWithSXResult(workLoadBean.getOrder_channel_id(), workLoadBean.getCart_id(), workLoadBean.getGroupId(),
                         codeList, workLoadBean.getNumId(), workLoadBean.getProductId(), publishTime, onSaleTime, instockTime, newPlatformStatus);
 
                 CmsBtSxWorkloadModel sxWorkloadModel = workLoadBean.getSxWorkloadModel();
                 sxWorkloadModel.setPublishStatus(1);
                 sxWorkloadDao.updateSxWorkloadModel(sxWorkloadModel);
+
+                // 增加voyageone_ims.ims_bt_product表的更新, 用来给wms更新库存时候用的 START
+                List<SxProductBean> sxProductBeenList = workLoadBean.getProcessProducts();
+                for (SxProductBean sxProductBean : sxProductBeenList) {
+                    String code = sxProductBean.getCmsBtProductModel().getFields().getCode();
+
+                    ProductPublishBean productPublishBean = productPublishDao.selectByChannelCartCode(
+                            workLoadBean.getOrder_channel_id(),
+                            workLoadBean.getCart_id(),
+                            code);
+                    if (productPublishBean == null) {
+                        // 没找到就插入
+                        productPublishBean = new ProductPublishBean();
+                        productPublishBean.setChannel_id(workLoadBean.getOrder_channel_id());
+                        productPublishBean.setCart_id(workLoadBean.getCart_id());
+                        productPublishBean.setCode(code);
+                        productPublishBean.setNum_iid(workLoadBean.getNumId());
+                        if (workLoadBean.isHasSku()) {
+                            productPublishBean.setQuantity_update_type("s");
+                        } else {
+                            productPublishBean.setQuantity_update_type("p");
+                        }
+
+                        productPublishDao.insertProductPublish(productPublishBean, getTaskName());
+
+                    } else {
+                        // 找到了, 更新
+                        productPublishBean.setNum_iid(workLoadBean.getNumId());
+                        if (workLoadBean.isHasSku()) {
+                            productPublishBean.setQuantity_update_type("s");
+                        } else {
+                            productPublishBean.setQuantity_update_type("p");
+                        }
+                        productPublishDao.updateProductPublish(productPublishBean);
+                    }
+                }
+                // 增加voyageone_ims.ims_bt_product表的更新, 用来给wms更新库存时候用的 END
+
                 break;
             }
             case PlatformWorkloadStatus.JOB_ABORT: {
@@ -235,7 +277,7 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
                     //成功时，publish_status设为1
                     codeList.add(cmsBtProductModel.getFields().getCode());
                 }
-                cmsProductService.bathUpdateWithSXResult(workLoadBean.getOrder_channel_id(), workLoadBean.getCart_id(), workLoadBean.getGroupId(),
+                productService.bathUpdateWithSXResult(workLoadBean.getOrder_channel_id(), workLoadBean.getCart_id(), workLoadBean.getGroupId(),
                         codeList, workLoadBean.getNumId(), workLoadBean.getProductId(), null, null, null, null);
 
                 //保存错误的日志
@@ -255,9 +297,9 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
                         && workLoadBean.getMainProduct().getCmsBtProductModel() != null
                         && workLoadBean.getMainProduct().getCmsBtProductModel().getFields() != null
                         && workLoadBean.getMainProduct().getCmsBtProductModel().getFields().size() > 0
-                        && workLoadBean.getMainProduct().getCmsBtProductModel().getFields().getProductNameCn() != null
+                        && workLoadBean.getMainProduct().getCmsBtProductModel().getFields().getLongTitle() != null
                         ) {
-                    cmsBusinessLogModel.setProductName(workLoadBean.getMainProduct().getCmsBtProductModel().getFields().getProductNameCn());
+                    cmsBusinessLogModel.setProductName(workLoadBean.getMainProduct().getCmsBtProductModel().getFields().getLongTitle());
                 }
                 cmsBusinessLogModel.setProductId(productId);
                 cmsBusinessLogModel.setCode(mainCode);

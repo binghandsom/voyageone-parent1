@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.voyageone.service.dao.cms.sql">
+<mapper namespace="com.voyageone.service.dao.sql">
 
     <!-- 批量插入授权类目表查询若干条任务-->
     <select id="cms_select_sx_workload" resultType="com.voyageone.service.model.cms.CmsBtSxWorkloadModel">
@@ -61,5 +61,30 @@
                 #{modifier,jdbcType=VARCHAR},
             </if>
         </trim>
+    </insert>
+
+    <insert id="cms_insert_sx_workloads" parameterType="java.util.List">
+        insert into voyageone_cms2.cms_bt_sx_workload
+        <trim prefix="(" suffix=")" suffixOverrides="," >
+            channel_id,
+            group_id,
+            publish_status,
+            created,
+            creater,
+            modified,
+            modifier
+        </trim>
+        value
+        <foreach collection="list" item="item" separator="," >
+            (
+            #{item.channelId,jdbcType=VARCHAR},
+            #{item.groupId,jdbcType=INTEGER},
+            #{item.publishStatus,jdbcType=INTEGER},
+            now(),
+            #{item.creater,jdbcType=VARCHAR},
+            now(),
+            #{item.modifier,jdbcType=VARCHAR}
+            )
+        </foreach>
     </insert>
 </mapper>

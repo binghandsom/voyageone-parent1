@@ -1,10 +1,9 @@
 package com.voyageone.web2.cms.views.promotion;
 
+import com.voyageone.service.impl.cms.promotion.PromotionDetailService;
+import com.voyageone.service.model.cms.CmsBtPromotionCodeModel;
 import com.voyageone.web2.cms.bean.CmsPromotionProductPriceBean;
 import com.voyageone.web2.cms.views.promotion.list.CmsPromotionDetailService;
-import com.voyageone.web2.sdk.api.VoApiDefaultClient;
-import com.voyageone.web2.sdk.api.request.PromotionCodeAddTejiaBaoRequest;
-import com.voyageone.web2.sdk.api.request.PromotionDetailAddRequest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,11 +26,9 @@ import java.util.Map;
 public class CmsPromotionDetailServiceTest {
 
     @Autowired
-    protected VoApiDefaultClient voApiClient;
-
-    @Autowired
     CmsPromotionDetailService cmsPromotionDetailService;
-
+    @Autowired
+    PromotionDetailService promotionDetailService;
     @Test
     public void testInsertPromotionProduct() throws Exception {
 
@@ -71,7 +68,7 @@ public class CmsPromotionDetailServiceTest {
     @Test
     public void testUploadPromotion() throws Exception {
         InputStream stream = new FileInputStream("d:\\promotion.xlsx");
-        cmsPromotionDetailService.uploadPromotion(stream,15,"james");
+        cmsPromotionDetailService.uploadPromotion(stream, 15, "james");
         System.out.println("");
     }
 
@@ -80,15 +77,35 @@ public class CmsPromotionDetailServiceTest {
         cmsPromotionDetailService.teJiaBaoInit(15, "james");
     }
 
-    public void testTejiaBaoInsert(){
-        PromotionCodeAddTejiaBaoRequest request=new PromotionCodeAddTejiaBaoRequest();
-        request.setModifier("lijun");
-        request.setChannelId("013");
-        request.setCartId(23);
-        request.setProductCode("ESJ9293LBS-SC ");
-        request.setPromotionId(45);
-        request.setPromotionPrice(100.0);
 
-        voApiClient.execute(request);
+    @Test
+    public void testTeJiaBaoPromotionInsert() throws Exception {
+        CmsBtPromotionCodeModel cmsBtPromotionCodeModel = new CmsBtPromotionCodeModel();
+        cmsBtPromotionCodeModel.setProductId(22151L);
+        cmsBtPromotionCodeModel.setProductCode("BF00003YGK");
+        cmsBtPromotionCodeModel.setPromotionPrice(100.0);
+        cmsBtPromotionCodeModel.setPromotionId(48);
+        cmsBtPromotionCodeModel.setNumIid("523128668920");
+        cmsBtPromotionCodeModel.setChannelId("010");
+        cmsBtPromotionCodeModel.setCartId(23);
+        cmsBtPromotionCodeModel.setModifier("james");
+        promotionDetailService.teJiaBaoPromotionInsert(cmsBtPromotionCodeModel);
     }
+
+    @Test
+    public void testTeJiaBaoPromotionUpdate() throws Exception {
+
+    }
+
+//    public void testTejiaBaoInsert(){
+//        PromotionCodeAddTejiaBaoRequest request=new PromotionCodeAddTejiaBaoRequest();
+//        request.setModifier("lijun");
+//        request.setChannelId("013");
+//        request.setCartId(23);
+//        request.setProductCode("ESJ9293LBS-SC ");
+//        request.setPromotionId(45);
+//        request.setPromotionPrice(100.0);
+//
+//        voApiClient.execute(request);
+//    }
 }

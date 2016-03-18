@@ -7,6 +7,204 @@
     delete from ${tableName}
   </delete>
 
+  <!-- 插入维他命产品文件信息 -->
+  <insert id="cms_superfeed_insertSuperfeedVtmInfo" parameterType="java.util.List">
+    insert into
+    voyageone_cms2.cms_zz_worktable_vtm_superfeed
+    (
+    `SKU`
+    ,`UPC`
+    ,`EAN`
+    ,`MPN`
+    ,`Description`
+    ,`Manufacturer`
+    ,`Brand1`
+    ,`Short Title`
+    ,`Product Margin`
+    ,`Buy It Now Price`
+    ,`Retail Price`
+    ,`Relationship Name`
+    ,`Variation Parent SKU`
+    ,`Classification`
+    ,`Alternative Groups`
+    ,`Amazon US ASIN`
+    ,`Base Size`
+    ,`Brand2`
+    ,`Casin Free`
+    ,`CNMSRP`
+    ,`CNPrice`
+    ,`COLOUR`
+    ,`CONDITION`
+    ,`Country of Origin`
+    ,`CountryISOCode`
+    ,`Dairy Free`
+    ,`Dosage Size`
+    ,`Dosage Units`
+    ,`Dropship`
+    ,`Eco Friendly`
+    ,`Egg Free`
+    ,`Full Title`
+    ,`Generic Color`
+    ,`Generic Flavor`
+    ,`Gluten Free`
+    ,`HTML Marketing Description`
+    ,`Hypo Allergenic`
+    ,`Image List`
+    ,`Ingredients Text`
+    ,`Is Item MAP`
+    ,`Item Categ Buyer Group`
+    ,`Item Name`
+    ,`Keywords`
+    ,`Kosher`
+    ,`Lactose Free`
+    ,`Low Carb`
+    ,`Lowest Available Price`
+    ,`MAP Price`
+    ,`Marketing Description`
+    ,`MerchantPrimaryCategory`
+    ,`MSRP`
+    ,`No Animal Testing`
+    ,`Normal Selling Price`
+    ,`Nut Free`
+    ,`Organic`
+    ,`Paraben Free`
+    ,`Potency Size`
+    ,`Potency Units`
+    ,`Primary Image`
+    ,`Product ID`
+    ,`Product Margin Percentage`
+    ,`Product Rating`
+    ,`Product URL`
+    ,`Restricted`
+    ,`Sale Price`
+    ,`Scent`
+    ,`Secondary Categories`
+    ,`Secondary Images`
+    ,`Servings`
+    ,`Shipping Surcharge`
+    ,`Size`
+    ,`Size Units`
+    ,`Soy Free`
+    ,`Specific Color`
+    ,`Specific Flavor`
+    ,`Sugar Free`
+    ,`Suggested Use`
+    ,`Taxable`
+    ,`Variant ID`
+    ,`Vegetarian`
+    ,`Warnings`
+    ,`Wheat Free`
+    ,`Height`
+    ,`Length`
+    ,`Width`
+    ,`Seller Cost`
+    ,`Weight`
+    ,`Is Parent`
+    ,`VoyageOne Price`
+    ,`Quantity`
+    ,`VoyageOne MSRP`
+    ,UpdateFlag
+    ,md5
+    )
+    values
+    <foreach collection="list" item="vtmInfo" separator="," >
+    (#{vtmInfo.SKU},
+    #{vtmInfo.UPC},
+    #{vtmInfo.EAN},
+    #{vtmInfo.MPN},
+    #{vtmInfo.Description},
+    #{vtmInfo.Manufacturer},
+    #{vtmInfo.Brand1},
+    #{vtmInfo.ShortTitle},
+    #{vtmInfo.ProductMargin},
+    #{vtmInfo.BuyItNowPrice},
+    #{vtmInfo.RetailPrice},
+    #{vtmInfo.RelationshipName},
+    #{vtmInfo.VariationParentSKU},
+    #{vtmInfo.Classification},
+    #{vtmInfo.AlternativeGroups},
+    #{vtmInfo.AmazonUSASIN},
+    #{vtmInfo.BaseSize},
+    #{vtmInfo.Brand2},
+    #{vtmInfo.CasinFree},
+    #{vtmInfo.CNMSRP},
+    #{vtmInfo.CNPrice},
+    #{vtmInfo.COLOUR},
+    #{vtmInfo.CONDITION},
+    #{vtmInfo.CountryofOrigin},
+    #{vtmInfo.CountryISOCode},
+    #{vtmInfo.DairyFree},
+    #{vtmInfo.DosageSize},
+    #{vtmInfo.DosageUnits},
+    #{vtmInfo.Dropship},
+    #{vtmInfo.EcoFriendly},
+    #{vtmInfo.EggFree},
+    #{vtmInfo.FullTitle},
+    #{vtmInfo.GenericColor},
+    #{vtmInfo.GenericFlavor},
+    #{vtmInfo.GlutenFree},
+    #{vtmInfo.HTMLMarketingDescription},
+    #{vtmInfo.HypoAllergenic},
+    #{vtmInfo.ImageList},
+    #{vtmInfo.IngredientsText},
+    #{vtmInfo.IsItemMAP},
+    #{vtmInfo.ItemCategBuyerGroup},
+    #{vtmInfo.ItemName},
+    #{vtmInfo.Keywords},
+    #{vtmInfo.Kosher},
+    #{vtmInfo.LactoseFree},
+    #{vtmInfo.LowCarb},
+    #{vtmInfo.LowestAvailablePrice},
+    #{vtmInfo.MAPPrice},
+    #{vtmInfo.MarketingDescription},
+    #{vtmInfo.MerchantPrimaryCategory},
+    #{vtmInfo.MSRP},
+    #{vtmInfo.NoAnimalTesting},
+    #{vtmInfo.NormalSellingPrice},
+    #{vtmInfo.NutFree},
+    #{vtmInfo.Organic},
+    #{vtmInfo.ParabenFree},
+    #{vtmInfo.PotencySize},
+    #{vtmInfo.PotencyUnits},
+    #{vtmInfo.PrimaryImage},
+    #{vtmInfo.ProductID},
+    #{vtmInfo.ProductMarginPercentage},
+    #{vtmInfo.ProductRating},
+    #{vtmInfo.ProductURL},
+    #{vtmInfo.Restricted},
+    #{vtmInfo.SalePrice},
+    #{vtmInfo.Scent},
+    #{vtmInfo.SecondaryCategories},
+    #{vtmInfo.SecondaryImages},
+    #{vtmInfo.Servings},
+    #{vtmInfo.ShippingSurcharge},
+    #{vtmInfo.Size},
+    #{vtmInfo.SizeUnits},
+    #{vtmInfo.SoyFree},
+    #{vtmInfo.SpecificColor},
+    #{vtmInfo.SpecificFlavor},
+    #{vtmInfo.SugarFree},
+    #{vtmInfo.SuggestedUse},
+    #{vtmInfo.Taxable},
+    #{vtmInfo.VariantID},
+    #{vtmInfo.Vegetarian},
+    #{vtmInfo.Warnings},
+    #{vtmInfo.WheatFree},
+    #{vtmInfo.Height},
+    #{vtmInfo.Length},
+    #{vtmInfo.Width},
+    #{vtmInfo.SellerCost},
+    #{vtmInfo.Weight},
+    #{vtmInfo.IsParent},
+    #{vtmInfo.VoyageOnePrice},
+    #{vtmInfo.Quantity},
+    #{vtmInfo.VoyageOneMSRP},
+    '0',
+    #{vtmInfo.md5}
+    )
+    </foreach>
+  </insert>
+
   <!-- 插入Jewelry产品文件信息 -->
   <insert id="cms_superfeed_insertSuperfeedJEInfo" parameterType="com.voyageone.task2.cms.bean.SuperFeedJEBean">
   insert into

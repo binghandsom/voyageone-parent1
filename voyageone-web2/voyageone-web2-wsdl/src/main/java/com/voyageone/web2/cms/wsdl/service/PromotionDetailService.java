@@ -2,10 +2,13 @@ package com.voyageone.web2.cms.wsdl.service;
 
 import com.voyageone.common.configs.Enums.PromotionTypeEnums;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.service.dao.cms.*;
+import com.voyageone.service.model.cms.CmsBtPromotionCodeModel;
+import com.voyageone.service.model.cms.CmsBtPromotionGroupModel;
+import com.voyageone.service.model.cms.CmsBtPromotionSkuModel;
+import com.voyageone.service.model.cms.CmsBtPromotionTaskModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.web2.cms.wsdl.BaseService;
-import com.voyageone.web2.cms.wsdl.dao.*;
-import com.voyageone.web2.sdk.api.domain.*;
 import com.voyageone.web2.sdk.api.request.*;
 import com.voyageone.web2.sdk.api.response.PromotionCodeAddTejiaBaoResponse;
 import com.voyageone.web2.sdk.api.response.PromotionDetailPutResponse;
@@ -69,6 +72,7 @@ public class PromotionDetailService extends BaseService {
             code.setNumIid(cmsBtPromotionGroupModel.getNumIid());
             code.setModifier(cmsBtPromotionGroupModel.getModifier());
             code.setCreater(cmsBtPromotionGroupModel.getModified());
+            code.setModelId(cmsBtPromotionGroupModel.getModelId());
             if (cmsPromotionCodeDao.updatePromotionCode(code) == 0) {
                 cmsPromotionCodeDao.insertPromotionCode(code);
             }
@@ -180,6 +184,11 @@ public class PromotionDetailService extends BaseService {
         cmsBtPromotionCodeModel.setTagId(tagId == null ? 0 : tagId);
         if(productInfo.getFields().getImages1().size() > 0){
             cmsBtPromotionCodeModel.setImage_url_1(productInfo.getFields().getImages1().get(0).getName());
+            //竖图就用第一张图
+            cmsBtPromotionCodeModel.setImage_url_3(productInfo.getFields().getImages1().get(0).getName());
+            if(productInfo.getFields().getImages1().size() > 1){
+                cmsBtPromotionCodeModel.setImage_url_2(productInfo.getFields().getImages1().get(1).getName());
+            }
         }
         if (cmsPromotionCodeDao.updatePromotionCode(cmsBtPromotionCodeModel) == 0) {
             cmsPromotionCodeDao.insertPromotionCode(cmsBtPromotionCodeModel);

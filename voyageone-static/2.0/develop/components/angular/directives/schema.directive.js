@@ -5,9 +5,9 @@
  * @Version: 2.0.0, 15/12/24
  */
 
-angular.module('voyageone.angular.directives.schema', [])
-    // 定义fieldTypes
-    .constant('fieldTypes', {
+(function () {
+
+    var fieldTypes = {
         INPUT: "INPUT",
         DATE: "DATE",
         DATETIME: "DATETIME",
@@ -19,9 +19,7 @@ angular.module('voyageone.angular.directives.schema', [])
         COMPLEX: "COMPLEX", // TODO
         MULTI_COMPLEX: "MULTICOMPLEX",
         LABEL: "LABEL"  // 可以不显示
-    })
-    // 定义ruleTypes
-    .constant('ruleTypes', {
+    }, ruleTypes = {
         VALUE_TYPE_RULE: "valueTypeRule",
         REQUIRED_RULE: "requiredRule",
         DISABLE_RULE: "disableRule",
@@ -42,9 +40,7 @@ angular.module('voyageone.angular.directives.schema', [])
         MAX_TARGET_SIZE_RULE: "maxTargetSizeRule", // TODO
         MIN_IMAGE_SIZE_RULE: "minImageSizeRule", // TODO
         MAX_IMAGE_SIZE_RULE: "maxImageSizeRule" // TODO
-    })
-    // 定义valueTypes
-    .constant('valueTypes', {
+    }, valueTypes = {
         TEXT: "text",
         DECIMAL: "decimal",
         INTEGER: "integer",
@@ -54,464 +50,214 @@ angular.module('voyageone.angular.directives.schema', [])
         URL: "url",
         TEXTAREA: "textarea",
         HTML: "html"
-    })
+    }, templates = {
+        header: '<div class="form-group">' +
+        '<label class="col-sm-2 control-label" ng-class="{\'vo_reqfield\': showHtmlData.isRequired}" ng-bind="$$data.name"></label>' +
+        '<div class="col-sm-8" ng-class="{\'modal-open\' : showHtmlData.isMultiComplex, \'hierarchy_main\': showHtmlData.isComplex}" ng-transclude></div>' +
+        '<div class="col-sm-2" ng-if="showHtmlData.isMultiComplex"><button class="btn btn-success" ng-click="addField($$data)"><i class="fa fa-plus"></i>{{\'BTN_ADD\' | translate}}</button></div>' +
+        '<div class="row" ng-repeat="tipMsg in showHtmlData.tipMsg"><div class="col-sm-8 col-sm-offset-2 text-warnings"><i class="icon fa fa-bell-o"></i>&nbsp;{{tipMsg}}</div></div>' +
+        '</div>',
+        label: '<input style="min-width: 150px; max-width: 250px;" type="text" readonly ng-model="vm.$$data.value" class="form-control">',
+        input: '<input style="min-width: 150px; max-width: 250px;" ng-model="vm.$$data.value" class="form-control" %replaceInfo%>',
+        date: '<div class="input-group" style="width: 180px;"><input %replaceInfo% type="text" class="form-control" datepicker-popup ng-model="vm.$$data.value" date-model-format="yyyy-MM-dd" is-open="datePicker" close-text="Close" /><span class="input-group-btn"><button %replaceInfo% type="button" class="btn btn-default" ng-click="datePicker = !datePicker"><i class="glyphicon glyphicon-calendar"></i></button></span></div>',
+        datetime: '<div class="input-group" style="width: 180px;"><input %replaceInfo% type="text" class="form-control" datepicker-popup ng-model="vm.$$data.value" date-model-format="yyyy-MM-dd HH:mm:ss" is-open="datePicker" close-text="Close" /><span class="input-group-btn"><button %replaceInfo% type="button" class="btn btn-default" ng-click="datePicker = !datePicker"><i class="glyphicon glyphicon-calendar"></i></button></span></div>',
+        textarea: '<textarea style="min-width: 150px; max-width: 650px;" class="form-control no-resize" ng-model="vm.$$data.value" rows="{{showHtmlData.rowNum}}" %replaceInfo%></textarea>',
+        select: '<select style="min-width: 150px; max-width: 250px;" %replaceInfo% class="form-control" ng-model="vm.$$data.value.value" ng-options="option.value as option.displayName for option in vm.$$data.options"> <option value="">{{\'TXT_SELECT_NO_VALUE\' | translate}}</option></select>',
+        radio: '<label class="checkbox-inline c-radio" ng-repeat="option in vm.$$data.options"><input name="{{vm.$$data.id}}" type="radio" ng-value="option.value" ng-model="vm.$$data.value.value"><span class="fa fa-check"></span> {{option.displayName}}</label>',
+        checkbox: '<label class="checkbox-inline c-checkbox" ng-repeat="option in vm.$$data.options"><input type="checkbox" ng-value="option.value" ng-click="checkboxValue(option.value)" ng-checked="isSelected(option.value)"><span class="fa fa-check"></span> {{option.displayName}}</label>',
+        multiComplex: '<table class="table text-center">' +
+        '<thead><tr>' +
+        '<th ng-repeat="field in vm.$$data.fields" ng-class="{\'vo_reqfield\': showHtmlData.isRequired}" class="text-center" style="min-width: 180px;">{{field.name}}</th>' +
+        '<th ng-if="!showHtmlData.notShowEdit" style="min-width: 60px;" class="text-center" translate="TXT_ACTION"></th>' +
+        '</tr></thead>' +
+        '<tbody><tr ng-repeat="value in vm.$$data.complexValues">' +
+        '<td class="text-left" ng-repeat="field in value.fieldMap"><div class="tableLayer"><p ng-if="field.type != \'COMPLEX\'">&nbsp;</p><p><schema-item data="field" hastip="true" complex="true"></schema-item></p></div></td>' +
+        '<td ng-if="!showHtmlData.notShowEdit" style="min-width: 60px;"><button title="{\'BTN_DELETE\' | translate}" class="btn btn-danger btn-xs" ng-click="delField($index)"><i class="fa  fa-trash-o"></i></button></td>' +
+        '</tr></tbody>' +
+        '</table>',
+        complex: '<schema-header ng-repeat="field in vm.$$data.fields" data="field"><schema-item data="field"></schema-item></schema-header>',
+        multi_in_complex: '<div ng-repeat="field in vm.$$data.fields"><p ng-bind="field.name"></p><p><schema-item data="field" hastip="true" complex="true"></schema-item></p></div>',
+        multiComplex_tip: '<div class="text-warnings" ng-repeat="tipMsg in showHtmlData.tipMsg"><br><i class="icon fa fa-bell-o"></i>&nbsp;{{tipMsg}}</div>'
+    };
 
-    .directive('schemaHeader', function ($templateCache, schemaHeaderFactory, fieldTypes, ruleTypes, valueTypes) {
+    var SchemaHeader, Schema;
 
-        // 定义header
-        var templateKey_header = "voyageone.angular.directives.schemaHeader.tpl.html";
-        if (!$templateCache.get(templateKey_header)) {
-            $templateCache.put(templateKey_header
-                ,
-                '<div class="form-group">' +
-                '<label class="col-sm-2 control-label" ng-class="{\'vo_reqfield\': showHtmlData.isRequired}" ng-bind="$$data.name"></label>' +
-                '<div class="col-sm-8" ng-class="{\'modal-open\' : showHtmlData.isMultiComplex, \'hierarchy_main\': showHtmlData.isComplex}" ng-transclude></div>' +
-                '<div class="col-sm-2" ng-if="showHtmlData.isMultiComplex"><button class="btn btn-success" ng-click="addField($$data)"><i class="fa fa-plus"></i>{{\'BTN_ADD\' | translate}}</button></div>' +
-                '<div class="row" ng-repeat="tipMsg in showHtmlData.tipMsg"><div class="col-sm-8 col-sm-offset-2 text-warnings"><i class="icon fa fa-bell-o"></i>&nbsp;{{tipMsg}}</div></div>' +
-                '</div>');
+    SchemaHeader = function (config) {
+        this.config = config || {
+                isRequired: false,
+                isMultiComplex: false,
+                isComplex: false,
+                tipMsg: []
+            };
+    };
+
+    SchemaHeader.prototype = {
+        isRequired: function (value) {
+            return value !== undefined ? this.config.isRequired = value : this.config.isRequired;
+        },
+        isComplex: function (value) {
+            return value !== undefined ? this.config.isComplex = value : this.config.isComplex;
+        },
+        isMultiComplex: function (value) {
+            return value !== undefined ? this.config.isMultiComplex = value : this.config.isMultiComplex;
+        },
+        tipMsg: function (value) {
+            return value !== undefined ? this.config.tipMsg.push(value) : this.config.tipMsg;
         }
+    };
 
-        return {
-            restrict: "E",
-            replace: true,
-            transclude: true,
-            templateUrl: templateKey_header,
-            scope: {
-                $$data: "=data"
-            },
-            link: function (scope) {
+    Schema = function (config) {
+        this.config = config || {
+                type: null,
+                name: null,
+                rowNum: null,
+                isRequired: false,
+                checkValues: [],
+                tipMsg: [],
+                html: [],
+                notShowEdit: true
+            };
+    };
 
-                var schemaHeader = new schemaHeaderFactory();
+    Schema.prototype = {
+        type: function (value) {
+            return value !== undefined ? this.config.type = value : this.config.type;
+        },
+        name: function (value) {
+            return value !== undefined ? this.config.name = value : this.config.name;
+        },
+        html: function (value) {
+            return value !== undefined ? this.config.html.push(value) : this.config.html.join(" ");
+        },
+        isRequired: function (value) {
+            return value !== undefined ? this.config.isRequired = value : this.config.isRequired;
+        },
+        rowNum: function (value) {
+            return value !== undefined ? this.config.rowNum = value : this.config.rowNum;
+        },
+        tipMsg: function (value) {
+            return value !== undefined ? this.config.tipMsg.push(value) : this.config.tipMsg;
+        },
+        checkValues: function (value) {
+            return value !== undefined ? this.config.checkValues.push(value) : this.config.checkValues;
+        },
+        notShowEdit: function (value) {
+            return value !== undefined ? this.config.notShowEdit = value : this.config.notShowEdit;
+        }
+    };
 
-                _returnType(scope.$$data.type);
-                _operateRule(scope.$$data.rules);
+    angular.module('voyageone.angular.directives.schema', [])
 
-                scope.showHtmlData = angular.copy(schemaHeader.schemaHearInfo);
+        .directive('schemaHeader', function () {
 
-                /**
-                 * 设置multi complex添加一条新记录
-                 * @param data
-                 */
-                scope.addField = function (data) {
-                    var newFieldMap = {};
-                    angular.forEach(data.fields, function (field) {
-                        newFieldMap[field.id] = field;
-                        //eval("newFieldMap." + field.id + "=field");
-                    });
+            return {
+                restrict: "E",
+                replace: true,
+                transclude: true,
+                template: templates.header,
+                scope: {
+                    $$data: "=data"
+                },
+                link: function (scope) {
 
-                    data.complexValues.push({fieldMap: angular.copy(newFieldMap)});
-                };
+                    var header = new SchemaHeader();
+                    var field = scope.$$data;
 
-                /**
-                 * 返回需要展示的页面样式
-                 * @param type
-                 * @param valueTypeRule
-                 * @private
-                 */
-                function _returnType(type) {
-
-                    switch (type) {
+                    // 标记特殊类型的 Field
+                    switch (field.type) {
                         case fieldTypes.MULTI_COMPLEX:
-                            schemaHeader.isMultiComplex(true);
+                            header.isMultiComplex(true);
                             break;
                         case fieldTypes.COMPLEX:
-                            schemaHeader.isComplex(true);
+                            header.isComplex(true);
                             break;
                     }
-                }
 
-                /**
-                 * 处理rules
-                 * @param rules
-                 * @private
-                 */
-                function _operateRule(rules) {
-                    angular.forEach(rules, function (rule) {
+                    // 标记提供了显示支持的规则
+                    angular.forEach(field.rules, function (rule) {
                         switch (rule.name) {
                             case ruleTypes.REQUIRED_RULE:
-                                _requiredRule(rule);
+                                header.isRequired("true" == rule.value);
                                 break;
                             case ruleTypes.TIP_RULE:
-                                _tipRule(rule);
+                                header.tipMsg(rule.value);
                                 break;
                         }
-                    })
+                    });
 
-                }
-
-                /**
-                 * 处理requiredRule
-                 * @param requiredRule
-                 * @private
-                 */
-                function _requiredRule(requiredRule) {
-                    if ("true" == requiredRule.value) {
-                        schemaHeader.isRequired(true);
-                    }
-                }
-
-                /**
-                 * 处理tipRule
-                 * @param tipRule
-                 * @private
-                 */
-                function _tipRule(tipRule) {
-                    schemaHeader.tipMsg(tipRule.value);
-                }
-            }
-        }
-    })
-
-    .directive('schemaItem', function ($templateCache, $compile, schemaFactory, fieldTypes, ruleTypes, valueTypes) {
-
-        // label
-        var templateKey_label = "voyageone.angular.directives.schemaLabel.tpl.html";
-        if (!$templateCache.get(templateKey_label)) {
-            $templateCache.put(templateKey_label,
-                '<input style="min-width: 150px; max-width: 250px;" type="text" readonly ng-model="vm.$$data.value" class="form-control inherited">');
-        }
-
-        // input
-        var templateKey_input = "voyageone.angular.directives.schemaInput.tpl.html";
-        if (!$templateCache.get(templateKey_input)) {
-            $templateCache.put(templateKey_input,
-                '<input style="min-width: 150px; max-width: 250px;" ng-model="vm.$$data.value" class="form-control inherited" replaceInfo>');
-        }
-
-        // data
-        var templateKey_date = "voyageone.angular.directives.schemaDate.tpl.html";
-        if (!$templateCache.get(templateKey_date)) {
-            $templateCache.put(templateKey_date,
-                '<div class="input-group" style="width: 180px;" ng-controller="datePickerCtrl"><input replaceInfo type="text" class="form-control" datepicker-popup="{{formatDate}}" ng-model="$parent.vm.$$data.value" date-model-format="{{formatDate}}" is-open="opened" datepicker-options="dateOptions" close-text="Close" /><span class="input-group-btn"><button replaceInfo type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button></span></div>');
-        }
-
-        // datetime
-        var templateKey_datetime = "voyageone.angular.directives.schemaDatetime.tpl.html";
-        if (!$templateCache.get(templateKey_datetime)) {
-            $templateCache.put(templateKey_datetime,
-                '<div class="input-group" style="width: 180px;" ng-controller="datePickerCtrl"><input replaceInfo type="text" class="form-control" datepicker-popup="{{formatDateTime}}" ng-model="$parent.vm.$$data.value" date-model-format="{{formatDateTime}}" is-open="opened" datepicker-options="dateOptions" close-text="Close" /><span class="input-group-btn"><button replaceInfo type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button></span></div>');
-        }
-
-        // textarea
-        var templateKey_textarea = "voyageone.angular.directives.schemaTextarea.tpl.html";
-        if (!$templateCache.get(templateKey_textarea)) {
-            $templateCache.put(templateKey_textarea,
-                '<textarea style="min-width: 150px; max-width: 650px;" class="form-control no-resize" ng-model="vm.$$data.value" rows="{{showHtmlData.rowNum}}" replaceInfo></textarea>');
-        }
-
-        // single check-select
-        var templateKey_select = "voyageone.angular.directives.schemaSelect.tpl.html";
-        if (!$templateCache.get(templateKey_select)) {
-            $templateCache.put(templateKey_select,
-                '<select style="min-width: 150px; max-width: 250px;" replaceInfo class="form-control" ng-model="vm.$$data.value.value" ng-options="option.value as option.displayName for option in vm.$$data.options"> <option value="">{{\'TXT_SELECT_NO_VALUE\' | translate}}</option></select>');
-        }
-
-        // single check-radio
-        var templateKey_radio = "voyageone.angular.directives.schemaRadio.tpl.html";
-        if (!$templateCache.get(templateKey_radio)) {
-            $templateCache.put(templateKey_radio,
-                '<label class="checkbox-inline c-radio" ng-repeat="option in vm.$$data.options"><input name="{{vm.$$data.id}}" type="radio" ng-value="option.value" ng-model="vm.$$data.value.value"><span class="fa fa-check"></span> {{option.displayName}}</label>');
-        }
-
-        // multi check-checkbox
-        var templateKey_checkbox = "voyageone.angular.directives.schemaCheckbox.tpl.html";
-        if (!$templateCache.get(templateKey_checkbox)) {
-            $templateCache.put(templateKey_checkbox,
-                '<label class="checkbox-inline c-checkbox" ng-repeat="option in vm.$$data.options"><input type="checkbox" ng-value="option.value" ng-click="checkboxValue(option.value)" ng-checked="isSelected(option.value)"><span class="fa fa-check"></span> {{option.displayName}}</label>');
-        }
-
-        // multi complex
-        var templateKey_multiComplex = "voyageone.angular.directives.schemaMultiComplex.tpl.html";
-        if (!$templateCache.get(templateKey_multiComplex)) {
-            $templateCache.put(templateKey_multiComplex,
-                '<table class="table text-center">' +
-                '<thead><tr>' +
-                    //'<schema-header ng-repeat="field in vm.$$data.fields" data="field" is-complex="true"></schema-header>' +
-                '<th ng-repeat="field in vm.$$data.fields" ng-class="{\'vo_reqfield\': showHtmlData.isRequired}" class="text-center" style="min-width: 180px;">{{field.name}}</th>' +
-                '<th ng-if="!showHtmlData.notShowEdit" style="min-width: 60px;" class="text-center" translate="TXT_ACTION"></th>' +
-                '</tr></thead>' +
-                '<tbody><tr ng-repeat="value in vm.$$data.complexValues">' +
-                '<td class="text-left" ng-repeat="field in value.fieldMap"><div class="tableLayer"><p ng-if="field.type != \'COMPLEX\'">&nbsp;</p><p><schema-item data="field" hastip="true" complex="true"></schema-item></p></div></td>' +
-                '<td ng-if="!showHtmlData.notShowEdit" style="min-width: 60px;"><button title="{\'BTN_DELETE\' | translate}" class="btn btn-danger btn-xs" ng-click="delField($index)"><i class="fa  fa-trash-o"></i></button></td>' +
-                '</tr></tbody>' +
-                '</table>');
-        }
-
-        // complex
-        var templateKey_complex = "voyageone.angular.directives.schemaComplex.tpl.html";
-        if (!$templateCache.get(templateKey_complex)) {
-            $templateCache.put(templateKey_complex,
-                '<schema-header ng-repeat="field in vm.$$data.fields" data="field"><schema-item data="field" ></schema-item></schema-header>');
-        }
-
-        // complex
-        var templateKey_multi_in_complex = "voyageone.angular.directives.schemaMultiInComplex.tpl.html";
-        if (!$templateCache.get(templateKey_multi_in_complex)) {
-            $templateCache.put(templateKey_multi_in_complex,
-                '<div ng-repeat="field in vm.$$data.fields"><p ng-bind="field.name"></p><p><schema-item data="field" hastip="true" complex="true"></schema-item></p></div>');
-        }
-
-        // multi complex tip
-        var templateKey_multiComplex_tip = "voyageone.angular.directives.schemaMultiComplexTip.tpl.html";
-        if (!$templateCache.get(templateKey_multiComplex_tip)) {
-            $templateCache.put(templateKey_multiComplex_tip,
-                '<div class="text-warnings" ng-repeat="tipMsg in showHtmlData.tipMsg"><br><i class="icon fa fa-bell-o"></i>&nbsp;{{tipMsg}}</div>');
-        }
-
-        return {
-            restrict: "E",
-            require: ['^?form'],
-            replace: true,
-            bindToController: true,
-            controllerAs: "vm",
-            controller: function () {
-            },
-            scope: {
-                $$data: "=data",
-                $$hastip: "=hastip",
-                $$complex: "=complex",
-                $$notShowEdit: "=notShowEdit"
-            },
-            link: function (scope, element, ctrl, attr) {
-
-                // 监视配置变动
-                scope.$watch('vm.$$data', function () {
-                    refresh();
-                });
-
-                function refresh() {
-
-                    var schema = new schemaFactory();
-                    scope.vm.$$from = ctrl;
-
-                    // 设置空间name
-                    schema.name(scope.vm.$$data.id);
-
-                    // 设置edit是否显示
-                    schema.notShowEdit(scope.vm.$$notShowEdit == undefined ? false : scope.vm.$$notShowEdit);
-
-                    _returnType(scope.vm.$$data.type);
-                    _operateRule(scope.vm.$$data.rules);
-
-                    var tempHtml = "";
-                    // 拼接body
-                    switch (schema.type()) {
-                        case fieldTypes.INPUT:
-                            tempHtml = $templateCache.get(templateKey_input).replace("replaceInfo", schema.html());
-                            break;
-                        case fieldTypes.DATE:
-                            tempHtml = $templateCache.get(templateKey_date).replace("replaceInfo", schema.html()).replace("replaceInfo", schema.html());
-                            break;
-                        case fieldTypes.DATETIME:
-                            tempHtml = $templateCache.get(templateKey_datetime).replace("replaceInfo", schema.html()).replace("replaceInfo", schema.html());
-                            break;
-                        case fieldTypes.TEXTAREA:
-                            tempHtml = $templateCache.get(templateKey_textarea).replace("replaceInfo", schema.html());
-                            break;
-                        case fieldTypes.SINGLE_CHECK:
-                            tempHtml = $templateCache.get(templateKey_select).replace("replaceInfo", schema.html());
-                            break;
-                        case fieldTypes.RADIO:
-                            tempHtml = $templateCache.get(templateKey_radio).replace("replaceInfo", schema.html());
-                            break;
-                        case fieldTypes.MULTI_CHECK:
-                            tempHtml = $templateCache.get(templateKey_checkbox).replace("replaceInfo", schema.html());
-                            break;
-                        case fieldTypes.LABEL:
-                            tempHtml = $templateCache.get(templateKey_label);
-                            break;
-                        case fieldTypes.MULTI_COMPLEX:
-                            tempHtml = $templateCache.get(templateKey_multiComplex);
-                            break;
-                        case fieldTypes.COMPLEX:
-                            tempHtml = scope.vm.$$complex ? $templateCache.get(templateKey_multi_in_complex) : $templateCache.get(templateKey_complex);
-                            break;
-                    }
-
-                    // 添加规则说明
-                    if (schema.tipMsg() != null && scope.vm.$$hastip) {
-                        tempHtml += $templateCache.get(templateKey_multiComplex_tip);
-                    }
-
-                    // 包裹 ng-form
-                    tempHtml = '<ng-form>' + tempHtml + '</ng-form>';
-
-                    scope.showHtmlData = angular.copy(schema.schemaInfo());
-                    element.html($compile(tempHtml)(scope));
+                    scope.showHtmlData = angular.copy(header.config);
 
                     /**
-                     * 设置checkbox被选中的value值处理
-                     * @param value
+                     * 设置multi complex添加一条新记录
+                     * @param data
                      */
-                    scope.checkboxValue = function (value) {
-                        if (_.contains(scope.showHtmlData.checkValues, value)) {
-                            scope.showHtmlData.checkValues.splice(_.indexOf(scope.showHtmlData.checkValues, value), 1);
-                        } else {
-                            scope.showHtmlData.checkValues.push(value);
-                        }
-                        scope.vm.$$data.values = [];
-                        angular.forEach(scope.showHtmlData.checkValues, function (obj) {
-                            scope.vm.$$data.values.push({id: null, value: obj});
-                        })
+                    scope.addField = function (data) {
+                        var newFieldMap = {};
+                        angular.forEach(data.fields, function (field) {
+                            newFieldMap[field.id] = field;
+                        });
+
+                        data.complexValues.push({fieldMap: angular.copy(newFieldMap)});
                     };
 
-                    /**
-                     * 判断是否被选中
-                     * @param value
-                     */
-                    scope.isSelected = function (value) {
-                        return _.contains(scope.showHtmlData.checkValues, value)
-                    };
+                }
+            };
+        })
 
-                    /**
-                     * 设置multi complex删除该条记录
-                     * @param index
-                     */
-                    scope.delField = function (index) {
-                        scope.vm.$$data.complexValues.splice(index, 1);
-                    };
+        .directive('schemaItem', function ($compile) {
 
-                    /**
-                     * 返回需要展示的页面样式
-                     * @param type
-                     * @param valueTypeRule
-                     * @private
-                     */
-                    function _returnType(type) {
-                        schema.type(type);
-                        switch (type) {
+            return {
+                restrict: "E",
+                require: ['^?form'],
+                bindToController: true,
+                controllerAs: "vm",
+                scope: {
+                    $$data: "=data",
+                    $$hastip: "=hastip",
+                    $$complex: "=complex",
+                    $$notShowEdit: "=notShowEdit"
+                },
+                controller: function () {
+                },
+                link: function (scope, element) {
+
+                    // 监视配置变动
+                    scope.$watch('vm.$$data', refresh);
+
+                    scope.$watch('schemaForm.$valid', function ($valid) {
+                        scope.vm.$$data.$valid = $valid;
+                    });
+
+                    function refresh() {
+
+                        var schema = new Schema();
+                        var field = scope.vm.$$data;
+
+                        // 设置空间name
+                        schema.name(field.id);
+
+                        // 设置edit是否显示
+                        schema.notShowEdit(scope.vm.$$notShowEdit == undefined ? false : scope.vm.$$notShowEdit);
+
+                        schema.type(field.type);
+
+                        switch (field.type) {
                             case fieldTypes.RADIO:
                                 if (scope.vm.$$complex)
                                     schema.type(fieldTypes.SINGLE_CHECK);
                                 break;
                             case fieldTypes.MULTI_CHECK:
-                                _setCheckValues(scope.vm.$$data.values);
+                                _setCheckValues(field.values);
                                 break;
                             case fieldTypes.MULTI_COMPLEX:
-                                scope.vm.$$data.complexValues = _resetMultiComplex(scope.vm.$$data);
+                                field.complexValues = _resetMultiComplex(field);
                                 break;
                             case fieldTypes.COMPLEX:
-                                _resetComplex(scope.vm.$$data);
+                                _resetComplex(field);
                                 break;
                         }
-                    }
 
-                    /**
-                     * 设置checkvalues
-                     * @param values
-                     * @private
-                     */
-                    function _setCheckValues(values) {
-                        if (values != undefined && values != null) {
-                            angular.forEach(values, function (obj) {
-                                schema.checkValues(obj.value);
-                            })
-                        }
-                    }
-
-                    /**
-                     * 重新设置multicomplex的一些属性
-                     * @param fields
-                     * @private
-                     */
-                    function _resetMultiComplex(data) {
-                        var tempValues = [];
-                        angular.forEach(data.complexValues, function (value) {
-                            var tempFieldMap = {};
-                            angular.forEach(data.fields, function (field) {
-                                var tempField = angular.copy(field);
-                                if (value.fieldMap[field.id] != undefined) {
-                                    switch (field.type) {
-                                        case fieldTypes.INPUT:
-                                        case fieldTypes.LABEL:
-                                        case fieldTypes.DATE:
-                                        case fieldTypes.DATETIME:
-                                        case fieldTypes.TEXTAREA:
-                                        case fieldTypes.SINGLE_CHECK:
-                                        case fieldTypes.RADIO:
-                                            tempField.value = value.fieldMap[field.id].value;
-                                            break;
-                                        case fieldTypes.MULTI_INPUT:
-                                        case fieldTypes.MULTI_CHECK:
-                                            tempField.values = value.fieldMap[field.id].values;
-                                            break;
-                                        case fieldTypes.COMPLEX:
-                                            tempField.complexValue = value.fieldMap[field.id].complexValue;
-                                            break;
-                                        case fieldTypes.MULTI_COMPLEX:
-                                            tempField.complexValues = value.fieldMap[field.id].complexValues;
-                                            break;
-                                    }
-                                }
-                                tempFieldMap[field.id] = tempField;
-                            });
-                            tempValues.push({fieldMap: angular.copy(tempFieldMap)});
-                        });
-
-                        // 如果values为空,默认添加空白行
-                        if (_.isEmpty(data.complexValues)) {
-                            var newFieldMap = {};
-                            angular.forEach(data.fields, function (field) {
-                                newFieldMap[field.id] = field;
-                                //eval("newFieldMap." + field.id + "=field");
-                            });
-
-                            tempValues.push({fieldMap: angular.copy(newFieldMap)});
-                        }
-
-                        return tempValues;
-                    }
-
-                    /**
-                     * 重新
-                     * @param data
-                     * @private
-                     */
-                    function _resetComplex(data) {
-                        angular.forEach(data.fields, function (field) {
-                            switch (field.type) {
-                                case fieldTypes.INPUT:
-                                case fieldTypes.LABEL:
-                                case fieldTypes.DATE:
-                                case fieldTypes.DATETIME:
-                                case fieldTypes.TEXTAREA:
-                                case fieldTypes.SINGLE_CHECK:
-                                case fieldTypes.RADIO:
-                                    if (!_.isEmpty(data.complexValue.fieldMap))
-                                        field.value = data.complexValue.fieldMap[field.id].value;
-                                    else
-                                        field.value = data.defaultComplexValue.fieldMap[field.id].value;
-                                    break;
-                                case fieldTypes.MULTI_INPUT:
-                                case fieldTypes.MULTI_CHECK:
-                                    if (!_.isEmpty(data.complexValue.fieldMap))
-                                        field.values = data.complexValue.fieldMap[field.id].values;
-                                    else
-                                        field.values = data.defaultComplexValue.fieldMap[field.id].values;
-                                    break;
-                                case fieldTypes.COMPLEX:
-                                    if (!_.isEmpty(data.complexValue.fieldMap))
-                                        field.complexValue = data.complexValue.fieldMap[field.id].complexValue;
-                                    else
-                                        field.complexValue = data.defaultComplexValue.fieldMap[field.id].complexValue;
-                                    break;
-                                case fieldTypes.MULTI_COMPLEX:
-                                    if (!_.isEmpty(data.complexValue.fieldMap))
-                                        field.complexValues = data.complexValue.fieldMap[field.id].complexValues;
-                                    else
-                                        field.complexValues = data.defaultComplexValue.fieldMap[field.id].complexValues;
-                                    break;
-                            }
-                        });
-                    }
-
-                    /**
-                     * 处理rules
-                     * @param rules
-                     * @private
-                     */
-                    function _operateRule(rules) {
-                        angular.forEach(rules, function (rule) {
+                        angular.forEach(field.rules, function (rule) {
                             switch (rule.name) {
                                 case ruleTypes.VALUE_TYPE_RULE:
                                     _valueTypeRule(rule);
@@ -550,202 +296,379 @@ angular.module('voyageone.angular.directives.schema', [])
                                     _maxInputNumRule(rule);
                                     break;
                             }
-                        })
-                    }
+                        });
 
-                    /**
-                     * 处理valueTypeRule
-                     * @param valueTypeRule
-                     * @private
-                     */
-                    function _valueTypeRule(valueTypeRule) {
-                        switch (valueTypeRule.value) {
-                            case valueTypes.TEXT:
-                            case valueTypes.DECIMAL:
-                            case valueTypes.INTEGER:
-                            case valueTypes.LONG:
-                                schema.type(fieldTypes.INPUT);
-                                schema.html("type=\"text\"");
+                        var tempHtml = "";
+
+                        // 拼接body
+                        switch (schema.type()) {
+                            case fieldTypes.INPUT:
+                                tempHtml = templates.input.replace("%replaceInfo%", schema.html());
                                 break;
-                            case valueTypes.DATE:
-                                schema.type(fieldTypes.DATE);
+                            case fieldTypes.DATE:
+                                tempHtml = templates.date.replace("%replaceInfo%", schema.html()).replace("%replaceInfo%", schema.html());
                                 break;
-                            case valueTypes.TIME:
-                                schema.type(fieldTypes.DATETIME);
+                            case fieldTypes.DATETIME:
+                                tempHtml = templates.datetime.replace("%replaceInfo%", schema.html()).replace("%replaceInfo%", schema.html());
                                 break;
-                            case valueTypes.URL:
-                                schema.type(fieldTypes.INPUT);
-                                schema.html("type=\"url\"");
+                            case fieldTypes.TEXTAREA:
+                                tempHtml = templates.textarea.replace("%replaceInfo%", schema.html());
                                 break;
-                            case valueTypes.TEXTAREA:
-                                schema.type(fieldTypes.TEXTAREA);
-                                schema.rowNum(4);
+                            case fieldTypes.SINGLE_CHECK:
+                                tempHtml = templates.select.replace("%replaceInfo%", schema.html());
                                 break;
-                            case valueTypes.HTML:
-                                schema.type(fieldTypes.TEXTAREA);
-                                schema.rowNum(10);
+                            case fieldTypes.RADIO:
+                                tempHtml = templates.radio.replace("%replaceInfo%", schema.html());
+                                break;
+                            case fieldTypes.MULTI_CHECK:
+                                tempHtml = templates.checkbox.replace("%replaceInfo%", schema.html());
+                                break;
+                            case fieldTypes.LABEL:
+                                tempHtml = templates.label;
+                                break;
+                            case fieldTypes.MULTI_COMPLEX:
+                                tempHtml = templates.multiComplex;
+                                break;
+                            case fieldTypes.COMPLEX:
+                                tempHtml = scope.vm.$$complex ? templates.multi_in_complex : templates.complex;
                                 break;
                         }
-                    }
 
-                    /**
-                     * 处理requiredRule
-                     * @param requiredRule
-                     * @private
-                     */
-                    function _requiredRule(requiredRule) {
-                        if ("true" == requiredRule.value) {
-                            schema.isRequired(true);
-                            schema.html("required");
+                        // 添加规则说明
+                        if (schema.tipMsg() != null && scope.vm.$$hastip) {
+                            tempHtml += templates.multiComplex_tip;
+                        }
+
+                        // 包裹 ng-form, 用于启用 angular 的验证功能
+                        tempHtml = '<ng-form name="schemaForm">' + tempHtml + '</ng-form>';
+                        // 追加错误信息的显示
+                        tempHtml += '<div ng-repeat="(k, v) in schemaForm.$error">{{k}}</div>';
+
+                        scope.showHtmlData = angular.copy(schema.config);
+                        element.html($compile(tempHtml)(scope));
+
+                        /**
+                         * 设置checkbox被选中的value值处理
+                         * @param value
+                         */
+                        scope.checkboxValue = function (value) {
+                            if (_.contains(scope.showHtmlData.checkValues, value)) {
+                                scope.showHtmlData.checkValues.splice(_.indexOf(scope.showHtmlData.checkValues, value), 1);
+                            } else {
+                                scope.showHtmlData.checkValues.push(value);
+                            }
+                            field.values = [];
+                            angular.forEach(scope.showHtmlData.checkValues, function (obj) {
+                                field.values.push({id: null, value: obj});
+                            })
+                        };
+
+                        /**
+                         * 判断是否被选中
+                         * @param value
+                         */
+                        scope.isSelected = function (value) {
+                            return _.contains(scope.showHtmlData.checkValues, value)
+                        };
+
+                        /**
+                         * 设置multi complex删除该条记录
+                         * @param index
+                         */
+                        scope.delField = function (index) {
+                            field.complexValues.splice(index, 1);
+                        };
+
+                        /**
+                         * 设置checkvalues
+                         * @param values
+                         * @private
+                         */
+                        function _setCheckValues(values) {
+                            if (values != undefined && values != null) {
+                                angular.forEach(values, function (obj) {
+                                    schema.checkValues(obj.value);
+                                })
+                            }
+                        }
+
+                        /**
+                         * 重新设置multicomplex的一些属性
+                         * @param data
+                         * @private
+                         */
+                        function _resetMultiComplex(data) {
+                            var tempValues = [];
+                            angular.forEach(data.complexValues, function (value) {
+                                var tempFieldMap = {};
+                                angular.forEach(data.fields, function (field) {
+                                    var tempField = angular.copy(field);
+                                    if (value.fieldMap[field.id] != undefined) {
+                                        switch (field.type) {
+                                            case fieldTypes.INPUT:
+                                            case fieldTypes.LABEL:
+                                            case fieldTypes.DATE:
+                                            case fieldTypes.DATETIME:
+                                            case fieldTypes.TEXTAREA:
+                                            case fieldTypes.SINGLE_CHECK:
+                                            case fieldTypes.RADIO:
+                                                tempField.value = value.fieldMap[field.id].value;
+                                                break;
+                                            case fieldTypes.MULTI_INPUT:
+                                            case fieldTypes.MULTI_CHECK:
+                                                tempField.values = value.fieldMap[field.id].values;
+                                                break;
+                                            case fieldTypes.COMPLEX:
+                                                tempField.complexValue = value.fieldMap[field.id].complexValue;
+                                                break;
+                                            case fieldTypes.MULTI_COMPLEX:
+                                                tempField.complexValues = value.fieldMap[field.id].complexValues;
+                                                break;
+                                        }
+                                    }
+                                    tempFieldMap[field.id] = tempField;
+                                });
+                                tempValues.push({fieldMap: angular.copy(tempFieldMap)});
+                            });
+
+                            // 如果values为空,默认添加空白行
+                            if (_.isEmpty(data.complexValues)) {
+                                var newFieldMap = {};
+                                angular.forEach(data.fields, function (field) {
+                                    newFieldMap[field.id] = field;
+                                    //eval("newFieldMap." + field.id + "=field");
+                                });
+
+                                tempValues.push({fieldMap: angular.copy(newFieldMap)});
+                            }
+
+                            return tempValues;
+                        }
+
+                        /**
+                         * 重新
+                         * @param data
+                         * @private
+                         */
+                        function _resetComplex(data) {
+                            angular.forEach(data.fields, function (field) {
+                                switch (field.type) {
+                                    case fieldTypes.INPUT:
+                                    case fieldTypes.LABEL:
+                                    case fieldTypes.DATE:
+                                    case fieldTypes.DATETIME:
+                                    case fieldTypes.TEXTAREA:
+                                    case fieldTypes.SINGLE_CHECK:
+                                    case fieldTypes.RADIO:
+                                        if (!_.isEmpty(data.complexValue.fieldMap))
+                                            field.value = data.complexValue.fieldMap[field.id].value;
+                                        else
+                                            field.value = data.defaultComplexValue.fieldMap[field.id].value;
+                                        break;
+                                    case fieldTypes.MULTI_INPUT:
+                                    case fieldTypes.MULTI_CHECK:
+                                        if (!_.isEmpty(data.complexValue.fieldMap))
+                                            field.values = data.complexValue.fieldMap[field.id].values;
+                                        else
+                                            field.values = data.defaultComplexValue.fieldMap[field.id].values;
+                                        break;
+                                    case fieldTypes.COMPLEX:
+                                        if (!_.isEmpty(data.complexValue.fieldMap))
+                                            field.complexValue = data.complexValue.fieldMap[field.id].complexValue;
+                                        else
+                                            field.complexValue = data.defaultComplexValue.fieldMap[field.id].complexValue;
+                                        break;
+                                    case fieldTypes.MULTI_COMPLEX:
+                                        if (!_.isEmpty(data.complexValue.fieldMap))
+                                            field.complexValues = data.complexValue.fieldMap[field.id].complexValues;
+                                        else
+                                            field.complexValues = data.defaultComplexValue.fieldMap[field.id].complexValues;
+                                        break;
+                                }
+                            });
+                        }
+
+                        /**
+                         * 处理valueTypeRule
+                         * @param valueTypeRule
+                         * @private
+                         */
+                        function _valueTypeRule(valueTypeRule) {
+                            switch (valueTypeRule.value) {
+                                case valueTypes.TEXT:
+                                case valueTypes.DECIMAL:
+                                case valueTypes.INTEGER:
+                                case valueTypes.LONG:
+                                    schema.type(fieldTypes.INPUT);
+                                    schema.html("type=\"text\"");
+                                    break;
+                                case valueTypes.DATE:
+                                    schema.type(fieldTypes.DATE);
+                                    break;
+                                case valueTypes.TIME:
+                                    schema.type(fieldTypes.DATETIME);
+                                    break;
+                                case valueTypes.URL:
+                                    schema.type(fieldTypes.INPUT);
+                                    schema.html("type=\"url\"");
+                                    break;
+                                case valueTypes.TEXTAREA:
+                                    schema.type(fieldTypes.TEXTAREA);
+                                    schema.rowNum(4);
+                                    break;
+                                case valueTypes.HTML:
+                                    schema.type(fieldTypes.TEXTAREA);
+                                    schema.rowNum(10);
+                                    break;
+                            }
+                        }
+
+                        /**
+                         * 处理requiredRule
+                         * @param requiredRule
+                         * @private
+                         */
+                        function _requiredRule(requiredRule) {
+                            if ("true" == requiredRule.value) {
+                                schema.isRequired(true);
+                                schema.html("required");
+                            }
+                        }
+
+                        /**
+                         * 处理disableRule
+                         * @param disableRule
+                         * @private
+                         */
+                        function _disableRule(disableRule) {
+                            if ("true" == disableRule.value
+                                && disableRule.dependGroup == null) {
+                                schema.html("ng-disabled=\"true\"");
+                            }
+                        }
+
+                        /**
+                         * 处理readOnlyRule
+                         * @param readOnlyRule
+                         * @private
+                         */
+                        function _readOnlyRule(readOnlyRule) {
+                            if ("true" == readOnlyRule.value) {
+                                schema.html("readonly");
+                            }
+                        }
+
+                        /**
+                         * 处理regexRule
+                         * @param regexRule
+                         * @private
+                         */
+                        function _regexRule(regexRule) {
+                            schema.html("ng-pattern=\"/" + regexRule.value + "/\"");
+                        }
+
+                        /**
+                         * 处理tipRule
+                         * @param tipRule
+                         * @private
+                         */
+                        function _tipRule(tipRule) {
+                            schema.tipMsg(tipRule.value);
+                        }
+
+                        /**
+                         * 处理minLengthRule
+                         * @param minLengthRule
+                         * @private
+                         */
+                        function _minLengthRule(minLengthRule) {
+                            var value = isNaN(parseInt(minLengthRule.value)) ? 0 : minLengthRule.value;
+
+                            if ("not include" === minLengthRule.exProperty)
+                                value = (value > 0) ? value - 1 : 0;
+
+                            if ("character" == minLengthRule.unit)
+                                schema.html("ng-minlength=\"" + value + "\"");
+                            else
+                                schema.html("ng-char-minlength=\"" + value + "\"");
+                        }
+
+                        /**
+                         * 处理maxLengthRule
+                         * @param maxLengthRule
+                         * @private
+                         */
+                        function _maxLengthRule(maxLengthRule) {
+                            var value = isNaN(parseInt(maxLengthRule.value)) ? 0 : maxLengthRule.value;
+
+                            if ("not include" === maxLengthRule.exProperty)
+                                value = (value > 0) ? value - 1 : 0;
+
+                            if ("character" == maxLengthRule.unit)
+                                schema.html("ng-maxlength=\"" + value + "\"");
+                            else
+                                schema.html("ng-char-maxlength=\"" + value + "\"");
+                        }
+
+                        /**
+                         * 处理minValueRule
+                         * @param minValueRule
+                         * @private
+                         */
+                        function _minValueRule(minValueRule) {
+                            var value = isNaN(parseFloat(minValueRule.value)) ? 0 : parseFloat(minValueRule.value);
+
+                            if ("not include" === minValueRule.exProperty)
+                                value = (value > 0) ? value - 0.01 : 0;
+
+                            schema.html("ng-minvalue=\"" + value + "\"");
+                        }
+
+                        /**
+                         * 处理maxValueRule
+                         * @param maxValueRule
+                         * @private
+                         */
+                        function _maxValueRule(maxValueRule) {
+                            var value = isNaN(parseFloat(maxValueRule.value)) ? 0 : parseFloat(maxValueRule.value);
+
+                            if ("not include" === maxValueRule.exProperty)
+                                value = (value > 0) ? value - 0.01 : 0;
+
+                            schema.html("ng-maxvalue=\"" + value + "\"");
+
+                        }
+
+                        /**
+                         * 处理minInputNumRule
+                         * @param minInputNumRule
+                         * @private
+                         */
+                        function _minInputNumRule(minInputNumRule) {
+                            var value = isNaN(parseInt(minInputNumRule.value)) ? 0 : parseInt(minInputNumRule.value);
+
+                            if ("not include" === minInputNumRule.exProperty)
+                                value = (value > 0) ? value - 1 : 0;
+
+                            schema.html("ng-mininputnum=\"" + value + "\"");
+                        }
+
+                        /**
+                         * 处理maxInputNumRule
+                         * @param maxInputNumRule
+                         * @private
+                         */
+                        function _maxInputNumRule(maxInputNumRule) {
+                            var value = isNaN(parseInt(maxInputNumRule.value)) ? 0 : parseInt(maxInputNumRule.value);
+
+                            if ("not include" === maxInputNumRule.exProperty)
+                                value = (value > 0) ? value - 1 : 0;
+
+                            schema.html("ng-maxinputnum=\"" + value + "\"");
                         }
                     }
-
-                    /**
-                     * 处理disableRule
-                     * @param disableRule
-                     * @private
-                     */
-                    function _disableRule(disableRule) {
-                        if ("true" == disableRule.value
-                            && disableRule.dependGroup == null) {
-                            schema.html("ng-disabled=\"true\"");
-                        }
-                    }
-
-                    /**
-                     * 处理readOnlyRule
-                     * @param readOnlyRule
-                     * @private
-                     */
-                    function _readOnlyRule(readOnlyRule) {
-                        if ("true" == readOnlyRule.value) {
-                            schema.html("readonly");
-                        }
-                    }
-
-                    /**
-                     * 处理regexRule
-                     * @param regexRule
-                     * @private
-                     */
-                    function _regexRule(regexRule) {
-                        schema.html("ng-pattern=\"/" + regexRule.value + "/\"");
-                    }
-
-                    /**
-                     * 处理tipRule
-                     * @param tipRule
-                     * @private
-                     */
-                    function _tipRule(tipRule) {
-                        schema.tipMsg(tipRule.value);
-                    }
-
-                    /**
-                     * 处理minLengthRule
-                     * @param minLengthRule
-                     * @private
-                     */
-                    function _minLengthRule(minLengthRule) {
-                        var value = isNaN(parseInt(minLengthRule.value)) ? 0 : minLengthRule.value;
-
-                        if ("not include" === minLengthRule.exProperty)
-                            value = (value > 0) ? value - 1 : 0;
-
-                        if ("character" == minLengthRule.unit)
-                            schema.html("ng-minlength=\"" + value + "\"");
-                        else
-                            schema.html("ng-char-minlength=\"" + value + "\"");
-                    }
-
-                    /**
-                     * 处理maxLengthRule
-                     * @param maxLengthRule
-                     * @private
-                     */
-                    function _maxLengthRule(maxLengthRule) {
-                        var value = isNaN(parseInt(maxLengthRule.value)) ? 0 : maxLengthRule.value;
-
-                        if ("not include" === maxLengthRule.exProperty)
-                            value = (value > 0) ? value - 1 : 0;
-
-                        if ("character" == maxLengthRule.unit)
-                            schema.html("ng-maxlength=\"" + value + "\"");
-                        else
-                            schema.html("ng-char-maxlength=\"" + value + "\"");
-                    }
-
-                    /**
-                     * 处理minValueRule
-                     * @param minValueRule
-                     * @private
-                     */
-                    function _minValueRule(minValueRule) {
-                        var value = isNaN(parseFloat(minValueRule.value)) ? 0 : parseFloat(minValueRule.value);
-
-                        if ("not include" === minValueRule.exProperty)
-                            value = (value > 0) ? value - 0.01 : 0;
-
-                        schema.html("ng-minvalue=\"" + value + "\"");
-                    }
-
-                    /**
-                     * 处理maxValueRule
-                     * @param maxValueRule
-                     * @private
-                     */
-                    function _maxValueRule(maxValueRule) {
-                        var value = isNaN(parseFloat(maxValueRule.value)) ? 0 : parseFloat(maxValueRule.value);
-
-                        if ("not include" === maxValueRule.exProperty)
-                            value = (value > 0) ? value - 0.01 : 0;
-
-                        schema.html("ng-maxvalue=\"" + value + "\"");
-
-                    }
-
-                    /**
-                     * 处理minInputNumRule
-                     * @param minInputNumRule
-                     * @private
-                     */
-                    function _minInputNumRule(minInputNumRule) {
-                        var value = isNaN(parseInt(minInputNumRule.value)) ? 0 : parseInt(minInputNumRule.value);
-
-                        if ("not include" === minInputNumRule.exProperty)
-                            value = (value > 0) ? value - 1 : 0;
-
-                        schema.html("ng-mininputnum=\"" + value + "\"");
-                    }
-
-                    /**
-                     * 处理maxInputNumRule
-                     * @param maxInputNumRule
-                     * @private
-                     */
-                    function _maxInputNumRule(maxInputNumRule) {
-                        var value = isNaN(parseInt(maxInputNumRule.value)) ? 0 : parseInt(maxInputNumRule.value);
-
-                        if ("not include" === maxInputNumRule.exProperty)
-                            value = (value > 0) ? value - 1 : 0;
-
-                        schema.html("ng-maxinputnum=\"" + value + "\"");
-                    }
-
-                    /**
-                     * 如果checkbox被选中,返回被选中的value.
-                     * eg.[{new: true, pending: false, approved: true}] -> [new, approved]
-                     * @param object
-                     * @returns {*}
-                     */
-                    //function _returnKey(object) {
-                    //    var result = [];
-                    //    angular.forEach(object, function(value, index) {
-                    //        if (value) result.push(index);
-                    //    });
-                    //    return result;
-                    //}
                 }
-            }
-        }
-    });
+            };
+        });
+
+})();

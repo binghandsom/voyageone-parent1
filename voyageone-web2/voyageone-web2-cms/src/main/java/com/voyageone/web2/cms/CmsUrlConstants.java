@@ -234,6 +234,8 @@ public interface CmsUrlConstants {
             String DIRECT_MATCH_OVER = "directMatchOver";
 
             String GET_MATCH_OVER = "getMatchOver";
+
+            String GET_MAIN_MAPPING = "getMainMapping";
         }
 
         interface PLATFORM {
@@ -414,9 +416,9 @@ public interface CmsUrlConstants {
 
             String SAVE = "update";
 
-            String GETCATTREE = "getCatTree";
+            String GET_CAT_TREE = "getCatTree";
 
-            String GETCATLIST = "getCatList";
+            String GET_CAT_LIST = "getCatList";
         }
         interface CUSTOM_VALUE {
 

@@ -12,14 +12,12 @@ define([
     'use strict';
 
     function isRequiredField(field) {
-
-        return _.find(field.rules, function (rule) {
+        return field.rules.some(function (rule) {
             return rule.name === RuleTypes.REQUIRED_RULE && rule.value === 'true';
         });
     }
 
     function isSimpleType(field) {
-
         return field.type !== FieldTypes.complex &&
             field.type !== FieldTypes.multiComplex;
     }
@@ -52,18 +50,6 @@ define([
         return iconClass;
     }
 
-    function hasRequired(bean, beans, required) {
-
-        if (!bean.children || !bean.children.length) {
-            return (!!bean.required) === required;
-        }
-        var child = _.find(bean.children, function (id) {
-            return hasRequired(beans[id], beans, required);
-        });
-
-        return !!child;
-    }
-
     function hasMatched(bean, beans, matched) {
 
         if (!bean.children || !bean.children.length) {
@@ -85,40 +71,41 @@ define([
         // 转换为包装后的数组
         var beanArray = _.map(beans, function (bean) {
 
-            if (bean.parentId) {
-                var parent
-                    = bean.parent
-                    = beans[bean.parentId];
+            var parent, parentId;
 
-                if (!parent.children) {
+            parentId = bean.parentId;
+
+            if (parentId)
+                parent = beans[parentId];
+
+            if (parent) {
+                bean.parent = parent;
+                if (!parent.children)
                     parent.children = [];
-                }
-
                 parent.children.push(bean.field.id);
             }
 
+            bean.inRequired = bean.required = isRequiredField(bean.field);
             bean.iconClass = getIconClass(bean.field);
             bean.isSimple = isSimpleType(bean.field);
-            bean.required = isRequiredField(bean.field);
             bean.matched = _.contains(toArray.matchedMains[bean.type], bean.field.id);
 
             return bean;
+        }).sort(function (a, b) {
+            return a.seq > b.seq ? 1 : -1
         });
 
-        // 设定字段,是否其子字段为必填
-        // 用于过滤
-        _.each(beanArray, function (bean) {
-            bean.hasRequired = hasRequired(bean, beans, true);
-            bean.hasOptional = hasRequired(bean, beans, false);
+        // 设定字段, 用于过滤
+        beanArray.forEach(function (bean) {
+            if (bean.parent)
+                bean.inRequired = bean.parent.required;
             bean.hasMatched = hasMatched(bean, beans, true);
             bean.hasUnMatched = hasMatched(bean, beans, false);
             bean.headClass = getHeadClass(bean);
         });
 
         // 整理展示顺序
-        return beanArray.sort(function (a, b) {
-            return a.seq > b.seq ? 1 : -1
-        });
+        return beanArray;
     }
 
     /**
@@ -133,7 +120,7 @@ define([
              * Feed Mapping 属性匹配画面的 Controller 类
              * @param $scope
              * @param $routeParams
-             * @param {FeedMappingService} feedMappingService
+             * @param feedMappingService
              * @param notify
              * @param $translate
              * @constructor
@@ -180,11 +167,11 @@ define([
                  * 显示的过滤条件
                  */
                 this.show = {
-                    hasRequired: null,
+                    hasRequired: true,
                     matched: null,
                     keyWord: null
                 };
-                
+
                 this.mappingModel = null;
 
                 this.saveMapping = this.saveMapping.bind(this);
@@ -234,10 +221,10 @@ define([
                             ).then(function (res) {
 
                                 var resultMap = res.data;
-                                
+
                                 // 保存已匹配的属性
                                 toArray.matchedMains = resultMap.propMap;
-                                
+
                                 ttt.mappingModel = resultMap.mappingModel;
 
                                 // 包装数据源
@@ -270,6 +257,7 @@ define([
                  */
                 saveMapping: function (context) {
 
+                    var self = this;
                     var bean = context.bean;
 
                     var path = [];
@@ -283,8 +271,8 @@ define([
 
                     context.fieldMapping.type = bean.type;
 
-                    this.feedMappingService.saveFieldMapping({
-                        mappingId: this.mappingModel._id,
+                    self.feedMappingService.saveFieldMapping({
+                        mappingId: self.mappingModel._id,
                         fieldPath: path.reverse(),
                         propMapping: context.fieldMapping
                     }).then(function (res) {
@@ -295,14 +283,31 @@ define([
                         var mappings = context.fieldMapping.mappings;
 
                         bean.matched = !!mappings && !!mappings.length;
+                        bean.hasMatched = bean.matched;
+                        bean.hasUnMatched = !bean.hasMatched;
 
-                        // 循环设定上层标识
+                        // 重新计算最顶层属性的 match 标识
+                        var fields = self.getDataSource(context.fieldMapping.type);
                         var parent = bean.parent;
-                        while (!!parent) {
-                            parent.hasUnMatched = !(parent.hasMatched = bean.matched);
+                        while (parent && parent.parent)
                             parent = parent.parent;
-                        }
-                    }.bind(this));
+                        parent = parent || bean;
+                        hasMatched(parent, fields, true);
+                        hasMatched(parent, fields, false);
+                    });
+                },
+
+                getDataSource: function (type) {
+                    switch (type){
+                        case "FIELD":
+                            return this.fields;
+                        case "SKU":
+                            return this.skuFields;
+                        case "COMMON":
+                            return this.commonFields;
+                        default:
+                            return null;
+                    }
                 },
 
                 /**
@@ -317,7 +322,7 @@ define([
                         return false;
 
                     if (this.show.hasRequired !== null) {
-                        result = (this.show.hasRequired ? bean.hasRequired : bean.hasOptional);
+                        result = this.show.hasRequired === bean.inRequired;
                     }
 
                     if (result && this.show.matched !== null) {

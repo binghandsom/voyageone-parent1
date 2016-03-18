@@ -1,5 +1,6 @@
 package com.voyageone.web2.sdk.api.request;
 
+import com.voyageone.service.bean.cms.product.ProductPriceBean;
 import com.voyageone.web2.sdk.api.VoApiRequest;
 import com.voyageone.web2.sdk.api.domain.ProductPriceModel;
 import com.voyageone.web2.sdk.api.exception.ApiRuleException;
@@ -34,7 +35,7 @@ public class ProductUpdatePriceRequest extends VoApiRequest<ProductUpdatePriceRe
 	 */
 	private String channelId;
 
-	private List<ProductPriceModel> productPrices = new ArrayList<>();
+	private List<ProductPriceBean> productPrices = new ArrayList<>();
 
 	public ProductUpdatePriceRequest() {}
 
@@ -46,7 +47,7 @@ public class ProductUpdatePriceRequest extends VoApiRequest<ProductUpdatePriceRe
 	public void requestCheck() throws ApiRuleException {
 		RequestUtils.checkNotEmpty(" channelId", channelId);
 		RequestUtils.checkNotEmpty(" productPrices ", productPrices);
-		for (ProductPriceModel model : productPrices) {
+		for (ProductPriceBean model : productPrices) {
 			RequestUtils.checkNotEmpty(" ProductPriceModel ", model);
 			RequestUtils.checkNotEmpty(" ProductPriceModel.productId or productCode", model.getProductId(), model.getProductCode());
 		}
@@ -64,15 +65,15 @@ public class ProductUpdatePriceRequest extends VoApiRequest<ProductUpdatePriceRe
 		this.channelId = channelId;
 	}
 
-	public List<ProductPriceModel> getProductPrices() {
+	public List<ProductPriceBean> getProductPrices() {
 		return productPrices;
 	}
 
-	public void setProductPrices(List<ProductPriceModel> productPrices) {
+	public void setProductPrices(List<ProductPriceBean> productPrices) {
 		this.productPrices = productPrices;
 	}
 
-	public void addProductPrices(ProductPriceModel model) {
+	public void addProductPrices(ProductPriceBean model) {
 		productPrices.add(model);
 	}
 

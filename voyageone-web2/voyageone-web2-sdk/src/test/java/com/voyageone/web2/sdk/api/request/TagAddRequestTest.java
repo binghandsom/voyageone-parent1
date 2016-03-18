@@ -1,7 +1,7 @@
 package com.voyageone.web2.sdk.api.request;
 
 import com.voyageone.web2.sdk.api.VoApiDefaultClient;
-import com.voyageone.web2.sdk.api.domain.CmsBtTagModel;
+import com.voyageone.service.model.cms.CmsBtTagModel;
 import com.voyageone.web2.sdk.api.response.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;

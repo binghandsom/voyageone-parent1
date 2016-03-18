@@ -1,7 +1,7 @@
 package com.voyageone.web2.sdk.api.request;
 
 import com.voyageone.web2.sdk.api.VoApiRequest;
-import com.voyageone.web2.sdk.api.domain.CmsBtPromotionGroupModel;
+import com.voyageone.service.model.cms.CmsBtPromotionGroupModel;
 import com.voyageone.web2.sdk.api.exception.ApiRuleException;
 import com.voyageone.web2.sdk.api.response.PromotionModelDeleteResponse;
 import org.springframework.util.Assert;

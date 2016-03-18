@@ -4,7 +4,7 @@ import com.voyageone.cms.CmsConstants;
 import com.voyageone.common.masterdate.schema.field.*;
 import com.voyageone.common.masterdate.schema.option.Option;
 import com.voyageone.service.dao.cms.mongo.CmsMtCategorySchemaDao;
-import com.voyageone.service.impl.cms.CmsProductService;
+import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.mongo.CmsMtCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.product.*;
 import com.voyageone.task2.Context;
@@ -25,7 +25,7 @@ public class SxPrepareData {
         ApplicationContext ctx = new GenericXmlApplicationContext("applicationContext.xml");
         conext.putAttribute("springContext", ctx);
 
-        CmsProductService cmsProductService = ctx.getBean(CmsProductService.class);
+        ProductService productService = ctx.getBean(ProductService.class);
         CmsMtCategorySchemaDao cmsMtCategorySchemaDao = ctx.getBean(CmsMtCategorySchemaDao.class);
         //珠宝/钻石/翡翠/黄金>天然珍珠（新）>胸饰
         //String catId= "54+g5a6dL+mSu+efsy/nv6Hnv6Av6buE6YeRPuWkqeeEtuePjeePoO+8iOaWsO+8iT7og7jppbA=";
@@ -39,7 +39,7 @@ public class SxPrepareData {
         List<CmsBtProductModel> products = new ArrayList<>();
         products.add(createProduct(cmsMtCategorySchemaDao, "200", 1111, 1, "jewelry", catId, true));
         products.add(createProduct(cmsMtCategorySchemaDao, "200", 1111, 2, "jewelry", catId, false));
-        cmsProductService.insert(products);
+        productService.insert(products);
         System.out.println("complete");
     }
 

@@ -1,5 +1,6 @@
 /**
- * Created by linanbin on 15/12/7.
+ * 统一管理弹出框的定义信息
+ * Created by LinAn.Bin on 15/12/7.
  */
 
 /**
@@ -113,6 +114,11 @@ define([
                     "controller": 'popAddAttributeValueNewCtl as ctrl',
                     "backdrop": 'static',
                     "size": 'md'
+                },
+                "column": {
+                    "templateUrl": "views/pop/custom/column.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/custom/column.ctl",
+                    "controller": 'popCustomColumnCtl'
                 }
 
             },
@@ -142,13 +148,6 @@ define([
                     "controller": 'propFeedMappingAttributeController as ctrl',
                     "backdrop": 'static',
                     "size": 'lg'
-                },
-                "dictValue": {
-                    "templateUrl": "views/pop/feedMapping/dictValue.tpl.html",
-                    "controllerUrl": "modules/cms/views/pop/feedMapping/dictValue.ctl",
-                    "controller": 'propFeedMappingDictValueController as ctrl',
-                    "backdrop": 'static',
-                    "size": 'md'
                 },
                 "value": {
                     "templateUrl": "views/pop/feedMapping/value.tpl.html",
@@ -556,10 +555,6 @@ define([
             return openModel(popActions.feedMapping.value, context);
         };
 
-        $scope.popupDictValue = function (context) {
-            return openModel(popActions.feedMapping.dictValue, context);
-        };
-
         $scope.openOtherPlatform = function (context) {
             return openModel(popActions.platformMapping.otherPlatform, context);
         };
@@ -641,9 +636,9 @@ define([
          * @type {openImport}
          */
         $scope.openImport = openImport;
-        function openImport(viewSize, data) {
+        function openImport(viewSize, data, fnInitial) {
             require([popActions.file.import.controllerUrl], function () {
-                $modal.open({
+                var modalInstance = $modal.open({
                     templateUrl: popActions.file.import.templateUrl,
                     controller: popActions.file.import.controller,
                     size: viewSize,
@@ -653,6 +648,13 @@ define([
                         }
                     }
                 });
+                modalInstance.result.then(function () {
+                    if (fnInitial) {
+                        fnInitial();
+                    }
+
+                })
+
             });
         }
 
@@ -801,12 +803,11 @@ define([
 
         /**
          * 显示该sku的库存隔离明细
-         * @type {openMrbstockdetail}
          */
         $scope.openSkuMrbStockDetail = openSkuMrbStockDetail;
         function openSkuMrbStockDetail(viewSize, data) {
             require([popActions.promotion.skuMrbStockDetail.controllerUrl], function () {
-                $modal.open({
+                $uibModal.open({
                     templateUrl: popActions.promotion.skuMrbStockDetail.templateUrl,
                     controller: popActions.promotion.skuMrbStockDetail.controller,
                     size: viewSize,
@@ -821,12 +822,11 @@ define([
 
         /**
          * 新增增量隔离库存任务
-         * @type {openMrbstockadd}
          */
         $scope.openAddMrbStockIncrement = openAddMrbStockIncrement;
         function openAddMrbStockIncrement(viewSize, data) {
             require([popActions.promotion.addMrbStockIncrement.controllerUrl], function () {
-                $modal.open({
+                $uibModal.open({
                     templateUrl: popActions.promotion.addMrbStockIncrement.templateUrl,
                     controller: popActions.promotion.addMrbStockIncrement.controller,
                     size: viewSize,
@@ -838,32 +838,25 @@ define([
                 });
             });
         }
-        //$scope.openshop_category = openshop_category;
-        //function openshop_category(viewSize) {
-        //    $modal.open({
-        //        templateUrl: popActions.tag.shop_category.templateUrl,
-        //        controllerUrl: popActions.tag.shop_category.controllerUrl,
-        //        size: viewSize,
-        //        resolve: {
-        //            items: function () {
-        //                //return data;
-        //            }
-        //        }
-        //    });
-        //}
-        //
-        //$scope.openOtherProgress = openOtherProgress;
-        //function openOtherProgress(viewSize) {
-        //    $modal.open({
-        //        templateUrl: popActions.other.progress.templateUrl,
-        //        controllerUrl: popActions.other.progress.controllerUrl,
-        //        size: viewSize,
-        //        resolve: {
-        //            items: function () {
-        //                //return data;
-        //            }
-        //        }
-        //    });
-        //}
+
+        /**
+         * 弹出自定义属性列
+         * @type {openCustomColumn}
+         */
+        $scope.openCustomColumn = openCustomColumn;
+        function openCustomColumn(viewSize, data) {
+            require([popActions.custom.column.controllerUrl], function () {
+                $modal.open({
+                    templateUrl: popActions.custom.column.templateUrl,
+                    controller: popActions.custom.column.controller,
+                    size: viewSize,
+                    resolve: {
+                        data: function () {
+                            return data;
+                        }
+                    }
+                });
+            });
+        }
     }
 });

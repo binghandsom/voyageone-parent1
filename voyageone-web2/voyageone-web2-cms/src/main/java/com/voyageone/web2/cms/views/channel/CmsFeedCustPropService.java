@@ -1,6 +1,8 @@
 package com.voyageone.web2.cms.views.channel;
 
+import com.voyageone.common.components.transaction.SimpleTransaction;
 import com.voyageone.service.dao.cms.mongo.CmsMtFeedCategoryTreeDao;
+import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryTreeModelx;
 import com.voyageone.web2.base.BaseAppService;
@@ -31,11 +33,51 @@ public class CmsFeedCustPropService extends BaseAppService {
     private CmsBtFeedCustomPropDao cmsBtFeedCustomPropDao;
     @Autowired
     private MongoTemplate mongoTemplate;
+    @Autowired
+    private SimpleTransaction simpleTransaction;
 
     // 取得类目路径数据
-    public List<CmsMtFeedCategoryModel> getTopCategories(UserSessionBean user) {
+    public List<CmsMtFeedCategoryModel> getTopFeedCategories(UserSessionBean user) {
         CmsMtFeedCategoryTreeModelx treeModelx = cmsMtFeedCategoryTreeDao.findFeedCategoryx(user.getSelChannelId());
         return treeModelx.getCategoryTree();
+    }
+
+    // 取得类目路径数据
+    public List<CmsMtCategoryTreeModel> getTopCategories(UserSessionBean user) {
+        CmsMtFeedCategoryTreeModelx treeModelx = cmsMtFeedCategoryTreeDao.findFeedCategoryx(user.getSelChannelId());
+        List<CmsMtFeedCategoryModel> feedBeanList = treeModelx.getCategoryTree();
+        List<CmsMtCategoryTreeModel> result = new ArrayList<>();
+        for(CmsMtFeedCategoryModel feedCategory : feedBeanList) {
+            result.add(buildFeedCategoryBean(feedCategory));
+        }
+        return result;
+    }
+
+    /**
+     * 递归重新给Feed类目赋值 并转换成CmsMtCategoryTreeModel.
+     * @param feedCategoryModel
+     * @return
+     */
+    private CmsMtCategoryTreeModel buildFeedCategoryBean(CmsMtFeedCategoryModel feedCategoryModel) {
+
+        CmsMtCategoryTreeModel cmsMtCategoryTreeModel = new CmsMtCategoryTreeModel();
+
+        cmsMtCategoryTreeModel.setCatId(feedCategoryModel.getCid());
+        cmsMtCategoryTreeModel.setCatName(feedCategoryModel.getName());
+        cmsMtCategoryTreeModel.setCatPath(feedCategoryModel.getPath());
+        cmsMtCategoryTreeModel.setIsParent(feedCategoryModel.getIsChild() == 1 ? 0 : 1);
+
+        // 先取出暂时保存
+        List<CmsMtFeedCategoryModel> children = feedCategoryModel.getChild();
+        List<CmsMtCategoryTreeModel> newChild = new ArrayList<>();
+
+        if (children != null && !children.isEmpty())
+            for (CmsMtFeedCategoryModel child : children) {
+                newChild.add(buildFeedCategoryBean(child));
+            }
+        cmsMtCategoryTreeModel.setChildren(newChild);
+
+        return cmsMtCategoryTreeModel;
     }
 
     // 根据类目路径查询自定义已翻译属性信息
@@ -43,7 +85,15 @@ public class CmsFeedCustPropService extends BaseAppService {
         Map<String, Object> params = new HashMap<String, Object>(2);
         params.put("channelId", channelId);
         params.put("feedCatPath", catPath);
-        return cmsBtFeedCustomPropDao.selectAllAttr(params);
+        List<Map<String, Object>> list1 = cmsBtFeedCustomPropDao.selectAllAttr(params);
+        List<Map<String, Object>> list2 = new ArrayList<Map<String, Object>>(list1.size());
+        for (Map<String, Object> obj : list1) {
+            Map<String, Object> obj2 = new HashMap<String, Object>(2);
+            obj2.put("feed_prop_original", obj.get("feed_prop_original"));
+            obj2.put("feed_prop_translation", obj.get("feed_prop_translation"));
+            list2.add(obj2);
+        }
+        return list2;
     }
 
     // 根据类目路径查询自定义已翻译属性信息
@@ -88,31 +138,36 @@ public class CmsFeedCustPropService extends BaseAppService {
         return cmsBtFeedCustomPropDao.isAttrExist(sqlPara);
     }
 
-    @Transactional
+    // 保存属性
     public void saveAttr( List<Map<String, Object>> addList,  List<Map<String, Object>> updList, String catPath, UserSessionBean userInfo) {
-        if (addList.size() > 0) {
-            Map<String, Object> params = new HashMap<String, Object>(4);
-            params.put("channelId", userInfo.getSelChannelId());
-            params.put("cat_path", catPath);
-            params.put("userName", userInfo.getUserName());
-            params.put("list", addList);
-            int tslt = cmsBtFeedCustomPropDao.addAttr(params);
-            if (tslt != addList.size()) {
-                logger.error("添加属性结果与期望不符：添加条数=" + addList.size() + " 实际更新件数=" + tslt);
-            } else {
-                logger.debug("添加属性成功 实际更新件数=" + tslt);
+        simpleTransaction.openTransaction();
+        try {
+            if (addList.size() > 0) {
+                Map<String, Object> params = new HashMap<String, Object>(4);
+                params.put("channelId", userInfo.getSelChannelId());
+                params.put("cat_path", catPath);
+                params.put("userName", userInfo.getUserName());
+                params.put("list", addList);
+                int tslt = cmsBtFeedCustomPropDao.addAttr(params);
+                if (tslt != addList.size()) {
+                    logger.error("添加属性结果与期望不符：添加条数=" + addList.size() + " 实际更新件数=" + tslt);
+                } else {
+                    logger.debug("添加属性成功 实际更新件数=" + tslt);
+                }
             }
-        }
-        if (updList.size() > 0) {
-            Map<String, Object> params = new HashMap<String, Object>(2);
-            params.put("userName", userInfo.getUserName());
-            params.put("list", updList);
-            int tslt = cmsBtFeedCustomPropDao.updateAttr(params);
-            if (tslt != addList.size()) {
-                logger.error("修改属性结果与期望不符：添加条数=" + addList.size() + " 实际更新件数=" + tslt);
-            } else {
-                logger.debug("修改属性成功 实际更新件数=" + tslt);
+            if (updList.size() > 0) {
+                for (Map<String, Object> item : updList) {
+                    item.put("userName", userInfo.getUserName());
+                    int tslt = cmsBtFeedCustomPropDao.updateAttr(item);
+                    if (tslt != 1) {
+                        logger.error("修改属性结果失败，params=" + item.toString());
+                    }
+                }
             }
+            simpleTransaction.commit();
+        } catch(Exception exp) {
+            logger.error("保存属性时失败", exp);
+            simpleTransaction.rollback();
         }
     }
 

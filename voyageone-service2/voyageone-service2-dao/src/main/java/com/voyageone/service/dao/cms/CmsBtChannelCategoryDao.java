@@ -1,13 +1,13 @@
 package com.voyageone.service.dao.cms;
 
-import com.voyageone.base.dao.BaseDao;
+import com.voyageone.service.dao.ServiceBaseDao;
 import com.voyageone.service.model.cms.CmsBtChannelCategoryModel;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
-public class CmsBtChannelCategoryDao extends BaseDao {
+public class CmsBtChannelCategoryDao extends ServiceBaseDao {
 
     public List<CmsBtChannelCategoryModel> selectbyChannelId(String channelId) {
         CmsBtChannelCategoryModel model = new CmsBtChannelCategoryModel();

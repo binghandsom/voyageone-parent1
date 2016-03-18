@@ -1,5 +1,5 @@
 <div class="wrapper-md" ng-init="ctrl.initialize()">
-	<div class="vo_accordion vo_attr" ng-if="ctrl.productDetails.productDataIsReady">
+	<div class="vo_accordion vo_attr" ng-if="ctrl.showInfoFlag">
 		<div class="panel-group">
 			<div class="panel panel-default">
 				<div class="panel-heading">
@@ -42,7 +42,9 @@
 							<label class="m-t-xs col-sm-2" translate="TXT_IS_APPROVED" ng-if="ctrl.productDetailsCopy.productStatus.statusInfo.isWaitingApprove"></label>
 							<div class="col-sm-2 text-left" ng-if="ctrl.productDetailsCopy.productStatus.statusInfo.isWaitingApprove">
 								<div class="onoffswitch">
-									<input type="checkbox" name="switchIsApprove" class="onoffswitch-checkbox" id="switchIsApprove" ng-model="ctrl.productDetails.productStatus.statusInfo.isApproved">
+									<input type="checkbox" name="switchIsApprove" class="onoffswitch-checkbox" id="switchIsApprove"
+										   ng-model="ctrl.productDetails.productStatus.statusInfo.isApproved"
+										   ng-disabled="ctrl.productDetails.productStatus.statusInfo.isDisable">
 									<label class="onoffswitch-label" for="switchIsApprove">
 										<span class="onoffswitch-inner"></span>
 										<span class="onoffswitch-switch"></span>
@@ -60,7 +62,7 @@
 		</div>
 	</div>
 
-	<div style="width:80%" ng-if="ctrl.productDetails.productDataIsReady">
+	<div style="width:80%" ng-if="ctrl.showInfoFlag">
 		<tabset class="tab-container vo_nav-tabs">
 
 			<tab>
@@ -261,8 +263,10 @@
 
 		</div>
 	</div><!-- tabs ng-controller -->
-	<div style="width:80%" hidden ng-show="!ctrl.productDetails.productDataIsReady || ctrl.errorMsg !== ''">
+
+	<div style="width:80%" ng-show="!ctrl.showInfoFlag">
 		<!-- TODO 需要enka设计一个画面,只显示切换类目中的商品的基础信息(code, iamges, ) -->
+
 		<div class="text-center text-hs ng-binding ng-scope" id="noData">
 			<h4 class="text-vo ng-binding"><i class="icon fa fa-warning"></i>&nbsp;{{'TXT_REMINDER_WITH_COLON' | translate}}</h4>
 			{{!ctrl.productDetails.productDataIsReady ? ('TXT_MSG_PRODUCT_CAN_NOT_EDIT' | translate) : ctrl.errorMsg}}</div>

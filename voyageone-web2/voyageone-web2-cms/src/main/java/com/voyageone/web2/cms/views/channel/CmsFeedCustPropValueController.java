@@ -1,5 +1,6 @@
 package com.voyageone.web2.cms.views.channel;
 
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
@@ -18,7 +19,7 @@ import java.util.Map;
  * Created by jiang on 2016/2/24.
  */
 @RestController
-@RequestMapping(value = CmsUrlConstants.CHANNEL.CUSTOM_VALUE.ROOT)
+@RequestMapping(value = CmsUrlConstants.CHANNEL.CUSTOM_VALUE.ROOT, method = RequestMethod.POST)
 public class CmsFeedCustPropValueController extends CmsController {
 
     @Autowired
@@ -32,7 +33,7 @@ public class CmsFeedCustPropValueController extends CmsController {
      * @apiVersion 0.0.1
      * @apiPermission 认证商户
      * @apiParam (应用级参数) {String} cat_path 类目路径（为'0'时表示查询共通属性，不设值时表示查询所有，即包含共通属性和所有类目）
-     * @apiParam (应用级参数) {String} sts 翻译状态（为'1'时表示查询已翻译的属性值，为'0'时表示查询未翻译的属性值）
+     * @apiParam (应用级参数) {String} sts 翻译状态（为'1'时表示查询已翻译的属性值，为'0'时表示查询未翻译的属性值，不设值时表示查询所有）
      * @apiParam (应用级参数) {String} propName 属性名（已翻译或未翻译的属性名）
      * @apiParam (应用级参数) {String} propValue 属性值（已翻译或未翻译的属性值）
      * @apiParam (应用级参数) {Integer} skip 翻页用参数，显示起始序号
@@ -60,12 +61,12 @@ public class CmsFeedCustPropValueController extends CmsController {
      *  使用cms_bt_feed_custom_prop_value表
      * @apiSampleRequest off
      */
-    @RequestMapping(value = CmsUrlConstants.CHANNEL.CUSTOM_VALUE.INIT, method = RequestMethod.GET)
-    public AjaxResponse getFeedCustPropValueList(@RequestParam Map<String, String> params) {
+    @RequestMapping(value = CmsUrlConstants.CHANNEL.CUSTOM_VALUE.INIT)
+    public AjaxResponse getFeedCustPropValueList(@RequestBody Map<String, String> params) {
         logger.debug("getFeedCustPropValueList() >>>> start");
         logger.debug("getFeedCustPropValueList() >>>> params" + params.toString());
         String catPath = StringUtils.trimToNull(params.get("cat_path"));
-        int tSts = NumberUtils.toInt(params.get("sts"));
+        int tSts = NumberUtils.toInt(params.get("sts"), 2);
         String propName = StringUtils.trimToNull(params.get("propName"));
         String propValue = StringUtils.trimToNull(params.get("propValue"));
         if (tSts == 0) {
@@ -75,40 +76,27 @@ public class CmsFeedCustPropValueController extends CmsController {
         int skip = NumberUtils.toInt(params.get("skip"));
         int limit = NumberUtils.toInt(params.get("limit"));
         UserSessionBean userInfo = getUser();
-        List<Map<String, Object>> rslt1 = null;
 
-        if (catPath == null) {
-            // 查询所有属性
-            rslt1 = cmsFeedCustPropService.selectPropValue("0", tSts, propName, propValue, userInfo.getSelChannelId());
-            List<Map<String, Object>> rslt2 = cmsFeedCustPropService.selectPropValue(null, tSts, propName, propValue, userInfo.getSelChannelId());
-            if (rslt1 == null) {
-                if (rslt2 == null) {
-                   rslt1 = new ArrayList<Map<String, Object>>(0);
-                } else {
-                    rslt1 = rslt2;
-                }
-            } else {
-                if (rslt2 != null) {
-                    rslt1.addAll(rslt2);
-                }
-            }
-        } else {
-            // 查询共通属性及类目属性
-            rslt1 = cmsFeedCustPropService.selectPropValue(catPath, tSts, propName, propValue, userInfo.getSelChannelId());
-            if (rslt1 == null) {
-                rslt1 = new ArrayList<Map<String, Object>>(0);
-            }
+        // 查询共通属性及类目属性
+        List<Map<String, Object>> rslt1 = cmsFeedCustPropService.selectPropValue(catPath, tSts, propName, propValue, userInfo.getSelChannelId());
+        if (rslt1 == null) {
+            rslt1 = new ArrayList<Map<String, Object>>(0);
         }
+
         HashMap dataMap = new HashMap();
         int listCnt = rslt1.size();
-        int endIdx = skip + limit;
-        if (listCnt < endIdx) {
-            endIdx = listCnt;
-        }
         dataMap.put("total", listCnt);
-        dataMap.put("resultData", rslt1.subList(skip, endIdx));
-        AjaxResponse resp = success(null);
-        resp.setData(dataMap);
+        if (listCnt == 0) {
+            dataMap.put("resultData", rslt1);
+        } else {
+            int staIdx = (skip - 1) * limit;
+            int endIdx = staIdx + limit;
+            if (listCnt < endIdx) {
+                endIdx = listCnt;
+            }
+            dataMap.put("resultData", rslt1.subList(staIdx, endIdx));
+        }
+        AjaxResponse resp = success(dataMap);
         return resp;
     }
 
@@ -128,7 +116,7 @@ public class CmsFeedCustPropValueController extends CmsController {
      * @apiSuccess (系统级返回字段) {String} redirectTo 跳转地址
      * @apiSuccessExample 成功响应更新请求
      * {
-     *  "code": "0", "message":null, "displayType":null, "redirectTo":null, "data":null
+     *  "code":null, "message":null, "displayType":null, "redirectTo":null, "data":null
      * }
      * @apiErrorExample  错误示例1
      * {
@@ -145,7 +133,7 @@ public class CmsFeedCustPropValueController extends CmsController {
      *  使用cms_bt_feed_custom_prop_value表
      * @apiSampleRequest off
      */
-    @RequestMapping(value = CmsUrlConstants.CHANNEL.CUSTOM_VALUE.ADD, method = RequestMethod.POST)
+    @RequestMapping(value = CmsUrlConstants.CHANNEL.CUSTOM_VALUE.ADD)
     public AjaxResponse addFeedCustPropValue(@RequestBody Map<String, String> params) {
         logger.debug("addFeedCustPropValue() >>>> start");
         logger.debug("addFeedCustPropValue() >>>> params" + params.toString());
@@ -154,19 +142,15 @@ public class CmsFeedCustPropValueController extends CmsController {
         String transValue = StringUtils.trimToEmpty(params.get("value_translation"));
         if (propId == 0 || origValue == null) {
             // 缺少参数
-            AjaxResponse resp = success(null);
-            resp.setCode("1");
-            resp.setMessage("参数错误/缺少参数");
-            return resp;
+            logger.warn("addFeedCustPropValue() >>>> 参数错误/缺少参数");
+            throw new BusinessException("参数错误/缺少参数");
         }
 
         UserSessionBean userInfo = getUser();
         // 先判断该属性值是否已存在
         if (cmsFeedCustPropService.isPropValueExist(propId, userInfo.getSelChannelId(), origValue)) {
-            AjaxResponse resp = success(null);
-            resp.setCode("2");
-            resp.setMessage("重复翻译的属性值");
-            return resp;
+            logger.warn("addFeedCustPropValue() >>>> 重复翻译的属性值");
+            throw new BusinessException("重复翻译的属性值");
         }
 
         int rslt = cmsFeedCustPropService.addPropValue(propId, userInfo.getSelChannelId(), origValue, transValue, userInfo.getUserName());
@@ -176,7 +160,6 @@ public class CmsFeedCustPropValueController extends CmsController {
             logger.debug("新增翻译后的属性值成功");
         }
         AjaxResponse resp = success(null);
-        resp.setCode("0");
         return resp;
     }
 
@@ -195,7 +178,7 @@ public class CmsFeedCustPropValueController extends CmsController {
      * @apiSuccess (系统级返回字段) {String} redirectTo 跳转地址
      * @apiSuccessExample 成功响应更新请求
      * {
-     *  "code": "0", "message":null, "displayType":null, "redirectTo":null, "data":null
+     *  "code":null, "message":null, "displayType":null, "redirectTo":null, "data":null
      * }
      * @apiErrorExample  错误示例1
      * {
@@ -211,7 +194,7 @@ public class CmsFeedCustPropValueController extends CmsController {
      *  使用cms_bt_feed_custom_prop_value表
      * @apiSampleRequest off
      */
-    @RequestMapping(value = CmsUrlConstants.CHANNEL.CUSTOM_VALUE.SAVE, method = RequestMethod.POST)
+    @RequestMapping(value = CmsUrlConstants.CHANNEL.CUSTOM_VALUE.SAVE)
     public AjaxResponse saveFeedCustPropValue(@RequestBody Map<String, String> params) {
         logger.debug("saveFeedCustPropValue() >>>> start");
         logger.debug("saveFeedCustPropValue() >>>> params" + params.toString());
@@ -219,19 +202,15 @@ public class CmsFeedCustPropValueController extends CmsController {
         String transValue = StringUtils.trimToEmpty(params.get("value_translation"));
         if (valueId == 0) {
             // 缺少参数
-            AjaxResponse resp = success(null);
-            resp.setCode("1");
-            resp.setMessage("参数错误/缺少参数");
-            return resp;
+            logger.warn("saveFeedCustPropValue() >>>> 参数错误/缺少参数");
+            throw new BusinessException("参数错误/缺少参数");
         }
 
         UserSessionBean userInfo = getUser();
         // 先判断该属性值是否已存在
         if (!cmsFeedCustPropService.isPropValueExist(valueId)) {
-            AjaxResponse resp = success(null);
-            resp.setCode("2");
-            resp.setMessage("该属性值不存在");
-            return resp;
+            logger.warn("saveFeedCustPropValue() >>>> 该属性值不存在");
+            throw new BusinessException("该属性值不存在");
         }
 
         int rslt = cmsFeedCustPropService.updatePropValue(valueId, transValue, userInfo.getUserName());
@@ -241,7 +220,6 @@ public class CmsFeedCustPropValueController extends CmsController {
             logger.debug("更新翻译后的属性值成功");
         }
         AjaxResponse resp = success(null);
-        resp.setCode("0");
         return resp;
     }
 }

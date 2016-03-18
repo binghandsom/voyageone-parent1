@@ -1,5 +1,6 @@
 package com.voyageone.service.impl.cms;
 
+import com.voyageone.service.impl.cms.feed.FeedToCmsService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 public class FeedToCmsServiceTest {
 
     @Autowired
-    CmsFeedToCmsService feedToCmsService;
+    FeedToCmsService feedToCmsService;
 
     @Test
     public void testGetFeedCategory() throws Exception {

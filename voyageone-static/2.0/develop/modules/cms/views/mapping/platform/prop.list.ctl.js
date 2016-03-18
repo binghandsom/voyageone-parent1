@@ -21,10 +21,12 @@ define([
     'use strict';
     return cms.controller('platformPropMappingController', (function () {
 
-        function PlatformPropMappingController(platformPropMappingService, $routeParams, alert) {
+        function PlatformPropMappingController(platformPropMappingService, $routeParams, alert, notify, $translate) {
 
             this.dataService = platformPropMappingService;
             this.alert = alert;
+            this.notify = notify;
+            this.$translate = $translate;
 
             this.cartId = parseInt($routeParams['cartId']);
 
@@ -158,6 +160,7 @@ define([
                 that.dataService.saveMatchOver(that.maindata.category.id, that.platform.matchOver,
                     that.cartId).then(function (matchOver) {
                     that.platform.matchOver = matchOver;
+                    that.notify.success(that.$translate.instant('TXT_MSG_UPDATE_SUCCESS'));
                 });
             }
         };

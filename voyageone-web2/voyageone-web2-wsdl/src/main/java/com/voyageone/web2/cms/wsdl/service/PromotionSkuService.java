@@ -1,8 +1,9 @@
 package com.voyageone.web2.cms.wsdl.service;
 
+import com.voyageone.service.dao.wms.WmsBtInventoryCenterOutputTmpDao;
 import com.voyageone.web2.cms.wsdl.BaseService;
-import com.voyageone.web2.cms.wsdl.dao.CmsPromotionSkuDao;
-import com.voyageone.web2.sdk.api.domain.CmsBtInventoryOutputTmpModel;
+import com.voyageone.service.dao.cms.CmsPromotionSkuDao;
+import com.voyageone.service.model.cms.CmsBtInventoryOutputTmpModel;
 import com.voyageone.web2.sdk.api.request.*;
 import com.voyageone.web2.sdk.api.response.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -24,6 +24,9 @@ public class PromotionSkuService extends BaseService {
 
     @Autowired
     private CmsPromotionSkuDao cmsPromotionSkuDao;
+
+    @Autowired
+    private WmsBtInventoryCenterOutputTmpDao wmsBtInventoryCenterOutputTmpDao;
 
     public PromotionSkuGetResponse getPromotionSkuList(PromotionSkuGetRequest promotionSkuRequest){
         PromotionSkuGetResponse res=new PromotionSkuGetResponse();
@@ -51,26 +54,26 @@ public class PromotionSkuService extends BaseService {
     @Transactional
     public PromotionSkuInventoryInfoDeleteResponse delSkuInventoryInfo(PromotionSkuInventoryInfoDeleteRequest request) {
         PromotionSkuInventoryInfoDeleteResponse response=new PromotionSkuInventoryInfoDeleteResponse();
-        response.setDelete(cmsPromotionSkuDao.delSkuInventoryInfo());
+        response.setDelete(wmsBtInventoryCenterOutputTmpDao.delSkuInventoryInfo());
         return response;
     }
 
     @Transactional
     public PromotionSkuInventoryInfoInsertResponse insertSkuInventoryInfo(PromotionSkuInventoryInfoInsertRequest request) {
         PromotionSkuInventoryInfoInsertResponse res=new PromotionSkuInventoryInfoInsertResponse();
-        res.setInsert(cmsPromotionSkuDao.insertSkuInventoryInfo(request.getInsertRecString()));
+        res.setInsert(wmsBtInventoryCenterOutputTmpDao.insertSkuInventoryInfo(request.getInsertRecString()));
         return  res;
     }
 
     public PromotionSkuInventoryInfoGetCountResponse getSkuInventoryInfoRecCount(PromotionSkuInventoryInfoGetRequest request) {
         PromotionSkuInventoryInfoGetCountResponse res=new PromotionSkuInventoryInfoGetCountResponse();
-        res.setTotalCount(cmsPromotionSkuDao.getSkuInventoryInfoRecCount());
+        res.setTotalCount(wmsBtInventoryCenterOutputTmpDao.getSkuInventoryInfoRecCount());
         return res;
     }
 
     public PromotionSkuInventoryInfoGetResponse getSkuInventoryInfoRecInfo(PromotionSkuInventoryInfoGetRequest request) {
         PromotionSkuInventoryInfoGetResponse res=new PromotionSkuInventoryInfoGetResponse();
-        List<CmsBtInventoryOutputTmpModel> models=cmsPromotionSkuDao.getSkuInventoryInfoRecInfo((request.getPageNo()-1)*request.getPageSize(),request.getPageSize());
+        List<CmsBtInventoryOutputTmpModel> models = wmsBtInventoryCenterOutputTmpDao.getSkuInventoryInfoRecInfo((request.getPageNo()-1)*request.getPageSize(),request.getPageSize());
         if(!CollectionUtils.isEmpty(models)){
             res.setModels(models);
             res.setTotalCount(Long.parseLong(String.valueOf(models.size())));

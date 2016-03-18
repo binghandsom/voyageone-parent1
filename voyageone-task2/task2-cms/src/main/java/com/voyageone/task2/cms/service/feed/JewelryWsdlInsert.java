@@ -1,6 +1,6 @@
 package com.voyageone.task2.cms.service.feed;
 
-import com.voyageone.service.impl.cms.CmsFeedToCmsService;
+import com.voyageone.service.impl.cms.feed.FeedToCmsService;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.task2.cms.dao.feed.JewelryDao;
 import com.voyageone.task2.cms.model.CmsBtFeedInfoJewelryModel;
@@ -30,7 +30,7 @@ public class JewelryWsdlInsert extends JewelryWsdlBase {
     private static final String INSERT_FLG = "(UpdateFlag = 1 or UpdateFlag = 2)";
 
     @Autowired
-    private CmsFeedToCmsService feedToCmsService;
+    private FeedToCmsService feedToCmsService;
 
     @Autowired
     private JewelryDao jewelryDao;
@@ -58,7 +58,7 @@ public class JewelryWsdlInsert extends JewelryWsdlBase {
 
             // 条件则根据类目筛选
             String where = String.format("WHERE %s AND %s = '%s' %s", INSERT_FLG, colums.get("category").toString(),
-                    category.replace("'", "\\\'"), Feed.getVal1(channel, FeedEnums.Name.model_sql_ending));
+                    category.replace("'", "\\\'"), "and `Variation Parent SKU` != 'parent'");
 
             List<CmsBtFeedInfoJewelryModel> jewmodelBeans = jewelryDao.selectSuperfeedModel(where, colums, Feed.getVal1(channel, FeedEnums.Name.table_id2));
             List<CmsBtFeedInfoModel> modelBeans = new ArrayList<>();

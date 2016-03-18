@@ -13,7 +13,8 @@ define([
             searchInfo: {
                 compareType: null,
                 brand: null,
-                promotion: null
+                promotion: null,
+                tags:[]
             },
             groupPageOption: {curr: 1, total: 0, size: 20, fetch: getGroupList},
             productPageOption: {curr: 1, total: 0, size: 20, fetch: getProductList},
@@ -26,6 +27,7 @@ define([
             groupSelList: { selList: []},
             productSelList: { selList: []}
         };
+        $scope.datePicker = [];
 
         $scope.initialize = initialize;
         $scope.clear = clear;
@@ -64,7 +66,8 @@ define([
             $scope.vm.searchInfo = {
                 compareType: null,
                 brand: null,
-                promotion: null
+                promotion: null,
+                tags:[]
             };
         }
 
@@ -72,19 +75,46 @@ define([
          * 检索
          */
         function search () {
+            // 默认设置成第一页
+            $scope.vm.groupPageOption.curr = 1;
+            $scope.vm.productPageOption.curr = 1;
             // 对应根据父类目检索
             var catInfo = getCatPath($scope.vm.searchInfo.catId);
             if (catInfo)
                 $scope.vm.searchInfo.catPath = catInfo.catPath;
-            searchAdvanceService.search($scope.vm.searchInfo, $scope.vm.groupPageOption, $scope.vm.productPageOption)
-                .then(function (res) {
-                    $scope.vm.groupList = res.data.groupList;
-                    $scope.vm.groupPageOption.total = res.data.groupListTotal;
-                    $scope.vm.groupSelList = res.data.groupSelList;
+            else
+                $scope.vm.searchInfo.catPath = null;
+            searchAdvanceService.search($scope.vm.searchInfo, $scope.vm.groupPageOption, $scope.vm.productPageOption).then(function (res) {
+                $scope.vm.customProps = res.data.customProps;
+                $scope.vm.commonProps = res.data.commonProps;
+                $scope.vm.groupList = res.data.groupList;
+                _.forEach($scope.vm.groupList, function (groupInfo) {
+                    var commArr = [];
+                    _.forEach($scope.vm.commonProps, function (data) {
+                        var itemVal = groupInfo.fields[data.propId];
+                        if (itemVal == undefined) {
+                            itemVal = "";
+                        }
+                        commArr.push({value: itemVal});
+                    });
+                    groupInfo.commArr = commArr;
+                    var custArr = [];
+                    _.forEach($scope.vm.customProps, function (data) {
+                        var itemVal = groupInfo.feed.cnAtts[data.feed_prop_original];
+                        if (itemVal == undefined) {
+                            itemVal = "";
+                        }
+                        custArr.push({value: itemVal});
+                    });
+                    groupInfo.custArr = custArr;
+                });
 
-                    $scope.vm.productList = res.data.productList;
-                    $scope.vm.productPageOption.total = res.data.productListTotal;
-                    $scope.vm.productSelList = res.data.productSelList;
+                $scope.vm.groupPageOption.total = res.data.groupListTotal;
+                $scope.vm.groupSelList = res.data.groupSelList;
+
+                $scope.vm.productList = res.data.productList;
+                $scope.vm.productPageOption.total = res.data.productListTotal;
+                $scope.vm.productSelList = res.data.productSelList;
             })
         }
 
@@ -99,12 +129,32 @@ define([
          * 分页处理group数据
          */
         function getGroupList () {
-
             searchAdvanceService.getGroupList($scope.vm.searchInfo, $scope.vm.groupPageOption, $scope.vm.groupSelList)
             .then(function (res) {
                 $scope.vm.groupList = res.data.groupList == null ? [] : res.data.groupList;
                 $scope.vm.groupPageOption.total = res.data.groupListTotal;
                 $scope.vm.groupSelList = res.data.groupSelList;
+
+                _.forEach($scope.vm.groupList, function (groupInfo) {
+                    var commArr = [];
+                    _.forEach($scope.vm.commonProps, function (data) {
+                        var itemVal = groupInfo.fields[data.propId];
+                        if (itemVal == undefined) {
+                            itemVal = "";
+                        }
+                        commArr.push({value: itemVal});
+                    });
+                    groupInfo.commArr = commArr;
+                    var custArr = [];
+                    _.forEach($scope.vm.customProps, function (data) {
+                        var itemVal = groupInfo.feed.cnAtts[data.feed_prop_original];
+                        if (itemVal == undefined) {
+                            itemVal = "";
+                        }
+                        custArr.push({value: itemVal});
+                    });
+                    groupInfo.custArr = custArr;
+                });
             });
         }
 
@@ -112,32 +162,26 @@ define([
          * 分页处理product数据
          */
         function getProductList () {
-
             searchAdvanceService.getProductList($scope.vm.searchInfo, $scope.vm.productPageOption, $scope.vm.productSelList)
-                .then(function (res) {
-                    $scope.vm.productList = res.data.productList == null ? [] : res.data.productList;
-                    $scope.vm.productPageOption.total = res.data.productListTotal;
-                    $scope.vm.productSelList = res.data.productSelList;
-                });
+            .then(function (res) {
+                $scope.vm.productList = res.data.productList == null ? [] : res.data.productList;
+                $scope.vm.productPageOption.total = res.data.productListTotal;
+                $scope.vm.productSelList = res.data.productSelList;
+            });
         }
 
         function openCategoryMapping (popupNewCategory) {
-
             var selList = $scope.vm.currTab === 'group' ? $scope.vm.groupSelList.selList : $scope.vm.productSelList.selList;
             if (selList && selList.length) {
-
                 feedMappingService.getMainCategories()
                     .then(function (res) {
-
                         popupNewCategory({
-
                             categories: res.data,
                             from: null
                         }).then( function (res) {
                                 bindCategory (res)
                             }
                         );
-
                     });
             } else {
                 alert($translate.instant('TXT_MSG_NO_ROWS_SELECT'));
@@ -145,7 +189,6 @@ define([
         }
 
         function bindCategory (context) {
-
             confirm($translate.instant('TXT_MSG_CONFIRM_IS_CHANGE_CATEGORY')).result
                 .then(function () {
                     var productIds = [];

@@ -4,12 +4,10 @@
 
 package com.voyageone.web2.cms.wsdl.service;
 
-import com.voyageone.base.exception.BusinessException;
-import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.web2.cms.wsdl.BaseService;
-import com.voyageone.web2.cms.wsdl.dao.CmsBtPromotionDao;
-import com.voyageone.web2.cms.wsdl.dao.CmsBtTagDao;
-import com.voyageone.web2.sdk.api.domain.CmsBtPromotionModel;
+import com.voyageone.service.dao.cms.CmsBtPromotionDao;
+import com.voyageone.service.dao.cms.CmsBtTagDao;
+import com.voyageone.service.model.cms.CmsBtPromotionModel;
 import com.voyageone.web2.sdk.api.exception.ApiException;
 import com.voyageone.web2.sdk.api.request.*;
 import com.voyageone.web2.sdk.api.response.PromotionsGetResponse;
@@ -25,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * product Service
  *
  * @author aooer 16/01/14
  * @version 2.0.0
@@ -121,8 +118,7 @@ public class PromotionService extends BaseService {
      * @param promotionGetRequest Request
      * @return PromotionsGetResponse
      */
-    public PromotionsGetResponse selectByCondition(
-            PromotionsGetRequest promotionGetRequest) {
+    public PromotionsGetResponse selectByCondition(PromotionsGetRequest promotionGetRequest) {
         promotionGetRequest.check();
         PromotionsGetResponse response = new PromotionsGetResponse();
         List<CmsBtPromotionModel> models = new ArrayList<>();

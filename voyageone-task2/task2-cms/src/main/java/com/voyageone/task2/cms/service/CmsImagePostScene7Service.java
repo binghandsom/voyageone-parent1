@@ -59,6 +59,7 @@ public class CmsImagePostScene7Service extends BaseTaskService {
 
                 CmsBtFeedProductImageModel feedImage = new CmsBtFeedProductImageModel();
                 feedImage.setSentFlag(0);
+                feedImage.setChannelId(channelId);
 
                 ExecutorService es  = Executors.newFixedThreadPool(10);
                 try {
@@ -197,11 +198,11 @@ public class CmsImagePostScene7Service extends BaseTaskService {
                             }
 
                             int lastSlash = imageUrl.lastIndexOf("/");
-                            String fileName = imageUrl.substring(lastSlash + 1);
-                            if (fileName.contains("?")) {
-                                int qIndex = fileName.indexOf("?");
-                                fileName = fileName.substring(0, qIndex);
-                            }
+                            String fileName = imageUrlList.get(i).getImageName();
+//                            if (fileName.contains("?")) {
+//                                int qIndex = fileName.indexOf("?");
+//                                fileName = fileName.substring(0, qIndex);
+//                            }
 
                             boolean result = ftpClient.storeFile(fileName, inputStream);
 
