@@ -270,7 +270,7 @@
 			<!--tab-->
 			<tab ng-click="vm.currTab = 'group'">
 				<tab-heading><i class="glyphicons glyphicons-more-items text-default"></i>&nbsp;{{'TXT_GROUP_LIST' | translate}}</tab-heading>
-				<div class="table-responsive">
+				<div class="table-responsive box-body">
 					<table class="table-hover-new vo_table vo_models dropdown_table_bk font-bold" style="background:#e67e22;color:#fff" width="{{vm.tblWidth}}">
 						<thead>
 						<tr>
@@ -288,7 +288,7 @@
 						</tr>
 						</thead>
 					</table>
-					<div class="col-sm-12 box-body" if-no-rows="vm.groupList.length" style="width:auto;">
+					<div class="col-sm-12 box-body" if-no-rows="vm.groupList.length">
 						<table class="table-hover vo_table vo_models" ng-if="vm.groupList.length" width="{{vm.tblWidth}}">
 							<tbody ng-repeat="groupInfo in vm.groupList">
 							<tr ng-class="{'table_bg_green_mint': groupInfo.groups.platforms[0].publishTime}" class="table_bg_gray">
