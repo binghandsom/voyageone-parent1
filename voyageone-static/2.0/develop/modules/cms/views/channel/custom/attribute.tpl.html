@@ -25,8 +25,9 @@
 			</div><!-- .form-inline -->
 			<p class="m-l-sm m-t-xs">您当前选择的是：<span>共通属性</span></p>
 		</div>
-
-		<div class="category_drag col-sm-5" style="margin-right:4px">
+		<div class="col-sm-12" style="padding-left:0px;padding-right:0px">
+		<div class="col-sm-6" style="padding-left:0px;padding-right:6px">
+		<div class="category_drag" >
 			<div class="category_drag_main">
 				<!--<p class="text-center text-vo font-bold">一级类目</p>-->
 				<div class="form-inline m-t-xs m-l-xs">
@@ -39,7 +40,9 @@
 				</div>
 			</div>
 		</div>
-		<div class="category_drag col-sm-6">
+			</div>
+			<div class="col-sm-6" style="padding-left:0px;padding-right:0px">
+			<div class="category_drag ">
 			<div class="category_drag_main">
 				<div class="form-inline m-t-xs m-l-xs">
 					<span class="m-l-xs m-r-sm">已翻译属性</span><input type="text" placeholder="快速检索" class="form-control" style="width:83%" ng-model="searchVal">
@@ -57,9 +60,11 @@
 				</div>
 			</div>
 		</div>
-		<div class="col-sm-10 m-t-md text-center">
+		</div>
+			</div>
+		<div class="col-sm-12 m-t-md text-center">
 			<button class="btn btn-vo btn-sm"  ng-click="save();"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;保存</button>
 			<button class="btn btn-success btn-sm" ng-click="goValuePage();">翻译自定义属性</button>
 		</div>
 	</div>
-</div><!-- .col-lg-12 -->
+</div>
