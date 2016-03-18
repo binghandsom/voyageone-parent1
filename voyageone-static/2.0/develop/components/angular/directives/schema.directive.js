@@ -154,7 +154,7 @@
                         }
                     });
 
-                    scope.showHtmlData = angular.copy(header.config);
+                    scope.header = angular.copy(header.config);
 
                     /**
                      * 设置multi complex添加一条新记录
@@ -287,7 +287,7 @@
                             // 追加错误信息的显示
                             html += '<div ng-repeat="(k, v) in schemaForm.$error">{{k}}</div>';
 
-                            scope.showHtmlData = angular.copy(schema.config);
+                            scope.schema = angular.copy(schema.config);
 
                             element.html($compile(html)(scope));
 
@@ -306,7 +306,7 @@
                                 return;
                             }
                             // 提前计算 index
-                            var index = values.findIndex(function(valWrap) {
+                            var index = values.findIndex(function (valWrap) {
                                 return valWrap.value === option.value;
                             });
                             // 选中并且没有, 就添加
@@ -371,12 +371,7 @@
                                     var tempField = angular.copy(field);
                                     var defValue = value.fieldMap[field.id];
 
-                                    if (!defValue) {
-                                        tempFieldMap[field.id] = tempField;
-                                        return;
-                                    }
-
-                                    switch (field.type) {
+                                    if (!defValue) switch (field.type) {
                                         case fieldTypes.INPUT:
                                         case fieldTypes.LABEL:
                                         case fieldTypes.DATE:
@@ -397,6 +392,8 @@
                                             tempField.complexValues = defValue.complexValues;
                                             break;
                                     }
+
+                                    tempFieldMap[field.id] = tempField;
                                 });
 
                                 tempValues.push({fieldMap: tempFieldMap});
