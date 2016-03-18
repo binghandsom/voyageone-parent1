@@ -84,7 +84,7 @@ public class CmsPromotionDetailServiceTest {
         cmsBtPromotionCodeModel.setProductId(22151L);
         cmsBtPromotionCodeModel.setProductCode("BF00003YGK");
         cmsBtPromotionCodeModel.setPromotionPrice(100.0);
-        cmsBtPromotionCodeModel.setPromotionId(48);
+        cmsBtPromotionCodeModel.setPromotionId(0);
         cmsBtPromotionCodeModel.setNumIid("523128668920");
         cmsBtPromotionCodeModel.setChannelId("010");
         cmsBtPromotionCodeModel.setCartId(23);
