@@ -30,19 +30,15 @@ public class CmsBtFeedCustomPropDao extends WebBaseDao {
         return selectList("cms_bt_feed_custom_prop_selectAllAttr", params);
     }
 
-    /**
-     * 取得该类目下所有的属性
-     * @param params
-     * @return
-     */
-    public List<Map<String, Object>> selectDitinctAttr(Map<String, Object> params) {
-        return selectList("cms_bt_feed_custom_prop_selectDiscintctAttr", params);
+    // 根据类目路径查询自定义已翻译属性信息(不包含共通属性)
+    public List<Map<String, Object>> selectTransProp(Map<String, Object> params) {
+        return selectList("cms_bt_feed_custom_prop_selectWithCat2", params);
     }
 
     // 根据类目路径查询自定义未翻译属性信息(不包含共通属性)
-//    public List<Map<String, Object>> selectOrigProp(Map<String, Object> params) {
-//        return selectList("cms_bt_feed_custom_prop_selectWithCat1", params);
-//    }
+    public List<Map<String, Object>> selectOrigProp(Map<String, Object> params) {
+        return selectList("cms_bt_feed_custom_prop_selectWithCat1", params);
+    }
 
     // 查询指定类目属性是否存在
     public boolean isAttrExist(Map<String, Object> params) {
