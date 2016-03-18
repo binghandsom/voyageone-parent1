@@ -14,7 +14,7 @@ define([
 ], function (cms, Status, FieldTypes) {
 
     function validation(fieldList) {
-        return !fieldList.some(function(field) {
+        return !fieldList.some(function (field) {
             // 暂时不检查超复杂类型
             if (field.type === FieldTypes.multiComplex)
                 return false;
@@ -89,7 +89,7 @@ define([
                 this.productDetailService.updateProductDetail(this.productDetails)
                     .then(function (res) {
                         self.productDetails.modified = res.data.modified;
-                        this.productDetailService._setProductStatus(self.productDetails.productStatus)
+                        this.productDetailService._setProductStatus(self.productDetails.productStatus);
                         self.productDetailsCopy = angular.copy(self.productDetails);
                         self.notify.success(this.translate.instant('TXT_MSG_UPDATE_SUCCESS'));
                     }.bind(this))
