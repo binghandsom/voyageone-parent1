@@ -193,7 +193,7 @@
                     // 监视配置变动
                     scope.$watch('$data', refresh);
 
-                    scope.$watch('schemaForm.$valid', function ($valid) {
+                    scope.$watch('validForm.$valid', function ($valid) {
                         scope.$data.$valid = $valid;
                     });
 
@@ -276,22 +276,23 @@
                         });
 
                         function compileTemplate(html) {
-                            // 尝试替换验证标识
+                            // 如果有验证属性, 追加这些属性, 并包裹 ng-form
                             var validAttrs = schema.html();
-                            if (validAttrs)
+                            if (validAttrs) {
                                 html = html.replace(/validators/g, validAttrs);
-
-                            // 包裹 ng-form, 用于启用 angular 的验证功能
-                            html = '<ng-form name="schemaForm">' + html + '</ng-form>';
-
-                            // 追加错误信息的显示
-                            html += '<div ng-repeat="(k, v) in schemaForm.$error">{{k}}</div>';
-
+                                // 包裹 ng-form, 用于启用 angular 的验证功能
+                                html = '<ng-form name="validForm">' + html + '</ng-form>';
+                                // 追加错误信息的显示
+                                html += '<div ng-repeat="(k, v) in validForm.$error">{{k}}</div>';
+                            }
+                            
                             scope.schema = angular.copy(schema.config);
 
                             element.html($compile(html)(scope));
 
-                            field.form = scope.schemaForm;
+                            // 如果有验证, 这里将正确返回
+                            // 否则, validForm 将是 null
+                            field.form = scope.validForm;
                         }
 
                         /**
