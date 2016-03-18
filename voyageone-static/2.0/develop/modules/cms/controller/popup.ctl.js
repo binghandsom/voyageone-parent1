@@ -747,15 +747,15 @@ define([
          * @type {openMrbstock}
          */
         $scope.openMrbstock = openMrbstock;
-        function openMrbstock(viewSize, data) {
+        function openMrbstock(viewSize, promotionIdList) {
             require([popActions.promotion.newMrbStock.controllerUrl], function () {
                 $modal.open({
                     templateUrl: popActions.promotion.newMrbStock.templateUrl,
                     controller: popActions.promotion.newMrbStock.controller,
                     size: viewSize,
                     resolve: {
-                        data: function () {
-                            return data;
+                        promotionIdList: function () {
+                            return promotionIdList;
                         }
                     }
                 });

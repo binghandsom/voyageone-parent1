@@ -51,6 +51,23 @@ public class CmsTaskStockService extends BaseAppService {
     @Autowired
     private SimpleTransaction simpleTransaction;
 
+    @Autowired
+    protected PromotionDao promotionDao;
+
+    /**
+     * 根据活动ID取得CartId
+     *
+     * @param param 活动ID
+     * @return CartId数量
+     */
+    public Map<Object, String> findByCartId(Map param){
+        Map<Object,String> sqlParam = new HashMap<Object,String>();
+        //循环取得活动ID
+        for(Object entry : param.entrySet()){
+        }
+        return null;
+    }
+
     /**
      * 取得库存隔离数据各种状态的数量
      *
@@ -1265,6 +1282,8 @@ public class CmsTaskStockService extends BaseAppService {
         return value.replaceAll("\\\\", "\\\\\\\\").replaceAll("'","\\\\'").replaceAll("\"","\\\\\"")
                 .replaceAll("%","\\\\%").replaceAll("_","\\\\_");
     }
+
+    
 
 //    /**
 //     * 状态文字转换
