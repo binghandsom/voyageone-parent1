@@ -1,3 +1,5 @@
+(function () {
+
 /**
  * Notify 的可用参数
  * {
@@ -80,3 +82,4 @@ angular.module('voyageone.angular.factories.notify', [])
 
         return notify;
     });
+})();

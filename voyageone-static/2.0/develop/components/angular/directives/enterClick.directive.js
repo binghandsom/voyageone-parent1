@@ -1,3 +1,5 @@
+(function () {
+
 /**
  * @Date: 2015-11-19 15:13:02
  * @User: Jonas
@@ -42,3 +44,5 @@ angular.module('voyageone.angular.directives.enterClick', [])
             }
         };
     });
+
+})();

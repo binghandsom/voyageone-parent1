@@ -1,9 +1,10 @@
+(function () {
+
 /**
  * 同意管理模板代码, 例如 directive 中 schema 使用的模板
  * 发布时, 该文件内容会被替换
  */
 
-(function () {
 
     function Template(key) {
         this.url = '/components/angular/factories/templates/' + key.replace('.', '/') + '.html';

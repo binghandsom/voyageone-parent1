@@ -1,3 +1,5 @@
+(function () {
+
 /**
  * @Description:
  * table中无数据范围的数据
@@ -40,3 +42,5 @@ angular.module('voyageone.angular.directives.ifNoRows', [])
             }
         };
     });
+
+})();

@@ -1,3 +1,5 @@
+(function () {
+
 /**
  * @Description:
  * 引入对上传框插件 fileStyle 的指令支持
@@ -20,3 +22,4 @@ angular.module('voyageone.angular.directives.fileStyle', [])
       }]
     };
   });
+})();

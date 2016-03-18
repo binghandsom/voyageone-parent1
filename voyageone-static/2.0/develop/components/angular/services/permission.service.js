@@ -1,3 +1,5 @@
+(function () {
+
 /**
  * @Date:    2015-11-19 14:26:43
  * @User:    Jonas
@@ -30,3 +32,5 @@ PermissionService.prototype = {
     return _.contains(this.permissions, permission.trim());
   }
 };
+
+})();

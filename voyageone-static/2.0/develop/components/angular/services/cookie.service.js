@@ -1,3 +1,5 @@
+(function () {
+
 /**
  * @Date:    2015-11-16 20:30:37
  * @User:    Jonas
@@ -52,3 +54,5 @@ CookieService.prototype.removeAll = function () {
     this.$cookieStore.remove(keys.channel);
     this.$cookieStore.remove(keys.application);
 };
+
+})();

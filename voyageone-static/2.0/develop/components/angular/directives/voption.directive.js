@@ -1,3 +1,5 @@
+(function () {
+
 /**
  * @Description:
  * 用于动态显示options
@@ -49,3 +51,4 @@ angular.module('voyageone.angular.directives.voption', [])
             }
         };
     });
+})();

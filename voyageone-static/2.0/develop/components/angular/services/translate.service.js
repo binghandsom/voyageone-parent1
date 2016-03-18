@@ -1,3 +1,5 @@
+(function () {
+
 /**
  * @Date:    2015-11-19 14:35:25
  * @User:    Jonas
@@ -38,3 +40,5 @@ TranslateService.prototype = {
     return currentLang.substr(0, 2);
   }
 };
+
+})();

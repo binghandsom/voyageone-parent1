@@ -1,3 +1,5 @@
+(function () {
+
 /**
  * @Description:
  * 显示html的popover的共同方法
@@ -22,3 +24,5 @@ angular.module('voyageone.angular.controllers.showPopover', [])
             return tempHtml
         }
     });
+
+})();

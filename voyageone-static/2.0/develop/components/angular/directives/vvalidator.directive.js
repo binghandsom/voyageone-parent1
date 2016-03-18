@@ -1,3 +1,5 @@
+(function () {
+
 /**
  * @Description:
  *
@@ -191,3 +193,4 @@ angular.module('voyageone.angular.directives.validator', [])
         }
     })
 ;
+})();

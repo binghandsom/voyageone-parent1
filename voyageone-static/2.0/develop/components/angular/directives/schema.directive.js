@@ -1,3 +1,5 @@
+(function () {
+
 /**
  * @Description:
  *
@@ -5,7 +7,6 @@
  * @Version: 2.0.0, 15/12/24
  */
 
-(function () {
 
     var fieldTypes = {
         INPUT: "INPUT",

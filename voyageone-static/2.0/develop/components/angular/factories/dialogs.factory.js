@@ -1,3 +1,5 @@
+(function () {
+
 /**
  * @User: Jonas
  * @Date: 2015-3-31 14:39:26
@@ -85,3 +87,4 @@ angular.module('voyageone.angular.factories.dialogs', [])
             });
         };
     });
+})();

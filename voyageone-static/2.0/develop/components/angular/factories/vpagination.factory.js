@@ -1,3 +1,5 @@
+(function () {
+
 /**
  * @User: Edward
  * @Version: 2.0.0, 2015-12-09
@@ -167,3 +169,4 @@ angular.module('voyageone.angular.factories.vpagination', [])
 
         };
     });
+})();

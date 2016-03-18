@@ -1,3 +1,5 @@
+(function () {
+
 /**
  * @description
  *
@@ -99,3 +101,4 @@ angular.module('voyageone.angular.vresources', [])
   .run(function ($vresources, $actions) {
     $vresources.register(null, $actions);
   });
+})();

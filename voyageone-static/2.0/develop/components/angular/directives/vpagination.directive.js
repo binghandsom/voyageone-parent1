@@ -1,3 +1,5 @@
+(function () {
+
 /**
  * @Description:
  * 用于分页
@@ -109,3 +111,4 @@ angular.module('voyageone.angular.directives.vpagination', [])
             }
         };
     });
+})();

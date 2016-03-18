@@ -1,3 +1,5 @@
+(function () {
+
 /**
  * @ngdoc
  * @factory
@@ -69,3 +71,4 @@ angular.module('voyageone.angular.factories.pppAutoImpl', [])
                     }) + 'PopupController';
         }
     });
+})();

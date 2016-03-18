@@ -1,3 +1,5 @@
+(function () {
+
 /**
  * @Description:
  * select tables items
@@ -99,3 +101,4 @@ angular.module('voyageone.angular.controllers.selectRows', [])
             return false;
         }
     });
+})();

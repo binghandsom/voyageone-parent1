@@ -1,3 +1,5 @@
+(function () {
+
 /**
  * @Description:
  * 用于菜单目录二级展开
@@ -75,3 +77,4 @@ angular.module('voyageone.angular.directives.uiNav', [])
             }
         };
     });
+})();

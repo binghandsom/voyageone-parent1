@@ -1,3 +1,5 @@
+(function () {
+
 /**
  * @Description:
  *
@@ -40,3 +42,4 @@ angular.module('voyageone.angular.factories.selectRows', [])
             this.selectRowsInfo = _selectRowsInfo;
         }
     });
+})();

@@ -1,3 +1,5 @@
+(function () {
+
 /**
  * @Date:    2015-11-16 18:48:29
  * @User:    Jonas
@@ -58,3 +60,4 @@ AjaxService.prototype.post = function (url, data) {
 
   return defer.promise;
 };
+})();

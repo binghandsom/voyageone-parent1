@@ -1,3 +1,5 @@
+(function () {
+
 /**
  * @Date:    2015-11-16 20:51:05
  * @User:    Jonas
@@ -87,3 +89,4 @@ angular.module('voyageone.angular.factories.interceptor', [])
     .config(function ($httpProvider) {
         $httpProvider.interceptors.push('interceptorFactory');
     });
+})();
