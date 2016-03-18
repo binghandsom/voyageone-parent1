@@ -61,7 +61,7 @@ public class TranslationService {
             "fields.model",
             "fields.images1",
             "fields.translator",
-            "groups.platforms.$",
+            "groups.platforms",
             "modified"};
 
     /**
