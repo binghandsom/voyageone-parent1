@@ -5,6 +5,7 @@ import com.mongodb.BulkWriteResult;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.common.components.baidu.translate.BaiduTranslateUtil;
+import com.voyageone.common.util.inch2cm.InchStrConvert;
 import com.voyageone.service.bean.cms.product.ProductUpdateBean;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedMappingDao;
@@ -93,7 +94,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
     @Override
     public String getTaskName() {
-        return "CmsSetMainPropJob";
+        return "CmsSetMainPropMongoJob";
     }
 
     /**
@@ -407,7 +408,9 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 // 调用百度翻译
                 List<String> transBaiduOrg = new ArrayList<>(); // 百度翻译 - 输入参数
                 transBaiduOrg.add(strProductNameEn); // 标题
-                transBaiduOrg.add(strLongDesEn); // 长描述
+                if (!StringUtils.isEmpty(strLongDesEn)) {
+                    transBaiduOrg.add(new InchStrConvert().inchToCM(strLongDesEn)); // 长描述
+                }
                 List<String> transBaiduCn; // 百度翻译 - 输出参数
                 try {
                     transBaiduCn = BaiduTranslateUtil.translate(transBaiduOrg);
