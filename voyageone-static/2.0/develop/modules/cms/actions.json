@@ -151,7 +151,7 @@
         "importStockInfo": "importStockInfo",
         "exportStockInfo": "exportStockInfo",
         "executeStockSeparation": "executeStockSeparation",
-        "executeStockRestore": "executeStockRestore",
+        "executeStockRevert": "executeStockRevert",
         "saveRecord": "saveRecord",
         "delRecord": "delRecord",
         "getSkuSeparationDetail": "getSkuSeparationDetail",

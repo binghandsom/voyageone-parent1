@@ -140,7 +140,7 @@ public interface CmsUrlConstants {
 
                 String EXECUTE_STOCK_SEPARATION = "executeStockSeparation";
 
-                String EXECUTE_STOCK_RESTORE = "executeStockRestore";
+                String EXECUTE_STOCK_REVERT = "executeStockRevert";
 
                 String SAVE_RECORD = "saveRecord";
 

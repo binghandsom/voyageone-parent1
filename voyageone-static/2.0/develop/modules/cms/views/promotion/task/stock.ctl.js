@@ -77,7 +77,7 @@ define([
                 });
             },
 
-        search: function (status) {
+            search: function (status) {
                 var main = this;
                 main.tempStockListSelect = new main.selectRowsFactory();
                 if (status != undefined)  {
@@ -215,6 +215,23 @@ define([
                     });
                     main.notify.success('设定成功');
                 }
+            },
+
+            delRecord: function (stock) {
+                var main = this;
+                main.confirm('TXT_MSG_DO_DELETE').result.then(function () {
+                    main.taskStockService.delRecord({
+                        "taskId": main.taskId,
+                        "stockInfo": stock
+                    }).then(function (res) {
+                        main.notify.success('TXT_MSG_DELETE_SUCCESS');
+                        main.search();
+                    }, function (err) {
+                        if (err.displayType == null) {
+                            main.alert('TXT_MSG_DELETE_FAIL');
+                        }
+                    })
+                })
             },
 
             delRecord: function (stock) {
