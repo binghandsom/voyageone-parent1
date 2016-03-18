@@ -1,6 +1,8 @@
 package com.voyageone.service.impl.cms.promotion;
 
+import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.Enums.PromotionTypeEnums;
+import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.PromotionDetailAddBean;
 import com.voyageone.service.dao.cms.*;
@@ -201,6 +203,16 @@ public class PromotionDetailService extends BaseService {
     }
 
     public void teJiaBaoPromotionInsert(CmsBtPromotionCodeModel cmsBtPromotionCodeModel) {
+
+        if(cmsBtPromotionCodeModel.getPromotionId() == 0){
+            CmsChannelConfigBean cmsChannelConfigBean =CmsChannelConfigs.getConfigBean(cmsBtPromotionCodeModel.getChannelId(), "TEJIABAO_ID", cmsBtPromotionCodeModel.getCartId().toString());
+            if(cmsChannelConfigBean == null || StringUtils.isEmpty(cmsChannelConfigBean.getConfigValue1())){
+                return;
+            }else{
+                cmsBtPromotionCodeModel.setPromotionId(Integer.parseInt(cmsChannelConfigBean.getConfigValue1()));
+            }
+        }
+
         CmsBtPromotionTaskModel newTask = new CmsBtPromotionTaskModel(cmsBtPromotionCodeModel.getPromotionId(), PromotionTypeEnums.Type.TEJIABAO.getTypeId(), cmsBtPromotionCodeModel.getProductCode(), cmsBtPromotionCodeModel.getNumIid(), cmsBtPromotionCodeModel.getModifier());
         //如果没有参加其他活动的场合 插入全店特价宝的活动的TASK中
         if (isUpdateAllPromotionTask(cmsBtPromotionCodeModel)) {
@@ -225,6 +237,15 @@ public class PromotionDetailService extends BaseService {
     }
 
     public void teJiaBaoPromotionUpdate(CmsBtPromotionCodeModel cmsBtPromotionCodeModel) {
+
+        if(cmsBtPromotionCodeModel.getPromotionId() == 0){
+            CmsChannelConfigBean cmsChannelConfigBean =CmsChannelConfigs.getConfigBean(cmsBtPromotionCodeModel.getChannelId(), "TEJIABAO_ID", cmsBtPromotionCodeModel.getCartId().toString());
+            if(cmsChannelConfigBean == null || StringUtils.isEmpty(cmsChannelConfigBean.getConfigValue1())){
+                return;
+            }else{
+                cmsBtPromotionCodeModel.setPromotionId(Integer.parseInt(cmsChannelConfigBean.getConfigValue1()));
+            }
+        }
 
         String operator = cmsBtPromotionCodeModel.getModifier();
         if (cmsPromotionCodeDao.updatePromotionCode(cmsBtPromotionCodeModel) != 0) {
