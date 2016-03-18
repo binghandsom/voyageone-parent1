@@ -66,7 +66,7 @@ public class CmsSearchAdvanceController extends CmsController {
         // 获取group列表
         List<CmsBtProductModel> groupList = searchIndexService.getGroupList(params, userInfo, cmsSession);
         resultBean.put("groupList", groupList);
-        resultBean.put("grpImgList", searchIndexService.getGroupImageList(groupList, userInfo.getSelChannelId(), cmsSession.getPlatformType().get("cartId").toString()));
+        resultBean.put("grpImgList", searchIndexService.getGroupImageList(groupList, userInfo.getSelChannelId(), (int) cmsSession.getPlatformType().get("cartId")));
         long groupListTotal = searchIndexService.getGroupCnt(params, userInfo, cmsSession);
         resultBean.put("groupListTotal", groupListTotal);
 

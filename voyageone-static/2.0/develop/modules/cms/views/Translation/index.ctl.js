@@ -58,7 +58,7 @@ define([
                 var assignRule = model.distributeRule;
                 var assignCount = model.distributeCount;
 
-                if (this.productTranslationBeanList.length > 0){
+                if (this.productTranslationBeanList && this.productTranslationBeanList.length > 0) {
 
                     this.alert("您尚有未完成任务，请先完成所有任务！")
 
@@ -143,64 +143,9 @@ define([
             clearConditions: function () {
                 this.searchCondition = "";
                 this.distributeCount = "";
-            },
-
-            //cvtLen: function (lenType) {
-            //    if (lenType == 1) {
-            //        minLen = this.lenInfo.long_title.minLen;
-            //        maxLen = this.lenInfo.long_title.maxLen;
-            //    } else if (lenType == 2) {
-            //        minLen = this.lenInfo.middle_title.minLen;
-            //        maxLen = this.lenInfo.middle_title.maxLen;
-            //    } else if (lenType == 3) {
-            //        minLen = this.lenInfo.short_title.minLen;
-            //        maxLen = this.lenInfo.short_title.maxLen;
-            //    } else if (lenType == 4) {
-            //        minLen = this.lenInfo.long_desc.minLen;
-            //        maxLen = this.lenInfo.long_desc.maxLen;
-            //    } else if (lenType == 5) {
-            //        minLen = this.lenInfo.short_desc.minLen;
-            //        maxLen = this.lenInfo.short_desc.maxLen;
-            //    }
-            //},
-            //
-            //chkWordSize: function(lenType, tobj) {
-            //    this.cvtLen(lenType);
-            //    clearTimeout(timeoutID);
-            //    timeoutID = setTimeout(timeoutFunc(this.translate), 500);
-            //    function timeoutFunc(transSrv) {
-            //        var curLength = $(tobj.target).val().length;
-            //        var od = $(tobj.target.parentNode).find("i");
-            //        if (curLength < minLen) {
-            //            od[0].innerHTML = '&nbsp;' + transSrv.instant('TXT_MSG_INPUT_WORD_LENLOWLIMIT') + minLen + transSrv.instant('TXT_MSG_INPUT_WORD_LENCHK2');
-            //        } else if (curLength >= maxLen) {
-            //            od[0].innerHTML = '&nbsp;' + transSrv.instant('TXT_MSG_INPUT_WORD_LENLIMIT');
-            //        } else {
-            //            od[0].innerHTML = '&nbsp;' + transSrv.instant('TXT_MSG_INPUT_WORD_LENCHK') + (maxLen - curLength) + transSrv.instant('TXT_MSG_INPUT_WORD_LENCHK2');
-            //        }
-            //    };
-            //},
-            //
-            //cmtWordSize: function(lenType, tobj) {
-            //    this.cvtLen(lenType);
-            //    var od = $(tobj.target.parentNode).find("i");
-            //    $(od[0]).css("visibility", "visible");
-            //    var curLength = $(tobj.target).val().length;
-            //    if (curLength < minLen) {
-            //        od[0].innerHTML = '&nbsp;' + this.translate.instant('TXT_MSG_INPUT_WORD_LENLOWLIMIT') + minLen + this.translate.instant('TXT_MSG_INPUT_WORD_LENCHK2');
-            //    } else if (curLength >= maxLen) {
-            //        od[0].innerHTML = '&nbsp;' + this.translate.instant('TXT_MSG_INPUT_WORD_LENLIMIT');
-            //    } else {
-            //        od[0].innerHTML = '&nbsp;' + this.translate.instant('TXT_MSG_INPUT_WORD_LENCHK') + (maxLen - curLength) + this.translate.instant('TXT_MSG_INPUT_WORD_LENCHK2');
-            //    }
-            //}
+            }
         };
 
         return translationDetailController
     })());
 });
-
-// 检查输入字数
-var timeoutID = "";
-var maxLen = 0;
-var minLen = 0;

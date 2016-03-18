@@ -189,7 +189,7 @@ public class TranslationService {
      * @param taskBean
      * @return
      */
-    public TranslateTaskBean saveTask(String channelId, String userName, ProductTranslationBean taskBean, String transSts) {
+    public TranslateTaskBean saveTask(String channelId, String userName, ProductTranslationBean taskBean, String transSts, int cartId) {
         // 先查询该商品对应的group信息
         logger.debug("TranslationService.saveTask() 商品ProdId=" + taskBean.getProdId());
         DBObject excObj = new BasicDBObject();
@@ -205,9 +205,9 @@ public class TranslationService {
                 Object platObj = groupObj.get("platforms");
                 if (platObj != null) {
                     for (Object obj2 : (List) platObj) {
-                        int cartId = (Integer) ((DBObject) obj2).get("cartId");
+                        int cartId2 = (Integer) ((DBObject) obj2).get("cartId");
                         int isMain = (Integer) ((DBObject) obj2).get("isMain");
-                        if (cartId == 1 && isMain == 1) {
+                        if (cartId == cartId2 && isMain == 1) {
                             groupId = (Integer) ((DBObject) obj2).get("groupId");
                             break;
                         }
@@ -224,7 +224,7 @@ public class TranslationService {
         } else {
             // 更新该group下的商品信息
             DBObject pal4 = new BasicDBObject();
-            pal4.put("cartId", 1);
+            pal4.put("cartId", cartId);
             pal4.put("groupId", groupId);
             DBObject pal3 = new BasicDBObject();
             pal3.put("$elemMatch", pal4);

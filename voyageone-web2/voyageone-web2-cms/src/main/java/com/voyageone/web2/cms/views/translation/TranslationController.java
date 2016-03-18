@@ -3,6 +3,7 @@ package com.voyageone.web2.cms.views.translation;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
+import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.cms.bean.ProductTranslationBean;
 import com.voyageone.web2.cms.bean.TranslateTaskBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,8 +74,9 @@ public class TranslationController extends CmsController{
 
         String channelId = getUser().getSelChannelId();
         String userName = getUser().getUserName();
+        CmsSessionBean cmsSession = getCmsSession();
 
-        TranslateTaskBean taskBean = feedPropsTranslateService.saveTask(channelId, userName, requestBean, "0");
+        TranslateTaskBean taskBean = feedPropsTranslateService.saveTask(channelId, userName, requestBean, "0", (int) cmsSession.getPlatformType().get("cartId"));
 
         Map<String,Object> updateInfo = new HashMap<>();
         updateInfo.put("taskInfo",taskBean);
@@ -88,8 +90,9 @@ public class TranslationController extends CmsController{
 
         String channelId = getUser().getSelChannelId();
         String userName = getUser().getUserName();
+        CmsSessionBean cmsSession = getCmsSession();
 
-        TranslateTaskBean taskBean = feedPropsTranslateService.saveTask(channelId, userName, requestBean, "1");
+        TranslateTaskBean taskBean = feedPropsTranslateService.saveTask(channelId, userName, requestBean, "1", (int) cmsSession.getPlatformType().get("cartId"));
 
         Map<String,Object> updateInfo = new HashMap<>();
         updateInfo.put("taskInfo",taskBean);

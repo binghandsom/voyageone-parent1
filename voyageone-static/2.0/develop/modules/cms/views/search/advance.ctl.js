@@ -53,9 +53,11 @@ define([
             })
             .then(function() {
                 // 如果来至category 或者header search 则默认检索
+                $scope.vm.tblWidth = '100%';
                 if ($routeParams.type == "1"
-                    || $routeParams.type == "2")
-                search();
+                    || $routeParams.type == "2") {
+                    search();
+                }
             })
         }
 
@@ -119,6 +121,9 @@ define([
                 $scope.vm.productList = res.data.productList;
                 $scope.vm.productPageOption.total = res.data.productListTotal;
                 $scope.vm.productSelList = res.data.productSelList;
+
+                // 计算表格宽度
+                $scope.vm.tblWidth = (($scope.vm.commonProps.length + $scope.vm.customProps.length) * 120 + 980) + 'px';
             })
         }
 

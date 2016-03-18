@@ -152,9 +152,9 @@ public class CmsSearchAdvanceService extends BaseAppService{
      * @param groupsList
      * @return
      */
-    public List<List<Map<String, String>>> getGroupImageList(List<CmsBtProductModel> groupsList, String channelId, String cartId) {
+    public List<List<Map<String, String>>> getGroupImageList(List<CmsBtProductModel> groupsList, String channelId, int cartId) {
         DBObject pal4 = new BasicDBObject();
-        pal4.put("cartId", NumberUtils.toLong(cartId));
+        pal4.put("cartId", cartId);
         pal4.put("isMain", 0);
         DBObject pal3 = new BasicDBObject();
         pal3.put("$elemMatch", pal4);
@@ -172,7 +172,7 @@ public class CmsSearchAdvanceService extends BaseAppService{
             List<CmsBtProductModel_Group_Platform> ptmList = groupObj.getGroups().getPlatforms();
             if (ptmList != null) {
                 for (CmsBtProductModel_Group_Platform ptmObj : ptmList) {
-                    if (ptmObj.getCartId() == NumberUtils.toLong(cartId) && ptmObj.getIsMain()) {
+                    if (ptmObj.getCartId() == cartId && ptmObj.getIsMain()) {
                         grpId = ptmObj.getGroupId();
                         break;
                     }
