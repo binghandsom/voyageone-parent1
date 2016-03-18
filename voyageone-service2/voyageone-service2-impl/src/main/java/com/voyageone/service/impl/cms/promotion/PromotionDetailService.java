@@ -256,6 +256,8 @@ public class PromotionDetailService extends BaseService {
             if (cmsPromotionTaskDao.updatePromotionTask(cmsBtPromotionTask) == 0) {
                 cmsPromotionTaskDao.insertPromotionTask(cmsBtPromotionTask);
             }
+        }else{
+            teJiaBaoPromotionInsert(cmsBtPromotionCodeModel);
         }
     }
 }

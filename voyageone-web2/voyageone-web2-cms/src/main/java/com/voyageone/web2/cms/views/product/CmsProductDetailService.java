@@ -26,6 +26,8 @@ import com.voyageone.service.dao.cms.mongo.CmsMtCategorySchemaDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtCommonSchemaDao;
 import com.voyageone.service.impl.cms.CategorySchemaService;
 import com.voyageone.service.impl.cms.product.ProductService;
+import com.voyageone.service.impl.cms.promotion.PromotionDetailService;
+import com.voyageone.service.model.cms.CmsBtPromotionCodeModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCommonSchemaModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
@@ -72,6 +74,9 @@ public class CmsProductDetailService {
 
     @Autowired
     protected CategorySchemaService categorySchemaService;
+
+    @Autowired
+    private PromotionDetailService promotionDetailService;
     
     private static final String FIELD_SKU_CARTS = "skuCarts";
 
@@ -300,7 +305,22 @@ public class CmsProductDetailService {
         String newModified = DateTimeUtil.getNowTimeStamp();
         productUpdateBean.setModified(newModified);
 
+        CmsBtProductModel oldProduct = productService.getProductById(channelId, productId);
         productService.updateProduct(channelId, productUpdateBean);
+        CmsBtProductModel newProduct = productService.getProductById(channelId, productId);
+
+        if(oldProduct.getFields().getPriceSaleEd() != newProduct.getFields().getPriceSaleEd() || oldProduct.getFields().getPriceSaleSt() != newProduct.getFields().getPriceSaleSt()){
+            CmsBtPromotionCodeModel cmsBtPromotionCodeModel = new CmsBtPromotionCodeModel();
+            cmsBtPromotionCodeModel.setProductId(productId);
+            cmsBtPromotionCodeModel.setProductCode(oldProduct.getFields().getCode());
+            cmsBtPromotionCodeModel.setPromotionPrice(newProduct.getFields().getPriceSaleEd());
+            cmsBtPromotionCodeModel.setPromotionId(0);
+            cmsBtPromotionCodeModel.setNumIid(oldProduct.getGroups().getPlatformByCartId(23).getNumIId());
+            cmsBtPromotionCodeModel.setChannelId(channelId);
+            cmsBtPromotionCodeModel.setCartId(23);
+            cmsBtPromotionCodeModel.setModifier(userName);
+            promotionDetailService.teJiaBaoPromotionUpdate(cmsBtPromotionCodeModel);
+        }
 
         return newModified;
     }
