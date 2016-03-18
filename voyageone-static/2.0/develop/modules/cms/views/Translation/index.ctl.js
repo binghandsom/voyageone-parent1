@@ -11,7 +11,7 @@
 define([
     'cms',
     'modules/cms/controller/popup.ctl'
-], function (cms, Status) {
+], function (cms) {
     return cms.controller('translationDetailController', (function () {
 
         function TranslationDetailController($routeParams, $translate, translationService, notify, confirm,alert) {
