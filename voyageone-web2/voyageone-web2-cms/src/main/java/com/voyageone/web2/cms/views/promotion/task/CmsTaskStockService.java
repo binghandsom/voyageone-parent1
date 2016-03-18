@@ -52,7 +52,7 @@ public class CmsTaskStockService extends BaseAppService {
     private SimpleTransaction simpleTransaction;
 
     @Autowired
-    protected PromotionDao promotionDao;
+//    protected PromotionDao promotionDao;
 
     /**
      * 根据活动ID取得CartId
