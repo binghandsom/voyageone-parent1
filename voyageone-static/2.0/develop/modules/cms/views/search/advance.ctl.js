@@ -50,6 +50,11 @@ define([
             }
             searchAdvanceService.init().then(function (res) {
                 $scope.vm.masterData = res.data;
+                $scope.newObj = {
+                    inputVal: "",
+                    inputOpts: ""
+                };
+                $scope.list.push($scope.newObj);
             })
             .then(function() {
                 // 如果来至category 或者header search 则默认检索
@@ -86,6 +91,8 @@ define([
                 $scope.vm.searchInfo.catPath = catInfo.catPath;
             else
                 $scope.vm.searchInfo.catPath = null;
+
+            $scope.vm.searchInfo.custAttrMap = $scope.list;
             searchAdvanceService.search($scope.vm.searchInfo, $scope.vm.groupPageOption, $scope.vm.productPageOption).then(function (res) {
                 $scope.vm.customProps = res.data.customProps;
                 $scope.vm.commonProps = res.data.commonProps;
@@ -229,41 +236,25 @@ define([
         /**
          * 添加新search选项
          */
-        $scope.list=[
-            {
-                inputVal:"input value 1",
-                selectOption:[
-                    {options:"option_1"},
-                    {options:"option_2"},
-                    {options:"option_3"},
-                    {options:"option_4"}
-                ]
-            }
-        ];
-        $scope.add=function(){
+        $scope.list = [];
+        $scope.add = function () {
             $scope.newObj = {
-                inputVal:"input value 2",
-                selectOption:[
-                    {options:"option_a"},
-                    {options:"option_b"},
-                    {options:"option_c"},
-                    {options:"option_d"}
-                ]
+                inputVal: "",
+                inputOpts: ""
             };
-            if($scope.list.length < 5){
+            if ($scope.list.length < 5) {
                 $scope.list.push($scope.newObj);
-            }else{
+            } else {
                 alert("最多只能添加5项")
             }
         };
 
-        $scope.del=function(idx){
-            if($scope.list.length >1){
-                $scope.list.splice(idx,1);
-            }else{
+        $scope.del = function (idx) {
+            if ($scope.list.length > 1) {
+                $scope.list.splice(idx, 1);
+            } else {
                 alert("最少保留一项")
             }
-
         };
 
     }

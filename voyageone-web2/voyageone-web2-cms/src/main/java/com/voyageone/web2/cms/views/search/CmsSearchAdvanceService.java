@@ -514,10 +514,14 @@ public class CmsSearchAdvanceService extends BaseAppService{
         }
 
         // 获取自定义查询条件
-        if (searchValue.getCustAttrKey() != null  && searchValue.getCustAttrKey().length() > 0
-                && searchValue.getCustAttrValue() != null  && searchValue.getCustAttrValue().length() > 0) {
-            result.append(MongoUtils.splicingValue(searchValue.getCustAttrKey(), searchValue.getCustAttrValue()));
-            result.append(",");
+        List<Map<String, String>> custList = searchValue.getCustAttrMap();
+        if (custList != null  && custList.size() > 0) {
+            for (Map<String, String> item : custList) {
+                if (!StringUtils.isEmpty(item.get("inputVal"))) {
+                    result.append(MongoUtils.splicingValue(item.get("inputOpts"), item.get("inputVal")));
+                    result.append(",");
+                }
+            }
         }
         return result.toString();
     }

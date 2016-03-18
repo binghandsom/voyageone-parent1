@@ -49,24 +49,29 @@
 								<div class="input-group col-sm-4"><input type="text" class="form-control" ng-model="vm.searchInfo.priceEnd" ng-pattern="/^(\d+)(\.[0-9]{0,2})?$/"></div>
 							</div>
 						</div><!-- .form-group -->
-						<div class="form-group" ng-repeat="option in list">
-							<label class="col-sm-3 control-label" translate="TXT_CUST_QUERY_ATTR"></label>
-							<div class="col-sm-8 form-inline">
-								<select class="form-control" ng-model="selectOption.options"
-										ng-options="selects.options for selects in option.selectOption">
-									<option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
-								</select>
-								<!--<select class="form-control">-->
-									<!--<option><&nbsp;=</option>-->
-									<!--<option>>&nbsp;=</option>-->
-									<!--<option>=&nbsp;=</option>-->
-								<!--</select>-->
-								<div class="input-group col-sm-5"><input type="text" class="form-control" ng-model="option.inputVal"></div>
-
+						<div style="display:inline;">
+							<div style="float:left" >
+								<div class="form-group" ng-repeat="option in list">
+									<label class="col-sm-3 control-label" translate="TXT_CUST_QUERY_ATTR"></label>
+									<div class="col-sm-8 form-inline">
+										<select class="form-control" ng-model="option.inputOpts"
+												ng-options="custAtts.configCode as custAtts.configValue1 for custAtts in vm.masterData.custAttsList">
+											<option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+										</select>
+										<!--<select class="form-control">-->
+											<!--<option>==</option>-->
+											<!--<option><=</option>-->
+											<!--<option>>=</option>-->
+										<!--</select>-->
+										<div class="input-group col-sm-5"><input type="text" class="form-control" ng-model="option.inputVal"></div>
+									</div>
+									<button id="delCustDiv" class="btn btn-danger btn-xs" ng-click="del($index)"><i class="fa fa-trash-o"></i></button>
+								</div>
 							</div>
-							<button class="btn btn-danger btn-xs" ng-click="del($index)"><i class="fa fa-trash-o"></i></button>
+							<div style="float:right">
+								<button id="addCustDiv" class="btn btn-success" style="margin-left:3px" ng-click="add()"><i class="fa fa-plus"></i></button>
+							</div>
 						</div>
-						<button class="btn btn-success" ng-click="add()"><i class="fa fa-plus"></i></button>
 					</div>
 				</div>
 				<div class="col-sm-4">
@@ -220,18 +225,6 @@
 								</div>
 							</div>
 						</div>
-						<div class="form-group">
-							<label class="col-sm-3 control-label" translate="TXT_CUST_QUERY_ATTR"></label>
-							<div class="col-sm-8 form-inline" style="padding-left:4px">
-								<div class="col-sm-5">
-									<select class="form-control m-r-xs" ng-model="vm.searchInfo.custAttrKey"
-											ng-options="custAtts.configCode as custAtts.configValue1 for custAtts in vm.masterData.custAttsList">
-										<option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
-									</select>
-								</div>
-								<div class="col-sm-4"><input class="form-control" type="text" ng-model="vm.searchInfo.custAttrValue"></div>
-							</div>
-						</div>
 					</div>
 				</div>
 				<div class="col-sm-12 text-center m-b-sm">
@@ -323,8 +316,10 @@
 											<li><a ng-href="#/product/detail/{{groupInfo.prodId}}" ng-bind="groupInfo.fields.code" target="_blank"></a></li>
 											<li><a ng-href="#/product/detail/{{groupInfo.prodId}}" ng-bind="groupInfo.fields.longTitle || groupInfo.fields.productNameEn" target="_blank"></a></li>
 										</ul>
+										<div class="form-inline thumb-xs-search" style="margin-top:4px" ng-if="groupInfo.grpImgList.length > 0" >
+											<img class="thumb-xs-search m-b-xs" style="width:34px;height:34px" ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{prop2.value}}" alt="" ng-repeat="prop2 in groupInfo.grpImgList"/>
+										</div>
 									</div>
-
 								</td>
 								<td class="text-center m-t-lg" style="display:inline-block;width:85px; height:97px;"><!--TODO 目前只能返回group的主product,所有拿不到group下面所有的product的库存--><!--popover-html="showInfo({{groupInfo.inventoryDetail}})"-->
 									<!--<button ng-controller="showPopoverCtrl" popover-title="{{'TXT_SKU_INVENTORY' | translate}}" type="button" popover-placement="left"
@@ -358,17 +353,9 @@
 									</small>
 								</td>
 							</tr>
-							<tr ng-if="groupInfo.grpImgList.length > 0">
-								<td colspan="8">
-									<span ng-repeat="prop2 in groupInfo.grpImgList">
-										<img class="thumb-sm-search pull-left m-r" alt="" ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{prop2.value}}" >
-									</span>
-								</td>
-							</tr>
 							</tbody>
 						</table>
 					</div><!-- .table-responsive -->
-
 				</div>
 				<div class="col-sm-12 m-t-lg m-b-lg">
 					<vpagination config="vm.groupPageOption"></vpagination>
