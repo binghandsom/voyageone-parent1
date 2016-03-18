@@ -18,6 +18,7 @@ import com.voyageone.web2.cms.bean.TranslateTaskBean;
 import com.voyageone.web2.cms.dao.CustomWordDao;
 import com.voyageone.web2.cms.dao.MongoNativeDao;
 import com.voyageone.web2.cms.views.search.CmsSearchAdvanceService;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -472,30 +473,80 @@ public class TranslationService {
     }
 
     /**
-     *
+     * 校验输入文字长度
      * @param requestBean
      */
-    public void verifyParameter(ProductTranslationBean requestBean){
-
+    public void verifyParameter(ProductTranslationBean requestBean, String channelId) {
         if (StringUtils.isEmpty(requestBean.getLongTitle())){
-
             throw new BusinessException("长标题不能为空");
         }
         if (StringUtils.isEmpty(requestBean.getMiddleTitle())){
-
             throw new BusinessException("中标题不能为空");
         }
         if (StringUtils.isEmpty(requestBean.getShortTitle())){
-
             throw new BusinessException("短标题不能为空");
         }
         if (StringUtils.isEmpty(requestBean.getLongDesCn())){
-
             throw new BusinessException("长描述不能为空");
         }
         if (StringUtils.isEmpty(requestBean.getShortDesCn())){
-
             throw new BusinessException("短描述不能为空");
+        }
+
+        Map<String, Object> setInfo = getTransLenSet(channelId);
+        Map<String, Object> lenColl = (Map<String, Object>) setInfo.get("long_title");
+        int minLen = NumberUtils.toInt((String) lenColl.get("minLen"));
+        int maxLen = NumberUtils.toInt((String) lenColl.get("maxLen"));
+        int strLen = requestBean.getLongTitle().length();
+        if (strLen < minLen) {
+            throw new BusinessException("长标题必须至少输入" + minLen + "个文字");
+        }
+        if (strLen > maxLen) {
+            throw new BusinessException("长标题不能超过" + maxLen + "个文字");
+        }
+
+        lenColl = (Map<String, Object>) setInfo.get("middle_title");
+        minLen = NumberUtils.toInt((String) lenColl.get("minLen"));
+        maxLen = NumberUtils.toInt((String) lenColl.get("maxLen"));
+        strLen = requestBean.getMiddleTitle().length();
+        if (strLen < minLen) {
+            throw new BusinessException("中标题必须至少输入" + minLen + "个文字");
+        }
+        if (strLen > maxLen) {
+            throw new BusinessException("中标题不能超过" + maxLen + "个文字");
+        }
+
+        lenColl = (Map<String, Object>) setInfo.get("short_title");
+        minLen = NumberUtils.toInt((String) lenColl.get("minLen"));
+        maxLen = NumberUtils.toInt((String) lenColl.get("maxLen"));
+        strLen = requestBean.getShortTitle().length();
+        if (strLen < minLen) {
+            throw new BusinessException("短标题必须至少输入" + minLen + "个文字");
+        }
+        if (strLen > maxLen) {
+            throw new BusinessException("短标题不能超过" + maxLen + "个文字");
+        }
+
+        lenColl = (Map<String, Object>) setInfo.get("long_desc");
+        minLen = NumberUtils.toInt((String) lenColl.get("minLen"));
+        maxLen = NumberUtils.toInt((String) lenColl.get("maxLen"));
+        strLen = requestBean.getLongDesCn().length();
+        if (strLen < minLen) {
+            throw new BusinessException("长描述必须至少输入" + minLen + "个文字");
+        }
+        if (strLen > maxLen) {
+            throw new BusinessException("长描述不能超过" + maxLen + "个文字");
+        }
+
+        lenColl = (Map<String, Object>) setInfo.get("short_desc");
+        minLen = NumberUtils.toInt((String) lenColl.get("minLen"));
+        maxLen = NumberUtils.toInt((String) lenColl.get("maxLen"));
+        strLen = requestBean.getShortDesCn().length();
+        if (strLen < minLen) {
+            throw new BusinessException("短描述必须至少输入" + minLen + "个文字");
+        }
+        if (strLen > maxLen) {
+            throw new BusinessException("短描述不能超过" + maxLen + "个文字");
         }
     }
 

@@ -83,12 +83,11 @@ public class TranslationController extends CmsController{
     // 保存并提交翻译内容（完成翻译任务）
     @RequestMapping(CmsUrlConstants.TRANSLATION.TASKS.SUBMIT_TASK)
     public AjaxResponse doSubmitTask(@RequestBody ProductTranslationBean requestBean){
-        feedPropsTranslateService.verifyParameter(requestBean);
-
         String channelId = getUser().getSelChannelId();
         String userName = getUser().getUserName();
         CmsSessionBean cmsSession = getCmsSession();
 
+        feedPropsTranslateService.verifyParameter(requestBean, channelId);
         TranslateTaskBean taskBean = feedPropsTranslateService.saveTask(channelId, userName, requestBean, "1", (int) cmsSession.getPlatformType().get("cartId"));
 
         Map<String,Object> updateInfo = new HashMap<>();
