@@ -276,8 +276,14 @@
                         });
 
                         function compileTemplate(html) {
+                            // 尝试替换验证标识
+                            var validAttrs = schema.html();
+                            if (validAttrs)
+                                html = html.replace(/validators/g, validAttrs);
+
                             // 包裹 ng-form, 用于启用 angular 的验证功能
                             html = '<ng-form name="schemaForm">' + html + '</ng-form>';
+
                             // 追加错误信息的显示
                             html += '<div ng-repeat="(k, v) in schemaForm.$error">{{k}}</div>';
 
