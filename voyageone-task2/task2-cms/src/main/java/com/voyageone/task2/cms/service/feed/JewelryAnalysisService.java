@@ -63,19 +63,19 @@ public class JewelryAnalysisService extends BaseTaskService {
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
 
         // 插入数据库
-//        List<SuperFeedJEBean> superFeedJEBean = jeSuperFeedImport();
-//
-//        if(superFeedJEBean.size()>0){
-//            insertSuperFeedJE(superFeedJEBean);
-//
-//            CheckSuperFeed(JEWELRY.getId());
-//
-//            transformer.new Context(JEWELRY, this).transform();
-//
+        List<SuperFeedJEBean> superFeedJEBean = jeSuperFeedImport();
+
+        if(superFeedJEBean.size()>0){
+            insertSuperFeedJE(superFeedJEBean);
+
+            CheckSuperFeed(JEWELRY.getId());
+
+            transformer.new Context(JEWELRY, this).transform();
+
             insertService.new Context(JEWELRY).postNewProduct();
-//
-//            backupFeedFile(JEWELRY.getId());
-//        }
+
+            backupFeedFile(JEWELRY.getId());
+        }
 
     }
     /**

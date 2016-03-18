@@ -18,7 +18,7 @@ define([
             };
             translationService.getFeedAttributes(parms).then(function (res) {
 
-                var feedAttributes = res.data.feedAttributes;
+                var feedAttributes = res.data;
 
                 $scope.feedAttributesModel = [];
 

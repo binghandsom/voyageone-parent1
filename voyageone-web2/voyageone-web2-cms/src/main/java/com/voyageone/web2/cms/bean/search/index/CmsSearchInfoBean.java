@@ -56,13 +56,13 @@ public class CmsSearchInfoBean {
 
     private String sortThreeType;
 
-    private Integer groupPageNum;
+    private Integer groupPageNum = 0;
 
-    private Integer groupPageSize;
+    private Integer groupPageSize = 0;
 
-    private Integer productPageNum;
+    private Integer productPageNum = 0;
 
-    private Integer productPageSize;
+    private Integer productPageSize = 0;
 
     // 自定义查询条件
     private String custAttrKey;

@@ -212,9 +212,21 @@ define(function() {
         "TXT_PENDING":"Pending",
         "TXT_SUCCESS":"Success",
         "TXT_FAIL":"Fail",
-        "TXT_BASE_ATTRIBUTE": "Base Attribute",
         "TXT_PRICE_ATTRIBUTE": "Price Attribute",
         "TXT_SALES_ATTRIBUTE": "Sales Attribute",
+        "TXT_PERSONAL_FINISHED_TRANSLATION": "Per. Translated",
+        "TXT_UN_TRANSLATION": "Untranslated",
+        "TXT_TRANSLATED": "Translated",
+        "TXT_DISTRIBUTION_RULE": "Distribution Rule",
+        "TXT_MAIN_PRODUCT": "Main Product",
+        "TXT_GET_TASK_COUNT": "Get Tasks Count",
+        "TXT_PRODUCT_NAME_WITH_LONG_DESCRIPTION": "Product Name / Description",
+        "TXT_LONG_TITLE_WITH_LONG_DESCRIPTION": "Long Title(CN)",
+        "TXT_MID_TITLE_WITH_SHORT_DESCRIPTION": "Mid Title /<br> Long Description(CN)",
+        "TXT_SHORT_TITLE_WITH_MORE_SHORT_DESCRIPTION": "Short Title /<br> Short Description(CN)",
+        "TXT_TRANSLATOR_WIT_COLON": "Translator：",
+        "TXT_BASE_ATTRIBUTE": "Common Attribute",
+        "TXT_CUST_ATTRIBUTE": "Custmize Attribute",
 
 
         "TXT_MSG_SEARCH": "Search...",
@@ -257,11 +269,12 @@ define(function() {
         "TXT_MSG_CODE_IN_OTHER": "The code you submit, already in other task. Go on ?",
         "TXT_MSG_REIMPORT_BEAT": "Reimport data, will clear last data. Go on (・ˍ・ ? )",
         "TXT_MSG_ERROR_BEAT_ITEM": "The data seems to be wrong. Are you sure you want to change the status of it (⊙＿⊙ ?)",
-        "TXT_MSG_INPUT_WORD_LENCHK": "you can input",
-        "TXT_MSG_INPUT_WORD_LENCHK2": "words",
+        "TXT_MSG_INPUT_WORD_LENCHK": "you can input ",
+        "TXT_MSG_INPUT_WORD_LENCHK2": " words",
         "TXT_MSG_FIELD_VAL_INVALID": "Invalid field (Text) `s value, please follow the prompts to modify.",
         "TXT_MSG_INPUT_WORD_LENLOWLIMIT": "Please enter at least ",
         "TXT_MSG_INPUT_WORD_LENLIMIT": "Maximum length limit of character",
+        "TXT_MSG_HAVE_UN_TRANSLATED_TASK": "您还有未完成的翻译项目, 请完成后再获取新的任务!",
 
 
         "BTN_CREATE_TASK": "New Task",
@@ -307,6 +320,8 @@ define(function() {
         "BTN_CHOOSE_FILE": "Choose File",
         "BTN_IMPORT_FILE": "Import File",
         "BTN_CUSTOMIZE_COLUMNS": "custmize columns",
+        "BTN_GET_TASK": "Get Tasks",
+        "BTN_COMPLETE": "Done",
 
         // 枚举 com.voyageone.cms.enums.BeatFlag 的翻译
         "STOP": "Stop",

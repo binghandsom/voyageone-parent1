@@ -67,9 +67,6 @@ public class CmsProductDetailService {
     @Autowired
     private CmsBtProductDao cmsBtProductDao;
 
-//    @Autowired
-//    protected VoApiDefaultClient voApiClient;
-
     @Autowired
     private ProductService productService;
 
@@ -305,7 +302,7 @@ public class CmsProductDetailService {
 
         productService.updateProduct(channelId, productUpdateBean);
 
-        return modified;
+        return newModified;
     }
 
     /**

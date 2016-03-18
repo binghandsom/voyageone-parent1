@@ -4,21 +4,27 @@
                 aria-hidden="true"><i class="fa fa-close"></i></span></button>
         <h5 class="modal-title"><i class="fa fa-codepen"></i>&nbsp;{{'BTN_CUSTOMIZE_COLUMNS' | translate}}</h5>
     </div>
-    <div class="modal-body wrapper">
-        <form role="form" class="form-horizontal">
-            <div class="panel panel-drag  col-sm-6">
-                <h4>自定义属性</h4>
-                <div class="column_overflow">
-                    <div ng-repeat="customData in cus.customProps"><label class="checkbox-inline c-checkbox"><input type="checkbox" ng-model="vm.customData.feed_prop_original"><span class="fa fa-check"></span>&nbsp;{{customData.feed_prop_translation}}</label></div>
-                </div>
+    <div class="modal-body">
+      <div class="row m-l-md m-r-md">
+        <div class="col-sm-6">
+            <h4 class="m-l-sm text-vo">{{'TXT_BASE_ATTRIBUTE' | translate}}</h4>
+            <div class="column_overflow">
+                <div ng-repeat="commonData in cus.commonProps" class="m-t-xs">
+                    <label class="checkbox-inline c-checkbox">
+                    <input type="checkbox" name="commonAttrSels" value="{{commonData.propId}}" ng-model="commonData.isChk">
+                    <span class="fa fa-check"></span>&nbsp;{{commonData.propName}}</label></div>
             </div>
-            <div class="panel panel-drag col-sm-6">
-                <h4>共通义属性</h4>
-                <div class="column_overflow">
-                    <div ng-repeat="commonData in cus.commonProps"><label class="checkbox-inline c-checkbox"><input type="checkbox" ng-model="vm.customData.propId"><span class="fa fa-check"></span>&nbsp;{{commonData.propName}}</label></div>
-                </div>
+        </div>
+        <div class="col-sm-6">
+            <h4 class="m-l-sm text-vo">{{'TXT_CUST_ATTRIBUTE' | translate}}</h4>
+            <div class="column_overflow">
+                <div ng-repeat="customData in cus.customProps" class="m-t-xs">
+                    <label class="checkbox-inline c-checkbox">
+                    <input type="checkbox" name="custAttrSels" value="{{customData.feed_prop_original}}" ng-model="customData.isChk">
+                    <span class="fa fa-check"></span>&nbsp;{{customData.feed_prop_translation}}</label></div>
             </div>
-    </form>
+        </div>
+      </div>
     </div>
     <div class="modal-footer">
         <button class="btn btn-default" ng-click="$close()"><i class="fa fa-remove"></i> 取消</button>

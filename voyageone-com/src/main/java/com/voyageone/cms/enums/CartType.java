@@ -21,7 +21,7 @@ public enum CartType {
 
     MASTER("Master", "主数据", "MT", 0),
 
-    FEED("Feed", "品牌方数据", "TH", 0);
+    FEED("Feed", "品牌方数据", "TH", 1);
 
     private String name;
 

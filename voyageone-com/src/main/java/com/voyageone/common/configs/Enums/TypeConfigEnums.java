@@ -199,7 +199,12 @@ public class TypeConfigEnums {
 		/**
 		 * 活动状态:cms2
 		 */
-		promotionStatus(56);
+		promotionStatus(56),
+
+		/**
+		 * 获取任务的优先顺序:cms2
+		 */
+		translateTask(66);
 
     	private int id;
 

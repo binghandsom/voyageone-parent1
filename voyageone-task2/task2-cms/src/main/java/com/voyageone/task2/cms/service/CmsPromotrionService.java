@@ -51,7 +51,6 @@ public class CmsPromotrionService extends BaseTaskService {
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
 
-        updatePromotion("010", "23");
         for (TaskControlBean taskControlBean : taskControlList) {
             if ("order_channel_id".equalsIgnoreCase(taskControlBean.getCfg_name())) {
                 String channelId  = taskControlBean.getCfg_val1();

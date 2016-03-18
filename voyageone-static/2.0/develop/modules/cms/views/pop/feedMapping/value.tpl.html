@@ -25,7 +25,7 @@
                 </div>
             </div>
         </form>
-        <div class="table-responsive">
+        <div>
             <table class="table">
                 <thead>
                 <tr>
@@ -36,7 +36,7 @@
                 <tbody>
                 <tr ng-repeat="condition in ctrl.conditions">
                     <td class="form-inline">
-                        <select class="form-control m-r-sm"
+                        <select search-contains="true" chosen class="form-control m-r-sm"
                                 ng-options="k as k for (k,v) in ctrl.feedAttributes track by k"
                                 ng-model="condition.property"></select>
 
@@ -46,13 +46,15 @@
 
                         <span ng-if="!condition.operation.isSingle">
                             <input class="form-control" type="text"
-                                   ng-if="!ctrl.feedAttributes[condition.property].length"
                                    ng-model="condition.value"/>
+                            <!--<input class="form-control" type="text"-->
+                                   <!--ng-if="!ctrl.feedAttributes[condition.property].length"-->
+                                   <!--ng-model="condition.value"/>-->
 
-                            <select class="form-control"
-                                    ng-if="ctrl.feedAttributes[condition.property].length"
-                                    ng-options="v as v for v in ctrl.feedAttributes[condition.property] track by v"
-                                    ng-model="condition.value"></select>
+                            <!--<select class="form-control"-->
+                                    <!--ng-if="ctrl.feedAttributes[condition.property].length"-->
+                                    <!--ng-options="v as v for v in ctrl.feedAttributes[condition.property] track by v"-->
+                                    <!--ng-model="condition.value"></select>-->
                         </span>
                     </td>
                     <td>
