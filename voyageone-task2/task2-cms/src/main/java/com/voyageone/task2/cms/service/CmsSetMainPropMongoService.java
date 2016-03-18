@@ -236,7 +236,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 // 查看类目是否匹配完成
                 if (mapping == null) {
                     // 记下log, 跳过当前记录
-                    logIssue(getTaskName(), String.format("[CMS2.0][测试]该feed类目, 没有匹配到主数据的类目 ( channel: [%s], feed: [%s] )", channelId, feed.getCategory()));
+//                    logIssue(getTaskName(), String.format("[CMS2.0][测试]该feed类目, 没有匹配到主数据的类目 ( channel: [%s], feed: [%s] )", channelId, feed.getCategory()));
+                    logger.warn(String.format("[CMS2.0][测试]该feed类目, 没有匹配到主数据的类目 ( channel: [%s], feed: [%s] )", channelId, feed.getCategory()));
 
                     return;
                 }
@@ -247,7 +248,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                     if (mapping == null || mapping.getMatchOver() == 0) {
                         // 没有共通mapping, 或者没有匹配完成
                         // 记下log, 跳过当前记录
-                        logIssue(getTaskName(), String.format("[CMS2.0][测试]该主类目的属性匹配尚未完成 ( channel: [%s], feed: [%s], main: [%s] )", channelId, feed.getCategory(), mapping.getScope().getMainCategoryPath()));
+//                        logIssue(getTaskName(), String.format("[CMS2.0][测试]该主类目的属性匹配尚未完成 ( channel: [%s], feed: [%s], main: [%s] )", channelId, feed.getCategory(), mapping.getScope().getMainCategoryPath()));
+                        logger.warn(String.format("[CMS2.0][测试]该主类目的属性匹配尚未完成 ( channel: [%s], feed: [%s], main: [%s] )", channelId, feed.getCategory(), mapping.getScope().getMainCategoryPath()));
 
                         return;
                     }
@@ -369,7 +371,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 logger.error(getTaskName() + ":" + String.format("[CMS2.0][测试]feed->main的品牌mapping没做 ( channel id: [%s], feed brand: [%s] )", feed.getChannelId(), feed.getBrand()));
 
                 // 记下log, 跳过当前记录
-                logIssue(getTaskName(), String.format("[CMS2.0][测试]feed->main的品牌mapping没做 ( channel id: [%s], feed brand: [%s] )", feed.getChannelId(), feed.getBrand()));
+//                logIssue(getTaskName(), String.format("[CMS2.0][测试]feed->main的品牌mapping没做 ( channel id: [%s], feed brand: [%s] )", feed.getChannelId(), feed.getBrand()));
+                logger.warn(String.format("[CMS2.0][测试]feed->main的品牌mapping没做 ( channel id: [%s], feed brand: [%s] )", feed.getChannelId(), feed.getBrand()));
 
                 return null;
             }
@@ -1091,7 +1094,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                             attributeValue = feed.getFullAttribute().get(mappingCondition.getVal());
                         } else {
                             // 记下log, 无视当前属性
-                            logIssue(getTaskName(), String.format("[CMS2.0][测试] 找不到feed的这个属性 ( channel: [%s], code: [%s], attr: [%s] )", feed.getChannelId(), feed.getCode(), mappingCondition.getVal()));
+//                            logIssue(getTaskName(), String.format("[CMS2.0][测试] 找不到feed的这个属性 ( channel: [%s], code: [%s], attr: [%s] )", feed.getChannelId(), feed.getCode(), mappingCondition.getVal()));
                             logger.info(String.format("[CMS2.0][测试] 找不到feed的这个属性 ( channel: [%s], code: [%s], attr: [%s] )", feed.getChannelId(), feed.getCode(), mappingCondition.getVal()));
                         }
 
@@ -1135,6 +1138,14 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 skuPriceModel.setSkuCode(sku.getSku());
                 skuPriceModel.setPriceMsrp(sku.getPrice_msrp());
                 skuPriceModel.setPriceRetail(sku.getPrice_current());
+
+                // 如果是新的SKU, 那么: PriceRetail -> priceSale
+                if (cmsProduct.getSku(sku.getSku()) == null) {
+                    skuPriceModel.setPriceSale(skuPriceModel.getPriceRetail());
+                } else if (cmsProduct.getSku(sku.getSku()).getPriceSale() == null || cmsProduct.getSku(sku.getSku()).getPriceSale() == 0d) {
+                    skuPriceModel.setPriceSale(skuPriceModel.getPriceRetail());
+                }
+
                 model.addSkuPrice(skuPriceModel);
             }
 
