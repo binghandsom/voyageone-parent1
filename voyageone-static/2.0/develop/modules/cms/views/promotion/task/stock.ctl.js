@@ -245,11 +245,7 @@ define([
                     "sku" : main.sku,
                     "qtyFrom" : main.qtyFrom,
                     "qtyTo" : main.qtyTo,
-                    "status" : main.status,
-                    "start1" :  0,
-                    "length1" : 20,
-                    "start2" :  0,
-                    "length2" : 10
+                    "status" : main.status
                 });
             }
         };

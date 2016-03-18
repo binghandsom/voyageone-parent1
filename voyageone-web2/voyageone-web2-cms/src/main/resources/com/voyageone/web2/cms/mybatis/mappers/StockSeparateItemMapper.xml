@@ -264,7 +264,8 @@
           `property3`,
           `property4`,
           `qty`,
-          `separate_qty`
+          `separate_qty`,
+          `status`
         from ${tableName}
         ${whereSql}
         order by

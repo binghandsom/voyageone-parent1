@@ -15,6 +15,7 @@ import com.voyageone.web2.cms.dao.*;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -848,25 +849,28 @@ public class CmsTaskStockService extends BaseAppService {
 
         String templatePath = Properties.readValue(CmsConstants.Props.STOCK_EXPORT_TEMPLATE);
 
-        param.put("whereSql" ,getWhereSql(param, true));
+        param.put("whereSql", getWhereSql(param, true));
         List<Map<String, Object>> resultData = cmsBtStockSeparateItemDao.selectExcelStockInfo(param);
 
         $info("准备打开文档 [ %s ]", templatePath);
 
         try (InputStream inputStream = new FileInputStream(templatePath);
-             Workbook book = WorkbookFactory.create(inputStream)) {
+             XSSFWorkbook book = new XSSFWorkbook(inputStream)) {
+            // Titel行
+            Map<String, Integer> mapCartCol = writeExcelStockInfoHead(book, param);
+            // 数据行
+            writeExcelStockInfoRecord(book, param, resultData, mapCartCol);
 
-            writeExcelStockInfoHead(book, param);
+            // 自适应列宽
+            List<Map> propertyList = (List<Map>) param.get("propertyList");
+            List<Map> platformList = (List<Map>) param.get("platformList");
+            int cntCol = 3 + propertyList.size() + platformList.size() + 1;
+            for (int i = 0; i < cntCol; i++) {
+                book.getSheetAt(0).autoSizeColumn(i);
+            }
 
-//            writeExcelStockInfoRecord();
-
-//            for (int i = 0; i < promotionCodes.size(); i++) {
-//                boolean isContinueOutput = writeTmallPromotionRecordToFile(book, promotionCodes.get(i), i + 1);
-//                // 超过最大行的场合
-//                if (!isContinueOutput) {
-//                    break;
-//                }
-//            }
+            // 格式copy用sheet删除
+            book.removeSheetAt(1);
 
             $info("文档写入完成");
 
@@ -884,36 +888,116 @@ public class CmsTaskStockService extends BaseAppService {
 
     /**
      * 库存隔离Excel的第一行Title部写入
+     *
+     * @return Map<cart_id, colIndex列号>
      */
-    private void writeExcelStockInfoHead(Workbook book, Map param) {
+    private Map<String, Integer> writeExcelStockInfoHead(Workbook book, Map param) {
+        Map<String, Integer> mapCartCol = new HashMap<String, Integer>();
+
         Sheet sheet = book.getSheetAt(0);
-        CellStyle unlock = FileUtils.createUnLockStyle(book);
-        CellStyle lock = book.createCellStyle();
+        Drawing drawing = sheet.createDrawingPatriarch();
+        CreationHelper helper = book.getCreationHelper();
 
         Row row = FileUtils.row(sheet, 0);
-        // 内容输出
-//        FileUtils.cell(row, 0, unlock).setCellValue("Model");
-//        FileUtils.cell(row, 1, unlock).setCellValue("Code");
-//        FileUtils.cell(row, 2, unlock).setCellValue("Sku");
+        CellStyle cellStyleProperty = book.getSheetAt(1).getRow(0).getCell(4).getCellStyle(); // 属性的cellStyle
 
-        CellStyle cellStyle = FileUtils.cell(row, 0, null).getCellStyle();
-        FileUtils.cell(row, 3, cellStyle).setCellValue("pro1");
-        CellRangeAddress filter = CellRangeAddress.valueOf("A1:AA1");
+        List<Map> propertyList = (List<Map>) param.get("propertyList");
+        List<Map> platformList = (List<Map>) param.get("platformList");
+
+        // 内容输出
+        int index = 3;
+
+        // 属性
+        for (Map property : propertyList) {
+            FileUtils.cell(row, index++, cellStyleProperty).setCellValue((String) property.get("name"));
+        }
+
+        // 可用库存
+        FileUtils.cell(row, index++, cellStyleProperty).setCellValue("Usable Stock");
+
+        // 平台
+        CellStyle cellStylePlatform = book.getSheetAt(1).getRow(0).getCell(0).getCellStyle(); // 平台的cellStyle
+        for (Map platform : platformList) {
+            mapCartCol.put((String) platform.get("cartId"), Integer.valueOf(index));
+            FileUtils.cell(row, index++, cellStylePlatform).setCellValue((String) platform.get("cartName"));
+
+            Comment comment = drawing.createCellComment(helper.createClientAnchor());
+            comment.setString(helper.createRichTextString((String) platform.get("cartId")));
+            row.getCell(index - 1).setCellComment(comment);
+        }
+        mapCartCol.put("-1", index);
+        FileUtils.cell(row, index++, cellStylePlatform).setCellValue("Other");
+
+        // 筛选
+        CellRangeAddress filter = new CellRangeAddress(0, 0, 0, index - 1);
         sheet.setAutoFilter(filter);
 
-        row = FileUtils.row(sheet, 1);
-        FileUtils.cell(row, 0, lock).setCellValue("m1");
-        FileUtils.cell(row, 1, unlock).setCellValue("c1");
-        FileUtils.cell(row, 2, null).setCellValue("s1");
-
-
+        return mapCartCol;
     }
 
     /**
      * 库存隔离Excel的数据写入
      */
-    private void writeExcelStockInfoRecord(Workbook book, Map param, List<Map<String, Object>> resultData) {
+    private void writeExcelStockInfoRecord(Workbook book, Map param, List<Map<String, Object>> resultData, Map<String, Integer> mapCartCol) {
 
+        Sheet sheet = book.getSheetAt(0);
+        String preSku = "";
+        String cart_id = "";
+        int lineIndex = 1; // 行号
+        int colIndex = 0; // 列号
+        Row row = null;
+
+        Cell cellDynamic = book.getSheetAt(1).getRow(0).getCell(1); // 动态的cell
+        CellStyle cellStyleDataLock = book.getSheetAt(1).getRow(0).getCell(2).getCellStyle(); // 数据（锁定）的cellStyle
+        CellStyle cellStyleData = book.getSheetAt(1).getRow(0).getCell(3).getCellStyle(); // 数据（不锁定）的cellStyle
+
+        List<Map> propertyList = (List<Map>) param.get("propertyList");
+
+        for (Map<String, Object> rowData : resultData) {
+            cart_id = rowData.get("cart_id").toString();
+            if (!mapCartCol.containsKey(cart_id)) {
+                continue;
+            }
+
+            if (!preSku.equals((String) rowData.get("sku"))) {
+                // 新sku
+                preSku = (String) rowData.get("sku");
+                row = FileUtils.row(sheet, lineIndex++);
+                colIndex = 0;
+
+                FileUtils.cell(row, colIndex++, cellStyleDataLock).setCellValue((String) rowData.get("product_model")); // Model
+                FileUtils.cell(row, colIndex++, cellStyleDataLock).setCellValue((String) rowData.get("product_code")); // Code
+                FileUtils.cell(row, colIndex++, cellStyleDataLock).setCellValue((String) rowData.get("sku")); // Sku
+
+                // 属性
+                for (Map property : propertyList) {
+                    FileUtils.cell(row, colIndex++, cellStyleDataLock).setCellValue((String) rowData.get(property.get("property")));
+                }
+
+                // 可用库存
+                FileUtils.cell(row, colIndex++, cellStyleDataLock).setCellValue(rowData.get("qty").toString());
+
+                // 平台
+                if (StringUtils.isEmpty((String) rowData.get("status"))) {
+                    FileUtils.cell(row, mapCartCol.get(cart_id), cellDynamic.getCellStyle()).setCellValue(cellDynamic.getStringCellValue());
+                } else {
+                    FileUtils.cell(row, mapCartCol.get(cart_id), cellStyleData).setCellValue(rowData.get("separate_qty").toString());
+                }
+
+                CellStyle cellStyle = book.createCellStyle();
+                cellStyle.cloneStyleFrom(cellDynamic.getCellStyle());
+                cellStyle.setLocked(true);
+                FileUtils.cell(row, mapCartCol.get("-1"), cellStyle).setCellValue(cellDynamic.getStringCellValue());
+            } else {
+                // 同一个sku，不同平台
+                // 平台
+                if (StringUtils.isEmpty((String) rowData.get("status"))) {
+                    FileUtils.cell(row, mapCartCol.get(cart_id), cellDynamic.getCellStyle()).setCellValue(cellDynamic.getStringCellValue());
+                } else {
+                    FileUtils.cell(row, mapCartCol.get(cart_id), cellStyleData).setCellValue(rowData.get("separate_qty").toString());
+                }
+            }
+        }
     }
 
     /**

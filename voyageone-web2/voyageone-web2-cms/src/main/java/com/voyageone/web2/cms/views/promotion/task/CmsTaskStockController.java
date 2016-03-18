@@ -758,8 +758,23 @@ public class CmsTaskStockController extends CmsController {
      * @apiGroup promotion
      * @apiVersion 0.0.1
      * @apiPermission 认证商户
-     * @apiParam (系统级参数) {String} channelId 渠道id
      * @apiParam (应用级参数) {String} taskId 任务id
+     * @apiParam (应用级参数) {String} model 商品model
+     * @apiParam (应用级参数) {String} code 商品Code
+     * @apiParam (应用级参数) {String} sku Sku
+     * @apiParam (应用级参数) {String} qtyFrom 可用库存（下限）
+     * @apiParam (应用级参数) {String} qtyTo 可用库存（上限）
+     * @apiParam (应用级参数) {String} status 状态（0：未进行； 1：等待隔离； 2：隔离成功； 3：隔离失败； 4：等待还原； 5：还原成功； 6：还原失败； 7：再修正； 空白:ALL）
+     * @apiParam (应用级参数) {Object} propertyList 属性列表（json数组）
+     * @apiParamExample  propertyList参数示例
+     *   "propertyList": [ {"property":"property1", "name":"品牌", "logic":"", "type":"", "show":false, "value"=""},
+     *                     {"property":"property2", "name":"英文短描述", "logic":"Like", "type":"", "show":false, "value"=""},
+     *                     {"property":"property3", "name":"性别", "logic":"", "type":"", "show":false, "value"=""}，
+     *                     {"property":"property4", "name":"Size", "logic":"", "type":"int", "show":false, "value"=""}]
+     * @apiParam (应用级参数) {Object} platformList 隔离平台列表（json数组）
+     * @apiParamExample  propertyList参数示例
+     *   "platformList": [ {"cartId":"23", "cartName":"天猫国际"},
+     *                     {"cartId":"27", "cartName":"聚美优品"} ]
      * @apiSuccess (系统级返回字段) {String} statusCode HttpStatus（eg:200:"OK"）
      * @apiSuccess (系统级返回字段) {byte[]} byte 导出的文件流
      * @apiExample  业务说明
@@ -813,7 +828,7 @@ public class CmsTaskStockController extends CmsController {
         byte[] data = cmsTaskStockService.getExcelFileStockInfo(searchParam);
         // 返回
 //        return genResponseEntityFromBytes("fileName", new byte[]{});
-        return genResponseEntityFromBytes("库存隔离_" + DateTimeUtil.getLocalTime(getUserTimeZone())+".xlsx", data);
+        return genResponseEntityFromBytes("StockInfo_" + DateTimeUtil.getLocalTime(getUserTimeZone())+".xlsx", data);
     }
 
     /**
