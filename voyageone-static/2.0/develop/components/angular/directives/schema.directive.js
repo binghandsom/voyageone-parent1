@@ -295,7 +295,7 @@
                         }
 
                         /**
-                         * 当多选 field 的值变更时, 同步更新 values 数组
+                         * 当多选(checkbox/multi_check) field 的值变更时, 同步更新 values 数组
                          * @param option 当前变更的目标选项
                          */
                         scope.changed = function (option) {
@@ -500,15 +500,21 @@
                         }
 
                         /**
-                         * 处理requiredRule
+                         * 检查必填属性, 并添加必填验证标识
                          * @param requiredRule
                          * @private
                          */
                         function _requiredRule(requiredRule) {
-                            if ("true" == requiredRule.value) {
-                                schema.isRequired(true);
-                                schema.html("required");
-                            }
+                            // 如果是普通类型, 就使用默认的 required 标识
+                            // 如果是多选框(checkbox),需要使用定制的 ng-required
+                            if (requiredRule.value !== 'true')
+                                return;
+
+                            schema.isRequired(true);
+
+                            schema.html(field.type === fieldTypes.MULTI_CHECK
+                                ? "ng-required=\"!$data.values.length\""
+                                : "required");
                         }
 
                         /**
