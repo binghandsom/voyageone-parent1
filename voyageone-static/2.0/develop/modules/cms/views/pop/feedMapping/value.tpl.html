@@ -7,10 +7,9 @@
     <div class="p-l-r m-t">
         <form role="form" class="form-horizontal m-r-sm m-l-sm">
             <div class="form-group">
-                <label class="col-sm-3 m-l-sm">
-                    <input type="radio" ng-model="ctrl.mappingSetting.type" ng-value="'propFeed'"/>
-                    <span>&nbsp;{{'TXT_FEED_ATTRIBUTE' | translate}}</span>
-                </label>
+                <div class="col-sm-3 m-l-sm">
+                    <label class="control-label"><input type="radio" ng-model="ctrl.mappingSetting.type" ng-value="'propFeed'"/>&nbsp;&nbsp;<span>{{::'TXT_FEED_ATTRIBUTE'|translate}}</span></label>
+                </div>
                 <div class="col-sm-6" ng-if="ctrl.mappingSetting.type === 'propFeed'">
                     <select search-contains="true" chosen class="form-control" title="Feed Attributes"
                             ng-options="k as k for (k,v) in ctrl.feedAttributes"
@@ -18,10 +17,9 @@
                 </div>
             </div>
             <div class="form-group">
-                <label class="col-sm-3 m-l-sm">
-                    <input type="radio" ng-model="ctrl.mappingSetting.type" ng-value="'text'"/>
-                    <span>&nbsp;{{'TXT_TEXT' | translate}}</span>
-                </label>
+                <div class="col-sm-3 m-l-sm">
+                    <label class="control-label"><input type="radio" ng-model="ctrl.mappingSetting.type" ng-value="'text'"/>&nbsp;&nbsp;<span>{{::'TXT_TEXT'|translate}}</span></label>
+                </div>
                 <div class="col-sm-6" ng-show="ctrl.mappingSetting.type === 'text'">
                     <schema-item data="ctrl.field"></schema-item>
                 </div>

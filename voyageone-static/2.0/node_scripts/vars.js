@@ -24,7 +24,7 @@ var build = {
       version: versions.angularCom
     },
     native: {
-      src: 'develop/components/js/*.js',
+      src: 'develop/components/js/*/*.js',
       dist: 'develop/components/dist',
       concat: 'voyageone.com.js',
       map: 'voyageone.com.js.map',
@@ -32,11 +32,11 @@ var build = {
     },
     appCss: {
       src: [
-        'develop/static/css/twitter-bootstrap/local/bootstrap.css',
-        'develop/static/css/assets/animate.css',
-        'develop/static/css/assets/font-awesome.css',
-        'develop/static/css/assets/simple-line-icons.css',
-        'develop/static/css/font.css',
+        'develop/static/css/twitter-bootstrap/local/css/bootstrap.css',
+        'develop/static/css/animate.css',
+        'develop/static/css/font-awesome/css/font-awesome.css',
+        'develop/static/css/simple-line-icons/css/simple-line-icons.css',
+        'develop/static/css/glyphicons-regular/css/font.css',
         'develop/static/css/app.css'
       ],
       dist: 'develop/static/css/',
@@ -45,7 +45,7 @@ var build = {
     loginCss: {
       src: [
         'develop/static/css/login.css',
-        'develop/static/css/assets/font-awesome.css'
+        'develop/static/css/font-awesome/css/font-awesome.css'
       ],
       dist: 'develop/static/css/',
       concat: 'login.min.css'
@@ -57,7 +57,7 @@ var publish = {
   static: {
     path: 'publish/static/' + versions.statics,
     fonts: {
-      src: 'develop/static/fonts/**',
+      src: 'develop/static/**/fonts/*',
       dist: 'publish/static/' + versions.statics + '/fonts'
     },
     img: {

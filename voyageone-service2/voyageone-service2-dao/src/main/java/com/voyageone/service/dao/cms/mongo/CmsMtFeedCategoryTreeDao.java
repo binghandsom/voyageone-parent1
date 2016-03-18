@@ -74,7 +74,7 @@ public class CmsMtFeedCategoryTreeDao extends BaseMongoDao<CmsMtFeedCategoryTree
         for (int i = 0; i < count; i++)
             builder.append(".child");
 
-        String query = String.format("{'channelId':'%s', 'categoryTree%s':{$elemMatch:{'path': '%s', 'isChild': 1}}}",
+        String query = String.format("{\"channelId\":\"%s\", \"categoryTree%s\":{$elemMatch:{\"path\": \"%s\", \"isChild\": 1}}}",
                 channelId, builder, topCategoryPath);
 
         JomgoQuery jomgoQuery = new JomgoQuery();

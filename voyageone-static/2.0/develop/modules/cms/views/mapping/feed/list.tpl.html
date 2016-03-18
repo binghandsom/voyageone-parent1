@@ -56,7 +56,7 @@
                         <td class="mfb-xt text-center">{{::$index + 1}}</td>
                         <td class="text-left">
                             <span class="badge {{::feedCategory.classes.background}}">
-                                <span>{{::feedCategory.level}}</span>&nbsp;<span translate="TXT_SUB_LEVEL"></span>
+                                <span>{{::feedCategory.level}}</span>&nbsp;<span>{{::'TXT_SUB_LEVEL'|translate}}</span>
                                 <i class="fa {{::feedCategory.classes.icon}}"></i>
                             </span>
                         </td>
@@ -66,22 +66,22 @@
                             <div class="btn-group" ng-controller="popupCtrl">
                                 <button ng-click="$ctrl.openCategoryMapping(feedCategory.model, popupNewCategory)"
                                         class="btn btn-default btn-xs">
-                                    <i class="glyphicon glyphicon-link"></i>&nbsp;<span>{{'BTN_MAPPING_CATEGORY' | translate}}</span>
+                                    <i class="glyphicon glyphicon-link"></i>&nbsp;<span>{{::'BTN_MAPPING_CATEGORY'|translate}}</span>
                                 </button>
                                 <button class="btn btn-default btn-xs" ng-click="$ctrl.extendsMapping(feedCategory.model)">
-                                    <i class="fa fa-arrow-circle-up"></i>&nbsp;<span>{{'BTN_FORWARD' | translate}}</span>
+                                    <i class="fa fa-arrow-circle-up"></i>&nbsp;<span>{{::'BTN_FORWARD'|translate}}</span>
                                 </button>
                             </div>
                         </td>
                         <td>
                             <a ng-href="#/mapping/feed/{{::feedCategory.model.path}}/0" target="_blank" ng-if="!!feedCategory.model.attribute && !!feedCategory.mainMapping">
-                                <i class="glyphicon glyphicon-link"></i>&nbsp;<span>{{'BTN_MAPPING_ATTRIBUTE_COMMON_MAIN' | translate}}</span>
-                            </a>&nbsp;<span class="h4" ng-show="feedCategory.mainMapping.matchOver"><i class="fa fa-check-circle text-vo"></i></span>
+                                <i class="glyphicon glyphicon-link"></i>&nbsp;<span>{{::'BTN_MAPPING_ATTRIBUTE_COMMON_MAIN'|translate}}</span>
+                            </a>&nbsp;<span class="h4" ng-show="!!feedCategory.model.attribute && feedCategory.mainMapping.matchOver"><i class="fa fa-check-circle text-vo"></i></span>
                         </td>
                         <td class=" text-center">
                             <a ng-href="#/mapping/feed/{{::feedCategory.model.path}}/1" target="_blank" ng-if="!!feedCategory.model.attribute && !!feedCategory.mapping">
-                                <i class="glyphicon glyphicon-link"></i>&nbsp;<span>{{'BTN_MAPPING_ATTRIBUTE' | translate}}</span>
-                            </a>&nbsp;<span class="h4" ng-show="feedCategory.mapping.matchOver"><i class="fa fa-check-circle text-vo"></i></span>
+                                <i class="glyphicon glyphicon-link"></i>&nbsp;<span>{{::'BTN_MAPPING_ATTRIBUTE'|translate}}</span>
+                            </a>&nbsp;<span class="h4" ng-show="!!feedCategory.model.attribute && feedCategory.mapping.matchOver"><i class="fa fa-check-circle text-vo"></i></span>
                         </td>
                       </tr>
                     </tbody>
