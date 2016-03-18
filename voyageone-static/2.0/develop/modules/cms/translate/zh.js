@@ -297,6 +297,10 @@ define(function(){
         "TXT_MSG_FIELD_VAL_INVALID": "属性(字段)的值无效, 请根据提示修改.",
         "TXT_MSG_INPUT_WORD_LENLOWLIMIT": "请至少输入",
         "TXT_MSG_INPUT_WORD_LENLIMIT": "已经达到最大长度字符数限制",
+        "TXT_MSG_IMPORT_MODE": "导入方式",
+        "TXT_MSG_IMPORT_UPDATE": "变更方式",
+        "TXT_MSG_IMPORT_ADD": "增量方式",
+        "TXT_MSG_IMPORT_DELETE_UPDATE": "重置方式",
 
 
         "BTN_CREATE_TASK": "新建任务",

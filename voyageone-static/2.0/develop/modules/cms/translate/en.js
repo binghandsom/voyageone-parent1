@@ -295,6 +295,10 @@ define(function() {
         "TXT_MSG_FIELD_VAL_INVALID": "Invalid field (Text) `s value, please follow the prompts to modify.",
         "TXT_MSG_INPUT_WORD_LENLOWLIMIT": "Please enter at least ",
         "TXT_MSG_INPUT_WORD_LENLIMIT": "Maximum length limit of character",
+        "TXT_MSG_IMPORT_MODE": "Import Mode",
+        "TXT_MSG_IMPORT_UPDATE": "Update Mode",
+        "TXT_MSG_IMPORT_ADD": "Add Mode",
+        "TXT_MSG_IMPORT_DELETE_UPDATE": "Reset Mode",
 
 
         "BTN_CREATE_TASK": "New Task",

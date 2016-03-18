@@ -8,6 +8,7 @@ import com.voyageone.common.configs.TypeChannel;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.FileUtils;
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.CmsConstants;
@@ -927,6 +928,10 @@ public class CmsTaskStockService extends BaseAppService {
         // 属性
         for (Map property : propertyList) {
             FileUtils.cell(row, index++, cellStyleProperty).setCellValue((String) property.get("name"));
+
+            Comment comment = drawing.createCellComment(helper.createClientAnchor());
+            comment.setString(helper.createRichTextString((String) property.get("property")));
+            row.getCell(index - 1).setCellComment(comment);
         }
 
         // 可用库存
@@ -1017,6 +1022,15 @@ public class CmsTaskStockService extends BaseAppService {
         }
     }
 
+    /**
+     * excel 导入
+     *
+     * @param param 客户端参数
+     */
+    public void importExcelFileStockInfo(Map param) {
+        List<Map> platformInfoList = JacksonUtil.json2Bean((String) param.get("platformList"), List.class);
+
+    }
     /**
      * 库存隔离数据输入Check
      *
