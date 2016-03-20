@@ -1,4 +1,4 @@
-(function() {
+(function () {
     /**
      * 同意管理模板代码, 例如 directive 中 schema 使用的模板
      * 发布时, 该文件内容会被替换
@@ -6,16 +6,22 @@
     function Template(key) {
         this.url = "/components/angular/factories/templates/" + key.replace(".", "/") + ".html";
     }
+
     Template.prototype = {
-        getHtml: function() {
+        getHtml: function () {
             var html = this.$cache.get(this.url);
-            if (html) return this.$q(function(resolve) {
+            if ((typeof html) === 'string') return this.$q(function (resolve) {
                 resolve(html);
+            });
+            // html 不是字符串的话, 则为 promise.<response>
+            // 所以此处特殊处理
+            if (html) return html.then(function (response) {
+                return response.data;
             });
             return this.$req(this.url);
         }
     };
-    angular.module("voyageone.angular.factories.templates", []).run(function($templateCache, $templateRequest, $q) {
+    angular.module("voyageone.angular.factories.templates", []).run(function ($templateCache, $templateRequest, $q) {
         Template.prototype.$cache = $templateCache;
         Template.prototype.$req = $templateRequest;
         Template.prototype.$q = $q;
