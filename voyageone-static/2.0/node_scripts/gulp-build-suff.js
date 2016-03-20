@@ -37,7 +37,7 @@ module.exports = function (path) {
 
         var moduleName = match[1];
         // 去除两边的引号
-        moduleName = moduleName.replace(/\'|"'/g, '');
+        moduleName = moduleName.replace(/'|"/g, '');
 
         // 简单检查格式
         if (moduleName.indexOf(pref) !== 0) {
