@@ -33,7 +33,7 @@ function fixCommonRef() {
     );
 }
 
-// publish-static
+// 图片, 字体, 样式, 资源发布
 gulp.task(tasks.publish.statics, function () {
 
     gulp.src(publish.static.img.src)
@@ -58,6 +58,7 @@ gulp.task(tasks.publish.statics, function () {
         .pipe(gulp.dest(publish.release.static.css));
 });
 
+// 压缩打包 schema directive 需要使用的 HTML 模板
 gulp.task('packaging-templates', function () {
     return gulp.src("develop/components/angular/factories/templates/*/*.html")
         .pipe(debug())
@@ -75,7 +76,7 @@ gulp.task('packaging-templates', function () {
         .pipe(gulp.dest("publish/temp/factories/"));
 });
 
-// release voyageone.angular.com.js
+// 发布未压缩版本的 angular 工具包
 gulp.task(tasks.publish.angular, ['packaging-templates', tasks.build.angular_suff], function () {
 
     var parentDeclare = fs.readFileSync((build.common.angular.dist + '/' + build.common.angular.footerFile), encode);
@@ -85,7 +86,6 @@ gulp.task(tasks.publish.angular, ['packaging-templates', tasks.build.angular_suf
             "publish/temp/factories/templates.html.js"
         ])
         .pipe(debug())
-        .pipe(sourceMaps.init())
         // 追加依赖注入语法
         .pipe(ngAnnotate())
         // 合并到一个文件
@@ -95,10 +95,11 @@ gulp.task(tasks.publish.angular, ['packaging-templates', tasks.build.angular_suf
         // 包裹整个内容
         .pipe(header(definePrefix))
         .pipe(footer(defineSuffix))
-        // 此处不进行压缩,只对合并后的内容进行格式化
-        .pipe(uglify())
-        .pipe(rename({suffix: '.min'}))
-        .pipe(sourceMaps.write('./'))
+        .pipe(uglify({
+            mangle: false,
+            compress: false,
+            output: {beautify: true}
+        }))
         .pipe(gulp.dest(publish.components.angular.dist))
         .pipe(gulp.dest(publish.release.components));
 });

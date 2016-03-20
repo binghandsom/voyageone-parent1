@@ -6,8 +6,6 @@ var actionsDesc = require('./gulp-build-actions');
 var build = require('./vars').build;
 var tasks = require('./vars').tasks;
 
-var encode = 'utf-8';
-
 gulp.task(tasks.build.actions, function() {
   return gulp.src(build.actions.src)
     .pipe(debug())
