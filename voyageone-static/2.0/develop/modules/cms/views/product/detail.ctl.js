@@ -89,9 +89,10 @@ define([
             updateProductDetail: function () {
                 var self = this;
 
+                // TODO 目前验证有问题,暂时不check
                 // 尝试检查商品的 field 验证
-                if (!validSchema(self.productDetails))
-                    return self.alert('TXT_MSG_UPDATE_FAIL');
+                //if (!validSchema(self.productDetails))
+                //    return self.alert('TXT_MSG_UPDATE_FAIL');
 
                 // 推算产品状态
                 // 如果该产品以前不是approve,这次变成approve的
