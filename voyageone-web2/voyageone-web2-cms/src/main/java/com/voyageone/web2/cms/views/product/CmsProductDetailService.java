@@ -30,6 +30,7 @@ import com.voyageone.service.model.cms.mongo.CmsMtCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCommonSchemaModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.product.*;
+import com.voyageone.service.model.wms.WmsBtInventoryCenterLogicModel;
 import com.voyageone.web2.cms.CmsConstants;
 import com.voyageone.web2.cms.bean.CmsProductInfoBean;
 import com.voyageone.web2.cms.bean.CustomAttributesBean;
@@ -196,19 +197,23 @@ public class CmsProductDetailService {
      * @param prodId
      * @return
      */
-    public int getProdSkuCnt(String channelId, Long prodId) {
+    public List<Map<String, Object>> getProdSkuCnt(String channelId, Long prodId) {
         CmsProductInfoBean productInfo = new CmsProductInfoBean();
         // 获取product data.
         CmsBtProductModel productValueModel = getProductModel(channelId, prodId);
 
         // 取得Sku的库存
         Map<String, Integer> skuInventoryList = productService.getProductSkuQty(channelId, productValueModel.getFields().getCode());
-        int qtyValue = 0;
-        for (int skuInv : skuInventoryList.values()) {
-            qtyValue += skuInv;
+        List<Map<String, Object>> inventoryList = new ArrayList<>(skuInventoryList.size());
+
+        for (Map.Entry<String, Integer> skuInv : skuInventoryList.entrySet()) {
+            Map<String, Object> result = new HashMap<>();
+            result.put("skucode", skuInv.getKey());
+            result.put("skyqty", skuInv.getValue());
+            inventoryList.add(result);
         }
 
-        return qtyValue;
+        return inventoryList;
     }
 
     /**

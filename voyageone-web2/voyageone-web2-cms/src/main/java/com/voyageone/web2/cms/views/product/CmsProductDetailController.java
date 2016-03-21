@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -32,8 +33,8 @@ public class CmsProductDetailController extends CmsController{
         Map<String,Object> categoryInfo = new HashMap<>();
 
         CmsProductInfoBean productInfo = productPropsEditService.getProductInfo(channelId,productId,getLang());
-        int qtyValue = productPropsEditService.getProdSkuCnt(channelId, productId);
-        categoryInfo.put("qtyValue", qtyValue);
+        List<Map<String, Object>> inventoryList = productPropsEditService.getProdSkuCnt(channelId, productId);
+        categoryInfo.put("inventoryList", inventoryList);
         categoryInfo.put("productInfo", productInfo);
 
         return success(categoryInfo);

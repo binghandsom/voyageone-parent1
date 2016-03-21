@@ -38,7 +38,7 @@ define([
                 self.productDetailService.getProductInfo(data)
                     .then(function (res) {
                         self.productDetails = res.data.productInfo;
-                        self.qtyValue = res.data.qtyValue;
+                        self.inventoryList = res.data.inventoryList;
                         self.productDetailsCopy = angular.copy(self.productDetails);
                         self.showInfoFlag = self.productDetails.productDataIsReady
 
