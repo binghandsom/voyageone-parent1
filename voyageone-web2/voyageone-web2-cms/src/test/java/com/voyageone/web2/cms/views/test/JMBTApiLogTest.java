@@ -49,7 +49,7 @@ public class JMBTApiLogTest {
     {
         //ApplicationContext context = new ClassPathXmlApplicationContext("spring-test.xml");
        // JmBtApiLogService service = (JmBtApiLogService)context.getBean("jmBtApiLogService");
-        JmBtApiLogModel  jmBtApiLog= service.get(2);
+        JmBtApiLogModel  jmBtApiLog= service.get(1);
         jmBtApiLog.setApiType(jmBtApiLog.getApiType()+1);
         jmBtApiLog.setErrorCode(jmBtApiLog.getErrorCode()+1);
         jmBtApiLog.setErrorMsg(jmBtApiLog.getErrorMsg()+1);

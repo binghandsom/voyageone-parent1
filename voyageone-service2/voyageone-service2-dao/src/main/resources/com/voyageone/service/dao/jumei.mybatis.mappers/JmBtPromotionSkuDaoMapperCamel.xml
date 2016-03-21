@@ -1,31 +1,32 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.voyageone.service.dao.jumei.JmBtSkuJuMeiDao">
-    <resultMap id="ResultMap" type="JmBtSku">
+<mapper namespace="com.voyageone.service.dao.jumei.JmBtPromotionSkuJuMeiDao">
+    <resultMap id="ResultMap" type="com.voyageone.service.model.jumei.JmBtPromotionSkuModel">
         
     </resultMap>
 	
     <select id="getList" resultMap="ResultMap">
 
-        select id,deal_id,product_code,jm_product_id,sku,jm_spu_no,jm_sku_no,upc,cms_size,jm_size,synch_state,creater,created,modified,modifier        from jumei2.jm_bt_sku
+        select id,promotion_id,product_code,jm_sku_no,sku,upc,jm_size,market_price,discount,deal_price,error_msg,synch_state,creater,created,modified,modifier        from jumei2.jm_bt_promotion_sku
     </select>
     <select id="get" resultMap="ResultMap">
-        select * from jumei2.jm_bt_sku where id=#{id}
+        select * from jumei2.jm_bt_promotion_sku where id=#{id}
     </select>
 
      <update id="update">
-        update jumei2.jm_bt_sku
+        update jumei2.jm_bt_promotion_sku
         set
 
-            deal_id=#{dealId}
+            promotion_id=#{promotionId}
             ,product_code=#{productCode}
-            ,jm_product_id=#{jmProductId}
-            ,sku=#{sku}
-            ,jm_spu_no=#{jmSpuNo}
             ,jm_sku_no=#{jmSkuNo}
+            ,sku=#{sku}
             ,upc=#{upc}
-            ,cms_size=#{cmsSize}
             ,jm_size=#{jmSize}
+            ,market_price=#{marketPrice}
+            ,discount=#{discount}
+            ,deal_price=#{dealPrice}
+            ,error_msg=#{errorMsg}
             ,synch_state=#{synchState}
             ,modified=#{modified}
             ,modifier=#{modifier}
@@ -33,23 +34,24 @@
    </update>
 
     <delete id="delete">
-        delete from  jumei2.jm_bt_sku
+        delete from  jumei2.jm_bt_promotion_sku
         where id=#{id}
 
     </delete>
 
     <insert id="create">
-        INSERT INTO jumei2.jm_bt_sku
+        INSERT INTO jumei2.jm_bt_promotion_sku
         (
-              deal_id,
+              promotion_id,
               product_code,
-              jm_product_id,
-              sku,
-              jm_spu_no,
               jm_sku_no,
+              sku,
               upc,
-              cms_size,
               jm_size,
+              market_price,
+              discount,
+              deal_price,
+              error_msg,
               synch_state,
               creater,
               created,
@@ -57,15 +59,16 @@
               modifier
         )
         VALUES(
-              #{dealId},
+              #{promotionId},
               #{productCode},
-              #{jmProductId},
-              #{sku},
-              #{jmSpuNo},
               #{jmSkuNo},
+              #{sku},
               #{upc},
-              #{cmsSize},
               #{jmSize},
+              #{marketPrice},
+              #{discount},
+              #{dealPrice},
+              #{errorMsg},
               #{synchState},
               #{creater},
               #{created},
