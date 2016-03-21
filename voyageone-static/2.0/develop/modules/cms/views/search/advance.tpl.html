@@ -49,11 +49,11 @@
 								<div class="input-group col-sm-4"><input type="text" class="form-control" ng-model="vm.searchInfo.priceEnd" ng-pattern="/^(\d+)(\.[0-9]{0,2})?$/"></div>
 							</div>
 						</div><!-- .form-group -->
-						<div style="display:inline;">
-							<div style="float:left" >
-								<div class="form-group" ng-repeat="option in list">
-									<label class="col-sm-3 control-label" translate="TXT_CUST_QUERY_ATTR"></label>
-									<div class="col-sm-8 form-inline">
+						<div style="display:inline;width:auto">
+							<div style="display:inline" >
+								<div ng-repeat="option in list" style="display:inline">
+									<label class="control-label" style="padding-right:5px;width:130px" translate="TXT_CUST_QUERY_ATTR"></label>
+									<div class="form-inline" style="display:inline">
 										<select class="form-control" ng-model="option.inputOpts"
 												ng-options="custAtts.configCode as custAtts.configValue1 for custAtts in vm.masterData.custAttsList">
 											<option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
@@ -63,12 +63,12 @@
 											<!--<option><=</option>-->
 											<!--<option>>=</option>-->
 										<!--</select>-->
-										<div class="input-group col-sm-5"><input type="text" class="form-control" ng-model="option.inputVal"></div>
+										<div class="input-group"><input type="text" class="form-control" ng-model="option.inputVal"></div>
 									</div>
 									<button id="delCustDiv" class="btn btn-danger btn-xs" ng-click="del($index)"><i class="fa fa-trash-o"></i></button>
 								</div>
 							</div>
-							<div style="float:right">
+							<div style="display:inline">
 								<button id="addCustDiv" class="btn btn-success" style="margin-left:3px" ng-click="add()"><i class="fa fa-plus"></i></button>
 							</div>
 						</div>
@@ -454,10 +454,10 @@
 							</tbody>
 						</table>
 					</div>
-					<div class="col-sm-12 m-t-lg m-b-lg">
-						<vpagination config="vm.productPageOption"></vpagination>
-					</div>
 				</div><!-- .table-responsive -->
+				<div class="col-sm-12 m-t-lg m-b-lg">
+					<vpagination config="vm.productPageOption"></vpagination>
+				</div>
 			</tab>
 		</tabset><!-- tabset -->
 	</div><!-- tabs ng-controller -->
