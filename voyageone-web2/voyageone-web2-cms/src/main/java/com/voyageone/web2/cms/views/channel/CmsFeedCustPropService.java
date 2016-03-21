@@ -13,8 +13,6 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -60,9 +58,9 @@ public class CmsFeedCustPropService extends BaseAppService {
                 if (!"0".equals(catPath)) {
                     List<Map<String, Object>> initAttrList = null;
                     // 查询指定类目(从mongo来的原始数据)
-                    List<Object> catgAttrList = this.selectCatAttr(userInfo.getSelChannelId());
-                    if (catgAttrList != null && catgAttrList.size() > 0) {
-                        List<Map> childList = (List<Map>) ((Map) catgAttrList.get(0)).get("categoryTree");
+                    CmsMtFeedCategoryTreeModelx catgAttrList = this.selectCatAttr(userInfo.getSelChannelId(), catPath);
+                    if (catgAttrList != null && catgAttrList.getCategoryTree().size() > 0) {
+                        List<CmsMtFeedCategoryModel> childList = catgAttrList.getCategoryTree();
                         if (childList != null && childList.size() > 0) {
                             attrMap = null;
                             getSubCatTree(childList, catPath);
@@ -180,6 +178,20 @@ public class CmsFeedCustPropService extends BaseAppService {
         this.saveAttr(addList, updList, catPath, userInfo);
         return result;
     }
+
+//    private CmsMtFeedCategoryModel findChildCategoryByCid (List<CmsMtFeedCategoryModel> childList, String cid) {
+//        CmsMtFeedCategoryModel result = new CmsMtFeedCategoryModel();
+//        for(CmsMtFeedCategoryModel childCategory : childList) {
+//            if (childCategory.getIsChild() == 0) {
+//                result = findChildCategoryByCid(childCategory.getChild(), cid);
+//            } else if (childCategory.getIsChild() == 1 && cid.equals(childCategory.getCid())) {
+//                result = childCategory;
+//            } else {
+//                continue;
+//            }
+//        }
+//        return result;
+//    }
 
     // 取得类目路径数据
     public List<CmsMtCategoryTreeModel> getTopCategories(UserSessionBean user) {
@@ -342,7 +354,7 @@ public class CmsFeedCustPropService extends BaseAppService {
     }
 
     // 根据类目路径查询自定义已翻译属性信息
-    private List<Map<String, Object>> selectAllAttr(String channelId, String catPath) {
+    public List<Map<String, Object>> selectAllAttr(String channelId, String catPath) {
         Map<String, Object> params = new HashMap<String, Object>(2);
         params.put("channelId", channelId);
         params.put("feedCatPath", catPath);
@@ -402,28 +414,25 @@ public class CmsFeedCustPropService extends BaseAppService {
     }
 
     // 根据类目路径查询自定义未翻译属性信息(不包含共通属性)
-    private List<Object> selectCatAttr(String channelId) {
-        Query query = new Query();
-        Criteria criteria = Criteria.where("channelId").is(channelId);
-        query.addCriteria(criteria);
-        return mongoTemplate.find(query, Object.class, "cms_mt_feed_category_tree");
+    private CmsMtFeedCategoryTreeModelx selectCatAttr(String channelId, String categoryId) {
+//        Query query = new Query();
+//        Criteria criteria = Criteria.where("channelId").is(channelId);
+//        query.addCriteria(criteria);
+
+        return cmsMtFeedCategoryTreeDao.findFeedCategoryx(channelId);
+//        return mongoTemplate.find(query, Object.class, "cms_mt_feed_category_tree");
         //TODO-- 这里只能使用Object对象来影射，不能使用Map.class，可能是spring mongoTemplate的问题
     }
 
-    private void getSubCatTree(List<Map> childList, String catPath) {
-        for (Map catItem : childList) {
-            String isChild = null;
-            Object chdFlg = catItem.get("isChild");
-            if (chdFlg != null) {
-                isChild = chdFlg.toString();
-            }
-            if ("1".equals(isChild)) {
-                if (catPath.equals(catItem.get("path"))) {
-                    attrMap = (Map) catItem.get("attribute");
+    private void getSubCatTree(List<CmsMtFeedCategoryModel> childList, String catPath) {
+        for (CmsMtFeedCategoryModel catItem : childList) {
+            if (catItem.getIsChild() == 1) {
+                if (catPath.equals(catItem.getCid())) {
+                    attrMap = catItem.getAttribute();
+                    break;
                 }
             } else {
-                List<Map> subList = (List<Map>) catItem.get("child");
-                getSubCatTree(subList, catPath);
+                getSubCatTree(catItem.getChild(), catPath);
             }
         }
     }

@@ -8,20 +8,22 @@
     <!-- DAO相关配置 -->
     <import resource="classpath*:datasource-cms2-config.xml" />
     <import resource="classpath*:datasource-config-mongo.xml" />
-    <!-- SDK Client Config -->
+    <!--&lt;!&ndash; SDK Client Config &ndash;&gt;-->
     <import resource="classpath*:sdk-client-config.xml" />
-    <!-- MQ Config -->
+    <!--&lt;!&ndash; MQ Config &ndash;&gt;-->
     <import resource="classpath*:mq-config.xml" />
-    <!-- Redis Config -->
-    <import resource="classpath*:redis-config.xml" />
+    <!--&lt;!&ndash; Redis Config &ndash;&gt;-->
+    <!--<import resource="classpath*:redis-config.xml" />-->
+<!--
 
-    <!-- online env -->
-    <!--<import resource="file:/usr/web/spring-config/datasource-cms2-config.xml" />-->
-    <!--<import resource="file:/usr/web/spring-config/datasource-config-mongo.xml" />-->
-    <!-- SDK Client Config -->
-    <!--<import resource="file:/usr/web/spring-config/sdk-client-config.xml" />-->
-    <!-- MQ Config -->
-    <!--<import resource="file:/usr/web/spring-config/mq-config.xml" />-->
+    &lt;!&ndash; online env &ndash;&gt;
+    <import resource="file:/usr/web/spring-config/datasource-cms2-config.xml" />
+    <import resource="file:/usr/web/spring-config/datasource-config-mongo.xml" />
+    &lt;!&ndash; SDK Client Config &ndash;&gt;
+    <import resource="file:/usr/web/spring-config/sdk-client-config.xml" />
+    &lt;!&ndash; MQ Config &ndash;&gt;
+    <import resource="file:/usr/web/spring-config/mq-config.xml" />
+-->
 
 
 </beans>
