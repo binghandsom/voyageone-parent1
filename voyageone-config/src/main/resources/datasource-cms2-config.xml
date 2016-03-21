@@ -44,6 +44,7 @@
     <bean id="sqlSessionFactoryMasterCamel"
           class="org.mybatis.spring.SqlSessionFactoryBean"
           p:dataSource-ref="dataSourceMaster"
+          p:typeAliasesPackage="com.voyageone.service.model.jumei"
           p:configLocation="classpath:com/voyageone/mybatis/myBatisConfigCamel.xml"
           p:mapperLocations="classpath*:com/voyageone/**/*MapperCamel.xml"/>
 
@@ -54,7 +55,7 @@
     <bean id="updateTemplateDaoScan"  class="org.mybatis.spring.mapper.MapperScannerConfigurer">
         <property name="sqlSessionTemplateBeanName" value="updateTemplateCamel"/>
         <!--property name="sqlSessionFactoryBeanName" value="sqlSessionFactoryAdmin"/ -->
-        <property name="basePackage" value=" com.voyageone.service.dao.jumei"/>
+        <property name="basePackage" value=" com.voyageone.service.dao.jumei,com.voyageone.service.daoext.jumei"/>
         <property name="annotationClass" value="org.springframework.stereotype.Repository"/>
     </bean>
 
@@ -107,6 +108,7 @@
     <!--<bean id="sqlSessionFactorySlaveCamel"-->
           <!--class="org.mybatis.spring.SqlSessionFactoryBean"-->
           <!--p:dataSource-ref="dataSourceSlave"-->
+    <!--p:typeAliasesPackage="com.voyagenne.jumeimodel"-->
           <!--p:configLocation="classpath:com/voyageone/mybatis/myBatisConfigCamel.xml"-->
           <!--p:mapperLocations="classpath*:com/voyageone/**/*MapperCamel.xml"/>-->
 

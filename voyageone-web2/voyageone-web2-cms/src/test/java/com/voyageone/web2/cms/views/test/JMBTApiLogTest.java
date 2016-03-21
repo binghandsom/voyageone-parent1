@@ -16,47 +16,52 @@ import java.util.List;
 public class JMBTApiLogTest {
     @Autowired
     JmBtApiLogService service;
+
     @Test
-    public  void  testGet()
-    {
-       // ApplicationContext context = new ClassPathXmlApplicationContext("spring-test.xml");
-       // JmBtApiLogService service = (JmBtApiLogService)context.getBean("jmBtApiLogService");
-       JmBtApiLogModel jmBtApiLog= service.get(1);
+    public void testGet() {
+        // ApplicationContext context = new ClassPathXmlApplicationContext("spring-test.xml");
+        // JmBtApiLogService service = (JmBtApiLogService)context.getBean("jmBtApiLogService");
+        JmBtApiLogModel jmBtApiLog = service.get(1);
     }
+
     @Test
-    public  void  testGetList()
-    {
+    public void testGetList() {
         //ApplicationContext context = new ClassPathXmlApplicationContext("spring-test.xml");
         //JmBtApiLogService service = (JmBtApiLogService)context.getBean("jmBtApiLogService");
-        List<JmBtApiLogModel> list= service.getList();
+        List<JmBtApiLogModel> list = service.getList();
     }
+
     @Test
-    public  void  testUpdate()
-    {
-       // ApplicationContext context = new ClassPathXmlApplicationContext("spring-test.xml");
-       // JmBtApiLogService service = (JmBtApiLogService)context.getBean("jmBtApiLogService");
-        JmBtApiLogModel  jmBtApiLog= service.get(1);
-        jmBtApiLog.setApiType(jmBtApiLog.getApiType()+1);
-        jmBtApiLog.setErrorCode(jmBtApiLog.getErrorCode()+1);
-        jmBtApiLog.setErrorMsg(jmBtApiLog.getErrorMsg()+1);
-        jmBtApiLog.setSourceId(jmBtApiLog.getSourceId()+1);
-        jmBtApiLog.setRemark(jmBtApiLog.getRemark()+1);
+    public void testUpdate() {
+        // ApplicationContext context = new ClassPathXmlApplicationContext("spring-test.xml");
+        // JmBtApiLogService service = (JmBtApiLogService)context.getBean("jmBtApiLogService");
+        JmBtApiLogModel jmBtApiLog = service.get(1);
+        jmBtApiLog.setApiType(jmBtApiLog.getApiType() + 1);
+        jmBtApiLog.setErrorCode(jmBtApiLog.getErrorCode() + 1);
+        jmBtApiLog.setErrorMsg(jmBtApiLog.getErrorMsg() + 1);
+        jmBtApiLog.setSourceId(jmBtApiLog.getSourceId() + 1);
+        jmBtApiLog.setRemark(jmBtApiLog.getRemark() + 1);
         service.update(jmBtApiLog);
-        JmBtApiLogModel jmBtApiLogNew=service.get(1);
+        JmBtApiLogModel jmBtApiLogNew = service.get(1);
     }
+
     @Test
-    public  void  testCreate()
-    {
+    public void testCreate() {
         //ApplicationContext context = new ClassPathXmlApplicationContext("spring-test.xml");
-       // JmBtApiLogService service = (JmBtApiLogService)context.getBean("jmBtApiLogService");
-        JmBtApiLogModel  jmBtApiLog= service.get(1);
-        jmBtApiLog.setApiType(jmBtApiLog.getApiType()+1);
-        jmBtApiLog.setErrorCode(jmBtApiLog.getErrorCode()+1);
-        jmBtApiLog.setErrorMsg(jmBtApiLog.getErrorMsg()+1);
-        jmBtApiLog.setSourceId(jmBtApiLog.getSourceId()+1);
-        jmBtApiLog.setRemark(jmBtApiLog.getRemark()+1);
+        // JmBtApiLogService service = (JmBtApiLogService)context.getBean("jmBtApiLogService");
+        JmBtApiLogModel jmBtApiLog = service.get(1);
+        jmBtApiLog.setApiType(jmBtApiLog.getApiType() + 1);
+        jmBtApiLog.setErrorCode(jmBtApiLog.getErrorCode() + 1);
+        jmBtApiLog.setErrorMsg(jmBtApiLog.getErrorMsg() + 1);
+        jmBtApiLog.setSourceId(jmBtApiLog.getSourceId() + 1);
+        jmBtApiLog.setRemark(jmBtApiLog.getRemark() + 1);
         jmBtApiLog.setId(0);
         service.create(jmBtApiLog);
-        JmBtApiLogModel jmBtApiLogNew=service.get(3);
+        JmBtApiLogModel jmBtApiLogNew = service.get(3);
+    }
+
+    @Test
+    public void testGetPage() {
+        List<JmBtApiLogModel> list = service.getPage();
     }
 }
