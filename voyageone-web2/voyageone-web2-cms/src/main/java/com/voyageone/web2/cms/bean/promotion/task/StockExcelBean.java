@@ -111,17 +111,17 @@ public class StockExcelBean {
     }
 
     public String getProperty(String propertyNa) {
-        Property property = Property.valueOf(propertyNa);
-        if (Property.property1.equals(property)) {
+
+        if (Property.property1.name().equals(propertyNa)) {
             return this.getProperty1();
         }
-        if (Property.property2.equals(property)) {
+        if (Property.property2.name().equals(propertyNa)) {
             return this.getProperty2();
         }
-        if (Property.property3.equals(property)) {
+        if (Property.property3.name().equals(propertyNa)) {
             return this.getProperty3();
         }
-        if (Property.property4.equals(property)) {
+        if (Property.property4.name().equals(propertyNa)) {
             return this.getProperty4();
         }
 

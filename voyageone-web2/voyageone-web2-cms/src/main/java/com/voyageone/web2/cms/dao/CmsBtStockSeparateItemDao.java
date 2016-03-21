@@ -53,11 +53,8 @@ public class CmsBtStockSeparateItemDao extends BaseDao {
         return selectList("select_stock_separate_detail_all", param);
     }
 
-    public List<StockExcelBean> selectExcelExportStockInfo(Map<String, Object> param) {
-        return selectList("select_stock_separate_item_excel_export", param);
+    public List<StockExcelBean> selectExcelStockInfo(Map<String, Object> param) {
+        return selectList("select_stock_separate_item_excel_map", param);
     }
 
-    public List<StockExcelBean> selectExcelImportStockInfo(Map<String, Object> param) {
-        return selectList("select_stock_separate_item_excel_import", param);
-    }
 }

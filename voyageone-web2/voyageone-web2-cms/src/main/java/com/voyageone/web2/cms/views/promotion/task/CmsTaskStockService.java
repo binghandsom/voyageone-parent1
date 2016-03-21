@@ -22,8 +22,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.*;
-import java.math.BigDecimal;
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 
 ;
@@ -885,7 +887,7 @@ public class CmsTaskStockService extends BaseAppService {
         String templatePath = Properties.readValue(CmsConstants.Props.STOCK_EXPORT_TEMPLATE);
 
         param.put("whereSql", getWhereSql(param, true));
-        List<StockExcelBean> resultData = cmsBtStockSeparateItemDao.selectExcelExportStockInfo(param);
+        List<StockExcelBean> resultData = cmsBtStockSeparateItemDao.selectExcelStockInfo(param);
 
         $info("准备打开文档 [ %s ]", templatePath);
 
@@ -1059,14 +1061,22 @@ public class CmsTaskStockService extends BaseAppService {
         // 库存隔离数据取得
         logger.info("库存隔离数据取得开始, task_id=" + task_id);
         Map searchParam = new HashMap();
-        searchParam.put("task_id", task_id);
-        List<StockExcelBean> resultData = cmsBtStockSeparateItemDao.selectExcelImportStockInfo(searchParam);
-        Map<String, StockExcelBean> mapSkuInDB = new HashMap<String, StockExcelBean>();
-        resultData.forEach(rowData -> mapSkuInDB.put(rowData.getSku(), rowData));
+        searchParam.put("tableName", "voyageone_cms2.cms_bt_stock_separate_item");
+        searchParam.put("whereSql", " where task_id= '" + task_id +"'");
+        List<StockExcelBean> resultData = cmsBtStockSeparateItemDao.selectExcelStockInfo(searchParam);
+        // Map<sku, Map<cart_id, StockExcelBean>>
+        Map<String, Map<String, StockExcelBean>> mapSkuInDB = new HashMap<String, Map<String, StockExcelBean>>();
+        for (StockExcelBean rowData : resultData) {
+            if (mapSkuInDB.containsKey(rowData.getSku())) {
+                mapSkuInDB.get(rowData.getSku()).put(rowData.getCart_id(), rowData);
+            } else {
+                mapSkuInDB.put(rowData.getSku(), new HashMap<String, StockExcelBean>(){{put(rowData.getCart_id(), rowData);}});
+            }
+        }
         logger.info("库存隔离数据取得结束");
 
         logger.info("导入Excel取得并check的处理开始");
-        readExcel(file, import_mode, paramPropertyList, paramPlatformInfoList, mapSkuInDB);
+        List<StockExcelBean> saveData = readExcel(file, import_mode, paramPropertyList, paramPlatformInfoList, mapSkuInDB);
         logger.info("导入Excel取得并check的处理结束");
 
 
@@ -1084,13 +1094,16 @@ public class CmsTaskStockService extends BaseAppService {
      * @param mapSkuInDB cms_bt_stock_separate_item的数据
      * @return
      */
-    private List<StockExcelBean> readExcel(MultipartFile file, String import_mode, List<Map> paramPropertyList, List<Map> paramPlatformInfoList, Map<String, StockExcelBean> mapSkuInDB) {
-        List<StockExcelBean> importData = new ArrayList<StockExcelBean>();
+    private List<StockExcelBean> readExcel(MultipartFile file, String import_mode, List<Map> paramPropertyList, List<Map> paramPlatformInfoList, Map<String, Map<String, StockExcelBean>> mapSkuInDB) {
+        List<StockExcelBean> saveData = new ArrayList<StockExcelBean>();
 
         Workbook wb;
+        int[] colPlatform = null;
         try {
             wb = WorkbookFactory.create(file.getInputStream());
         } catch (IOException | InvalidFormatException e) {
+            throw new BusinessException("7000005");
+        } catch (Exception e) {
             throw new BusinessException("7000005");
         }
 
@@ -1100,19 +1113,159 @@ public class CmsTaskStockService extends BaseAppService {
             if (isHeader) {
                 // 第一行Title行
                 isHeader = false;
-                checkHeader(row, paramPropertyList, paramPlatformInfoList, mapSkuInDB);
-
+                // Title行check
+                colPlatform = checkHeader(row, paramPropertyList, paramPlatformInfoList);
             } else {
                 // 数据行
-
+                checkRecord(row, import_mode, colPlatform, mapSkuInDB, saveData);
             }
         }
 
-        return importData;
+        return saveData;
     }
 
+    /**
+     * Title行check
+     *
+     * @param row 行
+     * @param paramPropertyList 设定的属性list
+     * @param paramPlatformInfoList 设定的平台list
+     * @return colPlatform colPlatform[0]平台对应起始列号,colPlatform[1]平台对应结束列号
+     */
+    private int[] checkHeader(Row row, List<Map> paramPropertyList, List<Map> paramPlatformInfoList) {
+        int[] colPlatform = new int[2];
+        String messageModelErr = "请使用正确格式的excel导入文件";
+        if (!"Model".equals(row.getCell(0).getStringCellValue())
+                || !"Code".equals(row.getCell(1).getStringCellValue())
+                || !"Sku".equals(row.getCell(2).getStringCellValue())) {
+            throw new BusinessException(messageModelErr);
+        }
 
-    private void checkHeader(Row row, List<Map> paramPropertyList, List<Map> paramPlatformInfoList, Map<String, StockExcelBean> mapSkuInDB) {
+        // 属性列check
+        List<String> listPropertyKey = new ArrayList<String>();
+        paramPropertyList.forEach(paramProperty -> listPropertyKey.add((String) paramProperty.get("property")));
+
+        List<String> propertyList = new ArrayList<String>();
+        int index = 3;
+        for (; index <= 6; index++) {
+            Comment comment = row.getCell(index).getCellComment();
+            if (comment == null) {
+                // 注解为空
+                if (propertyList.size() > 0) {
+                    // 已经有属性列，属性列结束
+                    break;
+                } else {
+                    // 没有属性列，此列也不是属性列，错误Excel
+                    throw new BusinessException(messageModelErr);
+                }
+            }
+            if (!listPropertyKey.contains(comment.getString().getString())) {
+                // 注解不是设定属性
+                throw new BusinessException(messageModelErr);
+            } else {
+                // 注解是设定属性
+                if (propertyList.contains(comment.getString().getString())) {
+                    // 已经存在相同属性列
+                    throw new BusinessException(messageModelErr);
+                } else {
+                    propertyList.add(comment.getString().getString());
+                }
+            }
+        }
+
+        if (propertyList.size() != listPropertyKey.size()) {
+            // Excel属性列少于设定属性列
+            throw new BusinessException(messageModelErr);
+        }
+
+        if (!"Usable Stock".equals(row.getCell(index++).getStringCellValue())) {
+            throw new BusinessException(messageModelErr);
+        }
+
+        // 平台对应起始列号
+        colPlatform[0] = index;
+
+        // 平台列check
+        List<String> listPlatformKey = new ArrayList<String>();
+        paramPlatformInfoList.forEach(paramPlatform -> listPlatformKey.add((String) paramPlatform.get("cartId")));
+
+        List<String> platformList = new ArrayList<String>();
+        while(true) {
+            Comment comment = row.getCell(index).getCellComment();
+            if (comment == null) {
+                // 注解为空
+                if (platformList.size() > 0) {
+                    // 已经有平台列，平台列结束
+                    break;
+                } else {
+                    // 没有平台列，此列也不是平台列，错误Excel
+                    throw new BusinessException(messageModelErr);
+                }
+            }
+            if (!listPlatformKey.contains(comment.getString().getString())) {
+                // 注解不是设定平台
+                throw new BusinessException(messageModelErr);
+            } else {
+                // 注解是设定平台
+                if (platformList.contains(comment.getString().getString())) {
+                    // 已经存在相同平台列
+                    throw new BusinessException(messageModelErr);
+                } else {
+                    platformList.add(comment.getString().getString());
+                }
+            }
+
+            index++;
+        }
+
+        if (platformList.size() != listPlatformKey.size()) {
+            // Excel平台列少于设定平台列
+            throw new BusinessException(messageModelErr);
+        }
+
+        // 平台对应结束列号
+        colPlatform[1] = index;
+
+        if (!"Other".equals(row.getCell(index).getStringCellValue())) {
+            throw new BusinessException(messageModelErr);
+        }
+
+        return colPlatform;
+    }
+
+    /**
+     * check数据，并返回保存对象
+     *
+     * @param row 行
+     * @param import_mode 导入mode
+     * @param colPlatform colPlatform[0]平台对应起始列号,colPlatform[1]平台对应结束列号
+     * @param mapSkuInDB cms_bt_stock_separate_item的数据
+     * @param saveData 保存对象
+     */
+    private void checkRecord(Row row, String import_mode, int[] colPlatform, Map<String, Map<String, StockExcelBean>> mapSkuInDB, List<StockExcelBean> saveData) {
+        StockExcelBean bean = new StockExcelBean();
+
+        String model = row.getCell(0).getStringCellValue(); // Model
+        String code = row.getCell(1).getStringCellValue(); // Code
+        String sku = row.getCell(2).getStringCellValue(); // Sku
+//        String p
+        for (int index = 3; index <= colPlatform[0] - 2; index++) {
+            // 属性
+
+        }
+
+        // Model输入check
+        if (StringUtils.isEmpty(model) || model.getBytes().length > 50) {
+            throw new BusinessException("Model必须输入且长度小于50！");
+        }
+        // Code输入check
+        if (StringUtils.isEmpty(code) || code.getBytes().length > 50) {
+            throw new BusinessException("Code必须输入且长度小于50！");
+        }
+        // Sku输入check
+        if (StringUtils.isEmpty(sku) || sku.getBytes().length > 50) {
+            throw new BusinessException("Sku必须输入且长度小于50！");
+        }
 
     }
 
