@@ -5,7 +5,6 @@ import com.voyageone.common.Constants;
 import com.voyageone.common.configs.beans.FeedBean;
 import org.springframework.stereotype.Repository;
 
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -19,6 +18,4 @@ public class FeedDao extends BaseDao {
     public List<FeedBean> getAll() {
         return selectList(Constants.DAO_NAME_SPACE_COMMON + "cms_mt_feed_config_getAll");
     }
-
-    public List<FeedBean> getAllUpdate(Date date){return selectList(Constants.DAO_NAME_SPACE_COMMON + "cms_mt_feed_config_getAll_update",date);}
 }
