@@ -77,6 +77,7 @@ define([
                 promotion: null,
                 tags:[]
             };
+            $scope.list = [{ inputVal: "", inputOpts: "" }];
         }
 
         /**
