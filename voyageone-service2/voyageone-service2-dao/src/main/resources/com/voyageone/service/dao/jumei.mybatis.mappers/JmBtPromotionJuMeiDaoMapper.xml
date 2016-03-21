@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.service.dao.jumei.JmBtPromotionJuMeiDao">
+    <resultMap id="ResultMap" type="JmBtPromotion">
+        
+    </resultMap>
+	
+    <select id="getList" resultMap="ResultMap">
+
+        select id,channel_id,name,activity_pc_id,activity_app_id,activity_start,activity_end,pre_period_start,pre_period_end,shipping_system_id,created,creater,modified,modifier        from jumei2.jm_bt_promotion
+    </select>
+    <select id="get" resultMap="ResultMap">
+        select * from jumei2.jm_bt_promotion where id=#{id}
+    </select>
+
+     <update id="update">
+        update jumei2.jm_bt_promotion
+        set
+
+            channel_id=#{channelId}
+            ,name=#{name}
+            ,activity_pc_id=#{activityPcId}
+            ,activity_app_id=#{activityAppId}
+            ,activity_start=#{activityStart}
+            ,activity_end=#{activityEnd}
+            ,pre_period_start=#{prePeriodStart}
+            ,pre_period_end=#{prePeriodEnd}
+            ,shipping_system_id=#{shippingSystemId}
+            ,modified=#{modified}
+            ,modifier=#{modifier}
+         where id=#{id}   
+   </update>
+
+    <delete id="delete">
+        delete from  jumei2.jm_bt_promotion
+        where id=#{id}
+
+    </delete>
+
+    <insert id="create">
+        INSERT INTO jumei2.jm_bt_promotion
+        (
+              channel_id,
+              name,
+              activity_pc_id,
+              activity_app_id,
+              activity_start,
+              activity_end,
+              pre_period_start,
+              pre_period_end,
+              shipping_system_id,
+              created,
+              creater,
+              modified,
+              modifier
+        )
+        VALUES(
+              #{channelId},
+              #{name},
+              #{activityPcId},
+              #{activityAppId},
+              #{activityStart},
+              #{activityEnd},
+              #{prePeriodStart},
+              #{prePeriodEnd},
+              #{shippingSystemId},
+              #{created},
+              #{creater},
+              #{modified},
+              #{modifier}
+        )
+    </insert>
+</mapper>

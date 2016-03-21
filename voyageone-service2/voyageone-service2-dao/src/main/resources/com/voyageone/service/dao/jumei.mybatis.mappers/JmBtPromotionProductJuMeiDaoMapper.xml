@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.service.dao.jumei.JmBtPromotionProductJuMeiDao">
+    <resultMap id="ResultMap" type="JmBtPromotionProduct">
+        
+    </resultMap>
+	
+    <select id="getList" resultMap="ResultMap">
+
+        select id,channel_id,promotion_id,jm_product_id,product_code,jm_hash_id,limit,error_msg,synch_state,creater,created,modified,modifier,state        from jumei2.jm_bt_promotion_product
+    </select>
+    <select id="get" resultMap="ResultMap">
+        select * from jumei2.jm_bt_promotion_product where id=#{id}
+    </select>
+
+     <update id="update">
+        update jumei2.jm_bt_promotion_product
+        set
+
+            channel_id=#{channelId}
+            ,promotion_id=#{promotionId}
+            ,jm_product_id=#{jmProductId}
+            ,product_code=#{productCode}
+            ,jm_hash_id=#{jmHashId}
+            ,limit=#{limit}
+            ,error_msg=#{errorMsg}
+            ,synch_state=#{synchState}
+            ,modified=#{modified}
+            ,modifier=#{modifier}
+            ,state=#{state}
+         where id=#{id}   
+   </update>
+
+    <delete id="delete">
+        delete from  jumei2.jm_bt_promotion_product
+        where id=#{id}
+
+    </delete>
+
+    <insert id="create">
+        INSERT INTO jumei2.jm_bt_promotion_product
+        (
+              channel_id,
+              promotion_id,
+              jm_product_id,
+              product_code,
+              jm_hash_id,
+              limit,
+              error_msg,
+              synch_state,
+              creater,
+              created,
+              modified,
+              modifier,
+              state
+        )
+        VALUES(
+              #{channelId},
+              #{promotionId},
+              #{jmProductId},
+              #{productCode},
+              #{jmHashId},
+              #{limit},
+              #{errorMsg},
+              #{synchState},
+              #{creater},
+              #{created},
+              #{modified},
+              #{modifier},
+              #{state}
+        )
+    </insert>
+</mapper>
