@@ -129,14 +129,20 @@ public class VtmWsdlInsert extends BaseTaskService {
             map.put("p_made_in_country", (Feed.getVal1(channel, FeedEnums.Name.product_p_made_in_country)));
             map.put("pe_short_description", (Feed.getVal1(channel, FeedEnums.Name.product_pe_short_description)));
             map.put("pe_long_description", (Feed.getVal1(channel, FeedEnums.Name.product_pe_long_description)));
-            map.put("p_msrp", (Feed.getVal1(channel, FeedEnums.Name.product_p_msrp)));
-            map.put("cps_cn_price_rmb", (Feed.getVal1(channel, FeedEnums.Name.product_cps_cn_price_rmb)));
+//            map.put("p_msrp", (Feed.getVal1(channel, FeedEnums.Name.product_p_msrp)));
+//            map.put("cps_cn_price_rmb", (Feed.getVal1(channel, FeedEnums.Name.product_cps_cn_price_rmb)));
             map.put("i_sku", (Feed.getVal1(channel, FeedEnums.Name.item_i_sku)));
             map.put("i_itemcode", (Feed.getVal1(channel, FeedEnums.Name.item_i_itemcode)));
             map.put("i_size", (Feed.getVal1(channel, FeedEnums.Name.item_i_size)));
             map.put("i_barcode", (Feed.getVal1(channel, FeedEnums.Name.item_i_barcode)));
             map.put("image", (Feed.getVal1(channel, FeedEnums.Name.images)));
             map.put("i_client_sku", (Feed.getVal1(channel, FeedEnums.Name.item_i_client_sku)));
+
+            map.put("price_client_msrp", (Feed.getVal1(channel, FeedEnums.Name.price_client_msrp)));
+            map.put("price_client_retail", (Feed.getVal1(channel, FeedEnums.Name.price_client_retail)));
+            map.put("price_net", (Feed.getVal1(channel, FeedEnums.Name.price_net)));
+            map.put("price_current", (Feed.getVal1(channel, FeedEnums.Name.price_current)));
+            map.put("price_msrp", (Feed.getVal1(channel, FeedEnums.Name.price_msrp)));
             return map;
         }
 

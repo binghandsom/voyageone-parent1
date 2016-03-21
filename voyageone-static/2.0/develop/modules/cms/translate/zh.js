@@ -230,6 +230,7 @@ define(function(){
 
 
         "TXT_MSG_SEARCH": "检索...",
+        "TXT_MSG_INVALID_FEILD": "请检查这些属性 [ <h4>{{fields}}</h4> ], 然后重新尝试保存. (。・`ω´・)",
         "TXT_MSG_PAGE_IS_BUILDING": "该页面正在建设中...",
         "TXT_MSG_SEARCH_INDEX_FUZZY_SEARCH": "查询包括:产品Code(多项换行分割),款号(多项换行分割),产品名称（中文）,产品名称（英文）,详情描述（中文）,详情描述（英文）",
         "TXT_MSG_SEARCH_INDEX_FUZZY_SEARCH_2": "查询包括:产品Code(多项换行分割),款号(多项换行分割)",

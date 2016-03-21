@@ -213,8 +213,11 @@
             <result column="i_size" property="size" />
             <result column="i_barcode" property="barcode" />
             <result column="i_client_sku" property="clientSku" />
-            <result column="p_msrp" property="price_msrp" />
-            <result column="cps_cn_price_rmb" property="price_current" />
+            <result column="price_msrp" property="price_msrp" />
+            <result column="price_current" property="price_current" />
+            <result column="price_net" property="price_net" />
+            <result column="price_client_retail" property="price_client_retail" />
+            <result column="price_client_msrp" property="price_client_msrp" />
         </collection>
         <collection property="image" javaType="ArrayList" ofType="String" >
             <result column="image" property="image" />
@@ -233,14 +236,19 @@
         ,${p_code} as p_code
         ,${p_name} as p_name
         ,${p_color} as p_color
-        ,${p_msrp} as p_msrp
         ,${p_made_in_country} as p_made_in_country
         ,${pe_short_description} as pe_short_description
         <if test="p_product_type != null">
             ,${p_product_type} as p_product_type
         </if>
         ,${pe_long_description} as pe_long_description
-        ,${cps_cn_price_rmb}  as cps_cn_price_rmb
+
+        ,${price_client_msrp} as price_client_msrp
+        ,${price_client_retail}  as price_client_retail
+        ,${price_net}  as price_net
+        ,${price_current}  as price_current
+        ,${price_msrp}  as price_msrp
+
         ,${i_sku} as i_sku
         ,${i_itemcode} as i_itemcode
         ,${i_size} as i_size
