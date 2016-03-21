@@ -73,7 +73,7 @@ public class CmsFeedCustPropController extends CmsController {
      * @apiSampleRequest off
      */
     @RequestMapping(value = CmsUrlConstants.CHANNEL.CUSTOM_PROP.INIT)
-    public AjaxResponse getFeedCustProp(@RequestBody Map<String, Object> params) {
+    public AjaxResponse getFeedCustProp(@RequestBody Map<String, String> params) {
         String catPath = StringUtils.trimToNull((String) params.get("cat_path"));
         if (catPath == null) {
             throw new BusinessException("缺少类目路径");

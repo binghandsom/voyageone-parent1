@@ -17,27 +17,26 @@ import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.product.ProductForOmsBean;
 import com.voyageone.service.bean.cms.product.ProductForWmsBean;
 import com.voyageone.service.bean.cms.product.ProductPriceBean;
+import com.voyageone.service.bean.cms.product.ProductSkuPriceBean;
+import com.voyageone.service.dao.cms.CmsBtPriceLogDao;
 import com.voyageone.service.dao.cms.CmsBtSxWorkloadDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductLogDao;
 import com.voyageone.service.dao.wms.WmsBtInventoryCenterLogicDao;
+import com.voyageone.service.model.cms.CmsBtPriceLogModel;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.service.model.cms.mongo.product.*;
+import com.voyageone.service.model.wms.WmsBtInventoryCenterLogicModel;
 import com.voyageone.web2.cms.wsdl.BaseService;
-import com.voyageone.service.dao.cms.CmsBtPriceLogDao;
 import com.voyageone.web2.sdk.api.VoApiConstants;
 import com.voyageone.web2.sdk.api.VoApiUpdateResponse;
-import com.voyageone.service.model.cms.CmsBtPriceLogModel;
-import com.voyageone.service.bean.cms.product.ProductSkuPriceBean;
-import com.voyageone.service.model.wms.WmsBtInventoryCenterLogicModel;
 import com.voyageone.web2.sdk.api.exception.ApiException;
 import com.voyageone.web2.sdk.api.request.*;
 import com.voyageone.web2.sdk.api.response.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.text.Collator;
 import java.util.*;
 
 /**
@@ -875,10 +874,10 @@ public class ProductService extends BaseService {
         buildProjection(request, queryObject);
 
         //getProductByCode
-        String productCode = request.getCode();
+        String productSku = request.getSku();
 
-        if (!StringUtils.isEmpty(productCode)) {
-            queryObject.setQuery(String.format("{\"fields.code\" : \"%s\" }", productCode));
+        if (!StringUtils.isEmpty(productSku)) {
+            queryObject.setQuery(String.format("{\"fields.code\" : \"%s\" }", productSku));
         }
 
         if (queryObject.getQuery() != null) {
