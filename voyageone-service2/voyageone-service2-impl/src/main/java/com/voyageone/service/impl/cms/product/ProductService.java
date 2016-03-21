@@ -16,6 +16,7 @@ import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.product.*;
+import com.voyageone.service.dao.cms.CmsBtChannelConfigDao;
 import com.voyageone.service.dao.cms.CmsBtPriceLogDao;
 import com.voyageone.service.dao.cms.CmsBtSxWorkloadDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
@@ -23,6 +24,7 @@ import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductLogDao;
 import com.voyageone.service.dao.wms.WmsBtInventoryCenterLogicDao;
 import com.voyageone.service.impl.BaseService;
+import com.voyageone.service.model.cms.CmsBtChannelConfigModel;
 import com.voyageone.service.model.cms.CmsBtPriceLogModel;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.service.model.cms.mongo.product.*;
@@ -62,6 +64,9 @@ public class ProductService extends BaseService {
 
     @Autowired
     private WmsBtInventoryCenterLogicDao wmsBtInventoryCenterLogicDao;
+
+    @Autowired
+    private CmsBtChannelConfigDao cmsBtChannelConfigDao;
 
     /**
      * 获取商品 根据ID获
@@ -1256,15 +1261,15 @@ public class ProductService extends BaseService {
     /**
      * get the product info from wms's request
      */
-    public ProductForWmsBean getWmsProductsInfo(String channelId, String productCode, String[] projection) {
+    public ProductForWmsBean getWmsProductsInfo(String channelId, String productSku, String[] projection) {
         JomgoQuery queryObject = new JomgoQuery();
         // set fields
         if (projection != null && projection.length > 0) {
             queryObject.setProjection(projection);
         }
 
-        if (!StringUtils.isEmpty(productCode)) {
-            queryObject.setQuery(String.format("{\"fields.code\" : \"%s\" }", productCode));
+        if (!StringUtils.isEmpty(productSku)) {
+            queryObject.setQuery(String.format("{\"skus.skuCode\" : \"%s\" }", productSku));
         }
 
         ProductForWmsBean resultInfo = null;
@@ -1285,8 +1290,21 @@ public class ProductService extends BaseService {
             // TODO 无法提供,属于主数据的非共通属性
             resultInfo.setMaterialFabricName("");
             resultInfo.setCountryName(product.getFields().getOrigin());
-            resultInfo.setMsrp(product.getFields().getPriceMsrpSt() != null ? product.getFields().getPriceMsrpSt().toString() : "0.00");
-            resultInfo.setPrice(product.getFields().getPriceSaleSt() != null ? product.getFields().getPriceSaleSt().toString() : "0.00");
+
+            // 设置人民币价格
+            resultInfo.setMsrp(product.getSku(productSku).getPriceMsrp() != null ? product.getSku(productSku).getPriceMsrp().toString() : "0.00");
+            resultInfo.setPrice(product.getSku(productSku).getPriceSale() != null ? product.getSku(productSku).getPriceSale().toString() : "0.00");
+            resultInfo.setRetailPrice(product.getSku(productSku).getPriceRetail() != null ? product.getSku(productSku).getPriceRetail().toString() : "0.00");
+
+            // 设置美元价格
+            resultInfo.setClientMsrpPrice(String.valueOf(product.getSku(productSku).getClientMsrpPrice()));
+            resultInfo.setClientRetailPrice(String.valueOf(product.getSku(productSku).getClientRetailPrice()));
+            resultInfo.setClientNetPrice(String.valueOf(product.getSku(productSku).getClientNetPrice()));
+
+            // 设置原始价格单位
+            List<CmsBtChannelConfigModel> channelConfigs = cmsBtChannelConfigDao.selectByConfigKey(channelId, CmsConstants.channelConfig.CLIENT_PRICE_UNIT);
+            resultInfo.setClientPriceUnit(channelConfigs.get(0).getConfigValue1());
+
             // TODO 无法提供,属于主数据的非共通属性
             resultInfo.setWeightkg("");
             // TODO 无法提供,属于主数据的非共通属性
