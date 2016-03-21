@@ -25,7 +25,6 @@ public class CmsProductDetailController extends CmsController{
 
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.GET_PRODUCT_INFO)
     public AjaxResponse doGetProductInfo(@RequestBody Map params){
-
         Long productId = Long.parseLong(String.valueOf(params.get("productId")));
 
         String channelId = getUser().getSelChannelId();
@@ -33,11 +32,11 @@ public class CmsProductDetailController extends CmsController{
         Map<String,Object> categoryInfo = new HashMap<>();
 
         CmsProductInfoBean productInfo = productPropsEditService.getProductInfo(channelId,productId,getLang());
-
-        categoryInfo.put("productInfo",productInfo);
+        int qtyValue = productPropsEditService.getProdSkuCnt(channelId, productId);
+        categoryInfo.put("qtyValue", qtyValue);
+        categoryInfo.put("productInfo", productInfo);
 
         return success(categoryInfo);
-
     }
 
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.UPDATE_PRODUCT_MASTER_INFO)

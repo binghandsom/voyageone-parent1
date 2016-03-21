@@ -190,6 +190,28 @@ public class CmsProductDetailService {
     }
 
     /**
+     * 取得Sku的库存
+     *
+     * @param channelId
+     * @param prodId
+     * @return
+     */
+    public int getProdSkuCnt(String channelId, Long prodId) {
+        CmsProductInfoBean productInfo = new CmsProductInfoBean();
+        // 获取product data.
+        CmsBtProductModel productValueModel = getProductModel(channelId, prodId);
+
+        // 取得Sku的库存
+        Map<String, Integer> skuInventoryList = productService.getProductSkuQty(channelId, productValueModel.getFields().getCode());
+        int qtyValue = 0;
+        for (int skuInv : skuInventoryList.values()) {
+            qtyValue += skuInv;
+        }
+
+        return qtyValue;
+    }
+
+    /**
      * 更新product values.
      *
      * @param channelId
