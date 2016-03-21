@@ -5,6 +5,7 @@ import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.cms.CmsConstants;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.service.bean.cms.product.ProductForWmsBean;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.mongo.product.*;
@@ -304,5 +305,14 @@ public class CmsProductServiceTest {
 //        System.out.println(productCodeMap.size());
 //        System.out.println("total time:=" + (end-start));
 //    }
+
+    @Test
+    public void getWmsProductsInfo() {
+
+        String[] projection = "prodId;channelId;fields;skus;groups".split(";");
+
+        ProductForWmsBean result = cmsProductService.getWmsProductsInfo("010", "51A0HC13E1-00LCNB0", projection);
+        System.out.println(result);
+    }
 
 }

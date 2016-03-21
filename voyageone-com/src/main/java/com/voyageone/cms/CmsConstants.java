@@ -41,4 +41,9 @@ public class CmsConstants {
         SetOnsale,      // 上架
         SetInstock      // 下架
     }
+
+    public interface channelConfig {
+        String SAME_ATTR = "SAME_ATTR";
+        String CLIENT_PRICE_UNIT = "CLIENT_PRICE_UNIT";
+    }
 }

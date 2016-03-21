@@ -8,9 +8,6 @@
           http://www.springframework.org/schema/task/spring-task.xsd">
     <task:scheduled-tasks scheduler="cms-job-scheduler">
 
-        <!-- redis更新 task 每5分钟运行一次 -->
-        <!--<task:scheduled ref="cmsMtFeedConfigCacheRealTimeJob" method="run" cron="0/5 * * * * ?"/>-->
-
         <!-- mq resume task 每5分钟运行一次 -->
         <!--<task:scheduled ref="mqResumeJob" method="run" cron="0/5 * * * * ?"/>-->
 

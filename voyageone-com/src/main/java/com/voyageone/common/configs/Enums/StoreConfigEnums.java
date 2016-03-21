@@ -36,7 +36,12 @@ public class StoreConfigEnums {
         /**
          * 库存位置编码
          */
-        storage_location
+        storage_location,
+
+        /**
+         * 库存扫描集计
+         */
+        transfer_display
     }
 
     /**
