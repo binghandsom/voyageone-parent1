@@ -1,5 +1,6 @@
 var fs = require('fs');
 var gulp = require('gulp');
+var debug = require('gulp-debug');
 var ngAnnotate = require('gulp-ng-annotate');
 var minifyCss = require('gulp-minify-css');
 var minifyHtml = require('gulp-minify-html');
@@ -57,17 +58,9 @@ gulp.task(tasks.publish.statics, function () {
         .pipe(gulp.dest(publish.release.static.css));
 });
 
-// release voyageone.angular.com.js
-gulp.task(tasks.publish.angular, [tasks.build.angular_suff], function () {
-
-    var parentDeclare = fs.readFileSync((build.common.angular.dist + '/' + build.common.angular.footerFile), encode);
-
-    // 复制源代码到 dist 临时发布编译目录
-    gulp.src(build.common.angular.src)
-        .pipe(gulp.dest("publish/dist"));
-
-    // 格式化模板里所有双引号
-    gulp.src("develop/components/angular/factories/templates/*/*.html")
+gulp.task('packaging-templates', function () {
+    return gulp.src("develop/components/angular/factories/templates/*/*.html")
+        .pipe(debug())
         .pipe(minifyHtml({empty: true}))
         .pipe(ngHtml2Js({
             moduleName: "voyageone.angular.templates",
@@ -79,9 +72,19 @@ gulp.task(tasks.publish.angular, [tasks.build.angular_suff], function () {
             compress: false,
             output: {beautify: true, indent_level: 2}
         }))
-        .pipe(gulp.dest("publish/dist/factories/"));
+        .pipe(gulp.dest("publish/temp/factories/"));
+});
 
-    gulp.src("publish/dist/*/*.js")
+// release voyageone.angular.com.js
+gulp.task(tasks.publish.angular, ['packaging-templates', tasks.build.angular_suff], function () {
+
+    var parentDeclare = fs.readFileSync((build.common.angular.dist + '/' + build.common.angular.footerFile), encode);
+
+    gulp.src([
+            build.common.angular.src,
+            "publish/temp/factories/templates.html.js"
+        ])
+        .pipe(debug())
         .pipe(sourceMaps.init())
         // 追加依赖注入语法
         .pipe(ngAnnotate())
