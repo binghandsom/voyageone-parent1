@@ -201,7 +201,11 @@
                             break;
 
                         case fieldTypes.MULTI_CHECK:
-                            schema.config.checkValues = field.values;
+                            field.options.forEach(function (option) {
+                                option.selected = field.values.some(function (value) {
+                                    return value.value === option.value;
+                                });
+                            });
                             break;
 
                         case fieldTypes.MULTI_COMPLEX:

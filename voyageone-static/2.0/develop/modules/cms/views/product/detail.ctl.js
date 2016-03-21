@@ -107,8 +107,6 @@ define([
                     return self.alert({id: 'TXT_MSG_INVALID_FEILD', values: {fields: invalidNames.join(', ')}});
                 }
 
-                return;
-
                 // 推算产品状态
                 // 如果该产品以前不是approve,这次变成approve的
                 if (self.productDetails.productStatus.statusInfo.isApproved
