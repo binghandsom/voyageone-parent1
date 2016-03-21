@@ -365,7 +365,6 @@
                             data.fields.forEach(function(field) {
                                 var tempField = angular.copy(field);
                                 var defValue = value.fieldMap[field.id];
-                                // 为什么这里要用 !defValue
                                 if (defValue) switch (field.type) {
                                   case fieldTypes.INPUT:
                                   case fieldTypes.LABEL:

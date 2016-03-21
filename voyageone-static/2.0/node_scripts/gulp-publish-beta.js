@@ -2,10 +2,8 @@ var fs = require('fs');
 var gulp = require('gulp');
 var debug = require('gulp-debug');
 var ngAnnotate = require('gulp-ng-annotate');
-var minifyCss = require('gulp-minify-css');
 var minifyHtml = require('gulp-minify-html');
 var uglify = require('gulp-uglify');
-var sourceMaps = require('gulp-sourcemaps');
 var replace = require('gulp-replace');
 var rename = require('gulp-rename');
 var concat = require('gulp-concat');
@@ -24,17 +22,8 @@ var headerSingle = '(function(){\n';
 var footerSingle = '})();';
 var encode = 'utf-8';
 
-// 压缩之前需要把 angular.com 追加 .min
-function fixCommonRef() {
-
-    return replace(
-        build.common.angular.concat.replace('.js', ''),
-        build.common.angular.concat.replace('.js', '.min')
-    );
-}
-
 // 图片, 字体, 样式, 资源发布
-gulp.task(tasks.publish.statics, function () {
+gulp.task(tasks.beta.statics, function () {
 
     gulp.src(publish.static.img.src)
         .pipe(gulp.dest(publish.static.img.dist))
@@ -47,13 +36,11 @@ gulp.task(tasks.publish.statics, function () {
 
     gulp.src(build.common.appCss.src)
         .pipe(concat(build.common.appCss.concat))
-        .pipe(minifyCss())
         .pipe(gulp.dest(publish.static.css.dist))
         .pipe(gulp.dest(publish.release.static.css));
 
     gulp.src(build.common.loginCss.src)
         .pipe(concat(build.common.loginCss.concat))
-        .pipe(minifyCss())
         .pipe(gulp.dest(publish.static.css.dist))
         .pipe(gulp.dest(publish.release.static.css));
 });
@@ -77,7 +64,7 @@ gulp.task('packaging-templates', function () {
 });
 
 // 发布未压缩版本的 angular 工具包
-gulp.task(tasks.publish.angular, ['packaging-templates', tasks.build.angular_suff], function () {
+gulp.task(tasks.beta.angular, ['packaging-templates', tasks.build.angular_suff], function () {
 
     var parentDeclare = fs.readFileSync((build.common.angular.dist + '/' + build.common.angular.footerFile), encode);
 
@@ -105,7 +92,7 @@ gulp.task(tasks.publish.angular, ['packaging-templates', tasks.build.angular_suf
 });
 
 // publish-com
-gulp.task(tasks.publish.com, function () {
+gulp.task(tasks.beta.com, function () {
 
     gulp.src(build.common.native.src)
         .pipe(header(headerSingle))
@@ -113,52 +100,39 @@ gulp.task(tasks.publish.com, function () {
         .pipe(concat(build.common.native.concat))
         .pipe(header(definePrefix))
         .pipe(footer(defineSuffix))
-        .pipe(sourceMaps.init())
-        .pipe(uglify())
-        .pipe(rename({suffix: '.min'}))
-        .pipe(sourceMaps.write('./'))
+        .pipe(uglify({
+            mangle: false,
+            compress: false,
+            output: {beautify: true}
+        }))
         .pipe(gulp.dest(publish.components.native.dist))
         .pipe(gulp.dest(publish.release.components));
 });
 
 // release libs.
-gulp.task(tasks.publish.libs, function () {
+gulp.task(tasks.beta.libs, function () {
 
     gulp.src(publish.libs.src)
         .pipe(gulp.dest(publish.release.libs));
 });
 
 // release modules.
-gulp.task(tasks.publish.modules, function () {
+gulp.task(tasks.beta.modules, function () {
 
     // build login.app and channel.app
     gulp.src(publish.loginAndChannel.js)
-        .pipe(fixCommonRef())
         .pipe(ngAnnotate())
-        .pipe(uglify())
-        .pipe(rename({suffix: ".min"}))
         .pipe(gulp.dest(publish.release.loginAndChannel));
 
     gulp.src(publish.loginAndChannel.html)
-        .pipe(replace(/data-main=["'](.+?)["']/g, 'data-main="$1.min"'))
-        .pipe(replace('libs/require.js/2.1.21/require.js', 'libs/require.js/2.1.21/require.min.js'))
-        .pipe(minifyHtml({empty: true}))
         .pipe(gulp.dest(publish.release.loginAndChannel));
 
     // 压缩js文件
     gulp.src(publish.modules.js)
-        .pipe(fixCommonRef())
-        //.pipe(sourceMaps.init())
-        // 追加依赖注入语法
-        //.pipe(ngAnnotate())
-        //.pipe(uglify())
-        //.pipe(sourceMaps.write('./'))
         .pipe(gulp.dest(publish.release.modules));
 
     // 压缩html文件
     gulp.src(publish.modules.html)
-        .pipe(replace('libs/require.js/2.1.21/require.js', 'libs/require.js/2.1.21/require.min.js'))
-        .pipe(minifyHtml({empty: true}))
         .pipe(gulp.dest(publish.release.modules));
 
     // copy json文件
@@ -167,4 +141,10 @@ gulp.task(tasks.publish.modules, function () {
 
 });
 
-gulp.task(tasks.publish.all, [tasks.publish.statics, tasks.publish.angular, tasks.publish.com, tasks.publish.libs, tasks.publish.modules]);
+gulp.task(tasks.beta.all, [
+    tasks.beta.statics, 
+    tasks.beta.angular, 
+    tasks.beta.com, 
+    tasks.beta.libs, 
+    tasks.beta.modules
+]);
