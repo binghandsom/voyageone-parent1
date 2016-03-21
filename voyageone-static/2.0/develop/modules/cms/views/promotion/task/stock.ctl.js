@@ -57,6 +57,7 @@ define([
             this.selectRowsFactory = selectRowsFactory;
             this.tempStockListSelect = new selectRowsFactory();
             this.taskStockService = taskStockService;
+            this.dynamicColNum = 0;
 
             this.downloadUrl = urls.root + "/" + urls.exportStockInfo;
         }
@@ -126,6 +127,20 @@ define([
                         main.tempStockListSelect.currPageRows({"id": stock.sku});
                     });
                     main.stockSelList = main.tempStockListSelect.selectRowsInfo;
+                    main.dynamicColNum = 0;
+                    _.forEach(res.data.propertyList, function(property) {
+                        if (property.show) {
+                            main.dynamicColNum++;
+                        }
+
+                    });
+                    if (main.platformList.length + main.dynamicColNum <= 6) {
+                        var stockSeparateTbl = document.getElementById('stock_separate_tbl');
+                        stockSeparateTbl.setAttribute("style", "width:100%;margin-bottom:0px");
+                    } else {
+                        var stockSeparateTbl = document.getElementById('stock_separate_tbl');
+                        stockSeparateTbl.setAttribute("style", "width:1800px;margin-bottom:0px");
+                    }
                 })
             },
 
@@ -213,16 +228,32 @@ define([
                             }
                         });
                     });
-                    main.notify.success('设定成功');
+                    main.notify.success('TXT_MSG_SET_SUCCESS');
                 }
             },
 
-            delRecord: function (stock) {
+            calculateCol: function (showFlg) {
+                if (showFlg) {
+                    this.dynamicColNum++;
+
+                } else {
+                    this.dynamicColNum--;
+                }
+                if (this.platformList.length + this.dynamicColNum <= 6) {
+                    var stockSeparateTbl = document.getElementById('stock_separate_tbl');
+                    stockSeparateTbl.setAttribute("style", "width:100%;margin-bottom:0px");
+                } else {
+                    var stockSeparateTbl = document.getElementById('stock_separate_tbl');
+                    stockSeparateTbl.setAttribute("style", "width:1800px;margin-bottom:0px");
+                }
+            },
+
+            delRecord: function (sku) {
                 var main = this;
                 main.confirm('TXT_MSG_DO_DELETE').result.then(function () {
                     main.taskStockService.delRecord({
                         "taskId": main.taskId,
-                        "stockInfo": stock
+                        "sku": sku
                     }).then(function (res) {
                         main.notify.success('TXT_MSG_DELETE_SUCCESS');
                         main.search();
@@ -234,18 +265,47 @@ define([
                 })
             },
 
-            delRecord: function (stock) {
+            executeStockSeparation: function (sku) {
                 var main = this;
-                main.confirm('TXT_MSG_DO_DELETE').result.then(function () {
-                    main.taskStockService.delRecord({
+                main.confirm('TXT_MSG_DO_SEPARATE').result.then(function () {
+                    main.taskStockService.executeStockSeparation({
                         "taskId": main.taskId,
-                        "stockInfo": stock
+                        "model" : main.model,
+                        "code" : main.code,
+                        "sku" : main.sku,
+                        "qtyFrom" : main.qtyFrom,
+                        "qtyTo" : main.qtyTo,
+                        "status" : main.status,
+                        "selSku":sku
                     }).then(function (res) {
-                        main.notify.success('TXT_MSG_DELETE_SUCCESS');
+                        main.notify.success('TXT_MSG_SEPARATE_SUCCESS');
                         main.search();
                     }, function (err) {
                         if (err.displayType == null) {
-                            main.alert('TXT_MSG_DELETE_FAIL');
+                            main.alert('TXT_MSG_SEPARATE_FAIL');
+                        }
+                    })
+                })
+            },
+
+            executeStockRevert: function (sku) {
+                var main = this;
+                main.confirm('TXT_MSG_DO_REVERT').result.then(function () {
+                    main.taskStockService.executeStockRevert({
+                        "taskId": main.taskId,
+                        "model" : main.model,
+                        "code" : main.code,
+                        "sku" : main.sku,
+                        "qtyFrom" : main.qtyFrom,
+                        "qtyTo" : main.qtyTo,
+                        "status" : main.status,
+                        "selSku":sku
+                    }).then(function (res) {
+                        main.notify.success('TXT_MSG_REVERT_SUCCESS');
+                        main.search();
+                    }, function (err) {
+                        if (err.displayType == null) {
+                            main.alert('TXT_MSG_REVERT_FAIL');
                         }
                     })
                 })

@@ -13,7 +13,7 @@
               ,t3.name as cartName
             </if>
         from voyageone_cms2.cms_bt_stock_separate_platform_info t1
-        inner join voyageone_cms2.cms_bt_promotion t2 on t1.promotion_id = t2.promotion_id
+        left outer join voyageone_cms2.cms_bt_promotion t2 on t1.promotion_id = t2.promotion_id
         <if test="channelId !=null and lang != null" >
           left outer join (select value,name from com_mt_value_channel where type_id= '53'and channel_id = #{channelId} and lang_id = #{lang}) t3
           on t1.cart_id = t3.value

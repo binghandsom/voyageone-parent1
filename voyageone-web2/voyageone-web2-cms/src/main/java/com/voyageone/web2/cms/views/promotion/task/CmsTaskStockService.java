@@ -577,7 +577,7 @@ public class CmsTaskStockService extends BaseAppService {
         // 取得这条sku明细对应的库存隔离信息
         Map<String, Object> sqlParam = new HashMap<String, Object>();
         sqlParam.put("taskId", param.get("taskId"));
-        sqlParam.put("sku", ((Map) param.get("stockInfo")).get("sku"));
+        sqlParam.put("sku", param.get("sku"));
         sqlParam.put("tableNameSuffix", "");
         sqlParam.put("lang", param.get("lang"));
         List<Map<String, Object>> stockSeparateItemList = cmsBtStockSeparateItemDao.selectStockSeparateItem(sqlParam);
@@ -594,7 +594,7 @@ public class CmsTaskStockService extends BaseAppService {
 
         Map<String, Object> sqlParam1 = new HashMap<String, Object>();
         sqlParam1.put("taskId", param.get("taskId"));
-        sqlParam1.put("sku", ((Map) param.get("stockInfo")).get("sku"));
+        sqlParam1.put("sku", param.get("sku"));
         int delCount = cmsBtStockSeparateItemDao.deleteStockSeparateItem(sqlParam1);
         if (delCount <= 0) {
             simpleTransaction.rollback();
