@@ -6,12 +6,10 @@ import com.voyageone.common.util.StringUtils;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -79,7 +77,8 @@ public class CmsTaskStockController extends CmsController {
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK.INIT_NEW_TASK)
     public AjaxResponse initNewTask(@RequestBody Map param) {
-
+        //根据活ID取得CartId
+        Map<Object, String> resultBean = cmsTaskStockService.findByCartId(param);
         // 返回
         return success(null);
     }
@@ -894,7 +893,8 @@ public class CmsTaskStockController extends CmsController {
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK.IMPORT_STOCK_INFO)
     public AjaxResponse importStockInfo(@RequestParam Map param) {
-
+        // import Excel
+        cmsTaskStockService.importExcelFileStockInfo(param);
         // 返回
         return success(null);
     }
