@@ -30,6 +30,14 @@ public class PromotionTypeEnums {
         public Integer getTypeId() {
             return this.typeId;
         }
+
+
+        public static Type valueOf(int typeId) {
+            for (Type type : values())
+                if (type.getTypeId() == typeId)
+                    return type;
+            return null;
+        }
     }
 
 
