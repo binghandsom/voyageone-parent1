@@ -7,14 +7,14 @@
 	
     <select id="getList" resultMap="ResultMap">
 
-        select id,source_id,api_type,error_msg,error_code,remark        from jumei2.jm_bt_api_log
+        select id,source_id,api_type,error_msg,error_code,remark        from jm_bt_api_log
     </select>
     <select id="get" resultMap="ResultMap">
-        select * from jumei2.jm_bt_api_log where id=#{id}
+        select id,source_id,api_type,error_msg,error_code,remark from jm_bt_api_log where id=#{id}
     </select>
 
      <update id="update">
-        update jumei2.jm_bt_api_log
+        update jm_bt_api_log
         set
 
             source_id=#{sourceId}
@@ -26,13 +26,13 @@
    </update>
 
     <delete id="delete">
-        delete from  jumei2.jm_bt_api_log
+        delete from  jm_bt_api_log
         where id=#{id}
 
     </delete>
 
     <insert id="create">
-        INSERT INTO jumei2.jm_bt_api_log
+        INSERT INTO jm_bt_api_log
         (
               source_id,
               api_type,

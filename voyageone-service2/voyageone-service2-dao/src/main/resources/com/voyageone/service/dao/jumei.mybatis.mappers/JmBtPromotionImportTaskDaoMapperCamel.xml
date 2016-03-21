@@ -7,14 +7,14 @@
 	
     <select id="getList" resultMap="ResultMap">
 
-        select id,promotion_id,file_name,file_path,error_msg,success_rows,failures_rows,failures_path,error_code,begin_time,end_time,creater,created        from jumei2.jm_bt_promotion_import_task
+        select id,promotion_id,file_name,file_path,error_msg,success_rows,failures_rows,failures_path,error_code,begin_time,end_time,creater,created        from jm_bt_promotion_import_task
     </select>
     <select id="get" resultMap="ResultMap">
-        select * from jumei2.jm_bt_promotion_import_task where id=#{id}
+        select id,promotion_id,file_name,file_path,error_msg,success_rows,failures_rows,failures_path,error_code,begin_time,end_time,creater,created from jm_bt_promotion_import_task where id=#{id}
     </select>
 
      <update id="update">
-        update jumei2.jm_bt_promotion_import_task
+        update jm_bt_promotion_import_task
         set
 
             promotion_id=#{promotionId}
@@ -31,13 +31,13 @@
    </update>
 
     <delete id="delete">
-        delete from  jumei2.jm_bt_promotion_import_task
+        delete from  jm_bt_promotion_import_task
         where id=#{id}
 
     </delete>
 
     <insert id="create">
-        INSERT INTO jumei2.jm_bt_promotion_import_task
+        INSERT INTO jm_bt_promotion_import_task
         (
               promotion_id,
               file_name,

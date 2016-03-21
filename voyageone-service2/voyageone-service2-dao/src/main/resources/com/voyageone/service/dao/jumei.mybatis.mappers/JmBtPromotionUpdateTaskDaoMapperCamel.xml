@@ -7,14 +7,14 @@
 	
     <select id="getList" resultMap="ResultMap">
 
-        select id,jm_bt_promotion_id,begin_time,end_time,error_msg,state,created,creater        from jumei2.jm_bt_promotion_update_task
+        select id,jm_bt_promotion_id,begin_time,end_time,error_msg,state,created,creater        from jm_bt_promotion_update_task
     </select>
     <select id="get" resultMap="ResultMap">
-        select * from jumei2.jm_bt_promotion_update_task where id=#{id}
+        select id,jm_bt_promotion_id,begin_time,end_time,error_msg,state,created,creater from jm_bt_promotion_update_task where id=#{id}
     </select>
 
      <update id="update">
-        update jumei2.jm_bt_promotion_update_task
+        update jm_bt_promotion_update_task
         set
 
             jm_bt_promotion_id=#{jmBtPromotionId}
@@ -26,13 +26,13 @@
    </update>
 
     <delete id="delete">
-        delete from  jumei2.jm_bt_promotion_update_task
+        delete from  jm_bt_promotion_update_task
         where id=#{id}
 
     </delete>
 
     <insert id="create">
-        INSERT INTO jumei2.jm_bt_promotion_update_task
+        INSERT INTO jm_bt_promotion_update_task
         (
               jm_bt_promotion_id,
               begin_time,

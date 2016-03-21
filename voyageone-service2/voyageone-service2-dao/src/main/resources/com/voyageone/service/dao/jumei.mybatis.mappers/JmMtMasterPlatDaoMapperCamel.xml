@@ -7,14 +7,14 @@
 	
     <select id="getList" resultMap="ResultMap">
 
-        select id,code,key,name1,name2,name3,name4,created,creater,modified,modifier        from jumei2.jm_mt_master_plat
+        select id,code,key,name1,name2,name3,name4,created,creater,modified,modifier        from jm_mt_master_plat
     </select>
     <select id="get" resultMap="ResultMap">
-        select * from jumei2.jm_mt_master_plat where id=#{id}
+        select id,code,key,name1,name2,name3,name4,created,creater,modified,modifier from jm_mt_master_plat where id=#{id}
     </select>
 
      <update id="update">
-        update jumei2.jm_mt_master_plat
+        update jm_mt_master_plat
         set
 
             code=#{code}
@@ -29,13 +29,13 @@
    </update>
 
     <delete id="delete">
-        delete from  jumei2.jm_mt_master_plat
+        delete from  jm_mt_master_plat
         where id=#{id}
 
     </delete>
 
     <insert id="create">
-        INSERT INTO jumei2.jm_mt_master_plat
+        INSERT INTO jm_mt_master_plat
         (
               code,
               key,

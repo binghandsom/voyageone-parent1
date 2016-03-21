@@ -7,14 +7,14 @@
 	
     <select id="getList" resultMap="ResultMap">
 
-        select id,channel_id,promotion_id,jm_product_id,product_code,jm_hash_id,limit,error_msg,synch_state,creater,created,modified,modifier,state        from jumei2.jm_bt_promotion_product
+        select id,channel_id,promotion_id,jm_product_id,product_code,jm_hash_id,limit,error_msg,synch_state,creater,created,modified,modifier,state        from jm_bt_promotion_product
     </select>
     <select id="get" resultMap="ResultMap">
-        select * from jumei2.jm_bt_promotion_product where id=#{id}
+        select id,channel_id,promotion_id,jm_product_id,product_code,jm_hash_id,limit,error_msg,synch_state,creater,created,modified,modifier,state from jm_bt_promotion_product where id=#{id}
     </select>
 
      <update id="update">
-        update jumei2.jm_bt_promotion_product
+        update jm_bt_promotion_product
         set
 
             channel_id=#{channelId}
@@ -32,13 +32,13 @@
    </update>
 
     <delete id="delete">
-        delete from  jumei2.jm_bt_promotion_product
+        delete from  jm_bt_promotion_product
         where id=#{id}
 
     </delete>
 
     <insert id="create">
-        INSERT INTO jumei2.jm_bt_promotion_product
+        INSERT INTO jm_bt_promotion_product
         (
               channel_id,
               promotion_id,

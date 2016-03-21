@@ -7,14 +7,14 @@
 	
     <select id="getList" resultMap="ResultMap">
 
-        select id,channel_id,deal_id,jumei_product_id,product_code,foreign_language_name,product_name_cn,product_long_name,product_medium_name,product_short_name,vo_category_name,category_lv1_name,category_lv2_name,category_lv3_name,category_lv4_name,category_lv4_id,brand_name,brand_id,product_type,size_type,color_en,attribute,origin,address_of_produce,material_en,material_cn,product_des_en,product_des_cn,available_period,applicable_crowd,search_meta_text_custom,special_note,function_ids,msrp,hs_code,hs_name,hs_unit,send_flg,synch_state,created,creater,modified,modifier,syn_flg        from jumei2.jm_bt_product
+        select id,channel_id,deal_id,jumei_product_id,product_code,foreign_language_name,product_name_cn,product_long_name,product_medium_name,product_short_name,vo_category_name,category_lv1_name,category_lv2_name,category_lv3_name,category_lv4_name,category_lv4_id,brand_name,brand_id,product_type,size_type,color_en,attribute,origin,address_of_produce,material_en,material_cn,product_des_en,product_des_cn,available_period,applicable_crowd,search_meta_text_custom,special_note,function_ids,msrp,hs_code,hs_name,hs_unit,send_flg,synch_state,created,creater,modified,modifier,syn_flg        from jm_bt_product
     </select>
     <select id="get" resultMap="ResultMap">
-        select * from jumei2.jm_bt_product where id=#{id}
+        select id,channel_id,deal_id,jumei_product_id,product_code,foreign_language_name,product_name_cn,product_long_name,product_medium_name,product_short_name,vo_category_name,category_lv1_name,category_lv2_name,category_lv3_name,category_lv4_name,category_lv4_id,brand_name,brand_id,product_type,size_type,color_en,attribute,origin,address_of_produce,material_en,material_cn,product_des_en,product_des_cn,available_period,applicable_crowd,search_meta_text_custom,special_note,function_ids,msrp,hs_code,hs_name,hs_unit,send_flg,synch_state,created,creater,modified,modifier,syn_flg from jm_bt_product where id=#{id}
     </select>
 
      <update id="update">
-        update jumei2.jm_bt_product
+        update jm_bt_product
         set
 
             channel_id=#{channelId}
@@ -62,13 +62,13 @@
    </update>
 
     <delete id="delete">
-        delete from  jumei2.jm_bt_product
+        delete from  jm_bt_product
         where id=#{id}
 
     </delete>
 
     <insert id="create">
-        INSERT INTO jumei2.jm_bt_product
+        INSERT INTO jm_bt_product
         (
               channel_id,
               deal_id,

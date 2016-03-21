@@ -7,14 +7,14 @@
 	
     <select id="getList" resultMap="ResultMap">
 
-        select id,channel_id,image_key_1,image_key_2,image_key_3,data_type,image_index,origin_url,jm_url,syn_flg,created,creater,modified,modifier        from jumei2.jm_bt_master_info
+        select id,channel_id,image_key_1,image_key_2,image_key_3,data_type,image_index,value1,value2,syn_flg,error_message,created,creater,modified,modifier        from jm_bt_master_info
     </select>
     <select id="get" resultMap="ResultMap">
-        select * from jumei2.jm_bt_master_info where id=#{id}
+        select id,channel_id,image_key_1,image_key_2,image_key_3,data_type,image_index,value1,value2,syn_flg,error_message,created,creater,modified,modifier from jm_bt_master_info where id=#{id}
     </select>
 
      <update id="update">
-        update jumei2.jm_bt_master_info
+        update jm_bt_master_info
         set
 
             channel_id=#{channelId}
@@ -23,22 +23,23 @@
             ,image_key_3=#{imageKey3}
             ,data_type=#{dataType}
             ,image_index=#{imageIndex}
-            ,origin_url=#{originUrl}
-            ,jm_url=#{jmUrl}
+            ,value1=#{value1}
+            ,value2=#{value2}
             ,syn_flg=#{synFlg}
+            ,error_message=#{errorMessage}
             ,modified=#{modified}
             ,modifier=#{modifier}
          where id=#{id}   
    </update>
 
     <delete id="delete">
-        delete from  jumei2.jm_bt_master_info
+        delete from  jm_bt_master_info
         where id=#{id}
 
     </delete>
 
     <insert id="create">
-        INSERT INTO jumei2.jm_bt_master_info
+        INSERT INTO jm_bt_master_info
         (
               channel_id,
               image_key_1,
@@ -46,9 +47,10 @@
               image_key_3,
               data_type,
               image_index,
-              origin_url,
-              jm_url,
+              value1,
+              value2,
               syn_flg,
+              error_message,
               created,
               creater,
               modified,
@@ -61,9 +63,10 @@
               #{imageKey3},
               #{dataType},
               #{imageIndex},
-              #{originUrl},
-              #{jmUrl},
+              #{value1},
+              #{value2},
               #{synFlg},
+              #{errorMessage},
               #{created},
               #{creater},
               #{modified},

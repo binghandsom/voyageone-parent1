@@ -7,20 +7,19 @@
 	
     <select id="getList" resultMap="ResultMap">
 
-        select id,channel_id,image_key_1,image_key_2,image_key_3,image_type,image_index,origin_url,jm_url,syn_flg,created,creater,modified,modifier        from jumei2.jm_bt_images
+        select id,channel_id,Product Code,image_type_name,image_type,image_index,origin_url,jm_url,syn_flg,created,creater,modified,modifier        from jm_bt_images
     </select>
     <select id="get" resultMap="ResultMap">
-        select * from jumei2.jm_bt_images where id=#{id}
+        select id,channel_id,Product Code,image_type_name,image_type,image_index,origin_url,jm_url,syn_flg,created,creater,modified,modifier from jm_bt_images where id=#{id}
     </select>
 
      <update id="update">
-        update jumei2.jm_bt_images
+        update jm_bt_images
         set
 
             channel_id=#{channelId}
-            ,image_key_1=#{imageKey1}
-            ,image_key_2=#{imageKey2}
-            ,image_key_3=#{imageKey3}
+            ,Product Code=#{Product Code}
+            ,image_type_name=#{imageTypeName}
             ,image_type=#{imageType}
             ,image_index=#{imageIndex}
             ,origin_url=#{originUrl}
@@ -32,18 +31,17 @@
    </update>
 
     <delete id="delete">
-        delete from  jumei2.jm_bt_images
+        delete from  jm_bt_images
         where id=#{id}
 
     </delete>
 
     <insert id="create">
-        INSERT INTO jumei2.jm_bt_images
+        INSERT INTO jm_bt_images
         (
               channel_id,
-              image_key_1,
-              image_key_2,
-              image_key_3,
+              Product Code,
+              image_type_name,
               image_type,
               image_index,
               origin_url,
@@ -56,9 +54,8 @@
         )
         VALUES(
               #{channelId},
-              #{imageKey1},
-              #{imageKey2},
-              #{imageKey3},
+              #{Product Code},
+              #{imageTypeName},
               #{imageType},
               #{imageIndex},
               #{originUrl},
