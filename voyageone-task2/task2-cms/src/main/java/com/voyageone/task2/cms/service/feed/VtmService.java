@@ -21,7 +21,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import static com.voyageone.common.configs.Enums.ChannelConfigEnums.Channel.VITAMIN;
+import static com.voyageone.common.configs.Enums.ChannelConfigEnums.Channel.LUCKY_VITAMIN;
 
 /**
  * @author morse.lu
@@ -65,7 +65,7 @@ public class VtmService extends BaseTaskService {
 
         // 清表
         $info("维他命产品信息清表开始");
-        superfeeddao.deleteTableInfo(Feed.getVal1(ChannelConfigEnums.Channel.VITAMIN.getId(), FeedEnums.Name.table_id));
+        superfeeddao.deleteTableInfo(Feed.getVal1(ChannelConfigEnums.Channel.LUCKY_VITAMIN.getId(), FeedEnums.Name.table_id));
         $info("维他命产品信息清表结束");
 
         // 插入数据库
@@ -79,10 +79,10 @@ public class VtmService extends BaseTaskService {
         // 2的sql文：
         // UPDATE voyageone_cms2.cms_zz_worktable_vtm_superfeed b SET b.UpdateFlag = 2 WHERE b.MerchantPrimaryCategory="" OR b.CNMSRP="" OR b.CNPrice="" OR b.`Image List`="";
         logger.info("transform开始");
-        transformer.new Context(VITAMIN, this).transform();
+        transformer.new Context(LUCKY_VITAMIN, this).transform();
         logger.info("transform结束");
 
-        insertService.new Context(VITAMIN).postNewProduct();
+        insertService.new Context(LUCKY_VITAMIN).postNewProduct();
         // 更新完成，UpdateFlag结果：
         // UpdateFlag    cms_zz_worktable_vtm_superfeed
         // 0             已经加入的原有数据(未变化)
@@ -90,7 +90,7 @@ public class VtmService extends BaseTaskService {
         // 2             本次导入error的数据
         // 3             本次导入完全导入成功的数据
 
-        backupFeedFile(VITAMIN.getId());
+        backupFeedFile(LUCKY_VITAMIN.getId());
 
     }
 
@@ -136,11 +136,11 @@ public class VtmService extends BaseTaskService {
 //        CsvReader reader;
         BufferedReader br = null;
         try {
-            String fileName = Feed.getVal1(ChannelConfigEnums.Channel.VITAMIN.getId(), FeedEnums.Name.file_id);
-            String filePath = Feed.getVal1(ChannelConfigEnums.Channel.VITAMIN.getId(), FeedEnums.Name.feed_ftp_localpath);
+            String fileName = Feed.getVal1(ChannelConfigEnums.Channel.LUCKY_VITAMIN.getId(), FeedEnums.Name.file_id);
+            String filePath = Feed.getVal1(ChannelConfigEnums.Channel.LUCKY_VITAMIN.getId(), FeedEnums.Name.feed_ftp_localpath);
             String fileFullName = String.format("%s/%s", filePath, fileName);
 
-            String encode = Feed.getVal1(ChannelConfigEnums.Channel.VITAMIN.getId(), FeedEnums.Name.feed_ftp_file_coding);
+            String encode = Feed.getVal1(ChannelConfigEnums.Channel.LUCKY_VITAMIN.getId(), FeedEnums.Name.feed_ftp_file_coding);
 
 //            reader = new CsvReader(new FileInputStream(fileFullName), '\t', Charset.forName(encode));
 
@@ -296,7 +296,7 @@ public class VtmService extends BaseTaskService {
      */
     private List<String> getListImportUPC() {
         List<String> listImportUPC = new ArrayList<String>();
-        List<FeedBean> configs = Feed.getConfigs(ChannelConfigEnums.Channel.VITAMIN.getId(), FeedEnums.Name.import_upc);
+        List<FeedBean> configs = Feed.getConfigs(ChannelConfigEnums.Channel.LUCKY_VITAMIN.getId(), FeedEnums.Name.import_upc);
         configs.forEach(bean->listImportUPC.add(bean.getCfg_val1()));
 
         return listImportUPC;

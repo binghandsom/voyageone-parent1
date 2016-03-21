@@ -19,6 +19,6 @@ public class CmsBtChannelConfigDao extends ServiceBaseDao {
         CmsBtChannelConfigModel model = new CmsBtChannelConfigModel();
         model.setChannelId(channelId);
         model.setConfigKey(configKey);
-        return selectList("cms_mt_channel_config_sameAttr", model);
+        return selectList("cms_mt_channel_config_selectByConfigKey", model);
     }
 }

@@ -60,6 +60,16 @@ public class ProductForWmsBean {
 
     private String hsDescription = "";
 
+    private String clientMsrpPrice = "";
+
+    private String clientRetailPrice = "";
+
+    private String clientNetPrice = "";
+
+    private String retailPrice = "";
+
+    private String clientPriceUnit = "";
+
     public String getChannelId() {
         return channelId;
     }
@@ -274,5 +284,45 @@ public class ProductForWmsBean {
 
     public void setHsDescription(String hsDescription) {
         this.hsDescription = hsDescription;
+    }
+
+    public String getClientMsrpPrice() {
+        return clientMsrpPrice;
+    }
+
+    public void setClientMsrpPrice(String clientMsrpPrice) {
+        this.clientMsrpPrice = clientMsrpPrice;
+    }
+
+    public String getClientRetailPrice() {
+        return clientRetailPrice;
+    }
+
+    public void setClientRetailPrice(String clientRetailPrice) {
+        this.clientRetailPrice = clientRetailPrice;
+    }
+
+    public String getClientNetPrice() {
+        return clientNetPrice;
+    }
+
+    public void setClientNetPrice(String clientNetPrice) {
+        this.clientNetPrice = clientNetPrice;
+    }
+
+    public String getRetailPrice() {
+        return retailPrice;
+    }
+
+    public void setRetailPrice(String retailPrice) {
+        this.retailPrice = retailPrice;
+    }
+
+    public String getClientPriceUnit() {
+        return clientPriceUnit;
+    }
+
+    public void setClientPriceUnit(String clientPriceUnit) {
+        this.clientPriceUnit = clientPriceUnit;
     }
 }
