@@ -253,7 +253,7 @@
         )
     </select>
 
-    <select id="select_stock_separate_item_excel_map" resultType="HashMap" parameterType="HashMap">
+    <select id="select_stock_separate_item_excel_export" resultType="com.voyageone.web2.cms.bean.promotion.task.StockExcelBean" parameterType="HashMap">
         select
           `product_model`,
           `product_code`,
@@ -270,6 +270,20 @@
         ${whereSql}
         order by
           `product_model`,`product_code`,`sku`,`cart_id`
+    </select>
+
+    <select id="select_stock_separate_item_excel_import" resultType="com.voyageone.web2.cms.bean.promotion.task.StockExcelBean" parameterType="HashMap">
+        select
+          max(sku) sku,
+          max(qty) qty,
+          max(status) status
+        from voyageone_cms2.cms_bt_stock_separate_item
+        where
+          task_id =#{task_id}
+        group by
+          task_id, sku
+        order by
+          task_id, sku
     </select>
 
 </mapper>

@@ -1,6 +1,7 @@
 package com.voyageone.web2.cms.dao;
 
 import com.voyageone.base.dao.BaseDao;
+import com.voyageone.web2.cms.bean.promotion.task.StockExcelBean;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -52,7 +53,11 @@ public class CmsBtStockSeparateItemDao extends BaseDao {
         return selectList("select_stock_separate_detail_all", param);
     }
 
-    public List<Map<String, Object>> selectExcelStockInfo(Map<String, Object> param) {
-        return selectList("select_stock_separate_item_excel_map", param);
+    public List<StockExcelBean> selectExcelExportStockInfo(Map<String, Object> param) {
+        return selectList("select_stock_separate_item_excel_export", param);
+    }
+
+    public List<StockExcelBean> selectExcelImportStockInfo(Map<String, Object> param) {
+        return selectList("select_stock_separate_item_excel_import", param);
     }
 }
