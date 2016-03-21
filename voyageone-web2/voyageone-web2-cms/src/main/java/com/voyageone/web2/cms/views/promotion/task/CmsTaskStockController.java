@@ -908,7 +908,13 @@ public class CmsTaskStockController extends CmsController {
      * @apiVersion 0.0.1
      * @apiPermission 认证商户
      * @apiParam (应用级参数) {String} taskId 任务id
-     * @apiParam (应用级参数) {String} sku Sku （不存在的场合，进行所有隔离）
+     * @apiParam (应用级参数) {String} model 商品model
+     * @apiParam (应用级参数) {String} code 商品Code
+     * @apiParam (应用级参数) {String} sku Sku
+     * @apiParam (应用级参数) {String} qtyFrom 可用库存（下限）
+     * @apiParam (应用级参数) {String} qtyTo 可用库存（上限）
+     * @apiParam (应用级参数) {String} status 状态（0：未进行； 1：等待隔离； 2：隔离成功； 3：隔离失败； 4：等待还原； 5：还原成功； 6：还原失败； 7：再修正； 空白:ALL）
+     * @apiParam (应用级参数) {String} selSku 选择的Sku （不存在的场合，进行所有隔离）
      * @apiSuccess (系统级返回字段) {String} code 处理结果代码编号
      * @apiSuccess (系统级返回字段) {String} message 处理结果描述
      * @apiSuccess (系统级返回字段) {String} displayType 消息的提示方式
@@ -919,7 +925,7 @@ public class CmsTaskStockController extends CmsController {
      * }
      * @apiExample  业务说明
      *  只有状态为"0:未进行"，"3:隔离失败"，"7:再修正"的数据可以进行隔离库存操作。
-     *  根据参数.Sku进行判断，不存在的场合，对所有Sku进行进行隔离。否则对指定sku进行库存隔离。
+     *  根据参数.Sku进行判断，不存在的场合，对指定条件的Sku进行进行隔离。否则对指定sku进行库存隔离。
      *  启动隔离后，将状态变为"1:等待隔离"。
      *
      * @apiExample 使用表
@@ -941,7 +947,13 @@ public class CmsTaskStockController extends CmsController {
      * @apiVersion 0.0.1
      * @apiPermission 认证商户
      * @apiParam (应用级参数) {String} taskId 任务id
-     * @apiParam (应用级参数) {String} sku Sku （不存在的场合，进行所有还原）
+     * @apiParam (应用级参数) {String} model 商品model
+     * @apiParam (应用级参数) {String} code 商品Code
+     * @apiParam (应用级参数) {String} sku Sku
+     * @apiParam (应用级参数) {String} qtyFrom 可用库存（下限）
+     * @apiParam (应用级参数) {String} qtyTo 可用库存（上限）
+     * @apiParam (应用级参数) {String} status 状态（0：未进行； 1：等待隔离； 2：隔离成功； 3：隔离失败； 4：等待还原； 5：还原成功； 6：还原失败； 7：再修正； 空白:ALL）
+     * @apiParam (应用级参数) {String} selSku 选择的Sku （不存在的场合，进行所有还原）
      * @apiSuccess (系统级返回字段) {String} code 处理结果代码编号
      * @apiSuccess (系统级返回字段) {String} message 处理结果描述
      * @apiSuccess (系统级返回字段) {String} displayType 消息的提示方式
@@ -951,12 +963,14 @@ public class CmsTaskStockController extends CmsController {
      *  "code":"0", "message":null, "displayType":null, "redirectTo":null, "data":null
      * }
      * @apiExample  业务说明
-     *  只有状态为"2:隔离成功"，"6:还原失败"的数据可以进行还原库存隔离操作。
-     *  根据参数.Sku进行判断，不存在的场合，对所有sku进行还原库存隔离。否则对指定sku进行还原库存隔离。
+     *  1.只有状态为"2:隔离成功"，"6:还原失败"的数据可以进行还原库存隔离操作。
+     *  根据参数.Sku进行判断，不存在的场合，对指定条件的sku进行还原库存隔离。否则对指定sku进行还原库存隔离。
      *  启动还原库存隔离后，将状态变为"4:等待还原"。
+     *  2.对增量库存隔离的数据进行状态变更，对于1.的处理对象（sku），将对应增量库存总的状态变为"4:还原"。
      *
      * @apiExample 使用表
      *  cms_bt_stock_separate_platform_info
+     *  cms_bt_stock_separate_increment_item
      *
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK.EXECUTE_STOCK_REVERT)
@@ -1041,14 +1055,7 @@ public class CmsTaskStockController extends CmsController {
      * @apiVersion 0.0.1
      * @apiPermission 认证商户
      * @apiParam (应用级参数) {String} taskId 任务id
-     * @apiParam (应用级参数) {Object} stockInfo（json数据） 一条Sku的隔离明细
-     * @apiParamExample  stockInfo参数示例
-     * {
-     *   "taskId":"1",
-     *   "stockInfo":  {"model":"35265", "code":"35265465", "sku":"256354566-9", "property1":"Puma", "property2":"Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"50",
-     *                                                         "platformStock":[{"cartId":"23", "separationQty":"40", "status":"未进行"},
-     *                                                                          {"cartId":"27", "separationQty":"10", "status":"未进行"}]}
-     * }
+     * @apiParam (应用级参数) {String} sku Sku
      * @apiSuccess (系统级返回字段) {String} code 处理结果代码编号
      * @apiSuccess (系统级返回字段) {String} message 处理结果描述
      * @apiSuccess (系统级返回字段) {String} displayType 消息的提示方式
