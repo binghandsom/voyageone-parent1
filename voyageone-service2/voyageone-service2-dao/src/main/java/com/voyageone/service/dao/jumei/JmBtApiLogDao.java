@@ -5,7 +5,7 @@ import com.voyageone.service.model.jumei.*;
 import java.util.List;
 
 @Repository
-public interface JmBtApiLogJuMeiDao {
+public interface JmBtApiLogDao {
     public List<JmBtApiLogModel>  getList();
     public  JmBtApiLogModel get(long id);
     public int create(JmBtApiLogModel entity);

@@ -5,7 +5,7 @@ import com.voyageone.service.model.jumei.*;
 import java.util.List;
 
 @Repository
-public interface JmMtCategoryJuMeiDao {
+public interface JmMtCategoryDao {
     public List<JmMtCategoryModel>  getList();
     public  JmMtCategoryModel get(long id);
     public int create(JmMtCategoryModel entity);

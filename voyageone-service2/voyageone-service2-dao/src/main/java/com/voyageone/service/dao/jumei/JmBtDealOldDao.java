@@ -5,7 +5,7 @@ import com.voyageone.service.model.jumei.*;
 import java.util.List;
 
 @Repository
-public interface JmBtDealOldJuMeiDao {
+public interface JmBtDealOldDao {
     public List<JmBtDealOldModel>  getList();
     public  JmBtDealOldModel get(long id);
     public int create(JmBtDealOldModel entity);

@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.voyageone.service.dao.jumei.JmBtImagesDao">
-    <resultMap id="ResultMap" type="com.voyageone.service.model.jumei.JmBtImagesModel">
+<mapper namespace="com.voyageone.service.dao.jumei.JmBtMasterInfoDao">
+    <resultMap id="ResultMap" type="com.voyageone.service.model.jumei.JmBtMasterInfoModel">
         
     </resultMap>
 	
     <select id="getList" resultMap="ResultMap">
 
-        select id,channel_id,image_key_1,image_key_2,image_key_3,image_type,image_index,origin_url,jm_url,syn_flg,created,creater,modified,modifier        from jumei2.jm_bt_images
+        select id,channel_id,image_key_1,image_key_2,image_key_3,data_type,image_index,origin_url,jm_url,syn_flg,created,creater,modified,modifier        from jumei2.jm_bt_master_info
     </select>
     <select id="get" resultMap="ResultMap">
-        select * from jumei2.jm_bt_images where id=#{id}
+        select * from jumei2.jm_bt_master_info where id=#{id}
     </select>
 
      <update id="update">
-        update jumei2.jm_bt_images
+        update jumei2.jm_bt_master_info
         set
 
             channel_id=#{channelId}
             ,image_key_1=#{imageKey1}
             ,image_key_2=#{imageKey2}
             ,image_key_3=#{imageKey3}
-            ,image_type=#{imageType}
+            ,data_type=#{dataType}
             ,image_index=#{imageIndex}
             ,origin_url=#{originUrl}
             ,jm_url=#{jmUrl}
@@ -32,19 +32,19 @@
    </update>
 
     <delete id="delete">
-        delete from  jumei2.jm_bt_images
+        delete from  jumei2.jm_bt_master_info
         where id=#{id}
 
     </delete>
 
     <insert id="create">
-        INSERT INTO jumei2.jm_bt_images
+        INSERT INTO jumei2.jm_bt_master_info
         (
               channel_id,
               image_key_1,
               image_key_2,
               image_key_3,
-              image_type,
+              data_type,
               image_index,
               origin_url,
               jm_url,
@@ -59,7 +59,7 @@
               #{imageKey1},
               #{imageKey2},
               #{imageKey3},
-              #{imageType},
+              #{dataType},
               #{imageIndex},
               #{originUrl},
               #{jmUrl},

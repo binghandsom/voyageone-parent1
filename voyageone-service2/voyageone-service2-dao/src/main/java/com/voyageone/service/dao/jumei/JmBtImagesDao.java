@@ -5,7 +5,7 @@ import com.voyageone.service.model.jumei.*;
 import java.util.List;
 
 @Repository
-public interface JmBtImagesJuMeiDao {
+public interface JmBtImagesDao {
     public List<JmBtImagesModel>  getList();
     public  JmBtImagesModel get(long id);
     public int create(JmBtImagesModel entity);

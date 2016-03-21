@@ -5,7 +5,7 @@ import com.voyageone.service.model.jumei.*;
 import java.util.List;
 
 @Repository
-public interface JmBtPromotionJuMeiDao {
+public interface JmBtPromotionDao {
     public List<JmBtPromotionModel>  getList();
     public  JmBtPromotionModel get(long id);
     public int create(JmBtPromotionModel entity);

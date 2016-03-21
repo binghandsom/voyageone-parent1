@@ -12,7 +12,7 @@ import java.util.List;
 @Service
 public class JmBtApiLogService {
 @Autowired
-    JmBtApiLogJuMeiDao dao;
+    JmBtApiLogDao dao;
 
     public JmBtApiLogModel get(int id)
     {
