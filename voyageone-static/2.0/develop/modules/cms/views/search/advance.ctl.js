@@ -58,7 +58,8 @@ define([
             })
             .then(function() {
                 // 如果来至category 或者header search 则默认检索
-                $scope.vm.tblWidth = '100%';
+                $scope.vm.tblWidth = '100%'; // group tab的原始宽度
+                $scope.vm.tblWidth2 = '100%'; // product tab的原始宽度
                 if ($routeParams.type == "1"
                     || $routeParams.type == "2") {
                     search();
@@ -126,11 +127,32 @@ define([
                 $scope.vm.groupSelList = res.data.groupSelList;
 
                 $scope.vm.productList = res.data.productList;
+                _.forEach($scope.vm.productList, function (prodInfo) {
+                    var commArr = [];
+                    _.forEach($scope.vm.commonProps, function (data) {
+                        var itemVal = prodInfo.fields[data.propId];
+                        if (itemVal == undefined) {
+                            itemVal = "";
+                        }
+                        commArr.push({value: itemVal});
+                    });
+                    prodInfo.commArr = commArr;
+                    var custArr = [];
+                    _.forEach($scope.vm.customProps, function (data) {
+                        var itemVal = prodInfo.feed.cnAtts[data.feed_prop_original];
+                        if (itemVal == undefined) {
+                            itemVal = "";
+                        }
+                        custArr.push({value: itemVal});
+                    });
+                    prodInfo.custArr = custArr;
+                });
                 $scope.vm.productPageOption.total = res.data.productListTotal;
                 $scope.vm.productSelList = res.data.productSelList;
 
                 // 计算表格宽度
                 $scope.vm.tblWidth = (($scope.vm.commonProps.length + $scope.vm.customProps.length) * 120 + 980) + 'px';
+                $scope.vm.tblWidth2 = (($scope.vm.commonProps.length + $scope.vm.customProps.length) * 120 + 980) + 'px';
             })
         }
 
@@ -183,6 +205,27 @@ define([
                 $scope.vm.productList = res.data.productList == null ? [] : res.data.productList;
                 $scope.vm.productPageOption.total = res.data.productListTotal;
                 $scope.vm.productSelList = res.data.productSelList;
+
+                _.forEach($scope.vm.productList, function (prodInfo) {
+                    var commArr = [];
+                    _.forEach($scope.vm.commonProps, function (data) {
+                        var itemVal = prodInfo.fields[data.propId];
+                        if (itemVal == undefined) {
+                            itemVal = "";
+                        }
+                        commArr.push({value: itemVal});
+                    });
+                    prodInfo.commArr = commArr;
+                    var custArr = [];
+                    _.forEach($scope.vm.customProps, function (data) {
+                        var itemVal = prodInfo.feed.cnAtts[data.feed_prop_original];
+                        if (itemVal == undefined) {
+                            itemVal = "";
+                        }
+                        custArr.push({value: itemVal});
+                    });
+                    prodInfo.custArr = custArr;
+                });
             });
         }
 

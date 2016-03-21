@@ -108,12 +108,14 @@ public class CmsSearchAdvanceController extends CmsController {
      */
     @RequestMapping(CmsUrlConstants.SEARCH.ADVANCE.GET_GROUP_LIST)
     public AjaxResponse getGroupList(@RequestBody CmsSearchInfoBean params) {
-
         Map<String, Object> resultBean = new HashMap<>();
+        UserSessionBean userInfo = getUser();
+        CmsSessionBean cmsSession = getCmsSession();
 
         // 获取group列表
         List<CmsBtProductModel> groupList = searchIndexService.getGroupList(params, getUser(), getCmsSession());
         resultBean.put("groupList", groupList);
+        resultBean.put("grpImgList", searchIndexService.getGroupImageList(groupList, userInfo.getSelChannelId(), (int) cmsSession.getPlatformType().get("cartId")));
         long groupListTotal = searchIndexService.getGroupCnt(params, getUser(), getCmsSession());
         resultBean.put("groupListTotal", groupListTotal);
 

@@ -228,13 +228,12 @@ public class CmsSearchAdvanceService extends BaseAppService{
      * @return
      */
     public List<CmsBtProductModel> getProductList(CmsSearchInfoBean searchValue, UserSessionBean userInfo, CmsSessionBean cmsSessionBean) {
-
         JomgoQuery queryObject = new JomgoQuery();
         queryObject.setQuery(getSearchQueryForProduct(searchValue, cmsSessionBean));
         queryObject.setProjection(searchItems.split(";"));
         queryObject.setSort(setSortValue(searchValue));
-        queryObject.setSkip((searchValue.getGroupPageNum() - 1) * searchValue.getGroupPageSize());
-        queryObject.setLimit(searchValue.getGroupPageSize());
+        queryObject.setSkip((searchValue.getProductPageNum() - 1) * searchValue.getProductPageSize());
+        queryObject.setLimit(searchValue.getProductPageSize());
         return productService.getList(userInfo.getSelChannelId(), queryObject);
     }
 
