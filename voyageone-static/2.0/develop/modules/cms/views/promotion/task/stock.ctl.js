@@ -8,19 +8,13 @@ define([
 ], function (cms) {
     cms.controller("taskStockController", (function () {
 
-        function TaskStockController($routeParams, taskStockService, cActions, confirm, alert, notify, $location, selectRowsFactory) {
+        function TaskStockController($routeParams, taskStockService, cActions, confirm, alert, notify, selectRowsFactory) {
             var urls = cActions.cms.task.taskStockService;
-            var taskId = $routeParams['task_id'];
-            if (_.isNaN(taskId)) {
-                this.init = null;
-                alert('TXT_MSG_UNVALID_URL').result.then(function () {
-                    $location.path('/promotion/task');
-                });
-            }
             this.alert = alert;
             this.notify = notify;
             this.confirm = confirm;
-            this.taskId = taskId;
+            this.taskId = $routeParams['task_id'];
+            this.hasAuthority = true;
             this.readyNum = 0;
             this.waitSeparationNum = 0;
             this.separationOKNum = 0;
@@ -103,6 +97,11 @@ define([
                     "start2" :  0,
                     "length2" : 20
                 }).then(function (res) {
+                    main.hasAuthority = res.data.hasAuthority;
+                    if (!main.hasAuthority) {
+                        main.alert('没有权限访问！')
+                        return;
+                    }
                     main.tempStockListSelect.clearCurrPageRows();
                     main.readyNum = res.data.readyNum;
                     main.waitSeparationNum = res.data.waitSeparationNum;

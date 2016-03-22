@@ -20,15 +20,15 @@ import java.util.Map;
         value = CmsUrlConstants.PROMOTION.TASK.STOCK_INCREMENT_DETAIL.ROOT,
         method = RequestMethod.POST
 )
-public class CmsTaskIncrementStockDetailController extends CmsController {
+public class CmsTaskStockIncrementDetailController extends CmsController {
 
 //    @Autowired
-//    private CmsTaskIncrementStockDetailService cmsTaskIncrementStockDetailService;
+//    private CmsTaskStockIncrementDetailService cmsTaskStockIncrementDetailService;
 
 
     /**
      * @api {post} /cms/promotion/task_stock_increment_detail/searchItem 3.1 检索增量隔离明细
-     * @apiName CmsTaskIncrementStockDetailController.searchItem
+     * @apiName CmsTaskStockIncrementDetailController.searchItem
      * @apiDescription 检索增量隔离明细
      * @apiGroup promotion
      * @apiVersion 0.0.1
@@ -101,7 +101,7 @@ public class CmsTaskIncrementStockDetailController extends CmsController {
 
     /**
      * @api {post} /cms/promotion/task_stock_increment_detail/saveItem 3.2 保存一条增量隔离库存明细
-     * @apiName CmsTaskIncrementStockDetailController.saveItem
+     * @apiName CmsTaskStockIncrementDetailController.saveItem
      * @apiDescription 保存一条增量隔离库存明细
      * @apiGroup promotion
      * @apiVersion 0.0.1
@@ -146,7 +146,7 @@ public class CmsTaskIncrementStockDetailController extends CmsController {
 
     /**
      * @api {post} /cms/promotion/task_stock_increment_detail/delItem 3.3 删除一条增量隔离库存明细
-     * @apiName CmsTaskIncrementStockDetailController.delItem
+     * @apiName CmsTaskStockIncrementDetailController.delItem
      * @apiDescription 删除一条增量隔离库存明细
      * @apiGroup promotion
      * @apiVersion 0.0.1
@@ -185,7 +185,7 @@ public class CmsTaskIncrementStockDetailController extends CmsController {
 
     /**
      * @api {post} /cms/promotion/task_stock_increment_detail/exportStockInfo 3.4 批量导出增量隔离库存明细
-     * @apiName CmsTaskIncrementStockDetailController.exportStockInfo
+     * @apiName CmsTaskStockIncrementDetailController.exportStockInfo
      * @apiDescription 批量导出增量隔离库存明细
      * @apiGroup promotion
      * @apiVersion 0.0.1
@@ -218,7 +218,7 @@ public class CmsTaskIncrementStockDetailController extends CmsController {
 
     /**
      * @api {post} /cms/promotion/task_stock_increment_detail/importStockInfo 3.5 批量导入增量隔离库存明细
-     * @apiName CmsTaskIncrementStockDetailController.importStockInfo
+     * @apiName CmsTaskStockIncrementDetailController.importStockInfo
      * @apiDescription 批量导入增量隔离库存明细
      * @apiGroup promotion
      * @apiVersion 0.0.1
@@ -277,7 +277,7 @@ public class CmsTaskIncrementStockDetailController extends CmsController {
 
     /**
      * @api {post} /cms/promotion/task_stock_increment_detail/executeStockIncrementSeparation 3.6 启动/重刷增量库存隔离
-     * @apiName CmsTaskIncrementStockDetailController.executeStockIncrementSeparation
+     * @apiName CmsTaskStockIncrementDetailController.executeStockIncrementSeparation
      * @apiDescription 启动/重刷增量库存隔离
      * @apiGroup promotion
      * @apiVersion 0.0.1

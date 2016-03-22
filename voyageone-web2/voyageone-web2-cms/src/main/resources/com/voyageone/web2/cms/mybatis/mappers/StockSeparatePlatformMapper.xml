@@ -4,13 +4,14 @@
 
     <select id="select_stock_separate_platform" resultType="HashMap" parameterType="HashMap">
         select
-            convert(t1.cart_id, char) as cartId,
+            t1.cart_id,
             t1.separate_percent,
             t2.activity_start,
             t2.activity_end,
+            t2.channel_id,
             t1.restore_separate_time
             <if test="channelId !=null and lang != null" >
-              ,t3.name as cartName
+              ,t3.name
             </if>
         from voyageone_cms2.cms_bt_stock_separate_platform_info t1
         left outer join voyageone_cms2.cms_bt_promotion t2 on t1.promotion_id = t2.promotion_id

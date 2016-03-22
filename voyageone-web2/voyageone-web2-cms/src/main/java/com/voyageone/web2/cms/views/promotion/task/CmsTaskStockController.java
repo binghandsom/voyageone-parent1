@@ -232,6 +232,7 @@ public class CmsTaskStockController extends CmsController {
      * @apiSuccess (系统级返回字段) {String} message 处理结果描述
      * @apiSuccess (系统级返回字段) {String} displayType 消息的提示方式
      * @apiSuccess (系统级返回字段) {String} redirectTo 跳转地址
+     * @apiSuccess (应用级返回字段) {boolean} hasAuthority 任务id对应渠道id是否有权限（false:没有权限,true:有权限）
      * @apiSuccess (应用级返回字段) {String} allNum 总数
      * @apiSuccess (应用级返回字段) {String} readyNum 未进行数
      * @apiSuccess (应用级返回字段) {String} waitSeparationNum 等待隔离数
@@ -251,6 +252,7 @@ public class CmsTaskStockController extends CmsController {
      * {
      *  "code":"0", "message":null, "displayType":null, "redirectTo":null,
      *  "data":{
+     *   "hasAuthority":true,
      *   "allNum":30000,
      *   "readyNum":1000,
      *   "waitSeparationNum":5000,
@@ -266,8 +268,8 @@ public class CmsTaskStockController extends CmsController {
      *                     {"property":"property2", "name":"英文短描述", "logic":"Like", "type":"", "show":false, "value"=""},
      *                     {"property":"property3", "name":"性别", "logic":"", "type":"", "show":false, "value"=""}，
      *                     {"property":"property4", "name":"Size", "logic":"", "type":"int", "show":false, "value"=""}],
-     *   "platformList": [ {"cartId":"23", "cartName":"天猫国际"},
-     *                     {"cartId":"27", "cartName":"聚美优品"} ]，
+     *   "platformList": [ {"cartId":"23", "cartName":"天猫国际".....},
+     *                     {"cartId":"27", "cartName":"聚美优品".....} ]，
      *   "stockList": [ {"model":"35265", "code":"35265465", "sku":"256354566-9", "property1":"Puma", "property2":"Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"50",
      *                                                         "platformStock":[{"cartId":"23", "separationQty":"30", "status":"隔离成功"},
      *                                                                          {"cartId":"27", "separationQty":"10", "status":"隔离失败"}]},
@@ -327,6 +329,31 @@ public class CmsTaskStockController extends CmsController {
         param.put("lang", this.getLang());
         // 返回内容
         Map<String, Object> resultBean = new HashMap<>();
+
+        // 任务对应平台信息列表 只有首次取得
+        if (param.get("platformList") == null || ((List<Map<String, Object>>)param.get("platformList")).size() == 0) {
+            List<Map<String, Object>> platformList = cmsTaskStockService.getPlatformList(param);
+            resultBean.put("platformList", platformList);
+            param.put("platformList", platformList);
+
+            // 任务id/渠道id权限check
+            boolean hasAuthority = cmsTaskStockService.hasAuthority(this.getUser().getSelChannelId(), platformList);
+            resultBean.put("hasAuthority", hasAuthority);
+        } else {
+            resultBean.put("platformList", param.get("platformList"));
+            resultBean.put("hasAuthority", true);
+        }
+
+
+
+        // 取得属性列表 只有首次取得
+        if (param.get("propertyList") == null || ((List<Map<String, Object>>)param.get("propertyList")).size() == 0) {
+            List<Map<String, Object>> propertyList = cmsTaskStockService.getPropertyList(param);
+            resultBean.put("propertyList", propertyList);
+            param.put("propertyList", propertyList);
+        } else {
+            resultBean.put("propertyList", param.get("propertyList"));
+        }
 
         // 任务id对应的库存隔离数据是否移到history表
         boolean historyFlg = cmsTaskStockService.isHistoryExist((String) param.get("taskId"));
@@ -395,24 +422,6 @@ public class CmsTaskStockController extends CmsController {
         // 总数
         resultBean.put("allNum", cntAllExceptDynamic);
 
-        // 取得属性列表 只有首次取得
-        if (param.get("propertyList") == null || ((List<Map<String, Object>>)param.get("propertyList")).size() == 0) {
-            List<Map<String, Object>> propertyList = cmsTaskStockService.getPropertyList(param);
-            resultBean.put("propertyList", propertyList);
-            param.put("propertyList", propertyList);
-        } else {
-            resultBean.put("propertyList", param.get("propertyList"));
-        }
-
-        // 任务对应平台信息列表 只有首次取得
-        if (param.get("platformList") == null || ((List<Map<String, Object>>)param.get("platformList")).size() == 0) {
-            List<Map<String, Object>> platformList = cmsTaskStockService.getPlatformList(param);
-            resultBean.put("platformList", platformList);
-            param.put("platformList", platformList);
-        } else {
-            resultBean.put("platformList", param.get("platformList"));
-        }
-
         // 取得实时库存表示状态(0:活动期间表示,1:活动结束后表示）
         String realStockStatus = cmsTaskStockService.getRealStockStatus(param);
         resultBean.put("realStockStatus", realStockStatus);
@@ -466,8 +475,8 @@ public class CmsTaskStockController extends CmsController {
      *                     {"property":"property4", "name":"Size", "logic":"", "type":"int", "show":false, "value"=""}]
      * @apiParam (应用级参数) {Object} platformList 隔离平台列表（json数组）
      * @apiParamExample  propertyList参数示例
-     *   "platformList": [ {"cartId":"23", "cartName":"天猫国际"},
-     *                     {"cartId":"27", "cartName":"聚美优品"} ]
+     *   "platformList": [ {"cartId":"23", "cartName":"天猫国际".....},
+     *                     {"cartId":"27", "cartName":"聚美优品".....} ]
      * @apiParam (应用级参数) {String} start1 检索开始Index
      * @apiParam (应用级参数) {String} length1 检索件数
      * @apiSuccess (系统级返回字段) {String} code 处理结果代码编号
@@ -551,8 +560,8 @@ public class CmsTaskStockController extends CmsController {
      *                     {"property":"property4", "name":"Size", "logic":"", "type":"int", "show":false, "value"=""}]
      * @apiParam (应用级参数) {Object} platformList 隔离平台列表（json数组）
      * @apiParamExample  propertyList参数示例
-     *   "platformList": [ {"cartId":"23", "cartName":"天猫国际"},
-     *                     {"cartId":"27", "cartName":"聚美优品"} ]
+     *   "platformList": [ {"cartId":"23", "cartName":"天猫国际".....},
+     *                     {"cartId":"27", "cartName":"聚美优品".....} ]
      * @apiParam (应用级参数) {String} start2 检索开始Index
      * @apiParam (应用级参数) {String} length2 检索件数
      * @apiSuccess (系统级返回字段) {String} code 处理结果代码编号
@@ -779,8 +788,8 @@ public class CmsTaskStockController extends CmsController {
      *                     {"property":"property4", "name":"Size", "logic":"", "type":"int", "show":false, "value"=""}]
      * @apiParam (应用级参数) {Object} platformList 隔离平台列表（json数组）
      * @apiParamExample  propertyList参数示例
-     *   "platformList": [ {"cartId":"23", "cartName":"天猫国际"},
-     *                     {"cartId":"27", "cartName":"聚美优品"} ]
+     *   "platformList": [ {"cartId":"23", "cartName":"天猫国际".....},
+     *                     {"cartId":"27", "cartName":"聚美优品".....} ]
      * @apiSuccess (系统级返回字段) {String} statusCode HttpStatus（eg:200:"OK"）
      * @apiSuccess (系统级返回字段) {byte[]} byte 导出的文件流
      * @apiExample  业务说明

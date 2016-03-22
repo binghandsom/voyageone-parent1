@@ -1,5 +1,5 @@
 <div class="wrapper-md" ng-init="$ctrl.init()">
-	<div class="vo_accordion vo_attr">
+	<div class="vo_accordion vo_attr" ng-show="$ctrl.hasAuthority">
 		<div class="panel-group">
 			<div class="panel panel-default">
 				<div class="panel-heading">
@@ -70,7 +70,7 @@
 			</div>
 		</div>
 	</div>
-	<tabset class="tab-container vo_nav-tabs">
+	<tabset class="tab-container vo_nav-tabs" ng-show="$ctrl.hasAuthority">
 		<!--right-btn-->
 		<div class="form-inline pull-right btn-group">
 			<label id="allNum" class="btn btn-default-vo btn-vo" ng-model="radioModel" uib-btn-radio="'总数'" ng-click="$ctrl.search('')">{{'TXT_ALL' | translate}}：{{$ctrl.allNum}}</label>
@@ -93,7 +93,7 @@
 							<button class="btn btn-dangers" ng-click="openImportStock('md',{'task_id':$ctrl.taskId,'platformList':$ctrl.platformList,'propertyList':$ctrl.propertyList})"><i class="fa fa-reply-all"></i>&nbsp;{{'BTN_IMPORT_ALL' | translate}}</button>
 							<button class="btn btn-danger" ng-click="$ctrl.download()"><i class="glyphicon glyphicon-share-alt"></i>&nbsp;{{'BTN_EXPORT_ALL' | translate}}</button>
 							<button class="btn btn-primary" ng-click="$ctrl.executeStockSeparation()"><i class="glyphicon glyphicon-play"></i>&nbsp;{{'BTN_START_REFRESH_ALL' | translate}}</button>
-							<button class="btn btn-primarys" ng-click="$ctrl.executeStockRevert()"><i class="glyphicon glyphicon-share-alt"></i>&nbsp;{{'BTN_REVERT_ALL' | translate}}</button>
+							<button class="btn btn-primarys"  ng-click="$ctrl.executeStockRevert()"><i class="glyphicon glyphicon-share-alt"></i>&nbsp;{{'BTN_REVERT_ALL' | translate}}</button>
 						</div>
 						<div class="pull-left">
 							<div class="form-group form-inline" ng-controller="popupCtrl">

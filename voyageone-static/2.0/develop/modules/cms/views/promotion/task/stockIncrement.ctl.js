@@ -7,10 +7,52 @@ define([
 ], function (cms) {
     cms.controller("taskStockIncrementController", (function () {
 
-        function TaskStockIncrementController() {
+        function TaskStockIncrementController($routeParams, taskStockIncrementService, cActions, confirm, alert, notify) {
+            var urls = cActions.cms.task.taskStockService;
+            this.alert = alert;
+            this.notify = notify;
+            this.confirm = confirm;
+            this.taskId = $routeParams['task_id'];
+            this.subTaskName = "";
+            this.cartId = "";
+            this.platformList = [];
+            this.taskList = [];
+            this.taskStockIncrementService = taskStockIncrementService;
         }
 
         TaskStockIncrementController.prototype = {
+            init: function () {
+                this.getPlatFormList();
+            },
+            clear: function () {
+                this.subTaskName = "";
+                this.cartId = "";
+            },
+            getPlatFormList: function (status) {
+                var main = this;
+                main.taskStockIncrementService.getPlatFormList({
+                    "taskId" : main.taskId
+                }).then(function (res) {
+                    main.hasAuthority = res.data.hasAuthority;
+                    if (!main.hasAuthority) {
+                        main.alert('没有权限访问！')
+                        return;
+                    }
+                    main.platformList = res.data.platformList;
+                    main.search();
+                })
+            },
+
+            search: function (status) {
+                var main = this;
+                main.taskStockIncrementService.searchTask({
+                    "taskId" : main.taskId,
+                    "subTaskName" : main.subTaskName,
+                    "cartId" : main.cartId
+                }).then(function (res) {
+                    main.taskList = res.data.taskList;
+                })
+            }
         };
 
         return TaskStockIncrementController;

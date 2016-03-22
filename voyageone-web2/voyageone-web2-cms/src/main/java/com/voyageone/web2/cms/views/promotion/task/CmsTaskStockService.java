@@ -91,6 +91,25 @@ public class CmsTaskStockService extends BaseAppService {
         return null;
     }
 
+
+    /**
+     * 任务id/渠道id权限check
+     *
+     * @param channelId 渠道id
+     * @param platformList 隔离平台列表
+     * @return 任务id/渠道id权限check结果（false:没有权限,true:有权限）
+     */
+    public boolean hasAuthority(String channelId, List<Map<String, Object>> platformList){
+        for (Map<String, Object> platform : platformList) {
+            // 任务id/渠道id权限check
+            if (!channelId.equals(platform.get("channelId"))) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     /**
      * 删除库存隔离任务
      *
@@ -196,7 +215,22 @@ public class CmsTaskStockService extends BaseAppService {
      * @return 获取取得属性列表
      */
     public List<Map<String,Object>> getPlatformList(Map param){
-        return cmsBtStockSeparatePlatformInfoDao.selectStockSeparatePlatform(param);
+        // 取得任务对应平台信息列表
+        Map<String,Object> sqlParam = new HashMap<String,Object>();
+        sqlParam.put("taskId", param.get("taskId"));
+        sqlParam.put("channelId", param.get("channelId"));
+        sqlParam.put("lang", param.get("lang"));
+        List<Map<String,Object>> stockSeparatePlatformListDB = cmsBtStockSeparatePlatformInfoDao.selectStockSeparatePlatform(sqlParam);
+        List<Map<String,Object>> stockSeparatePlatformList = new ArrayList<Map<String,Object>>();
+        // 生成只有cartId和cartName的平台信息列表
+        for (Map<String,Object> stockSeparatePlatformDB : stockSeparatePlatformListDB) {
+            Map<String,Object> stockSeparatePlatform = new HashMap<String,Object>();
+            stockSeparatePlatform.put("cartId", String.valueOf(stockSeparatePlatformDB.get("cart_id")));
+            stockSeparatePlatform.put("cartName", (String) stockSeparatePlatformDB.get("name"));
+            stockSeparatePlatform.put("channelId", (String) stockSeparatePlatformDB.get("channel_id"));
+            stockSeparatePlatformList.add(stockSeparatePlatform);
+        }
+        return stockSeparatePlatformList;
     }
 
     /**
@@ -296,7 +330,7 @@ public class CmsTaskStockService extends BaseAppService {
         List<Map<String, Object>> platformList = cmsBtStockSeparatePlatformInfoDao.selectStockSeparatePlatform(sqlParam);
         for (Map<String, Object> platformInfo : platformList) {
             // 库存隔离还原时间
-            String restoreSeparateTime = (String) platformInfo.get("restore_separate_time");
+            String restoreSeparateTime = (String) platformInfo.get("restore_separateTime");
             if (!StringUtils.isEmpty(restoreSeparateTime)) {
                 if (restoreSeparateTime.length() == 10) {
                     restoreSeparateTime = restoreSeparateTime + " 00:00:00";

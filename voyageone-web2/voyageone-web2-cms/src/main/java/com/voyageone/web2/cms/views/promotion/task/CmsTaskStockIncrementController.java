@@ -4,12 +4,13 @@ import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -20,14 +21,17 @@ import java.util.Map;
         value = CmsUrlConstants.PROMOTION.TASK.STOCK_INCREMENT.ROOT,
         method = RequestMethod.POST
 )
-public class CmsTaskIncrementStockController extends CmsController {
+public class CmsTaskStockIncrementController extends CmsController {
 
-//    @Autowired
-//    private CmsTaskIncrementStockListService cmsTaskIncrementStockListService;
+    @Autowired
+    private CmsTaskStockIncrementService cmsTaskStockIncrementService;
+
+    @Autowired
+    private CmsTaskStockService cmsTaskStockService;
 
     /**
      * @api {post} /cms/promotion/task_stock_increment/getPlatFormList 2.1 取得隔离任务的隔离平台
-     * @apiName CmsTaskIncrementStockController.getPlatFormList
+     * @apiName CmsTaskStockIncrementController.getPlatFormList
      * @apiDescription 取得隔离任务的隔离平台（新建增量库存隔离任务前初始化操作/ 增量库存隔离任务一览表示后）
      * @apiGroup promotion
      * @apiVersion 0.0.1
@@ -54,14 +58,28 @@ public class CmsTaskIncrementStockController extends CmsController {
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK_INCREMENT.GET_PLATFORM_LIST)
     public AjaxResponse getPlatFormList(@RequestBody Map param) {
+        // 渠道id
+        param.put("channelId", this.getUser().getSelChannelId());
+        // 语言
+        param.put("lang", this.getLang());
+        // 返回内容
+        Map<String, Object> resultBean = new HashMap<>();
+
+        // 取得任务对应平台信息列表
+        List<Map<String, Object>> platformList = cmsTaskStockService.getPlatformList(param);
+        resultBean.put("platformList", platformList);
+
+        // 任务id/渠道id权限check
+        boolean hasAuthority = cmsTaskStockService.hasAuthority(this.getUser().getSelChannelId(), platformList);
+        resultBean.put("hasAuthority", hasAuthority);
 
         // 返回
-        return success(null);
+        return success(resultBean);
     }
 
     /**
      * @api {post} /cms/promotion/task_stock_increment/searchTask 2.2 检索增量库存隔离任务
-     * @apiName CmsTaskIncrementStockController.searchTask
+     * @apiName CmsTaskStockIncrementController.searchTask
      * @apiDescription 检索增量库存隔离任务
      * @apiGroup promotion
      * @apiVersion 0.0.1
@@ -69,41 +87,49 @@ public class CmsTaskIncrementStockController extends CmsController {
      * @apiParam (应用级参数) {String} taskId 任务id
      * @apiParam (应用级参数) {String} subTaskName 增量任务名
      * @apiParam (应用级参数) {String} cartId 平台id
-     * @apiParam (应用级参数) {String} start 检索开始Index
-     * @apiParam (应用级参数) {String} length 检索件数
      * @apiSuccess (系统级返回字段) {String} code 处理结果代码编号
      * @apiSuccess (系统级返回字段) {String} message 处理结果描述
      * @apiSuccess (系统级返回字段) {String} displayType 消息的提示方式
      * @apiSuccess (系统级返回字段) {String} redirectTo 跳转地址
-     * @apiSuccess (应用级返回字段) {String} countNum 合计数
      * @apiSuccess (应用级返回字段) {Object} taskList 增量任务列表（json数组）
      * @apiSuccessExample 成功响应更新请求
      * {
      *  "code":"0", "message":null, "displayType":null, "redirectTo":null,
      *  "data":{
-     *   "countNum":5,
-     *   "taskList": [ {"taskName":"天猫国际双11-增量任务1", "cartName":"天猫"},
-     *                 {"taskName":"天猫国际双11-增量任务2", "cartName":"京东"},
+     *   "taskList": [ {"subTaskId":"1", "subTaskName":"天猫国际双11-增量任务1", "cartName":"天猫"},
+     *                 {"subTaskId":"2", "subTaskName":"天猫国际双11-增量任务2", "cartName":"京东"},
      *                    ...]，
      *  }
      * }
      * 说明："taskName":增量任务名。"cartName":平台名。
      * @apiExample  业务说明
-     *  1.根据参数.任务id，增量任务名从cms_bt_stock_separate_increment_task表检索增量库存隔离任务。
+     *  1.根据任务id，从cms_bt_stock_separate_platform_info取得隔离平台的信息。
+     *  2.根据参数.任务id，增量任务名从cms_bt_stock_separate_increment_task表检索增量库存隔离任务。
      * @apiExample 使用表
+     *  cms_bt_stock_separate_platform_info
      *  cms_bt_stock_separate_increment_task
      *
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK_INCREMENT.SEARCH_TASK)
     public AjaxResponse searchTask(@RequestBody Map param) {
+        // 渠道id
+        param.put("channelId", this.getUser().getSelChannelId());
+        // 语言
+        param.put("lang", this.getLang());
+        // 返回内容
+        Map<String, Object> resultBean = new HashMap<>();
+
+        // 取得增量库存隔离任务
+        List<Map<String, Object>> taskList = cmsTaskStockIncrementService.getStockIncrementTaskList(param);
+        resultBean.put("taskList", taskList);
 
         // 返回
-        return success(null);
+        return success(resultBean);
     }
 
     /**
      * @api {post} /cms/promotion/task_stock_increment/saveTask 2.3 新建/修改增量库存隔离任务
-     * @apiName CmsTaskIncrementStockController.saveTask
+     * @apiName CmsTaskStockIncrementController.saveTask
      * @apiDescription 新建/修改增量库存隔离任务
      * @apiGroup promotion
      * @apiVersion 0.0.1
@@ -158,7 +184,7 @@ public class CmsTaskIncrementStockController extends CmsController {
 
     /**
      * @api {post} /cms/promotion/task_stock_increment/delTask 2.4 删除增量库存隔离任务
-     * @apiName CmsTaskIncrementStockController.delTask
+     * @apiName CmsTaskStockIncrementController.delTask
      * @apiDescription 删除增量库存隔离任务
      * @apiGroup promotion
      * @apiVersion 0.0.1
