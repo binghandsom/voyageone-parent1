@@ -16,13 +16,14 @@ import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.CmsConstants;
 import com.voyageone.web2.cms.bean.promotion.task.StockExcelBean;
 import com.voyageone.web2.cms.dao.*;
-import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayOutputStream;
@@ -1292,7 +1293,7 @@ public class CmsTaskStockService extends BaseAppService {
 
         if (saveData.size() > 0) {
             logger.info("更新开始");
-            saveImportData(saveData, import_mode, task_id);
+            saveImportData(saveData, import_mode, task_id, (String) param.get("userName"));
             logger.info(String.format("更新结束,更新了%d件", saveData.size()));
         } else {
             logger.info("没有更新对象");
@@ -1531,7 +1532,7 @@ public class CmsTaskStockService extends BaseAppService {
                 bean.setQty(new BigDecimal(usableStock));
                 if (isDYNAMIC) {
                     // 动态
-                    bean.setSeparate_qty(new BigDecimal(-1));
+                    bean.setSeparate_qty(new BigDecimal("-1"));
                 } else {
                     bean.setSeparate_qty(new BigDecimal(separate_qty));
                     bean.setStatus("0");
@@ -1599,7 +1600,7 @@ public class CmsTaskStockService extends BaseAppService {
                     bean.setQty(new BigDecimal(usableStock));
                     if (isDYNAMIC) {
                         // 动态
-                        bean.setSeparate_qty(new BigDecimal(-1));
+                        bean.setSeparate_qty(new BigDecimal("-1"));
                     } else {
                         bean.setSeparate_qty(new BigDecimal(separate_qty));
                         if ("2".equals(beanInDB.getStatus()) || "7".equals(beanInDB.getStatus())) {
@@ -1629,11 +1630,67 @@ public class CmsTaskStockService extends BaseAppService {
      * @param saveData    保存对象
      * @param import_mode 导入方式
      * @param task_id     任务id
+     * @param creater     创建者/更新者
      */
-    private void saveImportData(List<StockExcelBean> saveData, String import_mode, String task_id) {
-        for (StockExcelBean bean : saveData) {
+//    @Transactional
+    private void saveImportData(List<StockExcelBean> saveData, String import_mode, String task_id, String creater) {
+        if (EXCEL_IMPORT_UPDATE.equals(import_mode)) {
+            // 变更方式
+            for (StockExcelBean bean : saveData) {
+                Map<String, Object> mapSaveData;
+                try {
+                    mapSaveData = PropertyUtils.describe(bean);
+                } catch (Exception e) {
+                    throw new BusinessException("导入文件有数据异常");
+                }
 
+                mapSaveData.put("task_id", task_id);
+                mapSaveData.put("modifier", creater);
+
+                updateImportData(mapSaveData);
+            }
+        } else {
+            // 增量方式
+            List<Map<String, Object>> listSaveData = new ArrayList<Map<String, Object>>();
+            for (StockExcelBean bean : saveData) {
+                Map<String, Object> mapSaveData;
+                try {
+                    mapSaveData = PropertyUtils.describe(bean);
+                } catch (Exception e) {
+                    throw new BusinessException("导入文件有数据异常");
+                }
+
+                mapSaveData.put("task_id", task_id);
+                mapSaveData.put("creater", creater);
+
+                listSaveData.add(mapSaveData);
+                if (listSaveData.size() == 200) {
+                    insertImportData(listSaveData);
+                    listSaveData.clear();
+                }
+            }
+
+            insertImportData(listSaveData);
+            listSaveData.clear();
         }
+    }
+
+    /**
+     * 导入文件数据插入更新
+     *
+     * @param saveData 保存对象
+     */
+    private void insertImportData(List<Map<String, Object>> saveData) {
+        cmsBtStockSeparateItemDao.insertStockSeparateItemFromExcel(saveData);
+    }
+
+    /**
+     * 导入文件数据变更更新
+     *
+     * @param saveData 保存对象
+     */
+    private void updateImportData(Map<String, Object> saveData) {
+        cmsBtStockSeparateItemDao.updateStockSeparateItemFromExcel(saveData);
     }
 
     /**
