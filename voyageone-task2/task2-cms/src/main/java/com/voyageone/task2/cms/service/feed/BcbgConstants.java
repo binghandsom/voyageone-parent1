@@ -11,19 +11,7 @@ import java.util.regex.Pattern;
  * 鉴于特殊情况,使用统一的类进行静态变量的管理和共用.但 BCBG 的任务启动前必须初始化
  * Created by Jonas on 11/4/15.
  */
-class BcbgWsdlConstants {
-
-    final static String table_feed = "voyageone_cms.cms_zz_worktable_bcbg_superfeed";
-
-    final static String table_feed_full = "voyageone_cms.cms_zz_worktable_bcbg_superfeed_full";
-
-    final static String table_style_full = "voyageone_cms.cms_zz_worktable_bcbg_styles_full";
-
-    final static String on_product = "styleID = feedStyleID";
-
-    final static String grouping_product = "CONCAT(MATKL,'-',SATNR,COLOR),MATKL,CONCAT(MATKL,'-',SATNR),feedStyleID,COLOR_ATWTB,WHERL,productDesc,A304_KBETR,A073_KBETR,A304_KBETR,A073_KBETR,A073_KBETR";
-
-    final static String grouping_model = "feedStyleID,MATKL,WLADG,BRAND_ID,SATNR,ATBEZ,SIZE1_ATINN";
+class BcbgConstants {
 
     static Pattern special_symbol;
 

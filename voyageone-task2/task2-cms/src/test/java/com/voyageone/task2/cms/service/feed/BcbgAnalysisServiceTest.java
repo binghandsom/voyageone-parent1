@@ -19,7 +19,7 @@ public class BcbgAnalysisServiceTest {
 
     @Before
     public void init() throws Exception {
-        BcbgWsdlConstants.init();
+        BcbgConstants.init();
     }
 
     @Test

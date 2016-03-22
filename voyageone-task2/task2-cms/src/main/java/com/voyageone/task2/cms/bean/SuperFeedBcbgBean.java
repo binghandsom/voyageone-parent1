@@ -17,6 +17,8 @@ public class SuperFeedBcbgBean {
 
     private String MATKL;
 
+    private String MATKL_ATT1;
+
     private String ZZCODE1;
 
     private String ZZCODE2;
@@ -73,6 +75,8 @@ public class SuperFeedBcbgBean {
 
     private String md5;
 
+    private BcbgStyleBean styleBean;
+
     public int getId() {
         return id;
     }
@@ -111,6 +115,14 @@ public class SuperFeedBcbgBean {
 
     public void setMATKL(String MATKL) {
         this.MATKL = MATKL;
+    }
+
+    public String getMATKL_ATT1() {
+        return MATKL_ATT1;
+    }
+
+    public void setMATKL_ATT1(String MATKL_ATT1) {
+        this.MATKL_ATT1 = MATKL_ATT1;
     }
 
     public String getZZCODE1() {
@@ -339,5 +351,13 @@ public class SuperFeedBcbgBean {
 
     public void setMd5(String md5) {
         this.md5 = md5;
+    }
+
+    public BcbgStyleBean getStyleBean() {
+        return styleBean;
+    }
+
+    public void setStyleBean(BcbgStyleBean styleBean) {
+        this.styleBean = styleBean;
     }
 }

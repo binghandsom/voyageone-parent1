@@ -2,6 +2,8 @@ package com.voyageone.task2.cms.bean;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -64,5 +66,20 @@ public class BcbgStyleBean {
         if (hasStringEmpty) return (valid = false);
 
         return (valid = getProductImgURLs() != null && getProductImgURLs().size() > 0);
+    }
+
+    /**
+     * 该方法用于从数据库取回 Style 数据时使用, MyBatis 调用.
+     * @param imageUrls ;; 双分分隔的图片地址
+     */
+    public void setImageUrls(String imageUrls) {
+
+        List<String> imageList = new ArrayList<>();
+
+        String[] imageArr = imageUrls.split(";;");
+
+        Collections.addAll(imageList, imageArr);
+
+        setProductImgURLs(imageList);
     }
 }
