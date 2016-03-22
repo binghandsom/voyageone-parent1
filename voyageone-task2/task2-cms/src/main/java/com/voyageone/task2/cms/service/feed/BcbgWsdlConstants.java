@@ -13,27 +13,27 @@ import java.util.regex.Pattern;
  */
 class BcbgWsdlConstants {
 
-    protected final static String table_feed = "voyageone_cms.cms_zz_worktable_bcbg_superfeed";
+    final static String table_feed = "voyageone_cms.cms_zz_worktable_bcbg_superfeed";
 
-    protected final static String table_feed_full = "voyageone_cms.cms_zz_worktable_bcbg_superfeed_full";
+    final static String table_feed_full = "voyageone_cms.cms_zz_worktable_bcbg_superfeed_full";
 
-    protected final static String table_style_full = "voyageone_cms.cms_zz_worktable_bcbg_styles_full";
+    final static String table_style_full = "voyageone_cms.cms_zz_worktable_bcbg_styles_full";
 
-    protected final static String on_product = "styleID = feedStyleID";
+    final static String on_product = "styleID = feedStyleID";
 
-    protected final static String grouping_product = "CONCAT(MATKL,'-',SATNR,COLOR),MATKL,CONCAT(MATKL,'-',SATNR),feedStyleID,COLOR_ATWTB,WHERL,productDesc,A304_KBETR,A073_KBETR,A304_KBETR,A073_KBETR,A073_KBETR";
+    final static String grouping_product = "CONCAT(MATKL,'-',SATNR,COLOR),MATKL,CONCAT(MATKL,'-',SATNR),feedStyleID,COLOR_ATWTB,WHERL,productDesc,A304_KBETR,A073_KBETR,A304_KBETR,A073_KBETR,A073_KBETR";
 
-    protected final static String grouping_model = "feedStyleID,MATKL,WLADG,BRAND_ID,SATNR,ATBEZ,SIZE1_ATINN";
+    final static String grouping_model = "feedStyleID,MATKL,WLADG,BRAND_ID,SATNR,ATBEZ,SIZE1_ATINN";
 
-    protected static Pattern special_symbol;
+    static Pattern special_symbol;
 
     protected static ChannelConfigEnums.Channel channel;
 
-    protected static BigDecimal fixed_exchange_rate;
+    static BigDecimal fixed_exchange_rate;
 
-    protected static BigDecimal apparels_duty;
+    static BigDecimal apparels_duty;
 
-    protected static BigDecimal other_duty;
+    static BigDecimal other_duty;
 
     /**
      * 初始化所有静态变量

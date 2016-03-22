@@ -97,7 +97,7 @@ public class BcbgAnalysisService extends BaseTaskService {
         }
     }
 
-    protected void appendDataFromFile() throws FileNotFoundException {
+    void appendDataFromFile() throws FileNotFoundException {
         File[] files = getDataFiles();
 
         File feedFile = files[0];
@@ -289,11 +289,11 @@ public class BcbgAnalysisService extends BaseTaskService {
         }
     }
 
-    class Backup {
+    private class Backup {
 
         private File backupDir;
 
-        public Backup() {
+        Backup() {
 
             String sBackupDir = Feed.getVal1(channel, Name.feed_backup_dir); // 备份的文件路径
 
@@ -315,7 +315,7 @@ public class BcbgAnalysisService extends BaseTaskService {
                 $info("文件备份失败 %s %s", file.getPath(), file.getName());
         }
 
-        protected void fromData(File file, File styleFile) {
+        void fromData(File file, File styleFile) {
             from(file);
             from(styleFile);
         }
