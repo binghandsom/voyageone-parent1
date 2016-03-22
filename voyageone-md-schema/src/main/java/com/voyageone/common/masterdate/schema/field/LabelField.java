@@ -105,7 +105,7 @@ public class LabelField extends Field {
 
     @Override
     public Object getFieldValueFromMap(Map<String, Object> valueMap) {
-        return null;
+        return StringUtil.getStringValue(valueMap.get(id));
     }
 
     @Override

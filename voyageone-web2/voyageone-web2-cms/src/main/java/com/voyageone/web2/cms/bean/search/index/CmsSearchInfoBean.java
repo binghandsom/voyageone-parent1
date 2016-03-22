@@ -66,6 +66,28 @@ public class CmsSearchInfoBean {
 
     private Integer productPageSize = 0;
 
+    public int getPriceChgFlg() {
+        return priceChgFlg;
+    }
+
+    public void setPriceChgFlg(int priceChgFlg) {
+        this.priceChgFlg = priceChgFlg;
+    }
+
+    // 价格变动查询用标志位
+    private int priceChgFlg = 0;
+
+    public int getPriceDiffFlg() {
+        return priceDiffFlg;
+    }
+
+    public void setPriceDiffFlg(int priceDiffFlg) {
+        this.priceDiffFlg = priceDiffFlg;
+    }
+
+    // 价格比较查询用标志位
+    private int priceDiffFlg = 0;
+
     public List<Map<String, String>> getCustAttrMap() {
         return custAttrMap;
     }

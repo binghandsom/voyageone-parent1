@@ -37,6 +37,7 @@ import com.voyageone.web2.cms.bean.CustomAttributesBean;
 import com.voyageone.web2.cms.dao.CmsBtFeedCustomPropDao;
 import com.voyageone.web2.cms.model.CmsBtFeedCustomPropModel;
 import com.voyageone.web2.core.bean.UserSessionBean;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -198,15 +199,16 @@ public class CmsProductDetailService {
      * @return
      */
     public List<Map<String, Object>> getProdSkuCnt(String channelId, Long prodId) {
-        CmsProductInfoBean productInfo = new CmsProductInfoBean();
-        // 获取product data.
-        CmsBtProductModel productValueModel = getProductModel(channelId, prodId);
+        CmsBtProductModel prodObj = cmsBtProductDao.selectProductById(channelId, prodId);
+        Map<String, Integer> skuList = productService.getProductSkuQty(channelId, prodObj.getFields().getCode());
 
-        // 取得Sku的库存
-        Map<String, Integer> skuInventoryList = productService.getProductSkuQty(channelId, productValueModel.getFields().getCode());
-        List<Map<String, Object>> inventoryList = new ArrayList<>(skuInventoryList.size());
+        List<Map<String, Object>> inventoryList = new ArrayList<Map<String, Object>>(0);
+        if (skuList == null || skuList.isEmpty()) {
+            logger.info("当前商品没有Sku信息 prodId=" + prodId);
+            return inventoryList;
+        }
 
-        for (Map.Entry<String, Integer> skuInv : skuInventoryList.entrySet()) {
+        for (Map.Entry<String, Integer> skuInv : skuList.entrySet()) {
             Map<String, Object> result = new HashMap<>();
             result.put("skucode", skuInv.getKey());
             result.put("skyqty", skuInv.getValue());

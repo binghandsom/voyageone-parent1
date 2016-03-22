@@ -1,10 +1,9 @@
-package com.voyageone.web2.cms.dao;
+package com.voyageone.service.dao;
 
 import com.mongodb.*;
 import org.apache.log4j.Logger;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Repository;
-import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;

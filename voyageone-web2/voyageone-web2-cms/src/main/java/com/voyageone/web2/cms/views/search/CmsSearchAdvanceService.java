@@ -1,6 +1,5 @@
 package com.voyageone.web2.cms.views.search;
 
-import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
@@ -16,24 +15,22 @@ import com.voyageone.service.impl.cms.ChannelCategoryService;
 import com.voyageone.service.impl.cms.TagService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Group;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Group_Platform;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import com.voyageone.web2.base.BaseAppService;
-import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsConstants;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.cms.bean.search.index.CmsSearchInfoBean;
 import com.voyageone.web2.cms.dao.CustomWordDao;
-import com.voyageone.web2.cms.dao.MongoNativeDao;
+import com.voyageone.service.dao.MongoNativeDao;
 import com.voyageone.web2.cms.views.promotion.list.CmsPromotionIndexService;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import com.voyageone.service.model.cms.CmsBtTagModel;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -136,15 +133,72 @@ public class CmsSearchAdvanceService extends BaseAppService{
      * @return
      */
     public List<CmsBtProductModel> getGroupList(CmsSearchInfoBean searchValue, UserSessionBean userInfo, CmsSessionBean cmsSessionBean) {
-
         JomgoQuery queryObject = new JomgoQuery();
         queryObject.setQuery(getSearchQueryForGroup(searchValue, cmsSessionBean));
         queryObject.setProjection(searchItems.split(";"));
         queryObject.setSort(setSortValue(searchValue));
-        queryObject.setSkip((searchValue.getGroupPageNum()-1)*searchValue.getGroupPageSize());
-        queryObject.setLimit(searchValue.getGroupPageSize());
 
-        return productService.getList(userInfo.getSelChannelId(), queryObject);
+        if (searchValue.getPriceChgFlg() > 0) {
+            // 如果是查询价格变动，必须查询当前主商品所在组的所有商品
+            List<CmsBtProductModel> grpList =  productService.getList(userInfo.getSelChannelId(), queryObject);
+            List<CmsBtProductModel> prodList = getProductList(searchValue, userInfo, cmsSessionBean);
+            if (prodList.isEmpty()) {
+                return grpList;
+            } else {
+                // 再找出其主商品
+                for (CmsBtProductModel prodObj : prodList) {
+                    CmsBtProductModel_Group gpList = prodObj.getGroups();
+                    long grpId = 0;
+                    if (gpList != null) {
+                        List<CmsBtProductModel_Group_Platform> pltList = gpList.getPlatforms();
+                        if (pltList != null && pltList.size() > 0) {
+                            for (CmsBtProductModel_Group_Platform pltObj : pltList) {
+                                if (pltObj.getCartId() == (int) cmsSessionBean.getPlatformType().get("cartId")) {
+                                    grpId = pltObj.getGroupId();
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    if (grpId != 0) {
+                        JomgoQuery queryObj = new JomgoQuery();
+                        queryObj.setQuery("{'groups.platforms':{'$elemMatch':{'isMain':1,'cartId':"+ (int) cmsSessionBean.getPlatformType().get("cartId") + ",'groupId':" + grpId + "}}}");
+
+                        List<CmsBtProductModel> grpList2 =  productService.getList(userInfo.getSelChannelId(), queryObj);
+                        if (grpList2.size() > 0) {
+                            CmsBtProductModel prodModel = grpList2.get(0);
+                            long prodId = prodModel.getProdId();
+                            boolean hasGrp = false;
+                            for (CmsBtProductModel grpObj : grpList) {
+                                if (grpObj.getProdId() == prodId) {
+                                    // 已经存在该主商品，则不追加
+                                    hasGrp = true;
+                                    break;
+                                }
+                            }
+                            if (!hasGrp) {
+                                grpList.add(prodModel);
+                            }
+                        }
+                    }
+                }
+                if (grpList.isEmpty()) {
+                    return grpList;
+                } else {
+                    int staIdx = (searchValue.getGroupPageNum() - 1) * searchValue.getGroupPageSize();
+                    int endIdx = staIdx + searchValue.getGroupPageSize();
+                    if (endIdx > grpList.size()) {
+                        endIdx = grpList.size();
+                    }
+                    return grpList.subList(staIdx, endIdx);
+                }
+            }
+        } else {
+            queryObject.setSkip((searchValue.getGroupPageNum() - 1) * searchValue.getGroupPageSize());
+            queryObject.setLimit(searchValue.getGroupPageSize());
+            List<CmsBtProductModel> grpList =  productService.getList(userInfo.getSelChannelId(), queryObject);
+            return grpList;
+        }
     }
 
     /**
@@ -205,6 +259,102 @@ public class CmsSearchAdvanceService extends BaseAppService{
                 }
             }
             rslt.add(images1Arr);
+        }
+        return rslt;
+    }
+
+    /**
+     * 取得当前主商品所在组的所有商品的价格变动信息
+     * @param groupsList
+     * @return
+     */
+    public List<Map<String, Integer>> getGroupProdChgInfo(List<CmsBtProductModel> groupsList, String channelId, int cartId) {
+        DBObject pal4 = new BasicDBObject();
+        pal4.put("cartId", cartId);
+        pal4.put("isMain", 0);
+        DBObject pal3 = new BasicDBObject();
+        pal3.put("$elemMatch", pal4);
+        DBObject params = new BasicDBObject();
+        params.put("groups.platforms", pal3);
+
+        DBObject excObj = new BasicDBObject();
+        excObj.put("skus.priceChgFlg", 1);
+        excObj.put("_id", 0);
+
+        List<Map<String, Integer>> rslt = new ArrayList<Map<String, Integer>>();
+        for (CmsBtProductModel groupObj : groupsList) {
+            long grpId = 0;
+            List<CmsBtProductModel_Group_Platform> ptmList = groupObj.getGroups().getPlatforms();
+            if (ptmList != null) {
+                for (CmsBtProductModel_Group_Platform ptmObj : ptmList) {
+                    if (ptmObj.getCartId() == cartId && ptmObj.getIsMain()) {
+                        grpId = ptmObj.getGroupId();
+                        break;
+                    }
+                }
+            }
+
+            boolean hasChg = false;
+            List<DBObject> infoList = null;
+            if (grpId == 0) {
+                // 当前主商品所在组没有其他商品
+                logger.info("当前主商品所在组没有其他商品 prodId=" + groupObj.getProdId());
+            } else {
+                pal4.put("groupId", grpId);
+                infoList = mongoDao.find("cms_bt_product_c" + channelId, params, excObj);
+                if (infoList == null || infoList.isEmpty()) {
+                    logger.info("当前主商品所在组没有其他商品的信息 groupId=" + grpId);
+                }
+            }
+            if (grpId == 0 || infoList == null || infoList.isEmpty()) {
+                List<CmsBtProductModel_Sku> skus = groupObj.getSkus();
+                if (skus != null) {
+                    for (CmsBtProductModel_Sku skuObj : skus) {
+                        String chgFlg = org.apache.commons.lang3.StringUtils.trimToEmpty(skuObj.getAttribute("priceChgFlg"));
+                        if (chgFlg.startsWith("+") || chgFlg.startsWith("-") || chgFlg.startsWith("*")) {
+                            hasChg = true;
+                            break;
+                        } else {
+                            hasChg = false;
+                        }
+                    }
+                }
+
+                Map<String, Integer> map = new HashMap<String, Integer>(1);
+                if (hasChg) {
+                    map.put("_chgFlg", 1);
+                } else {
+                    map.put("_chgFlg", 0);
+                }
+                rslt.add(map);
+                continue;
+            }
+
+            for (DBObject itemObj : infoList) {
+                List skus = (List) itemObj.get("skus");
+                if (skus != null) {
+                    for (Object skuObj : skus) {
+                        String chgFlg = org.apache.commons.lang3.StringUtils.trimToEmpty((String) ((DBObject) skuObj).get("priceChgFlg"));
+                        if (chgFlg.startsWith("+") || chgFlg.startsWith("-") || chgFlg.startsWith("*")) {
+                            hasChg = true;
+                            break;
+                          } else {
+                            hasChg = false;
+                        }
+                    }
+                    if (hasChg) {
+                        break;
+                    }
+                }
+            }
+
+            Map<String, Integer> map = new HashMap<String, Integer>(1);
+            if (hasChg) {
+                map.put("_chgFlg", 1);
+            } else {
+                map.put("_chgFlg", 0);
+            }
+            rslt.add(map);
         }
         return rslt;
     }
@@ -522,6 +672,37 @@ public class CmsSearchAdvanceService extends BaseAppService{
                 }
             }
         }
+
+        // 查询价格比较（建议销售价和实际销售价）
+        if (searchValue.getPriceDiffFlg() == 1) {
+            // 建议销售价等于实际销售价
+            result.append(MongoUtils.splicingValue("$where", "function(){ var skuArr = this.skus; for (var ind in skuArr) {if(skuArr[ind].priceMsrp == skuArr[ind].priceRetail){return true;}}}"));
+            result.append(",");
+        } else if (searchValue.getPriceDiffFlg() == 2) {
+            // 建议销售价小于实际销售价
+            result.append(MongoUtils.splicingValue("$where", "function(){ var skuArr = this.skus; for (var ind in skuArr) {if(skuArr[ind].priceMsrp < skuArr[ind].priceRetail){return true;}}}"));
+            result.append(",");
+        } else if (searchValue.getPriceDiffFlg() == 3) {
+            // 建议销售价大于实际销售价
+            result.append(MongoUtils.splicingValue("$where", "function(){ var skuArr = this.skus; for (var ind in skuArr) {if(skuArr[ind].priceMsrp > skuArr[ind].priceRetail){return true;}}}"));
+            result.append(",");
+        }
+
+        // 查询价格变动
+        if (searchValue.getPriceChgFlg() == 1) {
+            // 涨价
+            result.append(MongoUtils.splicingValue("$where", "function(){ var skuArr = this.skus; for (var ind in skuArr) {if(skuArr[ind].priceChgFlg && skuArr[ind].priceChgFlg.substring(0,1) == '+'){return true;}}}"));
+            result.append(",");
+        } else if (searchValue.getPriceChgFlg() == 2) {
+            // 降价
+            result.append(MongoUtils.splicingValue("$where", "function(){ var skuArr = this.skus; for (var ind in skuArr) {if(skuArr[ind].priceChgFlg && skuArr[ind].priceChgFlg.substring(0,1) == '-'){return true;}}}"));
+            result.append(",");
+        } else if (searchValue.getPriceChgFlg() == 3) {
+            // 击穿
+            result.append(MongoUtils.splicingValue("$where", "function(){ var skuArr = this.skus; for (var ind in skuArr) {if(skuArr[ind].priceChgFlg && skuArr[ind].priceChgFlg.substring(0,1) == '*'){return true;}}}"));
+            result.append(",");
+        }
+
         return result.toString();
     }
 

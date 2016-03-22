@@ -14,7 +14,9 @@ define([
                 compareType: null,
                 brand: null,
                 promotion: null,
-                tags:[]
+                tags:[],
+                priceChgFlg: '0',
+                priceDiffFlg: '0'
             },
             groupPageOption: {curr: 1, total: 0, size: 20, fetch: getGroupList},
             productPageOption: {curr: 1, total: 0, size: 20, fetch: getProductList},
@@ -75,7 +77,9 @@ define([
                 compareType: null,
                 brand: null,
                 promotion: null,
-                tags:[]
+                tags:[],
+                priceChgFlg: '0',
+                priceDiffFlg: '0'
             };
             $scope.list = [{ inputVal: "", inputOpts: "" }];
         }
@@ -123,7 +127,9 @@ define([
                 for (idx in $scope.vm.groupList) {
                     var grpObj = $scope.vm.groupList[idx];
                     grpObj.grpImgList = res.data.grpImgList[idx];
+                    grpObj.grpProdChgInfo = res.data.grpProdChgInfoList[idx];
                 }
+
                 $scope.vm.groupPageOption.total = res.data.groupListTotal;
                 $scope.vm.groupSelList = res.data.groupSelList;
 
@@ -148,6 +154,11 @@ define([
                     });
                     prodInfo.custArr = custArr;
                 });
+                for (idx in $scope.vm.productList) {
+                    var prodObj = $scope.vm.productList[idx];
+                    prodObj.prodChgInfo = res.data.prodChgInfoList[idx];
+                }
+
                 $scope.vm.productPageOption.total = res.data.productListTotal;
                 $scope.vm.productSelList = res.data.productSelList;
 
