@@ -35,14 +35,14 @@ public class CmsFeedCustPropService extends BaseAppService {
 
     private Map attrMap = null;
 
-    public Map<String, Object> getFeedCustProp(Map<String, Object> params, UserSessionBean userInfo) {
+    public Map<String, Object> getFeedCustProp(Map<String, String> params, UserSessionBean userInfo) {
         Map<String, Object> result = new HashMap<>();
         String catPath = StringUtils.trimToNull((String) params.get("cat_path"));
         int splitFlg = NumberUtils.toInt((String) params.get("unsplitFlg"), 0);
         if (splitFlg == 1) {
             // 合并为一个list输出
             List<Map<String, Object>> list = this.selectAllAttr(userInfo.getSelChannelId(), catPath);
-            List<Map<String, Object>> valList = convertList(list, false, "0".equals(catPath));
+            List<Map<String, Object>> valList = convertList(list, true, "0".equals(catPath));
 
             result.put("valList", valList);
         }else {
@@ -71,7 +71,7 @@ public class CmsFeedCustPropService extends BaseAppService {
                                     HashMap objMap = new HashMap();
                                     objMap.put("prop_id", "");
                                     objMap.put("prop_original", (String) iter.next());
-                                    objMap.put("cat_path", "");
+                                    objMap.put("cat_path", catPath);
                                     initAttrList.add(objMap);
                                 }
                             }
@@ -129,14 +129,15 @@ public class CmsFeedCustPropService extends BaseAppService {
                     propId = StringUtils.trimToNull(propIdObj.toString());
                 }
                 if (propId == null) {
-                    if ("0".equals(catPath) && "0".equals(cat_path)) {
+                    // 新规插入由前端去控制传进来的值为0
+//                    if ("0".equals(catPath) && "0".equals(cat_path)) {
                         // 新增属性,只能新增共通属性
                         if (this.isAttrExist(item, catPath, userInfo.getSelChannelId())) {
                             logger.warn("该属性亦存在 " + item.toString());
                         } else {
                             addList.add(item);
                         }
-                    }
+//                    }
                 } else {
                     // 修改属性
                     if ("0".equals(catPath) && "0".equals(cat_path)) {
@@ -358,15 +359,16 @@ public class CmsFeedCustPropService extends BaseAppService {
         Map<String, Object> params = new HashMap<String, Object>(2);
         params.put("channelId", channelId);
         params.put("feedCatPath", catPath);
-        List<Map<String, Object>> list1 = cmsBtFeedCustomPropDao.selectAllAttr(params);
-        List<Map<String, Object>> list2 = new ArrayList<Map<String, Object>>(list1.size());
-        for (Map<String, Object> obj : list1) {
-            Map<String, Object> obj2 = new HashMap<String, Object>(2);
-            obj2.put("feed_prop_original", obj.get("feed_prop_original"));
-            obj2.put("feed_prop_translation", obj.get("feed_prop_translation"));
-            list2.add(obj2);
-        }
-        return list2;
+        return cmsBtFeedCustomPropDao.selectAllAttr(params);
+//        List<Map<String, Object>> list1 = cmsBtFeedCustomPropDao.selectAllAttr(params);
+//        List<Map<String, Object>> list2 = new ArrayList<Map<String, Object>>(list1.size());
+//        for (Map<String, Object> obj : list1) {
+//            Map<String, Object> obj2 = new HashMap<String, Object>(2);
+//            obj2.put("feed_prop_original", obj.get("feed_prop_original"));
+//            obj2.put("feed_prop_translation", obj.get("feed_prop_translation"));
+//            list2.add(obj2);
+//        }
+//        return list2;
     }
 
     private List<Map<String, Object>> convertList(List<Map<String, Object>> inputList, boolean hasValue, boolean isComm) {
@@ -383,6 +385,8 @@ public class CmsFeedCustPropService extends BaseAppService {
             }
             if (isComm) {
                 objMap.put("cat_path", "0");
+            } else {
+                objMap.put("cat_path", item.get("feed_cat_path"));
             }
             rslt.add(objMap);
         }
