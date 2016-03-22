@@ -3,6 +3,7 @@ package com.voyageone.web2.cms.views.translation;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
+import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.cms.bean.ProductTranslationBean;
 import com.voyageone.web2.cms.bean.TranslateTaskBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,28 +27,25 @@ public class TranslationController extends CmsController{
 
     @RequestMapping(CmsUrlConstants.TRANSLATION.TASKS.GET_TASKS)
     public AjaxResponse doGetTasks() {
-
         String channelId = getUser().getSelChannelId();
 
         String userName = getUser().getUserName();
 
         Map<String,Object> translateTaskBeanInfo = new HashMap<>();
+        CmsSessionBean cmsSession = getCmsSession();
+        TranslateTaskBean taskBean = feedPropsTranslateService.getUndoneTasks(channelId, userName, (int) cmsSession.getPlatformType().get("cartId"));
 
-        TranslateTaskBean taskBean = feedPropsTranslateService.getUndoneTasks(channelId,userName);
-
-        translateTaskBeanInfo.put("taskInfo",taskBean);
-        translateTaskBeanInfo.put("sortFieldOptions",feedPropsTranslateService.getSortFieldOptions());
+        translateTaskBeanInfo.put("taskInfo", taskBean);
+        translateTaskBeanInfo.put("sortFieldOptions", feedPropsTranslateService.getSortFieldOptions());
 
         // 获取翻译时标题和描述的长度设置
-        translateTaskBeanInfo.put("lenSetInfo",feedPropsTranslateService.getTransLenSet(channelId));
+        translateTaskBeanInfo.put("lenSetInfo", feedPropsTranslateService.getTransLenSet(channelId));
 
         return success(translateTaskBeanInfo);
     }
 
-
     @RequestMapping(CmsUrlConstants.TRANSLATION.TASKS.ASSIGN_TASKS)
     public AjaxResponse doAssignTask(@RequestBody TranslateTaskBean request){
-
         String channelId = getUser().getSelChannelId();
 
         String userName = getUser().getUserName();
@@ -57,13 +55,13 @@ public class TranslationController extends CmsController{
         int distCount = request.getDistributeCount();
 
         Map<String,Object> TranslateTaskBeanInfo = new HashMap<>();
-
-        TranslateTaskBean taskBean = feedPropsTranslateService.assignTask(channelId,userName,distributeStrategy,distCount,request.getSortCondition(),request.getSortRule());
+        CmsSessionBean cmsSession = getCmsSession();
+        TranslateTaskBean taskBean = feedPropsTranslateService.assignTask(channelId, userName, distributeStrategy, distCount,
+                request.getSortCondition(), request.getSortRule(), (int) cmsSession.getPlatformType().get("cartId"));
 
         TranslateTaskBeanInfo.put("taskInfo",taskBean);
 
         return success(TranslateTaskBeanInfo);
-
     }
 
     // 保存翻译内容
@@ -73,8 +71,9 @@ public class TranslationController extends CmsController{
 
         String channelId = getUser().getSelChannelId();
         String userName = getUser().getUserName();
+        CmsSessionBean cmsSession = getCmsSession();
 
-        TranslateTaskBean taskBean = feedPropsTranslateService.saveTask(channelId, userName, requestBean, "0");
+        TranslateTaskBean taskBean = feedPropsTranslateService.saveTask(channelId, userName, requestBean, "0", (int) cmsSession.getPlatformType().get("cartId"));
 
         Map<String,Object> updateInfo = new HashMap<>();
         updateInfo.put("taskInfo",taskBean);
@@ -84,12 +83,12 @@ public class TranslationController extends CmsController{
     // 保存并提交翻译内容（完成翻译任务）
     @RequestMapping(CmsUrlConstants.TRANSLATION.TASKS.SUBMIT_TASK)
     public AjaxResponse doSubmitTask(@RequestBody ProductTranslationBean requestBean){
-        feedPropsTranslateService.verifyParameter(requestBean);
-
         String channelId = getUser().getSelChannelId();
         String userName = getUser().getUserName();
+        CmsSessionBean cmsSession = getCmsSession();
 
-        TranslateTaskBean taskBean = feedPropsTranslateService.saveTask(channelId, userName, requestBean, "1");
+        feedPropsTranslateService.verifyParameter(requestBean, channelId);
+        TranslateTaskBean taskBean = feedPropsTranslateService.saveTask(channelId, userName, requestBean, "1", (int) cmsSession.getPlatformType().get("cartId"));
 
         Map<String,Object> updateInfo = new HashMap<>();
         updateInfo.put("taskInfo",taskBean);
@@ -98,7 +97,6 @@ public class TranslationController extends CmsController{
 
     @RequestMapping(CmsUrlConstants.TRANSLATION.TASKS.COPY_FORM_MAIN_PRODUCT)
     public AjaxResponse doCopyFormMainProduct(@RequestBody ProductTranslationBean requestBean){
-
         Map<String,Object> translateTaskBeanInfo = new HashMap<>();
 
         String channelId = getUser().getSelChannelId();
@@ -117,7 +115,6 @@ public class TranslationController extends CmsController{
      */
     @RequestMapping(CmsUrlConstants.TRANSLATION.TASKS.GET_FEED_ATTRIBUTES)
     public AjaxResponse doGetFeedAttributes(@RequestBody ProductTranslationBean requestBean) {
-
         String channelId = getUser().getSelChannelId();
 
         Map feedAttributesMap = feedPropsTranslateService.getFeedAttributes(channelId,requestBean.getProductCode());
@@ -127,28 +124,21 @@ public class TranslationController extends CmsController{
         TranslateTaskBeanInfo.put("feedAttributes",feedAttributesMap);
 
         return success(TranslateTaskBeanInfo);
-
     }
-
 
     // TODO
     @RequestMapping(CmsUrlConstants.TRANSLATION.TASKS.SEARCH_HISTORY_TASKS)
     public AjaxResponse doSearchTasks(@RequestBody TranslateTaskBean requestBean) {
-
         String channelId = getUser().getSelChannelId();
 
         String userName = getUser().getUserName();
 
         Map<String,Object> translateTaskBeanInfo = new HashMap<>();
-
-        TranslateTaskBean taskBean = feedPropsTranslateService.searchUserTasks(channelId,userName,requestBean.getSearchCondition());
+        CmsSessionBean cmsSession = getCmsSession();
+        TranslateTaskBean taskBean = feedPropsTranslateService.searchUserTasks(channelId, userName, requestBean.getSearchCondition(), (int) cmsSession.getPlatformType().get("cartId"));
 
         translateTaskBeanInfo.put("taskInfo",taskBean);
-
         return success(translateTaskBeanInfo);
-
-
     }
-
 
 }

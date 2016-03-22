@@ -17,6 +17,8 @@ import com.voyageone.web2.cms.bean.ProductTranslationBean;
 import com.voyageone.web2.cms.bean.TranslateTaskBean;
 import com.voyageone.web2.cms.dao.CustomWordDao;
 import com.voyageone.web2.cms.dao.MongoNativeDao;
+import com.voyageone.web2.cms.views.search.CmsSearchAdvanceService;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +36,8 @@ import java.util.*;
 public class TranslationService {
 
     Log logger = LogFactory.getLog(TranslationService.class);
-
+    @Autowired
+    private CmsSearchAdvanceService searchIndexService;
     @Autowired
     private CmsBtFeedInfoDao cmsBtFeedInfoDao;
 
@@ -47,11 +50,10 @@ public class TranslationService {
     @Autowired
     private MongoNativeDao mongoDao;
 
-
     private Map sortFields;
 
     private static String[] RET_FIELDS = {
-            "prodId",
+            "prodId", "groups",
             "fields.code",
             "fields.productNameEn",
             "fields.longDesEn",
@@ -70,15 +72,12 @@ public class TranslationService {
      * TODO 将来应该从配置数据库中读取.
      */
     public Map getSortFieldOptions(){
-
         if (sortFields == null){
             sortFields = new HashMap<>();
         }
 
         sortFields.put("quantity","库存");
-
         return sortFields;
-
     }
 
     /**
@@ -89,7 +88,7 @@ public class TranslationService {
      * @return
      * @throws BusinessException
      */
-    public TranslateTaskBean getUndoneTasks(String channelId, String userName) throws BusinessException {
+    public TranslateTaskBean getUndoneTasks(String channelId, String userName, int cartId) throws BusinessException {
 
         TranslateTaskBean translateTaskBean = new TranslateTaskBean();
 
@@ -103,8 +102,9 @@ public class TranslationService {
         queryObject.setProjection(RET_FIELDS);
 
         List<CmsBtProductModel> cmsBtProductModels = productService.getList(channelId, queryObject);
+        List<List<Map<String, String>>> grpImgList = searchIndexService.getGroupImageList(cmsBtProductModels, channelId, cartId);
 
-        List<ProductTranslationBean> translateTaskBeanList = buildTranslateTaskBeen(cmsBtProductModels);
+        List<ProductTranslationBean> translateTaskBeanList = buildTranslateTaskBeen(cmsBtProductModels, grpImgList);
 
         translateTaskBean.setProductTranslationBeanList(translateTaskBeanList);
         translateTaskBean.setDistributeRule(1); // 缺省只查询主商品
@@ -121,8 +121,7 @@ public class TranslationService {
      * @param channelId
      * @param userName
      */
-    public TranslateTaskBean assignTask(String channelId, String userName,int distributeRule,int distCount,String sortCondition, Boolean sortRule) {
-
+    public TranslateTaskBean assignTask(String channelId, String userName, int distributeRule, int distCount, String sortCondition, Boolean sortRule, int cartId) {
         ProductTransDistrBean productTransDistrBean = new ProductTransDistrBean();
 
         if (!StringUtils.isEmpty(sortCondition)){
@@ -144,8 +143,9 @@ public class TranslationService {
         productTransDistrBean.setProjectionArr(RET_FIELDS);
 
         List<CmsBtProductModel> cmsBtProductModels = productService.translateDistribute(channelId, productTransDistrBean);
+        List<List<Map<String, String>>> grpImgList = searchIndexService.getGroupImageList(cmsBtProductModels, channelId, cartId);
 
-        List<ProductTranslationBean> translateTaskBeanList = buildTranslateTaskBeen(cmsBtProductModels);
+        List<ProductTranslationBean> translateTaskBeanList = buildTranslateTaskBeen(cmsBtProductModels, grpImgList);
 
         TranslateTaskBean translateTaskBean = new TranslateTaskBean();
 
@@ -154,9 +154,7 @@ public class TranslationService {
         translateTaskBean.setUserDoneCount(this.getDoneTaskCount(channelId,userName));
         translateTaskBean.setTotalUndoneCount(this.getTotalUndoneCount(channelId));
 
-
         return translateTaskBean;
-
     }
 
 //    /**
@@ -189,7 +187,7 @@ public class TranslationService {
      * @param taskBean
      * @return
      */
-    public TranslateTaskBean saveTask(String channelId, String userName, ProductTranslationBean taskBean, String transSts) {
+    public TranslateTaskBean saveTask(String channelId, String userName, ProductTranslationBean taskBean, String transSts, int cartId) {
         // 先查询该商品对应的group信息
         logger.debug("TranslationService.saveTask() 商品ProdId=" + taskBean.getProdId());
         DBObject excObj = new BasicDBObject();
@@ -205,9 +203,9 @@ public class TranslationService {
                 Object platObj = groupObj.get("platforms");
                 if (platObj != null) {
                     for (Object obj2 : (List) platObj) {
-                        int cartId = (Integer) ((DBObject) obj2).get("cartId");
+                        int cartId2 = (Integer) ((DBObject) obj2).get("cartId");
                         int isMain = (Integer) ((DBObject) obj2).get("isMain");
-                        if (cartId == 1 && isMain == 1) {
+                        if (cartId == cartId2 && isMain == 1) {
                             groupId = (Integer) ((DBObject) obj2).get("groupId");
                             break;
                         }
@@ -224,7 +222,7 @@ public class TranslationService {
         } else {
             // 更新该group下的商品信息
             DBObject pal4 = new BasicDBObject();
-            pal4.put("cartId", 1);
+            pal4.put("cartId", cartId);
             pal4.put("groupId", groupId);
             DBObject pal3 = new BasicDBObject();
             pal3.put("$elemMatch", pal4);
@@ -291,12 +289,9 @@ public class TranslationService {
      * @return
      * @throws BusinessException
      */
-    public TranslateTaskBean searchUserTasks(String channelId, String userName,String condition) throws BusinessException {
-
-        if (StringUtils.isEmpty(condition)){
-
-            return this.getUndoneTasks(channelId,userName);
-
+    public TranslateTaskBean searchUserTasks(String channelId, String userName,String condition, int cartId) throws BusinessException {
+        if (StringUtils.isEmpty(condition)) {
+            return this.getUndoneTasks(channelId, userName, cartId);
         }
 
         String tasksQueryStr = String.format("{'fields.translator':'%s',$or:[{'fields.code':{$regex:'%s'}},{'fields.productNameEn':{$regex:'%s'}},{'fields.longDesEn':{$regex:'%s'}},{'fields.shortDesEn':{$regex:'%s'}},{'fields.longTitle':{$regex:'%s'}},{'fields.middleTitle':{$regex:'%s'}},{'fields.shortTitle':{$regex:'%s'}},{'fields.longDesCn':{$regex:'%s'}},{'fields.shortDesCn':{$regex:'%s'}}]}",userName,condition,condition,condition,condition,condition,condition,condition,condition,condition);
@@ -307,9 +302,9 @@ public class TranslationService {
         queryObject.setProjection(RET_FIELDS);
 
         List<CmsBtProductModel> cmsBtProductModels = productService.getList(channelId, queryObject);
+        List<List<Map<String, String>>> grpImgList = searchIndexService.getGroupImageList(cmsBtProductModels, channelId, cartId);
 
-
-        List<ProductTranslationBean> translateTaskBeanList = buildTranslateTaskBeen(cmsBtProductModels);
+        List<ProductTranslationBean> translateTaskBeanList = buildTranslateTaskBeen(cmsBtProductModels, grpImgList);
 
         TranslateTaskBean translateTaskBean = new TranslateTaskBean();
         translateTaskBean.setProductTranslationBeanList(translateTaskBeanList);
@@ -320,16 +315,15 @@ public class TranslationService {
         return translateTaskBean;
     }
 
-
     /**
      * 组装task beans。
      * @param cmsBtProductModels
      * @return
      */
-    private List<ProductTranslationBean> buildTranslateTaskBeen(List<CmsBtProductModel> cmsBtProductModels) {
+    private List<ProductTranslationBean> buildTranslateTaskBeen(List<CmsBtProductModel> cmsBtProductModels, List<List<Map<String, String>>> grpImgList) {
         List<ProductTranslationBean> translateTaskBeanList = new ArrayList<>(cmsBtProductModels.size());
-
-        for (CmsBtProductModel productModel:cmsBtProductModels){
+        int idx = 0;
+        for (CmsBtProductModel productModel : cmsBtProductModels) {
             ProductTranslationBean translationBean = new ProductTranslationBean();
 
             translationBean.setLongDescription(productModel.getFields().getLongDesEn());
@@ -348,8 +342,9 @@ public class TranslationService {
             translationBean.setProdId(productModel.getProdId());
             translationBean.setTranslator(productModel.getFields().getTranslator());
 
+            translationBean.setGroupImgList(grpImgList.get(idx));
+            idx ++;
             translateTaskBeanList.add(translationBean);
-
         }
         return translateTaskBeanList;
     }
@@ -390,7 +385,6 @@ public class TranslationService {
      * @return
      */
     public Map<String, String> getFeedAttributes(String channelId, String productCode) {
-
         CmsBtFeedInfoModel feedInfoModel = cmsBtFeedInfoDao.selectProductByCode(channelId, productCode);
 
         if (feedInfoModel == null) {
@@ -472,39 +466,87 @@ public class TranslationService {
             }
 
             attributesMap.put(entry.getKey(), valueStr.toString());
-
         }
 
         feedAttributes.putAll(attributesMap);
-
         return feedAttributes;
     }
 
     /**
-     *
+     * 校验输入文字长度
      * @param requestBean
      */
-    public void verifyParameter(ProductTranslationBean requestBean){
-
+    public void verifyParameter(ProductTranslationBean requestBean, String channelId) {
         if (StringUtils.isEmpty(requestBean.getLongTitle())){
-
             throw new BusinessException("长标题不能为空");
         }
         if (StringUtils.isEmpty(requestBean.getMiddleTitle())){
-
             throw new BusinessException("中标题不能为空");
         }
         if (StringUtils.isEmpty(requestBean.getShortTitle())){
-
             throw new BusinessException("短标题不能为空");
         }
         if (StringUtils.isEmpty(requestBean.getLongDesCn())){
-
             throw new BusinessException("长描述不能为空");
         }
         if (StringUtils.isEmpty(requestBean.getShortDesCn())){
-
             throw new BusinessException("短描述不能为空");
+        }
+
+        Map<String, Object> setInfo = getTransLenSet(channelId);
+        Map<String, Object> lenColl = (Map<String, Object>) setInfo.get("long_title");
+        int minLen = NumberUtils.toInt((String) lenColl.get("minLen"));
+        int maxLen = NumberUtils.toInt((String) lenColl.get("maxLen"));
+        int strLen = requestBean.getLongTitle().length();
+        if (strLen < minLen) {
+            throw new BusinessException("长标题必须至少输入" + minLen + "个文字");
+        }
+        if (strLen > maxLen) {
+            throw new BusinessException("长标题不能超过" + maxLen + "个文字");
+        }
+
+        lenColl = (Map<String, Object>) setInfo.get("middle_title");
+        minLen = NumberUtils.toInt((String) lenColl.get("minLen"));
+        maxLen = NumberUtils.toInt((String) lenColl.get("maxLen"));
+        strLen = requestBean.getMiddleTitle().length();
+        if (strLen < minLen) {
+            throw new BusinessException("中标题必须至少输入" + minLen + "个文字");
+        }
+        if (strLen > maxLen) {
+            throw new BusinessException("中标题不能超过" + maxLen + "个文字");
+        }
+
+        lenColl = (Map<String, Object>) setInfo.get("short_title");
+        minLen = NumberUtils.toInt((String) lenColl.get("minLen"));
+        maxLen = NumberUtils.toInt((String) lenColl.get("maxLen"));
+        strLen = requestBean.getShortTitle().length();
+        if (strLen < minLen) {
+            throw new BusinessException("短标题必须至少输入" + minLen + "个文字");
+        }
+        if (strLen > maxLen) {
+            throw new BusinessException("短标题不能超过" + maxLen + "个文字");
+        }
+
+        lenColl = (Map<String, Object>) setInfo.get("long_desc");
+        minLen = NumberUtils.toInt((String) lenColl.get("minLen"));
+        maxLen = NumberUtils.toInt((String) lenColl.get("maxLen"));
+        strLen = requestBean.getLongDesCn().length();
+        if (strLen < minLen) {
+            throw new BusinessException("长描述必须至少输入" + minLen + "个文字");
+        }
+        if (strLen > maxLen) {
+            throw new BusinessException("长描述不能超过" + maxLen + "个文字");
+        }
+
+        lenColl = (Map<String, Object>) setInfo.get("short_desc");
+        minLen = NumberUtils.toInt((String) lenColl.get("minLen"));
+        maxLen = NumberUtils.toInt((String) lenColl.get("maxLen"));
+        strLen = requestBean.getShortDesCn().length();
+        if (strLen < minLen) {
+            throw new BusinessException("短描述必须至少输入" + minLen + "个文字");
+        }
+        if (strLen > maxLen) {
+            throw new BusinessException("短描述不能超过" + maxLen + "个文字");
         }
     }
 

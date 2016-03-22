@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -25,7 +26,6 @@ public class CmsProductDetailController extends CmsController{
 
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.GET_PRODUCT_INFO)
     public AjaxResponse doGetProductInfo(@RequestBody Map params){
-
         Long productId = Long.parseLong(String.valueOf(params.get("productId")));
 
         String channelId = getUser().getSelChannelId();
@@ -33,11 +33,11 @@ public class CmsProductDetailController extends CmsController{
         Map<String,Object> categoryInfo = new HashMap<>();
 
         CmsProductInfoBean productInfo = productPropsEditService.getProductInfo(channelId,productId,getLang());
-
-        categoryInfo.put("productInfo",productInfo);
+        List<Map<String, Object>> inventoryList = productPropsEditService.getProdSkuCnt(channelId, productId);
+        categoryInfo.put("inventoryList", inventoryList);
+        categoryInfo.put("productInfo", productInfo);
 
         return success(categoryInfo);
-
     }
 
     @RequestMapping(CmsUrlConstants.PRODUCT.DETAIL.UPDATE_PRODUCT_MASTER_INFO)

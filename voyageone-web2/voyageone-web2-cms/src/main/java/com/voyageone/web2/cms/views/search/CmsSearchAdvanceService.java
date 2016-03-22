@@ -1,5 +1,8 @@
 package com.voyageone.web2.cms.views.search;
 
+import com.mongodb.BasicDBList;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
@@ -13,15 +16,18 @@ import com.voyageone.service.impl.cms.ChannelCategoryService;
 import com.voyageone.service.impl.cms.TagService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Group_Platform;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsConstants;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.cms.bean.search.index.CmsSearchInfoBean;
 import com.voyageone.web2.cms.dao.CustomWordDao;
+import com.voyageone.web2.cms.dao.MongoNativeDao;
 import com.voyageone.web2.cms.views.promotion.list.CmsPromotionIndexService;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import com.voyageone.service.model.cms.CmsBtTagModel;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,6 +61,8 @@ public class CmsSearchAdvanceService extends BaseAppService{
     private ProductService productService;
     @Autowired
     private TagService tagService;
+    @Autowired
+    private MongoNativeDao mongoDao;
 
     private final String searchItems = "channelId;prodId;catId;catPath;created;creater;modified;" +
             "modifier;fields;feed.cnAtts;groups.msrpStart;groups.msrpEnd;groups.retailPriceStart;groups.retailPriceEnd;" +
@@ -140,6 +148,68 @@ public class CmsSearchAdvanceService extends BaseAppService{
     }
 
     /**
+     * 取得当前主商品所在组的所有商品的图片
+     * @param groupsList
+     * @return
+     */
+    public List<List<Map<String, String>>> getGroupImageList(List<CmsBtProductModel> groupsList, String channelId, int cartId) {
+        DBObject pal4 = new BasicDBObject();
+        pal4.put("cartId", cartId);
+        pal4.put("isMain", 0);
+        DBObject pal3 = new BasicDBObject();
+        pal3.put("$elemMatch", pal4);
+        DBObject params = new BasicDBObject();
+        params.put("groups.platforms", pal3);
+
+        DBObject excObj = new BasicDBObject();
+        excObj.put("fields.images1", 1);
+        excObj.put("_id", 0);
+
+        List<List<Map<String, String>>> rslt = new ArrayList<List<Map<String, String>>>();
+        for (CmsBtProductModel groupObj : groupsList) {
+            long grpId = 0;
+            List<CmsBtProductModel_Group_Platform> ptmList = groupObj.getGroups().getPlatforms();
+            if (ptmList != null) {
+                for (CmsBtProductModel_Group_Platform ptmObj : ptmList) {
+                    if (ptmObj.getCartId() == cartId && ptmObj.getIsMain()) {
+                        grpId = ptmObj.getGroupId();
+                        break;
+                    }
+                }
+            }
+            if (grpId == 0) {
+                // 当前主商品所在组没有其他商品
+                logger.info("当前主商品所在组没有其他商品 prodId=" + groupObj.getProdId());
+                rslt.add(new ArrayList<Map<String, String>>(0));
+                continue;
+            }
+
+            pal4.put("groupId", grpId);
+            List<DBObject> imgList = mongoDao.find("cms_bt_product_c" + channelId, params, excObj);
+            if (imgList == null || imgList.isEmpty()) {
+                logger.info("当前主商品所在组没有其他商品的图片 groupId=" + grpId);
+                rslt.add(new ArrayList<Map<String, String>>(0));
+                continue;
+            }
+
+            List<Map<String, String>> images1Arr = new ArrayList<Map<String, String>>();
+            for (DBObject imgObj : imgList) {
+                DBObject fields = (DBObject) imgObj.get("fields");
+                if (fields != null) {
+                    List imgaes = (List) fields.get("images1");
+                    if (imgaes != null && imgaes.size() > 0) {
+                        Map<String, String> map = new HashMap<String, String>(1);
+                        map.put("value", (String) ((DBObject) imgaes.get(0)).get("image1"));
+                        images1Arr.add(map);
+                    }
+                }
+            }
+            rslt.add(images1Arr);
+        }
+        return rslt;
+    }
+
+    /**
      * 返回当前页的group列表CNT
      * @param searchValue
      * @param userInfo
@@ -158,13 +228,12 @@ public class CmsSearchAdvanceService extends BaseAppService{
      * @return
      */
     public List<CmsBtProductModel> getProductList(CmsSearchInfoBean searchValue, UserSessionBean userInfo, CmsSessionBean cmsSessionBean) {
-
         JomgoQuery queryObject = new JomgoQuery();
         queryObject.setQuery(getSearchQueryForProduct(searchValue, cmsSessionBean));
         queryObject.setProjection(searchItems.split(";"));
         queryObject.setSort(setSortValue(searchValue));
-        queryObject.setSkip((searchValue.getGroupPageNum() - 1) * searchValue.getGroupPageSize());
-        queryObject.setLimit(searchValue.getGroupPageSize());
+        queryObject.setSkip((searchValue.getProductPageNum() - 1) * searchValue.getProductPageSize());
+        queryObject.setLimit(searchValue.getProductPageSize());
         return productService.getList(userInfo.getSelChannelId(), queryObject);
     }
 
@@ -444,10 +513,14 @@ public class CmsSearchAdvanceService extends BaseAppService{
         }
 
         // 获取自定义查询条件
-        if (searchValue.getCustAttrKey() != null  && searchValue.getCustAttrKey().length() > 0
-                && searchValue.getCustAttrValue() != null  && searchValue.getCustAttrValue().length() > 0) {
-            result.append(MongoUtils.splicingValue(searchValue.getCustAttrKey(), searchValue.getCustAttrValue()));
-            result.append(",");
+        List<Map<String, String>> custList = searchValue.getCustAttrMap();
+        if (custList != null  && custList.size() > 0) {
+            for (Map<String, String> item : custList) {
+                if (!StringUtils.isEmpty(item.get("inputVal"))) {
+                    result.append(MongoUtils.splicingValue(item.get("inputOpts"), item.get("inputVal")));
+                    result.append(",");
+                }
+            }
         }
         return result.toString();
     }

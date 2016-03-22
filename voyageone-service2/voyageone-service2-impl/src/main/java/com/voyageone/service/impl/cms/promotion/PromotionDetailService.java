@@ -183,58 +183,58 @@ public class PromotionDetailService extends BaseService {
         }
     }
 
-//    /**
-//     * 判断是否
-//     *
-//     * @param promotionCodeAddTejiaBaoRequest
-//     * @return
-//     */
-//    private Boolean isUpdateAllPromotionTask(PromotionCodeAddTejiaBaoRequest promotionCodeAddTejiaBaoRequest) {
-//
-//        Map<String, Object> parm = new HashMap<>();
-//        parm.put("channelId", promotionCodeAddTejiaBaoRequest.getChannelId());
-//        parm.put("cartId", promotionCodeAddTejiaBaoRequest.getCartId());
-//        parm.put("code", promotionCodeAddTejiaBaoRequest.getProductCode());
-//        // 找出该code有没有参加其它的活动
-//        List<CmsBtPromotionTaskModel> tasks = cmsPromotionTaskDao.getPromotionByCodeNotInAllPromotion(parm);
-//        return !(tasks != null && tasks.size() > 0);
-//    }
-//
-//    public PromotionCodeAddTejiaBaoResponse teJiaBaoPromotionInsert(PromotionCodeAddTejiaBaoRequest promotionCodeAddTejiaBaoRequest) {
-//        PromotionCodeAddTejiaBaoResponse response = new PromotionCodeAddTejiaBaoResponse();
-//        CmsBtPromotionTaskModel newTask = new CmsBtPromotionTaskModel(promotionCodeAddTejiaBaoRequest.getPromotionId(), PromotionTypeEnums.Type.TEJIABAO.getTypeId(), promotionCodeAddTejiaBaoRequest.getProductCode(), promotionCodeAddTejiaBaoRequest.getNumIid(), promotionCodeAddTejiaBaoRequest.getModifier());
-//        //如果没有参加其他活动的场合 插入全店特价宝的活动的TASK中
-//        if (isUpdateAllPromotionTask(promotionCodeAddTejiaBaoRequest)) {
-//            newTask.setSynFlg(1);
-//        }
-//        if (cmsPromotionTaskDao.updatePromotionTask(newTask) == 0) {
-//            cmsPromotionTaskDao.insertPromotionTask(newTask);
-//        }
-//        PromotionDetailAddRequest promotionDetailAddRequest = new PromotionDetailAddRequest();
-//
-//        BeanUtils.copyProperties(promotionCodeAddTejiaBaoRequest, promotionDetailAddRequest);
-//        insertPromotion(promotionDetailAddRequest);
-//        response.setModifiedCount(1);
-//        return response;
-//    }
-//
-//    public PromotionCodeAddTejiaBaoResponse teJiaBaoPromotionUpdate(PromotionCodeAddTejiaBaoRequest promotionCodeUpdateTejiaBaoRequest) {
-//
-//        CmsBtPromotionCodeModel promotionCodeModel = new CmsBtPromotionCodeModel();
-//        BeanUtils.copyProperties(promotionCodeUpdateTejiaBaoRequest, promotionCodeModel);
-//        String operator = promotionCodeUpdateTejiaBaoRequest.getModifier();
-//        if (cmsPromotionCodeDao.updatePromotionCode(promotionCodeModel) != 0) {
-//            CmsBtPromotionTaskModel cmsBtPromotionTask = new CmsBtPromotionTaskModel(promotionCodeModel.getPromotionId(), PromotionTypeEnums.Type.TEJIABAO.getTypeId(), promotionCodeModel.getProductCode(), promotionCodeModel.getNumIid(), operator);
-//            if (isUpdateAllPromotionTask(promotionCodeUpdateTejiaBaoRequest)) {
-//                cmsBtPromotionTask.setSynFlg(1);
-//            }
-//            if (cmsPromotionTaskDao.updatePromotionTask(cmsBtPromotionTask) == 0) {
-//                cmsPromotionTaskDao.insertPromotionTask(cmsBtPromotionTask);
-//            }
-//        }
-//
-//        PromotionCodeAddTejiaBaoResponse response = new PromotionCodeAddTejiaBaoResponse();
-//        response.setModifiedCount(1);
-//        return response;
-//    }
+    /**
+     * 判断是否
+     *
+     * @param cmsBtPromotionCodeModel
+     * @return
+     */
+    private Boolean isUpdateAllPromotionTask(CmsBtPromotionCodeModel cmsBtPromotionCodeModel) {
+
+        Map<String, Object> parm = new HashMap<>();
+        parm.put("channelId", cmsBtPromotionCodeModel.getChannelId());
+        parm.put("cartId", cmsBtPromotionCodeModel.getCartId());
+        parm.put("code", cmsBtPromotionCodeModel.getProductCode());
+        // 找出该code有没有参加其它的活动
+        List<CmsBtPromotionTaskModel> tasks = cmsPromotionTaskDao.getPromotionByCodeNotInAllPromotion(parm);
+        return !(tasks != null && tasks.size() > 0);
+    }
+
+    public void teJiaBaoPromotionInsert(CmsBtPromotionCodeModel cmsBtPromotionCodeModel) {
+        CmsBtPromotionTaskModel newTask = new CmsBtPromotionTaskModel(cmsBtPromotionCodeModel.getPromotionId(), PromotionTypeEnums.Type.TEJIABAO.getTypeId(), cmsBtPromotionCodeModel.getProductCode(), cmsBtPromotionCodeModel.getNumIid(), cmsBtPromotionCodeModel.getModifier());
+        //如果没有参加其他活动的场合 插入全店特价宝的活动的TASK中
+        if (isUpdateAllPromotionTask(cmsBtPromotionCodeModel)) {
+            newTask.setSynFlg(1);
+        }
+        if (cmsPromotionTaskDao.updatePromotionTask(newTask) == 0) {
+            cmsPromotionTaskDao.insertPromotionTask(newTask);
+        }
+
+        PromotionDetailAddBean request=new PromotionDetailAddBean();
+        request.setModifier(cmsBtPromotionCodeModel.getModifier());
+        request.setChannelId(cmsBtPromotionCodeModel.getChannelId());
+        request.setCartId(cmsBtPromotionCodeModel.getCartId());
+        request.setProductId(cmsBtPromotionCodeModel.getProductId());
+        request.setProductCode(cmsBtPromotionCodeModel.getProductCode());
+        request.setPromotionId(cmsBtPromotionCodeModel.getPromotionId());
+        request.setPromotionPrice(cmsBtPromotionCodeModel.getPromotionPrice());
+        request.setTagId(cmsBtPromotionCodeModel.getTagId());
+        request.setTagPath(cmsBtPromotionCodeModel.getTagPath());
+
+        insertPromotionDetail(request);
+    }
+
+    public void teJiaBaoPromotionUpdate(CmsBtPromotionCodeModel cmsBtPromotionCodeModel) {
+
+        String operator = cmsBtPromotionCodeModel.getModifier();
+        if (cmsPromotionCodeDao.updatePromotionCode(cmsBtPromotionCodeModel) != 0) {
+            CmsBtPromotionTaskModel cmsBtPromotionTask = new CmsBtPromotionTaskModel(cmsBtPromotionCodeModel.getPromotionId(), PromotionTypeEnums.Type.TEJIABAO.getTypeId(), cmsBtPromotionCodeModel.getProductCode(), cmsBtPromotionCodeModel.getNumIid(), operator);
+            if (isUpdateAllPromotionTask(cmsBtPromotionCodeModel)) {
+                cmsBtPromotionTask.setSynFlg(1);
+            }
+            if (cmsPromotionTaskDao.updatePromotionTask(cmsBtPromotionTask) == 0) {
+                cmsPromotionTaskDao.insertPromotionTask(cmsBtPromotionTask);
+            }
+        }
+    }
 }

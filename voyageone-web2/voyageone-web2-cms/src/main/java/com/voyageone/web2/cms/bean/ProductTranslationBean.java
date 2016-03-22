@@ -1,5 +1,8 @@
 package com.voyageone.web2.cms.bean;
 
+import java.util.List;
+import java.util.Map;
+
 /**
  * Created by lewis on 2016/2/21.
  */
@@ -54,6 +57,18 @@ public class ProductTranslationBean {
      */
     private String shortDesCn;
 
+    public List<Map<String, String>> getGroupImgList() {
+        return grpImgList;
+    }
+
+    public void setGroupImgList(List<Map<String, String>> grpImgList) {
+        this.grpImgList = grpImgList;
+    }
+
+    /**
+     * 该商品所在组的所有商品的图片
+     */
+    private List<Map<String, String>> grpImgList;
     /**
      * 产品图片.
      */
