@@ -371,24 +371,4 @@
         </foreach>
     </insert>
 
-    <update id="update_stock_separate_item_excel" parameterType="HashMap">
-        update voyageone_cms2.cms_bt_stock_separate_item
-        <set>
-            separate_qty = #{separate_qty},
-            <if test="status != null" >
-            status = #{status,jdbcType=VARCHAR},
-            </if>
-            <if test="status != null" >
-            status = '',
-            </if>
-            modified = now(),
-            modifier = #{modifier}
-        </set>
-        <where>
-            task_id = #{task_id}
-            and sku = #{sku}
-            and cart_id = #{cart_id}
-        </where>
-    </update>
-
 </mapper>

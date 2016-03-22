@@ -1674,14 +1674,12 @@ public class CmsTaskStockService extends BaseAppService {
                 if (EXCEL_IMPORT_UPDATE.equals(import_mode)) {
                     // 变更方式
                     for (StockExcelBean bean : saveData) {
-                        Map<String, Object> mapSaveData;
-                        try {
-                            mapSaveData = PropertyUtils.describe(bean);
-                        } catch (Exception e) {
-                            throw new BusinessException("导入文件有数据异常");
-                        }
-
-                        mapSaveData.put("task_id", task_id);
+                        Map<String, Object> mapSaveData =  new HashMap<String, Object>();
+                        mapSaveData.put("taskId", task_id);
+                        mapSaveData.put("sku", bean.getSku());
+                        mapSaveData.put("cartId", bean.getCart_id());
+                        mapSaveData.put("separateQty", bean.getSeparate_qty());
+                        mapSaveData.put("status", StringUtils.null2Space(bean.getStatus()));
                         mapSaveData.put("modifier", creater);
 
                         updateImportData(mapSaveData);
@@ -1734,7 +1732,7 @@ public class CmsTaskStockService extends BaseAppService {
      * @param saveData 保存对象
      */
     private void updateImportData(Map<String, Object> saveData) {
-        cmsBtStockSeparateItemDao.updateStockSeparateItemFromExcel(saveData);
+        cmsBtStockSeparateItemDao.updateStockSeparateItem(saveData);
     }
 
     /**

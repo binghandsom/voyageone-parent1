@@ -65,8 +65,4 @@ public class CmsBtStockSeparateItemDao extends BaseDao {
         return insert("insert_cms_bt_stock_separate_item_excel", param);
     }
 
-    public int updateStockSeparateItemFromExcel(Map<String, Object> param) {
-        return update("update_stock_separate_item_excel", param);
-    }
-
 }
