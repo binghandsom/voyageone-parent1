@@ -1,7 +1,7 @@
-package com.voyageone.web2.cms.dao;
+package com.voyageone.service.dao.cms;
 
 import com.voyageone.base.dao.BaseDao;
-import com.voyageone.web2.cms.model.CmsBtPromotionLogModel;
+import com.voyageone.service.model.cms.CmsBtPromotionLogModel;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
