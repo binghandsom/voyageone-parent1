@@ -73,22 +73,24 @@ public class VtmService extends BaseTaskService {
         int count = vtmSuperFeedImport();
         $info("维他命产品信息插入完成");
 
-        // updateFlag变更，0：原有数据 1：新数据 2：Error数据（category,CNMSRP，CNPrice, Image List为空）
-        // 1的sql文：
-        // UPDATE voyageone_cms2.cms_zz_worktable_vtm_superfeed b LEFT JOIN voyageone_cms2.cms_zz_worktable_vtm_superfeed_full bf ON b.md5 = bf.md5 SET b.UpdateFlag = 1 WHERE bf.md5 IS NULL;
-        // 2的sql文：
-        // UPDATE voyageone_cms2.cms_zz_worktable_vtm_superfeed b SET b.UpdateFlag = 2 WHERE b.MerchantPrimaryCategory="" OR b.CNMSRP="" OR b.CNPrice="" OR b.`Image List`="";
-        logger.info("transform开始");
-        transformer.new Context(VITAMIN, this).transform();
-        logger.info("transform结束");
+        if (count > 0) {
+            // updateFlag变更，0：原有数据 1：新数据 2：Error数据（category,CNMSRP，CNPrice, Image List为空）
+            // 1的sql文：
+            // UPDATE voyageone_cms2.cms_zz_worktable_vtm_superfeed b LEFT JOIN voyageone_cms2.cms_zz_worktable_vtm_superfeed_full bf ON b.md5 = bf.md5 SET b.UpdateFlag = 1 WHERE bf.md5 IS NULL;
+            // 2的sql文：
+            // UPDATE voyageone_cms2.cms_zz_worktable_vtm_superfeed b SET b.UpdateFlag = 2 WHERE b.MerchantPrimaryCategory="" OR b.CNMSRP="" OR b.CNPrice="" OR b.`Image List`="";
+            logger.info("transform开始");
+            transformer.new Context(VITAMIN, this).transform();
+            logger.info("transform结束");
 
-        insertService.new Context(VITAMIN).postNewProduct();
-        // 更新完成，UpdateFlag结果：
-        // UpdateFlag    cms_zz_worktable_vtm_superfeed
-        // 0             已经加入的原有数据(未变化)
-        // 1             途中OK待加入的数据(追加和变更的数据)
-        // 2             本次导入error的数据
-        // 3             本次导入完全导入成功的数据
+            insertService.new Context(VITAMIN).postNewProduct();
+            // 更新完成，UpdateFlag结果：
+            // UpdateFlag    cms_zz_worktable_vtm_superfeed
+            // 0             已经加入的原有数据(未变化)
+            // 1             途中OK待加入的数据(追加和变更的数据)
+            // 2             本次导入error的数据
+            // 3             本次导入完全导入成功的数据
+        }
 
         backupFeedFile(VITAMIN.getId());
 
@@ -132,6 +134,12 @@ public class VtmService extends BaseTaskService {
         String sku = "first";
 
         List<String> listImportUPC = getListImportUPC();
+
+        if (listImportUPC.size() == 0) {
+            logger.error("UPC设定的Excel文件不正确");
+            logIssue("cms 数据导入处理", "UPC设定的Excel文件不正确. ");
+            return 0;
+        }
 
 //        CsvReader reader;
         BufferedReader br = null;
@@ -254,7 +262,7 @@ public class VtmService extends BaseTaskService {
                 superfeedvtmbean.setQuantity(reader.get(i++));
                 superfeedvtmbean.setVoyageOneMSRP(reader.get(i++));
 
-                if(isErrData(superfeedvtmbean)) {
+                if (isErrData(superfeedvtmbean)) {
                     continue;
                 }
 
@@ -267,7 +275,9 @@ public class VtmService extends BaseTaskService {
                 }
             }
 
-            count = count + insertSuperFeedVtm(superfeed);
+            if (superfeed.size() > 0) {
+                count = count + insertSuperFeedVtm(superfeed);
+            }
 //            reader.close();
             $info("维他命产品文件读入完成");
         } catch (Exception ex) {
@@ -296,8 +306,34 @@ public class VtmService extends BaseTaskService {
      */
     private List<String> getListImportUPC() {
         List<String> listImportUPC = new ArrayList<String>();
-        List<FeedBean> configs = Feed.getConfigs(ChannelConfigEnums.Channel.VITAMIN.getId(), FeedEnums.Name.import_upc);
-        configs.forEach(bean->listImportUPC.add(bean.getCfg_val1()));
+//        List<FeedBean> configs = Feed.getConfigs(ChannelConfigEnums.Channel.VITAMIN.getId(), FeedEnums.Name.import_upc);
+//        configs.forEach(bean->listImportUPC.add(bean.getCfg_val1()));
+
+        BufferedReader br = null;
+        try {
+            String fileName = Feed.getVal1(ChannelConfigEnums.Channel.VITAMIN.getId(), FeedEnums.Name.file_id_import_upc);
+            String filePath = Feed.getVal1(ChannelConfigEnums.Channel.VITAMIN.getId(), FeedEnums.Name.feed_ftp_localpath);
+            String fileFullName = String.format("%s/%s", filePath, fileName);
+
+            br = new BufferedReader(new InputStreamReader(new FileInputStream(fileFullName)));
+
+            String b;
+            while ((b = br.readLine()) != null) {
+                listImportUPC.add(b);
+            }
+
+        } catch (Exception ex) {
+            listImportUPC.clear();
+            logger.error(ex.getMessage());
+        } finally {
+            if (br != null) {
+                try {
+                    br.close();
+                } catch (IOException e) {
+                    logger.error(e.getMessage());
+                }
+            }
+        }
 
         return listImportUPC;
     }
