@@ -1146,11 +1146,19 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 skuPriceModel.setPriceMsrp(sku.getPrice_msrp());
                 skuPriceModel.setPriceRetail(sku.getPrice_current());
 
+                skuPriceModel.setClientMsrpPrice(sku.getPrice_client_msrp());
+                skuPriceModel.setClientRetailPrice(sku.getPrice_client_retail());
+                skuPriceModel.setClientNetPrice(sku.getPrice_net());
+
                 // 如果是新的SKU, 那么: PriceRetail -> priceSale
                 if (cmsProduct.getSku(sku.getSku()) == null) {
                     skuPriceModel.setPriceSale(skuPriceModel.getPriceRetail());
                 } else if (cmsProduct.getSku(sku.getSku()).getPriceSale() == null || cmsProduct.getSku(sku.getSku()).getPriceSale() == 0d) {
                     skuPriceModel.setPriceSale(skuPriceModel.getPriceRetail());
+                } else {
+                    // 之前有价格的场合, 判断是否需要把价格更新掉
+                    // TODO: 价格是否自动更新这段代码还没写
+                    // TODO: 价格击穿还没写
                 }
 
                 model.addSkuPrice(skuPriceModel);
