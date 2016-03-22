@@ -1,11 +1,11 @@
-package com.voyageone.web2.cms.model;
+package com.voyageone.service.model.cms;
 
 /**
  * 对表 voyageone_ims.ims_mt_custom_word_param 的映射
  *
  * Created by Jonas on 9/11/15.
  */
-public class CustomWordParam {
+public class CmsMtCustomWordParam {
 
     private int param_id;
 

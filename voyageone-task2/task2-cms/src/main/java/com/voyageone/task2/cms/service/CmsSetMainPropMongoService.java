@@ -15,7 +15,7 @@ import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductSkuService;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
 import com.voyageone.service.impl.cms.MongoSequenceService;
-import com.voyageone.service.model.cms.CmsBtFeedCustomPropModel;
+import com.voyageone.service.model.cms.CmsBtFeedCustomPropAndValueModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;
@@ -641,9 +641,9 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             List<String> mainFeedOrgAttsKeyCnList = new ArrayList<>(); // 等待翻译的key的中文
             List<String> mainFeedOrgAttsValueList = new ArrayList<>(); // 等待翻译的value
             // 遍历所有的feed属性
-            List<CmsBtFeedCustomPropModel> feedCustomPropList = customPropService.getPropList(feed.getChannelId(), feed.getCategory());
+            List<CmsBtFeedCustomPropAndValueModel> feedCustomPropList = customPropService.getPropList(feed.getChannelId(), feed.getCategory());
             Map<String, String> feedCustomProp = new HashMap<>();
-            for (CmsBtFeedCustomPropModel propModel : feedCustomPropList) {
+            for (CmsBtFeedCustomPropAndValueModel propModel : feedCustomPropList) {
                 feedCustomProp.put(propModel.getFeed_prop_original(), propModel.getFeed_prop_translation());
             }
             for (Map.Entry<String,Object> attr : feed.getFullAttribute().entrySet() ) {

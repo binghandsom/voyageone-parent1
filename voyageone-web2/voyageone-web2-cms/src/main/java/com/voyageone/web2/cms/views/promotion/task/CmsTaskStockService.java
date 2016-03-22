@@ -4,8 +4,8 @@ import com.voyageone.common.configs.TypeChannel;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.web2.base.BaseAppService;
-import com.voyageone.web2.cms.dao.CmsBtStockSeparateItemDao;
-import com.voyageone.web2.cms.dao.CmsBtStockSeparatePlatformInfoDao;
+import com.voyageone.service.dao.cms.CmsBtStockSeparateItemDao;
+import com.voyageone.service.dao.cms.CmsBtStockSeparatePlatformInfoDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

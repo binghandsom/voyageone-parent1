@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.voyageone.web2.cms.sql">
+<mapper namespace="com.voyageone.service.dao.sql">
 
     <!-- 获取自定义查询属性 -->
     <select id="cms2_mt_channel_config_getCustAttr" resultType="HashMap">

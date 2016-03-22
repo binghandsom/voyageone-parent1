@@ -1,8 +1,7 @@
-package com.voyageone.web2.cms.dao;
+package com.voyageone.service.dao.cms;
 
-import com.voyageone.web2.base.dao.WebBaseDao;
-import com.voyageone.web2.base.dao.WebDaoNs;
-import com.voyageone.web2.cms.model.CmsBtFeedCustomPropModel;
+import com.voyageone.service.dao.ServiceBaseDao;
+import com.voyageone.service.model.cms.CmsBtFeedCustomPropModel;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -14,11 +13,7 @@ import java.util.Map;
  * Created by Jonas on 9/11/15.
  */
 @Repository
-public class CmsBtFeedCustomPropDao extends WebBaseDao {
-    @Override
-    protected WebDaoNs webNs() {
-        return WebDaoNs.CMS;
-    }
+public class CmsBtFeedCustomPropDao extends ServiceBaseDao {
 
     // 根据类目路径查询自定义属性信息(包含共通属性)
     public List<CmsBtFeedCustomPropModel> selectWithCategory(Map<String, Object> params) {

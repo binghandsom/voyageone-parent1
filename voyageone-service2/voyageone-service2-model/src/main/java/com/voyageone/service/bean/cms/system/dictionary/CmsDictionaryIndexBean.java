@@ -1,4 +1,4 @@
-package com.voyageone.web2.cms.bean.system.dictionary;
+package com.voyageone.service.bean.cms.system.dictionary;
 
 /**
  * 字典列表页面传递到服务器端的bean

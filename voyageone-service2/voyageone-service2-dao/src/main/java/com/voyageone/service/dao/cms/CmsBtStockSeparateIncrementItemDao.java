@@ -1,9 +1,8 @@
-package com.voyageone.web2.cms.dao;
+package com.voyageone.service.dao.cms;
 
 import com.voyageone.base.dao.BaseDao;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.util.Map;
 
 /**

@@ -6,6 +6,7 @@ import com.voyageone.cms.enums.CartType;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.product.ProductTransDistrBean;
+import com.voyageone.service.dao.cms.CmsMtCustomWordDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
@@ -14,8 +15,6 @@ import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Group_Platform;
 import com.voyageone.web2.cms.bean.ProductTranslationBean;
 import com.voyageone.web2.cms.bean.TranslateTaskBean;
-import com.voyageone.web2.cms.dao.CustomWordDao;
-import com.voyageone.web2.cms.dao.MongoNativeDao;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -42,10 +41,7 @@ public class TranslationService {
     private ProductGroupService productGroupService;
 
     @Autowired
-    protected CustomWordDao customWordDao;
-
-    @Autowired
-    private MongoNativeDao mongoDao;
+    protected CmsMtCustomWordDao customWordDao;
 
     private static String[] RET_FIELDS = {
             "prodId",
