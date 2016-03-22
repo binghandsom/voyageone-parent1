@@ -1,9 +1,10 @@
 package com.voyageone.service.model.jumei;
 import java.sql.Timestamp;
 import java.util.Date;
-import java.math.BigDecimal;
 import java.io.Serializable;
-import com.voyageone.common.util.*;
+
+import com.voyageone.common.help.DateHelp;
+
 public class JmBtPromotionProductModel implements Serializable
 {
    public JmBtPromotionProductModel()

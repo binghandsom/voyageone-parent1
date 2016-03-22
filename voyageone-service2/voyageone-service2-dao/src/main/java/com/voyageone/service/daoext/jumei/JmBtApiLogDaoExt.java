@@ -7,5 +7,5 @@ import java.util.List;
 
 @Repository
 public interface JmBtApiLogDaoExt {
-    public List<JmBtApiLogModel>  getPage();
+    public List  getPage();
     }

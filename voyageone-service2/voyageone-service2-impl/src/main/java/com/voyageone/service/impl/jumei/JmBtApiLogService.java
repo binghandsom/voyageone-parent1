@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by dell on 2016/3/18.
@@ -33,7 +34,7 @@ public class JmBtApiLogService {
         return dao.create(entity);
     }
 
-    public List<JmBtApiLogModel> getPage() {
+    public List<Map<String,Object>> getPage() {
         return daoext.getPage();
     }
 

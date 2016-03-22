@@ -1,4 +1,4 @@
-package com.voyageone.common.util;
+package com.voyageone.common.help;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

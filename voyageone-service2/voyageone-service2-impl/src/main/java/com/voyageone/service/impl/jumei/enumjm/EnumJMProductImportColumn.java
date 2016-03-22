@@ -1,5 +1,9 @@
-package com.voyageone.service.model.jumei.jmenum;
-public enum EnumJMProductImportColumn {
+package com.voyageone.service.impl.jumei.enumjm;
+import com.voyageone.service.impl.Excel.EnumExcelColumnType;
+import com.voyageone.service.impl.Excel.FunctionFormatter;
+import com.voyageone.service.impl.jumei.JmBtProductService;
+import com.voyageone.service.model.jumei.JmBtProductModel;
+public enum EnumJMProductImportColumn implements EnumImport<JmBtProductModel> {
     ProductCode("product_code",0,"jm_bt_product","商品code 唯一标识一个商品"),//Ajm_bt_product
     ForeignLanguageName("foreign_language_name",1,"jm_bt_product","商品英文名称"),//B
     ProductNameCn("product_name_cn",2,"jm_bt_product","商品中文名称"),//C
@@ -33,43 +37,65 @@ public enum EnumJMProductImportColumn {
     private String columnName;
     private String tableName;
     private int orderIndex;
-    private String description;
-    private EnumJMProductImportColumn(String columnName, int orderIndex, String tableName, String description)
+    private String text;
+    public EnumExcelColumnType columnType;
+    public double columnWidth;
+    public FunctionFormatter<Object, JmBtProductModel, Integer, Object> formatter;
+    private EnumJMProductImportColumn(String columnName, int orderIndex, String tableName, String text)
     {
         this.columnName=columnName;
         this.orderIndex=orderIndex;
         this.tableName=tableName;
-        this.description=description;
+        this.text=text;
+    }
+    private EnumJMProductImportColumn(String columnName, int orderIndex, String tableName, String text,EnumExcelColumnType columnType) {
+        this.columnName = columnName;
+        this.orderIndex = orderIndex;
+        this.tableName = tableName;
+        this.text = text;
+        this.columnType = columnType;
     }
     public String getColumnName() {
         return columnName;
     }
-
     public void setColumnName(String columnName) {
         this.columnName = columnName;
     }
-
     public String getTableName() {
         return tableName;
     }
-
     public void setTableName(String tableName) {
         this.tableName = tableName;
     }
-
     public int getOrderIndex() {
         return orderIndex;
     }
-
     public void setOrderIndex(int orderIndex) {
         this.orderIndex = orderIndex;
     }
-
-    public String getDescription() {
-        return description;
+    public String getText() {
+        return text;
     }
-
-    public void setDescription(String description) {
-        this.description = description;
+    public void setText(String text) {
+        this.text = text;
+    }
+    public EnumExcelColumnType getColumnType() {
+        return columnType;
+    }
+    public void setColumnType(EnumExcelColumnType columnType) {
+        this.columnType = columnType;
+    }
+    @Override
+    public FunctionFormatter<Object, JmBtProductModel, Integer, Object> getFormatter() {
+        return formatter;
+    }
+    public void setFormatter(FunctionFormatter<Object, JmBtProductModel, Integer, Object> formatter) {
+        this.formatter = formatter;
+    }
+    public double getColumnWidth() {
+        return columnWidth;
+    }
+    public void setColumnWidth(double columnWidth) {
+        this.columnWidth = columnWidth;
     }
 }

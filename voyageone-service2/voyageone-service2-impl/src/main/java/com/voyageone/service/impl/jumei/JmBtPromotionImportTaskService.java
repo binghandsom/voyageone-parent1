@@ -29,5 +29,10 @@ public class JmBtPromotionImportTaskService {
     public int create(JmBtPromotionImportTaskModel entity) {
         return dao.create(entity);
     }
+
+    public  void  Import(int JmBtPromotionImportTaskId)
+    {
+
+    }
 }
 
