@@ -4,17 +4,35 @@ import com.google.common.base.Joiner;
 import com.mongodb.BulkWriteResult;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
+import com.voyageone.cms.CmsConstants;
+import com.voyageone.cms.bean.Condition;
+import com.voyageone.cms.enums.MappingPropType;
+import com.voyageone.cms.enums.Operation;
+import com.voyageone.cms.enums.SrcType;
+import com.voyageone.common.Constants;
 import com.voyageone.common.components.baidu.translate.BaiduTranslateUtil;
-import com.voyageone.common.util.inch2cm.InchStrConvert;
+import com.voyageone.common.components.issueLog.enums.SubSystem;
+import com.voyageone.common.configs.ChannelConfigs;
+import com.voyageone.common.configs.TypeChannel;
+import com.voyageone.common.configs.beans.OrderChannelBean;
+import com.voyageone.common.configs.beans.TypeChannelBean;
+import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
+import com.voyageone.common.masterdate.schema.field.ComplexField;
+import com.voyageone.common.masterdate.schema.field.Field;
+import com.voyageone.common.masterdate.schema.field.MultiComplexField;
+import com.voyageone.common.util.MD5;
+import com.voyageone.common.util.StringUtils;
+import com.voyageone.service.bean.cms.product.ProductPriceBean;
+import com.voyageone.service.bean.cms.product.ProductSkuPriceBean;
 import com.voyageone.service.bean.cms.product.ProductUpdateBean;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedMappingDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtCategorySchemaDao;
+import com.voyageone.service.impl.cms.MongoSequenceService;
+import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductSkuService;
-import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
-import com.voyageone.service.impl.cms.MongoSequenceService;
 import com.voyageone.service.model.cms.CmsBtFeedCustomPropModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
@@ -28,29 +46,10 @@ import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.base.util.TaskControlUtils;
 import com.voyageone.task2.cms.bean.ItemDetailsBean;
-import com.voyageone.cms.CmsConstants;
-import com.voyageone.cms.enums.MappingPropType;
-import com.voyageone.cms.enums.SrcType;
-import com.voyageone.cms.bean.Condition;
-import com.voyageone.cms.enums.Operation;
-import com.voyageone.common.Constants;
-import com.voyageone.common.components.issueLog.enums.SubSystem;
-import com.voyageone.common.configs.ChannelConfigs;
-import com.voyageone.common.configs.TypeChannel;
-import com.voyageone.common.configs.beans.OrderChannelBean;
-import com.voyageone.common.configs.beans.TypeChannelBean;
-import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
-import com.voyageone.common.masterdate.schema.field.ComplexField;
-import com.voyageone.common.masterdate.schema.field.Field;
-import com.voyageone.common.masterdate.schema.field.MultiComplexField;
-import com.voyageone.common.util.MD5;
-import com.voyageone.common.util.StringUtils;
 import com.voyageone.task2.cms.dao.ItemDetailsDao;
 import com.voyageone.task2.cms.dao.MainPropDao;
 import com.voyageone.task2.cms.dao.SuperFeedDao;
 import com.voyageone.task2.cms.dao.TmpOldCmsDataDao;
-import com.voyageone.service.bean.cms.product.ProductPriceBean;
-import com.voyageone.service.bean.cms.product.ProductSkuPriceBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -412,12 +411,16 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                     List<String> transBaiduOrg = new ArrayList<>(); // 百度翻译 - 输入参数
                     transBaiduOrg.add(strProductNameEn); // 标题
                     if (!StringUtils.isEmpty(strLongDesEn)) {
-                        // TODO: 临时把017关掉
-                        if ("010".equals(feed.getChannelId())) {
-                            transBaiduOrg.add(new InchStrConvert().inchToCM(strLongDesEn)); // 长描述
-                        } else {
+                        // TODO: 临时关掉
+//                        if ("010".equals(feed.getChannelId())) {
+//                            logger.info("channel:" + feed.getChannelId());
+//                            logger.info("code:" + feed.getCode());
+//                            logger.info("strLongDesEn:" + strLongDesEn);
+//
+//                            transBaiduOrg.add(new InchStrConvert().inchToCM(strLongDesEn)); // 长描述
+//                        } else {
                             transBaiduOrg.add(strLongDesEn); // 长描述
-                        }
+//                        }
                     }
                     List<String> transBaiduCn; // 百度翻译 - 输出参数
                     try {
