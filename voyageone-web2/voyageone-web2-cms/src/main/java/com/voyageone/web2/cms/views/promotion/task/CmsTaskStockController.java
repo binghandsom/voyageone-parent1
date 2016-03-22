@@ -9,6 +9,7 @@ import com.voyageone.web2.cms.CmsUrlConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -895,9 +896,9 @@ public class CmsTaskStockController extends CmsController {
      *
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK.IMPORT_STOCK_INFO)
-    public AjaxResponse importStockInfo(@RequestParam Map param) {
+    public AjaxResponse importStockInfo(@RequestParam Map param, @RequestParam MultipartFile file) {
         // import Excel
-        cmsTaskStockService.importExcelFileStockInfo(param);
+        cmsTaskStockService.importExcelFileStockInfo(param, file);
         // 返回
         return success(null);
     }
