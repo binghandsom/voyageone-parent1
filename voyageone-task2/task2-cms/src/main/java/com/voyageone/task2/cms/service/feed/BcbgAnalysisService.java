@@ -2,16 +2,17 @@ package com.voyageone.task2.cms.service.feed;
 
 import com.google.gson.Gson;
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.components.issueLog.enums.SubSystem;
+import com.voyageone.common.configs.Enums.FeedEnums.Name;
+import com.voyageone.common.configs.Feed;
+import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.MD5;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.cms.bean.BcbgStyleBean;
 import com.voyageone.task2.cms.bean.SuperFeedBcbgBean;
 import com.voyageone.task2.cms.dao.SuperFeedDao;
 import com.voyageone.task2.cms.dao.feed.BcbgSuperFeedDao;
-import com.voyageone.common.components.issueLog.enums.SubSystem;
-import com.voyageone.common.configs.Enums.FeedEnums.Name;
-import com.voyageone.common.configs.Feed;
-import com.voyageone.common.util.DateTimeUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 
 import static com.voyageone.task2.cms.service.feed.BcbgWsdlConstants.channel;
-import static com.voyageone.task2.cms.service.feed.BcbgWsdlConstants.table_feed_full;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 
@@ -84,20 +84,9 @@ public class BcbgAnalysisService extends BaseTaskService {
         $info("开始处理 BCBG 数据");
 
         appendDataFromFile();
-
-        // 处理下拉类属性
-        attributeListInsert();
-
-        // 使用接口提交
-        boolean inserted = insertService.postNewProduct();
-        boolean updated = updateService.postUpdatedProduct();
-
-        if (inserted || updated) {
-            attributeService.postAttributes();
-        }
     }
 
-    void appendDataFromFile() throws FileNotFoundException {
+    private void appendDataFromFile() throws FileNotFoundException {
         File[] files = getDataFiles();
 
         File feedFile = files[0];
@@ -125,8 +114,16 @@ public class BcbgAnalysisService extends BaseTaskService {
             $info("已读取文件.获得 Style %s 个", styleBeans.length);
         }
 
-        // 插入数据库
+        // 清空老数据
         clearLastData();
+        // 计算 MD5
+        if (bcbgBeans != null)
+            for (SuperFeedBcbgBean bean : bcbgBeans)
+                setMd5(bean);
+        if (styleBeans != null)
+            for (BcbgStyleBean bean : styleBeans)
+                setMd5(bean);
+        // 插入数据库
         insertNewData(bcbgBeans, styleBeans);
 
         // 开始数据分析处理阶段
@@ -134,7 +131,7 @@ public class BcbgAnalysisService extends BaseTaskService {
         $info("数据处理阶段结束");
 
         // 备份文件
-        new Backup().fromData(feedFile, styleFile);
+        //new Backup().fromData(feedFile, styleFile);
     }
 
     private File[] getDataFiles() {
@@ -267,25 +264,51 @@ public class BcbgAnalysisService extends BaseTaskService {
         $info("发现 BCBG Style <无效>数据 %s 个", styleBeans.size());
     }
 
-    private void attributeListInsert(){
+    private void setMd5(Object obj) {
 
-        String channel_id = channel.getId();
+        String source;
 
-        // 取出所有预定义的可选项属性
-        List<String> attributeList = superFeedDao.selectSuperfeedAttributeList(channel_id, "1", "1");
-        
-        for (String attribute : attributeList) {
-            // 从数据中取该属性的数据,并消除重复
-            List<String> distinctValues = superFeedDao.selectAllAttribute(attribute, table_feed_full);
-
-            for (String value : distinctValues) {
-                // 针对每个值进行检查.有则跳过,没有则插入
-                String countByValue = superFeedDao.selectFeedAttribute(channel_id, attribute, value);
-
-                if (!countByValue.equals("0")) continue;
-
-                superFeedDao.insertFeedAttributeNew(channel_id, attribute, countByValue);
-            }
+        if (obj instanceof BcbgStyleBean) {
+            BcbgStyleBean bean = (BcbgStyleBean) obj;
+            source = bean.getStyleID() +
+                    bean.getProductDesc() +
+                    bean.getProductImgURLs();
+            bean.setMd5(MD5.getMD5(source));
+        }
+        else if (obj instanceof SuperFeedBcbgBean) {
+            SuperFeedBcbgBean bean = (SuperFeedBcbgBean) obj;
+            source = bean.getMATNR() +
+                    bean.getEAN11() +
+                    bean.getBRAND_ID() +
+                    bean.getMATKL() +
+                    bean.getZZCODE1() +
+                    bean.getZZCODE2() +
+                    bean.getZZCODE3() +
+                    bean.getMEINS() +
+                    bean.getBSTME() +
+                    bean.getCOLOR() +
+                    bean.getCOLOR_ATWTB() +
+                    bean.getSIZE1() +
+                    bean.getSIZE1_ATWTB() +
+                    bean.getSIZE1_ATINN() +
+                    bean.getATBEZ() +
+                    bean.getSAISO() +
+                    bean.getSAISJ() +
+                    bean.getSAITY() +
+                    bean.getSATNR() +
+                    bean.getMAKTX() +
+                    bean.getWLADG() +
+                    bean.getWHERL() +
+                    bean.getMEAN_EAN11() +
+                    bean.getA304_DATAB() +
+                    bean.getA304_DATBI() +
+                    bean.getA304_KBETR() +
+                    bean.getA304_KONWA() +
+                    bean.getA073_DATAB() +
+                    bean.getA073_DATBI() +
+                    bean.getA073_KBETR() +
+                    bean.getA073_KONWA();
+            bean.setMd5(MD5.getMD5(source));
         }
     }
 

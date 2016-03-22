@@ -71,6 +71,8 @@ public class SuperFeedBcbgBean {
 
     private String A073_KONWA;
 
+    private String md5;
+
     public int getId() {
         return id;
     }
@@ -329,5 +331,13 @@ public class SuperFeedBcbgBean {
 
     public String getStyleID() {
         return String.format("%s-%s", getSATNR(), getCOLOR());
+    }
+
+    public String getMd5() {
+        return md5;
+    }
+
+    public void setMd5(String md5) {
+        this.md5 = md5;
     }
 }
