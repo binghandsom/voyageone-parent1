@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.web2.cms.sql">
+
+    <select id="select_stock_separate_increment_task" resultType="HashMap" parameterType="HashMap">
+        select
+            sub_task_id,
+            task_id,
+            sub_task_Name,
+            type,
+            value
+        from   voyageone_cms2.cms_bt_stock_separate_increment_task
+        where 1=1
+            <if test="subTaskTd != null">
+                and sub_task_id = #{subTaskTd}
+            </if>
+            <if test="taskId != null">
+                and task_id = #{taskId}
+            </if>
+    </select>
+
+    <delete id="delete_stock_separate_increment_task" parameterType="HashMap">
+        delete
+        from voyageone_cms2.cms_bt_stock_separate_increment_task
+        where 1=1
+            <if test="subTaskTd != null">
+                and sub_task_id = #{subTaskTd}
+            </if>
+            <if test="taskId != null">
+                and task_id = #{taskId}
+            </if>
+    </delete>
+</mapper>

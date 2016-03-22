@@ -178,7 +178,7 @@ public class CmsTaskStockController extends CmsController {
      * }
      * @apiErrorExample  错误示例
      * {
-     *  "code": "1", "message": "已经开始隔离，删除失败", "displayType":null, "redirectTo":null, "data":null
+     *  "code": "1", "message": "已经开始库存隔离，删除失败", "displayType":null, "redirectTo":null, "data":null
      * }
      * @apiExample  业务说明
      *  1.check是否可以删除。如果这个任务在cms_bt_stock_separate_item表中存在状态<>0:未进行的隔离数据，则不允许删除。
@@ -191,6 +191,9 @@ public class CmsTaskStockController extends CmsController {
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK.DEL_TASK)
     public AjaxResponse delTask(@RequestBody Map param) {
+
+        // 删除库存隔离任务
+        cmsTaskStockService.delTask(param);
 
         // 返回
         return success(null);
@@ -624,38 +627,38 @@ public class CmsTaskStockController extends CmsController {
         return success(resultBean);
     }
 
-    /**
-     * @api {post} /cms/promotion/task_stock/initNewRecord 1.07 新建一条新隔离明细前初始化操作（取得隔离平台）
-     * @apiName CmsTaskStockController.initNewRecord
-     * @apiGroup promotion
-     * @apiVersion 0.0.1
-     * @apiPermission 认证商户
-     * @apiParam (应用级参数) {String} taskId 任务id
-     * @apiSuccess (系统级返回字段) {String} code 处理结果代码编号
-     * @apiSuccess (系统级返回字段) {String} message 处理结果描述
-     * @apiSuccess (系统级返回字段) {String} displayType 消息的提示方式
-     * @apiSuccess (系统级返回字段) {String} redirectTo 跳转地址
-     * @apiSuccess (应用级返回字段) {Object} platformList 隔离平台信息（json数组）
-     * @apiSuccessExample 成功响应更新请求
-     * {
-     *  "code":"0", "message":null, "displayType":null, "redirectTo":null,
-     *  "data":{
-     *   "platformList": [ {"cartId":"23", "cartName":"天猫国际"},
-     *                     {"cartId":"27", "cartName":"聚美优品"} ]
-     *  }
-     * }
-     * @apiExample  业务说明
-     *  1.根据参数.任务id，从cms_bt_stock_separate_platform_info取得隔离平台的信息。
-     * @apiExample 使用表
-     *  cms_bt_stock_separate_platform_info
-     *
-     */
-    @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK.INIT_NEW_RECORD)
-    public AjaxResponse initNewRecord(@RequestBody Map param) {
-
-        // 返回
-        return success(null);
-    }
+//    /**
+//     * @api {post} /cms/promotion/task_stock/initNewRecord 1.07 新建一条新隔离明细前初始化操作（取得隔离平台）
+//     * @apiName CmsTaskStockController.initNewRecord
+//     * @apiGroup promotion
+//     * @apiVersion 0.0.1
+//     * @apiPermission 认证商户
+//     * @apiParam (应用级参数) {String} taskId 任务id
+//     * @apiSuccess (系统级返回字段) {String} code 处理结果代码编号
+//     * @apiSuccess (系统级返回字段) {String} message 处理结果描述
+//     * @apiSuccess (系统级返回字段) {String} displayType 消息的提示方式
+//     * @apiSuccess (系统级返回字段) {String} redirectTo 跳转地址
+//     * @apiSuccess (应用级返回字段) {Object} platformList 隔离平台信息（json数组）
+//     * @apiSuccessExample 成功响应更新请求
+//     * {
+//     *  "code":"0", "message":null, "displayType":null, "redirectTo":null,
+//     *  "data":{
+//     *   "platformList": [ {"cartId":"23", "cartName":"天猫国际"},
+//     *                     {"cartId":"27", "cartName":"聚美优品"} ]
+//     *  }
+//     * }
+//     * @apiExample  业务说明
+//     *  1.根据参数.任务id，从cms_bt_stock_separate_platform_info取得隔离平台的信息。
+//     * @apiExample 使用表
+//     *  cms_bt_stock_separate_platform_info
+//     *
+//     */
+//    @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK.INIT_NEW_RECORD)
+//    public AjaxResponse initNewRecord(@RequestBody Map param) {
+//
+//        // 返回
+//        return success(null);
+//    }
 
     /**
      * @api {post} /cms/promotion/task_stock/getUsableStock 1.08 取得可用库存
@@ -916,6 +919,11 @@ public class CmsTaskStockController extends CmsController {
      * @apiParam (应用级参数) {String} qtyTo 可用库存（上限）
      * @apiParam (应用级参数) {String} status 状态（0：未进行； 1：等待隔离； 2：隔离成功； 3：隔离失败； 4：等待还原； 5：还原成功； 6：还原失败； 7：再修正； 空白:ALL）
      * @apiParam (应用级参数) {String} selSku 选择的Sku （不存在的场合，进行所有隔离）
+     * @apiParamExample  propertyList参数示例
+     *   "propertyList": [ {"property":"property1", "name":"品牌", "logic":"", "type":"", "show":false, "value"=""},
+     *                     {"property":"property2", "name":"英文短描述", "logic":"Like", "type":"", "show":false, "value"=""},
+     *                     {"property":"property3", "name":"性别", "logic":"", "type":"", "show":false, "value"=""}，
+     *                     {"property":"property4", "name":"Size", "logic":"", "type":"int", "show":false, "value"=""}]
      * @apiSuccess (系统级返回字段) {String} code 处理结果代码编号
      * @apiSuccess (系统级返回字段) {String} message 处理结果描述
      * @apiSuccess (系统级返回字段) {String} displayType 消息的提示方式
@@ -935,6 +943,11 @@ public class CmsTaskStockController extends CmsController {
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK.EXECUTE_STOCK_SEPARATION)
     public AjaxResponse executeStockSeparation(@RequestBody Map param) {
+        // 创建者/更新者用
+        param.put("userName", this.getUser().getUserName());
+
+        // 启动/重刷库存隔离
+        cmsTaskStockService.executeStockSeparation(param);
 
         // 返回
         return success(null);
@@ -976,6 +989,11 @@ public class CmsTaskStockController extends CmsController {
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK.EXECUTE_STOCK_REVERT)
     public AjaxResponse executeStockRevert(@RequestBody Map param) {
+        // 创建者/更新者用
+        param.put("userName", this.getUser().getUserName());
+
+        // 还原库存隔离离
+        cmsTaskStockService.executeStockRevert(param);
 
         // 返回
         return success(null);
@@ -1042,6 +1060,8 @@ public class CmsTaskStockController extends CmsController {
     public AjaxResponse saveRecord(@RequestBody Map param) {
         // 语言
         param.put("lang", this.getLang());
+        // 创建者/更新者用
+        param.put("userName", this.getUser().getUserName());
         // 保存隔离库存明细
         cmsTaskStockService.saveRecord(param);
         // 返回

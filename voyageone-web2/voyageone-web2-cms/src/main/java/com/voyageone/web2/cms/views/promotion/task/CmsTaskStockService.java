@@ -10,6 +10,8 @@ import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.FileUtils;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.service.dao.cms.CmsBtTasksDao;
+import com.voyageone.service.model.cms.CmsBtTasksModel;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.CmsConstants;
 import com.voyageone.web2.cms.bean.promotion.task.StockExcelBean;
@@ -45,6 +47,9 @@ public class CmsTaskStockService extends BaseAppService {
     private CmsBtStockSeparateItemDao cmsBtStockSeparateItemDao;
 
     @Autowired
+    private CmsBtStockSeparateIncrementTaskDao cmsBtStockSeparateIncrementTaskDao;
+
+    @Autowired
     private CmsBtStockSeparateIncrementItemDao cmsBtStockSeparateIncrementItemDao;
 
     @Autowired
@@ -53,6 +58,10 @@ public class CmsTaskStockService extends BaseAppService {
     @Autowired
     private WmsBtLogicInventoryDao wmsBtLogicInventoryDao;
 
+    @Autowired
+    private CmsBtTasksDao cmsBtTasksDao;
+
+//    @Autowired
     @Autowired
     private SimpleTransaction simpleTransaction;
 
@@ -79,6 +88,44 @@ public class CmsTaskStockService extends BaseAppService {
         for(Object entry : param.entrySet()){
         }
         return null;
+    }
+
+    /**
+     * 删除库存隔离任务
+     *
+     * @param param 客户端参数
+     */
+    public void delTask(Map param){
+        // 取得库存隔离中是否存在状态为"0:未进行"以外的数据
+        Map<String, Object> sqlParam = new HashMap<String, Object>();
+        sqlParam.put("taskId", param.get("taskId"));
+        sqlParam.put("statusList", Arrays.asList("2","4","5","6"));
+        List<Object> stockSeparateItem = cmsBtStockSeparateItemDao.selectStockSeparateItemByStatus(sqlParam);
+        if (stockSeparateItem != null && stockSeparateItem.size() > 0) {
+            throw new BusinessException("已经开始库存隔离，不能删除任务！");
+        }
+        simpleTransaction.openTransaction();
+        try {
+            // 删除库存隔离表中的数据
+            Map<String, Object> sqlParam1 = new HashMap<String, Object>();
+            sqlParam1.put("taskId", param.get("taskId"));
+            cmsBtStockSeparateItemDao.deleteStockSeparateItem(sqlParam1);
+
+            // 删除隔离任务/平台基本信息表中的数据
+            Map<String, Object> sqlParam2 = new HashMap<String, Object>();
+            sqlParam2.put("taskId", param.get("taskId"));
+            cmsBtStockSeparatePlatformInfoDao.deleteStockSeparatePlatform(sqlParam2);
+
+            // 删除任务表中的数据
+            CmsBtTasksModel cmsBtTasksModel = new CmsBtTasksModel();
+            cmsBtTasksModel.setTask_id((int)param.get("taskId"));
+            cmsBtTasksDao.delete(cmsBtTasksModel);
+
+        }catch (Exception e) {
+            simpleTransaction.rollback();
+            throw e;
+        }
+        simpleTransaction.commit();
     }
 
     /**
@@ -513,7 +560,6 @@ public class CmsTaskStockService extends BaseAppService {
             sqlParam.put("lang", param.get("lang"));
             List<Map<String, Object>> stockSeparateItemList = cmsBtStockSeparateItemDao.selectStockSeparateItem(sqlParam);
             if (stockSeparateItemList == null || stockSeparateItemList.size() == 0) {
-                simpleTransaction.rollback();
                 throw new BusinessException("选择的明细不存在！");
             }
             // 这个页面所有sku的库存隔离信息Map
@@ -544,6 +590,7 @@ public class CmsTaskStockService extends BaseAppService {
                             sqlParam1.put("sku", sku);
                             sqlParam1.put("cartId", cartId);
                             sqlParam1.put("separateQty", separationQty);
+                            sqlParam1.put("modifier", param.get("userName"));
                             // 导入前状态为"7：再修正"和"2 隔离成功"以外，则导入后状态为"0：未进行"，导入前状态为"7：再修正"或"2 隔离成功"，则导入后状态为"7：再修正"
                             String changedStatus = "";
                             if ("2".equals(statusDB) || "7".equals(statusDB)) {
@@ -558,14 +605,16 @@ public class CmsTaskStockService extends BaseAppService {
                                 String typeName = Type.getTypeName(63, changedStatus, (String) param.get("lang"));
                                 platformInfo.put("status", typeName);
                             } else {
-                                simpleTransaction.rollback();
                                 throw new BusinessException("选择的明细不存在！");
                             }
                         }
                     }
                 }
             }
-        }catch (Exception e) {
+        } catch (BusinessException e) {
+            simpleTransaction.rollback();
+            throw e;
+        } catch (Exception e) {
             simpleTransaction.rollback();
             throw e;
         }
@@ -584,33 +633,38 @@ public class CmsTaskStockService extends BaseAppService {
             throw new BusinessException("活动已经开始，不能删除数据！");
         }
         simpleTransaction.openTransaction();
-        // 取得这条sku明细对应的库存隔离信息
-        Map<String, Object> sqlParam = new HashMap<String, Object>();
-        sqlParam.put("taskId", param.get("taskId"));
-        sqlParam.put("sku", param.get("sku"));
-        sqlParam.put("tableNameSuffix", "");
-        sqlParam.put("lang", param.get("lang"));
-        List<Map<String, Object>> stockSeparateItemList = cmsBtStockSeparateItemDao.selectStockSeparateItem(sqlParam);
-        if (stockSeparateItemList == null || stockSeparateItemList.size() == 0) {
-            simpleTransaction.rollback();
-            throw new BusinessException("选择的明细不存在！");
-        }
-        for (Map<String, Object> stockSeparateItem : stockSeparateItemList) {
-            String status = (String) stockSeparateItem.get("status");
-            if (!StringUtils.isEmpty(status) && !"0".equals(status)) {
-                throw new BusinessException("选择的明细不能删除！");
+        try {
+                                                                 // 取得这条sku明细对应的库存隔离信息
+            Map<String, Object> sqlParam = new HashMap<String, Object>();
+            sqlParam.put("taskId", param.get("taskId"));
+            sqlParam.put("sku", param.get("sku"));
+            sqlParam.put("tableNameSuffix", "");
+            sqlParam.put("lang", param.get("lang"));
+            List<Map<String, Object>> stockSeparateItemList = cmsBtStockSeparateItemDao.selectStockSeparateItem(sqlParam);
+            if (stockSeparateItemList == null || stockSeparateItemList.size() == 0) {
+                throw new BusinessException("选择的明细不存在！");
             }
-        }
+            for (Map<String, Object> stockSeparateItem : stockSeparateItemList) {
+                String status = (String) stockSeparateItem.get("status");
+                if (!StringUtils.isEmpty(status) && !"0".equals(status)) {
+                    throw new BusinessException("选择的明细不能删除！");
+                }
+            }
 
-        Map<String, Object> sqlParam1 = new HashMap<String, Object>();
-        sqlParam1.put("taskId", param.get("taskId"));
-        sqlParam1.put("sku", param.get("sku"));
-        int delCount = cmsBtStockSeparateItemDao.deleteStockSeparateItem(sqlParam1);
-        if (delCount <= 0) {
+            Map<String, Object> sqlParam1 = new HashMap<String, Object>();
+            sqlParam1.put("taskId", param.get("taskId"));
+            sqlParam1.put("sku", param.get("sku"));
+            int delCount = cmsBtStockSeparateItemDao.deleteStockSeparateItem(sqlParam1);
+            if (delCount <= 0) {
+                throw new BusinessException("选择的明细不存在！");
+            }
+        } catch (BusinessException e) {
             simpleTransaction.rollback();
-            throw new BusinessException("选择的明细不存在！");
+            throw e;
+        } catch (Exception e) {
+            simpleTransaction.rollback();
+            throw e;
         }
-
         simpleTransaction.commit();
     }
 
@@ -882,6 +936,151 @@ public class CmsTaskStockService extends BaseAppService {
 
         return stockHistoryList;
 
+    }
+
+
+    /**
+     * 启动/重刷库存隔离
+     *
+     * @param param 客户端参数
+     */
+    public void executeStockSeparation(Map param){
+        // 取得任务id对应的Promotion是否开始
+        boolean promotionStartFlg = isPromotionStart((String) param.get("taskId"));
+        if (promotionStartFlg) {
+            throw new BusinessException("活动已经开始，不能进行库存隔离！");
+        }
+        simpleTransaction.openTransaction();
+        try {
+            // 画面选择的sku
+            String selSku = (String) param.get("selSku");
+            // 更新结果
+            int updateCnt = 0;
+            // 选择一件sku进行库存隔离的的场合
+            if (!StringUtils.isEmpty(selSku)) {
+                Map<String, Object> sqlParam = new HashMap<String, Object>();
+                // 更新状态为"1:等待隔离"
+                sqlParam.put("status", "1");
+                sqlParam.put("modifier", param.get("userName"));
+                //更新条件
+                sqlParam.put("taskId", param.get("taskId"));
+                sqlParam.put("sku", selSku);
+                // 只有状态为"0:未进行"，"3:隔离失败"，"7:再修正"的数据可以进行隔离库存操作
+                sqlParam.put("statusList", Arrays.asList("0", "3", "7"));
+                updateCnt = cmsBtStockSeparateItemDao.updateStockSeparateItem(sqlParam);
+            } else {
+                // 根据选择条件进行库存隔离的的场合
+                // 批量库存隔离
+                Map<String, Object> sqlParam = new HashMap<String, Object>();
+                // 更新状态为"1:等待隔离"
+                sqlParam.put("statusUpd", "1");
+                sqlParam.put("modifier", param.get("userName"));
+                // 更新条件
+                sqlParam.put("taskId", param.get("taskId"));
+                // 只有状态为"0:未进行"，"3:隔离失败"，"7:再修正"的数据可以进行隔离库存操作
+                sqlParam.put("statusList", Arrays.asList("0", "3", "7"));
+                updateCnt = cmsBtStockSeparateItemDao.updateStockSeparateStatusAll(sqlParam);
+            }
+
+            if (updateCnt == 0) {
+                throw new BusinessException("没有可以隔离的数据！");
+            }
+        } catch (BusinessException e) {
+            simpleTransaction.rollback();
+            throw e;
+        } catch (Exception e) {
+            simpleTransaction.rollback();
+            throw e;
+        }
+        simpleTransaction.commit();
+    }
+
+    /**
+     * 还原库存隔离
+     *
+     * @param param 客户端参数
+     */
+    public void executeStockRevert(Map param){
+        // 取得任务id对应的Promotion是否开始
+        boolean promotionStartFlg = isPromotionStart((String) param.get("taskId"));
+        if (promotionStartFlg) {
+            throw new BusinessException("活动已经开始，不能进行库存隔离！");
+        }
+        simpleTransaction.openTransaction();
+        try {
+            // 画面选择的sku
+            String selSku = (String) param.get("selSku");
+            // 更新结果
+            int updateCnt = 0;
+
+            // 对库存隔离数据表进行数据还原
+            // 选择一件sku进行库存还原的的场合
+            if (!StringUtils.isEmpty(selSku)) {
+                Map<String, Object> sqlParam2 = new HashMap<String, Object>();
+                // 更新状态为"4:等待还原"
+                sqlParam2.put("status", "4");
+                sqlParam2.put("modifier", param.get("userName"));
+                //更新条件
+                sqlParam2.put("taskId", param.get("taskId"));
+                sqlParam2.put("sku", selSku);
+                // 只有状态为"2:隔离成功"，"6:还原失败"的数据可以进行还原库存隔离操作。
+                sqlParam2.put("statusList", Arrays.asList("2", "6"));
+                updateCnt = cmsBtStockSeparateItemDao.updateStockSeparateItem(sqlParam2);
+            } else {
+                // 根据选择条件进行库存还原的的场合
+                // 批量库存隔离
+                Map<String, Object> sqlParam2 = new HashMap<String, Object>();
+                // 更新状态为"4:等待还原"
+                sqlParam2.put("statusUpd", "4");
+                sqlParam2.put("modifier", param.get("userName"));
+                // 更新条件
+                sqlParam2.put("taskId", param.get("taskId"));
+                // 只有状态为"2:隔离成功"，"6:还原失败"的数据可以进行还原库存隔离操作。
+                sqlParam2.put("statusList", Arrays.asList("2", "6"));
+                updateCnt = cmsBtStockSeparateItemDao.updateStockSeparateStatusAll(sqlParam2);
+            }
+            if (updateCnt == 0) {
+                throw new BusinessException("没有可以还原的数据！");
+            }
+
+            // 对增量库存隔离数据表进行数据还原
+            // 取得隔离对象对应的子任务id
+            List<Integer> subTaskIdList = new ArrayList<Integer>();
+            Map<String, Object> sqlParam = new HashMap<String, Object>();
+            sqlParam.put("taskId", param.get("taskId"));
+            List<Map<String, Object>> incrementTaskList = cmsBtStockSeparateIncrementTaskDao.selectStockSeparateIncrementTask(sqlParam);
+            for (Map<String, Object> incrementTask : incrementTaskList) {
+                subTaskIdList.add((Integer)incrementTask.get("sub_task_id"));
+            }
+            // 选择一件sku进行库存还原的的场合
+            if (!StringUtils.isEmpty(selSku)) {
+                Map<String, Object> sqlParam1 = new HashMap<String, Object>();
+                // 更新状态为"4:还原"
+                sqlParam1.put("status", "4");
+                sqlParam1.put("modifier", param.get("userName"));
+                //更新条件
+                sqlParam1.put("subTaskIdList", subTaskIdList);
+                sqlParam1.put("sku", selSku);
+                cmsBtStockSeparateIncrementItemDao.updateStockSeparateIncrementItem(sqlParam1);
+            } else {
+                // 根据选择条件进行库存还原的的场合
+                Map<String, Object> sqlParam1 = new HashMap<String, Object>();
+                // 更新状态为"4:还原"
+                sqlParam1.put("status", "4");
+                sqlParam1.put("modifier", param.get("userName"));
+                //更新条件
+                sqlParam1.put("subTaskIdList", subTaskIdList);
+                cmsBtStockSeparateIncrementItemDao.updateStockSeparateIncrementStatusAll(sqlParam1);
+            }
+
+        } catch (BusinessException e) {
+            simpleTransaction.rollback();
+            throw e;
+        } catch (Exception e) {
+            simpleTransaction.rollback();
+            throw e;
+        }
+        simpleTransaction.commit();
     }
 
     /**
@@ -1481,7 +1680,7 @@ public class CmsTaskStockService extends BaseAppService {
         }
         sql += " t1.qty";
         sql += " from (select * from voyageone_cms2.cms_bt_stock_separate_item" + (String) param.get("tableNameSuffix");
-        sql += getWhereSql(param, false) ;
+        sql += getWhereSql(param, false);
         if (!StringUtils.isEmpty((String) param.get("status"))) {
             sql += " and sku in (select sku from voyageone_cms2.cms_bt_stock_separate_item" + (String) param.get("tableNameSuffix") + getWhereSql(param, false) +
                     " and status = '" + (String) param.get("status") + "')";        }
@@ -1568,6 +1767,11 @@ public class CmsTaskStockService extends BaseAppService {
         String whereSql = " where 1=1 ";
         // 任务Id
         whereSql += " and task_id = " + String.valueOf(param.get("taskId")) + " ";
+
+        // 商品model
+        if (!StringUtils.isEmpty((String) param.get("model"))) {
+            whereSql += " and product_model = '" + escapeSpecialChar((String) param.get("model")) + "'";
+        }
 
         // 商品code
         if (!StringUtils.isEmpty((String) param.get("code"))) {

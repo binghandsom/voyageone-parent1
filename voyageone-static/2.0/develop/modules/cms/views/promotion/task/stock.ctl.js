@@ -88,16 +88,16 @@ define([
                     var allNumLabel = document.getElementById('allNum');
                     allNumLabel.setAttribute("class", "btn btn-default-vo");
                 }
-                this.taskStockService.searchStock({
-                    "taskId" : this.taskId,
-                    "model" : this.model,
-                    "code" : this.code,
-                    "sku" : this.sku,
-                    "qtyFrom" : this.qtyFrom,
-                    "qtyTo" : this.qtyTo,
-                    "status" : this.status,
-                    "propertyList" : this.propertyList,
-                    "platformList" : this.platformList,
+                main.taskStockService.searchStock({
+                    "taskId" : main.taskId,
+                    "model" : main.model,
+                    "code" : main.code,
+                    "sku" : main.sku,
+                    "qtyFrom" : main.qtyFrom,
+                    "qtyTo" : main.qtyTo,
+                    "status" : main.status,
+                    "propertyList" : main.propertyList,
+                    "platformList" : main.platformList,
                     "start1" :  0,
                     "length1" : 20,
                     "start2" :  0,
@@ -147,18 +147,18 @@ define([
             getCommonStockList: function () {
                 var main = this;
                 main.tempStockListSelect = new main.selectRowsFactory();
-                this.taskStockService.getCommonStockList({
-                    "taskId" : this.taskId,
-                    "model" : this.model,
-                    "code" : this.code,
-                    "sku" : this.sku,
-                    "qtyFrom" : this.qtyFrom,
-                    "qtyTo" : this.qtyTo,
-                    "status" : this.status,
-                    "propertyList" : this.propertyList,
-                    "platformList" : this.platformList,
-                    "start1" :  (this.stockPageOption.curr - 1) * this.stockPageOption.size,
-                    "length1" : this.stockPageOption.size
+                main.taskStockService.getCommonStockList({
+                    "taskId" : main.taskId,
+                    "model" : main.model,
+                    "code" : main.code,
+                    "sku" : main.sku,
+                    "qtyFrom" : main.qtyFrom,
+                    "qtyTo" : main.qtyTo,
+                    "status" : main.status,
+                    "propertyList" : main.propertyList,
+                    "platformList" : main.platformList,
+                    "start1" :  (main.stockPageOption.curr - 1) * main.stockPageOption.size,
+                    "length1" : main.stockPageOption.size
                 }).then(function (res) {
                     main.stockList = res.data.stockList;
                     _.forEach(res.data.stockList, function(stock) {
@@ -171,18 +171,18 @@ define([
 
             getRealStockList: function () {
                 var main = this;
-                this.taskStockService.getRealStockList({
-                    "taskId" : this.taskId,
-                    "model" : this.model,
-                    "code" : this.code,
-                    "sku" : this.sku,
-                    "qtyFrom" : this.qtyFrom,
-                    "qtyTo" : this.qtyTo,
-                    "status" : this.status,
-                    "propertyList" : this.propertyList,
-                    "platformList" : this.platformList,
-                    "start2" :  (this.realStockPageOption.curr - 1) * this.realStockPageOption.size,
-                    "length2" : this.realStockPageOption.size
+                main.taskStockService.getRealStockList({
+                    "taskId" : main.taskId,
+                    "model" : main.model,
+                    "code" : main.code,
+                    "sku" : main.sku,
+                    "qtyFrom" : main.qtyFrom,
+                    "qtyTo" : main.qtyTo,
+                    "status" : main.status,
+                    "propertyList" : main.propertyList,
+                    "platformList" : main.platformList,
+                    "start2" :  (main.realStockPageOption.curr - 1) * main.realStockPageOption.size,
+                    "length2" : main.realStockPageOption.size
                 }).then(function (res) {
                     main.realStockList = res.data.realStockList;;
                 })
@@ -191,7 +191,7 @@ define([
             saveRecord: function (index) {
                 var main = this;
                 main.taskStockService.saveRecord({
-                    "taskId" : this.taskId,
+                    "taskId" : main.taskId,
                     "stockList" : main.stockList,
                     "index" : index
                 }).then(function (res) {
@@ -276,7 +276,8 @@ define([
                         "qtyFrom" : main.qtyFrom,
                         "qtyTo" : main.qtyTo,
                         "status" : main.status,
-                        "selSku":sku
+                        "selSku":sku,
+                        "propertyList" : main.propertyList
                     }).then(function (res) {
                         main.notify.success('TXT_MSG_SEPARATE_SUCCESS');
                         main.search();
@@ -299,7 +300,8 @@ define([
                         "qtyFrom" : main.qtyFrom,
                         "qtyTo" : main.qtyTo,
                         "status" : main.status,
-                        "selSku":sku
+                        "selSku":sku,
+                        "propertyList" : main.propertyList
                     }).then(function (res) {
                         main.notify.success('TXT_MSG_REVERT_SUCCESS');
                         main.search();
