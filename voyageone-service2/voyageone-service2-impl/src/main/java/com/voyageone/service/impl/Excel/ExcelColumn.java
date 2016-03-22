@@ -9,7 +9,6 @@ public class ExcelColumn<T> {
     EnumExcelColumnType columnType;
     FunctionFormatter<Object, T, Integer, Object> formatter;
     double columnWidth;
-
     public double getColumnWidth() {
         return columnWidth;
     }

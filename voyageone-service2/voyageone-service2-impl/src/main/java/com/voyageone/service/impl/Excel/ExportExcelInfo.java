@@ -14,6 +14,15 @@ public class ExportExcelInfo<TRow> {
     List<ExcelColumn<TRow>> listColumn = new ArrayList<ExcelColumn<TRow>>();
     String fileName;
     List<TRow> dataSource;
+    String Sheet;
+
+    public String getSheet() {
+        return Sheet;
+    }
+
+    public void setSheet(String sheet) {
+        Sheet = sheet;
+    }
 
     public List<TRow> getDataSource() {
         return dataSource;

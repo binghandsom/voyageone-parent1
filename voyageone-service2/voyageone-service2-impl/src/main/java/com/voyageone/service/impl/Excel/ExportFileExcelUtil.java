@@ -42,9 +42,9 @@ public class ExportFileExcelUtil {
             ExportExcelInfo<T> info,
             OutputStream out
     ) throws ExcelException {
-        if (info.getDataSource() == null) {
-            throw new ExcelException("数据源中没有任何数据");
-        }
+//        if (info.getDataSource() == null) {
+//            throw new ExcelException("数据源中没有任何数据");
+//        }
         int sheetSize=65535;
         if (sheetSize > 65535 || sheetSize < 1) {
             sheetSize = 65535;
@@ -53,25 +53,25 @@ public class ExportFileExcelUtil {
         HSSFWorkbook wwb;
         try {
             wwb = new HSSFWorkbook();
-
             //因为2003的Excel一个工作表最多可以有65536条记录，除去列头剩下65535条
             //所以如果记录太多，需要放到多个工作表中，其实就是个分页的过程
             //1.计算一共有多少个工作表
-            int sheetNum = (info.getDataSource().size()-1) /sheetSize;
+            int sheetNum=0;
+            if(info.getDataSource()!=null) {
+                sheetNum = (info.getDataSource().size() - 1) / sheetSize;
+            }
             //获取各工作表的数据源
             if(sheetNum>0) {
                 List<List<T>> pageList = ListHelp.getPageList(info.getDataSource(), sheetSize);
+                int sheetIndex=0;
                 for (List<T> page : pageList) {
-                    HSSFSheet sheet = wwb.createSheet();//sheetName, i
+                    HSSFSheet sheet = wwb.createSheet(info.getSheet()+sheetIndex++);//sheetName, i
                     fillSheet(sheet, page, info.getListColumn());
-//                sheet.autoSizeColumn((short) 0); //调整第一列宽度
-//                sheet.autoSizeColumn((short)1); //调整第二列宽度
-//                sheet.autoSizeColumn((short)2); //调整第三列宽度
                 }
             }
             else
             {
-                HSSFSheet sheet = wwb.createSheet();//sheetName, i
+                HSSFSheet sheet = wwb.createSheet(info.getSheet());//sheetName, i
                 fillSheet(sheet, null, info.getListColumn());
             }
             //2.创建相应的工作表，并向其中填充数据
