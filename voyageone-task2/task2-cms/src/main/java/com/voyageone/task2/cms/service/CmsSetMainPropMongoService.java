@@ -412,7 +412,12 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                     List<String> transBaiduOrg = new ArrayList<>(); // 百度翻译 - 输入参数
                     transBaiduOrg.add(strProductNameEn); // 标题
                     if (!StringUtils.isEmpty(strLongDesEn)) {
-                        transBaiduOrg.add(new InchStrConvert().inchToCM(strLongDesEn)); // 长描述
+                        // TODO: 临时把017关掉
+                        if ("010".equals(feed.getChannelId())) {
+                            transBaiduOrg.add(new InchStrConvert().inchToCM(strLongDesEn)); // 长描述
+                        } else {
+                            transBaiduOrg.add(strLongDesEn); // 长描述
+                        }
                     }
                     List<String> transBaiduCn; // 百度翻译 - 输出参数
                     try {
