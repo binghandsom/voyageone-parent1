@@ -38,8 +38,8 @@
         </if>
         <if test="statusList != null and statusList.size() > 0">
             and (status in
-            <foreach collection="statusList" item="status" open="(" separator="," close=")">
-                #{status}
+            <foreach collection="statusList" item="statusItem" open="(" separator="," close=")">
+                #{statusItem}
             </foreach>
             )
         </if>
@@ -52,15 +52,6 @@
     <select id="select_stock_separate_item_by_sql_map" resultType="HashMap" parameterType="HashMap">
         ${sql}
     </select>
-    <!--select count(*)-->
-
-    <!--<select id="select_stock_separate_item_cnt" resultType="int" parameterType="HashMap">-->
-            <!--from   voyageone_cms2.cms_bt_stock_separate_item-->
-            <!--where task_id = #{taskId}-->
-            <!--<if test="status !=null">-->
-                <!--and status = #{status}-->
-            <!--</if>-->
-    <!--</select>-->
 
     <select id="select_stock_separate_success_qty" resultType="int" parameterType="HashMap">
         select sum(separate_qty) as separate_qty_sum
@@ -75,73 +66,117 @@
         </if>
     </select>
 
+    <select id="select_stock_separate_item_by_status" resultType="Object" parameterType="HashMap">
+        select seq
+            from   voyageone_cms2.cms_bt_stock_separate_item
+            where task_id = #{taskId}
+            <if test="statusList != null and statusList.size() > 0">
+                and (status in
+                <foreach collection="statusList" item="statusItem" open="(" separator="," close=")">
+                    #{statusItem}
+                </foreach>
+                )
+            </if>
+        limit 0,1
+    </select>
+
     <select id="select_stock_separate_item_history_cnt" resultType="int" parameterType="HashMap">
          select count(*)
             from   voyageone_cms2.cms_bt_stock_separate_item_history
             where task_id = #{taskId}
-          limit 0,1
     </select>
 
     <update id="update_stock_separate_item" parameterType="HashMap" >
         update voyageone_cms2.cms_bt_stock_separate_item
         <set >
             <if test="productModel != null" >
-                product_model = #{productModel,jdbcType=VARCHAR},
+                product_model = #{productModel},
             </if>
             <if test="productCode != null" >
-                product_code = #{productCode,jdbcType=VARCHAR},
+                product_code = #{productCode},
             </if>
             <if test="property1 != null" >
-                property1 = #{property1,jdbcType=VARCHAR},
+                property1 = #{property1},
             </if>
             <if test="property2 != null" >
-                property1 = #{property2,jdbcType=VARCHAR},
+                property1 = #{property2},
             </if>
             <if test="property3 != null" >
-                property1 = #{property3,jdbcType=VARCHAR},
+                property1 = #{property3},
             </if>
             <if test="property4 != null" >
-                property1 = #{property4,jdbcType=VARCHAR},
+                property1 = #{property4},
             </if>
             <if test="qty != null" >
-                qty = #{qty,jdbcType=INTEGER},
+                qty = #{qty},
             </if>
             <if test="separateQty != null" >
-                separate_qty = #{separateQty,jdbcType=INTEGER},
+                separate_qty = #{separateQty},
             </if>
             <if test="errorMsg != null" >
-                error_msg = #{errorMsg,jdbcType=VARCHAR},
+                error_msg = #{errorMsg},
             </if>
             <if test="errorTime != null" >
-                error_time = #{errorTime,jdbcType=VARCHAR},
+                error_time = #{errorTime},
             </if>
             <if test="separateTime != null" >
-                separate_time = #{separateTime,jdbcType=VARCHAR},
+                separate_time = #{separateTime},
             </if>
             <if test="restoreTime != null" >
-                restore_time = #{restoreTime,jdbcType=VARCHAR},
+                restore_time = #{restoreTime},
             </if>
             <if test="status != null" >
-                status = #{status,jdbcType=VARCHAR},
+                status = #{status},
             </if>
             modified = now(),
             <if test="modifier != null" >
-                modifier = #{modifier,jdbcType=VARCHAR},
+                modifier = #{modifier},
             </if>
         </set>
         <where>
             1 = 1
             <if test="seq != null" >
-                and seq = #{seq,jdbcType=INTEGER}
+                and seq = #{seq}
             </if>
             <if test="taskId != null" >
-                and task_id = #{taskId,jdbcType=INTEGER}
+                and task_id = #{taskId}
             </if>
             <if test="sku != null" >
-                and sku = #{sku,jdbcType=VARCHAR}
+                and sku = #{sku}
             </if>
             <if test="cartId != null" >
-                and cart_id = #{cartId,jdbcType=INTEGER}
+                and cart_id = #{cartId}
+            </if>
+            <if test="statusList != null and statusList.size() > 0">
+                and (status in
+                <foreach collection="statusList" item="statusItem" open="(" separator="," close=")">
+                    #{statusItem}
+                </foreach>
+                )
+            </if>
+        </where>
+    </update>
+
+    <update id="update_stock_separate_status_all" parameterType="HashMap" >
+        update voyageone_cms2.cms_bt_stock_separate_item
+        <set >
+            status = #{statusUpd},
+            modified = now(),
+            <if test="modifier != null" >
+                modifier = #{modifier},
+            </if>
+        </set>
+        <where>
+            1 = 1
+            <if test="taskId != null" >
+                and task_id = #{taskId}
+            </if>
+            <if test="statusList != null and statusList.size() > 0">
+                and (status in
+                <foreach collection="statusList" item="statusItem" open="(" separator="," close=")">
+                    #{statusItem}
+                </foreach>
+                )
             </if>
         </where>
     </update>
@@ -150,12 +185,12 @@
         delete
         from voyageone_cms2.cms_bt_stock_separate_item
         where
-        task_id = #{taskId,jdbcType=INTEGER}
+        task_id = #{taskId}
         <if test="sku != null" >
-            and sku = #{sku,jdbcType=VARCHAR}
+            and sku = #{sku}
         </if>
         <if test="cartId != null" >
-            and cart_id = #{cartId,jdbcType=INTEGER}
+            and cart_id = #{cartId}
         </if>
     </delete>
 
@@ -167,21 +202,21 @@
         sku,
         cart_id,
         <if test="property1 != null" >
-        property1,
+            property1,
         </if>
         <if test="property2 != null" >
-        property2,
+            property2,
         </if>
         <if test="property3 != null" >
-        property3,
+            property3,
         </if>
         <if test="property4 != null" >
-        property4,
+            property4,
         </if>
         qty,
         separate_qty,
         <if test="status != null" >
-        status,
+            status,
         </if>
         created,
         creater,
@@ -194,21 +229,21 @@
         #{sku},
         #{cartId},
         <if test="property1 != null" >
-        #{property1},
+            #{property1},
         </if>
         <if test="property2 != null" >
-        #{property2},
+            #{property2},
         </if>
         <if test="property3 != null" >
-        #{property3},
+            #{property3},
         </if>
         <if test="property4 != null" >
-        #{property4},
+            #{property4},
         </if>
         #{qty},
         #{separateQty},
         <if test="status != null" >
-        #{status},
+            #{status},
         </if>
         now(),
         #{creater},

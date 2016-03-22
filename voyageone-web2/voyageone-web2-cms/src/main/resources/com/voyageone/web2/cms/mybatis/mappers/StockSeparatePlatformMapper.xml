@@ -21,4 +21,11 @@
         where t1.task_id = #{taskId} and t1.cart_id != -1
         order by t1.cart_id
     </select>
+
+    <delete id="delete_stock_separate_platform" parameterType="HashMap">
+        delete
+        from voyageone_cms2.cms_bt_stock_separate_platform_info
+        where
+        task_id = #{taskId}
+    </delete>
 </mapper>

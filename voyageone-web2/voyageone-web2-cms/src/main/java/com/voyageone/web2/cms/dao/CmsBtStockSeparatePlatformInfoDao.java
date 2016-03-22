@@ -15,4 +15,8 @@ public class CmsBtStockSeparatePlatformInfoDao extends BaseDao {
     public List<Map<String, Object>> selectStockSeparatePlatform(Map<String, Object> param) {
         return selectList("select_stock_separate_platform", param);
     }
+
+    public int deleteStockSeparatePlatform(Map<String, Object> param) {
+        return delete("delete_stock_separate_platform", param);
+    }
 }

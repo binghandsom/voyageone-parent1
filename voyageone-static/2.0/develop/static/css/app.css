@@ -7669,6 +7669,11 @@ input:checked + ol > li {
   border-left:4px solid #999;
   border-bottom:4px solid #bbb
 }
+.w3{max-width:50px}
+.w5{max-width:80px}
+.w10{max-width:100px}
+.w20{max-width:200px}
+.w30{max-width:300px}
 
 .modal-xlg {
   width: 650px;
