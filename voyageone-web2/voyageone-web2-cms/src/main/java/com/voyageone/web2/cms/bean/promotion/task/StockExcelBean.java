@@ -1,5 +1,7 @@
 package com.voyageone.web2.cms.bean.promotion.task;
 
+import com.voyageone.common.masterdate.schema.value.Value;
+
 import java.math.BigDecimal;
 
 /**
@@ -108,6 +110,22 @@ public class StockExcelBean {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public void setProperty(String propertyNa, String property) {
+
+        if (Property.property1.name().equals(propertyNa)) {
+            this.setProperty1(property);
+        }
+        if (Property.property2.name().equals(propertyNa)) {
+            this.setProperty2(property);
+        }
+        if (Property.property3.name().equals(propertyNa)) {
+            this.setProperty3(property);
+        }
+        if (Property.property4.name().equals(propertyNa)) {
+            this.setProperty4(property);
+        }
     }
 
     public String getProperty(String propertyNa) {

@@ -14,6 +14,7 @@ import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.CmsConstants;
 import com.voyageone.web2.cms.bean.promotion.task.StockExcelBean;
 import com.voyageone.web2.cms.dao.*;
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -26,6 +27,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.util.*;
 
 ;
@@ -54,8 +56,16 @@ public class CmsTaskStockService extends BaseAppService {
     @Autowired
     private SimpleTransaction simpleTransaction;
 
-//    @Autowired
-//    protected PromotionDao promotionDao;
+    /** Excel增量方式导入 */
+    private static final String EXCEL_IMPORT_ADD = "1";
+    /** Excel变更方式导入 */
+    private static final String EXCEL_IMPORT_UPDATE = "2";
+    /** Excel的Title部可用库存显示文字 */
+    private static final String USABLESTOCK = "Usable Stock";
+    /** Excel的Title部其他平台显示文字 */
+    private static final String OTHER = "Other";
+    /** Excel动态时显示文字 */
+    private static final String DYNAMIC = "Dynamic";
 
     /**
      * 根据活动ID取得CartId
@@ -954,7 +964,7 @@ public class CmsTaskStockService extends BaseAppService {
         }
 
         // 可用库存
-        FileUtils.cell(row, index++, cellStyleProperty).setCellValue("Usable Stock");
+        FileUtils.cell(row, index++, cellStyleProperty).setCellValue(USABLESTOCK);
 
         // 平台
         CellStyle cellStylePlatform = book.getSheetAt(1).getRow(0).getCell(0).getCellStyle(); // 平台的cellStyle
@@ -967,7 +977,7 @@ public class CmsTaskStockService extends BaseAppService {
             row.getCell(index - 1).setCellComment(comment);
         }
         mapCartCol.put("-1", index);
-        FileUtils.cell(row, index++, cellStylePlatform).setCellValue("Other");
+        FileUtils.cell(row, index++, cellStylePlatform).setCellValue(OTHER);
 
         // 筛选
         CellRangeAddress filter = new CellRangeAddress(0, 0, 0, index - 1);
@@ -988,7 +998,7 @@ public class CmsTaskStockService extends BaseAppService {
         int colIndex = 0; // 列号
         Row row = null;
 
-        Cell cellDynamic = book.getSheetAt(1).getRow(0).getCell(1); // 动态的cell
+        CellStyle cellStyleDynamic = book.getSheetAt(1).getRow(0).getCell(1).getCellStyle(); // 动态的CellStyle
         CellStyle cellStyleDataLock = book.getSheetAt(1).getRow(0).getCell(2).getCellStyle(); // 数据（锁定）的cellStyle
         CellStyle cellStyleData = book.getSheetAt(1).getRow(0).getCell(3).getCellStyle(); // 数据（不锁定）的cellStyle
 
@@ -1020,20 +1030,20 @@ public class CmsTaskStockService extends BaseAppService {
 
                 // 平台
                 if (StringUtils.isEmpty(rowData.getStatus())) {
-                    FileUtils.cell(row, mapCartCol.get(cart_id), cellDynamic.getCellStyle()).setCellValue(cellDynamic.getStringCellValue());
+                    FileUtils.cell(row, mapCartCol.get(cart_id), cellStyleDynamic).setCellValue(DYNAMIC);
                 } else {
                     FileUtils.cell(row, mapCartCol.get(cart_id), cellStyleData).setCellValue(rowData.getSeparate_qty().toPlainString());
                 }
 
                 CellStyle cellStyle = book.createCellStyle();
-                cellStyle.cloneStyleFrom(cellDynamic.getCellStyle());
+                cellStyle.cloneStyleFrom(cellStyleDynamic);
                 cellStyle.setLocked(true);
-                FileUtils.cell(row, mapCartCol.get("-1"), cellStyle).setCellValue(cellDynamic.getStringCellValue());
+                FileUtils.cell(row, mapCartCol.get("-1"), cellStyle).setCellValue(DYNAMIC);
             } else {
                 // 同一个sku，不同平台
                 // 平台
                 if (StringUtils.isEmpty(rowData.getStatus())) {
-                    FileUtils.cell(row, mapCartCol.get(cart_id), cellDynamic.getCellStyle()).setCellValue(cellDynamic.getStringCellValue());
+                    FileUtils.cell(row, mapCartCol.get(cart_id), cellStyleDynamic).setCellValue(DYNAMIC);
                 } else {
                     FileUtils.cell(row, mapCartCol.get(cart_id), cellStyleData).setCellValue(rowData.getSeparate_qty().toPlainString());
                 }
@@ -1062,7 +1072,7 @@ public class CmsTaskStockService extends BaseAppService {
         logger.info("库存隔离数据取得开始, task_id=" + task_id);
         Map searchParam = new HashMap();
         searchParam.put("tableName", "voyageone_cms2.cms_bt_stock_separate_item");
-        searchParam.put("whereSql", " where task_id= '" + task_id +"'");
+        searchParam.put("whereSql", " where task_id= '" + task_id + "'");
         List<StockExcelBean> resultData = cmsBtStockSeparateItemDao.selectExcelStockInfo(searchParam);
         // Map<sku, Map<cart_id, StockExcelBean>>
         Map<String, Map<String, StockExcelBean>> mapSkuInDB = new HashMap<String, Map<String, StockExcelBean>>();
@@ -1070,7 +1080,9 @@ public class CmsTaskStockService extends BaseAppService {
             if (mapSkuInDB.containsKey(rowData.getSku())) {
                 mapSkuInDB.get(rowData.getSku()).put(rowData.getCart_id(), rowData);
             } else {
-                mapSkuInDB.put(rowData.getSku(), new HashMap<String, StockExcelBean>(){{put(rowData.getCart_id(), rowData);}});
+                mapSkuInDB.put(rowData.getSku(), new HashMap<String, StockExcelBean>() {{
+                    put(rowData.getCart_id(), rowData);
+                }});
             }
         }
         logger.info("库存隔离数据取得结束");
@@ -1079,19 +1091,24 @@ public class CmsTaskStockService extends BaseAppService {
         List<StockExcelBean> saveData = readExcel(file, import_mode, paramPropertyList, paramPlatformInfoList, mapSkuInDB);
         logger.info("导入Excel取得并check的处理结束");
 
-
-
-
+        if (saveData.size() > 0) {
+            logger.info("更新开始");
+            saveImportData(saveData, import_mode, task_id);
+            logger.info(String.format("更新结束,更新了%d件", saveData.size()));
+        } else {
+            logger.info("没有更新对象");
+            throw new BusinessException("没有更新对象");
+        }
     }
 
     /**
      * 读取导入文件，并做check
      *
-     * @param file 导入文件
-     * @param import_mode 导入mode
-     * @param paramPropertyList 属性list
+     * @param file                  导入文件
+     * @param import_mode           导入mode
+     * @param paramPropertyList     属性list
      * @param paramPlatformInfoList 平台list
-     * @param mapSkuInDB cms_bt_stock_separate_item的数据
+     * @param mapSkuInDB            cms_bt_stock_separate_item的数据
      * @return
      */
     private List<StockExcelBean> readExcel(MultipartFile file, String import_mode, List<Map> paramPropertyList, List<Map> paramPlatformInfoList, Map<String, Map<String, StockExcelBean>> mapSkuInDB) {
@@ -1117,7 +1134,7 @@ public class CmsTaskStockService extends BaseAppService {
                 colPlatform = checkHeader(row, paramPropertyList, paramPlatformInfoList);
             } else {
                 // 数据行
-                checkRecord(row, import_mode, colPlatform, mapSkuInDB, saveData);
+                checkRecord(row, sheet.getRow(0), import_mode, colPlatform, mapSkuInDB, saveData);
             }
         }
 
@@ -1127,8 +1144,8 @@ public class CmsTaskStockService extends BaseAppService {
     /**
      * Title行check
      *
-     * @param row 行
-     * @param paramPropertyList 设定的属性list
+     * @param row                   行
+     * @param paramPropertyList     设定的属性list
      * @param paramPlatformInfoList 设定的平台list
      * @return colPlatform colPlatform[0]平台对应起始列号,colPlatform[1]平台对应结束列号
      */
@@ -1178,7 +1195,7 @@ public class CmsTaskStockService extends BaseAppService {
             throw new BusinessException(messageModelErr);
         }
 
-        if (!"Usable Stock".equals(row.getCell(index++).getStringCellValue())) {
+        if (!USABLESTOCK.equals(row.getCell(index++).getStringCellValue())) {
             throw new BusinessException(messageModelErr);
         }
 
@@ -1190,7 +1207,7 @@ public class CmsTaskStockService extends BaseAppService {
         paramPlatformInfoList.forEach(paramPlatform -> listPlatformKey.add((String) paramPlatform.get("cartId")));
 
         List<String> platformList = new ArrayList<String>();
-        while(true) {
+        while (true) {
             Comment comment = row.getCell(index).getCellComment();
             if (comment == null) {
                 // 注解为空
@@ -1226,7 +1243,7 @@ public class CmsTaskStockService extends BaseAppService {
         // 平台对应结束列号
         colPlatform[1] = index;
 
-        if (!"Other".equals(row.getCell(index).getStringCellValue())) {
+        if (!OTHER.equals(row.getCell(index).getStringCellValue())) {
             throw new BusinessException(messageModelErr);
         }
 
@@ -1236,39 +1253,189 @@ public class CmsTaskStockService extends BaseAppService {
     /**
      * check数据，并返回保存对象
      *
-     * @param row 行
+     * @param row         行
      * @param import_mode 导入mode
      * @param colPlatform colPlatform[0]平台对应起始列号,colPlatform[1]平台对应结束列号
-     * @param mapSkuInDB cms_bt_stock_separate_item的数据
-     * @param saveData 保存对象
+     * @param mapSkuInDB  cms_bt_stock_separate_item的数据
+     * @param saveData    保存对象
      */
-    private void checkRecord(Row row, String import_mode, int[] colPlatform, Map<String, Map<String, StockExcelBean>> mapSkuInDB, List<StockExcelBean> saveData) {
-        StockExcelBean bean = new StockExcelBean();
+    private void checkRecord(Row row, Row rowHeader, String import_mode, int[] colPlatform, Map<String, Map<String, StockExcelBean>> mapSkuInDB, List<StockExcelBean> saveData) {
 
         String model = row.getCell(0).getStringCellValue(); // Model
         String code = row.getCell(1).getStringCellValue(); // Code
         String sku = row.getCell(2).getStringCellValue(); // Sku
-//        String p
-        for (int index = 3; index <= colPlatform[0] - 2; index++) {
-            // 属性
-
-        }
 
         // Model输入check
         if (StringUtils.isEmpty(model) || model.getBytes().length > 50) {
-            throw new BusinessException("Model必须输入且长度小于50！");
+            throw new BusinessException("Model必须输入且长度小于50！" + "Sku=" + sku);
         }
         // Code输入check
         if (StringUtils.isEmpty(code) || code.getBytes().length > 50) {
-            throw new BusinessException("Code必须输入且长度小于50！");
+            throw new BusinessException("Code必须输入且长度小于50！" + "Sku=" + sku);
         }
         // Sku输入check
         if (StringUtils.isEmpty(sku) || sku.getBytes().length > 50) {
-            throw new BusinessException("Sku必须输入且长度小于50！");
+            throw new BusinessException("Sku必须输入且长度小于50！" + "Sku=" + sku);
         }
 
+        for (int index = 3; index <= colPlatform[0] - 2; index++) {
+            // 属性
+            String property = row.getCell(index).getStringCellValue();
+            if (StringUtils.isEmpty(property) || property.getBytes().length > 500) {
+                throw new BusinessException(rowHeader.getCell(index).getStringCellValue() + "必须输入且长度小于500！" + "Sku=" + sku);
+            }
+        }
+
+        // 可用库存输入check
+        String usableStock = row.getCell(colPlatform[0] - 1).getStringCellValue();
+        if (StringUtils.isEmpty(usableStock) || !StringUtils.isDigit(usableStock) || usableStock.getBytes().length > 9) {
+            throw new BusinessException("可用库存必须输入小于10位的整数！" + "Sku=" + sku);
+        }
+
+        // 隔离库存的平台数
+        int stockCnt = 0;
+        for (int index = colPlatform[0]; index < colPlatform[1]; index++) {
+            // 平台隔离库存
+            String separate_qty = row.getCell(index).getStringCellValue();
+            // 平台号
+            String cartId = rowHeader.getCell(index).getCellComment().getString().getString();
+
+            boolean isDYNAMIC = false;
+            if (DYNAMIC.equals(separate_qty)) {
+                // 动态
+                isDYNAMIC = true;
+            } else {
+                if (StringUtils.isEmpty(separate_qty) || !StringUtils.isDigit(separate_qty) || separate_qty.getBytes().length > 9) {
+                    throw new BusinessException("隔离库存必须输入小于10位的整数,或者输入'" + DYNAMIC + "'！" + "Sku=" + sku);
+                }
+                stockCnt++;
+            }
+
+            // DB里本条sku对应的平台的数据Map<平台id，数据>
+            Map<String, StockExcelBean> mapCartIdInDB = mapSkuInDB.get(sku);
+
+            if (EXCEL_IMPORT_ADD.equals(import_mode)) {
+                // 增量方式
+                if (mapCartIdInDB != null) {
+                    throw new BusinessException("Sku=" + sku + "的数据在DB里已经存在,不能增量！");
+                }
+
+                StockExcelBean bean = new StockExcelBean();
+                bean.setProduct_model(model);
+                bean.setProduct_code(code);
+                bean.setSku(sku);
+                bean.setCart_id(cartId);
+                for (int c = 3; c <= colPlatform[0] - 2; c++) {
+                    // 属性
+                    bean.setProperty(rowHeader.getCell(c).getCellComment().getString().getString(), row.getCell(c).getStringCellValue());
+                }
+                bean.setQty(new BigDecimal(usableStock));
+                if (isDYNAMIC) {
+                    // 动态
+                    bean.setSeparate_qty(new BigDecimal(-1));
+                } else {
+                    bean.setSeparate_qty(new BigDecimal(separate_qty));
+                    bean.setStatus("0");
+                }
+
+                saveData.add(bean);
+            } else {
+                // 变更方式
+                if (mapCartIdInDB == null) {
+                    throw new BusinessException("Sku=" + sku + "的数据在DB里不存在,不能变更！");
+                }
+
+                StockExcelBean beanInDB = mapCartIdInDB.get(cartId);
+                if (beanInDB == null) {
+                    throw new BusinessException("Sku=" + sku + "的DB数据的平台信息错误！");
+                }
+                if (!model.equals(beanInDB.getProduct_model())) {
+                    throw new BusinessException("变更方式导入时,Model不能变更！" + "Sku=" + sku);
+                }
+                if (!code.equals(beanInDB.getProduct_code())) {
+                    throw new BusinessException("变更方式导入时,Code不能变更！" + "Sku=" + sku);
+                }
+                if (!sku.equals(beanInDB.getSku())) {
+                    throw new BusinessException("变更方式导入时,Sku不能变更！" + "Sku=" + sku);
+                }
+
+                for (int c = 3; c <= colPlatform[0] - 2; c++) {
+                    // 属性
+                    String propertyNa = rowHeader.getCell(c).getCellComment().getString().getString();
+                    String property = row.getCell(c).getStringCellValue();
+                    if (!property.equals(beanInDB.getProperty(propertyNa))) {
+                        throw new BusinessException("变更方式导入时," + rowHeader.getCell(c).getStringCellValue() + "不能变更！" + "Sku=" + sku);
+                    }
+                }
+
+                if (!usableStock.equals(beanInDB.getQty().toPlainString())) {
+                    throw new BusinessException("变更方式导入时,可用库存不能变更！" + "Sku=" + sku);
+                }
+
+                boolean isUpdate = false; // 更新对象
+                if (isDYNAMIC) {
+                    // 动态
+                    if (!StringUtils.isEmpty(beanInDB.getStatus())) {
+                        // DB非动态
+                        isUpdate = true;
+                    }
+                } else {
+                    // 非动态
+                    if (StringUtils.isEmpty(beanInDB.getStatus()) || !separate_qty.equals(beanInDB.getSeparate_qty().toPlainString())) {
+                        // DB动态或数量不一致
+                        isUpdate = true;
+                    }
+                }
+
+                if (isUpdate) {
+                    StockExcelBean bean = new StockExcelBean();
+                    bean.setProduct_model(model);
+                    bean.setProduct_code(code);
+                    bean.setSku(sku);
+                    bean.setCart_id(cartId);
+                    for (int c = 3; c <= colPlatform[0] - 2; c++) {
+                        // 属性
+                        bean.setProperty(rowHeader.getCell(c).getCellComment().getString().getString(), row.getCell(c).getStringCellValue());
+                    }
+                    bean.setQty(new BigDecimal(usableStock));
+                    if (isDYNAMIC) {
+                        // 动态
+                        bean.setSeparate_qty(new BigDecimal(-1));
+                    } else {
+                        bean.setSeparate_qty(new BigDecimal(separate_qty));
+                        if ("2".equals(beanInDB.getStatus()) || "7".equals(beanInDB.getStatus())) {
+                            bean.setStatus("7");
+                        } else {
+                            bean.setStatus("0");
+                        }
+                    }
+
+                    saveData.add(bean);
+                }
+            }
+        }
+        // 隔离库存的平台数 = 0
+        if (stockCnt == 0) {
+            throw new BusinessException("Sku=" + sku + "的数据至少隔离一个平台的库存值！");
+        }
+
+        if (!DYNAMIC.equals(row.getCell(colPlatform[1]).getStringCellValue())) {
+            throw new BusinessException("Sku=" + sku + "的其它平台栏不是动态！");
+        }
     }
 
+    /**
+     * 导入文件数据更新
+     *
+     * @param saveData    保存对象
+     * @param import_mode 导入方式
+     * @param task_id     任务id
+     */
+    private void saveImportData(List<StockExcelBean> saveData, String import_mode, String task_id) {
+        for (StockExcelBean bean : saveData) {
+
+        }
+    }
 
     /**
      * 库存隔离数据输入Check
