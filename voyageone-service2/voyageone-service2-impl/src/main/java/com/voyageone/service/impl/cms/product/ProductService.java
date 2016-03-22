@@ -735,6 +735,10 @@ public class ProductService extends BaseService {
                     skuPriceModel.setPriceMsrp(sku.getPriceMsrp());
                     skuPriceModel.setPriceRetail(sku.getPriceRetail());
                     skuPriceModel.setPriceSale(sku.getPriceSale());
+                    //vendor price update
+                    skuPriceModel.setClientNetPrice(sku.getClientNetPrice());
+                    skuPriceModel.setClientMsrpPrice(sku.getClientMsrpPrice());
+                    skuPriceModel.setClientRetailPrice(sku.getClientRetailPrice());
                     model.addSkuPrice(skuPriceModel);
                 }
 

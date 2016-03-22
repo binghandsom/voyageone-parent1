@@ -11,12 +11,19 @@ public class ProductSkuPriceBean {
 
     //skuCode
     private String skuCode;
-    //msrp价格区间
+    //msrp价格
     private Double priceMsrp;
-    //建议市场价格区间
+    //建议市场价格
     private Double priceRetail;
-    //当前销售价格区间
+    //当前销售价格
     private Double priceSale;
+
+    //供应商成本价
+    private Double clientNetPrice;
+    //供应商MSRP价
+    private Double clientMsrpPrice;
+    //供应商销售价
+    private Double clientRetailPrice;
 
     public String getSkuCode() {
         return skuCode;
@@ -48,5 +55,29 @@ public class ProductSkuPriceBean {
 
     public void setPriceSale(Double priceSale) {
         this.priceSale = priceSale;
+    }
+
+    public Double getClientNetPrice() {
+        return clientNetPrice;
+    }
+
+    public void setClientNetPrice(Double clientNetPrice) {
+        this.clientNetPrice = clientNetPrice;
+    }
+
+    public Double getClientMsrpPrice() {
+        return clientMsrpPrice;
+    }
+
+    public void setClientMsrpPrice(Double clientMsrpPrice) {
+        this.clientMsrpPrice = clientMsrpPrice;
+    }
+
+    public Double getClientRetailPrice() {
+        return clientRetailPrice;
+    }
+
+    public void setClientRetailPrice(Double clientRetailPrice) {
+        this.clientRetailPrice = clientRetailPrice;
     }
 }
