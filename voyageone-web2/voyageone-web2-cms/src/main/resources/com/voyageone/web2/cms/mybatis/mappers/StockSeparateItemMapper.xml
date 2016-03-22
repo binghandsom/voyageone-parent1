@@ -314,63 +314,73 @@
         product_code,
         sku,
         cart_id,
-        <if test="property1 != null" >
-            property1,
-        </if>
-        <if test="property2 != null" >
-            property2,
-        </if>
-        <if test="property3 != null" >
-            property3,
-        </if>
-        <if test="property4 != null" >
-            property4,
-        </if>
+        property1,
+        property2,
+        property3,
+        property4,
         qty,
         separate_qty,
-        <if test="status != null" >
-            status,
-        </if>
+        status,
         created,
         creater,
         modified,
         modifier
         ) value
-        <foreach collection="list" index="index" item="item" open="(" separator="," close=")">
-            #{item.task_id},
+        <foreach collection="list" index="index" item="item" separator=",">
+            (#{item.task_id},
             #{item.product_model},
             #{item.product_code},
             #{item.sku},
             #{item.cart_id},
-            <if test="property1 != null" >
+            <if test="item.property1 != null" >
                 #{item.property1},
             </if>
-            <if test="property2 != null" >
+            <if test="item.property1 == null" >
+                '',
+            </if>
+            <if test="item.property2 != null" >
                 #{item.property2},
             </if>
-            <if test="property3 != null" >
+            <if test="item.property2 == null" >
+                '',
+            </if>
+            <if test="item.property3 != null" >
                 #{item.property3},
             </if>
-            <if test="property4 != null" >
+            <if test="item.property3 == null" >
+                '',
+            </if>
+            <if test="item.property4 != null" >
                 #{item.property4},
+            </if>
+            <if test="item.property4 == null" >
+                '',
             </if>
             #{item.qty},
             #{item.separate_qty},
-            <if test="status != null" >
+            <if test="item.status != null" >
                 #{item.status},
+            </if>
+            <if test="item.status == null" >
+                '',
             </if>
             now(),
             #{item.creater},
             now(),
-            #{item.creater}
+            #{item.creater})
         </foreach>
     </insert>
 
     <update id="update_stock_separate_item_excel" parameterType="HashMap">
         update voyageone_cms2.cms_bt_stock_separate_item
         <set>
-            separate_qty = #{separate_qty}
-            status = #{status},
+            separate_qty = #{separate_qty},
+            <if test="status != null" >
+            status = #{status,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null" >
+            status = '',
+            </if>
             modified = now(),
             modifier = #{modifier}
         </set>
