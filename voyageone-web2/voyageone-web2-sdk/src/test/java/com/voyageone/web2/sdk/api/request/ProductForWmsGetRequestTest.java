@@ -24,7 +24,7 @@ public class ProductForWmsGetRequestTest {
     public void testGetSkuBySkuIncludes() {
 
         ProductForWmsGetRequest requestModel = new ProductForWmsGetRequest("010");
-        requestModel.setCode("00341");
+//        requestModel.setCode("00341");
 
         //SDK取得Product 数据
         ProductForWmsGetResponse response = voApiClient.execute(requestModel);
