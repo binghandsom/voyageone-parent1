@@ -7,10 +7,10 @@
 	
     <select id="getList" resultMap="ResultMap">
 
-        select id,channel_id,Product Code,image_type_name,image_type,image_index,origin_url,jm_url,syn_flg,created,creater,modified,modifier        from jm_bt_images
+        select id,channel_id,Product_Code,image_type_name,image_type,image_index,origin_url,jm_url,syn_flg,created,creater,modified,modifier        from jm_bt_images
     </select>
     <select id="get" resultMap="ResultMap">
-        select id,channel_id,Product Code,image_type_name,image_type,image_index,origin_url,jm_url,syn_flg,created,creater,modified,modifier from jm_bt_images where id=#{id}
+        select id,channel_id,Product_Code,image_type_name,image_type,image_index,origin_url,jm_url,syn_flg,created,creater,modified,modifier from jm_bt_images where id=#{id}
     </select>
 
      <update id="update">
@@ -18,7 +18,7 @@
         set
 
             channel_id=#{channelId}
-            ,Product Code=#{Product Code}
+            ,Product_Code=#{ProductCode}
             ,image_type_name=#{imageTypeName}
             ,image_type=#{imageType}
             ,image_index=#{imageIndex}
@@ -40,7 +40,7 @@
         INSERT INTO jm_bt_images
         (
               channel_id,
-              Product Code,
+              Product_Code,
               image_type_name,
               image_type,
               image_index,
@@ -54,7 +54,7 @@
         )
         VALUES(
               #{channelId},
-              #{Product Code},
+              #{ProductCode},
               #{imageTypeName},
               #{imageType},
               #{imageIndex},

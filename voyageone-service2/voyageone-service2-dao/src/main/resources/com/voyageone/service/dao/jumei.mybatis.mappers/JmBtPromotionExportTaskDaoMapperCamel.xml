@@ -1,24 +1,23 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.voyageone.service.dao.jumei.JmBtPromotionImportTaskDao">
-    <resultMap id="ResultMap" type="com.voyageone.service.model.jumei.JmBtPromotionImportTaskModel">
+<mapper namespace="com.voyageone.service.dao.jumei.JmBtPromotionExportTaskDao">
+    <resultMap id="ResultMap" type="com.voyageone.service.model.jumei.JmBtPromotionExportTaskModel">
         
     </resultMap>
 	
     <select id="getList" resultMap="ResultMap">
 
-        select id,promotion_id,is_import,file_name,file_path,error_msg,success_rows,failures_rows,failures_path,error_code,begin_time,end_time,creater,created        from jm_bt_promotion_import_task
+        select id,promotion_id,file_name,file_path,error_msg,success_rows,failures_rows,failures_path,error_code,begin_time,end_time,creater,created        from jm_bt_promotion_export_task
     </select>
     <select id="get" resultMap="ResultMap">
-        select id,promotion_id,is_import,file_name,file_path,error_msg,success_rows,failures_rows,failures_path,error_code,begin_time,end_time,creater,created from jm_bt_promotion_import_task where id=#{id}
+        select id,promotion_id,file_name,file_path,error_msg,success_rows,failures_rows,failures_path,error_code,begin_time,end_time,creater,created from jm_bt_promotion_export_task where id=#{id}
     </select>
 
      <update id="update">
-        update jm_bt_promotion_import_task
+        update jm_bt_promotion_export_task
         set
 
             promotion_id=#{promotionId}
-            ,is_import=#{isImport}
             ,file_name=#{fileName}
             ,file_path=#{filePath}
             ,error_msg=#{errorMsg}
@@ -32,16 +31,15 @@
    </update>
 
     <delete id="delete">
-        delete from  jm_bt_promotion_import_task
+        delete from  jm_bt_promotion_export_task
         where id=#{id}
 
     </delete>
 
     <insert id="create">
-        INSERT INTO jm_bt_promotion_import_task
+        INSERT INTO jm_bt_promotion_export_task
         (
               promotion_id,
-              is_import,
               file_name,
               file_path,
               error_msg,
@@ -56,7 +54,6 @@
         )
         VALUES(
               #{promotionId},
-              #{isImport},
               #{fileName},
               #{filePath},
               #{errorMsg},

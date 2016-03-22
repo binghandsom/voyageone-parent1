@@ -11,24 +11,23 @@ import java.util.List;
  */
 @Service
 public class JmBtPromotionImportTaskService {
-@Autowired
+    @Autowired
     JmBtPromotionImportTaskDao dao;
 
-    public JmBtPromotionImportTaskModel get(int id)
-    {
-       return dao.get(id);
+    public JmBtPromotionImportTaskModel get(int id) {
+        return dao.get(id);
     }
-    public List<JmBtPromotionImportTaskModel>  getList()
-    {
-    return dao.getList();
+
+    public List<JmBtPromotionImportTaskModel> getList() {
+        return dao.getList();
     }
-    public int update(JmBtPromotionImportTaskModel entity)
-    {
-   return dao.update(entity);
+
+    public int update(JmBtPromotionImportTaskModel entity) {
+        return dao.update(entity);
     }
-    public int create(JmBtPromotionImportTaskModel entity)
-    {
-                   return dao.create(entity);
+
+    public int create(JmBtPromotionImportTaskModel entity) {
+        return dao.create(entity);
     }
-    }
+}
 

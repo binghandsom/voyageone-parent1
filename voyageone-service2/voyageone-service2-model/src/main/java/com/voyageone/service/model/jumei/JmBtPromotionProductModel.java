@@ -40,7 +40,7 @@ public class JmBtPromotionProductModel implements Serializable
  /**
 聚美产品ID（聚美系统）
         */
-     private int jmProductId;
+     private int jmBtProductId;
     
     
  /**
@@ -155,14 +155,14 @@ this.channelId="";
          /**
            聚美产品ID（聚美系统）
         */
-        public int getJmProductId()
+        public int getJmBtProductId()
         {
          
-        return this.jmProductId;
+        return this.jmBtProductId;
         }
-        public void setJmProductId(int jmProductId)
+        public void setJmBtProductId(int jmBtProductId)
         {
-         this.jmProductId=jmProductId;
+         this.jmBtProductId=jmBtProductId;
         }
     
         

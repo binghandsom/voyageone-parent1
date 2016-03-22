@@ -4,9 +4,9 @@ import java.util.Date;
 import java.math.BigDecimal;
 import java.io.Serializable;
 import com.voyageone.common.util.*;
-public class JmBtPromotionImportTaskModel implements Serializable
+public class JmBtPromotionExportTaskModel implements Serializable
 {
-   public JmBtPromotionImportTaskModel()
+   public JmBtPromotionExportTaskModel()
     {
         setFileName(""); 
         setFilePath(""); 
@@ -30,12 +30,6 @@ public class JmBtPromotionImportTaskModel implements Serializable
 推广活动id
         */
      private int promotionId;
-    
-    
- /**
-是否导入
-        */
-     private boolean isImport;
     
     
  /**
@@ -129,20 +123,6 @@ public class JmBtPromotionImportTaskModel implements Serializable
         public void setPromotionId(int promotionId)
         {
          this.promotionId=promotionId;
-        }
-    
-        
-         /**
-           是否导入
-        */
-        public boolean getIsImport()
-        {
-         
-        return this.isImport;
-        }
-        public void setIsImport(boolean isImport)
-        {
-         this.isImport=isImport;
         }
     
         

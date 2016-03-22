@@ -12,8 +12,9 @@ public class JmBtMasterInfoModel implements Serializable
         setImageKey1(""); 
         setImageKey2(""); 
         setImageKey3(""); 
-        setOriginUrl(""); 
-        setJmUrl(""); 
+        setValue1(""); 
+        setValue2(""); 
+        setErrorMessage(""); 
         setCreater(""); 
         setModifier(""); 
 
@@ -51,7 +52,7 @@ public class JmBtMasterInfoModel implements Serializable
     
     
  /**
-数据类型（3:特殊说明；4：品牌故事图 ；5：尺码图； 6：物流介绍 ；7：竖图）
+数据类型（3:特殊说明；4：品牌故事图 ；5：尺码图； 6：物流介绍）
         */
      private int dataType;
     
@@ -63,21 +64,27 @@ public class JmBtMasterInfoModel implements Serializable
     
     
  /**
-自己服务器的图片url
+data_type为3，value1是文字（特殊说明）,data_type为其它，value1是origin_url自己服务器的图片url
         */
-     private String originUrl;
+     private String value1;
     
     
  /**
-聚美服务器的url
+data_type为3，value1是NULL,data_type为其它，value2是jm_url聚美服务器的url
         */
-     private String jmUrl;
+     private String value2;
     
     
  /**
-0:没上传 1:已经上传
+0:待上传；1:上传成功；2:上传失败
         */
      private int synFlg;
+    
+    
+ /**
+
+        */
+     private String errorMessage;
     
     
  /**
@@ -203,7 +210,7 @@ this.imageKey3="";
     
         
          /**
-           数据类型（3:特殊说明；4：品牌故事图 ；5：尺码图； 6：物流介绍 ；7：竖图）
+           数据类型（3:特殊说明；4：品牌故事图 ；5：尺码图； 6：物流介绍）
         */
         public int getDataType()
         {
@@ -231,49 +238,49 @@ this.imageKey3="";
     
         
          /**
-           自己服务器的图片url
+           data_type为3，value1是文字（特殊说明）,data_type为其它，value1是origin_url自己服务器的图片url
         */
-        public String getOriginUrl()
+        public String getValue1()
         {
          
-        return this.originUrl;
+        return this.value1;
         }
-        public void setOriginUrl(String originUrl)
+        public void setValue1(String value1)
         {
-        if(originUrl!=null){
-this.originUrl=originUrl;
+        if(value1!=null){
+this.value1=value1;
  }
 else
 {
-this.originUrl="";
+this.value1="";
 }
 
         }
     
         
          /**
-           聚美服务器的url
+           data_type为3，value1是NULL,data_type为其它，value2是jm_url聚美服务器的url
         */
-        public String getJmUrl()
+        public String getValue2()
         {
          
-        return this.jmUrl;
+        return this.value2;
         }
-        public void setJmUrl(String jmUrl)
+        public void setValue2(String value2)
         {
-        if(jmUrl!=null){
-this.jmUrl=jmUrl;
+        if(value2!=null){
+this.value2=value2;
  }
 else
 {
-this.jmUrl="";
+this.value2="";
 }
 
         }
     
         
          /**
-           0:没上传 1:已经上传
+           0:待上传；1:上传成功；2:上传失败
         */
         public int getSynFlg()
         {
@@ -283,6 +290,27 @@ this.jmUrl="";
         public void setSynFlg(int synFlg)
         {
          this.synFlg=synFlg;
+        }
+    
+        
+         /**
+           
+        */
+        public String getErrorMessage()
+        {
+         
+        return this.errorMessage;
+        }
+        public void setErrorMessage(String errorMessage)
+        {
+        if(errorMessage!=null){
+this.errorMessage=errorMessage;
+ }
+else
+{
+this.errorMessage="";
+}
+
         }
     
         

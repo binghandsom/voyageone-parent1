@@ -9,9 +9,8 @@ public class JmBtImagesModel implements Serializable
    public JmBtImagesModel()
     {
         setChannelId(""); 
-        setImageKey1(""); 
-        setImageKey2(""); 
-        setImageKey3(""); 
+        setProductCode(""); 
+        setImageTypeName(""); 
         setOriginUrl(""); 
         setJmUrl(""); 
         setCreater(""); 
@@ -35,23 +34,17 @@ public class JmBtImagesModel implements Serializable
  /**
 图片锁定条件（1:白底方图的情况下为Product Code；2:商品详情图的情况下为Product Code； 3:参数图的情况下为Product Code； 4：品牌故事图的情况下为品牌名称； 5：尺码图的情况下为品牌名称 6：物流介绍的情况下为品牌名称 7：竖图的情况下为Product Code）
         */
-     private String imageKey1;
+     private String ProductCode;
     
     
  /**
-图片锁定条件（1:白底方图的情况下为prduct_type；2:商品详情图的情况下为prduct_type； 3:参数图的情况下为prduct_type； 4：品牌故事图的情况下为prduct_type； 5：尺码图的情况下为商品的prduct_type 6：物流介绍的情况下为prduct_type 7：竖图的情况下为prduct_type）
+图片锁定条件（1:白底方图的情况下为"main_image"；2:商品详情图的情况下为"deal_image"； 3:参数图的情况下为"property_image"）
         */
-     private String imageKey2;
+     private String imageTypeName;
     
     
  /**
-图片锁定条件（1:白底方图的情况下为"main_image"；2:商品详情图的情况下为"deal_image"； 3:参数图的情况下为"property_image"； 4：品牌故事图的情况下为size_type； 5：尺码图的情况下为商品的size_type 6：物流介绍的情况下为"shop_process" 7：竖图的情况下为"mobile_image"）
-        */
-     private String imageKey3;
-    
-    
- /**
-图片类型（1:白底方图 2:商品详情图 3:参数图 4：品牌故事图 5：尺码图 6：物流介绍 7：竖图）
+图片类型（1:白底方图 ；2:商品详情图 ；3:参数图 ；7：竖图）
         */
      private int imageType;
     
@@ -142,68 +135,47 @@ this.channelId="";
          /**
            图片锁定条件（1:白底方图的情况下为Product Code；2:商品详情图的情况下为Product Code； 3:参数图的情况下为Product Code； 4：品牌故事图的情况下为品牌名称； 5：尺码图的情况下为品牌名称 6：物流介绍的情况下为品牌名称 7：竖图的情况下为Product Code）
         */
-        public String getImageKey1()
+        public String getProductCode()
         {
          
-        return this.imageKey1;
+        return this.ProductCode;
         }
-        public void setImageKey1(String imageKey1)
+        public void setProductCode(String ProductCode)
         {
-        if(imageKey1!=null){
-this.imageKey1=imageKey1;
+        if(ProductCode!=null){
+this.ProductCode=ProductCode;
  }
 else
 {
-this.imageKey1="";
+this.ProductCode="";
 }
 
         }
     
         
          /**
-           图片锁定条件（1:白底方图的情况下为prduct_type；2:商品详情图的情况下为prduct_type； 3:参数图的情况下为prduct_type； 4：品牌故事图的情况下为prduct_type； 5：尺码图的情况下为商品的prduct_type 6：物流介绍的情况下为prduct_type 7：竖图的情况下为prduct_type）
+           图片锁定条件（1:白底方图的情况下为"main_image"；2:商品详情图的情况下为"deal_image"； 3:参数图的情况下为"property_image"）
         */
-        public String getImageKey2()
+        public String getImageTypeName()
         {
          
-        return this.imageKey2;
+        return this.imageTypeName;
         }
-        public void setImageKey2(String imageKey2)
+        public void setImageTypeName(String imageTypeName)
         {
-        if(imageKey2!=null){
-this.imageKey2=imageKey2;
+        if(imageTypeName!=null){
+this.imageTypeName=imageTypeName;
  }
 else
 {
-this.imageKey2="";
+this.imageTypeName="";
 }
 
         }
     
         
          /**
-           图片锁定条件（1:白底方图的情况下为"main_image"；2:商品详情图的情况下为"deal_image"； 3:参数图的情况下为"property_image"； 4：品牌故事图的情况下为size_type； 5：尺码图的情况下为商品的size_type 6：物流介绍的情况下为"shop_process" 7：竖图的情况下为"mobile_image"）
-        */
-        public String getImageKey3()
-        {
-         
-        return this.imageKey3;
-        }
-        public void setImageKey3(String imageKey3)
-        {
-        if(imageKey3!=null){
-this.imageKey3=imageKey3;
- }
-else
-{
-this.imageKey3="";
-}
-
-        }
-    
-        
-         /**
-           图片类型（1:白底方图 2:商品详情图 3:参数图 4：品牌故事图 5：尺码图 6：物流介绍 7：竖图）
+           图片类型（1:白底方图 ；2:商品详情图 ；3:参数图 ；7：竖图）
         */
         public int getImageType()
         {

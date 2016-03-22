@@ -8,10 +8,6 @@ public class JmBtPromotionSkuModel implements Serializable
 {
    public JmBtPromotionSkuModel()
     {
-        setProductCode(""); 
-        setJmSkuNo(""); 
-        setSku(""); 
-        setUpc(""); 
         setJmSize(""); 
         setErrorMsg(""); 
         setCreater(""); 
@@ -34,27 +30,15 @@ public class JmBtPromotionSkuModel implements Serializable
     
     
  /**
-商品Code
+商品id
         */
-     private String productCode;
+     private int jmBtProductId;
     
     
  /**
-聚美SKU
+sku id
         */
-     private String jmSkuNo;
-    
-    
- /**
-品牌方SKU(聚美商家商品编码)
-        */
-     private String sku;
-    
-    
- /**
-
-        */
-     private String upc;
+     private int jmBtSkuId;
     
     
  /**
@@ -146,86 +130,30 @@ public class JmBtPromotionSkuModel implements Serializable
     
         
          /**
-           商品Code
+           商品id
         */
-        public String getProductCode()
+        public int getJmBtProductId()
         {
          
-        return this.productCode;
+        return this.jmBtProductId;
         }
-        public void setProductCode(String productCode)
+        public void setJmBtProductId(int jmBtProductId)
         {
-        if(productCode!=null){
-this.productCode=productCode;
- }
-else
-{
-this.productCode="";
-}
-
+         this.jmBtProductId=jmBtProductId;
         }
     
         
          /**
-           聚美SKU
+           sku id
         */
-        public String getJmSkuNo()
+        public int getJmBtSkuId()
         {
          
-        return this.jmSkuNo;
+        return this.jmBtSkuId;
         }
-        public void setJmSkuNo(String jmSkuNo)
+        public void setJmBtSkuId(int jmBtSkuId)
         {
-        if(jmSkuNo!=null){
-this.jmSkuNo=jmSkuNo;
- }
-else
-{
-this.jmSkuNo="";
-}
-
-        }
-    
-        
-         /**
-           品牌方SKU(聚美商家商品编码)
-        */
-        public String getSku()
-        {
-         
-        return this.sku;
-        }
-        public void setSku(String sku)
-        {
-        if(sku!=null){
-this.sku=sku;
- }
-else
-{
-this.sku="";
-}
-
-        }
-    
-        
-         /**
-           
-        */
-        public String getUpc()
-        {
-         
-        return this.upc;
-        }
-        public void setUpc(String upc)
-        {
-        if(upc!=null){
-this.upc=upc;
- }
-else
-{
-this.upc="";
-}
-
+         this.jmBtSkuId=jmBtSkuId;
         }
     
         

@@ -7,10 +7,10 @@
 	
     <select id="getList" resultMap="ResultMap">
 
-        select id,promotion_id,product_code,jm_sku_no,sku,upc,jm_size,market_price,discount,deal_price,error_msg,synch_state,creater,created,modified,modifier        from jm_bt_promotion_sku
+        select id,promotion_id,jm_bt_product_id,jm_bt_sku_id,jm_size,market_price,discount,deal_price,error_msg,synch_state,creater,created,modified,modifier        from jm_bt_promotion_sku
     </select>
     <select id="get" resultMap="ResultMap">
-        select id,promotion_id,product_code,jm_sku_no,sku,upc,jm_size,market_price,discount,deal_price,error_msg,synch_state,creater,created,modified,modifier from jm_bt_promotion_sku where id=#{id}
+        select id,promotion_id,jm_bt_product_id,jm_bt_sku_id,jm_size,market_price,discount,deal_price,error_msg,synch_state,creater,created,modified,modifier from jm_bt_promotion_sku where id=#{id}
     </select>
 
      <update id="update">
@@ -18,10 +18,8 @@
         set
 
             promotion_id=#{promotionId}
-            ,product_code=#{productCode}
-            ,jm_sku_no=#{jmSkuNo}
-            ,sku=#{sku}
-            ,upc=#{upc}
+            ,jm_bt_product_id=#{jmBtProductId}
+            ,jm_bt_sku_id=#{jmBtSkuId}
             ,jm_size=#{jmSize}
             ,market_price=#{marketPrice}
             ,discount=#{discount}
@@ -43,10 +41,8 @@
         INSERT INTO jm_bt_promotion_sku
         (
               promotion_id,
-              product_code,
-              jm_sku_no,
-              sku,
-              upc,
+              jm_bt_product_id,
+              jm_bt_sku_id,
               jm_size,
               market_price,
               discount,
@@ -60,10 +56,8 @@
         )
         VALUES(
               #{promotionId},
-              #{productCode},
-              #{jmSkuNo},
-              #{sku},
-              #{upc},
+              #{jmBtProductId},
+              #{jmBtSkuId},
               #{jmSize},
               #{marketPrice},
               #{discount},
