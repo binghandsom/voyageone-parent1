@@ -11,7 +11,6 @@ import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.cms.bean.BcbgStyleBean;
 import com.voyageone.task2.cms.bean.SuperFeedBcbgBean;
-import com.voyageone.task2.cms.dao.SuperFeedDao;
 import com.voyageone.task2.cms.dao.feed.BcbgSuperFeedDao;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,21 +37,9 @@ public class BcbgAnalysisService extends BaseTaskService {
 
     @Autowired
     private BcbgSuperFeedDao bcbgSuperFeedDao;
-    
-    @Autowired
-    private SuperFeedDao superFeedDao;
 
     @Autowired
     private Transformer transformer;
-
-    @Autowired
-    private BcbgWsdlInsert insertService;
-
-    @Autowired
-    private BcbgWsdlUpdate updateService;
-
-    @Autowired
-    private BcbgWsdlAttribute attributeService;
 
     /**
      * 获取子系统
