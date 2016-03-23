@@ -20,18 +20,18 @@
         <if test="taskId !=null">
             and task_id = #{taskId}
         </if>
+        <if test="cartId !=null">
+            and cart_id = #{cartId}
+        </if>
         <if test="sku !=null">
             and sku = #{sku}
         </if>
         <if test="skuList != null and skuList.size() > 0">
             and (sku in
-            <foreach collection="skuList" item="sku" open="(" separator="," close=")">
-                #{sku}
+            <foreach collection="skuList" item="skuItem" open="(" separator="," close=")">
+                #{skuItem}
             </foreach>
             )
-        </if>
-        <if test="cartId !=null">
-            and cart_id = #{cartId}
         </if>
         <if test="status !=null">
             and status = #{status}
@@ -144,11 +144,11 @@
         from voyageone_cms2.cms_bt_stock_separate_item
         where
         task_id = #{taskId}
-        <if test="sku != null" >
-            and sku = #{sku}
-        </if>
         <if test="cartId != null" >
             and cart_id = #{cartId}
+        </if>
+        <if test="sku != null" >
+            and sku = #{sku}
         </if>
     </delete>
 
@@ -222,8 +222,8 @@
         and t1.cart_id = #{cartId}
         and t1.sku = #{sku}
         and (t1.status in
-            <foreach collection="statusStockList" item="status" open="(" separator="," close=")">
-                #{status}
+            <foreach collection="statusStockList" item="statusItem" open="(" separator="," close=")">
+                #{statusItem}
             </foreach>
             )
         )
@@ -239,8 +239,8 @@
         and t2.cart_id = #{cartId}
         and t1.sku = #{sku}
         and (t1.status in
-            <foreach collection="statusStockIncrementList" item="status" open="(" separator="," close=")">
-                #{status}
+            <foreach collection="statusStockIncrementList" item="statusItem" open="(" separator="," close=")">
+                #{statusItem}
             </foreach>
             )
         )

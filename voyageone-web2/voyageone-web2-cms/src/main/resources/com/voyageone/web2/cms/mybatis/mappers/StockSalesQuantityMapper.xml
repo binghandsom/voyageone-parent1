@@ -9,10 +9,10 @@
         qty
         from   voyageone_cms2.cms_bt_stock_sales_quantity
         where channel_id = #{channelId}
-            <if test="cartId !=null and cartId != ''">
+            <if test="cartId !=null">
                 and cart_id = #{cartId}
             </if>
-            <if test="sku !=null and sku != ''">
+            <if test="sku !=null">
                 and sku = #{sku}
             </if>
             <if test="skuList != null and skuList.size() > 0">
@@ -22,10 +22,10 @@
                 </foreach>
                 )
             </if>
-            <if test="endFlg !=null and endFlg != ''">
+            <if test="endFlg !=null">
                 and end_flg = #{endFlg}
             </if>
-            <if test="sysTime !=null and sysTime != ''">
+            <if test="sysTime !=null">
                 <![CDATA[ and start_time <= #{sysTime} ]]>
             </if>
     </select>
@@ -35,16 +35,16 @@
         sum(qty) as qty_sum
         from   voyageone_cms2.cms_bt_stock_sales_quantity
         where channel_id = #{channelId}
-        <if test="cartId !=null and cartId != ''">
+        <if test="cartId !=null">
             and cart_id = #{cartId}
         </if>
-        <if test="sku !=null and sku != ''">
+        <if test="sku !=null">
             and sku = #{sku}
         </if>
-        <if test="endFlg !=null and endFlg != ''">
+        <if test="endFlg !=null">
             and end_flg = #{endFlg}
         </if>
-        <if test="sysTime !=null and sysTime != ''">
+        <if test="sysTime !=null">
             <![CDATA[ and start_time <= #{sysTime} ]]>
         </if>
     </select>
