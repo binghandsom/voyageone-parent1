@@ -162,13 +162,13 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
 
     //msrp价格区间
     public Double getPriceMsrpSt() {
-        return convertToDoubel(getAttribute("priceMsrpSt"));
+        return getDoubleAttribute("priceMsrpSt");
     }
     public void setPriceMsrpSt(Double priceMsrpSt) {
         setAttribute("priceMsrpSt", priceMsrpSt);
     }
     public Double getPriceMsrpEd() {
-        return convertToDoubel(getAttribute("priceMsrpEd"));
+        return getDoubleAttribute("priceMsrpEd");
     }
     public void setPriceMsrpEd(Double priceMsrpEd) {
         setAttribute("priceMsrpEd", priceMsrpEd);
@@ -176,13 +176,13 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
 
     //建议市场价格区间
     public Double getPriceRetailSt() {
-        return convertToDoubel(getAttribute("priceRetailSt"));
+        return getDoubleAttribute("priceRetailSt");
     }
     public void setPriceRetailSt(Double priceRetailSt) {
         setAttribute("priceRetailSt", priceRetailSt);
     }
     public Double getPriceRetailEd() {
-        return convertToDoubel(getAttribute("priceRetailEd"));
+        return getDoubleAttribute("priceRetailEd");
     }
     public void setPriceRetailEd(Double priceRetailEd) {
         setAttribute("priceRetailEd", priceRetailEd);
@@ -190,13 +190,13 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
 
     //销售价格价格区间
     public Double getPriceSaleSt() {
-        return convertToDoubel(getAttribute("priceSaleSt"));
+        return getDoubleAttribute("priceSaleSt");
     }
     public void setPriceSaleSt(Double priceSaleSt) {
         setAttribute("priceSaleSt", priceSaleSt);
     }
     public Double getPriceSaleEd() {
-        return convertToDoubel(getAttribute("priceSaleEd"));
+        return getDoubleAttribute("priceSaleEd");
     }
     public void setPriceSaleEd(Double priceSaleEd) {
         setAttribute("priceSaleEd", priceSaleEd);
@@ -204,13 +204,13 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
 
     //当前销售价格价格区间 暂时不使用
     public Double getCurPriceSt() {
-        return convertToDoubel(getAttribute("curPriceSt"));
+        return getDoubleAttribute("curPriceSt");
     }
     public void setCurPriceSt(Double curPriceSt) {
         setAttribute("curPriceSt", curPriceSt);
     }
     public Double getCurPriceEd() {
-        return convertToDoubel(getAttribute("curPriceSt"));
+        return getDoubleAttribute("curPriceSt");
     }
     public void setCurPriceEd(Double curPriceSt) {
         setAttribute("curPriceSt", curPriceSt);
