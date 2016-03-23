@@ -134,6 +134,7 @@ public class FeedEnums {
         price_client_retail,
         price_net,
         price_current,
-        price_msrp
+        price_msrp,
+        import_brand
         }
 }

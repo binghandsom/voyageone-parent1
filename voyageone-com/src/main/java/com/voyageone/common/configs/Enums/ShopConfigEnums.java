@@ -9,6 +9,9 @@ public class ShopConfigEnums {
      * 对应 tm_channel_shop_config 表中存在的所有配置名称
      */
     public enum Name {
+        push_cost_price,
+        seller_address_id,
+        expected_ship_date,
         /**
          * 是否同步运单到平台（0：不同步、1：同步)
          */

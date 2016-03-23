@@ -280,6 +280,8 @@ public class ChannelConfigEnums {
          */
         need_cancel_CA,
 
+        shipping_method1,
+
         /**
          * KitBag 订单是否取消
          */
