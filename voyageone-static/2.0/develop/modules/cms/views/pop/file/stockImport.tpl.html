@@ -18,7 +18,8 @@
                 <div class="col-sm-8">
                     <select class="form-control" ng-model="import_mode">
                         <option value="2">{{'TXT_MSG_IMPORT_UPDATE' | translate}}</option>
-                        <option value="1">{{'TXT_MSG_IMPORT_ADD' | translate}}</option>
+                        <option value="1" ng-if="parent_id=='1'">{{'TXT_MSG_IMPORT_ADD' | translate}}</option>
+                        <option value="3" ng-if="parent_id=='2'">{{'TXT_MSG_IMPORT_DELETE_UPDATE' | translate}}</option>
                     </select>
                 </div>
             </div><!-- .form-group -->

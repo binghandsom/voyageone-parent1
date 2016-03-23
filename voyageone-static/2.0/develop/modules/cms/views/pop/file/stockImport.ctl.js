@@ -7,19 +7,29 @@ define([
     'modules/cms/views/promotion/task/stock.ctl'
 ], function (angularAMD) {
 
-    angularAMD.controller('popFileStockImportCtl', function ($scope,FileUploader,alert,cActions,taskStockService,data,notify) {
-            var urls = cActions.cms.task.taskStockService;
+    angularAMD.controller('popFileStockImportCtl', function ($scope,FileUploader,alert,cActions,data,notify) {
+            var task_id = data.task_id;
+            var parent_id = data.parent_id;
+            var platformList = JSON.stringify(data.platformList);
+            var propertyList = JSON.stringify(data.propertyList);
+
+            var urls;
+            if (parent_id == '1') {
+                // 隔离导入
+                urls = cActions.cms.task.taskStockService;
+            }
+            if (parent_id == '2') {
+                // 增量导入
+                urls = cActions.cms.task.taskStockIncrementDetailService;
+            }
             $scope.vm={"messager":""};
             var uploader = $scope.uploader = new FileUploader({
                 url: urls.root + "/" + urls.importStockInfo
             });
 
-            var task_id = data.task_id;
-            var platformList = JSON.stringify(data.platformList);
-            var propertyList = JSON.stringify(data.propertyList);
-
             $scope.initialize  = function () {
                 $scope.import_mode = "2";
+                $scope.parent_id = parent_id;
             }
             $scope.upload = function(){
                 var main = this;

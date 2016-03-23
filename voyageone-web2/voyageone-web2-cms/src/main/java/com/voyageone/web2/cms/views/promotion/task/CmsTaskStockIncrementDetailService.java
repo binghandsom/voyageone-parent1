@@ -1,6 +1,8 @@
 package com.voyageone.web2.cms.views.promotion.task;
 
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Properties;
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.FileUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.web2.base.BaseAppService;
@@ -15,11 +17,13 @@ import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,13 +61,11 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
     /**
      * 增量库存隔离数据是否移到history表
      *
-     * @param subTaskId 子任务id
+     * @param subTaskId 任务id
      * @return 增量库存隔离数据是否移到history表
      */
     public boolean isHistoryExist(String subTaskId) {
-        return (cmsBtStockSeparateIncrementItemDao.selectStockSeparateIncrementItemHistoryCnt(new HashMap<String, Object>() {{
-            this.put("subTaskId", subTaskId);
-        }}) != 0) ? true : false;
+        return (cmsBtStockSeparateIncrementItemDao.selectStockSeparateIncrementItemHistoryCnt(new HashMap<String, Object>() {{this.put("subTaskId", subTaskId);}}) != 0) ? true : false;
     }
 
     /**
@@ -179,6 +181,36 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
     private String escapeSpecialChar(String value) {
         return value.replaceAll("\\\\", "\\\\\\\\").replaceAll("'", "\\\\'").replaceAll("\"", "\\\\\"")
                 .replaceAll("%", "\\\\%").replaceAll("_", "\\\\_");
+    }
+
+    /**
+     * 某个任务对应的Promotion是否在进行中
+     *
+     * @param subTaskId 任务id
+     * @return 是否在进行中
+     */
+    private boolean isPromotionDuring(String subTaskId){
+
+        // 取得任务下的平台平台信息
+        Date now = DateTimeUtil.parse(DateTimeUtil.getNow());
+        Map<String, Object> platformInfo = cmsBtStockSeparateIncrementItemDao.selectStockSeparateIncrementPlatform(subTaskId);
+        // Promotion开始时间
+        String activityStart = (String) platformInfo.get("activity_start");
+        if (!StringUtils.isEmpty(activityStart)) {
+            if (activityStart.length() == 10) {
+                activityStart = activityStart + " 00:00:00";
+            }
+            if (DateTimeUtil.parse(activityStart).compareTo(now) <= 0) {
+                String activityEnd = (String) platformInfo.get("activity_end");
+                if (activityEnd.length() == 10) {
+                    activityEnd = activityEnd + " 00:00:00";
+                }
+                if (StringUtils.isEmpty(activityEnd) || DateTimeUtil.addDays(DateTimeUtil.parse(activityEnd), 1).compareTo(now) > 0) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**
@@ -310,6 +342,21 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
                 FileUtils.cell(row, colIndex++, cellStyleData).setCellValue(YES);
             }
         }
+    }
+
+    /**
+     * excel 导入
+     *
+     * @param param 客户端参数
+     * @param file  导入文件
+     */
+    public void importExcelFileStockIncrementInfo(Map param, MultipartFile file) {
+        // 取得任务id对应的Promotion是否未开始或者已经结束
+        boolean promotionDuringFlg = isPromotionDuring((String) param.get("task_id"));
+        if (!promotionDuringFlg) {
+            throw new BusinessException("活动未开始或者已经结束，不能修改数据！");
+        }
+
     }
 
 }
