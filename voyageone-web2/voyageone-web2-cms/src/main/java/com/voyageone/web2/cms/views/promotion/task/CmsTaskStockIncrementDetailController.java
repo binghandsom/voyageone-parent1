@@ -6,12 +6,10 @@ import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -268,7 +266,7 @@ public class CmsTaskStockIncrementDetailController extends CmsController {
         String propertyList = (String) param.get("propertyList");
         searchParam.put("propertyList", JacksonUtil.json2Bean(propertyList, List.class));
         String platformList = (String) param.get("platformList");
-        searchParam.put("platformList", JacksonUtil.json2Bean(platformList, List.class));
+        searchParam.put("platformList", JacksonUtil.json2Bean(platformList, Map.class));
 
         byte[] data;
         try {

@@ -10,6 +10,7 @@ import com.voyageone.web2.cms.dao.CmsBtStockSeparateIncrementItemDao;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -39,11 +40,11 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
     /**
      * Excel的Title部可调配库存显示文字
      */
-    private static final String USABLESTOCK = "Usable Stock";
+    private static final String USABLESTOCK = "可调配库存";
     /**
      * Excel的Title部固定值增量显示文字
      */
-    private static final String FIXED_TEXT = "FIXED";
+    private static final String FIXED_TEXT = "固定值增量";
     /**
      * Excel固定值更新时显示文字
      */
@@ -176,21 +177,21 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
         $info("准备打开文档 [ %s ]", templatePath);
 
         try (InputStream inputStream = new FileInputStream(templatePath);
-             XSSFWorkbook book = new XSSFWorkbook(inputStream)) {
+             SXSSFWorkbook book = new SXSSFWorkbook(new XSSFWorkbook(inputStream))) {
             // Titel行
-            writeExcelStockIncrementInfoHead(book, param);
+            writeExcelStockIncrementInfoHead(book.getXSSFWorkbook(), param);
             // 数据行
-            writeExcelStockIncrementInfoRecord(book, param, resultData);
+            writeExcelStockIncrementInfoRecord(book.getXSSFWorkbook(), param, resultData);
 
             // 自适应列宽
             List<Map> propertyList = (List<Map>) param.get("propertyList");
             int cntCol = 3 + propertyList.size() + 3;
             for (int i = 0; i < cntCol; i++) {
-                book.getSheetAt(0).autoSizeColumn(i);
+                book.getXSSFWorkbook().getSheetAt(0).autoSizeColumn(i);
             }
 
             // 格式copy用sheet删除
-            book.removeSheetAt(1);
+            book.getXSSFWorkbook().removeSheetAt(1);
 
             // 返回值设定
             try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
@@ -285,7 +286,7 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
             // 固定值增量
             if (FIXED.equals(rowData.getFix_flg())) {
                 // 按固定值进行增量隔离
-                FileUtils.cell(row, colIndex++, cellStyleData).setCellValue(FIXED_TEXT);
+                FileUtils.cell(row, colIndex++, cellStyleData).setCellValue(YES);
             }
         }
     }

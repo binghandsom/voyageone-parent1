@@ -1203,11 +1203,11 @@ public class CmsTaskStockService extends BaseAppService {
             List<Map> platformList = (List<Map>) param.get("platformList");
             int cntCol = 3 + propertyList.size() + platformList.size() + 2;
             for (int i = 0; i < cntCol; i++) {
-                book.getSheetAt(0).autoSizeColumn(i);
+                book.getXSSFWorkbook().getSheetAt(0).autoSizeColumn(i);
             }
 
             // 格式copy用sheet删除
-            book.removeSheetAt(1);
+            book.getXSSFWorkbook().removeSheetAt(1);
 
             $info("文档写入完成");
 
