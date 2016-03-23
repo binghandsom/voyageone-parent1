@@ -14,8 +14,8 @@ import java.util.Map;
 @Repository
 public class CmsBtStockSeparateIncrementItemDao extends BaseDao {
 
-    public List<Map<String, Object>> selectStockSeparateIncrementSuccessAll(Map<String, Object> param) {
-        return selectList("select_stock_separate_increment_success_all", param);
+    public List<Map<String, Object>> selectStockSeparateIncrement(Map<String, Object> param) {
+        return selectList("select_stock_separate_increment", param);
     }
 
     public Integer selectStockSeparateIncrementSuccessQty(Map<String, Object> param) {

@@ -238,7 +238,7 @@ public class CmsTaskStockController extends CmsController {
      * @apiSuccess (应用级返回字段) {String} waitSeparationNum 等待隔离数
      * @apiSuccess (应用级返回字段) {String} separationOKNum 隔离成功数
      * @apiSuccess (应用级返回字段) {String} separationFailNum 隔离失败数
-     * @apiSuccess (应用级返回字段) {String} waitRestoreNum 等待还原数
+     * @apiSuccess (应用级返回字段) {String} waitRevertNum 等待还原数
      * @apiSuccess (应用级返回字段) {String} revertOKNum 还原成功数
      * @apiSuccess (应用级返回字段) {String} revertFailNum 还原失败数
      * @apiSuccess (应用级返回字段) {String} changedNum 再修正数
@@ -258,7 +258,7 @@ public class CmsTaskStockController extends CmsController {
      *   "waitSeparationNum":5000,
      *   "separationOKNum":1000,
      *   "separationFailNum":0,
-     *   "waitRestoreNum":5000,
+     *   "waitRevertNum":5000,
      *   "revertOKNum":1000,
      *   "revertFailNum":0,
      *   "changedNum":0,
@@ -344,8 +344,6 @@ public class CmsTaskStockController extends CmsController {
             resultBean.put("hasAuthority", true);
         }
 
-
-
         // 取得属性列表 只有首次取得
         if (param.get("propertyList") == null || ((List<Map<String, Object>>)param.get("propertyList")).size() == 0) {
             List<Map<String, Object>> propertyList = cmsTaskStockService.getPropertyList(this.getUser().getSelChannelId(), this.getLang());
@@ -364,7 +362,9 @@ public class CmsTaskStockController extends CmsController {
         }
 
         // 取得库存隔离数据各种状态的数量
+        // 所有库存隔离明细的计数
         int cntAll = 0;
+        // 所有库存隔离明细的计数(除了动态分配[状态=空白 或 隔离值=-1]的数据)
         int cntAllExceptDynamic = 0;
         List<Map<String,Object>> statusCountList = cmsTaskStockService.getStockStatusCount(param);
         for (Map<String,Object> statusInfo : statusCountList) {
@@ -384,7 +384,7 @@ public class CmsTaskStockController extends CmsController {
             } else if ("3".equals(status)) {
                 key = "separationFailNum";
             } else if ("4".equals(status)) {
-                key = "waitRestoreNum";
+                key = "waitRevertNum";
             } else if ("5".equals(status)) {
                 key = "revertOKNum";
             } else if ("6".equals(status)) {
@@ -406,8 +406,8 @@ public class CmsTaskStockController extends CmsController {
         if (!resultBean.containsKey("separationFailNum")) {
             resultBean.put("separationFailNum", 0);
         }
-        if (!resultBean.containsKey("waitRestoreNum")) {
-            resultBean.put("waitRestoreNum", 0);
+        if (!resultBean.containsKey("waitRevertNum")) {
+            resultBean.put("waitRevertNum", 0);
         }
         if (!resultBean.containsKey("revertOKNum")) {
             resultBean.put("revertOKNum", 0);
@@ -427,13 +427,16 @@ public class CmsTaskStockController extends CmsController {
         resultBean.put("realStockStatus", realStockStatus);
 
         // 库存隔离明细sku总数(分页的明细总数)
-        // 状态选择All的情况下，
+        // 状态选择All的情况下，合计总数/隔离平台数量
         if (StringUtils.isEmpty((String) param.get("status"))) {
             resultBean.put("skuNum", cntAll / ((List<Map<String, Object>>) param.get("platformList")).size());
         } else {
+            // 状态选择All以外的情况下，通过count(distinct sku)来进行计算
             int cnt = cmsTaskStockService.getStockSkuCount(param);
             resultBean.put("skuNum", cnt);
         }
+
+        // 条件结果sku数为0件的情况下，直接返回
         if ((int) resultBean.get("skuNum") == 0) {
             resultBean.put("stockList", new ArrayList());
             resultBean.put("realStockList", new ArrayList());
@@ -519,7 +522,7 @@ public class CmsTaskStockController extends CmsController {
         param.put("channelId", this.getUser().getSelChannelId());
         // 语言
         param.put("lang", this.getLang());
-
+        // 返回内容
         Map<String, Object> resultBean = new HashMap<>();
 
         // 取得任务id在history表中是否有数据
@@ -619,6 +622,7 @@ public class CmsTaskStockController extends CmsController {
         param.put("channelId", this.getUser().getSelChannelId());
         // 语言
         param.put("lang", this.getLang());
+        // 返回内容
         Map<String, Object> resultBean = new HashMap<>();
         // 取得任务id在history表中是否有数据
         boolean historyFlg = cmsTaskStockService.isHistoryExist((String) param.get("taskId"));
@@ -708,7 +712,7 @@ public class CmsTaskStockController extends CmsController {
     public AjaxResponse getUsableStock(@RequestBody Map param) {
         // 取得可用库存
         String usableStock = cmsTaskStockService.getUsableStock((String) param.get("sku"), this.getUser().getSelChannelId());
-
+        // 返回内容
         Map<String, Object> resultBean = new HashMap<>();
         resultBean.put("usableStock", usableStock);
         // 返回
@@ -757,7 +761,6 @@ public class CmsTaskStockController extends CmsController {
     public AjaxResponse saveNewRecord(@RequestBody Map param) {
         // 创建者/更新者用
         param.put("userName", this.getUser().getUserName());
-
         // 新增库存隔离明细
         cmsTaskStockService.saveNewRecord(param);
         // 返回
@@ -1159,6 +1162,7 @@ public class CmsTaskStockController extends CmsController {
 
         // 取得某个Sku的所有隔离详细
         List<Map<String, Object>> stockHistoryList = cmsTaskStockService.getSkuSeparationDetail(param);
+        // 返回内容
         Map<String, Object> resultBean = new HashMap<>();
         resultBean.put("stockHistoryList", stockHistoryList);
 

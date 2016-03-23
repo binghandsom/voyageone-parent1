@@ -2,14 +2,14 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.voyageone.web2.cms.sql">
 
-    <select id="select_stock_separate_increment_success_all" resultType="HashMap" parameterType="HashMap">
+    <select id="select_stock_separate_increment" resultType="HashMap" parameterType="HashMap">
         select
             t1.sku,
             t1.increment_qty,
             t1.status,
             t2.cart_id,
             t2.task_id
-        from voyageone_cms2.cms_bt_stock_separate_increment_item${tableName} t1
+        from voyageone_cms2.cms_bt_stock_separate_increment_item${tableNameSuffix} t1
         inner join voyageone_cms2.cms_bt_stock_separate_increment_task t2 on t1.sub_task_id = t2.sub_task_id
         where 1=1
             <if test="skuList != null and skuList.size() > 0">
@@ -104,6 +104,9 @@
             </if>
             <if test="sku != null" >
                 and sku = #{sku}
+            </if>
+            <if test="statusWhere != null" >
+                and status = #{statusWhere}
             </if>
         </where>
     </update>
