@@ -200,6 +200,7 @@ public class CmsTaskStockIncrementController extends CmsController {
      * }
      * @apiExample  业务说明
      *  1.check是否可以删除。如果这个任务在cms_bt_stock_separate_increment_item表中存在状态<>0:未进行的增量隔离数据（已经启动过这个任务的增量库存隔离），则不允许删除。
+     *                       如果这个任务在cms_bt_stock_separate_increment_item_history表中存在,则不允许删除。
      *  2.删除cms_bt_stock_separate_increment_item表，cms_bt_stock_separate_increment_task表中对应的数据。
      * @apiExample 使用表
      *  cms_bt_stock_separate_increment_item
@@ -210,7 +211,7 @@ public class CmsTaskStockIncrementController extends CmsController {
     public AjaxResponse delTask(@RequestBody Map param) {
 
         // 删除增量库存隔离任务
-        cmsTaskStockIncrementService.delTask((String) param.get("subTaskId"));
+        cmsTaskStockIncrementService.delTask((String) param.get("taskId"), (String) param.get("subTaskId"));
 
         // 返回
         return success(null);

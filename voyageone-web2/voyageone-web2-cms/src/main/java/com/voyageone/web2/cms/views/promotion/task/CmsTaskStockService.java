@@ -155,11 +155,18 @@ public class CmsTaskStockService extends BaseAppService {
                                                     STATUS_REVERT_SUCCESS,
                                                     STATUS_REVERT_FAIL,
                                                     STATUS_CHANGED));
-         List<Object> stockSeparateItem = cmsBtStockSeparateItemDao.selectStockSeparateItemByStatus(sqlParam);
+        Integer seq = cmsBtStockSeparateItemDao.selectStockSeparateItemByStatus(sqlParam);
         // 库存隔离数据中是否存在状态为"0:未进行"以外的数据,不允许删除任务
-        if (stockSeparateItem != null && stockSeparateItem.size() > 0) {
+        if (seq != null) {
             throw new BusinessException("已经开始库存隔离，不能删除任务！");
         }
+
+        // 取得任务id对应的Promotion是否开始
+        boolean promotionStartFlg = isPromotionStart((String) param.get("taskId"));
+        if (promotionStartFlg) {
+            throw new BusinessException("活动已经开始，不能删除任务！");
+        }
+
         simpleTransaction.openTransaction();
         try {
             // 删除库存隔离表中的数据

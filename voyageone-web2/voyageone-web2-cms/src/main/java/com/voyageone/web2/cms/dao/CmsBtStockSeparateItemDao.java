@@ -29,7 +29,7 @@ public class CmsBtStockSeparateItemDao extends BaseDao {
         return selectOne("select_stock_separate_success_qty", param);
     }
 
-    public List<Object> selectStockSeparateItemByStatus(Map<String, Object> param) {
+    public Integer selectStockSeparateItemByStatus(Map<String, Object> param) {
         return selectOne("select_stock_separate_item_by_status", param);
     }
 

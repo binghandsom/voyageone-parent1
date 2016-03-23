@@ -60,7 +60,19 @@ public class CmsTaskStockIncrementService extends BaseAppService {
     private CmsBtTasksDao cmsBtTasksDao;
 
     @Autowired
+    private CmsTaskStockIncrementDetailService cmsTaskStockIncrementDetailService;
+
+    @Autowired
     private SimpleTransaction simpleTransaction;
+
+    /** 增量库存隔离状态 1：等待增量 */
+    private static final String STATUS_WAITING_INCREMENT = "1";
+    /** 增量库存隔离状态 2：增量成功 */
+    private static final String STATUS_INCREMENT_SUCCESS = "2";
+    /** 增量库存隔离状态 3：增量失败 */
+    private static final String STATUS_INCREMENT_FAIL = "3";
+    /** 增量库存隔离状态 4：还原 */
+    private static final String STATUS_REVERT = "4";
 
     /**
      * 检索增量库存隔离任务
@@ -90,17 +102,29 @@ public class CmsTaskStockIncrementService extends BaseAppService {
     /**
      * 删除增量库存隔离任务
      *
+     * @param taskId 任务id
      * @param subTaskId 子任务id
      */
-    public void delTask(String subTaskId){
+    public void delTask(String taskId, String subTaskId){
         // 取得增量库存隔离数据中是否存在状态为"0:未进行"以外的数据
         Map<String, Object> sqlParam = new HashMap<String, Object>();
         sqlParam.put("subTaskId", subTaskId);
-        sqlParam.put("statusList", Arrays.asList("1","2","3","4"));
-        List<Object> stockSeparateIncrementItem = cmsBtStockSeparateIncrementItemDao.selectStockSeparateIncrementItemByStatus(sqlParam);
-        if (stockSeparateIncrementItem != null && stockSeparateIncrementItem.size() > 0) {
+        // 状态为"0:未进行"以外
+        sqlParam.put("statusList", Arrays.asList( STATUS_WAITING_INCREMENT,
+                                                    STATUS_INCREMENT_SUCCESS,
+                                                    STATUS_INCREMENT_FAIL,
+                                                    STATUS_REVERT));
+        Integer seq = cmsBtStockSeparateIncrementItemDao.selectStockSeparateIncrementItemByStatus(sqlParam);
+        if (seq != null) {
             throw new BusinessException("已经开始增量库存隔离，不能删除增量任务！");
         }
+
+        // 子任务id对应的增量库存隔离数据是否移到history表
+        boolean historyFlg = cmsTaskStockIncrementDetailService.isHistoryExist(subTaskId);
+        if (historyFlg) {
+            throw new BusinessException("已经开始增量库存隔离，不能删除增量任务！");
+        }
+
         simpleTransaction.openTransaction();
         try {
             // 删除增量库存隔离表中的数据
