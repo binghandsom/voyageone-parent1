@@ -1,14 +1,14 @@
 package com.voyageone.task2.cms.dao.feed;
 
 import com.voyageone.base.dao.BaseDao;
-import com.voyageone.task2.cms.bean.BcbgStyleBean;
-import com.voyageone.task2.cms.bean.SuperFeedBcbgBean;
 import com.voyageone.common.Constants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
+import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
+import com.voyageone.task2.cms.bean.BcbgStyleBean;
+import com.voyageone.task2.cms.bean.SuperFeedBcbgBean;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * 所有 bcbg 数据解析的操作
@@ -41,62 +41,11 @@ public class BcbgSuperFeedDao extends BaseDao {
         return delete("cms_zz_worktable_bcbg_styles_deleteStyles", null);
     }
 
-    public int[] updateSuccessStatus(List<String> modelFailList, List<String> productFailList) {
-
-        Map<String, Object> params = parameters(
-                "success_status", 20,
-                "target_status", 10,
-                "modelFailList", modelFailList,
-                "productFailList", productFailList);
-
-        int count1 = update("cms_zz_worktable_bcbg_superfeed_full_updateStatusWithoutFailModel", params);
-
-        // 必须 product 有数据才执行下一句, 否则会更新全部
-        if (productFailList == null || productFailList.size() < 1)
-            return new int[]{count1, 0};
-
-        int count2 = update("cms_zz_worktable_bcbg_superfeed_full_updateStatusWithoutFailCode", params);
-
-        return new int[]{count1, count2};
+    public List<SuperFeedBcbgBean> selectUnsaved() {
+        return selectList("cms_zz_worktable_bcbg_superfeed_selectUnsaved", parameters("unsaved", 0));
     }
 
-    public int[] updateFull(List<String> updatedCodes) {
-
-        Map<String, Object> params = parameters(
-                "updatedCodes", updatedCodes,
-                "status", 30,
-                "target_status", 30,
-                "success_status", 40);
-
-        int deleteFeedCount = delete("cms_zz_worktable_bcbg_superfeed_full_deleteFullByCode", params);
-
-        int insertFeedCount = insert("cms_zz_worktable_bcbg_superfeed_full_insertFullByCode", params);
-
-        int updateFeedCount = update("cms_zz_worktable_bcbg_superfeed_full_updateStatusByCode", params);
-
-        return new int[]{deleteFeedCount, insertFeedCount, updateFeedCount};
-    }
-
-    /**
-     * 更新所有 30(updating) 的商品为成功.
-     */
-    public int[] updateUpdatingSuccess() {
-        return updateFull(null);
-    }
-
-    public int deleteUpdating() {
-        return delete("cms_zz_worktable_bcbg_superfeed_full_deleteUpdating", parameters("updatingFlg", 30));
-    }
-
-    public int selectInsertUpdated() {
-        return insert("cms_zz_worktable_bcbg_superfeed_full_selectInsertUpdating", parameters("updatingFlg", 30));
-    }
-
-    /**
-     * 如果传递的 codes 是空的, 那么会更新所有的内容
-     */
-    public int updateFlgToUpdated(List<String> codes) {
-        return update("cms_zz_worktable_bcbg_superfeed_full_updateFlgToUpdated",
-                parameters("updatingFlg", 30, "updatedFlg", 40, "updatedCodes", codes));
+    public int updateSucceed(List<CmsBtFeedInfoModel> succeed) {
+        return update("cms_zz_worktable_bcbg_superfeed_full_updateSucceed", parameters("succeed", succeed));
     }
 }

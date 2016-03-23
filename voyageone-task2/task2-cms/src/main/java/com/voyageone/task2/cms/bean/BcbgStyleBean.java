@@ -2,6 +2,8 @@ package com.voyageone.task2.cms.bean;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -15,6 +17,8 @@ public class BcbgStyleBean {
     private String productDesc;
 
     private List<String> productImgURLs;
+
+    private String md5;
 
     private Boolean valid;
 
@@ -42,6 +46,14 @@ public class BcbgStyleBean {
         this.productImgURLs = productImgURLs;
     }
 
+    public String getMd5() {
+        return md5;
+    }
+
+    public void setMd5(String md5) {
+        this.md5 = md5;
+    }
+
     /**
      * 获取数据有效性. !! 实际校验只运行一次.因为导入到程序的数据,程序不会修改任何内容,而校验会进行多次.为了节省进行缓存
      */
@@ -54,5 +66,20 @@ public class BcbgStyleBean {
         if (hasStringEmpty) return (valid = false);
 
         return (valid = getProductImgURLs() != null && getProductImgURLs().size() > 0);
+    }
+
+    /**
+     * 该方法用于从数据库取回 Style 数据时使用, MyBatis 调用.
+     * @param imageUrls ;; 双分分隔的图片地址
+     */
+    public void setImageUrls(String imageUrls) {
+
+        List<String> imageList = new ArrayList<>();
+
+        String[] imageArr = imageUrls.split(";;");
+
+        Collections.addAll(imageList, imageArr);
+
+        setProductImgURLs(imageList);
     }
 }

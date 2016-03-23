@@ -16,7 +16,7 @@ public class CmsBtFeedProductImageModel extends BaseModel {
     public CmsBtFeedProductImageModel(String channelId,String code, String imageUrl,int index, String modifier){
         this.channelId = channelId;
         this.imageUrl = imageUrl;
-        if("010".equalsIgnoreCase(channelId)) {
+        if("010".equalsIgnoreCase(channelId)||"012".equalsIgnoreCase(channelId)) {
             this.imageName = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
         }else{
             if("015".equalsIgnoreCase(channelId)){

@@ -104,7 +104,6 @@ public class GiltInsert extends BaseTaskService {
                             attribute.put(feedBean.getCfg_val1(), values);
                         }
                     });
-
                 }
                 CmsBtFeedInfoModel cmsBtFeedInfoModel = vtmModelBean.getCmsBtFeedInfoModel();
                 cmsBtFeedInfoModel.setAttribute(attribute);
@@ -182,8 +181,6 @@ public class GiltInsert extends BaseTaskService {
          * @throws Exception
          */
         protected void postNewProduct() throws Exception {
-
-//            vtmDaotmDao.updateFull();
 
             $info("准备 <构造> 类目树");
             List<String> categoriePaths = getCategories();
