@@ -1,15 +1,16 @@
 package com.voyageone.web2.cms.views.promotion.task;
 
+import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -21,6 +22,14 @@ import java.util.Map;
         method = RequestMethod.POST
 )
 public class CmsTaskStockIncrementDetailController extends CmsController {
+
+    // morse.lu test用 added at 2016/03/23 start
+    @Autowired
+    private CmsTaskStockService cmsTaskStockService;
+    // morse.lu test用 added at 2016/03/23 end
+
+    @Autowired
+    private CmsTaskStockIncrementDetailService cmsTaskStockIncrementDetailService;
 
 //    @Autowired
 //    private CmsTaskStockIncrementDetailService cmsTaskStockIncrementDetailService;
@@ -95,8 +104,34 @@ public class CmsTaskStockIncrementDetailController extends CmsController {
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK_INCREMENT_DETAIL.SEARCH_ITEM)
     public AjaxResponse searchItem(@RequestBody Map param) {
 
+        // morse.lu test用 added at 2016/03/23 start
+        // 返回内容
+        Map<String, Object> resultBean = new HashMap<>();
+
+        // 任务对应平台信息列表 只有首次取得
+        if (param.get("platformList") == null || ((Map<String, Object>)param.get("platformList")).size() == 0) {
+
+            Map<String, String> platformList = new HashMap<>();
+            platformList.put("cartId", "23");
+            platformList.put("cartName", "天猫国际");
+            resultBean.put("platformList", platformList);
+            param.put("platformList", platformList);
+        } else {
+            resultBean.put("platformList", param.get("platformList"));
+        }
+
+        // 取得属性列表 只有首次取得
+        if (param.get("propertyList") == null || ((List<Map<String, Object>>)param.get("propertyList")).size() == 0) {
+            List<Map<String, Object>> propertyList = cmsTaskStockService.getPropertyList(this.getUser().getSelChannelId(), this.getLang());
+            resultBean.put("propertyList", propertyList);
+            param.put("propertyList", propertyList);
+        } else {
+            resultBean.put("propertyList", param.get("propertyList"));
+        }
+        // morse.lu test用 added at 2016/03/23 end
+
         // 返回
-        return success(null);
+        return success(resultBean);
     }
 
     /**
@@ -209,10 +244,38 @@ public class CmsTaskStockIncrementDetailController extends CmsController {
      *
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK_INCREMENT_DETAIL.EXPORT_STOCK_INFO)
-    public ResponseEntity exportStockInfo(@RequestBody Map param) {
+    public ResponseEntity exportStockInfo(@RequestParam Map param) throws Exception {
+
+        Map searchParam = new HashMap();
+        // 渠道id
+        searchParam.put("channelId", this.getUser().getSelChannelId());
+        // 语言
+        searchParam.put("lang", this.getLang());
+
+        // 任务id对应的库存隔离数据是否移到history表
+        boolean historyFlg = cmsTaskStockService.isHistoryExist((String) param.get("task_id"));
+        if (historyFlg) {
+            searchParam.put("tableName", "voyageone_cms2.cms_bt_stock_separate_increment_item_history");
+        } else {
+            searchParam.put("tableName", "voyageone_cms2.cms_bt_stock_separate_increment_item");
+        }
+
+        searchParam.put("taskId", (String) param.get("task_id"));
+        searchParam.put("model", (String) param.get("model"));
+        searchParam.put("code", (String) param.get("code"));
+        searchParam.put("sku", (String) param.get("sku"));
+        searchParam.put("status", (String) param.get("status"));
+
+        String propertyList = (String) param.get("propertyList");
+        searchParam.put("propertyList", JacksonUtil.json2Bean(propertyList, List.class));
+        String platformList = (String) param.get("platformList");
+        searchParam.put("platformList", JacksonUtil.json2Bean(platformList, List.class));
+
+
+        byte[] data = cmsTaskStockIncrementDetailService.getExcelFileStockIncrementInfo(searchParam);
 
         // 返回
-        return genResponseEntityFromBytes("fileName", new byte[]{});
+        return genResponseEntityFromBytes("StockIncrementInfo_" + DateTimeUtil.getLocalTime(getUserTimeZone(), DateTimeUtil.DATE_TIME_FORMAT_2)+".xlsx", data);
     }
 
 
