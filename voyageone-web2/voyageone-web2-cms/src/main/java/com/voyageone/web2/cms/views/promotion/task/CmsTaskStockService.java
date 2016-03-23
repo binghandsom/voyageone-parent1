@@ -21,6 +21,7 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -1206,7 +1207,9 @@ public class CmsTaskStockService extends BaseAppService {
             // 返回值设定
             try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
 
-                book.write(outputStream);
+                SXSSFWorkbook sxssfBook = new SXSSFWorkbook(book);
+
+                sxssfBook.write(outputStream);
 
                 $info("已写入输出流");
 
