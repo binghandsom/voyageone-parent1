@@ -250,8 +250,8 @@ public class CmsTaskStockIncrementDetailController extends CmsController {
         // 语言
         searchParam.put("lang", this.getLang());
 
-        // 任务id对应的库存隔离数据是否移到history表
-        boolean historyFlg = cmsTaskStockService.isHistoryExist((String) param.get("task_id"));
+        // 任务id对应的增量隔离库存数据是否移到history表
+        boolean historyFlg = cmsTaskStockIncrementDetailService.isHistoryExist((String) param.get("task_id"));
         if (historyFlg) {
             searchParam.put("tableName", "voyageone_cms2.cms_bt_stock_separate_increment_item_history");
         } else {
