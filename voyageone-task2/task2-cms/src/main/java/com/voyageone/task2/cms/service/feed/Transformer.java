@@ -64,26 +64,26 @@ public class Transformer {
                 switch (feed.getCfg_val1()) {
                     case SELECT_STR:
                         List<String> strings = sqlDao.selectStrings(feed.getCfg_val2());
-                        taskService.$info("执行 SELECT_STR 操作: " + strings.size());
+                        taskService.$info("执行 SELECT_STR 操作: [ %s ] -> %s", feed.getComment(), strings.size());
                         after(strings, feed);
                         break;
                     case SELECT_MAP:
                         List<Map<String, Object>> maps = sqlDao.selectMaps(feed.getCfg_val2());
-                        taskService.$info("执行 SELECT_MAP 操作: " + maps.size());
+                        taskService.$info("执行 SELECT_MAP 操作: [ %s ] -> %s", feed.getComment(), maps.size());
                         after(maps, feed);
                         break;
                     case INSERT:
                         int insertCount = sqlDao.insert(feed.getCfg_val2());
-                        taskService.$info("执行 INSERT 操作: " + insertCount);
+                        taskService.$info("执行 INSERT 操作: [ %s ] -> %s", feed.getComment(), insertCount);
                         break;
                     case DELETE:
                         int deleteCount = sqlDao.delete(feed.getCfg_val2());
-                        taskService.$info("执行 DELETE 操作: " + deleteCount);
+                        taskService.$info("执行 DELETE 操作: [ %s ] -> %s", feed.getComment(), deleteCount);
                         after(deleteCount, feed);
                         break;
                     case UPDATE:
                         int updateCount = sqlDao.update(feed.getCfg_val2());
-                        taskService.$info("执行 UPDATE 操作: " + updateCount);
+                        taskService.$info("执行 UPDATE 操作: [ %s ] -> %s", feed.getComment(), updateCount);
                         after(updateCount, feed);
                         break;
                     case MAIL:

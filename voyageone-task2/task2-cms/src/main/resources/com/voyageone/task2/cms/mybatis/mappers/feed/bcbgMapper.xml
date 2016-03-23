@@ -2,10 +2,10 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.voyageone.cms.sql">
     <insert id="cms_zz_worktable_bcbg_superfeed_insertWorkTables">
-        INSERT INTO voyageone_cms.cms_zz_worktable_bcbg_superfeed
+        INSERT INTO voyageone_cms2.cms_zz_worktable_bcbg_superfeed
         (MATNR, EAN11, BRAND_ID, MATKL, ZZCODE1, ZZCODE2, ZZCODE3, MEINS, BSTME, COLOR, COLOR_ATWTB, SIZE1,
         SIZE1_ATWTB, SIZE1_ATINN, ATBEZ, SAISO, SAISJ, SAITY, SATNR, MAKTX, WLADG, WHERL, MEAN_EAN11,
-        A304_DATAB, A304_DATBI, A304_KBETR, A304_KONWA, A073_DATAB, A073_DATBI, A073_KBETR, A073_KONWA, feedStyleID)
+        A304_DATAB, A304_DATBI, A304_KBETR, A304_KONWA, A073_DATAB, A073_DATBI, A073_KBETR, A073_KONWA, feedStyleID, md5)
         VALUES
         <foreach collection="bcbgBeans" item="bean" separator=",">
             (#{bean.MATNR}, #{bean.EAN11}, #{bean.BRAND_ID}, #{bean.MATKL}, #{bean.ZZCODE1}, #{bean.ZZCODE2},
@@ -13,145 +13,89 @@
             #{bean.SIZE1_ATWTB}, #{bean.SIZE1_ATINN}, #{bean.ATBEZ}, #{bean.SAISO}, #{bean.SAISJ}, #{bean.SAITY},
             #{bean.SATNR}, #{bean.MAKTX}, #{bean.WLADG}, #{bean.WHERL}, #{bean.MEAN_EAN11}, #{bean.A304_DATAB},
             #{bean.A304_DATBI}, #{bean.A304_KBETR}, #{bean.A304_KONWA}, #{bean.A073_DATAB}, #{bean.A073_DATBI},
-            #{bean.A073_KBETR}, #{bean.A073_KONWA}, #{bean.styleID})
+            #{bean.A073_KBETR}, #{bean.A073_KONWA}, #{bean.styleID}, #{bean.md5})
         </foreach>
     </insert>
 
     <delete id="cms_zz_worktable_bcbg_superfeed_delete">
-        DELETE FROM voyageone_cms.cms_zz_worktable_bcbg_superfeed;
+        DELETE FROM voyageone_cms2.cms_zz_worktable_bcbg_superfeed;
     </delete>
 
     <insert id="cms_zz_worktable_bcbg_styles_insertStyles">
-        INSERT INTO voyageone_cms.cms_zz_worktable_bcbg_styles (styleID, productDesc, productImgURLs) VALUES
+        INSERT INTO voyageone_cms2.cms_zz_worktable_bcbg_styles (styleID, productDesc, productImgURLs, md5) VALUES
         <foreach collection="bcbgStyles" item="style" separator=",">
             (
             #{style.styleID}, #{style.productDesc},
-            CONCAT(<foreach collection="style.productImgURLs" item="img" separator=",';;',">#{img}</foreach>)
+            CONCAT(<foreach collection="style.productImgURLs" item="img" separator=",';;',">#{img}</foreach>),
+            #{style.md5}
             )
         </foreach>
     </insert>
 
     <delete id="cms_zz_worktable_bcbg_styles_deleteStyles">
-        DELETE FROM voyageone_cms.cms_zz_worktable_bcbg_styles
+        DELETE FROM voyageone_cms2.cms_zz_worktable_bcbg_styles
     </delete>
 
-    <update id="cms_zz_worktable_bcbg_superfeed_full_updateStatusWithoutFailModel">
-        UPDATE voyageone_cms.cms_zz_worktable_bcbg_superfeed_full
-          JOIN voyageone_cms.cms_zz_worktable_bcbg_styles_full ON styleID = feedStyleID
-           SET `status` = #{success_status}
-         WHERE `status` = #{target_status}
-        <if test="modelFailList != null and modelFailList.size() > 0">
-            AND SATNR NOT IN (<foreach collection="modelFailList" item="model" separator=",">#{model}</foreach>)
-        </if>
-    </update>
-
-    <update id="cms_zz_worktable_bcbg_superfeed_full_updateStatusWithoutFailCode">
-        UPDATE voyageone_cms.cms_zz_worktable_bcbg_superfeed_full
-          JOIN voyageone_cms.cms_zz_worktable_bcbg_styles_full ON styleID = feedStyleID
-           SET `status` = #{success_status}
-         WHERE `status` = #{target_status}
-        <if test="productFailList != null and productFailList.size() > 0">
-            AND feedStyleID NOT IN (<foreach collection="productFailList" item="code" separator=",">#{code}</foreach>)
-        </if>
-    </update>
-
-    <delete id="cms_zz_worktable_bcbg_superfeed_full_deleteFullByCode">
-        DELETE a
-        FROM voyageone_cms.cms_zz_worktable_bcbg_superfeed_full a
-        JOIN voyageone_cms.cms_zz_worktable_bcbg_superfeed b on a.MATNR = b.MATNR
-        WHERE b.status = #{status}
-        <if test="updatedCodes != null and updatedCodes.size() > 0">
-            AND a.feedStyleID IN (
-            <foreach collection="updatedCodes" item="code" separator=",">#{code}</foreach>
-            )
-        </if>
-    </delete>
-
-    <insert id="cms_zz_worktable_bcbg_superfeed_full_insertFullByCode">
-        INSERT INTO voyageone_cms.cms_zz_worktable_bcbg_superfeed_full
-        (MATNR, EAN11, BRAND_ID, MATKL, MATKL_ATT1, ZZCODE1, ZZCODE2, ZZCODE3, MEINS, BSTME, COLOR, COLOR_ATWTB, SIZE1, SIZE1_ATWTB,
-        SIZE1_ATINN, ATBEZ, SAISO, SAISJ, SAITY, SATNR, MAKTX, WLADG, WHERL, MEAN_EAN11, A304_DATAB, A304_DATBI,
-        A304_KBETR, A304_KONWA, A073_DATAB, A073_DATBI, A073_KBETR, A073_KONWA, status, feedStyleID)
+    <select id="cms_zz_worktable_bcbg_superfeed_selectUnsaved" resultMap="SuperFeedBcbgBeanWithStyle">
         SELECT
-        f1.MATNR, f1.EAN11, f1.BRAND_ID, f1.MATKL, f1.MATKL_ATT1, f1.ZZCODE1, f1.ZZCODE2, f1.ZZCODE3,
-        f1.MEINS, f1.BSTME, f1.COLOR, f1.COLOR_ATWTB, f1.SIZE1, f1.SIZE1_ATWTB, f1.SIZE1_ATINN,
-        f1.ATBEZ, f1.SAISO, f1.SAISJ, f1.SAITY, f1.SATNR, f1.MAKTX, f1.WLADG, f1.WHERL,
-        f1.MEAN_EAN11, f1.A304_DATAB, f1.A304_DATBI, f1.A304_KBETR, f1.A304_KONWA, f1.A073_DATAB, f1.A073_DATBI,
-        f1.A073_KBETR, f1.A073_KONWA, 40, feedStyleID
-        FROM voyageone_cms.cms_zz_worktable_bcbg_superfeed f1
-        WHERE status = #{status}
-        <if test="updatedCodes != null and updatedCodes.size() > 0">
-            AND feedStyleID IN (
-            <foreach collection="updatedCodes" item="code" separator=",">#{code}</foreach>
-            )
-        </if>
-    </insert>
+            ID,
+            MATNR,
+            EAN11,
+            BRAND_ID,
+            MATKL,
+            MATKL_ATT1,
+            ZZCODE1,
+            ZZCODE2,
+            ZZCODE3,
+            MEINS,
+            BSTME,
+            COLOR,
+            COLOR_ATWTB,
+            SIZE1,
+            SIZE1_ATWTB,
+            SIZE1_ATINN,
+            ATBEZ,
+            SAISO,
+            SAISJ,
+            SAITY,
+            SATNR,
+            MAKTX,
+            WLADG,
+            WHERL,
+            MEAN_EAN11,
+            A304_DATAB,
+            A304_DATBI,
+            A304_KBETR,
+            A304_KONWA,
+            A073_DATAB,
+            A073_DATBI,
+            A073_KBETR,
+            A073_KONWA,
+            ff.md5,
+            styleID,
+            productDesc,
+            productImgURLs imageUrls,
+            sf.md5 styleMd5
+        FROM voyageone_cms2.cms_zz_worktable_bcbg_superfeed_full ff
+            JOIN voyageone_cms2.cms_zz_worktable_bcbg_styles_full sf
+                ON ff.feedStyleID = sf.styleID
+        WHERE ff.saved = #{unsaved}
+    </select>
 
-    <update id="cms_zz_worktable_bcbg_superfeed_full_updateStatusByCode">
-        UPDATE voyageone_cms.cms_zz_worktable_bcbg_superfeed_full
-        JOIN voyageone_cms.cms_zz_worktable_bcbg_styles_full ON styleID = feedStyleID
-        SET `status` = #{success_status}
-        <where>
-            `status` = #{target_status}
-            <if test="updatedCodes != null and updatedCodes.size() > 0">
-              AND styleID IN (<foreach collection="updatedCodes" item="code" separator=",">#{code}</foreach>)
-            </if>
-        </where>
-    </update>
+    <resultMap id="SuperFeedBcbgBeanWithStyle" type="com.voyageone.task2.cms.bean.SuperFeedBcbgBean" autoMapping="true">
+        <id column="ID" property="id"/>
+        <association property="styleBean" javaType="com.voyageone.task2.cms.bean.BcbgStyleBean" autoMapping="true">
+            <result column="styleMd5" property="md5"/>
+        </association>
+    </resultMap>
 
-    <delete id="cms_zz_worktable_bcbg_superfeed_full_deleteUpdating">
-        DELETE bf FROM voyageone_cms.cms_zz_worktable_bcbg_superfeed_full bf
-            JOIN voyageone_cms.cms_zz_worktable_bcbg_superfeed b ON bf.MATNR = b.MATNR
-        WHERE b.status = #{updatingFlg}
-    </delete>
-
-    <insert id="cms_zz_worktable_bcbg_superfeed_full_selectInsertUpdating">
-        INSERT INTO voyageone_cms.cms_zz_worktable_bcbg_superfeed_full
-        (MATNR, EAN11, BRAND_ID, MATKL, MATKL_ATT1, ZZCODE1, ZZCODE2, ZZCODE3, MEINS, BSTME, COLOR, COLOR_ATWTB, SIZE1, SIZE1_ATWTB, SIZE1_ATINN, ATBEZ, SAISO, SAISJ, SAITY, SATNR, MAKTX, WLADG, WHERL, MEAN_EAN11, A304_DATAB, A304_DATBI, A304_KBETR, A304_KONWA, A073_DATAB, A073_DATBI, A073_KBETR, A073_KONWA, status, feedStyleID)
-            SELECT
-                MATNR,
-                EAN11,
-                BRAND_ID,
-                MATKL,
-                MATKL_ATT1,
-                ZZCODE1,
-                ZZCODE2,
-                ZZCODE3,
-                MEINS,
-                BSTME,
-                COLOR,
-                COLOR_ATWTB,
-                SIZE1,
-                SIZE1_ATWTB,
-                SIZE1_ATINN,
-                ATBEZ,
-                SAISO,
-                SAISJ,
-                SAITY,
-                SATNR,
-                MAKTX,
-                WLADG,
-                WHERL,
-                MEAN_EAN11,
-                A304_DATAB,
-                A304_DATBI,
-                A304_KBETR,
-                A304_KONWA,
-                A073_DATAB,
-                A073_DATBI,
-                A073_KBETR,
-                A073_KONWA,
-                status,
-                feedStyleID
-            FROM voyageone_cms.cms_zz_worktable_bcbg_superfeed
-            WHERE status = #{updatingFlg};
-    </insert>
-
-    <update id="cms_zz_worktable_bcbg_superfeed_full_updateFlgToUpdated">
-        UPDATE voyageone_cms.cms_zz_worktable_bcbg_superfeed_full SET status = #{updatedFlg}
-        WHERE status = #{updatingFlg}
-        <if test="updatedCodes != null">
-            AND feedStyleID IN (<foreach collection="updatedCodes" item="code" separator=",">#{code}</foreach>)
-        </if>
+    <update id="cms_zz_worktable_bcbg_superfeed_full_updateSucceed">
+        UPDATE voyageone_cms2.cms_zz_worktable_bcbg_superfeed_full
+        SET saved = 1
+        WHERE feedStyleID IN (
+            <foreach collection="succeed" item="product" separator=",">
+                #{product.code}
+            </foreach>
+        )
     </update>
 </mapper>

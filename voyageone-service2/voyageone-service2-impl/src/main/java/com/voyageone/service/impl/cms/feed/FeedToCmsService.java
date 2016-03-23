@@ -90,7 +90,7 @@ public class FeedToCmsService {
      * @param products 产品列表
      * @return response
      */
-    public Map updateProduct(String channelId, List<CmsBtFeedInfoModel> products, String modifier) {
+    public Map<String, List<CmsBtFeedInfoModel>> updateProduct(String channelId, List<CmsBtFeedInfoModel> products, String modifier) {
         this.modifier = modifier;
         List<String> existCategory = new ArrayList<>();
         List<CmsBtFeedInfoModel> failProduct = new ArrayList<>();
@@ -177,7 +177,7 @@ public class FeedToCmsService {
             updateFeedCategoryAttribute(channelId, attributeMtDatas.get(key), key);
         }
 
-        Map<String, Object> response = new HashMap<>();
+        Map<String, List<CmsBtFeedInfoModel>> response = new HashMap<>();
         response.put("succeed", succeedProduct);
         response.put("fail", failProduct);
         return response;

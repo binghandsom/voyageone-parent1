@@ -1,4 +1,4 @@
-package com.voyageone.task2.cms.job;
+package com.voyageone.task2.cms.job.feed.analysis;
 
 import com.voyageone.task2.base.BaseTaskJob;
 import com.voyageone.task2.base.BaseTaskService;
