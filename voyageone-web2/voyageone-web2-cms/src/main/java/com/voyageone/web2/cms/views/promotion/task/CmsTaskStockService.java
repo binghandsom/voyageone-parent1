@@ -1185,11 +1185,11 @@ public class CmsTaskStockService extends BaseAppService {
         $info("准备打开文档 [ %s ]", templatePath);
 
         try (InputStream inputStream = new FileInputStream(templatePath);
-             XSSFWorkbook book = new XSSFWorkbook(inputStream)) {
+            SXSSFWorkbook book = new SXSSFWorkbook(new XSSFWorkbook(inputStream))) {
             // Titel行
-            Map<String, Integer> mapCartCol = writeExcelStockInfoHead(book, param);
+            Map<String, Integer> mapCartCol = writeExcelStockInfoHead(book.getXSSFWorkbook(), param);
             // 数据行
-            writeExcelStockInfoRecord(book, param, resultData, mapCartCol);
+            writeExcelStockInfoRecord(book.getXSSFWorkbook(), param, resultData, mapCartCol);
 
             // 自适应列宽
             List<Map> propertyList = (List<Map>) param.get("propertyList");
@@ -1206,10 +1206,7 @@ public class CmsTaskStockService extends BaseAppService {
 
             // 返回值设定
             try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
-
-                SXSSFWorkbook sxssfBook = new SXSSFWorkbook(book);
-
-                sxssfBook.write(outputStream);
+                book.write(outputStream);
 
                 $info("已写入输出流");
 
