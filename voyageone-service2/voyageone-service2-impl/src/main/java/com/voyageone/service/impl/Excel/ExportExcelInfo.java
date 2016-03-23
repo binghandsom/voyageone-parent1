@@ -15,6 +15,15 @@ public class ExportExcelInfo<TRow> {
     String fileName;
     List<TRow> dataSource;
     String Sheet;
+    boolean IsDisplayColumnName=false;
+
+    public boolean isDisplayColumnName() {
+        return IsDisplayColumnName;
+    }
+
+    public void setDisplayColumnName(boolean displayColumnName) {
+        IsDisplayColumnName = displayColumnName;
+    }
 
     public String getSheet() {
         return Sheet;

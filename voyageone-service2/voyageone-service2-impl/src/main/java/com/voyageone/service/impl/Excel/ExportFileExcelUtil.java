@@ -13,6 +13,7 @@ import java.io.*;
 import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -22,14 +23,14 @@ import java.util.Map;
  */
 public class ExportFileExcelUtil {
 
-    public static  <T> void exportExcel(ExportExcelInfo<T> info,String filePath) throws IOException, ExcelException {
+    public static  <T> void exportExcel(String filePath,ExportExcelInfo<T> ... infolist) throws IOException, ExcelException {
         FileOutputStream fileout = new FileOutputStream(filePath);
-        exportExcel(info, fileout);
+        exportExcel(Arrays.asList(infolist), fileout);
         fileout.flush();
         fileout.close();
     }
     /**
-     * @param info  类的英文属性和Excel中的中文列名的对应关系
+     * @param listInfo  类的英文属性和Excel中的中文列名的对应关系
      *                  如果需要的是引用对象的属性，则英文属性使用类似于EL表达式的格式
      *                  如：list中存放的都是student，student中又有college属性，而我们需要学院名称，则可以这样写
      *                  fieldMap.put("college.collegeName","学院名称")
@@ -39,16 +40,10 @@ public class ExportFileExcelUtil {
      * @Description : 导出Excel（可以导出到本地文件系统，也可以导出到浏览器，可自定义工作表大小）
      */
     private static <T> void exportExcel(
-            ExportExcelInfo<T> info,
+            List<ExportExcelInfo<T>>  listInfo,
             OutputStream out
     ) throws ExcelException {
-//        if (info.getDataSource() == null) {
-//            throw new ExcelException("数据源中没有任何数据");
-//        }
         int sheetSize=65535;
-        if (sheetSize > 65535 || sheetSize < 1) {
-            sheetSize = 65535;
-        }
         //创建工作簿并发送到OutputStream指定的地方
         HSSFWorkbook wwb;
         try {
@@ -56,23 +51,8 @@ public class ExportFileExcelUtil {
             //因为2003的Excel一个工作表最多可以有65536条记录，除去列头剩下65535条
             //所以如果记录太多，需要放到多个工作表中，其实就是个分页的过程
             //1.计算一共有多少个工作表
-            int sheetNum=0;
-            if(info.getDataSource()!=null) {
-                sheetNum = (info.getDataSource().size() - 1) / sheetSize;
-            }
-            //获取各工作表的数据源
-            if(sheetNum>0) {
-                List<List<T>> pageList = ListHelp.getPageList(info.getDataSource(), sheetSize);
-                int sheetIndex=0;
-                for (List<T> page : pageList) {
-                    HSSFSheet sheet = wwb.createSheet(info.getSheet()+sheetIndex++);//sheetName, i
-                    fillSheet(sheet, page, info.getListColumn());
-                }
-            }
-            else
-            {
-                HSSFSheet sheet = wwb.createSheet(info.getSheet());//sheetName, i
-                fillSheet(sheet, null, info.getListColumn());
+            for(ExportExcelInfo<T>info:listInfo) {
+                exportExcel(info, sheetSize, wwb);
             }
             //2.创建相应的工作表，并向其中填充数据
             wwb.write(out);
@@ -90,31 +70,48 @@ public class ExportFileExcelUtil {
 
     }
 
+    private static <T> void exportExcel(ExportExcelInfo<T> info, int sheetSize, HSSFWorkbook wwb) throws Exception {
+        int sheetNum=0;
+        if(info.getDataSource()!=null) {
+            sheetNum = (info.getDataSource().size() - 1) / sheetSize;
+        }
+        //获取各工作表的数据源
+        if(sheetNum>0) {
+            List<List<T>> pageList = ListHelp.getPageList(info.getDataSource(), sheetSize);
+            int sheetIndex=0;
+            for (List<T> page : pageList) {
+                HSSFSheet sheet = wwb.createSheet(info.getSheet()+sheetIndex++);//sheetName, i
+                fillSheet(sheet, page, info);
+            }
+        }
+        else
+        {
+            HSSFSheet sheet = wwb.createSheet(info.getSheet());//sheetName, i
+            fillSheet(sheet, null, info);
+        }
+    }
 
 
     /**
-     * @param info  类的英文属性和Excel中的中文列名的对应关系
+     * @param listInfo  类的英文属性和Excel中的中文列名的对应关系
      * @param response  使用response可以导出到浏览器
      * @throws ExcelException
      * @MethodName : listToExcel
      * @Description : 导出Excel（导出到浏览器，可以自定义工作表的大小）
      */
     public static <T> void exportExcel(
-            ExportExcelInfo<Map<String, Object>> info,
-            HttpServletResponse response
+            HttpServletResponse response, ExportExcelInfo<Map<String, Object>>... listInfo
     ) throws ExcelException, UnsupportedEncodingException {
         //设置默认文件名为当前时间：年月日时分秒
-        String fileName =info.getFileName()+ new SimpleDateFormat("yyyyMMddhhmmss").format(new Date()).toString();
+        String fileName =listInfo[0].getFileName()+ new SimpleDateFormat("yyyyMMddhhmmss").format(new Date()).toString();
         //设置response头信息
         response.reset();
         response.setContentType("application/vnd.ms-excel;charset=utf-8");        //改成输出excel文件
         response.setHeader("Content-disposition", "attachment; filename=" + URLEncoder.encode(fileName + ".xls", "utf-8"));
         //创建工作簿并发送到浏览器
         try {
-
             OutputStream out = response.getOutputStream();
-            exportExcel(info, out);
-
+            exportExcel(Arrays.asList(listInfo),out);
         } catch (Exception e) {
             e.printStackTrace();
 
@@ -132,27 +129,39 @@ public class ExportFileExcelUtil {
     /**
      * @param sheet      工作表
      * @param list       数据源
-     * @param listColumn   中英文字段对应关系的Map
+     * @param info   中英文字段对应关系的Map
      * @MethodName : fillSheet
      * @Description : 向工作表中填充数据
      */
     private static <T> void fillSheet(
             HSSFSheet sheet,
             List<T> list,
-            List<ExcelColumn<T>> listColumn
+            ExportExcelInfo<T> info
+
     ) throws Exception {
-        HSSFRow hssfRow = sheet.createRow(0);
+        List<ExcelColumn<T>> listColumn=info.getListColumn();
+        int rowNo = 0;
+        HSSFRow hssfRow = sheet.createRow(rowNo++);
         //填充表头
         for (int i = 0; i < listColumn.size(); i++) {
             // Label label=new Label(i, 0, cnFields[i]);
             HSSFCell xh = hssfRow.createCell(i);
             xh.setCellValue(listColumn.get(i).getText());
         }
+        if(info.isDisplayColumnName())
+        {
+             hssfRow = sheet.createRow(rowNo++);
+            for (int i = 0; i < listColumn.size(); i++) {
+                // Label label=new Label(i, 0, cnFields[i]);
+                HSSFCell xh = hssfRow.createCell(i);
+                xh.setCellValue(listColumn.get(i).getColumnName());
+            }
+        }
         if(list!=null) {
             HSSFWorkbook wwb = sheet.getWorkbook();
             ExcelColumn column;
             //填充内容
-            int rowNo = 1;
+
             for (int index = 0; index < list.size(); index++) {
                 //获取单个对象
                 T item = list.get(index);
