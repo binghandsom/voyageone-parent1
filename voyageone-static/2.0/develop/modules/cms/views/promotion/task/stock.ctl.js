@@ -19,7 +19,7 @@ define([
             this.waitSeparationNum = 0;
             this.separationOKNum = 0;
             this.separationFailNum = 0;
-            this.waitRestoreNum = 0;
+            this.waitRevertNum = 0;
             this.revertOKNum = 0;
             this.revertFailNum = 0;
             this.changedNum = 0;
@@ -107,7 +107,7 @@ define([
                     main.waitSeparationNum = res.data.waitSeparationNum;
                     main.separationOKNum = res.data.separationOKNum;
                     main.separationFailNum = res.data.separationFailNum;
-                    main.waitRestoreNum = res.data.waitRestoreNum;
+                    main.waitRevertNum = res.data.waitRevertNum;
                     main.revertOKNum = res.data.revertOKNum;
                     main.revertFailNum = res.data.revertFailNum;
                     main.changedNum = res.data.changedNum;
