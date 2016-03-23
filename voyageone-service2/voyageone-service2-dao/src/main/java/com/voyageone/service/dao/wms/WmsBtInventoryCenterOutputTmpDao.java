@@ -1,5 +1,6 @@
 package com.voyageone.service.dao.wms;
 
+import com.voyageone.service.dao.ServiceBaseDao;
 import com.voyageone.service.model.cms.CmsBtInventoryOutputTmpModel;
 import org.springframework.stereotype.Repository;
 
@@ -13,7 +14,7 @@ import java.util.Map;
  */
 
 @Repository
-public class WmsBtInventoryCenterOutputTmpDao extends com.voyageone.service.dao.ServiceBaseDao {
+public class WmsBtInventoryCenterOutputTmpDao extends ServiceBaseDao {
 
     public boolean insertSkuInventoryInfo(String values) {
         boolean ret = true;
