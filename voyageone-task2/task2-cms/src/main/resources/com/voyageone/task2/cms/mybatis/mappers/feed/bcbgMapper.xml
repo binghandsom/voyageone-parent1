@@ -38,6 +38,7 @@
 
     <select id="cms_zz_worktable_bcbg_superfeed_selectUnsaved" resultMap="SuperFeedBcbgBeanWithStyle">
         SELECT
+            ID,
             MATNR,
             EAN11,
             BRAND_ID,
@@ -82,8 +83,19 @@
     </select>
 
     <resultMap id="SuperFeedBcbgBeanWithStyle" type="com.voyageone.task2.cms.bean.SuperFeedBcbgBean" autoMapping="true">
+        <id column="ID" property="id"/>
         <association property="styleBean" javaType="com.voyageone.task2.cms.bean.BcbgStyleBean" autoMapping="true">
             <result column="styleMd5" property="md5"/>
         </association>
     </resultMap>
+
+    <update id="cms_zz_worktable_bcbg_superfeed_full_updateSucceed">
+        UPDATE voyageone_cms2.cms_zz_worktable_bcbg_superfeed_full
+        SET saved = 1
+        WHERE feedStyleID IN (
+            <foreach collection="succeed" item="product" separator=",">
+                #{product.code}
+            </foreach>
+        )
+    </update>
 </mapper>

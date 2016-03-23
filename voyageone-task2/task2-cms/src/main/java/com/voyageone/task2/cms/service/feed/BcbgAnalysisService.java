@@ -7,6 +7,8 @@ import com.voyageone.common.configs.Enums.FeedEnums.Name;
 import com.voyageone.common.configs.Feed;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.MD5;
+import com.voyageone.service.impl.cms.feed.FeedToCmsService;
+import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.cms.bean.BcbgStyleBean;
@@ -23,7 +25,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import static com.voyageone.task2.cms.service.feed.BcbgWsdlConstants.channel;
+import static com.voyageone.task2.cms.service.feed.BcbgConstants.channel;
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.toList;
 
@@ -40,6 +42,9 @@ public class BcbgAnalysisService extends BaseTaskService {
 
     @Autowired
     private Transformer transformer;
+
+    @Autowired
+    private FeedToCmsService feedToCmsService;
 
     /**
      * 获取子系统
@@ -66,11 +71,33 @@ public class BcbgAnalysisService extends BaseTaskService {
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
 
         // 每次启动尝试初始化
-        BcbgWsdlConstants.init();
+        BcbgConstants.init();
 
         $info("开始处理 BCBG 数据");
 
         appendDataFromFile();
+
+        List<SuperFeedBcbgBean> bcbgBeanList = bcbgSuperFeedDao.selectUnsaved();
+
+        $info("SKU 行数: " + bcbgBeanList.size());
+
+        BcbgAnalysisContext context = new BcbgAnalysisContext();
+
+        for(SuperFeedBcbgBean sku: bcbgBeanList)
+            context.put(sku);
+
+        List<CmsBtFeedInfoModel> codeList = context.getCodeList();
+
+        $info("Code 数: " + codeList.size());
+
+        Map<String, List<CmsBtFeedInfoModel>> result = feedToCmsService.updateProduct(channel.getId(), codeList, getTaskName());
+
+        List<CmsBtFeedInfoModel> succeed = result.get("succeed");
+
+        $info("成功数: " + succeed.size());
+
+        if (!succeed.isEmpty())
+            bcbgSuperFeedDao.updateSucceed(succeed);
     }
 
     private void appendDataFromFile() throws FileNotFoundException {
@@ -117,6 +144,7 @@ public class BcbgAnalysisService extends BaseTaskService {
         transformer.new Context(channel, this).transform();
         $info("数据处理阶段结束");
 
+        // TODO 正式情况请打开
         // 备份文件
         //new Backup().fromData(feedFile, styleFile);
     }

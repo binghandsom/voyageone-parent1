@@ -13,6 +13,39 @@ import java.util.regex.Pattern;
  */
 class BcbgConstants {
 
+    final static String MATNR = "MATNR";
+    final static String EAN11 = "EAN11";
+    final static String BRAND_ID = "BRAND_ID";
+    final static String MATKL = "MATKL";
+    final static String MATKL_ATT1 = "MATKL_ATT1";
+    final static String ZZCODE1 = "ZZCODE1";
+    final static String ZZCODE2 = "ZZCODE2";
+    final static String ZZCODE3 = "ZZCODE3";
+    final static String MEINS = "MEINS";
+    final static String BSTME = "BSTME";
+    final static String COLOR = "COLOR";
+    final static String COLOR_ATWTB = "COLOR_ATWTB";
+    final static String SIZE1 = "SIZE1";
+    final static String SIZE1_ATWTB = "SIZE1_ATWTB";
+    final static String SIZE1_ATINN = "SIZE1_ATINN";
+    final static String ATBEZ = "ATBEZ";
+    final static String SAISO = "SAISO";
+    final static String SAISJ = "SAISJ";
+    final static String SAITY = "SAITY";
+    final static String SATNR = "SATNR";
+    final static String MAKTX = "MAKTX";
+    final static String WLADG = "WLADG";
+    final static String WHERL = "WHERL";
+    final static String MEAN_EAN11 = "MEAN_EAN11";
+    final static String A304_DATAB = "A304_DATAB";
+    final static String A304_DATBI = "A304_DATBI";
+    final static String A304_KBETR = "A304_KBETR";
+    final static String A304_KONWA = "A304_KONWA";
+    final static String A073_DATAB = "A073_DATAB";
+    final static String A073_DATBI = "A073_DATBI";
+    final static String A073_KBETR = "A073_KBETR";
+    final static String A073_KONWA = "A073_KONWA";
+
     static Pattern special_symbol;
 
     protected static ChannelConfigEnums.Channel channel;
