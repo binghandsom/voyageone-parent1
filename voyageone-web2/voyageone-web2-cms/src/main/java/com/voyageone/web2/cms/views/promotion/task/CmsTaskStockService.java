@@ -1347,7 +1347,7 @@ public class CmsTaskStockService extends BaseAppService {
      */
     public void importExcelFileStockInfo(Map param, MultipartFile file) {
         // 取得任务id对应的Promotion是否开始
-        boolean promotionStartFlg = isPromotionStart((String) param.get("taskId"));
+        boolean promotionStartFlg = isPromotionStart((String) param.get("task_id"));
         if (promotionStartFlg) {
             throw new BusinessException("活动已经开始，不能修改数据！");
         }

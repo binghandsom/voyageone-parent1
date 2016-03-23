@@ -338,7 +338,7 @@ public class CmsTaskStockIncrementDetailController extends CmsController {
         // 创建者/更新者用
         param.put("userName", this.getUser().getUserName());
         // import Excel
-//        cmsTaskStockIncrementDetailService.importExcelFileStockIncrementInfo(param, file);
+        cmsTaskStockIncrementDetailService.importExcelFileStockIncrementInfo(param, file);
         // 返回
         return success(null);
     }
