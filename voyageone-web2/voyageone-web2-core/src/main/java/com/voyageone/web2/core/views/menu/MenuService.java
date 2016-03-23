@@ -3,16 +3,13 @@ package com.voyageone.web2.core.views.menu;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.beans.TypeBean;
-import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.base.BaseConstants;
-import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.core.CoreConstants;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import com.voyageone.web2.core.dao.UserRolePropertyDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
 import javax.servlet.http.HttpSession;
 import java.util.*;
@@ -43,6 +40,15 @@ public class MenuService extends BaseAppService {
         resultbean.put("languageList", languageList);
         Object menuTree = getMenuTree(Integer.toString(userId), channelId, applicationId);
         resultbean.put("menuTree", menuTree);
+        // TODO 临时对应翻译人员对应的权限
+        Map<String, Object> param = new HashMap<>();
+        param.put("userId", Integer.toString(userId));
+        param.put("channelId", channelId);
+        param.put("active", 1);
+        param.put("roleId", "12");
+        int roleList = userRolePropertyDao.selectUserRoleProperties(param);
+        resultbean.put("isTranslator", roleList == 1);
+
         return resultbean;
     }
     /**

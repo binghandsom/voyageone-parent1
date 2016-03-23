@@ -42,7 +42,7 @@ public class CmsSynInventoryToCmsService extends BaseTaskService {
 
     @Override
     public SubSystem getSubSystem() {
-        return SubSystem.WMS;
+        return SubSystem.CMS;
     }
 
     @Override

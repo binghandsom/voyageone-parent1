@@ -23,6 +23,15 @@ public class UserRolePropertyDao extends WebBaseDao {
     }
 
     /**
+     * 更具用户Id和渠道Id取得该用户的所对应的权限列表(TODO: 只是临时用户cms2的翻译权限使用)
+     * @param data
+     * @return
+     */
+    public int selectUserRoleProperties(Map<String, Object> data) {
+        return selectOne("ct_user_role_property_selectUserRoleByIdAndChannelId", data);
+    }
+
+    /**
      * 根据userId和channelId获取用户的application列表.
      *
      * @param data

@@ -2,17 +2,16 @@ package com.voyageone.web2.cms.views.channel;
 
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.transaction.SimpleTransaction;
+import com.voyageone.service.dao.cms.CmsBtFeedCustomPropDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtFeedCategoryTreeDao;
 import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryTreeModelx;
 import com.voyageone.web2.base.BaseAppService;
-import com.voyageone.web2.cms.dao.CmsBtFeedCustomPropDao;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.apache.commons.lang.math.NumberUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -28,8 +27,6 @@ public class CmsFeedCustPropService extends BaseAppService {
     private CmsMtFeedCategoryTreeDao cmsMtFeedCategoryTreeDao;
     @Autowired
     private CmsBtFeedCustomPropDao cmsBtFeedCustomPropDao;
-    @Autowired
-    private MongoTemplate mongoTemplate;
     @Autowired
     private SimpleTransaction simpleTransaction;
 

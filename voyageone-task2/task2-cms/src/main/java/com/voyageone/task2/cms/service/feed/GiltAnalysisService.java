@@ -86,7 +86,6 @@ public class GiltAnalysisService extends BaseTaskService {
         int delay = getDelaySecond();
 
         while(true) {
-
             $info("准备获取第 %s 页", pageIndex);
 
             List<GiltSku> skuList = getSkus(pageIndex);

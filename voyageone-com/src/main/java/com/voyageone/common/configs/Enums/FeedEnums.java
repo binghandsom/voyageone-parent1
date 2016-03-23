@@ -54,6 +54,7 @@ public class FeedEnums {
         item_i_itemcode,
         item_i_size,
         item_i_barcode,
+        attribute,
         attribute1,
         attribute2,
         attribute3,
