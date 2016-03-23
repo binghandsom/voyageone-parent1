@@ -5,6 +5,8 @@ import com.voyageone.service.impl.Excel.FunctionFormatter;
 import com.voyageone.service.impl.jumei.JmBtProductService;
 import com.voyageone.service.model.jumei.JmBtProductModel;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 public enum EnumJMProductImportColumn   {
@@ -67,5 +69,15 @@ public enum EnumJMProductImportColumn   {
     private EnumJMProductImportColumn(String columnName, String tableName, String text,EnumExcelColumnType columnType,boolean isNull)
     {
         this.excelColumn = new ExcelColumn(columnName, EnumCount.ProductColumnIndex++, tableName, text,columnType,isNull);
+    }
+
+    public  static  List<EnumJMProductImportColumn> getList()
+    {
+        List<EnumJMProductImportColumn> listEnumJMProductImportColumn = Arrays.asList(EnumJMProductImportColumn.values());
+        listEnumJMProductImportColumn.sort((a, b) -> {
+            if (a.getExcelColumn().getOrderIndex() > b.getExcelColumn().getOrderIndex()) return 1;
+            return -1;
+        });
+        return listEnumJMProductImportColumn;
     }
 }

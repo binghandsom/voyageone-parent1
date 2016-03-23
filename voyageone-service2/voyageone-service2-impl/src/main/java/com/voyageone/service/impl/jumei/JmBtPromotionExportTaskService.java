@@ -37,7 +37,7 @@ public class JmBtPromotionExportTaskService {
         return dao.create(entity);
     }
 
-    public  void  Export(int JmBtPromotionExportTaskId) throws FileNotFoundException {
+    public void Export(int JmBtPromotionExportTaskId) throws FileNotFoundException {
         JmBtPromotionExportTaskModel model = dao.get(1);
         String fileName = "/usr/JMExport" + "/Product" + DateHelp.DateToString(new Date(), "yyyyMMddHHmmss") + ".xls";
         ExportExcelInfo<Map<String, Object>> productInfo = exportProduct(fileName);
@@ -50,14 +50,8 @@ public class JmBtPromotionExportTaskService {
             e.printStackTrace();
         }
     }
-
-    private  ExportExcelInfo<Map<String, Object>>  exportProduct(String fileName) {
-        EnumJMProductImportColumn[] arraysEnumJMProductImportColumn = EnumJMProductImportColumn.values();
-        List<EnumJMProductImportColumn> listEnumJMProductImportColumn = Arrays.asList(arraysEnumJMProductImportColumn);
-        listEnumJMProductImportColumn.sort((a, b) -> {
-            if (a.getExcelColumn().getOrderIndex() > b.getExcelColumn().getOrderIndex()) return 1;
-            return -1;
-        });
+    private ExportExcelInfo<Map<String, Object>> exportProduct(String fileName) {
+        List<EnumJMProductImportColumn> listEnumJMProductImportColumn = EnumJMProductImportColumn.getList();
         ExportExcelInfo<Map<String, Object>> info = new ExportExcelInfo(null);
         info.setFileName("Product");
         info.setSheet("Product");
@@ -68,20 +62,14 @@ public class JmBtPromotionExportTaskService {
         return info;
     }
     private ExportExcelInfo<Map<String, Object>> exportSku(String fileName) {
-        EnumJMSkuImportColumn[] arraysEnumColumn = EnumJMSkuImportColumn.values();
-        List<EnumJMSkuImportColumn> listEnumColumn = Arrays.asList(arraysEnumColumn);
-        listEnumColumn.sort((a, b) -> {
-            if (a.getExcelColumn().getOrderIndex() > b.getExcelColumn().getOrderIndex()) return 1;
-            return -1;
-        });
+        List<EnumJMSkuImportColumn> listEnumColumn = EnumJMSkuImportColumn.getList();
         ExportExcelInfo<Map<String, Object>> info = new ExportExcelInfo(null);
         info.setFileName("Product");
         info.setSheet("Sku");
         info.setDisplayColumnName(true);
-        for(EnumJMSkuImportColumn o: listEnumColumn) {
+        for (EnumJMSkuImportColumn o : listEnumColumn) {
             info.addExcelColumn(o.getExcelColumn());
         }
-      return info;
+        return info;
     }
 }
-
