@@ -2,6 +2,7 @@ package com.voyageone.web2.cms.views.promotion.task;
 
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.transaction.SimpleTransaction;
+import com.voyageone.common.components.transaction.TransactionRunner;
 import com.voyageone.common.configs.Properties;
 import com.voyageone.common.configs.Type;
 import com.voyageone.common.configs.TypeChannel;
@@ -23,7 +24,6 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.ByteArrayOutputStream;
@@ -62,9 +62,11 @@ public class CmsTaskStockService extends BaseAppService {
     @Autowired
     private CmsBtTasksDao cmsBtTasksDao;
 
-//    @Autowired
     @Autowired
     private SimpleTransaction simpleTransaction;
+
+    @Autowired
+    private TransactionRunner transactionRunner;
 
     /** Excel增量方式导入 */
     private static final String EXCEL_IMPORT_ADD = "1";
@@ -1641,46 +1643,52 @@ public class CmsTaskStockService extends BaseAppService {
      * @param task_id     任务id
      * @param creater     创建者/更新者
      */
-//    @Transactional
     private void saveImportData(List<StockExcelBean> saveData, String import_mode, String task_id, String creater) {
-        if (EXCEL_IMPORT_UPDATE.equals(import_mode)) {
-            // 变更方式
-            for (StockExcelBean bean : saveData) {
-                Map<String, Object> mapSaveData;
-                try {
-                    mapSaveData = PropertyUtils.describe(bean);
-                } catch (Exception e) {
-                    throw new BusinessException("导入文件有数据异常");
+        try {
+            transactionRunner.runWithTran(() -> {
+                if (EXCEL_IMPORT_UPDATE.equals(import_mode)) {
+                    // 变更方式
+                    for (StockExcelBean bean : saveData) {
+                        Map<String, Object> mapSaveData =  new HashMap<String, Object>();
+                        mapSaveData.put("taskId", task_id);
+                        mapSaveData.put("sku", bean.getSku());
+                        mapSaveData.put("cartId", bean.getCart_id());
+                        mapSaveData.put("separateQty", bean.getSeparate_qty());
+                        mapSaveData.put("status", StringUtils.null2Space(bean.getStatus()));
+                        mapSaveData.put("modifier", creater);
+
+                        updateImportData(mapSaveData);
+                    }
+                } else {
+                    // 增量方式
+                    List<Map<String, Object>> listSaveData = new ArrayList<Map<String, Object>>();
+                    for (StockExcelBean bean : saveData) {
+                        Map<String, Object> mapSaveData;
+                        try {
+                            mapSaveData = PropertyUtils.describe(bean);
+                        } catch (Exception e) {
+                            throw new BusinessException("导入文件有数据异常");
+                        }
+
+                        mapSaveData.put("task_id", task_id);
+                        mapSaveData.put("creater", creater);
+
+                        listSaveData.add(mapSaveData);
+                        if (listSaveData.size() == 200) {
+                            insertImportData(listSaveData);
+                            listSaveData.clear();
+                        }
+                    }
+
+                    if (listSaveData.size() > 0) {
+                        insertImportData(listSaveData);
+                        listSaveData.clear();
+                    }
                 }
-
-                mapSaveData.put("task_id", task_id);
-                mapSaveData.put("modifier", creater);
-
-                updateImportData(mapSaveData);
-            }
-        } else {
-            // 增量方式
-            List<Map<String, Object>> listSaveData = new ArrayList<Map<String, Object>>();
-            for (StockExcelBean bean : saveData) {
-                Map<String, Object> mapSaveData;
-                try {
-                    mapSaveData = PropertyUtils.describe(bean);
-                } catch (Exception e) {
-                    throw new BusinessException("导入文件有数据异常");
-                }
-
-                mapSaveData.put("task_id", task_id);
-                mapSaveData.put("creater", creater);
-
-                listSaveData.add(mapSaveData);
-                if (listSaveData.size() == 200) {
-                    insertImportData(listSaveData);
-                    listSaveData.clear();
-                }
-            }
-
-            insertImportData(listSaveData);
-            listSaveData.clear();
+            });
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            throw new BusinessException("更新异常,请重新尝试！");
         }
     }
 
@@ -1699,7 +1707,7 @@ public class CmsTaskStockService extends BaseAppService {
      * @param saveData 保存对象
      */
     private void updateImportData(Map<String, Object> saveData) {
-        cmsBtStockSeparateItemDao.updateStockSeparateItemFromExcel(saveData);
+        cmsBtStockSeparateItemDao.updateStockSeparateItem(saveData);
     }
 
     /**
