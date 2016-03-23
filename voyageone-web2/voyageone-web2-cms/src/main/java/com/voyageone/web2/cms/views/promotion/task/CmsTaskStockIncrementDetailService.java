@@ -53,7 +53,7 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
     /**
      * 增量库存隔离数据是否移到history表
      *
-     * @param taskId 任务id
+     * @param subTaskId 任务id
      * @return 增量库存隔离数据是否移到history表
      */
     public boolean isHistoryExist(String subTaskId) {
