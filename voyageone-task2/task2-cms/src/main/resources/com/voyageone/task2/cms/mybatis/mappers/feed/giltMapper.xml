@@ -144,4 +144,11 @@
         </foreach>
         )
     </delete>
+
+    <insert id="wms_bt_client_sku_insertIgnoreList">
+        INSERT IGNORE INTO Synship.wms_bt_client_sku (order_channel_id, barcode, item_code, color, size, upc, active, created, creater, modified, modifier) VALUES
+        <foreach collection="list" item="item" separator=",">
+            (#{item.order_channel_id}, #{item.barcode}, #{item.item_code}, #{item.color}, #{item.size}, #{item.upc}, #{item.active}, #{item.created}, #{item.creater}, #{item.modified}, #{item.modifier})
+        </foreach>
+    </insert>
 </mapper>

@@ -12,6 +12,7 @@ import com.voyageone.common.configs.Feed;
 import com.voyageone.common.configs.ThirdPartyConfigs;
 import com.voyageone.common.configs.beans.FeedBean;
 import com.voyageone.common.configs.beans.ThirdPartyConfigBean;
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
@@ -19,6 +20,7 @@ import com.voyageone.task2.cms.bean.SuperFeedGiltBean;
 import com.voyageone.task2.cms.bean.SuperFeedVtmBean;
 import com.voyageone.task2.cms.dao.SuperFeed2Dao;
 import com.voyageone.task2.cms.dao.feed.GiltFeedDao;
+import com.voyageone.task2.cms.model.WmsBtClientSkuModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -96,16 +98,16 @@ public class Gilt2AnalysisService extends BaseTaskService {
 
         // 清表
         $info("产品信息清表开始");
-//        giltFeedDao.clearTemp();
+        giltFeedDao.clearTemp();
         $info("产品信息清表结束");
 
         // 插入数据库
         $info("产品信息插入开始");
-//        superFeedImport(taskControlList);
+        superFeedImport(taskControlList);
         $info("产品信息插入完成");
 
         logger.info("transform开始");
-//        transformer.new Context(GILT, this).transform();
+        transformer.new Context(GILT, this).transform();
         logger.info("transform结束");
 
         insertService.new Context(GILT).postNewProduct();
@@ -202,9 +204,40 @@ public class Gilt2AnalysisService extends BaseTaskService {
 
         int count = giltFeedDao.insertListTemp(feedGiltBeanList);
 
+        insertClientSku(feedGiltBeanList);
+
         $info("插入 TEMP SKU: %s", count);
     }
 
+    private void insertClientSku(List<SuperFeedGiltBean> feedGiltBeanList){
+
+        List<WmsBtClientSkuModel> clientSkuModels = new ArrayList<>();
+        for(SuperFeedGiltBean feedGiltBean : feedGiltBeanList) {
+            String[] codes = feedGiltBean.getProduct_codes().split(",");
+
+            if (codes.length > 1) {
+                // 如果 Code 有多个, 则需要将第一位和第二位的内容记录到 wms_bt_client_sku 表中
+                WmsBtClientSkuModel clientSkuModel = new WmsBtClientSkuModel();
+                clientSkuModel.setOrder_channel_id(ChannelConfigEnums.Channel.GILT.getId());
+                clientSkuModel.setBarcode(codes[1]);
+                clientSkuModel.setItem_code(feedGiltBean.getProduct_look_id());
+                clientSkuModel.setColor(feedGiltBean.getAttributes_color_name());
+                clientSkuModel.setSize(feedGiltBean.getAttributes_size_value());
+                clientSkuModel.setUpc(codes[0]);
+                clientSkuModel.setActive(true);
+                String now = DateTimeUtil.getNow();
+                clientSkuModel.setCreated(now);
+                clientSkuModel.setModified(now);
+                clientSkuModel.setCreater(getTaskName());
+                clientSkuModel.setModifier(getTaskName());
+                clientSkuModels.add(clientSkuModel);
+            }
+        }
+        if (clientSkuModels.size() > 0) {
+            int count = giltFeedDao.insertIgnoreList(clientSkuModels);
+            $info("\t插入 wms_bt_client_sku 表: %s", count);
+        }
+    }
     private SuperFeedGiltBean toMySqlBean(GiltSku giltSku) {
 
         SuperFeedGiltBean superFeedGiltBean = new SuperFeedGiltBean();
