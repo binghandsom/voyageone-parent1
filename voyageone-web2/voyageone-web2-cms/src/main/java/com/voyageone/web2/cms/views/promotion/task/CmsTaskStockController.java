@@ -827,10 +827,6 @@ public class CmsTaskStockController extends CmsController {
         searchParam.put("qtyFrom", (String) param.get("qtyFrom"));
         searchParam.put("qtyTo", (String) param.get("qtyTo"));
         searchParam.put("status", (String) param.get("status"));
-        searchParam.put("start1", (String) param.get("start1"));
-        searchParam.put("length1", (String) param.get("length1"));
-        searchParam.put("start2", (String) param.get("start2"));
-        searchParam.put("length2", (String) param.get("length2"));
 
         String propertyList = (String) param.get("propertyList");
         searchParam.put("propertyList", JacksonUtil.json2Bean(propertyList, List.class));

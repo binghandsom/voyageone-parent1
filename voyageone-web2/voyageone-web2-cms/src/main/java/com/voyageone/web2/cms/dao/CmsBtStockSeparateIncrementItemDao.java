@@ -25,6 +25,10 @@ public class CmsBtStockSeparateIncrementItemDao extends BaseDao {
         return selectOne("select_stock_separate_increment_item_by_status", param);
     }
 
+    public int selectStockSeparateIncrementItemHistoryCnt(Map<String, Object> param) {
+        return selectOne("select_stock_separate_increment_item_history_cnt", param);
+    }
+
     public int updateStockSeparateIncrementItem(Map<String, Object> param) {
         return update("update_stock_separate_increment_item", param);
     }
