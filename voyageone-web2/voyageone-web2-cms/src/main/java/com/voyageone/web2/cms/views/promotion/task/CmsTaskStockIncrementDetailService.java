@@ -4,6 +4,7 @@ import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.dao.CmsBtStockSeparateIncrementItemDao;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -12,6 +13,7 @@ import java.util.Map;
 /**
  * Created by morse.lu on 2016/3/23.
  */
+@Service
 public class CmsTaskStockIncrementDetailService extends BaseAppService {
 
     @Autowired
