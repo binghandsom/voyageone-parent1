@@ -10,6 +10,9 @@ import com.taobao.top.schema.factory.SchemaReader;
 import com.taobao.top.schema.factory.SchemaWriter;
 import com.taobao.top.schema.field.*;
 import com.taobao.top.schema.value.ComplexValue;
+import com.voyageone.common.configs.CmsChannelConfigs;
+import com.voyageone.common.configs.beans.CmsChannelConfigBean;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.*;
 import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategorySchemaDao;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
@@ -1196,7 +1199,23 @@ public class TmallProductService {
      * @param sxProducts
      * @return
      */
-    private double calcItemPrice(List<SxProductBean> sxProducts, Map<String, Integer> skuInventoryMap) {
+    private double calcItemPrice(List<SxProductBean> sxProducts, Map<String, Integer> skuInventoryMap,
+                                 String channelId, int cartId) {
+        // 价格有可能是用priceSale, 也有可能用priceMsrp, 所以需要判断一下 tom START
+        CmsChannelConfigBean sxPriceConfig = CmsChannelConfigs.getConfigBean(channelId, "PRICE", String.valueOf(cartId) + ".sx_price");
+
+        // 检查一下
+        String sxPricePropName;
+        if (sxPriceConfig == null) {
+            return 0d;
+        } else {
+            sxPricePropName = sxPriceConfig.getConfigValue1();
+            if (StringUtils.isEmpty(sxPricePropName)) {
+                return 0d;
+            }
+        }
+        // 价格有可能是用priceSale, 也有可能用priceMsrp, 所以需要判断一下 tom END
+
         Double resultPrice = 0d, onePrice = 0d;
         List<Double> skuPriceList = new ArrayList<>();
         for (SxProductBean sxProduct : sxProducts) {
@@ -1209,7 +1228,8 @@ public class TmallProductService {
                 }
                 double skuPrice = 0;
                 try {
-                    skuPrice = Double.valueOf(cmsBtProductModelSku.getPriceSale());
+//                    skuPrice = Double.valueOf(cmsBtProductModelSku.getPriceSale());
+                    skuPrice = Double.valueOf(cmsBtProductModelSku.getAttribute(sxPricePropName));
                 } catch (Exception e) {
                     logger.warn("No price for sku " + cmsBtProductModelSku.getSkuCode());
                 }
@@ -1390,7 +1410,8 @@ public class TmallProductService {
                     }
                     InputField  itemPriceField = (InputField) processFields.get(0);
 
-                    double itemPrice = calcItemPrice(workLoadBean.getProcessProducts(), workLoadBean.getSkuInventoryMap());
+//                    double itemPrice = calcItemPrice(workLoadBean.getProcessProducts(), workLoadBean.getSkuInventoryMap());
+                    double itemPrice = calcItemPrice(workLoadBean.getProcessProducts(), workLoadBean.getSkuInventoryMap(), workLoadBean.getOrder_channel_id(), workLoadBean.getCart_id());
                     itemPriceField.setValue(String.valueOf(itemPrice));
 
                     contextBuildCustomFields.setPriceField(itemPriceField);

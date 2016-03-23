@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.voyageone.web2.cms.sql">
-    <select id="cms_mt_dict_selectByCondition" resultType="com.voyageone.web2.cms.model.CmsMtDictModel" parameterType="com.voyageone.web2.cms.bean.system.dictionary.CmsDictionaryIndexBean">
+<mapper namespace="com.voyageone.service.dao.sql">
+    <select id="cms_mt_dict_selectByCondition" resultType="com.voyageone.service.model.cms.CmsMtDictModel" parameterType="com.voyageone.service.bean.cms.system.dictionary.CmsDictionaryIndexBean">
         SELECT DISTINCT
         a.id,
         a.order_channel_id,
@@ -29,7 +29,7 @@
         </if>
     </select>
 
-    <select id="cms_mt_dict_selectAllCount" resultType="int" parameterType="com.voyageone.web2.cms.bean.system.dictionary.CmsDictionaryIndexBean">
+    <select id="cms_mt_dict_selectAllCount" resultType="int" parameterType="com.voyageone.service.bean.cms.system.dictionary.CmsDictionaryIndexBean">
         SELECT count(DISTINCT a.id)
         FROM voyageone_cms2.cms_mt_dict a
         INNER JOIN Synship.com_mt_value_channel b
@@ -43,23 +43,23 @@
         </if>
     </select>
 
-    <insert id="cms_mt_dict_insertDict" parameterType="com.voyageone.web2.cms.model.CmsMtDictModel">
+    <insert id="cms_mt_dict_insertDict" parameterType="com.voyageone.service.model.cms.CmsMtDictModel">
         INSERT INTO voyageone_cms2.cms_mt_dict (order_channel_id, cart_id, name, value, created, creater, modified, modifier)
         VALUES (#{order_channel_id}, #{cart_id}, #{name}, #{value}, NOW(), #{creater}, NOW(), #{modifier})
     </insert>
 
-    <update id="cms_mt_dict_updateDict" parameterType="com.voyageone.web2.cms.model.CmsMtDictModel">
+    <update id="cms_mt_dict_updateDict" parameterType="com.voyageone.service.model.cms.CmsMtDictModel">
         UPDATE voyageone_cms2.cms_mt_dict
         SET name = #{name}, value = #{value}, modified = NOW(), modifier = #{modifier}
         WHERE id = #{id} AND modified = #{modified}
     </update>
 
-    <delete id="cms_mt_dict_deleteDict" parameterType="com.voyageone.web2.cms.model.CmsMtDictModel">
+    <delete id="cms_mt_dict_deleteDict" parameterType="com.voyageone.service.model.cms.CmsMtDictModel">
         DELETE FROM voyageone_cms2.cms_mt_dict
         WHERE id = #{id}
     </delete>
 
-    <select id="cms_mt_dict_selectByName" parameterType="com.voyageone.web2.cms.model.CmsMtDictModel" resultType="com.voyageone.web2.cms.model.CmsMtDictModel">
+    <select id="cms_mt_dict_selectByName" parameterType="com.voyageone.service.model.cms.CmsMtDictModel" resultType="com.voyageone.service.model.cms.CmsMtDictModel">
         SELECT
             id,
             order_channel_id,
@@ -74,7 +74,7 @@
         WHERE order_channel_id = #{order_channel_id} AND name = #{name}
     </select>
 
-    <select id="cms_mt_dict_selectById" parameterType="com.voyageone.web2.cms.model.CmsMtDictModel" resultType="com.voyageone.web2.cms.model.CmsMtDictModel">
+    <select id="cms_mt_dict_selectById" parameterType="com.voyageone.service.model.cms.CmsMtDictModel" resultType="com.voyageone.service.model.cms.CmsMtDictModel">
         SELECT
             id,
             order_channel_id,
@@ -89,7 +89,7 @@
         WHERE order_channel_id = #{order_channel_id} AND id = #{id}
     </select>
 
-    <select id="cms_mt_dict_selectSimpleDict" resultType="com.voyageone.web2.cms.model.CmsMtDictModel">
+    <select id="cms_mt_dict_selectSimpleDict" resultType="com.voyageone.service.model.cms.CmsMtDictModel">
         SELECT
         id,
         order_channel_id,
@@ -98,7 +98,7 @@
         WHERE order_channel_id = #{channel_id}
     </select>
 
-    <insert id="cms_mt_dict_insertDict_log" parameterType="com.voyageone.web2.cms.model.CmsMtDictModel">
+    <insert id="cms_mt_dict_insertDict_log" parameterType="com.voyageone.service.model.cms.CmsMtDictModel">
         INSERT INTO voyageone_cms2.cms_mt_dict_log (dict_id,order_channel_id, cart_id, name, value, created, creater, modified, modifier)
         VALUES (#{id},#{order_channel_id}, #{cart_id}, #{name}, #{value}, #{created}, #{creater}, NOW(), #{modifier})
     </insert>

@@ -337,6 +337,7 @@ define([
                 vm.userInfo = data.userInfo;
                 $rootScope.menuTree=data.menuTree;
                 $rootScope.application=data.userInfo.application;
+                $rootScope.isTranslator = data.isTranslator;
             });
         }
 

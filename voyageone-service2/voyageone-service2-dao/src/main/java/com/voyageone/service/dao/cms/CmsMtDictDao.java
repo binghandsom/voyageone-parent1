@@ -1,9 +1,8 @@
-package com.voyageone.web2.cms.dao;
+package com.voyageone.service.dao.cms;
 
-import com.voyageone.web2.base.dao.WebBaseDao;
-import com.voyageone.web2.base.dao.WebDaoNs;
-import com.voyageone.web2.cms.bean.system.dictionary.CmsDictionaryIndexBean;
-import com.voyageone.web2.cms.model.CmsMtDictModel;
+import com.voyageone.service.bean.cms.system.dictionary.CmsDictionaryIndexBean;
+import com.voyageone.service.dao.ServiceBaseDao;
+import com.voyageone.service.model.cms.CmsMtDictModel;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -14,11 +13,7 @@ import java.util.List;
  * @since 2.0.0
  */
 @Repository
-public class CmsMtDictDao extends WebBaseDao {
-    @Override
-    protected WebDaoNs webNs() {
-        return WebDaoNs.CMS;
-    }
+public class CmsMtDictDao extends ServiceBaseDao {
 
     public List<CmsMtDictModel> selectByChannel(CmsDictionaryIndexBean params) {
         return selectList("cms_mt_dict_selectByCondition", params);

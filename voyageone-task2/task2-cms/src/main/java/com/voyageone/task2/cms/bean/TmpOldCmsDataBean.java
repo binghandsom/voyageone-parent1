@@ -26,6 +26,8 @@ public class TmpOldCmsDataBean {
     private String img4; // 自定义图片
     private String color_en;
     private String hs_code_pu; // 个人行邮税号
+    private int translate_status; // 是否已翻译完毕(0:未翻译 1:已翻译)
+    private Double price_sale; // 真实售卖的价格
     private int finish_flg; // 已经处理过了的商品为1, 等待处理的为0
 
     public String getChannel_id() {
@@ -162,6 +164,22 @@ public class TmpOldCmsDataBean {
 
     public void setHs_code_pu(String hs_code_pu) {
         this.hs_code_pu = hs_code_pu;
+    }
+
+    public int getTranslate_status() {
+        return translate_status;
+    }
+
+    public void setTranslate_status(int translate_status) {
+        this.translate_status = translate_status;
+    }
+
+    public Double getPrice_sale() {
+        return price_sale;
+    }
+
+    public void setPrice_sale(Double price_sale) {
+        this.price_sale = price_sale;
     }
 
     public int getFinish_flg() {

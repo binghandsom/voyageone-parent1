@@ -1,8 +1,7 @@
-package com.voyageone.web2.cms.dao;
+package com.voyageone.service.dao.cms;
 
-import com.voyageone.web2.base.dao.WebBaseDao;
-import com.voyageone.web2.base.dao.WebDaoNs;
-import com.voyageone.web2.cms.model.CustomWord;
+import com.voyageone.service.dao.ServiceBaseDao;
+import com.voyageone.service.model.cms.CmsMtCustomWord;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -14,13 +13,9 @@ import java.util.Map;
  * Created by Jonas on 9/11/15.
  */
 @Repository
-public class CustomWordDao extends WebBaseDao {
-    @Override
-    protected WebDaoNs webNs() {
-        return WebDaoNs.CMS;
-    }
+public class CmsMtCustomWordDao extends ServiceBaseDao {
 
-    public List<CustomWord> selectWithParam() {
+    public List<CmsMtCustomWord> selectWithParam() {
         return selectList("cms_mt_custom_word_selectWithParam");
     }
 

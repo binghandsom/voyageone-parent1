@@ -1,4 +1,4 @@
-package com.voyageone.web2.cms.model;
+package com.voyageone.service.model.cms;
 
 import com.voyageone.base.dao.mysql.BaseModel;
 
@@ -9,7 +9,7 @@ import java.util.List;
  *
  * Created by Jonas on 9/11/15.
  */
-public class CustomWord extends BaseModel {
+public class CmsMtCustomWord extends BaseModel {
     private int word_id;
 
     private String word_name;
@@ -24,7 +24,7 @@ public class CustomWord extends BaseModel {
 
     private String modifier;
 
-    private List<CustomWordParam> params;
+    private List<CmsMtCustomWordParam> params;
 
     public int getWord_id() {
         return word_id;
@@ -82,11 +82,11 @@ public class CustomWord extends BaseModel {
         this.modifier = modifier;
     }
 
-    public List<CustomWordParam> getParams() {
+    public List<CmsMtCustomWordParam> getParams() {
         return params;
     }
 
-    public void setParams(List<CustomWordParam> params) {
+    public void setParams(List<CmsMtCustomWordParam> params) {
         this.params = params;
     }
 }

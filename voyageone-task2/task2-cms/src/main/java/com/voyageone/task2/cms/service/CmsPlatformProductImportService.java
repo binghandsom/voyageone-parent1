@@ -1,11 +1,13 @@
 package com.voyageone.task2.cms.service;
 
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.bean.cms.product.ProductUpdateBean;
 import com.voyageone.service.dao.cms.mongo.CmsMtCategorySchemaDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtCommonSchemaDao;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
+import com.voyageone.service.impl.cms.product.ProductSkuService;
 import com.voyageone.service.model.cms.mongo.CmsMtCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCommonSchemaModel;
 import com.voyageone.service.model.cms.mongo.product.*;
@@ -47,6 +49,8 @@ public class CmsPlatformProductImportService extends BaseTaskService {
     private TmpOldCmsDataDao tmpOldCmsDataDao; // DAO: 旧cms数据
     @Autowired
     private ProductGroupService productGroupService;
+    @Autowired
+    private ProductSkuService productSkuService;
     @Autowired
     private ProductService productService;
 
@@ -321,6 +325,10 @@ public class CmsPlatformProductImportService extends BaseTaskService {
             cmsFields.setColor(oldCmsDataBean.getColor_en());
             // hs_code_pu 个人行邮税号
             cmsFields.setHsCodePrivate(oldCmsDataBean.getHs_code_pu());
+            // 是否已翻译
+            cmsFields.setTranslateStatus(String.valueOf(oldCmsDataBean.getTranslate_status()));
+            cmsFields.setTranslator(getTaskName());
+            cmsFields.setTranslateTime(DateTimeUtil.getNow());
 
             // product ==========================================================================================
             cmsProduct.setFields(cmsFields);
@@ -357,6 +365,13 @@ public class CmsPlatformProductImportService extends BaseTaskService {
                 break;
             }
         }
+
+        // 设置sku信息
+        List<CmsBtProductModel_Sku> skus = cmsProduct.getSkus();
+        for (CmsBtProductModel_Sku sku : skus) {
+            sku.setPriceSale(oldCmsDataBean.getPrice_sale());
+        }
+        productSkuService.saveSkus(oldCmsDataBean.getChannel_id(), cmsProduct.getProdId(), skus);
 
         // 提交到product表 ==========================================================================================
         ProductUpdateBean productUpdateBean = new ProductUpdateBean();
