@@ -75,7 +75,6 @@ public final class ExcelUtils {
             case Cell.CELL_TYPE_FORMULA:
                 return cell.getStringCellValue();
         }
-
         return null;
     }
 }
