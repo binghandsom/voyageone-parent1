@@ -238,6 +238,13 @@ define(function() {
         "TXT_STOCK_SEPARATE_DETAIL":"Stock Separate Detail",
         "TXT_SEPARATE_TYPE":"Separate Type",
         "TXT_SEPARATE_INCREMENT_QUANTITY":"Separate/Increment Quantity",
+        "TXT_STOCK_INCREMENT_SEPARATE":"Stock Increment Separate",
+        "TXT_STOCK_INCREMENT_SEPARATE_TASK":"Stock Increment Separate Task",
+        "TXT_PLATFORM": "Platform",
+        "TXT_ADD_NEW_STOCK_INCREMENT_SEPARATE_TASK":"Add New Stock Increment Separate Task",
+        "TXT_PLATFORM_SALE_QUANTITY": "Platform Sale Quantity",
+        "TXT_PLATFORM_STOCK_SEPARATE_QUANTITY": "Platform Stock Separate Quantity",
+
 
         "TXT_MSG_SEARCH": "Search...",
         "TXT_MSG_PAGE_IS_BUILDING": "This page is building...",

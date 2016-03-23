@@ -3,14 +3,14 @@
 		<div class="panel-group">
 			<div class="panel panel-default">
 				<div class="panel-heading">
-					<h4 class="panel-title"><i class="fa fa-codepen"></i>&nbsp;增量库存隔离任务</h4>
+					<h4 class="panel-title"><i class="fa fa-codepen"></i>&nbsp;{{'TXT_STOCK_INCREMENT_SEPARATE_TASK' | translate}}</h4>
 				</div>
 				<div class="container-fluid m-t-xs m-b-xs">
 					<div class="col-sm-12">
 						<div class="col-sm-4">
 							<div class="form-horizontal">
 								<div class="form-group">
-									<label class="col-sm-3 control-label">任务名</label>
+									<label class="col-sm-3 control-label">{{'TXT_TASK_NAME' | translate}}</label>
 									<div class="col-sm-9">
 										<input type="text" class="form-control" ng-model="$ctrl.subTaskName">
 									</div>
@@ -20,7 +20,7 @@
 						<div class="col-sm-4">
 							<div class="form-horizontal">
 								<div class="form-group">
-									<label class="col-sm-3 control-label">平台</label>
+									<label class="col-sm-3 control-label">{{'TXT_PLATFORM' | translate}}</label>
 									<div class="col-sm-9">
 										<select class="form-control" ng-model="$ctrl.cartId">
 											<option value='' translate="TXT_SELECT_NO_VALUE"></option>
@@ -32,9 +32,9 @@
 						</div>
 						<div class="col-sm-12 text-center" ng-controller="popupCtrl">
 							<div class="form-horizontal form-inline">
-								<button class="btn btn-default" ng-click="$ctrl.clear()"><i class="fa fa-remove"></i>&nbsp;清除</button>
-								<button class="btn btn-vo" ng-click="$ctrl.search()"><i class="fa fa-search"></i>&nbsp;搜索</button>
-								<button class="btn btn-primary" ng-click="openAddMrbStockIncrement('md')"><i class="fa fa-plus"></i>&nbsp;新建增量隔离任务</button>
+								<button class="btn btn-default" ng-click="$ctrl.clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR' | translate}}</button>
+								<button class="btn btn-vo" ng-click="$ctrl.search()"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}</button>
+								<button class="btn btn-primary" ng-click="openAddMrbStockIncrement('md')"><i class="fa fa-plus"></i>&nbsp;{{'TXT_ADD_NEW_STOCK_INCREMENT_SEPARATE_TASK' | translate}}</button>
 							</div><!-- .form-inline -->
 						</div>
 					</div>
@@ -50,10 +50,10 @@
 						<thead>
 						<tr>
 							<th class="mfb-xxxs text-left">No</th>
-							<th class="mfb-xxxs text-left">任务名</th>
-							<th class="mfb-xxt text-left">平台</th>
-							<th class="mfb-xxt text-center">操作</th>
-							<th class="mfb-xt text-center">编辑</th>
+							<th class="mfb-xxxs text-left">{{'TXT_TASK_NAME' | translate}}</th>
+							<th class="mfb-xxt text-left">{{'TXT_PLATFORM' | translate}}</th>
+							<th class="mfb-xxt text-center">{{'TXT_ACTION' | translate}}</th>
+							<th class="mfb-xt text-center">{{'BTN_EDIT' | translate}}</th>
 						</tr>
 						</thead>
 						<tbody>
@@ -62,73 +62,13 @@
 							<td class="text-left">{{task.subTaskName}}</td>
 							<td class="text-left">{{task.cartName}}</td>
 							<td class="text-center">
-								<a href="#/promotion/task_stock_increment_detail/{{task.subTaskId}}" target="_blank"><button title="增量库存隔离" class="btn btn-default-vo btn-xs"><i class="fa fa-reorder"></i>&nbsp;增量库存明细</button></a>
+								<a href="#/promotion/task_stock_increment_detail/{{task.subTaskId}}" target="_blank"><button title="{{'TXT_STOCK_INCREMENT_SEPARATE' | translate}}" class="btn btn-default-vo btn-xs"><i class="fa fa-reorder"></i>&nbsp;{{'TXT_STOCK_INCREMENT_SEPARATE' | translate}}</button></a>
 							</td>
 							<td class="text-center">
-								<button title="编辑" class="btn btn-success btn-xs" ng-click="openAddMrbStockIncrement('md')"><i class="fa fa-pencil"></i></button>
-								<button title="删除" class="btn btn-danger btn-xs"><i class="fa  fa-trash-o"></i></button>
+								<button title="{{'BTN_EDIT' | translate}}" ng-click="$ctrl.editTask(task.subTaskId)" class="btn btn-success btn-xs" ng-click="openAddMrbStockIncrement('md')"><i class="fa fa-pencil"></i></button>
+								<button title="{{'BTN_DELETE' | translate}}" ng-click="$ctrl.delTask(task.subTaskId)" class="btn btn-danger btn-xs"><i class="fa  fa-trash-o"></i></button>
 							</td>
 						</tr>
-						<!--<tr>-->
-							<!--<td class="text-center">2</td>-->
-							<!--<td class="text-left">天猫国际双十一</td>-->
-							<!--<td class="text-left">京东</td>-->
-							<!--<td class="text-center">-->
-								<!--<a href="#/promotion/task_stock_increment_detail/1" target="_blank"><button title="增量库存隔离" class="btn btn-default-vo btn-xs"><i class="fa fa-reorder"></i>&nbsp;增量库存明细</button></a>-->
-							<!--</td>-->
-							<!--<td class="text-center">-->
-								<!--<button title="编辑" class="btn btn-success btn-xs" ng-click="openAddMrbStockIncrement('md')"><i class="fa fa-pencil"></i></button>-->
-								<!--<button title="删除" class="btn btn-danger btn-xs"><i class="fa  fa-trash-o"></i></button>-->
-							<!--</td>-->
-						<!--</tr>-->
-						<!--<tr>-->
-							<!--<td class="text-center">3</td>-->
-							<!--<td class="text-left">天猫国际双十一</td>-->
-							<!--<td class="text-left">京东</td>-->
-							<!--<td class="text-center">-->
-								<!--<a href="#/promotion/task_stock_increment_detail/1" target="_blank"><button title="增量库存隔离" class="btn btn-default-vo btn-xs"><i class="fa fa-reorder"></i>&nbsp;增量库存明细</button></a>-->
-							<!--</td>-->
-							<!--<td class="text-center">-->
-								<!--<button title="编辑" class="btn btn-success btn-xs" ng-click="openAddMrbStockIncrement('md')"><i class="fa fa-pencil"></i></button>-->
-								<!--<button title="删除" class="btn btn-danger btn-xs"><i class="fa  fa-trash-o"></i></button>-->
-							<!--</td>-->
-						<!--</tr>-->
-						<!--<tr>-->
-							<!--<td class="text-center">4</td>-->
-							<!--<td class="text-left">天猫国际双十一</td>-->
-							<!--<td class="text-left">天猫</td>-->
-							<!--<td class="text-center">-->
-								<!--<a href="#/promotion/task_stock_increment_detail/1" target="_blank"><button title="增量库存隔离" class="btn btn-default-vo btn-xs"><i class="fa fa-reorder"></i>&nbsp;增量库存明细</button></a>-->
-							<!--</td>-->
-							<!--<td class="text-center">-->
-								<!--<button title="编辑" class="btn btn-success btn-xs" ng-click="openAddMrbStockIncrement('md')"><i class="fa fa-pencil"></i></button>-->
-								<!--<button title="删除" class="btn btn-danger btn-xs"><i class="fa  fa-trash-o"></i></button>-->
-							<!--</td>-->
-						<!--</tr>-->
-						<!--<tr>-->
-							<!--<td class="text-center">5</td>-->
-							<!--<td class="text-left">天猫国际双十一</td>-->
-							<!--<td class="text-left">天猫</td>-->
-							<!--<td class="text-center">-->
-								<!--<a href="#/promotion/task_stock_increment_detail/1" target="_blank"><button title="增量库存隔离" class="btn btn-default-vo btn-xs"><i class="fa fa-reorder"></i>&nbsp;增量库存明细</button></a>-->
-							<!--</td>-->
-							<!--<td class="text-center">-->
-								<!--<button title="编辑" class="btn btn-success btn-xs" ng-click="openAddMrbStockIncrement('md')"><i class="fa fa-pencil"></i></button>-->
-								<!--<button title="删除" class="btn btn-danger btn-xs"><i class="fa  fa-trash-o"></i></button>-->
-							<!--</td>-->
-						<!--</tr>-->
-						<!--<tr>-->
-							<!--<td class="text-center">6</td>-->
-							<!--<td class="text-left">天猫国际双十一</td>-->
-							<!--<td class="text-left">京东</td>-->
-							<!--<td class="text-center">-->
-								<!--<a href="#/promotion/task_stock_increment_detail/1" target="_blank"><button title="增量库存隔离" class="btn btn-default-vo btn-xs"><i class="fa fa-reorder"></i>&nbsp;增量库存明细</button></a>-->
-							<!--</td>-->
-							<!--<td class="text-center">-->
-								<!--<button title="编辑" class="btn btn-success btn-xs" ng-click="openAddMrbStockIncrement('md')"><i class="fa fa-pencil"></i></button>-->
-								<!--<button title="删除" class="btn btn-danger btn-xs"><i class="fa  fa-trash-o"></i></button>-->
-							<!--</td>-->
-						<!--</tr>-->
 						</tbody>
 					</table>
 				</div><!-- .table-responsive -->

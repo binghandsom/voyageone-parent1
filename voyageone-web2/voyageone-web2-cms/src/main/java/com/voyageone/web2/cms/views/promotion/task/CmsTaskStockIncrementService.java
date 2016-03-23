@@ -87,4 +87,37 @@ public class CmsTaskStockIncrementService extends BaseAppService {
         return taskList;
     }
 
+    /**
+     * 删除增量库存隔离任务
+     *
+     * @param subTaskId 子任务id
+     */
+    public void delTask(String subTaskId){
+        // 取得增量库存隔离数据中是否存在状态为"0:未进行"以外的数据
+        Map<String, Object> sqlParam = new HashMap<String, Object>();
+        sqlParam.put("subTaskId", subTaskId);
+        sqlParam.put("statusList", Arrays.asList("1","2","3","4"));
+        List<Object> stockSeparateIncrementItem = cmsBtStockSeparateIncrementItemDao.selectStockSeparateIncrementItemByStatus(sqlParam);
+        if (stockSeparateIncrementItem != null && stockSeparateIncrementItem.size() > 0) {
+            throw new BusinessException("已经开始增量库存隔离，不能删除增量任务！");
+        }
+        simpleTransaction.openTransaction();
+        try {
+            // 删除增量库存隔离表中的数据
+            Map<String, Object> sqlParam1 = new HashMap<String, Object>();
+            sqlParam1.put("subTaskId", subTaskId);
+            cmsBtStockSeparateIncrementItemDao.deleteStockSeparateIncrementItem(sqlParam1);
+
+            // 删除增量库存隔离任务表中的数据
+            Map<String, Object> sqlParam2 = new HashMap<String, Object>();
+            sqlParam2.put("subTaskId", subTaskId);
+            cmsBtStockSeparateIncrementTaskDao.deleteStockSeparateIncrementTask(sqlParam2);
+
+        }catch (Exception e) {
+            simpleTransaction.rollback();
+            throw e;
+        }
+        simpleTransaction.commit();
+    }
+
 }

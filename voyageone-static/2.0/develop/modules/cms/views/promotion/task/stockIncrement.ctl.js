@@ -43,6 +43,22 @@ define([
                 })
             },
 
+            delTask: function (subTaskId) {
+                var main = this;
+                main.confirm('TXT_MSG_DO_DELETE').result.then(function () {
+                    main.taskStockIncrementService.delTask({
+                        "subTaskId": subTaskId
+                    }).then(function (res) {
+                        main.notify.success('TXT_MSG_DELETE_SUCCESS');
+                        main.search();
+                    }, function (err) {
+                        if (err.displayType == null) {
+                            main.alert('TXT_MSG_DELETE_FAIL');
+                        }
+                    })
+                })
+            },
+
             search: function (status) {
                 var main = this;
                 main.taskStockIncrementService.searchTask({

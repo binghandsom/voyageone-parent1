@@ -332,7 +332,7 @@ public class CmsTaskStockController extends CmsController {
 
         // 任务对应平台信息列表 只有首次取得
         if (param.get("platformList") == null || ((List<Map<String, Object>>)param.get("platformList")).size() == 0) {
-            List<Map<String, Object>> platformList = cmsTaskStockService.getPlatformList(param);
+            List<Map<String, Object>> platformList = cmsTaskStockService.getPlatformList((String) param.get("taskId"), this.getUser().getSelChannelId(), this.getLang());
             resultBean.put("platformList", platformList);
             param.put("platformList", platformList);
 
@@ -348,7 +348,7 @@ public class CmsTaskStockController extends CmsController {
 
         // 取得属性列表 只有首次取得
         if (param.get("propertyList") == null || ((List<Map<String, Object>>)param.get("propertyList")).size() == 0) {
-            List<Map<String, Object>> propertyList = cmsTaskStockService.getPropertyList(param);
+            List<Map<String, Object>> propertyList = cmsTaskStockService.getPropertyList(this.getUser().getSelChannelId(), this.getLang());
             resultBean.put("propertyList", propertyList);
             param.put("propertyList", propertyList);
         } else {
@@ -706,10 +706,8 @@ public class CmsTaskStockController extends CmsController {
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK.GET_USABLE_STOCK)
     public AjaxResponse getUsableStock(@RequestBody Map param) {
-        // 渠道id
-        param.put("channelId", this.getUser().getSelChannelId());
         // 取得可用库存
-        String usableStock = cmsTaskStockService.getUsableStock(param);
+        String usableStock = cmsTaskStockService.getUsableStock((String) param.get("sku"), this.getUser().getSelChannelId());
 
         Map<String, Object> resultBean = new HashMap<>();
         resultBean.put("usableStock", usableStock);
@@ -1108,10 +1106,8 @@ public class CmsTaskStockController extends CmsController {
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK.DEL_RECORD)
     public AjaxResponse delRecord(@RequestBody Map param) {
-        // 语言
-        param.put("lang", this.getLang());
         // 删除隔离库存明细
-        cmsTaskStockService.delRecord(param);
+        cmsTaskStockService.delRecord((String) param.get("taskId"), (String) param.get("sku"));
         // 返回
         return success(null);
     }

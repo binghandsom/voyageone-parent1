@@ -41,10 +41,6 @@ public class CmsBtStockSeparateItemDao extends BaseDao {
         return update("update_stock_separate_item", param);
     }
 
-    public int updateStockSeparateStatusAll(Map<String, Object> param) {
-        return update("update_stock_separate_status_all", param);
-    }
-
     public int deleteStockSeparateItem(Map<String, Object> param) {
         return delete("delete_stock_separate_item", param);
     }

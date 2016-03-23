@@ -21,13 +21,17 @@ public class CmsBtStockSeparateIncrementItemDao extends BaseDao {
         return selectOne("select_stock_separate_increment_success_qty", param);
     }
 
+    public List<Object> selectStockSeparateIncrementItemByStatus(Map<String, Object> param) {
+        return selectOne("select_stock_separate_increment_item_by_status", param);
+    }
+
     public int updateStockSeparateIncrementItem(Map<String, Object> param) {
         return update("update_stock_separate_increment_item", param);
     }
 
-    public int updateStockSeparateIncrementStatusAll(Map<String, Object> param) {
-        return update("update_stock_separate_increment_status_all", param);
-    }
+//    public int updateStockSeparateIncrementStatusAll(Map<String, Object> param) {
+//        return update("update_stock_separate_increment_status_all", param);
+//    }
 
     public int deleteStockSeparateIncrementItem(Map<String, Object> param) {
         return delete("delete_stock_separate_increment_item", param);

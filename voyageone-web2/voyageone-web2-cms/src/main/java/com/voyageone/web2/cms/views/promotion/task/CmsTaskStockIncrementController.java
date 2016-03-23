@@ -58,15 +58,11 @@ public class CmsTaskStockIncrementController extends CmsController {
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK_INCREMENT.GET_PLATFORM_LIST)
     public AjaxResponse getPlatFormList(@RequestBody Map param) {
-        // 渠道id
-        param.put("channelId", this.getUser().getSelChannelId());
-        // 语言
-        param.put("lang", this.getLang());
         // 返回内容
         Map<String, Object> resultBean = new HashMap<>();
 
         // 取得任务对应平台信息列表
-        List<Map<String, Object>> platformList = cmsTaskStockService.getPlatformList(param);
+        List<Map<String, Object>> platformList = cmsTaskStockService.getPlatformList((String)param.get("taskId"), this.getUser().getSelChannelId(), this.getLang());
         resultBean.put("platformList", platformList);
 
         // 任务id/渠道id权限check
@@ -189,7 +185,6 @@ public class CmsTaskStockIncrementController extends CmsController {
      * @apiGroup promotion
      * @apiVersion 0.0.1
      * @apiPermission 认证商户
-     * @apiParam (应用级参数) {String} taskId 任务id
      * @apiParam (应用级参数) {String} subTaskId 增量任务id
      * @apiSuccess (系统级返回字段) {String} code 处理结果代码编号
      * @apiSuccess (系统级返回字段) {String} message 处理结果描述
@@ -213,6 +208,9 @@ public class CmsTaskStockIncrementController extends CmsController {
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK_INCREMENT.DEL_TASK)
     public AjaxResponse delTask(@RequestBody Map param) {
+
+        // 删除增量库存隔离任务
+        cmsTaskStockIncrementService.delTask((String) param.get("subTaskId"));
 
         // 返回
         return success(null);

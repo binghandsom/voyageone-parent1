@@ -72,6 +72,20 @@
         and status = #{status}
     </select>
 
+    <select id="select_stock_separate_increment_item_by_status" resultType="Object" parameterType="HashMap">
+        select seq
+        from   voyageone_cms2.cms_bt_stock_separate_increment_item
+        where sub_task_id = #{subTaskId}
+        <if test="statusList != null and statusList.size() > 0">
+            and (status in
+            <foreach collection="statusList" item="statusItem" open="(" separator="," close=")">
+                #{statusItem}
+            </foreach>
+            )
+        </if>
+        limit 0,1
+    </select>
+
     <update id="update_stock_separate_increment_item" parameterType="HashMap" >
         update voyageone_cms2.cms_bt_stock_separate_increment_item
         <set >
@@ -125,29 +139,29 @@
         </where>
     </update>
 
-    <update id="update_stock_separate_increment_status_all" parameterType="HashMap" >
-        update voyageone_cms2.cms_bt_stock_separate_increment_item
-        <set >
-            status = #{status},
-            modified = now(),
-            <if test="modifier != null" >
-                modifier = #{modifier},
-            </if>
-        </set>
-        <where>
-            1 = 1
-            <if test="subTaskId != null" >
-                and sub_task_id = #{subTaskId}
-            </if>
-            <if test="subTaskIdList != null and subTaskIdList.size() > 0">
-                and (sub_task_id in
-                <foreach collection="subTaskIdList" item="subTaskIdItem" open="(" separator="," close=")">
-                    #{subTaskIdItem}
-                </foreach>
-                )
-            </if>
-        </where>
-    </update>
+    <!--<update id="update_stock_separate_increment_status_all" parameterType="HashMap" >-->
+        <!--update voyageone_cms2.cms_bt_stock_separate_increment_item-->
+        <!--<set >-->
+            <!--status = #{status},-->
+            <!--modified = now(),-->
+            <!--<if test="modifier != null" >-->
+                <!--modifier = #{modifier},-->
+            <!--</if>-->
+        <!--</set>-->
+        <!--<where>-->
+            <!--1 = 1-->
+            <!--<if test="subTaskId != null" >-->
+                <!--and sub_task_id = #{subTaskId}-->
+            <!--</if>-->
+            <!--<if test="subTaskIdList != null and subTaskIdList.size() > 0">-->
+                <!--and (sub_task_id in-->
+                <!--<foreach collection="subTaskIdList" item="subTaskIdItem" open="(" separator="," close=")">-->
+                    <!--#{subTaskIdItem}-->
+                <!--</foreach>-->
+                <!--)-->
+            <!--</if>-->
+        <!--</where>-->
+    <!--</update>-->
 
     <delete id="delete_stock_separate_increment_item" parameterType="HashMap">
         delete

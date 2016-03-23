@@ -159,12 +159,12 @@
 								</td>
 								<td class="text-center w3">{{'TXT_DYNAMIC' | translate}}</td>
 								<td class="text-center w10">
-									<button title="启动" class="btn btn-default-purple btn-xs" ng-click="$ctrl.executeStockSeparation(stock.sku)"><i class="glyphicon glyphicon-play"></i>&nbsp;{{'TXT_STARTUP' | translate}}</button>
-									<button title="还原" class="btn btn-default-green btn-xs" ng-click="$ctrl.executeStockRevert(stock.sku)"><i class="glyphicon glyphicon-share-alt"></i>&nbsp;{{'TXT_REVERT' | translate}}</button>
+									<button class="btn btn-default-purple btn-xs" ng-click="$ctrl.executeStockSeparation(stock.sku)"><i class="glyphicon glyphicon-play"></i>&nbsp;{{'TXT_STARTUP' | translate}}</button>
+									<button class="btn btn-default-green btn-xs" ng-click="$ctrl.executeStockRevert(stock.sku)"><i class="glyphicon glyphicon-share-alt"></i>&nbsp;{{'TXT_REVERT' | translate}}</button>
 								</td>
 								<td class="text-center w3">
-									<button title="保存" class="btn btn-vo btn-xs" ng-click="$ctrl.saveRecord($index)"><i class="glyphicon glyphicon-floppy-disk"></i></button>
-									<button title="删除" class="btn btn-danger btn-xs" ng-click="$ctrl.delRecord(stock.sku)"><i class="fa  fa-trash-o"></i></button>
+									<button title="{{'BTN_SAVE' | translate}}" class="btn btn-vo btn-xs" ng-click="$ctrl.saveRecord($index)"><i class="glyphicon glyphicon-floppy-disk"></i></button>
+									<button title="{{'BTN_DELETE' | translate}}" class="btn btn-danger btn-xs" ng-click="$ctrl.delRecord(stock.sku)"><i class="fa  fa-trash-o"></i></button>
 								</td>
 							</tr>
 
@@ -203,11 +203,11 @@
 								<td ng-repeat="platform in realStock.platformStock" class="text-center w5">
 									<div class="form-inline btn-group">
 										<span ng-if="platform.separationQty == -1">
-										    <button title="动态" class="badge badge-empty btn-xs">{{'TXT_DYNAMIC' | translate}}</button>
+										    <button title="{{'TXT_DYNAMIC' | translate}}" class="badge badge-empty btn-xs">{{'TXT_DYNAMIC' | translate}}</button>
 										</span>
 										<span ng-if="platform.separationQty != -1">
-											<button title="平台销售量" class="badge badge-empty btn-xs" ng-if="$ctrl.realStockStatus == '0'">{{platform.salesQty}}</button>
-											<button title="平台隔离数量" class="badge badge-empty btn-vo btn-xs" ng-click="openSkuMrbStockDetail('md', $ctrl.taskId, platform.cartId, realStock)">{{platform.separationQty}}</button>
+											<button title="{{'TXT_PLATFORM_SALE_QUANTITY' | translate}}" class="badge badge-empty btn-xs" ng-if="$ctrl.realStockStatus == '0'">{{platform.salesQty}}</button>
+											<button title="{{'TXT_PLATFORM_STOCK_SEPARATE_QUANTITY' | translate}}" class="badge badge-empty btn-vo btn-xs" ng-click="openSkuMrbStockDetail('md', $ctrl.taskId, platform.cartId, realStock)">{{platform.separationQty}}</button>
 										</span>
 									</div>
 								</td>
