@@ -22,6 +22,7 @@ import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.masterdate.schema.field.MultiComplexField;
 import com.voyageone.common.util.MD5;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.common.util.inch2cm.InchStrConvert;
 import com.voyageone.service.bean.cms.product.ProductPriceBean;
 import com.voyageone.service.bean.cms.product.ProductSkuPriceBean;
 import com.voyageone.service.bean.cms.product.ProductUpdateBean;
@@ -414,16 +415,13 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                     List<String> transBaiduOrg = new ArrayList<>(); // 百度翻译 - 输入参数
                     transBaiduOrg.add(strProductNameEn); // 标题
                     if (!StringUtils.isEmpty(strLongDesEn)) {
-                        // TODO: 临时关掉
-//                        if ("010".equals(feed.getChannelId())) {
-//                            logger.info("channel:" + feed.getChannelId());
-//                            logger.info("code:" + feed.getCode());
-//                            logger.info("strLongDesEn:" + strLongDesEn);
-//
-//                            transBaiduOrg.add(new InchStrConvert().inchToCM(strLongDesEn)); // 长描述
-//                        } else {
+                        // TODO: 临时关掉017
+                        if ("010".equals(feed.getChannelId())) {
+                            logger.info("英寸转厘米:原始:" + strLongDesEn);
+                            transBaiduOrg.add(new InchStrConvert().inchToCM(strLongDesEn)); // 长描述
+                        } else {
                             transBaiduOrg.add(strLongDesEn); // 长描述
-//                        }
+                        }
                     }
                     List<String> transBaiduCn; // 百度翻译 - 输出参数
                     try {
