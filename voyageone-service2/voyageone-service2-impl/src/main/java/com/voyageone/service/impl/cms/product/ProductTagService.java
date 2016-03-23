@@ -29,32 +29,6 @@ public class ProductTagService extends BaseService {
 
     @Autowired
     private CmsBtProductDao cmsBtProductDao;
-//
-//    /**
-//     * ProductSkusGetRequest - > ProductsGetRequest
-//     * @param inputRequest ProductSkusGetRequest
-//     * @return ProductsGetRequest
-//     */
-//    private ProductsGetRequest createProductsRequest(ProductSkusGetRequest inputRequest) {
-//        if (inputRequest == null) {
-//            return null;
-//        }
-//        ProductsGetRequest result = new ProductsGetRequest();
-//        result.setFields(inputRequest.getFields());
-//        result.addField("skus");
-//
-//
-//        result.setSorts(inputRequest.getSorts());
-//        result.setPageNo(inputRequest.getPageNo());
-//        result.setPageSize(inputRequest.getPageSize());
-//
-//        result.setChannelId(inputRequest.getChannelId());
-//        result.setProductIds(inputRequest.getProductIds());
-//        result.setProductCodes(inputRequest.getProductCodes());
-//
-//        return result;
-//    }
-//
 
     /**
      * 增加商品的Tag
@@ -262,7 +236,5 @@ public class ProductTagService extends BaseService {
         tagLogModel.setCreater(modifier);
         cmsBtTagLogModelList.add(tagLogModel);
     }
-
-
 
 }

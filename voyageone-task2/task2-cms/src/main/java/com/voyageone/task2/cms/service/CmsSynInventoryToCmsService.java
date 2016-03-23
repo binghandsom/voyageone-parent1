@@ -28,9 +28,6 @@ import java.util.Map;
 @Service
 public class CmsSynInventoryToCmsService extends BaseTaskService {
 
-//    @Autowired
-//    private InventoryTmpDao inventoryTmpDao;
-
     @Autowired
     private InventoryDao inventoryDao;
 
@@ -55,7 +52,8 @@ public class CmsSynInventoryToCmsService extends BaseTaskService {
         return true;
     }
 
-    static int i = 1;
+    // mongoDB 每次批量执行的数
+    public static final int BULK_COUNT = 500;
 
     /**
      * 批量插入code级别的库存数据到mongdodb，以便db端的定时任务进行处理
@@ -120,7 +118,7 @@ public class CmsSynInventoryToCmsService extends BaseTaskService {
                         model.setQueryMap(queryMap);
                         bulkList.add(model);
                         //批量插入group级记录到mysql 10000条插入一次 TODO
-                        if (bulkList.size() >= 10) {
+                        if (bulkList.size() >= BULK_COUNT) {
                             cmsBtProductDao.bulkUpdateWithMap(orderChannelID, bulkList, getTaskName(), "$set");
                             bulkList.clear();
                         }
@@ -144,7 +142,7 @@ public class CmsSynInventoryToCmsService extends BaseTaskService {
         Map<String, Object> ret = new HashMap<>();
 
         //以500条更新一次数据库
-        List<List<InventoryForCmsBean>> codeInventoryListSplit = CommonUtil.splitList(codeInventoryList, 500);
+        List<List<InventoryForCmsBean>> codeInventoryListSplit = CommonUtil.splitList(codeInventoryList, BULK_COUNT);
         for (List<InventoryForCmsBean> codeInventoryListItem : codeInventoryListSplit) {
             List<BulkUpdateModel> bulkList = new ArrayList<>();
             for (InventoryForCmsBean codeInventory : codeInventoryListItem) {

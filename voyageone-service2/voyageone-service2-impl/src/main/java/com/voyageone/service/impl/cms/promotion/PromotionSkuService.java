@@ -18,10 +18,7 @@ public class PromotionSkuService extends BaseService {
 
     @Autowired
     private CmsPromotionSkuDao cmsPromotionSkuDao;
-//
-//    @Autowired
-//    private WmsBtInventoryCenterOutputTmpDao wmsBtInventoryCenterOutputTmpDao;
-//
+
     public List<Map<String,Object>> getPromotionSkuList(Map<String,Object> params){
         return cmsPromotionSkuDao.getPromotionSkuList(params);
     }
@@ -33,34 +30,4 @@ public class PromotionSkuService extends BaseService {
     public int remove(int promotionId, long productId){
         return cmsPromotionSkuDao.deletePromotionSkuByProductId(promotionId, productId);
     }
-//
-//    @Transactional
-//    public PromotionSkuInventoryInfoDeleteResponse delSkuInventoryInfo(PromotionSkuInventoryInfoDeleteRequest request) {
-//        PromotionSkuInventoryInfoDeleteResponse response=new PromotionSkuInventoryInfoDeleteResponse();
-//        response.setDelete(wmsBtInventoryCenterOutputTmpDao.delSkuInventoryInfo());
-//        return response;
-//    }
-//
-//    @Transactional
-//    public PromotionSkuInventoryInfoInsertResponse insertSkuInventoryInfo(PromotionSkuInventoryInfoInsertRequest request) {
-//        PromotionSkuInventoryInfoInsertResponse res=new PromotionSkuInventoryInfoInsertResponse();
-//        res.setInsert(wmsBtInventoryCenterOutputTmpDao.insertSkuInventoryInfo(request.getInsertRecString()));
-//        return  res;
-//    }
-//
-//    public PromotionSkuInventoryInfoGetCountResponse getSkuInventoryInfoRecCount(PromotionSkuInventoryInfoGetRequest request) {
-//        PromotionSkuInventoryInfoGetCountResponse res=new PromotionSkuInventoryInfoGetCountResponse();
-//        res.setTotalCount(wmsBtInventoryCenterOutputTmpDao.getSkuInventoryInfoRecCount());
-//        return res;
-//    }
-//
-//    public PromotionSkuInventoryInfoGetResponse getSkuInventoryInfoRecInfo(PromotionSkuInventoryInfoGetRequest request) {
-//        PromotionSkuInventoryInfoGetResponse res=new PromotionSkuInventoryInfoGetResponse();
-//        List<CmsBtInventoryOutputTmpModel> models = wmsBtInventoryCenterOutputTmpDao.getSkuInventoryInfoRecInfo((request.getPageNo()-1)*request.getPageSize(),request.getPageSize());
-//        if(!CollectionUtils.isEmpty(models)){
-//            res.setModels(models);
-//            res.setTotalCount(Long.parseLong(String.valueOf(models.size())));
-//        }
-//        return res;
-//    }
 }
