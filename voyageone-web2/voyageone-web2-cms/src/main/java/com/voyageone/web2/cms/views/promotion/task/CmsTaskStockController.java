@@ -1,5 +1,6 @@
 package com.voyageone.web2.cms.views.promotion.task;
 
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
@@ -808,7 +809,7 @@ public class CmsTaskStockController extends CmsController {
      *
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK.EXPORT_STOCK_INFO)
-    public ResponseEntity exportStockInfo(@RequestParam Map param) throws Exception {
+    public ResponseEntity exportStockInfo(@RequestParam Map param) {
         Map searchParam = new HashMap();
         // 渠道id
         searchParam.put("channelId", this.getUser().getSelChannelId());
@@ -837,7 +838,13 @@ public class CmsTaskStockController extends CmsController {
         searchParam.put("platformList", JacksonUtil.json2Bean(platformList, List.class));
 
 
-        byte[] data = cmsTaskStockService.getExcelFileStockInfo(searchParam);
+        byte[] data;
+        try {
+            data = cmsTaskStockService.getExcelFileStockInfo(searchParam);
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            throw new BusinessException("导出异常！");
+        }
         // 返回
         return genResponseEntityFromBytes("StockInfo_" + DateTimeUtil.getLocalTime(getUserTimeZone(), DateTimeUtil.DATE_TIME_FORMAT_2)+".xlsx", data);
     }
