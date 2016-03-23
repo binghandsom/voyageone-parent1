@@ -37,8 +37,8 @@
         delete
         from voyageone_cms2.cms_bt_stock_separate_increment_task
         where 1=1
-            <if test="subTaskTd != null">
-                and sub_task_id = #{subTaskTd}
+            <if test="subTaskId != null">
+                and sub_task_id = #{subTaskId}
             </if>
             <if test="taskId != null">
                 and task_id = #{taskId}

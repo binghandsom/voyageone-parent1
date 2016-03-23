@@ -52,12 +52,12 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
     /**
      * 增量库存隔离数据是否移到history表
      *
-     * @param taskId 任务id
+     * @param subTaskId 子任务id
      * @return 增量库存隔离数据是否移到history表
      */
-    public boolean isHistoryExist(String taskId) {
+    public boolean isHistoryExist(String subTaskId) {
         return (cmsBtStockSeparateIncrementItemDao.selectStockSeparateIncrementItemHistoryCnt(new HashMap<String, Object>() {{
-            this.put("taskId", taskId);
+            this.put("subTaskId", subTaskId);
         }}) != 0) ? true : false;
     }
 

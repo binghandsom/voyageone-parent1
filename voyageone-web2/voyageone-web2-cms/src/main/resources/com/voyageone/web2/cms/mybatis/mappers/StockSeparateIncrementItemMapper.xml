@@ -35,7 +35,7 @@
         and status = #{status}
     </select>
 
-    <select id="select_stock_separate_increment_item_by_status" resultType="Object" parameterType="HashMap">
+    <select id="select_stock_separate_increment_item_by_status" resultType="Integer" parameterType="HashMap">
         select seq
         from   voyageone_cms2.cms_bt_stock_separate_increment_item
         where sub_task_id = #{subTaskId}
@@ -52,7 +52,7 @@
     <select id="select_stock_separate_increment_item_history_cnt" resultType="int" parameterType="HashMap">
         select count(*)
         from   voyageone_cms2.cms_bt_stock_separate_increment_item_history
-        where task_id = #{taskId}
+        where sub_task_id = #{subTaskId}
     </select>
 
     <update id="update_stock_separate_increment_item" parameterType="HashMap" >

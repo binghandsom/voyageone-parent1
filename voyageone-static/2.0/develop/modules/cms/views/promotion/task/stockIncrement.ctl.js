@@ -47,6 +47,7 @@ define([
                 var main = this;
                 main.confirm('TXT_MSG_DO_DELETE').result.then(function () {
                     main.taskStockIncrementService.delTask({
+                        "taskId" : main.taskId,
                         "subTaskId": subTaskId
                     }).then(function (res) {
                         main.notify.success('TXT_MSG_DELETE_SUCCESS');
