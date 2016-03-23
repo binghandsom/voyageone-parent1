@@ -57,9 +57,7 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
      * @return 增量库存隔离数据是否移到history表
      */
     public boolean isHistoryExist(String taskId) {
-        return (cmsBtStockSeparateIncrementItemDao.selectStockSeparateIncrementItemHistoryCnt(new HashMap<String, Object>() {{
-            this.put("taskId", taskId);
-        }}) != 0) ? true : false;
+        return (cmsBtStockSeparateIncrementItemDao.selectStockSeparateIncrementItemHistoryCnt(new HashMap<String, Object>() {{this.put("taskId", taskId);}}) != 0) ? true : false;
     }
 
     /**
