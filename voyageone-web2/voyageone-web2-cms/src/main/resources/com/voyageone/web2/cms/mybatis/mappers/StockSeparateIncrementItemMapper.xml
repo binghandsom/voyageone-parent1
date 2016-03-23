@@ -118,4 +118,23 @@
         </if>
     </delete>
 
+    <select id="select_stock_separate_increment_item_excel_map" resultType="com.voyageone.web2.cms.bean.promotion.task.StockIncrementExcelBean" parameterType="HashMap">
+        select
+        `product_model`,
+        `product_code`,
+        `sku`,
+        `property1`,
+        `property2`,
+        `property3`,
+        `property4`,
+        `qty`,
+        `increment_qty`,
+        `status`,
+        `fix_flg`
+        from ${tableName}
+        ${whereSql}
+        order by
+        `product_model`,`product_code`,`sku`
+    </select>
+
 </mapper>

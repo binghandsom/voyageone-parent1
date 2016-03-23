@@ -1,14 +1,17 @@
 package com.voyageone.web2.cms.views.promotion.task;
 
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,10 +33,6 @@ public class CmsTaskStockIncrementDetailController extends CmsController {
 
     @Autowired
     private CmsTaskStockIncrementDetailService cmsTaskStockIncrementDetailService;
-
-//    @Autowired
-//    private CmsTaskStockIncrementDetailService cmsTaskStockIncrementDetailService;
-
 
     /**
      * @api {post} /cms/promotion/task_stock_increment_detail/searchItem 3.1 检索增量隔离明细
@@ -244,7 +243,7 @@ public class CmsTaskStockIncrementDetailController extends CmsController {
      *
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK_INCREMENT_DETAIL.EXPORT_STOCK_INFO)
-    public ResponseEntity exportStockInfo(@RequestParam Map param) throws Exception {
+    public ResponseEntity exportStockInfo(@RequestParam Map param) {
 
         Map searchParam = new HashMap();
         // 渠道id
@@ -271,8 +270,13 @@ public class CmsTaskStockIncrementDetailController extends CmsController {
         String platformList = (String) param.get("platformList");
         searchParam.put("platformList", JacksonUtil.json2Bean(platformList, List.class));
 
-
-        byte[] data = cmsTaskStockIncrementDetailService.getExcelFileStockIncrementInfo(searchParam);
+        byte[] data;
+        try {
+            data = cmsTaskStockIncrementDetailService.getExcelFileStockIncrementInfo(searchParam);
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            throw new BusinessException("导出异常！");
+        }
 
         // 返回
         return genResponseEntityFromBytes("StockIncrementInfo_" + DateTimeUtil.getLocalTime(getUserTimeZone(), DateTimeUtil.DATE_TIME_FORMAT_2)+".xlsx", data);

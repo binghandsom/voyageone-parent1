@@ -1122,7 +1122,7 @@ public class CmsTaskStockService extends BaseAppService {
             // 自适应列宽
             List<Map> propertyList = (List<Map>) param.get("propertyList");
             List<Map> platformList = (List<Map>) param.get("platformList");
-            int cntCol = 3 + propertyList.size() + platformList.size() + 1;
+            int cntCol = 3 + propertyList.size() + platformList.size() + 2;
             for (int i = 0; i < cntCol; i++) {
                 book.getSheetAt(0).autoSizeColumn(i);
             }

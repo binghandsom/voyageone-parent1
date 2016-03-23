@@ -1,6 +1,7 @@
 package com.voyageone.web2.cms.dao;
 
 import com.voyageone.base.dao.BaseDao;
+import com.voyageone.web2.cms.bean.promotion.task.StockIncrementExcelBean;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -35,5 +36,9 @@ public class CmsBtStockSeparateIncrementItemDao extends BaseDao {
 
     public int deleteStockSeparateIncrementItem(Map<String, Object> param) {
         return delete("delete_stock_separate_increment_item", param);
+    }
+
+    public List<StockIncrementExcelBean> selectExcelStockIncrementInfo(Map<String, Object> param) {
+        return selectList("select_stock_separate_increment_item_excel_map", param);
     }
 }
