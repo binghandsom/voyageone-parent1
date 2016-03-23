@@ -360,15 +360,15 @@ public class VtmService extends BaseTaskService {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
         String date_ymd = sdf.format(date);
 
-        String filename = Feed.getVal1(channel_id, FeedEnums.Name.feed_ftp_localpath) + "/" + StringUtils.null2Space(Feed.getVal1(channel_id, FeedEnums.Name.file_id));
+        String filename = Feed.getVal1(channel_id, FeedEnums.Name.feed_ftp_localpath) + "/" + StringUtils.null2Space(Feed.getVal1(channel_id, FeedEnums.Name.file_id_import_upc));
         String filename_backup = Feed.getVal1(channel_id, FeedEnums.Name.feed_ftp_localpath) + "/" + date_ymd + "_"
-                + StringUtils.null2Space(Feed.getVal1(channel_id, FeedEnums.Name.file_id));
+                + StringUtils.null2Space(Feed.getVal1(channel_id, FeedEnums.Name.file_id_import_upc));
         File file = new File(filename);
         File file_backup = new File(filename_backup);
 
         if (!file.renameTo(file_backup)) {
 //            logger.error("产品文件备份失败");
-            $info("产品文件备份失败");
+            $info("UPC文件备份失败");
         }
 
         $info("备份处理文件结束");
