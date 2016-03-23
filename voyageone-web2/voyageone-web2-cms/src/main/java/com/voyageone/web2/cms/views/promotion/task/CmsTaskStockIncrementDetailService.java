@@ -7,6 +7,7 @@ import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.CmsConstants;
 import com.voyageone.web2.cms.bean.promotion.task.StockIncrementExcelBean;
 import com.voyageone.web2.cms.dao.CmsBtStockSeparateIncrementItemDao;
+import com.voyageone.web2.cms.dao.CmsBtStockSeparateIncrementTaskDao;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -31,6 +32,9 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
 
     @Autowired
     private CmsBtStockSeparateIncrementItemDao cmsBtStockSeparateIncrementItemDao;
+
+    @Autowired
+    private CmsBtStockSeparateIncrementTaskDao cmsBtStockSeparateIncrementTaskDao;
 
     /**
      * 按固定值进行增量隔离
@@ -60,6 +64,23 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
         return (cmsBtStockSeparateIncrementItemDao.selectStockSeparateIncrementItemHistoryCnt(new HashMap<String, Object>() {{
             this.put("subTaskId", subTaskId);
         }}) != 0) ? true : false;
+    }
+
+    /**
+     * 根据子任务id取得任务id
+     *
+     * @param subTaskId 子任务id
+     * @return 任务id
+     */
+    public String getTaskId(String subTaskId) {
+        Map<String,Object> sqlParam = new HashMap<String,Object>();
+        sqlParam.put("subTaskId", subTaskId);
+        List<Map<String, Object>> stockSeparateIncrementTask = cmsBtStockSeparateIncrementTaskDao.selectStockSeparateIncrementTask(sqlParam);
+        if (stockSeparateIncrementTask == null || stockSeparateIncrementTask.size() == 0) {
+            return null;
+        } else {
+            return (String) stockSeparateIncrementTask.get(0).get("task_id");
+        }
     }
 
     /**
