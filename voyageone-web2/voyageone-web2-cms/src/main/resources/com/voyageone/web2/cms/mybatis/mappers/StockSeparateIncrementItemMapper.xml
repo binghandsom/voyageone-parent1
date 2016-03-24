@@ -49,6 +49,13 @@
         limit 0,1
     </select>
 
+    <select id="select_stock_separate_increment_item_status_cnt" resultType="int" parameterType="HashMap">
+        select count(*)
+        from   voyageone_cms2.cms_bt_stock_separate_increment_item
+        where sub_task_id = #{subTaskId}
+          and status != '0'
+    </select>
+
     <select id="select_stock_separate_increment_item_history_cnt" resultType="int" parameterType="HashMap">
         select count(*)
         from   voyageone_cms2.cms_bt_stock_separate_increment_item_history

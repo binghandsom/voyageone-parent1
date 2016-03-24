@@ -1816,7 +1816,7 @@ public class CmsTaskStockService extends BaseAppService {
                     bean.setSeparate_qty(new BigDecimal("-1"));
                 } else {
                     bean.setSeparate_qty(new BigDecimal(separate_qty));
-                    bean.setStatus("0");
+                    bean.setStatus(STATUS_READY);
                 }
 
                 saveData.add(bean);
@@ -1884,10 +1884,10 @@ public class CmsTaskStockService extends BaseAppService {
                         bean.setSeparate_qty(new BigDecimal("-1"));
                     } else {
                         bean.setSeparate_qty(new BigDecimal(separate_qty));
-                        if ("2".equals(beanInDB.getStatus()) || "7".equals(beanInDB.getStatus())) {
-                            bean.setStatus("7");
+                        if (STATUS_SEPARATE_SUCCESS.equals(beanInDB.getStatus()) || STATUS_CHANGED.equals(beanInDB.getStatus())) {
+                            bean.setStatus(STATUS_CHANGED);
                         } else {
-                            bean.setStatus("0");
+                            bean.setStatus(STATUS_READY);
                         }
                     }
 

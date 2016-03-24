@@ -351,11 +351,19 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
      * @param file  导入文件
      */
     public void importExcelFileStockIncrementInfo(Map param, MultipartFile file) {
+        String subTaskId = (String) param.get("task_id");
         // 取得任务id对应的Promotion是否未开始或者已经结束
-        boolean promotionDuringFlg = isPromotionDuring((String) param.get("task_id"));
+        boolean promotionDuringFlg = isPromotionDuring(subTaskId);
         if (!promotionDuringFlg) {
             throw new BusinessException("活动未开始或者已经结束，不能修改数据！");
         }
+
+        if (cmsBtStockSeparateIncrementItemDao.selectStockSeparateIncrementItemStatusCnt(new HashMap<String, Object>(){{this.put("subTaskId", subTaskId);}}) > 0 ) {
+            // 如果在cms_bt_stock_separate_increment_item表中，这个增量任务有状态<>0:未进行的数据，则不允许导入
+            throw new BusinessException("此增量任务已经进行，不能修改数据！");
+        }
+
+
 
     }
 
