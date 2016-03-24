@@ -94,8 +94,12 @@ public class ProductGroupService extends BaseService {
             queryObject.setQuery(String.format("{ \"groups.platforms\": {\"$elemMatch\": {\"groupId\": %d}}}", groupId));
         return cmsBtProductDao.select(queryObject, channelId);
     }
+
     /**
      * save Groups
+     * @param channelId
+     * @param productIds
+     * @param platform
      */
     public void saveGroups(String channelId, Set<Long> productIds, CmsBtProductModel_Group_Platform platform) {
         List<BulkUpdateModel> bulkInsertList = new ArrayList<>();
