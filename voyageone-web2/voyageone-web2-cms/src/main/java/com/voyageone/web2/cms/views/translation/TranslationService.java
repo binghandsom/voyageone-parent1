@@ -143,7 +143,10 @@ public class TranslationService {
     public TranslateTaskBean saveTask(UserSessionBean userInfo, ProductTranslationBean taskBean, String transSts) {
 
         // check翻译数据是否正确
-        verifyParameter(taskBean);
+        if("1".equalsIgnoreCase(transSts)){
+            verifyParameter(taskBean);
+        }
+
         // 先查询该商品对应的group信息
 //        logger.debug("TranslationService.saveTask() 商品ProdId=" + taskBean.getProdId());
 //
@@ -191,10 +194,12 @@ public class TranslationService {
         updObj.put("fields.translator", userInfo.getUserName());
         updObj.put("fields.translateStatus", transSts);
         updObj.put("fields.translateTime", DateTimeUtil.getNow(DateTimeUtil.DEFAULT_DATETIME_FORMAT));
+        updObj.put("fields.originalTitleCn", taskBean.getLongTitle());
         updObj.put("fields.longTitle", taskBean.getLongTitle());
         updObj.put("fields.middleTitle", taskBean.getMiddleTitle());
         updObj.put("fields.shortTitle", taskBean.getShortTitle());
         updObj.put("fields.longDesCn", taskBean.getLongDesCn());
+        updObj.put("fields.originalDesCn", taskBean.getLongDesCn());
         updObj.put("fields.shortDesCn", taskBean.getShortDesCn());
 
         productService.updateTranslation(userInfo.getSelChannelId(), taskBean.getGroupId(), updObj, userInfo.getUserName());
@@ -463,22 +468,22 @@ public class TranslationService {
 
             throw new BusinessException("长标题不能为空");
         }
-        if (StringUtils.isEmpty(requestBean.getMiddleTitle())){
-
-            throw new BusinessException("中标题不能为空");
-        }
-        if (StringUtils.isEmpty(requestBean.getShortTitle())){
-
-            throw new BusinessException("短标题不能为空");
-        }
+//        if (StringUtils.isEmpty(requestBean.getMiddleTitle())){
+//
+//            throw new BusinessException("中标题不能为空");
+//        }
+//        if (StringUtils.isEmpty(requestBean.getShortTitle())){
+//
+//            throw new BusinessException("短标题不能为空");
+//        }
         if (StringUtils.isEmpty(requestBean.getLongDesCn())){
 
             throw new BusinessException("长描述不能为空");
         }
-        if (StringUtils.isEmpty(requestBean.getShortDesCn())){
-
-            throw new BusinessException("短描述不能为空");
-        }
+//        if (StringUtils.isEmpty(requestBean.getShortDesCn())){
+//
+//            throw new BusinessException("短描述不能为空");
+//        }
     }
 
     /**

@@ -237,8 +237,13 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 // 查看类目是否匹配完成
                 if (mapping == null) {
                     // 记下log, 跳过当前记录
+                    if (cmsProduct == null) {
 //                    logIssue(getTaskName(), String.format("[CMS2.0][测试]该feed类目, 没有匹配到主数据的类目 ( channel: [%s], feed: [%s] )", channelId, feed.getCategory()));
-                    logger.warn(String.format("[CMS2.0][测试]该feed类目, 没有匹配到主数据的类目 ( channel: [%s], feed: [%s] )", channelId, feed.getCategory()));
+                        logger.warn(String.format("[CMS2.0][测试]该feed类目, 没有匹配到主数据的类目 ( channel: [%s], feed: [%s] )", channelId, feed.getCategory()));
+                    } else {
+//                    logIssue(getTaskName(), String.format("[CMS2.0][测试]该feed类目, 没有匹配到主数据的类目 ( channel: [%s], feed: [%s], master: [%s] )", channelId, feed.getCategory(), cmsProduct.getCatPath()));
+                        logger.warn(String.format("[CMS2.0][测试]该feed类目, 没有匹配到主数据的类目 ( channel: [%s], feed: [%s], master: [%s] )", channelId, feed.getCategory(), cmsProduct.getCatPath()));
+                    }
 
                     return;
                 }
@@ -424,13 +429,13 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                     try {
                         transBaiduCn = BaiduTranslateUtil.translate(transBaiduOrg);
 
-                        field.setLongTitle(transBaiduCn.get(0)); // 标题
-                        field.setLongDesCn(transBaiduCn.get(1)); // 长描述
+                        field.setOriginalTitleCn(transBaiduCn.get(0)); // 标题
+                        field.setOriginalDesCn(transBaiduCn.get(1)); // 长描述
 
                     } catch (Exception e) {
                         // 翻译失败的场合,全部设置为空, 运营自己翻译吧
-                        field.setLongTitle(""); // 标题
-                        field.setLongDesCn(""); // 长描述
+                        field.setOriginalTitleCn(""); // 标题
+                        field.setOriginalDesCn(""); // 长描述
                     }
                 }
             }
