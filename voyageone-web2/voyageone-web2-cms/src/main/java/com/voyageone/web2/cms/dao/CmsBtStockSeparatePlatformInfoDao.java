@@ -19,4 +19,10 @@ public class CmsBtStockSeparatePlatformInfoDao extends BaseDao {
     public int deleteStockSeparatePlatform(Map<String, Object> param) {
         return delete("delete_stock_separate_platform", param);
     }
+    public String selectStockSeparatePlatFormInfoById(String cart_id,String separateTime){
+        return selectOne("select_cms_bt_stock_separate_platform_info", parameters(
+                "cart_id", cart_id,
+                "separateTime", separateTime
+        ));
+    }
 }

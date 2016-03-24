@@ -80,9 +80,10 @@ public class CmsTaskStockController extends CmsController {
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK.INIT_NEW_TASK)
     public AjaxResponse initNewTask(@RequestBody Map param) {
         //根据活ID取得CartId
-        Map<Object, String> resultBean = cmsTaskStockService.findByCartId(param);
+        Map<String, Boolean> selFlag = (Map) param.get("selFlag");
+        Map<String, Object> resultBean = cmsTaskStockService.getSeparateInfoByPromotionID(selFlag, getLang());
         // 返回
-        return success(null);
+        return success(resultBean);
     }
 
     /**

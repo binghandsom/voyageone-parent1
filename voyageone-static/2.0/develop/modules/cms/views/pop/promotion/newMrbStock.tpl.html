@@ -6,12 +6,12 @@
     </div>
     <div class="modal-body wrapper">
         <form role="form" class="form-horizontal">
-           <div class="form-group form-inline">
-               <label class="control-label m-l-md">任务名</label>
-               <input type="text" class="form-control" placeholder="请输入任务名">
-               <label class="checkbox-inline c-checkbox"><input type="radio"><span class="fa fa-check"></span>&nbsp;只导入Sku和库存</label>
-           </div>
-         </form>
+            <div class="form-group form-inline">
+                <label class="control-label m-l-md" ng-model="vm.promotionInfo.cartName">任务名</label>
+                <input type="text" class="form-control" placeholder="请输入任务名" ng-model="vm.separateTaskName">
+                <label class="checkbox-inline c-checkbox"><input type="radio"><span class="fa fa-check"></span>&nbsp;只导入Sku和库存</label>
+            </div>
+        </form>
         <div class="panel vo_panel tab_panel">
             <!-- .table-responsive -->
             <div class="table-responsive">
@@ -27,51 +27,42 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                        <td class="mfb-xxx">天猫</td>
-                        <td class="mfb-xxt"><input type="text" class="form-control ims_input_w" id="input-id-1" placeholder="20%"></td>
-                        <td class="mfb-xxt text-center">隔离</td>
+                    <tr ng-repeat="cartid in vm.getInitPromotionCartNameList.platformList">
+                        <td class="mfb-xxx">{{cartid.cartName}}</td>
+                        <td class="mfb-xxt"><input type="text" class="form-control ims_input_w" id="input-id-1"
+                                                   placeholder="20%"></td>
+                        <td class="mfb-xxt text-center">{{::cartid.type == 1 ? '隔离' : '共享'}}</td>
                         <td class="mfb-xxs">
-                            <div class="input-group" ng-controller="datePickerCtrl">
-                                <input type="text" id="input-id-18" data-inputmask="'alias': 'dd/mm/yyyy'" data-mask="" value="2016-11-02 03:00:00" class="form-control" uib-datepicker-popup="{{formatDate}}" ng-model="$parent.searchInfo.createdStart" date-model-format="{{formatDate}}" is-open="opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" />
-								              <span class="input-group-btn">
-								                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
-								              </span>
+                            <div class="input-group" ng-controller="datePickerCtrl" ng-if="::cartid.type == 1">
+                                <input type="text" id="input-id-18" data-inputmask="'alias': 'dd/mm/yyyy'" data-mask=""
+                                       class="form-control" uib-datepicker-popup="{{formatDate}}"
+                                       ng-model="cartid.revertTime" date-model-format="{{formatDate}}" is-open="opened"
+                                       datepicker-options="dateOptions" required close-text="Close"/>
+                                      <span class="input-group-btn">
+                                        <button type="button" class="btn btn-default" ng-click="open($event)"><i
+                                                class="glyphicon glyphicon-calendar"></i>
+                                        </button>
+                                      </span>
                             </div>
                         </td>
-                        <td class="mfb-xxt"><input type="text" class="form-control ims_input_w" id="input-id-10" value="3"></td>
-                        <td class="mfb-xxt"><input type="text" class="form-control ims_input_w" id="input-id-11" value="3"></td>
-                    </tr>
-                    <tr>
-                        <td class="mfb-xxx">聚美优品</td>
-                        <td class="mfb-xxt"><input type="text" class="form-control ims_input_w" id="input-id-2" placeholder="50%"></td>
-                        <td class="mfb-xxt text-center">隔离</td>
-                        <td class="mfb-xxs">
-                            <div class="input-group" ng-controller="datePickerCtrl">
-                            <input type="text" value="2016-11-02 10:00:00" class="form-control" uib-datepicker-popup="{{formatDate}}" ng-model="$parent.searchInfo.createdStart" date-model-format="{{formatDate}}" is-open="opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" />
-								              <span class="input-group-btn">
-								                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
-								              </span>
-                        </div>
+                        <td class="mfb-xxt">
+                            <input type="text" class="form-control ims_input_w" id="input-id-10"
+                                   ng_model="cartid.addPriority"/>
                         </td>
-                        <td class="mfb-xxt"><input type="text" class="form-control ims_input_w" id="input-id-12" value="2"></td>
-                        <td class="mfb-xxt"><input type="text" class="form-control ims_input_w" id="input-id-13" value="2"></td>
-                    </tr>
-                    <tr>
-                        <td class="mfb-xxx">京东&nbsp;|&nbsp;官网</td>
-                        <td class="mfb-xxt"></td>
-                        <td class="mfb-xxt text-center">共享</td>
-                        <td class="mfb-xxs"></td>
-                        <td class="mfb-xxt"><input type="text" class="form-control ims_input_w" id="input-id-14" value="1"></td>
-                        <td class="mfb-xxt"><input type="text" class="form-control ims_input_w" id="input-id-15" value="1"></td>
+                        <td class="mfb-xxt">
+                            <input type="text" class="form-control ims_input_w" id="input-id-11"
+                                   ng_model="cartid.subtractPriority"/>
+                        </td>
                     </tr>
                     </tbody>
                 </table>
-            </div><!-- .table-responsive -->
-        </div> <!-- .panel -->
+            </div>
+            <!-- .table-responsive -->
+        </div>
+        <!-- .panel -->
     </div>
     <div class="modal-footer">
         <button class="btn btn-default" ng-click="$close()"><i class="fa fa-remove"></i> 取消</button>
-        <button class="btn btn-vo" ng-click="ok()"><i class="glyphicon glyphicon-floppy-disk"></i> 保存</button>
+        <button class="btn btn-vo" ng-click="saveTask()"><i class="glyphicon glyphicon-floppy-disk"></i> 保存</button>
     </div>
 </div><!-- .vo_modal -->
