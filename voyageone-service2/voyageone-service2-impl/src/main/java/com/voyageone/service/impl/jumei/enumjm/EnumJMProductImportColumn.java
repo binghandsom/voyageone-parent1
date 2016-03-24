@@ -1,9 +1,6 @@
 package com.voyageone.service.impl.jumei.enumjm;
 import com.voyageone.service.impl.Excel.EnumExcelColumnType;
 import com.voyageone.service.impl.Excel.ExcelColumn;
-import com.voyageone.service.impl.Excel.FunctionFormatter;
-import com.voyageone.service.impl.jumei.JmBtProductService;
-import com.voyageone.service.model.jumei.JmBtProductModel;
 
 import java.util.Arrays;
 import java.util.List;
