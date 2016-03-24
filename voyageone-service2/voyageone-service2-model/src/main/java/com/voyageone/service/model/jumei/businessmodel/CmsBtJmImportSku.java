@@ -7,7 +7,7 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Date;
 
-public class CmsBtJmImportSkuModel extends CmsBtJmSkuModel {
+public class CmsBtJmImportSku extends CmsBtJmSkuModel {
     double dealPrice;
     double marketPrice;
     public double getMarketPrice() {
