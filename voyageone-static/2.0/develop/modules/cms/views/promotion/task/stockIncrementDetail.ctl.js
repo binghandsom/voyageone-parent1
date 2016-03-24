@@ -13,6 +13,7 @@ define([
             this.alert = alert;
             this.notify = notify;
             this.confirm = confirm;
+            this.taskId = "";
             this.subTaskId = $routeParams['sub_task_id'];
             this.taskStockIncrementDetailService = taskStockIncrementDetailService;
             this.hasAuthority = true;
@@ -52,11 +53,14 @@ define([
                 var main = this;
 
                 main.taskStockIncrementDetailService.searchItem({
+                    "taskId" : main.taskId,
                     "subTaskId" : main.subTaskId,
                     "model" : main.model,
                     "code" : main.code,
                     "sku" : main.sku,
                     "status" : main.status,
+                    "cartId" : main.cartId,
+                    "cartName" : main.cartName,
                     "propertyList" : main.propertyList,
                     "start1" :  0,
                     "length1" : 20
@@ -66,6 +70,7 @@ define([
                     //    main.alert('没有权限访问！')
                     //    return;
                     //}
+                    main.taskId = res.data.taskId;
                     main.readyNum = res.data.readyNum;
                     main.waitIncrementNum = res.data.waitIncrementNum;
                     main.increasingNum = res.data.increasingNum;
@@ -85,9 +90,11 @@ define([
             download: function () {
                 var main = this;
                 $.download.post(main.downloadUrl, {
-                    task_id: main.taskId,
-                    propertyList: JSON.stringify(main.propertyList),
-                    platformList: JSON.stringify(main.platformList),
+                    "taskId" : main.taskId,
+                    "subTaskId" : main.subTaskId,
+                    "propertyList": JSON.stringify(main.propertyList),
+                    "cartId" : main.cartId,
+                    "cartName" : main.cartName,
                     "model" : main.model,
                     "code" : main.code,
                     "sku" : main.sku,

@@ -3,6 +3,7 @@ package com.voyageone.web2.cms.views.promotion.task;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
@@ -112,21 +113,23 @@ public class CmsTaskStockIncrementDetailController extends CmsController {
         Map<String, Object> resultBean = new HashMap<>();
 
         // 根据子任务id取得任务id
-        String taskId = cmsTaskStockIncrementDetailService.getTaskId((String) param.get("subTaskId"));
+        if (StringUtils.isEmpty((String) param.get("taskId"))) {
+            String taskId = cmsTaskStockIncrementDetailService.getTaskId((String) param.get("subTaskId"));
+            resultBean.put("taskId", taskId);
+        } else {
+            resultBean.put("taskId", param.get("taskId"));
+        }
 
         // morse.lu test用 added at 2016/03/23 start
 
 
         // 任务对应平台信息列表 只有首次取得
-        if (param.get("platformList") == null || ((Map<String, Object>)param.get("platformList")).size() == 0) {
-
-            Map<String, String> platformList = new HashMap<>();
-            platformList.put("cartId", "23");
-            platformList.put("cartName", "天猫国际");
-            resultBean.put("platformList", platformList);
-            param.put("platformList", platformList);
+        if (StringUtils.isEmpty((String) param.get("cartId"))) {
+            resultBean.put("cartId", "23");
+            resultBean.put("cartName", "天猫国际");
         } else {
-            resultBean.put("platformList", param.get("platformList"));
+            resultBean.put("cartId", param.get("cartId"));
+            resultBean.put("cartName", param.get("cartName"));
         }
 
         // 取得属性列表 只有首次取得
@@ -269,16 +272,17 @@ public class CmsTaskStockIncrementDetailController extends CmsController {
             searchParam.put("tableName", "voyageone_cms2.cms_bt_stock_separate_increment_item");
         }
 
-        searchParam.put("taskId", (String) param.get("task_id"));
+        searchParam.put("taskId", (String) param.get("taskId"));
+        searchParam.put("subTaskId", (String) param.get("subTaskId"));
         searchParam.put("model", (String) param.get("model"));
         searchParam.put("code", (String) param.get("code"));
         searchParam.put("sku", (String) param.get("sku"));
         searchParam.put("status", (String) param.get("status"));
+        searchParam.put("cartId", (String) param.get("cartId"));
+        searchParam.put("cartName", (String) param.get("cartName"));
 
         String propertyList = (String) param.get("propertyList");
         searchParam.put("propertyList", JacksonUtil.json2Bean(propertyList, List.class));
-        String platformList = (String) param.get("platformList");
-        searchParam.put("platformList", JacksonUtil.json2Bean(platformList, Map.class));
 
         byte[] data;
         try {
@@ -346,12 +350,15 @@ public class CmsTaskStockIncrementDetailController extends CmsController {
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK_INCREMENT_DETAIL.IMPORT_STOCK_INFO)
     public AjaxResponse importStockInfo(@RequestParam Map param, @RequestParam MultipartFile file) {
+        // 返回内容
+        Map<String, Object> resultBean = new HashMap<>();
+
         // 创建者/更新者用
         param.put("userName", this.getUser().getUserName());
         // import Excel
-        cmsTaskStockIncrementDetailService.importExcelFileStockIncrementInfo(param, file);
+        cmsTaskStockIncrementDetailService.importExcelFileStockIncrementInfo(param, file, resultBean);
         // 返回
-        return success(null);
+        return success(resultBean);
     }
 
 

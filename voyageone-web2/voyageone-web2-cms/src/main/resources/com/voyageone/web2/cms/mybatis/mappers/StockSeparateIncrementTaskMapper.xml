@@ -19,8 +19,8 @@
             on t1.cart_id = t2.value
         </if>
         where 1=1
-            <if test="subTaskTd != null">
-                and sub_task_id = #{subTaskTd}
+            <if test="subTaskId != null">
+                and sub_task_id = #{subTaskId}
             </if>
             <if test="taskId != null">
                 and task_id = #{taskId}

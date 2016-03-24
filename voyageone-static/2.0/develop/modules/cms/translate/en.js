@@ -314,6 +314,7 @@ define(function() {
         "TXT_MSG_IMPORT_UPDATE": "Update Mode",
         "TXT_MSG_IMPORT_ADD": "Add Mode",
         "TXT_MSG_IMPORT_DELETE_UPDATE": "Reset Mode",
+        "TXT_MSG_IMPORT_STATUS_ERROR": "Exist being processed data, these are not saved.",
 
 
         "BTN_CREATE_TASK": "New Task",

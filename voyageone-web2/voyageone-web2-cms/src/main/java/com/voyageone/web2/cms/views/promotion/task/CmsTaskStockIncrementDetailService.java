@@ -81,7 +81,7 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
         if (stockSeparateIncrementTask == null || stockSeparateIncrementTask.size() == 0) {
             return null;
         } else {
-            return (String) stockSeparateIncrementTask.get(0).get("task_id");
+            return String.valueOf(stockSeparateIncrementTask.get(0).get("task_id"));
         }
     }
 
@@ -95,7 +95,7 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
     private String getWhereSql(Map param, boolean statusFlg) {
         String whereSql = " where ";
         // 任务Id
-        whereSql += " sub_task_id = " + String.valueOf(param.get("taskId")) + " ";
+        whereSql += " sub_task_id = " + String.valueOf(param.get("subTaskId")) + " ";
 
         // 商品model
         if (!StringUtils.isEmpty((String) param.get("model"))) {
@@ -271,7 +271,8 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
         CellStyle cellStyleProperty = book.getSheetAt(1).getRow(0).getCell(4).getCellStyle(); // 属性的cellStyle
 
         List<Map> propertyList = (List<Map>) param.get("propertyList");
-        Map platform = (Map) param.get("platformList");
+        String cartId = (String) param.get("cartId");
+        String cartName = (String) param.get("cartName");
 
         // 内容输出
         int index = 3;
@@ -290,9 +291,9 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
 
         // 平台
         CellStyle cellStylePlatform = book.getSheetAt(1).getRow(0).getCell(0).getCellStyle(); // 平台的cellStyle
-        FileUtils.cell(row, index++, cellStylePlatform).setCellValue((String) platform.get("cartName"));
+        FileUtils.cell(row, index++, cellStylePlatform).setCellValue(cartName);
         Comment comment = drawing.createCellComment(helper.createClientAnchor());
-        comment.setString(helper.createRichTextString((String) platform.get("cartId")));
+        comment.setString(helper.createRichTextString(cartId));
         row.getCell(index - 1).setCellComment(comment);
 
         // 固定值增量
@@ -347,13 +348,15 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
     /**
      * excel 导入
      *
-     * @param param 客户端参数
-     * @param file  导入文件
+     * @param param      客户端参数
+     * @param file       导入文件
+     * @param resultBean 返回内容
      */
-    public void importExcelFileStockIncrementInfo(Map param, MultipartFile file) {
-        String subTaskId = (String) param.get("task_id");
+    public void importExcelFileStockIncrementInfo(Map param, MultipartFile file, Map<String, Object> resultBean) {
+        String taskId = (String) param.get("task_id");
+        String subTaskId = (String) param.get("subTaskId");
         // 取得任务id对应的Promotion是否未开始或者已经结束
-        boolean promotionDuringFlg = isPromotionDuring(subTaskId);
+        boolean promotionDuringFlg = isPromotionDuring(taskId);
         if (!promotionDuringFlg) {
             throw new BusinessException("活动未开始或者已经结束，不能修改数据！");
         }
