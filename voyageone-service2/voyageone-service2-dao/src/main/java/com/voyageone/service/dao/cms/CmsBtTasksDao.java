@@ -39,4 +39,8 @@ public class CmsBtTasksDao extends ServiceBaseDao {
     public List<CmsBtTasksModel> selectTaskWithPromotionByChannel(Map<String,Object> searchInfo) {
         return selectList("cms_bt_tasks_select", searchInfo);
     }
+
+    public int delete(CmsBtTasksModel mode) {
+        return delete("delete_stock_separate_item", mode);
+    }
 }

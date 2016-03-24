@@ -1,15 +1,18 @@
 package com.voyageone.web2.cms.views.promotion.task;
 
+import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -20,15 +23,19 @@ import java.util.Map;
         value = CmsUrlConstants.PROMOTION.TASK.STOCK_INCREMENT_DETAIL.ROOT,
         method = RequestMethod.POST
 )
-public class CmsTaskIncrementStockDetailController extends CmsController {
+public class CmsTaskStockIncrementDetailController extends CmsController {
 
-//    @Autowired
-//    private CmsTaskIncrementStockDetailService cmsTaskIncrementStockDetailService;
+    // morse.lu test用 added at 2016/03/23 start
+    @Autowired
+    private CmsTaskStockService cmsTaskStockService;
+    // morse.lu test用 added at 2016/03/23 end
 
+    @Autowired
+    private CmsTaskStockIncrementDetailService cmsTaskStockIncrementDetailService;
 
     /**
      * @api {post} /cms/promotion/task_stock_increment_detail/searchItem 3.1 检索增量隔离明细
-     * @apiName CmsTaskIncrementStockDetailController.searchItem
+     * @apiName CmsTaskStockIncrementDetailController.searchItem
      * @apiDescription 检索增量隔离明细
      * @apiGroup promotion
      * @apiVersion 0.0.1
@@ -95,13 +102,39 @@ public class CmsTaskIncrementStockDetailController extends CmsController {
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK_INCREMENT_DETAIL.SEARCH_ITEM)
     public AjaxResponse searchItem(@RequestBody Map param) {
 
+        // morse.lu test用 added at 2016/03/23 start
+        // 返回内容
+        Map<String, Object> resultBean = new HashMap<>();
+
+        // 任务对应平台信息列表 只有首次取得
+        if (param.get("platformList") == null || ((Map<String, Object>)param.get("platformList")).size() == 0) {
+
+            Map<String, String> platformList = new HashMap<>();
+            platformList.put("cartId", "23");
+            platformList.put("cartName", "天猫国际");
+            resultBean.put("platformList", platformList);
+            param.put("platformList", platformList);
+        } else {
+            resultBean.put("platformList", param.get("platformList"));
+        }
+
+        // 取得属性列表 只有首次取得
+        if (param.get("propertyList") == null || ((List<Map<String, Object>>)param.get("propertyList")).size() == 0) {
+            List<Map<String, Object>> propertyList = cmsTaskStockService.getPropertyList(this.getUser().getSelChannelId(), this.getLang());
+            resultBean.put("propertyList", propertyList);
+            param.put("propertyList", propertyList);
+        } else {
+            resultBean.put("propertyList", param.get("propertyList"));
+        }
+        // morse.lu test用 added at 2016/03/23 end
+
         // 返回
-        return success(null);
+        return success(resultBean);
     }
 
     /**
      * @api {post} /cms/promotion/task_stock_increment_detail/saveItem 3.2 保存一条增量隔离库存明细
-     * @apiName CmsTaskIncrementStockDetailController.saveItem
+     * @apiName CmsTaskStockIncrementDetailController.saveItem
      * @apiDescription 保存一条增量隔离库存明细
      * @apiGroup promotion
      * @apiVersion 0.0.1
@@ -146,7 +179,7 @@ public class CmsTaskIncrementStockDetailController extends CmsController {
 
     /**
      * @api {post} /cms/promotion/task_stock_increment_detail/delItem 3.3 删除一条增量隔离库存明细
-     * @apiName CmsTaskIncrementStockDetailController.delItem
+     * @apiName CmsTaskStockIncrementDetailController.delItem
      * @apiDescription 删除一条增量隔离库存明细
      * @apiGroup promotion
      * @apiVersion 0.0.1
@@ -185,7 +218,7 @@ public class CmsTaskIncrementStockDetailController extends CmsController {
 
     /**
      * @api {post} /cms/promotion/task_stock_increment_detail/exportStockInfo 3.4 批量导出增量隔离库存明细
-     * @apiName CmsTaskIncrementStockDetailController.exportStockInfo
+     * @apiName CmsTaskStockIncrementDetailController.exportStockInfo
      * @apiDescription 批量导出增量隔离库存明细
      * @apiGroup promotion
      * @apiVersion 0.0.1
@@ -209,16 +242,49 @@ public class CmsTaskIncrementStockDetailController extends CmsController {
      *
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK_INCREMENT_DETAIL.EXPORT_STOCK_INFO)
-    public ResponseEntity exportStockInfo(@RequestBody Map param) {
+    public ResponseEntity exportStockInfo(@RequestParam Map param) {
+
+        Map searchParam = new HashMap();
+        // 渠道id
+        searchParam.put("channelId", this.getUser().getSelChannelId());
+        // 语言
+        searchParam.put("lang", this.getLang());
+
+        // 任务id对应的增量隔离库存数据是否移到history表
+        boolean historyFlg = cmsTaskStockIncrementDetailService.isHistoryExist((String) param.get("task_id"));
+        if (historyFlg) {
+            searchParam.put("tableName", "voyageone_cms2.cms_bt_stock_separate_increment_item_history");
+        } else {
+            searchParam.put("tableName", "voyageone_cms2.cms_bt_stock_separate_increment_item");
+        }
+
+        searchParam.put("taskId", (String) param.get("task_id"));
+        searchParam.put("model", (String) param.get("model"));
+        searchParam.put("code", (String) param.get("code"));
+        searchParam.put("sku", (String) param.get("sku"));
+        searchParam.put("status", (String) param.get("status"));
+
+        String propertyList = (String) param.get("propertyList");
+        searchParam.put("propertyList", JacksonUtil.json2Bean(propertyList, List.class));
+        String platformList = (String) param.get("platformList");
+        searchParam.put("platformList", JacksonUtil.json2Bean(platformList, Map.class));
+
+        byte[] data;
+        try {
+            data = cmsTaskStockIncrementDetailService.getExcelFileStockIncrementInfo(searchParam);
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            throw new BusinessException("导出异常！");
+        }
 
         // 返回
-        return genResponseEntityFromBytes("fileName", new byte[]{});
+        return genResponseEntityFromBytes("StockIncrementInfo_" + DateTimeUtil.getLocalTime(getUserTimeZone(), DateTimeUtil.DATE_TIME_FORMAT_2)+".xlsx", data);
     }
 
 
     /**
      * @api {post} /cms/promotion/task_stock_increment_detail/importStockInfo 3.5 批量导入增量隔离库存明细
-     * @apiName CmsTaskIncrementStockDetailController.importStockInfo
+     * @apiName CmsTaskStockIncrementDetailController.importStockInfo
      * @apiDescription 批量导入增量隔离库存明细
      * @apiGroup promotion
      * @apiVersion 0.0.1
@@ -268,8 +334,11 @@ public class CmsTaskIncrementStockDetailController extends CmsController {
      *
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK_INCREMENT_DETAIL.IMPORT_STOCK_INFO)
-    public AjaxResponse importStockInfo(@RequestBody Map param) {
-
+    public AjaxResponse importStockInfo(@RequestParam Map param, @RequestParam MultipartFile file) {
+        // 创建者/更新者用
+        param.put("userName", this.getUser().getUserName());
+        // import Excel
+        cmsTaskStockIncrementDetailService.importExcelFileStockIncrementInfo(param, file);
         // 返回
         return success(null);
     }
@@ -277,7 +346,7 @@ public class CmsTaskIncrementStockDetailController extends CmsController {
 
     /**
      * @api {post} /cms/promotion/task_stock_increment_detail/executeStockIncrementSeparation 3.6 启动/重刷增量库存隔离
-     * @apiName CmsTaskIncrementStockDetailController.executeStockIncrementSeparation
+     * @apiName CmsTaskStockIncrementDetailController.executeStockIncrementSeparation
      * @apiDescription 启动/重刷增量库存隔离
      * @apiGroup promotion
      * @apiVersion 0.0.1

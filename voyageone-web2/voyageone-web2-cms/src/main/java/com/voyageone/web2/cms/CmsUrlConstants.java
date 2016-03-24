@@ -128,7 +128,7 @@ public interface CmsUrlConstants {
 
                 String GET_REAL_STOCK_LIST = "getRealStockList";
 
-                String INIT_NEW_RECORD = "initNewRecord";
+//                String INIT_NEW_RECORD = "initNewRecord";
 
                 String GET_USABLE_STOCK = "getUsableStock";
 

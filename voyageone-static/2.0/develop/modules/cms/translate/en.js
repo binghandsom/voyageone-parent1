@@ -238,6 +238,13 @@ define(function() {
         "TXT_STOCK_SEPARATE_DETAIL":"Stock Separate Detail",
         "TXT_SEPARATE_TYPE":"Separate Type",
         "TXT_SEPARATE_INCREMENT_QUANTITY":"Separate/Increment Quantity",
+        "TXT_STOCK_INCREMENT_SEPARATE":"Stock Increment Separate",
+        "TXT_STOCK_INCREMENT_SEPARATE_TASK":"Stock Increment Separate Task",
+        "TXT_PLATFORM": "Platform",
+        "TXT_ADD_NEW_STOCK_INCREMENT_SEPARATE_TASK":"Add New Stock Increment Separate Task",
+        "TXT_PLATFORM_SALE_QUANTITY": "Platform Sale Quantity",
+        "TXT_PLATFORM_STOCK_SEPARATE_QUANTITY": "Platform Stock Separate Quantity",
+
 
         "TXT_MSG_SEARCH": "Search...",
         "TXT_MSG_PAGE_IS_BUILDING": "This page is building...",
@@ -295,6 +302,10 @@ define(function() {
         "TXT_MSG_FIELD_VAL_INVALID": "Invalid field (Text) `s value, please follow the prompts to modify.",
         "TXT_MSG_INPUT_WORD_LENLOWLIMIT": "Please enter at least ",
         "TXT_MSG_INPUT_WORD_LENLIMIT": "Maximum length limit of character",
+        "TXT_MSG_IMPORT_MODE": "Import Mode",
+        "TXT_MSG_IMPORT_UPDATE": "Update Mode",
+        "TXT_MSG_IMPORT_ADD": "Add Mode",
+        "TXT_MSG_IMPORT_DELETE_UPDATE": "Reset Mode",
 
 
         "BTN_CREATE_TASK": "New Task",

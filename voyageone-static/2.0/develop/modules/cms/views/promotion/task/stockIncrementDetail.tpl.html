@@ -1,4 +1,4 @@
-<div class="wrapper-md" ng-init="initialize()">
+<div class="wrapper-md" ng-init="$ctrl.init()">
 	<div class="vo_accordion vo_attr">
 		<div class="panel-group">
 			<div class="panel panel-default">
@@ -59,7 +59,7 @@
 					<div class="col-sm-12 text-center m-b-md" ng-controller="popupCtrl">
 						<div class="form-horizontal form-inline">
 							<button class="btn btn-default" ng-click="clear()"><i class="fa fa-remove"></i>&nbsp;清除</button>
-							<button class="btn btn-vo" ng-click="search()"><i class="fa fa-search"></i>&nbsp;搜索</button>
+							<button class="btn btn-vo" ng-click="$ctrl.search()"><i class="fa fa-search"></i>&nbsp;搜索</button>
 						</div><!-- .form-inline -->
 					</div>
 				</div>
@@ -67,8 +67,8 @@
 		</div>
 	</div>
 	<div class="pull-right form-inline btn-group" ng-controller="popupCtrl">
-		<button class="btn btn-danger" ng-click="openImportStock('md')"><i class="fa fa-reply-all"></i>&nbsp;批量导入</button>
-		<button class="btn btn-dangers"><i class="glyphicon glyphicon-share-alt"></i>&nbsp;批量导出</button>
+		<button class="btn btn-danger" ng-click="openImportStock('md',{'task_id':$ctrl.taskId,'platformList':$ctrl.platformList,'propertyList':$ctrl.propertyList,'parent_id':'2'})"><i class="fa fa-reply-all"></i>&nbsp;批量导入</button>
+		<button class="btn btn-dangers" ng-click="$ctrl.download()"><i class="glyphicon glyphicon-share-alt"></i>&nbsp;批量导出</button>
 		<button class="btn btn-primary"><i class="glyphicon glyphicon-play"></i>&nbsp;启动增量所有</button>
 	</div>
 	<div class="form-inline pull-left btn-group m-b-xs">

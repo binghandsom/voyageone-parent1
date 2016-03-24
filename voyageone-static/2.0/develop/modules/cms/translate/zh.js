@@ -235,9 +235,17 @@ define(function(){
         "TXT_ADD_NEW_STOCK_SEPARATE_DETAIL":"新增库存隔离明细",
         "TXT_GET_USABLE_STOCK":"取得可用库存",
         "TXT_SEPARATE_QUANTITY":"隔离库存",
-        "TXT_STOCK_SEPARATE_DETAIL":"库存隔离详情",
+        "TXT_STOCK_SEPARATE_DETAIL":"库存隔离明细",
         "TXT_SEPARATE_TYPE":"隔离种类",
         "TXT_SEPARATE_INCREMENT_QUANTITY":"隔离/增量数",
+        "TXT_STOCK_INCREMENT_SEPARATE":"增量库存隔离",
+        "TXT_STOCK_INCREMENT_SEPARATE_TASK":"增量库存隔离任务",
+        "TXT_PLATFORM": "平台",
+        "TXT_ADD_NEW_STOCK_INCREMENT_SEPARATE_TASK":"新建增量库存隔离任务",
+        "TXT_PLATFORM_SALE_QUANTITY": "平台销售量",
+        "TXT_PLATFORM_STOCK_SEPARATE_QUANTITY": "平台库存隔离数量",
+
+
 
 
 
@@ -297,6 +305,10 @@ define(function(){
         "TXT_MSG_FIELD_VAL_INVALID": "属性(字段)的值无效, 请根据提示修改.",
         "TXT_MSG_INPUT_WORD_LENLOWLIMIT": "请至少输入",
         "TXT_MSG_INPUT_WORD_LENLIMIT": "已经达到最大长度字符数限制",
+        "TXT_MSG_IMPORT_MODE": "导入方式",
+        "TXT_MSG_IMPORT_UPDATE": "变更方式",
+        "TXT_MSG_IMPORT_ADD": "增量方式",
+        "TXT_MSG_IMPORT_DELETE_UPDATE": "重置方式",
 
 
         "BTN_CREATE_TASK": "新建任务",

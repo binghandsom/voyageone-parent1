@@ -8,24 +8,18 @@ define([
 ], function (cms) {
     cms.controller("taskStockController", (function () {
 
-        function TaskStockController($routeParams, taskStockService, cActions, confirm, alert, notify, $location, selectRowsFactory) {
+        function TaskStockController($routeParams, taskStockService, cActions, confirm, alert, notify, selectRowsFactory) {
             var urls = cActions.cms.task.taskStockService;
-            var taskId = $routeParams['task_id'];
-            if (_.isNaN(taskId)) {
-                this.init = null;
-                alert('TXT_MSG_UNVALID_URL').result.then(function () {
-                    $location.path('/promotion/task');
-                });
-            }
             this.alert = alert;
             this.notify = notify;
             this.confirm = confirm;
-            this.taskId = taskId;
+            this.taskId = $routeParams['task_id'];
+            this.hasAuthority = true;
             this.readyNum = 0;
             this.waitSeparationNum = 0;
             this.separationOKNum = 0;
             this.separationFailNum = 0;
-            this.waitRestoreNum = 0;
+            this.waitRevertNum = 0;
             this.revertOKNum = 0;
             this.revertFailNum = 0;
             this.changedNum = 0;
@@ -57,6 +51,7 @@ define([
             this.selectRowsFactory = selectRowsFactory;
             this.tempStockListSelect = new selectRowsFactory();
             this.taskStockService = taskStockService;
+            this.dynamicColNum = 0;
 
             this.downloadUrl = urls.root + "/" + urls.exportStockInfo;
         }
@@ -87,27 +82,32 @@ define([
                     var allNumLabel = document.getElementById('allNum');
                     allNumLabel.setAttribute("class", "btn btn-default-vo");
                 }
-                this.taskStockService.searchStock({
-                    "taskId" : this.taskId,
-                    "model" : this.model,
-                    "code" : this.code,
-                    "sku" : this.sku,
-                    "qtyFrom" : this.qtyFrom,
-                    "qtyTo" : this.qtyTo,
-                    "status" : this.status,
-                    "propertyList" : this.propertyList,
-                    "platformList" : this.platformList,
+                main.taskStockService.searchStock({
+                    "taskId" : main.taskId,
+                    "model" : main.model,
+                    "code" : main.code,
+                    "sku" : main.sku,
+                    "qtyFrom" : main.qtyFrom,
+                    "qtyTo" : main.qtyTo,
+                    "status" : main.status,
+                    "propertyList" : main.propertyList,
+                    "platformList" : main.platformList,
                     "start1" :  0,
                     "length1" : 20,
                     "start2" :  0,
                     "length2" : 20
                 }).then(function (res) {
+                    main.hasAuthority = res.data.hasAuthority;
+                    if (!main.hasAuthority) {
+                        main.alert('没有权限访问！')
+                        return;
+                    }
                     main.tempStockListSelect.clearCurrPageRows();
                     main.readyNum = res.data.readyNum;
                     main.waitSeparationNum = res.data.waitSeparationNum;
                     main.separationOKNum = res.data.separationOKNum;
                     main.separationFailNum = res.data.separationFailNum;
-                    main.waitRestoreNum = res.data.waitRestoreNum;
+                    main.waitRevertNum = res.data.waitRevertNum;
                     main.revertOKNum = res.data.revertOKNum;
                     main.revertFailNum = res.data.revertFailNum;
                     main.changedNum = res.data.changedNum;
@@ -126,24 +126,38 @@ define([
                         main.tempStockListSelect.currPageRows({"id": stock.sku});
                     });
                     main.stockSelList = main.tempStockListSelect.selectRowsInfo;
+                    main.dynamicColNum = 0;
+                    _.forEach(res.data.propertyList, function(property) {
+                        if (property.show) {
+                            main.dynamicColNum++;
+                        }
+
+                    });
+                    if (main.platformList.length + main.dynamicColNum <= 6) {
+                        var stockSeparateTbl = document.getElementById('stock_separate_tbl');
+                        stockSeparateTbl.setAttribute("style", "width:100%;margin-bottom:0px");
+                    } else {
+                        var stockSeparateTbl = document.getElementById('stock_separate_tbl');
+                        stockSeparateTbl.setAttribute("style", "width:1800px;margin-bottom:0px");
+                    }
                 })
             },
 
             getCommonStockList: function () {
                 var main = this;
                 main.tempStockListSelect = new main.selectRowsFactory();
-                this.taskStockService.getCommonStockList({
-                    "taskId" : this.taskId,
-                    "model" : this.model,
-                    "code" : this.code,
-                    "sku" : this.sku,
-                    "qtyFrom" : this.qtyFrom,
-                    "qtyTo" : this.qtyTo,
-                    "status" : this.status,
-                    "propertyList" : this.propertyList,
-                    "platformList" : this.platformList,
-                    "start1" :  (this.stockPageOption.curr - 1) * this.stockPageOption.size,
-                    "length1" : this.stockPageOption.size
+                main.taskStockService.getCommonStockList({
+                    "taskId" : main.taskId,
+                    "model" : main.model,
+                    "code" : main.code,
+                    "sku" : main.sku,
+                    "qtyFrom" : main.qtyFrom,
+                    "qtyTo" : main.qtyTo,
+                    "status" : main.status,
+                    "propertyList" : main.propertyList,
+                    "platformList" : main.platformList,
+                    "start1" :  (main.stockPageOption.curr - 1) * main.stockPageOption.size,
+                    "length1" : main.stockPageOption.size
                 }).then(function (res) {
                     main.stockList = res.data.stockList;
                     _.forEach(res.data.stockList, function(stock) {
@@ -156,18 +170,18 @@ define([
 
             getRealStockList: function () {
                 var main = this;
-                this.taskStockService.getRealStockList({
-                    "taskId" : this.taskId,
-                    "model" : this.model,
-                    "code" : this.code,
-                    "sku" : this.sku,
-                    "qtyFrom" : this.qtyFrom,
-                    "qtyTo" : this.qtyTo,
-                    "status" : this.status,
-                    "propertyList" : this.propertyList,
-                    "platformList" : this.platformList,
-                    "start2" :  (this.realStockPageOption.curr - 1) * this.realStockPageOption.size,
-                    "length2" : this.realStockPageOption.size
+                main.taskStockService.getRealStockList({
+                    "taskId" : main.taskId,
+                    "model" : main.model,
+                    "code" : main.code,
+                    "sku" : main.sku,
+                    "qtyFrom" : main.qtyFrom,
+                    "qtyTo" : main.qtyTo,
+                    "status" : main.status,
+                    "propertyList" : main.propertyList,
+                    "platformList" : main.platformList,
+                    "start2" :  (main.realStockPageOption.curr - 1) * main.realStockPageOption.size,
+                    "length2" : main.realStockPageOption.size
                 }).then(function (res) {
                     main.realStockList = res.data.realStockList;;
                 })
@@ -176,7 +190,7 @@ define([
             saveRecord: function (index) {
                 var main = this;
                 main.taskStockService.saveRecord({
-                    "taskId" : this.taskId,
+                    "taskId" : main.taskId,
                     "stockList" : main.stockList,
                     "index" : index
                 }).then(function (res) {
@@ -213,16 +227,32 @@ define([
                             }
                         });
                     });
-                    main.notify.success('设定成功');
+                    main.notify.success('TXT_MSG_SET_SUCCESS');
                 }
             },
 
-            delRecord: function (stock) {
+            calculateCol: function (showFlg) {
+                if (showFlg) {
+                    this.dynamicColNum++;
+
+                } else {
+                    this.dynamicColNum--;
+                }
+                if (this.platformList.length + this.dynamicColNum <= 6) {
+                    var stockSeparateTbl = document.getElementById('stock_separate_tbl');
+                    stockSeparateTbl.setAttribute("style", "width:100%;margin-bottom:0px");
+                } else {
+                    var stockSeparateTbl = document.getElementById('stock_separate_tbl');
+                    stockSeparateTbl.setAttribute("style", "width:1800px;margin-bottom:0px");
+                }
+            },
+
+            delRecord: function (sku) {
                 var main = this;
                 main.confirm('TXT_MSG_DO_DELETE').result.then(function () {
                     main.taskStockService.delRecord({
                         "taskId": main.taskId,
-                        "stockInfo": stock
+                        "sku": sku
                     }).then(function (res) {
                         main.notify.success('TXT_MSG_DELETE_SUCCESS');
                         main.search();
@@ -234,18 +264,49 @@ define([
                 })
             },
 
-            delRecord: function (stock) {
+            executeStockSeparation: function (sku) {
                 var main = this;
-                main.confirm('TXT_MSG_DO_DELETE').result.then(function () {
-                    main.taskStockService.delRecord({
+                main.confirm('TXT_MSG_DO_SEPARATE').result.then(function () {
+                    main.taskStockService.executeStockSeparation({
                         "taskId": main.taskId,
-                        "stockInfo": stock
+                        "model" : main.model,
+                        "code" : main.code,
+                        "sku" : main.sku,
+                        "qtyFrom" : main.qtyFrom,
+                        "qtyTo" : main.qtyTo,
+                        "status" : main.status,
+                        "selSku":sku,
+                        "propertyList" : main.propertyList
                     }).then(function (res) {
-                        main.notify.success('TXT_MSG_DELETE_SUCCESS');
+                        main.notify.success('TXT_MSG_SEPARATE_SUCCESS');
                         main.search();
                     }, function (err) {
                         if (err.displayType == null) {
-                            main.alert('TXT_MSG_DELETE_FAIL');
+                            main.alert('TXT_MSG_SEPARATE_FAIL');
+                        }
+                    })
+                })
+            },
+
+            executeStockRevert: function (sku) {
+                var main = this;
+                main.confirm('TXT_MSG_DO_REVERT').result.then(function () {
+                    main.taskStockService.executeStockRevert({
+                        "taskId": main.taskId,
+                        "model" : main.model,
+                        "code" : main.code,
+                        "sku" : main.sku,
+                        "qtyFrom" : main.qtyFrom,
+                        "qtyTo" : main.qtyTo,
+                        "status" : main.status,
+                        "selSku":sku,
+                        "propertyList" : main.propertyList
+                    }).then(function (res) {
+                        main.notify.success('TXT_MSG_REVERT_SUCCESS');
+                        main.search();
+                    }, function (err) {
+                        if (err.displayType == null) {
+                            main.alert('TXT_MSG_REVERT_FAIL');
                         }
                     })
                 })
