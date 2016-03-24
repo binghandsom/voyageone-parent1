@@ -329,8 +329,15 @@
 				<configuration>
 					<source>${jdk.version}</source>
 					<target>${jdk.version}</target>
+					<encoding>UTF-8</encoding>
 				</configuration>
 			</plugin>
 		</plugins>
 	</build>
+	<profiles>
+		<profile>
+			<id>sonar</id>
+			<properties><sonar.host.url>http://localhost:9000</sonar.host.url></properties>
+		</profile>
+	</profiles>
 </project>

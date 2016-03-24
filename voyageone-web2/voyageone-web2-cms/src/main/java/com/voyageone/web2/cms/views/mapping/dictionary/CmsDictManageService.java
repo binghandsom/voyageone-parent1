@@ -4,7 +4,7 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.cms.bean.DictionaryMasterPropBean;
 import com.voyageone.cms.enums.DictionaryMasterProp;
 import com.voyageone.common.Constants;
-import com.voyageone.common.configs.TypeChannel;
+import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.system.dictionary.CmsDictionaryIndexBean;
 import com.voyageone.service.dao.cms.CmsMtCustomWordDao;
@@ -50,7 +50,7 @@ public class CmsDictManageService {
         Map<String, Object> masterData = new HashMap<>();
 
         // 获取platform信息
-        masterData.put("platformList", TypeChannel.getTypeListSkuCarts(userInfo.getSelChannelId(), Constants.comMtTypeChannel.SKU_CARTS_53_D , language));
+        masterData.put("platformList", TypeChannels.getTypeListSkuCarts(userInfo.getSelChannelId(), Constants.comMtTypeChannel.SKU_CARTS_53_D , language));
 
         return masterData;
     }

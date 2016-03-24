@@ -4,7 +4,7 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.Properties;
-import com.voyageone.common.configs.TypeChannel;
+import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.util.FileUtils;
 import com.voyageone.service.dao.cms.CmsBtPromotionDao;
 import com.voyageone.service.dao.cms.CmsBtPromotionCodeDao;
@@ -53,7 +53,7 @@ public class CmsPromotionIndexService extends BaseAppService {
     public Map<String, Object> init(String channelId, String language) {
         Map<String, Object> result = new HashMap<>();
 
-        result.put("platformTypeList", TypeChannel.getTypeListSkuCarts(channelId, Constants.comMtTypeChannel.SKU_CARTS_53_A, language));
+        result.put("platformTypeList", TypeChannels.getTypeListSkuCarts(channelId, Constants.comMtTypeChannel.SKU_CARTS_53_A, language));
         result.put("promotionStatus", TypeConfigEnums.MastType.promotionStatus.getList(language));
 
         return result;

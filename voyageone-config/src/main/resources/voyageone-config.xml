@@ -13,7 +13,7 @@
     <!-- MQ Config -->
     <import resource="classpath*:mq-config.xml" />
     <!-- Redis Config -->
-    <!--<import resource="classpath*:redis-config.xml" />-->
+    <import resource="classpath*:redis-config.xml" />
 
     <!-- online env -->
     <!--<import resource="file:/usr/web/spring-config/datasource-cms2-config.xml" />-->

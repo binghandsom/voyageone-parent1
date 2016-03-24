@@ -3,7 +3,7 @@ package com.voyageone.task2.cms.service.feed;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.FeedEnums;
-import com.voyageone.common.configs.Feed;
+import com.voyageone.common.configs.Feeds;
 import com.voyageone.common.configs.beans.FeedBean;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.task2.base.BaseTaskService;
@@ -65,7 +65,7 @@ public class VtmService extends BaseTaskService {
 
         // 清表
         $info("维他命产品信息清表开始");
-        superfeeddao.deleteTableInfo(Feed.getVal1(ChannelConfigEnums.Channel.LUCKY_VITAMIN.getId(), FeedEnums.Name.table_id));
+        superfeeddao.deleteTableInfo(Feeds.getVal1(ChannelConfigEnums.Channel.LUCKY_VITAMIN.getId(), FeedEnums.Name.table_id));
         $info("维他命产品信息清表结束");
 
         // 插入数据库
@@ -136,11 +136,11 @@ public class VtmService extends BaseTaskService {
 //        CsvReader reader;
         BufferedReader br = null;
         try {
-            String fileName = Feed.getVal1(ChannelConfigEnums.Channel.LUCKY_VITAMIN.getId(), FeedEnums.Name.file_id);
-            String filePath = Feed.getVal1(ChannelConfigEnums.Channel.LUCKY_VITAMIN.getId(), FeedEnums.Name.feed_ftp_localpath);
+            String fileName = Feeds.getVal1(ChannelConfigEnums.Channel.LUCKY_VITAMIN.getId(), FeedEnums.Name.file_id);
+            String filePath = Feeds.getVal1(ChannelConfigEnums.Channel.LUCKY_VITAMIN.getId(), FeedEnums.Name.feed_ftp_localpath);
             String fileFullName = String.format("%s/%s", filePath, fileName);
 
-            String encode = Feed.getVal1(ChannelConfigEnums.Channel.LUCKY_VITAMIN.getId(), FeedEnums.Name.feed_ftp_file_coding);
+            String encode = Feeds.getVal1(ChannelConfigEnums.Channel.LUCKY_VITAMIN.getId(), FeedEnums.Name.feed_ftp_file_coding);
 
 //            reader = new CsvReader(new FileInputStream(fileFullName), '\t', Charset.forName(encode));
 
@@ -296,7 +296,7 @@ public class VtmService extends BaseTaskService {
      */
     private List<String> getListImportUPC() {
         List<String> listImportUPC = new ArrayList<String>();
-        List<FeedBean> configs = Feed.getConfigs(ChannelConfigEnums.Channel.LUCKY_VITAMIN.getId(), FeedEnums.Name.import_upc);
+        List<FeedBean> configs = Feeds.getConfigs(ChannelConfigEnums.Channel.LUCKY_VITAMIN.getId(), FeedEnums.Name.import_upc);
         configs.forEach(bean->listImportUPC.add(bean.getCfg_val1()));
 
         return listImportUPC;
@@ -324,9 +324,9 @@ public class VtmService extends BaseTaskService {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
         String date_ymd = sdf.format(date);
 
-        String filename = Feed.getVal1(channel_id, FeedEnums.Name.feed_ftp_localpath) + "/" + StringUtils.null2Space(Feed.getVal1(channel_id, FeedEnums.Name.file_id));
-        String filename_backup = Feed.getVal1(channel_id, FeedEnums.Name.feed_ftp_localpath) + "/" + date_ymd + "_"
-                + StringUtils.null2Space(Feed.getVal1(channel_id, FeedEnums.Name.file_id));
+        String filename = Feeds.getVal1(channel_id, FeedEnums.Name.feed_ftp_localpath) + "/" + StringUtils.null2Space(Feeds.getVal1(channel_id, FeedEnums.Name.file_id));
+        String filename_backup = Feeds.getVal1(channel_id, FeedEnums.Name.feed_ftp_localpath) + "/" + date_ymd + "_"
+                + StringUtils.null2Space(Feeds.getVal1(channel_id, FeedEnums.Name.file_id));
         File file = new File(filename);
         File file_backup = new File(filename_backup);
 

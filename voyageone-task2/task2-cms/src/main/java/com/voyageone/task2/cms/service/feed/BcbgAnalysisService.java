@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.FeedEnums.Name;
-import com.voyageone.common.configs.Feed;
+import com.voyageone.common.configs.Feeds;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.MD5;
 import com.voyageone.service.impl.cms.feed.FeedToCmsService;
@@ -153,7 +153,7 @@ public class BcbgAnalysisService extends BaseTaskService {
 
         // 读取各种配置
         // 精简配置,减少独立配置,所以两个文件都配置在一个项目里
-        String fileNames = Feed.getVal1(channel, Name.feed_ftp_filename); // 文件路径
+        String fileNames = Feeds.getVal1(channel, Name.feed_ftp_filename); // 文件路径
 
         // 拆分成 feed 和 style
         String[] fileNameArr = fileNames.split(";");
@@ -333,7 +333,7 @@ public class BcbgAnalysisService extends BaseTaskService {
 
         Backup() {
 
-            String sBackupDir = Feed.getVal1(channel, Name.feed_backup_dir); // 备份的文件路径
+            String sBackupDir = Feeds.getVal1(channel, Name.feed_backup_dir); // 备份的文件路径
 
             // 如果是模板,就尝试格式化
             if (sBackupDir.contains("%s"))

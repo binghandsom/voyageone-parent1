@@ -1,6 +1,6 @@
 package com.voyageone.common.configs.Enums;
 
-import com.voyageone.common.configs.ChannelConfigs;
+import com.voyageone.common.configs.Channels;
 import com.voyageone.common.configs.beans.OrderChannelBean;
 
 /**
@@ -548,7 +548,7 @@ public class ChannelConfigEnums {
         }
 
         public OrderChannelBean getBean() {
-            return ChannelConfigs.getChannel(getId());
+            return Channels.getChannel(getId());
         }
 
         public String getFullName() {

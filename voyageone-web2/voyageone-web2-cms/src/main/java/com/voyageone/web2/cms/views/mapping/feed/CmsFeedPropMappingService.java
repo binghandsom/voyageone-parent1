@@ -3,7 +3,7 @@ package com.voyageone.web2.cms.views.mapping.feed;
 import com.mongodb.WriteResult;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.cms.enums.MappingPropType;
-import com.voyageone.common.configs.Type;
+import com.voyageone.common.configs.Types;
 import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.factory.SchemaJsonReader;
@@ -205,7 +205,7 @@ public class CmsFeedPropMappingService extends BaseAppService {
         CmsMtFeedCategoryModel feedCategoryModel = findByPath(feedCategoryPath, treeModelx);
 
         // 从 type/value 中取得 Feed 通用的属性
-        Map<String, List<String>> attributes = Type.getTypeList(49, lang)
+        Map<String, List<String>> attributes = Types.getTypeList(49, lang)
                 .stream()
                 .collect(toMap(TypeBean::getValue, t -> new ArrayList<>(0)));
 

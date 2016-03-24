@@ -19,7 +19,7 @@ import com.voyageone.cms.CmsConstants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.components.tmall.TbProductService;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
-import com.voyageone.common.configs.ShopConfigs;
+import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.masterdate.schema.factory.SchemaReader;
 import com.voyageone.common.masterdate.schema.field.*;
@@ -84,7 +84,7 @@ public class CmsPlatformProductImportService extends BaseTaskService {
     }
 
     private void doSetProduct(TmpOldCmsDataBean oldCmsDataBean) throws Exception {
-        ShopBean shopBean = ShopConfigs.getShop(oldCmsDataBean.getChannel_id(), oldCmsDataBean.getCart_id());
+        ShopBean shopBean = Shops.getShop(oldCmsDataBean.getChannel_id(), oldCmsDataBean.getCart_id());
         if (shopBean == null) {
             // 不存在的shop, 跳过
             return;
@@ -199,7 +199,7 @@ public class CmsPlatformProductImportService extends BaseTaskService {
             List<String> schemaFieldList,
             List<String> schemaFieldSkuList) {
 
-        ShopBean shopBean = ShopConfigs.getShop(oldCmsDataBean.getChannel_id(), oldCmsDataBean.getCart_id());
+        ShopBean shopBean = Shops.getShop(oldCmsDataBean.getChannel_id(), oldCmsDataBean.getCart_id());
         if (shopBean == null) {
             return;
         }

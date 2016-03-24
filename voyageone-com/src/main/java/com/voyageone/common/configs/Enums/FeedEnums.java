@@ -1,7 +1,5 @@
 package com.voyageone.common.configs.Enums;
 
-import com.voyageone.common.configs.Feed;
-
 /**
  * Created by Zero on 8/18/2015.
  */
