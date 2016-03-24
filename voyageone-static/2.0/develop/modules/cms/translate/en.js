@@ -221,9 +221,11 @@ define(function() {
         "TXT_ALL": "All",
         "TXT_READY": "Ready",
         "TXT_WAITING_SEPARATE": "Waiting Separate",
+        "TXT_SEPARATING": "Separating",
         "TXT_STOCK_SEPARATE_SUCCESS": "Separate Success",
         "TXT_STOCK_SEPARATE_FAILURE": "Separate Failure",
         "TXT_WAITING_REVERT": "Waiting Revert",
+        "TXT_REVERTING": "Reverting",
         "TXT_REVERT_SUCCESS": "Revert Success",
         "TXT_REVERT_FAILURE": "Revert Failure",
         "TXT_CHANGED": "Changed",
@@ -244,6 +246,12 @@ define(function() {
         "TXT_ADD_NEW_STOCK_INCREMENT_SEPARATE_TASK":"Add New Stock Increment Separate Task",
         "TXT_PLATFORM_SALE_QUANTITY": "Platform Sale Quantity",
         "TXT_PLATFORM_STOCK_SEPARATE_QUANTITY": "Platform Stock Separate Quantity",
+        "TXT_STOCK_INCREMENT_SEPARATE_DETAIL":"Stock Increment Separate Detail",
+        "TXT_WAITING_INCREMENT":"Waiting Increment",
+        "TXT_INCREASING":"Increasing",
+        "TXT_INCREMENT_SUCCESS":"Increment Success",
+        "TXT_INCREMENT_FAILURE":"Increment Failure",
+        "TXT_UPDATE_FIX_VALUE":"Update Fix Value",
 
 
         "TXT_MSG_SEARCH": "Search...",
@@ -352,10 +360,11 @@ define(function() {
         "BTN_IMPORT_FILE": "Import File",
         "BTN_CUSTOMIZE_COLUMNS": "custmize columns",
         "BTN_SET": "Set",
-        "BTN_IMPORT_ALL": "Import All",
-        "BTN_EXPORT_ALL": "Export All",
+        "BTN_IMPORT_ALL": "Import",
+        "BTN_EXPORT_ALL": "Export",
         "BTN_START_REFRESH_ALL": "Start/RefreshAll",
         "BTN_REVERT_ALL": "RevertAll",
+        "BTN_START_INCREMENT_ALL": "Start Increment All",
 
         // 枚举 com.voyageone.cms.enums.BeatFlag 的翻译
         "STOP": "Stop",

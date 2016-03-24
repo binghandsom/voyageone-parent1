@@ -18,8 +18,9 @@ define([
             this.hasAuthority = true;
             this.readyNum = 0;
             this.waitIncrementNum = 0;
-            this.incrementOKNum = 0;
-            this.incrementFailNum = 0;
+            this.increasingNum = 0;
+            this.incrementSuccessNum = 0;
+            this.incrementFailureNum = 0;
             this.revertNum = 0;
             this.allNum = 0;
 
@@ -60,15 +61,16 @@ define([
                     "start1" :  0,
                     "length1" : 20
                 }).then(function (res) {
-                    main.hasAuthority = res.data.hasAuthority;
-                    if (!main.hasAuthority) {
-                        main.alert('没有权限访问！')
-                        return;
-                    }
+                    //main.hasAuthority = res.data.hasAuthority;
+                    //if (!main.hasAuthority) {
+                    //    main.alert('没有权限访问！')
+                    //    return;
+                    //}
                     main.readyNum = res.data.readyNum;
                     main.waitIncrementNum = res.data.waitIncrementNum;
-                    main.incrementOKNum = res.data.incrementOKNum;
-                    main.incrementFailNum = res.data.incrementFailNum;
+                    main.increasingNum = res.data.increasingNum;
+                    main.incrementSuccessNum = res.data.incrementSuccessNum;
+                    main.incrementFailureNum = res.data.incrementFailureNum;
                     main.revertNum = res.data.revertNum;
                     main.allNum = res.data.allNum;
                     main.stockPageOption.total = res.data.allNum;

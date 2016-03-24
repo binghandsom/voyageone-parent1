@@ -66,24 +66,18 @@
 			</div>
 		</div>
 	</div>
-<<<<<<< Updated upstream
-	<div class="pull-right form-inline btn-group" ng-controller="popupCtrl">
-		<button class="btn btn-danger" ng-click="openImportStock('md',{'task_id':$ctrl.taskId,'platformList':$ctrl.platformList,'propertyList':$ctrl.propertyList,'parent_id':'2'})"><i class="fa fa-reply-all"></i>&nbsp;批量导入</button>
-		<button class="btn btn-dangers" ng-click="$ctrl.download()"><i class="glyphicon glyphicon-share-alt"></i>&nbsp;批量导出</button>
-		<button class="btn btn-primary"><i class="glyphicon glyphicon-play"></i>&nbsp;启动增量所有</button>
-=======
 	<div class="pull-right form-inline btn-group" ng-controller="popupCtrl"  ng-show="$ctrl.hasAuthority">
 		<button class="btn btn-danger" ng-click="openImportStock('md')"><i class="fa fa-reply-all"></i>&nbsp;{{'BTN_IMPORT_ALL' | translate}}</button>
 		<button class="btn btn-dangers" ng-click="$ctrl.download()"><i class="glyphicon glyphicon-share-alt"></i>&nbsp;{{'BTN_EXPORT_ALL' | translate}}</button>
 		<button class="btn btn-primary"><i class="glyphicon glyphicon-play"></i>&nbsp;{{'BTN_START_INCREMENT_ALL' | translate}}</button>
->>>>>>> Stashed changes
 	</div>
 	<div class="form-inline pull-left btn-group m-b-xs"  ng-show="$ctrl.hasAuthority">
 		<label class="btn btn-default-vo" ng-model="radioModel" uib-btn-radio="'总数：100000'">{{'TXT_ALL' | translate}}：{{$ctrl.allNum}}</label>
 		<label class="btn btn-default-vo" ng-model="radioModel" uib-btn-radio="'未进行：1000'">{{'TXT_READY' | translate}}：{{$ctrl.readyNum}}</label>
 		<label class="btn btn-default-vo" ng-model="radioModel" uib-btn-radio="'等待增量：0'">{{'TXT_WAITING_INCREMENT' | translate}}：{{$ctrl.waitIncrementNum}}</label>
-		<label class="btn btn-default-vo" ng-model="radioModel" uib-btn-radio="'增量成功：5000'">{{'TXT_INCREMENT_SUCCESS' | translate}}：{{$ctrl.incrementOKNum}}</label>
-		<label class="btn btn-default-vo" ng-model="radioModel" uib-btn-radio="'增量失败：10000'">{{'TXT_INCREMENT_FAILURE' | translate}}：{{$ctrl.incrementFailNum}}</label>
+		<label class="btn btn-default-vo" ng-model="radioModel" uib-btn-radio="'增量中：0'">{{'TXT_INCREASING' | translate}}：{{$ctrl.increasingNum}}</label>
+		<label class="btn btn-default-vo" ng-model="radioModel" uib-btn-radio="'增量成功：5000'">{{'TXT_INCREMENT_SUCCESS' | translate}}：{{$ctrl.incrementSuccessNum}}</label>
+		<label class="btn btn-default-vo" ng-model="radioModel" uib-btn-radio="'增量失败：10000'">{{'TXT_INCREMENT_FAILURE' | translate}}：{{$ctrl.incrementFailureNum}}</label>
 		<label class="btn btn-default-vo" ng-model="radioModel" uib-btn-radio="'还原：10000'">{{'TXT_REVERT' | translate}}：{{$ctrl.revertNum}}</label>
 	</div>
 	<div class="box" ng-show="$ctrl.hasAuthority">
