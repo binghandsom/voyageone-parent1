@@ -10,12 +10,10 @@ import com.voyageone.service.dao.cms.CmsBtTagDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.TagService;
 import com.voyageone.service.model.cms.CmsBtPromotionModel;
-import org.apache.commons.beanutils.BeanMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -108,7 +106,7 @@ public class PromotionService extends BaseService {
     public CmsBtPromotionModel getByPromotionId(int promotionId) {
         Map<String, Object> params = new HashMap<>();
         params.put("promotionId", promotionId);
-        return cmsBtPromotionDao.findById(params);
+        return cmsBtPromotionDao.selectById(params);
     }
 
     /**
@@ -118,7 +116,7 @@ public class PromotionService extends BaseService {
      * @return List<CmsBtPromotionModel>
      */
     public List<CmsBtPromotionModel> getByCondition(Map<String, Object> params) {
-        return cmsBtPromotionDao.findByCondition(params);
+        return cmsBtPromotionDao.selectByCondition(params);
     }
 
     /**

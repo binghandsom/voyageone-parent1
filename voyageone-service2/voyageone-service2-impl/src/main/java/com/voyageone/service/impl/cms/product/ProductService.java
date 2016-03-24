@@ -836,7 +836,7 @@ public class ProductService extends BaseService {
                 Map<String, Object> param = new HashMap<>();
                 param.put("channelId", channelId);
                 param.put("sku", sku.getSkuCode());
-                WmsBtInventoryCenterLogicModel skuInfo = wmsBtInventoryCenterLogicDao.getItemDetailBySku(param);
+                WmsBtInventoryCenterLogicModel skuInfo = wmsBtInventoryCenterLogicDao.selectItemDetailBySku(param);
                 bean.setInventory(String.valueOf(skuInfo.getQtyChina()));
                 // TODO 写死,取得是S7图片显示的路径
                 String imagePath = "";
@@ -939,7 +939,7 @@ public class ProductService extends BaseService {
         queryMap.put("channelId", channelId);
         queryMap.put("code", productCode);
 
-        List<WmsBtInventoryCenterLogicModel> inventoryList = wmsBtInventoryCenterLogicDao.getItemDetailByCode(queryMap);
+        List<WmsBtInventoryCenterLogicModel> inventoryList = wmsBtInventoryCenterLogicDao.selectItemDetailByCode(queryMap);
 
         Map<String, Integer> result = new HashMap<>();
         for (WmsBtInventoryCenterLogicModel inventory : inventoryList) {

@@ -45,14 +45,14 @@ public class CmsFeedMappingService extends BaseAppService {
 
     public List<CmsMtFeedCategoryModel> getTopCategories(UserSessionBean user) {
 
-        CmsMtFeedCategoryTreeModelx treeModelx = cmsMtFeedCategoryTreeDao.findTopCategories(user.getSelChannelId());
+        CmsMtFeedCategoryTreeModelx treeModelx = cmsMtFeedCategoryTreeDao.selectTopCategories(user.getSelChannelId());
 
         return treeModelx.getCategoryTree();
     }
 
     public Map<String, FeedCategoryBean> getFeedCategoryMap(String topCategoryId, UserSessionBean user) {
 
-        CmsMtFeedCategoryTreeModelx treeModelx = cmsMtFeedCategoryTreeDao.findTopCategory(user.getSelChannelId(), topCategoryId);
+        CmsMtFeedCategoryTreeModelx treeModelx = cmsMtFeedCategoryTreeDao.selectTopCategory(user.getSelChannelId(), topCategoryId);
 
         if (treeModelx.getCategoryTree().isEmpty())
             throw new BusinessException("未找到类目");

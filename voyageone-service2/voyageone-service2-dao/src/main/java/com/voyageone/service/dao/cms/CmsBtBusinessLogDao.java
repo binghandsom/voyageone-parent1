@@ -21,7 +21,7 @@ public class CmsBtBusinessLogDao extends ServiceBaseDao {
      * @param conditionParams params
      * @return list
      */
-    public List<CmsBtBusinessLogModel> findByCondition(Map<?, ?> conditionParams) {
+    public List<CmsBtBusinessLogModel> selectByCondition(Map<?, ?> conditionParams) {
         return selectList("select_business_log_By_Condition", conditionParams);
     }
 
@@ -30,7 +30,7 @@ public class CmsBtBusinessLogDao extends ServiceBaseDao {
      * @param conditionParams condition Params
      * @return int
      */
-    public int findByConditionCnt(Map<?, ?> conditionParams) {
+    public int selectByConditionCnt(Map<?, ?> conditionParams) {
 
         return selectOne("select_business_log_By_Condition_cnt", conditionParams);
     }

@@ -21,11 +21,11 @@ public class BusinessLogService extends BaseService {
     private CmsBtBusinessLogDao cmsBtBusinessLogDao;
 
     public List<CmsBtBusinessLogModel> getList(Map params){
-        return cmsBtBusinessLogDao.findByCondition(params);
+        return cmsBtBusinessLogDao.selectByCondition(params);
     }
 
     public int getCount(Map params){
-        return cmsBtBusinessLogDao.findByConditionCnt(params);
+        return cmsBtBusinessLogDao.selectByConditionCnt(params);
     }
 
     public int updateFinishStatus(Map params){
