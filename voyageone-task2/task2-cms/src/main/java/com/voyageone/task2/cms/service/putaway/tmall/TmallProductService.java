@@ -1229,7 +1229,7 @@ public class TmallProductService {
                 double skuPrice = 0;
                 try {
 //                    skuPrice = Double.valueOf(cmsBtProductModelSku.getPriceSale());
-                    skuPrice = Double.valueOf(cmsBtProductModelSku.getAttribute(sxPricePropName));
+                    skuPrice = Double.valueOf(cmsBtProductModelSku.getAttribute(sxPricePropName).toString());
                 } catch (Exception e) {
                     logger.warn("No price for sku " + cmsBtProductModelSku.getSkuCode());
                 }
