@@ -35,7 +35,7 @@ public class DiscountRateConfigs {
             Map<String, DiscountRateBean> discountRateBeanMap = new HashMap<>();
             orderChannelConfigDao.getDiscountRate().forEach(bean -> {
                         discountRateBeanMap.put(
-                                DiscountRateConfigs.buildKey(bean.getOrder_channel_id(), bean.getShip_channel()),
+                                buildKey(bean.getOrder_channel_id(), bean.getShip_channel()),
                                 bean
                         );
                     }
@@ -66,6 +66,7 @@ public class DiscountRateConfigs {
             log.warn("未查询到DiscountRateBean");
             return null;
         }
+
         if (StringUtils.isEmpty(bean.getDiscount_rate())) return null;
         return new BigDecimal(bean.getDiscount_rate());
     }

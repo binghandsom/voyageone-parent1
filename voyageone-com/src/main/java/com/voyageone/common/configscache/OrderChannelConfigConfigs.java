@@ -36,7 +36,7 @@ public class OrderChannelConfigConfigs {
                     bean -> {
                         orderChannelConfigBeanMap.
                                 put(
-                                        OrderChannelConfigConfigs.buildKey(bean.getOrder_channel_id(), ChannelConfigEnums.Name.valueOf(bean.getCfg_name()), bean.getCfg_val1()),
+                                        buildKey(bean.getOrder_channel_id(), ChannelConfigEnums.Name.valueOf(bean.getCfg_name()), bean.getCfg_val1()),
                                         bean
                                 );
                     }
@@ -93,6 +93,7 @@ public class OrderChannelConfigConfigs {
     public static List<OrderChannelConfigBean> getConfigs(String id, ChannelConfigEnums.Name name) {
         Set<String> keySet = hashOperations.keys(KEY);
         if (CollectionUtils.isEmpty(keySet)) return null;
+
         List<String> keyList = new ArrayList<>();
         keySet.forEach(k -> {
             if (k.startsWith(buildKey(id, name, ""))) keyList.add(k);

@@ -74,7 +74,7 @@ public class CmsChannelConfigs {
     public static List<CmsChannelConfigBean> getConfigBeans(String channelId, String configKey) {
         Set<String> keyset = hashOperations.keys(KEY);
         if (CollectionUtils.isEmpty(keyset)) return null;
-        List<String> keyList = new ArrayList<String>();
+        List<String> keyList = new ArrayList<>();
         keyset.forEach(k -> {
             if (k.startsWith(buildKey(channelId, configKey, ""))) keyList.add(k);
         });

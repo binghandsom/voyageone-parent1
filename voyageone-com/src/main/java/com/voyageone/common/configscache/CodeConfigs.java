@@ -31,7 +31,7 @@ public class CodeConfigs {
             Map<String, CodeBean> codeBeansMap = new HashMap<>();
             codeDao.getAll().forEach(bean -> {
                         codeBeansMap.put(
-                                CodeConfigs.buildKey(bean.getId(), bean.getCode()),
+                                buildKey(bean.getId(), bean.getCode()),
                                 bean
                         );
                     }
@@ -104,7 +104,6 @@ public class CodeConfigs {
     public static CodeBean getCodeBean(String id) {
         List<CodeBean> codeList = getCodeList(id);
         if (CollectionUtils.isEmpty(codeList)) return null;
-        codeList.sort((a, b) -> a.getId().compareTo(b.getId()));
         return codeList.get(0);
     }
 

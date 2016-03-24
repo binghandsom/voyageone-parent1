@@ -14,21 +14,21 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:test-context.xml")
-public class ShopCartConfigsTest {
+public class CartConfigsTest {
 
     @Test
     public void testGetCart() throws Exception {
-        System.out.println(JsonUtil.getJsonString(ShopCartConfigs.getCart(20)));
-        System.out.println(JsonUtil.getJsonString(ShopCartConfigs.getCart("20")));
+        System.out.println(JsonUtil.getJsonString(CartConfigs.getCart(20)));
+        System.out.println(JsonUtil.getJsonString(CartConfigs.getCart("20")));
     }
 
     @Test
     public void testGetCartList() throws Exception {
-        System.out.println(JsonUtil.getJsonString(ShopCartConfigs.getCartList(PlatFormEnums.PlatForm.TM)));
+        System.out.println(JsonUtil.getJsonString(CartConfigs.getCartList(PlatFormEnums.PlatForm.TM)));
     }
 
     @Test
     public void testGetAllCartList() throws Exception {
-        System.out.println(JsonUtil.getJsonString(ShopCartConfigs.getAllCartList()));
+        System.out.println(JsonUtil.getJsonString(CartConfigs.getAllCartList()));
     }
 }

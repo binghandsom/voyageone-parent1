@@ -88,6 +88,7 @@ public class PortConfigs {
     public static List<PortConfigBean> getConfigs(String id, PortConfigEnums.Name name) {
         Set<String> keySet = hashOperations.keys(KEY);
         if (CollectionUtils.isEmpty(keySet)) return null;
+
         List<String> keyList = new ArrayList<>();
         keySet.forEach(k -> {
             if (k.startsWith(buildKey(id, name, ""))) keyList.add(k);

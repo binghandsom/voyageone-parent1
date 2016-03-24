@@ -21,8 +21,6 @@ import java.util.Set;
  */
 public class OrderChannelConfigs {
 
-    private static final Logger log = LoggerFactory.getLogger(OrderChannelConfigs.class);
-
     /* redis key */
     private static final String KEY = CacheKeyEnums.ConfigData_OrderChannelConfigs.toString();
 
@@ -36,7 +34,7 @@ public class OrderChannelConfigs {
                     bean -> {
                         orderChannelBeanMap
                                 .put(
-                                        OrderChannelConfigs.buildKey(bean.getOrder_channel_id()),
+                                        buildKey(bean.getOrder_channel_id()),
                                         bean
                                 );
                     }
@@ -51,7 +49,7 @@ public class OrderChannelConfigs {
      * @return key
      */
     private static String buildKey(String id) {
-        return id+CacheHelper.SKIP;
+        return id;
     }
 
     /**

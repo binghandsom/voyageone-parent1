@@ -32,7 +32,7 @@ public class StoreConfigs {
             storeConfigDao.getAll().forEach(
                     bean -> {
                         storeBeanMap.put(
-                                StoreConfigs.buildKey(bean.getStore_id(), bean.getOrder_channel_id()),
+                                buildKey(bean.getStore_id(), bean.getOrder_channel_id()),
                                 bean
                         );
                     }
@@ -69,8 +69,9 @@ public class StoreConfigs {
      * @return StoreBean
      */
     public static StoreBean getStore(long store_id) {
-        Set<String> keySet=hashOperations.keys(KEY);
+        Set<String> keySet = hashOperations.keys(KEY);
         if(CollectionUtils.isEmpty(keySet)) return null;
+
         List<String> keyList=new ArrayList<>();
         keySet.forEach(k->{
             if(k.startsWith(buildKey(store_id,""))) keyList.add(k);
@@ -78,7 +79,6 @@ public class StoreConfigs {
         Collections.sort(keyList);
         List<StoreBean> beans=hashOperations.multiGet(KEY,keyList);
         return CollectionUtils.isEmpty(beans)?null:beans.get(0);
-        //return getAllStores().stream().filter(bean -> bean.getStore_id() == store_id).findFirst().get();
     }
 
     /**
@@ -88,15 +88,15 @@ public class StoreConfigs {
      * @return List<StoreBean>
      */
     public static List<StoreBean> getChannelStoreList(String order_channel_id) {
-        Set<String> keySet=hashOperations.keys(KEY);
+        Set<String> keySet = hashOperations.keys(KEY);
         if(CollectionUtils.isEmpty(keySet)) return null;
+
         List<String> keyList=new ArrayList<>();
         keySet.forEach(k->{
             if(k.endsWith(CacheHelper.SKIP+order_channel_id)) keyList.add(k);
         });
         Collections.sort(keyList);
         return hashOperations.multiGet(KEY,keyList);
-        //return getAllStores().stream().filter(bean -> order_channel_id.equals(bean.getOrder_channel_id())).collect(Collectors.toList());
     }
 
     /**
@@ -110,12 +110,14 @@ public class StoreConfigs {
     public static List<StoreBean> getChannelStoreList(String order_channel_id, boolean defaultAll, boolean includeVirtual) {
         List<StoreBean> beans = getChannelStoreList(order_channel_id);
         if (CollectionUtils.isEmpty(beans)) return null;
+
         List<StoreBean> channelStoreList = new ArrayList<>();
         // 是否有ALL选项
         if (defaultAll) channelStoreList.add(new StoreBean() {{
             setStore_id(0);
             setStore_name("ALL");
         }});
+
         beans.forEach(bean -> {
             if (includeVirtual || (StoreConfigEnums.Kind.REAL.getId().equals(bean.getStore_kind())))
                 channelStoreList.add(bean);
@@ -142,12 +144,14 @@ public class StoreConfigs {
     public static List<StoreBean> getStoreList(boolean defaultAll, boolean includeVirtual) {
         List<StoreBean> beans = getAllStores();
         if (CollectionUtils.isEmpty(beans)) return null;
+
         List<StoreBean> storeList = new ArrayList<>();
         // 是否有ALL选项
         if (defaultAll) storeList.add(new StoreBean() {{
             setStore_id(0);
             setStore_name("ALL");
         }});
+
         beans.forEach(bean -> {
             if (includeVirtual || (StoreConfigEnums.Kind.REAL.getId().equals(bean.getStore_kind())))
                 storeList.add(bean);

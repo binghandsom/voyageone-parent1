@@ -22,18 +22,19 @@ public class ImsCategoryConfigs {
 
     static {
         if (!CacheTemplateFactory.getCacheTemplate().hasKey(KEY)) {
-            ImsCategoryDao imsCategoryDao= ConfigDaoFactory.getImsCategoryDao();
+            ImsCategoryDao imsCategoryDao = ConfigDaoFactory.getImsCategoryDao();
             Map<String, ImsCategoryBean> ImsChannelBeanMap = new HashMap<>();
             ImsCategoryBean topBean = new ImsCategoryBean();
             List<ImsCategoryBean> categoryBeans = imsCategoryDao.getMtCategories();
             categoryBeans.forEach(bean -> {
-                List<ImsCategoryBean> subCategoryBeans = new ArrayList<ImsCategoryBean>();
+                List<ImsCategoryBean> subCategoryBeans = new ArrayList<>();
                 categoryBeans.forEach(subBean -> {
                     if (subBean.getParentCid() == bean.getCategoryId()) {
                         subCategoryBeans.add(subBean);
                     }
                 });
                 bean.setSubCategories(subCategoryBeans);
+
                 ImsChannelBeanMap.put(buildKey(bean.getCategoryId()), bean);
                 if (bean.getParentCid() == 0) {
                     if (topBean.getSubCategories() == null)
@@ -41,6 +42,7 @@ public class ImsCategoryConfigs {
                     topBean.getSubCategories().add(bean);
                 }
             });
+
             ImsChannelBeanMap.put(buildKey(0), topBean);
             CacheHelper.reFreshSSB(KEY, ImsChannelBeanMap);
         }
@@ -52,7 +54,7 @@ public class ImsCategoryConfigs {
      * @return key
      */
     private static String buildKey(int categoryId) {
-        return String.valueOf(categoryId)+CacheHelper.SKIP;
+        return String.valueOf(categoryId) + CacheHelper.SKIP;
     }
 
     public static ImsCategoryBean getMtCategoryBeanById(int categoryId) {

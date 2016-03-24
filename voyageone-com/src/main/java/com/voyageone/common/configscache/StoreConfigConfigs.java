@@ -32,8 +32,7 @@ public class StoreConfigConfigs {
             storeConfigDao.getAllConfigs().forEach(
                     bean -> {
                         storeConfigBeanMap.put(
-                                StoreConfigConfigs.buildKey(
-                                        bean.getStore_id(), StoreConfigEnums.Name.valueOf(bean.getCfg_name()), bean.getCfg_val1()),
+                                buildKey(bean.getStore_id(), StoreConfigEnums.Name.valueOf(bean.getCfg_name()), bean.getCfg_val1()),
                                 bean
                         );
                     }
@@ -61,7 +60,7 @@ public class StoreConfigConfigs {
     public static String getVal1(long id, StoreConfigEnums.Name name) {
         List<StoreConfigBean> beans = getConfigs(id, name);
         if (CollectionUtils.isEmpty(beans)) return "";
-        beans.sort((a, b) -> a.getCfg_val1().compareTo(b.getCfg_val1()));
+
         return beans.get(0).getCfg_val1();
     }
 

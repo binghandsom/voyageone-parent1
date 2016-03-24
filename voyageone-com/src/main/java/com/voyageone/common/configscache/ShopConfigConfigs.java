@@ -31,7 +31,7 @@ public class ShopConfigConfigs {
             Map<String, ShopConfigBean> shopConfigBeanMap = new HashMap<>();
             shopConfigDao.getAll().forEach(bean -> {
                         shopConfigBeanMap.put(
-                                ShopConfigConfigs.buildKey(bean.getOrder_channel_id(), bean.getCart_id(), ShopConfigEnums.Name.valueOf(bean.getCfg_name()), bean.getCfg_val1()),
+                                buildKey(bean.getOrder_channel_id(), bean.getCart_id(), ShopConfigEnums.Name.valueOf(bean.getCfg_name()), bean.getCfg_val1()),
                                 bean
                         );
                     }
@@ -107,6 +107,7 @@ public class ShopConfigConfigs {
     public static List<ShopConfigBean> getConfigs(String order_channel_id, String cart_id, ShopConfigEnums.Name name) {
         Set<String> keySet = hashOperations.keys(KEY);
         if (CollectionUtils.isEmpty(keySet)) return null;
+
         List<String> keyList = new ArrayList<>();
         keySet.forEach(k -> {
             if (k.startsWith(buildKey(order_channel_id, cart_id, name, ""))) keyList.add(k);

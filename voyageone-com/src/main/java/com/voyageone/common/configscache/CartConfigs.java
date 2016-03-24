@@ -21,10 +21,10 @@ import java.util.stream.Collectors;
  * @version 2.0.0
  * @since 2.0.0
  */
-public class ShopCartConfigs {
+public class CartConfigs {
 
     /* redis key */
-    private static final String KEY = CacheKeyEnums.ConfigData_ShopCartConfigs.toString();
+    private static final String KEY = CacheKeyEnums.ConfigData_CartConfigs.toString();
 
     private static HashOperations<String, String, CartBean> hashOperations = CacheTemplateFactory.getHashOperation();
 
@@ -33,7 +33,7 @@ public class ShopCartConfigs {
             ShopDao shopDao = ConfigDaoFactory.getShopDao();
             Map<String, CartBean> cartBeanMap = new HashMap<>();
             shopDao.getAllCart().forEach(bean -> {
-                cartBeanMap.put(ShopCartConfigs.buildKey(bean.getCart_id()), bean);
+                cartBeanMap.put(buildKey(bean.getCart_id()), bean);
             });
             CacheHelper.reFreshSSB(KEY, cartBeanMap);
         }
@@ -45,7 +45,7 @@ public class ShopCartConfigs {
      * @return key
      */
     private static String buildKey(String cart_id) {
-        return cart_id+CacheHelper.SKIP;
+        return cart_id;
     }
 
     /**

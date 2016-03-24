@@ -30,7 +30,7 @@ public class FeedConfigs {
             Map<String, FeedBean> feedBeanMap = new HashMap<>();
             feedDao.getAll().forEach(bean -> {
                         feedBeanMap.put(
-                                FeedConfigs.buildKey(bean.getOrder_channel_id(), FeedEnums.Name.valueOf(bean.getCfg_name())),
+                                buildKey(bean.getOrder_channel_id(), FeedEnums.Name.valueOf(bean.getCfg_name())),
                                 bean
                         );
                     }

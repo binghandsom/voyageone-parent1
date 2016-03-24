@@ -10,7 +10,6 @@ import org.springframework.data.redis.core.HashOperations;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * 访问 tm_order_channel 和 tm_order_channel_configs 表配置
@@ -30,7 +29,7 @@ public class ThirdPartyConfigs {
             thirdPartConfigDao.getAll().forEach(
                     bean -> {
                         thirdPartConfigBeanMap.put(
-                                ThirdPartyConfigs.buildKey(bean.getChannel_id(), bean.getProp_name(), bean.getSeq()),
+                                buildKey(bean.getChannel_id(), bean.getProp_name(), bean.getSeq()),
                                 bean
                         );
                     }
@@ -56,7 +55,7 @@ public class ThirdPartyConfigs {
      * @return ThirdPartyConfigBean
      */
     public static ThirdPartyConfigBean getThirdPartyConfig(String channelId, String propName) {
-        List<ThirdPartyConfigBean> beans=getThirdPartyConfigList(channelId,propName);
+        List<ThirdPartyConfigBean> beans = getThirdPartyConfigList(channelId,propName);
         return CollectionUtils.isEmpty(beans)?null:beans.get(0);
     }
 
@@ -68,29 +67,33 @@ public class ThirdPartyConfigs {
      * @return ThirdPartyConfigBean
      */
     public static List<ThirdPartyConfigBean> getThirdPartyConfigList(String channelId, String propName) {
-        Set<String> keySet=hashOperations.keys(KEY);
-        if(CollectionUtils.isEmpty(keySet)) return null;
+        Set<String> keySet = hashOperations.keys(KEY);
+        if(CollectionUtils.isEmpty(keySet)) {
+            return null;
+        }
+
         List<String> keyList=new ArrayList<>();
         keySet.forEach(k->{
-            if(k.startsWith(buildKey(channelId,propName,""))) keyList.add(k);
+            if(k.startsWith(buildKey(channelId, propName, ""))) keyList.add(k);
         });
         Collections.sort(keyList);
         return hashOperations.multiGet(KEY,keyList);
-        //return getConfigList(channelId).stream().filter(bean -> bean.getProp_name().equals(propName)).collect(Collectors.toList());
     }
 
     public static HashMap<String, ThirdPartyConfigBean> getThirdPartyConfigMap(String channelId) {
-        HashMap<String, ThirdPartyConfigBean> thirdPartyConfigMap = new HashMap<String, ThirdPartyConfigBean>();
-        getConfigList(channelId).forEach(bean -> thirdPartyConfigMap.put(bean.getProp_name(), bean));
+        HashMap<String, ThirdPartyConfigBean> thirdPartyConfigMap = new HashMap<>();
+        List<ThirdPartyConfigBean> configList = getConfigList(channelId);
+        if (configList != null) {
+            for (ThirdPartyConfigBean bean: configList) {
+                thirdPartyConfigMap.put(bean.getProp_name(), bean);
+            }
+        }
         return thirdPartyConfigMap;
     }
 
 
     /**
      * 返回这个渠道的第一个配置
-     *
-     * @param channelId
-     * @return
      */
     public static ThirdPartyConfigBean getFirstConfig(String channelId) {
         List<ThirdPartyConfigBean> configList = getConfigList(channelId);
@@ -100,9 +103,6 @@ public class ThirdPartyConfigs {
 
     /**
      * 返回对应渠道的所有配置
-     *
-     * @param channelId
-     * @return
      */
     public static List<ThirdPartyConfigBean> getConfigList(String channelId) {
         Set<String> keySet=hashOperations.keys(KEY);
@@ -113,17 +113,10 @@ public class ThirdPartyConfigs {
         });
         Collections.sort(keyList);
         return hashOperations.multiGet(KEY,keyList);
-        /*
-        List<ThirdPartyConfigBean> beans = hashOperations.values(KEY);
-        return CollectionUtils.isEmpty(beans) ? new ArrayList<>() : beans.stream().filter(bean -> bean.getChannel_id().equals(channelId)).collect(Collectors.toList());
-        */
     }
 
     /**
      * 返回对应渠道的所有配置
-     *
-     * @param channelId
-     * @return
      */
     public static String getVal1(String channelId, String propName) {
         ThirdPartyConfigBean thirdPartyConfigBean = getThirdPartyConfig(channelId, propName);

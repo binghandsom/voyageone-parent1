@@ -44,11 +44,9 @@ public enum CacheKeyEnums {
 
     ConfigData_ShopConfigConfigs,
 
-    ConfigData_ShopConfigsShopMap,
+    ConfigData_ShopConfigs,
 
-    ConfigData_ShopConfigsShopList,
-
-    ConfigData_ShopCartConfigs,
+    ConfigData_CartConfigs,
 
     ConfigData_$ModifyTime$
     ;

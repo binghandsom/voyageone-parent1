@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
+ * @deprecated 本地配置不同，建议不用此类
  *  KeyValue 配置文件的专用配置访问类
  * Created by Tester on 4/16/2015.
  */

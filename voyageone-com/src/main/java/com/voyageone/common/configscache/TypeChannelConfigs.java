@@ -47,8 +47,8 @@ public class TypeChannelConfigs {
      *
      * @return key
      */
-    private static String buildKey(String type_code, String channle_id,int real_id) {
-        return type_code + CacheHelper.SKIP + channle_id+CacheHelper.SKIP+real_id;
+    private static String buildKey(String type_code, String channle_id, int real_id) {
+        return type_code + CacheHelper.SKIP + channle_id + CacheHelper.SKIP + real_id;
     }
 
     private static Log logger = LogFactory.getLog(TypeChannelConfigs.class);
@@ -57,7 +57,7 @@ public class TypeChannelConfigs {
         Set<String> keySet=hashOperations.keys(KEY);
         List<String> keyList=new ArrayList<>();
         keySet.forEach(k->{
-            if(k.startsWith(type + CacheHelper.SKIP + channel_id+CacheHelper.SKIP)) keyList.add(k);
+            if(k.startsWith(type + CacheHelper.SKIP + channel_id + CacheHelper.SKIP)) keyList.add(k);
         });
         Collections.sort(keyList);
         return CollectionUtils.isEmpty(keyList)?null:hashOperations.multiGet(KEY,keyList);
