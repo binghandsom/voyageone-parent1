@@ -31,11 +31,7 @@ public final class MongoUtils {
                 if (compareType.length > 0){
 
                     // 查询以obj开头的数据
-                    if ("$leftLike".equals(compareType[0])) {
-                        result.append("/^" + obj.toString() + "/");
-                    }
-                    // 如果比较符为$elemMatch
-                    else if ("$elemMatch".equals(compareType[0]))
+                    if ("$elemMatch".equals(compareType[0]))
                         result.append("{" + compareType[0] + ": " + obj.toString() + "}");
                     // 如果比较符不为$eq($eq不是mongo的比较符,只是为了区分=的判断)
                     else if (!"$eq".equals(compareType[0]))

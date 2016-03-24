@@ -40,7 +40,7 @@ public class CmsSearchInfoBean {
 
     private String brand;
 
-    private String promotion;
+    private String[] tags;
 
     private String[] codeList;
 
@@ -56,13 +56,17 @@ public class CmsSearchInfoBean {
 
     private String sortThreeType;
 
-    private Integer groupPageNum;
+    private Integer groupPageNum = 0;
 
-    private Integer groupPageSize;
+    private Integer groupPageSize = 0;
 
-    private Integer productPageNum;
+    private Integer productPageNum = 0;
 
-    private Integer productPageSize;
+    private Integer productPageSize = 0;
+
+    // 自定义查询条件
+    private String custAttrKey;
+    private String custAttrValue;
 
     public String getCatId() {
         return catId;
@@ -192,12 +196,12 @@ public class CmsSearchInfoBean {
         this.brand = brand;
     }
 
-    public String getPromotion() {
-        return promotion;
+    public String[] getTags() {
+        return tags;
     }
 
-    public void setPromotion(String promotion) {
-        this.promotion = promotion;
+    public void setTags(String[] tags) {
+        this.tags = tags;
     }
 
     public String[] getCodeList() {
@@ -286,5 +290,21 @@ public class CmsSearchInfoBean {
 
     public void setProductPageSize(Integer productPageSize) {
         this.productPageSize = productPageSize != null && productPageSize > 0 ? productPageSize : 1;
+    }
+
+    public String getCustAttrValue() {
+        return custAttrValue;
+    }
+
+    public void setCustAttrValue(String custAttrValue) {
+        this.custAttrValue = custAttrValue;
+    }
+
+    public String getCustAttrKey() {
+        return custAttrKey;
+    }
+
+    public void setCustAttrKey(String custAttrKey) {
+        this.custAttrKey = custAttrKey;
     }
 }

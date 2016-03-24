@@ -11,11 +11,13 @@ define([
         $scope.vm = {"schema": {}};
         $scope.newOption = {};
         $scope.addOrEditFlg = context.addOrEditFlg;
+        $scope.fieldName = context.field.name;
         $scope.initialize = function () {
             $scope.vm = {"schema": {}};
             $scope.newOption = {};
             $scope.addOrEditFlg = context.addOrEditFlg;
             $scope.vm.catFullName = context.vm.category.catFullPath;
+            $scope.fieldName = context.field.name;
             // 编辑的场合
             if($scope.addOrEditFlg == 1){
                 if (context.field) {
@@ -54,7 +56,9 @@ define([
         };
         $scope.ok = function () {
 
-
+            if(!$scope.schemaFrom.$valid){
+                return;
+            }
             if($scope.vm.schema.type != "SINGLECHECK" && $scope.vm.schema.type != "MULTICHECK"){
                 if ($scope.vm.schema.options) {
                     delete $scope.vm.schema.options;

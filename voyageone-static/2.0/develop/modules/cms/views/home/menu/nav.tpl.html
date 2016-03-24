@@ -2,7 +2,7 @@
 <ul class="nav">
     <!-- CMS 类目管理 -->
     <!--<li ng-class="{active:$state.includes('ims.inventory''ims.new_inventory')}"> TODO 暂时做不了-->
-    <li>
+    <li ng-if="!$root.isTranslator">
         <a class="auto" ui-sref="cms.category">
       <span class="pull-right text-muted">
         <i class="fa fa-fw fa-angle-right text"></i>
@@ -11,14 +11,12 @@
             <i class="glyphicon glyphicon-th-list icon text-vo"></i>
             <span class="" translate="TXT_CATEGORY_MANAGER"></span>
         </a>
-
         <ul class="nav nav-sub dk">
             <li class="nav-sub-header">
                 <a href>
                     <span translate="TXT_CATEGORY_MANAGER"></span>
                 </a>
             </li>
-
             <li  ng-repeat="item in menuInfo.categoryTreeList">
                 <a class="auto" ng-if="item.isParent == 1">
                     <span class="pull-right text-muted">
@@ -34,12 +32,10 @@
                 </a>
                 <ul class="nav nav-sub dk" style="padding-left:10px" ng-if="item.isParent == 1" ng-include="'categoryMenu'" ng-init="categoryMenu = item.children"></ul>
             </li>
-
         </ul>
     </li>
-
     <!-- Promotion管理 -->
-    <li>
+    <li  ng-if="!$root.isTranslator">
         <a class="auto">
             <span class="pull-right text-muted">
                 <i class="fa fa-fw fa-angle-right text"></i>
@@ -70,7 +66,7 @@
     </li>
 
     <!-- 高级检索 -->
-    <li>
+    <li  ng-if="!$root.isTranslator">
         <a class="auto">
         <span class="pull-right text-muted">
         <i class="fa fa-fw fa-angle-right text"></i>
@@ -94,7 +90,7 @@
         </ul>
     </li>
     <!-- 设定 -->
-    <li>
+    <li  ng-if="!$root.isTranslator">
         <a class="auto">
             <span class="pull-right text-muted">
                 <i class="fa fa-fw fa-angle-right text"></i>
@@ -154,7 +150,7 @@
         </ul>
     </li>
     <!-- 店铺管理 -->
-    <li>
+    <li ng-if="!$root.isTranslator">
         <a class="auto">
             <span class="pull-right text-muted">
                 <i class="fa fa-fw fa-angle-right text"></i>
@@ -170,33 +166,33 @@
                 </a>
             </li>
             <li ui-sref-active="active">
-                <a href="#/channel/custom">
+                <a href="#/channel/custom/0">
                     <i class="fa fa-minus icon text-vo"></i>
                     <span translate="TXT_CUSTOM_ATTRIBUTE_MANAGER"></span>
                 </a>
             </li>
-            <li ui-sref-active="active">
-                <a href="#/channel/common">
-                    <i class="fa fa-minus icon text-vo"></i>
-                    <span translate="TXT_COMMON_ATTRIBUTE_MANAGER"></span>
-                </a>
-            </li>
-            <li ui-sref-active="active">
-                <a href="#/channel/authority">
-                    <i class="fa fa-minus icon text-vo"></i>
-                    <span translate="TXT_AUTHORITY_SETTING"></span>
-                </a>
-            </li>
-            <li ui-sref-active="active">
-                <a href="#/channel/configuration">
-                    <i class="fa fa-minus icon text-vo"></i>
-                    <span translate="TXT_CONFIGURATION_SETTING"></span>
-                </a>
-            </li>
+            <!--<li ui-sref-active="active">-->
+                <!--<a href="#/channel/common">-->
+                    <!--<i class="fa fa-minus icon text-vo"></i>-->
+                    <!--<span translate="TXT_COMMON_ATTRIBUTE_MANAGER"></span>-->
+                <!--</a>-->
+            <!--</li>-->
+            <!--<li ui-sref-active="active">-->
+                <!--<a href="#/channel/authority">-->
+                    <!--<i class="fa fa-minus icon text-vo"></i>-->
+                    <!--<span translate="TXT_AUTHORITY_SETTING"></span>-->
+                <!--</a>-->
+            <!--</li>-->
+            <!--<li ui-sref-active="active">-->
+                <!--<a href="#/channel/configuration">-->
+                    <!--<i class="fa fa-minus icon text-vo"></i>-->
+                    <!--<span translate="TXT_CONFIGURATION_SETTING"></span>-->
+                <!--</a>-->
+            <!--</li>-->
         </ul>
     </li>
     <!-- 系统管理 -->
-    <li>
+    <li  ng-if="!$root.isTranslator">
         <a class="auto">
             <span class="pull-right text-muted">
                 <i class="fa fa-fw fa-angle-right text"></i>

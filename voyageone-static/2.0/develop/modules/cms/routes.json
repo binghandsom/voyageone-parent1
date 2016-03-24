@@ -17,12 +17,8 @@
   "promotion_task_index": {
     "hash": "/promotion/task",
     "templateUrl": "views/promotion/task/index.tpl.html",
-    "controllerUrl": "modules/cms/views/promotion/task/index.ctl"
-  },
-  "promotion_task_detail": {
-    "hash": "/promotion/task/detail",
-    "templateUrl": "views/promotion/task/detail.tpl.html",
-    "controllerUrl": "modules/cms/views/promotion/task/detail.ctl"
+    "controllerUrl": "modules/cms/views/promotion/task/index.ctl",
+    "controller": "taskIndexController as $ctrl"
   },
   "promotion_task_price": {
     "url": "/promotion/task/price/",
@@ -32,9 +28,31 @@
   },
   "promotion_task_beat": {
     "url": "/promotion/task/beat/",
-    "hash": "/promotion/task/beat/:beatId",
+    "hash": "/promotion/task/beat/:task_id",
     "templateUrl": "views/promotion/task/beat.tpl.html",
-    "controllerUrl": "modules/cms/views/promotion/task/beat.ctl"
+    "controllerUrl": "modules/cms/views/promotion/task/beat.ctl",
+    "controller": "taskBeatController as $ctrl"
+  },
+  "promotion_task_stock_detail": {
+    "url": "/promotion/task_stock/",
+    "hash": "/promotion/task/stock/:task_id",
+    "templateUrl": "views/promotion/task/stock.tpl.html",
+    "controllerUrl": "modules/cms/views/promotion/task/stock.ctl",
+    "controller": "taskStockController as $ctrl"
+  },
+  "promotion_task_stock_increment": {
+    "url": "/promotion/task_stock_increment/",
+    "hash": "/promotion/task/stock_increment/:task_id",
+    "templateUrl": "views/promotion/task/stockIncrement.tpl.html",
+    "controllerUrl": "modules/cms/views/promotion/task/stockIncrement.ctl",
+    "controller": "taskStockIncrementController as $ctrl"
+  },
+  "promotion_task_stock_increment_detail": {
+    "url": "/promotion/task_stock_increment_detail/",
+    "hash": "/promotion/task/stock_increment_detail/:task_id",
+    "templateUrl": "views/promotion/task/stockIncrementDetail.tpl.html",
+    "controllerUrl": "modules/cms/views/promotion/task/stockIncrementDetail.ctl",
+    "controller": "taskStockIncrementDetailController as $ctrl"
   },
   "search_advance": {
     "hash": "/search/advance",
@@ -104,12 +122,14 @@
     "controllerUrl": "modules/cms/views/channel/common/attribute.ctl"
   },
   "channel_custom_attribute": {
-    "hash": "/channel/custom",
+    "url": "/channel/custom/",
+    "hash": "/channel/custom/:catPath",
     "templateUrl": "views/channel/custom/attribute.tpl.html",
     "controllerUrl": "modules/cms/views/channel/custom/attribute.ctl"
   },
   "channel_custom_value": {
-    "hash": "/channel/custom/value",
+    "url": "/channel/custom/value/",
+    "hash": "/channel/custom/value/:catPath",
     "templateUrl": "views/channel/custom/value.tpl.html",
     "controllerUrl": "modules/cms/views/channel/custom/value.ctl"
   },

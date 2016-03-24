@@ -1,5 +1,6 @@
 /**
- * Created by linanbin on 15/12/7.
+ * 统一管理弹出框的定义信息
+ * Created by LinAn.Bin on 15/12/7.
  */
 
 /**
@@ -99,6 +100,28 @@ define([
                     "size": 'md'
                 }
             },
+            "custom": {
+                "newAttribute": {
+                    "templateUrl": "views/pop/custom/newAttribute.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/custom/newAttribute.ctl",
+                    "controller": 'popAddAttributeValueCtl as ctrl',
+                    "backdrop": 'static',
+                    "size": 'md'
+                },
+                "newValue": {
+                    "templateUrl": "views/pop/custom/newValue.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/custom/newValue.ctl",
+                    "controller": 'popAddAttributeValueNewCtl as ctrl',
+                    "backdrop": 'static',
+                    "size": 'md'
+                },
+                "column": {
+                    "templateUrl": "views/pop/custom/column.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/custom/column.ctl",
+                    "controller": 'popCustomColumnCtl'
+                }
+
+            },
             "configuration": {
                 "new": {
                     "templateUrl": "views/pop/configuration/new.tpl.html",
@@ -125,13 +148,6 @@ define([
                     "controller": 'propFeedMappingAttributeController as ctrl',
                     "backdrop": 'static',
                     "size": 'lg'
-                },
-                "dictValue": {
-                    "templateUrl": "views/pop/feedMapping/dictValue.tpl.html",
-                    "controllerUrl": "modules/cms/views/pop/feedMapping/dictValue.ctl",
-                    "controller": 'propFeedMappingDictValueController as ctrl',
-                    "backdrop": 'static',
-                    "size": 'md'
                 },
                 "value": {
                     "templateUrl": "views/pop/feedMapping/value.tpl.html",
@@ -206,6 +222,11 @@ define([
                     "templateUrl": "views/pop/file/import.tpl.html",
                     "controllerUrl": "modules/cms/views/pop/file/import.ctl",
                     "controller": 'popFileImportCtl'
+                },
+                "stock": {
+                    "templateUrl": "views/pop/file/stockImport.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/file/stockImport.ctl",
+                    "controller": 'popFileStockImportCtl'
                 }
             },
             "history": {
@@ -229,7 +250,34 @@ define([
                 "newBeat": {
                     "templateUrl": "views/pop/promotion/newBeatTask.tpl.html",
                     "controllerUrl": "modules/cms/views/pop/promotion/newBeatTask.ctl",
-                    "controller": 'popNewBeatCtl'
+                    "controller": 'popNewBeatCtl as $ctrl',
+                    "size": "md"
+                },
+                "addBeat": {
+                    "templateUrl": "views/pop/promotion/addBeat.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/promotion/addBeat.ctl",
+                    "controller": 'popAddBeatCtl as $ctrl',
+                    "size": "md"
+                },
+                "newMrbStock": {
+                    "templateUrl": "views/pop/promotion/newMrbStock.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/promotion/newMrbStock.ctl",
+                    "controller": 'popNewMrbStockCtl'
+                },
+                "newMrbStockSku": {
+                    "templateUrl": "views/pop/promotion/newMrbStockSku.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/promotion/newMrbStockSku.ctl",
+                    "controller": 'popNewMrbStockSkuCtl'
+                },
+                "skuMrbStockDetail": {
+                    "templateUrl": "views/pop/promotion/skuMrbStockDetail.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/promotion/skuMrbStockDetail.ctl",
+                    "controller": 'popSkuMrbStockDetailCtl'
+                },
+                "addMrbStockIncrement": {
+                    "templateUrl": "views/pop/promotion/addStockIncrement.tpl.html",
+                    "controllerUrl": "modules/cms/views/pop/promotion/addStockIncrement.ctl",
+                    "controller": 'popAddStockIncrementCtl'
                 }
             }
         })
@@ -412,6 +460,24 @@ define([
         };
 
         /**
+         * 打开添加自定义属性编辑页面
+         * @param context
+         * @returns {*}
+         */
+        $scope.openAddAttribute = function (context) {
+            return openModel(popActions.custom.newAttribute, context);
+        };
+
+        /**
+         * 打开添加自定义属性-值，编辑页面
+         * @param context
+         * @returns {*}
+         */
+        $scope.openAddNewValue = function (context) {
+            return openModel(popActions.custom.newValue, context);
+        };
+
+        /**
          * 打开新增配置页面
          * @type {openConfiguration}
          */
@@ -487,10 +553,6 @@ define([
 
         $scope.popupFeedValue = function (context) {
             return openModel(popActions.feedMapping.value, context);
-        };
-
-        $scope.popupDictValue = function (context) {
-            return openModel(popActions.feedMapping.dictValue, context);
         };
 
         $scope.openOtherPlatform = function (context) {
@@ -574,9 +636,9 @@ define([
          * @type {openImport}
          */
         $scope.openImport = openImport;
-        function openImport(viewSize, data) {
+        function openImport(viewSize, data, fnInitial) {
             require([popActions.file.import.controllerUrl], function () {
-                $modal.open({
+                var modalInstance = $modal.open({
                     templateUrl: popActions.file.import.templateUrl,
                     controller: popActions.file.import.controller,
                     size: viewSize,
@@ -586,6 +648,13 @@ define([
                         }
                     }
                 });
+                modalInstance.result.then(function () {
+                    if (fnInitial) {
+                        fnInitial();
+                    }
+
+                })
+
             });
         }
 
@@ -660,49 +729,134 @@ define([
                 })
             });
         }
+
         /**
          * 打开promotion页面
-         * @type {openPromotion}
          */
-        $scope.openTask = openTask;
-        function openTask(viewSize) {
-            require([popActions.promotion.newBeat.controllerUrl], function () {
+        $scope.openTask = function (context) {
+            return openModel(popActions.promotion.newBeat, context);
+        };
+
+        $scope.popAddBeat = function (context) {
+            return openModel(popActions.promotion.addBeat, context);
+        };
+
+        /**
+         * 打开新建库存隔离任务
+         * @type {openMrbstock}
+         */
+        $scope.openMrbstock = openMrbstock;
+        function openMrbstock(viewSize, data) {
+            require([popActions.promotion.newMrbStock.controllerUrl], function () {
                 $modal.open({
-                    templateUrl: popActions.promotion.newBeat.templateUrl,
-                    controller: popActions.promotion.newBeat.controller,
+                    templateUrl: popActions.promotion.newMrbStock.templateUrl,
+                    controller: popActions.promotion.newMrbStock.controller,
                     size: viewSize,
                     resolve: {
+                        data: function () {
+                            return data;
+                        }
                     }
                 });
             });
         }
 
-        //$scope.openshop_category = openshop_category;
-        //function openshop_category(viewSize) {
-        //    $modal.open({
-        //        templateUrl: popActions.tag.shop_category.templateUrl,
-        //        controllerUrl: popActions.tag.shop_category.controllerUrl,
-        //        size: viewSize,
-        //        resolve: {
-        //            items: function () {
-        //                //return data;
-        //            }
-        //        }
-        //    });
-        //}
-        //
-        //$scope.openOtherProgress = openOtherProgress;
-        //function openOtherProgress(viewSize) {
-        //    $modal.open({
-        //        templateUrl: popActions.other.progress.templateUrl,
-        //        controllerUrl: popActions.other.progress.controllerUrl,
-        //        size: viewSize,
-        //        resolve: {
-        //            items: function () {
-        //                //return data;
-        //            }
-        //        }
-        //    });
-        //}
+        /**
+         * 导入库存隔离数据
+         * @type {openImportStock}
+         */
+        $scope.openImportStock = openImportStock;
+        function openImportStock(viewSize, data) {
+            require([popActions.file.stock.controllerUrl], function () {
+                $modal.open({
+                    templateUrl: popActions.file.stock.templateUrl,
+                    controller: popActions.file.stock.controller,
+                    size: viewSize,
+                    resolve: {
+                        data: function () {
+                            return data;
+                        }
+                    }
+                });
+            });
+        }
+
+        /**
+         * 新增一个sku的库存隔离
+         * @type {openMrbstocksku}
+         */
+        $scope.openNewMrbStockSku = openNewMrbStockSku;
+        function openNewMrbStockSku(viewSize, data) {
+            require([popActions.promotion.newMrbStockSku.controllerUrl], function () {
+                $modal.open({
+                    templateUrl: popActions.promotion.newMrbStockSku.templateUrl,
+                    controller: popActions.promotion.newMrbStockSku.controller,
+                    size: viewSize,
+                    resolve: {
+                        data: function () {
+                            return data;
+                        }
+                    }
+                });
+            });
+        }
+
+        /**
+         * 显示该sku的库存隔离明细
+         */
+        $scope.openSkuMrbStockDetail = openSkuMrbStockDetail;
+        function openSkuMrbStockDetail(viewSize, data) {
+            require([popActions.promotion.skuMrbStockDetail.controllerUrl], function () {
+                $uibModal.open({
+                    templateUrl: popActions.promotion.skuMrbStockDetail.templateUrl,
+                    controller: popActions.promotion.skuMrbStockDetail.controller,
+                    size: viewSize,
+                    resolve: {
+                        data: function () {
+                            return data;
+                        }
+                    }
+                });
+            });
+        }
+
+        /**
+         * 新增增量隔离库存任务
+         */
+        $scope.openAddMrbStockIncrement = openAddMrbStockIncrement;
+        function openAddMrbStockIncrement(viewSize, data) {
+            require([popActions.promotion.addMrbStockIncrement.controllerUrl], function () {
+                $uibModal.open({
+                    templateUrl: popActions.promotion.addMrbStockIncrement.templateUrl,
+                    controller: popActions.promotion.addMrbStockIncrement.controller,
+                    size: viewSize,
+                    resolve: {
+                        data: function () {
+                            return data;
+                        }
+                    }
+                });
+            });
+        }
+
+        /**
+         * 弹出自定义属性列
+         * @type {openCustomColumn}
+         */
+        $scope.openCustomColumn = openCustomColumn;
+        function openCustomColumn(viewSize, data) {
+            require([popActions.custom.column.controllerUrl], function () {
+                $modal.open({
+                    templateUrl: popActions.custom.column.templateUrl,
+                    controller: popActions.custom.column.controller,
+                    size: viewSize,
+                    resolve: {
+                        data: function () {
+                            return data;
+                        }
+                    }
+                });
+            });
+        }
     }
 });

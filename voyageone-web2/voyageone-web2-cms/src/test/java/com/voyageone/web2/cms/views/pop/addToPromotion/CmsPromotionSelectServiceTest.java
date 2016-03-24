@@ -2,7 +2,7 @@ package com.voyageone.web2.cms.views.pop.addToPromotion;
 
 //import com.voyageone.web2.cms.model.CmsBtTagModel;
 import com.voyageone.web2.cms.views.pop.bulkUpdate.CmsAddToPromotionService;
-import com.voyageone.web2.sdk.api.domain.CmsBtTagModel;
+import com.voyageone.service.model.cms.CmsBtTagModel;
 import net.minidev.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -23,8 +23,10 @@ public class ProductForWmsGetRequestTest {
     @Test
     public void testGetSkuBySkuIncludes() {
 
-        ProductForWmsGetRequest requestModel = new ProductForWmsGetRequest("010");
-        requestModel.setCode("00341");
+//        ProductForWmsGetRequest requestModel = new ProductForWmsGetRequest("010");
+//        requestModel.setCode("00341");
+        ProductForWmsGetRequest requestModel = new ProductForWmsGetRequest("017");
+        requestModel.setSku("017-54871");
 
         //SDK取得Product 数据
         ProductForWmsGetResponse response = voApiClient.execute(requestModel);

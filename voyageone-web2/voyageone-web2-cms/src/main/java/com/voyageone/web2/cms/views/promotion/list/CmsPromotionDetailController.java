@@ -1,22 +1,16 @@
 package com.voyageone.web2.cms.views.promotion.list;
 
-import com.jd.open.api.sdk.internal.util.JsonUtil;
-import com.voyageone.cms.CmsConstants;
-import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants.PROMOTION;
-import com.voyageone.web2.sdk.api.domain.CmsBtPromotionCodeModel;
-import com.voyageone.web2.sdk.api.domain.CmsBtPromotionGroupModel;
+import com.voyageone.service.model.cms.CmsBtPromotionCodeModel;
+import com.voyageone.service.model.cms.CmsBtPromotionGroupModel;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;

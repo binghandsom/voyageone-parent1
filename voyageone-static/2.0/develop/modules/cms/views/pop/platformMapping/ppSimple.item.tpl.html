@@ -5,23 +5,25 @@
         </button>
         <h5 class="modal-title"><i class="fa fa-crosshairs"></i> 简单类型属性匹配</h5>
     </div>
-    <h5 class="m-l">
+    <h5 class="text-vo m-l">
         <span>{{::ctrl.context.maindata.category.path}}</span>
-        <sup>主数据</sup>
+        <sup><strong>{{'TXT_MASTER_CATEGORY' | translate}}</strong></sup>
         <span class="fa fa-exchange"></span>
     </h5>
-    <h5 class="text-vo m-l">
+    <h5 class="m-l">
         <span>{{::ctrl.context.platform.category.path}}</span>
-        <sup>平台类目</sup>
+        <sup><strong>{{'TXT_PLATFORM_CATEGORY' | translate}}</strong></sup>
     </h5>
 
     <div class="p-l-r">
         <form role="form" class="form-horizontal m-r-sm m-l-sm">
             <div class="form-group">
-                <label class="col-sm-2">
-                    <input type="radio" name="radio1" ng-value="false" ng-model="ctrl.selected.fixedValue"/>
-                    <span> 非固定值</span>
-                </label>
+                <div class="col-sm-2">
+                    <label class="control-label">
+                        <input type="radio" name="radio1" ng-value="false" ng-model="ctrl.selected.fixedValue"/>
+                        <span> 非固定值</span>
+                    </label>
+                </div>
                 <div class="col-sm-10 form-inline">
                     <select class="form-control" title="值来源"
                             ng-options="i as i.desc for (k, i) in ctrl.valueFromOptions"
@@ -32,7 +34,7 @@
             </div>
             <div class="form-group" ng-repeat="propGroup in ctrl.values">
                 <div class="col-sm-10 col-sm-offset-2 form-inline">
-                    <select class="form-control" title="可用属性"
+                    <select search-contains="true" chosen class="form-control" title="可用属性"
                             ng-options="i as (i.name + ' ( ' + i.id + ' )') for i in propGroup.props"
                             ng-model="propGroup.selected"
                             ng-change="ctrl.tryLoadNext($index, propGroup)">
@@ -67,10 +69,12 @@
                 </div>
             </div>
             <div class="form-group">
-                <label class="col-sm-2">
-                    <input type="radio" name="radio1" ng-value="true" ng-model="ctrl.selected.fixedValue"/>
-                    <span> 固定值/文本值</span>
-                </label>
+                <div class="col-sm-2">
+                    <label class="control-label">
+                        <input type="radio" name="radio1" ng-value="true" ng-model="ctrl.selected.fixedValue"/>
+                        <span> 固定值/文本值</span>
+                    </label>
+                </div>
                 <div class="col-sm-10">
                     <schema-item data="ctrl.property"></schema-item>
                 </div>

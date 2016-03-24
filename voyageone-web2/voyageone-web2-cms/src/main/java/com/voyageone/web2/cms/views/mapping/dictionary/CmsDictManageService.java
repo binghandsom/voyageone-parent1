@@ -6,10 +6,11 @@ import com.voyageone.cms.enums.DictionaryMasterProp;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.TypeChannel;
 import com.voyageone.common.util.StringUtils;
-import com.voyageone.web2.cms.bean.system.dictionary.CmsDictionaryIndexBean;
-import com.voyageone.web2.cms.dao.CmsMtDictDao;
-import com.voyageone.web2.cms.dao.CustomWordDao;
-import com.voyageone.web2.cms.model.CmsMtDictModel;
+import com.voyageone.service.bean.cms.system.dictionary.CmsDictionaryIndexBean;
+import com.voyageone.service.dao.cms.CmsMtCustomWordDao;
+import com.voyageone.service.dao.cms.CmsMtDictDao;
+import com.voyageone.service.model.cms.CmsMtDictModel;
+import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import com.voyageone.web2.core.dao.ChannelShopDao;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +38,7 @@ public class CmsDictManageService {
     protected ChannelShopDao channelShopDao;
 
     @Autowired
-    protected CustomWordDao customWordDao;
+    protected CmsMtCustomWordDao customWordDao;
 
     /**
      * 获取检索页面初始化的master data数据
@@ -49,7 +50,7 @@ public class CmsDictManageService {
         Map<String, Object> masterData = new HashMap<>();
 
         // 获取platform信息
-        masterData.put("platformList", TypeChannel.getTypeListSkuCarts(userInfo.getSelChannelId(), Constants.comMtTypeChannel.SKU_CARTS_53_A , language));
+        masterData.put("platformList", TypeChannel.getTypeListSkuCarts(userInfo.getSelChannelId(), Constants.comMtTypeChannel.SKU_CARTS_53_D , language));
 
         return masterData;
     }
@@ -89,8 +90,6 @@ public class CmsDictManageService {
 
         cmsMtDictModel.setCreater(user.getUserName());
         cmsMtDictModel.setModifier(user.getUserName());
-        // TODO 目前默认值是0,以后再修改
-        cmsMtDictModel.setCart_id("0");
 
         if (cmsMtDictDao.insertDict(cmsMtDictModel) < 1)
             // TODO 以后所有的异常msg统一修改
@@ -135,7 +134,7 @@ public class CmsDictManageService {
      *
      * @return 属性集合
      */
-    public Map<String, Object> getMasterProps(UserSessionBean userInfo) {
+    public Map<String, Object> getMasterProps(UserSessionBean userInfo, String language, CmsSessionBean cmsSessionBean) {
         Map<String, Object> resultInfo = new HashMap<>();
 
         // TODO 目前是从定义死的数据取得,以后改成从数据库中取得
@@ -149,6 +148,8 @@ public class CmsDictManageService {
         // 获取字典的数据
         CmsDictionaryIndexBean params = new CmsDictionaryIndexBean();
         params.setOrder_channel_id(userInfo.getSelChannelId());
+        params.setLang(language);
+        params.setCart_id(cmsSessionBean.getPlatformType().get("cartId").toString());
         resultInfo.put("dictionaryProps", cmsMtDictDao.selectByChannel(params));
 
         return resultInfo;

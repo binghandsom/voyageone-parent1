@@ -8,27 +8,15 @@ package com.voyageone.common.mq.enums;
  */
 public enum MqRoutingKey {
 
-    KEY1("CMSKEY1","voyageone_batchjob_queue_1")
-
-
+    CMS_BATCH_PROMOTION("voyageone_cms_batchjob_promotion_queue")
     ;
-
-    private String key;
 
     private String value;
 
-    MqRoutingKey(String key, String value) {
-        this.key=key;
+    MqRoutingKey(String value) {
         this.value=value;
     }
 
-    public String getKey() {
-        return key;
-    }
-
-    public void setKey(String key) {
-        this.key = key;
-    }
 
     public String getValue() {
         return value;

@@ -10,7 +10,7 @@
 	</parent>
 	<artifactId>voyageone-web2-core</artifactId>
 	<packaging>jar</packaging>
-	<name>Voyageone Web2 Core Maven Webapp</name>
+	<name>VoyageOne Web2 - Core ( with Base )</name>
 	<url>http://maven.apache.org</url>
 	<version>${voyageone.web2.core.version}</version>
 	<dependencies>
@@ -19,6 +19,19 @@
 			<artifactId>voyageone-com</artifactId>
 			<version>${voyageone.common.version}</version>
 		</dependency>
+
+		<dependency>
+			<groupId>com.voyageone</groupId>
+			<artifactId>voyageone-service2-model</artifactId>
+			<version>${voyageone.service2.model.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.voyageone</groupId>
+			<artifactId>voyageone-service2-dao</artifactId>
+			<version>${voyageone.service2.dao.version}</version>
+		</dependency>
+
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>

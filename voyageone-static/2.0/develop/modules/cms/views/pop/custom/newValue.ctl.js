@@ -6,44 +6,61 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function (angularAMD) {
 
-    angularAMD.controller('popAddAttributeValueNewCtl', function ($scope) {
+    angularAMD.controller('popAddAttributeValueNewCtl', function ($scope,$modalInstance, attributeValueService, attributeService , notify ,$translate, context,alert) {
 
-        //$scope.vm={"messager":""};
-        //var uploader = $scope.uploader = new FileUploader({
-        //    url: '/cms/promotion/detail/uploadPromotion'
-        //});
-        //
-        //$scope.initialize  = function () {
-        //
-        //}
-        //$scope.upload = function(){
-        //    uploader.queue[0].formData = [{"promotionId":data}];
-        //    uploader.queue[0].upload();
-        //    $scope.vm.messager ="读入中";
-        //}
-        //
-        //uploader.onProgressItem = function(fileItem, progress) {
-        //    console.info('onProgressItem', fileItem, progress);
-        //};
-        //
-        //uploader.onSuccessItem = function(fileItem, response, status, headers) {
-        //    console.info('onSuccessItem', fileItem, response, status, headers);
-        //    $scope.vm.messager ="读入完毕！成功"+response.data.succeed.length +"条  失败"+response.data.fail.length +"条";
-        //};
+        $scope.vm = {
+            prop_id:"",
+            value_original:"",
+            value_translation:""
+        };
+        $scope.categoryList = context.categoryList;
+        $scope.valueList = context.valueList;
+
+        /**
+         * 类目发生变化时,动态获取对应的属性值
+         * @param catPath
+         */
+        $scope.valueChange = function(catPath){
+            attributeService.init({cat_path:catPath,unsplitFlg:1})
+                .then(function (res){
+                    $scope.vm.valList = res.data.valList;
+                });
+        };
+
+        /**
+         * 保存新增属性值数据
+         */
+        $scope.ok = function () {
+
+            var checkResult = true;
+            _.each($scope.valueList, function(value) {
+
+                if (_.isEqual(value.prop_id, $scope.vm.prop_id)
+                     && _.isEqual(value.value_original, $scope.vm.value_original)) {
+                    alert("该自定义属性值已经存在");
+                    checkResult = false;
+                }
+            });
+
+            if (checkResult) {
+                $scope.vmInfo ={
+                    prop_id: $scope.vm.prop_id,
+                    value_original: $scope.vm.value_original,
+                    value_translation: $scope.vm.value_translation
+                };
+                attributeValueService.add($scope.vmInfo)
+                    .then(function () {
+                        notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
+                        $modalInstance.close();
+                        //$scope.$parent.initialize();
+                    });
+            }
+
+        };
+
+        $scope.close = function () {
+            $modalInstance.dismiss();
+        }
     });
 
-    //return function ($scope,promotionService) {
-    //
-    //    $scope.promotion = {};
-    //    $scope.name = "123";
-    //
-    //    $scope.initialize  = function () {
-    //        alert("a");
-    //    }
-    //
-    //    $scope.ok = function(){
-    //        alert("e");
-    //    }
-    //
-    //};
 });

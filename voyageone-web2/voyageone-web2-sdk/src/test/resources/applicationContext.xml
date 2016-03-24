@@ -9,26 +9,11 @@
      http://www.springframework.org/schema/context  
      http://www.springframework.org/schema/context/spring-context-3.2.xsd">
 
+    <!-- 共通相关配置 -->
+    <import resource="classpath*:voyageone-config.xml" />
+
     <!-- 类扫描路径配置 -->
     <context:component-scan base-package="com.voyageone.web2.sdk"/>
-    <!-- DAO相关配置 -->
-    <!--<import resource="context-test-datasource.xml"/>-->
-    <!--<import resource="dao-mongo.xml"/>-->
-    <!--<import resource="test-context.xml"/>-->
 
-    <!-- 初始化处理 -->
-<!--
-    <bean id="init" class="com.voyageone.common.configs.Initializer" init-method="init"/>
-    <bean id="initial" class="com.voyageone.batch.bi.configs.Initializer" init-method="init"/>
--->
-    <bean id="restTemplate" class="org.springframework.web.client.RestTemplate"/>
-
-    <bean id="voApiDefaultClient" class="com.voyageone.web2.sdk.api.VoApiDefaultClient">
-        <constructor-arg ref="restTemplate" />
-        <constructor-arg name="serverUrl" value="http://localhost:8080/rest"/>
-        <!--<constructor-arg name="serverUrl" value="http://localhost:8080/rest"/>-->
-        <constructor-arg name="connectTimeout" value="3000"/><!-- ms -->
-        <constructor-arg name="readTimeout" value="60000"/><!-- ms -->
-    </bean>
 
 </beans>

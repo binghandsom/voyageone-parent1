@@ -15,16 +15,19 @@
 define([
     'cms',
     'underscore',
+    'modules/cms/enums/MappingTypes',
     'modules/cms/controller/popup.ctl',
     'modules/cms/views/mapping/platform/prop.item.d'
-], function (cms, _) {
+], function (cms, _, MappingTypes) {
     'use strict';
     return cms.controller('platformPropMappingController', (function () {
 
-        function PlatformPropMappingController(platformPropMappingService, $routeParams, alert) {
+        function PlatformPropMappingController(platformPropMappingService, $routeParams, alert, notify, $translate) {
 
             this.dataService = platformPropMappingService;
             this.alert = alert;
+            this.notify = notify;
+            this.$translate = $translate;
 
             this.cartId = parseInt($routeParams['cartId']);
 
@@ -150,7 +153,13 @@ define([
                     path: path
                 };
 
-                ppPlatformMapping(context);
+                ppPlatformMapping(context).then(function(topPropMapping) {
+                    // 窗口处理结束后, Complex 和 Simple 都会返回顶层的属性 Mapping
+                    // 因为 Match 标识是计算好的. 这里不再重复计算 Top 属性
+                    // 所以只简单处理
+                    // 如果返回了 Mapping, 说明保存正常, 则切换状态即可
+                    property.matched = topPropMapping && !property.matched;
+                });
             },
 
             saveMatchOver: function () {
@@ -158,6 +167,7 @@ define([
                 that.dataService.saveMatchOver(that.maindata.category.id, that.platform.matchOver,
                     that.cartId).then(function (matchOver) {
                     that.platform.matchOver = matchOver;
+                    that.notify.success(that.$translate.instant('TXT_MSG_UPDATE_SUCCESS'));
                 });
             }
         };

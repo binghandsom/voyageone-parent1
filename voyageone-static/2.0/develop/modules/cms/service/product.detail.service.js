@@ -17,10 +17,9 @@ define([
 	function productDetailService ($q, $productDetailService, $filter) {
 
 		this.getProductInfo = getProductInfo;
-		//this.updateProductInfo = updateProductInfo;
-		//this.updateSkuInfo = updateSkuInfo;
 		this.updateProductDetail = updateProductDetail;
 		this.changeCategory = changeCategory;
+		this._setProductStatus = _setProductStatus;
 
 		/**
 		 * 获取页面产品信息
@@ -33,15 +32,6 @@ define([
 			.then (function (res) {
 				var result = angular.copy(res);
 
-				// 设定custom列表中的feed被选中
-				//if (res.data.productInfo.customAttributes) {
-				//	result.data.productInfo.customAttributes.orgAtts = _returnNew(res.data.productInfo.customAttributes.orgAtts, result.data.productInfo.customAttributes.customIds);
-				//	result.data.productInfo.customAttributes.cnAtts = _returnNew(res.data.productInfo.customAttributes.cnAtts);
-                //
-				//	// 设定哪些原始feed被添加到custom列表
-				//	var feedKeys = _returnKeys(res.data.productInfo.customAttributes.orgAtts);
-				//	result.data.productInfo.feedKeys = feedKeys;
-				//}
 				var feedKeys = _.values(result.data.productInfo.customAttributes.customIds);
 				if(res.data.productInfo.feedInfoModel) {
 					result.data.productInfo.feedInfoModel = _returnNew(res.data.productInfo.feedInfoModel
@@ -61,31 +51,7 @@ define([
 
 				// 设置产品状态
 				if (result.data.productInfo.productStatus) {
-
-					switch (result.data.productInfo.productStatus.approveStatus) {
-						case Status.NEW:
-						case Status.PENDING:
-							result.data.productInfo.productStatus.statusInfo = {
-								isWaitingApprove: false,
-								isApproved: false,
-								isDisable: false
-							};
-							break;
-						case Status.READY:
-							result.data.productInfo.productStatus.statusInfo = {
-								isWaitingApprove: true,
-								isApproved: false,
-								isDisable: false
-							};
-							break;
-						case Status.APPROVED:
-							result.data.productInfo.productStatus.statusInfo = {
-								isWaitingApprove: false,
-								isApproved: true,
-								isDisable: true
-							};
-							break;
-					}
+					_setProductStatus(result.data.productInfo.productStatus);
 				}
 
 				defer.resolve(result);
@@ -93,46 +59,6 @@ define([
 
 			return defer.promise;
 		}
-
-		/**
-		 * 保存产品详情和产品自定义
-		 * @param formData
-		 * @returns {*|Promise}
-         */
-		//function updateProductInfo (formData) {
-		//	var data = {
-		//		categoryId: formData.categoryId,
-		//		categoryFullPath: formData.categoryFullPath,
-		//		productId: formData.productId,
-		//		modified: formData.modified,
-		//		masterFields: [],
-		//		customAttributes: formData.customAttributes
-		//	};
-        //
-		//	angular.forEach(formData.masterFields, function (field) {
-		//		if (field.type != "LABEL" && field.isDisplay != 0)
-		//			data.masterFields.push(field);
-		//	});
-        //
-		//	return $productDetailService.updateProductMasterInfo(data);
-		//}
-
-		/**
-		 * 保存SKU列表信息
-		 * @param formData
-		 * @returns {*}
-         */
-		//function updateSkuInfo (formData) {
-        //
-		//	var data = {
-		//		categoryId: formData.categoryId,
-		//		categoryFullPath: formData.categoryFullPath,
-		//		productId: formData.productId,
-		//		modified: formData.modified,
-		//		skuFields: formData.skuFields
-		//	};
-		//	return $productDetailService.updateProductSkuInfo(data);
-		//}
 
 		/**
 		 * 同时保存产品详情,产品自定义,SKU列表信息
@@ -154,14 +80,13 @@ define([
 				masterFields: [],
 				customAttributes: formData.customAttributes,
 				productStatus: {
-					approveStatus: formData.productStatus.statusInfo.isApproved
-							? Status.APPROVED
-							: (formData.productStatus.statusInfo.isWaitingApprove ? Status.READY : formData.productStatus.approveStatus),
-					translateStatus: formData.productStatus.translateStatus ? "1" : "0"/*,
-					editStatus: formData.productStatus.editStatus ? "1" : "0"*/
+					approveStatus: formData.productStatus.approveStatus,
+					translateStatus: formData.productStatus.translateStatus ? "1" : "0"
 				},
 				skuFields: formData.skuFields
 			};
+
+
 
 			angular.forEach(formData.masterFields, function (field) {
 				if (field.type != "LABEL" && field.isDisplay != 0)
@@ -205,20 +130,39 @@ define([
 			return $filter('orderBy')(result, "selected", true);
 		}
 
-		///**
-		// * 返回keys
-		// * @param data
-		// * @returns {Array}
-         //* @private
-         //*/
-		//function _returnKeys (data) {
-		//	var result = [];
-		//	for(var key in data) {
-		//		result.push(key);
-		//	}
-		//	return result;
-		//}
+		/**
+		 * 转换成画面上能用项目
+		 * @param productStatus
+         * @private
+         */
+		function _setProductStatus (productStatus) {
 
+			switch (productStatus.approveStatus) {
+				case Status.NEW:
+				case Status.PENDING:
+					productStatus.statusInfo = {
+						isWaitingApprove: false,
+						isApproved: false,
+						isDisable: false
+					};
+					break;
+				case Status.READY:
+					productStatus.statusInfo = {
+						isWaitingApprove: true,
+						isApproved: false,
+						isDisable: false
+					};
+					break;
+				case Status.APPROVED:
+					productStatus.statusInfo = {
+						isWaitingApprove: true,
+						isApproved: true,
+						isDisable: true
+					};
+					break;
+			}
+
+		}
 	}
 
 });

@@ -5,21 +5,21 @@
         </button>
         <h5 class="modal-title"><i class="fa fa-crosshairs"></i> Complex 父级属性匹配</h5>
     </div>
-    <h5 class="m-l">
+    <h5 class="text-vo m-l">
         <span>{{::ctrl.context.maindata.category.path}}</span>
-        <sup>主数据</sup>
+        <sup><strong>{{'TXT_MASTER_CATEGORY' | translate}}</strong></sup>
         <span class="fa fa-exchange"></span>
     </h5>
-    <h5 class="text-vo m-l">
+    <h5 class="m-l">
         <span>{{::ctrl.context.platform.category.path}}</span>
-        <sup>平台类目</sup>
+        <sup><strong>{{'TXT_PLATFORM_CATEGORY' | translate}}</strong></sup>
     </h5>
 
     <div class="p-l-r">
         <form role="form" class="form-horizontal m-r-sm m-l-sm">
             <div class="form-group">
                 <div class="col-sm-3">
-                    <label>主数据类目属性</label>
+                    <label class="control-label">主数据类目属性</label>
                 </div>
                 <div class="col-sm-9 form-inline">
                     <select class="form-control" title="值选择"

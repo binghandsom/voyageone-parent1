@@ -1,16 +1,17 @@
 package com.voyageone.web2.cms.views.system.category;
 
 import com.voyageone.base.exception.BusinessException;
-import com.voyageone.cms.service.dao.mongodb.CmsMtCategorySchemaDao;
-import com.voyageone.cms.service.model.CmsMtCategorySchemaModel;
 import com.voyageone.common.masterdate.schema.factory.SchemaJsonReader;
 import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.service.dao.cms.mongo.CmsMtCategorySchemaDao;
+import com.voyageone.service.model.cms.mongo.CmsMtCategorySchemaModel;
 import net.minidev.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -55,7 +56,13 @@ public class CmsCategoryListService {
                 masterSchemaModel.setCreater((String) schemaModel.get("creater"));
                 masterSchemaModel.setCreated((String) schemaModel.get("created"));
                 masterSchemaModel.setModified(DateTimeUtil.getNowTimeStamp());
-                masterSchemaModel.set_id( schemaModel.get("_id").toString());
+                masterSchemaModel.set_id(schemaModel.get("_id").toString());
+
+                List<Map<String, Object>> skuList = new ArrayList<>();
+                Map<String, Object> skuJson = (Map<String, Object>) schemaModel.get("sku");
+                skuList.add(skuJson);
+                List<Field> skuFields = SchemaJsonReader.readJsonForList(skuList);
+                masterSchemaModel.setSku(skuFields.get(0));
             }
             cmsMtCategorySchemaDao.update(masterSchemaModel);
             return masterSchemaModel;

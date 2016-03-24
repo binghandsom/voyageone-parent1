@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.service.dao.sql">
+    <resultMap id="PromotionLogMap" type="com.voyageone.service.model.cms.CmsBtPromotionLogModel">
+        <id column="seq" property="seq" jdbcType="INTEGER" />
+        <result column="promotion_id" property="promotionId" jdbcType="INTEGER" />
+        <result column="channel_id" property="channelId" jdbcType="VARCHAR" />
+        <result column="cart_id" property="cartId" jdbcType="INTEGER" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="short_name" property="shortName" jdbcType="VARCHAR" />
+        <result column="promotion_status" property="promotionStatus" jdbcType="INTEGER" />
+        <result column="promotion_name" property="promotionName" jdbcType="VARCHAR" />
+        <result column="activity_start" property="activityStart" jdbcType="VARCHAR" />
+        <result column="activity_end" property="activityEnd" jdbcType="VARCHAR" />
+        <result column="product_id" property="productId" jdbcType="INTEGER" />
+        <result column="product_code" property="productCode" jdbcType="VARCHAR" />
+        <result column="sale_price" property="salePrice" jdbcType="DECIMAL" />
+        <result column="msrp" property="msrp" jdbcType="DECIMAL" />
+        <result column="promotion_price" property="promotionPrice" jdbcType="DECIMAL" />
+        <result column="created" property="created" jdbcType="TIMESTAMP" />
+        <result column="creater" property="creater" jdbcType="VARCHAR" />
+        <result column="modified" property="modified" jdbcType="TIMESTAMP" />
+        <result column="modifier" property="modifier" jdbcType="VARCHAR" />
+    </resultMap>
+
+    <select id="select_promotion_log" resultMap="PromotionLogMap" parameterType="HashMap">
+        SELECT
+            a.seq,
+            a.promotion_id,
+            b.channel_id,
+            b.cart_id,
+            b.name,
+            b.add_name2 as short_name,
+            b.promotion_status,
+            b.promotion_name,
+            b.activity_start,
+            b.activity_end,
+            a.product_id,
+            a.product_code,
+            a.sale_price,
+            a.msrp,
+            a.promotion_price,
+            a.created,
+            a.creater,
+            a.modified,
+            a.modifier
+        FROM voyageone_cms2.cms_bt_promotion_code a
+        INNER JOIN (
+            SELECT
+                p.promotion_id,
+                p.channel_id,
+                p.cart_id,
+                p.promotion_status,
+                p.promotion_name,
+                p.activity_start,
+                p.activity_end,
+                c.name,
+                c.add_name2
+            FROM voyageone_cms2.cms_bt_promotion p
+            INNER JOIN Synship.com_mt_value_channel c
+            ON p.cart_id = c.value and c.type_id = '53' and c.lang_id = #{lang}) b
+        ON a.promotion_id = b.promotion_id
+        WHERE a.product_code = #{code} AND b.channel_id = #{channelId}
+        <if test="cartId !=null and cartId != ''">
+            and b.cart_id = #{cartId}
+        </if>
+        LIMIT #{offset}, #{rows}
+    </select>
+
+    <select id="select_promotion_log_cnt" resultType="int" parameterType="HashMap">
+        SELECT COUNT(1)
+        FROM voyageone_cms2.cms_bt_promotion_code a
+        INNER JOIN (
+            SELECT
+                p.promotion_id,
+                p.channel_id,
+                p.cart_id,
+                p.promotion_status,
+                p.promotion_name,
+                p.activity_start,
+                p.activity_end,
+                c.name,
+                c.add_name2
+            FROM voyageone_cms2.cms_bt_promotion p
+            INNER JOIN Synship.com_mt_value_channel c
+               ON p.cart_id = c.value and c.type_id = '53' and c.lang_id = #{lang}) b
+        ON a.promotion_id = b.promotion_id
+        WHERE a.product_code = #{code} AND b.channel_id = #{channelId}
+        <if test="cartId !=null and cartId != ''">
+            and b.cart_id = #{cartId}
+        </if>
+    </select>
+</mapper>

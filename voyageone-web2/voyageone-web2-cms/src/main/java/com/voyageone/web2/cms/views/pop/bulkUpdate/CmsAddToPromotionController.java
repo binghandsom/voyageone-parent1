@@ -3,8 +3,7 @@ package com.voyageone.web2.cms.views.pop.bulkUpdate;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
-import com.voyageone.web2.sdk.api.domain.CmsBtTagModel;
-import com.voyageone.web2.sdk.api.service.ProductTagClient;
+import com.voyageone.service.model.cms.CmsBtTagModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -13,8 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Map;
-
-//import com.voyageone.web2.cms.model.CmsBtTagModel;
 
 /**
  * @author gubuchun 15/12/14
@@ -29,9 +26,6 @@ public class CmsAddToPromotionController extends CmsController {
 
     @Autowired
     private CmsAddToPromotionService promotionSelectService;
-
-    @Autowired
-    private ProductTagClient productTagClient;
 
     @RequestMapping(CmsUrlConstants.POP.ADD_TO_PROMOTION.GET_PROM_TAGS)
     public AjaxResponse getPromotionTags(@RequestBody Map<String, Object> params){

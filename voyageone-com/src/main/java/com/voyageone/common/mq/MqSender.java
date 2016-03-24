@@ -20,25 +20,26 @@ import java.util.Map;
 @Component
 public class MqSender {
 
-//    @Autowired
-//    private AmqpTemplate amqpTemplate;
-//
-//    @Autowired
-//    private AmqpAdmin amqpAdmin;
+    @Autowired
+    private AmqpTemplate amqpTemplate;
+
+    @Autowired
+    private AmqpAdmin amqpAdmin;
 
     @Autowired
     private MqMsgBackDao msgBackDao;
 
     public void sendMessage(MqRoutingKey routingKey, Map<String, Object> messageMap){
-//        try{
-//            amqpAdmin.declareQueue(new Queue(routingKey.getValue()));
-//            if (messageMap == null) {
-//                messageMap = new HashMap<>();
-//            }
-//            amqpTemplate.convertAndSend(routingKey.getValue(), JsonUtil.getJsonString(messageMap));
-//        }catch (Exception e){
-//            msgBackDao.insertBatchMessage(routingKey.toString(),messageMap);
-//        }
+        try{
+            amqpAdmin.declareQueue(new Queue(routingKey.getValue()));
+            if (messageMap == null) {
+                messageMap = new HashMap<>();
+            }
+            amqpTemplate.convertAndSend(routingKey.getValue(), JsonUtil.getJsonString(messageMap));
+        }catch (Exception e){
+            e.printStackTrace();
+            msgBackDao.insertBatchMessage(routingKey.toString(),messageMap);
+        }
     }
 
 }

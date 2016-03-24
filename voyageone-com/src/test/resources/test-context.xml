@@ -11,11 +11,17 @@
     <!-- 类扫描路径配置 -->
     <context:component-scan base-package="com.voyageone"/>
 
-    <!-- DAO相关配置 -->
-    <import resource="test-context-datasource.xml"/>
-    <import resource="test-context-mongo.xml"/>
+    <import resource="classpath*:datasource-cms2-config.xml" />
+    <import resource="classpath*:datasource-config-mongo.xml" />
+    <!-- MQ Config -->
+    <import resource="classpath*:mq-config.xml" />
+    <!-- Redis Config -->
+    <import resource="classpath*:redis-config.xml" />
 
     <!-- 初始化处理 -->
     <bean class="com.voyageone.common.configs.Initializer" init-method="init"/>
     <!-- <bean id="initial" class="com.voyageone.batch.bi.configs.Initializer" init-method="init"/>-->
+
+
+
 </beans>

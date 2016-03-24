@@ -1,6 +1,6 @@
 package com.voyageone.web2.cms.views.pop.bulkUpdate;
 
-import com.voyageone.cms.service.model.CmsMtCommonPropDefModel;
+import com.voyageone.service.model.cms.mongo.CmsMtCommonPropDefModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
@@ -33,8 +33,7 @@ public class CmsFieldEditController extends CmsController {
      */
     @RequestMapping(CmsUrlConstants.POP.FIELD_EDIT.GET_POP_OPTIONS)
     public AjaxResponse getPopOptions(){
-        String channel_id = getUser().getSelChannelId();
-        List<CmsMtCommonPropDefModel> result = propChangeService.getPopOptions(channel_id);
+        List<CmsMtCommonPropDefModel> result = propChangeService.getPopOptions(getLang(), getUser().getSelChannelId());
         return success(result);
     }
 

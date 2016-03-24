@@ -77,6 +77,10 @@ public abstract class BaseDao {
         return updateTemplate.update(fullStatement(statement), parameter);
     }
 
+    protected int delete(String statement) {
+        return updateTemplate.delete(fullStatement(statement));
+    }
+
     protected int delete(String statement, Object parameter) {
         return updateTemplate.delete(fullStatement(statement), parameter);
     }

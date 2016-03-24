@@ -1,10 +1,15 @@
 package com.voyageone.web2.cms.views.channel;
 
+import com.voyageone.base.exception.BusinessException;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
@@ -13,8 +18,11 @@ import java.util.Map;
  * Created by jiang on 2016/2/24.
  */
 @RestController
-@RequestMapping(value = CmsUrlConstants.CHANNEL.CUSTOM_VALUE.ROOT)
+@RequestMapping(value = CmsUrlConstants.CHANNEL.CUSTOM_VALUE.ROOT, method = RequestMethod.POST)
 public class CmsFeedCustPropValueController extends CmsController {
+
+    @Autowired
+    private CmsFeedCustPropService cmsFeedCustPropService;
 
     /**
      * @api {get} /cms/channel/custom/value/get 5. 获取Feed自定义属性值一览
@@ -24,7 +32,7 @@ public class CmsFeedCustPropValueController extends CmsController {
      * @apiVersion 0.0.1
      * @apiPermission 认证商户
      * @apiParam (应用级参数) {String} cat_path 类目路径（为'0'时表示查询共通属性，不设值时表示查询所有，即包含共通属性和所有类目）
-     * @apiParam (应用级参数) {String} sts 翻译状态（为'1'时表示查询已翻译的属性值，为'0'时表示查询未翻译的属性值）
+     * @apiParam (应用级参数) {String} sts 翻译状态（为'1'时表示查询已翻译的属性值，为'0'时表示查询未翻译的属性值，不设值时表示查询所有）
      * @apiParam (应用级参数) {String} propName 属性名（已翻译或未翻译的属性名）
      * @apiParam (应用级参数) {String} propValue 属性值（已翻译或未翻译的属性值）
      * @apiParam (应用级参数) {Integer} skip 翻页用参数，显示起始序号
@@ -52,10 +60,9 @@ public class CmsFeedCustPropValueController extends CmsController {
      *  使用cms_bt_feed_custom_prop_value表
      * @apiSampleRequest off
      */
-    @RequestMapping(CmsUrlConstants.CHANNEL.CUSTOM_VALUE.INIT)
+    @RequestMapping(value = CmsUrlConstants.CHANNEL.CUSTOM_VALUE.INIT)
     public AjaxResponse getFeedCustPropValueList(@RequestBody Map<String, String> params) {
-        //propChangeService.setProductFields(params, getUser());
-        return success(true);
+        return success(cmsFeedCustPropService.getFeedCustPropValueList(params, getUser()));
     }
 
     /**
@@ -65,7 +72,7 @@ public class CmsFeedCustPropValueController extends CmsController {
      * @apiGroup channel
      * @apiVersion 0.0.1
      * @apiPermission 认证商户
-     * @apiParam (应用级参数) {Integer} prop_id 属性名ID（必须项）
+     * @apiParam (应用级参数) {String} prop_id 属性名ID（必须项）
      * @apiParam (应用级参数) {String} value_original 未翻译的属性值（必须项）
      * @apiParam (应用级参数) {String} value_translation 已翻译的属性值
      * @apiSuccess (系统级返回字段) {String} code 处理结果代码编号
@@ -74,11 +81,15 @@ public class CmsFeedCustPropValueController extends CmsController {
      * @apiSuccess (系统级返回字段) {String} redirectTo 跳转地址
      * @apiSuccessExample 成功响应更新请求
      * {
-     *  "code": "0", "message":null, "displayType":null, "redirectTo":null, "data":null
+     *  "code":null, "message":null, "displayType":null, "redirectTo":null, "data":null
      * }
-     * @apiErrorExample  错误示例
+     * @apiErrorExample  错误示例1
      * {
      *  "code": "1", "message": "参数错误/缺少参数", "displayType":null, "redirectTo":null, "data":null
+     * }
+     * @apiErrorExample  错误示例2
+     * {
+     *  "code": "2", "message": "重复翻译的属性值", "displayType":null, "redirectTo":null, "data":null
      * }
      * @apiExample  业务说明
      *  新增Feed自定义属性值
@@ -87,10 +98,14 @@ public class CmsFeedCustPropValueController extends CmsController {
      *  使用cms_bt_feed_custom_prop_value表
      * @apiSampleRequest off
      */
-    @RequestMapping(CmsUrlConstants.CHANNEL.CUSTOM_VALUE.ADD)
+    @RequestMapping(value = CmsUrlConstants.CHANNEL.CUSTOM_VALUE.ADD)
     public AjaxResponse addFeedCustPropValue(@RequestBody Map<String, String> params) {
-        //propChangeService.setProductFields(params, getUser());
-        return success(true);
+        int propId = NumberUtils.toInt(params.get("prop_id"));
+        String origValue = StringUtils.trimToNull(params.get("value_original"));
+        if (propId == 0 || origValue == null) {
+            throw new BusinessException("参数错误/缺少参数");
+        }
+        return success(cmsFeedCustPropService.addFeedCustPropValue(params, getUser()));
     }
 
     /**
@@ -108,11 +123,15 @@ public class CmsFeedCustPropValueController extends CmsController {
      * @apiSuccess (系统级返回字段) {String} redirectTo 跳转地址
      * @apiSuccessExample 成功响应更新请求
      * {
-     *  "code": "0", "message":null, "displayType":null, "redirectTo":null, "data":null
+     *  "code":null, "message":null, "displayType":null, "redirectTo":null, "data":null
      * }
-     * @apiErrorExample  错误示例
+     * @apiErrorExample  错误示例1
      * {
      *  "code": "1", "message": "参数错误/缺少参数", "displayType":null, "redirectTo":null, "data":null
+     * }
+     * @apiErrorExample  错误示例2
+     * {
+     *  "code": "2", "message": "该属性值不存在", "displayType":null, "redirectTo":null, "data":null
      * }
      * @apiExample  业务说明
      *  保存Feed自定义属性值
@@ -120,9 +139,12 @@ public class CmsFeedCustPropValueController extends CmsController {
      *  使用cms_bt_feed_custom_prop_value表
      * @apiSampleRequest off
      */
-    @RequestMapping(CmsUrlConstants.CHANNEL.CUSTOM_VALUE.SAVE)
+    @RequestMapping(value = CmsUrlConstants.CHANNEL.CUSTOM_VALUE.SAVE)
     public AjaxResponse saveFeedCustPropValue(@RequestBody Map<String, String> params) {
-        //propChangeService.setProductFields(params, getUser());
-        return success(true);
+        int valueId = NumberUtils.toInt(params.get("value_id"));
+        if (valueId == 0) {
+            throw new BusinessException("参数错误/缺少参数");
+        }
+        return success(cmsFeedCustPropService.saveFeedCustPropValue(params, getUser()));
     }
 }

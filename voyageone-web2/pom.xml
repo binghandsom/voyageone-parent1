@@ -9,14 +9,14 @@
 		<version>0.2.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>voyageone-web2</artifactId>
-	<name>voyageone-web2</name>
+	<name>VoyageOne Web2</name>
 	<packaging>pom</packaging>
 	<version>2.0.0-SNAPSHOT</version>
 	<modules>
 		<module>voyageone-web2-core</module>
 		<module>voyageone-web2-cms</module>
+		<module>voyageone-web2-openapi</module>
 		<module>voyageone-web2-sdk</module>
-		<module>voyageone-web2-wsdl</module>
 	</modules>
 </project>
 

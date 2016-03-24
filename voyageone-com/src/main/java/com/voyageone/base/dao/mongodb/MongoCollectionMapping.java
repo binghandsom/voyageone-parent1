@@ -9,6 +9,7 @@ import java.util.Map;
  * @version 2.0.0
  * @since 2.0.0
  */
+@Deprecated
 public class MongoCollectionMapping {
     private Map<String, String> collectionNameMap;
     private Map<String, String> _collectionNameMap = new HashMap<>();
@@ -31,23 +32,4 @@ public class MongoCollectionMapping {
         return null;
     }
 
-    private static String getPartitionValue(String channelId) {
-        String result = "";
-        if (channelId != null) {
-            result = "_c" + channelId;
-        }
-        return result;
-    }
-
-    public String getCollectionName(Class<?> entityClass, String channelId) {
-        String collectionName = getCollectionName(entityClass);
-        return getCollectionName(collectionName, channelId);
-    }
-
-    public String getCollectionName(String collectionName, String channelId) {
-        if (collectionName != null) {
-            return collectionName + getPartitionValue(channelId);
-        }
-        return null;
-    }
 }

@@ -1,8 +1,8 @@
 package com.voyageone.web2.cms.views.home.menu;
 
 import com.voyageone.cms.enums.CartType;
-import com.voyageone.cms.service.model.CmsMtCategoryTreeModel;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
@@ -35,7 +35,7 @@ public class CmsMenuController extends CmsController {
      * 返回categoryType, categoryList, categoryTreeList
      */
     @RequestMapping(CmsUrlConstants.HOME.MENU.GET_CATE_INFO)
-    public AjaxResponse getCategoryInfo() {
+    public AjaxResponse getCategoryInfo(){
 
         Map<String, Object> resultBean = new HashMap<>();
 
@@ -78,11 +78,11 @@ public class CmsMenuController extends CmsController {
 
         // 如果cTypeId为空,设置成其默认值.
         if (StringUtils.isEmpty(cTypeId)) {
-            params.put("cTypeId", CartType.TMALLG.getShortName());
+            params.put("cTypeId", CartType.MASTER.getShortName());
         }
 
         if (cartId == null) {
-            params.put("cartId", CartType.TMALLG.getCartId());
+            params.put("cartId", CartType.MASTER.getCartId());
         }
 
         getCmsSession().setPlatformType(params);

@@ -6,44 +6,35 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function (angularAMD) {
 
-    angularAMD.controller('popAddAttributeValueCtl', function ($scope) {
+    angularAMD.controller('popAddAttributeValueCtl', function ($scope, $modalInstance, context, alert) {
 
-        //$scope.vm={"messager":""};
-        //var uploader = $scope.uploader = new FileUploader({
-        //    url: '/cms/promotion/detail/uploadPromotion'
-        //});
-        //
-        //$scope.initialize  = function () {
-        //
-        //}
-        //$scope.upload = function(){
-        //    uploader.queue[0].formData = [{"promotionId":data}];
-        //    uploader.queue[0].upload();
-        //    $scope.vm.messager ="读入中";
-        //}
-        //
-        //uploader.onProgressItem = function(fileItem, progress) {
-        //    console.info('onProgressItem', fileItem, progress);
-        //};
-        //
-        //uploader.onSuccessItem = function(fileItem, response, status, headers) {
-        //    console.info('onSuccessItem', fileItem, response, status, headers);
-        //    $scope.vm.messager ="读入完毕！成功"+response.data.succeed.length +"条  失败"+response.data.fail.length +"条";
-        //};
+        $scope.vm = {
+            prop_original:"",
+            prop_translation:""
+        };
+
+        /**
+         * 提交属性追加
+         */
+        $scope.ok = function () {
+            var checkResult = true;
+            if($scope.vm.prop_original==""){
+                alert("请输入属性名");
+                checkResult = false;
+            }else{
+                _.each(context.from, function(value) {
+                    if (_.isEqual(value.prop_original, $scope.vm.prop_original)) {
+                        alert("该属性已经存在");
+                        checkResult = false;
+                    }
+                });
+            }
+
+            if (checkResult) {
+                $modalInstance.close($scope.vm);
+            }
+        };
     });
 
-    //return function ($scope,promotionService) {
-    //
-    //    $scope.promotion = {};
-    //    $scope.name = "123";
-    //
-    //    $scope.initialize  = function () {
-    //        alert("a");
-    //    }
-    //
-    //    $scope.ok = function(){
-    //        alert("e");
-    //    }
-    //
-    //};
+
 });

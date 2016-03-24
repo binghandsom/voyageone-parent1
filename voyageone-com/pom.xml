@@ -9,13 +9,18 @@
 		<version>0.2.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>voyageone-com</artifactId>
-	<name>voyageone-com</name>
+	<name>VoyageOne - Common ( voyageone-com )</name>
 	<url>http://maven.apache.org</url>
 	<version>${voyageone.common.version}</version>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 	<dependencies>
+		<dependency>
+			<groupId>com.voyageone</groupId>
+			<artifactId>voyageone-config</artifactId>
+			<version>${voyageone.config.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>com.voyageone</groupId>
 			<artifactId>voyageone-masterdata-schema</artifactId>
@@ -284,6 +289,10 @@
 			<groupId>com.jayway.jsonpath</groupId>
 			<artifactId>json-path</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.mongodb</groupId>
+			<artifactId>mongo-java-driver</artifactId>
+		</dependency>
 
 		<!-- httpclient -->
 		<dependency>
@@ -299,6 +308,16 @@
 		<dependency>
 			<groupId>org.springframework.amqp</groupId>
 			<artifactId>spring-rabbit</artifactId>
+		</dependency>
+
+		<!-- redis -->
+		<dependency>
+			<groupId>org.springframework.data</groupId>
+			<artifactId>spring-data-redis</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>redis.clients</groupId>
+			<artifactId>jedis</artifactId>
 		</dependency>
 	</dependencies>
 	<build>

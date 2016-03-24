@@ -1,5 +1,6 @@
 package com.voyageone.web2.base;
 
+import com.voyageone.base.exception.SystemException;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.core.bean.UserSessionBean;
@@ -12,10 +13,8 @@ import org.springframework.http.ResponseEntity;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.net.URLEncoder;
 
 /**
  * 通用 Controller 的基类
@@ -70,6 +69,11 @@ public abstract class BaseController extends BaseAppComponent {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+//        try {
+//            headers.setContentDispositionFormData("attachment", URLEncoder.encode(downloadFileName, "UTF-8"));
+//        } catch (UnsupportedEncodingException e) {
+//            throw new SystemException("Unsupported Encoding", e);
+//        }
         headers.setContentDispositionFormData("attachment", downloadFileName);
         return new ResponseEntity<>(bytes, headers, HttpStatus.OK);
     }
@@ -118,11 +122,7 @@ public abstract class BaseController extends BaseAppComponent {
 
         AjaxResponse response = new AjaxResponse();
         response.setData(data);
-        try {
-            logger.debug(JacksonUtil.bean2Json(response));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        logger.debug(JacksonUtil.bean2Json(response));
         return response;
     }
 

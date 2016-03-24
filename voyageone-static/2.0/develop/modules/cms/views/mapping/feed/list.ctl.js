@@ -15,7 +15,8 @@ define([
         /**
          * @description
          * Feed Mapping 画面的 Controller 类
-         * @param {FeedMappingService} feedMappingService
+         * @param $scope
+         * @param feedMappingService
          * @param feedMappingListService
          * @param {voNotify} notify
          * @param {function} confirm
@@ -23,7 +24,7 @@ define([
          * @param blockUI
          * @constructor
          */
-        function FeedMappingController(feedMappingService, feedMappingListService, notify, confirm, $translate, blockUI) {
+        function FeedMappingController($scope, feedMappingService, feedMappingListService, notify, confirm, $translate, blockUI) {
 
             this.confirm = confirm;
             this.notify = notify;
@@ -53,6 +54,25 @@ define([
                 category: null,
                 property: null,
                 keyWord: null
+            };
+
+            // 在 Window 上注册回调, 用于子页面通知切换 MatchOver
+            var self = this;
+
+            window.feedMappingController = {
+                setMatchOver: function(mappingScope, matchOver) {
+                    $scope.$apply(function() {
+                        var map = self.currCategoryMap;
+                        // 更新目标 Feed Mapping
+                        map[mappingScope.feedCategoryPath].mapping.matchOver = matchOver;
+                        // 更新目标通用 Mapping
+                        Object.keys(map).forEach(function (key) {
+                            var mapping = map[key].mainMapping;
+                            if (mapping && mapping.scope.mainCategoryPath === mappingScope.mainCategoryPath)
+                                mapping.matchOver = matchOver;
+                        });
+                    });
+                }
             };
         }
 
@@ -116,8 +136,8 @@ define([
                         if (result && !feedCategoryBean.classes) {
                             // 如果没有计算过样式, 就计算
                             feedCategoryBean.classes = {
-                                background: feedCategoryBean.level > 1 ? 'badge-empty' : 'badge-success',
-                                icon: feedCategoryBean.level > 1 ? 'fa-level-up' : 'fa-level-down'
+                                background: feedCategoryBean.model.isChild == 1 ? 'badge-empty' : 'badge-success',
+                                icon: feedCategoryBean.model.isChild == 1 ? 'fa-level-up' : 'fa-level-down'
                             };
                         }
 
@@ -141,23 +161,16 @@ define([
 
                 var ttt = this;
 
-                ttt.confirm(ttt.$translate.instant('TXT_MSG_CONFIRM_FROWARD_PARENT_CATEGORY'))
+                ttt.confirm('TXT_MSG_CONFIRM_FROWARD_PARENT_CATEGORY')
                     .result
                     .then(function () {
-
-                        ttt.feedMappingService.extendsMapping(feedCategory)
-                            .then(function (res) {
-
-                                if (!res.data) {
-                                    ttt.notify.warning(ttt.$translate.instant('TXT_MSG_NO_FIND_FORWARD_CATEGORY'));
-                                    return;
-                                }
-
-                                // 从后台获取更新后的 mapping
-                                // 刷新数据
-                                var feedCategoryBean = ttt.findCategory(feedCategory.path);
-                                feedCategoryBean.mapping = res.data;
-                            });
+                        return ttt.feedMappingService.extendsMapping(feedCategory);
+                    })
+                    .then(function (res) {
+                        if (!res.data)
+                            ttt.notify.warning({id: 'TXT_MSG_NO_FIND_FORWARD_CATEGORY'});
+                        else
+                            ttt.resetBeanMapping(feedCategory.path, res.data);
                     });
             },
             /**
@@ -213,16 +226,28 @@ define([
              * @param {{from:string, selected:object}} context Popup 返回的结果信息
              */
             bindCategory: function (context) {
-
-                this.feedMappingService.setMapping({
+                var self = this;
+                self.feedMappingService.setMapping({
                     from: context.from,
                     to: context.selected.catPath
                 }).then(function (res) {
-                    // 从后台获取更新后的 mapping
-                    // 刷新数据
-                    var feedCategoryBean = this.findCategory(context.from);
-                    feedCategoryBean.mapping = res.data;
-                }.bind(this));
+                    self.resetBeanMapping(context.from, res.data);
+                });
+            },
+
+            /**
+             * 重新设置 Bean 对象的 Mapping 和 MainMapping 属性
+             * @param feedCategoryPath
+             * @param mapping
+             */
+            resetBeanMapping: function (feedCategoryPath, mapping) {
+                var self = this;
+                var feedCategoryBean = self.findCategory(feedCategoryPath);
+                feedCategoryBean.mapping = mapping;
+                self.feedMappingListService.getMainMapping(feedCategoryBean.mapping.scope.mainCategoryPath)
+                    .then(function (mainMapping) {
+                        feedCategoryBean.mainMapping = mainMapping;
+                    });
             },
 
             /**
@@ -276,29 +301,23 @@ define([
 
     })()).service('feedMappingListService', (function () {
 
-        function FeedMappingListService(feedMappingService, $q) {
+        function FeedMappingListService(feedMappingService) {
             this.feedMappingService = feedMappingService;
-            this.$q = $q;
-            this.categoryTrees = {};
         }
 
         FeedMappingListService.prototype = {
             getCategoryMap: function (categoryId) {
-                var ttt = this;
-                var cache = ttt.categoryTrees;
-                var deferred = ttt.$q.defer();
-
-                if (cache[categoryId]) {
-                    deferred.resolve(cache[categoryId]);
-                    return deferred.promise;
-                }
-
-                ttt.feedMappingService.getFeedCategoryTree({topCategoryId: categoryId})
+                var self = this;
+                return self.feedMappingService.getFeedCategoryTree({topCategoryId: categoryId})
                     .then(function (res) {
-                        deferred.resolve(cache[categoryId] = res.data);
+                        return res.data;
                     });
-
-                return deferred.promise;
+            },
+            getMainMapping: function (mainCategoryPath) {
+                var self = this;
+                return self.feedMappingService.getMainMapping({to: mainCategoryPath}).then(function (res) {
+                    return res.data;
+                });
             }
         };
 
