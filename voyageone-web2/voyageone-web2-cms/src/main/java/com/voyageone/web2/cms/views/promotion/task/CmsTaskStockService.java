@@ -839,6 +839,8 @@ public class CmsTaskStockService extends BaseAppService {
             // 一件明细保存的场合
             stockList.add(((List<Map<String, Object>>) param.get("stockList")).get((Integer)param.get("index")));
         }
+
+        // 库存隔离数据输入Check
         checksSparationQty(stockList);
 
         String taskId = (String) param.get("taskId");
@@ -878,6 +880,7 @@ public class CmsTaskStockService extends BaseAppService {
                     String separationQty = (String) platformInfo.get("separationQty");
                     // 状态
                     String status = (String) platformInfo.get("status");
+                    // 平台id
                     String cartId = (String) platformInfo.get("cartId");
                     // sku + cartId在DB中存在的场合（隔离信息存在）
                     if (skuDBInfo.containsKey(sku + cartId)) {
