@@ -243,6 +243,7 @@ define([
                             ttt.matchOver = res.data == 1;
                         });
                 },
+
                 popupContext: function (bean) {
                     return {
                         isCommon: this.isCommon,
@@ -251,6 +252,7 @@ define([
                         bean: bean
                     };
                 },
+
                 /**
                  * 上层 popup 返回时的调用
                  * @param {{feedCategoryPath:string,mainCategoryPath:string,field:object,fieldMapping:object}} context
