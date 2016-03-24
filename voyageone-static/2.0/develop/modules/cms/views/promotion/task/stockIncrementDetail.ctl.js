@@ -13,7 +13,6 @@ define([
             this.alert = alert;
             this.notify = notify;
             this.confirm = confirm;
-            this.taskId = "";
             this.subTaskId = $routeParams['sub_task_id'];
             this.taskStockIncrementDetailService = taskStockIncrementDetailService;
             this.hasAuthority = true;
@@ -33,12 +32,13 @@ define([
             this.propertyList = [];
             this.cartId = "";
             this.cartName = "";
+            this.taskId = "";
 
             this.stockPageOption = {
                 curr: 1,
                 total: 0,
                 size: 20,
-                fetch: this.search.bind(this)
+                fetch: this.getStockList.bind(this)
             };
 
             this.downloadUrl = urls.root + "/" + urls.exportStockInfo;
@@ -46,12 +46,31 @@ define([
 
         TaskStockIncrementDetailController.prototype = {
             init: function () {
-                this.search();
+                this.search('search');
             },
 
-            search: function (status) {
-                var main = this;
+            getStockList: function () {
+                this.search('page');
+            },
 
+            search: function (param) {
+                var main = this;
+                if (param != 'search' && param != 'page')  {
+                    main.status = param;
+                }
+                if (param == 'search') {
+                    main.status = "";
+                }
+                if (main.status >= '0' && main.status <= '6') {
+                    var allNumLabel = document.getElementById('allNum');
+                    allNumLabel.setAttribute("class", "btn btn-default-vo");
+                }
+                var start = 0;
+                var page =  false;
+                if (param == 'page') {
+                    start = (main.stockPageOption.curr - 1) * main.stockPageOption.size;
+                    page = true;
+                }
                 main.taskStockIncrementDetailService.searchItem({
                     "taskId" : main.taskId,
                     "subTaskId" : main.subTaskId,
@@ -59,31 +78,34 @@ define([
                     "code" : main.code,
                     "sku" : main.sku,
                     "status" : main.status,
-                    "cartId" : main.cartId,
-                    "cartName" : main.cartName,
+                    "page" : page,
                     "propertyList" : main.propertyList,
-                    "start1" :  0,
-                    "length1" : 20
+                    "start" :  start,
+                    "length" : main.stockPageOption.size
                 }).then(function (res) {
-                    //main.hasAuthority = res.data.hasAuthority;
-                    //if (!main.hasAuthority) {
-                    //    main.alert('没有权限访问！')
-                    //    return;
-                    //}
-                    main.taskId = res.data.taskId;
-                    main.readyNum = res.data.readyNum;
-                    main.waitIncrementNum = res.data.waitIncrementNum;
-                    main.increasingNum = res.data.increasingNum;
-                    main.incrementSuccessNum = res.data.incrementSuccessNum;
-                    main.incrementFailureNum = res.data.incrementFailureNum;
-                    main.revertNum = res.data.revertNum;
-                    main.allNum = res.data.allNum;
-                    main.stockPageOption.total = res.data.allNum;
-                    main.cartId = res.data.cartId;
-                    main.cartName = res.data.cartName;
-                    main.propertyList = res.data.propertyList;
-                    main.stockList = res.data.stockList;
-                    main.stockPageOption.curr = 1;
+                    if (param != 'page') {
+                        main.hasAuthority = res.data.hasAuthority;
+                        if (!main.hasAuthority) {
+                            main.alert('没有权限访问！')
+                            return;
+                        }
+                        main.taskId = res.data.taskId;
+                        main.readyNum = res.data.readyNum;
+                        main.waitIncrementNum = res.data.waitIncrementNum;
+                        main.increasingNum = res.data.increasingNum;
+                        main.incrementSuccessNum = res.data.incrementSuccessNum;
+                        main.incrementFailureNum = res.data.incrementFailureNum;
+                        main.revertNum = res.data.revertNum;
+                        main.allNum = res.data.allNum;
+                        main.stockPageOption.total = res.data.allNum;
+                        main.cartId = res.data.cartId;
+                        main.cartName = res.data.cartName;
+                        main.propertyList = res.data.propertyList;
+                        main.stockList = res.data.stockList;
+                        main.stockPageOption.curr = 1;
+                    } else {
+                        main.stockList = res.data.stockList;
+                    }
                 })
             },
 

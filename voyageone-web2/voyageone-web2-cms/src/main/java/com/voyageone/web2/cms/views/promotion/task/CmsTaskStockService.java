@@ -100,7 +100,7 @@ public class CmsTaskStockService extends BaseAppService {
     /** 增量库存隔离状态 1：等待增量 */
     public static final String STATUS_WAITING_INCREMENT = "1";
     /** 增量库存隔离状态 2：增量中 */
-    public static final String STATUS_INCREMENT = "2";
+    public static final String STATUS_INCREASING = "2";
     /** 增量库存隔离状态 3：增量成功 */
     public static final String STATUS_INCREMENT_SUCCESS = "3";
     /** 增量库存隔离状态 5：增量失败 */
@@ -2141,10 +2141,18 @@ public class CmsTaskStockService extends BaseAppService {
      *
      * @return where条件的Sql文
      */
-    private String getWhereSql(Map param, boolean statusFlg){
+    public String getWhereSql(Map param, boolean statusFlg){
         String whereSql = " where 1=1 ";
-        // 任务Id
-        whereSql += " and task_id = " + String.valueOf(param.get("taskId")) + " ";
+
+        // 子任务Id
+        if (!StringUtils.isEmpty((String) param.get("subTaskId"))) {
+            whereSql += " and sub_task_id = " + String.valueOf(param.get("subTaskId")) + " ";
+        } else {
+            // 任务Id
+            if (!StringUtils.isEmpty((String) param.get("taskId"))) {
+                whereSql += " and task_id = " + String.valueOf(param.get("taskId")) + " ";
+            }
+        }
 
         // 商品model
         if (!StringUtils.isEmpty((String) param.get("model"))) {

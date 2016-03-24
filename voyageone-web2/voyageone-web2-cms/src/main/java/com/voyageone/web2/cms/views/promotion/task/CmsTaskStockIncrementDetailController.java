@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -108,28 +109,40 @@ public class CmsTaskStockIncrementDetailController extends CmsController {
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK_INCREMENT_DETAIL.SEARCH_ITEM)
     public AjaxResponse searchItem(@RequestBody Map param) {
-
+        // 渠道id
+        param.put("channelId", this.getUser().getSelChannelId());
+        // 语言
+        param.put("lang", this.getLang());
         // 返回内容
         Map<String, Object> resultBean = new HashMap<>();
+        // 子任务id
+        String subTaskId =(String) param.get("subTaskId");
 
-        // 根据子任务id取得任务id
-        if (StringUtils.isEmpty((String) param.get("taskId"))) {
-            String taskId = cmsTaskStockIncrementDetailService.getTaskId((String) param.get("subTaskId"));
-            resultBean.put("taskId", taskId);
+        // 根据子任务id取得任务信息 只有首次取得
+        if(StringUtils.isEmpty((String) param.get("taskId"))) {
+            Map<String, Object> taskInfo = cmsTaskStockIncrementDetailService.getTaskInfo(subTaskId, this.getUser().getSelChannelId(), this.getLang());
+            // 任务id取得失败的情况下，认为没有权限
+            if (taskInfo == null) {
+                resultBean.put("hasAuthority", false);
+                return success(resultBean);
+            } else {
+                // 子任务id/渠道id权限check
+                boolean hasAuthority = cmsTaskStockIncrementDetailService.hasAuthority(String.valueOf(taskInfo.get("task_id")), String.valueOf(taskInfo.get("cart_id")), this.getUser().getSelChannelId(), this.getLang());
+                resultBean.put("hasAuthority", hasAuthority);
+                if (!hasAuthority) {
+                    return success(resultBean);
+                }
+                // 任务id
+                resultBean.put("taskId", String.valueOf(taskInfo.get("task_id")));
+                param.put("taskId", String.valueOf(taskInfo.get("task_id")));
+                // 平台id
+                resultBean.put("cartId", String.valueOf(taskInfo.get("cart_id")));
+                param.put("cartId", String.valueOf(taskInfo.get("cart_id")));
+                // 平台名
+                resultBean.put("cartName", taskInfo.get("name"));
+            }
         } else {
-            resultBean.put("taskId", param.get("taskId"));
-        }
-
-        // morse.lu test用 added at 2016/03/23 start
-
-
-        // 任务对应平台信息列表 只有首次取得
-        if (StringUtils.isEmpty((String) param.get("cartId"))) {
-            resultBean.put("cartId", "23");
-            resultBean.put("cartName", "天猫国际");
-        } else {
-            resultBean.put("cartId", param.get("cartId"));
-            resultBean.put("cartName", param.get("cartName"));
+            resultBean.put("hasAuthority", true);
         }
 
         // 取得属性列表 只有首次取得
@@ -140,7 +153,97 @@ public class CmsTaskStockIncrementDetailController extends CmsController {
         } else {
             resultBean.put("propertyList", param.get("propertyList"));
         }
-        // morse.lu test用 added at 2016/03/23 end
+
+        // 子任务id对应的库存隔离数据是否移到history表
+        boolean historyFlg = cmsTaskStockIncrementDetailService.isHistoryExist(subTaskId);
+        if (historyFlg) {
+            param.put("tableNameSuffix", "_history");
+        } else {
+            param.put("tableNameSuffix", "");
+        }
+
+        // 取得增量库存隔离数据各种状态的数量(翻页是不计算)
+        if (!(boolean) param.get("page")) {
+            // 所有增量库存隔离明细的计数
+            int cntAll = 0;
+            List<Map<String, Object>> statusCountList = cmsTaskStockIncrementDetailService.getStockStatusCount(param);
+            for (Map<String, Object> statusInfo : statusCountList) {
+                String status = (String) statusInfo.get("status");
+                int cnt = Integer.parseInt(String.valueOf(statusInfo.get("count")));
+                cntAll += cnt;
+                String key = "";
+                if (CmsTaskStockService.STATUS_READY.equals(status)) {
+                    key = "readyNum";
+                } else if (CmsTaskStockService.STATUS_WAITING_INCREMENT.equals(status)) {
+                    key = "waitIncrementNum";
+                } else if (CmsTaskStockService.STATUS_INCREASING.equals(status)) {
+                    key = "increasingNum";
+                } else if (CmsTaskStockService.STATUS_INCREMENT_SUCCESS.equals(status)) {
+                    key = "incrementSuccessNum";
+                } else if (CmsTaskStockService.STATUS_INCREMENT_FAIL.equals(status)) {
+                    key = "incrementFailureNum";
+                } else if (CmsTaskStockService.STATUS_REVERT.equals(status)) {
+                    key = "revertNum";
+                }
+                resultBean.put(key, cnt);
+            }
+            if (!resultBean.containsKey("readyNum")) {
+                resultBean.put("readyNum", 0);
+            }
+            if (!resultBean.containsKey("waitIncrementNum")) {
+                resultBean.put("waitIncrementNum", 0);
+            }
+            if (!resultBean.containsKey("increasingNum")) {
+                resultBean.put("increasingNum", 0);
+            }
+            if (!resultBean.containsKey("incrementSuccessNum")) {
+                resultBean.put("incrementSuccessNum", 0);
+            }
+            if (!resultBean.containsKey("incrementFailureNum")) {
+                resultBean.put("incrementFailureNum", 0);
+            }
+            if (!resultBean.containsKey("revertNum")) {
+                resultBean.put("revertNum", 0);
+            }
+
+            // 总数
+            resultBean.put("allNum", cntAll);
+
+            // 条件结果为0件的情况下，直接返回
+            if (cntAll == 0) {
+                resultBean.put("stockList", new ArrayList());
+                return success(resultBean);
+            }
+        }
+
+        // 取得增量库存隔离明细
+        List<Map<String, Object>> stockList = cmsTaskStockIncrementDetailService.getStockList(param);
+        resultBean.put("stockList", stockList);
+
+        // morse.lu test用 added at 2016/03/23 start
+
+
+//        // 任务对应平台信息列表 只有首次取得
+//        if (param.get("platformList") == null || ((Map<String, Object>)param.get("platformList")).size() == 0) {
+//
+//            Map<String, String> platformList = new HashMap<>();
+//            platformList.put("cartId", "23");
+//            platformList.put("cartName", "天猫国际");
+//            resultBean.put("platformList", platformList);
+//            param.put("platformList", platformList);
+//        } else {
+//            resultBean.put("platformList", param.get("platformList"));
+//        }
+//
+//        // 取得属性列表 只有首次取得
+//        if (param.get("propertyList") == null || ((List<Map<String, Object>>)param.get("propertyList")).size() == 0) {
+//            List<Map<String, Object>> propertyList = cmsTaskStockService.getPropertyList(this.getUser().getSelChannelId(), this.getLang());
+//            resultBean.put("propertyList", propertyList);
+//            param.put("propertyList", propertyList);
+//        } else {
+//            resultBean.put("propertyList", param.get("propertyList"));
+//        }
+//        // morse.lu test用 added at 2016/03/23 end
 
         // 返回
         return success(resultBean);

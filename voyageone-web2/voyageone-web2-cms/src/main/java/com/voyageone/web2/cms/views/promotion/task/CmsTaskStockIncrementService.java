@@ -66,13 +66,15 @@ public class CmsTaskStockIncrementService extends BaseAppService {
     private SimpleTransaction simpleTransaction;
 
     /** 增量库存隔离状态 1：等待增量 */
-    private static final String STATUS_WAITING_INCREMENT = "1";
-    /** 增量库存隔离状态 2：增量成功 */
-    private static final String STATUS_INCREMENT_SUCCESS = "2";
-    /** 增量库存隔离状态 3：增量失败 */
-    private static final String STATUS_INCREMENT_FAIL = "3";
-    /** 增量库存隔离状态 4：还原 */
-    private static final String STATUS_REVERT = "4";
+    public static final String STATUS_WAITING_INCREMENT = "1";
+    /** 增量库存隔离状态 2：增量中 */
+    public static final String STATUS_INCREASING = "2";
+    /** 增量库存隔离状态 3：增量成功 */
+    public static final String STATUS_INCREMENT_SUCCESS = "3";
+    /** 增量库存隔离状态 5：增量失败 */
+    public static final String STATUS_INCREMENT_FAIL = "4";
+    /** 增量库存隔离状态 5：还原 */
+    public static final String STATUS_REVERT = "5";
 
     /**
      * 检索增量库存隔离任务
@@ -111,6 +113,7 @@ public class CmsTaskStockIncrementService extends BaseAppService {
         sqlParam.put("subTaskId", subTaskId);
         // 状态为"0:未进行"以外
         sqlParam.put("statusList", Arrays.asList( STATUS_WAITING_INCREMENT,
+                                                    STATUS_INCREASING,
                                                     STATUS_INCREMENT_SUCCESS,
                                                     STATUS_INCREMENT_FAIL,
                                                     STATUS_REVERT));

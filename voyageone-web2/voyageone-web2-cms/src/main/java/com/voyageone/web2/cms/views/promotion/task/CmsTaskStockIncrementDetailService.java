@@ -11,6 +11,7 @@ import com.voyageone.web2.cms.CmsConstants;
 import com.voyageone.web2.cms.bean.promotion.task.StockIncrementExcelBean;
 import com.voyageone.web2.cms.dao.CmsBtStockSeparateIncrementItemDao;
 import com.voyageone.web2.cms.dao.CmsBtStockSeparateIncrementTaskDao;
+import com.voyageone.web2.cms.dao.CmsBtStockSeparatePlatformInfoDao;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -37,6 +38,17 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
 
     @Autowired
     private CmsBtStockSeparateIncrementTaskDao cmsBtStockSeparateIncrementTaskDao;
+
+    @Autowired
+    private CmsBtStockSeparatePlatformInfoDao cmsBtStockSeparatePlatformInfoDao;
+
+    @Autowired
+    private CmsTaskStockService cmsTaskStockService;
+
+    /** 0：按动态值进行增量隔离 */
+    private static final String TYPE_DYNAMIC = "0";
+    /** 1：按固定值进行增量隔离 */
+    private static final String TYPE_FIX_VALUE = "1";
 
     /**
      * 按固定值进行增量隔离
@@ -67,144 +79,195 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
     }
 
     /**
-     * 根据子任务id取得任务id
+     * 根据子任务id取得任务信息
      *
      * @param subTaskId 子任务id
-     * @return 任务id
+     * @param channelId 渠道id
+     * @param lang 语言
+     *
+     * @return 任务信息
      */
-    public String getTaskId(String subTaskId) {
+    public Map<String, Object> getTaskInfo(String subTaskId, String channelId, String lang){
         Map<String,Object> sqlParam = new HashMap<String,Object>();
         sqlParam.put("subTaskId", subTaskId);
+        sqlParam.put("channelId", channelId);
+        sqlParam.put("lang", lang);
         List<Map<String, Object>> stockSeparateIncrementTask = cmsBtStockSeparateIncrementTaskDao.selectStockSeparateIncrementTask(sqlParam);
         if (stockSeparateIncrementTask == null || stockSeparateIncrementTask.size() == 0) {
             return null;
         } else {
-            return String.valueOf(stockSeparateIncrementTask.get(0).get("task_id"));
+            return stockSeparateIncrementTask.get(0);
         }
     }
 
     /**
-     * 取得where条件的Sql文
+     * 任务id/渠道id权限check
      *
-     * @param param
-     * @param statusFlg 使用状态条件Flg
-     * @return where条件的Sql文
+     * @param taskId 任务id
+     * @param cartId 平台id
+     * @param channelId 渠道id
+     * @param lang 语言
+     * @return 子任务id/渠道id权限check结果（false:没有权限,true:有权限）
      */
-    private String getWhereSql(Map param, boolean statusFlg) {
-        String whereSql = " where ";
-        // 任务Id
-        whereSql += " sub_task_id = " + String.valueOf(param.get("subTaskId")) + " ";
+    public boolean hasAuthority(String taskId, String cartId, String channelId, String lang){
 
-        // 商品model
-        if (!StringUtils.isEmpty((String) param.get("model"))) {
-            whereSql += " and product_model = '" + escapeSpecialChar((String) param.get("model")) + "'";
+        // 根据任务id/平台id取得渠道信息
+        Map<String,Object> sqlParam = new HashMap<String,Object>();
+        sqlParam.put("taskId", taskId);
+        sqlParam.put("cartId", cartId);
+        sqlParam.put("channelId", channelId);
+        sqlParam.put("lang", lang);
+        List<Map<String, Object>> stockSeparatePlatform = cmsBtStockSeparatePlatformInfoDao.selectStockSeparatePlatform(sqlParam);
+        // 没有渠道数据的情况下，一般情况下不可能
+        if (stockSeparatePlatform == null || stockSeparatePlatform.size() == 0) {
+            return false;
+        }
+        // 子任务对应的渠道和当前渠道不一致的情况，视为没有权限
+        if (!channelId.equals(stockSeparatePlatform.get(0).get("channel_id"))) {
+            return false;
         }
 
-        // 商品code
-        if (!StringUtils.isEmpty((String) param.get("code"))) {
-            whereSql += " and product_code = '" + escapeSpecialChar((String) param.get("code")) + "'";
-        }
-        // sku
-        if (!StringUtils.isEmpty((String) param.get("sku"))) {
-            whereSql += " and sku = '" + escapeSpecialChar((String) param.get("sku")) + "'";
-        }
+        return true;
+    }
 
-        //状态
-        if (statusFlg && !StringUtils.isEmpty((String) param.get("status"))) {
-            whereSql += " and status = '" + (String) param.get("status") + "'";
-        }
 
-        for (Map<String, Object> property : (List<Map<String, Object>>) param.get("propertyList")) {
-            // 动态属性名
-            String propertyName = (String) property.get("property");
-            // 动态属性值
-            String propertyValue = (String) property.get("value");
-            // 逻辑，支持：Like，默认为空白
-            String logic = (String) property.get("logic");
-            // 类型，支持：int，默认为空白
-            String type = (String) property.get("type");
-            if (StringUtils.isEmpty(propertyValue)) {
-                continue;
-            }
-            // 存在~则加上大于等于和小于等于的条件(如果是数值型则转换为数值做比较)
-            if (propertyValue.contains("~")) {
-                String values[] = propertyValue.split("~");
-                if ("int".equals(type)) {
-                    // propertyName = "convert(" + propertyName + ",signed)";
-                    propertyName = propertyName + "*1";
-                }
-                int end = 2;
-                if (values.length < 2) {
-                    end = values.length;
-                }
-                for (int i = 0; i < end; i++) {
-                    if (i == 0) {
-                        if (!StringUtils.isEmpty(values[i])) {
-                            whereSql += " and " + propertyName + " >= '" + escapeSpecialChar(values[i]) + "' ";
-                        }
-                    } else {
-                        if (!StringUtils.isEmpty(values[i])) {
-                            whereSql += " and " + propertyName + " <= '" + escapeSpecialChar(values[i]) + "' ";
-                        }
-                    }
-                }
-                continue;
-            }
-
-            // 按逗号分割则生成多个用 or 分割的条件
-            String values[] = propertyValue.split(",");
-            String propertySql = "";
-            for (String value : values) {
-                propertySql += propertyName;
-                if (logic.toLowerCase().equals("like")) {
-                    propertySql += " like '%" + escapeSpecialChar(value) + "%' or ";
-                } else {
-                    propertySql += " = '" + escapeSpecialChar(value) + "' or ";
-                }
-            }
-            if (values != null && values.length > 0) {
-                whereSql += " and ( " + propertySql.substring(0, propertySql.length() - 3) + " ) ";
-            }
-        }
-
-        return whereSql;
+    /**
+     * 取得增量库存隔离数据各种状态的数量
+     *
+     * @param param 客户端参数
+     * @return 某种状态的数量
+     */
+    public List<Map<String,Object>>  getStockStatusCount(Map param){
+        Map<String,Object> sqlParam = new HashMap<String,Object>();
+        // 各种状态统计数量的Sql
+        sqlParam.put("sql", getStockStatusCountSql(param));
+        List<Map<String,Object>> statusCountList = cmsBtStockSeparateIncrementItemDao.selectStockSeparateItemBySqlMap(sqlParam);
+        return statusCountList;
     }
 
     /**
-     * Sql转义字符转换
+     * 取得增量库存隔离明细列表
+     * 例：
+     *          {"model":"35265", "code":"35265465", "sku":"256354566-9", "property1":"Puma", "property2":"Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"50", "incrementQty":"50", "status":"未进行", "fixFlg":false},
+     *          {"model":"35265", "code":"35265465", "sku":"256354566-10", "property1":"Puma", "property2":"Puma Suede Classic +Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"80", "incrementQty":"80", "status":"未进行", "fixFlg":false},
+     *          {"model":"35265", "code":"35265465", "sku":"256354566-11", "property1":"Puma", "property2":"Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"20", "incrementQty":"20", "status":"增量成功", "fixFlg":false},
+     *                    ...
      *
-     * @param value 转义前字符串
-     * @return 转义后字符串
+     *
+     * @param param 客户端参数
+     * @return 增量库存隔离明细列表
      */
-    private String escapeSpecialChar(String value) {
-        return value.replaceAll("\\\\", "\\\\\\\\").replaceAll("'", "\\\\'").replaceAll("\"", "\\\\\"")
-                .replaceAll("%", "\\\\%").replaceAll("_", "\\\\_");
+    public List<Map<String,Object>> getStockList(Map param){
+        // 增量库存隔离明细列表
+        List<Map<String,Object>> stockList = new ArrayList<Map<String,Object>>();
+
+        // 获取当页表示的库存隔离数据
+        Map<String,Object> sqlParam = new HashMap<String,Object>();
+        // 库存隔离明细一页表示的Sku的Sql
+        sqlParam.put("sql", getStockPageSkuSql(param));
+        List<Map<String,Object>> stockAllList = cmsBtStockSeparateIncrementItemDao.selectStockSeparateItemBySqlMap(sqlParam);
+
+        for (Map<String,Object> stockInfo : stockAllList) {
+            String model = (String) stockInfo.get("product_model");
+            String code = (String) stockInfo.get("product_code");
+            String sku = (String) stockInfo.get("sku");
+            String property1 = (String) stockInfo.get("property1");
+            String property2 = (String) stockInfo.get("property2");
+            String property3 = (String) stockInfo.get("property3");
+            String property4 = (String) stockInfo.get("property4");
+            String qty = String.valueOf(stockInfo.get("qty"));
+            String incrementQty = String.valueOf(stockInfo.get("increment_qty"));
+            String fixFlg = String.valueOf(stockInfo.get("fix_flg"));
+            String statusName = String.valueOf(stockInfo.get("status_name"));
+            // 画面上一行的数据
+            Map<String, Object> lineInfo = new HashMap<String, Object>();
+            stockList.add(lineInfo);
+            lineInfo.put("model", model);
+            lineInfo.put("code", code);
+            lineInfo.put("sku", sku);
+            lineInfo.put("property1", property1);
+            lineInfo.put("property2", property2);
+            lineInfo.put("property3", property3);
+            lineInfo.put("property4", property4);
+            lineInfo.put("qty", qty);
+            lineInfo.put("incrementQty", incrementQty);
+            if (TYPE_FIX_VALUE.equals(fixFlg)) {
+                lineInfo.put("fixFlg", true);
+            } else {
+                lineInfo.put("fixFlg", false);
+            }
+            lineInfo.put("status", statusName);
+        }
+        return stockList;
+    }
+
+
+    /**
+     * 取得各种状态统计数量的Sql
+     *
+     * @param param 客户端参数
+     * @return 各种状态统计数量的Sql
+     */
+    private String getStockStatusCountSql(Map param){
+        String sql = "select status,count(*) as count from voyageone_cms2.cms_bt_stock_separate_increment_item" + (String) param.get("tableNameSuffix");
+        sql += cmsTaskStockService.getWhereSql(param, false);
+        sql += " group by status";
+        return sql;
+    }
+
+    /**
+     * 取得增量库存隔离明细一页表示的Sku的Sql
+     *
+     * @param param 客户端参数
+     * @return 库存增量隔离明细一页表示的Sku的Sql
+     */
+    private String getStockPageSkuSql(Map param){
+        List<Map<String,Object>> platformList = (List<Map<String,Object>>) param.get("platformList");
+        String sql = "select t1.product_model, t1.product_code, t1.sku, t1.property1, t1.property2, t1.property3, t1.property4, ";
+        sql += " t1.qty, t1.increment_qty,t2.name as status_name from";
+        sql += " (select * from voyageone_cms2.cms_bt_stock_separate_increment_item" + (String) param.get("tableNameSuffix") ;
+        sql += cmsTaskStockService.getWhereSql(param, true);
+        sql += " order by sku";
+        String start = String.valueOf(param.get("start"));
+        String length = String.valueOf(param.get("length"));
+        sql += " limit " + start + "," + length + ") t1 ";
+        sql +=" left join (select value,name from com_mt_value where type_id= '63' and lang_id = '" + param.get("lang") + "') t2 on t1.status = t2.value";
+        return sql;
     }
 
     /**
      * 某个任务对应的Promotion是否在进行中
      *
-     * @param subTaskId 任务id
+     * @param taskId 任务id
+     * @param cartId 平台id
      * @return 是否在进行中
      */
-    private boolean isPromotionDuring(String subTaskId){
+    private boolean isPromotionDuring(String taskId, String cartId){
 
         // 取得任务下的平台平台信息
         Date now = DateTimeUtil.parse(DateTimeUtil.getNow());
-        Map<String, Object> platformInfo = cmsBtStockSeparateIncrementItemDao.selectStockSeparateIncrementPlatform(subTaskId);
-        // Promotion开始时间
-        String activityStart = (String) platformInfo.get("activity_start");
-        if (!StringUtils.isEmpty(activityStart)) {
-            if (activityStart.length() == 10) {
-                activityStart = activityStart + " 00:00:00";
-            }
-            if (DateTimeUtil.parse(activityStart).compareTo(now) <= 0) {
-                String activityEnd = (String) platformInfo.get("activity_end");
-                if (activityEnd.length() == 10) {
-                    activityEnd = activityEnd + " 00:00:00";
+        Map<String,Object> sqlParam = new HashMap<String,Object>();
+        sqlParam.put("taskId", taskId);
+        sqlParam.put("cartId", cartId);
+        List<Map<String, Object>> platformInfoList = cmsBtStockSeparatePlatformInfoDao.selectStockSeparatePlatform(sqlParam);
+        if (platformInfoList != null && platformInfoList.size() > 0) {
+            Map<String, Object> platformInfo = platformInfoList.get(0);
+            // Promotion开始时间
+            String activityStart = (String) platformInfo.get("activity_start");
+            if (!StringUtils.isEmpty(activityStart)) {
+                if (activityStart.length() == 10) {
+                    activityStart = activityStart + " 00:00:00";
                 }
-                if (StringUtils.isEmpty(activityEnd) || DateTimeUtil.addDays(DateTimeUtil.parse(activityEnd), 1).compareTo(now) > 0) {
-                    return true;
+                if (DateTimeUtil.parse(activityStart).compareTo(now) <= 0) {
+                    String activityEnd = (String) platformInfo.get("activity_end");
+                    if (!StringUtils.isEmpty(activityEnd)) {
+                        if (activityEnd.length() == 10) {
+                            activityEnd = activityEnd + " 00:00:00";
+                        }
+                        if (DateTimeUtil.addDays(DateTimeUtil.parse(activityEnd), 1).compareTo(now) > 0) {
+                            return true;
+                        }
+                    }
                 }
             }
         }
@@ -222,7 +285,7 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
     public byte[] getExcelFileStockIncrementInfo(Map param) throws IOException, InvalidFormatException {
         String templatePath = Properties.readValue(CmsConstants.Props.STOCK_EXPORT_TEMPLATE);
 
-        param.put("whereSql", getWhereSql(param, true));
+        param.put("whereSql", cmsTaskStockService.getWhereSql(param, true));
         List<StockIncrementExcelBean> resultData = cmsBtStockSeparateIncrementItemDao.selectExcelStockIncrementInfo(param);
 
         $info("准备打开文档 [ %s ]", templatePath);
@@ -354,7 +417,7 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
         String taskId = (String) param.get("task_id");
         String subTaskId = (String) param.get("subTaskId");
         // 取得任务id对应的Promotion是否未开始或者已经结束
-        boolean promotionDuringFlg = isPromotionDuring(taskId);
+        boolean promotionDuringFlg = isPromotionDuring((String) param.get("taskId"), (String) param.get("cartId"));
         if (!promotionDuringFlg) {
             throw new BusinessException("活动未开始或者已经结束，不能修改数据！");
         }
