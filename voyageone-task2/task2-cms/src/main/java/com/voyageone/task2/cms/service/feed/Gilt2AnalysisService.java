@@ -34,7 +34,7 @@ import static com.voyageone.common.configs.Enums.ChannelConfigEnums.Channel.LUCK
 import static java.util.stream.Collectors.joining;
 
 /**
- * @author morse.lu
+ * @author james.li
  * @version 0.0.1, 16/3/4
  */
 @Service

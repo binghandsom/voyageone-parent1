@@ -110,8 +110,6 @@ public class GiltInsert extends BaseTaskService {
                 modelBeans.add(cmsBtFeedInfoModel);
 
             }
-            $info("取得 [ %s ] 的 Product 数 %s", category, modelBeans.size());
-
             return modelBeans;
         }
 
@@ -184,23 +182,21 @@ public class GiltInsert extends BaseTaskService {
 
             $info("准备 <构造> 类目树");
             List<String> categoriePaths = getCategories();
+            logger.info("共"+categoriePaths.size()+"个类目");
 
             List<CmsBtFeedInfoModel> productSucceeList = new ArrayList<>();
             // 准备接收失败内容
             List<CmsBtFeedInfoModel> productFailAllList = new ArrayList<>();
-            List<CmsBtFeedInfoModel> productAll = new ArrayList<>();
 
+            int i=1;
             for (String categorPath : categoriePaths) {
 
                 // 每棵树的信息取得
-                logger.info("每棵树的信息取得开始");
                 List<CmsBtFeedInfoModel> product = getCategoryInfo(categorPath);
-                logger.info("每棵树的信息取得结束");
+                $info("%d/%d 取得 [ %s ] 的 Product 数 %s", i++, categoriePaths.size(), categorPath, product.size());
 
-                productAll.addAll(product);
-                executeMongoDB(productAll, productSucceeList, productFailAllList);
+                executeMongoDB(product, productSucceeList, productFailAllList);
             }
-
             $info("总共~ 失败的 Product: %s", productFailAllList.size());
 
         }
@@ -214,9 +210,8 @@ public class GiltInsert extends BaseTaskService {
          */
         private void executeMongoDB(List<CmsBtFeedInfoModel> productAll, List<CmsBtFeedInfoModel> productSucceeList, List<CmsBtFeedInfoModel> productFailAllList) {
             try {
-                logger.info("插入mongodb开始");
+                if(productAll.size() == 0) return;
                 Map response = feedToCmsService.updateProduct(channel.getId(), productAll, getTaskName());
-                logger.info("插入mongodb结束");
                 List<String> itemIds = new ArrayList<>();
                 productSucceeList = (List<CmsBtFeedInfoModel>) response.get("succeed");
                 productSucceeList.forEach(feedProductModel -> feedProductModel.getSkus().forEach(feedSkuModel -> itemIds.add(feedSkuModel.getClientSku())));
