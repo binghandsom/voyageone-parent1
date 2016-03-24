@@ -25,7 +25,7 @@ public class CmsMtCustomWordDao extends ServiceBaseDao {
     }
 
     // 获取翻译时标题和描述的长度设置
-    public List<Map<String, Object>> getTransLenSet(String chnId) {
+    public List<Map<String, Object>> selectTransLenSet(String chnId) {
         return selectList("cms2_mt_channel_config_getTransLenSet", parameters("channelId", chnId));
     }
 }

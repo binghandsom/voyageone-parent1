@@ -44,11 +44,11 @@ public class FeedCustomPropService {
 		Map<String, Map<String, String>> propCommonN = new HashMap<>(); // ( <属性名 <属性值, 属性值的翻译> > )
 
 		// 获取表里的数据 (当前渠道的所有数据)
-		customPropList = cmsBtFeedCustomPropAndValueDao.getPropList(channel_id);
+		customPropList = cmsBtFeedCustomPropAndValueDao.selectPropList(channel_id);
 		for (CmsBtFeedCustomPropAndValueModel customProp : customPropList) {
 			customProp.setMapPropValue(new HashMap<>());
 		}
-		List<CmsBtFeedCustomPropValueModel> propValueList = cmsBtFeedCustomPropAndValueDao.getPropValue(channel_id);
+		List<CmsBtFeedCustomPropValueModel> propValueList = cmsBtFeedCustomPropAndValueDao.selectPropValue(channel_id);
 
 		// 数据整理 - 将 <属性值得翻译> 的内容整合到 <属性列表> 中去
 		// 注意: 不属于任何prop (就是prop_id为0) 的数据, 将会被扔到 customtranslationList

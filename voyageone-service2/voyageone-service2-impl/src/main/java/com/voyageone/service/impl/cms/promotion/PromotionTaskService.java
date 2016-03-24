@@ -1,6 +1,6 @@
 package com.voyageone.service.impl.cms.promotion;
 
-import com.voyageone.service.dao.cms.CmsPromotionTaskDao;
+import com.voyageone.service.dao.cms.CmsBtPromotionTaskDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.model.cms.CmsBtPromotionTaskModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +18,7 @@ import java.util.Map;
 public class PromotionTaskService extends BaseService {
 
     @Autowired
-    private CmsPromotionTaskDao cmsPromotionTaskDao;
+    private CmsBtPromotionTaskDao cmsPromotionTaskDao;
 
     public int insertPromotionTask(CmsBtPromotionTaskModel model){
         return cmsPromotionTaskDao.insertPromotionTask(model);

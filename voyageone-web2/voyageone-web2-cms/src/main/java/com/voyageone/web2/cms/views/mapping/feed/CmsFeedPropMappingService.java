@@ -171,7 +171,7 @@ class CmsFeedPropMappingService extends BaseAppService {
      */
     Map<String, List<String>> getFeedAttributes(String feedCategoryPath, String lang, UserSessionBean userSessionBean) {
 
-        CmsMtFeedCategoryTreeModelx treeModelx = cmsMtFeedCategoryTreeDao.findFeedCategoryx(userSessionBean.getSelChannelId());
+        CmsMtFeedCategoryTreeModelx treeModelx = cmsMtFeedCategoryTreeDao.selectFeedCategoryx(userSessionBean.getSelChannelId());
 
         CmsMtFeedCategoryModel feedCategoryModel = findByPath(feedCategoryPath, treeModelx);
 

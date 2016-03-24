@@ -57,7 +57,7 @@ public class FeedMappingService {
 
     public boolean isCanBeDefaultMain(Channel channel, String topCategoryPath) {
 
-        CmsMtFeedCategoryTreeModel treeModel = feedCategoryTreeDao.findHasTrueChild(channel.getId(), topCategoryPath);
+        CmsMtFeedCategoryTreeModel treeModel = feedCategoryTreeDao.selectHasTrueChild(channel.getId(), topCategoryPath);
 
         return treeModel != null && !StringUtils.isEmpty(treeModel.get_id());
     }
