@@ -154,7 +154,7 @@ public class ExportFileExcelUtil {
             for (int i = 0; i < listColumn.size(); i++) {
                 // Label label=new Label(i, 0, cnFields[i]);
                 HSSFCell xh = hssfRow.createCell(i);
-                xh.setCellValue(listColumn.get(i).getColumnName());
+                xh.setCellValue(listColumn.get(i).getCamelColumnName());
             }
         }
         if(list!=null) {
@@ -168,7 +168,7 @@ public class ExportFileExcelUtil {
                 hssfRow = sheet.createRow(rowNo);
                 for (int i = 0; i < listColumn.size(); i++) {
                     column = listColumn.get(i);
-                    Object objValue = ((Map<String, Object>) item).get(column.getColumnName());
+                    Object objValue = ((Map<String, Object>) item).get(column.getCamelColumnName());
                     ;
                     if (column.getFormatter() != null) {
                         objValue = column.getFormatter().apply(objValue, item, rowNo);

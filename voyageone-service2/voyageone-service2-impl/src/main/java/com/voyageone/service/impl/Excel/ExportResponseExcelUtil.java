@@ -146,7 +146,7 @@ public class ExportResponseExcelUtil {
             hssfRow = sheet.createRow(rowNo);
             for (int i = 0; i < listColumn.size(); i++) {
                 column = listColumn.get(i);
-                Object objValue = ((Map<String, Object>) item).get(column.getColumnName());
+                Object objValue = ((Map<String, Object>) item).get(column.getCamelColumnName());
                 ;
                 if (column.getFormatter() != null) {
                     objValue = column.getFormatter().apply(objValue, item, rowNo);

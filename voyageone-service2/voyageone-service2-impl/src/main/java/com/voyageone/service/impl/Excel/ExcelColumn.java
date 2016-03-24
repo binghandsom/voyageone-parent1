@@ -49,7 +49,7 @@ public class ExcelColumn<T> {
         this.tableName = tableName;
     }
 
-    public String getColumnName() {
+    private String getColumnName() {
         return columnName;
     }
 
