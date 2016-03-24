@@ -925,12 +925,15 @@ public class CmsTaskStockController extends CmsController {
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK.IMPORT_STOCK_INFO)
     public AjaxResponse importStockInfo(@RequestParam Map param, @RequestParam MultipartFile file) {
+        // 返回内容
+        Map<String, Object> resultBean = new HashMap<>();
+
         // 创建者/更新者用
         param.put("userName", this.getUser().getUserName());
         // import Excel
-        cmsTaskStockService.importExcelFileStockInfo(param, file);
+        cmsTaskStockService.importExcelFileStockInfo(param, file, resultBean);
         // 返回
-        return success(null);
+        return success(resultBean);
     }
 
 

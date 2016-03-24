@@ -9,6 +9,7 @@ define([
 
     angularAMD.controller('popFileStockImportCtl', function ($scope,FileUploader,alert,cActions,data,notify) {
             var task_id = data.task_id;
+            var subTaskId = data.subTaskId;
             var parent_id = data.parent_id;
             var platformList = JSON.stringify(data.platformList);
             var propertyList = JSON.stringify(data.propertyList);
@@ -45,14 +46,23 @@ define([
                         alert(res.message);
                         return;
                     }
-                    if (main.import_mode == "2") {
-                        notify.success('TXT_MSG_UPDATE_SUCCESS');
-                    } else {
+                    if (main.import_mode == "1") {
                         notify.success('TXT_MSG_INSERT_SUCCESS');
+                    } else {
+                        notify.success('TXT_MSG_UPDATE_SUCCESS');
+                    }
+                    if (res.data.hasExecutingData) {
+                        alert('TXT_MSG_IMPORT_STATUS_ERROR');
                     }
                     $scope.$close();
                 };
-                uploadItem.formData = [{"task_id":task_id,"platformList":platformList,"propertyList":propertyList,"import_mode":main.import_mode}];
+                uploadItem.formData = [{
+                    "task_id":task_id,
+                    "subTaskId":subTaskId,
+                    "platformList":platformList,
+                    "propertyList":propertyList,
+                    "import_mode":main.import_mode
+                }];
                 uploadItem.upload();
                 $scope.vm.messager ="reading...";
             }

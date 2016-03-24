@@ -319,6 +319,7 @@ define(function(){
         "TXT_MSG_IMPORT_UPDATE": "变更方式",
         "TXT_MSG_IMPORT_ADD": "增量方式",
         "TXT_MSG_IMPORT_DELETE_UPDATE": "重置方式",
+        "TXT_MSG_IMPORT_STATUS_ERROR": "存在正在处理中的数据，这些没有被更新",
 
 
         "BTN_CREATE_TASK": "新建任务",

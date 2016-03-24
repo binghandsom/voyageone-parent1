@@ -428,7 +428,8 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
         CellStyle cellStyleProperty = book.getSheetAt(1).getRow(0).getCell(4).getCellStyle(); // 属性的cellStyle
 
         List<Map> propertyList = (List<Map>) param.get("propertyList");
-        Map platform = (Map) param.get("platformList");
+        String cartId = (String) param.get("cartId");
+        String cartName = (String) param.get("cartName");
 
         // 内容输出
         int index = 3;
@@ -447,9 +448,9 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
 
         // 平台
         CellStyle cellStylePlatform = book.getSheetAt(1).getRow(0).getCell(0).getCellStyle(); // 平台的cellStyle
-        FileUtils.cell(row, index++, cellStylePlatform).setCellValue((String) platform.get("cartName"));
+        FileUtils.cell(row, index++, cellStylePlatform).setCellValue(cartName);
         Comment comment = drawing.createCellComment(helper.createClientAnchor());
-        comment.setString(helper.createRichTextString((String) platform.get("cartId")));
+        comment.setString(helper.createRichTextString(cartId));
         row.getCell(index - 1).setCellComment(comment);
 
         // 固定值增量
@@ -504,15 +505,25 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
     /**
      * excel 导入
      *
-     * @param param 客户端参数
-     * @param file  导入文件
+     * @param param      客户端参数
+     * @param file       导入文件
+     * @param resultBean 返回内容
      */
-    public void importExcelFileStockIncrementInfo(Map param, MultipartFile file) {
+    public void importExcelFileStockIncrementInfo(Map param, MultipartFile file, Map<String, Object> resultBean) {
+        String taskId = (String) param.get("task_id");
+        String subTaskId = (String) param.get("subTaskId");
         // 取得任务id对应的Promotion是否未开始或者已经结束
         boolean promotionDuringFlg = isPromotionDuring((String) param.get("taskId"), (String) param.get("cartId"));
         if (!promotionDuringFlg) {
             throw new BusinessException("活动未开始或者已经结束，不能修改数据！");
         }
+
+        if (cmsBtStockSeparateIncrementItemDao.selectStockSeparateIncrementItemStatusCnt(new HashMap<String, Object>(){{this.put("subTaskId", subTaskId);}}) > 0 ) {
+            // 如果在cms_bt_stock_separate_increment_item表中，这个增量任务有状态<>0:未进行的数据，则不允许导入
+            throw new BusinessException("此增量任务已经进行，不能修改数据！");
+        }
+
+
 
     }
 

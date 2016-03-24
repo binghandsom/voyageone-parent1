@@ -375,16 +375,17 @@ public class CmsTaskStockIncrementDetailController extends CmsController {
             searchParam.put("tableName", "voyageone_cms2.cms_bt_stock_separate_increment_item");
         }
 
-        searchParam.put("taskId", (String) param.get("task_id"));
+        searchParam.put("taskId", (String) param.get("taskId"));
+        searchParam.put("subTaskId", (String) param.get("subTaskId"));
         searchParam.put("model", (String) param.get("model"));
         searchParam.put("code", (String) param.get("code"));
         searchParam.put("sku", (String) param.get("sku"));
         searchParam.put("status", (String) param.get("status"));
+        searchParam.put("cartId", (String) param.get("cartId"));
+        searchParam.put("cartName", (String) param.get("cartName"));
 
         String propertyList = (String) param.get("propertyList");
         searchParam.put("propertyList", JacksonUtil.json2Bean(propertyList, List.class));
-        String platformList = (String) param.get("platformList");
-        searchParam.put("platformList", JacksonUtil.json2Bean(platformList, Map.class));
 
         byte[] data;
         try {
@@ -452,12 +453,15 @@ public class CmsTaskStockIncrementDetailController extends CmsController {
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK_INCREMENT_DETAIL.IMPORT_STOCK_INFO)
     public AjaxResponse importStockInfo(@RequestParam Map param, @RequestParam MultipartFile file) {
+        // 返回内容
+        Map<String, Object> resultBean = new HashMap<>();
+
         // 创建者/更新者用
         param.put("userName", this.getUser().getUserName());
         // import Excel
-        cmsTaskStockIncrementDetailService.importExcelFileStockIncrementInfo(param, file);
+        cmsTaskStockIncrementDetailService.importExcelFileStockIncrementInfo(param, file, resultBean);
         // 返回
-        return success(null);
+        return success(resultBean);
     }
 
 

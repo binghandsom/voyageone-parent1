@@ -112,9 +112,11 @@ define([
             download: function () {
                 var main = this;
                 $.download.post(main.downloadUrl, {
-                    task_id: main.taskId,
-                    propertyList: JSON.stringify(main.propertyList),
-                    platformList: JSON.stringify(main.platformList),
+                    "taskId" : main.taskId,
+                    "subTaskId" : main.subTaskId,
+                    "propertyList": JSON.stringify(main.propertyList),
+                    "cartId" : main.cartId,
+                    "cartName" : main.cartName,
                     "model" : main.model,
                     "code" : main.code,
                     "sku" : main.sku,

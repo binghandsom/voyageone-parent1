@@ -1549,9 +1549,11 @@ public class CmsTaskStockService extends BaseAppService {
     /**
      * excel 导入
      *
-     * @param param 客户端参数
+     * @param param      客户端参数
+     * @param file       导入文件
+     * @param resultBean 返回内容
      */
-    public void importExcelFileStockInfo(Map param, MultipartFile file) {
+    public void importExcelFileStockInfo(Map param, MultipartFile file, Map<String, Object> resultBean) {
         // 取得任务id对应的Promotion是否开始
         boolean promotionStartFlg = isPromotionStart((String) param.get("task_id"));
         if (promotionStartFlg) {
@@ -1583,7 +1585,7 @@ public class CmsTaskStockService extends BaseAppService {
         logger.info("库存隔离数据取得结束");
 
         logger.info("导入Excel取得并check的处理开始");
-        List<StockExcelBean> saveData = readExcel(file, import_mode, paramPropertyList, paramPlatformInfoList, mapSkuInDB);
+        List<StockExcelBean> saveData = readExcel(file, import_mode, paramPropertyList, paramPlatformInfoList, mapSkuInDB, resultBean);
         logger.info("导入Excel取得并check的处理结束");
 
         if (saveData.size() > 0) {
@@ -1604,9 +1606,10 @@ public class CmsTaskStockService extends BaseAppService {
      * @param paramPropertyList     属性list
      * @param paramPlatformInfoList 平台list
      * @param mapSkuInDB            cms_bt_stock_separate_item的数据
-     * @return
+     * @param resultBean            返回内容
+     * @return 更新对象
      */
-    private List<StockExcelBean> readExcel(MultipartFile file, String import_mode, List<Map> paramPropertyList, List<Map> paramPlatformInfoList, Map<String, Map<String, StockExcelBean>> mapSkuInDB) {
+    private List<StockExcelBean> readExcel(MultipartFile file, String import_mode, List<Map> paramPropertyList, List<Map> paramPlatformInfoList, Map<String, Map<String, StockExcelBean>> mapSkuInDB, Map<String, Object> resultBean) {
         List<StockExcelBean> saveData = new ArrayList<StockExcelBean>();
 
         Workbook wb;
@@ -1621,6 +1624,7 @@ public class CmsTaskStockService extends BaseAppService {
 
         Sheet sheet = wb.getSheetAt(0);
         boolean isHeader = true;
+        boolean hasExecutingData = false;
         for (Row row : sheet) {
             if (isHeader) {
                 // 第一行Title行
@@ -1629,9 +1633,14 @@ public class CmsTaskStockService extends BaseAppService {
                 colPlatform = checkHeader(row, paramPropertyList, paramPlatformInfoList);
             } else {
                 // 数据行
-                checkRecord(row, sheet.getRow(0), import_mode, colPlatform, mapSkuInDB, saveData);
+                boolean isExecutingData = checkRecord(row, sheet.getRow(0), import_mode, colPlatform, mapSkuInDB, saveData);
+                if (isExecutingData && !hasExecutingData) {
+                    hasExecutingData = true;
+                }
             }
         }
+
+        resultBean.put("hasExecutingData", hasExecutingData);
 
         return saveData;
     }
@@ -1754,7 +1763,8 @@ public class CmsTaskStockService extends BaseAppService {
      * @param mapSkuInDB  cms_bt_stock_separate_item的数据
      * @param saveData    保存对象
      */
-    private void checkRecord(Row row, Row rowHeader, String import_mode, int[] colPlatform, Map<String, Map<String, StockExcelBean>> mapSkuInDB, List<StockExcelBean> saveData) {
+    private boolean checkRecord(Row row, Row rowHeader, String import_mode, int[] colPlatform, Map<String, Map<String, StockExcelBean>> mapSkuInDB, List<StockExcelBean> saveData) {
+        boolean isExecutingData = false; // 是否是隔离中或者还原中数据
 
         String model = row.getCell(0).getStringCellValue(); // Model
         String code = row.getCell(1).getStringCellValue(); // Code
@@ -1830,7 +1840,7 @@ public class CmsTaskStockService extends BaseAppService {
                     bean.setSeparate_qty(new BigDecimal("-1"));
                 } else {
                     bean.setSeparate_qty(new BigDecimal(separate_qty));
-                    bean.setStatus("0");
+                    bean.setStatus(STATUS_READY);
                 }
 
                 saveData.add(bean);
@@ -1868,17 +1878,23 @@ public class CmsTaskStockService extends BaseAppService {
                 }
 
                 boolean isUpdate = false; // 更新对象
-                if (isDYNAMIC) {
-                    // 动态
-                    if (!StringUtils.isEmpty(beanInDB.getStatus())) {
-                        // DB非动态
-                        isUpdate = true;
-                    }
+                String dbStatus = beanInDB.getStatus();
+                if (STATUS_SEPARATING.equals(dbStatus) || STATUS_REVERTING.equals(dbStatus)) {
+                    // 隔离中或者还原中
+                    isExecutingData = true;
                 } else {
-                    // 非动态
-                    if (StringUtils.isEmpty(beanInDB.getStatus()) || !separate_qty.equals(beanInDB.getSeparate_qty().toPlainString())) {
-                        // DB动态或数量不一致
-                        isUpdate = true;
+                    if (isDYNAMIC) {
+                        // 动态
+                        if (!StringUtils.isEmpty(dbStatus)) {
+                            // DB非动态
+                            isUpdate = true;
+                        }
+                    } else {
+                        // 非动态
+                        if (StringUtils.isEmpty(dbStatus) || !separate_qty.equals(beanInDB.getSeparate_qty().toPlainString())) {
+                            // DB动态或数量不一致
+                            isUpdate = true;
+                        }
                     }
                 }
 
@@ -1898,10 +1914,10 @@ public class CmsTaskStockService extends BaseAppService {
                         bean.setSeparate_qty(new BigDecimal("-1"));
                     } else {
                         bean.setSeparate_qty(new BigDecimal(separate_qty));
-                        if ("2".equals(beanInDB.getStatus()) || "7".equals(beanInDB.getStatus())) {
-                            bean.setStatus("7");
+                        if (STATUS_SEPARATE_SUCCESS.equals(dbStatus) || STATUS_CHANGED.equals(dbStatus)) {
+                            bean.setStatus(STATUS_CHANGED);
                         } else {
-                            bean.setStatus("0");
+                            bean.setStatus(STATUS_READY);
                         }
                     }
 
@@ -1917,6 +1933,8 @@ public class CmsTaskStockService extends BaseAppService {
         if (!DYNAMIC.equals(row.getCell(colPlatform[1]).getStringCellValue())) {
             throw new BusinessException("Sku=" + sku + "的其它平台栏不是动态！");
         }
+
+        return isExecutingData;
     }
 
     /**
