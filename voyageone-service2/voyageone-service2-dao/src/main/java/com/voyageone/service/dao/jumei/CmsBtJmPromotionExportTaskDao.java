@@ -6,9 +6,9 @@ import java.util.List;
 
 @Repository
 public interface CmsBtJmPromotionExportTaskDao {
-    public List<CmsBtJmPromotionExportTaskModel>  getList();
-    public  CmsBtJmPromotionExportTaskModel get(long id);
-    public int create(CmsBtJmPromotionExportTaskModel entity);
+    public List<CmsBtJmPromotionExportTaskModel>  selectList();
+    public  CmsBtJmPromotionExportTaskModel select(long id);
+    public int insert(CmsBtJmPromotionExportTaskModel entity);
     public  int update(CmsBtJmPromotionExportTaskModel entity);
 
     public  int delete(long id);

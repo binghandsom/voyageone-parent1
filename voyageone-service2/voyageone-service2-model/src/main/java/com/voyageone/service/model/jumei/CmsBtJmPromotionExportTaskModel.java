@@ -30,7 +30,7 @@ public class CmsBtJmPromotionExportTaskModel implements Serializable
  /**
 推广活动id
         */
-     private int promotionId;
+     private int cmsBtJmPromotionId;
     
     
  /**
@@ -116,14 +116,14 @@ public class CmsBtJmPromotionExportTaskModel implements Serializable
          /**
            推广活动id
         */
-        public int getPromotionId()
+        public int getCmsBtJmPromotionId()
         {
          
-        return this.promotionId;
+        return this.cmsBtJmPromotionId;
         }
-        public void setPromotionId(int promotionId)
+        public void setCmsBtJmPromotionId(int cmsBtJmPromotionId)
         {
-         this.promotionId=promotionId;
+         this.cmsBtJmPromotionId=cmsBtJmPromotionId;
         }
     
         

@@ -27,19 +27,19 @@ public class CmsBtJmPromotionSkuModel implements Serializable
  /**
 聚美活动ID
         */
-     private int promotionId;
+     private int cmsBtJmPromotionId;
     
     
  /**
 商品id
         */
-     private int jmBtProductId;
+     private int cmsBtJmProductId;
     
     
  /**
 sku id
         */
-     private int jmBtSkuId;
+     private int cmsBtJmSkuId;
     
     
  /**
@@ -119,42 +119,42 @@ sku id
          /**
            聚美活动ID
         */
-        public int getPromotionId()
+        public int getCmsBtJmPromotionId()
         {
          
-        return this.promotionId;
+        return this.cmsBtJmPromotionId;
         }
-        public void setPromotionId(int promotionId)
+        public void setCmsBtJmPromotionId(int cmsBtJmPromotionId)
         {
-         this.promotionId=promotionId;
+         this.cmsBtJmPromotionId=cmsBtJmPromotionId;
         }
     
         
          /**
            商品id
         */
-        public int getJmBtProductId()
+        public int getCmsBtJmProductId()
         {
          
-        return this.jmBtProductId;
+        return this.cmsBtJmProductId;
         }
-        public void setJmBtProductId(int jmBtProductId)
+        public void setCmsBtJmProductId(int cmsBtJmProductId)
         {
-         this.jmBtProductId=jmBtProductId;
+         this.cmsBtJmProductId=cmsBtJmProductId;
         }
     
         
          /**
            sku id
         */
-        public int getJmBtSkuId()
+        public int getCmsBtJmSkuId()
         {
          
-        return this.jmBtSkuId;
+        return this.cmsBtJmSkuId;
         }
-        public void setJmBtSkuId(int jmBtSkuId)
+        public void setCmsBtJmSkuId(int cmsBtJmSkuId)
         {
-         this.jmBtSkuId=jmBtSkuId;
+         this.cmsBtJmSkuId=cmsBtJmSkuId;
         }
     
         

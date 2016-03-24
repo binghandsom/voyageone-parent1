@@ -6,9 +6,9 @@ import java.util.List;
 
 @Repository
 public interface CmsBtJmSkuDao {
-    public List<CmsBtJmSkuModel>  getList();
-    public  CmsBtJmSkuModel get(long id);
-    public int create(CmsBtJmSkuModel entity);
+    public List<CmsBtJmSkuModel>  selectList();
+    public  CmsBtJmSkuModel select(long id);
+    public int insert(CmsBtJmSkuModel entity);
     public  int update(CmsBtJmSkuModel entity);
 
     public  int delete(long id);

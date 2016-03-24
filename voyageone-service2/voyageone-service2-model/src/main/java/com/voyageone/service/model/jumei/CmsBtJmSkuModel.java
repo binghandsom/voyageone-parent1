@@ -45,7 +45,7 @@ public class CmsBtJmSkuModel implements Serializable
  /**
 产品ID
         */
-     private int jmProductId;
+     private int cmsBtJmProductId;
     
     
  /**
@@ -173,14 +173,14 @@ this.productCode="";
          /**
            产品ID
         */
-        public int getJmProductId()
+        public int getCmsBtJmProductId()
         {
          
-        return this.jmProductId;
+        return this.cmsBtJmProductId;
         }
-        public void setJmProductId(int jmProductId)
+        public void setCmsBtJmProductId(int cmsBtJmProductId)
         {
-         this.jmProductId=jmProductId;
+         this.cmsBtJmProductId=cmsBtJmProductId;
         }
     
         

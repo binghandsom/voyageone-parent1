@@ -37,13 +37,13 @@ public class CmsBtJmPromotionProductModel implements Serializable
  /**
 推广活动Id
         */
-     private int promotionId;
+     private int cmsBtJmPromotionId;
     
     
  /**
 聚美产品ID（聚美系统）
         */
-     private int jmBtProductId;
+     private int cmsBtJmProductId;
     
     
  /**
@@ -174,28 +174,28 @@ this.channelId="";
          /**
            推广活动Id
         */
-        public int getPromotionId()
+        public int getCmsBtJmPromotionId()
         {
          
-        return this.promotionId;
+        return this.cmsBtJmPromotionId;
         }
-        public void setPromotionId(int promotionId)
+        public void setCmsBtJmPromotionId(int cmsBtJmPromotionId)
         {
-         this.promotionId=promotionId;
+         this.cmsBtJmPromotionId=cmsBtJmPromotionId;
         }
     
         
          /**
            聚美产品ID（聚美系统）
         */
-        public int getJmBtProductId()
+        public int getCmsBtJmProductId()
         {
          
-        return this.jmBtProductId;
+        return this.cmsBtJmProductId;
         }
-        public void setJmBtProductId(int jmBtProductId)
+        public void setCmsBtJmProductId(int cmsBtJmProductId)
         {
-         this.jmBtProductId=jmBtProductId;
+         this.cmsBtJmProductId=cmsBtJmProductId;
         }
     
         

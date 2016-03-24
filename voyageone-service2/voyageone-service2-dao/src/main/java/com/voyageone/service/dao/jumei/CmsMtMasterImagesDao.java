@@ -6,9 +6,9 @@ import java.util.List;
 
 @Repository
 public interface CmsMtMasterImagesDao {
-    public List<CmsMtMasterImagesModel>  getList();
-    public  CmsMtMasterImagesModel get(long id);
-    public int create(CmsMtMasterImagesModel entity);
+    public List<CmsMtMasterImagesModel>  selectList();
+    public  CmsMtMasterImagesModel select(long id);
+    public int insert(CmsMtMasterImagesModel entity);
     public  int update(CmsMtMasterImagesModel entity);
 
     public  int delete(long id);

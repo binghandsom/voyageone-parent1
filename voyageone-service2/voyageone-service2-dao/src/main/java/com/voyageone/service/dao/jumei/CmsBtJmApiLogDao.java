@@ -6,9 +6,9 @@ import java.util.List;
 
 @Repository
 public interface CmsBtJmApiLogDao {
-    public List<CmsBtJmApiLogModel>  getList();
-    public  CmsBtJmApiLogModel get(long id);
-    public int create(CmsBtJmApiLogModel entity);
+    public List<CmsBtJmApiLogModel>  selectList();
+    public  CmsBtJmApiLogModel select(long id);
+    public int insert(CmsBtJmApiLogModel entity);
     public  int update(CmsBtJmApiLogModel entity);
 
     public  int delete(long id);
