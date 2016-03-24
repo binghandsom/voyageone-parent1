@@ -32,7 +32,7 @@ public class CmsBtSxWorkloadDaoTest {
 
     @Test
     public void testSelect() throws Exception {
-        List<CmsBtSxWorkloadModel> list = cmsBtSxWorkloadDao.getSxWorkloadModel(10);
+        List<CmsBtSxWorkloadModel> list = cmsBtSxWorkloadDao.selectSxWorkloadModel(10);
         for (CmsBtSxWorkloadModel model : list) {
             System.out.println(model.getChannelId() + "," + model.getGroupId() + "," + model.getPublishStatus());
         }

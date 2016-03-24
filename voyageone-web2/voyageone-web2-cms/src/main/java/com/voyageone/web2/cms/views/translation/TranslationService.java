@@ -488,7 +488,7 @@ public class TranslationService {
      */
     public Map<String, Object> getTransLenSet(String chnId) {
         Map<String, Object> setInfo = new HashMap<String, Object>();
-        List<Map<String, Object>> rslt = customWordDao.getTransLenSet(chnId);
+        List<Map<String, Object>> rslt = customWordDao.selectTransLenSet(chnId);
         for (Map<String, Object> item : rslt) {
             String lenType = (String) item.get("lenType");
             item.remove("lenType");

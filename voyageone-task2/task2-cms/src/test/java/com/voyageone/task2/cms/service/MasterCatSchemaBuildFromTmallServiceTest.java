@@ -52,7 +52,7 @@ public class MasterCatSchemaBuildFromTmallServiceTest {
         logger.info("");
         List<JSONObject> masterSchemaIds = cmsMtCategorySchemaDao.getAllSchemaIds();
         logger.info("总件数： "+masterSchemaIds.size());
-        List<CmsMtCommonPropActionDefModel> commPropActionDefModels = cmsMtCommonPropDao.getActionModelList();
+        List<CmsMtCommonPropActionDefModel> commPropActionDefModels = cmsMtCommonPropDao.selectActionModelList();
         int schemaCount = 0;
         for (JSONObject schemaId:masterSchemaIds) {
             schemaCount++;

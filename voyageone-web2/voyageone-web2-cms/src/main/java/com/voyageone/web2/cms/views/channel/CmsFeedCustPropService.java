@@ -193,7 +193,7 @@ public class CmsFeedCustPropService extends BaseAppService {
 
     // 取得类目路径数据
     public List<CmsMtCategoryTreeModel> getTopCategories(UserSessionBean user) {
-        CmsMtFeedCategoryTreeModelx treeModelx = cmsMtFeedCategoryTreeDao.findFeedCategoryx(user.getSelChannelId());
+        CmsMtFeedCategoryTreeModelx treeModelx = cmsMtFeedCategoryTreeDao.selectFeedCategoryx(user.getSelChannelId());
         List<CmsMtFeedCategoryModel> feedBeanList = treeModelx.getCategoryTree();
         List<CmsMtCategoryTreeModel> result = new ArrayList<>();
         for(CmsMtFeedCategoryModel feedCategory : feedBeanList) {
@@ -306,7 +306,7 @@ public class CmsFeedCustPropService extends BaseAppService {
         sqlPara.put("origValue", origValue);
         sqlPara.put("transValue", transValue);
         sqlPara.put("userName", userName);
-        return cmsBtFeedCustomPropDao.addPropValue(sqlPara);
+        return cmsBtFeedCustomPropDao.insertPropValue(sqlPara);
     }
 
     // 查询指定属性值是否存在
@@ -338,7 +338,7 @@ public class CmsFeedCustPropService extends BaseAppService {
 
     // 取得类目路径数据
     private List<CmsMtFeedCategoryModel> getTopFeedCategories(UserSessionBean user) {
-        CmsMtFeedCategoryTreeModelx treeModelx = cmsMtFeedCategoryTreeDao.findFeedCategoryx(user.getSelChannelId());
+        CmsMtFeedCategoryTreeModelx treeModelx = cmsMtFeedCategoryTreeDao.selectFeedCategoryx(user.getSelChannelId());
         return treeModelx.getCategoryTree();
     }
 
@@ -410,7 +410,7 @@ public class CmsFeedCustPropService extends BaseAppService {
     private String getSameAttr(String channelId) {
         Map<String, Object> params = new HashMap<String, Object>(2);
         params.put("channelId", channelId);
-        String rslt = cmsBtFeedCustomPropDao.getSameAttr(params);
+        String rslt = cmsBtFeedCustomPropDao.selectSameAttr(params);
         return rslt;
     }
 
@@ -420,7 +420,7 @@ public class CmsFeedCustPropService extends BaseAppService {
 //        Criteria criteria = Criteria.where("channelId").is(channelId);
 //        query.addCriteria(criteria);
 
-        return cmsMtFeedCategoryTreeDao.findFeedCategoryx(channelId);
+        return cmsMtFeedCategoryTreeDao.selectFeedCategoryx(channelId);
 //        return mongoTemplate.find(query, Object.class, "cms_mt_feed_category_tree");
         //TODO-- 这里只能使用Object对象来影射，不能使用Map.class，可能是spring mongoTemplate的问题
     }
@@ -481,7 +481,7 @@ public class CmsFeedCustPropService extends BaseAppService {
                 params.put("cat_path", catPath);
                 params.put("userName", userInfo.getUserName());
                 params.put("list", addList);
-                int tslt = cmsBtFeedCustomPropDao.addAttr(params);
+                int tslt = cmsBtFeedCustomPropDao.insertAttr(params);
                 if (tslt != addList.size()) {
                     logger.error("添加属性结果与期望不符：添加条数=" + addList.size() + " 实际更新件数=" + tslt);
                 } else {

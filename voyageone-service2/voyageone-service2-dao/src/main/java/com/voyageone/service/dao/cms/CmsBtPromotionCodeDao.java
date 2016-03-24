@@ -14,11 +14,15 @@ import java.util.Map;
 @Repository
 public class CmsBtPromotionCodeDao extends ServiceBaseDao {
 
-    public List<CmsBtPromotionCodeModel> getPromotionCodeList(Map<String, Object> params) {
+    public List<CmsBtPromotionCodeModel> selectPromotionCodeList(Map<String, Object> params) {
         return selectList("select_cms_bt_promotion_code", params);
     }
 
-    public int getPromotionCodeListCnt(Map<String, Object> params) {
+    public List<CmsBtPromotionCodeModel> selectPromotionCodeSkuList(Map<String, Object> params) {
+        return selectList("select_cms_bt_promotion_code_sku", params);
+    }
+
+    public int selectPromotionCodeListCnt(Map<String, Object> params) {
         return selectOne("select_cms_bt_promotion_code_cnt", params);
     }
 
