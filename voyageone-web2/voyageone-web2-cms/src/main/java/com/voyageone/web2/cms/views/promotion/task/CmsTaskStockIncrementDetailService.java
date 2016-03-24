@@ -416,8 +416,12 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
     public void importExcelFileStockIncrementInfo(Map param, MultipartFile file, Map<String, Object> resultBean) {
         String taskId = (String) param.get("task_id");
         String subTaskId = (String) param.get("subTaskId");
+        String import_mode = (String) param.get("import_mode");
+        Map<String, String> paramPlatformInfo = JacksonUtil.json2Bean((String) param.get("platformList"), Map.class);
+        List<Map> paramPropertyList = JacksonUtil.json2Bean((String) param.get("propertyList"), List.class);
+
         // 取得任务id对应的Promotion是否未开始或者已经结束
-        boolean promotionDuringFlg = isPromotionDuring((String) param.get("taskId"), (String) param.get("cartId"));
+        boolean promotionDuringFlg = isPromotionDuring(taskId, paramPlatformInfo.get("cartId"));
         if (!promotionDuringFlg) {
             throw new BusinessException("活动未开始或者已经结束，不能修改数据！");
         }
@@ -426,10 +430,6 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
             // 如果在cms_bt_stock_separate_increment_item表中，这个增量任务有状态<>0:未进行的数据，则不允许导入
             throw new BusinessException("此增量任务已经进行，不能修改数据！");
         }
-
-        String import_mode = (String) param.get("import_mode");
-        Map<String, String> paramPlatformInfoList = JacksonUtil.json2Bean((String) param.get("platformList"), Map.class);
-        List<Map> paramPropertyList = JacksonUtil.json2Bean((String) param.get("propertyList"), List.class);
 
         logger.info("增量库存隔离数据取得开始, sub_task_id=" + subTaskId);
         Map searchParam = new HashMap();
