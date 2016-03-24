@@ -51,7 +51,7 @@ gulp.task('packaging-templates', function () {
         .pipe(debug())
         .pipe(minifyHtml({empty: true}))
         .pipe(ngHtml2Js({
-            moduleName: "voyageone.angular.templates",
+            moduleName: "voyageone.angular.factories.templates",
             prefix: "/components/angular/factories/templates/"
         }))
         .pipe(concat("templates.html.js"))
