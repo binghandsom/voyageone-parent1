@@ -1,5 +1,6 @@
 package com.voyageone.service.dao.wms;
 
+import com.voyageone.service.dao.ServiceBaseDao;
 import com.voyageone.service.model.cms.CmsBtInventoryOutputTmpModel;
 import org.springframework.stereotype.Repository;
 
@@ -13,7 +14,7 @@ import java.util.Map;
  */
 
 @Repository
-public class WmsBtInventoryCenterOutputTmpDao extends com.voyageone.service.dao.ServiceBaseDao {
+public class WmsBtInventoryCenterOutputTmpDao extends ServiceBaseDao {
 
     public boolean insertSkuInventoryInfo(String values) {
         boolean ret = true;
@@ -26,17 +27,17 @@ public class WmsBtInventoryCenterOutputTmpDao extends com.voyageone.service.dao.
         return  ret;
     }
 
-    public boolean delSkuInventoryInfo() {
+    public boolean deleteSkuInventoryInfo() {
         delete("wms_bt_inventory_center_output_tmp_deleteAll");
 
         return true;
     }
 
-    public int getSkuInventoryInfoRecCount() {
+    public int selectSkuInventoryInfoRecCount() {
         return selectOne("wms_bt_inventory_center_output_tmp_getRecCount");
     }
 
-    public List<CmsBtInventoryOutputTmpModel> getSkuInventoryInfoRecInfo(int offset, int pagesize) {
+    public List<CmsBtInventoryOutputTmpModel> selectSkuInventoryInfoRecInfo(int offset, int pagesize) {
         Map<String, Object> dataMap = new HashMap<String, Object>();
         dataMap.put("offset", offset * pagesize);
         dataMap.put("pagesize", pagesize);

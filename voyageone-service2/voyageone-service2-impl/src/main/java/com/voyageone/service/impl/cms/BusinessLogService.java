@@ -20,28 +20,12 @@ public class BusinessLogService extends BaseService {
     @Autowired
     private CmsBtBusinessLogDao cmsBtBusinessLogDao;
 
-//    public BusinessLogGetResponse findList(BusinessLogGetRequest request){
-//        request.check();
-//        List<CmsBtBusinessLogModel> models = cmsBtBusinessLogDao.findByCondition(new BeanMap(request));
-//        BusinessLogGetResponse response = new BusinessLogGetResponse();
-//        response.setCmsBtBusinessLogModels(models);
-//        response.setTotalCount(Long.parseLong(String.valueOf(cmsBtBusinessLogDao.findByConditionCnt(new BeanMap(request)))));
-//        return response;
-//    }
-
-//    public BusinessLogUpdateResponse updateFinishStatus(BusinessLogUpdateRequest request){
-//        request.check();
-//        BusinessLogUpdateResponse response =new BusinessLogUpdateResponse();
-//        response.setModifiedCount(cmsBtBusinessLogDao.updateStatusFinish(new BeanMap(request)));
-//        return response;
-//    }
-
     public List<CmsBtBusinessLogModel> getList(Map params){
-        return cmsBtBusinessLogDao.findByCondition(params);
+        return cmsBtBusinessLogDao.selectByCondition(params);
     }
 
     public int getCount(Map params){
-        return cmsBtBusinessLogDao.findByConditionCnt(params);
+        return cmsBtBusinessLogDao.selectByConditionCnt(params);
     }
 
     public int updateFinishStatus(Map params){

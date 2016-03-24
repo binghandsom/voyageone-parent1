@@ -6,6 +6,7 @@ import com.voyageone.common.Constants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.task2.cms.model.CmsBtFeedInfoGiltModel;
 import com.voyageone.task2.cms.model.CmsBtFeedInfoVtmModel;
+import com.voyageone.task2.cms.model.WmsBtClientSkuModel;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -133,6 +134,10 @@ public class GiltFeedDao extends BaseDao {
 
     public int updateFeetStatus(List<String> itemIds) {
         return update("cms_zz_worktable_gilt_superfeed_update", itemIds);
+    }
+
+    public int insertIgnoreList(List<WmsBtClientSkuModel> clientSkuList) {
+        return insert("wms_bt_client_sku_insertIgnoreList", parameters("list", clientSkuList));
     }
 
 }

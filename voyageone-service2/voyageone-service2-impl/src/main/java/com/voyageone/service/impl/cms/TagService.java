@@ -74,7 +74,7 @@ public class TagService extends BaseService {
             // 子Tag追加的场合
         } else {
             // 父TagId存在检查
-            CmsBtTagModel cmsBtTagModel = cmsBtTagDao.getCmsBtTagByParentTagId(request.getParentTagId());
+            CmsBtTagModel cmsBtTagModel = cmsBtTagDao.selectCmsBtTagByParentTagId(request.getParentTagId());
             if (cmsBtTagModel == null) {
                 throw new RuntimeException("parent tag not found");
             }
@@ -162,7 +162,7 @@ public class TagService extends BaseService {
         if (parentTagId == 0) {
             ret = tagName;
         } else {
-            CmsBtTagModel cmsBtTagModel = cmsBtTagDao.getCmsBtTagByTagId(parentTagId);
+            CmsBtTagModel cmsBtTagModel = cmsBtTagDao.selectCmsBtTagByTagId(parentTagId);
             ret = cmsBtTagModel.getTagName() + ">" + tagName;
         }
 
@@ -201,7 +201,7 @@ public class TagService extends BaseService {
 //        boolean ret = false;
 //
 //        // 当前Tag取得
-//        CmsBtTagModel cmsBtTagModel = cmsBtTagDao.getCmsBtTagByTagId(request.getTagId());
+//        CmsBtTagModel cmsBtTagModel = cmsBtTagDao.selectCmsBtTagByTagId(request.getTagId());
 //
 //        TransactionStatus status=transactionManager.getTransaction(def);
 //

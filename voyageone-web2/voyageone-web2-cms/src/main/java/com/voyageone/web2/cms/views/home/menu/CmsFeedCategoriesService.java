@@ -44,7 +44,7 @@ public final class CmsFeedCategoriesService extends BaseAppService {
     public List<CmsMtCategoryTreeModel> getFeedCategoryMap(String channelId) throws IOException {
 
         // 获取整个类目树
-        CmsMtFeedCategoryTreeModelx treeModelX = cmsMtFeedCategoryTreeDao.findFeedCategoryx(channelId);
+        CmsMtFeedCategoryTreeModelx treeModelX = cmsMtFeedCategoryTreeDao.selectFeedCategoryx(channelId);
 
         if (treeModelX.getCategoryTree().isEmpty())
             throw new BusinessException("未找到类目");
@@ -78,7 +78,7 @@ public final class CmsFeedCategoriesService extends BaseAppService {
      * @return
      */
     public List<CmsMtCategoryTreeModel> getFeedCategories(UserSessionBean user) {
-        CmsMtFeedCategoryTreeModelx treeModelx = cmsMtFeedCategoryTreeDao.findFeedCategoryx(user.getSelChannelId());
+        CmsMtFeedCategoryTreeModelx treeModelx = cmsMtFeedCategoryTreeDao.selectFeedCategoryx(user.getSelChannelId());
         List<CmsMtFeedCategoryModel> feedBeanList = treeModelx.getCategoryTree();
         List<CmsMtCategoryTreeModel> result = new ArrayList<>();
         for(CmsMtFeedCategoryModel feedCategory : feedBeanList) {
@@ -89,7 +89,7 @@ public final class CmsFeedCategoriesService extends BaseAppService {
 
     // 取得类目路径数据
     public List<CmsMtFeedCategoryModel> getTopFeedCategories(UserSessionBean user) {
-        CmsMtFeedCategoryTreeModelx treeModelx = cmsMtFeedCategoryTreeDao.findFeedCategoryx(user.getSelChannelId());
+        CmsMtFeedCategoryTreeModelx treeModelx = cmsMtFeedCategoryTreeDao.selectFeedCategoryx(user.getSelChannelId());
         return treeModelx.getCategoryTree();
     }
 

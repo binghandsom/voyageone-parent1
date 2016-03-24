@@ -23,10 +23,6 @@ public class CmsBtPromotionTaskDao extends ServiceBaseDao {
         return ret;
     }
 
-    public int getPromotionTaskListCnt(Map<String,Object> params){
-        return selectOne("select_cms_bt_promotion_code_cnt",params);
-    }
-
     public int getPromotionTaskPriceListCnt(Map<String,Object> params){
         return selectOne("select_cms_bt_promotion_task_price_cnt",params);
     }
@@ -45,6 +41,6 @@ public class CmsBtPromotionTaskDao extends ServiceBaseDao {
 
 
     public List<CmsBtPromotionTaskModel> getPromotionByCodeNotInAllPromotion(Map<String,Object> params){
-        return selectList("select_cms_bt_promotion_task_by_code_in_no_all_promotion",params);
+        return selectList("select_cms_bt_promotion_by_code_in_no_all_promotion",params);
     }
 }

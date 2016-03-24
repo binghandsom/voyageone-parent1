@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -367,6 +368,8 @@ public class JewelryAnalysisService extends BaseTaskService {
 
             reader.close();
             $info("JE产品文件读入完成");
+        } catch (FileNotFoundException e){
+            $info("JE产品文件读入不存在");
         } catch (Exception ex) {
             $info("JE产品文件读入失败");
             logIssue("cms 数据导入处理", "JE产品文件读入失败 " + ex.getMessage());
