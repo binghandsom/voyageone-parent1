@@ -4,6 +4,7 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.configs.Properties;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.FileUtils;
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.CmsConstants;
@@ -23,10 +24,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by morse.lu on 2016/3/23.
@@ -366,6 +364,26 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
             throw new BusinessException("此增量任务已经进行，不能修改数据！");
         }
 
+        String import_mode = (String) param.get("import_mode");
+        Map<String, String> paramPlatformInfoList = JacksonUtil.json2Bean((String) param.get("platformList"), Map.class);
+        List<Map> paramPropertyList = JacksonUtil.json2Bean((String) param.get("propertyList"), List.class);
+
+        logger.info("增量库存隔离数据取得开始, sub_task_id=" + subTaskId);
+        Map searchParam = new HashMap();
+        searchParam.put("tableName", "voyageone_cms2.cms_bt_stock_separate_increment_item");
+        searchParam.put("whereSql", " where subTaskId= '" + subTaskId + "'");
+        List<StockIncrementExcelBean> resultData = cmsBtStockSeparateIncrementItemDao.selectExcelStockIncrementInfo(searchParam);
+        Map<String, StockIncrementExcelBean> mapSkuInDB = new HashMap<String, StockIncrementExcelBean>();
+        for (StockIncrementExcelBean rowData : resultData) {
+            mapSkuInDB.put(rowData.getSku(), rowData);
+        }
+        logger.info("增量库存隔离数据取得结束");
+
+        logger.info("导入Excel取得并check的处理开始");
+        List<StockIncrementExcelBean> insertData = new ArrayList<>(); // insert数据
+        List<StockIncrementExcelBean> updateData = new ArrayList<>(); // update数据
+
+        logger.info("导入Excel取得并check的处理结束");
 
 
     }
