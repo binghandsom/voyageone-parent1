@@ -43,14 +43,14 @@ public class CmsFeedMappingService extends BaseAppService {
     @Autowired
     private FeedMappingService feedMappingService;
 
-    public List<CmsMtFeedCategoryModel> getTopCategories(UserSessionBean user) {
+    List<CmsMtFeedCategoryModel> getTopCategories(UserSessionBean user) {
 
         CmsMtFeedCategoryTreeModelx treeModelx = cmsMtFeedCategoryTreeDao.findTopCategories(user.getSelChannelId());
 
         return treeModelx.getCategoryTree();
     }
 
-    public Map<String, FeedCategoryBean> getFeedCategoryMap(String topCategoryId, UserSessionBean user) {
+    Map<String, FeedCategoryBean> getFeedCategoryMap(String topCategoryId, UserSessionBean user) {
 
         CmsMtFeedCategoryTreeModelx treeModelx = cmsMtFeedCategoryTreeDao.findTopCategory(user.getSelChannelId(), topCategoryId);
 
@@ -92,35 +92,7 @@ public class CmsFeedMappingService extends BaseAppService {
                 .collect(toMap(f -> f.getModel().getPath(), f -> f));
     }
 
-    private Stream<FeedCategoryBean> buildFeedCategoryBean(CmsMtFeedCategoryModel feedCategoryModel, Map<String, CmsBtFeedMappingModel> feedMappingModelMap, Map<String, CmsBtFeedMappingModel> mainMappingModelMap) {
-
-        // 先取出暂时保存
-        List<CmsMtFeedCategoryModel> children = feedCategoryModel.getChild();
-
-        // 创建新模型
-        FeedCategoryBean feedCategoryBean = new FeedCategoryBean();
-        feedCategoryBean.setLevel(StringUtils.countMatches(feedCategoryModel.getPath(), "-"));
-        feedCategoryBean.setModel(feedCategoryModel);
-
-        if (feedMappingModelMap.containsKey(feedCategoryModel.getPath())) {
-            CmsBtFeedMappingModel feedMappingModel = feedMappingModelMap.get(feedCategoryModel.getPath());
-            feedCategoryBean.setMapping(feedMappingModel);
-            feedCategoryBean.setMainMapping(mainMappingModelMap.get(feedMappingModel.getScope().getMainCategoryPath()));
-        }
-
-        // 输出流
-        Stream<FeedCategoryBean> feedCategoryBeanStream = Stream.of(feedCategoryBean);
-        // 如果有子,则继续输出子
-        if (children != null && !children.isEmpty())
-            feedCategoryBeanStream = Stream.concat(feedCategoryBeanStream,
-                    children.stream().flatMap(m -> buildFeedCategoryBean(m, feedMappingModelMap, mainMappingModelMap)));
-
-        // 减少 JSON 重复输出
-        feedCategoryModel.setChild(null);
-        return feedCategoryBeanStream;
-    }
-
-    public List<CmsMtCategoryTreeModel> getMainCategories(UserSessionBean user) {
+    List<CmsMtCategoryTreeModel> getMainCategories(UserSessionBean user) {
         return cmsBtChannelCategoryService.getCategoriesByChannelId(user.getSelChannelId());
     }
 
@@ -200,7 +172,7 @@ public class CmsFeedMappingService extends BaseAppService {
      * @param user              变动用户
      * @return 更新后的 Mapping 关系
      */
-    public CmsBtFeedMappingModel extendsMapping(CmsMtFeedCategoryModel feedCategoryModel, UserSessionBean user) {
+    CmsBtFeedMappingModel extendsMapping(CmsMtFeedCategoryModel feedCategoryModel, UserSessionBean user) {
 
         CmsBtFeedMappingModel feedMappingModel = findParentDefaultMapping(user.getSelChannel(), feedCategoryModel.getPath());
 
@@ -212,27 +184,9 @@ public class CmsFeedMappingService extends BaseAppService {
     }
 
     /**
-     * 从下往上在类目树中查找已匹配的 Mapping
-     */
-    private CmsBtFeedMappingModel findParentDefaultMapping(ChannelConfigEnums.Channel channel, String feedCategoryPath) {
-
-        // 当前类目没父级了.
-        if (!feedCategoryPath.contains("-")) return null;
-
-        String parentPath = feedCategoryPath.substring(0, feedCategoryPath.lastIndexOf("-"));
-
-        CmsBtFeedMappingModel parentDefaultMapping = feedMappingService.getDefault(channel, parentPath, false);
-
-        if (parentDefaultMapping == null)
-            return findParentDefaultMapping(channel, parentPath);
-
-        return parentDefaultMapping;
-    }
-
-    /**
      * 切换 MatchOver
      */
-    public boolean switchMatchOver(SetMappingBean setMappingBean, UserSessionBean user) {
+    boolean switchMatchOver(SetMappingBean setMappingBean, UserSessionBean user) {
 
         CmsBtFeedMappingModel feedMappingModel = getMapping(setMappingBean, user);
 
@@ -243,7 +197,7 @@ public class CmsFeedMappingService extends BaseAppService {
         return result.getN() > 0;
     }
 
-    public int getMatchOver(SetMappingBean setMappingBean, UserSessionBean user) {
+    int getMatchOver(SetMappingBean setMappingBean, UserSessionBean user) {
 
         return getMapping(setMappingBean, user).getMatchOver();
     }
@@ -255,7 +209,7 @@ public class CmsFeedMappingService extends BaseAppService {
      * @param user           包含渠道的用户信息
      * @return Mapping 模型
      */
-    protected CmsBtFeedMappingModel getMapping(SetMappingBean setMappingBean, UserSessionBean user) {
+    CmsBtFeedMappingModel getMapping(SetMappingBean setMappingBean, UserSessionBean user) {
 
         CmsBtFeedMappingModel feedMappingModel = feedMappingService.getDefault(user.getSelChannel(),
                 setMappingBean.getFrom());
@@ -280,11 +234,57 @@ public class CmsFeedMappingService extends BaseAppService {
      * @param user   带有 selChannel 的用户信息
      * @return mapping 模型
      */
-    public CmsBtFeedMappingModel getMainMapping(SetMappingBean params, UserSessionBean user) {
+    CmsBtFeedMappingModel getMainMapping(SetMappingBean params, UserSessionBean user) {
         CmsBtFeedMappingModel model = feedMappingService.getDefaultMain(user.getSelChannel(), params.getTo());
         if (model == null)
             return null;
         model.setProps(null); // 减小 Json 大小
         return model;
+    }
+
+    /**
+     * 从下往上在类目树中查找已匹配的 Mapping
+     */
+    private CmsBtFeedMappingModel findParentDefaultMapping(ChannelConfigEnums.Channel channel, String feedCategoryPath) {
+
+        // 当前类目没父级了.
+        if (!feedCategoryPath.contains("-")) return null;
+
+        String parentPath = feedCategoryPath.substring(0, feedCategoryPath.lastIndexOf("-"));
+
+        CmsBtFeedMappingModel parentDefaultMapping = feedMappingService.getDefault(channel, parentPath, false);
+
+        if (parentDefaultMapping == null)
+            return findParentDefaultMapping(channel, parentPath);
+
+        return parentDefaultMapping;
+    }
+
+    private Stream<FeedCategoryBean> buildFeedCategoryBean(CmsMtFeedCategoryModel feedCategoryModel, Map<String, CmsBtFeedMappingModel> feedMappingModelMap, Map<String, CmsBtFeedMappingModel> mainMappingModelMap) {
+
+        // 先取出暂时保存
+        List<CmsMtFeedCategoryModel> children = feedCategoryModel.getChild();
+
+        // 创建新模型
+        FeedCategoryBean feedCategoryBean = new FeedCategoryBean();
+        feedCategoryBean.setLevel(StringUtils.countMatches(feedCategoryModel.getPath(), "-"));
+        feedCategoryBean.setModel(feedCategoryModel);
+
+        if (feedMappingModelMap.containsKey(feedCategoryModel.getPath())) {
+            CmsBtFeedMappingModel feedMappingModel = feedMappingModelMap.get(feedCategoryModel.getPath());
+            feedCategoryBean.setMapping(feedMappingModel);
+            feedCategoryBean.setMainMapping(mainMappingModelMap.get(feedMappingModel.getScope().getMainCategoryPath()));
+        }
+
+        // 输出流
+        Stream<FeedCategoryBean> feedCategoryBeanStream = Stream.of(feedCategoryBean);
+        // 如果有子,则继续输出子
+        if (children != null && !children.isEmpty())
+            feedCategoryBeanStream = Stream.concat(feedCategoryBeanStream,
+                    children.stream().flatMap(m -> buildFeedCategoryBean(m, feedMappingModelMap, mainMappingModelMap)));
+
+        // 减少 JSON 重复输出
+        feedCategoryModel.setChild(null);
+        return feedCategoryBeanStream;
     }
 }
