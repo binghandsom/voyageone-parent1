@@ -20,6 +20,7 @@ public class TmpOldCmsDataBean {
     private String title_cn;
     private String description_en;
     private String description_cn;
+    private String description_cn_short;
     private String img1; // 商品图片
     private String img2; // 包装图片
     private String img3; // 带角度图片
@@ -116,6 +117,14 @@ public class TmpOldCmsDataBean {
 
     public void setDescription_cn(String description_cn) {
         this.description_cn = description_cn;
+    }
+
+    public String getDescription_cn_short() {
+        return description_cn_short;
+    }
+
+    public void setDescription_cn_short(String description_cn_short) {
+        this.description_cn_short = description_cn_short;
     }
 
     public String getImg1() {

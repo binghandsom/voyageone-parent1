@@ -52,6 +52,15 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
         setAttribute("productNameCn", productNameCn);
     }
 
+    //产品名称（原始中文标题）
+    public String getOriginalTitleCn() {
+        return getAttribute("originalTitleCn");
+    }
+
+    public void setOriginalTitleCn(String originalTitleCn) {
+        setAttribute("originalTitleCn", originalTitleCn);
+    }
+
     //longTitle 长标题
     public String getLongTitle() {
         return getAttribute("longTitle");
@@ -104,6 +113,15 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
 
     public void setOrigin(String origin) {
         setAttribute("origin", origin);
+    }
+
+    //originalDesCn 原始中文描述
+    public String getOriginalDesCn() {
+        return getAttribute("originalDesCn");
+    }
+
+    public void setOriginalDesCn(String originalDesCn) {
+        setAttribute("originalDesCn", originalDesCn);
     }
 
     //shortDesCn 简短描述中文
