@@ -89,7 +89,9 @@ public class ExcelImportUtil {
                     }
                 }
                 try {
-                    ReflectUtil.setFieldValueByName(field, content, model);
+                    if (!StringUtils.isEmpty(content)) {
+                        ReflectUtil.setFieldValueByName(field, content, model);
+                    }
                 } catch (Exception e) {
                     errorMsg += column.getCamelColumnName() + ":" + e.getMessage();
                 }

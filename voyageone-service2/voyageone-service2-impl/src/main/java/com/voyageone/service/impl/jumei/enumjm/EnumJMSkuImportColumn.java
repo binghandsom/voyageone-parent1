@@ -2,12 +2,13 @@ package com.voyageone.service.impl.jumei.enumjm;
 import com.voyageone.service.impl.Excel.EnumExcelColumnType;
 import com.voyageone.service.impl.Excel.ExcelColumn;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 public enum EnumJMSkuImportColumn {
-    ProductCode("product_code", 1, "jm_bt_sku", "商品Code"),//商品Code                    jm_bt_sku
+    ProductCode("product_code", 1, "jm_bt_sku", "商品Code",EnumExcelColumnType.ColumnType_String,false),//商品Code                    jm_bt_sku
     sku("sku", 2, "jm_bt_sku", "品牌方SKU(聚美商家商品编码)"),//品牌方SKU(聚美商家商品编码)
     upc("upc", 3, "jm_bt_sku", "商品条形码"),//商品条形码
     cms_size("cms_size", 4, "jm_bt_sku", "尺码(VO系统)"),//尺码(VO系统)                     jm_bt_sku
@@ -28,6 +29,10 @@ public enum EnumJMSkuImportColumn {
     private EnumJMSkuImportColumn(String columnName, int orderIndex, String tableName, String text, EnumExcelColumnType columnType, boolean isNull) {
         this.excelColumn = new ExcelColumn(columnName, orderIndex, tableName, text, columnType, isNull);
     }
+    private EnumJMSkuImportColumn(String columnName, String tableName, String text,EnumExcelColumnType columnType,boolean isNull)
+    {
+        this.excelColumn = new ExcelColumn(columnName, EnumCount.ProductColumnIndex++, tableName, text,columnType,isNull);
+    }
     public  static List<EnumJMSkuImportColumn> getList()
     {
         List<EnumJMSkuImportColumn> listEnumImportColumn = Arrays.asList(EnumJMSkuImportColumn.values());
@@ -36,5 +41,13 @@ public enum EnumJMSkuImportColumn {
             return -1;
         });
         return listEnumImportColumn;
+    }
+    public static  List<ExcelColumn> getListExcelColumn() {
+        List<ExcelColumn> list = new ArrayList<>();
+        EnumJMSkuImportColumn[] array = EnumJMSkuImportColumn.values();
+        for (EnumJMSkuImportColumn column : array) {
+            list.add(column.getExcelColumn());
+        }
+        return list;
     }
 }
