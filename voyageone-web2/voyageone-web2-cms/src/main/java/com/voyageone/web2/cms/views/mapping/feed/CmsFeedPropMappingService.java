@@ -43,7 +43,7 @@ import static java.util.stream.Collectors.*;
  * @since 2.0.0
  */
 @Service
-public class CmsFeedPropMappingService extends BaseAppService {
+class CmsFeedPropMappingService extends BaseAppService {
 
     @Autowired
     private CmsMtFeedCategoryTreeDao cmsMtFeedCategoryTreeDao;
@@ -61,21 +61,12 @@ public class CmsFeedPropMappingService extends BaseAppService {
     private CommonSchemaService commonSchemaService;
 
     /**
-     * 通过 Feed 类目,获取其默认匹配的主类目
-     *
-     * @param feedCategoryPath Feed 类目路径
-     * @param user             当前用户及配置  @return 主类目
+     * 返回主类目和相应的属性
      */
-    public Map<String, Object> getCategoryPropsByFeed(String feedCategoryPath, UserSessionBean user) {
+    Map<String, Object> getMainCategoryInfo(String mainCategoryPath) {
 
-        CmsBtFeedMappingModel feedMappingModel = feedMappingService.getDefault(user.getSelChannel(), feedCategoryPath);
 
-        if (feedMappingModel == null)
-            throw new BusinessException("没找到 Mapping");
-
-        // 通过 Mapping 获取主类目的 Path
-        // 通过 Path 转换获取到 ID (这部分是规定的 MD5 转换)
-        String categoryId = convertPathToId(feedMappingModel.getScope().getMainCategoryPath());
+        String categoryId = convertPathToId(mainCategoryPath);
 
         // 查询主类目信息
         CmsMtCategorySchemaModel categorySchemaModel = categorySchemaDao.getMasterSchemaModelByCatId(categoryId);
@@ -134,7 +125,7 @@ public class CmsFeedPropMappingService extends BaseAppService {
      * @param getFieldMappingBean 查询参数
      * @return 属性匹配设定
      */
-    public Prop getFieldMapping(GetFieldMappingBean getFieldMappingBean) {
+    Prop getFieldMapping(GetFieldMappingBean getFieldMappingBean) {
 
         CmsBtFeedMappingModel mappingModel = feedMappingService.getMapping(new ObjectId(getFieldMappingBean.getMappingId()));
 
@@ -158,37 +149,17 @@ public class CmsFeedPropMappingService extends BaseAppService {
     /**
      * 获取类目匹配中已匹配的主类目属性
      */
-    public Map<String, Object> getMatched(SetMappingBean setMappingBean, UserSessionBean userSessionBean) {
+    Map<MappingPropType, List<String>> getMatched(SetMappingBean setMappingBean, UserSessionBean userSessionBean) {
 
-        CmsBtFeedMappingModel feedMappingModel = feedMappingService2.getMapping(setMappingBean, userSessionBean);
+        CmsBtFeedMappingModel feedMappingModel = feedMappingService.getMapping(userSessionBean.getSelChannel(), setMappingBean.getFrom(), setMappingBean.getTo());
 
         List<Prop> props = feedMappingModel.getProps();
 
-        Map<MappingPropType, List<String>> propMap = props == null
+        return props == null
                 ? new HashMap<>(0)
                 : flattenFinalProp(props)
                 .filter(p -> p.getMappings() != null && p.getMappings().size() > 0 && p.getType() != null)
                 .collect(groupingBy(Prop::getType, mapping(Prop::getProp, toList())));
-
-        // 减少 Json 传输
-        feedMappingModel.setProps(null);
-
-        Map<String, Object> result = new HashMap<>(2);
-
-        result.put("propMap", propMap);
-        result.put("mappingModel", feedMappingModel);
-
-        return result;
-    }
-
-    /**
-     * 通过 categoryPath 转换获取 categoryId
-     *
-     * @param categoryPath 类目路径
-     * @return String
-     */
-    public String convertPathToId(String categoryPath) {
-        return MD5.getMD5(categoryPath);
     }
 
     /**
@@ -198,7 +169,7 @@ public class CmsFeedPropMappingService extends BaseAppService {
      * @param userSessionBean  当前用户
      * @return 类目的属性
      */
-    public Map<String, List<String>> getFeedAttributes(String feedCategoryPath, String lang, UserSessionBean userSessionBean) {
+    Map<String, List<String>> getFeedAttributes(String feedCategoryPath, String lang, UserSessionBean userSessionBean) {
 
         CmsMtFeedCategoryTreeModelx treeModelx = cmsMtFeedCategoryTreeDao.selectFeedCategoryx(userSessionBean.getSelChannelId());
 
@@ -218,11 +189,21 @@ public class CmsFeedPropMappingService extends BaseAppService {
     }
 
     /**
+     * 通过 categoryPath 转换获取 categoryId
+     *
+     * @param categoryPath 类目路径
+     * @return String
+     */
+    private String convertPathToId(String categoryPath) {
+        return MD5.getMD5(categoryPath);
+    }
+
+    /**
      * 保存一个字段/属性的关联关系
      *
      * @param saveFieldMappingBean 请求参数
      */
-    public boolean saveFeedMapping(SaveFieldMappingBean saveFieldMappingBean) {
+    boolean saveFeedMapping(SaveFieldMappingBean saveFieldMappingBean) {
 
         CmsBtFeedMappingModel feedMappingModel = feedMappingService.getMapping(new ObjectId(saveFieldMappingBean.getMappingId()));
 

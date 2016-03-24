@@ -184,7 +184,13 @@ public abstract class TbBase {
             try {
                 apiLogDao.insert(new ComBtTaobaoApiLogModel(request.getApiMethodName(), shopBean));
             } catch (Exception e) {
-                setErrorLog(e);
+                // TODO : 上次梁兄建议修改的, 否则会报错 START
+                try {
+                    setErrorLog(e);
+                } catch (Exception ex) {
+
+                }
+                // TODO : 上次梁兄建议修改的, 否则会报错 END
             }
 
             try {

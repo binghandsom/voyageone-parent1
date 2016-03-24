@@ -221,10 +221,6 @@ public interface CmsUrlConstants {
 
             String EXTENDS_MAPPING = "extendsMapping";
 
-            String GET_MAIN_PROPS = "getMainCategoryProps";
-
-            String GET_MATCHED = "getMatched";
-
             String GET_FIELD_MAPPING = "getFieldMapping";
 
             String GET_FEED_ATTRS = "getFeedAttributes";
@@ -233,9 +229,11 @@ public interface CmsUrlConstants {
 
             String DIRECT_MATCH_OVER = "directMatchOver";
 
-            String GET_MATCH_OVER = "getMatchOver";
-
             String GET_MAIN_MAPPING = "getMainMapping";
+
+            String GET_MAPPINGS = "getMappings";
+
+            String GET_MAPPING_INFO = "getMappingInfo";
         }
 
         interface PLATFORM {
