@@ -595,14 +595,14 @@ public class CmsSearchAdvanceService extends BaseAppService{
 
     // 取得自定义显示列设置
     public List<Map<String, Object>> getCustColumns() {
-        return  cmsMtCommonPropDao.getCustColumns();
+        return  cmsMtCommonPropDao.selectCustColumns();
     }
 
     // 取得用户自定义显示列设置
     public Map<String, Object> getUserCustColumns(int userId) {
         Map<String, Object> rsMap = new HashMap<String, Object>();
 
-        List<Map<String, Object>> rsList = cmsMtCommonPropDao.getUserCustColumns(userId);
+        List<Map<String, Object>> rsList = cmsMtCommonPropDao.selectUserCustColumns(userId);
         if (rsList == null || rsList.isEmpty()) {
             rsMap.put("custAttrList", new String[]{});
             rsMap.put("commList", new String[]{});
@@ -617,12 +617,12 @@ public class CmsSearchAdvanceService extends BaseAppService{
 
     // 保存用户自定义显示列设置
     public void saveCustColumnsInfo(int userId, String userName, String param1, String param2) {
-        List<Map<String, Object>> rsList = cmsMtCommonPropDao.getUserCustColumns(userId);
+        List<Map<String, Object>> rsList = cmsMtCommonPropDao.selectUserCustColumns(userId);
         int rs = 0;
         if (rsList == null || rsList.isEmpty()) {
-            rs = cmsMtCommonPropDao.addUserCustColumns(userId, userName, param1, param2);
+            rs = cmsMtCommonPropDao.insertUserCustColumns(userId, userName, param1, param2);
         } else {
-            rs = cmsMtCommonPropDao.saveUserCustColumns(userId, userName, param1, param2);
+            rs = cmsMtCommonPropDao.updateUserCustColumns(userId, userName, param1, param2);
         }
         if (rs == 0) {
             logger.error("保存设置不成功 userid=" + userId);

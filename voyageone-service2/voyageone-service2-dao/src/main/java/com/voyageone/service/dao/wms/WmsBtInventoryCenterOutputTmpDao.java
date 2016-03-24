@@ -27,17 +27,17 @@ public class WmsBtInventoryCenterOutputTmpDao extends ServiceBaseDao {
         return  ret;
     }
 
-    public boolean delSkuInventoryInfo() {
+    public boolean deleteSkuInventoryInfo() {
         delete("wms_bt_inventory_center_output_tmp_deleteAll");
 
         return true;
     }
 
-    public int getSkuInventoryInfoRecCount() {
+    public int selectSkuInventoryInfoRecCount() {
         return selectOne("wms_bt_inventory_center_output_tmp_getRecCount");
     }
 
-    public List<CmsBtInventoryOutputTmpModel> getSkuInventoryInfoRecInfo(int offset, int pagesize) {
+    public List<CmsBtInventoryOutputTmpModel> selectSkuInventoryInfoRecInfo(int offset, int pagesize) {
         Map<String, Object> dataMap = new HashMap<String, Object>();
         dataMap.put("offset", offset * pagesize);
         dataMap.put("pagesize", pagesize);

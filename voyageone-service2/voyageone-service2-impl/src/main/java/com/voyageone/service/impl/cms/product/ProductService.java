@@ -54,6 +54,9 @@ public class ProductService extends BaseService {
     private CmsBtPriceLogDao cmsBtPriceLogDao;
 
     @Autowired
+    private ProductGroupService productGroupService;
+
+    @Autowired
     private ProductSkuService productSkuService;
 
     @Autowired
@@ -356,6 +359,17 @@ public class ProductService extends BaseService {
             if (fields != null && fields.size() > 0) {
                 BasicDBObject fieldObj = fields.toUpdateBasicDBObject("fields.");
                 updateMap.putAll(fieldObj);
+            }
+
+            /**
+             * Groups
+             */
+            CmsBtProductModel_Group group = productModel.getGroups();
+            for(CmsBtProductModel_Group_Platform platform : group.getPlatforms()) {
+                Set<Long> productIds = new HashSet<>();
+                productIds.add(prodId);
+
+                productGroupService.saveGroups(channelId, productIds, platform);
             }
 
             /**
@@ -836,7 +850,7 @@ public class ProductService extends BaseService {
                 Map<String, Object> param = new HashMap<>();
                 param.put("channelId", channelId);
                 param.put("sku", sku.getSkuCode());
-                WmsBtInventoryCenterLogicModel skuInfo = wmsBtInventoryCenterLogicDao.getItemDetailBySku(param);
+                WmsBtInventoryCenterLogicModel skuInfo = wmsBtInventoryCenterLogicDao.selectItemDetailBySku(param);
                 bean.setInventory(String.valueOf(skuInfo.getQtyChina()));
                 // TODO 写死,取得是S7图片显示的路径
                 String imagePath = "";
@@ -939,7 +953,7 @@ public class ProductService extends BaseService {
         queryMap.put("channelId", channelId);
         queryMap.put("code", productCode);
 
-        List<WmsBtInventoryCenterLogicModel> inventoryList = wmsBtInventoryCenterLogicDao.getItemDetailByCode(queryMap);
+        List<WmsBtInventoryCenterLogicModel> inventoryList = wmsBtInventoryCenterLogicDao.selectItemDetailByCode(queryMap);
 
         Map<String, Integer> result = new HashMap<>();
         for (WmsBtInventoryCenterLogicModel inventory : inventoryList) {

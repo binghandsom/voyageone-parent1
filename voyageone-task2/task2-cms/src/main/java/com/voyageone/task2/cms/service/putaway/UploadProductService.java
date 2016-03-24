@@ -3,7 +3,6 @@ package com.voyageone.task2.cms.service.putaway;
 import com.voyageone.common.configs.CmsChannelConfigs;
 import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.util.StringUtils;
-import com.voyageone.service.bean.cms.PromotionDetailAddBean;
 import com.voyageone.service.dao.cms.CmsBtSxWorkloadDao;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.promotion.PromotionDetailService;
@@ -58,7 +57,7 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
     public UploadProductService() {}
 
     public String do_upload() {
-        List<CmsBtSxWorkloadModel> sxWorkloadModels = sxWorkloadDao.getSxWorkloadModel (PUBLISH_PRODUCT_RECORD_COUNT_ONCE_HANDLE);
+        List<CmsBtSxWorkloadModel> sxWorkloadModels = sxWorkloadDao.selectSxWorkloadModel(PUBLISH_PRODUCT_RECORD_COUNT_ONCE_HANDLE);
         workLoadBeanListMap = buildWorkloadMap(sxWorkloadModels);
         workLoadBeans = workLoadBeanListMap.keySet();
 

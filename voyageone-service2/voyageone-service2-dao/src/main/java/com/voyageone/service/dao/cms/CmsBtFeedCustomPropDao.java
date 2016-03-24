@@ -45,7 +45,7 @@ public class CmsBtFeedCustomPropDao extends ServiceBaseDao {
     }
 
     // 查询是否全店铺共通属性
-    public String getSameAttr(Map<String, Object> params) {
+    public String selectSameAttr(Map<String, Object> params) {
         List<Map<String, Object>> rslt = selectList("cms_bt_feed_custom_prop_getSameAttr", params);
         if (rslt != null && rslt.size() > 0) {
             return (String) rslt.get(0).get("config_code");
@@ -54,7 +54,7 @@ public class CmsBtFeedCustomPropDao extends ServiceBaseDao {
     }
 
     // 根据类目路径查询自定义已翻译属性信息(不包含共通属性)
-    public int addAttr(Map<String, Object> params) {
+    public int insertAttr(Map<String, Object> params) {
         return insert("cms_bt_feed_custom_prop_add", params);
     }
 
@@ -82,7 +82,7 @@ public class CmsBtFeedCustomPropDao extends ServiceBaseDao {
     }
 
     // 添加属性值
-    public int addPropValue(Map<String, Object> params) {
+    public int insertPropValue(Map<String, Object> params) {
         return insert("cms_bt_feed_custom_prop_value_add", params);
     }
 

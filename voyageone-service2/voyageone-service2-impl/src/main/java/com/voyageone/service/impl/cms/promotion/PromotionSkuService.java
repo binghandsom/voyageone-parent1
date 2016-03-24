@@ -1,6 +1,6 @@
 package com.voyageone.service.impl.cms.promotion;
 
-import com.voyageone.service.dao.cms.CmsPromotionSkuDao;
+import com.voyageone.service.dao.cms.CmsBtPromotionSkuDao;
 import com.voyageone.service.impl.BaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,14 +17,14 @@ import java.util.Map;
 public class PromotionSkuService extends BaseService {
 
     @Autowired
-    private CmsPromotionSkuDao cmsPromotionSkuDao;
+    private CmsBtPromotionSkuDao cmsPromotionSkuDao;
 
     public List<Map<String,Object>> getPromotionSkuList(Map<String,Object> params){
-        return cmsPromotionSkuDao.getPromotionSkuList(params);
+        return cmsPromotionSkuDao.selectPromotionSkuList(params);
     }
 
     public int getPromotionSkuListCnt(Map<String,Object> params){
-        return cmsPromotionSkuDao.getPromotionSkuListCnt(params);
+        return cmsPromotionSkuDao.selectPromotionSkuListCnt(params);
     }
 
     public int remove(int promotionId, long productId){
