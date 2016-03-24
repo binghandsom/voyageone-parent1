@@ -95,9 +95,9 @@ define([
                     "propertyList" : main.propertyList,
                     "platformList" : main.platformList,
                     "start1" :  0,
-                    "length1" : 20,
+                    "length1" : main.stockPageOption.size,
                     "start2" :  0,
-                    "length2" : 20
+                    "length2" : main.realStockPageOption.size
                 }).then(function (res) {
                     main.hasAuthority = res.data.hasAuthority;
                     if (!main.hasAuthority) {
