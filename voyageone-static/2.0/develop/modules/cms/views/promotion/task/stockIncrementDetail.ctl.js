@@ -74,6 +74,8 @@ define([
                 main.taskStockIncrementDetailService.searchItem({
                     "taskId" : main.taskId,
                     "subTaskId" : main.subTaskId,
+                    "cartId" : main.cartId,
+                    "cartName" : main.cartName,
                     "model" : main.model,
                     "code" : main.code,
                     "sku" : main.sku,
@@ -97,7 +99,7 @@ define([
                         main.incrementFailureNum = res.data.incrementFailureNum;
                         main.revertNum = res.data.revertNum;
                         main.allNum = res.data.allNum;
-                        main.stockPageOption.total = res.data.allNum;
+                        main.stockPageOption.total = res.data.skuNum;
                         main.cartId = res.data.cartId;
                         main.cartName = res.data.cartName;
                         main.propertyList = res.data.propertyList;

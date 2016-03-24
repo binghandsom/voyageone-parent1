@@ -67,6 +67,7 @@ public class CmsTaskStockIncrementDetailController extends CmsController {
      * @apiSuccess (应用级返回字段) {String} incrementSuccessNum 增量成功数
      * @apiSuccess (应用级返回字段) {String} incrementFailureNum 增量失败数
      * @apiSuccess (应用级返回字段) {String} revertNum 还原数
+     * @apiSuccess (应用级返回字段) {String} skuNum sku数
      * @apiSuccess (应用级返回字段) {String} cartId 平台id
      * @apiSuccess (应用级返回字段) {String} cartName 平台名
      * @apiSuccess (应用级返回字段) {String} taskId 任务id
@@ -83,6 +84,7 @@ public class CmsTaskStockIncrementDetailController extends CmsController {
      *   "incrementSuccessNum":1000,
      *   "incrementFailureNum":0,
      *   "revertNum":0,
+     *   "skuNum":2000,
      *   "cartId":"23",
      *   "cartName":"天猫国际",
      *   "taskId":"1",
@@ -142,6 +144,9 @@ public class CmsTaskStockIncrementDetailController extends CmsController {
                 resultBean.put("cartName", taskInfo.get("name"));
             }
         } else {
+            resultBean.put("taskId", param.get("taskId"));
+            resultBean.put("cartId", param.get("cartId"));
+            resultBean.put("cartName", param.get("cartName"));
             resultBean.put("hasAuthority", true);
         }
 
@@ -166,6 +171,10 @@ public class CmsTaskStockIncrementDetailController extends CmsController {
         if (!(boolean) param.get("page")) {
             // 所有增量库存隔离明细的计数
             int cntAll = 0;
+            // 画面的sku数
+            int skuNum = 0;
+            // 画面条件选择的status
+            String currentStatus = (String) param.get("status");
             List<Map<String, Object>> statusCountList = cmsTaskStockIncrementDetailService.getStockStatusCount(param);
             for (Map<String, Object> statusInfo : statusCountList) {
                 String status = (String) statusInfo.get("status");
@@ -186,6 +195,13 @@ public class CmsTaskStockIncrementDetailController extends CmsController {
                     key = "revertNum";
                 }
                 resultBean.put(key, cnt);
+                // 设置画面的sku数
+                if (status.equals(currentStatus)) {
+                    skuNum = cnt;
+                }
+            }
+            if (StringUtils.isEmpty(currentStatus)) {
+                skuNum = cntAll;
             }
             if (!resultBean.containsKey("readyNum")) {
                 resultBean.put("readyNum", 0);
@@ -209,8 +225,11 @@ public class CmsTaskStockIncrementDetailController extends CmsController {
             // 总数
             resultBean.put("allNum", cntAll);
 
+            // sku数
+            resultBean.put("skuNum", skuNum);
+
             // 条件结果为0件的情况下，直接返回
-            if (cntAll == 0) {
+            if (skuNum == 0) {
                 resultBean.put("stockList", new ArrayList());
                 return success(resultBean);
             }
@@ -219,31 +238,6 @@ public class CmsTaskStockIncrementDetailController extends CmsController {
         // 取得增量库存隔离明细
         List<Map<String, Object>> stockList = cmsTaskStockIncrementDetailService.getStockList(param);
         resultBean.put("stockList", stockList);
-
-        // morse.lu test用 added at 2016/03/23 start
-
-
-//        // 任务对应平台信息列表 只有首次取得
-//        if (param.get("platformList") == null || ((Map<String, Object>)param.get("platformList")).size() == 0) {
-//
-//            Map<String, String> platformList = new HashMap<>();
-//            platformList.put("cartId", "23");
-//            platformList.put("cartName", "天猫国际");
-//            resultBean.put("platformList", platformList);
-//            param.put("platformList", platformList);
-//        } else {
-//            resultBean.put("platformList", param.get("platformList"));
-//        }
-//
-//        // 取得属性列表 只有首次取得
-//        if (param.get("propertyList") == null || ((List<Map<String, Object>>)param.get("propertyList")).size() == 0) {
-//            List<Map<String, Object>> propertyList = cmsTaskStockService.getPropertyList(this.getUser().getSelChannelId(), this.getLang());
-//            resultBean.put("propertyList", propertyList);
-//            param.put("propertyList", propertyList);
-//        } else {
-//            resultBean.put("propertyList", param.get("propertyList"));
-//        }
-//        // morse.lu test用 added at 2016/03/23 end
 
         // 返回
         return success(resultBean);

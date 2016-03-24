@@ -66,7 +66,7 @@
 	<div class="box" ng-show="$ctrl.hasAuthority">
 		<div class="box-body col-sm-12">
 			<div class="table-responsive">
-				<div class="col-sm-12 dropdown_table_main">
+				<div class="col-sm-12 dropdown_table_main"  if-no-rows="$ctrl.stockList.length">
 					<table class="table table-hover-new vo_table tableWordBreak" style="margin-bottom:0px" ng-controller="popupCtrl">
 						<thead>
 						<tr>
