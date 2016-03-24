@@ -120,4 +120,14 @@ public class CmsBtFeedMappingDao extends BaseMongoDao<CmsBtFeedMappingModel> {
 
         return selectOneWithQuery(jomgoQuery);
     }
+
+    public List<CmsBtFeedMappingModel> findMappingWithoutProps(String feedCategoryPath, String selChannelId) {
+
+        String strQuery = String.format("{\"scope.channelId\":\"%s\",\"scope.feedCategoryPath\":\"%s\"}",
+                selChannelId, feedCategoryPath);
+
+        String projection = "{\"props\": 0}";
+
+        return selectWithProjection(strQuery, projection);
+    }
 }

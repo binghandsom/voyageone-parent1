@@ -21,7 +21,7 @@ define([
 
             this.context = context;
 
-            this.feedPath = context.mappingModel.scope.feedCategoryPath;
+            this.feedPath = context.mapping.scope.feedCategoryPath;
             /**
              * 当前处理的主类目属性
              * @type {Field}

@@ -61,21 +61,12 @@ class CmsFeedPropMappingService extends BaseAppService {
     private CommonSchemaService commonSchemaService;
 
     /**
-     * 通过 Feed 类目,获取其默认匹配的主类目
-     *
-     * @param feedCategoryPath Feed 类目路径
-     * @param user             当前用户及配置  @return 主类目
+     * 返回主类目和相应的属性
      */
-    Map<String, Object> getCategoryPropsByFeed(String feedCategoryPath, UserSessionBean user) {
+    Map<String, Object> getMainCategoryInfo(String mainCategoryPath) {
 
-        CmsBtFeedMappingModel feedMappingModel = feedMappingService.getDefault(user.getSelChannel(), feedCategoryPath);
 
-        if (feedMappingModel == null)
-            throw new BusinessException("没找到 Mapping");
-
-        // 通过 Mapping 获取主类目的 Path
-        // 通过 Path 转换获取到 ID (这部分是规定的 MD5 转换)
-        String categoryId = convertPathToId(feedMappingModel.getScope().getMainCategoryPath());
+        String categoryId = convertPathToId(mainCategoryPath);
 
         // 查询主类目信息
         CmsMtCategorySchemaModel categorySchemaModel = categorySchemaDao.getMasterSchemaModelByCatId(categoryId);
@@ -158,27 +149,17 @@ class CmsFeedPropMappingService extends BaseAppService {
     /**
      * 获取类目匹配中已匹配的主类目属性
      */
-    Map<String, Object> getMatched(SetMappingBean setMappingBean, UserSessionBean userSessionBean) {
+    Map<MappingPropType, List<String>> getMatched(SetMappingBean setMappingBean, UserSessionBean userSessionBean) {
 
-        CmsBtFeedMappingModel feedMappingModel = feedMappingService2.getMapping(setMappingBean, userSessionBean);
+        CmsBtFeedMappingModel feedMappingModel = feedMappingService.getMapping(userSessionBean.getSelChannel(), setMappingBean.getFrom(), setMappingBean.getTo());
 
         List<Prop> props = feedMappingModel.getProps();
 
-        Map<MappingPropType, List<String>> propMap = props == null
+        return props == null
                 ? new HashMap<>(0)
                 : flattenFinalProp(props)
                 .filter(p -> p.getMappings() != null && p.getMappings().size() > 0 && p.getType() != null)
                 .collect(groupingBy(Prop::getType, mapping(Prop::getProp, toList())));
-
-        // 减少 Json 传输
-        feedMappingModel.setProps(null);
-
-        Map<String, Object> result = new HashMap<>(2);
-
-        result.put("propMap", propMap);
-        result.put("mappingModel", feedMappingModel);
-
-        return result;
     }
 
     /**

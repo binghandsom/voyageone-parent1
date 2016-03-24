@@ -96,6 +96,20 @@ public class CmsFeedMappingService extends BaseAppService {
         return cmsBtChannelCategoryService.getCategoriesByChannelId(user.getSelChannelId());
     }
 
+    List<CmsBtFeedMappingModel> getMappings(SetMappingBean param, UserSessionBean user) {
+
+        if (!param.isCommon())
+            return feedMappingService.getMappingWithoutProps(param.getFrom(), user.getSelChannelId());
+
+        CmsBtFeedMappingModel feedMappingModel = getMapping(param, user);
+
+        List<CmsBtFeedMappingModel> mappings = new ArrayList<>();
+
+        mappings.add(feedMappingModel);
+
+        return mappings;
+    }
+
     /**
      * 为类目更新 Mapping
      *
@@ -197,11 +211,6 @@ public class CmsFeedMappingService extends BaseAppService {
         return result.getN() > 0;
     }
 
-    int getMatchOver(SetMappingBean setMappingBean, UserSessionBean user) {
-
-        return getMapping(setMappingBean, user).getMatchOver();
-    }
-
     /**
      * 获取 Default Mapping 或 DefaultMain Mapping
      *
@@ -209,7 +218,7 @@ public class CmsFeedMappingService extends BaseAppService {
      * @param user           包含渠道的用户信息
      * @return Mapping 模型
      */
-    CmsBtFeedMappingModel getMapping(SetMappingBean setMappingBean, UserSessionBean user) {
+    private CmsBtFeedMappingModel getMapping(SetMappingBean setMappingBean, UserSessionBean user) {
 
         CmsBtFeedMappingModel feedMappingModel = feedMappingService.getDefault(user.getSelChannel(),
                 setMappingBean.getFrom());

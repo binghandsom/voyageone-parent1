@@ -1,5 +1,6 @@
 package com.voyageone.web2.cms.views.mapping.feed;
 
+import com.voyageone.cms.enums.MappingPropType;
 import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -59,18 +61,22 @@ public class CmsFeedMappingController extends CmsController {
         return success(feedMappingService.extendsMapping(feedCategoryModel, getUser()));
     }
 
-    @RequestMapping(FEED.GET_MAIN_PROPS)
-    public AjaxResponse getMainCategoryProps(@RequestBody Map<String, Object> params) {
+    @RequestMapping(FEED.GET_MAPPINGS)
+    public AjaxResponse getPropPageInfo(@RequestBody SetMappingBean params) {
 
-        String feedCategoryPath = (String) params.get("feedCategoryPath");
-
-        return success(feedPropMappingService.getCategoryPropsByFeed(feedCategoryPath, getUser()));
+        return success(feedMappingService.getMappings(params, getUser()));
     }
 
-    @RequestMapping(FEED.GET_MATCHED)
+    @RequestMapping(FEED.GET_MAPPING_INFO)
     public AjaxResponse getMatched(@RequestBody SetMappingBean params) {
 
-        return success(feedPropMappingService.getMatched(params, getUser()));
+        Map<String, Object> map = feedPropMappingService.getMainCategoryInfo(params.getTo());
+
+        Map<MappingPropType, List<String>> matched = feedPropMappingService.getMatched(params, getUser());
+
+        map.put("matched", matched);
+
+        return success(map);
     }
 
     @RequestMapping(FEED.GET_FIELD_MAPPING)
@@ -94,11 +100,6 @@ public class CmsFeedMappingController extends CmsController {
     @RequestMapping(FEED.DIRECT_MATCH_OVER)
     public AjaxResponse switchMatchOver(@RequestBody SetMappingBean params) {
         return success(feedMappingService.switchMatchOver(params, getUser()));
-    }
-
-    @RequestMapping(FEED.GET_MATCH_OVER)
-    public AjaxResponse getMatchOver(@RequestBody SetMappingBean params) {
-        return success(feedMappingService.getMatchOver(params, getUser()));
     }
 
     @RequestMapping(FEED.GET_MAIN_MAPPING)

@@ -15,7 +15,7 @@ define(['cms'], function (cms) {
 
             this.field = context.field;
 
-            this.mappingModel = context.mappingModel;
+            this.mapping = context.mapping;
 
             /**
              * 具体到字段的 Mapping 设定
@@ -35,7 +35,7 @@ define(['cms'], function (cms) {
                 var ttt = this;
 
                 ttt.feedMappingService.getFieldMapping({
-                        mappingId: ttt.mappingModel._id,
+                        mappingId: ttt.mapping._id,
                         fieldId: ttt.field.id,
                         fieldType: ttt.context.bean.type
                     })
