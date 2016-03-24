@@ -38,7 +38,7 @@ import static java.util.stream.Collectors.joining;
  * @version 0.0.1, 16/3/4
  */
 @Service
-public class Gilt2AnalysisService extends BaseTaskService {
+public class GiltAnalysisService extends BaseTaskService {
 
     @Autowired
     private SuperFeed2Dao superfeeddao;

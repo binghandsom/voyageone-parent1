@@ -10,8 +10,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.*;
-
 /**
  * @author james.li on 2016/3/21.
  * @version 2.0.0
@@ -21,7 +19,7 @@ import static org.junit.Assert.*;
 public class Gilt2AnalysisServiceTest {
 
     @Autowired
-    Gilt2AnalysisService gilt2AnalysisService;
+    GiltAnalysisService gilt2AnalysisService;
     @Test
     public void testOnStartup() throws Exception {
         List<TaskControlBean> taskControlList = new ArrayList<>();
