@@ -76,7 +76,6 @@
 							<button class="btn btn-success" ng-click="openPromotion('md',vm.platformTypeList,null,search)"><i class="fa fa-plus"></i>&nbsp;{{'BTN_NEW_PROMOTION' | translate}}</button>
 							<button class="btn btn-primary" ng-click="openMrbstock('md',vm.groupSelList,search)"><i class="fa fa-plus"></i>&nbsp;新建隔离任务</button>
 						</div><!-- .form-inline -->
-						{{vm.groupSelList}}
 					</div>
 					</div>
 				</div>
@@ -89,8 +88,7 @@
 				<thead>
 				<tr>
 					<th class="text-left mfb-x"><label class="checkbox-inline c-checkbox" ng-controller="selectRowsCtrl">
-						<input type="checkbox" ng-click="selectAll(vm.groupSelList)" ng-checked="isAllSelected(vm.groupSelList)">
-						<span class="fa fa-check"></span>&nbsp;{{'TXT_SELECT_ALL' | translate}}&nbsp;</label>
+						{{'TXT_SELECT_ALL' | translate}}&nbsp;</label>
 					</th>
 					<th class="text-center" translate="TXT_SEQ"></th>
 					<th class="text-left" translate="TXT_PROMOTION_NAME"></th>
