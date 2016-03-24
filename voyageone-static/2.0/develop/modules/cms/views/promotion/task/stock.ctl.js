@@ -16,12 +16,14 @@ define([
             this.taskId = $routeParams['task_id'];
             this.hasAuthority = true;
             this.readyNum = 0;
-            this.waitSeparationNum = 0;
-            this.separationOKNum = 0;
-            this.separationFailNum = 0;
+            this.waitingSeparateNum = 0;
+            this.separatingNum = 0;
+            this.separateSuccessNum = 0;
+            this.separateFailureNum = 0;
             this.waitRevertNum = 0;
-            this.revertOKNum = 0;
-            this.revertFailNum = 0;
+            this.revertingNum = 0;
+            this.revertSuccessNum = 0;
+            this.revertFailureNum = 0;
             this.changedNum = 0;
             this.allNum = 0;
             this.model = "";
@@ -78,7 +80,7 @@ define([
                 if (status != undefined)  {
                     main.status = status;
                 }
-                if (status >= '0' && status <= '7') {
+                if (status >= '0' && status <= '9') {
                     var allNumLabel = document.getElementById('allNum');
                     allNumLabel.setAttribute("class", "btn btn-default-vo");
                 }
@@ -104,12 +106,14 @@ define([
                     }
                     main.tempStockListSelect.clearCurrPageRows();
                     main.readyNum = res.data.readyNum;
-                    main.waitSeparationNum = res.data.waitSeparationNum;
-                    main.separationOKNum = res.data.separationOKNum;
-                    main.separationFailNum = res.data.separationFailNum;
+                    main.waitingSeparateNum = res.data.waitingSeparateNum;
+                    main.separatingNum = res.data.separatingNum;
+                    main.separateSuccessNum = res.data.separateSuccessNum;
+                    main.separateFailureNum = res.data.separateFailureNum;
                     main.waitRevertNum = res.data.waitRevertNum;
-                    main.revertOKNum = res.data.revertOKNum;
-                    main.revertFailNum = res.data.revertFailNum;
+                    main.revertingNum = res.data.revertingNum;
+                    main.revertSuccessNum = res.data.revertSuccessNum;
+                    main.revertFailureNum = res.data.revertFailureNum;
                     main.changedNum = res.data.changedNum;
                     main.allNum = res.data.allNum;
                     main.stockPageOption.total = res.data.skuNum;

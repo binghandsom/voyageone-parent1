@@ -60,11 +60,14 @@ public class CmsTaskStockIncrementDetailController extends CmsController {
      * @apiSuccess (系统级返回字段) {String} redirectTo 跳转地址
      * @apiSuccess (应用级返回字段) {String} allNum 总数
      * @apiSuccess (应用级返回字段) {String} readyNum 未进行数
-     * @apiSuccess (应用级返回字段) {String} waitSeparationNum 等待增量数
-     * @apiSuccess (应用级返回字段) {String} separationOKNum 增量成功数
-     * @apiSuccess (应用级返回字段) {String} separationFailNum 增量失败数
+     * @apiSuccess (应用级返回字段) {String} waitIncrementNum 等待增量数
+     * @apiSuccess (应用级返回字段) {String} increasingNum 增量中数
+     * @apiSuccess (应用级返回字段) {String} incrementSuccessNum 增量成功数
+     * @apiSuccess (应用级返回字段) {String} incrementFailureNum 增量失败数
+     * @apiSuccess (应用级返回字段) {String} revertNum 还原数
      * @apiSuccess (应用级返回字段) {String} cartId 平台id
      * @apiSuccess (应用级返回字段) {String} cartName 平台名
+     * @apiSuccess (应用级返回字段) {String} taskId 任务id
      * @apiSuccess (应用级返回字段) {Object} propertyList 属性列表（json数组）
      * @apiSuccess (应用级返回字段) {Object} stockList 库存隔离明细（json数组）
      * @apiSuccessExample 成功响应更新请求
@@ -73,11 +76,14 @@ public class CmsTaskStockIncrementDetailController extends CmsController {
      *  "data":{
      *   "allNum":10000,
      *   "readyNum":1000,
-     *   "waitSeparationNum":5000,
-     *   "separationOKNum":1000,
-     *   "separationFailNum":0,
+     *   "waitIncrementNum":5000,
+     *   "increasingNum":4000,
+     *   "incrementSuccessNum":1000,
+     *   "incrementFailureNum":0,
+     *   "revertNum":0,
      *   "cartId":"23",
      *   "cartName":"天猫国际",
+     *   "taskId":"1",
      *   "propertyList": [ {"property":"property1", "name":"品牌", "logic":"", "type":"", "show":false, "value"=""},
      *                     {"property":"property2", "name":"英文短描述", "logic":"Like", "type":"", "show":false, "value"=""},
      *                     {"property":"property3", "name":"性别", "logic":"", "type":"", "show":false, "value"=""}，
@@ -102,9 +108,14 @@ public class CmsTaskStockIncrementDetailController extends CmsController {
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK_INCREMENT_DETAIL.SEARCH_ITEM)
     public AjaxResponse searchItem(@RequestBody Map param) {
 
-        // morse.lu test用 added at 2016/03/23 start
         // 返回内容
         Map<String, Object> resultBean = new HashMap<>();
+
+        // 根据子任务id取得任务id
+        String taskId = cmsTaskStockIncrementDetailService.getTaskId((String) param.get("subTaskId"));
+
+        // morse.lu test用 added at 2016/03/23 start
+
 
         // 任务对应平台信息列表 只有首次取得
         if (param.get("platformList") == null || ((Map<String, Object>)param.get("platformList")).size() == 0) {
@@ -185,11 +196,11 @@ public class CmsTaskStockIncrementDetailController extends CmsController {
      * @apiVersion 0.0.1
      * @apiPermission 认证商户
      * @apiParam (应用级参数) {String} subTaskId 增量任务id
-     * @apiParam (应用级参数) {Object} stockInfo（json数据） 一条Sku的隔离明细
+     * @apiParam (应用级参数) {String} sku Sku
      * @apiParamExample  stockInfo参数示例
      * {
      *   "subTaskId":1,
-     *   "stockInfo":  {"model":"35265", "code":"35265465", "sku":"256354566-9", "property1":"Puma", "property2":"Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"50", "incrementQty":"50", "status":"未进行", "fixFlg":false}
+     *   "sku":"256354566-9"
      * }
      * @apiSuccess (系统级返回字段) {String} code 处理结果代码编号
      * @apiSuccess (系统级返回字段) {String} message 处理结果描述
@@ -210,7 +221,7 @@ public class CmsTaskStockIncrementDetailController extends CmsController {
      *
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK_INCREMENT_DETAIL.DEL_ITEM)
-    public AjaxResponse delItem1(@RequestBody Map param) {
+    public AjaxResponse delItem(@RequestBody Map param) {
 
         // 返回
         return success(null);

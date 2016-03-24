@@ -13,8 +13,16 @@ define([
             this.alert = alert;
             this.notify = notify;
             this.confirm = confirm;
-            this.taskId = $routeParams['task_id'];
+            this.subTaskId = $routeParams['sub_task_id'];
             this.taskStockIncrementDetailService = taskStockIncrementDetailService;
+            this.hasAuthority = true;
+            this.readyNum = 0;
+            this.waitIncrementNum = 0;
+            this.increasingNum = 0;
+            this.incrementSuccessNum = 0;
+            this.incrementFailureNum = 0;
+            this.revertNum = 0;
+            this.allNum = 0;
 
             this.model = "";
             this.code = "";
@@ -22,7 +30,15 @@ define([
             this.status = "";
 
             this.propertyList = [];
-            this.platformList = {};
+            this.cartId = "";
+            this.cartName = "";
+
+            this.stockPageOption = {
+                curr: 1,
+                total: 0,
+                size: 20,
+                fetch: this.search.bind(this)
+            };
 
             this.downloadUrl = urls.root + "/" + urls.exportStockInfo;
         }
@@ -36,16 +52,33 @@ define([
                 var main = this;
 
                 main.taskStockIncrementDetailService.searchItem({
-                    "taskId" : main.taskId,
+                    "subTaskId" : main.subTaskId,
                     "model" : main.model,
                     "code" : main.code,
                     "sku" : main.sku,
                     "status" : main.status,
                     "propertyList" : main.propertyList,
-                    "platformList" : main.platformList,
+                    "start1" :  0,
+                    "length1" : 20
                 }).then(function (res) {
+                    //main.hasAuthority = res.data.hasAuthority;
+                    //if (!main.hasAuthority) {
+                    //    main.alert('没有权限访问！')
+                    //    return;
+                    //}
+                    main.readyNum = res.data.readyNum;
+                    main.waitIncrementNum = res.data.waitIncrementNum;
+                    main.increasingNum = res.data.increasingNum;
+                    main.incrementSuccessNum = res.data.incrementSuccessNum;
+                    main.incrementFailureNum = res.data.incrementFailureNum;
+                    main.revertNum = res.data.revertNum;
+                    main.allNum = res.data.allNum;
+                    main.stockPageOption.total = res.data.allNum;
+                    main.cartId = res.data.cartId;
+                    main.cartName = res.data.cartName;
                     main.propertyList = res.data.propertyList;
-                    main.platformList = res.data.platformList;
+                    main.stockList = res.data.stockList;
+                    main.stockPageOption.curr = 1;
                 })
             },
 

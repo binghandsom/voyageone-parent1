@@ -77,30 +77,36 @@ public class CmsTaskStockService extends BaseAppService {
     private CmsBtPromotionDao cmsBtPromotionDao;
 
     /** 增量/库存隔离状态 0：未进行 */
-    private static final String STATUS_READY = "0";
+    public static final String STATUS_READY = "0";
     /** 库存隔离状态 1：等待隔离 */
-    private static final String STATUS_WAITING_SEPARATE = "1";
-    /** 库存隔离状态 2：隔离成功 */
-    private static final String STATUS_SEPARATE_SUCCESS = "2";
-    /** 库存隔离状态 3：隔离失败 */
-    private static final String STATUS_SEPARATE_FAIL = "3";
-    /** 库存隔离状态 4：等待还原 */
-    private static final String STATUS_WAITING_REVERT = "4";
-    /** 库存隔离状态 5：还原成功 */
-    private static final String STATUS_REVERT_SUCCESS = "5";
-    /** 库存隔离状态 6：还原失败 */
-    private static final String STATUS_REVERT_FAIL = "6";
-    /** 库存隔离状态 7：再修正 */
-    private static final String STATUS_CHANGED = "7";
+    public static final String STATUS_WAITING_SEPARATE = "1";
+    /** 库存隔离状态 2：隔离中 */
+    public static final String STATUS_SEPARATING = "2";
+    /** 库存隔离状态 3：隔离成功 */
+    public static final String STATUS_SEPARATE_SUCCESS = "3";
+    /** 库存隔离状态 4：隔离失败 */
+    public static final String STATUS_SEPARATE_FAIL = "4";
+    /** 库存隔离状态 5：等待还原 */
+    public static final String STATUS_WAITING_REVERT = "5";
+    /** 库存隔离状态 6：还原中 */
+    public static final String STATUS_REVERTING = "6";
+    /** 库存隔离状态 7：还原成功 */
+    public static final String STATUS_REVERT_SUCCESS = "7";
+    /** 库存隔离状态 8：还原失败 */
+    public static final String STATUS_REVERT_FAIL = "8";
+    /** 库存隔离状态 9：再修正 */
+    public static final String STATUS_CHANGED = "9";
 
     /** 增量库存隔离状态 1：等待增量 */
-    private static final String STATUS_WAITING_INCREMENT = "1";
-    /** 增量库存隔离状态 2：增量成功 */
-    private static final String STATUS_INCREMENT_SUCCESS = "2";
-    /** 增量库存隔离状态 3：增量失败 */
-    private static final String STATUS_INCREMENT_FAIL = "3";
-    /** 增量库存隔离状态 4：还原 */
-    private static final String STATUS_REVERT = "4";
+    public static final String STATUS_WAITING_INCREMENT = "1";
+    /** 增量库存隔离状态 2：增量中 */
+    public static final String STATUS_INCREMENT = "2";
+    /** 增量库存隔离状态 3：增量成功 */
+    public static final String STATUS_INCREMENT_SUCCESS = "3";
+    /** 增量库存隔离状态 5：增量失败 */
+    public static final String STATUS_INCREMENT_FAIL = "4";
+    /** 增量库存隔离状态 5：还原 */
+    public static final String STATUS_REVERT = "5";
 
     /** Excel增量方式导入 */
     private static final String EXCEL_IMPORT_ADD = "1";
@@ -341,9 +347,11 @@ public class CmsTaskStockService extends BaseAppService {
         sqlParam.put("taskId", param.get("taskId"));
         // "0:未进行"以外的状态
         sqlParam.put("statusList", Arrays.asList( STATUS_WAITING_SEPARATE,
+                                                    STATUS_SEPARATING,
                                                     STATUS_SEPARATE_SUCCESS,
                                                     STATUS_SEPARATE_FAIL,
                                                     STATUS_WAITING_REVERT,
+                                                    STATUS_REVERTING,
                                                     STATUS_REVERT_SUCCESS,
                                                     STATUS_REVERT_FAIL,
                                                     STATUS_CHANGED));
@@ -632,9 +640,10 @@ public class CmsTaskStockService extends BaseAppService {
         // 取得一页中的sku所有平台的隔离库存（含非本任务的）
         Map<String,Object> sqlParam1 = new HashMap<String,Object>();
         sqlParam1.put("skuList", skuList);
-        // 状态 = 2：隔离成功,4：等待还原, 5：还原成功 ,6：还原失败
+        // 状态 = 2：隔离成功,5：等待还原, 6：还原中, 7：还原成功 ,8：还原失败
         sqlParam1.put("statusList", Arrays.asList( STATUS_SEPARATE_SUCCESS,
                                                     STATUS_WAITING_REVERT,
+                                                    STATUS_REVERTING,
                                                     STATUS_REVERT_SUCCESS,
                                                     STATUS_REVERT_FAIL));
         sqlParam1.put("tableNameSuffix", param.get("tableNameSuffix"));
@@ -662,7 +671,7 @@ public class CmsTaskStockService extends BaseAppService {
                     }
                 }
 
-                // 加入到sku库存隔离信息（该任务下的各个平台的数据），状态为4：等待还原, 5：还原成功 ,6：还原失败也认为是隔离成功
+                // 加入到sku库存隔离信息（该任务下的各个平台的数据），状态为5：等待还原, 6：还原中, 7：还原成功 ,8：还原失败也认为是隔离成功
                 if (currentTaskId.equals(taskId)) {
                     skuStockByPlatform.put(sku + cartId, separateQty);
                 }
@@ -672,7 +681,7 @@ public class CmsTaskStockService extends BaseAppService {
         // 取得一页中的sku所有平台的增量隔离库存（含非本任务的）
         Map<String,Object> sqlParam2 = new HashMap<String,Object>();
         sqlParam2.put("skuList", skuList);
-        // 状态 = 2：增量成功,4：还原,
+        // 状态 = 3：增量成功,5：还原,
         sqlParam2.put("statusList", Arrays.asList(STATUS_INCREMENT_SUCCESS, STATUS_REVERT));
         sqlParam2.put("tableNameSuffix", param.get("tableNameSuffix"));
         List<Map<String,Object>> stockIncrementList = cmsBtStockSeparateIncrementItemDao.selectStockSeparateIncrement(sqlParam2);
@@ -688,7 +697,7 @@ public class CmsTaskStockService extends BaseAppService {
                 Integer incrementQty = (Integer) stockIncrementInfo.get("increment_qty");
                 String taskId = String.valueOf(stockIncrementInfo.get("task_id"));
                 String status = (String) stockIncrementInfo.get("status");
-                // 如果状态为2：隔离成功 那么加入到sku库存增量隔离信息（所有任务所有平台的数据）
+                // 如果状态为3：隔离成功 那么加入到sku库存增量隔离信息（所有任务所有平台的数据）
                 if (STATUS_INCREMENT_SUCCESS.equals(status)) {
                     if (skuStockIncrementAllTask.containsKey(sku)) {
                         skuStockIncrementAllTask.put(sku, skuStockIncrementAllTask.get(sku) + incrementQty);
@@ -892,20 +901,24 @@ public class CmsTaskStockService extends BaseAppService {
 
                         // 画面的隔离库存 != DB的隔离库存是进行更新 并且 不是动态的场合（状态不是空白）
                         if (!separationQty.equals(separateQtyDB) && !StringUtils.isEmpty(status)) {
+                            // 状态为"2:隔离中"或者"6:还原中"的数据不能进行变更
+                            if(STATUS_SEPARATING.equals(statusDB) || STATUS_REVERTING.equals(statusDB)) {
+                                throw new BusinessException("状态为 还原中 或者 隔离中 的明细不能进行变更！");
+                            }
                             Map<String, Object> sqlParam1 = new HashMap<String, Object>();
                             sqlParam1.put("taskId", taskId);
                             sqlParam1.put("sku", sku);
                             sqlParam1.put("cartId", cartId);
                             sqlParam1.put("separateQty", separationQty);
                             sqlParam1.put("modifier", param.get("userName"));
-                            // 导入前状态为"7：再修正"和"2 隔离成功"以外，则导入后状态为"0：未进行"，导入前状态为"7：再修正"或"2 隔离成功"，则导入后状态为"7：再修正"
+                            // 导入前状态为"9：再修正"和"3: 隔离成功"以外，则导入后状态为"0：未进行"，导入前状态为"9：再修正"或"3: 隔离成功"，则导入后状态为"9：再修正"
                             String changedStatus = "";
-                            if ("2".equals(statusDB) || "7".equals(statusDB)) {
-                                sqlParam1.put("status", "7");
-                                changedStatus = "7";
+                            if (STATUS_SEPARATE_SUCCESS.equals(statusDB) || STATUS_CHANGED.equals(statusDB)) {
+                                sqlParam1.put("status", STATUS_CHANGED);
+                                changedStatus = STATUS_CHANGED;
                             } else {
-                                sqlParam1.put("status", "0");
-                                changedStatus = "0";
+                                sqlParam1.put("status", STATUS_READY);
+                                changedStatus = STATUS_READY;
                             }
                             int updateCnt = cmsBtStockSeparateItemDao.updateStockSeparateItem(sqlParam1);
                             if (updateCnt == 1) {
@@ -1003,7 +1016,7 @@ public class CmsTaskStockService extends BaseAppService {
         int stockSeparate = 0;
         Map<String,Object> sqlParam1 = new HashMap<String,Object>();
         sqlParam1.put("sku", sku);
-        // 状态 = 2：隔离成功
+        // 状态 = 3：隔离成功
         sqlParam1.put("status", STATUS_SEPARATE_SUCCESS);
         Integer stockSeparateSuccessQty =  cmsBtStockSeparateItemDao.selectStockSeparateSuccessQty(sqlParam1);
         if (stockSeparateSuccessQty != null) {
@@ -1015,7 +1028,7 @@ public class CmsTaskStockService extends BaseAppService {
         int stockIncrementSeparate = 0;
         Map<String,Object> sqlParam2 = new HashMap<String,Object>();
         sqlParam2.put("sku", sku);
-        // 状态 = 2：增量成功
+        // 状态 = 3：增量成功
         sqlParam2.put("status", STATUS_INCREMENT_SUCCESS);
         Integer stockSeparateIncrementSuccessQty =  cmsBtStockSeparateIncrementItemDao.selectStockSeparateIncrementSuccessQty(sqlParam2);
         if (stockSeparateIncrementSuccessQty != null) {
@@ -1240,12 +1253,13 @@ public class CmsTaskStockService extends BaseAppService {
         sqlParam.put("cartId", param.get("cartId"));
         // sku
         sqlParam.put("sku", param.get("sku"));
-        // 一般库存隔离状态 状态 = 2：隔离成功,4：等待还原, 5：还原成功 ,6：还原失败
+        // 一般库存隔离状态 状态 = 3：隔离成功,5：等待还原, 6：等待中, 7：还原成功 ,8：还原失败
         sqlParam.put("statusStockList", Arrays.asList(STATUS_SEPARATE_SUCCESS,
                                                         STATUS_WAITING_REVERT,
+                                                        STATUS_REVERTING,
                                                         STATUS_REVERT_SUCCESS,
                                                         STATUS_REVERT_FAIL));
-        // 增量库存隔离状态 状态 = 2：增量成功,4：还原
+        // 增量库存隔离状态 状态 = 3：增量成功,5：还原
         sqlParam.put("statusStockIncrementList", Arrays.asList(STATUS_INCREMENT_SUCCESS, STATUS_REVERT));
         // 是否从历史表中取得数据
         sqlParam.put("tableNameSuffix", param.get("tableNameSuffix"));
@@ -1284,7 +1298,7 @@ public class CmsTaskStockService extends BaseAppService {
             sqlParam.put("modifier", param.get("userName"));
             // 更新条件
             sqlParam.put("taskId", param.get("taskId"));
-            // 只有状态为"0:未进行"，"3:隔离失败"，"7:再修正"的数据可以进行隔离库存操作
+            // 只有状态为"0:未进行"，"4:隔离失败"，"9:再修正"的数据可以进行隔离库存操作
             sqlParam.put("statusList", Arrays.asList(STATUS_READY, STATUS_SEPARATE_FAIL, STATUS_CHANGED));
             updateCnt = cmsBtStockSeparateItemDao.updateStockSeparateItem(sqlParam);
 
@@ -1325,7 +1339,7 @@ public class CmsTaskStockService extends BaseAppService {
             sqlParam2.put("modifier", param.get("userName"));
             // 更新条件
             sqlParam2.put("taskId", param.get("taskId"));
-            // 只有状态为"2:隔离成功"，"6:还原失败"的数据可以进行还原库存隔离操作。
+            // 只有状态为"3:隔离成功"，"8:还原失败"的数据可以进行还原库存隔离操作。
             sqlParam2.put("statusList", Arrays.asList(STATUS_SEPARATE_SUCCESS, STATUS_REVERT_FAIL));
             updateCnt = cmsBtStockSeparateItemDao.updateStockSeparateItem(sqlParam2);
             if (updateCnt == 0) {
@@ -1347,13 +1361,13 @@ public class CmsTaskStockService extends BaseAppService {
             if (!StringUtils.isEmpty(selSku)) {
                 sqlParam1.put("sku", selSku);
             }
-            // 更新状态为"4:还原"
+            // 更新状态为"5:还原"
             sqlParam1.put("status", STATUS_REVERT);
             sqlParam1.put("modifier", param.get("userName"));
             //更新条件
             sqlParam1.put("subTaskIdList", subTaskIdList);
             // 只对状态为"2:增量成功"的数据改变状态
-            sqlParam1.put("statusWhere", EXCEL_IMPORT_UPDATE);
+            sqlParam1.put("statusWhere", STATUS_INCREMENT_SUCCESS);
             cmsBtStockSeparateIncrementItemDao.updateStockSeparateIncrementItem(sqlParam1);
 
         } catch (BusinessException e) {

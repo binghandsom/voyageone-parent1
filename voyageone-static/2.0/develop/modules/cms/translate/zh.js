@@ -221,9 +221,11 @@ define(function(){
         "TXT_ALL": "总数",
         "TXT_READY": "未进行",
         "TXT_WAITING_SEPARATE": "等待隔离",
+        "TXT_SEPARATING": "隔离中",
         "TXT_STOCK_SEPARATE_SUCCESS": "隔离成功",
         "TXT_STOCK_SEPARATE_FAILURE": "隔离失败",
         "TXT_WAITING_REVERT": "等待还原",
+        "TXT_REVERTING": "还原中",
         "TXT_REVERT_SUCCESS": "还原成功",
         "TXT_REVERT_FAILURE": "还原失败",
         "TXT_CHANGED": "再修正",
@@ -244,6 +246,14 @@ define(function(){
         "TXT_ADD_NEW_STOCK_INCREMENT_SEPARATE_TASK":"新建增量库存隔离任务",
         "TXT_PLATFORM_SALE_QUANTITY": "平台销售量",
         "TXT_PLATFORM_STOCK_SEPARATE_QUANTITY": "平台库存隔离数量",
+        "TXT_STOCK_INCREMENT_SEPARATE_DETAIL":"增量库存隔离明细",
+        "TXT_WAITING_INCREMENT":"等待增量",
+        "TXT_INCREASING":"增量中",
+        "TXT_INCREMENT_SUCCESS":"增量成功",
+        "TXT_INCREMENT_FAILURE":"增量失败",
+        "TXT_UPDATE_FIX_VALUE":"更新固定值",
+
+
 
 
 
@@ -359,6 +369,7 @@ define(function(){
         "BTN_EXPORT_ALL": "批量导出",
         "BTN_START_REFRESH_ALL": "启动/重刷所有",
         "BTN_REVERT_ALL": "还原所有",
+        "BTN_START_INCREMENT_ALL": "启动增量所有",
 
         // 枚举 com.voyageone.cms.enums.BeatFlag 的翻译
         "STOP": "已停止",
