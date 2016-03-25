@@ -221,18 +221,4 @@
             #{item.creater})
         </foreach>
     </insert>
-
-    <!--<select id="select_stock_separate_increment_platform" resultType="HashMap" parameterType="String">-->
-        <!--SELECT-->
-          <!--t1.task_id,-->
-          <!--t1.promotion_id,-->
-	      <!--t2.activity_start,-->
-	      <!--t2.activity_end-->
-        <!--FROM-->
-          <!--voyageone_cms2.cms_bt_stock_separate_increment_task main-->
-        <!--LEFT OUTER JOIN voyageone_cms2.cms_bt_stock_separate_platform_info t1 ON main.task_id=t1.task_id AND main.cart_id=t1.cart_id-->
-        <!--LEFT OUTER JOIN voyageone_cms2.cms_bt_promotion t2 ON t1.promotion_id = t2.promotion_id-->
-        <!--WHERE-->
-	      <!--main.sub_task_id = #{subTaskId}-->
-    <!--</select>-->
 </mapper>
