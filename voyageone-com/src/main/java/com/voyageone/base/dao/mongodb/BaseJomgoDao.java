@@ -125,10 +125,6 @@ public abstract class BaseJomgoDao<T> {
         return mongoTemplate.removeById(model.get_id(), collectionName);
     }
 
-    public WriteResult deleteById(String id) {
-        return mongoTemplate.removeById(id, collectionName);
-    }
-
     public CommandResult executeCommand(String jsonCommand) {
         return mongoTemplate.executeCommand(jsonCommand);
     }

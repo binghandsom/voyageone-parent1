@@ -67,7 +67,7 @@ public class JdRefundService extends JdBase {
 				if (C_JD_RETURN_SUCCESS.equals(response.getCode())) {
 					// 京东返回正常的场合
 					// 看一下是否有数据，如果列表长度为0，那就不用再继续做了
-					if (response.getQueryResult().getResult().size() == 0) {
+					if (response.getQueryResult().getResult().isEmpty()) {
 						break;
 					}
 

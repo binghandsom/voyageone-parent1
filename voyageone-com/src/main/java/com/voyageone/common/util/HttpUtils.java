@@ -127,7 +127,7 @@ public class HttpUtils {
         InputStream input = null;//输入流
         InputStreamReader isr = null;
         BufferedReader buffer = null;
-        StringBuffer sb = null;
+        StringBuilder sb = null;
         String line;
 
         try {
@@ -148,11 +148,12 @@ public class HttpUtils {
             isr = new InputStreamReader(input);
             buffer = new BufferedReader(isr,10*1024);
 
-            sb = new StringBuffer();
+            sb = new StringBuilder();
             while ((line = buffer.readLine()) != null) {
                 sb.append(line);
             }
 
+            return sb.toString();
 
         } catch (Exception e) {
             //其他异常同样读取assets目录中的"local_stream.xml"文件
@@ -173,7 +174,6 @@ public class HttpUtils {
             } catch (Exception ignored) {
             }
         }
-        return sb.toString();
     }
 
     public static String patch(String url, String jsonParam,String authorization)
@@ -182,7 +182,7 @@ public class HttpUtils {
         InputStream input = null;//输入流
         InputStreamReader isr = null;
         BufferedReader buffer = null;
-        StringBuffer sb = null;
+        StringBuilder sb = null;
         String line;
 
         try {
@@ -195,7 +195,7 @@ public class HttpUtils {
             request.setHeader("Authorization", "Basic " + authorization);
             CloseableHttpClient httpclient= HttpClients.createDefault();
             HttpResponse response = httpclient.execute(request);
-            int code = response.getStatusLine().getStatusCode();
+            // int code = response.getStatusLine().getStatusCode();
             // System.out.println("postCode= " + code);
 
             //从服务器获得输入流
@@ -203,12 +203,12 @@ public class HttpUtils {
             isr = new InputStreamReader(input);
             buffer = new BufferedReader(isr,10*1024);
 
-            sb = new StringBuffer();
+            sb = new StringBuilder();
             while ((line = buffer.readLine()) != null) {
                 sb.append(line);
             }
 
-
+            return sb.toString();
         } catch (Exception e) {
             //其他异常同样读取assets目录中的"local_stream.xml"文件
             System.out.println("请求异常数据异常");
@@ -228,7 +228,6 @@ public class HttpUtils {
             } catch (Exception ignored) {
             }
         }
-        return sb.toString();
     }
 
 

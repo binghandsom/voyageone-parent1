@@ -40,12 +40,10 @@ public enum CartType {
 
     /**
      * 根据cartId返回对应CartType
-     * @param cartId
-     * @return
      */
     public static CartType getCartById (Integer cartId) {
         for (CartType c : CartType.values()) {
-            if (c.getCartId() == cartId) {
+            if (c.getCartId().intValue() == cartId.intValue()) {
                 return c;
             }
         }
@@ -54,13 +52,15 @@ public enum CartType {
 
     public static String getCartNameById (Integer cartId, String languageId) {
         for (CartType c : CartType.values()) {
-            if (c.getCartId() == cartId) {
+            if (c.getCartId().intValue() == cartId.intValue()) {
                 if (languageId != null) {
                     switch (languageId) {
                         case "en":
                             return c.name;
                         case "cn":
                             return c.cnName;
+                        default:
+                            return c.name;
                     }
                 } else {
                     return c.name;

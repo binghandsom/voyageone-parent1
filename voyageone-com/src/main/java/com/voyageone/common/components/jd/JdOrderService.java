@@ -41,13 +41,13 @@ public class JdOrderService extends JdBase {
 
 		// WAIT_SELLER_STOCK_OUT : 等待卖家发货
 		// LOCKED : 顾客没有点击确认收货之前取消订单
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("WAIT_SELLER_STOCK_OUT");
 		sb.append(",LOCKED");
-		
+
 		request.setOrderState(sb.toString());
 		
-		StringBuffer fields = new StringBuffer();
+		StringBuilder fields = new StringBuilder();
 		fields.append("order_id,");				// 订单id 
 		fields.append("order_source,");			// 订单来源 
 		fields.append("vender_id,");			// 商家id 
@@ -93,7 +93,7 @@ public class JdOrderService extends JdBase {
 					// 京东返回正常的场合
 					if ("0".equals(response.getCode())) {
 						// 没有订单信息
-						if (response.getOrderInfoResult().getOrderInfoList().size() == 0) {
+						if (response.getOrderInfoResult().getOrderInfoList().isEmpty()) {
 							break;
 						}
 						// 当前页的订单数据获得
@@ -140,13 +140,13 @@ public class JdOrderService extends JdBase {
 
 		// FINISHED_L:完成订单（交易成功）
 		// LOCKED : 顾客没有点击确认收货之前取消订单
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("FINISHED_L");
 		sb.append(",LOCKED");
 		
 		request.setOrderState(sb.toString());
 		
-		StringBuffer fields = new StringBuffer();
+		StringBuilder fields = new StringBuilder();
 		fields.append("order_id,");				// 订单id 
 		fields.append("order_source,");			// 订单来源 
 		fields.append("vender_id,");			// 商家id 
@@ -192,7 +192,7 @@ public class JdOrderService extends JdBase {
 					// 京东返回正常的场合
 					if ("0".equals(response.getCode())) {
 						// 没有订单信息
-						if (response.getOrderInfoResult().getOrderInfoList().size() == 0) {
+						if (response.getOrderInfoResult().getOrderInfoList().isEmpty()) {
 							break;
 						}
 						// 当前页的订单数据获得
