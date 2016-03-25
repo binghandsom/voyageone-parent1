@@ -1,5 +1,4 @@
 return angular.module("voyageone.angular",[
-"voyageone.angular.controllers.datePicker",
 "voyageone.angular.controllers.selectRows",
 "voyageone.angular.controllers.showPopover",
 "voyageone.angular.directives.dateModelFormat",
@@ -11,15 +10,16 @@ return angular.module("voyageone.angular",[
 "voyageone.angular.directives.voption",
 "voyageone.angular.directives.vpagination",
 "voyageone.angular.directives.validator",
-"voyageone.angular.services.ajax",
-"voyageone.angular.services.cookie",
-"voyageone.angular.services.message",
-"voyageone.angular.services.permission",
-"voyageone.angular.services.translate",
 "voyageone.angular.factories.dialogs",
 "voyageone.angular.factories.interceptor",
 "voyageone.angular.factories.notify",
 "voyageone.angular.factories.pppAutoImpl",
 "voyageone.angular.factories.selectRows",
-"voyageone.angular.factories.vpagination"
+"voyageone.angular.factories.templates",
+"voyageone.angular.factories.vpagination",
+"voyageone.angular.services.ajax",
+"voyageone.angular.services.cookie",
+"voyageone.angular.services.message",
+"voyageone.angular.services.permission",
+"voyageone.angular.services.translate"
 ]);

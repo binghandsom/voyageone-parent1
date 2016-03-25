@@ -1,5 +1,7 @@
 package com.voyageone.web2.cms.bean;
 
+import java.util.List;
+
 /**
  * Created by lewis on 2016/2/21.
  */
@@ -8,6 +10,11 @@ public class ProductTranslationBean {
      * 产品id.
      */
     private Long prodId;
+
+    /**
+     * 商品Id
+     */
+    private Long groupId;
 
     /**
      * 产品code.
@@ -61,6 +68,8 @@ public class ProductTranslationBean {
 
     private String translator;
 
+    private List<Object> otherProducts;
+
     public String getProductImage() {
         return productImage;
     }
@@ -101,6 +110,14 @@ public class ProductTranslationBean {
 
     public void setProdId(Long prodId) {
         this.prodId = prodId;
+    }
+
+    public Long getGroupId() {
+        return groupId;
+    }
+
+    public void setGroupId(Long groupId) {
+        this.groupId = groupId;
     }
 
     public String getProductName() {
@@ -181,5 +198,13 @@ public class ProductTranslationBean {
 
     public void setTranslator(String translator) {
         this.translator = translator;
+    }
+
+    public List<Object> getOtherProducts() {
+        return otherProducts;
+    }
+
+    public void setOtherProducts(List<Object> otherProducts) {
+        this.otherProducts = otherProducts;
     }
 }

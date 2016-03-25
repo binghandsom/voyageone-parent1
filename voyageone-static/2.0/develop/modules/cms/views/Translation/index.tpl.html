@@ -3,28 +3,28 @@
 		<div class="panel-group">
 			<div class="panel panel-default">
 				<div class="panel-heading">
-					<h4 class="panel-title"><i class="fa fa-reorder"></i>&nbsp;翻译管理</h4>
+					<h4 class="panel-title"><i class="fa fa-reorder"></i>&nbsp;{{'TXT_TRANSLATION_MANAGER' | translate}}</h4>
 				</div>
 				<div class="container-fluid m-t-xs m-b-xs">
 					<div class="col-sm-12">
 						<div class="col-sm-4">
 							<form class="form-horizontal">
 								<div class="form-group">
-									<label class="col-sm-4 control-label">个人完成翻译数</label>
+									<label class="col-sm-4 control-label" translate="TXT_UN_TRANSLATION"></label>
 									<div class="col-sm-7">
-										<input type="text" class="form-control" placeholder="{{ctrl.userDoneCount}}" disabled>
+										<input type="text" class="form-control" ng-model="ctrl.taskInfos.totalUndoneCount" disabled>
 									</div>
 								</div>
 								<div class="form-group">
-									<label class="col-sm-4 control-label">待翻译总数</label>
+									<label class="col-sm-4 control-label" translate="TXT_TRANSLATED"></label>
 									<div class="col-sm-7">
-										<input type="text" class="form-control" placeholder="{{ctrl.totalUndoneCount}}" disabled>
+										<input type="text" class="form-control" ng-model="ctrl.taskInfos.totalDoneCount" disabled>
 									</div>
 								</div>
 								<div class="form-group">
-									<label class="col-sm-4 control-label">完成翻译总数</label>
+									<label class="col-sm-4 control-label" translate="TXT_PERSONAL_FINISHED_TRANSLATION"></label>
 									<div class="col-sm-7">
-										<input type="text" class="form-control" placeholder="{{ctrl.totalDoneCount}}" disabled>
+										<input type="text" class="form-control" ng-model="ctrl.taskInfos.userDoneCount" disabled>
 									</div>
 								</div>
 							</form>
@@ -33,40 +33,41 @@
 						<div class="col-sm-4">
 							<form class="form-horizontal">
 								<div class="form-group">
-									<label class="col-sm-4 control-label">分发规则</label>
+									<label class="col-sm-4 control-label" translate="TXT_DISTRIBUTION_RULE"></label>
 									<div class="col-sm-7" style="padding-left:0px">
 										<!--<label class="checkbox-inline c-radio">-->
 											<!--<input type="radio" ng-model="ctrl.distributeRule" onclick="this.checked=false;" value="0"><span class="fa fa-check"></span>  全部商品-->
 										<!--</label>-->
 										<label class="checkbox-inline c-radio">
-											<input type="radio" ng-model="ctrl.distributeRule" onclick="this.checked=true;" ng-checked="true" value="1"><span class="fa fa-check"></span>  主商品
+											<input type="radio" ng-model="ctrl.getTaskInfo.distributeRule" value="1"><span class="fa fa-check"></span>&nbsp;{{'TXT_MAIN_PRODUCT' | translate}}
 										</label>
 									</div>
 								</div>
 								<div class="form-group">
-									<label class="col-sm-4 control-label">排序条件</label>
+									<label class="col-sm-4 control-label"></label>
 									<div class="col-sm-7">
-										<select class="form-control" ng-model="ctrl.sortCondition">
-											<option value="">-- 选择排序条件 --</option>
-											<option ng-repeat="option in ctrl.sortFieldOptions" value="{{option.value}}">{{option.name}}</option>
-										</select>
+										<div class="col-sm-5">
+											<select class="form-control" ng-model="ctrl.getTaskInfo.sortCondition"
+													ng-options="option.value as option.name for option in ctrl.sortFieldOptions">
+												<option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+											</select>
+										</div>
+										<div class="col-sm-3 text-right">
+											<label class="checkbox-inline c-radio">
+												<input name="sortOne" type="radio" value="1" ng-model="ctrl.getTaskInfo.sortRule"><span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_ASC' | translate }}
+											</label>
+										</div>
+										<div class="col-sm-3">
+											<label class="checkbox-inline c-radio">
+												<input name="sortOne" type="radio" value="-1" ng-model="ctrl.getTaskInfo.sortRule"><span class="fa fa-check"></span>&nbsp;{{'TXT_SORT_DESC' | translate }}
+											</label>
+										</div>
 									</div>
  								</div>
-								<div class="form-group" ng-if="ctrl.sortCondition != null && ctrl.sortCondition !=''">
-									<label class="col-sm-4 control-label">排序规则</label>
-									<div class="col-sm-7" style="padding-left:0px">
-										<label class="checkbox-inline c-radio">
-											<input type="radio" ng-model="ctrl.sortRule" value="true"><span class="fa fa-check"></span>  升序
-										</label>
-										<label class="checkbox-inline c-radio">
-											<input type="radio" ng-model="ctrl.sortRule" value="false"><span class="fa fa-check"></span>  降序
-										</label>
-									</div>
-								</div>
 								<div class="form-group">
-									<label class="col-sm-4 control-label">获取任务数量</label>
+									<label class="col-sm-4 control-label" translate="TXT_GET_TASK_COUNT"></label>
 									<div class="col-sm-7">
-										<input type="text" class="form-control" ng-model="ctrl.distributeCount">
+										<input type="text" class="form-control" ng-model="ctrl.getTaskInfo.distributeCount" ng-maxvalue="20" ng-pattern="/^(\d+)$/">
 									</div>
 								</div>
 							</form>
@@ -78,7 +79,7 @@
 									<label class="col-sm-1 control-label"></label>
 									<div class="form-inline col-sm-10">
 										<input type="text" ng-model="ctrl.searchCondition"  class="form-control col-sm-10">
-										<span class="input-group-btn"><button class="btn btn-vo"  ng-click="ctrl.searchHistoryTasks(ctrl)" type="button" ><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}</button></span>
+										<span class="input-group-btn"><button class="btn btn-vo"  ng-click="ctrl.searchHistoryTasks()" type="button" ><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}</button></span>
 									</div>
 								</div>
 							</form>
@@ -86,9 +87,8 @@
 						</div>
 						<div class="col-sm-12 text-center m-t-xs m-b-sm">
 							<div class="form-inline">
-								<button class="btn btn-default" ng-click="ctrl.clearConditions()"><i class="fa fa-remove"></i> 清空</button>
-								<!--<button class="btn btn-vo" ng-click="ctrl.searchHistoryTasks(ctrl)"><i class="fa fa-search"></i> Search</button>-->
-								<button class="btn btn-success" ng-click="ctrl.assignTasks(ctrl)"><i class="glyphicon glyphicon-check"></i> 获取任务</button>
+								<button class="btn btn-default" ng-click="ctrl.clearConditions()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CANCEL' | translate}}</button>
+								<button class="btn btn-success" ng-click="ctrl.assignTasks()"><i class="glyphicon glyphicon-check"></i>&nbsp;{{'BTN_GET_TASK' | translate}}</button>
 							</div>
 							<!-- .form-inline -->
 						</div>
@@ -99,74 +99,73 @@
 		</div>
 	</div>
 	<div class="box">
-		<div class="box-body">
+		<div class="box-body-new">
 			<table class="table table-hover-new table-hover">
 				<thead>
 				<tr>
-					<th class="text-center">Seq.</th>
-					<th class="text-center mfb-x">Product Code</th>
-					<th class="text-center mfb-xxs">Product Name / Long Description</th>
-					<th class="text-center">长标题/ 详情描述中文</th>
-					<th class="text-center">中标题/ Short Description</th>
-					<th class="text-center">短标题标题/ 简短描述中文</th>
-					<th class="text-center">Action</th>
+					<th class="text-center mfb-xt" translate="TXT_SEQ"></th>
+					<th class="text-left mfb-xxt" translate="TXT_PRODUCT_CODE"></th>
+					<th class="text-left mfb-xxs" translate="TXT_PRODUCT_NAME_WITH_LONG_DESCRIPTION"></th>
+					<th class="text-left mfb-xxs" translate="TXT_LONG_TITLE_WITH_LONG_DESCRIPTION"></th>
+					<th class="text-left mfb-xxx" translate="TXT_MID_TITLE_WITH_SHORT_DESCRIPTION"></th>
+					<th class="text-left mfb-xxx" translate="TXT_SHORT_TITLE_WITH_MORE_SHORT_DESCRIPTION"></th>
+					<th class="text-center" translate="Action"></th>
 				</tr>
 				</thead>
-				<tbody ng-repeat = "translationModel in ctrl.productTranslationBeanList">
+				<tbody ng-repeat = "translationModel in ctrl.taskInfos.productTranslationBeanList">
 					<tr>
-						<td class="text-center">{{$index + 1}}</td>
-						<td class="text-center mfb-x" ng-controller="popupCtrl">
+						<td class="text-center mfb-xt">{{$index + 1}}</td>
+						<td class="text-left mfb-xxt yellowLink" ng-controller="popupCtrl">
 							<p><a ng-click="openTranslate('md',translationModel)">{{translationModel.productCode}}</a></p>
 							<p><img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{translationModel.productImage}}"  alt="" class="thumb-lg pull-left"/></p>
-							<p class="col-sm-12 text-left text-vo m-t-xs">译者：{{translationModel.translator}}</p>
+							<p class="col-sm-12 text-left text-vo m-t-xs">{{'TXT_TRANSLATOR_WIT_COLON'| translate}}{{translationModel.translator}}</p>
 						</td>
-						<td class="text-left">{{translationModel.productName}}</td>
-						<td class="text-center">
+						<td class="text-left mfb-xxs">{{translationModel.productName}}</td>
+						<td class="text-left mfb-xxs">
 							<textarea class="form-control" style="resize:none" rows="6" ng-model="translationModel.longTitle"  maxlength="{{ctrl.lenInfo.long_title.maxLen}}" ng-required="required" placeholder="{{'TXT_MSG_LONG_TITLE' | translate}}"></textarea>
-							<div class="text-warnings text-left" style="padding-left:0px"><i class="icon fa fa-bell-o">{{translationModel.longTitle == null || translationModel.longTitle.length < ctrl.lenInfo.long_title.minLen?(('TXT_MSG_INPUT_WORD_LENLOWLIMIT' | translate)+ctrl.lenInfo.long_title.minLen+('TXT_MSG_INPUT_WORD_LENCHK2' | translate)):(('TXT_MSG_INPUT_WORD_LENCHK' | translate) + (ctrl.lenInfo.long_title.maxLen - translationModel.longTitle.length) + ('TXT_MSG_INPUT_WORD_LENCHK2' | translate))}}</i></div>
+							<div class="text-warnings text-left" style="padding-left:0px"><i class="icon fa fa-bell-o">
+								{{translationModel.longTitle == null || translationModel.longTitle.length == 0?'required':
+								(('TXT_MSG_INPUT_WORD_LENCHK' | translate) + (ctrl.lenInfo.long_title.maxLen - translationModel.longTitle.length) + ('TXT_MSG_INPUT_WORD_LENCHK2' | translate))}}</i></div>
+						</td>
+						<td class="text-left mfb-xxx">
+							<textarea class="form-control" style="resize:none" rows="6" ng-model="translationModel.middleTitle" maxlength="{{ctrl.lenInfo.middle_title.maxLen}}" placeholder="{{'TXT_MSG_MIDDLE_TITLE' | translate}}"></textarea>
+							<div class="text-warnings text-left" style="padding-left:0px"><i class="icon fa fa-bell-o">{{('TXT_MSG_INPUT_WORD_LENCHK' | translate) + (ctrl.lenInfo.middle_title.maxLen - translationModel.middleTitle.length) + ('TXT_MSG_INPUT_WORD_LENCHK2' | translate)}}</i></div>
+						</td>
+						<td class="text-left mfb-xxx">
+							<textarea class="form-control" style="resize:none" rows="6" ng-model="translationModel.shortTitle" maxlength="{{ctrl.lenInfo.short_title.maxLen}}"  placeholder="{{'TXT_MSG_SHORT_TITLE' | translate}}"></textarea>
+							<div class="text-warnings text-left" style="padding-left:0px"><i class="icon fa fa-bell-o">{{('TXT_MSG_INPUT_WORD_LENCHK' | translate) + (ctrl.lenInfo.short_title.maxLen - translationModel.shortTitle.length) + ('TXT_MSG_INPUT_WORD_LENCHK2' | translate)}}</i></div>
 						</td>
 						<td class="text-center">
-							<textarea class="form-control" style="resize:none" rows="6" ng-model="translationModel.middleTitle" maxlength="{{ctrl.lenInfo.middle_title.maxLen}}" ng-required="required" placeholder="{{'TXT_MSG_MIDDLE_TITLE' | translate}}"></textarea>
-							<div class="text-warnings text-left" style="padding-left:0px"><i class="icon fa fa-bell-o">{{translationModel.middleTitle == null || translationModel.middleTitle.length < ctrl.lenInfo.middle_title.minLen?(('TXT_MSG_INPUT_WORD_LENLOWLIMIT' | translate)+ctrl.lenInfo.middle_title.minLen+('TXT_MSG_INPUT_WORD_LENCHK2' | translate)):(('TXT_MSG_INPUT_WORD_LENCHK' | translate) + (ctrl.lenInfo.middle_title.maxLen - translationModel.middleTitle.length) + ('TXT_MSG_INPUT_WORD_LENCHK2' | translate))}}</i></div>
-						</td>
-						<td class="text-center">
-							<textarea class="form-control" style="resize:none" rows="6" ng-model="translationModel.shortTitle" maxlength="{{ctrl.lenInfo.short_title.maxLen}}" ng-required="required" placeholder="{{'TXT_MSG_SHORT_TITLE' | translate}}"></textarea>
-							<div class="text-warnings text-left" style="padding-left:0px"><i class="icon fa fa-bell-o">{{translationModel.shortTitle == null || translationModel.shortTitle.length < ctrl.lenInfo.short_title.minLen?(('TXT_MSG_INPUT_WORD_LENLOWLIMIT' | translate)+ctrl.lenInfo.short_title.minLen+('TXT_MSG_INPUT_WORD_LENCHK2' | translate)):(('TXT_MSG_INPUT_WORD_LENCHK' | translate) + (ctrl.lenInfo.short_title.maxLen - translationModel.shortTitle.length) + ('TXT_MSG_INPUT_WORD_LENCHK2' | translate))}}</i></div>
-						</td>
-						<td class="text-center">
-							<button title="从已有数据拷贝" class="btn btn-danger btn-xs m-b-xs" ng-click="ctrl.copyFormMainProduct(translationModel,$index)"><i class="fa fa-cloud-download"></i> 从已有数据拷贝</button>
-							<br/>
-							<button title="保存" class="btn btn-vo btn-xs" ng-click="ctrl.saveTask(translationModel,$index)"><i class="glyphicon glyphicon-floppy-disk"></i> 保存</button>
-							<button title="完成" class="btn btn-success btn-xs" ng-click="ctrl.submitTask(translationModel,$index)"><i class="glyphicon glyphicon-star"></i> 完成</button>
+							<!--<button title="从已有数据拷贝" class="btn btn-danger btn-xs m-b-xs" ng-click="ctrl.copyFormMainProduct(translationModel,$index)"><i class="fa fa-cloud-download"></i> 从已有数据拷贝</button>-->
+							<!--<br/>-->
+							<button class="btn btn-vo btn-xs" ng-click="ctrl.saveTask(translationModel,$index)"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;{{'BTN_SAVE' | translate}}</button>
+							<button class="btn btn-success btn-xs" ng-click="ctrl.submitTask(translationModel,$index)"><i class="glyphicon glyphicon-star"></i>&nbsp;{{'BTN_COMPLETE' | translate}}</button>
 						</td>
 					</tr>
 					<tr>
-						<td class="text-center" colspan="2" style="border-top:0px">
-							<!--<div class="form-inline">-->
-								<!--<a href="#"><img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{translationModel.productImage}}"  alt="" class="thumb-xs m-b-xs"/></a>-->
-								<!--<a href="#"><img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{translationModel.productImage}}"  alt="" class="thumb-xs m-b-xs"/></a>-->
-								<!--<a href="#"><img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{translationModel.productImage}}"  alt="" class="thumb-xs m-b-xs"/></a>-->
-								<!--<a href="#"><img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{translationModel.productImage}}"  alt="" class="thumb-xs m-b-xs"/></a>-->
-								<!--<a href="#"><img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{translationModel.productImage}}"  alt="" class="thumb-xs m-b-xs"/></a>-->
-								<!--<a href="#"><img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{translationModel.productImage}}"  alt="" class="thumb-xs m-b-xs"/></a>-->
-						    <!--</div>-->
+						<td class="text-left" colspan="2" style="border-top:0px">
+							<div class="form-inline">
+								<a href="" ng-repeat="product in translationModel.otherProducts">
+									<img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{::product.image1}}"  alt="" class="thumb-xs m-b-xs"/>
+								</a>
+						    </div>
 						</td>
 						<!--<td class="text-center mfb-x" style="border-top:0px"></td>-->
 						<td class="text-left" colspan="2" style="border-top:0px">{{translationModel.longDescription}}</td>
-						<td class="text-center" colspan="2" style="border-top:0px">
-							<textarea class="form-control" style="resize:none" rows="6" ng-model="translationModel.longDesCn"  maxlength="{{ctrl.lenInfo.long_desc.maxLen}}" ng-required="required" placeholder="{{'TXT_MSG_LONG_DESCRIPTION' | translate}}"></textarea>
-							<div class="text-warnings text-left" style="padding-left:0px"><i class="icon fa fa-bell-o">{{translationModel.longDesCn == null || translationModel.longDesCn.length < ctrl.lenInfo.long_desc.minLen?(('TXT_MSG_INPUT_WORD_LENLOWLIMIT' | translate)+ctrl.lenInfo.long_desc.minLen+('TXT_MSG_INPUT_WORD_LENCHK2' | translate)):(('TXT_MSG_INPUT_WORD_LENCHK' | translate) + (ctrl.lenInfo.long_desc.maxLen - translationModel.longDesCn.length) + ('TXT_MSG_INPUT_WORD_LENCHK2' | translate))}}</i></div>
+						<td class="text-left" colspan="2" style="border-top:0px">
+							<textarea class="form-control" style="resize:none" rows="6" ng-model="translationModel.longDesCn"   ng-required="required" placeholder="{{'TXT_MSG_LONG_DESCRIPTION' | translate}}"></textarea>
+							<div class="text-warnings text-left" style="padding-left:0px"><i class="icon fa fa-bell-o">{{translationModel.longDesCn == null || translationModel.longDesCn.length == 0 ? 'required':''}}</i></div>
 						</td>
 						<td class="text-center" style="border-top:0px">
 						</td>
 					</tr>
 					<tr>
-						<td class="text-center" style="border-top:0px"></td>
-						<td class="text-center mfb-x" style="border-top:0px"></td>
+						<td class="text-left" style="border-top:0px"></td>
+						<td class="text-left mfb-x" style="border-top:0px"></td>
 						<td class="text-left" colspan="2" style="border-top:0px" ng-model="translationModel.shortDescription"></td>
-						<td class="text-center" colspan="2" style="border-top:0px">
-							<textarea class="form-control" style="resize:none" rows="6" ng-model="translationModel.shortDesCn"  maxlength="{{ctrl.lenInfo.short_desc.maxLen}}" ng-required="required" placeholder="{{'TXT_MSG_SHORT_DESCRIPTION' | translate}}"></textarea>
-							<div class="text-warnings text-left" style="padding-left:0px"><i class="icon fa fa-bell-o" >{{translationModel.shortDesCn == null || translationModel.shortDesCn.length < ctrl.lenInfo.short_desc.minLen?(('TXT_MSG_INPUT_WORD_LENLOWLIMIT' | translate)+ctrl.lenInfo.short_desc.minLen+('TXT_MSG_INPUT_WORD_LENCHK2' | translate)):(('TXT_MSG_INPUT_WORD_LENCHK' | translate) + (ctrl.lenInfo.short_desc.maxLen - translationModel.shortDesCn.length) + ('TXT_MSG_INPUT_WORD_LENCHK2' | translate))}}</i></div>
+						<td class="text-left" colspan="2" style="border-top:0px">
+							<textarea class="form-control" style="resize:none" rows="6" ng-model="translationModel.shortDesCn"  maxlength="{{ctrl.lenInfo.short_desc.maxLen}}"  placeholder="{{'TXT_MSG_SHORT_DESCRIPTION' | translate}}"></textarea>
+							<div class="text-warnings text-left" style="padding-left:0px"><i class="icon fa fa-bell-o" >{{('TXT_MSG_INPUT_WORD_LENCHK' | translate) + (ctrl.lenInfo.short_desc.maxLen - translationModel.shortDesCn.length) + ('TXT_MSG_INPUT_WORD_LENCHK2' | translate)}}</i></div>
 						</td>
 						<td class="text-center" style="border-top:0px">
 						</td>

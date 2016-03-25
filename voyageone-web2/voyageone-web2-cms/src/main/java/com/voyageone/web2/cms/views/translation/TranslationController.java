@@ -1,5 +1,6 @@
 package com.voyageone.web2.cms.views.translation;
 
+import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
@@ -27,19 +28,13 @@ public class TranslationController extends CmsController{
     @RequestMapping(CmsUrlConstants.TRANSLATION.TASKS.GET_TASKS)
     public AjaxResponse doGetTasks() {
 
-        String channelId = getUser().getSelChannelId();
-
-        String userName = getUser().getUserName();
-
         Map<String,Object> translateTaskBeanInfo = new HashMap<>();
 
-        TranslateTaskBean taskBean = feedPropsTranslateService.getUndoneTasks(channelId,userName);
-
-        translateTaskBeanInfo.put("taskInfo",taskBean);
-        translateTaskBeanInfo.put("sortFieldOptions",feedPropsTranslateService.getSortFieldOptions());
+        translateTaskBeanInfo.put("taskInfos",feedPropsTranslateService.getUndoneTasks(getUser()));
+        translateTaskBeanInfo.put("sortFieldOptions", TypeConfigEnums.MastType.translateTask.getList(getLang()));
 
         // 获取翻译时标题和描述的长度设置
-        translateTaskBeanInfo.put("lenSetInfo",feedPropsTranslateService.getTransLenSet(channelId));
+        translateTaskBeanInfo.put("lenSetInfo",feedPropsTranslateService.getTransLenSet(getUser().getSelChannelId()));
 
         return success(translateTaskBeanInfo);
     }
@@ -48,67 +43,26 @@ public class TranslationController extends CmsController{
     @RequestMapping(CmsUrlConstants.TRANSLATION.TASKS.ASSIGN_TASKS)
     public AjaxResponse doAssignTask(@RequestBody TranslateTaskBean request){
 
-        String channelId = getUser().getSelChannelId();
-
-        String userName = getUser().getUserName();
-
-        int distributeStrategy = request.getDistributeRule();
-
-        int distCount = request.getDistributeCount();
-
-        Map<String,Object> TranslateTaskBeanInfo = new HashMap<>();
-
-        TranslateTaskBean taskBean = feedPropsTranslateService.assignTask(channelId,userName,distributeStrategy,distCount,request.getSortCondition(),request.getSortRule());
-
-        TranslateTaskBeanInfo.put("taskInfo",taskBean);
-
-        return success(TranslateTaskBeanInfo);
+        return success(feedPropsTranslateService.assignTask(getUser(),request));
 
     }
 
     // 保存翻译内容
     @RequestMapping(CmsUrlConstants.TRANSLATION.TASKS.SAVE_TASK)
     public AjaxResponse doSaveTask(@RequestBody ProductTranslationBean requestBean){
-//        feedPropsTranslateService.verifyParameter(requestBean);
-
-        String channelId = getUser().getSelChannelId();
-        String userName = getUser().getUserName();
-
-        TranslateTaskBean taskBean = feedPropsTranslateService.saveTask(channelId, userName, requestBean, "0");
-
-        Map<String,Object> updateInfo = new HashMap<>();
-        updateInfo.put("taskInfo",taskBean);
-        return success(updateInfo);
+        return success(feedPropsTranslateService.saveTask(getUser(), requestBean, "0"));
     }
 
     // 保存并提交翻译内容（完成翻译任务）
     @RequestMapping(CmsUrlConstants.TRANSLATION.TASKS.SUBMIT_TASK)
     public AjaxResponse doSubmitTask(@RequestBody ProductTranslationBean requestBean){
-        feedPropsTranslateService.verifyParameter(requestBean);
-
-        String channelId = getUser().getSelChannelId();
-        String userName = getUser().getUserName();
-
-        TranslateTaskBean taskBean = feedPropsTranslateService.saveTask(channelId, userName, requestBean, "1");
-
-        Map<String,Object> updateInfo = new HashMap<>();
-        updateInfo.put("taskInfo",taskBean);
-        return success(updateInfo);
+        return success(feedPropsTranslateService.saveTask(getUser(), requestBean, "1"));
     }
-
-    @RequestMapping(CmsUrlConstants.TRANSLATION.TASKS.COPY_FORM_MAIN_PRODUCT)
-    public AjaxResponse doCopyFormMainProduct(@RequestBody ProductTranslationBean requestBean){
-
-        Map<String,Object> translateTaskBeanInfo = new HashMap<>();
-
-        String channelId = getUser().getSelChannelId();
-
-        ProductTranslationBean translationBean = feedPropsTranslateService.copyFormMainProduct(channelId,requestBean);
-
-        translateTaskBeanInfo.put("translationInfo",translationBean);
-
-        return success(translateTaskBeanInfo);
-    }
+//
+//    @RequestMapping(CmsUrlConstants.TRANSLATION.TASKS.COPY_FORM_MAIN_PRODUCT)
+//    public AjaxResponse doCopyFormMainProduct(@RequestBody ProductTranslationBean requestBean){
+//        return success(feedPropsTranslateService.copyFormMainProduct(getUser().getSelChannelId(),requestBean));
+//    }
 
     /**
      * 获取品牌方所有属性.
@@ -117,16 +71,7 @@ public class TranslationController extends CmsController{
      */
     @RequestMapping(CmsUrlConstants.TRANSLATION.TASKS.GET_FEED_ATTRIBUTES)
     public AjaxResponse doGetFeedAttributes(@RequestBody ProductTranslationBean requestBean) {
-
-        String channelId = getUser().getSelChannelId();
-
-        Map feedAttributesMap = feedPropsTranslateService.getFeedAttributes(channelId,requestBean.getProductCode());
-
-        Map<String,Object> TranslateTaskBeanInfo = new HashMap<>();
-
-        TranslateTaskBeanInfo.put("feedAttributes",feedAttributesMap);
-
-        return success(TranslateTaskBeanInfo);
+        return success(feedPropsTranslateService.getFeedAttributes(getUser().getSelChannelId(),requestBean.getProductCode()));
 
     }
 
@@ -134,18 +79,7 @@ public class TranslationController extends CmsController{
     // TODO
     @RequestMapping(CmsUrlConstants.TRANSLATION.TASKS.SEARCH_HISTORY_TASKS)
     public AjaxResponse doSearchTasks(@RequestBody TranslateTaskBean requestBean) {
-
-        String channelId = getUser().getSelChannelId();
-
-        String userName = getUser().getUserName();
-
-        Map<String,Object> translateTaskBeanInfo = new HashMap<>();
-
-        TranslateTaskBean taskBean = feedPropsTranslateService.searchUserTasks(channelId,userName,requestBean.getSearchCondition());
-
-        translateTaskBeanInfo.put("taskInfo",taskBean);
-
-        return success(translateTaskBeanInfo);
+        return success(feedPropsTranslateService.searchUserTasks(getUser(),requestBean.getSearchCondition()));
 
 
     }

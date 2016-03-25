@@ -2,8 +2,9 @@ package com.voyageone.web2.cms.views.promotion.task;
 
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.transaction.SimpleTransaction;
+import com.voyageone.service.dao.cms.CmsBtStockSeparateIncrementItemDao;
+import com.voyageone.service.dao.cms.CmsBtStockSeparateIncrementTaskDao;
 import com.voyageone.web2.base.BaseAppService;
-import com.voyageone.web2.cms.dao.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.*;

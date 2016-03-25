@@ -7,7 +7,7 @@
     <bean id="restTemplate" class="org.springframework.web.client.RestTemplate"/>
     <bean id="voApiDefaultClient" class="com.voyageone.web2.sdk.api.VoApiDefaultClient">
         <constructor-arg ref="restTemplate" />
-        <!--<constructor-arg name="serverUrl" value="http://localhost:8081/rest"/>-->
+        <!--<constructor-arg name="serverUrl" value="http://119.9.106.21:28080/rest"/>-->
         <constructor-arg name="serverUrl" value="http://localhost:8080/rest"/>
         <!--<constructor-arg name="serverUrl" value="http://121.41.58.229:8081/rest"/>-->
         <constructor-arg name="connectTimeout" value="3000"/><!-- ms -->

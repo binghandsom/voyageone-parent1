@@ -17,7 +17,7 @@
             <div class="form-group">
                 <label class="col-sm-4 control-label">属性名（EN）</label>
                 <div class="col-sm-6">
-                    <select name="" id="" class="form-control" ng-model="vm.prop_id" ng-options="propInfo.prop_id as propInfo.prop_original for propInfo in vm.valList">
+                    <select name="" id="" class="form-control" ng-model="vm.prop_id" ng-options="propInfo.prop_id as (propInfo.prop_translation || propInfo.prop_original) for propInfo in vm.valList">
                         <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                     </select>
                 </div>

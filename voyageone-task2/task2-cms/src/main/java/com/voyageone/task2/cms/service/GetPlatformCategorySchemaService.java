@@ -14,7 +14,7 @@ import com.voyageone.task2.cms.dao.BrandDao;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.components.tmall.TbCategoryService;
 import com.voyageone.common.components.tmall.bean.ItemSchema;
-import com.voyageone.common.configs.ShopConfigs;
+import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.StringUtils;
 import org.apache.commons.logging.Log;
@@ -149,7 +149,7 @@ public class GetPlatformCategorySchemaService extends BaseTaskService {
         schemaModel.setCatFullPath(platformCategoriesModel.getCatPath());
 
         // 获取店铺信息
-        ShopBean shopProp = ShopConfigs.getShop(platformCategoriesModel.getChannelId(), String.valueOf(platformCategoriesModel.getCartId()));
+        ShopBean shopProp = Shops.getShop(platformCategoriesModel.getChannelId(), String.valueOf(platformCategoriesModel.getCartId()));
         if (shopProp == null) {
             logger.error("获取到店铺信息失败, channel_id:" + shopProp.getOrder_channel_id() + "  cart_id:" + shopProp.getCart_id());
         } else {

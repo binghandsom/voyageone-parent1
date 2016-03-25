@@ -73,6 +73,8 @@
         <property name="maxIdleTime" value="14400"></property>
         <!--强迫连接池扑杀任何的连接，这些连接超过了设置的秒数。(现将其设置为数据库wait_timeout的1/2)-->
         <property name="maxConnectionAge" value="14400"></property>
+        <!--每60秒检查所有连接池中的空闲连接。Default: 0 -->
+        <!--<property name="idleConnectionTestPeriod" value="60" />-->
     </bean>
 
     <bean id="sqlSessionFactorySlave"

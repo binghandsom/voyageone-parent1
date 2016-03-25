@@ -2,7 +2,7 @@ package com.voyageone.web2.cms.views.home.menu;
 
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.Constants;
-import com.voyageone.common.configs.TypeChannel;
+import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.service.impl.cms.ChannelCategoryService;
 import com.voyageone.service.model.cms.mongo.CmsMtCategoryTreeModel;
@@ -36,7 +36,7 @@ public class CmsMenuService extends BaseAppService{
      * @return
      */
     public List<TypeChannelBean> getPlatformTypeList (String channelId, String language) {
-        return TypeChannel.getTypeListSkuCarts(channelId, Constants.comMtTypeChannel.SKU_CARTS_53_D, language);
+        return TypeChannels.getTypeListSkuCarts(channelId, Constants.comMtTypeChannel.SKU_CARTS_53_D, language);
     }
 
     /**

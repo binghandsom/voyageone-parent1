@@ -5,20 +5,19 @@ import com.voyageone.common.Constants;
 import com.voyageone.common.components.transaction.SimpleTransaction;
 import com.voyageone.common.components.transaction.TransactionRunner;
 import com.voyageone.common.configs.Properties;
-import com.voyageone.common.configs.Type;
-import com.voyageone.common.configs.TypeChannel;
+import com.voyageone.common.configs.TypeChannels;
+import com.voyageone.common.configs.Types;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.FileUtils;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
-import com.voyageone.service.dao.cms.CmsBtTasksDao;
+import com.voyageone.service.bean.cms.task.stock.StockExcelBean;
+import com.voyageone.service.dao.cms.*;
+import com.voyageone.service.dao.wms.WmsBtLogicInventoryDao;
 import com.voyageone.service.model.cms.CmsBtTasksModel;
-import com.voyageone.service.dao.cms.CmsBtPromotionDao;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.CmsConstants;
-import com.voyageone.web2.cms.bean.promotion.task.StockExcelBean;
-import com.voyageone.web2.cms.dao.*;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
@@ -218,7 +217,7 @@ public class CmsTaskStockService extends BaseAppService {
             channelId= cmsBtPromotionDao.selectPromotionIDByChannelId(entry.getKey());
         }
         // 根据ChannelId获取cart list
-        typeChannelBeanList = TypeChannel.getTypeListSkuCarts(channelId, Constants.comMtTypeChannel.SKU_CARTS_53_A,language);
+        typeChannelBeanList = TypeChannels.getTypeListSkuCarts(channelId, Constants.comMtTypeChannel.SKU_CARTS_53_A,language);
         return typeChannelBeanList;
     }
     /**
@@ -536,7 +535,7 @@ public class CmsTaskStockService extends BaseAppService {
     public List<Map<String,Object>> getPropertyList(String channelId, String lang){
         List<Map<String,Object>> propertyList = new ArrayList<Map<String,Object>>();
         // 取得动态属性
-        List<TypeChannelBean> dynamicPropertyList = TypeChannel.getTypeList("dynamicProperty", (String) channelId);
+        List<TypeChannelBean> dynamicPropertyList = TypeChannels.getTypeList("dynamicProperty", (String) channelId);
         for (TypeChannelBean dynamicProperty : dynamicPropertyList) {
             if (lang.equals(dynamicProperty.getLang_id())) {
                 Map<String, Object> propertyItem = new HashMap<String, Object>();
@@ -1023,7 +1022,7 @@ public class CmsTaskStockService extends BaseAppService {
                             }
                             int updateCnt = cmsBtStockSeparateItemDao.updateStockSeparateItem(sqlParam1);
                             if (updateCnt == 1) {
-                                String typeName = Type.getTypeName(63, changedStatus, (String) param.get("lang"));
+                                String typeName = Types.getTypeName(63, changedStatus, (String) param.get("lang"));
                                 platformInfo.put("status", typeName);
                             } else {
                                 throw new BusinessException("明细对象不存在！");

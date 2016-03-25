@@ -4,13 +4,10 @@ import com.voyageone.common.Constants;
 import com.voyageone.common.components.yimei.bean.YMSMSSendBean;
 import com.voyageone.common.components.yimei.client.Client;
 import com.voyageone.common.configs.ChannelConfigs;
-import com.voyageone.common.configs.Codes;
 
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.util.CommonUtil;
 import org.springframework.stereotype.Component;
-
-import java.util.Map;
 
 /**
  * 亿美短信调用

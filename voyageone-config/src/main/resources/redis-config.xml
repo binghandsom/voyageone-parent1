@@ -1,7 +1,7 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-       http://www.springframework.org/schema/beans/spring-beans.xsd">
+                     http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <!-- 连接池配置. -->
     <bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
@@ -19,9 +19,13 @@
         <property name="numTestsPerEvictionRun" value="3" />
         <!-- “空闲链接”检测线程，检测的周期，毫秒数。如果为负值，表示不运行“检测线程”。默认为-1. -->
         <property name="timeBetweenEvictionRunsMillis" value="60000" />
+
         <!-- testOnBorrow:向调用者输出“链接”资源时，是否检测是有有效，如果无效则从连接池中移除，并尝试获取继续获取。默认为false。建议保持默认值. -->
+        <property name="testOnBorrow" value="true" />
         <!-- testOnReturn:向连接池“归还”链接时，是否检测“链接”对象的有效性。默认为false。建议保持默认值.-->
+        <property name="testOnReturn" value="true" />
         <!-- testWhileIdle:向调用者输出“链接”对象时，是否检测它的空闲超时；默认为false。如果“链接”空闲超时，将会被移除。建议保持默认值. -->
+        <property name="testWhileIdle" value="true" />
         <!-- whenExhaustedAction:当“连接池”中active数量达到阀值时，即“链接”资源耗尽时，连接池需要采取的手段, 默认为1(0:抛出异常。1:阻塞，直到有可用链接资源。2:强制创建新的链接资源) -->
     </bean>
 
@@ -40,6 +44,21 @@
         <property name="usePool" value="true" />
     </bean>
 
+    <!-- aliyun test -->
+    <!--<bean id="jedisConnectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory">-->
+        <!--&lt;!&ndash; 连接池配置. &ndash;&gt;-->
+        <!--<property name="poolConfig" ref="jedisPoolConfig" />-->
+        <!--&lt;!&ndash; Redis服务主机. &ndash;&gt;-->
+        <!--<property name="hostName" value="121.41.58.229" />-->
+        <!--&lt;!&ndash; Redis服务端口号. &ndash;&gt;-->
+        <!--<property name="port" value="6379" />-->
+        <!--&lt;!&ndash; Redis服务连接密码. &ndash;&gt;-->
+        <!--<property name="password" value="tYdce3Ot7" />-->
+        <!--&lt;!&ndash; 连超时设置. &ndash;&gt;-->
+        <!--<property name="timeout" value="15000" />-->
+        <!--&lt;!&ndash; 是否使用连接池. &ndash;&gt;-->
+        <!--<property name="usePool" value="true" />-->
+    <!--</bean>-->
 
     <bean id="genericJackson2JsonRedisSerializer" class="org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer" />
 

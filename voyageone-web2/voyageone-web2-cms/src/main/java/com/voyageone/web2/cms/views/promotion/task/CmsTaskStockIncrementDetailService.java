@@ -4,17 +4,16 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.transaction.SimpleTransaction;
 import com.voyageone.common.components.transaction.TransactionRunner;
 import com.voyageone.common.configs.Properties;
-import com.voyageone.common.configs.Type;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.FileUtils;
 import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.service.bean.cms.task.stock.StockIncrementExcelBean;
+import com.voyageone.service.dao.cms.CmsBtStockSeparateIncrementItemDao;
+import com.voyageone.service.dao.cms.CmsBtStockSeparatePlatformInfoDao;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.CmsConstants;
-import com.voyageone.web2.cms.bean.promotion.task.StockIncrementExcelBean;
-import com.voyageone.web2.cms.dao.CmsBtStockSeparateIncrementItemDao;
-import com.voyageone.web2.cms.dao.CmsBtStockSeparateIncrementTaskDao;
-import com.voyageone.web2.cms.dao.CmsBtStockSeparatePlatformInfoDao;
+import com.voyageone.service.dao.cms.CmsBtStockSeparateIncrementTaskDao;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
@@ -621,7 +620,7 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
                 CmsTaskStockService.STATUS_INCREMENT_SUCCESS,
                 CmsTaskStockService.STATUS_INCREMENT_FAIL,
                 CmsTaskStockService. STATUS_REVERT));
-        if (cmsBtStockSeparateIncrementItemDao.selectStockSeparateIncrementItemByStatus(sqlParam) != 0 ) {
+        if (cmsBtStockSeparateIncrementItemDao.selectStockSeparateIncrementItemByStatus(sqlParam) != null ) {
             throw new BusinessException("此增量任务已经进行，不能修改数据！");
         }
 

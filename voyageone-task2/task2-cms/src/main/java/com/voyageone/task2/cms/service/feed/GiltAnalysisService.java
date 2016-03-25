@@ -1,18 +1,22 @@
 package com.voyageone.task2.cms.service.feed;
 
-import com.voyageone.task2.base.BaseTaskService;
-import com.voyageone.task2.base.modelbean.TaskControlBean;
-import com.voyageone.task2.cms.bean.*;
-import com.voyageone.task2.cms.dao.feed.GiltFeedDao;
 import com.voyageone.common.components.gilt.GiltSkuService;
 import com.voyageone.common.components.gilt.bean.GiltCategory;
 import com.voyageone.common.components.gilt.bean.GiltImage;
 import com.voyageone.common.components.gilt.bean.GiltPageGetSkusRequest;
 import com.voyageone.common.components.gilt.bean.GiltSku;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.ThirdPartyConfigs;
 import com.voyageone.common.configs.beans.ThirdPartyConfigBean;
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.task2.base.BaseTaskService;
+import com.voyageone.task2.base.modelbean.TaskControlBean;
+import com.voyageone.task2.cms.bean.SuperFeedGiltBean;
+import com.voyageone.task2.cms.dao.SuperFeed2Dao;
+import com.voyageone.task2.cms.dao.feed.GiltFeedDao;
+import com.voyageone.task2.cms.model.WmsBtClientSkuModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,28 +26,25 @@ import java.util.Map;
 
 import static com.voyageone.common.configs.Enums.ChannelConfigEnums.Channel.GILT;
 import static java.util.stream.Collectors.joining;
-import static java.util.stream.Collectors.toMap;
 
 /**
- * @author Jonas, 2/3/16.
- * @version 2.0.0
- * @since 2.0.0
+ * @author james.li
+ * @version 0.0.1, 16/3/4
  */
 @Service
 public class GiltAnalysisService extends BaseTaskService {
 
-    @Override
-    public SubSystem getSubSystem() {
-        return SubSystem.CMS;
-    }
+    @Autowired
+    private SuperFeed2Dao superfeeddao;
 
-    @Override
-    public String getTaskName() {
-        return "GiltAnalysis";
-    }
+    @Autowired
+    private Transformer transformer;
 
     @Autowired
     private GiltFeedDao giltFeedDao;
+
+    @Autowired
+    private GiltInsert insertService;
 
     @Autowired
     private GiltSkuService giltSkuService;
@@ -65,9 +66,52 @@ public class GiltAnalysisService extends BaseTaskService {
         return Integer.valueOf(getFeedGetConfig().getProp_val1());
     }
 
+    /**
+     * 获取子系统
+     */
     @Override
-    protected void onStartup(List<TaskControlBean> taskControlList) throws InterruptedException {
+    public SubSystem getSubSystem() {
+        return SubSystem.CMS;
+    }
 
+    /**
+     * 获取任务名称
+     */
+    @Override
+    public String getTaskName() {
+        return "GiltAnalysis";
+    }
+
+    /**
+     * 必须实现的，具体的任务内容
+     *
+     * @param taskControlList job 配置
+     */
+    @Override
+    protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
+
+        // 清表
+        $info("产品信息清表开始");
+        giltFeedDao.clearTemp();
+        $info("产品信息清表结束");
+
+        // 插入数据库
+        $info("产品信息插入开始");
+        superFeedImport(taskControlList);
+        $info("产品信息插入完成");
+
+        logger.info("transform开始");
+        transformer.new Context(GILT, this).transform();
+        logger.info("transform结束");
+
+        insertService.new Context(GILT).postNewProduct();
+    }
+
+
+    /**
+     * 产品文件读入
+     */
+    private void superFeedImport(List<TaskControlBean> taskControlList) throws Exception {
         List<Runnable> runnables = new ArrayList<>();
 
         runnables.add(() -> {
@@ -82,11 +126,8 @@ public class GiltAnalysisService extends BaseTaskService {
     }
 
     private void onStartupInThread() throws Exception {
-
         int delay = getDelaySecond();
-
         while(true) {
-
             $info("准备获取第 %s 页", pageIndex);
 
             List<GiltSku> skuList = getSkus(pageIndex);
@@ -112,128 +153,6 @@ public class GiltAnalysisService extends BaseTaskService {
 
             pageIndex++;
         }
-    }
-
-    private void doFeedData(List<GiltSku> skuList) throws Exception {
-
-        prepareData(skuList);
-
-        boolean inserted = insert();
-
-        boolean updated = update();
-
-        if (inserted || updated)
-            attribute();
-    }
-
-    private void attribute() {
-        $info("attribute 暂未实现");
-    }
-
-    private boolean update() throws Exception {
-
-        $info("进入更新");
-
-        List<SuperFeedGiltBean> newData = giltFeedDao.selectUpdatingProducts();
-
-        $info("\t新数据取得 -> %s", newData.size());
-
-        GiltAnalysisContext context = new GiltAnalysisContext();
-
-        for (SuperFeedGiltBean newItem: newData) {
-            SuperFeedGiltBean oldItem = giltFeedDao.selectFullUpdatingProduct(newItem.getProduct_look_id());
-            context.put(newItem, oldItem);
-        }
-
-        if (context.isNoNeedUpdate()) {
-            $info("\t无需要更新的数据");
-            setUpdateFlag(null);
-            return false;
-        }
-
-        return callUpdate(context);
-    }
-
-    private boolean callUpdate(GiltAnalysisContext context) throws Exception {
-
-        WsdlProductService service = new WsdlProductService(GILT);
-
-        List<String> failCodes = new ArrayList<>();
-
-        List<String> successCodes = new ArrayList<>();
-
-        for (ProductsFeedUpdate feedUpdate: context.getFeedUpdateList()) {
-
-            WsdlProductUpdateResponse response = service.update(feedUpdate);
-
-            ProductUpdateResponseBean productUpdateResponseBean = response.getResultInfo();
-
-            if (response.getResult().equals("NG")) {
-
-                $info("\t更新产品处理失败 -> MessageCode = %s ,Message = %s", response.getMessageCode(), response.getMessage());
-
-                failCodes.add(feedUpdate.getCode());
-            } else {
-
-                List<ProductUpdateDetailBean> failure = productUpdateResponseBean.getFailure();
-
-                if (!failure.isEmpty()) {
-
-                    String failureMessage = failure.stream().map(ProductUpdateDetailBean::getResultMessage).collect(joining(";"));
-
-                    $info("\t更新产品处理失败 -> " + failureMessage);
-
-                    logIssue("cms 数据导入处理", "更新产品处理失败 -> " + failureMessage);
-
-                    failCodes.add(feedUpdate.getCode());
-                } else {
-
-                    successCodes.add(feedUpdate.getCode());
-                }
-            }
-        }
-
-        $info("\t更新产品结束 -> 成功 %s, 失败 %s", successCodes.size(), failCodes.size());
-
-        return setUpdateFlag(successCodes);
-    }
-
-    private boolean setUpdateFlag(List<String> successCodes) {
-
-        int count0 = giltFeedDao.deleteUpdating();
-        int count1 = giltFeedDao.selectInsertUpdating();
-        int count2 = giltFeedDao.updateUpdated(successCodes);
-
-        $info("\t更新产品标识结束 -> DELETE %s, INSERT %s, UPDATE %s", count0, count1, count2);
-
-        return count2 > 0;
-    }
-
-    private Map<String, SuperFeedGiltBean> getUpdatingMap(List<SuperFeedGiltBean> feedGiltBeanList) {
-        return feedGiltBeanList.stream().collect(toMap(SuperFeedGiltBean::getId, i -> i));
-    }
-
-    private void prepareData(List<GiltSku> skuList) {
-
-        List<SuperFeedGiltBean> feedGiltBeanList = new ArrayList<>();
-
-        for (GiltSku giltSku : skuList) feedGiltBeanList.add(toMySqlBean(giltSku));
-
-        $info("转换 SKU: %s", feedGiltBeanList.size());
-
-        giltFeedDao.clearTemp();
-
-        int count = giltFeedDao.insertListTemp(feedGiltBeanList);
-
-        $info("插入 TEMP SKU: %s", count);
-
-        int[] counts = giltFeedDao.updateFlg();
-
-        $info("更新 SKU 标识位: INSERT -> %s, UPDATE -> %s", counts[0], counts[1]);
-
-        counts = giltFeedDao.appendInserting();
-
-        $info("追加插入的 SKU 数据: DELETE -> %s, INSERT -> %s", counts[0], counts[1]);
     }
 
     private List<GiltSku> getSkus(int index) throws Exception {
@@ -265,70 +184,54 @@ public class GiltAnalysisService extends BaseTaskService {
 
         return giltSkus;
     }
+    private void doFeedData(List<GiltSku> skuList) throws Exception {
 
-    private boolean insert() throws Exception {
+        prepareData(skuList);
 
-        List<SuperFeedGiltBean> inserting = giltFeedDao.selectFullByUpdateFlg(SuperFeedGiltBean.INSERTING);
-
-        GiltAnalysisContext context = new GiltAnalysisContext();
-
-        for (SuperFeedGiltBean feedGiltBean : inserting)
-            context.put(feedGiltBean);
-
-        List<List<CategoryBean>> categoryTreeList = context.getCategoriesList();
-
-        $info("\t构建的 Category 树: %s", categoryTreeList.size());
-
-        return callInsert(context);
     }
 
-    private boolean callInsert(GiltAnalysisContext context) throws Exception {
+    private void prepareData(List<GiltSku> skuList) {
 
-        WsdlProductService service = new WsdlProductService(GILT);
+        List<SuperFeedGiltBean> feedGiltBeanList = new ArrayList<>();
 
-        List<String> modelFailList = new ArrayList<>();
+        for (GiltSku giltSku : skuList) feedGiltBeanList.add(toMySqlBean(giltSku));
 
-        List<String> productFailList = new ArrayList<>();
+        int count = giltFeedDao.insertListTemp(feedGiltBeanList);
 
-        for (List<CategoryBean> categoryTree: context.getCategoriesList()) {
+        insertClientSku(feedGiltBeanList);
 
-            $info("\t调用 Insert -> %s", categoryTree.get(categoryTree.size() - 1).getUrl_key());
+        $info("插入 TEMP SKU: %s", count);
+    }
 
-            ProductsFeedInsert feedInsert = new ProductsFeedInsert();
+    private void insertClientSku(List<SuperFeedGiltBean> feedGiltBeanList){
 
-            feedInsert.setChannel_id(GILT.getId());
-            feedInsert.setCategorybeans(categoryTree);
+        List<WmsBtClientSkuModel> clientSkuModels = new ArrayList<>();
+        for(SuperFeedGiltBean feedGiltBean : feedGiltBeanList) {
+            String[] codes = feedGiltBean.getProduct_codes().split(",");
 
-            WsdlProductInsertResponse response = service.insert(feedInsert);
-
-            $info("\t接口结果: %s ; 返回: %s", response.getResult(), response.getMessage());
-
-            ProductFeedResponseBean productFeedResponseBean = response.getResultInfo();
-
-            if (response.getResult().equals("OK") && productFeedResponseBean.getSuccess().size() > 0) {
-
-                List<ProductFeedDetailBean> productFeedDetailBeans = productFeedResponseBean.getFailure();
-
-                for (ProductFeedDetailBean productFeedDetailBean : productFeedDetailBeans) {
-                    //  处理类型 1:category 无; 2:model
-                    if (productFeedDetailBean.getBeanType() == 2)
-                        modelFailList.add(productFeedDetailBean.getDealObject().getModel());
-                    //  处理类型 3:product; 4:item
-                    if (productFeedDetailBean.getBeanType() == 3 || productFeedDetailBean.getBeanType() == 4)
-                        productFailList.add(productFeedDetailBean.getDealObject().getCode());
-                }
+            if (codes.length > 1) {
+                // 如果 Code 有多个, 则需要将第一位和第二位的内容记录到 wms_bt_client_sku 表中
+                WmsBtClientSkuModel clientSkuModel = new WmsBtClientSkuModel();
+                clientSkuModel.setOrder_channel_id(ChannelConfigEnums.Channel.GILT.getId());
+                clientSkuModel.setBarcode(codes[1]);
+                clientSkuModel.setItem_code(feedGiltBean.getProduct_look_id());
+                clientSkuModel.setColor(feedGiltBean.getAttributes_color_name());
+                clientSkuModel.setSize(feedGiltBean.getAttributes_size_value());
+                clientSkuModel.setUpc(codes[0]);
+                clientSkuModel.setActive(true);
+                String now = DateTimeUtil.getNow();
+                clientSkuModel.setCreated(now);
+                clientSkuModel.setModified(now);
+                clientSkuModel.setCreater(getTaskName());
+                clientSkuModel.setModifier(getTaskName());
+                clientSkuModels.add(clientSkuModel);
             }
         }
-
-        $info("\t总共~ 失败的 Model: %s ; 失败的 Product: %s", modelFailList.size(), productFailList.size());
-
-        int[] count = giltFeedDao.updateInsertSuccess(modelFailList, productFailList);
-
-        $info("\t新商品 INSERT 处理全部完成 { Feed: %s, Fail(M): %s, Fail(C): %s }", count[0], count[1], count[2]);
-
-        return count[0] - count[1] - count[2] > 0;
+        if (clientSkuModels.size() > 0) {
+            int count = giltFeedDao.insertIgnoreList(clientSkuModels);
+            $info("\t插入 wms_bt_client_sku 表: %s", count);
+        }
     }
-
     private SuperFeedGiltBean toMySqlBean(GiltSku giltSku) {
 
         SuperFeedGiltBean superFeedGiltBean = new SuperFeedGiltBean();
@@ -381,10 +284,16 @@ public class GiltAnalysisService extends BaseTaskService {
         superFeedGiltBean.setProduct_codes_first(String.valueOf(giltSku.getProduct_codes().get(0)));
 
         List<GiltCategory> categories = giltSku.getCategories();
+
+        String catPath ="";
+        for(GiltCategory categorie : categories){
+            if(catPath.length() != 0) catPath+="-";
+            catPath += categorie.getName().replaceAll("-","－");
+        }
         GiltCategory giltCategory = categories.get(categories.size() - 1);
 
         superFeedGiltBean.setCategories_id(String.valueOf(giltCategory.getId()));
-        superFeedGiltBean.setCategories_key(giltCategory.getKey().replaceAll("_", "-"));
+        superFeedGiltBean.setCategories_key(catPath);
         superFeedGiltBean.setCategories_name(giltCategory.getName());
 
         return superFeedGiltBean;

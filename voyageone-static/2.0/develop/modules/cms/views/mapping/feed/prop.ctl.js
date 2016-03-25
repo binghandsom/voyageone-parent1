@@ -172,11 +172,13 @@ define([
                     keyWord: null
                 };
 
-                this.mappingModel = null;
+                this.mapping = null;
 
                 this.saveMapping = this.saveMapping.bind(this);
 
                 this.matchOver = false;
+
+                this.mappings = null;
             }
 
             FeedPropMappingController.prototype = {
@@ -195,62 +197,31 @@ define([
                 },
 
                 init: function () {
+                    var self = this;
 
-                    var ttt = this;
-
-                    ttt.feedMappingService.getMainProps({
-                            feedCategoryPath: ttt.feedCategoryPath
-                        })
-
-                        .then(function (res) {
-
-                            // 保存主数据类目(完整类目)
-                            ttt.mainCategory = res.data.category;
-
-                            // 保存字段 Map 数据
-                            ttt.fields = res.data.fields;
-                            ttt.skuFields = res.data.sku;
-                            ttt.commonFields = res.data.common;
-
-                            // 根据类目信息继续查询
-                            ttt.feedMappingService.getMatched(
-                                {
-                                    from: ttt.feedCategoryPath,
-                                    isCommon: ttt.isCommon
-                                }
-                            ).then(function (res) {
-
-                                var resultMap = res.data;
-
-                                // 保存已匹配的属性
-                                toArray.matchedMains = resultMap.propMap;
-
-                                ttt.mappingModel = resultMap.mappingModel;
-
-                                // 包装数据源
-                                ttt.dataSources.fields = toArray(ttt.fields);
-                                ttt.dataSources.common = toArray(ttt.commonFields);
-                                ttt.dataSources.sku = toArray(ttt.skuFields);
-
-                            });
+                    self.feedMappingService.getMappings({
+                        from: self.feedCategoryPath,
+                        isCommon: self.isCommon
+                    }).then(function(res) {
+                        self.mappings = res.data;
+                        self.mapping = self.isCommon ? self.mappings[0] : self.mappings.find(function(mapping){
+                            return mapping.scope.feedCategoryPath === self.feedCategoryPath;
                         });
+                        self.matchOver = self.mapping.matchOver === 1;
 
-                    ttt.feedMappingService.getMatchOver({
-                            from: ttt.feedCategoryPath,
-                            isCommon: ttt.isCommon
-                        })
-                        .then(function (res) {
-                            ttt.matchOver = res.data == 1;
-                        });
+                        self.changeMapping();
+                    });
                 },
+
                 popupContext: function (bean) {
                     return {
                         isCommon: this.isCommon,
-                        mappingModel: this.mappingModel,
+                        mapping: this.mapping,
                         field: bean.field,
                         bean: bean
                     };
                 },
+
                 /**
                  * 上层 popup 返回时的调用
                  * @param {{feedCategoryPath:string,mainCategoryPath:string,field:object,fieldMapping:object}} context
@@ -272,7 +243,7 @@ define([
                     context.fieldMapping.type = bean.type;
 
                     self.feedMappingService.saveFieldMapping({
-                        mappingId: self.mappingModel._id,
+                        mappingId: self.mapping._id,
                         fieldPath: path.reverse(),
                         propMapping: context.fieldMapping
                     }).then(function (res) {
@@ -317,9 +288,17 @@ define([
 
                     var result = true;
                     var keyWord = this.show.keyWord;
+                    var parent;
 
-                    if (keyWord && bean.field.name.indexOf(keyWord) < 0)
-                        return false;
+                    if (keyWord) {
+                        parent = bean.parent;
+                        while (parent && parent.parent)
+                            parent = parent.parent;
+                        parent = parent || bean;
+
+                        if (parent.field.name.indexOf(keyWord) < 0)
+                            return false;
+                    }
 
                     if (this.show.hasRequired !== null) {
                         result = this.show.hasRequired === bean.inRequired;
@@ -339,8 +318,13 @@ define([
                             isCommon: ttt.isCommon
                         })
                         .then(function (res) {
-                            if (res.data)
+                            if (res.data) {
                                 ttt.notify.success(ttt.$translate.instant('TXT_MSG_UPDATE_SUCCESS'));
+                                // 通知列表页面切换 MatchOver
+                                var feedMappingController = opener && opener.feedMappingController;
+                                if (feedMappingController)
+                                    feedMappingController.setMatchOver(ttt.mapping.scope, ttt.matchOver);
+                            }
                             else {
                                 ttt.notify.danger(ttt.$translate.instant('TXT_MSG_UPDATE_FAIL'));
                                 ttt.matchOver = !ttt.matchOver;
@@ -357,6 +341,36 @@ define([
                         matched: null,
                         keyWord: null
                     };
+                },
+
+                /**
+                 * 更改当前选中的主类目后, 刷新画面的所有数据
+                 */
+                changeMapping: function () {
+                    var self = this;
+                    
+                    self.feedMappingService.getMappingInfo({
+                        from: self.feedCategoryPath,
+                        to: self.mapping.scope.mainCategoryPath
+                    }).then(function(res){
+                        var map = res.data;
+
+                        // 保存主数据类目(完整类目)
+                        self.mainCategory = map.category;
+
+                        // 保存字段 Map 数据
+                        self.fields = map.fields;
+                        self.skuFields = map.sku;
+                        self.commonFields = map.common;
+
+                        // 保存已匹配的属性
+                        toArray.matchedMains = map.matched;
+                        
+                        // 包装数据源
+                        self.dataSources.fields = toArray(self.fields);
+                        self.dataSources.common = toArray(self.commonFields);
+                        self.dataSources.sku = toArray(self.skuFields);
+                    });
                 }
             };
 

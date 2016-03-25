@@ -2,7 +2,7 @@
 <ul class="nav">
     <!-- CMS 类目管理 -->
     <!--<li ng-class="{active:$state.includes('ims.inventory''ims.new_inventory')}"> TODO 暂时做不了-->
-    <li>
+    <li ng-if="!$root.isTranslator">
         <a class="auto" ui-sref="cms.category">
       <span class="pull-right text-muted">
         <i class="fa fa-fw fa-angle-right text"></i>
@@ -35,7 +35,7 @@
         </ul>
     </li>
     <!-- Promotion管理 -->
-    <li>
+    <li  ng-if="!$root.isTranslator">
         <a class="auto">
             <span class="pull-right text-muted">
                 <i class="fa fa-fw fa-angle-right text"></i>
@@ -66,7 +66,7 @@
     </li>
 
     <!-- 高级检索 -->
-    <li>
+    <li  ng-if="!$root.isTranslator">
         <a class="auto">
         <span class="pull-right text-muted">
         <i class="fa fa-fw fa-angle-right text"></i>
@@ -90,7 +90,7 @@
         </ul>
     </li>
     <!-- 设定 -->
-    <li>
+    <li  ng-if="!$root.isTranslator">
         <a class="auto">
             <span class="pull-right text-muted">
                 <i class="fa fa-fw fa-angle-right text"></i>
@@ -150,7 +150,7 @@
         </ul>
     </li>
     <!-- 店铺管理 -->
-    <li>
+    <li ng-if="!$root.isTranslator">
         <a class="auto">
             <span class="pull-right text-muted">
                 <i class="fa fa-fw fa-angle-right text"></i>
@@ -192,7 +192,7 @@
         </ul>
     </li>
     <!-- 系统管理 -->
-    <li>
+    <li  ng-if="!$root.isTranslator">
         <a class="auto">
             <span class="pull-right text-muted">
                 <i class="fa fa-fw fa-angle-right text"></i>

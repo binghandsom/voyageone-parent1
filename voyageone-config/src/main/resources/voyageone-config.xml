@@ -7,7 +7,7 @@
     <!-- localhost dev env -->
     <!-- DAO相关配置 -->
     <import resource="classpath*:datasource-cms2-config.xml" />
-    <import resource="classpath*:datasource-config-mongo.xml" />
+    <import resource="classpath*:datasource-config-mongo-cms2.xml" />
     <!-- SDK Client Config -->
     <import resource="classpath*:sdk-client-config.xml" />
     <!-- MQ Config -->
@@ -17,11 +17,13 @@
 
     <!-- online env -->
     <!--<import resource="file:/usr/web/spring-config/datasource-cms2-config.xml" />-->
-    <!--<import resource="file:/usr/web/spring-config/datasource-config-mongo.xml" />-->
+    <!--<import resource="file:/usr/web/spring-config/datasource-config-mongo-cms2.xml" />-->
     <!-- SDK Client Config -->
     <!--<import resource="file:/usr/web/spring-config/sdk-client-config.xml" />-->
     <!-- MQ Config -->
     <!--<import resource="file:/usr/web/spring-config/mq-config.xml" />-->
+    <!-- Redis Config -->
+    <!--<import resource="file:/usr/web/spring-config/redis-config.xml" />-->
 
 
 </beans>

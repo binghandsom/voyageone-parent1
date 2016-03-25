@@ -354,7 +354,7 @@ public class CmsPlatformMappingService extends BaseTaskService {
                 a.add("sku_quantity");
                 a.add("sku_outerId");
                 a.add("sku_barcode");
-                b.add("priceSale");
+                b.add("priceMsrp"); // 把sku_price替换为: priceSale 或者 priceMsrp
                 b.add("qty");
                 b.add("skuCode");
                 b.add("barcode");

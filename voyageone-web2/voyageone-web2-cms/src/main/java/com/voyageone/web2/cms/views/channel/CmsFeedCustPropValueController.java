@@ -4,15 +4,14 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
-import com.voyageone.web2.core.bean.UserSessionBean;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -63,41 +62,7 @@ public class CmsFeedCustPropValueController extends CmsController {
      */
     @RequestMapping(value = CmsUrlConstants.CHANNEL.CUSTOM_VALUE.INIT)
     public AjaxResponse getFeedCustPropValueList(@RequestBody Map<String, String> params) {
-        logger.debug("getFeedCustPropValueList() >>>> start");
-        logger.debug("getFeedCustPropValueList() >>>> params" + params.toString());
-        String catPath = StringUtils.trimToNull(params.get("cat_path"));
-        int tSts = NumberUtils.toInt(params.get("sts"), 2);
-        String propName = StringUtils.trimToNull(params.get("propName"));
-        String propValue = StringUtils.trimToNull(params.get("propValue"));
-        if (tSts == 0) {
-            // 查询未翻译的属性值时，不需要输入属性值
-            propValue = null;
-        }
-        int skip = NumberUtils.toInt(params.get("skip"));
-        int limit = NumberUtils.toInt(params.get("limit"));
-        UserSessionBean userInfo = getUser();
-
-        // 查询共通属性及类目属性
-        List<Map<String, Object>> rslt1 = cmsFeedCustPropService.selectPropValue(catPath, tSts, propName, propValue, userInfo.getSelChannelId());
-        if (rslt1 == null) {
-            rslt1 = new ArrayList<Map<String, Object>>(0);
-        }
-
-        HashMap dataMap = new HashMap();
-        int listCnt = rslt1.size();
-        dataMap.put("total", listCnt);
-        if (listCnt == 0) {
-            dataMap.put("resultData", rslt1);
-        } else {
-            int staIdx = (skip - 1) * limit;
-            int endIdx = staIdx + limit;
-            if (listCnt < endIdx) {
-                endIdx = listCnt;
-            }
-            dataMap.put("resultData", rslt1.subList(staIdx, endIdx));
-        }
-        AjaxResponse resp = success(dataMap);
-        return resp;
+        return success(cmsFeedCustPropService.getFeedCustPropValueList(params, getUser()));
     }
 
     /**
@@ -135,32 +100,12 @@ public class CmsFeedCustPropValueController extends CmsController {
      */
     @RequestMapping(value = CmsUrlConstants.CHANNEL.CUSTOM_VALUE.ADD)
     public AjaxResponse addFeedCustPropValue(@RequestBody Map<String, String> params) {
-        logger.debug("addFeedCustPropValue() >>>> start");
-        logger.debug("addFeedCustPropValue() >>>> params" + params.toString());
         int propId = NumberUtils.toInt(params.get("prop_id"));
         String origValue = StringUtils.trimToNull(params.get("value_original"));
-        String transValue = StringUtils.trimToEmpty(params.get("value_translation"));
         if (propId == 0 || origValue == null) {
-            // 缺少参数
-            logger.warn("addFeedCustPropValue() >>>> 参数错误/缺少参数");
             throw new BusinessException("参数错误/缺少参数");
         }
-
-        UserSessionBean userInfo = getUser();
-        // 先判断该属性值是否已存在
-        if (cmsFeedCustPropService.isPropValueExist(propId, userInfo.getSelChannelId(), origValue)) {
-            logger.warn("addFeedCustPropValue() >>>> 重复翻译的属性值");
-            throw new BusinessException("重复翻译的属性值");
-        }
-
-        int rslt = cmsFeedCustPropService.addPropValue(propId, userInfo.getSelChannelId(), origValue, transValue, userInfo.getUserName());
-        if (rslt == 0) {
-            logger.error("新增翻译后的属性值不成功");
-        } else {
-            logger.debug("新增翻译后的属性值成功");
-        }
-        AjaxResponse resp = success(null);
-        return resp;
+        return success(cmsFeedCustPropService.addFeedCustPropValue(params, getUser()));
     }
 
     /**
@@ -196,30 +141,10 @@ public class CmsFeedCustPropValueController extends CmsController {
      */
     @RequestMapping(value = CmsUrlConstants.CHANNEL.CUSTOM_VALUE.SAVE)
     public AjaxResponse saveFeedCustPropValue(@RequestBody Map<String, String> params) {
-        logger.debug("saveFeedCustPropValue() >>>> start");
-        logger.debug("saveFeedCustPropValue() >>>> params" + params.toString());
         int valueId = NumberUtils.toInt(params.get("value_id"));
-        String transValue = StringUtils.trimToEmpty(params.get("value_translation"));
         if (valueId == 0) {
-            // 缺少参数
-            logger.warn("saveFeedCustPropValue() >>>> 参数错误/缺少参数");
             throw new BusinessException("参数错误/缺少参数");
         }
-
-        UserSessionBean userInfo = getUser();
-        // 先判断该属性值是否已存在
-        if (!cmsFeedCustPropService.isPropValueExist(valueId)) {
-            logger.warn("saveFeedCustPropValue() >>>> 该属性值不存在");
-            throw new BusinessException("该属性值不存在");
-        }
-
-        int rslt = cmsFeedCustPropService.updatePropValue(valueId, transValue, userInfo.getUserName());
-        if (rslt == 0) {
-            logger.error("更新翻译后的属性值不成功");
-        } else {
-            logger.debug("更新翻译后的属性值成功");
-        }
-        AjaxResponse resp = success(null);
-        return resp;
+        return success(cmsFeedCustPropService.saveFeedCustPropValue(params, getUser()));
     }
 }

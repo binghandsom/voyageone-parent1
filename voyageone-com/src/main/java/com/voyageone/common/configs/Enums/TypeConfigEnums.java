@@ -2,7 +2,7 @@ package com.voyageone.common.configs.Enums;
 
 import com.voyageone.common.configs.beans.TypeBean;
 
-import com.voyageone.common.configs.Type;
+import com.voyageone.common.configs.Types;
 
 import java.util.List;
 
@@ -199,7 +199,12 @@ public class TypeConfigEnums {
 		/**
 		 * 活动状态:cms2
 		 */
-		promotionStatus(56);
+		promotionStatus(56),
+
+		/**
+		 * 获取任务的优先顺序:cms2
+		 */
+		translateTask(66);
 
     	private int id;
 
@@ -212,19 +217,19 @@ public class TypeConfigEnums {
 		}
 
 		public TypeBean getBean() {
-			return Type.getTypeBean(getId());
+			return Types.getTypeBean(getId());
 		}
 
 		public TypeBean getBean(String lang) {
-			return Type.getTypeBean(getId(), lang);
+			return Types.getTypeBean(getId(), lang);
 		}
 
 		public List<TypeBean> getList() {
-			return Type.getTypeList(getId());
+			return Types.getTypeList(getId());
 		}
 
 		public List<TypeBean> getList(String lang) {
-			return Type.getTypeList(getId(), lang);
+			return Types.getTypeList(getId(), lang);
 		}
 	}
 }

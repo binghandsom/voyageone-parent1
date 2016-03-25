@@ -47,7 +47,12 @@ public class CartEnums {
 		/**
 		 * 聚美优品
 		 */
-		JM("27");
+		JM("27"),
+
+		/**
+		 * 天猫MiniMall
+		 */
+		TI("28");
 
 
     	private String id;
@@ -76,6 +81,8 @@ public class CartEnums {
 					return JG;
 				case "27":
 					return JM;
+				case "28":
+					return TI;
 				default:
 					return null;
 			}

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.service.dao.sql">
+    <select id="select_stock_separate_increment_task" resultType="HashMap" parameterType="HashMap">
+        select
+            t1.sub_task_id,
+            t1.task_id,
+            t1.sub_task_name,
+            t1.cart_id,
+            t1.type,
+            t1.value
+            <if test="channelId !=null and lang != null" >
+                ,t2.name
+            </if>
+        from   voyageone_cms2.cms_bt_stock_separate_increment_task t1
+        <if test="channelId !=null and lang != null" >
+            left outer join (select value,name from com_mt_value_channel where type_id= '53'and channel_id = #{channelId} and lang_id = #{lang}) t2
+            on t1.cart_id = t2.value
+        </if>
+        where 1=1
+            <if test="subTaskId != null">
+                and sub_task_id = #{subTaskId}
+            </if>
+            <if test="taskId != null">
+                and task_id = #{taskId}
+            </if>
+            <if test="cartId != null and cartId != ''">
+                and cart_id = #{cartId}
+            </if>
+            <if test="subTaskName != null and subTaskName != ''">
+                and sub_task_name like '%${subTaskName}%'
+            </if>
+    </select>
+
+    <delete id="delete_stock_separate_increment_task" parameterType="HashMap">
+        delete
+        from voyageone_cms2.cms_bt_stock_separate_increment_task
+        where 1=1
+            <if test="subTaskId != null">
+                and sub_task_id = #{subTaskId}
+            </if>
+            <if test="taskId != null">
+                and task_id = #{taskId}
+            </if>
+    </delete>
+</mapper>
