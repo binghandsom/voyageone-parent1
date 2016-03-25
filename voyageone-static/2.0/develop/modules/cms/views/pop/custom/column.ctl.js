@@ -52,6 +52,9 @@ define([
             console.log($scope.cusData);
         };
 
+        $scope.close = function () {
+            $modalInstance.dismiss();
+        }
 
     });
 

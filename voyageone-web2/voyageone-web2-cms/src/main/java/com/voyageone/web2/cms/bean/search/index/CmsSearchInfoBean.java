@@ -66,6 +66,16 @@ public class CmsSearchInfoBean {
 
     private Integer productPageSize = 0;
 
+    public String getPromotion() {
+        return promotion;
+    }
+
+    public void setPromotion(String promotion) {
+        this.promotion = promotion;
+    }
+
+    private String promotion = null;
+
     public String getTransStsFlg() {
         return transStsFlg;
     }
