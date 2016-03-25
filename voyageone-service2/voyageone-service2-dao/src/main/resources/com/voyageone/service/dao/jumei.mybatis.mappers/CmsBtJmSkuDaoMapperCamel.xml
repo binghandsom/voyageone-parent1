@@ -7,18 +7,17 @@
 	
     <select id="selectList" resultMap="ResultMap">
 
-        select id,deal_id,channel_id,product_code,cms_bt_jm_product_id,sku_code,jm_spu_no,jm_sku_no,upc,cms_size,jm_size,state,creater,created,modified,modifier        from cms_bt_jm_sku
+        select id,channel_id,product_code,cms_bt_jm_product_id,sku_code,jm_spu_no,jm_sku_no,upc,cms_size,jm_size,state,creater,created,modified,modifier        from cms_bt_jm_sku
     </select>
     <select id="select" resultMap="ResultMap">
-        select id,deal_id,channel_id,product_code,cms_bt_jm_product_id,sku_code,jm_spu_no,jm_sku_no,upc,cms_size,jm_size,state,creater,created,modified,modifier from cms_bt_jm_sku where id=#{id}
+        select id,channel_id,product_code,cms_bt_jm_product_id,sku_code,jm_spu_no,jm_sku_no,upc,cms_size,jm_size,state,creater,created,modified,modifier from cms_bt_jm_sku where id=#{id}
     </select>
 
      <update id="update">
         update cms_bt_jm_sku
         set
 
-            `deal_id`=#{dealId}
-            ,`channel_id`=#{channelId}
+            `channel_id`=#{channelId}
             ,`product_code`=#{productCode}
             ,`cms_bt_jm_product_id`=#{cmsBtJmProductId}
             ,`sku_code`=#{skuCode}
@@ -42,7 +41,6 @@
     <insert id="insert" useGeneratedKeys="true" keyProperty="id" >
         INSERT INTO cms_bt_jm_sku
         (
-              `deal_id`,
               `channel_id`,
               `product_code`,
               `cms_bt_jm_product_id`,
@@ -59,7 +57,6 @@
               `modifier`
         )
         VALUES(
-              #{dealId},
               #{channelId},
               #{productCode},
               #{cmsBtJmProductId},

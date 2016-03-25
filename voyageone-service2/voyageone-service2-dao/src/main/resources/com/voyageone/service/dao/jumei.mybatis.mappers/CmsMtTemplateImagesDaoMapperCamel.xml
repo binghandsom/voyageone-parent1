@@ -7,22 +7,20 @@
 	
     <select id="selectList" resultMap="ResultMap">
 
-        select id,cart_id,channel_id,key_extend1,key_extend2,model_type,image_model_url,syn_flg,created,creater,modified,modifier        from cms_mt_template_images
+        select id,platform_id,channel_id,template_type,image_template_url,syn_flg,created,creater,modified,modifier        from cms_mt_template_images
     </select>
     <select id="select" resultMap="ResultMap">
-        select id,cart_id,channel_id,key_extend1,key_extend2,model_type,image_model_url,syn_flg,created,creater,modified,modifier from cms_mt_template_images where id=#{id}
+        select id,platform_id,channel_id,template_type,image_template_url,syn_flg,created,creater,modified,modifier from cms_mt_template_images where id=#{id}
     </select>
 
      <update id="update">
         update cms_mt_template_images
         set
 
-            `cart_id`=#{cartId}
+            `platform_id`=#{platformId}
             ,`channel_id`=#{channelId}
-            ,`key_extend1`=#{keyExtend1}
-            ,`key_extend2`=#{keyExtend2}
-            ,`model_type`=#{modelType}
-            ,`image_model_url`=#{imageModelUrl}
+            ,`template_type`=#{templateType}
+            ,`image_template_url`=#{imageTemplateUrl}
             ,`syn_flg`=#{synFlg}
             ,`modified`=#{modified}
             ,`modifier`=#{modifier}
@@ -38,12 +36,10 @@
     <insert id="insert" useGeneratedKeys="true" keyProperty="id" >
         INSERT INTO cms_mt_template_images
         (
-              `cart_id`,
+              `platform_id`,
               `channel_id`,
-              `key_extend1`,
-              `key_extend2`,
-              `model_type`,
-              `image_model_url`,
+              `template_type`,
+              `image_template_url`,
               `syn_flg`,
               `created`,
               `creater`,
@@ -51,12 +47,10 @@
               `modifier`
         )
         VALUES(
-              #{cartId},
+              #{platformId},
               #{channelId},
-              #{keyExtend1},
-              #{keyExtend2},
-              #{modelType},
-              #{imageModelUrl},
+              #{templateType},
+              #{imageTemplateUrl},
               #{synFlg},
               #{created},
               #{creater},

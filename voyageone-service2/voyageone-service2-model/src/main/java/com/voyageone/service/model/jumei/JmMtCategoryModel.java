@@ -5,13 +5,14 @@ import java.math.BigDecimal;
 import java.io.Serializable;
 import com.voyageone.common.util.*;
 import com.voyageone.common.help.DateHelp;
-public class CmsMtTemplateImagesModel implements Serializable
+public class JmMtCategoryModel implements Serializable
 {
-   public CmsMtTemplateImagesModel()
+   public JmMtCategoryModel()
     {
-        setChannelId(""); 
-        setTemplateType(""); 
-        setImageTemplateUrl(""); 
+        setName(""); 
+        setLevel(""); 
+        setSeoKeywords(""); 
+        setSeoDescription(""); 
         setCreater(""); 
         setModifier(""); 
 
@@ -25,33 +26,33 @@ public class CmsMtTemplateImagesModel implements Serializable
     
     
  /**
-平台id   聚美27
+
         */
-     private int platformId;
+     private String name;
     
     
  /**
-店铺渠道编号（如：Sneakerhead为001,Jewelry为010）
+
         */
-     private String channelId;
+     private String level;
     
     
  /**
-图片模板类别（1:宝贝图（白底方图）；2:；详情图（商品实拍图）；3：移动端宝贝图（竖图））
+
         */
-     private String templateType;
+     private int parentCategoryId;
     
     
  /**
-图片锁定条件（1:白底方图的情况下为"main_image"；2:商品详情图的情况下为"deal_image"； 3:参数图的情况下为"property_image"）
+
         */
-     private String imageTemplateUrl;
+     private String seoKeywords;
     
     
  /**
-0:有变更需刷images表 1:已经同步images表
+
         */
-     private int synFlg;
+     private String seoDescription;
     
     
  /**
@@ -93,93 +94,100 @@ public class CmsMtTemplateImagesModel implements Serializable
     
         
          /**
-           平台id   聚美27
+           
         */
-        public int getPlatformId()
+        public String getName()
         {
          
-        return this.platformId;
+        return this.name;
         }
-        public void setPlatformId(int platformId)
+        public void setName(String name)
         {
-         this.platformId=platformId;
-        }
-    
-        
-         /**
-           店铺渠道编号（如：Sneakerhead为001,Jewelry为010）
-        */
-        public String getChannelId()
-        {
-         
-        return this.channelId;
-        }
-        public void setChannelId(String channelId)
-        {
-        if(channelId!=null){
-this.channelId=channelId;
+        if(name!=null){
+this.name=name;
  }
 else
 {
-this.channelId="";
+this.name="";
 }
 
         }
     
         
          /**
-           图片模板类别（1:宝贝图（白底方图）；2:；详情图（商品实拍图）；3：移动端宝贝图（竖图））
+           
         */
-        public String getTemplateType()
+        public String getLevel()
         {
          
-        return this.templateType;
+        return this.level;
         }
-        public void setTemplateType(String templateType)
+        public void setLevel(String level)
         {
-        if(templateType!=null){
-this.templateType=templateType;
+        if(level!=null){
+this.level=level;
  }
 else
 {
-this.templateType="";
+this.level="";
 }
 
         }
     
         
          /**
-           图片锁定条件（1:白底方图的情况下为"main_image"；2:商品详情图的情况下为"deal_image"； 3:参数图的情况下为"property_image"）
+           
         */
-        public String getImageTemplateUrl()
+        public int getParentCategoryId()
         {
          
-        return this.imageTemplateUrl;
+        return this.parentCategoryId;
         }
-        public void setImageTemplateUrl(String imageTemplateUrl)
+        public void setParentCategoryId(int parentCategoryId)
         {
-        if(imageTemplateUrl!=null){
-this.imageTemplateUrl=imageTemplateUrl;
+         this.parentCategoryId=parentCategoryId;
+        }
+    
+        
+         /**
+           
+        */
+        public String getSeoKeywords()
+        {
+         
+        return this.seoKeywords;
+        }
+        public void setSeoKeywords(String seoKeywords)
+        {
+        if(seoKeywords!=null){
+this.seoKeywords=seoKeywords;
  }
 else
 {
-this.imageTemplateUrl="";
+this.seoKeywords="";
 }
 
         }
     
         
          /**
-           0:有变更需刷images表 1:已经同步images表
+           
         */
-        public int getSynFlg()
+        public String getSeoDescription()
         {
          
-        return this.synFlg;
+        return this.seoDescription;
         }
-        public void setSynFlg(int synFlg)
+        public void setSeoDescription(String seoDescription)
         {
-         this.synFlg=synFlg;
+        if(seoDescription!=null){
+this.seoDescription=seoDescription;
+ }
+else
+{
+this.seoDescription="";
+}
+
         }
     
         

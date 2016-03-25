@@ -7,10 +7,10 @@
 	
     <select id="selectList" resultMap="ResultMap">
 
-        select id,channel_id,jumei_product_id,deal_id,product_code,foreign_language_name,product_name_cn,product_long_name,product_medium_name,product_short_name,vo_category_name,category_lv1_name,category_lv2_name,category_lv3_name,category_lv4_name,category_lv4_id,vo_brand_name,brand_name,brand_id,product_type,size_type,color_en,attribute,origin,address_of_produce,material_en,material_cn,product_des_en,product_des_cn,available_period,applicable_crowd,search_meta_text_custom,special_note,function_ids,msrp,hs_code,hs_name,hs_unit,send_flg,state,created,creater,modified,modifier,syn_flg        from cms_bt_jm_product
+        select id,channel_id,jumei_product_id,product_code,foreign_language_name,product_name_cn,product_long_name,product_medium_name,product_short_name,vo_category_name,category_lv1_name,category_lv2_name,category_lv3_name,category_lv4_name,category_lv4_id,vo_brand_name,brand_name,brand_id,product_type,size_type,color_en,attribute,origin,address_of_produce,material_en,material_cn,product_des_en,product_des_cn,available_period,applicable_crowd,search_meta_text_custom,function_ids,msrp,hs_code,hs_name,hs_unit,send_flg,state,created,creater,modified,modifier,syn_flg        from cms_bt_jm_product
     </select>
     <select id="select" resultMap="ResultMap">
-        select id,channel_id,jumei_product_id,deal_id,product_code,foreign_language_name,product_name_cn,product_long_name,product_medium_name,product_short_name,vo_category_name,category_lv1_name,category_lv2_name,category_lv3_name,category_lv4_name,category_lv4_id,vo_brand_name,brand_name,brand_id,product_type,size_type,color_en,attribute,origin,address_of_produce,material_en,material_cn,product_des_en,product_des_cn,available_period,applicable_crowd,search_meta_text_custom,special_note,function_ids,msrp,hs_code,hs_name,hs_unit,send_flg,state,created,creater,modified,modifier,syn_flg from cms_bt_jm_product where id=#{id}
+        select id,channel_id,jumei_product_id,product_code,foreign_language_name,product_name_cn,product_long_name,product_medium_name,product_short_name,vo_category_name,category_lv1_name,category_lv2_name,category_lv3_name,category_lv4_name,category_lv4_id,vo_brand_name,brand_name,brand_id,product_type,size_type,color_en,attribute,origin,address_of_produce,material_en,material_cn,product_des_en,product_des_cn,available_period,applicable_crowd,search_meta_text_custom,function_ids,msrp,hs_code,hs_name,hs_unit,send_flg,state,created,creater,modified,modifier,syn_flg from cms_bt_jm_product where id=#{id}
     </select>
 
      <update id="update">
@@ -19,7 +19,6 @@
 
             `channel_id`=#{channelId}
             ,`jumei_product_id`=#{jumeiProductId}
-            ,`deal_id`=#{dealId}
             ,`product_code`=#{productCode}
             ,`foreign_language_name`=#{foreignLanguageName}
             ,`product_name_cn`=#{productNameCn}
@@ -48,7 +47,6 @@
             ,`available_period`=#{availablePeriod}
             ,`applicable_crowd`=#{applicableCrowd}
             ,`search_meta_text_custom`=#{searchMetaTextCustom}
-            ,`special_note`=#{specialNote}
             ,`function_ids`=#{functionIds}
             ,`msrp`=#{msrp}
             ,`hs_code`=#{hsCode}
@@ -73,7 +71,6 @@
         (
               `channel_id`,
               `jumei_product_id`,
-              `deal_id`,
               `product_code`,
               `foreign_language_name`,
               `product_name_cn`,
@@ -102,7 +99,6 @@
               `available_period`,
               `applicable_crowd`,
               `search_meta_text_custom`,
-              `special_note`,
               `function_ids`,
               `msrp`,
               `hs_code`,
@@ -119,7 +115,6 @@
         VALUES(
               #{channelId},
               #{jumeiProductId},
-              #{dealId},
               #{productCode},
               #{foreignLanguageName},
               #{productNameCn},
@@ -148,7 +143,6 @@
               #{availablePeriod},
               #{applicableCrowd},
               #{searchMetaTextCustom},
-              #{specialNote},
               #{functionIds},
               #{msrp},
               #{hsCode},

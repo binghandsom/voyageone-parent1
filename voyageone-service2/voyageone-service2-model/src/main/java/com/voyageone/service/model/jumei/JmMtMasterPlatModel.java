@@ -5,13 +5,16 @@ import java.math.BigDecimal;
 import java.io.Serializable;
 import com.voyageone.common.util.*;
 import com.voyageone.common.help.DateHelp;
-public class CmsMtTemplateImagesModel implements Serializable
+public class JmMtMasterPlatModel implements Serializable
 {
-   public CmsMtTemplateImagesModel()
+   public JmMtMasterPlatModel()
     {
-        setChannelId(""); 
-        setTemplateType(""); 
-        setImageTemplateUrl(""); 
+        setCode(""); 
+        setKey(""); 
+        setName1(""); 
+        setName2(""); 
+        setName3(""); 
+        setName4(""); 
         setCreater(""); 
         setModifier(""); 
 
@@ -25,33 +28,39 @@ public class CmsMtTemplateImagesModel implements Serializable
     
     
  /**
-平台id   聚美27
+0：brand 1:货币  2:仓库
         */
-     private int platformId;
+     private String code;
     
     
  /**
-店铺渠道编号（如：Sneakerhead为001,Jewelry为010）
+
         */
-     private String channelId;
+     private String key;
     
     
  /**
-图片模板类别（1:宝贝图（白底方图）；2:；详情图（商品实拍图）；3：移动端宝贝图（竖图））
+
         */
-     private String templateType;
+     private String name1;
     
     
  /**
-图片锁定条件（1:白底方图的情况下为"main_image"；2:商品详情图的情况下为"deal_image"； 3:参数图的情况下为"property_image"）
+
         */
-     private String imageTemplateUrl;
+     private String name2;
     
     
  /**
-0:有变更需刷images表 1:已经同步images表
+
         */
-     private int synFlg;
+     private String name3;
+    
+    
+ /**
+
+        */
+     private String name4;
     
     
  /**
@@ -93,93 +102,128 @@ public class CmsMtTemplateImagesModel implements Serializable
     
         
          /**
-           平台id   聚美27
+           0：brand 1:货币  2:仓库
         */
-        public int getPlatformId()
+        public String getCode()
         {
          
-        return this.platformId;
+        return this.code;
         }
-        public void setPlatformId(int platformId)
+        public void setCode(String code)
         {
-         this.platformId=platformId;
-        }
-    
-        
-         /**
-           店铺渠道编号（如：Sneakerhead为001,Jewelry为010）
-        */
-        public String getChannelId()
-        {
-         
-        return this.channelId;
-        }
-        public void setChannelId(String channelId)
-        {
-        if(channelId!=null){
-this.channelId=channelId;
+        if(code!=null){
+this.code=code;
  }
 else
 {
-this.channelId="";
+this.code="";
 }
 
         }
     
         
          /**
-           图片模板类别（1:宝贝图（白底方图）；2:；详情图（商品实拍图）；3：移动端宝贝图（竖图））
+           
         */
-        public String getTemplateType()
+        public String getKey()
         {
          
-        return this.templateType;
+        return this.key;
         }
-        public void setTemplateType(String templateType)
+        public void setKey(String key)
         {
-        if(templateType!=null){
-this.templateType=templateType;
+        if(key!=null){
+this.key=key;
  }
 else
 {
-this.templateType="";
+this.key="";
 }
 
         }
     
         
          /**
-           图片锁定条件（1:白底方图的情况下为"main_image"；2:商品详情图的情况下为"deal_image"； 3:参数图的情况下为"property_image"）
+           
         */
-        public String getImageTemplateUrl()
+        public String getName1()
         {
          
-        return this.imageTemplateUrl;
+        return this.name1;
         }
-        public void setImageTemplateUrl(String imageTemplateUrl)
+        public void setName1(String name1)
         {
-        if(imageTemplateUrl!=null){
-this.imageTemplateUrl=imageTemplateUrl;
+        if(name1!=null){
+this.name1=name1;
  }
 else
 {
-this.imageTemplateUrl="";
+this.name1="";
 }
 
         }
     
         
          /**
-           0:有变更需刷images表 1:已经同步images表
+           
         */
-        public int getSynFlg()
+        public String getName2()
         {
          
-        return this.synFlg;
+        return this.name2;
         }
-        public void setSynFlg(int synFlg)
+        public void setName2(String name2)
         {
-         this.synFlg=synFlg;
+        if(name2!=null){
+this.name2=name2;
+ }
+else
+{
+this.name2="";
+}
+
+        }
+    
+        
+         /**
+           
+        */
+        public String getName3()
+        {
+         
+        return this.name3;
+        }
+        public void setName3(String name3)
+        {
+        if(name3!=null){
+this.name3=name3;
+ }
+else
+{
+this.name3="";
+}
+
+        }
+    
+        
+         /**
+           
+        */
+        public String getName4()
+        {
+         
+        return this.name4;
+        }
+        public void setName4(String name4)
+        {
+        if(name4!=null){
+this.name4=name4;
+ }
+else
+{
+this.name4="";
+}
+
         }
     
         

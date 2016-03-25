@@ -7,10 +7,10 @@
 	
     <select id="selectList" resultMap="ResultMap">
 
-        select id,channel_id,cms_bt_jm_product_id,product_code,image_type_name,image_type,image_index,origin_url,jm_url,syn_flg,created,creater,modified,modifier        from cms_bt_jm_images
+        select id,channel_id,product_code,image_type_name,image_type,image_index,origin_url,jm_url,syn_flg,created,creater,modified,modifier        from cms_bt_jm_images
     </select>
     <select id="select" resultMap="ResultMap">
-        select id,channel_id,cms_bt_jm_product_id,product_code,image_type_name,image_type,image_index,origin_url,jm_url,syn_flg,created,creater,modified,modifier from cms_bt_jm_images where id=#{id}
+        select id,channel_id,product_code,image_type_name,image_type,image_index,origin_url,jm_url,syn_flg,created,creater,modified,modifier from cms_bt_jm_images where id=#{id}
     </select>
 
      <update id="update">
@@ -18,7 +18,6 @@
         set
 
             `channel_id`=#{channelId}
-            ,`cms_bt_jm_product_id`=#{cmsBtJmProductId}
             ,`product_code`=#{productCode}
             ,`image_type_name`=#{imageTypeName}
             ,`image_type`=#{imageType}
@@ -41,7 +40,6 @@
         INSERT INTO cms_bt_jm_images
         (
               `channel_id`,
-              `cms_bt_jm_product_id`,
               `product_code`,
               `image_type_name`,
               `image_type`,
@@ -56,7 +54,6 @@
         )
         VALUES(
               #{channelId},
-              #{cmsBtJmProductId},
               #{productCode},
               #{imageTypeName},
               #{imageType},

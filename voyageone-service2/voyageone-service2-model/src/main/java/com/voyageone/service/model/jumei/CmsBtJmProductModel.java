@@ -11,7 +11,6 @@ public class CmsBtJmProductModel implements Serializable
     {
         setChannelId(""); 
         setJumeiProductId(""); 
-        setDealId(""); 
         setProductCode(""); 
         setForeignLanguageName(""); 
         setProductNameCn(""); 
@@ -38,7 +37,6 @@ public class CmsBtJmProductModel implements Serializable
         setAvailablePeriod(""); 
         setApplicableCrowd(""); 
         setSearchMetaTextCustom(""); 
-        setSpecialNote(""); 
         setFunctionIds(""); 
         setMsrp(new BigDecimal(0));
         setHsCode(""); 
@@ -66,12 +64,6 @@ public class CmsBtJmProductModel implements Serializable
 聚美的商品id
         */
      private String jumeiProductId;
-    
-    
- /**
-
-        */
-     private String dealId;
     
     
  /**
@@ -243,12 +235,6 @@ vo系统自用类目（Feed类目或CMS类目）
     
     
  /**
-特别说明 用于聚美上新
-        */
-     private String specialNote;
-    
-    
- /**
 聚美功效id 基本上不设置
         */
      private String functionIds;
@@ -371,27 +357,6 @@ this.jumeiProductId=jumeiProductId;
 else
 {
 this.jumeiProductId="";
-}
-
-        }
-    
-        
-         /**
-           
-        */
-        public String getDealId()
-        {
-         
-        return this.dealId;
-        }
-        public void setDealId(String dealId)
-        {
-        if(dealId!=null){
-this.dealId=dealId;
- }
-else
-{
-this.dealId="";
 }
 
         }
@@ -966,27 +931,6 @@ this.searchMetaTextCustom=searchMetaTextCustom;
 else
 {
 this.searchMetaTextCustom="";
-}
-
-        }
-    
-        
-         /**
-           特别说明 用于聚美上新
-        */
-        public String getSpecialNote()
-        {
-         
-        return this.specialNote;
-        }
-        public void setSpecialNote(String specialNote)
-        {
-        if(specialNote!=null){
-this.specialNote=specialNote;
- }
-else
-{
-this.specialNote="";
 }
 
         }

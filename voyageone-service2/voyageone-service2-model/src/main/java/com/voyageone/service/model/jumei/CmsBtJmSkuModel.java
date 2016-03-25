@@ -9,7 +9,6 @@ public class CmsBtJmSkuModel implements Serializable
 {
    public CmsBtJmSkuModel()
     {
-        setDealId(""); 
         setChannelId(""); 
         setProductCode(""); 
         setSkuCode(""); 
@@ -29,12 +28,6 @@ public class CmsBtJmSkuModel implements Serializable
 
         */
      private int id;
-    
-    
- /**
-
-        */
-     private String dealId;
     
     
  /**
@@ -132,27 +125,6 @@ public class CmsBtJmSkuModel implements Serializable
         public void setId(int id)
         {
          this.id=id;
-        }
-    
-        
-         /**
-           
-        */
-        public String getDealId()
-        {
-         
-        return this.dealId;
-        }
-        public void setDealId(String dealId)
-        {
-        if(dealId!=null){
-this.dealId=dealId;
- }
-else
-{
-this.dealId="";
-}
-
         }
     
         

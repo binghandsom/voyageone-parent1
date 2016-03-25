@@ -33,12 +33,6 @@ public class CmsBtJmImagesModel implements Serializable
     
     
  /**
-
-        */
-     private int cmsBtJmProductId;
-    
-    
- /**
 图片锁定条件（1:白底方图的情况下为Product Code；2:商品详情图的情况下为Product Code； 3:参数图的情况下为Product Code； 4：品牌故事图的情况下为品牌名称； 5：尺码图的情况下为品牌名称 6：物流介绍的情况下为品牌名称 7：竖图的情况下为Product Code）
         */
      private String productCode;
@@ -136,20 +130,6 @@ else
 this.channelId="";
 }
 
-        }
-    
-        
-         /**
-           
-        */
-        public int getCmsBtJmProductId()
-        {
-         
-        return this.cmsBtJmProductId;
-        }
-        public void setCmsBtJmProductId(int cmsBtJmProductId)
-        {
-         this.cmsBtJmProductId=cmsBtJmProductId;
         }
     
         
