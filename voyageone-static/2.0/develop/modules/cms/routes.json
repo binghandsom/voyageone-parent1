@@ -163,5 +163,20 @@
     "hash": "/system/error/:type",
     "templateUrl": "views/system/error/list.tpl.html",
     "controllerUrl": "modules/cms/views/system/error/list.ctl"
+  },
+  "jm_promotion_detail_list": {
+    "hash": "/jm/promotion_detail_list",
+    "templateUrl": "views/jm/jmpromotiondetaillist.tpl.html",
+    "controllerUrl": "modules/cms/views/jm/jmpromotiondetaillist.ctl"
+  },
+  "jm_promotion_manage": {
+    "hash": "/jm/promotion_manage",
+    "templateUrl": "views/jm/jmpromotionmanage.tpl.html",
+    "controllerUrl": "modules/cms/views/jm/jmpromotionmanage.ctl"
+  },
+  "jm_image_manage": {
+    "hash": "/jm/image_manage",
+    "templateUrl": "views/jm/jmimagemanage.tpl.html",
+    "controllerUrl": "modules/cms/views/jm/jmimagemanage.ctl"
   }
 }

@@ -279,6 +279,35 @@ define([
                     "controllerUrl": "modules/cms/views/pop/promotion/addStockIncrement.ctl",
                     "controller": 'popAddStockIncrementCtl'
                 }
+            },
+            "jumei": {
+                "jmPromotionDefaultSetting": {
+                    "batch": {
+                        "templateUrl": "views/pop/jm/promotiondefaultsetting.tpl.html",
+                        "controllerUrl": "modules/cms/views/pop/jm/promotiondefaultsetting.ctl",
+                        "controller": 'popPromotionDefaultSettingCtl',
+                        "size": 'md',
+                        "backdrop": "static"
+                    }
+                },
+                "jmProductDetail": {
+                    "detail": {
+                        "templateUrl": "views/pop/jm/productdetail.tpl.html",
+                        "controllerUrl": "modules/cms/views/pop/jm/productdetail.ctl",
+                        "controller": 'popProductDetailCtl',
+                        "size": 'md',
+                        "backdrop": "static"
+                    }
+                },
+                "jmPromotionDetail": {
+                    "detail": {
+                        "templateUrl": "views/pop/jm/promotiondetail.tpl.html",
+                        "controllerUrl": "modules/cms/views/pop/jm/promotiondetail.ctl",
+                        "controller": 'popPromotionDetailCtl',
+                        "size": 'md',
+                        "backdrop": "static"
+                    }
+                }
             }
         })
         .controller('popupCtrl', popupCtrl);
@@ -858,5 +887,19 @@ define([
                 });
             });
         }
+
+        $scope.openJmPromotionDefaultSetting = function (context) {
+            return openModel(popActions.jumei.jmPromotionDefaultSetting.batch, context);
+        };
+
+
+        $scope.openJmProductDetail = function (context) {
+            return openModel(popActions.jumei.jmProductDetail.detail, context);
+        };
+
+
+        $scope.openJmPromotionDetail = function (context) {
+            return openModel(popActions.jumei.jmPromotionDetail.detail, context);
+        };
     }
 });

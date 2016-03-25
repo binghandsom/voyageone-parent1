@@ -1,0 +1,213 @@
+<div class="wrapper-md" ng-init="initialize()">
+	<div class="vo_accordion vo_attr">
+		<div class="panel-group">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h4 class="panel-title"><i class="glyphicon glyphicon-th"></i>&nbsp;图片管理</h4>
+				</div>
+				<div class="container-fluid m-t-xs m-b-xs">
+					<div class="col-sm-12">
+						<div class="col-sm-4">
+							<div class="form-horizontal">
+								<div class="form-group">
+									<label class="col-sm-3 control-label">Status</label>
+									<div class="col-sm-8">
+										<label class="checkbox-inline c-checkbox">
+											<input type="checkbox">
+											<span class="fa fa-check"></span>&nbsp;待上传&nbsp;</label>
+										<label class="checkbox-inline c-checkbox">
+											<input type="checkbox">
+											<span class="fa fa-check"></span>&nbsp;上传成功&nbsp;</label>
+										<label class="checkbox-inline c-checkbox">
+											<input type="checkbox">
+											<span class="fa fa-check"></span>&nbsp;上传失败&nbsp;</label>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-3 control-label">Update Time</label>
+									<div class="col-sm-8 form-inline">
+										<div class="col-sm-5 input-group">
+											<input type="text" class="form-control" datepicker-popup="{{formatDate}}" ng-model="$parent.searchInfo.createdStart" date-model-format="{{formatDate}}" is-open="opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" />
+								              <span class="input-group-btn">
+								                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+								              </span>
+										</div>&nbsp;~&nbsp;
+										<div class="col-sm-5 input-group">
+											<input type="text" class="form-control" datepicker-popup="{{formatDate}}" ng-model="$parent.searchInfo.createdEnd" date-model-format="{{formatDate}}" is-open="opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" />
+								              <span class="input-group-btn">
+								                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+								              </span>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-sm-4">
+							<div class="form-horizontal">
+								<div class="form-group">
+									<label class="col-sm-3 control-label">Brand Name</label>
+									<div class="col-sm-8">
+										<select class="form-control">
+											<option>Brand1</option>
+											<option>Brand2</option>
+											<option>Brand3</option>
+											<option>Brand4</option>
+										</select>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-3 control-label">Product Type</label>
+									<div class="col-sm-8">
+										<select class="form-control">
+											<option>Type</option>
+											<option>Type</option>
+											<option>Type</option>
+											<option>Type</option>
+										</select>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-sm-4">
+							<div class="form-horizontal">
+								<div class="form-group">
+									<label class="col-sm-3 control-label">Size Type</label>
+									<div class="col-sm-8">
+										<select class="form-control">
+											<option>Type</option>
+											<option>Type</option>
+											<option>Type</option>
+											<option>Type</option>
+										</select>
+									</div>
+								</div>
+								<div class="form-group">
+									<label class="col-sm-3 control-label">Data Type</label>
+									<div class="col-sm-8">
+										<select class="form-control">
+											<option>Type</option>
+											<option>Type</option>
+											<option>Type</option>
+											<option>Type</option>
+										</select>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="col-sm-12 text-center m-b-xs" ng-controller="popupCtrl">
+							<div class="form-horizontal form-inline">
+								<button class="btn btn-default" ng-click="clear()"><i class="fa fa-remove"></i>&nbsp;清除</button>
+								<button class="btn btn-vo" ng-click="search()"><i class="fa fa-search"></i>&nbsp;搜索</button>
+								<button class="btn btn-success" ng-click="openJmPromotionDefaultSetting('md')"><i class="glyphicon glyphicon-cog"></i>&nbsp;设定默认项</button>
+							</div><!-- .form-inline -->
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="box">
+		<div class="box-body">
+			<div class="table-responsive">
+				<table class="table table-hover-new vo_table tableWordBreak dropdown_table_main" style="width:1700px;margin-bottom:0px" ng-controller="popupCtrl">
+					<thead>
+					<tr>
+						<th class="text-center mfb-xt3">Seq.</th>
+						<th>Status</th>
+						<th>Brand Name</th>
+						<th>Product Type</th>
+						<th>Size Type</th>
+						<th>Image Type</th>
+						<th class="text-center mfb-xt3">Index</th>
+						<th>Origin Url</th>
+						<th>JM Url</th>
+						<th>Update Time</th>
+						<th class="mfb-xxs text-left">异常说明</th>
+						<th class="text-center mfb-xt">编辑</th>
+					</tr>
+					</thead>
+					<tbody>
+					<tr>
+						<td class="text-center mfb-xt3">1</td>
+						<td><span class="label label-yellow-new">&nbsp;待进行&nbsp;</span></td>
+						<td>sneakerhead</td>
+						<td>536219</td>
+						<td>896321</td>
+						<td>4：品牌故事图</td>
+						<td class="text-center mfb-xt3">1</td>
+						<td><textarea class="form-control" rows="2"></textarea></td>
+						<td>http://s7d5.scene7.com</td>
+						<td>2016.4.16</td>
+						<td class="mfb-xxs text-left">出现异常了哦，让我们一直来找碴哦</td>
+						<td class="text-left mfb-xt">
+							<button title="重刷" class="btn btn-success btn-xs"><i class="fa fa-refresh"></i></button>
+							<button title="追加" class="btn btn-success btn-xs"><i class="fa fa-plus"></i></button>
+							<button title="保存" class="btn btn-vo btn-xs"><i class="glyphicon glyphicon-floppy-disk"></i></button>
+				       </td>
+					</tr>
+					<tr>
+						<td class="text-center">2</td>
+						<td><span class="label label-success-new">&nbsp;进行中&nbsp;</span></td>
+						<td>sneakerhead</td>
+						<td>495632</td>
+						<td>495632</td>
+						<td>5：尺码图</td>
+						<td class="text-center mfb-xt3">5</td>
+						<td><textarea class="form-control" rows="2"></textarea></td>
+						<td>http://s7d5.scene7.com</td>
+						<td>2016.4.16</td>
+						<td class="mfb-xxs text-left">出现异常了哦，请找出问题吧。</td>
+						<td class="text-left mfb-xt">
+							<button title="重刷" class="btn btn-success btn-xs"><i class="fa fa-refresh"></i></button>
+							<button title="追加" class="btn btn-success btn-xs"><i class="fa fa-plus"></i></button>
+							<button title="保存" class="btn btn-vo btn-xs"><i class="glyphicon glyphicon-floppy-disk"></i></button>
+							<button title="删除" class="btn btn-danger btn-xs"><i class="fa  fa-trash-o"></i></button>
+						</td>
+					</tr>
+					<tr>
+						<td class="text-center mfb-xt3">3</td>
+						<td><span class="label label-yellow-new">&nbsp;待进行&nbsp;</span></td>
+						<td>sneakerhead</td>
+						<td>536219</td>
+						<td>896321</td>
+						<td>3：特殊说明</td>
+						<td class="text-center mfb-xt3">4</td>
+						<td><textarea class="form-control" rows="2"></textarea></td>
+						<td>http://s7d5.scene7.com</td>
+						<td>2016.4.16</td>
+						<td class="mfb-xxs text-left">出现异常了哦，让我们一直来找碴哦</td>
+						<td class="text-left mfb-xt">
+							<button title="重刷" class="btn btn-success btn-xs"><i class="fa fa-refresh"></i></button>
+							<button title="追加" class="btn btn-success btn-xs"><i class="fa fa-plus"></i></button>
+							<button title="保存" class="btn btn-vo btn-xs"><i class="glyphicon glyphicon-floppy-disk"></i></button>
+							<button title="删除" class="btn btn-danger btn-xs"><i class="fa  fa-trash-o"></i></button>
+						</td>
+					</tr>
+					<tr>
+						<td class="text-center">4</td>
+						<td><span class="label label-success-new">&nbsp;进行中&nbsp;</span></td>
+						<td>sneakerhead</td>
+						<td>495632</td>
+						<td>495632</td>
+						<td>6：物流介绍</td>
+						<td class="text-center mfb-xt3">3</td>
+						<td><textarea class="form-control" rows="2"></textarea></td>
+						<td>http://s7d5.scene7.com</td>
+						<td>2016.4.16</td>
+						<td class="mfb-xxs text-left">出现异常了哦，请找出问题吧。</td>
+						<td class="text-left mfb-xt">
+							<button title="重刷" class="btn btn-success btn-xs"><i class="fa fa-refresh"></i></button>
+							<button title="追加" class="btn btn-success btn-xs"><i class="fa fa-plus"></i></button>
+							<button title="保存" class="btn btn-vo btn-xs"><i class="glyphicon glyphicon-floppy-disk"></i></button>
+							<button title="删除" class="btn btn-danger btn-xs"><i class="fa  fa-trash-o"></i></button>
+						</td>
+					</tr>
+					</tbody>
+				</table>
+			</div>
+		</div><!-- /.box-body -->
+		<div class="m-t-xs">
+			<vpagination config="vm.errorPageOption"></vpagination>
+		</div>
+	</div>
+</div><!-- end .wrapper-md -->

@@ -1,0 +1,267 @@
+<div class="vo_modal" ng-init="initialize()">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" ng-click="$close()"><span
+                aria-hidden="true"><i class="fa fa-close"></i></span></button>
+        <h5 class="modal-title"><i class="glyphicon glyphicon-share"></i>&nbsp;产品详情</h5>
+    </div>
+    <div class="modal-body wrapper">
+        <form role="form" class="form-horizontal">
+            <div class="row m-l-xs">
+                <div class="col-sm-8">
+                 <tabset class="tab-container vo_nav-tabs">
+                  <tab>
+                    <tab-heading>Product 详情</tab-heading>
+                    <div class="column_overflow" style="height:400px">
+                        <div class="form-group col-sm-12">
+                           <h5 class="text-vo font-bold m-l-md">产品库数据</h5>
+                           <hr style="margin-top:4px;margin-bottom:4px">
+                         </div>
+                        <div class="form-group col-sm-12" ng-controller="popupCtrl">
+                            <label class="col-sm-3 control-label"><button class="btn btn-default btn-xs vo_reqfield" ng-click="$parent.openCategoryMapping(popupNewCategory)">聚美类目</button></label>
+                            <div class="col-sm-6">
+                                <input class="form-control"/>
+                            </div>
+                            <label class="col-sm-3 control-label text-u-red text-left">(聚美类目ID必填)</label>
+                        </div>
+                        <div class="form-group col-sm-12">
+                            <label class="col-sm-3 control-label vo_reqfield">产品品牌</label>
+                            <div class="col-sm-6">
+                                <select class="form-control">
+                                    <option>品牌1</option>
+                                    <option>品牌2</option>
+                                    <option>品牌3</option>
+                                </select>
+                            </div>
+                            <label class="col-sm-3 control-label text-u-red text-left">(聚美品牌ID必填)</label>
+                        </div>
+                        <div class="form-group col-sm-12">
+                            <label class="col-sm-3 control-label vo_reqfield">产品名</label>
+                            <div class="col-sm-6">
+                                <input class="form-control"/>
+                            </div>
+                            <label class="col-sm-3 control-label text-u-red text-left">(必填)</label>
+                        </div>
+                        <div class="form-group col-sm-12">
+                            <label class="col-sm-3 control-label vo_reqfield">外文名</label>
+                            <div class="col-sm-6">
+                                <input class="form-control"/>
+                            </div>
+                            <label class="col-sm-3 control-label text-u-red text-left">(必填)</label>
+                        </div>
+                        <div class="form-group text-center col-sm-12">
+                            <button class="btn btn-default" ng-click="$close()"><i class="fa fa-remove"></i>&nbsp;取消</button>
+                            <button class="btn btn-vo" ng-click="ok()"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;保存</button>
+                        </div>
+                        <div class="form-group col-sm-12">
+                            <h5 class="text-vo font-bold m-l-md">Deal数据</h5>
+                            <hr style="margin-top:4px;margin-bottom:4px">
+                        </div>
+                        <div class="form-group col-sm-12">
+                            <label class="col-sm-3 control-label vo_reqfield">售卖时间</label>
+                            <div class="col-sm-6 form-inline">
+                                <div class="input-group col-sm-6"><input type="text" class="form-control" placeholder="from"></div>&nbsp;~&nbsp;
+                                <div class="input-group col-sm-5"><input type="text" class="form-control" placeholder="to"></div>
+                            </div>
+                            <label class="col-sm-3 control-label text-u-red text-left">(必填)</label>
+                        </div>
+                        <div class="form-group col-sm-12">
+                            <label class="col-sm-3 control-label">每人限购</label>
+                            <div class="col-sm-6">
+                                <input class="form-control"/>
+                            </div>
+                        </div>
+                        <div class="form-group col-sm-12">
+                            <label class="col-sm-3 control-label vo_reqfield">长标题</label>
+                            <div class="col-sm-6">
+                                <textarea class="form-control" rows="2"></textarea>
+                            </div>
+                            <label class="col-sm-3 control-label text-u-red text-left">(必填)</label>
+                        </div>
+                        <div class="form-group col-sm-12">
+                            <label class="col-sm-3 control-label vo_reqfield">中标题</label>
+                            <div class="col-sm-6">
+                                <input class="form-control"/>
+                            </div>
+                            <label class="col-sm-3 control-label text-u-red text-left">(必填)</label>
+                        </div>
+                        <div class="form-group col-sm-12">
+                            <label class="col-sm-3 control-label vo_reqfield">短标题</label>
+                            <div class="col-sm-6">
+                                <input class="form-control"/>
+                            </div>
+                            <label class="col-sm-3 control-label text-u-red text-left">(必填)</label>
+                        </div>
+                        <div class="form-group col-sm-12">
+                            <label class="col-sm-3 control-label vo_reqfield">自定义搜索词</label>
+                            <div class="col-sm-6">
+                                <input class="form-control"/>
+                            </div>
+                            <label class="col-sm-3 control-label text-u-red text-left">(必填)</label>
+                        </div>
+                        <div class="form-group col-sm-12">
+                            <label class="col-sm-3 control-label">保质期限</label>
+                            <div class="col-sm-9">
+                                <textarea class="form-control" rows="2" placeholder="无"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group col-sm-12">
+                            <label class="col-sm-3 control-label">生产地区</label>
+                            <div class="col-sm-9">
+                                <textarea class="form-control" rows="2" placeholder="其他（详情请见商品标签）"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group col-sm-12">
+                            <label class="col-sm-3 control-label">适合人群</label>
+                            <div class="col-sm-9">
+                                <textarea class="form-control" rows="2" placeholder="时尚潮流人士"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group col-sm-12">
+                            <label class="col-sm-3 control-label">英文描述</label>
+                            <div class="col-sm-9">
+                                <textarea class="form-control" rows="2" placeholder="其他（详情请见商品标签）" disabled></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group col-sm-12">
+                            <label class="col-sm-3 control-label">中文描述</label>
+                            <div class="col-sm-9">
+                                <textarea class="form-control" rows="2" placeholder="其他（详情请见商品标签）"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group text-center col-sm-12">
+                            <button class="btn btn-default" ng-click="$close()"><i class="fa fa-remove"></i>&nbsp;取消</button>
+                            <button class="btn btn-vo" ng-click="ok()"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;保存</button>
+                        </div>
+                        <div class="form-group col-sm-12">
+                            <h5 class="text-vo font-bold m-l-md">报关数据</h5>
+                            <hr style="margin-top:4px;margin-bottom:4px">
+                        </div>
+                        <div class="form-group col-sm-12">
+                            <label class="col-sm-3 control-label">报关关税编号</label>
+                            <div class="col-sm-9">
+                                <input class="form-control"/>
+                            </div>
+                        </div>
+                        <div class="form-group col-sm-12">
+                            <label class="col-sm-3 control-label">报关商品类目</label>
+                            <div class="col-sm-9">
+                                <input class="form-control"/>
+                            </div>
+                        </div>
+                        <div class="form-group col-sm-12">
+                            <label class="col-sm-3 control-label">报关商品单位</label>
+                            <div class="col-sm-9">
+                                <input class="form-control"/>
+                            </div>
+                        </div>
+                        <div class="form-group col-sm-12">
+                            <label class="col-sm-3 control-label">英文材质</label>
+                            <div class="col-sm-9">
+                                <textarea class="form-control" rows="2" placeholder="其他（详情请见商品标签）" disabled></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group col-sm-12">
+                            <label class="col-sm-3 control-label">中文材质</label>
+                            <div class="col-sm-9">
+                                <textarea class="form-control" rows="2" placeholder="其他（详情请见商品标签）"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group text-center col-sm-12">
+                            <button class="btn btn-default" ng-click="$close()"><i class="fa fa-remove"></i>&nbsp;取消</button>
+                            <button class="btn btn-vo" ng-click="ok()"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;保存</button>
+                        </div>
+                        </div>
+                </tab>
+                <tab>
+                    <tab-heading>SKU 详情</tab-heading>
+                    <div class="column_overflow" style="height:400px">
+                        <div class="form-group col-sm-12">
+                            <label class="col-sm-3 control-label">颜色<br/>（子产品SPU）</label>
+                            <div class="col-sm-6 m-t-sm">
+                                <input class="form-control"/>
+                            </div>
+                            <label class="col-sm-3 m-t-sm control-label text-u-red text-left">(英文颜色)</label>
+                        </div>
+                        <div class="form-group col-sm-12">
+                            <label class="col-sm-3 control-label">海外官网价<br/>（子产品SPU）</label>
+                            <div class="col-sm-9 form-inline m-t-sm">
+                                <div class="input-group col-sm-6"><input type="text" class="form-control"></div>&nbsp;
+                                <div class="input-group col-sm-5">
+                                    <select class="form-control">
+                                        <option>123</option>
+                                        <option>123</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group col-sm-12">
+                            <label class="col-sm-3 control-label">市场价<br/>（子产品SPU）</label>
+                            <div class="col-sm-9 m-t-sm">
+                                <input class="form-control"/>
+                            </div>
+                        </div>
+                        <div class="col-sm-12 panel vo_panel tab_panel">
+                            <!-- .table-responsive -->
+                            <div class="table-responsive">
+                                <table class="table table-hover-new vo_table dropdown_table_main" style="width:900px">
+                                    <thead>
+                                    <tr>
+                                        <th class="text-center">Seq.</th>
+                                        <th class="text-center">UPC<br/>（子产品SPU）</th>
+                                        <th class="text-center">尺码<br/>（子产品SPU）</th>
+                                        <th class="text-center">SKU<br/>（SKU信息）</th>
+                                        <th class="text-center">团购价<br/>（SKU信息）</th>
+                                        <th class="mfb-xxx text-center">规格<br/>（子产品SPU）</th>
+                                        <th class="mfb-xxs text-center">Action</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td class="text-center">1</td>
+                                        <td class="text-center">
+                                            <textarea class="form-control" rows="2" placeholder="5782748"></textarea>
+                                        </td>
+                                        <td class="text-center">
+                                            <textarea class="form-control" rows="2" placeholder="L"></textarea>
+                                        </td>
+                                        <td class="text-center">
+                                            <textarea class="form-control" rows="2" placeholder="5782748"></textarea>
+                                        </td>
+                                        <td class="text-center">
+                                            <textarea class="form-control" rows="2" placeholder="3"></textarea>
+                                        </td>
+                                        <td class="mfb-xxx text-center">
+                                            <select class="form-control">
+                                                <option>其它</option>
+                                                <option>其它</option>
+                                            </select>
+                                        </td>
+                                        <td class="mfb-xxs text-center">
+                                            <button title="追加" class="btn btn-success btn-xs"><i class="fa fa-plus"></i></button>
+                                            <button title="上移" class="btn btn-success btn-xs"><i class="glyphicon glyphicon-arrow-up"></i></button>
+                                            <button title="下移" class="btn btn-success btn-xs"><i class="glyphicon glyphicon-arrow-down"></i></button>
+                                            <button title="保存" class="btn btn-vo btn-xs"><i class="glyphicon glyphicon-floppy-disk"></i></button>
+                                            <button title="删除" class="btn btn-danger btn-xs"><i class="fa fa-trash-o"></i></button>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div><!-- .table-responsive -->
+                        </div> <!-- .panel -->
+                    </div>
+                </tab>
+            </tabset>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="form-group">
+                            <img class="col-sm-12" src="http://image.sneakerhead.com/is/image/sneakerhead/snusa-detail_20?$sn20-650$&amp;$img=sneakerhead/air-jordan-jumpman-team-ii-819175417-1"/>
+                        </div>
+                    </div>
+            </div>
+        </form>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-default" ng-click="$close()"><i class="fa fa-remove"></i>&nbsp;取消</button>
+        <button class="btn btn-vo" ng-click="ok()"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;确认</button>
+    </div>
+</div><!-- .vo_modal -->
