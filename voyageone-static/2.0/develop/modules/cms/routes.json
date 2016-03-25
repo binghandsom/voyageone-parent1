@@ -83,7 +83,7 @@
     "controller": "feedMappingController as $ctrl"
   },
   "mapping_feed_prop": {
-    "hash": "/mapping/feed/:feedCategoryPath/:commonFlg",
+    "hash": "/mapping/feed/:feedCategoryPath*\/:commonFlg",
     "templateUrl": "views/mapping/feed/prop.tpl.html",
     "controllerUrl": "modules/cms/views/mapping/feed/prop.ctl",
     "controller": "feedPropMappingController as $ctrl"
