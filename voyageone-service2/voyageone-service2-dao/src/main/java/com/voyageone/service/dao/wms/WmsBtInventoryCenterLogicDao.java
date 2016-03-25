@@ -14,11 +14,11 @@ import java.util.Map;
 @Repository
 public class WmsBtInventoryCenterLogicDao extends com.voyageone.service.dao.ServiceBaseDao {
 
-    public List<WmsBtInventoryCenterLogicModel> getItemDetailByCode(Map params){
+    public List<WmsBtInventoryCenterLogicModel> selectItemDetailByCode(Map params){
         return selectList("select_wms_bt_inventory_center_logic_byChannelWithCodeOrSku", params);
     }
 
-    public WmsBtInventoryCenterLogicModel getItemDetailBySku(Map params){
+    public WmsBtInventoryCenterLogicModel selectItemDetailBySku(Map params){
         return selectOne("select_wms_bt_inventory_center_logic_byChannelWithCodeOrSku", params);
     }
 }

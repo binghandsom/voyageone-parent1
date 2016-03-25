@@ -11,7 +11,6 @@ import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Group_Platform;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.*;
 
@@ -80,86 +79,27 @@ public class ProductGroupService extends BaseService {
 //        return result;
 //    }
 
-//    /**
-//     * selectList
-//     * @param request ProductGroupsGetRequest
-//     * @return ProductGroupsGetResponse
-//     */
-//    public ProductGroupsGetResponse selectList(ProductGroupsGetRequest request) {
-//        ProductGroupsGetResponse result = new ProductGroupsGetResponse();
-//
-//        checkCommRequest(request);
-//        //ChannelId
-//        String channelId = request.getChannelId();
-//        checkRequestChannelId(channelId);
-//
-//        request.check();
-//
-//        JomgoQuery queryObject = new JomgoQuery();
-//        //fields
-//        buildProjection(request, queryObject);
-//        if (StringUtils.isEmpty(queryObject.getProjection())) {
-//            queryObject.setProjection("groups.platforms.$");
-//        }
-//        //sorts
-//        buildSort(request, queryObject);
-//        //limit
-//        buildLimit(request, queryObject);
-//
-//        //get GroupId
-//        Set<Long> groupIds = request.getGroupIds();
-//        //get CartId
-//        Integer cartId = request.getCartId();
-//        //get NumIId
-//        Set<String> numIIds = request.getNumIIds();
-//        //getProductByCondition
-////        String props = request.getProps();
-//
-//        boolean isExecute = false;
-//        if (groupIds != null && groupIds.size() > 0) {
-//            String groupIdsArrStr = Joiner.on(", ").skipNulls().join(groupIds);
-//            String queryTmp = "{\"groups.platforms\":{$elemMatch: {\"groupId\":{$in:[%s]}, \"isMain\":1}}}";
-//            queryObject.setQuery(String.format(queryTmp, groupIdsArrStr));
-//            isExecute = true;
-//        } else if (cartId != null && numIIds != null && numIIds.size() > 0) {
-//            String productCodesStr = "\"" + Joiner.on("\", \"").skipNulls().join(numIIds) + "\"";
-//            String queryTmp = "{\"groups.platforms\":{$elemMatch: {\"cartId\":%s, \"numIId\":{$in:[%s]}, \"isMain\":1}}}";
-//            queryObject.setQuery(String.format(queryTmp, cartId, productCodesStr));
-//            isExecute = true;
-//        }
-////        else if (!StringUtils.isEmpty(props)) {
-////            //queryObject.setQuery(buildProductQuery(props));
-////            isExecute = false;
-////        }
-//
-//        List<CmsBtProductModel> products;
-//        List<CmsBtProductModel_Group_Platform> productGroups = null;
-//        long totalCount = 0L;
-//        if (isExecute) {
-//            products = cmsBtProductDao.select(queryObject, channelId);
-//            if (request.getPageNo() == 1 && products != null && products.size() < request.getPageSize()) {
-//                totalCount = products.size();
-//            } else {
-//                totalCount = cmsBtProductDao.countByQuery(queryObject.getQuery(), channelId);
-//            }
-//            if (products != null) {
-//                productGroups = new ArrayList<>();
-//                for (CmsBtProductModel product : products) {
-//                    if (product != null && product.getGroups() != null && product.getGroups().getPlatforms() != null && product.getGroups().getPlatforms().size() > 0) {
-//                        productGroups.add(product.getGroups().getPlatforms().get(0));
-//                    }
-//                }
-//            }
-//        }
-//
-//        result.setProductGroupPlatforms(productGroups);
-//        result.setTotalCount(totalCount);
-//
-//        return result;
-//    }
+    /**
+     * 根据多个groupsIds获取产品列表
+     * @param channelId
+     * @param groupId
+     * @param flag: true:检索主商品以外的商品,false:检索所有的商品
+     * @return
+     */
+    public List<CmsBtProductModel> getProductIdsByGroupId(String channelId, Long groupId, Boolean flag) {
+        JomgoQuery queryObject = new JomgoQuery();
+        if (flag)
+            queryObject.setQuery(String.format("{ \"groups.platforms\": {\"$elemMatch\": {\"groupId\": %d, \"isMain\": 0}}}", groupId));
+        else
+            queryObject.setQuery(String.format("{ \"groups.platforms\": {\"$elemMatch\": {\"groupId\": %d}}}", groupId));
+        return cmsBtProductDao.select(queryObject, channelId);
+    }
 
     /**
      * save Groups
+     * @param channelId
+     * @param productIds
+     * @param platform
      */
     public void saveGroups(String channelId, Set<Long> productIds, CmsBtProductModel_Group_Platform platform) {
         List<BulkUpdateModel> bulkInsertList = new ArrayList<>();

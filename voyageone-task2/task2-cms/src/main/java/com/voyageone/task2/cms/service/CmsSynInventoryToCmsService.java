@@ -3,7 +3,7 @@ package com.voyageone.task2.cms.service;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.common.Constants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
-import com.voyageone.common.configs.TypeChannel;
+import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.CommonUtil;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
@@ -28,9 +28,6 @@ import java.util.Map;
 @Service
 public class CmsSynInventoryToCmsService extends BaseTaskService {
 
-//    @Autowired
-//    private InventoryTmpDao inventoryTmpDao;
-
     @Autowired
     private InventoryDao inventoryDao;
 
@@ -42,7 +39,7 @@ public class CmsSynInventoryToCmsService extends BaseTaskService {
 
     @Override
     public SubSystem getSubSystem() {
-        return SubSystem.WMS;
+        return SubSystem.CMS;
     }
 
     @Override
@@ -55,7 +52,8 @@ public class CmsSynInventoryToCmsService extends BaseTaskService {
         return true;
     }
 
-    static int i = 1;
+    // mongoDB 每次批量执行的数
+    public static final int BULK_COUNT = 500;
 
     /**
      * 批量插入code级别的库存数据到mongdodb，以便db端的定时任务进行处理
@@ -85,13 +83,16 @@ public class CmsSynInventoryToCmsService extends BaseTaskService {
             List<InventoryForCmsBean> codeInventoryList = inventoryDao.selectInventoryCode(orderChannelID, this.getTaskName());
             $info("orderChannelID:" + orderChannelID + "    库存记录数:" + codeInventoryList.size());
 
+            if(codeInventoryList.size() == 0){
+                continue;
+            }
             //批量更新code级库存 TODO
             bulkUpdateCodeQty(orderChannelID, codeInventoryList, getTaskName());
 
             //获取本渠道的cart
 
 //            List<ShopBean> cartList = ShopConfigs.getChannelShopList(orderChannelID);
-            List<TypeChannelBean> cartList = TypeChannel.getTypeListSkuCarts(orderChannelID, Constants.comMtTypeChannel.SKU_CARTS_53_D, "en");
+            List<TypeChannelBean> cartList = TypeChannels.getTypeListSkuCarts(orderChannelID, Constants.comMtTypeChannel.SKU_CARTS_53_D, "en");
             $info("orderChannelID:" + orderChannelID + "    cart数:" + cartList.size());
 
 
@@ -117,7 +118,7 @@ public class CmsSynInventoryToCmsService extends BaseTaskService {
                         model.setQueryMap(queryMap);
                         bulkList.add(model);
                         //批量插入group级记录到mysql 10000条插入一次 TODO
-                        if (bulkList.size() >= 10) {
+                        if (bulkList.size() >= BULK_COUNT) {
                             cmsBtProductDao.bulkUpdateWithMap(orderChannelID, bulkList, getTaskName(), "$set");
                             bulkList.clear();
                         }
@@ -141,7 +142,7 @@ public class CmsSynInventoryToCmsService extends BaseTaskService {
         Map<String, Object> ret = new HashMap<>();
 
         //以500条更新一次数据库
-        List<List<InventoryForCmsBean>> codeInventoryListSplit = CommonUtil.splitList(codeInventoryList, 500);
+        List<List<InventoryForCmsBean>> codeInventoryListSplit = CommonUtil.splitList(codeInventoryList, BULK_COUNT);
         for (List<InventoryForCmsBean> codeInventoryListItem : codeInventoryListSplit) {
             List<BulkUpdateModel> bulkList = new ArrayList<>();
             for (InventoryForCmsBean codeInventory : codeInventoryListItem) {

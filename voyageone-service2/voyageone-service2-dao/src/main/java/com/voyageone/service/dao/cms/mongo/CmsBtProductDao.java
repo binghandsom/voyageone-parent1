@@ -491,20 +491,20 @@ public class CmsBtProductDao extends BaseMongoPartDao<CmsBtProductModel> {
         return null;
     }
 
-    /**
-     * 取得该产品所有的group信息
-     * @param channelId String
-     * @param productIds Object[]
-     * @return List<CmsBtProductModel>
-     */
-    public List<CmsBtProductModel> getModelCode(String channelId, Object[] productIds) {
-
-        JomgoQuery jomgoQuery = new JomgoQuery();
-        jomgoQuery.setQuery(MongoUtils.splicingValue("prodId", productIds));
-        jomgoQuery.setProjection("groups");
-
-        return select(jomgoQuery, channelId);
-    }
+//    /**
+//     * 取得该产品所有的group信息
+//     * @param channelId String
+//     * @param productIds Object[]
+//     * @return List<CmsBtProductModel>
+//     */
+//    public List<CmsBtProductModel> getModelCode(String channelId, Object[] productIds) {
+//
+//        JomgoQuery jomgoQuery = new JomgoQuery();
+//        jomgoQuery.setQuery(MongoUtils.splicingValue("prodId", productIds));
+//        jomgoQuery.setProjection("groups");
+//
+//        return select(jomgoQuery, channelId);
+//    }
 
     /**
      * 检查该产品的数据是否已经准备完成.

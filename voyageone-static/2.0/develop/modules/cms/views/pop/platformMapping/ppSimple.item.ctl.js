@@ -295,6 +295,9 @@ define([
                         textWord.value = values.join(',');
                 }
 
+                // 该函数只有最终确定时使用, 所以在最后返回时, 重置 field 的 value. 防止下次打开画面仍显示这些值
+                pfProp.value = pfProp.values = null;
+
                 return textWord;
             },
 
@@ -356,6 +359,9 @@ define([
             },
 
             cancel: function () {
+                // 这里同 getTextWord 函数底部的作用相同
+                var prop = this.property;
+                prop.value = prop.values = null;
                 this.$modal.dismiss('cancel');
             }
         };

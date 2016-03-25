@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.service.dao.sql">
+    <select id="select_stock_sales_quantity" resultType="HashMap" parameterType="HashMap">
+        select
+        sku,
+        cart_id,
+        qty
+        from   voyageone_cms2.cms_bt_stock_sales_quantity
+        where channel_id = #{channelId}
+            <if test="cartId !=null">
+                and cart_id = #{cartId}
+            </if>
+            <if test="sku !=null">
+                and sku = #{sku}
+            </if>
+            <if test="skuList != null and skuList.size() > 0">
+                and (sku in
+                <foreach collection="skuList" item="sku" open="(" separator="," close=")">
+                    #{sku}
+                </foreach>
+                )
+            </if>
+            <if test="endFlg !=null">
+                and end_flg = #{endFlg}
+            </if>
+            <if test="sysTime !=null">
+                <![CDATA[ and start_time <= #{sysTime} ]]>
+            </if>
+    </select>
+
+    <select id="select_stock_sales_quantity_qty" resultType="int" parameterType="HashMap">
+        select
+        sum(qty) as qty_sum
+        from   voyageone_cms2.cms_bt_stock_sales_quantity
+        where channel_id = #{channelId}
+        <if test="cartId !=null">
+            and cart_id = #{cartId}
+        </if>
+        <if test="sku !=null">
+            and sku = #{sku}
+        </if>
+        <if test="endFlg !=null">
+            and end_flg = #{endFlg}
+        </if>
+        <if test="sysTime !=null">
+            <![CDATA[ and start_time <= #{sysTime} ]]>
+        </if>
+    </select>
+</mapper>

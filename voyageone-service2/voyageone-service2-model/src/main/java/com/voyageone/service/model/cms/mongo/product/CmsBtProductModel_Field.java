@@ -52,6 +52,15 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
         setAttribute("productNameCn", productNameCn);
     }
 
+    //产品名称（原始中文标题）
+    public String getOriginalTitleCn() {
+        return getAttribute("originalTitleCn");
+    }
+
+    public void setOriginalTitleCn(String originalTitleCn) {
+        setAttribute("originalTitleCn", originalTitleCn);
+    }
+
     //longTitle 长标题
     public String getLongTitle() {
         return getAttribute("longTitle");
@@ -104,6 +113,15 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
 
     public void setOrigin(String origin) {
         setAttribute("origin", origin);
+    }
+
+    //originalDesCn 原始中文描述
+    public String getOriginalDesCn() {
+        return getAttribute("originalDesCn");
+    }
+
+    public void setOriginalDesCn(String originalDesCn) {
+        setAttribute("originalDesCn", originalDesCn);
     }
 
     //shortDesCn 简短描述中文
@@ -162,13 +180,13 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
 
     //msrp价格区间
     public Double getPriceMsrpSt() {
-        return convertToDoubel(getAttribute("priceMsrpSt"));
+        return getDoubleAttribute("priceMsrpSt");
     }
     public void setPriceMsrpSt(Double priceMsrpSt) {
         setAttribute("priceMsrpSt", priceMsrpSt);
     }
     public Double getPriceMsrpEd() {
-        return convertToDoubel(getAttribute("priceMsrpEd"));
+        return getDoubleAttribute("priceMsrpEd");
     }
     public void setPriceMsrpEd(Double priceMsrpEd) {
         setAttribute("priceMsrpEd", priceMsrpEd);
@@ -176,13 +194,13 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
 
     //建议市场价格区间
     public Double getPriceRetailSt() {
-        return convertToDoubel(getAttribute("priceRetailSt"));
+        return getDoubleAttribute("priceRetailSt");
     }
     public void setPriceRetailSt(Double priceRetailSt) {
         setAttribute("priceRetailSt", priceRetailSt);
     }
     public Double getPriceRetailEd() {
-        return convertToDoubel(getAttribute("priceRetailEd"));
+        return getDoubleAttribute("priceRetailEd");
     }
     public void setPriceRetailEd(Double priceRetailEd) {
         setAttribute("priceRetailEd", priceRetailEd);
@@ -190,13 +208,13 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
 
     //销售价格价格区间
     public Double getPriceSaleSt() {
-        return convertToDoubel(getAttribute("priceSaleSt"));
+        return getDoubleAttribute("priceSaleSt");
     }
     public void setPriceSaleSt(Double priceSaleSt) {
         setAttribute("priceSaleSt", priceSaleSt);
     }
     public Double getPriceSaleEd() {
-        return convertToDoubel(getAttribute("priceSaleEd"));
+        return getDoubleAttribute("priceSaleEd");
     }
     public void setPriceSaleEd(Double priceSaleEd) {
         setAttribute("priceSaleEd", priceSaleEd);
@@ -204,13 +222,13 @@ public class CmsBtProductModel_Field extends BaseMongoMap<String, Object> {
 
     //当前销售价格价格区间 暂时不使用
     public Double getCurPriceSt() {
-        return convertToDoubel(getAttribute("curPriceSt"));
+        return getDoubleAttribute("curPriceSt");
     }
     public void setCurPriceSt(Double curPriceSt) {
         setAttribute("curPriceSt", curPriceSt);
     }
     public Double getCurPriceEd() {
-        return convertToDoubel(getAttribute("curPriceSt"));
+        return getDoubleAttribute("curPriceSt");
     }
     public void setCurPriceEd(Double curPriceSt) {
         setAttribute("curPriceSt", curPriceSt);

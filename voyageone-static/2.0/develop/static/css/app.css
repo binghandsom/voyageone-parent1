@@ -1,3 +1,5 @@
+@import url(custom.css);
+
 html {
   /*  background-color: #fff;*/
 }
@@ -6067,7 +6069,7 @@ a.text-black:hover {
 }
 
 .thumb-sm-search {
-  width: 80px;
+  /*width: 80px;*/
   height:80px;
   display: inline-block;
 }
@@ -7365,13 +7367,13 @@ input:checked + ol > li {
   border-top:4px double #e74c3c;
   border-left:4px double #e74c3c;
   border-bottom:4px double #e74c3c
-}.
- whirl.duo:after{
-   border-right:4px solid #333;
-   border-left:4px solid #333;
-   border-top:4px solid #f1c40f;
-   border-bottom:4px solid #f1c40f
- }
+}
+.whirl.duo:after{
+  border-right: 4px solid #333;
+  border-left: 4px solid #333;
+  border-top: 4px solid #f1c40f;
+  border-bottom: 4px solid #f1c40f
+}
 .whirl.helicopter:after{
   height:10px;
   width:40px;
@@ -7546,43 +7548,46 @@ input:checked + ol > li {
     box-shadow:inset 5px -5px 5px rgba(0,0,0,.5)
   }
 }
-@keyframes spin-shadow{0%{
-  -webkit-box-shadow:inset 5px 5px 5px rgba(0,0,0,.5);
-  box-shadow:inset 5px 5px 5px rgba(0,0,0,.5)
+@keyframes spin-shadow {
+  0% {
+    -webkit-box-shadow: inset 5px 5px 5px rgba(0, 0, 0, .5);
+    box-shadow: inset 5px 5px 5px rgba(0, 0, 0, .5)
+  }
+  25% {
+    -webkit-box-shadow: inset -5px 5px 5px rgba(0, 0, 0, .5);
+    box-shadow: inset -5px 5px 5px rgba(0, 0, 0, .5)
+  }
+  50% {
+    -webkit-box-shadow: inset -5px -5px 5px rgba(0, 0, 0, .5);
+    box-shadow: inset -5px -5px 5px rgba(0, 0, 0, .5)
+  }
+  100% {
+    -webkit-box-shadow: inset 5px -5px 5px rgba(0, 0, 0, .5);
+    box-shadow: inset 5px -5px 5px rgba(0, 0, 0, .5)
+  }
 }
-  25%{
-    -webkit-box-shadow:inset -5px 5px 5px rgba(0,0,0,.5);
-    box-shadow:inset -5px 5px 5px rgba(0,0,0,.5)
-  }
-  50%{
-    -webkit-box-shadow:inset -5px -5px 5px rgba(0,0,0,.5);
-    box-shadow:inset -5px -5px 5px rgba(0,0,0,.5)
-  }
-  100%{
-    -webkit-box-shadow:inset 5px -5px 5px rgba(0,0,0,.5);
-    box-shadow:inset 5px -5px 5px rgba(0,0,0,.5)
-  }}
 .whirl.shadow.oval.right:after{
   -webkit-animation:spin-shadow .25s infinite linear;
   animation:spin-shadow .25s infinite linear;
   border:none;
   border-radius:100% 40%
 }
-@keyframes spin-shadow{0%{
-  -webkit-box-shadow:inset 5px 5px 5px rgba(0,0,0,.5);
-  box-shadow:inset 5px 5px 5px rgba(0,0,0,.5)
-}
-  25%{
-    -webkit-box-shadow:inset -5px 5px 5px rgba(0,0,0,.5);
-    box-shadow:inset -5px 5px 5px rgba(0,0,0,.5)
+@keyframes spin-shadow {
+  0% {
+    -webkit-box-shadow: inset 5px 5px 5px rgba(0, 0, 0, .5);
+    box-shadow: inset 5px 5px 5px rgba(0, 0, 0, .5)
   }
-  50%{
-    -webkit-box-shadow:inset -5px -5px 5px rgba(0,0,0,.5);
-    box-shadow:inset -5px -5px 5px rgba(0,0,0,.5)
+  25% {
+    -webkit-box-shadow: inset -5px 5px 5px rgba(0, 0, 0, .5);
+    box-shadow: inset -5px 5px 5px rgba(0, 0, 0, .5)
   }
-  100%{
-    -webkit-box-shadow:inset 5px -5px 5px rgba(0,0,0,.5);
-    box-shadow:inset 5px -5px 5px rgba(0,0,0,.5)
+  50% {
+    -webkit-box-shadow: inset -5px -5px 5px rgba(0, 0, 0, .5);
+    box-shadow: inset -5px -5px 5px rgba(0, 0, 0, .5)
+  }
+  100% {
+    -webkit-box-shadow: inset 5px -5px 5px rgba(0, 0, 0, .5);
+    box-shadow: inset 5px -5px 5px rgba(0, 0, 0, .5)
   }
 }
 .whirl.shadow:after{

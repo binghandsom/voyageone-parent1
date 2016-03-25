@@ -4,7 +4,7 @@ import com.voyageone.task2.cms.CmsConstants;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.FeedEnums;
-import com.voyageone.common.configs.Feed;
+import com.voyageone.common.configs.Feeds;
 import com.voyageone.task2.cms.bean.*;
 import org.springframework.stereotype.Service;
 
@@ -126,7 +126,7 @@ public class SearsWsdlUpdate extends SearsWsdlBase {
             String where = Constants.EmptyString;
 
             List<ProductBean> productBeans = superFeedDao.selectSuperfeedProduct(
-                    String.format("%s %s", where, Feed.getVal1(channel, FeedEnums.Name.product_sql_ending)),
+                    String.format("%s %s", where, Feeds.getVal1(channel, FeedEnums.Name.product_sql_ending)),
                     productColumns,
                     String.format("%s_full %s", productTable, productJoin));
 
@@ -148,8 +148,8 @@ public class SearsWsdlUpdate extends SearsWsdlBase {
 
             // 逻辑设定上, getLastImags 将和 getLastProducts 一样, 一次 Job 只查询一次. 数据的处理移交 Java 端执行
             // 所以吧必须的两列内容按固定格式取出
-            String code = Feed.getVal1(channel, FeedEnums.Name.item_code);
-            String images = Feed.getVal1(channel, FeedEnums.Name.images);
+            String code = Feeds.getVal1(channel, FeedEnums.Name.item_code);
+            String images = Feeds.getVal1(channel, FeedEnums.Name.images);
 
             // 拼装 full 表获取的专用条件
             String where = String.format("WHERE item_id in (select item_id from %s where %s)", imageTable,getWhereUpdateFlg());
@@ -171,7 +171,7 @@ public class SearsWsdlUpdate extends SearsWsdlBase {
 
             List<ImageBean> imageBeans = new ArrayList<>();
 
-            String separator = Feed.getVal1(channel, FeedEnums.Name.image_split);
+            String separator = Feeds.getVal1(channel, FeedEnums.Name.image_split);
 
             String[] imagePaths = imagePathsStr.split(separator);
 

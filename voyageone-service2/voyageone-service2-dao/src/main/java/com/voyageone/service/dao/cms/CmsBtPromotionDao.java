@@ -25,7 +25,7 @@ public class CmsBtPromotionDao extends ServiceBaseDao {
 	 * @param condtionParams condtionParams
 	 * @return List<CmsBtPromotionModel>
 	 */
-	public List<CmsBtPromotionModel> findByCondition(Map<?, ?> condtionParams) {
+	public List<CmsBtPromotionModel> selectByCondition(Map<?, ?> condtionParams) {
 		return selectList("select_cms_bt_promotion_by_condtion", condtionParams);
 	}
 
@@ -35,7 +35,7 @@ public class CmsBtPromotionDao extends ServiceBaseDao {
 	 * @param condtionParams condtion Params
 	 * @return CmsBtPromotionModel
 	 */
-	public CmsBtPromotionModel findById(Map<?, ?> condtionParams) {
+	public CmsBtPromotionModel selectById(Map<?, ?> condtionParams) {
 		return selectOne("select_cms_bt_promotion_by_id", condtionParams);
 	}
 

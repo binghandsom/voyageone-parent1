@@ -21,7 +21,7 @@ define([
 
             this.context = context;
 
-            this.feedPath = context.mappingModel.scope.feedCategoryPath;
+            this.feedPath = context.mapping.scope.feedCategoryPath;
             /**
              * 当前处理的主类目属性
              * @type {Field}
@@ -135,6 +135,7 @@ define([
 
                 // value 会保存在 field 中. 取出后,需要清空
                 ttt.field.value = null;
+                ttt.field.values = null;
                 
                 ttt.$uibModalInstance.close({
                     type: type,
@@ -143,6 +144,8 @@ define([
                 });
             },
             cancel: function () {
+                this.field.value = null;
+                this.field.values = null;
                 this.$uibModalInstance.dismiss('cancel');
             }
         };

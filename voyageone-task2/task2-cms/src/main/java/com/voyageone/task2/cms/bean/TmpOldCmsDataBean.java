@@ -20,12 +20,15 @@ public class TmpOldCmsDataBean {
     private String title_cn;
     private String description_en;
     private String description_cn;
+    private String description_cn_short;
     private String img1; // 商品图片
     private String img2; // 包装图片
     private String img3; // 带角度图片
     private String img4; // 自定义图片
     private String color_en;
     private String hs_code_pu; // 个人行邮税号
+    private int translate_status; // 是否已翻译完毕(0:未翻译 1:已翻译)
+    private Double price_sale; // 真实售卖的价格
     private int finish_flg; // 已经处理过了的商品为1, 等待处理的为0
 
     public String getChannel_id() {
@@ -116,6 +119,14 @@ public class TmpOldCmsDataBean {
         this.description_cn = description_cn;
     }
 
+    public String getDescription_cn_short() {
+        return description_cn_short;
+    }
+
+    public void setDescription_cn_short(String description_cn_short) {
+        this.description_cn_short = description_cn_short;
+    }
+
     public String getImg1() {
         return img1;
     }
@@ -162,6 +173,22 @@ public class TmpOldCmsDataBean {
 
     public void setHs_code_pu(String hs_code_pu) {
         this.hs_code_pu = hs_code_pu;
+    }
+
+    public int getTranslate_status() {
+        return translate_status;
+    }
+
+    public void setTranslate_status(int translate_status) {
+        this.translate_status = translate_status;
+    }
+
+    public Double getPrice_sale() {
+        return price_sale;
+    }
+
+    public void setPrice_sale(Double price_sale) {
+        this.price_sale = price_sale;
     }
 
     public int getFinish_flg() {

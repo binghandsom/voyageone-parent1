@@ -1,5 +1,7 @@
 package com.voyageone.web2.cms.views.promotion;
 
+import com.voyageone.service.impl.cms.promotion.PromotionDetailService;
+import com.voyageone.service.model.cms.CmsBtPromotionCodeModel;
 import com.voyageone.web2.cms.bean.CmsPromotionProductPriceBean;
 import com.voyageone.web2.cms.views.promotion.list.CmsPromotionDetailService;
 import org.junit.Test;
@@ -25,7 +27,8 @@ public class CmsPromotionDetailServiceTest {
 
     @Autowired
     CmsPromotionDetailService cmsPromotionDetailService;
-
+    @Autowired
+    PromotionDetailService promotionDetailService;
     @Test
     public void testInsertPromotionProduct() throws Exception {
 
@@ -65,13 +68,33 @@ public class CmsPromotionDetailServiceTest {
     @Test
     public void testUploadPromotion() throws Exception {
         InputStream stream = new FileInputStream("d:\\promotion.xlsx");
-        cmsPromotionDetailService.uploadPromotion(stream,15,"james");
+        cmsPromotionDetailService.uploadPromotion(stream, 15, "james");
         System.out.println("");
     }
 
     @Test
     public void testTeJiaBaoInit() throws Exception {
         cmsPromotionDetailService.teJiaBaoInit(15, "james");
+    }
+
+
+    @Test
+    public void testTeJiaBaoPromotionInsert() throws Exception {
+        CmsBtPromotionCodeModel cmsBtPromotionCodeModel = new CmsBtPromotionCodeModel();
+        cmsBtPromotionCodeModel.setProductId(22151L);
+        cmsBtPromotionCodeModel.setProductCode("BF00003YGK");
+        cmsBtPromotionCodeModel.setPromotionPrice(100.0);
+        cmsBtPromotionCodeModel.setPromotionId(0);
+        cmsBtPromotionCodeModel.setNumIid("523128668920");
+        cmsBtPromotionCodeModel.setChannelId("010");
+        cmsBtPromotionCodeModel.setCartId(23);
+        cmsBtPromotionCodeModel.setModifier("james");
+        promotionDetailService.teJiaBaoPromotionInsert(cmsBtPromotionCodeModel);
+    }
+
+    @Test
+    public void testTeJiaBaoPromotionUpdate() throws Exception {
+
     }
 
 //    public void testTejiaBaoInsert(){

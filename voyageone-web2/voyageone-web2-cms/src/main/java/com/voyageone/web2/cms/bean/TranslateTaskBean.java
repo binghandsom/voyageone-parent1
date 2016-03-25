@@ -50,7 +50,7 @@ public class TranslateTaskBean {
     /**
      * 排序规则.
      */
-    private Boolean sortRule;
+    private String sortRule;
 
     /**
      * 待翻译商品信息列表.
@@ -130,11 +130,11 @@ public class TranslateTaskBean {
         this.sortCondition = sortCondition;
     }
 
-    public Boolean getSortRule() {
+    public String getSortRule() {
         return sortRule;
     }
 
-    public void setSortRule(Boolean sortRule) {
+    public void setSortRule(String sortRule) {
         this.sortRule = sortRule;
     }
 

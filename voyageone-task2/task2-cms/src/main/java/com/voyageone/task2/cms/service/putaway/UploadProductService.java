@@ -1,16 +1,23 @@
 package com.voyageone.task2.cms.service.putaway;
 
+import com.voyageone.common.configs.CmsChannelConfigs;
+import com.voyageone.common.configs.beans.CmsChannelConfigBean;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.cms.CmsBtSxWorkloadDao;
 import com.voyageone.service.impl.cms.product.ProductService;
+import com.voyageone.service.impl.cms.promotion.PromotionDetailService;
+import com.voyageone.service.model.cms.CmsBtPromotionCodeModel;
 import com.voyageone.service.model.cms.CmsBtSxWorkloadModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Group_Platform;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
+import com.voyageone.task2.cms.bean.ProductPublishBean;
 import com.voyageone.task2.cms.bean.SxProductBean;
 import com.voyageone.task2.cms.bean.UpJobParamBean;
 import com.voyageone.task2.cms.dao.CmsBusinessLogDao;
+import com.voyageone.task2.cms.dao.ProductPublishDao;
 import com.voyageone.task2.cms.enums.PlatformWorkloadStatus;
 import com.voyageone.task2.cms.model.CmsBusinessLogModel;
 import com.voyageone.task2.cms.bean.WorkLoadBean;
@@ -37,6 +44,10 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
     private CmsBtSxWorkloadDao sxWorkloadDao;
     @Autowired
     private CmsBusinessLogDao cmsBusinessLogDao;
+    @Autowired
+    private ProductPublishDao productPublishDao;
+    @Autowired
+    private PromotionDetailService promotionDetailService;
 
     private static final int PUBLISH_PRODUCT_RECORD_COUNT_ONCE_HANDLE = 100;
     private Map<WorkLoadBean, List<SxProductBean>> workLoadBeanListMap;
@@ -46,7 +57,7 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
     public UploadProductService() {}
 
     public String do_upload() {
-        List<CmsBtSxWorkloadModel> sxWorkloadModels = sxWorkloadDao.getSxWorkloadModel (PUBLISH_PRODUCT_RECORD_COUNT_ONCE_HANDLE);
+        List<CmsBtSxWorkloadModel> sxWorkloadModels = sxWorkloadDao.selectSxWorkloadModel(PUBLISH_PRODUCT_RECORD_COUNT_ONCE_HANDLE);
         workLoadBeanListMap = buildWorkloadMap(sxWorkloadModels);
         workLoadBeans = workLoadBeanListMap.keySet();
 
@@ -221,6 +232,87 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
                 CmsBtSxWorkloadModel sxWorkloadModel = workLoadBean.getSxWorkloadModel();
                 sxWorkloadModel.setPublishStatus(1);
                 sxWorkloadDao.updateSxWorkloadModel(sxWorkloadModel);
+
+                // 增加voyageone_ims.ims_bt_product表的更新, 用来给wms更新库存时候用的 START
+                List<SxProductBean> sxProductBeenList = workLoadBean.getProcessProducts();
+                for (SxProductBean sxProductBean : sxProductBeenList) {
+                    String code = sxProductBean.getCmsBtProductModel().getFields().getCode();
+
+                    ProductPublishBean productPublishBean = productPublishDao.selectByChannelCartCode(
+                            workLoadBean.getOrder_channel_id(),
+                            workLoadBean.getCart_id(),
+                            code);
+                    if (productPublishBean == null) {
+                        // 没找到就插入
+                        productPublishBean = new ProductPublishBean();
+                        productPublishBean.setChannel_id(workLoadBean.getOrder_channel_id());
+                        productPublishBean.setCart_id(workLoadBean.getCart_id());
+                        productPublishBean.setCode(code);
+                        productPublishBean.setNum_iid(workLoadBean.getNumId());
+                        if (workLoadBean.isHasSku()) {
+                            productPublishBean.setQuantity_update_type("s");
+                        } else {
+                            productPublishBean.setQuantity_update_type("p");
+                        }
+
+                        productPublishDao.insertProductPublish(productPublishBean, getTaskName());
+
+                    } else {
+                        // 找到了, 更新
+                        productPublishBean.setNum_iid(workLoadBean.getNumId());
+                        if (workLoadBean.isHasSku()) {
+                            productPublishBean.setQuantity_update_type("s");
+                        } else {
+                            productPublishBean.setQuantity_update_type("p");
+                        }
+                        productPublishDao.updateProductPublish(productPublishBean);
+                    }
+                }
+                // 增加voyageone_ims.ims_bt_product表的更新, 用来给wms更新库存时候用的 END
+
+                // 增加特价宝的调用 tom START
+                // 价格有可能是用priceSale, 也有可能用priceMsrp, 所以需要判断一下
+                CmsChannelConfigBean tejiabaoOpenConfig = CmsChannelConfigs.getConfigBean(workLoadBean.getOrder_channel_id(), "PRICE", String.valueOf(workLoadBean.getCart_id()) + ".tejiabao_open");
+                CmsChannelConfigBean tejiabaoPriceConfig = CmsChannelConfigs.getConfigBean(workLoadBean.getOrder_channel_id(), "PRICE", String.valueOf(workLoadBean.getCart_id()) + ".tejiabao_price");
+
+                // 检查一下
+                String tejiabaoOpenFlag = null;
+                String tejiabaoPricePropName = null;
+
+                if (tejiabaoOpenConfig != null && !StringUtils.isEmpty(tejiabaoOpenConfig.getConfigValue1())) {
+                    if ("0".equals(tejiabaoOpenConfig.getConfigValue1()) || "1".equals(tejiabaoOpenConfig.getConfigValue1())) {
+                        tejiabaoOpenFlag = tejiabaoOpenConfig.getConfigValue1();
+                    }
+                }
+                if (tejiabaoPriceConfig != null && !StringUtils.isEmpty(tejiabaoPriceConfig.getConfigValue1())) {
+                    tejiabaoPricePropName = tejiabaoPriceConfig.getConfigValue1();
+                }
+
+                if (tejiabaoOpenFlag != null && "1".equals(tejiabaoOpenFlag)) {
+                    for (SxProductBean sxProductBean : sxProductBeenList) {
+                        // 获取价格
+                        if (sxProductBean.getCmsBtProductModel().getSkus() == null || sxProductBean.getCmsBtProductModel().getSkus().size() == 0) {
+                            // 没有sku的code, 跳过
+                            continue;
+                        }
+                        Double dblPrice = sxProductBean.getCmsBtProductModel().getSkus().get(0).getAttribute(tejiabaoPricePropName);
+
+                        // 设置特价宝
+                        CmsBtPromotionCodeModel cmsBtPromotionCodeModel = new CmsBtPromotionCodeModel();
+                        cmsBtPromotionCodeModel.setPromotionId(0); // 设置为0的场合,李俊代码里会去处理
+                        cmsBtPromotionCodeModel.setChannelId(workLoadBean.getOrder_channel_id());
+                        cmsBtPromotionCodeModel.setCartId(workLoadBean.getCart_id());
+                        cmsBtPromotionCodeModel.setProductCode(sxProductBean.getCmsBtProductModel().getFields().getCode());
+                        cmsBtPromotionCodeModel.setProductId(sxProductBean.getCmsBtProductModel().getProdId());
+                        cmsBtPromotionCodeModel.setPromotionPrice(dblPrice); // 真实售价
+                        cmsBtPromotionCodeModel.setNumIid(workLoadBean.getNumId());
+                        cmsBtPromotionCodeModel.setModifier(getTaskName());
+                        promotionDetailService.teJiaBaoPromotionUpdate(cmsBtPromotionCodeModel); // 这里只需要调用更新接口就可以了, 里面会有判断如果没有的话就插入
+                    }
+                }
+
+                // 增加特价宝的调用 tom END
+
                 break;
             }
             case PlatformWorkloadStatus.JOB_ABORT: {

@@ -5,6 +5,9 @@ package com.voyageone.service.bean.cms.product;
  * @version 2.0.0, 16/2/2
  */
 public class ProductForOmsBean {
+
+    private String channelId;
+
     /**
      * sku
      */
@@ -39,6 +42,14 @@ public class ProductForOmsBean {
      * skuTmallUrl
      */
     private String skuTmallUrl;
+
+    public String getChannelId() {
+        return channelId;
+    }
+
+    public void setChannelId(String channelId) {
+        this.channelId = channelId;
+    }
 
     public String getSku() {
         return sku;

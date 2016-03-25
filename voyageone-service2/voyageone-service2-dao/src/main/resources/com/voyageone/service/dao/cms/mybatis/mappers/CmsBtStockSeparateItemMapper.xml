@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.service.dao.sql">
+    <select id="select_stock_separate_item" resultType="HashMap" parameterType="HashMap">
+        select
+            task_id,
+            product_model,
+            product_code,
+            sku,
+            cart_id,
+            property1,
+            property2,
+            property3,
+            property4,
+            qty,
+            separate_qty,
+            status
+        from voyageone_cms2.cms_bt_stock_separate_item${tableNameSuffix}
+        where 1=1
+        <if test="taskId !=null">
+            and task_id = #{taskId}
+        </if>
+        <if test="cartId !=null">
+            and cart_id = #{cartId}
+        </if>
+        <if test="sku !=null">
+            and sku = #{sku}
+        </if>
+        <if test="skuList != null and skuList.size() > 0">
+            and (sku in
+            <foreach collection="skuList" item="skuItem" open="(" separator="," close=")">
+                #{skuItem}
+            </foreach>
+            )
+        </if>
+        <if test="status !=null">
+            and status = #{status}
+        </if>
+        <if test="statusList != null and statusList.size() > 0">
+            and (status in
+            <foreach collection="statusList" item="statusItem" open="(" separator="," close=")">
+                #{statusItem}
+            </foreach>
+            )
+        </if>
+    </select>
+
+    <select id="select_stock_separate_item_by_sql_object" resultType="Object" parameterType="HashMap">
+        ${sql}
+    </select>
+
+    <select id="select_stock_separate_item_by_sql_map" resultType="HashMap" parameterType="HashMap">
+        ${sql}
+    </select>
+
+    <select id="select_stock_separate_success_qty" resultType="int" parameterType="HashMap">
+        select sum(separate_qty) as separate_qty_sum
+        from   voyageone_cms2.cms_bt_stock_separate_item
+        where sku = #{sku}
+        and status = #{status}
+        <if test="taskId !=null">
+            and task_id = #{taskId}
+        </if>
+        <if test="cartId !=null">
+            and cart_id = #{cartId}
+        </if>
+    </select>
+
+    <select id="select_stock_separate_item_by_status" resultType="Integer" parameterType="HashMap">
+        select seq
+            from   voyageone_cms2.cms_bt_stock_separate_item
+            where task_id = #{taskId}
+            <if test="statusList != null and statusList.size() > 0">
+                and (status in
+                <foreach collection="statusList" item="statusItem" open="(" separator="," close=")">
+                    #{statusItem}
+                </foreach>
+                )
+            </if>
+        limit 0,1
+    </select>
+
+    <select id="select_stock_separate_item_history_cnt" resultType="int" parameterType="HashMap">
+         select count(*)
+            from   voyageone_cms2.cms_bt_stock_separate_item_history
+            where task_id = #{taskId}
+    </select>
+
+    <update id="update_stock_separate_item" parameterType="HashMap" >
+        update voyageone_cms2.cms_bt_stock_separate_item
+        <set >
+            <if test="qty != null" >
+                qty = #{qty},
+            </if>
+            <if test="separateQty != null" >
+                separate_qty = #{separateQty},
+            </if>
+            <if test="errorMsg != null" >
+                error_msg = #{errorMsg},
+            </if>
+            <if test="errorTime != null" >
+                error_time = #{errorTime},
+            </if>
+            <if test="separateTime != null" >
+                separate_time = #{separateTime},
+            </if>
+            <if test="restoreTime != null" >
+                restore_time = #{restoreTime},
+            </if>
+            <if test="status != null" >
+                status = #{status},
+            </if>
+            modified = now(),
+            <if test="modifier != null" >
+                modifier = #{modifier},
+            </if>
+        </set>
+        <where>
+            1 = 1
+            <if test="seq != null" >
+                and seq = #{seq}
+            </if>
+            <if test="taskId != null" >
+                and task_id = #{taskId}
+            </if>
+            <if test="sku != null" >
+                and sku = #{sku}
+            </if>
+            <if test="cartId != null" >
+                and cart_id = #{cartId}
+            </if>
+            <if test="statusList != null and statusList.size() > 0">
+                and (status in
+                <foreach collection="statusList" item="statusItem" open="(" separator="," close=")">
+                    #{statusItem}
+                </foreach>
+                )
+            </if>
+        </where>
+    </update>
+
+    <delete id="delete_stock_separate_item" parameterType="HashMap">
+        delete
+        from voyageone_cms2.cms_bt_stock_separate_item
+        where
+        task_id = #{taskId}
+        <if test="cartId != null" >
+            and cart_id = #{cartId}
+        </if>
+        <if test="sku != null" >
+            and sku = #{sku}
+        </if>
+    </delete>
+
+    <insert id="insert_cms_bt_stock_separate_item" parameterType="HashMap" useGeneratedKeys="true" keyProperty="seq">
+        insert into voyageone_cms2.cms_bt_stock_separate_item (
+        task_id,
+        product_model,
+        product_code,
+        sku,
+        cart_id,
+        <if test="property1 != null" >
+            property1,
+        </if>
+        <if test="property2 != null" >
+            property2,
+        </if>
+        <if test="property3 != null" >
+            property3,
+        </if>
+        <if test="property4 != null" >
+            property4,
+        </if>
+        qty,
+        separate_qty,
+        <if test="status != null" >
+            status,
+        </if>
+        created,
+        creater,
+        modified,
+        modifier
+        ) value (
+        #{taskId},
+        #{productModel},
+        #{productCode},
+        #{sku},
+        #{cartId},
+        <if test="property1 != null" >
+            #{property1},
+        </if>
+        <if test="property2 != null" >
+            #{property2},
+        </if>
+        <if test="property3 != null" >
+            #{property3},
+        </if>
+        <if test="property4 != null" >
+            #{property4},
+        </if>
+        #{qty},
+        #{separateQty},
+        <if test="status != null" >
+            #{status},
+        </if>
+        now(),
+        #{creater},
+        now(),
+        #{creater}
+        )
+    </insert>
+
+    <select id="select_stock_separate_detail_all" resultType="HashMap" parameterType="HashMap">
+        (select
+        '一般库存隔离' as type,
+        t2.task_name as taskName,
+        t1.separate_qty as qty
+        from voyageone_cms2.cms_bt_stock_separate_item${tableNameSuffix} t1
+        inner join voyageone_cms2.cms_bt_tasks t2 on t1.task_id = t2.task_id
+        where
+        t1.task_id = #{taskId}
+        and t1.cart_id = #{cartId}
+        and t1.sku = #{sku}
+        and (t1.status in
+            <foreach collection="statusStockList" item="statusItem" open="(" separator="," close=")">
+                #{statusItem}
+            </foreach>
+            )
+        )
+        union
+        (select
+            '增量库存隔离' as type,
+            t2.sub_task_Name as taskName,
+            t1.increment_qty as qty
+        from voyageone_cms2.cms_bt_stock_separate_increment_item${tableNameSuffix} t1
+        inner join voyageone_cms2.cms_bt_stock_separate_increment_task t2 on t1.sub_task_id = t2.sub_task_id
+        where
+        t2.task_id = #{taskId}
+        and t2.cart_id = #{cartId}
+        and t1.sku = #{sku}
+        and (t1.status in
+            <foreach collection="statusStockIncrementList" item="statusItem" open="(" separator="," close=")">
+                #{statusItem}
+            </foreach>
+            )
+        )
+    </select>
+
+    <select id="select_stock_separate_item_excel_map" resultType="com.voyageone.service.bean.cms.task.stock.StockExcelBean" parameterType="HashMap">
+        select
+          `product_model`,
+          `product_code`,
+          `sku`,
+          `cart_id`,
+          `property1`,
+          `property2`,
+          `property3`,
+          `property4`,
+          `qty`,
+          `separate_qty`,
+          `status`
+        from ${tableName}
+        ${whereSql}
+        order by
+          `product_model`,`product_code`,`sku`,`cart_id`
+    </select>
+
+    <insert id="insert_cms_bt_stock_separate_item_excel" parameterType="List">
+        insert into voyageone_cms2.cms_bt_stock_separate_item (
+        task_id,
+        product_model,
+        product_code,
+        sku,
+        cart_id,
+        property1,
+        property2,
+        property3,
+        property4,
+        qty,
+        separate_qty,
+        status,
+        created,
+        creater,
+        modified,
+        modifier
+        ) value
+        <foreach collection="list" index="index" item="item" separator=",">
+            (#{item.task_id},
+            #{item.product_model},
+            #{item.product_code},
+            #{item.sku},
+            #{item.cart_id},
+            <if test="item.property1 != null" >
+                #{item.property1},
+            </if>
+            <if test="item.property1 == null" >
+                '',
+            </if>
+            <if test="item.property2 != null" >
+                #{item.property2},
+            </if>
+            <if test="item.property2 == null" >
+                '',
+            </if>
+            <if test="item.property3 != null" >
+                #{item.property3},
+            </if>
+            <if test="item.property3 == null" >
+                '',
+            </if>
+            <if test="item.property4 != null" >
+                #{item.property4},
+            </if>
+            <if test="item.property4 == null" >
+                '',
+            </if>
+            #{item.qty},
+            #{item.separate_qty},
+            <if test="item.status != null" >
+                #{item.status},
+            </if>
+            <if test="item.status == null" >
+                '',
+            </if>
+            now(),
+            #{item.creater},
+            now(),
+            #{item.creater})
+        </foreach>
+    </insert>
+
+</mapper>

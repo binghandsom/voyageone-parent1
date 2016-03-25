@@ -7,23 +7,22 @@ import com.taobao.top.schema.field.ComplexField;
 import com.taobao.top.schema.field.Field;
 import com.taobao.top.schema.field.MultiComplexField;
 import com.voyageone.base.exception.BusinessException;
-import com.voyageone.common.util.JsonUtil;
 import com.voyageone.ims.rule_expression.RuleExpression;
 import com.voyageone.ims.rule_expression.RuleWord;
 import com.voyageone.service.bean.cms.*;
+import com.voyageone.service.bean.cms.system.dictionary.CmsDictionaryIndexBean;
+import com.voyageone.service.dao.cms.CmsMtDictDao;
 import com.voyageone.service.dao.cms.CmsMtPlatformSpecialFieldDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtCategorySchemaDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategorySchemaDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtPlatformMappingDao;
+import com.voyageone.service.model.cms.CmsMtDictModel;
 import com.voyageone.service.model.cms.CmsMtPlatformSpecialFieldModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingModel;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.bean.setting.mapping.platform.PlatformMappingBean;
-import com.voyageone.web2.cms.bean.system.dictionary.CmsDictionaryIndexBean;
-import com.voyageone.web2.cms.dao.CmsMtDictDao;
-import com.voyageone.web2.cms.model.CmsMtDictModel;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -262,7 +261,7 @@ public class CmsPlatformPropMappingService extends BaseAppService {
         platformMappingDao.update(platformMappingModel);
 
         List<String> top = new ArrayList<>();
-        top.add(mappingPath.get(mappingPath.size() - 1));
+        top.add(mappingPath.get(0));
         return searchPropertyMappingByPath(platformMappingModel, top);
     }
 
@@ -285,7 +284,7 @@ public class CmsPlatformPropMappingService extends BaseAppService {
     private MappingBean fixMappingStruct(CmsMtPlatformMappingModel platformMappingModel, Map<String, Field> fieldMap,
                                          List<String> mappingPath) {
 
-        List<MappingBean> mappingBeen = platformMappingModel.getProps();
+        List<MappingBean> mappingBeanList = platformMappingModel.getProps();
 
         List<MultiComplexCustomMappingValue> values = null;
 
@@ -297,27 +296,27 @@ public class CmsPlatformPropMappingService extends BaseAppService {
 
         for (String propertyId : mappingPath) {
 
-            if (mappingBeen == null && values != null) {
+            if (mappingBeanList == null && values != null) {
 
                 int index = Integer.valueOf(propertyId);
 
                 if (values.size() < index) {
-                    mappingBeen = values.get(index).getSubMappings();
+                    mappingBeanList = values.get(index).getSubMappings();
                 } else {
                     MultiComplexCustomMappingValue value = new MultiComplexCustomMappingValue();
                     values.add(value);
-                    mappingBeen = value.getSubMappings();
+                    mappingBeanList = value.getSubMappings();
                 }
 
                 continue;
             }
 
-            if (mappingBeen == null || fieldMap == null)
+            if (mappingBeanList == null || fieldMap == null)
                 return mappingBean;
 
             field = fieldMap.get(propertyId);
 
-            mappingBean = mappingBeen.stream()
+            mappingBean = mappingBeanList.stream()
                     .filter(m -> m.getPlatformPropId().equals(propertyId))
                     .findFirst()
                     .orElse(null);
@@ -353,8 +352,8 @@ public class CmsPlatformPropMappingService extends BaseAppService {
                         mappingBean = new SimpleMappingBean();
                         mappingBean.setPlatformPropId(field.getId());
                     }
-                    mappingBeen.add(mappingBean);
-                    mappingBeen = null;
+                    mappingBeanList.add(mappingBean);
+                    mappingBeanList = null;
                     values = null;
                     break;
                 case MappingBean.MAPPING_COMPLEX:
@@ -363,11 +362,11 @@ public class CmsPlatformPropMappingService extends BaseAppService {
                         mappingBean = complexMappingBean = new ComplexMappingBean();
                         complexMappingBean.setPlatformPropId(field.getId());
                         complexMappingBean.setSubMappings(new ArrayList<>());
-                        mappingBeen.add(complexMappingBean);
+                        mappingBeanList.add(complexMappingBean);
                     } else {
                         complexMappingBean = (ComplexMappingBean) mappingBean;
                     }
-                    mappingBeen = complexMappingBean.getSubMappings();
+                    mappingBeanList = complexMappingBean.getSubMappings();
                     values = null;
                     break;
                 case MappingBean.MAPPING_MULTICOMPLEX_CUSTOM:
@@ -376,11 +375,11 @@ public class CmsPlatformPropMappingService extends BaseAppService {
                         mappingBean = multiComplexCustomMappingBean = new MultiComplexCustomMappingBean();
                         multiComplexCustomMappingBean.setPlatformPropId(field.getId());
                         multiComplexCustomMappingBean.setValues(new ArrayList<>());
-                        mappingBeen.add(multiComplexCustomMappingBean);
+                        mappingBeanList.add(multiComplexCustomMappingBean);
                     } else {
                         multiComplexCustomMappingBean = (MultiComplexCustomMappingBean) mappingBean;
                     }
-                    mappingBeen = null;
+                    mappingBeanList = null;
                     values = multiComplexCustomMappingBean.getValues();
                     break;
             }

@@ -24,17 +24,17 @@
 			<artifactId>voyageone-web2-sdk</artifactId>
 			<version>${voyageone.web2.sdk.version}</version>
 		</dependency>
-		<!--<dependency>-->
-			<!--<groupId>com.voyageone</groupId>-->
-			<!--<artifactId>voyageone-web2-wsdl</artifactId>-->
-			<!--<version>${voyageone.web2.wsdl.version}</version>-->
-		<!--</dependency>-->
+		<dependency>
+			<groupId>com.voyageone</groupId>
+			<artifactId>voyageone-web2-openapi</artifactId>
+			<version>${voyageone.web2.openapi.version}</version>
+		</dependency>
 
-		<!--<dependency>-->
-			<!--<groupId>com.voyageone</groupId>-->
-			<!--<artifactId>voyageone-service2-model</artifactId>-->
-			<!--<version>${voyageone.service2.model.version}</version>-->
-		<!--</dependency>-->
+		<dependency>
+			<groupId>com.voyageone</groupId>
+			<artifactId>voyageone-service2-model</artifactId>
+			<version>${voyageone.service2.model.version}</version>
+		</dependency>
 
 		<dependency>
 			<groupId>com.voyageone</groupId>

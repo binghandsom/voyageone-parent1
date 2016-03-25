@@ -34,7 +34,7 @@ public class CmsProductDaoTest {
     @Test
     public void testSelectProductByCode() throws Exception {
         long start = System.currentTimeMillis();
-        CmsBtProductModel model = cmsBtProductDao.selectProductByCode("100", "100011");
+        CmsBtProductModel model = cmsBtProductDao.selectProductByCode("010", "51A0HC13E1-00LCNB0");
         System.out.println("time total:=" + (System.currentTimeMillis() - start));
         System.out.println(model.toString());
     }

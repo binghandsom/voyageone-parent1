@@ -1,29 +1,27 @@
 package com.voyageone.task2.cms.service.feed;
 
-import com.csvreader.CsvReader;
-import com.voyageone.task2.base.BaseTaskService;
-
-import com.voyageone.task2.cms.bean.SuperFeedVtmBean;
-import com.voyageone.task2.cms.dao.SuperFeed2Dao;
-import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.FeedEnums;
-import com.voyageone.common.configs.Feed;
+import com.voyageone.common.configs.Feeds;
+import com.voyageone.common.configs.beans.FeedBean;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.task2.base.BaseTaskService;
+import com.voyageone.task2.base.modelbean.TaskControlBean;
+import com.voyageone.task2.cms.bean.SuperFeedVtmBean;
+import com.voyageone.task2.cms.dao.SuperFeed2Dao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.*;
-import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import static com.voyageone.common.configs.Enums.ChannelConfigEnums.Channel.VITAMIN;
+import static com.voyageone.common.configs.Enums.ChannelConfigEnums.Channel.LUCKY_VITAMIN;
 
 /**
  * @author morse.lu
@@ -67,7 +65,7 @@ public class VtmService extends BaseTaskService {
 
         // 清表
         $info("维他命产品信息清表开始");
-        superfeeddao.deleteTableInfo(Feed.getVal1(ChannelConfigEnums.Channel.VITAMIN.getId(), FeedEnums.Name.table_id));
+        superfeeddao.deleteTableInfo(Feeds.getVal1(ChannelConfigEnums.Channel.LUCKY_VITAMIN.getId(), FeedEnums.Name.table_id));
         $info("维他命产品信息清表结束");
 
         // 插入数据库
@@ -81,10 +79,10 @@ public class VtmService extends BaseTaskService {
         // 2的sql文：
         // UPDATE voyageone_cms2.cms_zz_worktable_vtm_superfeed b SET b.UpdateFlag = 2 WHERE b.MerchantPrimaryCategory="" OR b.CNMSRP="" OR b.CNPrice="" OR b.`Image List`="";
         logger.info("transform开始");
-        transformer.new Context(VITAMIN, this).transform();
+        transformer.new Context(LUCKY_VITAMIN, this).transform();
         logger.info("transform结束");
 
-        insertService.new Context(VITAMIN).postNewProduct();
+        insertService.new Context(LUCKY_VITAMIN).postNewProduct();
         // 更新完成，UpdateFlag结果：
         // UpdateFlag    cms_zz_worktable_vtm_superfeed
         // 0             已经加入的原有数据(未变化)
@@ -92,7 +90,7 @@ public class VtmService extends BaseTaskService {
         // 2             本次导入error的数据
         // 3             本次导入完全导入成功的数据
 
-        backupFeedFile(VITAMIN.getId());
+        backupFeedFile(LUCKY_VITAMIN.getId());
 
     }
 
@@ -133,14 +131,16 @@ public class VtmService extends BaseTaskService {
         int count = 0;
         String sku = "first";
 
+        List<String> listImportUPC = getListImportUPC();
+
 //        CsvReader reader;
         BufferedReader br = null;
         try {
-            String fileName = Feed.getVal1(ChannelConfigEnums.Channel.VITAMIN.getId(), FeedEnums.Name.file_id);
-            String filePath = Feed.getVal1(ChannelConfigEnums.Channel.VITAMIN.getId(), FeedEnums.Name.feed_ftp_localpath);
+            String fileName = Feeds.getVal1(ChannelConfigEnums.Channel.LUCKY_VITAMIN.getId(), FeedEnums.Name.file_id);
+            String filePath = Feeds.getVal1(ChannelConfigEnums.Channel.LUCKY_VITAMIN.getId(), FeedEnums.Name.feed_ftp_localpath);
             String fileFullName = String.format("%s/%s", filePath, fileName);
 
-            String encode = Feed.getVal1(ChannelConfigEnums.Channel.VITAMIN.getId(), FeedEnums.Name.feed_ftp_file_coding);
+            String encode = Feeds.getVal1(ChannelConfigEnums.Channel.LUCKY_VITAMIN.getId(), FeedEnums.Name.feed_ftp_file_coding);
 
 //            reader = new CsvReader(new FileInputStream(fileFullName), '\t', Charset.forName(encode));
 
@@ -161,7 +161,7 @@ public class VtmService extends BaseTaskService {
                 superfeedvtmbean.setSKU(reader.get(i++));
                 sku = superfeedvtmbean.getSKU();
                 superfeedvtmbean.setUPC(reader.get(i++));
-                if (StringUtils.isEmpty(superfeedvtmbean.getUPC())) {
+                if (StringUtils.isEmpty(superfeedvtmbean.getUPC()) || !listImportUPC.contains(superfeedvtmbean.getUPC())) {
                     continue;
                 }
                 superfeedvtmbean.setEAN(reader.get(i++));
@@ -290,6 +290,19 @@ public class VtmService extends BaseTaskService {
     }
 
     /**
+     * cms_mt_feed_config中配置的需要导入的产品的UPC列表取得
+     *
+     * @return listImportUPC
+     */
+    private List<String> getListImportUPC() {
+        List<String> listImportUPC = new ArrayList<String>();
+        List<FeedBean> configs = Feeds.getConfigs(ChannelConfigEnums.Channel.LUCKY_VITAMIN.getId(), FeedEnums.Name.import_upc);
+        configs.forEach(bean->listImportUPC.add(bean.getCfg_val1()));
+
+        return listImportUPC;
+    }
+
+    /**
      * 错误数据把UpdateFlag设置成2
      * 备注：response的原因，替代transform的sql文 UPDATE voyageone_cms2.cms_zz_worktable_vtm_superfeed b SET b.UpdateFlag = 2 WHERE b.MerchantPrimaryCategory="" OR b.CNMSRP="" OR b.CNPrice="" OR b.`Image List`="";
      */
@@ -311,9 +324,9 @@ public class VtmService extends BaseTaskService {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
         String date_ymd = sdf.format(date);
 
-        String filename = Feed.getVal1(channel_id, FeedEnums.Name.feed_ftp_localpath) + "/" + StringUtils.null2Space(Feed.getVal1(channel_id, FeedEnums.Name.file_id));
-        String filename_backup = Feed.getVal1(channel_id, FeedEnums.Name.feed_ftp_localpath) + "/" + date_ymd + "_"
-                + StringUtils.null2Space(Feed.getVal1(channel_id, FeedEnums.Name.file_id));
+        String filename = Feeds.getVal1(channel_id, FeedEnums.Name.feed_ftp_localpath) + "/" + StringUtils.null2Space(Feeds.getVal1(channel_id, FeedEnums.Name.file_id));
+        String filename_backup = Feeds.getVal1(channel_id, FeedEnums.Name.feed_ftp_localpath) + "/" + date_ymd + "_"
+                + StringUtils.null2Space(Feeds.getVal1(channel_id, FeedEnums.Name.file_id));
         File file = new File(filename);
         File file_backup = new File(filename_backup);
 

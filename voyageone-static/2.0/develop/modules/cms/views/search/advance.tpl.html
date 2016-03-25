@@ -49,6 +49,56 @@
 								<div class="input-group col-sm-4"><input type="text" class="form-control" ng-model="vm.searchInfo.priceEnd" ng-pattern="/^(\d+)(\.[0-9]{0,2})?$/"></div>
 							</div>
 						</div><!-- .form-group -->
+						<!-- TODO 还未实现 -->
+						<!--<div class="form-group">-->
+							<!--<label class="col-sm-3 control-label" translate="TXT_CUST_QUERY_ATTR"></label>-->
+							<!--<div class="col-sm-8 form-inline">-->
+								<!--<select class="form-control">-->
+									<!--<option>1</option>-->
+									<!--<option>2</option>-->
+									<!--<option>3</option>-->
+								<!--</select>-->
+								<!--<select class="form-control">-->
+									<!--<option><&nbsp;=</option>-->
+									<!--<option>>&nbsp;=</option>-->
+									<!--<option>=&nbsp;=</option>-->
+								<!--</select>-->
+								<!--<div class="input-group col-sm-5"><input type="text" class="form-control"></div>-->
+								<!--<button class="btn btn-success"><i class="fa fa-plus"></i></button>-->
+							<!--</div>-->
+						<!--</div>-->
+						<!--<div class="form-group">-->
+							<!--<label class="col-sm-3 control-label"></label>-->
+							<!--<div class="col-sm-8 form-inline">-->
+								<!--<select class="form-control">-->
+									<!--<option>1</option>-->
+									<!--<option>2</option>-->
+									<!--<option>3</option>-->
+								<!--</select>-->
+								<!--<select class="form-control">-->
+									<!--<option><&nbsp;=</option>-->
+									<!--<option>>&nbsp;=</option>-->
+									<!--<option>=&nbsp;=</option>-->
+								<!--</select>-->
+								<!--<div class="input-group col-sm-5"><input type="text" class="form-control"></div>-->
+							<!--</div>-->
+						<!--</div>-->
+						<!--<div class="form-group">-->
+							<!--<label class="col-sm-3 control-label"></label>-->
+							<!--<div class="col-sm-8 form-inline">-->
+								<!--<select class="form-control">-->
+									<!--<option>1</option>-->
+									<!--<option>2</option>-->
+									<!--<option>3</option>-->
+								<!--</select>-->
+								<!--<select class="form-control">-->
+									<!--<option><&nbsp;=</option>-->
+									<!--<option>>&nbsp;=</option>-->
+									<!--<option>=&nbsp;=</option>-->
+								<!--</select>-->
+								<!--<div class="input-group col-sm-5"><input type="text" class="form-control"></div>-->
+							<!--</div>-->
+						<!--</div>-->
 					</div>
 				</div>
 				<div class="col-sm-4">
@@ -232,12 +282,8 @@
 		<tabset class="tab-container vo_nav-tabs">
 			<!--right-btn-->
 			<div class="form-inline m-b-xs pull-right" ng-controller="popupCtrl">
-				<!--<button class="btn btn-vo"-->
-						<!--ng-click="" >-->
-					<!--<i class="fa fa-table"></i>&nbsp;<span translate="BTN_CUSTOMIZE_COLUMNS"></span>-->
-				<!--</button>-->
-				<!-- TODO 暂时未实现-->
-				<!--<button class="btn btn-default" ng-click="openCustomBaseProperty('lg')"><i class="fa fa-cog"></i>&nbsp;{{'BTN_CUSTOMIZE_COLUMNS' | translate}}</button>-->
+				<!-- TODO 还未实现 -->
+				<!--<button class="btn btn-default" ng-click="openCustomColumn('lg','md')"><i class="fa fa-cog"></i>&nbsp;{{'BTN_CUSTOMIZE_COLUMNS' | translate}}</button>-->
 				<div class="btn-group" uib-dropdown>
 					<button type="button" class="btn btn-default" ng-disabled="vm.masterData.promotionList.length < 0" uib-dropdown-toggle>
 						<i class="fa fa-arrow-circle-right"></i>&nbsp;{{'BTN_ADD_TO_PROMOTION' | translate}}&nbsp;<span class="caret"></span>
@@ -269,7 +315,8 @@
 							<th class="mfb-xxt text-center" translate="TXT_INVENTORY"></th>
 							<th class="mfb-xxt text-right" translate="TXT_SALE_PRICE"></th>
 							<th class="mfb-xxt text-left" translate="TXT_BRAND"></th>
-							<th class="mfb-xxxs text-left" translate="TXT_BASE_PROPERTY"></th>
+							<th class="text-left" ng-repeat="prop1 in vm.commonProps">{{prop1.propName}}</th>
+							<th class="text-left" ng-repeat="prop2 in vm.customProps">{{prop2.feed_prop_translation}}</th>
 							<th class="mfb-xxt text-left" translate="TXT_TIME"></th>
 						</tr>
 						</thead>
@@ -330,15 +377,10 @@
 										{{groupInfo.groups.priceSale}}
 									</button>
 								</td>
-								<td class="mfb-xxt text-left">{{groupInfo.fields.brand}}</td>
-								<td class="mfb-xxxs text-left">
-									<div class="table_main">
-										<ul>
-											<!--TODO 暂时实现不了 -->
-											<!--<li ng-repeat="baseProperty in groupInfo.primaryProduct.basePropertyList">{{baseProperty.name}}&nbsp;{{baseProperty.value}}</li>-->
-										</ul>
-									</div>
-								</td>
+								<td class="mfb-xxt text-left">{{groupInfo.fields.brand}}</td>{{groupInfo.commArr}}{{groupInfo.custArr}}
+								<td class="text-left" ng-repeat="prop1 in groupInfo.commArr">{{prop1.value}}</td>
+								<td class="text-left" ng-repeat="prop2 in groupInfo.custArr">{{prop2.value}}</td>
+
 								<td class="mfb-xxt text-left">
 									<small ng-controller="showPopoverCtrl" popover-html="showInfo({{groupInfo.groups.platforms[0].timeDetail}})" popover-trigger="mouseenter" popover-placement="left">
 										<div class="table_main">
@@ -435,11 +477,7 @@
 									<td class="mfb-xxt text-left">{{productInfo.fields.productType}}</td>
 									<td class="mfb-xxt text-left">{{productInfo.fields.sizeType}}</td>
 									<td class="mfb-xxs text-left">
-										<div class="table_main">
-											<ul>
-												<!--<li ng-repeat="baseProperty in productInfo.basePropertyList">{{baseProperty.name}}&nbsp;{{baseProperty.value}}</li>-->
-											</ul>
-										</div>
+
 									</td>
 									<td class="mfb-xxt text-center">
 										<button ng-controller="showPopoverCtrl" popover-html="showInfo({{productInfo.skuDetail}})" popover-title="{{'TXT_SKU_PLATFORM_INFO' | translate}}"

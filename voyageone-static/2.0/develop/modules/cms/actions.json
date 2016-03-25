@@ -28,7 +28,8 @@
         "getGroupList": "getGroupList",
         "getProductList": "getProductList",
         "exportProducts":"exportProducts",
-        "getCustColumnsInfo":"getCustColumnsInfo"
+        "getCustColumnsInfo":"getCustColumnsInfo",
+        "saveCustColumnsInfo":"saveCustColumnsInfo"
       }
     },
     "group": {
@@ -58,14 +59,13 @@
         "getMainCategories": "getMainCategories",
         "setMapping": "setFeedMapping",
         "extendsMapping": "extendsMapping",
-        "getMainProps": "getMainCategoryProps",
-        "getMatched": "getMatched",
         "getFieldMapping": "getFieldMapping",
         "getFeedAttrs": "getFeedAttributes",
         "saveFieldMapping": "saveFieldMapping",
         "directMatchOver": "directMatchOver",
-        "getMatchOver": "getMatchOver",
-        "getMainMapping": "getMainMapping"
+        "getMainMapping": "getMainMapping",
+        "getMappings": "getMappings",
+        "getMappingInfo": "getMappingInfo"
       },
       "platformMappingService": {
         "root": "/cms/mapping/platform",
