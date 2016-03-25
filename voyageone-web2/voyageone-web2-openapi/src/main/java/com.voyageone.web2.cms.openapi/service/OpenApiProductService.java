@@ -43,10 +43,10 @@ public class OpenApiProductService extends OpenApiBaseService {
         String[] projection = getProjection(request);
 
         //getProductByCode
-        String productCode = request.getCode();
+        String productSku = request.getSku();
 
-        if (!StringUtils.isEmpty(productCode)) {
-            ProductForWmsBean bean = productService.getWmsProductsInfo(channelId, productCode, projection);
+        if (!StringUtils.isEmpty(productSku)) {
+            ProductForWmsBean bean = productService.getWmsProductsInfo(channelId, productSku, projection);
             response.setResultInfo(bean);
         }
         return response;

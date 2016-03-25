@@ -9,12 +9,10 @@ define([
     function attributeValueController($scope, $routeParams, attributeValueService, attributeService, $translate,notify) {
         $scope.vm = {
             searchInfo: {
-                cat_path: '',
+                cat_path: $routeParams.catPath,
                 sts : "2",
                 propName: "",
-                propValue: "",
-                skip: "",
-                limit: ""
+                propValue: ""
             },
             path:"",
             categoryList:[],
@@ -43,22 +41,18 @@ define([
          */
         function clear(){
             $scope.vm.searchInfo={
-                //cat_path: $routeParams.catPath,
-                cat_path: '',
+                cat_path: null,
                 sts: "2",
                 propName: "",
-                propValue: "",
-                skip: "",
-                limit: ""
+                propValue: ""
             };
-            $scope.vm.valuesPageOption= {curr: 1, total: 0, size: 20, fetch: search};
-
         }
 
         /**
          * 检索数据
          */
-        function search(){
+        function search(page){
+            $scope.vm.valuesPageOption.curr = !page ? $scope.vm.valuesPageOption.curr : page;
             $scope.vm.searchInfo.skip = $scope.vm.valuesPageOption.curr;
             $scope.vm.searchInfo.limit = $scope.vm.valuesPageOption.size;
             attributeValueService.init($scope.vm.searchInfo)

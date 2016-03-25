@@ -11,11 +11,11 @@ import java.util.List;
  */
 @Repository
 public class CmsBtSxWorkloadDao extends ServiceBaseDao {
-    public List<CmsBtSxWorkloadModel> getSxWorkloadModelWithChannel(int recordCount, String channelId) {
+    public List<CmsBtSxWorkloadModel> selectSxWorkloadModelWithChannel(int recordCount, String channelId) {
         return selectList("cms_select_sx_workload", parameters("record_count", recordCount, "channel_id", channelId));
     }
 
-    public List<CmsBtSxWorkloadModel> getSxWorkloadModel(int recordCount) {
+    public List<CmsBtSxWorkloadModel> selectSxWorkloadModel(int recordCount) {
         return selectList("cms_select_sx_workload", parameters("record_count", recordCount));
     }
 

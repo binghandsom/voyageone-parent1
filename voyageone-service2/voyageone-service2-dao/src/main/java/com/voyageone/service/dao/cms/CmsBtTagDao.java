@@ -31,13 +31,13 @@ public class CmsBtTagDao extends ServiceBaseDao {
         return delete("delete_cms_bt_tag_by_parent_tag_id", cmsBtTagModel);
     }
 
-    public CmsBtTagModel getCmsBtTagByTagId(int tagId) {
+    public CmsBtTagModel selectCmsBtTagByTagId(int tagId) {
         HashMap<String, Object> paraIn = new HashMap<>();
         paraIn.put("tagId", tagId);
         return selectOne("select_one_by_tag_id", paraIn);
     }
 
-    public CmsBtTagModel getCmsBtTagByParentTagId(int tagId) {
+    public CmsBtTagModel selectCmsBtTagByParentTagId(int tagId) {
         HashMap<String, Object> paraIn = new HashMap<>();
         paraIn.put("tagId", tagId);
         return selectOne("select_one_by_parent_tag_id", paraIn);

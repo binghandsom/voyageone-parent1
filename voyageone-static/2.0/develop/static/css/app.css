@@ -6069,7 +6069,7 @@ a.text-black:hover {
 }
 
 .thumb-sm-search {
-  width: 80px;
+  /*width: 80px;*/
   height:80px;
   display: inline-block;
 }

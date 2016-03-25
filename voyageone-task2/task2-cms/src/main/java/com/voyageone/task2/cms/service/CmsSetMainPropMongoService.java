@@ -4,18 +4,37 @@ import com.google.common.base.Joiner;
 import com.mongodb.BulkWriteResult;
 import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
+import com.voyageone.cms.CmsConstants;
+import com.voyageone.cms.bean.Condition;
+import com.voyageone.cms.enums.MappingPropType;
+import com.voyageone.cms.enums.Operation;
+import com.voyageone.cms.enums.SrcType;
+import com.voyageone.common.Constants;
 import com.voyageone.common.components.baidu.translate.BaiduTranslateUtil;
+import com.voyageone.common.components.issueLog.enums.SubSystem;
+import com.voyageone.common.configs.Channels;
+import com.voyageone.common.configs.TypeChannels;
+import com.voyageone.common.configs.beans.OrderChannelBean;
+import com.voyageone.common.configs.beans.TypeChannelBean;
+import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
+import com.voyageone.common.masterdate.schema.field.ComplexField;
+import com.voyageone.common.masterdate.schema.field.Field;
+import com.voyageone.common.masterdate.schema.field.MultiComplexField;
+import com.voyageone.common.util.MD5;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.common.util.inch2cm.InchStrConvert;
+import com.voyageone.service.bean.cms.product.ProductPriceBean;
+import com.voyageone.service.bean.cms.product.ProductSkuPriceBean;
 import com.voyageone.service.bean.cms.product.ProductUpdateBean;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedMappingDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtCategorySchemaDao;
+import com.voyageone.service.impl.cms.MongoSequenceService;
+import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductSkuService;
-import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
-import com.voyageone.service.impl.cms.MongoSequenceService;
-import com.voyageone.service.model.cms.CmsBtFeedCustomPropModel;
+import com.voyageone.service.model.cms.CmsBtFeedCustomPropAndValueModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;
@@ -28,29 +47,10 @@ import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.base.util.TaskControlUtils;
 import com.voyageone.task2.cms.bean.ItemDetailsBean;
-import com.voyageone.cms.CmsConstants;
-import com.voyageone.cms.enums.MappingPropType;
-import com.voyageone.cms.enums.SrcType;
-import com.voyageone.cms.bean.Condition;
-import com.voyageone.cms.enums.Operation;
-import com.voyageone.common.Constants;
-import com.voyageone.common.components.issueLog.enums.SubSystem;
-import com.voyageone.common.configs.ChannelConfigs;
-import com.voyageone.common.configs.TypeChannel;
-import com.voyageone.common.configs.beans.OrderChannelBean;
-import com.voyageone.common.configs.beans.TypeChannelBean;
-import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
-import com.voyageone.common.masterdate.schema.field.ComplexField;
-import com.voyageone.common.masterdate.schema.field.Field;
-import com.voyageone.common.masterdate.schema.field.MultiComplexField;
-import com.voyageone.common.util.MD5;
-import com.voyageone.common.util.StringUtils;
 import com.voyageone.task2.cms.dao.ItemDetailsDao;
 import com.voyageone.task2.cms.dao.MainPropDao;
 import com.voyageone.task2.cms.dao.SuperFeedDao;
 import com.voyageone.task2.cms.dao.TmpOldCmsDataDao;
-import com.voyageone.service.bean.cms.product.ProductPriceBean;
-import com.voyageone.service.bean.cms.product.ProductSkuPriceBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -144,7 +144,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
         private boolean skip_mapping_check;
 
         public setMainProp(String orderChannelId, boolean skip_mapping_check) {
-            this.channel = ChannelConfigs.getChannel(orderChannelId);
+            this.channel = Channels.getChannel(orderChannelId);
             this.skip_mapping_check = skip_mapping_check;
         }
 
@@ -165,7 +165,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 // --------------------------------------------------------------------------------------------
                 // 品牌mapping做成
                 List<TypeChannelBean> typeChannelBeanList;
-                typeChannelBeanList = TypeChannel.getTypeList("brand", channelId);
+                typeChannelBeanList = TypeChannels.getTypeList("brand", channelId);
 
                 if (typeChannelBeanList != null) {
                     for (TypeChannelBean typeChannelBean : typeChannelBeanList) {
@@ -237,8 +237,13 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 // 查看类目是否匹配完成
                 if (mapping == null) {
                     // 记下log, 跳过当前记录
+                    if (cmsProduct == null) {
 //                    logIssue(getTaskName(), String.format("[CMS2.0][测试]该feed类目, 没有匹配到主数据的类目 ( channel: [%s], feed: [%s] )", channelId, feed.getCategory()));
-                    logger.warn(String.format("[CMS2.0][测试]该feed类目, 没有匹配到主数据的类目 ( channel: [%s], feed: [%s] )", channelId, feed.getCategory()));
+                        logger.warn(String.format("[CMS2.0][测试]该feed类目, 没有匹配到主数据的类目 ( channel: [%s], feed: [%s] )", channelId, feed.getCategory()));
+                    } else {
+//                    logIssue(getTaskName(), String.format("[CMS2.0][测试]该feed类目, 没有匹配到主数据的类目 ( channel: [%s], feed: [%s], master: [%s] )", channelId, feed.getCategory(), cmsProduct.getCatPath()));
+                        logger.warn(String.format("[CMS2.0][测试]该feed类目, 没有匹配到主数据的类目 ( channel: [%s], feed: [%s], master: [%s] )", channelId, feed.getCategory(), cmsProduct.getCatPath()));
+                    }
 
                     return;
                 }
@@ -339,9 +344,10 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
          * @param mapping feed与main的匹配关系
          * @param mapBrandMapping 品牌mapping一览
          * @param schemaModel 主类目的属性的schema
+         * @param newFlg 新建flg (true:新建商品 false:更新的商品)
          * @return 返回整个儿的Fields的内容
          */
-        private CmsBtProductModel_Field doCreateCmsBtProductModelField(CmsBtFeedInfoModel feed, CmsBtFeedMappingModel mapping, Map<String, String> mapBrandMapping, CmsMtCategorySchemaModel schemaModel) {
+        private CmsBtProductModel_Field doCreateCmsBtProductModelField(CmsBtFeedInfoModel feed, CmsBtFeedMappingModel mapping, Map<String, String> mapBrandMapping, CmsMtCategorySchemaModel schemaModel, boolean newFlg) {
 
             // --------- 商品属性信息设定 ------------------------------------------------------
             CmsBtProductModel_Field field = new CmsBtProductModel_Field();
@@ -361,67 +367,76 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 }
             }
 
-            // TODO: 现在mapping画面功能还不够强大, 共通属性和SKU属性先暂时写死在代码里, 等我写完上新代码回过头来再想办法改 (tom.zhu)
-            // 主数据的field里, 暂时强制写死的字段(共通属性)
-            // 产品code
-            field.setCode(feed.getCode());
-            // 品牌
-            if (mapBrandMapping.containsKey(feed.getBrand())) {
-                field.setBrand(mapBrandMapping.get(feed.getBrand()));
-            } else {
-                logger.error(getTaskName() + ":" + String.format("[CMS2.0][测试]feed->main的品牌mapping没做 ( channel id: [%s], feed brand: [%s] )", feed.getChannelId(), feed.getBrand()));
+            // 新建的场合才设置的属性
+            if (newFlg) {
+                // TODO: 现在mapping画面功能还不够强大, 共通属性和SKU属性先暂时写死在代码里, 等我写完上新代码回过头来再想办法改 (tom.zhu)
+                // 主数据的field里, 暂时强制写死的字段(共通属性)
+                // 产品code
+                field.setCode(feed.getCode());
+                // 品牌
+                if (mapBrandMapping.containsKey(feed.getBrand())) {
+                    field.setBrand(mapBrandMapping.get(feed.getBrand()));
+                } else {
+                    logger.error(getTaskName() + ":" + String.format("[CMS2.0][测试]feed->main的品牌mapping没做 ( channel id: [%s], feed brand: [%s] )", feed.getChannelId(), feed.getBrand()));
 
-                // 记下log, 跳过当前记录
-//                logIssue(getTaskName(), String.format("[CMS2.0][测试]feed->main的品牌mapping没做 ( channel id: [%s], feed brand: [%s] )", feed.getChannelId(), feed.getBrand()));
-                logger.warn(String.format("[CMS2.0][测试]feed->main的品牌mapping没做 ( channel id: [%s], feed brand: [%s] )", feed.getChannelId(), feed.getBrand()));
+                    // 记下log, 跳过当前记录
+                    //                logIssue(getTaskName(), String.format("[CMS2.0][测试]feed->main的品牌mapping没做 ( channel id: [%s], feed brand: [%s] )", feed.getChannelId(), feed.getBrand()));
+                    logger.warn(String.format("[CMS2.0][测试]feed->main的品牌mapping没做 ( channel id: [%s], feed brand: [%s] )", feed.getChannelId(), feed.getBrand()));
 
-                return null;
-            }
-            // 产品名称（英文）
-            field.setProductNameEn(feed.getName());
-            // 长标题, 中标题, 短标题: 都是中文, 需要自己翻译的
-            // 款号model
-            field.setModel(feed.getModel());
-            // 颜色
-            field.setColor(feed.getColor());
-            // 产地
-            field.setOrigin(feed.getOrigin());
-            // 简短描述英文
-            field.setShortDesEn(feed.getShort_description());
-            // 详情描述英文
-            field.setLongDesEn(feed.getLong_description());
-            // 税号集货: 不要设置
-            // 税号个人: 这里暂时不设，以后要自动设置的
-            // 产品状态
-            field.setStatus(CmsConstants.ProductStatus.New); // 产品状态: 初始时期为(新建) Synship.com_mt_type : id = 44 : productStatus
-
-            {
-                // 所有的翻译内容
-                Map<String, String> mapTrans = customPropService.getTransList(feed.getChannelId(), feed.getCategory());
-                // 翻译(标题 和 长描述)
-                String strProductNameEn = field.getProductNameEn();
-                String strLongDesEn = field.getLongDesEn();
-                for (Map.Entry<String, String> entry : mapTrans.entrySet()) {
-                    strProductNameEn = strProductNameEn.replace(entry.getKey(), entry.getValue());
-                    strLongDesEn = strLongDesEn.replace(entry.getKey(), entry.getValue());
+                    return null;
                 }
-                // 调用百度翻译
-                List<String> transBaiduOrg = new ArrayList<>(); // 百度翻译 - 输入参数
-                transBaiduOrg.add(strProductNameEn); // 标题
-                if (!StringUtils.isEmpty(strLongDesEn)) {
-                    transBaiduOrg.add(new InchStrConvert().inchToCM(strLongDesEn)); // 长描述
-                }
-                List<String> transBaiduCn; // 百度翻译 - 输出参数
-                try {
-                    transBaiduCn = BaiduTranslateUtil.translate(transBaiduOrg);
+                // 产品名称（英文）
+                field.setProductNameEn(feed.getName());
+                // 长标题, 中标题, 短标题: 都是中文, 需要自己翻译的
+                // 款号model
+                field.setModel(feed.getModel());
+                // 颜色
+                field.setColor(feed.getColor());
+                // 产地
+                field.setOrigin(feed.getOrigin());
+                // 简短描述英文
+                field.setShortDesEn(feed.getShort_description());
+                // 详情描述英文
+                field.setLongDesEn(feed.getLong_description());
+                // 税号集货: 不要设置
+                // 税号个人: 这里暂时不设，以后要自动设置的
+                // 产品状态
+                field.setStatus(CmsConstants.ProductStatus.New); // 产品状态: 初始时期为(新建) Synship.com_mt_type : id = 44 : productStatus
 
-                    field.setLongTitle(transBaiduCn.get(0)); // 标题
-                    field.setLongDesCn(transBaiduCn.get(1)); // 长描述
+                {
+                    // 所有的翻译内容
+                    Map<String, String> mapTrans = customPropService.getTransList(feed.getChannelId(), feed.getCategory());
+                    // 翻译(标题 和 长描述)
+                    String strProductNameEn = field.getProductNameEn();
+                    String strLongDesEn = field.getLongDesEn();
+                    for (Map.Entry<String, String> entry : mapTrans.entrySet()) {
+                        strProductNameEn = strProductNameEn.replace(entry.getKey(), entry.getValue());
+                        strLongDesEn = strLongDesEn.replace(entry.getKey(), entry.getValue());
+                    }
+                    // 调用百度翻译
+                    List<String> transBaiduOrg = new ArrayList<>(); // 百度翻译 - 输入参数
+                    transBaiduOrg.add(strProductNameEn); // 标题
+                    if (!StringUtils.isEmpty(strLongDesEn)) {
+                        // TODO: 临时关掉017
+                        if ("010".equals(feed.getChannelId())) {
+                            logger.info("英寸转厘米:原始:" + strLongDesEn);
+                            transBaiduOrg.add(new InchStrConvert().inchToCM(strLongDesEn)); // 长描述
+                        } else {
+                            transBaiduOrg.add(strLongDesEn); // 长描述
+                        }
+                    }
+                    List<String> transBaiduCn; // 百度翻译 - 输出参数
+                    try {
+                        transBaiduCn = BaiduTranslateUtil.translate(transBaiduOrg);
 
-                } catch (Exception e) {
-                    // 翻译失败的场合,全部设置为空, 运营自己翻译吧
-                    field.setLongTitle(""); // 标题
-                    field.setLongDesCn(""); // 长描述
+                        field.setOriginalTitleCn(transBaiduCn.get(0)); // 标题
+                        field.setOriginalDesCn(transBaiduCn.get(1)); // 长描述
+
+                    } catch (Exception e) {
+                        // 翻译失败的场合,全部设置为空, 运营自己翻译吧
+                        field.setOriginalTitleCn(""); // 标题
+                        field.setOriginalDesCn(""); // 长描述
+                    }
                 }
             }
 
@@ -504,7 +519,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
             // --------- 获取主类目的schema信息 ------------------------------------------------------
             CmsMtCategorySchemaModel schemaModel = cmsMtCategorySchemaDao.getMasterSchemaModelByCatId(product.getCatId());
-            CmsBtProductModel_Field field = doCreateCmsBtProductModelField(feed, mapping, mapBrandMapping, schemaModel);
+            CmsBtProductModel_Field field = doCreateCmsBtProductModelField(feed, mapping, mapBrandMapping, schemaModel, true);
             if (field == null) {
                 return null;
             }
@@ -512,7 +527,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             product.setFields(field);
 
             // 获取当前channel, 有多少个platform
-            List<TypeChannelBean> typeChannelBeanListApprove = TypeChannel.getTypeListSkuCarts(feed.getChannelId(), "A", "en"); // 取得允许Approve的数据
+            List<TypeChannelBean> typeChannelBeanListApprove = TypeChannels.getTypeListSkuCarts(feed.getChannelId(), "A", "en"); // 取得允许Approve的数据
             if (typeChannelBeanListApprove == null) {
                 return null;
             }
@@ -564,7 +579,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 //            // 价格区间设置 ( -> 调用顾步春的api自动会去设置,这里不需要设置了)
 
             // 获取当前channel, 有多少个platform
-            List<TypeChannelBean> typeChannelBeanList = TypeChannel.getTypeListSkuCarts(feed.getChannelId(), "D", "en"); // 取得展示用数据
+            List<TypeChannelBean> typeChannelBeanList = TypeChannels.getTypeListSkuCarts(feed.getChannelId(), "D", "en"); // 取得展示用数据
             if (typeChannelBeanList == null) {
                 return null;
             }
@@ -632,9 +647,9 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             List<String> mainFeedOrgAttsKeyCnList = new ArrayList<>(); // 等待翻译的key的中文
             List<String> mainFeedOrgAttsValueList = new ArrayList<>(); // 等待翻译的value
             // 遍历所有的feed属性
-            List<CmsBtFeedCustomPropModel> feedCustomPropList = customPropService.getPropList(feed.getChannelId(), feed.getCategory());
+            List<CmsBtFeedCustomPropAndValueModel> feedCustomPropList = customPropService.getPropList(feed.getChannelId(), feed.getCategory());
             Map<String, String> feedCustomProp = new HashMap<>();
-            for (CmsBtFeedCustomPropModel propModel : feedCustomPropList) {
+            for (CmsBtFeedCustomPropAndValueModel propModel : feedCustomPropList) {
                 feedCustomProp.put(propModel.getFeed_prop_original(), propModel.getFeed_prop_translation());
             }
             for (Map.Entry<String,Object> attr : feed.getFullAttribute().entrySet() ) {
@@ -818,7 +833,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             // --------- 获取主类目的schema信息 ------------------------------------------------------
             CmsMtCategorySchemaModel schemaModel = cmsMtCategorySchemaDao.getMasterSchemaModelByCatId(product.getCatId());
             // 更新Fields字段
-            CmsBtProductModel_Field field = doCreateCmsBtProductModelField(feed, mapping, mapBrandMapping, schemaModel);
+            CmsBtProductModel_Field field = doCreateCmsBtProductModelField(feed, mapping, mapBrandMapping, schemaModel, false);
             if (field == null) {
                 return null;
             }
@@ -1142,11 +1157,19 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 skuPriceModel.setPriceMsrp(sku.getPrice_msrp());
                 skuPriceModel.setPriceRetail(sku.getPrice_current());
 
+                skuPriceModel.setClientMsrpPrice(sku.getPrice_client_msrp());
+                skuPriceModel.setClientRetailPrice(sku.getPrice_client_retail());
+                skuPriceModel.setClientNetPrice(sku.getPrice_net());
+
                 // 如果是新的SKU, 那么: PriceRetail -> priceSale
                 if (cmsProduct.getSku(sku.getSku()) == null) {
                     skuPriceModel.setPriceSale(skuPriceModel.getPriceRetail());
                 } else if (cmsProduct.getSku(sku.getSku()).getPriceSale() == null || cmsProduct.getSku(sku.getSku()).getPriceSale() == 0d) {
                     skuPriceModel.setPriceSale(skuPriceModel.getPriceRetail());
+                } else {
+                    // 之前有价格的场合, 判断是否需要把价格更新掉
+                    // TODO: 价格是否自动更新这段代码还没写
+                    // TODO: 价格击穿还没写
                 }
 
                 model.addSkuPrice(skuPriceModel);

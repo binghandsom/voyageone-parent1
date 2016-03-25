@@ -4,13 +4,13 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.cms.bean.DictionaryMasterPropBean;
 import com.voyageone.cms.enums.DictionaryMasterProp;
 import com.voyageone.common.Constants;
-import com.voyageone.common.configs.TypeChannel;
+import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.service.bean.cms.system.dictionary.CmsDictionaryIndexBean;
+import com.voyageone.service.dao.cms.CmsMtCustomWordDao;
+import com.voyageone.service.dao.cms.CmsMtDictDao;
+import com.voyageone.service.model.cms.CmsMtDictModel;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
-import com.voyageone.web2.cms.bean.system.dictionary.CmsDictionaryIndexBean;
-import com.voyageone.web2.cms.dao.CmsMtDictDao;
-import com.voyageone.web2.cms.dao.CustomWordDao;
-import com.voyageone.web2.cms.model.CmsMtDictModel;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import com.voyageone.web2.core.dao.ChannelShopDao;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +38,7 @@ public class CmsDictManageService {
     protected ChannelShopDao channelShopDao;
 
     @Autowired
-    protected CustomWordDao customWordDao;
+    protected CmsMtCustomWordDao customWordDao;
 
     /**
      * 获取检索页面初始化的master data数据
@@ -50,7 +50,7 @@ public class CmsDictManageService {
         Map<String, Object> masterData = new HashMap<>();
 
         // 获取platform信息
-        masterData.put("platformList", TypeChannel.getTypeListSkuCarts(userInfo.getSelChannelId(), Constants.comMtTypeChannel.SKU_CARTS_53_D , language));
+        masterData.put("platformList", TypeChannels.getTypeListSkuCarts(userInfo.getSelChannelId(), Constants.comMtTypeChannel.SKU_CARTS_53_D , language));
 
         return masterData;
     }

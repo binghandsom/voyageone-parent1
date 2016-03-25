@@ -15,7 +15,7 @@ import java.util.Map;
 @Repository
 public class CmsBtPromotionModelDao extends ServiceBaseDao {
 
-    public List<CmsBtPromotionGroupModel> getPromotionModelList(Map<String,Object> params){
+    public List<CmsBtPromotionGroupModel> selectPromotionModelList(Map<String, Object> params){
         List<CmsBtPromotionGroupModel> ret = selectList("select_cms_bt_promotion_model",params);
         if (ret == null){
             ret = new ArrayList<>();
@@ -23,14 +23,14 @@ public class CmsBtPromotionModelDao extends ServiceBaseDao {
         return ret;
     }
 
-    public List<Map<String,Object>> getPromotionModelDetailList(Map<String,Object> params) {
+    public List<Map<String,Object>> selectPromotionModelDetailList(Map<String, Object> params) {
         List<Map<String,Object>> ret = selectList("select_promotion_detail", params);
         if (ret == null) {
             ret = new ArrayList<>();
         }
         return ret;
     }
-    public int getPromotionModelDetailListCnt(Map<String,Object> params){
+    public int selectPromotionModelDetailListCnt(Map<String, Object> params){
         return selectOne("select_promotion_detail_cnt",params);
     }
     public int insertPromotionModel(CmsBtPromotionGroupModel params){

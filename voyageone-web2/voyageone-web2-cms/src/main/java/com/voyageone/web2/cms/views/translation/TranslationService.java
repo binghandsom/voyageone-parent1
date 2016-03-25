@@ -6,6 +6,7 @@ import com.voyageone.cms.enums.CartType;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.product.ProductTransDistrBean;
+import com.voyageone.service.dao.cms.CmsMtCustomWordDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtFeedInfoDao;
 import com.voyageone.service.impl.cms.product.ProductGroupService;
 import com.voyageone.service.impl.cms.product.ProductService;
@@ -14,8 +15,6 @@ import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Group_Platform;
 import com.voyageone.web2.cms.bean.ProductTranslationBean;
 import com.voyageone.web2.cms.bean.TranslateTaskBean;
-import com.voyageone.web2.cms.dao.CustomWordDao;
-import com.voyageone.web2.cms.dao.MongoNativeDao;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -42,10 +41,7 @@ public class TranslationService {
     private ProductGroupService productGroupService;
 
     @Autowired
-    protected CustomWordDao customWordDao;
-
-    @Autowired
-    private MongoNativeDao mongoDao;
+    protected CmsMtCustomWordDao customWordDao;
 
     private static String[] RET_FIELDS = {
             "prodId",
@@ -147,7 +143,10 @@ public class TranslationService {
     public TranslateTaskBean saveTask(UserSessionBean userInfo, ProductTranslationBean taskBean, String transSts) {
 
         // check翻译数据是否正确
-        verifyParameter(taskBean);
+        if("1".equalsIgnoreCase(transSts)){
+            verifyParameter(taskBean);
+        }
+
         // 先查询该商品对应的group信息
 //        logger.debug("TranslationService.saveTask() 商品ProdId=" + taskBean.getProdId());
 //
@@ -195,10 +194,12 @@ public class TranslationService {
         updObj.put("fields.translator", userInfo.getUserName());
         updObj.put("fields.translateStatus", transSts);
         updObj.put("fields.translateTime", DateTimeUtil.getNow(DateTimeUtil.DEFAULT_DATETIME_FORMAT));
+        updObj.put("fields.originalTitleCn", taskBean.getLongTitle());
         updObj.put("fields.longTitle", taskBean.getLongTitle());
         updObj.put("fields.middleTitle", taskBean.getMiddleTitle());
         updObj.put("fields.shortTitle", taskBean.getShortTitle());
         updObj.put("fields.longDesCn", taskBean.getLongDesCn());
+        updObj.put("fields.originalDesCn", taskBean.getLongDesCn());
         updObj.put("fields.shortDesCn", taskBean.getShortDesCn());
 
         productService.updateTranslation(userInfo.getSelChannelId(), taskBean.getGroupId(), updObj, userInfo.getUserName());
@@ -467,22 +468,22 @@ public class TranslationService {
 
             throw new BusinessException("长标题不能为空");
         }
-        if (StringUtils.isEmpty(requestBean.getMiddleTitle())){
-
-            throw new BusinessException("中标题不能为空");
-        }
-        if (StringUtils.isEmpty(requestBean.getShortTitle())){
-
-            throw new BusinessException("短标题不能为空");
-        }
+//        if (StringUtils.isEmpty(requestBean.getMiddleTitle())){
+//
+//            throw new BusinessException("中标题不能为空");
+//        }
+//        if (StringUtils.isEmpty(requestBean.getShortTitle())){
+//
+//            throw new BusinessException("短标题不能为空");
+//        }
         if (StringUtils.isEmpty(requestBean.getLongDesCn())){
 
             throw new BusinessException("长描述不能为空");
         }
-        if (StringUtils.isEmpty(requestBean.getShortDesCn())){
-
-            throw new BusinessException("短描述不能为空");
-        }
+//        if (StringUtils.isEmpty(requestBean.getShortDesCn())){
+//
+//            throw new BusinessException("短描述不能为空");
+//        }
     }
 
     /**
@@ -492,7 +493,7 @@ public class TranslationService {
      */
     public Map<String, Object> getTransLenSet(String chnId) {
         Map<String, Object> setInfo = new HashMap<String, Object>();
-        List<Map<String, Object>> rslt = customWordDao.getTransLenSet(chnId);
+        List<Map<String, Object>> rslt = customWordDao.selectTransLenSet(chnId);
         for (Map<String, Object> item : rslt) {
             String lenType = (String) item.get("lenType");
             item.remove("lenType");

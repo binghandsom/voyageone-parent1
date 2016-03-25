@@ -31,9 +31,9 @@ public class ProductForWmsGetRequest extends VoApiRequest<ProductForWmsGetRespon
 	private String channelId;
 
 	/**
-	 * code
+	 * sku
 	 */
-	private String code;
+	private String sku;
 
 	public ProductForWmsGetRequest() {
 
@@ -47,7 +47,7 @@ public class ProductForWmsGetRequest extends VoApiRequest<ProductForWmsGetRespon
 	public void requestCheck() throws ApiRuleException {
 
 		RequestUtils.checkNotEmpty(" channelId", channelId);
-		RequestUtils.checkNotEmpty(" code", code);
+		RequestUtils.checkNotEmpty(" sku", sku);
 	}
 
 	public String getChannelId() {
@@ -58,12 +58,12 @@ public class ProductForWmsGetRequest extends VoApiRequest<ProductForWmsGetRespon
 		this.channelId = channelId;
 	}
 
-	public String getCode() {
-		return code;
+	public String getSku() {
+		return sku;
 	}
 
-	public void setCode(String code) {
-		this.code = code;
+	public void setSku(String sku) {
+		this.sku = sku;
 	}
 
 

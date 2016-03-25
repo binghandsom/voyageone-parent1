@@ -1,18 +1,19 @@
 package com.voyageone.web2.cms.views.channel;
 
 import com.voyageone.base.exception.BusinessException;
-import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
-import com.voyageone.web2.cms.views.mapping.feed.CmsFeedMappingService;
-import com.voyageone.web2.core.bean.UserSessionBean;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by jiang on 2016/2/24.
@@ -21,8 +22,6 @@ import java.util.*;
 @RequestMapping(value = CmsUrlConstants.CHANNEL.CUSTOM_PROP.ROOT, method = RequestMethod.POST)
 public class CmsFeedCustPropController extends CmsController {
 
-    @Autowired
-    private CmsFeedMappingService cmsFeedMappingService;
     @Autowired
     private CmsFeedCustPropService cmsFeedCustPropService;
 
@@ -75,156 +74,11 @@ public class CmsFeedCustPropController extends CmsController {
      */
     @RequestMapping(value = CmsUrlConstants.CHANNEL.CUSTOM_PROP.INIT)
     public AjaxResponse getFeedCustProp(@RequestBody Map<String, String> params) {
-        logger.debug("getFeedCustProp() >>>> start");
-        logger.debug("getFeedCustProp() >>>> params" + params.toString());
-        String catPath = StringUtils.trimToNull(params.get("cat_path"));
+        String catPath = StringUtils.trimToNull((String) params.get("cat_path"));
         if (catPath == null) {
-            // 缺少参数
-            logger.warn("getFeedCustProp() >>>> 缺少catPath参数");
-            throw new BusinessException("1", "缺少参数", null);
+            throw new BusinessException("缺少类目路径");
         }
-
-        UserSessionBean userInfo = getUser();
-        int splitFlg = NumberUtils.toInt(params.get("unsplitFlg"), 0);
-        if (splitFlg == 1) {
-            // 合并为一个list输出
-            List<Map<String, Object>> list = cmsFeedCustPropService.selectAllAttr(userInfo.getSelChannelId(), catPath);
-            List<Map<String, Object>> valList = convertList(list, false, "0".equals(catPath));
-
-            HashMap dataMap = new HashMap();
-            dataMap.put("valList", valList);
-            AjaxResponse resp = success(dataMap);
-            return resp;
-
-        } else {
-            // 分为两个list输出
-            List<Map<String, Object>> list1 = cmsFeedCustPropService.selectOrigProp(userInfo.getSelChannelId(), "0");
-            List<Map<String, Object>> list2 = cmsFeedCustPropService.selectTransProp(userInfo.getSelChannelId(), "0");
-            List<Map<String, Object>> valList = convertList(list2, true, true);
-            List<Map<String, Object>> unvalList = convertList(list1, false, true);
-
-            // 判断是否全店铺共通属性
-            String commFlg = cmsFeedCustPropService.getSameAttr(userInfo.getSelChannelId());
-            if (!"1".equals(commFlg)) {
-                if (!"0".equals(catPath)) {
-                    List<Map<String, Object>> initAttrList = null;
-                    // 查询指定类目(从mongo来的原始数据)
-                    List<Object> catgAttrList = cmsFeedCustPropService.selectCatAttr(userInfo.getSelChannelId());
-                    if (catgAttrList != null && catgAttrList.size() > 0) {
-                        List<Map> childList = (List<Map>)((Map) catgAttrList.get(0)).get("categoryTree");
-                        if (childList != null && childList.size() > 0) {
-                            attrMap = null;
-                            getSubCatTree(childList, catPath);
-                            if (attrMap != null) {
-                                initAttrList = new ArrayList<Map<String, Object>>(attrMap.size());
-                                Iterator iter = attrMap.keySet().iterator();
-                                while (iter.hasNext()) {
-                                    HashMap objMap = new HashMap();
-                                    objMap.put("prop_id", "");
-                                    objMap.put("prop_original", (String) iter.next());
-                                    objMap.put("cat_path", "");
-                                    initAttrList.add(objMap);
-                                }
-                            }
-                        }
-                    }
-                    // 过滤已翻译的属性
-                    List<Map<String, Object>> custArr1 = cmsFeedCustPropService.selectOrigProp(userInfo.getSelChannelId(), catPath);
-                    List<Map<String, Object>> custArr2 = cmsFeedCustPropService.selectTransProp(userInfo.getSelChannelId(), catPath);
-                    if (custArr1 == null) {
-                        custArr1 = new ArrayList<Map<String, Object>>();
-                    }
-                    if (custArr2 == null) {
-                        custArr2 = new ArrayList<Map<String, Object>>();
-                    }
-                    List<Map<String, Object>> valList2 = convertList(custArr2, true, false);
-                    List<Map<String, Object>> unvalList2 = convertList(custArr1, false, false);
-
-                    // 合并过滤后的未翻译自定义属性
-                    filterList(valList2, initAttrList);
-                    filterList(unvalList2, initAttrList);
-                    if (initAttrList != null && initAttrList.size() > 0) {
-                        unvalList2.addAll(initAttrList);
-                    }
-
-                    // 最后合并共通属性和自定义属性
-                    filterList(valList2, valList);
-                    filterList(unvalList2, unvalList);
-                    valList.addAll(valList2);
-                    unvalList.addAll(unvalList2);
-                }
-            }
-            HashMap dataMap = new HashMap();
-            dataMap.put("sameAttr", commFlg);
-            dataMap.put("valList", valList);
-            dataMap.put("unvalList", unvalList);
-            AjaxResponse resp = success(dataMap);
-            return resp;
-        }
-    }
-
-    private List<Map<String, Object>> convertList(List<Map<String, Object>> inputList, boolean hasValue, boolean isComm) {
-        List<Map<String, Object>> rslt = new ArrayList<Map<String, Object>>();
-        if (inputList == null || inputList.size() == 0) {
-            return rslt;
-        }
-        for (Map<String, Object> item : inputList) {
-            HashMap objMap = new HashMap();
-            objMap.put("prop_id", item.get("prop_id"));
-            objMap.put("prop_original", item.get("feed_prop_original"));
-            if (hasValue) {
-                objMap.put("prop_translation", item.get("feed_prop_translation"));
-            }
-            if (isComm) {
-                objMap.put("cat_path", "0");
-            }
-            rslt.add(objMap);
-        }
-        return rslt;
-    }
-
-    private void filterList(List<Map<String, Object>> list1, List<Map<String, Object>> list2) {
-        if (list1 == null || list1.size() == 0) {
-            return;
-        }
-        for (Map<String, Object> item : list1) {
-            String propName = (String) item.get("prop_original");
-            if (list2 != null && list2.size() > 0) {
-                int i = 0;
-                boolean hasValue = false;
-                for (Map<String, Object> item2 : list2) {
-                    String propName2 = (String) item2.get("prop_original");
-                    if (propName.equals(propName2)) {
-                        hasValue = true;
-                        break;
-                    }
-                    i ++;
-                }
-                if (hasValue) {
-                    list2.remove(i);
-                }
-            }
-        }
-    }
-
-    Map attrMap = null;
-
-    private void getSubCatTree(List<Map> childList, String catPath) {
-        for (Map catItem : childList) {
-            String isChild = null;
-            Object chdFlg = catItem.get("isChild");
-            if (chdFlg != null) {
-                isChild = chdFlg.toString();
-            }
-            if ("1".equals(isChild)) {
-                if (catPath.equals(catItem.get("path"))) {
-                    attrMap = (Map) catItem.get("attribute");
-                }
-            } else {
-                List<Map> subList = (List<Map>) catItem.get("child");
-                getSubCatTree(subList, catPath);
-            }
-        }
+        return success(cmsFeedCustPropService.getFeedCustProp(params, getUser()));
     }
 
     /**
@@ -267,86 +121,18 @@ public class CmsFeedCustPropController extends CmsController {
      */
     @RequestMapping(value = CmsUrlConstants.CHANNEL.CUSTOM_PROP.SAVE)
     public AjaxResponse saveFeedCustProp(@RequestBody Map<String, Object> params) {
-        logger.debug("saveFeedCustProp() >>>> start");
-        logger.debug("saveFeedCustProp() >>>> params" + params.toString());
         String catPath = StringUtils.trimToNull((String) params.get("cat_path"));
         if (catPath == null) {
-            // 缺少参数
-            logger.warn("saveFeedCustProp() >>>> 缺少catpath参数");
-            throw new BusinessException("缺少参数");
+            throw new BusinessException("缺少类目路径");
         }
 
         List<Map<String, Object>> valList = (List<Map<String, Object>>) params.get("valList");
         List<Map<String, Object>> unvalList = (List<Map<String, Object>>) params.get("unvalList");
         if ((valList == null || valList.size() == 0) && (unvalList == null || unvalList.size() == 0)) {
-            // 缺少参数
-            logger.warn("saveFeedCustProp() >>>> 缺少属性相关参数");
-            throw new BusinessException("缺少参数");
+            throw new BusinessException("缺少属性参数");
         }
-        UserSessionBean userInfo = getUser();
-        List<Map<String, Object>> addList = new ArrayList<Map<String, Object>>();
-        List<Map<String, Object>> updList = new ArrayList<Map<String, Object>>();
-        String propId = null;
-        String cat_path = null;
 
-        if (valList != null) {
-            for (Map<String, Object> item : valList) {
-                cat_path = StringUtils.trimToNull((String) item.get("cat_path"));
-                Object propIdObj = item.get("prop_id");
-                propId = null;
-                if (propIdObj != null) {
-                    propId = StringUtils.trimToNull(propIdObj.toString());
-                }
-                if (propId == null) {
-                    if ("0".equals(catPath) && "0".equals(cat_path)) {
-                        // 新增属性,只能新增共通属性
-                        if (cmsFeedCustPropService.isAttrExist(item, catPath, userInfo.getSelChannelId())) {
-                            logger.warn("该属性亦存在 " + item.toString());
-                        } else {
-                            addList.add(item);
-                        }
-                    }
-                } else {
-                    // 修改属性
-                    if ("0".equals(catPath) && "0".equals(cat_path)) {
-                        updList.add(item);
-                    } else if (!"0".equals(catPath) && !"0".equals(cat_path) && catPath.equals(cat_path)) {
-                        updList.add(item);
-                    }
-                }
-            }
-        }
-        if (unvalList != null) {
-            for (Map<String, Object> item : unvalList) {
-                item.put("prop_translation", "");
-                cat_path = StringUtils.trimToNull((String) item.get("cat_path"));
-                Object propIdObj = item.get("prop_id");
-                propId = null;
-                if (propIdObj != null) {
-                    propId = StringUtils.trimToNull(propIdObj.toString());
-                }
-                if (propId == null) {
-                    if ("0".equals(catPath) && "0".equals(cat_path)) {
-                        // 新增属性,只能新增共通属性
-                        if (cmsFeedCustPropService.isAttrExist(item, catPath, userInfo.getSelChannelId())) {
-                            logger.warn("该属性亦存在 " + item.toString());
-                        } else {
-                            addList.add(item);
-                        }
-                    }
-                } else {
-                    // 修改属性
-                    if ("0".equals(catPath) && "0".equals(cat_path)) {
-                        updList.add(item);
-                    } else if (!"0".equals(catPath) && !"0".equals(cat_path) && catPath.equals(cat_path)) {
-                        updList.add(item);
-                    }
-                }
-            }
-        }
-        cmsFeedCustPropService.saveAttr(addList, updList, catPath, userInfo);
-        AjaxResponse resp = success(null);
-        return resp;
+        return success(cmsFeedCustPropService.saveFeedCustProp(params, getUser()));
     }
 
     /**
@@ -384,10 +170,9 @@ public class CmsFeedCustPropController extends CmsController {
      */
     @RequestMapping(value = CmsUrlConstants.CHANNEL.CUSTOM_PROP.GET_CAT_TREE)
     public AjaxResponse getCategoryTree() {
-        HashMap dataMap = new HashMap(1);
-        dataMap.put("categoryTree", cmsFeedCustPropService.getTopCategories(getUser()));
-        AjaxResponse resp = success(dataMap);
-        return resp;
+        Map<String, Object> result = new HashMap<>();
+        result.put("categoryTree", cmsFeedCustPropService.getTopCategories(getUser()));
+        return success(result);
     }
 
     /**
@@ -417,31 +202,8 @@ public class CmsFeedCustPropController extends CmsController {
      */
     @RequestMapping(value = CmsUrlConstants.CHANNEL.CUSTOM_PROP.GET_CAT_LIST)
     public AjaxResponse getCategoryList() {
-        HashMap dataMap = new HashMap(1);
-        List<CmsMtFeedCategoryModel> topTree = cmsFeedCustPropService.getTopFeedCategories(getUser());
-        List<CmsMtFeedCategoryModel> rsltList = new ArrayList<CmsMtFeedCategoryModel>();
-        CmsMtFeedCategoryModel comMdl = new CmsMtFeedCategoryModel();
-        comMdl.setPath("0");
-        comMdl.setName("共通属性");
-        comMdl.setCid("共通属性");
-        rsltList.add(comMdl);
-        getSubCatTree2List(topTree, rsltList);
-        for (CmsMtFeedCategoryModel catItem : rsltList) {
-            catItem.setChild(null);
-            catItem.setAttribute(null);
-        }
-
-        dataMap.put("categoryList", rsltList);
-        AjaxResponse resp = success(dataMap);
-        return resp;
-    }
-
-    private void getSubCatTree2List(List<CmsMtFeedCategoryModel> childList, List<CmsMtFeedCategoryModel> rsltList) {
-        for (CmsMtFeedCategoryModel catItem : childList) {
-            rsltList.add(catItem);
-            if (catItem.getIsChild() == 0) {
-                getSubCatTree2List(catItem.getChild(), rsltList);
-            }
-        }
+        Map<String, Object> result = new HashMap<>();
+        result.put("categoryList", cmsFeedCustPropService.getCategoryList(getUser()));
+        return success(result);
     }
 }

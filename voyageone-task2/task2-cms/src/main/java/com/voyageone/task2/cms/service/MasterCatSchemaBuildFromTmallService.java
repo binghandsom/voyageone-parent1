@@ -93,7 +93,7 @@ public class MasterCatSchemaBuildFromTmallService extends BaseTaskService implem
 
         List<JSONObject> schemaIds = cmsMtPlatformCategorySchemaDao.getAllSchemaKeys();
 
-        List<CmsMtCommonPropActionDefModel> allDefModels = cmsMtCommonPropDao.getActionModelList();
+        List<CmsMtCommonPropActionDefModel> allDefModels = cmsMtCommonPropDao.selectActionModelList();
 
         List<CmsMtCommonPropActionDefModel> removelist =new ArrayList<>();
 

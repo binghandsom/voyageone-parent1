@@ -230,6 +230,7 @@ define(function() {
 
 
         "TXT_MSG_SEARCH": "Search...",
+        "TXT_MSG_INVALID_FEILD": "Please check these fields [ <h4>{{fields}}</h4> ], then try SAVE. (。・`ω´・)",
         "TXT_MSG_PAGE_IS_BUILDING": "This page is building...",
         "TXT_MSG_SEARCH_INDEX_FUZZY_SEARCH": "Search include:Code(use enter to split),Model(use enter to split),Product Name(ZH),Product Name(EN),Long Description(ZH),Long Description(EN)",
         "TXT_MSG_SEARCH_INDEX_FUZZY_SEARCH_2": "Search include:Code(use enter to split),Model(use enter to split)",

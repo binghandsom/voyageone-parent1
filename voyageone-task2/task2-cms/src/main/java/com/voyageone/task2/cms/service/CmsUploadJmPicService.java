@@ -10,7 +10,7 @@ import com.voyageone.common.components.jumei.Enums.JumeiImageType;
 import com.voyageone.common.components.jumei.JumeiImageFileService;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
-import com.voyageone.common.configs.ShopConfigs;
+import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.HttpUtils;
 import com.voyageone.common.util.MD5;
@@ -81,7 +81,7 @@ public class CmsUploadJmPicService extends BaseTaskService {
      */
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
-        shopBean = ShopConfigs.getShop(ChannelConfigEnums.Channel.SN.getId(), CartEnums.Cart.JM.getId());
+        shopBean = Shops.getShop(ChannelConfigEnums.Channel.SN.getId(), CartEnums.Cart.JM.getId());
         monitor = new MonitorUpload();
         monitor.setTaskStart();
         List<Map<String, Object>> jmpickeys = jmPicDao.getJmPicImageKeyGroup();

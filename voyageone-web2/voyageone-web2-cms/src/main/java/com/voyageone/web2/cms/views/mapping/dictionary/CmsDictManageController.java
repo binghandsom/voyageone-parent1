@@ -1,10 +1,10 @@
 package com.voyageone.web2.cms.views.mapping.dictionary;
 
+import com.voyageone.service.bean.cms.system.dictionary.CmsDictionaryIndexBean;
+import com.voyageone.service.model.cms.CmsMtDictModel;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
-import com.voyageone.web2.cms.bean.system.dictionary.CmsDictionaryIndexBean;
-import com.voyageone.web2.cms.model.CmsMtDictModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;

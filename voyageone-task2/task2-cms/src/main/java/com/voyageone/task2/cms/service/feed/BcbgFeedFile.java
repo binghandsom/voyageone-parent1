@@ -10,11 +10,11 @@ import java.util.List;
  * 完整映射 Bcbg feed xml 文件的类定义,用于读取 Bcbg 的 feed xml 文件
  * Created by Jonas on 10/15/15.
  */
-public class BcbgFeedFile {
+class BcbgFeedFile {
 
     private List<SuperFeedBcbgBean> MATERIALS;
 
-    public List<SuperFeedBcbgBean> getMATERIALS() {
+    List<SuperFeedBcbgBean> getMATERIALS() {
         return MATERIALS;
     }
 
@@ -23,7 +23,7 @@ public class BcbgFeedFile {
         this.MATERIALS = MATERIALS;
     }
 
-    public static BcbgFeedFile read(File file) {
+    static BcbgFeedFile read(File file) {
 
         XStream xStream = new XStream();
 

@@ -21,15 +21,14 @@ public class CmsBtProductDaoTest {
     @Autowired
     CmsBtProductDao cmsBtProductDao;
 
-    @Test
-    public void testGetModelCode() throws Exception {
-
-        Long[] productIds = new Long[]{};
-        productIds[0] = 163L;
-
-        List<CmsBtProductModel> modelCode = cmsBtProductDao.getModelCode("013", productIds);
-        Assert.assertNotNull(modelCode);
-    }
+//    @Test
+//    public void testGetModelCode() throws Exception {
+//
+//        Long[] productIds = {22139L};
+//
+//        List<CmsBtProductModel> modelCode = cmsBtProductDao.getModelCode("010", productIds);
+//        Assert.assertNotNull(modelCode);
+//    }
 
     @Test
     public void testCheckProductDataIsReady() throws Exception {

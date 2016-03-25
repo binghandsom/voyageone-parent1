@@ -3,7 +3,7 @@ package com.voyageone.web2.cms.views.mapping.platform;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
-import com.voyageone.common.configs.TypeChannel;
+import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategoryDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategorySchemaDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtPlatformMappingDao;
@@ -81,7 +81,7 @@ public class CmsPlatformMappingService extends BaseAppService {
         return new HashMap<String, Object>() {{
             put("categories", treeModelMap);
             put("mappings", mappings);
-            put("carts", TypeChannel.getTypeListSkuCarts(user.getSelChannelId(), Constants.comMtTypeChannel.SKU_CARTS_53_A, language));
+            put("carts", TypeChannels.getTypeListSkuCarts(user.getSelChannelId(), Constants.comMtTypeChannel.SKU_CARTS_53_A, language));
         }};
     }
 

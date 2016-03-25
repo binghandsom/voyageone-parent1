@@ -7,8 +7,8 @@
     <!-- 共通相关配置 -->
     <import resource="classpath*:voyageone-config.xml" />
 
-	<!-- 异常处理 -->
-	<bean class="com.voyageone.web2.base.ExceptionHandler">
+    <!-- 异常处理 -->
+    <bean class="com.voyageone.web2.base.ExceptionHandler">
         <property name="debug" value="true"/>
     </bean>
     <!-- 配置内容初始化Bean -->

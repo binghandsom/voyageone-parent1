@@ -37,7 +37,7 @@ public class InchStrConvert {
         for (String s : strList) {//2 5/ 8 inches
             //  8 1/2 inches -> 是指 -> 8又二分之一英寸（也就是8+二分之一  英寸）
 //            String price = s.replace(suffix, "").replace(" ", "");
-            String price = s.replace(suffix, "");
+            String price = s.toUpperCase().replace(suffix.toUpperCase(), "");
             String[] strSplit = price.split("\\s+");
 
             double valueInches=0;//英寸
@@ -62,7 +62,7 @@ public class InchStrConvert {
         }
         UnitConvert unitConvert = new UnitConvert();
         for (String s : strList) {//2 5/ 8 inches
-            String price = s.replace(suffix, "").replace(" ", "");
+            String price = s.toUpperCase().replace(suffix.toUpperCase(), "").replace(" ", "");
 
             double valueInches=0;//英寸
             valueInches+= new BigDecimal(price).doubleValue();

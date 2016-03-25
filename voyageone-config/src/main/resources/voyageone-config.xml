@@ -8,7 +8,7 @@
     <!-- DAO相关配置 -->
     <import resource="classpath*:datasource-cms2-config.xml" />
     <import resource="classpath*:datasource-jumei-config.xml" />
-    <import resource="classpath*:datasource-config-mongo.xml" />
+    <import resource="classpath*:datasource-config-mongo-cms2.xml" />
     <!-- SDK Client Config -->
     <import resource="classpath*:sdk-client-config.xml" />
     <!-- MQ Config -->

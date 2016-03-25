@@ -4,21 +4,20 @@ import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.Properties;
-import com.voyageone.common.configs.TypeChannel;
+import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.util.FileUtils;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.cms.CmsMtCommonPropDao;
+import com.voyageone.service.dao.cms.CmsMtCustomWordDao;
 import com.voyageone.service.impl.cms.ChannelCategoryService;
 import com.voyageone.service.impl.cms.TagService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.web2.base.BaseAppService;
-import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsConstants;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.cms.bean.search.index.CmsSearchInfoBean;
-import com.voyageone.web2.cms.dao.CustomWordDao;
 import com.voyageone.web2.cms.views.promotion.list.CmsPromotionIndexService;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import com.voyageone.service.model.cms.CmsBtTagModel;
@@ -26,8 +25,6 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -46,7 +43,7 @@ public class CmsSearchAdvanceService extends BaseAppService{
     @Autowired
     private CmsPromotionIndexService cmsPromotionService;
     @Autowired
-    private CustomWordDao customWordDao;
+    private CmsMtCustomWordDao customWordDao;
     @Autowired
     private ChannelCategoryService channelCategoryService;
     @Autowired
@@ -101,10 +98,10 @@ public class CmsSearchAdvanceService extends BaseAppService{
         masterData.put("compareTypeList", TypeConfigEnums.MastType.compareType.getList(language));
 
         // 获取brand list
-        masterData.put("brandList", TypeChannel.getTypeWithLang(Constants.comMtTypeChannel.BRAND_41, userInfo.getSelChannelId(), language));
+        masterData.put("brandList", TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.BRAND_41, userInfo.getSelChannelId(), language));
 
         // 获取sort list
-        masterData.put("sortList", TypeChannel.getTypeWithLang(Constants.comMtTypeChannel.SORT_ATTRIBUTES_61, userInfo.getSelChannelId(), language));
+        masterData.put("sortList", TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.SORT_ATTRIBUTES_61, userInfo.getSelChannelId(), language));
 
         // 获取category list
         masterData.put("categoryList", channelCategoryService.getAllCategoriesByChannelId(userInfo.getSelChannelId()));
@@ -598,14 +595,14 @@ public class CmsSearchAdvanceService extends BaseAppService{
 
     // 取得自定义显示列设置
     public List<Map<String, Object>> getCustColumns() {
-        return  cmsMtCommonPropDao.getCustColumns();
+        return  cmsMtCommonPropDao.selectCustColumns();
     }
 
     // 取得用户自定义显示列设置
     public Map<String, Object> getUserCustColumns(int userId) {
         Map<String, Object> rsMap = new HashMap<String, Object>();
 
-        List<Map<String, Object>> rsList = cmsMtCommonPropDao.getUserCustColumns(userId);
+        List<Map<String, Object>> rsList = cmsMtCommonPropDao.selectUserCustColumns(userId);
         if (rsList == null || rsList.isEmpty()) {
             rsMap.put("custAttrList", new String[]{});
             rsMap.put("commList", new String[]{});
@@ -620,12 +617,12 @@ public class CmsSearchAdvanceService extends BaseAppService{
 
     // 保存用户自定义显示列设置
     public void saveCustColumnsInfo(int userId, String userName, String param1, String param2) {
-        List<Map<String, Object>> rsList = cmsMtCommonPropDao.getUserCustColumns(userId);
+        List<Map<String, Object>> rsList = cmsMtCommonPropDao.selectUserCustColumns(userId);
         int rs = 0;
         if (rsList == null || rsList.isEmpty()) {
-            rs = cmsMtCommonPropDao.addUserCustColumns(userId, userName, param1, param2);
+            rs = cmsMtCommonPropDao.insertUserCustColumns(userId, userName, param1, param2);
         } else {
-            rs = cmsMtCommonPropDao.saveUserCustColumns(userId, userName, param1, param2);
+            rs = cmsMtCommonPropDao.updateUserCustColumns(userId, userName, param1, param2);
         }
         if (rs == 0) {
             logger.error("保存设置不成功 userid=" + userId);

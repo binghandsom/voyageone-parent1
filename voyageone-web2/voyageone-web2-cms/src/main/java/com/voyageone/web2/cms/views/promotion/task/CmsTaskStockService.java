@@ -1,11 +1,11 @@
 package com.voyageone.web2.cms.views.promotion.task;
 
-import com.voyageone.common.configs.TypeChannel;
+import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.web2.base.BaseAppService;
-import com.voyageone.web2.cms.dao.CmsBtStockSeparateItemDao;
-import com.voyageone.web2.cms.dao.CmsBtStockSeparatePlatformInfoDao;
+import com.voyageone.service.dao.cms.CmsBtStockSeparateItemDao;
+import com.voyageone.service.dao.cms.CmsBtStockSeparatePlatformInfoDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -40,7 +40,7 @@ public class CmsTaskStockService extends BaseAppService {
     public List<Map<String,Object>> getPropertyList(Map param){
         List<Map<String,Object>> propertyList = new ArrayList<Map<String,Object>>();
 
-        List<TypeChannelBean> dynamicPropertyList = TypeChannel.getTypeList("dynamicProperty", (String) param.get("channelId"));
+        List<TypeChannelBean> dynamicPropertyList = TypeChannels.getTypeList("dynamicProperty", (String) param.get("channelId"));
         for (TypeChannelBean dynamicProperty : dynamicPropertyList) {
             Map<String,Object> propertyItem = new HashMap<String,Object>();
             propertyItem.put("value", dynamicProperty.getValue());

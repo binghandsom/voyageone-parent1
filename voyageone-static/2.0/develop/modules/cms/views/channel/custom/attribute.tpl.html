@@ -53,7 +53,7 @@
 							<label class="text-left">{{valData.prop_original}}</label>
 						</div>
 						<div class="col-sm-8 form-group form-inline">
-							<input type="text" class="form-control" style="width:90%" ng-disabled="vm.cat_path != '0'" ng-model="valData.prop_translation">&nbsp;
+							<input type="text" class="form-control" style="width:90%" ng-disabled="vm.cat_path != '0' && valData.cat_path == '0'" ng-model="valData.prop_translation">&nbsp;
 							<button title="删除" class="btn btn-danger btn-xs" ng-click="remove(valData, $index);"><i class="fa  fa-trash-o"></i></button>
 						</div>
 					</div>

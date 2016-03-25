@@ -5,11 +5,10 @@ import com.taobao.api.domain.Item;
 import com.taobao.api.request.ItemsOnsaleGetRequest;
 import com.taobao.api.response.ItemsOnsaleGetResponse;
 import com.voyageone.common.components.tmall.base.TbBase;
-import com.voyageone.common.configs.ShopConfigs;
+import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -31,7 +30,7 @@ public class TbSaleService extends TbBase {
 
         ItemsOnsaleGetResponse response = null;
 
-        ShopBean shopInfo = ShopConfigs.getShop(strOrderChannelId, strCardId);
+        ShopBean shopInfo = Shops.getShop(strOrderChannelId, strCardId);
 
         ItemsOnsaleGetRequest req=new ItemsOnsaleGetRequest();
         req.setPageNo(lPageIndex);

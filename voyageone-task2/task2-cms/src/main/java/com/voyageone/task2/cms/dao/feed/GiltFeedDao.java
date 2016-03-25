@@ -4,6 +4,9 @@ import com.voyageone.base.dao.BaseDao;
 import com.voyageone.task2.cms.bean.SuperFeedGiltBean;
 import com.voyageone.common.Constants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
+import com.voyageone.task2.cms.model.CmsBtFeedInfoGiltModel;
+import com.voyageone.task2.cms.model.CmsBtFeedInfoVtmModel;
+import com.voyageone.task2.cms.model.WmsBtClientSkuModel;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -111,4 +114,30 @@ public class GiltFeedDao extends BaseDao {
         return selectOne("cms_zz_worktable_gilt_superfeed_full_selectUpdatingProduct",
                 parameters("updatingFlag", SuperFeedGiltBean.UPDATING, "product_look_id", product_look_id));
     }
+
+    public List<CmsBtFeedInfoGiltModel> selectSuperfeedModel(String keyword, Map params, String tableName) {
+        params.put("keyword", keyword);
+        params.put("tableName", tableName);
+
+        return selectList("cms_giltfeed_select", params);
+    }
+
+    // 把读入成功的FEED数据保存起来
+    public int insertFull(List<String> itemIds){
+        return insert("cms_zz_worktable_gilt_superfeed_full_insert", itemIds);
+    }
+
+    //把导入成功的FEED数据 从保存数据中删除
+    public int delFull(List<String> itemIds){
+        return delete("cms_zz_worktable_gilt_superfeed_full_del", itemIds);
+    }
+
+    public int updateFeetStatus(List<String> itemIds) {
+        return update("cms_zz_worktable_gilt_superfeed_update", itemIds);
+    }
+
+    public int insertIgnoreList(List<WmsBtClientSkuModel> clientSkuList) {
+        return insert("wms_bt_client_sku_insertIgnoreList", parameters("list", clientSkuList));
+    }
+
 }

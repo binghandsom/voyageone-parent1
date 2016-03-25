@@ -8,9 +8,6 @@
           http://www.springframework.org/schema/task/spring-task.xsd">
     <task:scheduled-tasks scheduler="cms-job-scheduler">
 
-        <!-- redis更新 task 每5分钟运行一次 -->
-        <!--<task:scheduled ref="cmsMtFeedConfigCacheRealTimeJob" method="run" cron="0/5 * * * * ?"/>-->
-
         <!-- mq resume task 每5分钟运行一次 -->
         <!--<task:scheduled ref="mqResumeJob" method="run" cron="0/5 * * * * ?"/>-->
 
@@ -34,13 +31,16 @@
         <task:scheduled ref="CmsCreateCmsMtCategoryTreeJob" method="run" cron="0 0/1 0-23 * * ?"/>
 
         <!-- 主数据到平台的默认mapping数据做成 -->
-        <task:scheduled ref="CmsPlatformMappingJob" method="run" cron="0 0/1 0-23 * * ?"/>
+        <task:scheduled ref="CmsPlatformMappingJob" method="run" cron="0 0/1 * * * ?"/>
+
+        <!-- 从天猫拉取商品数据, 插入到主数据 (用于旧系统迁移到新系统) -->
+        <task:scheduled ref="CmsPlatformProductImportJob" method="run" cron="0 0/3 0-23 * * ?"/>
 
         <!-- cms2的图片推送到Scene7-->
         <task:scheduled ref="CmsImagePostScene7Job" method="run" cron="0/30 * * * * ?"/>
 
         <!-- Jewelry feed 导入 cms2 -->
-        <task:scheduled ref="CmsJEAnalySisJob" method="run" cron="0 0 0/6 * * ?"/>
+        <task:scheduled ref="CmsJEAnalysisJob" method="run" cron="0 0 0/6 * * ?"/>
 
         <!-- 价格披露 v2 -->
         <task:scheduled ref="CmsBeatJob" method="run" cron="0 0/1 0-23 * * ?"/>
