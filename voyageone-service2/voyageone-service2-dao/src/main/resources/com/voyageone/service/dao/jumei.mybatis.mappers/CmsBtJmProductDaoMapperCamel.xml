@@ -1,64 +1,64 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.voyageone.service.dao.jumei.CmsBtJmProductDao">
-    <resultMap id="ResultMap" type="com.voyageone.service.model.jumei.CmsBtJmProductModel">
+    <resultMap id="ResultMap" type="CmsBtJmProductModel">
         
     </resultMap>
 	
     <select id="selectList" resultMap="ResultMap">
 
-        select id,channel_id,deal_id,jumei_product_id,product_code,foreign_language_name,product_name_cn,product_long_name,product_medium_name,product_short_name,vo_category_name,category_lv1_name,category_lv2_name,category_lv3_name,category_lv4_name,category_lv4_id,vo_brand_name,brand_name,brand_id,product_type,size_type,color_en,attribute,origin,address_of_produce,material_en,material_cn,product_des_en,product_des_cn,available_period,applicable_crowd,search_meta_text_custom,special_note,function_ids,msrp,hs_code,hs_name,hs_unit,send_flg,synch_state,created,creater,modified,modifier,syn_flg        from cms_bt_jm_product
+        select id,channel_id,jumei_product_id,deal_id,product_code,foreign_language_name,product_name_cn,product_long_name,product_medium_name,product_short_name,vo_category_name,category_lv1_name,category_lv2_name,category_lv3_name,category_lv4_name,category_lv4_id,vo_brand_name,brand_name,brand_id,product_type,size_type,color_en,attribute,origin,address_of_produce,material_en,material_cn,product_des_en,product_des_cn,available_period,applicable_crowd,search_meta_text_custom,special_note,function_ids,msrp,hs_code,hs_name,hs_unit,send_flg,state,created,creater,modified,modifier,syn_flg        from cms_bt_jm_product
     </select>
     <select id="select" resultMap="ResultMap">
-        select id,channel_id,deal_id,jumei_product_id,product_code,foreign_language_name,product_name_cn,product_long_name,product_medium_name,product_short_name,vo_category_name,category_lv1_name,category_lv2_name,category_lv3_name,category_lv4_name,category_lv4_id,vo_brand_name,brand_name,brand_id,product_type,size_type,color_en,attribute,origin,address_of_produce,material_en,material_cn,product_des_en,product_des_cn,available_period,applicable_crowd,search_meta_text_custom,special_note,function_ids,msrp,hs_code,hs_name,hs_unit,send_flg,synch_state,created,creater,modified,modifier,syn_flg from cms_bt_jm_product where id=#{id}
+        select id,channel_id,jumei_product_id,deal_id,product_code,foreign_language_name,product_name_cn,product_long_name,product_medium_name,product_short_name,vo_category_name,category_lv1_name,category_lv2_name,category_lv3_name,category_lv4_name,category_lv4_id,vo_brand_name,brand_name,brand_id,product_type,size_type,color_en,attribute,origin,address_of_produce,material_en,material_cn,product_des_en,product_des_cn,available_period,applicable_crowd,search_meta_text_custom,special_note,function_ids,msrp,hs_code,hs_name,hs_unit,send_flg,state,created,creater,modified,modifier,syn_flg from cms_bt_jm_product where id=#{id}
     </select>
 
      <update id="update">
         update cms_bt_jm_product
         set
 
-            channel_id=#{channelId}
-            ,deal_id=#{dealId}
-            ,jumei_product_id=#{jumeiProductId}
-            ,product_code=#{productCode}
-            ,foreign_language_name=#{foreignLanguageName}
-            ,product_name_cn=#{productNameCn}
-            ,product_long_name=#{productLongName}
-            ,product_medium_name=#{productMediumName}
-            ,product_short_name=#{productShortName}
-            ,vo_category_name=#{voCategoryName}
-            ,category_lv1_name=#{categoryLv1Name}
-            ,category_lv2_name=#{categoryLv2Name}
-            ,category_lv3_name=#{categoryLv3Name}
-            ,category_lv4_name=#{categoryLv4Name}
-            ,category_lv4_id=#{categoryLv4Id}
-            ,vo_brand_name=#{voBrandName}
-            ,brand_name=#{brandName}
-            ,brand_id=#{brandId}
-            ,product_type=#{productType}
-            ,size_type=#{sizeType}
-            ,color_en=#{colorEn}
-            ,attribute=#{attribute}
-            ,origin=#{origin}
-            ,address_of_produce=#{addressOfProduce}
-            ,material_en=#{materialEn}
-            ,material_cn=#{materialCn}
-            ,product_des_en=#{productDesEn}
-            ,product_des_cn=#{productDesCn}
-            ,available_period=#{availablePeriod}
-            ,applicable_crowd=#{applicableCrowd}
-            ,search_meta_text_custom=#{searchMetaTextCustom}
-            ,special_note=#{specialNote}
-            ,function_ids=#{functionIds}
-            ,msrp=#{msrp}
-            ,hs_code=#{hsCode}
-            ,hs_name=#{hsName}
-            ,hs_unit=#{hsUnit}
-            ,send_flg=#{sendFlg}
-            ,synch_state=#{synchState}
-            ,modified=#{modified}
-            ,modifier=#{modifier}
-            ,syn_flg=#{synFlg}
+            `channel_id`=#{channelId}
+            ,`jumei_product_id`=#{jumeiProductId}
+            ,`deal_id`=#{dealId}
+            ,`product_code`=#{productCode}
+            ,`foreign_language_name`=#{foreignLanguageName}
+            ,`product_name_cn`=#{productNameCn}
+            ,`product_long_name`=#{productLongName}
+            ,`product_medium_name`=#{productMediumName}
+            ,`product_short_name`=#{productShortName}
+            ,`vo_category_name`=#{voCategoryName}
+            ,`category_lv1_name`=#{categoryLv1Name}
+            ,`category_lv2_name`=#{categoryLv2Name}
+            ,`category_lv3_name`=#{categoryLv3Name}
+            ,`category_lv4_name`=#{categoryLv4Name}
+            ,`category_lv4_id`=#{categoryLv4Id}
+            ,`vo_brand_name`=#{voBrandName}
+            ,`brand_name`=#{brandName}
+            ,`brand_id`=#{brandId}
+            ,`product_type`=#{productType}
+            ,`size_type`=#{sizeType}
+            ,`color_en`=#{colorEn}
+            ,`attribute`=#{attribute}
+            ,`origin`=#{origin}
+            ,`address_of_produce`=#{addressOfProduce}
+            ,`material_en`=#{materialEn}
+            ,`material_cn`=#{materialCn}
+            ,`product_des_en`=#{productDesEn}
+            ,`product_des_cn`=#{productDesCn}
+            ,`available_period`=#{availablePeriod}
+            ,`applicable_crowd`=#{applicableCrowd}
+            ,`search_meta_text_custom`=#{searchMetaTextCustom}
+            ,`special_note`=#{specialNote}
+            ,`function_ids`=#{functionIds}
+            ,`msrp`=#{msrp}
+            ,`hs_code`=#{hsCode}
+            ,`hs_name`=#{hsName}
+            ,`hs_unit`=#{hsUnit}
+            ,`send_flg`=#{sendFlg}
+            ,`state`=#{state}
+            ,`modified`=#{modified}
+            ,`modifier`=#{modifier}
+            ,`syn_flg`=#{synFlg}
          where id=#{id}   
    </update>
 
@@ -68,58 +68,58 @@
 
     </delete>
 
-    <insert id="insert">
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" >
         INSERT INTO cms_bt_jm_product
         (
-              channel_id,
-              deal_id,
-              jumei_product_id,
-              product_code,
-              foreign_language_name,
-              product_name_cn,
-              product_long_name,
-              product_medium_name,
-              product_short_name,
-              vo_category_name,
-              category_lv1_name,
-              category_lv2_name,
-              category_lv3_name,
-              category_lv4_name,
-              category_lv4_id,
-              vo_brand_name,
-              brand_name,
-              brand_id,
-              product_type,
-              size_type,
-              color_en,
-              attribute,
-              origin,
-              address_of_produce,
-              material_en,
-              material_cn,
-              product_des_en,
-              product_des_cn,
-              available_period,
-              applicable_crowd,
-              search_meta_text_custom,
-              special_note,
-              function_ids,
-              msrp,
-              hs_code,
-              hs_name,
-              hs_unit,
-              send_flg,
-              synch_state,
-              created,
-              creater,
-              modified,
-              modifier,
-              syn_flg
+              `channel_id`,
+              `jumei_product_id`,
+              `deal_id`,
+              `product_code`,
+              `foreign_language_name`,
+              `product_name_cn`,
+              `product_long_name`,
+              `product_medium_name`,
+              `product_short_name`,
+              `vo_category_name`,
+              `category_lv1_name`,
+              `category_lv2_name`,
+              `category_lv3_name`,
+              `category_lv4_name`,
+              `category_lv4_id`,
+              `vo_brand_name`,
+              `brand_name`,
+              `brand_id`,
+              `product_type`,
+              `size_type`,
+              `color_en`,
+              `attribute`,
+              `origin`,
+              `address_of_produce`,
+              `material_en`,
+              `material_cn`,
+              `product_des_en`,
+              `product_des_cn`,
+              `available_period`,
+              `applicable_crowd`,
+              `search_meta_text_custom`,
+              `special_note`,
+              `function_ids`,
+              `msrp`,
+              `hs_code`,
+              `hs_name`,
+              `hs_unit`,
+              `send_flg`,
+              `state`,
+              `created`,
+              `creater`,
+              `modified`,
+              `modifier`,
+              `syn_flg`
         )
         VALUES(
               #{channelId},
-              #{dealId},
               #{jumeiProductId},
+              #{dealId},
               #{productCode},
               #{foreignLanguageName},
               #{productNameCn},
@@ -155,7 +155,7 @@
               #{hsName},
               #{hsUnit},
               #{sendFlg},
-              #{synchState},
+              #{state},
               #{created},
               #{creater},
               #{modified},

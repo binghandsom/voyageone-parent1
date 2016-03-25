@@ -1,34 +1,35 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.voyageone.service.dao.jumei.CmsBtJmSkuDao">
-    <resultMap id="ResultMap" type="com.voyageone.service.model.jumei.CmsBtJmSkuModel">
+    <resultMap id="ResultMap" type="CmsBtJmSkuModel">
         
     </resultMap>
 	
     <select id="selectList" resultMap="ResultMap">
 
-        select id,deal_id,product_code,cms_bt_jm_product_id,sku,jm_spu_no,jm_sku_no,upc,cms_size,jm_size,synch_state,creater,created,modified,modifier        from cms_bt_jm_sku
+        select id,deal_id,channel_id,product_code,cms_bt_jm_product_id,sku_code,jm_spu_no,jm_sku_no,upc,cms_size,jm_size,state,creater,created,modified,modifier        from cms_bt_jm_sku
     </select>
     <select id="select" resultMap="ResultMap">
-        select id,deal_id,product_code,cms_bt_jm_product_id,sku,jm_spu_no,jm_sku_no,upc,cms_size,jm_size,synch_state,creater,created,modified,modifier from cms_bt_jm_sku where id=#{id}
+        select id,deal_id,channel_id,product_code,cms_bt_jm_product_id,sku_code,jm_spu_no,jm_sku_no,upc,cms_size,jm_size,state,creater,created,modified,modifier from cms_bt_jm_sku where id=#{id}
     </select>
 
      <update id="update">
         update cms_bt_jm_sku
         set
 
-            deal_id=#{dealId}
-            ,product_code=#{productCode}
-            ,cms_bt_jm_product_id=#{cmsBtJmProductId}
-            ,sku=#{sku}
-            ,jm_spu_no=#{jmSpuNo}
-            ,jm_sku_no=#{jmSkuNo}
-            ,upc=#{upc}
-            ,cms_size=#{cmsSize}
-            ,jm_size=#{jmSize}
-            ,synch_state=#{synchState}
-            ,modified=#{modified}
-            ,modifier=#{modifier}
+            `deal_id`=#{dealId}
+            ,`channel_id`=#{channelId}
+            ,`product_code`=#{productCode}
+            ,`cms_bt_jm_product_id`=#{cmsBtJmProductId}
+            ,`sku_code`=#{skuCode}
+            ,`jm_spu_no`=#{jmSpuNo}
+            ,`jm_sku_no`=#{jmSkuNo}
+            ,`upc`=#{upc}
+            ,`cms_size`=#{cmsSize}
+            ,`jm_size`=#{jmSize}
+            ,`state`=#{state}
+            ,`modified`=#{modified}
+            ,`modifier`=#{modifier}
          where id=#{id}   
    </update>
 
@@ -38,35 +39,37 @@
 
     </delete>
 
-    <insert id="insert">
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" >
         INSERT INTO cms_bt_jm_sku
         (
-              deal_id,
-              product_code,
-              cms_bt_jm_product_id,
-              sku,
-              jm_spu_no,
-              jm_sku_no,
-              upc,
-              cms_size,
-              jm_size,
-              synch_state,
-              creater,
-              created,
-              modified,
-              modifier
+              `deal_id`,
+              `channel_id`,
+              `product_code`,
+              `cms_bt_jm_product_id`,
+              `sku_code`,
+              `jm_spu_no`,
+              `jm_sku_no`,
+              `upc`,
+              `cms_size`,
+              `jm_size`,
+              `state`,
+              `creater`,
+              `created`,
+              `modified`,
+              `modifier`
         )
         VALUES(
               #{dealId},
+              #{channelId},
               #{productCode},
               #{cmsBtJmProductId},
-              #{sku},
+              #{skuCode},
               #{jmSpuNo},
               #{jmSkuNo},
               #{upc},
               #{cmsSize},
               #{jmSize},
-              #{synchState},
+              #{state},
               #{creater},
               #{created},
               #{modified},

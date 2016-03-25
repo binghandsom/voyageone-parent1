@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.voyageone.service.dao.jumei.CmsBtJmApiLogDao">
-    <resultMap id="ResultMap" type="com.voyageone.service.model.jumei.CmsBtJmApiLogModel">
+    <resultMap id="ResultMap" type="CmsBtJmApiLogModel">
         
     </resultMap>
 	
@@ -17,11 +17,11 @@
         update cms_bt_jm_api_log
         set
 
-            source_id=#{sourceId}
-            ,api_type=#{apiType}
-            ,error_msg=#{errorMsg}
-            ,error_code=#{errorCode}
-            ,remark=#{remark}
+            `source_id`=#{sourceId}
+            ,`api_type`=#{apiType}
+            ,`error_msg`=#{errorMsg}
+            ,`error_code`=#{errorCode}
+            ,`remark`=#{remark}
          where id=#{id}   
    </update>
 
@@ -31,14 +31,14 @@
 
     </delete>
 
-    <insert id="insert">
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" >
         INSERT INTO cms_bt_jm_api_log
         (
-              source_id,
-              api_type,
-              error_msg,
-              error_code,
-              remark
+              `source_id`,
+              `api_type`,
+              `error_msg`,
+              `error_code`,
+              `remark`
         )
         VALUES(
               #{sourceId},

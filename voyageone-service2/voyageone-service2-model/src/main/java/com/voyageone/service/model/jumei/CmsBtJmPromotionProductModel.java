@@ -12,11 +12,14 @@ public class CmsBtJmPromotionProductModel implements Serializable
         setChannelId(""); 
         setProductCode(""); 
         setJmHashId(""); 
+        setMarketPrice(new BigDecimal(0));
         setCreater(""); 
         setCreated(DateHelp.getDefaultDate());
         setModifier(""); 
         setAppId(""); 
         setPcId(""); 
+        setDealPrice(new BigDecimal(0));
+        setDiscount(new BigDecimal(0));
         setErrorMsg(""); 
 
     }

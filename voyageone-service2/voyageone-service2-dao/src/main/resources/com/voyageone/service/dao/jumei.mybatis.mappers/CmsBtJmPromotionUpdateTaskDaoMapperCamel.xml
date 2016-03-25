@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.voyageone.service.dao.jumei.CmsBtJmPromotionUpdateTaskDao">
-    <resultMap id="ResultMap" type="com.voyageone.service.model.jumei.CmsBtJmPromotionUpdateTaskModel">
+    <resultMap id="ResultMap" type="CmsBtJmPromotionUpdateTaskModel">
         
     </resultMap>
 	
@@ -17,11 +17,11 @@
         update cms_bt_jm_promotion_update_task
         set
 
-            jm_bt_promotion_id=#{jmBtPromotionId}
-            ,begin_time=#{beginTime}
-            ,end_time=#{endTime}
-            ,error_msg=#{errorMsg}
-            ,state=#{state}
+            `jm_bt_promotion_id`=#{jmBtPromotionId}
+            ,`begin_time`=#{beginTime}
+            ,`end_time`=#{endTime}
+            ,`error_msg`=#{errorMsg}
+            ,`state`=#{state}
          where id=#{id}   
    </update>
 
@@ -31,16 +31,16 @@
 
     </delete>
 
-    <insert id="insert">
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" >
         INSERT INTO cms_bt_jm_promotion_update_task
         (
-              jm_bt_promotion_id,
-              begin_time,
-              end_time,
-              error_msg,
-              state,
-              created,
-              creater
+              `jm_bt_promotion_id`,
+              `begin_time`,
+              `end_time`,
+              `error_msg`,
+              `state`,
+              `created`,
+              `creater`
         )
         VALUES(
               #{jmBtPromotionId},

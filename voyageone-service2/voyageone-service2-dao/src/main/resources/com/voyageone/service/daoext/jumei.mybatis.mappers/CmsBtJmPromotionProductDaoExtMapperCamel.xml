@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.service.daoext.jumei.CmsBtJmPromotionProductDaoExt">
+    <resultMap id="ResultMap" type="CmsBtJmPromotionProductModel">
+        
+    </resultMap>
+
+    <select id="getByProductCodeChannelIdCmsBtJmPromotionId"  resultMap="ResultMap">
+        select  *   from cms_bt_jm_promotion_product  where  cms_bt_jm_promotion_id=#{cmsBtJmPromotionId} and  channel_id=#{channelId} and product_code=#{productCode} limit 1
+    </select>
+
+</mapper>

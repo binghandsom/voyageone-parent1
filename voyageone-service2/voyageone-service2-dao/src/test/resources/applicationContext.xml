@@ -12,6 +12,7 @@
     <context:component-scan base-package="com.voyageone"/>
 
     <import resource="classpath*:datasource-cms2-config.xml" />
+    <import resource="datasource-jumei-config.xml"></import>
     <import resource="classpath*:datasource-config-mongo.xml" />
     <!-- MQ Config -->
     <import resource="classpath*:mq-config.xml" />

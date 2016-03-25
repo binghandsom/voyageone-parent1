@@ -10,8 +10,9 @@ public class CmsBtJmSkuModel implements Serializable
    public CmsBtJmSkuModel()
     {
         setDealId(""); 
+        setChannelId(""); 
         setProductCode(""); 
-        setSku(""); 
+        setSkuCode(""); 
         setJmSpuNo(""); 
         setJmSkuNo(""); 
         setUpc(""); 
@@ -37,6 +38,12 @@ public class CmsBtJmSkuModel implements Serializable
     
     
  /**
+渠道id
+        */
+     private String channelId;
+    
+    
+ /**
 商品Code
         */
      private String productCode;
@@ -51,7 +58,7 @@ public class CmsBtJmSkuModel implements Serializable
  /**
 品牌方SKU(聚美商家商品编码)
         */
-     private String sku;
+     private String skuCode;
     
     
  /**
@@ -87,7 +94,7 @@ public class CmsBtJmSkuModel implements Serializable
  /**
 同步状态||0:未上新 1:已新增到聚美平台
         */
-     private int synchState;
+     private int state;
     
     
  /**
@@ -150,6 +157,27 @@ this.dealId="";
     
         
          /**
+           渠道id
+        */
+        public String getChannelId()
+        {
+         
+        return this.channelId;
+        }
+        public void setChannelId(String channelId)
+        {
+        if(channelId!=null){
+this.channelId=channelId;
+ }
+else
+{
+this.channelId="";
+}
+
+        }
+    
+        
+         /**
            商品Code
         */
         public String getProductCode()
@@ -187,19 +215,19 @@ this.productCode="";
          /**
            品牌方SKU(聚美商家商品编码)
         */
-        public String getSku()
+        public String getSkuCode()
         {
          
-        return this.sku;
+        return this.skuCode;
         }
-        public void setSku(String sku)
+        public void setSkuCode(String skuCode)
         {
-        if(sku!=null){
-this.sku=sku;
+        if(skuCode!=null){
+this.skuCode=skuCode;
  }
 else
 {
-this.sku="";
+this.skuCode="";
 }
 
         }
@@ -313,14 +341,14 @@ this.jmSize="";
          /**
            同步状态||0:未上新 1:已新增到聚美平台
         */
-        public int getSynchState()
+        public int getState()
         {
          
-        return this.synchState;
+        return this.state;
         }
-        public void setSynchState(int synchState)
+        public void setState(int state)
         {
-         this.synchState=synchState;
+         this.state=state;
         }
     
         
