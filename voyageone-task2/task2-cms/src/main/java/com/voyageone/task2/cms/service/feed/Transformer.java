@@ -3,7 +3,7 @@ package com.voyageone.task2.cms.service.feed;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.cms.dao.feed.TransformSqlDao;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums.Channel;
-import com.voyageone.common.configs.Feed;
+import com.voyageone.common.configs.Feeds;
 import com.voyageone.common.configs.beans.FeedBean;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +47,7 @@ public class Transformer {
 
             this.taskService = taskService;
 
-            configs = Feed.getConfigs(channel.getId(), transform);
+            configs = Feeds.getConfigs(channel.getId(), transform);
             // 按配置从新排序
             if (configs != null && configs.size() > 0)
                 configs.sort((a, b) -> a.getDisplay_sort() - b.getDisplay_sort());

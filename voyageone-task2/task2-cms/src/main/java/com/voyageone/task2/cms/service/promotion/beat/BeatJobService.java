@@ -13,7 +13,7 @@ import com.voyageone.common.components.tmall.TbItemSchema;
 import com.voyageone.common.components.tmall.TbItemService;
 import com.voyageone.common.components.tmall.TbPictureService;
 import com.voyageone.common.components.tmall.exceptions.GetUpdateSchemaFailException;
-import com.voyageone.common.configs.ShopConfigs;
+import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.service.bean.cms.task.beat.ConfigBean;
 import com.voyageone.service.bean.cms.task.beat.TaskBean;
@@ -199,7 +199,7 @@ public class BeatJobService extends BaseTaskService {
         private Context(CmsBtBeatInfoModel beatInfoModel) throws TopSchemaException, ApiException, GetUpdateSchemaFailException {
             this.beatInfoModel = beatInfoModel;
             this.promotion = beatInfoModel.getPromotion();
-            this.shopBean = ShopConfigs.getShop(promotion.getChannelId(), promotion.getCartId());
+            this.shopBean = Shops.getShop(promotion.getChannelId(), promotion.getCartId());
 
             // TODO 测试代码
             this.shopBean.setAppKey("21008948");

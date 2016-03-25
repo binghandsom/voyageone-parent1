@@ -2,7 +2,7 @@ package com.voyageone.task2.cms.service.feed;
 
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.FeedEnums;
-import com.voyageone.common.configs.Feed;
+import com.voyageone.common.configs.Feeds;
 
 import java.math.BigDecimal;
 import java.util.regex.Pattern;
@@ -67,7 +67,7 @@ class BcbgConstants {
 
         channel = ChannelConfigEnums.Channel.BCBG;
         // 特殊字符 (正则)
-        special_symbol = Pattern.compile(Feed.getVal1(channel, FeedEnums.Name.url_special_symbol));
+        special_symbol = Pattern.compile(Feeds.getVal1(channel, FeedEnums.Name.url_special_symbol));
 
         fixed_exchange_rate = getBigDecimalFeedVal1(FeedEnums.Name.fixed_exchange_rate);
         apparels_duty = getBigDecimalFeedVal1(FeedEnums.Name.apparels_duty);
@@ -79,7 +79,7 @@ class BcbgConstants {
     }
 
     private static BigDecimal getBigDecimalFeedVal1(FeedEnums.Name name) {
-        String val1 = Feed.getVal1(channel, name);
+        String val1 = Feeds.getVal1(channel, name);
         return new BigDecimal(val1);
     }
 }

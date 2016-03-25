@@ -3,13 +3,11 @@ package com.voyageone.common.components.jd;
 import com.jd.open.api.sdk.JdException;
 import com.jd.open.api.sdk.domain.ware.Ware;
 import com.jd.open.api.sdk.request.ware.WareDelistingGetRequest;
-import com.jd.open.api.sdk.request.ware.WareListRequest;
 import com.jd.open.api.sdk.request.ware.WareListingGetRequest;
 import com.jd.open.api.sdk.response.ware.WareDelistingGetResponse;
 import com.jd.open.api.sdk.response.ware.WareListingGetResponse;
-import com.taobao.api.domain.Item;
 import com.voyageone.common.components.jd.base.JdBase;
-import com.voyageone.common.configs.ShopConfigs;
+import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.DateTimeUtil;
 import org.apache.commons.lang3.time.DateUtils;
@@ -26,7 +24,7 @@ import java.util.List;
 public class JdSaleService extends JdBase {
 
     public List<Ware> getOnListProduct(String strOrderChannelId, String strCardId, String strPageIndex, String strFieldList) throws JdException {
-        ShopBean shopInfo = ShopConfigs.getShop(strOrderChannelId, strCardId);
+        ShopBean shopInfo = Shops.getShop(strOrderChannelId, strCardId);
         WareListingGetRequest request = new WareListingGetRequest();
 
         request.setPage(strPageIndex);
@@ -42,7 +40,7 @@ public class JdSaleService extends JdBase {
     public List<Ware> getDeListProduct(String strOrderChannelId, String strCardId, String strPageIndex, String strFieldList) throws JdException {
 
 
-        ShopBean shopInfo = ShopConfigs.getShop(strOrderChannelId, strCardId);
+        ShopBean shopInfo = Shops.getShop(strOrderChannelId, strCardId);
 
         WareDelistingGetRequest request = new WareDelistingGetRequest();
 

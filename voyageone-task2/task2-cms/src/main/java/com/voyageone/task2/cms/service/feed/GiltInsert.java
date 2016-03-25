@@ -4,7 +4,7 @@ import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.FeedEnums;
-import com.voyageone.common.configs.Feed;
+import com.voyageone.common.configs.Feeds;
 import com.voyageone.common.configs.beans.FeedBean;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.JacksonUtil;
@@ -14,9 +14,7 @@ import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.cms.dao.SuperFeed2Dao;
 import com.voyageone.task2.cms.dao.feed.GiltFeedDao;
-import com.voyageone.task2.cms.dao.feed.VtmDao;
 import com.voyageone.task2.cms.model.CmsBtFeedInfoGiltModel;
-import com.voyageone.task2.cms.model.CmsBtFeedInfoVtmModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,7 +23,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * @author james.li
@@ -79,7 +76,7 @@ public class GiltInsert extends BaseTaskService {
         protected Context(ChannelConfigEnums.Channel channel) {
             this.channel = channel;
             // 主表
-            this.table = Feed.getVal1(channel, FeedEnums.Name.table_id);
+            this.table = Feeds.getVal1(channel, FeedEnums.Name.table_id);
         }
 
         private List<CmsBtFeedInfoModel> getModels(String category) throws Exception {
@@ -95,7 +92,7 @@ public class GiltInsert extends BaseTaskService {
             for (CmsBtFeedInfoGiltModel vtmModelBean : vtmModelBeans) {
                 Map temp = JacksonUtil.json2Bean(JacksonUtil.bean2Json(vtmModelBean), HashMap.class);
                 Map<String, List<String>> attribute = new HashMap<>();
-                List<FeedBean> feeds = Feed.getConfigs(channel.getId(), FeedEnums.Name.attribute);
+                List<FeedBean> feeds = Feeds.getConfigs(channel.getId(), FeedEnums.Name.attribute);
                 if (feeds != null) {
                     feeds.forEach(feedBean -> {
                         if (!StringUtil.isEmpty(feedBean.getCfg_val1())) {
@@ -115,34 +112,34 @@ public class GiltInsert extends BaseTaskService {
 
         private HashMap<String, Object> getColumns() {
             HashMap<String, Object> map = new HashMap<>();
-            map.put("category", Feed.getVal1(channel, FeedEnums.Name.category_column));
+            map.put("category", Feeds.getVal1(channel, FeedEnums.Name.category_column));
             map.put("channel_id", channel.getId());
-            map.put("m_product_type", Feed.getVal1(channel, FeedEnums.Name.model_m_product_type));
-            map.put("m_brand", Feed.getVal1(channel, FeedEnums.Name.model_m_brand));
-            map.put("m_model", Feed.getVal1(channel, FeedEnums.Name.model_m_model));
-            map.put("m_name", Feed.getVal1(channel, FeedEnums.Name.model_m_name));
-            map.put("m_size_type", Feed.getVal1(channel, FeedEnums.Name.model_m_size_type));
-            map.put("m_weight", Feed.getVal1(channel, FeedEnums.Name.model_m_weight));
-            map.put("p_code", (Feed.getVal1(channel, FeedEnums.Name.product_p_code)));
-            map.put("p_name", (Feed.getVal1(channel, FeedEnums.Name.product_p_name)));
-            map.put("p_color", (Feed.getVal1(channel, FeedEnums.Name.product_p_color)));
-            map.put("p_made_in_country", (Feed.getVal1(channel, FeedEnums.Name.product_p_made_in_country)));
-            map.put("pe_short_description", (Feed.getVal1(channel, FeedEnums.Name.product_pe_short_description)));
-            map.put("pe_long_description", (Feed.getVal1(channel, FeedEnums.Name.product_pe_long_description)));
+            map.put("m_product_type", Feeds.getVal1(channel, FeedEnums.Name.model_m_product_type));
+            map.put("m_brand", Feeds.getVal1(channel, FeedEnums.Name.model_m_brand));
+            map.put("m_model", Feeds.getVal1(channel, FeedEnums.Name.model_m_model));
+            map.put("m_name", Feeds.getVal1(channel, FeedEnums.Name.model_m_name));
+            map.put("m_size_type", Feeds.getVal1(channel, FeedEnums.Name.model_m_size_type));
+            map.put("m_weight", Feeds.getVal1(channel, FeedEnums.Name.model_m_weight));
+            map.put("p_code", (Feeds.getVal1(channel, FeedEnums.Name.product_p_code)));
+            map.put("p_name", (Feeds.getVal1(channel, FeedEnums.Name.product_p_name)));
+            map.put("p_color", (Feeds.getVal1(channel, FeedEnums.Name.product_p_color)));
+            map.put("p_made_in_country", (Feeds.getVal1(channel, FeedEnums.Name.product_p_made_in_country)));
+            map.put("pe_short_description", (Feeds.getVal1(channel, FeedEnums.Name.product_pe_short_description)));
+            map.put("pe_long_description", (Feeds.getVal1(channel, FeedEnums.Name.product_pe_long_description)));
 //            map.put("p_msrp", (Feed.getVal1(channel, FeedEnums.Name.product_p_msrp)));
 //            map.put("cps_cn_price_rmb", (Feed.getVal1(channel, FeedEnums.Name.product_cps_cn_price_rmb)));
-            map.put("i_sku", (Feed.getVal1(channel, FeedEnums.Name.item_i_sku)));
-            map.put("i_itemcode", (Feed.getVal1(channel, FeedEnums.Name.item_i_itemcode)));
-            map.put("i_size", (Feed.getVal1(channel, FeedEnums.Name.item_i_size)));
-            map.put("i_barcode", (Feed.getVal1(channel, FeedEnums.Name.item_i_barcode)));
-            map.put("image", (Feed.getVal1(channel, FeedEnums.Name.images)));
-            map.put("i_client_sku", (Feed.getVal1(channel, FeedEnums.Name.item_i_client_sku)));
+            map.put("i_sku", (Feeds.getVal1(channel, FeedEnums.Name.item_i_sku)));
+            map.put("i_itemcode", (Feeds.getVal1(channel, FeedEnums.Name.item_i_itemcode)));
+            map.put("i_size", (Feeds.getVal1(channel, FeedEnums.Name.item_i_size)));
+            map.put("i_barcode", (Feeds.getVal1(channel, FeedEnums.Name.item_i_barcode)));
+            map.put("image", (Feeds.getVal1(channel, FeedEnums.Name.images)));
+            map.put("i_client_sku", (Feeds.getVal1(channel, FeedEnums.Name.item_i_client_sku)));
 
-            map.put("price_client_msrp", (Feed.getVal1(channel, FeedEnums.Name.price_client_msrp)));
-            map.put("price_client_retail", (Feed.getVal1(channel, FeedEnums.Name.price_client_retail)));
-            map.put("price_net", (Feed.getVal1(channel, FeedEnums.Name.price_net)));
-            map.put("price_current", (Feed.getVal1(channel, FeedEnums.Name.price_current)));
-            map.put("price_msrp", (Feed.getVal1(channel, FeedEnums.Name.price_msrp)));
+            map.put("price_client_msrp", (Feeds.getVal1(channel, FeedEnums.Name.price_client_msrp)));
+            map.put("price_client_retail", (Feeds.getVal1(channel, FeedEnums.Name.price_client_retail)));
+            map.put("price_net", (Feeds.getVal1(channel, FeedEnums.Name.price_net)));
+            map.put("price_current", (Feeds.getVal1(channel, FeedEnums.Name.price_current)));
+            map.put("price_msrp", (Feeds.getVal1(channel, FeedEnums.Name.price_msrp)));
             return map;
         }
 
@@ -156,7 +153,7 @@ public class GiltInsert extends BaseTaskService {
             // 先从数据表中获取所有商品的类目路径,经过去重复的
             // update flg 标记, 只获取哪些即将进行新增的商品的类目
             List<String> categoryPaths = superFeedDao.selectSuperfeedCategory(
-                    Feed.getVal1(channel, FeedEnums.Name.category_column), table, " AND " + INSERT_FLG);
+                    Feeds.getVal1(channel, FeedEnums.Name.category_column), table, " AND " + INSERT_FLG);
             $info("获取类目路径数 %s , 准备拆分继续处理", categoryPaths.size());
 
             return categoryPaths;
