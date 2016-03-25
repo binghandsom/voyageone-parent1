@@ -334,10 +334,4 @@
 			</plugin>
 		</plugins>
 	</build>
-	<profiles>
-		<profile>
-			<id>sonar</id>
-			<properties><sonar.host.url>http://localhost:9000</sonar.host.url></properties>
-		</profile>
-	</profiles>
 </project>

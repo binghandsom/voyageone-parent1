@@ -68,7 +68,7 @@ public class EtkService extends EtkBase{
 		if (loginRes != null && "T".equals(loginRes.getResult())){
 			order.getAwb().setUserToken(loginRes.getMsg());
 		}else{
-			throw new Exception("调用E特快登录API eExpressShipmentImport错误：" + loginRes.getMsg());
+			throw new Exception("调用E特快登录API eExpressShipmentImport错误：" + (loginRes==null?"null":loginRes.getMsg()));
 		}		
 		
 		//Bean -->  XML
@@ -108,7 +108,7 @@ public class EtkService extends EtkBase{
 		if (loginRes != null && "T".equals(loginRes.getResult())){
 			cancel.setUserToken(loginRes.getMsg());
 		}else{
-			throw new Exception("调用E特快登录API错误：" + loginRes.getMsg());
+			throw new Exception("调用E特快登录API错误：" +  (loginRes==null?"null":loginRes.getMsg()));
 		}
 		
 		XStream xstream = new XStream(new DomDriver());
@@ -144,7 +144,7 @@ public class EtkService extends EtkBase{
 		if (loginRes != null && "T".equals(loginRes.getResult())){
 			tracking.setUserToken(loginRes.getMsg());
 		}else{
-			throw new Exception("调用E特快登录API错误：" + loginRes.getMsg());
+			throw new Exception("调用E特快登录API错误："  + (loginRes==null?"null":loginRes.getMsg()));
 		}
 		
 		XStream xstream = new XStream(new DomDriver());
