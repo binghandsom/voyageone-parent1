@@ -7,10 +7,10 @@
 	
     <select id="selectList" resultMap="ResultMap">
 
-        select id,channel_id,deal_id,jumei_product_id,product_code,foreign_language_name,product_name_cn,product_long_name,product_medium_name,product_short_name,vo_category_name,category_lv1_name,category_lv2_name,category_lv3_name,category_lv4_name,category_lv4_id,vo_brand_name,brand_name,brand_id,product_type,size_type,color_en,attribute,origin,address_of_produce,material_en,material_cn,product_des_en,product_des_cn,available_period,applicable_crowd,search_meta_text_custom,special_note,function_ids,msrp,hs_code,hs_name,hs_unit,send_flg,synch_state,created,creater,modified,modifier,syn_flg        from cms_bt_jm_product
+        select id,channel_id,jumei_product_id,deal_id,product_code,foreign_language_name,product_name_cn,product_long_name,product_medium_name,product_short_name,vo_category_name,category_lv1_name,category_lv2_name,category_lv3_name,category_lv4_name,category_lv4_id,vo_brand_name,brand_name,brand_id,product_type,size_type,color_en,attribute,origin,address_of_produce,material_en,material_cn,product_des_en,product_des_cn,available_period,applicable_crowd,search_meta_text_custom,special_note,function_ids,msrp,hs_code,hs_name,hs_unit,send_flg,synch_state,created,creater,modified,modifier,syn_flg        from cms_bt_jm_product
     </select>
     <select id="select" resultMap="ResultMap">
-        select id,channel_id,deal_id,jumei_product_id,product_code,foreign_language_name,product_name_cn,product_long_name,product_medium_name,product_short_name,vo_category_name,category_lv1_name,category_lv2_name,category_lv3_name,category_lv4_name,category_lv4_id,vo_brand_name,brand_name,brand_id,product_type,size_type,color_en,attribute,origin,address_of_produce,material_en,material_cn,product_des_en,product_des_cn,available_period,applicable_crowd,search_meta_text_custom,special_note,function_ids,msrp,hs_code,hs_name,hs_unit,send_flg,synch_state,created,creater,modified,modifier,syn_flg from cms_bt_jm_product where id=#{id}
+        select id,channel_id,jumei_product_id,deal_id,product_code,foreign_language_name,product_name_cn,product_long_name,product_medium_name,product_short_name,vo_category_name,category_lv1_name,category_lv2_name,category_lv3_name,category_lv4_name,category_lv4_id,vo_brand_name,brand_name,brand_id,product_type,size_type,color_en,attribute,origin,address_of_produce,material_en,material_cn,product_des_en,product_des_cn,available_period,applicable_crowd,search_meta_text_custom,special_note,function_ids,msrp,hs_code,hs_name,hs_unit,send_flg,synch_state,created,creater,modified,modifier,syn_flg from cms_bt_jm_product where id=#{id}
     </select>
 
      <update id="update">
@@ -18,8 +18,8 @@
         set
 
             channel_id=#{channelId}
-            ,deal_id=#{dealId}
             ,jumei_product_id=#{jumeiProductId}
+            ,deal_id=#{dealId}
             ,product_code=#{productCode}
             ,foreign_language_name=#{foreignLanguageName}
             ,product_name_cn=#{productNameCn}
@@ -68,12 +68,12 @@
 
     </delete>
 
-    <insert id="insert">
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" >
         INSERT INTO cms_bt_jm_product
         (
               channel_id,
-              deal_id,
               jumei_product_id,
+              deal_id,
               product_code,
               foreign_language_name,
               product_name_cn,
@@ -118,8 +118,8 @@
         )
         VALUES(
               #{channelId},
-              #{dealId},
               #{jumeiProductId},
+              #{dealId},
               #{productCode},
               #{foreignLanguageName},
               #{productNameCn},

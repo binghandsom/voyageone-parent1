@@ -6,17 +6,14 @@
     </resultMap>
 	
     <select id="selectList" resultMap="ResultMap">
-
         select id,source_id,api_type,error_msg,error_code,remark        from cms_bt_jm_api_log
     </select>
     <select id="select" resultMap="ResultMap">
         select id,source_id,api_type,error_msg,error_code,remark from cms_bt_jm_api_log where id=#{id}
     </select>
-
      <update id="update">
         update cms_bt_jm_api_log
         set
-
             source_id=#{sourceId}
             ,api_type=#{apiType}
             ,error_msg=#{errorMsg}
@@ -28,10 +25,9 @@
     <delete id="delete">
         delete from  cms_bt_jm_api_log
         where id=#{id}
-
     </delete>
 
-    <insert id="insert">
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" >
         INSERT INTO cms_bt_jm_api_log
         (
               source_id,

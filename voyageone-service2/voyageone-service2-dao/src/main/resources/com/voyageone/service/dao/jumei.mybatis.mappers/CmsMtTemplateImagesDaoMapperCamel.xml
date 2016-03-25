@@ -35,7 +35,7 @@
 
     </delete>
 
-    <insert id="insert">
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" >
         INSERT INTO cms_mt_template_images
         (
               cart_id,

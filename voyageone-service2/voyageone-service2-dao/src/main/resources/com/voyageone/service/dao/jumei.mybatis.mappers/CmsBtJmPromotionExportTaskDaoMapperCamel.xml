@@ -36,7 +36,7 @@
 
     </delete>
 
-    <insert id="insert">
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" >
         INSERT INTO cms_bt_jm_promotion_export_task
         (
               cms_bt_jm_promotion_id,
