@@ -106,7 +106,7 @@ public abstract class BaseJomgoDao<T> {
     }
 
     public WriteResult insertWithList(Collection<? extends T> models) {
-        if (models != null && models.size() > 0) {
+        if (models != null && !models.isEmpty()) {
             BaseMongoModel model = (BaseMongoModel)models.iterator().next();
             String collectionName = mongoTemplate.getCollectionName(this.collectionName, model);
             return mongoTemplate.insert(models, collectionName);

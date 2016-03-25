@@ -20,30 +20,6 @@ import java.util.*;
  */
 public abstract class BaseMongoDao<T> extends BaseJomgoDao<T> {
 
-    static {
-        // 在 BaseMongoDao 静态初始化时, 初始化 JsonPath 的 Provider 配置
-        Configuration.setDefaults(new Configuration.Defaults() {
-
-            private final JsonProvider jsonProvider = new JacksonJsonProvider();
-            private final MappingProvider mappingProvider = new JacksonMappingProvider();
-
-            @Override
-            public JsonProvider jsonProvider() {
-                return jsonProvider;
-            }
-
-            @Override
-            public MappingProvider mappingProvider() {
-                return mappingProvider;
-            }
-
-            @Override
-            public Set<Option> options() {
-                return EnumSet.noneOf(Option.class);
-            }
-        });
-    }
-
     public DBCollection getDBCollection() {
         return mongoTemplate.getDBCollection(collectionName);
     }

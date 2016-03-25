@@ -1,23 +1,19 @@
 package com.voyageone.common.components.eExpress.base;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import com.voyageone.common.configs.beans.CarrierBean;
+import com.voyageone.common.configs.beans.PostResponse;
+import com.voyageone.common.util.HttpUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import com.voyageone.common.util.HttpUtils;
-import com.voyageone.common.configs.beans.PostResponse;
-import com.voyageone.common.configs.beans.CarrierBean;
 
 public class EtkBase {
 	
 	protected Log logger = LogFactory.getLog(getClass());
 	
-	public final static Map map = new HashMap() {{  
-	    put("key1", "value1");  
-	    put("key2", "value2");  
-	}};
+//	public final static Map map = new HashMap() {{
+//	    put("key1", "value1");
+//	    put("key2", "value2");
+//	}};
 	
 	/*
 	 * 保持Session调用E特快的API

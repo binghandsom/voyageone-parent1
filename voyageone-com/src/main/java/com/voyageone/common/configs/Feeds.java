@@ -64,7 +64,7 @@ public class Feeds {
      */
     public static String getVal1(String id, FeedEnums.Name name) {
         List<FeedBean> beans = getConfigs(id, name);
-        return (beans == null || beans.size() < 1) ? "" : beans.get(0).getCfg_val1();
+        return (beans == null || beans.isEmpty()) ? "" : beans.get(0).getCfg_val1();
     }
 
     /**
@@ -97,7 +97,7 @@ public class Feeds {
         for (String key : keys) {
             if (key.startsWith(channelId + CacheHelper.SKIP + name)) filterKeys.add(key);
         }
-        if (filterKeys.size() > 0) {
+        if (!filterKeys.isEmpty()) {
             Collections.sort(filterKeys);
             feedBeanList = hashOperations.multiGet(KEY, filterKeys);
         }

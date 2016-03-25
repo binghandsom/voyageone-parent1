@@ -5,7 +5,6 @@ import com.voyageone.common.components.sears.bean.*;
 import com.voyageone.common.util.JaxbUtil;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,7 +29,7 @@ public class SearsService extends SearsBase {
 
         StringBuffer param = new StringBuffer();
 
-        if (skuList.size() > 0) {
+        if (!skuList.isEmpty()) {
             skus = "/" + skuList.stream().collect(Collectors.joining(","));
         }
         param.append("product_details=" + details);
@@ -115,7 +114,6 @@ public class SearsService extends SearsBase {
      * Order LookUp
      *
      * @param orderId     第几页
-     * @return
      * @throws Exception
      */
     public OrderLookupResponse getOrderInfo(String orderId) throws Exception {
@@ -158,7 +156,7 @@ public class SearsService extends SearsBase {
      * @throws Exception
      */
     public OrderResponse CreateOrder(OrderBean order) throws Exception {
-        return SearsHttpPost(searsUrl+"orders","utf-8",JaxbUtil.convertToXml(order));
+        return searsHttpPost(searsUrl + "orders", "utf-8", JaxbUtil.convertToXml(order));
     }
 
     /**
@@ -168,6 +166,6 @@ public class SearsService extends SearsBase {
      * @throws Exception
      */
     public OrderResponse UpdateStatus(UpdateStatusBean order) throws Exception {
-        return SearsHttpPost(String.format(updateStatusUrl,order.getOrderId()),"utf-8",JaxbUtil.convertToXml(order));
+        return searsHttpPost(String.format(updateStatusUrl, order.getOrderId()), "utf-8", JaxbUtil.convertToXml(order));
     }
 }

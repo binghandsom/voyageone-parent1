@@ -84,7 +84,7 @@ public class Carriers {
         for (String key : keys) {
             if (key.startsWith(order_channel_id+CacheHelper.SKIP)) filterKeys.add(key);
         }
-        if (filterKeys.size() > 0) {
+        if (!filterKeys.isEmpty()) {
             Collections.sort(filterKeys);
             carriersList = hashOperations.multiGet(KEY, filterKeys);
         }

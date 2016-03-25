@@ -128,7 +128,7 @@ public class HttpUtils {
         InputStreamReader isr = null;
         BufferedReader buffer = null;
         StringBuffer sb = null;
-        String line = null;
+        String line;
 
         try {
 	            /*post向服务器请求数据*/
@@ -137,8 +137,8 @@ public class HttpUtils {
             request.setEntity(se);
             se.setContentEncoding("UTF-8");
             se.setContentType("application/json");
-            request.setHeader("Authorization", "Basic " + authorization);;
-            CloseableHttpClient httpclient= HttpClients.createDefault();
+            request.setHeader("Authorization", "Basic " + authorization);
+            CloseableHttpClient httpclient = HttpClients.createDefault();
             HttpResponse response = httpclient.execute(request);
             int code = response.getStatusLine().getStatusCode();
             // System.out.println("postCode= " + code);
@@ -163,17 +163,14 @@ public class HttpUtils {
             try {
                 if(buffer != null) {
                     buffer.close();
-                    buffer = null;
                 }
                 if(isr != null) {
                     isr.close();
-                    isr = null;
                 }
                 if(input != null) {
                     input.close();
-                    input = null;
                 }
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         }
         return sb.toString();
@@ -186,7 +183,7 @@ public class HttpUtils {
         InputStreamReader isr = null;
         BufferedReader buffer = null;
         StringBuffer sb = null;
-        String line = null;
+        String line;
 
         try {
 	            /*post向服务器请求数据*/
@@ -195,7 +192,7 @@ public class HttpUtils {
             request.setEntity(se);
             se.setContentEncoding("UTF-8");
             se.setContentType("application/json");
-            request.setHeader("Authorization", "Basic " + authorization);;
+            request.setHeader("Authorization", "Basic " + authorization);
             CloseableHttpClient httpclient= HttpClients.createDefault();
             HttpResponse response = httpclient.execute(request);
             int code = response.getStatusLine().getStatusCode();
@@ -221,17 +218,14 @@ public class HttpUtils {
             try {
                 if(buffer != null) {
                     buffer.close();
-                    buffer = null;
                 }
                 if(isr != null) {
                     isr.close();
-                    isr = null;
                 }
                 if(input != null) {
                     input.close();
-                    input = null;
                 }
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
         }
         return sb.toString();
@@ -643,9 +637,8 @@ public class HttpUtils {
                 readConent =  readConnection(inputStream);
             }
 
-            if (connection != null) {
-                connection.disconnect();
-            }
+            connection.disconnect();
+
         } catch (Exception e) {
             if (connection != null) {
                 connection.disconnect();
@@ -702,9 +695,7 @@ public class HttpUtils {
     public static InputStream getInputStream(String urlString) throws IOException {
         URL url = new URL(urlString);
 
-        InputStream inputStream = url.openStream();
-
-        return inputStream;
+        return url.openStream();
     }
 
 }
