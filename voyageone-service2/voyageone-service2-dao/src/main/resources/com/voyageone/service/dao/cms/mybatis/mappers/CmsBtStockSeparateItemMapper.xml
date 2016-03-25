@@ -246,7 +246,7 @@
         )
     </select>
 
-    <select id="select_stock_separate_item_excel_map" resultType="com.voyageone.web2.cms.bean.promotion.task.StockExcelBean" parameterType="HashMap">
+    <select id="select_stock_separate_item_excel_map" resultType="com.voyageone.service.bean.cms.task.stock.StockExcelBean" parameterType="HashMap">
         select
           `product_model`,
           `product_code`,

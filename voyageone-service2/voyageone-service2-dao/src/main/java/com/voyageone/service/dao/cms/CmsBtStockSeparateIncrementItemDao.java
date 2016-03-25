@@ -1,9 +1,10 @@
 package com.voyageone.service.dao.cms;
 
 import com.voyageone.base.dao.BaseDao;
-import com.voyageone.web2.cms.bean.promotion.task.StockIncrementExcelBean;
+import com.voyageone.service.bean.cms.task.stock.StockIncrementExcelBean;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Map;
 
 /**

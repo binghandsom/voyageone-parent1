@@ -1,6 +1,4 @@
-package com.voyageone.web2.cms.bean.promotion.task;
-
-import com.voyageone.common.masterdate.schema.value.Value;
+package com.voyageone.service.bean.cms.task.stock;
 
 import java.math.BigDecimal;
 

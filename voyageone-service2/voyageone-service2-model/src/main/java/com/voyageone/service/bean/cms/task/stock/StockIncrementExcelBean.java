@@ -1,4 +1,4 @@
-package com.voyageone.web2.cms.bean.promotion.task;
+package com.voyageone.service.bean.cms.task.stock;
 
 import java.math.BigDecimal;
 

@@ -139,7 +139,7 @@
         </if>
     </delete>
 
-    <select id="select_stock_separate_increment_item_excel_map" resultType="com.voyageone.web2.cms.bean.promotion.task.StockIncrementExcelBean" parameterType="HashMap">
+    <select id="select_stock_separate_increment_item_excel_map" resultType="com.voyageone.service.bean.cms.task.stock.StockIncrementExcelBean" parameterType="HashMap">
         select
         `product_model`,
         `product_code`,
