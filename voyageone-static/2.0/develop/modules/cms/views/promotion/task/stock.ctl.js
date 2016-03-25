@@ -8,7 +8,8 @@ define([
 ], function (cms) {
     cms.controller("taskStockController", (function () {
 
-        function TaskStockController($routeParams, taskStockService, cActions, confirm, alert, notify, selectRowsFactory) {
+        function TaskStockController($routeParams, taskStockService, cActions, confirm, alert, notify, selectRowsFactory,blockUI) {
+            this.blockUI = blockUI;
             var urls = cActions.cms.task.taskStockService;
             this.alert = alert;
             this.notify = notify;
@@ -209,7 +210,6 @@ define([
 
             setPercent: function () {
                 var main = this;
-
                 if(main.stockSelList.selList.length <= 0){
                     main.alert('TXT_MSG_NO_ROWS_SELECT');
                 }
@@ -318,6 +318,7 @@ define([
 
             download: function () {
                 var main = this;
+                //main.blockUI.start();
                 $.download.post(main.downloadUrl, {
                     task_id: main.taskId,
                     propertyList: JSON.stringify(main.propertyList),
@@ -328,6 +329,9 @@ define([
                     "qtyFrom" : main.qtyFrom,
                     "qtyTo" : main.qtyTo,
                     "status" : main.status
+                },function(){
+                    //main.blockUI.stop();
+                    //var test= "";
                 });
             }
         };

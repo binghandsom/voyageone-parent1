@@ -341,10 +341,17 @@ public class CmsTaskStockController extends CmsController {
             List<Map<String, Object>> platformList = cmsTaskStockService.getPlatformList((String) param.get("taskId"), this.getUser().getSelChannelId(), this.getLang());
             resultBean.put("platformList", platformList);
             param.put("platformList", platformList);
+            if (platformList == null || platformList.size() == 0) {
+                resultBean.put("hasAuthority", false);
+                return success(resultBean);
+            }
 
             // 任务id/渠道id权限check
             boolean hasAuthority = cmsTaskStockService.hasAuthority(this.getUser().getSelChannelId(), platformList);
             resultBean.put("hasAuthority", hasAuthority);
+            if (!hasAuthority) {
+                return success(resultBean);
+            }
         } else {
             resultBean.put("platformList", param.get("platformList"));
             resultBean.put("hasAuthority", true);
