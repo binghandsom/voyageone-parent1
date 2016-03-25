@@ -621,7 +621,7 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
                 CmsTaskStockService.STATUS_INCREMENT_SUCCESS,
                 CmsTaskStockService.STATUS_INCREMENT_FAIL,
                 CmsTaskStockService. STATUS_REVERT));
-        if (cmsBtStockSeparateIncrementItemDao.selectStockSeparateIncrementItemByStatus(sqlParam) != 0 ) {
+        if (cmsBtStockSeparateIncrementItemDao.selectStockSeparateIncrementItemByStatus(sqlParam) != null ) {
             throw new BusinessException("此增量任务已经进行，不能修改数据！");
         }
 
