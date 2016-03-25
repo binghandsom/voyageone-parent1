@@ -26,16 +26,12 @@ public class CmsBtStockSeparateIncrementItemDao extends BaseDao {
         return selectOne("select_stock_separate_increment_item_by_status", param);
     }
 
-    public int selectStockSeparateIncrementItemStatusCnt(Map<String, Object> param) {
-        return selectOne("select_stock_separate_increment_item_status_cnt", param);
-    }
-
     public int selectStockSeparateIncrementItemHistoryCnt(Map<String, Object> param) {
         return selectOne("select_stock_separate_increment_item_history_cnt", param);
     }
 
-    public List<Map<String, Object>> selectStockSeparateItemBySqlMap(Map<String, Object> param) {
-        return selectList("select_stock_separate_item_by_sql_map", param);
+    public List<Map<String, Object>> selectStockSeparateIncrementItemBySql(Map<String, Object> param) {
+        return selectList("select_stock_separate_increment_item_by_sql", param);
     }
 
     public int updateStockSeparateIncrementItem(Map<String, Object> param) {
@@ -49,8 +45,4 @@ public class CmsBtStockSeparateIncrementItemDao extends BaseDao {
     public List<StockIncrementExcelBean> selectExcelStockIncrementInfo(Map<String, Object> param) {
         return selectList("select_stock_separate_increment_item_excel_map", param);
     }
-
-//    public Map selectStockSeparateIncrementPlatform(String subTaskId) {
-//        return selectOne("select_stock_separate_increment_platform", subTaskId);
-//    }
 }

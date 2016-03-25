@@ -51,10 +51,10 @@
 	<div class="pull-right form-inline btn-group" ng-controller="popupCtrl"  ng-show="$ctrl.hasAuthority">
 		<button class="btn btn-danger" ng-click="$ctrl.openImport(openImportStock)"><i class="fa fa-reply-all"></i>&nbsp;{{'BTN_IMPORT_ALL' | translate}}</button>
 		<button class="btn btn-dangers" ng-click="$ctrl.download()"><i class="glyphicon glyphicon-share-alt"></i>&nbsp;{{'BTN_EXPORT_ALL' | translate}}</button>
-		<button class="btn btn-primary"><i class="glyphicon glyphicon-play"></i>&nbsp;{{'BTN_START_INCREMENT_ALL' | translate}}</button>
+		<button class="btn btn-primary" ng-click="$ctrl.executeStockIncrementSeparation()"><i class="glyphicon glyphicon-play"></i>&nbsp;{{'BTN_START_INCREMENT_ALL' | translate}}</button>
 	</div>
 	<div class="form-inline pull-left btn-group m-b-xs"  ng-show="$ctrl.hasAuthority">
-		<label id="allNum" class="btn btn-default-vo" ng-model="radioModel" uib-btn-radio="'总数：100000'" ng-click="$ctrl.search('search')">{{'TXT_ALL' | translate}}：{{$ctrl.allNum}}</label>
+		<label id="allNum" class="btn btn-default-vo btn-vo" ng-model="radioModel" uib-btn-radio="'总数：100000'" ng-click="$ctrl.search('search')">{{'TXT_ALL' | translate}}：{{$ctrl.allNum}}</label>
 		<label class="btn btn-default-vo" ng-model="radioModel" uib-btn-radio="'未进行：1000'" ng-click="$ctrl.search('0')">{{'TXT_READY' | translate}}：{{$ctrl.readyNum}}</label>
 		<label class="btn btn-default-vo" ng-model="radioModel" uib-btn-radio="'等待增量：0'" ng-click="$ctrl.search('1')">{{'TXT_WAITING_INCREMENT' | translate}}：{{$ctrl.waitIncrementNum}}</label>
 		<label class="btn btn-default-vo" ng-model="radioModel" uib-btn-radio="'增量中：0'" ng-click="$ctrl.search('2')">{{'TXT_INCREASING' | translate}}：{{$ctrl.increasingNum}}</label>

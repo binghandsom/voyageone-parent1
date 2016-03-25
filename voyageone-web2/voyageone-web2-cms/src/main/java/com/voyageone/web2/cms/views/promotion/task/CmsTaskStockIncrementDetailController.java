@@ -27,10 +27,8 @@ import java.util.Map;
 )
 public class CmsTaskStockIncrementDetailController extends CmsController {
 
-    // morse.lu test用 added at 2016/03/23 start
     @Autowired
     private CmsTaskStockService cmsTaskStockService;
-    // morse.lu test用 added at 2016/03/23 end
 
     @Autowired
     private CmsTaskStockIncrementDetailService cmsTaskStockIncrementDetailService;
@@ -43,6 +41,8 @@ public class CmsTaskStockIncrementDetailController extends CmsController {
      * @apiVersion 0.0.1
      * @apiPermission 认证商户
      * @apiParam (系统级参数) {String} channelId 渠道id
+     * @apiParam (应用级参数) {String} taskId 任务id
+     * @apiParam (应用级参数) {String} cartId 平台id
      * @apiParam (应用级参数) {String} subTaskId 增量任务id
      * @apiParam (应用级参数) {String} model 商品model
      * @apiParam (应用级参数) {String} code 商品Code
@@ -128,7 +128,7 @@ public class CmsTaskStockIncrementDetailController extends CmsController {
                 resultBean.put("hasAuthority", false);
                 return success(resultBean);
             } else {
-                // 子任务id/渠道id权限check
+                // 增量任务/渠道id权限check
                 boolean hasAuthority = cmsTaskStockIncrementDetailService.hasAuthority(String.valueOf(taskInfo.get("task_id")), String.valueOf(taskInfo.get("cart_id")), this.getUser().getSelChannelId(), this.getLang());
                 resultBean.put("hasAuthority", hasAuthority);
                 if (!hasAuthority) {
@@ -250,12 +250,13 @@ public class CmsTaskStockIncrementDetailController extends CmsController {
      * @apiGroup promotion
      * @apiVersion 0.0.1
      * @apiPermission 认证商户
+     * @apiParam (应用级参数) {String} taskId 任务id
+     * @apiParam (应用级参数) {String} cartId 平台id
      * @apiParam (应用级参数) {String} subTaskId 增量任务id
-     * @apiParam (应用级参数) {Object} stockInfo（json数据） 一条Sku的隔离明细
-     * @apiParamExample  stockInfo参数示例
+     * @apiParam (应用级参数) {Object} stockInfo（json数组） 增量库存隔离明细
+     * @apiParamExample  stockInfo 示例
      * {
-     *   "subTaskId":1,
-     *   "stockInfo":  {"model":"35265", "code":"35265465", "sku":"256354566-9", "property1":"Puma", "property2":"Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"50", "incrementQty":"50", "status":"增量失败", "fixFlg":false}
+     *  "stockInfo":  {"model":"35265", "code":"35265465", "sku":"256354566-9", "property1":"Puma", "property2":"Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"50", "incrementQty":"50", "status":"未进行", "fixFlg":false}
      * }
      * @apiSuccess (系统级返回字段) {String} code 处理结果代码编号
      * @apiSuccess (系统级返回字段) {String} message 处理结果描述
@@ -263,14 +264,11 @@ public class CmsTaskStockIncrementDetailController extends CmsController {
      * @apiSuccess (系统级返回字段) {String} redirectTo 跳转地址
      * @apiSuccessExample 成功响应更新请求
      * {
-     *  "code":"0", "message":null, "displayType":null, "redirectTo":null,
-     *  "data":{
-     *    "stockInfo":  {"model":"35265", "code":"35265465", "sku":"256354566-9", "property1":"Puma", "property2":"Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"50", "incrementQty":"50", "status":"未进行", "fixFlg":false}
-     *  }
+     *  "code":"0", "message":null, "displayType":null, "redirectTo":null, "data":null
      *  }
      * @apiErrorExample  错误示例
      * {
-     *  "code": "1", "message": "增量隔离库存格式不正确", "displayType":null, "redirectTo":null, "data":null
+     *  "code": "1", "message": "保存失败（增量库存隔离后不能进行变更）", "displayType":null, "redirectTo":null, "data":null
      * }
      * @apiExample  业务说明
      *  1.check输入信息。增量隔离库存必须是大于0的整数。
@@ -282,6 +280,10 @@ public class CmsTaskStockIncrementDetailController extends CmsController {
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK_INCREMENT_DETAIL.SAVE_ITEM)
     public AjaxResponse saveItem(@RequestBody Map param) {
+        // 创建者/更新者用
+        param.put("userName", this.getUser().getUserName());
+        // 增量隔离库存明细
+        cmsTaskStockIncrementDetailService.saveItem(param);
 
         // 返回
         return success(null);
@@ -294,13 +296,10 @@ public class CmsTaskStockIncrementDetailController extends CmsController {
      * @apiGroup promotion
      * @apiVersion 0.0.1
      * @apiPermission 认证商户
+     * @apiParam (应用级参数) {String} taskId 任务id
+     * @apiParam (应用级参数) {String} cartId 平台id
      * @apiParam (应用级参数) {String} subTaskId 增量任务id
      * @apiParam (应用级参数) {String} sku Sku
-     * @apiParamExample  stockInfo参数示例
-     * {
-     *   "subTaskId":1,
-     *   "sku":"256354566-9"
-     * }
      * @apiSuccess (系统级返回字段) {String} code 处理结果代码编号
      * @apiSuccess (系统级返回字段) {String} message 处理结果描述
      * @apiSuccess (系统级返回字段) {String} displayType 消息的提示方式
@@ -321,6 +320,9 @@ public class CmsTaskStockIncrementDetailController extends CmsController {
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK_INCREMENT_DETAIL.DEL_ITEM)
     public AjaxResponse delItem(@RequestBody Map param) {
+
+        // 删除增量隔离库存明细
+        cmsTaskStockIncrementDetailService.delItem((String) param.get("taskId"), (String) param.get("subTaskId"), (String) param.get("cartId"), (String) param.get("sku"));
 
         // 返回
         return success(null);
@@ -465,6 +467,8 @@ public class CmsTaskStockIncrementDetailController extends CmsController {
      * @apiGroup promotion
      * @apiVersion 0.0.1
      * @apiPermission 认证商户
+     * @apiParam (应用级参数) {String} taskId 任务id
+     * @apiParam (应用级参数) {String} cartId 平台id
      * @apiParam (应用级参数) {String} subTaskId 增量任务id
      * @apiSuccess (系统级返回字段) {String} code 处理结果代码编号
      * @apiSuccess (系统级返回字段) {String} message 处理结果描述
@@ -475,7 +479,7 @@ public class CmsTaskStockIncrementDetailController extends CmsController {
      *  "code":"0", "message":null, "displayType":null, "redirectTo":null, "data":null
      * }
      * @apiExample  业务说明
-     *  将状态为"0:未进行"，"3:增量失败"的增量隔离明细进行处理，将其状态变为"1:等待增量"。等待Batch处理。
+     *  将状态为"0:未进行"，"4:增量失败"的增量隔离明细进行处理，将其状态变为"1:等待增量"。等待Batch处理。
      *
      * @apiExample 使用表
      *  cms_bt_stock_separate_platform_info
@@ -483,6 +487,12 @@ public class CmsTaskStockIncrementDetailController extends CmsController {
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK_INCREMENT_DETAIL.EXECUTE_STOCK_INCREMENT_SEPARATION)
     public AjaxResponse executeStockIncrementSeparation(@RequestBody Map param) {
+
+        // 创建者/更新者用
+        param.put("userName", this.getUser().getUserName());
+
+        // 启动/重刷增量库存隔离
+        cmsTaskStockIncrementDetailService.executeStockIncrementSeparation(param);
 
         // 返回
         return success(null);

@@ -53,6 +53,15 @@ define([
                 this.search('page');
             },
 
+            clear: function () {
+                this.model = "";
+                this.code = "";
+                this.sku = "";
+                _.each(this.propertyList, function (property) {
+                    property.value = "";
+                });
+            },
+
             search: function (param) {
                 var main = this;
                 if (param != 'search' && param != 'page')  {
@@ -71,6 +80,7 @@ define([
                     start = (main.stockPageOption.curr - 1) * main.stockPageOption.size;
                     page = true;
                 }
+
                 main.taskStockIncrementDetailService.searchItem({
                     "taskId" : main.taskId,
                     "subTaskId" : main.subTaskId,
@@ -92,6 +102,8 @@ define([
                             return;
                         }
                         main.taskId = res.data.taskId;
+                        main.cartId = res.data.cartId;
+                        main.cartName = res.data.cartName;
                         main.readyNum = res.data.readyNum;
                         main.waitIncrementNum = res.data.waitIncrementNum;
                         main.increasingNum = res.data.increasingNum;
@@ -100,14 +112,65 @@ define([
                         main.revertNum = res.data.revertNum;
                         main.allNum = res.data.allNum;
                         main.stockPageOption.total = res.data.skuNum;
-                        main.cartId = res.data.cartId;
-                        main.cartName = res.data.cartName;
                         main.propertyList = res.data.propertyList;
                         main.stockList = res.data.stockList;
                         main.stockPageOption.curr = 1;
                     } else {
                         main.stockList = res.data.stockList;
                     }
+                })
+            },
+
+            saveItem: function (stock) {
+                var main = this;
+                main.taskStockIncrementDetailService.saveItem({
+                    "taskId" : main.taskId,
+                    "subTaskId" : main.subTaskId,
+                    "cartId" : main.cartId,
+                    "stockInfo" : stock
+                }).then(function (res) {
+                    main.notify.success('TXT_MSG_UPDATE_SUCCESS');
+                }, function (err) {
+                    if (err.displayType == null) {
+                        main.alert('TXT_MSG_UPDATE_FAIL');
+                    }
+                })
+            },
+
+            delItem: function (sku) {
+                var main = this;
+                main.confirm('TXT_MSG_DO_DELETE').result.then(function () {
+                    main.taskStockIncrementDetailService.delItem({
+                        "taskId": main.taskId,
+                        "subTaskId": main.subTaskId,
+                        "cartId": main.cartId,
+                        "sku": sku
+                    }).then(function (res) {
+                        main.notify.success('TXT_MSG_DELETE_SUCCESS');
+                        main.search();
+                    }, function (err) {
+                        if (err.displayType == null) {
+                            main.alert('TXT_MSG_DELETE_FAIL');
+                        }
+                    })
+                })
+            },
+
+            executeStockIncrementSeparation: function (sku) {
+                var main = this;
+                main.confirm('TXT_MSG_DO_INCREASE').result.then(function () {
+                    main.taskStockIncrementDetailService.executeStockIncrementSeparation({
+                        "taskId": main.taskId,
+                        "subTaskId" : main.subTaskId,
+                        "cartId": main.cartId
+                    }).then(function (res) {
+                        main.notify.success('TXT_MSG_INCREMENT_SUCCESS');
+                        main.search();
+                    }, function (err) {
+                        if (err.displayType == null) {
+                            main.alert('TXT_MSG_INCREMENT_FAIL');
+                        }
+                    })
                 })
             },
 

@@ -837,7 +837,7 @@ public class CmsTaskStockService extends BaseAppService {
         // 取得任务id对应的Promotion是否开始
         boolean promotionStartFlg = isPromotionStart((String) param.get("taskId"));
         if (promotionStartFlg) {
-            throw new BusinessException("活动已经开始，不能修改数据！");
+            throw new BusinessException("活动已经开始，不能编辑数据！");
         }
 
         List<Map<String,Object>> stockList = new ArrayList<Map<String,Object>>();
@@ -870,7 +870,7 @@ public class CmsTaskStockService extends BaseAppService {
             sqlParam.put("tableNameSuffix", "");
             List<Map<String, Object>> stockSeparateItemList = cmsBtStockSeparateItemDao.selectStockSeparateItem(sqlParam);
             if (stockSeparateItemList == null || stockSeparateItemList.size() == 0) {
-                throw new BusinessException("更新对象不存在！");
+                throw new BusinessException("明细对象不存在！");
             }
             // 这个页面所有sku的库存隔离信息Map
             Map<String, Object> skuDBInfo = new HashMap<String, Object>();
@@ -903,7 +903,7 @@ public class CmsTaskStockService extends BaseAppService {
                         if (!separationQty.equals(separateQtyDB) && !StringUtils.isEmpty(status)) {
                             // 状态为"2:隔离中"或者"6:还原中"的数据不能进行变更
                             if(STATUS_SEPARATING.equals(statusDB) || STATUS_REVERTING.equals(statusDB)) {
-                                throw new BusinessException("状态为 还原中 或者 隔离中 的明细不能进行变更！");
+                                throw new BusinessException("状态为 还原中 或者 隔离中 的明细不能进行编辑！");
                             }
                             Map<String, Object> sqlParam1 = new HashMap<String, Object>();
                             sqlParam1.put("taskId", taskId);
@@ -925,7 +925,7 @@ public class CmsTaskStockService extends BaseAppService {
                                 String typeName = Type.getTypeName(63, changedStatus, (String) param.get("lang"));
                                 platformInfo.put("status", typeName);
                             } else {
-                                throw new BusinessException("更新对象不存在！");
+                                throw new BusinessException("明细对象不存在！");
                             }
                         }
                     }
@@ -962,13 +962,13 @@ public class CmsTaskStockService extends BaseAppService {
             sqlParam.put("tableNameSuffix", "");
             List<Map<String, Object>> stockSeparateItemList = cmsBtStockSeparateItemDao.selectStockSeparateItem(sqlParam);
             if (stockSeparateItemList == null || stockSeparateItemList.size() == 0) {
-                throw new BusinessException("选择的明细不存在！");
+                throw new BusinessException("明细对象不存在");
             }
             for (Map<String, Object> stockSeparateItem : stockSeparateItemList) {
                 String status = (String) stockSeparateItem.get("status");
                 // 只有状态为 0：未进行的数据可以删除
                 if (!StringUtils.isEmpty(status) && !STATUS_READY.equals(status)) {
-                    throw new BusinessException("选择的明细不能删除！");
+                    throw new BusinessException("只有状态为未进行的明细才能进行删除！");
                 }
             }
 
@@ -976,8 +976,8 @@ public class CmsTaskStockService extends BaseAppService {
             sqlParam.put("taskId", taskId);
             sqlParam.put("sku", sku);
             int delCount = cmsBtStockSeparateItemDao.deleteStockSeparateItem(sqlParam);
-            if (delCount <= 0) {
-                throw new BusinessException("选择的明细不存在！");
+            if (delCount == 0) {
+                throw new BusinessException("明细对象不存在！");
             }
         } catch (BusinessException e) {
             simpleTransaction.rollback();
