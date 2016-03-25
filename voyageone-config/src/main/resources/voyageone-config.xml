@@ -22,6 +22,8 @@
     <!--<import resource="file:/usr/web/spring-config/sdk-client-config.xml" />-->
     <!-- MQ Config -->
     <!--<import resource="file:/usr/web/spring-config/mq-config.xml" />-->
+    <!-- Redis Config -->
+    <!--<import resource="file:/usr/web/spring-config/redis-config.xml" />-->
 
 
 </beans>
