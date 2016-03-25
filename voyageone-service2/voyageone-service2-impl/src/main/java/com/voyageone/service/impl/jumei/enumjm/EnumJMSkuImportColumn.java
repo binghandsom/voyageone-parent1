@@ -9,7 +9,7 @@ import java.util.Map;
 
 public enum EnumJMSkuImportColumn {
     ProductCode("product_code", 1, "jm_bt_sku", "商品Code",EnumExcelColumnType.ColumnType_String,false),//商品Code                    jm_bt_sku
-    sku("sku", 2, "jm_bt_sku", "品牌方SKU(聚美商家商品编码)"),//品牌方SKU(聚美商家商品编码)
+    sku("sku_code", 2, "jm_bt_sku", "品牌方SKU(聚美商家商品编码)"),//品牌方SKU(聚美商家商品编码)
     upc("upc", 3, "jm_bt_sku", "商品条形码"),//商品条形码
     cms_size("cms_size", 4, "jm_bt_sku", "尺码(VO系统)"),//尺码(VO系统)                     jm_bt_sku
     jm_size("jm_size", 5, "jm_bt_promotion_sku", "尺码（聚美系统"),//尺码（聚美系统）      jm_bt_promotion_sku

@@ -9,11 +9,16 @@ public class CmsBtJmPromotionSkuModel implements Serializable
 {
    public CmsBtJmPromotionSkuModel()
     {
+        setSkuCode(""); 
         setJmSize(""); 
+        setMarketPrice(new BigDecimal(0));
+        setDiscount(new BigDecimal(0));
+        setDealPrice(new BigDecimal(0));
         setErrorMsg(""); 
         setCreater(""); 
         setCreated(DateHelp.getDefaultDate());
         setModifier(""); 
+        setChannelId(""); 
 
     }
  
@@ -40,6 +45,12 @@ public class CmsBtJmPromotionSkuModel implements Serializable
 sku id
         */
      private int cmsBtJmSkuId;
+    
+    
+ /**
+规格代码
+        */
+     private String skuCode;
     
     
  /**
@@ -101,6 +112,18 @@ sku id
         */
      private String modifier;
     
+    
+ /**
+0:未上新 1：已上新  (上新：新增到聚美平台)
+        */
+     private int state;
+    
+    
+ /**
+渠道商id
+        */
+     private String channelId;
+    
         
          /**
            
@@ -155,6 +178,27 @@ sku id
         public void setCmsBtJmSkuId(int cmsBtJmSkuId)
         {
          this.cmsBtJmSkuId=cmsBtJmSkuId;
+        }
+    
+        
+         /**
+           规格代码
+        */
+        public String getSkuCode()
+        {
+         
+        return this.skuCode;
+        }
+        public void setSkuCode(String skuCode)
+        {
+        if(skuCode!=null){
+this.skuCode=skuCode;
+ }
+else
+{
+this.skuCode="";
+}
+
         }
     
         
@@ -328,6 +372,41 @@ this.modifier=modifier;
 else
 {
 this.modifier="";
+}
+
+        }
+    
+        
+         /**
+           0:未上新 1：已上新  (上新：新增到聚美平台)
+        */
+        public int getState()
+        {
+         
+        return this.state;
+        }
+        public void setState(int state)
+        {
+         this.state=state;
+        }
+    
+        
+         /**
+           渠道商id
+        */
+        public String getChannelId()
+        {
+         
+        return this.channelId;
+        }
+        public void setChannelId(String channelId)
+        {
+        if(channelId!=null){
+this.channelId=channelId;
+ }
+else
+{
+this.channelId="";
 }
 
         }

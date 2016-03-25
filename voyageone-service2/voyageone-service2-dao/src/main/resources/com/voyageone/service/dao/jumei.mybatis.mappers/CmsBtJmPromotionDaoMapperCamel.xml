@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.voyageone.service.dao.jumei.CmsBtJmPromotionDao">
-    <resultMap id="ResultMap" type="com.voyageone.service.model.jumei.CmsBtJmPromotionModel">
+    <resultMap id="ResultMap" type="CmsBtJmPromotionModel">
         
     </resultMap>
 	
@@ -17,17 +17,17 @@
         update cms_bt_jm_promotion
         set
 
-            channel_id=#{channelId}
-            ,name=#{name}
-            ,activity_pc_id=#{activityPcId}
-            ,activity_app_id=#{activityAppId}
-            ,activity_start=#{activityStart}
-            ,activity_end=#{activityEnd}
-            ,pre_period_start=#{prePeriodStart}
-            ,pre_period_end=#{prePeriodEnd}
-            ,shipping_system_id=#{shippingSystemId}
-            ,modified=#{modified}
-            ,modifier=#{modifier}
+            `channel_id`=#{channelId}
+            ,`name`=#{name}
+            ,`activity_pc_id`=#{activityPcId}
+            ,`activity_app_id`=#{activityAppId}
+            ,`activity_start`=#{activityStart}
+            ,`activity_end`=#{activityEnd}
+            ,`pre_period_start`=#{prePeriodStart}
+            ,`pre_period_end`=#{prePeriodEnd}
+            ,`shipping_system_id`=#{shippingSystemId}
+            ,`modified`=#{modified}
+            ,`modifier`=#{modifier}
          where id=#{id}   
    </update>
 
@@ -40,19 +40,19 @@
     <insert id="insert" useGeneratedKeys="true" keyProperty="id" >
         INSERT INTO cms_bt_jm_promotion
         (
-              channel_id,
-              name,
-              activity_pc_id,
-              activity_app_id,
-              activity_start,
-              activity_end,
-              pre_period_start,
-              pre_period_end,
-              shipping_system_id,
-              created,
-              creater,
-              modified,
-              modifier
+              `channel_id`,
+              `name`,
+              `activity_pc_id`,
+              `activity_app_id`,
+              `activity_start`,
+              `activity_end`,
+              `pre_period_start`,
+              `pre_period_end`,
+              `shipping_system_id`,
+              `created`,
+              `creater`,
+              `modified`,
+              `modifier`
         )
         VALUES(
               #{channelId},

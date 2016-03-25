@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.voyageone.service.dao.jumei.CmsBtJmPromotionImportTaskDao">
-    <resultMap id="ResultMap" type="com.voyageone.service.model.jumei.CmsBtJmPromotionImportTaskModel">
+    <resultMap id="ResultMap" type="CmsBtJmPromotionImportTaskModel">
         
     </resultMap>
 	
@@ -17,17 +17,17 @@
         update cms_bt_jm_promotion_import_task
         set
 
-            cms_bt_jm_promotion_id=#{cmsBtJmPromotionId}
-            ,is_import=#{isImport}
-            ,file_name=#{fileName}
-            ,file_path=#{filePath}
-            ,error_msg=#{errorMsg}
-            ,success_rows=#{successRows}
-            ,failures_rows=#{failuresRows}
-            ,failures_path=#{failuresPath}
-            ,error_code=#{errorCode}
-            ,begin_time=#{beginTime}
-            ,end_time=#{endTime}
+            `cms_bt_jm_promotion_id`=#{cmsBtJmPromotionId}
+            ,`is_import`=#{isImport}
+            ,`file_name`=#{fileName}
+            ,`file_path`=#{filePath}
+            ,`error_msg`=#{errorMsg}
+            ,`success_rows`=#{successRows}
+            ,`failures_rows`=#{failuresRows}
+            ,`failures_path`=#{failuresPath}
+            ,`error_code`=#{errorCode}
+            ,`begin_time`=#{beginTime}
+            ,`end_time`=#{endTime}
          where id=#{id}   
    </update>
 
@@ -40,19 +40,19 @@
     <insert id="insert" useGeneratedKeys="true" keyProperty="id" >
         INSERT INTO cms_bt_jm_promotion_import_task
         (
-              cms_bt_jm_promotion_id,
-              is_import,
-              file_name,
-              file_path,
-              error_msg,
-              success_rows,
-              failures_rows,
-              failures_path,
-              error_code,
-              begin_time,
-              end_time,
-              creater,
-              created
+              `cms_bt_jm_promotion_id`,
+              `is_import`,
+              `file_name`,
+              `file_path`,
+              `error_msg`,
+              `success_rows`,
+              `failures_rows`,
+              `failures_path`,
+              `error_code`,
+              `begin_time`,
+              `end_time`,
+              `creater`,
+              `created`
         )
         VALUES(
               #{cmsBtJmPromotionId},

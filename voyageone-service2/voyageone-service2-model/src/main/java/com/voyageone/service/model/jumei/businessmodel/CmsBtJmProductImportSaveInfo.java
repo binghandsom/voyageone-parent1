@@ -2,6 +2,7 @@ package com.voyageone.service.model.jumei.businessmodel;
 
 import com.voyageone.service.model.jumei.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -13,6 +14,11 @@ public class CmsBtJmProductImportSaveInfo {
     CmsBtJmPromotionProductModel promotionProductModel;
     List<CmsBtJmPromotionSkuModel> listPromotionSkuModel;
 
+    public  CmsBtJmProductImportSaveInfo()
+    {
+        this.setListSkuModel(new ArrayList<>());
+        this.setListPromotionSkuModel(new ArrayList<>());
+    }
     public List<CmsBtJmSkuModel> getListSkuModel() {
         return listSkuModel;
     }

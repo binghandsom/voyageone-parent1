@@ -5,5 +5,5 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 @Repository
 public interface CmsBtJmProductDaoExt {
-    public CmsBtJmProductModel getByProductCodeChannelId(@Param("channelId") String channelId, @Param("productCode") String productCode);
+    public CmsBtJmProductModel getByProductCodeChannelId(@Param("productCode") String productCode,@Param("channelId") String channelId);
 }

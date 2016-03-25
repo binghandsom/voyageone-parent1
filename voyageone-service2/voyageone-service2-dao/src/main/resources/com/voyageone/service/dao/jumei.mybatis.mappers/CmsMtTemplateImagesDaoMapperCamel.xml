@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.voyageone.service.dao.jumei.CmsMtTemplateImagesDao">
-    <resultMap id="ResultMap" type="com.voyageone.service.model.jumei.CmsMtTemplateImagesModel">
+    <resultMap id="ResultMap" type="CmsMtTemplateImagesModel">
         
     </resultMap>
 	
@@ -17,15 +17,15 @@
         update cms_mt_template_images
         set
 
-            cart_id=#{cartId}
-            ,channel_id=#{channelId}
-            ,key_extend1=#{keyExtend1}
-            ,key_extend2=#{keyExtend2}
-            ,model_type=#{modelType}
-            ,image_model_url=#{imageModelUrl}
-            ,syn_flg=#{synFlg}
-            ,modified=#{modified}
-            ,modifier=#{modifier}
+            `cart_id`=#{cartId}
+            ,`channel_id`=#{channelId}
+            ,`key_extend1`=#{keyExtend1}
+            ,`key_extend2`=#{keyExtend2}
+            ,`model_type`=#{modelType}
+            ,`image_model_url`=#{imageModelUrl}
+            ,`syn_flg`=#{synFlg}
+            ,`modified`=#{modified}
+            ,`modifier`=#{modifier}
          where id=#{id}   
    </update>
 
@@ -38,17 +38,17 @@
     <insert id="insert" useGeneratedKeys="true" keyProperty="id" >
         INSERT INTO cms_mt_template_images
         (
-              cart_id,
-              channel_id,
-              key_extend1,
-              key_extend2,
-              model_type,
-              image_model_url,
-              syn_flg,
-              created,
-              creater,
-              modified,
-              modifier
+              `cart_id`,
+              `channel_id`,
+              `key_extend1`,
+              `key_extend2`,
+              `model_type`,
+              `image_model_url`,
+              `syn_flg`,
+              `created`,
+              `creater`,
+              `modified`,
+              `modifier`
         )
         VALUES(
               #{cartId},

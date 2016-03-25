@@ -10,8 +10,8 @@ public class CmsBtJmProductModel implements Serializable
    public CmsBtJmProductModel()
     {
         setChannelId(""); 
-        setDealId(""); 
         setJumeiProductId(""); 
+        setDealId(""); 
         setProductCode(""); 
         setForeignLanguageName(""); 
         setProductNameCn(""); 
@@ -40,6 +40,7 @@ public class CmsBtJmProductModel implements Serializable
         setSearchMetaTextCustom(""); 
         setSpecialNote(""); 
         setFunctionIds(""); 
+        setMsrp(new BigDecimal(0));
         setHsCode(""); 
         setHsName(""); 
         setHsUnit(""); 
@@ -62,15 +63,15 @@ public class CmsBtJmProductModel implements Serializable
     
     
  /**
-
-        */
-     private String dealId;
-    
-    
- /**
 聚美的商品id
         */
      private String jumeiProductId;
+    
+    
+ /**
+
+        */
+     private String dealId;
     
     
  /**
@@ -286,7 +287,7 @@ SN库存同步用
  /**
 同步状态||0:未上新 1:已新增到聚美平台 不用 计划删掉
         */
-     private int synchState;
+     private int state;
     
     
  /**
@@ -355,27 +356,6 @@ this.channelId="";
     
         
          /**
-           
-        */
-        public String getDealId()
-        {
-         
-        return this.dealId;
-        }
-        public void setDealId(String dealId)
-        {
-        if(dealId!=null){
-this.dealId=dealId;
- }
-else
-{
-this.dealId="";
-}
-
-        }
-    
-        
-         /**
            聚美的商品id
         */
         public String getJumeiProductId()
@@ -391,6 +371,27 @@ this.jumeiProductId=jumeiProductId;
 else
 {
 this.jumeiProductId="";
+}
+
+        }
+    
+        
+         /**
+           
+        */
+        public String getDealId()
+        {
+         
+        return this.dealId;
+        }
+        public void setDealId(String dealId)
+        {
+        if(dealId!=null){
+this.dealId=dealId;
+ }
+else
+{
+this.dealId="";
 }
 
         }
@@ -1106,14 +1107,14 @@ this.hsUnit="";
          /**
            同步状态||0:未上新 1:已新增到聚美平台 不用 计划删掉
         */
-        public int getSynchState()
+        public int getState()
         {
          
-        return this.synchState;
+        return this.state;
         }
-        public void setSynchState(int synchState)
+        public void setState(int state)
         {
-         this.synchState=synchState;
+         this.state=state;
         }
     
         
