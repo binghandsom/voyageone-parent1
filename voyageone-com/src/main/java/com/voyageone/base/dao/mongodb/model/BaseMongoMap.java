@@ -1,6 +1,7 @@
 package com.voyageone.base.dao.mongodb.model;
 
 import com.mongodb.BasicDBObject;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.JsonUtil;
 
 import java.util.LinkedHashMap;
@@ -79,7 +80,9 @@ public class BaseMongoMap<K, V> extends LinkedHashMap<K, V> implements Map<K, V>
         if (input instanceof Double) {
             result = (Double)input;
         } else {
-            result = Double.parseDouble(input.toString());
+            if(!StringUtil.isEmpty(input.toString())){
+                result = Double.parseDouble(input.toString());
+            }
         }
         return result;
     }
