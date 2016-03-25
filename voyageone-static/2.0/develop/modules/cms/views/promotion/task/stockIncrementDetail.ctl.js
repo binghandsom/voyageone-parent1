@@ -111,6 +111,17 @@ define([
                 })
             },
 
+            openImport: function (openImportStock) {
+                var main = this;
+                openImportStock('md', {
+                    'task_id': main.taskId,
+                    'subTaskId': main.subTaskId,
+                    'platformList': {'cartId': main.cartId, 'cartName': main.cartName},
+                    'propertyList': main.propertyList,
+                    'parent_id': '2'
+                })
+            },
+
             download: function () {
                 var main = this;
                 $.download.post(main.downloadUrl, {
