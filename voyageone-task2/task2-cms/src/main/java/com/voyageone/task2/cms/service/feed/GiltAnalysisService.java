@@ -79,7 +79,7 @@ public class GiltAnalysisService extends BaseTaskService {
      */
     @Override
     public String getTaskName() {
-        return "GiltAnalysis";
+        return "Cms2GiltAnalysis";
     }
 
     /**
@@ -90,44 +90,29 @@ public class GiltAnalysisService extends BaseTaskService {
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
 
-        // 清表
-        $info("产品信息清表开始");
-        giltFeedDao.clearTemp();
-        $info("产品信息清表结束");
+//        // 清表
+//        $info("产品信息清表开始");
+//        giltFeedDao.clearTemp();
+//        $info("产品信息清表结束");
 
         // 插入数据库
         $info("产品信息插入开始");
         superFeedImport(taskControlList);
         $info("产品信息插入完成");
 
-        logger.info("transform开始");
-        transformer.new Context(GILT, this).transform();
-        logger.info("transform结束");
+//        logger.info("transform开始");
+//        transformer.new Context(GILT, this).transform();
+//        logger.info("transform结束");
 
-        insertService.new Context(GILT).postNewProduct();
+//        insertService.new Context(GILT).postNewProduct();
     }
 
-
-    /**
-     * 产品文件读入
-     */
-    private void superFeedImport(List<TaskControlBean> taskControlList) throws Exception {
-        List<Runnable> runnables = new ArrayList<>();
-
-        runnables.add(() -> {
-            try {
-                onStartupInThread();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
-
-        runWithThreadPool(runnables, taskControlList);
-    }
 
     private void onStartupInThread() throws Exception {
         int delay = getDelaySecond();
         while(true) {
+            giltFeedDao.clearTemp();
+
             $info("准备获取第 %s 页", pageIndex);
 
             List<GiltSku> skuList = getSkus(pageIndex);
@@ -152,6 +137,8 @@ public class GiltAnalysisService extends BaseTaskService {
             }
 
             pageIndex++;
+            transformer.new Context(GILT, this).transform();
+            insertService.new Context(GILT).postNewProduct();
         }
     }
 
@@ -183,6 +170,23 @@ public class GiltAnalysisService extends BaseTaskService {
         }
 
         return giltSkus;
+    }
+
+    /**
+     * 产品文件读入
+     */
+    private void superFeedImport(List<TaskControlBean> taskControlList) throws Exception {
+        List<Runnable> runnables = new ArrayList<>();
+
+        runnables.add(() -> {
+            try {
+                onStartupInThread();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+
+        runWithThreadPool(runnables, taskControlList);
     }
     private void doFeedData(List<GiltSku> skuList) throws Exception {
 
