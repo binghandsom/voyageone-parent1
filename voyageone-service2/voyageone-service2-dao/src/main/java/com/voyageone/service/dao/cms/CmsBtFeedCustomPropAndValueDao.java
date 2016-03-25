@@ -1,7 +1,7 @@
 package com.voyageone.service.dao.cms;
 
 import com.voyageone.service.dao.ServiceBaseDao;
-import com.voyageone.service.model.cms.CmsBtFeedCustomPropModel;
+import com.voyageone.service.model.cms.CmsBtFeedCustomPropAndValueModel;
 import com.voyageone.service.model.cms.CmsBtFeedCustomPropValueModel;
 import org.springframework.stereotype.Repository;
 
@@ -25,7 +25,7 @@ public class CmsBtFeedCustomPropAndValueDao extends ServiceBaseDao {
 	 * @param channel_id channel id
 	 * @return 自定义属性列表
 	 */
-	public List<CmsBtFeedCustomPropModel> getPropList(String channel_id) {
+	public List<CmsBtFeedCustomPropAndValueModel> selectPropList(String channel_id) {
 
 		Map<String, Object> paramMap = new HashMap<>();
 		paramMap.put("channel_id", channel_id);
@@ -38,7 +38,7 @@ public class CmsBtFeedCustomPropAndValueDao extends ServiceBaseDao {
 	 * @param channel_id channel id
 	 * @return 自定义属性值翻译列表
 	 */
-	public List<CmsBtFeedCustomPropValueModel> getPropValue(String channel_id) {
+	public List<CmsBtFeedCustomPropValueModel> selectPropValue(String channel_id) {
 
 		Map<String, Object> paramMap = new HashMap<>();
 		paramMap.put("channel_id", channel_id);

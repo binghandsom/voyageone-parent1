@@ -16,18 +16,21 @@
 			,title_cn
 			,description_en
 			,description_cn
+			,description_cn_short
 			,img1
 			,img2
 			,img3
 			,img4
 			,color_en
 			,hs_code_pu
+			,translate_status
+			,price_sale
 			,finish_flg
 		from
 			voyageone_cms2.cms_tmp_old_cms_data
 		where
 			finish_flg = 0
-		limit 3000
+		limit 4000
 	</select>
 
 	<!-- 看看数据库中是否存在 -->

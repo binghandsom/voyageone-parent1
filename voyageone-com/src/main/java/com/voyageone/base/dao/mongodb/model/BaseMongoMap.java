@@ -1,6 +1,7 @@
 package com.voyageone.base.dao.mongodb.model;
 
 import com.mongodb.BasicDBObject;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.JsonUtil;
 
 import java.util.LinkedHashMap;
@@ -27,11 +28,24 @@ public class BaseMongoMap<K, V> extends LinkedHashMap<K, V> implements Map<K, V>
         return convertToDoubel(getAttribute(key));
     }
 
+    public String getStringAttribute(K key) {
+        return convertToString(getAttribute(key));
+    }
+
     public void setAttribute(K key, V value) {
         if (value == null) {
             super.remove(key);
         } else {
             super.put(key, value);
+        }
+    }
+
+    public void setStringAttribute(K key, Object value) {
+        if (value == null) {
+            super.remove(key);
+        } else {
+            String strValue = convertToString(value);
+            super.put(key, (V) strValue);
         }
     }
 
@@ -58,7 +72,7 @@ public class BaseMongoMap<K, V> extends LinkedHashMap<K, V> implements Map<K, V>
         return result;
     }
 
-    public double convertToDoubel(Object input) {
+    private double convertToDoubel(Object input) {
         double result = 0;
         if (input == null) {
             return result;
@@ -66,8 +80,21 @@ public class BaseMongoMap<K, V> extends LinkedHashMap<K, V> implements Map<K, V>
         if (input instanceof Double) {
             result = (Double)input;
         } else {
-            result = Double.parseDouble(input.toString());
+            if(!StringUtil.isEmpty(input.toString())){
+                result = Double.parseDouble(input.toString());
+            }
         }
         return result;
+    }
+
+    private String convertToString(Object input) {
+        if (input == null) {
+            return null;
+        }
+        if (input instanceof String) {
+            return (String)input;
+        } else {
+            return input.toString();
+        }
     }
 }

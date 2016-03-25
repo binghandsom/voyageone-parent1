@@ -18,7 +18,7 @@ import com.voyageone.common.components.jumei.JumeiProductService;
 import com.voyageone.common.components.transaction.SimpleTransaction;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
-import com.voyageone.common.configs.ShopConfigs;
+import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.CommonUtil;
 import com.voyageone.common.util.JacksonUtil;
@@ -92,7 +92,7 @@ public class CmsUploadJmProductService extends BaseTaskService {
         }
         List<JmBtProductImportModel> jmBtProductImports = getNotUploadProduct(limit,channels);
         logger.info("---------------cnt:" + jmBtProductImports.size());
-        ShopBean shopBean = ShopConfigs.getShop(ChannelConfigEnums.Channel.SN.getId(), CartEnums.Cart.JM.getId());
+        ShopBean shopBean = Shops.getShop(ChannelConfigEnums.Channel.SN.getId(), CartEnums.Cart.JM.getId());
 //        shopBean.setAppKey("131");
 //        shopBean.setSessionKey("7e059a48c30c67d2693be14275c2d3be");
 //        shopBean.setAppSecret("0f9e3437ca010f63f2c4f3a216b7f4bc9698f071");

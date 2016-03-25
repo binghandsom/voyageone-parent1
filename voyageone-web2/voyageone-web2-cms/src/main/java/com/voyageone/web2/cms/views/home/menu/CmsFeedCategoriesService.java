@@ -9,6 +9,7 @@ import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedMappingModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryTreeModelx;
 import com.voyageone.web2.base.BaseAppService;
+import com.voyageone.web2.core.bean.UserSessionBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -43,7 +44,7 @@ public final class CmsFeedCategoriesService extends BaseAppService {
     public List<CmsMtCategoryTreeModel> getFeedCategoryMap(String channelId) throws IOException {
 
         // 获取整个类目树
-        CmsMtFeedCategoryTreeModelx treeModelX = cmsMtFeedCategoryTreeDao.findFeedCategoryx(channelId);
+        CmsMtFeedCategoryTreeModelx treeModelX = cmsMtFeedCategoryTreeDao.selectFeedCategoryx(channelId);
 
         if (treeModelX.getCategoryTree().isEmpty())
             throw new BusinessException("未找到类目");
@@ -65,10 +66,31 @@ public final class CmsFeedCategoriesService extends BaseAppService {
 
         List<CmsMtCategoryTreeModel> result = new ArrayList<>();
         for(CmsMtFeedCategoryModel feedCategory : treeModelX.getCategoryTree()) {
-            result.add(buildFeedCategoryBean(feedCategory, feedMappingModelMap));
+            result.add(buildFeedCategoryBean(feedCategory, feedMappingModelMap, true));
         }
 
         return result;
+    }
+
+    /**
+     * 取得类目路径数据
+     * @param user
+     * @return
+     */
+    public List<CmsMtCategoryTreeModel> getFeedCategories(UserSessionBean user) {
+        CmsMtFeedCategoryTreeModelx treeModelx = cmsMtFeedCategoryTreeDao.selectFeedCategoryx(user.getSelChannelId());
+        List<CmsMtFeedCategoryModel> feedBeanList = treeModelx.getCategoryTree();
+        List<CmsMtCategoryTreeModel> result = new ArrayList<>();
+        for(CmsMtFeedCategoryModel feedCategory : feedBeanList) {
+            result.add(buildFeedCategoryBean(feedCategory, null, false));
+        }
+        return result;
+    }
+
+    // 取得类目路径数据
+    public List<CmsMtFeedCategoryModel> getTopFeedCategories(UserSessionBean user) {
+        CmsMtFeedCategoryTreeModelx treeModelx = cmsMtFeedCategoryTreeDao.selectFeedCategoryx(user.getSelChannelId());
+        return treeModelx.getCategoryTree();
     }
 
     /**
@@ -76,11 +98,11 @@ public final class CmsFeedCategoriesService extends BaseAppService {
      * @param feedCategoryModel
      * @return
      */
-    private CmsMtCategoryTreeModel buildFeedCategoryBean(CmsMtFeedCategoryModel feedCategoryModel, Map<String, String> feedMappingModelMap) {
+    private CmsMtCategoryTreeModel buildFeedCategoryBean(CmsMtFeedCategoryModel feedCategoryModel, Map<String, String> feedMappingModelMap, Boolean setMainFlag) {
 
         CmsMtCategoryTreeModel cmsMtCategoryTreeModel = new CmsMtCategoryTreeModel();
 
-        cmsMtCategoryTreeModel.setCatId(feedMappingModelMap.get(feedCategoryModel.getPath()));
+        cmsMtCategoryTreeModel.setCatId(setMainFlag ? feedMappingModelMap.get(feedCategoryModel.getPath()) : feedCategoryModel.getCid());
         cmsMtCategoryTreeModel.setCatName(feedCategoryModel.getName());
         cmsMtCategoryTreeModel.setCatPath(feedCategoryModel.getPath());
         cmsMtCategoryTreeModel.setIsParent(feedCategoryModel.getIsChild() == 1 ? 0 : 1);
@@ -91,10 +113,12 @@ public final class CmsFeedCategoriesService extends BaseAppService {
 
         if (children != null && !children.isEmpty())
             for (CmsMtFeedCategoryModel child : children) {
-                newChild.add(buildFeedCategoryBean(child, feedMappingModelMap));
+                newChild.add(buildFeedCategoryBean(child, feedMappingModelMap, setMainFlag));
             }
         cmsMtCategoryTreeModel.setChildren(newChild);
 
         return cmsMtCategoryTreeModel;
     }
+
+
 }

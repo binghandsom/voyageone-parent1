@@ -1,8 +1,6 @@
 package com.voyageone.task2.cms.utils;
 
 import com.voyageone.common.Constants;
-import com.voyageone.common.configs.Enums.ChannelConfigEnums;
-import com.voyageone.common.configs.Enums.FeedEnums;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.TypeHandler;
 
@@ -11,7 +9,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.regex.Pattern;
-import com.voyageone.common.configs.Feed;
 
 public class ClearSpecial implements TypeHandler<String> {
 

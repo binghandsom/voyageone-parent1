@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.service.dao.sql">
+
+    <select id="select_stock_separate_increment" resultType="HashMap" parameterType="HashMap">
+        select
+            t1.sku,
+            t1.increment_qty,
+            t1.fix_flg,
+            t1.status,
+            t2.cart_id,
+            t2.task_id
+        from voyageone_cms2.cms_bt_stock_separate_increment_item${tableNameSuffix} t1
+        inner join voyageone_cms2.cms_bt_stock_separate_increment_task t2 on t1.sub_task_id = t2.sub_task_id
+        where 1=1
+            <if test="subTaskId != null" >
+                and t1.sub_task_id = #{subTaskId}
+            </if>
+            <if test="sku != null" >
+                and t1.sku = #{sku}
+            </if>
+            <if test="skuList != null and skuList.size() > 0">
+                and (t1.sku in
+                <foreach collection="skuList" item="skuItem" open="(" separator="," close=")">
+                    #{skuItem}
+                </foreach>
+                )
+            </if>
+            <if test="statusList != null and statusList.size() > 0">
+                and (t1.status in
+                <foreach collection="statusList" item="statusItem" open="(" separator="," close=")">
+                    #{statusItem}
+                </foreach>
+                )
+            </if>
+    </select>
+
+    <select id="select_stock_separate_increment_success_qty" resultType="int" parameterType="HashMap">
+        select sum(increment_qty) as increment_qty_sum
+        from voyageone_cms2.cms_bt_stock_separate_increment_item
+        where sku = #{sku}
+        and status = #{status}
+    </select>
+
+    <select id="select_stock_separate_increment_item_by_status" resultType="Integer" parameterType="HashMap">
+        select seq
+        from   voyageone_cms2.cms_bt_stock_separate_increment_item
+        where sub_task_id = #{subTaskId}
+        <if test="statusList != null and statusList.size() > 0">
+            and (status in
+            <foreach collection="statusList" item="statusItem" open="(" separator="," close=")">
+                #{statusItem}
+            </foreach>
+            )
+        </if>
+        limit 0,1
+    </select>
+
+    <select id="select_stock_separate_increment_item_history_cnt" resultType="int" parameterType="HashMap">
+        select count(*)
+        from   voyageone_cms2.cms_bt_stock_separate_increment_item_history
+        where sub_task_id = #{subTaskId}
+    </select>
+
+    <select id="select_stock_separate_increment_item_by_sql" resultType="HashMap" parameterType="HashMap">
+        ${sql}
+    </select>
+
+    <update id="update_stock_separate_increment_item" parameterType="HashMap" >
+        update voyageone_cms2.cms_bt_stock_separate_increment_item
+        <set >
+            <if test="qty != null" >
+                qty = #{qty},
+            </if>
+            <if test="incrementQty != null" >
+                increment_qty = #{incrementQty},
+            </if>
+            <if test="errorMsg != null" >
+                error_msg = #{errorMsg},
+            </if>
+            <if test="errorTime != null" >
+                error_time = #{errorTime},
+            </if>
+            <if test="separateTime != null" >
+                separate_time = #{separateTime},
+            </if>
+            <if test="restoreTime != null" >
+                restore_time = #{restoreTime},
+            </if>
+            <if test="status != null" >
+                status = #{status},
+            </if>
+            <if test="fixFlg != null" >
+                fix_flg = #{fixFlg},
+            </if>
+            modified = now(),
+            <if test="modifier != null" >
+                modifier = #{modifier},
+            </if>
+        </set>
+        <where>
+            1 = 1
+            <if test="seq != null" >
+                and seq = #{seq}
+            </if>
+            <if test="subTaskId != null" >
+                and sub_task_id = #{subTaskId}
+            </if>
+            <if test="subTaskIdList != null and subTaskIdList.size() > 0">
+                and (sub_task_id in
+                <foreach collection="subTaskIdList" item="subTaskIdItem" open="(" separator="," close=")">
+                    #{subTaskIdItem}
+                </foreach>
+                )
+            </if>
+            <if test="sku != null" >
+                and sku = #{sku}
+            </if>
+            <if test="statusWhere != null" >
+                and status = #{statusWhere}
+            </if>
+            <if test="statusList != null and statusList.size() > 0">
+                and (status in
+                <foreach collection="statusList" item="statusItem" open="(" separator="," close=")">
+                    #{statusItem}
+                </foreach>
+                )
+            </if>
+        </where>
+    </update>
+
+    <delete id="delete_stock_separate_increment_item" parameterType="HashMap">
+        delete
+        from voyageone_cms2.cms_bt_stock_separate_increment_item
+        where
+        sub_task_id = #{subTaskId}
+        <if test="sku != null" >
+            and sku = #{sku}
+        </if>
+    </delete>
+
+    <select id="select_stock_separate_increment_item_excel_map" resultType="com.voyageone.web2.cms.bean.promotion.task.StockIncrementExcelBean" parameterType="HashMap">
+        select
+        `product_model`,
+        `product_code`,
+        `sku`,
+        `property1`,
+        `property2`,
+        `property3`,
+        `property4`,
+        `qty`,
+        `increment_qty`,
+        `status`,
+        `fix_flg`
+        from ${tableName}
+        ${whereSql}
+        order by
+        `product_model`,`product_code`,`sku`
+    </select>
+
+    <insert id="insert_cms_bt_stock_separate_increment_item_excel" parameterType="List">
+        insert into voyageone_cms2.cms_bt_stock_separate_increment_item (
+        sub_task_id,
+        product_model,
+        product_code,
+        sku,
+        qty,
+        increment_qty,
+        property1,
+        property2,
+        property3,
+        property4,
+        status,
+        fix_flg,
+        created,
+        creater,
+        modified,
+        modifier
+        ) value
+        <foreach collection="list" index="index" item="item" separator=",">
+            (#{item.sub_task_id},
+            #{item.product_model},
+            #{item.product_code},
+            #{item.sku},
+            #{item.qty},
+            #{item.increment_qty},
+            <if test="item.property1 != null" >
+                #{item.property1},
+            </if>
+            <if test="item.property1 == null" >
+                '',
+            </if>
+            <if test="item.property2 != null" >
+                #{item.property2},
+            </if>
+            <if test="item.property2 == null" >
+                '',
+            </if>
+            <if test="item.property3 != null" >
+                #{item.property3},
+            </if>
+            <if test="item.property3 == null" >
+                '',
+            </if>
+            <if test="item.property4 != null" >
+                #{item.property4},
+            </if>
+            <if test="item.property4 == null" >
+                '',
+            </if>
+            <if test="item.status != null" >
+                #{item.status},
+            </if>
+            <if test="item.status == null" >
+                '',
+            </if>
+            #{item.fix_flg},
+            now(),
+            #{item.creater},
+            now(),
+            #{item.creater})
+        </foreach>
+    </insert>
+</mapper>

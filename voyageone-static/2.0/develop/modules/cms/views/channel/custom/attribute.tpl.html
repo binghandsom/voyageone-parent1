@@ -25,43 +25,46 @@
 			</div><!-- .form-inline -->
 			<p class="m-l-sm m-t-xs">您当前选择的是：<span>共通属性</span></p>
 		</div>
-
-		<div class="category_drag col-sm-6">
+		<div class="col-sm-12" style="padding-left:0px;padding-right:0px">
+		<div class="col-sm-6" style="padding-left:0px;padding-right:6px">
+		<div class="category_drag" >
 			<div class="category_drag_main">
 				<!--<p class="text-center text-vo font-bold">一级类目</p>-->
-				<div class="form-inline m-l-xs">
-					<span style="padding-right:2px">未翻译属性:</span><input type="text" placeholder="快速检索" class="form-control" style="width:60%" ng-model="searchUnval">
+				<div class="form-inline m-t-xs m-l-xs">
+					<span class="m-l-xs m-r-sm">未翻译属性</span><input type="text" placeholder="快速检索" class="form-control" style="width:83%" ng-model="searchUnval">
 				</div>
 				<div class="category_drag_list_qh">
 					<ul>
-						<li ng-repeat="unvalData in vm.unvalList | filter:searchUnval">{{unvalData.prop_original}} <span class="pull-right text-muted" style="cursor:pointer" ng-click="addVal(unvalData, $index);"><i class="fa fa-fw fa-angle-right text-vo"></i></span></li>
+						<li ng-repeat="unvalData in vm.unvalList | filter:searchUnval"><a>{{unvalData.prop_original}} <span class="pull-right text-muted" style="cursor:pointer" ng-click="addVal(unvalData, $index);"><i class="fa fa-fw fa-angle-right text-vo"></i></span></a></li>
 					</ul>
 				</div>
 			</div>
 		</div>
-		<div class="category_drag col-sm-6">
+			</div>
+			<div class="col-sm-6" style="padding-left:0px;padding-right:0px">
+			<div class="category_drag ">
 			<div class="category_drag_main">
-				<div class="form-inline m-l-xs">
-					<span style="padding-right:2px">已翻译属性:</span><input type="text" placeholder="快速检索" class="form-control" style="width:60%" ng-model="searchVal">
+				<div class="form-inline m-t-xs m-l-xs">
+					<span class="m-l-xs m-r-sm">已翻译属性</span><input type="text" placeholder="快速检索" class="form-control" style="width:83%" ng-model="searchVal">
 				</div>
 				<div class="category_drag_list_qh">
 					<div class="col-sm-12" ng-repeat="valData in vm.valList | filter:searchVal">
-						<div class="col-sm-2 form-group text-left m-t-xs">
+						<div class="col-sm-4 form-group text-left m-t-xs">
 							<label class="text-left">{{valData.prop_original}}</label>
 						</div>
-						<div class="col-sm-4 form-group">
-							<input type="text" class="col-sm-12 form-control" ng-disabled="vm.cat_path != '0'" ng-model="valData.prop_translation">
-						</div>
-						<div class="form-inline pull-right m-t-xs">
+						<div class="col-sm-8 form-group form-inline">
+							<input type="text" class="form-control" style="width:90%" ng-disabled="vm.cat_path != '0' && valData.cat_path == '0'" ng-model="valData.prop_translation">&nbsp;
 							<button title="删除" class="btn btn-danger btn-xs" ng-click="remove(valData, $index);"><i class="fa  fa-trash-o"></i></button>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
+		</div>
+			</div>
 		<div class="col-sm-12 m-t-md text-center">
 			<button class="btn btn-vo btn-sm"  ng-click="save();"><i class="glyphicon glyphicon-floppy-disk"></i>&nbsp;保存</button>
 			<button class="btn btn-success btn-sm" ng-click="goValuePage();">翻译自定义属性</button>
 		</div>
 	</div>
-</div><!-- .col-lg-12 -->
+</div>

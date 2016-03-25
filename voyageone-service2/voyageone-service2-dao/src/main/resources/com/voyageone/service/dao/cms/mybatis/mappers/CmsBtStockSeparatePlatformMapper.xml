@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.service.dao.sql">
+
+    <select id="select_stock_separate_platform" resultType="HashMap" parameterType="HashMap">
+        select
+            t1.cart_id,
+            t1.separate_percent,
+            t2.activity_start,
+            t2.activity_end,
+            t2.channel_id,
+            t1.restore_separate_time
+            <if test="channelId !=null and lang != null" >
+              ,t3.name
+            </if>
+        from voyageone_cms2.cms_bt_stock_separate_platform_info t1
+        left outer join voyageone_cms2.cms_bt_promotion t2 on t1.promotion_id = t2.promotion_id
+        <if test="channelId !=null and lang != null" >
+          left outer join (select value,name from com_mt_value_channel where type_id= '53'and channel_id = #{channelId} and lang_id = #{lang}) t3
+          on t1.cart_id = t3.value
+        </if>
+        where t1.task_id = #{taskId}
+        and t1.cart_id != -1
+        <if test="cartId != null" >
+            and t1.cart_id = #{cartId}
+        </if>
+        order by t1.cart_id
+    </select>
+
+    <delete id="delete_stock_separate_platform" parameterType="HashMap">
+        delete
+        from voyageone_cms2.cms_bt_stock_separate_platform_info
+        where
+        task_id = #{taskId}
+    </delete>
+    <select id="select_cms_bt_stock_separate_platform_info" resultType="HashMap" parameterType="String" >
+        select
+        cart_id cart_id,
+        restore_separate_time restore_separate_time
+        from voyageone_cms2.cms_bt_stock_separate_platform_info
+        where cart_id = #{cart_id}
+          and restore_separate_time >#{separateTime}
+    </select>
+</mapper>

@@ -1,5 +1,7 @@
 package com.voyageone.task2.cms.bean;
 
+import com.voyageone.common.util.MD5;
+
 /**
  * @author Jonas, 2/3/16.
  * @version 2.0.0
@@ -71,7 +73,9 @@ public class SuperFeedGiltBean {
 
     private String categories_key;
 
-    private String updateFlag;
+    private String updateFlag = "0";
+
+    private String md5;
 
     public String getId() {
         return id;
@@ -303,6 +307,44 @@ public class SuperFeedGiltBean {
 
     public void setUpdateFlag(String updateFlag) {
         this.updateFlag = updateFlag;
+    }
+
+    public String getMd5() {
+        StringBuffer temp = new StringBuffer();
+        temp.append(this.id);
+        temp.append(this.product_id);
+        temp.append(this.product_look_id);
+        temp.append(this.locale);
+        temp.append(this.name);
+        temp.append(this.description);
+        temp.append(this.country_code);
+        temp.append(this.brand_id);
+        temp.append(this.brand_name);
+        temp.append(this.images_url);
+        temp.append(this.attributes_color_nfr_code);
+        temp.append(this.attributes_color_name);
+        temp.append(this.attributes_style_name);
+        temp.append(this.attributes_material_value);
+        temp.append(this.attributes_size_size_chart_id);
+        temp.append(this.attributes_size_type);
+        temp.append(this.attributes_size_value);
+        temp.append(this.prices_retail_currency);
+        temp.append(this.prices_retail_value);
+        temp.append(this.prices_sale_currencty);
+        temp.append(this.prices_sale_value);
+        temp.append(this.prices_cost_currency);
+        temp.append(this.prices_cost_value);
+        temp.append(this.product_codes);
+        temp.append(this.product_codes_first);
+        temp.append(this.categories_id);
+        temp.append(this.categories_name);
+        temp.append(this.categories_key);
+
+        return MD5.getMD5(temp.toString());
+    }
+
+    public void setMd5(String md5) {
+        this.md5 = md5;
     }
 }
 

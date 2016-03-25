@@ -9,20 +9,12 @@
                 <div class="container-fluid m-t-sm m-b-xs m-l-xs m-r-xs">
                     <div class="col-sm-12">
                         <div class="col-sm-12 m-t-xs m-b-xs" style="border-bottom:1px solid #efefef;padding-bottom:4px">
-                            <span>
-                                <span>{{::$ctrl.mappingModel.scope.feedCategoryPath}}</span>
-                                <sup>{{'TXT_FEED_CATEGORY' | translate}}</sup>
-                                <span class="fa fa-exchange"></span>
-                            </span>
-                            <span class="font-bold text-vo">{{$ctrl.mainCategory.catFullPath}}</span>
-                            <sup class="font-bold text-vo">{{'TXT_MASTER_CATEGORY' | translate}}</sup>
-                            <sup class="font-bold text-vo" ng-if="$ctrl.isCommon">
-                                <strong>
-                                    <span>(</span>
-                                    <span>{{'TXT_MASTER_CATEGORY_COMMON_FLG' | translate}}</span>
-                                    <span>)</span>
-                                </strong>
-                            </sup>
+                            <span>&nbsp;<span>{{::$ctrl.mapping.scope.feedCategoryPath}}</span><sup>{{'TXT_FEED_CATEGORY'
+                                | translate}}</sup>&nbsp;<i class="fa fa-exchange"></i>&nbsp;</span>
+                            <select ng-model="$ctrl.mapping" ng-change="$ctrl.changeMapping()" ng-options="m as m.scope.mainCategoryPath for m in $ctrl.mappings" title="当前进行属性匹配的主类目"></select>
+                            <sup class="font-bold text-vo">{{'TXT_MASTER_CATEGORY' | translate}}</sup><sup
+                                class="font-bold text-vo" ng-if="$ctrl.isCommon"><strong><span>(</span><span>{{'TXT_MASTER_CATEGORY_COMMON_FLG'
+                            | translate}}</span><span>)</span></strong></sup>
                         </div>
                         <div class="form-inline pull-left m-r-lg">
                             <label class="m-t-xs col-sm-9" translate="TXT_MAPPING_ATTRIBUTE_IS_FINISHED"></label>

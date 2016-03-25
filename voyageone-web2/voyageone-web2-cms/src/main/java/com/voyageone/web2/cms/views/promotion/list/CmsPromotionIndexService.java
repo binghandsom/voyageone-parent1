@@ -4,10 +4,10 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.Properties;
-import com.voyageone.common.configs.TypeChannel;
+import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.util.FileUtils;
 import com.voyageone.service.dao.cms.CmsBtPromotionDao;
-import com.voyageone.service.dao.cms.CmsPromotionCodeDao;
+import com.voyageone.service.dao.cms.CmsBtPromotionCodeDao;
 import com.voyageone.service.impl.cms.promotion.PromotionService;
 import com.voyageone.service.model.cms.CmsBtPromotionCodeModel;
 import com.voyageone.service.model.cms.CmsBtPromotionModel;
@@ -36,7 +36,7 @@ public class CmsPromotionIndexService extends BaseAppService {
 
 
     @Autowired
-    CmsPromotionCodeDao cmsPromotionCodeDao;
+    CmsBtPromotionCodeDao cmsPromotionCodeDao;
 
     @Autowired
     CmsBtPromotionDao cmsPromotionDao;
@@ -53,7 +53,7 @@ public class CmsPromotionIndexService extends BaseAppService {
     public Map<String, Object> init(String channelId, String language) {
         Map<String, Object> result = new HashMap<>();
 
-        result.put("platformTypeList", TypeChannel.getTypeListSkuCarts(channelId, Constants.comMtTypeChannel.SKU_CARTS_53_A, language));
+        result.put("platformTypeList", TypeChannels.getTypeListSkuCarts(channelId, Constants.comMtTypeChannel.SKU_CARTS_53_A, language));
         result.put("promotionStatus", TypeConfigEnums.MastType.promotionStatus.getList(language));
 
         return result;
@@ -87,8 +87,8 @@ public class CmsPromotionIndexService extends BaseAppService {
         Map<String, Object> param = new HashMap<>();
         param.put("promotionId", promotionId);
 
-        CmsBtPromotionModel cmsBtPromotionModel = cmsPromotionDao.findById(param);
-        List<CmsBtPromotionCodeModel> promotionCodes = cmsPromotionCodeDao.getPromotionCodeSkuList(param);
+        CmsBtPromotionModel cmsBtPromotionModel = cmsPromotionDao.selectById(param);
+        List<CmsBtPromotionCodeModel> promotionCodes = cmsPromotionCodeDao.selectPromotionCodeSkuList(param);
 
         $info("准备生成 Item 文档 [ %s ]", promotionCodes.size());
         $info("准备打开文档 [ %s ]", templatePath);

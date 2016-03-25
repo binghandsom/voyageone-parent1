@@ -1,38 +1,57 @@
 package com.voyageone.common.configs;
 
+import com.voyageone.common.configs.Enums.CacheKeyEnums;
 import com.voyageone.common.configs.Enums.PortConfigEnums;
 import com.voyageone.common.configs.beans.PortConfigBean;
+import com.voyageone.common.configs.dao.ConfigDaoFactory;
 import com.voyageone.common.configs.dao.PortConfigDao;
+import com.voyageone.common.redis.CacheHelper;
+import com.voyageone.common.redis.CacheTemplateFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.data.redis.core.HashOperations;
+import org.springframework.util.CollectionUtils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 /**
  * 访问 tm_port_configs 表配置
  * Created by Jonas on 4/16/2015.
  */
 public class PortConfigs {
-    private static Configs configs;
 
-    private static Log logger = LogFactory.getLog(PortConfigs.class);
+    private static final Log logger = LogFactory.getLog(PortConfigs.class);
+
+    /* redis key */
+    private static final String KEY = CacheKeyEnums.ConfigData_PortConfigs.toString();
+
+    private static HashOperations<String, String, PortConfigBean> hashOperations = CacheTemplateFactory.getHashOperation();
+
+    static {
+        if (!CacheTemplateFactory.getCacheTemplate().hasKey(KEY)) {
+            PortConfigDao portConfigDao = ConfigDaoFactory.getPortConfigDao();
+            Map<String, PortConfigBean> portConfigBeanMap = new HashMap<>();
+            portConfigDao.getAll().forEach(
+                    bean -> {
+                        portConfigBeanMap
+                                .put(
+                                        buildKey(bean.getPort(), PortConfigEnums.Name.valueOf(bean.getCfg_name()), bean.getSeq() + ""),
+                                        bean
+                                );
+                    }
+            );
+            CacheHelper.reFreshSSB(KEY, portConfigBeanMap);
+            logger.info("portConfig 读取数量: " + hashOperations.size(KEY));
+        }
+    }
 
     /**
-     * 初始化港口相关的基本信息和配置信息
+     * build redis hash Key
      *
-     * @param portConfigDao 用于获取基本信息
+     * @return key
      */
-    public static void init(PortConfigDao portConfigDao) {
-        if (configs == null) {
-            List<PortConfigBean> all = portConfigDao.getAll();
-
-            logger.info("PortConfig 读取数量: " + all.size());
-
-            configs = new Configs(all);
-        }
-
+    private static String buildKey(String id, PortConfigEnums.Name name, String seq) {
+        return id + CacheHelper.SKIP + name + CacheHelper.SKIP + seq;
     }
 
     /**
@@ -44,7 +63,8 @@ public class PortConfigs {
      */
     public static String getVal1(String id, PortConfigEnums.Name name) {
         List<PortConfigBean> beans = getConfigs(id, name);
-        return (beans == null || beans.size() < 1) ? "" : beans.get(0).getCfg_val1();
+        if (CollectionUtils.isEmpty(beans)) return "";
+        return beans.get(0).getCfg_val1();
     }
 
     /**
@@ -57,17 +77,9 @@ public class PortConfigs {
      */
     public static String getVal2(String id, PortConfigEnums.Name name, String val1) {
         List<PortConfigBean> beans = getConfigs(id, name);
-        if (beans == null || beans.size() < 1) {
-            return "";
-        }
-        String val2 = "";
-        for (PortConfigBean PortConfig : beans) {
-            if (val1.equals(PortConfig.getCfg_val1())) {
-                val2 = PortConfig.getCfg_val2();
-                break;
-            }
-        }
-        return val2;
+        for (PortConfigBean bean : beans)
+            if (val1.equals(bean.getCfg_val1())) return bean.getCfg_val2();
+        return "";
     }
 
 
@@ -79,59 +91,14 @@ public class PortConfigs {
      * @return List<PortConfig>
      */
     public static List<PortConfigBean> getConfigs(String id, PortConfigEnums.Name name) {
-        if (configs == null) return null;
+        Set<String> keySet = hashOperations.keys(KEY);
+        if (CollectionUtils.isEmpty(keySet)) return null;
 
-        if (!configs.containsKey(id)) return null;
-
-        ConfigMap map = configs.get(id);
-
-        if (!map.containsKey(name)) return null;
-
-        return map.get(name);
-    }
-
-    /**
-     * 专用存储所有港口的配置信息
-     *
-     * @author Jonas
-     */
-    private static class Configs extends HashMap<String, ConfigMap> {
-        private static final long serialVersionUID = 1L;
-
-        public Configs(List<PortConfigBean> beans) {
-            for (PortConfigBean bean : beans) {
-                put(bean);
-            }
-        }
-
-        public void put(PortConfigBean config) {
-            String port = config.getPort();
-            ConfigMap map = containsKey(port) ? get(port) : new ConfigMap();
-
-            try {
-                PortConfigEnums.Name name = PortConfigEnums.Name.valueOf(config.getCfg_name());
-                map.put(name, config);
-                put(port, map);
-            } catch (IllegalArgumentException e) {
-                logger.warn(String.format("PortConfig 枚举匹配警告: [%s] NO \"%s\"", config.getPort(), config.getCfg_name()));
-            }
-        }
-    }
-
-    /**
-     * 专用存储单个港口的所有配置信息
-     *
-     * @author Jonas
-     */
-    private static class ConfigMap extends HashMap<PortConfigEnums.Name, List<PortConfigBean>> {
-        private static final long serialVersionUID = 1L;
-
-        public void put(PortConfigEnums.Name name, PortConfigBean config) {
-            if (!containsKey(name)) {
-                super.put(name, new ArrayList<>());
-            }
-
-            get(name).add(config);
-        }
+        List<String> keyList = new ArrayList<>();
+        keySet.forEach(k -> {
+            if (k.startsWith(buildKey(id, name, ""))) keyList.add(k);
+        });
+        Collections.sort(keyList);
+        return hashOperations.multiGet(KEY, keyList);
     }
 }

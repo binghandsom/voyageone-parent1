@@ -22,7 +22,7 @@ import java.util.List;
 public class FeedMappingService {
 
     @Autowired
-    private CmsBtFeedMappingDao cmsBtFeedMappingDao;
+    private CmsBtFeedMappingDao feedMappingDao;
 
     @Autowired
     private CmsMtFeedCategoryTreeDao feedCategoryTreeDao;
@@ -32,33 +32,37 @@ public class FeedMappingService {
     }
 
     public CmsBtFeedMappingModel getDefault(Channel channel, String feedCategory, boolean withProps) {
-        return cmsBtFeedMappingDao.findDefault(channel.getId(), feedCategory, withProps);
+        return feedMappingDao.findDefault(channel.getId(), feedCategory, withProps);
     }
 
     public CmsBtFeedMappingModel getDefaultMain(Channel channel, String mainCategoryPath) {
-        return cmsBtFeedMappingDao.findDefaultMainMapping(channel.getId(), mainCategoryPath);
+        return feedMappingDao.findDefaultMainMapping(channel.getId(), mainCategoryPath);
     }
 
     public CmsBtFeedMappingModel getMapping(Channel channel, String feedCategory, String mainCategoryPath) {
-        return cmsBtFeedMappingDao.selectByKey(channel.getId(), feedCategory, mainCategoryPath);
+        return feedMappingDao.selectByKey(channel.getId(), feedCategory, mainCategoryPath);
     }
 
     public CmsBtFeedMappingModel getMapping(ObjectId objectId) {
-        return cmsBtFeedMappingDao.findOne(objectId);
+        return feedMappingDao.findOne(objectId);
     }
 
     public WriteResult setMapping(CmsBtFeedMappingModel feedMappingModel) {
-        return cmsBtFeedMappingDao.update(feedMappingModel);
+        return feedMappingDao.update(feedMappingModel);
     }
 
     public List<CmsBtFeedMappingModel> getMappingWithoutProps(String selChannelId) {
-        return cmsBtFeedMappingDao.findMappingWithoutProps(selChannelId);
+        return feedMappingDao.findMappingWithoutProps(selChannelId);
     }
 
     public boolean isCanBeDefaultMain(Channel channel, String topCategoryPath) {
 
-        CmsMtFeedCategoryTreeModel treeModel = feedCategoryTreeDao.findHasTrueChild(channel.getId(), topCategoryPath);
+        CmsMtFeedCategoryTreeModel treeModel = feedCategoryTreeDao.selectHasTrueChild(channel.getId(), topCategoryPath);
 
         return treeModel != null && !StringUtils.isEmpty(treeModel.get_id());
+    }
+
+    public List<CmsBtFeedMappingModel> getMappingWithoutProps(String feedCategoryPath, String selChannelId) {
+        return feedMappingDao.findMappingWithoutProps(feedCategoryPath, selChannelId);
     }
 }

@@ -12,7 +12,7 @@ import com.voyageone.task2.cms.dao.PromotionDao;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.components.tmall.TbItemService;
 import com.voyageone.common.components.tmall.TbPromotionService;
-import com.voyageone.common.configs.ShopConfigs;
+import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,7 +51,6 @@ public class CmsPromotrionService extends BaseTaskService {
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
 
-        updatePromotion("010", "23");
         for (TaskControlBean taskControlBean : taskControlList) {
             if ("order_channel_id".equalsIgnoreCase(taskControlBean.getCfg_name())) {
                 String channelId  = taskControlBean.getCfg_val1();
@@ -65,7 +64,7 @@ public class CmsPromotrionService extends BaseTaskService {
         List<Map> items = promotionDao.getPromotionItem(channelId, cartId);
         if (items.size() == 0) return;
         // 取得shop信息
-        ShopBean shopBean = ShopConfigs.getShop(channelId, cartId);
+        ShopBean shopBean = Shops.getShop(channelId, cartId);
 //        shopBean.setAppKey("21008948");
 //        shopBean.setAppSecret("0a16bd08019790b269322e000e52a19f");
 //        shopBean.setSessionKey("6201d2770dbfa1a88af5acfd330fd334fb4ZZa8ff26a40b2641101981");

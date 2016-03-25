@@ -4,11 +4,12 @@ import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.Properties;
-import com.voyageone.common.configs.TypeChannel;
+import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.util.FileUtils;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.cms.CmsMtCommonPropDao;
+import com.voyageone.service.dao.cms.CmsMtCustomWordDao;
 import com.voyageone.service.impl.cms.ChannelCategoryService;
 import com.voyageone.service.impl.cms.TagService;
 import com.voyageone.service.impl.cms.product.ProductService;
@@ -17,7 +18,6 @@ import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.CmsConstants;
 import com.voyageone.web2.cms.bean.CmsSessionBean;
 import com.voyageone.web2.cms.bean.search.index.CmsSearchInfoBean;
-import com.voyageone.web2.cms.dao.CustomWordDao;
 import com.voyageone.web2.cms.views.promotion.list.CmsPromotionIndexService;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import com.voyageone.service.model.cms.CmsBtTagModel;
@@ -43,7 +43,7 @@ public class CmsSearchAdvanceService extends BaseAppService{
     @Autowired
     private CmsPromotionIndexService cmsPromotionService;
     @Autowired
-    private CustomWordDao customWordDao;
+    private CmsMtCustomWordDao customWordDao;
     @Autowired
     private ChannelCategoryService channelCategoryService;
     @Autowired
@@ -54,7 +54,7 @@ public class CmsSearchAdvanceService extends BaseAppService{
     private TagService tagService;
 
     private final String searchItems = "channelId;prodId;catId;catPath;created;creater;modified;" +
-            "modifier;fields;groups.msrpStart;groups.msrpEnd;groups.retailPriceStart;groups.retailPriceEnd;" +
+            "modifier;fields;feed.cnAtts;groups.msrpStart;groups.msrpEnd;groups.retailPriceStart;groups.retailPriceEnd;" +
             "groups.salePriceStart;groups.salePriceEnd;groups.platforms.$;skus";
 
     // 未结束提示信息
@@ -98,10 +98,10 @@ public class CmsSearchAdvanceService extends BaseAppService{
         masterData.put("compareTypeList", TypeConfigEnums.MastType.compareType.getList(language));
 
         // 获取brand list
-        masterData.put("brandList", TypeChannel.getTypeWithLang(Constants.comMtTypeChannel.BRAND_41, userInfo.getSelChannelId(), language));
+        masterData.put("brandList", TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.BRAND_41, userInfo.getSelChannelId(), language));
 
         // 获取sort list
-        masterData.put("sortList", TypeChannel.getTypeWithLang(Constants.comMtTypeChannel.SORT_ATTRIBUTES_61, userInfo.getSelChannelId(), language));
+        masterData.put("sortList", TypeChannels.getTypeWithLang(Constants.comMtTypeChannel.SORT_ATTRIBUTES_61, userInfo.getSelChannelId(), language));
 
         // 获取category list
         masterData.put("categoryList", channelCategoryService.getAllCategoriesByChannelId(userInfo.getSelChannelId()));
@@ -413,7 +413,7 @@ public class CmsSearchAdvanceService extends BaseAppService{
         }
 
         // 获取promotion
-        if (searchValue.getTags().length > 0) {
+        if (searchValue.getTags() != null && searchValue.getTags().length > 0) {
             result.append(MongoUtils.splicingValue("tags", searchValue.getTags()));
             result.append(",");
         }
@@ -595,6 +595,37 @@ public class CmsSearchAdvanceService extends BaseAppService{
 
     // 取得自定义显示列设置
     public List<Map<String, Object>> getCustColumns() {
-        return  cmsMtCommonPropDao.getCustColumns();
+        return  cmsMtCommonPropDao.selectCustColumns();
+    }
+
+    // 取得用户自定义显示列设置
+    public Map<String, Object> getUserCustColumns(int userId) {
+        Map<String, Object> rsMap = new HashMap<String, Object>();
+
+        List<Map<String, Object>> rsList = cmsMtCommonPropDao.selectUserCustColumns(userId);
+        if (rsList == null || rsList.isEmpty()) {
+            rsMap.put("custAttrList", new String[]{});
+            rsMap.put("commList", new String[]{});
+            return rsMap;
+        }
+        String custAttrStr = org.apache.commons.lang3.StringUtils.trimToEmpty((String) rsList.get(0).get("cfg_val1"));
+        String commStr = org.apache.commons.lang3.StringUtils.trimToEmpty((String) rsList.get(0).get("cfg_val2"));
+        rsMap.put("custAttrList", custAttrStr.split(","));
+        rsMap.put("commList", commStr.split(","));
+        return rsMap;
+    }
+
+    // 保存用户自定义显示列设置
+    public void saveCustColumnsInfo(int userId, String userName, String param1, String param2) {
+        List<Map<String, Object>> rsList = cmsMtCommonPropDao.selectUserCustColumns(userId);
+        int rs = 0;
+        if (rsList == null || rsList.isEmpty()) {
+            rs = cmsMtCommonPropDao.insertUserCustColumns(userId, userName, param1, param2);
+        } else {
+            rs = cmsMtCommonPropDao.updateUserCustColumns(userId, userName, param1, param2);
+        }
+        if (rs == 0) {
+            logger.error("保存设置不成功 userid=" + userId);
+        }
     }
 }

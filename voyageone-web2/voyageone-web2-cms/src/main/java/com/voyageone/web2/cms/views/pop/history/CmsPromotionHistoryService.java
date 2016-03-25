@@ -1,10 +1,10 @@
 package com.voyageone.web2.cms.views.pop.history;
 
 import com.voyageone.common.Constants;
-import com.voyageone.common.configs.TypeChannel;
+import com.voyageone.common.configs.TypeChannels;
+import com.voyageone.service.dao.cms.CmsBtPromotionLogDao;
+import com.voyageone.service.model.cms.CmsBtPromotionLogModel;
 import com.voyageone.web2.base.BaseAppService;
-import com.voyageone.web2.cms.dao.CmsBtPromotionLogDao;
-import com.voyageone.web2.cms.model.CmsBtPromotionLogModel;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -37,7 +37,7 @@ public class CmsPromotionHistoryService extends BaseAppService {
         result.put("total", count);
 
         // 获取cart list
-        result.put("cartList", TypeChannel.getTypeListSkuCarts(userInfo.getSelChannelId(),Constants.comMtTypeChannel.SKU_CARTS_53_D,  language));
+        result.put("cartList", TypeChannels.getTypeListSkuCarts(userInfo.getSelChannelId(),Constants.comMtTypeChannel.SKU_CARTS_53_D,  language));
         return result;
     }
 

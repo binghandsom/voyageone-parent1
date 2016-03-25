@@ -15,8 +15,8 @@
 	<modules>
 		<module>voyageone-web2-core</module>
 		<module>voyageone-web2-cms</module>
+		<module>voyageone-web2-openapi</module>
 		<module>voyageone-web2-sdk</module>
-		<module>voyageone-web2-wsdl</module>
 	</modules>
 </project>
 
