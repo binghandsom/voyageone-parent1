@@ -1,0 +1,14 @@
+<script>
+	$(function(){
+		$.post("/cms/system/cache/init",{},function(result){
+			result.data.forEach(function(e){
+				$("#cacheManager").append("<tr><td>"+e+"</td><td><a href='/cms/system/cache/clear?cacheKey="+e+"'>清空缓存</a></td></tr>");
+			});
+		});
+	});
+
+
+</script>
+<table id="cacheManager" style="width:600px;margin:10px auto;border:1px solid #666;font-size: 16px;" >
+	<tr><th>缓存表名</th><th>操作</th></tr>
+</table>

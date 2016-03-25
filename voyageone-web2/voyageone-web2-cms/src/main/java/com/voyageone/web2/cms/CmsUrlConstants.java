@@ -309,6 +309,13 @@ public interface CmsUrlConstants {
 
             String UPDATE_FINISH_STATUS = "updateFinishStatus";
         }
+
+        interface CACHE {
+
+            String ROOT = "/cms/system/cache";
+            String INIT = "init";
+            String CLEAR = "clear";
+        }
     }
 
     // popup页面
