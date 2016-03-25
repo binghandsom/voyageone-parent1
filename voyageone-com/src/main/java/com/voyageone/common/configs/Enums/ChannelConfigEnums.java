@@ -1,6 +1,6 @@
 package com.voyageone.common.configs.Enums;
 
-import com.voyageone.common.configs.ChannelConfigs;
+import com.voyageone.common.configs.Channels;
 import com.voyageone.common.configs.beans.OrderChannelBean;
 
 /**
@@ -280,6 +280,8 @@ public class ChannelConfigEnums {
          */
         need_cancel_CA,
 
+        shipping_method1,
+
         /**
          * KitBag 订单是否取消
          */
@@ -546,7 +548,7 @@ public class ChannelConfigEnums {
         }
 
         public OrderChannelBean getBean() {
-            return ChannelConfigs.getChannel(getId());
+            return Channels.getChannel(getId());
         }
 
         public String getFullName() {

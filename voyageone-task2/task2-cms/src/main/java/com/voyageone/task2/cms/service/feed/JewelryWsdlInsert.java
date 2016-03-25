@@ -8,7 +8,7 @@ import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.FeedEnums;
-import com.voyageone.common.configs.Feed;
+import com.voyageone.common.configs.Feeds;
 import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.util.JacksonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,7 +60,7 @@ public class JewelryWsdlInsert extends JewelryWsdlBase {
             String where = String.format("WHERE %s AND %s = '%s' %s", INSERT_FLG, colums.get("category").toString(),
                     category.replace("'", "\\\'"), "and `Variation Parent SKU` != 'parent'");
 
-            List<CmsBtFeedInfoJewelryModel> jewmodelBeans = jewelryDao.selectSuperfeedModel(where, colums, Feed.getVal1(channel, FeedEnums.Name.table_id2));
+            List<CmsBtFeedInfoJewelryModel> jewmodelBeans = jewelryDao.selectSuperfeedModel(where, colums, Feeds.getVal1(channel, FeedEnums.Name.table_id2));
             List<CmsBtFeedInfoModel> modelBeans = new ArrayList<>();
             for(CmsBtFeedInfoJewelryModel jewmodelBean : jewmodelBeans){
                 Map temp= JacksonUtil.json2Bean(JacksonUtil.bean2Json(jewmodelBean), HashMap.class);
@@ -86,43 +86,43 @@ public class JewelryWsdlInsert extends JewelryWsdlBase {
 
         private HashMap<String, Object> getColumns() {
             HashMap<String, Object> map = new HashMap<>();
-            map.put("category", Feed.getVal1(channel, FeedEnums.Name.category_column));
+            map.put("category", Feeds.getVal1(channel, FeedEnums.Name.category_column));
             map.put("channel_id", channel.getId());
-            map.put("url_key", Feed.getVal1(channel, FeedEnums.Name.model_url_key));
-            map.put("category_url_key", Feed.getVal1(channel, FeedEnums.Name.model_category_url_key));
-            map.put("m_product_type", Feed.getVal1(channel, FeedEnums.Name.model_m_product_type));
-            map.put("m_brand", Feed.getVal1(channel, FeedEnums.Name.model_m_brand));
-            map.put("m_model", Feed.getVal1(channel, FeedEnums.Name.model_m_model));
-            map.put("m_name", Feed.getVal1(channel, FeedEnums.Name.model_m_name));
-            map.put("m_short_description", Feed.getVal1(channel, FeedEnums.Name.model_m_short_description));
-            map.put("m_long_description", Feed.getVal1(channel, FeedEnums.Name.model_m_long_description));
-            map.put("m_size_type", Feed.getVal1(channel, FeedEnums.Name.model_m_size_type));
-            map.put("m_is_unisex", Feed.getVal1(channel, FeedEnums.Name.model_m_is_unisex));
-            map.put("m_weight", Feed.getVal1(channel, FeedEnums.Name.model_m_weight));
-            map.put("m_is_taxable", Feed.getVal1(channel, FeedEnums.Name.model_m_is_taxable));
-            map.put("m_is_effective", Feed.getVal1(channel, FeedEnums.Name.model_m_is_effective));
-            map.put("model_url_key", (Feed.getVal1(channel, FeedEnums.Name.product_model_url_key)));
-            map.put("p_url_key", (Feed.getVal1(channel, FeedEnums.Name.product_url_key)));
-            map.put("p_code", (Feed.getVal1(channel, FeedEnums.Name.product_p_code)));
-            map.put("p_name", (Feed.getVal1(channel, FeedEnums.Name.product_p_name)));
-            map.put("p_color", (Feed.getVal1(channel, FeedEnums.Name.product_p_color)));
+            map.put("url_key", Feeds.getVal1(channel, FeedEnums.Name.model_url_key));
+            map.put("category_url_key", Feeds.getVal1(channel, FeedEnums.Name.model_category_url_key));
+            map.put("m_product_type", Feeds.getVal1(channel, FeedEnums.Name.model_m_product_type));
+            map.put("m_brand", Feeds.getVal1(channel, FeedEnums.Name.model_m_brand));
+            map.put("m_model", Feeds.getVal1(channel, FeedEnums.Name.model_m_model));
+            map.put("m_name", Feeds.getVal1(channel, FeedEnums.Name.model_m_name));
+            map.put("m_short_description", Feeds.getVal1(channel, FeedEnums.Name.model_m_short_description));
+            map.put("m_long_description", Feeds.getVal1(channel, FeedEnums.Name.model_m_long_description));
+            map.put("m_size_type", Feeds.getVal1(channel, FeedEnums.Name.model_m_size_type));
+            map.put("m_is_unisex", Feeds.getVal1(channel, FeedEnums.Name.model_m_is_unisex));
+            map.put("m_weight", Feeds.getVal1(channel, FeedEnums.Name.model_m_weight));
+            map.put("m_is_taxable", Feeds.getVal1(channel, FeedEnums.Name.model_m_is_taxable));
+            map.put("m_is_effective", Feeds.getVal1(channel, FeedEnums.Name.model_m_is_effective));
+            map.put("model_url_key", (Feeds.getVal1(channel, FeedEnums.Name.product_model_url_key)));
+            map.put("p_url_key", (Feeds.getVal1(channel, FeedEnums.Name.product_url_key)));
+            map.put("p_code", (Feeds.getVal1(channel, FeedEnums.Name.product_p_code)));
+            map.put("p_name", (Feeds.getVal1(channel, FeedEnums.Name.product_p_name)));
+            map.put("p_color", (Feeds.getVal1(channel, FeedEnums.Name.product_p_color)));
 
-            map.put("p_made_in_country", (Feed.getVal1(channel, FeedEnums.Name.product_p_made_in_country)));
-            map.put("pe_short_description", (Feed.getVal1(channel, FeedEnums.Name.product_pe_short_description)));
-            map.put("pe_long_description", (Feed.getVal1(channel, FeedEnums.Name.product_pe_long_description)));
-            map.put("item_code", (Feed.getVal1(channel, FeedEnums.Name.item_code)));
-            map.put("i_sku", (Feed.getVal1(channel, FeedEnums.Name.item_i_sku)));
-            map.put("i_itemcode", (Feed.getVal1(channel, FeedEnums.Name.item_i_itemcode)));
-            map.put("i_size", (Feed.getVal1(channel, FeedEnums.Name.item_i_size)));
-            map.put("i_barcode", (Feed.getVal1(channel, FeedEnums.Name.item_i_barcode)));
-            map.put("i_client_sku", (Feed.getVal1(channel, FeedEnums.Name.item_i_client_sku)));
-            map.put("image", (Feed.getVal1(channel, FeedEnums.Name.images)));
+            map.put("p_made_in_country", (Feeds.getVal1(channel, FeedEnums.Name.product_p_made_in_country)));
+            map.put("pe_short_description", (Feeds.getVal1(channel, FeedEnums.Name.product_pe_short_description)));
+            map.put("pe_long_description", (Feeds.getVal1(channel, FeedEnums.Name.product_pe_long_description)));
+            map.put("item_code", (Feeds.getVal1(channel, FeedEnums.Name.item_code)));
+            map.put("i_sku", (Feeds.getVal1(channel, FeedEnums.Name.item_i_sku)));
+            map.put("i_itemcode", (Feeds.getVal1(channel, FeedEnums.Name.item_i_itemcode)));
+            map.put("i_size", (Feeds.getVal1(channel, FeedEnums.Name.item_i_size)));
+            map.put("i_barcode", (Feeds.getVal1(channel, FeedEnums.Name.item_i_barcode)));
+            map.put("i_client_sku", (Feeds.getVal1(channel, FeedEnums.Name.item_i_client_sku)));
+            map.put("image", (Feeds.getVal1(channel, FeedEnums.Name.images)));
 
-            map.put("price_msrp", (Feed.getVal1(channel, FeedEnums.Name.price_msrp)));
-            map.put("price_current", (Feed.getVal1(channel, FeedEnums.Name.price_current)));
-            map.put("price_net", (Feed.getVal1(channel, FeedEnums.Name.price_net)));
-            map.put("price_client_msrp", (Feed.getVal1(channel, FeedEnums.Name.price_client_msrp)));
-            map.put("price_client_retail", (Feed.getVal1(channel, FeedEnums.Name.price_client_retail)));
+            map.put("price_msrp", (Feeds.getVal1(channel, FeedEnums.Name.price_msrp)));
+            map.put("price_current", (Feeds.getVal1(channel, FeedEnums.Name.price_current)));
+            map.put("price_net", (Feeds.getVal1(channel, FeedEnums.Name.price_net)));
+            map.put("price_client_msrp", (Feeds.getVal1(channel, FeedEnums.Name.price_client_msrp)));
+            map.put("price_client_retail", (Feeds.getVal1(channel, FeedEnums.Name.price_client_retail)));
             return map;
         }
 
@@ -136,8 +136,8 @@ public class JewelryWsdlInsert extends JewelryWsdlBase {
             // 先从数据表中获取所有商品的类目路径,经过去重复的
             // update flg 标记, 只获取哪些即将进行新增的商品的类目
             List<String> categoryPaths = superFeedDao.selectSuperfeedCategory(
-                    Feed.getVal1(channel, FeedEnums.Name.category_column),
-                    table, " AND " + INSERT_FLG + " AND " + Feed.getVal1(channel, FeedEnums.Name.model_m_model) + " != '' AND "+Feed.getVal1(channel, FeedEnums.Name.model_m_brand)+" != ''");
+                    Feeds.getVal1(channel, FeedEnums.Name.category_column),
+                    table, " AND " + INSERT_FLG + " AND " + Feeds.getVal1(channel, FeedEnums.Name.model_m_model) + " != '' AND "+ Feeds.getVal1(channel, FeedEnums.Name.model_m_brand)+" != ''");
             $info("获取类目路径数 %s , 准备拆分继续处理", categoryPaths.size());
 
             return categoryPaths;

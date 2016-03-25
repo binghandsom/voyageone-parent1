@@ -18,7 +18,7 @@ import com.voyageone.task2.cms.model.PlatformCategoriesModel;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.components.tmall.TbCategoryService;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
-import com.voyageone.common.configs.ShopConfigs;
+import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
@@ -62,7 +62,7 @@ public class GetPlatformCategoryTreesService extends BaseTaskService{
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception{
 
         // 获取天猫系所有店铺
-        List<ShopBean> shopList = ShopConfigs.getShopListByPlatform(PlatFormEnums.PlatForm.TM);
+        List<ShopBean> shopList = Shops.getShopListByPlatform(PlatFormEnums.PlatForm.TM);
 
         for (Iterator<ShopBean> it = shopList.iterator();it.hasNext();){
             ShopBean shop = it.next();

@@ -1,7 +1,5 @@
 package com.voyageone.common.configs.Enums;
 
-import com.voyageone.common.configs.Feed;
-
 /**
  * Created by Zero on 8/18/2015.
  */
@@ -134,6 +132,7 @@ public class FeedEnums {
         price_client_retail,
         price_net,
         price_current,
-        price_msrp
+        price_msrp,
+        import_brand
         }
 }

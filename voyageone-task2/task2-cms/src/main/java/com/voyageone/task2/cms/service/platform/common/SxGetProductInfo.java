@@ -8,7 +8,7 @@ import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Group_Pla
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import com.voyageone.task2.cms.bean.platform.SxData;
 import com.voyageone.task2.cms.dao.SkuInventoryDao;
-import com.voyageone.common.configs.ShopConfigs;
+import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +55,7 @@ public class SxGetProductInfo {
 		sxData.setCartId(platformList.get(0).getCartId());
 		sxData.setGroupId(groupId);
 		// ShopBean
-		ShopBean shopBean = ShopConfigs.getShop(channelId, sxData.getCartId());
+		ShopBean shopBean = Shops.getShop(channelId, sxData.getCartId());
 		sxData.setShopBean(shopBean);
 		// 平台类目
 		CmsMtPlatformMappingModel cmsMtPlatformMappingModel = cmsMtPlatformMappingDao.getMappingByMainCatId(

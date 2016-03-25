@@ -75,7 +75,8 @@ public class JewelryDictTest {
 
 				{
 					// 精品描述图片
-					TextWord word = new TextWord(String.format(C_TEMPLATE_IMG, "https://img.alicdn.com/imgextra/i4/2183719539/TB2DfsYeFXXXXagXXXXXXXXXXXX_!!2183719539.gif"));
+//					TextWord word = new TextWord(String.format(C_TEMPLATE_IMG, "https://img.alicdn.com/imgextra/i4/2183719539/TB2DfsYeFXXXXagXXXXXXXXXXXX_!!2183719539.gif")); // PA
+					TextWord word = new TextWord(String.format(C_TEMPLATE_IMG, "https://img.alicdn.com/imgextra/i4/2641101981/TB2NcXifXXXXXb3XXXXXXXXXXXX_!!2641101981.jpg")); // jewelry
 					ruleRoot.addRuleWord(word);
 				}
 
@@ -299,82 +300,82 @@ public class JewelryDictTest {
 					ruleRoot.addRuleWord(new CustomWord(word));
 				}
 
-				{
-					// 四张手绘图
-
-					// html
-					String html_01 =
-							"<div style=\"font-size: 0;padding: 0.0px 15.0px 15.0px 15.0px;\">" +
-									"    <div style=\"display: inline-block;width: 380.0px;border: solid 0.0px;\">" +
-									"        <img style=\"display: block;width: 380.0px;height: 251.0px;\" src=\"";
-					ruleRoot.addRuleWord(new TextWord(html_01));
-
-					// 左上角图片
-					// TODO:添加自定义图片 CustomWordValueImageWithParam word = new CustomWordValueImageWithParam(imageTemplate, imageParams);
-					ruleRoot.addRuleWord(new TextWord("https://img.alicdn.com/imgextra/i2/2183719539/TB2x8C5gpXXXXaNXpXXXXXXXXXX_!!2183719539.jpg"));
-
-					// html
-					String html_02 =
-							"\">";
-					ruleRoot.addRuleWord(new TextWord(html_02));
-
-					// 左下角图片 - 手绘图 - 1
-					{
-						RuleExpression htmlTemplate = new RuleExpression();
-						htmlTemplate.addRuleWord(new TextWord("<img style=\"display: block;width: 380.0px;height: 509.0px;\" src=\"%s\">"));
-						RuleExpression imageTemplate = new RuleExpression();
-						imageTemplate.addRuleWord(new TextWord("http://s7d5.scene7.com/is/image/sneakerhead/Jewerly_20150907_x380_509x?$308x509$&$Jewerly_380-509$&$product=%s"));
-						RuleExpression imageIndex = new RuleExpression();
-						imageIndex.addRuleWord(new TextWord("1")); // 手绘图中的第一张
-						RuleExpression imageType = new RuleExpression();
-						imageType.addRuleWord(new TextWord(C_自定义图片)); // 手绘图
-
-						RuleExpression paddingExpression = get获取手绘图的默认图("1"); // 第一张替换图
-
-						CustomWordValueGetMainProductImages word = new CustomWordValueGetMainProductImages(htmlTemplate, imageTemplate, imageIndex, imageType, paddingExpression);
-						ruleRoot.addRuleWord(new CustomWord(word));
-					}
-
-					// html
-					String html_03 =
-							"    </div>" +
-									"    <div style=\"display: inline-block;width: 380.0px;border: solid 0.0px;\">";
-					ruleRoot.addRuleWord(new TextWord(html_03));
-
-					// 右上角图片 - 手绘图 - 2
-					{
-						RuleExpression htmlTemplate = new RuleExpression();
-						htmlTemplate.addRuleWord(new TextWord("<img style=\"display: block;width: 380.0px;height: 509.0px;\" src=\"%s\">"));
-						RuleExpression imageTemplate = new RuleExpression();
-						imageTemplate.addRuleWord(new TextWord("http://s7d5.scene7.com/is/image/sneakerhead/Jewerly_20150907_x380_509x?$308x509$&$Jewerly_380-509$&$product=%s"));
-						RuleExpression imageIndex = new RuleExpression();
-						imageIndex.addRuleWord(new TextWord("2")); // 手绘图中的第二张
-						RuleExpression imageType = new RuleExpression();
-						imageType.addRuleWord(new TextWord(C_自定义图片)); // 手绘图
-
-						RuleExpression paddingExpression = get获取手绘图的默认图("2"); // 第二张替换图
-
-						CustomWordValueGetMainProductImages word = new CustomWordValueGetMainProductImages(htmlTemplate, imageTemplate, imageIndex, imageType, paddingExpression);
-						ruleRoot.addRuleWord(new CustomWord(word));
-					}
-
-					// html
-					String html_04 =
-							"        <img style=\"display: block;width: 380.0px;height: 251.0px;\" src=\"";
-					ruleRoot.addRuleWord(new TextWord(html_04));
-
-					// 右下角图片 - 固定图片
-					String html_05 = "https://img.alicdn.com/imgextra/i2/2183719539/TB2x8C5gpXXXXaNXpXXXXXXXXXX_!!2183719539.jpg";
-					ruleRoot.addRuleWord(new TextWord(html_05));
-
-					// html
-					String html_06 =
-							"\">" +
-									"    </div>" +
-									"</div>";
-					ruleRoot.addRuleWord(new TextWord(html_06));
-
-				}
+//				{
+//					// 四张手绘图
+//
+//					// html
+//					String html_01 =
+//							"<div style=\"font-size: 0;padding: 0.0px 15.0px 15.0px 15.0px;\">" +
+//									"    <div style=\"display: inline-block;width: 380.0px;border: solid 0.0px;\">" +
+//									"        <img style=\"display: block;width: 380.0px;height: 251.0px;\" src=\"";
+//					ruleRoot.addRuleWord(new TextWord(html_01));
+//
+//					// 左上角图片
+//					// TODO:添加自定义图片 CustomWordValueImageWithParam word = new CustomWordValueImageWithParam(imageTemplate, imageParams);
+//					ruleRoot.addRuleWord(new TextWord("https://img.alicdn.com/imgextra/i2/2183719539/TB2x8C5gpXXXXaNXpXXXXXXXXXX_!!2183719539.jpg"));
+//
+//					// html
+//					String html_02 =
+//							"\">";
+//					ruleRoot.addRuleWord(new TextWord(html_02));
+//
+//					// 左下角图片 - 手绘图 - 1
+//					{
+//						RuleExpression htmlTemplate = new RuleExpression();
+//						htmlTemplate.addRuleWord(new TextWord("<img style=\"display: block;width: 380.0px;height: 509.0px;\" src=\"%s\">"));
+//						RuleExpression imageTemplate = new RuleExpression();
+//						imageTemplate.addRuleWord(new TextWord("http://s7d5.scene7.com/is/image/sneakerhead/Jewerly_20150907_x380_509x?$308x509$&$Jewerly_380-509$&$product=%s"));
+//						RuleExpression imageIndex = new RuleExpression();
+//						imageIndex.addRuleWord(new TextWord("1")); // 手绘图中的第一张
+//						RuleExpression imageType = new RuleExpression();
+//						imageType.addRuleWord(new TextWord(C_自定义图片)); // 手绘图
+//
+//						RuleExpression paddingExpression = get获取手绘图的默认图("1"); // 第一张替换图
+//
+//						CustomWordValueGetMainProductImages word = new CustomWordValueGetMainProductImages(htmlTemplate, imageTemplate, imageIndex, imageType, paddingExpression);
+//						ruleRoot.addRuleWord(new CustomWord(word));
+//					}
+//
+//					// html
+//					String html_03 =
+//							"    </div>" +
+//									"    <div style=\"display: inline-block;width: 380.0px;border: solid 0.0px;\">";
+//					ruleRoot.addRuleWord(new TextWord(html_03));
+//
+//					// 右上角图片 - 手绘图 - 2
+//					{
+//						RuleExpression htmlTemplate = new RuleExpression();
+//						htmlTemplate.addRuleWord(new TextWord("<img style=\"display: block;width: 380.0px;height: 509.0px;\" src=\"%s\">"));
+//						RuleExpression imageTemplate = new RuleExpression();
+//						imageTemplate.addRuleWord(new TextWord("http://s7d5.scene7.com/is/image/sneakerhead/Jewerly_20150907_x380_509x?$308x509$&$Jewerly_380-509$&$product=%s"));
+//						RuleExpression imageIndex = new RuleExpression();
+//						imageIndex.addRuleWord(new TextWord("2")); // 手绘图中的第二张
+//						RuleExpression imageType = new RuleExpression();
+//						imageType.addRuleWord(new TextWord(C_自定义图片)); // 手绘图
+//
+//						RuleExpression paddingExpression = get获取手绘图的默认图("2"); // 第二张替换图
+//
+//						CustomWordValueGetMainProductImages word = new CustomWordValueGetMainProductImages(htmlTemplate, imageTemplate, imageIndex, imageType, paddingExpression);
+//						ruleRoot.addRuleWord(new CustomWord(word));
+//					}
+//
+//					// html
+//					String html_04 =
+//							"        <img style=\"display: block;width: 380.0px;height: 251.0px;\" src=\"";
+//					ruleRoot.addRuleWord(new TextWord(html_04));
+//
+//					// 右下角图片 - 固定图片
+//					String html_05 = "https://img.alicdn.com/imgextra/i2/2183719539/TB2x8C5gpXXXXaNXpXXXXXXXXXX_!!2183719539.jpg";
+//					ruleRoot.addRuleWord(new TextWord(html_05));
+//
+//					// html
+//					String html_06 =
+//							"\">" +
+//									"    </div>" +
+//									"</div>";
+//					ruleRoot.addRuleWord(new TextWord(html_06));
+//
+//				}
 
 			}
 
@@ -389,7 +390,8 @@ public class JewelryDictTest {
 
 		{
 			// 尺寸参考, 关于我们, 巴菲特
-			String html = "<img src=\"https://img.alicdn.com/imgextra/i3/2183719539/TB246e8gpXXXXaSXpXXXXXXXXXX_!!2183719539.jpg\">";
+//			String html = "<img src=\"https://img.alicdn.com/imgextra/i3/2183719539/TB246e8gpXXXXaSXpXXXXXXXXXX_!!2183719539.jpg\">"; // PA
+			String html = "<img src=\"https://img.alicdn.com/imgextra/i4/2641101981/TB2k3RyfpXXXXbbXpXXXXXXXXXX_!!2641101981.jpg\">"; // jewelry
 			TextWord word = new TextWord(html);
 			ruleRoot.addRuleWord(word);
 		}
@@ -398,7 +400,8 @@ public class JewelryDictTest {
 			// 珠宝知识
 			String html =
 					"<a href=\"http://jewelry.tmall.com/p/rd294659.htm\">" +
-							"<img src=\"https://img.alicdn.com/imgextra/i3/2183719539/TB279TdgpXXXXXgXpXXXXXXXXXX_!!2183719539.jpg\">" +
+//							"<img src=\"https://img.alicdn.com/imgextra/i3/2183719539/TB279TdgpXXXXXgXpXXXXXXXXXX_!!2183719539.jpg\">" + // PA
+							"<img src=\"https://img.alicdn.com/imgextra/i1/2641101981/TB2YG4hfpXXXXbtXpXXXXXXXXXX_!!2641101981.jpg\">" + // jewelry
 							"</a>";
 			TextWord word = new TextWord(html);
 			ruleRoot.addRuleWord(word);
@@ -406,7 +409,8 @@ public class JewelryDictTest {
 
 		{
 			// 购买须知, 购买流程, 商品包装, 退货政策
-			String html = "<img src=\"https://img.alicdn.com/imgextra/i2/2183719539/TB20izkgpXXXXbfXXXXXXXXXXXX_!!2183719539.jpg\">";
+//			String html = "<img src=\"https://img.alicdn.com/imgextra/i2/2183719539/TB20izkgpXXXXbfXXXXXXXXXXXX_!!2183719539.jpg\">"; // PA
+			String html = "<img src=\"https://img.alicdn.com/imgextra/i1/2641101981/TB2KYhQfpXXXXbYXXXXXXXXXXXX_!!2641101981.jpg\">"; // jewelry
 			TextWord word = new TextWord(html);
 			ruleRoot.addRuleWord(word);
 		}

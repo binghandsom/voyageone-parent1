@@ -1,26 +1,15 @@
 package com.voyageone.task2.cms.service;
 
 import com.voyageone.task2.base.BaseTaskService;
-import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
-import com.voyageone.task2.base.util.TaskControlUtils;
-import com.voyageone.task2.cms.bean.*;
 import com.voyageone.task2.cms.dao.MainPropDao;
 import com.voyageone.task2.cms.dao.SuperFeedDao;
 
-import com.voyageone.task2.cms.enums.FeedPropMappingType;
-import com.voyageone.cms.bean.Condition;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.components.transaction.TransactionRunner;
-import com.voyageone.common.configs.ChannelConfigs;
-import com.voyageone.common.configs.beans.OrderChannelBean;
-import com.voyageone.common.util.JsonUtil;
-import com.voyageone.common.util.StringUtils;
-import com.voyageone.ims.enums.MasterPropTypeEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.text.DecimalFormat;
 import java.util.*;
 
 @Service

@@ -7,30 +7,24 @@ import com.voyageone.common.components.gilt.bean.GiltPageGetSkusRequest;
 import com.voyageone.common.components.gilt.bean.GiltSku;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
-import com.voyageone.common.configs.Enums.FeedEnums;
-import com.voyageone.common.configs.Feed;
 import com.voyageone.common.configs.ThirdPartyConfigs;
-import com.voyageone.common.configs.beans.FeedBean;
 import com.voyageone.common.configs.beans.ThirdPartyConfigBean;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.cms.bean.SuperFeedGiltBean;
-import com.voyageone.task2.cms.bean.SuperFeedVtmBean;
 import com.voyageone.task2.cms.dao.SuperFeed2Dao;
 import com.voyageone.task2.cms.dao.feed.GiltFeedDao;
 import com.voyageone.task2.cms.model.WmsBtClientSkuModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.io.*;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 import static com.voyageone.common.configs.Enums.ChannelConfigEnums.Channel.GILT;
-import static com.voyageone.common.configs.Enums.ChannelConfigEnums.Channel.LUCKY_VITAMIN;
 import static java.util.stream.Collectors.joining;
 
 /**

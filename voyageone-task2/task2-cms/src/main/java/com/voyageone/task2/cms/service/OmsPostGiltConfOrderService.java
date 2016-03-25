@@ -1,5 +1,6 @@
 package com.voyageone.task2.cms.service;
 
+import com.voyageone.common.configs.ChannelConfigs;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.Constants;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
@@ -13,7 +14,6 @@ import com.voyageone.common.components.gilt.exceptions.GiltException;
 import com.voyageone.common.components.issueLog.IssueLog;
 import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
-import com.voyageone.common.configs.ChannelConfigs;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;

@@ -19,7 +19,7 @@ import com.voyageone.cms.CmsConstants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.components.tmall.TbProductService;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
-import com.voyageone.common.configs.ShopConfigs;
+import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.masterdate.schema.factory.SchemaReader;
 import com.voyageone.common.masterdate.schema.field.*;
@@ -84,19 +84,11 @@ public class CmsPlatformProductImportService extends BaseTaskService {
     }
 
     private void doSetProduct(TmpOldCmsDataBean oldCmsDataBean) throws Exception {
-        ShopBean shopBean = ShopConfigs.getShop(oldCmsDataBean.getChannel_id(), oldCmsDataBean.getCart_id());
+        ShopBean shopBean = Shops.getShop(oldCmsDataBean.getChannel_id(), oldCmsDataBean.getCart_id());
         if (shopBean == null) {
             // 不存在的shop, 跳过
             return;
         }
-
-        // tom 20160129 测试代码, 正式发布时要删除的 START
-        shopBean.setApp_url("http://gw.api.taobao.com/router/rest");
-        shopBean.setAppKey("21008948");
-        shopBean.setSessionKey("6201d2770dbfa1a88af5acfd330fd334fb4ZZa8ff26a40b2641101981");
-        shopBean.setAppSecret("0a16bd08019790b269322e000e52a19f");
-        shopBean.setOrder_channel_id("010");
-        // tom 20160129 测试代码, 正式发布时要删除的 END
 
         // 属性名字列表
         List<String> schemaFieldList = new ArrayList<>();
@@ -199,7 +191,7 @@ public class CmsPlatformProductImportService extends BaseTaskService {
             List<String> schemaFieldList,
             List<String> schemaFieldSkuList) {
 
-        ShopBean shopBean = ShopConfigs.getShop(oldCmsDataBean.getChannel_id(), oldCmsDataBean.getCart_id());
+        ShopBean shopBean = Shops.getShop(oldCmsDataBean.getChannel_id(), oldCmsDataBean.getCart_id());
         if (shopBean == null) {
             return;
         }
@@ -296,11 +288,13 @@ public class CmsPlatformProductImportService extends BaseTaskService {
             // 英文标题
             cmsFields.setProductNameEn(oldCmsDataBean.getTitle_en());
             // 中文标题
+            cmsFields.setOriginalTitleCn(oldCmsDataBean.getTitle_cn());
             cmsFields.setLongTitle(oldCmsDataBean.getTitle_cn());
             // 英文描述
             cmsFields.setLongDesEn(oldCmsDataBean.getDescription_en());
             // 中文描述
-            cmsFields.setLongDesCn(oldCmsDataBean.getDescription_cn());
+            cmsFields.setOriginalDesCn(oldCmsDataBean.getDescription_cn()); // 原本的长描述, 扔到原始中文描述里
+            cmsFields.setLongDesCn(oldCmsDataBean.getDescription_cn_short()); // 原本的短描述, 扔到中文长描述里
             // 图片1
             List<String> imgListString = oldCmsDataBean.getImageList(oldCmsDataBean.getImg1());
             List<CmsBtProductModel_Field_Image> imgList1 = new ArrayList<>();

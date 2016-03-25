@@ -8,7 +8,7 @@ import com.voyageone.task2.cms.dao.SuperFeed2Dao;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.FeedEnums;
-import com.voyageone.common.configs.Feed;
+import com.voyageone.common.configs.Feeds;
 import com.voyageone.common.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -89,7 +89,7 @@ public class JewelryAnalysisService extends BaseTaskService {
         $info("JE产品信息插入开始");
 
         // 清表
-        if (superfeeddao.deleteTableInfo(Feed.getVal1(ChannelConfigEnums.Channel.JEWELRY.getId(), FeedEnums.Name.table_id2)) >= 0) {
+        if (superfeeddao.deleteTableInfo(Feeds.getVal1(ChannelConfigEnums.Channel.JEWELRY.getId(), FeedEnums.Name.table_id2)) >= 0) {
             for (SuperFeedJEBean superfeed : superfeedlist) {
 
                 if (superfeeddao.insertSuperfeedJEInfo(superfeed) <= 0) {
@@ -114,11 +114,11 @@ public class JewelryAnalysisService extends BaseTaskService {
 
         CsvReader reader;
         try {
-            String fileName = Feed.getVal1(ChannelConfigEnums.Channel.JEWELRY.getId(), FeedEnums.Name.file_id);
-            String filePath = Feed.getVal1(ChannelConfigEnums.Channel.JEWELRY.getId(), FeedEnums.Name.feed_ftp_localpath2);
+            String fileName = Feeds.getVal1(ChannelConfigEnums.Channel.JEWELRY.getId(), FeedEnums.Name.file_id);
+            String filePath = Feeds.getVal1(ChannelConfigEnums.Channel.JEWELRY.getId(), FeedEnums.Name.feed_ftp_localpath2);
             String fileFullName = String.format("%s/%s", filePath, fileName);
 
-            String encode = Feed.getVal1(ChannelConfigEnums.Channel.JEWELRY.getId(), FeedEnums.Name.feed_ftp_file_coding);
+            String encode = Feeds.getVal1(ChannelConfigEnums.Channel.JEWELRY.getId(), FeedEnums.Name.feed_ftp_file_coding);
 
             reader = new CsvReader(new FileInputStream(fileFullName), '\t', Charset.forName(encode));
 
@@ -383,7 +383,7 @@ public class JewelryAnalysisService extends BaseTaskService {
 
 
         // 取得category异常数据
-        List<String> err_categorylist = superfeeddao.selectErrData(Feed.getVal1(channel_id, FeedEnums.Name.feed_delete_category_err_sql2));
+        List<String> err_categorylist = superfeeddao.selectErrData(Feeds.getVal1(channel_id, FeedEnums.Name.feed_delete_category_err_sql2));
 
         // 异常数据-邮件提示
         String err_data_maill = "category异常:";
@@ -398,9 +398,9 @@ public class JewelryAnalysisService extends BaseTaskService {
             logIssue("cms 数据导入处理", "异常数据清除对象=>" + err_data_maill);
 
             // 去掉最后一个“，”
-            err_data = Feed.getVal1(channel_id, FeedEnums.Name.feed_item_key) + " in (" + err_data.substring(0, err_data.lastIndexOf(",")) + ")";
+            err_data = Feeds.getVal1(channel_id, FeedEnums.Name.feed_item_key) + " in (" + err_data.substring(0, err_data.lastIndexOf(",")) + ")";
 
-            if (superfeeddao.deleteErrData(Feed.getVal1(channel_id, FeedEnums.Name.table_id2), err_data) <= 0) {
+            if (superfeeddao.deleteErrData(Feeds.getVal1(channel_id, FeedEnums.Name.table_id2), err_data) <= 0) {
                 //异常数据清除失败
                 $info("异常数据清除失败");
                 logIssue("cms 数据导入处理", "异常数据清除失败");
@@ -409,7 +409,7 @@ public class JewelryAnalysisService extends BaseTaskService {
         }
 
         // 取得model异常数据
-        List<String> err_modellist = superfeeddao.selectErrData(Feed.getVal1(channel_id, FeedEnums.Name.feed_delete_model_sql2));
+        List<String> err_modellist = superfeeddao.selectErrData(Feeds.getVal1(channel_id, FeedEnums.Name.feed_delete_model_sql2));
         err_data_maill = "model异常:";
         err_data = "";
         for (String anErr_modellist : err_modellist) {
@@ -421,9 +421,9 @@ public class JewelryAnalysisService extends BaseTaskService {
             logIssue("cms 数据导入处理", "异常数据清除对象=>" + err_data_maill);
 
             // 去掉最后一个“，”
-            err_data = Feed.getVal1(channel_id, FeedEnums.Name.feed_item_key) + " in (" + err_data.substring(0, err_data.lastIndexOf(",")) + ")";
+            err_data = Feeds.getVal1(channel_id, FeedEnums.Name.feed_item_key) + " in (" + err_data.substring(0, err_data.lastIndexOf(",")) + ")";
 
-            if (superfeeddao.deleteErrData(Feed.getVal1(channel_id, FeedEnums.Name.table_id2), err_data) <= 0) {
+            if (superfeeddao.deleteErrData(Feeds.getVal1(channel_id, FeedEnums.Name.table_id2), err_data) <= 0) {
                 //异常数据清除失败
                 $info("异常数据清除失败");
                 logIssue("cms 数据导入处理", "异常数据清除失败");
@@ -432,7 +432,7 @@ public class JewelryAnalysisService extends BaseTaskService {
         }
 
         // 取得product异常数据
-        List<String> err_productlist = superfeeddao.selectErrData(Feed.getVal1(channel_id, FeedEnums.Name.feed_delete_product_sql2));
+        List<String> err_productlist = superfeeddao.selectErrData(Feeds.getVal1(channel_id, FeedEnums.Name.feed_delete_product_sql2));
         err_data = "";
         err_data_maill = "product异常:";
         for (String anErr_productlist : err_productlist) {
@@ -444,9 +444,9 @@ public class JewelryAnalysisService extends BaseTaskService {
             logIssue("cms 数据导入处理", "异常数据清除对象=>" + err_data_maill);
 
             // 去掉最后一个“，”
-            err_data = Feed.getVal1(channel_id, FeedEnums.Name.feed_item_key) + " in (" + err_data.substring(0, err_data.lastIndexOf(",")) + ")";
+            err_data = Feeds.getVal1(channel_id, FeedEnums.Name.feed_item_key) + " in (" + err_data.substring(0, err_data.lastIndexOf(",")) + ")";
 
-            if (superfeeddao.deleteErrData(Feed.getVal1(channel_id, FeedEnums.Name.table_id2), err_data) <= 0) {
+            if (superfeeddao.deleteErrData(Feeds.getVal1(channel_id, FeedEnums.Name.table_id2), err_data) <= 0) {
                 //异常数据清除失败
                 $info("异常数据清除失败");
                 logIssue("cms 数据导入处理", "异常数据清除失败");
@@ -455,7 +455,7 @@ public class JewelryAnalysisService extends BaseTaskService {
         }
 
         // 取得有model无product异常数据
-        List<String> err_model_noproductlist = superfeeddao.selectErrData(Feed.getVal1(channel_id, FeedEnums.Name.feed_delete_model_no_product_sql2));
+        List<String> err_model_noproductlist = superfeeddao.selectErrData(Feeds.getVal1(channel_id, FeedEnums.Name.feed_delete_model_no_product_sql2));
         err_data = "";
         err_data_maill = "有model无product异常:";
         for (String anErr_model_noproductlist : err_model_noproductlist) {
@@ -467,9 +467,9 @@ public class JewelryAnalysisService extends BaseTaskService {
             logIssue("cms 数据导入处理", "异常数据清除对象=>" + err_data_maill);
 
             // 去掉最后一个“，”
-            err_data = Feed.getVal1(channel_id, FeedEnums.Name.feed_item_key) + " in (" + err_data.substring(0, err_data.lastIndexOf(",")) + ")";
+            err_data = Feeds.getVal1(channel_id, FeedEnums.Name.feed_item_key) + " in (" + err_data.substring(0, err_data.lastIndexOf(",")) + ")";
 
-            if (superfeeddao.deleteErrData(Feed.getVal1(channel_id, FeedEnums.Name.table_id2), err_data) <= 0) {
+            if (superfeeddao.deleteErrData(Feeds.getVal1(channel_id, FeedEnums.Name.table_id2), err_data) <= 0) {
                 //异常数据清除失败
                 $info("异常数据清除失败");
                 logIssue("cms 数据导入处理", "异常数据清除失败");
@@ -478,7 +478,7 @@ public class JewelryAnalysisService extends BaseTaskService {
         }
 
         // 取得有prouduct无model异常数据
-        List<String> err_product_nomodellist = superfeeddao.selectErrData(Feed.getVal1(channel_id, FeedEnums.Name.feed_delete_product_no_model_sql2));
+        List<String> err_product_nomodellist = superfeeddao.selectErrData(Feeds.getVal1(channel_id, FeedEnums.Name.feed_delete_product_no_model_sql2));
         err_data = "";
         err_data_maill = "有prouduct无model异常:";
         for (String anErr_product_nomodellist : err_product_nomodellist) {
@@ -490,9 +490,9 @@ public class JewelryAnalysisService extends BaseTaskService {
             logIssue("cms 数据导入处理", "异常数据清除对象=>" + err_data_maill);
 
             // 去掉最后一个“，”
-            err_data = Feed.getVal1(channel_id, FeedEnums.Name.feed_item_key) + " in (" + err_data.substring(0, err_data.lastIndexOf(",")) + ")";
+            err_data = Feeds.getVal1(channel_id, FeedEnums.Name.feed_item_key) + " in (" + err_data.substring(0, err_data.lastIndexOf(",")) + ")";
 
-            if (superfeeddao.deleteErrData(Feed.getVal1(channel_id, FeedEnums.Name.table_id2), err_data) <= 0) {
+            if (superfeeddao.deleteErrData(Feeds.getVal1(channel_id, FeedEnums.Name.table_id2), err_data) <= 0) {
                 //异常数据清除失败
                 $info("异常数据清除失败");
                 logIssue("cms 数据导入处理", "异常数据清除失败");
@@ -572,9 +572,9 @@ public class JewelryAnalysisService extends BaseTaskService {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
         String date_ymd = sdf.format(date);
 
-        String filename = Feed.getVal1(channel_id, FeedEnums.Name.feed_ftp_localpath2) + "/" + StringUtils.null2Space(Feed.getVal1(channel_id, FeedEnums.Name.file_id));
-        String filename_backup = Feed.getVal1(channel_id, FeedEnums.Name.feed_ftp_localpath2) + "/" + date_ymd + "_"
-                + StringUtils.null2Space(Feed.getVal1(channel_id, FeedEnums.Name.file_id));
+        String filename = Feeds.getVal1(channel_id, FeedEnums.Name.feed_ftp_localpath2) + "/" + StringUtils.null2Space(Feeds.getVal1(channel_id, FeedEnums.Name.file_id));
+        String filename_backup = Feeds.getVal1(channel_id, FeedEnums.Name.feed_ftp_localpath2) + "/" + date_ymd + "_"
+                + StringUtils.null2Space(Feeds.getVal1(channel_id, FeedEnums.Name.file_id));
         File file = new File(filename);
         File file_backup = new File(filename_backup);
 

@@ -6,7 +6,7 @@ import com.voyageone.task2.cms.utils.WebServiceUtil;
 import com.voyageone.common.configs.Codes;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.FeedEnums;
-import com.voyageone.common.configs.Feed;
+import com.voyageone.common.configs.Feeds;
 import com.voyageone.task2.cms.bean.ProductsFeedAttribute;
 import com.voyageone.task2.cms.bean.ProductsFeedInsert;
 import com.voyageone.task2.cms.bean.ProductsFeedUpdate;
@@ -50,9 +50,9 @@ public class WsdlProductService {
         Map<String, Object> param = new HashMap<>();
 
         Map<String, String> authMap = new HashMap<>();
-        authMap.put("appKey", Feed.getVal1(channel_id, FeedEnums.Name.webServiesAppKey));
-        authMap.put("appSecret", Feed.getVal1(channel_id, FeedEnums.Name.webServiesAppSecret));
-        authMap.put("sessionKey", Feed.getVal1(channel_id, FeedEnums.Name.webServiesSessionKey));
+        authMap.put("appKey", Feeds.getVal1(channel_id, FeedEnums.Name.webServiesAppKey));
+        authMap.put("appSecret", Feeds.getVal1(channel_id, FeedEnums.Name.webServiesAppSecret));
+        authMap.put("sessionKey", Feeds.getVal1(channel_id, FeedEnums.Name.webServiesSessionKey));
 
         param.put("authentication", authMap);
         param.put("dataBody", dataBody);
