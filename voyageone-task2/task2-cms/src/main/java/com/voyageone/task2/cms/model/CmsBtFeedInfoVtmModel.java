@@ -55,26 +55,4 @@ public class CmsBtFeedInfoVtmModel extends CmsBtFeedInfoModel {
         Warnings = warnings;
     }
 
-    public CmsBtFeedInfoModel getCmsBtFeedInfoModel(){
-        CmsBtFeedInfoModel cmsBtFeedInfoModel =new CmsBtFeedInfoModel(this.channelId);
-        cmsBtFeedInfoModel.setCategory(this.getCategory());
-        cmsBtFeedInfoModel.setCode(this.getCode());
-        cmsBtFeedInfoModel.setName(this.getName());
-        cmsBtFeedInfoModel.setModel(this.getModel());
-        cmsBtFeedInfoModel.setColor(this.getColor());
-        cmsBtFeedInfoModel.setOrigin(this.getOrigin());
-        cmsBtFeedInfoModel.setSizeType(this.getSizeType());
-        if(this.getImage().size()>0){
-            cmsBtFeedInfoModel.setImage(Arrays.asList(this.getImage().get(0).split(",")));
-        }else{
-            cmsBtFeedInfoModel.setImage(new ArrayList<>());
-        }
-        cmsBtFeedInfoModel.setBrand(this.getBrand());
-        cmsBtFeedInfoModel.setWeight(this.getWeight());
-        cmsBtFeedInfoModel.setShort_description(this.getShort_description());
-        cmsBtFeedInfoModel.setLong_description(this.getLong_description());
-        cmsBtFeedInfoModel.setSkus(this.getSkus());
-        cmsBtFeedInfoModel.setUpdFlg(0);
-        return  cmsBtFeedInfoModel;
-    }
 }

@@ -35,7 +35,8 @@ define([
             var checkResult = true;
             _.each($scope.valueList, function(value) {
 
-                if (_.isEqual(value.value_original, $scope.vm.value_original)) {
+                if (_.isEqual(value.prop_id, $scope.vm.prop_id)
+                     && _.isEqual(value.value_original, $scope.vm.value_original)) {
                     alert("该自定义属性值已经存在");
                     checkResult = false;
                 }

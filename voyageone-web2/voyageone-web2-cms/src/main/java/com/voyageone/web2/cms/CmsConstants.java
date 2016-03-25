@@ -77,8 +77,4 @@ public interface CmsConstants extends BaseConstants{
 
         String OPTION_DATA_SOURCE_CHANNEL = "optConfigChannel";
     }
-
-    interface channelConfig {
-        String SAME_ATTR = "SAME_ATTR";
-    }
 }

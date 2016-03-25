@@ -1,6 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.voyageone.web2.core.sql">
+
+    <select id="ct_user_role_property_selectUserRoleByIdAndChannelId"  resultType="int" parameterType="HashMap">
+        SELECT count(1)
+        FROM
+          Synship.ct_user_role_property a
+        WHERE a.user_id = #{userId}
+        AND a.property_id = #{channelId}
+        <if test="active != null and active !=''">
+            AND a.active = #{active}
+        </if>
+        <if test="roleId != null and roleId != ''">
+            AND a.role_id = #{roleId}
+        </if>
+    </select>
+
     <select id="ct_user_role_property_selectUserApplication" resultType="HashMap">
         SELECT DISTINCT
             f.menu_title as menuTitle,

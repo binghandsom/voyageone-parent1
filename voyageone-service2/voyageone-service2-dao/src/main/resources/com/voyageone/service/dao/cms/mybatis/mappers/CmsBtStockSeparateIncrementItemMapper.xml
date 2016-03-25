@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.service.dao.sql">
+
+    <select id="select_stock_separate_increment_item_cnt" resultType="int" parameterType="HashMap">
+         select count(*)
+            from   voyageone_cms2.cms_bt_stock_separate_increment_item
+            where sub_task_id in (select sub_task_id from cms_bt_stock_separate_increment_task where task_id = #{taskId})
+            <if test="status !=null and status != ''">
+                and status = #{status}
+            </if>
+    </select>
+</mapper>

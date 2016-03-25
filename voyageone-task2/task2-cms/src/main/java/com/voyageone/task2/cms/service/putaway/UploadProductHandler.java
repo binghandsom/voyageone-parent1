@@ -15,7 +15,7 @@ import com.voyageone.common.components.issueLog.IssueLog;
 import com.voyageone.common.configs.Enums.CartEnums;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.PlatFormEnums;
-import com.voyageone.common.configs.ShopConfigs;
+import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -116,7 +116,7 @@ public class UploadProductHandler extends UploadWorkloadHandler{
             }
         }
         //如果任务已经初始化过，那么直接交由平台的处理逻辑来处理
-        ShopBean shopBean = ShopConfigs.getShop(uploadJob.getChannel_id(), uploadJob.getCart_id());
+        ShopBean shopBean = Shops.getShop(uploadJob.getChannel_id(), uploadJob.getCart_id());
 
         if (shopBean == null)
         {

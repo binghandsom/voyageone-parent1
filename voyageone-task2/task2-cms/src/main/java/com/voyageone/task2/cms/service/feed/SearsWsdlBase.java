@@ -12,7 +12,7 @@ import com.voyageone.common.Constants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.FeedEnums;
-import com.voyageone.common.configs.Feed;
+import com.voyageone.common.configs.Feeds;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -82,21 +82,21 @@ abstract class SearsWsdlBase extends BaseTaskService {
         protected ContextBase(ChannelConfigEnums.Channel channel) {
             this.channel = channel;
             // 主表
-            this.table = Feed.getVal1(channel, FeedEnums.Name.table_id);
+            this.table = Feeds.getVal1(channel, FeedEnums.Name.table_id);
             // 图片表
-            this.imageTable = Feed.getVal1(channel, FeedEnums.Name.image_table_id);
+            this.imageTable = Feeds.getVal1(channel, FeedEnums.Name.image_table_id);
             // 特殊字符 (正则)
-            this.special_symbol = Pattern.compile(Feed.getVal1(channel, FeedEnums.Name.url_special_symbol));
+            this.special_symbol = Pattern.compile(Feeds.getVal1(channel, FeedEnums.Name.url_special_symbol));
             // 商品表
-            this.productTable = Feed.getVal1(channel, FeedEnums.Name.product_table_id);
+            this.productTable = Feeds.getVal1(channel, FeedEnums.Name.product_table_id);
             // 图片表的 Join 部分
-            this.imageJoin = Feed.getVal1(channel, FeedEnums.Name.image_table_join);
+            this.imageJoin = Feeds.getVal1(channel, FeedEnums.Name.image_table_join);
             // 商品表的 Join 部分
-            this.productJoin = Feed.getVal1(channel, FeedEnums.Name.product_table_join);
+            this.productJoin = Feeds.getVal1(channel, FeedEnums.Name.product_table_join);
             // Model 表
-            this.modelTable = Feed.getVal1(channel, FeedEnums.Name.model_table_id);
+            this.modelTable = Feeds.getVal1(channel, FeedEnums.Name.model_table_id);
             // Model 的 Join 部分
-            this.modelJoin = Feed.getVal1(channel, FeedEnums.Name.model_table_join);
+            this.modelJoin = Feeds.getVal1(channel, FeedEnums.Name.model_table_join);
         }
 
         protected List<ItemBean> getItems(ProductBean product) {
@@ -118,22 +118,22 @@ abstract class SearsWsdlBase extends BaseTaskService {
 
             itemColumns = new ItemBean();
 
-            itemColumns.setCode(Feed.getVal1(channel, FeedEnums.Name.item_code));
-            itemColumns.setI_sku(Feed.getVal1(channel, FeedEnums.Name.item_i_sku));
-            itemColumns.setI_itemcode(Feed.getVal1(channel, FeedEnums.Name.item_i_itemcode));
-            itemColumns.setI_size(Feed.getVal1(channel, FeedEnums.Name.item_i_size));
-            itemColumns.setI_barcode(Feed.getVal1(channel, FeedEnums.Name.item_i_barcode));
-            itemColumns.setI_client_sku(Feed.getVal1(channel, FeedEnums.Name.item_i_client_sku));
+            itemColumns.setCode(Feeds.getVal1(channel, FeedEnums.Name.item_code));
+            itemColumns.setI_sku(Feeds.getVal1(channel, FeedEnums.Name.item_i_sku));
+            itemColumns.setI_itemcode(Feeds.getVal1(channel, FeedEnums.Name.item_i_itemcode));
+            itemColumns.setI_size(Feeds.getVal1(channel, FeedEnums.Name.item_i_size));
+            itemColumns.setI_barcode(Feeds.getVal1(channel, FeedEnums.Name.item_i_barcode));
+            itemColumns.setI_client_sku(Feeds.getVal1(channel, FeedEnums.Name.item_i_client_sku));
             return itemColumns;
         }
 
         protected List<ImageBean> getImages(ProductBean product) {
 
-            String where = String.format("WHERE %s AND %s = '%s'", getWhereUpdateFlg(), Feed.getVal1(channel, FeedEnums.Name.product_p_code), product.getP_code());
+            String where = String.format("WHERE %s AND %s = '%s'", getWhereUpdateFlg(), Feeds.getVal1(channel, FeedEnums.Name.product_p_code), product.getP_code());
 
             List<String> imageArrs = superFeedDao.selectSuperfeedImage(
                     where,
-                    Feed.getVal1(channel, FeedEnums.Name.images),
+                    Feeds.getVal1(channel, FeedEnums.Name.images),
                     // 组合 Image 的表部分和Join部分
                     String.format("%s %s", imageTable, imageJoin));
 
@@ -141,7 +141,7 @@ abstract class SearsWsdlBase extends BaseTaskService {
 
             List<ImageBean> imageBeans = new ArrayList<>();
 
-            String separator = Feed.getVal1(channel, FeedEnums.Name.image_split);
+            String separator = Feeds.getVal1(channel, FeedEnums.Name.image_split);
 
             for (String imageArr : imageArrs) {
 
@@ -201,7 +201,7 @@ abstract class SearsWsdlBase extends BaseTaskService {
             ProductBean productColumns = getProductColumns();
 
             List<ProductBean> productBeans = superFeedDao.selectSuperfeedProduct(
-                    String.format("%s %s", where, Feed.getVal1(channel, FeedEnums.Name.product_sql_ending)),
+                    String.format("%s %s", where, Feeds.getVal1(channel, FeedEnums.Name.product_sql_ending)),
                     productColumns,
                     // 组合 Product 的表部分和Join部分
                     String.format("%s %s", productTable, productJoin));
@@ -236,20 +236,20 @@ abstract class SearsWsdlBase extends BaseTaskService {
 
             // 为每个字段指定其映射到的数据表的列.
             // 在后面的查询,自动从数据表填充值.
-            productColumns.setUrl_key(Feed.getVal1(channel, FeedEnums.Name.product_url_key));
-            productColumns.setModel_url_key(Feed.getVal1(channel, FeedEnums.Name.product_model_url_key));
-            productColumns.setCategory_url_key(Feed.getVal1(channel, FeedEnums.Name.product_category_url_key));
-            productColumns.setP_code(Feed.getVal1(channel, FeedEnums.Name.product_p_code));
-            productColumns.setP_name(Feed.getVal1(channel, FeedEnums.Name.product_p_name));
-            productColumns.setP_color(Feed.getVal1(channel, FeedEnums.Name.product_p_color));
-            productColumns.setP_msrp(Feed.getVal1(channel, FeedEnums.Name.product_p_msrp));
-            productColumns.setP_made_in_country(Feed.getVal1(channel, FeedEnums.Name.product_p_made_in_country));
-            productColumns.setPe_short_description(Feed.getVal1(channel, FeedEnums.Name.product_pe_short_description));
-            productColumns.setPe_long_description(Feed.getVal1(channel, FeedEnums.Name.product_pe_long_description));
-            productColumns.setPs_price(Feed.getVal1(channel, FeedEnums.Name.product_ps_price));
-            productColumns.setCps_cn_price_rmb(Feed.getVal1(channel, FeedEnums.Name.product_cps_cn_price_rmb));
-            productColumns.setCps_cn_price(Feed.getVal1(channel, FeedEnums.Name.product_cps_cn_price));
-            productColumns.setCps_cn_price_final_rmb(Feed.getVal1(channel, FeedEnums.Name.product_cps_cn_price_final_rmb));
+            productColumns.setUrl_key(Feeds.getVal1(channel, FeedEnums.Name.product_url_key));
+            productColumns.setModel_url_key(Feeds.getVal1(channel, FeedEnums.Name.product_model_url_key));
+            productColumns.setCategory_url_key(Feeds.getVal1(channel, FeedEnums.Name.product_category_url_key));
+            productColumns.setP_code(Feeds.getVal1(channel, FeedEnums.Name.product_p_code));
+            productColumns.setP_name(Feeds.getVal1(channel, FeedEnums.Name.product_p_name));
+            productColumns.setP_color(Feeds.getVal1(channel, FeedEnums.Name.product_p_color));
+            productColumns.setP_msrp(Feeds.getVal1(channel, FeedEnums.Name.product_p_msrp));
+            productColumns.setP_made_in_country(Feeds.getVal1(channel, FeedEnums.Name.product_p_made_in_country));
+            productColumns.setPe_short_description(Feeds.getVal1(channel, FeedEnums.Name.product_pe_short_description));
+            productColumns.setPe_long_description(Feeds.getVal1(channel, FeedEnums.Name.product_pe_long_description));
+            productColumns.setPs_price(Feeds.getVal1(channel, FeedEnums.Name.product_ps_price));
+            productColumns.setCps_cn_price_rmb(Feeds.getVal1(channel, FeedEnums.Name.product_cps_cn_price_rmb));
+            productColumns.setCps_cn_price(Feeds.getVal1(channel, FeedEnums.Name.product_cps_cn_price));
+            productColumns.setCps_cn_price_final_rmb(Feeds.getVal1(channel, FeedEnums.Name.product_cps_cn_price_final_rmb));
 
             return productColumns;
         }

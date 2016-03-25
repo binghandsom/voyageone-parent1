@@ -2,7 +2,7 @@ package com.voyageone.web2.cms.views.system.error;
 
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
-import com.voyageone.common.configs.TypeChannel;
+import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.service.impl.cms.BusinessLogService;
 import com.voyageone.service.impl.cms.ChannelCategoryService;
 import com.voyageone.web2.base.BaseAppService;
@@ -41,7 +41,7 @@ public class CmsErrorListService extends BaseAppService{
         Map<String, Object> masterData = new HashMap<>();
 
         // 获取platform信息
-        masterData.put("platformTypeList", TypeChannel.getTypeListSkuCarts(userInfo.getSelChannelId(), Constants.comMtTypeChannel.SKU_CARTS_53_A, language));
+        masterData.put("platformTypeList", TypeChannels.getTypeListSkuCarts(userInfo.getSelChannelId(), Constants.comMtTypeChannel.SKU_CARTS_53_A, language));
 
         // 获取category list
         masterData.put("categoryList", cmsBtChannelCategoryService.getFinallyCategoriesByChannelId(userInfo.getSelChannelId()));

@@ -10,8 +10,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.List;
 
-import static org.junit.Assert.*;
-
 /**
  * Created by lewis on 15-12-8.
  */
@@ -24,7 +22,7 @@ public class CmsMtCommonPropDaoTest {
 
     @Test
     public void testGetActionModelList() throws Exception {
-        List<CmsMtCommonPropActionDefModel> delModelsById = cmsMtCommonPropDao.getActionModelList();
+        List<CmsMtCommonPropActionDefModel> delModelsById = cmsMtCommonPropDao.selectActionModelList();
 
         Assert.assertTrue(delModelsById.size()>0);
 
@@ -33,19 +31,19 @@ public class CmsMtCommonPropDaoTest {
 //            Assert.assertTrue("1".equals(model.getActionType()));
 //        }
 //
-//        List<MtCommPropActionDefModel> delModelsByIdAndName = cmsMtCommonPropDao.getActionModelList("2",null);
+//        List<MtCommPropActionDefModel> delModelsByIdAndName = cmsMtCommonPropDao.selectActionModelList("2",null);
 //        for (MtCommPropActionDefModel model:delModelsByIdAndName){
 //            Assert.assertTrue(StringUtils.isEmpty(model.getPlatformPropRefId()));
 //            Assert.assertTrue("2".equals(model.getActionType()));
 //        }
 //
-//        List<MtCommPropActionDefModel> updModels = cmsMtCommonPropDao.getActionModelList("0","");
+//        List<MtCommPropActionDefModel> updModels = cmsMtCommonPropDao.selectActionModelList("0","");
 //        for (MtCommPropActionDefModel model:updModels){
 //            Assert.assertFalse(StringUtils.isEmpty(model.getPlatformPropRefId()));
 //            Assert.assertTrue("0".equals(model.getActionType()));
 //        }
 //
-//        List<MtCommPropActionDefModel> addModels = cmsMtCommonPropDao.getActionModelList("0",null);
+//        List<MtCommPropActionDefModel> addModels = cmsMtCommonPropDao.selectActionModelList("0",null);
 //        for (MtCommPropActionDefModel model:addModels){
 //            Assert.assertTrue(StringUtils.isEmpty(model.getPlatformPropRefId()));
 //            Assert.assertTrue("0".equals(model.getActionType()));

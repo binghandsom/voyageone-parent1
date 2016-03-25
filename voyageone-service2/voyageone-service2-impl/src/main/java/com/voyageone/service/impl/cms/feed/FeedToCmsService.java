@@ -90,7 +90,7 @@ public class FeedToCmsService {
      * @param products 产品列表
      * @return response
      */
-    public Map updateProduct(String channelId, List<CmsBtFeedInfoModel> products, String modifier) {
+    public Map<String, List<CmsBtFeedInfoModel>> updateProduct(String channelId, List<CmsBtFeedInfoModel> products, String modifier) {
         this.modifier = modifier;
         List<String> existCategory = new ArrayList<>();
         List<CmsBtFeedInfoModel> failProduct = new ArrayList<>();
@@ -112,10 +112,20 @@ public class FeedToCmsService {
                 imageUrls = product.getImage();
 
                 // 把Image中的Path删除只保留文件名
-                if("010".equalsIgnoreCase(channelId)){
+                if("010".equalsIgnoreCase(channelId) || "012".equalsIgnoreCase(channelId)){
                     product.setImage(product.getImage().stream().map(image -> image.substring(image.lastIndexOf("/") + 1, image.lastIndexOf("."))).collect(toList()));
                 }else{
-                    product.setImage(product.getImage().stream().map(image -> channelId + "-" + image.substring(image.lastIndexOf("/") + 1, image.lastIndexOf("."))).collect(toList()));
+                    int i = 1;
+                    List<String> images = new ArrayList<>();
+                    for (String  image :product.getImage()){
+                        if("015".equalsIgnoreCase(channelId)){
+                            images.add(product.getCode() + "-" + i);
+                        }else{
+                            images.add(channelId + "-" + product.getCode() + "-" + i);
+                        }
+                        i++;
+                    }
+                    product.setImage(images);
                 }
                 CmsBtFeedInfoModel befproduct = cmsBtFeedInfoDao.selectProductByCode(channelId, product.getCode());
                 if (befproduct != null) {
@@ -128,14 +138,23 @@ public class FeedToCmsService {
                     });
                     product.setCreated(befproduct.getCreated());
                     product.setCreater(befproduct.getCreater());
+                    product.setAttribute(attributeMerge(product.getAttribute(), befproduct.getAttribute()));
                 }
+
+
                 product.setModified(DateTimeUtil.getNow());
                 product.setModifier(this.modifier);
                 product.setUpdFlg(0);
                 cmsBtFeedInfoDao.update(product);
 
                 List<CmsBtFeedProductImageModel> imageModels = new ArrayList<>();
-                imageUrls.forEach(s -> imageModels.add(new CmsBtFeedProductImageModel(channelId, product.getCode(), s, this.modifier)));
+
+                int i = 1;
+                for (String  image :imageUrls){
+                    imageModels.add(new CmsBtFeedProductImageModel(channelId, product.getCode(), image, i, this.modifier));
+                    i++;
+                }
+//                imageUrls.forEach(s -> imageModels.add(new CmsBtFeedProductImageModel(channelId, product.getCode(), s, this.modifier)));
                 cmsBtFeedProductImageDao.insertImagebyUrl(imageModels);
 
                 Map<String, List<String>> attributeMtData;
@@ -158,12 +177,26 @@ public class FeedToCmsService {
             updateFeedCategoryAttribute(channelId, attributeMtDatas.get(key), key);
         }
 
-        Map<String, Object> response = new HashMap<>();
+        Map<String, List<CmsBtFeedInfoModel>> response = new HashMap<>();
         response.put("succeed", succeedProduct);
         response.put("fail", failProduct);
         return response;
     }
 
+    private Map<String,List<String>> attributeMerge(Map<String,List<String>> attribute1, Map<String,List<String>> attribute2){
+
+        for (String key : attribute1.keySet()) {
+            if (attribute2.containsKey(key)) {
+                attribute2.put(key, Stream.concat(attribute1.get(key).stream(), attribute2.get(key).stream())
+                        .map(String::trim)
+                        .distinct()
+                        .collect(toList()));
+            } else {
+                attribute2.put(key, attribute1.get(key));
+            }
+        }
+        return attribute2;
+    }
     /**
      * 设定feed类目
      */
@@ -291,5 +324,6 @@ public class FeedToCmsService {
                 oldAtt.put(key, attribute.get(key));
             }
         }
+        cmsMtFeedCategoryTreeDao.update(categoryTree);
     }
 }

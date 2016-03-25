@@ -10,6 +10,9 @@ import com.taobao.top.schema.factory.SchemaReader;
 import com.taobao.top.schema.factory.SchemaWriter;
 import com.taobao.top.schema.field.*;
 import com.taobao.top.schema.value.ComplexValue;
+import com.voyageone.common.configs.CmsChannelConfigs;
+import com.voyageone.common.configs.beans.CmsChannelConfigBean;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.bean.cms.*;
 import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategorySchemaDao;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
@@ -35,9 +38,8 @@ import com.voyageone.common.components.issueLog.IssueLog;
 import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.components.tmall.TbProductService;
-import com.voyageone.common.configs.ShopConfigs;
+import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
-import com.voyageone.common.util.JsonUtil;
 import com.voyageone.ims.modelbean.DictWordBean;
 import com.voyageone.ims.rule_expression.DictWord;
 import com.voyageone.ims.rule_expression.RuleExpression;
@@ -163,7 +165,7 @@ public class TmallProductService {
         WorkLoadBean workLoadBean = tcb.getWorkLoadBean();
         String channelId = workLoadBean.getOrder_channel_id();
         int cartId = workLoadBean.getCart_id();
-        ShopBean shopBean = ShopConfigs.getShop(channelId, cartId);
+        ShopBean shopBean = Shops.getShop(channelId, cartId);
 
         TmallUploadRunState tmallUploadRunState = new TmallUploadRunState(tcb);
         SxProductBean mainSxProduct = workLoadBean.getMainProduct();
@@ -257,7 +259,7 @@ public class TmallProductService {
 
         ExpressionParser expressionParser = tcb.getExpressionParser();
 
-        ShopBean shopBean = ShopConfigs.getShop(orderChannelId, cartId);
+        ShopBean shopBean = Shops.getShop(orderChannelId, cartId);
 
         List<String> productCodeList = new ArrayList<>();
 
@@ -464,7 +466,7 @@ public class TmallProductService {
         long categoryCode = tmallUploadRunState.getCategory_code();
         String brandCode = tmallUploadRunState.getBrand_code();
         String productCode = tmallUploadRunState.getProduct_code();
-        ShopBean shopBean = ShopConfigs.getShop(workLoadBean.getOrder_channel_id(),
+        ShopBean shopBean = Shops.getShop(workLoadBean.getOrder_channel_id(),
                 String.valueOf(workLoadBean.getCart_id()));
         ExpressionParser expressionParser = tcb.getExpressionParser();
         CmsMtPlatformCategorySchemaModel cmsMtPlatformCategorySchemaModel = workLoadBean.getCmsMtPlatformCategorySchemaModel();
@@ -596,7 +598,7 @@ public class TmallProductService {
         TmallWorkloadStatus tmallWorkloadStatus = (TmallWorkloadStatus) workLoadBean.getWorkload_status();
         String channelId = workLoadBean.getOrder_channel_id();
         int cartId = workLoadBean.getCart_id();
-        ShopBean shopBean = ShopConfigs.getShop(channelId, cartId);
+        ShopBean shopBean = Shops.getShop(channelId, cartId);
         ExpressionParser expressionParser = tcb.getExpressionParser();
         CmsMtPlatformCategorySchemaModel cmsMtPlatformCategorySchemaModel = workLoadBean.getCmsMtPlatformCategorySchemaModel();
         CmsMtPlatformMappingModel cmsMtPlatformMappingModel = workLoadBean.getCmsMtPlatformMappingModel();
@@ -675,7 +677,7 @@ public class TmallProductService {
         UploadImageResult uploadImageResult = tcb.getUploadImageResult();
 
         WorkLoadBean workLoadBean = tcb.getWorkLoadBean();
-        ShopBean shopBean = ShopConfigs.getShop(workLoadBean.getOrder_channel_id(), String.valueOf(workLoadBean.getCart_id()));
+        ShopBean shopBean = Shops.getShop(workLoadBean.getOrder_channel_id(), String.valueOf(workLoadBean.getCart_id()));
 
         TmallUploadRunState.TmallContextBuildFields contextBeforeUploadImage = tmallUploadRunState.getContextBuildFields();
 
@@ -825,7 +827,7 @@ public class TmallProductService {
 
     private String addTmallProduct(Long category_code, String brand_code, List<Field> productFields,
                                    WorkLoadBean workLoadBean) throws ApiException, TopSchemaException, TaskSignal {
-        ShopBean shopBean = ShopConfigs.getShop(workLoadBean.getOrder_channel_id(), String.valueOf(workLoadBean.getCart_id()));
+        ShopBean shopBean = Shops.getShop(workLoadBean.getOrder_channel_id(), String.valueOf(workLoadBean.getCart_id()));
         TmallWorkloadStatus tmallWorkloadStatus = (TmallWorkloadStatus) workLoadBean.getWorkload_status();
         String product_code = null;
 
@@ -883,7 +885,7 @@ public class TmallProductService {
     }
 
     private String getProductStatus(String channel_id, String cart_id, Long product_id) throws ApiException, TopSchemaException {
-        ShopBean shopBean = ShopConfigs.getShop(channel_id, cart_id);
+        ShopBean shopBean = Shops.getShop(channel_id, cart_id);
         String schema = tbProductService.getProductSchema(product_id, shopBean);
         logger.debug("product status schema:" + schema);
         List<Field> fields = SchemaReader.readXmlForList(schema);
@@ -942,7 +944,7 @@ public class TmallProductService {
         String channelId = workLoadBean.getOrder_channel_id();
         int cartId = workLoadBean.getCart_id();
 
-        ShopBean shopBean = ShopConfigs.getShop(channelId, cartId);
+        ShopBean shopBean = Shops.getShop(channelId, cartId);
 
         TmallUploadRunState tmallUploadRunState = new TmallUploadRunState(tcb);
 
@@ -1029,7 +1031,7 @@ public class TmallProductService {
         Long categoryCode = tmallUploadRunState.getCategory_code();
         WorkLoadBean workLoadBean = tcb.getWorkLoadBean();
         TmallWorkloadStatus tmallWorkloadStatus = (TmallWorkloadStatus) workLoadBean.getWorkload_status();
-        ShopBean shopBean = ShopConfigs.getShop(workLoadBean.getOrder_channel_id(), String.valueOf(workLoadBean.getCart_id()));
+        ShopBean shopBean = Shops.getShop(workLoadBean.getOrder_channel_id(), String.valueOf(workLoadBean.getCart_id()));
         String numId = workLoadBean.getNumId();
         String productId = workLoadBean.getProductId();
         Set<String> imageSet = new HashSet<>();
@@ -1105,7 +1107,7 @@ public class TmallProductService {
 
         UploadImageResult uploadImageResult = tcb.getUploadImageResult();
 
-        ShopBean shopBean = ShopConfigs.getShop(workLoadBean.getOrder_channel_id(), String.valueOf(workLoadBean.getCart_id()));
+        ShopBean shopBean = Shops.getShop(workLoadBean.getOrder_channel_id(), String.valueOf(workLoadBean.getCart_id()));
 
 
         Map<String, String> urlMap;
@@ -1196,7 +1198,23 @@ public class TmallProductService {
      * @param sxProducts
      * @return
      */
-    private double calcItemPrice(List<SxProductBean> sxProducts, Map<String, Integer> skuInventoryMap) {
+    private double calcItemPrice(List<SxProductBean> sxProducts, Map<String, Integer> skuInventoryMap,
+                                 String channelId, int cartId) {
+        // 价格有可能是用priceSale, 也有可能用priceMsrp, 所以需要判断一下 tom START
+        CmsChannelConfigBean sxPriceConfig = CmsChannelConfigs.getConfigBean(channelId, "PRICE", String.valueOf(cartId) + ".sx_price");
+
+        // 检查一下
+        String sxPricePropName;
+        if (sxPriceConfig == null) {
+            return 0d;
+        } else {
+            sxPricePropName = sxPriceConfig.getConfigValue1();
+            if (StringUtils.isEmpty(sxPricePropName)) {
+                return 0d;
+            }
+        }
+        // 价格有可能是用priceSale, 也有可能用priceMsrp, 所以需要判断一下 tom END
+
         Double resultPrice = 0d, onePrice = 0d;
         List<Double> skuPriceList = new ArrayList<>();
         for (SxProductBean sxProduct : sxProducts) {
@@ -1209,7 +1227,8 @@ public class TmallProductService {
                 }
                 double skuPrice = 0;
                 try {
-                    skuPrice = Double.valueOf(cmsBtProductModelSku.getPriceSale());
+//                    skuPrice = Double.valueOf(cmsBtProductModelSku.getPriceSale());
+                    skuPrice = Double.valueOf(cmsBtProductModelSku.getAttribute(sxPricePropName));
                 } catch (Exception e) {
                     logger.warn("No price for sku " + cmsBtProductModelSku.getSkuCode());
                 }
@@ -1390,7 +1409,8 @@ public class TmallProductService {
                     }
                     InputField  itemPriceField = (InputField) processFields.get(0);
 
-                    double itemPrice = calcItemPrice(workLoadBean.getProcessProducts(), workLoadBean.getSkuInventoryMap());
+//                    double itemPrice = calcItemPrice(workLoadBean.getProcessProducts(), workLoadBean.getSkuInventoryMap());
+                    double itemPrice = calcItemPrice(workLoadBean.getProcessProducts(), workLoadBean.getSkuInventoryMap(), workLoadBean.getOrder_channel_id(), workLoadBean.getCart_id());
                     itemPriceField.setValue(String.valueOf(itemPrice));
 
                     contextBuildCustomFields.setPriceField(itemPriceField);
@@ -1488,7 +1508,7 @@ public class TmallProductService {
                         final String sellerCategoryPropId = "seller_cids";
                         if (workLoadBean.getUpJobParam().getMethod() == UpJobParamBean.METHOD_UPDATE) {
                             String numId = workLoadBean.getNumId();
-                            ShopBean shopBean = ShopConfigs.getShop(workLoadBean.getOrder_channel_id(), String.valueOf(workLoadBean.getCart_id()));
+                            ShopBean shopBean = Shops.getShop(workLoadBean.getOrder_channel_id(), String.valueOf(workLoadBean.getCart_id()));
                             try {
                                 TmallItemUpdateSchemaGetResponse response = tbProductService.doGetWareInfoItem(numId, shopBean);
                                 String strXml = response.getUpdateItemResult();

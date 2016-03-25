@@ -17,35 +17,46 @@ define([
     /**
      * 验证一组字段, 是否通过了 ng-form 验证
      * @param {object|Array} fields
-     * @returns {*}
+     * @returns Array.<Field>
      */
     function validFields(fields) {
-        return !_.any(fields, function (field) {
+        return _.filter(fields, function (field) {
             if (field.form && field.type === FieldTypes.multiComplex) {
-                return !field.complexValues.some(function(value){
+                return !field.complexValues.some(function (value) {
                     if (!value.fieldMap) return false;
-                    return !validFields(value.fieldMap);
+                    return !validFields(value.fieldMap).length;
                 });
             }
             // 如果是复杂类型, 并且启用了检查, 那么就递归
             if (field.form && field.type === FieldTypes.complex)
-                return !validFields(field.fields);
+                return validFields(field.fields).length;
             // 简单类型就直接检查
             return field.$valid === false;
         });
     }
 
+    /**
+     * 验证商品 Schema, 返回无效的属性名
+     * @param schema
+     * @returns Array.<String>
+     */
     function validSchema(schema) {
-        if (!validFields(schema.masterFields))
-            return false;
         var skuValues = schema.skuFields.complexValues;
-        // 如果没有 sku 字段, 则默认返回通过.
-        if (!skuValues || !skuValues.length)
-            return true;
-        return !skuValues.some(function(value){
-            if (!value.fieldMap) return false;
-            return !validFields(value.fieldMap);
-        });
+        var hasSkuValues = skuValues && skuValues.length;
+        var invalid = [];
+
+        if (hasSkuValues) invalid = skuValues.reduce(function(arr, value) {
+            if (!value.fieldMap) return;
+            return arr.concat(validFields(value.fieldMap));
+        }, invalid);
+
+        invalid = invalid.concat(validFields(schema.masterFields));
+
+        return invalid.reduce(function (arr, item) {
+            if (arr.indexOf(item.name) < 0)
+                arr.push(item.name);
+            return arr;
+        }, []);
     }
 
     return cms.controller('productDetailController', (function () {
@@ -89,10 +100,12 @@ define([
             updateProductDetail: function () {
                 var self = this;
 
-                // TODO 目前验证有问题,暂时不check
                 // 尝试检查商品的 field 验证
-                //if (!validSchema(self.productDetails))
-                //    return self.alert('TXT_MSG_UPDATE_FAIL');
+                var invalidNames = validSchema(self.productDetails);
+
+                if (invalidNames.length) {
+                    return self.alert({id: 'TXT_MSG_INVALID_FEILD', values: {fields: invalidNames.join(', ')}});
+                }
 
                 // 推算产品状态
                 // 如果该产品以前不是approve,这次变成approve的

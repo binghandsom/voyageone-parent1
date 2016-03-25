@@ -382,6 +382,17 @@ public class ProductSkuService extends BaseService {
                                 salePriceList.add(skuModel.getPriceSale());
                             }
 
+                            //vendor price update
+                            if (skuModel.getClientNetPrice() != null) {
+                                updateMap.put("skus.$.client_net_price", skuModel.getClientNetPrice());
+                            }
+                            if (skuModel.getClientMsrpPrice() != null) {
+                                updateMap.put("skus.$.client_msrp_price", skuModel.getClientMsrpPrice());
+                            }
+                            if (skuModel.getClientRetailPrice() != null) {
+                                updateMap.put("skus.$.client_retail_price", skuModel.getClientRetailPrice());
+                            }
+
                             if (updateMap.size() > 0) {
                                 BulkUpdateModel skuUpdateModel = new BulkUpdateModel();
                                 skuUpdateModel.setUpdateMap(updateMap);

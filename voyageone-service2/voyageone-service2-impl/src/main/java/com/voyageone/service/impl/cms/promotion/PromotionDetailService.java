@@ -31,13 +31,13 @@ import java.util.Map;
 public class PromotionDetailService extends BaseService {
 
     @Autowired
-    private CmsPromotionModelDao cmsPromotionModelDao;
+    private CmsBtPromotionModelDao cmsPromotionModelDao;
 
     @Autowired
-    private CmsPromotionCodeDao cmsPromotionCodeDao;
+    private CmsBtPromotionCodeDao cmsPromotionCodeDao;
 
     @Autowired
-    private CmsPromotionSkuDao cmsPromotionSkuDao;
+    private CmsBtPromotionSkuDao cmsPromotionSkuDao;
 
     @Autowired
     private ProductService productService;
@@ -49,7 +49,7 @@ public class PromotionDetailService extends BaseService {
     private CmsBtPromotionDao cmsBtPromotionDao;
 
     @Autowired
-    private CmsPromotionTaskDao cmsPromotionTaskDao;
+    private CmsBtPromotionTaskDao cmsPromotionTaskDao;
 
     /**
      * 添加
@@ -157,7 +157,7 @@ public class PromotionDetailService extends BaseService {
             param.put("modelId", item.getModelId());
 
             Map<Long, List<String>> productIdTagsMap = new HashMap<>();
-            List<CmsBtPromotionCodeModel> codes = cmsPromotionCodeDao.getPromotionCodeList(param);
+            List<CmsBtPromotionCodeModel> codes = cmsPromotionCodeDao.selectPromotionCodeList(param);
             codes.forEach(code -> {
                 Long productId = code.getProductId();
                 if (!productIdTagsMap.containsKey(productId)) {
