@@ -1,7 +1,7 @@
 package com.voyageone.service.impl.cms;
 
 import com.voyageone.base.exception.BusinessException;
-import com.voyageone.common.configs.TypeChannel;
+import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.field.ComplexField;
 import com.voyageone.common.masterdate.schema.field.Field;
@@ -147,7 +147,7 @@ public class CategorySchemaService extends BaseService {
                         break;
                     case SINGLECHECK:
                     case MULTICHECK:
-                        List<Option> options = TypeChannel.getOptions(field.getId(), channelId);
+                        List<Option> options = TypeChannels.getOptions(field.getId(), channelId);
                         OptionsField optionsField = (OptionsField) field;
                         optionsField.setOptions(options);
                         break;

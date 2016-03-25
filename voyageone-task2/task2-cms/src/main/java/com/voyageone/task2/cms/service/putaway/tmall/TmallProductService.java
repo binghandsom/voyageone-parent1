@@ -38,9 +38,8 @@ import com.voyageone.common.components.issueLog.IssueLog;
 import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.components.tmall.TbProductService;
-import com.voyageone.common.configs.ShopConfigs;
+import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
-import com.voyageone.common.util.JsonUtil;
 import com.voyageone.ims.modelbean.DictWordBean;
 import com.voyageone.ims.rule_expression.DictWord;
 import com.voyageone.ims.rule_expression.RuleExpression;
@@ -166,7 +165,7 @@ public class TmallProductService {
         WorkLoadBean workLoadBean = tcb.getWorkLoadBean();
         String channelId = workLoadBean.getOrder_channel_id();
         int cartId = workLoadBean.getCart_id();
-        ShopBean shopBean = ShopConfigs.getShop(channelId, cartId);
+        ShopBean shopBean = Shops.getShop(channelId, cartId);
 
         TmallUploadRunState tmallUploadRunState = new TmallUploadRunState(tcb);
         SxProductBean mainSxProduct = workLoadBean.getMainProduct();
@@ -260,7 +259,7 @@ public class TmallProductService {
 
         ExpressionParser expressionParser = tcb.getExpressionParser();
 
-        ShopBean shopBean = ShopConfigs.getShop(orderChannelId, cartId);
+        ShopBean shopBean = Shops.getShop(orderChannelId, cartId);
 
         List<String> productCodeList = new ArrayList<>();
 
@@ -467,7 +466,7 @@ public class TmallProductService {
         long categoryCode = tmallUploadRunState.getCategory_code();
         String brandCode = tmallUploadRunState.getBrand_code();
         String productCode = tmallUploadRunState.getProduct_code();
-        ShopBean shopBean = ShopConfigs.getShop(workLoadBean.getOrder_channel_id(),
+        ShopBean shopBean = Shops.getShop(workLoadBean.getOrder_channel_id(),
                 String.valueOf(workLoadBean.getCart_id()));
         ExpressionParser expressionParser = tcb.getExpressionParser();
         CmsMtPlatformCategorySchemaModel cmsMtPlatformCategorySchemaModel = workLoadBean.getCmsMtPlatformCategorySchemaModel();
@@ -599,7 +598,7 @@ public class TmallProductService {
         TmallWorkloadStatus tmallWorkloadStatus = (TmallWorkloadStatus) workLoadBean.getWorkload_status();
         String channelId = workLoadBean.getOrder_channel_id();
         int cartId = workLoadBean.getCart_id();
-        ShopBean shopBean = ShopConfigs.getShop(channelId, cartId);
+        ShopBean shopBean = Shops.getShop(channelId, cartId);
         ExpressionParser expressionParser = tcb.getExpressionParser();
         CmsMtPlatformCategorySchemaModel cmsMtPlatformCategorySchemaModel = workLoadBean.getCmsMtPlatformCategorySchemaModel();
         CmsMtPlatformMappingModel cmsMtPlatformMappingModel = workLoadBean.getCmsMtPlatformMappingModel();
@@ -678,7 +677,7 @@ public class TmallProductService {
         UploadImageResult uploadImageResult = tcb.getUploadImageResult();
 
         WorkLoadBean workLoadBean = tcb.getWorkLoadBean();
-        ShopBean shopBean = ShopConfigs.getShop(workLoadBean.getOrder_channel_id(), String.valueOf(workLoadBean.getCart_id()));
+        ShopBean shopBean = Shops.getShop(workLoadBean.getOrder_channel_id(), String.valueOf(workLoadBean.getCart_id()));
 
         TmallUploadRunState.TmallContextBuildFields contextBeforeUploadImage = tmallUploadRunState.getContextBuildFields();
 
@@ -828,7 +827,7 @@ public class TmallProductService {
 
     private String addTmallProduct(Long category_code, String brand_code, List<Field> productFields,
                                    WorkLoadBean workLoadBean) throws ApiException, TopSchemaException, TaskSignal {
-        ShopBean shopBean = ShopConfigs.getShop(workLoadBean.getOrder_channel_id(), String.valueOf(workLoadBean.getCart_id()));
+        ShopBean shopBean = Shops.getShop(workLoadBean.getOrder_channel_id(), String.valueOf(workLoadBean.getCart_id()));
         TmallWorkloadStatus tmallWorkloadStatus = (TmallWorkloadStatus) workLoadBean.getWorkload_status();
         String product_code = null;
 
@@ -886,7 +885,7 @@ public class TmallProductService {
     }
 
     private String getProductStatus(String channel_id, String cart_id, Long product_id) throws ApiException, TopSchemaException {
-        ShopBean shopBean = ShopConfigs.getShop(channel_id, cart_id);
+        ShopBean shopBean = Shops.getShop(channel_id, cart_id);
         String schema = tbProductService.getProductSchema(product_id, shopBean);
         logger.debug("product status schema:" + schema);
         List<Field> fields = SchemaReader.readXmlForList(schema);
@@ -945,7 +944,7 @@ public class TmallProductService {
         String channelId = workLoadBean.getOrder_channel_id();
         int cartId = workLoadBean.getCart_id();
 
-        ShopBean shopBean = ShopConfigs.getShop(channelId, cartId);
+        ShopBean shopBean = Shops.getShop(channelId, cartId);
 
         TmallUploadRunState tmallUploadRunState = new TmallUploadRunState(tcb);
 
@@ -1032,7 +1031,7 @@ public class TmallProductService {
         Long categoryCode = tmallUploadRunState.getCategory_code();
         WorkLoadBean workLoadBean = tcb.getWorkLoadBean();
         TmallWorkloadStatus tmallWorkloadStatus = (TmallWorkloadStatus) workLoadBean.getWorkload_status();
-        ShopBean shopBean = ShopConfigs.getShop(workLoadBean.getOrder_channel_id(), String.valueOf(workLoadBean.getCart_id()));
+        ShopBean shopBean = Shops.getShop(workLoadBean.getOrder_channel_id(), String.valueOf(workLoadBean.getCart_id()));
         String numId = workLoadBean.getNumId();
         String productId = workLoadBean.getProductId();
         Set<String> imageSet = new HashSet<>();
@@ -1108,7 +1107,7 @@ public class TmallProductService {
 
         UploadImageResult uploadImageResult = tcb.getUploadImageResult();
 
-        ShopBean shopBean = ShopConfigs.getShop(workLoadBean.getOrder_channel_id(), String.valueOf(workLoadBean.getCart_id()));
+        ShopBean shopBean = Shops.getShop(workLoadBean.getOrder_channel_id(), String.valueOf(workLoadBean.getCart_id()));
 
 
         Map<String, String> urlMap;
@@ -1509,7 +1508,7 @@ public class TmallProductService {
                         final String sellerCategoryPropId = "seller_cids";
                         if (workLoadBean.getUpJobParam().getMethod() == UpJobParamBean.METHOD_UPDATE) {
                             String numId = workLoadBean.getNumId();
-                            ShopBean shopBean = ShopConfigs.getShop(workLoadBean.getOrder_channel_id(), String.valueOf(workLoadBean.getCart_id()));
+                            ShopBean shopBean = Shops.getShop(workLoadBean.getOrder_channel_id(), String.valueOf(workLoadBean.getCart_id()));
                             try {
                                 TmallItemUpdateSchemaGetResponse response = tbProductService.doGetWareInfoItem(numId, shopBean);
                                 String strXml = response.getUpdateItemResult();

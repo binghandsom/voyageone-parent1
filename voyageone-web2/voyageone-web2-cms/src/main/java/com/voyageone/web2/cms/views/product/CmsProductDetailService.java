@@ -4,8 +4,8 @@ import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.cms.enums.CartType;
 import com.voyageone.common.Constants;
-import com.voyageone.common.configs.Type;
-import com.voyageone.common.configs.TypeChannel;
+import com.voyageone.common.configs.Types;
+import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
@@ -905,7 +905,7 @@ public class CmsProductDetailService {
                     case SINGLECHECK:
                     case MULTICHECK:
                         if (CmsConstants.optionConfigType.OPTION_DATA_SOURCE.equals(field.getDataSource())) {
-                            List<TypeBean> typeBeanList = Type.getTypeList(field.getId(), language);
+                            List<TypeBean> typeBeanList = Types.getTypeList(field.getId(), language);
 
                             // 替换成field需要的样式
                             List<Option> options = new ArrayList<>();
@@ -922,9 +922,9 @@ public class CmsProductDetailService {
                             // 获取type channel bean
                             List<TypeChannelBean> typeChannelBeanList = new ArrayList<>();
                             if (FIELD_SKU_CARTS.equals(field.getId())) {
-                                typeChannelBeanList = TypeChannel.getTypeListSkuCarts(channelId, Constants.comMtTypeChannel.SKU_CARTS_53_A, language);
+                                typeChannelBeanList = TypeChannels.getTypeListSkuCarts(channelId, Constants.comMtTypeChannel.SKU_CARTS_53_A, language);
                             } else {
-                                typeChannelBeanList = TypeChannel.getTypeWithLang(field.getId(), channelId, language);
+                                typeChannelBeanList = TypeChannels.getTypeWithLang(field.getId(), channelId, language);
                             }
 
                             // 替换成field需要的样式

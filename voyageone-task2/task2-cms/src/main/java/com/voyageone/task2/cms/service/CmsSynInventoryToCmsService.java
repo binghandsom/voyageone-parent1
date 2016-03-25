@@ -3,7 +3,7 @@ package com.voyageone.task2.cms.service;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.common.Constants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
-import com.voyageone.common.configs.TypeChannel;
+import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.CommonUtil;
 import com.voyageone.service.dao.cms.mongo.CmsBtProductDao;
@@ -92,7 +92,7 @@ public class CmsSynInventoryToCmsService extends BaseTaskService {
             //获取本渠道的cart
 
 //            List<ShopBean> cartList = ShopConfigs.getChannelShopList(orderChannelID);
-            List<TypeChannelBean> cartList = TypeChannel.getTypeListSkuCarts(orderChannelID, Constants.comMtTypeChannel.SKU_CARTS_53_D, "en");
+            List<TypeChannelBean> cartList = TypeChannels.getTypeListSkuCarts(orderChannelID, Constants.comMtTypeChannel.SKU_CARTS_53_D, "en");
             $info("orderChannelID:" + orderChannelID + "    cart数:" + cartList.size());
 
 

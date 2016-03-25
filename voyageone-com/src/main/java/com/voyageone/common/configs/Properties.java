@@ -15,9 +15,9 @@ import java.util.HashMap;
  * Created by Tester on 4/16/2015.
  */
 public class Properties {
-    private static HashMap<String, String> keyValueMap;
+    private static final Log logger = LogFactory.getLog(Properties.class);
 
-    private static Log logger = LogFactory.getLog(Properties.class);
+    private static HashMap<String, String> keyValueMap;
 
     public static void init() throws IOException {
 

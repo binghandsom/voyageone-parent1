@@ -11,11 +11,11 @@ import com.voyageone.task2.cms.dao.SuperFeedDao;
 import com.voyageone.task2.cms.utils.WebServiceUtil;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.components.transaction.TransactionRunner;
-import com.voyageone.common.configs.ChannelConfigs;
+import com.voyageone.common.configs.Channels;
 import com.voyageone.common.configs.Codes;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.FeedEnums;
-import com.voyageone.common.configs.Feed;
+import com.voyageone.common.configs.Feeds;
 import com.voyageone.common.configs.beans.FtpBean;
 import com.voyageone.common.configs.beans.OrderChannelBean;
 import com.voyageone.common.util.FtpUtil;
@@ -77,7 +77,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
         private OrderChannelBean channel;
 
         public getSuperFeed(String orderChannelId) {
-            this.channel = ChannelConfigs.getChannel(orderChannelId);
+            this.channel = Channels.getChannel(orderChannelId);
         }
 
         public void doRun() {
@@ -150,11 +150,11 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 
         CsvReader reader;
         try {
-            String fileName = Feed.getVal1(ChannelConfigEnums.Channel.JEWELRY.getId(), FeedEnums.Name.file_id);
-            String filePath = Feed.getVal1(ChannelConfigEnums.Channel.JEWELRY.getId(), FeedEnums.Name.feed_ftp_localpath);
+            String fileName = Feeds.getVal1(ChannelConfigEnums.Channel.JEWELRY.getId(), FeedEnums.Name.file_id);
+            String filePath = Feeds.getVal1(ChannelConfigEnums.Channel.JEWELRY.getId(), FeedEnums.Name.feed_ftp_localpath);
             String fileFullName = String.format("%s/%s", filePath, fileName);
 
-            String encode = Feed.getVal1(ChannelConfigEnums.Channel.JEWELRY.getId(), FeedEnums.Name.feed_ftp_file_coding);
+            String encode = Feeds.getVal1(ChannelConfigEnums.Channel.JEWELRY.getId(), FeedEnums.Name.feed_ftp_file_coding);
 
             reader = new CsvReader(new FileInputStream(fileFullName), '\t', Charset.forName(encode));
 
@@ -421,8 +421,8 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 
         CsvReader reader;
         try {
-            reader = new CsvReader(new FileInputStream(Feed.getVal1(ChannelConfigEnums.Channel.LOCONDO.getId(), FeedEnums.Name.feed_ftp_localpath) + "/"
-                    + Feed.getVal1(ChannelConfigEnums.Channel.LOCONDO.getId(), FeedEnums.Name.file_id)), ',', Charset.forName(Feed.getVal1(ChannelConfigEnums.Channel.LOCONDO.getId(), FeedEnums.Name.feed_ftp_file_coding)));
+            reader = new CsvReader(new FileInputStream(Feeds.getVal1(ChannelConfigEnums.Channel.LOCONDO.getId(), FeedEnums.Name.feed_ftp_localpath) + "/"
+                    + Feeds.getVal1(ChannelConfigEnums.Channel.LOCONDO.getId(), FeedEnums.Name.file_id)), ',', Charset.forName(Feeds.getVal1(ChannelConfigEnums.Channel.LOCONDO.getId(), FeedEnums.Name.feed_ftp_file_coding)));
             // Head读入
             reader.readHeaders();
             reader.getHeaders();
@@ -499,7 +499,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
         $info("JE产品信息插入开始");
 
         // 清表
-        if (superfeeddao.deleteTableInfo(Feed.getVal1(ChannelConfigEnums.Channel.JEWELRY.getId(), FeedEnums.Name.table_id)) >= 0) {
+        if (superfeeddao.deleteTableInfo(Feeds.getVal1(ChannelConfigEnums.Channel.JEWELRY.getId(), FeedEnums.Name.table_id)) >= 0) {
             for (SuperFeedJEBean superfeed : superfeedlist) {
 
                 if (superfeeddao.insertSuperfeedJEInfo(superfeed) <= 0) {
@@ -524,7 +524,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
         $info("LC产品信息插入开始");
 
         // 清表
-        if (superfeeddao.deleteTableInfo(Feed.getVal1(ChannelConfigEnums.Channel.LOCONDO.getId(), FeedEnums.Name.table_id)) >= 0) {
+        if (superfeeddao.deleteTableInfo(Feeds.getVal1(ChannelConfigEnums.Channel.LOCONDO.getId(), FeedEnums.Name.table_id)) >= 0) {
             for (SuperFeedLCBean superfeed : superfeedlist) {
 
                 if (superfeeddao.insertSuperfeedLCInfo(superfeed) <= 0) {
@@ -551,7 +551,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 
 
         // 取得category异常数据
-        List<String> err_categorylist = superfeeddao.selectErrData(Feed.getVal1(channel_id, FeedEnums.Name.feed_delete_category_err_sql));
+        List<String> err_categorylist = superfeeddao.selectErrData(Feeds.getVal1(channel_id, FeedEnums.Name.feed_delete_category_err_sql));
 
         // 异常数据-邮件提示
         String err_data_maill = "category异常:";
@@ -566,9 +566,9 @@ public class CmsGetSuperFeedService extends BaseTaskService {
             logIssue("cms 数据导入处理", "异常数据清除对象=>" + err_data_maill);
 
             // 去掉最后一个“，”
-            err_data = Feed.getVal1(channel_id, FeedEnums.Name.feed_item_key) + " in (" + err_data.substring(0, err_data.lastIndexOf(",")) + ")";
+            err_data = Feeds.getVal1(channel_id, FeedEnums.Name.feed_item_key) + " in (" + err_data.substring(0, err_data.lastIndexOf(",")) + ")";
 
-            if (superfeeddao.deleteErrData(Feed.getVal1(channel_id, FeedEnums.Name.table_id), err_data) <= 0) {
+            if (superfeeddao.deleteErrData(Feeds.getVal1(channel_id, FeedEnums.Name.table_id), err_data) <= 0) {
                 //异常数据清除失败
                 $info("异常数据清除失败");
                 logIssue("cms 数据导入处理", "异常数据清除失败");
@@ -577,7 +577,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
         }
 
         // 取得model异常数据
-        List<String> err_modellist = superfeeddao.selectErrData(Feed.getVal1(channel_id, FeedEnums.Name.feed_delete_model_sql));
+        List<String> err_modellist = superfeeddao.selectErrData(Feeds.getVal1(channel_id, FeedEnums.Name.feed_delete_model_sql));
         err_data_maill = "model异常:";
         err_data = "";
         for (String anErr_modellist : err_modellist) {
@@ -589,9 +589,9 @@ public class CmsGetSuperFeedService extends BaseTaskService {
             logIssue("cms 数据导入处理", "异常数据清除对象=>" + err_data_maill);
 
             // 去掉最后一个“，”
-            err_data = Feed.getVal1(channel_id, FeedEnums.Name.feed_item_key) + " in (" + err_data.substring(0, err_data.lastIndexOf(",")) + ")";
+            err_data = Feeds.getVal1(channel_id, FeedEnums.Name.feed_item_key) + " in (" + err_data.substring(0, err_data.lastIndexOf(",")) + ")";
 
-            if (superfeeddao.deleteErrData(Feed.getVal1(channel_id, FeedEnums.Name.table_id), err_data) <= 0) {
+            if (superfeeddao.deleteErrData(Feeds.getVal1(channel_id, FeedEnums.Name.table_id), err_data) <= 0) {
                 //异常数据清除失败
                 $info("异常数据清除失败");
                 logIssue("cms 数据导入处理", "异常数据清除失败");
@@ -600,7 +600,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
         }
 
         // 取得product异常数据
-        List<String> err_productlist = superfeeddao.selectErrData(Feed.getVal1(channel_id, FeedEnums.Name.feed_delete_product_sql));
+        List<String> err_productlist = superfeeddao.selectErrData(Feeds.getVal1(channel_id, FeedEnums.Name.feed_delete_product_sql));
         err_data = "";
         err_data_maill = "product异常:";
         for (String anErr_productlist : err_productlist) {
@@ -612,9 +612,9 @@ public class CmsGetSuperFeedService extends BaseTaskService {
             logIssue("cms 数据导入处理", "异常数据清除对象=>" + err_data_maill);
 
             // 去掉最后一个“，”
-            err_data = Feed.getVal1(channel_id, FeedEnums.Name.feed_item_key) + " in (" + err_data.substring(0, err_data.lastIndexOf(",")) + ")";
+            err_data = Feeds.getVal1(channel_id, FeedEnums.Name.feed_item_key) + " in (" + err_data.substring(0, err_data.lastIndexOf(",")) + ")";
 
-            if (superfeeddao.deleteErrData(Feed.getVal1(channel_id, FeedEnums.Name.table_id), err_data) <= 0) {
+            if (superfeeddao.deleteErrData(Feeds.getVal1(channel_id, FeedEnums.Name.table_id), err_data) <= 0) {
                 //异常数据清除失败
                 $info("异常数据清除失败");
                 logIssue("cms 数据导入处理", "异常数据清除失败");
@@ -623,7 +623,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
         }
 
         // 取得有model无product异常数据
-        List<String> err_model_noproductlist = superfeeddao.selectErrData(Feed.getVal1(channel_id, FeedEnums.Name.feed_delete_model_no_product_sql));
+        List<String> err_model_noproductlist = superfeeddao.selectErrData(Feeds.getVal1(channel_id, FeedEnums.Name.feed_delete_model_no_product_sql));
         err_data = "";
         err_data_maill = "有model无product异常:";
         for (String anErr_model_noproductlist : err_model_noproductlist) {
@@ -635,9 +635,9 @@ public class CmsGetSuperFeedService extends BaseTaskService {
             logIssue("cms 数据导入处理", "异常数据清除对象=>" + err_data_maill);
 
             // 去掉最后一个“，”
-            err_data = Feed.getVal1(channel_id, FeedEnums.Name.feed_item_key) + " in (" + err_data.substring(0, err_data.lastIndexOf(",")) + ")";
+            err_data = Feeds.getVal1(channel_id, FeedEnums.Name.feed_item_key) + " in (" + err_data.substring(0, err_data.lastIndexOf(",")) + ")";
 
-            if (superfeeddao.deleteErrData(Feed.getVal1(channel_id, FeedEnums.Name.table_id), err_data) <= 0) {
+            if (superfeeddao.deleteErrData(Feeds.getVal1(channel_id, FeedEnums.Name.table_id), err_data) <= 0) {
                 //异常数据清除失败
                 $info("异常数据清除失败");
                 logIssue("cms 数据导入处理", "异常数据清除失败");
@@ -646,7 +646,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
         }
 
         // 取得有prouduct无model异常数据
-        List<String> err_product_nomodellist = superfeeddao.selectErrData(Feed.getVal1(channel_id, FeedEnums.Name.feed_delete_product_no_model_sql));
+        List<String> err_product_nomodellist = superfeeddao.selectErrData(Feeds.getVal1(channel_id, FeedEnums.Name.feed_delete_product_no_model_sql));
         err_data = "";
         err_data_maill = "有prouduct无model异常:";
         for (String anErr_product_nomodellist : err_product_nomodellist) {
@@ -658,9 +658,9 @@ public class CmsGetSuperFeedService extends BaseTaskService {
             logIssue("cms 数据导入处理", "异常数据清除对象=>" + err_data_maill);
 
             // 去掉最后一个“，”
-            err_data = Feed.getVal1(channel_id, FeedEnums.Name.feed_item_key) + " in (" + err_data.substring(0, err_data.lastIndexOf(",")) + ")";
+            err_data = Feeds.getVal1(channel_id, FeedEnums.Name.feed_item_key) + " in (" + err_data.substring(0, err_data.lastIndexOf(",")) + ")";
 
-            if (superfeeddao.deleteErrData(Feed.getVal1(channel_id, FeedEnums.Name.table_id), err_data) <= 0) {
+            if (superfeeddao.deleteErrData(Feeds.getVal1(channel_id, FeedEnums.Name.table_id), err_data) <= 0) {
                 //异常数据清除失败
                 $info("异常数据清除失败");
                 logIssue("cms 数据导入处理", "异常数据清除失败");
@@ -673,16 +673,16 @@ public class CmsGetSuperFeedService extends BaseTaskService {
         $info("数据判定开始");
         if (isSuccess) {
             // insert data
-            List<String> insert_data = superfeeddao.inertSuperfeedInsertData(Feed.getVal1(channel_id, FeedEnums.Name.category_column),
-                    Feed.getVal1(channel_id, FeedEnums.Name.feed_model_key),
-                    Feed.getVal1(channel_id, FeedEnums.Name.feed_code_key),
-                    Feed.getVal1(channel_id, FeedEnums.Name.table_id),
-                    Feed.getVal1(channel_id, FeedEnums.Name.table_id) + "_full");
+            List<String> insert_data = superfeeddao.inertSuperfeedInsertData(Feeds.getVal1(channel_id, FeedEnums.Name.category_column),
+                    Feeds.getVal1(channel_id, FeedEnums.Name.feed_model_key),
+                    Feeds.getVal1(channel_id, FeedEnums.Name.feed_code_key),
+                    Feeds.getVal1(channel_id, FeedEnums.Name.table_id),
+                    Feeds.getVal1(channel_id, FeedEnums.Name.table_id) + "_full");
 
             // update data
-            List<String> update_data = superfeeddao.inertSuperfeedUpdateData(Feed.getVal1(channel_id, FeedEnums.Name.feed_code_key),
-                    Feed.getVal1(channel_id, FeedEnums.Name.table_id),
-                    Feed.getVal1(channel_id, FeedEnums.Name.table_id) + "_full");
+            List<String> update_data = superfeeddao.inertSuperfeedUpdateData(Feeds.getVal1(channel_id, FeedEnums.Name.feed_code_key),
+                    Feeds.getVal1(channel_id, FeedEnums.Name.table_id),
+                    Feeds.getVal1(channel_id, FeedEnums.Name.table_id) + "_full");
 
             // 新数据_code
             String str_code_insert = "";
@@ -697,9 +697,9 @@ public class CmsGetSuperFeedService extends BaseTaskService {
                 str_code_insert = str_code_insert.substring(0, str_code_insert.lastIndexOf(","));
 
                 // 插入数据 更新UpdateFlag :1
-                int reslut_insert = superfeeddao.updateInsertData(Feed.getVal1(channel_id, FeedEnums.Name.table_id),
-                        Feed.getVal1(channel_id, FeedEnums.Name.product_keyword),
-                        Feed.getVal1(channel_id, FeedEnums.Name.feed_code_key),
+                int reslut_insert = superfeeddao.updateInsertData(Feeds.getVal1(channel_id, FeedEnums.Name.table_id),
+                        Feeds.getVal1(channel_id, FeedEnums.Name.product_keyword),
+                        Feeds.getVal1(channel_id, FeedEnums.Name.feed_code_key),
                         str_code_insert);
 
                 if (reslut_insert <= 0) {
@@ -707,8 +707,8 @@ public class CmsGetSuperFeedService extends BaseTaskService {
                 }
 
                 // 插入数据 补足没有model的数据
-                int reslut_insertmodel = superfeeddao.updateInsertModelData(Feed.getVal1(channel_id, FeedEnums.Name.table_id), Feed.getVal1(channel_id, FeedEnums.Name.feed_model_key),
-                        Feed.getVal1(channel_id, FeedEnums.Name.feed_code_key), str_code_insert, Feed.getVal1(channel_id, FeedEnums.Name.feed_model_keyword));
+                int reslut_insertmodel = superfeeddao.updateInsertModelData(Feeds.getVal1(channel_id, FeedEnums.Name.table_id), Feeds.getVal1(channel_id, FeedEnums.Name.feed_model_key),
+                        Feeds.getVal1(channel_id, FeedEnums.Name.feed_code_key), str_code_insert, Feeds.getVal1(channel_id, FeedEnums.Name.feed_model_keyword));
                 if (reslut_insertmodel < 0) {
                     logIssue("cms 数据导入处理", "更新UpdateFlag :1 ( for model ), 无受影响行数");
                 }
@@ -723,7 +723,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
                 str_code_update = str_code_update.substring(0, str_code_update.lastIndexOf(","));
 
                 // 更新数据 更新UpdateFlag :2，3
-                int reslut_update = superfeeddao.updateUpdateData(Feed.getVal1(channel_id, FeedEnums.Name.table_id), Feed.getVal1(channel_id, FeedEnums.Name.feed_code_key), str_code_update);
+                int reslut_update = superfeeddao.updateUpdateData(Feeds.getVal1(channel_id, FeedEnums.Name.table_id), Feeds.getVal1(channel_id, FeedEnums.Name.feed_code_key), str_code_update);
                 if (reslut_update <= 0) {
                     logIssue("cms 数据导入处理", "更新UpdateFlag :2，3 ( for all ), 无受影响行数");
                 }
@@ -746,7 +746,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
         String keyword = " and UpdateFlag in ('1','3')";
 
         // 取得所有Superfeed category划分
-        List<String> superfeedjebeanlist = superfeeddao.selectSuperfeedCategory(Feed.getVal1(channel_id, FeedEnums.Name.category_column), Feed.getVal1(channel_id, FeedEnums.Name.table_id), keyword);
+        List<String> superfeedjebeanlist = superfeeddao.selectSuperfeedCategory(Feeds.getVal1(channel_id, FeedEnums.Name.category_column), Feeds.getVal1(channel_id, FeedEnums.Name.table_id), keyword);
 
         for (String aSuperfeedjebeanlist : superfeedjebeanlist) {
 
@@ -759,7 +759,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
             $info("新产品category= " + aSuperfeedjebeanlist);
 
             // category
-            String[] strarray = aSuperfeedjebeanlist.split(Feed.getVal1(channel_id, FeedEnums.Name.category_split));
+            String[] strarray = aSuperfeedjebeanlist.split(Feeds.getVal1(channel_id, FeedEnums.Name.category_split));
             for (int j = 0; j < strarray.length; j++) {
                 CategoryBean categoryBean = new CategoryBean();
 
@@ -768,14 +768,14 @@ public class CmsGetSuperFeedService extends BaseTaskService {
                     categoryBean.setC_name(strarray[j]);
                     categoryBean.setC_header_title(strarray[j]);
                     // 全部小写,且空格用-替代
-                    categoryBean.setUrl_key(formaturl(channel_id, strarray[j], "1", Feed.getVal1(channel_id, FeedEnums.Name.category_split)));
+                    categoryBean.setUrl_key(formaturl(channel_id, strarray[j], "1", Feeds.getVal1(channel_id, FeedEnums.Name.category_split)));
 
                 } else {
                     // 子层
                     categoryBean.setC_name(strarray[j]);
                     categoryBean.setC_header_title(strarray[j]);
                     // 全部小写,且空格用-替代
-                    categoryBean.setUrl_key(categoryBeans.get(categoryBeans.size() - 1).getUrl_key() + '-' + formaturl(channel_id, strarray[j], "1", Feed.getVal1(channel_id, FeedEnums.Name.category_split)));
+                    categoryBean.setUrl_key(categoryBeans.get(categoryBeans.size() - 1).getUrl_key() + '-' + formaturl(channel_id, strarray[j], "1", Feeds.getVal1(channel_id, FeedEnums.Name.category_split)));
                     categoryBean.setParent_url_key(categoryBeans.get(categoryBeans.size() - 1).getUrl_key());
                 }
 
@@ -793,7 +793,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 
                         List<ProductBean> productBeans;
                         // product 取得
-                        productBeans = createProduct(channel_id, aSuperfeedjebeanlist, modelbean.getM_model(), "", keyword, Feed.getVal1(channel_id, FeedEnums.Name.table_id));
+                        productBeans = createProduct(channel_id, aSuperfeedjebeanlist, modelbean.getM_model(), "", keyword, Feeds.getVal1(channel_id, FeedEnums.Name.table_id));
 
                         $info("新产品product= " + productBeans.get(0).getP_code());
 
@@ -810,9 +810,9 @@ public class CmsGetSuperFeedService extends BaseTaskService {
                 $info("新产品Attribute处理异常");
 
                 // 更新update数据flag
-                superfeeddao.changeUpdateDateFlag(Feed.getVal1(channel_id, FeedEnums.Name.table_id),
+                superfeeddao.changeUpdateDateFlag(Feeds.getVal1(channel_id, FeedEnums.Name.table_id),
                         keyword,
-                        Feed.getVal1(channel_id, FeedEnums.Name.category_column),
+                        Feeds.getVal1(channel_id, FeedEnums.Name.category_column),
                         "'" + aSuperfeedjebeanlist + "'");
                 continue;
             }
@@ -826,7 +826,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
             }
 
             // 100 model 推送一次
-            int post_max_model = Integer.parseInt(Feed.getVal1(channel_id, FeedEnums.Name.post_max_model));
+            int post_max_model = Integer.parseInt(Feeds.getVal1(channel_id, FeedEnums.Name.post_max_model));
             int post_count = model_size / post_max_model;
             if (model_size % post_max_model > 0) {
                 post_count = post_count + 1;
@@ -929,9 +929,9 @@ public class CmsGetSuperFeedService extends BaseTaskService {
             } else {
 //				// 更新update数据flag
                 // 更新update数据flag
-                superfeeddao.changeUpdateDateFlag(Feed.getVal1(channel_id, FeedEnums.Name.table_id),
+                superfeeddao.changeUpdateDateFlag(Feeds.getVal1(channel_id, FeedEnums.Name.table_id),
                         keyword,
-                        Feed.getVal1(channel_id, FeedEnums.Name.category_column),
+                        Feeds.getVal1(channel_id, FeedEnums.Name.category_column),
                         "'" + aSuperfeedjebeanlist + "'");
             }
         }
@@ -951,80 +951,80 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 
         AttributeBean attributebean_param = new AttributeBean();
 
-        attributebean_param.setCategory_url_key(Feed.getVal1(channel_id, FeedEnums.Name.product_category_url_key));
-        attributebean_param.setModel_url_key(Feed.getVal1(channel_id, FeedEnums.Name.product_model_url_key));
-        attributebean_param.setProduct_url_key(Feed.getVal1(channel_id, FeedEnums.Name.product_url_key));
-        attributebean_param.setAttribute1(Feed.getVal1(channel_id, FeedEnums.Name.attribute1));
-        attributebean_param.setAttribute2(Feed.getVal1(channel_id, FeedEnums.Name.attribute2));
-        attributebean_param.setAttribute3(Feed.getVal1(channel_id, FeedEnums.Name.attribute3));
-        attributebean_param.setAttribute4(Feed.getVal1(channel_id, FeedEnums.Name.attribute4));
-        attributebean_param.setAttribute5(Feed.getVal1(channel_id, FeedEnums.Name.attribute5));
-        attributebean_param.setAttribute6(Feed.getVal1(channel_id, FeedEnums.Name.attribute6));
-        attributebean_param.setAttribute7(Feed.getVal1(channel_id, FeedEnums.Name.attribute7));
-        attributebean_param.setAttribute8(Feed.getVal1(channel_id, FeedEnums.Name.attribute8));
-        attributebean_param.setAttribute9(Feed.getVal1(channel_id, FeedEnums.Name.attribute9));
-        attributebean_param.setAttribute10(Feed.getVal1(channel_id, FeedEnums.Name.attribute10));
-        attributebean_param.setAttribute11(Feed.getVal1(channel_id, FeedEnums.Name.attribute11));
-        attributebean_param.setAttribute12(Feed.getVal1(channel_id, FeedEnums.Name.attribute12));
-        attributebean_param.setAttribute13(Feed.getVal1(channel_id, FeedEnums.Name.attribute13));
-        attributebean_param.setAttribute14(Feed.getVal1(channel_id, FeedEnums.Name.attribute14));
-        attributebean_param.setAttribute15(Feed.getVal1(channel_id, FeedEnums.Name.attribute15));
-        attributebean_param.setAttribute16(Feed.getVal1(channel_id, FeedEnums.Name.attribute16));
-        attributebean_param.setAttribute17(Feed.getVal1(channel_id, FeedEnums.Name.attribute17));
-        attributebean_param.setAttribute18(Feed.getVal1(channel_id, FeedEnums.Name.attribute18));
-        attributebean_param.setAttribute19(Feed.getVal1(channel_id, FeedEnums.Name.attribute19));
-        attributebean_param.setAttribute20(Feed.getVal1(channel_id, FeedEnums.Name.attribute20));
-        attributebean_param.setAttribute21(Feed.getVal1(channel_id, FeedEnums.Name.attribute21));
-        attributebean_param.setAttribute22(Feed.getVal1(channel_id, FeedEnums.Name.attribute22));
-        attributebean_param.setAttribute23(Feed.getVal1(channel_id, FeedEnums.Name.attribute23));
-        attributebean_param.setAttribute24(Feed.getVal1(channel_id, FeedEnums.Name.attribute24));
-        attributebean_param.setAttribute25(Feed.getVal1(channel_id, FeedEnums.Name.attribute25));
-        attributebean_param.setAttribute26(Feed.getVal1(channel_id, FeedEnums.Name.attribute26));
-        attributebean_param.setAttribute27(Feed.getVal1(channel_id, FeedEnums.Name.attribute27));
-        attributebean_param.setAttribute28(Feed.getVal1(channel_id, FeedEnums.Name.attribute28));
-        attributebean_param.setAttribute29(Feed.getVal1(channel_id, FeedEnums.Name.attribute29));
-        attributebean_param.setAttribute30(Feed.getVal1(channel_id, FeedEnums.Name.attribute30));
-        attributebean_param.setAttribute31(Feed.getVal1(channel_id, FeedEnums.Name.attribute31));
-        attributebean_param.setAttribute32(Feed.getVal1(channel_id, FeedEnums.Name.attribute32));
-        attributebean_param.setAttribute33(Feed.getVal1(channel_id, FeedEnums.Name.attribute33));
-        attributebean_param.setAttribute34(Feed.getVal1(channel_id, FeedEnums.Name.attribute34));
-        attributebean_param.setAttribute35(Feed.getVal1(channel_id, FeedEnums.Name.attribute35));
-        attributebean_param.setAttribute36(Feed.getVal1(channel_id, FeedEnums.Name.attribute36));
-        attributebean_param.setAttribute37(Feed.getVal1(channel_id, FeedEnums.Name.attribute37));
-        attributebean_param.setAttribute37(Feed.getVal1(channel_id, FeedEnums.Name.attribute37));
-        attributebean_param.setAttribute38(Feed.getVal1(channel_id, FeedEnums.Name.attribute38));
-        attributebean_param.setAttribute39(Feed.getVal1(channel_id, FeedEnums.Name.attribute39));
-        attributebean_param.setAttribute40(Feed.getVal1(channel_id, FeedEnums.Name.attribute40));
-        attributebean_param.setAttribute41(Feed.getVal1(channel_id, FeedEnums.Name.attribute41));
-        attributebean_param.setAttribute42(Feed.getVal1(channel_id, FeedEnums.Name.attribute42));
-        attributebean_param.setAttribute43(Feed.getVal1(channel_id, FeedEnums.Name.attribute43));
-        attributebean_param.setAttribute44(Feed.getVal1(channel_id, FeedEnums.Name.attribute44));
-        attributebean_param.setAttribute45(Feed.getVal1(channel_id, FeedEnums.Name.attribute45));
-        attributebean_param.setAttribute46(Feed.getVal1(channel_id, FeedEnums.Name.attribute46));
-        attributebean_param.setAttribute47(Feed.getVal1(channel_id, FeedEnums.Name.attribute47));
-        attributebean_param.setAttribute48(Feed.getVal1(channel_id, FeedEnums.Name.attribute48));
-        attributebean_param.setAttribute49(Feed.getVal1(channel_id, FeedEnums.Name.attribute49));
-        attributebean_param.setAttribute50(Feed.getVal1(channel_id, FeedEnums.Name.attribute50));
+        attributebean_param.setCategory_url_key(Feeds.getVal1(channel_id, FeedEnums.Name.product_category_url_key));
+        attributebean_param.setModel_url_key(Feeds.getVal1(channel_id, FeedEnums.Name.product_model_url_key));
+        attributebean_param.setProduct_url_key(Feeds.getVal1(channel_id, FeedEnums.Name.product_url_key));
+        attributebean_param.setAttribute1(Feeds.getVal1(channel_id, FeedEnums.Name.attribute1));
+        attributebean_param.setAttribute2(Feeds.getVal1(channel_id, FeedEnums.Name.attribute2));
+        attributebean_param.setAttribute3(Feeds.getVal1(channel_id, FeedEnums.Name.attribute3));
+        attributebean_param.setAttribute4(Feeds.getVal1(channel_id, FeedEnums.Name.attribute4));
+        attributebean_param.setAttribute5(Feeds.getVal1(channel_id, FeedEnums.Name.attribute5));
+        attributebean_param.setAttribute6(Feeds.getVal1(channel_id, FeedEnums.Name.attribute6));
+        attributebean_param.setAttribute7(Feeds.getVal1(channel_id, FeedEnums.Name.attribute7));
+        attributebean_param.setAttribute8(Feeds.getVal1(channel_id, FeedEnums.Name.attribute8));
+        attributebean_param.setAttribute9(Feeds.getVal1(channel_id, FeedEnums.Name.attribute9));
+        attributebean_param.setAttribute10(Feeds.getVal1(channel_id, FeedEnums.Name.attribute10));
+        attributebean_param.setAttribute11(Feeds.getVal1(channel_id, FeedEnums.Name.attribute11));
+        attributebean_param.setAttribute12(Feeds.getVal1(channel_id, FeedEnums.Name.attribute12));
+        attributebean_param.setAttribute13(Feeds.getVal1(channel_id, FeedEnums.Name.attribute13));
+        attributebean_param.setAttribute14(Feeds.getVal1(channel_id, FeedEnums.Name.attribute14));
+        attributebean_param.setAttribute15(Feeds.getVal1(channel_id, FeedEnums.Name.attribute15));
+        attributebean_param.setAttribute16(Feeds.getVal1(channel_id, FeedEnums.Name.attribute16));
+        attributebean_param.setAttribute17(Feeds.getVal1(channel_id, FeedEnums.Name.attribute17));
+        attributebean_param.setAttribute18(Feeds.getVal1(channel_id, FeedEnums.Name.attribute18));
+        attributebean_param.setAttribute19(Feeds.getVal1(channel_id, FeedEnums.Name.attribute19));
+        attributebean_param.setAttribute20(Feeds.getVal1(channel_id, FeedEnums.Name.attribute20));
+        attributebean_param.setAttribute21(Feeds.getVal1(channel_id, FeedEnums.Name.attribute21));
+        attributebean_param.setAttribute22(Feeds.getVal1(channel_id, FeedEnums.Name.attribute22));
+        attributebean_param.setAttribute23(Feeds.getVal1(channel_id, FeedEnums.Name.attribute23));
+        attributebean_param.setAttribute24(Feeds.getVal1(channel_id, FeedEnums.Name.attribute24));
+        attributebean_param.setAttribute25(Feeds.getVal1(channel_id, FeedEnums.Name.attribute25));
+        attributebean_param.setAttribute26(Feeds.getVal1(channel_id, FeedEnums.Name.attribute26));
+        attributebean_param.setAttribute27(Feeds.getVal1(channel_id, FeedEnums.Name.attribute27));
+        attributebean_param.setAttribute28(Feeds.getVal1(channel_id, FeedEnums.Name.attribute28));
+        attributebean_param.setAttribute29(Feeds.getVal1(channel_id, FeedEnums.Name.attribute29));
+        attributebean_param.setAttribute30(Feeds.getVal1(channel_id, FeedEnums.Name.attribute30));
+        attributebean_param.setAttribute31(Feeds.getVal1(channel_id, FeedEnums.Name.attribute31));
+        attributebean_param.setAttribute32(Feeds.getVal1(channel_id, FeedEnums.Name.attribute32));
+        attributebean_param.setAttribute33(Feeds.getVal1(channel_id, FeedEnums.Name.attribute33));
+        attributebean_param.setAttribute34(Feeds.getVal1(channel_id, FeedEnums.Name.attribute34));
+        attributebean_param.setAttribute35(Feeds.getVal1(channel_id, FeedEnums.Name.attribute35));
+        attributebean_param.setAttribute36(Feeds.getVal1(channel_id, FeedEnums.Name.attribute36));
+        attributebean_param.setAttribute37(Feeds.getVal1(channel_id, FeedEnums.Name.attribute37));
+        attributebean_param.setAttribute37(Feeds.getVal1(channel_id, FeedEnums.Name.attribute37));
+        attributebean_param.setAttribute38(Feeds.getVal1(channel_id, FeedEnums.Name.attribute38));
+        attributebean_param.setAttribute39(Feeds.getVal1(channel_id, FeedEnums.Name.attribute39));
+        attributebean_param.setAttribute40(Feeds.getVal1(channel_id, FeedEnums.Name.attribute40));
+        attributebean_param.setAttribute41(Feeds.getVal1(channel_id, FeedEnums.Name.attribute41));
+        attributebean_param.setAttribute42(Feeds.getVal1(channel_id, FeedEnums.Name.attribute42));
+        attributebean_param.setAttribute43(Feeds.getVal1(channel_id, FeedEnums.Name.attribute43));
+        attributebean_param.setAttribute44(Feeds.getVal1(channel_id, FeedEnums.Name.attribute44));
+        attributebean_param.setAttribute45(Feeds.getVal1(channel_id, FeedEnums.Name.attribute45));
+        attributebean_param.setAttribute46(Feeds.getVal1(channel_id, FeedEnums.Name.attribute46));
+        attributebean_param.setAttribute47(Feeds.getVal1(channel_id, FeedEnums.Name.attribute47));
+        attributebean_param.setAttribute48(Feeds.getVal1(channel_id, FeedEnums.Name.attribute48));
+        attributebean_param.setAttribute49(Feeds.getVal1(channel_id, FeedEnums.Name.attribute49));
+        attributebean_param.setAttribute50(Feeds.getVal1(channel_id, FeedEnums.Name.attribute50));
 
-        String keyword_attribute = Feed.getVal1(channel_id, FeedEnums.Name.product_keyword) + keyword;
+        String keyword_attribute = Feeds.getVal1(channel_id, FeedEnums.Name.product_keyword) + keyword;
 
         if (!Objects.equals(category, "")) {
-            keyword_attribute = keyword_attribute + " and " + Feed.getVal1(channel_id, FeedEnums.Name.product_category_url_key) + " ='" + transferStr(category) + "'";
+            keyword_attribute = keyword_attribute + " and " + Feeds.getVal1(channel_id, FeedEnums.Name.product_category_url_key) + " ='" + transferStr(category) + "'";
         }
 
         if (!Objects.equals(product, "")) {
-            keyword_attribute = keyword_attribute + " and " + Feed.getVal1(channel_id, FeedEnums.Name.product_p_code) + " ='" + transferStr(product) + "'";
+            keyword_attribute = keyword_attribute + " and " + Feeds.getVal1(channel_id, FeedEnums.Name.product_p_code) + " ='" + transferStr(product) + "'";
         }
 
         // 新产品Attribute处理
         ProductsFeedAttribute productsFeedAttribute = new ProductsFeedAttribute();
-        List<AttributeBean> attributebeans = superfeeddao.selectAttribute(attributebean_param, Feed.getVal1(channel_id, FeedEnums.Name.table_id), keyword_attribute);
+        List<AttributeBean> attributebeans = superfeeddao.selectAttribute(attributebean_param, Feeds.getVal1(channel_id, FeedEnums.Name.table_id), keyword_attribute);
 
         for (int k = 0; k < attributebeans.size(); k++) {
             AttributeBean attributebean = attributebeans.get(k);
-            attributebean.setCategory_url_key(formaturl(channel_id, attributebean.getCategory_url_key(), "1", Feed.getVal1(channel_id, FeedEnums.Name.category_split)));
-            attributebean.setModel_url_key(formaturl(channel_id, attributebean.getModel_url_key(), "1", Feed.getVal1(channel_id, FeedEnums.Name.category_split)));
-            attributebean.setProduct_url_key(formaturl(channel_id, attributebean.getProduct_url_key(), "1", Feed.getVal1(channel_id, FeedEnums.Name.category_split)));
+            attributebean.setCategory_url_key(formaturl(channel_id, attributebean.getCategory_url_key(), "1", Feeds.getVal1(channel_id, FeedEnums.Name.category_split)));
+            attributebean.setModel_url_key(formaturl(channel_id, attributebean.getModel_url_key(), "1", Feeds.getVal1(channel_id, FeedEnums.Name.category_split)));
+            attributebean.setProduct_url_key(formaturl(channel_id, attributebean.getProduct_url_key(), "1", Feeds.getVal1(channel_id, FeedEnums.Name.category_split)));
 
             attributebeans.set(k, attributebean);
         }
@@ -1069,14 +1069,14 @@ public class CmsGetSuperFeedService extends BaseTaskService {
         List<ProductBean> productBeans;
 
         // product 取得
-        productBeans = createProduct(channel_id, "", "", "", keyword, Feed.getVal1(channel_id, FeedEnums.Name.table_id));
+        productBeans = createProduct(channel_id, "", "", "", keyword, Feeds.getVal1(channel_id, FeedEnums.Name.table_id));
 
         // 自动生成 Name Urlkey Parentcategory Parenturlkey
         for (ProductBean productBean : productBeans) {
 
             ProductsFeedUpdate productsFeed = new ProductsFeedUpdate();
 
-            List<ProductBean> productBeans_full = createProduct(channel_id, "", "", transferStr(productBean.getP_code()), "", Feed.getVal1(channel_id, FeedEnums.Name.table_id) + "_full");
+            List<ProductBean> productBeans_full = createProduct(channel_id, "", "", transferStr(productBean.getP_code()), "", Feeds.getVal1(channel_id, FeedEnums.Name.table_id) + "_full");
 
             if (productBeans_full.size() != 1) {
 //                logger.error("更新产品处理异常 code=" + productBean.getP_code() + ",抽出件数=" + productBeans_full.size());
@@ -1216,42 +1216,42 @@ public class CmsGetSuperFeedService extends BaseTaskService {
         List<ModelBean> modelBeans;
 
         ModelBean modelbean_params = new ModelBean();
-        String model_keyword = Feed.getVal1(channel_id, FeedEnums.Name.model_keyword) + " and "
-                + Feed.getVal1(channel_id, FeedEnums.Name.model_category_url_key) + "='" + transferStr(category) + "' " + keyword;
+        String model_keyword = Feeds.getVal1(channel_id, FeedEnums.Name.model_keyword) + " and "
+                + Feeds.getVal1(channel_id, FeedEnums.Name.model_category_url_key) + "='" + transferStr(category) + "' " + keyword;
 
         // Model 字段 以category为单位
-        modelbean_params.setUrl_key(Feed.getVal1(channel_id, FeedEnums.Name.model_url_key));
-        modelbean_params.setCategory_url_key(Feed.getVal1(channel_id, FeedEnums.Name.model_category_url_key));
-        modelbean_params.setM_product_type(Feed.getVal1(channel_id, FeedEnums.Name.model_m_product_type));
+        modelbean_params.setUrl_key(Feeds.getVal1(channel_id, FeedEnums.Name.model_url_key));
+        modelbean_params.setCategory_url_key(Feeds.getVal1(channel_id, FeedEnums.Name.model_category_url_key));
+        modelbean_params.setM_product_type(Feeds.getVal1(channel_id, FeedEnums.Name.model_m_product_type));
 
-        modelbean_params.setM_brand(Feed.getVal1(channel_id, FeedEnums.Name.model_m_brand));
+        modelbean_params.setM_brand(Feeds.getVal1(channel_id, FeedEnums.Name.model_m_brand));
 
-        modelbean_params.setM_model(Feed.getVal1(channel_id, FeedEnums.Name.model_m_model));
-        modelbean_params.setM_name(Feed.getVal1(channel_id, FeedEnums.Name.model_m_name));
+        modelbean_params.setM_model(Feeds.getVal1(channel_id, FeedEnums.Name.model_m_model));
+        modelbean_params.setM_name(Feeds.getVal1(channel_id, FeedEnums.Name.model_m_name));
 
-        modelbean_params.setM_short_description(Feed.getVal1(channel_id, FeedEnums.Name.model_m_short_description));
-        modelbean_params.setM_long_description(Feed.getVal1(channel_id, FeedEnums.Name.model_m_long_description));
+        modelbean_params.setM_short_description(Feeds.getVal1(channel_id, FeedEnums.Name.model_m_short_description));
+        modelbean_params.setM_long_description(Feeds.getVal1(channel_id, FeedEnums.Name.model_m_long_description));
 
-        modelbean_params.setM_size_type(Feed.getVal1(channel_id, FeedEnums.Name.model_m_size_type));
+        modelbean_params.setM_size_type(Feeds.getVal1(channel_id, FeedEnums.Name.model_m_size_type));
 
-        modelbean_params.setM_is_unisex(Feed.getVal1(channel_id, FeedEnums.Name.model_m_is_unisex));
+        modelbean_params.setM_is_unisex(Feeds.getVal1(channel_id, FeedEnums.Name.model_m_is_unisex));
 
-        modelbean_params.setM_weight(Feed.getVal1(channel_id, FeedEnums.Name.model_m_weight));
+        modelbean_params.setM_weight(Feeds.getVal1(channel_id, FeedEnums.Name.model_m_weight));
 
-        modelbean_params.setM_is_taxable(Feed.getVal1(channel_id, FeedEnums.Name.model_m_is_taxable));
+        modelbean_params.setM_is_taxable(Feeds.getVal1(channel_id, FeedEnums.Name.model_m_is_taxable));
 
-        modelbean_params.setM_is_effective(Feed.getVal1(channel_id, FeedEnums.Name.model_m_is_effective));
+        modelbean_params.setM_is_effective(Feeds.getVal1(channel_id, FeedEnums.Name.model_m_is_effective));
 
         // 取得所有Superfeed Model
-        modelBeans = superfeeddao.selectSuperfeedModel(model_keyword, modelbean_params, Feed.getVal1(channel_id, FeedEnums.Name.table_id));
+        modelBeans = superfeeddao.selectSuperfeedModel(model_keyword, modelbean_params, Feeds.getVal1(channel_id, FeedEnums.Name.table_id));
 
         // urlkey  category_url_key 转换
         for (int i = 0; i < modelBeans.size(); i++) {
             ModelBean modelbean = modelBeans.get(i);
 
             // urlkey 转换
-            modelbean.setCategory_url_key(formaturl(channel_id, modelbean.getCategory_url_key(), "1", Feed.getVal1(channel_id, FeedEnums.Name.category_split)));
-            modelbean.setUrl_key(formaturl(channel_id, modelbean.getUrl_key(), "1", Feed.getVal1(channel_id, FeedEnums.Name.category_split)));
+            modelbean.setCategory_url_key(formaturl(channel_id, modelbean.getCategory_url_key(), "1", Feeds.getVal1(channel_id, FeedEnums.Name.category_split)));
+            modelbean.setUrl_key(formaturl(channel_id, modelbean.getUrl_key(), "1", Feeds.getVal1(channel_id, FeedEnums.Name.category_split)));
 
             modelBeans.set(i, modelbean);
         }
@@ -1276,16 +1276,16 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 
         // category
         if (!Objects.equals(category, "")) {
-            category_keyword = " and " + Feed.getVal1(channel_id, FeedEnums.Name.product_category_url_key) + "='" + transferStr(category) + "'";
+            category_keyword = " and " + Feeds.getVal1(channel_id, FeedEnums.Name.product_category_url_key) + "='" + transferStr(category) + "'";
         }
         // product models
         if (!Objects.equals(models, "")) {
-            model_keyword = " and (" + Feed.getVal1(channel_id, FeedEnums.Name.model_m_model) + " in ('" + transferStr(models) + "')"
-                    + " or " + Feed.getVal1(channel_id, FeedEnums.Name.model_m_model_other_feild) + " in ('" + transferStr(models) + "'))";
+            model_keyword = " and (" + Feeds.getVal1(channel_id, FeedEnums.Name.model_m_model) + " in ('" + transferStr(models) + "')"
+                    + " or " + Feeds.getVal1(channel_id, FeedEnums.Name.model_m_model_other_feild) + " in ('" + transferStr(models) + "'))";
         }
         // product codes
         if (!Objects.equals(codes, "")) {
-            code_keyword = " and " + Feed.getVal1(channel_id, FeedEnums.Name.product_p_code) + " in ('" + transferStr(codes) + "')";
+            code_keyword = " and " + Feeds.getVal1(channel_id, FeedEnums.Name.product_p_code) + " in ('" + transferStr(codes) + "')";
         }
         // updateflag
         if (!Objects.equals(keyword, "")) {
@@ -1294,21 +1294,21 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 
         ProductBean productbean_params = new ProductBean();
 
-        String product_keyword = Feed.getVal1(channel_id, FeedEnums.Name.product_keyword) + category_keyword + model_keyword + code_keyword + updateflag_keyword;
-        productbean_params.setUrl_key(Feed.getVal1(channel_id, FeedEnums.Name.product_url_key));
-        productbean_params.setModel_url_key(Feed.getVal1(channel_id, FeedEnums.Name.product_model_url_key));
-        productbean_params.setCategory_url_key(Feed.getVal1(channel_id, FeedEnums.Name.product_category_url_key));
-        productbean_params.setP_code(Feed.getVal1(channel_id, FeedEnums.Name.product_p_code));
-        productbean_params.setP_name(Feed.getVal1(channel_id, FeedEnums.Name.product_p_name));
-        productbean_params.setP_color(Feed.getVal1(channel_id, FeedEnums.Name.product_p_color));
-        productbean_params.setP_msrp(Feed.getVal1(channel_id, FeedEnums.Name.product_p_msrp));
-        productbean_params.setP_made_in_country(Feed.getVal1(channel_id, FeedEnums.Name.product_p_made_in_country));
-        productbean_params.setPe_short_description(Feed.getVal1(channel_id, FeedEnums.Name.product_pe_short_description));
-        productbean_params.setPe_long_description(Feed.getVal1(channel_id, FeedEnums.Name.product_pe_long_description));
-        productbean_params.setPs_price(Feed.getVal1(channel_id, FeedEnums.Name.product_ps_price));
-        productbean_params.setCps_cn_price_rmb(Feed.getVal1(channel_id, FeedEnums.Name.product_cps_cn_price_rmb));
-        productbean_params.setCps_cn_price(Feed.getVal1(channel_id, FeedEnums.Name.product_cps_cn_price));
-        productbean_params.setCps_cn_price_final_rmb(Feed.getVal1(channel_id, FeedEnums.Name.product_cps_cn_price_final_rmb));
+        String product_keyword = Feeds.getVal1(channel_id, FeedEnums.Name.product_keyword) + category_keyword + model_keyword + code_keyword + updateflag_keyword;
+        productbean_params.setUrl_key(Feeds.getVal1(channel_id, FeedEnums.Name.product_url_key));
+        productbean_params.setModel_url_key(Feeds.getVal1(channel_id, FeedEnums.Name.product_model_url_key));
+        productbean_params.setCategory_url_key(Feeds.getVal1(channel_id, FeedEnums.Name.product_category_url_key));
+        productbean_params.setP_code(Feeds.getVal1(channel_id, FeedEnums.Name.product_p_code));
+        productbean_params.setP_name(Feeds.getVal1(channel_id, FeedEnums.Name.product_p_name));
+        productbean_params.setP_color(Feeds.getVal1(channel_id, FeedEnums.Name.product_p_color));
+        productbean_params.setP_msrp(Feeds.getVal1(channel_id, FeedEnums.Name.product_p_msrp));
+        productbean_params.setP_made_in_country(Feeds.getVal1(channel_id, FeedEnums.Name.product_p_made_in_country));
+        productbean_params.setPe_short_description(Feeds.getVal1(channel_id, FeedEnums.Name.product_pe_short_description));
+        productbean_params.setPe_long_description(Feeds.getVal1(channel_id, FeedEnums.Name.product_pe_long_description));
+        productbean_params.setPs_price(Feeds.getVal1(channel_id, FeedEnums.Name.product_ps_price));
+        productbean_params.setCps_cn_price_rmb(Feeds.getVal1(channel_id, FeedEnums.Name.product_cps_cn_price_rmb));
+        productbean_params.setCps_cn_price(Feeds.getVal1(channel_id, FeedEnums.Name.product_cps_cn_price));
+        productbean_params.setCps_cn_price_final_rmb(Feeds.getVal1(channel_id, FeedEnums.Name.product_cps_cn_price_final_rmb));
 
         // 取得所有Superfeed  product
         productBeans = superfeeddao.selectSuperfeedProduct(product_keyword,
@@ -1319,22 +1319,22 @@ public class CmsGetSuperFeedService extends BaseTaskService {
             ProductBean productbean = productBeans.get(i);
 
             // urlkey 转换
-            productbean.setCategory_url_key(formaturl(channel_id, productbean.getCategory_url_key(), "1", Feed.getVal1(channel_id, FeedEnums.Name.category_split)));
-            productbean.setModel_url_key(formaturl(channel_id, productbean.getModel_url_key(), "1", Feed.getVal1(channel_id, FeedEnums.Name.category_split)));
-            productbean.setUrl_key(formaturl(channel_id, productbean.getUrl_key(), "1", Feed.getVal1(channel_id, FeedEnums.Name.category_split)));
+            productbean.setCategory_url_key(formaturl(channel_id, productbean.getCategory_url_key(), "1", Feeds.getVal1(channel_id, FeedEnums.Name.category_split)));
+            productbean.setModel_url_key(formaturl(channel_id, productbean.getModel_url_key(), "1", Feeds.getVal1(channel_id, FeedEnums.Name.category_split)));
+            productbean.setUrl_key(formaturl(channel_id, productbean.getUrl_key(), "1", Feeds.getVal1(channel_id, FeedEnums.Name.category_split)));
             // 初期值 0
             productbean.setP_image_item_count("0");
 
             // 抽出条件 code
-            String item_keyword = product_keyword + " and" + Feed.getVal1(channel_id, FeedEnums.Name.product_p_code) + " = '" + transferStr(productbean.getP_code()) + "'";
+            String item_keyword = product_keyword + " and" + Feeds.getVal1(channel_id, FeedEnums.Name.product_p_code) + " = '" + transferStr(productbean.getP_code()) + "'";
 
             // 图片取得
-            List<String> image = superfeeddao.selectSuperfeedImage(item_keyword, Feed.getVal1(channel_id, FeedEnums.Name.images), tablename);
+            List<String> image = superfeeddao.selectSuperfeedImage(item_keyword, Feeds.getVal1(channel_id, FeedEnums.Name.images), tablename);
             List<ImageBean> imagebeans = new ArrayList<>();
 
             // 多条只取第一条;
             for (String anImage : image) {
-                String[] images = anImage.split(Feed.getVal1(channel_id, FeedEnums.Name.image_split));
+                String[] images = anImage.split(Feeds.getVal1(channel_id, FeedEnums.Name.image_split));
 
                 for (String image1 : images) {
 
@@ -1361,12 +1361,12 @@ public class CmsGetSuperFeedService extends BaseTaskService {
             }
 
             ItemBean itembean_params = new ItemBean();
-            itembean_params.setCode(Feed.getVal1(channel_id, FeedEnums.Name.item_code));
-            itembean_params.setI_sku(Feed.getVal1(channel_id, FeedEnums.Name.item_i_sku));
-            itembean_params.setI_client_sku(Feed.getVal1(channel_id, FeedEnums.Name.item_i_sku));
-            itembean_params.setI_itemcode(Feed.getVal1(channel_id, FeedEnums.Name.item_i_itemcode));
-            itembean_params.setI_size(Feed.getVal1(channel_id, FeedEnums.Name.item_i_size));
-            itembean_params.setI_barcode(Feed.getVal1(channel_id, FeedEnums.Name.item_i_barcode));
+            itembean_params.setCode(Feeds.getVal1(channel_id, FeedEnums.Name.item_code));
+            itembean_params.setI_sku(Feeds.getVal1(channel_id, FeedEnums.Name.item_i_sku));
+            itembean_params.setI_client_sku(Feeds.getVal1(channel_id, FeedEnums.Name.item_i_sku));
+            itembean_params.setI_itemcode(Feeds.getVal1(channel_id, FeedEnums.Name.item_i_itemcode));
+            itembean_params.setI_size(Feeds.getVal1(channel_id, FeedEnums.Name.item_i_size));
+            itembean_params.setI_barcode(Feeds.getVal1(channel_id, FeedEnums.Name.item_i_barcode));
 
             // item size取得
             List<ItemBean> items = superfeeddao.selectSuperfeedItem(item_keyword, itembean_params, tablename);
@@ -1392,8 +1392,8 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 
         String strformaturl = url.replace(split, "-");
 
-        for (int i = 0; i < Feed.getVal1(channel_id, FeedEnums.Name.url_special_symbol).length(); i++) {
-            strformaturl = strformaturl.replace(Feed.getVal1(channel_id, FeedEnums.Name.url_special_symbol).substring(i, i + 1), "");
+        for (int i = 0; i < Feeds.getVal1(channel_id, FeedEnums.Name.url_special_symbol).length(); i++) {
+            strformaturl = strformaturl.replace(Feeds.getVal1(channel_id, FeedEnums.Name.url_special_symbol).substring(i, i + 1), "");
         }
 
         if ("1".equals(tolower)) {
@@ -1443,9 +1443,9 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 
         Map<String, Object> param = new HashMap<>();
         Map<String, String> authMap = new HashMap<>();
-        authMap.put("appKey", Feed.getVal1(channel_id, FeedEnums.Name.webServiesAppKey));
-        authMap.put("appSecret", Feed.getVal1(channel_id, FeedEnums.Name.webServiesAppSecret));
-        authMap.put("sessionKey", Feed.getVal1(channel_id, FeedEnums.Name.webServiesSessionKey));
+        authMap.put("appKey", Feeds.getVal1(channel_id, FeedEnums.Name.webServiesAppKey));
+        authMap.put("appSecret", Feeds.getVal1(channel_id, FeedEnums.Name.webServiesAppSecret));
+        authMap.put("sessionKey", Feeds.getVal1(channel_id, FeedEnums.Name.webServiesSessionKey));
 
         param.put("authentication", authMap);
         param.put("dataBody", productsFeed);
@@ -1474,9 +1474,9 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 
         Map<String, Object> param = new HashMap<>();
         Map<String, String> authMap = new HashMap<>();
-        authMap.put("appKey", Feed.getVal1(channel_id, FeedEnums.Name.webServiesAppKey));
-        authMap.put("appSecret", Feed.getVal1(channel_id, FeedEnums.Name.webServiesAppSecret));
-        authMap.put("sessionKey", Feed.getVal1(channel_id, FeedEnums.Name.webServiesSessionKey));
+        authMap.put("appKey", Feeds.getVal1(channel_id, FeedEnums.Name.webServiesAppKey));
+        authMap.put("appSecret", Feeds.getVal1(channel_id, FeedEnums.Name.webServiesAppSecret));
+        authMap.put("sessionKey", Feeds.getVal1(channel_id, FeedEnums.Name.webServiesSessionKey));
 
         param.put("authentication", authMap);
         param.put("dataBody", productsFeed);
@@ -1502,9 +1502,9 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 
         Map<String, Object> param = new HashMap<>();
         Map<String, String> authMap = new HashMap<>();
-        authMap.put("appKey", Feed.getVal1(channel_id, FeedEnums.Name.webServiesAppKey));
-        authMap.put("appSecret", Feed.getVal1(channel_id, FeedEnums.Name.webServiesAppSecret));
-        authMap.put("sessionKey", Feed.getVal1(channel_id, FeedEnums.Name.webServiesSessionKey));
+        authMap.put("appKey", Feeds.getVal1(channel_id, FeedEnums.Name.webServiesAppKey));
+        authMap.put("appSecret", Feeds.getVal1(channel_id, FeedEnums.Name.webServiesAppSecret));
+        authMap.put("sessionKey", Feeds.getVal1(channel_id, FeedEnums.Name.webServiesSessionKey));
 
         param.put("authentication", authMap);
         param.put("dataBody", attributebeans);
@@ -1533,11 +1533,11 @@ public class CmsGetSuperFeedService extends BaseTaskService {
         // FtpBean初期化
         FtpBean ftpBean = new FtpBean();
 
-        ftpBean.setPort(Feed.getVal1(channel_id, FeedEnums.Name.feed_ftp_port));
-        ftpBean.setUrl(Feed.getVal1(channel_id, FeedEnums.Name.feed_ftp_url));
-        ftpBean.setUsername(Feed.getVal1(channel_id, FeedEnums.Name.feed_ftp_username));
-        ftpBean.setPassword(Feed.getVal1(channel_id, FeedEnums.Name.feed_ftp_password));
-        ftpBean.setFile_coding(Feed.getVal1(channel_id, FeedEnums.Name.feed_ftp_file_coding));
+        ftpBean.setPort(Feeds.getVal1(channel_id, FeedEnums.Name.feed_ftp_port));
+        ftpBean.setUrl(Feeds.getVal1(channel_id, FeedEnums.Name.feed_ftp_url));
+        ftpBean.setUsername(Feeds.getVal1(channel_id, FeedEnums.Name.feed_ftp_username));
+        ftpBean.setPassword(Feeds.getVal1(channel_id, FeedEnums.Name.feed_ftp_password));
+        ftpBean.setFile_coding(Feeds.getVal1(channel_id, FeedEnums.Name.feed_ftp_file_coding));
 
         FtpUtil ftpUtil = new FtpUtil();
         FTPClient ftpClient = new FTPClient();
@@ -1546,11 +1546,11 @@ public class CmsGetSuperFeedService extends BaseTaskService {
             ftpClient = ftpUtil.linkFtp(ftpBean);
             if (ftpClient != null) {
                 //本地文件路径设定
-                ftpBean.setDown_localpath(Feed.getVal1(channel_id, FeedEnums.Name.feed_ftp_localpath));
+                ftpBean.setDown_localpath(Feeds.getVal1(channel_id, FeedEnums.Name.feed_ftp_localpath));
                 //Ftp源文件路径设定
-                ftpBean.setDown_remotepath(Feed.getVal1(channel_id, FeedEnums.Name.feed_ftp_remotepath));
+                ftpBean.setDown_remotepath(Feeds.getVal1(channel_id, FeedEnums.Name.feed_ftp_remotepath));
                 //Ftp源文件名设定
-                ftpBean.setDown_filename(StringUtils.null2Space(Feed.getVal1(channel_id, FeedEnums.Name.feed_ftp_filename)));
+                ftpBean.setDown_filename(StringUtils.null2Space(Feeds.getVal1(channel_id, FeedEnums.Name.feed_ftp_filename)));
 
                 String filePathName = ftpBean.getDown_localpath() + "/" + ftpBean.getDown_filename();
                 int result = ftpUtil.downFile(ftpBean, ftpClient);
@@ -1589,9 +1589,9 @@ public class CmsGetSuperFeedService extends BaseTaskService {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
         String date_ymd = sdf.format(date);
 
-        String filename = Feed.getVal1(channel_id, FeedEnums.Name.feed_ftp_localpath) + "/" + StringUtils.null2Space(Feed.getVal1(channel_id, FeedEnums.Name.file_id));
-        String filename_backup = Feed.getVal1(channel_id, FeedEnums.Name.feed_ftp_localpath) + "/" + date_ymd + "_"
-                + StringUtils.null2Space(Feed.getVal1(channel_id, FeedEnums.Name.file_id));
+        String filename = Feeds.getVal1(channel_id, FeedEnums.Name.feed_ftp_localpath) + "/" + StringUtils.null2Space(Feeds.getVal1(channel_id, FeedEnums.Name.file_id));
+        String filename_backup = Feeds.getVal1(channel_id, FeedEnums.Name.feed_ftp_localpath) + "/" + date_ymd + "_"
+                + StringUtils.null2Space(Feeds.getVal1(channel_id, FeedEnums.Name.file_id));
         File file = new File(filename);
         File file_backup = new File(filename_backup);
 
@@ -1618,7 +1618,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
 //					if (superfeeddao.deleteData(sql) >= 0) {
 // 					}
 
-                List<String> allattributes = superfeeddao.selectAllAttribute(attribute, Feed.getVal1(channel_id, FeedEnums.Name.table_id));
+                List<String> allattributes = superfeeddao.selectAllAttribute(attribute, Feeds.getVal1(channel_id, FeedEnums.Name.table_id));
                 for (String allattribute : allattributes) {
                     String result = superfeeddao.selectFeedAttribute(channel_id, attribute, allattribute);
                     if (Integer.parseInt(result) == 0) {
@@ -1664,7 +1664,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
         String keyWrod_model = "";
         for (int f = 0; f < modelList.size(); f++) {
             if (f == 0) {
-                keyWrod_model = Feed.getVal1(channel_id, FeedEnums.Name.model_m_model) + " not in ('" + modelList.get(f);
+                keyWrod_model = Feeds.getVal1(channel_id, FeedEnums.Name.model_m_model) + " not in ('" + modelList.get(f);
             } else {
                 keyWrod_model = keyWrod_model + "', '" + modelList.get(f);
             }
@@ -1677,7 +1677,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
         String keyWrod_product = "";
         for (int f = 0; f < productList.size(); f++) {
             if (f == 0) {
-                keyWrod_product = Feed.getVal1(channel_id, FeedEnums.Name.product_p_code) + "not in ('" + productList.get(f);
+                keyWrod_product = Feeds.getVal1(channel_id, FeedEnums.Name.product_p_code) + "not in ('" + productList.get(f);
             } else {
                 keyWrod_product = keyWrod_product + "', '" + productList.get(f);
             }
@@ -1687,7 +1687,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
         }
 
         keyWrod = " where UpdateFlag in ('1','3') and "
-                + Feed.getVal1(channel_id, FeedEnums.Name.category_column) + " ='" + transferStr(category) + "'";
+                + Feeds.getVal1(channel_id, FeedEnums.Name.category_column) + " ='" + transferStr(category) + "'";
 
         // model + product date isexist'
         if (!Objects.equals(keyWrod_model, "") && !Objects.equals(keyWrod_product, "")) {
@@ -1700,7 +1700,7 @@ public class CmsGetSuperFeedService extends BaseTaskService {
         }
 
         if (StringUtils.isEmpty(keyWrod)) {
-            int count = superfeeddao.inertSuperfeedFull(keyWrod, Feed.getVal1(channel_id, FeedEnums.Name.table_id), Feed.getVal1(channel_id, FeedEnums.Name.table_id) + "_full");
+            int count = superfeeddao.inertSuperfeedFull(keyWrod, Feeds.getVal1(channel_id, FeedEnums.Name.table_id), Feeds.getVal1(channel_id, FeedEnums.Name.table_id) + "_full");
             if (count < 0) {
                 isSuccess = false;
 //                logger.error("插入ZZ_Work_Superfeed_Full产品处理失败");
@@ -1719,15 +1719,15 @@ public class CmsGetSuperFeedService extends BaseTaskService {
         // 单事务处理
         transactionRunner.runWithTran(() -> {
 
-            String deletefeed = "delete from " + Feed.getVal1(channel_id, FeedEnums.Name.table_id) + "_full" + " where "
-                    + Feed.getVal1(channel_id, FeedEnums.Name.product_p_code) + "='" + product_code + "'";
+            String deletefeed = "delete from " + Feeds.getVal1(channel_id, FeedEnums.Name.table_id) + "_full" + " where "
+                    + Feeds.getVal1(channel_id, FeedEnums.Name.product_p_code) + "='" + product_code + "'";
 
             // 删除full表即存数据
             if (superfeeddao.deleteData(deletefeed) > 0) {
-                String keyword = " where " + Feed.getVal1(channel_id, FeedEnums.Name.product_p_code) + "='" + product_code + "'";
+                String keyword = " where " + Feeds.getVal1(channel_id, FeedEnums.Name.product_p_code) + "='" + product_code + "'";
 
                 // 新的增加
-                int result = superfeeddao.inertSuperfeedFull(keyword, Feed.getVal1(channel_id, FeedEnums.Name.table_id), Feed.getVal1(channel_id, FeedEnums.Name.table_id) + "_full");
+                int result = superfeeddao.inertSuperfeedFull(keyword, Feeds.getVal1(channel_id, FeedEnums.Name.table_id), Feeds.getVal1(channel_id, FeedEnums.Name.table_id) + "_full");
 
                 if (result <= 0) {
 //                    logger.error("更新 ZZ_Work_Superfeed_Full表 delete失败，code= " + product_code);

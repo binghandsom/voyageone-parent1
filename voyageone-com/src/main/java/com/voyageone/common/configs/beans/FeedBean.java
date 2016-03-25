@@ -4,6 +4,7 @@ package com.voyageone.common.configs.beans;
  * Created by Zero on 8/18/2015.
  */
 public class FeedBean {
+    private int id;
 
     private String order_channel_id;
 
@@ -22,6 +23,14 @@ public class FeedBean {
     private int display_sort;
 
     private String comment;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
 
     public String getOrder_channel_id() {
         return order_channel_id;

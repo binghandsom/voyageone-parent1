@@ -16,7 +16,7 @@ import com.voyageone.common.components.jumei.JumeiCategoryService;
 import com.voyageone.common.components.jumei.JumeiCurrencyService;
 import com.voyageone.common.components.jumei.JumeiWarehouseService;
 import com.voyageone.common.configs.Enums.CartEnums;
-import com.voyageone.common.configs.ShopConfigs;
+import com.voyageone.common.configs.Shops;
 import com.voyageone.common.configs.beans.ShopBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -61,7 +61,7 @@ public class CmsGetJmMasterService extends BaseTaskService {
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
 
-        ShopBean shopBean = ShopConfigs.getShop("001", CartEnums.Cart.JM.getId());
+        ShopBean shopBean = Shops.getShop("001", CartEnums.Cart.JM.getId());
 //        shopBean.setAppKey("131");
 //        shopBean.setSessionKey("7e059a48c30c67d2693be14275c2d3be");
 //        shopBean.setAppSecret("0f9e3437ca010f63f2c4f3a216b7f4bc9698f071");

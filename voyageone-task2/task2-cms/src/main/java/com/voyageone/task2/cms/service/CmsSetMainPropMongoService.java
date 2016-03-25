@@ -12,8 +12,8 @@ import com.voyageone.cms.enums.SrcType;
 import com.voyageone.common.Constants;
 import com.voyageone.common.components.baidu.translate.BaiduTranslateUtil;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
-import com.voyageone.common.configs.ChannelConfigs;
-import com.voyageone.common.configs.TypeChannel;
+import com.voyageone.common.configs.Channels;
+import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.OrderChannelBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
@@ -34,10 +34,7 @@ import com.voyageone.service.impl.cms.MongoSequenceService;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
 import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.impl.cms.product.ProductSkuService;
-import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
-import com.voyageone.service.impl.cms.MongoSequenceService;
 import com.voyageone.service.model.cms.CmsBtFeedCustomPropAndValueModel;
-import com.voyageone.service.model.cms.CmsBtFeedCustomPropModel;
 import com.voyageone.service.model.cms.mongo.CmsMtCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;
@@ -147,7 +144,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
         private boolean skip_mapping_check;
 
         public setMainProp(String orderChannelId, boolean skip_mapping_check) {
-            this.channel = ChannelConfigs.getChannel(orderChannelId);
+            this.channel = Channels.getChannel(orderChannelId);
             this.skip_mapping_check = skip_mapping_check;
         }
 
@@ -168,7 +165,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 // --------------------------------------------------------------------------------------------
                 // 品牌mapping做成
                 List<TypeChannelBean> typeChannelBeanList;
-                typeChannelBeanList = TypeChannel.getTypeList("brand", channelId);
+                typeChannelBeanList = TypeChannels.getTypeList("brand", channelId);
 
                 if (typeChannelBeanList != null) {
                     for (TypeChannelBean typeChannelBean : typeChannelBeanList) {
@@ -530,7 +527,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             product.setFields(field);
 
             // 获取当前channel, 有多少个platform
-            List<TypeChannelBean> typeChannelBeanListApprove = TypeChannel.getTypeListSkuCarts(feed.getChannelId(), "A", "en"); // 取得允许Approve的数据
+            List<TypeChannelBean> typeChannelBeanListApprove = TypeChannels.getTypeListSkuCarts(feed.getChannelId(), "A", "en"); // 取得允许Approve的数据
             if (typeChannelBeanListApprove == null) {
                 return null;
             }
@@ -582,7 +579,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 //            // 价格区间设置 ( -> 调用顾步春的api自动会去设置,这里不需要设置了)
 
             // 获取当前channel, 有多少个platform
-            List<TypeChannelBean> typeChannelBeanList = TypeChannel.getTypeListSkuCarts(feed.getChannelId(), "D", "en"); // 取得展示用数据
+            List<TypeChannelBean> typeChannelBeanList = TypeChannels.getTypeListSkuCarts(feed.getChannelId(), "D", "en"); // 取得展示用数据
             if (typeChannelBeanList == null) {
                 return null;
             }
