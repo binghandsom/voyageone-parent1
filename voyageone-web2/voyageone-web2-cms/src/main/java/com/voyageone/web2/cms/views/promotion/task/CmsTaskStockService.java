@@ -1757,7 +1757,8 @@ public class CmsTaskStockService extends BaseAppService {
     /**
      * check数据，并返回保存对象
      *
-     * @param row         行
+     * @param row         数据行
+     * @param rowHeader   Title行
      * @param import_mode 导入mode
      * @param colPlatform colPlatform[0]平台对应起始列号,colPlatform[1]平台对应结束列号
      * @param mapSkuInDB  cms_bt_stock_separate_item的数据

@@ -45,6 +45,11 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
     @Autowired
     private CmsTaskStockService cmsTaskStockService;
 
+    /** Excel重置方式导入 */
+    private static final String EXCEL_IMPORT_DELETE_UPDATE = "3";
+    /** Excel变更方式导入 */
+    private static final String EXCEL_IMPORT_UPDATE = "2";
+
     /** 0：按动态值进行增量隔离 */
     private static final String TYPE_DYNAMIC = "0";
     /** 1：按固定值进行增量隔离 */
@@ -434,7 +439,7 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
         logger.info("增量库存隔离数据取得开始, sub_task_id=" + subTaskId);
         Map searchParam = new HashMap();
         searchParam.put("tableName", "voyageone_cms2.cms_bt_stock_separate_increment_item");
-        searchParam.put("whereSql", " where subTaskId= '" + subTaskId + "'");
+        searchParam.put("whereSql", " where sub_task_id= '" + subTaskId + "'");
         List<StockIncrementExcelBean> resultData = cmsBtStockSeparateIncrementItemDao.selectExcelStockIncrementInfo(searchParam);
         Map<String, StockIncrementExcelBean> mapSkuInDB = new HashMap<String, StockIncrementExcelBean>();
         for (StockIncrementExcelBean rowData : resultData) {
@@ -445,10 +450,238 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
         logger.info("导入Excel取得并check的处理开始");
         List<StockIncrementExcelBean> insertData = new ArrayList<>(); // insert数据
         List<StockIncrementExcelBean> updateData = new ArrayList<>(); // update数据
-
+        readExcel(file, import_mode, paramPropertyList, paramPlatformInfo, mapSkuInDB, insertData, updateData);
         logger.info("导入Excel取得并check的处理结束");
 
 
     }
+
+    /**
+     * 读取导入文件，并做check
+     *
+     * @param file              导入文件
+     * @param import_mode       导入mode
+     * @param paramPropertyList 属性list
+     * @param paramPlatformInfo 平台信息
+     * @param mapSkuInDB        cms_bt_stock_separate_increment_item的数据
+     * @param insertData        insert数据
+     * @param updateData        update数据
+     */
+    private void readExcel(MultipartFile file, String import_mode, List<Map> paramPropertyList, Map<String, String> paramPlatformInfo, Map<String, StockIncrementExcelBean> mapSkuInDB, List<StockIncrementExcelBean> insertData, List<StockIncrementExcelBean> updateData) {
+
+        Workbook wb;
+        int colPlatform = -1;
+        try {
+            wb = WorkbookFactory.create(file.getInputStream());
+        } catch (IOException | InvalidFormatException e) {
+            throw new BusinessException("7000005");
+        } catch (Exception e) {
+            throw new BusinessException("7000005");
+        }
+
+        Sheet sheet = wb.getSheetAt(0);
+        boolean isHeader = true;
+        for (Row row : sheet) {
+            if (isHeader) {
+                // 第一行Title行
+                isHeader = false;
+                // Title行check
+                colPlatform = checkHeader(row, paramPropertyList, paramPlatformInfo);
+            } else {
+                // 数据行
+                checkRecord(row, sheet.getRow(0), import_mode, colPlatform, mapSkuInDB, insertData, updateData);
+            }
+        }
+    }
+
+    /**
+     * Title行check
+     *
+     * @param row 行
+     * @param paramPropertyList 属性list
+     * @param paramPlatformInfo 平台信息
+     * @return 平台对应列号
+     */
+    private int checkHeader(Row row, List<Map> paramPropertyList, Map<String, String> paramPlatformInfo) {
+        String messageModelErr = "请使用正确格式的excel导入文件";
+        if (!"Model".equals(row.getCell(0).getStringCellValue())
+                || !"Code".equals(row.getCell(1).getStringCellValue())
+                || !"Sku".equals(row.getCell(2).getStringCellValue())) {
+            throw new BusinessException(messageModelErr);
+        }
+
+        // 属性列check
+        List<String> listPropertyKey = new ArrayList<String>();
+        paramPropertyList.forEach(paramProperty -> listPropertyKey.add((String) paramProperty.get("property")));
+
+        List<String> propertyList = new ArrayList<String>();
+        int index = 3;
+        for (; index <= 6; index++) {
+            Comment comment = row.getCell(index).getCellComment();
+            if (comment == null) {
+                // 注解为空
+                if (propertyList.size() > 0) {
+                    // 已经有属性列，属性列结束
+                    break;
+                } else {
+                    // 没有属性列，此列也不是属性列，错误Excel
+                    throw new BusinessException(messageModelErr);
+                }
+            }
+            if (!listPropertyKey.contains(comment.getString().getString())) {
+                // 注解不是设定属性
+                throw new BusinessException(messageModelErr);
+            } else {
+                // 注解是设定属性
+                if (propertyList.contains(comment.getString().getString())) {
+                    // 已经存在相同属性列
+                    throw new BusinessException(messageModelErr);
+                } else {
+                    propertyList.add(comment.getString().getString());
+                }
+            }
+        }
+
+        if (propertyList.size() != listPropertyKey.size()) {
+            // Excel属性列少于设定属性列
+            throw new BusinessException(messageModelErr);
+        }
+
+        if (!USABLESTOCK.equals(row.getCell(index++).getStringCellValue())) {
+            throw new BusinessException(messageModelErr);
+        }
+
+        // 平台对应起始列号
+        int colPlatform = index;
+
+        // 平台列check
+        Comment comment = row.getCell(index++).getCellComment();
+        if (comment == null) {
+            // 注解为空
+            throw new BusinessException(messageModelErr);
+        }
+        if (!comment.getString().getString().equals(paramPlatformInfo.get("cartId"))) {
+            // 注解不是设定平台
+            throw new BusinessException(messageModelErr);
+        }
+
+        if (!FIXED_TEXT.equals(row.getCell(index).getStringCellValue())) {
+            throw new BusinessException(messageModelErr);
+        }
+
+        return colPlatform;
+    }
+
+    /**
+     * check数据，并返回保存对象
+     *
+     * @param row         数据行
+     * @param rowHeader   Title行
+     * @param import_mode 导入mode
+     * @param colPlatform 平台对应列号
+     * @param mapSkuInDB  cms_bt_stock_separate_increment_item的数据
+     * @param insertData  insert数据
+     * @param updateData  update数据
+     */
+    private void checkRecord(Row row, Row rowHeader, String import_mode, int colPlatform, Map<String, StockIncrementExcelBean> mapSkuInDB, List<StockIncrementExcelBean> insertData, List<StockIncrementExcelBean> updateData) {
+        String model = row.getCell(0).getStringCellValue(); // Model
+        String code = row.getCell(1).getStringCellValue(); // Code
+        String sku = row.getCell(2).getStringCellValue(); // Sku
+
+        // Model输入check
+        if (StringUtils.isEmpty(model) || model.getBytes().length > 50) {
+            throw new BusinessException("Model必须输入且长度小于50！" + "Sku=" + sku);
+        }
+        // Code输入check
+        if (StringUtils.isEmpty(code) || code.getBytes().length > 50) {
+            throw new BusinessException("Code必须输入且长度小于50！" + "Sku=" + sku);
+        }
+        // Sku输入check
+        if (StringUtils.isEmpty(sku) || sku.getBytes().length > 50) {
+            throw new BusinessException("Sku必须输入且长度小于50！" + "Sku=" + sku);
+        }
+
+        for (int index = 3; index <= colPlatform - 2; index++) {
+            // 属性
+            String property = row.getCell(index).getStringCellValue();
+            if (StringUtils.isEmpty(property) || property.getBytes().length > 500) {
+                throw new BusinessException(rowHeader.getCell(index).getStringCellValue() + "必须输入且长度小于500！" + "Sku=" + sku);
+            }
+        }
+
+        // 可调配库存输入check
+        String usableStock = row.getCell(colPlatform - 1).getStringCellValue();
+        if (StringUtils.isEmpty(usableStock) || !StringUtils.isDigit(usableStock) || usableStock.getBytes().length > 9) {
+            throw new BusinessException("可调配库存必须输入小于10位的整数！" + "Sku=" + sku);
+        }
+
+        // 增量隔离库存
+        String increment_qty = row.getCell(colPlatform).getStringCellValue();
+        if (StringUtils.isEmpty(increment_qty) || !StringUtils.isDigit(increment_qty) || increment_qty.getBytes().length > 9) {
+            throw new BusinessException("增量隔离库存必须输入小于10位的整数！" + "Sku=" + sku);
+        }
+
+        // 固定值增量
+        String fix = row.getCell(colPlatform + 1).getStringCellValue();
+        if (StringUtils.isEmpty(fix)) {
+            fix = TYPE_DYNAMIC;
+        } else if (YES.equals(fix)) {
+            fix = TYPE_FIX_VALUE;
+        } else {
+            throw new BusinessException("固定值增量请输入'" + YES + "'或不输入！" + "Sku=" + sku);
+        }
+
+        boolean isAddData = false;
+        boolean isUpdateData = false;
+        if (EXCEL_IMPORT_UPDATE.equals(import_mode)) {
+            // 变更方式导入
+            StockIncrementExcelBean beanInDB = mapSkuInDB.get(sku);
+            if (beanInDB == null) {
+                // DB不存在,新建数据
+                isAddData = true;
+            } else {
+                // DB存在,更新数据
+                if (!model.equals(beanInDB.getProduct_model())) {
+                    throw new BusinessException("变更方式导入时,Model不能变更！" + "Sku=" + sku);
+                }
+                if (!code.equals(beanInDB.getProduct_code())) {
+                    throw new BusinessException("变更方式导入时,Code不能变更！" + "Sku=" + sku);
+                }
+                if (!sku.equals(beanInDB.getSku())) {
+                    throw new BusinessException("变更方式导入时,Sku不能变更！" + "Sku=" + sku);
+                }
+
+                for (int index = 3; index <= colPlatform - 2; index++) {
+                    // 属性
+                    String propertyNa = rowHeader.getCell(index).getCellComment().getString().getString();
+                    String property = row.getCell(index).getStringCellValue();
+                    if (!property.equals(beanInDB.getProperty(propertyNa))) {
+                        throw new BusinessException("变更方式导入时," + rowHeader.getCell(index).getStringCellValue() + "不能变更！" + "Sku=" + sku);
+                    }
+                }
+
+                if (!usableStock.equals(beanInDB.getQty().toPlainString())) {
+                    throw new BusinessException("变更方式导入时,可调配库存不能变更！" + "Sku=" + sku);
+                }
+
+
+            }
+
+        } else {
+            // 重置方式导入
+            isAddData = true;
+        }
+
+        if (isAddData || isUpdateData) {
+            // 更新对象
+            StockIncrementExcelBean bean = new StockIncrementExcelBean();
+            bean.setProduct_model(model);
+            bean.setProduct_code(code);
+            bean.setSku(sku);
+        }
+
+    }
+
+
 
 }
