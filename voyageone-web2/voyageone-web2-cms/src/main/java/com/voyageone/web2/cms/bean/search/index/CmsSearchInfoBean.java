@@ -66,6 +66,17 @@ public class CmsSearchInfoBean {
 
     private Integer productPageSize = 0;
 
+    public String getTransStsFlg() {
+        return transStsFlg;
+    }
+
+    public void setTransStsFlg(String transStsFlg) {
+        this.transStsFlg = transStsFlg;
+    }
+
+    // 翻译状态查询用标志位
+    private String transStsFlg = null;
+
     public int getPriceChgFlg() {
         return priceChgFlg;
     }

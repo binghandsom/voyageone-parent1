@@ -673,6 +673,13 @@ public class CmsSearchAdvanceService extends BaseAppService{
             result.append("'skus':{'$elemMatch':{'priceChgFlg':{'$regex':'^X'}}},");
         }
 
+        // 获取翻译状态
+        String transFlg = org.apache.commons.lang3.StringUtils.trimToNull(searchValue.getTransStsFlg());
+        if (transFlg != null) {
+            result.append(MongoUtils.splicingValue("fields.translateStatus", transFlg));
+            result.append(",");
+        }
+
         return result.toString();
     }
 

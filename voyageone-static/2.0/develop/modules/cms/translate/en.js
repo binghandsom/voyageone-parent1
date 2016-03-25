@@ -214,6 +214,7 @@ define(function() {
         "TXT_FAIL":"Fail",
         "TXT_BASE_ATTRIBUTE": "Common Attribute",
         "TXT_CUST_ATTRIBUTE": "Custmize Attribute",
+        "TXT_TRANSSTS_ATTRIBUTE": "Translation status",
 
 
         "TXT_MSG_SEARCH": "Search...",

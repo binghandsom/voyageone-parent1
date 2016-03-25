@@ -214,6 +214,7 @@ define(function(){
         "TXT_FAIL":"失败",
         "TXT_BASE_ATTRIBUTE": "共通属性",
         "TXT_CUST_ATTRIBUTE": "自定义属性",
+        "TXT_TRANSSTS_ATTRIBUTE": "翻译状态",
 
 
         "TXT_MSG_SEARCH": "检索...",
