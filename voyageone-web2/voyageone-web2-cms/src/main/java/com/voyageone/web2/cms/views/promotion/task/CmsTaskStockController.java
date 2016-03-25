@@ -79,9 +79,17 @@ public class CmsTaskStockController extends CmsController {
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK.INIT_NEW_TASK)
     public AjaxResponse initNewTask(@RequestBody Map param) {
-        //根据活ID取得CartId
+        //取得选择的活动ID
         Map<String, Boolean> selFlag = (Map) param.get("selFlag");
-        Map<String, Object> resultBean = cmsTaskStockService.getSeparateInfoByPromotionID(selFlag, getLang());
+        Map<String, Boolean> chooseSelFlag = new HashMap<>();
+        Map<String, Object> resultBean =new HashMap<>();
+        for (Map.Entry<String, Boolean> entry : selFlag.entrySet()) {
+            //取得选择活动的活动ID
+            if(entry.getValue()){
+                chooseSelFlag.put(entry.getKey(),true);
+                resultBean = cmsTaskStockService.getSeparateInfoByPromotionID(chooseSelFlag, getLang());
+            }
+        }
         // 返回
         return success(resultBean);
     }
@@ -157,9 +165,11 @@ public class CmsTaskStockController extends CmsController {
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK.SAVE_TASK)
     public AjaxResponse saveTask(@RequestBody Map param) {
-
+        //
+        Map<String, Object> resultBean =new HashMap<>();
+        resultBean = cmsTaskStockService.saveSeparateInfoByPromotionInfo(param, getLang());
         // 返回
-        return success(null);
+        return success(resultBean);
     }
 
     /**

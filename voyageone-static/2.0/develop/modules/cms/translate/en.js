@@ -306,6 +306,14 @@ define(function() {
         "TXT_MSG_IMPORT_UPDATE": "Update Mode",
         "TXT_MSG_IMPORT_ADD": "Add Mode",
         "TXT_MSG_IMPORT_DELETE_UPDATE": "Reset Mode",
+        "TXT_SEPARATE_PROPORTION":"Isolation ratio",
+        "TXT_REVERT_TIME":"Revert time",
+        "TXT_INCREASING_PRIORITY":"Increasing priority",
+        "TXT_REDUCED_PRIORITY_ORDER":"Reduced priority order",
+        "TXT_IMPORT_ONLY_SKU_AND_INVENTORY":"Import only SKU and inventory",
+        "TXT_SEPARATE":"Separate",
+        "TXT_SHARE":"Share",
+        "TXT_SEPARATE_NEW_TASK":"New Separate Task",
 
 
         "BTN_CREATE_TASK": "New Task",

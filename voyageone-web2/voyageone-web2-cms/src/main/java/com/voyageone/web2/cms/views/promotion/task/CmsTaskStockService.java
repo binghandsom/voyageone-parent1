@@ -191,11 +191,9 @@ public class CmsTaskStockService extends BaseAppService {
         HashMap<String,String> channelIdMap = new HashMap<>();
         String channelId="";
         for (Map.Entry<String, Boolean> entry : selFlag.entrySet()) {
-            if(entry.getValue()){
-                //根据活动ID取得隔离的CartID
-                cartNameMap=cmsBtPromotionDao.selectPromotionIDByCartId(entry.getKey());
-                platformList.put(entry.getKey(),cartNameMap);
-            }
+            //根据活动ID取得隔离的CartID
+            cartNameMap=cmsBtPromotionDao.selectPromotionIDByCartId(entry.getKey());
+            platformList.put(entry.getKey(),cartNameMap);
         }
         return platformList;
     }
@@ -310,9 +308,112 @@ public class CmsTaskStockService extends BaseAppService {
         }
         data.put("platformList", separatePlatformList);
         data.put("taskName", "");
-        data.put("onlySku",false);
+        data.put("onlySku", false);
         return data;
     }
+
+    /**
+     *
+     *
+     * @param param
+     * @param lang
+     * @return
+     */
+    public Map<String, Object> saveSeparateInfoByPromotionInfo(Map param, String lang) {
+        //画面入力信息的CHECK
+        checkPromotionInfo(param, lang);
+        //将隔离任务信息（任务名，对应平台隔离比例，还原时间，优先顺等）反应到cms_bt_tasks
+        saveTasksByPromotionInfo(param, lang);
+        //表和cms_bt_stock_separate_platform_info表
+        saveStockSeparatePlatFormByPromotionInfo(param, lang);
+        //将隔离任务信息（任务名，对应平台隔离比例，还原时间，优先顺等）反应到cms_bt_stock_separate_platform_info表
+        setPromotionInfo(param);
+        //抽出隔离平台下面的所有Sku，取得商品基本情报，计算出可用库存数和各隔离平台的隔离数
+        return null;
+    }
+
+    /**
+     *
+     * @param param
+     * @param lang
+     */
+    private void saveTasksByPromotionInfo(Map param, String lang) {
+
+    }
+
+    /**
+     *
+     * @param param
+     * @param lang
+     */
+    private void saveStockSeparatePlatFormByPromotionInfo(Map param, String lang) {
+
+    }
+
+
+    /**
+     *
+     * @param param
+     * @param lang
+     */
+    private void checkPromotionInfo(Map param, String lang) {
+        List<Map> separatePlatformList = new ArrayList<>();
+
+        Map<String, Object> promotionList = (Map) param.get("promotionList");
+        separatePlatformList= (List<Map>) promotionList.get("platformList");
+
+        for(int i=0;i<separatePlatformList.size();i++){
+            //平台id
+            String carId=separatePlatformList.get(i).get("carId").toString();
+            //平台名
+            String cartName=separatePlatformList.get(i).get("cartName").toString();
+            //隔离比例
+            String value=separatePlatformList.get(i).get("value").toString();
+            //类型（1：隔离，2：共享）
+            String type= separatePlatformList.get(i).get("type").toString();
+            // 还原时间
+            String revertTime=separatePlatformList.get(i).get("revertTime").toString();
+            //增优先顺
+            String addPriority=separatePlatformList.get(i).get("addPriority").toString();
+            //减优先顺
+            String subtractPriority=separatePlatformList.get(i).get("subtractPriority").toString();
+
+            if(type.equals("1")){
+                //隔离平台的隔离比例
+                if (StringUtils.isEmpty(value) || !StringUtils.isDigit(value)) {
+                    throw new BusinessException("隔离平台的隔离比例为大于0的整数！");
+                }
+                //增优先顺
+                if (StringUtils.isEmpty(addPriority) || !StringUtils.isDigit(addPriority)) {
+                    throw new BusinessException("增优先顺为大于0的整数！");
+                }
+                //减优先顺
+                if (StringUtils.isEmpty(subtractPriority) || !StringUtils.isDigit(subtractPriority)) {
+                    throw new BusinessException("减优先顺为大于0的整数！");
+                }
+                //优先顺必须是1开始的连续整数
+
+                //隔离结束时间必须是时间格式
+                SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+                try {
+                    format.setLenient(false);
+                    format.parse(revertTime);
+                } catch (ParseException e){
+                    throw new BusinessException("时间格式不正确,请填写正确的时间格式！");
+                }
+            }
+        }
+
+    }
+
+    /**
+     *
+     * @param param
+     */
+    private void setPromotionInfo(Map param) {
+
+    }
+
     /**
      * 任务id/渠道id权限check
      *
@@ -2236,7 +2337,7 @@ public class CmsTaskStockService extends BaseAppService {
                 .replaceAll("%","\\\\%").replaceAll("_","\\\\_");
     }
 
-    
+
 
 //    /**
 //     * 状态文字转换

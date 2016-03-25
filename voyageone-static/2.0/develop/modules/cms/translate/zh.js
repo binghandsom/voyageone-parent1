@@ -244,10 +244,14 @@ define(function(){
         "TXT_ADD_NEW_STOCK_INCREMENT_SEPARATE_TASK":"新建增量库存隔离任务",
         "TXT_PLATFORM_SALE_QUANTITY": "平台销售量",
         "TXT_PLATFORM_STOCK_SEPARATE_QUANTITY": "平台库存隔离数量",
-
-
-
-
+        "TXT_SEPARATE_PROPORTION":"隔离比例",
+        "TXT_REVERT_TIME":"还原时间",
+        "TXT_INCREASING_PRIORITY":"增优先顺序",
+        "TXT_REDUCED_PRIORITY_ORDER":"减优先顺序",
+        "TXT_IMPORT_ONLY_SKU_AND_INVENTORY":"只导入SKU和库存",
+        "TXT_SEPARATE":"隔离",
+        "TXT_SHARE":"共享",
+        "TXT_SEPARATE_NEW_TASK":"新建隔离任务",
 
         "TXT_MSG_SEARCH": "检索...",
         "TXT_MSG_PAGE_IS_BUILDING": "该页面正在建设中...",
