@@ -53,4 +53,8 @@ public class CmsBtStockSeparateIncrementItemDao extends BaseDao {
 //    public Map selectStockSeparateIncrementPlatform(String subTaskId) {
 //        return selectOne("select_stock_separate_increment_platform", subTaskId);
 //    }
+
+    public int insertStockSeparateIncrementItemFromExcel(List<Map<String, Object>> param) {
+        return insert("insert_cms_bt_stock_separate_increment_item_excel", param);
+    }
 }

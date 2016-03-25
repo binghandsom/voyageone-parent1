@@ -1,6 +1,7 @@
 package com.voyageone.web2.cms.views.promotion.task;
 
 import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.components.transaction.TransactionRunner;
 import com.voyageone.common.configs.Properties;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.FileUtils;
@@ -12,6 +13,7 @@ import com.voyageone.web2.cms.bean.promotion.task.StockIncrementExcelBean;
 import com.voyageone.web2.cms.dao.CmsBtStockSeparateIncrementItemDao;
 import com.voyageone.web2.cms.dao.CmsBtStockSeparateIncrementTaskDao;
 import com.voyageone.web2.cms.dao.CmsBtStockSeparatePlatformInfoDao;
+import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -25,6 +27,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -44,6 +47,9 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
 
     @Autowired
     private CmsTaskStockService cmsTaskStockService;
+
+    @Autowired
+    private TransactionRunner transactionRunner;
 
     /** Excel重置方式导入 */
     private static final String EXCEL_IMPORT_DELETE_UPDATE = "3";
@@ -453,6 +459,16 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
         readExcel(file, import_mode, paramPropertyList, paramPlatformInfo, mapSkuInDB, insertData, updateData);
         logger.info("导入Excel取得并check的处理结束");
 
+        if (insertData.size() > 0 || updateData.size() > 0) {
+            // 有更新对象
+            logger.info("更新开始");
+            saveImportData(insertData, updateData, import_mode, subTaskId, (String) param.get("userName"));
+            logger.info(String.format("更新结束,更新了%d件", insertData.size() + updateData.size()));
+        } else {
+            // 没有更新对象
+            logger.info("没有更新对象");
+            throw new BusinessException("没有更新对象");
+        }
 
     }
 
@@ -468,6 +484,7 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
      * @param updateData        update数据
      */
     private void readExcel(MultipartFile file, String import_mode, List<Map> paramPropertyList, Map<String, String> paramPlatformInfo, Map<String, StockIncrementExcelBean> mapSkuInDB, List<StockIncrementExcelBean> insertData, List<StockIncrementExcelBean> updateData) {
+        List<String> listExcelSku = new ArrayList<String>();
 
         Workbook wb;
         int colPlatform = -1;
@@ -489,7 +506,7 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
                 colPlatform = checkHeader(row, paramPropertyList, paramPlatformInfo);
             } else {
                 // 数据行
-                checkRecord(row, sheet.getRow(0), import_mode, colPlatform, mapSkuInDB, insertData, updateData);
+                checkRecord(row, sheet.getRow(0), import_mode, colPlatform, mapSkuInDB, insertData, updateData, listExcelSku);
             }
         }
     }
@@ -504,9 +521,9 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
      */
     private int checkHeader(Row row, List<Map> paramPropertyList, Map<String, String> paramPlatformInfo) {
         String messageModelErr = "请使用正确格式的excel导入文件";
-        if (!"Model".equals(row.getCell(0).getStringCellValue())
-                || !"Code".equals(row.getCell(1).getStringCellValue())
-                || !"Sku".equals(row.getCell(2).getStringCellValue())) {
+        if (!"Model".equals(getCellValue(row, 0))
+                || !"Code".equals(getCellValue(row, 1))
+                || !"Sku".equals(getCellValue(row, 2))) {
             throw new BusinessException(messageModelErr);
         }
 
@@ -517,8 +534,8 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
         List<String> propertyList = new ArrayList<String>();
         int index = 3;
         for (; index <= 6; index++) {
-            Comment comment = row.getCell(index).getCellComment();
-            if (comment == null) {
+            String comment = getCellCommentValue(row, index);
+            if (StringUtils.isEmpty(comment)) {
                 // 注解为空
                 if (propertyList.size() > 0) {
                     // 已经有属性列，属性列结束
@@ -528,16 +545,16 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
                     throw new BusinessException(messageModelErr);
                 }
             }
-            if (!listPropertyKey.contains(comment.getString().getString())) {
+            if (!listPropertyKey.contains(comment)) {
                 // 注解不是设定属性
                 throw new BusinessException(messageModelErr);
             } else {
                 // 注解是设定属性
-                if (propertyList.contains(comment.getString().getString())) {
+                if (propertyList.contains(comment)) {
                     // 已经存在相同属性列
                     throw new BusinessException(messageModelErr);
                 } else {
-                    propertyList.add(comment.getString().getString());
+                    propertyList.add(comment);
                 }
             }
         }
@@ -547,7 +564,7 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
             throw new BusinessException(messageModelErr);
         }
 
-        if (!USABLESTOCK.equals(row.getCell(index++).getStringCellValue())) {
+        if (!USABLESTOCK.equals(getCellValue(row, index++))) {
             throw new BusinessException(messageModelErr);
         }
 
@@ -555,17 +572,17 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
         int colPlatform = index;
 
         // 平台列check
-        Comment comment = row.getCell(index++).getCellComment();
-        if (comment == null) {
+        String comment = getCellCommentValue(row, index++);
+        if (StringUtils.isEmpty(comment)) {
             // 注解为空
             throw new BusinessException(messageModelErr);
         }
-        if (!comment.getString().getString().equals(paramPlatformInfo.get("cartId"))) {
+        if (!comment.equals(paramPlatformInfo.get("cartId"))) {
             // 注解不是设定平台
             throw new BusinessException(messageModelErr);
         }
 
-        if (!FIXED_TEXT.equals(row.getCell(index).getStringCellValue())) {
+        if (!FIXED_TEXT.equals(getCellValue(row, index))) {
             throw new BusinessException(messageModelErr);
         }
 
@@ -575,18 +592,19 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
     /**
      * check数据，并返回保存对象
      *
-     * @param row         数据行
-     * @param rowHeader   Title行
-     * @param import_mode 导入mode
-     * @param colPlatform 平台对应列号
-     * @param mapSkuInDB  cms_bt_stock_separate_increment_item的数据
-     * @param insertData  insert数据
-     * @param updateData  update数据
+     * @param row          数据行
+     * @param rowHeader    Title行
+     * @param import_mode  导入mode
+     * @param colPlatform  平台对应列号
+     * @param mapSkuInDB   cms_bt_stock_separate_increment_item的数据
+     * @param insertData   insert数据
+     * @param updateData   update数据
+     * @param listExcelSku Excel输入的sku
      */
-    private void checkRecord(Row row, Row rowHeader, String import_mode, int colPlatform, Map<String, StockIncrementExcelBean> mapSkuInDB, List<StockIncrementExcelBean> insertData, List<StockIncrementExcelBean> updateData) {
-        String model = row.getCell(0).getStringCellValue(); // Model
-        String code = row.getCell(1).getStringCellValue(); // Code
-        String sku = row.getCell(2).getStringCellValue(); // Sku
+    private void checkRecord(Row row, Row rowHeader, String import_mode, int colPlatform, Map<String, StockIncrementExcelBean> mapSkuInDB, List<StockIncrementExcelBean> insertData, List<StockIncrementExcelBean> updateData, List<String> listExcelSku) {
+        String model = getCellValue(row, 0); // Model
+        String code = getCellValue(row, 1); // Code
+        String sku = getCellValue(row, 2); // Sku
 
         // Model输入check
         if (StringUtils.isEmpty(model) || model.getBytes().length > 50) {
@@ -601,28 +619,34 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
             throw new BusinessException("Sku必须输入且长度小于50！" + "Sku=" + sku);
         }
 
+        if (listExcelSku.contains(sku)) {
+            throw new BusinessException("Sku重复输入！" + "Sku=" + sku);
+        } else {
+            listExcelSku.add(sku);
+        }
+
         for (int index = 3; index <= colPlatform - 2; index++) {
             // 属性
-            String property = row.getCell(index).getStringCellValue();
+            String property = getCellValue(row, index);
             if (StringUtils.isEmpty(property) || property.getBytes().length > 500) {
-                throw new BusinessException(rowHeader.getCell(index).getStringCellValue() + "必须输入且长度小于500！" + "Sku=" + sku);
+                throw new BusinessException(getCellValue(rowHeader, index) + "必须输入且长度小于500！" + "Sku=" + sku);
             }
         }
 
         // 可调配库存输入check
-        String usableStock = row.getCell(colPlatform - 1).getStringCellValue();
+        String usableStock = getCellValue(row, colPlatform - 1);
         if (StringUtils.isEmpty(usableStock) || !StringUtils.isDigit(usableStock) || usableStock.getBytes().length > 9) {
             throw new BusinessException("可调配库存必须输入小于10位的整数！" + "Sku=" + sku);
         }
 
         // 增量隔离库存
-        String increment_qty = row.getCell(colPlatform).getStringCellValue();
+        String increment_qty = getCellValue(row, colPlatform);
         if (StringUtils.isEmpty(increment_qty) || !StringUtils.isDigit(increment_qty) || increment_qty.getBytes().length > 9) {
             throw new BusinessException("增量隔离库存必须输入小于10位的整数！" + "Sku=" + sku);
         }
 
         // 固定值增量
-        String fix = row.getCell(colPlatform + 1).getStringCellValue();
+        String fix = getCellValue(row, colPlatform + 1);
         if (StringUtils.isEmpty(fix)) {
             fix = TYPE_DYNAMIC;
         } else if (YES.equals(fix)) {
@@ -653,10 +677,10 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
 
                 for (int index = 3; index <= colPlatform - 2; index++) {
                     // 属性
-                    String propertyNa = rowHeader.getCell(index).getCellComment().getString().getString();
-                    String property = row.getCell(index).getStringCellValue();
+                    String propertyNa = getCellCommentValue(rowHeader, index);
+                    String property = getCellValue(row, index);
                     if (!property.equals(beanInDB.getProperty(propertyNa))) {
-                        throw new BusinessException("变更方式导入时," + rowHeader.getCell(index).getStringCellValue() + "不能变更！" + "Sku=" + sku);
+                        throw new BusinessException("变更方式导入时," + getCellValue(rowHeader, index) + "不能变更！" + "Sku=" + sku);
                     }
                 }
 
@@ -664,7 +688,10 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
                     throw new BusinessException("变更方式导入时,可调配库存不能变更！" + "Sku=" + sku);
                 }
 
-
+                if (!increment_qty.equals(beanInDB.getIncrement_qty().toPlainString()) || !fix.equals(beanInDB.getFix_flg())) {
+                    // 数据变更，是更新对象
+                    isUpdateData = true;
+                }
             }
 
         } else {
@@ -673,15 +700,139 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
         }
 
         if (isAddData || isUpdateData) {
-            // 更新对象
+            // 是更新对象
             StockIncrementExcelBean bean = new StockIncrementExcelBean();
             bean.setProduct_model(model);
             bean.setProduct_code(code);
             bean.setSku(sku);
-        }
+            for (int index = 3; index <= colPlatform - 2; index++) {
+                // 属性
+                bean.setProperty(getCellCommentValue(rowHeader, index), getCellValue(row, index));
+            }
+            bean.setQty(new BigDecimal(usableStock));
+            bean.setIncrement_qty(new BigDecimal(increment_qty));
+            bean.setStatus("0");
+            bean.setFix_flg(fix);
 
+            if (isAddData) {
+                insertData.add(bean);
+            }
+            if (isUpdateData) {
+                updateData.add(bean);
+            }
+        }
     }
 
+    /**
+     * 返回单元格注解值
+     *
+     * @param row 行
+     * @param col 列
+     * @return 单元格注解值
+     */
+    private String getCellCommentValue(Row row, int col) {
+        if (row == null) return null;
+        if (row.getCell(col) == null) return null;
+        if (row.getCell(col).getCellComment() == null) return null;
+        return row.getCell(col).getCellComment().getString().getString();
+    }
 
+    /**
+     * 返回单元格值
+     *
+     * @param row 行
+     * @param col 列
+     * @return 单元格值
+     */
+    private String getCellValue(Row row, int col) {
+        if (row == null) return null;
+        if (row.getCell(col) == null) return null;
+        return row.getCell(col).getStringCellValue();
+    }
+
+    /**
+     * 导入文件数据更新
+     *
+     * @param insertData  insert对象
+     * @param updateData  update对象
+     * @param import_mode 导入方式
+     * @param subTaskId   任务id
+     * @param creater     创建者/更新者
+     */
+    private void saveImportData(List<StockIncrementExcelBean> insertData, List<StockIncrementExcelBean> updateData, String import_mode, String subTaskId, String creater) {
+        try {
+            transactionRunner.runWithTran(() -> {
+                if (EXCEL_IMPORT_DELETE_UPDATE.equals(import_mode)) {
+                    // 重置方式
+                    // 此任务所有数据删除
+                    cmsBtStockSeparateIncrementItemDao.deleteStockSeparateIncrementItem(new HashMap<String, Object>(){{this.put("subTaskId",subTaskId);}});
+                    // 插入数据
+                    insertImportData(insertData, subTaskId, creater);
+                } else {
+                    // 变更方式
+                    // 更新数据
+                    updateImportData(updateData, subTaskId, creater);
+                    // 插入数据
+                    insertImportData(insertData, subTaskId, creater);
+                }
+            });
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            throw new BusinessException("更新异常,请重新尝试！");
+        }
+    }
+
+    /**
+     * 导入文件数据插入更新
+     *
+     * @param insertData  insert对象
+     * @param subTaskId   任务id
+     * @param creater     创建者/更新者
+     */
+    private void insertImportData(List<StockIncrementExcelBean> insertData, String subTaskId, String creater) {
+        List<Map<String, Object>> listSaveData = new ArrayList<Map<String, Object>>();
+        for (StockIncrementExcelBean bean : insertData) {
+            Map<String, Object> mapSaveData;
+            try {
+                mapSaveData = PropertyUtils.describe(bean);
+            } catch (Exception e) {
+                throw new BusinessException("导入文件有数据异常");
+            }
+
+            mapSaveData.put("sub_task_id", subTaskId);
+            mapSaveData.put("creater", creater);
+
+            listSaveData.add(mapSaveData);
+            if (listSaveData.size() == 200) {
+                cmsBtStockSeparateIncrementItemDao.insertStockSeparateIncrementItemFromExcel(listSaveData);
+                listSaveData.clear();
+            }
+        }
+
+        if (listSaveData.size() > 0) {
+            cmsBtStockSeparateIncrementItemDao.insertStockSeparateIncrementItemFromExcel(listSaveData);
+            listSaveData.clear();
+        }
+    }
+
+    /**
+     * 导入文件数据变更更新
+     *
+     * @param updateData update对象
+     * @param subTaskId  任务id
+     * @param creater    创建者/更新者
+     */
+    private void updateImportData(List<StockIncrementExcelBean> updateData, String subTaskId, String creater) {
+        for (StockIncrementExcelBean bean : updateData) {
+            Map<String, Object> mapSaveData =  new HashMap<String, Object>();
+            mapSaveData.put("sub_task_id", subTaskId);
+            mapSaveData.put("sku", bean.getSku());
+            mapSaveData.put("incrementQty", bean.getIncrement_qty());
+            mapSaveData.put("fixFlg", bean.getFix_flg());
+            mapSaveData.put("modifier", creater);
+
+            cmsBtStockSeparateIncrementItemDao.updateStockSeparateIncrementItem(mapSaveData);
+        }
+    }
 
 }
