@@ -173,7 +173,7 @@ public class CmsProductDetailService {
         customAttributes.setOrgAtts(productValueModel.getFeed().getOrgAtts());
         customAttributes.setCnAtts(productValueModel.getFeed().getCnAtts());
         customAttributes.setCustomIds(productValueModel.getFeed().getCustomIds());
-        customAttributes.setCnAttsShow(getCustomAttributesCnAttsShow(feedInfoModel.get("category").toString(), productValueModel.getFeed(), channelId));
+        customAttributes.setCnAttsShow(getCustomAttributesCnAttsShow((String) feedInfoModel.get("category"), productValueModel.getFeed(), channelId));
 
         productInfo.setMasterFields(masterSchemaFields);
         productInfo.setChannelId(channelId);
@@ -439,18 +439,14 @@ public class CmsProductDetailService {
      * @return
      */
     private Map<String, String> getCmsBtFeedInfoModel(String channelId, Long prodId, CmsBtProductModel productValueModel) {
-
         CmsBtFeedInfoModel feedInfoModel = cmsBtFeedInfoDao.selectProductByCode(channelId, productValueModel.getFields().getCode());
-
+        Map<String, String> feedAttributes = new HashMap<>();
         if (feedInfoModel == null) {
             //feed 信息不存在时异常处理.
             String errMsg = "channel id: " + channelId + " product id: " + prodId + " 对应的品牌方信息不存在！";
-
             logger.warn(errMsg);
-
+            return feedAttributes;
         }
-
-        Map<String, String> feedAttributes = new HashMap<>();
 
         if (!StringUtils.isEmpty(feedInfoModel.getCategory())) {
             feedAttributes.put("category", feedInfoModel.getCategory());
