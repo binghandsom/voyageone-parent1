@@ -157,4 +157,82 @@
         order by
         `product_model`,`product_code`,`sku`
     </select>
+
+    <insert id="insert_cms_bt_stock_separate_increment_item_excel" parameterType="List">
+        insert into voyageone_cms2.cms_bt_stock_separate_increment_item (
+        sub_task_id,
+        product_model,
+        product_code,
+        sku,
+        qty,
+        increment_qty,
+        property1,
+        property2,
+        property3,
+        property4,
+        status,
+        fix_flg,
+        created,
+        creater,
+        modified,
+        modifier
+        ) value
+        <foreach collection="list" index="index" item="item" separator=",">
+            (#{item.sub_task_id},
+            #{item.product_model},
+            #{item.product_code},
+            #{item.sku},
+            #{item.qty},
+            #{item.increment_qty},
+            <if test="item.property1 != null" >
+                #{item.property1},
+            </if>
+            <if test="item.property1 == null" >
+                '',
+            </if>
+            <if test="item.property2 != null" >
+                #{item.property2},
+            </if>
+            <if test="item.property2 == null" >
+                '',
+            </if>
+            <if test="item.property3 != null" >
+                #{item.property3},
+            </if>
+            <if test="item.property3 == null" >
+                '',
+            </if>
+            <if test="item.property4 != null" >
+                #{item.property4},
+            </if>
+            <if test="item.property4 == null" >
+                '',
+            </if>
+            <if test="item.status != null" >
+                #{item.status},
+            </if>
+            <if test="item.status == null" >
+                '',
+            </if>
+            #{item.fix_flg},
+            now(),
+            #{item.creater},
+            now(),
+            #{item.creater})
+        </foreach>
+    </insert>
+
+    <!--<select id="select_stock_separate_increment_platform" resultType="HashMap" parameterType="String">-->
+        <!--SELECT-->
+          <!--t1.task_id,-->
+          <!--t1.promotion_id,-->
+	      <!--t2.activity_start,-->
+	      <!--t2.activity_end-->
+        <!--FROM-->
+          <!--voyageone_cms2.cms_bt_stock_separate_increment_task main-->
+        <!--LEFT OUTER JOIN voyageone_cms2.cms_bt_stock_separate_platform_info t1 ON main.task_id=t1.task_id AND main.cart_id=t1.cart_id-->
+        <!--LEFT OUTER JOIN voyageone_cms2.cms_bt_promotion t2 ON t1.promotion_id = t2.promotion_id-->
+        <!--WHERE-->
+	      <!--main.sub_task_id = #{subTaskId}-->
+    <!--</select>-->
 </mapper>
