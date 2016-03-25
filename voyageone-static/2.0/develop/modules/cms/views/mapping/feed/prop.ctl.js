@@ -204,7 +204,7 @@ define([
                         isCommon: self.isCommon
                     }).then(function(res) {
                         self.mappings = res.data;
-                        self.mapping = self.mappings.find(function(mapping){
+                        self.mapping = self.isCommon ? self.mappings[0] : self.mappings.find(function(mapping){
                             return mapping.scope.feedCategoryPath === self.feedCategoryPath;
                         });
                         self.matchOver = self.mapping.matchOver === 1;
