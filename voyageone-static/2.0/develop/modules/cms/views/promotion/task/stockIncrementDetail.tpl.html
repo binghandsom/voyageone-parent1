@@ -77,7 +77,7 @@
 							<th class="text-center w5">{{'TXT_USABLE_STOCK' | translate}}</th>
 							<th class="text-center w3">{{$ctrl.cartName}}</th>
 							<th class="text-center w5">{{'TXT_STATUS' | translate}}</th>
-							<th class="text-center w3">{{'TXT_UPDATE_FIX_VALUE' | translate}}</th>
+							<th class="text-center w5">{{'TXT_UPDATE_FIX_VALUE' | translate}}</th>
 							<th class="text-center w5">{{'BTN_EDIT' | translate}}</th>
 						</tr>
 						</thead>
@@ -90,7 +90,7 @@
 							<td class="text-center w5">{{stock.qty}}</td>
 							<td class="text-center w3"><input class="form-control" placeholder="20"  ng-model="stock.incrementQty"></td>
 							<td class="text-center w5">{{stock.status}}</td>
-							<th class="text-center w3"><label class="checkbox-inline c-checkbox"><input type="checkbox" ng-model="stock.fixFlg"><span class="fa fa-check"></span></label></th>
+							<th class="text-center w5"><label class="checkbox-inline c-checkbox"><input type="checkbox" ng-model="stock.fixFlg"><span class="fa fa-check"></span></label></th>
 							<td class="text-center w5">
 								<button title="{{'BTN_SAVE' | translate}}" class="btn btn-vo btn-xs" ng-click="$ctrl.saveItem(stock)"><i class="glyphicon glyphicon-floppy-disk"></i></button>
 								<button title="{{'BTN_DELETE' | translate}}" class="btn btn-danger btn-xs" ng-click="$ctrl.delItem(stock.sku)"><i class="fa  fa-trash-o"></i></button>

@@ -274,9 +274,8 @@ public class CmsTaskStockIncrementDetailController extends CmsController {
      * }
      * @apiExample  业务说明
      *  1.check输入信息。增量隔离库存必须是大于0的整数。
-     *                   如果状态="2：增量成功"或者"1:等待增量"，则不能进行修改。
+     *                   如果状态="1:等待增量","2：增量中","3：增量成功","4：增量失败","5：还原"，则不能进行修改。
      *  2.如果修改的增量隔离库存<>cms_bt_increment_stock_separate_item表里对应的值，那么更新cms_bt_increment_stock_separate_item表的值。
-     *    （修正后状态变为0:未进行，其实只针对3：增量失败的场合）
      * @apiExample 使用表
      *  cms_bt_increment_stock_separate_item
      *
@@ -315,7 +314,7 @@ public class CmsTaskStockIncrementDetailController extends CmsController {
      *  "code": "1", "message": "删除失败（增量库存隔离后不能进行删除）", "displayType":null, "redirectTo":null, "data":null
      * }
      * @apiExample  业务说明
-     *  如果选择的增量隔离明细的状态为1:等待增量或者2：增量成功，则删除失败。否则删除这条增量隔离明细。
+     *  如果选择的增量隔离明细的状态为"1:等待增量","2：增量中","3：增量成功","4：增量失败","5：还原"则不能删除这条明细，否则删除这条增量隔离明细。
      * @apiExample 使用表
      *  cms_bt_increment_stock_separate_item
      *
