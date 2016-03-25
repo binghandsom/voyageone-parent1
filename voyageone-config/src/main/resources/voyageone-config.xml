@@ -17,7 +17,7 @@
 
     <!-- online env -->
     <!--<import resource="file:/usr/web/spring-config/datasource-cms2-config.xml" />-->
-    <!--<import resource="file:/usr/web/spring-config/datasource-config-mongo.xml" />-->
+    <!--<import resource="file:/usr/web/spring-config/datasource-config-mongo-cms2.xml" />-->
     <!-- SDK Client Config -->
     <!--<import resource="file:/usr/web/spring-config/sdk-client-config.xml" />-->
     <!-- MQ Config -->

@@ -1,7 +1,7 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
-       http://www.springframework.org/schema/beans/spring-beans.xsd">
+                     http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <!-- 连接池配置. -->
     <bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
@@ -53,7 +53,7 @@
         <!--&lt;!&ndash; Redis服务端口号. &ndash;&gt;-->
         <!--<property name="port" value="6379" />-->
         <!--&lt;!&ndash; Redis服务连接密码. &ndash;&gt;-->
-        <!--<property name="password" value="tYdce3*&Ot7%" />-->
+        <!--<property name="password" value="tYdce3Ot7" />-->
         <!--&lt;!&ndash; 连超时设置. &ndash;&gt;-->
         <!--<property name="timeout" value="15000" />-->
         <!--&lt;!&ndash; 是否使用连接池. &ndash;&gt;-->
