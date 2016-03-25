@@ -7,8 +7,7 @@ define([
 ], function (cms) {
     cms.controller("taskStockIncrementController", (function () {
 
-        function TaskStockIncrementController($routeParams, taskStockIncrementService, cActions, confirm, alert, notify) {
-            var urls = cActions.cms.task.taskStockService;
+        function TaskStockIncrementController($routeParams, taskStockIncrementService, confirm, alert, notify) {
             this.alert = alert;
             this.notify = notify;
             this.confirm = confirm;

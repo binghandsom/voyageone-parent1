@@ -77,30 +77,36 @@ public class CmsTaskStockService extends BaseAppService {
     private CmsBtPromotionDao cmsBtPromotionDao;
 
     /** 增量/库存隔离状态 0：未进行 */
-    private static final String STATUS_READY = "0";
+    public static final String STATUS_READY = "0";
     /** 库存隔离状态 1：等待隔离 */
-    private static final String STATUS_WAITING_SEPARATE = "1";
-    /** 库存隔离状态 2：隔离成功 */
-    private static final String STATUS_SEPARATE_SUCCESS = "2";
-    /** 库存隔离状态 3：隔离失败 */
-    private static final String STATUS_SEPARATE_FAIL = "3";
-    /** 库存隔离状态 4：等待还原 */
-    private static final String STATUS_WAITING_REVERT = "4";
-    /** 库存隔离状态 5：还原成功 */
-    private static final String STATUS_REVERT_SUCCESS = "5";
-    /** 库存隔离状态 6：还原失败 */
-    private static final String STATUS_REVERT_FAIL = "6";
-    /** 库存隔离状态 7：再修正 */
-    private static final String STATUS_CHANGED = "7";
+    public static final String STATUS_WAITING_SEPARATE = "1";
+    /** 库存隔离状态 2：隔离中 */
+    public static final String STATUS_SEPARATING = "2";
+    /** 库存隔离状态 3：隔离成功 */
+    public static final String STATUS_SEPARATE_SUCCESS = "3";
+    /** 库存隔离状态 4：隔离失败 */
+    public static final String STATUS_SEPARATE_FAIL = "4";
+    /** 库存隔离状态 5：等待还原 */
+    public static final String STATUS_WAITING_REVERT = "5";
+    /** 库存隔离状态 6：还原中 */
+    public static final String STATUS_REVERTING = "6";
+    /** 库存隔离状态 7：还原成功 */
+    public static final String STATUS_REVERT_SUCCESS = "7";
+    /** 库存隔离状态 8：还原失败 */
+    public static final String STATUS_REVERT_FAIL = "8";
+    /** 库存隔离状态 9：再修正 */
+    public static final String STATUS_CHANGED = "9";
 
     /** 增量库存隔离状态 1：等待增量 */
-    private static final String STATUS_WAITING_INCREMENT = "1";
-    /** 增量库存隔离状态 2：增量成功 */
-    private static final String STATUS_INCREMENT_SUCCESS = "2";
-    /** 增量库存隔离状态 3：增量失败 */
-    private static final String STATUS_INCREMENT_FAIL = "3";
-    /** 增量库存隔离状态 4：还原 */
-    private static final String STATUS_REVERT = "4";
+    public static final String STATUS_WAITING_INCREMENT = "1";
+    /** 增量库存隔离状态 2：增量中 */
+    public static final String STATUS_INCREASING = "2";
+    /** 增量库存隔离状态 3：增量成功 */
+    public static final String STATUS_INCREMENT_SUCCESS = "3";
+    /** 增量库存隔离状态 5：增量失败 */
+    public static final String STATUS_INCREMENT_FAIL = "4";
+    /** 增量库存隔离状态 5：还原 */
+    public static final String STATUS_REVERT = "5";
 
     /** Excel增量方式导入 */
     private static final String EXCEL_IMPORT_ADD = "1";
@@ -442,9 +448,11 @@ public class CmsTaskStockService extends BaseAppService {
         sqlParam.put("taskId", param.get("taskId"));
         // "0:未进行"以外的状态
         sqlParam.put("statusList", Arrays.asList( STATUS_WAITING_SEPARATE,
+                                                    STATUS_SEPARATING,
                                                     STATUS_SEPARATE_SUCCESS,
                                                     STATUS_SEPARATE_FAIL,
                                                     STATUS_WAITING_REVERT,
+                                                    STATUS_REVERTING,
                                                     STATUS_REVERT_SUCCESS,
                                                     STATUS_REVERT_FAIL,
                                                     STATUS_CHANGED));
@@ -733,9 +741,10 @@ public class CmsTaskStockService extends BaseAppService {
         // 取得一页中的sku所有平台的隔离库存（含非本任务的）
         Map<String,Object> sqlParam1 = new HashMap<String,Object>();
         sqlParam1.put("skuList", skuList);
-        // 状态 = 2：隔离成功,4：等待还原, 5：还原成功 ,6：还原失败
+        // 状态 = 2：隔离成功,5：等待还原, 6：还原中, 7：还原成功 ,8：还原失败
         sqlParam1.put("statusList", Arrays.asList( STATUS_SEPARATE_SUCCESS,
                                                     STATUS_WAITING_REVERT,
+                                                    STATUS_REVERTING,
                                                     STATUS_REVERT_SUCCESS,
                                                     STATUS_REVERT_FAIL));
         sqlParam1.put("tableNameSuffix", param.get("tableNameSuffix"));
@@ -763,7 +772,7 @@ public class CmsTaskStockService extends BaseAppService {
                     }
                 }
 
-                // 加入到sku库存隔离信息（该任务下的各个平台的数据），状态为4：等待还原, 5：还原成功 ,6：还原失败也认为是隔离成功
+                // 加入到sku库存隔离信息（该任务下的各个平台的数据），状态为5：等待还原, 6：还原中, 7：还原成功 ,8：还原失败也认为是隔离成功
                 if (currentTaskId.equals(taskId)) {
                     skuStockByPlatform.put(sku + cartId, separateQty);
                 }
@@ -773,7 +782,7 @@ public class CmsTaskStockService extends BaseAppService {
         // 取得一页中的sku所有平台的增量隔离库存（含非本任务的）
         Map<String,Object> sqlParam2 = new HashMap<String,Object>();
         sqlParam2.put("skuList", skuList);
-        // 状态 = 2：增量成功,4：还原,
+        // 状态 = 3：增量成功,5：还原,
         sqlParam2.put("statusList", Arrays.asList(STATUS_INCREMENT_SUCCESS, STATUS_REVERT));
         sqlParam2.put("tableNameSuffix", param.get("tableNameSuffix"));
         List<Map<String,Object>> stockIncrementList = cmsBtStockSeparateIncrementItemDao.selectStockSeparateIncrement(sqlParam2);
@@ -789,7 +798,7 @@ public class CmsTaskStockService extends BaseAppService {
                 Integer incrementQty = (Integer) stockIncrementInfo.get("increment_qty");
                 String taskId = String.valueOf(stockIncrementInfo.get("task_id"));
                 String status = (String) stockIncrementInfo.get("status");
-                // 如果状态为2：隔离成功 那么加入到sku库存增量隔离信息（所有任务所有平台的数据）
+                // 如果状态为3：隔离成功 那么加入到sku库存增量隔离信息（所有任务所有平台的数据）
                 if (STATUS_INCREMENT_SUCCESS.equals(status)) {
                     if (skuStockIncrementAllTask.containsKey(sku)) {
                         skuStockIncrementAllTask.put(sku, skuStockIncrementAllTask.get(sku) + incrementQty);
@@ -929,7 +938,7 @@ public class CmsTaskStockService extends BaseAppService {
         // 取得任务id对应的Promotion是否开始
         boolean promotionStartFlg = isPromotionStart((String) param.get("taskId"));
         if (promotionStartFlg) {
-            throw new BusinessException("活动已经开始，不能修改数据！");
+            throw new BusinessException("活动已经开始，不能编辑数据！");
         }
 
         List<Map<String,Object>> stockList = new ArrayList<Map<String,Object>>();
@@ -962,7 +971,7 @@ public class CmsTaskStockService extends BaseAppService {
             sqlParam.put("tableNameSuffix", "");
             List<Map<String, Object>> stockSeparateItemList = cmsBtStockSeparateItemDao.selectStockSeparateItem(sqlParam);
             if (stockSeparateItemList == null || stockSeparateItemList.size() == 0) {
-                throw new BusinessException("更新对象不存在！");
+                throw new BusinessException("明细对象不存在！");
             }
             // 这个页面所有sku的库存隔离信息Map
             Map<String, Object> skuDBInfo = new HashMap<String, Object>();
@@ -993,27 +1002,31 @@ public class CmsTaskStockService extends BaseAppService {
 
                         // 画面的隔离库存 != DB的隔离库存是进行更新 并且 不是动态的场合（状态不是空白）
                         if (!separationQty.equals(separateQtyDB) && !StringUtils.isEmpty(status)) {
+                            // 状态为"2:隔离中"或者"6:还原中"的数据不能进行变更
+                            if(STATUS_SEPARATING.equals(statusDB) || STATUS_REVERTING.equals(statusDB)) {
+                                throw new BusinessException("状态为 还原中 或者 隔离中 的明细不能进行编辑！");
+                            }
                             Map<String, Object> sqlParam1 = new HashMap<String, Object>();
                             sqlParam1.put("taskId", taskId);
                             sqlParam1.put("sku", sku);
                             sqlParam1.put("cartId", cartId);
                             sqlParam1.put("separateQty", separationQty);
                             sqlParam1.put("modifier", param.get("userName"));
-                            // 导入前状态为"7：再修正"和"2 隔离成功"以外，则导入后状态为"0：未进行"，导入前状态为"7：再修正"或"2 隔离成功"，则导入后状态为"7：再修正"
+                            // 导入前状态为"9：再修正"和"3: 隔离成功"以外，则导入后状态为"0：未进行"，导入前状态为"9：再修正"或"3: 隔离成功"，则导入后状态为"9：再修正"
                             String changedStatus = "";
-                            if ("2".equals(statusDB) || "7".equals(statusDB)) {
-                                sqlParam1.put("status", "7");
-                                changedStatus = "7";
+                            if (STATUS_SEPARATE_SUCCESS.equals(statusDB) || STATUS_CHANGED.equals(statusDB)) {
+                                sqlParam1.put("status", STATUS_CHANGED);
+                                changedStatus = STATUS_CHANGED;
                             } else {
-                                sqlParam1.put("status", "0");
-                                changedStatus = "0";
+                                sqlParam1.put("status", STATUS_READY);
+                                changedStatus = STATUS_READY;
                             }
                             int updateCnt = cmsBtStockSeparateItemDao.updateStockSeparateItem(sqlParam1);
                             if (updateCnt == 1) {
                                 String typeName = Type.getTypeName(63, changedStatus, (String) param.get("lang"));
                                 platformInfo.put("status", typeName);
                             } else {
-                                throw new BusinessException("更新对象不存在！");
+                                throw new BusinessException("明细对象不存在！");
                             }
                         }
                     }
@@ -1050,13 +1063,13 @@ public class CmsTaskStockService extends BaseAppService {
             sqlParam.put("tableNameSuffix", "");
             List<Map<String, Object>> stockSeparateItemList = cmsBtStockSeparateItemDao.selectStockSeparateItem(sqlParam);
             if (stockSeparateItemList == null || stockSeparateItemList.size() == 0) {
-                throw new BusinessException("选择的明细不存在！");
+                throw new BusinessException("明细对象不存在");
             }
             for (Map<String, Object> stockSeparateItem : stockSeparateItemList) {
                 String status = (String) stockSeparateItem.get("status");
                 // 只有状态为 0：未进行的数据可以删除
                 if (!StringUtils.isEmpty(status) && !STATUS_READY.equals(status)) {
-                    throw new BusinessException("选择的明细不能删除！");
+                    throw new BusinessException("只有状态为未进行的明细才能进行删除！");
                 }
             }
 
@@ -1064,8 +1077,8 @@ public class CmsTaskStockService extends BaseAppService {
             sqlParam.put("taskId", taskId);
             sqlParam.put("sku", sku);
             int delCount = cmsBtStockSeparateItemDao.deleteStockSeparateItem(sqlParam);
-            if (delCount <= 0) {
-                throw new BusinessException("选择的明细不存在！");
+            if (delCount == 0) {
+                throw new BusinessException("明细对象不存在！");
             }
         } catch (BusinessException e) {
             simpleTransaction.rollback();
@@ -1104,7 +1117,7 @@ public class CmsTaskStockService extends BaseAppService {
         int stockSeparate = 0;
         Map<String,Object> sqlParam1 = new HashMap<String,Object>();
         sqlParam1.put("sku", sku);
-        // 状态 = 2：隔离成功
+        // 状态 = 3：隔离成功
         sqlParam1.put("status", STATUS_SEPARATE_SUCCESS);
         Integer stockSeparateSuccessQty =  cmsBtStockSeparateItemDao.selectStockSeparateSuccessQty(sqlParam1);
         if (stockSeparateSuccessQty != null) {
@@ -1116,7 +1129,7 @@ public class CmsTaskStockService extends BaseAppService {
         int stockIncrementSeparate = 0;
         Map<String,Object> sqlParam2 = new HashMap<String,Object>();
         sqlParam2.put("sku", sku);
-        // 状态 = 2：增量成功
+        // 状态 = 3：增量成功
         sqlParam2.put("status", STATUS_INCREMENT_SUCCESS);
         Integer stockSeparateIncrementSuccessQty =  cmsBtStockSeparateIncrementItemDao.selectStockSeparateIncrementSuccessQty(sqlParam2);
         if (stockSeparateIncrementSuccessQty != null) {
@@ -1341,12 +1354,13 @@ public class CmsTaskStockService extends BaseAppService {
         sqlParam.put("cartId", param.get("cartId"));
         // sku
         sqlParam.put("sku", param.get("sku"));
-        // 一般库存隔离状态 状态 = 2：隔离成功,4：等待还原, 5：还原成功 ,6：还原失败
+        // 一般库存隔离状态 状态 = 3：隔离成功,5：等待还原, 6：等待中, 7：还原成功 ,8：还原失败
         sqlParam.put("statusStockList", Arrays.asList(STATUS_SEPARATE_SUCCESS,
                                                         STATUS_WAITING_REVERT,
+                                                        STATUS_REVERTING,
                                                         STATUS_REVERT_SUCCESS,
                                                         STATUS_REVERT_FAIL));
-        // 增量库存隔离状态 状态 = 2：增量成功,4：还原
+        // 增量库存隔离状态 状态 = 3：增量成功,5：还原
         sqlParam.put("statusStockIncrementList", Arrays.asList(STATUS_INCREMENT_SUCCESS, STATUS_REVERT));
         // 是否从历史表中取得数据
         sqlParam.put("tableNameSuffix", param.get("tableNameSuffix"));
@@ -1385,7 +1399,7 @@ public class CmsTaskStockService extends BaseAppService {
             sqlParam.put("modifier", param.get("userName"));
             // 更新条件
             sqlParam.put("taskId", param.get("taskId"));
-            // 只有状态为"0:未进行"，"3:隔离失败"，"7:再修正"的数据可以进行隔离库存操作
+            // 只有状态为"0:未进行"，"4:隔离失败"，"9:再修正"的数据可以进行隔离库存操作
             sqlParam.put("statusList", Arrays.asList(STATUS_READY, STATUS_SEPARATE_FAIL, STATUS_CHANGED));
             updateCnt = cmsBtStockSeparateItemDao.updateStockSeparateItem(sqlParam);
 
@@ -1426,7 +1440,7 @@ public class CmsTaskStockService extends BaseAppService {
             sqlParam2.put("modifier", param.get("userName"));
             // 更新条件
             sqlParam2.put("taskId", param.get("taskId"));
-            // 只有状态为"2:隔离成功"，"6:还原失败"的数据可以进行还原库存隔离操作。
+            // 只有状态为"3:隔离成功"，"8:还原失败"的数据可以进行还原库存隔离操作。
             sqlParam2.put("statusList", Arrays.asList(STATUS_SEPARATE_SUCCESS, STATUS_REVERT_FAIL));
             updateCnt = cmsBtStockSeparateItemDao.updateStockSeparateItem(sqlParam2);
             if (updateCnt == 0) {
@@ -1448,13 +1462,13 @@ public class CmsTaskStockService extends BaseAppService {
             if (!StringUtils.isEmpty(selSku)) {
                 sqlParam1.put("sku", selSku);
             }
-            // 更新状态为"4:还原"
+            // 更新状态为"5:还原"
             sqlParam1.put("status", STATUS_REVERT);
             sqlParam1.put("modifier", param.get("userName"));
             //更新条件
             sqlParam1.put("subTaskIdList", subTaskIdList);
             // 只对状态为"2:增量成功"的数据改变状态
-            sqlParam1.put("statusWhere", EXCEL_IMPORT_UPDATE);
+            sqlParam1.put("statusWhere", STATUS_INCREMENT_SUCCESS);
             cmsBtStockSeparateIncrementItemDao.updateStockSeparateIncrementItem(sqlParam1);
 
         } catch (BusinessException e) {
@@ -1636,9 +1650,11 @@ public class CmsTaskStockService extends BaseAppService {
     /**
      * excel 导入
      *
-     * @param param 客户端参数
+     * @param param      客户端参数
+     * @param file       导入文件
+     * @param resultBean 返回内容
      */
-    public void importExcelFileStockInfo(Map param, MultipartFile file) {
+    public void importExcelFileStockInfo(Map param, MultipartFile file, Map<String, Object> resultBean) {
         // 取得任务id对应的Promotion是否开始
         boolean promotionStartFlg = isPromotionStart((String) param.get("task_id"));
         if (promotionStartFlg) {
@@ -1670,7 +1686,7 @@ public class CmsTaskStockService extends BaseAppService {
         logger.info("库存隔离数据取得结束");
 
         logger.info("导入Excel取得并check的处理开始");
-        List<StockExcelBean> saveData = readExcel(file, import_mode, paramPropertyList, paramPlatformInfoList, mapSkuInDB);
+        List<StockExcelBean> saveData = readExcel(file, import_mode, paramPropertyList, paramPlatformInfoList, mapSkuInDB, resultBean);
         logger.info("导入Excel取得并check的处理结束");
 
         if (saveData.size() > 0) {
@@ -1691,10 +1707,12 @@ public class CmsTaskStockService extends BaseAppService {
      * @param paramPropertyList     属性list
      * @param paramPlatformInfoList 平台list
      * @param mapSkuInDB            cms_bt_stock_separate_item的数据
-     * @return
+     * @param resultBean            返回内容
+     * @return 更新对象
      */
-    private List<StockExcelBean> readExcel(MultipartFile file, String import_mode, List<Map> paramPropertyList, List<Map> paramPlatformInfoList, Map<String, Map<String, StockExcelBean>> mapSkuInDB) {
+    private List<StockExcelBean> readExcel(MultipartFile file, String import_mode, List<Map> paramPropertyList, List<Map> paramPlatformInfoList, Map<String, Map<String, StockExcelBean>> mapSkuInDB, Map<String, Object> resultBean) {
         List<StockExcelBean> saveData = new ArrayList<StockExcelBean>();
+        List<String> listExcelSku = new ArrayList<String>();
 
         Workbook wb;
         int[] colPlatform = null;
@@ -1708,6 +1726,7 @@ public class CmsTaskStockService extends BaseAppService {
 
         Sheet sheet = wb.getSheetAt(0);
         boolean isHeader = true;
+        boolean hasExecutingData = false;
         for (Row row : sheet) {
             if (isHeader) {
                 // 第一行Title行
@@ -1716,9 +1735,14 @@ public class CmsTaskStockService extends BaseAppService {
                 colPlatform = checkHeader(row, paramPropertyList, paramPlatformInfoList);
             } else {
                 // 数据行
-                checkRecord(row, sheet.getRow(0), import_mode, colPlatform, mapSkuInDB, saveData);
+                boolean isExecutingData = checkRecord(row, sheet.getRow(0), import_mode, colPlatform, mapSkuInDB, saveData, listExcelSku);
+                if (isExecutingData && !hasExecutingData) {
+                    hasExecutingData = true;
+                }
             }
         }
+
+        resultBean.put("hasExecutingData", hasExecutingData);
 
         return saveData;
     }
@@ -1734,9 +1758,9 @@ public class CmsTaskStockService extends BaseAppService {
     private int[] checkHeader(Row row, List<Map> paramPropertyList, List<Map> paramPlatformInfoList) {
         int[] colPlatform = new int[2];
         String messageModelErr = "请使用正确格式的excel导入文件";
-        if (!"Model".equals(row.getCell(0).getStringCellValue())
-                || !"Code".equals(row.getCell(1).getStringCellValue())
-                || !"Sku".equals(row.getCell(2).getStringCellValue())) {
+        if (!"Model".equals(getCellValue(row, 0))
+                || !"Code".equals(getCellValue(row, 1))
+                || !"Sku".equals(getCellValue(row, 2))) {
             throw new BusinessException(messageModelErr);
         }
 
@@ -1747,8 +1771,8 @@ public class CmsTaskStockService extends BaseAppService {
         List<String> propertyList = new ArrayList<String>();
         int index = 3;
         for (; index <= 6; index++) {
-            Comment comment = row.getCell(index).getCellComment();
-            if (comment == null) {
+            String comment = getCellCommentValue(row, index);
+            if (StringUtils.isEmpty(comment)) {
                 // 注解为空
                 if (propertyList.size() > 0) {
                     // 已经有属性列，属性列结束
@@ -1758,16 +1782,16 @@ public class CmsTaskStockService extends BaseAppService {
                     throw new BusinessException(messageModelErr);
                 }
             }
-            if (!listPropertyKey.contains(comment.getString().getString())) {
+            if (!listPropertyKey.contains(comment)) {
                 // 注解不是设定属性
                 throw new BusinessException(messageModelErr);
             } else {
                 // 注解是设定属性
-                if (propertyList.contains(comment.getString().getString())) {
+                if (propertyList.contains(comment)) {
                     // 已经存在相同属性列
                     throw new BusinessException(messageModelErr);
                 } else {
-                    propertyList.add(comment.getString().getString());
+                    propertyList.add(comment);
                 }
             }
         }
@@ -1777,7 +1801,7 @@ public class CmsTaskStockService extends BaseAppService {
             throw new BusinessException(messageModelErr);
         }
 
-        if (!USABLESTOCK.equals(row.getCell(index++).getStringCellValue())) {
+        if (!USABLESTOCK.equals(getCellValue(row, index++))) {
             throw new BusinessException(messageModelErr);
         }
 
@@ -1790,8 +1814,8 @@ public class CmsTaskStockService extends BaseAppService {
 
         List<String> platformList = new ArrayList<String>();
         while (true) {
-            Comment comment = row.getCell(index).getCellComment();
-            if (comment == null) {
+            String comment = getCellCommentValue(row, index);
+            if (StringUtils.isEmpty(comment)) {
                 // 注解为空
                 if (platformList.size() > 0) {
                     // 已经有平台列，平台列结束
@@ -1801,16 +1825,16 @@ public class CmsTaskStockService extends BaseAppService {
                     throw new BusinessException(messageModelErr);
                 }
             }
-            if (!listPlatformKey.contains(comment.getString().getString())) {
+            if (!listPlatformKey.contains(comment)) {
                 // 注解不是设定平台
                 throw new BusinessException(messageModelErr);
             } else {
                 // 注解是设定平台
-                if (platformList.contains(comment.getString().getString())) {
+                if (platformList.contains(comment)) {
                     // 已经存在相同平台列
                     throw new BusinessException(messageModelErr);
                 } else {
-                    platformList.add(comment.getString().getString());
+                    platformList.add(comment);
                 }
             }
 
@@ -1825,7 +1849,7 @@ public class CmsTaskStockService extends BaseAppService {
         // 平台对应结束列号
         colPlatform[1] = index;
 
-        if (!OTHER.equals(row.getCell(index).getStringCellValue())) {
+        if (!OTHER.equals(getCellValue(row, index))) {
             throw new BusinessException(messageModelErr);
         }
 
@@ -1835,17 +1859,20 @@ public class CmsTaskStockService extends BaseAppService {
     /**
      * check数据，并返回保存对象
      *
-     * @param row         行
-     * @param import_mode 导入mode
-     * @param colPlatform colPlatform[0]平台对应起始列号,colPlatform[1]平台对应结束列号
-     * @param mapSkuInDB  cms_bt_stock_separate_item的数据
-     * @param saveData    保存对象
+     * @param row          数据行
+     * @param rowHeader    Title行
+     * @param import_mode  导入mode
+     * @param colPlatform  colPlatform[0]平台对应起始列号,colPlatform[1]平台对应结束列号
+     * @param mapSkuInDB   cms_bt_stock_separate_item的数据
+     * @param saveData     保存对象
+     * @param listExcelSku Excel输入的sku
      */
-    private void checkRecord(Row row, Row rowHeader, String import_mode, int[] colPlatform, Map<String, Map<String, StockExcelBean>> mapSkuInDB, List<StockExcelBean> saveData) {
+    private boolean checkRecord(Row row, Row rowHeader, String import_mode, int[] colPlatform, Map<String, Map<String, StockExcelBean>> mapSkuInDB, List<StockExcelBean> saveData, List<String> listExcelSku) {
+        boolean isExecutingData = false; // 是否是隔离中或者还原中数据
 
-        String model = row.getCell(0).getStringCellValue(); // Model
-        String code = row.getCell(1).getStringCellValue(); // Code
-        String sku = row.getCell(2).getStringCellValue(); // Sku
+        String model = getCellValue(row, 0); // Model
+        String code = getCellValue(row, 1); // Code
+        String sku = getCellValue(row, 2); // Sku
 
         // Model输入check
         if (StringUtils.isEmpty(model) || model.getBytes().length > 50) {
@@ -1860,16 +1887,22 @@ public class CmsTaskStockService extends BaseAppService {
             throw new BusinessException("Sku必须输入且长度小于50！" + "Sku=" + sku);
         }
 
+        if (listExcelSku.contains(sku)) {
+            throw new BusinessException("Sku重复输入！" + "Sku=" + sku);
+        } else {
+            listExcelSku.add(sku);
+        }
+
         for (int index = 3; index <= colPlatform[0] - 2; index++) {
             // 属性
-            String property = row.getCell(index).getStringCellValue();
+            String property = getCellValue(row, index);
             if (StringUtils.isEmpty(property) || property.getBytes().length > 500) {
-                throw new BusinessException(rowHeader.getCell(index).getStringCellValue() + "必须输入且长度小于500！" + "Sku=" + sku);
+                throw new BusinessException(getCellValue(rowHeader, index) + "必须输入且长度小于500！" + "Sku=" + sku);
             }
         }
 
         // 可用库存输入check
-        String usableStock = row.getCell(colPlatform[0] - 1).getStringCellValue();
+        String usableStock = getCellValue(row, colPlatform[0] - 1);
         if (StringUtils.isEmpty(usableStock) || !StringUtils.isDigit(usableStock) || usableStock.getBytes().length > 9) {
             throw new BusinessException("可用库存必须输入小于10位的整数！" + "Sku=" + sku);
         }
@@ -1878,9 +1911,9 @@ public class CmsTaskStockService extends BaseAppService {
         int stockCnt = 0;
         for (int index = colPlatform[0]; index < colPlatform[1]; index++) {
             // 平台隔离库存
-            String separate_qty = row.getCell(index).getStringCellValue();
+            String separate_qty = getCellValue(row, index);
             // 平台号
-            String cartId = rowHeader.getCell(index).getCellComment().getString().getString();
+            String cartId = getCellCommentValue(rowHeader, index);
 
             boolean isDYNAMIC = false;
             if (DYNAMIC.equals(separate_qty)) {
@@ -1909,7 +1942,7 @@ public class CmsTaskStockService extends BaseAppService {
                 bean.setCart_id(cartId);
                 for (int c = 3; c <= colPlatform[0] - 2; c++) {
                     // 属性
-                    bean.setProperty(rowHeader.getCell(c).getCellComment().getString().getString(), row.getCell(c).getStringCellValue());
+                    bean.setProperty(getCellCommentValue(rowHeader, c), getCellValue(row, c));
                 }
                 bean.setQty(new BigDecimal(usableStock));
                 if (isDYNAMIC) {
@@ -1917,7 +1950,7 @@ public class CmsTaskStockService extends BaseAppService {
                     bean.setSeparate_qty(new BigDecimal("-1"));
                 } else {
                     bean.setSeparate_qty(new BigDecimal(separate_qty));
-                    bean.setStatus("0");
+                    bean.setStatus(STATUS_READY);
                 }
 
                 saveData.add(bean);
@@ -1943,10 +1976,10 @@ public class CmsTaskStockService extends BaseAppService {
 
                 for (int c = 3; c <= colPlatform[0] - 2; c++) {
                     // 属性
-                    String propertyNa = rowHeader.getCell(c).getCellComment().getString().getString();
-                    String property = row.getCell(c).getStringCellValue();
+                    String propertyNa = getCellCommentValue(rowHeader, c);
+                    String property = getCellValue(row, c);
                     if (!property.equals(beanInDB.getProperty(propertyNa))) {
-                        throw new BusinessException("变更方式导入时," + rowHeader.getCell(c).getStringCellValue() + "不能变更！" + "Sku=" + sku);
+                        throw new BusinessException("变更方式导入时," + getCellValue(rowHeader, c) + "不能变更！" + "Sku=" + sku);
                     }
                 }
 
@@ -1955,17 +1988,23 @@ public class CmsTaskStockService extends BaseAppService {
                 }
 
                 boolean isUpdate = false; // 更新对象
-                if (isDYNAMIC) {
-                    // 动态
-                    if (!StringUtils.isEmpty(beanInDB.getStatus())) {
-                        // DB非动态
-                        isUpdate = true;
-                    }
+                String dbStatus = beanInDB.getStatus();
+                if (STATUS_SEPARATING.equals(dbStatus) || STATUS_REVERTING.equals(dbStatus)) {
+                    // 隔离中或者还原中
+                    isExecutingData = true;
                 } else {
-                    // 非动态
-                    if (StringUtils.isEmpty(beanInDB.getStatus()) || !separate_qty.equals(beanInDB.getSeparate_qty().toPlainString())) {
-                        // DB动态或数量不一致
-                        isUpdate = true;
+                    if (isDYNAMIC) {
+                        // 动态
+                        if (!StringUtils.isEmpty(dbStatus)) {
+                            // DB非动态
+                            isUpdate = true;
+                        }
+                    } else {
+                        // 非动态
+                        if (StringUtils.isEmpty(dbStatus) || !separate_qty.equals(beanInDB.getSeparate_qty().toPlainString())) {
+                            // DB动态或数量不一致
+                            isUpdate = true;
+                        }
                     }
                 }
 
@@ -1977,7 +2016,7 @@ public class CmsTaskStockService extends BaseAppService {
                     bean.setCart_id(cartId);
                     for (int c = 3; c <= colPlatform[0] - 2; c++) {
                         // 属性
-                        bean.setProperty(rowHeader.getCell(c).getCellComment().getString().getString(), row.getCell(c).getStringCellValue());
+                        bean.setProperty(getCellCommentValue(rowHeader, c), getCellValue(row, c));
                     }
                     bean.setQty(new BigDecimal(usableStock));
                     if (isDYNAMIC) {
@@ -1985,10 +2024,10 @@ public class CmsTaskStockService extends BaseAppService {
                         bean.setSeparate_qty(new BigDecimal("-1"));
                     } else {
                         bean.setSeparate_qty(new BigDecimal(separate_qty));
-                        if ("2".equals(beanInDB.getStatus()) || "7".equals(beanInDB.getStatus())) {
-                            bean.setStatus("7");
+                        if (STATUS_SEPARATE_SUCCESS.equals(dbStatus) || STATUS_CHANGED.equals(dbStatus)) {
+                            bean.setStatus(STATUS_CHANGED);
                         } else {
-                            bean.setStatus("0");
+                            bean.setStatus(STATUS_READY);
                         }
                     }
 
@@ -2001,9 +2040,11 @@ public class CmsTaskStockService extends BaseAppService {
             throw new BusinessException("Sku=" + sku + "的数据至少隔离一个平台的库存值！");
         }
 
-        if (!DYNAMIC.equals(row.getCell(colPlatform[1]).getStringCellValue())) {
+        if (!DYNAMIC.equals(getCellValue(row, colPlatform[1]))) {
             throw new BusinessException("Sku=" + sku + "的其它平台栏不是动态！");
         }
+
+        return isExecutingData;
     }
 
     /**
@@ -2079,6 +2120,33 @@ public class CmsTaskStockService extends BaseAppService {
      */
     private void updateImportData(Map<String, Object> saveData) {
         cmsBtStockSeparateItemDao.updateStockSeparateItem(saveData);
+    }
+
+    /**
+     * 返回单元格注解值
+     *
+     * @param row 行
+     * @param col 列
+     * @return 单元格注解值
+     */
+    private String getCellCommentValue(Row row, int col) {
+        if (row == null) return null;
+        if (row.getCell(col) == null) return null;
+        if (row.getCell(col).getCellComment() == null) return null;
+        return row.getCell(col).getCellComment().getString().getString();
+    }
+
+    /**
+     * 返回单元格值
+     *
+     * @param row 行
+     * @param col 列
+     * @return 单元格值
+     */
+    private String getCellValue(Row row, int col) {
+        if (row == null) return null;
+        if (row.getCell(col) == null) return null;
+        return row.getCell(col).getStringCellValue();
     }
 
     /**
@@ -2210,10 +2278,18 @@ public class CmsTaskStockService extends BaseAppService {
      *
      * @return where条件的Sql文
      */
-    private String getWhereSql(Map param, boolean statusFlg){
+    public String getWhereSql(Map param, boolean statusFlg){
         String whereSql = " where 1=1 ";
-        // 任务Id
-        whereSql += " and task_id = " + String.valueOf(param.get("taskId")) + " ";
+
+        // 子任务Id
+        if (!StringUtils.isEmpty((String) param.get("subTaskId"))) {
+            whereSql += " and sub_task_id = " + String.valueOf(param.get("subTaskId")) + " ";
+        } else {
+            // 任务Id
+            if (!StringUtils.isEmpty((String) param.get("taskId"))) {
+                whereSql += " and task_id = " + String.valueOf(param.get("taskId")) + " ";
+            }
+        }
 
         // 商品model
         if (!StringUtils.isEmpty((String) param.get("model"))) {

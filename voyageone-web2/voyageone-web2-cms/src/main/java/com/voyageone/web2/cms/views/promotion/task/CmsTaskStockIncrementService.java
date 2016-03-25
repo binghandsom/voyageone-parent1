@@ -2,32 +2,10 @@ package com.voyageone.web2.cms.views.promotion.task;
 
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.transaction.SimpleTransaction;
-import com.voyageone.common.configs.Properties;
-import com.voyageone.common.configs.Type;
-import com.voyageone.common.configs.TypeChannel;
-import com.voyageone.common.configs.beans.TypeChannelBean;
-import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.common.util.FileUtils;
-import com.voyageone.common.util.JacksonUtil;
-import com.voyageone.common.util.StringUtils;
-import com.voyageone.service.dao.cms.CmsBtTasksDao;
-import com.voyageone.service.model.cms.CmsBtTasksModel;
 import com.voyageone.web2.base.BaseAppService;
-import com.voyageone.web2.cms.CmsConstants;
-import com.voyageone.web2.cms.bean.promotion.task.StockExcelBean;
 import com.voyageone.web2.cms.dao.*;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.*;
 
 ;
@@ -37,13 +15,6 @@ import java.util.*;
  */
 @Service
 public class CmsTaskStockIncrementService extends BaseAppService {
-
-    @Autowired
-    private CmsBtStockSeparatePlatformInfoDao cmsBtStockSeparatePlatformInfoDao;
-
-    @Autowired
-    private CmsBtStockSeparateItemDao cmsBtStockSeparateItemDao;
-
     @Autowired
     private CmsBtStockSeparateIncrementTaskDao cmsBtStockSeparateIncrementTaskDao;
 
@@ -51,28 +22,10 @@ public class CmsTaskStockIncrementService extends BaseAppService {
     private CmsBtStockSeparateIncrementItemDao cmsBtStockSeparateIncrementItemDao;
 
     @Autowired
-    private CmsBtStockSalesQuantityDao cmsBtStockSalesQuantityDao;
-
-    @Autowired
-    private WmsBtLogicInventoryDao wmsBtLogicInventoryDao;
-
-    @Autowired
-    private CmsBtTasksDao cmsBtTasksDao;
-
-    @Autowired
     private CmsTaskStockIncrementDetailService cmsTaskStockIncrementDetailService;
 
     @Autowired
     private SimpleTransaction simpleTransaction;
-
-    /** 增量库存隔离状态 1：等待增量 */
-    private static final String STATUS_WAITING_INCREMENT = "1";
-    /** 增量库存隔离状态 2：增量成功 */
-    private static final String STATUS_INCREMENT_SUCCESS = "2";
-    /** 增量库存隔离状态 3：增量失败 */
-    private static final String STATUS_INCREMENT_FAIL = "3";
-    /** 增量库存隔离状态 4：还原 */
-    private static final String STATUS_REVERT = "4";
 
     /**
      * 检索增量库存隔离任务
@@ -110,10 +63,11 @@ public class CmsTaskStockIncrementService extends BaseAppService {
         Map<String, Object> sqlParam = new HashMap<String, Object>();
         sqlParam.put("subTaskId", subTaskId);
         // 状态为"0:未进行"以外
-        sqlParam.put("statusList", Arrays.asList( STATUS_WAITING_INCREMENT,
-                                                    STATUS_INCREMENT_SUCCESS,
-                                                    STATUS_INCREMENT_FAIL,
-                                                    STATUS_REVERT));
+        sqlParam.put("statusList", Arrays.asList( CmsTaskStockService.STATUS_WAITING_INCREMENT,
+                                                    CmsTaskStockService.STATUS_INCREASING,
+                                                    CmsTaskStockService.STATUS_INCREMENT_SUCCESS,
+                                                    CmsTaskStockService.STATUS_INCREMENT_FAIL,
+                                                    CmsTaskStockService.STATUS_REVERT));
         Integer seq = cmsBtStockSeparateIncrementItemDao.selectStockSeparateIncrementItemByStatus(sqlParam);
         if (seq != null) {
             throw new BusinessException("已经开始增量库存隔离，不能删除增量任务！");

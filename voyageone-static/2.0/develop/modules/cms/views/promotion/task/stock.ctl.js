@@ -8,7 +8,8 @@ define([
 ], function (cms) {
     cms.controller("taskStockController", (function () {
 
-        function TaskStockController($routeParams, taskStockService, cActions, confirm, alert, notify, selectRowsFactory) {
+        function TaskStockController($routeParams, taskStockService, cActions, confirm, alert, notify, selectRowsFactory,blockUI) {
+            this.blockUI = blockUI;
             var urls = cActions.cms.task.taskStockService;
             this.alert = alert;
             this.notify = notify;
@@ -16,12 +17,14 @@ define([
             this.taskId = $routeParams['task_id'];
             this.hasAuthority = true;
             this.readyNum = 0;
-            this.waitSeparationNum = 0;
-            this.separationOKNum = 0;
-            this.separationFailNum = 0;
+            this.waitingSeparateNum = 0;
+            this.separatingNum = 0;
+            this.separateSuccessNum = 0;
+            this.separateFailureNum = 0;
             this.waitRevertNum = 0;
-            this.revertOKNum = 0;
-            this.revertFailNum = 0;
+            this.revertingNum = 0;
+            this.revertSuccessNum = 0;
+            this.revertFailureNum = 0;
             this.changedNum = 0;
             this.allNum = 0;
             this.model = "";
@@ -78,7 +81,7 @@ define([
                 if (status != undefined)  {
                     main.status = status;
                 }
-                if (status >= '0' && status <= '7') {
+                if (status >= '0' && status <= '9') {
                     var allNumLabel = document.getElementById('allNum');
                     allNumLabel.setAttribute("class", "btn btn-default-vo");
                 }
@@ -93,9 +96,9 @@ define([
                     "propertyList" : main.propertyList,
                     "platformList" : main.platformList,
                     "start1" :  0,
-                    "length1" : 20,
+                    "length1" : main.stockPageOption.size,
                     "start2" :  0,
-                    "length2" : 20
+                    "length2" : main.realStockPageOption.size
                 }).then(function (res) {
                     main.hasAuthority = res.data.hasAuthority;
                     if (!main.hasAuthority) {
@@ -104,12 +107,14 @@ define([
                     }
                     main.tempStockListSelect.clearCurrPageRows();
                     main.readyNum = res.data.readyNum;
-                    main.waitSeparationNum = res.data.waitSeparationNum;
-                    main.separationOKNum = res.data.separationOKNum;
-                    main.separationFailNum = res.data.separationFailNum;
+                    main.waitingSeparateNum = res.data.waitingSeparateNum;
+                    main.separatingNum = res.data.separatingNum;
+                    main.separateSuccessNum = res.data.separateSuccessNum;
+                    main.separateFailureNum = res.data.separateFailureNum;
                     main.waitRevertNum = res.data.waitRevertNum;
-                    main.revertOKNum = res.data.revertOKNum;
-                    main.revertFailNum = res.data.revertFailNum;
+                    main.revertingNum = res.data.revertingNum;
+                    main.revertSuccessNum = res.data.revertSuccessNum;
+                    main.revertFailureNum = res.data.revertFailureNum;
                     main.changedNum = res.data.changedNum;
                     main.allNum = res.data.allNum;
                     main.stockPageOption.total = res.data.skuNum;
@@ -205,7 +210,6 @@ define([
 
             setPercent: function () {
                 var main = this;
-
                 if(main.stockSelList.selList.length <= 0){
                     main.alert('TXT_MSG_NO_ROWS_SELECT');
                 }
@@ -314,6 +318,7 @@ define([
 
             download: function () {
                 var main = this;
+                //main.blockUI.start();
                 $.download.post(main.downloadUrl, {
                     task_id: main.taskId,
                     propertyList: JSON.stringify(main.propertyList),
@@ -324,6 +329,9 @@ define([
                     "qtyFrom" : main.qtyFrom,
                     "qtyTo" : main.qtyTo,
                     "status" : main.status
+                },function(){
+                    //main.blockUI.stop();
+                    //var test= "";
                 });
             }
         };

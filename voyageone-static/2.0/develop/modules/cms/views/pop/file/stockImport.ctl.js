@@ -7,8 +7,9 @@ define([
     'modules/cms/views/promotion/task/stock.ctl'
 ], function (angularAMD) {
 
-    angularAMD.controller('popFileStockImportCtl', function ($scope,FileUploader,alert,cActions,data,notify) {
+    angularAMD.controller('popFileStockImportCtl', function ($scope,FileUploader,confirm,alert,cActions,data,notify) {
             var task_id = data.task_id;
+            var subTaskId = data.subTaskId;
             var parent_id = data.parent_id;
             var platformList = JSON.stringify(data.platformList);
             var propertyList = JSON.stringify(data.propertyList);
@@ -31,30 +32,46 @@ define([
                 $scope.import_mode = "2";
                 $scope.parent_id = parent_id;
             }
-            $scope.upload = function(){
+            $scope.upload = function() {
                 var main = this;
                 var uploadQueue = uploader.queue;
                 var uploadItem = uploadQueue[uploadQueue.length - 1];
                 if (!uploadItem) {
                     return alert('TXT_MSG_NO_UPLOAD');
                 }
-                this.uploadItem = uploadItem;
-                uploadItem.onSuccess = function (res) {
-                    if (res.message) {
-                        $scope.vm.messager = res.message;
-                        alert(res.message);
-                        return;
-                    }
-                    if (main.import_mode == "2") {
-                        notify.success('TXT_MSG_UPDATE_SUCCESS');
-                    } else {
-                        notify.success('TXT_MSG_INSERT_SUCCESS');
-                    }
-                    $scope.$close();
+                var uploadIt = function () {
+                    this.uploadItem = uploadItem;
+                    uploadItem.onSuccess = function (res) {
+                        if (res.message) {
+                            $scope.vm.messager = res.message;
+                            alert(res.message);
+                            return;
+                        }
+                        if (main.import_mode == "1") {
+                            notify.success('TXT_MSG_INSERT_SUCCESS');
+                        } else {
+                            notify.success('TXT_MSG_UPDATE_SUCCESS');
+                        }
+                        if (res.data.hasExecutingData) {
+                            alert('TXT_MSG_IMPORT_STATUS_ERROR');
+                        }
+                        $scope.$close();
+                    };
+                    uploadItem.formData = [{
+                        "task_id": task_id,
+                        "subTaskId": subTaskId,
+                        "platformList": platformList,
+                        "propertyList": propertyList,
+                        "import_mode": main.import_mode
+                    }];
+                    uploadItem.upload();
+                    $scope.vm.messager = "reading...";
                 };
-                uploadItem.formData = [{"task_id":task_id,"platformList":platformList,"propertyList":propertyList,"import_mode":main.import_mode}];
-                uploadItem.upload();
-                $scope.vm.messager ="reading...";
+                if (main.import_mode == "3") {
+                    confirm('TXT_MSG_IMPORT_DELETE_UPDATE_MSGBOX').result.then(uploadIt);
+                } else {
+                    uploadIt();
+                }
             }
 
             uploader.onProgressItem = function(fileItem, progress) {

@@ -247,12 +247,14 @@ public class CmsTaskStockController extends CmsController {
      * @apiSuccess (应用级返回字段) {boolean} hasAuthority 任务id对应渠道id是否有权限（false:没有权限,true:有权限）
      * @apiSuccess (应用级返回字段) {String} allNum 总数
      * @apiSuccess (应用级返回字段) {String} readyNum 未进行数
-     * @apiSuccess (应用级返回字段) {String} waitSeparationNum 等待隔离数
-     * @apiSuccess (应用级返回字段) {String} separationOKNum 隔离成功数
-     * @apiSuccess (应用级返回字段) {String} separationFailNum 隔离失败数
+     * @apiSuccess (应用级返回字段) {String} waitingSeparateNum 等待隔离数
+     * @apiSuccess (应用级返回字段) {String} separatingNum 隔离中数
+     * @apiSuccess (应用级返回字段) {String} separateSuccessNum 隔离成功数
+     * @apiSuccess (应用级返回字段) {String} separateFailureNum 隔离失败数
      * @apiSuccess (应用级返回字段) {String} waitRevertNum 等待还原数
-     * @apiSuccess (应用级返回字段) {String} revertOKNum 还原成功数
-     * @apiSuccess (应用级返回字段) {String} revertFailNum 还原失败数
+     * @apiSuccess (应用级返回字段) {String} revertingNum 等待还原数
+     * @apiSuccess (应用级返回字段) {String} revertSuccessNum 还原成功数
+     * @apiSuccess (应用级返回字段) {String} revertFailureNum 还原失败数
      * @apiSuccess (应用级返回字段) {String} changedNum 再修正数
      * @apiSuccess (应用级返回字段) {String} skuNum sku数
      * @apiSuccess (应用级返回字段) {String} realStockStatus 实时库存表示状态(0:活动期间表示,1:活动结束后表示）
@@ -267,12 +269,14 @@ public class CmsTaskStockController extends CmsController {
      *   "hasAuthority":true,
      *   "allNum":30000,
      *   "readyNum":1000,
-     *   "waitSeparationNum":5000,
-     *   "separationOKNum":1000,
-     *   "separationFailNum":0,
+     *   "waitingSeparateNum":5000,
+     *   "separatingNum":5000,
+     *   "separateSuccessNum":1000,
+     *   "separateFailureNum":0,
      *   "waitRevertNum":5000,
-     *   "revertOKNum":1000,
-     *   "revertFailNum":0,
+     *   "revertingNum":5000,
+     *   "revertSuccessNum":1000,
+     *   "revertFailureNum":0,
      *   "changedNum":0,
      *   "skuNum":10000,
      *   "realStockStatus":"0",
@@ -289,7 +293,7 @@ public class CmsTaskStockController extends CmsController {
      *                                                         "platformStock":[{"cartId":"23", "separationQty":"40", "status":"等待隔离"},
      *                                                                          {"cartId":"27", "separationQty":"30", "status":"还原成功"}]},
      *                   {"model":"35265", "code":"35265465", "sku":"256354566-11", "property1":"Puma", "property2":"Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"80",
-     *                                                         "platformStock":[{"cartId":"23", "separationQty":"-1", "status":""},
+     *                                                         "platformStock":[{"cartId":"23", "separationQty":"-1", "status":null},
      *                                                                          {"cartId":"27", "separationQty":"10", "status":"还原成功"}]},
      *                    ...]，
      *   "realStockList": [ {"model":"35265", "code":"35265465", "Sku":"256354566-9", "property1":"Puma", "property2":"Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"50",
@@ -304,7 +308,7 @@ public class CmsTaskStockController extends CmsController {
      *                    ...]，
      *  }
      * }
-     * 说明："separationQty":"-1"为动态。"salesQty":平台销售数量
+     * 说明："separationQty":"-1"或者"status":null为动态。"salesQty":平台销售数量
      * propertyList是通过在com_mt_value_channel(typeId=62)中通过配置来取得。（配置这个channel显示几个属性，每个属性在画面上的显示名称是什么）
      * @apiExample  业务说明
      *  1.根据参数.任务id，商品Code，Sku，状态和各个属性从cms_bt_stock_separate_item表检索库存隔离明细。（一个Sku一条记录，按Sku进行分页）
@@ -347,10 +351,17 @@ public class CmsTaskStockController extends CmsController {
             List<Map<String, Object>> platformList = cmsTaskStockService.getPlatformList((String) param.get("taskId"), this.getUser().getSelChannelId(), this.getLang());
             resultBean.put("platformList", platformList);
             param.put("platformList", platformList);
+            if (platformList == null || platformList.size() == 0) {
+                resultBean.put("hasAuthority", false);
+                return success(resultBean);
+            }
 
             // 任务id/渠道id权限check
             boolean hasAuthority = cmsTaskStockService.hasAuthority(this.getUser().getSelChannelId(), platformList);
             resultBean.put("hasAuthority", hasAuthority);
+            if (!hasAuthority) {
+                return success(resultBean);
+            }
         } else {
             resultBean.put("platformList", param.get("platformList"));
             resultBean.put("hasAuthority", true);
@@ -387,21 +398,25 @@ public class CmsTaskStockController extends CmsController {
                 cntAllExceptDynamic +=cnt;
             }
             String key = "";
-            if ("0".equals(status)) {
+            if (CmsTaskStockService.STATUS_READY.equals(status)) {
                 key = "readyNum";
-            } else if ("1".equals(status)) {
-                key = "waitSeparationNum";
-            } else if ("2".equals(status)) {
-                key = "separationOKNum";
-            } else if ("3".equals(status)) {
-                key = "separationFailNum";
-            } else if ("4".equals(status)) {
+            } else if (CmsTaskStockService.STATUS_WAITING_SEPARATE.equals(status)) {
+                key = "waitingSeparateNum";
+            } else if (CmsTaskStockService.STATUS_SEPARATING.equals(status)) {
+                key = "separatingNum";
+            } else if (CmsTaskStockService.STATUS_SEPARATE_SUCCESS.equals(status)) {
+                key = "separateSuccessNum";
+            } else if (CmsTaskStockService.STATUS_SEPARATE_FAIL.equals(status)) {
+                key = "separateFailureNum";
+            } else if (CmsTaskStockService.STATUS_WAITING_REVERT.equals(status)) {
                 key = "waitRevertNum";
-            } else if ("5".equals(status)) {
-                key = "revertOKNum";
-            } else if ("6".equals(status)) {
-                key = "revertFailNum";
-            } else if ("7".equals(status)) {
+            } else if (CmsTaskStockService.STATUS_REVERTING.equals(status)) {
+                key = "revertingNum";
+            } else if (CmsTaskStockService.STATUS_REVERT_SUCCESS.equals(status)) {
+                key = "revertSuccessNum";
+            } else if (CmsTaskStockService.STATUS_REVERT_FAIL.equals(status)) {
+                key = "revertFailureNum";
+            } else if (CmsTaskStockService.STATUS_CHANGED.equals(status)) {
                 key = "changedNum";
             }
             resultBean.put(key, cnt);
@@ -409,23 +424,29 @@ public class CmsTaskStockController extends CmsController {
         if (!resultBean.containsKey("readyNum")) {
             resultBean.put("readyNum", 0);
         }
-        if (!resultBean.containsKey("waitSeparationNum")) {
-            resultBean.put("waitSeparationNum", 0);
+        if (!resultBean.containsKey("waitingSeparateNum")) {
+            resultBean.put("waitingSeparateNum", 0);
         }
-        if (!resultBean.containsKey("separationOKNum")) {
-            resultBean.put("separationOKNum", 0);
+        if (!resultBean.containsKey("separatingNum")) {
+            resultBean.put("separatingNum", 0);
         }
-        if (!resultBean.containsKey("separationFailNum")) {
-            resultBean.put("separationFailNum", 0);
+        if (!resultBean.containsKey("separateSuccessNum")) {
+            resultBean.put("separateSuccessNum", 0);
+        }
+        if (!resultBean.containsKey("separateFailureNum")) {
+            resultBean.put("separateFailureNum", 0);
         }
         if (!resultBean.containsKey("waitRevertNum")) {
             resultBean.put("waitRevertNum", 0);
         }
-        if (!resultBean.containsKey("revertOKNum")) {
-            resultBean.put("revertOKNum", 0);
+        if (!resultBean.containsKey("revertingNum")) {
+            resultBean.put("revertingNum", 0);
         }
-        if (!resultBean.containsKey("revertFailNum")) {
-            resultBean.put("revertFailNum", 0);
+        if (!resultBean.containsKey("revertSuccessNum")) {
+            resultBean.put("revertSuccessNum", 0);
+        }
+        if (!resultBean.containsKey("revertFailureNum")) {
+            resultBean.put("revertFailureNum", 0);
         }
         if (!resultBean.containsKey("changedNum")) {
             resultBean.put("changedNum", 0);
@@ -921,12 +942,15 @@ public class CmsTaskStockController extends CmsController {
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK.IMPORT_STOCK_INFO)
     public AjaxResponse importStockInfo(@RequestParam Map param, @RequestParam MultipartFile file) {
+        // 返回内容
+        Map<String, Object> resultBean = new HashMap<>();
+
         // 创建者/更新者用
         param.put("userName", this.getUser().getUserName());
         // import Excel
-        cmsTaskStockService.importExcelFileStockInfo(param, file);
+        cmsTaskStockService.importExcelFileStockInfo(param, file, resultBean);
         // 返回
-        return success(null);
+        return success(resultBean);
     }
 
 

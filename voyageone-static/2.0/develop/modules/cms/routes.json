@@ -49,7 +49,7 @@
   },
   "promotion_task_stock_increment_detail": {
     "url": "/promotion/task_stock_increment_detail/",
-    "hash": "/promotion/task_stock_increment_detail/:task_id",
+    "hash": "/promotion/task_stock_increment_detail/:sub_task_id",
     "templateUrl": "views/promotion/task/stockIncrementDetail.tpl.html",
     "controllerUrl": "modules/cms/views/promotion/task/stockIncrementDetail.ctl",
     "controller": "taskStockIncrementDetailController as $ctrl"

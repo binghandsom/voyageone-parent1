@@ -221,9 +221,11 @@ define(function(){
         "TXT_ALL": "总数",
         "TXT_READY": "未进行",
         "TXT_WAITING_SEPARATE": "等待隔离",
+        "TXT_SEPARATING": "隔离中",
         "TXT_STOCK_SEPARATE_SUCCESS": "隔离成功",
         "TXT_STOCK_SEPARATE_FAILURE": "隔离失败",
         "TXT_WAITING_REVERT": "等待还原",
+        "TXT_REVERTING": "还原中",
         "TXT_REVERT_SUCCESS": "还原成功",
         "TXT_REVERT_FAILURE": "还原失败",
         "TXT_CHANGED": "再修正",
@@ -244,6 +246,16 @@ define(function(){
         "TXT_ADD_NEW_STOCK_INCREMENT_SEPARATE_TASK":"新建增量库存隔离任务",
         "TXT_PLATFORM_SALE_QUANTITY": "平台销售量",
         "TXT_PLATFORM_STOCK_SEPARATE_QUANTITY": "平台库存隔离数量",
+        "TXT_STOCK_INCREMENT_SEPARATE_DETAIL":"增量库存隔离明细",
+        "TXT_WAITING_INCREMENT":"等待增量",
+        "TXT_INCREASING":"增量中",
+        "TXT_INCREMENT_SUCCESS":"增量成功",
+        "TXT_INCREMENT_FAILURE":"增量失败",
+        "TXT_UPDATE_FIX_VALUE":"更新固定值",
+
+
+
+
         "TXT_SEPARATE_PROPORTION":"隔离比例",
         "TXT_REVERT_TIME":"还原时间",
         "TXT_INCREASING_PRIORITY":"增优先顺序",
@@ -252,6 +264,8 @@ define(function(){
         "TXT_SEPARATE":"隔离",
         "TXT_SHARE":"共享",
         "TXT_SEPARATE_NEW_TASK":"新建隔离任务",
+
+
 
         "TXT_MSG_SEARCH": "检索...",
         "TXT_MSG_PAGE_IS_BUILDING": "该页面正在建设中...",
@@ -265,6 +279,8 @@ define(function(){
         "TXT_MSG_SET_FAIL": "设定操作失败.",
         "TXT_MSG_SEPARATE_SUCCESS": "隔离操作成功",
         "TXT_MSG_SEPARATE_FAIL": "隔离操作失败",
+        "TXT_MSG_INCREMENT_SUCCESS": "增量操作成功",
+        "TXT_MSG_INCREMENT_FAIL": "增量操作失败.",
         "TXT_MSG_REVERT_SUCCESS": "还原操作成功",
         "TXT_MSG_REVERT_FAIL": "还原操作失败",
         "TXT_MSG_NO_ROWS_SELECT": "请至少选择一条数据.",
@@ -293,6 +309,7 @@ define(function(){
         "TXT_MSG_PRODUCT_CAN_NOT_EDIT": "该商品正在主类目切换中,请稍等...",
         "TXT_MSG_DO_DELETE": "您确定要删除 ",
         "TXT_MSG_DO_SEPARATE": "您确定要隔离 ",
+        "TXT_MSG_DO_INCREASE": "您确定要增量 ",
         "TXT_MSG_DO_REVERT": "您确定要还原 ",
         "TXT_MSG_LONG_TITLE":"长标题",
         "TXT_MSG_MIDDLE_TITLE":"中标题",
@@ -304,6 +321,7 @@ define(function(){
         "TXT_MSG_CODE_IN_OTHER": "你提交的商品,已经在其他任务中.你确定要继续?",
         "TXT_MSG_REIMPORT_BEAT": "从新上传会覆盖原数据, 意味着之前的数据将被清空. 你确定要继续么?",
         "TXT_MSG_ERROR_BEAT_ITEM": "这个任务的商品信息好像有问题? 你确定要修改它的状态?",
+        "TXT_MSG_IMPORT_DELETE_UPDATE_MSGBOX": "重置方式导入时,原数据会全部被删除.你确定要继续?",
         "TXT_MSG_INPUT_WORD_LENCHK": "你还可以输入",
         "TXT_MSG_INPUT_WORD_LENCHK2": "个文字",
         "TXT_MSG_FIELD_VAL_INVALID": "属性(字段)的值无效, 请根据提示修改.",
@@ -313,6 +331,7 @@ define(function(){
         "TXT_MSG_IMPORT_UPDATE": "变更方式",
         "TXT_MSG_IMPORT_ADD": "增量方式",
         "TXT_MSG_IMPORT_DELETE_UPDATE": "重置方式",
+        "TXT_MSG_IMPORT_STATUS_ERROR": "存在正在处理中的数据，这些没有被更新",
 
 
         "BTN_CREATE_TASK": "新建任务",
@@ -363,6 +382,7 @@ define(function(){
         "BTN_EXPORT_ALL": "批量导出",
         "BTN_START_REFRESH_ALL": "启动/重刷所有",
         "BTN_REVERT_ALL": "还原所有",
+        "BTN_START_INCREMENT_ALL": "启动增量所有",
 
         // 枚举 com.voyageone.cms.enums.BeatFlag 的翻译
         "STOP": "已停止",

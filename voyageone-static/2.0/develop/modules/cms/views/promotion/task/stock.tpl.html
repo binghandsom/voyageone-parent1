@@ -75,13 +75,15 @@
 		<div class="form-inline pull-right btn-group">
 			<label id="allNum" class="btn btn-default-vo btn-vo" ng-model="radioModel" uib-btn-radio="'总数'" ng-click="$ctrl.search('')">{{'TXT_ALL' | translate}}：{{$ctrl.allNum}}</label>
 			<label class="btn btn-default-vo" ng-model="radioModel" uib-btn-radio="'未进行'" ng-click="$ctrl.search('0')">{{'TXT_READY' | translate}}：{{$ctrl.readyNum}}</label>
-			<label class="btn btn-default-vo" ng-model="radioModel" uib-btn-radio="'等待隔离'" ng-click="$ctrl.search('1')">{{'TXT_WAITING_SEPARATE' | translate}}：{{$ctrl.waitSeparationNum}}</label>
-			<label class="btn btn-default-vo" ng-model="radioModel" uib-btn-radio="'隔离成功'" ng-click="$ctrl.search('2')">{{'TXT_STOCK_SEPARATE_SUCCESS' | translate}}：{{$ctrl.separationOKNum}}</label>
-			<label class="btn btn-default-vo" ng-model="radioModel" uib-btn-radio="'隔离失败'" ng-click="$ctrl.search('3')">{{'TXT_STOCK_SEPARATE_FAILURE' | translate}}：{{$ctrl.separationFailNum}}</label>
-			<label class="btn btn-default-vo" ng-model="radioModel" uib-btn-radio="'等待还原'" ng-click="$ctrl.search('4')">{{'TXT_WAITING_REVERT' | translate}}：{{$ctrl.waitRevertNum}}</label>
-			<label class="btn btn-default-vo" ng-model="radioModel" uib-btn-radio="'还原成功'" ng-click="$ctrl.search('5')">{{'TXT_REVERT_SUCCESS' | translate}}：{{$ctrl.revertOKNum}}</label>
-			<label class="btn btn-default-vo" ng-model="radioModel" uib-btn-radio="'还原失败'" ng-click="$ctrl.search('6')">{{'TXT_REVERT_FAILURE' | translate}}：{{$ctrl.revertFailNum}}</label>
-			<label class="btn btn-default-vo" ng-model="radioModel" uib-btn-radio="'再修正'" ng-click="$ctrl.search('7')">{{'TXT_CHANGED' | translate}}：{{$ctrl.changedNum}}</label>
+			<label class="btn btn-default-vo" ng-model="radioModel" uib-btn-radio="'等待隔离'" ng-click="$ctrl.search('1')">{{'TXT_WAITING_SEPARATE' | translate}}：{{$ctrl.waitingSeparateNum}}</label>
+			<label class="btn btn-default-vo" ng-model="radioModel" uib-btn-radio="'隔离中'" ng-click="$ctrl.search('2')">{{'TXT_SEPARATING' | translate}}：{{$ctrl.separatingNum}}</label>
+			<label class="btn btn-default-vo" ng-model="radioModel" uib-btn-radio="'隔离成功'" ng-click="$ctrl.search('3')">{{'TXT_STOCK_SEPARATE_SUCCESS' | translate}}：{{$ctrl.separateSuccessNum}}</label>
+			<label class="btn btn-default-vo" ng-model="radioModel" uib-btn-radio="'隔离失败'" ng-click="$ctrl.search('4')">{{'TXT_STOCK_SEPARATE_FAILURE' | translate}}：{{$ctrl.separateFailureNum}}</label>
+			<label class="btn btn-default-vo" ng-model="radioModel" uib-btn-radio="'等待还原'" ng-click="$ctrl.search('5')">{{'TXT_WAITING_REVERT' | translate}}：{{$ctrl.waitRevertNum}}</label>
+			<label class="btn btn-default-vo" ng-model="radioModel" uib-btn-radio="'还原中'" ng-click="$ctrl.search('6')">{{'TXT_REVERTING' | translate}}：{{$ctrl.revertingNum}}</label>
+			<label class="btn btn-default-vo" ng-model="radioModel" uib-btn-radio="'还原成功'" ng-click="$ctrl.search('7')">{{'TXT_REVERT_SUCCESS' | translate}}：{{$ctrl.revertSuccessNum}}</label>
+			<label class="btn btn-default-vo" ng-model="radioModel" uib-btn-radio="'还原失败'" ng-click="$ctrl.search('8')">{{'TXT_REVERT_FAILURE' | translate}}：{{$ctrl.revertFailureNum}}</label>
+			<label class="btn btn-default-vo" ng-model="radioModel" uib-btn-radio="'再修正'" ng-click="$ctrl.search('9')">{{'TXT_CHANGED' | translate}}：{{$ctrl.changedNum}}</label>
 		</div><!-- /right-btn -->
 		<!--tab-->
 		<tab>

@@ -6,21 +6,28 @@
         select
             t1.sku,
             t1.increment_qty,
+            t1.fix_flg,
             t1.status,
             t2.cart_id,
             t2.task_id
         from voyageone_cms2.cms_bt_stock_separate_increment_item${tableNameSuffix} t1
         inner join voyageone_cms2.cms_bt_stock_separate_increment_task t2 on t1.sub_task_id = t2.sub_task_id
         where 1=1
+            <if test="subTaskId != null" >
+                and t1.sub_task_id = #{subTaskId}
+            </if>
+            <if test="sku != null" >
+                and t1.sku = #{sku}
+            </if>
             <if test="skuList != null and skuList.size() > 0">
-                and (sku in
+                and (t1.sku in
                 <foreach collection="skuList" item="skuItem" open="(" separator="," close=")">
                     #{skuItem}
                 </foreach>
                 )
             </if>
             <if test="statusList != null and statusList.size() > 0">
-                and (status in
+                and (t1.status in
                 <foreach collection="statusList" item="statusItem" open="(" separator="," close=")">
                     #{statusItem}
                 </foreach>
@@ -53,6 +60,10 @@
         select count(*)
         from   voyageone_cms2.cms_bt_stock_separate_increment_item_history
         where sub_task_id = #{subTaskId}
+    </select>
+
+    <select id="select_stock_separate_increment_item_by_sql" resultType="HashMap" parameterType="HashMap">
+        ${sql}
     </select>
 
     <update id="update_stock_separate_increment_item" parameterType="HashMap" >
@@ -108,6 +119,13 @@
             <if test="statusWhere != null" >
                 and status = #{statusWhere}
             </if>
+            <if test="statusList != null and statusList.size() > 0">
+                and (status in
+                <foreach collection="statusList" item="statusItem" open="(" separator="," close=")">
+                    #{statusItem}
+                </foreach>
+                )
+            </if>
         </where>
     </update>
 
@@ -140,17 +158,67 @@
         `product_model`,`product_code`,`sku`
     </select>
 
-    <select id="select_stock_separate_increment_platform" resultType="HashMap" parameterType="String">
-        SELECT
-          t1.task_id,
-          t1.promotion_id,
-	      t2.activity_start,
-	      t2.activity_end
-        FROM
-          voyageone_cms2.cms_bt_stock_separate_increment_task main
-        LEFT OUTER JOIN voyageone_cms2.cms_bt_stock_separate_platform_info t1 ON main.task_id=t1.task_id AND main.cart_id=t1.cart_id
-        LEFT OUTER JOIN voyageone_cms2.cms_bt_promotion t2 ON t1.promotion_id = t2.promotion_id
-        WHERE
-	      main.sub_task_id = #{subTaskId}
-    </select>
+    <insert id="insert_cms_bt_stock_separate_increment_item_excel" parameterType="List">
+        insert into voyageone_cms2.cms_bt_stock_separate_increment_item (
+        sub_task_id,
+        product_model,
+        product_code,
+        sku,
+        qty,
+        increment_qty,
+        property1,
+        property2,
+        property3,
+        property4,
+        status,
+        fix_flg,
+        created,
+        creater,
+        modified,
+        modifier
+        ) value
+        <foreach collection="list" index="index" item="item" separator=",">
+            (#{item.sub_task_id},
+            #{item.product_model},
+            #{item.product_code},
+            #{item.sku},
+            #{item.qty},
+            #{item.increment_qty},
+            <if test="item.property1 != null" >
+                #{item.property1},
+            </if>
+            <if test="item.property1 == null" >
+                '',
+            </if>
+            <if test="item.property2 != null" >
+                #{item.property2},
+            </if>
+            <if test="item.property2 == null" >
+                '',
+            </if>
+            <if test="item.property3 != null" >
+                #{item.property3},
+            </if>
+            <if test="item.property3 == null" >
+                '',
+            </if>
+            <if test="item.property4 != null" >
+                #{item.property4},
+            </if>
+            <if test="item.property4 == null" >
+                '',
+            </if>
+            <if test="item.status != null" >
+                #{item.status},
+            </if>
+            <if test="item.status == null" >
+                '',
+            </if>
+            #{item.fix_flg},
+            now(),
+            #{item.creater},
+            now(),
+            #{item.creater})
+        </foreach>
+    </insert>
 </mapper>

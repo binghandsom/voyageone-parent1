@@ -3,6 +3,7 @@ package com.voyageone.web2.cms.views.promotion.task;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.common.util.StringUtils;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
@@ -11,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,10 +27,8 @@ import java.util.Map;
 )
 public class CmsTaskStockIncrementDetailController extends CmsController {
 
-    // morse.lu test用 added at 2016/03/23 start
     @Autowired
     private CmsTaskStockService cmsTaskStockService;
-    // morse.lu test用 added at 2016/03/23 end
 
     @Autowired
     private CmsTaskStockIncrementDetailService cmsTaskStockIncrementDetailService;
@@ -41,6 +41,8 @@ public class CmsTaskStockIncrementDetailController extends CmsController {
      * @apiVersion 0.0.1
      * @apiPermission 认证商户
      * @apiParam (系统级参数) {String} channelId 渠道id
+     * @apiParam (应用级参数) {String} taskId 任务id
+     * @apiParam (应用级参数) {String} cartId 平台id
      * @apiParam (应用级参数) {String} subTaskId 增量任务id
      * @apiParam (应用级参数) {String} model 商品model
      * @apiParam (应用级参数) {String} code 商品Code
@@ -60,11 +62,15 @@ public class CmsTaskStockIncrementDetailController extends CmsController {
      * @apiSuccess (系统级返回字段) {String} redirectTo 跳转地址
      * @apiSuccess (应用级返回字段) {String} allNum 总数
      * @apiSuccess (应用级返回字段) {String} readyNum 未进行数
-     * @apiSuccess (应用级返回字段) {String} waitSeparationNum 等待增量数
-     * @apiSuccess (应用级返回字段) {String} separationOKNum 增量成功数
-     * @apiSuccess (应用级返回字段) {String} separationFailNum 增量失败数
+     * @apiSuccess (应用级返回字段) {String} waitIncrementNum 等待增量数
+     * @apiSuccess (应用级返回字段) {String} increasingNum 增量中数
+     * @apiSuccess (应用级返回字段) {String} incrementSuccessNum 增量成功数
+     * @apiSuccess (应用级返回字段) {String} incrementFailureNum 增量失败数
+     * @apiSuccess (应用级返回字段) {String} revertNum 还原数
+     * @apiSuccess (应用级返回字段) {String} skuNum sku数
      * @apiSuccess (应用级返回字段) {String} cartId 平台id
      * @apiSuccess (应用级返回字段) {String} cartName 平台名
+     * @apiSuccess (应用级返回字段) {String} taskId 任务id
      * @apiSuccess (应用级返回字段) {Object} propertyList 属性列表（json数组）
      * @apiSuccess (应用级返回字段) {Object} stockList 库存隔离明细（json数组）
      * @apiSuccessExample 成功响应更新请求
@@ -73,11 +79,15 @@ public class CmsTaskStockIncrementDetailController extends CmsController {
      *  "data":{
      *   "allNum":10000,
      *   "readyNum":1000,
-     *   "waitSeparationNum":5000,
-     *   "separationOKNum":1000,
-     *   "separationFailNum":0,
+     *   "waitIncrementNum":5000,
+     *   "increasingNum":4000,
+     *   "incrementSuccessNum":1000,
+     *   "incrementFailureNum":0,
+     *   "revertNum":0,
+     *   "skuNum":2000,
      *   "cartId":"23",
      *   "cartName":"天猫国际",
+     *   "taskId":"1",
      *   "propertyList": [ {"property":"property1", "name":"品牌", "logic":"", "type":"", "show":false, "value"=""},
      *                     {"property":"property2", "name":"英文短描述", "logic":"Like", "type":"", "show":false, "value"=""},
      *                     {"property":"property3", "name":"性别", "logic":"", "type":"", "show":false, "value"=""}，
@@ -101,21 +111,43 @@ public class CmsTaskStockIncrementDetailController extends CmsController {
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK_INCREMENT_DETAIL.SEARCH_ITEM)
     public AjaxResponse searchItem(@RequestBody Map param) {
-
-        // morse.lu test用 added at 2016/03/23 start
+        // 渠道id
+        param.put("channelId", this.getUser().getSelChannelId());
+        // 语言
+        param.put("lang", this.getLang());
         // 返回内容
         Map<String, Object> resultBean = new HashMap<>();
+        // 子任务id
+        String subTaskId =(String) param.get("subTaskId");
 
-        // 任务对应平台信息列表 只有首次取得
-        if (param.get("platformList") == null || ((Map<String, Object>)param.get("platformList")).size() == 0) {
-
-            Map<String, String> platformList = new HashMap<>();
-            platformList.put("cartId", "23");
-            platformList.put("cartName", "天猫国际");
-            resultBean.put("platformList", platformList);
-            param.put("platformList", platformList);
+        // 根据子任务id取得任务信息 只有首次取得
+        if(StringUtils.isEmpty((String) param.get("taskId"))) {
+            Map<String, Object> taskInfo = cmsTaskStockIncrementDetailService.getTaskInfo(subTaskId, this.getUser().getSelChannelId(), this.getLang());
+            // 任务id取得失败的情况下，认为没有权限
+            if (taskInfo == null) {
+                resultBean.put("hasAuthority", false);
+                return success(resultBean);
+            } else {
+                // 增量任务/渠道id权限check
+                boolean hasAuthority = cmsTaskStockIncrementDetailService.hasAuthority(String.valueOf(taskInfo.get("task_id")), String.valueOf(taskInfo.get("cart_id")), this.getUser().getSelChannelId(), this.getLang());
+                resultBean.put("hasAuthority", hasAuthority);
+                if (!hasAuthority) {
+                    return success(resultBean);
+                }
+                // 任务id
+                resultBean.put("taskId", String.valueOf(taskInfo.get("task_id")));
+                param.put("taskId", String.valueOf(taskInfo.get("task_id")));
+                // 平台id
+                resultBean.put("cartId", String.valueOf(taskInfo.get("cart_id")));
+                param.put("cartId", String.valueOf(taskInfo.get("cart_id")));
+                // 平台名
+                resultBean.put("cartName", taskInfo.get("name"));
+            }
         } else {
-            resultBean.put("platformList", param.get("platformList"));
+            resultBean.put("taskId", param.get("taskId"));
+            resultBean.put("cartId", param.get("cartId"));
+            resultBean.put("cartName", param.get("cartName"));
+            resultBean.put("hasAuthority", true);
         }
 
         // 取得属性列表 只有首次取得
@@ -126,7 +158,86 @@ public class CmsTaskStockIncrementDetailController extends CmsController {
         } else {
             resultBean.put("propertyList", param.get("propertyList"));
         }
-        // morse.lu test用 added at 2016/03/23 end
+
+        // 子任务id对应的库存隔离数据是否移到history表
+        boolean historyFlg = cmsTaskStockIncrementDetailService.isHistoryExist(subTaskId);
+        if (historyFlg) {
+            param.put("tableNameSuffix", "_history");
+        } else {
+            param.put("tableNameSuffix", "");
+        }
+
+        // 取得增量库存隔离数据各种状态的数量(翻页是不计算)
+        if (!(boolean) param.get("page")) {
+            // 所有增量库存隔离明细的计数
+            int cntAll = 0;
+            // 画面的sku数
+            int skuNum = 0;
+            // 画面条件选择的status
+            String currentStatus = (String) param.get("status");
+            List<Map<String, Object>> statusCountList = cmsTaskStockIncrementDetailService.getStockStatusCount(param);
+            for (Map<String, Object> statusInfo : statusCountList) {
+                String status = (String) statusInfo.get("status");
+                int cnt = Integer.parseInt(String.valueOf(statusInfo.get("count")));
+                cntAll += cnt;
+                String key = "";
+                if (CmsTaskStockService.STATUS_READY.equals(status)) {
+                    key = "readyNum";
+                } else if (CmsTaskStockService.STATUS_WAITING_INCREMENT.equals(status)) {
+                    key = "waitIncrementNum";
+                } else if (CmsTaskStockService.STATUS_INCREASING.equals(status)) {
+                    key = "increasingNum";
+                } else if (CmsTaskStockService.STATUS_INCREMENT_SUCCESS.equals(status)) {
+                    key = "incrementSuccessNum";
+                } else if (CmsTaskStockService.STATUS_INCREMENT_FAIL.equals(status)) {
+                    key = "incrementFailureNum";
+                } else if (CmsTaskStockService.STATUS_REVERT.equals(status)) {
+                    key = "revertNum";
+                }
+                resultBean.put(key, cnt);
+                // 设置画面的sku数
+                if (status.equals(currentStatus)) {
+                    skuNum = cnt;
+                }
+            }
+            if (StringUtils.isEmpty(currentStatus)) {
+                skuNum = cntAll;
+            }
+            if (!resultBean.containsKey("readyNum")) {
+                resultBean.put("readyNum", 0);
+            }
+            if (!resultBean.containsKey("waitIncrementNum")) {
+                resultBean.put("waitIncrementNum", 0);
+            }
+            if (!resultBean.containsKey("increasingNum")) {
+                resultBean.put("increasingNum", 0);
+            }
+            if (!resultBean.containsKey("incrementSuccessNum")) {
+                resultBean.put("incrementSuccessNum", 0);
+            }
+            if (!resultBean.containsKey("incrementFailureNum")) {
+                resultBean.put("incrementFailureNum", 0);
+            }
+            if (!resultBean.containsKey("revertNum")) {
+                resultBean.put("revertNum", 0);
+            }
+
+            // 总数
+            resultBean.put("allNum", cntAll);
+
+            // sku数
+            resultBean.put("skuNum", skuNum);
+
+            // 条件结果为0件的情况下，直接返回
+            if (skuNum == 0) {
+                resultBean.put("stockList", new ArrayList());
+                return success(resultBean);
+            }
+        }
+
+        // 取得增量库存隔离明细
+        List<Map<String, Object>> stockList = cmsTaskStockIncrementDetailService.getStockList(param);
+        resultBean.put("stockList", stockList);
 
         // 返回
         return success(resultBean);
@@ -139,12 +250,13 @@ public class CmsTaskStockIncrementDetailController extends CmsController {
      * @apiGroup promotion
      * @apiVersion 0.0.1
      * @apiPermission 认证商户
+     * @apiParam (应用级参数) {String} taskId 任务id
+     * @apiParam (应用级参数) {String} cartId 平台id
      * @apiParam (应用级参数) {String} subTaskId 增量任务id
-     * @apiParam (应用级参数) {Object} stockInfo（json数据） 一条Sku的隔离明细
-     * @apiParamExample  stockInfo参数示例
+     * @apiParam (应用级参数) {Object} stockInfo（json数组） 增量库存隔离明细
+     * @apiParamExample  stockInfo 示例
      * {
-     *   "subTaskId":1,
-     *   "stockInfo":  {"model":"35265", "code":"35265465", "sku":"256354566-9", "property1":"Puma", "property2":"Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"50", "incrementQty":"50", "status":"增量失败", "fixFlg":false}
+     *  "stockInfo":  {"model":"35265", "code":"35265465", "sku":"256354566-9", "property1":"Puma", "property2":"Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"50", "incrementQty":"50", "status":"未进行", "fixFlg":false}
      * }
      * @apiSuccess (系统级返回字段) {String} code 处理结果代码编号
      * @apiSuccess (系统级返回字段) {String} message 处理结果描述
@@ -152,26 +264,26 @@ public class CmsTaskStockIncrementDetailController extends CmsController {
      * @apiSuccess (系统级返回字段) {String} redirectTo 跳转地址
      * @apiSuccessExample 成功响应更新请求
      * {
-     *  "code":"0", "message":null, "displayType":null, "redirectTo":null,
-     *  "data":{
-     *    "stockInfo":  {"model":"35265", "code":"35265465", "sku":"256354566-9", "property1":"Puma", "property2":"Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"50", "incrementQty":"50", "status":"未进行", "fixFlg":false}
-     *  }
+     *  "code":"0", "message":null, "displayType":null, "redirectTo":null, "data":null
      *  }
      * @apiErrorExample  错误示例
      * {
-     *  "code": "1", "message": "增量隔离库存格式不正确", "displayType":null, "redirectTo":null, "data":null
+     *  "code": "1", "message": "保存失败（增量库存隔离后不能进行变更）", "displayType":null, "redirectTo":null, "data":null
      * }
      * @apiExample  业务说明
      *  1.check输入信息。增量隔离库存必须是大于0的整数。
-     *                   如果状态="2：增量成功"或者"1:等待增量"，则不能进行修改。
+     *                   如果状态="1:等待增量","2：增量中","3：增量成功","4：增量失败","5：还原"，则不能进行修改。
      *  2.如果修改的增量隔离库存<>cms_bt_increment_stock_separate_item表里对应的值，那么更新cms_bt_increment_stock_separate_item表的值。
-     *    （修正后状态变为0:未进行，其实只针对3：增量失败的场合）
      * @apiExample 使用表
      *  cms_bt_increment_stock_separate_item
      *
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK_INCREMENT_DETAIL.SAVE_ITEM)
     public AjaxResponse saveItem(@RequestBody Map param) {
+        // 创建者/更新者用
+        param.put("userName", this.getUser().getUserName());
+        // 增量隔离库存明细
+        cmsTaskStockIncrementDetailService.saveItem(param);
 
         // 返回
         return success(null);
@@ -184,13 +296,10 @@ public class CmsTaskStockIncrementDetailController extends CmsController {
      * @apiGroup promotion
      * @apiVersion 0.0.1
      * @apiPermission 认证商户
+     * @apiParam (应用级参数) {String} taskId 任务id
+     * @apiParam (应用级参数) {String} cartId 平台id
      * @apiParam (应用级参数) {String} subTaskId 增量任务id
-     * @apiParam (应用级参数) {Object} stockInfo（json数据） 一条Sku的隔离明细
-     * @apiParamExample  stockInfo参数示例
-     * {
-     *   "subTaskId":1,
-     *   "stockInfo":  {"model":"35265", "code":"35265465", "sku":"256354566-9", "property1":"Puma", "property2":"Puma Suede Classic+", "property3":"women", "property4":"10", "qty":"50", "incrementQty":"50", "status":"未进行", "fixFlg":false}
-     * }
+     * @apiParam (应用级参数) {String} sku Sku
      * @apiSuccess (系统级返回字段) {String} code 处理结果代码编号
      * @apiSuccess (系统级返回字段) {String} message 处理结果描述
      * @apiSuccess (系统级返回字段) {String} displayType 消息的提示方式
@@ -204,13 +313,16 @@ public class CmsTaskStockIncrementDetailController extends CmsController {
      *  "code": "1", "message": "删除失败（增量库存隔离后不能进行删除）", "displayType":null, "redirectTo":null, "data":null
      * }
      * @apiExample  业务说明
-     *  如果选择的增量隔离明细的状态为1:等待增量或者2：增量成功，则删除失败。否则删除这条增量隔离明细。
+     *  如果选择的增量隔离明细的状态为"1:等待增量","2：增量中","3：增量成功","4：增量失败","5：还原"则不能删除这条明细，否则删除这条增量隔离明细。
      * @apiExample 使用表
      *  cms_bt_increment_stock_separate_item
      *
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK_INCREMENT_DETAIL.DEL_ITEM)
-    public AjaxResponse delItem1(@RequestBody Map param) {
+    public AjaxResponse delItem(@RequestBody Map param) {
+
+        // 删除增量隔离库存明细
+        cmsTaskStockIncrementDetailService.delItem((String) param.get("taskId"), (String) param.get("subTaskId"), (String) param.get("cartId"), (String) param.get("sku"));
 
         // 返回
         return success(null);
@@ -258,16 +370,17 @@ public class CmsTaskStockIncrementDetailController extends CmsController {
             searchParam.put("tableName", "voyageone_cms2.cms_bt_stock_separate_increment_item");
         }
 
-        searchParam.put("taskId", (String) param.get("task_id"));
+        searchParam.put("taskId", (String) param.get("taskId"));
+        searchParam.put("subTaskId", (String) param.get("subTaskId"));
         searchParam.put("model", (String) param.get("model"));
         searchParam.put("code", (String) param.get("code"));
         searchParam.put("sku", (String) param.get("sku"));
         searchParam.put("status", (String) param.get("status"));
+        searchParam.put("cartId", (String) param.get("cartId"));
+        searchParam.put("cartName", (String) param.get("cartName"));
 
         String propertyList = (String) param.get("propertyList");
         searchParam.put("propertyList", JacksonUtil.json2Bean(propertyList, List.class));
-        String platformList = (String) param.get("platformList");
-        searchParam.put("platformList", JacksonUtil.json2Bean(platformList, Map.class));
 
         byte[] data;
         try {
@@ -335,12 +448,15 @@ public class CmsTaskStockIncrementDetailController extends CmsController {
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK_INCREMENT_DETAIL.IMPORT_STOCK_INFO)
     public AjaxResponse importStockInfo(@RequestParam Map param, @RequestParam MultipartFile file) {
+        // 返回内容
+        Map<String, Object> resultBean = new HashMap<>();
+
         // 创建者/更新者用
         param.put("userName", this.getUser().getUserName());
         // import Excel
-        cmsTaskStockIncrementDetailService.importExcelFileStockIncrementInfo(param, file);
+        cmsTaskStockIncrementDetailService.importExcelFileStockIncrementInfo(param, file, resultBean);
         // 返回
-        return success(null);
+        return success(resultBean);
     }
 
 
@@ -351,6 +467,8 @@ public class CmsTaskStockIncrementDetailController extends CmsController {
      * @apiGroup promotion
      * @apiVersion 0.0.1
      * @apiPermission 认证商户
+     * @apiParam (应用级参数) {String} taskId 任务id
+     * @apiParam (应用级参数) {String} cartId 平台id
      * @apiParam (应用级参数) {String} subTaskId 增量任务id
      * @apiSuccess (系统级返回字段) {String} code 处理结果代码编号
      * @apiSuccess (系统级返回字段) {String} message 处理结果描述
@@ -361,7 +479,7 @@ public class CmsTaskStockIncrementDetailController extends CmsController {
      *  "code":"0", "message":null, "displayType":null, "redirectTo":null, "data":null
      * }
      * @apiExample  业务说明
-     *  将状态为"0:未进行"，"3:增量失败"的增量隔离明细进行处理，将其状态变为"1:等待增量"。等待Batch处理。
+     *  将状态为"0:未进行"，"4:增量失败"的增量隔离明细进行处理，将其状态变为"1:等待增量"。等待Batch处理。
      *
      * @apiExample 使用表
      *  cms_bt_stock_separate_platform_info
@@ -369,6 +487,12 @@ public class CmsTaskStockIncrementDetailController extends CmsController {
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK_INCREMENT_DETAIL.EXECUTE_STOCK_INCREMENT_SEPARATION)
     public AjaxResponse executeStockIncrementSeparation(@RequestBody Map param) {
+
+        // 创建者/更新者用
+        param.put("userName", this.getUser().getUserName());
+
+        // 启动/重刷增量库存隔离
+        cmsTaskStockIncrementDetailService.executeStockIncrementSeparation(param);
 
         // 返回
         return success(null);
