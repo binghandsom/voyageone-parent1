@@ -389,6 +389,7 @@ define(function(){
         "BTN_PROMOTION_HISTORY": "活动履历",
         "BTN_PRICE_HISTORY": "价格履历",
         "BTN_DOWNLOAD": "下载",
+        "BTN_DOWNLOAD_ERROR": "Error日志",
         "BTN_IMPORT_PROMOTION_FILE": "导入活动文件",
         "BTN_CHOOSE_FILE": "选择文件",
         "BTN_IMPORT_FILE": "Import File",

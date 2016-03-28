@@ -7,9 +7,10 @@ define([
 ], function (cms) {
     cms.controller("taskIndexController", (function () {
     
-        function TaskIndexController(taskService, taskStockService, confirm, notify) {
+        function TaskIndexController(taskService, taskStockService, cActions, confirm, notify) {
             this.taskService = taskService;
             this.taskStockService = taskStockService;
+            var urls = cActions.cms.task.taskStockService;
             this.tasks = [];
             this.confirm = confirm;
             this.notify = notify;
@@ -17,6 +18,8 @@ define([
 
             this.taskType=[{"name":"特价宝","value":"0"},{"name":"价格披露","value":"1"}];
             this.datePicker = [];
+
+            this.downloadUrl = urls.root + "/" + urls.exportErrorInfo;
         }
     
         TaskIndexController.prototype = {
@@ -66,6 +69,12 @@ define([
                     }
                 })
             },
+            download: function (taskId) {
+                var main = this;
+                $.download.post(main.downloadUrl, {
+                    "taskId" : taskId
+                });
+            }
         };
             
         return TaskIndexController;
