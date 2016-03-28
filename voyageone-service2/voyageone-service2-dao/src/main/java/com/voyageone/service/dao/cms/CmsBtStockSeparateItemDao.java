@@ -61,4 +61,8 @@ public class CmsBtStockSeparateItemDao extends BaseDao {
         return insert("insert_cms_bt_stock_separate_item_excel", param);
     }
 
+    public List<Map<String, Object>> selectExcelStockErrorInfo(Map<String, Object> param) {
+        return selectList("select_stock_separate_error_excel", param);
+    }
+
 }

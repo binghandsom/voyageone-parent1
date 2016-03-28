@@ -1239,8 +1239,23 @@ public class CmsTaskStockController extends CmsController {
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK.EXPORT_ERROR_INFO)
     public ResponseEntity exportErrorInfo(@RequestParam String taskId) {
+        Map<String, Object> param = new HashMap<String, Object>();
+        // 渠道id
+        param.put("channelId", this.getUser().getSelChannelId());
+        // 语言
+        param.put("lang", this.getLang());
+        // 任务ID
+        param.put("taskId", taskId);
 
+        byte[] data;
+        try {
+            data = cmsTaskStockService.getExcelFileStockErrorInfo(param);
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+            throw new BusinessException("导出异常！");
+        }
         // 返回
-        return genResponseEntityFromBytes("fileName", new byte[]{});
+        return genResponseEntityFromBytes("StockErrorInfo_" + DateTimeUtil.getLocalTime(getUserTimeZone(), DateTimeUtil.DATE_TIME_FORMAT_2)+".xlsx", data);
+
     }
 }

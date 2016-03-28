@@ -118,6 +118,20 @@ public class CmsTaskStockService extends BaseAppService {
     /** Excel动态时显示文字 */
     private static final String DYNAMIC = "Dynamic";
 
+    /** Excel的Title部平台显示文字 */
+    private static final String PLATFORM = "Platform";
+    /** Excel的Title部隔离类型显示文字 */
+    private static final String SEPARATETYPE = "Separate Type";
+    /** Excel的Title部错误信息显示文字 */
+    private static final String ERRORMESSAGE = "Error Message";
+    /** Excel的Title部发生时间显示文字 */
+    private static final String ERRORTIME = "Error Time";
+
+    /** Excel一般隔离类型显示文字 */
+    private static final String TYPE_SEPARATE = "一般";
+    /** Excel增量隔离类型显示文字 */
+    private static final String TYPE_INCREMENT = "增量";
+
     /**
      *
      * @param selFlag
@@ -2149,6 +2163,122 @@ public class CmsTaskStockService extends BaseAppService {
         if (row == null) return null;
         if (row.getCell(col) == null) return null;
         return row.getCell(col).getStringCellValue();
+    }
+
+    /**
+     * 导出Error日志Excel文档做成，数据流返回
+     *
+     * @param param 客户端参数
+     * @return byte[] 数据流
+     * @throws IOException
+     * @throws InvalidFormatException
+     */
+    public byte[] getExcelFileStockErrorInfo(Map<String, Object> param) throws IOException, InvalidFormatException {
+        String taskId = (String) param.get("taskId");
+
+        String templatePath = Properties.readValue(CmsConstants.Props.STOCK_EXPORT_TEMPLATE);
+
+        Map<String, Object> searchParam = new HashMap<String, Object>();
+        searchParam.put("taskId", taskId);
+        // 任务id对应的库存隔离数据是否移到history表
+        boolean historyFlg = this.isHistoryExist(taskId);
+        if (historyFlg) {
+            searchParam.put("tableNameSuffix", "_history");
+        } else {
+            searchParam.put("tableNameSuffix", "");
+        }
+        List<Map<String, Object>> resultData = cmsBtStockSeparateItemDao.selectExcelStockErrorInfo(searchParam);
+
+        List<Map<String, Object>> platformList = this.getPlatformList(taskId, (String) param.get("channelId"), (String) param.get("lang"));
+        Map<String, String> mapPlatform = new HashMap<String, String>();
+        platformList.forEach(platform -> mapPlatform.put((String) platform.get("cartId"), (String) platform.get("cartName")));
+
+        $info("准备打开文档 [ %s ]", templatePath);
+
+        try (InputStream inputStream = new FileInputStream(templatePath);
+             SXSSFWorkbook book = new SXSSFWorkbook(new XSSFWorkbook(inputStream))) {
+            // Titel行
+            writeExcelStockErrorInfoHead(book.getXSSFWorkbook());
+            // 数据行
+            writeExcelStockErrorInfoRecord(book.getXSSFWorkbook(), resultData, mapPlatform);
+
+            // 自适应列宽
+            for (int i = 0; i < 7; i++) {
+                book.getXSSFWorkbook().getSheetAt(0).autoSizeColumn(i);
+            }
+
+            // 格式copy用sheet删除
+            book.getXSSFWorkbook().removeSheetAt(1);
+
+            $info("文档写入完成");
+
+            // 返回值设定
+            try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+                book.write(outputStream);
+
+                $info("已写入输出流");
+
+                return outputStream.toByteArray();
+            }
+        }
+    }
+
+    /**
+     * Error日志Excel的第一行Title部写入
+     */
+    private void writeExcelStockErrorInfoHead(Workbook book) {
+        Sheet sheet = book.getSheetAt(0);
+        Row row = FileUtils.row(sheet, 0);
+        CellStyle cellStyleProperty = book.getSheetAt(1).getRow(0).getCell(4).getCellStyle(); // 属性的cellStyle
+
+        // 内容输出
+        int index = 3;
+        // 平台
+        FileUtils.cell(row, index++, cellStyleProperty).setCellValue(PLATFORM);
+        // 隔离类型
+        FileUtils.cell(row, index++, cellStyleProperty).setCellValue(SEPARATETYPE);
+        // 错误信息
+        FileUtils.cell(row, index++, cellStyleProperty).setCellValue(ERRORMESSAGE);
+        // 发生时间
+        FileUtils.cell(row, index++, cellStyleProperty).setCellValue(ERRORTIME);
+
+        // 筛选
+        CellRangeAddress filter = new CellRangeAddress(0, 0, 0, index - 1);
+        sheet.setAutoFilter(filter);
+    }
+
+    /**
+     * Error日志Excel的数据写入
+     */
+    private void writeExcelStockErrorInfoRecord(Workbook book, List<Map<String, Object>> resultData, Map<String, String> mapPlatform) {
+        Sheet sheet = book.getSheetAt(0);
+        int lineIndex = 1; // 行号
+        int colIndex; // 列号
+        Row row;
+
+        CellStyle cellStyleData = book.getSheetAt(1).getRow(0).getCell(3).getCellStyle(); // 数据（不锁定）的cellStyle
+
+        for (Map<String, Object> rowData : resultData) {
+            row = FileUtils.row(sheet, lineIndex++);
+            colIndex = 0;
+
+            FileUtils.cell(row, colIndex++, cellStyleData).setCellValue((String) rowData.get("model")); // Model
+            FileUtils.cell(row, colIndex++, cellStyleData).setCellValue((String) rowData.get("code")); // Code
+            FileUtils.cell(row, colIndex++, cellStyleData).setCellValue((String) rowData.get("sku")); // Sku
+            FileUtils.cell(row, colIndex++, cellStyleData).setCellValue(mapPlatform.get((String) rowData.get("cartId"))); // 平台
+
+            // 隔离类型
+            if ("1".equals((String) rowData.get("type"))) {
+                // 一般隔离类型
+                FileUtils.cell(row, colIndex++, cellStyleData).setCellValue(TYPE_SEPARATE);
+            } else {
+                // 增量隔离类型
+                FileUtils.cell(row, colIndex++, cellStyleData).setCellValue(TYPE_INCREMENT);
+            }
+
+            FileUtils.cell(row, colIndex++, cellStyleData).setCellValue((String) rowData.get("errorMsg")); // 错误信息
+            FileUtils.cell(row, colIndex++, cellStyleData).setCellValue((String) rowData.get("errorTime")); // 发生时间
+        }
     }
 
     /**

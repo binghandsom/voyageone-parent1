@@ -329,4 +329,38 @@
         </foreach>
     </insert>
 
+    <select id="select_stock_separate_error_excel" resultType="HashMap" parameterType="HashMap">
+        select
+            '1' as `type`,
+            `product_model` as model,
+            `product_code` as code,
+            `sku` as sku,
+            `cart_id` as cartId,
+            `error_msg` as errorMsg,
+            `error_time` as errorTime
+        from
+             voyageone_cms2.cms_bt_stock_separate_item${tableNameSuffix}
+        where
+             task_id = #{taskId} and
+             error_msg is not null and error_msg != ''
+        UNION ALL
+        select
+            '2' as `type`,
+            t1.`product_model` as model,
+            t1.`product_code` as code,
+            t1.`sku` as sku,
+            t2.`cart_id` as cartId,
+            t1.`error_msg` as errorMsg,
+            t1.`error_time` as errorTime
+        from
+            voyageone_cms2.cms_bt_stock_separate_increment_item${tableNameSuffix} t1
+        left join voyageone_cms2.cms_bt_stock_separate_increment_task t2
+        on t1.sub_task_id = t2.sub_task_id
+        where
+            t2.task_id = #{taskId} and
+            t1.error_msg is not null and t1.error_msg != ''
+        order by
+            errorTime desc
+    </select>
+
 </mapper>
