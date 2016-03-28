@@ -125,13 +125,4 @@ public class ArithHelper {
         java.math.BigDecimal one = new java.math.BigDecimal("1");
         return b.divide(one, scale, java.math.BigDecimal.ROUND_HALF_UP).doubleValue();
     }
-
-    public static double round(String v, int scale) {
-        if (scale < 0) {
-            throw new IllegalArgumentException("The   scale   must   be   a   positive   integer   or   zero");
-        }
-        java.math.BigDecimal b = new java.math.BigDecimal(v);
-        java.math.BigDecimal one = new java.math.BigDecimal("1");
-        return b.divide(one, scale, java.math.BigDecimal.ROUND_HALF_UP).doubleValue();
-    }
 }

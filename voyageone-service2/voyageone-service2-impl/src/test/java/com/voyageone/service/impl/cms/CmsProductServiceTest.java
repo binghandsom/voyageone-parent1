@@ -91,7 +91,7 @@ public class CmsProductServiceTest {
         images.add(new CmsBtProductModel_Field_Image("image1", "zzzzz-" + random.nextInt(10) + ".jpg"));
         images.add(new CmsBtProductModel_Field_Image("image1", "zzzzz-" + random.nextInt(10) + ".jpg"));
 
-        fields.setLock(index % 2 == 0);
+      //  fields.setLock(index % 2 == 0);
 
 
         fields.setPriceMsrpSt(100.00 + random.nextInt(100));
