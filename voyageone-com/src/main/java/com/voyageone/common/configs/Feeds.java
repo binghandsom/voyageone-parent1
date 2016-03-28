@@ -33,7 +33,7 @@ public class Feeds {
             Map<String, FeedBean> feedBeanMap = new HashMap<>();
             feedDao.getAll().forEach(bean -> {
                         feedBeanMap.put(
-                                buildKey(bean.getOrder_channel_id(), FeedEnums.Name.valueOf(bean.getCfg_name()), bean.getId()),
+                                buildKey(bean.getOrder_channel_id(), bean.getCfg_name(), bean.getId()),
                                 bean
                         );
                     }
@@ -51,7 +51,7 @@ public class Feeds {
      * @param id id
      * @return key
      */
-    private static String buildKey(String channelId, FeedEnums.Name name, int id) {
+    private static String buildKey(String channelId, String name, int id) {
         return channelId + CacheHelper.SKIP + name + CacheHelper.SKIP + id;
     }
 
