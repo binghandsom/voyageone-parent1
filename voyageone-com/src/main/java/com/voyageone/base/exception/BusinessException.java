@@ -37,6 +37,7 @@ public class BusinessException extends RuntimeException {
         this.cause = ex;
     }
 
+    @Override
     public Throwable getCause() {
         return this.cause;
     }
@@ -45,6 +46,7 @@ public class BusinessException extends RuntimeException {
         return this.code;
     }
 
+    @Override
     public String getMessage() {
         String message = super.getMessage();
         Throwable cause = getCause();
@@ -54,6 +56,7 @@ public class BusinessException extends RuntimeException {
         return message;
     }
 
+    @Override
     public void printStackTrace(PrintStream ps) {
         if (getCause() == null) {
             super.printStackTrace(ps);
@@ -63,6 +66,7 @@ public class BusinessException extends RuntimeException {
         }
     }
 
+    @Override
     public void printStackTrace(PrintWriter pw) {
         if (getCause() == null) {
             super.printStackTrace(pw);
@@ -72,6 +76,7 @@ public class BusinessException extends RuntimeException {
         }
     }
 
+    @Override
     public void printStackTrace() {
         if (getCause() == null) {
             super.printStackTrace();

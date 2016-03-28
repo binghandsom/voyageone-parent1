@@ -45,7 +45,7 @@ public class BaiduTranslateUtil {
         // 请求翻译query
         StringBuilder q = new StringBuilder();
         StringBuilder qSign = new StringBuilder();
-        if (query != null && query.size() > 0) {
+        if (query != null && !query.isEmpty()) {
             String qSplit = URLEncoder.encode("\n", "utf-8");
             String qSplitSign = "\n";
             int qSize = query.size();
@@ -109,7 +109,7 @@ public class BaiduTranslateUtil {
         } else {
             Object trans_result = jsonToMap.get("trans_result");
             List<Map> mapList = (List<Map>) trans_result;
-            if (mapList != null && mapList.size() > 0) {
+            if (mapList != null && !mapList.isEmpty()) {
                 for (int i = 0; i < mapList.size(); i++) {
                     Map<String, String> map = mapList.get(i);
                     String src = map.get("src");

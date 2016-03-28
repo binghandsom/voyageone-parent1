@@ -1,21 +1,19 @@
 package com.voyageone.common.components.eExpress;
 
-import java.io.ByteArrayInputStream;
-import java.util.ArrayList;
-import java.util.List;
-
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.DomDriver;
+import com.voyageone.common.components.eExpress.base.EtkBase;
 import com.voyageone.common.components.eExpress.bean.*;
-import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.configs.beans.CarrierBean;
+import com.voyageone.common.configs.beans.PostResponse;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import org.springframework.stereotype.Component;
 
-import com.voyageone.common.configs.beans.PostResponse;
-import com.voyageone.common.configs.beans.CarrierBean;
-import com.voyageone.common.components.eExpress.base.EtkBase;
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.xml.DomDriver;
+import java.io.ByteArrayInputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class EtkService extends EtkBase{

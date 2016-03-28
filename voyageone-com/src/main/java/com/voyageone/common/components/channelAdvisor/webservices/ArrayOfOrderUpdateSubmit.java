@@ -61,7 +61,7 @@ public class ArrayOfOrderUpdateSubmit {
 	 */
 	public List<OrderUpdateSubmit> getOrderUpdateSubmit() {
 		if (orderUpdateSubmit == null) {
-			orderUpdateSubmit = new ArrayList<OrderUpdateSubmit>();
+			orderUpdateSubmit = new ArrayList<>();
 		}
 		return this.orderUpdateSubmit;
 	}

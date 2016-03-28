@@ -6,6 +6,7 @@ import com.mongodb.DBCollection;
 import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
 import com.voyageone.base.dao.mongodb.model.ChannelPartitionModel;
+import com.voyageone.base.exception.VoMongoException;
 import com.voyageone.common.util.StringUtils;
 import net.minidev.json.JSONObject;
 import org.apache.commons.collections.IteratorUtils;
@@ -35,7 +36,7 @@ public class BaseJomgoPartTemplate {
         try {
             this.jongo = new Jongo(mongoTemplate.getDb());
         } catch (Exception e) {
-            throw new RuntimeException("MongoDB connection error:", e);
+            throw new VoMongoException("MongoDB connection error:", e);
         }
     }
 
@@ -117,7 +118,6 @@ public class BaseJomgoPartTemplate {
     }
 
     public <T> T findOne(JomgoQuery queryObject, Class<T> entityClass, String collectionName) {
-        MongoCursor<T> result;
         FindOne find;
 
         //condition
@@ -296,9 +296,6 @@ public class BaseJomgoPartTemplate {
         return findAndModify.as(entityClass);
     }
 
-//    public void findAndRemove(String strQuery, String collectionName) {
-//        getCollection(collectionName).remove(strQuery);
-//    }
 
     public long count(final String collectionName) {
         return getCollection(collectionName).count();

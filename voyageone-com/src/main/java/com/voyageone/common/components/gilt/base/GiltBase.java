@@ -47,8 +47,9 @@ public abstract class GiltBase {
 
         String call_url = api_url_root + api_url;
 
-        if (StringUtils.isNullOrBlank2(app_key))
-        throw new IllegalArgumentException("authorization Key不能为空");
+        if (StringUtils.isNullOrBlank2(app_key)) {
+            throw new IllegalArgumentException("authorization Key不能为空");
+        }
 
         StringBuilder parm_url = new StringBuilder();
         //拼接URL
@@ -62,7 +63,7 @@ public abstract class GiltBase {
             parm_url.delete(0,1);
         }
 
-        String result = HttpUtils.get(call_url, parm_url.toString(),app_key);
+        String result = HttpUtils.get(call_url, parm_url.toString(), app_key);
 
         /* 如果包含message  表示错误*/
         if(StringUtils.isNullOrBlank2(result)||result.contains("message")){
@@ -123,10 +124,10 @@ public abstract class GiltBase {
         }
 
         /* 如果包含message  表示错误*/
-        if(StringUtils.isNullOrBlank2(result)||result.contains("message")){
+        if(StringUtils.isNullOrBlank2(result) || result.contains("message")){
             //转换错误信息
             List<GiltErrorResult> res = JacksonUtil.jsonToBeanList(result, GiltErrorResult.class);
-            if (res.size()>0){
+            if (!res.isEmpty()){
                 throw new GiltException(result);
             }
         }
@@ -151,8 +152,7 @@ public abstract class GiltBase {
                 else{
                     try {
                         Thread.sleep(TRY_WAIT_TIME);
-                    } catch (InterruptedException ignore) {
-
+                    } catch (Exception ignore) {
                     }
                 }
             }

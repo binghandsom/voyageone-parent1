@@ -112,7 +112,7 @@ public class JmImageFileBean extends JmBaseBean {
     }
 
     /** 图片流 */
-    private InputStream inputStream;
+    private transient InputStream inputStream;
 
     public InputStream getInputStream() {
         return inputStream;

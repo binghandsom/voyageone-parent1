@@ -107,7 +107,7 @@ public class JmBase {
         logger.info("result：" + result);
 
         //转换错误信息
-        if (result != null && result.indexOf("\"error\"") > 0) {
+        if (result != null && result.contains("\"error\"")) {
             Map<String, Object> resultMap = JsonUtil.jsonToMap(result);
             if (resultMap.containsKey("error") && !"0".equals(resultMap.get("error"))) {
                 throw new BusinessException("调用聚美API错误：" + result);

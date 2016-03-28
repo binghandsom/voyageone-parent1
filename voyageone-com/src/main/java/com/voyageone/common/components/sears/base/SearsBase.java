@@ -2,16 +2,15 @@ package com.voyageone.common.components.sears.base;
 
 import com.voyageone.common.components.sears.bean.OrderResponse;
 import com.voyageone.common.util.HttpUtils;
-import javax.net.ssl.HttpsURLConnection;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSocketFactory;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Properties;
 
@@ -57,9 +56,6 @@ public class SearsBase {
 
     /**
      * 调用Sears的webService
-     * @param postUrl
-     * @return
-     * @throws Exception
      */
     protected String reqSearsApi(String postUrl) throws Exception {
 
@@ -74,10 +70,6 @@ public class SearsBase {
 
     /**
      * 调用Sears的webService
-     * @param postUrl
-     * @param param
-     * @return
-     * @throws Exception
      */
     protected String reqSearsApi(String postUrl, String param) throws Exception {
 
@@ -93,10 +85,6 @@ public class SearsBase {
 
     /**
      * 超时的话，自动重调
-     * @param postUrl
-     * @param param
-     * @return
-     * @throws Exception
      */
     protected String reqSearsOnTimeoutRepert(String postUrl, String param) throws Exception {
 
@@ -113,7 +101,7 @@ public class SearsBase {
         return "";
     }
 
-    protected OrderResponse SearsHttpPost(String url, String charset,String content) throws Exception {
+    protected OrderResponse searsHttpPost(String url, String charset, String content) throws Exception {
 
         // Properties属性没有设置的场合 Properties的SSL属性设置
 //        if (!System.getProperties().contains(keystore)){
@@ -123,7 +111,6 @@ public class SearsBase {
         HttpsURLConnection http = null;
         OutputStream output = null;
         BufferedReader in = null;
-        String ret = null;
         OrderResponse orderResponse = new OrderResponse();
 
         SSLSocketFactory ssf = HttpUtils.getSsf(trustStore, trustStore_password, keystore_password);
@@ -182,18 +169,17 @@ public class SearsBase {
                 orderResponse.setMessage("Succeed");
             }
         } catch (IOException e) {
-            e.printStackTrace();
             if (output != null) {
                 try {
                     output.close();
-                } catch (IOException ex) {
+                } catch (IOException ignored) {
                     e.printStackTrace();
                 }
             }
             if (in != null) {
                 try {
                     in.close();
-                } catch (IOException ex) {
+                } catch (IOException ignored) {
                     e.printStackTrace();
                 }
             }

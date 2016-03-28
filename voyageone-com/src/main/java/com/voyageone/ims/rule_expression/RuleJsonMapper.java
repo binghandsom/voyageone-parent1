@@ -17,8 +17,7 @@ public class RuleJsonMapper {
         om.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
-    public String serializeRuleWord(RuleWord word)
-    {
+    public String serializeRuleWord(RuleWord word) {
         try {
             return om.writeValueAsString(word);
         } catch (JsonProcessingException e) {
