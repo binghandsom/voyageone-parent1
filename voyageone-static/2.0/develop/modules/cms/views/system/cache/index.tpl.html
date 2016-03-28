@@ -2,7 +2,7 @@
 	$(function(){
 		$.post("/cms/system/cache/init",{},function(result){
 			result.data.forEach(function(e){
-				$("#cacheManager").append("<tr><td>"+e+"</td><td><a href='/cms/system/cache/clear?cacheKey="+e+"'>清空缓存</a></td></tr>");
+				$("#cacheManager").append("<tr><td>"+e+"</td><td><a href='/cms/system/cache/init?cacheKey="+e+"'>清空缓存</a></td></tr>");
 			});
 		});
 	});

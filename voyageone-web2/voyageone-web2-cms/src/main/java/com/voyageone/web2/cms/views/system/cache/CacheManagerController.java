@@ -6,11 +6,13 @@ import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
 import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -26,14 +28,12 @@ import java.util.Set;
 public class CacheManagerController extends CmsController{
 
     @RequestMapping(CmsUrlConstants.SYSTEM.CACHE.INIT)
-    public AjaxResponse init() throws Exception {
+    public AjaxResponse init(HttpServletRequest request) throws Exception {
+        if(!StringUtils.isEmpty(request.getParameter("cacheKey"))) {
+            CacheTemplateFactory.getCacheTemplate().delete(request.getParameter("cacheKey"));
+            return redirectTo("/modules/cms/app.html#/system/cache/index");
+        }
         return success(cacheKeySet());
-    }
-
-    @RequestMapping(CmsUrlConstants.SYSTEM.CACHE.CLEAR)
-    public void clear(@RequestBody String cacheKey) throws Exception {
-        Assert.notNull(CacheKeyEnums.valueOf(cacheKey),"参数校验未通过，"+cacheKey+"不是CacheKeyEnums实例");
-        CacheTemplateFactory.getCacheTemplate().delete(cacheKey);
     }
 
     private Set<String> cacheKeySet(){
