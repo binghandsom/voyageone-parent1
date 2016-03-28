@@ -72,7 +72,7 @@ public class CmsFeedMappingService extends BaseAppService {
 
         // 拍平, 转 Map, 供前台查询方便, 和显示方便
         List<FeedCategoryBean> result = new ArrayList<>();
-        buildFeedCategoryBean(topCategory, mappingMap, 0, result);
+        buildFeedCategoryBean(topCategory, mappingMap, new int[]{0}, result);
         return result;
     }
 
@@ -253,10 +253,10 @@ public class CmsFeedMappingService extends BaseAppService {
         return parentDefaultMapping;
     }
 
-    private void buildFeedCategoryBean(CmsMtFeedCategoryModel feedCategoryModel, Map<String, List<FeedCategoryBean.MappingBean>> feedMappingModelMap, int seq, List<FeedCategoryBean> result) {
+    private void buildFeedCategoryBean(CmsMtFeedCategoryModel feedCategoryModel, Map<String, List<FeedCategoryBean.MappingBean>> feedMappingModelMap, int[] seq, List<FeedCategoryBean> result) {
 
         FeedCategoryBean feedCategoryBean = new FeedCategoryBean();
-        feedCategoryBean.setSeq(seq++);
+        feedCategoryBean.setSeq(seq[0]++);
         feedCategoryBean.setLevel(StringUtils.countMatches(feedCategoryModel.getPath(), "-"));
         feedCategoryBean.setIsChild(feedCategoryModel.getIsChild());
         feedCategoryBean.setPath(feedCategoryModel.getPath());
