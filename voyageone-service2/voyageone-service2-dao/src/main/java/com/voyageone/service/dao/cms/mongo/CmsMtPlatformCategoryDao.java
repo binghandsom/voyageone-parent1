@@ -13,7 +13,7 @@ import java.util.List;
 public class CmsMtPlatformCategoryDao extends BaseMongoDao<CmsMtPlatformCategoryTreeModel> {
 
     public WriteResult deletePlatformCategories(Integer cartId,String channelId){
-        String queryStr = "{cartId:"+cartId+",channelId:"+channelId+"}";
+        String queryStr = "{'cartId':"+cartId+",'channelId':'"+channelId+"'}";
         return deleteWithQuery(queryStr);
     }
 
