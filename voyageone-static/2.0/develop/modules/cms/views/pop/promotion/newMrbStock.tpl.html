@@ -34,7 +34,7 @@
                         </td>
                         <td class="mfb-xxt text-center">{{::(promotion.type==1?'TXT_SEPARATE':'TXT_SHARE')|translate}}</td>
                         <td class="mfb-xxs">
-                            <div class="input-group" ng-controller="datePickerCtrl" ng-if="::promotion.type == 1">
+                            <div class="input-group" ng-if="::promotion.type == 1">
                                 <input type="text" id="input-id-18" data-inputmask="'alias': 'dd/mm/yyyy'" data-mask=""
                                        class="form-control" uib-datepicker-popup="{{formatDate}}"
                                        ng-model="promotion.revertTime" date-model-format="{{formatDate}}" is-open="opened"
