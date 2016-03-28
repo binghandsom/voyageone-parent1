@@ -118,8 +118,10 @@
                                 ng-click="openMrbstock('lg')"><i class="fa fa-pencil"></i></button>
                         <button title="{{'BTN_DELETE' | translate}}" class="btn btn-danger btn-xs" ng-click="$ctrl.delete(task)"><i
                                 class="fa  fa-trash-o"></i></button>
-                        <button title="{{'BTN_ADD' | translate}}" class="btn btn-dangerdel btn-xs"><i
+                        <button title="{{'BTN_ADD' | translate}}" class="btn btn-dangerdel btn-xs" ng-if="task.task_type != 2"><i
                                 class="fa fa-cloud-download"></i></button>
+                        <button title="{{'BTN_DOWNLOAD_ERROR' | translate}}" class="btn btn-dangerdel btn-xs" ng-if="task.task_type == 2"
+                                ng-click="$ctrl.download(task.task_id)"><i class="glyphicons glyphicons-cloud-download"></i></button>
                     </td>
                 </tr>
                 </tbody>

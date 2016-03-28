@@ -1238,7 +1238,7 @@ public class CmsTaskStockController extends CmsController {
      *
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK.EXPORT_ERROR_INFO)
-    public ResponseEntity exportErrorInfo(@RequestBody Map param) {
+    public ResponseEntity exportErrorInfo(@RequestParam String taskId) {
 
         // 返回
         return genResponseEntityFromBytes("fileName", new byte[]{});

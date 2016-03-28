@@ -384,6 +384,7 @@ define(function() {
         "BTN_PROMOTION_HISTORY": "Promotion History",
         "BTN_PRICE_HISTORY": "Price History",
         "BTN_DOWNLOAD": "Download",
+        "BTN_DOWNLOAD_ERROR": "Error log",
         "BTN_IMPORT_PROMOTION_FILE": "Import Promotion File",
         "BTN_CHOOSE_FILE": "Choose File",
         "BTN_IMPORT_FILE": "Import File",
