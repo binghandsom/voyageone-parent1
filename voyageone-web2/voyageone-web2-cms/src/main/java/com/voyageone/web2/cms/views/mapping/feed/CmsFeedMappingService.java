@@ -20,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -49,7 +48,7 @@ public class CmsFeedMappingService extends BaseAppService {
         return treeModelx.getCategoryTree();
     }
 
-    Map<String, FeedCategoryBean> getFeedCategoryMap(String topCategoryId, UserSessionBean user) {
+    List<FeedCategoryBean> getFeedCategoryMap(String topCategoryId, UserSessionBean user) {
 
         CmsMtFeedCategoryTreeModelx treeModelx = cmsMtFeedCategoryTreeDao.selectTopCategory(user.getSelChannelId(), topCategoryId);
 
@@ -72,7 +71,7 @@ public class CmsFeedMappingService extends BaseAppService {
                 .collect(groupingBy(FeedCategoryBean.MappingBean::getFeedPath, toList()));
 
         // 拍平, 转 Map, 供前台查询方便, 和显示方便
-        Map<String, FeedCategoryBean> result = new HashMap<>();
+        List<FeedCategoryBean> result = new ArrayList<>();
         buildFeedCategoryBean(topCategory, mappingMap, 0, result);
         return result;
     }
@@ -254,7 +253,7 @@ public class CmsFeedMappingService extends BaseAppService {
         return parentDefaultMapping;
     }
 
-    private void buildFeedCategoryBean(CmsMtFeedCategoryModel feedCategoryModel, Map<String, List<FeedCategoryBean.MappingBean>> feedMappingModelMap, int seq, Map<String, FeedCategoryBean> result) {
+    private void buildFeedCategoryBean(CmsMtFeedCategoryModel feedCategoryModel, Map<String, List<FeedCategoryBean.MappingBean>> feedMappingModelMap, int seq, List<FeedCategoryBean> result) {
 
         FeedCategoryBean feedCategoryBean = new FeedCategoryBean();
         feedCategoryBean.setSeq(seq++);
@@ -266,7 +265,7 @@ public class CmsFeedMappingService extends BaseAppService {
             feedCategoryBean.setMappings(mappings);
         }
 
-        result.put(feedCategoryModel.getPath(), feedCategoryBean);
+        result.add(feedCategoryBean);
 
         for (CmsMtFeedCategoryModel child : feedCategoryModel.getChild())
             buildFeedCategoryBean(child, feedMappingModelMap, seq, result);
