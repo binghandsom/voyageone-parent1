@@ -36,7 +36,7 @@ public class ChannelConfigs {
                     bean -> {
                         orderChannelConfigBeanMap.
                                 put(
-                                        buildKey(bean.getOrder_channel_id(), ChannelConfigEnums.Name.valueOf(bean.getCfg_name()), bean.getCfg_val1()),
+                                        buildKey(bean.getOrder_channel_id(), bean.getCfg_name(), bean.getCfg_val1()),
                                         bean
                                 );
                     }
@@ -51,7 +51,7 @@ public class ChannelConfigs {
      *
      * @return key
      */
-    private static String buildKey(String id, ChannelConfigEnums.Name name, String cfgVal1) {
+    private static String buildKey(String id, String name, String cfgVal1) {
         return id + CacheHelper.SKIP + name + CacheHelper.SKIP + cfgVal1;
     }
 
@@ -80,7 +80,7 @@ public class ChannelConfigs {
      * @return String
      */
     public static String getVal2(String id, ChannelConfigEnums.Name name, String val1) {
-        OrderChannelConfigBean bean = hashOperations.get(KEY, buildKey(id, name, val1));
+        OrderChannelConfigBean bean = hashOperations.get(KEY, buildKey(id, name.toString(), val1));
         return (bean == null) ? "" : bean.getCfg_val2();
     }
 
@@ -97,7 +97,7 @@ public class ChannelConfigs {
 
         List<String> keyList = new ArrayList<>();
         keySet.forEach(k -> {
-            if (k.startsWith(buildKey(id, name, ""))) keyList.add(k);
+            if (k.startsWith(buildKey(id, name.toString(), ""))) keyList.add(k);
         });
         Collections.sort(keyList);
         return hashOperations.multiGet(KEY, keyList);
