@@ -136,6 +136,7 @@ public class GiltAnalysisService extends BaseTaskService {
 
             if (skuList.isEmpty()){
                 pageIndex = 0;
+                lastExecuteTime = Calendar.getInstance().getTimeInMillis();
                 break;
             }
 
@@ -147,14 +148,14 @@ public class GiltAnalysisService extends BaseTaskService {
                 break;
             }
 
-            if (delay > 0) {
-                $info("阶段结束等待 %s 秒", delay);
-                Thread.sleep(delay * 1000);
-            }
+//            if (delay > 0) {
+//                $info("阶段结束等待 %s 秒", delay);
+//                Thread.sleep(delay * 1000);
+//            }
 
-            pageIndex++;
             transformer.new Context(GILT, this).transform();
             insertService.new Context(GILT).postNewProduct();
+            pageIndex++;
         }
     }
 
