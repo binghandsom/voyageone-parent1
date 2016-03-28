@@ -1,5 +1,5 @@
 <div class="wrapper-md" ng-init="$ctrl.init()">
-	<div class="vo_accordion vo_attr" ng-show="$ctrl.hasAuthority">
+	<div class="vo_accordion vo_attr">
 		<div class="panel-group">
 			<div class="panel panel-default">
 				<div class="panel-heading">
@@ -50,7 +50,7 @@
 							</div>
 						</div>
 					</div>
-					<div class="col-sm-12">
+					<div class="col-sm-12" ng-show="$ctrl.propertyList.length > 0">
 						<div class="form-horizontal">
 							<div class="form-group form-inline col-sm-3">
 								<label class="col-sm-4 control-label">{{'TXT_SHOW_FLG' | translate}}</label>
@@ -70,7 +70,7 @@
 			</div>
 		</div>
 	</div>
-	<tabset class="tab-container vo_nav-tabs" ng-show="$ctrl.hasAuthority">
+	<tabset class="tab-container vo_nav-tabs">
 		<!--right-btn-->
 		<div class="form-inline pull-right btn-group">
 			<label class="btn btn-default-vo btn-vo" ng-model="radioModel" uib-btn-radio="'总数'" ng-click="$ctrl.search('')" ng-class="$ctrl.allNumClass">{{'TXT_ALL' | translate}}：{{$ctrl.allNum}}</label>

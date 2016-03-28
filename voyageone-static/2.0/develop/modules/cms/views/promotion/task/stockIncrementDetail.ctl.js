@@ -15,7 +15,7 @@ define([
             this.confirm = confirm;
             this.subTaskId = $routeParams['sub_task_id'];
             this.taskStockIncrementDetailService = taskStockIncrementDetailService;
-            this.hasAuthority = true;
+            //this.hasAuthority = true;
             this.readyNum = 0;
             this.waitIncrementNum = 0;
             this.increasingNum = 0;
@@ -97,11 +97,11 @@ define([
                     "length" : main.stockPageOption.size
                 }).then(function (res) {
                     if (param != 'page') {
-                        main.hasAuthority = res.data.hasAuthority;
-                        if (!main.hasAuthority) {
-                            main.alert('没有权限访问！')
-                            return;
-                        }
+                        //main.hasAuthority = res.data.hasAuthority;
+                        //if (!main.hasAuthority) {
+                        //    main.alert('没有权限访问！')
+                        //    return;
+                        //}
                         main.taskId = res.data.taskId;
                         main.cartId = res.data.cartId;
                         main.cartName = res.data.cartName;
@@ -112,7 +112,9 @@ define([
                         main.incrementFailureNum = res.data.incrementFailureNum;
                         main.revertNum = res.data.revertNum;
                         main.allNum = res.data.allNum;
-                        main.stockPageOption.total = res.data.skuNum;
+                        if (!isNaN(res.data.skuNum)) {
+                            main.stockPageOption.total = res.data.skuNum;
+                        }
                         main.propertyList = res.data.propertyList;
                         main.stockList = res.data.stockList;
                         main.stockPageOption.curr = 1;

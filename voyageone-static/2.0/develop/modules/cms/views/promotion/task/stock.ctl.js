@@ -15,7 +15,7 @@ define([
             this.notify = notify;
             this.confirm = confirm;
             this.taskId = $routeParams['task_id'];
-            this.hasAuthority = true;
+            //this.hasAuthority = true;
             this.readyNum = 0;
             this.waitingSeparateNum = 0;
             this.separatingNum = 0;
@@ -105,11 +105,11 @@ define([
                     "start2" :  0,
                     "length2" : main.realStockPageOption.size
                 }).then(function (res) {
-                    main.hasAuthority = res.data.hasAuthority;
-                    if (!main.hasAuthority) {
-                        main.alert('没有权限访问！')
-                        return;
-                    }
+                    //main.hasAuthority = res.data.hasAuthority;
+                    //if (!main.hasAuthority) {
+                    //    main.alert('没有权限访问！')
+                    //    return;
+                    //}
                     main.tempStockListSelect.clearCurrPageRows();
                     main.readyNum = res.data.readyNum;
                     main.waitingSeparateNum = res.data.waitingSeparateNum;
@@ -122,8 +122,10 @@ define([
                     main.revertFailureNum = res.data.revertFailureNum;
                     main.changedNum = res.data.changedNum;
                     main.allNum = res.data.allNum;
-                    main.stockPageOption.total = res.data.skuNum;
-                    main.realStockPageOption.total = res.data.skuNum;
+                    if (!isNaN(res.data.skuNum)) {
+                        main.stockPageOption.total = res.data.skuNum;
+                        main.realStockPageOption.total = res.data.skuNum;
+                    }
                     main.propertyList = res.data.propertyList;
                     main.platformList = res.data.platformList;
                     if (res.data.platformList.length > 0) {
