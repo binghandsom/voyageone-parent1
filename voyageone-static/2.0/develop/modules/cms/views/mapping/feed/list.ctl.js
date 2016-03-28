@@ -71,6 +71,7 @@ define([
          *
          * @param obj
          * @constructor
+         * @property _id
          * @property defaultMapping
          * @property defaultMain
          * @property matchOver
@@ -142,18 +143,22 @@ define([
             var self = this;
 
             window.feedMappingController = {
-                setMatchOver: function (mappingScope, matchOver) {
+                setMatchOver: function (mappingModel, matchOver) {
                     $scope.$apply(function () {
                         var map = self.currCategoryMap;
+                        var isCommon = mappingModel.defaultMain === 1;
+                        var mainPath = mappingModel.scope.mainCategoryPath;
+                        var feedPath = mappingModel.scope.feedCategoryPath;
                         // 更新目标 Feed Mapping
-                        map[mappingScope.feedCategoryPath].selectedMapping.matchOver = matchOver;
+                        map[feedPath].selectedMapping.matchOver = matchOver;
+                        if (!isCommon) return;
                         // 更新目标通用 Mapping
                         Object.keys(map).forEach(function (key) {
                             var feedCategoryBean = map[key];
                             if (!feedCategoryBean.selectedMapping) return;
                             var mapping = feedCategoryBean.selectedMapping.mainMapping;
                             if (!mapping) return;
-                            if (mapping && mapping.mainPath === mappingScope.mainCategoryPath)
+                            if (mapping && mapping.mainPath === mainPath)
                                 mapping.matchOver = matchOver;
                         });
                     });
@@ -181,14 +186,11 @@ define([
              * 画面初始化时
              */
             init: function () {
-
-                var ttt = this;
-
-                ttt.feedMappingService.getTopCategories().then(function (res) {
-                    ttt.topCategories = res.data;
-                    ttt.selectedTop = ttt.topCategories[0].cid;
-
-                    ttt.refreshTable();
+                var self = this;
+                self.feedMappingService.getTopCategories().then(function (res) {
+                    self.topCategories = res.data;
+                    self.selectedTop = self.topCategories[0].cid;
+                    self.refreshTable();
                 });
             },
 
