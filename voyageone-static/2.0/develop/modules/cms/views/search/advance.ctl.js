@@ -13,7 +13,6 @@ define([
             searchInfo: {
                 compareType: null,
                 brand: null,
-                promotion: null,
                 tags:[]
             },
             groupPageOption: {curr: 1, total: 0, size: 20, fetch: getGroupList},
@@ -66,7 +65,6 @@ define([
             $scope.vm.searchInfo = {
                 compareType: null,
                 brand: null,
-                promotion: null,
                 tags:[]
             };
         }
