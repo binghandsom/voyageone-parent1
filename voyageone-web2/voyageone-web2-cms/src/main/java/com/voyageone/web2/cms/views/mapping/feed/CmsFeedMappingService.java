@@ -166,17 +166,17 @@ public class CmsFeedMappingService extends BaseAppService {
     /**
      * 自动继承 feedCategoryModel 类目父级类目的 Mapping 关系
      *
-     * @param feedCategoryModel Feed 类目
-     * @param user              变动用户
+     * @param path Feed 类目路径
+     * @param user 变动用户
      * @return 更新后的 Mapping 关系
      */
-    CmsBtFeedMappingModel extendsMapping(CmsMtFeedCategoryModel feedCategoryModel, UserSessionBean user) {
+    CmsBtFeedMappingModel extendsMapping(String path, UserSessionBean user) {
 
-        CmsBtFeedMappingModel feedMappingModel = findParentDefaultMapping(user.getSelChannel(), feedCategoryModel.getPath());
+        CmsBtFeedMappingModel feedMappingModel = findParentDefaultMapping(user.getSelChannel(), path);
 
         if (feedMappingModel == null) return null;
 
-        SetMappingBean setMappingBean = new SetMappingBean(feedCategoryModel.getPath(), feedMappingModel.getScope().getMainCategoryPath());
+        SetMappingBean setMappingBean = new SetMappingBean(path, feedMappingModel.getScope().getMainCategoryPath());
 
         return setMapping(setMappingBean, user);
     }
