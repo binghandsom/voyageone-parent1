@@ -6,7 +6,7 @@ define(['cms'], function (cms) {
 
     return cms.controller('popCategoryCtl', (function () {
 
-        function popCategoryController(context, $uibModalInstance, notify, $translate) {
+        function PopCategoryController(context, $uibModalInstance, notify, $translate) {
 
             this.$uibModalInstance = $uibModalInstance;
             this.notify = notify;
@@ -39,7 +39,7 @@ define(['cms'], function (cms) {
             this.divType = null;
         }
 
-        popCategoryController.prototype = {
+        PopCategoryController.prototype = {
             /**
              * 初始化时,加载必需数据
              */
@@ -100,7 +100,7 @@ define(['cms'], function (cms) {
             }
         };
 
-        return popCategoryController;
+        return PopCategoryController;
 
     })());
 });

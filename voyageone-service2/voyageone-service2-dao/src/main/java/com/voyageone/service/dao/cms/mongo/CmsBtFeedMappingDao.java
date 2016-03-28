@@ -18,19 +18,6 @@ import java.util.List;
 public class CmsBtFeedMappingDao extends BaseMongoDao<CmsBtFeedMappingModel> {
 
     /**
-     * 查询渠道的所有类目匹配关系
-     *
-     * @param channelId 渠道
-     * @return 类目的 mapping 关系
-     */
-    public List<CmsBtFeedMappingModel> selectCategoryMappingByChannel(String channelId) {
-
-        return selectWithProjection(
-                String.format("{ scope.channelId: '%s' }", channelId),
-                "{scope:1,defaultMapping:1,defaultMain:1,matchOver:1}");
-    }
-
-    /**
      * 根据feedCategory,获取该feedCategory默认的对应关系
      *
      * @param channelId    channel id
@@ -121,7 +108,7 @@ public class CmsBtFeedMappingDao extends BaseMongoDao<CmsBtFeedMappingModel> {
         return selectOneWithQuery(jomgoQuery);
     }
 
-    public List<CmsBtFeedMappingModel> findMappingWithoutProps(String feedCategoryPath, String selChannelId) {
+    public List<CmsBtFeedMappingModel> findMappingsWithoutProps(String feedCategoryPath, String selChannelId) {
 
         String strQuery = String.format("{\"scope.channelId\":\"%s\",\"scope.feedCategoryPath\":\"%s\"}",
                 selChannelId, feedCategoryPath);
@@ -129,5 +116,14 @@ public class CmsBtFeedMappingDao extends BaseMongoDao<CmsBtFeedMappingModel> {
         String projection = "{\"props\": 0}";
 
         return selectWithProjection(strQuery, projection);
+    }
+
+    public CmsBtFeedMappingModel findOneWithoutProps(ObjectId mappingId) {
+
+        JomgoQuery jomgoQuery = new JomgoQuery();
+        jomgoQuery.setObjectId(mappingId);
+        jomgoQuery.setProjection("{\"props\": 0}");
+
+        return selectOneWithQuery(jomgoQuery);
     }
 }
