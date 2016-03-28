@@ -26,8 +26,7 @@ public class RuleJsonMapper {
         }
     }
 
-    public String serializeRuleExpression(RuleExpression expression)
-    {
+    public String serializeRuleExpression(RuleExpression expression) {
         try {
             return om.writeValueAsString(expression);
         } catch (JsonProcessingException e) {
@@ -36,8 +35,7 @@ public class RuleJsonMapper {
         }
     }
 
-    public RuleWord deserializeRuleWord(String json)
-    {
+    public RuleWord deserializeRuleWord(String json) {
         try {
             return om.readValue(json, RuleWord.class);
         } catch (IOException e) {
@@ -46,8 +44,7 @@ public class RuleJsonMapper {
         }
     }
 
-    public RuleExpression deserializeRuleExpression(String json)
-    {
+    public RuleExpression deserializeRuleExpression(String json) {
         try {
             return om.readValue(json, RuleExpression.class);
         } catch (IOException e) {
