@@ -2,7 +2,8 @@ package com.voyageone.web2.cms.bean.setting.mapping.feed;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedMappingModel;
-import com.voyageone.service.model.cms.mongo.feed.CmsMtFeedCategoryModel;
+
+import java.util.List;
 
 /**
  * FeedMapping 画面特供数据模型,将画面需要的数据事先找好
@@ -15,13 +16,13 @@ public class FeedCategoryBean {
 
     private int seq;
 
-    private CmsMtFeedCategoryModel model;
+    private String path;
+
+    private int isChild;
 
     private int level;
 
-    private CmsBtFeedMappingModel mapping;
-
-    private CmsBtFeedMappingModel mainMapping;
+    private List<MappingBean> mappings;
 
     public int getSeq() {
         return seq;
@@ -31,12 +32,20 @@ public class FeedCategoryBean {
         this.seq = seq;
     }
 
-    public CmsMtFeedCategoryModel getModel() {
-        return model;
+    public String getPath() {
+        return path;
     }
 
-    public void setModel(CmsMtFeedCategoryModel model) {
-        this.model = model;
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+    public int getIsChild() {
+        return isChild;
+    }
+
+    public void setIsChild(int isChild) {
+        this.isChild = isChild;
     }
 
     public int getLevel() {
@@ -47,25 +56,90 @@ public class FeedCategoryBean {
         this.level = level;
     }
 
-    public CmsBtFeedMappingModel getMapping() {
-        return mapping;
+    public List<MappingBean> getMappings() {
+        return mappings;
     }
 
-    public void setMapping(CmsBtFeedMappingModel mapping) {
-        this.mapping = mapping;
+    public void setMappings(List<MappingBean> mappings) {
+        this.mappings = mappings;
     }
 
-    public CmsBtFeedMappingModel getMainMapping() {
-        return mainMapping;
-    }
+    public static class MappingBean {
 
-    public void setMainMapping(CmsBtFeedMappingModel mainMapping) {
-        this.mainMapping = mainMapping;
+        private int defaultMapping;
+
+        private int defaultMain;
+
+        private int matchOver;
+
+        private String feedPath;
+
+        private String mainPath;
+
+        private MappingBean mainMapping;
+
+        public MappingBean(CmsBtFeedMappingModel mapping, CmsBtFeedMappingModel mainMapping) {
+            this.defaultMapping = mapping.getDefaultMapping();
+            this.defaultMain = mapping.getDefaultMain();
+            this.matchOver = mapping.getMatchOver();
+            this.feedPath = mapping.getScope().getFeedCategoryPath();
+            this.mainPath = mapping.getScope().getMainCategoryPath();
+            if (mainMapping != null)
+                this.mainMapping = new MappingBean(mainMapping, null);
+        }
+
+        public int getDefaultMapping() {
+            return defaultMapping;
+        }
+
+        public void setDefaultMapping(int defaultMapping) {
+            this.defaultMapping = defaultMapping;
+        }
+
+        public int getDefaultMain() {
+            return defaultMain;
+        }
+
+        public void setDefaultMain(int defaultMain) {
+            this.defaultMain = defaultMain;
+        }
+
+        public int getMatchOver() {
+            return matchOver;
+        }
+
+        public void setMatchOver(int matchOver) {
+            this.matchOver = matchOver;
+        }
+
+        public String getFeedPath() {
+            return feedPath;
+        }
+
+        public void setFeedPath(String feedPath) {
+            this.feedPath = feedPath;
+        }
+
+        public String getMainPath() {
+            return mainPath;
+        }
+
+        public void setMainPath(String mainPath) {
+            this.mainPath = mainPath;
+        }
+
+        public MappingBean getMainMapping() {
+            return mainMapping;
+        }
+
+        public void setMainMapping(MappingBean mainMapping) {
+            this.mainMapping = mainMapping;
+        }
     }
 
     @JsonProperty
     public String getParentPath() {
-        String path = model.getPath();
+        String path = this.path;
         int lastIndex = path.lastIndexOf("-");
         return lastIndex < 0 ? null : path.substring(0, lastIndex);
     }
