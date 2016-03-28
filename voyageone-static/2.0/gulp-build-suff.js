@@ -41,13 +41,13 @@ module.exports = function (path) {
 
         // 简单检查格式
         if (moduleName.indexOf(pref) !== 0) {
-            gutil.log(`cant support this module name (must start with "${pref}"): ${moduleName}`);
+            gutil.log('cant support this module name (must start with "${pref}"): ${moduleName}');
             return cb();
         }
 
         var lastPointIndex = moduleName.lastIndexOf('.');
         if (lastPointIndex < 1) {
-            gutil.log(`cant support this module name: ${moduleName}`);
+            gutil.log('cant support this module name: ${moduleName}');
             return cb();
         }
 
@@ -61,7 +61,7 @@ module.exports = function (path) {
     }, function (cb) {
         // 生成最终文件的文件名
         var suff = new File({path: path});
-        suff.contents = new Buffer(`return angular.module("${pref}",[\n"${modules.join('",\n"')}"\n]);`);
+        suff.contents = new Buffer('return angular.module("${pref}",[\n"${modules.join(\'",\n"\')}"\n]);');
         this.push(suff);
         return cb();
     });
