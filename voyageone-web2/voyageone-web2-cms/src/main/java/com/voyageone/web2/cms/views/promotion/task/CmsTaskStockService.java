@@ -2187,7 +2187,9 @@ public class CmsTaskStockService extends BaseAppService {
         } else {
             searchParam.put("tableNameSuffix", "");
         }
+        $info("Error数据取得开始");
         List<Map<String, Object>> resultData = cmsBtStockSeparateItemDao.selectExcelStockErrorInfo(searchParam);
+        $info("Error数据取得结束,共%d件", resultData.size());
 
         List<Map<String, Object>> platformList = this.getPlatformList(taskId, (String) param.get("channelId"), (String) param.get("lang"));
         Map<String, String> mapPlatform = new HashMap<String, String>();
