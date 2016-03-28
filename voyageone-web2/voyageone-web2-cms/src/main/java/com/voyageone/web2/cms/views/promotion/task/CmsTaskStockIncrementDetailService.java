@@ -447,9 +447,9 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
                     String activityEnd = (String) platformInfo.get("activity_end");
                     if (!StringUtils.isEmpty(activityEnd)) {
                         if (activityEnd.length() == 10) {
-                            activityEnd = activityEnd + " 00:00:00";
+                            activityEnd = activityEnd + " 23:59:59";
                         }
-                        if (DateTimeUtil.addDays(DateTimeUtil.parse(activityEnd), 1).compareTo(now) > 0) {
+                        if (DateTimeUtil.parse(activityEnd).compareTo(now) > 0) {
                             return true;
                         }
                     }
