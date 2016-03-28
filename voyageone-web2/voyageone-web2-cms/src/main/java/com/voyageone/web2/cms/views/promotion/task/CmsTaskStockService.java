@@ -1022,7 +1022,7 @@ public class CmsTaskStockService extends BaseAppService {
                             }
                             int updateCnt = cmsBtStockSeparateItemDao.updateStockSeparateItem(sqlParam1);
                             if (updateCnt == 1) {
-                                String typeName = Types.getTypeName(63, changedStatus, (String) param.get("lang"));
+                                String typeName = Types.getTypeName(63, (String) param.get("lang"), changedStatus);
                                 platformInfo.put("status", typeName);
                             } else {
                                 throw new BusinessException("明细对象不存在！");

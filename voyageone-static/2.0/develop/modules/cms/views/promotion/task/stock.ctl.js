@@ -55,6 +55,10 @@ define([
             this.tempStockListSelect = new selectRowsFactory();
             this.taskStockService = taskStockService;
             this.dynamicColNum = 0;
+            this.selPlatform = "";
+            this.percent = "";
+            this.style= "";
+            this.allNumClass = "btn btn-default-vo btn-vo";
 
             this.downloadUrl = urls.root + "/" + urls.exportStockInfo;
         }
@@ -82,8 +86,9 @@ define([
                     main.status = status;
                 }
                 if (status >= '0' && status <= '9') {
-                    var allNumLabel = document.getElementById('allNum');
-                    allNumLabel.setAttribute("class", "btn btn-default-vo");
+                    main.allNumClass = "btn btn-default-vo";
+                    //var allNumLabel = document.getElementById('allNum');
+                    //allNumLabel.setAttribute("class", "btn btn-default-vo");
                 }
                 main.taskStockService.searchStock({
                     "taskId" : main.taskId,
@@ -121,6 +126,9 @@ define([
                     main.realStockPageOption.total = res.data.skuNum;
                     main.propertyList = res.data.propertyList;
                     main.platformList = res.data.platformList;
+                    if (res.data.platformList.length > 0) {
+                        main.selPlatform = res.data.platformList[0].cartId;
+                    }
                     main.stockList = res.data.stockList;
                     main.realStockList = res.data.realStockList;
                     main.realStockStatus = res.data.realStockStatus;
@@ -139,11 +147,13 @@ define([
 
                     });
                     if (main.platformList.length + main.dynamicColNum <= 6) {
-                        var stockSeparateTbl = document.getElementById('stock_separate_tbl');
-                        stockSeparateTbl.setAttribute("style", "width:100%;margin-bottom:0px");
+                        //var stockSeparateTbl = document.getElementById('stock_separate_tbl');
+                        //stockSeparateTbl.setAttribute("style", "width:100%;margin-bottom:0px");
+                        main.style = "100%";
                     } else {
-                        var stockSeparateTbl = document.getElementById('stock_separate_tbl');
-                        stockSeparateTbl.setAttribute("style", "width:1800px;margin-bottom:0px");
+                        //var stockSeparateTbl = document.getElementById('stock_separate_tbl');
+                        //stockSeparateTbl.setAttribute("style", "width:1800px;margin-bottom:0px");
+                        main.style = "1800px";
                     }
                 })
             },
@@ -210,11 +220,11 @@ define([
 
             setPercent: function () {
                 var main = this;
-                if(main.stockSelList.selList.length <= 0){
+                if(main.stockSelList.selList.length <= 0) {
                     main.alert('TXT_MSG_NO_ROWS_SELECT');
                 }
-                var selPlatform = document.getElementById('selPlatform').value;
-                var percent = document.getElementById('percent').value;
+
+                var percent = main.percent;
                 if (percent.length > 0 && percent.substring(percent.length - 1) == '%') {
                     percent = percent.substring(0, percent.length - 1);
                 }
@@ -224,7 +234,7 @@ define([
                         _.each(main.stockList, function (stock) {
                             if (item.id == stock.sku) {
                                 _.each(stock.platformStock, function (platform) {
-                                    if (platform.cartId == selPlatform && platform.status != null && platform.status != '') {
+                                    if (platform.cartId == main.selPlatform && platform.status != null && platform.status != '') {
                                         platform.separationQty = (Math.floor(percent * 0.01 * stock.qty)).toString();
                                     }
                                 });
@@ -243,11 +253,13 @@ define([
                     this.dynamicColNum--;
                 }
                 if (this.platformList.length + this.dynamicColNum <= 6) {
-                    var stockSeparateTbl = document.getElementById('stock_separate_tbl');
-                    stockSeparateTbl.setAttribute("style", "width:100%;margin-bottom:0px");
+                    //var stockSeparateTbl = document.getElementById('stock_separate_tbl');
+                    //stockSeparateTbl.setAttribute("style", "width:100%;margin-bottom:0px");
+                    this.style = "100%";
                 } else {
-                    var stockSeparateTbl = document.getElementById('stock_separate_tbl');
-                    stockSeparateTbl.setAttribute("style", "width:1800px;margin-bottom:0px");
+                    //var stockSeparateTbl = document.getElementById('stock_separate_tbl');
+                    //stockSeparateTbl.setAttribute("style", "width:1800px;margin-bottom:0px");
+                    this.style = "1800px";
                 }
             },
 
