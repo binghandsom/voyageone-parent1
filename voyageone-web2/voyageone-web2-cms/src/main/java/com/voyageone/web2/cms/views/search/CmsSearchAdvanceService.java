@@ -66,7 +66,7 @@ public class CmsSearchAdvanceService extends BaseAppService{
     private final String searchItems = "channelId;prodId;catId;catPath;created;creater;modified;" +
             "modifier;groups.msrpStart;groups.msrpEnd;groups.retailPriceStart;groups.retailPriceEnd;" +
             "groups.salePriceStart;groups.salePriceEnd;groups.platforms.$;skus;" +
-            "fields.longTitle;fields.productNameEn;fields.brand;fields.status;fields.code;fields.images1;fields.quantity;";
+            "fields.longTitle;fields.productNameEn;fields.brand;fields.status;fields.code;fields.images1;fields.quantity;fields.productType;fields.sizeType;";
 
     // 未结束提示信息
     private final String not_End_Prompt_Message = "";
