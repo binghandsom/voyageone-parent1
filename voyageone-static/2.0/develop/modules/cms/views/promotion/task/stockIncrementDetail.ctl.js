@@ -33,6 +33,7 @@ define([
             this.cartId = "";
             this.cartName = "";
             this.taskId = "";
+            this.allNumClass = "btn btn-default-vo btn-vo";
 
             this.stockPageOption = {
                 curr: 1,
@@ -46,7 +47,7 @@ define([
 
         TaskStockIncrementDetailController.prototype = {
             init: function () {
-                this.search('search');
+                this.search('init');
             },
 
             getStockList: function () {
@@ -64,16 +65,16 @@ define([
 
             search: function (param) {
                 var main = this;
-                if (param != 'search' && param != 'page')  {
+                if (param >= '0' && param <= '6')  {
                     main.status = param;
+                    main.allNumClass = "btn btn-default-vo";
+                    //var allNumLabel = document.getElementById('allNum');
+                    //allNumLabel.setAttribute("class", "btn btn-default-vo");
                 }
-                if (param == 'search') {
+                if (param == 'init' || param == '') {
                     main.status = "";
                 }
-                if (main.status >= '0' && main.status <= '6') {
-                    var allNumLabel = document.getElementById('allNum');
-                    allNumLabel.setAttribute("class", "btn btn-default-vo");
-                }
+
                 var start = 0;
                 var page =  false;
                 if (param == 'page') {
