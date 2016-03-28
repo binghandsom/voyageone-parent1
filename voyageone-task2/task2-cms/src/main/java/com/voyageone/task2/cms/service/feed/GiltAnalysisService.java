@@ -12,7 +12,9 @@ import com.voyageone.common.configs.beans.ThirdPartyConfigBean;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.task2.base.BaseTaskService;
+import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
+import com.voyageone.task2.base.util.TaskControlUtils;
 import com.voyageone.task2.cms.bean.SuperFeedGiltBean;
 import com.voyageone.task2.cms.dao.SuperFeed2Dao;
 import com.voyageone.task2.cms.dao.feed.GiltFeedDao;
@@ -21,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
@@ -51,6 +54,8 @@ public class GiltAnalysisService extends BaseTaskService {
 
     private static int pageIndex = 0;
 
+    private Long lastExecuteTime = 0L;
+
     //允许webSericce请求超时的连续最大次数
     private static int ALLOWLOSEPAGECOUNT = 10;
 
@@ -79,7 +84,7 @@ public class GiltAnalysisService extends BaseTaskService {
      */
     @Override
     public String getTaskName() {
-        return "Cms2GiltAnalysis";
+        return "Cms2GiltAnalysisJob";
     }
 
     /**
@@ -90,21 +95,31 @@ public class GiltAnalysisService extends BaseTaskService {
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
 
-//        // 清表
-//        $info("产品信息清表开始");
-//        giltFeedDao.clearTemp();
-//        $info("产品信息清表结束");
+        Long scheduled = 24 * 60 * 60 * 1000L;
+        String val1 = TaskControlUtils.getVal1(taskControlList, TaskControlEnums.Name.scheduled_time);
+        if (!StringUtils.isEmpty(val1)) {
+            scheduled = Integer.parseInt(val1) * 60 * 60 * 1000L;
+        }
+        if((Calendar.getInstance().getTimeInMillis() - lastExecuteTime) > scheduled){
 
-        // 插入数据库
-        $info("产品信息插入开始");
-        superFeedImport(taskControlList);
-        $info("产品信息插入完成");
+    //        // 清表
+    //        $info("产品信息清表开始");
+    //        giltFeedDao.clearTemp();
+    //        $info("产品信息清表结束");
 
-//        logger.info("transform开始");
-//        transformer.new Context(GILT, this).transform();
-//        logger.info("transform结束");
+            // 插入数据库
+            $info("产品信息插入开始");
+            superFeedImport(taskControlList);
+            $info("产品信息插入完成");
 
-//        insertService.new Context(GILT).postNewProduct();
+    //        logger.info("transform开始");
+    //        transformer.new Context(GILT, this).transform();
+    //        logger.info("transform结束");
+
+    //        insertService.new Context(GILT).postNewProduct();
+        }else{
+            $info("间隔时间未定不许要执行");
+        }
     }
 
 
@@ -128,6 +143,7 @@ public class GiltAnalysisService extends BaseTaskService {
 
             if (skuList.size() < getPageSize()) {
                 pageIndex = 0;
+                lastExecuteTime = Calendar.getInstance().getTimeInMillis();
                 break;
             }
 
