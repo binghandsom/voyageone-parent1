@@ -39,7 +39,7 @@ public enum EnumJMProductImportColumn   {
     AvailablePeriod("available_period","cms_bt_jm_product","保质期"),//Z
     ApplicableCrowd("applicable_crowd","cms_bt_jm_product","适合人群"),//AA
     SearchMetaTextCustom("search_meta_text_custom","cms_bt_jm_product","自定义搜索词"),//AB
-    SpecialNote("special_note","cms_bt_jm_product","特别说明 用于聚美上新"),//AC
+    SpecialNote("special_note","cms_mt_master_info","特别说明 用于聚美上新"),//AC
     Msrp("msrp","cms_bt_jm_product","海外官网价格"),//AD                                                           cms_bt_jm_product
     Limit("limit","cms_bt_jm_promotion_product","Deal每人限购"),//jm_bt_promotion_product
     PropertyImage("property_image","jm_bt_images","使用方法_商品参数图"),     //jm_bt_images  image url 进入jm_bt_images（产品图片）   image type是 3

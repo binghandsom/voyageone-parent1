@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.voyageone.service.dao.jumei.CmsBtJmImagesDao">
-    <resultMap id="ResultMap" type="CmsBtJmImagesModel">
+<mapper namespace="com.voyageone.service.dao.jumei.CmsBtJmProductImagesDao">
+    <resultMap id="ResultMap" type="CmsBtJmProductImagesModel">
         
     </resultMap>
 	
     <select id="selectList" resultMap="ResultMap">
 
-        select id,channel_id,product_code,image_type_name,image_type,image_index,origin_url,jm_url,syn_flg,created,creater,modified,modifier        from cms_bt_jm_images
+        select id,channel_id,product_code,image_type_name,image_type,image_index,origin_url,jm_url,syn_flg,created,creater,modified,modifier,productImageUrlKey        from cms_bt_jm_product_images
     </select>
     <select id="select" resultMap="ResultMap">
-        select id,channel_id,product_code,image_type_name,image_type,image_index,origin_url,jm_url,syn_flg,created,creater,modified,modifier from cms_bt_jm_images where id=#{id}
+        select id,channel_id,product_code,image_type_name,image_type,image_index,origin_url,jm_url,syn_flg,created,creater,modified,modifier,productImageUrlKey from cms_bt_jm_product_images where id=#{id}
     </select>
 
      <update id="update">
-        update cms_bt_jm_images
+        update cms_bt_jm_product_images
         set
 
             `channel_id`=#{channelId}
@@ -27,17 +27,18 @@
             ,`syn_flg`=#{synFlg}
             ,`modified`=#{modified}
             ,`modifier`=#{modifier}
+            ,`productImageUrlKey`=#{productImageUrlKey}
          where id=#{id}   
    </update>
 
     <delete id="delete">
-        delete from  cms_bt_jm_images
+        delete from  cms_bt_jm_product_images
         where id=#{id}
 
     </delete>
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="id" >
-        INSERT INTO cms_bt_jm_images
+        INSERT INTO cms_bt_jm_product_images
         (
               `channel_id`,
               `product_code`,
@@ -50,7 +51,8 @@
               `created`,
               `creater`,
               `modified`,
-              `modifier`
+              `modifier`,
+              `productImageUrlKey`
         )
         VALUES(
               #{channelId},
@@ -64,7 +66,8 @@
               #{created},
               #{creater},
               #{modified},
-              #{modifier}
+              #{modifier},
+              #{productImageUrlKey}
         )
     </insert>
 </mapper>

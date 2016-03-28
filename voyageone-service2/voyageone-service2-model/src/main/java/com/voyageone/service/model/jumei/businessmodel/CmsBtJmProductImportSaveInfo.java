@@ -1,23 +1,38 @@
 package com.voyageone.service.model.jumei.businessmodel;
-
 import com.voyageone.service.model.jumei.*;
-
 import java.util.ArrayList;
 import java.util.List;
-
 /**
  * 商品导入保存信息
  */
 public class CmsBtJmProductImportSaveInfo {
-    CmsBtJmProductModel productModel;
-    List<CmsBtJmSkuModel> listSkuModel;
-    CmsBtJmPromotionProductModel promotionProductModel;
-    List<CmsBtJmPromotionSkuModel> listPromotionSkuModel;
+    CmsBtJmProductModel productModel;//商品
+    List<CmsBtJmSkuModel> listSkuModel;//规格
+    CmsBtJmPromotionProductModel promotionProductModel;//活动商品
+    List<CmsBtJmPromotionSkuModel> listPromotionSkuModel;//活动规格
+    List<CmsMtMasterInfoModel> listCmsMtMasterInfoModel;//主数据库图片
 
-    public  CmsBtJmProductImportSaveInfo()
-    {
+    public List<CmsBtJmProductImagesModel> getListCmsBtJmProductImagesModel() {
+        return listCmsBtJmProductImagesModel;
+    }
+
+    public void setListCmsBtJmProductImagesModel(List<CmsBtJmProductImagesModel> listCmsBtJmProductImagesModel) {
+        this.listCmsBtJmProductImagesModel = listCmsBtJmProductImagesModel;
+    }
+
+    List<CmsBtJmProductImagesModel> listCmsBtJmProductImagesModel;//商品聚美图片
+    public List<CmsMtMasterInfoModel> getListCmsMtMasterInfoModel() {
+        return listCmsMtMasterInfoModel;
+    }
+    public void setListCmsMtMasterInfoModel(List<CmsMtMasterInfoModel> listCmsMtMasterInfoModel) {
+        this.listCmsMtMasterInfoModel = listCmsMtMasterInfoModel;
+    }
+
+    public CmsBtJmProductImportSaveInfo() {
         this.setListSkuModel(new ArrayList<>());
         this.setListPromotionSkuModel(new ArrayList<>());
+        this.setListCmsMtMasterInfoModel(new ArrayList<>());
+        this.setListCmsBtJmProductImagesModel(new ArrayList<>());
     }
     public List<CmsBtJmSkuModel> getListSkuModel() {
         return listSkuModel;

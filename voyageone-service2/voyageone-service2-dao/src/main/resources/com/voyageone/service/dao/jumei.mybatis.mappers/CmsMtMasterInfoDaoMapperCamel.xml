@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.service.dao.jumei.CmsMtMasterInfoDao">
+    <resultMap id="ResultMap" type="CmsMtMasterInfoModel">
+        
+    </resultMap>
+	
+    <select id="selectList" resultMap="ResultMap">
+
+        select id,platform_id,channel_id,brand_name,product_type,size_type,data_type,image_index,value1,value2,syn_flg,error_message,created,creater,modified,modifier        from cms_mt_master_info
+    </select>
+    <select id="select" resultMap="ResultMap">
+        select id,platform_id,channel_id,brand_name,product_type,size_type,data_type,image_index,value1,value2,syn_flg,error_message,created,creater,modified,modifier from cms_mt_master_info where id=#{id}
+    </select>
+
+     <update id="update">
+        update cms_mt_master_info
+        set
+
+            `platform_id`=#{platformId}
+            ,`channel_id`=#{channelId}
+            ,`brand_name`=#{brandName}
+            ,`product_type`=#{productType}
+            ,`size_type`=#{sizeType}
+            ,`data_type`=#{dataType}
+            ,`image_index`=#{imageIndex}
+            ,`value1`=#{value1}
+            ,`value2`=#{value2}
+            ,`syn_flg`=#{synFlg}
+            ,`error_message`=#{errorMessage}
+            ,`modified`=#{modified}
+            ,`modifier`=#{modifier}
+         where id=#{id}   
+   </update>
+
+    <delete id="delete">
+        delete from  cms_mt_master_info
+        where id=#{id}
+
+    </delete>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id" >
+        INSERT INTO cms_mt_master_info
+        (
+              `platform_id`,
+              `channel_id`,
+              `brand_name`,
+              `product_type`,
+              `size_type`,
+              `data_type`,
+              `image_index`,
+              `value1`,
+              `value2`,
+              `syn_flg`,
+              `error_message`,
+              `created`,
+              `creater`,
+              `modified`,
+              `modifier`
+        )
+        VALUES(
+              #{platformId},
+              #{channelId},
+              #{brandName},
+              #{productType},
+              #{sizeType},
+              #{dataType},
+              #{imageIndex},
+              #{value1},
+              #{value2},
+              #{synFlg},
+              #{errorMessage},
+              #{created},
+              #{creater},
+              #{modified},
+              #{modifier}
+        )
+    </insert>
+</mapper>

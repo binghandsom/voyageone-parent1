@@ -13,6 +13,7 @@ public class JmMtCategoryModel implements Serializable
         setLevel(""); 
         setSeoKeywords(""); 
         setSeoDescription(""); 
+        setCreated(DateHelp.getDefaultDate());
         setCreater(""); 
         setModifier(""); 
 
@@ -58,7 +59,7 @@ public class JmMtCategoryModel implements Serializable
  /**
 
         */
-     private Timestamp created;
+     private Date created;
     
     
  /**
@@ -194,14 +195,21 @@ this.seoDescription="";
          /**
            
         */
-        public Timestamp getCreated()
+        public Date getCreated()
         {
          
         return this.created;
         }
-        public void setCreated(Timestamp created)
+        public void setCreated(Date created)
         {
-         this.created=created;
+       if(created!=null){
+this.created=created;
+ }
+else
+{
+this.created=DateHelp.getDefaultDate();
+}
+
         }
     
         

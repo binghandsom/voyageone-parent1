@@ -15,6 +15,7 @@ public class JmMtMasterPlatModel implements Serializable
         setName2(""); 
         setName3(""); 
         setName4(""); 
+        setCreated(DateHelp.getDefaultDate());
         setCreater(""); 
         setModifier(""); 
 
@@ -66,7 +67,7 @@ public class JmMtMasterPlatModel implements Serializable
  /**
 
         */
-     private Timestamp created;
+     private Date created;
     
     
  /**
@@ -230,14 +231,21 @@ this.name4="";
          /**
            
         */
-        public Timestamp getCreated()
+        public Date getCreated()
         {
          
         return this.created;
         }
-        public void setCreated(Timestamp created)
+        public void setCreated(Date created)
         {
-         this.created=created;
+       if(created!=null){
+this.created=created;
+ }
+else
+{
+this.created=DateHelp.getDefaultDate();
+}
+
         }
     
         

@@ -42,6 +42,7 @@ public class CmsBtJmProductModel implements Serializable
         setHsCode(""); 
         setHsName(""); 
         setHsUnit(""); 
+        setCreated(DateHelp.getDefaultDate());
         setCreater(""); 
         setModifier(""); 
 
@@ -279,7 +280,7 @@ SN库存同步用
  /**
 
         */
-     private Timestamp created;
+     private Date created;
     
     
  /**
@@ -1065,14 +1066,21 @@ this.hsUnit="";
          /**
            
         */
-        public Timestamp getCreated()
+        public Date getCreated()
         {
          
         return this.created;
         }
-        public void setCreated(Timestamp created)
+        public void setCreated(Date created)
         {
-         this.created=created;
+       if(created!=null){
+this.created=created;
+ }
+else
+{
+this.created=DateHelp.getDefaultDate();
+}
+
         }
     
         

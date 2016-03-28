@@ -5,17 +5,19 @@ import java.math.BigDecimal;
 import java.io.Serializable;
 import com.voyageone.common.util.*;
 import com.voyageone.common.help.DateHelp;
-public class CmsBtJmImagesModel implements Serializable
+public class CmsBtJmProductImagesModel implements Serializable
 {
-   public CmsBtJmImagesModel()
+   public CmsBtJmProductImagesModel()
     {
         setChannelId(""); 
         setProductCode(""); 
         setImageTypeName(""); 
         setOriginUrl(""); 
         setJmUrl(""); 
+        setCreated(DateHelp.getDefaultDate());
         setCreater(""); 
         setModifier(""); 
+        setProductImageUrlKey(""); 
 
     }
  
@@ -77,7 +79,7 @@ public class CmsBtJmImagesModel implements Serializable
  /**
 
         */
-     private Timestamp created;
+     private Date created;
     
     
  /**
@@ -96,6 +98,12 @@ public class CmsBtJmImagesModel implements Serializable
 
         */
      private String modifier;
+    
+    
+ /**
+商品图片urlKey
+        */
+     private String productImageUrlKey;
     
         
          /**
@@ -262,14 +270,21 @@ this.jmUrl="";
          /**
            
         */
-        public Timestamp getCreated()
+        public Date getCreated()
         {
          
         return this.created;
         }
-        public void setCreated(Timestamp created)
+        public void setCreated(Date created)
         {
-         this.created=created;
+       if(created!=null){
+this.created=created;
+ }
+else
+{
+this.created=DateHelp.getDefaultDate();
+}
+
         }
     
         
@@ -324,6 +339,27 @@ this.modifier=modifier;
 else
 {
 this.modifier="";
+}
+
+        }
+    
+        
+         /**
+           商品图片urlKey
+        */
+        public String getProductImageUrlKey()
+        {
+         
+        return this.productImageUrlKey;
+        }
+        public void setProductImageUrlKey(String productImageUrlKey)
+        {
+        if(productImageUrlKey!=null){
+this.productImageUrlKey=productImageUrlKey;
+ }
+else
+{
+this.productImageUrlKey="";
 }
 
         }

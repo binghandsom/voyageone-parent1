@@ -10,8 +10,8 @@ public class CmsMtTemplateImagesModel implements Serializable
    public CmsMtTemplateImagesModel()
     {
         setChannelId(""); 
-        setTemplateType(""); 
         setImageTemplateUrl(""); 
+        setCreated(DateHelp.getDefaultDate());
         setCreater(""); 
         setModifier(""); 
 
@@ -39,7 +39,7 @@ public class CmsMtTemplateImagesModel implements Serializable
  /**
 图片模板类别（1:宝贝图（白底方图）；2:；详情图（商品实拍图）；3：移动端宝贝图（竖图））
         */
-     private String templateType;
+     private int templateType;
     
     
  /**
@@ -57,7 +57,7 @@ public class CmsMtTemplateImagesModel implements Serializable
  /**
 
         */
-     private Timestamp created;
+     private Date created;
     
     
  /**
@@ -130,21 +130,14 @@ this.channelId="";
          /**
            图片模板类别（1:宝贝图（白底方图）；2:；详情图（商品实拍图）；3：移动端宝贝图（竖图））
         */
-        public String getTemplateType()
+        public int getTemplateType()
         {
          
         return this.templateType;
         }
-        public void setTemplateType(String templateType)
+        public void setTemplateType(int templateType)
         {
-        if(templateType!=null){
-this.templateType=templateType;
- }
-else
-{
-this.templateType="";
-}
-
+         this.templateType=templateType;
         }
     
         
@@ -186,14 +179,21 @@ this.imageTemplateUrl="";
          /**
            
         */
-        public Timestamp getCreated()
+        public Date getCreated()
         {
          
         return this.created;
         }
-        public void setCreated(Timestamp created)
+        public void setCreated(Date created)
         {
-         this.created=created;
+       if(created!=null){
+this.created=created;
+ }
+else
+{
+this.created=DateHelp.getDefaultDate();
+}
+
         }
     
         
