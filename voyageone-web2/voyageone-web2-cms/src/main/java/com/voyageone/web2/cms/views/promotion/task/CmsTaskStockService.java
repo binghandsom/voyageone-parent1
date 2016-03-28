@@ -256,14 +256,17 @@ public class CmsTaskStockService extends BaseAppService {
             isAllSq.put(cartId.getValue(),cartId.getName());
         }
         // 获取未隔离的名称
-        StringBuffer cartName= new StringBuffer();
-        for(Map.Entry<String, String> sqEntry : sq.entrySet()){
-            for(Map.Entry<String, String> isAllSqEntry : isAllSq.entrySet()){
-                if(!sq.keySet().contains(isAllSqEntry.getKey())){
-                    cartName.append(isAllSqEntry.getValue()+"|");
-                }
+        StringBuffer sbCartName= new StringBuffer();
+        String cartName = "";
+        for(Map.Entry<String, String> isAllSqEntry : isAllSq.entrySet()){
+            if(sq.keySet().contains(isAllSqEntry.getKey())){
+                continue;
+            }else{
+                sbCartName.append(isAllSqEntry.getValue()+"|");
             }
         }
+        // 去掉最后一个|
+        cartName=sbCartName.substring(0,sbCartName.length()-1);
         // 获取隔离和未隔离的数据
         Map<String,String> isNotSeparatePlatformMap  = new HashMap<>();
         // 平台id
