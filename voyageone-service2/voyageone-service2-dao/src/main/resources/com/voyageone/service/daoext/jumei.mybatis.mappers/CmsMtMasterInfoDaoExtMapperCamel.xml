@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.service.daoext.jumei.CmsMtMasterInfoDaoExt">
+    <resultMap id="ResultMap" type="CmsMtMasterInfoModel">
+        
+    </resultMap>
+    <select id="getByKey" resultMap="ResultMap">
+        select *  from cms_mt_master_info where  `platform_id`=#{platformId} and  `channel_id`=#{channelId}  and `brand_name`=#{brandName}
+        and  `product_type`=#{productType} and `data_type`=#{dataType} limit 1
+
+    </select>
+    <select id="getByKeySizeType" resultMap="ResultMap">
+        select *  from cms_mt_master_info where  `platform_id`=#{platformId} and  `channel_id`=#{channelId}  and `brand_name`=#{brandName}
+        and  `product_type`=#{productType} and `data_type`=#{dataType}     and size_type=#{sizeType} limit 1
+
+    </select>
+</mapper>

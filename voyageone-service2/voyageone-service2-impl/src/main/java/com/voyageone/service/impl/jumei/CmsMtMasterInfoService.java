@@ -10,23 +10,23 @@ import java.util.List;
  * Created by dell on 2016/3/18.
  */
 @Service
-public class CmsMtMasterImagesService {
+public class CmsMtMasterInfoService {
 @Autowired
-    CmsMtMasterImagesDao dao;
+    CmsMtMasterInfoDao dao;
 
-    public CmsMtMasterImagesModel select(int id)
+    public CmsMtMasterInfoModel select(int id)
     {
        return dao.select(id);
     }
-    public List<CmsMtMasterImagesModel>  selectList()
+    public List<CmsMtMasterInfoModel>  selectList()
     {
     return dao.selectList();
     }
-    public int update(CmsMtMasterImagesModel entity)
+    public int update(CmsMtMasterInfoModel entity)
     {
    return dao.update(entity);
     }
-    public int create(CmsMtMasterImagesModel entity)
+    public int create(CmsMtMasterInfoModel entity)
     {
                    return dao.insert(entity);
     }

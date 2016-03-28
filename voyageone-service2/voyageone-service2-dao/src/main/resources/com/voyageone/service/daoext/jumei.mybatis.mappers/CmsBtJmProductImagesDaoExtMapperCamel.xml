@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.service.daoext.jumei.CmsBtJmProductImagesDaoExt">
+    <resultMap id="ResultMap" type="CmsBtJmProductImagesModel">
+    </resultMap>
+    <select id="getByKey" resultMap="ResultMap">
+        select *  from cms_bt_jm_product_images where  channel_id=#{channelId} and  `product_code`=#{productCode}
+        and   `image_type`=#{imageType} and  `image_index`=#{imageIndex} limit 1
+    </select>
+</mapper>
