@@ -16,6 +16,7 @@ import com.voyageone.web2.cms.bean.setting.mapping.feed.FeedCategoryBean;
 import com.voyageone.web2.cms.bean.setting.mapping.feed.SetMappingBean;
 import com.voyageone.web2.core.bean.UserSessionBean;
 import org.apache.commons.lang3.StringUtils;
+import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -82,12 +83,13 @@ public class CmsFeedMappingService extends BaseAppService {
 
     List<CmsBtFeedMappingModel> getMappings(SetMappingBean param, UserSessionBean user) {
 
-        if (!param.isCommon())
-            return feedMappingService.getMappingWithoutProps(param.getFrom(), user.getSelChannelId());
-
-        CmsBtFeedMappingModel feedMappingModel = getMapping(param, user);
+        if (!param.isCommon()) {
+            return feedMappingService.getMappingsWithoutProps(param.getFrom(), user.getSelChannelId());
+        }
 
         List<CmsBtFeedMappingModel> mappings = new ArrayList<>();
+
+        CmsBtFeedMappingModel feedMappingModel = feedMappingService.getMappingWithoutProps(new ObjectId(param.getMappingId()));
 
         mappings.add(feedMappingModel);
 
@@ -184,40 +186,15 @@ public class CmsFeedMappingService extends BaseAppService {
     /**
      * 切换 MatchOver
      */
-    boolean switchMatchOver(SetMappingBean setMappingBean, UserSessionBean user) {
+    boolean switchMatchOver(String mappingId) {
 
-        CmsBtFeedMappingModel feedMappingModel = getMapping(setMappingBean, user);
+        CmsBtFeedMappingModel feedMappingModel = feedMappingService.getMapping(new ObjectId(mappingId));
 
         feedMappingModel.setMatchOver(feedMappingModel.getMatchOver() == 1 ? 0 : 1);
 
         WriteResult result = feedMappingService.setMapping(feedMappingModel);
 
         return result.getN() > 0;
-    }
-
-    /**
-     * 获取 Default Mapping 或 DefaultMain Mapping
-     *
-     * @param setMappingBean 参数模型, isCommon 用于控制获取的是 Default 还是 DefaultMain
-     * @param user           包含渠道的用户信息
-     * @return Mapping 模型
-     */
-    private CmsBtFeedMappingModel getMapping(SetMappingBean setMappingBean, UserSessionBean user) {
-
-        CmsBtFeedMappingModel feedMappingModel = feedMappingService.getDefault(user.getSelChannel(),
-                setMappingBean.getFrom());
-
-        if (feedMappingModel == null)
-            throw new BusinessException("没找到 Mapping");
-
-        if (setMappingBean.isCommon())
-            feedMappingModel = feedMappingService.getDefaultMain(user.getSelChannel(),
-                    feedMappingModel.getScope().getMainCategoryPath());
-
-        if (feedMappingModel == null)
-            throw new BusinessException("没找到主类目 Mapping");
-
-        return feedMappingModel;
     }
 
     /**

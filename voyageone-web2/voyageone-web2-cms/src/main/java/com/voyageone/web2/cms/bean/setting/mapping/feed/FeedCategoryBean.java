@@ -66,6 +66,8 @@ public class FeedCategoryBean {
 
     public static class MappingBean {
 
+        private String _id;
+
         private int defaultMapping;
 
         private int defaultMain;
@@ -79,6 +81,7 @@ public class FeedCategoryBean {
         private MappingBean mainMapping;
 
         public MappingBean(CmsBtFeedMappingModel mapping, CmsBtFeedMappingModel mainMapping) {
+            this._id = mapping.get_id();
             this.defaultMapping = mapping.getDefaultMapping();
             this.defaultMain = mapping.getDefaultMain();
             this.matchOver = mapping.getMatchOver();
@@ -86,6 +89,14 @@ public class FeedCategoryBean {
             this.mainPath = mapping.getScope().getMainCategoryPath();
             if (mainMapping != null)
                 this.mainMapping = new MappingBean(mainMapping, null);
+        }
+
+        public String get_id() {
+            return _id;
+        }
+
+        public void set_id(String _id) {
+            this._id = _id;
         }
 
         public int getDefaultMapping() {

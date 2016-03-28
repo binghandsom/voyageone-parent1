@@ -61,17 +61,17 @@ public class CmsFeedMappingController extends CmsController {
     }
 
     @RequestMapping(FEED.GET_MAPPINGS)
-    public AjaxResponse getPropPageInfo(@RequestBody SetMappingBean params) {
+    public AjaxResponse getMappings(@RequestBody SetMappingBean params) {
 
         return success(feedMappingService.getMappings(params, getUser()));
     }
 
     @RequestMapping(FEED.GET_MAPPING_INFO)
-    public AjaxResponse getMatched(@RequestBody SetMappingBean params) {
+    public AjaxResponse getMappingInfo(@RequestBody SetMappingBean params) {
 
         Map<String, Object> map = feedPropMappingService.getMainCategoryInfo(params.getTo());
 
-        Map<MappingPropType, List<String>> matched = feedPropMappingService.getMatched(params, getUser());
+        Map<MappingPropType, List<String>> matched = feedPropMappingService.getMatched(params);
 
         map.put("matched", matched);
 
@@ -98,7 +98,7 @@ public class CmsFeedMappingController extends CmsController {
 
     @RequestMapping(FEED.DIRECT_MATCH_OVER)
     public AjaxResponse switchMatchOver(@RequestBody SetMappingBean params) {
-        return success(feedMappingService.switchMatchOver(params, getUser()));
+        return success(feedMappingService.switchMatchOver(params.getMappingId()));
     }
 
     @RequestMapping(FEED.GET_MAIN_MAPPING)
