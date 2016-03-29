@@ -873,18 +873,20 @@ define([
          * @type {openCustomColumn}
          */
         $scope.openCustomColumn = openCustomColumn;
-        function openCustomColumn(viewSize, data) {
+        function openCustomColumn(viewSize, fnInitial) {
             require([popActions.custom.column.controllerUrl], function () {
-                $modal.open({
+                var modalInstance = $modal.open({
                     templateUrl: popActions.custom.column.templateUrl,
                     controller: popActions.custom.column.controller,
-                    size: viewSize,
-                    resolve: {
-                        data: function () {
-                            return data;
-                        }
-                    }
+                    size: viewSize
                 });
+
+                modalInstance.result.then(function () {
+                    if (fnInitial) {
+                        fnInitial();
+                    }
+
+                })
             });
         }
 

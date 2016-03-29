@@ -264,13 +264,13 @@ public class ProductDetailBean {
 
     public List<Specification> getSpecifications() {
         List<Specification> ret = new ArrayList<>();
-        if (productSpecifications != null && productSpecifications.size() > 0) {
+        if (productSpecifications != null && !productSpecifications.isEmpty()) {
             ret.addAll(getProductSpecifications());
         }
-        if (commonSpecifications != null && commonSpecifications.size() > 0) {
+        if (commonSpecifications != null && !commonSpecifications.isEmpty()) {
             ret.addAll(getCommonSpecifications());
         }
-        if (variantSpecifications != null && variantSpecifications.size() > 0) {
+        if (variantSpecifications != null && !variantSpecifications.isEmpty()) {
             ret.addAll(getVariantSpecifications());
         }
         return ret;

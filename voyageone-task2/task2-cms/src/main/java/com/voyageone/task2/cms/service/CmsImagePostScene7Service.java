@@ -186,7 +186,7 @@ public class CmsImagePostScene7Service extends BaseTaskService {
                             }
 
                             try {
-                                inputStream = HttpUtils.getInputStream(imageUrl, null);
+                                inputStream = HttpUtils.getInputStream(imageUrl);
                             } catch (FileNotFoundException ex) {
                                 // 图片url错误
                                 logger.error(ex.getMessage(), ex);
@@ -198,10 +198,6 @@ public class CmsImagePostScene7Service extends BaseTaskService {
 
                             int lastSlash = imageUrl.lastIndexOf("/");
                             String fileName = imageUrlList.get(i).getImageName();
-//                            if (fileName.contains("?")) {
-//                                int qIndex = fileName.indexOf("?");
-//                                fileName = fileName.substring(0, qIndex);
-//                            }
 
                             boolean result = ftpClient.storeFile(fileName, inputStream);
 

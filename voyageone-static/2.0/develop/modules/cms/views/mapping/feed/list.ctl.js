@@ -9,6 +9,89 @@ define([
 ], function (cms, _) {
     "use strict";
     return cms.controller('feedMappingController', (function () {
+
+        /**
+         * @param obj
+         * @constructor
+         * @property seq
+         * @property path
+         * @property isChild
+         * @property level
+         * @property {Array.<MappingBean>} mappings
+         * @property {MappingBean} defaultMapping
+         * @property {MappingBean} selectedMapping
+         * @property classes
+         */
+        function FeedCategoryBean(obj) {
+            if (obj) _.extend(this, obj);
+            this.classes = {
+                background: (this.isChild == 1 ? 'badge-empty' : 'badge-success'),
+                icon: (this.isChild == 1 ? 'fa-level-up' : 'fa-level-down')
+            };
+            if (!this.mappings || !this.mappings.length) return;
+            this.mappings = this.mappings.map(function (mapping) {
+                return new MappingBean(mapping);
+            });
+            this.selectedMapping = this.defaultMapping = this.mappings.find(function (mapping) {
+                return mapping.defaultMapping === 1;
+            });
+        }
+
+        FeedCategoryBean.prototype = {
+            /**
+             * 检查当前类目是否已进行类目匹配
+             * @return {boolean}
+             */
+            isMatched: function () {
+                // 只要默认 mapping 存在即已匹配
+                return !!this.defaultMapping;
+            },
+
+            /**
+             * 检查当前类目是否已经完成了属性匹配
+             * @return {boolean}
+             */
+            isPropertyMatched: function () {
+                // 如果有匹配并且确实匹配完了,才算是属性匹配完成
+                return this.isMatched()
+                    && !!this.defaultMapping.matchOver;
+            },
+
+            /**
+             * 更新默认 Mapping
+             */
+            resetDefaultMapping: function(mapping) {
+                if (!(mapping instanceof MappingBean)) mapping = new MappingBean(mapping);
+                var defMappingIndex = this.mappings.indexOf(this.defaultMapping);
+                this.mappings[defMappingIndex] = this.defaultMapping = this.selectedMapping = mapping;
+            }
+        };
+
+        /**
+         *
+         * @param obj
+         * @constructor
+         * @property _id
+         * @property defaultMapping
+         * @property defaultMain
+         * @property matchOver
+         * @property feedPath
+         * @property mainPath
+         * @property {MappingBean} mainMapping
+         */
+        function MappingBean(obj) {
+            if (!obj) return;
+            if (!obj.scope) {
+                _.extend(this, obj);
+                return;
+            }
+            this.defaultMapping = obj.defaultMapping;
+            this.defaultMain = obj.defaultMain;
+            this.matchOver = obj.matchOver;
+            this.feedPath = obj.scope.feedCategoryPath;
+            this.mainPath = obj.scope.mainCategoryPath;
+        }
+
         /**
          * @typedef {{parentPath:string,level:int,model:object,mapping:object}} FeedCategoryBean
          */
@@ -60,15 +143,22 @@ define([
             var self = this;
 
             window.feedMappingController = {
-                setMatchOver: function(mappingScope, matchOver) {
-                    $scope.$apply(function() {
+                setMatchOver: function (mappingModel, matchOver) {
+                    $scope.$apply(function () {
                         var map = self.currCategoryMap;
+                        var isCommon = mappingModel.defaultMain === 1;
+                        var mainPath = mappingModel.scope.mainCategoryPath;
+                        var feedPath = mappingModel.scope.feedCategoryPath;
                         // 更新目标 Feed Mapping
-                        map[mappingScope.feedCategoryPath].mapping.matchOver = matchOver;
+                        map[feedPath].selectedMapping.matchOver = matchOver;
+                        if (!isCommon) return;
                         // 更新目标通用 Mapping
                         Object.keys(map).forEach(function (key) {
-                            var mapping = map[key].mainMapping;
-                            if (mapping && mapping.scope.mainCategoryPath === mappingScope.mainCategoryPath)
+                            var feedCategoryBean = map[key];
+                            if (!feedCategoryBean.selectedMapping) return;
+                            var mapping = feedCategoryBean.selectedMapping.mainMapping;
+                            if (!mapping) return;
+                            if (mapping && mapping.mainPath === mainPath)
                                 mapping.matchOver = matchOver;
                         });
                     });
@@ -96,14 +186,11 @@ define([
              * 画面初始化时
              */
             init: function () {
-
-                var ttt = this;
-
-                ttt.feedMappingService.getTopCategories().then(function (res) {
-                    ttt.topCategories = res.data;
-                    ttt.selectedTop = ttt.topCategories[0].cid;
-
-                    ttt.refreshTable();
+                var self = this;
+                self.feedMappingService.getTopCategories().then(function (res) {
+                    self.topCategories = res.data;
+                    self.selectedTop = self.topCategories[0].cid;
+                    self.refreshTable();
                 });
             },
 
@@ -112,44 +199,39 @@ define([
              */
             refreshTable: function () {
 
-                var ttt = this;
-                var keyWord = ttt.matched.keyWord;
+                var self = this;
+                var keyWord = self.matched.keyWord;
 
-                ttt.blockUI.start();
+                self.blockUI.start();
 
-                ttt.feedMappingListService.getCategoryMap(ttt.selectedTop).then(function (categoryMap) {
+                self.feedMappingListService.getCategoryMap(self.selectedTop).then(function (categoris) {
 
-                    ttt.currCategoryMap = categoryMap;
+                    var categoryMap = self.currCategoryMap = {};
 
-                    var rows = _.filter(categoryMap, function (feedCategoryBean) {
+                    categoris = _.map(categoris, function (categoryBean) {
+                        return (categoryMap[categoryBean.path] = new FeedCategoryBean(categoryBean));
+                    }).filter(function (feedCategoryBean) {
+
                         var result = true;
 
                         // 如果关键字存在, 先进行关键字过滤
-                        if (keyWord && feedCategoryBean.model.path.indexOf(keyWord) < 0)
+                        if (keyWord && feedCategoryBean.path.indexOf(keyWord) < 0)
                             return false;
 
-                        if (ttt.matched.category !== null)
-                            result = ttt.matched.category === ttt.isCategoryMatched(feedCategoryBean);
-                        else if (ttt.matched.property !== null)
-                            result = ttt.matched.property === ttt.isPropertyMatched(feedCategoryBean);
-
-                        if (result && !feedCategoryBean.classes) {
-                            // 如果没有计算过样式, 就计算
-                            feedCategoryBean.classes = {
-                                background: feedCategoryBean.model.isChild == 1 ? 'badge-empty' : 'badge-success',
-                                icon: feedCategoryBean.model.isChild == 1 ? 'fa-level-up' : 'fa-level-down'
-                            };
-                        }
+                        if (self.matched.category !== null)
+                            result = self.matched.category === feedCategoryBean.isMatched();
+                        else if (self.matched.property !== null)
+                            result = self.matched.property === feedCategoryBean.isPropertyMatched();
 
                         return result;
-                    });
-
-                    // 绑定&显示
-                    ttt.tableSource = rows.sort(function (a, b) {
+                    }).sort(function (a, b) {
                         return a.seq > b.seq ? 1 : -1;
                     });
 
-                    ttt.blockUI.stop();
+                    // 绑定&显示
+                    self.tableSource = categoris;
+
+                    self.blockUI.stop();
                 });
             },
 
@@ -164,7 +246,9 @@ define([
                 ttt.confirm('TXT_MSG_CONFIRM_FROWARD_PARENT_CATEGORY')
                     .result
                     .then(function () {
-                        return ttt.feedMappingService.extendsMapping(feedCategory);
+                        return ttt.feedMappingService.extendsMapping({
+                            from: feedCategory.path
+                        });
                     })
                     .then(function (res) {
                         if (!res.data)
@@ -184,33 +268,27 @@ define([
                     return '?';
                 }
 
-                var defMapping = feedCategory.mapping;
-
-                if (defMapping) {
-                    return defMapping.scope.mainCategoryPath;
-                }
-
                 var parent = null;
+                var defMapping = feedCategory.defaultMapping;
+
+                if (defMapping)
+                    return defMapping.mainPath;
+
                 while (!defMapping && (parent = this.findParent(parent || feedCategory))) {
-                    defMapping = parent.mapping;
+                    defMapping = parent.defaultMapping;
                 }
 
                 return defMapping
-                    ? (this.$translate.instant('TXT_FORWARD_WITH_COLON') + defMapping.scope.mainCategoryPath)
+                    ? (this.$translate.instant('TXT_FORWARD_WITH_COLON') + defMapping.mainPath)
                     : this.$translate.instant('TXT_UN_SETTING');
             },
             /**
              * 查找父级类目
-             * @param {object} category
+             * @param {FeedCategoryBean} category
              * @returns {object}
              */
             findParent: function (category) {
-
-                var path = category.model.path;
-                var index = path.lastIndexOf('-');
-                return index < 0
-                    ? null
-                    : this.findCategory(path.substring(0, index));
+                return !category.parentPath ? null : this.findCategory(category.parentPath);
             },
             /**
              * 在树中查找类目
@@ -238,48 +316,33 @@ define([
             /**
              * 重新设置 Bean 对象的 Mapping 和 MainMapping 属性
              * @param feedCategoryPath
-             * @param mapping
+             * @param mappingModel
              */
-            resetBeanMapping: function (feedCategoryPath, mapping) {
+            resetBeanMapping: function (feedCategoryPath, mappingModel) {
                 var self = this;
                 var feedCategoryBean = self.findCategory(feedCategoryPath);
-                feedCategoryBean.mapping = mapping;
-                self.feedMappingListService.getMainMapping(feedCategoryBean.mapping.scope.mainCategoryPath)
+                feedCategoryBean.resetDefaultMapping(mappingModel);
+                // 使用新的查询其默认主 Mapping
+                self.feedMappingListService.getMainMapping(feedCategoryBean.defaultMapping.mainPath)
                     .then(function (mainMapping) {
-                        feedCategoryBean.mainMapping = mainMapping;
+                        feedCategoryBean.defaultMapping.mainMapping = new MappingBean(mainMapping);
                     });
             },
 
             /**
-             * 检查当前类目是否已进行类目匹配
+             * 打开匹配弹出框
              * @param {FeedCategoryBean} feedCategoryBean
-             * @return {boolean}
+             * @param {function} popupNewCategory
              */
-            isCategoryMatched: function (feedCategoryBean) {
-                // 只要默认 mapping 存在即已匹配
-                return !!feedCategoryBean.mapping;
-            },
-
-            /**
-             * 检查当前类目是否已经完成了属性匹配
-             * @param {FeedCategoryBean} feedCategoryBean
-             * @return {boolean}
-             */
-            isPropertyMatched: function (feedCategoryBean) {
-                // 如果有匹配并且确实匹配完了,才算是属性匹配完成
-                return this.isCategoryMatched(feedCategoryBean)
-                    && !!feedCategoryBean.mapping.matchOver;
-            },
-
-            openCategoryMapping: function (categoryModel, popupNewCategory) {
+            openCategoryMapping: function (feedCategoryBean, popupNewCategory) {
 
                 this.feedMappingService.getMainCategories()
                     .then(function (res) {
-
+                        
                         popupNewCategory({
 
                             categories: res.data,
-                            from: categoryModel.path
+                            from: feedCategoryBean.path
 
                         }).then(this.bindCategory.bind(this));
 

@@ -15,7 +15,7 @@ import java.util.List;
 @Service
 public class JumeiCurrencyService extends JmBase {
 
-    private static List<JmCurrencyBean> currencys = null;
+    private List<JmCurrencyBean> currencys = null;
 
     private static String CURRENCY_URL = "v1/currency/query";
 

@@ -206,7 +206,7 @@ public class StatusReport  implements java.io.Serializable {
         this.submitDate = submitDate;
     }
 
-    private Object __equalsCalc = null;
+    private transient Object __equalsCalc = null;
     public synchronized boolean equals(Object obj) {
         if (!(obj instanceof StatusReport)) return false;
         StatusReport other = (StatusReport) obj;

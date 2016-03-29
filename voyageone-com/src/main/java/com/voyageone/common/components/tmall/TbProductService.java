@@ -86,9 +86,7 @@ public class TbProductService extends TbBase {
         request.setProductId(Long.parseLong(productId));
         request.setXmlData(xmlData);
 
-        TmallItemSchemaAddResponse response = reqTaobaoApi(config, request);
-
-        return response;
+        return reqTaobaoApi(config, request);
     }
 
     //tmall.item.schema.update
@@ -99,17 +97,14 @@ public class TbProductService extends TbBase {
         request.setProductId(Long.parseLong(productId));
         request.setXmlData(xmlData);
 
-        TmallItemSchemaUpdateResponse response = reqTaobaoApi(config, request);
-
-        return response;
+        return reqTaobaoApi(config, request);
     }
 
     public TmallItemUpdateSchemaGetResponse doGetWareInfoItem(String itemId, ShopBean config) throws ApiException{
 
         TmallItemUpdateSchemaGetRequest request = new TmallItemUpdateSchemaGetRequest();
         request.setItemId(Long.parseLong(itemId));
-            TmallItemUpdateSchemaGetResponse response = reqTaobaoApi(config, request);
-        return response;
+        return reqTaobaoApi(config, request);
     }
 
     public Boolean isDarwin(Long categoryId, Long brandId, ShopBean config, StringBuffer failCause) throws ApiException
@@ -127,6 +122,6 @@ public class TbProductService extends TbBase {
             failCause.append(response.getMsg());
             return null;
         }
-        return Boolean.valueOf(response.getBrandCatMetaData().getIsDarwin());
+        return response.getBrandCatMetaData().getIsDarwin();
     }
 }

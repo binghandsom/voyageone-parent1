@@ -34,7 +34,7 @@ public class ShopConfigs {
             Map<String, ShopConfigBean> shopConfigBeanMap = new HashMap<>();
             shopConfigDao.getAll().forEach(bean -> {
                         shopConfigBeanMap.put(
-                                buildKey(bean.getOrder_channel_id(), bean.getCart_id(), ShopConfigEnums.Name.valueOf(bean.getCfg_name()), bean.getCfg_val1()),
+                                buildKey(bean.getOrder_channel_id(), bean.getCart_id(),bean.getCfg_name(), bean.getCfg_val1()),
                                 bean
                         );
                     }
@@ -49,7 +49,7 @@ public class ShopConfigs {
      *
      * @return key
      */
-    private static String buildKey(String order_channel_id, String cart_id, ShopConfigEnums.Name name, String val1) {
+    private static String buildKey(String order_channel_id, String cart_id, String name, String val1) {
         return order_channel_id + CacheHelper.SKIP + cart_id + CacheHelper.SKIP+ name + CacheHelper.SKIP + val1;
     }
 
@@ -99,7 +99,7 @@ public class ShopConfigs {
      * @return String
      */
     public static String getVal2(String order_channel_id, String cart_id, ShopConfigEnums.Name name, String val1) {
-        ShopConfigBean bean = hashOperations.get(KEY, buildKey(order_channel_id, cart_id, name, val1));
+        ShopConfigBean bean = hashOperations.get(KEY, buildKey(order_channel_id, cart_id, name.toString(), val1));
         return (bean == null) ? "" : bean.getCfg_val2();
     }
 
@@ -114,7 +114,7 @@ public class ShopConfigs {
 
         List<String> keyList = new ArrayList<>();
         keySet.forEach(k -> {
-            if (k.startsWith(buildKey(order_channel_id, cart_id, name, ""))) keyList.add(k);
+            if (k.startsWith(buildKey(order_channel_id, cart_id, name.toString(), ""))) keyList.add(k);
         });
         Collections.sort(keyList);
         return hashOperations.multiGet(KEY, keyList);

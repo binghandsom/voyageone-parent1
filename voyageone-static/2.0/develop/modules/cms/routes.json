@@ -164,6 +164,11 @@
     "templateUrl": "views/system/error/list.tpl.html",
     "controllerUrl": "modules/cms/views/system/error/list.ctl"
   },
+  "system_cache_set": {
+    "hash": "/system/cache/index",
+    "templateUrl": "views/system/cache/index.tpl.html",
+    "controllerUrl": "modules/cms/views/system/cache/index.ctl"
+  },
   "jm_promotion_detail_list": {
     "hash": "/jm/promotion_detail_list",
     "templateUrl": "views/jm/jmpromotiondetaillist.tpl.html",
@@ -178,5 +183,5 @@
     "hash": "/jm/image_manage",
     "templateUrl": "views/jm/jmimagemanage.tpl.html",
     "controllerUrl": "modules/cms/views/jm/jmimagemanage.ctl"
-  }
+  },
 }

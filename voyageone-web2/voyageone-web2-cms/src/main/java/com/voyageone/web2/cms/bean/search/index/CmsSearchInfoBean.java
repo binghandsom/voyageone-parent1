@@ -1,6 +1,8 @@
 package com.voyageone.web2.cms.bean.search.index;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Edward
@@ -64,9 +66,58 @@ public class CmsSearchInfoBean {
 
     private Integer productPageSize = 0;
 
+    public String getPromotion() {
+        return promotion;
+    }
+
+    public void setPromotion(String promotion) {
+        this.promotion = promotion;
+    }
+
+    private String promotion = null;
+
+    public String getTransStsFlg() {
+        return transStsFlg;
+    }
+
+    public void setTransStsFlg(String transStsFlg) {
+        this.transStsFlg = transStsFlg;
+    }
+
+    // 翻译状态查询用标志位
+    private String transStsFlg = null;
+
+    public int getPriceChgFlg() {
+        return priceChgFlg;
+    }
+
+    public void setPriceChgFlg(int priceChgFlg) {
+        this.priceChgFlg = priceChgFlg;
+    }
+
+    // 价格变动查询用标志位
+    private int priceChgFlg = 0;
+
+    public int getPriceDiffFlg() {
+        return priceDiffFlg;
+    }
+
+    public void setPriceDiffFlg(int priceDiffFlg) {
+        this.priceDiffFlg = priceDiffFlg;
+    }
+
+    // 价格比较查询用标志位
+    private int priceDiffFlg = 0;
+
+    public List<Map<String, String>> getCustAttrMap() {
+        return custAttrMap;
+    }
+
+    public void setCustAttrMap(List<Map<String, String>> custAttrMap) {
+        this.custAttrMap = custAttrMap;
+    }
     // 自定义查询条件
-    private String custAttrKey;
-    private String custAttrValue;
+    private List<Map<String, String>> custAttrMap;
 
     public String getCatId() {
         return catId;
@@ -292,19 +343,4 @@ public class CmsSearchInfoBean {
         this.productPageSize = productPageSize != null && productPageSize > 0 ? productPageSize : 1;
     }
 
-    public String getCustAttrValue() {
-        return custAttrValue;
-    }
-
-    public void setCustAttrValue(String custAttrValue) {
-        this.custAttrValue = custAttrValue;
-    }
-
-    public String getCustAttrKey() {
-        return custAttrKey;
-    }
-
-    public void setCustAttrKey(String custAttrKey) {
-        this.custAttrKey = custAttrKey;
-    }
 }

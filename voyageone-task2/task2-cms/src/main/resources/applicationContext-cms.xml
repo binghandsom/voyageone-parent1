@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:task="http://www.springframework.org/schema/task"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
           http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
@@ -53,6 +53,10 @@
 
         <!-- 库存数据导入 cms2 -->
         <task:scheduled ref="CmsSynInventoryToCmsJob" method="run" cron="0 0/5 * * * ?"/>
+
+        <!-- 库存数据导入 cms2 -->
+        <task:scheduled ref="Cms2GiltAnalysisJob" method="run" cron="40 0/1 * * * ?"/>
+
 
     </task:scheduled-tasks>
 

@@ -28,9 +28,6 @@ public abstract class CnBase {
     protected final String trustStore_jc_password = "voyage1#";
 
     protected String post(String apiAction, Object parameter, ShopBean shopBean) throws Exception {
-
-        String post = "";
-
         return post(apiAction, parameter, 3, 1000, shopBean);
     }
 
@@ -51,10 +48,8 @@ public abstract class CnBase {
                 if (tryCount - i == 1) throw e;
                 try {
                     Thread.sleep(tryWait);
-                } catch (InterruptedException ignore) {
+                } catch (Exception ignore) {
                 }
-            } catch (Exception e) {
-                throw e;
             }
         }
 
