@@ -77,9 +77,11 @@ define([
 
                 var start = 0;
                 var page =  false;
-                if (param == 'page') {
+                if (param == 'page' || param == 'refresh') {
                     start = (main.stockPageOption.curr - 1) * main.stockPageOption.size;
-                    page = true;
+                    if (param == 'page') {
+                        page = true;
+                    }
                 }
 
                 main.taskStockIncrementDetailService.searchItem({
@@ -117,7 +119,9 @@ define([
                         }
                         main.propertyList = res.data.propertyList;
                         main.stockList = res.data.stockList;
-                        main.stockPageOption.curr = 1;
+                        if (param != 'refresh') {
+                            main.stockPageOption.curr = 1;
+                        }
                     } else {
                         main.stockList = res.data.stockList;
                     }
@@ -150,7 +154,7 @@ define([
                         "sku": sku
                     }).then(function (res) {
                         main.notify.success('TXT_MSG_DELETE_SUCCESS');
-                        main.search();
+                        main.search('refresh');
                     }, function (err) {
                         if (err.displayType == null) {
                             main.alert('TXT_MSG_DELETE_FAIL');

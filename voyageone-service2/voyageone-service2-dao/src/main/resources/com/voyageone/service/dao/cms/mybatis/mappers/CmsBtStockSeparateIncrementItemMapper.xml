@@ -26,6 +26,9 @@
                 </foreach>
                 )
             </if>
+            <if test="channelId !=null">
+                and channel_id = #{channelId}
+            </if>
             <if test="statusList != null and statusList.size() > 0">
                 and (t1.status in
                 <foreach collection="statusList" item="statusItem" open="(" separator="," close=")">
@@ -38,7 +41,9 @@
     <select id="select_stock_separate_increment_success_qty" resultType="int" parameterType="HashMap">
         select sum(increment_qty) as increment_qty_sum
         from voyageone_cms2.cms_bt_stock_separate_increment_item
-        where sku = #{sku}
+        where
+        sku = #{sku}
+        and channel_id = #{channelId}
         and status = #{status}
     </select>
 
