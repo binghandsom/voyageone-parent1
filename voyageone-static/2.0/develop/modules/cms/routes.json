@@ -183,5 +183,5 @@
     "hash": "/jm/image_manage",
     "templateUrl": "views/jm/jmimagemanage.tpl.html",
     "controllerUrl": "modules/cms/views/jm/jmimagemanage.ctl"
-  },
+  }
 }
