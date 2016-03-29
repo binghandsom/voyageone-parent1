@@ -13,7 +13,6 @@ import java.util.List;
 public class CmsMtTemplateImagesService {
 @Autowired
     CmsMtTemplateImagesDao dao;
-
     public CmsMtTemplateImagesModel select(int id)
     {
        return dao.select(id);

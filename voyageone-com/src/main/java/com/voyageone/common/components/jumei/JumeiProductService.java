@@ -3,7 +3,6 @@ package com.voyageone.common.components.jumei;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.jumei.Bean.JmGetProductInfoRes;
 import com.voyageone.common.components.jumei.Bean.JmProductBean;
-import com.voyageone.common.components.jumei.Bean.JmProductBean_DealInfo;
 import com.voyageone.common.components.jumei.Bean.JmProductBean_Spus;
 import com.voyageone.common.components.jumei.base.JmBase;
 import com.voyageone.common.configs.beans.ShopBean;
@@ -12,7 +11,6 @@ import com.voyageone.common.util.JsonUtil;
 import com.voyageone.common.util.StringUtils;
 import org.springframework.stereotype.Service;
 
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,7 +28,7 @@ public class JumeiProductService extends JmBase {
      * 创建商品并同时创建Deal
      */
     @SuppressWarnings("unchecked")
-    public void productNewUpload(ShopBean shopBean, JmProductBean product) throws Exception {
+    public JmGetProductInfoRes productNewUpload(ShopBean shopBean, JmProductBean product) throws Exception {
         if (product == null) {
             throw new Exception("fileBean not found!");
         }
@@ -106,6 +104,7 @@ public class JumeiProductService extends JmBase {
         }
 
 //        product.getDealInfo().setJumei_hash_id((String) getValue(resultMap, "dealInfo", "jumei_hash_id"));
+        return null;
     }
 
     private Object getValue(Map<String, Object> dataMap, String parentKey, String key) {
