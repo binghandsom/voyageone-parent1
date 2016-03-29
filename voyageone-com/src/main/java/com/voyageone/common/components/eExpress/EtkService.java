@@ -1,21 +1,19 @@
 package com.voyageone.common.components.eExpress;
 
-import java.io.ByteArrayInputStream;
-import java.util.ArrayList;
-import java.util.List;
-
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.DomDriver;
+import com.voyageone.common.components.eExpress.base.EtkBase;
 import com.voyageone.common.components.eExpress.bean.*;
-import com.voyageone.common.util.DateTimeUtil;
+import com.voyageone.common.configs.beans.CarrierBean;
+import com.voyageone.common.configs.beans.PostResponse;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import org.springframework.stereotype.Component;
 
-import com.voyageone.common.configs.beans.PostResponse;
-import com.voyageone.common.configs.beans.CarrierBean;
-import com.voyageone.common.components.eExpress.base.EtkBase;
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.xml.DomDriver;
+import java.io.ByteArrayInputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class EtkService extends EtkBase{
@@ -68,7 +66,7 @@ public class EtkService extends EtkBase{
 		if (loginRes != null && "T".equals(loginRes.getResult())){
 			order.getAwb().setUserToken(loginRes.getMsg());
 		}else{
-			throw new Exception("调用E特快登录API eExpressShipmentImport错误：" + loginRes.getMsg());
+			throw new Exception("调用E特快登录API eExpressShipmentImport错误：" + (loginRes==null?"null":loginRes.getMsg()));
 		}		
 		
 		//Bean -->  XML
@@ -108,7 +106,7 @@ public class EtkService extends EtkBase{
 		if (loginRes != null && "T".equals(loginRes.getResult())){
 			cancel.setUserToken(loginRes.getMsg());
 		}else{
-			throw new Exception("调用E特快登录API错误：" + loginRes.getMsg());
+			throw new Exception("调用E特快登录API错误：" +  (loginRes==null?"null":loginRes.getMsg()));
 		}
 		
 		XStream xstream = new XStream(new DomDriver());
@@ -144,7 +142,7 @@ public class EtkService extends EtkBase{
 		if (loginRes != null && "T".equals(loginRes.getResult())){
 			tracking.setUserToken(loginRes.getMsg());
 		}else{
-			throw new Exception("调用E特快登录API错误：" + loginRes.getMsg());
+			throw new Exception("调用E特快登录API错误："  + (loginRes==null?"null":loginRes.getMsg()));
 		}
 		
 		XStream xstream = new XStream(new DomDriver());

@@ -63,7 +63,9 @@ public final class MailInfo {
 	}
 
 	private Properties getProperties() {
-        if (properties == null) properties = System.getProperties();
+        if (properties == null) {
+            properties = System.getProperties();
+        }
         return properties;
     }
 

@@ -16,12 +16,22 @@ public class SetMappingBean {
 
     private boolean isCommon;
 
+    private String mappingId;
+
     public SetMappingBean() {
     }
 
     public SetMappingBean(String from, String to) {
         this.from = from;
         this.to = to;
+    }
+
+    public String getMappingId() {
+        return mappingId;
+    }
+
+    public void setMappingId(String mappingId) {
+        this.mappingId = mappingId;
     }
 
     public String getTo() {

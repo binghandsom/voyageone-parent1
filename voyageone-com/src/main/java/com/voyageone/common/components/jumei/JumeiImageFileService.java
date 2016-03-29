@@ -19,8 +19,6 @@ import java.util.Map;
 @Service
 public class JumeiImageFileService extends JmBase {
 
-    private static List<JmCategoryBean> categoryListLevel4 = null;
-
     private static String IMAGWE_UPLOAD = "v1/img/upload";
 
     /**

@@ -7,7 +7,9 @@
 
 package com.voyageone.common.components.yimei.eucp;
 
-public class Mo  implements java.io.Serializable {
+import java.io.Serializable;
+
+public class Mo implements Serializable {
     private String addSerial;
 
     private String addSerialRev;

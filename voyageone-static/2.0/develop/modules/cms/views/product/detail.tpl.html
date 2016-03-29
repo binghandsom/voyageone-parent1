@@ -256,9 +256,15 @@
 							<button type="submit" class="btn btn-vo" ng-click="ctrl.updateProductDetail()"><i class="glyphicon glyphicon-floppy-disk"></i> {{'BTN_SAVE' | translate}}</button>
 						</div><!-- .form-inline -->
 					</div><!-- .wrapper -->
+					<div class="wrapper-sm" style="margin-top: 15px;width:300px">
+						SKU库存明细
+						<div ng-repeat="invObj in ctrl.inventoryList">
+							<label style="margin-top:5px;width:180px;">{{invObj.skucode}}</label>
+							<input style="width:80px;" ng-value="invObj.skyqty" readonly="">
+						</div>
+					</div>
 				</div><!-- #prodFixed -->
 			</div><!-- no-padder -->
-
 		</div>
 	</div><!-- tabs ng-controller -->
 

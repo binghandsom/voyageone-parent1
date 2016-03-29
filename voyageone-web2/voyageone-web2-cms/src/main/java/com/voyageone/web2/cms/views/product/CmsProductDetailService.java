@@ -4,8 +4,8 @@ import com.voyageone.base.dao.mongodb.model.BaseMongoMap;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.cms.enums.CartType;
 import com.voyageone.common.Constants;
-import com.voyageone.common.configs.Types;
 import com.voyageone.common.configs.TypeChannels;
+import com.voyageone.common.configs.Types;
 import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
@@ -173,7 +173,7 @@ public class CmsProductDetailService {
         customAttributes.setOrgAtts(productValueModel.getFeed().getOrgAtts());
         customAttributes.setCnAtts(productValueModel.getFeed().getCnAtts());
         customAttributes.setCustomIds(productValueModel.getFeed().getCustomIds());
-        customAttributes.setCnAttsShow(getCustomAttributesCnAttsShow(feedInfoModel.get("category").toString(), productValueModel.getFeed(), channelId));
+        customAttributes.setCnAttsShow(getCustomAttributesCnAttsShow((String) feedInfoModel.get("category"), productValueModel.getFeed(), channelId));
 
         productInfo.setMasterFields(masterSchemaFields);
         productInfo.setChannelId(channelId);
@@ -189,6 +189,33 @@ public class CmsProductDetailService {
         productInfo.setProductCode(productValueModel.getFields().getCode());
 
         return productInfo;
+    }
+
+    /**
+     * 取得Sku的库存
+     *
+     * @param channelId
+     * @param prodId
+     * @return
+     */
+    public List<Map<String, Object>> getProdSkuCnt(String channelId, Long prodId) {
+        CmsBtProductModel prodObj = cmsBtProductDao.selectProductById(channelId, prodId);
+        Map<String, Integer> skuList = productService.getProductSkuQty(channelId, prodObj.getFields().getCode());
+
+        List<Map<String, Object>> inventoryList = new ArrayList<Map<String, Object>>(0);
+        if (skuList == null || skuList.isEmpty()) {
+            logger.info("当前商品没有Sku信息 prodId=" + prodId);
+            return inventoryList;
+        }
+
+        for (Map.Entry<String, Integer> skuInv : skuList.entrySet()) {
+            Map<String, Object> result = new HashMap<>();
+            result.put("skucode", skuInv.getKey());
+            result.put("skyqty", skuInv.getValue());
+            inventoryList.add(result);
+        }
+
+        return inventoryList;
     }
 
     /**
@@ -427,18 +454,14 @@ public class CmsProductDetailService {
      * @return
      */
     private Map<String, String> getCmsBtFeedInfoModel(String channelId, Long prodId, CmsBtProductModel productValueModel) {
-
         CmsBtFeedInfoModel feedInfoModel = cmsBtFeedInfoDao.selectProductByCode(channelId, productValueModel.getFields().getCode());
-
+        Map<String, String> feedAttributes = new HashMap<>();
         if (feedInfoModel == null) {
             //feed 信息不存在时异常处理.
             String errMsg = "channel id: " + channelId + " product id: " + prodId + " 对应的品牌方信息不存在！";
-
             logger.warn(errMsg);
-
+            return feedAttributes;
         }
-
-        Map<String, String> feedAttributes = new HashMap<>();
 
         if (!StringUtils.isEmpty(feedInfoModel.getCategory())) {
             feedAttributes.put("category", feedInfoModel.getCategory());

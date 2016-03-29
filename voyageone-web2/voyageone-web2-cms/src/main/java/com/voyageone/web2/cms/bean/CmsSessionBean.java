@@ -14,6 +14,8 @@ public class CmsSessionBean implements Serializable {
 
     // categoryType
     private Map<String, Object> platformType;
+    // 其他附加信息
+    private Map<String, Object> extraInfo;
 
     public Map<String, Object> getPlatformType() {
         if (platformType != null) {
@@ -29,4 +31,20 @@ public class CmsSessionBean implements Serializable {
     public void setPlatformType(Map<String, Object> platformType) {
         this.platformType = platformType;
     }
+
+    public Object getAttribute(String key) {
+        if (extraInfo == null) {
+            return null;
+        } else {
+            return extraInfo.get(key);
+        }
+    }
+
+    public void putAttribute(String key, Object value) {
+        if (extraInfo == null) {
+            extraInfo = new HashMap<>();
+        }
+        extraInfo.put(key, value);
+    }
+
 }

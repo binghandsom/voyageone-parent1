@@ -67,7 +67,7 @@ public final class CommonUtil {
             builder.append("<p>").append(s.getClassName()).append(".").append(s.getMethodName()).append("</p>");
         }
 
-        if (attMsg != null && attMsg.size() > 0) {
+        if (attMsg != null && !attMsg.isEmpty()) {
             builder.append("<p>附加信息</p>");
             for (String s : attMsg) {
                 builder.append("<p>").append(s).append("</p>");
@@ -242,23 +242,18 @@ public final class CommonUtil {
      * 保留两位小数
      */
     public static double getRoundUp2Digits(double doubleValue) {
-        double ret = 0d;
-
-        BigDecimal bd1 = new BigDecimal(doubleValue);
-
-        ret = bd1.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
-
-        return ret;
+        BigDecimal bd1 = BigDecimal.valueOf(doubleValue);
+        return bd1.setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue();
     }
 
     /**
      * 将integer的list转成long的list
      */
     public static List<Long> changeListType(List<Integer> list) {
-        if (list != null && list.size() > 0)
+        if (list != null && !list.isEmpty())
             return list.stream().map(Integer::longValue).collect(Collectors.toList());
         else
-            return new ArrayList<Long>();
+            return new ArrayList<>();
     }
 
 

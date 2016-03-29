@@ -55,7 +55,7 @@ public class GiltInsert extends BaseTaskService {
 
     @Override
     public String getTaskName() {
-        return "Vitamin";
+        return "Cms2GiltAnalysisJob";
     }
 
     /**

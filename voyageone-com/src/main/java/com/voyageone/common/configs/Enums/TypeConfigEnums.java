@@ -192,6 +192,21 @@ public class TypeConfigEnums {
 		compareType(48),
 
 		/**
+		 * 商品翻译状态:cms2
+		 */
+		translationStatus(50),
+
+		/**
+		 * 商品编辑状态:cms2
+		 */
+		editStatus(51),
+
+		/**
+		 * 商品锁定状态:cms2
+		 */
+		procLockStatus(52),
+
+		/**
 		 * 错误类别:cms2
 		 */
 		errorType(55),

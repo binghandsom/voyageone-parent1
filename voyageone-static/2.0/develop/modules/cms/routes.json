@@ -83,7 +83,7 @@
     "controller": "feedMappingController as $ctrl"
   },
   "mapping_feed_prop": {
-    "hash": "/mapping/feed/:feedCategoryPath*\/:commonFlg",
+    "hash": "/mapping/feed/:params*",
     "templateUrl": "views/mapping/feed/prop.tpl.html",
     "controllerUrl": "modules/cms/views/mapping/feed/prop.ctl",
     "controller": "feedPropMappingController as $ctrl"
@@ -163,5 +163,11 @@
     "hash": "/system/error/:type",
     "templateUrl": "views/system/error/list.tpl.html",
     "controllerUrl": "modules/cms/views/system/error/list.ctl"
+  },
+  "system_cache_set": {
+    "hash": "/system/cache/index",
+    "templateUrl": "views/system/cache/index.tpl.html",
+    "controllerUrl": "modules/cms/views/system/cache/index.ctl"
   }
+
 }
