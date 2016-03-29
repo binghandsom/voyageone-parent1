@@ -268,6 +268,7 @@
     <insert id="insert_cms_bt_stock_separate_item_excel" parameterType="List">
         insert into voyageone_cms2.cms_bt_stock_separate_item (
         task_id,
+        channel_id,
         product_model,
         product_code,
         sku,
@@ -286,6 +287,7 @@
         ) value
         <foreach collection="list" index="index" item="item" separator=",">
             (#{item.task_id},
+            #{item.channelId},
             #{item.product_model},
             #{item.product_code},
             #{item.sku},

@@ -1718,7 +1718,7 @@ public class CmsTaskStockService extends BaseAppService {
 
         if (saveData.size() > 0) {
             logger.info("更新开始");
-            saveImportData(saveData, import_mode, task_id, (String) param.get("userName"));
+            saveImportData(saveData, import_mode, task_id, (String) param.get("userName"), (String) param.get("channelId"));
             logger.info(String.format("更新结束,更新了%d件", saveData.size()));
         } else {
             logger.info("没有更新对象");
@@ -2081,8 +2081,9 @@ public class CmsTaskStockService extends BaseAppService {
      * @param import_mode 导入方式
      * @param task_id     任务id
      * @param creater     创建者/更新者
+     * @param channelId   渠道id
      */
-    private void saveImportData(List<StockExcelBean> saveData, String import_mode, String task_id, String creater) {
+    private void saveImportData(List<StockExcelBean> saveData, String import_mode, String task_id, String creater, String channelId) {
         try {
             transactionRunner.runWithTran(() -> {
                 if (EXCEL_IMPORT_UPDATE.equals(import_mode)) {
@@ -2111,6 +2112,7 @@ public class CmsTaskStockService extends BaseAppService {
 
                         mapSaveData.put("task_id", task_id);
                         mapSaveData.put("creater", creater);
+                        mapSaveData.put("channelId", channelId);
 
                         listSaveData.add(mapSaveData);
                         if (listSaveData.size() == 200) {

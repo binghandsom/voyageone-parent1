@@ -953,6 +953,8 @@ public class CmsTaskStockController extends CmsController {
         // 返回内容
         Map<String, Object> resultBean = new HashMap<>();
 
+        // 渠道id
+        param.put("channelId", this.getUser().getSelChannelId());
         // 创建者/更新者用
         param.put("userName", this.getUser().getUserName());
         // import Excel
