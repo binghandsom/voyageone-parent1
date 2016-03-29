@@ -927,9 +927,7 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
      * @return 单元格值
      */
     private String getCellValue(Row row, int col) {
-        if (row == null) return null;
-        if (row.getCell(col) == null) return null;
-        return row.getCell(col).getStringCellValue();
+        return cmsTaskStockService.getCellValue(row, col);
     }
 
     /**

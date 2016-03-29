@@ -33,6 +33,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -74,6 +76,9 @@ public class CmsTaskStockService extends BaseAppService {
 
     @Autowired
     private CmsBtPromotionDao cmsBtPromotionDao;
+
+    private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    private final NumberFormat numberFormatter = new DecimalFormat("#");
 
     /** 增量/库存隔离状态 0：未进行 */
     public static final String STATUS_READY = "0";
@@ -1612,7 +1617,8 @@ public class CmsTaskStockService extends BaseAppService {
 
         CellStyle cellStyleDynamic = book.getSheetAt(1).getRow(0).getCell(1).getCellStyle(); // 动态的CellStyle
         CellStyle cellStyleDataLock = book.getSheetAt(1).getRow(0).getCell(2).getCellStyle(); // 数据（锁定）的cellStyle
-        CellStyle cellStyleData = book.getSheetAt(1).getRow(0).getCell(3).getCellStyle(); // 数据（不锁定）的cellStyle
+        CellStyle cellStyleNum = book.getSheetAt(1).getRow(0).getCell(3).getCellStyle(); // 数值（不锁定）的cellStyle
+        CellStyle cellStyleNumLock = book.getSheetAt(1).getRow(0).getCell(6).getCellStyle(); // 数值（锁定）的cellStyle
 
         List<Map> propertyList = (List<Map>) param.get("propertyList");
 
@@ -1638,13 +1644,13 @@ public class CmsTaskStockService extends BaseAppService {
                 }
 
                 // 可用库存
-                FileUtils.cell(row, colIndex++, cellStyleDataLock).setCellValue(rowData.getQty().toPlainString());
+                FileUtils.cell(row, colIndex++, cellStyleNumLock).setCellValue(rowData.getQty().toPlainString());
 
                 // 平台
                 if (StringUtils.isEmpty(rowData.getStatus())) {
                     FileUtils.cell(row, mapCartCol.get(cart_id), cellStyleDynamic).setCellValue(DYNAMIC);
                 } else {
-                    FileUtils.cell(row, mapCartCol.get(cart_id), cellStyleData).setCellValue(rowData.getSeparate_qty().toPlainString());
+                    FileUtils.cell(row, mapCartCol.get(cart_id), cellStyleNum).setCellValue(rowData.getSeparate_qty().toPlainString());
                 }
 
                 CellStyle cellStyle = book.createCellStyle();
@@ -1657,7 +1663,7 @@ public class CmsTaskStockService extends BaseAppService {
                 if (StringUtils.isEmpty(rowData.getStatus())) {
                     FileUtils.cell(row, mapCartCol.get(cart_id), cellStyleDynamic).setCellValue(DYNAMIC);
                 } else {
-                    FileUtils.cell(row, mapCartCol.get(cart_id), cellStyleData).setCellValue(rowData.getSeparate_qty().toPlainString());
+                    FileUtils.cell(row, mapCartCol.get(cart_id), cellStyleNum).setCellValue(rowData.getSeparate_qty().toPlainString());
                 }
             }
         }
@@ -2159,10 +2165,46 @@ public class CmsTaskStockService extends BaseAppService {
      * @param col 列
      * @return 单元格值
      */
-    private String getCellValue(Row row, int col) {
+    public String getCellValue(Row row, int col) {
         if (row == null) return null;
-        if (row.getCell(col) == null) return null;
-        return row.getCell(col).getStringCellValue();
+        Cell cell = row.getCell(col);
+        if (cell == null) return null;
+        return getCellValue(cell);
+    }
+
+    public String getCellValue(Cell cell) {
+        String ret;
+        switch (cell.getCellType()) {
+            case Cell.CELL_TYPE_BLANK:
+                ret = "";
+                break;
+            case Cell.CELL_TYPE_BOOLEAN:
+                ret = String.valueOf(cell.getBooleanCellValue());
+                break;
+            case Cell.CELL_TYPE_ERROR:
+                ret = null;
+                break;
+            case Cell.CELL_TYPE_FORMULA:
+                Workbook wb = cell.getSheet().getWorkbook();
+                CreationHelper crateHelper = wb.getCreationHelper();
+                FormulaEvaluator evaluator = crateHelper.createFormulaEvaluator();
+                ret = getCellValue(evaluator.evaluateInCell(cell));
+                break;
+            case Cell.CELL_TYPE_NUMERIC:
+                if (DateUtil.isCellDateFormatted(cell)) {
+                    ret = simpleDateFormat.format(cell.getDateCellValue());
+                } else {
+                    ret = numberFormatter.format(cell.getNumericCellValue());
+                }
+                break;
+            case Cell.CELL_TYPE_STRING:
+                ret = cell.getStringCellValue();
+                break;
+            default:
+                ret = null;
+        }
+
+        return ret;
     }
 
     /**
@@ -2258,7 +2300,7 @@ public class CmsTaskStockService extends BaseAppService {
         int colIndex; // 列号
         Row row;
 
-        CellStyle cellStyleData = book.getSheetAt(1).getRow(0).getCell(3).getCellStyle(); // 数据（不锁定）的cellStyle
+        CellStyle cellStyleData = book.getSheetAt(1).getRow(0).getCell(5).getCellStyle(); // 数据（不锁定）的cellStyle
 
         for (Map<String, Object> rowData : resultData) {
             row = FileUtils.row(sheet, lineIndex++);
