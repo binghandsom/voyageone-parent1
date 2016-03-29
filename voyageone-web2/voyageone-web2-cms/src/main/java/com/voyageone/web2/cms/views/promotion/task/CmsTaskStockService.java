@@ -1649,13 +1649,13 @@ public class CmsTaskStockService extends BaseAppService {
                 }
 
                 // 可用库存
-                FileUtils.cell(row, colIndex++, cellStyleNumLock).setCellValue(rowData.getQty().toPlainString());
+                FileUtils.cell(row, colIndex++, cellStyleNumLock).setCellValue(Double.valueOf(rowData.getQty().toPlainString()));
 
                 // 平台
                 if (StringUtils.isEmpty(rowData.getStatus())) {
                     FileUtils.cell(row, mapCartCol.get(cart_id), cellStyleDynamic).setCellValue(DYNAMIC);
                 } else {
-                    FileUtils.cell(row, mapCartCol.get(cart_id), cellStyleNum).setCellValue(rowData.getSeparate_qty().toPlainString());
+                    FileUtils.cell(row, mapCartCol.get(cart_id), cellStyleNum).setCellValue(Double.valueOf(rowData.getSeparate_qty().toPlainString()));
                 }
 
                 CellStyle cellStyle = book.createCellStyle();
@@ -1668,7 +1668,7 @@ public class CmsTaskStockService extends BaseAppService {
                 if (StringUtils.isEmpty(rowData.getStatus())) {
                     FileUtils.cell(row, mapCartCol.get(cart_id), cellStyleDynamic).setCellValue(DYNAMIC);
                 } else {
-                    FileUtils.cell(row, mapCartCol.get(cart_id), cellStyleNum).setCellValue(rowData.getSeparate_qty().toPlainString());
+                    FileUtils.cell(row, mapCartCol.get(cart_id), cellStyleNum).setCellValue(Double.valueOf(rowData.getSeparate_qty().toPlainString()));
                 }
             }
         }

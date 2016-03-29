@@ -579,9 +579,9 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
             }
 
             // 可调配库存
-            FileUtils.cell(row, colIndex++, cellStyleDataLock).setCellValue(rowData.getQty().toPlainString());
+            FileUtils.cell(row, colIndex++, cellStyleDataLock).setCellValue(Double.valueOf(rowData.getQty().toPlainString()));
             // 平台
-            FileUtils.cell(row, colIndex++, cellStyleData).setCellValue(rowData.getIncrement_qty().toPlainString());
+            FileUtils.cell(row, colIndex++, cellStyleData).setCellValue(Double.valueOf(rowData.getIncrement_qty().toPlainString()));
 
             // 固定值增量
             if (FIXED.equals(rowData.getFix_flg())) {
