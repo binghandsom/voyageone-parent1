@@ -23,12 +23,7 @@ public class JdRefundService extends JdBase {
 	private static final String C_JD_RETURN_SUCCESS = "0";
 	
 	/**
-	 * 京东退款审核单列表查询 
-	 * @param shop
-	 * @param startdate
-	 * @param enddate
-	 * @param status
-	 * @return
+	 * 京东退款审核单列表查询
 	 */
 	public List<RefundApplyVo> doJDSearchRefundOrders(ShopBean shop, String ids, String startdate, String enddate, Long status) {
 		List<RefundApplyVo> jdRefundList = new ArrayList<RefundApplyVo>();
@@ -72,7 +67,7 @@ public class JdRefundService extends JdBase {
 				if (C_JD_RETURN_SUCCESS.equals(response.getCode())) {
 					// 京东返回正常的场合
 					// 看一下是否有数据，如果列表长度为0，那就不用再继续做了
-					if (response.getQueryResult().getResult().size() == 0) {
+					if (response.getQueryResult().getResult().isEmpty()) {
 						break;
 					}
 
@@ -108,10 +103,7 @@ public class JdRefundService extends JdBase {
 	}
 	
 	/**
-	 * 京东根据Id查询退款审核单 
-	 * @param shop
-	 * @param id
-	 * @return
+	 * 京东根据Id查询退款审核单
 	 */
 	public RefundApplyVo doJDRefundDetail(ShopBean shop, String id) {
 		PopAfsSoaRefundapplyQueryByIdRequest request=new PopAfsSoaRefundapplyQueryByIdRequest(); 
@@ -121,7 +113,7 @@ public class JdRefundService extends JdBase {
 			if (C_JD_RETURN_SUCCESS.equals(response.getCode())) {
 				// 京东返回正常的场合
 				// 看一下是否有数据，如果列表长度为0，那就不用再继续做了
-				if (response.getQueryResult().getResult().size() > 0) {
+				if (!response.getQueryResult().getResult().isEmpty()) {
 					return response.getQueryResult().getResult().get(0);
 				}
 			}
@@ -134,9 +126,6 @@ public class JdRefundService extends JdBase {
 	
 	/**
 	 * 京东根据服务单号取得退款信息
-	 * @param shop
-	 * @param serviceId
-	 * @return
 	 */
 	public AfsRefundInfoOut doJDGetRefundInfo(ShopBean shop, String serviceId){
 		AfsserviceRefundinfoGetRequest request=new AfsserviceRefundinfoGetRequest(); 

@@ -80,5 +80,6 @@ public class CaBase {
         }
         fs.write(strXML);
         fs.flush();
+        fs.close();
     }
 }

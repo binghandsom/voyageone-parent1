@@ -15,7 +15,7 @@ import java.util.List;
 @Service
 public class JumeiBrandService extends JmBase {
 
-    private static List<JmBrandBean> brands = null;
+    private List<JmBrandBean> brands = null;
 
     private static String BRAND_URL = "v1/htBrand/query";
     /**

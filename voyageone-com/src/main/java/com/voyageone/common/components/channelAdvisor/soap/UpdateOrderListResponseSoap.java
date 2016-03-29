@@ -20,10 +20,7 @@ public class UpdateOrderListResponseSoap {
 
 	@XmlElement(name = "Body") 
 	private UpdateOrderListResponseBody body;
-	
-	public UpdateOrderListResponseSoap(){
-		
-	}
+
 	/**
 	 * @return the body
 	 */

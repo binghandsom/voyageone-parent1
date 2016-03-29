@@ -3,13 +3,15 @@ package com.voyageone.cms.bean;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.voyageone.cms.enums.Operation;
 
+import java.io.Serializable;
+
 /**
  * 枚举 Operation 的 Bean 定义
  * @author Jonas 9/2/15.
  * @version 2.0.0
  * @since 1.0.0
  */
-public class OperationBean {
+public class OperationBean implements Serializable {
 
     private final Operation operation;
 
