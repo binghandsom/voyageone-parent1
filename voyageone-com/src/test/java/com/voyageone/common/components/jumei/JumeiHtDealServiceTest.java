@@ -17,7 +17,7 @@ import java.util.Date;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:applicationContext.xml")
-public class HtDealServiceTest {
+public class JumeiHtDealServiceTest {
     @Autowired
     JumeiHtDealService htDealService;
     @Test

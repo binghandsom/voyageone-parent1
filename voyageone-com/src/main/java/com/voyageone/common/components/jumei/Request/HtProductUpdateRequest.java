@@ -21,10 +21,6 @@ public class HtProductUpdateRequest implements JMRequest {
     String jumei_product_name;// 可选	String     // 聚美产品名.
     HtProductUpdate_ProductInfo update_data;
 
-    public void setUrl(String url) {
-        Url = url;
-    }
-
     public int getJumei_product_id() {
         return jumei_product_id;
     }
@@ -51,7 +47,7 @@ public class HtProductUpdateRequest implements JMRequest {
 
     public Map<String, Object> getParameter() throws IOException {
         Map<String, Object> params = new HashMap<>();
-        params.put("jumei_product_id", this.getJumei_product_id());
+        params.put("jumei_product_id",Long.toString(this.getJumei_product_id()));
         params.put("jumei_product_name", this.getJumei_product_name());
         params.put("update_data", JacksonUtil.bean2JsonNotNull(update_data));
         return params;

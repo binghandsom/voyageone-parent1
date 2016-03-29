@@ -12,7 +12,7 @@ import java.util.Map;
  * Created by dell on 2016/3/29.
  */
 public class JumeiHtSpuService extends JmBase {
-    public HtSpuAddResponse copyDeal(ShopBean shopBean, HtSpuAddRequest request) throws Exception {
+    public HtSpuAddResponse add(ShopBean shopBean, HtSpuAddRequest request) throws Exception {
         Map<String, Object> params = request.getParameter();
         String reqResult = reqJmApi(shopBean, request.getUrl(), params);
         logger.info("添加Spu信息返回：" + reqResult);

@@ -8,18 +8,17 @@ import com.voyageone.common.components.jumei.Request.HtProductUpdateRequest;
 import com.voyageone.common.components.jumei.Request.HtSkuAddRequest;
 import com.voyageone.common.components.jumei.base.JmBase;
 import com.voyageone.common.configs.beans.ShopBean;
+import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
-/**
- * Created by dell on 2016/3/29.
- */
+@Service
 public class JumeiHtProductService extends JmBase {
-    public HtSkuAddResponse copyDeal(ShopBean shopBean, HtSkuAddRequest request) throws Exception {
+    public HtProductUpdateResponse copyDeal(ShopBean shopBean, HtProductUpdateRequest request) throws Exception {
         Map<String, Object> params = request.getParameter();
         String reqResult = reqJmApi(shopBean, request.getUrl(), params);
-        logger.info("添加Sku信息返回：" + reqResult);
-        HtSkuAddResponse response = new HtSkuAddResponse();
+        logger.info("国际POP-修改商品属性返回：" + reqResult);
+        HtProductUpdateResponse response = new HtProductUpdateResponse();
         response.setBody(reqResult);
         return response;
     }
