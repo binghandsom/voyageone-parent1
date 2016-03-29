@@ -798,14 +798,14 @@ public class CmsSearchAdvanceService extends BaseAppService{
 
     // 取得自定义显示列设置
     public List<Map<String, Object>> getCustColumns() {
-        return  cmsMtCommonPropDao.getCustColumns();
+        return  cmsMtCommonPropDao.selectCustColumns();
     }
 
     // 取得用户自定义显示列设置
     public Map<String, Object> getUserCustColumns(int userId) {
         Map<String, Object> rsMap = new HashMap<String, Object>();
 
-        List<Map<String, Object>> rsList = cmsMtCommonPropDao.getUserCustColumns(userId);
+        List<Map<String, Object>> rsList = cmsMtCommonPropDao.selectUserCustColumns(userId);
         if (rsList == null || rsList.isEmpty()) {
             rsMap.put("custAttrList", new String[]{});
             rsMap.put("commList", new String[]{});
@@ -820,7 +820,7 @@ public class CmsSearchAdvanceService extends BaseAppService{
 
     // 取得用户自定义显示列设置
     public void getUserCustColumns(String channelId, int userId, CmsSessionBean cmsSession) {
-        List<Map<String, Object>> rsList = cmsMtCommonPropDao.getUserCustColumns(userId);
+        List<Map<String, Object>> rsList = cmsMtCommonPropDao.selectUserCustColumns(userId);
         if (rsList == null || rsList.isEmpty()) {
             cmsSession.putAttribute("_adv_search_customProps", new ArrayList<Map<String, Object>>());
             cmsSession.putAttribute("_adv_search_commonProps", new ArrayList<Map<String, Object>>());
@@ -848,7 +848,7 @@ public class CmsSearchAdvanceService extends BaseAppService{
         String[] commList = commStr.split(",");
         StringBuilder commonPropsStr = new StringBuilder();
         if (commList.length > 0) {
-            List<Map<String, Object>> commonProps = cmsMtCommonPropDao.getCustColumns();
+            List<Map<String, Object>> commonProps = cmsMtCommonPropDao.selectCustColumns();
             for (Map<String, Object> props : commonProps) {
                 String propId = (String) props.get("propId");
                 if (ArrayUtils.contains(commList, propId)) {
@@ -888,7 +888,7 @@ public class CmsSearchAdvanceService extends BaseAppService{
         List<Map<String, Object>> commonProp2 = new ArrayList<Map<String, Object>>();
         StringBuilder commonPropsStr = new StringBuilder();
         if (param2 != null && param2.length > 0) {
-            List<Map<String, Object>> commonProps = cmsMtCommonPropDao.getCustColumns();
+            List<Map<String, Object>> commonProps = cmsMtCommonPropDao.selectCustColumns();
             for (Map<String, Object> props : commonProps) {
                 String propId = (String) props.get("propId");
                 if (ArrayUtils.contains(param2, propId)) {
@@ -903,12 +903,12 @@ public class CmsSearchAdvanceService extends BaseAppService{
         cmsSessionBean.putAttribute("_adv_search_customProps", customProps2);
         cmsSessionBean.putAttribute("_adv_search_commonProps", commonProp2);
 
-        List<Map<String, Object>> rsList = cmsMtCommonPropDao.getUserCustColumns(userInfo.getUserId());
+        List<Map<String, Object>> rsList = cmsMtCommonPropDao.selectUserCustColumns(userInfo.getUserId());
         int rs = 0;
         if (rsList == null || rsList.isEmpty()) {
-            rs = cmsMtCommonPropDao.addUserCustColumns(userInfo.getUserId(), userInfo.getUserName(), customStrs, commonStrs);
+            rs = cmsMtCommonPropDao.insertUserCustColumns(userInfo.getUserId(), userInfo.getUserName(), customStrs, commonStrs);
         } else {
-            rs = cmsMtCommonPropDao.saveUserCustColumns(userInfo.getUserId(), userInfo.getUserName(), customStrs, commonStrs);
+            rs = cmsMtCommonPropDao.updateUserCustColumns(userInfo.getUserId(), userInfo.getUserName(), customStrs, commonStrs);
         }
         if (rs == 0) {
             logger.error("保存自定义显示列设置不成功 userid=" + userInfo.getUserId());
