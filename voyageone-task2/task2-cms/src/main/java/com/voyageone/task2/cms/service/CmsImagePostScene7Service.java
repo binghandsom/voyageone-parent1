@@ -186,7 +186,7 @@ public class CmsImagePostScene7Service extends BaseTaskService {
                             }
 
                             try {
-                                inputStream = HttpUtils.getInputStream(imageUrl, null);
+                                inputStream = HttpUtils.getInputStream(imageUrl);
                             } catch (FileNotFoundException ex) {
                                 // 图片url错误
                                 logger.error(ex.getMessage(), ex);
