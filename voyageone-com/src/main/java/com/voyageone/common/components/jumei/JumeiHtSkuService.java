@@ -6,12 +6,11 @@ import com.voyageone.common.components.jumei.Request.HtProductUpdateRequest;
 import com.voyageone.common.components.jumei.Request.HtSkuAddRequest;
 import com.voyageone.common.components.jumei.base.JmBase;
 import com.voyageone.common.configs.beans.ShopBean;
+import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
-/**
- * Created by dell on 2016/3/29.
- */
+@Service
 public class JumeiHtSkuService extends JmBase {
     public HtSkuAddResponse add(ShopBean shopBean, HtSkuAddRequest request) throws Exception {
         Map<String, Object> params = request.getParameter();

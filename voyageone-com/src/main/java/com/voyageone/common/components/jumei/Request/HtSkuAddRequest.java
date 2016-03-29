@@ -36,9 +36,6 @@ public class HtSkuAddRequest implements JMRequest {
     //    参数范围: 注：必须大于等于团购价
     String market_price;    //String   市场价
 
-    public void setUrl(String url) {
-        Url = url;
-    }
     public String getJumei_spu_no() {
         return jumei_spu_no;
     }
