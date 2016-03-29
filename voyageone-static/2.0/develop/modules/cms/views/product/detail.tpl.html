@@ -108,14 +108,12 @@
 			<uib-tab>
 				<tab-heading>&nbsp;{{'TXT_PRODUCT_SKU_DETAIL' | translate}}</tab-heading>
 				<div class="panel vo_panel tab_panel">
-					<div class="row wrapper">
-						<div class="container-fluid">
-							<schema-item class="hierarchy_main modal-open col-sm-11" data="ctrl.productDetails.skuFields" ng-if="ctrl.productDetails.skuFields != null" not-show-edit="true"></schema-item>
-							<!-- SKU 不可以添加和删除 -->
-							<!--<div class="col-sm-1">-->
-								<!--<button class="btn btn-success" ng-click="ctrl.addField(ctrl.productDetails.skuFields)"><i class="fa fa-plus"></i>{{'BTN_COM_ADD' | translate}}</button>-->
-							<!--</div>-->
-						</div>
+					<div class="container-fluid">
+						<schema-item class="modal-open" data="ctrl.productDetails.skuFields" ng-if="ctrl.productDetails.skuFields != null" not-show-edit="true"></schema-item>
+						<!-- SKU 不可以添加和删除 -->
+						<!--<div class="col-sm-1">-->
+						<!--<button class="btn btn-success" ng-click="ctrl.addField(ctrl.productDetails.skuFields)"><i class="fa fa-plus"></i>{{'BTN_COM_ADD' | translate}}</button>-->
+						<!--</div>-->
 					</div>
 				</div> <!-- .panel -->
 				<!--<div class="row text-center">-->
