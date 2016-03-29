@@ -767,6 +767,7 @@ public class CmsTaskStockService extends BaseAppService {
         // 取得一页中的sku所有平台的隔离库存（含非本任务的）
         Map<String,Object> sqlParam1 = new HashMap<String,Object>();
         sqlParam1.put("skuList", skuList);
+        sqlParam1.put("channelId", param.get("channelId"));
         // 状态 = 2：隔离成功,5：等待还原, 6：还原中, 7：还原成功 ,8：还原失败
         sqlParam1.put("statusList", Arrays.asList( STATUS_SEPARATE_SUCCESS,
                                                     STATUS_WAITING_REVERT,
@@ -808,6 +809,7 @@ public class CmsTaskStockService extends BaseAppService {
         // 取得一页中的sku所有平台的增量隔离库存（含非本任务的）
         Map<String,Object> sqlParam2 = new HashMap<String,Object>();
         sqlParam2.put("skuList", skuList);
+        sqlParam1.put("channelId", param.get("channelId"));
         // 状态 = 3：增量成功,5：还原,
         sqlParam2.put("statusList", Arrays.asList(STATUS_INCREMENT_SUCCESS, STATUS_REVERT));
         sqlParam2.put("tableNameSuffix", param.get("tableNameSuffix"));
@@ -1142,9 +1144,10 @@ public class CmsTaskStockService extends BaseAppService {
         // 取得隔离库存
         int stockSeparate = 0;
         Map<String,Object> sqlParam1 = new HashMap<String,Object>();
+        sqlParam1.put("channelId", channelId);
         sqlParam1.put("sku", sku);
-        // 状态 = 3：隔离成功
-        sqlParam1.put("status", STATUS_SEPARATE_SUCCESS);
+        // 状态 = 3：隔离成功, 5：等待还原
+        sqlParam1.put("statusList", Arrays.asList(STATUS_SEPARATE_SUCCESS, STATUS_WAITING_REVERT));
         Integer stockSeparateSuccessQty =  cmsBtStockSeparateItemDao.selectStockSeparateSuccessQty(sqlParam1);
         if (stockSeparateSuccessQty != null) {
             stockSeparate =  stockSeparateSuccessQty;
@@ -1154,6 +1157,7 @@ public class CmsTaskStockService extends BaseAppService {
         // 取得增量隔离库存
         int stockIncrementSeparate = 0;
         Map<String,Object> sqlParam2 = new HashMap<String,Object>();
+        sqlParam2.put("channelId", channelId);
         sqlParam2.put("sku", sku);
         // 状态 = 3：增量成功
         sqlParam2.put("status", STATUS_INCREMENT_SUCCESS);
@@ -1303,6 +1307,8 @@ public class CmsTaskStockService extends BaseAppService {
      * @param param 客户端参数
      */
     private void insertNewRecord(Map param) {
+        // 渠道id
+        String channelId = (String) param.get("channelId");
         // Model
         String model = (String) param.get("model");
         // Code
@@ -1327,6 +1333,8 @@ public class CmsTaskStockService extends BaseAppService {
 
             // 插入库存隔离数据库
             Map<String, Object> sqlParam = new HashMap<String, Object>();
+            // 渠道id
+            sqlParam.put("channelId", channelId);
             // 任务id
             sqlParam.put("taskId", param.get("taskId"));
             // Model
@@ -1448,6 +1456,13 @@ public class CmsTaskStockService extends BaseAppService {
      * @param param 客户端参数
      */
     public void executeStockRevert(Map param){
+
+        // 取得任务id对应的Promotion是否开始
+        boolean promotionStartFlg = isPromotionStart((String) param.get("taskId"));
+        if (promotionStartFlg) {
+            throw new BusinessException("活动已经开始，活动结束后会自动还原！");
+        }
+
         simpleTransaction.openTransaction();
         try {
             // 画面选择的sku
@@ -1473,29 +1488,29 @@ public class CmsTaskStockService extends BaseAppService {
                 throw new BusinessException("没有可以还原的数据！");
             }
 
-            // 对增量库存隔离数据表进行数据还原
-            // 取得隔离对象对应的子任务id
-            List<Integer> subTaskIdList = new ArrayList<Integer>();
-            Map<String, Object> sqlParam = new HashMap<String, Object>();
-            sqlParam.put("taskId", param.get("taskId"));
-            List<Map<String, Object>> incrementTaskList = cmsBtStockSeparateIncrementTaskDao.selectStockSeparateIncrementTask(sqlParam);
-            for (Map<String, Object> incrementTask : incrementTaskList) {
-                subTaskIdList.add((Integer)incrementTask.get("sub_task_id"));
-            }
-
-            Map<String, Object> sqlParam1 = new HashMap<String, Object>();
-            // 选择一件sku进行库存还原的的场合,加入sku的条件
-            if (!StringUtils.isEmpty(selSku)) {
-                sqlParam1.put("sku", selSku);
-            }
-            // 更新状态为"5:还原"
-            sqlParam1.put("status", STATUS_REVERT);
-            sqlParam1.put("modifier", param.get("userName"));
-            //更新条件
-            sqlParam1.put("subTaskIdList", subTaskIdList);
-            // 只对状态为"2:增量成功"的数据改变状态
-            sqlParam1.put("statusWhere", STATUS_INCREMENT_SUCCESS);
-            cmsBtStockSeparateIncrementItemDao.updateStockSeparateIncrementItem(sqlParam1);
+//            // 对增量库存隔离数据表进行数据还原
+//            // 取得隔离对象对应的子任务id
+//            List<Integer> subTaskIdList = new ArrayList<Integer>();
+//            Map<String, Object> sqlParam = new HashMap<String, Object>();
+//            sqlParam.put("taskId", param.get("taskId"));
+//            List<Map<String, Object>> incrementTaskList = cmsBtStockSeparateIncrementTaskDao.selectStockSeparateIncrementTask(sqlParam);
+//            for (Map<String, Object> incrementTask : incrementTaskList) {
+//                subTaskIdList.add((Integer)incrementTask.get("sub_task_id"));
+//            }
+//
+//            Map<String, Object> sqlParam1 = new HashMap<String, Object>();
+//            // 选择一件sku进行库存还原的的场合,加入sku的条件
+//            if (!StringUtils.isEmpty(selSku)) {
+//                sqlParam1.put("sku", selSku);
+//            }
+//            // 更新状态为"5:还原"
+//            sqlParam1.put("status", STATUS_REVERT);
+//            sqlParam1.put("modifier", param.get("userName"));
+//            //更新条件
+//            sqlParam1.put("subTaskIdList", subTaskIdList);
+//            // 只对状态为"2:增量成功"的数据改变状态
+//            sqlParam1.put("statusWhere", STATUS_INCREMENT_SUCCESS);
+//            cmsBtStockSeparateIncrementItemDao.updateStockSeparateIncrementItem(sqlParam1);
 
         } catch (BusinessException e) {
             simpleTransaction.rollback();

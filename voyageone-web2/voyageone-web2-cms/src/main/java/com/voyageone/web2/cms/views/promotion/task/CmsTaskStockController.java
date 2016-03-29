@@ -800,6 +800,8 @@ public class CmsTaskStockController extends CmsController {
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK.SAVE_NEW_RECORD)
     public AjaxResponse saveNewRecord(@RequestBody Map param) {
+        // 渠道id
+        param.put("channelId", this.getUser().getSelChannelId());
         // 创建者/更新者用
         param.put("userName", this.getUser().getUserName());
         // 新增库存隔离明细
