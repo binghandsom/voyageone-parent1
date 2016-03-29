@@ -822,6 +822,7 @@ public class CmsSearchAdvanceService extends BaseAppService{
     public void getUserCustColumns(String channelId, int userId, CmsSessionBean cmsSession) {
         List<Map<String, Object>> rsList = cmsMtCommonPropDao.selectUserCustColumns(userId);
         if (rsList == null || rsList.isEmpty()) {
+            cmsSession.putAttribute("_adv_search_props_searchItems", "");
             cmsSession.putAttribute("_adv_search_customProps", new ArrayList<Map<String, Object>>());
             cmsSession.putAttribute("_adv_search_commonProps", new ArrayList<Map<String, Object>>());
             return;
