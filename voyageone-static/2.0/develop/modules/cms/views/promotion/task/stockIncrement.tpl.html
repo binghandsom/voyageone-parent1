@@ -1,5 +1,5 @@
 <div class="wrapper-md" ng-init="$ctrl.init()">
-	<div class="vo_accordion vo_attr" ng-show="$ctrl.hasAuthority">
+	<div class="vo_accordion vo_attr">
 		<div class="panel-group">
 			<div class="panel panel-default">
 				<div class="panel-heading">
@@ -34,7 +34,7 @@
 							<div class="form-horizontal form-inline">
 								<button class="btn btn-default" ng-click="$ctrl.clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR' | translate}}</button>
 								<button class="btn btn-vo" ng-click="$ctrl.search()"><i class="fa fa-search"></i>&nbsp;{{'BTN_SEARCH' | translate}}</button>
-								<button class="btn btn-primary" ng-click="openAddMrbStockIncrement('md')"><i class="fa fa-plus"></i>&nbsp;{{'TXT_ADD_NEW_STOCK_INCREMENT_SEPARATE_TASK' | translate}}</button>
+								<button class="btn btn-primary" ng-click="openAddMrbStockIncrement('md')" ng-show="$ctrl.platformList.length >  0"><i class="fa fa-plus"></i>&nbsp;{{'TXT_ADD_NEW_STOCK_INCREMENT_SEPARATE_TASK' | translate}}</button>
 							</div><!-- .form-inline -->
 						</div>
 					</div>
@@ -42,7 +42,7 @@
 			</div>
 		</div>
 	</div>
-	<div class="box" ng-show="$ctrl.hasAuthority">
+	<div class="box">
 		<div class="box-body">
 			<div class="table-responsive">
 				<div class="col-sm-12 dropdown_table_main">

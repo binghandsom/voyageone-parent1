@@ -125,15 +125,16 @@ public class CmsTaskStockIncrementDetailController extends CmsController {
             Map<String, Object> taskInfo = cmsTaskStockIncrementDetailService.getTaskInfo(subTaskId, this.getUser().getSelChannelId(), this.getLang());
             // 任务id取得失败的情况下，认为没有权限
             if (taskInfo == null) {
-                resultBean.put("hasAuthority", false);
+                resultBean.put("stockList", new ArrayList());
+//                resultBean.put("hasAuthority", false);
                 return success(resultBean);
             } else {
-                // 增量任务/渠道id权限check
-                boolean hasAuthority = cmsTaskStockIncrementDetailService.hasAuthority(String.valueOf(taskInfo.get("task_id")), String.valueOf(taskInfo.get("cart_id")), this.getUser().getSelChannelId(), this.getLang());
-                resultBean.put("hasAuthority", hasAuthority);
-                if (!hasAuthority) {
-                    return success(resultBean);
-                }
+//                // 增量任务/渠道id权限check
+//                boolean hasAuthority = cmsTaskStockIncrementDetailService.hasAuthority(String.valueOf(taskInfo.get("task_id")), String.valueOf(taskInfo.get("cart_id")), this.getUser().getSelChannelId(), this.getLang());
+//                resultBean.put("hasAuthority", hasAuthority);
+//                if (!hasAuthority) {
+//                    return success(resultBean);
+//                }
                 // 任务id
                 resultBean.put("taskId", String.valueOf(taskInfo.get("task_id")));
                 param.put("taskId", String.valueOf(taskInfo.get("task_id")));
@@ -147,7 +148,7 @@ public class CmsTaskStockIncrementDetailController extends CmsController {
             resultBean.put("taskId", param.get("taskId"));
             resultBean.put("cartId", param.get("cartId"));
             resultBean.put("cartName", param.get("cartName"));
-            resultBean.put("hasAuthority", true);
+//            resultBean.put("hasAuthority", true);
         }
 
         // 取得属性列表 只有首次取得

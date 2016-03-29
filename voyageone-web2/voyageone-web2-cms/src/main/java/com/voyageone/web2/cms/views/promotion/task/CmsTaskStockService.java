@@ -631,9 +631,11 @@ public class CmsTaskStockService extends BaseAppService {
         Map<String,Object> sqlParam = new HashMap<String,Object>();
         // 库存隔离明细一页表示的Sku的Sql
         sqlParam.put("sql", getStockPageSkuSql(param, "1"));
-        List<Map<String,Object>> stockAllList = cmsBtStockSeparateItemDao.selectStockSeparateItemBySqlMap(sqlParam);
+        List<Map<String,Object>> stockCommonList = cmsBtStockSeparateItemDao.selectStockSeparateItemBySqlMap(sqlParam);
+        // 实时库存状态查询时用
+        param.put("stockCommonList", stockCommonList);
 
-        for (Map<String,Object> stockInfo : stockAllList) {
+        for (Map<String,Object> stockInfo : stockCommonList) {
             String model = (String) stockInfo.get("product_model");
             String code = (String) stockInfo.get("product_code");
             String sku = (String) stockInfo.get("sku");
@@ -746,12 +748,15 @@ public class CmsTaskStockService extends BaseAppService {
         List<Map<String,Object>> platformList = (List<Map<String,Object>>) param.get("platformList");
 
         // 取得一页中的sku基本信息（含逻辑库存）
-        Map<String,Object> sqlParam = new HashMap<String,Object>();
-        // 库存隔离明细一页表示的Sku的Sql
-        sqlParam.put("sql", getStockPageSkuSql(param, "2"));
-        List<Map<String,Object>> stockRealList = cmsBtStockSeparateItemDao.selectStockSeparateItemBySqlMap(sqlParam);
-        if (stockRealList == null || stockRealList.size() == 0) {
-            return realStockList;
+        List<Map<String, Object>> stockRealList = (List<Map<String, Object>> ) param.get("stockCommonList");
+        if (stockRealList == null) {
+            Map<String, Object> sqlParam = new HashMap<String, Object>();
+            // 库存隔离明细一页表示的Sku的Sql
+            sqlParam.put("sql", getStockPageSkuSql(param, "2"));
+            stockRealList = cmsBtStockSeparateItemDao.selectStockSeparateItemBySqlMap(sqlParam);
+            if (stockRealList == null || stockRealList.size() == 0) {
+                return realStockList;
+            }
         }
         // 一页中的sku列表（之后的检索用）
         List<String> skuList = new ArrayList<String>();
@@ -2366,9 +2371,7 @@ public class CmsTaskStockService extends BaseAppService {
             sql += "z" + String.valueOf(index) + ".name as status_name" + String.valueOf(index) + ", ";
             index++;
         }
-        if ("2".equals(flg)) {
-            sql += " (select qty_china from wms_bt_inventory_center_logic t50 where order_channel_id = '" + param.get("channelId") + "' and t50.sku = t1.sku) qty_china,";
-        }
+        sql += " (select qty_china from wms_bt_inventory_center_logic t50 where order_channel_id = '" + param.get("channelId") + "' and t50.sku = t1.sku) qty_china,";
         sql += " t1.qty";
         sql += " from (select * from voyageone_cms2.cms_bt_stock_separate_item" + (String) param.get("tableNameSuffix");
         sql += getWhereSql(param, false);

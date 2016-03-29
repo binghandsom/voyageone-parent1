@@ -352,19 +352,22 @@ public class CmsTaskStockController extends CmsController {
             resultBean.put("platformList", platformList);
             param.put("platformList", platformList);
             if (platformList == null || platformList.size() == 0) {
-                resultBean.put("hasAuthority", false);
+//                resultBean.put("hasAuthority", false);
+                resultBean.put("propertyList", new ArrayList());
+                resultBean.put("stockList", new ArrayList());
+                resultBean.put("realStockList", new ArrayList());
                 return success(resultBean);
             }
 
-            // 任务id/渠道id权限check
-            boolean hasAuthority = cmsTaskStockService.hasAuthority(this.getUser().getSelChannelId(), platformList);
-            resultBean.put("hasAuthority", hasAuthority);
-            if (!hasAuthority) {
-                return success(resultBean);
-            }
+//            // 任务id/渠道id权限check
+//            boolean hasAuthority = cmsTaskStockService.hasAuthority(this.getUser().getSelChannelId(), platformList);
+//            resultBean.put("hasAuthority", hasAuthority);
+//            if (!hasAuthority) {
+//                return success(resultBean);
+//            }
         } else {
             resultBean.put("platformList", param.get("platformList"));
-            resultBean.put("hasAuthority", true);
+//            resultBean.put("hasAuthority", true);
         }
 
         // 取得属性列表 只有首次取得
@@ -479,6 +482,11 @@ public class CmsTaskStockController extends CmsController {
         // 取得库存隔离明细
         List<Map<String, Object>> stockList = cmsTaskStockService.getCommonStockList(param);
         resultBean.put("stockList", stockList);
+        // 0件的场合
+        if (stockList.size() == 0) {
+            resultBean.put("realStockList", new ArrayList());
+            return success(resultBean);
+        }
 
         // 实时库存状态
         List<Map<String, Object>> realStockList = cmsTaskStockService.getRealStockList(param);

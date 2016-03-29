@@ -15,7 +15,7 @@ define([
             this.notify = notify;
             this.confirm = confirm;
             this.taskId = $routeParams['task_id'];
-            this.hasAuthority = true;
+            //this.hasAuthority = true;
             this.readyNum = 0;
             this.waitingSeparateNum = 0;
             this.separatingNum = 0;
@@ -82,13 +82,20 @@ define([
             search: function (status) {
                 var main = this;
                 main.tempStockListSelect = new main.selectRowsFactory();
-                if (status != undefined)  {
-                    main.status = status;
+                if (status == '') {
+                    main.status = '';
                 }
                 if (status >= '0' && status <= '9') {
+                    main.status = status;
                     main.allNumClass = "btn btn-default-vo";
                     //var allNumLabel = document.getElementById('allNum');
                     //allNumLabel.setAttribute("class", "btn btn-default-vo");
+                }
+                var start1 = 0;
+                var start2 = 0;
+                if (status == 'page') {
+                    start1 = (main.stockPageOption.curr - 1) * main.stockPageOption.size;
+                    start2 = (main.realStockPageOption.curr - 1) * main.realStockPageOption.size;
                 }
                 main.taskStockService.searchStock({
                     "taskId" : main.taskId,
@@ -100,16 +107,16 @@ define([
                     "status" : main.status,
                     "propertyList" : main.propertyList,
                     "platformList" : main.platformList,
-                    "start1" :  0,
+                    "start1" :  start1,
+                    "start2" :  start2,
                     "length1" : main.stockPageOption.size,
-                    "start2" :  0,
                     "length2" : main.realStockPageOption.size
                 }).then(function (res) {
-                    main.hasAuthority = res.data.hasAuthority;
-                    if (!main.hasAuthority) {
-                        main.alert('没有权限访问！')
-                        return;
-                    }
+                    //main.hasAuthority = res.data.hasAuthority;
+                    //if (!main.hasAuthority) {
+                    //    main.alert('没有权限访问！')
+                    //    return;
+                    //}
                     main.tempStockListSelect.clearCurrPageRows();
                     main.readyNum = res.data.readyNum;
                     main.waitingSeparateNum = res.data.waitingSeparateNum;
@@ -122,8 +129,10 @@ define([
                     main.revertFailureNum = res.data.revertFailureNum;
                     main.changedNum = res.data.changedNum;
                     main.allNum = res.data.allNum;
-                    main.stockPageOption.total = res.data.skuNum;
-                    main.realStockPageOption.total = res.data.skuNum;
+                    if (!isNaN(res.data.skuNum)) {
+                        main.stockPageOption.total = res.data.skuNum;
+                        main.realStockPageOption.total = res.data.skuNum;
+                    }
                     main.propertyList = res.data.propertyList;
                     main.platformList = res.data.platformList;
                     if (res.data.platformList.length > 0) {
@@ -132,8 +141,10 @@ define([
                     main.stockList = res.data.stockList;
                     main.realStockList = res.data.realStockList;
                     main.realStockStatus = res.data.realStockStatus;
-                    main.stockPageOption.curr = 1;
-                    main.realStockPageOption.curr = 1;
+                    if (status != 'page') {
+                        main.stockPageOption.curr = 1;
+                        main.realStockPageOption.curr = 1;
+                    }
                     _.forEach(res.data.stockList, function(stock) {
                         // 初始化数据选中需要的数组
                         main.tempStockListSelect.currPageRows({"id": stock.sku});
@@ -271,7 +282,7 @@ define([
                         "sku": sku
                     }).then(function (res) {
                         main.notify.success('TXT_MSG_DELETE_SUCCESS');
-                        main.search();
+                        main.search('page');
                     }, function (err) {
                         if (err.displayType == null) {
                             main.alert('TXT_MSG_DELETE_FAIL');
@@ -295,7 +306,7 @@ define([
                         "propertyList" : main.propertyList
                     }).then(function (res) {
                         main.notify.success('TXT_MSG_SEPARATE_SUCCESS');
-                        main.search();
+                        main.search('page');
                     }, function (err) {
                         if (err.displayType == null) {
                             main.alert('TXT_MSG_SEPARATE_FAIL');
@@ -319,7 +330,7 @@ define([
                         "propertyList" : main.propertyList
                     }).then(function (res) {
                         main.notify.success('TXT_MSG_REVERT_SUCCESS');
-                        main.search();
+                        main.search('page');
                     }, function (err) {
                         if (err.displayType == null) {
                             main.alert('TXT_MSG_REVERT_FAIL');

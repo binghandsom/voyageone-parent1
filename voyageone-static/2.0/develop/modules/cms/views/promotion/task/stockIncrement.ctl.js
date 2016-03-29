@@ -32,11 +32,11 @@ define([
                 main.taskStockIncrementService.getPlatFormList({
                     "taskId" : main.taskId
                 }).then(function (res) {
-                    main.hasAuthority = res.data.hasAuthority;
-                    if (!main.hasAuthority) {
-                        main.alert('没有权限访问！')
-                        return;
-                    }
+                    //main.hasAuthority = res.data.hasAuthority;
+                    //if (!main.hasAuthority) {
+                    //    main.alert('没有权限访问！')
+                    //    return;
+                    //}
                     main.platformList = res.data.platformList;
                     main.search();
                 })

@@ -115,35 +115,35 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
         }
     }
 
-    /**
-     * 增量任务/渠道id权限check
-     *
-     * @param taskId 任务id
-     * @param cartId 平台id
-     * @param channelId 渠道id
-     * @param lang 语言
-     * @return 增量任务/渠道id权限check结果（false:没有权限,true:有权限）
-     */
-    public boolean hasAuthority(String taskId, String cartId, String channelId, String lang){
-
-        // 根据任务id/平台id取得渠道信息
-        Map<String,Object> sqlParam = new HashMap<String,Object>();
-        sqlParam.put("taskId", taskId);
-        sqlParam.put("cartId", cartId);
-        sqlParam.put("channelId", channelId);
-        sqlParam.put("lang", lang);
-        List<Map<String, Object>> stockSeparatePlatform = cmsBtStockSeparatePlatformInfoDao.selectStockSeparatePlatform(sqlParam);
-        // 没有渠道数据的情况下，一般情况下不可能
-        if (stockSeparatePlatform == null || stockSeparatePlatform.size() == 0) {
-            return false;
-        }
-        // 增量任务对应的渠道和当前渠道不一致的情况，视为没有权限
-        if (!channelId.equals(stockSeparatePlatform.get(0).get("channel_id"))) {
-            return false;
-        }
-
-        return true;
-    }
+//    /**
+//     * 增量任务/渠道id权限check
+//     *
+//     * @param taskId 任务id
+//     * @param cartId 平台id
+//     * @param channelId 渠道id
+//     * @param lang 语言
+//     * @return 增量任务/渠道id权限check结果（false:没有权限,true:有权限）
+//     */
+//    public boolean hasAuthority(String taskId, String cartId, String channelId, String lang){
+//
+//        // 根据任务id/平台id取得渠道信息
+//        Map<String,Object> sqlParam = new HashMap<String,Object>();
+//        sqlParam.put("taskId", taskId);
+//        sqlParam.put("cartId", cartId);
+//        sqlParam.put("channelId", channelId);
+//        sqlParam.put("lang", lang);
+//        List<Map<String, Object>> stockSeparatePlatform = cmsBtStockSeparatePlatformInfoDao.selectStockSeparatePlatform(sqlParam);
+//        // 没有渠道数据的情况下，一般情况下不可能
+//        if (stockSeparatePlatform == null || stockSeparatePlatform.size() == 0) {
+//            return false;
+//        }
+//        // 增量任务对应的渠道和当前渠道不一致的情况，视为没有权限
+//        if (!channelId.equals(stockSeparatePlatform.get(0).get("channel_id"))) {
+//            return false;
+//        }
+//
+//        return true;
+//    }
 
 
     /**
