@@ -1,7 +1,5 @@
 package com.voyageone.web2.cms.views.search;
 
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBObject;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
@@ -11,7 +9,6 @@ import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.common.util.FileUtils;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
-import com.voyageone.service.dao.MongoNativeDao;
 import com.voyageone.service.dao.cms.CmsMtCommonPropDao;
 import com.voyageone.service.dao.cms.CmsMtCustomWordDao;
 import com.voyageone.service.impl.cms.ChannelCategoryService;
@@ -36,7 +33,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
@@ -60,8 +60,7 @@ public class CmsSearchAdvanceService extends BaseAppService{
     private TagService tagService;
     @Autowired
     private CmsFeedCustPropService cmsFeedCustPropService;
-    @Autowired
-    private MongoNativeDao mongoDao;
+
 
     private final String searchItems = "channelId;prodId;catId;catPath;created;creater;modified;" +
             "modifier;groups.msrpStart;groups.msrpEnd;groups.retailPriceStart;groups.retailPriceEnd;" +
@@ -186,17 +185,8 @@ public class CmsSearchAdvanceService extends BaseAppService{
      * @return
      */
     public List<List<Map<String, String>>> getGroupImageList(List<CmsBtProductModel> groupsList, String channelId, int cartId) {
-        DBObject pal4 = new BasicDBObject();
-        pal4.put("cartId", cartId);
-        pal4.put("isMain", 0);
-        DBObject pal3 = new BasicDBObject();
-        pal3.put("$elemMatch", pal4);
-        DBObject params = new BasicDBObject();
-        params.put("groups.platforms", pal3);
-
-        DBObject excObj = new BasicDBObject();
-        excObj.put("fields.images1", 1);
-        excObj.put("_id", 0);
+        JomgoQuery queryObj = new JomgoQuery();
+        queryObj.setProjection("{'fields.images1':1,'_id':0}");
 
         List<List<Map<String, String>>> rslt = new ArrayList<List<Map<String, String>>>();
         for (CmsBtProductModel groupObj : groupsList) {
@@ -217,8 +207,8 @@ public class CmsSearchAdvanceService extends BaseAppService{
                 continue;
             }
 
-            pal4.put("groupId", grpId);
-            List<DBObject> imgList = mongoDao.find("cms_bt_product_c" + channelId, params, excObj);
+            queryObj.setQuery("{'groups.platforms':{'$elemMatch':{'isMain':0,'cartId':" + cartId + ",'groupId':" + grpId + "}}}");
+            List<CmsBtProductModel> imgList =  productService.getList(channelId, queryObj);
             if (imgList == null || imgList.isEmpty()) {
                 logger.info("当前主商品所在组没有其他商品的图片 groupId=" + grpId);
                 rslt.add(new ArrayList<Map<String, String>>(0));
@@ -226,13 +216,13 @@ public class CmsSearchAdvanceService extends BaseAppService{
             }
 
             List<Map<String, String>> images1Arr = new ArrayList<Map<String, String>>();
-            for (DBObject imgObj : imgList) {
-                DBObject fields = (DBObject) imgObj.get("fields");
+            for (CmsBtProductModel imgObj : imgList) {
+                CmsBtProductModel_Field fields = imgObj.getFields();
                 if (fields != null) {
-                    List imgaes = (List) fields.get("images1");
+                    List<CmsBtProductModel_Field_Image> imgaes = fields.getImages1();
                     if (imgaes != null && imgaes.size() > 0) {
                         Map<String, String> map = new HashMap<String, String>(1);
-                        map.put("value", (String) ((DBObject) imgaes.get(0)).get("image1"));
+                        map.put("value", imgaes.get(0).getName());
                         images1Arr.add(map);
                     }
                 }
@@ -248,30 +238,21 @@ public class CmsSearchAdvanceService extends BaseAppService{
      * @return
      */
     public List[] getGroupExtraInfo(List<CmsBtProductModel> groupsList, String channelId, int cartId, boolean hasImgFlg) {
-        DBObject pal4 = new BasicDBObject();
-        pal4.put("cartId", cartId);
-        pal4.put("isMain", 0);
-        DBObject pal3 = new BasicDBObject();
-        pal3.put("$elemMatch", pal4);
-        DBObject params = new BasicDBObject();
-        params.put("groups.platforms", pal3);
-
         List[] rslt = null;
         List<List<Map<String, String>>> imgList = new ArrayList<List<Map<String, String>>>();
         List<Map<String, Integer>> chgFlgList = new ArrayList<Map<String, Integer>>();
 
-        DBObject excObj = new BasicDBObject();
-        excObj.put("skus.priceChgFlg", 1);
+        JomgoQuery queryObj = new JomgoQuery();
         if (hasImgFlg) {
-            excObj.put("fields.images1", 1);
+            queryObj.setProjection("{'skus.priceChgFlg':1,'fields.images1':1,'_id':0}");
             rslt = new List[2];
             rslt[0] = chgFlgList;
             rslt[1] = imgList;
         } else {
+            queryObj.setProjection("{'fields.images1':1,'_id':0}");
             rslt = new List[1];
             rslt[0] = chgFlgList;
         }
-        excObj.put("_id", 0);
 
         for (CmsBtProductModel groupObj : groupsList) {
             long grpId = 0;
@@ -286,13 +267,13 @@ public class CmsSearchAdvanceService extends BaseAppService{
             }
 
             boolean hasChg = false;
-            List<DBObject> infoList = null;
+            List<CmsBtProductModel> infoList = null;
             if (grpId == 0) {
                 // 当前主商品所在组没有其他商品
                 logger.info("当前主商品所在组没有其他商品 prodId=" + groupObj.getProdId());
             } else {
-                pal4.put("groupId", grpId);
-                infoList = mongoDao.find("cms_bt_product_c" + channelId, params, excObj);
+                queryObj.setQuery("{'groups.platforms':{'$elemMatch':{'isMain':0,'cartId':" + cartId + ",'groupId':" + grpId + "}}}");
+                infoList =  productService.getList(channelId, queryObj);
                 if (infoList == null || infoList.isEmpty()) {
                     logger.info("当前主商品所在组没有其他商品的信息 groupId=" + grpId);
                 }
@@ -323,11 +304,11 @@ public class CmsSearchAdvanceService extends BaseAppService{
             }
 
             List<Map<String, String>> images1Arr = new ArrayList<Map<String, String>>();
-            for (DBObject itemObj : infoList) {
-                List skus = (List) itemObj.get("skus");
+            for (CmsBtProductModel itemObj : infoList) {
+                List<CmsBtProductModel_Sku> skus = itemObj.getSkus();
                 if (skus != null) {
-                    for (Object skuObj : skus) {
-                        String chgFlg = org.apache.commons.lang3.StringUtils.trimToEmpty((String) ((DBObject) skuObj).get("priceChgFlg"));
+                    for (CmsBtProductModel_Sku skuObj : skus) {
+                        String chgFlg = org.apache.commons.lang3.StringUtils.trimToEmpty((String) (skuObj).get("priceChgFlg"));
                         if (chgFlg.startsWith("U") || chgFlg.startsWith("D") || chgFlg.startsWith("X")) {
                             hasChg = true;
                             break;
@@ -335,18 +316,14 @@ public class CmsSearchAdvanceService extends BaseAppService{
                             hasChg = false;
                         }
                     }
-                    // TODO 这段逻辑是什么意思?
-//                    if (hasChg) {
-//                        break;
-//                    }
                 }
                 if (hasImgFlg) {
-                    DBObject fields = (DBObject) itemObj.get("fields");
+                    CmsBtProductModel_Field fields = itemObj.getFields();
                     if (fields != null) {
-                        List imgaes = (List) fields.get("images1");
+                        List<CmsBtProductModel_Field_Image> imgaes = fields.getImages1();
                         if (imgaes != null && imgaes.size() > 0) {
                             Map<String, String> map = new HashMap<String, String>(1);
-                            map.put("value", (String) ((DBObject) imgaes.get(0)).get("image1"));
+                            map.put("value", imgaes.get(0).getName());
                             images1Arr.add(map);
                         }
                     }
