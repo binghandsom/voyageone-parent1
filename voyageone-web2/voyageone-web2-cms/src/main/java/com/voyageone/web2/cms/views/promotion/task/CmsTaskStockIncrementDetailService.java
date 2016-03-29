@@ -579,9 +579,9 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
             }
 
             // 可调配库存
-            FileUtils.cell(row, colIndex++, cellStyleDataLock).setCellValue(rowData.getQty().toPlainString());
+            FileUtils.cell(row, colIndex++, cellStyleDataLock).setCellValue(Double.valueOf(rowData.getQty().toPlainString()));
             // 平台
-            FileUtils.cell(row, colIndex++, cellStyleData).setCellValue(rowData.getIncrement_qty().toPlainString());
+            FileUtils.cell(row, colIndex++, cellStyleData).setCellValue(Double.valueOf(rowData.getIncrement_qty().toPlainString()));
 
             // 固定值增量
             if (FIXED.equals(rowData.getFix_flg())) {
@@ -644,7 +644,7 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
         if (insertData.size() > 0 || updateData.size() > 0) {
             // 有更新对象
             logger.info("更新开始");
-            saveImportData(insertData, updateData, import_mode, subTaskId, (String) param.get("userName"));
+            saveImportData(insertData, updateData, import_mode, subTaskId, (String) param.get("userName"), (String) param.get("channelId"));
             logger.info(String.format("更新结束,更新了%d件", insertData.size() + updateData.size()));
         } else {
             // 没有更新对象
@@ -927,9 +927,7 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
      * @return 单元格值
      */
     private String getCellValue(Row row, int col) {
-        if (row == null) return null;
-        if (row.getCell(col) == null) return null;
-        return row.getCell(col).getStringCellValue();
+        return cmsTaskStockService.getCellValue(row, col);
     }
 
     /**
@@ -940,8 +938,9 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
      * @param import_mode 导入方式
      * @param subTaskId   任务id
      * @param creater     创建者/更新者
+     * @param channelId   渠道id
      */
-    private void saveImportData(List<StockIncrementExcelBean> insertData, List<StockIncrementExcelBean> updateData, String import_mode, String subTaskId, String creater) {
+    private void saveImportData(List<StockIncrementExcelBean> insertData, List<StockIncrementExcelBean> updateData, String import_mode, String subTaskId, String creater, String channelId) {
         try {
             transactionRunner.runWithTran(() -> {
                 if (EXCEL_IMPORT_DELETE_UPDATE.equals(import_mode)) {
@@ -949,13 +948,13 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
                     // 此任务所有数据删除
                     cmsBtStockSeparateIncrementItemDao.deleteStockSeparateIncrementItem(new HashMap<String, Object>(){{this.put("subTaskId",subTaskId);}});
                     // 插入数据
-                    insertImportData(insertData, subTaskId, creater);
+                    insertImportData(insertData, subTaskId, creater, channelId);
                 } else {
                     // 变更方式
                     // 更新数据
                     updateImportData(updateData, subTaskId, creater);
                     // 插入数据
-                    insertImportData(insertData, subTaskId, creater);
+                    insertImportData(insertData, subTaskId, creater, channelId);
                 }
             });
         } catch (Exception e) {
@@ -967,11 +966,12 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
     /**
      * 导入文件数据插入更新
      *
-     * @param insertData  insert对象
-     * @param subTaskId   任务id
-     * @param creater     创建者/更新者
+     * @param insertData insert对象
+     * @param subTaskId  任务id
+     * @param creater    创建者/更新者
+     * @param channelId  渠道id
      */
-    private void insertImportData(List<StockIncrementExcelBean> insertData, String subTaskId, String creater) {
+    private void insertImportData(List<StockIncrementExcelBean> insertData, String subTaskId, String creater, String channelId) {
         List<Map<String, Object>> listSaveData = new ArrayList<Map<String, Object>>();
         for (StockIncrementExcelBean bean : insertData) {
             Map<String, Object> mapSaveData;
@@ -983,6 +983,7 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
 
             mapSaveData.put("sub_task_id", subTaskId);
             mapSaveData.put("creater", creater);
+            mapSaveData.put("channelId", channelId);
 
             listSaveData.add(mapSaveData);
             if (listSaveData.size() == 200) {
