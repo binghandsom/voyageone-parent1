@@ -4,6 +4,7 @@
     <select id="select_stock_separate_item" resultType="HashMap" parameterType="HashMap">
         select
             task_id,
+            channel_id,
             product_model,
             product_code,
             sku,
