@@ -82,13 +82,20 @@ define([
             search: function (status) {
                 var main = this;
                 main.tempStockListSelect = new main.selectRowsFactory();
-                if (status != undefined)  {
-                    main.status = status;
+                if (status == '') {
+                    main.status = '';
                 }
                 if (status >= '0' && status <= '9') {
+                    main.status = status;
                     main.allNumClass = "btn btn-default-vo";
                     //var allNumLabel = document.getElementById('allNum');
                     //allNumLabel.setAttribute("class", "btn btn-default-vo");
+                }
+                var start1 = 0;
+                var start2 = 0;
+                if (status == 'page') {
+                    start1 = (main.stockPageOption.curr - 1) * main.stockPageOption.size;
+                    start2 = (main.realStockPageOption.curr - 1) * main.realStockPageOption.size;
                 }
                 main.taskStockService.searchStock({
                     "taskId" : main.taskId,
@@ -100,9 +107,9 @@ define([
                     "status" : main.status,
                     "propertyList" : main.propertyList,
                     "platformList" : main.platformList,
-                    "start1" :  0,
+                    "start1" :  start1,
+                    "start2" :  start2,
                     "length1" : main.stockPageOption.size,
-                    "start2" :  0,
                     "length2" : main.realStockPageOption.size
                 }).then(function (res) {
                     //main.hasAuthority = res.data.hasAuthority;
@@ -134,8 +141,10 @@ define([
                     main.stockList = res.data.stockList;
                     main.realStockList = res.data.realStockList;
                     main.realStockStatus = res.data.realStockStatus;
-                    main.stockPageOption.curr = 1;
-                    main.realStockPageOption.curr = 1;
+                    if (status != 'page') {
+                        main.stockPageOption.curr = 1;
+                        main.realStockPageOption.curr = 1;
+                    }
                     _.forEach(res.data.stockList, function(stock) {
                         // 初始化数据选中需要的数组
                         main.tempStockListSelect.currPageRows({"id": stock.sku});
@@ -273,7 +282,7 @@ define([
                         "sku": sku
                     }).then(function (res) {
                         main.notify.success('TXT_MSG_DELETE_SUCCESS');
-                        main.search();
+                        main.search('page');
                     }, function (err) {
                         if (err.displayType == null) {
                             main.alert('TXT_MSG_DELETE_FAIL');
@@ -297,7 +306,7 @@ define([
                         "propertyList" : main.propertyList
                     }).then(function (res) {
                         main.notify.success('TXT_MSG_SEPARATE_SUCCESS');
-                        main.search();
+                        main.search('page');
                     }, function (err) {
                         if (err.displayType == null) {
                             main.alert('TXT_MSG_SEPARATE_FAIL');
@@ -321,7 +330,7 @@ define([
                         "propertyList" : main.propertyList
                     }).then(function (res) {
                         main.notify.success('TXT_MSG_REVERT_SUCCESS');
-                        main.search();
+                        main.search('page');
                     }, function (err) {
                         if (err.displayType == null) {
                             main.alert('TXT_MSG_REVERT_FAIL');

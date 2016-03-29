@@ -482,6 +482,11 @@ public class CmsTaskStockController extends CmsController {
         // 取得库存隔离明细
         List<Map<String, Object>> stockList = cmsTaskStockService.getCommonStockList(param);
         resultBean.put("stockList", stockList);
+        // 0件的场合
+        if (stockList.size() == 0) {
+            resultBean.put("realStockList", new ArrayList());
+            return success(resultBean);
+        }
 
         // 实时库存状态
         List<Map<String, Object>> realStockList = cmsTaskStockService.getRealStockList(param);
