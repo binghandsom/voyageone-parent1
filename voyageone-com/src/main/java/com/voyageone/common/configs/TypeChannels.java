@@ -7,11 +7,9 @@ import com.voyageone.common.configs.dao.ConfigDaoFactory;
 import com.voyageone.common.configs.dao.TypeChannelDao;
 import com.voyageone.common.masterdate.schema.option.Option;
 import com.voyageone.common.redis.CacheHelper;
-import com.voyageone.common.redis.CacheTemplateFactory;
 import com.voyageone.common.util.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.data.redis.core.HashOperations;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
@@ -26,23 +24,20 @@ import java.util.*;
  */
 public class TypeChannels {
 
-    private static final Log logger = LogFactory.getLog(TypeChannels.class);
+    private static final Class selfClass = TypeChannels.class;
+
+    private static final Log logger = LogFactory.getLog(selfClass);
+
 
     /* redis key */
-    private static final String KEY = CacheKeyEnums.ConfigData_TypeChannel.toString();
+    private static final String KEY = CacheKeyEnums.KeyEnum.ConfigData_TypeChannel.toString();
 
-    private static HashOperations<String, String, TypeChannelBean> hashOperations = CacheTemplateFactory.getHashOperation();
-
-    static {
-        if (!CacheTemplateFactory.getCacheTemplate().hasKey(KEY)) {
-            TypeChannelDao channelValueDao= ConfigDaoFactory.getChannelValueDao();
-            Map<String, TypeChannelBean> typeChannelBeanMap = new HashMap<>();
-            channelValueDao.getAll().forEach(bean -> {
-                typeChannelBeanMap.put(buildKey(bean.getType_code(),bean.getChannel_id(),bean.getId()), bean);
-            });
-            CacheHelper.reFreshSSB(KEY,typeChannelBeanMap);
-            logger.info("TypeChannel 读取数量: " + hashOperations.size(KEY));
-        }
+    public static void reload() {
+        TypeChannelDao channelValueDao= ConfigDaoFactory.getChannelValueDao();
+        Map<String, TypeChannelBean> typeChannelBeanMap = new HashMap<>();
+        channelValueDao.getAll().forEach(bean ->typeChannelBeanMap.put(buildKey(bean.getType_code(),bean.getChannel_id(),bean.getId()), bean));
+        CacheHelper.reFreshSSB(KEY,typeChannelBeanMap);
+        logger.info("TypeChannel 读取数量: " + CacheHelper.getSize(KEY));
     }
     /**
      * build redis hash Key
@@ -50,17 +45,17 @@ public class TypeChannels {
      * @return key
      */
     private static String buildKey(String type_code, String channle_id, int real_id) {
-        return type_code + CacheHelper.SKIP + channle_id + CacheHelper.SKIP + real_id;
+        return type_code + CacheKeyEnums.SKIP + channle_id + CacheKeyEnums.SKIP + real_id;
     }
 
     private static List<TypeChannelBean> getTypeChannelBeans(String type, String channel_id) {
-        Set<String> keySet=hashOperations.keys(KEY);
+        Set<String> keySet = CacheHelper.getKeySet(KEY, selfClass);
         List<String> keyList=new ArrayList<>();
         keySet.forEach(k->{
-            if(k.startsWith(type + CacheHelper.SKIP + channel_id + CacheHelper.SKIP)) keyList.add(k);
+            if(k.startsWith(type + CacheKeyEnums.SKIP + channel_id + CacheKeyEnums.SKIP)) keyList.add(k);
         });
         Collections.sort(keyList);
-        return CollectionUtils.isEmpty(keyList)?null:hashOperations.multiGet(KEY,keyList);
+        return CollectionUtils.isEmpty(keyList)?null: CacheHelper.getBeans(KEY,keyList, selfClass);
     }
 
     /**
@@ -161,11 +156,7 @@ public class TypeChannels {
     }
 
     /**
-     * @param type
-     * @param channel_id
-     * @param value
-     * @param lang_id
-     * @return
+     * getTypeChannelByCode
      */
     public static TypeChannelBean getTypeChannelByCode(String type, String channel_id, String value, String... lang_id) {
 
@@ -199,7 +190,7 @@ public class TypeChannels {
      */
     public static List<TypeChannelBean> getTypeListSkuCarts(String channel_id, String strDAO, String language) {
         String type = Constants.comMtTypeChannel.SKU_CARTS_53;
-        int charIndex = 0;
+        int charIndex;
         switch (strDAO) {
             case Constants.comMtTypeChannel.SKU_CARTS_53_D: {
                 charIndex = 0;

@@ -5,10 +5,8 @@ import com.voyageone.common.configs.beans.CmsChannelConfigBean;
 import com.voyageone.common.configs.dao.CmsChannelConfigDao;
 import com.voyageone.common.configs.dao.ConfigDaoFactory;
 import com.voyageone.common.redis.CacheHelper;
-import com.voyageone.common.redis.CacheTemplateFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.data.redis.core.HashOperations;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
@@ -23,29 +21,25 @@ import java.util.*;
  */
 public class CmsChannelConfigs {
 
-    private static final Log logger = LogFactory.getLog(CmsChannelConfigs.class);
+    private static final Class selfClass = CmsChannelConfigs.class;
+
+    private static final Log logger = LogFactory.getLog(selfClass);
 
     /* redis key */
-    private static final String KEY = CacheKeyEnums.ConfigData_CmsChannelConfigs.toString();
+    private static final String KEY = CacheKeyEnums.KeyEnum.ConfigData_CmsChannelConfigs.toString();
 
-    private static HashOperations<String, String, CmsChannelConfigBean> hashOperations = CacheTemplateFactory.getHashOperation();
-
-    static {
-        if (!CacheTemplateFactory.getCacheTemplate().hasKey(KEY)) {
-            CmsChannelConfigDao cmsChannelConfigDao = ConfigDaoFactory.getCmsChannelConfigDao();
-            Map<String, CmsChannelConfigBean> cmsChannelConfigBeanMap = new HashMap<>();
-            cmsChannelConfigDao.selectALl()
-                    .forEach(bean -> {
-                                cmsChannelConfigBeanMap
-                                        .put(
-                                                buildKey(bean.getChannelId(), bean.getConfigKey(), bean.getConfigCode()),
-                                                bean
-                                        );
-                            }
-                    );
-            CacheHelper.reFreshSSB(KEY, cmsChannelConfigBeanMap);
-            logger.info("cmsChannelConfig 读取数量: " + hashOperations.size(KEY));
-        }
+    public static void reload() {
+        CmsChannelConfigDao cmsChannelConfigDao = ConfigDaoFactory.getCmsChannelConfigDao();
+        Map<String, CmsChannelConfigBean> cmsChannelConfigBeanMap = new HashMap<>();
+        cmsChannelConfigDao.selectALl()
+                .forEach(bean ->
+                            cmsChannelConfigBeanMap.put(
+                                buildKey(bean.getChannelId(), bean.getConfigKey(), bean.getConfigCode()),
+                                bean
+                            )
+                );
+        CacheHelper.reFreshSSB(KEY, cmsChannelConfigBeanMap);
+        logger.info("cmsChannelConfig 读取数量: " + CacheHelper.getSize(KEY));
     }
 
     /**
@@ -54,7 +48,7 @@ public class CmsChannelConfigs {
      * @return key
      */
     private static String buildKey(String channelId, String configKey, String configCode) {
-        return channelId + CacheHelper.SKIP + configKey + CacheHelper.SKIP + configCode;
+        return channelId + CacheKeyEnums.SKIP + configKey + CacheKeyEnums.SKIP + configCode;
     }
 
     /**
@@ -66,7 +60,7 @@ public class CmsChannelConfigs {
      * @return CmsChannelConfigBean
      */
     public static CmsChannelConfigBean getConfigBean(String channelId, String configKey, String configCode) {
-        return hashOperations.get(KEY, buildKey(channelId, configKey, configCode));
+        return CacheHelper.getBean(KEY, buildKey(channelId, configKey, configCode), selfClass);
     }
 
     /**
@@ -77,13 +71,13 @@ public class CmsChannelConfigs {
      * @return List<CmsChannelConfigBean>
      */
     public static List<CmsChannelConfigBean> getConfigBeans(String channelId, String configKey) {
-        Set<String> keyset = hashOperations.keys(KEY);
+        Set<String> keyset = CacheHelper.getKeySet(KEY, selfClass);
         if (CollectionUtils.isEmpty(keyset)) return null;
         List<String> keyList = new ArrayList<>();
         keyset.forEach(k -> {
             if (k.startsWith(buildKey(channelId, configKey, ""))) keyList.add(k);
         });
         Collections.sort(keyList);
-        return hashOperations.multiGet(KEY, keyList);
+        return CacheHelper.getBeans(KEY, keyList, selfClass);
     }
 }

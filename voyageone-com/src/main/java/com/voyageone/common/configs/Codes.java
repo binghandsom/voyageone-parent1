@@ -5,10 +5,8 @@ import com.voyageone.common.configs.beans.CodeBean;
 import com.voyageone.common.configs.dao.CodeDao;
 import com.voyageone.common.configs.dao.ConfigDaoFactory;
 import com.voyageone.common.redis.CacheHelper;
-import com.voyageone.common.redis.CacheTemplateFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.data.redis.core.HashOperations;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
@@ -22,27 +20,24 @@ import java.util.*;
  */
 public class Codes {
 
-    private static final Log logger = LogFactory.getLog(Codes.class);
+    private static final Class selfClass = Codes.class;
+
+    private static final Log logger = LogFactory.getLog(selfClass);
 
     /* redis key */
-    private static final String KEY = CacheKeyEnums.ConfigData_Codes.toString();
+    private static final String KEY = CacheKeyEnums.KeyEnum.ConfigData_Codes.toString();
 
-    private static HashOperations<String, String, CodeBean> hashOperations = CacheTemplateFactory.getHashOperation();
-
-    static {
-        if (!CacheTemplateFactory.getCacheTemplate().hasKey(KEY)) {
-            CodeDao codeDao = ConfigDaoFactory.getCodeDao();
-            Map<String, CodeBean> codeBeansMap = new HashMap<>();
-            codeDao.getAll().forEach(bean -> {
-                        codeBeansMap.put(
-                                buildKey(bean.getId(), bean.getCode()),
-                                bean
-                        );
-                    }
-            );
-            CacheHelper.reFreshSSB(KEY, codeBeansMap);
-            logger.info("codes 读取数量: " + hashOperations.size(KEY));
-        }
+    public static void reload() {
+        CodeDao codeDao = ConfigDaoFactory.getCodeDao();
+        Map<String, CodeBean> codeBeansMap = new HashMap<>();
+        codeDao.getAll().forEach(bean ->
+                    codeBeansMap.put(
+                        buildKey(bean.getId(), bean.getCode()),
+                        bean
+                    )
+        );
+        CacheHelper.reFreshSSB(KEY, codeBeansMap);
+        logger.info("codes 读取数量: " + CacheHelper.getSize(KEY));
     }
 
     /**
@@ -52,7 +47,7 @@ public class Codes {
      * @return key
      */
     private static String buildKey(String id, String code) {
-        return id + CacheHelper.SKIP + code;
+        return id + CacheKeyEnums.SKIP + code;
     }
 
     /**
@@ -74,7 +69,7 @@ public class Codes {
      * @return codeName
      */
     public static String getCodeName(String id, String code) {
-        CodeBean bean = hashOperations.get(KEY, buildKey(id, code));
+        CodeBean bean = CacheHelper.getBean(KEY, buildKey(id, code), selfClass);
         return (bean == null) ? null : bean.getName();
     }
 
@@ -96,7 +91,7 @@ public class Codes {
      * @return codeName1
      */
     public static String getCodeName1(String id, String code) {
-        CodeBean bean = hashOperations.get(KEY, buildKey(id, code));
+        CodeBean bean = CacheHelper.getBean(KEY, buildKey(id, code), selfClass);
         return (bean == null) ? null : bean.getName1();
     }
 
@@ -116,9 +111,10 @@ public class Codes {
         Map<String, String> ret = new LinkedHashMap<>();
 
         List<CodeBean> codeList = getCodeList(id);
-
-        for (CodeBean bean : codeList) {
-            ret.put(String.valueOf(bean.getCode()), bean.getName());
+        if (codeList != null) {
+            for (CodeBean bean : codeList) {
+                ret.put(String.valueOf(bean.getCode()), bean.getName());
+            }
         }
 
         return ret;
@@ -129,40 +125,43 @@ public class Codes {
      *
      * @param id         Code 的 id 字段
      * @param defaultAll 是否有All选项
-     * @return List<Map<String, String>>
+     * @return List
      */
     public static List<Map<String, String>> getCodeMapList(String id, boolean defaultAll) {
 
-        List<Map<String, String>> ret = new ArrayList<Map<String, String>>();
+        List<Map<String, String>> ret = new ArrayList<>();
 
         List<CodeBean> typeList = getCodeList(id);
 
         //加入All选项
         if (defaultAll) {
-            Map<String, String> mapAll = new HashMap<String, String>();
+            Map<String, String> mapAll = new HashMap<>();
             mapAll.put("id", null);
             mapAll.put("name", "ALL");
             ret.add(mapAll);
         }
 
-        for (CodeBean bean : typeList) {
-            Map<String, String> tempMap = new HashMap<String, String>();
-            tempMap.put("id", String.valueOf(bean.getCode()));
-            tempMap.put("name", bean.getName());
-            ret.add(tempMap);
+        if (typeList != null) {
+            for (CodeBean bean : typeList) {
+                Map<String, String> tempMap = new HashMap<>();
+                tempMap.put("id", String.valueOf(bean.getCode()));
+                tempMap.put("name", bean.getName());
+                ret.add(tempMap);
+            }
         }
+
         return ret;
     }
 
     public static List<CodeBean> getCodeList(String id) {
-        Set<String> keySet = hashOperations.keys(KEY);
+        Set<String> keySet = CacheHelper.getKeySet(KEY, selfClass);
         if (CollectionUtils.isEmpty(keySet)) return null;
         List<String> keyList = new ArrayList<>();
         keySet.forEach(k -> {
             if (k.startsWith(buildKey(id, ""))) keyList.add(k);
         });
         Collections.sort(keyList);
-        return hashOperations.multiGet(KEY, keyList);
+        return CacheHelper.getBeans(KEY, keyList, selfClass);
     }
 
     /**
@@ -174,8 +173,10 @@ public class Codes {
      */
     public static String getCode(String id, String name) {
         List<CodeBean> beans = getCodeList(id);
-        for (CodeBean bean : beans)
-            if (bean.getName().equals(name)) return bean.getCode();
+        if (beans != null) {
+            for (CodeBean bean : beans)
+                if (bean.getName().equals(name)) return bean.getCode();
+        }
         return null;
     }
 }

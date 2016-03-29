@@ -7,10 +7,8 @@ import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.common.configs.dao.ConfigDaoFactory;
 import com.voyageone.common.configs.dao.TypeDao;
 import com.voyageone.common.redis.CacheHelper;
-import com.voyageone.common.redis.CacheTemplateFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.data.redis.core.HashOperations;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
@@ -24,23 +22,22 @@ import java.util.stream.Collectors;
  */
 public class Types {
 
-    private static final Log logger = LogFactory.getLog(Types.class);
+    private static final Class selfClass = Types.class;
+
+    private static final Log logger = LogFactory.getLog(selfClass);
+
 
     /* redis key */
-    private static final String KEY = CacheKeyEnums.ConfigData_Type.toString();
+    private static final String KEY = CacheKeyEnums.KeyEnum.ConfigData_Type.toString();
 
-    private static HashOperations<String, String, TypeBean> hashOperations = CacheTemplateFactory.getHashOperation();
-
-    static {
-        if (!CacheTemplateFactory.getCacheTemplate().hasKey(KEY)) {
-            Map<String, TypeBean> typeBeansMap = new HashMap<>();
-            TypeDao typeDao = ConfigDaoFactory.getTypeDao();
-            typeDao.getAll().forEach(bean -> {
-                typeBeansMap.put(buildKey(bean.getType_id(), bean.getLang_id(), bean.getValue()), bean);
-            });
-            CacheHelper.reFreshSSB(KEY, typeBeansMap);
-            logger.info("Type 读取数量: " + hashOperations.size(KEY));
-        }
+    public static void reload() {
+        Map<String, TypeBean> typeBeansMap = new HashMap<>();
+        TypeDao typeDao = ConfigDaoFactory.getTypeDao();
+        typeDao.getAll().forEach(bean -> {
+            typeBeansMap.put(buildKey(bean.getType_id(), bean.getLang_id(), bean.getValue()), bean);
+        });
+        CacheHelper.reFreshSSB(KEY, typeBeansMap);
+        logger.info("Type 读取数量: " + CacheHelper.getSize(KEY));
     }
 
     /**
@@ -49,7 +46,7 @@ public class Types {
      * @return key
      */
     private static String buildKey(int type_id, String lang_id, String value) {
-        return type_id + CacheHelper.SKIP + lang_id + CacheHelper.SKIP + value;
+        return type_id + CacheKeyEnums.SKIP + lang_id + CacheKeyEnums.SKIP + value;
     }
 
     /**
@@ -61,7 +58,7 @@ public class Types {
      * @return name
      */
     public static String getTypeName(int typeId, String langId, String value) {
-        TypeBean typeBean = hashOperations.get(KEY, buildKey(typeId, langId, value));
+        TypeBean typeBean = CacheHelper.getBean(KEY, buildKey(typeId, langId, value), selfClass);
         return typeBean == null ? null : typeBean.getName();
     }
 
@@ -73,14 +70,14 @@ public class Types {
      * @return TypeBean
      */
     public static TypeBean getTypeBean(int typeId, String langId) {
-        Set<String> keySet = hashOperations.keys(KEY);
+        Set<String> keySet = CacheHelper.getKeySet(KEY, selfClass);
         if (CollectionUtils.isEmpty(keySet)) return null;
         List<String> keyList = new ArrayList<>();
         keySet.forEach(k -> {
             if (k.startsWith(buildKey(typeId, langId, ""))) keyList.add(k);
         });
         Collections.sort(keyList);
-        List<TypeBean> beans = hashOperations.multiGet(KEY, keyList);
+        List<TypeBean> beans = CacheHelper.getBeans(KEY, keyList, selfClass);
         return CollectionUtils.isEmpty(beans) ? null : beans.get(0);
     }
 
@@ -92,26 +89,25 @@ public class Types {
      * @return TypeBean
      */
     public static TypeBean getTypeBean(String typeName, String langId) {
-        for (TypeBean typeBean : hashOperations.values(KEY)) {
+        List<TypeBean> beans = CacheHelper.getAllBeans(KEY, selfClass);
+        for (TypeBean typeBean : beans) {
             if (typeBean.getType_code().equals(typeName) && typeBean.getLang_id().equals(langId)) return typeBean;
         }
         return null;
     }
 
     public static Map<String, String> getTypeMap(int typeId, String langId) {
-        Set<String> keySet = hashOperations.keys(KEY);
+        Set<String> keySet = CacheHelper.getKeySet(KEY, selfClass);
         if (CollectionUtils.isEmpty(keySet)) return null;
         List<String> keyList = new ArrayList<>();
         keySet.forEach(k -> {
             if (k.startsWith(buildKey(typeId, langId, ""))) keyList.add(k);
         });
         Collections.sort(keyList);
-        List<TypeBean> beans = hashOperations.multiGet(KEY, keyList);
+        List<TypeBean> beans = CacheHelper.getBeans(KEY, keyList, selfClass);
         if (CollectionUtils.isEmpty(beans)) return null;
         Map<String, String> result = new LinkedHashMap<>();
-        beans.forEach(bean -> {
-            result.put(String.valueOf(bean.getValue()), bean.getName());
-        });
+        beans.forEach(bean -> result.put(String.valueOf(bean.getValue()), bean.getName()));
         return result;
     }
 
@@ -132,14 +128,14 @@ public class Types {
             mapAll.put("name", "ALL");
             ret.add(mapAll);
         }
-        Set<String> keySet = hashOperations.keys(KEY);
+        Set<String> keySet = CacheHelper.getKeySet(KEY, selfClass);
         if (CollectionUtils.isEmpty(keySet)) return ret;
         List<String> keyList = new ArrayList<>();
         keySet.forEach(k -> {
             if (k.startsWith(buildKey(typeId, langId, ""))) keyList.add(k);
         });
         Collections.sort(keyList);
-        List<TypeBean> typeList = hashOperations.multiGet(KEY, keyList);
+        List<TypeBean> typeList = CacheHelper.getBeans(KEY, keyList, selfClass);
         typeList.forEach(bean ->
             ret.add(new HashMap<String, String>() {{
                         put("id", String.valueOf(bean.getValue()));
@@ -167,14 +163,14 @@ public class Types {
             masterInfoAll.setName("All");
             ret.add(masterInfoAll);
         }
-        Set<String> keySet = hashOperations.keys(KEY);
+        Set<String> keySet = CacheHelper.getKeySet(KEY, selfClass);
         if (CollectionUtils.isEmpty(keySet)) return ret;
         List<String> keyList = new ArrayList<>();
         keySet.forEach(k -> {
             if (k.startsWith(buildKey(typeId, langId, ""))) keyList.add(k);
         });
         Collections.sort(keyList);
-        List<TypeBean> typeList = hashOperations.multiGet(KEY, keyList);
+        List<TypeBean> typeList = CacheHelper.getBeans(KEY, keyList, selfClass);
         typeList.forEach(bean ->
             ret.add(new MasterInfoBean() {{
                 setType(typeId);
@@ -186,19 +182,19 @@ public class Types {
     }
 
     public static List<TypeBean> getTypeList(int typeId, String langId) {
-        Set<String> keySet = hashOperations.keys(KEY);
+        Set<String> keySet = CacheHelper.getKeySet(KEY, selfClass);
         if (CollectionUtils.isEmpty(keySet)) return null;
         List<String> keyList = new ArrayList<>();
         keySet.forEach(k -> {
             if (k.startsWith(buildKey(typeId, langId, ""))) keyList.add(k);
         });
         Collections.sort(keyList);
-        return CollectionUtils.isEmpty(keyList) ? null : hashOperations.multiGet(KEY, keyList);
+        return CollectionUtils.isEmpty(keyList) ? null : CacheHelper.getBeans(KEY, keyList, selfClass);
     }
 
     public static List<TypeBean> getTypeList(String typeName, String langId) {
-        List<TypeBean> beans = hashOperations
-                .values(KEY)
+        List<TypeBean> allBeans = CacheHelper.getAllBeans(KEY, selfClass);
+        List<TypeBean> beans = allBeans
                 .stream()
                 .filter(b -> b.getType_code().equals(typeName) && b.getLang_id().equals(langId))
                 .collect(Collectors.toList());
@@ -351,14 +347,14 @@ public class Types {
 
     public static List<TypeBean> getTypeListById(int typeId) {
         List<TypeBean> beans = new ArrayList<>();
-        Set<String> keySet = hashOperations.keys(KEY);
+        Set<String> keySet = CacheHelper.getKeySet(KEY, selfClass);
         if (CollectionUtils.isEmpty(keySet)) return beans;
         List<String> keyList = new ArrayList<>();
         keySet.forEach(k -> {
-            if (k.startsWith(typeId + CacheHelper.SKIP)) keyList.add(k);
+            if (k.startsWith(typeId + CacheKeyEnums.SKIP)) keyList.add(k);
         });
         Collections.sort(keyList);
-        beans = hashOperations.multiGet(KEY, keyList);
+        beans = CacheHelper.getBeans(KEY, keyList, selfClass);
         return beans == null ? new ArrayList<>() : beans;
     }
 }

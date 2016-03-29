@@ -6,10 +6,8 @@ import com.voyageone.common.configs.beans.OrderChannelConfigBean;
 import com.voyageone.common.configs.dao.ConfigDaoFactory;
 import com.voyageone.common.configs.dao.OrderChannelConfigDao;
 import com.voyageone.common.redis.CacheHelper;
-import com.voyageone.common.redis.CacheTemplateFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.data.redis.core.HashOperations;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
@@ -21,29 +19,25 @@ import java.util.*;
  */
 public class ChannelConfigs {
 
-    private static final Logger logger = LoggerFactory.getLogger(ChannelConfigs.class);
+    private static final Class selfClass = ChannelConfigs.class;
+
+    private static final Log logger = LogFactory.getLog(selfClass);
 
     /* redis key */
-    private static final String KEY = CacheKeyEnums.ConfigData_OrderChannelConfigConfigs.toString();
+    private static final String KEY = CacheKeyEnums.KeyEnum.ConfigData_OrderChannelConfigConfigs.toString();
 
-    private static HashOperations<String, String, OrderChannelConfigBean> hashOperations = CacheTemplateFactory.getHashOperation();
-
-    static {
-        if (!CacheTemplateFactory.getCacheTemplate().hasKey(KEY)) {
-            OrderChannelConfigDao orderChannelConfigDao = ConfigDaoFactory.getOrderChannelConfigDao();
-            Map<String, OrderChannelConfigBean> orderChannelConfigBeanMap = new HashMap<>();
-            orderChannelConfigDao.getAll().forEach(
-                    bean -> {
-                        orderChannelConfigBeanMap.
-                                put(
-                                        buildKey(bean.getOrder_channel_id(), bean.getCfg_name(), bean.getCfg_val1()),
-                                        bean
-                                );
-                    }
-            );
-            CacheHelper.reFreshSSB(KEY, orderChannelConfigBeanMap);
-            logger.info("orderChannelConfig 读取数量: " + hashOperations.size(KEY));
-        }
+    public static void reload() {
+        OrderChannelConfigDao orderChannelConfigDao = ConfigDaoFactory.getOrderChannelConfigDao();
+        Map<String, OrderChannelConfigBean> orderChannelConfigBeanMap = new HashMap<>();
+        orderChannelConfigDao.getAll().forEach(
+                bean ->
+                    orderChannelConfigBeanMap.put(
+                        buildKey(bean.getOrder_channel_id(), bean.getCfg_name(), bean.getCfg_val1()),
+                        bean
+                    )
+        );
+        CacheHelper.reFreshSSB(KEY, orderChannelConfigBeanMap);
+        logger.info("orderChannelConfig 读取数量: " + CacheHelper.getSize(KEY));
     }
 
     /**
@@ -52,7 +46,7 @@ public class ChannelConfigs {
      * @return key
      */
     private static String buildKey(String id, String name, String cfgVal1) {
-        return id + CacheHelper.SKIP + name + CacheHelper.SKIP + cfgVal1;
+        return id + CacheKeyEnums.SKIP + name + CacheKeyEnums.SKIP + cfgVal1;
     }
 
     /**
@@ -67,7 +61,7 @@ public class ChannelConfigs {
         if (CollectionUtils.isEmpty(beans)) {
             logger.warn("未获取到beans");
             return "";
-        };
+        }
         return beans.get(0).getCfg_val1();
     }
 
@@ -80,7 +74,7 @@ public class ChannelConfigs {
      * @return String
      */
     public static String getVal2(String id, ChannelConfigEnums.Name name, String val1) {
-        OrderChannelConfigBean bean = hashOperations.get(KEY, buildKey(id, name.toString(), val1));
+        OrderChannelConfigBean bean = CacheHelper.getBean(KEY, buildKey(id, name.toString(), val1), selfClass);
         return (bean == null) ? "" : bean.getCfg_val2();
     }
 
@@ -92,7 +86,7 @@ public class ChannelConfigs {
      * @return List<OrderChannelConfig>
      */
     public static List<OrderChannelConfigBean> getConfigs(String id, ChannelConfigEnums.Name name) {
-        Set<String> keySet = hashOperations.keys(KEY);
+        Set<String> keySet = CacheHelper.getKeySet(KEY, selfClass);
         if (CollectionUtils.isEmpty(keySet)) return null;
 
         List<String> keyList = new ArrayList<>();
@@ -100,6 +94,6 @@ public class ChannelConfigs {
             if (k.startsWith(buildKey(id, name.toString(), ""))) keyList.add(k);
         });
         Collections.sort(keyList);
-        return hashOperations.multiGet(KEY, keyList);
+        return CacheHelper.getBeans(KEY, keyList, selfClass);
     }
 }

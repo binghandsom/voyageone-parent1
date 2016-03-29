@@ -6,10 +6,8 @@ import com.voyageone.common.configs.beans.StoreConfigBean;
 import com.voyageone.common.configs.dao.ConfigDaoFactory;
 import com.voyageone.common.configs.dao.StoreConfigDao;
 import com.voyageone.common.redis.CacheHelper;
-import com.voyageone.common.redis.CacheTemplateFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.data.redis.core.HashOperations;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
@@ -20,28 +18,25 @@ import java.util.*;
  * @since 2.0.0
  */
 public class StoreConfigs {
-    private static final Log logger = LogFactory.getLog(StoreConfigs.class);
+    private static final Class selfClass = StoreConfigs.class;
+
+    private static final Log logger = LogFactory.getLog(selfClass);
 
     /* redis key */
-    private static final String KEY = CacheKeyEnums.ConfigData_StoreConfigConfigs.toString();
+    private static final String KEY = CacheKeyEnums.KeyEnum.ConfigData_StoreConfigConfigs.toString();
 
-    private static HashOperations<String, String, StoreConfigBean> hashOperations = CacheTemplateFactory.getHashOperation();
-
-    static {
-        if (!CacheTemplateFactory.getCacheTemplate().hasKey(KEY)) {
-            StoreConfigDao storeConfigDao = ConfigDaoFactory.getStoreConfigDao();
-            Map<String, StoreConfigBean> storeConfigBeanMap = new HashMap<>();
-            storeConfigDao.getAllConfigs().forEach(
-                    bean -> {
-                        storeConfigBeanMap.put(
-                                buildKey(bean.getStore_id(), bean.getCfg_name(), bean.getCfg_val1()),
-                                bean
-                        );
-                    }
-            );
-            CacheHelper.reFreshSSB(KEY, storeConfigBeanMap);
-            logger.info("storeConfig 读取数量: " + hashOperations.size(KEY));
-        }
+    public static void reload() {
+        StoreConfigDao storeConfigDao = ConfigDaoFactory.getStoreConfigDao();
+        Map<String, StoreConfigBean> storeConfigBeanMap = new HashMap<>();
+        storeConfigDao.getAllConfigs().forEach(
+                bean ->
+                    storeConfigBeanMap.put(
+                            buildKey(bean.getStore_id(), bean.getCfg_name(), bean.getCfg_val1()),
+                            bean
+                    )
+        );
+        CacheHelper.reFreshSSB(KEY, storeConfigBeanMap);
+        logger.info("storeConfig 读取数量: " + CacheHelper.getSize(KEY));
     }
 
     /**
@@ -50,7 +45,7 @@ public class StoreConfigs {
      * @return key
      */
     private static String buildKey(long storeId, String name, String val1) {
-        return storeId + CacheHelper.SKIP + name + CacheHelper.SKIP + val1;
+        return storeId + CacheKeyEnums.SKIP + name + CacheKeyEnums.SKIP + val1;
     }
 
     /**
@@ -76,7 +71,7 @@ public class StoreConfigs {
      * @return String
      */
     public static String getVal2(long id, StoreConfigEnums.Name name, String val1) {
-        StoreConfigBean bean = hashOperations.get(KEY, buildKey(id, name.toString(), val1));
+        StoreConfigBean bean = CacheHelper.getBean(KEY, buildKey(id, name.toString(), val1), selfClass);
         return bean == null ? null : bean.getCfg_val2();
     }
 
@@ -88,14 +83,14 @@ public class StoreConfigs {
      * @return List<StoreConfig>
      */
     public static List<StoreConfigBean> getConfigs(long id, StoreConfigEnums.Name name) {
-        Set<String> keySet=hashOperations.keys(KEY);
+        Set<String> keySet = CacheHelper.getKeySet(KEY, selfClass);
         if(CollectionUtils.isEmpty(keySet)) return null;
         List<String> keyList=new ArrayList<>();
         keySet.forEach(k->{
             if(k.startsWith(buildKey(id,name.toString(),""))) keyList.add(k);
         });
         Collections.sort(keyList);
-        return hashOperations.multiGet(KEY,keyList);
+        return CacheHelper.getBeans(KEY, keyList, selfClass);
     }
 
 }

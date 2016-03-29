@@ -6,10 +6,8 @@ import com.voyageone.common.configs.beans.CartBean;
 import com.voyageone.common.configs.dao.ConfigDaoFactory;
 import com.voyageone.common.configs.dao.ShopDao;
 import com.voyageone.common.redis.CacheHelper;
-import com.voyageone.common.redis.CacheTemplateFactory;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.data.redis.core.HashOperations;
 import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
@@ -24,23 +22,19 @@ import java.util.stream.Collectors;
  * @since 2.0.0
  */
 public class Carts {
-    private static final Log logger = LogFactory.getLog(Carts.class);
+    private static final Class selfClass = Carts.class;
+
+    private static final Log logger = LogFactory.getLog(selfClass);
 
     /* redis key */
-    private static final String KEY = CacheKeyEnums.ConfigData_CartConfigs.toString();
+    private static final String KEY = CacheKeyEnums.KeyEnum.ConfigData_CartConfigs.toString();
 
-    private static HashOperations<String, String, CartBean> hashOperations = CacheTemplateFactory.getHashOperation();
-
-    static {
-        if (!CacheTemplateFactory.getCacheTemplate().hasKey(KEY)) {
-            ShopDao shopDao = ConfigDaoFactory.getShopDao();
-            Map<String, CartBean> cartBeanMap = new HashMap<>();
-            shopDao.getAllCart().forEach(bean -> {
-                cartBeanMap.put(buildKey(bean.getCart_id()), bean);
-            });
-            CacheHelper.reFreshSSB(KEY, cartBeanMap);
-            logger.info("Cart 读取数量: " + hashOperations.size(KEY));
-        }
+    public static void reload() {
+        ShopDao shopDao = ConfigDaoFactory.getShopDao();
+        Map<String, CartBean> cartBeanMap = new HashMap<>();
+        shopDao.getAllCart().forEach(bean ->cartBeanMap.put(buildKey(bean.getCart_id()), bean));
+        CacheHelper.reFreshSSB(KEY, cartBeanMap);
+        logger.info("Cart 读取数量: " + CacheHelper.getSize(KEY));
     }
 
     /**
@@ -58,7 +52,7 @@ public class Carts {
      * @return CartBean
      */
     public static CartBean getCart(String cart_id) {
-        return hashOperations.get(KEY, buildKey(cart_id));
+        return CacheHelper.getBean(KEY, buildKey(cart_id), selfClass);
     }
 
     public static CartBean getCart(int cart_id) {
@@ -83,9 +77,9 @@ public class Carts {
      * @return List<CartBean>
      */
     public static List<CartBean> getAllCartList() {
-        List<CartBean> beans=hashOperations.values(KEY);
+        List<CartBean> beans= CacheHelper.getAllBeans(KEY, selfClass);
         return CollectionUtils.isEmpty(beans)
-                ?new ArrayList<CartBean>()
+                ?new ArrayList<>()
                 :beans.stream().sorted((a,b)->a.getCart_id().compareTo(b.getCart_id()))
                 .collect(Collectors.toList());
     }
