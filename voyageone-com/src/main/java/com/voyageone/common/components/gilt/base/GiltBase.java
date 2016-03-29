@@ -53,10 +53,10 @@ public abstract class GiltBase {
 
         StringBuilder parm_url = new StringBuilder();
         //拼接URL
-        for (String key : params.keySet()) {
-            if(!StringUtils.isEmpty(params.get(key))){
-                parm_url.append("&"  + key + "=");
-                parm_url.append(params.get(key));
+        for (Map.Entry<String, String> entry : params.entrySet()) {
+            if(!StringUtils.isEmpty(entry.getValue())){
+                parm_url.append("&").append(entry.getKey()).append("=");
+                parm_url.append(params.get(entry.getValue()));
             }
         }
         if (parm_url.length() != 0){
@@ -116,10 +116,10 @@ public abstract class GiltBase {
             throw new IllegalArgumentException("authorization Key不能为空");
 
         String result=null;
-        if(reqType.equals("put")){
-             result = HttpUtils.put(post_url.toString(), jsonString,app_key);
+        if("put".equals(reqType)){
+             result = HttpUtils.put(post_url.toString(), jsonString, app_key);
           //  System.out.println(result);
-        }else if(reqType.equals("patch")){
+        }else if("patch".equals(reqType)){
              result = HttpUtils.patch(post_url.toString(), jsonString,app_key);
         }
 

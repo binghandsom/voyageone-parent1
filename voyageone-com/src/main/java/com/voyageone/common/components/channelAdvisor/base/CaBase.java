@@ -31,11 +31,10 @@ public class CaBase {
 
     /**
      * 超时的话，自动重调
-     * @param postUrl
-     * @param postAction
-     * @param postData
-     * @return
-     * @throws Exception
+     * @param postUrl String
+     * @param postAction String
+     * @param postData String
+     * @return String
      */
     protected String reqCaApiOnTimeoutRepert(String postUrl, String postAction, String postData) throws Exception {
 
@@ -58,8 +57,6 @@ public class CaBase {
      * @param orderNumber 订单号
      * @param strXML 交互XML
      * @param type 类型（0：post 1:ret）
-     * @return
-     * @throws Exception
      */
     protected void backupTheXmlFile(String orderNumber, String strXML, int type) throws IOException {
 
@@ -71,7 +68,7 @@ public class CaBase {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddhhmmssSSS");
         java.util.Date date = new java.util.Date();
         String fileName = orderNumber + "_" + sdf.format(date);
-        FileWriter fs = null;
+        FileWriter fs;
 
         if (type == 0) {
             fs = new FileWriter(strFolder + File.separator + "post_onestop_" + fileName + ".xml");

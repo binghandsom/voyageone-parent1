@@ -170,8 +170,7 @@ public class FileWriteUtils {
                 if(this.initialized) {
                     this.outputStream.close();
                 }
-            } catch (Exception var3) {
-                ;
+            } catch (Exception ignored) {
             }
 
             this.outputStream = null;
@@ -189,9 +188,4 @@ public class FileWriteUtils {
     protected void finalize() {
         this.close(false);
     }
-
-//    public static void main(String[] args) {
-//        String a = getFormattedString("1.0","S,15.2");
-//        System.out.println("a = " + a);
-//    }
 }

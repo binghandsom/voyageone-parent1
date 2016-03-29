@@ -127,7 +127,7 @@ public class HttpUtils {
         InputStream input = null;//输入流
         InputStreamReader isr = null;
         BufferedReader buffer = null;
-        StringBuilder sb = null;
+        StringBuilder sb;
         String line;
 
         try {
@@ -182,7 +182,7 @@ public class HttpUtils {
         InputStream input = null;//输入流
         InputStreamReader isr = null;
         BufferedReader buffer = null;
-        StringBuilder sb = null;
+        StringBuilder sb;
         String line;
 
         try {
@@ -587,7 +587,7 @@ public class HttpUtils {
 
     public static SSLSocketFactory getSsf(String clientTrustCerFile, String clientTrustCerPwd, String clientKeyPwd)  {
 
-        SSLSocketFactory ssf = null;
+        SSLSocketFactory ssf;
 
         try {
             // 实例化 SSL 上下文  arg1:protocol arg2:provider

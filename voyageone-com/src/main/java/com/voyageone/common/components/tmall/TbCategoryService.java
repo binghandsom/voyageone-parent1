@@ -22,12 +22,10 @@ public class TbCategoryService extends TbBase {
 
     /**
      * 获得授权类目和品牌
-     * @param shop
-     * @return
      */
     public SellerAuthorize getSellerCategoriesAuthorize(ShopBean shop) throws ApiException {
 
-        int intApiErrorCount = 0;
+//        int intApiErrorCount = 0;
 
         // 设置 返回字段
         StringBuilder sbField = getRequestFields();
@@ -113,14 +111,11 @@ public class TbCategoryService extends TbBase {
 
     /**
      * 获取天猫产品属性
-     * @param shop
-     * @param cid
-     * @return
      */
     public String getTbProductAddSchema(ShopBean shop,Long cid) throws ApiException{
 
 
-        ItemcatsAuthorizeGetResponse ret = null;
+//        ItemcatsAuthorizeGetResponse ret = null;
         //获取淘宝API连接
 //        TaobaoClient client = getDefaultTaobaoClient(shop,"xml");
 
@@ -153,9 +148,6 @@ public class TbCategoryService extends TbBase {
 
     /**
      * tmall.item.add.schema.get 天猫发布商品规则获取
-     * @param shop
-     * @param cid
-     * @return
      */
     public ItemSchema getTbItemAddSchema(ShopBean shop,Long cid, Long productId) throws ApiException{
 
@@ -207,12 +199,10 @@ public class TbCategoryService extends TbBase {
 
     /**
      * tmall.brandcat.control.get 获取品牌类目的控制信息
-     * @param shop
-     * @return
      */
     public BrandCatControlInfo getTbBrandCat(ShopBean shop) throws ApiException{
 
-        int intApiErrorCount = 0;
+//        int intApiErrorCount = 0;
 
         //获取淘宝API连接
 //        TaobaoClient client = getDefaultTaobaoClient(shop);

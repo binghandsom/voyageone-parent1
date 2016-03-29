@@ -25,12 +25,10 @@ public class FtpUtil {
     /**
      * Description: 向FTP服务器上传文件
      *
-     * @Version1.0
      * @param ftpBean           FtpBean
-     * @return FTPClient        FTPClient
      * @return 成功返回true，否则返回false
      */
-    public  boolean uploadFile(FtpBean ftpBean,FTPClient ftpClient) throws IOException {
+    public boolean uploadFile(FtpBean ftpBean,FTPClient ftpClient) throws IOException {
         logger.info(ftpBean.getUpload_filename() + "  Ftp 上传文件开始");
         logger.info("hostname=" + ftpBean.getUrl() + "  port=" + ftpBean.getPort());
         logger.info("  uploadPath=" + ftpBean.getUpload_path());
@@ -39,7 +37,7 @@ public class FtpUtil {
         boolean result = false;
 
 //        try {
-        int reply;
+        //int reply;
         // 转移工作目录至指定目录下
         boolean change = ftpClient.changeWorkingDirectory(ftpBean.getUpload_path());
         // 设置PassiveMode传输
@@ -84,7 +82,6 @@ public class FtpUtil {
     /**
      * Description: 连接FTP服务器
      *
-     * @Version1.0
      * @param ftpBean           FtpBean
      * @return FTPClient        FTPClient
      */
@@ -132,12 +129,9 @@ public class FtpUtil {
     /**
      * Description: 断开FTP服务器
      *
-     * @Version1.0
      * @param ftpClient         FTPClient
-     * @return result            false: 断开出错
-     *                            true : 断开成功
      */
-    public void  disconnectFtp(FTPClient ftpClient) throws IOException {
+    public void disconnectFtp(FTPClient ftpClient) throws IOException {
         logger.info("Ftp 断开开始");
         if (ftpClient.isConnected()) {
             //ftpClient.logout();
@@ -146,13 +140,11 @@ public class FtpUtil {
             logger.info("Ftp 断开成功");
         }
         logger.info("Ftp 断开结束");
-
     }
 
     /**
      * Description: 从FTP服务器下载文件
      *
-     * @Version1.0
      * @param ftpBean           FtpBean
      * @return result            0: 执行出错
      *                            1: 没有找到指定文件
@@ -167,7 +159,7 @@ public class FtpUtil {
         logger.info("  fileName=" + ftpBean.getDown_filename());
         logger.info("  getFile_coding=" + ftpBean.getFile_coding());
 
-        int result = 0;
+        int result;
         //定位FTP目录夹
         ftpClient = changeFolder(ftpBean,ftpClient);
         // 获取文件列表
@@ -203,7 +195,6 @@ public class FtpUtil {
     /**
      * Description: 从FTP服务器下载同一目录夹下多个文件
      *
-     * @Version1.0
      * @param ftpBean           FtpBean
      * @return result            0: 执行出错
      *                            1: 没有找到指定文件

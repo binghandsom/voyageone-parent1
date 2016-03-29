@@ -557,8 +557,8 @@ public final class DateTimeUtil {
     
     /**
      * 计算两个日期的小时差
-     * @param one
-     * @param two
+     * @param one Date
+     * @param two Date
      * @return 两个日期相差的小时数
      */
 	public static long diffHours(Date one, Date two){
@@ -1157,7 +1157,7 @@ public final class DateTimeUtil {
      * 取得本地时间与天数相加后对应的GMT时间(开始)
      *
      * @param timezone like +8 / -7
-     * @param days
+     * @param days int
      * @return String
      */
     public static String getGMTTimeFrom(int timezone,int days) {
@@ -1180,7 +1180,7 @@ public final class DateTimeUtil {
      * 取得本地时间与天数相加后对应的GMT时间(结束)
      *
      * @param timezone like +8 / -7
-     * @param days
+     * @param days int
      * @return String
      */
     public static String getGMTTimeTo(int timezone,int days) {
@@ -1201,7 +1201,7 @@ public final class DateTimeUtil {
     
 	/***
 	 * 取得指定天数之前的日期
-	 * @param intDays
+	 * @param intDays int
 	 * @return 返回的日期
 	 */
 	public static String getDateBeforeDays(int intDays) {
@@ -1228,7 +1228,7 @@ public final class DateTimeUtil {
      * 
      * flag 0:天数   1:小时   2:分钟   3:秒 
      * 
-     * @return
+     * @return long
      */
 	public static long getInterVal(String startDateTime, String endDateTime, int flag) throws ParseException{
 		long intervale = 0;
@@ -1246,23 +1246,19 @@ public final class DateTimeUtil {
 		
 		// 天数
 		if (flag == 0) {
-			long day = between / (24 * 3600);
-			intervale = day;
+            intervale = between / (24 * 3600);
 			
 		// 小时
 		} else if (flag == 1) {
-			long hour = between / 3600;
-			intervale = hour;
+            intervale = between / 3600;
 			
 		// 分钟
 		} else if (flag == 2) {
-			long minute = between / 60;
-			intervale = minute;
+            intervale = between / 60;
 			
 		// 秒
 		} else if (flag == 3) {
-			long second = between;
-			intervale = second;
+            intervale = between;
 		}
 		
 		return intervale;
@@ -1274,9 +1270,8 @@ public final class DateTimeUtil {
      */
     public static String changeDefautlDateTimeToUSFormat(String orderDateTime) {
         Date a = DateTimeUtil.parse(orderDateTime, DateTimeUtil.DEFAULT_DATETIME_FORMAT);
-        String ret = DateTimeUtil.format(a, DateTimeUtil.US_DATE_FORMAT);
 
-        return ret;
+        return DateTimeUtil.format(a, DateTimeUtil.US_DATE_FORMAT);
     }
 
     /**
@@ -1285,9 +1280,8 @@ public final class DateTimeUtil {
      */
     public static String changeDefautlDateTimeToENFormat(String orderDateTime) {
         Date a = DateTimeUtil.parse(orderDateTime, DateTimeUtil.DEFAULT_DATETIME_FORMAT);
-        String  ret = DateTimeUtil.format(a, DateTimeUtil.EN_DATE_FORMAT);
 
-        return ret;
+        return DateTimeUtil.format(a, DateTimeUtil.EN_DATE_FORMAT);
     }
 
     /**
@@ -1302,8 +1296,8 @@ public final class DateTimeUtil {
     /**
      * UNIXTIME转换成yyyy-MM-dd HH:mm:ss格式
      * 
-     * @param unixTime
-     * @return
+     * @param unixTime String
+     * @return String
      */
     public static String getDateTimeFromUnixTime(String unixTime) {
     	long unixTimeL = 0;
@@ -1313,17 +1307,16 @@ public final class DateTimeUtil {
 		unixTimeL = unixTimeL * 1000;
 		
 		SimpleDateFormat sf = new SimpleDateFormat(DEFAULT_DATETIME_FORMAT);
-		String dateTime = sf.format(new Date(unixTimeL));
-		
-		return dateTime;
+
+        return sf.format(new Date(unixTimeL));
 	}
     
     /**
      * 根据Date型dateTime获得pattern格式的字符串日期
      * 
-     * @param dateTime
-     * @param pattern
-     * @return
+     * @param dateTime Date
+     * @param pattern String
+     * @return String
      */
     public static String getDateTime(Date dateTime, String pattern) {
 		if (StringUtils.isNullOrBlank2(pattern)) {
@@ -1335,7 +1328,7 @@ public final class DateTimeUtil {
 	}
 
     /**
-     * @description 将时间字符串转化成XMLGregorianCalendar
+     * 将时间字符串转化成XMLGregorianCalendar
      * @param dateTimeStr 时间字符串
      * @return XMLGregorianCalendar
      */
@@ -1352,7 +1345,7 @@ public final class DateTimeUtil {
     }
 
     /**
-     * @description 将XMLGregorianCalendar转化成时间字符串
+     * 将XMLGregorianCalendar转化成时间字符串
      * @param cal XMLGregorianCalendar
      * @return 时间字符串 yyyy-MM-dd HH:mm:ss
      */

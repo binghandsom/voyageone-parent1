@@ -121,7 +121,7 @@ public class Types {
      * @param typeId     Type 的 type_id 字段
      * @param defaultAll 是否有All选项
      * @param langId     TypeBean 的 lang_Id 字段
-     * @return List<Map<String,String>>
+     * @return List
      */
     public static List<Map<String, String>> getTypeMapList(int typeId, boolean defaultAll, String langId) {
         List<Map<String, String>> ret = new ArrayList<>();
@@ -140,14 +140,13 @@ public class Types {
         });
         Collections.sort(keyList);
         List<TypeBean> typeList = hashOperations.multiGet(KEY, keyList);
-        typeList.forEach(bean -> {
-            ret.add(
-                    new HashMap<String, String>() {{
+        typeList.forEach(bean ->
+            ret.add(new HashMap<String, String>() {{
                         put("id", String.valueOf(bean.getValue()));
                         put("name", bean.getName());
                     }}
-            );
-        });
+            )
+        );
         return ret;
     }
 
@@ -176,13 +175,13 @@ public class Types {
         });
         Collections.sort(keyList);
         List<TypeBean> typeList = hashOperations.multiGet(KEY, keyList);
-        typeList.forEach(bean -> {
+        typeList.forEach(bean ->
             ret.add(new MasterInfoBean() {{
                 setType(typeId);
                 setId(String.valueOf(bean.getValue()));
                 setName(String.valueOf(bean.getName()));
-            }});
-        });
+            }})
+        );
         return ret;
     }
 
@@ -264,9 +263,7 @@ public class Types {
         Map<String, String> ret = new LinkedHashMap<>();
         List<TypeBean> typeList = getTypeList(typeId);
         if (CollectionUtils.isEmpty(typeList)) return ret;
-        typeList.forEach(bean -> {
-            ret.put(String.valueOf(bean.getValue()), bean.getName());
-        });
+        typeList.forEach(bean -> ret.put(String.valueOf(bean.getValue()), bean.getName()));
         return ret;
     }
 
@@ -275,7 +272,7 @@ public class Types {
      *
      * @param typeId     Type 的 type_id 字段
      * @param defaultAll 是否有All选项
-     * @return List<Map<String,String>>
+     * @return List
      */
     public static List<Map<String, String>> getTypeMapList(int typeId, boolean defaultAll) {
         List<Map<String, String>> ret = new ArrayList<>();
