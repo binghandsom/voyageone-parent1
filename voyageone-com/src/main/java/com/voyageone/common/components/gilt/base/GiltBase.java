@@ -30,7 +30,7 @@ public abstract class GiltBase {
 
     protected final Log logger = LogFactory.getLog(getClass());
 
-    public static final int C_MAX_API_ERROR = 3;
+//    public static final int C_MAX_API_ERROR = 3;
 
     public static final int TRY_WAIT_TIME = 5000;
 
@@ -45,29 +45,25 @@ public abstract class GiltBase {
         String api_url_root = ThirdPartyConfigs.getVal1(ChannelConfigEnums.Channel.GILT.getId(), "api_url");
         String app_key = ThirdPartyConfigs.getVal1(ChannelConfigEnums.Channel.GILT.getId(), "app_key");
 
-        StringBuilder post_url = new StringBuilder();
         String call_url = api_url_root + api_url;
-        post_url.append(call_url);
 
-        if (StringUtils.isNullOrBlank2(app_key))
-        throw new IllegalArgumentException("authorization Key不能为空");
-
-        //临时map
-        Map<String, String> tempParm=params;
+        if (StringUtils.isNullOrBlank2(app_key)) {
+            throw new IllegalArgumentException("authorization Key不能为空");
+        }
 
         StringBuilder parm_url = new StringBuilder();
         //拼接URL
-        for (String key : tempParm.keySet()) {
-            if(!StringUtils.isEmpty(tempParm.get(key))){
+        for (String key : params.keySet()) {
+            if(!StringUtils.isEmpty(params.get(key))){
                 parm_url.append("&"  + key + "=");
-                parm_url.append(tempParm.get(key));
+                parm_url.append(params.get(key));
             }
         }
         if (parm_url.length() != 0){
             parm_url.delete(0,1);
         }
 
-        String result = HttpUtils.get(post_url.toString(), parm_url.toString(),app_key);
+        String result = HttpUtils.get(call_url, parm_url.toString(), app_key);
 
         /* 如果包含message  表示错误*/
         if(StringUtils.isNullOrBlank2(result)||result.contains("message")){
@@ -128,10 +124,10 @@ public abstract class GiltBase {
         }
 
         /* 如果包含message  表示错误*/
-        if(StringUtils.isNullOrBlank2(result)||result.contains("message")){
+        if(StringUtils.isNullOrBlank2(result) || result.contains("message")){
             //转换错误信息
             List<GiltErrorResult> res = JacksonUtil.jsonToBeanList(result, GiltErrorResult.class);
-            if (res.size()>0){
+            if (!res.isEmpty()){
                 throw new GiltException(result);
             }
         }
@@ -156,8 +152,7 @@ public abstract class GiltBase {
                 else{
                     try {
                         Thread.sleep(TRY_WAIT_TIME);
-                    } catch (InterruptedException ignore) {
-
+                    } catch (Exception ignore) {
                     }
                 }
             }

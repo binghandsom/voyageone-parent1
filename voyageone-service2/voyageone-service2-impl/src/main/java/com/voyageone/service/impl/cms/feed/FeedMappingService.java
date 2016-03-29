@@ -62,7 +62,11 @@ public class FeedMappingService {
         return treeModel != null && !StringUtils.isEmpty(treeModel.get_id());
     }
 
-    public List<CmsBtFeedMappingModel> getMappingWithoutProps(String feedCategoryPath, String selChannelId) {
-        return feedMappingDao.findMappingWithoutProps(feedCategoryPath, selChannelId);
+    public CmsBtFeedMappingModel getMappingWithoutProps(ObjectId mappingId) {
+        return feedMappingDao.findOneWithoutProps(mappingId);
+    }
+
+    public List<CmsBtFeedMappingModel> getMappingsWithoutProps(String feedCategoryPath, String selChannelId) {
+        return feedMappingDao.findMappingsWithoutProps(feedCategoryPath, selChannelId);
     }
 }

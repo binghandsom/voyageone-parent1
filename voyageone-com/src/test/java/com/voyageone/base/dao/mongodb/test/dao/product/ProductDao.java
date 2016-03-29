@@ -132,7 +132,7 @@ public class ProductDao {
         }
 
         String collectionName = null;
-        if (lst.size()>0) {
+        if (!lst.isEmpty()) {
             Product product =  lst.get(0);
             collectionName = product.getCollectionName();
         }

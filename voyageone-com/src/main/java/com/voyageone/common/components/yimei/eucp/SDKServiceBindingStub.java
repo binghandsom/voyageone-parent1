@@ -964,7 +964,7 @@ public class SDKServiceBindingStub extends org.apache.axis.client.Stub implement
     	System.out.println("注册:"+regValue);
     	double blance=client.getBalance("2SDK-EMY-6688-JBUQR", "911305");
     	System.out.println("余额:"+blance);
-    	StringBuffer sb=new StringBuffer();
+    	StringBuilder sb = new StringBuilder();
     	for(int i=1;i<10;i++){
     		sb.append(i);
     		String sendValue=	client.sendVoice("2SDK-EMY-6688-JBUQR", "911305", null, new String[]{"13717882257"}, sb.toString(), "", "GBK", 5, System.currentTimeMillis());

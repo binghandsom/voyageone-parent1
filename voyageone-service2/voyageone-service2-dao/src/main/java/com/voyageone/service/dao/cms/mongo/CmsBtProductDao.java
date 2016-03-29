@@ -7,7 +7,6 @@ import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
 import com.voyageone.base.dao.mongodb.model.BulkUpdateModel;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.common.util.MongoUtils;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Field;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Group_Platform;
@@ -109,7 +108,7 @@ public class CmsBtProductDao extends BaseMongoPartDao<CmsBtProductModel> {
      */
     public List<CmsBtProductModel_Sku> selectSKUById(String channelId, long prodId) {
         JomgoQuery queryObject = new JomgoQuery();
-        queryObject.setProjection("skus.skuCode");
+        //queryObject.setProjection("skus.skuCode");
         queryObject.setQuery("{\"prodId\":" + prodId + "}");
         CmsBtProductModel product = selectOneWithQuery(queryObject, channelId);
         if (product != null) {
@@ -123,7 +122,7 @@ public class CmsBtProductDao extends BaseMongoPartDao<CmsBtProductModel> {
      */
     public List<CmsBtProductModel_Sku> selectSKUByCode(String channelId, String productCode) {
         JomgoQuery queryObject = new JomgoQuery();
-        queryObject.setProjection("skus.skuCode");
+        //queryObject.setProjection("skus.skuCode");
         queryObject.setQuery("{\"fields.code\":\"" + productCode + "\"}");
         CmsBtProductModel product = selectOneWithQuery(queryObject, channelId);
         if (product != null) {

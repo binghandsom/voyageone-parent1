@@ -149,9 +149,9 @@ class CmsFeedPropMappingService extends BaseAppService {
     /**
      * 获取类目匹配中已匹配的主类目属性
      */
-    Map<MappingPropType, List<String>> getMatched(SetMappingBean setMappingBean, UserSessionBean userSessionBean) {
+    Map<MappingPropType, List<String>> getMatched(SetMappingBean setMappingBean) {
 
-        CmsBtFeedMappingModel feedMappingModel = feedMappingService.getMapping(userSessionBean.getSelChannel(), setMappingBean.getFrom(), setMappingBean.getTo());
+        CmsBtFeedMappingModel feedMappingModel = feedMappingService.getMapping(new ObjectId(setMappingBean.getMappingId()));
 
         List<Prop> props = feedMappingModel.getProps();
 

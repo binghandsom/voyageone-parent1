@@ -34,7 +34,7 @@ public abstract class BaseCondition {
                 .collect(toList());
 
         // 没有任何参数..
-        if (fields.size() == 0)
+        if (fields.isEmpty())
             return null;
 
         // 当有参数时,检查第一个是否是 json 格式,如果是,则忽略后续所有参数

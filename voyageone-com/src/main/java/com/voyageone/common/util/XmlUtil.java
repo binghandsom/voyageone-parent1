@@ -53,7 +53,7 @@ public class XmlUtil {
         try {
             inputStream.read(bytes);
             return bytes;
-        } catch (Exception e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
         return null;
