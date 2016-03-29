@@ -8,7 +8,7 @@ import java.util.Map;
 /**
  * Created by dell on 2016/3/29.
  */
-public class HtDealCopyDealRequest {
+public class HtDealCopyDealRequest implements JMRequest {
     public String Url = "/v1/htDeal/copyDeal";
 
     public String getUrl() {
@@ -16,29 +16,24 @@ public class HtDealCopyDealRequest {
     }
 
     String jumei_hash_id;
-
-    public void setUrl(String url) {
-        Url = url;
-    }
-
-    public int getStart_time() {
+    public long getStart_time() {
         return start_time;
     }
 
-    public void setStart_time(int start_time) {
+    public void setStart_time(long start_time) {
         this.start_time = start_time;
     }
 
-    public int getEnd_time() {
+    public long getEnd_time() {
         return end_time;
     }
 
-    public void setEnd_time(int end_time) {
+    public void setEnd_time(long end_time) {
         this.end_time = end_time;
     }
 
-    int start_time;//	Number 售卖开始时间    参数范围: 注:
-    int end_time;//Number 售卖结束时间    参数范围: 注:
+    long start_time;//	Number 售卖开始时间    参数范围: 注:
+    long end_time;//Number 售卖结束时间    参数范围: 注:
     HtDealCopyDeal_DealInfo update_data;
 
     public String getJumei_hash_id() {
@@ -60,8 +55,8 @@ public class HtDealCopyDealRequest {
     public Map<String, Object> getParameter() throws IOException {
         Map<String, Object> params = new HashMap<>();
         params.put("jumei_hash_id", jumei_hash_id);
-        params.put("start_time", start_time);
-        params.put("end_time", end_time);
+        params.put("start_time",Long.toString(start_time));
+        params.put("end_time", Long.toString(end_time));
         params.put("update_data", JacksonUtil.bean2JsonNotNull(update_data));
         return params;
     }
