@@ -5,12 +5,11 @@ import com.voyageone.common.components.jumei.Request.HtProductUpdateRequest;
 import com.voyageone.common.components.jumei.Request.HtSpuAddRequest;
 import com.voyageone.common.components.jumei.base.JmBase;
 import com.voyageone.common.configs.beans.ShopBean;
+import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
-/**
- * Created by dell on 2016/3/29.
- */
+@Service
 public class JumeiHtSpuService extends JmBase {
     public HtSpuAddResponse add(ShopBean shopBean, HtSpuAddRequest request) throws Exception {
         Map<String, Object> params = request.getParameter();
@@ -20,5 +19,4 @@ public class JumeiHtSpuService extends JmBase {
         response.setBody(reqResult);
         return response;
     }
-
 }

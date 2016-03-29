@@ -98,7 +98,7 @@ String     verticalImage;// 可选	String
         params.put("size", this.getSize());
         params.put("attribute", this.getAttribute());
         params.put("abroad_price", this.getAbroad_price());
-        params.put("area_code", this.getArea_code());
+        params.put("area_code",Integer.toString(this.getArea_code()));
         params.put("abroad_url", this.getAbroad_url());
         params.put("normalImage", this.getNormalImage());
         params.put("verticalImage", this.getVerticalImage());
