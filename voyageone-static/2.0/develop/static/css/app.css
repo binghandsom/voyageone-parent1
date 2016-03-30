@@ -620,6 +620,7 @@ a.list-group-item.hover {
   border-right: none;
 }
 .table-hover-new>thead>tr>th{
+  width:100%;
   background-color:#e67e22;
   color:#fff;
 }
@@ -1942,6 +1943,8 @@ a.text-vo:focus {
 }
 
 .vo_table th {
+  width:100%;
+  border-collapse:separate;
   word-wrap:normal;
   /*word-wrap:break-word;*/
   vertical-align: middle !important;
@@ -6854,7 +6857,7 @@ a.btn-main:hover {color:#e67e22;text-decoration:underline;}
 /*category*/
 .table_main{
   margin:0px;
-  padding:4px 0px 0px 0px;
+  padding:0px 0px 0px 0px;
   vertical-align: middle;
 }
 .table_main ul{

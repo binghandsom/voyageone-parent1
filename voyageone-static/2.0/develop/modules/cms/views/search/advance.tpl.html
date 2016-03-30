@@ -311,7 +311,7 @@
 						</tr>
 						</thead>
 					</table>
-					<div class="col-sm-12 box-body-new" if-no-rows="vm.groupList.length" style="padding-left:0px">
+					<div class="box-body-new" if-no-rows="vm.groupList.length" style="padding-left:0px">
 						<table class="table-hover vo_table vo_models" ng-if="vm.groupList.length" width="{{vm.tblWidth}}">
 							<tbody ng-repeat="groupInfo in vm.groupList">
 							<tr ng-class="{'table_bg_green_mint': groupInfo.groups.platforms[0].publishTime}" class="table_bg_gray">
@@ -338,8 +338,8 @@
 									<span class="pull-right" style="margin-right:10px">{{'TXT_CATEGORY' | translate}}&nbsp;{{groupInfo.catPath}}</span>
 								</td>
 							</tr>
-							<tr ng-class="{'table_bg_green_mint': groupInfo.groups.platforms[0].publishTime}">
-								<td colspan="3" class="text-left m-t-xs" style="display:inline-block;width:400px;">
+							<tr ng-class="{'table_bg_green_mint': groupInfo.groups.platforms[0].publishTime}" style="">
+								<td colspan="3" class="text-left m-t-sm" style="display:inline-block;width:400px;">
 										<img ng-src="http://image.sneakerhead.com/is/image/sneakerhead/{{groupInfo.fields.images1[0].image1}}" alt="{{groupInfo.fields.code}}" class="thumb-sm-search pull-left m-r"/>
 									<div class="table_main pull-left" style="width:60%">
 										<ul>
@@ -351,22 +351,22 @@
 										</div>
 									</div>
 								</td>
-								<td class="text-center m-t-lg" style="display:inline-block;width:85px; height:97px;"><!--TODO 目前只能返回group的主product,所有拿不到group下面所有的product的库存--><!--popover-html="showInfo({{groupInfo.inventoryDetail}})"-->
+								<td class="text-center" style="display:inline-block;width:85px;"><!--TODO 目前只能返回group的主product,所有拿不到group下面所有的product的库存--><!--popover-html="showInfo({{groupInfo.inventoryDetail}})"-->
 									<!--<button ng-controller="showPopoverCtrl" popover-title="{{'TXT_SKU_INVENTORY' | translate}}" type="button" popover-placement="left"
 											class="btn btn-default btn-xs">{{groupInfo.groups.platforms[0].inventory || 0}}</button>-->
 									{{groupInfo.groups.platforms[0].qty || 0}}
 								</td>
-								<td class="text-center m-t-lg" style="display:inline-block;width:150px; height:97px;">
+								<td class="text-center" style="display:inline-block;width:150px;">
 									<button ng-controller="showPopoverCtrl" popover-html="showInfo({{groupInfo.groups.priceDetail}})"
 											popover-title="{{'TXT_PRICE' | translate}}" type="button" popover-placement="left" class="btn btn-default btn-xs">
 										{{groupInfo.groups.priceSale}}
 									</button><label ng-if="groupInfo.grpProdChgInfo._chgFlg == 1" style="color:red;font-size: 16px;font-weight:bolder">&nbsp;!</label>
 								</td>
-								<td class="text-left m-t-lg" style="display:inline-block;width:150px; height:97px;">{{groupInfo.fields.brand}}</td>
-								<td class="text-left m-t-lg" title="{{prop1.value}}" ng-repeat="prop1 in groupInfo.commArr" style="display:inline-block;width:120px; height:90px; overflow:hidden;">{{prop1.value}}</td>
-								<td class="text-left m-t-lg" title="{{prop2.value}}" ng-repeat="prop2 in groupInfo.custArr" style="display:inline-block;width:120px; height:90px; overflow:hidden;">{{prop2.value}}</td>
+								<td class="text-left" style="display:inline-block;width:150px;">{{groupInfo.fields.brand}}</td>
+								<td class="text-left" title="{{prop1.value}}" ng-repeat="prop1 in groupInfo.commArr" style="display:inline-block;width:120px; height:90px; overflow:hidden;">{{prop1.value}}</td>
+								<td class="text-left" title="{{prop2.value}}" ng-repeat="prop2 in groupInfo.custArr" style="display:inline-block;width:120px; height:90px; overflow:hidden;">{{prop2.value}}</td>
 
-								<td class="text-left m-t-lg" style="display:inline-block;width:150px; height:97px;">
+								<td class="text-left" style="display:inline-block;width:150px;">
 									<small ng-controller="showPopoverCtrl" popover-html="showInfo({{groupInfo.groups.platforms[0].timeDetail}})" popover-trigger="mouseenter" popover-placement="left">
 										<div class="table_main">
 											<ul ng-if="groupInfo.groups.platforms[0].publishTime">
