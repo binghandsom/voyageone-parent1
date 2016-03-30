@@ -141,6 +141,7 @@ public class CmsSearchAdvanceService extends BaseAppService{
 
         if (productList.size() > 0) {
             // 再找出其主商品
+            List<Long> grpIdList = new ArrayList<Long>();
             for (CmsBtProductModel prodObj : productList) {
                 CmsBtProductModel_Group gpList = prodObj.getGroups();
                 long grpId = 0;
@@ -149,31 +150,41 @@ public class CmsSearchAdvanceService extends BaseAppService{
                     if (pltList != null && pltList.size() > 0) {
                         for (CmsBtProductModel_Group_Platform pltObj : pltList) {
                             if (pltObj.getCartId() == (int) cmsSessionBean.getPlatformType().get("cartId")) {
-                                grpId = pltObj.getGroupId();
+                                grpIdList.add(pltObj.getGroupId());
                                 break;
                             }
                         }
                     }
                 }
-                if (grpId != 0) {
-                    JomgoQuery queryObj = new JomgoQuery();
-                    queryObj.setQuery("{'groups.platforms':{'$elemMatch':{'isMain':1,'cartId':" + (int) cmsSessionBean.getPlatformType().get("cartId") + ",'groupId':" + grpId + "}}}");
+            }
+            if (grpIdList.size() > 0) {
+                StringBuilder inStr = new StringBuilder("{'$in':[");
+                for (int i = 0, leng = grpIdList.size(); i < leng; i ++) {
+                    if (i == 0) {
+                        inStr.append(grpIdList.get(i));
+                    } else {
+                        inStr.append(",");
+                        inStr.append(grpIdList.get(i));
+                    }
+                }
+                inStr.append("]}");
 
-                    List<CmsBtProductModel> grpList2 = productService.getList(userInfo.getSelChannelId(), queryObj);
-                    if (grpList2.size() > 0) {
-                        CmsBtProductModel prodModel = grpList2.get(0);
-                        long prodId = prodModel.getProdId();
-                        boolean hasGrp = false;
-                        for (CmsBtProductModel grpObj : grpList) {
-                            if (grpObj.getProdId() == prodId) {
-                                // 已经存在该主商品，则不追加
-                                hasGrp = true;
-                                break;
-                            }
+                JomgoQuery queryObj = new JomgoQuery();
+                queryObj.setQuery("{'groups.platforms':{'$elemMatch':{'isMain':1,'cartId':" + (int) cmsSessionBean.getPlatformType().get("cartId") + ",'groupId':" + inStr.toString() + "}}}");
+
+                List<CmsBtProductModel> grpList2 = productService.getList(userInfo.getSelChannelId(), queryObj);
+                for (CmsBtProductModel prodModel : grpList2) {
+                    long prodId = prodModel.getProdId();
+                    boolean hasGrp = false;
+                    for (CmsBtProductModel grpObj : grpList) {
+                        if (grpObj.getProdId() == prodId) {
+                            // 已经存在该主商品，则不追加
+                            hasGrp = true;
+                            break;
                         }
-                        if (!hasGrp) {
-                            grpList.add(prodModel);
-                        }
+                    }
+                    if (!hasGrp) {
+                        grpList.add(prodModel);
                     }
                 }
             }
