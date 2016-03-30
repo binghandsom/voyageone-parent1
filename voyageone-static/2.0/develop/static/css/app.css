@@ -620,7 +620,6 @@ a.list-group-item.hover {
   border-right: none;
 }
 .table-hover-new>thead>tr>th{
-  width:100%;
   background-color:#e67e22;
   color:#fff;
 }
@@ -1943,8 +1942,6 @@ a.text-vo:focus {
 }
 
 .vo_table th {
-  width:100%;
-  border-collapse:separate;
   word-wrap:normal;
   /*word-wrap:break-word;*/
   vertical-align: middle !important;
