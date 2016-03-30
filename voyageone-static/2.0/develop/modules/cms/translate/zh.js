@@ -143,6 +143,8 @@ define(function(){
         "TXT_PROMOTION_HISTORY": "活动履历",
         "TXT_PROMOTION_NAME": "活动名称",
         "TXT_PROMOTION_TIME": "活动时间",
+        "TXT_PROMOTION_PC_ID":"聚美专场PC端ID",
+        "TXT_PROMOTION_APP_ID":"聚美专场App端ID",
         "TXT_MSRP": "官方售价",
         "TXT_PROMOTION_PRICE": "活动售价",
         "TXT_CODE_OR_SKU": "产品Code / SKU",

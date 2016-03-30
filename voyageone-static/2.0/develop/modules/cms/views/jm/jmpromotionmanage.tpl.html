@@ -88,48 +88,33 @@
 	<div class="box">
 		<div class="box-body">
 			<div class="table-responsive">
-				<table class="table table-hover-new vo_table tableWordBreak" style="margin-bottom:0px" ng-controller="popupCtrl">
+				<table class="table table-hover-new vo_table tableWordBreak" style="margin-bottom:0px" ng-controller="popupCtrl" >
 					<thead>
 					<tr>
-						<th class="mfb-xt text-center">Seq.</th>
-						<th>Status</th>
-						<th>Activity Name</th>
+						<th class="mfb-xt text-center" translate="TXT_SEQ">Seq.</th>
+						<th translate="TXT_PROMOTION_NAME"></th>
+						<th translate="TXT_STATUS"></th>
 						<th class="text-center">涉及品类</th>
 						<th class="text-center">涉及品牌</th>
-						<th>Activity Start Time</th>
-						<th>Activity End Time</th>
-						<th class="text-center">PC端专场ID</th>
-						<th class="text-center">APP端专场ID</th>
+						<th translate="TXT_PROMOTION_TIME"></th>
+						<th translate="TXT_PRE_SALE_TIME"></th>
+
+						<th translate="TXT_PROMOTION_PC_ID" class="text-center"></th>
+						<th translate="TXT_PROMOTION_APP_ID" class="text-center"></th>
 						<th>编辑</th>
 					</tr>
 					</thead>
-					<tbody>
-					<tr>
-						<td class="mfb-xt text-center">1</td>
+					<tbody ng-if="vm.modelList.length">
+					<tr ng-repeat="model in vm.modelList">
+						<td class="mfb-xt text-center">{{model.id}}</td>
+						<td><a href="#/jm/promotion_detail_list" target="_blank">{{model.name}}</a></td>
 						<td><span class="label label-yellow-new">&nbsp;待进行&nbsp;</span></td>
-						<td><a href="#/jm/promotion_detail_list" target="_blank">Girl's Disney's Mickey & Minnie Bracelet in 14K Two-Tone Gold</a></td>
 						<td class="text-center">日用品</td>
 						<td class="text-center">sneakerhead</td>
-						<td>2016.3.11</td>
-						<td>2016.3.15</td>
-						<td class="text-center">69321</td>
-						<td class="text-center">96482</td>
-						<td>
-							<button title="编辑" class="btn btn-success btn-xs" ng-click="openJmPromotionDetail('md')"><i class="fa fa-pencil"></i></button>
-							<button title="删除" class="btn btn-danger btn-xs"><i class="fa  fa-trash-o"></i></button>
-							<button title="下载" class="btn btn-dangerdel btn-xs"><i class="fa fa-download"></i></button>
-						</td>
-					</tr>
-					<tr>
-						<td class="mfb-xt text-center">1</td>
-						<td><span class="label label-success-new">&nbsp;进行中&nbsp;</span></td>
-						<td><a href="#/jm/promotion_detail_list" target="_blank">  Pearl Bracelet in 14K Yellow Gold</a></td>
-						<td class="text-center">家用品</td>
-						<td class="text-center">Nike</td>
-						<td>2016.4.11</td>
-						<td>2016.5.15</td>
-						<td class="text-center">54256</td>
-						<td class="text-center">45693</td>
+						<td class="text-left">{{model.activityStart}}&nbsp;~&nbsp;{{model.activityEnd}}</td>
+						<td class="text-left">{{model.prePeriodStart}}&nbsp;~&nbsp;{{model.prePeriodEnd}}</td>
+						<td class="text-center">{{model.activityPcId}}</td>
+						<td class="text-center">{{model.activityAppId}}</td>
 						<td>
 							<button title="编辑" class="btn btn-success btn-xs" ng-click="openJmPromotionDetail('md')"><i class="fa fa-pencil"></i></button>
 							<button title="删除" class="btn btn-danger btn-xs"><i class="fa  fa-trash-o"></i></button>
@@ -140,8 +125,8 @@
 				</table>
 			</div>
 		</div><!-- /.box-body -->
-		<div class="m-t-xs">
-			<vpagination config="vm.errorPageOption"></vpagination>
-		</div>
+		<!--<div class="m-t-xs">-->
+			<!--<vpagination config="vm.errorPageOption"></vpagination>-->
+		<!--</div>-->
 	</div>
 </div><!-- end .wrapper-md -->

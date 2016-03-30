@@ -115,6 +115,13 @@
         "delPromotionCode":"delPromotionCode"
       }
     },
+    "jmpromotion": {
+      "jmPromotionService" : {
+        "root": "/cms/jmpromotion/index",
+        "init": "init",
+        "getListByWhere": "getListByWhere"
+      }
+    },
     "task": {
       "taskService": {
         "root": "/cms/promotion/task",

@@ -23,7 +23,22 @@ public interface CmsUrlConstants {
         }
 
     }
+    interface JMPROMOTION {
+        interface LIST {
+            interface INDEX {
 
+                String ROOT = "/cms/jmpromotion/index";
+
+                String INIT = "init";
+
+                String GET_LIST_BY_WHERE = "getListByWhere";
+
+                String INSERT_PROMOTION = "insertPromotion";
+
+                String UPDATE_PROMOTION = "updatePromotion";
+            }
+        }
+    }
     // 活动管理
     interface PROMOTION {
         interface LIST {

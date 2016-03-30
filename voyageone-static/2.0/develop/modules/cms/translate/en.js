@@ -143,6 +143,8 @@ define(function() {
         "TXT_PROMOTION_HISTORY": "Promotion History",
         "TXT_PROMOTION_NAME": "Promotion Name",
         "TXT_PROMOTION_TIME": "Promotion Time",
+        "TXT_PROMOTION_PC_ID":"Promotion PCId",
+        "TXT_PROMOTION_APP_ID":"Promotion AppId",
         "TXT_MSRP": "MSRP",
         "TXT_PROMOTION_PRICE": "Promotion Price",
         "TXT_CODE_OR_SKU": "Code / Sku",
