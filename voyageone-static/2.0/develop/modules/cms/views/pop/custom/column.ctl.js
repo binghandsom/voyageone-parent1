@@ -47,8 +47,9 @@ define([
             var params = {};
             params.customProps = customProps;
             params.commonProps = commonProps;
-            $searchAdvanceService.saveCustColumnsInfo(params);
-            $modalInstance.close('');
+            $searchAdvanceService.saveCustColumnsInfo(params).then(function() {
+                $modalInstance.close('');
+            });
         };
 
         $scope.close = function () {
