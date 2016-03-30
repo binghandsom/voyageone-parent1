@@ -25,6 +25,12 @@ public class CmsBtFeedCustomPropDao extends ServiceBaseDao {
         return selectList("cms_bt_feed_custom_prop_selectAllAttr", params);
     }
 
+    // 根据类目路径查询已翻译的属性信息
+    // 只查询feed_prop_original和feed_prop_translation
+    public List<Map<String, Object>> selectAttrs(Map<String, Object> params) {
+        return selectList("cms_bt_feed_custom_prop_selectAttrByTrans", params);
+    }
+
     // 根据类目路径查询自定义已翻译属性信息(不包含共通属性)
     public List<Map<String, Object>> selectTransProp(Map<String, Object> params) {
         return selectList("cms_bt_feed_custom_prop_selectWithCat2", params);
