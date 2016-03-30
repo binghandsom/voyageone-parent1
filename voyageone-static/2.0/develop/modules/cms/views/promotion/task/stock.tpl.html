@@ -92,7 +92,7 @@
 				<div class="table-responsive">
 					<div class="col-sm-12" ng-show="$ctrl.stockList.length > 0">
 						<div class="pull-right form-inline btn-group" ng-controller="popupCtrl" >
-							<button class="btn btn-dangers" ng-click="openImportStock('md',{'task_id':$ctrl.taskId,'platformList':$ctrl.platformList,'propertyList':$ctrl.propertyList,'parent_id':'1'})"><i class="fa fa-reply-all"></i>&nbsp;{{'BTN_IMPORT_ALL' | translate}}</button>
+							<button class="btn btn-dangers" ng-click="$ctrl.openImport(openImportStock)"><i class="fa fa-reply-all"></i>&nbsp;{{'BTN_IMPORT_ALL' | translate}}</button>
 							<button class="btn btn-danger" ng-click="$ctrl.download()"><i class="glyphicon glyphicon-share-alt"></i>&nbsp;{{'BTN_EXPORT_ALL' | translate}}</button>
 							<button class="btn btn-primary" ng-click="$ctrl.executeStockSeparation()"><i class="glyphicon glyphicon-play"></i>&nbsp;{{'BTN_START_REFRESH_ALL' | translate}}</button>
 							<button class="btn btn-primarys"  ng-click="$ctrl.executeStockRevert()"><i class="glyphicon glyphicon-share-alt"></i>&nbsp;{{'BTN_REVERT_ALL' | translate}}</button>

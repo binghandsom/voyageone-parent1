@@ -339,6 +339,17 @@ define([
                 })
             },
 
+            openImport: function (openImportStock) {
+                var main = this;
+                openImportStock('md', {
+                    'task_id': main.taskId,
+                    'platformList': main.platformList,
+                    'propertyList': main.propertyList,
+                    'parent_id': '1',
+                    'parentCtl' : this
+                })
+            },
+
             download: function () {
                 var main = this;
                 //main.blockUI.start();

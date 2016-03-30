@@ -2250,7 +2250,13 @@ public class CmsTaskStockService extends BaseAppService {
                     mapSaveData.put("channelId", channelId);
                     for(String cartId : mapSku.keySet()) {
                         mapSaveData.put("cartId", cartId);
-                        mapSaveData.put("skuList", mapSku.get(cartId));
+                        List<String> listSku = mapSku.get(cartId);
+                        int index = 0;
+                        for (; index + 500 < listSku.size(); index = index + 500) {
+                            mapSaveData.put("skuList", mapSku.get(cartId).subList(index, index + 500));
+                            cmsBtStockSalesQuantityDao.updateStockSalesQuantity(mapSaveData);
+                        }
+                        mapSaveData.put("skuList", mapSku.get(cartId).subList(index, listSku.size()));
                         cmsBtStockSalesQuantityDao.updateStockSalesQuantity(mapSaveData);
                     }
                 } else {

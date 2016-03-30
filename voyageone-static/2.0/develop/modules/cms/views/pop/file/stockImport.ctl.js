@@ -13,6 +13,7 @@ define([
             var parent_id = data.parent_id;
             var platformList = JSON.stringify(data.platformList);
             var propertyList = JSON.stringify(data.propertyList);
+            var parentCtl = data.parentCtl;
             var blockUI = blockUI;
 
             var urls;
@@ -58,6 +59,7 @@ define([
                             alert('TXT_MSG_IMPORT_STATUS_ERROR');
                         }
                         $scope.$close();
+                        parentCtl.search();
                     };
                     uploadItem.formData = [{
                         "task_id": task_id,
