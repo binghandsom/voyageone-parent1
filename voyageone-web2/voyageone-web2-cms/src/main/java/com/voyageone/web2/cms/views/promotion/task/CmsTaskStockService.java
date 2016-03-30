@@ -1538,9 +1538,10 @@ public class CmsTaskStockService extends BaseAppService {
         List<StockExcelBean> resultData = cmsBtStockSeparateItemDao.selectExcelStockInfo(param);
 
         $info("准备打开文档 [ %s ]", templatePath);
-
-        try (InputStream inputStream = new FileInputStream(templatePath);
-            SXSSFWorkbook book = new SXSSFWorkbook(new XSSFWorkbook(inputStream))) {
+        InputStream inputStream = inputStream = new FileInputStream(templatePath);
+        SXSSFWorkbook book = new SXSSFWorkbook(new XSSFWorkbook(inputStream));
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        try  {
             // Titel行
             Map<String, Integer> mapCartCol = writeExcelStockInfoHead(book.getXSSFWorkbook(), param);
             // 数据行
@@ -1560,12 +1561,19 @@ public class CmsTaskStockService extends BaseAppService {
             $info("文档写入完成");
 
             // 返回值设定
-            try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
-                book.write(outputStream);
+            book.write(outputStream);
 
-                $info("已写入输出流");
+            $info("已写入输出流");
 
-                return outputStream.toByteArray();
+            return outputStream.toByteArray();
+
+        } finally {
+            book = null;
+            if (inputStream != null) {
+                inputStream.close();
+            }
+            if (outputStream != null) {
+                outputStream.close();
             }
         }
     }
@@ -1757,34 +1765,49 @@ public class CmsTaskStockService extends BaseAppService {
         List<String> listExcelSku = new ArrayList<String>();
 
         Workbook wb;
+        Sheet sheet;
         int[] colPlatform = null;
+        InputStream is = null;
         try {
-            wb = WorkbookFactory.create(file.getInputStream());
+            is = file.getInputStream();
+            wb = WorkbookFactory.create(is);
+
+            sheet = wb.getSheetAt(0);
+            boolean isHeader = true;
+            boolean hasExecutingData = false;
+            for (Row row : sheet) {
+                if (isHeader) {
+                    // 第一行Title行
+                    isHeader = false;
+                    // Title行check
+                    colPlatform = checkHeader(row, paramPropertyList, paramPlatformInfoList);
+                } else {
+                    // 数据行
+                    boolean isExecutingData = checkRecord(row, sheet.getRow(0), import_mode, colPlatform, mapSkuInDB, saveData, listExcelSku);
+                    if (isExecutingData && !hasExecutingData) {
+                        hasExecutingData = true;
+                    }
+                }
+            }
+
+            resultBean.put("hasExecutingData", hasExecutingData);
+
         } catch (IOException | InvalidFormatException e) {
             throw new BusinessException("7000005");
         } catch (Exception e) {
             throw new BusinessException("7000005");
-        }
-
-        Sheet sheet = wb.getSheetAt(0);
-        boolean isHeader = true;
-        boolean hasExecutingData = false;
-        for (Row row : sheet) {
-            if (isHeader) {
-                // 第一行Title行
-                isHeader = false;
-                // Title行check
-                colPlatform = checkHeader(row, paramPropertyList, paramPlatformInfoList);
-            } else {
-                // 数据行
-                boolean isExecutingData = checkRecord(row, sheet.getRow(0), import_mode, colPlatform, mapSkuInDB, saveData, listExcelSku);
-                if (isExecutingData && !hasExecutingData) {
-                    hasExecutingData = true;
+        }finally {
+            wb = null;
+            sheet = null;
+            try {
+                if (is != null) {
+                    is.close();
                 }
+            } catch (IOException ex) {
+                throw new BusinessException("7000005");
             }
-        }
 
-        resultBean.put("hasExecutingData", hasExecutingData);
+        }
 
         return saveData;
     }
@@ -2260,9 +2283,10 @@ public class CmsTaskStockService extends BaseAppService {
         platformList.forEach(platform -> mapPlatform.put((String) platform.get("cartId"), (String) platform.get("cartName")));
 
         $info("准备打开文档 [ %s ]", templatePath);
-
-        try (InputStream inputStream = new FileInputStream(templatePath);
-             SXSSFWorkbook book = new SXSSFWorkbook(new XSSFWorkbook(inputStream))) {
+        InputStream inputStream = new FileInputStream(templatePath);
+        SXSSFWorkbook book = new SXSSFWorkbook(new XSSFWorkbook(inputStream));
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        try  {
             // Titel行
             writeExcelStockErrorInfoHead(book.getXSSFWorkbook());
             // 数据行
@@ -2279,12 +2303,18 @@ public class CmsTaskStockService extends BaseAppService {
             $info("文档写入完成");
 
             // 返回值设定
-            try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
-                book.write(outputStream);
+            book.write(outputStream);
 
-                $info("已写入输出流");
+            $info("已写入输出流");
 
-                return outputStream.toByteArray();
+            return outputStream.toByteArray();
+        } finally {
+            book = null;
+            if (inputStream != null) {
+                inputStream.close();
+            }
+            if (outputStream != null) {
+                outputStream.close();
             }
         }
     }
