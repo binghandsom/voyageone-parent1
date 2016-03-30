@@ -56,7 +56,7 @@ public class ExceptionHandler implements HandlerExceptionResolver {
             String url = request.getRequestURI();
             String simpleMessage = exception.getMessage();
             if (StringUtils.isEmpty(simpleMessage)) simpleMessage = exception.toString();
-            logger.debug(String.format("%s => %s", url, simpleMessage));
+            logger.debug(String.format("%s => %s", url, simpleMessage), exception);
 
             Object val = request.getSession().getAttribute(BaseConstants.SESSION_LANG);
 
