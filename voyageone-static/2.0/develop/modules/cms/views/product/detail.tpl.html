@@ -260,10 +260,13 @@
 						<h5 class="text-vo font-bold">SKU库存明细</h5>
 						<hr style="margin-top:0px;margin-bottom:10px"/>
 						<div ng-repeat="invObj in ctrl.inventoryList" class="column_overflow" style="height:80px">
-							<div class="col-sm-12">
-								<div class="col-sm-7 m-b-xs"><label class="control-label m-t-xs"></label>{{invObj.skucode}}</div>
-								<div class="col-sm-5 m-b-xs"><input class="form-control" readonly="" ng-model="invObj.skyqty" disabled></div>
-							</div>
+
+							<div class="form-group">
+                                <label class="col-sm-7 control-label m-t-xs">{{invObj.skucode}}</label>
+                                <div class="col-sm-5 text-left">
+									<input type="text" class="form-control" ng-model="invObj.skyqty" disabled>
+                                </div>
+                            </div>
 						</div>
 					</div>
 				</div><!-- #prodFixed -->
