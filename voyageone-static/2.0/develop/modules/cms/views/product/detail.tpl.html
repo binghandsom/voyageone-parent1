@@ -108,14 +108,12 @@
 			<uib-tab>
 				<tab-heading>&nbsp;{{'TXT_PRODUCT_SKU_DETAIL' | translate}}</tab-heading>
 				<div class="panel vo_panel tab_panel">
-					<div class="row wrapper">
-						<div class="container-fluid">
-							<schema-item class="hierarchy_main modal-open col-sm-11" data="ctrl.productDetails.skuFields" ng-if="ctrl.productDetails.skuFields != null" not-show-edit="true"></schema-item>
-							<!-- SKU 不可以添加和删除 -->
-							<!--<div class="col-sm-1">-->
-								<!--<button class="btn btn-success" ng-click="ctrl.addField(ctrl.productDetails.skuFields)"><i class="fa fa-plus"></i>{{'BTN_COM_ADD' | translate}}</button>-->
-							<!--</div>-->
-						</div>
+					<div class="container-fluid">
+						<schema-item class="modal-open" data="ctrl.productDetails.skuFields" ng-if="ctrl.productDetails.skuFields != null" not-show-edit="true"></schema-item>
+						<!-- SKU 不可以添加和删除 -->
+						<!--<div class="col-sm-1">-->
+						<!--<button class="btn btn-success" ng-click="ctrl.addField(ctrl.productDetails.skuFields)"><i class="fa fa-plus"></i>{{'BTN_COM_ADD' | translate}}</button>-->
+						<!--</div>-->
 					</div>
 				</div> <!-- .panel -->
 				<!--<div class="row text-center">-->
@@ -258,9 +256,15 @@
 							<button type="submit" class="btn btn-vo" ng-click="ctrl.updateProductDetail()"><i class="glyphicon glyphicon-floppy-disk"></i> {{'BTN_SAVE' | translate}}</button>
 						</div><!-- .form-inline -->
 					</div><!-- .wrapper -->
+					<div class="wrapper-sm" style="margin-top: 15px;width:300px">
+						SKU库存明细
+						<div ng-repeat="invObj in ctrl.inventoryList">
+							<label style="margin-top:5px;width:180px;">{{invObj.skucode}}</label>
+							<input style="width:80px;" ng-value="invObj.skyqty" readonly="">
+						</div>
+					</div>
 				</div><!-- #prodFixed -->
 			</div><!-- no-padder -->
-
 		</div>
 	</div><!-- tabs ng-controller -->
 
