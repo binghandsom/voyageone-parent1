@@ -11,6 +11,7 @@ import com.voyageone.task2.base.modelbean.TaskControlBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -69,69 +70,93 @@ public class StockInfoService {
     public static final String STATUS_REVERT = "5";
 
 
-    /**
-     * 取得可用库存
-     *
-     * @param sku Sku
-     * @param channelId 渠道id
-     * @return 可用库存
-     */
-    public String getUsableStock(String sku, String channelId){
-        // sku没有输入的情况
-        if (StringUtils.isEmpty(sku)) {
-            return "";
-        }
+//    /**
+//     * 取得可用库存
+//     *
+//     * @param sku Sku
+//     * @param channelId 渠道id
+//     * @return 可用库存
+//     */
+//    public String getUsableStock(String sku, String channelId){
+//        // sku没有输入的情况
+//        if (StringUtils.isEmpty(sku)) {
+//            return "";
+//        }
+//
+//        // 取得逻辑库存
+//        int logicStock = 0;
+//        Map<String,Object> sqlParam = new HashMap<String,Object>();
+//        sqlParam.put("sku", sku);
+//        sqlParam.put("channelId", channelId);
+//        Integer logicInventoryCnt = wmsBtLogicInventoryDao.selectLogicInventoryCnt(sqlParam);
+//        if (logicInventoryCnt != null) {
+//            logicStock = logicInventoryCnt;
+//        }
+//
+//        // 取得隔离库存
+//        int stockSeparate = 0;
+//        Map<String,Object> sqlParam1 = new HashMap<String,Object>();
+//        sqlParam1.put("sku", sku);
+//        // 状态 = 3：隔离成功
+//        sqlParam1.put("status", STATUS_SEPARATE_SUCCESS);
+//        Integer stockSeparateSuccessQty =  cmsBtStockSeparateItemDao.selectStockSeparateSuccessQty(sqlParam1);
+//        if (stockSeparateSuccessQty != null) {
+//            stockSeparate =  stockSeparateSuccessQty;
+//        }
+//
+//
+//        // 取得增量隔离库存
+//        int stockIncrementSeparate = 0;
+//        Map<String,Object> sqlParam2 = new HashMap<String,Object>();
+//        sqlParam2.put("sku", sku);
+//        // 状态 = 3：增量成功
+//        sqlParam2.put("status", STATUS_INCREMENT_SUCCESS);
+//        Integer stockSeparateIncrementSuccessQty =  cmsBtStockSeparateIncrementItemDao.selectStockSeparateIncrementSuccessQty(sqlParam2);
+//        if (stockSeparateIncrementSuccessQty != null) {
+//            stockIncrementSeparate =  stockSeparateIncrementSuccessQty;
+//        }
+//
+//        // 取得平台的销售数量
+//        int stockSalesQuantity = 0;
+//        Map<String,Object> sqlParam3 = new HashMap<String,Object>();
+//        sqlParam3.put("channelId", channelId);
+//        sqlParam3.put("sku", sku);
+//        sqlParam3.put("endFlg", "0");
+//        Integer stockSalesQuantityQty =  cmsBtStockSalesQuantityDao.selectStockSalesQuantityQty(sqlParam3);
+//        if (stockSalesQuantityQty != null) {
+//            stockSalesQuantity =  stockSalesQuantityQty;
+//        }
+//
+//        // 可用库存数 = 逻辑库存 - （隔离库存 + 增量隔离库 - 平台的销售数量)
+//        int usableStockInt = logicStock - (stockSeparate + stockIncrementSeparate - stockSalesQuantity);
+//        if (usableStockInt < 0 ) {
+//            usableStockInt = 0;
+//        }
+//
+//        return String.valueOf(usableStockInt);
+//    }
 
+    /**
+     * 取得可用库存里list
+     *
+     * @param channelId 渠道id
+     * @return 可用库存list
+     */
+    public List<Map<String,Object>> getRealStockList(String channelId) {
         // 取得逻辑库存
         int logicStock = 0;
         Map<String,Object> sqlParam = new HashMap<String,Object>();
-        sqlParam.put("sku", sku);
         sqlParam.put("channelId", channelId);
-        Integer logicInventoryCnt = wmsBtLogicInventoryDao.selectLogicInventoryCnt(sqlParam);
-        if (logicInventoryCnt != null) {
-            logicStock = logicInventoryCnt;
-        }
+        // 状态 = 2：隔离成功,5：等待还原
+        sqlParam.put("statusList", Arrays.asList( STATUS_SEPARATE_SUCCESS,
+                STATUS_WAITING_REVERT,
+                STATUS_REVERTING,
+                STATUS_REVERT_SUCCESS,
+                STATUS_REVERT_FAIL));
+        sqlParam.put("tableNameSuffix", "");
+        List<Map<String,Object>> stockSeparateList = cmsBtStockSeparateItemDao.selectStockSeparateItem(sqlParam);
 
-        // 取得隔离库存
-        int stockSeparate = 0;
-        Map<String,Object> sqlParam1 = new HashMap<String,Object>();
-        sqlParam1.put("sku", sku);
-        // 状态 = 3：隔离成功
-        sqlParam1.put("status", STATUS_SEPARATE_SUCCESS);
-        Integer stockSeparateSuccessQty =  cmsBtStockSeparateItemDao.selectStockSeparateSuccessQty(sqlParam1);
-        if (stockSeparateSuccessQty != null) {
-            stockSeparate =  stockSeparateSuccessQty;
-        }
+        return null;
 
-
-        // 取得增量隔离库存
-        int stockIncrementSeparate = 0;
-        Map<String,Object> sqlParam2 = new HashMap<String,Object>();
-        sqlParam2.put("sku", sku);
-        // 状态 = 3：增量成功
-        sqlParam2.put("status", STATUS_INCREMENT_SUCCESS);
-        Integer stockSeparateIncrementSuccessQty =  cmsBtStockSeparateIncrementItemDao.selectStockSeparateIncrementSuccessQty(sqlParam2);
-        if (stockSeparateIncrementSuccessQty != null) {
-            stockIncrementSeparate =  stockSeparateIncrementSuccessQty;
-        }
-
-        // 取得平台的销售数量
-        int stockSalesQuantity = 0;
-        Map<String,Object> sqlParam3 = new HashMap<String,Object>();
-        sqlParam3.put("channelId", channelId);
-        sqlParam3.put("sku", sku);
-        sqlParam3.put("endFlg", "0");
-        Integer stockSalesQuantityQty =  cmsBtStockSalesQuantityDao.selectStockSalesQuantityQty(sqlParam3);
-        if (stockSalesQuantityQty != null) {
-            stockSalesQuantity =  stockSalesQuantityQty;
-        }
-
-        // 可用库存数 = 逻辑库存 - （隔离库存 + 增量隔离库 - 平台的销售数量)
-        int usableStockInt = logicStock - (stockSeparate + stockIncrementSeparate - stockSalesQuantity);
-        if (usableStockInt < 0 ) {
-            usableStockInt = 0;
-        }
-
-        return String.valueOf(usableStockInt);
     }
 }

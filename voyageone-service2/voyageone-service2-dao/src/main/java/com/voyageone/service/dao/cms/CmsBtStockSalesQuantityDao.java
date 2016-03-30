@@ -20,4 +20,8 @@ public class CmsBtStockSalesQuantityDao extends BaseDao {
     public Integer selectStockSalesQuantityQty(Map<String, Object> param) {
         return selectOne("select_stock_sales_quantity_qty", param);
     }
+
+    public int updateStockSalesQuantity(Map<String, Object> param) {
+        return update("update_stock_sales_quantity", param);
+    }
 }

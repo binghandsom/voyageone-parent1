@@ -1728,12 +1728,13 @@ public class CmsTaskStockService extends BaseAppService {
         logger.info("库存隔离数据取得结束");
 
         logger.info("导入Excel取得并check的处理开始");
-        List<StockExcelBean> saveData = readExcel(file, import_mode, paramPropertyList, paramPlatformInfoList, mapSkuInDB, resultBean);
+        Map<String, List<String>> mapSku = new HashMap<String, List<String>>();
+        List<StockExcelBean> saveData = readExcel(file, import_mode, paramPropertyList, paramPlatformInfoList, mapSkuInDB, mapSku, resultBean);
         logger.info("导入Excel取得并check的处理结束");
 
         if (saveData.size() > 0) {
             logger.info("更新开始");
-            saveImportData(saveData, import_mode, task_id, (String) param.get("userName"), (String) param.get("channelId"));
+            saveImportData(saveData, mapSku, import_mode, task_id, (String) param.get("userName"), (String) param.get("channelId"));
             logger.info(String.format("更新结束,更新了%d件", saveData.size()));
         } else {
             logger.info("没有更新对象");
@@ -1749,10 +1750,11 @@ public class CmsTaskStockService extends BaseAppService {
      * @param paramPropertyList     属性list
      * @param paramPlatformInfoList 平台list
      * @param mapSkuInDB            cms_bt_stock_separate_item的数据
+     * @param mapSku               原隔离成功的sku(Map<cartId,List<sku>>)，用于更新cms_bt_stock_sales_quantity（隔离平台实际销售数据表）的end_flg为1：结束
      * @param resultBean            返回内容
      * @return 更新对象
      */
-    private List<StockExcelBean> readExcel(MultipartFile file, String import_mode, List<Map> paramPropertyList, List<Map> paramPlatformInfoList, Map<String, Map<String, StockExcelBean>> mapSkuInDB, Map<String, Object> resultBean) {
+    private List<StockExcelBean> readExcel(MultipartFile file, String import_mode, List<Map> paramPropertyList, List<Map> paramPlatformInfoList, Map<String, Map<String, StockExcelBean>> mapSkuInDB, Map<String, List<String>> mapSku, Map<String, Object> resultBean) {
         List<StockExcelBean> saveData = new ArrayList<StockExcelBean>();
         List<String> listExcelSku = new ArrayList<String>();
 
@@ -1777,7 +1779,7 @@ public class CmsTaskStockService extends BaseAppService {
                 colPlatform = checkHeader(row, paramPropertyList, paramPlatformInfoList);
             } else {
                 // 数据行
-                boolean isExecutingData = checkRecord(row, sheet.getRow(0), import_mode, colPlatform, mapSkuInDB, saveData, listExcelSku);
+                boolean isExecutingData = checkRecord(row, sheet.getRow(0), import_mode, colPlatform, mapSkuInDB, saveData, listExcelSku, mapSku);
                 if (isExecutingData && !hasExecutingData) {
                     hasExecutingData = true;
                 }
@@ -1908,8 +1910,9 @@ public class CmsTaskStockService extends BaseAppService {
      * @param mapSkuInDB   cms_bt_stock_separate_item的数据
      * @param saveData     保存对象
      * @param listExcelSku Excel输入的sku
+     * @param mapSku      原隔离成功的sku(Map<cartId,List<sku>>)，用于更新cms_bt_stock_sales_quantity（隔离平台实际销售数据表）的end_flg为1：结束
      */
-    private boolean checkRecord(Row row, Row rowHeader, String import_mode, int[] colPlatform, Map<String, Map<String, StockExcelBean>> mapSkuInDB, List<StockExcelBean> saveData, List<String> listExcelSku) {
+    private boolean checkRecord(Row row, Row rowHeader, String import_mode, int[] colPlatform, Map<String, Map<String, StockExcelBean>> mapSkuInDB, List<StockExcelBean> saveData, List<String> listExcelSku, Map<String, List<String>> mapSku) {
         boolean isExecutingData = false; // 是否是隔离中或者还原中数据
 
         String model = getCellValue(row, 0); // Model
@@ -2066,7 +2069,14 @@ public class CmsTaskStockService extends BaseAppService {
                         bean.setSeparate_qty(new BigDecimal("-1"));
                     } else {
                         bean.setSeparate_qty(new BigDecimal(separate_qty));
-                        if (STATUS_SEPARATE_SUCCESS.equals(dbStatus) || STATUS_CHANGED.equals(dbStatus)) {
+                        if (STATUS_SEPARATE_SUCCESS.equals(dbStatus)) {
+                            bean.setStatus(STATUS_CHANGED);
+                            if(mapSku.containsKey(cartId)) {
+                                mapSku.get(cartId).add(sku);
+                            } else {
+                                mapSku.put(cartId, new ArrayList<String>(){{this.add(sku);}});
+                            }
+                        } else if (STATUS_CHANGED.equals(dbStatus)) {
                             bean.setStatus(STATUS_CHANGED);
                         } else {
                             bean.setStatus(STATUS_READY);
@@ -2093,26 +2103,37 @@ public class CmsTaskStockService extends BaseAppService {
      * 导入文件数据更新
      *
      * @param saveData    保存对象
+     * @param mapSku     原隔离成功的sku(Map<cartId,List<sku>>)，用于更新cms_bt_stock_sales_quantity（隔离平台实际销售数据表）的end_flg为1：结束
      * @param import_mode 导入方式
      * @param task_id     任务id
      * @param creater     创建者/更新者
      * @param channelId   渠道id
      */
-    private void saveImportData(List<StockExcelBean> saveData, String import_mode, String task_id, String creater, String channelId) {
+    private void saveImportData(List<StockExcelBean> saveData, Map<String, List<String>> mapSku, String import_mode, String task_id, String creater, String channelId) {
         try {
             transactionRunner.runWithTran(() -> {
                 if (EXCEL_IMPORT_UPDATE.equals(import_mode)) {
                     // 变更方式
+                    Map<String, Object> mapSaveData =  new HashMap<String, Object>();
+                    mapSaveData.put("taskId", task_id);
+                    mapSaveData.put("modifier", creater);
                     for (StockExcelBean bean : saveData) {
-                        Map<String, Object> mapSaveData =  new HashMap<String, Object>();
-                        mapSaveData.put("taskId", task_id);
                         mapSaveData.put("sku", bean.getSku());
                         mapSaveData.put("cartId", bean.getCart_id());
                         mapSaveData.put("separateQty", bean.getSeparate_qty());
                         mapSaveData.put("status", StringUtils.null2Space(bean.getStatus()));
-                        mapSaveData.put("modifier", creater);
 
                         updateImportData(mapSaveData);
+                    }
+
+                    mapSaveData.clear();
+                    mapSaveData.put("endFlg", "1");
+                    mapSaveData.put("modifier", creater);
+                    mapSaveData.put("channelId", channelId);
+                    for(String cartId : mapSku.keySet()) {
+                        mapSaveData.put("cartId", cartId);
+                        mapSaveData.put("skuList", mapSku.get(cartId));
+                        cmsBtStockSalesQuantityDao.updateStockSalesQuantity(mapSaveData);
                     }
                 } else {
                     // 增量方式

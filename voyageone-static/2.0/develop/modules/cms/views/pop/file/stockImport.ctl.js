@@ -7,12 +7,13 @@ define([
     'modules/cms/views/promotion/task/stock.ctl'
 ], function (angularAMD) {
 
-    angularAMD.controller('popFileStockImportCtl', function ($scope,FileUploader,confirm,alert,cActions,data,notify) {
+    angularAMD.controller('popFileStockImportCtl', function ($scope,FileUploader,confirm,alert,cActions,data,notify,blockUI) {
             var task_id = data.task_id;
             var subTaskId = data.subTaskId;
             var parent_id = data.parent_id;
             var platformList = JSON.stringify(data.platformList);
             var propertyList = JSON.stringify(data.propertyList);
+            var blockUI = blockUI;
 
             var urls;
             if (parent_id == '1') {
@@ -42,6 +43,7 @@ define([
                 var uploadIt = function () {
                     this.uploadItem = uploadItem;
                     uploadItem.onSuccess = function (res) {
+                        blockUI.stop();
                         if (res.message) {
                             $scope.vm.messager = res.message;
                             alert(res.message);
@@ -66,6 +68,7 @@ define([
                     }];
                     uploadItem.upload();
                     $scope.vm.messager = "reading...";
+                    blockUI.start();
                 };
                 if (main.import_mode == "3") {
                     confirm('TXT_MSG_IMPORT_DELETE_UPDATE_MSGBOX').result.then(uploadIt);
