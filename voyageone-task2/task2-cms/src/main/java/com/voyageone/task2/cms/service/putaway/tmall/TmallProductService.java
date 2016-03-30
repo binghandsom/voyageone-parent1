@@ -1463,7 +1463,11 @@ public class TmallProductService {
                         logger.info("已经有sku属性，忽略商品外部编码");
                         continue;
                     }
-                    InputField  field = (InputField) processFields;
+                    // bug修正 tom START
+//                    InputField  field = (InputField) processFields;
+
+                    InputField  field = (InputField) (processFields.get(0));
+                    // bug修正 tom END
                     List<SxProductBean> processProducts = workLoadBean.getProcessProducts();
                     if (processProducts.size() != 1) {
                         String errorCause = "包含商品外部编码的类目必须只有一个code";
