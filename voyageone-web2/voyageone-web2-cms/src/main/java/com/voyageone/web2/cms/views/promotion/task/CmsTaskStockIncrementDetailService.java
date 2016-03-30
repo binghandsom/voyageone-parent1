@@ -474,9 +474,10 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
         List<StockIncrementExcelBean> resultData = cmsBtStockSeparateIncrementItemDao.selectExcelStockIncrementInfo(param);
 
         $info("准备打开文档 [ %s ]", templatePath);
-
-        try (InputStream inputStream = new FileInputStream(templatePath);
-             SXSSFWorkbook book = new SXSSFWorkbook(new XSSFWorkbook(inputStream))) {
+        InputStream inputStream = new FileInputStream(templatePath);
+        SXSSFWorkbook book = new SXSSFWorkbook(new XSSFWorkbook(inputStream));
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        try {
             // Titel行
             writeExcelStockIncrementInfoHead(book.getXSSFWorkbook(), param);
             // 数据行
@@ -493,13 +494,16 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
             book.getXSSFWorkbook().removeSheetAt(1);
 
             // 返回值设定
-            try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
-
-                book.write(outputStream);
-
-                $info("已写入输出流");
-
-                return outputStream.toByteArray();
+            book.write(outputStream);
+            $info("已写入输出流");
+            return outputStream.toByteArray();
+        } finally {
+            book = null;
+            if (inputStream != null) {
+                inputStream.close();
+            }
+            if (outputStream != null) {
+                outputStream.close();
             }
         }
     }
@@ -669,26 +673,39 @@ public class CmsTaskStockIncrementDetailService extends BaseAppService {
         List<String> listExcelSku = new ArrayList<String>();
 
         Workbook wb;
+        Sheet sheet;
         int colPlatform = -1;
+        InputStream is = null;
         try {
-            wb = WorkbookFactory.create(file.getInputStream());
-        } catch (IOException | InvalidFormatException e) {
+            is = file.getInputStream();
+            wb = WorkbookFactory.create(is);
+
+            sheet = wb.getSheetAt(0);
+            boolean isHeader = true;
+            for (Row row : sheet) {
+                if (isHeader) {
+                    // 第一行Title行
+                    isHeader = false;
+                    // Title行check
+                    colPlatform = checkHeader(row, paramPropertyList, paramPlatformInfo);
+                } else {
+                    // 数据行
+                    checkRecord(row, sheet.getRow(0), import_mode, colPlatform, mapSkuInDB, insertData, updateData, listExcelSku);
+                }
+            }
+            } catch (IOException | InvalidFormatException e) {
             throw new BusinessException("7000005");
         } catch (Exception e) {
             throw new BusinessException("7000005");
-        }
-
-        Sheet sheet = wb.getSheetAt(0);
-        boolean isHeader = true;
-        for (Row row : sheet) {
-            if (isHeader) {
-                // 第一行Title行
-                isHeader = false;
-                // Title行check
-                colPlatform = checkHeader(row, paramPropertyList, paramPlatformInfo);
-            } else {
-                // 数据行
-                checkRecord(row, sheet.getRow(0), import_mode, colPlatform, mapSkuInDB, insertData, updateData, listExcelSku);
+        } finally {
+            wb = null;
+            sheet = null;
+            try {
+                if (is != null) {
+                    is.close();
+                }
+            } catch (IOException ex) {
+                throw new BusinessException("7000005");
             }
         }
     }
