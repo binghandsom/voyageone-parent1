@@ -790,8 +790,8 @@ public class CmsTaskStockService extends BaseAppService {
                 Integer separateQty = (Integer) stockInfo.get("separate_qty");
                 String taskId = String.valueOf(stockInfo.get("task_id"));
                 String status = (String) stockInfo.get("status");
-                // 如果状态为2：隔离成功 那么加入到sku库存隔离信息（所有任务所有平台的数据）
-                if (STATUS_SEPARATE_SUCCESS.equals(status)) {
+                // 如果状态为2：隔离成功，5：等待还原 那么加入到sku库存隔离信息（所有任务所有平台的数据）
+                if (STATUS_SEPARATE_SUCCESS.equals(status) || STATUS_WAITING_REVERT.equals(status)) {
                     if (skuStockAllTask.containsKey(sku)) {
                         skuStockAllTask.put(sku, skuStockAllTask.get(sku) + separateQty);
                     } else {
