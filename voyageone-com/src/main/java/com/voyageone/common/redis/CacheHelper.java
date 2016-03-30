@@ -81,14 +81,14 @@ public class CacheHelper {
         return getHashOperation().values(key);
     }
 
-    /* SSB表示缓存数据类型为<String,String,Bean> key必须在CacheKeyEnums声明，否则抛出异常 */
+    /* SSB表示缓存数据类型为<String,String,Bean>  */
     public static void reFreshSSB(String key, Map refreshMap) {
-        reFreshSSB(CacheKeyEnums.KeyEnum.valueOf(key), refreshMap);
+        callCache(key, refreshMap);
     }
 
-    /* SSB表示缓存数据类型为<String,String,Bean> */
-    public static void reFreshSSB(CacheKeyEnums.KeyEnum key, Map refreshMap) {
-        callCache(key.toString(), refreshMap);
+    /* 删除RedisKey */
+    public static void delete(String key) {
+        getCacheTemplate().delete(key);
     }
 
     /**

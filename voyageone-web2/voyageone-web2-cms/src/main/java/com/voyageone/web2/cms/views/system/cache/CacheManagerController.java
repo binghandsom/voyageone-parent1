@@ -25,7 +25,7 @@ public class CacheManagerController extends CmsController{
     @RequestMapping(CmsUrlConstants.SYSTEM.CACHE.INIT)
     public AjaxResponse init(HttpServletRequest request) throws Exception {
         if(!StringUtils.isEmpty(request.getParameter("cacheKey"))) {
-            CacheHelper.getCacheTemplate().delete(request.getParameter("cacheKey"));
+            CacheHelper.delete(request.getParameter("cacheKey"));
             return redirectTo("/modules/cms/app.html#/system/cache/index");
         }
         return success(cacheKeySet());
