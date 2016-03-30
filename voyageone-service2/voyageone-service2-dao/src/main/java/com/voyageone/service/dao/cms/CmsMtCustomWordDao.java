@@ -19,11 +19,6 @@ public class CmsMtCustomWordDao extends ServiceBaseDao {
         return selectList("cms_mt_custom_word_selectWithParam");
     }
 
-    // 获取高级查询时自定义添加的查询属性
-    public List<Map<String, Object>> selectCustAttrs(String chnId, String language) {
-        return selectList("cms2_mt_channel_config_getCustAttr", parameters("channelId", chnId, "langId", language));
-    }
-
     // 获取翻译时标题和描述的长度设置
     public List<Map<String, Object>> selectTransLenSet(String chnId) {
         return selectList("cms2_mt_channel_config_getTransLenSet", parameters("channelId", chnId));
