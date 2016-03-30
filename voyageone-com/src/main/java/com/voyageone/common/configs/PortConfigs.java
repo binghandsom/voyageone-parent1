@@ -35,7 +35,7 @@ public class PortConfigs {
                     bean -> {
                         portConfigBeanMap
                                 .put(
-                                        buildKey(bean.getPort(), PortConfigEnums.Name.valueOf(bean.getCfg_name()), bean.getSeq() + ""),
+                                        buildKey(bean.getPort(), bean.getCfg_name(), bean.getSeq() + ""),
                                         bean
                                 );
                     }
@@ -50,7 +50,7 @@ public class PortConfigs {
      *
      * @return key
      */
-    private static String buildKey(String id, PortConfigEnums.Name name, String seq) {
+    private static String buildKey(String id, String name, String seq) {
         return id + CacheHelper.SKIP + name + CacheHelper.SKIP + seq;
     }
 
@@ -96,7 +96,7 @@ public class PortConfigs {
 
         List<String> keyList = new ArrayList<>();
         keySet.forEach(k -> {
-            if (k.startsWith(buildKey(id, name, ""))) keyList.add(k);
+            if (k.startsWith(buildKey(id, name.toString(), ""))) keyList.add(k);
         });
         Collections.sort(keyList);
         return hashOperations.multiGet(KEY, keyList);

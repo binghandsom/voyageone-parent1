@@ -106,7 +106,7 @@ public abstract class BaseJomgoDao<T> {
     }
 
     public WriteResult insertWithList(Collection<? extends T> models) {
-        if (models != null && models.size() > 0) {
+        if (models != null && !models.isEmpty()) {
             BaseMongoModel model = (BaseMongoModel)models.iterator().next();
             String collectionName = mongoTemplate.getCollectionName(this.collectionName, model);
             return mongoTemplate.insert(models, collectionName);
@@ -123,10 +123,6 @@ public abstract class BaseJomgoDao<T> {
     public WriteResult delete(BaseMongoModel model) {
         String collectionName = mongoTemplate.getCollectionName(this.collectionName, model);
         return mongoTemplate.removeById(model.get_id(), collectionName);
-    }
-
-    public WriteResult deleteById(String id) {
-        return mongoTemplate.removeById(id, collectionName);
     }
 
     public CommandResult executeCommand(String jsonCommand) {

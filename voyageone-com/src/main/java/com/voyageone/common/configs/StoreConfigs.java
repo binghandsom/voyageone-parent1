@@ -34,7 +34,7 @@ public class StoreConfigs {
             storeConfigDao.getAllConfigs().forEach(
                     bean -> {
                         storeConfigBeanMap.put(
-                                buildKey(bean.getStore_id(), StoreConfigEnums.Name.valueOf(bean.getCfg_name()), bean.getCfg_val1()),
+                                buildKey(bean.getStore_id(), bean.getCfg_name(), bean.getCfg_val1()),
                                 bean
                         );
                     }
@@ -49,7 +49,7 @@ public class StoreConfigs {
      *
      * @return key
      */
-    private static String buildKey(long storeId, StoreConfigEnums.Name name, String val1) {
+    private static String buildKey(long storeId, String name, String val1) {
         return storeId + CacheHelper.SKIP + name + CacheHelper.SKIP + val1;
     }
 
@@ -76,7 +76,7 @@ public class StoreConfigs {
      * @return String
      */
     public static String getVal2(long id, StoreConfigEnums.Name name, String val1) {
-        StoreConfigBean bean = hashOperations.get(KEY, buildKey(id, name, val1));
+        StoreConfigBean bean = hashOperations.get(KEY, buildKey(id, name.toString(), val1));
         return bean == null ? null : bean.getCfg_val2();
     }
 
@@ -92,7 +92,7 @@ public class StoreConfigs {
         if(CollectionUtils.isEmpty(keySet)) return null;
         List<String> keyList=new ArrayList<>();
         keySet.forEach(k->{
-            if(k.startsWith(buildKey(id,name,""))) keyList.add(k);
+            if(k.startsWith(buildKey(id,name.toString(),""))) keyList.add(k);
         });
         Collections.sort(keyList);
         return hashOperations.multiGet(KEY,keyList);

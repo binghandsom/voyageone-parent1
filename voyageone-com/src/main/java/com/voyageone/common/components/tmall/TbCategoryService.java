@@ -30,7 +30,7 @@ public class TbCategoryService extends TbBase {
         int intApiErrorCount = 0;
 
         // 设置 返回字段
-        StringBuffer sbField = getRequestFields();
+        StringBuilder sbField = getRequestFields();
 
         ItemcatsAuthorizeGetRequest request = new ItemcatsAuthorizeGetRequest();
         request.setFields(sbField.toString());
@@ -87,8 +87,8 @@ public class TbCategoryService extends TbBase {
         return itemCatListResult;
     }
 
-    private StringBuffer getRequestFields(){
-        StringBuffer sbField = new StringBuffer();
+    private StringBuilder getRequestFields(){
+        StringBuilder sbField = new StringBuilder();
 
         sbField.append("brand.pid");                    // （已授权的品牌）pid
         sbField.append(",brand.vid");                   // （已授权的品牌）vid

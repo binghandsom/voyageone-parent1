@@ -478,27 +478,27 @@ public class JewelryAnalysisService extends BaseTaskService {
         }
 
         // 取得有prouduct无model异常数据
-        List<String> err_product_nomodellist = superfeeddao.selectErrData(Feeds.getVal1(channel_id, FeedEnums.Name.feed_delete_product_no_model_sql2));
-        err_data = "";
-        err_data_maill = "有prouduct无model异常:";
-        for (String anErr_product_nomodellist : err_product_nomodellist) {
-            err_data = err_data + " '" + anErr_product_nomodellist + "',";
-        }
-        err_data_maill = err_data_maill + err_data;
-        // 存在异常数据
-        if (err_data.length() > 0) {
-            logIssue("cms 数据导入处理", "异常数据清除对象=>" + err_data_maill);
-
-            // 去掉最后一个“，”
-            err_data = Feeds.getVal1(channel_id, FeedEnums.Name.feed_item_key) + " in (" + err_data.substring(0, err_data.lastIndexOf(",")) + ")";
-
-            if (superfeeddao.deleteErrData(Feeds.getVal1(channel_id, FeedEnums.Name.table_id2), err_data) <= 0) {
-                //异常数据清除失败
-                $info("异常数据清除失败");
-                logIssue("cms 数据导入处理", "异常数据清除失败");
-                isSuccess = false;
-            }
-        }
+//        List<String> err_product_nomodellist = superfeeddao.selectErrData(Feeds.getVal1(channel_id, FeedEnums.Name.feed_delete_product_no_model_sql2));
+//        err_data = "";
+//        err_data_maill = "有prouduct无model异常:";
+//        for (String anErr_product_nomodellist : err_product_nomodellist) {
+//            err_data = err_data + " '" + anErr_product_nomodellist + "',";
+//        }
+//        err_data_maill = err_data_maill + err_data;
+//        // 存在异常数据
+//        if (err_data.length() > 0) {
+//            logIssue("cms 数据导入处理", "异常数据清除对象=>" + err_data_maill);
+//
+//            // 去掉最后一个“，”
+//            err_data = Feeds.getVal1(channel_id, FeedEnums.Name.feed_item_key) + " in (" + err_data.substring(0, err_data.lastIndexOf(",")) + ")";
+//
+//            if (superfeeddao.deleteErrData(Feeds.getVal1(channel_id, FeedEnums.Name.table_id2), err_data) <= 0) {
+//                //异常数据清除失败
+//                $info("异常数据清除失败");
+//                logIssue("cms 数据导入处理", "异常数据清除失败");
+//                isSuccess = false;
+//            }
+//        }
         $info("异常数据清除结束");
 
 //        // UpdateFlag : 1:插入 2:更新 3:两者都有 0:不处理

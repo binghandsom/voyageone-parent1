@@ -16,9 +16,7 @@ public class JsonBeanSerializer extends StdSerializer<JsonBean> {
 	}
 
 	@Override
-	public void serialize(JsonBean value, JsonGenerator jgen,
-			SerializerProvider provider) throws IOException
-			{
+	public void serialize(JsonBean value, JsonGenerator jgen, SerializerProvider provider) throws IOException {
 		ObjectMapper om = module.getObjectMapper();
 
 		String beanValue = om.writeValueAsString(value.getObj());

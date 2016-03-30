@@ -25,7 +25,7 @@ import com.voyageone.common.util.DateTimeUtil;
 public class TbOrderService extends TbBase {
 
 	// 淘宝交易类型
-	public static String TRADE_TYPE_TG = "tmall_i18n";
+	public static final String TRADE_TYPE_TG = "tmall_i18n";
 
 	/**
 	 * 获取天猫的订单
@@ -36,7 +36,6 @@ public class TbOrderService extends TbBase {
 	 *            结束日期
 	 * @param shop
 	 *            渠道
-	 * @return
 	 */
 	public List<Trade> getOrderPage(String startdate, String enddate, ShopBean shop) {
 

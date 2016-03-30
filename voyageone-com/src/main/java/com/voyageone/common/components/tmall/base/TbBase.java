@@ -114,7 +114,7 @@ public abstract class TbBase {
                 // 否则等待一段时间
                 try {
                     Thread.sleep(tryWait);
-                } catch (InterruptedException ignore) {
+                } catch (Exception ignore) {
                 }
 
             }
@@ -133,7 +133,7 @@ public abstract class TbBase {
 
         try {
             t.join(timeout);
-        } catch (InterruptedException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -187,7 +187,7 @@ public abstract class TbBase {
                 // TODO : 上次梁兄建议修改的, 否则会报错 START
                 try {
                     setErrorLog(e);
-                } catch (Exception ex) {
+                } catch (Exception ignored) {
 
                 }
                 // TODO : 上次梁兄建议修改的, 否则会报错 END

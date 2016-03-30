@@ -97,7 +97,7 @@ public class BaseJomgoTemplate extends BaseJomgoPartTemplate {
 
     public WriteResult insert(Collection<? extends Object> batchToSaves) {
         String collectionName = null;
-        if (batchToSaves != null && batchToSaves.size()>0) {
+        if (batchToSaves != null && !batchToSaves.isEmpty()) {
             collectionName = getCollectionName(batchToSaves.iterator().next().getClass());
         }
         return insert(batchToSaves, collectionName);

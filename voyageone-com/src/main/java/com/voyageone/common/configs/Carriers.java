@@ -34,7 +34,7 @@ public class Carriers {
             List<CarrierBean> allCarriers = ConfigDaoFactory.getCarrierDao().getAll();
             Map<String, CarrierBean> carrierBeanMap = new HashMap<>();
             allCarriers.forEach(bean->{
-                carrierBeanMap.put(buildKey(bean.getOrder_channel_id(), CarrierEnums.Name.valueOf(bean.getCarrier())), bean);
+                carrierBeanMap.put(buildKey(bean.getOrder_channel_id(), bean.getCarrier()), bean);
             });
             CacheHelper.reFreshSSB(KEY, carrierBeanMap);
             logger.info("Carrier 读取数量: " + hashOperations.size(KEY));
@@ -52,7 +52,7 @@ public class Carriers {
      *
      * @return key
      */
-    private static String buildKey(String order_channel_id, CarrierEnums.Name name) {
+    private static String buildKey(String order_channel_id, String name) {
         return order_channel_id + CacheHelper.SKIP + name;
     }
 
@@ -64,7 +64,7 @@ public class Carriers {
      * @return CarrierBean
      */
     public static CarrierBean getCarrier(String order_channel_id, CarrierEnums.Name name) {
-        return hashOperations.get(KEY, buildKey(order_channel_id, name));
+        return hashOperations.get(KEY, buildKey(order_channel_id, name.toString()));
     }
 
     /**
@@ -84,7 +84,7 @@ public class Carriers {
         for (String key : keys) {
             if (key.startsWith(order_channel_id+CacheHelper.SKIP)) filterKeys.add(key);
         }
-        if (filterKeys.size() > 0) {
+        if (!filterKeys.isEmpty()) {
             Collections.sort(filterKeys);
             carriersList = hashOperations.multiGet(KEY, filterKeys);
         }

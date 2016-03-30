@@ -9,7 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 
 @SuppressWarnings("rawtypes")
-public class JsonBeanSerializeModule{
+public class JsonBeanSerializeModule {
 
 	List<JsonSerializer> serializers;
 	List<JsonDeserializer> deserializers;

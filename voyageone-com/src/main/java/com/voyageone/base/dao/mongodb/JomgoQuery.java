@@ -44,7 +44,6 @@ public class JomgoQuery extends BaseCondition {
 
 
     public JomgoQuery() {
-
     }
 
     public JomgoQuery(String projection, String query, String sort, Integer limit, Integer skip) {
