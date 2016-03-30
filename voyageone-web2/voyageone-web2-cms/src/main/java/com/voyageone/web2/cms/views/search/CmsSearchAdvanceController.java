@@ -64,7 +64,7 @@ public class CmsSearchAdvanceController extends CmsController {
         long productListTotal = searchIndexService.getProductCnt(params, userInfo, cmsSession);
         resultBean.put("productListTotal", productListTotal);
         // 查询该商品是否有价格变动
-        List[] infoArr = searchIndexService.getGroupExtraInfo(productList, userInfo.getSelChannelId(), (int) cmsSession.getPlatformType().get("cartId"), false);
+        List[] infoArr = searchIndexService.getGroupExtraInfo(productList, userInfo.getSelChannelId(), Integer.parseInt(cmsSession.getPlatformType().get("cartId").toString()), false);
         resultBean.put("prodChgInfoList", infoArr[0]);
 
         // 获取group列表
