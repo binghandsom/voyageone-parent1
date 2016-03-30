@@ -256,11 +256,35 @@
 							<button type="submit" class="btn btn-vo" ng-click="ctrl.updateProductDetail()"><i class="glyphicon glyphicon-floppy-disk"></i> {{'BTN_SAVE' | translate}}</button>
 						</div><!-- .form-inline -->
 					</div><!-- .wrapper -->
-					<div class="wrapper-sm" style="margin-top: 15px;width:300px">
-						SKU库存明细
-						<div ng-repeat="invObj in ctrl.inventoryList">
-							<label style="margin-top:5px;width:180px;">{{invObj.skucode}}</label>
-							<input style="width:80px;" ng-value="invObj.skyqty" readonly="">
+					<div class="wrapper-sm m-t-xs">
+						<h5 class="text-vo font-bold">SKU库存明细</h5>
+						<hr style="margin-top:0px;margin-bottom:10px"/>
+						<div ng-repeat="invObj in ctrl.inventoryList" class="column_overflow" style="height:80px">
+							<div class="col-sm-12">
+							<div class="col-sm-4 m-b-xs"><label class="control-label m-t-xs">51A0HC13E1</label></div><!--{{invObj.skucode}}-->
+							<div class="col-sm-8 m-b-xs"><input class="form-control" readonly="" placeholder="353" disabled></div><!--ng-value="invObj.skyqty"-->
+							</div>
+							<div class="col-sm-12">
+								<div class="col-sm-4 m-b-xs"><label class="control-label m-t-xs">51A0HC13E1</label></div><!--{{invObj.skucode}}-->
+								<div class="col-sm-8 m-b-xs"><input class="form-control" readonly="" placeholder="353" disabled></div><!--ng-value="invObj.skyqty"-->
+							</div>
+							<div class="col-sm-12">
+								<div class="col-sm-4 m-b-xs"><label class="control-label m-t-xs">51A0HC13E1</label></div><!--{{invObj.skucode}}-->
+								<div class="col-sm-8 m-b-xs"><input class="form-control" readonly="" placeholder="353" disabled></div><!--ng-value="invObj.skyqty"-->
+							</div>
+							<div class="col-sm-12">
+								<div class="col-sm-4 m-b-xs"><label class="control-label m-t-xs">51A0HC13E1</label></div><!--{{invObj.skucode}}-->
+								<div class="col-sm-8 m-b-xs"><input class="form-control" readonly="" placeholder="353" disabled></div><!--ng-value="invObj.skyqty"-->
+							</div><div class="col-sm-12">
+							<div class="col-sm-4 m-b-xs"><label class="control-label m-t-xs">51A0HC13E1</label></div><!--{{invObj.skucode}}-->
+							<div class="col-sm-8 m-b-xs"><input class="form-control" readonly="" placeholder="353" disabled></div><!--ng-value="invObj.skyqty"-->
+						</div>
+							<div class="col-sm-12">
+								<div class="col-sm-4 m-b-xs"><label class="control-label m-t-xs">51A0HC13E1</label></div><!--{{invObj.skucode}}-->
+								<div class="col-sm-8 m-b-xs"><input class="form-control" readonly="" placeholder="353" disabled></div><!--ng-value="invObj.skyqty"-->
+							</div>
+
+
 						</div>
 					</div>
 				</div><!-- #prodFixed -->
