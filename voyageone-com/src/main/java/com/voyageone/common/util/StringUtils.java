@@ -454,8 +454,38 @@ public final class StringUtils {
     public static String generCatId(String catPath) {
         return MD5.getMD5(catPath);
     }
-	
 
+    public static String format(String msg, String... params) {
+        if ((params == null) || (params.length == 0)) {
+            return msg;
+        }
+        int i = 0;
+        for (int lens = params.length; i < lens; i++) {
+            StringBuilder idx = new StringBuilder();
+            idx.append("{");
+            idx.append(i);
+            idx.append("}");
+            msg = replace(msg, idx.toString(), params[i]);
+        }
+        return msg;
+    }
+
+    public static String replace(String val, String find, String rep) {
+        if ((val == null) || ("".equals(val))) {
+            return "";
+        }
+        StringBuilder ret = new StringBuilder();
+        int end = val.indexOf(find);
+        int start = 0;
+        while (end >= 0) {
+            ret.append(val.substring(start, end));
+            ret.append(rep);
+            start = end + find.length();
+            end = val.indexOf(find, start);
+        }
+        ret.append(val.substring(start));
+        return ret.toString();
+    }
 //    public static void main(String[] args) {
 //        String content = "<img src=https://img.alicdn.com/imgextra/i3/2694857307/TB2GprUjVXXXXbjXpXXXXXXXXXX_!!2694857307.jpg> <p>The envelope <img src=https://img.alicdn.com/imgextra/i3/2694857307/TB2GprUjVXXXXbjXpXXXXXXXXXX_!!2694857307.jpg>clutch is reimagined in smooth cork with splashes of vivid colors for an artistic finish.</p><ul><li>Magnetic snap closure.</li><li>Material: Cork.</li><li>Lining: Rayon.</li><li>Imported.</li></ul><br /><p>这款信封式手拿包的灵感来源于鲜艳的色彩飞溅在光滑的软木上，体现了现代艺术与自然的结合.</p><ul><li>磁扣闭合.</li><li>材质: 软木.</li><li>内衬: 人造丝.</li><li>进口原厂制作.</li></ul>  <img src=https://img.alicdn.com/imgextra/i3/2694857307/TB2GprUjVXXXXbjXpXXXXXXXXXX_!!2694857307.jpg> <br>";
 //

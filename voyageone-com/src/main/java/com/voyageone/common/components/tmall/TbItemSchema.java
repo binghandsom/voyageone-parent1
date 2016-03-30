@@ -3,10 +3,13 @@ package com.voyageone.common.components.tmall;
 import com.taobao.top.schema.enums.FieldTypeEnum;
 import com.taobao.top.schema.field.*;
 import com.taobao.top.schema.value.ComplexValue;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static com.voyageone.common.components.tmall.TbConstants.sizeSortMap;
 
 /**
  * 淘宝商品信息操作辅助类
@@ -19,7 +22,7 @@ public class TbItemSchema {
 
     private long num_iid;
 
-    protected TbItemSchema(long num_iid, List<Field> fields) {
+    TbItemSchema(long num_iid, List<Field> fields) {
         this.num_iid = num_iid;
         this.fields = fields;
     }
@@ -50,13 +53,17 @@ public class TbItemSchema {
      */
     public void setFieldValue() {
         // 将所有 Field 的默认值，设置到其值上。等待后续更新提交
-        fields.stream().forEach(this::setFieldValue);
+        fields.forEach(this::setFieldValue);
     }
 
     /**
      * 辅助方法：在更新淘宝商品时，全量更新需要将不更改的值，从 Default Value 中设置到 Valued
      */
     private void setFieldValue(Field field) {
+        // 对特定字段进行处理
+        if (setSpecialFieldValue(field))
+            return;
+
         switch (field.getType()) {
             case INPUT:
                 InputField inputField = (InputField) field;
@@ -85,18 +92,36 @@ public class TbItemSchema {
         }
     }
 
-    /**
-     * 获取商品的默认价格
-     */
-    public String getDefaultPrice() {
+    private boolean setSpecialFieldValue(Field field) {
+        // 暂时只有 sku 排序, 所以这里是简写写法
+        // 后续请在此修改, 对更多字段提供支持
+        return field.getId().equals("darwin_sku") && setSortedSku(field);
+    }
 
-        Field field = getFieldMap().get("sku_price");
+    private boolean setSortedSku(Field field) {
+        // 如果不是这种类型, 那么返回 false 按默认方式操作
+        if (!field.getType().equals(FieldTypeEnum.MULTICOMPLEX))
+            return false;
 
-        if (field == null || !field.getType().equals(FieldTypeEnum.INPUT)) return null;
+        MultiComplexField multiComplexField = (MultiComplexField) field;
 
-        InputField inputField = (InputField) field;
+        List<ComplexValue> complexValues = multiComplexField.getDefaultComplexValues();
 
-        return inputField.getDefaultValue();
+        // 依据尺码进行 SKU 排序
+        if (!complexValues.isEmpty()) complexValues.sort((v1, v2) -> sizeIndex(v1).compareTo(sizeIndex(v2)));
+
+        multiComplexField.setComplexValues(complexValues);
+
+        return true;
+    }
+
+    private Integer sizeIndex(ComplexValue complexValue) {
+        String outerId = complexValue.getInputFieldValue("sku_outerId");
+        if (StringUtils.isEmpty(outerId)) return 999;
+        if (!outerId.contains("-") || outerId.endsWith("-")) return 999;
+        String sizeName =  outerId.substring(outerId.lastIndexOf("-") + 1);
+        Integer index = sizeSortMap.get(sizeName);
+        return index == null ? 999 : index;
     }
 
     /**
@@ -124,7 +149,7 @@ public class TbItemSchema {
         }
     }
 
-    public Field getVerticalImage() {
+    private Field getVerticalImage() {
         return getFieldMap().get("vertical_image");
     }
 
