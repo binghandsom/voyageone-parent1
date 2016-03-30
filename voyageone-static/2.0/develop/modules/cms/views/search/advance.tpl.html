@@ -294,7 +294,7 @@
 			<tab ng-click="vm.currTab = 'group'">
 				<tab-heading><i class="glyphicons glyphicons-more-items text-default"></i>&nbsp;{{'TXT_GROUP_LIST' | translate}}</tab-heading>
 				<div class="table-responsive box-body">
-					<table class="table-hover-new vo_table vo_models dropdown_table_bk font-bold" style="background:#e67e22;color:#fff;width:100%" width="{{vm.tblWidth}}">
+					<table class="table-hover-new vo_table vo_models dropdown_table_bk font-bold" style="background:#e67e22;color:#fff;" width="{{vm.tblWidth}}">
 						<thead>
 						<tr>
 							<th colspan="3" class="text-left" style="display:inline-block; height:40px; line-height:40px;width:400px;"><label class="checkbox-inline c-checkbox" ng-controller="selectRowsCtrl">
@@ -312,7 +312,7 @@
 						</thead>
 					</table>
 					<div class="box-body-new" if-no-rows="vm.groupList.length" style="padding-left:0px">
-						<table class="table-hover vo_table vo_models" ng-if="vm.groupList.length" width="{{vm.tblWidth}}" style="width:100%;">
+						<table class="table-hover vo_table vo_models" ng-if="vm.groupList.length" width="{{vm.tblWidth}}">
 							<tbody ng-repeat="groupInfo in vm.groupList">
 							<tr ng-class="{'table_bg_green_mint': groupInfo.groups.platforms[0].publishTime}" class="table_bg_gray">
 								<td colspan="8" class="control-label text-left form-inline" style="height:36px; border-bottom:1px solid #ddd;border-top:1px solid #ddd;">
