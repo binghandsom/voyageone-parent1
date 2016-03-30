@@ -295,7 +295,7 @@ public class UploadProductService extends BaseTaskService implements WorkloadCom
                             // 没有sku的code, 跳过
                             continue;
                         }
-                        Double dblPrice = sxProductBean.getCmsBtProductModel().getSkus().get(0).getAttribute(tejiabaoPricePropName);
+                        Double dblPrice = Double.parseDouble(sxProductBean.getCmsBtProductModel().getSkus().get(0).getAttribute(tejiabaoPricePropName).toString());
 
                         // 设置特价宝
                         CmsBtPromotionCodeModel cmsBtPromotionCodeModel = new CmsBtPromotionCodeModel();

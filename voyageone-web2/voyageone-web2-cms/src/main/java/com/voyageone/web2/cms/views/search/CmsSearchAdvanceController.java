@@ -201,7 +201,7 @@ public class CmsSearchAdvanceController extends CmsController {
         UserSessionBean userInfo = getUser();
 
         // 取得自定义显示列设置
-        resultBean.put("customProps", cmsFeedCustPropService.selectAllAttr(userInfo.getSelChannelId(), "0"));
+        resultBean.put("customProps", searchIndexService.selectAttrs(userInfo.getSelChannelId(), "0"));
         resultBean.put("commonProps", searchIndexService.getCustColumns());
 
         // 获取该用户自定义显示列设置

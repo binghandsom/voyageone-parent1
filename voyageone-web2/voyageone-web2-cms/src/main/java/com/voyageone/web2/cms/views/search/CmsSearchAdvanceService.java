@@ -9,6 +9,7 @@ import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.common.util.FileUtils;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.service.dao.cms.CmsBtFeedCustomPropDao;
 import com.voyageone.service.dao.cms.CmsMtCommonPropDao;
 import com.voyageone.service.dao.cms.CmsMtCustomWordDao;
 import com.voyageone.service.impl.cms.ChannelCategoryService;
@@ -60,8 +61,10 @@ public class CmsSearchAdvanceService extends BaseAppService{
     private TagService tagService;
     @Autowired
     private CmsFeedCustPropService cmsFeedCustPropService;
+    @Autowired
+    private CmsBtFeedCustomPropDao cmsBtFeedCustomPropDao;
 
-
+    // 查询产品信息时的缺省输出列
     private final String searchItems = "channelId;prodId;catId;catPath;created;creater;modified;" +
             "modifier;groups.msrpStart;groups.msrpEnd;groups.retailPriceStart;groups.retailPriceEnd;" +
             "groups.salePriceStart;groups.salePriceEnd;groups.platforms.$;skus;" +
@@ -73,7 +76,6 @@ public class CmsSearchAdvanceService extends BaseAppService{
 
     // Excel 文件最大行数
     private int MAX_EXCEL_REC_COUNT = 10000;
-
 
     // Sku 文件单线程用
     ReentrantLock lock = new ReentrantLock();
@@ -586,11 +588,31 @@ public class CmsSearchAdvanceService extends BaseAppService{
         // 获取自定义查询条件
         List<Map<String, String>> custList = searchValue.getCustAttrMap();
         if (custList != null  && custList.size() > 0) {
+            List<String> inputList = new ArrayList<String>();
             for (Map<String, String> item : custList) {
-                if (!StringUtils.isEmpty(item.get("inputVal"))) {
-                    result.append(MongoUtils.splicingValue(item.get("inputOpts"), item.get("inputVal")));
-                    result.append(",");
+                String inputVal = org.apache.commons.lang3.StringUtils.trimToNull(item.get("inputVal"));
+                if (inputVal != null) {
+                    // 字符型和数字要分开比较
+                    if (org.apache.commons.lang3.math.NumberUtils.isNumber(inputVal)) {
+                        String qStr = "{'$or':[{'{0}':{'$type':1},'{0}':{1}},{'{0}':{'$type':16},'{0}':{1}},{'{0}':{'$type':18},'{0}':{1}},{'{0}':{'$type':2},'{0}':'{1}'}]}";
+                        inputList.add(com.voyageone.common.util.StringUtils.format(qStr, item.get("inputOpts"), inputVal));
+                    } else {
+                        String qStr = "{'{0}':'{1}'}";
+                        inputList.add(com.voyageone.common.util.StringUtils.format(qStr, item.get("inputOpts"), inputVal));
+                    }
                 }
+            }
+            if (inputList.size() > 0) {
+                result.append("'$and':[");
+                for (int i = 0, leng = inputList.size(); i < leng; i ++) {
+                    if (i == 0) {
+                        result.append(inputList.get(i));
+                    } else {
+                        result.append(",");
+                        result.append(inputList.get(i));
+                    }
+                }
+                result.append("],");
             }
         }
 
@@ -795,6 +817,15 @@ public class CmsSearchAdvanceService extends BaseAppService{
         return rsMap;
     }
 
+    // 根据类目路径查询已翻译的属性信息
+    // 只查询feed_prop_original和feed_prop_translation
+    public List<Map<String, Object>> selectAttrs(String channelId, String catPath) {
+        Map<String, Object> params = new HashMap<String, Object>(2);
+        params.put("channelId", channelId);
+        params.put("feedCatPath", catPath);
+        return cmsBtFeedCustomPropDao.selectAttrs(params);
+    }
+
     // 取得用户自定义显示列设置
     public void getUserCustColumns(String channelId, int userId, CmsSessionBean cmsSession) {
         List<Map<String, Object>> rsList = cmsMtCommonPropDao.selectUserCustColumns(userId);
@@ -816,7 +847,10 @@ public class CmsSearchAdvanceService extends BaseAppService{
         String[] custAttrList = custAttrStr.split(",");
         StringBuilder customPropsStr = new StringBuilder();
         if (custAttrList.length > 0) {
-            List<Map<String, Object>> customProps = cmsFeedCustPropService.selectAllAttr(channelId, "0");
+            Map<String, Object> params = new HashMap<String, Object>(2);
+            params.put("channelId", channelId);
+            params.put("feedCatPath", "0");
+            List<Map<String, Object>> customProps = cmsBtFeedCustomPropDao.selectAttrs(params);
             for (Map<String, Object> props : customProps) {
                 String propId = (String) props.get("feed_prop_original");
                 Map atts = new HashMap<>(2);
@@ -867,7 +901,10 @@ public class CmsSearchAdvanceService extends BaseAppService{
         List<Map<String, Object>> customProps2 = new ArrayList<Map<String, Object>>();
         StringBuilder customPropsStr = new StringBuilder();
         if (param1 != null && param1.length > 0) {
-            List<Map<String, Object>> customProps = cmsFeedCustPropService.selectAllAttr(userInfo.getSelChannelId(), "0");
+            Map<String, Object> params = new HashMap<String, Object>(2);
+            params.put("channelId", userInfo.getSelChannelId());
+            params.put("feedCatPath", "0");
+            List<Map<String, Object>> customProps = cmsBtFeedCustomPropDao.selectAttrs(params);
             for (Map<String, Object> props : customProps) {
                 String propId = (String) props.get("feed_prop_original");
                 if (ArrayUtils.contains(param1, propId)) {
