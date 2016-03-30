@@ -188,7 +188,8 @@ define([
                     'subTaskId': main.subTaskId,
                     'platformList': {'cartId': main.cartId, 'cartName': main.cartName},
                     'propertyList': main.propertyList,
-                    'parent_id': '2'
+                    'parent_id': '2',
+                    'parentCtl' : this
                 })
             },
 
