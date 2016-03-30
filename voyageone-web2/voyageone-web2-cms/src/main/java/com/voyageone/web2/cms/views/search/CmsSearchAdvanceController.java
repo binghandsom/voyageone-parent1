@@ -43,7 +43,7 @@ public class CmsSearchAdvanceController extends CmsController {
         CmsSessionBean cmsSession = getCmsSession();
         UserSessionBean userInfo = getUser();
         searchIndexService.getUserCustColumns(userInfo.getSelChannelId(), userInfo.getUserId(), cmsSession);
-        return success(searchIndexService.getMasterData(getUser(), getLang()));
+        return success(searchIndexService.getMasterData(userInfo, cmsSession, getLang()));
     }
 
     /**
