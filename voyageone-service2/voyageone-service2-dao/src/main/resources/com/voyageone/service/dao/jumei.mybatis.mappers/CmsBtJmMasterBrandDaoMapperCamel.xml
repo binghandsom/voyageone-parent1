@@ -1,46 +1,42 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.voyageone.service.dao.jumei.JmMtCategoryDao">
-    <resultMap id="ResultMap" type="JmMtCategoryModel">
+<mapper namespace="com.voyageone.service.dao.jumei.CmsBtJmMasterBrandDao">
+    <resultMap id="ResultMap" type="CmsBtJmMasterBrandModel">
         
     </resultMap>
 	
     <select id="selectList" resultMap="ResultMap">
 
-        select id,name,level,parent_category_id,seo_keywords,seo_description,created,creater,modified,modifier        from jm_mt_category
+        select id,name,jm_master_brand_id,en_name,created,creater,modified,modifier        from cms_bt_jm_master_brand
     </select>
     <select id="select" resultMap="ResultMap">
-        select id,name,level,parent_category_id,seo_keywords,seo_description,created,creater,modified,modifier from jm_mt_category where id=#{id}
+        select id,name,jm_master_brand_id,en_name,created,creater,modified,modifier from cms_bt_jm_master_brand where id=#{id}
     </select>
 
      <update id="update">
-        update jm_mt_category
+        update cms_bt_jm_master_brand
         set
 
             `name`=#{name}
-            ,`level`=#{level}
-            ,`parent_category_id`=#{parentCategoryId}
-            ,`seo_keywords`=#{seoKeywords}
-            ,`seo_description`=#{seoDescription}
+            ,`jm_master_brand_id`=#{jmMasterBrandId}
+            ,`en_name`=#{enName}
             ,`modified`=#{modified}
             ,`modifier`=#{modifier}
          where id=#{id}   
    </update>
 
     <delete id="delete">
-        delete from  jm_mt_category
+        delete from  cms_bt_jm_master_brand
         where id=#{id}
 
     </delete>
 
     <insert id="insert" useGeneratedKeys="true" keyProperty="id" >
-        INSERT INTO jm_mt_category
+        INSERT INTO cms_bt_jm_master_brand
         (
               `name`,
-              `level`,
-              `parent_category_id`,
-              `seo_keywords`,
-              `seo_description`,
+              `jm_master_brand_id`,
+              `en_name`,
               `created`,
               `creater`,
               `modified`,
@@ -48,10 +44,8 @@
         )
         VALUES(
               #{name},
-              #{level},
-              #{parentCategoryId},
-              #{seoKeywords},
-              #{seoDescription},
+              #{jmMasterBrandId},
+              #{enName},
               #{created},
               #{creater},
               #{modified},

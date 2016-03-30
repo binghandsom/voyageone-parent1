@@ -66,7 +66,7 @@ public class CmsMtMasterInfoModel implements Serializable
     
     
  /**
-图片顺序 1
+图片顺序 默认1
         */
      private int imageIndex;
     
@@ -246,7 +246,7 @@ this.sizeType="";
     
         
          /**
-           图片顺序 1
+           图片顺序 默认1
         */
         public int getImageIndex()
         {

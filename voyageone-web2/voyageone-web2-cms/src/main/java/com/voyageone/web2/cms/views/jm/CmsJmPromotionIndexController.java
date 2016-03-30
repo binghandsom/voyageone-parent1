@@ -20,7 +20,10 @@ import java.util.Map;
 public class CmsJmPromotionIndexController extends CmsController {
     @Autowired
     private CmsBtJmPromotionService cmsPromotionService;
-
+    @RequestMapping(CmsUrlConstants.PROMOTION.LIST.INDEX.INIT)
+    public AjaxResponse init() {
+        return success(cmsPromotionService.init());
+    }
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.INDEX.GET_LIST_BY_WHERE)
     public AjaxResponse getListByWhere(@RequestBody Map params) {
         String channelId = getUser().getSelChannelId();

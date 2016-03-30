@@ -1,6 +1,6 @@
 package com.voyageone.service.impl.Excel;
 
-import com.voyageone.service.impl.jumei.enumjm.CamelUtil;
+import com.voyageone.common.util.CamelUtil;
 
 /**
  * Created by admin on 2015/10/9.

@@ -1,9 +1,11 @@
 package com.voyageone.service.impl.jumei;
 import com.voyageone.service.dao.jumei.*;
+import com.voyageone.service.daoext.jumei.CmsBtJmPromotionDaoExt;
 import com.voyageone.service.model.jumei.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -14,6 +16,17 @@ import java.util.Map;
 public class CmsBtJmPromotionService {
     @Autowired
     CmsBtJmPromotionDao dao;
+    @Autowired
+    CmsBtJmMasterBrandDao daoCmsBtJmMasterBrand;
+    @Autowired
+    CmsBtJmPromotionDaoExt daoExt;
+
+    public Map<String, Object> init() {
+        Map<String, Object> map = new HashMap<>();
+        List<CmsBtJmMasterBrandModel> jmMasterBrandList = daoCmsBtJmMasterBrand.selectList();
+        map.put("jmMasterBrandList", jmMasterBrandList);
+        return map;
+    }
 
     public CmsBtJmPromotionModel select(int id) {
         return dao.select(id);
@@ -32,7 +45,19 @@ public class CmsBtJmPromotionService {
     }
 
     public List<CmsBtJmPromotionModel> getListByWhere(Map<String, Object> map) {
-        return dao.selectList();
+        if (map.containsKey("state1") && map.get("state1") == "false")//待进行
+        {
+            map.remove("state1");  //小于开始时间
+        }
+        if (map.containsKey("state2") && map.get("state1") == "false")//进行中
+        {
+            map.remove("state2"); // 当前时间大于开始时间 小于结束时间
+        }
+        if (map.containsKey("state3") && map.get("state1") == "false")//完成
+        {
+            map.remove("state3"); //当前时间大于结束时间
+        }
+        return daoExt.getListByWhere(map);
     }
 }
 
