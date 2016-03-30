@@ -1,7 +1,5 @@
 package com.voyageone.web2.cms.views.search;
 
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBObject;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
@@ -11,7 +9,6 @@ import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.common.util.FileUtils;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
-import com.voyageone.service.dao.MongoNativeDao;
 import com.voyageone.service.dao.cms.CmsMtCommonPropDao;
 import com.voyageone.service.dao.cms.CmsMtCustomWordDao;
 import com.voyageone.service.impl.cms.ChannelCategoryService;
@@ -36,7 +33,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
@@ -60,14 +60,13 @@ public class CmsSearchAdvanceService extends BaseAppService{
     private TagService tagService;
     @Autowired
     private CmsFeedCustPropService cmsFeedCustPropService;
-    @Autowired
-    private MongoNativeDao mongoDao;
+
 
     private final String searchItems = "channelId;prodId;catId;catPath;created;creater;modified;" +
             "modifier;groups.msrpStart;groups.msrpEnd;groups.retailPriceStart;groups.retailPriceEnd;" +
             "groups.salePriceStart;groups.salePriceEnd;groups.platforms.$;skus;" +
             "fields.longTitle;fields.productNameEn;fields.brand;fields.status;fields.code;fields.images1;fields.quantity;fields.productType;fields.sizeType;" +
-            "fields.priceSaleSt;fields.priceSaleEd;fields.priceRetailSt;fields.priceRetailEd;fields.priceMsrpSt;fields.priceMsrpEd";
+            "fields.priceSaleSt;fields.priceSaleEd;fields.priceRetailSt;fields.priceRetailEd;fields.priceMsrpSt;fields.priceMsrpEd;";
 
     // DB检索页大小
     private int SELECT_PAGE_SIZE = 2000;
@@ -84,7 +83,7 @@ public class CmsSearchAdvanceService extends BaseAppService{
      * @param userInfo
      * @return
      */
-    public Map<String, Object> getMasterData(UserSessionBean userInfo, String language) throws IOException{
+    public Map<String, Object> getMasterData(UserSessionBean userInfo, CmsSessionBean cmsSession, String language) throws IOException{
 
         Map<String, Object> masterData = new HashMap<>();
 
@@ -118,7 +117,7 @@ public class CmsSearchAdvanceService extends BaseAppService{
         masterData.put("promotionList", cmsPromotionService.queryByCondition(params));
 
         // 获取自定义查询用的属性
-        masterData.put("custAttsList", customWordDao.selectCustAttrs(userInfo.getSelChannelId(), language));
+        masterData.put("custAttsList", cmsSession.getAttribute("_adv_search_props_custAttsQueryList"));
 
         return masterData;
     }
@@ -186,17 +185,8 @@ public class CmsSearchAdvanceService extends BaseAppService{
      * @return
      */
     public List<List<Map<String, String>>> getGroupImageList(List<CmsBtProductModel> groupsList, String channelId, int cartId) {
-        DBObject pal4 = new BasicDBObject();
-        pal4.put("cartId", cartId);
-        pal4.put("isMain", 0);
-        DBObject pal3 = new BasicDBObject();
-        pal3.put("$elemMatch", pal4);
-        DBObject params = new BasicDBObject();
-        params.put("groups.platforms", pal3);
-
-        DBObject excObj = new BasicDBObject();
-        excObj.put("fields.images1", 1);
-        excObj.put("_id", 0);
+        JomgoQuery queryObj = new JomgoQuery();
+        queryObj.setProjection("{'fields.images1':1,'_id':0}");
 
         List<List<Map<String, String>>> rslt = new ArrayList<List<Map<String, String>>>();
         for (CmsBtProductModel groupObj : groupsList) {
@@ -217,8 +207,8 @@ public class CmsSearchAdvanceService extends BaseAppService{
                 continue;
             }
 
-            pal4.put("groupId", grpId);
-            List<DBObject> imgList = mongoDao.find("cms_bt_product_c" + channelId, params, excObj);
+            queryObj.setQuery("{'groups.platforms':{'$elemMatch':{'isMain':0,'cartId':" + cartId + ",'groupId':" + grpId + "}}}");
+            List<CmsBtProductModel> imgList =  productService.getList(channelId, queryObj);
             if (imgList == null || imgList.isEmpty()) {
                 logger.info("当前主商品所在组没有其他商品的图片 groupId=" + grpId);
                 rslt.add(new ArrayList<Map<String, String>>(0));
@@ -226,13 +216,13 @@ public class CmsSearchAdvanceService extends BaseAppService{
             }
 
             List<Map<String, String>> images1Arr = new ArrayList<Map<String, String>>();
-            for (DBObject imgObj : imgList) {
-                DBObject fields = (DBObject) imgObj.get("fields");
+            for (CmsBtProductModel imgObj : imgList) {
+                CmsBtProductModel_Field fields = imgObj.getFields();
                 if (fields != null) {
-                    List imgaes = (List) fields.get("images1");
+                    List<CmsBtProductModel_Field_Image> imgaes = fields.getImages1();
                     if (imgaes != null && imgaes.size() > 0) {
                         Map<String, String> map = new HashMap<String, String>(1);
-                        map.put("value", (String) ((DBObject) imgaes.get(0)).get("image1"));
+                        map.put("value", imgaes.get(0).getName());
                         images1Arr.add(map);
                     }
                 }
@@ -248,30 +238,21 @@ public class CmsSearchAdvanceService extends BaseAppService{
      * @return
      */
     public List[] getGroupExtraInfo(List<CmsBtProductModel> groupsList, String channelId, int cartId, boolean hasImgFlg) {
-        DBObject pal4 = new BasicDBObject();
-        pal4.put("cartId", cartId);
-        pal4.put("isMain", 0);
-        DBObject pal3 = new BasicDBObject();
-        pal3.put("$elemMatch", pal4);
-        DBObject params = new BasicDBObject();
-        params.put("groups.platforms", pal3);
-
         List[] rslt = null;
         List<List<Map<String, String>>> imgList = new ArrayList<List<Map<String, String>>>();
         List<Map<String, Integer>> chgFlgList = new ArrayList<Map<String, Integer>>();
 
-        DBObject excObj = new BasicDBObject();
-        excObj.put("skus.priceChgFlg", 1);
+        JomgoQuery queryObj = new JomgoQuery();
         if (hasImgFlg) {
-            excObj.put("fields.images1", 1);
+            queryObj.setProjection("{'skus.priceChgFlg':1,'fields.images1':1,'_id':0}");
             rslt = new List[2];
             rslt[0] = chgFlgList;
             rslt[1] = imgList;
         } else {
+            queryObj.setProjection("{'fields.images1':1,'_id':0}");
             rslt = new List[1];
             rslt[0] = chgFlgList;
         }
-        excObj.put("_id", 0);
 
         for (CmsBtProductModel groupObj : groupsList) {
             long grpId = 0;
@@ -286,13 +267,13 @@ public class CmsSearchAdvanceService extends BaseAppService{
             }
 
             boolean hasChg = false;
-            List<DBObject> infoList = null;
+            List<CmsBtProductModel> infoList = null;
             if (grpId == 0) {
                 // 当前主商品所在组没有其他商品
                 logger.info("当前主商品所在组没有其他商品 prodId=" + groupObj.getProdId());
             } else {
-                pal4.put("groupId", grpId);
-                infoList = mongoDao.find("cms_bt_product_c" + channelId, params, excObj);
+                queryObj.setQuery("{'groups.platforms':{'$elemMatch':{'isMain':0,'cartId':" + cartId + ",'groupId':" + grpId + "}}}");
+                infoList =  productService.getList(channelId, queryObj);
                 if (infoList == null || infoList.isEmpty()) {
                     logger.info("当前主商品所在组没有其他商品的信息 groupId=" + grpId);
                 }
@@ -323,11 +304,11 @@ public class CmsSearchAdvanceService extends BaseAppService{
             }
 
             List<Map<String, String>> images1Arr = new ArrayList<Map<String, String>>();
-            for (DBObject itemObj : infoList) {
-                List skus = (List) itemObj.get("skus");
+            for (CmsBtProductModel itemObj : infoList) {
+                List<CmsBtProductModel_Sku> skus = itemObj.getSkus();
                 if (skus != null) {
-                    for (Object skuObj : skus) {
-                        String chgFlg = org.apache.commons.lang3.StringUtils.trimToEmpty((String) ((DBObject) skuObj).get("priceChgFlg"));
+                    for (CmsBtProductModel_Sku skuObj : skus) {
+                        String chgFlg = org.apache.commons.lang3.StringUtils.trimToEmpty((String) (skuObj).get("priceChgFlg"));
                         if (chgFlg.startsWith("U") || chgFlg.startsWith("D") || chgFlg.startsWith("X")) {
                             hasChg = true;
                             break;
@@ -335,18 +316,14 @@ public class CmsSearchAdvanceService extends BaseAppService{
                             hasChg = false;
                         }
                     }
-                    // TODO 这段逻辑是什么意思?
-//                    if (hasChg) {
-//                        break;
-//                    }
                 }
                 if (hasImgFlg) {
-                    DBObject fields = (DBObject) itemObj.get("fields");
+                    CmsBtProductModel_Field fields = itemObj.getFields();
                     if (fields != null) {
-                        List imgaes = (List) fields.get("images1");
+                        List<CmsBtProductModel_Field_Image> imgaes = fields.getImages1();
                         if (imgaes != null && imgaes.size() > 0) {
                             Map<String, String> map = new HashMap<String, String>(1);
-                            map.put("value", (String) ((DBObject) imgaes.get(0)).get("image1"));
+                            map.put("value", imgaes.get(0).getName());
                             images1Arr.add(map);
                         }
                     }
@@ -821,14 +798,19 @@ public class CmsSearchAdvanceService extends BaseAppService{
     // 取得用户自定义显示列设置
     public void getUserCustColumns(String channelId, int userId, CmsSessionBean cmsSession) {
         List<Map<String, Object>> rsList = cmsMtCommonPropDao.selectUserCustColumns(userId);
+        String custAttrStr = null;
+        String commStr = null;
         if (rsList == null || rsList.isEmpty()) {
-            cmsSession.putAttribute("_adv_search_props_searchItems", "");
-            cmsSession.putAttribute("_adv_search_customProps", new ArrayList<Map<String, Object>>());
-            cmsSession.putAttribute("_adv_search_commonProps", new ArrayList<Map<String, Object>>());
-            return;
+            logger.debug("该用户还未设置自定义查询列 userId=" + userId + " channelId=" + channelId);
+            custAttrStr = "";
+            commStr = "";
+        } else {
+            custAttrStr = org.apache.commons.lang3.StringUtils.trimToEmpty((String) rsList.get(0).get("cfg_val1"));
+            commStr = org.apache.commons.lang3.StringUtils.trimToEmpty((String) rsList.get(0).get("cfg_val2"));
         }
-        String custAttrStr = org.apache.commons.lang3.StringUtils.trimToEmpty((String) rsList.get(0).get("cfg_val1"));
-        String commStr = org.apache.commons.lang3.StringUtils.trimToEmpty((String) rsList.get(0).get("cfg_val2"));
+
+        // 设置自定义查询用的属性
+        List<Map<String, String>> custAttsQueryList = new ArrayList<Map<String, String>>();
 
         List<Map<String, Object>> customProps2 = new ArrayList<Map<String, Object>>();
         String[] custAttrList = custAttrStr.split(",");
@@ -837,6 +819,11 @@ public class CmsSearchAdvanceService extends BaseAppService{
             List<Map<String, Object>> customProps = cmsFeedCustPropService.selectAllAttr(channelId, "0");
             for (Map<String, Object> props : customProps) {
                 String propId = (String) props.get("feed_prop_original");
+                Map atts = new HashMap<>(2);
+                atts.put("configCode", "feed.cnAtts." + propId);
+                atts.put("configValue1", (String) props.get("feed_prop_translation"));
+                custAttsQueryList.add(atts);
+
                 if (ArrayUtils.contains(custAttrList, propId)) {
                     customProps2.add(props);
                     customPropsStr.append("feed.cnAtts.");
@@ -852,6 +839,11 @@ public class CmsSearchAdvanceService extends BaseAppService{
             List<Map<String, Object>> commonProps = cmsMtCommonPropDao.selectCustColumns();
             for (Map<String, Object> props : commonProps) {
                 String propId = (String) props.get("propId");
+                Map atts = new HashMap<>(2);
+                atts.put("configCode", "fields." + propId);
+                atts.put("configValue1", (String) props.get("propName"));
+                custAttsQueryList.add(atts);
+
                 if (ArrayUtils.contains(commList, propId)) {
                     commonProp2.add(props);
                     commonPropsStr.append("fields.");
@@ -861,6 +853,7 @@ public class CmsSearchAdvanceService extends BaseAppService{
             }
         }
 
+        cmsSession.putAttribute("_adv_search_props_custAttsQueryList", custAttsQueryList);
         cmsSession.putAttribute("_adv_search_props_searchItems", customPropsStr.toString() + commonPropsStr.toString());
         cmsSession.putAttribute("_adv_search_customProps", customProps2);
         cmsSession.putAttribute("_adv_search_commonProps", commonProp2);

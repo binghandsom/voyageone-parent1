@@ -81,10 +81,13 @@ define([
          */
         function MappingBean(obj) {
             if (!obj) return;
+            // 没有 Scope 表示这应该是后端的 MappingBean 数据
             if (!obj.scope) {
                 _.extend(this, obj);
                 return;
             }
+            // 如果有 Scope 说明是后端的 Model 数据
+            this._id = obj._id;
             this.defaultMapping = obj.defaultMapping;
             this.defaultMain = obj.defaultMain;
             this.matchOver = obj.matchOver;

@@ -113,7 +113,7 @@ public class TranslationService {
         }
 
         productTransDistrBean.setTranslator(userInfo.getUserName());
-        productTransDistrBean.setTranslateTimeHDiff(24);
+        productTransDistrBean.setTranslateTimeHDiff(48);
         productTransDistrBean.setDistributeRule(translateTaskBean.getDistributeRule());
         if (translateTaskBean.getDistributeCount() > 0){
             productTransDistrBean.setLimit(translateTaskBean.getDistributeCount());
