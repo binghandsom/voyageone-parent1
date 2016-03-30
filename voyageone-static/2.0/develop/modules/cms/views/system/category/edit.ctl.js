@@ -3,7 +3,8 @@
  */
 
 define([
-    'modules/cms/controller/popup.ctl'
+    'modules/cms/controller/popup.ctl',
+    'modules/cms/enums/RuleTypes'
 ], function () {
 
     function editController($scope,systemCategoryService,$routeParams,notify,$translate,confirm) {
@@ -46,6 +47,25 @@ define([
                 notify.success($translate.instant('TXT_MSG_UPDATE_SUCCESS'));
             },function(err){
             })
+        };
+
+        $scope.isRequiredField = function(field) {
+            return field.rules.some(function (rule) {
+                return rule.name === "requiredRule" && rule.value === 'true';
+            });
+        };
+
+        $scope.isOptionsField = function(field) {
+            if(field.options && field.options.length > 0) return true;
+        };
+
+        $scope.showOptions = function(field) {
+            var str = "";
+            _.map(field.options,function(item){
+                str += item.displayName + "\t" +item.value + "<br>";
+            })
+            return str;
+
         }
     };
 
