@@ -11,7 +11,9 @@
             t2.activity_end,
             t2.channel_id,
             t1.revert_time,
-            t1.revert_flg
+            t1.revert_flg,
+            t1.add_priority,
+            t1.subtract_priority
             <if test="channelId !=null and lang != null" >
               ,t3.name
             </if>
@@ -21,7 +23,10 @@
           left outer join (select value,name from com_mt_value_channel where type_id= '53'and channel_id = #{channelId} and lang_id = #{lang}) t3
           on t1.cart_id = t3.value
         </if>
-        where t1.cart_id != -1
+        where 1 = 1
+        <if test="commonPlatform == null" >
+        and t1.cart_id != -1
+        </if>
         <if test="taskId != null" >
         and t1.task_id = #{taskId}
         </if>
@@ -29,7 +34,7 @@
             and t1.cart_id = #{cartId}
         </if>
         <if test="revertTime != null" >
-            and t1.revert_time >= #{revertTime}
+            <![CDATA[ and t1.revert_time <= #{revertTime} ]]>
         </if>
         <if test="revertFlg != null" >
             and t1.revert_flg = #{revertFlg}
@@ -62,6 +67,9 @@
         </set>
         <where>
             1 = 1
+            <if test="commonPlatform == null" >
+                and cart_id != -1
+            </if>
             <if test="taskId != null" >
                 and task_id = #{taskId}
             </if>
@@ -72,7 +80,7 @@
                 and revert_flg = #{revertFlgWhere}
             </if>
             <if test="revertTimeWhere != null" >
-                and revert_time = #{revertTimeWhere}
+                <![CDATA[ and revert_time <= #{revertTimeWhere} ]]>
             </if>
         </where>
     </update>
