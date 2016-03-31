@@ -282,11 +282,4 @@
         from voyageone_cms2.cms_bt_promotion a
         where a.promotion_id = #{PromotionID}
     </select>
-    <!--根据产品ID或者CartID-->
-    <select id="select_cms_bt_promotion_by_channel_id" resultType="String" parameterType="String" >
-        select
-        a.channel_id  as channel_id
-        from voyageone_cms2.cms_bt_promotion a
-        where a.promotion_id = #{PromotionID}
-    </select>
 </mapper>

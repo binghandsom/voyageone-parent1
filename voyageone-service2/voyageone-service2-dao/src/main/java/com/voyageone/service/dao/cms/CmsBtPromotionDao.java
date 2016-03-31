@@ -77,13 +77,4 @@ public class CmsBtPromotionDao extends ServiceBaseDao {
 	public HashMap selectPromotionIDByCartId(String PromotionID){
 		return selectOne("select_cms_bt_promotion_by_cat_id", PromotionID);
 	}
-	/**
-	 * 条件查询
-	 *
-	 * @param  PromotionID PromotionID
-	 * @return String
-	 */
-	public String selectPromotionIDByChannelId(String PromotionID){
-		return selectOne("select_cms_bt_promotion_by_channel_id", PromotionID);
-	}
 }
