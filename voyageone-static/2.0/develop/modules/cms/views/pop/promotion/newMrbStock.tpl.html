@@ -35,15 +35,11 @@
                         <td class="mfb-xxt text-center">{{::(promotion.type==1?'TXT_SEPARATE':'TXT_SHARE')|translate}}</td>
                         <td class="mfb-xxs">
                             <div class="input-group" ng-if="::promotion.type == 1">
-                                <input type="text" id="input-id-18" data-inputmask="'alias': 'dd/mm/yyyy'" data-mask=""
-                                       class="form-control" uib-datepicker-popup="{{formatDate}}"
-                                       ng-model="promotion.revertTime" date-model-format="{{formatDate}}" is-open="opened"
-                                       datepicker-options="dateOptions" required close-text="Close"/>
-                                      <span class="input-group-btn">
-                                        <button type="button" class="btn btn-default" ng-click="open($event)"><i
-                                                class="glyphicon glyphicon-calendar"></i>
-                                        </button>
-                                      </span>
+                                <input type="text" ng-model="promotion.revertTime" class="form-control" uib-datepicker-popup="yyyy-MM-dd HH:mm:ss"
+                                       is-open="datePicker1" date-model-format="yyyy-MM-dd HH:mm:ss" close-text="Close"/>
+								              <span class="input-group-btn">
+								                <button type="button" class="btn btn-default" ng-click="datePicker1 = !datePicker1"><i class="glyphicon glyphicon-calendar"></i></button>
+								              </span>
                             </div>
                         </td>
                         <td class="mfb-xxt">

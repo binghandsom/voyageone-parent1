@@ -48,14 +48,18 @@ define([
                         taskStockService.initNewTask($scope.vm).then(
                             function (res) {
                                 $scope.vm.promotionList = res.data;
+                            },
+                            function (err) {
+                                if (err.message != null) {
+                                    $scope.$close();
+                                }
                             }
                         );
-
                     }else{
                         $scope.$close();
                         alert('请选择对应的活动');
                     }
-                };
+                }　;
             }
             //Save保存按钮
             $scope.saveTask =function(){
