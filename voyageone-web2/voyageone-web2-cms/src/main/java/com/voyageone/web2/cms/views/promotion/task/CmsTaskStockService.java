@@ -470,23 +470,20 @@ public class CmsTaskStockService extends BaseAppService {
      * @param param 客户端参数
      */
     public void delTask(Map param){
-        // 取得库存隔离数据中是否存在状态为"0:未进行"以外的数据
+        // 取得库存隔离数据中是否存在状态为 1：等待隔离；2：隔离中；3：隔离成功；5：等待还原； 6：还原中的数据
         Map<String, Object> sqlParam = new HashMap<String, Object>();
         sqlParam.put("taskId", param.get("taskId"));
-        // "0:未进行"以外的状态
-        sqlParam.put("statusList", Arrays.asList( STATUS_WAITING_SEPARATE,
+        // 1：等待隔离；2：隔离中；3：隔离成功；5：等待还原； 6：还原中的状态
+        sqlParam.put("statusList", Arrays.asList(
+                                                    STATUS_WAITING_SEPARATE,
                                                     STATUS_SEPARATING,
                                                     STATUS_SEPARATE_SUCCESS,
-                                                    STATUS_SEPARATE_FAIL,
                                                     STATUS_WAITING_REVERT,
-                                                    STATUS_REVERTING,
-                                                    STATUS_REVERT_SUCCESS,
-                                                    STATUS_REVERT_FAIL,
-                                                    STATUS_CHANGED));
+                                                    STATUS_REVERTING));
         Integer seq = cmsBtStockSeparateItemDao.selectStockSeparateItemByStatus(sqlParam);
-        // 库存隔离数据中是否存在状态为"0:未进行"以外的数据,不允许删除任务
+        // 库存隔离数据中是否存在状态为 1：等待隔离；2：隔离中；3：隔离成功；5：等待还原； 6：还原中的数据,不允许删除任务
         if (seq != null) {
-            throw new BusinessException("已经开始库存隔离，不能删除任务！");
+            throw new BusinessException("不能删除任务！");
         }
 
         // 取得任务id对应的Promotion是否开始
@@ -1112,9 +1109,14 @@ public class CmsTaskStockService extends BaseAppService {
             }
             for (Map<String, Object> stockSeparateItem : stockSeparateItemList) {
                 String status = (String) stockSeparateItem.get("status");
-                // 只有状态为 0：未进行的数据可以删除
-                if (!StringUtils.isEmpty(status) && !STATUS_READY.equals(status)) {
-                    throw new BusinessException("只有状态为未进行的明细才能进行删除！");
+                // 只有状态为 0：未进行,4：隔离失败,7：还原成功,8：还原失败,9：再修正 的数据可以删除
+                if (!StringUtils.isEmpty(status)
+                        && !STATUS_READY.equals(status)
+                        && !STATUS_SEPARATE_FAIL.equals(status)
+                        && !STATUS_REVERT_SUCCESS.equals(status)
+                        && !STATUS_REVERT_FAIL.equals(status)
+                        && !STATUS_CHANGED.equals(status)) {
+                    throw new BusinessException("不能删除数据！");
                 }
             }
 
@@ -1450,8 +1452,13 @@ public class CmsTaskStockService extends BaseAppService {
             sqlParam.put("modifier", param.get("userName"));
             // 更新条件
             sqlParam.put("taskId", param.get("taskId"));
-            // 只有状态为"0:未进行"，"4:隔离失败"，"9:再修正"的数据可以进行隔离库存操作
-            sqlParam.put("statusList", Arrays.asList(STATUS_READY, STATUS_SEPARATE_FAIL, STATUS_CHANGED));
+            // 只有状态为"0:未进行"，"4:隔离失败"，"7：还原成功", "8：还原失败", "9:再修正"的数据可以进行隔离库存操作
+            sqlParam.put("statusList", Arrays.asList(
+                                            STATUS_READY,
+                                            STATUS_SEPARATE_FAIL,
+                                            STATUS_REVERT_SUCCESS,
+                                            STATUS_REVERT_FAIL,
+                                            STATUS_CHANGED));
             updateCnt = cmsBtStockSeparateItemDao.updateStockSeparateItem(sqlParam);
 
             if (updateCnt == 0) {

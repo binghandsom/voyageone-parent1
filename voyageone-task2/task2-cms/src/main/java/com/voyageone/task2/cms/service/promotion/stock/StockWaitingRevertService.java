@@ -85,19 +85,20 @@ public class StockWaitingRevertService extends BaseTaskService {
                 // 平台id
                 String cartId = String.valueOf(taskInfo.get("cart_id"));
 
-                $info("渠道id：" + channelId + "任务id：" + taskId + "平台id：" + cartId);
+                $info("渠道id：" + channelId + "; 任务id：" + taskId + "; 平台id：" + cartId);
 
                 // 取得库存隔离数据表（cms_bt_stock_separate_item）中 需要设定"等待还原"的sku
                 List<String> skuList = getSkuList(taskId, cartId);
+                $info("取得sku件数:" + skuList.size());
 
                 // 更新库存隔离数据表（cms_bt_stock_separate_item）中 状态为"3：隔离成功"的状态为"5：等待还原"
                 updateStockSeparateItem(taskId, cartId);
 
-                // 取得任务id对应的增量任务id
-                String subTaskId = getSubTaskId(taskId, cartId);
-                if (!StringUtils.isEmpty(subTaskId)) {
+                // 取得任务id对应的增量任务信息
+                List<Map<String, Object>> stockIncrementList = getSubTaskInfo(taskId, cartId);
+                for (Map<String, Object> stockIncrement : stockIncrementList) {
                     // 更新增量库存隔离数据表（cms_bt_stock_separate_increment_item）中 状态为"3：增量成功"的状态为"5：还原"
-                    updateStockSeparateIncrementItem(subTaskId);
+                    updateStockSeparateIncrementItem(String.valueOf(stockIncrement.get("sub_task_id")));
                 }
                 // 根据渠道id和平台id，批量更新隔离平台实际销售数据表（cms_bt_stock_sales_quantity）的结束状态为"1：结束"
                 updateStockSalesQuantity(channelId, cartId, skuList);
@@ -244,16 +245,12 @@ public class StockWaitingRevertService extends BaseTaskService {
      * @param cartId 平台id
      * @return 增量任务id
      */
-    private String getSubTaskId(String taskId, String cartId) {
+    private List<Map<String, Object>> getSubTaskInfo(String taskId, String cartId) {
         Map<String, Object> sqlParam = new HashMap<String, Object>();
         sqlParam.put("taskId", taskId);
         sqlParam.put("cartId", cartId);
-        List<Map<String, Object>> stockList = cmsBtStockSeparateIncrementTaskDao.selectStockSeparateIncrementTask(sqlParam);
-        if (stockList.size() > 0) {
-            return String.valueOf(stockList.get(0).get("sub_task_id"));
-        } else {
-            return "";
-        }
+        List<Map<String, Object>> stockIncrementList = cmsBtStockSeparateIncrementTaskDao.selectStockSeparateIncrementTask(sqlParam);
+        return stockIncrementList;
     }
 
 
