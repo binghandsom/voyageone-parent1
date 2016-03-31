@@ -99,7 +99,8 @@ public class StockWaitingRevertService extends BaseTaskService {
                     // 更新增量库存隔离数据表（cms_bt_stock_separate_increment_item）中 状态为"3：增量成功"的状态为"5：还原"
                     updateStockSeparateIncrementItem(subTaskId);
                 }
-                // 根据渠道id和平台id，批量更新隔离平台实际销售数据表（cms_bt_stock_sales_quantity）的结束状态为"5：还原"
+                // 根据渠道id和平台id，批量更新隔离平台实际销售数据表（cms_bt_stock_sales_quantity）的结束状态为"1：结束"
+                updateStockSalesQuantity(channelId, cartId, skuList);
             }
 
 
@@ -119,8 +120,9 @@ public class StockWaitingRevertService extends BaseTaskService {
         Map<String, Object> sqlParam = new HashMap<String, Object>();
         // 更新为 1：已经执行自动还原
         sqlParam.put("revertFlg", StockInfoService.AUTO_REVERTED);
+        sqlParam.put("modifier", getTaskName());
          // 更新条件
-        sqlParam.put("revertTime", sysTime);
+        sqlParam.put("revertTimeWhere", sysTime);
         // 0: 未执行自动还原
         sqlParam.put("revertFlgWhere", StockInfoService.NOT_REVERT);
         int cnt = cmsBtStockSeparatePlatformInfoDao.updateStockSeparatePlatform(sqlParam);
@@ -138,6 +140,7 @@ public class StockWaitingRevertService extends BaseTaskService {
         Map<String, Object> sqlParam = new HashMap<String, Object>();
         // 状态更新为"5：等待还原"
         sqlParam.put("status", StockInfoService.STATUS_WAITING_REVERT);
+        sqlParam.put("modifier", getTaskName());
         // 更新条件
         sqlParam.put("taskId", taskId);
         sqlParam.put("cartId", cartId);
@@ -157,12 +160,45 @@ public class StockWaitingRevertService extends BaseTaskService {
         Map<String, Object> sqlParam = new HashMap<String, Object>();
         // 状态更新为"5：还原"
         sqlParam.put("status", StockInfoService.STATUS_REVERT);
+        sqlParam.put("modifier", getTaskName());
         // 更新条件
         sqlParam.put("subTaskId", subTaskId);
         // 状态为"3：增量成功"
         sqlParam.put("statusWhere", StockInfoService.STATUS_INCREMENT_SUCCESS);
         int cnt = cmsBtStockSeparateIncrementItemDao.updateStockSeparateIncrementItem(sqlParam);
         $info("增量库存隔离数据表 更新件数：" + cnt);
+        return;
+    }
+
+    /**
+     * 根据渠道id和平台id，批量更新隔离平台实际销售数据表（cms_bt_stock_sales_quantity）的结束状态为"1：结束"
+     *
+     * @param channelId 渠道id
+     * @param cartId 平台id
+     * @param skuList sku列表
+     */
+    private void updateStockSalesQuantity(String channelId, String cartId, List<String> skuList) {
+
+        int updateCnt = 0;
+        for(int i = 0; i < skuList.size(); i+= 500) {
+            int toIndex = i + 500;
+            if (toIndex > skuList.size()) {
+                toIndex = skuList.size();
+            }
+            // 分割执行sku列表
+            List newList = skuList.subList(i, toIndex);
+            Map<String, Object> sqlParam = new HashMap<String, Object>();
+            // 结束状态更新为"1：结束"
+            sqlParam.put("endFlg", StockInfoService.END);
+            sqlParam.put("modifier", getTaskName());
+            // 更新条件
+            sqlParam.put("channelId", channelId);
+            sqlParam.put("cartId", cartId);
+            sqlParam.put("skuList", newList);
+            int cnt = cmsBtStockSalesQuantityDao.updateStockSalesQuantity(sqlParam);
+            updateCnt += cnt;
+        }
+        $info("隔离平台实际销售数据表 更新件数：" + updateCnt);
         return;
     }
 

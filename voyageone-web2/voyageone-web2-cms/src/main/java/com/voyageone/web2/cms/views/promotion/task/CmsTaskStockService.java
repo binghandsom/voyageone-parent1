@@ -1548,7 +1548,7 @@ public class CmsTaskStockService extends BaseAppService {
 
                 // 更新隔离平台实际销售数据表(cms_bt_stock_sales_quantity)的end_flg为"1：结束"
                 for (Map.Entry<String, List> cartSku : cartSkuMap.entrySet()) {
-                    String carTId = cartSku.getKey();
+                    String cartId = cartSku.getKey();
                     List skuList = cartSku.getValue();
                     for(int i = 0; i < skuList.size(); i+= 500) {
                         int toIndex = i + 500;
@@ -1558,7 +1558,7 @@ public class CmsTaskStockService extends BaseAppService {
                         List newList = skuList.subList(i, toIndex);
                         Map<String, Object> sqlParam1 = new HashMap<String, Object>();
                         sqlParam1.put("channelId", param.get("channelId"));
-                        sqlParam1.put("cartId", carTId);
+                        sqlParam1.put("cartId", cartId);
                         sqlParam1.put("skuList", newList);
                         sqlParam1.put("modifier", param.get("userName"));
                         sqlParam1.put("endFlg", END_FLG);
