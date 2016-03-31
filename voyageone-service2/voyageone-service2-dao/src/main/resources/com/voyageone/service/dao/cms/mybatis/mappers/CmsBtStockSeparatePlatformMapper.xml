@@ -37,6 +37,46 @@
         order by t1.cart_id
     </select>
 
+    <update id="update_stock_separate_platform" parameterType="HashMap" >
+        update voyageone_cms2.cms_bt_stock_separate_platform_info
+        <set >
+            <if test="separatePercent != null" >
+                separate_percent = #{separatePercent},
+            </if>
+            <if test="revertTime != null" >
+                revert_time = #{revertTime},
+            </if>
+            <if test="revertFlg != null" >
+                revert_flg = #{revertFlg},
+            </if>
+            <if test="addPriority != null" >
+                add_priority = #{addPriority},
+            </if>
+            <if test="subtractPriority != null" >
+                subtract_priority = #{subtractPriority},
+            </if>
+            modified = now(),
+            <if test="modifier != null" >
+                modifier = #{modifier},
+            </if>
+        </set>
+        <where>
+            1 = 1
+            <if test="taskId != null" >
+                and task_id = #{taskId}
+            </if>
+            <if test="cartId != null" >
+                and cart_id = #{cartId}
+            </if>
+            <if test="revertFlgWhere != null" >
+                and revert_flg = #{revertFlgWhere}
+            </if>
+            <if test="revertTimeWhere != null" >
+                and revert_time = #{revertTimeWhere}
+            </if>
+        </where>
+    </update>
+
     <delete id="delete_stock_separate_platform" parameterType="HashMap">
         delete
         from voyageone_cms2.cms_bt_stock_separate_platform_info
