@@ -1,19 +1,20 @@
 package com.voyageone.task2.cms.service.promotion.stock;
 
+import com.voyageone.common.Constants;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.components.transaction.TransactionRunner;
+import com.voyageone.common.configs.TypeChannels;
+import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.service.dao.cms.CmsBtBeatInfoDao;
 import com.voyageone.service.dao.cms.CmsBtStockSeparateItemDao;
+import com.voyageone.service.dao.cms.CmsBtStockSeparatePlatformInfoDao;
 import com.voyageone.service.model.cms.CmsBtBeatInfoModel;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 库存隔离batch
@@ -29,6 +30,9 @@ public class StockSeparateService extends BaseTaskService {
 
     @Autowired
     private CmsBtStockSeparateItemDao cmsBtStockSeparateItemDao;
+
+    @Autowired
+    private CmsBtStockSeparatePlatformInfoDao cmsBtStockSeparatePlatformInfoDao;
 
     @Autowired
     private TransactionRunner transactionRunner;
@@ -60,22 +64,68 @@ public class StockSeparateService extends BaseTaskService {
         param.put("status", stockInfoService.STATUS_WAITING_SEPARATE);
         $info("开始取得等待隔离数据");
         List<Map<String, Object>> resultData = cmsBtStockSeparateItemDao.selectStockSeparateItem(param);
-        $info("等待隔离数据取得完毕");
-        // 按渠道整理Map<channelId, resultData>
-        Map<String, List<Map<String, Object>>> resultDataByChannel = new HashMap<>();
+        $info("等待隔离数据取得完毕. %d件", resultData.size());
+
+        // 按渠道整理隔离平台Map<channelId, Map<taskId, List<cartId>>>
+        Map<String, Map<Integer, List<Integer>>> mapSeparateCartId = new HashMap<>();
+        // 按渠道,sku整理Map<channelId, Map<taskId, Map<sku,resultData>>>
+        Map<String, Map<Integer, Map<String, List<Map<String, Object>>>>> resultDataByChannel = new HashMap<>();
+
         for (Map<String, Object> rowData : resultData) {
             String channelId = (String) rowData.get("channel_id");
-            if (resultDataByChannel.containsKey(channelId)) {
-                resultDataByChannel.get(channelId).add(rowData);
-            } else {
+            String sku = (String) rowData.get("sku");
+            Integer cartId = (Integer) rowData.get("cart_id");
+            Integer taskId = (Integer) rowData.get("task_id");
+
+            // 隔离数据Map put
+            Map<Integer, Map<String, List<Map<String, Object>>>> mapDataChannel = resultDataByChannel.get(channelId);
+            if (mapDataChannel == null) {
+                mapDataChannel = new HashMap<>();
+                Map<String, List<Map<String, Object>>> mapDataTask = new HashMap<>();
                 List<Map<String, Object>> listData = new ArrayList<>();
                 listData.add(rowData);
-                resultDataByChannel.put(channelId, listData);
+                mapDataTask.put(sku, listData);
+                mapDataChannel.put(taskId, mapDataTask);
+                resultDataByChannel.put(channelId, mapDataChannel);
+            } else {
+                Map<String, List<Map<String, Object>>> mapDataTask = mapDataChannel.get(taskId);
+                if (mapDataTask == null) {
+                    mapDataTask = new HashMap<>();
+                    List<Map<String, Object>> listData = new ArrayList<>();
+                    listData.add(rowData);
+                    mapDataTask.put(sku, listData);
+                    mapDataChannel.put(taskId, mapDataTask);
+                } else {
+                    if (mapDataTask.containsKey(sku)) {
+                        mapDataTask.get(sku).add(rowData);
+                    } else {
+                        List<Map<String, Object>> listData = new ArrayList<>();
+                        listData.add(rowData);
+                        mapDataTask.put(sku, listData);
+                    }
+                }
+            }
+
+            // 隔离平台Map put
+            Map<Integer, List<Integer>> mapPlatChannel = mapSeparateCartId.get(channelId);
+            if (mapPlatChannel==null) {
+                mapPlatChannel = new HashMap<>();
+                List<Integer> listData = new ArrayList<>();
+                listData.add(cartId);
+                mapPlatChannel.put(taskId, listData);
+            } else {
+                if (mapPlatChannel.containsKey(taskId)) {
+                    mapPlatChannel.get(taskId).add(cartId);
+                } else {
+                    List<Integer> listData = new ArrayList<>();
+                    listData.add(cartId);
+                    mapPlatChannel.put(taskId, listData);
+                }
             }
         }
 
         for (String channelId : resultDataByChannel.keySet()) {
-            executeByChannel(channelId, resultDataByChannel.get(channelId));
+            executeByChannel(channelId, resultDataByChannel.get(channelId), mapSeparateCartId.get(channelId));
         }
 
     }
@@ -84,16 +134,38 @@ public class StockSeparateService extends BaseTaskService {
      * 按渠道把等待隔离数据进行更新
      *
      * @param channelId   渠道id
-     * @param listSkuData 该渠道下的sku数据
+     * @param mapSkuTaskData Map<taskId, Map<sku,resultData>>该渠道下的sku数据
+     * @param mapSeparateCartId Map<taskId, List<cartId>> 该渠道下的隔离的所有平台
      */
-    private void executeByChannel(String channelId, List<Map<String, Object>> listSkuData) {
+    private void executeByChannel(String channelId, Map<Integer, Map<String, List<Map<String, Object>>>> mapSkuTaskData, Map<Integer, List<Integer>> mapSeparateCartId) {
         // 渠道对应的所有销售平台取得
-
+        List<TypeChannelBean> cartList = TypeChannels.getTypeListSkuCarts(channelId, Constants.comMtTypeChannel.SKU_CARTS_53_A, "en");
+        List<Integer> listCartId = new ArrayList<>();
+        cartList.forEach(cartInfo -> listCartId.add(Integer.parseInt(cartInfo.getValue())));
 
         // 取得可用库存
         $info("开始取得可用库存数据");
         Map<String,Integer> skuStockUsableAll = stockInfoService.getUsableStock(channelId);
         $info("可用库存数据取得完毕");
+
+        // 计算隔离库存
+        for (Integer taskId : mapSkuTaskData.keySet()) {
+            // taskId对应平台的增减顺
+            Map<String, Object> param = new HashMap<>();
+            param.put("taskId", taskId);
+            List<Map<String, Object>> listTaskInfo = cmsBtStockSeparatePlatformInfoDao.selectStockSeparatePlatform(param);
+
+            Map<String, List<Map<String, Object>>> mapSkuData = mapSkuTaskData.get(taskId);
+            Integer skuUsable = 0; // 可用库存
+            for (String sku : mapSkuData.keySet()) {
+                List<Map<String, Object>> listData = mapSkuData.get(sku);
+                skuUsable = (Integer) listData.get(0).get("qty");
+                for (Map<String, Object> data : listData) {
+
+                }
+            }
+
+        }
 
         $info("更新处理开始,渠道是%s", channelId);
         try {
@@ -105,5 +177,9 @@ public class StockSeparateService extends BaseTaskService {
             logIssue("cms 库存隔离batch", "渠道是"+ channelId +"的等待隔离数据更新失败. " + e.getMessage());
         }
         $info("更新处理结束,渠道是%s", channelId);
+    }
+
+    private void calQty() {
+
     }
 }

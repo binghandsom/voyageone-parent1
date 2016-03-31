@@ -76,7 +76,7 @@ public class StockInfoService {
         // 检索用param
         Map<String,Object> sqlParam = new HashMap<>();
         // skuList
-        List<String> listSku = new ArrayList<>();
+        Set<String> setSku = new HashSet<>();
 
         // 取得逻辑库存
         Map<String,Integer> skuLogicStockAll = new HashMap<>();
@@ -85,12 +85,11 @@ public class StockInfoService {
         if (listLogicInventory != null && listLogicInventory.size() > 0) {
             for (Map<String, Object> mapLogicInventory : listLogicInventory) {
                 String sku = (String) mapLogicInventory.get("sku");
-                if (!listSku.contains(sku)) {
-                    listSku.add(sku);
-                }
+                setSku.add(sku);
                 Integer logicStock = (Integer) mapLogicInventory.get("qty_china");
-                if (skuLogicStockAll.containsKey(sku)) {
-                    skuLogicStockAll.put(sku, skuLogicStockAll.get(sku) + logicStock);
+                Integer logicStockAll = skuLogicStockAll.get(sku);
+                if (logicStockAll != null) {
+                    skuLogicStockAll.put(sku, logicStockAll + logicStock);
                 } else {
                     skuLogicStockAll.put(sku, logicStock);
                 }
@@ -109,12 +108,11 @@ public class StockInfoService {
         if (listStockSeparate != null && listStockSeparate.size() > 0) {
             for (Map<String, Object> stockInfo : listStockSeparate) {
                 String sku = (String) stockInfo.get("sku");
-                if (!listSku.contains(sku)) {
-                    listSku.add(sku);
-                }
+                setSku.add(sku);
                 Integer separateQty = (Integer) stockInfo.get("separate_qty");
-                if (skuStockSeparateAll.containsKey(sku)) {
-                    skuStockSeparateAll.put(sku, skuStockSeparateAll.get(sku) + separateQty);
+                Integer separateQtyAll = skuStockSeparateAll.get(sku);
+                if (separateQtyAll != null) {
+                    skuStockSeparateAll.put(sku, separateQtyAll + separateQty);
                 } else {
                     skuStockSeparateAll.put(sku, separateQty);
                 }
@@ -132,12 +130,11 @@ public class StockInfoService {
         if (listStockIncrement != null && listStockIncrement.size() > 0) {
             for (Map<String, Object> stockIncrementInfo : listStockIncrement) {
                 String sku = (String) stockIncrementInfo.get("sku");
-                if (!listSku.contains(sku)) {
-                    listSku.add(sku);
-                }
+                setSku.add(sku);
                 Integer incrementQty = (Integer) stockIncrementInfo.get("increment_qty");
-                if (skuStockIncrementAll.containsKey(sku)) {
-                    skuStockIncrementAll.put(sku, skuStockIncrementAll.get(sku) + incrementQty);
+                Integer incrementQtyAll = skuStockIncrementAll.get(sku);
+                if (incrementQtyAll != null) {
+                    skuStockIncrementAll.put(sku, incrementQtyAll + incrementQty);
                 } else {
                     skuStockIncrementAll.put(sku, incrementQty);
                 }
@@ -149,16 +146,15 @@ public class StockInfoService {
         sqlParam.clear();
         sqlParam.put("channelId", channelId);
         sqlParam.put("endFlg", "0");
-        List<Map<String,Object>> listStockSalesQuantity = cmsBtStockSalesQuantityDao.selectStockSalesQuantity(sqlParam);
+        List<Map<String, Object>> listStockSalesQuantity = cmsBtStockSalesQuantityDao.selectStockSalesQuantity(sqlParam);
         if (listStockSalesQuantity != null && listStockSalesQuantity.size() > 0) {
             for (Map<String, Object> stockSaleInfo : listStockSalesQuantity) {
                 String sku = (String) stockSaleInfo.get("sku");
-                if (!listSku.contains(sku)) {
-                    listSku.add(sku);
-                }
+                setSku.add(sku);
                 Integer qty = (Integer) stockSaleInfo.get("qty");
-                if (skuStockSalesAll.containsKey(sku)) {
-                    skuStockSalesAll.put(sku, skuStockSalesAll.get(sku) + qty);
+                Integer qtyAll = skuStockSalesAll.get(sku);
+                if (qtyAll != null) {
+                    skuStockSalesAll.put(sku, qtyAll + qty);
                 } else {
                     skuStockSalesAll.put(sku, qty);
                 }
@@ -167,7 +163,7 @@ public class StockInfoService {
 
         // 可用库存数 = 逻辑库存 - （隔离库存 + 增量隔离库 - 销售数量)
         Map<String, Integer> skuStockUsableAll = new HashMap<>();
-        for (String sku : listSku) {
+        for (String sku : setSku) {
             Integer usable = getMapValue(skuLogicStockAll, sku) - (getMapValue(skuStockSeparateAll, sku) + getMapValue(skuStockIncrementAll, sku) - getMapValue(skuStockSalesAll, sku));
             if (usable < 0) {
                 usable = 0;

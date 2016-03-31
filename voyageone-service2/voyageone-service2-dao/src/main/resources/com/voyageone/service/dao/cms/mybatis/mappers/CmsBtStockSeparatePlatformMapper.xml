@@ -10,7 +10,9 @@
             t2.activity_end,
             t2.channel_id,
             t1.revert_time,
-            t1.revert_flg
+            t1.revert_flg,
+            t1.add_priority,
+            t1.subtract_priority
             <if test="channelId !=null and lang != null" >
               ,t3.name
             </if>
