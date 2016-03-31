@@ -7,11 +7,15 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function (angularAMD) {
 
-    angularAMD.controller('popPromotionDetailCtl', function ($scope,jmPromotionService,confirm,$translate) {
+    angularAMD.controller('popPromotionDetailCtl', function ($scope,jmPromotionService,context,confirm,$translate) {
         $scope.vm = {"jmMasterBrandList":[]};
         $scope.model = {};
         $scope.datePicker = [];
         $scope.initialize  = function () {
+            if(context)
+            {
+                $scope.model=context;
+            }
             jmPromotionService.init().then(function (res) {
                 $scope.vm.jmMasterBrandList = res.data.jmMasterBrandList;
             });

@@ -29,7 +29,7 @@
             ,`pre_period_start`=#{prePeriodStart}
             ,`pre_period_end`=#{prePeriodEnd}
             ,`shipping_system_id`=#{shippingSystemId}
-            ,`modified`=#{modified}
+
             ,`modifier`=#{modifier}
             ,`activity_start`=#{activityStart}
          where id=#{id}   

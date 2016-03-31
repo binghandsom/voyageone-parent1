@@ -16,20 +16,20 @@ import java.util.Date;
  * @author godfox
  * @date 2010-5-3
  */
-public class CJacksonDateDeserializer extends JsonDeserializer<Date> {
+public class CJacksonTimestampDeserializer extends JsonDeserializer<Timestamp> {
 
     @Override
-    public Date deserialize(JsonParser parser, DeserializationContext context)
+    public Timestamp deserialize(JsonParser parser, DeserializationContext context)
             throws IOException, JsonProcessingException {
         String dateFormat = "yyyy-MM-dd HH:mm:ss";
         SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
         try {
             String fieldData = parser.getText();
             //Timestamp
-            if(fieldData==null ||fieldData.equals("")) {return DateHelp.getDefaultDate();}
+            if(fieldData==null ||fieldData.equals("")) {return new Timestamp(DateHelp.getDefaultDate().getTime());}
             if(fieldData.length()<19){ fieldData+="0000-00-00 00:00:00".substring(fieldData.length());}
 
-            return sdf.parse(fieldData);
+          return   new Timestamp (sdf.parse(fieldData).getTime());
         } catch (Exception e) {
            //return DateHelp.getDefaultDate();
             e.printStackTrace();

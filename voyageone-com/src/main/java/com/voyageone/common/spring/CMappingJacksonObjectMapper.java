@@ -26,6 +26,10 @@ public class CMappingJacksonObjectMapper extends ObjectMapper {
       //  SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
       //  this.setDateFormat(formatter);
+        SimpleModule newModuleTimestamp = new SimpleModule("CJacksonTimestampSerializer", Version.unknownVersion());
+      //  newModule.addSerializer(Date.class, new CJacksonDateSerializer());
+        newModuleTimestamp.addDeserializer(Timestamp.class, new CJacksonTimestampDeserializer());
+        this.registerModule(newModuleTimestamp);
         SimpleModule newModule = new SimpleModule("CJacksonDateSerializer", Version.unknownVersion());
         newModule.addSerializer(Date.class, new CJacksonDateSerializer());
         newModule.addDeserializer(Date.class, new CJacksonDateDeserializer());
