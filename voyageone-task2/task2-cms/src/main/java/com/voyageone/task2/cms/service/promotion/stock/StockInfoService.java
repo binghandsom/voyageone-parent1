@@ -66,6 +66,16 @@ public class StockInfoService {
     /** 增量库存隔离状态 5：还原 */
     public static final String STATUS_REVERT = "5";
 
+    /** 结束状态  0: 未结束 */
+    public static final String NOT_END = "0";
+    /** 结束状态  1: 结束 */
+    public static final String END = "1";
+
+    /** 自动还原标志  0: 未执行自动还原 */
+    public static final String AUTO_REVERTED  = "1";
+    /** 自动还原标志  1: 已经执行自动还原 */
+    public static final String NOT_REVERT = "0";
+
     /**
      * 取得可用库存里list
      *
