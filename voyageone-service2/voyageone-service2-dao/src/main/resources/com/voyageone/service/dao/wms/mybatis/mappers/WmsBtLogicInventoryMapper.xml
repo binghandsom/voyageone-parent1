@@ -8,4 +8,12 @@
         where order_channel_id = #{channelId}
         and sku = #{sku}
     </select>
+
+    <select id="select_logic_inventory_by_channelId" resultType="HashMap" parameterType="HashMap">
+        select
+        sku,
+        qty_china
+        from wms_bt_inventory_center_logic
+        where order_channel_id = #{channelId}
+    </select>
 </mapper>

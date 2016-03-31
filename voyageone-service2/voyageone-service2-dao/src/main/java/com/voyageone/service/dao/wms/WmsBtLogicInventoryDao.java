@@ -15,4 +15,8 @@ public class WmsBtLogicInventoryDao extends BaseDao {
     public Integer selectLogicInventoryCnt(Map<String, Object> param) {
         return selectOne("select_logic_inventory_cnt", param);
     }
+
+    public List<Map<String, Object>> selectLogicInventoryList(Map<String, Object> param) {
+        return selectList("select_logic_inventory_by_channelId", param);
+    }
 }
