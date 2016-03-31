@@ -190,7 +190,7 @@ public class CmsTaskStockController extends CmsController {
      *  "code": "1", "message": "已经开始库存隔离，删除失败", "displayType":null, "redirectTo":null, "data":null
      * }
      * @apiExample  业务说明
-     *  1.check是否可以删除。如果这个任务在cms_bt_stock_separate_item表中存在状态<>0:未进行的隔离数据，则不允许删除。
+     *  1.check是否可以删除。如果这个任务在cms_bt_stock_separate_item表中，只要有状态为 1：等待隔离；2：隔离中；3：隔离成功；5：等待还原； 6：还原中的隔离数据，则不允许删除。
      *  2.删除cms_bt_stock_separate_platform_info表，cms_bt_stock_separate_item表，cms_bt_tasks表中对应的数据。
      * @apiExample 使用表
      *  cms_bt_tasks
@@ -1154,7 +1154,7 @@ public class CmsTaskStockController extends CmsController {
      *  "code": "1", "message": "删除失败（库存隔离后不能进行删除）", "displayType":null, "redirectTo":null, "data":null
      * }
      * @apiExample  业务说明
-     *  如果选择的Sku对应的平台中，有发生过库存隔离的（存在状态<>0:未进行的隔离数据），则删除失败。否则删除这个sku的所有平台的隔离数据。
+     *  如果选择的Sku对应的平台中， 只有状态为 0：未进行,4：隔离失败,7：还原成功,8：还原失败,9：再修正 的数据，则可以删除这个sku的所有平台的隔离数据。
      * @apiExample 使用表
      *  cms_bt_stock_separate_item
      *

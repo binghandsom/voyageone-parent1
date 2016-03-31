@@ -145,7 +145,7 @@
                 and cart_id = #{cartId}
             </if>
             <if test="statusWhere != null" >
-                status = #{statusWhere},
+                and status = #{statusWhere}
             </if>
             <if test="statusList != null and statusList.size() > 0">
                 and (status in
