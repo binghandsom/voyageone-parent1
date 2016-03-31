@@ -9,7 +9,8 @@
             t2.activity_start,
             t2.activity_end,
             t2.channel_id,
-            t1.restore_separate_time
+            t1.revert_time,
+            t1.revert_flg
             <if test="channelId !=null and lang != null" >
               ,t3.name
             </if>
@@ -35,10 +36,10 @@
     </delete>
     <select id="select_cms_bt_stock_separate_platform_info" resultType="HashMap" parameterType="String" >
         select
-        cart_id cart_id,
-        restore_separate_time restore_separate_time
+        cart_id,
+        revert_time
         from voyageone_cms2.cms_bt_stock_separate_platform_info
         where cart_id = #{cart_id}
-          and restore_separate_time >#{separateTime}
+          and revert_time >#{separateTime}
     </select>
 </mapper>

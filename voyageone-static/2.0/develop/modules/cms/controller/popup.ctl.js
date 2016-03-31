@@ -787,7 +787,7 @@ define([
          * @type {openMrbstocksku}
          */
         $scope.openNewMrbStockSku = openNewMrbStockSku;
-        function openNewMrbStockSku(viewSize, data, fnInitial) {
+        function openNewMrbStockSku(viewSize, data) {
             require([popActions.promotion.newMrbStockSku.controllerUrl], function () {
                 $modal.open({
                     templateUrl: popActions.promotion.newMrbStockSku.templateUrl,

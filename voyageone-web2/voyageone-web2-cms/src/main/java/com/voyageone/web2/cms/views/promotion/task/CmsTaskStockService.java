@@ -19,6 +19,7 @@ import com.voyageone.service.model.cms.CmsBtTasksModel;
 import com.voyageone.web2.base.BaseAppService;
 import com.voyageone.web2.cms.CmsConstants;
 import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.commons.collections.map.HashedMap;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -111,6 +112,11 @@ public class CmsTaskStockService extends BaseAppService {
     public static final String STATUS_INCREMENT_FAIL = "4";
     /** 增量库存隔离状态 5：还原 */
     public static final String STATUS_REVERT = "5";
+
+    /** 结束状态  0: 未结束 */
+    private static final String NOT_END_FLG = "0";
+    /** 结束状态  1: 结束 */
+    private static final String END_FLG = "1";
 
     /** Excel增量方式导入 */
     private static final String EXCEL_IMPORT_ADD = "1";
@@ -708,7 +714,7 @@ public class CmsTaskStockService extends BaseAppService {
         List<Map<String, Object>> platformList = cmsBtStockSeparatePlatformInfoDao.selectStockSeparatePlatform(sqlParam);
         for (Map<String, Object> platformInfo : platformList) {
             // 库存隔离还原时间
-            String restoreSeparateTime = (String) platformInfo.get("restore_separate_time");
+            String restoreSeparateTime = (String) platformInfo.get("revert_time");
             // 系统时间小于这个任务中任意一个隔离平台的还原时间，实时库存表示状态=0:活动期间表示
             if (!StringUtils.isEmpty(restoreSeparateTime)) {
                 if (restoreSeparateTime.length() == 10) {
@@ -790,8 +796,8 @@ public class CmsTaskStockService extends BaseAppService {
                 Integer separateQty = (Integer) stockInfo.get("separate_qty");
                 String taskId = String.valueOf(stockInfo.get("task_id"));
                 String status = (String) stockInfo.get("status");
-                // 如果状态为2：隔离成功，5：等待还原 那么加入到sku库存隔离信息（所有任务所有平台的数据）
-                if (STATUS_SEPARATE_SUCCESS.equals(status) || STATUS_WAITING_REVERT.equals(status)) {
+                // 如果状态为2：隔离成功那么加入到sku库存隔离信息（所有任务所有平台的数据）
+                if (STATUS_SEPARATE_SUCCESS.equals(status)) {
                     if (skuStockAllTask.containsKey(sku)) {
                         skuStockAllTask.put(sku, skuStockAllTask.get(sku) + separateQty);
                     } else {
@@ -1056,6 +1062,17 @@ public class CmsTaskStockService extends BaseAppService {
                             } else {
                                 throw new BusinessException("明细对象不存在！");
                             }
+
+                            // 导入前状态为"3: 隔离成功"的场合，更新隔离平台实际销售数据表(cms_bt_stock_sales_quantity)的end_flg为"1：结束"
+                            if (STATUS_SEPARATE_SUCCESS.equals(statusDB)) {
+                                Map<String, Object> sqlParam2 = new HashMap<String, Object>();
+                                sqlParam2.put("channelId", param.get("channelId"));
+                                sqlParam2.put("cartId", cartId);
+                                sqlParam2.put("sku", sku);
+                                sqlParam2.put("modifier", param.get("userName"));
+                                sqlParam2.put("endFlg", END_FLG);
+                                cmsBtStockSalesQuantityDao.updateStockSalesQuantity(sqlParam2);
+                            }
                         }
                     }
                 }
@@ -1146,8 +1163,8 @@ public class CmsTaskStockService extends BaseAppService {
         Map<String,Object> sqlParam1 = new HashMap<String,Object>();
         sqlParam1.put("channelId", channelId);
         sqlParam1.put("sku", sku);
-        // 状态 = 3：隔离成功, 5：等待还原
-        sqlParam1.put("statusList", Arrays.asList(STATUS_SEPARATE_SUCCESS, STATUS_WAITING_REVERT));
+        // 状态 = 3：隔离成功
+        sqlParam1.put("status", STATUS_SEPARATE_SUCCESS);
         Integer stockSeparateSuccessQty =  cmsBtStockSeparateItemDao.selectStockSeparateSuccessQty(sqlParam1);
         if (stockSeparateSuccessQty != null) {
             stockSeparate =  stockSeparateSuccessQty;
@@ -1457,10 +1474,23 @@ public class CmsTaskStockService extends BaseAppService {
      */
     public void executeStockRevert(Map param){
 
+        // 还原状态 1:所有活动未开始前的状态；2:至少有一个活动已经自动还原的状态
+        String revertStatus = "";
+
         // 取得任务id对应的Promotion是否开始
         boolean promotionStartFlg = isPromotionStart((String) param.get("taskId"));
-        if (promotionStartFlg) {
-            throw new BusinessException("活动已经开始，活动结束后会自动还原！");
+        if (!promotionStartFlg) {
+            revertStatus = "1";
+        }
+        // 取得任务id对应的Promotion是否结束
+        boolean promotionRevertFlg = isPromotionRevert((String) param.get("taskId"));
+        if (promotionRevertFlg) {
+            revertStatus = "2";
+        }
+
+        // 活动期间
+        if ("".equals(revertStatus)) {
+            throw new BusinessException("活动期间不能进行还原！");
         }
 
         simpleTransaction.openTransaction();
@@ -1470,23 +1500,111 @@ public class CmsTaskStockService extends BaseAppService {
             // 更新结果
             int updateCnt = 0;
 
-            // 对库存隔离数据表进行数据还原
-            Map<String, Object> sqlParam2 = new HashMap<String, Object>();
-            // 选择一件sku进行库存还原的的场合,加入sku的条件
-            if (!StringUtils.isEmpty(selSku)) {
-                sqlParam2.put("sku", selSku);
+            // 还原状态 1:所有活动未开始前的状态 的情况下，对状态为"3:隔离成功"，"8:还原失败"的数据可以进行还原
+            // 状态为"3:隔离成功"的场合，并且更新隔离平台实际销售数据表(cms_bt_stock_sales_quantity)的end_flg为"1：结束"
+            if ("1".equals(revertStatus)) {
+                // 取得状态为状态为"3:隔离成功"的sku和平台id
+                Map<String, Object> sqlParam = new HashMap<String, Object>();
+                sqlParam.put("taskId", param.get("taskId"));
+                // 选择一件sku进行库存还原的的场合,加入sku的条件
+                if (!StringUtils.isEmpty(selSku)) {
+                    sqlParam.put("sku", selSku);
+                }
+                sqlParam.put("status", STATUS_SEPARATE_SUCCESS);
+                List<Map<String, Object>> stockList = cmsBtStockSeparateItemDao.selectStockSeparateItem(sqlParam);
+
+                // 对库存隔离数据表进行数据还原
+                Map<String, Object> sqlParam2 = new HashMap<String, Object>();
+                // 选择一件sku进行库存还原的的场合,加入sku的条件
+                if (!StringUtils.isEmpty(selSku)) {
+                    sqlParam2.put("sku", selSku);
+                }
+                // 更新状态为"4:等待还原"
+                sqlParam2.put("status", STATUS_WAITING_REVERT);
+                sqlParam2.put("modifier", param.get("userName"));
+                // 更新条件
+                sqlParam2.put("taskId", param.get("taskId"));
+                // 只有状态为"3:隔离成功"，"8:还原失败"的数据可以进行还原库存隔离操作。
+                sqlParam2.put("statusList", Arrays.asList(STATUS_SEPARATE_SUCCESS, STATUS_REVERT_FAIL));
+                updateCnt = cmsBtStockSeparateItemDao.updateStockSeparateItem(sqlParam2);
+                if (updateCnt == 0) {
+                    throw new BusinessException("没有可以还原的数据！");
+                }
+
+                // 做一个以cartId为单位的包含sku的Map，Map<cartId, List<sku>>
+                Map<String, List> cartSkuMap = new HashMap<String, List>();
+                for (Map<String, Object> stock : stockList) {
+                    String cartId =  String.valueOf(stock.get("cart_id"));
+                    String sku = (String) stock.get("sku");
+                    if (cartSkuMap.containsKey(cartId)) {
+                        ArrayList<String> skuList = (ArrayList<String>) cartSkuMap.get(cartId);
+                        skuList.add(sku);
+                    } else {
+                        ArrayList<String> skuList = new ArrayList<String>();
+                        skuList.add(sku);
+                        cartSkuMap.put(cartId, skuList);
+                    }
+                }
+
+                // 更新隔离平台实际销售数据表(cms_bt_stock_sales_quantity)的end_flg为"1：结束"
+                for (Map.Entry<String, List> cartSku : cartSkuMap.entrySet()) {
+                    String carTId = cartSku.getKey();
+                    List skuList = cartSku.getValue();
+                    for(int i = 0; i < skuList.size(); i+= 500) {
+                        int toIndex = i + 500;
+                        if (toIndex > skuList.size()) {
+                            toIndex = skuList.size();
+                        }
+                        List newList = skuList.subList(i, toIndex);
+                        Map<String, Object> sqlParam1 = new HashMap<String, Object>();
+                        sqlParam1.put("channelId", param.get("channelId"));
+                        sqlParam1.put("cartId", carTId);
+                        sqlParam1.put("skuList", newList);
+                        sqlParam1.put("modifier", param.get("userName"));
+                        sqlParam1.put("endFlg", END_FLG);
+                        cmsBtStockSalesQuantityDao.updateStockSalesQuantity(sqlParam1);
+                    }
+                }
+
+            } else {
+
+                // 还原状态 2:至少有一个活动已经自动还原的状态 的情况下，对状态为 "8:还原失败"的数据可以进行还原
+                // 对库存隔离数据表进行数据还原
+                Map<String, Object> sqlParam2 = new HashMap<String, Object>();
+                // 选择一件sku进行库存还原的的场合,加入sku的条件
+                if (!StringUtils.isEmpty(selSku)) {
+                    sqlParam2.put("sku", selSku);
+                }
+                // 更新状态为"4:等待还原"
+                sqlParam2.put("status", STATUS_WAITING_REVERT);
+                sqlParam2.put("modifier", param.get("userName"));
+                // 更新条件
+                sqlParam2.put("taskId", param.get("taskId"));
+                // 只有状态为"3:隔离成功"，"8:还原失败"的数据可以进行还原库存隔离操作。
+                sqlParam2.put("statusList", Arrays.asList(STATUS_REVERT_FAIL));
+                updateCnt = cmsBtStockSeparateItemDao.updateStockSeparateItem(sqlParam2);
+                if (updateCnt == 0) {
+                    throw new BusinessException("没有可以还原的数据！");
+                }
             }
-            // 更新状态为"4:等待还原"
-            sqlParam2.put("status", STATUS_WAITING_REVERT);
-            sqlParam2.put("modifier", param.get("userName"));
-            // 更新条件
-            sqlParam2.put("taskId", param.get("taskId"));
-            // 只有状态为"3:隔离成功"，"8:还原失败"的数据可以进行还原库存隔离操作。
-            sqlParam2.put("statusList", Arrays.asList(STATUS_SEPARATE_SUCCESS, STATUS_REVERT_FAIL));
-            updateCnt = cmsBtStockSeparateItemDao.updateStockSeparateItem(sqlParam2);
-            if (updateCnt == 0) {
-                throw new BusinessException("没有可以还原的数据！");
-            }
+
+//            // 对库存隔离数据表进行数据还原
+//            Map<String, Object> sqlParam2 = new HashMap<String, Object>();
+//            // 选择一件sku进行库存还原的的场合,加入sku的条件
+//            if (!StringUtils.isEmpty(selSku)) {
+//                sqlParam2.put("sku", selSku);
+//            }
+//            // 更新状态为"4:等待还原"
+//            sqlParam2.put("status", STATUS_WAITING_REVERT);
+//            sqlParam2.put("modifier", param.get("userName"));
+//            // 更新条件
+//            sqlParam2.put("taskId", param.get("taskId"));
+//            // 只有状态为"3:隔离成功"，"8:还原失败"的数据可以进行还原库存隔离操作。
+//            sqlParam2.put("statusList", Arrays.asList(STATUS_SEPARATE_SUCCESS, STATUS_REVERT_FAIL));
+//            updateCnt = cmsBtStockSeparateItemDao.updateStockSeparateItem(sqlParam2);
+//            if (updateCnt == 0) {
+//                throw new BusinessException("没有可以还原的数据！");
+//            }
 
 //            // 对增量库存隔离数据表进行数据还原
 //            // 取得隔离对象对应的子任务id
@@ -2600,7 +2718,7 @@ public class CmsTaskStockService extends BaseAppService {
      * 某个任务对应的Promotion是否已经开始（只要有一个Promotion开始就认为已经开始）
      *
      * @param taskId 任务id
-     * @return 实时库存表示状态
+     * @return Promotion是否开始
      */
     private boolean isPromotionStart(String taskId){
 
@@ -2618,6 +2736,35 @@ public class CmsTaskStockService extends BaseAppService {
                 }
                 Date activityStartDate = DateTimeUtil.parse(activityStart);
                 if (now.getTime() - activityStartDate.getTime() > 0) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 某个任务对应的Promotion是否已经还原（只要有一个Promotion还原就认为已经还原）
+     *
+     * @param taskId 任务id
+     * @return Promotion是否结束
+     */
+    private boolean isPromotionRevert(String taskId){
+        // 取得任务下的平台平台信息
+        Date now = DateTimeUtil.parse(DateTimeUtil.getNow());
+        Map<String,Object> sqlParam = new HashMap<String,Object>();
+        sqlParam.put("taskId", taskId);
+        List<Map<String, Object>> platformList = cmsBtStockSeparatePlatformInfoDao.selectStockSeparatePlatform(sqlParam);
+        for (Map<String, Object> platformInfo : platformList) {
+            // 库存隔离还原时间
+            String restoreSeparateTime = (String) platformInfo.get("revert_time");
+            // 系统时间大于这个任务中任意一个隔离平台的还原时间，认为已经还原
+            if (!StringUtils.isEmpty(restoreSeparateTime)) {
+                if (restoreSeparateTime.length() == 10) {
+                    restoreSeparateTime = restoreSeparateTime + " 00:00:00";
+                }
+                Date restoreSeparateTimeDate = DateTimeUtil.parse(restoreSeparateTime);
+                if (now.getTime() - restoreSeparateTimeDate.getTime() > 0) {
                     return true;
                 }
             }

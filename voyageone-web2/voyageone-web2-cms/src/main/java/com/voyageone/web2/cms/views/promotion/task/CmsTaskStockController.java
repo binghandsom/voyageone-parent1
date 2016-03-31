@@ -1053,6 +1053,8 @@ public class CmsTaskStockController extends CmsController {
     public AjaxResponse executeStockRevert(@RequestBody Map param) {
         // 创建者/更新者用
         param.put("userName", this.getUser().getUserName());
+        // 渠道id
+        param.put("channelId", this.getUser().getSelChannelId());
 
         // 还原库存隔离离
         cmsTaskStockService.executeStockRevert(param);
@@ -1124,6 +1126,9 @@ public class CmsTaskStockController extends CmsController {
         param.put("lang", this.getLang());
         // 创建者/更新者用
         param.put("userName", this.getUser().getUserName());
+        // 渠道id
+        param.put("channelId", this.getUser().getSelChannelId());
+
         // 保存隔离库存明细
         cmsTaskStockService.saveRecord(param);
         // 返回
