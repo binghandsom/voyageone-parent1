@@ -307,7 +307,7 @@ define([
          */
         function setPlatformType(cType) {
             var defer = $q.defer();
-            ajaxService.post(cActions.cms.home.menu.setPlatformType, {"cTypeId": cType.add_name2, "cartId": cType.value})
+            ajaxService.post(cActions.cms.home.menu.setPlatformType, {"cTypeId": cType.add_name2, "cartId": parseInt(cType.value)})
                 .then(function (response) {
                     defer.resolve(response.data);
                 });
