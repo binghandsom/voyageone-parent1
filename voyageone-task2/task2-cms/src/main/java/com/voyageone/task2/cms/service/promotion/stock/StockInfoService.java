@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 
 /**
- * 库存还原batch
+ * 库存batch共用逻辑Service
  *
  * @author morse.lu
  * @version 0.0.1, 16/3/29
