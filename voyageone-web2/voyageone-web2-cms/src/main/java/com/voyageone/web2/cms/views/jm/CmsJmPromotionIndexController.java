@@ -5,10 +5,8 @@ import com.voyageone.web2.cms.CmsController;
 import com.voyageone.web2.cms.CmsUrlConstants;
 import com.voyageone.web2.cms.views.promotion.list.CmsPromotionIndexService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -24,6 +22,7 @@ public class CmsJmPromotionIndexController extends CmsController {
     public AjaxResponse init() {
         return success(cmsPromotionService.init());
     }
+
     @RequestMapping(CmsUrlConstants.JMPROMOTION.LIST.INDEX.GET_LIST_BY_WHERE)
     public AjaxResponse getListByWhere(@RequestBody Map params) {
         String channelId = getUser().getSelChannelId();

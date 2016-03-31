@@ -1,4 +1,5 @@
 package com.voyageone.service.impl.jumei;
+import com.voyageone.common.util.MapCamel;
 import com.voyageone.service.dao.jumei.*;
 import com.voyageone.service.daoext.jumei.CmsBtJmPromotionDaoExt;
 import com.voyageone.service.model.jumei.*;
@@ -44,7 +45,7 @@ public class CmsBtJmPromotionService {
         return dao.insert(entity);
     }
 
-    public List<CmsBtJmPromotionModel> getListByWhere(Map<String, Object> map) {
+    public List<MapCamel> getListByWhere(Map<String, Object> map) {
         if (map.containsKey("state1") && map.get("state1") == "false")//待进行
         {
             map.remove("state1");  //小于开始时间

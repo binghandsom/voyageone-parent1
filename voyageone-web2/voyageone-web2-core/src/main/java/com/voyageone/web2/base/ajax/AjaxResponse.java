@@ -99,7 +99,7 @@ public class AjaxResponse {
     public void writeTo(HttpServletResponse response) {
 
         ObjectMapper mapper = new ObjectMapper();
-
+       // CMappingJacksonObjectMapper
         PrintWriter out = null;
         try {
             response.setCharacterEncoding("UTF-8");

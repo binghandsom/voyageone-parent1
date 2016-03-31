@@ -18,6 +18,7 @@ define([
         $scope.search = function () {
            // console.log($scope.searchInfo);
             jmPromotionService.getListByWhere($scope.searchInfo).then(function (res) {
+                console.log(res);
                 $scope.vm.modelList = res.data;
                // $scope.groupPageOption.total = $scope.vm.modelList.size;
             }, function (res) {
