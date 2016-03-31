@@ -66,15 +66,12 @@ public class StockSeparateService extends BaseTaskService {
         List<Map<String, Object>> resultData = cmsBtStockSeparateItemDao.selectStockSeparateItem(param);
         $info("等待隔离数据取得完毕. %d件", resultData.size());
 
-        // 按渠道整理隔离平台Map<channelId, Map<taskId, List<cartId>>>
-        Map<String, Map<Integer, List<Integer>>> mapSeparateCartId = new HashMap<>();
         // 按渠道,sku整理Map<channelId, Map<taskId, Map<sku,resultData>>>
         Map<String, Map<Integer, Map<String, List<Map<String, Object>>>>> resultDataByChannel = new HashMap<>();
 
         for (Map<String, Object> rowData : resultData) {
             String channelId = (String) rowData.get("channel_id");
             String sku = (String) rowData.get("sku");
-            Integer cartId = (Integer) rowData.get("cart_id");
             Integer taskId = (Integer) rowData.get("task_id");
 
             // 隔离数据Map put
@@ -105,27 +102,10 @@ public class StockSeparateService extends BaseTaskService {
                     }
                 }
             }
-
-            // 隔离平台Map put
-            Map<Integer, List<Integer>> mapPlatChannel = mapSeparateCartId.get(channelId);
-            if (mapPlatChannel==null) {
-                mapPlatChannel = new HashMap<>();
-                List<Integer> listData = new ArrayList<>();
-                listData.add(cartId);
-                mapPlatChannel.put(taskId, listData);
-            } else {
-                if (mapPlatChannel.containsKey(taskId)) {
-                    mapPlatChannel.get(taskId).add(cartId);
-                } else {
-                    List<Integer> listData = new ArrayList<>();
-                    listData.add(cartId);
-                    mapPlatChannel.put(taskId, listData);
-                }
-            }
         }
 
         for (String channelId : resultDataByChannel.keySet()) {
-            executeByChannel(channelId, resultDataByChannel.get(channelId), mapSeparateCartId.get(channelId));
+            executeByChannel(channelId, resultDataByChannel.get(channelId));
         }
 
     }
@@ -135,9 +115,8 @@ public class StockSeparateService extends BaseTaskService {
      *
      * @param channelId   渠道id
      * @param mapSkuTaskData Map<taskId, Map<sku,resultData>>该渠道下的sku数据
-     * @param mapSeparateCartId Map<taskId, List<cartId>> 该渠道下的隔离的所有平台
      */
-    private void executeByChannel(String channelId, Map<Integer, Map<String, List<Map<String, Object>>>> mapSkuTaskData, Map<Integer, List<Integer>> mapSeparateCartId) {
+    private void executeByChannel(String channelId, Map<Integer, Map<String, List<Map<String, Object>>>> mapSkuTaskData) {
         // 渠道对应的所有销售平台取得
         List<TypeChannelBean> cartList = TypeChannels.getTypeListSkuCarts(channelId, Constants.comMtTypeChannel.SKU_CARTS_53_A, "en");
         List<Integer> listCartId = new ArrayList<>();
@@ -153,14 +132,27 @@ public class StockSeparateService extends BaseTaskService {
             // taskId对应平台的增减顺
             Map<String, Object> param = new HashMap<>();
             param.put("taskId", taskId);
+            param.put("commonPlatform", true);
             List<Map<String, Object>> listTaskInfo = cmsBtStockSeparatePlatformInfoDao.selectStockSeparatePlatform(param);
 
             Map<String, List<Map<String, Object>>> mapSkuData = mapSkuTaskData.get(taskId);
-            Integer skuUsable = 0; // 可用库存
+            Integer skuUsableOld = 0; // 可用库存
             for (String sku : mapSkuData.keySet()) {
                 List<Map<String, Object>> listData = mapSkuData.get(sku);
-                skuUsable = (Integer) listData.get(0).get("qty");
+                skuUsableOld = (Integer) listData.get(0).get("qty");
+                Map<Integer, Integer> cartSeparateQty = new HashMap<>();
+                Integer separateQtyAll = 0;
                 for (Map<String, Object> data : listData) {
+                    Integer cartId = (Integer) data.get("cart_id");
+                    Integer separateQty = (Integer) data.get("separate_qty");
+                    separateQtyAll += separateQty;
+                    cartSeparateQty.put(cartId, separateQty);
+                }
+
+                if (separateQtyAll <= skuUsableOld) {
+                    // 各平台设置之和 <= 可用库存
+
+                } else {
 
                 }
             }
