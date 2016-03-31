@@ -714,7 +714,7 @@ public class CmsTaskStockService extends BaseAppService {
         List<Map<String, Object>> platformList = cmsBtStockSeparatePlatformInfoDao.selectStockSeparatePlatform(sqlParam);
         for (Map<String, Object> platformInfo : platformList) {
             // 库存隔离还原时间
-            String restoreSeparateTime = (String) platformInfo.get("resvert_time");
+            String restoreSeparateTime = (String) platformInfo.get("revert_time");
             // 系统时间小于这个任务中任意一个隔离平台的还原时间，实时库存表示状态=0:活动期间表示
             if (!StringUtils.isEmpty(restoreSeparateTime)) {
                 if (restoreSeparateTime.length() == 10) {
@@ -2757,7 +2757,7 @@ public class CmsTaskStockService extends BaseAppService {
         List<Map<String, Object>> platformList = cmsBtStockSeparatePlatformInfoDao.selectStockSeparatePlatform(sqlParam);
         for (Map<String, Object> platformInfo : platformList) {
             // 库存隔离还原时间
-            String restoreSeparateTime = (String) platformInfo.get("resvert_time");
+            String restoreSeparateTime = (String) platformInfo.get("revert_time");
             // 系统时间大于这个任务中任意一个隔离平台的还原时间，认为已经还原
             if (!StringUtils.isEmpty(restoreSeparateTime)) {
                 if (restoreSeparateTime.length() == 10) {
