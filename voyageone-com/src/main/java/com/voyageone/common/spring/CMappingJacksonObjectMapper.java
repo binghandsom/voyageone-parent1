@@ -18,22 +18,19 @@ public class CMappingJacksonObjectMapper extends ObjectMapper {
     public static Logger logger = LoggerFactory.getLogger(CMappingJacksonObjectMapper.class);
     public CMappingJacksonObjectMapper() {
         super();
-        //long 自动按字符串序列化
+        //long 自动按字符串序列化  js没有长整型
         this.configure(JsonGenerator.Feature.WRITE_NUMBERS_AS_STRINGS, true);
         //按方法get set 后名字大小写序列化
 //        this.setPropertyNamingStrategy(new CDefaultPropertyNamingStrategy());
         //自定义显示日期格式
-        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        // formatter.parse()
-        this.setDateFormat(formatter);
+      //  SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-        //UTCDateDeserializer utcDateDeserializer = new UTCDateDeserializer();
+      //  this.setDateFormat(formatter);
         SimpleModule newModule = new SimpleModule("CJacksonDateSerializer", Version.unknownVersion());
         newModule.addSerializer(Date.class, new CJacksonDateSerializer());
         newModule.addDeserializer(Date.class, new CJacksonDateDeserializer());
         this.registerModule(newModule);
     }
-
     @Override
     protected Object _readMapAndClose(JsonParser jp, JavaType valueType)
             throws IOException, JsonParseException, JsonMappingException {

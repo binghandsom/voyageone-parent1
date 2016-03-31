@@ -33,9 +33,9 @@ public interface CmsUrlConstants {
 
                 String GET_LIST_BY_WHERE = "getListByWhere";
 
-                String INSERT_PROMOTION = "insertPromotion";
+                String INSERT = "insert";
 
-                String UPDATE_PROMOTION = "updatePromotion";
+                String UPDATE= "update";
             }
         }
     }

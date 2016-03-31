@@ -13,13 +13,16 @@ public class CmsBtJmPromotionModel implements Serializable
         setName(""); 
         setActivityPcId(""); 
         setActivityAppId(""); 
-        setActivityStart(DateHelp.getDefaultDate());
+        setCmsBtJmMasterBrandName(""); 
+        setBrand(""); 
+        setCategory(""); 
         setActivityEnd(DateHelp.getDefaultDate());
         setPrePeriodStart(DateHelp.getDefaultDate());
         setPrePeriodEnd(DateHelp.getDefaultDate());
         setCreated(DateHelp.getDefaultDate());
         setCreater(""); 
         setModifier(""); 
+        setActivityStart(DateHelp.getDefaultDate());
 
     }
  
@@ -55,9 +58,27 @@ public class CmsBtJmPromotionModel implements Serializable
     
     
  /**
-活动开始时间
+
         */
-     private Date activityStart;
+     private int cmsBtJmMasterBrandId;
+    
+    
+ /**
+
+        */
+     private String cmsBtJmMasterBrandName;
+    
+    
+ /**
+专场涉及品牌
+        */
+     private String brand;
+    
+    
+ /**
+专场涉及品类
+        */
+     private String category;
     
     
  /**
@@ -106,6 +127,12 @@ public class CmsBtJmPromotionModel implements Serializable
 修改人
         */
      private String modifier;
+    
+    
+ /**
+活动开始时间
+        */
+     private Date activityStart;
     
         
          /**
@@ -207,21 +234,77 @@ this.activityAppId="";
     
         
          /**
-           活动开始时间
+           
         */
-        public Date getActivityStart()
+        public int getCmsBtJmMasterBrandId()
         {
          
-        return this.activityStart;
+        return this.cmsBtJmMasterBrandId;
         }
-        public void setActivityStart(Date activityStart)
+        public void setCmsBtJmMasterBrandId(int cmsBtJmMasterBrandId)
         {
-       if(activityStart!=null){
-this.activityStart=activityStart;
+         this.cmsBtJmMasterBrandId=cmsBtJmMasterBrandId;
+        }
+    
+        
+         /**
+           
+        */
+        public String getCmsBtJmMasterBrandName()
+        {
+         
+        return this.cmsBtJmMasterBrandName;
+        }
+        public void setCmsBtJmMasterBrandName(String cmsBtJmMasterBrandName)
+        {
+        if(cmsBtJmMasterBrandName!=null){
+this.cmsBtJmMasterBrandName=cmsBtJmMasterBrandName;
  }
 else
 {
-this.activityStart=DateHelp.getDefaultDate();
+this.cmsBtJmMasterBrandName="";
+}
+
+        }
+    
+        
+         /**
+           专场涉及品牌
+        */
+        public String getBrand()
+        {
+         
+        return this.brand;
+        }
+        public void setBrand(String brand)
+        {
+        if(brand!=null){
+this.brand=brand;
+ }
+else
+{
+this.brand="";
+}
+
+        }
+    
+        
+         /**
+           专场涉及品类
+        */
+        public String getCategory()
+        {
+         
+        return this.category;
+        }
+        public void setCategory(String category)
+        {
+        if(category!=null){
+this.category=category;
+ }
+else
+{
+this.category="";
 }
 
         }
@@ -376,6 +459,27 @@ this.modifier=modifier;
 else
 {
 this.modifier="";
+}
+
+        }
+    
+        
+         /**
+           活动开始时间
+        */
+        public Date getActivityStart()
+        {
+         
+        return this.activityStart;
+        }
+        public void setActivityStart(Date activityStart)
+        {
+       if(activityStart!=null){
+this.activityStart=activityStart;
+ }
+else
+{
+this.activityStart=DateHelp.getDefaultDate();
 }
 
         }

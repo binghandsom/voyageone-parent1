@@ -41,7 +41,7 @@ public class CmsBtJmPromotionService {
         return dao.update(entity);
     }
 
-    public int create(CmsBtJmPromotionModel entity) {
+    public int insert(CmsBtJmPromotionModel entity) {
         return dao.insert(entity);
     }
 

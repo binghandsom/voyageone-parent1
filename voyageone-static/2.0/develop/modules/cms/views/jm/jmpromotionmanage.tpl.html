@@ -44,14 +44,15 @@
 								</div>
 							</div>
 						</div>
-						<div class="col-sm-4">
+						<div class="col-sm-4">i
 							<div class="form-horizontal">
 								<div class="form-group">
-									<label class="col-sm-3 control-label">专场品牌</label>
+									<label class="col-sm-3 control-label">专场主品牌</label>
 									<div class="col-sm-8">
 										<select search-contains="true" chosen class="form-control" ng-model="searchInfo.cmsBtJmMasterBrandId"
-												ng-options="brand.Id as brand.name for brand in vm.jmMasterBrandList">
+												ng-options="brand.d as brand.name for brand in vm.jmMasterBrandList">
 											<option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+											<!--<option ng-repeat="brand in vm.jmMasterBrandList" value={{brand.id}}>{{platform.name}}</option>-->
 										</select>
 									</div>
 								</div>

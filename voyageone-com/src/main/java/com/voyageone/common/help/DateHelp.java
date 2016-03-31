@@ -17,7 +17,7 @@ public class DateHelp {
         if (DefaultDate == null) {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             try {
-                DefaultDate = sdf.parse("1949-10-01 00:00:00");
+                DefaultDate = sdf.parse("2000-01-01 00:00:00");
             } catch (Exception ex) {
                 ex.printStackTrace();
             }

@@ -16,7 +16,8 @@ define([
             $scope.searchInfo = {};
         };
         $scope.search = function () {
-           // console.log($scope.searchInfo);
+            console.log("searchInfo");
+           console.log($scope.searchInfo);
             jmPromotionService.getListByWhere($scope.searchInfo).then(function (res) {
                 console.log(res);
                 $scope.vm.modelList = res.data;

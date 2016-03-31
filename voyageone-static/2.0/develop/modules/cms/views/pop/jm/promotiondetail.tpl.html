@@ -6,565 +6,89 @@
     </div>
     <div class="modal-body wrapper">
         <form role="form" class="form-horizontal">
-           <div class="form-group">
-               <label class="col-sm-3 control-label">Activity ID</label>
-               <div class="col-sm-8">
-                   <input type="text" class="form-control" placeholder="123456" disabled>
-                </div>
-           </div>
+           <!--<div class="form-group">-->
+               <!--<label class="col-sm-3 control-label">Activity ID</label>-->
+               <!--<div class="col-sm-8">-->
+                   <!--<input type="text" class="form-control" placeholder="123456" >-->
+                <!--</div>-->
+           <!--</div>-->
             <div class="form-group">
-                <label class="col-sm-3 control-label">Activity Name</label>
+                <label class="col-sm-3 control-label" translate="TXT_PROMOTION_NAME"></label>
                 <div class="col-sm-8">
-                    <input type="text" class="form-control" placeholder="双十一活动" disabled>
+                    <input type="text" class="form-control" placeholder="双十一活动"  ng-model="model.name">
+                    <input type="hidden"  ng-model="model.id">
                 </div>
             </div>
             <div class="form-group">
                 <label class="col-sm-3 control-label">专场主品牌</label>
-                <div class="col-sm-5">
-                    <select class="form-control">
-                        <option>聚美品牌ID1</option>
-                        <option>聚美品牌ID2</option>
-                        <option>聚美品牌ID3</option>
+                <div class="col-sm-8 form-inline"  >
+                    <select search-contains="true"  class="form-control" ng-model="model.cmsBtJmMasterBrandId"
+                            ng-options="brand.id as brand.name for brand in vm.jmMasterBrandList">
+                        <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                     </select>
                 </div>
-                <label class="col-sm-3 control-label text-u-red text-left">聚美品牌ID</label>
+                <!--<label class="col-sm-3 control-label text-u-red text-left">聚美品牌ID</label>-->
             </div>
             <div class="form-group">
-                <label class="col-sm-3 control-label">Up Date</label>
-                <div class="col-sm-8">
-                    <input type="text" class="form-control" placeholder="2015.11.11">
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="col-sm-3 control-label">Sales Date</label>
+                <label class="col-sm-3 control-label" translate="TXT_PROMOTION_TIME"></label>
                 <div class="col-sm-8 form-inline">
                     <div class="col-sm-5 input-group">
-                        <input type="text" class="form-control" datepicker-popup="{{formatDate}}" ng-model="$parent.searchInfo.createdStart" date-model-format="{{formatDate}}" is-open="opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" />
+                        <input type="text" class="form-control" datepicker-popup ng-model="model.activityStart"
+                               max-date="model.activityStart" date-model-format="yyyy-MM-dd" is-open="datePicker1" ng-required="true" close-text="Close" />
 								              <span class="input-group-btn">
-								                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+								                <button type="button" class="btn btn-default" ng-click="datePicker1 = !datePicker1"><i class="glyphicon glyphicon-calendar"></i></button>
 								              </span>
                     </div>&nbsp;~&nbsp;
                     <div class="col-sm-5 input-group">
-                        <input type="text" class="form-control" datepicker-popup="{{formatDate}}" ng-model="$parent.searchInfo.createdEnd" date-model-format="{{formatDate}}" is-open="opened" datepicker-options="dateOptions" ng-required="true" close-text="Close" />
+                        <input type="text" class="form-control" datepicker-popup ng-model="model.activityEnd"
+                               max-date="model.activityEnd" date-model-format="yyyy-MM-dd" is-open="datePicker2" ng-required="true" close-text="Close" />
 								              <span class="input-group-btn">
-								                <button type="button" class="btn btn-default" ng-click="open($event)"><i class="glyphicon glyphicon-calendar"></i></button>
+								                <button type="button" class="btn btn-default" ng-click="datePicker2 = !datePicker2"><i class="glyphicon glyphicon-calendar"></i></button>
 								              </span>
                     </div>
                 </div>
             </div>
             <div class="form-group">
-                <label class="col-sm-3 control-label">PC端专场ID</label>
-                <div class="col-sm-8">
-                    <input type="text" class="form-control" placeholder="38493">
+                <label class="col-sm-3 control-label" translate="TXT_PRE_SALE_TIME"></label>
+                <div class="col-sm-8 form-inline">
+                    <div class="col-sm-5 input-group">
+                        <input type="text" class="form-control" datepicker-popup ng-model="model.prePeriodStart"
+                               max-date="model.prePeriodStart" date-model-format="yyyy-MM-dd" is-open="datePicker3" ng-required="true" close-text="Close" />
+								              <span class="input-group-btn">
+								                <button type="button" class="btn btn-default" ng-click="datePicker3 = !datePicker3"><i class="glyphicon glyphicon-calendar"></i></button>
+								              </span>
+                    </div>&nbsp;~&nbsp;
+                    <div class="col-sm-5 input-group">
+                        <input type="text" class="form-control" datepicker-popup ng-model="model.prePeriodEnd"
+                               max-date="mdoel.prePeriodEnd" date-model-format="yyyy-MM-dd" is-open="datePicker4" ng-required="true" close-text="Close" />
+								              <span class="input-group-btn">
+								                <button type="button" class="btn btn-default" ng-click="datePicker4 = !datePicker4"><i class="glyphicon glyphicon-calendar"></i></button>
+								              </span>
+                    </div>
                 </div>
             </div>
             <div class="form-group">
-                <label class="col-sm-3 control-label">APP端专场ID</label>
+                <label class="col-sm-3 control-label" translate="TXT_PROMOTION_PC_ID" ></label>
                 <div class="col-sm-8">
-                    <input type="text" class="form-control" placeholder="38493">
+                    <input type="text" class="form-control" placeholder="38493"   ng-model="model.activityPcId" >
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label" translate="TXT_PROMOTION_APP_ID" ></label>
+                <div class="col-sm-8">
+                    <input type="text" class="form-control" placeholder="38493"  ng-model="model.activityAppId">
                 </div>
             </div>
             <div class="form-group">
                 <label class="col-sm-3 control-label">专场涉及品类</label>
                 <div class="col-sm-8">
-                    <input type="text" class="form-control" placeholder="双十一专场活动">
+                    <input type="text" class="form-control" placeholder="双十一专场活动" ng-model="model.brand">
                 </div>
             </div>
             <div class="form-group">
                 <label class="col-sm-3 control-label">专场涉及品牌</label>
                 <div class="col-sm-8">
-                    <textarea class="form-control" rows="8" placeholder="Vans、Adidas" disabled></textarea>
-                    <!--<uib-tabset type="pills">
-                        <uib-tab heading="A" class="m-b-xs">
-                            <hr style="margin-top:4px;margin-bottom:3px">
-                            <div>
-                                <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                <input type="checkbox">
-                                <span class="fa fa-check"></span>&nbsp;Alex Alex&nbsp;</label>
-                            </div>
-                            <div>
-                            <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                <input type="checkbox">
-                                <span class="fa fa-check"></span>&nbsp;American Rag&nbsp;</label> </div>
-                            <div>
-                            <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                <input type="checkbox">
-                                <span class="fa fa-check"></span>&nbsp;American West&nbsp;</label>
-                                </div>
-                            <div>
-                                <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                    <input type="checkbox">
-                                    <span class="fa fa-check"></span>&nbsp;American Apparel&nbsp;</label>
-                            </div>
-                            <div>
-                                <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                    <input type="checkbox">
-                                    <span class="fa fa-check"></span>&nbsp;Anna Sui&nbsp;</label> </div>
-                            <div>
-                                <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                    <input type="checkbox">
-                                    <span class="fa fa-check"></span>&nbsp;Asphalt&nbsp;</label>
-                            </div>
-                            <div>
-                            <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                <input type="checkbox">
-                                <span class="fa fa-check"></span>&nbsp;Ava & Aiden&nbsp;</label>
-                        </div>
-                        </uib-tab>
-                        <uib-tab heading="B" class="m-b-xs">
-                            <hr style="margin-top:4px;margin-bottom:3px">
-                            <div>
-                                <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                    <input type="checkbox">
-                                    <span class="fa fa-check"></span>&nbsp;BCBGMAXAZRIA&nbsp;</label>
-                            </div>
-                            <div>
-                                <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                    <input type="checkbox">
-                                    <span class="fa fa-check"></span>&nbsp;Bearpaw&nbsp;</label> </div>
-                            <div>
-                                <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                    <input type="checkbox">
-                                    <span class="fa fa-check"></span>&nbsp;Beren LA&nbsp;</label>
-                            </div>
-                            <div>
-                                <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                    <input type="checkbox">
-                                    <span class="fa fa-check"></span>&nbsp;Boots&nbsp;</label>
-                            </div>
-                            <div>
-                                <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                    <input type="checkbox">
-                                    <span class="fa fa-check"></span>&nbsp;BoyLondon&nbsp;</label>
-                            </div>
-                        </uib-tab>
-                        <uib-tab heading="C" class="m-b-xs">
-                            <hr style="margin-top:4px;margin-bottom:3px">
-                            <div>
-                                <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                    <input type="checkbox">
-                                    <span class="fa fa-check"></span>&nbsp;进行中&nbsp;</label>
-                            </div>
-                            <div>
-                                <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                    <input type="checkbox">
-                                    <span class="fa fa-check"></span>&nbsp;完成&nbsp;</label> </div>
-                            <div>
-                                <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                    <input type="checkbox">
-                                    <span class="fa fa-check"></span>&nbsp;待进行中&nbsp;</label>
-                            </div>
-                        </uib-tab>
-                        <uib-tab heading="D" class="m-b-xs">
-                            <hr style="margin-top:4px;margin-bottom:3px">
-                            <div>
-                                <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                    <input type="checkbox">
-                                    <span class="fa fa-check"></span>&nbsp;完成&nbsp;</label>
-                            </div>
-                            <div>
-                                <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                    <input type="checkbox">
-                                    <span class="fa fa-check"></span>&nbsp;待进行中&nbsp;</label> </div>
-                            <div>
-                                <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                    <input type="checkbox">
-                                    <span class="fa fa-check"></span>&nbsp;进行中&nbsp;</label>
-                            </div>
-                        </uib-tab>
-                        <uib-tab heading="E" class="m-b-xs">
-                            <hr style="margin-top:4px;margin-bottom:3px">
-                            <div>
-                                <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                    <input type="checkbox">
-                                    <span class="fa fa-check"></span>&nbsp;进行中&nbsp;</label>
-                            </div>
-                            <div>
-                                <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                    <input type="checkbox">
-                                    <span class="fa fa-check"></span>&nbsp;完成&nbsp;</label> </div>
-                            <div>
-                                <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                    <input type="checkbox">
-                                    <span class="fa fa-check"></span>&nbsp;待进行中&nbsp;</label>
-                            </div>
-                        </uib-tab>
-                        <uib-tab heading="F" class="m-b-xs">
-                            <hr style="margin-top:4px;margin-bottom:3px">
-                            <div>
-                                <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                    <input type="checkbox">
-                                    <span class="fa fa-check"></span>&nbsp;待进行中&nbsp;</label>
-                            </div>
-                            <div>
-                                <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                    <input type="checkbox">
-                                    <span class="fa fa-check"></span>&nbsp;进行中&nbsp;</label> </div>
-                            <div>
-                                <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                    <input type="checkbox">
-                                    <span class="fa fa-check"></span>&nbsp;完成&nbsp;</label>
-                            </div>
-                        </uib-tab>
-                        <uib-tab heading="G" class="m-b-xs">
-                            <hr style="margin-top:4px;margin-bottom:3px">
-                            <div>
-                                <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                    <input type="checkbox">
-                                    <span class="fa fa-check"></span>&nbsp;进行中&nbsp;</label>
-                            </div>
-                            <div>
-                                <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                    <input type="checkbox">
-                                    <span class="fa fa-check"></span>&nbsp;待进行中&nbsp;</label> </div>
-                            <div>
-                                <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                    <input type="checkbox">
-                                    <span class="fa fa-check"></span>&nbsp;完成&nbsp;</label>
-                            </div>
-                        </uib-tab>
-                        <uib-tab heading="H" class="m-b-xs">
-                            <hr style="margin-top:4px;margin-bottom:3px">
-                            <div>
-                                <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                    <input type="checkbox">
-                                    <span class="fa fa-check"></span>&nbsp;待进行中&nbsp;</label>
-                            </div>
-                            <div>
-                                <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                    <input type="checkbox">
-                                    <span class="fa fa-check"></span>&nbsp;进行中&nbsp;</label> </div>
-                            <div>
-                                <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                    <input type="checkbox">
-                                    <span class="fa fa-check"></span>&nbsp;完成&nbsp;</label>
-                            </div>
-                        </uib-tab>
-                        <uib-tab heading="I" class="m-b-xs">
-                            <hr style="margin-top:4px;margin-bottom:3px">
-                            <div>
-                                <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                    <input type="checkbox">
-                                    <span class="fa fa-check"></span>&nbsp;进行中&nbsp;</label>
-                            </div>
-                            <div>
-                                <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                    <input type="checkbox">
-                                    <span class="fa fa-check"></span>&nbsp;完成&nbsp;</label> </div>
-                            <div>
-                                <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                    <input type="checkbox">
-                                    <span class="fa fa-check"></span>&nbsp;待进行中&nbsp;</label>
-                            </div>
-                        </uib-tab>
-                        <uib-tab heading="J" class="m-b-xs">
-                            <hr style="margin-top:4px;margin-bottom:3px">
-                            <div>
-                                <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                    <input type="checkbox">
-                                    <span class="fa fa-check"></span>&nbsp;完成&nbsp;</label>
-                            </div>
-                            <div>
-                                <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                    <input type="checkbox">
-                                    <span class="fa fa-check"></span>&nbsp;待进行中&nbsp;</label> </div>
-                            <div>
-                                <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                    <input type="checkbox">
-                                    <span class="fa fa-check"></span>&nbsp;进行中&nbsp;</label>
-                            </div>
-                        </uib-tab>
-                        <uib-tab heading="K" class="m-b-xs">
-                            <hr style="margin-top:4px;margin-bottom:3px">
-                            <div>
-                                <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                    <input type="checkbox">
-                                    <span class="fa fa-check"></span>&nbsp;进行中&nbsp;</label>
-                            </div>
-                            <div>
-                                <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                    <input type="checkbox">
-                                    <span class="fa fa-check"></span>&nbsp;完成&nbsp;</label> </div>
-                            <div>
-                                <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                    <input type="checkbox">
-                                    <span class="fa fa-check"></span>&nbsp;待进行中&nbsp;</label>
-                            </div>
-                        </uib-tab>
-                        <uib-tab heading="L" class="m-b-xs">
-                            <hr style="margin-top:4px;margin-bottom:3px">
-                            <div>
-                                <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                    <input type="checkbox">
-                                    <span class="fa fa-check"></span>&nbsp;待进行中&nbsp;</label>
-                            </div>
-                            <div>
-                                <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                    <input type="checkbox">
-                                    <span class="fa fa-check"></span>&nbsp;进行中&nbsp;</label> </div>
-                            <div>
-                                <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                    <input type="checkbox">
-                                    <span class="fa fa-check"></span>&nbsp;完成&nbsp;</label>
-                            </div>
-                        </uib-tab>
-                            <uib-tab heading="M" class="m-b-xs">
-                                <hr style="margin-top:4px;margin-bottom:3px">
-                                <div>
-                                    <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                        <input type="checkbox">
-                                        <span class="fa fa-check"></span>&nbsp;进行中&nbsp;</label>
-                                </div>
-                                <div>
-                                    <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                        <input type="checkbox">
-                                        <span class="fa fa-check"></span>&nbsp;待进行中&nbsp;</label> </div>
-                                <div>
-                                    <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                        <input type="checkbox">
-                                        <span class="fa fa-check"></span>&nbsp;完成&nbsp;</label>
-                                </div>
-                            </uib-tab>
-                            <uib-tab heading="N" class="m-b-xs">
-                                <hr style="margin-top:4px;margin-bottom:3px">
-                                <div>
-                                    <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                        <input type="checkbox">
-                                        <span class="fa fa-check"></span>&nbsp;待进行中&nbsp;</label>
-                                </div>
-                                <div>
-                                    <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                        <input type="checkbox">
-                                        <span class="fa fa-check"></span>&nbsp;进行中&nbsp;</label> </div>
-                                <div>
-                                    <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                        <input type="checkbox">
-                                        <span class="fa fa-check"></span>&nbsp;完成&nbsp;</label>
-                                </div>
-                            </uib-tab>
-                            <uib-tab heading="O" class="m-b-xs">
-                                <hr style="margin-top:4px;margin-bottom:3px">
-                                <div>
-                                    <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                        <input type="checkbox">
-                                        <span class="fa fa-check"></span>&nbsp;进行中&nbsp;</label>
-                                </div>
-                                <div>
-                                    <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                        <input type="checkbox">
-                                        <span class="fa fa-check"></span>&nbsp;完成&nbsp;</label> </div>
-                                <div>
-                                    <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                        <input type="checkbox">
-                                        <span class="fa fa-check"></span>&nbsp;待进行中&nbsp;</label>
-                                </div>
-                            </uib-tab>
-                            <uib-tab heading="P" class="m-b-xs">
-                                <hr style="margin-top:4px;margin-bottom:3px">
-                                <div>
-                                    <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                        <input type="checkbox">
-                                        <span class="fa fa-check"></span>&nbsp;完成&nbsp;</label>
-                                </div>
-                                <div>
-                                    <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                        <input type="checkbox">
-                                        <span class="fa fa-check"></span>&nbsp;待进行中&nbsp;</label> </div>
-                                <div>
-                                    <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                        <input type="checkbox">
-                                        <span class="fa fa-check"></span>&nbsp;进行中&nbsp;</label>
-                                </div>
-                            </uib-tab>
-                            <uib-tab heading="Q" class="m-b-xs">
-                                <hr style="margin-top:4px;margin-bottom:3px">
-                                <div>
-                                    <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                        <input type="checkbox">
-                                        <span class="fa fa-check"></span>&nbsp;进行中&nbsp;</label>
-                                </div>
-                                <div>
-                                    <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                        <input type="checkbox">
-                                        <span class="fa fa-check"></span>&nbsp;完成&nbsp;</label> </div>
-                                <div>
-                                    <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                        <input type="checkbox">
-                                        <span class="fa fa-check"></span>&nbsp;待进行中&nbsp;</label>
-                                </div>
-                            </uib-tab>
-                            <uib-tab heading="R" class="m-b-xs">
-                                <hr style="margin-top:4px;margin-bottom:3px">
-                                <div>
-                                    <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                        <input type="checkbox">
-                                        <span class="fa fa-check"></span>&nbsp;待进行中&nbsp;</label>
-                                </div>
-                                <div>
-                                    <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                        <input type="checkbox">
-                                        <span class="fa fa-check"></span>&nbsp;进行中&nbsp;</label> </div>
-                                <div>
-                                    <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                        <input type="checkbox">
-                                        <span class="fa fa-check"></span>&nbsp;完成&nbsp;</label>
-                                </div>
-                            </uib-tab>
-                            <uib-tab heading="S" class="m-b-xs">
-                                <hr style="margin-top:4px;margin-bottom:3px">
-                                <div>
-                                    <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                        <input type="checkbox">
-                                        <span class="fa fa-check"></span>&nbsp;进行中&nbsp;</label>
-                                </div>
-                                <div>
-                                    <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                        <input type="checkbox">
-                                        <span class="fa fa-check"></span>&nbsp;待进行中&nbsp;</label> </div>
-                                <div>
-                                    <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                        <input type="checkbox">
-                                        <span class="fa fa-check"></span>&nbsp;完成&nbsp;</label>
-                                </div>
-                            </uib-tab>
-                            <uib-tab heading="T" class="m-b-xs">
-                                <hr style="margin-top:4px;margin-bottom:3px">
-                                <div>
-                                    <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                        <input type="checkbox">
-                                        <span class="fa fa-check"></span>&nbsp;待进行中&nbsp;</label>
-                                </div>
-                                <div>
-                                    <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                        <input type="checkbox">
-                                        <span class="fa fa-check"></span>&nbsp;进行中&nbsp;</label> </div>
-                                <div>
-                                    <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                        <input type="checkbox">
-                                        <span class="fa fa-check"></span>&nbsp;完成&nbsp;</label>
-                                </div>
-                            </uib-tab>
-                            <uib-tab heading="U" class="m-b-xs">
-                                <hr style="margin-top:4px;margin-bottom:3px">
-                                <div>
-                                    <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                        <input type="checkbox">
-                                        <span class="fa fa-check"></span>&nbsp;进行中&nbsp;</label>
-                                </div>
-                                <div>
-                                    <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                        <input type="checkbox">
-                                        <span class="fa fa-check"></span>&nbsp;完成&nbsp;</label> </div>
-                                <div>
-                                    <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                        <input type="checkbox">
-                                        <span class="fa fa-check"></span>&nbsp;待进行中&nbsp;</label>
-                                </div>
-                            </uib-tab>
-                            <uib-tab heading="V" class="m-b-xs">
-                                <hr style="margin-top:4px;margin-bottom:3px">
-                                <div>
-                                    <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                        <input type="checkbox">
-                                        <span class="fa fa-check"></span>&nbsp;完成&nbsp;</label>
-                                </div>
-                                <div>
-                                    <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                        <input type="checkbox">
-                                        <span class="fa fa-check"></span>&nbsp;待进行中&nbsp;</label> </div>
-                                <div>
-                                    <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                        <input type="checkbox">
-                                        <span class="fa fa-check"></span>&nbsp;进行中&nbsp;</label>
-                                </div>
-                            </uib-tab>
-                            <uib-tab heading="W" class="m-b-xs">
-                                <hr style="margin-top:4px;margin-bottom:3px">
-                                <div>
-                                    <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                        <input type="checkbox">
-                                        <span class="fa fa-check"></span>&nbsp;进行中&nbsp;</label>
-                                </div>
-                                <div>
-                                    <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                        <input type="checkbox">
-                                        <span class="fa fa-check"></span>&nbsp;完成&nbsp;</label> </div>
-                                <div>
-                                    <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                        <input type="checkbox">
-                                        <span class="fa fa-check"></span>&nbsp;待进行中&nbsp;</label>
-                                </div>
-                            </uib-tab>
-                            <uib-tab heading="X" class="m-b-xs">
-                                <hr style="margin-top:4px;margin-bottom:3px">
-                                <div>
-                                    <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                        <input type="checkbox">
-                                        <span class="fa fa-check"></span>&nbsp;待进行中&nbsp;</label>
-                                </div>
-                                <div>
-                                    <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                        <input type="checkbox">
-                                        <span class="fa fa-check"></span>&nbsp;进行中&nbsp;</label> </div>
-                                <div>
-                                    <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                        <input type="checkbox">
-                                        <span class="fa fa-check"></span>&nbsp;完成&nbsp;</label>
-                                </div>
-                            </uib-tab>
-                            <uib-tab heading="Y" class="m-b-xs">
-                                <hr style="margin-top:4px;margin-bottom:3px">
-                                <div>
-                                    <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                        <input type="checkbox">
-                                        <span class="fa fa-check"></span>&nbsp;进行中&nbsp;</label>
-                                </div>
-                                <div>
-                                    <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                        <input type="checkbox">
-                                        <span class="fa fa-check"></span>&nbsp;待进行中&nbsp;</label> </div>
-                                <div>
-                                    <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                        <input type="checkbox">
-                                        <span class="fa fa-check"></span>&nbsp;完成&nbsp;</label>
-                                </div>
-                            </uib-tab>
-                            <uib-tab heading="Z" class="m-b-xs">
-                                <hr style="margin-top:4px;margin-bottom:3px">
-                                <div>
-                                    <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                        <input type="checkbox">
-                                        <span class="fa fa-check"></span>&nbsp;待进行中&nbsp;</label>
-                                </div>
-                                <div>
-                                    <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                        <input type="checkbox">
-                                        <span class="fa fa-check"></span>&nbsp;进行中&nbsp;</label> </div>
-                                <div>
-                                    <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                        <input type="checkbox">
-                                        <span class="fa fa-check"></span>&nbsp;完成&nbsp;</label>
-                                </div>
-                            </uib-tab>
-                            <uib-tab heading="其它" class="m-b-xs">
-                                <hr style="margin-top:4px;margin-bottom:3px">
-                                <div>
-                                    <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                        <input type="checkbox">
-                                        <span class="fa fa-check"></span>&nbsp;进行中&nbsp;</label>
-                                </div>
-                                <div>
-                                    <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                        <input type="checkbox">
-                                        <span class="fa fa-check"></span>&nbsp;完成&nbsp;</label> </div>
-                                <div>
-                                    <label class="checkbox-inline c-checkbox" style="margin-left:0px">
-                                        <input type="checkbox">
-                                        <span class="fa fa-check"></span>&nbsp;待进行中&nbsp;</label>
-                                </div>
-                            </uib-tab>
-                        </uib-tab>
-                    </uib-tabset>-->
+                    <textarea class="form-control" rows="8" placeholder="Vans、Adidas"  ng-model="model.category" disabled></textarea>
                 </div>
             </div>
         </form>
