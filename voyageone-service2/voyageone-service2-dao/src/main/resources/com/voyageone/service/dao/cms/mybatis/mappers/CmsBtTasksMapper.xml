@@ -124,5 +124,10 @@
         where
         task_id = #{taskId}
     </delete>
+    <select id="select_cms_bt_tasks_task_id" parameterType="String">
+      select MAX(task_id) task_id
+        from cms_bt_tasks
+       where task_name=#{task_name}
+    </select>
 
 </mapper>

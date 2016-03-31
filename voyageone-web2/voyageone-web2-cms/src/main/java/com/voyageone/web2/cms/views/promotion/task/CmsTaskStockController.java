@@ -78,22 +78,16 @@ public class CmsTaskStockController extends CmsController {
      *
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK.INIT_NEW_TASK)
-    public AjaxResponse initNewTask(@RequestBody Map param) {
-        //取得选择的活动ID
-        Map<String, Boolean> selFlag = (Map) param.get("selFlag");
-        Map<String, Boolean> chooseSelFlag = new HashMap<>();
+    public AjaxResponse initNewTask(@RequestBody Map param){
+
         Map<String, Object> resultBean =new HashMap<>();
-        for (Map.Entry<String, Boolean> entry : selFlag.entrySet()) {
-            //取得选择活动的活动ID
-            if(entry.getValue()){
-                chooseSelFlag.put(entry.getKey(),true);
-                resultBean = cmsTaskStockService.getSeparateInfoByPromotionID(chooseSelFlag, getLang());
-            }
-        }
-        // 返回
+        //公司平台销售渠道
+        param.put("channel_id", this.getUser().getSelChannelId());
+        //调用CmsTaskStockService
+        resultBean = cmsTaskStockService.getSeparateInfoByPromotionID(param, getLang());
+        //返回数据的类型
         return success(resultBean);
     }
-
     /**
      * @api {post} /cms/promotion/task_stock/saveTask 1.02 新建/修改库存隔离任务
      * @apiName CmsTaskStockController.saveTask
@@ -165,11 +159,14 @@ public class CmsTaskStockController extends CmsController {
      */
     @RequestMapping(CmsUrlConstants.PROMOTION.TASK.STOCK.SAVE_TASK)
     public AjaxResponse saveTask(@RequestBody Map param) {
-        //
-        Map<String, Object> resultBean =new HashMap<>();
-        resultBean = cmsTaskStockService.saveSeparateInfoByPromotionInfo(param, getLang());
-        // 返回
-        return success(resultBean);
+        //创建者/更新者用
+        param.put("userName", this.getUser().getUserName());
+        //公司平台销售渠道
+        param.put("channel_id", this.getUser().getSelChannelId());
+        //调用CmsTaskStockService
+        cmsTaskStockService.saveSeparateInfoByPromotionInfo(param, getLang());
+        //返回数据的类型
+        return success(param);
     }
 
     /**
