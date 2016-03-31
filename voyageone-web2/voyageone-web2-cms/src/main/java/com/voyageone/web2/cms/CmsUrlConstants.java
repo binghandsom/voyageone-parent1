@@ -40,6 +40,8 @@ public interface CmsUrlConstants {
                 String UPDATE_PROMOTION = "updatePromotion";
 
                 String PROMOTION_EXPORT = "exportPromotion";
+
+                String DEL_PROMOTION = "delPromotion";
             }
 
             interface DETAIL {
