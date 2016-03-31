@@ -144,6 +144,9 @@
             <if test="cartId != null" >
                 and cart_id = #{cartId}
             </if>
+            <if test="statusWhere != null" >
+                status = #{statusWhere},
+            </if>
             <if test="statusList != null and statusList.size() > 0">
                 and (status in
                 <foreach collection="statusList" item="statusItem" open="(" separator="," close=")">
