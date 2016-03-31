@@ -70,7 +70,7 @@ public class CmsBtJmPromotionModel implements Serializable
     
     
  /**
-专场涉及品牌
+专场涉及品牌 明细汇总 顿号、分隔
         */
      private String brand;
     
@@ -133,6 +133,12 @@ public class CmsBtJmPromotionModel implements Serializable
 活动开始时间
         */
      private Date activityStart;
+    
+    
+ /**
+
+        */
+     private boolean isDelete;
     
         
          /**
@@ -269,7 +275,7 @@ this.cmsBtJmMasterBrandName="";
     
         
          /**
-           专场涉及品牌
+           专场涉及品牌 明细汇总 顿号、分隔
         */
         public String getBrand()
         {
@@ -482,6 +488,20 @@ else
 this.activityStart=DateHelp.getDefaultDate();
 }
 
+        }
+    
+        
+         /**
+           
+        */
+        public boolean getIsDelete()
+        {
+         
+        return this.isDelete;
+        }
+        public void setIsDelete(boolean isDelete)
+        {
+         this.isDelete=isDelete;
         }
     
 }

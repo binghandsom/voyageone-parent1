@@ -7,8 +7,9 @@
     <select id="getListByWhere"  resultType="com.voyageone.common.util.MapCamel">
         select *  from cms_bt_jm_promotion
           <where>
+              is_delete=0
               <if test="id != null">
-                  id =  #{id}
+                 AND id =  #{id}
               </if>
               <if test="channelId!=null">
                  and  channel_id=#{channelId}
