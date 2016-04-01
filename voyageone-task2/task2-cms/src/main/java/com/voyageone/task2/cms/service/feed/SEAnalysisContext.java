@@ -8,6 +8,7 @@ import com.voyageone.task2.cms.bean.ShoeCityFeedBean;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -47,7 +48,8 @@ class SEAnalysisContext {
         sku.setBarcode(feedBean.getUpc());
         sku.setClientSku(feedBean.getClientSku());
         sku.setPrice_net(feedBean.getCost().doubleValue());
-        sku.setPrice_current(getPriceCurrent(feedBean));
+        BigDecimal price = new BigDecimal(getPriceCurrent(feedBean));
+        sku.setPrice_current(price.setScale(0, BigDecimal.ROUND_HALF_UP).doubleValue());
 
         CmsBtFeedInfoModel code = getProduct(feedBean);
 
