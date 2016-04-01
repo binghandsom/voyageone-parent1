@@ -2,8 +2,8 @@ package com.voyageone.common.components.sears.base;
 
 import com.voyageone.common.components.sears.bean.OrderResponse;
 import com.voyageone.common.util.HttpUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSocketFactory;
@@ -19,7 +19,7 @@ import java.util.Properties;
  */
 public class SearsBase {
 
-    protected Log logger = LogFactory.getLog(getClass());
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     public static final int C_MAX_API_REPEAT_TIME = 3;
 
@@ -173,14 +173,14 @@ public class SearsBase {
                 try {
                     output.close();
                 } catch (IOException ignored) {
-                    e.printStackTrace();
+                    logger.error(e.getMessage(), e);
                 }
             }
             if (in != null) {
                 try {
                     in.close();
                 } catch (IOException ignored) {
-                    e.printStackTrace();
+                    logger.error(e.getMessage(), e);
                 }
             }
             if (http != null) {

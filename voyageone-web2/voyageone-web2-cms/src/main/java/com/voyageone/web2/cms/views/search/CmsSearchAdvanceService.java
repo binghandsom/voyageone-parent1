@@ -221,7 +221,7 @@ public class CmsSearchAdvanceService extends BaseAppService {
             }
             if (grpId == 0) {
                 // 当前主商品所在组没有其他商品
-                logger.info("当前主商品所在组没有其他商品 prodId=" + groupObj.getProdId());
+                $info("当前主商品所在组没有其他商品 prodId=" + groupObj.getProdId());
                 rslt.add(new ArrayList<Map<String, String>>(0));
                 continue;
             }
@@ -229,7 +229,7 @@ public class CmsSearchAdvanceService extends BaseAppService {
             queryObj.setQuery("{'groups.platforms':{'$elemMatch':{'isMain':0,'cartId':" + cartId + ",'groupId':" + grpId + "}}}");
             List<CmsBtProductModel> imgList = productService.getList(channelId, queryObj);
             if (imgList == null || imgList.isEmpty()) {
-                logger.info("当前主商品所在组没有其他商品的图片 groupId=" + grpId);
+                $info("当前主商品所在组没有其他商品的图片 groupId=" + grpId);
                 rslt.add(new ArrayList<Map<String, String>>(0));
                 continue;
             }
@@ -290,12 +290,12 @@ public class CmsSearchAdvanceService extends BaseAppService {
             List<CmsBtProductModel> infoList = null;
             if (grpId == 0) {
                 // 当前主商品所在组没有其他商品
-                logger.info("当前主商品所在组没有其他商品 prodId=" + groupObj.getProdId());
+                $info("当前主商品所在组没有其他商品 prodId=" + groupObj.getProdId());
             } else {
                 queryObj.setQuery("{'groups.platforms':{'$elemMatch':{'isMain':0,'cartId':" + cartId + ",'groupId':" + grpId + "}}}");
                 infoList = productService.getList(channelId, queryObj);
                 if (infoList == null || infoList.isEmpty()) {
-                    logger.info("当前主商品所在组没有其他商品的信息 groupId=" + grpId);
+                    $info("当前主商品所在组没有其他商品的信息 groupId=" + grpId);
                 }
             }
             if (grpId == 0 || infoList == null || infoList.isEmpty()) {
@@ -870,7 +870,7 @@ public class CmsSearchAdvanceService extends BaseAppService {
         String custAttrStr = null;
         String commStr = null;
         if (rsList == null || rsList.isEmpty()) {
-            logger.debug("该用户还未设置自定义查询列 userId=" + userId + " channelId=" + channelId);
+            $debug("该用户还未设置自定义查询列 userId=" + userId + " channelId=" + channelId);
             custAttrStr = "";
             commStr = "";
         } else {
@@ -980,7 +980,7 @@ public class CmsSearchAdvanceService extends BaseAppService {
             rs = cmsMtCommonPropDao.updateUserCustColumns(userInfo.getUserId(), userInfo.getUserName(), customStrs, commonStrs);
         }
         if (rs == 0) {
-            logger.error("保存自定义显示列设置不成功 userid=" + userInfo.getUserId());
+            $error("保存自定义显示列设置不成功 userid=" + userInfo.getUserId());
         }
     }
 

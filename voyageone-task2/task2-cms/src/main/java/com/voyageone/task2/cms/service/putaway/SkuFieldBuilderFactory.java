@@ -11,8 +11,8 @@ import com.voyageone.task2.cms.bean.tcb.AbortTaskSignalInfo;
 import com.voyageone.task2.cms.bean.tcb.TaskSignal;
 import com.voyageone.task2.cms.bean.tcb.TaskSignalType;
 import com.voyageone.common.configs.Enums.CartEnums;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -26,12 +26,14 @@ import java.util.Map;
  */
 @Repository
 public class SkuFieldBuilderFactory {
+
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+
     @Autowired
     private PlatformSkuInfoDao platformSkuInfoDao;
     @Autowired
     private CustomSizePropDao customSizePropDao;
     private Map<String, List<Class>> skuFieldBuilderClazzsMap;
-    private static Log logger = LogFactory.getLog(SkuFieldBuilderFactory.class);
 
     public SkuFieldBuilderFactory() {
         skuFieldBuilderClazzsMap = new HashMap<>();
@@ -59,10 +61,8 @@ public class SkuFieldBuilderFactory {
                     logger.info("Choose skuBuilder " + skuFieldBuilderClazz.getSimpleName());
                     return skuFieldBuilder;
                 }
-            } catch (InstantiationException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
+            } catch (InstantiationException | IllegalAccessException e) {
+                logger.error(e.getMessage(), e);
             }
         }
 

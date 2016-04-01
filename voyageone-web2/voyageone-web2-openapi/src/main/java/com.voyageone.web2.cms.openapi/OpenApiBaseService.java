@@ -2,14 +2,13 @@ package com.voyageone.web2.cms.openapi;
 
 import com.mongodb.BulkWriteResult;
 import com.voyageone.base.dao.mongodb.JomgoQuery;
+import com.voyageone.common.logger.VOAbsLoggable;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.web2.sdk.api.VoApiConstants;
 import com.voyageone.web2.sdk.api.VoApiListRequest;
 import com.voyageone.web2.sdk.api.VoApiRequest;
 import com.voyageone.web2.sdk.api.VoApiUpdateResponse;
 import com.voyageone.web2.sdk.api.exception.ApiException;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 
 /**
@@ -17,9 +16,7 @@ import org.apache.commons.logging.LogFactory;
  * Created by chuanyu.liang on 15/6/26.
  * @author chuanyu.liang
  */
-public abstract class OpenApiBaseService {
-
-    protected Log logger = LogFactory.getLog(getClass());
+public abstract class OpenApiBaseService extends VOAbsLoggable {
     /**
      * Check Request
      * @param request Request

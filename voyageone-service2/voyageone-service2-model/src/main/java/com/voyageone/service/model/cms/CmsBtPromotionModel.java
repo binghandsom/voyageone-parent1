@@ -5,10 +5,8 @@ import com.voyageone.base.dao.mysql.BaseModel;
 import java.util.List;
 
 /**
- * @description
  *
- * @author gbb
- * @date Jan 13, 2016
+ * @author gbb Jan 13, 2016
  */
 public class CmsBtPromotionModel extends BaseModel {
 

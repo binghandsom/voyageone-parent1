@@ -8,9 +8,12 @@ import com.voyageone.common.components.yimei.eucp.Mo;
 import com.voyageone.common.components.yimei.eucp.SDKServiceBindingStub;
 import com.voyageone.common.components.yimei.eucp.SDKServiceLocator;
 import com.voyageone.common.components.yimei.eucp.StatusReport;
+
 public class Client {
-private String softwareSerialNo;
-private String key;
+
+	private String softwareSerialNo;
+	private String key;
+
 	public Client(String sn,String key){
 		this.softwareSerialNo=sn;
 		this.key=key;
@@ -19,51 +22,39 @@ private String key;
 	
 	SDKServiceBindingStub binding;
 	
-	
 	public void init(){
 		 try {
-            binding = (SDKServiceBindingStub)
-                          new SDKServiceLocator().getSDKService();
-		 }
-        catch (javax.xml.rpc.ServiceException jre) {
+            binding = (SDKServiceBindingStub)new SDKServiceLocator().getSDKService();
+		 } catch (javax.xml.rpc.ServiceException jre) {
             if(jre.getLinkedCause()!=null)
                 jre.getLinkedCause().printStackTrace();
         }
 	}
 	
-	public int chargeUp(  String cardNo,String cardPass)
-			throws RemoteException {
-		int value=-1;
-		value=binding.chargeUp(softwareSerialNo, key, cardNo, cardPass);
-		return value;
+	public int chargeUp(  String cardNo,String cardPass)throws RemoteException {
+		return binding.chargeUp(softwareSerialNo, key, cardNo, cardPass);
 	}
 
 	public double getBalance() throws RemoteException {
-		double value=0.0;
-		value=binding.getBalance(softwareSerialNo, key);
-		return value;
+		return binding.getBalance(softwareSerialNo, key);
 	}
 
 	public double getEachFee( ) throws RemoteException {
-		double value=0.0;
-		value=binding.getEachFee(softwareSerialNo, key);
-		return value;
+		return binding.getEachFee(softwareSerialNo, key);
 	}
 	public List<Mo> getMO( ) throws RemoteException {
 		Mo[] mo=binding.getMO(softwareSerialNo, key);
 		
 		if(null == mo){
 			return null;
-		}else{
-			List<Mo> molist=Arrays.asList(mo);
-		    return molist;
+		} else {
+			return Arrays.asList(mo);
 		}
 	}
 	
 
-	public List<StatusReport> getReport( )
-			throws RemoteException {
-		StatusReport[] sr=binding.getReport(softwareSerialNo, key);
+	public List<StatusReport> getReport( ) throws RemoteException {
+		StatusReport[] sr = binding.getReport(softwareSerialNo, key);
 		if(null!=sr){
 			return Arrays.asList(sr);
 		}else{
@@ -73,58 +64,34 @@ private String key;
 
 
 	public int logout( ) throws RemoteException {
-		int value=-1;
-		value=binding.logout(softwareSerialNo, key);
-		return value;
+		return binding.logout(softwareSerialNo, key);
 	}
 
-	public int registDetailInfo(
-			String eName, String linkMan, String phoneNum, String mobile,
-			String email, String fax, String address, String postcode
-) throws RemoteException {
-		int value=-1;
-		value=binding.registDetailInfo(softwareSerialNo, key, eName, linkMan, phoneNum, mobile, email, fax, address, postcode);
-		return value;
+	public int registDetailInfo(String eName, String linkMan, String phoneNum, String mobile,
+			String email, String fax, String address, String postcode) throws RemoteException {
+		return binding.registDetailInfo(softwareSerialNo, key, eName, linkMan, phoneNum, mobile, email, fax, address, postcode);
 	}
 
-	public int registEx(String password)
-			throws RemoteException {
-		int value=-1;
-		value=binding.registEx(softwareSerialNo, key, password);
-		return value;
+	public int registEx(String password) throws RemoteException {
+		return binding.registEx(softwareSerialNo, key, password);
 	}
 
-	public int sendSMS( String[] mobiles, String smsContent, String addSerial,int smsPriority)
-			throws RemoteException {
-		int value=-1;
-		value=binding.sendSMS(softwareSerialNo, key,"", mobiles, smsContent, addSerial, "gbk", smsPriority,0);
-		return value;
+	public int sendSMS( String[] mobiles, String smsContent, String addSerial,int smsPriority) throws RemoteException {
+		return binding.sendSMS(softwareSerialNo, key,"", mobiles, smsContent, addSerial, "gbk", smsPriority,0);
 	}
 	
-	public int sendScheduledSMSEx(String[] mobiles, String smsContent,String sendTime,String srcCharset)
-	throws RemoteException {
-      int value=-1;
-      value=binding.sendSMS(softwareSerialNo, key, sendTime, mobiles, smsContent, "", srcCharset, 3,0);
-      return value;
+	public int sendScheduledSMSEx(String[] mobiles, String smsContent,String sendTime,String srcCharset) throws RemoteException {
+		return binding.sendSMS(softwareSerialNo, key, sendTime, mobiles, smsContent, "", srcCharset, 3,0);
 	}
-	public int sendSMSEx(String[] mobiles, String smsContent, String addSerial,String srcCharset, int smsPriority,long smsID)
-	throws RemoteException {
-      int value=-1;
-      value=binding.sendSMS(softwareSerialNo, key,"", mobiles, smsContent,addSerial, srcCharset, smsPriority,smsID);
-      return value;
+	public int sendSMSEx(String[] mobiles, String smsContent, String addSerial,String srcCharset, int smsPriority,long smsID) throws RemoteException {
+		return binding.sendSMS(softwareSerialNo, key,"", mobiles, smsContent,addSerial, srcCharset, smsPriority,smsID);
 	}
 
-	public String sendVoice(String[] mobiles, String smsContent, String addSerial,String srcCharset, int smsPriority,long smsID)
-			throws RemoteException {
-		     String value=null;
-		      value=binding.sendVoice(softwareSerialNo, key,"", mobiles, smsContent,addSerial, srcCharset, smsPriority,smsID);
-		      return value;
+	public String sendVoice(String[] mobiles, String smsContent, String addSerial,String srcCharset, int smsPriority,long smsID) throws RemoteException {
+		return binding.sendVoice(softwareSerialNo, key,"", mobiles, smsContent,addSerial, srcCharset, smsPriority,smsID);
 	}
 	
-	public int serialPwdUpd( String serialPwd, String serialPwdNew)
-			throws RemoteException {
-		int value=-1;
-		value=binding.serialPwdUpd(softwareSerialNo, key, serialPwd, serialPwdNew);
-		return value;
+	public int serialPwdUpd( String serialPwd, String serialPwdNew) throws RemoteException {
+		return binding.serialPwdUpd(softwareSerialNo, key, serialPwd, serialPwdNew);
 	}
 }

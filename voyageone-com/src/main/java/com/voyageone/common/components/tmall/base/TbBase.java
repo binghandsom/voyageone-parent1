@@ -8,8 +8,8 @@ import com.voyageone.common.components.tmall.bean.ComBtTaobaoApiLogModel;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.dao.ComBtTaobaoApiLogDao;
 import com.voyageone.common.util.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -18,13 +18,13 @@ import org.springframework.beans.factory.annotation.Autowired;
  */
 public abstract class TbBase {
 
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
+
     @Autowired
     protected IssueLog issueLog;
 
     @Autowired
     private ComBtTaobaoApiLogDao apiLogDao;
-
-    protected Log logger = LogFactory.getLog(getClass());
 
     /**
      * 获取淘宝API连接，使用默认的 json 格式
@@ -134,7 +134,7 @@ public abstract class TbBase {
         try {
             t.join(timeout);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
         }
 
         if (t.getApiException() != null) {

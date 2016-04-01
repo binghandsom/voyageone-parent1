@@ -46,7 +46,7 @@ public class CommSequenceDao extends BaseMongoDao<Long> {
             insertObject.put("seq", 0);
             coll.save(insertObject);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            throw new RuntimeException(ex);
         }
     }
 

@@ -149,7 +149,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
         }
 
         public void doRun() {
-            logger.info(channel.getFull_name() + "产品导入主数据开始");
+            $info(channel.getFull_name() + "产品导入主数据开始");
 
             String channelId = this.channel.getOrder_channel_id();
 
@@ -193,7 +193,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 doSaveProductMainProp(feed, channelId, mapBrandMapping);
             }
 
-            logger.info(channel.getFull_name() + "产品导入主数据结束");
+            $info(channel.getFull_name() + "产品导入主数据结束");
 
         }
 
@@ -239,10 +239,10 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                     // 记下log, 跳过当前记录
                     if (cmsProduct == null) {
 //                    logIssue(getTaskName(), String.format("[CMS2.0][测试]该feed类目, 没有匹配到主数据的类目 ( channel: [%s], feed: [%s] )", channelId, feed.getCategory()));
-                        logger.warn(String.format("[CMS2.0][测试]该feed类目, 没有匹配到主数据的类目 ( channel: [%s], feed: [%s] )", channelId, feed.getCategory()));
+                        $warn(String.format("[CMS2.0][测试]该feed类目, 没有匹配到主数据的类目 ( channel: [%s], feed: [%s] )", channelId, feed.getCategory()));
                     } else {
 //                    logIssue(getTaskName(), String.format("[CMS2.0][测试]该feed类目, 没有匹配到主数据的类目 ( channel: [%s], feed: [%s], master: [%s] )", channelId, feed.getCategory(), cmsProduct.getCatPath()));
-                        logger.warn(String.format("[CMS2.0][测试]该feed类目, 没有匹配到主数据的类目 ( channel: [%s], feed: [%s], master: [%s] )", channelId, feed.getCategory(), cmsProduct.getCatPath()));
+                        $warn(String.format("[CMS2.0][测试]该feed类目, 没有匹配到主数据的类目 ( channel: [%s], feed: [%s], master: [%s] )", channelId, feed.getCategory(), cmsProduct.getCatPath()));
                     }
 
                     return;
@@ -255,7 +255,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                         // 没有共通mapping, 或者没有匹配完成
                         // 记下log, 跳过当前记录
 //                        logIssue(getTaskName(), String.format("[CMS2.0][测试]该主类目的属性匹配尚未完成 ( channel: [%s], feed: [%s], main: [%s] )", channelId, feed.getCategory(), mapping.getScope().getMainCategoryPath()));
-                        logger.warn(String.format("[CMS2.0][测试]该主类目的属性匹配尚未完成 ( channel: [%s], feed: [%s], main: [%s] )", channelId, feed.getCategory(), mapping.getScope().getMainCategoryPath()));
+                        $warn(String.format("[CMS2.0][测试]该主类目的属性匹配尚未完成 ( channel: [%s], feed: [%s], main: [%s] )", channelId, feed.getCategory(), mapping.getScope().getMainCategoryPath()));
 
                         return;
                     }
@@ -301,21 +301,21 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
                 }
 
-                logger.info(getTaskName() + ":更新:" + cmsProduct.getChannelId() + ":" + cmsProduct.getFields().getCode());
+                $info(getTaskName() + ":更新:" + cmsProduct.getChannelId() + ":" + cmsProduct.getFields().getCode());
 
             } else {
                 // 不存在的场合, 新建一个product
                 cmsProduct = doCreateCmsBtProductModel(feed, mapping, mapBrandMapping);
                 if (cmsProduct == null) {
                     // 有出错, 跳过
-                    logger.error(getTaskName() + ":新增:编辑商品的时候出错:" + feed.getChannelId() + ":" + feed.getCode());
+                    $error(getTaskName() + ":新增:编辑商品的时候出错:" + feed.getChannelId() + ":" + feed.getCode());
 
                     return;
                 }
 
                 productService.createProduct(channelId, cmsProduct, getTaskName());
 
-                logger.info(getTaskName() + ":新增:" + cmsProduct.getChannelId() + ":" + cmsProduct.getFields().getCode());
+                $info(getTaskName() + ":新增:" + cmsProduct.getChannelId() + ":" + cmsProduct.getFields().getCode());
 
             }
 
@@ -377,11 +377,11 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 if (mapBrandMapping.containsKey(feed.getBrand())) {
                     field.setBrand(mapBrandMapping.get(feed.getBrand()));
                 } else {
-                    logger.error(getTaskName() + ":" + String.format("[CMS2.0][测试]feed->main的品牌mapping没做 ( channel id: [%s], feed brand: [%s] )", feed.getChannelId(), feed.getBrand()));
+                    $error(getTaskName() + ":" + String.format("[CMS2.0][测试]feed->main的品牌mapping没做 ( channel id: [%s], feed brand: [%s] )", feed.getChannelId(), feed.getBrand()));
 
                     // 记下log, 跳过当前记录
                     //                logIssue(getTaskName(), String.format("[CMS2.0][测试]feed->main的品牌mapping没做 ( channel id: [%s], feed brand: [%s] )", feed.getChannelId(), feed.getBrand()));
-                    logger.warn(String.format("[CMS2.0][测试]feed->main的品牌mapping没做 ( channel id: [%s], feed brand: [%s] )", feed.getChannelId(), feed.getBrand()));
+                    $warn(String.format("[CMS2.0][测试]feed->main的品牌mapping没做 ( channel id: [%s], feed brand: [%s] )", feed.getChannelId(), feed.getBrand()));
 
                     return null;
                 }
@@ -419,7 +419,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                     if (!StringUtils.isEmpty(strLongDesEn)) {
                         // TODO: 临时关掉017
                         if ("010".equals(feed.getChannelId())) {
-                            logger.info("英寸转厘米:原始:" + strLongDesEn);
+                            $info("英寸转厘米:原始:" + strLongDesEn);
                             transBaiduOrg.add(new InchStrConvert().inchToCM(strLongDesEn)); // 长描述
                         } else {
                             transBaiduOrg.add(strLongDesEn); // 长描述
@@ -499,7 +499,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 int cnt = tmpOldCmsDataDao.checkExist(feed.getChannelId(), feed.getCode());
                 if (cnt == 0) {
                     // 不存在, 直接跳出
-                    logger.warn(String.format("[CMS2.0][测试]feed->mapping, 未上新过, 不能直接导入.channel id: [%s], code:[%s]", feed.getChannelId(), feed.getCode()));
+                    $warn(String.format("[CMS2.0][测试]feed->mapping, 未上新过, 不能直接导入.channel id: [%s], code:[%s]", feed.getChannelId(), feed.getCode()));
                     return null;
                 }
             }
@@ -1113,7 +1113,7 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                         } else {
                             // 记下log, 无视当前属性
 //                            logIssue(getTaskName(), String.format("[CMS2.0][测试] 找不到feed的这个属性 ( channel: [%s], code: [%s], attr: [%s] )", feed.getChannelId(), feed.getCode(), mappingCondition.getVal()));
-                            logger.info(String.format("[CMS2.0][测试] 找不到feed的这个属性 ( channel: [%s], code: [%s], attr: [%s] )", feed.getChannelId(), feed.getCode(), mappingCondition.getVal()));
+                            $info(String.format("[CMS2.0][测试] 找不到feed的这个属性 ( channel: [%s], code: [%s], attr: [%s] )", feed.getChannelId(), feed.getCode(), mappingCondition.getVal()));
                         }
 
                         if (m_mulitComplex_run) {

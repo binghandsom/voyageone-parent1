@@ -13,8 +13,8 @@ import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.dao.TaskDao;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.base.util.TaskControlUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.voyageone.task2.cms.service.ImagePostScene7Service;
@@ -24,8 +24,8 @@ import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 
 public class ImagePostScene7Job {
-	
-	private static Log logger = LogFactory.getLog(ImagePostScene7Job.class);
+
+	private final Logger logger = LoggerFactory.getLogger(getClass());
 	
 	@Autowired
 	TaskDao taskDao;
@@ -125,7 +125,7 @@ public class ImagePostScene7Job {
 				//打印各个线程（任务）执行的结果
 				logger.info(fs.get());
 			} catch (InterruptedException | ExecutionException e) {
-				e.printStackTrace(); 
+				logger.error(e.getMessage(), e);
 			} finally {
 				if (es != null) {
 					es.shutdown();
@@ -134,7 +134,7 @@ public class ImagePostScene7Job {
 		}
 		
 		// 任务监控历史记录添加:结束
-		String result = "";
+		String result;
 		if (isSuccess) {
 			result = TaskControlEnums.Status.SUCCESS.getIs();
 		} else {
@@ -178,8 +178,8 @@ public class ImagePostScene7Job {
 			logger.info("thread-" + threadNo + " start");
 			
 			//  成功处理的图片url列表
-			List<String> subSuccessImageUrlList = new ArrayList<String>();
-			List<Map<String, String>> urlErrorList = new ArrayList<Map<String, String>>();
+			List<String> subSuccessImageUrlList = new ArrayList<>();
+			List<Map<String, String>> urlErrorList = new ArrayList<>();
 			boolean isSuccess = imagePostScene7Service.getAndSendImage(orderChannelId, subImageUrlList, subSuccessImageUrlList, urlErrorList, threadNo);
 			
 			if (isSuccess) {

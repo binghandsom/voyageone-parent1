@@ -19,7 +19,7 @@ import java.util.List;
  *
  * @author edward.lin
  * @version 2.0.0
- * @since. 2.0.0
+ * @since 2.0.0
  */
 public class ProductForOmsGetRequest extends VoApiRequest<ProductForOmsGetResponse> {
 

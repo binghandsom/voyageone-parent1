@@ -4,16 +4,13 @@ import java.util.List;
 
 import javax.mail.MessagingException;
 
+import com.voyageone.common.logger.VOAbsLoggable;
 import com.voyageone.task2.base.dao.TaskDao;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import com.voyageone.task2.base.util.TaskControlUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public abstract class AbstractJobExecuter implements JobExecuter {
-	
-	private static Log logger = LogFactory.getLog(AbstractJobExecuter.class);
+public abstract class AbstractJobExecuter extends VOAbsLoggable implements JobExecuter {
 	
 	protected boolean isRunning = false;
 	
@@ -22,19 +19,19 @@ public abstract class AbstractJobExecuter implements JobExecuter {
 	
 	@Override
 	public void execute() {
-		logger.info("task start at:"+System.currentTimeMillis());
+		$info("task start at:" + System.currentTimeMillis());
 		
 		String taskName = getTaskName();
 		
 		JobContext jobContext = new JobContext();
 		jobContext.put(JobContext.JOB_CONTEXT_TASK_NAME, taskName);
-		
-		logger.info("preExecute for task:"+taskName+" start...");
+
+		$info("preExecute for task:" + taskName + " start...");
 		preExecute(jobContext);
-		logger.info("preExecute for task:"+taskName+" end...");
+		$info("preExecute for task:" + taskName + " end...");
 		
 		boolean canRun = checkRunable(jobContext);
-		logger.info("taskName:"+taskName+",canRun:"+canRun);
+		$info("taskName:" + taskName + ",canRun:" + canRun);
 		if (!canRun) {
 			return;
 		}
@@ -42,22 +39,22 @@ public abstract class AbstractJobExecuter implements JobExecuter {
 		long start = System.currentTimeMillis();
 
 		try {
-			logger.info("doExecute for task:"+taskName+" start...");
+			$info("doExecute for task:" + taskName + " start...");
 			doExecute(jobContext);
-			logger.info("doExecute for task:"+taskName+" end...");
+			$info("doExecute for task:"+taskName+" end...");
 		} catch (Exception e) {
-			logger.error("execute task fail,taskName:"+taskName);
-			logger.error(e);
+			$error("execute task fail,taskName:" + taskName);
+			$error(e);
 		}
 		
 		long end = System.currentTimeMillis();
-        logger.info("execute task use "+(end-start)+" milliseconds");
-		
-		logger.info("postExecute for task:"+taskName+" start...");
+		$info("execute task use " + (end - start) + " milliseconds");
+
+		$info("postExecute for task:" + taskName + " start...");
 		postExecute(jobContext);
-		logger.info("postExecute for task:"+taskName+" end...");
-		
-        logger.info("execute task end,taskName:"+taskName);
+		$info("postExecute for task:" + taskName + " end...");
+
+		$info("execute task end,taskName:" + taskName);
         isRunning = false;
         
 	}
@@ -80,7 +77,7 @@ public abstract class AbstractJobExecuter implements JobExecuter {
 
 	/**
 	 * Job前置逻辑,默认为空,可由之子类复写
-	 * @param jobContext
+	 * @param jobContext JobContext
 	 */
 	protected void preExecute(JobContext jobContext) {
 		
@@ -89,14 +86,14 @@ public abstract class AbstractJobExecuter implements JobExecuter {
 	
 	/**
 	 *	执行Job
-	 * @param jobContext 
+	 * @param jobContext JobContext
 	 * @throws MessagingException 
 	 */
 	protected abstract void doExecute(JobContext jobContext) throws Exception;
 	
 	/**
 	 * Job后置逻辑,默认为空,可由之子类复写
-	 * @param jobContext 
+	 * @param jobContext JobContext
 	 */
 	protected void postExecute(JobContext jobContext) {
 		
@@ -105,7 +102,7 @@ public abstract class AbstractJobExecuter implements JobExecuter {
 	/**
 	 * 获取任务名称
 	 * 
-	 * @return
+	 * @return String
 	 */
 	protected abstract String getTaskName();
 	
