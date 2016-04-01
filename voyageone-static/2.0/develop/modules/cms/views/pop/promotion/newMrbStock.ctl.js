@@ -30,6 +30,7 @@ define([
                 taskStockService.initNewTask($scope.vm).then(
                     function (res) {
                         $scope.vm.promotionList = res.data.platformList;
+                        $scope.vm.onlySku = true
                     }
                 );
                 $scope.vm.taskId=data.task_id;

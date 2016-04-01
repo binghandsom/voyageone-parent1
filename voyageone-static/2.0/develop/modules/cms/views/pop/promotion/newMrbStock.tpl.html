@@ -9,7 +9,7 @@
             <div class="form-group form-inline">
                 <label class="control-label m-l-md">{{'TXT_TASK_NAME' | translate}}</label>
                 <input type="text" class="form-control" ng-model="vm.taskName">
-                <label class="checkbox-inline c-checkbox">
+                <label class="checkbox-inline c-checkbox"  ng-if="::vm.promotionType == 1">
                     <input type="checkbox" ng-model="vm.onlySku">
                     <span class="fa fa-check"></span>&nbsp;{{'TXT_IMPORT_ONLY_SKU_AND_INVENTORY' | translate}}
                 </label>
@@ -33,24 +33,27 @@
                     <tr ng-repeat="promotion in vm.promotionList" >
                         <td class="mfb-xxx">{{promotion.cartName}}</td>
                         <td class="mfb-xxt">
-                            <input type="text" class="form-control ims_input_w" id="input-id-1"placeholder="20%"ng_model="promotion.value" ng-if="::promotion.type == 1"ng-disabled="vm.onlySku">
+                            <input type="text" class="form-control ims_input_w" id="input-id-1"placeholder="20%"
+                                   ng_model="promotion.value"
+                                   ng-if="::promotion.type == 1"
+                                   ng-disabled="vm.onlySku">
                         </td>
                         <td class="mfb-xxt text-center">{{::(promotion.type==1?'TXT_SEPARATE':'TXT_SHARE')|translate}}</td>
                         <td class="mfb-xxs">
                             <div class="input-group" ng-if="::promotion.type == 1">
                                 <input type="text" ng-model="promotion.revertTime" class="form-control" uib-datepicker-popup="yyyy-MM-dd HH:mm:ss"
-                                       is-open="datePicker1" date-model-format="yyyy-MM-dd HH:mm:ss" close-text="Close" ng-disabled="vm.onlySku"/>
+                                       is-open="datePicker1" date-model-format="yyyy-MM-dd HH:mm:ss" close-text="Close"/>
 								              <span class="input-group-btn">
 								                <button type="button" class="btn btn-default" ng-click="datePicker1 = !datePicker1"><i class="glyphicon glyphicon-calendar"></i></button>
 								              </span>
                             </div>
                         </td>
                         <td class="mfb-xxt">
-                            <input type="text" class="form-control ims_input_w" id="input-id-10" ng-disabled="vm.onlySku"
+                            <input type="text" class="form-control ims_input_w" id="input-id-10"
                                    ng_model="promotion.addPriority"/>
                         </td>
                         <td class="mfb-xxt">
-                            <input type="text" class="form-control ims_input_w" id="input-id-11" ng-disabled="vm.onlySku"
+                            <input type="text" class="form-control ims_input_w" id="input-id-11"
                                    ng_model="promotion.subtractPriority"/>
                         </td>
                     </tr>
