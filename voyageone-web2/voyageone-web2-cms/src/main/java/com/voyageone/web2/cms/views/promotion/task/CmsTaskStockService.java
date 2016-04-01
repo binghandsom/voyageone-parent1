@@ -290,6 +290,7 @@ public class CmsTaskStockService extends BaseAppService {
         HashMap<String,String> isAllSeparateCartName=new HashMap();
         // 还原时间
         String revertTime="";
+        // 根据数据的值
 
         //取得隔离渠道的数据
         for(TypeChannelBean cartId :typeChannelBeanList){

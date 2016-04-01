@@ -10,6 +10,7 @@ define([
         $scope.vm = {
             //根据活动ID取得数据隔离渠道的名称
             promotionList:{},
+            onlySku:null,
             //选择的活动ID
             selFlag:{},
             //已经选择的活动ID
@@ -47,7 +48,9 @@ define([
                         //判断隔离任务:新规的场合
                         taskStockService.initNewTask($scope.vm).then(
                             function (res) {
-                                $scope.vm.promotionList = res.data;
+                                $scope.vm.promotionList = res.data.platformList;
+                                $scope.vm.onlySku = res.data.onlySku;
+                                $scope.vm.taskName=res.data.taskName;
                             },
                             function (err) {
                                 if (err.message != null) {
@@ -67,6 +70,7 @@ define([
                 });
                 $scope.$close();
             }
+
         }else{
             $scope.initialize = function(){
                 $scope.$close();
