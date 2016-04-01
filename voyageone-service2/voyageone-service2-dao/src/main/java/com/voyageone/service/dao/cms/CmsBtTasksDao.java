@@ -41,7 +41,7 @@ public class CmsBtTasksDao extends ServiceBaseDao {
     }
 
     public int delete(CmsBtTasksModel mode) {
-        return delete("delete_stock_separate_item", mode);
+        return delete("cms_bt_tasks_delete", mode);
     }
 
     public String selectCmsBtTaskByTaskName(String task_name){
