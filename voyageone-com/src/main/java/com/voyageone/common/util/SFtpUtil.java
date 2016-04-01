@@ -31,12 +31,12 @@ public class SFtpUtil {
         logger.info("  uploadPath=" + ftpBean.getUpload_path());
         logger.info("  uploadLocalPath=" + ftpBean.getUpload_localpath());
         logger.info("  uploadFileName=" + ftpBean.getUpload_filename());
-        logger.info("  getUploadInputSize=" + ftpBean.getUpload_input().available());
         boolean result = false;
 
         if (!StringUtils.isEmpty(ftpBean.getUpload_filename())) {
             InputStream fileInputStream = null;
             if (ftpBean.getUpload_input() != null) {
+                logger.info("  getUploadInputSize=" + ftpBean.getUpload_input().available());
                 fileInputStream = ftpBean.getUpload_input();
             } else {
                 String localFile = ftpBean.getUpload_localpath() + this.seperator + ftpBean.getUpload_filename();
@@ -144,14 +144,12 @@ public class SFtpUtil {
     public void disconnectFtp(ChannelSftp ftpClient) throws IOException {
         logger.info("Ftp 断开开始");
         if (ftpClient.isConnected()) {
-
             ftpClient.disconnect();
             logger.info("Ftp 断开成功");
         } else if (ftpClient.isClosed()) {
             logger.info("Ftp 已经断开");
         }
         logger.info("Ftp 断开结束");
-
     }
 
     /**
@@ -204,7 +202,6 @@ public class SFtpUtil {
         ftpClient.cd(directory);
         File file = new File(saveFile);
         ftpClient.get(downloadFile, new FileOutputStream(file));
-
     }
 
     /**
