@@ -6,8 +6,8 @@ import com.voyageone.common.configs.beans.OrderChannelConfigBean;
 import com.voyageone.common.configs.dao.ConfigDaoFactory;
 import com.voyageone.common.configs.dao.OrderChannelConfigDao;
 import com.voyageone.common.redis.CacheHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
@@ -21,7 +21,7 @@ public class ChannelConfigs {
 
     private static final Class selfClass = ChannelConfigs.class;
 
-    private static final Log logger = LogFactory.getLog(selfClass);
+    private final static Logger logger = LoggerFactory.getLogger(selfClass);
 
     /* redis key */
     private static final String KEY = CacheKeyEnums.KeyEnum.ConfigData_OrderChannelConfigConfigs.toString();

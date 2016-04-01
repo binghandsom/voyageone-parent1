@@ -3,8 +3,8 @@
  */
 package com.voyageone.task2;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.GenericXmlApplicationContext;
 
@@ -13,19 +13,18 @@ import org.springframework.context.support.GenericXmlApplicationContext;
  */
 public class VoyageOneTaskService {
 
-    private static final Log log = LogFactory.getLog(VoyageOneTaskService.class);
+    private static final Logger logger = LoggerFactory.getLogger(VoyageOneTaskService.class);
 
     private static final String BATCH_JOB_NAME = "VoyageOne_BatchJob";
 
     public static void main(String[] args) {
         VoyageOneTaskService service = new VoyageOneTaskService();
         try {
-            log.info(BATCH_JOB_NAME + "启动中......");
+            logger.info(BATCH_JOB_NAME + "启动中......");
             service.startServer();
-            log.info(BATCH_JOB_NAME + "启动完成......");
+            logger.info(BATCH_JOB_NAME + "启动完成......");
         } catch (Exception ex) {
-            ex.printStackTrace();
-            log.error(ex.getMessage());
+            logger.error(ex.getMessage(), ex);
         }
     }
 
@@ -35,6 +34,6 @@ public class VoyageOneTaskService {
         ApplicationContext ctx = new GenericXmlApplicationContext("applicationContext.xml");
         conext.putAttribute("springContext", ctx);
 
-        System.out.println("fininsh");
+        logger.info("startServer fininsh");
     }
 }

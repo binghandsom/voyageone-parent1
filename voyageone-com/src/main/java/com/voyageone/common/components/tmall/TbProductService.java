@@ -5,8 +5,6 @@ import com.taobao.api.request.*;
 import com.taobao.api.response.*;
 import com.voyageone.common.components.tmall.base.TbBase;
 import com.voyageone.common.configs.beans.ShopBean;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Component;
 
 /**
@@ -14,8 +12,6 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class TbProductService extends TbBase {
-
-    private static Log logger = LogFactory.getLog(TbProductService.class);
 
     public String getProductMatchSchema(Long categoryId, ShopBean config) throws ApiException {
 

@@ -1,12 +1,12 @@
 package com.voyageone.common.util;
 
 import com.voyageone.common.configs.beans.FtpBean;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPReply;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -17,10 +17,11 @@ import java.util.List;
  */
 public class FtpUtil {
 
+    private final static Logger logger = LoggerFactory.getLogger(FtpUtil.class);
+
     //private  FTPClient ftpClient = new FTPClient();
     private  String encoding = System.getProperty("file.encoding");
 
-    private final Log logger = LogFactory.getLog(getClass());
     private final String basCoding = "iso-8859-1";
     /**
      * Description: 向FTP服务器上传文件

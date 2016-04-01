@@ -1,16 +1,13 @@
 package com.voyageone.common.components.channelAdvisor.base;
 
-import com.taobao.api.ApiException;
-import com.taobao.api.TaobaoClient;
 import com.voyageone.common.configs.Properties;
 import com.voyageone.common.util.HttpUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.net.SocketTimeoutException;
 import java.text.SimpleDateFormat;
 
 /**
@@ -19,7 +16,7 @@ import java.text.SimpleDateFormat;
  */
 public class CaBase {
 
-    protected Log logger = LogFactory.getLog(getClass());
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     public static final int C_MAX_API_REPEAT_TIME = 3;
 

@@ -3,6 +3,8 @@ package com.voyageone.ims.rule_expression;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
@@ -10,6 +12,9 @@ import java.io.IOException;
  * Created by Leo on 15-6-24.
  */
 public class RuleJsonMapper {
+
+    protected Logger logger = LoggerFactory.getLogger(getClass());
+
     private ObjectMapper om;
 
     public RuleJsonMapper() {
@@ -21,7 +26,7 @@ public class RuleJsonMapper {
         try {
             return om.writeValueAsString(word);
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
             return null;
         }
     }
@@ -30,7 +35,7 @@ public class RuleJsonMapper {
         try {
             return om.writeValueAsString(expression);
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
             return null;
         }
     }
@@ -39,7 +44,7 @@ public class RuleJsonMapper {
         try {
             return om.readValue(json, RuleWord.class);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
             return null;
         }
     }
@@ -48,8 +53,8 @@ public class RuleJsonMapper {
         try {
             return om.readValue(json, RuleExpression.class);
         } catch (IOException e) {
-            System.out.println("json:" + json);
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
+            logger.error("json:" + json);
             return null;
         }
     }

@@ -9,6 +9,7 @@ import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.common.util.FileUtils;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
+import com.voyageone.service.dao.cms.CmsBtFeedCustomPropDao;
 import com.voyageone.service.dao.cms.CmsMtCommonPropDao;
 import com.voyageone.service.dao.cms.CmsMtCustomWordDao;
 import com.voyageone.service.impl.cms.ChannelCategoryService;
@@ -60,8 +61,10 @@ public class CmsSearchAdvanceService extends BaseAppService{
     private TagService tagService;
     @Autowired
     private CmsFeedCustPropService cmsFeedCustPropService;
+    @Autowired
+    private CmsBtFeedCustomPropDao cmsBtFeedCustomPropDao;
 
-
+    // 查询产品信息时的缺省输出列
     private final String searchItems = "channelId;prodId;catId;catPath;created;creater;modified;" +
             "modifier;groups.msrpStart;groups.msrpEnd;groups.retailPriceStart;groups.retailPriceEnd;" +
             "groups.salePriceStart;groups.salePriceEnd;groups.platforms.$;skus;" +
@@ -73,7 +76,6 @@ public class CmsSearchAdvanceService extends BaseAppService{
 
     // Excel 文件最大行数
     private int MAX_EXCEL_REC_COUNT = 10000;
-
 
     // Sku 文件单线程用
     ReentrantLock lock = new ReentrantLock();
@@ -139,6 +141,7 @@ public class CmsSearchAdvanceService extends BaseAppService{
 
         if (productList.size() > 0) {
             // 再找出其主商品
+            List<Long> grpIdList = new ArrayList<Long>();
             for (CmsBtProductModel prodObj : productList) {
                 CmsBtProductModel_Group gpList = prodObj.getGroups();
                 long grpId = 0;
@@ -147,31 +150,42 @@ public class CmsSearchAdvanceService extends BaseAppService{
                     if (pltList != null && pltList.size() > 0) {
                         for (CmsBtProductModel_Group_Platform pltObj : pltList) {
                             if (pltObj.getCartId() == (int) cmsSessionBean.getPlatformType().get("cartId")) {
-                                grpId = pltObj.getGroupId();
+                                grpIdList.add(pltObj.getGroupId());
                                 break;
                             }
                         }
                     }
                 }
-                if (grpId != 0) {
-                    JomgoQuery queryObj = new JomgoQuery();
-                    queryObj.setQuery("{'groups.platforms':{'$elemMatch':{'isMain':1,'cartId':" + (int) cmsSessionBean.getPlatformType().get("cartId") + ",'groupId':" + grpId + "}}}");
+            }
+            if (grpIdList.size() > 0) {
+                StringBuilder inStr = new StringBuilder("{'$in':[");
+                for (int i = 0, leng = grpIdList.size(); i < leng; i ++) {
+                    if (i == 0) {
+                        inStr.append(grpIdList.get(i));
+                    } else {
+                        inStr.append(",");
+                        inStr.append(grpIdList.get(i));
+                    }
+                }
+                inStr.append("]}");
 
-                    List<CmsBtProductModel> grpList2 = productService.getList(userInfo.getSelChannelId(), queryObj);
-                    if (grpList2.size() > 0) {
-                        CmsBtProductModel prodModel = grpList2.get(0);
-                        long prodId = prodModel.getProdId();
-                        boolean hasGrp = false;
-                        for (CmsBtProductModel grpObj : grpList) {
-                            if (grpObj.getProdId() == prodId) {
-                                // 已经存在该主商品，则不追加
-                                hasGrp = true;
-                                break;
-                            }
+                JomgoQuery queryObj = new JomgoQuery();
+                queryObj.setProjection("{'prodId':1,'_id':0}");
+                queryObj.setQuery("{'groups.platforms':{'$elemMatch':{'isMain':1,'cartId':" + (int) cmsSessionBean.getPlatformType().get("cartId") + ",'groupId':" + inStr.toString() + "}}}");
+
+                List<CmsBtProductModel> grpList2 = productService.getList(userInfo.getSelChannelId(), queryObj);
+                for (CmsBtProductModel prodModel : grpList2) {
+                    long prodId = prodModel.getProdId();
+                    boolean hasGrp = false;
+                    for (CmsBtProductModel grpObj : grpList) {
+                        if (grpObj.getProdId() == prodId) {
+                            // 已经存在该主商品，则不追加
+                            hasGrp = true;
+                            break;
                         }
-                        if (!hasGrp) {
-                            grpList.add(prodModel);
-                        }
+                    }
+                    if (!hasGrp) {
+                        grpList.add(prodModel);
                     }
                 }
             }
@@ -202,7 +216,7 @@ public class CmsSearchAdvanceService extends BaseAppService{
             }
             if (grpId == 0) {
                 // 当前主商品所在组没有其他商品
-                logger.info("当前主商品所在组没有其他商品 prodId=" + groupObj.getProdId());
+                $info("当前主商品所在组没有其他商品 prodId=" + groupObj.getProdId());
                 rslt.add(new ArrayList<Map<String, String>>(0));
                 continue;
             }
@@ -210,7 +224,7 @@ public class CmsSearchAdvanceService extends BaseAppService{
             queryObj.setQuery("{'groups.platforms':{'$elemMatch':{'isMain':0,'cartId':" + cartId + ",'groupId':" + grpId + "}}}");
             List<CmsBtProductModel> imgList =  productService.getList(channelId, queryObj);
             if (imgList == null || imgList.isEmpty()) {
-                logger.info("当前主商品所在组没有其他商品的图片 groupId=" + grpId);
+                $info("当前主商品所在组没有其他商品的图片 groupId=" + grpId);
                 rslt.add(new ArrayList<Map<String, String>>(0));
                 continue;
             }
@@ -270,12 +284,12 @@ public class CmsSearchAdvanceService extends BaseAppService{
             List<CmsBtProductModel> infoList = null;
             if (grpId == 0) {
                 // 当前主商品所在组没有其他商品
-                logger.info("当前主商品所在组没有其他商品 prodId=" + groupObj.getProdId());
+                $info("当前主商品所在组没有其他商品 prodId=" + groupObj.getProdId());
             } else {
                 queryObj.setQuery("{'groups.platforms':{'$elemMatch':{'isMain':0,'cartId':" + cartId + ",'groupId':" + grpId + "}}}");
                 infoList =  productService.getList(channelId, queryObj);
                 if (infoList == null || infoList.isEmpty()) {
-                    logger.info("当前主商品所在组没有其他商品的信息 groupId=" + grpId);
+                    $info("当前主商品所在组没有其他商品的信息 groupId=" + grpId);
                 }
             }
             if (grpId == 0 || infoList == null || infoList.isEmpty()) {
@@ -586,11 +600,31 @@ public class CmsSearchAdvanceService extends BaseAppService{
         // 获取自定义查询条件
         List<Map<String, String>> custList = searchValue.getCustAttrMap();
         if (custList != null  && custList.size() > 0) {
+            List<String> inputList = new ArrayList<String>();
             for (Map<String, String> item : custList) {
-                if (!StringUtils.isEmpty(item.get("inputVal"))) {
-                    result.append(MongoUtils.splicingValue(item.get("inputOpts"), item.get("inputVal")));
-                    result.append(",");
+                String inputVal = org.apache.commons.lang3.StringUtils.trimToNull(item.get("inputVal"));
+                if (inputVal != null) {
+                    // 字符型和数字要分开比较
+                    if (org.apache.commons.lang3.math.NumberUtils.isNumber(inputVal)) {
+                        String qStr = "{'$or':[{'{0}':{'$type':1},'{0}':{1}},{'{0}':{'$type':16},'{0}':{1}},{'{0}':{'$type':18},'{0}':{1}},{'{0}':{'$type':2},'{0}':'{1}'}]}";
+                        inputList.add(com.voyageone.common.util.StringUtils.format(qStr, item.get("inputOpts"), inputVal));
+                    } else {
+                        String qStr = "{'{0}':'{1}'}";
+                        inputList.add(com.voyageone.common.util.StringUtils.format(qStr, item.get("inputOpts"), inputVal));
+                    }
                 }
+            }
+            if (inputList.size() > 0) {
+                result.append("'$and':[");
+                for (int i = 0, leng = inputList.size(); i < leng; i ++) {
+                    if (i == 0) {
+                        result.append(inputList.get(i));
+                    } else {
+                        result.append(",");
+                        result.append(inputList.get(i));
+                    }
+                }
+                result.append("],");
             }
         }
 
@@ -795,13 +829,22 @@ public class CmsSearchAdvanceService extends BaseAppService{
         return rsMap;
     }
 
+    // 根据类目路径查询已翻译的属性信息
+    // 只查询feed_prop_original和feed_prop_translation
+    public List<Map<String, Object>> selectAttrs(String channelId, String catPath) {
+        Map<String, Object> params = new HashMap<String, Object>(2);
+        params.put("channelId", channelId);
+        params.put("feedCatPath", catPath);
+        return cmsBtFeedCustomPropDao.selectAttrs(params);
+    }
+
     // 取得用户自定义显示列设置
     public void getUserCustColumns(String channelId, int userId, CmsSessionBean cmsSession) {
         List<Map<String, Object>> rsList = cmsMtCommonPropDao.selectUserCustColumns(userId);
         String custAttrStr = null;
         String commStr = null;
         if (rsList == null || rsList.isEmpty()) {
-            logger.debug("该用户还未设置自定义查询列 userId=" + userId + " channelId=" + channelId);
+            $debug("该用户还未设置自定义查询列 userId=" + userId + " channelId=" + channelId);
             custAttrStr = "";
             commStr = "";
         } else {
@@ -816,7 +859,10 @@ public class CmsSearchAdvanceService extends BaseAppService{
         String[] custAttrList = custAttrStr.split(",");
         StringBuilder customPropsStr = new StringBuilder();
         if (custAttrList.length > 0) {
-            List<Map<String, Object>> customProps = cmsFeedCustPropService.selectAllAttr(channelId, "0");
+            Map<String, Object> params = new HashMap<String, Object>(2);
+            params.put("channelId", channelId);
+            params.put("feedCatPath", "0");
+            List<Map<String, Object>> customProps = cmsBtFeedCustomPropDao.selectAttrs(params);
             for (Map<String, Object> props : customProps) {
                 String propId = (String) props.get("feed_prop_original");
                 Map atts = new HashMap<>(2);
@@ -867,7 +913,10 @@ public class CmsSearchAdvanceService extends BaseAppService{
         List<Map<String, Object>> customProps2 = new ArrayList<Map<String, Object>>();
         StringBuilder customPropsStr = new StringBuilder();
         if (param1 != null && param1.length > 0) {
-            List<Map<String, Object>> customProps = cmsFeedCustPropService.selectAllAttr(userInfo.getSelChannelId(), "0");
+            Map<String, Object> params = new HashMap<String, Object>(2);
+            params.put("channelId", userInfo.getSelChannelId());
+            params.put("feedCatPath", "0");
+            List<Map<String, Object>> customProps = cmsBtFeedCustomPropDao.selectAttrs(params);
             for (Map<String, Object> props : customProps) {
                 String propId = (String) props.get("feed_prop_original");
                 if (ArrayUtils.contains(param1, propId)) {
@@ -905,7 +954,7 @@ public class CmsSearchAdvanceService extends BaseAppService{
             rs = cmsMtCommonPropDao.updateUserCustColumns(userInfo.getUserId(), userInfo.getUserName(), customStrs, commonStrs);
         }
         if (rs == 0) {
-            logger.error("保存自定义显示列设置不成功 userid=" + userInfo.getUserId());
+            $error("保存自定义显示列设置不成功 userid=" + userInfo.getUserId());
         }
     }
 

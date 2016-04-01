@@ -6,8 +6,8 @@ import com.voyageone.common.configs.beans.StoreConfigBean;
 import com.voyageone.common.configs.dao.ConfigDaoFactory;
 import com.voyageone.common.configs.dao.StoreConfigDao;
 import com.voyageone.common.redis.CacheHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
@@ -20,7 +20,7 @@ import java.util.*;
 public class StoreConfigs {
     private static final Class selfClass = StoreConfigs.class;
 
-    private static final Log logger = LogFactory.getLog(selfClass);
+    private final static Logger logger = LoggerFactory.getLogger(selfClass);
 
     /* redis key */
     private static final String KEY = CacheKeyEnums.KeyEnum.ConfigData_StoreConfigConfigs.toString();

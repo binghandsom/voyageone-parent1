@@ -8,8 +8,8 @@ import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.configs.dao.ConfigDaoFactory;
 import com.voyageone.common.redis.CacheHelper;
 import com.voyageone.common.util.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
@@ -23,8 +23,7 @@ import java.util.stream.Collectors;
 public class Shops {
     private static final Class selfClass = Shops.class;
 
-    private static final Log logger = LogFactory.getLog(selfClass);
-
+    private final static Logger logger = LoggerFactory.getLogger(selfClass);
 
     /* redis key */
     private static final String KEY = CacheKeyEnums.KeyEnum.ConfigData_ShopConfigs.toString();

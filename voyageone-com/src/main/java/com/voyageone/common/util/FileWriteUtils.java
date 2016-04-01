@@ -1,8 +1,7 @@
 package com.voyageone.common.util;
 
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -18,7 +17,7 @@ import java.text.DecimalFormat;
 
 public class FileWriteUtils {
 
-    private static Log logger = LogFactory.getLog(FileWriteUtils.class);
+    private final static Logger logger = LoggerFactory.getLogger(FileWriteUtils.class);
 
     private Writer outputStream;
     private String systemRecordDelimiter;

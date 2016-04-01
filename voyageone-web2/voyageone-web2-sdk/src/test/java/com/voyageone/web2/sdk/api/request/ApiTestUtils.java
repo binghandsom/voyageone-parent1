@@ -50,7 +50,6 @@ public class ApiTestUtils {
             else
                 System.out.println(new BeanMap(voApiResponse));
         } catch (Exception e) {
-            e.printStackTrace();
             LOGGER.error(e);
         }
     }
@@ -66,7 +65,6 @@ public class ApiTestUtils {
             else
                 System.out.println(new BeanMap(voApiResponse));
         } catch (Exception e) {
-            e.printStackTrace();
             LOGGER.error(e);
         }
     }

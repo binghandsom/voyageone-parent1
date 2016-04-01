@@ -6,8 +6,8 @@ import com.voyageone.common.configs.dao.ConfigDaoFactory;
 import com.voyageone.common.configs.dao.OrderChannelConfigDao;
 import com.voyageone.common.redis.CacheHelper;
 import com.voyageone.common.util.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -22,7 +22,7 @@ public class DiscountRates {
 
     private static final Class selfClass = DiscountRates.class;
 
-    private static final Log logger = LogFactory.getLog(selfClass);
+    private final static Logger logger = LoggerFactory.getLogger(selfClass);
 
     /* redis key */
     private static final String KEY = CacheKeyEnums.KeyEnum.ConfigData_DiscountRateConfigs.toString();

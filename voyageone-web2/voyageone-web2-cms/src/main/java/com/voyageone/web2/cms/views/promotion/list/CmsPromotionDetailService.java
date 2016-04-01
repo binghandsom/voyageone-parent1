@@ -95,7 +95,7 @@ public class CmsPromotionDetailService extends BaseAppService {
         // 获取promotion信息
         CmsBtPromotionModel promotion = cmsPromotionService.queryById(promotionId);
         if (promotion == null) {
-            logger.info("promotionId不存在：" + promotionId);
+            $info("promotionId不存在：" + promotionId);
             productPrices.forEach(m -> {
                 response.get("fail").add(m.getCode());
             });
@@ -148,7 +148,7 @@ public class CmsPromotionDetailService extends BaseAppService {
         // 获取promotion信息
         CmsBtPromotionModel promotion = cmsPromotionService.queryById(promotionId);
         if (promotion == null) {
-            logger.info("promotionId不存在：" + promotionId);
+            $info("promotionId不存在：" + promotionId);
             return response;
         }
         // 获取Tag列表
@@ -170,7 +170,7 @@ public class CmsPromotionDetailService extends BaseAppService {
                 productModel.setModifier(operator);
                 promotionDetailService.insertPromotionGroup(productModel);
             } catch (Exception e) {
-                e.printStackTrace();
+                $error(e);
                 simpleTransaction.rollback();
                 productModel.getCodes().forEach(cmsBtPromotionCodeModel -> response.get("fail").add(cmsBtPromotionCodeModel.getProductCode()));
                 errflg = true;
@@ -192,7 +192,7 @@ public class CmsPromotionDetailService extends BaseAppService {
      * @return 以model为单位的数据
      */
     public List<Map<String, Object>> getPromotionGroup(Map<String, Object> param) {
-        List<Map<String, Object>> promotionGroups = promotionModelService.getPromotionModelDetailList(param);;
+        List<Map<String, Object>> promotionGroups = promotionModelService.getPromotionModelDetailList(param);
 
         if (!CollectionUtils.isEmpty(promotionGroups)) {
             promotionGroups.forEach(map -> {

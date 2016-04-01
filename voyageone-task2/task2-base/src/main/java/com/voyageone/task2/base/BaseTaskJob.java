@@ -3,6 +3,7 @@ package com.voyageone.task2.base;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.issueLog.IssueLog;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
+import com.voyageone.common.logger.VOAbsIssueLoggable;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.dao.TaskDao;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
@@ -18,18 +19,9 @@ import java.util.List;
  *
  * Created by jonas on 15/6/6.
  */
-public abstract class BaseTaskJob {
-
-    protected final Log logger = LogFactory.getLog(getClass());
+public abstract class BaseTaskJob extends VOAbsIssueLoggable {
 
     private boolean running = false;
-
-    @Autowired
-    protected IssueLog issueLog;
-
-    protected Log getLogger() {
-        return logger;
-    }
 
     protected String getTaskName() {
         return getTaskService().getTaskName();
@@ -46,17 +38,17 @@ public abstract class BaseTaskJob {
         String taskCheck = getTaskName();
 
         if (running) {
-            getLogger().info(taskCheck + "正在运行，忽略");
+            $info(taskCheck + "正在运行，忽略");
             return;
         }
 
         running = true;
 
-        logger.info(taskCheck + "任务开始");
+        $info(taskCheck + "任务开始");
 
         startup();
 
-        getLogger().info(taskCheck + "任务结束");
+        $info(taskCheck + "任务结束");
 
         running = false;
     }

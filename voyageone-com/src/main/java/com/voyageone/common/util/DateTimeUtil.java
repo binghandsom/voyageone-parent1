@@ -7,8 +7,8 @@
 package com.voyageone.common.util;
 
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
@@ -170,7 +170,7 @@ import java.util.TimeZone;
 
 public final class DateTimeUtil {
 
-    private static Log log = LogFactory.getLog(DateTimeUtil.class);
+    private final static Logger logger = LoggerFactory.getLogger(DateTimeUtil.class);
 
     /**
      * 缺省的日期显示格式： yyyy-MM-dd
@@ -595,7 +595,7 @@ public final class DateTimeUtil {
             SimpleDateFormat dateFormat = new SimpleDateFormat(pattern);
             date = dateFormat.parse(dateStr);
         } catch (ParseException e) {
-            log.debug("日期转换错误", e);
+            logger.debug("日期转换错误", e);
         }
 
         return date;
@@ -621,7 +621,7 @@ public final class DateTimeUtil {
             dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
             date = dateFormat.parse(dateStr);
         } catch (ParseException e) {
-            log.debug("日期转换错误", e);
+            logger.debug("日期转换错误", e);
         }
 
         return date;
@@ -885,7 +885,7 @@ public final class DateTimeUtil {
 
             return c;
         } catch (ParseException e) {
-            log.error("DateTimeUtil.parseDateString ", e);
+            logger.error("DateTimeUtil.parseDateString ", e);
             return null;
         }
     }
@@ -897,7 +897,7 @@ public final class DateTimeUtil {
         try {
             date = format.parse(before);
         } catch (ParseException e) {
-            log.error("DateTimeUtil.parseDateString ", e);
+            logger.error("DateTimeUtil.parseDateString ", e);
             return null;
         }
 

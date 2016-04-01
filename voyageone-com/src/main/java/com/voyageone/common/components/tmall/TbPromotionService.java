@@ -2,18 +2,14 @@ package com.voyageone.common.components.tmall;
 
 import com.taobao.api.ApiException;
 import com.taobao.api.domain.TipItemPromDTO;
-import com.taobao.api.request.TmallProductMatchSchemaGetRequest;
 import com.taobao.api.request.TmallPromotionTipItemAddRequest;
 import com.taobao.api.request.TmallPromotionTipItemModifyRequest;
 import com.taobao.api.request.TmallPromotionTipItemRemoveRequest;
-import com.taobao.api.response.TmallProductMatchSchemaGetResponse;
 import com.taobao.api.response.TmallPromotionTipItemAddResponse;
 import com.taobao.api.response.TmallPromotionTipItemModifyResponse;
 import com.taobao.api.response.TmallPromotionTipItemRemoveResponse;
 import com.voyageone.common.components.tmall.base.TbBase;
 import com.voyageone.common.configs.beans.ShopBean;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Component;
 
 /**
@@ -21,7 +17,6 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class TbPromotionService extends TbBase {
-    private static Log logger = LogFactory.getLog(TbProductService.class);
 
     public TmallPromotionTipItemAddResponse addPromotion(ShopBean shopBean,TipItemPromDTO ItemProm) throws ApiException {
 

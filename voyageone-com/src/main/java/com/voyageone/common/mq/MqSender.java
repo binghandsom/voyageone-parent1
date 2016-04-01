@@ -3,6 +3,8 @@ package com.voyageone.common.mq;
 import com.voyageone.common.mq.dao.MqMsgBackDao;
 import com.voyageone.common.mq.enums.MqRoutingKey;
 import com.voyageone.common.util.JsonUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.AmqpAdmin;
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.amqp.core.Queue;
@@ -19,6 +21,8 @@ import java.util.Map;
  */
 @Component
 public class MqSender {
+
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
     private AmqpTemplate amqpTemplate;
@@ -37,7 +41,7 @@ public class MqSender {
             }
             amqpTemplate.convertAndSend(routingKey.getValue(), JsonUtil.getJsonString(messageMap));
         }catch (Exception e){
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
             msgBackDao.insertBatchMessage(routingKey.toString(),messageMap);
         }
     }

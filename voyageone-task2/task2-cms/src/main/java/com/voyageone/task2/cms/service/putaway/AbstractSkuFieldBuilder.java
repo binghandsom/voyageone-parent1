@@ -8,6 +8,8 @@ import com.voyageone.task2.cms.bean.tcb.TaskSignal;
 import com.voyageone.task2.cms.dao.CustomSizePropDao;
 import com.voyageone.task2.cms.dao.PlatformSkuInfoDao;
 import com.voyageone.task2.cms.service.putaway.rule_parser.ExpressionParser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
@@ -18,6 +20,7 @@ import java.util.Set;
  * Created by Leo on 15-7-14.
  */
 public abstract class AbstractSkuFieldBuilder {
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     protected PlatformSkuInfoDao platformSkuInfoDao;
     protected CustomSizePropDao customSizePropDao;

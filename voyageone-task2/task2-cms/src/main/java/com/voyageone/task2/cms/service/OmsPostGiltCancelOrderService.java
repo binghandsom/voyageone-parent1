@@ -15,8 +15,6 @@ import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.stereotype.Service;
@@ -29,8 +27,6 @@ import java.util.UUID;
 
 @Service
 public class OmsPostGiltCancelOrderService extends BaseTaskService {
-	
-	private static Log logger = LogFactory.getLog(OmsPostGiltCancelOrderService.class);
 	
 	@Autowired
 	private OrderDao orderDao;
@@ -98,7 +94,7 @@ public class OmsPostGiltCancelOrderService extends BaseTaskService {
 		boolean isSuccess = true;
 
 		if (!orderChannelID.equals(orderChannelIDParam)) {
-			return isSuccess;
+			return true;
 		}
 
 		// 待取消订单信息取得
@@ -107,9 +103,7 @@ public class OmsPostGiltCancelOrderService extends BaseTaskService {
 		// 有数据的场合
 		if (pushOrderList.size() > 0) {
 
-			for (int i = 0; i < pushOrderList.size(); i++) {
-				OutFormOrderdetailOrders orderInfo = pushOrderList.get(i);
-
+			for (OutFormOrderdetailOrders orderInfo : pushOrderList) {
 				// 向Gilt推送
 				isSuccess = postGiltCancelOrderSub(orderInfo);
 				if (!isSuccess) {
@@ -117,7 +111,7 @@ public class OmsPostGiltCancelOrderService extends BaseTaskService {
 				}
 			}
 		} else {
-			logger.info("postGiltCancelOrder push order rec = 0");
+			$info("postGiltCancelOrder push order rec = 0");
 		}
 
 		return isSuccess;
@@ -128,13 +122,8 @@ public class OmsPostGiltCancelOrderService extends BaseTaskService {
 	 *
 	 */
 	private List<OutFormOrderdetailOrders> getPushOrderListForCancel(String orderChannelId) {
-
-		List<OutFormOrderdetailOrders> ordersList = new ArrayList<OutFormOrderdetailOrders>();
-
 		// 订单信息取得
-		ordersList = orderDao.getOrdersListByOrderChannelIdForCancel(orderChannelId);
-
-		return ordersList;
+		return orderDao.getOrdersListByOrderChannelIdForCancel(orderChannelId);
 	}
 
 	/**
@@ -144,9 +133,6 @@ public class OmsPostGiltCancelOrderService extends BaseTaskService {
 	private boolean postGiltCancelOrderSub(OutFormOrderdetailOrders orderInfo) {
 		// 异常判定
 		boolean ret = true;
-		// 处理判定
-		boolean isSuccess = true;
-
 		try {
 			// Gilt 推送
 			List<Object> retArr = postGiltCancelledOrderByService(orderInfo);
@@ -159,7 +145,7 @@ public class OmsPostGiltCancelOrderService extends BaseTaskService {
 //																	(Boolean)retArr.get(0),
 //																	(Boolean)retArr.get(1),
 //																	(String)retArr.get(2));
-			isSuccess = updateOrdersInfo(retArr, orderInfo);
+			boolean isSuccess = updateOrdersInfo(retArr, orderInfo);
 			if (!isSuccess) {
 				// DB 更新失败
 				ret = false;
@@ -170,7 +156,7 @@ public class OmsPostGiltCancelOrderService extends BaseTaskService {
 			}
 		} catch (Exception e) {
 			ret = false;
-			logger.error("postGiltCancelOrderSub", e);
+			$error("postGiltCancelOrderSub", e);
 			issueLog.log("postGiltCancelOrder.postGiltCancelOrderSub",
 					"postGiltCancelOrder error;Push order number = " + orderInfo.getOrderNumber(),
 					ErrorType.BatchJob,
@@ -188,9 +174,8 @@ public class OmsPostGiltCancelOrderService extends BaseTaskService {
 	 * 			list[3] Gilt 返回信息（错误时设定）
 	 */
 	private List<Object> postGiltCancelledOrderByService(OutFormOrderdetailOrders orderInfo) throws Exception {
-		List<Object> retArr = new ArrayList<Object>();
+		List<Object> retArr = new ArrayList<>();
 
-		boolean ret = true;
 		boolean isCancelled = true;
 		String errorContent = "";
 
@@ -199,15 +184,15 @@ public class OmsPostGiltCancelOrderService extends BaseTaskService {
 			request.setId(UUID.fromString(orderInfo.getClientOrderId()));
 			request.setStatus(GiltOrderStatus.cancelled);
 			GiltOrder orders= giltOrderService.patchOrder(request);
-			logger.info("postGiltCancelOrder Success ; Push order uuid = " + orders.getId());
+			$info("postGiltCancelOrder Success ; Push order uuid = " + orders.getId());
 		} catch (GiltException e) {
 			// Gilt取消失败，Gilt发货，LA仓库拦截
-			logger.info("postGiltCancelOrder order Gilt error "+ e.getMessage() + " ; Push order number = " + orderInfo.getOrderNumber());
+			$info("postGiltCancelOrder order Gilt error " + e.getMessage() + " ; Push order number = " + orderInfo.getOrderNumber());
 			isCancelled = false;
 			errorContent = e.getMessage();
 		}
 
-		retArr.add(ret);
+		retArr.add(true);
 		retArr.add(isCancelled);
 		retArr.add(errorContent);
 
@@ -223,9 +208,7 @@ public class OmsPostGiltCancelOrderService extends BaseTaskService {
 
 		TransactionStatus status=transactionManager.getTransaction(def);
 		try {
-			String noteContent = "";
-
-			List<String> orderNumberList = new ArrayList<String>();
+			List<String> orderNumberList = new ArrayList<>();
 			orderNumberList.add(orderInfo.getOrderNumber());
 
 			String retContent = "";
@@ -244,7 +227,7 @@ public class OmsPostGiltCancelOrderService extends BaseTaskService {
 			}
 
 			if (isSuccess) {
-				List<OutFormOrderdetailOrders> pushOrderList = new ArrayList<OutFormOrderdetailOrders>();
+				List<OutFormOrderdetailOrders> pushOrderList = new ArrayList<>();
 				pushOrderList.add(orderInfo);
 
 				String notesStr = getBatchNoteSqlData(pushOrderList, getTaskName(), retContent);
@@ -266,7 +249,7 @@ public class OmsPostGiltCancelOrderService extends BaseTaskService {
 						SubSystem.OMS);
 			}
 		} catch (Exception ex) {
-			logger.error("updateOrdersSendInfo", ex);
+			$error("updateOrdersSendInfo", ex);
 
 			isSuccess = false;
 
@@ -285,18 +268,15 @@ public class OmsPostGiltCancelOrderService extends BaseTaskService {
 	 * 批处理Notes信息所需数据拼装
 	 *
 	 * @param orderInfoList 订单列表（含明细）
-	 * @param taskName
-	 * @return
+	 * @param taskName String
+	 * @return String
 	 */
 	private String getBatchNoteSqlData(List<OutFormOrderdetailOrders> orderInfoList, String taskName, String retContent) {
 		StringBuilder sqlBuffer = new StringBuilder();
-		ArrayList<String> orderNumberList = new ArrayList<String>();
+		ArrayList<String> orderNumberList = new ArrayList<>();
 
-		int size = orderInfoList.size();
-		for (int i = 0; i < size; i++) {
+		for (OutFormOrderdetailOrders orderInfo : orderInfoList) {
 			// 订单信息
-			OutFormOrderdetailOrders orderInfo = orderInfoList.get(i);
-
 			//	相同订单号只出一条Notes
 			if (orderNumberList.contains(orderInfo.getOrderNumber())) {
 				continue;
@@ -321,12 +301,6 @@ public class OmsPostGiltCancelOrderService extends BaseTaskService {
 
 	/**
 	 * 一条订单的插入notes表语句values部分
-	 *
-	 * @param orderInfo
-	 * @param entryDate
-	 * @param entryTime
-	 * @param taskName
-	 * @return
 	 */
 	private String prepareNotesData(OutFormOrderdetailOrders orderInfo, String entryDate, String entryTime, String taskName, String retContent) {
 		StringBuilder sqlValueBuffer = new StringBuilder();
@@ -435,9 +409,6 @@ public class OmsPostGiltCancelOrderService extends BaseTaskService {
 
 	/**
 	 * 转换数据中的特殊字符
-	 *
-	 * @param data
-	 * @return
 	 */
 	private String transferStr(String data) {
 		if (StringUtils.isNullOrBlank2(data)) {
