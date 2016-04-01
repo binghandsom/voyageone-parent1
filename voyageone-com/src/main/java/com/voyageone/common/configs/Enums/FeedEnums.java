@@ -136,6 +136,9 @@ public class FeedEnums {
         import_brand,
         file_id_import_upc,
         file_id_import_category,
-        client_product_url
+        client_product_url,
+        useDuty,
+        priceWithDuty,
+        priceWithoutDuty
     }
 }
