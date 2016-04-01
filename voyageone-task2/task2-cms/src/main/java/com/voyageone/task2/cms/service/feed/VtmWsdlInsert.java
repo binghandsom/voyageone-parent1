@@ -137,6 +137,8 @@ public class VtmWsdlInsert extends BaseTaskService {
             map.put("i_barcode", (Feeds.getVal1(channel, FeedEnums.Name.item_i_barcode)));
             map.put("image", (Feeds.getVal1(channel, FeedEnums.Name.images)));
             map.put("i_client_sku", (Feeds.getVal1(channel, FeedEnums.Name.item_i_client_sku)));
+            map.put("client_product_url", (Feeds.getVal1(channel, FeedEnums.Name.client_product_url)));
+
 
             map.put("price_client_msrp", (Feeds.getVal1(channel, FeedEnums.Name.price_client_msrp)));
             map.put("price_client_retail", (Feeds.getVal1(channel, FeedEnums.Name.price_client_retail)));
