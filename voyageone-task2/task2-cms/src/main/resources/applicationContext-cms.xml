@@ -51,6 +51,9 @@
         <!-- Jewelry feed 导入 cms2 -->
         <task:scheduled ref="CmsJEAnalysisJob" method="run" cron="0 0 0/1 * * ?"/>
 
+        <!-- Shoe City feed 导入 cms2 -->
+        <task:scheduled ref="ShoeCityAnalysisJob" method="run" cron="0 0 0/1 * * ?"/>
+
         <!-- 维他命 feed 导入 cms2 -->
         <task:scheduled ref="CmsVtmJob" method="run" cron="0 0/5 * * * ?"/>
 
