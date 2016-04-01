@@ -35,7 +35,7 @@ define([
              * @type {{cart: number}}
              */
             this.selected = {
-                cart: $rootScope.platformType.cartId.toString()
+                cart: null
             };
 
             this.matched = {
@@ -66,34 +66,36 @@ define([
             },
 
             init: function () {
-
-                this.loadCategories();
+                var self = this;
+                self.platformMappingService.getCarts().then(function(res){
+                    self.carts = res.data;
+                    self.selected.cart = self.carts[0].value;
+                    self.loadCategories();
+                });
             },
 
             loadCategories: function () {
-
-                var ttt = this;
-                var selectedCart = ttt.selected.cart;
+                var self = this;
+                var selectedCart = self.selected.cart;
 
                 if (!selectedCart)
                     return;
 
-                ttt.platformMappingService.getMainCategory({
-                    cartId: selectedCart.toString()
+                self.platformMappingService.getMainCategory({
+                    cartId: selectedCart
                 }).then(function (res) {
 
-                    ttt.mainCategories = res.data.categories;
-                    ttt.carts = res.data.carts;
+                    self.mainCategories = res.data.categories;
                     var mappings = res.data.mappings;
 
                     // 追加附加属性
-                    _.each(ttt.mainCategories, function (category) {
+                    _.each(self.mainCategories, function (category) {
 
                         var map = mappings[category.catId];
 
                         category.matched = !!(map && map.path);
 
-                        category.mapping = category.matched ? map.path : ttt.$translate.instant('TXT_INCOMPLETE');
+                        category.mapping = category.matched ? map.path : self.$translate.instant('TXT_INCOMPLETE');
 
                         category.propertyMatched = category.matched && !!map.matched;
                     });

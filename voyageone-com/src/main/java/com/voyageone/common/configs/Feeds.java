@@ -14,12 +14,14 @@ import org.springframework.data.redis.core.HashOperations;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 访问 com_mt_feed_config 表配置
  * Created by Zero on 8/18/2015.
  */
 public class Feeds {
+
     private static Log logger = LogFactory.getLog(Feeds.class);
 
     /* redis key */
@@ -31,12 +33,10 @@ public class Feeds {
         if (!CacheTemplateFactory.getCacheTemplate().hasKey(KEY)) {
             FeedDao feedDao = ConfigDaoFactory.getFeedDao();
             Map<String, FeedBean> feedBeanMap = new HashMap<>();
-            feedDao.getAll().forEach(bean -> {
-                        feedBeanMap.put(
-                                buildKey(bean.getOrder_channel_id(), bean.getCfg_name(), bean.getId()),
-                                bean
-                        );
-                    }
+            feedDao.getAll().forEach(bean -> feedBeanMap.put(
+                    buildKey(bean.getOrder_channel_id(), bean.getCfg_name(), bean.getId()),
+                    bean
+            )
             );
             CacheHelper.reFreshSSB(KEY, feedBeanMap);
             logger.info("feed_config 读取数量: " + hashOperations.size(KEY));
@@ -67,6 +67,11 @@ public class Feeds {
         return (beans == null || beans.isEmpty()) ? "" : beans.get(0).getCfg_val1();
     }
 
+    public static String getVal1(String id, String name) {
+        List<FeedBean> beans = getConfigs(id, name);
+        return (beans == null || beans.isEmpty()) ? "" : beans.get(0).getCfg_val1();
+    }
+
     /**
      * 获取指定渠道的第一个配置参数
      *
@@ -78,6 +83,10 @@ public class Feeds {
         return getVal1(channel.getId(), name);
     }
 
+    public static String getVal1(ChannelConfigEnums.Channel channel, String name) {
+        return getVal1(channel.getId(), name);
+    }
+
     /**
      * 获取指定渠道的一个配置的所有参数
      *
@@ -86,6 +95,10 @@ public class Feeds {
      * @return List<FeedBean>
      */
     public static List<FeedBean> getConfigs(String channelId, FeedEnums.Name name) {
+        return getConfigs(channelId, name.toString());
+    }
+
+    public static List<FeedBean> getConfigs(String channelId, String name) {
         List<FeedBean> feedBeanList = new ArrayList<>();
         Set<String> keys = hashOperations.keys(KEY);
         if (CollectionUtils.isEmpty(keys)) {
@@ -93,12 +106,11 @@ public class Feeds {
             return feedBeanList;
         }
 
-        List<String> filterKeys = new ArrayList<>();
-        for (String key : keys) {
-            if (key.startsWith(channelId + CacheHelper.SKIP + name)) filterKeys.add(key);
-        }
+        List<String> filterKeys = keys.stream()
+                .filter(key -> key.startsWith(channelId + CacheHelper.SKIP + name))
+                .sorted()
+                .collect(Collectors.toList());
         if (!filterKeys.isEmpty()) {
-            Collections.sort(filterKeys);
             feedBeanList = hashOperations.multiGet(KEY, filterKeys);
         }
         return feedBeanList;

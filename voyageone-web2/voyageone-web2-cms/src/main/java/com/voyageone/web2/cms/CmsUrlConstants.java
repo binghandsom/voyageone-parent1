@@ -40,6 +40,8 @@ public interface CmsUrlConstants {
                 String UPDATE_PROMOTION = "updatePromotion";
 
                 String PROMOTION_EXPORT = "exportPromotion";
+
+                String DEL_PROMOTION = "delPromotion";
             }
 
             interface DETAIL {
@@ -261,6 +263,8 @@ public interface CmsUrlConstants {
             String SAVE_MAPPING = "saveMapping";
 
             String SAVE_MATCH_OVER_BY_MAIN_CATE = "saveMatchOverByMainCategory";
+
+            String GET_CARTS = "getCarts";
         }
 
         interface DICTIONARY {

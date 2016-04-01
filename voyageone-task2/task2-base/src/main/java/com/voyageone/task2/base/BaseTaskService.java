@@ -1,9 +1,9 @@
 package com.voyageone.task2.base;
 
-import com.google.gson.Gson;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
+import com.voyageone.common.util.JacksonUtil;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.dao.TaskDao;
@@ -25,8 +25,6 @@ import static java.lang.String.format;
  */
 public abstract class BaseTaskService extends LoggedService {
 
-    protected static final Gson gson = new Gson();
-
     @Autowired
     protected TaskDao taskDao;
 
@@ -43,7 +41,7 @@ public abstract class BaseTaskService extends LoggedService {
     /**
      * 获取 job 配置
      */
-    protected List<TaskControlBean> getControls() {
+    List<TaskControlBean> getControls() {
         return taskDao.getTaskControlList(getTaskName());
     }
 
@@ -194,6 +192,6 @@ public abstract class BaseTaskService extends LoggedService {
 
         if (attach instanceof String) return (String) attach;
 
-        return gson.toJson(attach);
+        return JacksonUtil.bean2Json(attach);
     }
 }

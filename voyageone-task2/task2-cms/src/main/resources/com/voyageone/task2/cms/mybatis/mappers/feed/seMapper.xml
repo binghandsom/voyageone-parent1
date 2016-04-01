@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.voyageone.cms.sql">
+    <insert id="cms_zz_worktable_se_superfeed_insertList">
+        INSERT INTO voyageone_cms2.cms_zz_worktable_se_superfeed_full (
+        upc, code, `size`, category, cost, brand, vo_cost, img_id, color, size_type, product_type, saved, md5
+        )
+        VALUES
+        <foreach collection="beanList" item="bean" separator=",">
+            (#{bean.upc}, #{bean.code}, #{bean.size}, #{bean.category}, #{bean.cost}, #{bean.brand}, #{bean.vo_cost},
+            #{bean.img_id}, #{bean.color}, #{bean.size_type}, #{bean.product_type}, #{bean.saved}, #{bean.md5})
+        </foreach>
+    </insert>
+
+    <select id="cms_zz_worktable_se_superfeed_full_selectUnsaved"
+            resultType="com.voyageone.task2.cms.bean.ShoeCityFeedBean">
+        SELECT
+            id,
+            upc,
+            code,
+            size,
+            category,
+            cost,
+            brand,
+            vo_cost,
+            img_id,
+            color,
+            size_type,
+            product_type,
+            saved,
+            md5
+        FROM voyageone_cms2.cms_zz_worktable_se_superfeed_full
+        WHERE saved = 0;
+    </select>
+
+    <update id="cms_zz_worktable_se_superfeed_full_updateSucceed">
+        UPDATE voyageone_cms2.cms_zz_worktable_se_superfeed_full
+        SET saved = 1
+        WHERE code IN (
+        <foreach collection="succeed" item="i" separator=",">
+            #{i.code}
+        </foreach>
+        )
+    </update>
+</mapper>

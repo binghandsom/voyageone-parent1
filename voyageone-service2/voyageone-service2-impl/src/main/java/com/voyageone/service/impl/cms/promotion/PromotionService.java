@@ -10,6 +10,7 @@ import com.voyageone.service.dao.cms.CmsBtTagDao;
 import com.voyageone.service.impl.BaseService;
 import com.voyageone.service.impl.cms.TagService;
 import com.voyageone.service.model.cms.CmsBtPromotionModel;
+import com.voyageone.service.model.cms.CmsBtTagModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -122,9 +123,19 @@ public class PromotionService extends BaseService {
     /**
      * 删除
      */
-    public int deleteById(int promotionId) {
+    @Transactional
+    public int delete(CmsBtPromotionModel cmsBtPromotionModel) {
         Map<String, Object> param = new HashMap<>();
-        param.put("promotionId", promotionId);
+        param.put("promotionId", cmsBtPromotionModel.getPromotionId());
+        param.put("modifier", cmsBtPromotionModel.getModifier());
+
+        // 删除对应的tag
+        CmsBtTagModel cmsBtTagModel = new CmsBtTagModel();
+        cmsBtTagModel.setParentTagId(cmsBtPromotionModel.getRefTagId());
+        cmsBtTagModel.setTagId(cmsBtPromotionModel.getRefTagId());
+        cmsBtTagDao.deleteCmsBtTagByParentTagId(cmsBtTagModel);
+        cmsBtTagDao.deleteCmsBtTagByTagId(cmsBtTagModel);
+
         return cmsBtPromotionDao.deleteById(param);
     }
 
