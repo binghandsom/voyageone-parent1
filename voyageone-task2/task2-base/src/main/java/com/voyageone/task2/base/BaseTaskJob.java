@@ -91,7 +91,6 @@ public abstract class BaseTaskJob extends VOAbsIssueLoggable {
             status = TaskControlEnums.Status.ERROR;
         } catch (Exception e) {
             status = TaskControlEnums.Status.ERROR;
-            logger.error("出现异常，任务退出", e);
         }
 
         // 任务监控历史记录添加:结束
