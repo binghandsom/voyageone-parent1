@@ -135,7 +135,11 @@ public class StockSeparateService extends BaseTaskService {
 
     }
 
-
+    /**
+     * 隔离数据整理
+     *
+     * @param mapSkuTaskData 等待隔离数据
+     */
     private void updateSeparateSuccessData(Map<Integer, Map<String, List<Map<String, Object>>>> mapSkuTaskData) {
         Map<String, Object> sqlParamItem = new HashMap<>();
         Map<String, Object> sqlParamTask = new HashMap<>();
@@ -252,6 +256,15 @@ public class StockSeparateService extends BaseTaskService {
             param.put("taskId", taskId);
             param.put("commonPlatform", true);
             List<Map<String, Object>> listTaskInfo = cmsBtStockSeparatePlatformInfoDao.selectStockSeparatePlatform(param);
+            Map<Integer, Integer> mapPlatAdd = new TreeMap<>(); // 增顺
+            Map<Integer, Integer> mapPlatSub = new TreeMap<>(); // 减顺
+            for(Map<String, Object> platformInfo : listTaskInfo) {
+                Integer cartId = (Integer) platformInfo.get("cart_id");
+                Integer add = (Integer) platformInfo.get("add_priority");
+                Integer sub = (Integer) platformInfo.get("subtract_priority");
+                mapPlatAdd.put(add, cartId);
+                mapPlatSub.put(sub, cartId);
+            }
 
             Map<String, List<Map<String, Object>>> mapSkuData = mapSkuTaskData.get(taskId);
             Integer skuUsableOld = 0; // 可用库存
@@ -259,21 +272,18 @@ public class StockSeparateService extends BaseTaskService {
                 String sku = entry.getKey();
                 List<Map<String, Object>> listData = entry.getValue();
                 skuUsableOld = (Integer) listData.get(0).get("qty");
-                Map<Integer, Integer> cartSeparateQty = new HashMap<>();
+                Map<Integer, Integer> cartSeparateQtyOld = new HashMap<>(); // Map<平台, 隔离库存>
                 Integer separateQtyAll = 0;
                 for (Map<String, Object> data : listData) {
                     Integer cartId = (Integer) data.get("cart_id");
                     Integer separateQty = (Integer) data.get("separate_qty");
                     separateQtyAll += separateQty;
-                    cartSeparateQty.put(cartId, separateQty);
+                    cartSeparateQtyOld.put(cartId, separateQty);
                 }
 
-                if (separateQtyAll <= skuUsableOld) {
-                    // 各平台设置之和 <= 可用库存
+                // 各平台最终显示库存（包含隔离平台，共享平台（-1），不包含动态平台）
+                Map<Integer, Integer> cartDisplayQty = calQty(cartSeparateQtyOld, separateQtyAll, skuUsableOld, skuStockUsableAll.get(sku), mapPlatAdd, mapPlatSub);
 
-                } else {
-
-                }
             }
 
         }
@@ -290,7 +300,70 @@ public class StockSeparateService extends BaseTaskService {
         $info("更新处理结束,渠道是%s", channelId);
     }
 
-    private void calQty() {
+    /**
+     * @param cartSeparateQty Map<平台, 隔离库存>
+     * @param separateQtyAll  各平台设置隔离数量之和
+     * @param skuUsableOld    元可用库存
+     * @param skuUsable       现可用库存
+     * @param mapPlatAdd      平台增顺
+     * @param mapPlatSub      平台减顺
+     * @return Map<平台, 隔离库存>
+     */
+    private Map<Integer, Integer> calQty(Map<Integer, Integer> cartSeparateQty, Integer separateQtyAll, Integer skuUsableOld, Integer skuUsable, Map<Integer, Integer> mapPlatAdd, Map<Integer, Integer> mapPlatSub) {
+        Map<Integer, Integer> ret = new HashMap<>();
+        ret.putAll(cartSeparateQty);
+        // 共享平台
+        Integer share = skuUsableOld - separateQtyAll;
+        if (share < 0) share = 0;
+        ret.put(-1, share);
 
+        if (skuUsableOld == skuUsable) {
+            return ret;
+        }
+
+        if (separateQtyAll <= skuUsableOld) {
+            // 各平台设置之和 <= 可用库存
+            // 根据增减顺修正隔离库存
+            if (skuUsableOld < skuUsable) {
+                // 增顺
+                for (Integer cartId : mapPlatAdd.values()) {
+                    Integer separateQty = ret.get(cartId);
+                    if (separateQty != null) {
+                        // 非动态平台，即隔离平台或共享平台
+                        ret.put(cartId, separateQty + (skuUsable - skuUsableOld));
+                        break;
+                    }
+                }
+            } else {
+                // 减顺
+                Integer minus = skuUsableOld - skuUsable; // 需要减少的数量
+                for (Integer cartId : mapPlatSub.values()) {
+                    Integer separateQty = ret.get(cartId);
+                    if (separateQty != null) {
+                        // 非动态平台，即隔离平台或共享平台
+                        if (separateQty - minus >= 0) {
+                            // 够减
+                            ret.put(cartId, separateQty - minus);
+                            break;
+                        } else {
+                            // 不够减，下个平台继续减
+                            ret.put(cartId, 0);
+                            minus = minus - separateQty;
+                        }
+                    }
+                }
+            }
+
+        } else {
+            // 按比例修正隔离库存
+            for (Map.Entry<Integer, Integer> entry : cartSeparateQty.entrySet()) {
+                Integer cartId = entry.getKey();
+                Integer separateQtyOld = entry.getValue();
+                Integer separateQty = skuUsable * separateQtyOld / skuUsableOld;
+                ret.put(cartId, separateQty);
+            }
+        }
+
+        return ret;
     }
 }
