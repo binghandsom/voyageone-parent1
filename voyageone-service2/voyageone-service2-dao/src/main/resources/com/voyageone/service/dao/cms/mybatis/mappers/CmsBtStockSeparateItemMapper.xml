@@ -144,6 +144,13 @@
             <if test="sku != null" >
                 and sku = #{sku}
             </if>
+            <if test="skuList != null and skuList.size() > 0">
+                and (sku in
+                <foreach collection="skuList" item="skuItem" open="(" separator="," close=")">
+                    #{skuItem}
+                </foreach>
+                )
+            </if>
             <if test="cartId != null" >
                 and cart_id = #{cartId}
             </if>
