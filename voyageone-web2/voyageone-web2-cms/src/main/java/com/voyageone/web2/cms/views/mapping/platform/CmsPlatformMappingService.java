@@ -4,6 +4,7 @@ import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.Constants;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.TypeChannels;
+import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategoryDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtPlatformCategorySchemaDao;
 import com.voyageone.service.dao.cms.mongo.CmsMtPlatformMappingDao;
@@ -47,6 +48,10 @@ class CmsPlatformMappingService extends BaseAppService {
     @Autowired
     private ChannelCategoryService cmsBtChannelCategoryService;
 
+    List<TypeChannelBean> getCarts(UserSessionBean user, String lang) {
+        return TypeChannels.getTypeListSkuCarts(user.getSelChannelId(), Constants.comMtTypeChannel.SKU_CARTS_53_A, lang);
+    }
+
     /**
      * 获取拍平的叶子类目和类目Mapping对应主数据类目名称
      *
@@ -54,7 +59,7 @@ class CmsPlatformMappingService extends BaseAppService {
      * @param user   用户配置
      * @return Map, Key: categoryMap, mappings
      */
-    Map<String, Object> getMainFinalCategoryMap(Integer cartId, UserSessionBean user, String language) {
+    Map<String, Object> getMainFinalCategoryMap(Integer cartId, UserSessionBean user) {
 
         // 拍平
         List<CmsMtCategoryTreeModel> treeModelMap =
@@ -80,7 +85,6 @@ class CmsPlatformMappingService extends BaseAppService {
         return new HashMap<String, Object>() {{
             put("categories", treeModelMap);
             put("mappings", mappings);
-            put("carts", TypeChannels.getTypeListSkuCarts(user.getSelChannelId(), Constants.comMtTypeChannel.SKU_CARTS_53_A, language));
         }};
     }
 
