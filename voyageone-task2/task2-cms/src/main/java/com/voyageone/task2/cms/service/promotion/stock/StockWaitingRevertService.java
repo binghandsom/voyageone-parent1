@@ -239,7 +239,6 @@ public class StockWaitingRevertService extends BaseTaskService {
         List<Map<String, Object>> stockList = cmsBtStockSeparateItemDao.selectStockSeparateItem(sqlParam);
         List<String> skuList = new ArrayList<String>();
         for (Map<String, Object>  stock : stockList) {
-//            if (!StringUtils.isEmpty((String) stock.get("status")))
             skuList.add((String) stock.get("sku"));
         }
 
