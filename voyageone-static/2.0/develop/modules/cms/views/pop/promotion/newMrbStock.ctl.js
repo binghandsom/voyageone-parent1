@@ -29,7 +29,7 @@ define([
                 $scope.vm.promotionType="2";
                 taskStockService.initNewTask($scope.vm).then(
                     function (res) {
-                        $scope.vm.promotionList = res.data;
+                        $scope.vm.promotionList = res.data.platformList;
                     }
                 );
                 $scope.vm.taskId=data.task_id;
