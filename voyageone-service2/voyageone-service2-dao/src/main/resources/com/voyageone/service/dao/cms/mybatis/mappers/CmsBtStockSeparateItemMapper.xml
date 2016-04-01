@@ -47,6 +47,9 @@
             </foreach>
             )
         </if>
+        <if test="statusNotEmpty !=null">
+            and status != ''
+        </if>
     </select>
 
     <select id="select_stock_separate_item_by_sql_object" resultType="Object" parameterType="HashMap">

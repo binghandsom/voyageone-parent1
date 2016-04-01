@@ -3,13 +3,12 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function () {
 
-    function indexController($scope, promotionService, promotionDetailService, confirm, $translate, cActions, notify, $location, cRoutes) {
+    function indexController($scope, promotionService, promotionDetailService, confirm, $translate, cActions, notify, $location, cRoutes, alert) {
 
         $scope.vm = {"promotionList": [], "platformTypeList": [], "promotionStatus": [],"promotionIdList": []};
         $scope.searchInfo = {};
         $scope.groupPageOption = {curr: 1, total: 198, size: 30, fetch: $scope.search};
         $scope.datePicker = [];
-
         $scope.initialize = function () {
             promotionService.init().then(function (res) {
                 $scope.vm.platformTypeList = res.data.platformTypeList;

@@ -744,18 +744,18 @@ define([
 
         /**
          * 打开新建库存隔离任务
-         * @type {openMrbstock}
+         * @type {openMrbStock}
          */
-        $scope.openMrbstock = openMrbstock;
-        function openMrbstock(viewSize, promotionIdList) {
+        $scope.openMrbStock = openMrbStock;
+        function openMrbStock(viewSize, data) {
             require([popActions.promotion.newMrbStock.controllerUrl], function () {
                 $modal.open({
                     templateUrl: popActions.promotion.newMrbStock.templateUrl,
                     controller: popActions.promotion.newMrbStock.controller,
                     size: viewSize,
                     resolve: {
-                        promotionIdList: function () {
-                            return promotionIdList;
+                        data: function () {
+                            return data;
                         }
                     }
                 });

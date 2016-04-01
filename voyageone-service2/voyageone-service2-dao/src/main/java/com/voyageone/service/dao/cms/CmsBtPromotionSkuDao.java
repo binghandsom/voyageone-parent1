@@ -1,12 +1,10 @@
 package com.voyageone.service.dao.cms;
 
 import com.voyageone.service.dao.ServiceBaseDao;
-import com.voyageone.service.model.cms.CmsBtInventoryOutputTmpModel;
 import com.voyageone.service.model.cms.CmsBtPromotionSkuModel;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -25,7 +23,7 @@ public class CmsBtPromotionSkuDao extends ServiceBaseDao {
         return ret;
     }
     public int selectPromotionSkuListCnt(Map<String, Object> params){
-        return selectOne("select_cms_bt_promotion_sku_cnt",params);
+        return selectOne("select_cms_bt_promotion_sku_cnt", params);
     }
     public int insertPromotionSku(CmsBtPromotionSkuModel params){
         return insert("insert_cms_bt_promotion_sku", params);
@@ -56,5 +54,11 @@ public class CmsBtPromotionSkuDao extends ServiceBaseDao {
         params.setPromotionId(promotionId);
         params.setProductCode(productCode);
         return delete("delete_cms_bt_promotion_sku", params);
+    }
+    public List<Map<String, Object>> selectCmsBtPromotionSkuByPromotionIds(List promotionIdList){
+        return selectList("select_cms_bt_promotion_sku_bt_promotionIds", promotionIdList);
+    }
+    public List<Map<String, Object>> selectCmsBtPromotionAllSkuByPromotionIdS(List promotionIdList){
+        return selectList("select_cms_bt_promotion_sku_bt_all_sku_promotionIds", promotionIdList);
     }
 }

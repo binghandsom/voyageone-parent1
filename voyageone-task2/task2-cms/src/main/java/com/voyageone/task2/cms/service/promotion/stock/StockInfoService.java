@@ -155,7 +155,7 @@ public class StockInfoService {
         Map<String,Integer> skuStockSalesAll = new HashMap<>();
         sqlParam.clear();
         sqlParam.put("channelId", channelId);
-        sqlParam.put("endFlg", "0");
+        sqlParam.put("endFlg", NOT_END);
         List<Map<String, Object>> listStockSalesQuantity = cmsBtStockSalesQuantityDao.selectStockSalesQuantity(sqlParam);
         if (listStockSalesQuantity != null && listStockSalesQuantity.size() > 0) {
             for (Map<String, Object> stockSaleInfo : listStockSalesQuantity) {

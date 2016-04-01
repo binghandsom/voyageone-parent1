@@ -45,7 +45,7 @@
     </select>
 
 
-    <update id="com_issue_log_updateSendflgByIds" parameterType="String">
+    <update id="com_issue_log_updateSendflgByIds" parameterType="String" >
         update com_issue_log
         set
         send_flg = #{send_flg}

@@ -118,11 +118,16 @@
         </where>
     </select>
 
-    <delete id="cms_bt_tasks_delete" parameterType="HashMap">
+    <delete id="cms_bt_tasks_delete" parameterType="com.voyageone.service.model.cms.CmsBtTasksModel">
         delete
         from voyageone_cms2.cms_bt_tasks
         where
-        task_id = #{taskId}
+        task_id = #{task_id}
     </delete>
+    <select id="select_cms_bt_tasks_task_id" parameterType="String">
+      select MAX(task_id) task_id
+        from cms_bt_tasks
+       where task_name=#{task_name}
+    </select>
 
 </mapper>

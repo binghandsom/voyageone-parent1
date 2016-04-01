@@ -230,6 +230,23 @@
             and product_code = #{productCode,jdbcType=VARCHAR}
         </if>
     </delete>
-
+    <select id="select_cms_bt_promotion_sku_bt_promotionIds" parameterType="List" resultType="HashMap">
+        select product_sku,promotion_id
+        from voyageone_cms2.cms_bt_promotion_sku
+        where promotion_id in
+        <foreach collection="list" item="skuItem" open="(" separator="," close=")">
+            #{skuItem}
+        </foreach>
+        group by product_sku,promotion_id
+    </select>
+    <select id="select_cms_bt_promotion_sku_bt_all_sku_promotionIds" parameterType="List" resultType="HashMap">
+        select distinct product_sku,product_code
+        from voyageone_cms2.cms_bt_promotion_sku
+        where promotion_id in
+        <foreach collection="list" item="skuItem" open="(" separator="," close=")">
+            #{skuItem}
+        </foreach>
+        group by product_sku,product_code
+    </select>
 
 </mapper>
