@@ -1071,7 +1071,7 @@ public class CmsTaskStockService extends BaseAppService {
         }
 
         // 取得任务id对应的Promotion是否开始
-        boolean promotionStartFlg = isPromotionStart((String) param.get("taskId"));
+        boolean promotionStartFlg = isPromotionStart(String.valueOf(param.get("taskId")));
         if (promotionStartFlg) {
             throw new BusinessException("活动已经开始，不能删除任务！");
         }
@@ -2072,11 +2072,12 @@ public class CmsTaskStockService extends BaseAppService {
         boolean promotionStartFlg = isPromotionStart((String) param.get("taskId"));
         if (!promotionStartFlg) {
             revertStatus = "1";
-        }
-        // 取得任务id对应的Promotion是否结束
-        boolean promotionRevertFlg = isPromotionRevert((String) param.get("taskId"));
-        if (promotionRevertFlg) {
-            revertStatus = "2";
+        } else {
+            // 取得任务id对应的Promotion是否结束
+            boolean promotionRevertFlg = isPromotionRevert((String) param.get("taskId"));
+            if (promotionRevertFlg) {
+                revertStatus = "2";
+            }
         }
 
         // 活动期间
@@ -3126,11 +3127,13 @@ public class CmsTaskStockService extends BaseAppService {
         }
         sql += " (select qty_china from wms_bt_inventory_center_logic t50 where order_channel_id = '" + param.get("channelId") + "' and t50.sku = t1.sku) qty_china,";
         sql += " t1.qty";
-        sql += " from (select * from voyageone_cms2.cms_bt_stock_separate_item" + (String) param.get("tableNameSuffix");
+        sql += " from (select * from voyageone_cms2.cms_bt_stock_separate_item" + (String) param.get("tableNameSuffix") + " s1 ";
         sql += getWhereSql(param, false);
         if (!StringUtils.isEmpty((String) param.get("status"))) {
-            sql += " and sku in (select sku from voyageone_cms2.cms_bt_stock_separate_item" + (String) param.get("tableNameSuffix") + getWhereSql(param, false) +
-                    " and status = '" + (String) param.get("status") + "')";        }
+//            sql += " and sku in (select sku from voyageone_cms2.cms_bt_stock_separate_item" + (String) param.get("tableNameSuffix") + getWhereSql(param, false) +
+//                    " and status = '" + (String) param.get("status") + "')";        }
+            sql += " and exists (select sku from voyageone_cms2.cms_bt_stock_separate_item" + (String) param.get("tableNameSuffix") + " s2 " + getWhereSql(param, false) +
+                    " and status = '" + (String) param.get("status") + "' and s1.seq = s2.seq)";        }
         sql += " and cart_id = " + ((List<Map<String, Object>>)param.get("platformList")).get(0).get("cartId");
         sql += " order by sku";
         if ("1".equals(flg)) {
