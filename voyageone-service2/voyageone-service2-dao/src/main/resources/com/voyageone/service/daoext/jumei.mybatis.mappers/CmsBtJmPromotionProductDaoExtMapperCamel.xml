@@ -8,5 +8,7 @@
     <select id="getByProductCodeChannelIdCmsBtJmPromotionId"  resultMap="ResultMap">
         select  *   from cms_bt_jm_promotion_product  where  cms_bt_jm_promotion_id=#{cmsBtJmPromotionId} and  channel_id=#{channelId} and product_code=#{productCode} limit 1
     </select>
-
+    <select id="getListByWhere" resultType="MapModel" >
+            select  *   from cms_bt_jm_promotion_product
+    </select>
 </mapper>

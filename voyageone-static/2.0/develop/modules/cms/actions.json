@@ -122,6 +122,9 @@
         "getListByWhere": "getListByWhere",
         "insert": "insert",
         "update": "update"
+      },
+      "jmPromotionDetailService": {
+        "root": "/cms/jmPromotionDetail/index"
       }
     },
     "task": {

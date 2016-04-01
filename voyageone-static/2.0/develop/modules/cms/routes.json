@@ -170,7 +170,7 @@
     "controllerUrl": "modules/cms/views/system/cache/index.ctl"
   },
   "jm_promotion_detail_list": {
-    "hash": "/jm/promotion_detail_list",
+    "hash": "/jm/promotion_detail_list/:parentId",
     "templateUrl": "views/jm/jmpromotiondetaillist.tpl.html",
     "controllerUrl": "modules/cms/views/jm/jmpromotiondetaillist.ctl"
   },

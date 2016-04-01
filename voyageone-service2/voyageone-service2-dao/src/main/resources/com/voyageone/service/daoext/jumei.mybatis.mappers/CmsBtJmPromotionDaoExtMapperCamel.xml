@@ -4,7 +4,7 @@
     <resultMap id="ResultMap" type="CmsBtJmPromotionModel">
 
     </resultMap>
-    <select id="getListByWhere"  resultType="com.voyageone.common.util.MapCamel">
+    <select id="getListByWhere"  resultType="MapModel">
         select *  from cms_bt_jm_promotion
           <where>
               is_delete=0

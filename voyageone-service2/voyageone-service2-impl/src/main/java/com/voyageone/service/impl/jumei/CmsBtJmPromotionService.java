@@ -3,6 +3,7 @@ import com.voyageone.common.util.MapCamel;
 import com.voyageone.service.dao.jumei.*;
 import com.voyageone.service.daoext.jumei.CmsBtJmPromotionDaoExt;
 import com.voyageone.service.model.jumei.*;
+import com.voyageone.service.model.util.MapModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -45,7 +46,7 @@ public class CmsBtJmPromotionService {
         return dao.insert(entity);
     }
 
-    public List<MapCamel> getListByWhere(Map<String, Object> map) {
+    public List<MapModel> getListByWhere(Map<String, Object> map) {
         if (map.containsKey("state1") && map.get("state1") == "false")//待进行
         {
             map.remove("state1");  //小于开始时间
