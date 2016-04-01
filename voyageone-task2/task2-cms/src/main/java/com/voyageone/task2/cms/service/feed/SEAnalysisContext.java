@@ -1,6 +1,7 @@
 package com.voyageone.task2.cms.service.feed;
 
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
+import com.voyageone.common.configs.Enums.FeedEnums;
 import com.voyageone.common.configs.Feeds;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel;
 import com.voyageone.service.model.cms.mongo.feed.CmsBtFeedInfoModel_Sku;
@@ -21,12 +22,6 @@ import java.util.regex.Pattern;
  * @since 2.0.0
  */
 class SEAnalysisContext {
-
-    private final static String USE_DUTY = "useDuty";
-
-    private final static String PRICE_WITH_DUTY = "priceWithDuty";
-
-    private final static String PRICE_WITHOUT_DUTY = "priceWithoutDuty";
 
     private final static Pattern NUM_REGEX = Pattern.compile("^\\d+$");
 
@@ -103,19 +98,19 @@ class SEAnalysisContext {
     }
 
     private boolean isUseDuty(ShoeCityFeedBean feedBean) {
-        String exp = getExp(USE_DUTY);
+        String exp = getExp(FeedEnums.Name.useDuty);
         ExpParams params = getParam(feedBean);
         return getValue(exp, params, Boolean.class);
     }
 
     private Double getPriceWithDuty(ShoeCityFeedBean feedBean) {
-        String exp = getExp(PRICE_WITH_DUTY);
+        String exp = getExp(FeedEnums.Name.priceWithDuty);
         ExpParams params = getParam(feedBean);
         return getValue(exp, params, Double.class);
     }
 
     private Double getPriceWithoutDuty(ShoeCityFeedBean feedBean) {
-        String exp = getExp(PRICE_WITHOUT_DUTY);
+        String exp = getExp(FeedEnums.Name.priceWithoutDuty);
         ExpParams params = getParam(feedBean);
         return getValue(exp, params, Double.class);
     }
@@ -128,8 +123,8 @@ class SEAnalysisContext {
         return parser.parseExpression(exp).getValue(context, resultClass);
     }
 
-    private String getExp(String name) {
-        return Feeds.getVal1(ChannelConfigEnums.Channel.SHOE_CITY, name);
+    private String getExp(FeedEnums.Name name) {
+        return Feeds.getVal1(ChannelConfigEnums.Channel.SHOE_CITY.getId(), name);
     }
 
     /**
