@@ -5,6 +5,8 @@ import com.voyageone.service.model.cms.mongo.CmsMtPlatformCategorySchemaModel;
 import com.voyageone.service.model.cms.mongo.CmsMtPlatformMappingModel;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel_Sku;
 import com.voyageone.task2.cms.enums.PlatformWorkloadStatus;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
@@ -12,7 +14,10 @@ import java.util.*;
 /**
  * Created by Leo on 2015/5/26.
  */
-public class WorkLoadBean implements Cloneable{
+public class WorkLoadBean implements Cloneable {
+
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+
     //任务相关
     private String order_channel_id;
     private int cart_id;
@@ -176,7 +181,7 @@ public class WorkLoadBean implements Cloneable{
             cloneObj = (WorkLoadBean) super.clone();
             cloneObj.setWorkload_status(this.getWorkload_status().clone());
         } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
         }
         return cloneObj;
     }

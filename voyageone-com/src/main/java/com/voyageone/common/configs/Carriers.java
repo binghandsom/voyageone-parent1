@@ -5,8 +5,8 @@ import com.voyageone.common.configs.Enums.CarrierEnums;
 import com.voyageone.common.configs.beans.CarrierBean;
 import com.voyageone.common.configs.dao.ConfigDaoFactory;
 import com.voyageone.common.redis.CacheHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
@@ -19,7 +19,7 @@ public class Carriers {
 
     private static final Class selfClass = Carriers.class;
 
-    private static final Log logger = LogFactory.getLog(selfClass);
+    private static final Logger log = LoggerFactory.getLogger(selfClass);
 
     /* redis key */
     private static final String KEY = CacheKeyEnums.KeyEnum.ConfigData_CarrierConfigs.toString();
@@ -29,9 +29,9 @@ public class Carriers {
     public static void reload() {
         List<CarrierBean> allCarriers = ConfigDaoFactory.getCarrierDao().getAll();
         Map<String, CarrierBean> carrierBeanMap = new HashMap<>();
-        allCarriers.forEach(bean->carrierBeanMap.put(buildKey(bean.getOrder_channel_id(), bean.getCarrier()), bean));
+        allCarriers.forEach(bean -> carrierBeanMap.put(buildKey(bean.getOrder_channel_id(), bean.getCarrier()), bean));
         CacheHelper.reFreshSSB(KEY, carrierBeanMap);
-        logger.info("Carrier 读取数量: " + CacheHelper.getSize(KEY));
+        log.info("Carrier 读取数量: " + CacheHelper.getSize(KEY));
     }
 
     /**
@@ -64,7 +64,7 @@ public class Carriers {
         List<CarrierBean> carriersList = new ArrayList<>();
         Set<String> keys = CacheHelper.getKeySet(KEY, selfClass);
         if (CollectionUtils.isEmpty(keys)) {
-            logger.warn("未初始化CarrierBean");
+            log.warn("未初始化CarrierBean");
             return carriersList;
         }
         List<String> filterKeys = new ArrayList<>();

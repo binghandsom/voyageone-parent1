@@ -64,8 +64,8 @@ public class CmsImagePostScene7Service extends BaseTaskService {
                 try {
                     // 获得该渠道要上传Scene7的图片url列表
                     List<CmsBtFeedProductImageModel> imageUrlList = cmsBtFeedProductImageDao.selectImagebyUrl(feedImage);
-                    logger.info(channelId + String.format("渠道本次有%d要推送scene7的图片",imageUrlList.size()));
-                    if (imageUrlList != null && imageUrlList.size() > 0) {
+                    $info(channelId + String.format("渠道本次有%d要推送scene7的图片", imageUrlList.size()));
+                    if (!imageUrlList.isEmpty()) {
                         List<List<CmsBtFeedProductImageModel>> imageSplitList = CommonUtil.splitList(imageUrlList,10);
                         for (List<CmsBtFeedProductImageModel> subImageUrlList :imageSplitList ){
                             es.execute(() -> ImageGetAndSendTask(channelId, subImageUrlList));
@@ -74,11 +74,11 @@ public class CmsImagePostScene7Service extends BaseTaskService {
                         es.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
 
                     } else {
-                        logger.info(channelId + "渠道本次没有要推送scene7的图片");
+                        $info(channelId + "渠道本次没有要推送scene7的图片");
                     }
 
                 } catch (Exception ex) {
-                    logger.error(ex.getMessage(), ex);
+                    $error(ex.getMessage(), ex);
                     issueLog.log(ex, ErrorType.BatchJob, SubSystem.CMS);
                 }
             }
@@ -89,7 +89,7 @@ public class CmsImagePostScene7Service extends BaseTaskService {
 
         long threadNo =  Thread.currentThread().getId();
 
-        logger.info("thread-" + threadNo + " start");
+        $info("thread-" + threadNo + " start");
 
         //  成功处理的图片url列表
         List<CmsBtFeedProductImageModel> subSuccessImageUrlList = new ArrayList<CmsBtFeedProductImageModel>();
@@ -97,14 +97,14 @@ public class CmsImagePostScene7Service extends BaseTaskService {
         boolean isSuccess = false;
         try {
             isSuccess = getAndSendImage(orderChannelId, subImageUrlList, subSuccessImageUrlList, urlErrorList, threadNo);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
 
         }
 
         if (isSuccess) {
-            logger.info(orderChannelId + "渠道本次推送scene7图片任务thread-" + threadNo + "成功");
+            $info(orderChannelId + "渠道本次推送scene7图片任务thread-" + threadNo + "成功");
         } else {
-            logger.info(orderChannelId + "渠道本次推送scene7图片任务thread-" + threadNo + "有错误发生");
+            $info(orderChannelId + "渠道本次推送scene7图片任务thread-" + threadNo + "有错误发生");
         }
 
         // 已上传成功图片处理标志置位
@@ -156,7 +156,7 @@ public class CmsImagePostScene7Service extends BaseTaskService {
             String uploadPath = ChannelConfigs.getVal1(orderChannelId, ChannelConfigEnums.Name.scene7_image_folder);
             if(StringUtils.isEmpty(uploadPath)){
                 String err = String.format("channelId(%s)的scene7上的路径没有配置 请配置tm_order_channel_config表",orderChannelId);
-                logger.error(orderChannelId);
+                $error(orderChannelId);
                 throw new BusinessException(err);
             }
             ftpBean.setUpload_path(uploadPath);
@@ -189,7 +189,7 @@ public class CmsImagePostScene7Service extends BaseTaskService {
                                 inputStream = HttpUtils.getInputStream(imageUrl);
                             } catch (FileNotFoundException ex) {
                                 // 图片url错误
-                                logger.error(ex.getMessage(), ex);
+                                $error(ex.getMessage(), ex);
                                 // 记录url错误图片以便删除这张图片相关记录
                                 urlErrorList.add(imageUrlList.get(i));
 
@@ -204,7 +204,7 @@ public class CmsImagePostScene7Service extends BaseTaskService {
                             if (result) {
                                 successImageUrlList.add(imageUrlList.get(i));
 
-                                logger.info("thread-" + threadNo + ":" + imageUrl + "上传成功!");
+                                $info("thread-" + threadNo + ":" + imageUrl + "上传成功!");
 
                             } else {
                                 isSuccess = false;
@@ -220,7 +220,7 @@ public class CmsImagePostScene7Service extends BaseTaskService {
                 }
 
             } catch (Exception ex) {
-                logger.error(ex.getMessage(), ex);
+                $error(ex.getMessage(), ex);
                 issueLog.log(ex, ErrorType.BatchJob, SubSystem.CMS);
 
                 isSuccess = false;

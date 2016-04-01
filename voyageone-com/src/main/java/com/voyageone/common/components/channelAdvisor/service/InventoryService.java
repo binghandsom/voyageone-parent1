@@ -21,7 +21,7 @@ import javax.xml.datatype.DatatypeConfigurationException;
 @Component
 public class InventoryService extends CaBase {
     /**
-     * @description 取得商品库存
+     * 取得商品库存
      * @param paramBean 参数bean
      * @return String
      * @throws Exception
@@ -86,7 +86,7 @@ public class InventoryService extends CaBase {
     }
 
     /**
-     * @description 取得商品库存
+     * 取得商品库存
      * @param paramBean 参数bean
      * @return String
      * @throws Exception

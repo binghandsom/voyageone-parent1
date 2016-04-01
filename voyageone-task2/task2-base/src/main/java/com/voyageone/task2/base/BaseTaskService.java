@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
+import com.voyageone.common.logger.VOAbsIssueLoggable;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.dao.TaskDao;
@@ -23,7 +24,7 @@ import static java.lang.String.format;
  * <p>
  * Created by neil on 2015-05-26.
  */
-public abstract class BaseTaskService extends LoggedService {
+public abstract class BaseTaskService extends VOAbsIssueLoggable {
 
     protected static final Gson gson = new Gson();
 
@@ -83,7 +84,7 @@ public abstract class BaseTaskService extends LoggedService {
         } catch (Exception e) {
             logIssue(e);
             status = TaskControlEnums.Status.ERROR;
-            logger.error("出现异常，任务退出", e);
+            $error("出现异常，任务退出", e);
         }
 
         // 任务监控历史记录添加:结束

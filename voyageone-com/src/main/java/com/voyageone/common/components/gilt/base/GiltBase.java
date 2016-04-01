@@ -1,23 +1,17 @@
 package com.voyageone.common.components.gilt.base;
 
-import com.taobao.api.ApiException;
-import com.taobao.top.schema.Util.StringUtil;
 import com.voyageone.common.components.gilt.bean.GiltErrorResult;
-import com.voyageone.common.components.gilt.bean.GiltErrorType;
 import com.voyageone.common.components.gilt.exceptions.GiltException;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.ThirdPartyConfigs;
-import com.voyageone.common.configs.beans.ShopBean;
-import com.voyageone.common.util.*;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.util.Assert;
+import com.voyageone.common.util.HttpUtils;
+import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.common.util.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
 
 /**
  * GiltBase
@@ -28,7 +22,7 @@ import java.util.TreeMap;
  */
 public abstract class GiltBase {
 
-    protected final Log logger = LogFactory.getLog(getClass());
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
 
 //    public static final int C_MAX_API_ERROR = 3;
 

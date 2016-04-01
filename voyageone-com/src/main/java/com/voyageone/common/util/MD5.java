@@ -1,10 +1,15 @@
 package com.voyageone.common.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 public class MD5 {
+
+	private final static Logger logger = LoggerFactory.getLogger(MD5.class);
 
 	/**
 	 * 将输入的字符串转为32位的MD5
@@ -33,7 +38,7 @@ public class MD5 {
 			result = buf.toString();
 
 		} catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage(), e);
 		}
 
 		return result;

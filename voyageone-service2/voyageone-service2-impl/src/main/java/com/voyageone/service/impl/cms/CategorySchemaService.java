@@ -28,7 +28,7 @@ import java.util.Map;
  *
  * @author lewis 2016/01/28
  * @version 2.0.1
- * @since. 2.0.0
+ * @since 2.0.0
  */
 @Service
 public class CategorySchemaService extends BaseService {

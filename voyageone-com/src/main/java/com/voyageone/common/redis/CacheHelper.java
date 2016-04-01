@@ -20,8 +20,6 @@ import java.util.Set;
 @Component
 public class CacheHelper {
 
-
-
     private final static String RELAOD = "reload";
 
     private static RedisTemplate template;

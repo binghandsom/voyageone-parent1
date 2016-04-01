@@ -7,8 +7,8 @@ import com.voyageone.common.configs.beans.TypeBean;
 import com.voyageone.common.configs.dao.ConfigDaoFactory;
 import com.voyageone.common.configs.dao.TypeDao;
 import com.voyageone.common.redis.CacheHelper;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
@@ -24,7 +24,7 @@ public class Types {
 
     private static final Class selfClass = Types.class;
 
-    private static final Log logger = LogFactory.getLog(selfClass);
+    private final static Logger logger = LoggerFactory.getLogger(selfClass);
 
 
     /* redis key */

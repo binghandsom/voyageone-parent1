@@ -8,8 +8,8 @@ import com.voyageone.common.configs.dao.TypeChannelDao;
 import com.voyageone.common.masterdate.schema.option.Option;
 import com.voyageone.common.redis.CacheHelper;
 import com.voyageone.common.util.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
@@ -26,7 +26,7 @@ public class TypeChannels {
 
     private static final Class selfClass = TypeChannels.class;
 
-    private static final Log logger = LogFactory.getLog(selfClass);
+    private final static Logger logger = LoggerFactory.getLogger(selfClass);
 
 
     /* redis key */

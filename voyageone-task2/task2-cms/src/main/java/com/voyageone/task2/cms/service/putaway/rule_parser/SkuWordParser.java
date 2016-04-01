@@ -3,8 +3,8 @@ package com.voyageone.task2.cms.service.putaway.rule_parser;
 import com.voyageone.ims.rule_expression.RuleWord;
 import com.voyageone.ims.rule_expression.SkuWord;
 import com.voyageone.ims.rule_expression.WordType;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
@@ -12,19 +12,16 @@ import java.util.*;
  * Created by Leo on 16-1-7.
  */
 public class SkuWordParser {
-    private Log logger = LogFactory.getLog(MasterWordParser.class);
+
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     private Map<String, Object> evaluationContext;
 
     //目前只支持解析model级别的属性
-    public String parse(RuleWord ruleWord)
-    {
-        if (!WordType.SKU.equals(ruleWord.getWordType()))
-        {
+    public String parse(RuleWord ruleWord) {
+        if (!WordType.SKU.equals(ruleWord.getWordType())) {
             return null;
-        }
-        else
-        {
+        } else {
             SkuWord skuWord = (SkuWord) ruleWord;
             String propName = skuWord.getValue();
             Object plainPropValueObj;
