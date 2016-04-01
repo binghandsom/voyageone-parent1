@@ -69,7 +69,7 @@ public class SEAnalysisService extends BaseTaskService {
         while (reader.readRecord()) {
             try {
                 ShoeCityFeedBean bean = new ShoeCityFeedBean(reader);
-                if (ALL_ZERO.matcher(bean.getUpc()).matches())
+                if (!ALL_ZERO.matcher(bean.getUpc()).matches())
                     beanList.add(bean);
             } catch (Exception e) {
                 logIssue(e, reader.getValues());
