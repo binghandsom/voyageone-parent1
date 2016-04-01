@@ -54,7 +54,8 @@ public class SEAnalysisService extends BaseTaskService {
         // /opt/app-shared/voyageone_web/contents/other/third_party/016/Feed/shoecity-product-feed.csv
 
         List<ShoeCityFeedBean> beanList = new ArrayList<>();
-        CsvReader reader = new CsvReader(""); // TODO ???
+        // TODO 测试文件地址
+        CsvReader reader = new CsvReader("/Users/jonasvlag/Desktop/ShoeCity/shoecity-product-feed-20160328_20160328130020.csv");
         while (reader.readRecord()) {
             try {
                 ShoeCityFeedBean bean = new ShoeCityFeedBean(reader);
@@ -66,6 +67,10 @@ public class SEAnalysisService extends BaseTaskService {
         }
 
         $info("读取数据: " + beanList.size());
+
+        shoeCityDao.clearTemp();
+
+        $info("清空数据");
 
         int count = shoeCityDao.insertList(beanList);
 
