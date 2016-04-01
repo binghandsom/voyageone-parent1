@@ -8,6 +8,69 @@
     <select id="selectList" resultMap="ResultMap">
 
         select id,jm_bt_promotion_id,begin_time,end_time,error_msg,state,created,creater        from cms_bt_jm_promotion_update_task
+        <where>
+                <if test="id != null">
+                        AND id = #{id}
+                    </if>
+                                <if test="jm_bt_promotion_id != null">
+                        AND id = #{jm_bt_promotion_id}
+                    </if>
+                                <if test="begin_time != null">
+                        AND id = #{begin_time}
+                    </if>
+                                <if test="end_time != null">
+                        AND id = #{end_time}
+                    </if>
+                                <if test="error_msg != null">
+                        AND id = #{error_msg}
+                    </if>
+                                <if test="state != null">
+                        AND id = #{state}
+                    </if>
+                                <if test="created != null">
+                        AND id = #{created}
+                    </if>
+                                <if test="creater != null">
+                        AND id = #{creater}
+                    </if>
+                        </where>
+    </select>
+    <select id="selectOne" resultMap="ResultMap">
+        select id,jm_bt_promotion_id,begin_time,end_time,error_msg,state,created,creater from cms_bt_jm_promotion_update_task 
+        <where>
+                
+                    <if test="id != null">
+                        AND id = #{id}
+                    </if> 
+                
+                    <if test="jm_bt_promotion_id != null">
+                        AND id = #{jm_bt_promotion_id}
+                    </if> 
+                
+                    <if test="begin_time != null">
+                        AND id = #{begin_time}
+                    </if> 
+                
+                    <if test="end_time != null">
+                        AND id = #{end_time}
+                    </if> 
+                
+                    <if test="error_msg != null">
+                        AND id = #{error_msg}
+                    </if> 
+                
+                    <if test="state != null">
+                        AND id = #{state}
+                    </if> 
+                
+                    <if test="created != null">
+                        AND id = #{created}
+                    </if> 
+                
+                    <if test="creater != null">
+                        AND id = #{creater}
+                    </if> 
+        </where> limit 1
     </select>
     <select id="select" resultMap="ResultMap">
         select id,jm_bt_promotion_id,begin_time,end_time,error_msg,state,created,creater from cms_bt_jm_promotion_update_task where id=#{id}

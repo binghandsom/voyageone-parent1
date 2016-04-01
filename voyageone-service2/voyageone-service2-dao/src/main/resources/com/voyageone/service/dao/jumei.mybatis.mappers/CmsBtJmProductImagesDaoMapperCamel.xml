@@ -8,6 +8,111 @@
     <select id="selectList" resultMap="ResultMap">
 
         select id,channel_id,product_code,image_type_name,image_type,image_index,origin_url,jm_url,syn_flg,created,creater,modified,modifier,productImageUrlKey        from cms_bt_jm_product_images
+        <where>
+                <if test="id != null">
+                        AND id = #{id}
+                    </if>
+                                <if test="channel_id != null">
+                        AND id = #{channel_id}
+                    </if>
+                                <if test="product_code != null">
+                        AND id = #{product_code}
+                    </if>
+                                <if test="image_type_name != null">
+                        AND id = #{image_type_name}
+                    </if>
+                                <if test="image_type != null">
+                        AND id = #{image_type}
+                    </if>
+                                <if test="image_index != null">
+                        AND id = #{image_index}
+                    </if>
+                                <if test="origin_url != null">
+                        AND id = #{origin_url}
+                    </if>
+                                <if test="jm_url != null">
+                        AND id = #{jm_url}
+                    </if>
+                                <if test="syn_flg != null">
+                        AND id = #{syn_flg}
+                    </if>
+                                <if test="created != null">
+                        AND id = #{created}
+                    </if>
+                                <if test="creater != null">
+                        AND id = #{creater}
+                    </if>
+                                <if test="modified != null">
+                        AND id = #{modified}
+                    </if>
+                                <if test="modifier != null">
+                        AND id = #{modifier}
+                    </if>
+                                <if test="productImageUrlKey != null">
+                        AND id = #{productImageUrlKey}
+                    </if>
+                        </where>
+    </select>
+    <select id="selectOne" resultMap="ResultMap">
+        select id,channel_id,product_code,image_type_name,image_type,image_index,origin_url,jm_url,syn_flg,created,creater,modified,modifier,productImageUrlKey from cms_bt_jm_product_images 
+        <where>
+                
+                    <if test="id != null">
+                        AND id = #{id}
+                    </if> 
+                
+                    <if test="channel_id != null">
+                        AND id = #{channel_id}
+                    </if> 
+                
+                    <if test="product_code != null">
+                        AND id = #{product_code}
+                    </if> 
+                
+                    <if test="image_type_name != null">
+                        AND id = #{image_type_name}
+                    </if> 
+                
+                    <if test="image_type != null">
+                        AND id = #{image_type}
+                    </if> 
+                
+                    <if test="image_index != null">
+                        AND id = #{image_index}
+                    </if> 
+                
+                    <if test="origin_url != null">
+                        AND id = #{origin_url}
+                    </if> 
+                
+                    <if test="jm_url != null">
+                        AND id = #{jm_url}
+                    </if> 
+                
+                    <if test="syn_flg != null">
+                        AND id = #{syn_flg}
+                    </if> 
+                
+                    <if test="created != null">
+                        AND id = #{created}
+                    </if> 
+                
+                    <if test="creater != null">
+                        AND id = #{creater}
+                    </if> 
+                
+                    <if test="modified != null">
+                        AND id = #{modified}
+                    </if> 
+                
+                    <if test="modifier != null">
+                        AND id = #{modifier}
+                    </if> 
+                
+                    <if test="productImageUrlKey != null">
+                        AND id = #{productImageUrlKey}
+                    </if> 
+        </where> limit 1
     </select>
     <select id="select" resultMap="ResultMap">
         select id,channel_id,product_code,image_type_name,image_type,image_index,origin_url,jm_url,syn_flg,created,creater,modified,modifier,productImageUrlKey from cms_bt_jm_product_images where id=#{id}

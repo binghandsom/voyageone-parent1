@@ -18,10 +18,7 @@ public class CmsBtJmPromotionUpdateTaskService {
     {
        return dao.select(id);
     }
-    public List<CmsBtJmPromotionUpdateTaskModel>  selectList()
-    {
-    return dao.selectList();
-    }
+
     public int update(CmsBtJmPromotionUpdateTaskModel entity)
     {
    return dao.update(entity);

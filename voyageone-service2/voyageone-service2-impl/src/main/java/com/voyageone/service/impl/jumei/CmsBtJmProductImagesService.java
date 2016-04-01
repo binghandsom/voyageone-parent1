@@ -18,10 +18,7 @@ public class CmsBtJmProductImagesService {
     {
        return dao.select(id);
     }
-    public List<CmsBtJmProductImagesModel>  selectList()
-    {
-    return dao.selectList();
-    }
+
     public int update(CmsBtJmProductImagesModel entity)
     {
    return dao.update(entity);

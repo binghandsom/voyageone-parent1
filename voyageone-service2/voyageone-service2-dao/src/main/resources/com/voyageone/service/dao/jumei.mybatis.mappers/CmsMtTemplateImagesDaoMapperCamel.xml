@@ -8,6 +8,83 @@
     <select id="selectList" resultMap="ResultMap">
 
         select id,platform_id,channel_id,template_type,image_template_url,syn_flg,created,creater,modified,modifier        from cms_mt_template_images
+        <where>
+                <if test="id != null">
+                        AND id = #{id}
+                    </if>
+                                <if test="platform_id != null">
+                        AND id = #{platform_id}
+                    </if>
+                                <if test="channel_id != null">
+                        AND id = #{channel_id}
+                    </if>
+                                <if test="template_type != null">
+                        AND id = #{template_type}
+                    </if>
+                                <if test="image_template_url != null">
+                        AND id = #{image_template_url}
+                    </if>
+                                <if test="syn_flg != null">
+                        AND id = #{syn_flg}
+                    </if>
+                                <if test="created != null">
+                        AND id = #{created}
+                    </if>
+                                <if test="creater != null">
+                        AND id = #{creater}
+                    </if>
+                                <if test="modified != null">
+                        AND id = #{modified}
+                    </if>
+                                <if test="modifier != null">
+                        AND id = #{modifier}
+                    </if>
+                        </where>
+    </select>
+    <select id="selectOne" resultMap="ResultMap">
+        select id,platform_id,channel_id,template_type,image_template_url,syn_flg,created,creater,modified,modifier from cms_mt_template_images 
+        <where>
+                
+                    <if test="id != null">
+                        AND id = #{id}
+                    </if> 
+                
+                    <if test="platform_id != null">
+                        AND id = #{platform_id}
+                    </if> 
+                
+                    <if test="channel_id != null">
+                        AND id = #{channel_id}
+                    </if> 
+                
+                    <if test="template_type != null">
+                        AND id = #{template_type}
+                    </if> 
+                
+                    <if test="image_template_url != null">
+                        AND id = #{image_template_url}
+                    </if> 
+                
+                    <if test="syn_flg != null">
+                        AND id = #{syn_flg}
+                    </if> 
+                
+                    <if test="created != null">
+                        AND id = #{created}
+                    </if> 
+                
+                    <if test="creater != null">
+                        AND id = #{creater}
+                    </if> 
+                
+                    <if test="modified != null">
+                        AND id = #{modified}
+                    </if> 
+                
+                    <if test="modifier != null">
+                        AND id = #{modifier}
+                    </if> 
+        </where> limit 1
     </select>
     <select id="select" resultMap="ResultMap">
         select id,platform_id,channel_id,template_type,image_template_url,syn_flg,created,creater,modified,modifier from cms_mt_template_images where id=#{id}

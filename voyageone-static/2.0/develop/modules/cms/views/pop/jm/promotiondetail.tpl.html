@@ -21,10 +21,11 @@
             </div>
             <div class="form-group">
                 <label class="col-sm-3 control-label">专场主品牌</label>
-                <div class="col-sm-8 form-inline"  >
-                    <select search-contains="true"  class="form-control" ng-model="model.cmsBtJmMasterBrandId"
+                <div class="col-sm-8" >
+                    <select ng-model="model.cmsBtJmMasterBrandId"
                             ng-options="brand.id as brand.name for brand in vm.jmMasterBrandList">
                         <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
+                        <!--<option ng-repeat="brand in vm.jmMasterBrandList" value={{brand}}>{{brand.name}}</option>-->
                     </select>
                 </div>
                 <!--<label class="col-sm-3 control-label text-u-red text-left">聚美品牌ID</label>-->

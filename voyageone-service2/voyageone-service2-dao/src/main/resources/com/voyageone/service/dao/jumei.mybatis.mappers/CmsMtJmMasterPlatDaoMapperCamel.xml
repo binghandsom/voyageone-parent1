@@ -8,6 +8,90 @@
     <select id="selectList" resultMap="ResultMap">
 
         select id,code,key,name1,name2,name3,name4,created,creater,modified,modifier        from cms_mt_jm_master_plat
+        <where>
+                <if test="id != null">
+                        AND id = #{id}
+                    </if>
+                                <if test="code != null">
+                        AND id = #{code}
+                    </if>
+                                <if test="key != null">
+                        AND id = #{key}
+                    </if>
+                                <if test="name1 != null">
+                        AND id = #{name1}
+                    </if>
+                                <if test="name2 != null">
+                        AND id = #{name2}
+                    </if>
+                                <if test="name3 != null">
+                        AND id = #{name3}
+                    </if>
+                                <if test="name4 != null">
+                        AND id = #{name4}
+                    </if>
+                                <if test="created != null">
+                        AND id = #{created}
+                    </if>
+                                <if test="creater != null">
+                        AND id = #{creater}
+                    </if>
+                                <if test="modified != null">
+                        AND id = #{modified}
+                    </if>
+                                <if test="modifier != null">
+                        AND id = #{modifier}
+                    </if>
+                        </where>
+    </select>
+    <select id="selectOne" resultMap="ResultMap">
+        select id,code,key,name1,name2,name3,name4,created,creater,modified,modifier from cms_mt_jm_master_plat 
+        <where>
+                
+                    <if test="id != null">
+                        AND id = #{id}
+                    </if> 
+                
+                    <if test="code != null">
+                        AND id = #{code}
+                    </if> 
+                
+                    <if test="key != null">
+                        AND id = #{key}
+                    </if> 
+                
+                    <if test="name1 != null">
+                        AND id = #{name1}
+                    </if> 
+                
+                    <if test="name2 != null">
+                        AND id = #{name2}
+                    </if> 
+                
+                    <if test="name3 != null">
+                        AND id = #{name3}
+                    </if> 
+                
+                    <if test="name4 != null">
+                        AND id = #{name4}
+                    </if> 
+                
+                    <if test="created != null">
+                        AND id = #{created}
+                    </if> 
+                
+                    <if test="creater != null">
+                        AND id = #{creater}
+                    </if> 
+                
+                    <if test="modified != null">
+                        AND id = #{modified}
+                    </if> 
+                
+                    <if test="modifier != null">
+                        AND id = #{modifier}
+                    </if> 
+        </where> limit 1
     </select>
     <select id="select" resultMap="ResultMap">
         select id,code,key,name1,name2,name3,name4,created,creater,modified,modifier from cms_mt_jm_master_plat where id=#{id}

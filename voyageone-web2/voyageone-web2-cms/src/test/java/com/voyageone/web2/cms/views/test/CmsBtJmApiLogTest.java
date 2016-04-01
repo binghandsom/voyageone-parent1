@@ -27,7 +27,7 @@ public class CmsBtJmApiLogTest {
     public void testGetList() {
         //ApplicationContext context = new ClassPathXmlApplicationContext("spring-test.xml");
         //CmsBtJmApiLogService service = (CmsBtJmApiLogService)context.getBean("CmsBtJmApiLogService");
-        List<CmsBtJmApiLogModel> list = service.selectList();
+       // List<CmsBtJmApiLogModel> list = service.selectList();
     }
 
     @Test

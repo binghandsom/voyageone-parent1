@@ -17,10 +17,7 @@ public class CmsMtTemplateImagesService {
     {
        return dao.select(id);
     }
-    public List<CmsMtTemplateImagesModel>  selectList()
-    {
-    return dao.selectList();
-    }
+
     public int update(CmsMtTemplateImagesModel entity)
     {
    return dao.update(entity);

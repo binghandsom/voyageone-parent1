@@ -8,6 +8,118 @@
     <select id="selectList" resultMap="ResultMap">
 
         select id,channel_id,product_code,cms_bt_jm_product_id,sku_code,jm_spu_no,jm_sku_no,upc,cms_size,jm_size,state,creater,created,modified,modifier        from cms_bt_jm_sku
+        <where>
+                <if test="id != null">
+                        AND id = #{id}
+                    </if>
+                                <if test="channel_id != null">
+                        AND id = #{channel_id}
+                    </if>
+                                <if test="product_code != null">
+                        AND id = #{product_code}
+                    </if>
+                                <if test="cms_bt_jm_product_id != null">
+                        AND id = #{cms_bt_jm_product_id}
+                    </if>
+                                <if test="sku_code != null">
+                        AND id = #{sku_code}
+                    </if>
+                                <if test="jm_spu_no != null">
+                        AND id = #{jm_spu_no}
+                    </if>
+                                <if test="jm_sku_no != null">
+                        AND id = #{jm_sku_no}
+                    </if>
+                                <if test="upc != null">
+                        AND id = #{upc}
+                    </if>
+                                <if test="cms_size != null">
+                        AND id = #{cms_size}
+                    </if>
+                                <if test="jm_size != null">
+                        AND id = #{jm_size}
+                    </if>
+                                <if test="state != null">
+                        AND id = #{state}
+                    </if>
+                                <if test="creater != null">
+                        AND id = #{creater}
+                    </if>
+                                <if test="created != null">
+                        AND id = #{created}
+                    </if>
+                                <if test="modified != null">
+                        AND id = #{modified}
+                    </if>
+                                <if test="modifier != null">
+                        AND id = #{modifier}
+                    </if>
+                        </where>
+    </select>
+    <select id="selectOne" resultMap="ResultMap">
+        select id,channel_id,product_code,cms_bt_jm_product_id,sku_code,jm_spu_no,jm_sku_no,upc,cms_size,jm_size,state,creater,created,modified,modifier from cms_bt_jm_sku 
+        <where>
+                
+                    <if test="id != null">
+                        AND id = #{id}
+                    </if> 
+                
+                    <if test="channel_id != null">
+                        AND id = #{channel_id}
+                    </if> 
+                
+                    <if test="product_code != null">
+                        AND id = #{product_code}
+                    </if> 
+                
+                    <if test="cms_bt_jm_product_id != null">
+                        AND id = #{cms_bt_jm_product_id}
+                    </if> 
+                
+                    <if test="sku_code != null">
+                        AND id = #{sku_code}
+                    </if> 
+                
+                    <if test="jm_spu_no != null">
+                        AND id = #{jm_spu_no}
+                    </if> 
+                
+                    <if test="jm_sku_no != null">
+                        AND id = #{jm_sku_no}
+                    </if> 
+                
+                    <if test="upc != null">
+                        AND id = #{upc}
+                    </if> 
+                
+                    <if test="cms_size != null">
+                        AND id = #{cms_size}
+                    </if> 
+                
+                    <if test="jm_size != null">
+                        AND id = #{jm_size}
+                    </if> 
+                
+                    <if test="state != null">
+                        AND id = #{state}
+                    </if> 
+                
+                    <if test="creater != null">
+                        AND id = #{creater}
+                    </if> 
+                
+                    <if test="created != null">
+                        AND id = #{created}
+                    </if> 
+                
+                    <if test="modified != null">
+                        AND id = #{modified}
+                    </if> 
+                
+                    <if test="modifier != null">
+                        AND id = #{modifier}
+                    </if> 
+        </where> limit 1
     </select>
     <select id="select" resultMap="ResultMap">
         select id,channel_id,product_code,cms_bt_jm_product_id,sku_code,jm_spu_no,jm_sku_no,upc,cms_size,jm_size,state,creater,created,modified,modifier from cms_bt_jm_sku where id=#{id}

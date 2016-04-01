@@ -23,9 +23,7 @@ public class CmsBtJmPromotionProductService {
         return dao.select(id);
     }
 
-    public List<CmsBtJmPromotionProductModel> selectList() {
-        return dao.selectList();
-    }
+
 
     public int update(CmsBtJmPromotionProductModel entity) {
         return dao.update(entity);

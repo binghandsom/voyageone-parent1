@@ -18,10 +18,7 @@ public class CmsBtJmApiLogService {
     {
        return dao.select(id);
     }
-    public List<CmsBtJmApiLogModel>  selectList()
-    {
-    return dao.selectList();
-    }
+
     public int update(CmsBtJmApiLogModel entity)
     {
    return dao.update(entity);

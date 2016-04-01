@@ -8,6 +8,55 @@
     <select id="selectList" resultMap="ResultMap">
 
         select id,source_id,api_type,error_msg,error_code,remark        from cms_bt_jm_api_log
+        <where>
+                <if test="id != null">
+                        AND id = #{id}
+                    </if>
+                                <if test="source_id != null">
+                        AND id = #{source_id}
+                    </if>
+                                <if test="api_type != null">
+                        AND id = #{api_type}
+                    </if>
+                                <if test="error_msg != null">
+                        AND id = #{error_msg}
+                    </if>
+                                <if test="error_code != null">
+                        AND id = #{error_code}
+                    </if>
+                                <if test="remark != null">
+                        AND id = #{remark}
+                    </if>
+                        </where>
+    </select>
+    <select id="selectOne" resultMap="ResultMap">
+        select id,source_id,api_type,error_msg,error_code,remark from cms_bt_jm_api_log 
+        <where>
+                
+                    <if test="id != null">
+                        AND id = #{id}
+                    </if> 
+                
+                    <if test="source_id != null">
+                        AND id = #{source_id}
+                    </if> 
+                
+                    <if test="api_type != null">
+                        AND id = #{api_type}
+                    </if> 
+                
+                    <if test="error_msg != null">
+                        AND id = #{error_msg}
+                    </if> 
+                
+                    <if test="error_code != null">
+                        AND id = #{error_code}
+                    </if> 
+                
+                    <if test="remark != null">
+                        AND id = #{remark}
+                    </if> 
+        </where> limit 1
     </select>
     <select id="select" resultMap="ResultMap">
         select id,source_id,api_type,error_msg,error_code,remark from cms_bt_jm_api_log where id=#{id}

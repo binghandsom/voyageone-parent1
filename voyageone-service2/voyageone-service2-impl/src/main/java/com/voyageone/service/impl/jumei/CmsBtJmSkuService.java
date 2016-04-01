@@ -18,10 +18,7 @@ public class CmsBtJmSkuService {
     {
        return dao.select(id);
     }
-    public List<CmsBtJmSkuModel>  selectList()
-    {
-    return dao.selectList();
-    }
+
     public int update(CmsBtJmSkuModel entity)
     {
    return dao.update(entity);

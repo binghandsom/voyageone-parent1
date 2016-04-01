@@ -8,6 +8,125 @@
     <select id="selectList" resultMap="ResultMap">
 
         select id,platform_id,channel_id,brand_name,product_type,size_type,data_type,image_index,value1,value2,syn_flg,error_message,created,creater,modified,modifier        from cms_mt_master_info
+        <where>
+                <if test="id != null">
+                        AND id = #{id}
+                    </if>
+                                <if test="platform_id != null">
+                        AND id = #{platform_id}
+                    </if>
+                                <if test="channel_id != null">
+                        AND id = #{channel_id}
+                    </if>
+                                <if test="brand_name != null">
+                        AND id = #{brand_name}
+                    </if>
+                                <if test="product_type != null">
+                        AND id = #{product_type}
+                    </if>
+                                <if test="size_type != null">
+                        AND id = #{size_type}
+                    </if>
+                                <if test="data_type != null">
+                        AND id = #{data_type}
+                    </if>
+                                <if test="image_index != null">
+                        AND id = #{image_index}
+                    </if>
+                                <if test="value1 != null">
+                        AND id = #{value1}
+                    </if>
+                                <if test="value2 != null">
+                        AND id = #{value2}
+                    </if>
+                                <if test="syn_flg != null">
+                        AND id = #{syn_flg}
+                    </if>
+                                <if test="error_message != null">
+                        AND id = #{error_message}
+                    </if>
+                                <if test="created != null">
+                        AND id = #{created}
+                    </if>
+                                <if test="creater != null">
+                        AND id = #{creater}
+                    </if>
+                                <if test="modified != null">
+                        AND id = #{modified}
+                    </if>
+                                <if test="modifier != null">
+                        AND id = #{modifier}
+                    </if>
+                        </where>
+    </select>
+    <select id="selectOne" resultMap="ResultMap">
+        select id,platform_id,channel_id,brand_name,product_type,size_type,data_type,image_index,value1,value2,syn_flg,error_message,created,creater,modified,modifier from cms_mt_master_info 
+        <where>
+                
+                    <if test="id != null">
+                        AND id = #{id}
+                    </if> 
+                
+                    <if test="platform_id != null">
+                        AND id = #{platform_id}
+                    </if> 
+                
+                    <if test="channel_id != null">
+                        AND id = #{channel_id}
+                    </if> 
+                
+                    <if test="brand_name != null">
+                        AND id = #{brand_name}
+                    </if> 
+                
+                    <if test="product_type != null">
+                        AND id = #{product_type}
+                    </if> 
+                
+                    <if test="size_type != null">
+                        AND id = #{size_type}
+                    </if> 
+                
+                    <if test="data_type != null">
+                        AND id = #{data_type}
+                    </if> 
+                
+                    <if test="image_index != null">
+                        AND id = #{image_index}
+                    </if> 
+                
+                    <if test="value1 != null">
+                        AND id = #{value1}
+                    </if> 
+                
+                    <if test="value2 != null">
+                        AND id = #{value2}
+                    </if> 
+                
+                    <if test="syn_flg != null">
+                        AND id = #{syn_flg}
+                    </if> 
+                
+                    <if test="error_message != null">
+                        AND id = #{error_message}
+                    </if> 
+                
+                    <if test="created != null">
+                        AND id = #{created}
+                    </if> 
+                
+                    <if test="creater != null">
+                        AND id = #{creater}
+                    </if> 
+                
+                    <if test="modified != null">
+                        AND id = #{modified}
+                    </if> 
+                
+                    <if test="modifier != null">
+                        AND id = #{modifier}
+                    </if> 
+        </where> limit 1
     </select>
     <select id="select" resultMap="ResultMap">
         select id,platform_id,channel_id,brand_name,product_type,size_type,data_type,image_index,value1,value2,syn_flg,error_message,created,creater,modified,modifier from cms_mt_master_info where id=#{id}

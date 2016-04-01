@@ -18,10 +18,7 @@ public class CmsMtMasterInfoService {
     {
        return dao.select(id);
     }
-    public List<CmsMtMasterInfoModel>  selectList()
-    {
-    return dao.selectList();
-    }
+
     public int update(CmsMtMasterInfoModel entity)
     {
    return dao.update(entity);

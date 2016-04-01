@@ -25,7 +25,7 @@ public class CmsBtJmPromotionService {
 
     public Map<String, Object> init() {
         Map<String, Object> map = new HashMap<>();
-        List<CmsBtJmMasterBrandModel> jmMasterBrandList = daoCmsBtJmMasterBrand.selectList();
+        List<CmsBtJmMasterBrandModel> jmMasterBrandList = daoCmsBtJmMasterBrand.selectList(new HashMap<String,Object>());
         map.put("jmMasterBrandList", jmMasterBrandList);
         return map;
     }
@@ -34,9 +34,7 @@ public class CmsBtJmPromotionService {
         return dao.select(id);
     }
 
-    public List<CmsBtJmPromotionModel> selectList() {
-        return dao.selectList();
-    }
+
 
     public int update(CmsBtJmPromotionModel entity) {
         return dao.update(entity);
