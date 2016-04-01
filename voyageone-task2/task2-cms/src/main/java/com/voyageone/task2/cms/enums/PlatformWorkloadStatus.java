@@ -1,9 +1,15 @@
 package com.voyageone.task2.cms.enums;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Created by Leo on 15-8-3.
  */
 public class PlatformWorkloadStatus implements Cloneable {
+
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+
     public static final int JOB_INIT = 0;
     public static final int JOB_DONE = 1;
     public static final int JOB_ABORT = 2;
@@ -32,7 +38,7 @@ public class PlatformWorkloadStatus implements Cloneable {
         try {
             cloneObj = (PlatformWorkloadStatus) super.clone();
         } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
         }
         return cloneObj;
     }

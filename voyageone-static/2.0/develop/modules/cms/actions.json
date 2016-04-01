@@ -79,7 +79,8 @@
         "getPlatformMapping": "getPlatformMapping",
         "getMappingTypes": "getMappingType",
         "$saveMapping": "saveMapping",
-        "$saveMatchOverByMainCategory": "saveMatchOverByMainCategory"
+        "$saveMatchOverByMainCategory": "saveMatchOverByMainCategory",
+        "getCarts": "getCarts"
       },
       "$dictionaryService": {
         "root": "/cms/mapping/dictionary",

@@ -6,6 +6,7 @@ import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.Properties;
 import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.TypeBean;
+import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.FileUtils;
 import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
@@ -45,7 +46,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * @version 2.0.0, 15/12/14
  */
 @Service
-public class CmsSearchAdvanceService extends BaseAppService{
+public class CmsSearchAdvanceService extends BaseAppService {
 
     @Autowired
     private CmsPromotionIndexService cmsPromotionService;
@@ -69,7 +70,7 @@ public class CmsSearchAdvanceService extends BaseAppService{
             "modifier;groups.msrpStart;groups.msrpEnd;groups.retailPriceStart;groups.retailPriceEnd;" +
             "groups.salePriceStart;groups.salePriceEnd;groups.platforms.$;skus;" +
             "fields.longTitle;fields.productNameEn;fields.brand;fields.status;fields.code;fields.images1;fields.quantity;fields.productType;fields.sizeType;" +
-            "fields.priceSaleSt;fields.priceSaleEd;fields.priceRetailSt;fields.priceRetailEd;fields.priceMsrpSt;fields.priceMsrpEd;";
+            "fields.priceSaleSt;fields.priceSaleEd;fields.priceRetailSt;fields.priceRetailEd;fields.priceMsrpSt;fields.priceMsrpEd;fields.hsCodeCrop;fields.hsCodePrivate;";
 
     // DB检索页大小
     private int SELECT_PAGE_SIZE = 2000;
@@ -82,10 +83,11 @@ public class CmsSearchAdvanceService extends BaseAppService{
 
     /**
      * 获取检索页面初始化的master data数据
+     *
      * @param userInfo
      * @return
      */
-    public Map<String, Object> getMasterData(UserSessionBean userInfo, CmsSessionBean cmsSession, String language) throws IOException{
+    public Map<String, Object> getMasterData(UserSessionBean userInfo, CmsSessionBean cmsSession, String language) throws IOException {
 
         Map<String, Object> masterData = new HashMap<>();
 
@@ -126,6 +128,7 @@ public class CmsSearchAdvanceService extends BaseAppService{
 
     /**
      * 返回当前页的group列表
+     *
      * @param searchValue
      * @param userInfo
      * @param cmsSessionBean
@@ -137,10 +140,11 @@ public class CmsSearchAdvanceService extends BaseAppService{
         queryObject.setProjection(searchItems.concat((String) cmsSessionBean.getAttribute("_adv_search_props_searchItems")).split(";"));
         queryObject.setSort(setSortValue(searchValue));
 
-        List<CmsBtProductModel> grpList =  productService.getList(userInfo.getSelChannelId(), queryObject);
+        List<CmsBtProductModel> grpList = productService.getList(userInfo.getSelChannelId(), queryObject);
 
         if (productList.size() > 0) {
             // 再找出其主商品
+            int cartId = (int) cmsSessionBean.getPlatformType().get("cartId");
             List<Long> grpIdList = new ArrayList<Long>();
             for (CmsBtProductModel prodObj : productList) {
                 CmsBtProductModel_Group gpList = prodObj.getGroups();
@@ -149,7 +153,7 @@ public class CmsSearchAdvanceService extends BaseAppService{
                     List<CmsBtProductModel_Group_Platform> pltList = gpList.getPlatforms();
                     if (pltList != null && pltList.size() > 0) {
                         for (CmsBtProductModel_Group_Platform pltObj : pltList) {
-                            if (pltObj.getCartId() == (int) cmsSessionBean.getPlatformType().get("cartId")) {
+                            if (pltObj.getCartId() == cartId) {
                                 grpIdList.add(pltObj.getGroupId());
                                 break;
                             }
@@ -159,7 +163,7 @@ public class CmsSearchAdvanceService extends BaseAppService{
             }
             if (grpIdList.size() > 0) {
                 StringBuilder inStr = new StringBuilder("{'$in':[");
-                for (int i = 0, leng = grpIdList.size(); i < leng; i ++) {
+                for (int i = 0, leng = grpIdList.size(); i < leng; i++) {
                     if (i == 0) {
                         inStr.append(grpIdList.get(i));
                     } else {
@@ -171,7 +175,7 @@ public class CmsSearchAdvanceService extends BaseAppService{
 
                 JomgoQuery queryObj = new JomgoQuery();
                 queryObj.setProjection("{'prodId':1,'_id':0}");
-                queryObj.setQuery("{'groups.platforms':{'$elemMatch':{'isMain':1,'cartId':" + (int) cmsSessionBean.getPlatformType().get("cartId") + ",'groupId':" + inStr.toString() + "}}}");
+                queryObj.setQuery("{'groups.platforms':{'$elemMatch':{'isMain':1,'cartId':" + cartId + ",'groupId':" + inStr.toString() + "}}}");
 
                 List<CmsBtProductModel> grpList2 = productService.getList(userInfo.getSelChannelId(), queryObj);
                 for (CmsBtProductModel prodModel : grpList2) {
@@ -195,6 +199,7 @@ public class CmsSearchAdvanceService extends BaseAppService{
 
     /**
      * 取得当前主商品所在组的所有商品的图片
+     *
      * @param groupsList
      * @return
      */
@@ -216,15 +221,15 @@ public class CmsSearchAdvanceService extends BaseAppService{
             }
             if (grpId == 0) {
                 // 当前主商品所在组没有其他商品
-                logger.info("当前主商品所在组没有其他商品 prodId=" + groupObj.getProdId());
+                $info("当前主商品所在组没有其他商品 prodId=" + groupObj.getProdId());
                 rslt.add(new ArrayList<Map<String, String>>(0));
                 continue;
             }
 
             queryObj.setQuery("{'groups.platforms':{'$elemMatch':{'isMain':0,'cartId':" + cartId + ",'groupId':" + grpId + "}}}");
-            List<CmsBtProductModel> imgList =  productService.getList(channelId, queryObj);
+            List<CmsBtProductModel> imgList = productService.getList(channelId, queryObj);
             if (imgList == null || imgList.isEmpty()) {
-                logger.info("当前主商品所在组没有其他商品的图片 groupId=" + grpId);
+                $info("当前主商品所在组没有其他商品的图片 groupId=" + grpId);
                 rslt.add(new ArrayList<Map<String, String>>(0));
                 continue;
             }
@@ -248,6 +253,7 @@ public class CmsSearchAdvanceService extends BaseAppService{
 
     /**
      * 取得当前主商品所在组的其他信息：所有商品的价格变动信息，子商品图片
+     *
      * @param groupsList
      * @return
      */
@@ -284,12 +290,12 @@ public class CmsSearchAdvanceService extends BaseAppService{
             List<CmsBtProductModel> infoList = null;
             if (grpId == 0) {
                 // 当前主商品所在组没有其他商品
-                logger.info("当前主商品所在组没有其他商品 prodId=" + groupObj.getProdId());
+                $info("当前主商品所在组没有其他商品 prodId=" + groupObj.getProdId());
             } else {
                 queryObj.setQuery("{'groups.platforms':{'$elemMatch':{'isMain':0,'cartId':" + cartId + ",'groupId':" + grpId + "}}}");
-                infoList =  productService.getList(channelId, queryObj);
+                infoList = productService.getList(channelId, queryObj);
                 if (infoList == null || infoList.isEmpty()) {
-                    logger.info("当前主商品所在组没有其他商品的信息 groupId=" + grpId);
+                    $info("当前主商品所在组没有其他商品的信息 groupId=" + grpId);
                 }
             }
             if (grpId == 0 || infoList == null || infoList.isEmpty()) {
@@ -326,7 +332,7 @@ public class CmsSearchAdvanceService extends BaseAppService{
                         if (chgFlg.startsWith("U") || chgFlg.startsWith("D") || chgFlg.startsWith("X")) {
                             hasChg = true;
                             break;
-                          } else {
+                        } else {
                             hasChg = false;
                         }
                     }
@@ -358,6 +364,7 @@ public class CmsSearchAdvanceService extends BaseAppService{
 
     /**
      * 获取当前页的product列表
+     *
      * @param searchValue
      * @param userInfo
      * @param cmsSessionBean
@@ -375,6 +382,7 @@ public class CmsSearchAdvanceService extends BaseAppService{
 
     /**
      * 获取当前页的product列表Cnt
+     *
      * @param searchValue
      * @param userInfo
      * @param cmsSessionBean
@@ -386,6 +394,7 @@ public class CmsSearchAdvanceService extends BaseAppService{
 
     /**
      * 获取数据文件内容
+     *
      * @param searchValue
      * @param userInfo
      * @param cmsSessionBean
@@ -402,9 +411,9 @@ public class CmsSearchAdvanceService extends BaseAppService{
 
         int pageCount = 0;
         if ((int) recCount % SELECT_PAGE_SIZE > 0) {
-            pageCount =(int) recCount / SELECT_PAGE_SIZE + 1;
+            pageCount = (int) recCount / SELECT_PAGE_SIZE + 1;
         } else {
-            pageCount =(int) recCount / SELECT_PAGE_SIZE;
+            pageCount = (int) recCount / SELECT_PAGE_SIZE;
         }
 
         $info("准备生成 Item 文档 [ %s ]", recCount);
@@ -419,7 +428,7 @@ public class CmsSearchAdvanceService extends BaseAppService{
                 queryObject.setQuery(getSearchQuery(searchValue, cmsSessionBean, false));
                 queryObject.setProjection(searchItems.concat((String) cmsSessionBean.getAttribute("_adv_search_props_searchItems")).split(";"));
                 queryObject.setSort(setSortValue(searchValue));
-                queryObject.setSkip(i*SELECT_PAGE_SIZE);
+                queryObject.setSkip(i * SELECT_PAGE_SIZE);
                 queryObject.setLimit(SELECT_PAGE_SIZE);
                 List<CmsBtProductModel> items = productService.getList(userInfo.getSelChannelId(), queryObject);
 
@@ -427,8 +436,19 @@ public class CmsSearchAdvanceService extends BaseAppService{
                     break;
                 }
 
+                List<TypeChannelBean> hscodes = TypeChannels.getTypeList("hsCodePrivate", userInfo.getSelChannelId());
+                items.forEach(item -> {
+                    if(!StringUtils.isEmpty(item.getFields().getHsCodePrivate())){
+                        for(TypeChannelBean hscode :hscodes){
+                            if(hscode.getValue().equalsIgnoreCase(item.getFields().getHsCodePrivate())){
+                                item.getFields().setHsCodePrivate(hscode.getName());
+                                break;
+                            }
+                        }
+                    }
+                });
                 // 每页开始行
-                int startRowIndex =  i * SELECT_PAGE_SIZE + 1;
+                int startRowIndex = i * SELECT_PAGE_SIZE + 1;
                 boolean isContinueOutput = writeRecordToFile(book, items, cmsSessionBean.getPlatformType().get("cartId").toString(), startRowIndex);
                 // 超过最大行的场合
                 if (!isContinueOutput) {
@@ -452,6 +472,7 @@ public class CmsSearchAdvanceService extends BaseAppService{
 
     /**
      * 返回页面端的检索条件拼装成mongo使用的条件
+     *
      * @param searchValue
      * @param cmsSessionBean
      * @return
@@ -476,7 +497,7 @@ public class CmsSearchAdvanceService extends BaseAppService{
         }
 
         // 获取publishTime start
-        if (searchValue.getPublishTimeStart() != null ) {
+        if (searchValue.getPublishTimeStart() != null) {
             resultPlatforms.append(MongoUtils.splicingValue("publishTime", searchValue.getPublishTimeStart() + " 00.00.00", "$gte"));
             resultPlatforms.append(",");
         }
@@ -503,18 +524,18 @@ public class CmsSearchAdvanceService extends BaseAppService{
 
         if (!StringUtils.isEmpty(result.toString())) {
             return "{" + result.toString().substring(0, result.toString().length() - 1) + "}";
-        }
-        else {
+        } else {
             return "";
         }
     }
 
     /**
      * 获取其他检索条件
+     *
      * @param searchValue
      * @return
      */
-    private String getSearchValueForMongo (CmsSearchInfoBean searchValue) {
+    private String getSearchValueForMongo(CmsSearchInfoBean searchValue) {
         StringBuffer result = new StringBuffer();
 
         // 获取category Id
@@ -531,7 +552,7 @@ public class CmsSearchAdvanceService extends BaseAppService{
         }
 
         // 获取price start
-        if(searchValue.getPriceType() != null
+        if (searchValue.getPriceType() != null
                 && searchValue.getPriceStart() != null) {
             result.append(MongoUtils.splicingValue("fields." + searchValue.getPriceType() + "St", searchValue.getPriceStart(), "$gte"));
             result.append(",");
@@ -599,7 +620,7 @@ public class CmsSearchAdvanceService extends BaseAppService{
 
         // 获取自定义查询条件
         List<Map<String, String>> custList = searchValue.getCustAttrMap();
-        if (custList != null  && custList.size() > 0) {
+        if (custList != null && custList.size() > 0) {
             List<String> inputList = new ArrayList<String>();
             for (Map<String, String> item : custList) {
                 String inputVal = org.apache.commons.lang3.StringUtils.trimToNull(item.get("inputVal"));
@@ -616,7 +637,7 @@ public class CmsSearchAdvanceService extends BaseAppService{
             }
             if (inputList.size() > 0) {
                 result.append("'$and':[");
-                for (int i = 0, leng = inputList.size(); i < leng; i ++) {
+                for (int i = 0, leng = inputList.size(); i < leng; i++) {
                     if (i == 0) {
                         result.append(inputList.get(i));
                     } else {
@@ -668,8 +689,8 @@ public class CmsSearchAdvanceService extends BaseAppService{
     /**
      * Code单位，文件输出
      *
-     * @param book 输出Excel文件对象
-     * @param items 待输出DB数据
+     * @param book          输出Excel文件对象
+     * @param items         待输出DB数据
      * @param cartId
      * @param startRowIndex 开始
      * @return boolean 是否终止输出
@@ -705,7 +726,7 @@ public class CmsSearchAdvanceService extends BaseAppService{
             Row row = FileUtils.row(sheet, startRowIndex);
 
             // 最大行限制
-            if ( startRowIndex + 1 > MAX_EXCEL_REC_COUNT -1) {
+            if (startRowIndex + 1 > MAX_EXCEL_REC_COUNT - 1) {
                 isContinueOutput = false;
 
                 FileUtils.cell(row, 0, unlock).setCellValue("未完，存在未抽出数据！");
@@ -742,6 +763,10 @@ public class CmsSearchAdvanceService extends BaseAppService{
 
             FileUtils.cell(row, 13, unlock).setCellValue(item.getCatPath());
 
+            FileUtils.cell(row, 14, unlock).setCellValue(StringUtils.null2Space2(item.getFields().getHsCodeCrop()));
+
+            FileUtils.cell(row, 15, unlock).setCellValue(StringUtils.null2Space2(item.getFields().getHsCodePrivate()));
+
             startRowIndex = startRowIndex + 1;
         }
 
@@ -758,7 +783,7 @@ public class CmsSearchAdvanceService extends BaseAppService{
     private String getOutputPrice(Double strPrice, Double endPrice) {
         String output = "";
 
-        if(strPrice != null && endPrice != null) {
+        if (strPrice != null && endPrice != null) {
             if (strPrice.equals(endPrice)) {
                 output = String.valueOf(strPrice);
             } else {
@@ -777,10 +802,11 @@ public class CmsSearchAdvanceService extends BaseAppService{
 
     /**
      * 获取排序规则
+     *
      * @param searchValue
      * @return
      */
-    private String setSortValue (CmsSearchInfoBean searchValue) {
+    private String setSortValue(CmsSearchInfoBean searchValue) {
         StringBuffer result = new StringBuffer();
 
         // 获取排序字段1
@@ -804,12 +830,12 @@ public class CmsSearchAdvanceService extends BaseAppService{
             result.append(",");
         }
 
-        return result.toString().length() > 0 ? "{" + result.toString().substring(0, result.toString().length()-1) + "}" : null;
+        return result.toString().length() > 0 ? "{" + result.toString().substring(0, result.toString().length() - 1) + "}" : null;
     }
 
     // 取得自定义显示列设置
     public List<Map<String, Object>> getCustColumns() {
-        return  cmsMtCommonPropDao.selectCustColumns();
+        return cmsMtCommonPropDao.selectCustColumns();
     }
 
     // 取得用户自定义显示列设置
@@ -844,7 +870,7 @@ public class CmsSearchAdvanceService extends BaseAppService{
         String custAttrStr = null;
         String commStr = null;
         if (rsList == null || rsList.isEmpty()) {
-            logger.debug("该用户还未设置自定义查询列 userId=" + userId + " channelId=" + channelId);
+            $debug("该用户还未设置自定义查询列 userId=" + userId + " channelId=" + channelId);
             custAttrStr = "";
             commStr = "";
         } else {
@@ -954,7 +980,7 @@ public class CmsSearchAdvanceService extends BaseAppService{
             rs = cmsMtCommonPropDao.updateUserCustColumns(userInfo.getUserId(), userInfo.getUserName(), customStrs, commonStrs);
         }
         if (rs == 0) {
-            logger.error("保存自定义显示列设置不成功 userid=" + userInfo.getUserId());
+            $error("保存自定义显示列设置不成功 userid=" + userInfo.getUserId());
         }
     }
 

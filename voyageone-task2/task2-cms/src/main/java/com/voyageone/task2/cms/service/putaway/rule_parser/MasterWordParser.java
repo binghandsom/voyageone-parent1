@@ -4,8 +4,8 @@ import com.voyageone.ims.rule_expression.MasterWord;
 import com.voyageone.ims.rule_expression.RuleWord;
 import com.voyageone.ims.rule_expression.WordType;
 import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,9 +15,10 @@ import java.util.Map;
  * Created by Leo on 15-6-18.
  */
 public class MasterWordParser {
-    private CmsBtProductModel cmsBtProductModel;
 
-    private Log logger = LogFactory.getLog(MasterWordParser.class);
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
+
+    private CmsBtProductModel cmsBtProductModel;
 
     private List<Map<String, Object>> evaluationContextStack;
 

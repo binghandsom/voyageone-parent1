@@ -6,8 +6,12 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class JsonBeanDeserializer extends JsonDeserializer<JsonBean> {
+
+	private final Logger logger = LoggerFactory.getLogger(getClass());
 
 	private JsonBeanSerializeModule module;
 	
@@ -37,7 +41,7 @@ public class JsonBeanDeserializer extends JsonDeserializer<JsonBean> {
 */
 			jsonBean.setObj(obj);
 		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
+			logger.error(e.getMessage(), e);
 		}
 		return jsonBean;
 	}

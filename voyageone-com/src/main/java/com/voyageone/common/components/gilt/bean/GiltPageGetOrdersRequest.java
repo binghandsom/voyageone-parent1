@@ -34,10 +34,8 @@ public class GiltPageGetOrdersRequest extends GiltPage {
     }
 
     public void check(){
-        if(!StringUtils.isNullOrBlank2(order_ids)){
-            if(order_ids.split(",").length>100){
-                throw new IllegalArgumentException(" A comma delineated array of Order ids to fetch. (Max 100)");
-            }
+        if(!StringUtils.isNullOrBlank2(order_ids) && order_ids.split(",").length > 100) {
+            throw new IllegalArgumentException(" A comma delineated array of Order ids to fetch. (Max 100)");
         }
     }
 }

@@ -45,7 +45,7 @@ public class MqResumeService extends BaseTaskService {
             MqRoutingKey routingKey = MqRoutingKey.valueOf((String)message.get("routingKey"));
             String messageMapStr = (String)message.get("messageMap");
 
-            logger.debug("MqResumeService Resume:=" + routingKey.getValue() + " ; " + messageMapStr);
+            $debug("MqResumeService Resume:=" + routingKey.getValue() + " ; " + messageMapStr);
 
             // send mq to mqserver
             sender.sendMessage(

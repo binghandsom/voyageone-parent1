@@ -2,8 +2,9 @@ package com.voyageone.task2.base.util;
 
 import com.voyageone.task2.base.Enums.TaskControlEnums;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -12,12 +13,12 @@ import static java.util.stream.Collectors.toList;
 
 public class TaskControlUtils {
 
-    private static Log logger = LogFactory.getLog(TaskControlUtils.class);
+    private static final Logger logger = LoggerFactory.getLogger(TaskControlUtils.class);
 
     /**
      * 取得任务是否可以运行的标志位
      *
-     * @param taskControlList
+     * @param taskControlList List
      * @return 运行标志位
      */
     public static String getRunFlag(List<TaskControlBean> taskControlList) {
@@ -33,41 +34,35 @@ public class TaskControlUtils {
         }
 
         return strRunFlag;
-
     }
 
     /**
      * 取得任务ID
      *
-     * @param taskControlList
+     * @param taskControlList List
      * @return 任务ID
      */
     public static String getTaskId(List<TaskControlBean> taskControlList) {
-
         return taskControlList.get(0).getTask_id();
-
     }
 
     /**
      * 取得任务名
      *
-     * @param taskControlList
+     * @param taskControlList List
      * @return 任务名
      */
     public static String getTaskName(List<TaskControlBean> taskControlList) {
-
         return taskControlList.get(0).getTask_name();
-
     }
 
     /**
      * 取得配置属性对应的值1(单个)
      *
-     * @param taskControlList
+     * @param taskControlList List
      * @return 对应值1
      */
     public static String getVal1(List<TaskControlBean> taskControlList, TaskControlEnums.Name name) {
-
         String stVal = "";
         for (TaskControlBean taskControlBean : taskControlList) {
 
@@ -77,24 +72,20 @@ public class TaskControlUtils {
             }
 
         }
-
         return stVal;
-
     }
 
     /**
      * 取得配置属性对应的值1(复数)
      *
-     * @param taskControlList
+     * @param taskControlList List
      * @return 对应值1（列表）
      */
     public static List<String> getVal1List(List<TaskControlBean> taskControlList, TaskControlEnums.Name name) {
-
         return taskControlList.stream()
                 .filter(taskControlBean -> taskControlBean.getCfg_name().equals(name.toString()))
                 .map(TaskControlBean::getCfg_val1)
                 .collect(Collectors.toList());
-
     }
 
     /**
@@ -105,21 +96,18 @@ public class TaskControlUtils {
      * @return val1 和 val2 的配置表
      */
     public static List<TaskControlBean> getVal1s(List<TaskControlBean> taskControlList, TaskControlEnums.Name name) {
-
         return taskControlList.stream()
                 .filter(taskControlBean -> taskControlBean.getCfg_name().equals(name.toString()))
                 .collect(toList());
-
     }
 
     /**
      * 取得配置属性对应的值2(单个)
      *
-     * @param taskControlList
+     * @param taskControlList List
      * @return 对应值2
      */
     public static String getVal2(List<TaskControlBean> taskControlList, TaskControlEnums.Name name, String val1) {
-
         String stVa2 = "";
         for (TaskControlBean taskControlBean : taskControlList) {
 
@@ -130,9 +118,7 @@ public class TaskControlUtils {
             }
 
         }
-
         return stVa2;
-
     }
 
     /**
@@ -153,7 +139,6 @@ public class TaskControlUtils {
      * @return 是否可运行
      */
     public static boolean isRunnable(List<TaskControlBean> taskControlList, String taskCheck) {
-
         if (taskControlList.size() == 0) {
             logger.info("TASK配置表没有设定，无法执行此任务: " + taskCheck);
             return false;
@@ -166,6 +151,5 @@ public class TaskControlUtils {
         }
 
         return true;
-
     }
 }

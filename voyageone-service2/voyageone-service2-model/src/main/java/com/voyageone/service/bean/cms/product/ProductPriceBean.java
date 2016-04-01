@@ -8,7 +8,7 @@ import java.util.List;
  *
  * @author chuanyu.liang 2015/12/10
  * @version 2.0.0
- * @since. 2.0.0
+ * @since 2.0.0
  */
 public class ProductPriceBean {
 

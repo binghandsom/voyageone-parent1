@@ -1,6 +1,7 @@
 package com.voyageone.base.dao;
 
 import com.voyageone.common.Constants;
+import com.voyageone.common.logger.VOAbsLoggable;
 import org.apache.commons.lang3.StringUtils;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +12,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public abstract class BaseDao {
+public abstract class BaseDao extends VOAbsLoggable {
     private String namespace;
 
     @Autowired

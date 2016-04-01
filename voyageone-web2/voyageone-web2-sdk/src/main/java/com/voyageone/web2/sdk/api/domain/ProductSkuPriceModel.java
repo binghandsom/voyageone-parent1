@@ -5,7 +5,7 @@ package com.voyageone.web2.sdk.api.domain;
  *
  * @author chuanyu.liang 2015/12/10
  * @version 2.0.0
- * @since. 2.0.0
+ * @since 2.0.0
  */
 public class ProductSkuPriceModel {
 

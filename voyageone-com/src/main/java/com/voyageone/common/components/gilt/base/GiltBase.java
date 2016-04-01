@@ -1,23 +1,17 @@
 package com.voyageone.common.components.gilt.base;
 
-import com.taobao.api.ApiException;
-import com.taobao.top.schema.Util.StringUtil;
 import com.voyageone.common.components.gilt.bean.GiltErrorResult;
-import com.voyageone.common.components.gilt.bean.GiltErrorType;
 import com.voyageone.common.components.gilt.exceptions.GiltException;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.ThirdPartyConfigs;
-import com.voyageone.common.configs.beans.ShopBean;
-import com.voyageone.common.util.*;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.util.Assert;
+import com.voyageone.common.util.HttpUtils;
+import com.voyageone.common.util.JacksonUtil;
+import com.voyageone.common.util.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
 
 /**
  * GiltBase
@@ -28,7 +22,7 @@ import java.util.TreeMap;
  */
 public abstract class GiltBase {
 
-    protected final Log logger = LogFactory.getLog(getClass());
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
 
 //    public static final int C_MAX_API_ERROR = 3;
 
@@ -53,10 +47,10 @@ public abstract class GiltBase {
 
         StringBuilder parm_url = new StringBuilder();
         //拼接URL
-        for (String key : params.keySet()) {
-            if(!StringUtils.isEmpty(params.get(key))){
-                parm_url.append("&"  + key + "=");
-                parm_url.append(params.get(key));
+        for (Map.Entry<String, String> entry : params.entrySet()) {
+            if(!StringUtils.isEmpty(entry.getValue())){
+                parm_url.append("&").append(entry.getKey()).append("=");
+                parm_url.append(params.get(entry.getValue()));
             }
         }
         if (parm_url.length() != 0){
@@ -116,10 +110,10 @@ public abstract class GiltBase {
             throw new IllegalArgumentException("authorization Key不能为空");
 
         String result=null;
-        if(reqType.equals("put")){
-             result = HttpUtils.put(post_url.toString(), jsonString,app_key);
+        if("put".equals(reqType)){
+             result = HttpUtils.put(post_url.toString(), jsonString, app_key);
           //  System.out.println(result);
-        }else if(reqType.equals("patch")){
+        }else if("patch".equals(reqType)){
              result = HttpUtils.patch(post_url.toString(), jsonString,app_key);
         }
 

@@ -6,6 +6,7 @@ import com.mongodb.DBCollection;
 import com.mongodb.WriteResult;
 import com.voyageone.base.dao.mongodb.model.BaseMongoModel;
 import com.voyageone.base.dao.mongodb.model.ChannelPartitionModel;
+import com.voyageone.base.dao.mongodb.support.VOJacksonMapper;
 import com.voyageone.base.exception.VoMongoException;
 import com.voyageone.common.util.StringUtils;
 import net.minidev.json.JSONObject;
@@ -34,7 +35,8 @@ public class BaseJomgoPartTemplate {
     public BaseJomgoPartTemplate(MongoTemplate mongoTemplate) {
         this.mongoTemplate = mongoTemplate;
         try {
-            this.jongo = new Jongo(mongoTemplate.getDb());
+            Mapper mapper = new VOJacksonMapper.Builder().build();
+            this.jongo = new Jongo(mongoTemplate.getDb(), mapper);
         } catch (Exception e) {
             throw new VoMongoException("MongoDB connection error:", e);
         }

@@ -140,7 +140,7 @@ public class CmsPromotionMqService extends BaseMQTaskService {
                     }
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                $error(e);
                 if (failProduct.get(e.getMessage()) == null) {
                     List<String> temp = new ArrayList<>();
                     temp.add(item.get("promotionId").toString() + "," + item.get("num_iid").toString());
@@ -148,7 +148,7 @@ public class CmsPromotionMqService extends BaseMQTaskService {
                 } else {
                     failProduct.get(e.getMessage()).add(item.get("promotionId").toString() + "," + item.get("num_iid").toString());
                 }
-                logger.info(e.getMessage());
+                $info(e.getMessage());
             }
         });
         // 把成功的产品更新数据库

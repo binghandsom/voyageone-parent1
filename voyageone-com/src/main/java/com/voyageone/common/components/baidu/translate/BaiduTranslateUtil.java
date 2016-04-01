@@ -4,8 +4,8 @@ import com.voyageone.common.configs.Codes;
 import com.voyageone.common.util.HttpUtils;
 import com.voyageone.common.util.JsonUtil;
 import com.voyageone.common.util.MD5;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -17,10 +17,11 @@ import java.util.Random;
  * Created by jacky on 2015/11/19.
  */
 public class BaiduTranslateUtil {
+
+    protected final static Logger logger = LoggerFactory.getLogger(BaiduTranslateUtil.class);
+
     // 百度翻译设置
     private static final String BAIDU_TRANSLATE_CONFIG = "BAIDU_TRANSLATE_CONFIG";
-
-    protected static Log logger = LogFactory.getLog(BaiduTranslateUtil.class);
 
     public static List<String> translate(List<String> query) throws Exception {
         List<String> resultStrList = new ArrayList<String>();
@@ -108,10 +109,9 @@ public class BaiduTranslateUtil {
 
         } else {
             Object trans_result = jsonToMap.get("trans_result");
-            List<Map> mapList = (List<Map>) trans_result;
+            List<Map<String, String>> mapList = (List<Map<String, String>>) trans_result;
             if (mapList != null && !mapList.isEmpty()) {
-                for (int i = 0; i < mapList.size(); i++) {
-                    Map<String, String> map = mapList.get(i);
+                for (Map<String, String> map : mapList) {
                     String src = map.get("src");
                     String dst = map.get("dst");
                     logger.info("src:" + src + " -> dst:" + dst);
