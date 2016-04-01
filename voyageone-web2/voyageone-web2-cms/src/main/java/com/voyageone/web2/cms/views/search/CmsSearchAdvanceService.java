@@ -141,6 +141,7 @@ public class CmsSearchAdvanceService extends BaseAppService{
 
         if (productList.size() > 0) {
             // 再找出其主商品
+            int cartId = (int) cmsSessionBean.getPlatformType().get("cartId");
             List<Long> grpIdList = new ArrayList<Long>();
             for (CmsBtProductModel prodObj : productList) {
                 CmsBtProductModel_Group gpList = prodObj.getGroups();
@@ -149,7 +150,7 @@ public class CmsSearchAdvanceService extends BaseAppService{
                     List<CmsBtProductModel_Group_Platform> pltList = gpList.getPlatforms();
                     if (pltList != null && pltList.size() > 0) {
                         for (CmsBtProductModel_Group_Platform pltObj : pltList) {
-                            if (pltObj.getCartId() == (int) cmsSessionBean.getPlatformType().get("cartId")) {
+                            if (pltObj.getCartId() == cartId) {
                                 grpIdList.add(pltObj.getGroupId());
                                 break;
                             }
@@ -171,7 +172,7 @@ public class CmsSearchAdvanceService extends BaseAppService{
 
                 JomgoQuery queryObj = new JomgoQuery();
                 queryObj.setProjection("{'prodId':1,'_id':0}");
-                queryObj.setQuery("{'groups.platforms':{'$elemMatch':{'isMain':1,'cartId':" + (int) cmsSessionBean.getPlatformType().get("cartId") + ",'groupId':" + inStr.toString() + "}}}");
+                queryObj.setQuery("{'groups.platforms':{'$elemMatch':{'isMain':1,'cartId':" + cartId + ",'groupId':" + inStr.toString() + "}}}");
 
                 List<CmsBtProductModel> grpList2 = productService.getList(userInfo.getSelChannelId(), queryObj);
                 for (CmsBtProductModel prodModel : grpList2) {
