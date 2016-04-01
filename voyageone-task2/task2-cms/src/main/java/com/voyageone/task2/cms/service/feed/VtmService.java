@@ -71,9 +71,7 @@ public class VtmService extends BaseTaskService {
         $info("维他命产品信息插入完成");
         if( count > 0) {
             // 清表
-            $info("维他命产品信息清表开始");
-            superfeeddao.deleteTableInfo(Feeds.getVal1(ChannelConfigEnums.Channel.LUCKY_VITAMIN.getId(), FeedEnums.Name.table_id));
-            $info("维他命产品信息清表结束");
+
             // updateFlag变更，0：原有数据 1：新数据 2：Error数据（category,CNMSRP，CNPrice, Image List为空）
             // 1的sql文：
             // UPDATE voyageone_cms2.cms_zz_worktable_vtm_superfeed b LEFT JOIN voyageone_cms2.cms_zz_worktable_vtm_superfeed_full bf ON b.md5 = bf.md5 SET b.UpdateFlag = 1 WHERE bf.md5 IS NULL;
@@ -141,7 +139,9 @@ public class VtmService extends BaseTaskService {
 //            logIssue("cms 数据导入处理", "UPC设定的Excel文件不正确. ");
             return 0;
         }
-
+        $info("维他命产品信息清表开始");
+        superfeeddao.deleteTableInfo(Feeds.getVal1(ChannelConfigEnums.Channel.LUCKY_VITAMIN.getId(), FeedEnums.Name.table_id));
+        $info("维他命产品信息清表结束");
 //        CsvReader reader;
         BufferedReader br = null;
         try {

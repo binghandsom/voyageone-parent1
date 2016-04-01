@@ -35,6 +35,7 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
     private Map<String,List<String>> attribute = new HashMap<>();
     private Map<String, Object> fullAttribute = new HashMap<>();
     private int updFlg;
+    private String clientProductURL;
 
     public String getCategory() {
         return category;
@@ -152,6 +153,18 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
         return this.fullAttribute;
     }
 
+    public void setFullAttribute(Map<String, Object> fullAttribute) {
+        this.fullAttribute = fullAttribute;
+    }
+
+    public String getClientProductURL() {
+        return clientProductURL;
+    }
+
+    public void setClientProductURL(String clientProductURL) {
+        this.clientProductURL = clientProductURL;
+    }
+
     public void setFullAttribute() {
         Map<String, Object> attribute = new HashMap<>();
 
@@ -240,6 +253,7 @@ public class CmsBtFeedInfoModel extends ChannelPartitionModel {
         cmsBtFeedInfoModel.setLong_description(this.getLong_description());
         cmsBtFeedInfoModel.setSkus(this.getSkus());
         cmsBtFeedInfoModel.setUpdFlg(0);
+        cmsBtFeedInfoModel.setClientProductURL(this.clientProductURL);
         return  cmsBtFeedInfoModel;
     }
 

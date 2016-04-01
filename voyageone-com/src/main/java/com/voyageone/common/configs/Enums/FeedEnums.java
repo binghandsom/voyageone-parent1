@@ -135,6 +135,7 @@ public class FeedEnums {
         price_msrp,
         import_brand,
         file_id_import_upc,
-        file_id_import_category
+        file_id_import_category,
+        client_product_url
     }
 }
