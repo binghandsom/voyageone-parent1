@@ -61,6 +61,7 @@
             </foreach>
             )
         </if>
+        ORDER BY created DESC
         LIMIT #{offset}, #{rows}
     </select>
 

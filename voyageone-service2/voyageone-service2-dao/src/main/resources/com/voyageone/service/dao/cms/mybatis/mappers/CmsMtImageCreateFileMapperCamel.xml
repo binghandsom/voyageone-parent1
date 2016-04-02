@@ -15,12 +15,9 @@
         where `id` = #{id,jdbcType=INTEGER}
     </select>
 
-    <insert id="insert" parameterType="com.voyageone.service.model.cms.CmsMtImageCreateFileModel" >
+    <insert id="insert" parameterType="com.voyageone.service.model.cms.CmsMtImageCreateFileModel" useGeneratedKeys="true" keyProperty="id" >
         insert into cms_mt_image_create_file
         <trim prefix="(" suffix=")" suffixOverrides="," >
-            <if test="id != null" >
-                `id`,
-            </if>
             <if test="hashCode != null" >
                 `hash_code`,
             </if>
@@ -68,14 +65,14 @@
             <if test="modifier != null" >
                 `modifier`,
             </if>
+            <if test="modifier == null and creater != null" >
+                `modifier`,
+            </if>
             <if test="isUploadUsCdn != null" >
                 `is_upload_us_cdn`,
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides="," >
-            <if test="id != null" >
-                #{id,jdbcType=INTEGER},
-            </if>
             <if test="hashCode != null" >
                 #{hashCode,jdbcType=BIGINT},
             </if>
@@ -83,7 +80,7 @@
                 #{channelId,jdbcType=VARCHAR},
             </if>
             <if test="templateId != null" >
-                #{templateId,jdbcType=INTEGER},
+                #{templateId,jdbcType=BIGINT},
             </if>
             <if test="file != null" >
                 #{file,jdbcType=VARCHAR},
@@ -133,6 +130,9 @@
             <if test="modifier != null" >
                 #{modifier,jdbcType=VARCHAR},
             </if>
+            <if test="modifier == null and creater != null" >
+                #{creater,jdbcType=VARCHAR},
+            </if>
             <if test="isUploadUsCdn != null" >
                 #{isUploadUsCdn,jdbcType=BIT},
             </if>
@@ -149,7 +149,7 @@
                 `channel_id` = #{channelId,jdbcType=VARCHAR},
             </if>
             <if test="templateId != null" >
-                `template_id` = #{templateId,jdbcType=INTEGER},
+                `template_id` = #{templateId,jdbcType=BIGINT},
             </if>
             <if test="file != null" >
                 `file` = #{file,jdbcType=VARCHAR},
@@ -193,8 +193,8 @@
             <if test="modified == null" >
                 `modified` = now(),
             </if>
-            <if test="modifier != null" >
-                `modifier` = #{modifier,jdbcType=VARCHAR},
+            <if test="creater != null" >
+                `modifier` = #{creater,jdbcType=VARCHAR},
             </if>
             <if test="isUploadUsCdn != null" >
                 `is_upload_us_cdn` = #{isUploadUsCdn,jdbcType=BIT},
@@ -220,7 +220,7 @@
                 and `channel_id` = #{channelId,jdbcType=VARCHAR}
             </if>
             <if test="templateId != null" >
-                and `template_id` = #{templateId,jdbcType=INTEGER}
+                and `template_id` = #{templateId,jdbcType=BIGINT}
             </if>
             <if test="file != null" >
                 and `file` = #{file,jdbcType=VARCHAR}
@@ -261,8 +261,8 @@
             <if test="modified != null" >
                 and `modified` = #{modified,jdbcType=TIMESTAMP}
             </if>
-            <if test="modifier != null" >
-                and `modifier` = #{modifier,jdbcType=VARCHAR}
+            <if test="creater != null" >
+                and `modifier` = #{creater,jdbcType=VARCHAR}
             </if>
             <if test="isUploadUsCdn != null" >
                 and `is_upload_us_cdn` = #{isUploadUsCdn,jdbcType=BIT}
@@ -282,7 +282,7 @@
                 and `channel_id` = #{channelId,jdbcType=VARCHAR}
             </if>
             <if test="templateId != null" >
-                and `template_id` = #{templateId,jdbcType=INTEGER}
+                and `template_id` = #{templateId,jdbcType=BIGINT}
             </if>
             <if test="file != null" >
                 and `file` = #{file,jdbcType=VARCHAR}
@@ -323,8 +323,8 @@
             <if test="modified != null" >
                 and `modified` = #{modified,jdbcType=TIMESTAMP}
             </if>
-            <if test="modifier != null" >
-                and `modifier` = #{modifier,jdbcType=VARCHAR}
+            <if test="creater != null" >
+                and `modifier` = #{creater,jdbcType=VARCHAR}
             </if>
             <if test="isUploadUsCdn != null" >
                 and `is_upload_us_cdn` = #{isUploadUsCdn,jdbcType=BIT}

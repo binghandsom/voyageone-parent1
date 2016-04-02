@@ -7,81 +7,108 @@
         </h5>
     </div>
     <div class="m-t-md m-b-md">
-        <form role="form" class="form-horizontal" name="promotionFrom">
+        <form role="form" novalidate class="form-horizontal" name="promotionForm">
             <div class="form-group">
-                <label class="col-sm-3 control-label vo_reqfield" translate="TXT_PROMOTION_NAME"></label>
+                <label for="promotionName" class="col-sm-3 control-label vo_reqfield" translate="TXT_PROMOTION_NAME"></label>
                 <div class="col-sm-7">
-                    <input class="form-control" ng-model="promotion.promotionName" ng-required="true" >
+                    <input id="promotionName" name="promotionName" class="form-control"
+                           ng-model="promotion.promotionName" required title="Promotion Name">
                 </div>
-                <label class="col-sm-1 control-label text-u-red text-left" translate="TXT_REQUIRED"></label>
+                <label ng-if="promotionForm.promotionName.$invalid" class="col-sm-1 control-label text-u-red text-left" translate="TXT_REQUIRED"></label>
             </div><!-- .form-group -->
             <div class="form-group">
                 <label class="col-sm-3 control-label vo_reqfield" translate="TXT_PLATFORM_TYPE"></label>
                 <div class="col-sm-7">
-                    <label ng-repeat="cart in cartList" class="checkbox-inline c-checkbox">
-                        <input type="radio" name="cartid" ng-model="promotion.cartId"  ng-required="true" value={{cart.value}}>
-                        <span class="fa fa-check"></span> {{cart.name}}
+                    <label ng-repeat="cart in cartList" class="c-radio">
+                        <input type="radio" name="cartId" ng-model="promotion.cartId" ng-required="!promotion.cartId" value="{{::cart.value}}">
+                        <span class="fa fa-check"></span><b>&nbsp;{{::cart.name}}</b>
                     </label>
                 </div>
-                <label class="col-sm-1 control-label text-u-red text-left" translate="TXT_REQUIRED"></label>
+                <label ng-if="promotionForm.cartId.$invalid" class="col-sm-1 control-label text-u-red text-left" translate="TXT_REQUIRED"></label>
             </div><!-- .form-group -->
             <div class="form-group">
                 <label class="col-sm-3 control-label" translate="TXT_PREHEATING_TIME"></label>
                 <div class="col-sm-7 form-inline">
-                    <div class="col-sm-5 input-group" >
-                        <input type="text" ng-model="promotion.prePeriodStart" class="form-control" uib-datepicker-popup is-open="datePicker1"
-                               max-date="promotion.prePeriodEnd" date-model-format="yyyy-MM-dd" close-text="Close" />
-								              <span class="input-group-btn">
-								                <button type="button" class="btn btn-default" ng-click="datePicker1 = !datePicker1"><i class="glyphicon glyphicon-calendar"></i></button>
-								              </span>
-                    </div>&nbsp;~&nbsp;
-                    <div class="col-sm-5 input-group" >
-                        <input type="text" ng-model="promotion.prePeriodEnd" class="form-control" uib-datepicker-popup is-open="datePicker2"
-                               min-date="promotion.prePeriodStart" date-model-format="yyyy-MM-dd" close-text="Close" />
-								              <span class="input-group-btn">
-								                <button type="button" class="btn btn-default" ng-click="datePicker2 = !datePicker2"><i class="glyphicon glyphicon-calendar"></i></button>
-								              </span>
+                    <div class="col-sm-5 input-group">
+                        <input type="date" class="form-control"
+                               ng-model="promotion.prePeriodStart"
+                               uib-datepicker-popup
+                               is-open="datePicker1"
+                               max-date="promotion.prePeriodEnd"
+                               date-model-format="yyyy-MM-dd">
+                        <span class="input-group-btn"><button type="button" class="btn btn-default" ng-click="datePicker1 = !datePicker1"><i
+                                    class="glyphicon glyphicon-calendar"></i></button></span>
+                    </div>
+                    &nbsp;~&nbsp;
+                    <div class="col-sm-5 input-group">
+                        <input type="date" class="form-control"
+                               ng-model="promotion.prePeriodEnd"
+                               uib-datepicker-popup
+                               is-open="datePicker2"
+                               min-date="promotion.prePeriodStart"
+                               date-model-format="yyyy-MM-dd">
+                        <span class="input-group-btn"><button type="button" class="btn btn-default" ng-click="datePicker2 = !datePicker2"><i
+                                class="glyphicon glyphicon-calendar"></i></button></span>
                     </div>
                 </div>
             </div>
             <div class="form-group">
                 <label class="col-sm-3 control-label" translate="TXT_PRE_SALE_TIME"></label>
                 <div class="col-sm-7 form-inline">
-                    <div class="col-sm-5 input-group" >
-                        <input type="text" ng-model="promotion.preSaleStart" class="form-control" uib-datepicker-popup is-open="datePicker3"
-                               max-date="promotion.preSaleEnd" date-model-format="yyyy-MM-dd" close-text="Close" />
-								              <span class="input-group-btn">
-								                <button type="button" class="btn btn-default" ng-click="datePicker3 = !datePicker3"><i class="glyphicon glyphicon-calendar"></i></button>
-								              </span>
-                    </div>&nbsp;~&nbsp;
-                    <div class="col-sm-5 input-group" >
-                        <input type="text" ng-model="promotion.preSaleEnd" class="form-control" uib-datepicker-popup is-open="datePicker4"
-                               min-date="promotion.preSaleStart" date-model-format="yyyy-MM-dd" close-text="Close" />
-								              <span class="input-group-btn">
-								                <button type="button" class="btn btn-default" ng-click="datePicker4 = !datePicker4"><i class="glyphicon glyphicon-calendar"></i></button>
-								              </span>
+                    <div class="col-sm-5 input-group">
+                        <input type="date"
+                               ng-model="promotion.preSaleStart"
+                               class="form-control"
+                               uib-datepicker-popup
+                               is-open="datePicker3"
+                               max-date="promotion.preSaleEnd"
+                               date-model-format="yyyy-MM-dd">
+						<span class="input-group-btn"><button type="button" class="btn btn-default" ng-click="datePicker3 = !datePicker3"><i
+                                class="glyphicon glyphicon-calendar"></i></button></span>
+                    </div>
+                    &nbsp;~&nbsp;
+                    <div class="col-sm-5 input-group">
+                        <input type="date"
+                               ng-model="promotion.preSaleEnd"
+                               class="form-control"
+                               uib-datepicker-popup
+                               is-open="datePicker4"
+                               min-date="promotion.preSaleStart"
+                               date-model-format="yyyy-MM-dd">
+						<span class="input-group-btn"><button type="button" class="btn btn-default" ng-click="datePicker4 = !datePicker4"><i
+                                class="glyphicon glyphicon-calendar"></i></button></span>
                     </div>
                 </div>
             </div>
             <div class="form-group">
                 <label class="col-sm-3 control-label vo_reqfield" translate="TXT_PROMOTION_TIME"></label>
                 <div class="col-sm-7 form-inline">
-                    <div class="col-sm-5 input-group" >
-                        <input type="text" ng-model="promotion.activityStart" class="form-control" uib-datepicker-popup is-open="datePicker5"
-                               max-date="promotion.activityEnd" date-model-format="yyyy-MM-dd" ng-required="true" close-text="Close" />
-								              <span class="input-group-btn">
-								                <button type="button" class="btn btn-default" ng-click="datePicker5 = !datePicker5"><i class="glyphicon glyphicon-calendar"></i></button>
-								              </span>
-                    </div>&nbsp;~&nbsp;
-                    <div class="col-sm-5 input-group" >
-                        <input type="text" ng-model="promotion.activityEnd" class="form-control" uib-datepicker-popup is-open="datePicker6"
-                               min-date="promotion.activityStart" date-model-format="yyyy-MM-dd" ng-required="true" close-text="Close" />
-								              <span class="input-group-btn">
-								                <button type="button" class="btn btn-default" ng-click="datePicker6 = !datePicker6"><i class="glyphicon glyphicon-calendar"></i></button>
-								              </span>
+                    <div class="col-sm-5 input-group">
+                        <input type="date" class="form-control" name="promotionTimeStart"
+                               ng-model="promotion.activityStart"
+                               uib-datepicker-popup
+                               is-open="datePicker5"
+                               max-date="promotion.activityEnd"
+                               date-model-format="yyyy-MM-dd"
+                               required>
+						<span class="input-group-btn"><button type="button" class="btn btn-default" ng-click="datePicker5 = !datePicker5"><i
+                                class="glyphicon glyphicon-calendar"></i></button></span>
+                    </div>
+                    &nbsp;~&nbsp;
+                    <div class="col-sm-5 input-group">
+                        <input type="date" class="form-control" name="promotionTimeEnd"
+                               ng-model="promotion.activityEnd"
+                               uib-datepicker-popup
+                               is-open="datePicker6"
+                               min-date="promotion.activityStart"
+                               date-model-format="yyyy-MM-dd"
+                               required>
+						<span class="input-group-btn"><button type="button" class="btn btn-default" ng-click="datePicker6 = !datePicker6"><i
+                                class="glyphicon glyphicon-calendar"></i></button></span>
                     </div>
                 </div>
-                <label class="col-sm-1 control-label text-u-red text-left" translate="TXT_REQUIRED"></label>
+                <label ng-if="promotionForm.promotionTimeStart.$invalid || promotionForm.promotionTimeEnd.$invalid"
+                       class="col-sm-1 control-label text-u-red text-left" translate="TXT_REQUIRED"></label>
             </div>
             <div class="form-group" ng-show="promotion.cartId == 20 || promotion.cartId == 23">
                 <div class="col-sm-3 control-label"><label class="" translate="TXT_IS_START_TE_JIA_BAO"></label></div>

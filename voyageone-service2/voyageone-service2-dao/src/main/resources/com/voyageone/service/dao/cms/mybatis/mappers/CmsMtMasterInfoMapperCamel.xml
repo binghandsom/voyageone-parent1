@@ -15,12 +15,9 @@
         where `id` = #{id,jdbcType=INTEGER}
     </select>
 
-    <insert id="insert" parameterType="com.voyageone.service.model.cms.CmsMtMasterInfoModel" >
+    <insert id="insert" parameterType="com.voyageone.service.model.cms.CmsMtMasterInfoModel" useGeneratedKeys="true" keyProperty="id" >
         insert into cms_mt_master_info
         <trim prefix="(" suffix=")" suffixOverrides="," >
-            <if test="id != null" >
-                `id`,
-            </if>
             <if test="platformId != null" >
                 `platform_id`,
             </if>
@@ -62,14 +59,14 @@
             <if test="modifier != null" >
                 `modifier`,
             </if>
+            <if test="modifier == null and creater != null" >
+                `modifier`,
+            </if>
             <if test="active != null" >
                 `active`,
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides="," >
-            <if test="id != null" >
-                #{id,jdbcType=INTEGER},
-            </if>
             <if test="platformId != null" >
                 #{platformId,jdbcType=INTEGER},
             </if>
@@ -120,6 +117,9 @@
             </if>
             <if test="modifier != null" >
                 #{modifier,jdbcType=VARCHAR},
+            </if>
+            <if test="modifier == null and creater != null" >
+                #{creater,jdbcType=VARCHAR},
             </if>
             <if test="active != null" >
                 #{active,jdbcType=BIT},
@@ -175,8 +175,8 @@
             <if test="modified == null" >
                 `modified` = now(),
             </if>
-            <if test="modifier != null" >
-                `modifier` = #{modifier,jdbcType=VARCHAR},
+            <if test="creater != null" >
+                `modifier` = #{creater,jdbcType=VARCHAR},
             </if>
             <if test="active != null" >
                 `active` = #{active,jdbcType=BIT},
@@ -237,8 +237,8 @@
             <if test="modified != null" >
                 and `modified` = #{modified,jdbcType=TIMESTAMP}
             </if>
-            <if test="modifier != null" >
-                and `modifier` = #{modifier,jdbcType=VARCHAR}
+            <if test="creater != null" >
+                and `modifier` = #{creater,jdbcType=VARCHAR}
             </if>
             <if test="active != null" >
                 and `active` = #{active,jdbcType=BIT}
@@ -293,8 +293,8 @@
             <if test="modified != null" >
                 and `modified` = #{modified,jdbcType=TIMESTAMP}
             </if>
-            <if test="modifier != null" >
-                and `modifier` = #{modifier,jdbcType=VARCHAR}
+            <if test="creater != null" >
+                and `modifier` = #{creater,jdbcType=VARCHAR}
             </if>
             <if test="active != null" >
                 and `active` = #{active,jdbcType=BIT}

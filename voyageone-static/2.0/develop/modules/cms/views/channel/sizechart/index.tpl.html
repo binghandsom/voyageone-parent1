@@ -20,6 +20,7 @@
 
                                     <div class="col-sm-7">
                                         <select class="form-control" ng-model="vm.searchInfo.finishFlag">
+                                            <option value="">{{'TXT_SELECT_NO_VALUE' | translate}}</option>
                                             <option value="1">yes</option>
                                             <option value="0">no</option>
                                         </select>
@@ -54,7 +55,7 @@
                         <div class="col-sm-6">
                             <div class="form-horizontal">
                                 <div class="form-group">
-                                    <label class="col-sm-3 control-label">{{'TXT_SIZE_CHART_BRAND_NAME' | translate}}</label>
+                                    <label class="col-sm-3 control-label">{{'TXT_RELATED_BRAND_NAME' | translate}}</label>
                                     <div class="col-sm-7">
                                         <select multiple chosen class="form-control" width="'360px'" ng-model="vm.searchInfo.brandNameList"
                                                 ng-options="brand.value as brand.name for brand in vm.brandNameList">
@@ -62,18 +63,18 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="col-sm-3 control-label">{{'TXT_SIZE_CHART_PRODUCT_TYPE' | translate}}</label>
+                                    <label class="col-sm-3 control-label">{{'TXT_RELATED_PRODUCT_TYPE' | translate}}</label>
                                     <div class="col-sm-7">
                                         <select multiple chosen class="form-control" width="'360px'" ng-model="vm.searchInfo.productTypeList"
-                                                ng-options="brand.value as brand.name for brand in vm.productTypeList">
+                                                ng-options="productType.value as productType.name for productType in vm.productTypeList">
                                         </select>
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="col-sm-3 control-label">{{'TXT_SIZE_CHART_SIZE_TYPE' | translate}}</label>
+                                    <label class="col-sm-3 control-label">{{'TXT_RELATED_SIZE_TYPE' | translate}}</label>
                                     <div class="col-sm-7">
                                         <select multiple chosen class="form-control" width="'360px'" ng-model="vm.searchInfo.sizeTypeList"
-                                                ng-options="brand.value as brand.name for brand in vm.sizeTypeList">
+                                                ng-options="sizeType.value as sizeType.name for sizeType in vm.sizeTypeList">
                                         </select>
                                     </div>
                             </div>
@@ -99,30 +100,36 @@
                     <table class="table table-hover-new vo_table tableWordBreak" style="margin-bottom:0px">
                         <thead>
                             <tr>
-                                <th class="mfb-xt text-center">{{'TXT_INDEX' | translate}}</th>
+                                <th class="mfb-xt text-center">{{'TXT_SEQ' | translate}}</th>
                                 <th class="mfb-xxt text-left">{{'TXT_SIZE_CHART_NAME' | translate}}</th>
-                                <th class="mfb-xxt text-left">{{'TXT_SIZE_CHART_BRAND_NAME' | translate}}</th>
-                                <th class="mfb-xxt text-left">{{'TXT_SIZE_CHART_PRODUCT_TYPE' | translate}}</th>
-                                <th class="mfb-xxt text-left">{{'TXT_SIZE_CHART_SIZE_TYPE' | translate}}</th>
+                                <th class="mfb-xxt text-left">{{'TXT_RELATED_BRAND_NAME' | translate}}</th>
+                                <th class="mfb-xxt text-left">{{'TXT_RELATED_PRODUCT_TYPE' | translate}}</th>
+                                <th class="mfb-xxt text-left">{{'TXT_RELATED_SIZE_TYPE' | translate}}</th>
+                                <th class="mfb-xxt text-left">{{'TXT_SIZE_CHART_FINISH' | translate}}</th>
                                 <th class="mfb-xxs text-center">{{'TXT_SIZE_CHART_UPDATE_TIME' | translate}}</th>
                                 <th class="mfb-xxt text-center">{{'TXT_ACTION' | translate}}</th>
                             </tr>
                         </thead>
-                        <tbody>
-                                <tr ng-repeat="chartInfo in vm.sizeChartList">
-                                    <td class="mfb-xt text-center">{{$index + 1}}</td>
-                                    <td class="mfb-xxt text-left"><a href="#/channel/sizechart/detail/{{chartInfo.sizeChartId}}" target="_blank">{{chartInfo.sizeChartName}}</a></td>
-                                    <td class="mfb-xxt text-left">{{chartInfo.brandNameTrans.join(' , ')}}</td>
-                                    <td class="mfb-xxt text-left">{{chartInfo.productTypeTrans.join(' , ')}}</td>
-                                    <td class="mfb-xxt text-left">{{chartInfo.sizeTypeTrans.join(' , ')}}</td>
-                                    <td class="mfb-xxs text-center">{{chartInfo.modified}}</td>
-                                    <td class="mfb-xxt text-center">
-                                        <a href="#/channel/sizechart/detail/{{chartInfo.sizeChartId}}" class="btn btn-success btn-xs" target="_blank" ><i class="fa fa-cog"></i></a>
-                                        <a href="javascript:void(0)" class="btn btn-danger btn-xs" ng-click="deleteRow(chartInfo.sizeChartId)"><i class="fa  fa-trash-o"></i></a>
-                                    </td>
-                                </tr>
-                        </tbody>
-                    </table>
+                        </table>
+                        <div if-no-rows="vm.sizeChartList.length" style="padding-left:0px">
+                            <table class="table dropdown_table_main">
+                                <tbody>
+                                        <tr ng-repeat="chartInfo in vm.sizeChartList">
+                                            <td class="mfb-xt text-center">{{chartInfo.sizeChartId}}</td>
+                                            <td class="mfb-xxt text-left"><a href="#/channel/sizechart/detail/{{chartInfo.sizeChartId}}" target="_blank">{{chartInfo.sizeChartName}}</a></td>
+                                            <td class="mfb-xxt text-left">{{chartInfo.brandNameTrans.join(' , ')}}</td>
+                                            <td class="mfb-xxt text-left">{{chartInfo.productTypeTrans.join(' , ')}}</td>
+                                            <td class="mfb-xxt text-left">{{chartInfo.sizeTypeTrans.join(' , ')}}</td>
+                                            <td class="mfb-xxt text-left">{{chartInfo.finish == true?"yes":"no"}}</td>
+                                            <td class="mfb-xxs text-center">{{chartInfo.modified}}</td>
+                                            <td class="mfb-xxt text-center">
+                                                <a title="{{'BTN_SET'|translate}}" href="#/channel/sizechart/detail/{{chartInfo.sizeChartId}}" class="btn btn-success btn-xs" target="_blank" ><i class="fa fa-cog"></i></a>
+                                                <a title="{{'BTN_DELETE'|translate}}" href="javascript:void(0)" class="btn btn-danger btn-xs" ng-click="deleteRow(chartInfo.sizeChartId)"><i class="fa  fa-trash-o"></i></a>
+                                            </td>
+                                        </tr>
+                                </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>

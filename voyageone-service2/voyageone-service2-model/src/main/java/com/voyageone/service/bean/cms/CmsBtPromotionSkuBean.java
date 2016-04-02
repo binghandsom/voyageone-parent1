@@ -15,6 +15,8 @@ public class CmsBtPromotionSkuBean extends CmsBtPromotionGroupsBean {
 
     private String productSku;
 
+    private String size;
+
     private Integer qty;
 
     public CmsBtPromotionSkuBean(CmsBtProductModel productInfo, CmsBtProductGroupModel groupModel, int promotionId, String operator, String productSku, Integer qty) {
@@ -61,4 +63,11 @@ public class CmsBtPromotionSkuBean extends CmsBtPromotionGroupsBean {
         this.productCode = productCode;
     }
 
+    public String getSize() {
+        return size;
+    }
+
+    public void setSize(String size) {
+        this.size = size;
+    }
 }

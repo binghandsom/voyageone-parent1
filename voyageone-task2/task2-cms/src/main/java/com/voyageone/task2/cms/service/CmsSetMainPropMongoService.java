@@ -18,9 +18,7 @@ import com.voyageone.common.masterdate.schema.enums.FieldTypeEnum;
 import com.voyageone.common.masterdate.schema.field.ComplexField;
 import com.voyageone.common.masterdate.schema.field.Field;
 import com.voyageone.common.masterdate.schema.field.MultiComplexField;
-import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.common.util.MD5;
-import com.voyageone.common.util.StringUtils;
+import com.voyageone.common.util.*;
 import com.voyageone.common.util.baidu.translate.BaiduTranslateUtil;
 import com.voyageone.common.util.inch2cm.InchStrConvert;
 import com.voyageone.service.bean.cms.Condition;
@@ -31,6 +29,7 @@ import com.voyageone.service.bean.cms.product.ProductUpdateBean;
 import com.voyageone.service.dao.cms.mongo.*;
 import com.voyageone.service.daoext.cms.CmsBtImagesDaoExt;
 import com.voyageone.service.impl.cms.DataAmountService;
+import com.voyageone.service.impl.cms.ImagesService;
 import com.voyageone.service.impl.cms.MongoSequenceService;
 import com.voyageone.service.impl.cms.feed.FeedCustomPropService;
 import com.voyageone.service.impl.cms.feed.FeedInfoService;
@@ -113,6 +112,9 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
 
     @Autowired
     private DataAmountService dataAmountService;
+
+    @Autowired
+    private ImagesService imagesService;
 
     @Override
     public SubSystem getSubSystem() {
@@ -322,6 +324,15 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 // 修改商品数据
                 // 一般只改改价格神马的
                 cmsProduct = doUpdateCmsBtProductModel(feed, cmsProduct, mapping, mapBrandMapping);
+
+                // tom 20160510 追加 START
+                // 更新wms_bt_item_details表的数据
+                if (!doSaveItemDetails(channelId, cmsProduct.getProdId(), feed)) {
+                    // 如果出错了的话, 就跳出去
+                    return;
+                }
+                // tom 20160510 追加 END
+
                 // TODO: 没有设置的fields里的内容, 不会被清除? 这个应该是在共通里做掉的吧, 要是共通里不做的话就要自己写了
 
                 // 清除一些batch的标记 // TODO: 梁兄啊, batchField的更新没有放到product更新里, 暂时自己写一个用, 这里暂时注释掉
@@ -371,6 +382,14 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                     return;
                 }
 
+                // tom 20160510 追加 START
+                // 更新wms_bt_item_details表的数据
+                if (!doSaveItemDetails(channelId, cmsProduct.getProdId(), feed)) {
+                    // 如果出错了的话, 就跳出去
+                    return;
+                }
+                // tom 20160510 追加 END
+
                 productService.createProduct(channelId, cmsProduct, getTaskName());
 
                 $info(getTaskName() + ":新增:" + cmsProduct.getChannelId() + ":" + cmsProduct.getFields().getCode());
@@ -405,8 +424,11 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             }
             // jeff 2016/04 change end
 
-            // 更新wms_bt_item_details表的数据
-            doSaveItemDetails(channelId, cmsProduct.getProdId(), feed);
+            // tom 20160510 删除 START
+            // 这里不要了, 放到最前面去做, 如果出错了, 那么就跳过当前记录
+//            // 更新wms_bt_item_details表的数据
+//            doSaveItemDetails(channelId, cmsProduct.getProdId(), feed);
+            // tom 20160510 删除 END
 
             // 更新price_log信息
             // 更新price_log信息 -> 共通代码里会处理的,我这边就不需要写了
@@ -548,8 +570,8 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 }
                 List<String> transBaiduCn; // 百度翻译 - 输出参数
                 try {
-                    if ("017".equals(feed.getChannelId())) {
-                        // lucky vitamin 不做翻译
+                    if ("017".equals(feed.getChannelId()) || "021".equals(feed.getChannelId())) {
+                        // lucky vitamin 和 BHFO不做翻译
                         if (newFlg || !newFlg && StringUtils.isEmpty(productField.getOriginalTitleCn())) {
                             field.setOriginalTitleCn(""); // 标题
                         }
@@ -593,25 +615,25 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
             }
 
             // 商品图片1, 包装图片2, 带角度图片3, 自定义图片4 : 暂时只设置商品图片1
-            {
-                if (newFlg) {
-                    List<Map<String, Object>> multiComplex = new LinkedList<>();
+//            {
+//                if (newFlg) {
+            List<Map<String, Object>> multiComplex = new LinkedList<>();
 
-                    List<String> lstImageOrg = feed.getImage();
-                    if (lstImageOrg != null && lstImageOrg.size() > 0) {
-                        for (String imgOrg : lstImageOrg) {
-                            Map<String, Object> multiComplexChildren = new HashMap<>();
-                            // jeff 2016/04 change start
-                            // multiComplexChildren.put("image1", imgOrg);
-                            multiComplexChildren.put("image1", doUpdateImage(feed.getChannelId(), feed.getCode(), imgOrg));
-                            // jeff 2016/04 add end
-                            multiComplex.add(multiComplexChildren);
-                        }
-                    }
-
-                    field.put("images1", multiComplex);
+            List<String> lstImageOrg = feed.getImage();
+            if (lstImageOrg != null && lstImageOrg.size() > 0) {
+                for (String imgOrg : lstImageOrg) {
+                    Map<String, Object> multiComplexChildren = new HashMap<>();
+                    // jeff 2016/04 change start
+                    // multiComplexChildren.put("image1", imgOrg);
+                    multiComplexChildren.put("image1", doUpdateImage(feed.getChannelId(), feed.getCode(), imgOrg));
+                    // jeff 2016/04 add end
+                    multiComplex.add(multiComplexChildren);
                 }
             }
+
+            field.put("images1", multiComplex);
+//                }
+//            }
 
             // 商品翻译状态, 翻译者, 翻译时间, 商品编辑状态, 价格审批flg, lock商品: 暂时都不用设置
 
@@ -1281,19 +1303,20 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
         private String doUpdateImage(String channelId, String code, String originalUrl) {
 
             // 检查是否存在该Image
-            CmsBtImagesModel param = new CmsBtImagesModel();
-            param.setChannelId(channelId);
-            param.setCode(code);
-            param.setOriginalUrl(originalUrl);
-            List<CmsBtImagesModel> findImage = cmsBtImageDaoExt.selectImages(param);
+//            CmsBtImagesModel param = new CmsBtImagesModel();
+//            param.setChannelId(channelId);
+//            param.setCode(code);
+//            param.setOriginalUrl(originalUrl);
+//            List<CmsBtImagesModel> findImage = cmsBtImageDaoExt.selectImages(param);
+            CmsBtImagesModel findImage = imagesService.getImageIsExists(channelId, code, originalUrl);
 
             // 不存在则插入
-            if (findImage.size() == 0) {
+            if (findImage == null) {
                 // 图片名最后一部分的值（索引）
                 int index = 1;
 
                 // 检查该code是否存在该Image（为了取得图片名最后一部分中的索引的最大值）
-                param = new CmsBtImagesModel();
+                CmsBtImagesModel param = new CmsBtImagesModel();
                 param.setChannelId(channelId);
                 param.setCode(code);
                 List<CmsBtImagesModel> oldImages = cmsBtImageDaoExt.selectImages(param);
@@ -1315,14 +1338,24 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 newModel.setCode(code);
                 newModel.setUpdFlg(0);
                 newModel.setCreater(getTaskName());
+                newModel.setModifier(getTaskName());
                 String URL_FORMAT = "[~@.' '#$%&*_'':/‘’^\\()]";
                 Pattern special_symbol = Pattern.compile(URL_FORMAT);
                 newModel.setImgName(channelId + "-" + special_symbol.matcher(code).replaceAll(Constants.EmptyString) + "-" + index);
-                cmsBtImageDaoExt.insertImages(newModel);
+                imagesService.insert(newModel);
 
                 return newModel.getImgName();
             } else {
-                return findImage.get(0).getImgName();
+
+                // 如果原始图片的地址发生变更则做更新操作
+                if (!originalUrl.equals(findImage.getOriginalUrl())) {
+                    findImage.setOriginalUrl(originalUrl);
+                    findImage.setUpdFlg(0);
+                    findImage.setModifier(getTaskName());
+                    imagesService.update(findImage);
+                }
+
+                return findImage.getImgName();
             }
         }
 
@@ -1862,11 +1895,12 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
          * @param productId product id
          * @param feed      feed信息
          */
-        private void doSaveItemDetails(String channelId, Long productId, CmsBtFeedInfoModel feed) {
+        private boolean doSaveItemDetails(String channelId, Long productId, CmsBtFeedInfoModel feed) {
 
             // 如果feed里,没有sku的数据的话,那么就不需要做下去了
             if (feed.getSkus() == null || feed.getSkus().size() == 0) {
-                return;
+                // 也认为是正常
+                return true;
             }
 
             // 根据product id, 获取现有的item details表的数据
@@ -1890,20 +1924,33 @@ public class CmsSetMainPropMongoService extends BaseTaskService {
                 itemDetailsBean.setClient_sku(feedSku.getClientSku());
                 itemDetailsBean.setActive(1);
 
-                // 判断这个sku是否已经存在
-                if (skuList.contains(feedSku.getSku())) {
-                    // 已经存在的场合: 更新数据库
-                    itemDetailsDao.updateItemDetails(itemDetailsBean, getTaskName());
-                } else {
-                    // 不存在的场合: 插入数据库
-                    itemDetailsDao.insertItemDetails(itemDetailsBean, getTaskName());
+                try {
+                    // 判断这个sku是否已经存在
+                    if (skuList.contains(feedSku.getSku())) {
+                        // 已经存在的场合: 更新数据库
+                        itemDetailsDao.updateItemDetails(itemDetailsBean, getTaskName());
+                    } else {
+                        // 不存在的场合: 插入数据库
+                        itemDetailsDao.insertItemDetails(itemDetailsBean, getTaskName());
 
-                    // 添加到判断列表中
-                    skuList.add(feedSku.getSku());
+                        // 添加到判断列表中
+                        skuList.add(feedSku.getSku());
+                    }
+                } catch (Exception e) {
+                    logIssue(getTaskName(),
+                            String.format("[CMS2.0]无法插入或更新item detail表( channel: [%s], sku: [%s], itemcode: [%s], barcode: [%s], size: [%s]  )",
+                                    channelId,
+                                    itemDetailsBean.getSku(),
+                                    itemDetailsBean.getItemcode(),
+                                    itemDetailsBean.getBarcode(),
+                                    itemDetailsBean.getSize()
+                            ));
+                    return false;
                 }
 
             }
 
+            return true;
 
         }
 

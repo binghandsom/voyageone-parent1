@@ -42,7 +42,7 @@ public class TbItemSchema {
 
         fieldMap = new HashMap<>();
 
-        for (Field field: fields)
+        for (Field field : fields)
             fieldMap.put(field.getId(), field);
 
         return fieldMap;
@@ -89,13 +89,15 @@ public class TbItemSchema {
                 MultiComplexField multiComplexField = (MultiComplexField) field;
                 multiComplexField.setComplexValues(multiComplexField.getDefaultComplexValues());
                 break;
+            default:
+                break;
         }
     }
 
     private boolean setSpecialFieldValue(Field field) {
         // 暂时只有 sku 排序, 所以这里是简写写法
         // 后续请在此修改, 对更多字段提供支持
-        return field.getId().equals("darwin_sku") && setSortedSku(field);
+        return "darwin_sku".equals(field.getId()) && setSortedSku(field);
     }
 
     private boolean setSortedSku(Field field) {
@@ -119,7 +121,7 @@ public class TbItemSchema {
         String outerId = complexValue.getInputFieldValue("sku_outerId");
         if (StringUtils.isEmpty(outerId)) return 999;
         if (!outerId.contains("-") || outerId.endsWith("-")) return 999;
-        String sizeName =  outerId.substring(outerId.lastIndexOf("-") + 1);
+        String sizeName = outerId.substring(outerId.lastIndexOf("-") + 1);
         Integer index = sizeSortMap.get(sizeName);
         return index == null ? 999 : index;
     }
@@ -138,7 +140,7 @@ public class TbItemSchema {
 
         ComplexValue complexValue = complexField.getComplexValue();
 
-        for (Map.Entry<Integer, String > imageUrl: imageUrls.entrySet()) {
+        for (Map.Entry<Integer, String> imageUrl : imageUrls.entrySet()) {
 
             int index = imageUrl.getKey();
 

@@ -226,15 +226,14 @@
     "controller": "storeOperationController as store"
   },
   "system_category_setting": {
-    "hash": "/system/categorysetting",
+    "hash": "/system/categorysetting/:type",
     "templateUrl": "views/system/categorysetting/maincatunion.tpl.html",
     "controllerUrl": "modules/cms/views/system/categorysetting/maincatunion.ctl"
   },
   "system_category_union": {
-    "hash": "/system/categorysetting/catunion",
+    "hash": "/system/categorysetting_catunion",
     "templateUrl": "views/system/categorysetting/catunion.tpl.html",
-    "controllerUrl": "modules/cms/views/system/categorysetting/catunion.ctl",
-    "controller": "CatUnionController as ctrl"
+    "controllerUrl": "modules/cms/views/system/categorysetting/catunion.ctl"
   },
   "jm_promotion_detail_list": {
     "hash": "/jm/promotion_detail_list/:parentId",

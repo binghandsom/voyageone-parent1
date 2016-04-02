@@ -13,17 +13,17 @@
         where `id` = #{id,jdbcType=INTEGER}
     </select>
 
-    <insert id="insert" parameterType="com.voyageone.service.model.cms.CmsBtStoreOperationHistoryModel" >
+    <insert id="insert" parameterType="com.voyageone.service.model.cms.CmsBtStoreOperationHistoryModel" useGeneratedKeys="true" keyProperty="id" >
         insert into cms_bt_store_operation_history
         <trim prefix="(" suffix=")" suffixOverrides="," >
-            <if test="id != null" >
-                `id`,
-            </if>
             <if test="operationType != null" >
                 `operation_type`,
             </if>
             `modified`,
             <if test="modifier != null" >
+                `modifier`,
+            </if>
+            <if test="modifier == null and creater != null" >
                 `modifier`,
             </if>
             `created`,
@@ -32,9 +32,6 @@
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides="," >
-            <if test="id != null" >
-                #{id,jdbcType=INTEGER},
-            </if>
             <if test="operationType != null" >
                 #{operationType,jdbcType=VARCHAR},
             </if>
@@ -46,6 +43,9 @@
             </if>
             <if test="modifier != null" >
                 #{modifier,jdbcType=VARCHAR},
+            </if>
+            <if test="modifier == null and creater != null" >
+                #{creater,jdbcType=VARCHAR},
             </if>
             <if test="created == null" >
                 now(),
@@ -71,8 +71,8 @@
             <if test="modified == null" >
                 `modified` = now(),
             </if>
-            <if test="modifier != null" >
-                `modifier` = #{modifier,jdbcType=VARCHAR},
+            <if test="creater != null" >
+                `modifier` = #{creater,jdbcType=VARCHAR},
             </if>
             <if test="created != null" >
                 `created` = #{created,jdbcType=TIMESTAMP},
@@ -100,8 +100,8 @@
             <if test="modified != null" >
                 and `modified` = #{modified,jdbcType=TIMESTAMP}
             </if>
-            <if test="modifier != null" >
-                and `modifier` = #{modifier,jdbcType=VARCHAR}
+            <if test="creater != null" >
+                and `modifier` = #{creater,jdbcType=VARCHAR}
             </if>
             <if test="created != null" >
                 and `created` = #{created,jdbcType=TIMESTAMP}
@@ -123,8 +123,8 @@
             <if test="modified != null" >
                 and `modified` = #{modified,jdbcType=TIMESTAMP}
             </if>
-            <if test="modifier != null" >
-                and `modifier` = #{modifier,jdbcType=VARCHAR}
+            <if test="creater != null" >
+                and `modifier` = #{creater,jdbcType=VARCHAR}
             </if>
             <if test="created != null" >
                 and `created` = #{created,jdbcType=TIMESTAMP}

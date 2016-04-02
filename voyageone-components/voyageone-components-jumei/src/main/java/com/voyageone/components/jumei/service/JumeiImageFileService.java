@@ -12,12 +12,16 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by chuanyu.laing on 2016/1/25.
+ * JumeiImageFileService
+ *
+ * @author chuanyu.laing on 2016/1/25.
+ * @version 2.0.0
+ * @since 2.0.0
  */
 @Service
 public class JumeiImageFileService extends JmBase {
 
-    private static String IMAGWE_UPLOAD = "v1/img/upload";
+    private static final String IMAGWE_UPLOAD = "v1/img/upload";
 
     /**
      * 图片上传至聚美图片空间
@@ -44,7 +48,7 @@ public class JumeiImageFileService extends JmBase {
 
         String result = null;
         if (resultMap != null && resultMap.containsKey("imgUrl")) {
-            result = (String)resultMap.get("imgUrl");
+            result = (String) resultMap.get("imgUrl");
         }
 
         return result;

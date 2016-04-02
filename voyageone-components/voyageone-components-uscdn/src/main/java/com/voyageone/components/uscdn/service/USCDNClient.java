@@ -89,7 +89,7 @@ public class USCDNClient {
             change = ftpClient.changeWorkingDirectory(fullPath.toString());
             if (!change) {
                 ftpClient.makeDirectory(fullPath.toString());
-                System.out.println("创建目录为：" + fullPath.toString());
+                //System.out.println("创建目录为：" + fullPath.toString());
             }
         }
     }

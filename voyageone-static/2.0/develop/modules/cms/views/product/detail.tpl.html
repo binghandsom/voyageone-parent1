@@ -106,28 +106,21 @@
                     <div class="panel vo_panel tab_panel">
                         <div class="row wrapper">
                             <div class="container-fluid">
-                                <div class="col-sm-8">
-
-                                    <!--<ng-form ng-repeat="field in ctrl.productDetails.masterFields" name="subForm" novalidate>-->
-                                    <!--<schema-header data="field" ng-if="field.isDisplay != 0">-->
-                                    <!--<schema-item data="field"></schema-item>-->
-                                    <!--</schema-header>-->
-                                    <!--</ng-form>-->
-
+                                <div class="col-sm-7">
                                     <schema-header ng-repeat="field in ctrl.productDetails.masterFields" data="field"
                                                    ng-if="field.isDisplay != 0">
                                         <schema-item data="field"></schema-item>
                                     </schema-header>
                                 </div>
-                                <div class="col-sm-3">
+                                <div class="col-sm-5" style="width: 380px;margin-left: -38px;">
                                     <!-- product detail panel starts here -->
-                                    <div class="col no-padder w-lg bg-light vo_prodDetailPanel">
+                                    <div class="col no-padder bg-light vo_prodDetailPanel">
                                         <div id="vo_fixProdPanel">
                                             <!-- product photos -->
                                             <div class="vo_prodGallery">
                                                 <div class="imageContainer">
                                                     <div class="imageWrapper">
-                                                        <img  class="imageWrapper" ng-src="{{!ctrl.currentImage ? 'http://image.sneakerhead.com/is/image/sneakerhead/'+ ctrl.productDetails.productImages.image1[0].image1 : ctrl.currentImage}}">
+                                                        <img  class="imageWrapper" ng-src="{{ctrl.currentImage}}">
                                                     </div>
                                                 </div>
                                             </div>
@@ -142,15 +135,15 @@
                                                                 <div class="thumbnailWrapper">
                                                                     <div  ng-repeat="image in ctrl.productDetails.productImages.image1 | limitTo: 10"
                                                                           class="thumbnail" ng-class="{'active':ctrl.currentImage == image.image1}"
-                                                                          ng-click="ctrl.currentImage = 'http://image.sneakerhead.com/is/image/sneakerhead/'+ image.image1"
-                                                                          ng-style="{'background-image' : 'url(http://image.sneakerhead.com/is/image/sneakerhead/' + image.image1 + ')'}">
+                                                                          ng-click="ctrl.currentImage = $root.imageUrl.replace('%s', image.image1) + '.jpg'"
+                                                                          ng-style="{'background-image' : 'url(' + $root.imageUrl.replace('%s', image.image1) + '.jpg)'}">
 
                                                                     </div>
                                                                     <div  ng-repeat="image in ctrl.tempImage.image1 | limitTo: 10"
                                                                           class="thumbnail">
                                                                         <img ng-click="ctrl.currentImage = 'data:image/jpg;base64,'+ image" ng-src="{{'data:image/jpg;base64,'+ image}}">
                                                                     </div>
-                                                                    <button ng-controller="popupCtrl" ng-click="ctrl.openImageSetting(ctrl.productDetails,'image1',openImageSetting)" class="btn btn-success pull-right input-lg col-lg-2"><i class="glyphicon glyphicon-plus"></i></button>
+                                                                    <button ng-controller="popupCtrl" ng-click="ctrl.openProImageSetting(ctrl.productDetails,'image1',openImageSetting)" class="btn btn-success pull-right input-lg col-lg-2"><i class="glyphicon glyphicon-plus"></i></button>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -166,15 +159,15 @@
                                                                 <div class="thumbnailWrapper">
                                                                     <div  ng-repeat="image in ctrl.productDetails.productImages.image2 | limitTo: 10"
                                                                           class="thumbnail" ng-class="{'active':ctrl.currentImage == image.image2}"
-                                                                          ng-click="ctrl.currentImage = 'http://image.sneakerhead.com/is/image/sneakerhead/'+ image.image2"
-                                                                          ng-style="{'background-image' : 'url(http://image.sneakerhead.com/is/image/sneakerhead/' + image.image2 + ')'}">
+                                                                          ng-click="ctrl.currentImage = $root.imageUrl.replace('%s', image.image2) + '.jpg'"
+                                                                          ng-style="{'background-image' : 'url(' + $root.imageUrl.replace('%s', image.image2) + '.jpg)'}">
 
                                                                     </div>
                                                                     <div  ng-repeat="image in ctrl.tempImage.image2 | limitTo: 10"
                                                                           class="thumbnail">
                                                                         <img ng-click="ctrl.currentImage = 'data:image/jpg;base64,'+ image" ng-src="{{'data:image/jpg;base64,'+ image}}">
                                                                     </div>
-                                                                    <button ng-controller="popupCtrl"  ng-click="ctrl.openImageSetting(ctrl.productDetails,'image2',openImageSetting)" class="btn btn-success pull-right input-lg col-lg-2"><i class="glyphicon glyphicon-plus"></i></button>
+                                                                    <button ng-controller="popupCtrl"  ng-click="ctrl.openProImageSetting(ctrl.productDetails,'image2',openImageSetting)" class="btn btn-success pull-right input-lg col-lg-2"><i class="glyphicon glyphicon-plus"></i></button>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -190,14 +183,14 @@
                                                                 <div class="thumbnailWrapper">
                                                                     <div  ng-repeat="image in ctrl.productDetails.productImages.image3 | limitTo: 10"
                                                                           class="thumbnail" ng-class="{'active':ctrl.currentImage == image.image3}"
-                                                                          ng-click="ctrl.currentImage = 'http://image.sneakerhead.com/is/image/sneakerhead/'+ image.image3"
-                                                                          ng-style="{'background-image' : 'url(http://image.sneakerhead.com/is/image/sneakerhead/' + image.image3 + ')'}">
+                                                                          ng-click="ctrl.currentImage = $root.imageUrl.replace('%s', image.image3) + '.jpg'"
+                                                                          ng-style="{'background-image' : 'url(' + $root.imageUrl.replace('%s', image.image3) + '.jpg)'}">
                                                                     </div>
                                                                     <div  ng-repeat="image in ctrl.tempImage.image3 | limitTo: 10"
                                                                           class="thumbnail">
                                                                         <img ng-click="ctrl.currentImage = 'data:image/jpg;base64,'+ image" ng-src="{{'data:image/jpg;base64,'+ image}}">
                                                                     </div>
-                                                                    <button ng-controller="popupCtrl"  ng-click="ctrl.openImageSetting(ctrl.productDetails,'image3',openImageSetting)" class="btn btn-success pull-right input-lg col-lg-2"><i class="glyphicon glyphicon-plus"></i></button>
+                                                                    <button ng-controller="popupCtrl"  ng-click="ctrl.openProImageSetting(ctrl.productDetails,'image3',openImageSetting)" class="btn btn-success pull-right input-lg col-lg-2"><i class="glyphicon glyphicon-plus"></i></button>
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -205,7 +198,7 @@
                                                 </uib-tab>
                                                 <uib-tab>
                                                     <tab-heading ng-click="vm.tabIndex = 0"><i class="text-default"></i>
-                                                        自定义
+                                                        PC端自定义
                                                     </tab-heading>
                                                     <div class="tab-content"  style="border-top: 1px solid #d4cfcf;">
                                                         <div class="tab-pane ng-scope active">
@@ -213,19 +206,43 @@
                                                                 <div class="thumbnailWrapper">
                                                                     <div  ng-repeat="image in ctrl.productDetails.productImages.image4 | limitTo: 10"
                                                                           class="thumbnail" ng-class="{'active':ctrl.currentImage == image.image4}"
-                                                                          ng-click="ctrl.currentImage = 'http://image.sneakerhead.com/is/image/sneakerhead/'+ image.image4"
-                                                                          ng-style="{'background-image' : 'url(http://image.sneakerhead.com/is/image/sneakerhead/' + image.image4 + ')'}">
+                                                                          ng-click="ctrl.currentImage = $root.imageUrl.replace('%s', image.image4)+ '.jpg'"
+                                                                          ng-style="{'background-image' : 'url(' + $root.imageUrl.replace('%s', image.image4) + '.jpg)'}">
                                                                     </div>
                                                                     <div  ng-repeat="image in ctrl.tempImage.image4 | limitTo: 10"
                                                                           class="thumbnail">
                                                                         <img ng-click="ctrl.currentImage = 'data:image/jpg;base64,'+ image" ng-src="{{'data:image/jpg;base64,'+ image}}">
                                                                     </div>
-                                                                    <button ng-controller="popupCtrl" ng-click="ctrl.openImageSetting(ctrl.productDetails,'image4',openImageSetting)" class="btn btn-success pull-right input-lg col-lg-2"><i class="glyphicon glyphicon-plus"></i></button>
+                                                                    <button ng-controller="popupCtrl" ng-click="ctrl.openProImageSetting(ctrl.productDetails,'image4',openImageSetting)" class="btn btn-success pull-right input-lg col-lg-2"><i class="glyphicon glyphicon-plus"></i></button>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </uib-tab>
+                                                <!-- todo 还未开发 -->
+                                                <!--<uib-tab>
+                                                    <tab-heading ng-click="vm.tabIndex = 0"><i class="text-default"></i>
+                                                        APP端自定义
+                                                    </tab-heading>
+                                                    <div class="tab-content"  style="border-top: 1px solid #d4cfcf;">
+                                                        <div class="tab-pane ng-scope active">
+                                                            <div class="vo_prodGallery">
+                                                                <div class="thumbnailWrapper">
+                                                                    <div  ng-repeat="image in ctrl.productDetails.productImages.image4 | limitTo: 10"
+                                                                          class="thumbnail" ng-class="{'active':ctrl.currentImage == image.image4}"
+                                                                          ng-click="ctrl.currentImage = $root.imageUrl + image.image4 + '.jpg'"
+                                                                          ng-style="{'background-image' : 'url(' + $root.imageUrl + image.image4 + '.jpg)'}">
+                                                                    </div>
+                                                                    <div  ng-repeat="image in ctrl.tempImage.image4 | limitTo: 10"
+                                                                          class="thumbnail">
+                                                                        <img ng-click="ctrl.currentImage = 'data:image/jpg;base64,'+ image" ng-src="{{'data:image/jpg;base64,'+ image}}">
+                                                                    </div>
+                                                                    <button ng-controller="popupCtrl" ng-click="ctrl.openProImageSetting(ctrl.productDetails,'image4',openImageSetting)" class="btn btn-success pull-right input-lg col-lg-2"><i class="glyphicon glyphicon-plus"></i></button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </uib-tab>-->
                                             </uib-tabset>
                                             <!-- .vo_prodGallery -->
                                             <!-- .wrapper -->
@@ -318,6 +335,7 @@
                                     </div>
                                 </div>
                                 <!--.col -->
+                                <!---------------------------------------显示中文区域------------------------------------------->
                                 <div class="col-sm-5">
                                     <div class="form-group">
                                         <label class="col-sm-4 control-label" ng-bind="feedAttr.cnKey"></label>

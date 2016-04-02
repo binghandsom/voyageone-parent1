@@ -6,9 +6,12 @@ import java.io.IOException;
 import java.util.Map;
 
 /**
- * Created by dell on 2016/3/29.
+ * HtDealUpdateResponse
+ * @author peitao.sun, 2016/3/29
+ * @version 2.0.0
+ * @since 2.0.0
  */
-public class HtDealUpdateResponse extends JMResponse {
+public class HtDealUpdateResponse extends BaseJMResponse {
     //    {
 //        "error_code": "0",
 //            "reason": "success",
@@ -21,7 +24,9 @@ public class HtDealUpdateResponse extends JMResponse {
 //            "reason": "error",
 //            "response": ""
 //    }
-    String errorMsg;
+    private String errorMsg;
+    private boolean is_Success;
+    private String body;
 
     public String getErrorMsg() {
         return errorMsg;
@@ -31,7 +36,6 @@ public class HtDealUpdateResponse extends JMResponse {
         this.errorMsg = errorMsg;
     }
 
-    @Override
     public String getBody() {
         return body;
     }
@@ -40,10 +44,9 @@ public class HtDealUpdateResponse extends JMResponse {
         return is_Success;
     }
 
-    @Override
     public void setBody(String body) throws IOException {
         Map<String, Object> map = JacksonUtil.jsonToMap(body);
-        if (map.containsKey("error_code") && map.get("error_code") == "0") {
+        if (map.containsKey("error_code") && "0".equals(map.get("error_code"))) {
             this.setIs_Success(true);
         } else {
             this.setErrorMsg(body);
@@ -51,12 +54,11 @@ public class HtDealUpdateResponse extends JMResponse {
         this.body = body;
     }
 
-    String body;
-    boolean is_Success;
 
     public boolean getIs_Success() {
         return is_Success;
     }
+
     public void setIs_Success(boolean is_Success) {
         this.is_Success = is_Success;
     }

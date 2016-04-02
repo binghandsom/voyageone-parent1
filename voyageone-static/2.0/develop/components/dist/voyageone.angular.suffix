@@ -3,6 +3,7 @@ angular.module("voyageone.angular",[
 "voyageone.angular.controllers.showPopover",
 "voyageone.angular.directives.dateModelFormat",
 "voyageone.angular.directives.enterClick",
+"voyageone.angular.directives.image",
 "voyageone.angular.directives.fileStyle",
 "voyageone.angular.directives.ifNoRows",
 "voyageone.angular.directives.keyValue",

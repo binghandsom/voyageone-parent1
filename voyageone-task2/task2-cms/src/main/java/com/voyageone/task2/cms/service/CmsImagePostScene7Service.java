@@ -1,18 +1,32 @@
 package com.voyageone.task2.cms.service;
 
+import com.voyageone.base.exception.BusinessException;
+import com.voyageone.common.CmsConstants;
 import com.voyageone.common.components.issueLog.enums.ErrorType;
 import com.voyageone.common.components.issueLog.enums.SubSystem;
 import com.voyageone.common.configs.ChannelConfigs;
 import com.voyageone.common.configs.Codes;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
-import com.voyageone.common.util.CommonUtil;
-import com.voyageone.common.util.HttpUtils;
-import com.voyageone.common.util.StringUtils;
-import com.voyageone.components.service.FtpService;
+import com.voyageone.common.configs.beans.FtpBean;
+import com.voyageone.common.util.*;
+import com.voyageone.components.imagecreate.bean.ImageCreateAddListRequest;
+import com.voyageone.components.imagecreate.bean.ImageCreateAddListResponse;
+import com.voyageone.components.imagecreate.service.ImageCreateService;
+import com.voyageone.service.bean.openapi.image.CreateImageParameter;
 import com.voyageone.service.daoext.cms.CmsBtImagesDaoExt;
+import com.voyageone.service.impl.cms.ImageTemplateService;
+import com.voyageone.service.impl.cms.PlatformImagesService;
+import com.voyageone.service.impl.cms.product.ProductGroupService;
+import com.voyageone.service.impl.cms.product.ProductService;
 import com.voyageone.service.model.cms.CmsBtImagesModel;
+import com.voyageone.service.model.cms.CmsBtPlatformImagesModel;
+import com.voyageone.service.model.cms.mongo.channel.CmsBtImageTemplateModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductGroupModel;
+import com.voyageone.service.model.cms.mongo.product.CmsBtProductModel;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
+import org.apache.commons.net.ftp.FTP;
+import org.apache.commons.net.ftp.FTPClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,8 +49,23 @@ public class CmsImagePostScene7Service extends BaseTaskService {
 
     @Autowired
     CmsBtImagesDaoExt cmsBtImagesDaoExt;
+
+    @Autowired
+    PlatformImagesService platformImagesService;
+
+    @Autowired
+    ProductService productService;
+
+    @Autowired
+    ProductGroupService productGroupService;
 //    @Autowired
 //    ImagesService imagesService;
+
+    @Autowired
+    ImageTemplateService imageTemplateService;
+
+    @Autowired
+    private ImageCreateService imageCreateService;
 
     @Override
     public SubSystem getSubSystem() {
@@ -48,32 +77,101 @@ public class CmsImagePostScene7Service extends BaseTaskService {
         return "CmsImagePostScene7Job";
     }
 
-    @Autowired
-    private FtpService ftpService;
-
     @Override
     protected void onStartup(List<TaskControlBean> taskControlList) throws Exception {
 
         for (TaskControlBean taskControl : taskControlList) {
             if ("order_channel_id".equalsIgnoreCase(taskControl.getCfg_name())) {
                 String channelId = taskControl.getCfg_val1();
-                $info("渠道" + channelId);
+                $info("渠道"+channelId);
                 CmsBtImagesModel feedImage = new CmsBtImagesModel();
                 feedImage.setUpdFlg(0);
                 feedImage.setChannelId(channelId);
 
-                ExecutorService es = Executors.newFixedThreadPool(10);
+                ExecutorService es  = Executors.newFixedThreadPool(10);
                 try {
                     // 获得该渠道要上传Scene7的图片url列表
                     List<CmsBtImagesModel> imageUrlList = cmsBtImagesDaoExt.selectImages(feedImage);
                     $info(channelId + String.format("渠道本次有%d要推送scene7的图片", imageUrlList.size()));
                     if (!imageUrlList.isEmpty()) {
-                        List<List<CmsBtImagesModel>> imageSplitList = CommonUtil.splitList(imageUrlList, 10);
-                        for (List<CmsBtImagesModel> subImageUrlList : imageSplitList) {
+
+                        // 上传图片到图片服务器
+                        // TODO: 16/5/9 等待梁兄ftp访问的共通方法
+                        List<List<CmsBtImagesModel>> imageSplitList = CommonUtil.splitList(imageUrlList,10);
+
+                        for (List<CmsBtImagesModel> subImageUrlList :imageSplitList ){
                             es.execute(() -> ImageGetAndSendTask(channelId, subImageUrlList));
                         }
                         es.shutdown();
                         es.awaitTermination(Long.MAX_VALUE, TimeUnit.DAYS);
+
+                        // 取得CMS系统展示用的产品图片模板
+                        CmsBtImageTemplateModel commonTemplate = imageTemplateService.getCommonTemplate();
+
+                        // 获取该code对应的所有模板
+                        List<CreateImageParameter> imageDatas = new ArrayList<>();
+
+                        for(CmsBtImagesModel image : imageUrlList) {
+
+                            String imageExtend = ImgUtils.getImageExtend(image.getOriginalUrl());
+                            // CMS显示用共通模板
+                            CreateImageParameter commonTemplateParameter = new CreateImageParameter();
+                            commonTemplateParameter.setChannelId(channelId);
+                            commonTemplateParameter.setTemplateId(commonTemplate.getImageTemplateId());
+                            commonTemplateParameter.setFile(image.getImgName());
+                            commonTemplateParameter.setVParam(new String[]{channelId, image.getImgName() + imageExtend});
+                            imageDatas.add(commonTemplateParameter);
+
+                            // 获取所有模板数据
+                            CmsBtProductModel product = productService.getProductByCode(channelId, image.getCode());
+                            List<CmsBtImageTemplateModel> templateModels = imageTemplateService.getTemplateListWithNoParams(channelId
+                                    , product.getFields().getBrand()
+                                    , product.getFields().getProductType()
+                                    , product.getFields().getSizeType());
+
+                            // 返回需要调用图片生成api的对象
+                            for (CmsBtImageTemplateModel templateModel : templateModels) {
+
+                                CreateImageParameter createImageParameter = new CreateImageParameter();
+                                createImageParameter.setChannelId(channelId);
+                                createImageParameter.setTemplateId(templateModel.getImageTemplateId());
+                                createImageParameter.setFile(ImgUtils.getImageName(image.getImgName()));
+                                createImageParameter.setVParam(new String[]{image.getImgName() + imageExtend});
+                                imageDatas.add(createImageParameter);
+
+                                // 获取产品对应的group信息
+                                CmsBtProductGroupModel groupModel = productGroupService.selectProductGroupByCode(channelId, product.getFields().getCode(), templateModel.getCartId());
+
+                                // 返回templateImageUrl
+                                String templateImageUrl = imageTemplateService.getTemplateImageUrl(channelId, templateModel.getImageTemplateId().toString(), image.getImgName() + imageExtend);
+
+                                // 将模板图片插入到platformImage
+                                CmsBtPlatformImagesModel platformImage = platformImagesService.selectByImageNameWithTemplate(channelId, templateModel.getCartId(), image.getImgName(), templateModel.getImageTemplateId());
+                                platformImage.setSearchId(groupModel.getGroupId().toString());
+                                platformImage.setOriginalImgUrl(templateImageUrl);
+                                platformImage.setUpdFlg(0);
+                                platformImage.setCreater(getTaskName());
+                                platformImage.setModifier(getTaskName());
+                                platformImagesService.save(platformImage);
+
+                                // 上新
+                                if (CmsConstants.ProductStatus.Approved.name().equals(product.getFields().getStatus()))
+                                    productService.insertSxWorkLoad(channelId, product, getTaskName());
+                            }
+                        }
+
+                        // 按每次可以批量生成图片的最大数拆分图片列表
+                        List<List<CreateImageParameter>> splitImageDatas = CommonUtil.splitList(imageDatas, 200);
+
+                        for (List<CreateImageParameter> imageData : splitImageDatas) {
+
+                            // 调用图片生成API
+                            ImageCreateAddListRequest request = new ImageCreateAddListRequest();
+                            request.setData(imageData);
+                            ImageCreateAddListResponse response = imageCreateService.addList(request);
+                            if (response.getErrorCode() > 0)
+                                $error(imageData + " 调用图片生成API失败:" + response.getErrorMsg());
+                        }
 
                     } else {
                         $debug(channelId + "渠道本次没有要推送scene7的图片");
@@ -89,7 +187,7 @@ public class CmsImagePostScene7Service extends BaseTaskService {
 
     private String ImageGetAndSendTask(String orderChannelId, List<CmsBtImagesModel> subImageUrlList) {
 
-        long threadNo = Thread.currentThread().getId();
+        long threadNo =  Thread.currentThread().getId();
 
         $info("thread-" + threadNo + " start");
 
@@ -141,67 +239,112 @@ public class CmsImagePostScene7Service extends BaseTaskService {
 
             InputStream inputStream = null;
 
+            FtpBean ftpBean = new FtpBean();
+            // ftp连接port
+            String port = Codes.getCodeName(S7FTP_CONFIG, "Port");
+            ftpBean.setPort(port);
+            // ftp连接url
+            String url = Codes.getCodeName(S7FTP_CONFIG, "Url");
+            ftpBean.setUrl(url);
+            // ftp连接usernmae
+            String userName = Codes.getCodeName(S7FTP_CONFIG, "UserName");
+            ftpBean.setUsername(userName);
+            // ftp连接password
+            String password = Codes.getCodeName(S7FTP_CONFIG, "Password");
+            ftpBean.setPassword(password);
+            // ftp连接上传文件编码
+            String fileEncode = Codes.getCodeName(S7FTP_CONFIG, "FileCoding");
+            ftpBean.setFile_coding(fileEncode);
+
+            //FTP服务器保存目录设定
+            String uploadPath = ChannelConfigs.getVal1(orderChannelId, ChannelConfigEnums.Name.scene7_image_folder);
+            if(StringUtils.isEmpty(uploadPath)){
+                String err = String.format("channelId(%s)的scene7上的路径没有配置 请配置tm_order_channel_config表",orderChannelId);
+                $error(err);
+                throw new BusinessException(err);
+            }
+            ftpBean.setUpload_path(uploadPath);
+
+            FtpUtil ftpUtil = new FtpUtil();
+            FTPClient ftpClient = new FTPClient();
 
             String imageUrl = "";
 
             try {
+                //建立连接
+                ftpClient = ftpUtil.linkFtp(ftpBean);
+                if (ftpClient != null) {
 
-                for (int i = 0; i < imageUrlList.size(); i++) {
-                    imageUrl = String.valueOf(imageUrlList.get(i).getOriginalUrl());
+                    boolean change = ftpClient.changeWorkingDirectory(ftpBean.getUpload_path());
+                    if (change) {
+                        ftpClient.enterLocalPassiveMode();
+                        ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
+                        ftpClient.setConnectTimeout(120000);
 
-                    if (StringUtils.isNullOrBlank2(imageUrl)) {
-                        successImageUrlList.add(imageUrlList.get(i));
-                        continue;
-                    }
+                        for (int i = 0; i < imageUrlList.size(); i++) {
+                            imageUrl = String.valueOf(imageUrlList.get(i).getOriginalUrl());
 
-                    try {
-                        inputStream = HttpUtils.getInputStream(imageUrl);
-                    } catch (Exception ex) {
-                        // 图片url错误
-                        $error(ex.getMessage(), ex);
-                        imageUrlList.get(i).setUpdFlg(3);
-                        imageUrlList.get(i).setModifier(getTaskName());
+                            if (StringUtils.isNullOrBlank2(imageUrl)) {
+                                successImageUrlList.add(imageUrlList.get(i));
+                                continue;
+                            }
 
-                        cmsBtImagesDaoExt.updateImage(imageUrlList.get(i));
-                        // 记录url错误图片以便删除这张图片相关记录
+                            try {
+                                inputStream = HttpUtils.getInputStream(imageUrl);
+                            } catch (Exception ex) {
+                                // 图片url错误
+                                $error(ex.getMessage(), ex);
+                                imageUrlList.get(i).setUpdFlg(3);
+                                imageUrlList.get(i).setModifier(getTaskName());
+
+                                cmsBtImagesDaoExt.updateImage(imageUrlList.get(i));
+                                // 记录url错误图片以便删除这张图片相关记录
 //                                urlErrorList.add(imageUrlList.get(i));
 
-                        continue;
-                    }
+                                continue;
+                            }
 
-                    int lastSlash = imageUrl.lastIndexOf("/");
-                    String fileName = imageUrlList.get(i).getImgName();
+                            int lastSlash = imageUrl.lastIndexOf("/");
+                            String fileName = imageUrlList.get(i).getImgName() + ImgUtils.getImageExtend(imageUrlList.get(i).getOriginalUrl());
 
-                    boolean result = ftpService.storeFile(Codes.getCodeName(S7FTP_CONFIG, "Url"),
-                            Codes.getCodeName(S7FTP_CONFIG, "Port"),
-                            Codes.getCodeName(S7FTP_CONFIG, "UserName"),
-                            Codes.getCodeName(S7FTP_CONFIG, "Password"),
-                            fileName,
-                            ChannelConfigs.getVal1(orderChannelId, ChannelConfigEnums.Name.scene7_image_folder),
-                            inputStream,
-                            Codes.getCodeName(S7FTP_CONFIG, "FileCoding"),
-                            120000);
-                    if (result) {
-                        successImageUrlList.add(imageUrlList.get(i));
+                            boolean result = ftpClient.storeFile(fileName, inputStream);
 
-                        $info("thread-" + threadNo + ":" + imageUrl + "上传成功!");
+                            if (result) {
+                                successImageUrlList.add(imageUrlList.get(i));
 
-                    } else {
-                        isSuccess = false;
+                                $info("thread-" + threadNo + ":" + imageUrl + "上传成功!");
 
-                        break;
-                    }
+                            } else {
+                                isSuccess = false;
 
-                    if (inputStream != null) {
-                        inputStream.close();
+                                break;
+                            }
+
+                            if (inputStream != null) {
+                                inputStream.close();
+                            }
+                        }
                     }
                 }
-            } catch (Exception ex){
+
+            } catch (Exception ex) {
                 $error(ex.getMessage(), ex);
                 issueLog.log(ex, ErrorType.BatchJob, SubSystem.CMS);
+
                 isSuccess = false;
+
+            } finally {
+                //断开连接
+                if (ftpClient != null) {
+                    ftpUtil.disconnectFtp(ftpClient);
+                }
+
+                if (inputStream != null) {
+                    inputStream.close();
+                }
             }
         }
+
         return isSuccess;
     }
 }

@@ -32,13 +32,13 @@
                         <div class="form-inline">
                             <select class="form-control m-r-xxs"
                                     ng-model="ctrl.show.hasRequired"
-                                    ng-options="v as k for (k,v) in ctrl.options.hasRequired"></select>
+                                    ng-options="v as k for (k,v) in ::ctrl.options.hasRequired"></select>
                             <select class="form-control m-r-xxs"
                                     ng-model="ctrl.show.matched"
-                                    ng-options="v as k for (k,v) in ctrl.options.matched"></select>
+                                    ng-options="v as k for (k,v) in ::ctrl.options.matched"></select>
                             <input type="text" ng-model="ctrl.show.keyWord"
                                    placeholder="{{'TXT_MSG_SEARCH' | translate}}" class="form-control">
-                            <button class="btn btn-default" ng-click="ctrl.clear()"><i class="fa fa-remove"></i>&nbsp;{{'BTN_CLEAR'
+                            <button class="btn btn-default" ng-click="ctrl.clear()"><i class="fa fa-remove"></i>&nbsp;{{::'BTN_CLEAR'
                                 | translate}}
                             </button>
                         </div>

@@ -36,7 +36,7 @@
         var defConfig = {
             curr: 1,
             total: 0,
-            size: 20,
+            size: 10,
             showPageNo: 5,
             fetch:null
         };

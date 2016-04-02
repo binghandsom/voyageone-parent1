@@ -80,6 +80,7 @@
         "getPlatformCategories": "getPlatformCategories",
         "setPlatformMapping": "setPlatformMapping",
         "getPlatformCategory": "getPlatformCategory",
+        "getPlatformCategorySchema": "getPlatformCategorySchema",
         "getMainCategorySchema": "getMainCategorySchema",
         "getDictList": "getDictList",
         "getPlatformMapping": "getPlatformMapping",
@@ -104,6 +105,7 @@
       "promotionService" : {
         "root": "/cms/promotion/index",
         "init": "init",
+        "initByPromotionId":"initByPromotionId",
         "getPromotionList": "getPromotionList",
         "insertPromotion": "insertPromotion",
         "updatePromotion": "updatePromotion",
@@ -264,6 +266,11 @@
           "getCategoryList": "getCategoryList",
           "getCategoryDetail":"getCategoryDetail",
           "updateCategorySchema":"updateCategorySchema"
+        },
+        "categorySettingService": {
+          "root": "/cms/system/category/setting",
+          "getMasterSubCategoryList":"getMasterSubCategoryList",
+          "getPlatformSubCategoryList":"getPlatformSubCategoryList"
         }
       },
       "systemCartService":{
@@ -377,7 +384,10 @@
         "getCount": "getCount",
         "save": "save",
         "delete": "delete",
-        "get":"get"
+        "get":"get",
+        "getTemplateParameter":"getTemplateParameter",
+        "getDownloadUrl":"getDownloadUrl"
+
        },
       "imageGroupService": {
         "root": "/cms/channel/image_group",
@@ -403,12 +413,17 @@
           "init": "sizeChartInit",
           "search": "sizeChartSearch",
           "delete": "sizeChartDelete",
-          "editSave": "sizeChartEditSave",
-          "detailSearch": "sizeChartDetailSearch",
+          "editSave": "sizeChartEditSave"
+        }
+    },
+      "sizeChartDetail":{
+        "sizeChartDetailService": {
+          "root": "/cms/channel/sizeChartDetail",
+          "init": "sizeChartDetailSearch",
           "detailSave": "sizeChartDetailSave",
           "detailSizeMapSave": "sizeChartDetailSizeMapSave"
         }
-    }
+      }
     }
   }
 }

@@ -1,11 +1,7 @@
 package com.voyageone.web2.cms.views.channel.listing;
 
-import com.voyageone.common.util.DateTimeUtil;
-import com.voyageone.service.dao.cms.CmsMtImageCreateTemplateDao;
 import com.voyageone.service.dao.cms.mongo.CmsBtImageTemplateDao;
-import com.voyageone.service.impl.cms.CmsImageTemplateService;
-import com.voyageone.service.impl.cms.MongoSequenceService;
-import com.voyageone.service.model.cms.CmsMtImageCreateTemplateModel;
+import com.voyageone.service.impl.cms.ImageTemplateService;
 import com.voyageone.service.model.cms.mongo.channel.CmsBtImageTemplateModel;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,7 +10,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -23,13 +18,13 @@ import java.util.List;
 public class CmsImageTemplateTest {
 
     @Autowired
-    private CmsImageTemplateService service;
+    private ImageTemplateService service;
 
     @Autowired
     private CmsBtImageTemplateDao dao;
 
-    @Autowired
-    CmsMtImageCreateTemplateDao daoCmsMtImageCreateTemplate;
+//    @Autowired
+//    CmsMtImageCreateTemplateDao daoCmsMtImageCreateTemplate;
 
     @Test
     public void loadCmsImageTemplate() {

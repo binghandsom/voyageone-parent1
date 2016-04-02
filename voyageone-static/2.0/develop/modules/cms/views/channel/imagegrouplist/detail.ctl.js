@@ -7,7 +7,7 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function (cms) {
     cms.controller("imageGroupDetailController", (function () {
-        function ImageGroupDetailController($routeParams, imageGroupDetailService, cActions, confirm, alert, notify) {
+        function ImageGroupDetailController($routeParams, imageGroupDetailService, confirm, alert, notify) {
             this.confirm = confirm;
             this.alert = alert;
             this.notify = notify;
@@ -56,7 +56,7 @@ define([
                 var main = this;
                 main.imageGroupDetailService.search({"imageGroupId":main.imageGroupId}).then(function (res) {
                     if (res.data != null) {
-                    main.imageList = res.data;
+                        main.imageList = res.data;
                     }
                 })
             },
@@ -94,6 +94,14 @@ define([
                             main.alert('TXT_MSG_REFRESH_IMAGE_FAIL');
                         }
                     })
+                })
+            },
+            refreshPage: function () {
+                var main = this;
+                main.imageGroupDetailService.search({"imageGroupId":main.imageGroupId}).then(function (res) {
+                    if (res.data != null) {
+                        main.imageList = res.data;
+                    }
                 })
             },
             delete: function (originUrl) {

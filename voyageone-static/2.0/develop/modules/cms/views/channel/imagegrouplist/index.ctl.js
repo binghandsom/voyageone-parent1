@@ -16,8 +16,8 @@ define([
             this.imageType = "";
             this.beginModified = "";
             this.endModified = "";
-            this.brandNameList = [];
 
+            this.brandNameList = [];
             this.brandName = [];
             this.productTypeList = [];
             this.productType = [];
@@ -28,7 +28,6 @@ define([
             this.pageOption = {
                 curr: 1,
                 total: 0,
-                size: 20,
                 fetch: this.getImageGroupList.bind(this)
             };
             this.imageGroupService = imageGroupService;
