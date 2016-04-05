@@ -1,5 +1,8 @@
 package com.voyageone.task2.cms.service.promotion.stock;
 
+import com.voyageone.common.Constants;
+import com.voyageone.common.configs.TypeChannels;
+import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.dao.cms.CmsBtStockSalesQuantityDao;
 import com.voyageone.service.dao.cms.CmsBtStockSeparateIncrementItemDao;
@@ -205,7 +208,7 @@ public class StockInfoService {
     public List<Integer> getSeparateCartId(String channelId) {
         List<Integer> listSeparateCartId = new ArrayList<>();
 
-        Map<String, Object> sqlParam = new HashMap<String, Object>();
+        Map<String, Object> sqlParam = new HashMap<>();
         sqlParam.put("channelIdWhere", channelId);
         sqlParam.put("revertTimeGt", DateTimeUtil.getNow());
         List<Map<String, Object>> resultData = cmsBtStockSeparatePlatformInfoDao.selectStockSeparatePlatform(sqlParam);
@@ -217,5 +220,48 @@ public class StockInfoService {
         });
 
         return listSeparateCartId;
+    }
+
+    /**
+     * 取得该渠道下未被隔离的平台(共享平台)
+     *
+     * @param channelId 渠道id
+     * @param listCartIdAll 全部平台
+     * @param listCartIdExcept 除外的平台
+     * @return
+     */
+    public List<Integer> getShareCartId(String channelId, List<Integer> listCartIdAll, List<Integer> listCartIdExcept) {
+        List<Integer> listShareCartId = new ArrayList<>();
+
+        if (listCartIdAll == null || listCartIdAll.size() == 0) {
+            // 渠道对应的所有销售平台取得
+            List<TypeChannelBean> cartList = TypeChannels.getTypeListSkuCarts(channelId, Constants.comMtTypeChannel.SKU_CARTS_53_A, "en");
+            cartList.forEach(cartInfo -> listShareCartId.add(Integer.parseInt(cartInfo.getValue())));
+        } else {
+            listShareCartId.addAll(listCartIdAll);
+        }
+
+        // 取得该渠道下已经隔离的平台,并去除
+        List<Integer> listSeparateCartId = getSeparateCartId(channelId);
+        if (listSeparateCartId != null && listSeparateCartId.size() > 0) {
+            removeListValue(listShareCartId, listSeparateCartId);
+        }
+
+        // 去除用户设定一定要去除的平台
+        if (listCartIdExcept != null && listCartIdExcept.size() > 0) {
+            removeListValue(listShareCartId, listCartIdExcept);
+        }
+
+        return listShareCartId;
+    }
+
+    /**
+     * 去除list值
+     *
+     * @param listSource 去除的list对象
+     * @param listRemove 要去出的值
+     */
+    private void removeListValue(List<Integer> listSource, List<Integer> listRemove) {
+        listRemove.forEach(val -> listSource.remove(val));
     }
 }
