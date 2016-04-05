@@ -288,7 +288,7 @@ public class StockSeparateService extends BaseTaskService {
         $info("可用库存数据取得完毕");
 
         // 取得该渠道下已经隔离的平台
-        List<Integer> listSeparateCartId = stockInfoService.getSeparateCartId(channelId, DateTimeUtil.getNow());
+        List<Integer> listSeparateCartId = stockInfoService.getSeparateCartId(channelId);
 
         $info("更新处理开始,渠道是%s", channelId);
         try {
@@ -330,12 +330,16 @@ public class StockSeparateService extends BaseTaskService {
 
                         // 更新
                         for (Integer cartId : listCartId) {
-                            // 此任务设定的隔离平台
+                            if (mapPlatAdd.containsKey(cartId)) {
+                                // 此任务设定的隔离平台
 
+                            } else {
+                                // 共享平台
+                                if (!listSeparateCartId.contains(cartId)) {
+                                    // 不是已经隔离的平台
 
-
-                            // 共享平台
-
+                                }
+                            }
 
                         }
 

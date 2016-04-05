@@ -1,5 +1,6 @@
 package com.voyageone.task2.cms.service.promotion.stock;
 
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.dao.cms.CmsBtStockSalesQuantityDao;
 import com.voyageone.service.dao.cms.CmsBtStockSeparateIncrementItemDao;
 import com.voyageone.service.dao.cms.CmsBtStockSeparateItemDao;
@@ -199,15 +200,14 @@ public class StockInfoService {
      * 取得该渠道下已经隔离的平台
      *
      * @param channelId 渠道id
-     * @param sysTime   系统时间
      * @return List<渠道id>
      */
-    public List<Integer> getSeparateCartId(String channelId, String sysTime) {
+    public List<Integer> getSeparateCartId(String channelId) {
         List<Integer> listSeparateCartId = new ArrayList<>();
 
         Map<String, Object> sqlParam = new HashMap<String, Object>();
         sqlParam.put("channelIdWhere", channelId);
-        sqlParam.put("revertTimeGt", sysTime);
+        sqlParam.put("revertTimeGt", DateTimeUtil.getNow());
         List<Map<String, Object>> resultData = cmsBtStockSeparatePlatformInfoDao.selectStockSeparatePlatform(sqlParam);
         resultData.forEach(data -> {
             Integer cartId = (Integer) data.get("cart_id");
