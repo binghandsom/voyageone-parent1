@@ -279,7 +279,20 @@ define([
                     "controllerUrl": "modules/cms/views/pop/promotion/addStockIncrement.ctl",
                     "controller": 'popAddStockIncrementCtl'
                 }
+            },
+        "search": {
+            "imagedetail": {
+                "templateUrl": "views/pop/search/imagedetail.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/search/imagedetail.ctl",
+                "controller": 'popImageDetailCtl'
+            },
+            "codeDetail": {
+                "templateUrl": "views/pop/search/codeDetail.tpl.html",
+                "controllerUrl": "modules/cms/views/pop/search/codeDetail.ctl",
+                "controller": 'popCodeDetailCtl'
             }
+
+        },
         })
         .controller('popupCtrl', popupCtrl);
 
@@ -838,6 +851,27 @@ define([
                 });
             });
         }
+
+        /**
+         * 新增feed查询页图片弹出
+         * */
+        $scope.openImagedetail = function (context) {
+            return openModel(popActions.search.imagedetail, context);
+        };
+
+        /**
+         * 新增feed查询页code弹出
+         * */
+        $scope.openCodeDetail = function (context) {
+            return openModel(popActions.search.codeDetail, context);
+        };
+
+        /**
+         * 新增channel Feed查询输入页c规则弹出
+         * */
+        $scope.openNewFeedRule = function (context) {
+            return openModel(popActions.search.codeDetail, context);
+        };
 
         /**
          * 弹出自定义属性列
