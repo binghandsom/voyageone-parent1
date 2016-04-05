@@ -98,8 +98,8 @@
         where
         a.is_active = 1
           and (a.channel_id = #{channelId}
-        <if test="subChannelId != null and subChannelId != ''">
-            or a.channel_id = #{subChannelId}
+        <if test="orgChannelId != null and orgChannelId != ''">
+            or a.channel_id = #{orgChannelId}
         </if>
           )
         <if test="promotionId != null and promotionId != ''">

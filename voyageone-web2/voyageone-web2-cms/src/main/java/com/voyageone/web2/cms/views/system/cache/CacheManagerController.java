@@ -1,6 +1,7 @@
 package com.voyageone.web2.cms.views.system.cache;
 
 import com.voyageone.common.configs.Enums.CacheKeyEnums;
+import com.voyageone.common.masterdate.schema.utils.StringUtil;
 import com.voyageone.common.redis.CacheHelper;
 import com.voyageone.web2.base.ajax.AjaxResponse;
 import com.voyageone.web2.cms.CmsController;
@@ -29,7 +30,7 @@ public class CacheManagerController extends CmsController{
             return redirectTo("/modules/cms/app.html#/system/cache/index");
         }
         if(!StringUtil.isEmpty(request.getParameter("delAll"))){
-            cacheKeySet().forEach(k->CacheHelper.delete(k));
+            cacheKeySet().forEach(k -> CacheHelper.delete(k));
             return redirectTo("/modules/cms/app.html#/system/cache/index");
         }
         return success(cacheKeySet());

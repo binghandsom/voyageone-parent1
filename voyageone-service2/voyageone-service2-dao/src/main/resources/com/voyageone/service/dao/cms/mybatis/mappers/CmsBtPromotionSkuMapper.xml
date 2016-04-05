@@ -19,7 +19,7 @@
             (
                 SELECT
                     promotion_id,
-                    sub_channel_id,
+                    org_channel_id,
                     model_id,
                     product_id,
                     num_iid,
@@ -78,6 +78,9 @@
             <if test="promotionId != null" >
                 promotion_id,
             </if>
+            <if test="orgChannelId != null" >
+                org_channel_id,
+            </if>
             <if test="modelId != null" >
                 model_id,
             </if>
@@ -117,6 +120,9 @@
         <trim prefix="values (" suffix=")" suffixOverrides="," >
             <if test="promotionId != null" >
                 #{promotionId,jdbcType=INTEGER},
+            </if>
+            <if test="orgChannelId != null" >
+                #{orgChannelId,jdbcType=VARCHAR},
             </if>
             <if test="modelId != null" >
                 #{modelId,jdbcType=INTEGER},
@@ -160,6 +166,9 @@
         <set >
             <if test="promotionId != null" >
                 promotion_id = #{promotionId,jdbcType=INTEGER},
+            </if>
+            <if test="orgChannelId != null" >
+                org_channel_id = #{orgChannelId,jdbcType=VARCHAR},
             </if>
             <if test="modelId != null" >
                 model_id = #{modelId,jdbcType=INTEGER},

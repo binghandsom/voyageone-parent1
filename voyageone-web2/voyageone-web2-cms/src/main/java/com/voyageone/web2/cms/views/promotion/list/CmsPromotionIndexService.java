@@ -6,6 +6,7 @@ import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.Properties;
 import com.voyageone.common.configs.TypeChannels;
+import com.voyageone.common.configs.UsJois;
 import com.voyageone.common.util.FileUtils;
 import com.voyageone.service.dao.cms.CmsBtPromotionDao;
 import com.voyageone.service.dao.cms.CmsBtPromotionCodeDao;
@@ -65,8 +66,10 @@ public class CmsPromotionIndexService extends BaseAppService {
     }
 
     public List<CmsBtPromotionModel> queryByCondition(Map<String, Object> conditionParams) {
-        conditionParams.put("subChannelId", conditionParams.get("channelId"));
-        conditionParams.put("channelId", ChannelConfigEnums.Channel.VOYAGEONE.getId());
+        if(UsJois.isExists(conditionParams.get("channelId").toString())){
+            conditionParams.put("orgChannelId", conditionParams.get("channelId"));
+            conditionParams.put("channelId", ChannelConfigEnums.Channel.VOYAGEONE.getId());
+        }
         return promotionService.getByCondition(conditionParams);
     }
 
@@ -82,7 +85,7 @@ public class CmsPromotionIndexService extends BaseAppService {
         return promotionService.delete(cmsBtPromotionModel);
     }
 
-    public byte[] getCodeExcelFile(Integer promotionId) throws IOException, InvalidFormatException {
+    public byte[] getCodeExcelFile(Integer promotionId,String channelId) throws IOException, InvalidFormatException {
 
 //        String templatePath = readValue(CmsConstants.Props.CODE_TEMPLATE);
         String templatePath = Properties.readValue(CmsConstants.Props.PROMOTION_EXPORT_TEMPLATE);
