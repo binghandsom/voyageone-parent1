@@ -23,7 +23,7 @@ public class WmsBtInventoryCenterLogicDao extends com.voyageone.service.dao.Serv
     }
 
     public List<WmsBtInventoryCenterLogicModel> selectItemDetail(Map params){
-        return selectOne("wms_bt_inventory_center_logic_selectByChannelWithCodeOrSku", params);
+        return selectList("wms_bt_inventory_center_logic_selectLogicInventory", params);
     }
 
     public Integer selectLogicInventoryCnt(Map<String, Object> param) {

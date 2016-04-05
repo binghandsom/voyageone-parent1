@@ -113,7 +113,7 @@ public class StockSeparateService extends BaseTaskService {
         // if（该sku下所有平台只要有状态不是隔离成功和等待隔离的）
         //    此sku等待隔离数据变成隔离失败，其余状态的数据不更新，保持原样(此sku从更新对象resultDataByChannel里面remove)
         // else
-        //    此sku隔离成功数据变成等待隔离，即也作为对象重新隔离(此sku对应平台从更新对象resultDataByChannel里面add)
+        //    此sku隔离成功数据变成等待隔离，即也作为对象重新隔离(此sku对应平台从更新对象resultDataByChannel里面add),并把cms_bt_stock_sales_quantity销售表end_flg更新成"0：未结束"
         List<String> errorChannel = new ArrayList<>();
         for (String channelId : resultDataByChannel.keySet()) {
             try {
@@ -202,13 +202,14 @@ public class StockSeparateService extends BaseTaskService {
                     updateParam.put("modifier", getTaskName());
                     updateParam.put("taskId", taskId);
                     updateParam.put("statusWhere", stockInfoService.STATUS_WAITING_SEPARATE);
-                    int index = 0;
-                    for (; index + 500 < listErrorSku.size(); index = index + 500) {
-                        updateParam.put("skuList", listErrorSku.subList(index, index + 500));
+                    for (int index = 0; index < listErrorSku.size(); index = index + 500) {
+                        if (index + 500 < listErrorSku.size()) {
+                            updateParam.put("skuList", listErrorSku.subList(index, index + 500));
+                        } else {
+                            updateParam.put("skuList", listErrorSku.subList(index, listErrorSku.size()));
+                        }
                         cmsBtStockSeparateItemDao.updateStockSeparateItem(updateParam);
                     }
-                    updateParam.put("skuList", listErrorSku.subList(index, listErrorSku.size()));
-                    cmsBtStockSeparateItemDao.updateStockSeparateItem(updateParam);
                 }
 
                 if (listSuccessStatusSku.size() > 0) {
@@ -218,13 +219,17 @@ public class StockSeparateService extends BaseTaskService {
                     updateParam.put("modifier", getTaskName());
                     updateParam.put("taskId", taskId);
                     updateParam.put("statusWhere", stockInfoService.STATUS_SEPARATE_SUCCESS);
-                    int index = 0;
-                    for (; index + 500 < listSuccessStatusSku.size(); index = index + 500) {
-                        updateParam.put("skuList", listSuccessStatusSku.subList(index, index + 500));
+                    for (int index = 0; index < listSuccessStatusSku.size(); index += 500) {
+                        if (index + 500 < listSuccessStatusSku.size()) {
+                            updateParam.put("skuList", listSuccessStatusSku.subList(index, index + 500));
+                        } else {
+                            updateParam.put("skuList", listSuccessStatusSku.subList(index, listSuccessStatusSku.size()));
+                        }
                         cmsBtStockSeparateItemDao.updateStockSeparateItem(updateParam);
                     }
-                    updateParam.put("skuList", listSuccessStatusSku.subList(index, listSuccessStatusSku.size()));
-                    cmsBtStockSeparateItemDao.updateStockSeparateItem(updateParam);
+
+                    // TODO:隔离成功的销售表end_flg更新成"0：未结束"
+
                 }
             }
         });
@@ -356,11 +361,17 @@ public class StockSeparateService extends BaseTaskService {
 
         } else {
             // 按比例修正隔离库存
-            for (Map.Entry<Integer, Integer> entry : cartSeparateQty.entrySet()) {
-                Integer cartId = entry.getKey();
-                Integer separateQtyOld = entry.getValue();
-                Integer separateQty = skuUsable * separateQtyOld / skuUsableOld;
-                ret.put(cartId, separateQty);
+            if (skuUsableOld ==0) {
+                // 原可用库存为0
+
+            } else {
+                // 原可用库存不为0
+                for (Map.Entry<Integer, Integer> entry : cartSeparateQty.entrySet()) {
+                    Integer cartId = entry.getKey();
+                    Integer separateQtyOld = entry.getValue();
+                    Integer separateQty = skuUsable * separateQtyOld / skuUsableOld;
+                    ret.put(cartId, separateQty);
+                }
             }
         }
 
