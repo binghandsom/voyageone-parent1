@@ -48,9 +48,9 @@ public abstract class GiltBase {
         StringBuilder parm_url = new StringBuilder();
         //拼接URL
         for (Map.Entry<String, String> entry : params.entrySet()) {
-            if(!StringUtils.isEmpty(entry.getValue())){
+            if(!StringUtils.isEmpty(entry.getKey())){
                 parm_url.append("&").append(entry.getKey()).append("=");
-                parm_url.append(params.get(entry.getValue()));
+                parm_url.append(entry.getValue());
             }
         }
         if (parm_url.length() != 0){
