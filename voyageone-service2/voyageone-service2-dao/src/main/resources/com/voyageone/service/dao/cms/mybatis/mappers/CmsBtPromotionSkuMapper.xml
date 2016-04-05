@@ -19,6 +19,7 @@
             (
                 SELECT
                     promotion_id,
+                    sub_channel_id,
                     model_id,
                     product_id,
                     num_iid,

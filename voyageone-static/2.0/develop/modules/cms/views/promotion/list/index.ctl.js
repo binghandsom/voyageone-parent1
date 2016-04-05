@@ -3,12 +3,14 @@ define([
     'modules/cms/controller/popup.ctl'
 ], function () {
 
-    function indexController($scope, promotionService, promotionDetailService, confirm, $translate, cActions, notify, $location, cRoutes) {
+    function indexController($scope, promotionService, promotionDetailService, confirm, $translate, cActions, notify, $location, cRoutes,cookieService) {
 
         $scope.vm = {"promotionList": [], "platformTypeList": [], "promotionStatus": []};
         $scope.searchInfo = {};
         $scope.groupPageOption = {curr: 1, total: 198, size: 30, fetch: $scope.search};
         $scope.datePicker = [];
+        $scope.currentChannelId = cookieService.channel();
+
 
         $scope.initialize = function () {
             promotionService.init().then(function (res) {
@@ -56,6 +58,6 @@ define([
         };
     }
 
-    indexController.$inject = ['$scope', 'promotionService', 'promotionDetailService', 'confirm', '$translate', 'cActions', 'notify', '$location', 'cRoutes'];
+    indexController.$inject = ['$scope', 'promotionService', 'promotionDetailService', 'confirm', '$translate', 'cActions', 'notify', '$location', 'cRoutes','cookieService'];
     return indexController;
 });

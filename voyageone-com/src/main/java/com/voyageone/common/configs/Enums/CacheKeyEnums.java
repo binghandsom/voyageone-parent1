@@ -48,7 +48,9 @@ public enum CacheKeyEnums {
 
     ConfigData_CartConfigs,
 
-    ConfigData_$ModifyTime$
+    ConfigData_$ModifyTime$,
+
+    ConfigData_USJoinConfig
     ;
 
     /**

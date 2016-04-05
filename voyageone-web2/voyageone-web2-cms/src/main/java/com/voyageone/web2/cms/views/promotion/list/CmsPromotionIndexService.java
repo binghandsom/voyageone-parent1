@@ -2,6 +2,7 @@ package com.voyageone.web2.cms.views.promotion.list;
 
 import com.voyageone.base.exception.BusinessException;
 import com.voyageone.common.Constants;
+import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.Enums.TypeConfigEnums;
 import com.voyageone.common.configs.Properties;
 import com.voyageone.common.configs.TypeChannels;
@@ -64,6 +65,8 @@ public class CmsPromotionIndexService extends BaseAppService {
     }
 
     public List<CmsBtPromotionModel> queryByCondition(Map<String, Object> conditionParams) {
+        conditionParams.put("subChannelId", conditionParams.get("channelId"));
+        conditionParams.put("channelId", ChannelConfigEnums.Channel.VOYAGEONE.getId());
         return promotionService.getByCondition(conditionParams);
     }
 
