@@ -14,55 +14,55 @@ import java.util.Map;
 @Repository
 public class CmsBtStockSeparateItemDao extends BaseDao {
     public List<Map<String, Object>> selectStockSeparateItem(Map<String, Object> param) {
-        return selectList("select_stock_separate_item", param);
+        return selectList("cms_bt_stock_separate_item_selectStockSeparateItem", param);
     }
 
     public List<Map<String, Object>> selectStockSeparateItemBySqlMap(Map<String, Object> param) {
-        return selectList("select_stock_separate_item_by_sql_map", param);
+        return selectList("cms_bt_stock_separate_item_selectStockSeparateItemBySqlMap", param);
     }
 
     public List<Object> selectStockSeparateItemBySqlObject(Map<String, Object> param) {
-        return selectList("select_stock_separate_item_by_sql_object", param);
+        return selectList("cms_bt_stock_separate_item_selectStockSeparateItemBySqlObject", param);
     }
 
     public Integer selectStockSeparateSuccessQty(Map<String, Object> param) {
-        return selectOne("select_stock_separate_success_qty", param);
+        return selectOne("cms_bt_stock_separate_item_selectStockSeparateSuccessQty", param);
     }
 
     public Integer selectStockSeparateItemByStatus(Map<String, Object> param) {
-        return selectOne("select_stock_separate_item_by_status", param);
+        return selectOne("cms_bt_stock_separate_item_selectStockSeparateItemByStatus", param);
     }
 
     public int selectStockSeparateItemHistoryCnt(Map<String, Object> param) {
-        return selectOne("select_stock_separate_item_history_cnt", param);
+        return selectOne("cms_bt_stock_separate_item_selectStockSeparateItemHistoryCnt", param);
     }
 
     public int updateStockSeparateItem(Map<String, Object> param) {
-        return update("update_stock_separate_item", param);
+        return update("cms_bt_stock_separate_item_updateStockSeparateItem", param);
     }
 
     public int deleteStockSeparateItem(Map<String, Object> param) {
-        return delete("delete_stock_separate_item", param);
+        return delete("cms_bt_stock_separate_item_deleteStockSeparateItem", param);
     }
 
     public int insertStockSeparateItem(Map<String, Object> param) {
-        return insert("insert_cms_bt_stock_separate_item", param);
+        return insert("cms_bt_stock_separate_insertStockSeparateItem", param);
     }
 
     public List<Map<String, Object>> selectStockSeparateDetailAll(Map<String, Object> param) {
-        return selectList("select_stock_separate_detail_all", param);
+        return selectList("cms_bt_stock_separate_selectStockSeparateDetailAll", param);
     }
 
     public List<StockExcelBean> selectExcelStockInfo(Map<String, Object> param) {
-        return selectList("select_stock_separate_item_excel_map", param);
+        return selectList("cms_bt_stock_separate_selectExcelStockInfo", param);
     }
 
     public int insertStockSeparateItemFromExcel(List<Map<String, Object>> param) {
-        return insert("insert_cms_bt_stock_separate_item_excel", param);
+        return insert("cms_bt_stock_separate_insertStockSeparateItemFromExcel", param);
     }
 
     public List<Map<String, Object>> selectExcelStockErrorInfo(Map<String, Object> param) {
-        return selectList("select_stock_separate_error_excel", param);
+        return selectList("cms_bt_stock_separate_selectExcelStockErrorInfo", param);
     }
 
 }

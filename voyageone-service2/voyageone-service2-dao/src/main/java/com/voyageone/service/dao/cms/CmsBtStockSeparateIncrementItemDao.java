@@ -15,38 +15,38 @@ import java.util.Map;
 public class CmsBtStockSeparateIncrementItemDao extends BaseDao {
 
     public List<Map<String, Object>> selectStockSeparateIncrement(Map<String, Object> param) {
-        return selectList("select_stock_separate_increment", param);
+        return selectList("cms_bt_stock_separate_increment_item_selectStockSeparateIncrement", param);
     }
 
     public Integer selectStockSeparateIncrementSuccessQty(Map<String, Object> param) {
-        return selectOne("select_stock_separate_increment_success_qty", param);
+        return selectOne("cms_bt_stock_separate_increment_item_selectStockSeparateIncrementSuccessQty", param);
     }
 
     public Integer selectStockSeparateIncrementItemByStatus(Map<String, Object> param) {
-        return selectOne("select_stock_separate_increment_item_by_status", param);
+        return selectOne("cms_bt_stock_separate_increment_item_selectStockSeparateIncrementItemByStatus", param);
     }
 
     public int selectStockSeparateIncrementItemHistoryCnt(Map<String, Object> param) {
-        return selectOne("select_stock_separate_increment_item_history_cnt", param);
+        return selectOne("cms_bt_stock_separate_increment_item_selectStockSeparateIncrementItemHistoryCnt", param);
     }
 
     public List<Map<String, Object>> selectStockSeparateIncrementItemBySql(Map<String, Object> param) {
-        return selectList("select_stock_separate_increment_item_by_sql", param);
+        return selectList("cms_bt_stock_separate_increment_item_selectStockSeparateIncrementItemBySql", param);
     }
 
     public int updateStockSeparateIncrementItem(Map<String, Object> param) {
-        return update("update_stock_separate_increment_item", param);
+        return update("cms_bt_stock_separate_increment_item_updateStockSeparateIncrementItem", param);
     }
 
     public int deleteStockSeparateIncrementItem(Map<String, Object> param) {
-        return delete("delete_stock_separate_increment_item", param);
+        return delete("cms_bt_stock_separate_increment_item_deleteStockSeparateIncrementItem", param);
     }
 
     public List<StockIncrementExcelBean> selectExcelStockIncrementInfo(Map<String, Object> param) {
-        return selectList("select_stock_separate_increment_item_excel_map", param);
+        return selectList("cms_bt_stock_separate_increment_item_selectExcelStockIncrementInfo", param);
     }
 
     public int insertStockSeparateIncrementItemFromExcel(List<Map<String, Object>> param) {
-        return insert("insert_cms_bt_stock_separate_increment_item_excel", param);
+        return insert("cms_bt_stock_separate_increment_item_insertStockSeparateIncrementItemFromExcel", param);
     }
 }

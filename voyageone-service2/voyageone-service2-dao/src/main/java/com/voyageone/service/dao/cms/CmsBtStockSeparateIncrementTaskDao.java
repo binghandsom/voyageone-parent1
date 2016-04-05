@@ -14,10 +14,10 @@ import java.util.Map;
 public class CmsBtStockSeparateIncrementTaskDao extends BaseDao {
 
     public List<Map<String, Object>> selectStockSeparateIncrementTask(Map<String, Object> param) {
-        return selectList("select_stock_separate_increment_task", param);
+        return selectList("cms_bt_stock_separate_increment_task_selectStockSeparateIncrementTask", param);
     }
 
     public int deleteStockSeparateIncrementTask(Map<String, Object> param) {
-        return delete("delete_stock_separate_increment_task", param);
+        return delete("cms_bt_stock_separate_increment_task_deleteStockSeparateIncrementTask", param);
     }
 }
