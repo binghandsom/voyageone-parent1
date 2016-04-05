@@ -1,8 +1,10 @@
 package com.voyageone.task2.cms.service.promotion.stock;
 
+import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.service.dao.cms.CmsBtStockSalesQuantityDao;
 import com.voyageone.service.dao.cms.CmsBtStockSeparateIncrementItemDao;
 import com.voyageone.service.dao.cms.CmsBtStockSeparateItemDao;
+import com.voyageone.service.dao.cms.CmsBtStockSeparatePlatformInfoDao;
 import com.voyageone.service.dao.wms.WmsBtInventoryCenterLogicDao;
 import com.voyageone.service.model.wms.WmsBtInventoryCenterLogicModel;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +34,9 @@ public class StockInfoService {
 
     @Autowired
     private CmsBtStockSalesQuantityDao cmsBtStockSalesQuantityDao;
+
+    @Autowired
+    private CmsBtStockSeparatePlatformInfoDao cmsBtStockSeparatePlatformInfoDao;
 
     /** 增量/库存隔离状态 0：未进行 */
     public static final String STATUS_READY = "0";
@@ -76,7 +81,7 @@ public class StockInfoService {
     public static final String NOT_REVERT = "0";
 
     /**
-     * 取得可用库存里list
+     * 取得可用库存
      *
      * @param channelId 渠道id
      * @return 可用库存Map<sku,usableStock>
@@ -189,5 +194,28 @@ public class StockInfoService {
             ret = 0;
         }
         return ret;
+    }
+
+    /**
+     * 取得该渠道下已经隔离的平台
+     *
+     * @param channelId 渠道id
+     * @return List<渠道id>
+     */
+    public List<Integer> getSeparateCartId(String channelId) {
+        List<Integer> listSeparateCartId = new ArrayList<>();
+
+        Map<String, Object> sqlParam = new HashMap<String, Object>();
+        sqlParam.put("channelIdWhere", channelId);
+        sqlParam.put("revertTimeGt", DateTimeUtil.getNow());
+        List<Map<String, Object>> resultData = cmsBtStockSeparatePlatformInfoDao.selectStockSeparatePlatform(sqlParam);
+        resultData.forEach(data -> {
+            Integer cartId = (Integer) data.get("cart_id");
+            if (!listSeparateCartId.contains(cartId)) {
+                listSeparateCartId.add(cartId);
+            }
+        });
+
+        return listSeparateCartId;
     }
 }

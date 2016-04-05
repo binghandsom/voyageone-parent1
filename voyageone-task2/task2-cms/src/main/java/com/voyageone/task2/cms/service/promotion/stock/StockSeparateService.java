@@ -7,10 +7,9 @@ import com.voyageone.common.configs.TypeChannels;
 import com.voyageone.common.configs.beans.TypeChannelBean;
 import com.voyageone.common.util.DateTimeUtil;
 import com.voyageone.common.util.StringUtils;
-import com.voyageone.service.dao.cms.CmsBtBeatInfoDao;
+import com.voyageone.service.dao.cms.CmsBtStockSalesQuantityDao;
 import com.voyageone.service.dao.cms.CmsBtStockSeparateItemDao;
 import com.voyageone.service.dao.cms.CmsBtStockSeparatePlatformInfoDao;
-import com.voyageone.service.model.cms.CmsBtBeatInfoModel;
 import com.voyageone.task2.base.BaseTaskService;
 import com.voyageone.task2.base.modelbean.TaskControlBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +34,9 @@ public class StockSeparateService extends BaseTaskService {
 
     @Autowired
     private CmsBtStockSeparatePlatformInfoDao cmsBtStockSeparatePlatformInfoDao;
+
+    @Autowired
+    private CmsBtStockSalesQuantityDao cmsBtStockSalesQuantityDao;
 
     @Autowired
     private TransactionRunner transactionRunner;
@@ -113,11 +115,11 @@ public class StockSeparateService extends BaseTaskService {
         // if（该sku下所有平台只要有状态不是隔离成功和等待隔离的）
         //    此sku等待隔离数据变成隔离失败，其余状态的数据不更新，保持原样(此sku从更新对象resultDataByChannel里面remove)
         // else
-        //    此sku隔离成功数据变成等待隔离，即也作为对象重新隔离(此sku对应平台从更新对象resultDataByChannel里面add)
+        //    此sku隔离成功数据变成等待隔离，即也作为对象重新隔离(此sku对应平台从更新对象resultDataByChannel里面add),并把cms_bt_stock_sales_quantity销售表end_flg更新成"1：结束"
         List<String> errorChannel = new ArrayList<>();
         for (String channelId : resultDataByChannel.keySet()) {
             try {
-                updateSeparateSuccessData(resultDataByChannel.get(channelId));
+                updateSeparateSuccessData(resultDataByChannel.get(channelId), channelId);
             } catch (Exception e) {
                 errorChannel.add(channelId);
                 logger.error(e.getMessage());
@@ -139,19 +141,22 @@ public class StockSeparateService extends BaseTaskService {
      * 隔离数据整理
      *
      * @param mapSkuTaskData 等待隔离数据
+     * @param channelId      平台
      */
-    private void updateSeparateSuccessData(Map<Integer, Map<String, List<Map<String, Object>>>> mapSkuTaskData) {
+    private void updateSeparateSuccessData(Map<Integer, Map<String, List<Map<String, Object>>>> mapSkuTaskData, String channelId) {
         Map<String, Object> sqlParamItem = new HashMap<>();
         Map<String, Object> sqlParamTask = new HashMap<>();
         List<String> listErrorSku = new ArrayList<>();
         List<String> listSuccessStatusSku = new ArrayList<>();
         List<Map<String, Object>> listAddData = new ArrayList<>();
+        Map<Integer, List<String>> mapCartSku = new HashMap<>(); // Map<平台, List<Sku>> 用于更新sku隔离销售表
 
         $info("隔离数据整理开始");
         transactionRunner.runWithTran(() -> {
             for (Integer taskId : mapSkuTaskData.keySet()) {
                 listErrorSku.clear();
                 listSuccessStatusSku.clear();
+                mapCartSku.clear();
 
                 // taskId对应所有隔离平台
                 sqlParamItem.put("taskId", taskId);
@@ -185,6 +190,16 @@ public class StockSeparateService extends BaseTaskService {
                         if (!isErr && listAddData.size() > 0) {
                             listData.addAll(listAddData);
                             listSuccessStatusSku.add(sku);
+                            listAddData.forEach(data -> {
+                                Integer cartId = (Integer) data.get("cart_id");
+                                if (mapCartSku.containsKey(cartId)) {
+                                    mapCartSku.get(cartId).add(sku);
+                                } else {
+                                    mapCartSku.put(cartId, new ArrayList<String>() {{
+                                        this.add(sku);
+                                    }});
+                                }
+                            });
                         }
                     }
                 }
@@ -202,13 +217,14 @@ public class StockSeparateService extends BaseTaskService {
                     updateParam.put("modifier", getTaskName());
                     updateParam.put("taskId", taskId);
                     updateParam.put("statusWhere", stockInfoService.STATUS_WAITING_SEPARATE);
-                    int index = 0;
-                    for (; index + 500 < listErrorSku.size(); index = index + 500) {
-                        updateParam.put("skuList", listErrorSku.subList(index, index + 500));
+                    for (int index = 0; index < listErrorSku.size(); index = index + 500) {
+                        if (index + 500 < listErrorSku.size()) {
+                            updateParam.put("skuList", listErrorSku.subList(index, index + 500));
+                        } else {
+                            updateParam.put("skuList", listErrorSku.subList(index, listErrorSku.size()));
+                        }
                         cmsBtStockSeparateItemDao.updateStockSeparateItem(updateParam);
                     }
-                    updateParam.put("skuList", listErrorSku.subList(index, listErrorSku.size()));
-                    cmsBtStockSeparateItemDao.updateStockSeparateItem(updateParam);
                 }
 
                 if (listSuccessStatusSku.size() > 0) {
@@ -218,19 +234,41 @@ public class StockSeparateService extends BaseTaskService {
                     updateParam.put("modifier", getTaskName());
                     updateParam.put("taskId", taskId);
                     updateParam.put("statusWhere", stockInfoService.STATUS_SEPARATE_SUCCESS);
-                    int index = 0;
-                    for (; index + 500 < listSuccessStatusSku.size(); index = index + 500) {
-                        updateParam.put("skuList", listSuccessStatusSku.subList(index, index + 500));
+
+                    for (int index = 0; index < listSuccessStatusSku.size(); index += 500) {
+                        if (index + 500 < listSuccessStatusSku.size()) {
+                            updateParam.put("skuList", listSuccessStatusSku.subList(index, index + 500));
+                        } else {
+                            updateParam.put("skuList", listSuccessStatusSku.subList(index, listSuccessStatusSku.size()));
+                        }
                         cmsBtStockSeparateItemDao.updateStockSeparateItem(updateParam);
                     }
-                    updateParam.put("skuList", listSuccessStatusSku.subList(index, listSuccessStatusSku.size()));
-                    cmsBtStockSeparateItemDao.updateStockSeparateItem(updateParam);
+                }
+
+                if (mapCartSku.size() > 0) {
+                    // 隔离成功的销售表end_flg更新成"1：结束"
+                    Map<String, Object> updateParam = new HashMap<>();
+                    updateParam.put("channelId", channelId);
+                    updateParam.put("endFlg", stockInfoService.END);
+                    updateParam.put("modifier", getTaskName());
+
+                    for (Map.Entry<Integer, List<String>> entry : mapCartSku.entrySet()) {
+                        updateParam.put("cartId", entry.getKey());
+                        List<String> lisSku = entry.getValue();
+                        for (int index = 0; index < lisSku.size(); index += 500) {
+                            if (index + 500 < lisSku.size()) {
+                                updateParam.put("skuList", lisSku.subList(index, index + 500));
+                            } else {
+                                updateParam.put("skuList", lisSku.subList(index, lisSku.size()));
+                            }
+                            cmsBtStockSalesQuantityDao.updateStockSalesQuantity(updateParam);
+                        }
+                    }
                 }
             }
         });
         $info("隔离数据整理结束");
     }
-
 
     /**
      * 按渠道把等待隔离数据进行更新
@@ -249,49 +287,64 @@ public class StockSeparateService extends BaseTaskService {
         Map<String,Integer> skuStockUsableAll = stockInfoService.getUsableStock(channelId);
         $info("可用库存数据取得完毕");
 
-        // 计算隔离库存
-        for (Integer taskId : mapSkuTaskData.keySet()) {
-            // taskId对应平台的增减顺
-            Map<String, Object> param = new HashMap<>();
-            param.put("taskId", taskId);
-            param.put("commonPlatform", true);
-            List<Map<String, Object>> listTaskInfo = cmsBtStockSeparatePlatformInfoDao.selectStockSeparatePlatform(param);
-            Map<Integer, Integer> mapPlatAdd = new TreeMap<>(); // 增顺
-            Map<Integer, Integer> mapPlatSub = new TreeMap<>(); // 减顺
-            for(Map<String, Object> platformInfo : listTaskInfo) {
-                Integer cartId = (Integer) platformInfo.get("cart_id");
-                Integer add = (Integer) platformInfo.get("add_priority");
-                Integer sub = (Integer) platformInfo.get("subtract_priority");
-                mapPlatAdd.put(add, cartId);
-                mapPlatSub.put(sub, cartId);
-            }
-
-            Map<String, List<Map<String, Object>>> mapSkuData = mapSkuTaskData.get(taskId);
-            Integer skuUsableOld = 0; // 可用库存
-            for (Map.Entry<String, List<Map<String, Object>>> entry : mapSkuData.entrySet()) {
-                String sku = entry.getKey();
-                List<Map<String, Object>> listData = entry.getValue();
-                skuUsableOld = (Integer) listData.get(0).get("qty");
-                Map<Integer, Integer> cartSeparateQtyOld = new HashMap<>(); // Map<平台, 隔离库存>
-                Integer separateQtyAll = 0;
-                for (Map<String, Object> data : listData) {
-                    Integer cartId = (Integer) data.get("cart_id");
-                    Integer separateQty = (Integer) data.get("separate_qty");
-                    separateQtyAll += separateQty;
-                    cartSeparateQtyOld.put(cartId, separateQty);
-                }
-
-                // 各平台最终显示库存（包含隔离平台，共享平台（-1），不包含动态平台）
-                Map<Integer, Integer> cartDisplayQty = calQty(cartSeparateQtyOld, separateQtyAll, skuUsableOld, skuStockUsableAll.get(sku), mapPlatAdd, mapPlatSub);
-
-            }
-
-        }
+        // 取得该渠道下已经隔离的平台
+        List<Integer> listSeparateCartId = stockInfoService.getSeparateCartId(channelId);
 
         $info("更新处理开始,渠道是%s", channelId);
         try {
             transactionRunner.runWithTran(() -> {
+                // 计算隔离库存,更新
+                for (Integer taskId : mapSkuTaskData.keySet()) {
+                    // taskId对应平台的增减顺
+                    Map<String, Object> param = new HashMap<>();
+                    param.put("taskId", taskId);
+                    param.put("commonPlatform", true);
+                    List<Map<String, Object>> listTaskInfo = cmsBtStockSeparatePlatformInfoDao.selectStockSeparatePlatform(param);
+                    Map<Integer, Integer> mapPlatAdd = new TreeMap<>(); // 增顺
+                    Map<Integer, Integer> mapPlatSub = new TreeMap<>(); // 减顺
+                    for(Map<String, Object> platformInfo : listTaskInfo) {
+                        Integer cartId = (Integer) platformInfo.get("cart_id");
+                        Integer add = (Integer) platformInfo.get("add_priority");
+                        Integer sub = (Integer) platformInfo.get("subtract_priority");
+                        mapPlatAdd.put(add, cartId);
+                        mapPlatSub.put(sub, cartId);
+                    }
 
+                    Map<String, List<Map<String, Object>>> mapSkuData = mapSkuTaskData.get(taskId);
+                    Integer skuUsableOld = 0; // 可用库存
+                    for (Map.Entry<String, List<Map<String, Object>>> entry : mapSkuData.entrySet()) {
+                        String sku = entry.getKey();
+                        List<Map<String, Object>> listData = entry.getValue();
+                        skuUsableOld = (Integer) listData.get(0).get("qty");
+                        Map<Integer, Integer> cartSeparateQtyOld = new HashMap<>(); // Map<平台, 隔离库存>
+                        Integer separateQtyAll = 0;
+                        for (Map<String, Object> data : listData) {
+                            Integer cartId = (Integer) data.get("cart_id");
+                            Integer separateQty = (Integer) data.get("separate_qty");
+                            separateQtyAll += separateQty;
+                            cartSeparateQtyOld.put(cartId, separateQty);
+                        }
+
+                        // 各平台最终显示库存（包含隔离平台，共享平台（-1），不包含动态平台）
+                        Map<Integer, Integer> cartDisplayQty = calQty(cartSeparateQtyOld, separateQtyAll, skuUsableOld, skuStockUsableAll.get(sku), mapPlatAdd, mapPlatSub);
+
+                        // 更新
+                        for (Integer cartId : listCartId) {
+                            if (mapPlatAdd.containsKey(cartId)) {
+                                // 此任务设定的隔离平台
+
+                            } else {
+                                // 共享平台
+                                if (!listSeparateCartId.contains(cartId)) {
+                                    // 不是已经隔离的平台
+
+                                }
+                            }
+
+                        }
+
+                    }
+                }
             });
         } catch (Exception e) {
             logger.error(e.getMessage());
@@ -353,14 +406,30 @@ public class StockSeparateService extends BaseTaskService {
                     }
                 }
             }
-
         } else {
             // 按比例修正隔离库存
-            for (Map.Entry<Integer, Integer> entry : cartSeparateQty.entrySet()) {
-                Integer cartId = entry.getKey();
-                Integer separateQtyOld = entry.getValue();
-                Integer separateQty = skuUsable * separateQtyOld / skuUsableOld;
-                ret.put(cartId, separateQty);
+            if (skuUsableOld ==0) {
+                // 原可用库存为0
+                if (skuUsable > separateQtyAll) {
+                    // 现可用库存 > 各平台设置比例之和
+                    // 按各平台所占比例重新计算
+                    Integer all = 0;
+                    for (Map.Entry<Integer, Integer> entry : cartSeparateQty.entrySet()) {
+                        Integer separateQtyOld = entry.getValue();
+                        Integer separateQty = skuUsable * separateQtyOld / separateQtyAll;
+                        all += separateQty;
+                        ret.put(entry.getKey(), separateQty);
+                    }
+                    ret.put(-1, skuUsable - all); // 共享平台
+                }
+                // 现可用库存 <= 各平台设置比例之和,隔离数量不变
+            } else {
+                // 原可用库存不为0
+                for (Map.Entry<Integer, Integer> entry : cartSeparateQty.entrySet()) {
+                    Integer separateQtyOld = entry.getValue();
+                    Integer separateQty = skuUsable * separateQtyOld / skuUsableOld;
+                    ret.put(entry.getKey(), separateQty);
+                }
             }
         }
 
