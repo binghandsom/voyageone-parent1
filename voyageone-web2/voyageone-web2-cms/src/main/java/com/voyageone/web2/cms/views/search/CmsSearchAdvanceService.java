@@ -11,7 +11,6 @@ import com.voyageone.common.util.MongoUtils;
 import com.voyageone.common.util.StringUtils;
 import com.voyageone.service.dao.cms.CmsBtFeedCustomPropDao;
 import com.voyageone.service.dao.cms.CmsMtCommonPropDao;
-import com.voyageone.service.dao.cms.CmsMtCustomWordDao;
 import com.voyageone.service.impl.cms.ChannelCategoryService;
 import com.voyageone.service.impl.cms.TagService;
 import com.voyageone.service.impl.cms.product.ProductService;
@@ -49,8 +48,6 @@ public class CmsSearchAdvanceService extends BaseAppService{
 
     @Autowired
     private CmsPromotionIndexService cmsPromotionService;
-    @Autowired
-    private CmsMtCustomWordDao customWordDao;
     @Autowired
     private ChannelCategoryService channelCategoryService;
     @Autowired

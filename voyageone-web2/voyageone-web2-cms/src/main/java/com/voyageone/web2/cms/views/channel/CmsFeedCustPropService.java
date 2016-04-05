@@ -322,7 +322,7 @@ public class CmsFeedCustPropService extends BaseAppService {
 //        Criteria criteria = Criteria.where("channelId").is(channelId);
 //        query.addCriteria(criteria);
 
-        return feedCategoryTreeService.getTopFeedCategory(channelId);
+        return feedCategoryTreeService.getFeedCategory(channelId);
 //        return mongoTemplate.find(query, Object.class, "cms_mt_feed_category_tree");
         //TODO-- 这里只能使用Object对象来影射，不能使用Map.class，可能是spring mongoTemplate的问题
     }
