@@ -43,7 +43,7 @@ public abstract class BaseController extends BaseAppComponent {
         try {
             return genResponseEntityFromStream(downloadFileName, new FileInputStream(srcFile));
         } catch (FileNotFoundException e) {
-            logger.warn("File Not Found for " + srcFile);
+            $warn("File Not Found for " + srcFile);
         }
 
         return null;
@@ -56,7 +56,7 @@ public abstract class BaseController extends BaseAppComponent {
         try {
             return genResponseEntityFromBytes(downloadFileName, IOUtils.toByteArray(inputStream));
         } catch (IOException e) {
-            logger.warn("IOException", e);
+            $warn("IOException", e);
         }
 
         return null;
@@ -122,7 +122,7 @@ public abstract class BaseController extends BaseAppComponent {
 
         AjaxResponse response = new AjaxResponse();
         response.setData(data);
-        logger.debug(JacksonUtil.bean2Json(response));
+        $debug(JacksonUtil.bean2Json(response));
         return response;
     }
 

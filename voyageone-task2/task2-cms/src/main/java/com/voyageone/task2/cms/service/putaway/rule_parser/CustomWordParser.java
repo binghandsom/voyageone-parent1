@@ -6,8 +6,8 @@ import com.voyageone.task2.cms.service.putaway.DefaultCustomRuleModules;
 import com.voyageone.ims.rule_expression.CustomWord;
 import com.voyageone.ims.rule_expression.RuleWord;
 import com.voyageone.ims.rule_expression.WordType;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Set;
 
@@ -15,10 +15,11 @@ import java.util.Set;
  * Created by Leo on 15-6-18.
  */
 public class CustomWordParser {
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
+
     private DefaultCustomRuleModules ruleModules;
     private ExpressionParser expressionParser;
     private CustomValueSystemParam systemParam;
-    private static Log logger = LogFactory.getLog(CustomWordParser.class);
 
     public CustomWordParser(ExpressionParser expressionParser, CustomValueSystemParam systemParam) {
         this.expressionParser = expressionParser;
@@ -26,17 +27,14 @@ public class CustomWordParser {
         this.ruleModules = DefaultCustomRuleModules.getInstance();
     }
 
-    public String parse(RuleWord ruleWord, Set<String> imageSet)
-    {
-        if (!WordType.CUSTOM.equals(ruleWord.getWordType()))
-        {
+    public String parse(RuleWord ruleWord, Set<String> imageSet) {
+        if (!WordType.CUSTOM.equals(ruleWord.getWordType())) {
             return null;
         }
 
         CustomWord customWord = (CustomWord) ruleWord;
         CustomWordModule customWordModule = ruleModules.getRuleModule(customWord.getValue().getModuleName());
-        if (customWordModule == null)
-        {
+        if (customWordModule == null) {
             logger.error("没有找到匹配的模块-moduleName:" + customWord.getValue().getModuleName());
             return null;
         }

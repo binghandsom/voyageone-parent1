@@ -31,7 +31,8 @@ public enum ImageCategoryType {
                 return Main;
             case 2:
                 return Beat;
+            default:
+                return null;
         }
-        return null;
     }
 }

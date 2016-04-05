@@ -1,7 +1,6 @@
 package com.voyageone.web2.base.interceptors;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import com.voyageone.common.logger.VOAbsLoggable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
@@ -16,8 +15,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author Jonas
  * @version 2.0.0
  */
-public class Interceptor implements HandlerInterceptor {
-    private final Log logger = LogFactory.getLog(getClass());
+public class Interceptor extends VOAbsLoggable implements HandlerInterceptor {
 
     @Autowired
     private AuthorizationInterceptor authorizationInterceptor;
@@ -39,7 +37,7 @@ public class Interceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
-        logger.info(request.getServletPath() + " is start.");
+        $info(request.getServletPath() + " is start.");
 
         return loginInterceptor.preHandle(request)
             && channelInterceptor.preHandle(request)
@@ -57,7 +55,7 @@ public class Interceptor implements HandlerInterceptor {
      */
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
-        logger.info(request.getServletPath() + " is end.");
+        $info(request.getServletPath() + " is end.");
     }
 
     /**

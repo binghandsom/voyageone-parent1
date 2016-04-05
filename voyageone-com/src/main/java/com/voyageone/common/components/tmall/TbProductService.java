@@ -5,8 +5,6 @@ import com.taobao.api.request.*;
 import com.taobao.api.response.*;
 import com.voyageone.common.components.tmall.base.TbBase;
 import com.voyageone.common.configs.beans.ShopBean;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Component;
 
 /**
@@ -15,16 +13,13 @@ import org.springframework.stereotype.Component;
 @Component
 public class TbProductService extends TbBase {
 
-    private static Log logger = LogFactory.getLog(TbProductService.class);
-
     public String getProductMatchSchema(Long categoryId, ShopBean config) throws ApiException {
 
         TmallProductMatchSchemaGetRequest request = new TmallProductMatchSchemaGetRequest();
         request.setCategoryId(categoryId);
 
         TmallProductMatchSchemaGetResponse response = reqTaobaoApi(config, request);
-        if (response.getErrorCode() != null)
-        {
+        if (response.getErrorCode() != null) {
             logger.error(response.getSubMsg());
         }
 
@@ -72,8 +67,7 @@ public class TbProductService extends TbBase {
         request.setXmlData(xmlData);
 
         TmallProductSchemaAddResponse response = reqTaobaoApi(config, request);
-        if (response.getErrorCode() != null)
-        {
+        if (response.getErrorCode() != null) {
             failCause.append(response.getSubMsg());
         }
         return response.getAddProductResult();
@@ -100,21 +94,18 @@ public class TbProductService extends TbBase {
         return reqTaobaoApi(config, request);
     }
 
-    public TmallItemUpdateSchemaGetResponse doGetWareInfoItem(String itemId, ShopBean config) throws ApiException{
-
+    public TmallItemUpdateSchemaGetResponse doGetWareInfoItem(String itemId, ShopBean config) throws ApiException {
         TmallItemUpdateSchemaGetRequest request = new TmallItemUpdateSchemaGetRequest();
         request.setItemId(Long.parseLong(itemId));
         return reqTaobaoApi(config, request);
     }
 
-    public Boolean isDarwin(Long categoryId, Long brandId, ShopBean config, StringBuffer failCause) throws ApiException
-    {
+    public Boolean isDarwin(Long categoryId, Long brandId, ShopBean config, StringBuffer failCause) throws ApiException {
         TmallBrandcatMetadataGetRequest req = new TmallBrandcatMetadataGetRequest();
         req.setCatId(categoryId);
         //req.setBrandId(brandId);
         TmallBrandcatMetadataGetResponse response = reqTaobaoApi(config, req);
-        if (response == null)
-        {
+        if (response == null) {
             failCause.append("访问淘宝超时");
             return null;
         }

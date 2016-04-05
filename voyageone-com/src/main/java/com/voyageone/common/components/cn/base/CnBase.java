@@ -5,11 +5,9 @@ import com.voyageone.common.components.issueLog.IssueLog;
 import com.voyageone.common.configs.Enums.ChannelConfigEnums;
 import com.voyageone.common.configs.beans.ShopBean;
 import com.voyageone.common.util.HttpUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.io.IOException;
 
 /**
  * 对独立域名提供接口调用基础
@@ -18,10 +16,10 @@ import java.io.IOException;
  */
 public abstract class CnBase {
 
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
+
     @Autowired
     protected IssueLog issueLog;
-
-    protected Log logger = LogFactory.getLog(getClass());
 
     protected final String trustStore_jc = "/opt/app-shared/voyageone_web/contents/other/third_party/004/cn_key/juicycouture_store";
 //    protected final String trustStore_jc = "d:/juicycouture_store";

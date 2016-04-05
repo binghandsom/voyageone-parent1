@@ -164,9 +164,6 @@ public class VtmWsdlInsert extends BaseTaskService {
 
         /**
          * 生成类目数据包含model product数据
-         *
-         * @param categoryPath
-         * @return
          */
         protected List<CmsBtFeedInfoModel> getCategoryInfo(String categoryPath) throws Exception {
 
@@ -193,9 +190,9 @@ public class VtmWsdlInsert extends BaseTaskService {
             for (String categorPath : categoriePaths) {
 
                 // 每棵树的信息取得
-                logger.info("每棵树的信息取得开始");
+                $info("每棵树的信息取得开始");
                 List<CmsBtFeedInfoModel> product = getCategoryInfo(categorPath);
-                logger.info("每棵树的信息取得结束");
+                $info("每棵树的信息取得结束");
 
                 product.forEach(cmsBtFeedInfoModel -> {
                     List<String> categors = java.util.Arrays.asList(cmsBtFeedInfoModel.getCategory().split(":"));
@@ -221,16 +218,16 @@ public class VtmWsdlInsert extends BaseTaskService {
          */
         private  void executeMongoDB(List<CmsBtFeedInfoModel> productAll, List<CmsBtFeedInfoModel> productSucceeList, List<CmsBtFeedInfoModel> productFailAllList) {
             try {
-                logger.info("插入mongodb开始");
+                $info("插入mongodb开始");
                 Map response = feedToCmsService.updateProduct(channel.getId(), productAll, getTaskName());
-                logger.info("插入mongodb结束");
+                $info("插入mongodb结束");
                 List<String> itemIds = new ArrayList<>();
                 productSucceeList = (List<CmsBtFeedInfoModel>) response.get("succeed");
                 productSucceeList.forEach(feedProductModel -> feedProductModel.getSkus().forEach(feedSkuModel -> itemIds.add(feedSkuModel.getClientSku())));
                 updateFull(itemIds);
                 productFailAllList.addAll((List<CmsBtFeedInfoModel>) response.get("fail"));
             } catch (Exception e) {
-                logger.error(e.getMessage());
+                $error(e.getMessage());
                 issueLog.log(e, ErrorType.BatchJob, SubSystem.CMS);
             } finally {
                 productSucceeList.clear();
@@ -240,8 +237,6 @@ public class VtmWsdlInsert extends BaseTaskService {
 
         /**
          * 导入成功的FEED数据保存起来
-         *
-         * @param itemIds
          */
         @Transactional
         private void updateFull(List<String> itemIds) {

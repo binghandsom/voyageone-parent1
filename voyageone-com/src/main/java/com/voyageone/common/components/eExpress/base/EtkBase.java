@@ -3,12 +3,12 @@ package com.voyageone.common.components.eExpress.base;
 import com.voyageone.common.configs.beans.CarrierBean;
 import com.voyageone.common.configs.beans.PostResponse;
 import com.voyageone.common.util.HttpUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class EtkBase {
-	
-	protected Log logger = LogFactory.getLog(getClass());
+
+	protected final Logger logger = LoggerFactory.getLogger(getClass());
 	
 //	public final static Map map = new HashMap() {{
 //	    put("key1", "value1");

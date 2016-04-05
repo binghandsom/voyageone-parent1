@@ -23,15 +23,15 @@ public class JdOrderService extends JdBase {
 	/**
 	 * 取得京东新订单
 	 * 
-	 * @param startdate
-	 * @param enddate
-	 * @param shop
-	 * @return
+	 * @param startdate String
+	 * @param enddate String
+	 * @param shop ShopBean
+	 * @return List<OrderSearchInfo>
 	 * @throws Exception
 	 */
 	public List<OrderSearchInfo> getNewOrderPage(String startdate, String enddate, ShopBean shop) throws Exception {
 		
-		List<OrderSearchInfo> retData = new ArrayList<OrderSearchInfo>();
+		List<OrderSearchInfo> retData = new ArrayList<>();
 
 		OrderSearchRequest request = new OrderSearchRequest();
 		// 开始时间
@@ -87,7 +87,7 @@ public class JdOrderService extends JdBase {
 		
 		try {
 			while (true) {
-				request.setPage(intPageNow + "");
+				request.setPage(String.valueOf(intPageNow));
 				OrderSearchResponse response = reqApi(shop, request);
 				if (response != null) {
 					// 京东返回正常的场合
@@ -122,10 +122,10 @@ public class JdOrderService extends JdBase {
 	/**
 	 * 获得京东交易成功和锁定订单
 	 * 
-	 * @param startdate
-	 * @param enddate
-	 * @param shop
-	 * @return
+	 * @param startdate String
+	 * @param enddate String
+	 * @param shop ShopBean
+	 * @return List<OrderSearchInfo>
 	 * @throws Exception
 	 */
 	public List<OrderSearchInfo> getChangedOrderPage(String startdate, String enddate, ShopBean shop) throws Exception {
@@ -186,7 +186,7 @@ public class JdOrderService extends JdBase {
 		
 		try {
 			while (true) {
-				request.setPage(intPageNow + "");
+				request.setPage(String.valueOf(intPageNow));
 				OrderSearchResponse response = reqApi(shop, request);
 				if (response != null) {
 					// 京东返回正常的场合
@@ -218,11 +218,11 @@ public class JdOrderService extends JdBase {
 		return retData;
 	}
 	
-	public static void main(String[] args) throws Exception {
-		JdOrderService service = new JdOrderService();
-		ShopBean shop = new ShopBean();
-		List<OrderSearchInfo> orderList = service.getChangedOrderPage("2015-06-15 10:25:16", "2015-07-03 10:25:16", shop);
-		System.out.println();
-	}
+//	public static void main(String[] args) throws Exception {
+//		JdOrderService service = new JdOrderService();
+//		ShopBean shop = new ShopBean();
+//		List<OrderSearchInfo> orderList = service.getChangedOrderPage("2015-06-15 10:25:16", "2015-07-03 10:25:16", shop);
+//		System.out.println();
+//	}
 	
 }

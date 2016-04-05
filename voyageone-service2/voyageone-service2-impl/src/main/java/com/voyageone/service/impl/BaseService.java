@@ -1,11 +1,7 @@
 package com.voyageone.service.impl;
 
-import com.mongodb.BulkWriteResult;
-import com.voyageone.base.dao.mongodb.JomgoQuery;
-import com.voyageone.common.util.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Rest webservice Service 层提供基类
@@ -14,7 +10,7 @@ import org.apache.commons.logging.LogFactory;
  */
 public abstract class BaseService {
 
-    protected Log logger = LogFactory.getLog(getClass());
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
 
 //    /**
 //     * Check Request

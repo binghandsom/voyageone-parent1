@@ -7,10 +7,8 @@ import com.voyageone.common.configs.beans.FeedBean;
 import com.voyageone.common.configs.dao.ConfigDaoFactory;
 import com.voyageone.common.configs.dao.FeedDao;
 import com.voyageone.common.redis.CacheHelper;
-import com.voyageone.common.redis.CacheTemplateFactory;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.data.redis.core.HashOperations;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
@@ -20,27 +18,25 @@ import java.util.*;
  * Created by Zero on 8/18/2015.
  */
 public class Feeds {
-    private static Log logger = LogFactory.getLog(Feeds.class);
+
+    private static final Class selfClass = Feeds.class;
+
+    private final static Logger logger = LoggerFactory.getLogger(selfClass);
 
     /* redis key */
-    private static final String KEY = CacheKeyEnums.ConfigData_FeedConfigs.toString();
+    private static final String KEY = CacheKeyEnums.KeyEnum.ConfigData_FeedConfigs.toString();
 
-    private static HashOperations<String, String, FeedBean> hashOperations = CacheTemplateFactory.getHashOperation();
-
-    static {
-        if (!CacheTemplateFactory.getCacheTemplate().hasKey(KEY)) {
-            FeedDao feedDao = ConfigDaoFactory.getFeedDao();
-            Map<String, FeedBean> feedBeanMap = new HashMap<>();
-            feedDao.getAll().forEach(bean -> {
-                        feedBeanMap.put(
-                                buildKey(bean.getOrder_channel_id(), bean.getCfg_name(), bean.getId()),
-                                bean
-                        );
-                    }
-            );
-            CacheHelper.reFreshSSB(KEY, feedBeanMap);
-            logger.info("feed_config 读取数量: " + hashOperations.size(KEY));
-        }
+    public static void reload() {
+        FeedDao feedDao = ConfigDaoFactory.getFeedDao();
+        Map<String, FeedBean> feedBeanMap = new HashMap<>();
+        feedDao.getAll().forEach(bean ->
+                    feedBeanMap.put(
+                        buildKey(bean.getOrder_channel_id(), bean.getCfg_name(), bean.getId()),
+                        bean
+                    )
+        );
+        CacheHelper.reFreshSSB(KEY, feedBeanMap);
+        logger.info("feed_config 读取数量: " + CacheHelper.getSize(KEY));
     }
 
     /**
@@ -52,7 +48,7 @@ public class Feeds {
      * @return key
      */
     private static String buildKey(String channelId, String name, int id) {
-        return channelId + CacheHelper.SKIP + name + CacheHelper.SKIP + id;
+        return channelId + CacheKeyEnums.SKIP + name + CacheKeyEnums.SKIP + id;
     }
 
     /**
@@ -87,7 +83,7 @@ public class Feeds {
      */
     public static List<FeedBean> getConfigs(String channelId, FeedEnums.Name name) {
         List<FeedBean> feedBeanList = new ArrayList<>();
-        Set<String> keys = hashOperations.keys(KEY);
+        Set<String> keys = CacheHelper.getKeySet(KEY, selfClass);
         if (CollectionUtils.isEmpty(keys)) {
             logger.warn("未初始化CarrierBean");
             return feedBeanList;
@@ -95,11 +91,11 @@ public class Feeds {
 
         List<String> filterKeys = new ArrayList<>();
         for (String key : keys) {
-            if (key.startsWith(channelId + CacheHelper.SKIP + name)) filterKeys.add(key);
+            if (key.startsWith(channelId + CacheKeyEnums.SKIP + name)) filterKeys.add(key);
         }
         if (!filterKeys.isEmpty()) {
             Collections.sort(filterKeys);
-            feedBeanList = hashOperations.multiGet(KEY, filterKeys);
+            feedBeanList = CacheHelper.getBeans(KEY, filterKeys, selfClass);
         }
         return feedBeanList;
     }

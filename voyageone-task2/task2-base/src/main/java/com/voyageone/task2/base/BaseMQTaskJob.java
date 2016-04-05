@@ -22,9 +22,9 @@ public abstract class BaseMQTaskJob extends BaseTaskJob implements MessageListen
             if(service instanceof BaseMQTaskService)
                 ((BaseMQTaskService) service).startup(JsonUtil.jsonToMap(new String(message.getBody(),"UTF-8")));
             else
-                logger.error("请配置BaseMQTaskService");
+                $error("请配置BaseMQTaskService");
         } catch (Exception e) {
-            logger.error("onMessage error:", e);
+            $error("onMessage error:", e);
         }
     }
 }

@@ -5,10 +5,8 @@ import com.voyageone.common.configs.beans.ThirdPartyConfigBean;
 import com.voyageone.common.configs.dao.ConfigDaoFactory;
 import com.voyageone.common.configs.dao.ThirdPartConfigDao;
 import com.voyageone.common.redis.CacheHelper;
-import com.voyageone.common.redis.CacheTemplateFactory;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.springframework.data.redis.core.HashOperations;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
@@ -18,28 +16,25 @@ import java.util.*;
  * Created by Jonas on 06/26/2015.
  */
 public class ThirdPartyConfigs {
-    private static final Log logger = LogFactory.getLog(ThirdPartyConfigs.class);
+    private static final Class selfClass = ThirdPartyConfigs.class;
+
+    private final static Logger logger = LoggerFactory.getLogger(selfClass);
 
     /* redis key */
-    private static final String KEY = CacheKeyEnums.ConfigData_ThirdPartyConfigs.toString();
+    private static final String KEY = CacheKeyEnums.KeyEnum.ConfigData_ThirdPartyConfigs.toString();
 
-    private static HashOperations<String, String, ThirdPartyConfigBean> hashOperations = CacheTemplateFactory.getHashOperation();
-
-    static {
-        if (!CacheTemplateFactory.getCacheTemplate().hasKey(KEY)) {
-            ThirdPartConfigDao thirdPartConfigDao = ConfigDaoFactory.getThirdPartConfigDao();
-            Map<String, ThirdPartyConfigBean> thirdPartConfigBeanMap = new HashMap<>();
-            thirdPartConfigDao.getAll().forEach(
-                    bean -> {
-                        thirdPartConfigBeanMap.put(
-                                buildKey(bean.getChannel_id(), bean.getProp_name(), bean.getSeq()),
-                                bean
-                        );
-                    }
-            );
-            CacheHelper.reFreshSSB(KEY, thirdPartConfigBeanMap);
-            logger.info("thirdPartConfig 读取数量: " + hashOperations.size(KEY));
-        }
+    public static void reload() {
+        ThirdPartConfigDao thirdPartConfigDao = ConfigDaoFactory.getThirdPartConfigDao();
+        Map<String, ThirdPartyConfigBean> thirdPartConfigBeanMap = new HashMap<>();
+        thirdPartConfigDao.getAll().forEach(
+                bean ->
+                    thirdPartConfigBeanMap.put(
+                            buildKey(bean.getChannel_id(), bean.getProp_name(), bean.getSeq()),
+                            bean
+                    )
+        );
+        CacheHelper.reFreshSSB(KEY, thirdPartConfigBeanMap);
+        logger.info("thirdPartConfig 读取数量: " + CacheHelper.getSize(KEY));
     }
 
     /**
@@ -48,7 +43,7 @@ public class ThirdPartyConfigs {
      * @return key
      */
     private static String buildKey(String channelId, String propName, String seq) {
-        return channelId + CacheHelper.SKIP + propName + CacheHelper.SKIP + seq;
+        return channelId + CacheKeyEnums.SKIP + propName + CacheKeyEnums.SKIP + seq;
     }
 
     /**
@@ -71,7 +66,7 @@ public class ThirdPartyConfigs {
      * @return ThirdPartyConfigBean
      */
     public static List<ThirdPartyConfigBean> getThirdPartyConfigList(String channelId, String propName) {
-        Set<String> keySet = hashOperations.keys(KEY);
+        Set<String> keySet = CacheHelper.getKeySet(KEY, selfClass);
         if(CollectionUtils.isEmpty(keySet)) {
             return null;
         }
@@ -81,7 +76,7 @@ public class ThirdPartyConfigs {
             if(k.startsWith(buildKey(channelId, propName, ""))) keyList.add(k);
         });
         Collections.sort(keyList);
-        return hashOperations.multiGet(KEY,keyList);
+        return CacheHelper.getBeans(KEY,keyList, selfClass);
     }
 
     public static HashMap<String, ThirdPartyConfigBean> getThirdPartyConfigMap(String channelId) {
@@ -109,14 +104,14 @@ public class ThirdPartyConfigs {
      * 返回对应渠道的所有配置
      */
     public static List<ThirdPartyConfigBean> getConfigList(String channelId) {
-        Set<String> keySet=hashOperations.keys(KEY);
+        Set<String> keySet= CacheHelper.getKeySet(KEY, selfClass);
         if(CollectionUtils.isEmpty(keySet)) return null;
         List<String> keyList=new ArrayList<>();
         keySet.forEach(k->{
-            if(k.startsWith(channelId+CacheHelper.SKIP)) keyList.add(k);
+            if(k.startsWith(channelId+ CacheKeyEnums.SKIP)) keyList.add(k);
         });
         Collections.sort(keyList);
-        return hashOperations.multiGet(KEY,keyList);
+        return CacheHelper.getBeans(KEY,keyList, selfClass);
     }
 
     /**

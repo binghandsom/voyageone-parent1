@@ -51,10 +51,8 @@ public class GiltPageInventoryRequest extends GiltPage{
     }
 
     public void check(){
-        if(!StringUtils.isNullOrBlank2(sku_ids)){
-            if(sku_ids.split(",").length>100){
-                throw new IllegalArgumentException(" A comma delineated array of Sku ids to fetch. (Max 100)");
-            }
+        if(!StringUtils.isNullOrBlank2(sku_ids) && sku_ids.split(",").length > 100) {
+            throw new IllegalArgumentException(" A comma delineated array of Sku ids to fetch. (Max 100)");
         }
     }
 }
